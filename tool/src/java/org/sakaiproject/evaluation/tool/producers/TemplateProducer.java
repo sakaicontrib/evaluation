@@ -95,7 +95,9 @@ public class TemplateProducer implements ViewComponentProducer, NavigationCaseRe
 			combo.optionnames = comboNames;
 			
 			EvalTemplate tpl= templateBean.getCurrTemplate();
-
+			
+			UIOutput.make(form, "cancel-button", messageLocator.getMessage("general.cancel.button"));
+			
 			if(tpl!=null && tpl.getId()!=null)
 				UICommand.make(form, "addContinue",messageLocator.getMessage("modifytemplatetitledesc.save.button"), "#{templateBean.saveTemplate}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			else 

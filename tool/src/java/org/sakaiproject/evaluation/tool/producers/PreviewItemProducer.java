@@ -533,6 +533,8 @@ public class PreviewItemProducer implements ViewComponentProducer {
 			}
 			
 		}
-	
+		
+		UIOutput.make(tofill, "close-button", messageLocator.getMessage("general.close.window.button"));
+		
 	}
 }

@@ -77,6 +77,8 @@ public class PreviewEmailProducer implements ViewComponentProducer,NavigationCas
 			
 		UIOutput.make(form, "preview-email-desc", messageLocator.getMessage("previewemail.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 		
+		UIOutput.make(form, "close-button", messageLocator.getMessage("general.close.window.button"));
+		
 		if( evalViewParams.originalPage.equals("available")){ //$NON-NLS-1$
 			UICommand.make(form, "modifyEmailTemplate", messageLocator.getMessage("previewemail.modify.button"), "#{evaluationBean.modifyAvailableEmailTemplate}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
