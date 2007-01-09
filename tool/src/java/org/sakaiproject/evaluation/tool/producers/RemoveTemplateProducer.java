@@ -133,7 +133,10 @@ public class RemoveTemplateProducer implements ViewComponentProducer, Navigation
 							UIOutput.make(evalsRb, "evalDueDate", df.format(eval1.getDueDate())); //$NON-NLS-1$
 						}//end of for loop
 					}//end of if block
+					
+					UIOutput.make(noRemoveDiv, "cancel-button", messageLocator.getMessage("general.cancel.button"));
 
+					
 				}else{
 					//Can delete section: if there is no evaluation associated with this template
 					//first delete items associated with this template

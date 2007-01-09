@@ -62,11 +62,13 @@ public class ModifyEmailProducer implements ViewComponentProducer, NavigationCas
 		
 		
 		UIOutput.make(tofill, "modify-template-header", messageLocator.getMessage("modifyemail.modify.template.header")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIForm form = UIForm.make(tofill, "emailTamplateForm"); //$NON-NLS-1$
+		UIForm form = UIForm.make(tofill, "emailTemplateForm"); //$NON-NLS-1$
 		
 		UIOutput.make(form, "modify-text-instructions", messageLocator.getMessage("modifyemail.modify.text.instructions")); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		EvalViewParameters evalViewParams = (EvalViewParameters) viewparams;
+		
+		UIOutput.make(form, "close-button", messageLocator.getMessage("general.close.window.button"));
 		
 		if( evalViewParams.originalPage.equals("available")){ //$NON-NLS-1$
 			UIInput.make(form,"emailTemplate","#{evaluationBean.emailAvailableTxt}", null); //$NON-NLS-1$ //$NON-NLS-2$
