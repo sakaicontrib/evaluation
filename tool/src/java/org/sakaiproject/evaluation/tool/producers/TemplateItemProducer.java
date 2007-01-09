@@ -76,8 +76,8 @@ public class TemplateItemProducer implements ViewComponentProducer,NavigationCas
 
 		UIForm form = UIForm.make(tofill, "itemForm"); //$NON-NLS-1$
 
-		//UIOutput.make(form, "item-header", messageLocator.getMessage("modifitem.item.header"));	//TODO: exception: can not get property
-		UIOutput.make(form, "item-header","Item" );
+		UIOutput.make(form, "item-header", messageLocator.getMessage("modifyitem.item.header"));	//TODO: exception: can not get property
+		//UIOutput.make(form, "item-header","Item" );
 		UIOutput.make(form,"itemNo",null,"#{templateBean.currItemNo}"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		UIOutput.make(form,"itemClassification",null,"#{templateBean.itemClassification}");

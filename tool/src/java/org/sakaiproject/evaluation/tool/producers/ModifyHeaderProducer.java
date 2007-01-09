@@ -71,8 +71,8 @@ public class ModifyHeaderProducer implements ViewComponentProducer,NavigationCas
 
 		UIForm form = UIForm.make(tofill, "headerForm");
 
-		//UIOutput.make(form, "item-header", messageLocator.getMessage("modifitem.item.header"));	//TODO: exception: can not get property
-		UIOutput.make(form, "item-header","Item" );
+		UIOutput.make(form, "item-header", messageLocator.getMessage("modifyitem.item.header"));	//TODO: exception: can not get property
+		//UIOutput.make(form, "item-header","Item" );
 		UIOutput.make(form, "added-by-header", messageLocator.getMessage("modifyitem.added.by"));  //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(form,"itemNo",null,"#{templateBean.currItemNo}");
 		UIOutput.make(form,"itemClassification",null,"#{templateBean.itemClassification}");
