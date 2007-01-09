@@ -39,7 +39,7 @@
 	
 <h2 rsf:id="modify-template-header">Modify reminder email template for Evaluation Title</h2>
 	
-  <form  name="emailTamplate_form" rsf:id="emailTamplateForm" method="post" onsubmit="javascript:return validateForm();"> 
+  <form name="emailTemplate_form" rsf:id="emailTemplateForm" method="post" onsubmit="javascript:return validateForm();"> 
 	<table border = "0" cellspacing = "0" cellpadding = "0" width = "70%">
 	<tr>
 		<td width="100%">
@@ -67,7 +67,7 @@
 	
 	<tr>
 		<td align="left">
-			<input type="button" value="Close Window" onclick = "self.close()"/>
+			<input type="button" value="Close Window" onclick = "self.close()" rsf:id="close-button"/>
 		</td>
 		<td align="right">
 			<input name="saveEmailTemplate" rsf:id="saveEmailTemplate" type="submit" value="Save Changes"/>  
