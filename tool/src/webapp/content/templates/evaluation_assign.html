@@ -1,0 +1,89 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+	<title rsf:id="assign-eval-ext-title">Assign Evaluation to courses</title>
+    <link href="/library/skin/tool_base.css" type="text/css" rel="stylesheet" media="all"/>
+    <link href="/library/skin/default/tool.css" type="text/css" rel="stylesheet" media="all"/>
+	<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />    
+    <script type="text/javascript" language="JavaScript" src="/library/js/headscripts.js"></script>
+</head>
+
+<body rsf:id="scr=sakai-body">
+<div class="portletBody">
+
+	<div class="navIntraTool">
+		<a rsf:id="administrate-toplink" href="administrate.html">Administrate</a>
+		<a rsf:id="summary-toplink" href="summary.html">Summary</a>
+	</div>
+
+	<div>
+	<ul class="breadCrumb">
+		<li class="breadCrumb"><a rsf:id="summary-toplink" href="summary.html">Summary</a></li>
+		<li class="breadCrumb" rsf:id="create-eval-title">Create Evaluation</li>
+		<li class="breadCrumb" rsf:id="assign-eval-title">Assign Evaluation</li>					
+	</ul>
+	</div>
+	<form name="eval_assign_form" rsf:id="evalAssignForm" method="post">
+		<table border="0" cellspacing="0" cellpadding="0" width="90%">
+			<tr>
+				<td align = "left">
+					<span rsf:id="assign-eval-instructions-pre">You are allowed to assign this evaluation (</span><label name="evaluation_title" rsf:id="evaluationTitle">The title of the evaluation goes here</label><span rsf:id="assign-eval-instructions-post">) to the courses listed below.</span> 
+				</td>
+			</tr>
+		</table>
+		<br/>
+		<span rsf:id="siteCheckboxes"/>
+		<table border = "1" cellspacing = "0" cellpadding = "0" rules="none" width="90%">
+			<tr>
+				<td width="5%">
+					&nbsp;
+				</td>
+				<td width="85%">
+					<b><span rsf:id="name-header">Name</span></b>
+				</td>
+				<td width="10%">
+					<b><span rsf:id="select-header">Select</span></b>
+				</td>
+			</tr>
+			<tr>
+				<td width="5%">
+					&nbsp;
+				</td>
+				<td width="85%">
+					&nbsp;
+				</td>
+				<td width="10%">
+					&nbsp;
+				</td>
+			</tr>			
+			<tr rsf:id="sites:"> 
+				<td width="5%">
+					&nbsp;
+				</td>
+				<td width="85%">
+					<label rsf:id="siteTitle"/>
+				</td>
+				<td width="10%">
+					<input type="checkbox" rsf:id="siteId"/>
+				</td>
+			</tr>
+		</table>
+		<br/>
+		<table border="0" cellspacing="0" cellpadding="0" width="90%">	
+			<tr>
+				<td width="50%" align="left">
+					<input type="submit" name="cancel" value="Cancel" rsf:id="cancelAssign"/> 
+					&nbsp;
+					<input type="submit" name="edit_settings" value="Edit Settings" rsf:id="editSettings"/> 
+				</td>
+				<td align="right" width="50%">
+					<input type="submit" name="save_assigned_courses" value="Save Assigned Courses" rsf:id="confirmAssignCourses"/> 
+				</td>
+			</tr>
+		</table>	
+	</form>
+	
+</div>	
+</body>
+</html>

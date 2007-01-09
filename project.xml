@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+    <pomVersion>3</pomVersion>
+    <extend>../master/project.xml</extend>
+    <name>Sakai Evaluation</name>
+    <groupId>sakai-evaluation</groupId>
+    <currentVersion>${sakai.version}</currentVersion>
+    <organization>
+        <name>Virginia Tech</name>
+        <url>http://www.vt.edu/</url>
+    </organization>
+    <inceptionYear>2006</inceptionYear>
+
+    <dependencies>
+        <dependency>
+            <groupId>sakaiproject</groupId>
+            <artifactId>sakai</artifactId>
+            <version>${sakai.plugin.version}</version>
+            <type>plugin</type>
+        </dependency>
+    </dependencies>
+
+    <build />
+</project>
+

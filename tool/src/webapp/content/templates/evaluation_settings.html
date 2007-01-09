@@ -1,0 +1,256 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+	<title rsf:id="eval-settings-title">Evaluation Settings</title>
+    <link href="/library/skin/tool_base.css" type="text/css" rel="stylesheet" media="all"/>
+    <link href="/library/skin/default/tool.css" type="text/css" rel="stylesheet" media="all"/>
+	<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />    
+    <script type="text/javascript" language="JavaScript" src="/library/js/headscripts.js"></script>
+	<script type="text/javascript" language="JavaScript" src="../js/evalEditSettings.js"></script>
+</head>
+
+<body rsf:id="scr=sakai-body">
+<div class="portletBody">
+
+	<div class="navIntraTool">
+		<a rsf:id="administrate-toplink" href="administrate.html">Administrate</a>
+		<a rsf:id="summary-toplink" href="summary.html">Summary</a>
+	</div>
+
+	<div>
+	<ul class="breadCrumb">
+		<li class="breadCrumb"><a rsf:id="summary-toplink" href="summary.html">Summary</a></li>
+		<li class="breadCrumb" rsf:id="eval-settings-title">Evaluation Settings</li>
+	</ul>
+	</div>
+	 <form name="eval_settings_form" rsf:id="evalSettingsForm" method="post"  onsubmit="javascript:return validateSettingsForm(this);"> 
+	
+		<table border="0" cellspacing="0" cellpadding="0" width="90%">
+			<tr>
+				<td colspan = "5" align = "left"><span rsf:id="settings-desc-header">Modify Evaluation Settings for </span><label name="evaluation_title" rsf:id="evaluationTitle" style="font-weight:bold;">The title of the evaluation goes here</label></td>
+			</tr>
+		</table>
+		<br/>
+		<table border="0" cellspacing="0" cellpadding="0" width="90%">
+			<tr>
+				<td colspan="5">
+					<b><span rsf:id="eval-dates-header">Evaluation Dates:</span></b>
+				</td>
+			</tr>
+			<tr>
+				<td width="5%">&nbsp;</td>
+				<td width="8%" align="left" valign="top" nowrap="Y"><span rsf:id="eval-start-date-header">Start Date:</span>&nbsp;</td>
+				<td width="10%" align="left" valign="top">
+					<input type="text" name="start_date" rsf:id="startDate" value="MM/DD/YYYY" size="12" maxlength="10"/>
+				</td>
+				<td width="4%" align="center" valign="top">
+					<img src="#" rsf:id="calenderImage" />
+				</td>
+				<td width="73%" align="left">&nbsp;<span rsf:id="eval-start-date-desc">Users may begin submitting evaluation responses on this date</span></td>
+			</tr>
+		</table>
+		<div rsf:id="showStopDate:">			
+			<table border="0" cellspacing="0" cellpadding="0" width="90%">
+				<tr>
+					<td width="5%">&nbsp;</td>
+					<td width="8%" align="left" valign="top" nowrap="Y"><span rsf:id="eval-stop-date-header">Stop Date:</span>&nbsp;</td>
+					<td width="10%" align="left" valign="top">
+						<input type="text" name="stop_date" rsf:id="stopDate" value="MM/DD/YYYY" size="12" maxlength="10"/>
+					</td>
+					<td width="4%" align="center" valign="top">
+						<img src="#" rsf:id="calenderImageForStop" />
+					</td>
+					<td width="73%" align="left">&nbsp;</td>
+				</tr>
+			</table>
+		</div>
+		<table border="0" cellspacing="0" cellpadding="0" width="90%">
+			<tr>
+				<td width="5%">&nbsp;</td>
+				<td width="8%" align="left" valign="top" nowrap="Y"><span rsf:id="eval-due-date-header">Due Date:</span>&nbsp;</td>
+				<td width="10%" align="left" valign="top">
+					<input type="text" name="due_date" rsf:id="dueDate" value="MM/DD/YYYY" size="12" maxlength="10"/>
+				</td>
+				<td width="4%" align="center" valign="top">
+					<img src="#" rsf:id="calenderImage" />
+				</td>
+				<td width="73%" align="left">&nbsp;</td>
+			</tr>
+			<tr>
+				<td width="5%">&nbsp;</td>
+				<td width="8%" align="left" valign="top" nowrap="Y"><span rsf:id="eval-view-date-header">View Date:</span>&nbsp;</td>
+				<td width="10%" align="left" valign="top">
+					<input type="text" name="view_date" rsf:id="viewDate" value="MM/DD/YYYY" size="12" maxlength="10"/>
+				</td>
+				<td width="4%" align="center" valign="top">
+					<img src="#" rsf:id="calenderImage" />
+				</td>
+				<td width="73%" align="left">&nbsp;<span rsf:id="eval-view-date-desc">Results are not viewable until this date</span></td>
+			</tr>
+		</table>
+		<br/>
+		<table border="0" cellspacing="0" cellpadding="0" width="90%">
+			<tr>
+				<td colspan="3">
+					<b><span rsf:id="eval-results-viewable-header">Evaluation results viewable by:</span></b>
+				</td>
+			</tr>
+			<tr>
+				<td width="2%">&nbsp;</td>
+				<td width="30%" align="left" valign="top" nowrap="Y">
+					<input type="checkbox" name="results_private" rsf:id="resultsPrivate"/>&nbsp;<span rsf:id="eval-results-viewable-private">Private (owner only - aaronz)</span>
+				</td>
+				<td width="68%" align="right" valign="top">
+					<I><b><span rsf:id="private-warning-note">Note:</span></b> <span rsf:id="private-warning-desc">Checking the private box overrides settings below</span></I>
+				</td>
+			</tr>
+		</table>
+		<table border="0" cellspacing="0" cellpadding="0" width="90%">
+			<tr>
+				<td width="2%">&nbsp;</td>
+				<td width="50%" align="left" valign="top" nowrap="Y">
+					<input type="checkbox" name="student_view_results" rsf:id="studentViewResults"/>&nbsp;<span rsf:id="eval-results-viewable-students">Students in the courses this evaluation is assigned to</span>
+				</td>
+				<td width="44%" align="right" valign="top">
+					<input type="text" name="students_date" rsf:id="studentsDate" value="MM/DD/YYYY" size="12" maxlength="10"/>
+				</td>
+				<td width="4%" align="right" valign="top">
+					<img src="#" rsf:id="calenderImage" />
+				</td>
+			</tr>
+			<tr>
+				<td width="2%">&nbsp;</td>
+				<td width="50%" align="left" valign="top" nowrap="Y">
+					<input type="checkbox" name="instructor_view_results" rsf:id="instructorViewResults"/>&nbsp;<span rsf:id="eval-results-viewable-instructors">Instructors in the courses this evaluation is assigned to</span>
+				</td>
+				<td width="44%" align="right" valign="top">
+					<input type="text" name="instructor_date" rsf:id="instructorsDate" value="MM/DD/YYYY" size="12" maxlength="10"/>
+				</td>
+				<td width="4%" align="right" valign="top">
+					<img src="#" rsf:id="calenderImage" />
+				</td>
+			</tr>
+			<tr>
+				<td colspan="4">
+					<I><span rsf:id="eval-results-viewable-admin-note">* Note that admins above in the hierarchy can view the results UNLESS the private box is checked</span></I>
+				</td>
+			</tr>
+		</table>
+		<br/>
+		<table border="0" cellspacing="0" cellpadding="0" width="90%">
+			<tr>
+				<td colspan="2">
+					<b><span rsf:id="student-completion-settings-header">Student Completion Settings:</span></b>
+				</td>
+			</tr>
+			<tr>
+				<td width="45%" align="right" valign="top" nowrap="Y">
+					<span rsf:id="blank-responses-allowed-desc">Blank non-text question responses allowed:</span>&nbsp;<input type="checkbox" name="blank_responses_allowed" rsf:id="blankResponsesAllowed"/>
+				</td>
+				<td width="55%" align="right" valign="top">
+					<i><span rsf:id="blank-responses-allowed-note">Students are always warned when reponses are left blank</span></i>
+				</td>
+			</tr>
+			<tr>
+				<td width="45%" align="right" valign="top" nowrap="Y">
+					<span rsf:id="modify-responses-allowed-desc">Modification of responses allowed:</span>&nbsp;<input type="checkbox" name="modify_responses_allowed" rsf:id="modifyResponsesAllowed"/>
+				</td>
+				<td width="55%" align="right" valign="top">
+					<i><span rsf:id="modify-responses-allowed-note">Students may submit reponses once only if unchecked</span></i>
+				</td>
+			</tr>
+			<tr>
+				<td width="45%" align="right" valign="top" nowrap="Y">
+					<span rsf:id="unregistered-allowed-desc">Unregistered students not allowed to complete:</span>&nbsp;<input type="checkbox" name="unregistered_allowed" rsf:id="unregisteredAllowed"/>
+				</td>
+				<td width="55%" align="right" valign="top">
+					<i><span rsf:id="unregistered-allowed-note">Students may only complete evaluation if officially registered</span></i>
+				</td>
+			</tr>
+		</table>
+		<br/>
+		<table border="0" cellspacing="0" cellpadding="0" width="90%">
+			<tr>
+				<td colspan="3">
+					<b><span rsf:id="admin-settings-header">Administrative Settings:</span></b>
+				</td>
+			</tr>
+			<tr>
+				<td width="2%">&nbsp;</td>
+				<td colspan="2">
+					<i><span rsf:id="admin-settings-instructions">This setting allows you to give the instructor control over whether or not to use the evaluation or require it.</span></i>
+				</td>
+			</tr>
+			<tr>
+				<td width="2%" valign="middle" style="height:40px;">&nbsp;</td>
+				<td width="23%" align="left" valign="middle" style="height:40px;" nowrap="Y">
+					<span rsf:id="instructor-opt-desc">Instructor opt in setting:</span>&nbsp;
+				</td>
+				<td width="75%" align="left" valign="middle" style="height:40px;">
+					<select name="instructor_opt" rsf:id="instructorOpt">
+					</select>
+				</td>
+			</tr>
+		</table>
+		<br/>
+		<table border="0" cellspacing="0" cellpadding="0" width="90%">
+			<tr>
+				<td colspan="3">
+					<b><span rsf:id="eval-reminder-settings-header">Evaluation Reminders:</span></b>
+				</td>
+			</tr>
+			<tr>
+				<td width="2%">&nbsp;</td>
+				<td colspan="2">
+					<a href="#" name="emailAvailable_link" rsf:id="emailAvailable_link" target="_blank">Evaluation Available</a><i><span rsf:id="eval-available-mail-desc"> email is sent out to all students assigned to an evaluation the morning of the day the evaluation goes live. All emails will be sent from "HELPDESK EMAIL". Preview and modify the email template by clicking the link.</span></i>
+				</td>
+			</tr>
+			<tr>
+				<td width="2%" valign="middle" style="height:40px;">&nbsp;</td>
+				<td width="38%" align="left" valign="middle" style="height:40px;" nowrap="Y">
+					<span rsf:id="reminder-noresponders-header">Email reminder to non-respondent students:</span>&nbsp;
+				</td>
+				<td width="60%" align="left" valign="middle" style="height:40px;">
+					<select name="reminder_days" rsf:id="reminderDays">
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td width="2%">&nbsp;</td>
+				<td colspan="2">
+					<a href="#" name="emailReminder_link" rsf:id="emailReminder_link" target="_blank">Evaluation Reminder</a><i><span rsf:id="eval-reminder-mail-desc"> email is sent out to all students who have not yet completed the evaluation at the interval specified above. Preview and modify the email template by clicking the link.</span></i>
+				</td>
+			</tr>
+			<tr>
+				<td width="2%" valign="middle" style="height:40px;">&nbsp;</td>
+				<td width="38%" align="left" valign="middle" style="height:40px;" nowrap="Y">
+					<span rsf:id="reminder-noresponders-header">Email reminder to non-respondent students:</span>&nbsp;
+				</td>
+				<td width="60%" align="left" valign="middle" style="height:40px;">
+					<input type="text" name="reminder_from_email" rsf:id="reminderFromEmail" size="25" maxlength="25"/>
+				</td>
+			</tr>
+		</table>
+		<br/>
+		<input type="hidden" name="evalStatus" rsf:id="evalStatus" value="new"/>
+		<input type="hidden" name="dummyToday" rsf:id="dummyToday" value="MM/DD/YYYY"/>
+		<table border="0" cellspacing="0" cellpadding="0" width="90%">	
+			<tr>
+				<td width="30%" align="left">
+				<!--  <input name="cancel_setting" rsf:id="cancelSetting" type="submit" value="Cancel" /> -->
+				<input name="cancel_setting" type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" />
+				</td>
+				
+				<td align="right" width="90%">
+				<!--  	<input name="save_settings_action" rsf:id="saveSettings" type="submit" value="Save Settings"/> -->
+					&nbsp;
+					<input name="continue_assigning" rsf:id="continueAssigning" type="submit" value="Continue to Assign to Courses"/>  
+				</td>
+			</tr>
+		</table>
+	</form>
+	
+</div>	
+</body>
+</html>

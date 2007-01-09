@@ -1,0 +1,285 @@
+/******************************************************************************
+ * EvalAssignsLogicImpl.java - created by aaronz@vt.edu on Dec 28, 2006
+ * 
+ * Copyright (c) 2007 Virginia Polytechnic Institute and State University
+ * Licensed under the Educational Community License version 1.0
+ * 
+ * A copy of the Educational Community License has been included in this 
+ * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
+ * 
+ * Contributors:
+ * Aaron Zeckoski (aaronz@vt.edu) - primary
+ * 
+ *****************************************************************************/
+
+package org.sakaiproject.evaluation.logic.impl;
+
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.sakaiproject.evaluation.dao.EvaluationDao;
+import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
+import org.sakaiproject.evaluation.logic.EvalExternalLogic;
+import org.sakaiproject.evaluation.model.EvalAssignContext;
+import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
+import org.sakaiproject.evaluation.model.utils.EvalUtils;
+
+
+/**
+ * Implementation for EvalAssignsLogic
+ *
+ * @author Aaron Zeckoski (aaronz@vt.edu)
+ */
+public class EvalAssignsLogicImpl implements EvalAssignsLogic {
+
+	private static Log log = LogFactory.getLog(EvalAssignsLogicImpl.class);
+
+	private EvaluationDao dao;
+	public void setDao(EvaluationDao dao) {
+		this.dao = dao;
+	}
+
+	private EvalExternalLogic external;
+	public void setExternalLogic(EvalExternalLogic external) {
+		this.external = external;
+	}
+
+
+	// INIT method
+	public void init() {
+		log.debug("Init");
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalAssignsLogic#saveAssignContext(org.sakaiproject.evaluation.model.EvalAssignContext, java.lang.String)
+	 */
+	public void saveAssignContext(EvalAssignContext assignContext, String userId) {
+		log.debug("userId: " + userId + ", context: " + assignContext.getContext());
+
+		// set the date modified
+		assignContext.setLastModified( new Date() );
+
+		EvalEvaluation eval = assignContext.getEvaluation();
+
+		if (assignContext.getId() == null) {
+			// creating new AC
+			if (checkCreateAC(userId, eval)) {
+				// check for duplicate AC first
+				if ( checkRemoveDuplicateAC(assignContext) ) {
+					throw new IllegalStateException("Duplicate mapping error, there is already an AC that defines a link from context: " + 
+							assignContext.getContext() + " to eval: " + eval.getId());
+				}
+
+				dao.save(assignContext);
+				log.info("User ("+userId+") created a new AC ("+assignContext.getId()+"), " +
+						"linked context ("+assignContext.getContext()+") with eval ("+eval.getId()+")");
+			}
+		} else {
+			// updating an existing AC
+
+			// fetch the existing AC out of the DB to compare it
+			EvalAssignContext existingAC = (EvalAssignContext) dao.findById(EvalAssignContext.class, assignContext.getId());
+			//log.info("AZQ: current AC("+existingAC.getId()+"): ctxt:" + existingAC.getContext() + ", eval:" + existingAC.getEvaluation().getId());
+
+			// check the user control permissions
+			if (! checkControlAC(userId, assignContext) ) {
+				throw new SecurityException("User ("+userId+") attempted to update existing AC ("+existingAC.getId()+") without permissions");
+			}
+
+			// cannot change the evaluation or context so fail if they have been changed
+			if (! existingAC.getContext().equals(assignContext.getContext())) {
+				throw new IllegalArgumentException("Cannot update context ("+assignContext.getContext()+
+						") for an existing AC, context ("+existingAC.getContext()+")");
+			} else if (! existingAC.getEvaluation().getId().equals(eval.getId())) {
+				throw new IllegalArgumentException("Cannot update eval ("+eval.getId()+
+						") for an existing AC, eval ("+existingAC.getEvaluation().getId()+")");
+			}
+
+			// allow any other changes
+			dao.save(assignContext);
+			log.info("User ("+userId+") updated existing AC ("+assignContext.getId()+") properties");
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalAssignsLogic#deleteAssignContext(java.lang.Long, java.lang.String)
+	 */
+	public void deleteAssignContext(Long assignContextId, String userId) {
+		log.debug("userId: " + userId + ", assignContextId: " + assignContextId);
+
+		// get AC
+		EvalAssignContext assignContext = (EvalAssignContext) dao.findById(EvalAssignContext.class, assignContextId);
+		if (assignContext == null) {
+			throw new IllegalArgumentException("Cannot find assign context with this id: " + assignContextId);
+		}
+
+		if ( checkRemoveAC(userId, assignContext) ) {
+			dao.delete(assignContext);
+			log.info("User ("+userId+") deleted existing AC ("+assignContext.getId()+")");
+			return;
+		}
+
+		// should not get here so die if we do
+		throw new RuntimeException("User ("+userId+") could NOT delete AC ("+assignContext.getId()+")");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalAssignsLogic#getAssignContextsByEvalId(java.lang.Long)
+	 */
+	public List getAssignContextsByEvalId(Long evaluationId) {
+		log.debug("evaluationId: " + evaluationId);
+
+		// get evaluation to check id
+		EvalEvaluation eval = (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);
+		if (eval == null) {
+			throw new IllegalArgumentException("Cannot find evaluation with this id: " + evaluationId);
+		}
+
+		return dao.findByProperties(EvalAssignContext.class, 
+				new String[] {"evaluation.id"}, 
+				new Object[] {evaluationId});
+	}
+
+
+	// PERMISSIONS
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalAssignsLogic#canCreateAssignEval(java.lang.String, java.lang.Long)
+	 */
+	public boolean canCreateAssignEval(String userId, Long evaluationId) {
+		log.debug("userId: " + userId + ", evaluationId: " + evaluationId);
+
+		// get evaluation
+		EvalEvaluation eval = (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);
+		if (eval == null) {
+			throw new IllegalArgumentException("Cannot find evaluation with this id: " + evaluationId);
+		}
+
+		try {
+			return checkCreateAC(userId, eval);
+		} catch (RuntimeException e) {
+			log.info(e.getMessage());
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalAssignsLogic#canDeleteAssignContext(java.lang.String, java.lang.Long)
+	 */
+	public boolean canDeleteAssignContext(String userId, Long assignContextId) {
+		log.debug("userId: " + userId + ", assignContextId: " + assignContextId);
+
+		// get AC
+		EvalAssignContext assignContext = (EvalAssignContext) dao.findById(EvalAssignContext.class, assignContextId);
+		if (assignContext == null) {
+			throw new IllegalArgumentException("Cannot find assign context with this id: " + assignContextId);
+		}
+
+		try {
+			return checkRemoveAC(userId, assignContext);
+		} catch (RuntimeException e) {
+			log.info(e.getMessage());
+		}
+		return false;
+	}
+
+	// PRIVATE METHODS
+
+	/**
+	 * Check if user can control this AC
+	 * @param userId
+	 * @param assignContext
+	 * @return true if can, false otherwise
+	 */
+	private boolean checkControlAC(String userId, EvalAssignContext assignContext) {
+		log.debug("userId: " + userId + ", assignContext: " + assignContext.getId());
+
+		// check user permissions (just owner and super at this point)
+		if ( userId.equals(assignContext.getOwner()) ||
+				external.isUserAdmin(userId) ) {
+			return true;
+		} else {
+			return false;
+		}	
+	}
+
+	/**
+	 * Check if the user can create an AC in an eval
+	 * @param userId
+	 * @param eval
+	 * @return true if they can, throw exceptions otherwise
+	 */
+	private boolean checkCreateAC(String userId, EvalEvaluation eval) {
+		log.debug("userId: " + userId + ", eval: " + eval.getId());
+
+		// check state to see if assign contexts can be added
+		String state = EvalUtils.getEvaluationState(eval);
+		if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(state) || 
+				EvalConstants.EVALUATION_STATE_ACTIVE.equals(state)) {
+
+			// check eval user permissions (just owner and super at this point)
+			// TODO - find a way to centralize this check
+			if (userId.equals(eval.getOwner()) ||
+					external.isUserAdmin(userId)) {
+				return true;
+			} else {
+				throw new SecurityException("User ("+userId+") cannot create assign context in evaluation ("+eval.getId()+"), do not have permission");
+			}
+		} else {
+			throw new IllegalStateException("User ("+userId+") cannot create assign context in evaluation ("+eval.getId()+"), invalid eval state");
+		}
+	}
+
+	/**
+	 * Check if user can remove an AC
+	 * @param userId
+	 * @param assignContext
+	 * @return true if they can, throw exceptions otherwise
+	 */
+	private boolean checkRemoveAC(String userId, EvalAssignContext assignContext) {
+		log.debug("userId: " + userId + ", assignContextId: " + assignContext.getId());
+
+		// get evaluation from AC
+		EvalEvaluation eval = assignContext.getEvaluation();
+		String state = EvalUtils.getEvaluationState(eval);
+		if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(state)) {
+			
+			// check user permissions (just owner and super at this point)
+			if ( checkControlAC(userId, assignContext) ) {
+				return true;
+			} else {
+				throw new SecurityException("User ("+userId+") cannot remove assign context ("+assignContext.getId()+"), do not have permission");
+			}
+		} else {
+			throw new IllegalStateException("User ("+userId+") cannot remove this assign context ("+assignContext.getId()+"), invalid eval state");
+		}
+	}
+
+	/**
+	 * Check for existing AC which matches this ones linkage
+	 * @param ac
+	 * @return true if duplicate found
+	 */
+	private boolean checkRemoveDuplicateAC(EvalAssignContext ac) {
+		log.debug("assignContext: " + ac.getId());
+
+//		log.info("AZ1: current AC("+ac.getId()+"): ctxt:" + ac.getContext() + ", eval:" + ac.getEvaluation().getId());
+		List l = dao.findByProperties(EvalAssignContext.class, 
+				new String[] {"context", "evaluation.id"}, 
+				new Object[] {ac.getContext(), ac.getEvaluation().getId()});
+		if ( (ac.getId() == null && l.size() >= 1) || 
+				(ac.getId() != null && l.size() >= 2) ) {
+			// there is an existing AC which does the same mapping
+//			EvalAssignContext eac = (EvalAssignContext) l.get(0);
+//			log.info("AZ2: fetched AC("+eac.getId()+"): ctxt:" + eac.getContext() + ", eval:" + eac.getEvaluation().getId());
+			return true;
+		}
+//		log.info("AZ3: " + l.size());
+		return false;
+	}
+}

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<!-- Evaluation project lead: Aaron Zeckoski (aaronz@vt.edu) -->
+<hibernate-mapping default-cascade="none">
+    <class name="org.sakaiproject.evaluation.model.EvalAssignContext" table="EVAL_ASSIGN_CONTEXT" dynamic-insert="false" dynamic-update="false">
+        <id name="id" type="java.lang.Long" unsaved-value="null">
+            <column name="ID" />
+            <generator class="native" />
+        </id>
+        <property name="lastModified" type="java.util.Date">
+            <column name="LAST_MODIFIED" not-null="true" />
+        </property>
+        <!-- this should be the internal userId -->
+        <property name="owner" type="java.lang.String">
+            <column name="OWNER" not-null="true" length="255" />
+        </property>
+        <!-- this should be the context (siteId sometimes) -->
+        <property name="context" type="java.lang.String" index="eval_assign_context">
+            <column name="CONTEXT" not-null="true" length="255" />
+        </property> 
+        <property name="instructorApproval" type="java.lang.Boolean">
+            <column name="INSTRUCTOR_APPROVAL" not-null="true" />
+        </property>
+        <property name="instructorsViewResults" type="java.lang.Boolean">
+            <column name="INSTRUCTORS_VIEW_RESULTS" not-null="true" />
+        </property>
+        <property name="studentsViewResults" type="java.lang.Boolean">
+            <column name="STUDENTS_VIEW_RESULTS" not-null="true" />
+        </property>
+        <many-to-one name="evaluation" class="org.sakaiproject.evaluation.model.EvalEvaluation" foreign-key="ASSIGN_COURSE_EVALUATION_FKC" lazy="proxy" fetch="select">
+            <column name="EVALUATION_FK" not-null="true"/>
+        </many-to-one>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!-- Aaron Zeckoski (aaronz@vt.edu), Rui Feng(fengr@vt.edu)-->
+<beans>
+
+	<!-- session scope backing beans here -->
+	<bean id="evaluationBean"
+			class="org.sakaiproject.evaluation.tool.EvaluationBean"
+			init-method="init">
+		<property name="logic"
+			ref="org.sakaiproject.evaluation.logic.EvaluationLogic" />
+	</bean>
+
+	<!-- request scope backing beans here -->
+	<bean id="templateBean"
+			class="org.sakaiproject.evaluation.tool.TemplateBean"
+			init-method="init">
+		<property name="external" 
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+		<property name="templatesLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
+		<property name="itemsLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />	
+		<property name="scalesLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalScalesLogic" />
+		<property name="logic" 
+			ref="org.sakaiproject.evaluation.logic.EvaluationLogic" />
+	</bean>
+	
+	<bean id="handlerHook"
+		class="org.sakaiproject.evaluation.tool.ReportHandlerHook">	
+		<property name="viewparams" ref="viewParameters" />	
+		<property name="response" ref="httpServletResponse" />
+		<property name="request" ref="httpServletRequest" />
+		<property name="evalsLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+		<property name="responsesLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
+		<property name="messageLocator" ref="messageLocator" />				
+	</bean>
+
+
+	<!-- producers here -->
+	<bean class="org.sakaiproject.evaluation.tool.producers.SummaryProducer">
+		<property name="logic" 
+			ref="org.sakaiproject.evaluation.logic.EvaluationLogic" />
+		<property name="external" 
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+		<property name="messageLocator" ref="messageLocator" />
+		<property name="locale" ref="sakai-Locale" />
+	</bean>
+
+	<bean class="org.sakaiproject.evaluation.tool.producers.ControlPanelProducer">
+		<property name="logic" 
+			ref="org.sakaiproject.evaluation.logic.EvaluationLogic" />
+		<property name="external" 
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+		<property name="messageLocator" ref="messageLocator" />
+		<property name="locale" ref="sakai-Locale" />
+	</bean>
+
+	<bean class="org.sakaiproject.evaluation.tool.producers.AdministrateProducer">
+		<property name="logic" 
+			ref="org.sakaiproject.evaluation.logic.EvaluationLogic" />
+		<property name="external" 
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+		<property name="settings" 
+			ref="org.sakaiproject.evaluation.logic.EvaluationSettings" />
+		<property name="messageLocator" ref="messageLocator" />				
+	</bean>
+
+	<bean class="org.sakaiproject.evaluation.tool.producers.TemplateProducer" >
+		<property name="messageLocator" ref="messageLocator" />
+		<property name="templateBean" ref="templateBean" />	
+	</bean>
+
+	<bean class="org.sakaiproject.evaluation.tool.producers.TemplateModifyProducer">
+		<property name="messageLocator" ref="messageLocator" />	
+		<property name="templateBean" ref="templateBean" />				
+	</bean>
+
+	<bean class="org.sakaiproject.evaluation.tool.producers.TemplateItemProducer" >
+		<property name="templateBean" ref="templateBean" />
+		<property name="messageLocator" ref="messageLocator" />			
+	</bean>
+
+	<bean class="org.sakaiproject.evaluation.tool.producers.PreviewItemProducer">
+		<property name="templateBean" ref="templateBean" />
+		<property name="messageLocator" ref="messageLocator" />			
+	</bean>
+
+	<bean class="org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer">
+		<property name="external" 
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+		<property name="evalsLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />	
+		<property name="templatesLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
+		<property name="messageLocator" ref="messageLocator" />				
+	</bean>
+
+	<bean class="org.sakaiproject.evaluation.tool.producers.RemoveQuestionProducer">
+		<property name="templateBean" ref="templateBean" />
+		<property name="messageLocator" ref="messageLocator" />			
+	</bean>
+
+	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyEssayProducer">
+		<property name="templateBean" ref="templateBean" />
+		<property name="messageLocator" ref="messageLocator" />			
+	</bean>
+
+	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyHeaderProducer">
+		<property name="templateBean" ref="templateBean" />
+		<property name="messageLocator" ref="messageLocator" />			
+	</bean>
+
+	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyBlockProducer">
+		<property name="templateBean" ref="templateBean" />
+		<property name="messageLocator" ref="messageLocator" />		
+	</bean>
+
+	<bean class="org.sakaiproject.evaluation.tool.producers.EvaluationStartProducer">
+		<property name="templatesLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
+		<property name="external" 
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+		<property name="messageLocator" ref="messageLocator" />				
+	</bean>
+
+	<bean class="org.sakaiproject.evaluation.tool.producers.EvaluationSettingsProducer">
+		<property name="evaluationBean" ref="evaluationBean" />
+		<property name="messageLocator" ref="messageLocator" />		
+	</bean>
+
+	<bean class="org.sakaiproject.evaluation.tool.producers.EvaluationAssignProducer">
+		<property name="external" 
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+		<property name="messageLocator" ref="messageLocator" />			
+	</bean>
+
+	<bean class="org.sakaiproject.evaluation.tool.producers.EvaluationAssignConfirmProducer">
+		<property name="external" 
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+		<property name="evaluationBean" ref="evaluationBean" />	
+		<property name="messageLocator" ref="messageLocator" />	
+	</bean>
+
+	<bean class="org.sakaiproject.evaluation.tool.producers.PreviewEmailProducer">
+		<property name="evaluationBean" ref="evaluationBean" />
+		<property name="messageLocator" ref="messageLocator" />			
+	</bean>
+
+	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyEmailProducer">
+		<property name="messageLocator" ref="messageLocator" />	
+	</bean>
+
+	<bean class="org.sakaiproject.evaluation.tool.producers.ViewReportProducer">		
+		<property name="evalsLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+		<property name="responsesLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />			
+		<property name="messageLocator" ref="messageLocator" />			
+	</bean>
+
+	<bean class="org.sakaiproject.evaluation.tool.producers.ViewEssayResponseProducer">	
+		<property name="evalsLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+		<property name="itemsLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
+		<property name="responsesLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />							
+	</bean>	
+
+	<bean class="org.sakaiproject.evaluation.tool.producers.TakeEvalProducer">
+		<property name="external" 
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+		<property name="evalsLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />			
+		<property name="messageLocator" ref="messageLocator" />				
+	</bean>
+
+	<bean class="org.sakaiproject.evaluation.tool.producers.RemoveEvalProducer">
+		<property name="evalsLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />		
+		<property name="messageLocator" ref="messageLocator" />				
+	</bean>
+
+	<bean class="org.sakaiproject.evaluation.tool.producers.RemoveTemplateProducer">
+		<property name="templatesLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
+		<property name="evalsLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />		
+		<property name="messageLocator" ref="messageLocator" />				
+	</bean>
+
+</beans>

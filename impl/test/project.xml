@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+	<pomVersion>3</pomVersion>
+	<extend>../../../master/project.xml</extend>
+	<name>sakai-evaluation-dao-impl</name>
+	<groupId>sakaiproject</groupId>
+	<id>sakai-evaluation-test</id>
+	<currentVersion>${sakai.version}</currentVersion>
+    <organization>
+        <name>Sakai Project</name>
+        <url>http://www.sakaiproject.org/</url>
+    </organization>
+    <inceptionYear>2006</inceptionYear>
+
+	<!-- the test should be deployed as a jar,
+		this has to be here so the logic and dao tests can share a class -->
+    <properties>
+        <deploy.type>jar</deploy.type>
+    </properties>
+
+    <dependencies>
+
+        <!-- Sakai dependencies -->
+        <dependency>
+            <groupId>sakaiproject</groupId>
+            <artifactId>sakai</artifactId>
+            <version>${sakai.plugin.version}</version>
+            <type>plugin</type>
+        </dependency>
+
+        <!-- Evaluation dependencies -->
+        <dependency>
+            <groupId>sakaiproject</groupId>
+            <artifactId>sakai-evaluation-model-api</artifactId>
+            <version>${sakai.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>sakaiproject</groupId>
+            <artifactId>sakai-evaluation-logic-api</artifactId>
+            <version>${sakai.version}</version>
+        </dependency>
+
+        <!-- generic DAO -->
+        <dependency>
+                <groupId>generic-dao</groupId>
+                <artifactId>generic-dao</artifactId>
+                <version>0.9</version>
+        </dependency>
+
+        <!-- Spring and Hibernate dependencies. -->
+        <dependency>
+           <groupId>${sakai.spring.groupId}</groupId>
+           <artifactId>${sakai.spring.artifactId}</artifactId>
+           <version>${sakai.spring.version}</version>
+        </dependency>
+
+        <!-- Apache commons dependencies -->
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.0.4</version>
+        </dependency>
+
+    </dependencies>
+
+	<build>
+		<sourceDirectory>src/java</sourceDirectory>
+	</build>
+
+</project>
+

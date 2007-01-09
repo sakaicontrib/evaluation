@@ -1,0 +1,211 @@
+/** 
+ * Aaron Zeckoski (aaronz@vt.edu) 
+ */
+
+.testStyles {
+	color:red;
+}
+
+form {
+	margin:0px;
+}
+
+table.sample {
+	border-width: 1px 1px 1px 1px;
+	border-spacing: 1px;
+	border-style: none none none none;
+	border-color: black black black black;
+	border-collapse: collapse;
+	background-color: white;
+}
+table.sample td {
+	border-width: 1px 1px 1px 1px;
+	padding: 1px 1px 1px 1px;
+	border-style: solid solid solid solid;
+	border-color: black black black black;
+	background-color: white;
+	-moz-border-radius: 0px 0px 0px 0px;
+}
+.borderLeft {
+	border-top:.01em solid black;
+	border-bottom:.01em solid black;
+	border-left:.01em solid black; 
+}
+.borderMid {
+	border-top:.01em solid black;
+	border-bottom:.01em solid black;
+}
+.borderRight {
+	border-top:.01em solid black;
+	border-bottom:.01em solid black;
+	border-left:.01em solid black;
+	border-right:.01em solid black;	
+}
+/*The following 2 classes are being used in table so should not be removed */
+.div_box_element{
+  float:left;
+  border-right:1px solid black;
+  padding:2px;
+}
+
+.div_box_element_center{
+  float:left;
+  border-right:1px solid black;
+  padding:2px;
+  text-align:center;
+  font-style:italic;
+}
+
+/*Revist the following to see if they are needed or not. We are not using div's anymore */
+.err_message{
+  color:red;
+}
+
+.div_base{
+  width:80%;
+}
+
+.div_box_base{
+  width:90%;
+  border:1px solid black;
+}
+
+.div_element_right{
+  float:right;
+  padding:5px;
+  text-align:center;
+}
+
+.div_element_left{
+  float:left;
+  padding:5px;
+  text-align:center;
+}
+
+.div_element_preview{
+	position: absolute;
+	left:70%;
+	width:30%;
+	padding:5px;
+	text-align:left;
+}
+
+DIV.summaryBox {
+	width: 97%;
+	height: 100%;
+	border: 2px #999 solid;
+	padding: 3px;
+	margin-bottom: 8px;
+}
+
+.summaryHeader {
+	font-size: 1.1em;
+	font-weight: bold;
+	margin-bottom: 3px;
+}
+
+UL.summaryToolList {
+	margin: 0px;
+	padding-left: 2em;
+}
+
+DIV.listHeader {
+	font-weight: bold;
+	margin-left: 1em;
+}
+
+UL.summaryEvaluateList {
+	margin: 0px;
+	padding-left: 2em;
+}
+
+.noListItems {
+	font-size: .9em;
+	font-style: italic;
+	margin-left: 3em;
+}
+
+
+/* breadcrumb navigation styles */
+UL.breadCrumb {
+	font-size: .8em;
+	height: 14px; /* This is the height we want on our breadcrumb */
+	padding: 3px 8px; 
+	background: #CCC; /* This is our background color */
+	margin: 4px;
+}
+
+LI.breadCrumb {
+	display: inline; 
+	margin-right: 4px; 
+	padding: 0px;
+}
+
+A.breadCrumb {
+	font-weight: bold;
+	margin: 0px;
+}
+
+A:hover.breadCrumb {
+	color: #333;
+}
+
+input.makeLink {
+	padding: 0px;
+	margin: 0px;
+	color: blue;
+	background-color: transparent;
+	border: none;
+	text-decoration: underline;
+	cursor: pointer;
+}
+input:hover.makeLink {
+	font-weight: bold;
+	color: #993300;
+	cursor: hand;
+}
+
+input.makeLinkLeft {
+	padding: 0px;
+	margin: 0px;
+	color: blue;
+	background-color: transparent;
+	border: none;
+	text-decoration: underline;
+	text-align: left;
+	cursor: pointer;
+}
+input:hover.makeLinkLeft {
+	font-weight: bold;
+	color: #993300;
+	cursor: hand;
+}
+input.makeLinkRight {
+	padding: 0px;
+	margin: 0px;
+	color: blue;
+	background-color: transparent;
+	border: none;
+	text-decoration: underline;
+	text-align: right;
+	cursor: pointer;
+}
+input:hover.makeLinkRight {
+	font-weight: bold;
+	color: #993300;
+	cursor: hand;
+}
+
+/* administrate view */
+td.checktable1 {
+	text-align: right;
+}
+
+td.checktable2 {
+	padding-left: 1em;
+}
+
+.noteText {
+	font-size: 90%;
+	font-style: italic;
+}
