@@ -125,8 +125,8 @@ public class ModifyBlockProducer implements ViewComponentProducer,NavigationCase
 		for(int i=0;i< queNo; i++){		
 			UIBranchContainer radiobranch = UIBranchContainer.make(form,"queRow:",Integer.toString(i)); //$NON-NLS-1$
 			UIInput.make(radiobranch,"queText","#{templateBean.queList." + i +"}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			UICommand removeQueCmd=UICommand.make(radiobranch,"removeQue","Remove");
-			//UICommand removeQueCmd=UICommand.make(radiobranch,"removeQue",messageLocator.getMessage("modifyblock.remove.blockitem.button"), "#{templateBean.removeItemFromBlock}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			//UICommand removeQueCmd=UICommand.make(radiobranch,"removeQue","Remove");
+			UICommand removeQueCmd=UICommand.make(radiobranch,"removeQue",messageLocator.getMessage("modifyblock.remove.blockitem.button"), "#{templateBean.removeItemFromBlock}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			
 			removeQueCmd.parameters.add(new UIELBinding("#{templateBean.currQueNo}",Integer.toString(i))); //$NON-NLS-1$
 

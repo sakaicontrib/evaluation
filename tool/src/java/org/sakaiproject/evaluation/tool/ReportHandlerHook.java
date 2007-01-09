@@ -78,10 +78,7 @@ public class ReportHandlerHook implements HandlerHook {
 		this.responsesLogic = responsesLogic;
 	}
 	
-	private MessageLocator messageLocator;
-	public void setMessageLocator(MessageLocator messageLocator) {
-		this.messageLocator = messageLocator;
-	}
+
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.rsf.processor.HandlerHook#handle()
 	 */

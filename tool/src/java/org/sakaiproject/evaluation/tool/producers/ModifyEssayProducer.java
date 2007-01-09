@@ -74,8 +74,8 @@ public class ModifyEssayProducer implements ViewComponentProducer,NavigationCase
 
 		UIForm form = UIForm.make(tofill, "essayForm"); //$NON-NLS-1$
 
-		//UIOutput.make(form, "item-header", messageLocator.getMessage("modifitem.item.header"));	//TODO: exception: can not get property
-		UIOutput.make(form, "item-header","Item" );
+		UIOutput.make(form, "item-header", messageLocator.getMessage("modifyitem.item.header"));	//TODO: exception: can not get property
+		//UIOutput.make(form, "item-header","Item" );
 		UIOutput.make(form,"itemNo",null,"#{templateBean.currItemNo}");
 
 		UIOutput.make(form, "added-by", messageLocator.getMessage("modifyitem.added.by"));  //$NON-NLS-1$ //$NON-NLS-2$

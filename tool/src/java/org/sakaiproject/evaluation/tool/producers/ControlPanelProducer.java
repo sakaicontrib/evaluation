@@ -148,7 +148,7 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 		// Begin eval link
 		if (beginEvaluation) {
 			UIForm startEvalForm = UIForm.make(tofill, "start-evaluation-form"); //$NON-NLS-1$
-			UICommand.make(startEvalForm, "startEvalLink", "Start Evaluation", //$NON-NLS-1$ //$NON-NLS-2$
+			UICommand.make(startEvalForm, "startEvalLink", messageLocator.getMessage("starteval.page.title"), //$NON-NLS-1$ //$NON-NLS-2$
 									"#{evaluationBean.startEvaluation}"); //$NON-NLS-1$
 			/*UIInternalLink.make(tofill, "startEvalLink", new EvalViewParameters(EvaluationStartProducer.VIEW_ID, null,
 				ControlPanelProducer.VIEW_ID));*/
