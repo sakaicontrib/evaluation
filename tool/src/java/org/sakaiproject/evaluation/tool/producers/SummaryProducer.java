@@ -24,8 +24,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.EvaluationLogic;
+import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
+import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.logic.model.Context;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
@@ -64,14 +66,24 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		return VIEW_ID;
 	}
 
-	private EvaluationLogic logic;
-	public void setLogic(EvaluationLogic logic) {
-		this.logic = logic;
-	}
-
 	private EvalExternalLogic external;
 	public void setExternal(EvalExternalLogic external) {
 		this.external = external;
+	}
+
+	private EvalEvaluationsLogic evaluationsLogic;
+	public void setEvaluationsLogic(EvalEvaluationsLogic evaluationsLogic) {
+		this.evaluationsLogic = evaluationsLogic;
+	}
+
+	private EvalResponsesLogic responsesLogic;
+	public void setResponsesLogic(EvalResponsesLogic responsesLogic) {
+		this.responsesLogic = responsesLogic;
+	}
+
+	private EvalTemplatesLogic templatesLogic;
+	public void setTemplatesLogic(EvalTemplatesLogic templatesLogic) {
+		this.templatesLogic = templatesLogic;
 	}
 
 	private MessageLocator messageLocator;
@@ -94,8 +106,8 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		String currentUserId = external.getCurrentUserId();
 		String currentContext = external.getCurrentContext();
 		boolean userAdmin = external.isUserAdmin(currentUserId);
-		boolean createTemplate = logic.canCreateTemplate(currentUserId);
-		boolean beginEvaluation = logic.canBeginEvaluation(currentUserId);
+		boolean createTemplate = templatesLogic.canCreateTemplate(currentUserId);
+		boolean beginEvaluation = evaluationsLogic.canBeginEvaluation(currentUserId);
 		// use a date which is related to the current users locale
 		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
 
@@ -142,7 +154,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		/*
 		 * for the evaluations taking box
 		 */
-		List evalsToTake = logic.getEvaluationsForUser(currentUserId, true, false);
+		List evalsToTake = evaluationsLogic.getEvaluationsForUser(currentUserId, true, false);
 		if (evalsToTake.size() > 0) {
 			UIBranchContainer evalBC = UIBranchContainer.make(tofill, "evaluationsBox:"); //$NON-NLS-1$
 
@@ -154,8 +166,8 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			}
 
 			// now fetch all the information we care about for these evaluations at once (for speed)
-			Map evalContexts = logic.getEvaluationContexts(evalIds);
-			List evalResponses = logic.getEvaluationResponses(currentUserId, evalIds);
+			Map evalContexts = evaluationsLogic.getEvaluationContexts(evalIds);
+			List evalResponses = responsesLogic.getEvaluationResponses(currentUserId, evalIds);
 
 			for (Iterator itEvals = evalsToTake.iterator(); itEvals.hasNext();) {
 				EvalEvaluation eval = (EvalEvaluation) itEvals.next();
@@ -218,7 +230,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		/*
 		 * for the evaluations admin box
 		 */
-		List evals = logic.getVisibleEvaluationsForUser(currentUserId, true);
+		List evals = evaluationsLogic.getVisibleEvaluationsForUser(currentUserId, true);
 		if (! evals.isEmpty()) {
 			UIBranchContainer evalAdminBC = UIBranchContainer.make(tofill, "evalAdminBox:"); //$NON-NLS-1$
 			UIInternalLink.make(evalAdminBC, "evaladmin-title",  //$NON-NLS-1$
