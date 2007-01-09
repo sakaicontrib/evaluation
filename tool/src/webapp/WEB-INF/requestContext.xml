@@ -42,10 +42,14 @@
 
 	<!-- producers here -->
 	<bean class="org.sakaiproject.evaluation.tool.producers.SummaryProducer">
-		<property name="logic" 
-			ref="org.sakaiproject.evaluation.logic.EvaluationLogic" />
 		<property name="external" 
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+		<property name="evaluationsLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+		<property name="templatesLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
+		<property name="responsesLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
 		<property name="messageLocator" ref="messageLocator" />
 		<property name="locale" ref="sakai-Locale" />
 	</bean>
