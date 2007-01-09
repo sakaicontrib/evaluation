@@ -1,0 +1,191 @@
+/******************************************************************************
+ * EvalEvaluationLogic.java - created by aaronz@vt.edu on Dec 24, 2006
+ * 
+ * Copyright (c) 2007 Virginia Polytechnic Institute and State University
+ * Licensed under the Educational Community License version 1.0
+ * 
+ * A copy of the Educational Community License has been included in this 
+ * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
+ * 
+ * Contributors:
+ * Aaron Zeckoski (aaronz@vt.edu) - primary
+ * 
+ *****************************************************************************/
+
+package org.sakaiproject.evaluation.logic;
+
+import java.util.List;
+import java.util.Map;
+
+import org.sakaiproject.evaluation.model.EvalEvaluation;
+
+
+/**
+ * Handles all logic associated with processing Evaluations
+ * (Note for developers - do not modify this without permission from the project lead)
+ *
+ * @author Aaron Zeckoski (aaronz@vt.edu)
+ */
+public interface EvalEvaluationsLogic {
+
+	/**
+	 * Save or update an evaluation to persistent storage,
+	 * checks that dates are appropriate and validates settings,
+	 * use {@link #getEvaluationState(Long)} to check the state
+	 * if you want to avoid possible exceptions<br/>
+	 * Evaluations can be saved with the email templates as null and will use the
+	 * default templates in this circumstance<br/> 
+	 * <b>Note about dates</b>:<br/>
+	 * Start date - eval becomes active on this date, cannot change start date once it passes, 
+	 * most parts of evaluation cannot change on this date, no assigned contexts can be modified<br/>
+	 * Due date - eval is reported to be closed after this date passes (interface and email), 
+	 * cannot change due date once it passes, cannot assign new contexts once this passes<br/>
+	 * Stop date - eval is actually closed after this date passes, cannot change stop date once it passes,
+	 * no changes to evaluation after this date EXCEPT adjusting the view dates<br/>
+	 * View date - eval results visible on this date<br/>
+	 * (currently times are taken into account, so if you want to close an evaluation at the
+	 * end of a date, make sure to set the time to midnight)
+	 * 
+	 * @param evaluation evaluation object to save
+	 * @param userId the internal user id (not username)
+	 */
+	public void saveEvaluation(EvalEvaluation evaluation, String userId);
+
+	/**
+	 * Delete an evaluation from persistent storage,
+	 * evaluations that are active or completed cannot be deleted,
+	 * use {@link #canRemoveEvaluation(String, EvalEvaluation)} to check if
+	 * the evaluation can be removed if you want to avoid possible exceptions,
+	 * removes all associated course assignments and email templates 
+	 * (if they are not default or associated with other evaluations)
+	 * 
+	 * @param evaluationId the id of an EvalEvaluation object
+	 * @param userId the internal user id (not username)
+	 */
+	public void deleteEvaluation(Long evaluationId, String userId);
+
+	/**
+	 * Get an evaluation based on its unique id
+	 * 
+	 * @param evaluationId the unique id of an EvalEvaluation object
+	 * @return the evaluation object or null if not found
+	 */	
+	public EvalEvaluation getEvaluationById(Long evaluationId);
+
+	/**
+	 * Get a list of evaluations for a template id
+	 * 
+	 * @param templateId the id of an EvalTemplate object
+	 * @return a List of EvalEvaluation objects (empty if none exist)
+	 */
+	public List getEvaluationsByTemplateId(Long templateId);
+
+	/**
+	 * Count the number of evaluations for a template id
+	 * 
+	 * @param templateId the id of an EvalTemplate object
+	 * @return the count of Evaluation objects
+	 */
+	public int countEvaluationsByTemplateId(Long templateId);
+
+	/**
+	 * Get the evaluations that are currently visible to a user, this should be used
+	 * to determine evaluations that are visible from an administrative perspective,
+	 * can limit to recently closed only (closed within 10 days)
+	 * 
+	 * @param userId the internal user id (not username)
+	 * @param recentOnly if true return recently closed evaluations only 
+	 * (still returns all active and in queue evaluations), if false return all closed evaluations
+	 * @return a List of EvalEvaluation objects
+	 */
+	public List getVisibleEvaluationsForUser(String userId, boolean recentOnly);
+
+	/**
+	 * Get all evaluations that can be taken by this user,
+	 * can include only active and only untaken if desired
+	 * 
+	 * @param userId the internal user id (not username)
+	 * @param activeOnly if true, only include active evaluations, if false, include all evaluations
+	 * @param untakenOnly if true, include only the evaluations which have NOT been taken, 
+	 * if false, include all evaluations
+	 * @return a List of EvalEvaluation objects (sorted by DueDate)
+	 */
+	public List getEvaluationsForUser(String userId, boolean activeOnly, boolean untakenOnly);
+
+
+	// CONTEXTS
+
+	/**
+	 * Get a map of the Contexts for an array of evaluation ids
+	 * 
+	 * @param evaluationId an array of the ids of EvalEvaluation objects
+	 * @return a Map of evaluationId (Long) -> List of Context objects
+	 */
+	public Map getEvaluationContexts(Long[] evaluationIds);
+
+	/**
+	 * Count the number of contexts assigned for an evaluation id
+	 * (this is much faster than the related method: {@link #getEvaluationContexts(Long[])}
+	 * 
+	 * @param evaluationId the id of an EvalEvaluation object
+	 * @return the count of contexts
+	 */
+	public int countEvaluationContexts(Long evaluationId);
+
+
+	// PERMISSIONS
+
+	/**
+	 * Check if this user can begin a new evaluation (administratively), 
+	 * this checks if this user can access any templates and
+	 * also checks if they have permission to begin an evaluation in any contexts<br/>
+	 * <b>Note:</b> this is an expensive check so be careful when using it
+	 * 
+	 * @param userId the internal user id (not username)
+	 * @return true if the user can begin an evaluation, false otherwise
+	 */
+	public boolean canBeginEvaluation(String userId);
+
+	/**
+	 * Find the current state (in queue, active, closed, etc.) 
+	 * of the supplied evaluation, this should be used before attempting to
+	 * delete or save an evaluation as the state determines the updates that
+	 * can be performed on the evaluation, this will also update the
+	 * state of the evaluation if the stored state does not match the actual
+	 * state as determined by dates
+	 * 
+	 * @param evaluationId the id of an EvalEvaluation object
+	 * @param userId the internal user id (not username)
+	 * @return an EVALUATION_STATE constant from 
+	 * {@link org.sakaiproject.evaluation.model.constant.EvalConstants}
+	 */
+	public String getEvaluationState(Long evaluationId);
+
+	/**
+	 * Test if an evaluation can be removed at this time by this user, 
+	 * this tests the dates of the evaluation against the removal logic
+	 * and the user permissions
+	 * 
+	 * @param userId the internal user id (not username)
+	 * @param evaluationId the id of an EvalEvaluation object
+	 * @return true if the evaluation can be removed, false otherwise
+	 */
+	public boolean canRemoveEvaluation(String userId, Long evaluationId);
+
+	/**
+	 * Check if a user can take an evaluation in the supplied context,
+	 * the check includes testing if an entry exists already and if the
+	 * user is allowed to modify their entry<br/>
+	 * This check should be used on any page which presents the user with
+	 * an evaluation to take (fill out)<br/>
+	 * Use {@link #getEvaluationsForUser(String, boolean, boolean)} if you are trying
+	 * to determine which "take evaluation" links to show a user
+	 * 
+	 * @param userId the internal user id (not username)
+	 * @param evaluationId unique id of the evaluation
+	 * @param context the internal context (represents a site or group)
+	 * @return true if the user can take the evaluation, false otherwise
+	 */
+	public boolean canTakeEvaluation(String userId, Long evaluationId, String context);
+
+}

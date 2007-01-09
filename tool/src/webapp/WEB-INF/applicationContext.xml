@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!-- Aaron Zeckoski (aaronz@vt.edu) -->
+<beans>
+
+	<!-- Configure the location of the messages files -->
+	<bean id="messageLocator" class="uk.org.ponder.springutil.SpringMessageLocator">
+		<property name="messageSource">
+			<bean class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+				<property name="basename" value="classpath:org/sakaiproject/evaluation/tool/bundle/messages" />
+				<property name="cacheSeconds" value="10" />
+			</bean>
+		</property>
+		<property name="localeGetter" ref="requestLocaleProxy" />
+	</bean>
+
+	<!-- the beans listed here are allowed access to values (security) -->
+	<bean name="requestAddressibleBeans"
+		class="uk.org.ponder.springutil.StringListFactory">
+		<property name="strings">
+			<value>templateBean, evaluationBean</value>
+		</property>
+	</bean>
+
+	<!-- The beans listed here are session beans (they stick around) -->
+	<bean id="myBeanScope" parent="beanScopeParent">
+		<property name="copyPreservingBeans"
+			value="templateBean, evaluationBean" />
+		<property name="exclusive" value="true" />
+	</bean>
+
+	<!-- define any XML producer files -->
+	<bean id="siteMap" parent="siteMapDef" />
+
+	<!-- special wrapper beans which work with genericdao to allow hibernate lazy inits -->
+	<bean id="org.sakaiproject.evaluation.ModelAccessWrapperInvoker"
+		class="org.sakaiproject.evaluation.tool.wrapper.ModelAccessWrapperInvoker">
+		<property name="evaluationDao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+	</bean>
+
+	<bean id="modelAccessBracketer"
+		class="uk.org.ponder.rsac.BeanFetchBracketer">
+		<property name="targetBeanName">
+			<idref bean="rootHandlerBean" />
+		</property>
+		<property name="wrappingBean"
+			ref="org.sakaiproject.evaluation.ModelAccessWrapperInvoker" />
+	</bean>
+
+</beans>

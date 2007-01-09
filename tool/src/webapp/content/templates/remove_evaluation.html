@@ -1,0 +1,68 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+	<title rsf:id="remove-eval-title">Remove Evaluation</title>
+    <link href="/library/skin/tool_base.css" type="text/css" rel="stylesheet" media="all"/>
+    <link href="/library/skin/default/tool.css" type="text/css" rel="stylesheet" media="all"/>
+    <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+    <script type="text/javascript" language="JavaScript" src="/library/js/headscripts.js"></script>
+</head>
+
+<body rsf:id="scr=sakai-body">
+<div class="portletBody">
+
+<form name="removeEval_form" rsf:id="removeEvalForm" method="post">	
+<table width="80%" border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td align="left" colspan="2">
+		<b><span rsf:id="remove-eval-confirm-pre-name">Are you sure you want to remove evaluation </span><label style="font-weight:bold;" rsf:id="evalTitle">#</label><span rsf:id="remove-eval-confirm-post-name">? The removal is permanant.</span></b>&nbsp;		
+		</td>
+	</tr>
+	
+	<tr>
+		<td colspan="2">
+		<b><span rsf:id="remove-eval-note">All data related to the evaluation will be removed permanantly.</span></b>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<table border = "1" cellspacing = "0" cellpadding="0" width = "99%">
+				<tr>
+					<th width="45%" align="left" rsf:id="eval-title-header">Evaluation&nbsp;Title</th>
+					<th width="25%" align="center" rsf:id="assigned-header">Assigned</th>
+					<th width="15%" align="center" rsf:id="start-date-header">Start&nbsp;Date</th>
+					<th width="15%" align="center" rsf:id="due-date-header">Due&nbsp;Date</th>
+				</tr>
+				<tr> 
+					<td rsf:id="evalTitle">Evaluation Title 1</td>
+					<td align="center" rsf:id="evalAssigned">Course 1010</td>
+					<td rsf:id="evalStartDate" align="center" nowrap="true">EvalStartDate</td>					
+					<td rsf:id="evalDueDate" align="center" nowrap="true">EvalDueDate</td>		
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+	
+
+	<br/>
+	
+<table width="80%" border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td align="left"  width="50%">
+			<input type="submit" value="Cancel" rsf:id="cancelRemoveEvalAction"/>
+		</td>
+		<td align="right"  width="50%">
+			<input type="submit" value="Remove Evaluation" rsf:id="removeEvalAction"/>
+		</td>
+	</tr>
+</table>
+
+</form>
+
+</div>
+</body>
+</html>
+
+

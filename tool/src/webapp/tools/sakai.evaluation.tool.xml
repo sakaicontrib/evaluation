@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<registration>
+  <tool id="sakai.rsf.evaluation"
+        title="Evaluation System"
+        description="Tool for running site evaluations.">
+     <category name="course" />
+     <category name="project" />
+  </tool>
+</registration>

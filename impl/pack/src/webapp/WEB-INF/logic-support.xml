@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!-- Aaron Zeckoski (aaronz@vt.edu) -->
+<beans>
+
+	<!-- handles api based retrieval of app settings -->
+	<bean id="org.sakaiproject.evaluation.logic.EvalSettings"
+			class="org.sakaiproject.evaluation.logic.impl.EvalSettingsImpl"
+			init-method="init">
+		<property name="evaluationDao" 
+			ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+	</bean>
+
+</beans>
