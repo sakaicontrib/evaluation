@@ -35,17 +35,6 @@ public class EvaluationConstant {
 		EvalConstants.SHARING_SHARED,
 		EvalConstants.SHARING_PUBLIC
 	};
-	
-	/**
-	 * Need to pull strings from properties file from within the producer instead
-	 * or trying to put it in this file
-	 * @deprecated
-	 */
-	public static String[] MODIFIER_LABELS = new String[] {
-		"Private - Template is private (visible to you only)", 
-		"Visible - Template is visible to any admin", 
-		"Shared - Template is modifiable by admins at hierarchy level of owner",
-		"Public - Template is modifiable by any admin"};
 
 	//For template_modify.html
 	/**
