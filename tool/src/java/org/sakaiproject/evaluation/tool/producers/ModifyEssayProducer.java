@@ -117,7 +117,7 @@ public class ModifyEssayProducer implements ViewComponentProducer,NavigationCase
 		UISelectChoice.make(form, "item_category_C", selectID, 0); //$NON-NLS-1$
 		UISelectChoice.make(form, "item_category_I", selectID, 1);	 //$NON-NLS-1$
 
-		UICommand.make(form, "cancelEssayAction", messageLocator.getMessage("modifyitem.cancel.button"), "#{templateBean.cancelEssayAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		UICommand.make(form, "cancelEssayAction", messageLocator.getMessage("general.cancel.button"), "#{templateBean.cancelEssayAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		UICommand.make(form, "saveEssayAction", messageLocator.getMessage("modifyitem.save.button"), "#{templateBean.saveEssayAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 

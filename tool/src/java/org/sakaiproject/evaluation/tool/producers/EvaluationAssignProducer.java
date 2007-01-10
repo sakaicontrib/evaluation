@@ -136,7 +136,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
 		UIOutput.make(form, "name-header", messageLocator.getMessage("assigneval.name.header")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(form, "select-header", messageLocator.getMessage("assigneval.select.header"));		 //$NON-NLS-1$ //$NON-NLS-2$
 		
-		UICommand.make(form, "cancelAssign", messageLocator.getMessage("assigneval.cancel.assign.button"), "#{evaluationBean.cancelAssignAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		UICommand.make(form, "cancel-button", messageLocator.getMessage("general.cancel.button"), "#{evaluationBean.cancelAssignAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
 		UICommand.make(form, "editSettings", messageLocator.getMessage("assigneval.edit.settings.button"), "#{evaluationBean.backToSettingsAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		

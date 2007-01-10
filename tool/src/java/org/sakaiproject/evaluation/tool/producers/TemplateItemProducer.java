@@ -130,7 +130,7 @@ public class TemplateItemProducer implements ViewComponentProducer,NavigationCas
 		UISelectChoice.make(form, "item_category_C", selectID, 0); //$NON-NLS-1$
 		UISelectChoice.make(form, "item_category_I", selectID, 1);	 //$NON-NLS-1$
 
-		UICommand.make(form, "cancelItemAction",  messageLocator.getMessage("modifyitem.cancel.button"), "#{templateBean.cancelItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		UICommand.make(form, "cancelItemAction",  messageLocator.getMessage("general.cancel.button"), "#{templateBean.cancelItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		UICommand.make(form, "saveItemAction",  messageLocator.getMessage("modifyitem.save.button"), "#{templateBean.saveItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 

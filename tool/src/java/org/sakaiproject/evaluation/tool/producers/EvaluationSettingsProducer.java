@@ -205,7 +205,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		else 
 			UICommand.make(form, "continueAssigning", messageLocator.getMessage("evalsettings.continue.assigning.link"), "#{evaluationBean.continueAssigningAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		//UICommand.make(form, "saveSettings", "Save Settings", "#{evaluationBean.saveSettingsAction}");
-		UIOutput.make(form, "cancel-button", messageLocator.getMessage("evalsettings.cancel.button"));
+		UIOutput.make(form, "cancel-button", messageLocator.getMessage("general.cancel.button"));
 
 	}
 	

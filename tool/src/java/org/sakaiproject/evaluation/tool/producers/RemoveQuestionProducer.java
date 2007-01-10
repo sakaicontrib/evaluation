@@ -536,7 +536,7 @@ public class RemoveQuestionProducer implements ViewComponentProducer, Navigation
 			
 		}
 		
-		UICommand.make(form, "cancelRemoveAction", messageLocator.getMessage("removequestion.cancel.button"),  //$NON-NLS-1$ //$NON-NLS-2$
+		UICommand.make(form, "cancelRemoveAction", messageLocator.getMessage("general.cancel.button"),  //$NON-NLS-1$ //$NON-NLS-2$
 				"#{templateBean.cancelRemoveAction}"); //$NON-NLS-1$
 		UICommand.make(form, "removeQuestionAction", messageLocator.getMessage("removequestion.remove.button"),  //$NON-NLS-1$ //$NON-NLS-2$
 				"#{templateBean.removeQuestionAction}"); //$NON-NLS-1$
