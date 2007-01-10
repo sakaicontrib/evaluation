@@ -170,8 +170,15 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		UIBoundList instValues = new UIBoundList();
 		instValues.setValue(EvaluationConstant.INSTRUCTOR_OPT_VALUES);
 		inst.optionlist = instValues;
+		
+		String[] instructorOptLabels = 
+		{
+			messageLocator.getMessage("evalsettings.instructors.label.opt.in"),
+			messageLocator.getMessage("evalsettings.instructors.label.opt.out"),
+			messageLocator.getMessage("evalsettings.instructors.label.required")
+		};
 		UIBoundList instNames = new UIBoundList();
-		instNames.setValue(EvaluationConstant.INSTRUCTOR_OPT_LABELS);
+		instNames.setValue(instructorOptLabels);
 		inst.optionnames = instNames;
 		
 		
@@ -186,8 +193,20 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		UIBoundList reminderValues = new UIBoundList();
 		reminderValues.setValue(EvaluationConstant.REMINDER_EMAIL_DAYS_VALUES);
 		reminder.optionlist = reminderValues;
+		
+		String[] reminderEmailDaysLabels = 
+		{
+			messageLocator.getMessage("evalsettings.reminder.days.0"),
+			messageLocator.getMessage("evalsettings.reminder.days.1"),
+			messageLocator.getMessage("evalsettings.reminder.days.2"),
+			messageLocator.getMessage("evalsettings.reminder.days.3"),
+			messageLocator.getMessage("evalsettings.reminder.days.4"),
+			messageLocator.getMessage("evalsettings.reminder.days.5"),
+			messageLocator.getMessage("evalsettings.reminder.days.6"),
+			messageLocator.getMessage("evalsettings.reminder.days.7")
+		};
 		UIBoundList reminderNames = new UIBoundList();
-		reminderNames.setValue(EvaluationConstant.REMINDER_EMAIL_DAYS_LABELS);
+		reminderNames.setValue(reminderEmailDaysLabels);
 		reminder.optionnames = reminderNames;
 		
 		UIInternalLink.make(form, "emailReminder_link", messageLocator.getMessage("evalsettings.reminder.mail.link"), new EvalViewParameters(PreviewEmailProducer.VIEW_ID, null, "reminder"));	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

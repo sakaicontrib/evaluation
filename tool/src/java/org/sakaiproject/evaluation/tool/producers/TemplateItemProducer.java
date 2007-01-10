@@ -110,7 +110,7 @@ public class TemplateItemProducer implements ViewComponentProducer,NavigationCas
 		sl.selection = new UIInput();
 		sl.selection.valuebinding = new ELReference("#{templateBean.scaleDisplaySetting}");
 		
-		String[] scaleValueList = 
+		String[] scaleLabelList = 
 		{
 			messageLocator.getMessage("templateitem.scale.select.compact"),
 			messageLocator.getMessage("templateitem.scale.select.compactc"),
@@ -121,7 +121,7 @@ public class TemplateItemProducer implements ViewComponentProducer,NavigationCas
 			messageLocator.getMessage("templateitem.scale.select.vertical")
 		};
 		UIBoundList slNames = new UIBoundList();
-		slNames.setValue(scaleValueList); //Need to pull strings from properties file
+		slNames.setValue(scaleLabelList);
 		sl.optionnames = slNames;
 		UIBoundList slValues = new UIBoundList();
     	slValues.setValue(EvaluationConstant.SCALE_DISPLAY_SETTING_VALUES);
@@ -134,9 +134,14 @@ public class TemplateItemProducer implements ViewComponentProducer,NavigationCas
 		UIOutput.make(form, "course-category-header", messageLocator.getMessage("modifyitem.course.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(form, "instructor-category-header", messageLocator.getMessage("modifyitem.instructor.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
 		//Radio Buttons for "Item Category"
+		String[] courseCategoryList = 
+		{
+			messageLocator.getMessage("modifyitem.course.category.header"),
+			messageLocator.getMessage("modifyitem.instructor.category.header"),
+		};
 		UISelect radios = UISelect.make(form, "item_category", EvaluationConstant.ITEM_CATEGORY_VALUES,
-				EvaluationConstant.ITEM_CATEGORY_VALUES_LABELS, "#{templateBean.itemCategory}",null); //Need to pull strings from properties file
-
+				courseCategoryList, "#{templateBean.itemCategory}",null);
+		
 		String selectID = radios.getFullID();
 		UISelectChoice.make(form, "item_category_C", selectID, 0); //$NON-NLS-1$
 		UISelectChoice.make(form, "item_category_I", selectID, 1);	 //$NON-NLS-1$

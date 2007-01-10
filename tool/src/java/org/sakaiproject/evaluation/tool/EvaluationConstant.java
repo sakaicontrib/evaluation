@@ -83,17 +83,6 @@ public class EvaluationConstant {
 		EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL
 	};
 
-	/**
-	 * Need to pull strings from properties file from within the producer instead
-	 * or trying to put it in this file, also, you should be using the VALUES as
-	 * shown in the next array after this one (especially when saving items)
-	 * @deprecated
-	 */
-	public static String[] ITEM_CATEGORY_VALUES_LABELS = new String[] {
-		"Course",
-		"Instructor"
-	};
-
 	public static String[] ITEM_CATEGORY_VALUES = new String[] {
 		EvalConstants.ITEM_CATEGORY_COURSE,
 		EvalConstants.ITEM_CATEGORY_INSTRUCTOR
@@ -109,20 +98,6 @@ public class EvaluationConstant {
 	//For evaluation_settings.html
 	public static final String[] REMINDER_EMAIL_DAYS_VALUES = new String[] {
 		"0", "1", "2", "3", "4", "5", "6", "7" };
-	/**
-	 * Need to pull strings from properties file from within the producer instead
-	 * or trying to put it in this file
-	 * @deprecated
-	 */
-	public static final String[] REMINDER_EMAIL_DAYS_LABELS = new String[] {
-		"Never", 
-		"Daily", 
-		"Every other day", 
-		"Every 3 days", 
-		"Every 4 days",
-		"Every 5 days",
-		"Every 6 days", 
-		"Every week"};
 
 	public static final String[] INSTRUCTOR_OPT_VALUES = new String[] {
 		EvalConstants.INSTRUCTOR_OPT_IN, 
