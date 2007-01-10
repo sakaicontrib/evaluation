@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.logic.model.Context;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -43,14 +44,17 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
 /**
- * This page is to remove template from DAO
+ * This page allows the user to remove templates
  * 
  * @author: Rui Feng (fengr@vt.edu)
  */
 
 public class RemoveTemplateProducer implements ViewComponentProducer, NavigationCaseReporter,ViewParamsReporter{
 	public static final String VIEW_ID = "remove_template"; //$NON-NLS-1$
-		
+	public String getViewID(){
+		return VIEW_ID;
+	}
+
 	private EvalTemplatesLogic templatesLogic;
 	public void setTemplatesLogic(EvalTemplatesLogic templatesLogic) {
 		this.templatesLogic = templatesLogic;
@@ -60,9 +64,10 @@ public class RemoveTemplateProducer implements ViewComponentProducer, Navigation
 	public void setEvalsLogic(EvalEvaluationsLogic evalsLogic) {
 		this.evalsLogic = evalsLogic;
 	}
-	
-	public String getViewID(){
-		return VIEW_ID;
+
+	private EvalSettings settings;
+	public void setSettings(EvalSettings settings) {
+		this.settings = settings;
 	}
 
 	private MessageLocator messageLocator;
