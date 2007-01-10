@@ -90,8 +90,13 @@ public class ModifyHeaderProducer implements ViewComponentProducer,NavigationCas
 		UIOutput.make(form, "course-category-header", messageLocator.getMessage("modifyitem.course.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(form, "instructor-category-header", messageLocator.getMessage("modifyitem.instructor.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
 		//Radio Buttons for "Item Category"
+		String[] courseCategoryList = 
+		{
+			messageLocator.getMessage("modifyitem.course.category.header"),
+			messageLocator.getMessage("modifyitem.instructor.category.header"),
+		};
 		UISelect radios = UISelect.make(form, "item_category", EvaluationConstant.ITEM_CATEGORY_VALUES,
-				EvaluationConstant.ITEM_CATEGORY_VALUES_LABELS, "#{templateBean.itemCategory}",null); //Need to pull strings from properties file
+				courseCategoryList, "#{templateBean.itemCategory}",null);
 		String selectID = radios.getFullID();
 		UISelectChoice.make(form, "item_category_C", selectID, 0);
 		UISelectChoice.make(form, "item_category_I", selectID, 1);

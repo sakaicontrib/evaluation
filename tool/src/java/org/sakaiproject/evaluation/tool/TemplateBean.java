@@ -74,7 +74,7 @@ public class TemplateBean {
 	public String scaleDisplaySetting;	//the actual value of the selected "Scale Display Setting" dropdown list
 	public Boolean itemNA; //the boolean value of "Add N/A (not available)" check box
 	//selected radio button  value, by default the "Course" radio button is selected
-	//private String itemCategory = EvaluationConstant.ITEM_CATEGORY_VALUES_LABELS[0]; 		
+	//private String itemCategory = messageLocator.getMessage("modifyitem.course.category.header"); 		
 	public String itemCategory;
 	public int currItemNo;				//the order number of the item. Also used in preview_item.html
 										//there is a getter corresponding to a userId but no variable or setter
@@ -297,7 +297,7 @@ public class TemplateBean {
 		this.displayRows = null;
 		this.itemNA = Boolean.FALSE;
 
-		this.itemCategory = EvalConstants.ITEM_CATEGORY_COURSE;//EvaluationConstant.ITEM_CATEGORY_VALUES_LABELS[0];			
+		this.itemCategory = EvalConstants.ITEM_CATEGORY_COURSE;			
 		this.currentItem = null;
 		this.currItemNo = this.getItemDisplayListSize() + 1;
 		
