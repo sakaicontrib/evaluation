@@ -96,7 +96,7 @@ public class ModifyHeaderProducer implements ViewComponentProducer,NavigationCas
 		UISelectChoice.make(form, "item_category_C", selectID, 0);
 		UISelectChoice.make(form, "item_category_I", selectID, 1);
 
-		UICommand.make(form, "cancelHeaderAction", messageLocator.getMessage("modifyitem.cancel.button"), "#{templateBean.cancelHeaderAction}");
+		UICommand.make(form, "cancelHeaderAction", messageLocator.getMessage("general.cancel.button"), "#{templateBean.cancelHeaderAction}");
 
 		UICommand.make(form, "saveHeaderAction", messageLocator.getMessage("modifyitem.save.button"), "#{templateBean.saveHeaderAction}");
 

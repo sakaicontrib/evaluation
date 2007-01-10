@@ -109,7 +109,7 @@ public class RemoveEvalProducer implements ViewComponentProducer,ViewParamsRepor
 				UIOutput.make(form, "evalStartDate", df.format(eval.getStartDate())); //$NON-NLS-1$
 				UIOutput.make(form, "evalDueDate", df.format(eval.getDueDate())); //$NON-NLS-1$
 				
-				UICommand.make(form, "cancelRemoveEvalAction", messageLocator.getMessage("removeeval.cancel.button"),  //$NON-NLS-1$ //$NON-NLS-2$
+				UICommand.make(form, "cancelRemoveEvalAction", messageLocator.getMessage("general.cancel.button"),  //$NON-NLS-1$ //$NON-NLS-2$
 						"#{evaluationBean.cancelRemoveEvalAction}"); //$NON-NLS-1$
 				
 				UICommand removeCmd = UICommand.make(form, "removeEvalAction", messageLocator.getMessage("removeeval.remove.button"),  //$NON-NLS-1$ //$NON-NLS-2$

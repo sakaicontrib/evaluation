@@ -134,7 +134,7 @@ public class ModifyBlockProducer implements ViewComponentProducer,NavigationCase
 
 		UICommand.make(form, "addItemToBlock", messageLocator.getMessage("modifyblock.add.item.to.block.button"), "#{templateBean.addItemToBlock}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
-		UICommand.make(form, "cancelBlockAction", messageLocator.getMessage("modifyitem.cancel.button"), "#{templateBean.cancelBlockAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		UICommand.make(form, "cancelBlockAction", messageLocator.getMessage("general.cancel.button"), "#{templateBean.cancelBlockAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
 		UICommand.make(form, "saveBlockAction", messageLocator.getMessage("modifyitem.save.button"), "#{templateBean.saveBlockAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
