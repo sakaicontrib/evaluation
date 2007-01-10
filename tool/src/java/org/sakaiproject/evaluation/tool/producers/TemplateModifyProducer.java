@@ -101,7 +101,16 @@ public class TemplateModifyProducer implements ViewComponentProducer,NavigationC
 		combo.selection.valuebinding = new ELReference("#{templateBean.itemClassification}");	
 		//combo.selection.valuebinding = new ELReference("#{templateBean.item.classification}");	
 		UIBoundList comboNames = new UIBoundList();
-		comboNames.setValue(EvaluationConstant.ITEM_CLASSIFICATION_VALUES_LABELS);//TODO: pull strings from properties file
+		String[] itemClassificationList = 
+		{
+			messageLocator.getMessage("modifytemplate.itemtype.scaled"),
+			messageLocator.getMessage("modifytemplate.itemtype.text"),
+			messageLocator.getMessage("modifytemplate.itemtype.header"),
+			messageLocator.getMessage("modifytemplate.itemtype.block"),
+			messageLocator.getMessage("modifytemplate.itemtype.expert")
+		};
+		
+		comboNames.setValue(itemClassificationList);
 		combo.optionnames = comboNames;
 		UIBoundList comboValues = new UIBoundList();
 		comboValues.setValue(EvaluationConstant.ITEM_CLASSIFICATION_VALUES);

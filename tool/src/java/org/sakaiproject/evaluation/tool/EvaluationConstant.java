@@ -37,20 +37,6 @@ public class EvaluationConstant {
 	};
 
 	//For template_modify.html
-	/**
-	 * Need to pull strings from properties file from within the producer instead
-	 * or trying to put it in this file, also, you should be using the VALUES as
-	 * shown in the next array after this one (especially when saving items)
-	 * @deprecated
-	 */
-	public static String[] ITEM_CLASSIFICATION_VALUES_LABELS = new String[] {
-		"Scaled/Survey", 
-		"Short Answer/Essay", 
-		"Text Header",
-		"Question Block", 
-		"Expert"
-	};
-	
 	public static final String ITEM_TYPE_EXPERT = "Expert";
 	
 	/**

@@ -98,7 +98,7 @@ public class TemplateProducer implements ViewComponentProducer, NavigationCaseRe
 				messageLocator.getMessage("modifytemplatetitledesc.sharing.shared"),
 				messageLocator.getMessage("modifytemplatetitledesc.sharing.public")
 			};
-			comboNames.setValue(sharingList); //TODO: pull strings from properties file
+			comboNames.setValue(sharingList);
 			combo.optionnames = comboNames;
 			
 			EvalTemplate tpl= templateBean.getCurrTemplate();
