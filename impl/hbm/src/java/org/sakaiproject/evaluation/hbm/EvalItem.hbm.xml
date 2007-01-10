@@ -35,7 +35,7 @@
         <!-- is this an expert item or not -->
         <property name="expert" type="java.lang.Boolean" not-null="true" index="eval_item_expert" />
         <!-- the expert description of usage for this item -->
-        <property name="expertDescription" type="java.lang.String" length="255" />
+        <property name="expertDescription" type="text" />
         <!-- Should this item include Not Available as an answer -->
         <property name="usesNA" type="java.lang.Boolean" />
         <!-- how big should the text box be when rendering this item -->
