@@ -109,8 +109,19 @@ public class TemplateItemProducer implements ViewComponentProducer,NavigationCas
 		UISelect sl = UISelect.make(form, "scaleDisplaySetting"); //$NON-NLS-1$
 		sl.selection = new UIInput();
 		sl.selection.valuebinding = new ELReference("#{templateBean.scaleDisplaySetting}");
+		
+		String[] scaleValueList = 
+		{
+			messageLocator.getMessage("templateitem.scale.select.compact"),
+			messageLocator.getMessage("templateitem.scale.select.compactc"),
+			messageLocator.getMessage("templateitem.scale.select.full"),
+			messageLocator.getMessage("templateitem.scale.select.fullc"),
+			messageLocator.getMessage("templateitem.scale.select.stepped"),
+			messageLocator.getMessage("templateitem.scale.select.steppedc"),
+			messageLocator.getMessage("templateitem.scale.select.vertical")
+		};
 		UIBoundList slNames = new UIBoundList();
-		slNames.setValue(EvaluationConstant.SCALE_DISPLAY_SETTING_VALUES_LABELS); //Need to pull strings from properties file
+		slNames.setValue(scaleValueList); //Need to pull strings from properties file
 		sl.optionnames = slNames;
 		UIBoundList slValues = new UIBoundList();
     	slValues.setValue(EvaluationConstant.SCALE_DISPLAY_SETTING_VALUES);
