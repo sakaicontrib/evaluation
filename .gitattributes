@@ -39,7 +39,6 @@ impl/dao/src/java/org/sakaiproject/evaluation/dao/impl/PreloadDataImpl.java -tex
 impl/dao/src/test/hibernate-test.xml -text
 impl/dao/src/test/hibernate.cfg.xml -text
 impl/dao/src/test/hibernate.properties -text
-impl/dao/src/test/log4j.properties -text
 impl/dao/src/test/org/sakaiproject/evaluation/dao/test/EvaluationDaoImplTest.java -text
 impl/hbm/project.xml -text
 impl/hbm/src/java/org/sakaiproject/evaluation/hbm/EvalAnswer.hbm.xml -text
@@ -64,7 +63,6 @@ impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalScalesLogicImpl.j
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalSettingsImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalTemplatesLogicImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvaluationLogicImpl.java -text
-impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvaluationSecurityOld.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvalAssignContextInterceptor.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvaluationInterceptor.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvaluationModificationRegistry.java -text
