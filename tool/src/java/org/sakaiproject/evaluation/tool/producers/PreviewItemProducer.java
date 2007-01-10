@@ -17,6 +17,7 @@ import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.TemplateBean;
@@ -77,6 +78,13 @@ public class PreviewItemProducer implements ViewComponentProducer {
 		
 		
 		if(templateBean.itemClassification.equals(EvalConstants.ITEM_TYPE_SCALED)){//"Scaled/Survey"
+			
+			EvalScale  scale = templateBean.itemPreview.getScale();
+			String[] scaleOptions = scale.getOptions();
+			int optionCount = scaleOptions.length;
+			String scaleValues[] = new String[optionCount];
+			String scaleLabels[] = new String[optionCount];
+			
 			if (templateBean.scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_COMPACT)) {//"Compact"
 				
 				UIBranchContainer compact = UIBranchContainer.make(tofill, "compactDisplay:");
@@ -86,25 +94,37 @@ public class PreviewItemProducer implements ViewComponentProducer {
 				UIOutput.make(compact, "itemText", null, "#{templateBean.itemText}");
 
 				//Start label
-				UIOutput.make(compact, "compactDisplayStart", (templateBean.itemDisplayPreview).getCompactDisplayStart());			
+				String compactDisplayStart = scaleOptions[0];		
+				String compactDisplayEnd = scaleOptions[optionCount - 1];
+
+				for (int count = 0; count < optionCount; count++) {
+					
+					scaleValues[count] = new Integer(count).toString();
+					scaleLabels[count] = " ";
+				}
+				
+				//UIOutput.make(compact, "compactDisplayStart", (templateBean.itemDisplayPreview).getCompactDisplayStart());			
+				UIOutput.make(compact, "compactDisplayStart",compactDisplayStart);
 				
 				//Radio Buttons
-				String values [] = (templateBean.itemDisplayPreview).getScaleValues();
-				String labels [] = (templateBean.itemDisplayPreview).getScaleLabels();
-				UISelect radios = UISelect.make(compact, "dummyRadio", values, labels, null, false);
+				//String values [] = (templateBean.itemDisplayPreview).getScaleValues();
+				//String labels [] = (templateBean.itemDisplayPreview).getScaleLabels();
+
+				UISelect radios = UISelect.make(compact, "dummyRadio", scaleValues, scaleLabels, null, false);
 				
-				radios.optionnames = UIOutputMany.make(labels);
+				radios.optionnames = UIOutputMany.make(scaleLabels);
 				
 			    String selectID = radios.getFullID();
-			    for (int i = 0; i < values.length; ++i) 
+			    for (int i = 0; i < scaleValues.length; ++i) 
 			    {
 					UIBranchContainer radiobranch = UIBranchContainer.make(compact, "scaleOptions:", Integer.toString(i));
 					UISelectChoice.make(radiobranch, "dummyRadioValue", selectID, i);
 			    }
 				
 				//End label
-				UIOutput.make(compact, "compactDisplayEnd", (templateBean.itemDisplayPreview).getCompactDisplayEnd());			
-				if(templateBean.itemNA !=null && templateBean.itemNA.booleanValue()== true){
+				//UIOutput.make(compact, "compactDisplayEnd", (templateBean.itemDisplayPreview).getCompactDisplayEnd());			
+			    UIOutput.make(compact, "compactDisplayEnd", compactDisplayEnd);	
+			    if(templateBean.itemNA !=null && templateBean.itemNA.booleanValue()== true){
 					UIBranchContainer radiobranch3 = UIBranchContainer.make(compact,"showNA:");
 					UIBoundBoolean.make(radiobranch3, "itemNA",templateBean.itemNA);
 					UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc"));
@@ -119,8 +139,9 @@ public class PreviewItemProducer implements ViewComponentProducer {
 				UIOutput.make(compactColored, "itemText", null, "#{templateBean.itemText}");
 				
 				//Get the scale ideal value (none, low, mid, high )
-				String ideal = templateBean.itemDisplayPreview.getItem().getScale().getIdeal(); 
-
+				//String ideal = templateBean.itemDisplayPreview.getItem().getScale().getIdeal(); 
+				String ideal = scale.getIdeal();
+				
 				//Compact start and end label containers
 				UIBranchContainer compactStartContainer = UIBranchContainer.make(compactColored, "compactStartContainer:");
 				UIBranchContainer compactEndContainer = UIBranchContainer.make(compactColored, "compactEndContainer:");
@@ -151,9 +172,20 @@ public class PreviewItemProducer implements ViewComponentProducer {
 			    compactStartContainer.decorators = new DecoratorList(new UIColourDecorator(null, startColor));			
 			    compactEndContainer.decorators = new DecoratorList(new UIColourDecorator(null, endColor));
 		    
+				//Start label
+				String compactDisplayStart = scaleOptions[0];		
+				String compactDisplayEnd = scaleOptions[optionCount - 1];
+				for (int count = 0; count < optionCount; count++) {
+					
+					scaleValues[count] = new Integer(count).toString();
+					scaleLabels[count] = " ";
+				}
+			    
 				//Compact start and end actual labels
-				UIOutput.make(compactStartContainer, "compactDisplayStart", (templateBean.itemDisplayPreview).getCompactDisplayStart());			
-				UIOutput.make(compactEndContainer, "compactDisplayEnd", (templateBean.itemDisplayPreview).getCompactDisplayEnd());
+				//UIOutput.make(compactStartContainer, "compactDisplayStart", (templateBean.itemDisplayPreview).getCompactDisplayStart());			
+				//UIOutput.make(compactEndContainer, "compactDisplayEnd", (templateBean.itemDisplayPreview).getCompactDisplayEnd());
+				UIOutput.make(compactStartContainer, "compactDisplayStart",compactDisplayStart);	
+				UIOutput.make(compactEndContainer, "compactDisplayEnd", compactDisplayEnd);
 				
 			    //For the radio buttons
 				UIBranchContainer compactRadioContainer = UIBranchContainer.make(compactColored, "compactRadioContainer:");
@@ -170,14 +202,14 @@ public class PreviewItemProducer implements ViewComponentProducer {
 				
 				UILink.make(compactRadioContainer, "idealImage", idealImage);
 				
-				String values [] = (templateBean.itemDisplayPreview).getScaleValues();
-				String labels [] = (templateBean.itemDisplayPreview).getScaleLabels();
-				UISelect radios = UISelect.make(compactRadioContainer, "dummyRadio", values, labels, null, false);
+				//String values [] = (templateBean.itemDisplayPreview).getScaleValues();
+				//String labels [] = (templateBean.itemDisplayPreview).getScaleLabels();
+				UISelect radios = UISelect.make(compactRadioContainer, "dummyRadio", scaleValues, scaleLabels, null, false);
 				
-				radios.optionnames = UIOutputMany.make(labels);
+				radios.optionnames = UIOutputMany.make(scaleLabels);
 				
 			    String selectID = radios.getFullID();
-			    for (int i = 0; i < values.length; ++i) 
+			    for (int i = 0; i < scaleValues.length; ++i) 
 			    {
 					UIBranchContainer radioBranchFirst = UIBranchContainer.make(compactRadioContainer, "scaleOptionsFirst:", Integer.toString(i));
 					UISelectChoice.make(radioBranchFirst, "dummyRadioValueFirst", selectID, i);
@@ -206,14 +238,20 @@ public class PreviewItemProducer implements ViewComponentProducer {
 
 				}
 				//Radio Buttons
-				String values [] = (templateBean.itemDisplayPreview).getScaleValues();
-				String labels [] = (templateBean.itemDisplayPreview).getScaleLabels();
-				UISelect radios = UISelect.make(full, "dummyRadio", values, labels, null, false);
+				//String values [] = (templateBean.itemDisplayPreview).getScaleValues();
+				//String labels [] = (templateBean.itemDisplayPreview).getScaleLabels();
+				for (int count = 0; count < optionCount; count++) {
+
+					//TODO: Check if the order here is same as in SCALE_OPTIONS_INDEX in SCALE_OPTIONS table.
+					scaleValues[count] = new Integer(count).toString();
+					scaleLabels[count] = scaleOptions[count];	
+				}
 				
-				radios.optionnames = UIOutputMany.make(labels);
+				UISelect radios = UISelect.make(full, "dummyRadio", scaleValues, scaleLabels, null, false);				
+				radios.optionnames = UIOutputMany.make(scaleLabels);
 				
 			    String selectID = radios.getFullID();
-			    for (int i = 0; i < values.length; ++i) 
+			    for (int i = 0; i < scaleValues.length; ++i) 
 			    {
 					UIBranchContainer radiobranch = UIBranchContainer.make(full, "scaleOptions:", Integer.toString(i));
 					UISelectChoice.make(radiobranch, "dummyRadioValue", selectID, i);
@@ -234,8 +272,9 @@ public class PreviewItemProducer implements ViewComponentProducer {
 
 				}
 				//Get the scale ideal value (none, low, mid, high )
-				String ideal = templateBean.itemDisplayPreview.getItem().getScale().getIdeal(); 
-
+				//String ideal = templateBean.itemDisplayPreview.getItem().getScale().getIdeal(); 
+				String ideal = scale.getIdeal(); 
+				
 				//Set the ideal image
 				String idealImage = "";
 				if (ideal ==  null)
@@ -251,14 +290,21 @@ public class PreviewItemProducer implements ViewComponentProducer {
 				UILink.make(fullColored, "idealImageSafari", idealImage);
 				
 				//Radio Buttons
-				String values [] = (templateBean.itemDisplayPreview).getScaleValues();
-				String labels [] = (templateBean.itemDisplayPreview).getScaleLabels();
-				UISelect radios = UISelect.make(fullColored, "dummyRadio", values, labels, null, false);
+				//String values [] = (templateBean.itemDisplayPreview).getScaleValues();
+				//String labels [] = (templateBean.itemDisplayPreview).getScaleLabels();
+				for (int count = 0; count < optionCount; count++) {
+
+					//TODO: Check if the order here is same as in SCALE_OPTIONS_INDEX in SCALE_OPTIONS table.
+					scaleValues[count] = new Integer(count).toString();
+					scaleLabels[count] = scaleOptions[count];	
+				}
 				
-				radios.optionnames = UIOutputMany.make(labels);
+				UISelect radios = UISelect.make(fullColored, "dummyRadio", scaleValues, scaleLabels, null, false);
+				
+				radios.optionnames = UIOutputMany.make(scaleLabels);
 				
 			    String selectID = radios.getFullID();
-			    for (int i = 0; i < values.length; ++i) 
+			    for (int i = 0; i < scaleValues.length; ++i) 
 			    {
 					UIBranchContainer radiobranch = UIBranchContainer.make(fullColored, "scaleOptions:", Integer.toString(i));
 					UISelectChoice.make(radiobranch, "dummyRadioValue", selectID, i);
@@ -279,14 +325,19 @@ public class PreviewItemProducer implements ViewComponentProducer {
 
 				}
 				//Radio Buttons
-				String values [] = (templateBean.itemDisplayPreview).getScaleValues();
-				String labels [] = (templateBean.itemDisplayPreview).getScaleLabels();
-				UISelect radios = UISelect.make(stepped, "dummyRadio", values, labels, null, false);
+				//String values [] = (templateBean.itemDisplayPreview).getScaleValues();
+				//String labels [] = (templateBean.itemDisplayPreview).getScaleLabels();
+				for (int count = 1; count <= optionCount; count++) {
+					scaleValues[optionCount - count] = new Integer(optionCount - count).toString();
+					scaleLabels[optionCount - count] = scaleOptions[count-1];
+				}
 				
-				radios.optionnames = UIOutputMany.make(labels);
+				UISelect radios = UISelect.make(stepped, "dummyRadio", scaleValues, scaleLabels, null, false);
+				
+				radios.optionnames = UIOutputMany.make(scaleLabels);
 				
 			    String selectID = radios.getFullID();
-			    for (int i = 0; i < values.length; ++i) 
+			    for (int i = 0; i < scaleValues.length; ++i) 
 			    {
 					UIBranchContainer radioTopLabelBranch = UIBranchContainer.make(stepped, "scaleTopLabelOptions:", Integer.toString(i));
 					UISelectLabel.make(radioTopLabelBranch, "dummyTopRadioLabel", selectID, i);
@@ -320,7 +371,8 @@ public class PreviewItemProducer implements ViewComponentProducer {
 
 				}
 				//Get the scale ideal value (none, low, mid, high )
-				String ideal = templateBean.itemDisplayPreview.getItem().getScale().getIdeal();
+				//String ideal = templateBean.itemDisplayPreview.getItem().getScale().getIdeal();
+				String ideal = scale.getIdeal();
 				
 				String idealImage = "";
 				if (ideal ==  null)
@@ -335,14 +387,20 @@ public class PreviewItemProducer implements ViewComponentProducer {
 				UILink.make(steppedColored, "idealImage", idealImage);
 				
 				//Radio Buttons
-				String values [] = (templateBean.itemDisplayPreview).getScaleValues();
-				String labels [] = (templateBean.itemDisplayPreview).getScaleLabels();
-				UISelect radios = UISelect.make(steppedColored, "dummyRadio", values, labels, null, false);
+				//String values [] = (templateBean.itemDisplayPreview).getScaleValues();
+				//String labels [] = (templateBean.itemDisplayPreview).getScaleLabels();
+				for (int count = 1; count <= optionCount; count++) {
+		
+					scaleValues[optionCount - count] = new Integer(optionCount - count).toString();
+					scaleLabels[optionCount - count] = scaleOptions[count-1];
+				}
 				
-				radios.optionnames = UIOutputMany.make(labels);
+				UISelect radios = UISelect.make(steppedColored, "dummyRadio", scaleValues, scaleLabels, null, false);
+				
+				radios.optionnames = UIOutputMany.make(scaleLabels);
 				
 			    String selectID = radios.getFullID();
-			    for (int i = 0; i < values.length; ++i) 
+			    for (int i = 0; i < scaleValues.length; ++i) 
 			    {
 					UIBranchContainer rowBranch = UIBranchContainer.make(steppedColored, "rowBranch:", Integer.toString(i));
 					
@@ -382,14 +440,21 @@ public class PreviewItemProducer implements ViewComponentProducer {
 
 				}
 				//Radio Buttons
-				String values [] = (templateBean.itemDisplayPreview).getScaleValues();
-				String labels [] = (templateBean.itemDisplayPreview).getScaleLabels();
-				UISelect radios = UISelect.make(vertical, "dummyRadio", values, labels, null, false);
+				//String values [] = (templateBean.itemDisplayPreview).getScaleValues();
+				//String labels [] = (templateBean.itemDisplayPreview).getScaleLabels();
+				for (int count = 0; count < optionCount; count++) {
+
+					//TODO: Check if the order here is same as in SCALE_OPTIONS_INDEX in SCALE_OPTIONS table.
+					scaleValues[count] = new Integer(count).toString();
+					scaleLabels[count] = scaleOptions[count];	
+				}
 				
-				radios.optionnames = UIOutputMany.make(labels);
+				UISelect radios = UISelect.make(vertical, "dummyRadio", scaleValues, scaleLabels, null, false);
+				
+				radios.optionnames = UIOutputMany.make(scaleLabels);
 				
 			    String selectID = radios.getFullID();
-			    for (int i = 0; i < values.length; ++i) 
+			    for (int i = 0; i < scaleValues.length; ++i) 
 			    {
 					UIBranchContainer radiobranch = UIBranchContainer.make(vertical, "scaleOptions:", Integer.toString(i));
 					UISelectChoice.make(radiobranch, "dummyRadioValue", selectID, i);
@@ -434,12 +499,23 @@ public class PreviewItemProducer implements ViewComponentProducer {
 
 			}
 			//Radio Buttons
-			String values [] = (templateBean.itemDisplayPreview).getScaleValues();
-			String labels [] = (templateBean.itemDisplayPreview).getScaleLabels();
-			UISelect radios = UISelect.make(blockStepped, "dummyRadio", values, labels, null, false);
-			radios.optionnames = UIOutputMany.make(labels);		
+			//String values [] = (templateBean.itemDisplayPreview).getScaleValues();
+			//String labels [] = (templateBean.itemDisplayPreview).getScaleLabels();
+			EvalScale  scale = templateBean.itemPreview.getScale();
+			String[] scaleOptions = scale.getOptions();
+			int optionCount = scaleOptions.length;
+			String scaleValues[] = new String[optionCount];
+			String scaleLabels[] = new String[optionCount];
+
+			for (int count = 1; count <= optionCount; count++) {
+				scaleValues[optionCount - count] = new Integer(optionCount - count).toString();
+				scaleLabels[optionCount - count] = scaleOptions[count-1];
+			}
+			
+			UISelect radios = UISelect.make(blockStepped, "dummyRadio", scaleValues, scaleLabels, null, false);
+			radios.optionnames = UIOutputMany.make(scaleLabels);		
 		    String selectID = radios.getFullID();
-		    for (int i = 0; i < values.length; ++i) 
+		    for (int i = 0; i < scaleValues.length; ++i) 
 		    {
 				UIBranchContainer radioTopLabelBranch = UIBranchContainer.make(blockStepped, "scaleTopLabelOptions:", Integer.toString(i));
 				UISelectLabel.make(radioTopLabelBranch, "dummyTopRadioLabel", selectID, i);
@@ -458,7 +534,7 @@ public class PreviewItemProducer implements ViewComponentProducer {
 					String txt = (String)templateBean.queList.get(j);
 					UIOutput.make(queRow,"queNo",Integer.toString(j+1));	
 					UIOutput.make(queRow,"queText",txt);
-					for(int k=0;k< values.length; k++){
+					for(int k=0;k< scaleValues.length; k++){
 						UIBranchContainer bc1 = UIBranchContainer.make(queRow, "scaleValueOptions:", Integer.toString(k));
 						UISelectChoice.make(bc1, "dummyRadioValue", selectID, k);
 					}
@@ -478,8 +554,21 @@ public class PreviewItemProducer implements ViewComponentProducer {
 				UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc"));
 
 			}
+			
+			EvalScale  scale = templateBean.itemPreview.getScale();
+			String[] scaleOptions = scale.getOptions();
+			int optionCount = scaleOptions.length;
+			String scaleValues[] = new String[optionCount];
+			String scaleLabels[] = new String[optionCount];
+
+			for (int count = 1; count <= optionCount; count++) {
+				scaleValues[optionCount - count] = new Integer(optionCount - count).toString();
+				scaleLabels[optionCount - count] = scaleOptions[count-1];
+			}
 			//Get the scale ideal value (none, low, mid, high )
-			String ideal = templateBean.itemDisplayPreview.getItem().getScale().getIdeal();
+			//String ideal = templateBean.itemDisplayPreview.getItem().getScale().getIdeal();
+			String ideal = scale.getIdeal();
+			
 			String idealImage = "";
 			if (ideal ==  null)
 				idealImage = EvaluationConstant.COLORED_IMAGE_URLS[0];
@@ -492,12 +581,13 @@ public class PreviewItemProducer implements ViewComponentProducer {
 		//	UILink.make(blockSteppedColored, "idealImage", idealImage);
 			
 			//Radio Buttons
-			String values [] = (templateBean.itemDisplayPreview).getScaleValues();
-			String labels [] = (templateBean.itemDisplayPreview).getScaleLabels();
-			UISelect radios = UISelect.make(blockSteppedColored, "dummyRadio", values, labels, null, false);
-			radios.optionnames = UIOutputMany.make(labels);
+			//String values [] = (templateBean.itemDisplayPreview).getScaleValues();
+			//String labels [] = (templateBean.itemDisplayPreview).getScaleLabels();
+			
+			UISelect radios = UISelect.make(blockSteppedColored, "dummyRadio", scaleValues, scaleLabels, null, false);
+			radios.optionnames = UIOutputMany.make(scaleLabels);
 		    String selectID = radios.getFullID();
-		    for (int i = 0; i < values.length; ++i) {
+		    for (int i = 0; i < scaleValues.length; ++i) {
 				UIBranchContainer rowBranch = UIBranchContainer.make(blockSteppedColored, "rowBranch:", Integer.toString(i));				
 			    //Actual label
 				UISelectLabel.make(rowBranch, "topLabel", selectID, i);				
@@ -523,7 +613,7 @@ public class PreviewItemProducer implements ViewComponentProducer {
 				UIOutput.make(queRow,"queText",txt);
 				UILink.make(queRow, "idealImage", idealImage);
 				
-				for(int k=0;k< values.length; k++){
+				for(int k=0;k< scaleValues.length; k++){
 					UIBranchContainer radioBranchFirst = UIBranchContainer.make(queRow, "scaleOptionsFirst:", Integer.toString(k));
 					
 					UISelectChoice.make(radioBranchFirst, "dummyRadioValueFirst", selectID, k);

@@ -73,8 +73,7 @@ public class TemplateBean {
 	public Long scaleId; 				//the actual value of the selected "Scale Type" dropdown list
 	public String scaleDisplaySetting;	//the actual value of the selected "Scale Display Setting" dropdown list
 	public Boolean itemNA; //the boolean value of "Add N/A (not available)" check box
-	//selected radio button  value, by default the "Course" radio button is selected
-	//private String itemCategory = messageLocator.getMessage("modifyitem.course.category.header"); 		
+	//selected radio button  value, by default the "Course" radio button is selected	
 	public String itemCategory;
 	public int currItemNo;				//the order number of the item. Also used in preview_item.html
 										//there is a getter corresponding to a userId but no variable or setter
@@ -90,10 +89,15 @@ public class TemplateBean {
 	//The following variables used in TemplateModifierProducer.java
 	public List itemDisplayList;
 	private int itemDisplayListSize;
+	
+	public List itemsList; //to replace itemDisplayList which contain deprectaed ItemDisplay object
+	private int itemsListSize; 
+	
 	public String currRowNo;			
 
 	//The following variables used in PreviewItemProducer.java
 	public ItemDisplay itemDisplayPreview;
+	public EvalItem itemPreview; //to replace itemDisplayPreview to remove deprectaed ItemDisplay object
 	public EvalItem currentItem;
 
 	public Long templateId;
@@ -208,6 +212,15 @@ public class TemplateBean {
 	
 	/*No setItemDisplayListSize method needed*/
 	
+	public int getItemsListSize() {
+		
+		if(this.itemsList == null) 
+			this.itemsListSize=0;
+		else 
+			this.itemsListSize = this.itemsList.size();
+		
+		return this.itemsListSize;
+	}
 	
 	
 	
@@ -220,21 +233,28 @@ public class TemplateBean {
 		currTemplate = templatesLogic.getTemplateById(templateId);//logic.getTemplateById(templateId);
 		
 		// making this template information current in the template bean
-		itemDisplayList = new ArrayList();
+		itemDisplayList = new ArrayList(); //TODO: TO BE REMOVED
+		itemsList = new ArrayList();
+		
 		Set items = new TreeSet(new PreviewEvalProducer.EvaluationItemOrderComparator());
 		items.addAll(currTemplate.getItems());
-		System.out.println("template items size="+currTemplate.getItems().size());
+		//System.out.println("template items size="+currTemplate.getItems().size());
 		for (Iterator it = items.iterator(); it.hasNext();) {
 			EvalItem evalItem = (EvalItem) it.next();
 			ItemDisplay id = new ItemDisplay(evalItem);
 			itemDisplayList.add(id);
+			
+			itemsList.add(evalItem);
 		}
+		
 		itemDisplayListSize = itemDisplayList.size();
+		itemsListSize = itemsList.size();
+		
 		title = currTemplate.getTitle();
 		description = currTemplate.getDescription();
 		modifier = currTemplate.getSharing();
 		currentItem = null;
-
+		
 		return TemplateModifyProducer.VIEW_ID;
 	}
 
@@ -267,6 +287,10 @@ public class TemplateBean {
 			itemDisplayList = new ArrayList();
 		else itemDisplayList.clear();
 		
+		if (itemsList == null)
+			itemsList = new ArrayList();
+		else itemsList.clear();
+			
 	    return TemplateModifyProducer.VIEW_ID;
 	}
 	
@@ -337,11 +361,18 @@ public class TemplateBean {
 		//log.warn("Preview item");
 
 		//creating an item
-		EvalItem tempItemForPreview = new EvalItem();
+		/* TODO: TO BE REMOVED
+		EvalItem tempItemForPreview = new EvalItem();		
 		updateItemObject(tempItemForPreview);
 		//set Item DisplayOrder
 		tempItemForPreview.setDisplayOrder(new Integer(this.currItemNo));
 		itemDisplayPreview = new ItemDisplay(tempItemForPreview);
+		*/
+		
+		itemPreview = new EvalItem();
+		updateItemObject(itemPreview);
+		itemPreview.setDisplayOrder(new Integer(this.currItemNo));
+		itemDisplayPreview = new ItemDisplay(itemPreview);
 		
 		return PreviewItemProducer.VIEW_ID;
 	}
@@ -363,6 +394,9 @@ public class TemplateBean {
 			//Update itemDisplayList (list of current items).
 			itemDisplayList.remove(Integer.parseInt(currRowNo));
 			itemDisplayList.add(Integer.parseInt(currRowNo), new ItemDisplay(currentItem));
+			
+			itemsList.remove(Integer.parseInt(currRowNo));
+			itemsList.add(Integer.parseInt(currRowNo),currentItem);
 		}
 		else {
 			
@@ -389,6 +423,8 @@ public class TemplateBean {
 				//logic.saveItem(currentItem, logic.getCurrentUserId());			
 			}
 			itemDisplayList.add(new ItemDisplay(currentItem));
+			itemsList.add(currentItem);
+		
 		}
 		
 		return TemplateModifyProducer.VIEW_ID;
@@ -405,13 +441,14 @@ public class TemplateBean {
 		
 		itemDisplayPreview = null;
 		
-		int size = getItemDisplayListSize();
+		int size = getItemDisplayListSize(); // = getItemsListSize();
 		int[] orderArr = new int[size];	
 		int missingOrderIndex = -1;
 		int identicalOrderIndex = -1;
 		//get the missingOrder index, so we know which dropdown list is changed
 		for(int i = 0 ; i< size; i++){
 			EvalItem myItem = ((ItemDisplay)this.itemDisplayList.get(i)).getItem();
+			
 			orderArr[i] = myItem.getDisplayOrder().intValue();
 			if(orderArr[i] != (i+1))
 				missingOrderIndex = i;						
@@ -467,7 +504,7 @@ public class TemplateBean {
 		else{
 			this.currItemNo = rowNo + 1;
 			
-			itemDisplayPreview=(ItemDisplay)this.itemDisplayList.get(rowNo);	
+			itemDisplayPreview=(ItemDisplay)this.itemDisplayList.get(rowNo);
 			this.itemText = itemDisplayPreview.getItem().getItemText();
 			this.itemClassification = itemDisplayPreview.getItem().getClassification();
 			this.itemNA = itemDisplayPreview.getItem().getUsesNA();
@@ -483,7 +520,7 @@ public class TemplateBean {
 					this.queList = new ArrayList();
 					Long parentID = itemDisplayPreview.getItem().getId();
 					Integer blockID = new Integer(parentID.intValue());
-					/* TODO: wait fot aaron's logic layer method
+					// TODO: wait fot aaron's logic layer method
 					List childItems = logic.findItem(blockID);
 					if (childItems != null && childItems.size() > 0) {
 						this.queList= new ArrayList();
@@ -491,7 +528,7 @@ public class TemplateBean {
 							EvalItem child = (EvalItem) childItems.get(j);
 							this.queList.add(child.getItemText());
 						}
-					} */
+					} 
 	
 			}else if(this.itemClassification.equals(EvalConstants.ITEM_TYPE_TEXT)){
 				//"Short Answer/Essay"
@@ -572,6 +609,7 @@ public class TemplateBean {
 		    	}
 		    	
 		    	Integer blockID = new Integer(currentItem.getId().intValue());	
+		    	//TODO: wait for aaron's logic method
 		    	List childItems = logic.findItem(blockID);
 		    	for(int i=0; i< childItems.size(); i++){
 		    		EvalItem myItem = (EvalItem)childItems.get(i);
@@ -628,6 +666,7 @@ public class TemplateBean {
 				this.queList = new ArrayList();
 				Long parentID = itemDisplayPreview.getItem().getId();
 				Integer blockID = new Integer(parentID.intValue());
+				//TODO: wait for aaron's logic method
 				List childItems = logic.findItem(blockID);
 				if (childItems != null && childItems.size() > 0) {
 					this.queList= new ArrayList();
@@ -662,6 +701,7 @@ public class TemplateBean {
 			//remove BLOCK child items
 			if(item.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK)&& item.getBlockParent().booleanValue()==true){
 				Integer id = new Integer(item.getId().intValue());
+				//TODO: wait for aaron's logic layer method
 				List childItems = logic.findItem(id);
 				for(int i=0; i< childItems.size();i++){
 					EvalItem cItem =(EvalItem) childItems.get(i);
@@ -677,7 +717,7 @@ public class TemplateBean {
 			for(int i = this.currItemNo - 1 ; i< getItemDisplayListSize(); i++){
 				EvalItem myItem = ((ItemDisplay)this.itemDisplayList.get(i)).getItem();
 				myItem.setDisplayOrder(new Integer(i+1));
-				itemsLogic.saveItem(myItem, logic.getCurrentUserId());
+				itemsLogic.saveItem(myItem, external.getCurrentUserId());
 				itemDisplayList.set(i, new ItemDisplay(myItem));
 			}
 		
@@ -716,15 +756,17 @@ public class TemplateBean {
 			this.scaleDisplaySetting = null;		
 			updateItemObject(currentItem);
 			currentItem.setDisplayRows(this.displayRows);
-			logic.saveItem(currentItem, logic.getCurrentUserId());
-	
+			//logic.saveItem(currentItem, logic.getCurrentUserId());
+			itemsLogic.saveItem(currentItem, external.getCurrentUserId());
+			
 			itemDisplayList.remove(Integer.parseInt(currRowNo));
 			itemDisplayList.add(Integer.parseInt(currRowNo), new ItemDisplay(currentItem));
 		
 		}
 		else {					
 			if ( currTemplate.getId() == null )
-				logic.saveTemplate(currTemplate, logic.getCurrentUserId());
+				templatesLogic.saveTemplate(currTemplate, external.getCurrentUserId());
+				//logic.saveTemplate(currTemplate, logic.getCurrentUserId());
 
 			currentItem = new EvalItem();
 			this.scaleDisplaySetting = null;
@@ -736,7 +778,8 @@ public class TemplateBean {
 			int orderNo = this.getItemDisplayListSize();
 			//set the display order for each item
 			currentItem.setDisplayOrder(new Integer(orderNo + 1)); 
-			logic.saveItem(currentItem, logic.getCurrentUserId());			
+			//logic.saveItem(currentItem, logic.getCurrentUserId());			
+			itemsLogic.saveItem(currentItem, external.getCurrentUserId());
 			itemDisplayList.add(new ItemDisplay(currentItem));
 			
 		}
@@ -795,10 +838,12 @@ public class TemplateBean {
 			
 			//first delete all the old child items,
 			Integer id = new Integer(currentItem.getId().intValue());
+			//TODO: Wait for aaron's logic layer method
 			List childItems = logic.findItem(id);
 			for(int i=0; i< childItems.size();i++){
 				EvalItem myItem =(EvalItem) childItems.get(i);
-				logic.deleteItem(myItem, logic.getCurrentUserId());
+				//logic.deleteItem(myItem, logic.getCurrentUserId());
+				itemsLogic.deleteItem(myItem.getId(), external.getCurrentUserId());
 			}
 			
 			currentItem.setLastModified(new Date());
@@ -807,18 +852,20 @@ public class TemplateBean {
 			currentItem.setCategory(itemCategory);
 			currentItem.setUsesNA(itemNA);
 			this.setScale(currentItem);
-			logic.saveItem(currentItem, logic.getCurrentUserId());
+			//logic.saveItem(currentItem, logic.getCurrentUserId());
+			itemsLogic.saveItem(currentItem, external.getCurrentUserId());
 			itemDisplayList.remove(Integer.parseInt(currRowNo));
 			itemDisplayList.add(Integer.parseInt(currRowNo), new ItemDisplay(currentItem));
 			
 			//update child items; add new items
 			for(int j=0; j< this.queList.size(); j++){
-				EvalItem tempItem = new EvalItem(new Date(), logic.getCurrentUserId(),
+				EvalItem tempItem = new EvalItem(new Date(), external.getCurrentUserId(),
 						(String)queList.get(j), EvalConstants.SHARING_PRIVATE, 
 						itemClassification, Boolean.FALSE);
 				tempItem.setDisplayOrder(Integer.valueOf(j+1));
 				tempItem.setBlockId(id);
-				logic.saveItem(tempItem, logic.getCurrentUserId());
+				//logic.saveItem(tempItem, logic.getCurrentUserId());
+				itemsLogic.saveItem(tempItem, external.getCurrentUserId());
 			}
 		}
 		else {
@@ -830,7 +877,8 @@ public class TemplateBean {
 			}
 			
 			if ( currTemplate.getId() == null ){
-				logic.saveTemplate(currTemplate, logic.getCurrentUserId());
+				//logic.saveTemplate(currTemplate, logic.getCurrentUserId());
+				templatesLogic.saveTemplate(currTemplate, external.getCurrentUserId());
 			}
 	
 			//set the header Item
@@ -847,18 +895,20 @@ public class TemplateBean {
 			currentItem.getTemplates().add(currTemplate);
 			int orderNo = this.getItemDisplayListSize();
 			currentItem.setDisplayOrder(new Integer(orderNo + 1)); 
-			logic.saveItem(currentItem, logic.getCurrentUserId());			
+			//logic.saveItem(currentItem, logic.getCurrentUserId());			
+			itemsLogic.saveItem(currentItem, external.getCurrentUserId());
 			itemDisplayList.add(new ItemDisplay(currentItem));		
 
 			Integer parentId = new Integer(currentItem.getId().intValue());
 			//save child items
 			for(int i= 0; i < this.queList.size(); i++){
-				EvalItem tempItem = new EvalItem(new Date(), logic.getCurrentUserId(),
+				EvalItem tempItem = new EvalItem(new Date(), external.getCurrentUserId(),
 						(String)queList.get(i), EvalConstants.SHARING_PRIVATE, 
 						itemClassification, Boolean.FALSE);
 				tempItem.setDisplayOrder(Integer.valueOf(i+1));
 				tempItem.setBlockId(parentId);
-				logic.saveItem(tempItem, logic.getCurrentUserId());
+				//logic.saveItem(tempItem, logic.getCurrentUserId());
+				itemsLogic.saveItem(tempItem, external.getCurrentUserId());
 			}//end of for loop
 		}
 		
@@ -897,15 +947,18 @@ public class TemplateBean {
 		{	
 			this.scaleDisplaySetting = null;		
 			updateItemObject(currentItem);
-			logic.saveItem(currentItem, logic.getCurrentUserId());	
+			//logic.saveItem(currentItem, logic.getCurrentUserId());	
+			itemsLogic.saveItem(currentItem, external.getCurrentUserId());
 			itemDisplayList.remove(Integer.parseInt(currRowNo));
 			itemDisplayList.add(Integer.parseInt(currRowNo), new ItemDisplay(currentItem));
 		
 		}
 		else {					
 			if ( currTemplate.getId() == null )
-				logic.saveTemplate(currTemplate, logic.getCurrentUserId());
-
+				templatesLogic.saveTemplate(currTemplate, external.getCurrentUserId());
+				//logic.saveTemplate(currTemplate, logic.getCurrentUserId());
+				
+			
 			currentItem = new EvalItem();
 			this.scaleDisplaySetting = null;
 			updateItemObject(currentItem);
@@ -915,7 +968,9 @@ public class TemplateBean {
 			int orderNo = this.getItemDisplayListSize();
 			//set the display order for each item
 			currentItem.setDisplayOrder(new Integer(orderNo + 1)); 
-			logic.saveItem(currentItem, logic.getCurrentUserId());			
+			//logic.saveItem(currentItem, logic.getCurrentUserId());
+			itemsLogic.saveItem(currentItem, external.getCurrentUserId());
+			
 			itemDisplayList.add(new ItemDisplay(currentItem));
 			
 		}
@@ -966,7 +1021,7 @@ public class TemplateBean {
 	private void updateItemObject (EvalItem tempItem) {
 		
 		tempItem.setLastModified(new Date());
-		tempItem.setOwner(logic.getCurrentUserId());
+		tempItem.setOwner(external.getCurrentUserId());
 		tempItem.setItemText(itemText);
 		// Description is nullable and only for parent item.
 		tempItem.setExpert(Boolean.FALSE);
