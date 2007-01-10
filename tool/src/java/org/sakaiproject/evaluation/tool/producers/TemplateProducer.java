@@ -91,7 +91,14 @@ public class TemplateProducer implements ViewComponentProducer, NavigationCaseRe
 			comboValues.setValue(EvaluationConstant.MODIFIER_VALUES);
 			combo.optionlist = comboValues;
 			UIBoundList comboNames = new UIBoundList();
-			comboNames.setValue(EvaluationConstant.MODIFIER_LABELS); //TODO: pull strings from properties file
+			String[] sharingList = 
+			{
+				messageLocator.getMessage("modifytemplatetitledesc.sharing.private"),
+				messageLocator.getMessage("modifytemplatetitledesc.sharing.visible"),
+				messageLocator.getMessage("modifytemplatetitledesc.sharing.shared"),
+				messageLocator.getMessage("modifytemplatetitledesc.sharing.public")
+			};
+			comboNames.setValue(sharingList); //TODO: pull strings from properties file
 			combo.optionnames = comboNames;
 			
 			EvalTemplate tpl= templateBean.getCurrTemplate();
