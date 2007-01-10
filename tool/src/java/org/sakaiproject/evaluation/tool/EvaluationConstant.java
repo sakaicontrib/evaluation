@@ -104,16 +104,6 @@ public class EvaluationConstant {
 		EvalConstants.INSTRUCTOR_OPT_OUT, 
 		EvalConstants.INSTRUCTOR_REQUIRED
 	};
-	/**
-	 * Need to pull strings from properties file from within the producer instead
-	 * or trying to put it in this file
-	 * @deprecated
-	 */
-	public static final String[] INSTRUCTOR_OPT_LABELS = new String[] {
-		"Instructors must opt in (Disabled initially)", 
-		"Instructors must opt out (Enabled initially)",
-		"Instructors must use (Enabled, cannot opt out)"
-	};
 
 	/**
 	 * The default number of rows to use when displaying a textarea type input box
