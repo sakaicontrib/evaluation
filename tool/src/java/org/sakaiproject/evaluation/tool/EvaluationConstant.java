@@ -73,16 +73,6 @@ public class EvaluationConstant {
 	public static String LIGHT_GRAY_COLOR = "#CCCCFF";
 
 	//For template_item.html
-	/**
-	 * Need to pull strings from properties file from within the producer instead
-	 * or trying to put it in this file, also, you should be using the VALUES as
-	 * shown in the next array after this one (especially when saving items)
-	 * @deprecated
-	 */
-	public static String[] SCALE_DISPLAY_SETTING_VALUES_LABELS = new String[]{
-		"Compact", "Compact Colored", "Full", "Full Colored",
-		"Stepped", "Stepped Colored", "Vertical"
-	};
 	public static String[] SCALE_DISPLAY_SETTING_VALUES = new String[]{
 		EvalConstants.ITEM_SCALE_DISPLAY_COMPACT,
 		EvalConstants.ITEM_SCALE_DISPLAY_COMPACT_COLORED,
