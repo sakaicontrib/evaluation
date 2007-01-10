@@ -18,7 +18,6 @@ import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.EvaluationLogic;
 
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIContainer;
@@ -42,11 +41,6 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
 		return VIEW_ID;
 	}
 
-	private EvaluationLogic logic;
-	public void setLogic(EvaluationLogic logic) {
-		this.logic = logic;
-	}
-
 	private EvalExternalLogic external;
 	public void setExternal(EvalExternalLogic external) {
 		this.external = external;
@@ -63,9 +57,14 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
 	}	
 	
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
-		String currentUserId = logic.getCurrentUserId();
+		String currentUserId = external.getCurrentUserId();
 		boolean userAdmin = external.isUserAdmin(currentUserId);
-		
+
+		if (! userAdmin) {
+			// Security check and denial
+			throw new SecurityException("Non-admin users may not access this page");
+		}
+
 		/*
 		 * top links here
 		 */
@@ -77,6 +76,8 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
 
 		UIInternalLink.make(tofill, "summary-toplink", messageLocator.getMessage("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID)); //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(tofill, "system-settings-instructions", messageLocator.getMessage("administrate.system.settings.instructions")); //$NON-NLS-1$ //$NON-NLS-2$
+
+
 		UIOutput.make(tofill, "instructors-eval-create-note", messageLocator.getMessage("administrate.instructors.eval.create.note")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(tofill, "instructors-view-results-note", messageLocator.getMessage("administrate.instructors.view.results.note")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(tofill, "instructors-email-students-note", messageLocator.getMessage("administrate.instructors.email.students.note")); //$NON-NLS-1$ //$NON-NLS-2$
