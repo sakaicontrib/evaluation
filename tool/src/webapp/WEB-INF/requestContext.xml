@@ -73,7 +73,7 @@
 		<property name="external" 
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="settings" 
-			ref="org.sakaiproject.evaluation.logic.EvaluationSettings" />
+			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 		<property name="messageLocator" ref="messageLocator" />				
 	</bean>
 
@@ -198,6 +198,8 @@
 			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
 		<property name="evalsLogic" 
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />		
+		<property name="settings" 
+			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 		<property name="messageLocator" ref="messageLocator" />				
 	</bean>
 
