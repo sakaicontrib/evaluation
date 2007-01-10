@@ -474,7 +474,7 @@ public class EvaluationLogicImpl implements EvaluationLogic {
 		return evaluationDao.getAnswers(itemId, evaluationId);
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvaluationLogic#getTotalEnrollments(java.lang.Long)
 	 */

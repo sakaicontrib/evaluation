@@ -21,11 +21,17 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
+import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
+import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.EvaluationLogic;
+import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
+import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
+import org.sakaiproject.evaluation.model.EvalAssignContext;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.params.PreviewEvalParameters;
 
@@ -58,9 +64,24 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 		return VIEW_ID;
 	}
 
-	private EvaluationLogic logic;
-	public void setLogic(EvaluationLogic logic) {
-		this.logic = logic;
+	private EvalAssignsLogic assignsLogic;
+	public void setAssignsLogic(EvalAssignsLogic assignsLogic) {
+		this.assignsLogic = assignsLogic;
+	}
+
+	private EvalEvaluationsLogic evaluationsLogic;
+	public void setEvaluationsLogic(EvalEvaluationsLogic evaluationsLogic) {
+		this.evaluationsLogic = evaluationsLogic;
+	}
+
+	private EvalResponsesLogic responsesLogic;
+	public void setResponsesLogic(EvalResponsesLogic responsesLogic) {
+		this.responsesLogic = responsesLogic;
+	}
+
+	private EvalTemplatesLogic templatesLogic;
+	public void setTemplatesLogic(EvalTemplatesLogic templatesLogic) {
+		this.templatesLogic = templatesLogic;
 	}
 
 	private EvalExternalLogic external;
@@ -83,8 +104,8 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 		// local variables used in the render logic
 		String currentUserId = external.getCurrentUserId();
 		boolean userAdmin = external.isUserAdmin(currentUserId);
-		boolean createTemplate = logic.canCreateTemplate(currentUserId);
-		boolean beginEvaluation = logic.canBeginEvaluation(currentUserId);
+		boolean createTemplate = templatesLogic.canCreateTemplate(currentUserId);
+		boolean beginEvaluation = evaluationsLogic.canBeginEvaluation(currentUserId);
 		// use a date which is related to the current users locale
 		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
 
@@ -111,7 +132,7 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 		}
 
 		// get template List
-		List templateList = logic.getTemplatesToDisplay(currentUserId);
+		List templateList = templatesLogic.getTemplatesForUser(currentUserId, null);
 		if (templateList != null && templateList.size() > 0) {
 
 			UIBranchContainer templates = UIBranchContainer.make(tofill, "templateTable:"); //$NON-NLS-1$
@@ -157,7 +178,7 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 		}
 
 		// get all the visible evaluation to current user
-		List evals = logic.getVisibleEvaluationsForUser(external.getCurrentUserId(), true);
+		List evals = evaluationsLogic.getVisibleEvaluationsForUser(external.getCurrentUserId(), true);
 		if (evals != null && evals.size() > 0) {
 			// get queued, active, closed evaluations by date
 			List queuedEvals = new ArrayList();
@@ -209,19 +230,17 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 					UIInternalLink.make(queuedEvalsRb, "queuedEvalTitle", eval1.getTitle(), new PreviewEvalParameters( //$NON-NLS-1$
 							PreviewEvalProducer.VIEW_ID, eval1.getId(),eval1.getTemplate().getId(), null, ControlPanelProducer.VIEW_ID));
 					
-					int count = logic.countEvaluationContexts(eval1.getId());
-					if (count > 1){
-					
-						UICommand queuedEvalAssigned = UICommand.make(queuedEvalsRb, "queuedEvalAssigned", count+"courses", //$NON-NLS-1$ //$NON-NLS-2$
-														"#{evaluationBean.evalAssigned}"); //$NON-NLS-1$
+					// vary the display depending on the number of contexts assigned
+					int contextCount = evaluationsLogic.countEvaluationContexts(eval1.getId());
+					if (contextCount > 1) {
+						UICommand queuedEvalAssigned = UICommand.make(queuedEvalsRb, 
+								"queuedEvalAssigned", contextCount+"courses", //$NON-NLS-1$ //$NON-NLS-2$
+								"#{evaluationBean.evalAssigned}"); //$NON-NLS-1$
 						queuedEvalAssigned.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", eval1.getId())); //$NON-NLS-1$
-					}else{
-						
-						UICommand queuedEvalAssigned = UICommand
-								.make(
-										queuedEvalsRb,
-										"queuedEvalAssigned", logic.getCourseTitle(eval1.getId()), //$NON-NLS-1$
-														"#{evaluationBean.evalAssigned}"); //$NON-NLS-1$
+					} else {
+						UICommand queuedEvalAssigned = UICommand.make(queuedEvalsRb,
+								"queuedEvalAssigned", getTitleForFirstEvalContext(eval1.getId()), //$NON-NLS-1$
+								"#{evaluationBean.evalAssigned}"); //$NON-NLS-1$
 						queuedEvalAssigned.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", eval1.getId())); //$NON-NLS-1$
 					}
 
@@ -260,23 +279,19 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 							Integer.toString(i));
 
 					EvalEvaluation eval1 = (EvalEvaluation) (activeEvals.get(i));
-/*
-					UIInternalLink.make(activeEvalsRb, "activeEvalTitle", eval1.getTitle(), new EvalViewParameters(
-										PreviewEvalProducer.VIEW_ID, eval1.getId(), ControlPanelProducer.VIEW_ID));
-*/	
 					UIInternalLink.make(activeEvalsRb, "activeEvalTitle", eval1.getTitle(),new PreviewEvalParameters( //$NON-NLS-1$
 							PreviewEvalProducer.VIEW_ID, eval1.getId(),eval1.getTemplate().getId(), null, ControlPanelProducer.VIEW_ID));
 					
-					int count = logic.countEvaluationContexts(eval1.getId());
-					if (count > 1){
-					
-						UICommand activeEvalAssigned = UICommand.make(activeEvalsRb, "activeEvalAssigned", count+"courses", //$NON-NLS-1$ //$NON-NLS-2$
-										"#{evaluationBean.evalAssigned}"); //$NON-NLS-1$
+					int count = evaluationsLogic.countEvaluationContexts(eval1.getId());
+					if (count > 1) {
+						UICommand activeEvalAssigned = UICommand.make(activeEvalsRb, 
+								"activeEvalAssigned", count+"courses", //$NON-NLS-1$ //$NON-NLS-2$
+								"#{evaluationBean.evalAssigned}"); //$NON-NLS-1$
 						activeEvalAssigned.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", eval1.getId())); //$NON-NLS-1$
-					}else{
-				
-						UICommand activeEvalAssigned = UICommand.make(activeEvalsRb, "activeEvalAssigned", logic.getCourseTitle(eval1.getId()), //$NON-NLS-1$
-										"#{evaluationBean.evalAssigned}"); //$NON-NLS-1$
+					} else {
+						UICommand activeEvalAssigned = UICommand.make(activeEvalsRb, 
+								"activeEvalAssigned", getTitleForFirstEvalContext(eval1.getId()), //$NON-NLS-1$
+								"#{evaluationBean.evalAssigned}"); //$NON-NLS-1$
 						activeEvalAssigned.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", eval1.getId())); //$NON-NLS-1$
 					}
 
@@ -287,9 +302,11 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 											"#{evaluationBean.editEvalSettingAction}"); //$NON-NLS-1$
 					activeEvalEdit.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", eval1.getId())); //$NON-NLS-1$
 					
-					//GET user Rate: Response/Enrollement
-					UIOutput.make(activeEvalsRb, "users", logic.countResponses(eval1.getId(), null)+"/"  //$NON-NLS-1$ //$NON-NLS-2$
-													+ logic.getTotalEnrollments(eval1.getId()));
+					// GET user Rate: Response/Enrollement
+					int ctResponses = responsesLogic.countResponses(eval1.getId(), null);
+					int ctEnrollments = getTotalEnrollmentsForEval(eval1.getId());
+					UIOutput.make(activeEvalsRb, "users", //$NON-NLS-1$
+							ctResponses + "/" + ctEnrollments ); //$NON-NLS-1$
 				} // end of for loop
 			}
 
@@ -311,17 +328,13 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 							Integer.toString(i));
 
 					EvalEvaluation eval1 = (EvalEvaluation) (closedEvals.get(i));
-/*
-					UIInternalLink.make(closedEvalsRb, "closedEvalTitle", eval1.getTitle(), new EvalViewParameters(
-							PreviewEvalProducer.VIEW_ID, eval1.getId(), ControlPanelProducer.VIEW_ID));
-*/
 					UIInternalLink.make(closedEvalsRb, "closedEvalTitle", eval1.getTitle(),new PreviewEvalParameters( //$NON-NLS-1$
 							PreviewEvalProducer.VIEW_ID, eval1.getId(),eval1.getTemplate().getId(), null, ControlPanelProducer.VIEW_ID));
 					
 					UIOutput.make(closedEvalsRb, "closedEvalDueDate", df.format(eval1.getDueDate())); //$NON-NLS-1$
 					// get response, get enrollment
-					int ctResponses = logic.countResponses(eval1.getId(), null);
-					int ctEnrollments =logic.getTotalEnrollments(eval1.getId());
+					int ctResponses = responsesLogic.countResponses(eval1.getId(), null);
+					int ctEnrollments = getTotalEnrollmentsForEval(eval1.getId());
 					double per = (1.0 * ctResponses )/ctEnrollments;
 					long percentage = Math.round(per*100);
 					
@@ -334,7 +347,8 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 
 		} // end of :if (evals !=null && evals.size() > 0)
 
-	} // end of medthod:fillComponents
+	} // end of method:fillComponents
+
 
 	public List reportNavigationCases() {
 		List i = new ArrayList();
@@ -351,6 +365,39 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 				EvaluationAssignConfirmProducer.VIEW_ID)));
 		
 		return i;
+	}
+
+
+	/**
+	 * Gets the title for the first returned context for this evaluation,
+	 * should only be used when there is only one context assigned to an eval
+	 * 
+	 * @param evaluationId
+	 * @return title of first context returned
+	 */
+	private String getTitleForFirstEvalContext(Long evaluationId) {
+		List acs = assignsLogic.getAssignContextsByEvalId(evaluationId);
+		EvalAssignContext eac = (EvalAssignContext) acs.get(0);
+		return external.getDisplayTitle( eac.getContext() );
+	}
+
+	/**
+	 * Gets the total count of enrollments for an evaluation
+	 * 
+	 * @param evaluationId
+	 * @return total number of users with take eval perms in this evaluation
+	 */
+	private int getTotalEnrollmentsForEval(Long evaluationId) {
+		int totalEnrollments = 0;
+
+		List l = assignsLogic.getAssignContextsByEvalId(evaluationId);
+		for (int i=0; i<l.size(); i++) {
+			EvalAssignContext eac = (EvalAssignContext) l.get(i);
+			String context = eac.getContext();
+			Set userIds = external.getUserIdsForContext(context, EvalConstants.PERM_TAKE_EVALUATION);
+			totalEnrollments = totalEnrollments + userIds.size();
+		}
+		return totalEnrollments;
 	}
 
 }
