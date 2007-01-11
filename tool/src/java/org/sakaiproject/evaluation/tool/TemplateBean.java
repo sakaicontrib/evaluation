@@ -372,7 +372,6 @@ public class TemplateBean {
 		itemPreview = new EvalItem();
 		updateItemObject(itemPreview);
 		itemPreview.setDisplayOrder(new Integer(this.currItemNo));
-		itemDisplayPreview = new ItemDisplay(itemPreview);
 		
 		return PreviewItemProducer.VIEW_ID;
 	}
@@ -491,7 +490,8 @@ public class TemplateBean {
 
 		//get the rowNo which is ELBinding to the parameters of "preview" link
 		int rowNo = -1;
-		itemDisplayPreview = null;
+		//itemDisplayPreview = null;
+		itemPreview = null;
 		
 		try{
 			rowNo=Integer.parseInt(currRowNo);
@@ -504,35 +504,49 @@ public class TemplateBean {
 		else{
 			this.currItemNo = rowNo + 1;
 			
-			itemDisplayPreview=(ItemDisplay)this.itemDisplayList.get(rowNo);
-			this.itemText = itemDisplayPreview.getItem().getItemText();
-			this.itemClassification = itemDisplayPreview.getItem().getClassification();
-			this.itemNA = itemDisplayPreview.getItem().getUsesNA();
+			//itemDisplayPreview=(ItemDisplay)this.itemDisplayList.get(rowNo);	
+			//this.itemText = itemDisplayPreview.getItem().getItemText();
+			//this.itemClassification = itemDisplayPreview.getItem().getClassification();
+			//this.itemNA = itemDisplayPreview.getItem().getUsesNA();
+			itemPreview = (EvalItem) itemsList.get(rowNo);
+			this.itemText = itemPreview.getItemText();
+			this.itemClassification = itemPreview.getClassification();
+			this.itemNA = itemPreview.getUsesNA();
+						
 			if(this.itemClassification.equals(EvalConstants.ITEM_TYPE_SCALED)){
 				//"Scaled/Survey"
-				this.scaleId = itemDisplayPreview.getItem().getScale().getId();
-				this.scaleDisplaySetting = itemDisplayPreview.getItem().getScaleDisplaySetting();		
+				//this.scaleId = itemDisplayPreview.getItem().getScale().getId();
+				//this.scaleDisplaySetting = itemDisplayPreview.getItem().getScaleDisplaySetting();
+				this.scaleId = itemPreview.getScale().getId();
+				this.scaleDisplaySetting = itemPreview.getScaleDisplaySetting();
+				
 			}else if(this.itemClassification.equals(EvalConstants.ITEM_TYPE_BLOCK)){
 				//"Question Block"
-				this.scaleId = itemDisplayPreview.getItem().getScale().getId();	
-				this.scaleDisplaySetting = itemDisplayPreview.getItem().getScaleDisplaySetting();
-				this.itemNA = itemDisplayPreview.getItem().getUsesNA();
-					this.queList = new ArrayList();
-					Long parentID = itemDisplayPreview.getItem().getId();
-					Integer blockID = new Integer(parentID.intValue());
-					// TODO: wait fot aaron's logic layer method
-					List childItems = logic.findItem(blockID);
-					if (childItems != null && childItems.size() > 0) {
-						this.queList= new ArrayList();
-						for (int j = 0; j < childItems.size(); j++) {
-							EvalItem child = (EvalItem) childItems.get(j);
-							this.queList.add(child.getItemText());
-						}
-					} 
+				//this.scaleId = itemDisplayPreview.getItem().getScale().getId();	
+				//this.scaleDisplaySetting = itemDisplayPreview.getItem().getScaleDisplaySetting();
+				//this.itemNA = itemDisplayPreview.getItem().getUsesNA();
+				this.scaleId = itemPreview.getScale().getId();	
+				this.scaleDisplaySetting = itemPreview.getScaleDisplaySetting();
+				this.itemNA = itemPreview.getUsesNA();
+				
+				this.queList = new ArrayList();
+				//Long parentID = itemDisplayPreview.getItem().getId();
+				Long parentID = itemPreview.getId();
+				Integer blockID = new Integer(parentID.intValue());
+				// TODO: wait fot aaron's logic layer method
+				List childItems = logic.findItem(blockID);
+				if (childItems != null && childItems.size() > 0) {
+					this.queList= new ArrayList();
+					for (int j = 0; j < childItems.size(); j++) {
+						EvalItem child = (EvalItem) childItems.get(j);
+						this.queList.add(child.getItemText());
+					}
+				} 
 	
 			}else if(this.itemClassification.equals(EvalConstants.ITEM_TYPE_TEXT)){
 				//"Short Answer/Essay"
-				this.displayRows = itemDisplayPreview.getItem().getDisplayRows();
+				//this.displayRows = itemDisplayPreview.getItem().getDisplayRows();
+				this.displayRows = itemPreview.getDisplayRows();
 			}
 			
 		}	
@@ -737,14 +751,21 @@ public class TemplateBean {
 	public String previewEssayAction(){
 	
 		//creating an item
-		EvalItem tempItemForPreview = new EvalItem();
+/*		EvalItem tempItemForPreview = new EvalItem();		
 		this.scaleDisplaySetting = null;
 		updateItemObject(tempItemForPreview);
 		tempItemForPreview.setDisplayRows(this.displayRows);
 		//set Item DisplayOrder
 		tempItemForPreview.setDisplayOrder(new Integer(this.currItemNo));
 		itemDisplayPreview = new ItemDisplay(tempItemForPreview);
-
+*/
+		itemPreview = new EvalItem();
+		this.scaleDisplaySetting = null;
+		updateItemObject(itemPreview);
+		itemPreview.setDisplayRows(this.displayRows);
+		//set Item DisplayOrder
+		itemPreview.setDisplayOrder(new Integer(this.currItemNo));
+		
 		return PreviewItemProducer.VIEW_ID;
 	}
 	
@@ -919,7 +940,7 @@ public class TemplateBean {
 	public String previewBlockAction(){
 
 		//	creating an item
-		EvalItem tempItemForPreview = new EvalItem();
+/*		EvalItem tempItemForPreview = new EvalItem();
 		updateItemObject(tempItemForPreview);
 		if(idealColor != null && idealColor.booleanValue() == true)
 			scaleDisplaySetting = "Stepped Colored";
@@ -930,6 +951,17 @@ public class TemplateBean {
 		//set Item DisplayOrder
 		tempItemForPreview.setDisplayOrder(new Integer(this.currItemNo));
 		itemDisplayPreview = new ItemDisplay(tempItemForPreview);
+*/
+		itemPreview = new EvalItem();
+		updateItemObject(itemPreview);
+		if(idealColor != null && idealColor.booleanValue() == true)
+			scaleDisplaySetting = EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED;
+		else
+			scaleDisplaySetting = EvalConstants.ITEM_SCALE_DISPLAY_STEPPED;
+		itemPreview.setBlockParent(Boolean.TRUE);
+		this.setScale(itemPreview);
+		//set Item DisplayOrder
+		itemPreview.setDisplayOrder(new Integer(this.currItemNo));
 		
 		return PreviewItemProducer.VIEW_ID;
 	}
@@ -981,14 +1013,20 @@ public class TemplateBean {
 	//method binding to the "Preview" button on modify_header.html
 	public String previewHeaderAction(){
 
-		EvalItem tempItemForPreview = new EvalItem();
+	/*	EvalItem tempItemForPreview = new EvalItem();
 		this.scaleDisplaySetting = null;
 		updateItemObject(tempItemForPreview);
 		//set Item DisplayOrder
 		tempItemForPreview.setDisplayOrder(new Integer(this.currItemNo));
 		itemDisplayPreview = new ItemDisplay(tempItemForPreview);
+	*/
+		itemPreview = new EvalItem();
+		this.scaleDisplaySetting = null;
+		updateItemObject(itemPreview);
+		//set Item DisplayOrder
+		itemPreview.setDisplayOrder(new Integer(this.currItemNo));
 		
-		return PreviewItemProducer.VIEW_ID;
+		return PreviewItemProducer.VIEW_ID;		
 	}
 	
 	//initialize/clear variables when creating a new template
