@@ -126,7 +126,9 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 		}
 
 		// now perform checks depending on whether this is new or existing
-		Date today = new Date();
+		Calendar calendar = GregorianCalendar.getInstance();
+		calendar.add(Calendar.SECOND, 10); // put today slightly in the future (10 seconds)
+		Date today = calendar.getTime();
 		if (evaluation.getId() == null) { // creating new evaluation
 			// test if new evaluation occurs in the past
 			if (evaluation.getStartDate().before(today)) {
