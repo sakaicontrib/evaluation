@@ -134,8 +134,6 @@ public class TemplateBean {
 		return currTemplate;
 	}
 
-
-
 	/*
 	 * INITIALIZATION
 	 */
@@ -301,6 +299,7 @@ public class TemplateBean {
 	*/
 	public String saveTemplate(){   
 		//TODO: hibernate bugs
+		currTemplate=templatesLogic.getTemplateById(templateId);
 		currTemplate.setTitle(title);
 		currTemplate.setDescription(description);
 		currTemplate.setSharing(modifier);
