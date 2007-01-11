@@ -137,7 +137,7 @@ public class EvalTestDataLoad {
 	 */
 	public EvalItem item2;
 	/**
-	 * Item that is used in {@link #templateUnused} and {@link #templatePublicUnused}, 
+	 * Item that is used in {@link #templateAdmin} and {@link #templateUnused} and {@link #templatePublicUnused}, 
 	 * unlocked, scaled, MAINT_USER_ID owns, private
 	 */
 	public EvalItem item3;
@@ -151,7 +151,7 @@ public class EvalTestDataLoad {
 	 */
 	public EvalItem item5;
 	/**
-	 * Item that is used in {@link #templateUser}, textual, unlocked, MAINT_USER_ID owns, private
+	 * Item that is used in {@link #templateUserUnused}, textual, unlocked, MAINT_USER_ID owns, private
 	 */
 	public EvalItem item6;
 
@@ -159,12 +159,13 @@ public class EvalTestDataLoad {
 	public EvalTemplateItem templateItem1User;
 	public EvalTemplateItem templateItem1P;
 	public EvalTemplateItem templateItem2A;
+	public EvalTemplateItem templateItem3A;
 	public EvalTemplateItem templateItem3U;
 	public EvalTemplateItem templateItem3PU;
 	public EvalTemplateItem templateItem5A;
 	public EvalTemplateItem templateItem5User;
 	public EvalTemplateItem templateItem5U;
-	public EvalTemplateItem templateItem6User;
+	public EvalTemplateItem templateItem6UU;
 
 
 	// TEMPLATES
@@ -172,7 +173,7 @@ public class EvalTestDataLoad {
 	//public EvalTemplate templateVisible;
 	/**
 	 * Template used by admin, private, ADMIN_USER_ID owns, locked
-	 * <br/>Uses {@link #item2} and {@link #item5}
+	 * <br/>Uses {@link #item2} and {@link #item3} and {@link #item5}
 	 */
 	public EvalTemplate templateAdmin;
 	/**
@@ -400,7 +401,7 @@ public class EvalTestDataLoad {
 				"expert desc", null, null, UNLOCKED);
 
 		// assign items to templates
-		templateItem1User = new EvalTemplateItem( new Date(), MAINT_USER_ID, 
+		templateItem1User = new EvalTemplateItem( new Date(), USER_ID, 
 				templateUser, item1, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
 				null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, 
 				Boolean.FALSE, null);
@@ -408,33 +409,106 @@ public class EvalTestDataLoad {
 				templatePublic, item1, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
 				null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, 
 				Boolean.FALSE, null);
-		templateItem2A = null;
-		templateItem3U = null;
-		templateItem3PU = null;
-		templateItem5A = null;
-		templateItem5User = null;
-		templateItem5U = null;
-		templateItem6User = null;
+		templateItem2A = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
+				templateAdmin, item2, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
+				null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, 
+				Boolean.FALSE, null);
+		templateItem3A = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
+				templateAdmin, item3, new Integer(2), EvalConstants.ITEM_CATEGORY_COURSE,
+				null, EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL, Boolean.FALSE, 
+				Boolean.FALSE, null);
+		templateItem3U = new EvalTemplateItem( new Date(), MAINT_USER_ID, 
+				templateUnused, item3, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
+				null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, 
+				Boolean.FALSE, null);
+		templateItem3PU = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
+				templatePublicUnused, item3, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
+				null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, 
+				Boolean.FALSE, null);
+		templateItem5A = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
+				templateAdmin, item5, new Integer(3), EvalConstants.ITEM_CATEGORY_INSTRUCTOR,
+				new Integer(3), null, Boolean.FALSE, 
+				Boolean.FALSE, null);
+		templateItem5User = new EvalTemplateItem( new Date(), USER_ID, 
+				templateUser, item5, new Integer(2), EvalConstants.ITEM_CATEGORY_INSTRUCTOR,
+				new Integer(2), null, Boolean.FALSE, 
+				Boolean.FALSE, null);
+		templateItem5U = new EvalTemplateItem( new Date(), MAINT_USER_ID, 
+				templateUnused, item5, new Integer(2), EvalConstants.ITEM_CATEGORY_INSTRUCTOR,
+				new Integer(3), null, Boolean.FALSE, 
+				Boolean.FALSE, null);
+		templateItem6UU = new EvalTemplateItem( new Date(), USER_ID, 
+				templateUserUnused, item6, new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE,
+				new Integer(4), null, Boolean.FALSE, 
+				Boolean.FALSE, null);
 
-		Set s = new HashSet();
-		s.add(templateUser);
-		s.add(templatePublic);
-		item1.setTemplates(s);
-		s.remove(templateUser);
-		s.add(templateAdmin);
-		item2.setTemplates(s);
-		s = new HashSet();
-		s.add(templateUnused);
-		s.add(templatePublicUnused);
-		item3.setTemplates(s);
-		s = new HashSet();
-		s.add(templateAdmin);
-		s.add(templateUser);
-		s.add(templateUnused);
-		item5.setTemplates(s);
-		s = new HashSet();
-		s.add(templateUserUnused);
-		item6.setTemplates(s);
+		// associate the templates with the link
+		templateAdmin.setTemplateItems( new HashSet() );
+		templateAdmin.getTemplateItems().add( templateItem2A );
+		templateAdmin.getTemplateItems().add( templateItem3A );
+		templateAdmin.getTemplateItems().add( templateItem5A );
+
+		templatePublicUnused.setTemplateItems( new HashSet() );
+		templatePublicUnused.getTemplateItems().add( templateItem3PU );
+
+		templatePublic.setTemplateItems( new HashSet() );
+		templatePublic.getTemplateItems().add( templateItem1P );
+
+		templateUnused.setTemplateItems( new HashSet() );
+		templateUnused.getTemplateItems().add( templateItem3U );
+		templateUnused.getTemplateItems().add( templateItem5U );
+
+		templateUser.setTemplateItems( new HashSet() );
+		templateUser.getTemplateItems().add( templateItem1User );
+		templateUser.getTemplateItems().add( templateItem5User );
+
+		templateUserUnused.setTemplateItems( new HashSet() );
+		templateUserUnused.getTemplateItems().add( templateItem6UU );
+
+		// associate the items with the link
+		item1.setTemplateItems( new HashSet() );
+		item1.getTemplateItems().add( templateItem1P );
+		item1.getTemplateItems().add( templateItem1User );
+
+		item2.setTemplateItems( new HashSet() );
+		item2.getTemplateItems().add( templateItem2A );
+
+		item3.setTemplateItems( new HashSet() );
+		item3.getTemplateItems().add( templateItem3A );
+		item3.getTemplateItems().add( templateItem3PU );
+		item3.getTemplateItems().add( templateItem3U );
+
+		item4.setTemplateItems( new HashSet() );
+
+		item5.setTemplateItems( new HashSet() );
+		item5.getTemplateItems().add( templateItem5A );
+		item5.getTemplateItems().add( templateItem5U );
+		item5.getTemplateItems().add( templateItem5User );
+
+		item6.setTemplateItems( new HashSet() );
+		item6.getTemplateItems().add( templateItem6UU );
+
+
+		// TODO - change these to no longer use the old linking method
+//		Set s = new HashSet();
+//		s.add(templateUser);
+//		s.add(templatePublic);
+//		item1.setTemplates(s);
+//		s.remove(templateUser);
+//		s.add(templateAdmin);
+//		item2.setTemplates(s);
+//		s = new HashSet();
+//		s.add(templateUnused);
+//		s.add(templatePublicUnused);
+//		item3.setTemplates(s);
+//		s = new HashSet();
+//		s.add(templateAdmin);
+//		s.add(templateUser);
+//		s.add(templateUnused);
+//		item5.setTemplates(s);
+//		s = new HashSet();
+//		s.add(templateUserUnused);
+//		item6.setTemplates(s);
 
 		// init the evaluation times
 		Calendar calendar = GregorianCalendar.getInstance();
@@ -605,7 +679,14 @@ public class EvalTestDataLoad {
 
 		dao.save(templateItem1User);
 		dao.save(templateItem1P);
-		// TODO - add rest
+		dao.save(templateItem2A);
+		dao.save(templateItem3A);
+		dao.save(templateItem3PU);
+		dao.save(templateItem3U);
+		dao.save(templateItem5A);
+		dao.save(templateItem5U);
+		dao.save(templateItem5User);
+		dao.save(templateItem6UU);
 
 		dao.save(emailTemplate1);
 		dao.save(emailTemplate2);
