@@ -133,8 +133,13 @@ public class TemplateModifyProducer implements ViewComponentProducer,NavigationC
 		UIOutput.make(form, "template-title-header", messageLocator.getMessage("modifytemplate.template.title.header")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(form, "title",null,"#{templateBean.title}");
 		
-		UIInternalLink.make(form, "modify_title_desc_link", messageLocator.getMessage("modifytemplate.modify.title.desc.link"),
-				new EvalViewParameters(TemplateProducer.VIEW_ID, null, TemplateModifyProducer.VIEW_ID));
+		UIInternalLink.make(form, 
+				"modify_title_desc_link", 
+				messageLocator.getMessage("modifytemplate.modify.title.desc.link"),
+				new EvalViewParameters(
+						TemplateProducer.VIEW_ID, 
+						templateBean.getCurrTemplate().getId(), 
+						TemplateModifyProducer.VIEW_ID));
 		
 		UIOutput.make(form, "description-header", messageLocator.getMessage("modifytemplate.description.header")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(form, "description",null, "#{templateBean.description}");	
