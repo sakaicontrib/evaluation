@@ -16,8 +16,6 @@ package org.sakaiproject.evaluation.tool.producers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.sakaiproject.evaluation.logic.EvalItemsLogic;
-
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.ItemDisplay;
 import org.sakaiproject.evaluation.tool.TemplateBean;
