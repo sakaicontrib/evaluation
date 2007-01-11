@@ -25,7 +25,6 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
-import org.sakaiproject.evaluation.logic.EvaluationLogic;
 import org.sakaiproject.evaluation.logic.model.Context;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
