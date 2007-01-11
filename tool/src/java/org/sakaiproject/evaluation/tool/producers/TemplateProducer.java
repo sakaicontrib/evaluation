@@ -52,11 +52,6 @@ public class TemplateProducer implements ViewComponentProducer, ViewParamsReport
 	public String getViewID() {
 		return VIEW_ID;
 	}
-	
-	private TemplateBean templateBean;	
-	public void setTemplateBean(TemplateBean templateBean) {
-		this.templateBean = templateBean;
-	}
 
 	private MessageLocator messageLocator;
 	public void setMessageLocator(MessageLocator messageLocator) {
