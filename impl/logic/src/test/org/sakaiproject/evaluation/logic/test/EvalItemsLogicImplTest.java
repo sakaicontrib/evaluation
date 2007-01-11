@@ -14,6 +14,10 @@
 
 package org.sakaiproject.evaluation.logic.test;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import junit.framework.Assert;
 
 import org.sakaiproject.evaluation.dao.EvaluationDao;
@@ -22,6 +26,7 @@ import org.sakaiproject.evaluation.logic.test.stubs.EvalExternalLogicStub;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
+import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.PreloadTestData;
@@ -92,6 +97,39 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 	 */
 
 
+	public void testPreloadedData() {
+		// this test is just making sure that hibernate is actually linking the items
+		// to the templates the way we think it is
+		List l = null;
+		List ids = null;
+
+		Assert.assertEquals(10, evaluationDao.countAll(EvalTemplateItem.class) );
+
+		EvalTemplate template = (EvalTemplate) 
+			evaluationDao.findById(EvalTemplate.class, etdl.templateAdmin.getId());
+
+		// No longer supporting this type of linkage between templates and items
+//		Set items = template.getItems();
+//		Assert.assertNotNull( items );
+//		Assert.assertEquals(3, items.size());
+
+		Set tItems = template.getTemplateItems();
+		Assert.assertNotNull( tItems );
+		Assert.assertEquals(3, tItems.size());
+		ids = EvalTestDataLoad.makeIdList(tItems);
+		Assert.assertTrue(ids.contains( etdl.templateItem2A.getId() ));
+		Assert.assertTrue(ids.contains( etdl.templateItem3A.getId() ));
+		Assert.assertTrue(ids.contains( etdl.templateItem5A.getId() ));
+		
+		EvalItem item = (EvalItem) evaluationDao.findById(EvalItem.class, etdl.item1.getId());
+		Set itItems = item.getTemplateItems();
+		Assert.assertNotNull( itItems );
+		Assert.assertEquals(2, itItems.size());
+		ids = EvalTestDataLoad.makeIdList(itItems);
+		Assert.assertTrue(ids.contains( etdl.templateItem1P.getId() ));
+		Assert.assertTrue(ids.contains( etdl.templateItem1User.getId() ));
+
+	}
 
 	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl#getItemById(java.lang.Long)}.

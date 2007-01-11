@@ -39,7 +39,7 @@
 		</set>
 		<!-- maps from templates to items via the itemtemplate joining table (new) -->
         <set name="templateItems" inverse="true" fetch="join">
-            <key column="item_id" not-null="true" />
+            <key column="template_id" not-null="true" />
             <one-to-many class="org.sakaiproject.evaluation.model.EvalTemplateItem" />
         </set>
         <!-- locked templates cannot be edited or removed, any template used in an evaluation must be locked also -->
