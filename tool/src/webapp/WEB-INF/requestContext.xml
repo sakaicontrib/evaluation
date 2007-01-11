@@ -92,7 +92,6 @@
 
 	<bean class="org.sakaiproject.evaluation.tool.producers.TemplateProducer" >
 		<property name="messageLocator" ref="messageLocator" />
-		<property name="templateBean" ref="templateBean" />	
 	</bean>
 
 	<bean class="org.sakaiproject.evaluation.tool.producers.TemplateModifyProducer">
