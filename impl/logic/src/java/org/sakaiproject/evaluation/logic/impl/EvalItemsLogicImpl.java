@@ -22,6 +22,7 @@ import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
+import org.sakaiproject.evaluation.model.EvalTemplateItem;
 
 
 /**
@@ -70,9 +71,9 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalItemsLogic#deleteItem(java.lang.Long, java.lang.String)
 	 */
-	public boolean deleteItem(Long itemId, String userId) {
+	public void deleteItem(Long itemId, String userId) {
 		// TODO Auto-generated method stub
-		return false;
+
 	}
 
 	/* (non-Javadoc)
@@ -83,12 +84,45 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 		return null;
 	}
 
+	public List getItemsForTemplate(Long templateId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public EvalTemplateItem getTemplateItemById(Long templateItemId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void saveTemplateItem(EvalTemplateItem templateItem, String userId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void deleteTemplateItem(Long templateItemId, String userId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public List getTemplateItemsForTemplate(Long templateId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalItemsLogic#canControlItem(java.lang.String, java.lang.Long)
 	 */
 	public boolean canControlItem(String userId, Long itemId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalItemsLogic#canControlTemplateItem(java.lang.String, java.lang.Long)
+	 */
+	public boolean canControlTemplateItem(String userId, Long templateItemId) {
 		// TODO Auto-generated method stub
 		return false;
 	}

@@ -17,6 +17,7 @@ package org.sakaiproject.evaluation.logic;
 import java.util.List;
 
 import org.sakaiproject.evaluation.model.EvalItem;
+import org.sakaiproject.evaluation.model.EvalTemplateItem;
 
 
 /**
@@ -28,13 +29,14 @@ import org.sakaiproject.evaluation.model.EvalItem;
 public interface EvalItemsLogic {
 
 	/**
-	 * Get an item by its unique id<br/> 
+	 * Get an item by its unique id<br/>
+	 * An item represents a reusable question item in the system<br/>
 	 * Note: if you need to get a group of items
-	 * then use {@link #getItemsOwnedByUser(String)} or use the template
-	 * collection of template items
+	 * then use {@link #getItemsOwnedByUser(String)} or 
+	 * use the template collection of templateItems to get the items
 	 * 
 	 * @param itemId the id of an EvalItem object
-	 * @return the item or null if not found
+	 * @return an {@link EvalItem} object or null if not found
 	 */
 	public EvalItem getItemById(Long itemId);
 
@@ -55,9 +57,8 @@ public interface EvalItemsLogic {
 	 * 
 	 * @param itemId the id of an EvalItem object
 	 * @param userId the internal user id (not username)
-	 * @return true if the item was found and removed, false otherwise
 	 */
-	public boolean deleteItem(Long itemId, String userId);
+	public void deleteItem(Long itemId, String userId);
 
 	/**
 	 * Get a list of all the items visible to a specific user,
@@ -70,9 +71,69 @@ public interface EvalItemsLogic {
 	 * user, if set to a sharing constant then return just the visible
 	 * items that match that sharing setting (can be used to get all
 	 * items owned by this user for example)
-	 * @return a list of EvalItem objects
+	 * @return a list of {@link EvalItem} objects
 	 */
 	public List getItemsForUser(String userId, String sharingConstant);
+
+	/**
+	 * Get a list of items in a template, most of the time you will want to
+	 * get the items by getting the templateItems from the template and then
+	 * using that to get the items themselves or 
+	 * using {@link #getTemplateItemsForTemplate(Long)},
+	 * but if you do not have the template and do not need the template items
+	 * then use this method
+	 * 
+	 * @param templateId the unique id of an EvalTemplate object
+	 * @return a list of {@link EvalItem} objects
+	 */
+	public List getItemsForTemplate(Long templateId);
+
+	// TEMPLATE ITEMS
+
+	/**
+	 * Get a template item by its unique id<br/>
+	 * A template item represents a specific instance of an item in a specific template<br/>
+	 * Note: if you need to get a group of template items
+	 * then use {@link #getTemplateItemsForTemplate(Long)}
+	 * 
+	 * @param templateItemId the id of an EvalTemplateItem object
+	 * @return an {@link EvalTemplateItem} object or null if not found
+	 */
+	public EvalTemplateItem getTemplateItemById(Long templateItemId);
+
+	/**
+	 * Save a template item to create a link between an item and a template or
+	 * update display settings for an item in a template,
+	 * template items cannot be saved in locked templates<br/>
+	 * A template item represents a specific instance of an item in a specific template
+	 * 
+	 * @param templateItem a templateItem object to be saved
+	 * @param userId the internal user id (not username)
+	 */
+	public void saveTemplateItem(EvalTemplateItem templateItem, String userId);
+
+	/**
+	 * Remove a template item (this removes the item from the template effectively),
+	 * template items cannot be removed from locked templates,
+	 * use {@link #canControlTemplateItem(String, Long)} to check if a
+	 * user has permissions and avoid possible exceptions
+	 * <b>Note:</b> This does not remove the associated item
+	 * 
+	 * @param templateItemId the id of an EvalTemplateItem object
+	 * @param userId the internal user id (not username)
+	 */
+	public void deleteTemplateItem(Long templateItemId, String userId);
+
+	/**
+	 * Get all the templateItems for this template, most of the time you will want to
+	 * get the items by getting the templateItems from the template,
+	 * but if you do not have the template and do not need the template items
+	 * then use this method
+	 * 
+	 * @param templateId the unique id of an EvalTemplate object
+	 * @return a list of {@link EvalTemplateItem} objects
+	 */
+	public List getTemplateItemsForTemplate(Long templateId);
 
 
 	// PERMISSIONS
@@ -82,9 +143,19 @@ public interface EvalItemsLogic {
 	 * locked items cannot be modified in any way
 	 * 
 	 * @param userId the internal user id (not username)
-	 * @param itemId the id of an EvalItem object
+	 * @param itemId the id of an {@link EvalItem} object
 	 * @return true if user can control this item, false otherwise
 	 */
 	public boolean canControlItem(String userId, Long itemId);
+
+	/**
+	 * Check if a user can control (update or delete) a specific templateItem,
+	 * templateItems associated with a locked template cannot be modified
+	 * 
+	 * @param userId the internal user id (not username)
+	 * @param templateItemId the id of an {@link EvalTemplateItem} object
+	 * @return true if user can control this templateItem, false otherwise
+	 */
+	public boolean canControlTemplateItem(String userId, Long templateItemId);
 
 }
