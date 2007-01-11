@@ -35,6 +35,7 @@ import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
+import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.genericdao.api.finders.ByPropsFinder;
 import org.sakaiproject.site.api.Site;
@@ -625,9 +626,8 @@ public class EvaluationLogicImpl implements EvaluationLogic {
 	}
 
 
-	public boolean deleteItem(Long itemId, String userId) {
+	public void deleteItem(Long itemId, String userId) {
 		// TODO Auto-generated method stub
-		return false;
 	}
 
 
@@ -794,6 +794,42 @@ public class EvaluationLogicImpl implements EvaluationLogic {
 
 
 	public void saveResponse(EvalResponse response, String userId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public boolean canControlTemplateItem(String userId, Long templateItemId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+	public void deleteTemplateItem(Long templateItemId, String userId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public List getItemsForTemplate(Long templateId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public EvalTemplateItem getTemplateItemById(Long templateItemId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public List getTemplateItemsForTemplate(Long templateId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public void saveTemplateItem(EvalTemplateItem templateItem, String userId) {
 		// TODO Auto-generated method stub
 		
 	}
