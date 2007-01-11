@@ -76,7 +76,6 @@ public class PreviewItemProducer implements ViewComponentProducer {
 		UIInternalLink.make(tofill, "summary-toplink", messageLocator.getMessage("summary.page.title"), 
 				new SimpleViewParameters(SummaryProducer.VIEW_ID));		
 		
-		
 		if(templateBean.itemClassification.equals(EvalConstants.ITEM_TYPE_SCALED)){//"Scaled/Survey"
 			
 			EvalScale  scale = templateBean.itemPreview.getScale();
