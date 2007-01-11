@@ -23,15 +23,14 @@ import java.util.Map;
 
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.logic.model.Context;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
+import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
-import org.sakaiproject.evaluation.tool.ItemDisplay;
 import org.sakaiproject.evaluation.tool.params.PreviewEvalParameters;
 
 
@@ -281,31 +280,42 @@ private void doFillComponent(EvalItem myItem, int i,
 
 	if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)) { //scaled
 
-		ItemDisplay itemDisplay = new ItemDisplay(myItem);
-		String values[] = itemDisplay.getScaleValues();
-		String labels[] = itemDisplay.getScaleLabels();
-
+		EvalScale  scale =  myItem.getScale();
+		String[] scaleOptions = scale.getOptions();
+		int optionCount = scaleOptions.length;
+		String scaleValues[] = new String[optionCount];
+		String scaleLabels[] = new String[optionCount];
+		
+		
 		String setting = myItem.getScaleDisplaySetting();
 		Boolean useNA = myItem.getUsesNA();
 
 		if (setting.equals(EvalConstants.ITEM_SCALE_DISPLAY_COMPACT)) { //compact
 			UIBranchContainer compact = UIBranchContainer.make(radiobranch,"compactDisplay:"); 
+			
+			String compactDisplayStart = scaleOptions[0];		
+			String compactDisplayEnd = scaleOptions[optionCount - 1];
 
+			for (int count = 0; count < optionCount; count++) {
+				
+				scaleValues[count] = new Integer(count).toString();
+				scaleLabels[count] = " ";
+			}
+			
 			UIOutput.make(compact, "itemNum", (new Integer(i + 1)) //$NON-NLS-1$
 					.toString());
 			UIOutput.make(compact, "itemText", myItem.getItemText()); //$NON-NLS-1$
-			UIOutput.make(compact, "compactDisplayStart", itemDisplay.getCompactDisplayStart());// Radio Buttons
-			UISelect radios = UISelect.make(compact, "dummyRadio", values, //$NON-NLS-1$
-					labels, null, false);
-			radios.optionnames = UIOutputMany.make(labels);
+			UIOutput.make(compact, "compactDisplayStart", compactDisplayStart);// Radio Buttons
+			UISelect radios = UISelect.make(compact, "dummyRadio", scaleValues,scaleLabels, null, false);
+			radios.optionnames = UIOutputMany.make(scaleLabels);
 
 			String selectID = radios.getFullID();
-			for (int j = 0; j < values.length; ++j) {
+			for (int j = 0; j < scaleValues.length; ++j) {
 				UIBranchContainer rb = UIBranchContainer.make(compact,
 						"scaleOptions:", Integer.toString(j)); //$NON-NLS-1$
 				UISelectChoice.make(rb, "dummyRadioValue", selectID, j); //$NON-NLS-1$
 			}
-			UIOutput.make(compact, "compactDisplayEnd", itemDisplay.getCompactDisplayEnd());
+			UIOutput.make(compact, "compactDisplayEnd", compactDisplayEnd);
 
 			if (useNA.booleanValue() == true) {
 				UIBranchContainer radiobranch3 = UIBranchContainer.make(
@@ -322,7 +332,7 @@ private void doFillComponent(EvalItem myItem, int i,
 					.toString());
 			UIOutput.make(compactColored, "itemText", myItem.getItemText()); //$NON-NLS-1$
 			// Get the scale ideal value (none, low, mid, high )
-			String ideal = myItem.getScale().getIdeal();
+			String ideal = scale.getIdeal();
 			// Compact start and end label containers
 			UIBranchContainer compactStartContainer = UIBranchContainer
 					.make(compactColored, "compactStartContainer:"); //$NON-NLS-1$
@@ -355,9 +365,16 @@ private void doFillComponent(EvalItem myItem, int i,
 			compactEndContainer.decorators = new DecoratorList(
 					new UIColourDecorator(null, endColor));
 
+			String compactDisplayStart = scaleOptions[0];		
+			String compactDisplayEnd = scaleOptions[optionCount - 1];
+			for (int count = 0; count < optionCount; count++) {
+				
+				scaleValues[count] = new Integer(count).toString();
+				scaleLabels[count] = " ";
+			}
 			// Compact start and end actual labels
-			UIOutput.make(compactStartContainer, "compactDisplayStart", itemDisplay.getCompactDisplayStart());
-			UIOutput.make(compactEndContainer, "compactDisplayEnd",itemDisplay.getCompactDisplayEnd());
+			UIOutput.make(compactStartContainer, "compactDisplayStart", compactDisplayStart);
+			UIOutput.make(compactEndContainer, "compactDisplayEnd",compactDisplayEnd);
 
 			// For the radio buttons
 			UIBranchContainer compactRadioContainer = UIBranchContainer
@@ -376,18 +393,18 @@ private void doFillComponent(EvalItem myItem, int i,
 			UILink.make(compactRadioContainer, "idealImage", idealImage); //$NON-NLS-1$
 
 			UISelect radios = UISelect.make(compactRadioContainer,
-					"dummyRadio", values, labels, null, false); //$NON-NLS-1$
-			radios.optionnames = UIOutputMany.make(labels);
+					"dummyRadio", scaleValues, scaleLabels, null, false); //$NON-NLS-1$
+			radios.optionnames = UIOutputMany.make(scaleLabels);
 			String selectID = radios.getFullID();
-			for (int j = 0; j < values.length; ++j) {
+			for (int j = 0; j < scaleValues.length; ++j) {
 				UIBranchContainer radioBranchFirst = UIBranchContainer
-						.make(compactRadioContainer, "scaleOptionsFirst:", //$NON-NLS-1$
+						.make(compactRadioContainer, "scaleOptionsFirst:",
 								Integer.toString(j));
 				UISelectChoice.make(radioBranchFirst,
 						"dummyRadioValueFirst", selectID, j); //$NON-NLS-1$
 
 				UIBranchContainer radioBranchSecond = UIBranchContainer
-						.make(compactRadioContainer, "scaleOptionsSecond:", //$NON-NLS-1$
+						.make(compactRadioContainer, "scaleOptionsSecond:",
 								Integer.toString(j));
 				UISelectChoice.make(radioBranchSecond,
 						"dummyRadioValueSecond", selectID, j); //$NON-NLS-1$
@@ -402,6 +419,13 @@ private void doFillComponent(EvalItem myItem, int i,
 
 		} else if (setting.equals(EvalConstants.ITEM_SCALE_DISPLAY_FULL) || setting.equals(EvalConstants.ITEM_SCALE_DISPLAY_FULL_COLORED)
 				|| setting.equals(EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL)) { //full, full colored, vertical
+			
+			for (int count = 0; count < optionCount; count++) {
+
+				scaleValues[count] = new Integer(count).toString();
+				scaleLabels[count] = scaleOptions[count];	
+			}
+			
 			UIBranchContainer fullFirst = UIBranchContainer.make(
 					radiobranch, "fullType:"); //$NON-NLS-1$
 			UIOutput.make(fullFirst, "itemNum", (new Integer(i + 1)) //$NON-NLS-1$
@@ -429,11 +453,10 @@ private void doFillComponent(EvalItem myItem, int i,
 				UIBranchContainer full = UIBranchContainer.make(
 						radiobranchFullRow, "fullDisplay:"); //$NON-NLS-1$
 				// Radio Buttons
-				UISelect radios = UISelect.make(full, "dummyRadio", values,
-						labels, null, false);
-				radios.optionnames = UIOutputMany.make(labels);
+				UISelect radios = UISelect.make(full, "dummyRadio", scaleValues,scaleLabels, null, false);
+				radios.optionnames = UIOutputMany.make(scaleLabels);
 				String selectID = radios.getFullID();
-				for (int j = 0; j < values.length; ++j) {
+				for (int j = 0; j < scaleValues.length; ++j) {
 					UIBranchContainer radiobranchNested = UIBranchContainer.make(full, "scaleOptions:", Integer.toString(j));
 					UISelectChoice.make(radiobranchNested,
 							"dummyRadioValue", selectID, j); //$NON-NLS-1$
@@ -444,10 +467,10 @@ private void doFillComponent(EvalItem myItem, int i,
 			else if (setting.equals(EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL)){
 				UIBranchContainer vertical = UIBranchContainer.make(
 						radiobranchFullRow, "verticalDisplay:"); //$NON-NLS-1$
-				UISelect radios = UISelect.make(vertical, "dummyRadio",values, labels, null, false);
-				radios.optionnames = UIOutputMany.make(labels);
+				UISelect radios = UISelect.make(vertical, "dummyRadio",scaleValues, scaleLabels, null, false);
+				radios.optionnames = UIOutputMany.make(scaleLabels);
 				String selectID = radios.getFullID();
-				for (int j = 0; j < values.length; ++j) {
+				for (int j = 0; j < scaleValues.length; ++j) {
 					UIBranchContainer radiobranchInside = UIBranchContainer
 							.make(vertical, "scaleOptions:", Integer.toString(j));
 					UISelectChoice.make(radiobranchInside,
@@ -459,7 +482,7 @@ private void doFillComponent(EvalItem myItem, int i,
 				UIBranchContainer fullColored = UIBranchContainer.make(
 						radiobranchFullRow, "fullDisplayColored:"); //$NON-NLS-1$
 				// Get the scale ideal value (none, low, mid, high )
-				String ideal = myItem.getScale().getIdeal();
+				String ideal = scale.getIdeal();
 
 				// Set the ideal image
 				String idealImage = ""; //$NON-NLS-1$
@@ -474,12 +497,12 @@ private void doFillComponent(EvalItem myItem, int i,
 
 				UILink.make(fullColored, "idealImage", idealImage); //$NON-NLS-1$
 				// UILink.make(fullColored, "idealImageSafari", idealImage);
-				UISelect radios = UISelect.make(fullColored, "dummyRadio",values, labels, null, false);
+				UISelect radios = UISelect.make(fullColored, "dummyRadio",scaleValues, scaleLabels, null, false);
 
-				radios.optionnames = UIOutputMany.make(labels);
+				radios.optionnames = UIOutputMany.make(scaleLabels);
 
 				String selectID = radios.getFullID();
-				for (int j = 0; j < values.length; ++j) {
+				for (int j = 0; j < scaleValues.length; ++j) {
 					UIBranchContainer radiobranchInside = UIBranchContainer
 							.make(fullColored, "scaleOptions:", Integer.toString(j));
 					UISelectChoice.make(radiobranchInside,
@@ -504,12 +527,17 @@ private void doFillComponent(EvalItem myItem, int i,
 				UIBoundBoolean.make(radiobranch3, "itemNA", useNA); //$NON-NLS-1$
 				UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc"));				
 			}
-			UISelect radios = UISelect.make(stepped, "dummyRadio", values, //$NON-NLS-1$
-					labels, null, false);
-			radios.optionnames = UIOutputMany.make(labels);
+			
+			for (int count = 1; count <= optionCount; count++) {
+				scaleValues[optionCount - count] = new Integer(optionCount - count).toString();
+				scaleLabels[optionCount - count] = scaleOptions[count-1];
+			}
+			
+			UISelect radios = UISelect.make(stepped, "dummyRadio", scaleValues,scaleLabels, null, false);
+			radios.optionnames = UIOutputMany.make(scaleLabels);
 			String selectID = radios.getFullID();
 
-			for (int j = 0; j < values.length; ++j) {
+			for (int j = 0; j < scaleValues.length; ++j) {
 				UIBranchContainer radioTopLabelBranch = UIBranchContainer
 						.make(stepped, "scaleTopLabelOptions:", Integer.toString(j));
 				UISelectLabel.make(radioTopLabelBranch,
@@ -551,7 +579,7 @@ private void doFillComponent(EvalItem myItem, int i,
 				UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc"));				
 			}
 			// Get the scale ideal value (none, low, mid, high )
-			String ideal = myItem.getScale().getIdeal();
+			String ideal = scale.getIdeal();
 			String idealImage = ""; //$NON-NLS-1$
 			if (ideal == null)
 				idealImage = EvaluationConstant.COLORED_IMAGE_URLS[0];
@@ -563,19 +591,23 @@ private void doFillComponent(EvalItem myItem, int i,
 				idealImage = EvaluationConstant.COLORED_IMAGE_URLS[3];
 
 			UILink.make(steppedColored, "idealImage", idealImage); //$NON-NLS-1$
-			UISelect radios = UISelect.make(steppedColored, "dummyRadio",
-					values, labels, null, false);
-			radios.optionnames = UIOutputMany.make(labels);
+			
+			for (int count = 1; count <= optionCount; count++) {
+				
+				scaleValues[optionCount - count] = new Integer(optionCount - count).toString();
+				scaleLabels[optionCount - count] = scaleOptions[count-1];
+			}
+			UISelect radios = UISelect.make(steppedColored, "dummyRadio",scaleValues, scaleLabels, null, false);
+			radios.optionnames = UIOutputMany.make(scaleLabels);
 			String selectID = radios.getFullID();
-			for (int j = 0; j < values.length; ++j) {
+			for (int j = 0; j < scaleValues.length; ++j) {
 				UIBranchContainer rowBranch = UIBranchContainer.make(
 						steppedColored, "rowBranch:", Integer.toString(j)); //$NON-NLS-1$
 				// Actual label
 				UISelectLabel.make(rowBranch, "topLabel", selectID, j); //$NON-NLS-1$
 
 				// Corner Image
-				UILink.make(rowBranch, "cornerImage", //$NON-NLS-1$
-						EvaluationConstant.STEPPED_IMAGE_URLS[0]);
+				UILink.make(rowBranch, "cornerImage",EvaluationConstant.STEPPED_IMAGE_URLS[0]);
 
 				// This branch container is created to help in creating the
 				// middle images after the LABEL
@@ -617,16 +649,22 @@ private void doFillComponent(EvalItem myItem, int i,
 			UIBoundBoolean.make(radiobranch3, "itemNA", useNA); //$NON-NLS-1$
 			UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc"));			
 		}
-		// Radio Buttons
-		ItemDisplay itemDisplay = new ItemDisplay(myItem);
-		String values[] = itemDisplay.getScaleValues();
-		String labels[] = itemDisplay.getScaleLabels();
 
-		UISelect radios = UISelect.make(block, "dummyRadio", values, //$NON-NLS-1$
-				labels, null, false);
-		radios.optionnames = UIOutputMany.make(labels);
+		EvalScale  scale = myItem.getScale();
+		String[] scaleOptions = scale.getOptions();
+		int optionCount = scaleOptions.length;
+		String scaleValues[] = new String[optionCount];
+		String scaleLabels[] = new String[optionCount];
+
+		for (int count = 1; count <= optionCount; count++) {
+			scaleValues[optionCount - count] = new Integer(optionCount - count).toString();
+			scaleLabels[optionCount - count] = scaleOptions[count-1];
+		}
+		
+		UISelect radios = UISelect.make(block, "dummyRadio", scaleValues,scaleLabels, null, false);
+		radios.optionnames = UIOutputMany.make(scaleLabels);
 		String selectID = radios.getFullID();
-		for (int j = 0; j < values.length; ++j) {
+		for (int j = 0; j < scaleValues.length; ++j) {
 			UIBranchContainer radioTopLabelBranch = UIBranchContainer.make(
 					block, "scaleTopLabelOptions:", Integer.toString(j)); //$NON-NLS-1$
 			UISelectLabel.make(radioTopLabelBranch, "dummyTopRadioLabel", //$NON-NLS-1$
@@ -647,8 +685,8 @@ private void doFillComponent(EvalItem myItem, int i,
 			UILink.make(radioBottomLabelBranch, "bottomImage", EvaluationConstant.STEPPED_IMAGE_URLS[2]);
 		}
 		// get child block item text
-/* TODO: wait for for Aaron's ItemsLogic method
-  		if (myItem.getBlockParent().booleanValue() == true) {
+		//TODO: wait for for Aaron's ItemsLogic method
+/*		if (myItem.getBlockParent().booleanValue() == true) {
 			Long parentID = myItem.getId();
 			Integer blockID = new Integer(parentID.intValue());
 			List childItems = logic.findItem(blockID);
@@ -659,7 +697,7 @@ private void doFillComponent(EvalItem myItem, int i,
 					EvalItem child = (EvalItem) childItems.get(j);
 					UIOutput.make(queRow, "queNo", Integer.toString(j + 1)); //$NON-NLS-1$
 					UIOutput.make(queRow, "queText", child.getItemText()); //$NON-NLS-1$
-					for (int k = 0; k < values.length; k++) {
+					for (int k = 0; k < scaleValues.length; k++) {
 						UIBranchContainer bc1 = UIBranchContainer.make(
 								queRow, "scaleValueOptions:", Integer //$NON-NLS-1$
 										.toString(k));
@@ -670,7 +708,7 @@ private void doFillComponent(EvalItem myItem, int i,
 			}// end of if
 
 		} // end of get child block item
-  		*/
+*/
 	} else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK) 
 			&& myItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED)) { //"Question Block","Stepped Colored"
 
@@ -687,36 +725,41 @@ private void doFillComponent(EvalItem myItem, int i,
 			UIBoundBoolean.make(radiobranch3, "itemNA", useNA); //$NON-NLS-1$
 			UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc"));
 		}
+		
+		EvalScale  scale = myItem.getScale();
+		String[] scaleOptions = scale.getOptions();
+		int optionCount = scaleOptions.length;
+		String scaleValues[] = new String[optionCount];
+		String scaleLabels[] = new String[optionCount];
 
+		for (int count = 1; count <= optionCount; count++) {
+			scaleValues[optionCount - count] = new Integer(optionCount - count).toString();
+			scaleLabels[optionCount - count] = scaleOptions[count-1];
+		}
+		
 		// Get the scale ideal value (none, low, mid, high )
-		String ideal = myItem.getScale().getIdeal();
-		String idealImage = ""; //$NON-NLS-1$
+		String ideal = scale.getIdeal();
+		
+		String idealImage = ""; 
 		if (ideal == null)
 			idealImage = EvaluationConstant.COLORED_IMAGE_URLS[0];
-		else if (ideal.equals("low")) //$NON-NLS-1$
+		else if (ideal.equals("low"))
 			idealImage = EvaluationConstant.COLORED_IMAGE_URLS[1];
-		else if (ideal.equals("mid")) //$NON-NLS-1$
+		else if (ideal.equals("mid")) 
 			idealImage = EvaluationConstant.COLORED_IMAGE_URLS[2];
 		else
 			idealImage = EvaluationConstant.COLORED_IMAGE_URLS[3];
 
-		// Radio Buttons
-		ItemDisplay itemDisplay = new ItemDisplay(myItem);
-		String values[] = itemDisplay.getScaleValues();
-		String labels[] = itemDisplay.getScaleLabels();
-
-		UISelect radios = UISelect.make(blockSteppedColored, "dummyRadio", //$NON-NLS-1$
-				values, labels, null, false);
-		radios.optionnames = UIOutputMany.make(labels);
+		UISelect radios = UISelect.make(blockSteppedColored, "dummyRadio",scaleValues, scaleLabels, null, false);
+		radios.optionnames = UIOutputMany.make(scaleLabels);
 		String selectID = radios.getFullID();
-		for (int j = 0; j < values.length; ++j) {
+		for (int j = 0; j < scaleValues.length; ++j) {
 			UIBranchContainer rowBranch = UIBranchContainer.make(
 					blockSteppedColored, "rowBranch:", Integer.toString(j)); //$NON-NLS-1$
 			// Actual label
 			UISelectLabel.make(rowBranch, "topLabel", selectID, j); //$NON-NLS-1$
 			// Corner Image
-			UILink.make(rowBranch, "cornerImage", //$NON-NLS-1$
-					EvaluationConstant.STEPPED_IMAGE_URLS[0]);
+			UILink.make(rowBranch, "cornerImage",EvaluationConstant.STEPPED_IMAGE_URLS[0]);
 			// This branch container is created to help in creating the
 			// middle images after the LABEL
 			for (int k = 0; k < j; ++k) {
