@@ -38,6 +38,7 @@ import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
+import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 
@@ -153,6 +154,18 @@ public class EvalTestDataLoad {
 	 * Item that is used in {@link #templateUser}, textual, unlocked, MAINT_USER_ID owns, private
 	 */
 	public EvalItem item6;
+
+	// TEMPLATE ITEMS
+	public EvalTemplateItem templateItem1User;
+	public EvalTemplateItem templateItem1P;
+	public EvalTemplateItem templateItem2A;
+	public EvalTemplateItem templateItem3U;
+	public EvalTemplateItem templateItem3PU;
+	public EvalTemplateItem templateItem5A;
+	public EvalTemplateItem templateItem5User;
+	public EvalTemplateItem templateItem5U;
+	public EvalTemplateItem templateItem6User;
+
 
 	// TEMPLATES
 	//public EvalTemplate templateShared;
@@ -387,6 +400,22 @@ public class EvalTestDataLoad {
 				"expert desc", null, null, UNLOCKED);
 
 		// assign items to templates
+		templateItem1User = new EvalTemplateItem( new Date(), MAINT_USER_ID, 
+				templateUser, item1, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
+				null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, 
+				Boolean.FALSE, null);
+		templateItem1P = new EvalTemplateItem( new Date(), MAINT_USER_ID, 
+				templatePublic, item1, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
+				null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, 
+				Boolean.FALSE, null);
+		templateItem2A = null;
+		templateItem3U = null;
+		templateItem3PU = null;
+		templateItem5A = null;
+		templateItem5User = null;
+		templateItem5U = null;
+		templateItem6User = null;
+
 		Set s = new HashSet();
 		s.add(templateUser);
 		s.add(templatePublic);
@@ -573,6 +602,10 @@ public class EvalTestDataLoad {
 		dao.save(item4);
 		dao.save(item5);
 		dao.save(item6);
+
+		dao.save(templateItem1User);
+		dao.save(templateItem1P);
+		// TODO - add rest
 
 		dao.save(emailTemplate1);
 		dao.save(emailTemplate2);

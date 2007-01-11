@@ -1,6 +1,6 @@
 package org.sakaiproject.evaluation.model;
 
-// Generated Jan 3, 2007 8:04:14 AM by Hibernate Tools 3.2.0.beta6a
+// Generated Jan 11, 2007 11:02:49 AM by Hibernate Tools 3.2.0.beta6a
 
 import java.util.Date;
 
@@ -17,11 +17,11 @@ public class EvalTemplateItem implements java.io.Serializable {
 
 	private String owner;
 
+	private EvalTemplate template;
+
+	private EvalItem item;
+
 	private Integer displayOrder;
-
-	private Boolean blockParent;
-
-	private Integer blockId;
 
 	private String itemCategory;
 
@@ -31,9 +31,9 @@ public class EvalTemplateItem implements java.io.Serializable {
 
 	private Boolean usesNA;
 
-	private EvalTemplate template;
+	private Boolean blockParent;
 
-	private EvalItem item;
+	private Integer blockId;
 
 	// Constructors
 
@@ -42,34 +42,31 @@ public class EvalTemplateItem implements java.io.Serializable {
 	}
 
 	/** minimal constructor */
-	public EvalTemplateItem(Date lastModified, String owner,
-			Integer displayOrder, Boolean blockParent, EvalTemplate template,
-			EvalItem item) {
+	public EvalTemplateItem(Date lastModified, String owner, EvalTemplate template, EvalItem item,
+			Integer displayOrder, String itemCategory) {
 		this.lastModified = lastModified;
 		this.owner = owner;
-		this.displayOrder = displayOrder;
-		this.blockParent = blockParent;
 		this.template = template;
 		this.item = item;
+		this.displayOrder = displayOrder;
+		this.itemCategory = itemCategory;
 	}
 
 	/** full constructor */
-	public EvalTemplateItem(Date lastModified, String owner,
-			Integer displayOrder, Boolean blockParent, Integer blockId,
-			String itemCategory, Integer displayRows,
-			String scaleDisplaySetting, Boolean usesNA, EvalTemplate template,
-			EvalItem item) {
+	public EvalTemplateItem(Date lastModified, String owner, EvalTemplate template, EvalItem item,
+			Integer displayOrder, String itemCategory, Integer displayRows, String scaleDisplaySetting, Boolean usesNA,
+			Boolean blockParent, Integer blockId) {
 		this.lastModified = lastModified;
 		this.owner = owner;
+		this.template = template;
+		this.item = item;
 		this.displayOrder = displayOrder;
-		this.blockParent = blockParent;
-		this.blockId = blockId;
 		this.itemCategory = itemCategory;
 		this.displayRows = displayRows;
 		this.scaleDisplaySetting = scaleDisplaySetting;
 		this.usesNA = usesNA;
-		this.template = template;
-		this.item = item;
+		this.blockParent = blockParent;
+		this.blockId = blockId;
 	}
 
 	// Property accessors
@@ -97,28 +94,28 @@ public class EvalTemplateItem implements java.io.Serializable {
 		this.owner = owner;
 	}
 
+	public EvalTemplate getTemplate() {
+		return this.template;
+	}
+
+	public void setTemplate(EvalTemplate template) {
+		this.template = template;
+	}
+
+	public EvalItem getItem() {
+		return this.item;
+	}
+
+	public void setItem(EvalItem item) {
+		this.item = item;
+	}
+
 	public Integer getDisplayOrder() {
 		return this.displayOrder;
 	}
 
 	public void setDisplayOrder(Integer displayOrder) {
 		this.displayOrder = displayOrder;
-	}
-
-	public Boolean getBlockParent() {
-		return this.blockParent;
-	}
-
-	public void setBlockParent(Boolean blockParent) {
-		this.blockParent = blockParent;
-	}
-
-	public Integer getBlockId() {
-		return this.blockId;
-	}
-
-	public void setBlockId(Integer blockId) {
-		this.blockId = blockId;
 	}
 
 	public String getItemCategory() {
@@ -153,20 +150,20 @@ public class EvalTemplateItem implements java.io.Serializable {
 		this.usesNA = usesNA;
 	}
 
-	public EvalTemplate getTemplate() {
-		return this.template;
+	public Boolean getBlockParent() {
+		return this.blockParent;
 	}
 
-	public void setTemplate(EvalTemplate template) {
-		this.template = template;
+	public void setBlockParent(Boolean blockParent) {
+		this.blockParent = blockParent;
 	}
 
-	public EvalItem getItem() {
-		return this.item;
+	public Integer getBlockId() {
+		return this.blockId;
 	}
 
-	public void setItem(EvalItem item) {
-		this.item = item;
+	public void setBlockId(Integer blockId) {
+		this.blockId = blockId;
 	}
 
 }

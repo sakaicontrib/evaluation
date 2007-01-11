@@ -18,21 +18,21 @@
         <property name="owner" type="java.lang.String" index="eval_templateitem_owner">
             <column name="OWNER" not-null="true" length="255" />
         </property>
+        <!-- linkage to the template -->
+        <many-to-one name="template" class="org.sakaiproject.evaluation.model.EvalTemplate" fetch="join">
+        	<column name="template_id" not-null="true" />
+        </many-to-one>
+        <!-- linkage to the item -->
+        <many-to-one name="item" class="org.sakaiproject.evaluation.model.EvalItem" fetch="join">
+        	<column name="item_id" not-null="true" />
+        </many-to-one>
         <!-- stores the display order of items in the linked template -->
         <property name="displayOrder" type="java.lang.Integer">
             <column name="DISPLAY_ORDER" not-null="true" />
         </property>
-        <!-- is this item the parent item for a block -->
-        <property name="blockParent" type="java.lang.Boolean">
-            <column name="BLOCK_PARENT" not-null="true" />
-        </property>
-        <!-- what is the unique id of this block if in a block -->
-        <property name="blockId" type="java.lang.Integer" index="eval_templateitem_blockid">
-            <column name="BLOCK_ID" />
-        </property>
         <!-- used to determine the type of item (course, instructor, etc.) -->
         <property name="itemCategory" type="java.lang.String">
-            <column name="ITEM_CATEGORY" length="255" />
+            <column name="ITEM_CATEGORY" length="255" not-null="true" />
         </property>
         <!-- how big should the text box be when rendering this item -->
         <property name="displayRows" type="java.lang.Integer">
@@ -44,13 +44,11 @@
         </property>
         <!-- Does the item use Not Available in this template -->
         <property name="usesNA" type="java.lang.Boolean" />
-        <!-- linkage to the template -->
-        <many-to-one name="template" class="org.sakaiproject.evaluation.model.EvalTemplate" fetch="join">
-        	<column name="template_id" not-null="true" />
-        </many-to-one>
-        <!-- linkage to the item -->
-        <many-to-one name="item" class="org.sakaiproject.evaluation.model.EvalItem" fetch="join">
-        	<column name="item_id" not-null="true" />
-        </many-to-one>
+        <!-- is this item the parent item for a block -->
+        <property name="blockParent" type="java.lang.Boolean" />
+        <!-- what is the unique id of this block if in a block -->
+        <property name="blockId" type="java.lang.Integer" index="eval_templateitem_blockid">
+            <column name="BLOCK_ID" />
+        </property>
     </class>
 </hibernate-mapping>

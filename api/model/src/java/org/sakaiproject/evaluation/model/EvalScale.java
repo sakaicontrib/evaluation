@@ -1,6 +1,6 @@
 package org.sakaiproject.evaluation.model;
 
-// Generated Jan 3, 2007 8:04:14 AM by Hibernate Tools 3.2.0.beta6a
+// Generated Jan 11, 2007 11:02:49 AM by Hibernate Tools 3.2.0.beta6a
 
 import java.util.Date;
 
@@ -38,8 +38,7 @@ public class EvalScale implements java.io.Serializable {
 	}
 
 	/** minimal constructor */
-	public EvalScale(Date lastModified, String owner, String title,
-			String sharing, Boolean expert) {
+	public EvalScale(Date lastModified, String owner, String title, String sharing, Boolean expert) {
 		this.lastModified = lastModified;
 		this.owner = owner;
 		this.title = title;
@@ -48,9 +47,8 @@ public class EvalScale implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public EvalScale(Date lastModified, String owner, String title,
-			String sharing, Boolean expert, String expertDescription,
-			String ideal, String[] options, Boolean locked) {
+	public EvalScale(Date lastModified, String owner, String title, String sharing, Boolean expert,
+			String expertDescription, String ideal, String[] options, Boolean locked) {
 		this.lastModified = lastModified;
 		this.owner = owner;
 		this.title = title;
