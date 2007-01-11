@@ -72,6 +72,7 @@ impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalEmailsLogicImplTe
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalEvaluationsLogicImplTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalExternalLogicImplTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalExternalLogicStubTest.java -text
+impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalItemsLogicImplTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalResponsesLogicImplTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalScalesLogicImplTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalSettingsImplTest.java -text

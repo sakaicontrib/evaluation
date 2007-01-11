@@ -1,6 +1,6 @@
 package org.sakaiproject.evaluation.model;
 
-// Generated Jan 3, 2007 8:04:14 AM by Hibernate Tools 3.2.0.beta6a
+// Generated Jan 11, 2007 11:02:49 AM by Hibernate Tools 3.2.0.beta6a
 
 import java.util.Date;
 
@@ -35,8 +35,7 @@ public class EvalEmailTemplate implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public EvalEmailTemplate(Date lastModified, String owner, String message,
-			String defaultType) {
+	public EvalEmailTemplate(Date lastModified, String owner, String message, String defaultType) {
 		this.lastModified = lastModified;
 		this.owner = owner;
 		this.message = message;
