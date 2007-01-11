@@ -300,7 +300,7 @@ public class TemplateBean {
 	 * method binding to the "Save" button on template_title_description.html
 	*/
 	public String saveTemplate(){   
-		
+		//TODO: hibernate bugs
 		currTemplate.setTitle(title);
 		currTemplate.setDescription(description);
 		currTemplate.setSharing(modifier);

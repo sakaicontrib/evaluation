@@ -5,13 +5,26 @@
 <beans>
 
 	<!-- session scope backing beans here -->
+
 	<bean id="evaluationBean"
 			class="org.sakaiproject.evaluation.tool.EvaluationBean"
 			init-method="init">
 		<property name="logic"
 			ref="org.sakaiproject.evaluation.logic.EvaluationLogic" />
+		<property name="external" 
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+		<property name="templatesLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
+		<property name="itemsLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />		
+		<property name="evalsLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />	
+		<property name="assignsLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalAssignsLogic" />
+		<property name="responsesLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />						
 	</bean>
-
+	
 	<!-- request scope backing beans here -->
 	<bean id="templateBean"
 			class="org.sakaiproject.evaluation.tool.TemplateBean"

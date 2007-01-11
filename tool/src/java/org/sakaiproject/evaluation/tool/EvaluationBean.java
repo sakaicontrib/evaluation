@@ -27,6 +27,12 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
+import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
+import org.sakaiproject.evaluation.logic.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.EvalItemsLogic;
+import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
+import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.logic.EvaluationLogic;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignContext;
@@ -111,8 +117,37 @@ public class EvaluationBean {
 	public void setLogic(EvaluationLogic logic) {
 		this.logic = logic;
 	}
-
-
+	
+	private EvalExternalLogic external;
+	public void setExternal(EvalExternalLogic external) {
+		this.external = external;
+	}
+	
+	private EvalTemplatesLogic templatesLogic;
+	public void setTemplatesLogic( EvalTemplatesLogic templatesLogic) {
+		this.templatesLogic = templatesLogic;
+	}
+	
+	private EvalItemsLogic itemsLogic;
+	public void setItemsLogic( EvalItemsLogic itemsLogic) {
+		this.itemsLogic = itemsLogic;
+	}
+	
+	private EvalEvaluationsLogic evalsLogic;
+	public void setEvalsLogic(EvalEvaluationsLogic evalsLogic) {
+		this.evalsLogic = evalsLogic;
+	}
+	
+	private EvalAssignsLogic assignsLogic;
+	public void setAssignsLogic(EvalAssignsLogic assignsLogic) {
+		this.assignsLogic = assignsLogic;
+	}
+	
+	private EvalResponsesLogic responsesLogic;	
+	public void setResponsesLogic(EvalResponsesLogic responsesLogic) {
+		this.responsesLogic = responsesLogic;
+	}
+	
 	/*
 	 * INITIALIZATION
 	 */
@@ -167,6 +202,7 @@ public class EvaluationBean {
 		eval.setReminderFromEmail(EvaluationConstant.HELP_DESK_ID);
 		instructorViewResults = Boolean.TRUE;
 		eval.setReminderDays( new Integer(1));
+		//TODO: deprecated method been marked as "replaced by getEmailTemplate(String) in EvalEvaluations", but not FOUND
 		emailAvailableTxt = logic.getEmailTemplate(true).getMessage(); 
 		emailReminderTxt = logic.getEmailTemplate(false).getMessage();
 		
@@ -178,8 +214,9 @@ public class EvaluationBean {
 		this.studentsDate = "MM/DD/YYYY";
 		this.instructorsDate = "MM/DD/YYYY";
 
-		listOfTemplates = logic.getTemplatesToDisplay(logic.getCurrentUserId());
-
+		//listOfTemplates = logic.getTemplatesToDisplay(logic.getCurrentUserId());
+		listOfTemplates = templatesLogic.getTemplatesForUser(external.getCurrentUserId(), null);
+		
 		int count = 0;
 		
 		if (listOfTemplates != null) {
@@ -242,7 +279,14 @@ public class EvaluationBean {
 		if (eval.getUnregisteredAllowed() == null)
 			eval.setUnregisteredAllowed(Boolean.FALSE);
 		
-		logic.saveEvaluation(eval, logic.getCurrentUserId());
+		//logic.saveEvaluation(eval, logic.getCurrentUserId());
+		/*
+		 * TODO: need to check if the start date is today's date
+		 * if it is today, set startdate as the current date(today) 
+		 * becauase there might be 1 second difference, and evalsLogic method think it is past
+		 *
+		 * */		 
+		evalsLogic.saveEvaluation(eval, external.getCurrentUserId());
 		
 	    return ControlPanelProducer.VIEW_ID;
 	}
@@ -265,8 +309,9 @@ public class EvaluationBean {
 			return EvaluationAssignProducer.VIEW_ID;
 		}
 		else {
+			//TODO: been marked as "be replaced by countEnrollment(String)", such method no FOUND
 			enrollment = logic.getEnrollment(selectedSakaiSiteIds);
-		    return EvaluationAssignConfirmProducer.VIEW_ID;
+			return EvaluationAssignConfirmProducer.VIEW_ID;
 		}
 	}
 
@@ -326,8 +371,8 @@ public class EvaluationBean {
 			//do nothing as the template has not been modified.
 		} else {
 			availableTemplate = new EvalEmailTemplate(new Date(),
-					logic.getCurrentUserId(), emailAvailableTxt);
-			logic.saveEmailTemplate(availableTemplate, logic.getCurrentUserId());
+					external.getCurrentUserId(), emailAvailableTxt);
+			logic.saveEmailTemplate(availableTemplate, external.getCurrentUserId());
 		}
 		eval.setAvailableEmailTemplate(availableTemplate);
 		
@@ -337,7 +382,7 @@ public class EvaluationBean {
 			//do nothing as the template has not been modified.
 		}else {
 			reminderTemplate = new EvalEmailTemplate(new Date(),
-					logic.getCurrentUserId(), emailReminderTxt);
+					external.getCurrentUserId(), emailReminderTxt);
 			logic.saveEmailTemplate(reminderTemplate, logic.getCurrentUserId());
 		}
 		eval.setReminderEmailTemplate(reminderTemplate);
@@ -347,7 +392,7 @@ public class EvaluationBean {
 		 * The main evaluation section with all the settings.
 		 */
 		eval.setLastModified(new Date());
-		eval.setOwner(logic.getCurrentUserId());
+		eval.setOwner(external.getCurrentUserId());
 		eval.setStartDate(changeStringToDate(this.startDate));
 		eval.setDueDate(changeStringToDate(this.dueDate));
 		eval.setViewDate(changeStringToDate(this.viewDate));
@@ -373,8 +418,14 @@ public class EvaluationBean {
 		if (eval.getUnregisteredAllowed() == null)
 			eval.setUnregisteredAllowed(Boolean.FALSE);
 		
-		logic.saveEvaluation(eval, logic.getCurrentUserId());
-	
+		//logic.saveEvaluation(eval, logic.getCurrentUserId());
+		/*
+		 * TODO: need to check if the start date is today's date
+		 * if it is today, set startdate as the current date(today) 
+		 * becauase there might be 1 second difference, and evalsLogic method think it is past
+		 *
+		 * */		
+		evalsLogic.saveEvaluation(eval, external.getCurrentUserId());
 		
 		/*
 		 * Now save the selected courses (AKA sites).
@@ -383,9 +434,10 @@ public class EvaluationBean {
 		for (int count = 0; count < this.selectedSakaiSiteIds.length; count++) {
 			
 			EvalAssignContext assignCourse = new EvalAssignContext(new Date(), 
-					logic.getCurrentUserId(), selectedSakaiSiteIds[count], 
+					external.getCurrentUserId(), selectedSakaiSiteIds[count], 
 					Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, eval);
-			logic.saveAssignContext(assignCourse, logic.getCurrentUserId());
+			//logic.saveAssignContext(assignCourse, logic.getCurrentUserId());
+			assignsLogic.saveAssignContext(assignCourse, external.getCurrentUserId());
 		}
 
 		// now reset the eval item here
@@ -417,7 +469,7 @@ public class EvaluationBean {
 		// Not sure what the comment above means but you should never get a time started
 		// from the webpage, it needs to always come from the server
 		EvalResponse response = new EvalResponse(new Date(), 
-				logic.getCurrentUserId(), sakaiContext, new Date(), eval);
+				external.getCurrentUserId(), sakaiContext, new Date(), eval);
 		/*
 		 * From the list of items make the hashmap with key as item_id and item
 		 * object as value. This is done so that it is easy in the for loop below.
@@ -435,6 +487,7 @@ public class EvaluationBean {
 			if(evalItem.getBlockParent().booleanValue() == true) {
 				
 				Integer blockID = new Integer(evalItem.getId().intValue());
+				//TODO: wait for aaron's logic layer method
 				List childItemsList = logic.findItem(blockID);
 				for (int j = 0; j < childItemsList.size(); j++) {
 					EvalItem childItem = (EvalItem)childItemsList.get(j);
@@ -468,7 +521,8 @@ public class EvaluationBean {
 		}
 		
 		//Finally save
-		logic.saveResponse(response);
+		//logic.saveResponse(response);
+		responsesLogic.saveResponse(response,external.getCurrentUserId());
 		
 		//clearing the answers
 		listOfItems = new ArrayList();  
@@ -505,9 +559,10 @@ public class EvaluationBean {
 	 */
 	
 	public String editEvalSettingAction(){
-		//TODO:
-		eval = logic.getEvaluationById(eval.getId());
-
+	
+		//eval = logic.getEvaluationById(eval.getId());
+		eval = evalsLogic.getEvaluationById(eval.getId());
+			
 		DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
 		//not -null field
 		startDate = df.format(eval.getStartDate()); 
@@ -525,9 +580,13 @@ public class EvaluationBean {
 	
 	//method binding to control panel page "Assigned" Link/Command
 	public String evalAssigned(){		
-		//TODO: need to check with aaron
-		eval = logic.getEvaluationById(eval.getId());
-		List l = logic.getAssignContextsByEvalId(eval.getId());
+		
+		//eval = logic.getEvaluationById(eval.getId());
+		eval = evalsLogic.getEvaluationById(eval.getId());
+		
+		//List l = logic.getAssignContextsByEvalId(eval.getId());
+		List l = assignsLogic.getAssignContextsByEvalId(eval.getId());
+		
 		if(l!=null && l.size() >0){
 			selectedSakaiSiteIds = new String[l.size()];
 			for(int i =0; i< l.size(); i++){
@@ -535,7 +594,7 @@ public class EvaluationBean {
 				selectedSakaiSiteIds[i] = eac.getContext();
 			}
 		}
-			
+		//TODO: been marked as "be replaced by countEnrollment(String)", such method no FOUND
 		enrollment = logic.getEnrollment(selectedSakaiSiteIds);
 		
 		return EvaluationAssignConfirmProducer.VIEW_ID;
@@ -562,8 +621,8 @@ public class EvaluationBean {
 		if(id.intValue()== -1) 
 			log.error("Error inside removeEvalAction()");
 		else
-			eval1 = logic.getEvaluationById(id);
-
+			//eval1 = logic.getEvaluationById(id);
+			eval1 = evalsLogic.getEvaluationById(id);
 		/**
 		 * TODO
 		 * WARNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -581,14 +640,17 @@ public class EvaluationBean {
 		 */
 		if(eval1 != null){
 			//delete evaluation, need to deleted entry in AssignCourse Table
-			List l = logic.getAssignContextsByEvalId(eval1.getId());
+			//List l = logic.getAssignContextsByEvalId(eval1.getId());
+			List l = assignsLogic.getAssignContextsByEvalId(eval1.getId());
 			if(l !=null && l.size() >0){
 				for (int i=0; i<l.size(); i++) {
 					EvalAssignContext eac = (EvalAssignContext) l.get(i);
-					logic.deleteAssignContext(eac.getId(), logic.getCurrentUserId());
+					//logic.deleteAssignContext(eac.getId(), logic.getCurrentUserId());
+					assignsLogic.deleteAssignContext(eac.getId(), external.getCurrentUserId());
 				}
 			}
-			logic.deleteEvaluation(eval1.getId(), logic.getCurrentUserId());
+			//logic.deleteEvaluation(eval1.getId(), logic.getCurrentUserId());
+			evalsLogic.deleteEvaluation(eval1.getId(), external.getCurrentUserId());
 		}
 		
 		return ControlPanelProducer.VIEW_ID;
@@ -609,7 +671,7 @@ public class EvaluationBean {
 	//method binding to the "Remove Template" button  on the remove_template.html
 	public String removeTemplateAction(){
 
-		String currentUserId = logic.getCurrentUserId();
+		String currentUserId = external.getCurrentUserId();
 	
 		Long id = new Long("-1");
 		EvalTemplate template1 =null;
@@ -621,8 +683,9 @@ public class EvaluationBean {
 		if(id.intValue()== -1) 
 			log.error("Error inside removeEvalAction()");
 		else
-			template1 = logic.getTemplateById(id);
-			
+			//template1 = logic.getTemplateById(id);
+			template1 = templatesLogic.getTemplateById(id);
+		
 		if(template1 != null){
 			//delete template, need to deleted items entry
 			Set items = template1.getItems();
@@ -635,18 +698,22 @@ public class EvaluationBean {
 						item.getBlockParent().booleanValue()== true){
 					Long parentID = item.getId();
 					Integer blockID = new Integer(parentID.intValue());
+					//TODO: need to wait for Aaron's logic layer method
 					List childItems = logic.findItem(blockID);
 					if(childItems !=null && childItems.size() >0 ){
 						for(int k=0; k< childItems.size();k++){
 							EvalItem cItem = (EvalItem) childItems.get(k);
-							logic.deleteItem(cItem.getId(), currentUserId);
+							//logic.deleteItem(cItem.getId(), currentUserId);
+							itemsLogic.deleteItem(cItem.getId(), currentUserId);
 						}
 					}
 				}//end of check: block child
 				
-				logic.deleteItem(item, currentUserId);	
+				//logic.deleteItem(item, currentUserId);
+				itemsLogic.deleteItem(item.getId(), currentUserId);
 			}
-			logic.deleteTemplate(template1);
+			//logic.deleteTemplate(template1);
+			templatesLogic.deleteTemplate(template1.getId(), currentUserId);
 		}
 		return ControlPanelProducer.VIEW_ID;
 	}
