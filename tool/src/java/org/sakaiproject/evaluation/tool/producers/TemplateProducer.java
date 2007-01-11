@@ -19,12 +19,15 @@ import java.util.List;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.TemplateBean;
+import org.sakaiproject.evaluation.tool.params.PreviewEvalParameters;
+import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.UIBoundList;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
@@ -36,6 +39,7 @@ import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
 /**
  * Page for start creating a template
@@ -43,7 +47,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  * @author: Rui Feng (fengr@vt.edu)
  */
 
-public class TemplateProducer implements ViewComponentProducer, NavigationCaseReporter {
+public class TemplateProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
 	public static final String VIEW_ID = "template_title_desc"; 
 	public String getViewID() {
 		return VIEW_ID;
@@ -68,6 +72,8 @@ public class TemplateProducer implements ViewComponentProducer, NavigationCaseRe
 	 *
 	 */
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {		
+		
+		EvalViewParameters evalViewParams = (EvalViewParameters)viewparams;
 		
 		UIOutput.make(tofill, "template-title-desc-title", messageLocator.getMessage("modifytemplatetitledesc.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
 		
@@ -101,17 +107,17 @@ public class TemplateProducer implements ViewComponentProducer, NavigationCaseRe
 			comboNames.setValue(sharingList);
 			combo.optionnames = comboNames;
 			
-			EvalTemplate tpl= templateBean.getCurrTemplate();
+			//EvalTemplate tpl= templateBean.getCurrTemplate();
 			
 			UIOutput.make(form, "cancel-button", messageLocator.getMessage("general.cancel.button"));
 			
-			if(tpl!=null && tpl.getId()!=null)
-				UICommand.make(form, "addContinue",messageLocator.getMessage("modifytemplatetitledesc.save.button"), "#{templateBean.saveTemplate}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			if(evalViewParams.templateId!=null){
+				UICommand saveCmd=UICommand.make(form, "addContinue",messageLocator.getMessage("modifytemplatetitledesc.save.button"), "#{templateBean.saveTemplate}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				saveCmd.parameters.add(new UIELBinding("#{templateBean.templateId}",evalViewParams.templateId.toString()));		
+			}
 			else 
 				UICommand.make(form, "addContinue",messageLocator.getMessage("modifytemplatetitledesc.continue.button"), "#{templateBean.createTemplateAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-		
-		//TODO-i18n cancel button
 	}
 	
 	public List reportNavigationCases() {
@@ -120,6 +126,11 @@ public class TemplateProducer implements ViewComponentProducer, NavigationCaseRe
 		i.add(new NavigationCase(TemplateModifyProducer.VIEW_ID, new SimpleViewParameters(TemplateModifyProducer.VIEW_ID)));
 		
 		return i;
+	}
+
+
+	public ViewParameters getViewParameters() {
+		return new EvalViewParameters(VIEW_ID, null, null);
 	}
 
 
