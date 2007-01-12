@@ -24,10 +24,10 @@ import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
+import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
-import org.sakaiproject.evaluation.tool.ItemDisplay;
 import org.sakaiproject.evaluation.tool.params.CSVReportViewParams;
 import org.sakaiproject.evaluation.tool.params.EssayResponseParams;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
@@ -130,14 +130,14 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 				// check if there is any "Course" items or "Instructor" items;
 				UIBranchContainer courseSection = null;
 				UIBranchContainer instructorSection = null;
-				if (this.findItemCategory(true, childItems))
-					courseSection = UIBranchContainer.make(tofill,
-							"courseSection:"); //$NON-NLS-1$
+				if (this.findItemCategory(true, childItems)){
+					courseSection = UIBranchContainer.make(tofill,"courseSection:"); //$NON-NLS-1$
 					UIOutput.make(courseSection, "report-course-questions", messageLocator.getMessage("viewreport.itemlist.coursequestions")); //$NON-NLS-1$ //$NON-NLS-2$
+				}
 				if (this.findItemCategory(false, childItems))
-					instructorSection = UIBranchContainer.make(tofill,
-							"instructorSection:"); //$NON-NLS-1$
+				{	instructorSection = UIBranchContainer.make(tofill,"instructorSection:"); //$NON-NLS-1$
 					UIOutput.make(instructorSection, "report-instructor-questions", messageLocator.getMessage("viewreport.itemlist.instructorquestions")); //$NON-NLS-1$ //$NON-NLS-2$
+				}
 				for (int i = 0; i < childItems.size(); i++) {
 					EvalItem item1 = (EvalItem) childItems.get(i);
 
@@ -180,10 +180,17 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 
 		if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)) { //"Scaled/Survey"
 
-			ItemDisplay itemDisplay = new ItemDisplay(myItem);
+	/*		ItemDisplay itemDisplay = new ItemDisplay(myItem);
 			String values[] = itemDisplay.getScaleValues();			
 			String labels[] = myItem.getScale().getOptions();
-			String setting = myItem.getScaleDisplaySetting();
+		*/
+			EvalScale  scale =  myItem.getScale();
+			String[] scaleOptions = scale.getOptions();
+			int optionCount = scaleOptions.length;
+		//	String scaleValues[] = new String[optionCount];
+			String scaleLabels[] = new String[optionCount];
+			
+			//String setting = myItem.getScaleDisplaySetting();
 			Boolean useNA = myItem.getUsesNA();
 			
 			UIBranchContainer scaledSurvey = UIBranchContainer.make(radiobranch,
@@ -201,10 +208,10 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 			
 			List itemAnswers = responsesLogic.getEvalAnswers(myItem.getId(), evalId);//logic.getEvalAnswers(myItem.getId(), evalId);
 			
-		    for (int x = 0; x < labels.length; ++x) 
+		    for (int x = 0; x < scaleLabels.length; ++x) 
 		    {
 		    	UIBranchContainer answerbranch = UIBranchContainer.make(scaledSurvey, "answers:", Integer.toString(x)); //$NON-NLS-1$
-				UIOutput.make(answerbranch, "responseText", labels[x], (new Integer(x)).toString()); //$NON-NLS-1$
+				UIOutput.make(answerbranch, "responseText", scaleLabels[x], (new Integer(x)).toString()); //$NON-NLS-1$
 				int answers=0;
 				//count the number of answers that match this one
 				for(int y=0; y<itemAnswers.size();y++){
@@ -229,15 +236,27 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 				UIBoundBoolean.make(radiobranch3, "itemNA", useNA); //$NON-NLS-1$
 			}
 			// Radio Buttons
-			ItemDisplay itemDisplay = new ItemDisplay(myItem);
+			
+/*			ItemDisplay itemDisplay = new ItemDisplay(myItem);
 			String values[] = itemDisplay.getScaleValues();
 			String labels[] = myItem.getScale().getOptions();
+			*/
+			EvalScale  scale = myItem.getScale();
+			String[] scaleOptions = scale.getOptions();
+			int optionCount = scaleOptions.length;
+			String scaleValues[] = new String[optionCount];
+			String scaleLabels[] = new String[optionCount];
+
+			for (int count = 1; count <= optionCount; count++) {
+				scaleValues[optionCount - count] = new Integer(optionCount - count).toString();
+				scaleLabels[optionCount - count] = scaleOptions[count-1];
+			}
 			
 			//render answer options
-			for(int p=0; p < labels.length; ++p){
+			for(int p=0; p < scaleLabels.length; ++p){
 			UIBranchContainer responseTexts = UIBranchContainer.make(
 					block, "responseTexts:", Integer.toString(p));			
-			UIOutput.make(responseTexts, "responseText", labels[p], (new Integer(p).toString())); //$NON-NLS-1$
+			UIOutput.make(responseTexts, "responseText", scaleLabels[p], (new Integer(p).toString())); //$NON-NLS-1$
 			}
 /* TODO: wait for aaron's itemsLogic method	
 			// get child block item text
