@@ -642,7 +642,8 @@ public class TemplateBean {
 
 		//	get the rowNo which is ELBinding to the parameters of "preview" link
 		int rowNo = -1;
-		itemDisplayPreview = null;
+		//itemDisplayPreview = null;
+		itemPreview = null;
 		
 		try{
 			rowNo=Integer.parseInt(currRowNo);
@@ -650,34 +651,46 @@ public class TemplateBean {
 			log.fatal(fe);
 		}
 
-		if (itemDisplayList == null) {
-			log.error("itemDisplayList null");
+		//if (itemDisplayList == null) {
+		if (itemsList == null) {
+			//log.error("itemDisplayList null");
+			log.error("itemsList null");
 		} else {
-			log.error("itemDisplayList not null");
+			//log.error("itemDisplayList not null");
+			log.error("itemsList not null");
 		}
 		log.warn("remove item action, rowNo=" + rowNo);
 
 		if(rowNo == -1) 
-			log.error("Error inside previewRowItemAction()");
+			log.error("Error inside removeRowItemAction()");
 		else{
 			this.currItemNo = rowNo + 1;
 			
-			itemDisplayPreview=(ItemDisplay)this.itemDisplayList.get(rowNo);	
-			this.itemText = itemDisplayPreview.getItem().getItemText();
-			this.itemClassification = itemDisplayPreview.getItem().getClassification();
-			
+			//itemDisplayPreview=(ItemDisplay)this.itemDisplayList.get(rowNo);
+			//this.itemText = itemDisplayPreview.getItem().getItemText();
+			//this.itemClassification = itemDisplayPreview.getItem().getClassification();
+			itemPreview = (EvalItem) itemsList.get(rowNo);
+			itemText = itemPreview.getItemText();
+			itemClassification = itemPreview.getClassification();
+						
 			if(this.itemClassification.equals(EvalConstants.ITEM_TYPE_SCALED)){
 				//"Scaled/Survey"
-				this.scaleId = itemDisplayPreview.getItem().getScale().getId();
-				this.scaleDisplaySetting = itemDisplayPreview.getItem().getScaleDisplaySetting();
-			
+				//this.scaleId = itemDisplayPreview.getItem().getScale().getId();
+				//this.scaleDisplaySetting = itemDisplayPreview.getItem().getScaleDisplaySetting();
+				this.scaleId = itemPreview.getScale().getId();
+				this.scaleDisplaySetting = itemPreview.getScaleDisplaySetting();
+				
 			}else if(this.itemClassification.equals(EvalConstants.ITEM_TYPE_BLOCK)){
 				//block
-				this.scaleId = itemDisplayPreview.getItem().getScale().getId();	
-				this.scaleDisplaySetting = itemDisplayPreview.getItem().getScaleDisplaySetting();
-				this.itemNA = itemDisplayPreview.getItem().getUsesNA();
+				//this.scaleId = itemDisplayPreview.getItem().getScale().getId();	
+				//this.scaleDisplaySetting = itemDisplayPreview.getItem().getScaleDisplaySetting();
+				//this.itemNA = itemDisplayPreview.getItem().getUsesNA();
+				scaleId = itemPreview.getScale().getId();	
+				scaleDisplaySetting = itemPreview.getScaleDisplaySetting();
+				itemNA = itemPreview.getUsesNA();
 				this.queList = new ArrayList();
-				Long parentID = itemDisplayPreview.getItem().getId();
+				//Long parentID = itemDisplayPreview.getItem().getId();
+				Long parentID = itemPreview.getId();
 				Integer blockID = new Integer(parentID.intValue());
 				//TODO: wait for aaron's logic method
 				List childItems = logic.findItem(blockID);
