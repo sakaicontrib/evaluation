@@ -16,8 +16,8 @@ package org.sakaiproject.evaluation.tool.producers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
-import org.sakaiproject.evaluation.tool.ItemDisplay;
 import org.sakaiproject.evaluation.tool.TemplateBean;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.params.PreviewEvalParameters;
@@ -74,7 +74,7 @@ public class TemplateModifyProducer implements ViewComponentProducer,NavigationC
 	 *  2) access this page through links on Control Panel or other
 	 *  3) access this page through "Save" button on Template page
 	 *  
-	 *  TODO: remove usage of ItemDisplay
+	 * 
 	 */
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
@@ -117,7 +117,7 @@ public class TemplateModifyProducer implements ViewComponentProducer,NavigationC
 		//command button:"Add"
 		UICommand.make(form, "add_questions", messageLocator.getMessage("modifytemplate.add.item.button"), "#{templateBean.addItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	
-		if(templateBean.getItemDisplayListSize() > 0){
+		if(templateBean.getItemsListSize() > 0){
 			UIInternalLink.make(form, "begin_eval_link", new EvalViewParameters(EvaluationStartProducer.VIEW_ID, 
 						templateBean.getCurrTemplate().getId(), TemplateModifyProducer.VIEW_ID));
 		}else{
@@ -125,7 +125,7 @@ public class TemplateModifyProducer implements ViewComponentProducer,NavigationC
 		}
 		
 		UIOutput.make(form, "univ-level-header", messageLocator.getMessage("modifytemplate.univ.level.header")); //$NON-NLS-1$ //$NON-NLS-2$			
-		UIOutput.make(form,"itemCount",null,"#{templateBean.itemDisplayListSize}");
+		UIOutput.make(form,"itemCount",null,"#{templateBean.itemsListSize}");
 		UIOutput.make(form, "existing-items", messageLocator.getMessage("modifytemplate.existing.items")); //$NON-NLS-1$ //$NON-NLS-2$
 	
 		UIOutput.make(form, "template-title-header", messageLocator.getMessage("modifytemplate.template.title.header")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -149,22 +149,25 @@ public class TemplateModifyProducer implements ViewComponentProducer,NavigationC
 		UICommand.make(form2,"hiddenBtn","#{templateBean.changeDisplayOrder}"); 
 		
 		//display each item in the template	
-		List l= templateBean.itemDisplayList;
-		if (l!=null && l.size() >0) {
+		//List l= templateBean.itemDisplayList;
+		List l = templateBean.itemsList;
+		if (l!= null && l.size() >0) {
 			String[] strArr = new String[l.size()];
 		    for(int h=0; h<l.size();h++){
 		    	strArr[h]= Integer.toString(h+1);
 		    }
 		    			
 		    for(int i=0;i<l.size();i++){
-		    	ItemDisplay currItemDisplay=(ItemDisplay) l.get(i);
+		    	//ItemDisplay currItemDisplay=(ItemDisplay) l.get(i);
+		    	EvalItem myItem = (EvalItem) l.get(i);
+		    	
 		    	UIBranchContainer radiobranch = UIBranchContainer.make(form2,"itemrow:header", Integer.toString(i)); //$NON-NLS-1$
 				UIOutput.make(radiobranch, "item-num-header", messageLocator.getMessage("modifytemplate.item.num.header")); //$NON-NLS-1$ //$NON-NLS-2$
 			
 				//DISPLAY ORDER
 				UISelect sl = UISelect.make(radiobranch, "itemNum");
 				sl.selection = new UIInput();
-				sl.selection.valuebinding = new ELReference("#{templateBean.itemDisplayList." + i +".item.displayOrder"+"}");
+				sl.selection.valuebinding = new ELReference("#{templateBean.itemsList." + i +".displayOrder"+"}");
 				UIBoundList slNames = new UIBoundList();
 				slNames.setValue(strArr);
 				sl.optionnames = slNames;
@@ -172,9 +175,12 @@ public class TemplateModifyProducer implements ViewComponentProducer,NavigationC
 		    	slValues.setValue(strArr);
 				sl.optionlist = slValues;
 								
-				String itemClassificationLabel = (currItemDisplay.getItem()).getClassification();
+				//String itemClassificationLabel = (currItemDisplay.getItem()).getClassification();
+				String itemClassificationLabel = myItem.getClassification();
 				UIOutput.make(radiobranch,"itemClassificationLabel",itemClassificationLabel);
-				String scaleDisplaySettingLabel = (currItemDisplay.getItem()).getScaleDisplaySetting();
+				//String scaleDisplaySettingLabel = (currItemDisplay.getItem()).getScaleDisplaySetting();
+				String scaleDisplaySettingLabel = myItem.getScaleDisplaySetting();
+				
 				if(scaleDisplaySettingLabel !=null)
 					scaleDisplaySettingLabel = "-" + scaleDisplaySettingLabel;
 				else scaleDisplaySettingLabel = "";
@@ -191,14 +197,18 @@ public class TemplateModifyProducer implements ViewComponentProducer,NavigationC
 	
 				UIBranchContainer radiobranch2 = UIBranchContainer.make(form2,"itemrow:text", Integer.toString(i)); //$NON-NLS-1$
 				UIOutput.make(radiobranch2,"queNo",Integer.toString(i+1));	 //$NON-NLS-1$
-				UIOutput.make(radiobranch2,"itemText",currItemDisplay.getItem().getItemText());	
+				//UIOutput.make(radiobranch2,"itemText",currItemDisplay.getItem().getItemText());	
+				UIOutput.make(radiobranch2,"itemText",myItem.getItemText());	
 				
-				String title = ""; //$NON-NLS-1$
-				if(currItemDisplay.getItem().getScale() != null)
-					title = currItemDisplay.getItem().getScale().getTitle();
+				String title = ""; //$NON-NLS-1$				
+			//	if(currItemDisplay.getItem().getScale() != null)
+			//		title = currItemDisplay.getItem().getScale().getTitle();
+				if(myItem.getScale() != null)
+					title = myItem.getScale().getTitle();
 				UIOutput.make(radiobranch2,"scaleType",title); //$NON-NLS-1$
 				
-				Boolean useNA= currItemDisplay.getItem().getUsesNA();
+				//Boolean useNA= currItemDisplay.getItem().getUsesNA();
+				Boolean useNA= myItem.getUsesNA();
 				if(useNA != null && useNA.booleanValue()== true){
 					UIBranchContainer radiobranch3 = UIBranchContainer.make(radiobranch2,"showNA:", Integer.toString(i)); //$NON-NLS-1$
 					UIBoundBoolean.make(radiobranch3, "itemNA",useNA); //$NON-NLS-1$
