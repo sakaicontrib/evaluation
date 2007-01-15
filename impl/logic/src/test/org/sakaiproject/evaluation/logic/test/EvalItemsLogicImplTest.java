@@ -14,6 +14,7 @@
 
 package org.sakaiproject.evaluation.logic.test;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -100,9 +101,9 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 	public void testPreloadedData() {
 		// this test is just making sure that hibernate is actually linking the items
 		// to the templates the way we think it is
-		List l = null;
 		List ids = null;
 
+		// check the full count of perloaded items
 		Assert.assertEquals(10, evaluationDao.countAll(EvalTemplateItem.class) );
 
 		EvalTemplate template = (EvalTemplate) 
@@ -120,7 +121,19 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertTrue(ids.contains( etdl.templateItem2A.getId() ));
 		Assert.assertTrue(ids.contains( etdl.templateItem3A.getId() ));
 		Assert.assertTrue(ids.contains( etdl.templateItem5A.getId() ));
-		
+		// get the items from the templateItems
+		List l = new ArrayList();
+		for (Iterator iter = tItems.iterator(); iter.hasNext();) {
+			EvalTemplateItem eti = (EvalTemplateItem) iter.next();
+			Assert.assertTrue( eti.getItem() instanceof EvalItem );
+			Assert.assertEquals(eti.getTemplate().getId(), template.getId());
+			l.add(eti.getItem().getId());
+		}
+		Assert.assertTrue(l.contains( etdl.item2.getId() ));
+		Assert.assertTrue(l.contains( etdl.item3.getId() ));
+		Assert.assertTrue(l.contains( etdl.item5.getId() ));
+
+		// test getting another set of items
 		EvalItem item = (EvalItem) evaluationDao.findById(EvalItem.class, etdl.item1.getId());
 		Set itItems = item.getTemplateItems();
 		Assert.assertNotNull( itItems );
@@ -176,7 +189,91 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl#getItemsForTemplate(java.lang.Long)}.
 	 */
 	public void testGetItemsForTemplate() {
-//		 TODO fail("Not yet implemented");
+		List l = null;
+		List ids = null;
+
+		// test getting all items by valid templates
+		l = items.getItemsForTemplate( etdl.templateAdmin.getId(), null );
+		Assert.assertNotNull( l );
+		Assert.assertEquals(3, l.size());
+		ids = EvalTestDataLoad.makeIdList(l);
+		Assert.assertTrue(ids.contains( etdl.item2.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item3.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item5.getId() ));
+
+		// test getting all items by valid templates
+		l = items.getItemsForTemplate( etdl.templatePublic.getId(), null );
+		Assert.assertNotNull( l );
+		Assert.assertEquals(1, l.size());
+		ids = EvalTestDataLoad.makeIdList(l);
+		Assert.assertTrue(ids.contains( etdl.item1.getId() ));
+
+		// test getting items from template with no items
+		l = items.getItemsForTemplate( etdl.templatePublic.getId(), null );
+		Assert.assertNotNull( l );
+		Assert.assertEquals(1, l.size());
+
+		// test getting items for specific user returns correct items
+		// admin should get all items
+		l = items.getItemsForTemplate( etdl.templateAdmin.getId(), 
+				EvalTestDataLoad.ADMIN_USER_ID );
+		Assert.assertNotNull( l );
+		Assert.assertEquals(3, l.size());
+		ids = EvalTestDataLoad.makeIdList(l);
+		Assert.assertTrue(ids.contains( etdl.item2.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item3.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item5.getId() ));
+
+		l = items.getItemsForTemplate( etdl.templateUnused.getId(), 
+				EvalTestDataLoad.ADMIN_USER_ID );
+		Assert.assertNotNull( l );
+		Assert.assertEquals(2, l.size());
+		ids = EvalTestDataLoad.makeIdList(l);
+		Assert.assertTrue(ids.contains( etdl.item3.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item5.getId() ));
+
+		// owner should see all items
+		l = items.getItemsForTemplate( etdl.templateUnused.getId(), 
+				EvalTestDataLoad.MAINT_USER_ID );
+		Assert.assertNotNull( l );
+		Assert.assertEquals(2, l.size());
+		ids = EvalTestDataLoad.makeIdList(l);
+		Assert.assertTrue(ids.contains( etdl.item3.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item5.getId() ));
+
+		// takers should see items at their level (one level)
+		l = items.getItemsForTemplate( etdl.templateUser.getId(), 
+				EvalTestDataLoad.USER_ID );
+		Assert.assertNotNull( l );
+		Assert.assertEquals(2, l.size());
+		ids = EvalTestDataLoad.makeIdList(l);
+		Assert.assertTrue(ids.contains( etdl.item1.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item5.getId() ));
+
+		l = items.getItemsForTemplate( etdl.templateUser.getId(), 
+				EvalTestDataLoad.STUDENT_USER_ID );
+		Assert.assertNotNull( l );
+		Assert.assertEquals(2, l.size());
+		ids = EvalTestDataLoad.makeIdList(l);
+		Assert.assertTrue(ids.contains( etdl.item1.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item5.getId() ));
+
+		// TODO - add in tests that take the hierarchy into account
+
+		// test getting items from invalid template fails
+		try {
+			items.getItemsForTemplate( EvalTestDataLoad.INVALID_LONG_ID, null );
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+			Assert.assertNotNull(e);
+		}
+
+		// test getting items for invalid user returns nothing
+		l = items.getItemsForTemplate( etdl.templatePublic.getId(), 
+				EvalTestDataLoad.INVALID_USER_ID );
+		Assert.assertNotNull( l );
+		Assert.assertEquals(1, l.size());
+
 	}
 
 	/**
@@ -219,6 +316,15 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 	public void testGetTemplateItemsForTemplate() {
 //		 TODO fail("Not yet implemented");
 	}
+
+
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl#getNextBlockId()}.
+	 */
+	public void testGetNextBlockId() {
+//		 TODO fail("Not yet implemented");
+	}
+
 
 	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl#canControlItem(java.lang.String, java.lang.Long)}.

@@ -76,17 +76,20 @@ public interface EvalItemsLogic {
 	public List getItemsForUser(String userId, String sharingConstant);
 
 	/**
-	 * Get a list of items in a template, most of the time you will want to
-	 * get the items by getting the templateItems from the template and then
+	 * Get a list of items in a template that are visible to a user, 
+	 * most of the time you will want to get the items by getting the 
+	 * templateItems from the template and then
 	 * using that to get the items themselves or 
 	 * using {@link #getTemplateItemsForTemplate(Long)},
 	 * but if you do not have the template and do not need the template items
 	 * then use this method
 	 * 
 	 * @param templateId the unique id of an EvalTemplate object
+	 * @param userId the internal user id (not username), if this is null then
+	 * it will return all items in the template
 	 * @return a list of {@link EvalItem} objects
 	 */
-	public List getItemsForTemplate(Long templateId);
+	public List getItemsForTemplate(Long templateId, String userId);
 
 	// TEMPLATE ITEMS
 
@@ -134,6 +137,16 @@ public interface EvalItemsLogic {
 	 * @return a list of {@link EvalTemplateItem} objects
 	 */
 	public List getTemplateItemsForTemplate(Long templateId);
+
+
+	// BLOCK
+
+	/**
+	 * Gets the next unique unused block id that is available
+	 * 
+	 * @return the next block id
+	 */
+	public Integer getNextBlockId();
 
 
 	// PERMISSIONS

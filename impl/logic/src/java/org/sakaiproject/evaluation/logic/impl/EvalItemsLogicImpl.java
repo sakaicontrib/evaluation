@@ -14,7 +14,12 @@
 
 package org.sakaiproject.evaluation.logic.impl;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+
+import junit.framework.Assert;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,7 +27,9 @@ import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
+import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
+import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 
 
 /**
@@ -88,12 +95,25 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.EvalItemsLogic#getItemsForTemplate(java.lang.Long)
+	 * @see org.sakaiproject.evaluation.logic.EvalItemsLogic#getItemsForTemplate(java.lang.Long, java.lang.String)
 	 */
-	public List getItemsForTemplate(Long templateId) {
-		log.debug("templateId:" + templateId);
-		// TODO Auto-generated method stub
-		return null;
+	public List getItemsForTemplate(Long templateId, String userId) {
+		log.debug("templateId:" + templateId + ", userId:" + userId);
+
+		// check if the template is a valid one
+		EvalTemplate template = (EvalTemplate) dao.findById(EvalTemplate.class, templateId);
+		if (template == null) {
+			throw new IllegalArgumentException("Cannot find template with id: " + templateId);
+		}
+
+		List l = new ArrayList();
+		for (Iterator iter = template.getTemplateItems().iterator(); iter.hasNext();) {
+			EvalTemplateItem eti = (EvalTemplateItem) iter.next();
+			// TODO - check if this user can see this item (must be either taking a related eval or must somehow control the template)
+			l.add(eti.getItem());
+		}
+
+		return l;
 	}
 
 
@@ -134,6 +154,15 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 
 
 	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalItemsLogic#getNextBlockId()
+	 */
+	public Integer getNextBlockId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalItemsLogic#canControlItem(java.lang.String, java.lang.Long)
 	 */
 	public boolean canControlItem(String userId, Long itemId) {
@@ -151,4 +180,25 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 		return false;
 	}
 
+
+	// PRIVATE METHODS
+
+	protected boolean checkUserControlTemplateItem(String userId, EvalTemplateItem templateItem) {
+		log.debug("templateItem: " + templateItem.getId() + ", userId: " + userId);
+		// check locked first (expensive check)
+		if (templateItem.getId() != null &&
+				templateItem.getTemplate().getLocked().booleanValue() == true) {
+			throw new IllegalStateException("Cannot control (modify) template item ("+
+					templateItem.getId()+") in locked template ("+templateItem.getTemplate().getId()+")");
+		}
+
+		// check ownership or super user
+		if ( external.isUserAdmin(userId) ) {
+			return true;
+		} else if ( templateItem.getOwner().equals(userId) ) {
+			return true;
+		} else {
+			throw new SecurityException("User ("+userId+") cannot control template item ("+templateItem.getId()+") without permissions");
+		}
+	}
 }
