@@ -173,8 +173,29 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 	 */
 	public void deleteItem(Long itemId, String userId) {
 		log.debug("itemId:" + itemId + ", userId:" + userId);
-		// TODO Auto-generated method stub
 
+		// get the item by id
+		EvalItem item = (EvalItem) dao.findById(EvalItem.class, itemId);
+		if (item == null) {
+			throw new IllegalArgumentException("Cannot find item with id: " + itemId);
+		}
+
+		// cannot remove expert items
+		if (item.getExpert().booleanValue() == true) {
+			throw new IllegalStateException("Cannot remove expert item ("+itemId+")");
+		}
+
+		if (checkUserControlItem(userId, item)) {
+			if (item.getLocked().booleanValue() == true) {
+				// TODO - add logic to unlock associated scales here
+				log.error("TODO - Unlocking locked items not implemented yet");
+			}
+			dao.delete(item);
+			return;
+		}
+		
+		// should not get here so die if we do
+		throw new RuntimeException("User ("+userId+") could NOT delete item ("+item.getId()+")");
 	}
 
 	/* (non-Javadoc)

@@ -242,7 +242,7 @@ public class EvalTemplatesLogicImplTest extends AbstractTransactionalSpringConte
 			templates.deleteTemplate(etdl.templatePublicUnused.getId(), 
 					EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");
-		} catch (RuntimeException e) {
+		} catch (SecurityException e) {
 			Assert.assertNotNull(e);
 		}
 
@@ -250,7 +250,7 @@ public class EvalTemplatesLogicImplTest extends AbstractTransactionalSpringConte
 			templates.deleteTemplate(etdl.templateUnused.getId(), 
 					EvalTestDataLoad.USER_ID);
 			Assert.fail("Should have thrown exception");
-		} catch (RuntimeException e) {
+		} catch (SecurityException e) {
 			Assert.assertNotNull(e);
 		}
 
@@ -259,7 +259,7 @@ public class EvalTemplatesLogicImplTest extends AbstractTransactionalSpringConte
 			templates.deleteTemplate(etdl.templatePublic.getId(), 
 					EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");
-		} catch (RuntimeException e) {
+		} catch (IllegalStateException e) {
 			Assert.assertNotNull(e);
 		}
 
@@ -267,7 +267,7 @@ public class EvalTemplatesLogicImplTest extends AbstractTransactionalSpringConte
 			templates.deleteTemplate(etdl.templateAdmin.getId(), 
 					EvalTestDataLoad.ADMIN_USER_ID);
 			Assert.fail("Should have thrown exception");
-		} catch (RuntimeException e) {
+		} catch (IllegalStateException e) {
 			Assert.assertNotNull(e);
 		}
 
@@ -276,7 +276,7 @@ public class EvalTemplatesLogicImplTest extends AbstractTransactionalSpringConte
 			templates.deleteTemplate(etdl.templateUserUnused.getId(), 
 					EvalTestDataLoad.ADMIN_USER_ID);
 			Assert.fail("Should have thrown exception");
-		} catch (RuntimeException e) {
+		} catch (IllegalStateException e) {
 			Assert.assertNotNull(e);
 		}
 
@@ -294,7 +294,7 @@ public class EvalTemplatesLogicImplTest extends AbstractTransactionalSpringConte
 			templates.deleteTemplate(EvalTestDataLoad.INVALID_LONG_ID, 
 					EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");
-		} catch (RuntimeException e) {
+		} catch (IllegalArgumentException e) {
 			Assert.assertNotNull(e);
 		}
 
