@@ -86,20 +86,23 @@ public class TemplateBean {
 	public List queList;
 	public String currQueNo;
 	
-	//TODO: TO BE REMOVED
+	/*
+	 * TODO: TO BE REMOVED
 	// The following variables used in TemplateModifierProducer.java
 	public List itemDisplayList;
 	private int itemDisplayListSize;
-	
+	*/
 	public List itemsList; //to replace itemDisplayList which contain deprectaed ItemDisplay object
 	private int itemsListSize; 
 	
 	public String currRowNo;			
 
-	//TODO: TO BE REMOVED
-	//The following variables used in PreviewItemProducer.java
+	/*TODO: TO BE REMOVED
+
 	public ItemDisplay itemDisplayPreview;
+	*/
 	
+	//The following variables used in PreviewItemProducer.java
 	public EvalItem itemPreview; //to replace itemDisplayPreview to remove deprectaed ItemDisplay object
 	public EvalItem currentItem;
 
@@ -200,7 +203,7 @@ public class TemplateBean {
 	public void setScaleLabels(List scaleLabels) {
 		this.scaleLabels = scaleLabels;
 	}
-
+/*
 	public int getItemDisplayListSize() {
 		
 		if(this.itemDisplayList == null) 
@@ -210,7 +213,7 @@ public class TemplateBean {
 		
 		return this.itemDisplayListSize;
 	}
-	
+	*/
 	/*No setItemDisplayListSize method needed*/
 	
 	public int getItemsListSize() {

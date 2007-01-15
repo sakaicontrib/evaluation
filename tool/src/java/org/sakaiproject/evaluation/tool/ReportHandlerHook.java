@@ -19,7 +19,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +34,7 @@ import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.params.CSVReportViewParams;
+import org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer;
 
 import uk.org.ponder.rsf.processor.HandlerHook;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
@@ -46,7 +46,7 @@ import au.com.bytecode.opencsv.CSVWriter;
  *
  * @author Will Humphries (whumphri@vt.edu)
  * @author Aaron Zeckoski (aaronz@vt.edu)
- *  @author Rui Feng (fengr@vt.edu)
+ * @author Rui Feng (fengr@vt.edu)
  */
 public class ReportHandlerHook implements HandlerHook {
 
@@ -116,7 +116,8 @@ public class ReportHandlerHook implements HandlerHook {
 		//get all items
 		List childItems = new ArrayList(template.getItems());
 		if (! childItems.isEmpty()) {
-			Collections.sort(childItems, new ReportItemOrderComparator());
+			//Collections.sort(childItems, new ReportItemOrderComparator());
+			Collections.sort(childItems,new PreviewEvalProducer.EvaluationItemOrderComparator());
 			//for each item
 			for (int i = 0; i < childItems.size(); i++) {
 				//fetch the item
@@ -222,7 +223,7 @@ public class ReportHandlerHook implements HandlerHook {
 	public void setHandlerHook(HandlerHook arg0) {
 		// don't bother with this for now -AZ
 	}
-
+/*
 	private static class ReportItemOrderComparator implements Comparator {
 		public int compare(Object eval0, Object eval1) {
 			// expects to get EvalItem objects
@@ -230,13 +231,7 @@ public class ReportHandlerHook implements HandlerHook {
 				compareTo(((EvalItem)eval1).getId());
 		}
 	}
-
-//	private static class CSVAnswerOrderComparator implements Comparator {
-//		public int compare(Object answer0, Object answer1) {
-//			return ((EvalAnswer)answer0).getResponse().getId().
-//				compareTo(((EvalAnswer)answer1).getResponse().getId());
-//		}
-//	}
+*/
 
 
 }

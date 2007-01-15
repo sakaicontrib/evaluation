@@ -28,6 +28,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
+import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
@@ -41,6 +42,7 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalTemplate;
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.producers.ControlPanelProducer;
 import org.sakaiproject.evaluation.tool.producers.EvaluationAssignConfirmProducer;
 import org.sakaiproject.evaluation.tool.producers.EvaluationAssignProducer;
@@ -148,6 +150,10 @@ public class EvaluationBean {
 		this.responsesLogic = responsesLogic;
 	}
 	
+	private EvalEmailsLogic emailsLogic;	
+	public void setEmailsLogic(EvalEmailsLogic emailsLogic) {
+		this.emailsLogic = emailsLogic;
+	}
 	/*
 	 * INITIALIZATION
 	 */
@@ -179,11 +185,11 @@ public class EvaluationBean {
 	/**
 	 * @deprecated - will be removed before release
 	 */
-	public List getTemplatesToDisplay() {
+/*	public List getTemplatesToDisplay() {
 		//Get the list of templates from the logic layer.
 		return logic.getTemplatesToDisplay(logic.getCurrentUserId());
 	}
-
+*/
 	//method binding to the "Cancel" button on evaluation_start.html
 	public String cancelEvalStartAction(){
 		//TODO: need to be revised 
@@ -202,10 +208,13 @@ public class EvaluationBean {
 		eval.setReminderFromEmail(EvaluationConstant.HELP_DESK_ID);
 		instructorViewResults = Boolean.TRUE;
 		eval.setReminderDays( new Integer(1));
-		//TODO: deprecated method been marked as "replaced by getEmailTemplate(String) in EvalEvaluations", but not FOUND
-		emailAvailableTxt = logic.getEmailTemplate(true).getMessage(); 
-		emailReminderTxt = logic.getEmailTemplate(false).getMessage();
+	
+		//emailAvailableTxt = logic.getEmailTemplate(true).getMessage(); //true if available template
+		//emailReminderTxt = logic.getEmailTemplate(false).getMessage();//false if reminder email
 		
+		emailAvailableTxt = emailsLogic.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE).getMessage();// available template
+		emailReminderTxt =  emailsLogic.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_REMINDER).getMessage();;//reminder email
+				
 		SimpleDateFormat simpleDate = new SimpleDateFormat("MM/dd/yyyy");
 		this.startDate = simpleDate.format(new Date());
 		this.dueDate = "MM/DD/YYYY";
@@ -309,8 +318,14 @@ public class EvaluationBean {
 			return EvaluationAssignProducer.VIEW_ID;
 		}
 		else {
-			//TODO: been marked as "be replaced by countEnrollment(String)", such method no FOUND
-			enrollment = logic.getEnrollment(selectedSakaiSiteIds);
+			//enrollment = logic.getEnrollment(selectedSakaiSiteIds);
+			//get enrollemnt on by one 
+			enrollment =  new int[selectedSakaiSiteIds.length];
+			for(int i =0; i<selectedSakaiSiteIds.length; i++){
+				Set s = external.getUserIdsForContext(selectedSakaiSiteIds[i], EvalConstants.PERM_TAKE_EVALUATION);
+				enrollment[i] = s.size();				
+			}
+
 			return EvaluationAssignConfirmProducer.VIEW_ID;
 		}
 	}
@@ -352,11 +367,11 @@ public class EvaluationBean {
 	/**
 	 * @deprecated This is a pointless passthrough method
 	 */
-	public Map getSites() {
+/*	public Map getSites() {
 		siteIdsTitle = logic.getSites();
 		return siteIdsTitle;
 	}
-
+*/
 	//method binding to the "Done" button on evaluation_assign_confirm.html
 	public String doneAssignmentAction() {	
 
@@ -366,7 +381,9 @@ public class EvaluationBean {
 		EvalEmailTemplate availableTemplate,reminderTemplate;
 
 		//Save email available template
-		availableTemplate = logic.getEmailTemplate(true);
+		//availableTemplate = logic.getEmailTemplate(true);
+		availableTemplate = emailsLogic.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
+		
 		if(emailAvailableTxt.equals(availableTemplate.getMessage())){
 			//do nothing as the template has not been modified.
 		} else {
@@ -377,7 +394,9 @@ public class EvaluationBean {
 		eval.setAvailableEmailTemplate(availableTemplate);
 		
 		//Save the email reminder template
-		reminderTemplate = logic.getEmailTemplate(false);
+		//reminderTemplate = logic.getEmailTemplate(false);
+		reminderTemplate = emailsLogic.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_REMINDER);
+		
 		if(emailReminderTxt.equals(reminderTemplate.getMessage())){
 			//do nothing as the template has not been modified.
 		}else {
