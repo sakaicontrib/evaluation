@@ -37,6 +37,7 @@
         <!-- the expert description of usage for this item -->
         <property name="expertDescription" type="text" />
         <!-- Should this item include Not Available as an answer -->
+        <!-- (this is a hint only and used when making the itemtemplate) -->
         <property name="usesNA" type="java.lang.Boolean" />
         <!-- how big should the text box be when rendering this item -->
         <!-- (this is a hint only and used when making the itemtemplate) -->
@@ -65,21 +66,23 @@
             <column name="DISPLAY_ORDER" />
         </property>
 <!-- END WARNING -->
+		<!-- the scale for this item (if uses a scale) (MOVE ABOVE HINT ITEMS) -->
         <many-to-one name="scale" class="org.sakaiproject.evaluation.model.EvalScale" foreign-key="ITEM_SCALE_FKC" lazy="false" fetch="join">
             <column name="SCALE_FK" />
         </many-to-one>
+        <!-- answers mapping will be removed -->
         <set name="answers" order-by="ITEM_FK" lazy="true" fetch="select" inverse="true">
             <key foreign-key="ANSWER_ITEM_FKC">
                 <column name="ITEM_FK" />
             </key>
             <one-to-many class="org.sakaiproject.evaluation.model.EvalAnswer"/>
         </set>
-        <!-- link to all the templates that contain this item (old) -->
+        <!-- link to all the templates that contain this item (old) (REMOVE) -->
 		<set name="templates" table="EVAL_ITEMS2TEMPLATES" lazy="false" inverse="false" fetch="join">
             <key column="ITEM_ID" />
             <many-to-many column="TEMPLATE_ID" class="org.sakaiproject.evaluation.model.EvalTemplate" />
 		</set>
-		<!-- maps from items to templates via the itemtemplate joining table (new) -->
+		<!-- maps from items to templates via the itemtemplate joining table (new) (MOVE TO TOP) -->
         <set name="templateItems" inverse="true" fetch="join">
             <key column="item_id" not-null="true" />
             <one-to-many class="org.sakaiproject.evaluation.model.EvalTemplateItem" />

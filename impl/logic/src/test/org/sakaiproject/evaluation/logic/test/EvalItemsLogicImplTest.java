@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.logic.test;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -29,6 +30,7 @@ import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.PreloadTestData;
 import org.springframework.test.AbstractTransactionalSpringContextTests;
@@ -168,7 +170,188 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl#saveItem(org.sakaiproject.evaluation.model.EvalItem, java.lang.String)}.
 	 */
 	public void testSaveItem() {
-//		 TODO fail("Not yet implemented");
+		String test_text = "test item text";
+		String test_desc = "test item description";
+
+		// test saving a valid item
+		items.saveItem( new EvalItem( new Date(), 
+				EvalTestDataLoad.MAINT_USER_ID, test_text, test_desc, 
+				EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_SCALED, 
+				EvalTestDataLoad.NOT_EXPERT, "expert desc", Boolean.FALSE, null, 
+				EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, EvalConstants.ITEM_CATEGORY_COURSE, 
+				null, null, null, etdl.scale1, null, null, null, EvalTestDataLoad.UNLOCKED), 
+				EvalTestDataLoad.MAINT_USER_ID);
+
+		// test saving valid item locked
+		items.saveItem( new EvalItem( new Date(), 
+				EvalTestDataLoad.MAINT_USER_ID, test_text, test_desc, 
+				EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_TEXT, 
+				EvalTestDataLoad.NOT_EXPERT, "expert desc", Boolean.FALSE, new Integer(2), 
+				null, EvalConstants.ITEM_CATEGORY_COURSE, 
+				null, null, null, null, null, null, null, EvalTestDataLoad.LOCKED), 
+				EvalTestDataLoad.MAINT_USER_ID);
+
+		// test saving valid item with no date and lock specified ok
+		EvalItem eiTest1 = new EvalItem( null, 
+				EvalTestDataLoad.MAINT_USER_ID, test_text, test_desc, 
+				EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_TEXT, 
+				EvalTestDataLoad.NOT_EXPERT, "expert desc", Boolean.FALSE, new Integer(2), 
+				null, EvalConstants.ITEM_CATEGORY_COURSE, 
+				null, null, null, null, null, null, null, null);
+		items.saveItem( eiTest1, 
+				EvalTestDataLoad.MAINT_USER_ID);
+		// make sure the values are filled in for us
+		Assert.assertNotNull( eiTest1.getLastModified() );
+		Assert.assertNotNull( eiTest1.getLocked() );
+
+		// test saving scaled item with no scale fails
+		try {
+			items.saveItem( new EvalItem( null, 
+					EvalTestDataLoad.MAINT_USER_ID, test_text, 
+					EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_SCALED, 
+					EvalTestDataLoad.NOT_EXPERT), 
+					EvalTestDataLoad.MAINT_USER_ID);
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+			Assert.assertNotNull(e);
+		}
+
+		// test saving scaled item with scale set AND text size fails
+		try {
+			items.saveItem( new EvalItem( new Date(), 
+					EvalTestDataLoad.MAINT_USER_ID, test_text, test_desc, 
+					EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_SCALED, 
+					EvalTestDataLoad.NOT_EXPERT, "expert desc", Boolean.FALSE, new Integer(3), 
+					EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, EvalConstants.ITEM_CATEGORY_COURSE, 
+					null, null, null, etdl.scale2, null, null, null, EvalTestDataLoad.UNLOCKED), 
+					EvalTestDataLoad.MAINT_USER_ID);
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+			Assert.assertNotNull(e);
+		}
+
+		// test saving text item with no text size fails
+		try {
+			items.saveItem( new EvalItem( null, 
+					EvalTestDataLoad.MAINT_USER_ID, test_text, 
+					EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_TEXT, 
+					EvalTestDataLoad.NOT_EXPERT), 
+					EvalTestDataLoad.MAINT_USER_ID);
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+			Assert.assertNotNull(e);
+		}
+
+		// test saving text item with scale set fails
+		try {
+			items.saveItem( new EvalItem( new Date(), 
+					EvalTestDataLoad.MAINT_USER_ID, test_text, test_desc, 
+					EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_TEXT, 
+					EvalTestDataLoad.NOT_EXPERT, "expert desc", Boolean.FALSE, new Integer(3), 
+					EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, EvalConstants.ITEM_CATEGORY_COURSE, 
+					null, null, null, etdl.scale2, null, null, null, EvalTestDataLoad.UNLOCKED), 
+					EvalTestDataLoad.MAINT_USER_ID);
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+			Assert.assertNotNull(e);
+		}
+
+		// test saving header type item with scale or text size set fails
+		try {
+			items.saveItem( new EvalItem( new Date(), 
+					EvalTestDataLoad.MAINT_USER_ID, test_text, test_desc, 
+					EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_HEADER, 
+					EvalTestDataLoad.NOT_EXPERT, "expert desc", Boolean.FALSE, new Integer(3), 
+					EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, EvalConstants.ITEM_CATEGORY_COURSE, 
+					null, null, null, etdl.scale2, null, null, null, EvalTestDataLoad.UNLOCKED), 
+					EvalTestDataLoad.MAINT_USER_ID);
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+			Assert.assertNotNull(e);
+		}
+
+		// test saving block item without block id fails
+		// NOTE: BLOCK ITEMS must have a scale specified
+		try {
+			items.saveItem( new EvalItem( new Date(), 
+					EvalTestDataLoad.MAINT_USER_ID, test_text, test_desc, 
+					EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_BLOCK, 
+					EvalTestDataLoad.NOT_EXPERT, "expert desc", Boolean.FALSE, null, 
+					EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, EvalConstants.ITEM_CATEGORY_COURSE, 
+					null, null, null, etdl.scale1, null, null, null, EvalTestDataLoad.UNLOCKED), 
+					EvalTestDataLoad.MAINT_USER_ID);
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+			Assert.assertNotNull(e);
+		}
+
+		// fetch items to work with (for editing tests)
+		EvalItem testItem1 = (EvalItem) evaluationDao.findById(EvalItem.class, 
+				etdl.item4.getId());
+		EvalItem testItem2 = (EvalItem) evaluationDao.findById(EvalItem.class, 
+				etdl.item6.getId());
+		EvalItem testItem3 = (EvalItem) evaluationDao.findById(EvalItem.class, 
+				etdl.item7.getId());
+		EvalItem testItem4 = (EvalItem) evaluationDao.findById(EvalItem.class, 
+				etdl.item1.getId());
+
+		// test editing unlocked item
+		testItem1.setDescription("something maint user new");
+		items.saveItem( testItem1, 
+				EvalTestDataLoad.MAINT_USER_ID);
+
+		// TODO - CANNOT RUN THIS TEST FOR NOW BECAUSE OF HIBERNATE
+//		// test that LOCKED cannot be changed to FALSE on existing item
+//		try {
+//			testItem3.setLocked(Boolean.FALSE);
+//			items.saveItem( testItem3, 
+//					EvalTestDataLoad.ADMIN_USER_ID);
+//			Assert.fail("Should have thrown exception");
+//		} catch (RuntimeException e) {
+//			Assert.assertNotNull(e);
+//			Assert.fail(e.getMessage()); // see why failing
+//		}
+
+		// test editing LOCKED item fails
+		try {
+			testItem4.setExpert(Boolean.FALSE);
+			items.saveItem( testItem4, 
+					EvalTestDataLoad.ADMIN_USER_ID);
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalStateException e) {
+			Assert.assertNotNull(e);
+		}
+
+		// test admin can edit any item
+		testItem2.setDescription("something admin new");
+		items.saveItem( testItem2, 
+				EvalTestDataLoad.ADMIN_USER_ID);
+
+		// test that editing unowned item causes permission failure
+		try {
+			testItem3.setDescription("something maint new");
+			items.saveItem( testItem3, 
+					EvalTestDataLoad.MAINT_USER_ID);
+			Assert.fail("Should have thrown exception");
+		} catch (SecurityException e) {
+			Assert.assertNotNull(e);
+		}
+
+		// test that setting sharing to PUBLIC as non-admin fails
+		try {
+			testItem1.setSharing(EvalConstants.SHARING_PUBLIC);
+			items.saveItem( testItem1, 
+					EvalTestDataLoad.MAINT_USER_ID);
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+			Assert.assertNotNull(e);
+		}
+
+		// test admin can set sharing to public
+		testItem1.setSharing(EvalConstants.SHARING_PUBLIC);
+		items.saveItem( testItem1, 
+				EvalTestDataLoad.ADMIN_USER_ID);
+
 	}
 
 	/**
