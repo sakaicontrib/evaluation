@@ -16,7 +16,6 @@ package org.sakaiproject.evaluation.tool.producers;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
@@ -125,7 +124,8 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 			List childItems = new ArrayList(template.getItems());
 			if (! childItems.isEmpty()) {
 				System.out.println("ChildItems is not empty");
-				Collections.sort(childItems, new ReportItemOrderComparator());
+				//Collections.sort(childItems, new ReportItemOrderComparator());
+				Collections.sort(childItems,new PreviewEvalProducer.EvaluationItemOrderComparator());
 				
 				// check if there is any "Course" items or "Instructor" items;
 				UIBranchContainer courseSection = null;
@@ -304,7 +304,8 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 			UIOutput.make(header, "itemText", myItem.getItemText()); //$NON-NLS-1$
 		}
 	}
-	
+/*	
+ * 
 	private static class ReportItemOrderComparator implements Comparator {
 		public int compare(Object eval0, Object eval1) {
 			// expects to get EvalItem objects
@@ -312,7 +313,7 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 				compareTo(((EvalItem)eval1).getId());
 		}
 	}
-	
+*/	
 	public List reportNavigationCases() {
 		List i = new ArrayList();
 		//TODO
