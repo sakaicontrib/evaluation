@@ -167,7 +167,18 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 	 */
 	public boolean canControlItem(String userId, Long itemId) {
 		log.debug("itemId:" + itemId + ", userId:" + userId);
-		// TODO Auto-generated method stub
+		// get the item by id
+		EvalItem item = (EvalItem) dao.findById(EvalItem.class, itemId);
+		if (item == null) {
+			throw new IllegalArgumentException("Cannot find item with id: " + itemId);
+		}
+
+		// check perms and locked
+		try {
+			return checkUserControlItem(userId, item);
+		} catch (RuntimeException e) {
+			log.info(e.getMessage());
+		}
 		return false;
 	}
 
@@ -176,12 +187,41 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 	 */
 	public boolean canControlTemplateItem(String userId, Long templateItemId) {
 		log.debug("templateItemId:" + templateItemId + ", userId:" + userId);
-		// TODO Auto-generated method stub
+		// get the template item by id
+		EvalTemplateItem templateItem = (EvalTemplateItem) dao.findById(EvalTemplateItem.class, templateItemId);
+		if (templateItem == null) {
+			throw new IllegalArgumentException("Cannot find template item with id: " + templateItemId);
+		}
+
+		// check perms and locked
+		try {
+			return checkUserControlTemplateItem(userId, templateItem);
+		} catch (RuntimeException e) {
+			log.info(e.getMessage());
+		}
 		return false;
 	}
 
 
 	// PRIVATE METHODS
+
+	protected boolean checkUserControlItem(String userId, EvalItem item) {
+		log.debug("item: " + item.getId() + ", userId: " + userId);
+		// check locked first
+		if (item.getId() != null &&
+				item.getLocked().booleanValue() == true) {
+			throw new IllegalStateException("Cannot control (modify) locked item ("+item.getId()+")");
+		}
+
+		// check ownership or super user
+		if ( external.isUserAdmin(userId) ) {
+			return true;
+		} else if ( item.getOwner().equals(userId) ) {
+			return true;
+		} else {
+			throw new SecurityException("User ("+userId+") cannot control item ("+item.getId()+") without permissions");
+		}
+	}
 
 	protected boolean checkUserControlTemplateItem(String userId, EvalTemplateItem templateItem) {
 		log.debug("templateItem: " + templateItem.getId() + ", userId: " + userId);
@@ -201,4 +241,5 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 			throw new SecurityException("User ("+userId+") cannot control template item ("+templateItem.getId()+") without permissions");
 		}
 	}
+
 }

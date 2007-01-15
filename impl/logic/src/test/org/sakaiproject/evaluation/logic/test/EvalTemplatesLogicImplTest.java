@@ -415,7 +415,7 @@ public class EvalTemplatesLogicImplTest extends AbstractTransactionalSpringConte
 		Assert.assertFalse( templates.canControlTemplate( EvalTestDataLoad.ADMIN_USER_ID, 
 				etdl.templateAdmin.getId() ) );
 
-		// test invalid scale id causes failure
+		// test invalid template id causes failure
 		try {
 			templates.canControlTemplate( EvalTestDataLoad.MAINT_USER_ID, 
 					EvalTestDataLoad.INVALID_LONG_ID );
