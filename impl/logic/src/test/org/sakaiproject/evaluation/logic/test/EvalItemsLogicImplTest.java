@@ -358,7 +358,67 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl#deleteItem(java.lang.Long, java.lang.String)}.
 	 */
 	public void testDeleteItem() {
-//		 TODO fail("Not yet implemented");
+		// test removing item without permissions fails
+		try {
+			items.deleteItem(etdl.item7.getId(), 
+					EvalTestDataLoad.MAINT_USER_ID);
+			Assert.fail("Should have thrown exception");
+		} catch (SecurityException e) {
+			Assert.assertNotNull(e);
+		}
+
+		try {
+			items.deleteItem(etdl.item4.getId(), 
+					EvalTestDataLoad.USER_ID);
+			Assert.fail("Should have thrown exception");
+		} catch (SecurityException e) {
+			Assert.assertNotNull(e);
+		}
+
+		// test removing locked item fails
+		try {
+			items.deleteItem(etdl.item2.getId(), 
+					EvalTestDataLoad.MAINT_USER_ID);
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalStateException e) {
+			Assert.assertNotNull(e);
+		}
+
+		try {
+			items.deleteItem(etdl.item1.getId(), 
+					EvalTestDataLoad.ADMIN_USER_ID);
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalStateException e) {
+			Assert.assertNotNull(e);
+		}
+
+		// test cannot remove expert item
+		try {
+			items.deleteItem(etdl.item6.getId(), 
+					EvalTestDataLoad.ADMIN_USER_ID);
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalStateException e) {
+			Assert.assertNotNull(e);
+		}
+
+		// test removing unused item OK
+		items.deleteItem(etdl.item4.getId(), 
+				EvalTestDataLoad.MAINT_USER_ID);
+		Assert.assertNull( items.getItemById(etdl.item4.getId()) );
+
+		items.deleteItem(etdl.item7.getId(), 
+				EvalTestDataLoad.ADMIN_USER_ID);
+		Assert.assertNull( items.getItemById(etdl.item7.getId()) );
+
+		// test removing invalid item id fails
+		try {
+			items.deleteItem(EvalTestDataLoad.INVALID_LONG_ID, 
+					EvalTestDataLoad.MAINT_USER_ID);
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+			Assert.assertNotNull(e);
+		}
+
 	}
 
 	/**

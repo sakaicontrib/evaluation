@@ -151,7 +151,7 @@ public class EvalTestDataLoad {
 	 */
 	public EvalItem item5;
 	/**
-	 * Item that is used in {@link #templateUserUnused}, textual, unlocked, MAINT_USER_ID owns, private
+	 * Item that is used in {@link #templateUserUnused}, textual, unlocked, MAINT_USER_ID owns, private, expert
 	 */
 	public EvalItem item6;
 	/**
@@ -385,7 +385,7 @@ public class EvalTestDataLoad {
 		item5.setDisplayRows( new Integer(2) );
 		item5.setLocked(LOCKED);
 		item6 = new EvalItem(new Date(), MAINT_USER_ID, "Textual unlocked", 
-				EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_TEXT, NOT_EXPERT);
+				EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_TEXT, EXPERT);
 		item6.setDisplayRows( new Integer(3) );
 		item6.setLocked(UNLOCKED);
 		item7 = new EvalItem(new Date(), ADMIN_USER_ID, "Textual unlocked", 
