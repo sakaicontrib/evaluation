@@ -363,27 +363,34 @@ public class EvalTestDataLoad {
 		item1 = new EvalItem(new Date(), ADMIN_USER_ID, ITEM_TEXT, 
 				EvalConstants.SHARING_PUBLIC, EvalConstants.ITEM_TYPE_SCALED, EXPERT);
 		item1.setScale(scale1);
+		item1.setScaleDisplaySetting( EvalConstants.ITEM_SCALE_DISPLAY_COMPACT );
 		item1.setLocked(LOCKED);
 		item2 = new EvalItem(new Date(), MAINT_USER_ID, ITEM_TEXT, 
 				EvalConstants.SHARING_PUBLIC, EvalConstants.ITEM_TYPE_SCALED, NOT_EXPERT);
 		item2.setScale(scale1);
+		item2.setScaleDisplaySetting( EvalConstants.ITEM_SCALE_DISPLAY_FULL );
 		item2.setLocked(LOCKED);
 		item3 = new EvalItem(new Date(), MAINT_USER_ID, ITEM_TEXT, 
 				EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_SCALED, NOT_EXPERT);
 		item3.setScale(scale1);
+		item3.setScaleDisplaySetting( EvalConstants.ITEM_SCALE_DISPLAY_STEPPED );
 		item3.setLocked(LOCKED);
 		item4 = new EvalItem(new Date(), MAINT_USER_ID, ITEM_TEXT, 
 				EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_SCALED, NOT_EXPERT);
 		item4.setScale(scale1);
+		item4.setScaleDisplaySetting( EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL );
 		item4.setLocked(UNLOCKED);
 		item5 = new EvalItem(new Date(), MAINT_USER_ID, "Textual locked", 
 				EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_TEXT, NOT_EXPERT);
+		item5.setDisplayRows( new Integer(2) );
 		item5.setLocked(LOCKED);
 		item6 = new EvalItem(new Date(), MAINT_USER_ID, "Textual unlocked", 
 				EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_TEXT, NOT_EXPERT);
+		item6.setDisplayRows( new Integer(3) );
 		item6.setLocked(UNLOCKED);
 		item7 = new EvalItem(new Date(), ADMIN_USER_ID, "Textual unlocked", 
 				EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_TEXT, NOT_EXPERT);
+		item7.setDisplayRows( new Integer(4) );
 		item7.setLocked(UNLOCKED);
 
 		//templateShared = new EvalTemplate(new Date(), ADMIN_USER_ID, "Template shared", EvalConstants.SHARING_SHARED, UNLOCKED, NOT_EXPERT);

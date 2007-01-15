@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.logic.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -26,6 +27,8 @@ import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
+import org.sakaiproject.evaluation.model.utils.EvalUtils;
 
 
 /**
@@ -68,8 +71,101 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 	 */
 	public void saveItem(EvalItem item, String userId) {
 		log.debug("item:" + item.getId() + ", userId:" + userId);
-		// TODO Auto-generated method stub
 
+		// set the date modified
+		item.setLastModified( new Date() );
+
+		// check on ITEM_TYPE and invalid combinations of item values depending on the type
+		if ( EvalConstants.ITEM_TYPE_SCALED.equals(item.getClassification()) ) {
+			if (item.getScale() == null) {
+				throw new IllegalArgumentException("Item scale must be specified for scaled type items");
+			} else if (item.getScaleDisplaySetting() == null) {
+				throw new IllegalArgumentException("Item scale display setting must be specified for scaled type items");
+			} else if (item.getBlockId() != null) {
+				throw new IllegalArgumentException("Item blockid cannot be included for scaled type items");
+			} else if (item.getDisplayRows() != null) {
+				throw new IllegalArgumentException("Item displayRows cannot be included for scaled type items");
+			} else if (item.getBlockParent() != null) {
+				throw new IllegalArgumentException("Item blockParent cannot be included for scaled type items");
+			}
+		} else if ( EvalConstants.ITEM_TYPE_TEXT.equals(item.getClassification()) ) {
+			if (item.getDisplayRows() == null) {
+				throw new IllegalArgumentException("Item display rows must be specified for text type items");
+			} else if (item.getBlockId() != null) {
+				throw new IllegalArgumentException("Item blockid cannot be included for text type items");
+			} else if (item.getScale() != null) {
+				throw new IllegalArgumentException("Item scale cannot be included for text type items");
+			} else if (item.getScaleDisplaySetting() != null) {
+				throw new IllegalArgumentException("Item scale display setting cannot be included for text type items");
+			} else if (item.getBlockParent() != null) {
+				throw new IllegalArgumentException("Item blockParent cannot be included for text type items");
+			}
+		} else if ( EvalConstants.ITEM_TYPE_BLOCK.equals(item.getClassification()) ) {
+			if (item.getBlockId() == null) {
+				throw new IllegalArgumentException("Item blockid must be specified for block type items");
+			} else if (item.getScale() == null) {
+				throw new IllegalArgumentException("Item scale must be specified for block type items");
+			} else if (item.getScaleDisplaySetting() != null) {
+				throw new IllegalArgumentException("Item scale display setting cannot be included for block type items");
+			} else if (item.getDisplayRows() != null) {
+				throw new IllegalArgumentException("Item displayRows cannot be included for block type items");
+			}
+		} else if ( EvalConstants.ITEM_TYPE_HEADER.equals(item.getClassification()) ) {
+			if (item.getBlockId() != null) {
+				throw new IllegalArgumentException("Item blockid cannot be included for header type items");
+			} else if (item.getScale() != null) {
+				throw new IllegalArgumentException("Item scale cannot be included for header type items");
+			} else if (item.getScaleDisplaySetting() != null) {
+				throw new IllegalArgumentException("Item scale display setting cannot be included for header type items");
+			} else if (item.getDisplayRows() != null) {
+				throw new IllegalArgumentException("Item displayRows cannot be included for header type items");
+			} else if (item.getBlockParent() != null) {
+				throw new IllegalArgumentException("Item blockParent cannot be included for header type items");
+			}			
+		} else {
+			throw new IllegalArgumentException("Invalid item classification specified ("+item.getClassification()+"), you must use the ITEM_TYPE constants to indicate classification");
+		}
+
+		// check the sharing constants
+		if (! EvalUtils.checkSharingConstant(item.getSharing()) ||
+				EvalConstants.SHARING_OWNER.equals(item.getSharing()) ) {
+			throw new IllegalArgumentException("Invalid sharing constant ("+item.getSharing()+") set for item ("+item.getItemText()+")");
+		} else if ( EvalConstants.SHARING_PUBLIC.equals(item.getSharing()) ) {
+			// test if non-admin trying to set public sharing
+			if (! external.isUserAdmin(userId) ) {
+				throw new IllegalArgumentException("Only admins can set item ("+item.getItemText()+") sharing to public");
+			}
+		}
+
+		if (item.getId() != null) {
+			// existing item, don't allow change to locked setting
+			EvalItem existingItem = (EvalItem) dao.findById(EvalItem.class, item.getId());
+			if (existingItem == null) {
+				throw new IllegalArgumentException("Cannot find item with id: " + item.getId());
+			}
+
+			if (! existingItem.getLocked().equals(item.getLocked())) {
+				throw new IllegalArgumentException("Cannot change locked setting on existing item (" + item.getId() + ")");
+			}
+		}
+
+		// fill in the locked setting with the default UNLOCKED
+		if (item.getLocked() == null) {
+			item.setLocked( Boolean.FALSE );
+		}
+
+		if (checkUserControlItem(userId, item)) {
+			if (item.getLocked().booleanValue() == true) {
+				// TODO - add logic to lock associated scales here
+				log.error("TODO - Locking associated scales not implemented yet");
+			}
+			dao.save(item);
+			log.info("User ("+userId+") saved item ("+item.getId()+"), title: " + item.getItemText());
+			return;
+		}
+
+		// should not get here so die if we do
+		throw new RuntimeException("User ("+userId+") could NOT save item ("+item.getId()+"), title: " + item.getItemText());
 	}
 
 	/* (non-Javadoc)
