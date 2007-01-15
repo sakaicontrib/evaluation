@@ -241,7 +241,6 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertTrue(ids.contains( etdl.item3.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item5.getId() ));
 
-		// takers should see items at their level (one level)
 		l = items.getItemsForTemplate( etdl.templateUser.getId(), 
 				EvalTestDataLoad.USER_ID );
 		Assert.assertNotNull( l );
@@ -250,6 +249,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertTrue(ids.contains( etdl.item1.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item5.getId() ));
 
+		// TODO - takers should see items at their level (one level) if they have access
 		l = items.getItemsForTemplate( etdl.templateUser.getId(), 
 				EvalTestDataLoad.STUDENT_USER_ID );
 		Assert.assertNotNull( l );
@@ -330,14 +330,72 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl#canControlItem(java.lang.String, java.lang.Long)}.
 	 */
 	public void testCanControlItem() {
-//		 TODO fail("Not yet implemented");
+		// test can control owned items
+		Assert.assertTrue( items.canControlItem( EvalTestDataLoad.ADMIN_USER_ID, 
+				etdl.item7.getId() ) );
+		Assert.assertTrue( items.canControlItem( EvalTestDataLoad.MAINT_USER_ID, 
+				etdl.item4.getId() ) );
+
+		// test admin user can override perms
+		Assert.assertTrue( items.canControlItem( EvalTestDataLoad.ADMIN_USER_ID, 
+				etdl.item4.getId() ) );
+
+		// test cannot control unowned items
+		Assert.assertFalse( items.canControlItem( EvalTestDataLoad.MAINT_USER_ID, 
+				etdl.item7.getId() ) );
+		Assert.assertFalse( items.canControlItem( EvalTestDataLoad.USER_ID, 
+				etdl.item4.getId() ) );
+
+		// test cannot control locked items
+		Assert.assertFalse( items.canControlItem( EvalTestDataLoad.ADMIN_USER_ID, 
+				etdl.item1.getId() ) );
+		Assert.assertFalse( items.canControlItem( EvalTestDataLoad.MAINT_USER_ID, 
+				etdl.item2.getId() ) );
+
+		// test invalid item id causes failure
+		try {
+			items.canControlItem( EvalTestDataLoad.MAINT_USER_ID, 
+					EvalTestDataLoad.INVALID_LONG_ID );
+			Assert.fail("Should have thrown exception");
+		} catch (RuntimeException e) {
+			Assert.assertNotNull(e);
+		}
 	}
 
 	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl#canControlTemplateItem(java.lang.String, java.lang.Long)}.
 	 */
 	public void testCanControlTemplateItem() {
-//		 TODO fail("Not yet implemented");
+		// test can control owned items
+		Assert.assertTrue( items.canControlTemplateItem( EvalTestDataLoad.ADMIN_USER_ID, 
+				etdl.templateItem3PU.getId() ) );
+		Assert.assertTrue( items.canControlTemplateItem( EvalTestDataLoad.MAINT_USER_ID, 
+				etdl.templateItem3U.getId() ) );
+
+		// test admin user can override perms
+		Assert.assertTrue( items.canControlTemplateItem( EvalTestDataLoad.ADMIN_USER_ID, 
+				etdl.templateItem3U.getId() ) );
+
+		// test cannot control unowned items
+		Assert.assertFalse( items.canControlTemplateItem( EvalTestDataLoad.MAINT_USER_ID, 
+				etdl.templateItem3PU.getId() ) );
+		Assert.assertFalse( items.canControlTemplateItem( EvalTestDataLoad.USER_ID, 
+				etdl.templateItem3U.getId() ) );
+
+		// test cannot control items locked by locked template
+		Assert.assertFalse( items.canControlTemplateItem( EvalTestDataLoad.ADMIN_USER_ID, 
+				etdl.templateItem2A.getId() ) );
+		Assert.assertFalse( items.canControlTemplateItem( EvalTestDataLoad.MAINT_USER_ID, 
+				etdl.templateItem1P.getId() ) );
+
+		// test invalid item id causes failure
+		try {
+			items.canControlTemplateItem( EvalTestDataLoad.MAINT_USER_ID, 
+					EvalTestDataLoad.INVALID_LONG_ID );
+			Assert.fail("Should have thrown exception");
+		} catch (RuntimeException e) {
+			Assert.assertNotNull(e);
+		}
 	}
 
 }

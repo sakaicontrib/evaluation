@@ -138,7 +138,7 @@ public class EvalTestDataLoad {
 	public EvalItem item2;
 	/**
 	 * Item that is used in {@link #templateAdmin} and {@link #templateUnused} and {@link #templatePublicUnused}, 
-	 * unlocked, scaled, MAINT_USER_ID owns, private
+	 * locked, scaled, MAINT_USER_ID owns, private
 	 */
 	public EvalItem item3;
 	/**
@@ -154,6 +154,10 @@ public class EvalTestDataLoad {
 	 * Item that is used in {@link #templateUserUnused}, textual, unlocked, MAINT_USER_ID owns, private
 	 */
 	public EvalItem item6;
+	/**
+	 * Item that is unused, textual, unlocked, ADMIN_USER_ID owns, private
+	 */
+	public EvalItem item7;
 
 	// TEMPLATE ITEMS
 	public EvalTemplateItem templateItem1User;
@@ -367,7 +371,7 @@ public class EvalTestDataLoad {
 		item3 = new EvalItem(new Date(), MAINT_USER_ID, ITEM_TEXT, 
 				EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_SCALED, NOT_EXPERT);
 		item3.setScale(scale1);
-		item3.setLocked(UNLOCKED);
+		item3.setLocked(LOCKED);
 		item4 = new EvalItem(new Date(), MAINT_USER_ID, ITEM_TEXT, 
 				EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_SCALED, NOT_EXPERT);
 		item4.setScale(scale1);
@@ -378,6 +382,9 @@ public class EvalTestDataLoad {
 		item6 = new EvalItem(new Date(), MAINT_USER_ID, "Textual unlocked", 
 				EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_TEXT, NOT_EXPERT);
 		item6.setLocked(UNLOCKED);
+		item7 = new EvalItem(new Date(), ADMIN_USER_ID, "Textual unlocked", 
+				EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_TEXT, NOT_EXPERT);
+		item7.setLocked(UNLOCKED);
 
 		//templateShared = new EvalTemplate(new Date(), ADMIN_USER_ID, "Template shared", EvalConstants.SHARING_SHARED, UNLOCKED, NOT_EXPERT);
 		//templateVisible = new EvalTemplate(new Date(), ADMIN_USER_ID, "Template visible", EvalConstants.SHARING_VISIBLE, UNLOCKED, NOT_EXPERT);
@@ -676,6 +683,7 @@ public class EvalTestDataLoad {
 		dao.save(item4);
 		dao.save(item5);
 		dao.save(item6);
+		dao.save(item7);
 
 		dao.save(templateItem1User);
 		dao.save(templateItem1P);
