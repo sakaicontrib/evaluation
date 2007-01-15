@@ -834,4 +834,16 @@ public class EvaluationLogicImpl implements EvaluationLogic {
 		
 	}
 
+
+	public List getItemsForTemplate(Long templateId, String userId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public Integer getNextBlockId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
