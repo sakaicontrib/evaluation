@@ -17,9 +17,6 @@ package org.sakaiproject.evaluation.logic.impl;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-
-import junit.framework.Assert;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,7 +26,6 @@ import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
-import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 
 
 /**
