@@ -311,9 +311,10 @@ public class EvalTemplatesLogicImplTest extends AbstractTransactionalSpringConte
 		// test getting all templates for admin user (should include all templates)
 		l = templates.getTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, null);
 		Assert.assertNotNull(l);
-		Assert.assertEquals(6, l.size());
+		Assert.assertEquals(7, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.templateAdmin.getId() ));
+		Assert.assertTrue(ids.contains( etdl.templateAdminNoItems.getId() ));
 		Assert.assertTrue(ids.contains( etdl.templatePublicUnused.getId() ));
 		Assert.assertTrue(ids.contains( etdl.templatePublic.getId() ));
 		Assert.assertTrue(ids.contains( etdl.templateUnused.getId() ));
@@ -342,14 +343,15 @@ public class EvalTemplatesLogicImplTest extends AbstractTransactionalSpringConte
 		// test using SHARING_OWNER same as null (getting all templates)
 		l = templates.getTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.SHARING_OWNER);
 		Assert.assertNotNull(l);
-		Assert.assertEquals(6, l.size());
+		Assert.assertEquals(7, l.size());
 
 		// test getting private templates for admin (admin should see all private)
 		l = templates.getTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.SHARING_PRIVATE);
 		Assert.assertNotNull(l);
-		Assert.assertEquals(4, l.size());
+		Assert.assertEquals(5, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.templateAdmin.getId() ));
+		Assert.assertTrue(ids.contains( etdl.templateAdminNoItems.getId() ));
 		Assert.assertTrue(ids.contains( etdl.templateUnused.getId() ));
 		Assert.assertTrue(ids.contains( etdl.templateUser.getId() ));
 		Assert.assertTrue(ids.contains( etdl.templateUserUnused.getId() ));
