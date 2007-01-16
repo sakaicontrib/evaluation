@@ -121,9 +121,10 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 		// all private templates
 		l = evaluationDao.getVisibleTemplates(null, false);
 		Assert.assertNotNull(l);
-		Assert.assertEquals(4, l.size());
+		Assert.assertEquals(5, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.templateAdmin.getId() ));
+		Assert.assertTrue(ids.contains( etdl.templateAdminNoItems.getId() ));
 		Assert.assertTrue(ids.contains( etdl.templateUnused.getId() ));
 		Assert.assertTrue(ids.contains( etdl.templateUser.getId() ));
 		Assert.assertTrue(ids.contains( etdl.templateUserUnused.getId() ));
@@ -139,7 +140,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 		// all templates (admin would use this)
 		l = evaluationDao.getVisibleTemplates(null, true);
 		Assert.assertNotNull(l);
-		Assert.assertEquals(6, l.size());
+		Assert.assertEquals(7, l.size());
 
 		// no templates (no one should do this, it throws an exception)
 		l = evaluationDao.getVisibleTemplates("", false);
@@ -165,7 +166,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 
 		// all private templates
 		count = evaluationDao.countVisibleTemplates(null, false);
-		Assert.assertEquals(4, count);
+		Assert.assertEquals(5, count);
 
 		// all public templates
 		count = evaluationDao.countVisibleTemplates("", true);
@@ -173,7 +174,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 
 		// all templates (admin would use this)
 		count = evaluationDao.countVisibleTemplates(null, true);
-		Assert.assertEquals(6, count);
+		Assert.assertEquals(7, count);
 	}
 
 	/**

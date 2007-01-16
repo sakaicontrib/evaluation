@@ -205,6 +205,11 @@ public class EvalTestDataLoad {
 	 * <br/>Uses {@link #item6}
 	 */
 	public EvalTemplate templateUserUnused;
+	/**
+	 * Template not being used, private, ADMIN_USER_ID owns, unlocked, not expert
+	 * <br/>Uses NO items
+	 */
+	public EvalTemplate templateAdminNoItems;
 
 	// EVALUATIONS
 	/**
@@ -398,6 +403,9 @@ public class EvalTestDataLoad {
 		templateAdmin = new EvalTemplate(new Date(), ADMIN_USER_ID, "Template admin", 
 				"description", EvalConstants.SHARING_PRIVATE, NOT_EXPERT, 
 				"expert desc", null, null, LOCKED);
+		templateAdminNoItems = new EvalTemplate(new Date(), ADMIN_USER_ID, "Template admin no items", 
+				"description", EvalConstants.SHARING_PRIVATE, NOT_EXPERT, 
+				"not expert desc", null, null, UNLOCKED);
 		templatePublicUnused = new EvalTemplate(new Date(), ADMIN_USER_ID, "Template unused public", 
 				"description", EvalConstants.SHARING_PUBLIC, NOT_EXPERT, 
 				"expert desc", null, null, UNLOCKED);
@@ -678,6 +686,7 @@ public class EvalTestDataLoad {
 		//dao.save(templateShared);
 		//dao.save(templateVisible);
 		dao.save(templateAdmin);
+		dao.save(templateAdminNoItems);
 		dao.save(templatePublicUnused);
 		dao.save(templatePublic);
 		dao.save(templateUnused);
