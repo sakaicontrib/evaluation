@@ -1,6 +1,6 @@
 package org.sakaiproject.evaluation.model;
 
-// Generated Jan 11, 2007 4:37:19 PM by Hibernate Tools 3.2.0.beta6a
+// Generated Jan 15, 2007 9:40:12 PM by Hibernate Tools 3.2.0.beta6a
 
 import java.util.Date;
 import java.util.HashSet;
@@ -36,7 +36,8 @@ public class EvalResponse implements java.io.Serializable {
 	}
 
 	/** minimal constructor */
-	public EvalResponse(Date lastModified, String owner, String context, Date startTime, EvalEvaluation evaluation) {
+	public EvalResponse(Date lastModified, String owner, String context,
+			Date startTime, EvalEvaluation evaluation) {
 		this.lastModified = lastModified;
 		this.owner = owner;
 		this.context = context;
@@ -45,8 +46,8 @@ public class EvalResponse implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public EvalResponse(Date lastModified, String owner, String context, Date startTime, Date endTime, Set answers,
-			EvalEvaluation evaluation) {
+	public EvalResponse(Date lastModified, String owner, String context,
+			Date startTime, Date endTime, Set answers, EvalEvaluation evaluation) {
 		this.lastModified = lastModified;
 		this.owner = owner;
 		this.context = context;

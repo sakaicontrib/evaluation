@@ -1,6 +1,6 @@
 package org.sakaiproject.evaluation.model;
 
-// Generated Jan 11, 2007 4:37:19 PM by Hibernate Tools 3.2.0.beta6a
+// Generated Jan 15, 2007 9:40:12 PM by Hibernate Tools 3.2.0.beta6a
 
 import java.util.Date;
 import java.util.HashSet;
@@ -70,8 +70,10 @@ public class EvalEvaluation implements java.io.Serializable {
 	}
 
 	/** minimal constructor */
-	public EvalEvaluation(Date lastModified, String owner, String title, Date startDate, Date stopDate, Date dueDate,
-			Date viewDate, String state, String instructorOpt, Integer reminderDays, EvalTemplate template) {
+	public EvalEvaluation(Date lastModified, String owner, String title,
+			Date startDate, Date stopDate, Date dueDate, Date viewDate,
+			String state, String instructorOpt, Integer reminderDays,
+			EvalTemplate template) {
 		this.lastModified = lastModified;
 		this.owner = owner;
 		this.title = title;
@@ -86,11 +88,15 @@ public class EvalEvaluation implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public EvalEvaluation(Date lastModified, String owner, String title, String instructions, Date startDate,
-			Date stopDate, Date dueDate, Date viewDate, Date studentsDate, Date instructorsDate, String state,
-			String instructorOpt, Integer reminderDays, String reminderFromEmail, String termId,
-			EvalEmailTemplate availableEmailTemplate, EvalEmailTemplate reminderEmailTemplate, EvalTemplate template,
-			Set responses, Boolean resultsPrivate, Boolean blankResponsesAllowed, Boolean modifyResponsesAllowed,
+	public EvalEvaluation(Date lastModified, String owner, String title,
+			String instructions, Date startDate, Date stopDate, Date dueDate,
+			Date viewDate, Date studentsDate, Date instructorsDate,
+			String state, String instructorOpt, Integer reminderDays,
+			String reminderFromEmail, String termId,
+			EvalEmailTemplate availableEmailTemplate,
+			EvalEmailTemplate reminderEmailTemplate, EvalTemplate template,
+			Set responses, Boolean resultsPrivate,
+			Boolean blankResponsesAllowed, Boolean modifyResponsesAllowed,
 			Boolean unregisteredAllowed, Boolean locked) {
 		this.lastModified = lastModified;
 		this.owner = owner;
@@ -251,7 +257,8 @@ public class EvalEvaluation implements java.io.Serializable {
 		return this.availableEmailTemplate;
 	}
 
-	public void setAvailableEmailTemplate(EvalEmailTemplate availableEmailTemplate) {
+	public void setAvailableEmailTemplate(
+			EvalEmailTemplate availableEmailTemplate) {
 		this.availableEmailTemplate = availableEmailTemplate;
 	}
 

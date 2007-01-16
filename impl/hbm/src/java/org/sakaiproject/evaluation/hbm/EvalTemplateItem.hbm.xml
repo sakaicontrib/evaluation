@@ -15,8 +15,8 @@
             <column name="LAST_MODIFIED" not-null="true" />
         </property>
         <!-- this should be the internal userId -->
-        <property name="owner" type="java.lang.String" index="eval_templateitem_owner">
-            <column name="OWNER" not-null="true" length="255" />
+        <property name="owner" type="java.lang.String">
+            <column name="OWNER" not-null="true" length="255" index="eval_templateitem_owner" />
         </property>
         <!-- linkage to the template -->
         <many-to-one name="template" class="org.sakaiproject.evaluation.model.EvalTemplate" fetch="join">
@@ -43,12 +43,16 @@
             <column name="SCALE_DISPLAY_SETTING" length="255" />
         </property>
         <!-- Does the item use Not Available in this template -->
-        <property name="usesNA" type="java.lang.Boolean" />
+        <property name="usesNA" type="java.lang.Boolean">
+            <column name="USES_NA" />
+        </property>
         <!-- is this item the parent item for a block -->
-        <property name="blockParent" type="java.lang.Boolean" />
+        <property name="blockParent" type="java.lang.Boolean">
+            <column name="BLOCK_PARENT" />
+        </property>
         <!-- what is the unique id of this block if in a block -->
-        <property name="blockId" type="java.lang.Integer" index="eval_templateitem_blockid">
-            <column name="BLOCK_ID" />
+        <property name="blockId" type="java.lang.Integer">
+            <column name="BLOCK_ID" index="eval_templateitem_blockid" />
         </property>
     </class>
 </hibernate-mapping>

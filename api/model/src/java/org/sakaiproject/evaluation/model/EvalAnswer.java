@@ -1,6 +1,6 @@
 package org.sakaiproject.evaluation.model;
 
-// Generated Jan 11, 2007 4:37:19 PM by Hibernate Tools 3.2.0.beta6a
+// Generated Jan 15, 2007 9:40:12 PM by Hibernate Tools 3.2.0.beta6a
 
 import java.util.Date;
 
@@ -37,7 +37,8 @@ public class EvalAnswer implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public EvalAnswer(Date lastModified, EvalItem item, EvalResponse response, String text, Integer numeric) {
+	public EvalAnswer(Date lastModified, EvalItem item, EvalResponse response,
+			String text, Integer numeric) {
 		this.lastModified = lastModified;
 		this.item = item;
 		this.response = response;

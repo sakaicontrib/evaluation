@@ -1,6 +1,6 @@
 package org.sakaiproject.evaluation.model;
 
-// Generated Jan 11, 2007 4:37:19 PM by Hibernate Tools 3.2.0.beta6a
+// Generated Jan 15, 2007 9:40:12 PM by Hibernate Tools 3.2.0.beta6a
 
 import java.util.Date;
 
@@ -30,7 +30,8 @@ public class EvalItemGroup implements java.io.Serializable {
 	}
 
 	/** minimal constructor */
-	public EvalItemGroup(Date lastModified, String type, String title, EvalItem item) {
+	public EvalItemGroup(Date lastModified, String type, String title,
+			EvalItem item) {
 		this.lastModified = lastModified;
 		this.type = type;
 		this.title = title;
@@ -38,7 +39,8 @@ public class EvalItemGroup implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public EvalItemGroup(Date lastModified, String type, String title, String description, EvalItem item) {
+	public EvalItemGroup(Date lastModified, String type, String title,
+			String description, EvalItem item) {
 		this.lastModified = lastModified;
 		this.type = type;
 		this.title = title;
