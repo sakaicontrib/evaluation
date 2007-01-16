@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.dao.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -55,8 +56,8 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 	 * @param sharedTemplates
 	 * @return an HQL query string
 	 */
-	private String makeTemplateHQL(String userId, boolean publicTemplates,
-			boolean visibleTemplates, boolean sharedTemplates) {
+	private String makeTemplateHQL(String userId, boolean includeEmpty,  
+			boolean publicTemplates, boolean visibleTemplates, boolean sharedTemplates) {
 
 		/**
 		 * TODO - Hierarchy
@@ -69,51 +70,92 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 		 */
 
 		boolean atleastOnePredicate = false;
-		StringBuffer query = new StringBuffer("from EvalTemplate where");
+		StringBuffer query = 
+			new StringBuffer("from EvalTemplate as template");
+
+		// do not include templates which have no items in them
+		if (!includeEmpty) {
+			query.append(" where template.templateItems.size > 0 and ");
+		} else {
+			query.append(" where ");
+		}
 
 		if (userId == null) {
 			// null userId means return all private templates
-			query.append(" sharing = '" + EvalConstants.SHARING_PRIVATE + "' ");
+			if (atleastOnePredicate)
+				query.append(" or ");
 			atleastOnePredicate = true;
+
+			query.append(" template.sharing = '" + EvalConstants.SHARING_PRIVATE + "' ");
 		} else if ("".equals(userId) ) {
 			// blank userId means no private templates
 		} else {
 			// all private templates based on the userId (owner)
-			query.append(" (sharing = '" + EvalConstants.SHARING_PRIVATE + "' and owner = '" + userId + "') ");
-			atleastOnePredicate = true;
-		}
-
-		if (visibleTemplates) {
 			if (atleastOnePredicate)
 				query.append(" or ");
-
-			query.append(" sharing = '" + EvalConstants.SHARING_VISIBLE + "' ");
 			atleastOnePredicate = true;
-		}
 
-		if (sharedTemplates) {
-			if (atleastOnePredicate)
-				query.append(" or ");
-
-			query.append(" sharing = '" + EvalConstants.SHARING_SHARED + "' ");
-			atleastOnePredicate = true;
+			query.append(" (template.sharing = '" + EvalConstants.SHARING_PRIVATE + "' and template.owner = '" + userId + "') ");
 		}
 
 		if (publicTemplates) {
 			if (atleastOnePredicate)
 				query.append(" or ");
+			atleastOnePredicate = true;
 
-			query.append(" sharing = '" + EvalConstants.SHARING_PUBLIC + "'");
+			query.append(" template.sharing = '" + EvalConstants.SHARING_PUBLIC + "'");
 		}
+
+//		if (visibleTemplates) {
+//			if (atleastOnePredicate)
+//				query.append(" or ");
+//			atleastOnePredicate = true;
+//
+//			query.append(" template.sharing = '" + EvalConstants.SHARING_VISIBLE + "' ");
+//		}
+//
+//		if (sharedTemplates) {
+//			if (atleastOnePredicate)
+//				query.append(" or ");
+//			atleastOnePredicate = true;
+//
+//			query.append(" template.sharing = '" + EvalConstants.SHARING_SHARED + "' ");
+//		}
 
 		return query.toString();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#getTemplates(java.lang.String, boolean, boolean, boolean)
+	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#countVisibleTemplates(java.lang.String, java.lang.String[], boolean)
 	 */
-	public List getVisibleTemplates(String userId, boolean publicTemplates) {
+	public int countVisibleTemplates(String userId, String[] sharingConstants, boolean includeEmpty) {
+		boolean publicTemplates = false;
+		for (int i = 0; i < sharingConstants.length; i++) {
+			String sharingConstant = sharingConstants[i];
+			if (EvalConstants.SHARING_PRIVATE.equals(sharingConstant)) {
+				if (userId == null || userId.equals("")) {
+					throw new IllegalArgumentException("Must specify a userId when requesting private templates");
+				}
+			} else if (EvalConstants.SHARING_PUBLIC.equals(sharingConstant)) {
+				publicTemplates = true;
+			}
+		}
+		String hqlQuery = makeTemplateHQL(userId, includeEmpty, publicTemplates, false, false);
 
+		int count = 0;
+		try {
+			count = count(hqlQuery);
+		} catch (DataAccessException e) {
+			// this may appear to be a swallowed error, but it is actually intended behavior
+			log.error("Invalid argument combination (most likely you tried to request no items) caused failure", e);
+		}
+		return count;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#getVisibleTemplates(java.lang.String, java.lang.String[], boolean)
+	 */
+	public List getVisibleTemplates(String userId, String[] sharingConstants, boolean includeEmpty) {
 		/*
 		 * TO BE TESTED - 17 Oct 2006 - KAPIL DetachedCriteria dc =
 		 * DetachedCriteria.forClass(Template.class);
@@ -134,7 +176,19 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 		 * TO BE TESTED return getHibernateTemplate().findByCriteria(dc);
 		 */
 
-		String hqlQuery = makeTemplateHQL(userId, publicTemplates, false, false);
+		boolean publicTemplates = false;
+		for (int i = 0; i < sharingConstants.length; i++) {
+			String sharingConstant = sharingConstants[i];
+			if (EvalConstants.SHARING_PRIVATE.equals(sharingConstant)) {
+				if (userId == null || userId.equals("")) {
+					throw new IllegalArgumentException("Must specify a userId when requesting private templates");
+				}
+			} else if (EvalConstants.SHARING_PUBLIC.equals(sharingConstant)) {
+				publicTemplates = true;
+			}
+		}
+		String hqlQuery = makeTemplateHQL(userId, includeEmpty, publicTemplates, false, false);
+
 		List l = new ArrayList();
 		try {
 			l = getHibernateTemplate().find(hqlQuery);
@@ -143,22 +197,6 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 			log.error("Invalid argument combination (most likely you tried to request no items) caused failure");
 		}
 		return l;
-	}
-
-
-	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#countVisibleTemplates(java.lang.String, boolean)
-	 */
-	public int countVisibleTemplates(String userId, boolean publicTemplates) {
-		String hqlQuery = makeTemplateHQL(userId, publicTemplates, false, false);
-		int count = 0;
-		try {
-			count = count(hqlQuery);
-		} catch (DataAccessException e) {
-			// this may appear to be a swallowed error, but it is actually intended behavior
-			log.error("Invalid argument combination (most likely you tried to request no items) caused failure", e);
-		}
-		return count;
 	}
 
 	/* (non-Javadoc)
