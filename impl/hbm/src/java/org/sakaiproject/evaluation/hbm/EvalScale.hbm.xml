@@ -29,9 +29,13 @@
             <column name="EXPERT" not-null="true" />
         </property>
         <!-- the expert description for use of this scale -->
-        <property name="expertDescription" type="text" />
+        <property name="expertDescription" type="text">
+            <column name="EXPERT_DESCRIPTION" />
+        </property>
         <!-- the ideal response on this scale (use constants, used for coloring) -->
-        <property name="ideal" type="java.lang.String" not-null="false" />
+        <property name="ideal" type="java.lang.String" not-null="false">
+            <column name="IDEAL" />
+        </property>
         <!-- this holds the scale options for this scale, this must not be null (enforced in code) -->
         <array name="options" table="EVAL_SCALE_OPTIONS" cascade="all-delete-orphan">
 			<key column="ID" not-null="true"/>
@@ -40,7 +44,7 @@
 		</array>
         <!-- locked scales cannot be edited or removed, any scale used in a locked item must be locked also -->
         <property name="locked" type="java.lang.Boolean">
-            <column name="LOCKED" default="false" />
+            <column name="LOCKED" />
         </property>
     </class>
 </hibernate-mapping>

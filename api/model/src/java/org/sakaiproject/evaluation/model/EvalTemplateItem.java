@@ -1,6 +1,6 @@
 package org.sakaiproject.evaluation.model;
 
-// Generated Jan 11, 2007 4:37:19 PM by Hibernate Tools 3.2.0.beta6a
+// Generated Jan 15, 2007 9:40:12 PM by Hibernate Tools 3.2.0.beta6a
 
 import java.util.Date;
 
@@ -42,8 +42,9 @@ public class EvalTemplateItem implements java.io.Serializable {
 	}
 
 	/** minimal constructor */
-	public EvalTemplateItem(Date lastModified, String owner, EvalTemplate template, EvalItem item,
-			Integer displayOrder, String itemCategory) {
+	public EvalTemplateItem(Date lastModified, String owner,
+			EvalTemplate template, EvalItem item, Integer displayOrder,
+			String itemCategory) {
 		this.lastModified = lastModified;
 		this.owner = owner;
 		this.template = template;
@@ -53,9 +54,11 @@ public class EvalTemplateItem implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public EvalTemplateItem(Date lastModified, String owner, EvalTemplate template, EvalItem item,
-			Integer displayOrder, String itemCategory, Integer displayRows, String scaleDisplaySetting, Boolean usesNA,
-			Boolean blockParent, Integer blockId) {
+	public EvalTemplateItem(Date lastModified, String owner,
+			EvalTemplate template, EvalItem item, Integer displayOrder,
+			String itemCategory, Integer displayRows,
+			String scaleDisplaySetting, Boolean usesNA, Boolean blockParent,
+			Integer blockId) {
 		this.lastModified = lastModified;
 		this.owner = owner;
 		this.template = template;

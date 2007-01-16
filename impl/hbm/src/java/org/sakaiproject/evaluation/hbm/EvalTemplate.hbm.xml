@@ -21,7 +21,9 @@
             <column name="TITLE" not-null="true" length="255" unique="true" />
         </property>
         <!-- the description that is displayed only when editing or selecting this template -->
-        <property name="description" type="text" />
+        <property name="description" type="text">
+            <column name="DESCRIPTION" />
+        </property>
         <!-- sharing setting for this template (private, public, etc...) -->
 		<property name="sharing" type="java.lang.String" index="eval_template_sharing">
             <column name="SHARING" not-null="true" length="255" />

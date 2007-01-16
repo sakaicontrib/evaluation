@@ -33,12 +33,18 @@
             <column name="CLASSIFICATION" not-null="true" length="255" />
         </property>
         <!-- is this an expert item or not -->
-        <property name="expert" type="java.lang.Boolean" not-null="true" index="eval_item_expert" />
+        <property name="expert" type="java.lang.Boolean">
+            <column name="EXPERT" not-null="true" index="eval_item_expert" />
+        </property>
         <!-- the expert description of usage for this item -->
-        <property name="expertDescription" type="text" />
+        <property name="expertDescription" type="text">
+            <column name="EXPERT_DESCRIPTION" />
+        </property>
         <!-- Should this item include Not Available as an answer -->
         <!-- (this is a hint only and used when making the itemtemplate) -->
-        <property name="usesNA" type="java.lang.Boolean" />
+        <property name="usesNA" type="java.lang.Boolean">
+            <column name="USES_NA" />
+        </property>
         <!-- how big should the text box be when rendering this item -->
         <!-- (this is a hint only and used when making the itemtemplate) -->
         <property name="displayRows" type="java.lang.Integer">
