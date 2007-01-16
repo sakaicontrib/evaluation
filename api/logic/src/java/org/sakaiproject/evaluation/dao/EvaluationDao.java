@@ -35,20 +35,26 @@ public interface EvaluationDao extends CompleteGenericDao {
 	 * 
 	 * @param userId Sakai internal user id, owner of the private templates to be selected,
 	 * if it is null then all "Private" templates returned, if empty string then no private templates
-	 * @param publicTemplates if true, include all templates marked as public
+	 * @param sharingConstants an array of sharing constants (private, public, etc) to define 
+	 * what to include in the return
+	 * @param includeEmpty if true then include templates with no items in them, else only return 
+	 * templates with at least one item
 	 * @return a List of EvalTemplate objects
 	 */
-	public List getVisibleTemplates(String userId, boolean publicTemplates);
+	public List getVisibleTemplates(String userId, String[] sharingConstants, boolean includeEmpty);
 
 	/**
 	 * Count the templates that are visible to a user
 	 * 
 	 * @param userId - Sakai internal user id, owner of the private templates to be selected,
 	 * if it is null then all "Private" templates returned, if empty string then no private templates
-	 * @param publicTemplates if true, include all templates marked as public
+	 * @param sharingConstants an array of sharing constants (private, public, etc) to define 
+	 * what to include in the return
+	 * @param includeEmpty if true then include templates with no items in them, else only return 
+	 * templates with at least one item
 	 * @return the count of accessible EvalTemplates for this user
 	 */
-	public int countVisibleTemplates(String userId, boolean publicTemplates);
+	public int countVisibleTemplates(String userId, String[] sharingConstants, boolean includeEmpty);
 
 	/**
 	 * Returns all evaluation objects associated with the input contexts

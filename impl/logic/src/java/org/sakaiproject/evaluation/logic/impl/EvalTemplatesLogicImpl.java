@@ -163,6 +163,8 @@ public class EvalTemplatesLogicImpl implements EvalTemplatesLogic {
 		 * link them to the template. This will be a very simple but necessary table.
 		 */
 
+		boolean includeEmpty = false;
+
 		// check sharing constant
 		if (sharingConstant != null &&
 				! EvalUtils.checkSharingConstant(sharingConstant)) {
@@ -172,23 +174,24 @@ public class EvalTemplatesLogicImpl implements EvalTemplatesLogic {
 		// admin always gets all of the templates of a type
 		if (external.isUserAdmin(userId)) {
 			userId = null;
+			includeEmpty = true;
 		}
 
-		boolean publicTemplates = false;
+		String[] sharingConstants = new String[] {};
 		if (EvalConstants.SHARING_PRIVATE.equals(sharingConstant)) {
 			// do private templates only
-			publicTemplates = false;
+			includeEmpty = true;
 		} else if (EvalConstants.SHARING_PUBLIC.equals(sharingConstant)) {
 			// do public templates only
-			publicTemplates = true;
+			sharingConstants = new String[] {EvalConstants.SHARING_PUBLIC};
 			userId = "";
 		} else if (sharingConstant == null || 
 				EvalConstants.SHARING_OWNER.equals(sharingConstant)) {
 			// do all templates visible to this user
-			publicTemplates = true;
+			sharingConstants = new String[] {EvalConstants.SHARING_PUBLIC};
 		}
 
-		return dao.getVisibleTemplates(userId, publicTemplates);
+		return dao.getVisibleTemplates(userId, sharingConstants, includeEmpty);
 	}
 
 

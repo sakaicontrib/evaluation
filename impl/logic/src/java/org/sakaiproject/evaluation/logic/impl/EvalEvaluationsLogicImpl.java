@@ -436,7 +436,8 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 			 * so we will have to add in a table which will track the hierarchy levels and
 			 * link them to the template. This will be a very simple but necessary table.
 			 */
-			if ( dao.countVisibleTemplates(userId, true) > 0 ) {
+			if ( dao.countVisibleTemplates(userId, 
+					new String[] {EvalConstants.SHARING_PUBLIC}, true) > 0 ) {
 				return true;
 			}
 		}

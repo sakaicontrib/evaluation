@@ -121,7 +121,8 @@ public class EvaluationLogicImpl implements EvaluationLogic {
 		if (externalLogic.isUserAdmin(userId)) {
 			userId = null;
 		}
-		return evaluationDao.getVisibleTemplates(userId, true);
+		return evaluationDao.getVisibleTemplates(userId, 
+				new String[] {EvalConstants.SHARING_PUBLIC}, false);
 	}
 
 	/* (non-Javadoc)
@@ -140,7 +141,11 @@ public class EvaluationLogicImpl implements EvaluationLogic {
 		if (externalLogic.isUserAdmin(userId)) {
 			userId = null;
 		}
-		return evaluationDao.getVisibleTemplates(userId, publicTemplates);
+		String [] sharing = new String[] {};
+		if (publicTemplates) {
+			sharing = new String[] {EvalConstants.SHARING_PUBLIC};
+		}
+		return evaluationDao.getVisibleTemplates(userId, sharing, false);
 	}
 
 	/* (non-Javadoc)
@@ -586,7 +591,8 @@ public class EvaluationLogicImpl implements EvaluationLogic {
 			 * so we will have to add in a table which will track the hierarchy levels and
 			 * link them to the template. This will be a very simple but necessary table.
 			 */
-			if ( evaluationDao.countVisibleTemplates(userId, true) > 0 ) {
+			if ( evaluationDao.countVisibleTemplates(userId, 
+					new String[] {EvalConstants.SHARING_PUBLIC}, false) > 0 ) {
 				return true;
 			}
 		}
