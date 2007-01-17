@@ -688,7 +688,9 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl#getNextBlockId()}.
 	 */
 	public void testGetNextBlockId() {
-//		 TODO fail("Not yet implemented");
+		Integer blockId = items.getNextBlockId();
+		Assert.assertNotNull(blockId);
+		Assert.assertTrue(blockId.intValue() >= 0);
 	}
 
 

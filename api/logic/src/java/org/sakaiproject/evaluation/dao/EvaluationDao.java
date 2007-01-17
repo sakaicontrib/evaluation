@@ -74,5 +74,12 @@ public interface EvaluationDao extends CompleteGenericDao {
 	 * @return a list of EvalAnswer objects or empty list if none found
 	 */
 	public List getAnswers(Long itemId, Long evalId);
-	
+
+	/**
+	 * Gets the next unique unused block id that is available
+	 * 
+	 * @return the next block id
+	 */
+	public Integer getNextBlockId();
+
 }
