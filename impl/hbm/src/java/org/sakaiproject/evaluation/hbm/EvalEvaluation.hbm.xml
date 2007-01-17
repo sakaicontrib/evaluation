@@ -76,7 +76,7 @@
         <many-to-one name="reminderEmailTemplate" class="org.sakaiproject.evaluation.model.EvalEmailTemplate" foreign-key="EVALUATION_REMINDER_EMAIL_TEMP" lazy="proxy" fetch="select">
             <column name="REMINDER_EMAIL_TEMPLATE_FK" />
         </many-to-one>
-        <many-to-one name="template" class="org.sakaiproject.evaluation.model.EvalTemplate" foreign-key="EVALUATION_TEMPLATE_FKC" lazy="proxy" fetch="select">
+        <many-to-one name="template" class="org.sakaiproject.evaluation.model.EvalTemplate" foreign-key="EVALUATION_TEMPLATE_FKC" lazy="proxy" fetch="select" >
             <column name="TEMPLATE_FK" not-null="true" />
         </many-to-one>
         <set name="responses" order-by="EVALUATION_FK" lazy="true" fetch="select" inverse="true">

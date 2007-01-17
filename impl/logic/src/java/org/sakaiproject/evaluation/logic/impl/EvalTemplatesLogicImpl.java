@@ -149,9 +149,9 @@ public class EvalTemplatesLogicImpl implements EvalTemplatesLogic {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.EvalTemplatesLogic#getTemplatesForUser(java.lang.String, boolean)
+	 * @see org.sakaiproject.evaluation.logic.EvalTemplatesLogic#getTemplatesForUser(java.lang.String, java.lang.String, boolean)
 	 */
-	public List getTemplatesForUser(String userId, String sharingConstant) {
+	public List getTemplatesForUser(String userId, String sharingConstant, boolean includeEmpty) {
 		log.debug("sharingConstant: " + sharingConstant + ", userId: " + userId);
 		/**
 		 * TODO - Hierarchy
@@ -163,8 +163,6 @@ public class EvalTemplatesLogicImpl implements EvalTemplatesLogic {
 		 * link them to the template. This will be a very simple but necessary table.
 		 */
 
-		boolean includeEmpty = false;
-
 		// check sharing constant
 		if (sharingConstant != null &&
 				! EvalUtils.checkSharingConstant(sharingConstant)) {
@@ -174,13 +172,11 @@ public class EvalTemplatesLogicImpl implements EvalTemplatesLogic {
 		// admin always gets all of the templates of a type
 		if (external.isUserAdmin(userId)) {
 			userId = null;
-			includeEmpty = true;
 		}
 
 		String[] sharingConstants = new String[] {};
 		if (EvalConstants.SHARING_PRIVATE.equals(sharingConstant)) {
 			// do private templates only
-			includeEmpty = true;
 		} else if (EvalConstants.SHARING_PUBLIC.equals(sharingConstant)) {
 			// do public templates only
 			sharingConstants = new String[] {EvalConstants.SHARING_PUBLIC};

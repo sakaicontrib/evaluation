@@ -69,9 +69,11 @@ public interface EvalTemplatesLogic {
 	 * user, if set to a sharing constant then return just the visible
 	 * templates that match that sharing setting (can be used to get all
 	 * templates owned by this user for example)
+	 * @param includeEmpty if true then include templates with no items in them, else
+	 * only return templates that have items
 	 * @return a list of EvalTemplate objects
 	 */
-	public List getTemplatesForUser(String userId, String sharingConstant);
+	public List getTemplatesForUser(String userId, String sharingConstant, boolean includeEmpty);
 
 
 	// PERMISSIONS

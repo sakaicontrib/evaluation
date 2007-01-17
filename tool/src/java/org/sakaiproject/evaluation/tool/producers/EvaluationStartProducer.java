@@ -95,7 +95,7 @@ public class EvaluationStartProducer implements ViewComponentProducer, Navigatio
 		if ( evalViewParams.templateId == null ) {
 
 			//List templateList = evaluationBean.getTemplatesToDisplay();
-			List templateList = templatesLogic.getTemplatesForUser(external.getCurrentUserId(), null);
+			List templateList = templatesLogic.getTemplatesForUser(external.getCurrentUserId(), null, false);
 			if(templateList !=null && templateList.size()>0){
 				
 				UIBranchContainer chooseTemplate = UIBranchContainer.make(form, "chooseTemplate:"); //$NON-NLS-1$

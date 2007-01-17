@@ -132,7 +132,7 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 		}
 
 		// get template List
-		List templateList = templatesLogic.getTemplatesForUser(currentUserId, null);
+		List templateList = templatesLogic.getTemplatesForUser(currentUserId, null, true);
 		if (templateList != null && templateList.size() > 0) {
 
 			UIBranchContainer templates = UIBranchContainer.make(tofill, "templateTable:"); //$NON-NLS-1$

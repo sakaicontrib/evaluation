@@ -238,7 +238,7 @@ public class EvaluationBean {
 		this.instructorsDate = "MM/DD/YYYY";
 
 		//listOfTemplates = logic.getTemplatesToDisplay(logic.getCurrentUserId());
-		listOfTemplates = templatesLogic.getTemplatesForUser(external.getCurrentUserId(), null);
+		listOfTemplates = templatesLogic.getTemplatesForUser(external.getCurrentUserId(), null, false);
 		
 		int count = 0;
 		
