@@ -262,19 +262,11 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 	public List getItemsForTemplate(Long templateId, String userId) {
 		log.debug("templateId:" + templateId + ", userId:" + userId);
 
-		// check if the template is a valid one
-		EvalTemplate template = (EvalTemplate) dao.findById(EvalTemplate.class, templateId);
-		if (template == null) {
-			throw new IllegalArgumentException("Cannot find template with id: " + templateId);
-		}
-
 		List l = new ArrayList();
-		for (Iterator iter = template.getTemplateItems().iterator(); iter.hasNext();) {
+		for (Iterator iter = getTemplateItemsForTemplate(templateId, userId).iterator(); iter.hasNext();) {
 			EvalTemplateItem eti = (EvalTemplateItem) iter.next();
-			// TODO - check if this user can see this item (must be either taking a related eval or must somehow control the template)
 			l.add(eti.getItem());
 		}
-
 		return l;
 	}
 
@@ -308,10 +300,22 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalItemsLogic#getTemplateItemsForTemplate(java.lang.Long)
 	 */
-	public List getTemplateItemsForTemplate(Long templateId) {
+	public List getTemplateItemsForTemplate(Long templateId, String userId) {
 		log.debug("templateId:" + templateId);
-		// TODO Auto-generated method stub
-		return null;
+
+		// check if the template is a valid one
+		EvalTemplate template = (EvalTemplate) dao.findById(EvalTemplate.class, templateId);
+		if (template == null) {
+			throw new IllegalArgumentException("Cannot find template with id: " + templateId);
+		}
+
+		List l = new ArrayList();
+		for (Iterator iter = template.getTemplateItems().iterator(); iter.hasNext();) {
+			EvalTemplateItem eti = (EvalTemplateItem) iter.next();
+			// TODO - check if this user can see this item (must be either taking a related eval or must somehow control the template)
+			l.add(eti);
+		}
+		return l;
 	}
 
 
