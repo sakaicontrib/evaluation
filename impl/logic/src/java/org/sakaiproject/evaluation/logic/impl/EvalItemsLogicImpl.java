@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.logic.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -25,10 +26,12 @@ import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
+import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.utils.EvalUtils;
+import org.sakaiproject.genericdao.api.finders.ByPropsFinder;
 
 
 /**
@@ -203,8 +206,54 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 	 */
 	public List getItemsForUser(String userId, String sharingConstant) {
 		log.debug("sharingConstant:" + sharingConstant + ", userId:" + userId);
-		// TODO Auto-generated method stub
-		return null;
+
+		List l = new ArrayList();
+
+		// get admin state
+		boolean isAdmin = external.isUserAdmin(userId);
+
+		boolean getPublic = false;
+		boolean getPrivate = false;
+		// check the sharingConstant param
+		if (sharingConstant != null && 
+				! EvalUtils.checkSharingConstant(sharingConstant)) {
+			throw new IllegalArgumentException("Invalid sharing constant: " + sharingConstant);
+		}
+		if ( sharingConstant == null || 
+				EvalConstants.SHARING_OWNER.equals(sharingConstant) ) {
+			// return all items visible to this user
+			getPublic = true;
+			getPrivate = true;
+		} else if ( EvalConstants.SHARING_PRIVATE.equals(sharingConstant) ) {
+			// return only private items visible to this user
+			getPrivate = true;
+		} else if ( EvalConstants.SHARING_PUBLIC.equals(sharingConstant) ) {
+			// return all public items
+			getPublic = true;
+		}
+
+		// handle private sharing items
+		if (getPrivate) {
+			String[] props;
+			Object[] values;
+			if (isAdmin) {
+				props = new String[] { "sharing" };
+				values = new Object[] { EvalConstants.SHARING_PRIVATE };
+			} else {
+				props = new String[] { "sharing", "owner" };
+				values = new Object[] { EvalConstants.SHARING_PRIVATE, userId };				
+			}
+			l.addAll( dao.findByProperties(EvalItem.class, props, values) );
+		}
+
+		// handle public sharing items
+		if (getPublic) {
+			l.addAll( dao.findByProperties(EvalItem.class, 
+					new String[] { "sharing" }, 
+					new Object[] { EvalConstants.SHARING_PUBLIC } ) );
+		}
+
+		return l;
 	}
 
 	/* (non-Javadoc)
