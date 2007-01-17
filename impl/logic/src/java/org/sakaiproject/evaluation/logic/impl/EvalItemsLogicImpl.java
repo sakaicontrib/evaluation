@@ -285,7 +285,9 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 	public void saveTemplateItem(EvalTemplateItem templateItem, String userId) {
 		log.debug("templateItem:" + templateItem.getId() + ", userId:" + userId);
 		// TODO Auto-generated method stub
-		
+
+		// TODO Stub to save temporarily
+		dao.save(templateItem);
 	}
 
 	/* (non-Javadoc)
@@ -295,6 +297,8 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 		log.debug("templateItemId:" + templateItemId + ", userId:" + userId);
 		// TODO Auto-generated method stub
 		
+		// TODO Stub to delete temporarily
+		dao.delete(EvalTemplateItem.class, templateItemId);
 	}
 
 	/* (non-Javadoc)
