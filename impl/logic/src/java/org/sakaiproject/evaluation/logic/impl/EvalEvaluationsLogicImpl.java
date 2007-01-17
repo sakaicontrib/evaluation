@@ -161,6 +161,13 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
           // All other checks have been moved to interceptor
 		}
 
+		// make sure we are not using a blank template here
+		if (evaluation.getTemplate() == null ||
+				evaluation.getTemplate().getTemplateItems() == null ||
+				evaluation.getTemplate().getTemplateItems().size() <= 0) {
+			throw new IllegalArgumentException("Evaluations must include a template and the template must have at least one item in it");
+		}
+
 		// TODO - fill in any default values and nulls here
 		if (evaluation.getLocked() == null) {
 			evaluation.setLocked( Boolean.FALSE );
@@ -437,7 +444,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 			 * link them to the template. This will be a very simple but necessary table.
 			 */
 			if ( dao.countVisibleTemplates(userId, 
-					new String[] {EvalConstants.SHARING_PUBLIC}, true) > 0 ) {
+					new String[] {EvalConstants.SHARING_PUBLIC}, false) > 0 ) {
 				return true;
 			}
 		}

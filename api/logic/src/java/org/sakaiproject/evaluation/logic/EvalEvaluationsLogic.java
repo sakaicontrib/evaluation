@@ -34,7 +34,9 @@ public interface EvalEvaluationsLogic {
 	 * use {@link #getEvaluationState(Long)} to check the state
 	 * if you want to avoid possible exceptions<br/>
 	 * Evaluations can be saved with the email templates as null and will use the
-	 * default templates in this circumstance<br/> 
+	 * default templates in this circumstance<br/>
+	 * <b>Note:</b> Do NOT attempt to save an evaluation with a null template
+	 * or a template that contains no items<br/>
 	 * <b>Note about dates</b>:<br/>
 	 * Start date - eval becomes active on this date, cannot change start date once it passes, 
 	 * most parts of evaluation cannot change on this date, no assigned contexts can be modified<br/>
@@ -139,7 +141,8 @@ public interface EvalEvaluationsLogic {
 	 * Check if this user can begin a new evaluation (administratively), 
 	 * this checks if this user can access any templates and
 	 * also checks if they have permission to begin an evaluation in any contexts<br/>
-	 * <b>Note:</b> this is an expensive check so be careful when using it
+	 * <b>Note:</b> this is an expensive check so be careful when using it,
+	 * Only includes non-empty templates
 	 * 
 	 * @param userId the internal user id (not username)
 	 * @return true if the user can begin an evaluation, false otherwise

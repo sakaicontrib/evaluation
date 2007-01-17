@@ -176,7 +176,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 					EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(1), etdl.templatePublic),
 				EvalTestDataLoad.MAINT_USER_ID );
 			Assert.fail("Should have thrown exception");
-		} catch (RuntimeException e) {
+		} catch (NullPointerException e) {
 			Assert.assertNotNull(e);
 		}
 
@@ -189,7 +189,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 					EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(1), etdl.templatePublic),
 				EvalTestDataLoad.MAINT_USER_ID );
 			Assert.fail("Should have thrown exception");
-		} catch (RuntimeException e) {
+		} catch (NullPointerException e) {
 			Assert.assertNotNull(e);
 		}
 
@@ -203,7 +203,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 					EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(1), etdl.templatePublic),
 				EvalTestDataLoad.MAINT_USER_ID );
 			Assert.fail("Should have thrown exception");
-		} catch (RuntimeException e) {
+		} catch (IllegalArgumentException e) {
 			Assert.assertNotNull(e);
 		}
 
@@ -215,7 +215,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 					EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(1), etdl.templatePublic),
 				EvalTestDataLoad.MAINT_USER_ID );
 			Assert.fail("Should have thrown exception");
-		} catch (RuntimeException e) {
+		} catch (IllegalArgumentException e) {
 			Assert.assertNotNull(e);
 		}
 
@@ -228,7 +228,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 					EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(1), etdl.templatePublic),
 				EvalTestDataLoad.MAINT_USER_ID );
 			Assert.fail("Should have thrown exception");
-		} catch (RuntimeException e) {
+		} catch (IllegalArgumentException e) {
 			Assert.assertNotNull(e);
 		}
 
@@ -241,7 +241,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 					EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(1), etdl.templatePublic),
 				EvalTestDataLoad.MAINT_USER_ID );
 			Assert.fail("Should have thrown exception");
-		} catch (RuntimeException e) {
+		} catch (IllegalArgumentException e) {
 			Assert.assertNotNull(e);
 		}
 
@@ -255,7 +255,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 					EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(1), etdl.templatePublic),
 				EvalTestDataLoad.MAINT_USER_ID );
 			Assert.fail("Should have thrown exception");
-		} catch (RuntimeException e) {
+		} catch (IllegalArgumentException e) {
 			Assert.assertNotNull(e);
 		}
 
@@ -268,7 +268,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 					EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(1), etdl.templatePublic),
 				EvalTestDataLoad.MAINT_USER_ID );
 			Assert.fail("Should have thrown exception");
-		} catch (RuntimeException e) {
+		} catch (IllegalArgumentException e) {
 			Assert.assertNotNull(e);
 		}
 
@@ -281,7 +281,32 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 					EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(1), etdl.templatePublic),
 				EvalTestDataLoad.USER_ID );
 			Assert.fail("Should have thrown exception");
-		} catch (RuntimeException e) {
+		} catch (SecurityException e) {
+			Assert.assertNotNull(e);
+		}
+
+		// test saving an evaluation with an empty template fails
+		try {
+			evaluations.saveEvaluation( new EvalEvaluation( new Date(), 
+					EvalTestDataLoad.ADMIN_USER_ID, "Eval valid title", 
+					etdl.today, etdl.tomorrow, etdl.tomorrow, etdl.threeDaysFuture, 
+					EvalConstants.EVALUATION_STATE_INQUEUE, 
+					EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(1), etdl.templateAdminNoItems), 
+				EvalTestDataLoad.ADMIN_USER_ID );
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+			Assert.assertNotNull(e);
+		}
+
+		try {
+			evaluations.saveEvaluation( new EvalEvaluation( new Date(), 
+					EvalTestDataLoad.ADMIN_USER_ID, "Eval valid title", 
+					etdl.today, etdl.tomorrow, etdl.tomorrow, etdl.threeDaysFuture, 
+					EvalConstants.EVALUATION_STATE_INQUEUE, 
+					EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(1), null), 
+				EvalTestDataLoad.ADMIN_USER_ID );
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
 			Assert.assertNotNull(e);
 		}
 

@@ -615,9 +615,11 @@ public class EvaluationLogicImpl implements EvaluationLogic {
 	}
 
 
+
 	/**
 	 * WARNING: All methods below are non-functional
 	 */
+
 
 
 	public void deleteItem(EvalItem item, String userId) {
@@ -632,8 +634,27 @@ public class EvaluationLogicImpl implements EvaluationLogic {
 	}
 
 
+	public boolean canControlTemplateItem(String userId, Long templateItemId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
 	public void deleteItem(Long itemId, String userId) {
 		// TODO Auto-generated method stub
+		
+	}
+
+
+	public void deleteTemplateItem(Long templateItemId, String userId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public List getItemsForTemplate(Long templateId, String userId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 
@@ -643,7 +664,31 @@ public class EvaluationLogicImpl implements EvaluationLogic {
 	}
 
 
+	public Integer getNextBlockId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public EvalTemplateItem getTemplateItemById(Long templateItemId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public List getTemplateItemsForTemplate(Long templateId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
 	public void saveItem(EvalItem item, String userId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public void saveTemplateItem(EvalTemplateItem templateItem, String userId) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -661,7 +706,7 @@ public class EvaluationLogicImpl implements EvaluationLogic {
 	}
 
 
-	public List getTemplatesForUser(String userId, String sharingConstant) {
+	public List getTemplatesForUser(String userId, String sharingConstant, boolean includeEmpty) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -712,6 +757,18 @@ public class EvaluationLogicImpl implements EvaluationLogic {
 	public boolean canModifyResponse(String userId, Long responseId) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+
+	public int countResponses(Long evaluationId, String context) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	public void saveResponse(EvalResponse response, String userId) {
+		// TODO Auto-generated method stub
+		
 	}
 
 
@@ -790,66 +847,6 @@ public class EvaluationLogicImpl implements EvaluationLogic {
 	public void saveScale(EvalScale scale, String userId) {
 		// TODO Auto-generated method stub
 		
-	}
-
-
-	public int countResponses(Long evaluationId, String context) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-
-	public void saveResponse(EvalResponse response, String userId) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	public boolean canControlTemplateItem(String userId, Long templateItemId) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-
-	public void deleteTemplateItem(Long templateItemId, String userId) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	public List getItemsForTemplate(Long templateId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	public EvalTemplateItem getTemplateItemById(Long templateItemId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	public List getTemplateItemsForTemplate(Long templateId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	public void saveTemplateItem(EvalTemplateItem templateItem, String userId) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	public List getItemsForTemplate(Long templateId, String userId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	public Integer getNextBlockId() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }
