@@ -137,7 +137,9 @@ public class EvaluationStartProducer implements ViewComponentProducer, Navigatio
 					evalViewParams.templateId) );
 		}
 
-		UICommand.make(form, "cancel-button", messageLocator.getMessage("general.cancel.button"), "#{evaluationBean.cancelEvalStartAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		//UICommand.make(form, "cancel-button", messageLocator.getMessage("general.cancel.button"), "#{evaluationBean.cancelEvalStartAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		UIOutput.make(form, "cancel-button", messageLocator.getMessage("general.cancel.button"));
+
 		UICommand.make(form, "continueToSettings", messageLocator.getMessage("starteval.continue.settings.link"), "#{evaluationBean.continueToSettingsAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
