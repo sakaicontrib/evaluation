@@ -319,8 +319,7 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 	 * @see org.sakaiproject.evaluation.logic.EvalItemsLogic#getNextBlockId()
 	 */
 	public Integer getNextBlockId() {
-		// TODO Auto-generated method stub
-		return null;
+		return dao.getNextBlockId();
 	}
 
 

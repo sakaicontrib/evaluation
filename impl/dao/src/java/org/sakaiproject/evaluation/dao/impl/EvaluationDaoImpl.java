@@ -246,6 +246,19 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 		return getHibernateTemplate().find(hqlQuery.toString());
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#getNextBlockId()
+	 */
+	public Integer getNextBlockId() {
+		String hqlQuery = "select max(item.blockId) from EvalItem item";
+		Integer max = (Integer) getHibernateTemplate().iterate(hqlQuery).next();
+		if (max == null) {
+			return new Integer(0);
+		}
+		return new Integer(max.intValue() + 1);
+	}
+
+
 
 	private static class EvaluationDateComparator implements Comparator {
 		public int compare(Object eval0, Object eval1) {

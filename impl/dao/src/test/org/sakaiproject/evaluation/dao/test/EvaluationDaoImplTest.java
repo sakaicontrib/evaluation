@@ -14,6 +14,7 @@
 
 package org.sakaiproject.evaluation.dao.test;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -21,6 +22,7 @@ import junit.framework.Assert;
 
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
@@ -322,6 +324,33 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 		l = evaluationDao.getAnswers(Long.valueOf(999), etdl.evaluationClosed.getId());
 		Assert.assertNotNull(l);
 		Assert.assertEquals(0, l.size());
+	}
+
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#getNextBlockId()}.
+	 */
+	public void testGetNextBlockId() {
+		Integer blockId = evaluationDao.getNextBlockId();
+		Assert.assertNotNull(blockId);
+		Assert.assertTrue(blockId.intValue() >= 0);
+
+		EvalItem item = new EvalItem( new Date(), "AZ", "text", "sharing", "classification", Boolean.FALSE);
+		item.setBlockId( blockId );
+		evaluationDao.save( item );
+
+		Integer blockId2 = evaluationDao.getNextBlockId();
+		Assert.assertNotNull(blockId2);
+		Assert.assertTrue(blockId2.intValue() >= 0);
+		Assert.assertTrue(blockId2.compareTo(blockId) > 0);
+
+		EvalItem item2 = new EvalItem( new Date(), "AZ", "text", "sharing", "classification", Boolean.FALSE);
+		item.setBlockId( blockId2 );
+		evaluationDao.save( item2 );
+
+		Integer blockId3 = evaluationDao.getNextBlockId();
+		Assert.assertNotNull(blockId3);
+		Assert.assertTrue(blockId3.intValue() >= 0);
+		Assert.assertTrue(blockId3.compareTo(blockId2) > 0);
 	}
 
 	/**
