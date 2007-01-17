@@ -106,6 +106,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 				UIInput.make(form, "startDate", "#{evaluationBean.startDate}", null); //$NON-NLS-1$ //$NON-NLS-2$
 				
 				UIInput.make(form, "evalStatus",null,"queued"); //$NON-NLS-1$ //$NON-NLS-2$
+			
 			}else{ //started evaluation
 				UIInput startDateInput = UIInput.make(form, "startDate", "#{evaluationBean.startDate}", null); //$NON-NLS-1$ //$NON-NLS-2$
 				Map attrmap = new HashMap();

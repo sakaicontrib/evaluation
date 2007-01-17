@@ -18,7 +18,9 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -33,6 +35,7 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.logic.EvaluationLogic;
 import org.sakaiproject.evaluation.model.EvalAnswer;
@@ -109,12 +112,12 @@ public class EvaluationBean {
 
 	private static Log log = LogFactory.getLog(EvaluationBean.class);
 	
-	//Indicate the latest origination of EvalStart page
+/*	//Indicate the latest origination of EvalStart page
 	private String evalStartFlag ;
 	public void setEvalStartFlag(String flag){
 		this.evalStartFlag = flag;
 	}
-
+*/
 	private EvaluationLogic logic;
 	public void setLogic(EvaluationLogic logic) {
 		this.logic = logic;
@@ -154,6 +157,12 @@ public class EvaluationBean {
 	public void setEmailsLogic(EvalEmailsLogic emailsLogic) {
 		this.emailsLogic = emailsLogic;
 	}
+	
+	private EvalSettings settings;
+	public void setSettings(EvalSettings settings) {
+		this.settings = settings;
+	}
+	
 	/*
 	 * INITIALIZATION
 	 */
@@ -182,16 +191,15 @@ public class EvaluationBean {
 	 * MAJOR METHOD DEFINITIONS
 	 */
 	
-	/**
-	 * @deprecated - will be removed before release
-	 */
+	 // @deprecated - will be removed before release
 /*	public List getTemplatesToDisplay() {
 		//Get the list of templates from the logic layer.
 		return logic.getTemplatesToDisplay(logic.getCurrentUserId());
 	}
 */
 	//method binding to the "Cancel" button on evaluation_start.html
-	public String cancelEvalStartAction(){
+/*	REMOVED
+ * public String cancelEvalStartAction(){
 		//TODO: need to be revised 
 		if(this.evalStartFlag!=null && this.evalStartFlag.equals(TemplateModifyProducer.VIEW_ID))
 			return TemplateModifyProducer.VIEW_ID;		
@@ -199,13 +207,19 @@ public class EvaluationBean {
 			return SummaryProducer.VIEW_ID;//default coming from Summary page
 		
 	}
+*/	
 	
 	//method binding to the "Continue to Settings" button on evaluation_start.html
 	public String continueToSettingsAction() {
 		
 		//Initializing 
 		eval.setBlankResponsesAllowed(Boolean.TRUE);
-		eval.setReminderFromEmail(EvaluationConstant.HELP_DESK_ID);
+
+		//eval.setReminderFromEmail(EvaluationConstant.HELP_DESK_ID);
+		String s = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
+		eval.setReminderFromEmail(s);
+		
+		
 		instructorViewResults = Boolean.TRUE;
 		eval.setReminderDays( new Integer(1));
 	
@@ -290,11 +304,11 @@ public class EvaluationBean {
 		
 		//logic.saveEvaluation(eval, logic.getCurrentUserId());
 		/*
-		 * TODO: need to check if the start date is today's date
-		 * if it is today, set startdate as the current date(today) 
-		 * becauase there might be 1 second difference, and evalsLogic method think it is past
-		 *
-		 * */		 
+		 * check if start date is the same as today's date, set startDate as today's date time, 
+		 * as when we parse the string to a date, the time filed by default is
+		 * */
+		checkEvalStartDate(eval);
+		
 		evalsLogic.saveEvaluation(eval, external.getCurrentUserId());
 		
 	    return ControlPanelProducer.VIEW_ID;
@@ -364,9 +378,8 @@ public class EvaluationBean {
 	}
 
 	
-	/**
-	 * @deprecated This is a pointless passthrough method
-	 */
+	
+	  //@deprecated This is a pointless passthrough method	 
 /*	public Map getSites() {
 		siteIdsTitle = logic.getSites();
 		return siteIdsTitle;
@@ -389,7 +402,9 @@ public class EvaluationBean {
 		} else {
 			availableTemplate = new EvalEmailTemplate(new Date(),
 					external.getCurrentUserId(), emailAvailableTxt);
-			logic.saveEmailTemplate(availableTemplate, external.getCurrentUserId());
+			//logic.saveEmailTemplate(availableTemplate, external.getCurrentUserId());
+			emailsLogic.saveEmailTemplate(availableTemplate, external.getCurrentUserId());
+			
 		}
 		eval.setAvailableEmailTemplate(availableTemplate);
 		
@@ -402,7 +417,8 @@ public class EvaluationBean {
 		}else {
 			reminderTemplate = new EvalEmailTemplate(new Date(),
 					external.getCurrentUserId(), emailReminderTxt);
-			logic.saveEmailTemplate(reminderTemplate, logic.getCurrentUserId());
+			//logic.saveEmailTemplate(reminderTemplate, logic.getCurrentUserId());
+			emailsLogic.saveEmailTemplate(reminderTemplate, external.getCurrentUserId());
 		}
 		eval.setReminderEmailTemplate(reminderTemplate);
 	
@@ -439,11 +455,11 @@ public class EvaluationBean {
 		
 		//logic.saveEvaluation(eval, logic.getCurrentUserId());
 		/*
-		 * TODO: need to check if the start date is today's date
-		 * if it is today, set startdate as the current date(today) 
-		 * becauase there might be 1 second difference, and evalsLogic method think it is past
-		 *
-		 * */		
+		 * check if start date is the same as today's date, set startDate as today's date time, 
+		 * as when we parse the string to a date, the time filed by default is
+		 * */
+		checkEvalStartDate(eval);
+		
 		evalsLogic.saveEvaluation(eval, external.getCurrentUserId());
 		
 		/*
@@ -482,8 +498,9 @@ public class EvaluationBean {
 		 * Get the evaluation object which contains template object
 		 * which contains the list of items.
 		 */
-		eval = logic.getEvaluationById(eval.getId());
-
+		//eval = logic.getEvaluationById(eval.getId());
+		eval = evalsLogic.getEvaluationById(eval.getId());
+		
 		//TODO: start date to be picked from webpage
 		// Not sure what the comment above means but you should never get a time started
 		// from the webpage, it needs to always come from the server
@@ -529,8 +546,8 @@ public class EvaluationBean {
 				EvalItem item = (EvalItem)itemMap.get(listOfItems.get(count));
 				EvalAnswer ans = new EvalAnswer(new Date(), item, response);
 				
-				// TODO USE CONSTANTS HERE INSTEAD OF A HARDCODED STRING
-				if ( (ans.getItem()).getClassification().equals("Short Answer/Essay") )
+				//if ( (ans.getItem()).getClassification().equals("Short Answer/Essay") )
+				if ( (ans.getItem()).getClassification().equals(EvalConstants.ITEM_TYPE_TEXT) )
 					ans.setText((listOfAnswers.get(count)).toString());
 				else
 					ans.setNumeric(new Integer((listOfAnswers.get(count)).toString()));
@@ -613,9 +630,14 @@ public class EvaluationBean {
 				selectedSakaiSiteIds[i] = eac.getContext();
 			}
 		}
-		//TODO: been marked as "be replaced by countEnrollment(String)", such method no FOUND
-		enrollment = logic.getEnrollment(selectedSakaiSiteIds);
-		
+	
+		//enrollment = logic.getEnrollment(selectedSakaiSiteIds);
+		enrollment =  new int[selectedSakaiSiteIds.length];
+		for(int i =0; i<selectedSakaiSiteIds.length; i++){
+			Set s = external.getUserIdsForContext(selectedSakaiSiteIds[i], EvalConstants.PERM_TAKE_EVALUATION);
+			enrollment[i] = s.size();				
+		}
+
 		return EvaluationAssignConfirmProducer.VIEW_ID;
 	}
 	
@@ -751,6 +773,33 @@ public class EvaluationBean {
 			}
 		}
 		return returnDate;
+	} 
+	
+	
+	private void checkEvalStartDate(EvalEvaluation myEval){
+		
+		/*
+		 * check if start date is the same as today's date, set startDate as today's date time, 
+		 * as when we parse the string to a date, the time filed by default is
+		 * */
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(myEval.getStartDate());
+		int year_start = calendar.get(Calendar.YEAR);
+		int month_start = calendar.get(Calendar.MONTH);
+		int day_start = calendar.get(Calendar.DAY_OF_MONTH);
+	
+		Date today = new Date();
+		calendar.setTime(today);
+		int year_today = calendar.get(Calendar.YEAR);
+		int month_today = calendar.get(Calendar.MONTH);
+		int day_today = calendar.get(Calendar.DAY_OF_MONTH);
+	
+		if(year_start == year_today && month_start == month_today && day_start == day_today){
+			//need to set time a little big later than new Date(), otherwise exception
+			calendar.add(Calendar.MINUTE, 5);
+			myEval.setStartDate(calendar.getTime());		
+		}	
+		
 	} 
 }
 

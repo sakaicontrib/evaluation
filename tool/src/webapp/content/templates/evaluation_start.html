@@ -93,7 +93,8 @@
 		<table border = "0" cellspacing = "0" cellpadding = "0" width = "70%">
 			<tr>
 				<td align="left">
-					<input rsf:id="cancel-button" type="submit" value="Cancel"/> 
+					<!--  <input rsf:id="cancel-button" type="submit" value="Cancel"/> -->
+					<input name="cancel" type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" rsf:id="cancel-button"/>
 				</td>
 				<td align="right">
 					<input rsf:id="continueToSettings" type="submit" value="Continue to Settings" />
