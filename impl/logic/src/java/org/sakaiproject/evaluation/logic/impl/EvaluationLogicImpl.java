@@ -849,4 +849,10 @@ public class EvaluationLogicImpl implements EvaluationLogic {
 		
 	}
 
+
+	public List getTemplateItemsForTemplate(Long templateId, String userId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

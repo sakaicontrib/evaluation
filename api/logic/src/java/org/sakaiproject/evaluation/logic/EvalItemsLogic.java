@@ -80,9 +80,9 @@ public interface EvalItemsLogic {
 	 * most of the time you will want to get the items by getting the 
 	 * templateItems from the template and then
 	 * using that to get the items themselves or 
-	 * using {@link #getTemplateItemsForTemplate(Long)},
-	 * but if you do not have the template and do not need the template items
-	 * then use this method
+	 * using {@link #getTemplateItemsForTemplate(Long, String)},
+	 * but if you do not have the template OR you need the items
+	 * restricted to visibility to a specific user then use this method
 	 * 
 	 * @param templateId the unique id of an EvalTemplate object
 	 * @param userId the internal user id (not username), if this is null then
@@ -128,15 +128,18 @@ public interface EvalItemsLogic {
 	public void deleteTemplateItem(Long templateItemId, String userId);
 
 	/**
-	 * Get all the templateItems for this template, most of the time you will want to
-	 * get the items by getting the templateItems from the template,
-	 * but if you do not have the template and do not need the template items
-	 * then use this method
+	 * Get all the templateItems for this template that are visible to a user, 
+	 * most of the time you will want to just get the items by getting the 
+	 * templateItems from the template itself,
+	 * but if you do not have the template OR you need the templateItems
+	 * restricted to visibility to a specific user then use this method
 	 * 
 	 * @param templateId the unique id of an EvalTemplate object
+	 * @param userId the internal user id (not username), if this is null then
+	 * it will return all items in the template
 	 * @return a list of {@link EvalTemplateItem} objects
 	 */
-	public List getTemplateItemsForTemplate(Long templateId);
+	public List getTemplateItemsForTemplate(Long templateId, String userId);
 
 
 	// BLOCK

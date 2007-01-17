@@ -680,7 +680,84 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl#getTemplateItemsForTemplate(java.lang.Long)}.
 	 */
 	public void testGetTemplateItemsForTemplate() {
-//		 TODO fail("Not yet implemented");
+		List l = null;
+		List ids = null;
+
+		// test getting all items by valid templates
+		l = items.getTemplateItemsForTemplate( etdl.templateAdmin.getId(), null );
+		Assert.assertNotNull( l );
+		Assert.assertEquals(3, l.size());
+		ids = EvalTestDataLoad.makeIdList(l);
+		Assert.assertTrue(ids.contains( etdl.templateItem2A.getId() ));
+		Assert.assertTrue(ids.contains( etdl.templateItem3A.getId() ));
+		Assert.assertTrue(ids.contains( etdl.templateItem5A.getId() ));
+
+		// test getting all items by valid templates
+		l = items.getTemplateItemsForTemplate( etdl.templatePublic.getId(), null );
+		Assert.assertNotNull( l );
+		Assert.assertEquals(1, l.size());
+		ids = EvalTestDataLoad.makeIdList(l);
+		Assert.assertTrue(ids.contains( etdl.templateItem1P.getId() ));
+
+		// test getting items from template with no items
+		l = items.getTemplateItemsForTemplate( etdl.templateAdminNoItems.getId(), null );
+		Assert.assertNotNull( l );
+		Assert.assertEquals(0, l.size());
+
+		// test getting items for specific user returns correct items
+		// admin should get all items
+		l = items.getTemplateItemsForTemplate( etdl.templateAdmin.getId(), 
+				EvalTestDataLoad.ADMIN_USER_ID );
+		Assert.assertNotNull( l );
+		Assert.assertEquals(3, l.size());
+		ids = EvalTestDataLoad.makeIdList(l);
+		Assert.assertTrue(ids.contains( etdl.templateItem2A.getId() ));
+		Assert.assertTrue(ids.contains( etdl.templateItem3A.getId() ));
+		Assert.assertTrue(ids.contains( etdl.templateItem5A.getId() ));
+
+		l = items.getTemplateItemsForTemplate( etdl.templateUnused.getId(), 
+				EvalTestDataLoad.ADMIN_USER_ID );
+		Assert.assertNotNull( l );
+		Assert.assertEquals(2, l.size());
+		ids = EvalTestDataLoad.makeIdList(l);
+		Assert.assertTrue(ids.contains( etdl.templateItem3U.getId() ));
+		Assert.assertTrue(ids.contains( etdl.templateItem5U.getId() ));
+
+		// owner should see all items
+		l = items.getTemplateItemsForTemplate( etdl.templateUnused.getId(), 
+				EvalTestDataLoad.MAINT_USER_ID );
+		Assert.assertNotNull( l );
+		Assert.assertEquals(2, l.size());
+		ids = EvalTestDataLoad.makeIdList(l);
+		Assert.assertTrue(ids.contains( etdl.templateItem3U.getId() ));
+		Assert.assertTrue(ids.contains( etdl.templateItem5U.getId() ));
+
+		l = items.getTemplateItemsForTemplate( etdl.templateUser.getId(), 
+				EvalTestDataLoad.USER_ID );
+		Assert.assertNotNull( l );
+		Assert.assertEquals(2, l.size());
+		ids = EvalTestDataLoad.makeIdList(l);
+		Assert.assertTrue(ids.contains( etdl.templateItem1User.getId() ));
+		Assert.assertTrue(ids.contains( etdl.templateItem5User.getId() ));
+
+		// TODO - takers should see items at their level (one level) if they have access
+		l = items.getTemplateItemsForTemplate( etdl.templateUser.getId(), 
+				EvalTestDataLoad.STUDENT_USER_ID );
+		Assert.assertNotNull( l );
+		Assert.assertEquals(2, l.size());
+		ids = EvalTestDataLoad.makeIdList(l);
+		Assert.assertTrue(ids.contains( etdl.templateItem1User.getId() ));
+		Assert.assertTrue(ids.contains( etdl.templateItem5User.getId() ));
+
+		// TODO - add in tests that take the hierarchy into account
+
+		// test getting items from invalid template fails
+		try {
+			items.getTemplateItemsForTemplate( EvalTestDataLoad.INVALID_LONG_ID, null );
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+			Assert.assertNotNull(e);
+		}
 	}
 
 
