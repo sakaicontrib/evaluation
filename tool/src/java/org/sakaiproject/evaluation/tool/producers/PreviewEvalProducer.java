@@ -31,6 +31,7 @@ import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
+import org.sakaiproject.evaluation.tool.ItemBlockUtils;
 import org.sakaiproject.evaluation.tool.params.PreviewEvalParameters;
 
 
@@ -230,7 +231,7 @@ public void fillComponents(UIContainer tofill, ViewParameters viewparams,
 		 * */
 		if (! allItems.isEmpty()) {
 			//filter out the block child items, to get a list non-child items
-			List ncItemsList = getNonChildItems(allItems);
+			List ncItemsList = ItemBlockUtils.getNonChildItems(allItems);
 			
 			//Collections.sort(allItems, new EvaluationItemOrderComparator());
 			Collections.sort(ncItemsList, new EvaluationItemOrderComparator());		
@@ -702,7 +703,8 @@ private void doFillComponent(EvalItem myItem, int i,
 			Integer blockID = new Integer(parentID.intValue());
 			//List childItems = logic.findItem(blockID);
 			//get child items associated with this Block parent ID
-			List childItems = getChildItmes(itemsList, blockID);
+			List childItems = ItemBlockUtils.getChildItmes(itemsList, blockID);
+			
 			if (childItems != null && childItems.size() > 0) {
 				for (int j = 0; j < childItems.size(); j++) {
 					UIBranchContainer queRow = UIBranchContainer.make(
@@ -793,7 +795,7 @@ private void doFillComponent(EvalItem myItem, int i,
 			Long parentID = myItem.getId();
 			Integer blockID = new Integer(parentID.intValue());
 			//List childItems = logic.findItem(blockID);
-			List childItems = getChildItmes(itemsList, blockID);
+			List childItems = ItemBlockUtils.getChildItmes(itemsList, blockID);
 			
 			if (childItems != null && childItems.size() > 0) {
 				for (int j = 0; j < childItems.size(); j++) {
@@ -865,28 +867,4 @@ public static class EvaluationItemOrderComparator implements Comparator {
 	}
 }
 
-//to filter out the Block child items, and only return non-child items
-public static List getNonChildItems(List itemsList){
-	
-	List nonChildItemsList = new ArrayList();
-	for(int i= 0; i< itemsList.size(); i++){
-		EvalItem item1 = (EvalItem)itemsList.get(i);		
-		if(item1.getBlockId()== null)
-			nonChildItemsList.add(item1);
-	}
-	
-	return nonChildItemsList;
-}
-
-//return the child items which assocaited with the BlockParentId
-public static List getChildItmes(List itemsList, Integer blockParentId){
-	List childItemsList = new ArrayList();
-	for(int i= 0; i< itemsList.size(); i++){
-		EvalItem item1 = (EvalItem)itemsList.get(i);		
-		if(item1.getBlockId()!= null && item1.getBlockId().equals(blockParentId))
-			childItemsList.add(item1);
-	}
-	
-	return childItemsList;
-}
 }

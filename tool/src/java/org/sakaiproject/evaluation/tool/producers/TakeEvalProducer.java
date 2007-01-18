@@ -28,6 +28,7 @@ import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
+import org.sakaiproject.evaluation.tool.ItemBlockUtils;
 import org.sakaiproject.evaluation.tool.params.EvalTakeViewParameters;
 
 import uk.org.ponder.messageutil.MessageLocator;
@@ -170,7 +171,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 		List allItems = new ArrayList(template.getItems());
 		
 		//filter out the block child items, to get a list non-child items
-		List ncItemsList = PreviewEvalProducer.getNonChildItems(allItems);
+		List ncItemsList = ItemBlockUtils.getNonChildItems(allItems);
 		// We know that for an evaluation child items will not be empty so no check needed here
 		//Collections.sort(allItems, new PreviewEvalProducer.EvaluationItemOrderComparator());
 		Collections.sort(ncItemsList, new PreviewEvalProducer.EvaluationItemOrderComparator());
@@ -682,7 +683,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 				
 			//	List childItems = logic.findItem(blockID);
 				
-				List childItems = PreviewEvalProducer.getChildItmes(itemsList, blockID);
+				List childItems = ItemBlockUtils.getChildItmes(itemsList, blockID);
 				if (childItems != null && childItems.size() > 0) {
 					for (int j = 0; j < childItems.size(); j++) {
 						UIBranchContainer queRow = UIBranchContainer.make(
@@ -798,7 +799,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 				Integer blockID = new Integer(parentID.intValue());
 				
 				//List childItems = logic.findItem(blockID);
-				List childItems = PreviewEvalProducer.getChildItmes(itemsList, blockID);
+				List childItems = ItemBlockUtils.getChildItmes(itemsList, blockID);
 				if (childItems != null && childItems.size() > 0) {
 					for (int j = 0; j < childItems.size(); j++) {
 						UIBranchContainer queRow = UIBranchContainer.make(

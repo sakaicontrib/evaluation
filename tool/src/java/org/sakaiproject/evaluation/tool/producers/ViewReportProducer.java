@@ -27,6 +27,7 @@ import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
+import org.sakaiproject.evaluation.tool.ItemBlockUtils;
 import org.sakaiproject.evaluation.tool.params.CSVReportViewParams;
 import org.sakaiproject.evaluation.tool.params.EssayResponseParams;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
@@ -126,7 +127,7 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 			if (! allItems.isEmpty()) {
 				
 				//filter out the block child items, to get a list non-child items
-				List ncItemsList = PreviewEvalProducer.getNonChildItems(allItems);
+				List ncItemsList = ItemBlockUtils.getNonChildItems(allItems);
 				//Collections.sort(childItems, new ReportItemOrderComparator());
 				
 				Collections.sort(ncItemsList,new PreviewEvalProducer.EvaluationItemOrderComparator());
@@ -269,7 +270,7 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 				Integer blockID = new Integer(parentID.intValue());
 				
 				//List childItems = logic.findItem(blockID);
-				List childItems = PreviewEvalProducer.getChildItmes(itemsList, blockID);
+				List childItems = ItemBlockUtils.getChildItmes(itemsList, blockID);
 				if (childItems != null && childItems.size() > 0) {
 					for (int j = 0; j < childItems.size(); j++) {
 						UIBranchContainer queRow = UIBranchContainer.make(
