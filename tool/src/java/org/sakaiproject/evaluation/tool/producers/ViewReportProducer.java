@@ -121,25 +121,29 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 			UIInternalLink.make(tofill, "csvResultsReport", messageLocator.getMessage("viewreport.view.csv"), new CSVReportViewParams("csvResultsReport", template.getId(), previewEvalViewParams.templateId)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			// get items(parent items, child items --need to set order
 
-			List childItems = new ArrayList(template.getItems());
-			if (! childItems.isEmpty()) {
-				System.out.println("ChildItems is not empty");
+			//List childItems = new ArrayList(template.getItems());
+			List allItems = new ArrayList(template.getItems());
+			if (! allItems.isEmpty()) {
+				
+				//filter out the block child items, to get a list non-child items
+				List ncItemsList = PreviewEvalProducer.getNonChildItems(allItems);
 				//Collections.sort(childItems, new ReportItemOrderComparator());
-				Collections.sort(childItems,new PreviewEvalProducer.EvaluationItemOrderComparator());
+				
+				Collections.sort(ncItemsList,new PreviewEvalProducer.EvaluationItemOrderComparator());
 				
 				// check if there is any "Course" items or "Instructor" items;
 				UIBranchContainer courseSection = null;
 				UIBranchContainer instructorSection = null;
-				if (this.findItemCategory(true, childItems)){
+				if (this.findItemCategory(true,ncItemsList)){
 					courseSection = UIBranchContainer.make(tofill,"courseSection:"); //$NON-NLS-1$
 					UIOutput.make(courseSection, "report-course-questions", messageLocator.getMessage("viewreport.itemlist.coursequestions")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
-				if (this.findItemCategory(false, childItems))
+				if (this.findItemCategory(false, ncItemsList))
 				{	instructorSection = UIBranchContainer.make(tofill,"instructorSection:"); //$NON-NLS-1$
 					UIOutput.make(instructorSection, "report-instructor-questions", messageLocator.getMessage("viewreport.itemlist.instructorquestions")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
-				for (int i = 0; i < childItems.size(); i++) {
-					EvalItem item1 = (EvalItem) childItems.get(i);
+				for (int i = 0; i < ncItemsList.size(); i++) {
+					EvalItem item1 = (EvalItem) ncItemsList.get(i);
 
 					String cat = item1.getCategory();
 					UIBranchContainer radiobranch = null;
@@ -154,7 +158,7 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 													.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
 
 						this.doFillComponent(item1, evaluation.getId(), i, radiobranch,
-								courseSection);
+								courseSection,allItems);
 					} else if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR)) { //"Instructor"
 						radiobranch = UIBranchContainer.make(instructorSection,
 								"itemrow:first", Integer.toString(i)); //$NON-NLS-1$
@@ -165,7 +169,7 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 											Color
 													.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
 						this.doFillComponent(item1, evaluation.getId(), i, radiobranch,
-								instructorSection);
+								instructorSection,allItems);
 					}
 				} // end of for loop
 
@@ -176,7 +180,7 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 	}
 	
 	private void doFillComponent(EvalItem myItem, Long evalId, int i,
-			UIBranchContainer radiobranch, UIContainer tofill) {
+			UIBranchContainer radiobranch, UIContainer tofill,List itemsList) {
 
 		if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)) { //"Scaled/Survey"
 
@@ -258,12 +262,14 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 					block, "responseTexts:", Integer.toString(p));			
 			UIOutput.make(responseTexts, "responseText", scaleLabels[p], (new Integer(p).toString())); //$NON-NLS-1$
 			}
-/* TODO: wait for aaron's itemsLogic method	
+
 			// get child block item text
 			if (myItem.getBlockParent().booleanValue() == true) {
 				Long parentID = myItem.getId();
 				Integer blockID = new Integer(parentID.intValue());
-				List childItems = logic.findItem(blockID);
+				
+				//List childItems = logic.findItem(blockID);
+				List childItems = PreviewEvalProducer.getChildItmes(itemsList, blockID);
 				if (childItems != null && childItems.size() > 0) {
 					for (int j = 0; j < childItems.size(); j++) {
 						UIBranchContainer queRow = UIBranchContainer.make(
@@ -271,9 +277,10 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 						EvalItem child = (EvalItem) childItems.get(j);
 						UIOutput.make(queRow, "queNo", Integer.toString(j + 1)); //$NON-NLS-1$
 						UIOutput.make(queRow, "queText", child.getItemText()); //$NON-NLS-1$
-						List itemAnswers=logic.getEvalAnswers(child.getId(), evalId);
+						//List itemAnswers=logic.getEvalAnswers(child.getId(), evalId);
+						List itemAnswers = responsesLogic.getEvalAnswers(child.getId(), evalId);
 						
-					    for (int x = 0; x < labels.length; ++x) 
+					    for (int x = 0; x < scaleLabels.length; ++x) 
 					    {
 					    	UIBranchContainer answerbranch = UIBranchContainer.make(queRow, "answers:", Integer.toString(x)); //$NON-NLS-1$
 							int answers=0;
@@ -290,7 +297,7 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 				}// end of if
 
 			} // end of get child block item
-		*/			
+			
 		} else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)) { //"Short Answer/Essay"
 			UIBranchContainer essay = UIBranchContainer.make(radiobranch,
 			"essayType:"); //$NON-NLS-1$

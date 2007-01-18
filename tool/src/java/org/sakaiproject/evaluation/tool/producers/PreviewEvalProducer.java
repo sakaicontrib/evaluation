@@ -223,25 +223,37 @@ public void fillComponents(UIContainer tofill, ViewParameters viewparams,
 		
 
 		// get items(parent items, child items --need to set order
-		List childItems = new ArrayList(template.getItems());//block child items will not be included
-		if (! childItems.isEmpty()) {
-			Collections.sort(childItems, new EvaluationItemOrderComparator());
-	
+		List allItems = new ArrayList(template.getItems());
+		/*
+		 * With new table design, all the items(including child items) are pull out
+		 * 
+		 * */
+		if (! allItems.isEmpty()) {
+			//filter out the block child items, to get a list non-child items
+			List ncItemsList = getNonChildItems(allItems);
+			
+			//Collections.sort(allItems, new EvaluationItemOrderComparator());
+			Collections.sort(ncItemsList, new EvaluationItemOrderComparator());		
+			
 			// check if there is any "Course" items or "Instructor" items;
 			UIBranchContainer courseSection = null;
 			UIBranchContainer instructorSection = null;
-			if (this.findItemCategory(true, childItems))	{
+			//if (this.findItemCategory(true, allItems))	{
+			if (this.findItemCategory(true, ncItemsList))	{	
 				courseSection = UIBranchContainer.make(tofill,"courseSection:"); //$NON-NLS-1$
 				UIOutput.make(courseSection, "course-questions-header", messageLocator.getMessage("previeweval.course.questions.header"));  //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			if (this.findItemCategory(false, childItems)){
+			//if (this.findItemCategory(false, allItems)){
+			if (this.findItemCategory(false,ncItemsList)){	
 				instructorSection = UIBranchContainer.make(tofill,"instructorSection:"); //$NON-NLS-1$
 				UIOutput.make(instructorSection, "instructor-questions-header", messageLocator.getMessage("previeweval.instructor.questions.header"));  //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
-			for (int i = 0; i < childItems.size(); i++) {
-				EvalItem item1 = (EvalItem) childItems.get(i);
-
+			//for (int i = 0; i < allItems.size(); i++) {
+			for (int i = 0; i < ncItemsList.size(); i++) {	
+				//EvalItem item1 = (EvalItem) allItems.get(i);
+				EvalItem item1 = (EvalItem) ncItemsList.get(i);
+				
 				String cat = item1.getCategory();
 				UIBranchContainer radiobranch = null;
 				if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_COURSE)) { //"Course"
@@ -252,7 +264,7 @@ public void fillComponents(UIContainer tofill, ViewParameters viewparams,
 						radiobranch.decorators = new DecoratorList(new UIColourDecorator(null,
 											Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
 
-					this.doFillComponent(item1, i, radiobranch,courseSection);
+					this.doFillComponent(item1, i, radiobranch,courseSection, allItems);
 						
 				} else if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR)) { //"Instructor"
 					radiobranch = UIBranchContainer.make(instructorSection,
@@ -262,21 +274,20 @@ public void fillComponents(UIContainer tofill, ViewParameters viewparams,
 						radiobranch.decorators = new DecoratorList(new UIColourDecorator(null,
 											Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
 						
-					this.doFillComponent(item1, i, radiobranch,
-								instructorSection);
+					this.doFillComponent(item1, i, radiobranch,instructorSection,allItems);
 				}
 			} // end of for loop
 
-		}//end of:if (! childItems.isEmpty())
+		}//end of:if (! allItems.isEmpty())
 		
 	} //end of:if(previewEvalViewParams.originalPage != null)
 	
 	
 } // end of method
 
-//TODO: need to remove usage of ItemDisplay
+
 private void doFillComponent(EvalItem myItem, int i,
-		UIBranchContainer radiobranch, UIContainer tofill) {
+		UIBranchContainer radiobranch, UIContainer tofill, List itemsList) {
 
 	if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)) { //scaled
 
@@ -685,11 +696,13 @@ private void doFillComponent(EvalItem myItem, int i,
 			UILink.make(radioBottomLabelBranch, "bottomImage", EvaluationConstant.STEPPED_IMAGE_URLS[2]);
 		}
 		// get child block item text
-		//TODO: wait for for Aaron's ItemsLogic method
-/*		if (myItem.getBlockParent().booleanValue() == true) {
+
+		if (myItem.getBlockParent().booleanValue() == true) {
 			Long parentID = myItem.getId();
 			Integer blockID = new Integer(parentID.intValue());
-			List childItems = logic.findItem(blockID);
+			//List childItems = logic.findItem(blockID);
+			//get child items associated with this Block parent ID
+			List childItems = getChildItmes(itemsList, blockID);
 			if (childItems != null && childItems.size() > 0) {
 				for (int j = 0; j < childItems.size(); j++) {
 					UIBranchContainer queRow = UIBranchContainer.make(
@@ -708,7 +721,7 @@ private void doFillComponent(EvalItem myItem, int i,
 			}// end of if
 
 		} // end of get child block item
-*/
+
 	} else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK) 
 			&& myItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED)) { //"Question Block","Stepped Colored"
 
@@ -774,12 +787,14 @@ private void doFillComponent(EvalItem myItem, int i,
 			UILink.make(bottomLabelBranch, "bottomImage",EvaluationConstant.STEPPED_IMAGE_URLS[2]);
 
 		}
-/* TODO: wait for Aaron's itemsLogic method
+
 		// get child block item text
 		if (myItem.getBlockParent().booleanValue() == true) {
 			Long parentID = myItem.getId();
 			Integer blockID = new Integer(parentID.intValue());
-			List childItems = logic.findItem(blockID);
+			//List childItems = logic.findItem(blockID);
+			List childItems = getChildItmes(itemsList, blockID);
+			
 			if (childItems != null && childItems.size() > 0) {
 				for (int j = 0; j < childItems.size(); j++) {
 					UIBranchContainer queRow = UIBranchContainer.make(
@@ -789,7 +804,7 @@ private void doFillComponent(EvalItem myItem, int i,
 					UIOutput.make(queRow, "queNo", Integer.toString(j + 1)); //$NON-NLS-1$
 					UIOutput.make(queRow, "queText", child.getItemText()); //$NON-NLS-1$
 					UILink.make(queRow, "idealImage", idealImage); //$NON-NLS-1$
-					for (int k = 0; k < values.length; k++) {
+					for (int k = 0; k < scaleValues.length; k++) {
 						UIBranchContainer radioBranchFirst = UIBranchContainer
 								.make(queRow, "scaleOptionsFirst:", Integer //$NON-NLS-1$
 										.toString(k));
@@ -806,7 +821,7 @@ private void doFillComponent(EvalItem myItem, int i,
 			}// end of if
 
 		} // end of get child block item
-		*/
+
 	}// else if (myItem.getClassification().equals("Short Answer/Essay")) { //$NON-NLS-1$
 	else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)) {
 		UIBranchContainer essay = UIBranchContainer.make(radiobranch,
@@ -850,4 +865,28 @@ public static class EvaluationItemOrderComparator implements Comparator {
 	}
 }
 
+//to filter out the Block child items, and only return non-child items
+public static List getNonChildItems(List itemsList){
+	
+	List nonChildItemsList = new ArrayList();
+	for(int i= 0; i< itemsList.size(); i++){
+		EvalItem item1 = (EvalItem)itemsList.get(i);		
+		if(item1.getBlockId()== null)
+			nonChildItemsList.add(item1);
+	}
+	
+	return nonChildItemsList;
+}
+
+//return the child items which assocaited with the BlockParentId
+public static List getChildItmes(List itemsList, Integer blockParentId){
+	List childItemsList = new ArrayList();
+	for(int i= 0; i< itemsList.size(); i++){
+		EvalItem item1 = (EvalItem)itemsList.get(i);		
+		if(item1.getBlockId()!= null && item1.getBlockId().equals(blockParentId))
+			childItemsList.add(item1);
+	}
+	
+	return childItemsList;
+}
 }

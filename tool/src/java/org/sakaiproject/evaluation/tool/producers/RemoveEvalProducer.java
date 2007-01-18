@@ -110,7 +110,7 @@ public class RemoveEvalProducer implements ViewComponentProducer,ViewParamsRepor
 					//UIOutput.make(form, "evalAssigned", logic.getCourseTitle(eval.getId()));
 				}
 				
-				DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, locale);
+				DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
 				
 				UIOutput.make(form, "evalStartDate", df.format(eval.getStartDate())); //$NON-NLS-1$
 				UIOutput.make(form, "evalDueDate", df.format(eval.getDueDate())); //$NON-NLS-1$

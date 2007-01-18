@@ -166,26 +166,30 @@ public class TakeEvalProducer implements ViewComponentProducer,
 		EvalTemplate template = eval.getTemplate();
 
 		// get items(parent items, child items --need to set order
-		List childItems = new ArrayList(template.getItems());
+		//List childItems = new ArrayList(template.getItems());
+		List allItems = new ArrayList(template.getItems());
 		
+		//filter out the block child items, to get a list non-child items
+		List ncItemsList = PreviewEvalProducer.getNonChildItems(allItems);
 		// We know that for an evaluation child items will not be empty so no check needed here
-		Collections.sort(childItems, new PreviewEvalProducer.EvaluationItemOrderComparator());
-
+		//Collections.sort(allItems, new PreviewEvalProducer.EvaluationItemOrderComparator());
+		Collections.sort(ncItemsList, new PreviewEvalProducer.EvaluationItemOrderComparator());
+		
 		// check if there is any "Course" items or "Instructor" items;
 		UIBranchContainer courseSection = null;
 		UIBranchContainer instructorSection = null;
-		if (this.findItemCategory(true, childItems)){
+		if (this.findItemCategory(true,ncItemsList)){
 			courseSection = UIBranchContainer.make(form,
 					"courseSection:"); //$NON-NLS-1$
 			UIOutput.make(courseSection, "course-questions-header", messageLocator.getMessage("takeeval.course.questions.header")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		if (this.findItemCategory(false, childItems)){
+		if (this.findItemCategory(false, ncItemsList)){
 			instructorSection = UIBranchContainer.make(form,
 					"instructorSection:"); //$NON-NLS-1$
 			UIOutput.make(instructorSection, "instructor-questions-header", messageLocator.getMessage("takeeval.instructor.questions.header"));			 //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		for (int i = 0; i < childItems.size(); i++) {
-			EvalItem item1 = (EvalItem) childItems.get(i);
+		for (int i = 0; i <ncItemsList.size(); i++) {
+			EvalItem item1 = (EvalItem) ncItemsList.get(i);
 
 			String cat = item1.getCategory();
 			UIBranchContainer radiobranch = null;
@@ -199,8 +203,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 							new UIColourDecorator(null,
 									Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
 
-				this.doFillComponent(item1, i, radiobranch,
-						courseSection, form);
+				this.doFillComponent(item1, i, radiobranch,courseSection, form,allItems);
 				
 			} else if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR)) { //"Instructor"
 				radiobranch = UIBranchContainer.make(instructorSection,
@@ -211,8 +214,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 							new UIColourDecorator(null,
 									Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
 				
-				this.doFillComponent(item1, i, radiobranch,
-						instructorSection, form);
+				this.doFillComponent(item1, i, radiobranch,instructorSection, form,allItems);
 			}
 		} // end of for loop
 		
@@ -221,7 +223,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 	} // end of method
 
 	private void doFillComponent(EvalItem myItem, int i,
-			UIBranchContainer radiobranch, UIContainer tofill, UIContainer form) {
+			UIBranchContainer radiobranch, UIContainer tofill, UIContainer form,List itemsList) {
 
 		if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)) { //"Scaled/Survey"
 
@@ -672,12 +674,15 @@ public class TakeEvalProducer implements ViewComponentProducer,
 				UILink.make(radioBottomLabelBranch, "bottomImage",
 						EvaluationConstant.STEPPED_IMAGE_URLS[2]);
 			}
-/* TODO: wait for aaron's itemsLogic method to get block child items
+
 			// get child block item text
 			if (myItem.getBlockParent().booleanValue() == true) {
 				Long parentID = myItem.getId();
 				Integer blockID = new Integer(parentID.intValue());
-				List childItems = logic.findItem(blockID);
+				
+			//	List childItems = logic.findItem(blockID);
+				
+				List childItems = PreviewEvalProducer.getChildItmes(itemsList, blockID);
 				if (childItems != null && childItems.size() > 0) {
 					for (int j = 0; j < childItems.size(); j++) {
 						UIBranchContainer queRow = UIBranchContainer.make(
@@ -713,7 +718,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 				}// end of if
 
 			} // end of get child block item
-	*/
+
 		} else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK) 
 				&& myItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED)) { //"Question Block","Stepped Colored"
 
@@ -786,12 +791,14 @@ public class TakeEvalProducer implements ViewComponentProducer,
 						EvaluationConstant.STEPPED_IMAGE_URLS[2]);
 
 			}
-			/*TODO: wait for aaron's itemsLogic method to get block child items
+		
 			// get child block item text
 			if (myItem.getBlockParent().booleanValue() == true) {
 				Long parentID = myItem.getId();
 				Integer blockID = new Integer(parentID.intValue());
-				List childItems = logic.findItem(blockID);
+				
+				//List childItems = logic.findItem(blockID);
+				List childItems = PreviewEvalProducer.getChildItmes(itemsList, blockID);
 				if (childItems != null && childItems.size() > 0) {
 					for (int j = 0; j < childItems.size(); j++) {
 						UIBranchContainer queRow = UIBranchContainer.make(
@@ -809,18 +816,18 @@ public class TakeEvalProducer implements ViewComponentProducer,
 						
 						// Bind the answers to list of answers in evaluation bean.
 						UISelect radios = UISelect.make(queRow, "dummyRadio",  //$NON-NLS-1$
-								values,	labels, 
+								scaleValues,	scaleLabels, 
 									"#{evaluationBean.listOfAnswers."  //$NON-NLS-1$
 										+ totalItemsAdded + "}", null); //$NON-NLS-1$
 						totalItemsAdded++;
 
-						radios.optionnames = UIOutputMany.make(labels);
+						radios.optionnames = UIOutputMany.make(scaleLabels);
 						String selectID = radios.getFullID();
 						
 						UIOutput.make(queRow, "queNo", Integer.toString(j + 1)); //$NON-NLS-1$
 						UIOutput.make(queRow, "queText", child.getItemText()); //$NON-NLS-1$
 						UILink.make(queRow, "idealImage", idealImage); //$NON-NLS-1$
-						for (int k = 0; k < values.length; k++) {
+						for (int k = 0; k < scaleValues.length; k++) {
 							UIBranchContainer radioBranchFirst = UIBranchContainer
 									.make(queRow, "scaleOptionsFirst:", Integer //$NON-NLS-1$
 											.toString(k));
@@ -837,7 +844,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 				}// end of if
 
 			} // end of get child block item
-*/
+
 		} else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)) { //"Short Answer/Essay"
 
 			UIBranchContainer essay = UIBranchContainer.make(radiobranch,

@@ -114,14 +114,18 @@ public class ReportHandlerHook implements HandlerHook {
 		}
 
 		//get all items
-		List childItems = new ArrayList(template.getItems());
-		if (! childItems.isEmpty()) {
+		List allItems = new ArrayList(template.getItems());
+		
+		if (! allItems.isEmpty()) {
+			//filter out the block child items, to get a list non-child items
+			List ncItemsList = PreviewEvalProducer.getNonChildItems(allItems);
+			
 			//Collections.sort(childItems, new ReportItemOrderComparator());
-			Collections.sort(childItems,new PreviewEvalProducer.EvaluationItemOrderComparator());
+			Collections.sort(ncItemsList,new PreviewEvalProducer.EvaluationItemOrderComparator());
 			//for each item
-			for (int i = 0; i < childItems.size(); i++) {
+			for (int i = 0; i < ncItemsList.size(); i++) {
 				//fetch the item
-				EvalItem item1 = (EvalItem) childItems.get(i);
+				EvalItem item1 = (EvalItem) ncItemsList.get(i);
 				//if the item is scaled
 				if(item1.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)){
 					String labels[] = item1.getScale().getOptions();
@@ -138,7 +142,7 @@ public class ReportHandlerHook implements HandlerHook {
 					}
 				}
 				else if (item1.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK)) {//"Question Block"
-				//	String labels[] = item1.getScale().getOptions();
+					String labels[] = item1.getScale().getOptions();
 					//add the block description to the top row
 					topRow.add(item1.getItemText());
 					for(int j=0; j<numOfResponses; j++){
@@ -146,14 +150,14 @@ public class ReportHandlerHook implements HandlerHook {
 						//add blank response to block parent row
 						currRow.add("");
 					}
-/* TODO: wait after aaron's itemLogic method to get block child items
- * 
+
 					//get child block items
-					if (item1.getBlockParent().booleanValue() == true) {
+				if (item1.getBlockParent().booleanValue() == true) {
 						Long parentID = item1.getId();
 						Integer blockID = new Integer(parentID.intValue());
 
-					List blockChildItems = logic.findItem(blockID);
+					//List blockChildItems = logic.findItem(blockID);
+					List blockChildItems = PreviewEvalProducer.getChildItmes(allItems, blockID);
 					if (blockChildItems != null && blockChildItems.size() > 0) {
 							//for each child item
 							for (int j = 0; j < blockChildItems.size(); j++) {
@@ -161,7 +165,7 @@ public class ReportHandlerHook implements HandlerHook {
 								//add child's text to top row
 								topRow.add(child.getItemText());
 								//get all answers to the child item within this eval
-								List itemAnswers=logic.getEvalAnswers(child.getId(), crvp.evalId);
+								List itemAnswers = responsesLogic.getEvalAnswers(child.getId(), crvp.evalId);
 								//for each response row
 								for(int y=0; y<numOfResponses;y++){
 									List currRow = (List)responseRows.get(y);
@@ -172,7 +176,7 @@ public class ReportHandlerHook implements HandlerHook {
 							}
 						}// end of if
 					} // end of get child block item
-					*/
+
 				}
 			}
 
