@@ -9,8 +9,6 @@
 	<bean id="evaluationBean"
 			class="org.sakaiproject.evaluation.tool.EvaluationBean"
 			init-method="init">
-		<property name="logic"
-			ref="org.sakaiproject.evaluation.logic.EvaluationLogic" />
 		<property name="external" 
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="templatesLogic" 

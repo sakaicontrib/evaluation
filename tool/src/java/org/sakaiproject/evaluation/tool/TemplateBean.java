@@ -26,7 +26,6 @@ import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalScalesLogic;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
-import org.sakaiproject.evaluation.logic.EvaluationLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
@@ -536,7 +535,8 @@ public class TemplateBean {
 				this.queList = new ArrayList();
 					Long parentID = itemPreview.getId();
 				Integer blockID = new Integer(parentID.intValue());
-				// TODO: wait fot aaron's logic layer method
+				// TODO:
+			/*
 				List childItems = logic.findItem(blockID);
 				if (childItems != null && childItems.size() > 0) {
 					this.queList= new ArrayList();
@@ -545,7 +545,7 @@ public class TemplateBean {
 						this.queList.add(child.getItemText());
 					}
 				} 
-	
+				*/
 			}else if(this.itemClassification.equals(EvalConstants.ITEM_TYPE_TEXT)){
 				//"Short Answer/Essay"
 				this.displayRows = itemPreview.getDisplayRows();
@@ -622,12 +622,14 @@ public class TemplateBean {
 		    	}
 		    	
 		    	Integer blockID = new Integer(currentItem.getId().intValue());	
-		    	//TODO: wait for aaron's logic method
+		    	//TODO:
+		    	/*
 		    	List childItems = logic.findItem(blockID);
 		    	for(int i=0; i< childItems.size(); i++){
 		    		EvalItem myItem = (EvalItem)childItems.get(i);
 		    		this.queList.add(myItem.getItemText());
 		    	}
+		    	*/
 		    	return ModifyBlockProducer.VIEW_ID;
 			}
 			
@@ -692,7 +694,8 @@ public class TemplateBean {
 				//Long parentID = itemDisplayPreview.getItem().getId();
 				Long parentID = itemPreview.getId();
 				Integer blockID = new Integer(parentID.intValue());
-				//TODO: wait for aaron's logic method
+				//TODO:
+				/*
 				List childItems = logic.findItem(blockID);
 				if (childItems != null && childItems.size() > 0) {
 					this.queList= new ArrayList();
@@ -701,6 +704,8 @@ public class TemplateBean {
 						this.queList.add(child.getItemText());
 					}
 				}
+				
+				*/
 			}
 
 		}	
@@ -757,12 +762,14 @@ public class TemplateBean {
 			//remove BLOCK child items
 			if(itemPreview.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK)&& itemPreview.getBlockParent().booleanValue()==true){
 				Integer id = new Integer(itemPreview.getId().intValue());
-				//TODO: wait for aaron's logic layer method
+				//TODO:
+				/*
 				List childItems = logic.findItem(id);
 				for(int i=0; i< childItems.size();i++){
 					EvalItem cItem =(EvalItem) childItems.get(i);
 					itemsLogic.deleteItem(cItem.getId(),external.getCurrentUserId());
 				}
+				*/
 			}
 			itemsLogic.deleteItem(itemPreview.getId(), external.getCurrentUserId());
 			itemsList.remove(itemPreview);			
@@ -900,14 +907,15 @@ public class TemplateBean {
 			
 			//first delete all the old child items,
 			Integer id = new Integer(currentItem.getId().intValue());
-			//TODO: Wait for aaron's logic layer method
+			//TODO: 
+			/*
 			List childItems = logic.findItem(id);
 			for(int i=0; i< childItems.size();i++){
 				EvalItem myItem =(EvalItem) childItems.get(i);
 				//logic.deleteItem(myItem, logic.getCurrentUserId());
 				itemsLogic.deleteItem(myItem.getId(), external.getCurrentUserId());
 			}
-			
+			*/
 			currentItem.setLastModified(new Date());
 			currentItem.setItemText(itemText);
 			currentItem.setScaleDisplaySetting(scaleDisplaySetting);
@@ -959,8 +967,10 @@ public class TemplateBean {
 			currentItem.getTemplates().add(currTemplate);
 			int orderNo = getItemsListSize();//this.getItemDisplayListSize();
 			currentItem.setDisplayOrder(new Integer(orderNo + 1)); 
-			//logic.saveItem(currentItem, logic.getCurrentUserId());			
+			//logic.saveItem(currentItem, logic.getCurrentUserId());
+			
 			itemsLogic.saveItem(currentItem, external.getCurrentUserId());
+			
 			//itemDisplayList.add(new ItemDisplay(currentItem));		
 			itemsList.add(currentItem);
 			
@@ -972,7 +982,9 @@ public class TemplateBean {
 						itemClassification, Boolean.FALSE);
 				tempItem.setDisplayOrder(Integer.valueOf(i+1));
 				tempItem.setBlockId(parentId);
-				//logic.saveItem(tempItem, logic.getCurrentUserId());
+				//BLOCK CHILD ITEM need to be assocaite with Template
+				tempItem.getTemplates().add(currTemplate);
+				//logic.saveItem(tempItem, logic.getCurrentUserId());			
 				itemsLogic.saveItem(tempItem, external.getCurrentUserId());
 			}//end of for loop
 		}
@@ -1133,12 +1145,12 @@ public class TemplateBean {
 
 	//TODO: to be removed,
 	//return BLOCK CHILD ITEMS specified BLOCK_ID 
-	public List getChildItem(Integer blockId){
+/*	public List getChildItem(Integer blockId){
 		log.warn("get child for block: " + blockId);
 
 		return logic.findItem(blockId);
 	}
-
+*/
 	
 }
 

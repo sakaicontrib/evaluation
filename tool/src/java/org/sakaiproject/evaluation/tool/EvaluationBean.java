@@ -101,7 +101,7 @@ public class EvaluationBean {
 	public String emailReminderTxt; 
 
 	// Used on assign confirm page. That is saved to avoid going to database again.
-	private Map siteIdsTitle;			
+//	private Map siteIdsTitle;			
 
 	//Used to link the proper template object with the evaluation 
 	private List listOfTemplates;
@@ -118,11 +118,12 @@ public class EvaluationBean {
 		this.evalStartFlag = flag;
 	}
 */
+/*
 	private EvaluationLogic logic;
 	public void setLogic(EvaluationLogic logic) {
 		this.logic = logic;
 	}
-	
+*/
 	private EvalExternalLogic external;
 	public void setExternal(EvalExternalLogic external) {
 		this.external = external;
@@ -180,10 +181,10 @@ public class EvaluationBean {
 		}
 		
 		log.debug("Initializing the TemplateBean....");
-		
+		/*
 		if (logic == null) {
 			throw new NullPointerException("logic is null");
-		}
+		}*/
 	}
 
 	
@@ -200,7 +201,6 @@ public class EvaluationBean {
 	//method binding to the "Cancel" button on evaluation_start.html
 /*	REMOVED
  * public String cancelEvalStartAction(){
-		//TODO: need to be revised 
 		if(this.evalStartFlag!=null && this.evalStartFlag.equals(TemplateModifyProducer.VIEW_ID))
 			return TemplateModifyProducer.VIEW_ID;		
 		else 
@@ -305,7 +305,7 @@ public class EvaluationBean {
 		//logic.saveEvaluation(eval, logic.getCurrentUserId());
 		/*
 		 * check if start date is the same as today's date, set startDate as today's date time, 
-		 * as when we parse the string to a date, the time filed by default is
+		 * as when we parse the string to a date, the time filed by default is zero
 		 * */
 		checkEvalStartDate(eval);
 		
@@ -455,8 +455,8 @@ public class EvaluationBean {
 		
 		//logic.saveEvaluation(eval, logic.getCurrentUserId());
 		/*
-		 * check if start date is the same as today's date, set startDate as today's date time, 
-		 * as when we parse the string to a date, the time filed by default is
+		 * check if start date is the same as today's date, set startDate as today's date & time, 
+		 * as when we parse the string to a date, the time filed by default is zero
 		 * */
 		checkEvalStartDate(eval);
 		
@@ -511,15 +511,27 @@ public class EvaluationBean {
 		 * object as value. This is done so that it is easy in the for loop below.
 		 * 
 		 */ 
+		//Object evalItems[] = ((EvalTemplate)eval.getTemplate()).getItems().toArray();
+		//get all items
+		List allItems = new ArrayList(((EvalTemplate)eval.getTemplate()).getItems());
+		
+		HashMap itemMap = new HashMap();
+		for(int i=0; i < allItems.size(); i++ ){
+			EvalItem evalItem = (EvalItem)allItems.get(i);
+			if(evalItem.getBlockParent().booleanValue() == false) {
+				//filter out the block parent item
+				itemMap.put(evalItem.getId().toString(), evalItem);
+			}
+				
+		}
+		
+/*
 		Object evalItems[] = ((EvalTemplate)eval.getTemplate()).getItems().toArray();
 		HashMap itemMap = new HashMap();
 		for (int i = 0; i < evalItems.length; i++) {
 			EvalItem evalItem = (EvalItem)evalItems[i];
 			
-			/*
-			 * If it is a block pararent then get all child items and 
-			 * add to the map. 
-			 */ 
+			// If it is a block pararent then get all child items and  add to the map.  
 			if(evalItem.getBlockParent().booleanValue() == true) {
 				
 				Integer blockID = new Integer(evalItem.getId().intValue());
@@ -534,6 +546,7 @@ public class EvaluationBean {
 				itemMap.put(evalItem.getId().toString(), evalItem);
 			}
 		}
+	*/
 		
 		for (int count=0; count < listOfAnswers.size(); count++) {
 			
@@ -665,7 +678,6 @@ public class EvaluationBean {
 			//eval1 = logic.getEvaluationById(id);
 			eval1 = evalsLogic.getEvaluationById(id);
 		/**
-		 * TODO
 		 * WARNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		 * ***************************************
 		 * This removal of contexts associated with the deleted evaluation should
@@ -677,9 +689,9 @@ public class EvaluationBean {
 		 * responses and answers (which is a HUGE problem) -AZ
 		 * Remove this logic and use the appropriate method in the logic layer
 		 * *************************************** 
-		 * TODO
 		 */
-		if(eval1 != null){
+
+	/*	if(eval1 != null){
 			//delete evaluation, need to deleted entry in AssignCourse Table
 			//List l = logic.getAssignContextsByEvalId(eval1.getId());
 			List l = assignsLogic.getAssignContextsByEvalId(eval1.getId());
@@ -693,6 +705,10 @@ public class EvaluationBean {
 			//logic.deleteEvaluation(eval1.getId(), logic.getCurrentUserId());
 			evalsLogic.deleteEvaluation(eval1.getId(), external.getCurrentUserId());
 		}
+		*/		
+		//ONLY Queued Evaluations has delete link
+	
+		evalsLogic.deleteEvaluation(eval1.getId(), external.getCurrentUserId());
 		
 		return ControlPanelProducer.VIEW_ID;
 	}
@@ -729,18 +745,23 @@ public class EvaluationBean {
 		
 		if(template1 != null){
 			//delete template, need to deleted items entry
-			Set items = template1.getItems();
-			for(Iterator iter = items.iterator();iter.hasNext();){
-				EvalItem item = (EvalItem) iter.next();
+			//Set items = template1.getItems();//get all the items
+			
+			List allItems = new ArrayList(template1.getItems());			
+			//filter out the block child items, to get a list non-child items
+			List ncItemsList = PreviewEvalProducer.getNonChildItems(allItems);
+			
+			for(int i = 0; i < ncItemsList.size(); i++){
+				EvalItem item = (EvalItem) ncItemsList.get(i);
 				
 				//need to check if it is a Block parent, delete child items first
-				// TODO USE CONSTANTS HERE INSTEAD OF A HARDCODED STRING
-				if(item.getClassification().equals("Question Block") && 
+				if(item.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK) && 
 						item.getBlockParent().booleanValue()== true){
 					Long parentID = item.getId();
 					Integer blockID = new Integer(parentID.intValue());
-					//TODO: need to wait for Aaron's logic layer method
-					List childItems = logic.findItem(blockID);
+				
+					//List childItems = logic.findItem(blockID);
+					List childItems = PreviewEvalProducer.getChildItmes(allItems, blockID);
 					if(childItems !=null && childItems.size() >0 ){
 						for(int k=0; k< childItems.size();k++){
 							EvalItem cItem = (EvalItem) childItems.get(k);

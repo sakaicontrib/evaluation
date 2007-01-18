@@ -215,12 +215,12 @@ public class TemplateModifyProducer implements ViewComponentProducer,NavigationC
 					UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				
-		/*TODO: wait for aaron's logic method
-				if(currItemDisplay.getItem().getBlockParent().booleanValue()== true){
+		/* TODO; get BLOCK child item
+				if(myItem.getBlockParent().booleanValue()== true){
 					//get child items
-					Long parentID = currItemDisplay.getItem().getId();
-					Integer blockID = new Integer(parentID.intValue());
+					Integer blockID = new Integer(myItem.getId().intValue());
 					List childItems = logic.findItem(blockID);
+					
 					if(childItems != null && childItems.size()>0){
 						for(int k =0; k< childItems.size(); k++){
 							UIBranchContainer childRow = UIBranchContainer.make(form2,"itemrow:blockItems", Integer.toString(k));
@@ -230,8 +230,8 @@ public class TemplateModifyProducer implements ViewComponentProducer,NavigationC
 						}
 					}
 				}		
-				
 				*/
+
 	
 		    }//end of for loop
 		}
