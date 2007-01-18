@@ -392,9 +392,12 @@ public class TemplateBean {
 		 * Else: Coming to save/add an item.
 		 */
 		if(currentItem != null)	{
+			//System.out.println("modify exsiting item, item id="+ currentItem.getId().longValue());
 			
+			currentItem = itemsLogic.getItemById(currentItem.getId());
 			updateItemObject(currentItem);
-
+			currentItem.setScaleDisplaySetting(scaleDisplaySetting);
+			
 			//Update the item in database
 			//logic.saveItem(currentItem, logic.getCurrentUserId());
 			itemsLogic.saveItem(currentItem, external.getCurrentUserId());
@@ -406,29 +409,32 @@ public class TemplateBean {
 			itemsList.add(Integer.parseInt(currRowNo),currentItem);
 		}
 		else {
+			if ( currTemplate.getId() == null ) 
+				templatesLogic.saveTemplate(currTemplate, external.getCurrentUserId());
 			
 			currentItem = new EvalItem();
 			updateItemObject(currentItem);
+			currentItem.setScaleDisplaySetting(scaleDisplaySetting);
 			currentItem.setSharing(modifier);
 			currentItem.getTemplates().add(currTemplate);
 			
 			//set the display order.
 			int orderNo = getItemsListSize();//this.getItemDisplayListSize();
 			currentItem.setDisplayOrder(new Integer(orderNo + 1)); 
-			
-			/*
-			 * 1) For the first item, doing a BATCH save for template and item.
-			 * 2) For subsequent items only save the item as template is already there.
-			 */
+			itemsLogic.saveItem(currentItem, external.getCurrentUserId());
+		/*
 			if ( currTemplate.getId() == null ) {
-				currTemplate.getItems().add(currentItem);
-				//TODO
+				 currTemplate.getItems().add(currentItem);
 				logic.batchSaveItemTemplate(currTemplate, currentItem);
+				
+				
 			}
 			else {
 				itemsLogic.saveItem(currentItem, external.getCurrentUserId());
 				//logic.saveItem(currentItem, logic.getCurrentUserId());			
 			}
+			*/
+			
 			//itemDisplayList.add(new ItemDisplay(currentItem));
 			itemsList.add(currentItem);
 		
@@ -821,7 +827,9 @@ public class TemplateBean {
 
 		if(currentItem != null)
 		{	
-			this.scaleDisplaySetting = null;		
+			//System.out.println("modify exsiting essay item, item id="+ currentItem.getId().longValue());
+			
+			currentItem = itemsLogic.getItemById(currentItem.getId());
 			updateItemObject(currentItem);
 			currentItem.setDisplayRows(this.displayRows);
 			//logic.saveItem(currentItem, logic.getCurrentUserId());
@@ -841,6 +849,7 @@ public class TemplateBean {
 			this.scaleDisplaySetting = null;
 			updateItemObject(currentItem);
 			currentItem.setDisplayRows(this.displayRows);
+			currentItem.setSharing(modifier);
 			currentItem.getTemplates().add(currTemplate);
 			
 			//Save the item everytime	
@@ -1124,10 +1133,10 @@ public class TemplateBean {
 		// Description is nullable and only for parent item.
 		tempItem.setExpert(Boolean.FALSE);
 		// Display rows for later when explicit block added
-		tempItem.setScaleDisplaySetting(scaleDisplaySetting);
+		//tempItem.setScaleDisplaySetting(scaleDisplaySetting);
 		tempItem.setCategory(itemCategory);
 		tempItem.setLocked(Boolean.FALSE);
-		tempItem.setBlockParent(Boolean.FALSE);
+		//tempItem.setBlockParent(Boolean.FALSE);
 		tempItem.setClassification(itemClassification);
 		
 		if(this.itemClassification.equals(EvalConstants.ITEM_TYPE_HEADER))

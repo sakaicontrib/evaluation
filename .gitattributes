@@ -96,6 +96,7 @@ tool/project.properties -text
 tool/project.xml -text
 tool/src/java/org/sakaiproject/evaluation/tool/EvaluationBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/EvaluationConstant.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/ItemBlockUtils.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ItemDisplay.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ReportHandlerHook.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/TemplateBean.java -text

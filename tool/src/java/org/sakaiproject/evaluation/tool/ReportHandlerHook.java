@@ -118,7 +118,7 @@ public class ReportHandlerHook implements HandlerHook {
 		
 		if (! allItems.isEmpty()) {
 			//filter out the block child items, to get a list non-child items
-			List ncItemsList = PreviewEvalProducer.getNonChildItems(allItems);
+			List ncItemsList = ItemBlockUtils.getNonChildItems(allItems);
 			
 			//Collections.sort(childItems, new ReportItemOrderComparator());
 			Collections.sort(ncItemsList,new PreviewEvalProducer.EvaluationItemOrderComparator());
@@ -157,7 +157,7 @@ public class ReportHandlerHook implements HandlerHook {
 						Integer blockID = new Integer(parentID.intValue());
 
 					//List blockChildItems = logic.findItem(blockID);
-					List blockChildItems = PreviewEvalProducer.getChildItmes(allItems, blockID);
+					List blockChildItems = ItemBlockUtils.getChildItmes(allItems, blockID);
 					if (blockChildItems != null && blockChildItems.size() > 0) {
 							//for each child item
 							for (int j = 0; j < blockChildItems.size(); j++) {

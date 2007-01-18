@@ -22,9 +22,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.Iterator;
+
 import java.util.List;
-import java.util.Map;
+
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -37,7 +37,6 @@ import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
-import org.sakaiproject.evaluation.logic.EvaluationLogic;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignContext;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
@@ -53,7 +52,7 @@ import org.sakaiproject.evaluation.tool.producers.EvaluationSettingsProducer;
 import org.sakaiproject.evaluation.tool.producers.EvaluationStartProducer;
 import org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer;
 import org.sakaiproject.evaluation.tool.producers.SummaryProducer;
-import org.sakaiproject.evaluation.tool.producers.TemplateModifyProducer;
+
 
 
 /**
@@ -517,9 +516,11 @@ public class EvaluationBean {
 		
 		HashMap itemMap = new HashMap();
 		for(int i=0; i < allItems.size(); i++ ){
-			EvalItem evalItem = (EvalItem)allItems.get(i);
-			if(evalItem.getBlockParent().booleanValue() == false) {
-				//filter out the block parent item
+			EvalItem evalItem = (EvalItem)allItems.get(i);	
+			//filter out the block parent item
+			if(evalItem.getBlockParent()== null){
+				itemMap.put(evalItem.getId().toString(), evalItem);
+			}else if(evalItem.getBlockParent().booleanValue() == false) {			
 				itemMap.put(evalItem.getId().toString(), evalItem);
 			}
 				
@@ -749,7 +750,7 @@ public class EvaluationBean {
 			
 			List allItems = new ArrayList(template1.getItems());			
 			//filter out the block child items, to get a list non-child items
-			List ncItemsList = PreviewEvalProducer.getNonChildItems(allItems);
+			List ncItemsList = ItemBlockUtils.getNonChildItems(allItems);
 			
 			for(int i = 0; i < ncItemsList.size(); i++){
 				EvalItem item = (EvalItem) ncItemsList.get(i);
@@ -761,7 +762,7 @@ public class EvaluationBean {
 					Integer blockID = new Integer(parentID.intValue());
 				
 					//List childItems = logic.findItem(blockID);
-					List childItems = PreviewEvalProducer.getChildItmes(allItems, blockID);
+					List childItems = ItemBlockUtils.getChildItmes(allItems, blockID);
 					if(childItems !=null && childItems.size() >0 ){
 						for(int k=0; k< childItems.size();k++){
 							EvalItem cItem = (EvalItem) childItems.get(k);
