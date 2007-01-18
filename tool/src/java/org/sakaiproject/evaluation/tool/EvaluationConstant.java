@@ -119,5 +119,8 @@ public class EvaluationConstant {
 
 	public static final String[] MAX_QUESTIONS_IN_BLOCK = new String[] {
 		"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "12", "15", "18", "20"};	
+
+	public static final String[] ADMINSTRATIVE_SETTING_OPTIONS = new String[] {
+		"Yes", "No", "Configurable"};	
 }
 
