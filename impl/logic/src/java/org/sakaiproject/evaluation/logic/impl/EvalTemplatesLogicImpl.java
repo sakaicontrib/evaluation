@@ -15,7 +15,9 @@
 package org.sakaiproject.evaluation.logic.impl;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -140,7 +142,22 @@ public class EvalTemplatesLogicImpl implements EvalTemplatesLogic {
 				// TODO - add logic to unlock associated items here
 				log.error("TODO - Unlocking locked items not implemented yet");
 			}
-			dao.delete(template);
+
+			// remove all associated templateItems also (should disassociate all items automatically)
+			if ( template.getTemplateItems().size() > 0 ) {
+				Set[] entitySets = new Set[2];
+
+				entitySets[0] = template.getTemplateItems();
+
+				Set templateSet = new HashSet();
+				templateSet.add( template );
+				entitySets[1] = templateSet;
+
+				// remove the template and related templateItems in one transaction
+				dao.deleteMixedSet(entitySets);
+			} else { 
+				dao.delete(template);
+			}
 			return;
 		}
 		

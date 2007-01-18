@@ -15,7 +15,6 @@
 package org.sakaiproject.evaluation.dao.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -246,17 +245,15 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 		return getHibernateTemplate().find(hqlQuery.toString());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#getNextBlockId()
-	 */
-	public Integer getNextBlockId() {
-		String hqlQuery = "select max(item.blockId) from EvalItem item";
-		Integer max = (Integer) getHibernateTemplate().iterate(hqlQuery).next();
-		if (max == null) {
-			return new Integer(0);
-		}
-		return new Integer(max.intValue() + 1);
-	}
+
+//	public Integer getNextBlockId() {
+//		String hqlQuery = "select max(item.blockId) from EvalItem item";
+//		Integer max = (Integer) getHibernateTemplate().iterate(hqlQuery).next();
+//		if (max == null) {
+//			return new Integer(0);
+//		}
+//		return new Integer(max.intValue() + 1);
+//	}
 
 
 

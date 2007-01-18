@@ -133,7 +133,7 @@ public class EvalTemplatesLogicImplTest extends AbstractTransactionalSpringConte
 		templates.saveTemplate( new EvalTemplate( new Date(), 
 				EvalTestDataLoad.ADMIN_USER_ID, "admin test template", 
 				"desc", EvalConstants.SHARING_PRIVATE, EvalTestDataLoad.EXPERT, 
-				"expert desc", null, null, EvalTestDataLoad.LOCKED), 
+				"expert desc", null, EvalTestDataLoad.LOCKED), 
 				EvalTestDataLoad.ADMIN_USER_ID);
 
 		// test user without perms cannot create template
@@ -298,6 +298,7 @@ public class EvalTemplatesLogicImplTest extends AbstractTransactionalSpringConte
 			Assert.assertNotNull(e);
 		}
 
+		// TODO - add testing for automatic removal of templateItems
 	}
 
 	/**

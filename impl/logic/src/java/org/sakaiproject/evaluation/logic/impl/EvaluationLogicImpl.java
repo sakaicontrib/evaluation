@@ -201,7 +201,7 @@ public class EvaluationLogicImpl implements EvaluationLogic {
 	 */
 	public List findItem(Integer blockId) {
 		EvalItem item = new EvalItem();
-		item.setBlockId(blockId);
+		//item.setBlockId(blockId); // commented out since no blockId on item anymore -AZ
 
 		return evaluationDao.findByExample(item);
 	}
@@ -538,8 +538,8 @@ public class EvaluationLogicImpl implements EvaluationLogic {
 		Set[] entitySets = new Set[2];
 
 		//EvalTemplate has to be saved before Item for ITEM2TEMPLATE table.
-		entitySets[0] = item.getTemplates();
-		entitySets[1] = template.getItems();
+		//entitySets[0] = item.getTemplates(); template not on item directly anymore -AZ
+		//entitySets[1] = template.getItems(); items not directly tied to template anymore
 
 		evaluationDao.saveMixedSet(entitySets);
 	}

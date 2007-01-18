@@ -158,6 +158,10 @@ public class EvalTestDataLoad {
 	 * Item that is unused, textual, unlocked, ADMIN_USER_ID owns, private
 	 */
 	public EvalItem item7;
+	/**
+	 * Item that is unused, header, unlocked, MAINT_USER_ID owns, private
+	 */
+	public EvalItem item8;
 
 	// TEMPLATE ITEMS
 	public EvalTemplateItem templateItem1User;
@@ -369,100 +373,100 @@ public class EvalTestDataLoad {
 				EvalConstants.SHARING_PUBLIC, EvalConstants.ITEM_TYPE_SCALED, EXPERT);
 		item1.setScale(scale1);
 		item1.setScaleDisplaySetting( EvalConstants.ITEM_SCALE_DISPLAY_COMPACT );
+		item1.setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
 		item1.setLocked(LOCKED);
 		item2 = new EvalItem(new Date(), MAINT_USER_ID, ITEM_TEXT, 
 				EvalConstants.SHARING_PUBLIC, EvalConstants.ITEM_TYPE_SCALED, NOT_EXPERT);
 		item2.setScale(scale1);
 		item2.setScaleDisplaySetting( EvalConstants.ITEM_SCALE_DISPLAY_FULL );
+		item2.setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
 		item2.setLocked(LOCKED);
 		item3 = new EvalItem(new Date(), MAINT_USER_ID, ITEM_TEXT, 
 				EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_SCALED, NOT_EXPERT);
 		item3.setScale(scale1);
 		item3.setScaleDisplaySetting( EvalConstants.ITEM_SCALE_DISPLAY_STEPPED );
+		item3.setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
 		item3.setLocked(LOCKED);
 		item4 = new EvalItem(new Date(), MAINT_USER_ID, ITEM_TEXT, 
 				EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_SCALED, NOT_EXPERT);
 		item4.setScale(scale1);
 		item4.setScaleDisplaySetting( EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL );
+		item4.setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
 		item4.setLocked(UNLOCKED);
 		item5 = new EvalItem(new Date(), MAINT_USER_ID, "Textual locked", 
 				EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_TEXT, NOT_EXPERT);
 		item5.setDisplayRows( new Integer(2) );
+		item5.setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
 		item5.setLocked(LOCKED);
 		item6 = new EvalItem(new Date(), MAINT_USER_ID, "Textual unlocked", 
 				EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_TEXT, EXPERT);
 		item6.setDisplayRows( new Integer(3) );
+		item6.setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
 		item6.setLocked(UNLOCKED);
 		item7 = new EvalItem(new Date(), ADMIN_USER_ID, "Textual unlocked", 
 				EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_TEXT, NOT_EXPERT);
 		item7.setDisplayRows( new Integer(4) );
+		item7.setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
 		item7.setLocked(UNLOCKED);
+		item8 = new EvalItem(new Date(), MAINT_USER_ID, "Header unlocked", 
+				EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_HEADER, NOT_EXPERT);
+		item8.setLocked(UNLOCKED);
 
 		//templateShared = new EvalTemplate(new Date(), ADMIN_USER_ID, "Template shared", EvalConstants.SHARING_SHARED, UNLOCKED, NOT_EXPERT);
 		//templateVisible = new EvalTemplate(new Date(), ADMIN_USER_ID, "Template visible", EvalConstants.SHARING_VISIBLE, UNLOCKED, NOT_EXPERT);
 		templateAdmin = new EvalTemplate(new Date(), ADMIN_USER_ID, "Template admin", 
 				"description", EvalConstants.SHARING_PRIVATE, NOT_EXPERT, 
-				"expert desc", null, null, LOCKED);
+				"expert desc", null, LOCKED);
 		templateAdminNoItems = new EvalTemplate(new Date(), ADMIN_USER_ID, "Template admin no items", 
 				"description", EvalConstants.SHARING_PRIVATE, NOT_EXPERT, 
-				"not expert desc", null, null, UNLOCKED);
+				"not expert desc", null, UNLOCKED);
 		templatePublicUnused = new EvalTemplate(new Date(), ADMIN_USER_ID, "Template unused public", 
 				"description", EvalConstants.SHARING_PUBLIC, NOT_EXPERT, 
-				"expert desc", null, null, UNLOCKED);
+				"expert desc", null, UNLOCKED);
 		templatePublic = new EvalTemplate(new Date(), MAINT_USER_ID, "Template maint public", 
 				"description", EvalConstants.SHARING_PUBLIC, EXPERT, 
-				"expert desc", null, null, LOCKED);
+				"expert desc", null, LOCKED);
 		templateUnused = new EvalTemplate(new Date(), MAINT_USER_ID, "Template maint unused", 
 				"description", EvalConstants.SHARING_PRIVATE, NOT_EXPERT, 
-				"expert desc", null, null, UNLOCKED);
+				"expert desc", null, UNLOCKED);
 		templateUser = new EvalTemplate(new Date(), USER_ID, "Template user", 
 				"description", EvalConstants.SHARING_PRIVATE, NOT_EXPERT, 
-				"expert desc", null, null, LOCKED);
+				"expert desc", null, LOCKED);
 		templateUserUnused = new EvalTemplate(new Date(), USER_ID, "Template user unused", 
 				"description", EvalConstants.SHARING_PRIVATE, EXPERT, 
-				"expert desc", null, null, UNLOCKED);
+				"expert desc", null, UNLOCKED);
 
 		// assign items to templates
 		templateItem1User = new EvalTemplateItem( new Date(), USER_ID, 
 				templateUser, item1, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
-				null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, 
-				Boolean.FALSE, null);
+				null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, null, null);
 		templateItem1P = new EvalTemplateItem( new Date(), MAINT_USER_ID, 
 				templatePublic, item1, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
-				null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, 
-				Boolean.FALSE, null);
+				null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, null, null);
 		templateItem2A = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
 				templateAdmin, item2, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
-				null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, 
-				Boolean.FALSE, null);
+				null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, null, null);
 		templateItem3A = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
 				templateAdmin, item3, new Integer(2), EvalConstants.ITEM_CATEGORY_COURSE,
-				null, EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL, Boolean.FALSE, 
-				Boolean.FALSE, null);
+				null, EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL, Boolean.FALSE, null, null);
 		templateItem3U = new EvalTemplateItem( new Date(), MAINT_USER_ID, 
 				templateUnused, item3, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
-				null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, 
-				Boolean.FALSE, null);
+				null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, null, null);
 		templateItem3PU = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
 				templatePublicUnused, item3, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
-				null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, 
-				Boolean.FALSE, null);
+				null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, null, null);
 		templateItem5A = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
 				templateAdmin, item5, new Integer(3), EvalConstants.ITEM_CATEGORY_INSTRUCTOR,
-				new Integer(3), null, Boolean.FALSE, 
-				Boolean.FALSE, null);
+				new Integer(3), null, Boolean.FALSE, null, null);
 		templateItem5User = new EvalTemplateItem( new Date(), USER_ID, 
 				templateUser, item5, new Integer(2), EvalConstants.ITEM_CATEGORY_INSTRUCTOR,
-				new Integer(2), null, Boolean.FALSE, 
-				Boolean.FALSE, null);
+				new Integer(2), null, Boolean.FALSE, null, null);
 		templateItem5U = new EvalTemplateItem( new Date(), MAINT_USER_ID, 
 				templateUnused, item5, new Integer(2), EvalConstants.ITEM_CATEGORY_INSTRUCTOR,
-				new Integer(3), null, Boolean.FALSE, 
-				Boolean.FALSE, null);
+				new Integer(3), null, Boolean.FALSE, null, null);
 		templateItem6UU = new EvalTemplateItem( new Date(), USER_ID, 
 				templateUserUnused, item6, new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE,
-				new Integer(4), null, Boolean.FALSE, 
-				Boolean.FALSE, null);
+				new Integer(4), null, Boolean.FALSE, null, null);
 
 		// associate the templates with the link
 		templateAdmin.setTemplateItems( new HashSet() );
@@ -700,6 +704,7 @@ public class EvalTestDataLoad {
 		dao.save(item5);
 		dao.save(item6);
 		dao.save(item7);
+		dao.save(item8);
 
 		dao.save(templateItem1User);
 		dao.save(templateItem1P);

@@ -34,12 +34,7 @@
         </property>
         <!-- the expert description for use of this template -->
         <property name="expertDescription" type="text" />
-        <!-- the items that are linked to this template (old) -->
-		<set name="items" table="EVAL_ITEMS2TEMPLATES" lazy="false" inverse="true">
-            <key column="TEMPLATE_ID" />
-            <many-to-many column="ITEM_ID" class="org.sakaiproject.evaluation.model.EvalItem" />
-		</set>
-		<!-- maps from templates to items via the itemtemplate joining table (new) -->
+		<!-- maps from templates to items via the itemtemplate joining table -->
         <set name="templateItems" inverse="true" fetch="join">
             <key column="template_id" not-null="true" />
             <one-to-many class="org.sakaiproject.evaluation.model.EvalTemplateItem" />

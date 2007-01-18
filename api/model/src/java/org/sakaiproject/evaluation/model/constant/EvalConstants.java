@@ -75,7 +75,10 @@ public class EvalConstants {
 
 	/**
 	 * Item type (itemClassification) setting:
-	 * This is a scaled (likert) type item
+	 * This is a scaled (likert) type item<br/>
+	 * <b>Note:</b> Scaled items could be a block type item, 
+	 * blocks are a special item type which defines
+	 * a chunk of items which all use the same scale
 	 */
 	public static final String ITEM_TYPE_SCALED = "Scaled";
 	/**
@@ -90,12 +93,6 @@ public class EvalConstants {
 	 * does not count as an actual question item
 	 */
 	public static final String ITEM_TYPE_HEADER = "Header";
-	/**
-	 * Item type (itemClassification) setting:
-	 * This is a block type item, blocks are a special item type which defines
-	 * a chunk of items which all use the same scale
-	 */
-	public static final String ITEM_TYPE_BLOCK = "Block";
 
 	/**
 	 * Item category (itemCategory) setting:

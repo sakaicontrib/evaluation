@@ -75,11 +75,5 @@ public interface EvaluationDao extends CompleteGenericDao {
 	 */
 	public List getAnswers(Long itemId, Long evalId);
 
-	/**
-	 * Gets the next unique unused block id that is available
-	 * 
-	 * @return the next block id
-	 */
-	public Integer getNextBlockId();
 
 }

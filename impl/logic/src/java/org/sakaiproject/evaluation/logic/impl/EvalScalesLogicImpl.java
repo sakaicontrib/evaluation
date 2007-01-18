@@ -16,7 +16,9 @@ package org.sakaiproject.evaluation.logic.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -146,7 +148,7 @@ public class EvalScalesLogicImpl implements EvalScalesLogic {
 	public List getScalesForUser(String userId, String sharingConstant) {
 		log.debug("userId: " + userId + ", sharingConstant: " + sharingConstant );
 
-		List l = new ArrayList();
+		Set s = new HashSet();
 
 		// get admin state
 		boolean isAdmin = external.isUserAdmin(userId);
@@ -182,17 +184,17 @@ public class EvalScalesLogicImpl implements EvalScalesLogic {
 				props = new String[] { "sharing", "owner" };
 				values = new Object[] { EvalConstants.SHARING_PRIVATE, userId };				
 			}
-			l.addAll( dao.findByProperties(EvalScale.class, props, values) );
+			s.addAll( dao.findByProperties(EvalScale.class, props, values) );
 		}
 
 		// handle public sharing items
 		if (getPublic) {
-			l.addAll( dao.findByProperties(EvalScale.class, 
+			s.addAll( dao.findByProperties(EvalScale.class, 
 					new String[] { "sharing" }, 
 					new Object[] { EvalConstants.SHARING_PUBLIC } ) );
 		}
 
-		return l;
+		return new ArrayList(s);
 	}
 
 
