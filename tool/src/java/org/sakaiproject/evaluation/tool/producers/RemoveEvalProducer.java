@@ -17,6 +17,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
@@ -62,6 +63,11 @@ public class RemoveEvalProducer implements ViewComponentProducer,ViewParamsRepor
 		this.messageLocator = messageLocator;
 	}	
 	
+	private Locale locale;
+	public void setLocale(Locale locale){
+		this.locale=locale;
+	}
+	
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {	
 		/*
 		 * TODO: 
@@ -104,7 +110,7 @@ public class RemoveEvalProducer implements ViewComponentProducer,ViewParamsRepor
 					//UIOutput.make(form, "evalAssigned", logic.getCourseTitle(eval.getId()));
 				}
 				
-				DateFormat df = new SimpleDateFormat("MM/dd/yyyy"); //$NON-NLS-1$
+				DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, locale);
 				
 				UIOutput.make(form, "evalStartDate", df.format(eval.getStartDate())); //$NON-NLS-1$
 				UIOutput.make(form, "evalDueDate", df.format(eval.getDueDate())); //$NON-NLS-1$
