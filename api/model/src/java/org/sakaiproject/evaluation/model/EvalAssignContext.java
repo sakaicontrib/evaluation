@@ -1,6 +1,6 @@
 package org.sakaiproject.evaluation.model;
 
-// Generated Jan 15, 2007 9:40:12 PM by Hibernate Tools 3.2.0.beta6a
+// Generated Jan 18, 2007 3:54:56 PM by Hibernate Tools 3.2.0.beta6a
 
 import java.util.Date;
 
@@ -34,9 +34,8 @@ public class EvalAssignContext implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public EvalAssignContext(Date lastModified, String owner, String context,
-			Boolean instructorApproval, Boolean instructorsViewResults,
-			Boolean studentsViewResults, EvalEvaluation evaluation) {
+	public EvalAssignContext(Date lastModified, String owner, String context, Boolean instructorApproval,
+			Boolean instructorsViewResults, Boolean studentsViewResults, EvalEvaluation evaluation) {
 		this.lastModified = lastModified;
 		this.owner = owner;
 		this.context = context;

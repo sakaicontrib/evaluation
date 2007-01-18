@@ -177,32 +177,33 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		items.saveItem( new EvalItem( new Date(), 
 				EvalTestDataLoad.MAINT_USER_ID, test_text, test_desc, 
 				EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_SCALED, 
-				EvalTestDataLoad.NOT_EXPERT, "expert desc", Boolean.FALSE, null, 
-				EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, EvalConstants.ITEM_CATEGORY_COURSE, 
-				null, null, null, etdl.scale1, null, null, null, EvalTestDataLoad.UNLOCKED), 
+				EvalTestDataLoad.NOT_EXPERT, "expert desc", etdl.scale1, null,
+				Boolean.FALSE, null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, 
+				EvalConstants.ITEM_CATEGORY_COURSE, EvalTestDataLoad.UNLOCKED), 
 				EvalTestDataLoad.MAINT_USER_ID);
 
 		// test saving valid item locked
 		items.saveItem( new EvalItem( new Date(), 
 				EvalTestDataLoad.MAINT_USER_ID, test_text, test_desc, 
 				EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_TEXT, 
-				EvalTestDataLoad.NOT_EXPERT, "expert desc", Boolean.FALSE, new Integer(2), 
-				null, EvalConstants.ITEM_CATEGORY_COURSE, 
-				null, null, null, null, null, null, null, EvalTestDataLoad.LOCKED), 
+				EvalTestDataLoad.NOT_EXPERT, "expert desc", null, null,
+				null, new Integer(2), null, 
+				EvalConstants.ITEM_CATEGORY_COURSE, EvalTestDataLoad.LOCKED), 
 				EvalTestDataLoad.MAINT_USER_ID);
 
-		// test saving valid item with no date and lock specified ok
+		// test saving valid item with no date, NA, and lock specified ok
 		EvalItem eiTest1 = new EvalItem( null, 
 				EvalTestDataLoad.MAINT_USER_ID, test_text, test_desc, 
 				EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_TEXT, 
-				EvalTestDataLoad.NOT_EXPERT, "expert desc", Boolean.FALSE, new Integer(2), 
-				null, EvalConstants.ITEM_CATEGORY_COURSE, 
-				null, null, null, null, null, null, null, null);
+				EvalTestDataLoad.NOT_EXPERT, "expert desc", null, null,
+				null, new Integer(2), null, 
+				EvalConstants.ITEM_CATEGORY_COURSE, null);
 		items.saveItem( eiTest1, 
 				EvalTestDataLoad.MAINT_USER_ID);
 		// make sure the values are filled in for us
 		Assert.assertNotNull( eiTest1.getLastModified() );
 		Assert.assertNotNull( eiTest1.getLocked() );
+		Assert.assertNotNull( eiTest1.getUsesNA() );
 
 		// test saving scaled item with no scale fails
 		try {
@@ -221,10 +222,10 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 			items.saveItem( new EvalItem( new Date(), 
 					EvalTestDataLoad.MAINT_USER_ID, test_text, test_desc, 
 					EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_SCALED, 
-					EvalTestDataLoad.NOT_EXPERT, "expert desc", Boolean.FALSE, new Integer(3), 
-					EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, EvalConstants.ITEM_CATEGORY_COURSE, 
-					null, null, null, etdl.scale2, null, null, null, EvalTestDataLoad.UNLOCKED), 
-					EvalTestDataLoad.MAINT_USER_ID);
+					EvalTestDataLoad.NOT_EXPERT, "expert desc", etdl.scale2, null,
+					Boolean.FALSE, new Integer(3), EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, 
+					EvalConstants.ITEM_CATEGORY_COURSE, EvalTestDataLoad.UNLOCKED),
+				EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");
 		} catch (IllegalArgumentException e) {
 			Assert.assertNotNull(e);
@@ -247,10 +248,10 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 			items.saveItem( new EvalItem( new Date(), 
 					EvalTestDataLoad.MAINT_USER_ID, test_text, test_desc, 
 					EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_TEXT, 
-					EvalTestDataLoad.NOT_EXPERT, "expert desc", Boolean.FALSE, new Integer(3), 
-					EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, EvalConstants.ITEM_CATEGORY_COURSE, 
-					null, null, null, etdl.scale2, null, null, null, EvalTestDataLoad.UNLOCKED), 
-					EvalTestDataLoad.MAINT_USER_ID);
+					EvalTestDataLoad.NOT_EXPERT, "expert desc", etdl.scale2, null,
+					Boolean.FALSE, null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, 
+					EvalConstants.ITEM_CATEGORY_COURSE, EvalTestDataLoad.UNLOCKED),
+				EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");
 		} catch (IllegalArgumentException e) {
 			Assert.assertNotNull(e);
@@ -261,25 +262,10 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 			items.saveItem( new EvalItem( new Date(), 
 					EvalTestDataLoad.MAINT_USER_ID, test_text, test_desc, 
 					EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_HEADER, 
-					EvalTestDataLoad.NOT_EXPERT, "expert desc", Boolean.FALSE, new Integer(3), 
-					EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, EvalConstants.ITEM_CATEGORY_COURSE, 
-					null, null, null, etdl.scale2, null, null, null, EvalTestDataLoad.UNLOCKED), 
-					EvalTestDataLoad.MAINT_USER_ID);
-			Assert.fail("Should have thrown exception");
-		} catch (IllegalArgumentException e) {
-			Assert.assertNotNull(e);
-		}
-
-		// test saving block item without block id fails
-		// NOTE: BLOCK ITEMS must have a scale specified
-		try {
-			items.saveItem( new EvalItem( new Date(), 
-					EvalTestDataLoad.MAINT_USER_ID, test_text, test_desc, 
-					EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_BLOCK, 
-					EvalTestDataLoad.NOT_EXPERT, "expert desc", Boolean.FALSE, null, 
-					EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, EvalConstants.ITEM_CATEGORY_COURSE, 
-					null, null, null, etdl.scale1, null, null, null, EvalTestDataLoad.UNLOCKED), 
-					EvalTestDataLoad.MAINT_USER_ID);
+					EvalTestDataLoad.NOT_EXPERT, "expert desc", etdl.scale2, null,
+					Boolean.FALSE, new Integer(3), EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, 
+					EvalConstants.ITEM_CATEGORY_COURSE, EvalTestDataLoad.UNLOCKED),
+				EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");
 		} catch (IllegalArgumentException e) {
 			Assert.assertNotNull(e);
@@ -431,7 +417,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		// test getting all items for the admin user
 		l = items.getItemsForUser(EvalTestDataLoad.ADMIN_USER_ID, null);
 		Assert.assertNotNull( l );
-		Assert.assertEquals(7, l.size());
+		Assert.assertEquals(8, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item1.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item2.getId() ));
@@ -440,12 +426,13 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertTrue(ids.contains( etdl.item5.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item6.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item7.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item8.getId() ));
 
 		// same as getting all items
 		l = items.getItemsForUser(EvalTestDataLoad.ADMIN_USER_ID, 
 				EvalConstants.SHARING_OWNER);
 		Assert.assertNotNull( l );
-		Assert.assertEquals(7, l.size());
+		Assert.assertEquals(8, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item1.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item2.getId() ));
@@ -454,11 +441,12 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertTrue(ids.contains( etdl.item5.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item6.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item7.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item8.getId() ));
 
 		// test getting all items for the maint user
 		l = items.getItemsForUser(EvalTestDataLoad.MAINT_USER_ID, null);
 		Assert.assertNotNull( l );
-		Assert.assertEquals(6, l.size());
+		Assert.assertEquals(7, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item1.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item2.getId() ));
@@ -466,6 +454,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertTrue(ids.contains( etdl.item4.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item5.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item6.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item8.getId() ));
 
 		// test getting all items for the normal user
 		l = items.getItemsForUser(EvalTestDataLoad.USER_ID, null);
@@ -479,24 +468,26 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		l = items.getItemsForUser(EvalTestDataLoad.ADMIN_USER_ID,
 				EvalConstants.SHARING_PRIVATE);
 		Assert.assertNotNull( l );
-		Assert.assertEquals(5, l.size());
+		Assert.assertEquals(6, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item3.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item4.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item5.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item6.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item7.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item8.getId() ));
 
 		// test getting private items for the maint user
 		l = items.getItemsForUser(EvalTestDataLoad.MAINT_USER_ID, 
 				EvalConstants.SHARING_PRIVATE);
 		Assert.assertNotNull( l );
-		Assert.assertEquals(4, l.size());
+		Assert.assertEquals(5, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item3.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item4.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item5.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item6.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item8.getId() ));
 
 		// test getting private items for the user
 		l = items.getItemsForUser(EvalTestDataLoad.USER_ID, 
@@ -666,7 +657,206 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl#saveTemplateItem(org.sakaiproject.evaluation.model.EvalTemplateItem, java.lang.String)}.
 	 */
 	public void testSaveTemplateItem() {
-//		 TODO fail("Not yet implemented");
+		// test saving a new templateItem actually creates the linkage in the item and template
+		EvalTemplateItem eiTest1 = new EvalTemplateItem( null, 
+				EvalTestDataLoad.ADMIN_USER_ID, etdl.templateAdminNoItems, etdl.item5, 
+				new Integer(2), EvalConstants.ITEM_CATEGORY_COURSE, 
+				new Integer(3), null, Boolean.FALSE, null, null);
+		items.saveTemplateItem( eiTest1, 
+				EvalTestDataLoad.ADMIN_USER_ID);
+		Assert.assertNotNull( eiTest1.getItem() );
+		Assert.assertNotNull( eiTest1.getTemplate() );
+		Assert.assertNotNull( eiTest1.getItem().getTemplateItems() );
+		Assert.assertNotNull( eiTest1.getTemplate().getTemplateItems() );
+		// verify items are there
+		Assert.assertEquals( eiTest1.getItem().getId(), etdl.item5.getId() );
+		Assert.assertEquals( eiTest1.getTemplate().getId(), etdl.templateAdminNoItems.getId() );
+		// check if the templateItem is contained in the new sets
+		Assert.assertEquals( 4, eiTest1.getItem().getTemplateItems().size() );
+		Assert.assertEquals( 1, eiTest1.getTemplate().getTemplateItems().size() );
+		Assert.assertTrue( eiTest1.getItem().getTemplateItems().contains(eiTest1) );
+		Assert.assertTrue( eiTest1.getTemplate().getTemplateItems().contains(eiTest1) );
+
+		// test saving a valid templateItem
+		items.saveTemplateItem( new EvalTemplateItem( new Date(), 
+				EvalTestDataLoad.ADMIN_USER_ID, etdl.templateAdminNoItems, etdl.item7, 
+				new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE, 
+				new Integer(3), null, Boolean.FALSE, null, null),
+			EvalTestDataLoad.ADMIN_USER_ID);
+
+		// test saving valid templateItem with locked item
+		items.saveTemplateItem( new EvalTemplateItem( new Date(), 
+				EvalTestDataLoad.MAINT_USER_ID, etdl.templateUnused, etdl.item2, 
+				new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
+				null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null),
+			EvalTestDataLoad.MAINT_USER_ID);
+
+		// test saving valid templateItem with empty required fields (inherit from item)
+		EvalTemplateItem eiTest2 = new EvalTemplateItem( null, 
+				EvalTestDataLoad.ADMIN_USER_ID, etdl.templateAdminNoItems, etdl.item4, 
+				new Integer(2), null, 
+				null, null, null, null, null);
+		items.saveTemplateItem( eiTest2, 
+				EvalTestDataLoad.ADMIN_USER_ID);
+		// make sure the values are filled in for us
+		Assert.assertNotNull( eiTest2.getLastModified() );
+		Assert.assertNotNull( eiTest2.getItemCategory() );
+		Assert.assertNotNull( eiTest2.getScaleDisplaySetting() );
+		Assert.assertNotNull( eiTest2.getUsesNA() );
+		// make sure filled in values match the ones set in the item
+		Assert.assertTrue( eiTest2.getItemCategory().equals(etdl.item4.getCategory()) );
+		Assert.assertTrue( eiTest2.getScaleDisplaySetting().equals(etdl.item4.getScaleDisplaySetting()) );
+		// not checking is UsesNA is equal because it is null in the item
+
+		// test saving templateItem with no item fails
+		try {
+			items.saveTemplateItem( new EvalTemplateItem( new Date(), 
+					EvalTestDataLoad.MAINT_USER_ID, etdl.templateUnused, null, 
+					new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
+					null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null),
+				EvalTestDataLoad.MAINT_USER_ID);
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+			Assert.assertNotNull(e);
+		}
+
+		// test saving templateItem with no template fails
+		try {
+			items.saveTemplateItem( new EvalTemplateItem( new Date(), 
+					EvalTestDataLoad.MAINT_USER_ID, null, etdl.item3, 
+					new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
+					null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null),
+				EvalTestDataLoad.MAINT_USER_ID);
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+			Assert.assertNotNull(e);
+		}
+
+		// test saving scaled item with text size set fails
+		try {
+			items.saveTemplateItem( new EvalTemplateItem( new Date(), 
+					EvalTestDataLoad.MAINT_USER_ID, etdl.templateUnused, etdl.item4, 
+					new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
+					new Integer(2), EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null),
+				EvalTestDataLoad.MAINT_USER_ID);
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+			Assert.assertNotNull(e);
+		}
+
+		// test saving text item with scale display setting fails
+		try {
+			items.saveTemplateItem( new EvalTemplateItem( new Date(), 
+					EvalTestDataLoad.MAINT_USER_ID, etdl.templateUnused, etdl.item6, 
+					new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
+					new Integer(4), EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null),
+				EvalTestDataLoad.MAINT_USER_ID);
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+			Assert.assertNotNull(e);
+		}
+
+		// TODO - add logic to not allow an item to be associated with the same template twice?
+//		// test saving header type item with scale setting or text size set fails
+//		try {
+//			items.saveTemplateItem( new EvalTemplateItem( new Date(), 
+//					EvalTestDataLoad.MAINT_USER_ID, etdl.templateUnused, etdl.item3, 
+//					new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
+//					null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null),
+//				EvalTestDataLoad.MAINT_USER_ID);
+//			Assert.fail("Should have thrown exception");
+//		} catch (IllegalArgumentException e) {
+//			Assert.assertNotNull(e);
+//			Assert.fail(e.getMessage()); // see why failing
+//		}
+
+		// test saving header type item with scale setting or text size set fails
+		try {
+			items.saveTemplateItem( new EvalTemplateItem( new Date(), 
+					EvalTestDataLoad.MAINT_USER_ID, etdl.templateUnused, etdl.item8, 
+					new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
+					new Integer(1), EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null),
+				EvalTestDataLoad.MAINT_USER_ID);
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+			Assert.assertNotNull(e);
+		}
+
+		// fetch items to work with (for editing tests)
+		EvalTemplateItem testTemplateItem1 = (EvalTemplateItem) evaluationDao.findById(EvalTemplateItem.class, 
+				etdl.templateItem3PU.getId()); // ADMIN, editable
+		EvalTemplateItem testTemplateItem2 = (EvalTemplateItem) evaluationDao.findById(EvalTemplateItem.class, 
+				etdl.templateItem3U.getId()); // MAINT, editable
+		EvalTemplateItem testTemplateItem3 = (EvalTemplateItem) evaluationDao.findById(EvalTemplateItem.class, 
+				etdl.templateItem3A.getId()); // ADMIN, uneditable
+		EvalTemplateItem testTemplateItem4 = (EvalTemplateItem) evaluationDao.findById(EvalTemplateItem.class, 
+				etdl.templateItem1P.getId()); // MAINT, uneditable
+
+		// test editing templateItem not in LOCKED templateItem
+		testTemplateItem1.setItemCategory( EvalConstants.ITEM_CATEGORY_INSTRUCTOR );
+		items.saveTemplateItem( testTemplateItem1, EvalTestDataLoad.ADMIN_USER_ID );
+
+		testTemplateItem2.setItemCategory( EvalConstants.ITEM_CATEGORY_INSTRUCTOR );
+		items.saveTemplateItem( testTemplateItem2, EvalTestDataLoad.MAINT_USER_ID );
+
+		// TODO - CANNOT RUN THIS TEST FOR NOW BECAUSE OF HIBERNATE
+//		// test that template and item cannot be changed on existing templateItem
+//		try {
+//			testTemplateItem1.setItem( etdl.item1 );
+//			items.saveTemplateItem( testTemplateItem1, EvalTestDataLoad.ADMIN_USER_ID );
+//			Assert.fail("Should have thrown exception");
+//		} catch (IllegalStateException e) {
+//			Assert.assertNotNull(e);
+//			Assert.fail(e.getMessage()); // see why failing
+//		}
+//
+//		try {
+//			testTemplateItem1.setTemplate( etdl.templateAdminNoItems );
+//			items.saveTemplateItem( testTemplateItem1, EvalTestDataLoad.ADMIN_USER_ID );
+//			Assert.fail("Should have thrown exception");
+//		} catch (IllegalStateException e) {
+//			Assert.assertNotNull(e);
+//		}
+
+		// test editing templateItem in LOCKED template fails
+		try {
+			testTemplateItem3.setItemCategory( EvalConstants.ITEM_CATEGORY_INSTRUCTOR );
+			items.saveTemplateItem( testTemplateItem3, EvalTestDataLoad.ADMIN_USER_ID );
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalStateException e) {
+			Assert.assertNotNull(e);
+		}
+
+		try {
+			testTemplateItem4.setItemCategory( EvalConstants.ITEM_CATEGORY_INSTRUCTOR );
+			items.saveTemplateItem( testTemplateItem4, EvalTestDataLoad.MAINT_USER_ID );
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalStateException e) {
+			Assert.assertNotNull(e);
+		}
+
+		// test admin can edit any templateItem
+		testTemplateItem2.setItemCategory( EvalConstants.ITEM_CATEGORY_ENVIRONMENT );
+		items.saveTemplateItem( testTemplateItem2, EvalTestDataLoad.ADMIN_USER_ID );
+
+		// test that editing unowned templateItem causes permission failure
+		try {
+			testTemplateItem2.setItemCategory( EvalConstants.ITEM_CATEGORY_COURSE );
+			items.saveTemplateItem( testTemplateItem2, EvalTestDataLoad.USER_ID );
+			Assert.fail("Should have thrown exception");
+		} catch (SecurityException e) {
+			Assert.assertNotNull(e);
+		}
+
+		// test that editing unowned templateItem causes permission failure
+		try {
+			testTemplateItem1.setItemCategory( EvalConstants.ITEM_CATEGORY_COURSE );
+			items.saveTemplateItem( testTemplateItem1, EvalTestDataLoad.MAINT_USER_ID );
+			Assert.fail("Should have thrown exception");
+		} catch (SecurityException e) {
+			Assert.assertNotNull(e);
+		}
+
 	}
 
 	/**
@@ -758,16 +948,6 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		} catch (IllegalArgumentException e) {
 			Assert.assertNotNull(e);
 		}
-	}
-
-
-	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl#getNextBlockId()}.
-	 */
-	public void testGetNextBlockId() {
-		Integer blockId = items.getNextBlockId();
-		Assert.assertNotNull(blockId);
-		Assert.assertTrue(blockId.intValue() >= 0);
 	}
 
 

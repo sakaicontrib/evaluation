@@ -142,16 +142,6 @@ public interface EvalItemsLogic {
 	public List getTemplateItemsForTemplate(Long templateId, String userId);
 
 
-	// BLOCK
-
-	/**
-	 * Gets the next unique unused block id that is available
-	 * 
-	 * @return the next block id
-	 */
-	public Integer getNextBlockId();
-
-
 	// PERMISSIONS
 
 	/**

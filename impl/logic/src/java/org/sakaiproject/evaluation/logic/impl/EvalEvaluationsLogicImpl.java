@@ -240,6 +240,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 			evalSet.add(eval);
 
 			// TODO - update the states of templates used in this evaluation to unlocked (if not used elsewhere)
+			log.error("Locking templates not implemented yet");
 
 			// remove the evaluation and related items in one transaction
 			dao.deleteMixedSet(entitySets);

@@ -40,59 +40,35 @@
         <property name="expertDescription" type="text">
             <column name="EXPERT_DESCRIPTION" />
         </property>
-        <!-- Should this item include Not Available as an answer -->
-        <!-- (this is a hint only and used when making the itemtemplate) -->
-        <property name="usesNA" type="java.lang.Boolean">
-            <column name="USES_NA" />
-        </property>
-        <!-- how big should the text box be when rendering this item -->
-        <!-- (this is a hint only and used when making the itemtemplate) -->
-        <property name="displayRows" type="java.lang.Integer">
-            <column name="DISPLAY_ROWS" />
-        </property>
-        <!-- how should the scale be rendered -->
-        <!-- (this is a hint only and used when making the itemtemplate) -->
-        <property name="scaleDisplaySetting" type="java.lang.String">
-            <column name="SCALE_DISPLAY_SETTING" length="255" />
-        </property>
-        <!-- used to determine the category of the item (course, instructor, etc.) -->
-        <!-- (this is a hint only and used when making the itemtemplate) -->
-        <property name="category" type="java.lang.String">
-            <column name="CATEGORY" length="255" />
-        </property>
-<!-- WARNING: Everything down to the END WARNING will be removed from this HBM 
-	It will now be kept in the EvalTemplateItem hbm file -->
-        <property name="blockParent" type="java.lang.Boolean">
-            <column name="BLOCK_PARENT" />
-        </property>
-        <property name="blockId" type="java.lang.Integer">
-            <column name="BLOCK_ID" />
-        </property>
-        <property name="displayOrder" type="java.lang.Integer">
-            <column name="DISPLAY_ORDER" />
-        </property>
-<!-- END WARNING -->
-		<!-- the scale for this item (if uses a scale) (MOVE ABOVE HINT ITEMS) -->
+		<!-- the scale for this item (if uses a scale) -->
         <many-to-one name="scale" class="org.sakaiproject.evaluation.model.EvalScale" foreign-key="ITEM_SCALE_FKC" lazy="false" fetch="join">
             <column name="SCALE_FK" />
         </many-to-one>
-        <!-- answers mapping will be removed -->
-        <set name="answers" order-by="ITEM_FK" lazy="true" fetch="select" inverse="true">
-            <key foreign-key="ANSWER_ITEM_FKC">
-                <column name="ITEM_FK" />
-            </key>
-            <one-to-many class="org.sakaiproject.evaluation.model.EvalAnswer"/>
-        </set>
-        <!-- link to all the templates that contain this item (old) (REMOVE) -->
-		<set name="templates" table="EVAL_ITEMS2TEMPLATES" lazy="false" inverse="false" fetch="join">
-            <key column="ITEM_ID" />
-            <many-to-many column="TEMPLATE_ID" class="org.sakaiproject.evaluation.model.EvalTemplate" />
-		</set>
-		<!-- maps from items to templates via the itemtemplate joining table (new) (MOVE TO TOP) -->
+		<!-- maps from items to templates via the itemtemplate joining table -->
         <set name="templateItems" inverse="true" fetch="join">
             <key column="item_id" not-null="true" />
             <one-to-many class="org.sakaiproject.evaluation.model.EvalTemplateItem" />
         </set>
+        <!-- Should this item include Not Available as an answer -->
+        <!-- (this is a hint only and used when making the templateItem) -->
+        <property name="usesNA" type="java.lang.Boolean">
+            <column name="USES_NA" />
+        </property>
+        <!-- how big should the text box be when rendering this item -->
+        <!-- (this is a hint only and used when making the templateItem) -->
+        <property name="displayRows" type="java.lang.Integer">
+            <column name="DISPLAY_ROWS" />
+        </property>
+        <!-- how should the scale be rendered -->
+        <!-- (this is a hint only and used when making the templateItem) -->
+        <property name="scaleDisplaySetting" type="java.lang.String">
+            <column name="SCALE_DISPLAY_SETTING" length="255" />
+        </property>
+        <!-- used to determine the category of the item (course, instructor, etc.) -->
+        <!-- (this is a hint only and used when making the templateItem) -->
+        <property name="category" type="java.lang.String">
+            <column name="CATEGORY" length="255" />
+        </property>
         <!-- locked items cannot be removed or modified, items which are linked to a locked template should also be locked -->
         <property name="locked" type="java.lang.Boolean">
             <column name="LOCKED" />

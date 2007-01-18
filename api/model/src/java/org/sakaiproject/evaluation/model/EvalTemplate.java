@@ -1,6 +1,6 @@
 package org.sakaiproject.evaluation.model;
 
-// Generated Jan 15, 2007 9:40:12 PM by Hibernate Tools 3.2.0.beta6a
+// Generated Jan 18, 2007 3:54:56 PM by Hibernate Tools 3.2.0.beta6a
 
 import java.util.Date;
 import java.util.HashSet;
@@ -29,8 +29,6 @@ public class EvalTemplate implements java.io.Serializable {
 
 	private String expertDescription;
 
-	private Set items = new HashSet(0);
-
 	private Set templateItems = new HashSet(0);
 
 	private Boolean locked;
@@ -42,8 +40,7 @@ public class EvalTemplate implements java.io.Serializable {
 	}
 
 	/** minimal constructor */
-	public EvalTemplate(Date lastModified, String owner, String title,
-			String sharing, Boolean expert) {
+	public EvalTemplate(Date lastModified, String owner, String title, String sharing, Boolean expert) {
 		this.lastModified = lastModified;
 		this.owner = owner;
 		this.title = title;
@@ -52,10 +49,8 @@ public class EvalTemplate implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public EvalTemplate(Date lastModified, String owner, String title,
-			String description, String sharing, Boolean expert,
-			String expertDescription, Set items, Set templateItems,
-			Boolean locked) {
+	public EvalTemplate(Date lastModified, String owner, String title, String description, String sharing,
+			Boolean expert, String expertDescription, Set templateItems, Boolean locked) {
 		this.lastModified = lastModified;
 		this.owner = owner;
 		this.title = title;
@@ -63,7 +58,6 @@ public class EvalTemplate implements java.io.Serializable {
 		this.sharing = sharing;
 		this.expert = expert;
 		this.expertDescription = expertDescription;
-		this.items = items;
 		this.templateItems = templateItems;
 		this.locked = locked;
 	}
@@ -131,14 +125,6 @@ public class EvalTemplate implements java.io.Serializable {
 
 	public void setExpertDescription(String expertDescription) {
 		this.expertDescription = expertDescription;
-	}
-
-	public Set getItems() {
-		return this.items;
-	}
-
-	public void setItems(Set items) {
-		this.items = items;
 	}
 
 	public Set getTemplateItems() {

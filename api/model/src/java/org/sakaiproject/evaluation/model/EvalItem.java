@@ -1,6 +1,6 @@
 package org.sakaiproject.evaluation.model;
 
-// Generated Jan 15, 2007 9:40:12 PM by Hibernate Tools 3.2.0.beta6a
+// Generated Jan 18, 2007 3:54:56 PM by Hibernate Tools 3.2.0.beta6a
 
 import java.util.Date;
 import java.util.HashSet;
@@ -31,6 +31,10 @@ public class EvalItem implements java.io.Serializable {
 
 	private String expertDescription;
 
+	private EvalScale scale;
+
+	private Set templateItems = new HashSet(0);
+
 	private Boolean usesNA;
 
 	private Integer displayRows;
@@ -38,20 +42,6 @@ public class EvalItem implements java.io.Serializable {
 	private String scaleDisplaySetting;
 
 	private String category;
-
-	private Boolean blockParent;
-
-	private Integer blockId;
-
-	private Integer displayOrder;
-
-	private EvalScale scale;
-
-	private Set answers = new HashSet(0);
-
-	private Set templates = new HashSet(0);
-
-	private Set templateItems = new HashSet(0);
 
 	private Boolean locked;
 
@@ -62,8 +52,8 @@ public class EvalItem implements java.io.Serializable {
 	}
 
 	/** minimal constructor */
-	public EvalItem(Date lastModified, String owner, String itemText,
-			String sharing, String classification, Boolean expert) {
+	public EvalItem(Date lastModified, String owner, String itemText, String sharing, String classification,
+			Boolean expert) {
 		this.lastModified = lastModified;
 		this.owner = owner;
 		this.itemText = itemText;
@@ -73,13 +63,9 @@ public class EvalItem implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public EvalItem(Date lastModified, String owner, String itemText,
-			String description, String sharing, String classification,
-			Boolean expert, String expertDescription, Boolean usesNA,
-			Integer displayRows, String scaleDisplaySetting, String category,
-			Boolean blockParent, Integer blockId, Integer displayOrder,
-			EvalScale scale, Set answers, Set templates, Set templateItems,
-			Boolean locked) {
+	public EvalItem(Date lastModified, String owner, String itemText, String description, String sharing,
+			String classification, Boolean expert, String expertDescription, EvalScale scale, Set templateItems,
+			Boolean usesNA, Integer displayRows, String scaleDisplaySetting, String category, Boolean locked) {
 		this.lastModified = lastModified;
 		this.owner = owner;
 		this.itemText = itemText;
@@ -88,17 +74,12 @@ public class EvalItem implements java.io.Serializable {
 		this.classification = classification;
 		this.expert = expert;
 		this.expertDescription = expertDescription;
+		this.scale = scale;
+		this.templateItems = templateItems;
 		this.usesNA = usesNA;
 		this.displayRows = displayRows;
 		this.scaleDisplaySetting = scaleDisplaySetting;
 		this.category = category;
-		this.blockParent = blockParent;
-		this.blockId = blockId;
-		this.displayOrder = displayOrder;
-		this.scale = scale;
-		this.answers = answers;
-		this.templates = templates;
-		this.templateItems = templateItems;
 		this.locked = locked;
 	}
 
@@ -175,6 +156,22 @@ public class EvalItem implements java.io.Serializable {
 		this.expertDescription = expertDescription;
 	}
 
+	public EvalScale getScale() {
+		return this.scale;
+	}
+
+	public void setScale(EvalScale scale) {
+		this.scale = scale;
+	}
+
+	public Set getTemplateItems() {
+		return this.templateItems;
+	}
+
+	public void setTemplateItems(Set templateItems) {
+		this.templateItems = templateItems;
+	}
+
 	public Boolean getUsesNA() {
 		return this.usesNA;
 	}
@@ -205,62 +202,6 @@ public class EvalItem implements java.io.Serializable {
 
 	public void setCategory(String category) {
 		this.category = category;
-	}
-
-	public Boolean getBlockParent() {
-		return this.blockParent;
-	}
-
-	public void setBlockParent(Boolean blockParent) {
-		this.blockParent = blockParent;
-	}
-
-	public Integer getBlockId() {
-		return this.blockId;
-	}
-
-	public void setBlockId(Integer blockId) {
-		this.blockId = blockId;
-	}
-
-	public Integer getDisplayOrder() {
-		return this.displayOrder;
-	}
-
-	public void setDisplayOrder(Integer displayOrder) {
-		this.displayOrder = displayOrder;
-	}
-
-	public EvalScale getScale() {
-		return this.scale;
-	}
-
-	public void setScale(EvalScale scale) {
-		this.scale = scale;
-	}
-
-	public Set getAnswers() {
-		return this.answers;
-	}
-
-	public void setAnswers(Set answers) {
-		this.answers = answers;
-	}
-
-	public Set getTemplates() {
-		return this.templates;
-	}
-
-	public void setTemplates(Set templates) {
-		this.templates = templates;
-	}
-
-	public Set getTemplateItems() {
-		return this.templateItems;
-	}
-
-	public void setTemplateItems(Set templateItems) {
-		this.templateItems = templateItems;
 	}
 
 	public Boolean getLocked() {
