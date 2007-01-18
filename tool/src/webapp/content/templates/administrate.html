@@ -22,7 +22,7 @@
 		</ul>
 	</div>
 
-	<form method="post" action="TODO">
+	<form  rsf:id="basic-form" method="post">
 		
 		<h3 rsf:id="system-settings-header">System Settings</h3>
 		<p class="noteText" rsf:id="system-settings-instructions">
@@ -36,7 +36,7 @@
 		<table class="tableFlat" width="99%" cellpadding="0" cellspacing="0">
 			<tr>
 				<td class="checktable1" width="2%">
-					<input type="checkbox" />
+					<input type="checkbox" rsf:id="instructors-eval-create"/>
 				</td>
 				<td class="checktable2" width="98%">
 					<span rsf:id="instructors-eval-create-note">Instructors allowed to create evaluations</span>
@@ -44,7 +44,7 @@
 			</tr>
 			<tr>
 				<td class="checktable1">
-					<input type="checkbox" />
+					<input type="checkbox" rsf:id="instructors-view-results"/>
 				</td>
 				<td class="checktable2">
 					<span rsf:id="instructors-view-results-note">Instructors allowed to view results</span>
@@ -52,7 +52,7 @@
 			</tr>
 			<tr>
 				<td class="checktable1">
-					<input type="checkbox" />
+					<input type="checkbox" rsf:id="instructors-email-students"/>
 				</td>
 				<td class="checktable2">
 					<span rsf:id="instructors-email-students-note">Instructors allowed to email students</span>
@@ -60,7 +60,7 @@
 			</tr>
 			<tr>
 				<td class="checktable1">
-					<input type="checkbox" />
+					<input type="checkbox" rsf:id="instructors-hierarchy-email"/>
 				</td>
 				<td class="checktable2">
 					<span rsf:id="instructors-hierarchy-email-note">Instructors must use evaluations from above in the hierachy</span>
@@ -68,18 +68,8 @@
 			</tr>
 			<tr>
 				<td class="checktable1">
-					<select>
-						<option>0</option>
-						<option>1</option>
-						<option>2</option>
-						<option>3</option>
-						<option>4</option>
-						<option selected="true">5</option>
-						<option>8</option>
-						<option>10</option>
-						<option>15</option>
-						<option>20</option>
-					</select>
+					<select rsf:id="instructors-num-questions">
+					</select>	
 				</td>
 				<td class="checktable2">
 					<span rsf:id="instructors-num-questions-note">Instructors may add this number of questions to evaluations from above in the
@@ -92,7 +82,7 @@
 		<table class="tableFlat" width="99%" cellpadding="0" cellspacing="0">
 			<tr>
 				<td class="checktable1" width="5%">
-					<input type="checkbox" />
+					<input type="checkbox" rsf:id="students-unanswered"/>
 				</td>
 				<td class="checktable2" width="95%">
 					<span rsf:id="students-unanswered-note">Students may leave questions unanswered</span>
@@ -100,7 +90,7 @@
 			</tr>
 			<tr>
 				<td class="checktable1">
-					<input type="checkbox" />
+					<input type="checkbox" rsf:id="students-modify-responses"/>
 				</td>
 				<td class="checktable2">
 					<span rsf:id="students-modify-responses-note">Students may modify their responses up to the due date</span>
@@ -108,7 +98,7 @@
 			</tr>
 			<tr>
 				<td class="checktable1">
-					<input type="checkbox" />
+					<input type="checkbox" rsf:id="students-view-results"/>
 				</td>
 				<td class="checktable2">
 					<span rsf:id="students-view-results-note">Students allowed to view results</span>
@@ -120,17 +110,7 @@
 		<table class="tableFlat" width="99%" cellpadding="0" cellspacing="0">
 			<tr>
 				<td class="checktable1" width="5%">
-					<select>
-						<option>0</option>
-						<option>1</option>
-						<option>2</option>
-						<option>3</option>
-						<option>4</option>
-						<option selected="true">5</option>
-						<option>8</option>
-						<option>10</option>
-						<option>15</option>
-						<option>20</option>
+					<select rsf:id="admin-hierarchy-num-questions">
 					</select>
 				</td>
 				<td class="checktable2">
@@ -140,7 +120,7 @@
 			</tr>
 			<tr>
 				<td class="checktable1">
-					<input type="checkbox" />
+					<input type="checkbox" rsf:id="admin-view-instructor-questions"/>
 				</td>
 				<td class="checktable2">
 					<span rsf:id="admin-view-instructor-questions-note">Admins allowed to view instructor added question results</span>
@@ -148,7 +128,7 @@
 			</tr>
 			<tr>
 				<td class="checktable1">
-					<input type="checkbox" />
+					<input type="checkbox" rsf:id="admin-super-modify-question"/>
 				</td>
 				<td class="checktable2">
 					<span rsf:id="admin-super-modify-question-note">Only super admins may modify question text after eval start</span>
@@ -160,27 +140,14 @@
 		<table class="tableFlat" width="99%" cellpadding="0" cellspacing="0">
 			<tr>
 				<td colspan="2">
-					<input type="textfield" />
+					<input type="text" rsf:id="general-helpdesk-email"/>
 					<span rsf:id="general-helpdesk-email-note">Helpdesk email address (email messages appear to come from this email address by default)</span>
 				</td>
 			</tr>
 			<tr>
 				<td class="checktable1" width="5%">
-					<select>
-						<option>0</option>
-						<option>1</option>
-						<option>2</option>
-						<option>3</option>
-						<option>4</option>
-						<option selected="true">5</option>
-						<option>6</option>
-						<option>7</option>
-						<option>8</option>
-						<option>9</option>
-						<option>10</option>
-						<option>15</option>
-						<option>20</option>
-					</select>
+					<select rsf:id="general-responses-before-view">
+					</select>				
 				</td>
 				<td class="checktable2">
 					<span rsf:id="general-responses-before-view-note">Number of responses required before results can be viewed</span>
@@ -188,7 +155,7 @@
 			</tr>
 			<tr>
 				<td class="checktable1">
-					<input type="checkbox" />
+					<input type="checkbox" rsf:id="general-na-allowed"/>
 				</td>
 				<td class="checktable2">
 					<span rsf:id="general-na-allowed-note">Not Available allowed when creating questions</span>
@@ -196,21 +163,8 @@
 			</tr>
 			<tr>
 				<td class="checktable1">
-					<select>
-						<option>0</option>
-						<option>1</option>
-						<option>2</option>
-						<option>3</option>
-						<option>4</option>
-						<option>5</option>
-						<option>6</option>
-						<option>7</option>
-						<option>8</option>
-						<option>9</option>
-						<option selected="true">10</option>
-						<option>15</option>
-						<option>20</option>
-					</select>
+					<select rsf:id="general-max-questions-block">
+					</select>				
 				</td>
 				<td class="checktable2">
 					<span rsf:id="general-max-questions-block-note">Maximum number of questions in a question block</span>
@@ -218,20 +172,15 @@
 			</tr>
 			<tr>
 				<td colspan="2">
-					<select>
-						<option selected="true">Owner - Visibility set by owner</option>
-						<option>Private - Visible to owner only</option>
-						<option>Visible - Visible to any admin</option>
-						<option>Shared - Editable by same level</option>
-						<option>Public - Editable by any admin</option>
-					</select>
+					<select rsf:id="general-template-sharing">
+					</select>				
 					&nbsp;
 					<span rsf:id="general-template-sharing-note">Template sharing and visibility setting</span>
 				</td>
 			</tr>
 			<tr>
 				<td class="checktable1">
-					<input type="checkbox" />
+					<input type="checkbox" rsf:id="general-default-question"/>
 				</td>
 				<td class="checktable2">
 					<span rsf:id="general-default-question-category">All questions default to course category only
@@ -240,7 +189,7 @@
 			</tr>
 			<tr>
 				<td class="checktable1">
-					<input type="checkbox" />
+					<input type="checkbox" rsf:id="general-use-stop-date"/>
 				</td>
 				<td class="checktable2">
 					<span rsf:id="general-use-stop-date-note">Use stop date for evaluations</span>
@@ -248,7 +197,7 @@
 			</tr>
 			<tr>
 				<td class="checktable1">
-					<input type="checkbox" />
+					<input type="checkbox" rsf:id="general-expert-templates"/>
 				</td>
 				<td class="checktable2">
 					<span rsf:id="general-expert-templates-note">Use expert created templates</span>
@@ -256,7 +205,7 @@
 			</tr>
 			<tr>
 				<td class="checktable1">
-					<input type="checkbox" />
+					<input type="checkbox" rsf:id="general-expert-questions"/>
 				</td>
 				<td class="checktable2">
 					<span rsf:id="general-expert-questions-note">Use expert created questions</span>
@@ -264,7 +213,7 @@
 			</tr>
 			<tr>
 				<td class="checktable1">
-					<input type="checkbox" />
+					<input type="checkbox" rsf:id="general-same-view-date"/>
 				</td>
 				<td class="checktable2">
 					<span rsf:id="general-same-view-date-note">Use same view date for all users<br/>
@@ -274,7 +223,7 @@
 		</table>
 
 		<br/>
-		<input type="submit" value="Save Settings" />
+		<input rsf:id="saveSettings" type="submit" value="Save Settings"/>
 	</form>
 	
 </div>
