@@ -441,10 +441,47 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 	 */
 	public void deleteTemplateItem(Long templateItemId, String userId) {
 		log.debug("templateItemId:" + templateItemId + ", userId:" + userId);
-		// TODO Auto-generated method stub
+
+		// get the templateItem by id
+		EvalTemplateItem templateItem = (EvalTemplateItem) dao.findById(EvalTemplateItem.class, templateItemId);
+		if (templateItem == null) {
+			throw new IllegalArgumentException("Cannot find templateItem with id: " + templateItemId);
+		}
+
+		// check if this templateItem can be removed (checks if associated template is locked)
+		if (checkUserControlTemplateItem(userId, templateItem)) {
+			// remove the item/template linkages first
+			Set[] entitySets = new HashSet[2];
+			EvalItem item = templateItem.getItem();
+			EvalTemplate template = templateItem.getTemplate();
+
+			if (item.getTemplateItems() == null) {
+				item.setTemplateItems( new HashSet() );
+			}
+
+			item.getTemplateItems().remove(templateItem);
+			Set itemSet = new HashSet();
+			itemSet.add(item);
+			entitySets[0] = itemSet;
+
+			if (template.getTemplateItems() == null) {
+				template.setTemplateItems( new HashSet() );
+			}
+			template.getTemplateItems().remove(templateItem);
+			Set templateSet = new HashSet();
+			templateSet.add(template);
+			entitySets[1] = templateSet;
+
+			// update the linkages
+			dao.saveMixedSet(entitySets);
+
+			// remove the templateItem
+			dao.delete(templateItem);
+			return;
+		}
 		
-		// TODO Stub to delete temporarily
-		dao.delete(EvalTemplateItem.class, templateItemId);
+		// should not get here so die if we do
+		throw new RuntimeException("User ("+userId+") could NOT delete template-item linkage ("+templateItem.getId()+")");
 	}
 
 	/* (non-Javadoc)
@@ -535,8 +572,8 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 		// check locked first (expensive check)
 		if (templateItem.getId() != null &&
 				templateItem.getTemplate().getLocked().booleanValue() == true) {
-			throw new IllegalStateException("Cannot control (modify) template item ("+
-					templateItem.getId()+") in locked template ("+templateItem.getTemplate().getId()+")");
+			throw new IllegalStateException("Cannot control (modify,remove) template item ("+
+					templateItem.getId()+") in locked template ("+templateItem.getTemplate().getTitle()+")");
 		}
 
 		// check ownership or super user

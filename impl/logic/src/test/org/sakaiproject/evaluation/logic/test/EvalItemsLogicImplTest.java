@@ -816,6 +816,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 //			Assert.fail("Should have thrown exception");
 //		} catch (IllegalStateException e) {
 //			Assert.assertNotNull(e);
+//			Assert.fail(e.getMessage()); // see why failing
 //		}
 
 		// test editing templateItem in LOCKED template fails
@@ -863,7 +864,87 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl#deleteTemplateItem(java.lang.Long, java.lang.String)}.
 	 */
 	public void testDeleteTemplateItem() {
-//		 TODO fail("Not yet implemented");
+		// test removing templateItem without permissions fails
+		try {
+			items.deleteTemplateItem(etdl.templateItem3PU.getId(), 
+					EvalTestDataLoad.MAINT_USER_ID);
+			Assert.fail("Should have thrown exception");
+		} catch (SecurityException e) {
+			Assert.assertNotNull(e);
+		}
+
+		try {
+			items.deleteTemplateItem(etdl.templateItem3U.getId(), 
+					EvalTestDataLoad.USER_ID);
+			Assert.fail("Should have thrown exception");
+		} catch (SecurityException e) {
+			Assert.assertNotNull(e);
+		}
+
+		// test removing templateItem from locked template fails
+		try {
+			items.deleteTemplateItem(etdl.templateItem1P.getId(), 
+					EvalTestDataLoad.MAINT_USER_ID);
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalStateException e) {
+			Assert.assertNotNull(e);
+		}
+
+		try {
+			items.deleteTemplateItem(etdl.templateItem2A.getId(), 
+					EvalTestDataLoad.ADMIN_USER_ID);
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalStateException e) {
+			Assert.assertNotNull(e);
+		}
+
+		// verify that the item/template link exists before removal
+		EvalTemplateItem eti1 = items.getTemplateItemById(etdl.templateItem3U.getId());
+		Assert.assertNotNull( eti1 );
+		Assert.assertNotNull( eti1.getItem() );
+		Assert.assertNotNull( eti1.getTemplate() );
+		Assert.assertNotNull( eti1.getItem().getTemplateItems() );
+		Assert.assertNotNull( eti1.getTemplate().getTemplateItems() );
+		Assert.assertFalse( eti1.getItem().getTemplateItems().isEmpty() );
+		Assert.assertFalse( eti1.getTemplate().getTemplateItems().isEmpty() );
+		Assert.assertTrue( eti1.getItem().getTemplateItems().contains( eti1 ) );
+		Assert.assertTrue( eti1.getTemplate().getTemplateItems().contains( eti1 ) );
+		int itemsSize = eti1.getItem().getTemplateItems().size();
+		int templatesSize = eti1.getTemplate().getTemplateItems().size();
+
+		// test removing unused templateItem OK
+		items.deleteTemplateItem(etdl.templateItem3U.getId(), 
+				EvalTestDataLoad.MAINT_USER_ID);
+		Assert.assertNull( items.getTemplateItemById(etdl.templateItem3U.getId()) );
+
+		// verify that the item/template link no longer exists
+		Assert.assertNotNull( eti1.getItem().getTemplateItems() );
+		Assert.assertNotNull( eti1.getTemplate().getTemplateItems() );
+		Assert.assertFalse( eti1.getItem().getTemplateItems().isEmpty() );
+		Assert.assertFalse( eti1.getTemplate().getTemplateItems().isEmpty() );
+		Assert.assertEquals( itemsSize-1, eti1.getItem().getTemplateItems().size() );
+		Assert.assertEquals( templatesSize-1, eti1.getTemplate().getTemplateItems().size() );
+		Assert.assertTrue(! eti1.getItem().getTemplateItems().contains( eti1 ) );
+		Assert.assertTrue(! eti1.getTemplate().getTemplateItems().contains( eti1 ) );
+
+		items.deleteTemplateItem(etdl.templateItem6UU.getId(), 
+				EvalTestDataLoad.USER_ID);
+		Assert.assertNull( items.getTemplateItemById(etdl.templateItem6UU.getId()) );
+
+		// test admin can remove unowned templateItem
+		items.deleteTemplateItem(etdl.templateItem5U.getId(), 
+				EvalTestDataLoad.ADMIN_USER_ID);
+		Assert.assertNull( items.getTemplateItemById(etdl.templateItem5U.getId()) );
+
+		// test removing invalid templateItem id fails
+		try {
+			items.deleteTemplateItem(EvalTestDataLoad.INVALID_LONG_ID, 
+					EvalTestDataLoad.MAINT_USER_ID);
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+			Assert.assertNotNull(e);
+		}
+
 	}
 
 	/**

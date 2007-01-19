@@ -27,6 +27,7 @@ import org.hibernate.criterion.Property;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.model.EvalAssignContext;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.utils.EvalUtils;
 import org.sakaiproject.genericdao.hibernate.HibernateCompleteGenericDao;
@@ -263,6 +264,12 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 			return ((EvalEvaluation)eval0).getDueDate().
 				compareTo(((EvalEvaluation)eval1).getDueDate());
 		}
+	}
+
+
+	public void removeTemplateItems(EvalTemplateItem[] templateItems) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
