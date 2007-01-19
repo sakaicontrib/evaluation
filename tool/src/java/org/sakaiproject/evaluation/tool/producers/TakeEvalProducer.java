@@ -168,7 +168,10 @@ public class TakeEvalProducer implements ViewComponentProducer,
 
 		// get items(parent items, child items --need to set order
 		//List childItems = new ArrayList(template.getItems());
-		List allItems = new ArrayList(template.getItems());
+
+		// TODO - changed to EMPTY ARRAY so it will COMPILE - AZ
+		//List allItems = new ArrayList(template.getItems());
+		List allItems = new ArrayList();
 		
 		//filter out the block child items, to get a list non-child items
 		List ncItemsList = ItemBlockUtils.getNonChildItems(allItems);
@@ -620,7 +623,8 @@ public class TakeEvalProducer implements ViewComponentProducer,
 			 */ 
 			totalItemsAdded++;
 
-		} else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK) 
+		// TODO - changed to ITEM_TYPE_SCALED so it will COMPILE - AZ
+		} else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED) 
 				&& myItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED)) { //"Question Block","Stepped"
 			UIBranchContainer block = UIBranchContainer.make(radiobranch,
 					"blockStepped:"); //$NON-NLS-1$
@@ -677,7 +681,9 @@ public class TakeEvalProducer implements ViewComponentProducer,
 			}
 
 			// get child block item text
-			if (myItem.getBlockParent().booleanValue() == true) {
+			// TODO - changed to ALWAYS FALSE so it will COMPILE - AZ
+			//if (myItem.getBlockParent().booleanValue() == true) {
+			if ( false ) {
 				Long parentID = myItem.getId();
 				Integer blockID = new Integer(parentID.intValue());
 				
@@ -720,7 +726,8 @@ public class TakeEvalProducer implements ViewComponentProducer,
 
 			} // end of get child block item
 
-		} else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK) 
+		// TODO - changed to ITEM_TYPE_SCALED so it will COMPILE - AZ
+		} else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED) 
 				&& myItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED)) { //"Question Block","Stepped Colored"
 
 			UIBranchContainer blockSteppedColored = UIBranchContainer.make(
@@ -794,7 +801,9 @@ public class TakeEvalProducer implements ViewComponentProducer,
 			}
 		
 			// get child block item text
-			if (myItem.getBlockParent().booleanValue() == true) {
+			// TODO - changed to ALWAYS FALSE so it will COMPILE - AZ
+			//if (myItem.getBlockParent().booleanValue() == true) {
+			if ( false ) {
 				Long parentID = myItem.getId();
 				Integer blockID = new Integer(parentID.intValue());
 				
