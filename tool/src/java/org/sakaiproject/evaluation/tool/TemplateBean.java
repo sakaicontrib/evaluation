@@ -30,6 +30,7 @@ import org.sakaiproject.evaluation.logic.EvaluationLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
+import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.producers.ModifyBlockProducer;
 import org.sakaiproject.evaluation.tool.producers.ModifyEssayProducer;
@@ -241,7 +242,7 @@ public class TemplateBean {
 		itemsList = new ArrayList();
 		
 		Set items = new TreeSet(new PreviewEvalProducer.EvaluationItemOrderComparator());
-		items.addAll(currTemplate.getItems());
+		items.addAll(itemsLogic.getItemsForTemplate(currTemplate.getId(), external.getCurrentUserId()));
 		//System.out.println("template items size="+currTemplate.getItems().size());
 		for (Iterator it = items.iterator(); it.hasNext();) {
 			EvalItem evalItem = (EvalItem) it.next();
@@ -343,7 +344,8 @@ public class TemplateBean {
 		}else if(this.itemClassification.equals(EvalConstants.ITEM_TYPE_HEADER)){
 			//"Text Header"
 			return ModifyHeaderProducer.VIEW_ID;
-		}else if(this.itemClassification.equals(EvalConstants.ITEM_TYPE_BLOCK)){
+		}/*TODO-How do we handle blocks here
+		else if(this.itemClassification.equals(EvalConstants.ITEM_TYPE_BLOCK)){
 			//"Question Block"
 			this.idealColor = Boolean.FALSE;
 			this.queList = new ArrayList();
@@ -351,9 +353,8 @@ public class TemplateBean {
 			queList.add("");
 			queList.add("");
 			return ModifyBlockProducer.VIEW_ID;
-		}else  //for "Scale/Suvey" type
+		}*/else  //for "Scale/Suvey" type
 			return TemplateItemProducer.VIEW_ID;
-
 	}
 	
 
@@ -379,8 +380,16 @@ public class TemplateBean {
 		
 		itemPreview = new EvalItem();
 		updateItemObject(itemPreview);
-		itemPreview.setDisplayOrder(new Integer(this.currItemNo));
-		
+		//itemPreview.setDisplayOrder(new Integer(this.currItemNo));
+		//fetch all templateItems in this template
+		List templateItemsList=itemsLogic.getTemplateItemsForTemplate(currTemplate.getId(), external.getCurrentUserId());
+		//locate the templateItem whose display order you wish to set
+		for(int i=0;i<templateItemsList.size();i++){
+			EvalTemplateItem curr=(EvalTemplateItem)templateItemsList.get(i);
+			if(curr.getItem().getId()==itemPreview.getId()){
+				curr.setDisplayOrder(new Integer(this.currItemNo));
+			}
+		}
 		return PreviewItemProducer.VIEW_ID;
 	}
 
@@ -416,11 +425,23 @@ public class TemplateBean {
 			updateItemObject(currentItem);
 			currentItem.setScaleDisplaySetting(scaleDisplaySetting);
 			currentItem.setSharing(modifier);
-			currentItem.getTemplates().add(currTemplate);
 			
-			//set the display order.
+			//We used to add the current template to the hash set of templates in the item
+			//currentItem.getTemplates().add(currTemplate);
+			
+			//Now we add a new template item to that has set.
 			int orderNo = getItemsListSize();//this.getItemDisplayListSize();
-			currentItem.setDisplayOrder(new Integer(orderNo + 1)); 
+			
+			//We used to set the display order in the item.
+			//currentItem.setDisplayOrder(new Integer(orderNo + 1)); 			
+			
+			EvalTemplateItem currTemplateItem = new EvalTemplateItem(new Date(), external.getCurrentUserId(), currTemplate, currentItem,
+					new Integer(orderNo + 1), itemCategory, displayRows, scaleDisplaySetting, itemNA,
+					false, 0);
+			
+			itemsLogic.saveTemplateItem(currTemplateItem,external.getCurrentUserId());
+			currentItem.getTemplateItems().add(currTemplateItem);
+
 			itemsLogic.saveItem(currentItem, external.getCurrentUserId());
 		/*
 			if ( currTemplate.getId() == null ) {
@@ -449,9 +470,10 @@ public class TemplateBean {
 	 * method binding to the hidden button with rsf:id="hiddenBtn" on template_modify page
 	 * used to change displayOrder of each item when the onChange event of dropdown 
 	 * 		(displayOrder #)on template_modify.gtml fired
+	 *
 	 */
 	public String changeDisplayOrder(){
-		
+		/*TODO-Change display order
 		//itemDisplayPreview = null;
 		itemPreview =null;
 		
@@ -499,7 +521,7 @@ public class TemplateBean {
 			}	
 		}
 		//itemDisplayList.set(identicalOrderIndex, new ItemDisplay(onChangeItem));
-		itemsList.set(identicalOrderIndex,onChangeItem);
+		itemsList.set(identicalOrderIndex,onChangeItem);*/
 		return TemplateModifyProducer.VIEW_ID;
 	}
 	
@@ -533,7 +555,8 @@ public class TemplateBean {
 				this.scaleId = itemPreview.getScale().getId();
 				this.scaleDisplaySetting = itemPreview.getScaleDisplaySetting();
 				
-			}else if(this.itemClassification.equals(EvalConstants.ITEM_TYPE_BLOCK)){
+			}/*TODO-Block Question
+				else if(this.itemClassification.equals(EvalConstants.ITEM_TYPE_BLOCK)){
 				//"Question Block"
 							this.scaleId = itemPreview.getScale().getId();	
 				this.scaleDisplaySetting = itemPreview.getScaleDisplaySetting();
@@ -553,7 +576,7 @@ public class TemplateBean {
 					}
 				} 
 				*/
-			}else if(this.itemClassification.equals(EvalConstants.ITEM_TYPE_TEXT)){
+			/*}*/else if(this.itemClassification.equals(EvalConstants.ITEM_TYPE_TEXT)){
 				//"Short Answer/Essay"
 				this.displayRows = itemPreview.getDisplayRows();
 			}
@@ -610,7 +633,8 @@ public class TemplateBean {
 			}else if(this.itemClassification.equals(EvalConstants.ITEM_TYPE_HEADER)){
 				//"Text Header"
 				return ModifyHeaderProducer.VIEW_ID;			
-			}else if(this.itemClassification.equals(EvalConstants.ITEM_TYPE_BLOCK)){
+			}/*TODO-Question Block
+				else if(this.itemClassification.equals(EvalConstants.ITEM_TYPE_BLOCK)){
 				//"Question Block"
 				this.scaleId = currentItem.getScale().getId();
 		    	this.scaleDisplaySetting = currentItem.getScaleDisplaySetting();
@@ -637,8 +661,8 @@ public class TemplateBean {
 		    		this.queList.add(myItem.getItemText());
 		    	}
 		    	*/
-		    	return ModifyBlockProducer.VIEW_ID;
-			}
+		    	/*return ModifyBlockProducer.VIEW_ID;
+			}*/
 			
 		}
 		
@@ -689,7 +713,8 @@ public class TemplateBean {
 				this.scaleId = itemPreview.getScale().getId();
 				this.scaleDisplaySetting = itemPreview.getScaleDisplaySetting();
 				
-			}else if(this.itemClassification.equals(EvalConstants.ITEM_TYPE_BLOCK)){
+			}/*TODO-Block
+				else if(this.itemClassification.equals(EvalConstants.ITEM_TYPE_BLOCK)){
 				//block
 				//this.scaleId = itemDisplayPreview.getItem().getScale().getId();	
 				//this.scaleDisplaySetting = itemDisplayPreview.getItem().getScaleDisplaySetting();
@@ -713,7 +738,7 @@ public class TemplateBean {
 				}
 				
 				*/
-			}
+			/*}*/
 
 		}	
 		
@@ -766,9 +791,9 @@ public class TemplateBean {
 		
 		if(itemPreview != null){
 			//EvalItem item = itemDisplayPreview.getItem();		
-			//remove BLOCK child items
-			if(itemPreview.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK)&& itemPreview.getBlockParent().booleanValue()==true){
-				Integer id = new Integer(itemPreview.getId().intValue());
+			//TODO-remove BLOCK child items
+			/*if(itemPreview.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK)&& itemPreview.getBlockParent().booleanValue()==true){
+				Integer id = new Integer(itemPreview.getId().intValue());*/
 				//TODO:
 				/*
 				List childItems = logic.findItem(id);
@@ -776,18 +801,18 @@ public class TemplateBean {
 					EvalItem cItem =(EvalItem) childItems.get(i);
 					itemsLogic.deleteItem(cItem.getId(),external.getCurrentUserId());
 				}
-				*/
-			}
+				
+			}*/
 			itemsLogic.deleteItem(itemPreview.getId(), external.getCurrentUserId());
 			itemsList.remove(itemPreview);			
 
-			//update the other item's displayOrder ,save item,re-organize ItemDisplayList
-			for(int i = this.currItemNo - 1 ; i< getItemsListSize(); i++){
+			//TODO-update the other item's displayOrder ,save item,re-organize ItemDisplayList
+			/*for(int i = this.currItemNo - 1 ; i< getItemsListSize(); i++){
 				EvalItem myItem = (EvalItem)itemsList.get(i);
 				myItem.setDisplayOrder(new Integer(i+1));
 				itemsLogic.saveItem(myItem, external.getCurrentUserId());
 				itemsList.set(i, myItem);
-			}
+			}*/
 		
 		}
 		itemPreview = null;
@@ -816,8 +841,8 @@ public class TemplateBean {
 		this.scaleDisplaySetting = null;
 		updateItemObject(itemPreview);
 		itemPreview.setDisplayRows(this.displayRows);
-		//set Item DisplayOrder
-		itemPreview.setDisplayOrder(new Integer(this.currItemNo));
+		//TODO-set TemplateItem DisplayOrder
+		//itemPreview.setDisplayOrder(new Integer(this.currItemNo));
 		
 		return PreviewItemProducer.VIEW_ID;
 	}
@@ -850,13 +875,21 @@ public class TemplateBean {
 			updateItemObject(currentItem);
 			currentItem.setDisplayRows(this.displayRows);
 			currentItem.setSharing(modifier);
-			currentItem.getTemplates().add(currTemplate);
+			//We used to add the current template to the hash set of templates in the item
+			//currentItem.getTemplates().add(currTemplate);
 			
-			//Save the item everytime	
+			//Now we add a new template item to that has set.
 			int orderNo = getItemsListSize();//this.getItemDisplayListSize();
-			//set the display order for each item
-			currentItem.setDisplayOrder(new Integer(orderNo + 1)); 
-			//logic.saveItem(currentItem, logic.getCurrentUserId());			
+			
+			//We used to set the display order in the item.
+			//currentItem.setDisplayOrder(new Integer(orderNo + 1)); 			
+			
+			EvalTemplateItem currTemplateItem = new EvalTemplateItem(new Date(), external.getCurrentUserId(), currTemplate, currentItem,
+					new Integer(orderNo + 1), itemCategory, displayRows, scaleDisplaySetting, itemNA,
+					false, 0);
+			
+			itemsLogic.saveTemplateItem(currTemplateItem,external.getCurrentUserId());
+			currentItem.getTemplateItems().add(currTemplateItem);			//logic.saveItem(currentItem, logic.getCurrentUserId());			
 			itemsLogic.saveItem(currentItem, external.getCurrentUserId());
 			//itemDisplayList.add(new ItemDisplay(currentItem));
 			itemsList.add(currentItem);
@@ -907,7 +940,7 @@ public class TemplateBean {
 	
 	//method binding to the "Save" button on modify_block.html
 	public String saveBlockAction(){
-	
+		/*TODO-save a block
 		if(currentItem != null){	
 			
 			if(idealColor != null && idealColor.booleanValue() == true)
@@ -926,7 +959,7 @@ public class TemplateBean {
 				itemsLogic.deleteItem(myItem.getId(), external.getCurrentUserId());
 			}
 			*/
-			currentItem.setLastModified(new Date());
+	/*		currentItem.setLastModified(new Date());
 			currentItem.setItemText(itemText);
 			currentItem.setScaleDisplaySetting(scaleDisplaySetting);
 			currentItem.setCategory(itemCategory);
@@ -998,13 +1031,13 @@ public class TemplateBean {
 				itemsLogic.saveItem(tempItem, external.getCurrentUserId());
 			}//end of for loop
 		}
-		
+		*/
 		return TemplateModifyProducer.VIEW_ID;
 	}
 	
 	//method binding to the "Preview" button on modify_block.html
 	public String previewBlockAction(){
-
+		//TODO-Preview Block
 		//	creating an item
 /*		EvalItem tempItemForPreview = new EvalItem();
 		updateItemObject(tempItemForPreview);
@@ -1018,7 +1051,7 @@ public class TemplateBean {
 		tempItemForPreview.setDisplayOrder(new Integer(this.currItemNo));
 		itemDisplayPreview = new ItemDisplay(tempItemForPreview);
 */
-		itemPreview = new EvalItem();
+		/*itemPreview = new EvalItem();
 		updateItemObject(itemPreview);
 		if(idealColor != null && idealColor.booleanValue() == true)
 			scaleDisplaySetting = EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED;
@@ -1028,7 +1061,7 @@ public class TemplateBean {
 		this.setScale(itemPreview);
 		//set Item DisplayOrder
 		itemPreview.setDisplayOrder(new Integer(this.currItemNo));
-		
+		*/
 		return PreviewItemProducer.VIEW_ID;
 	}
 	
