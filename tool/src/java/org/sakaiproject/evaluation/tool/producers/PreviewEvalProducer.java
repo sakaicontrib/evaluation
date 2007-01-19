@@ -225,7 +225,9 @@ public void fillComponents(UIContainer tofill, ViewParameters viewparams,
 		
 
 		// get items(parent items, child items --need to set order
-		List allItems = new ArrayList(template.getItems());
+		//List allItems = new ArrayList(template.getItems());
+		List allItems = new ArrayList(template.getTemplateItems());
+		
 		/*
 		 * With new table design, all the items(including child items) are pull out
 		 * 
@@ -254,9 +256,11 @@ public void fillComponents(UIContainer tofill, ViewParameters viewparams,
 			//for (int i = 0; i < allItems.size(); i++) {
 			for (int i = 0; i < ncItemsList.size(); i++) {	
 				//EvalItem item1 = (EvalItem) allItems.get(i);
-				EvalItem item1 = (EvalItem) ncItemsList.get(i);
+				EvalTemplateItem tempItem1 = (EvalTemplateItem) ncItemsList.get(i);
+			//	EvalItem item1 = (EvalItem) tempItem1.getItem();
 				
-				String cat = item1.getCategory();
+				//String cat = item1.getCategory();
+				String cat = tempItem1.getItemCategory();
 				UIBranchContainer radiobranch = null;
 				if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_COURSE)) { //"Course"
 					radiobranch = UIBranchContainer.make(courseSection,
@@ -266,7 +270,7 @@ public void fillComponents(UIContainer tofill, ViewParameters viewparams,
 						radiobranch.decorators = new DecoratorList(new UIColourDecorator(null,
 											Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
 
-					this.doFillComponent(item1, i, radiobranch,courseSection, allItems);
+					this.doFillComponent(tempItem1, i, radiobranch,courseSection, allItems);
 						
 				} else if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR)) { //"Instructor"
 					radiobranch = UIBranchContainer.make(instructorSection,
@@ -276,7 +280,7 @@ public void fillComponents(UIContainer tofill, ViewParameters viewparams,
 						radiobranch.decorators = new DecoratorList(new UIColourDecorator(null,
 											Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
 						
-					this.doFillComponent(item1, i, radiobranch,instructorSection,allItems);
+					this.doFillComponent(tempItem1, i, radiobranch,instructorSection,allItems);
 				}
 			} // end of for loop
 
@@ -288,9 +292,11 @@ public void fillComponents(UIContainer tofill, ViewParameters viewparams,
 } // end of method
 
 
-private void doFillComponent(EvalItem myItem, int i,
+private void doFillComponent(EvalTemplateItem myTempItem, int i,
 		UIBranchContainer radiobranch, UIContainer tofill, List itemsList) {
-
+	
+	EvalItem myItem = myTempItem.getItem();
+	
 	if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)) { //scaled
 
 		EvalScale  scale =  myItem.getScale();
@@ -300,8 +306,10 @@ private void doFillComponent(EvalItem myItem, int i,
 		String scaleLabels[] = new String[optionCount];
 		
 		
-		String setting = myItem.getScaleDisplaySetting();
-		Boolean useNA = myItem.getUsesNA();
+		//String setting = myItem.getScaleDisplaySetting();	
+		//Boolean useNA = myItem.getUsesNA();
+		String setting = myTempItem.getScaleDisplaySetting();
+		Boolean useNA = myTempItem.getUsesNA();
 
 		if (setting.equals(EvalConstants.ITEM_SCALE_DISPLAY_COMPACT)) { //compact
 			UIBranchContainer compact = UIBranchContainer.make(radiobranch,"compactDisplay:"); 
@@ -648,8 +656,8 @@ private void doFillComponent(EvalItem myItem, int i,
 
 		}
 
-	} else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK)
-			&& myItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED)) { //"Question Block" "Stepped" type
+	} else if (myItem.getClassification().equals(EvaluationConstant.ITEM_TYPE_BLOCK)
+			&& myTempItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED)) { //"Question Block" "Stepped" type
 		
 		UIBranchContainer block = UIBranchContainer.make(radiobranch,
 				"blockStepped:"); //$NON-NLS-1$
@@ -699,8 +707,8 @@ private void doFillComponent(EvalItem myItem, int i,
 		}
 		// get child block item text
 
-		if (myItem.getBlockParent().booleanValue() == true) {
-			Long parentID = myItem.getId();
+		if (myTempItem.getBlockParent().booleanValue() == true) {
+			Long parentID = myTempItem.getId();
 			Integer blockID = new Integer(parentID.intValue());
 			//List childItems = logic.findItem(blockID);
 			//get child items associated with this Block parent ID
@@ -710,7 +718,9 @@ private void doFillComponent(EvalItem myItem, int i,
 				for (int j = 0; j < childItems.size(); j++) {
 					UIBranchContainer queRow = UIBranchContainer.make(
 							block, "queRow:", Integer.toString(j)); //$NON-NLS-1$
-					EvalItem child = (EvalItem) childItems.get(j);
+					EvalTemplateItem tempItemChild = (EvalTemplateItem) childItems.get(j);
+					EvalItem child = tempItemChild.getItem();
+					
 					UIOutput.make(queRow, "queNo", Integer.toString(j + 1)); //$NON-NLS-1$
 					UIOutput.make(queRow, "queText", child.getItemText()); //$NON-NLS-1$
 					for (int k = 0; k < scaleValues.length; k++) {
@@ -725,8 +735,8 @@ private void doFillComponent(EvalItem myItem, int i,
 
 		} // end of get child block item
 
-	} else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK) 
-			&& myItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED)) { //"Question Block","Stepped Colored"
+	} else if (myItem.getClassification().equals(EvaluationConstant.ITEM_TYPE_BLOCK) 
+			&& myTempItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED)) { //"Question Block","Stepped Colored"
 
 		UIBranchContainer blockSteppedColored = UIBranchContainer.make(
 				radiobranch, "blockSteppedColored:"); //$NON-NLS-1$
@@ -792,8 +802,8 @@ private void doFillComponent(EvalItem myItem, int i,
 		}
 
 		// get child block item text
-		if (myItem.getBlockParent().booleanValue() == true) {
-			Long parentID = myItem.getId();
+		if (myTempItem.getBlockParent().booleanValue() == true) {
+			Long parentID = myTempItem.getId();
 			Integer blockID = new Integer(parentID.intValue());
 			//List childItems = logic.findItem(blockID);
 			List childItems = ItemBlockUtils.getChildItmes(itemsList, blockID);
@@ -803,7 +813,9 @@ private void doFillComponent(EvalItem myItem, int i,
 					UIBranchContainer queRow = UIBranchContainer.make(
 							blockSteppedColored, "queRow:", Integer //$NON-NLS-1$
 									.toString(j));
-					EvalItem child = (EvalItem) childItems.get(j);
+					EvalTemplateItem tempItemChild = (EvalTemplateItem) childItems.get(j);
+					EvalItem child = tempItemChild.getItem();
+					
 					UIOutput.make(queRow, "queNo", Integer.toString(j + 1)); //$NON-NLS-1$
 					UIOutput.make(queRow, "queText", child.getItemText()); //$NON-NLS-1$
 					UILink.make(queRow, "idealImage", idealImage); //$NON-NLS-1$

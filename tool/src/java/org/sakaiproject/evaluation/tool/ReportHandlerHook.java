@@ -166,7 +166,8 @@ public class ReportHandlerHook implements HandlerHook {
 					if (blockChildItems != null && blockChildItems.size() > 0) {
 							//for each child item
 							for (int j = 0; j < blockChildItems.size(); j++) {
-								EvalItem child = (EvalItem) blockChildItems.get(j);
+								EvalTemplateItem tempItemChild = (EvalTemplateItem) blockChildItems.get(j);
+								EvalItem child = tempItemChild.getItem();
 								//add child's text to top row
 								topRow.add(child.getItemText());
 								//get all answers to the child item within this eval
