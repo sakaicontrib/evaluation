@@ -29,6 +29,7 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
+import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.ItemBlockUtils;
@@ -855,16 +856,25 @@ private void doFillComponent(EvalItem myItem, int i,
 	}
 	
 } // end of method
-
+/*
 public static class EvaluationItemOrderComparator implements Comparator {
 	public int compare(Object eval0, Object eval1) {
 		// expects to get EvalItem objects, compare by displayOrder
 		return ((EvalItem)eval0).getDisplayOrder().
 		compareTo(((EvalItem)eval1).getDisplayOrder());
-	/*	return ((EvalItem)eval0).getId().
-			compareTo(((EvalItem)eval1).getId());*/
+		//return ((EvalItem)eval0).getId().
+		//	compareTo(((EvalItem)eval1).getId());
+		
+	}
+}*/
+public static class EvaluationItemOrderComparator implements Comparator {
+	public int compare(Object eval0, Object eval1) {
+		// expects to get EvalItem objects, compare by displayOrder
+		return ((EvalTemplateItem)eval0).getDisplayOrder().
+		compareTo(((EvalTemplateItem)eval1).getDisplayOrder());
+		//return ((EvalItem)eval0).getId().
+		//	compareTo(((EvalItem)eval1).getId());
 		
 	}
 }
-
 }

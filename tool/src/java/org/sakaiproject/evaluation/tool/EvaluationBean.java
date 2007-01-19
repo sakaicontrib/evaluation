@@ -532,11 +532,12 @@ public class EvaluationBean {
 		HashMap itemMap = new HashMap();
 		for(int i=0; i < allItems.size(); i++ ){
 			EvalTemplateItem evalTemplateItem = (EvalTemplateItem)allItems.get(i);	
+			EvalItem evalItem = evalTemplateItem.getItem();
 			//filter out the block parent item
 			if(evalTemplateItem.getBlockParent()== null){
-				itemMap.put(evalTemplateItem.getId().toString(), evalTemplateItem);
+				itemMap.put(evalItem.getId().toString(), evalItem);
 			}else if(evalTemplateItem.getBlockParent().booleanValue() == false) {			
-				itemMap.put(evalTemplateItem.getId().toString(), evalTemplateItem);
+				itemMap.put(evalItem.getId().toString(), evalItem);
 			}
 				
 		}
