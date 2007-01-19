@@ -481,8 +481,9 @@ public class RemoveQuestionProducer implements ViewComponentProducer, Navigation
 			UIBranchContainer header = UIBranchContainer.make(tofill, "essayType:"); //$NON-NLS-1$
 			UIOutput.make(header, "queNo",null,"#{templateBean.currItemNo}"); //$NON-NLS-1$ //$NON-NLS-2$
 			UIOutput.make(header, "itemText", null, "#{templateBean.itemText}"); //$NON-NLS-1$ //$NON-NLS-2$
-	
-		}else if(templateBean.itemClassification.equals(EvalConstants.ITEM_TYPE_BLOCK)&& 
+
+		// TODO - changed to ITEM_TYPE_SCALED so it will COMPILE - AZ
+		}else if(templateBean.itemClassification.equals(EvalConstants.ITEM_TYPE_SCALED)&& 
 				templateBean.scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED)){ //"Question Block","Stepped"
 			UIBranchContainer blockStepped = UIBranchContainer.make(tofill, "blockStepped:"); //$NON-NLS-1$
 			
@@ -538,7 +539,9 @@ public class RemoveQuestionProducer implements ViewComponentProducer, Navigation
 					}
 					
 			}
-		}else if(templateBean.itemClassification.equals(EvalConstants.ITEM_TYPE_BLOCK)&& 
+
+		// TODO - changed to ITEM_TYPE_SCALED so it will COMPILE - AZ
+		}else if(templateBean.itemClassification.equals(EvalConstants.ITEM_TYPE_SCALED)&& 
 				templateBean.scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED)){ //"Question Block","Stepped Colored"
 			UIBranchContainer blockSteppedColored = UIBranchContainer.make(tofill, "blockSteppedColored:"); //$NON-NLS-1$
 			UIOutput.make(blockSteppedColored, "itemNo",null,"#{templateBean.currItemNo}"); //$NON-NLS-1$ //$NON-NLS-2$

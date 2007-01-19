@@ -159,7 +159,10 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 
 			// get items(parent items, child items --need to set order
 
-			List childItems = new ArrayList(template.getItems());
+			// TODO - changed to empty array so it will compile -AZ
+			//List childItems = new ArrayList(template.getItems());
+			List childItems = new ArrayList();
+
 			if (! childItems.isEmpty()) {
 				//Collections.sort(childItems, new ReportItemOrderComparator());
 				Collections.sort(childItems,new PreviewEvalProducer.EvaluationItemOrderComparator());

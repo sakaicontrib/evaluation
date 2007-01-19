@@ -123,7 +123,9 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 			// get items(parent items, child items --need to set order
 
 			//List childItems = new ArrayList(template.getItems());
-			List allItems = new ArrayList(template.getItems());
+			// TODO - changed to empty array so it will compile -AZ
+			//List allItems = new ArrayList(template.getItems());
+			List allItems = new ArrayList();
 			if (! allItems.isEmpty()) {
 				
 				//filter out the block child items, to get a list non-child items
@@ -228,8 +230,9 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 				UIOutput.make(answerbranch, "responseTotal", (new Integer(answers)).toString(), (new Integer(x)).toString());				 //$NON-NLS-1$
 		    }
 
-			
-		} else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK)) {		 //$NON-NLS-1$
+
+		// TODO - changed to ITEM_TYPE_SCALED so it will COMPILE - AZ
+		} else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)) {		 //$NON-NLS-1$
 
 			UIBranchContainer block = UIBranchContainer.make(radiobranch,"block:"); //$NON-NLS-1$
 			UIOutput.make(block, "itemNum", (new Integer(i + 1)).toString()); //$NON-NLS-1$
@@ -265,7 +268,9 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 			}
 
 			// get child block item text
-			if (myItem.getBlockParent().booleanValue() == true) {
+			// TODO - changed to ALWAYS FALSE so it will COMPILE - AZ
+			//if (myItem.getBlockParent().booleanValue() == true) {
+			if (false) {
 				Long parentID = myItem.getId();
 				Integer blockID = new Integer(parentID.intValue());
 				
