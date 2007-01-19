@@ -25,11 +25,12 @@ import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplate;
+import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
+import org.sakaiproject.evaluation.tool.ItemBlockUtils;
 import org.sakaiproject.evaluation.tool.params.EssayResponseParams;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
-
 
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -93,8 +94,9 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 		boolean rs = false;
 
 		for (int j = 0; j < itemList.size(); j++) {
-			EvalItem item1 = (EvalItem) itemList.get(j);
-			String category = item1.getCategory();
+			EvalTemplateItem tempItem1 = (EvalTemplateItem) itemList.get(j);
+			EvalItem item1 = tempItem1.getItem();
+			String category = tempItem1.getItemCategory();
 			String classification = item1.getClassification();
 			if (bl && category.equals(EvalConstants.ITEM_CATEGORY_COURSE) 
 					&& classification.equals(EvalConstants.ITEM_TYPE_TEXT)) {
@@ -126,8 +128,14 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 					essayResponseParams.evalId, SummaryProducer.VIEW_ID));		
 		//output single set of essay responses
 		if(essayResponseParams.itemId != null){
-			EvalItem myItem = itemsLogic.getItemById(essayResponseParams.itemId);//EvalItem myItem = logic.getItemById(essayResponseParams.itemId);
-			String cat = myItem.getCategory();
+			//we are actually passing EvalTemplateItem ID
+			//EvalItem myItem = itemsLogic.getItemById(essayResponseParams.itemId);//EvalItem myItem = logic.getItemById(essayResponseParams.itemId);
+			EvalTemplateItem myTempItem = itemsLogic.getTemplateItemById(essayResponseParams.itemId);
+			EvalItem myItem = myTempItem.getItem();
+			
+			//String cat = myItem.getCategory();
+			String cat = myTempItem.getItemCategory();
+			
 			UIBranchContainer radiobranch = null;
 			UIBranchContainer courseSection = null;
 			UIBranchContainer instructorSection = null;
@@ -159,27 +167,32 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 
 			// get items(parent items, child items --need to set order
 
-			// TODO - changed to empty array so it will compile -AZ
 			//List childItems = new ArrayList(template.getItems());
-			List childItems = new ArrayList();
+			List allItems = new ArrayList(template.getTemplateItems());
 
-			if (! childItems.isEmpty()) {
+			if (! allItems.isEmpty()) {
+			
+				List ncItemsList = ItemBlockUtils.getNonChildItems(allItems);
+				Collections.sort(ncItemsList, new PreviewEvalProducer.EvaluationItemOrderComparator());	
+				
 				//Collections.sort(childItems, new ReportItemOrderComparator());
-				Collections.sort(childItems,new PreviewEvalProducer.EvaluationItemOrderComparator());
+			
 				// check if there is any "Course" items or "Instructor" items;
 				UIBranchContainer courseSection = null;
 				UIBranchContainer instructorSection = null;
-				if (this.findItemCategory(true, childItems))
+				if (this.findItemCategory(true, ncItemsList))
 					courseSection = UIBranchContainer.make(tofill,
 							"courseSection:");
-				if (this.findItemCategory(false, childItems))
+				if (this.findItemCategory(false, ncItemsList))
 					instructorSection = UIBranchContainer.make(tofill,
 							"instructorSection:");
 				
-				for (int i = 0; i < childItems.size(); i++) {
-					EvalItem item1 = (EvalItem) childItems.get(i);
-
-					String cat = item1.getCategory();
+				for (int i = 0; i < ncItemsList.size(); i++) {
+					EvalTemplateItem tempItem1 = (EvalTemplateItem) ncItemsList.get(i);
+					EvalItem item1 = tempItem1.getItem();
+					//String cat = item1.getCategory();
+					String cat = tempItem1.getItemCategory();
+					
 					UIBranchContainer radiobranch = null;
 					if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_COURSE) 
 							&& item1.getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)){
@@ -238,18 +251,10 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 				}
 		}
 	}
-	/*
-	private static class ReportItemOrderComparator implements Comparator {
-		public int compare(Object eval0, Object eval1) {
-			// expects to get EvalItem objects
-			return ((EvalItem)eval0).getId().
-				compareTo(((EvalItem)eval1).getId());
-		}
-	}
-	*/
+
 	public List reportNavigationCases() {
 		List i = new ArrayList();
-		//TODO
+
 		return i;
 	}
 
