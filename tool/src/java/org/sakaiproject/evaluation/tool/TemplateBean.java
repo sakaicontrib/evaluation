@@ -26,7 +26,6 @@ import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalScalesLogic;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
-import org.sakaiproject.evaluation.logic.EvaluationLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
@@ -109,12 +108,6 @@ public class TemplateBean {
 
 	public Long templateId;
 
-	//The following fields only used in TemplateBean.java (that is this file only)
-	private EvaluationLogic logic;
-	
-	public void setLogic(EvaluationLogic logic) {
-		this.logic = logic;
-	}
 	private EvalTemplatesLogic templatesLogic;
 	public void setTemplatesLogic( EvalTemplatesLogic templatesLogic) {
 		this.templatesLogic = templatesLogic;
@@ -136,7 +129,6 @@ public class TemplateBean {
 	}
 	
 	private EvalTemplate currTemplate;
-	
 	public EvalTemplate getCurrTemplate() {
 		return currTemplate;
 	}
@@ -145,9 +137,7 @@ public class TemplateBean {
 	 * INITIALIZATION
 	 */
 	public void init() {
-		if (logic == null) {
-			throw new NullPointerException("logic is null");
-		}
+		log.debug("INIT");
 	}
 
 	/*
