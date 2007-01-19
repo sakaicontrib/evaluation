@@ -1096,12 +1096,21 @@ public class TemplateBean {
 			currentItem = new EvalItem();
 			this.scaleDisplaySetting = null;
 			updateItemObject(currentItem);
-			currentItem.getTemplates().add(currTemplate);
+			//We used to add the current template to the hash set of templates in the item
+			//currentItem.getTemplates().add(currTemplate);
 			
-			//Save the item everytime	
+			//Now we add a new template item to that has set.
 			int orderNo = getItemsListSize();//this.getItemDisplayListSize();
-			//set the display order for each item
-			currentItem.setDisplayOrder(new Integer(orderNo + 1)); 
+			
+			//We used to set the display order in the item.
+			//currentItem.setDisplayOrder(new Integer(orderNo + 1)); 			
+			
+			EvalTemplateItem currTemplateItem = new EvalTemplateItem(new Date(), external.getCurrentUserId(), currTemplate, currentItem,
+					new Integer(orderNo + 1), itemCategory, displayRows, scaleDisplaySetting, itemNA,
+					false, 0);
+			
+			itemsLogic.saveTemplateItem(currTemplateItem,external.getCurrentUserId());
+			currentItem.getTemplateItems().add(currTemplateItem);
 			//logic.saveItem(currentItem, logic.getCurrentUserId());
 			itemsLogic.saveItem(currentItem, external.getCurrentUserId());
 			
@@ -1122,12 +1131,13 @@ public class TemplateBean {
 		tempItemForPreview.setDisplayOrder(new Integer(this.currItemNo));
 		itemDisplayPreview = new ItemDisplay(tempItemForPreview);
 	*/
+		/*TODO-Preview Header 
 		itemPreview = new EvalItem();
 		this.scaleDisplaySetting = null;
 		updateItemObject(itemPreview);
 		//set Item DisplayOrder
 		itemPreview.setDisplayOrder(new Integer(this.currItemNo));
-		
+		*/
 		return PreviewItemProducer.VIEW_ID;		
 	}
 	
