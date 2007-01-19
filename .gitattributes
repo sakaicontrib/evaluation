@@ -15,7 +15,6 @@ api/logic/src/java/org/sakaiproject/evaluation/logic/EvalResponsesLogic.java -te
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalScalesLogic.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalSettings.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalTemplatesLogic.java -text
-api/logic/src/java/org/sakaiproject/evaluation/logic/EvaluationLogic.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvaluationSettingsParse.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/model/Context.java -text
 api/model/project.xml -text
@@ -62,7 +61,6 @@ impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalResponsesLogicImp
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalScalesLogicImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalSettingsImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalTemplatesLogicImpl.java -text
-impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvaluationLogicImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvalAssignContextInterceptor.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvaluationInterceptor.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvaluationModificationRegistry.java -text
