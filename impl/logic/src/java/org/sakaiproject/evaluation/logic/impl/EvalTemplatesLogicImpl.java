@@ -25,6 +25,7 @@ import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.model.EvalTemplate;
+import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.utils.EvalUtils;
 
@@ -102,7 +103,7 @@ public class EvalTemplatesLogicImpl implements EvalTemplatesLogic {
 			}
 		}
 
-		// TODO - fill in any default values and nulls here
+		// fill in any default values and nulls here
 		if (template.getLocked() == null) {
 			template.setLocked( Boolean.FALSE );
 		}
@@ -143,24 +144,16 @@ public class EvalTemplatesLogicImpl implements EvalTemplatesLogic {
 				log.error("TODO - Unlocking locked items not implemented yet");
 			}
 
-			// remove all associated templateItems also (should disassociate all items automatically)
 			if ( template.getTemplateItems().size() > 0 ) {
-				Set[] entitySets = new Set[2];
-
-				entitySets[0] = template.getTemplateItems();
-
-				Set templateSet = new HashSet();
-				templateSet.add( template );
-				entitySets[1] = templateSet;
-
-				// remove the template and related templateItems in one transaction
-				dao.deleteMixedSet(entitySets);
-			} else { 
-				dao.delete(template);
+				// remove all associated templateItems (disassociate all items automatically)
+				EvalTemplateItem[] templateItems = (EvalTemplateItem[]) 
+					template.getTemplateItems().toArray( new EvalTemplateItem[] {} );
+				dao.removeTemplateItems(templateItems);
 			}
+			dao.delete(template);
 			return;
 		}
-		
+
 		// should not get here so die if we do
 		throw new RuntimeException("User ("+userId+") could NOT delete template ("+template.getId()+")");
 	}

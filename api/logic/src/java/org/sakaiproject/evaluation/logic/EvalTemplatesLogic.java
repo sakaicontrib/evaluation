@@ -47,10 +47,11 @@ public interface EvalTemplatesLogic {
 	public void saveTemplate(EvalTemplate template, String userId);
 
 	/**
-	 * Delete the template only if it is not locked and not expert<br/>
+	 * Delete the template only if it is not locked and not expert,
+	 * also removes all associated templateItems and unlinks associated items<br/>
 	 * Unlocks any associated items that are not being used in other locked templates<br/>
 	 * Use {@link #canControlTemplate(String, Long)} to check if
-	 * the user can control this template and avoid exceptions
+	 * the user can control this template and avoid exceptions<br/>
 	 * 
 	 * @param template the object to be removed
 	 * @param userId the internal user id (not username)

@@ -450,33 +450,8 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 
 		// check if this templateItem can be removed (checks if associated template is locked)
 		if (checkUserControlTemplateItem(userId, templateItem)) {
-			// remove the item/template linkages first
-			Set[] entitySets = new HashSet[2];
-			EvalItem item = templateItem.getItem();
-			EvalTemplate template = templateItem.getTemplate();
-
-			if (item.getTemplateItems() == null) {
-				item.setTemplateItems( new HashSet() );
-			}
-
-			item.getTemplateItems().remove(templateItem);
-			Set itemSet = new HashSet();
-			itemSet.add(item);
-			entitySets[0] = itemSet;
-
-			if (template.getTemplateItems() == null) {
-				template.setTemplateItems( new HashSet() );
-			}
-			template.getTemplateItems().remove(templateItem);
-			Set templateSet = new HashSet();
-			templateSet.add(template);
-			entitySets[1] = templateSet;
-
-			// update the linkages
-			dao.saveMixedSet(entitySets);
-
-			// remove the templateItem
-			dao.delete(templateItem);
+			// remove the templateItem and update all linkages
+			dao.removeTemplateItems( new EvalTemplateItem[] {templateItem} );
 			return;
 		}
 		

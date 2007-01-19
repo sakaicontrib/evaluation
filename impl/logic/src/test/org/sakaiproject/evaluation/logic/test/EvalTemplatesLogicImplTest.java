@@ -298,7 +298,6 @@ public class EvalTemplatesLogicImplTest extends AbstractTransactionalSpringConte
 			Assert.assertNotNull(e);
 		}
 
-		// TODO - add testing for automatic removal of templateItems
 	}
 
 	/**
