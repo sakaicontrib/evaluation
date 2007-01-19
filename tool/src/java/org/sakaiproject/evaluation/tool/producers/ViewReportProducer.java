@@ -25,6 +25,7 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
+import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.ItemBlockUtils;
@@ -92,8 +93,8 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 		boolean rs = false;
 
 		for (int j = 0; j < itemList.size(); j++) {
-			EvalItem item1 = (EvalItem) itemList.get(j);
-			String category = item1.getCategory();
+			EvalTemplateItem tempItem1 = (EvalTemplateItem) itemList.get(j);
+			String category = tempItem1.getItemCategory();
 			if (bl && category.equals(EvalConstants.ITEM_CATEGORY_COURSE)) { //"Course"
 				rs = true;
 				break;
@@ -123,9 +124,9 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 			// get items(parent items, child items --need to set order
 
 			//List childItems = new ArrayList(template.getItems());
-			// TODO - changed to empty array so it will compile -AZ
 			//List allItems = new ArrayList(template.getItems());
-			List allItems = new ArrayList();
+			List allItems = new ArrayList(template.getTemplateItems());
+			
 			if (! allItems.isEmpty()) {
 				
 				//filter out the block child items, to get a list non-child items
@@ -146,9 +147,11 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 					UIOutput.make(instructorSection, "report-instructor-questions", messageLocator.getMessage("viewreport.itemlist.instructorquestions")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				for (int i = 0; i < ncItemsList.size(); i++) {
-					EvalItem item1 = (EvalItem) ncItemsList.get(i);
-
-					String cat = item1.getCategory();
+					//EvalItem item1 = (EvalItem) ncItemsList.get(i);
+					EvalTemplateItem tempItem1 = (EvalTemplateItem) ncItemsList.get(i);
+					
+					//String cat = item1.getCategory();
+					String cat = tempItem1.getItemCategory();
 					UIBranchContainer radiobranch = null;
 					if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_COURSE)) { //"Course"
 						radiobranch = UIBranchContainer.make(courseSection,
@@ -160,7 +163,7 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 											Color
 													.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
 
-						this.doFillComponent(item1, evaluation.getId(), i, radiobranch,
+						this.doFillComponent(tempItem1, evaluation.getId(), i, radiobranch,
 								courseSection,allItems);
 					} else if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR)) { //"Instructor"
 						radiobranch = UIBranchContainer.make(instructorSection,
@@ -171,7 +174,7 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 											null,
 											Color
 													.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
-						this.doFillComponent(item1, evaluation.getId(), i, radiobranch,
+						this.doFillComponent(tempItem1, evaluation.getId(), i, radiobranch,
 								instructorSection,allItems);
 					}
 				} // end of for loop
@@ -182,9 +185,11 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 		
 	}
 	
-	private void doFillComponent(EvalItem myItem, Long evalId, int i,
+	private void doFillComponent(EvalTemplateItem myTempItem, Long evalId, int i,
 			UIBranchContainer radiobranch, UIContainer tofill,List itemsList) {
 
+		EvalItem myItem = myTempItem.getItem();
+		
 		if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)) { //"Scaled/Survey"
 
 	/*		ItemDisplay itemDisplay = new ItemDisplay(myItem);
@@ -198,7 +203,8 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 			String scaleLabels[] = new String[optionCount];
 			
 			//String setting = myItem.getScaleDisplaySetting();
-			Boolean useNA = myItem.getUsesNA();
+			//Boolean useNA = myItem.getUsesNA();
+			Boolean useNA = myTempItem.getUsesNA();
 			
 			UIBranchContainer scaledSurvey = UIBranchContainer.make(radiobranch,
 			"scaledSurvey:"); //$NON-NLS-1$
@@ -231,13 +237,14 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 		    }
 
 
-		// TODO - changed to ITEM_TYPE_SCALED so it will COMPILE - AZ
-		} else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)) {		 //$NON-NLS-1$
+		} else if (myItem.getClassification().equals(EvaluationConstant.ITEM_TYPE_BLOCK)) {		 //$NON-NLS-1$
 
 			UIBranchContainer block = UIBranchContainer.make(radiobranch,"block:"); //$NON-NLS-1$
 			UIOutput.make(block, "itemNum", (new Integer(i + 1)).toString()); //$NON-NLS-1$
 			UIOutput.make(block, "itemText", myItem.getItemText()); //$NON-NLS-1$
-			Boolean useNA = myItem.getUsesNA();
+			
+			//Boolean useNA = myItem.getUsesNA();
+			Boolean useNA = myTempItem.getUsesNA();
 			if (useNA.booleanValue() == true) {
 				UIBranchContainer radiobranch3 = UIBranchContainer.make(block,
 						"showNA:"); //$NON-NLS-1$
@@ -268,10 +275,8 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 			}
 
 			// get child block item text
-			// TODO - changed to ALWAYS FALSE so it will COMPILE - AZ
-			//if (myItem.getBlockParent().booleanValue() == true) {
-			if (false) {
-				Long parentID = myItem.getId();
+			if (myTempItem.getBlockParent()!=null && myTempItem.getBlockParent().booleanValue() == true) {
+				Long parentID = myTempItem.getId();
 				Integer blockID = new Integer(parentID.intValue());
 				
 				//List childItems = logic.findItem(blockID);
@@ -280,7 +285,10 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 					for (int j = 0; j < childItems.size(); j++) {
 						UIBranchContainer queRow = UIBranchContainer.make(
 								block, "queRow:", Integer.toString(j)); //$NON-NLS-1$
-						EvalItem child = (EvalItem) childItems.get(j);
+	
+						EvalTemplateItem tempItemChild = (EvalTemplateItem) childItems.get(j);
+						EvalItem child = tempItemChild.getItem();
+						
 						UIOutput.make(queRow, "queNo", Integer.toString(j + 1)); //$NON-NLS-1$
 						UIOutput.make(queRow, "queText", child.getItemText()); //$NON-NLS-1$
 						//List itemAnswers=logic.getEvalAnswers(child.getId(), evalId);
@@ -317,19 +325,10 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 			UIOutput.make(header, "itemText", myItem.getItemText()); //$NON-NLS-1$
 		}
 	}
-/*	
- * 
-	private static class ReportItemOrderComparator implements Comparator {
-		public int compare(Object eval0, Object eval1) {
-			// expects to get EvalItem objects
-			return ((EvalItem)eval0).getId().
-				compareTo(((EvalItem)eval1).getId());
-		}
-	}
-*/	
+	
 	public List reportNavigationCases() {
 		List i = new ArrayList();
-		//TODO
+
 		return i;
 	}
 

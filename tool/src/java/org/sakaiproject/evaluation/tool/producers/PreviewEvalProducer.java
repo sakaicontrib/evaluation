@@ -108,8 +108,8 @@ private boolean findItemCategory(boolean bl, List itemList) {
 	boolean rs = false;
 
 	for (int j = 0; j < itemList.size(); j++) {
-		EvalItem item1 = (EvalItem) itemList.get(j);
-		String category = item1.getCategory();
+		EvalTemplateItem tempItem1 = (EvalTemplateItem) itemList.get(j);
+		String category = tempItem1.getItemCategory();
 		if (bl && category.equals(EvalConstants.ITEM_CATEGORY_COURSE)) { //"Course"
 			rs = true;
 			break;
@@ -707,7 +707,7 @@ private void doFillComponent(EvalTemplateItem myTempItem, int i,
 		}
 		// get child block item text
 
-		if (myTempItem.getBlockParent().booleanValue() == true) {
+		if (myTempItem.getBlockParent()!=null && myTempItem.getBlockParent().booleanValue() == true) {
 			Long parentID = myTempItem.getId();
 			Integer blockID = new Integer(parentID.intValue());
 			//List childItems = logic.findItem(blockID);
@@ -802,7 +802,7 @@ private void doFillComponent(EvalTemplateItem myTempItem, int i,
 		}
 
 		// get child block item text
-		if (myTempItem.getBlockParent().booleanValue() == true) {
+		if (myTempItem.getBlockParent()!= null && myTempItem.getBlockParent().booleanValue() == true) {
 			Long parentID = myTempItem.getId();
 			Integer blockID = new Integer(parentID.intValue());
 			//List childItems = logic.findItem(blockID);
