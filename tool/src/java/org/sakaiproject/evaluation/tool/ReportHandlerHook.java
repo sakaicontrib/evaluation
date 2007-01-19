@@ -32,6 +32,7 @@ import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplate;
+import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.params.CSVReportViewParams;
 import org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer;
@@ -114,7 +115,8 @@ public class ReportHandlerHook implements HandlerHook {
 		}
 
 		//get all items
-		List allItems = new ArrayList(template.getItems());
+		//List allItems = new ArrayList(template.getItems());
+		List allItems = new ArrayList(template.getTemplateItems());
 		
 		if (! allItems.isEmpty()) {
 			//filter out the block child items, to get a list non-child items
@@ -125,7 +127,10 @@ public class ReportHandlerHook implements HandlerHook {
 			//for each item
 			for (int i = 0; i < ncItemsList.size(); i++) {
 				//fetch the item
-				EvalItem item1 = (EvalItem) ncItemsList.get(i);
+				//EvalItem item1 = (EvalItem) ncItemsList.get(i);
+				EvalTemplateItem tempItem1 = (EvalTemplateItem) ncItemsList.get(i);
+				EvalItem item1 = (EvalItem) tempItem1.getItem();
+				
 				//if the item is scaled
 				if(item1.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)){
 					String labels[] = item1.getScale().getOptions();
@@ -141,7 +146,7 @@ public class ReportHandlerHook implements HandlerHook {
 						currRow.add(labels[currAnswer.getNumeric().intValue()]);
 					}
 				}
-				else if (item1.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK)) {//"Question Block"
+				else if (item1.getClassification().equals(EvaluationConstant.ITEM_TYPE_BLOCK)) {//"Question Block"
 					String labels[] = item1.getScale().getOptions();
 					//add the block description to the top row
 					topRow.add(item1.getItemText());
@@ -152,7 +157,7 @@ public class ReportHandlerHook implements HandlerHook {
 					}
 
 					//get child block items
-				if (item1.getBlockParent().booleanValue() == true) {
+				if (tempItem1.getBlockParent().booleanValue() == true) {
 						Long parentID = item1.getId();
 						Integer blockID = new Integer(parentID.intValue());
 
