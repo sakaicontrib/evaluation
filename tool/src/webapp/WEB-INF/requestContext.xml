@@ -5,7 +5,6 @@
 <beans>
 
 	<!-- session scope backing beans here -->
-
 	<bean id="evaluationBean"
 			class="org.sakaiproject.evaluation.tool.EvaluationBean"
 			init-method="init">
@@ -26,7 +25,7 @@
 		<property name="settings" 
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />							
 	</bean>
-	
+
 	<!-- request scope backing beans here -->
 	<bean id="templateBean"
 			class="org.sakaiproject.evaluation.tool.TemplateBean"
@@ -39,10 +38,8 @@
 			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />	
 		<property name="scalesLogic" 
 			ref="org.sakaiproject.evaluation.logic.EvalScalesLogic" />
-		<property name="logic" 
-			ref="org.sakaiproject.evaluation.logic.EvaluationLogic" />
 	</bean>
-	
+
 	<bean id="handlerHook"
 		class="org.sakaiproject.evaluation.tool.ReportHandlerHook">	
 		<property name="viewparams" ref="viewParameters" />	
