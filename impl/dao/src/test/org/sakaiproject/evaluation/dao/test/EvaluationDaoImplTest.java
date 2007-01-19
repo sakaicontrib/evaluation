@@ -22,6 +22,8 @@ import junit.framework.Assert;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalScale;
+import org.sakaiproject.evaluation.model.EvalTemplate;
+import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.PreloadTestData;
@@ -324,6 +326,93 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 		Assert.assertEquals(0, l.size());
 	}
 
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#removeTemplateItems(org.sakaiproject.evaluation.model.EvalTemplateItem[])}.
+	 */
+	public void testRemoveTemplateItems() {
+
+		// test removing a single templateItem
+		EvalTemplateItem eti1 = (EvalTemplateItem) evaluationDao.findById(EvalTemplateItem.class, etdl.templateItem1User.getId());
+
+		// verify that the item/template link exists before removal
+		Assert.assertNotNull( eti1 );
+		Assert.assertNotNull( eti1.getItem() );
+		Assert.assertNotNull( eti1.getTemplate() );
+		Assert.assertNotNull( eti1.getItem().getTemplateItems() );
+		Assert.assertNotNull( eti1.getTemplate().getTemplateItems() );
+		Assert.assertFalse( eti1.getItem().getTemplateItems().isEmpty() );
+		Assert.assertFalse( eti1.getTemplate().getTemplateItems().isEmpty() );
+		Assert.assertTrue( eti1.getItem().getTemplateItems().contains( eti1 ) );
+		Assert.assertTrue( eti1.getTemplate().getTemplateItems().contains( eti1 ) );
+		int itemsSize = eti1.getItem().getTemplateItems().size();
+		int templatesSize = eti1.getTemplate().getTemplateItems().size();
+
+		// test removing templateItem OK
+		evaluationDao.removeTemplateItems( new EvalTemplateItem[] {etdl.templateItem1User} );
+		Assert.assertNull( evaluationDao.findById(EvalTemplateItem.class, etdl.templateItem1User.getId()) );
+
+		// verify that the item/template link no longer exists
+		Assert.assertNotNull( eti1.getItem().getTemplateItems() );
+		Assert.assertNotNull( eti1.getTemplate().getTemplateItems() );
+		Assert.assertFalse( eti1.getItem().getTemplateItems().isEmpty() );
+		Assert.assertFalse( eti1.getTemplate().getTemplateItems().isEmpty() );
+		Assert.assertEquals( itemsSize-1, eti1.getItem().getTemplateItems().size() );
+		Assert.assertEquals( templatesSize-1, eti1.getTemplate().getTemplateItems().size() );
+		Assert.assertTrue(! eti1.getItem().getTemplateItems().contains( eti1 ) );
+		Assert.assertTrue(! eti1.getTemplate().getTemplateItems().contains( eti1 ) );
+
+		// test removing a group of templateItems (item 3 and 5 from UnUsed)
+		EvalTemplateItem eti3 = (EvalTemplateItem) evaluationDao.findById(EvalTemplateItem.class, etdl.templateItem3U.getId());
+		EvalTemplateItem eti5 = (EvalTemplateItem) evaluationDao.findById(EvalTemplateItem.class, etdl.templateItem5U.getId());
+
+		// verify that the item/template link exists before removal
+		Assert.assertNotNull( eti3 );
+		Assert.assertNotNull( eti3.getItem() );
+		Assert.assertNotNull( eti3.getTemplate() );
+		Assert.assertNotNull( eti3.getItem().getTemplateItems() );
+		Assert.assertNotNull( eti3.getTemplate().getTemplateItems() );
+		Assert.assertFalse( eti3.getItem().getTemplateItems().isEmpty() );
+		Assert.assertFalse( eti3.getTemplate().getTemplateItems().isEmpty() );
+		Assert.assertTrue( eti3.getItem().getTemplateItems().contains( eti3 ) );
+		Assert.assertTrue( eti3.getTemplate().getTemplateItems().contains( eti3 ) );
+		int itemsSize3 = eti3.getItem().getTemplateItems().size();
+
+		Assert.assertNotNull( eti5 );
+		Assert.assertNotNull( eti5.getItem() );
+		Assert.assertNotNull( eti5.getTemplate() );
+		Assert.assertNotNull( eti5.getItem().getTemplateItems() );
+		Assert.assertNotNull( eti5.getTemplate().getTemplateItems() );
+		Assert.assertFalse( eti5.getItem().getTemplateItems().isEmpty() );
+		Assert.assertFalse( eti5.getTemplate().getTemplateItems().isEmpty() );
+		Assert.assertTrue( eti5.getItem().getTemplateItems().contains( eti5 ) );
+		Assert.assertTrue( eti5.getTemplate().getTemplateItems().contains( eti5 ) );
+		int itemsSize5 = eti5.getItem().getTemplateItems().size();
+
+		// test removing templateItem OK
+		evaluationDao.removeTemplateItems( new EvalTemplateItem[] {etdl.templateItem3U, etdl.templateItem5U} );
+		Assert.assertNull( evaluationDao.findById(EvalTemplateItem.class, etdl.templateItem3U.getId()) );
+		Assert.assertNull( evaluationDao.findById(EvalTemplateItem.class, etdl.templateItem5U.getId()) );
+
+		// verify that the item/template link no longer exists
+		Assert.assertNotNull( eti3.getItem().getTemplateItems() );
+		Assert.assertFalse( eti3.getItem().getTemplateItems().isEmpty() );
+		Assert.assertEquals( itemsSize3-1, eti3.getItem().getTemplateItems().size() );
+		Assert.assertTrue(! eti3.getItem().getTemplateItems().contains( eti3 ) );
+
+		Assert.assertNotNull( eti5.getItem().getTemplateItems() );
+		Assert.assertFalse( eti5.getItem().getTemplateItems().isEmpty() );
+		Assert.assertEquals( itemsSize5-1, eti5.getItem().getTemplateItems().size() );
+		Assert.assertTrue(! eti5.getItem().getTemplateItems().contains( eti5 ) );
+
+		// should be no items left in this template now
+		Assert.assertNotNull( eti3.getTemplate().getTemplateItems() );
+		Assert.assertTrue( eti3.getTemplate().getTemplateItems().isEmpty() );
+		EvalTemplate template = (EvalTemplate) evaluationDao.findById(EvalTemplate.class, eti3.getTemplate().getId());
+		Assert.assertNotNull( template );
+		Assert.assertNotNull( template.getTemplateItems() );
+		Assert.assertTrue( template.getTemplateItems().isEmpty() );
+
+	}
 
 	/**
 	 * Add anything that supports the unit tests below here

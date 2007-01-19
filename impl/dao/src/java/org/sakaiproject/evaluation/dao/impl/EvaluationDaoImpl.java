@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.dao.impl;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -247,6 +248,28 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 	}
 
 
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#removeTemplateItems(org.sakaiproject.evaluation.model.EvalTemplateItem[])
+	 */
+	public void removeTemplateItems(EvalTemplateItem[] templateItems) {
+		log.debug("Removing "+templateItems.length+" template items");
+		Set deleteTemplateItems = new HashSet();
+
+		for (int i = 0; i < templateItems.length; i++) {
+			EvalTemplateItem eti = (EvalTemplateItem) getHibernateTemplate().merge( templateItems[i] );
+			deleteTemplateItems.add(eti);
+
+			eti.getItem().getTemplateItems().remove(eti);
+			eti.getTemplate().getTemplateItems().remove(eti);
+			getHibernateTemplate().update(eti);
+		}
+
+		// do the actual deletes
+		getHibernateTemplate().deleteAll(deleteTemplateItems);
+		log.info("Removed "+deleteTemplateItems.size()+" template items");
+	}
+
+
 //	public Integer getNextBlockId() {
 //		String hqlQuery = "select max(item.blockId) from EvalItem item";
 //		Integer max = (Integer) getHibernateTemplate().iterate(hqlQuery).next();
@@ -264,12 +287,6 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 			return ((EvalEvaluation)eval0).getDueDate().
 				compareTo(((EvalEvaluation)eval1).getDueDate());
 		}
-	}
-
-
-	public void removeTemplateItems(EvalTemplateItem[] templateItems) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }
