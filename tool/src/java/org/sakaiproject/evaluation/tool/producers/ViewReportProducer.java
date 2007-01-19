@@ -317,7 +317,10 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 			"essayType:"); //$NON-NLS-1$
 			UIOutput.make(essay, "itemNum", (new Integer(i + 1)).toString()); //$NON-NLS-1$
 			UIOutput.make(essay, "itemText", myItem.getItemText()); //$NON-NLS-1$
-			UIInternalLink.make(essay, "essayResponse", new EssayResponseParams(ViewEssayResponseProducer.VIEW_ID,evalId,myItem.getId()));					 //$NON-NLS-1$
+			//should pass EValTemplateItem Id instead of EvalItem Id
+			//UIInternalLink.make(essay, "essayResponse", new EssayResponseParams(ViewEssayResponseProducer.VIEW_ID,evalId,myItem.getId()));		
+			UIInternalLink.make(essay, "essayResponse", new EssayResponseParams(ViewEssayResponseProducer.VIEW_ID,evalId,myTempItem.getId()));
+						 //$NON-NLS-1$
 		} else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_HEADER)) { //"Text Header"
 			UIBranchContainer header = UIBranchContainer.make(radiobranch,
 			"headerType:"); //$NON-NLS-1$
