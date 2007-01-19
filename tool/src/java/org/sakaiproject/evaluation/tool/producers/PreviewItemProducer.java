@@ -458,7 +458,8 @@ public class PreviewItemProducer implements ViewComponentProducer {
 			UIOutput.make(header, "queNo",null,"#{templateBean.currItemNo}");
 			UIOutput.make(header, "itemText", null, "#{templateBean.itemText}");
 	
-		}else if(templateBean.itemClassification.equals(EvalConstants.ITEM_TYPE_BLOCK)
+		// TODO - changed so it will COMPILE - AZ
+		}else if(templateBean.itemClassification.equals(EvalConstants.ITEM_TYPE_SCALED)
 				&& templateBean.scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED)){
 			//"Question Block","Stepped"
 			UIBranchContainer blockStepped = UIBranchContainer.make(tofill, "blockStepped:");
@@ -513,7 +514,8 @@ public class PreviewItemProducer implements ViewComponentProducer {
 		    	}
 		
 		}
-		else if(templateBean.itemClassification.equals(EvalConstants.ITEM_TYPE_BLOCK)&&
+		// TODO - changed so it will COMPILE - AZ
+		else if(templateBean.itemClassification.equals(EvalConstants.ITEM_TYPE_SCALED)&&
 				templateBean.scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED)){
 			//"Question Block","Stepped Colored"
 			UIBranchContainer blockSteppedColored = UIBranchContainer.make(tofill, "blockSteppedColored:");
