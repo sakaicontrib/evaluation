@@ -16,31 +16,31 @@ package org.sakaiproject.evaluation.tool;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.sakaiproject.evaluation.model.EvalItem;
+import org.sakaiproject.evaluation.model.EvalTemplateItem;
 
 public class ItemBlockUtils {
 	
 //	to filter out the Block child items, and only return non-child items
-	public static List getNonChildItems(List itemsList){
+	public static List getNonChildItems(List tempItemsList){
 		
 		List nonChildItemsList = new ArrayList();
-		for(int i= 0; i< itemsList.size(); i++){
-			EvalItem item1 = (EvalItem)itemsList.get(i);		
-			if(item1.getBlockId()== null)
-				nonChildItemsList.add(item1);
+		for(int i= 0; i< tempItemsList.size(); i++){
+			EvalTemplateItem tempItem1 = (EvalTemplateItem)tempItemsList.get(i);		
+			if(tempItem1.getBlockId()== null)
+				nonChildItemsList.add(tempItem1);
 		}
 		
 		return nonChildItemsList;
 	}
 
 //	return the child items which assocaited with the BlockParentId
-	public static List getChildItmes(List itemsList, Integer blockParentId){
+	public static List getChildItmes(List tempItemsList, Integer blockParentId){
 		List childItemsList = new ArrayList();
 		
-		for(int i= 0; i< itemsList.size(); i++){
-			EvalItem item1 = (EvalItem)itemsList.get(i);		
-			if(item1.getBlockId()!= null && item1.getBlockId().equals(blockParentId))
-				childItemsList.add(item1);
+		for(int i= 0; i< tempItemsList.size(); i++){
+			EvalTemplateItem tempItem1 = (EvalTemplateItem)tempItemsList.get(i);		
+			if(tempItem1.getBlockId()!= null && tempItem1.getBlockId().equals(blockParentId))
+				childItemsList.add(tempItem1);
 		}
 		
 		return childItemsList;
