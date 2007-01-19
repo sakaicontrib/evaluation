@@ -437,12 +437,12 @@ public class TemplateBean {
 			
 			EvalTemplateItem currTemplateItem = new EvalTemplateItem(new Date(), external.getCurrentUserId(), currTemplate, currentItem,
 					new Integer(orderNo + 1), itemCategory, displayRows, scaleDisplaySetting, itemNA,
-					new Boolean(false), new Integer(0));
+					null, null);
+			
+			currentItem.getTemplateItems().add(currTemplateItem);
+			itemsLogic.saveItem(currentItem, external.getCurrentUserId());
 			
 			itemsLogic.saveTemplateItem(currTemplateItem,external.getCurrentUserId());
-			currentItem.getTemplateItems().add(currTemplateItem);
-
-			itemsLogic.saveItem(currentItem, external.getCurrentUserId());
 		/*
 			if ( currTemplate.getId() == null ) {
 				 currTemplate.getItems().add(currentItem);
@@ -886,11 +886,12 @@ public class TemplateBean {
 			
 			EvalTemplateItem currTemplateItem = new EvalTemplateItem(new Date(), external.getCurrentUserId(), currTemplate, currentItem,
 					new Integer(orderNo + 1), itemCategory, displayRows, scaleDisplaySetting, itemNA,
-					new Boolean(false), new Integer(0));
-			
-			itemsLogic.saveTemplateItem(currTemplateItem,external.getCurrentUserId());
+					null, null);
+
 			currentItem.getTemplateItems().add(currTemplateItem);			//logic.saveItem(currentItem, logic.getCurrentUserId());			
 			itemsLogic.saveItem(currentItem, external.getCurrentUserId());
+			
+			itemsLogic.saveTemplateItem(currTemplateItem,external.getCurrentUserId());
 			//itemDisplayList.add(new ItemDisplay(currentItem));
 			itemsList.add(currentItem);
 			
@@ -1096,6 +1097,8 @@ public class TemplateBean {
 			currentItem = new EvalItem();
 			this.scaleDisplaySetting = null;
 			updateItemObject(currentItem);
+			currentItem.setSharing(modifier);
+
 			//We used to add the current template to the hash set of templates in the item
 			//currentItem.getTemplates().add(currTemplate);
 			
@@ -1107,12 +1110,13 @@ public class TemplateBean {
 			
 			EvalTemplateItem currTemplateItem = new EvalTemplateItem(new Date(), external.getCurrentUserId(), currTemplate, currentItem,
 					new Integer(orderNo + 1), itemCategory, displayRows, scaleDisplaySetting, itemNA,
-					new Boolean(false), new Integer(0));
-			
-			itemsLogic.saveTemplateItem(currTemplateItem,external.getCurrentUserId());
+					null, null);
+
 			currentItem.getTemplateItems().add(currTemplateItem);
 			//logic.saveItem(currentItem, logic.getCurrentUserId());
 			itemsLogic.saveItem(currentItem, external.getCurrentUserId());
+			
+			itemsLogic.saveTemplateItem(currTemplateItem,external.getCurrentUserId());
 			
 			//itemDisplayList.add(new ItemDisplay(currentItem));
 			itemsList.add(currentItem);
