@@ -106,15 +106,4 @@
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 	</bean>
 
-
-	<!-- create a logic bean, give it the dao from above and some sakai services -->
-	<bean id="org.sakaiproject.evaluation.logic.EvaluationLogic"
-			class="org.sakaiproject.evaluation.logic.impl.EvaluationLogicImpl"
-			init-method="init">
-		<property name="evaluationDao" 
-			ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
-		<property name="evalExternalLogic" 
-			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-	</bean>
-
 </beans>
