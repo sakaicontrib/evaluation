@@ -17,6 +17,7 @@ package org.sakaiproject.evaluation.dao;
 import java.util.List;
 import java.util.Set;
 
+import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.genericdao.api.CompleteGenericDao;
 
 /**
@@ -75,5 +76,12 @@ public interface EvaluationDao extends CompleteGenericDao {
 	 */
 	public List getAnswers(Long itemId, Long evalId);
 
+	/**
+	 * Removes a group of templateItems and updates all related items 
+	 * and templates at the same time (inside one transaction)
+	 * 
+	 * @param templateItems the array of {@link EvalTemplateItem} to remove 
+	 */
+	public void removeTemplateItems(EvalTemplateItem[] templateItems);
 
 }

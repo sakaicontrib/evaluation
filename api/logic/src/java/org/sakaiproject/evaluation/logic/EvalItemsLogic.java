@@ -126,7 +126,7 @@ public interface EvalItemsLogic {
 	 * Remove a template item (this removes the item from the template effectively),
 	 * template items cannot be removed from locked templates,
 	 * use {@link #canControlTemplateItem(String, Long)} to check if a
-	 * user has permissions and avoid possible exceptions
+	 * user has permissions and avoid possible exceptions<br/>
 	 * <b>Note:</b> This does not remove the associated item
 	 * 
 	 * @param templateItemId the id of an EvalTemplateItem object
