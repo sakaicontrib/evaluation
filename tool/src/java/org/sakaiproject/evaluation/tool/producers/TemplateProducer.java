@@ -77,38 +77,38 @@ public class TemplateProducer implements ViewComponentProducer, ViewParamsReport
 		UIOutput.make(form, "description-header", messageLocator.getMessage("modifytemplatetitledesc.description.header")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(form, "description-note", messageLocator.getMessage("modifytemplatetitledesc.description.note")); //$NON-NLS-1$ //$NON-NLS-2$
 		
-			UIInput.make(form, "title", "#{templateBean.title}");
-			UIInput.make(form, "description", "#{templateBean.description}");
-	
-			//dropdown list		
-			UISelect combo = UISelect.make(form, "sharing");
-			combo.selection = new UIInput();
-			combo.selection.valuebinding = new ELReference("#{templateBean.modifier}");
-			//combo.selection.valuebinding = new ELReference("#{templateBean.template.sharing}");
-			UIBoundList comboValues = new UIBoundList();
-			comboValues.setValue(EvaluationConstant.MODIFIER_VALUES);
-			combo.optionlist = comboValues;
-			UIBoundList comboNames = new UIBoundList();
-			String[] sharingList = 
-			{
-				messageLocator.getMessage("modifytemplatetitledesc.sharing.private"),
-				messageLocator.getMessage("modifytemplatetitledesc.sharing.visible"),
-				messageLocator.getMessage("modifytemplatetitledesc.sharing.shared"),
-				messageLocator.getMessage("modifytemplatetitledesc.sharing.public")
-			};
-			comboNames.setValue(sharingList);
-			combo.optionnames = comboNames;
-			
-			//EvalTemplate tpl= templateBean.getCurrTemplate();
-			
-			UIOutput.make(form, "cancel-button", messageLocator.getMessage("general.cancel.button"));
-			
-			if(evalViewParams.templateId!=null){
-				UICommand saveCmd=UICommand.make(form, "addContinue",messageLocator.getMessage("modifytemplatetitledesc.save.button"), "#{templateBean.saveTemplate}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				saveCmd.parameters.add(new UIELBinding("#{templateBean.templateId}",evalViewParams.templateId.toString()));		
-			}
-			else 
-				UICommand.make(form, "addContinue",messageLocator.getMessage("modifytemplatetitledesc.continue.button"), "#{templateBean.createTemplateAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		UIInput.make(form, "title", "#{templateBean.title}");
+		UIInput.make(form, "description", "#{templateBean.description}");
+
+		//dropdown list		
+		UISelect combo = UISelect.make(form, "sharing");
+		combo.selection = new UIInput();
+		combo.selection.valuebinding = new ELReference("#{templateBean.modifier}");
+		//combo.selection.valuebinding = new ELReference("#{templateBean.template.sharing}");
+		UIBoundList comboValues = new UIBoundList();
+		comboValues.setValue(EvaluationConstant.MODIFIER_VALUES);
+		combo.optionlist = comboValues;
+		UIBoundList comboNames = new UIBoundList();
+		String[] sharingList = 
+		{
+			messageLocator.getMessage("modifytemplatetitledesc.sharing.private"),
+			messageLocator.getMessage("modifytemplatetitledesc.sharing.visible")
+			//messageLocator.getMessage("modifytemplatetitledesc.sharing.shared"),
+			//messageLocator.getMessage("modifytemplatetitledesc.sharing.public")
+		};
+		comboNames.setValue(sharingList);
+		combo.optionnames = comboNames;
+		
+		//EvalTemplate tpl= templateBean.getCurrTemplate();
+		
+		UIOutput.make(form, "cancel-button", messageLocator.getMessage("general.cancel.button"));
+		
+		if(evalViewParams.templateId!=null){
+			UICommand saveCmd=UICommand.make(form, "addContinue",messageLocator.getMessage("modifytemplatetitledesc.save.button"), "#{templateBean.saveTemplate}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			saveCmd.parameters.add(new UIELBinding("#{templateBean.templateId}",evalViewParams.templateId.toString()));		
+		}
+		else 
+			UICommand.make(form, "addContinue",messageLocator.getMessage("modifytemplatetitledesc.continue.button"), "#{templateBean.createTemplateAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	}
 	
