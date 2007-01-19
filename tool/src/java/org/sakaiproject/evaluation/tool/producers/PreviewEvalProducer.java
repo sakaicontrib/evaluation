@@ -663,7 +663,8 @@ private void doFillComponent(EvalTemplateItem myTempItem, int i,
 				"blockStepped:"); //$NON-NLS-1$
 		UIOutput.make(block, "itemNum", (new Integer(i + 1)).toString()); //$NON-NLS-1$
 		UIOutput.make(block, "itemText", myItem.getItemText()); //$NON-NLS-1$
-		Boolean useNA = myItem.getUsesNA();
+		//Boolean useNA = myItem.getUsesNA();
+		Boolean useNA = myTempItem.getUsesNA();
 		if (useNA.booleanValue() == true) {
 			UIBranchContainer radiobranch3 = UIBranchContainer.make(block,
 					"showNA:"); //$NON-NLS-1$
@@ -744,7 +745,9 @@ private void doFillComponent(EvalTemplateItem myTempItem, int i,
 				.toString());
 		UIOutput
 				.make(blockSteppedColored, "itemText", myItem.getItemText()); //$NON-NLS-1$
-		Boolean useNA = myItem.getUsesNA();
+		//Boolean useNA = myItem.getUsesNA();
+		Boolean useNA = myTempItem.getUsesNA();
+		
 		if (useNA.booleanValue() == true) {
 			UIBranchContainer radiobranch3 = UIBranchContainer.make(
 					blockSteppedColored, "showNA:"); //$NON-NLS-1$
@@ -843,7 +846,8 @@ private void doFillComponent(EvalTemplateItem myTempItem, int i,
 				"essayType:"); //$NON-NLS-1$
 		UIOutput.make(essay, "itemNum", (new Integer(i + 1)).toString()); //$NON-NLS-1$
 		UIOutput.make(essay, "itemText", myItem.getItemText()); //$NON-NLS-1$
-		Boolean useNA = myItem.getUsesNA();
+		//Boolean useNA = myItem.getUsesNA();
+		Boolean useNA = myTempItem.getUsesNA();
 		if (useNA.booleanValue() == true) {
 			UIBranchContainer radiobranch3 = UIBranchContainer.make(essay,
 					"showNA:"); //$NON-NLS-1$
@@ -853,7 +857,7 @@ private void doFillComponent(EvalTemplateItem myTempItem, int i,
 
 		UIInput textarea = UIInput.make(essay, "essayBox", null); //$NON-NLS-1$
 		Map attrmap = new HashMap();
-		String rowNum = myItem.getDisplayRows().toString();
+		String rowNum = myTempItem.getDisplayRows().toString();
 		attrmap.put("rows", rowNum); //$NON-NLS-1$
 		textarea.decorators = new DecoratorList(
 				new UIFreeAttributeDecorator(attrmap));
@@ -868,17 +872,7 @@ private void doFillComponent(EvalTemplateItem myTempItem, int i,
 	}
 	
 } // end of method
-/*
-public static class EvaluationItemOrderComparator implements Comparator {
-	public int compare(Object eval0, Object eval1) {
-		// expects to get EvalItem objects, compare by displayOrder
-		return ((EvalItem)eval0).getDisplayOrder().
-		compareTo(((EvalItem)eval1).getDisplayOrder());
-		//return ((EvalItem)eval0).getId().
-		//	compareTo(((EvalItem)eval1).getId());
-		
-	}
-}*/
+
 public static class EvaluationItemOrderComparator implements Comparator {
 	public int compare(Object eval0, Object eval1) {
 		// expects to get EvalItem objects, compare by displayOrder

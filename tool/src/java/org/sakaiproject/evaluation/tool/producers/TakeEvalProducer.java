@@ -1,5 +1,5 @@
 /******************************************************************************
- * TakeEvalProducer.java - created by feng@vt.edu on Sept 18, 2006
+ * TakeEvalProducer.java - created by fengr@vt.edu on Sept 18, 2006
  * 
  * Copyright (c) 2007 Virginia Polytechnic Institute and State University
  * Licensed under the Educational Community License version 1.0
@@ -26,6 +26,7 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
+import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.ItemBlockUtils;
@@ -106,8 +107,8 @@ public class TakeEvalProducer implements ViewComponentProducer,
 		boolean rs = false;
 
 		for (int j = 0; j < itemList.size(); j++) {
-			EvalItem item1 = (EvalItem) itemList.get(j);
-			String category = item1.getCategory();
+			EvalTemplateItem tempItem1 = (EvalTemplateItem) itemList.get(j);
+			String category = tempItem1.getItemCategory();
 			if (bl && category.equals(EvalConstants.ITEM_CATEGORY_COURSE)) { //"Course"
 				rs = true;
 				break;
@@ -167,12 +168,9 @@ public class TakeEvalProducer implements ViewComponentProducer,
 		EvalTemplate template = eval.getTemplate();
 
 		// get items(parent items, child items --need to set order
-		//List childItems = new ArrayList(template.getItems());
-
-		// TODO - changed to EMPTY ARRAY so it will COMPILE - AZ
-		//List allItems = new ArrayList(template.getItems());
-		List allItems = new ArrayList();
-		
+		//List childItems = new ArrayList(template.getItems());	//List allItems = new ArrayList(template.getItems());
+		List allItems = new ArrayList(template.getTemplateItems());
+	
 		//filter out the block child items, to get a list non-child items
 		List ncItemsList = ItemBlockUtils.getNonChildItems(allItems);
 		// We know that for an evaluation child items will not be empty so no check needed here
@@ -183,19 +181,18 @@ public class TakeEvalProducer implements ViewComponentProducer,
 		UIBranchContainer courseSection = null;
 		UIBranchContainer instructorSection = null;
 		if (this.findItemCategory(true,ncItemsList)){
-			courseSection = UIBranchContainer.make(form,
-					"courseSection:"); //$NON-NLS-1$
+			courseSection = UIBranchContainer.make(form,"courseSection:"); //$NON-NLS-1$
 			UIOutput.make(courseSection, "course-questions-header", messageLocator.getMessage("takeeval.course.questions.header")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (this.findItemCategory(false, ncItemsList)){
-			instructorSection = UIBranchContainer.make(form,
-					"instructorSection:"); //$NON-NLS-1$
+			instructorSection = UIBranchContainer.make(form,"instructorSection:"); //$NON-NLS-1$
 			UIOutput.make(instructorSection, "instructor-questions-header", messageLocator.getMessage("takeeval.instructor.questions.header"));			 //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		for (int i = 0; i <ncItemsList.size(); i++) {
-			EvalItem item1 = (EvalItem) ncItemsList.get(i);
-
-			String cat = item1.getCategory();
+			//EvalItem item1 = (EvalItem) ncItemsList.get(i);
+			EvalTemplateItem tempItem1 = (EvalTemplateItem) ncItemsList.get(i);
+			
+			String cat = tempItem1.getItemCategory();
 			UIBranchContainer radiobranch = null;
 			
 			if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_COURSE)) { //"Course"
@@ -207,7 +204,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 							new UIColourDecorator(null,
 									Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
 
-				this.doFillComponent(item1, i, radiobranch,courseSection, form,allItems);
+				this.doFillComponent(tempItem1, i, radiobranch,courseSection, form,allItems);
 				
 			} else if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR)) { //"Instructor"
 				radiobranch = UIBranchContainer.make(instructorSection,
@@ -218,7 +215,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 							new UIColourDecorator(null,
 									Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
 				
-				this.doFillComponent(item1, i, radiobranch,instructorSection, form,allItems);
+				this.doFillComponent(tempItem1, i, radiobranch,instructorSection, form,allItems);
 			}
 		} // end of for loop
 		
@@ -226,9 +223,11 @@ public class TakeEvalProducer implements ViewComponentProducer,
 		
 	} // end of method
 
-	private void doFillComponent(EvalItem myItem, int i,
+	private void doFillComponent(EvalTemplateItem myTempItem, int i,
 			UIBranchContainer radiobranch, UIContainer tofill, UIContainer form,List itemsList) {
 
+		EvalItem myItem = myTempItem.getItem();
+		
 		if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)) { //"Scaled/Survey"
 
 			// Bind item id to list of items in evaluation bean.
@@ -245,9 +244,11 @@ public class TakeEvalProducer implements ViewComponentProducer,
 			String scaleValues[] = new String[optionCount];
 			String scaleLabels[] = new String[optionCount];
 			
-			String setting = myItem.getScaleDisplaySetting();
-			Boolean useNA = myItem.getUsesNA();
-
+		//	String setting = myItem.getScaleDisplaySetting();
+		//	Boolean useNA = myItem.getUsesNA();
+			String setting = myTempItem.getScaleDisplaySetting();
+			Boolean useNA = myTempItem.getUsesNA();
+			
 			if (setting.equals(EvalConstants.ITEM_SCALE_DISPLAY_COMPACT)) { //"Compact"
 				UIBranchContainer compact = UIBranchContainer.make(radiobranch,
 						"compactDisplay:"); //$NON-NLS-1$
@@ -623,14 +624,15 @@ public class TakeEvalProducer implements ViewComponentProducer,
 			 */ 
 			totalItemsAdded++;
 
-		// TODO - changed to ITEM_TYPE_SCALED so it will COMPILE - AZ
-		} else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED) 
-				&& myItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED)) { //"Question Block","Stepped"
+		} else if (myItem.getClassification().equals(EvaluationConstant.ITEM_TYPE_BLOCK) 
+				&& myTempItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED)) { //"Question Block","Stepped"
 			UIBranchContainer block = UIBranchContainer.make(radiobranch,
 					"blockStepped:"); //$NON-NLS-1$
 			UIOutput.make(block, "itemNum", (new Integer(i + 1)).toString()); //$NON-NLS-1$
 			UIOutput.make(block, "itemText", myItem.getItemText()); //$NON-NLS-1$
-			Boolean useNA = myItem.getUsesNA();
+			Boolean useNA = myTempItem.getUsesNA();
+			//Boolean useNA = myItem.getUsesNA();
+			
 			if (useNA.booleanValue() == true) {
 				UIBranchContainer radiobranch3 = UIBranchContainer.make(block,
 						"showNA:"); //$NON-NLS-1$
@@ -681,10 +683,10 @@ public class TakeEvalProducer implements ViewComponentProducer,
 			}
 
 			// get child block item text
-			// TODO - changed to ALWAYS FALSE so it will COMPILE - AZ
-			//if (myItem.getBlockParent().booleanValue() == true) {
-			if ( false ) {
-				Long parentID = myItem.getId();
+		
+			if (myTempItem.getBlockParent()!= null && myTempItem.getBlockParent().booleanValue() == true) {
+
+				Long parentID = myTempItem.getId();
 				Integer blockID = new Integer(parentID.intValue());
 				
 			//	List childItems = logic.findItem(blockID);
@@ -696,7 +698,8 @@ public class TakeEvalProducer implements ViewComponentProducer,
 								block, "queRow:", Integer.toString(j)); //$NON-NLS-1$
 
 						// Get child item
-						EvalItem child = (EvalItem) childItems.get(j);
+						EvalTemplateItem tempItemChild = (EvalTemplateItem) childItems.get(j);
+						EvalItem child = tempItemChild.getItem();
 						
 						// Bind item id to list of items in evaluation bean.
 						form.parameters.add( new UIELBinding
@@ -726,16 +729,16 @@ public class TakeEvalProducer implements ViewComponentProducer,
 
 			} // end of get child block item
 
-		// TODO - changed to ITEM_TYPE_SCALED so it will COMPILE - AZ
-		} else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED) 
-				&& myItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED)) { //"Question Block","Stepped Colored"
+		} else if (myItem.getClassification().equals(EvaluationConstant.ITEM_TYPE_BLOCK) 
+				&& myTempItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED)) { //"Question Block","Stepped Colored"
 
 			UIBranchContainer blockSteppedColored = UIBranchContainer.make(
 					radiobranch, "blockSteppedColored:"); //$NON-NLS-1$
 			UIOutput.make(blockSteppedColored, "itemNum", (new Integer(i + 1)).toString());
 			UIOutput
 					.make(blockSteppedColored, "itemText", myItem.getItemText()); //$NON-NLS-1$
-			Boolean useNA = myItem.getUsesNA();
+			//Boolean useNA = myItem.getUsesNA();
+			Boolean useNA = myTempItem.getUsesNA();
 			if (useNA.booleanValue() == true) {
 				UIBranchContainer radiobranch3 = UIBranchContainer.make(
 						blockSteppedColored, "showNA:"); //$NON-NLS-1$
@@ -801,10 +804,9 @@ public class TakeEvalProducer implements ViewComponentProducer,
 			}
 		
 			// get child block item text
-			// TODO - changed to ALWAYS FALSE so it will COMPILE - AZ
-			//if (myItem.getBlockParent().booleanValue() == true) {
-			if ( false ) {
-				Long parentID = myItem.getId();
+			if (myTempItem.getBlockParent()!= null && myTempItem.getBlockParent().booleanValue() == true) {
+		
+				Long parentID = myTempItem.getId();
 				Integer blockID = new Integer(parentID.intValue());
 				
 				//List childItems = logic.findItem(blockID);
@@ -816,8 +818,10 @@ public class TakeEvalProducer implements ViewComponentProducer,
 										.toString(j));
 
 						//get the child item
-						EvalItem child = (EvalItem) childItems.get(j);
-						
+
+						EvalTemplateItem tempItemChild = (EvalTemplateItem) childItems.get(j);
+						EvalItem child = tempItemChild.getItem();
+
 						// Bind item id to list of items in evaluation bean.
 						form.parameters.add( new UIELBinding
 								("#{evaluationBean.listOfItems."+  //$NON-NLS-1$
@@ -861,7 +865,8 @@ public class TakeEvalProducer implements ViewComponentProducer,
 					"essayType:"); //$NON-NLS-1$
 			UIOutput.make(essay, "itemNum", (new Integer(i + 1)).toString()); //$NON-NLS-1$
 			UIOutput.make(essay, "itemText", myItem.getItemText()); //$NON-NLS-1$
-			Boolean useNA = myItem.getUsesNA();
+			//Boolean useNA = myItem.getUsesNA();
+			Boolean useNA = myTempItem.getUsesNA();
 			if (useNA.booleanValue() == true) {
 				UIBranchContainer radiobranch3 = UIBranchContainer.make(essay,
 						"showNA:"); //$NON-NLS-1$
@@ -880,7 +885,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 			totalItemsAdded++;
 			
 			Map attrmap = new HashMap();
-			String rowNum = myItem.getDisplayRows().toString();
+			String rowNum = myTempItem.getDisplayRows().toString();
 			attrmap.put("rows", rowNum); //$NON-NLS-1$
 			textarea.decorators = new DecoratorList(
 					new UIFreeAttributeDecorator(attrmap));
