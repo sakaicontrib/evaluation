@@ -437,7 +437,7 @@ public class TemplateBean {
 			
 			EvalTemplateItem currTemplateItem = new EvalTemplateItem(new Date(), external.getCurrentUserId(), currTemplate, currentItem,
 					new Integer(orderNo + 1), itemCategory, displayRows, scaleDisplaySetting, itemNA,
-					false, 0);
+					new Boolean(false), new Integer(0));
 			
 			itemsLogic.saveTemplateItem(currTemplateItem,external.getCurrentUserId());
 			currentItem.getTemplateItems().add(currTemplateItem);
@@ -886,7 +886,7 @@ public class TemplateBean {
 			
 			EvalTemplateItem currTemplateItem = new EvalTemplateItem(new Date(), external.getCurrentUserId(), currTemplate, currentItem,
 					new Integer(orderNo + 1), itemCategory, displayRows, scaleDisplaySetting, itemNA,
-					false, 0);
+					new Boolean(false), new Integer(0));
 			
 			itemsLogic.saveTemplateItem(currTemplateItem,external.getCurrentUserId());
 			currentItem.getTemplateItems().add(currTemplateItem);			//logic.saveItem(currentItem, logic.getCurrentUserId());			
@@ -1107,7 +1107,7 @@ public class TemplateBean {
 			
 			EvalTemplateItem currTemplateItem = new EvalTemplateItem(new Date(), external.getCurrentUserId(), currTemplate, currentItem,
 					new Integer(orderNo + 1), itemCategory, displayRows, scaleDisplaySetting, itemNA,
-					false, 0);
+					new Boolean(false), new Integer(0));
 			
 			itemsLogic.saveTemplateItem(currTemplateItem,external.getCurrentUserId());
 			currentItem.getTemplateItems().add(currTemplateItem);
