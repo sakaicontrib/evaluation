@@ -43,7 +43,9 @@ public interface EvalItemsLogic {
 	/**
 	 * Save or update the item only if it is not locked, 
 	 * use {@link #canControlItem(String, Long)} if you want to check
-	 * if user has permission and avoid exceptions
+	 * if user has permission and avoid exceptions<br/>
+	 * Validates that settings are correct for this type of item,
+	 * enforces sharing constraints, and fills in the optional values with defaults
 	 * 
 	 * @param item an item object to be saved
 	 * @param userId the internal user id (not username)
@@ -62,7 +64,8 @@ public interface EvalItemsLogic {
 
 	/**
 	 * Get a list of all the items visible to a specific user,
-	 * can limit it to only items owned by that user
+	 * can limit it to only items owned by that user or
+	 * items by sharing level
 	 * 
 	 * @param userId the internal user id (not username)
 	 * @param sharingConstant a SHARING constant from 
@@ -105,10 +108,14 @@ public interface EvalItemsLogic {
 	public EvalTemplateItem getTemplateItemById(Long templateItemId);
 
 	/**
-	 * Save a template item to create a link between an item and a template or
+	 * Save a templateItem to create a link between an item and a template or
 	 * update display settings for an item in a template,
-	 * template items cannot be saved in locked templates<br/>
-	 * A template item represents a specific instance of an item in a specific template
+	 * template items cannot be saved in locked templates, the item and template
+	 * cannot be changed after the templateItem is created<br/>
+	 * A template item represents a specific instance of an item in a specific template<br/>
+	 * Validates display settings based on the type of item, creates the association between
+	 * the template and this templateItem and the item and this templateItem,
+	 * fills in default optional values
 	 * 
 	 * @param templateItem a templateItem object to be saved
 	 * @param userId the internal user id (not username)

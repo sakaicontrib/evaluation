@@ -281,7 +281,7 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 		}
 
 		// check on ITEM_TYPE and invalid combinations of item values depending on the type
-		// TODO - inherit settings from item if not set correctly here
+		// inherit settings from item if not set correctly here
 		if ( EvalConstants.ITEM_TYPE_SCALED.equals(item.getClassification()) ) {
 			// check if this scaled item is a block item
 			if (templateItem.getBlockParent() == null) {
