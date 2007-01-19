@@ -1,5 +1,5 @@
 /******************************************************************************
- * EvaluationBean.java - created by kahuja@vt.edu on Jan 18, 2007
+ * ItemBlockUtils.java - created by fengr@vt.edu on Jan 18, 2007
  * 
  * Copyright (c) 2007 Virginia Polytechnic Institute and State University
  * Licensed under the Educational Community License version 1.0
@@ -17,7 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
+/**
+ *  includes static methods to handle BLOCK Child ietms
 
+ * @author Rui Feng (fengr@vt.edu)
+ */
 public class ItemBlockUtils {
 	
 //	to filter out the Block child items, and only return non-child items
