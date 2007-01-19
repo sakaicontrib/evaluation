@@ -44,6 +44,7 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalTemplate;
+import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.producers.ControlPanelProducer;
 import org.sakaiproject.evaluation.tool.producers.EvaluationAssignConfirmProducer;
@@ -512,7 +513,7 @@ public class EvaluationBean {
 		 */ 
 		//Object evalItems[] = ((EvalTemplate)eval.getTemplate()).getItems().toArray();
 		//get all items
-		List allItems = new ArrayList(((EvalTemplate)eval.getTemplate()).getItems());
+	/*	List allItems = new ArrayList(((EvalTemplate)eval.getTemplate()).getItems());
 		
 		HashMap itemMap = new HashMap();
 		for(int i=0; i < allItems.size(); i++ ){
@@ -522,6 +523,20 @@ public class EvaluationBean {
 				itemMap.put(evalItem.getId().toString(), evalItem);
 			}else if(evalItem.getBlockParent().booleanValue() == false) {			
 				itemMap.put(evalItem.getId().toString(), evalItem);
+			}
+				
+		}
+		*/
+		List allItems = new ArrayList(((EvalTemplate)eval.getTemplate()).getTemplateItems());
+		
+		HashMap itemMap = new HashMap();
+		for(int i=0; i < allItems.size(); i++ ){
+			EvalTemplateItem evalTemplateItem = (EvalTemplateItem)allItems.get(i);	
+			//filter out the block parent item
+			if(evalTemplateItem.getBlockParent()== null){
+				itemMap.put(evalTemplateItem.getId().toString(), evalTemplateItem);
+			}else if(evalTemplateItem.getBlockParent().booleanValue() == false) {			
+				itemMap.put(evalTemplateItem.getId().toString(), evalTemplateItem);
 			}
 				
 		}
@@ -747,7 +762,7 @@ public class EvaluationBean {
 		if(template1 != null){
 			//delete template, need to deleted items entry
 			//Set items = template1.getItems();//get all the items
-			
+			/*
 			List allItems = new ArrayList(template1.getItems());			
 			//filter out the block child items, to get a list non-child items
 			List ncItemsList = ItemBlockUtils.getNonChildItems(allItems);
@@ -771,9 +786,34 @@ public class EvaluationBean {
 						}
 					}
 				}//end of check: block child
-				
-				//logic.deleteItem(item, currentUserId);
 				itemsLogic.deleteItem(item.getId(), currentUserId);
+				*/
+			List allItems = new ArrayList(template1.getTemplateItems());			
+			//filter out the block child items, to get a list non-child items
+			List ncItemsList = ItemBlockUtils.getNonChildItems(allItems);
+			
+			for(int i = 0; i < ncItemsList.size(); i++){
+				EvalTemplateItem tempItem = (EvalTemplateItem) ncItemsList.get(i);
+				EvalItem item1 = tempItem.getItem();
+				//need to check if it is a Block parent, delete child items first
+				if(item1.getClassification().equals(EvaluationConstant.ITEM_TYPE_BLOCK) && 
+						tempItem.getBlockParent().booleanValue()== true){
+					Long parentID = tempItem.getId();
+					Integer blockID = new Integer(parentID.intValue());
+				
+					//List childItems = logic.findItem(blockID);
+					List childItems = ItemBlockUtils.getChildItmes(allItems, blockID);
+					if(childItems !=null && childItems.size() >0 ){
+						for(int k=0; k< childItems.size();k++){
+							EvalTemplateItem tItem = (EvalTemplateItem) childItems.get(k);
+							//logic.deleteItem(cItem.getId(), currentUserId);
+							itemsLogic.deleteTemplateItem(tItem.getId(), currentUserId);
+						}
+					}
+				}//end of check: block child
+			
+				//logic.deleteItem(item, currentUserId);
+				itemsLogic.deleteTemplateItem(tempItem.getId(), currentUserId);
 			}
 			//logic.deleteTemplate(template1);
 			templatesLogic.deleteTemplate(template1.getId(), currentUserId);
