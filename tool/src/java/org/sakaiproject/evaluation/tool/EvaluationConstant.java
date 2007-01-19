@@ -1,5 +1,5 @@
 /******************************************************************************
- * EvaluationConstant.java - created by fengr@vt.edu on Aug 21, 2006
+ * EvaluationConstant.java - created on Aug 21, 2006
  * 
  * Copyright (c) 2007 Virginia Polytechnic Institute and State University
  * Licensed under the Educational Community License version 1.0
@@ -12,6 +12,7 @@
  * Rui Feng (fengr@vt.edu)
  * Kapil Ahuja (kahuja@vt.edu)
  *****************************************************************************/
+
 package org.sakaiproject.evaluation.tool;
 
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
@@ -26,21 +27,24 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
  */
 public class EvaluationConstant {
 
-	// TODO - remove all deprecated values BEFORE release -AZ
-
-	//For template_title_desc.html
+	/**
+	 * The values for all sharing menus
+	 */
 	public static String[] MODIFIER_VALUES = new String[] {
 		EvalConstants.SHARING_PRIVATE, 
-		EvalConstants.SHARING_VISIBLE,
-		EvalConstants.SHARING_SHARED,
 		EvalConstants.SHARING_PUBLIC
+//		EvalConstants.SHARING_VISIBLE,
+//		EvalConstants.SHARING_SHARED
 	};
 
 	//For template_modify.html
+	public static final String ITEM_TYPE_BLOCK = "Block";
 	public static final String ITEM_TYPE_EXPERT = "Expert";
-	
+	public static final String ITEM_TYPE_EXISTING = "Existing";
+
 	/**
-	 * Note that this only includes the types for items which are stored in
+	 * The values for the Add Item pulldown
+	 * <b>Note:</b> This only includes the types for items which are stored in
 	 * the item, expert and the like should be added on to this and simply
 	 * should use constants defined in this file somewhere as the VALUES
 	 */
@@ -48,12 +52,12 @@ public class EvaluationConstant {
 		EvalConstants.ITEM_TYPE_SCALED, 
 		EvalConstants.ITEM_TYPE_TEXT, 
 		EvalConstants.ITEM_TYPE_HEADER, 
-		EvalConstants.ITEM_TYPE_BLOCK,
-		ITEM_TYPE_EXPERT
+		ITEM_TYPE_BLOCK,
+		ITEM_TYPE_EXPERT,
+		ITEM_TYPE_EXISTING
 	};
-	
 
-	
+
 	//For template_modify and preview_item.html
 	public static String[] STEPPED_IMAGE_URLS = new String[] {
 		"$context/content/images/corner.gif",
@@ -88,17 +92,15 @@ public class EvaluationConstant {
 		EvalConstants.ITEM_CATEGORY_INSTRUCTOR
 	};
 
-	//Helpdesk email id (basically the id from which the emails are sent) - for evaluation_settings.html
 	/**
-	 * This should be using the value from EvaluationSettings
-	 * @deprecated
+	 * Evaluation Settings: Page pulldown constants for reminder interval
 	 */
-	public static final String HELP_DESK_ID = "ocs@vt.edu";
-
-	//For evaluation_settings.html
 	public static final String[] REMINDER_EMAIL_DAYS_VALUES = new String[] {
 		"0", "1", "2", "3", "4", "5", "6", "7" };
 
+	/**
+	 * Evaluation settings: Values for instructor options for using evaluations from above
+	 */
 	public static final String[] INSTRUCTOR_OPT_VALUES = new String[] {
 		EvalConstants.INSTRUCTOR_OPT_IN, 
 		EvalConstants.INSTRUCTOR_OPT_OUT, 
