@@ -13,49 +13,11 @@
 
 package org.sakaiproject.evaluation.tool;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-
-import java.util.List;
-
-import java.util.Set;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
-import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
-import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
-import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.EvalItemsLogic;
-import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
+
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
-import org.sakaiproject.evaluation.model.EvalAnswer;
-import org.sakaiproject.evaluation.model.EvalAssignContext;
-import org.sakaiproject.evaluation.model.EvalEmailTemplate;
-import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.model.EvalItem;
-import org.sakaiproject.evaluation.model.EvalResponse;
-import org.sakaiproject.evaluation.model.EvalTemplate;
-import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.producers.AdministrateProducer;
-import org.sakaiproject.evaluation.tool.producers.ControlPanelProducer;
-import org.sakaiproject.evaluation.tool.producers.EvaluationAssignConfirmProducer;
-import org.sakaiproject.evaluation.tool.producers.EvaluationAssignProducer;
-import org.sakaiproject.evaluation.tool.producers.EvaluationSettingsProducer;
-import org.sakaiproject.evaluation.tool.producers.EvaluationStartProducer;
-import org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer;
-import org.sakaiproject.evaluation.tool.producers.SummaryProducer;
-
-import sun.util.logging.resources.logging;
-
-
 
 /**
  * This is the backing bean of administrative functionality
@@ -107,9 +69,70 @@ public class AdministrativeBean {
 	//method binding to the "Continue to Settings" button on evaluation_start.html
 	public String saveAdminSettingsAction() {
 		
-		//log.warn("Inside adminBeam!!, instViewResults = " + instViewResults);
+		/*
+		 * If checkboxes not selected then their default value is null instead of FALSE.
+		 * This making those null values as FALSE.
+		 */
+		if (instCreateTemplate == null)
+			instCreateTemplate = Boolean.FALSE;
+
+		if (instSendEmail == null)
+			instSendEmail = Boolean.FALSE;
+
+		if (adminViewInstQuestion == null)
+			adminViewInstQuestion = Boolean.FALSE;
+
+		if (adminSuperModifyQues == null)
+			adminSuperModifyQues = Boolean.FALSE;
+
+		if (genNaAllowed == null)
+			genNaAllowed = Boolean.FALSE;
+
+		if (genUseStopDate == null)
+			genUseStopDate = Boolean.FALSE;
+
+		if (genUseExpertTemplate == null)
+			genUseExpertTemplate = Boolean.FALSE;
+
+		if (genUseExpertQuestion == null)
+			genUseExpertQuestion = Boolean.FALSE;
+
+		if (genUseSameViewDate == null)
+			genUseSameViewDate = Boolean.FALSE;
+
+		/*
+		 * Note: The commented below are need to be fixed on EvalSettings.java.
+		 *       To be checked with Aaron whether I could modify it - Kapil.
+		 */
 		
+		//Instructor specific
+		settings.set(EvalSettings.INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS, instCreateTemplate);
+		//settings.set(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS, instViewResults);
+		settings.set(EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS, instSendEmail);
+		//settings.set(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE, instUseEvalFromAbove);
 		settings.set(EvalSettings.INSTRUCTOR_ADD_ITEMS_NUMBER, new Integer(instQuestionAdd));
+		
+		//Student specific
+		//settings.set(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED, stuQuesUnanswered);
+		//settings.set(EvalSettings.STUDENT_MODIFY_RESPONSES, stuModifyResponses);
+		//settings.set(EvalSettings.STUDENT_VIEW_RESULTS, stuViewResults);
+		
+		//Admin specific
+		settings.set(EvalSettings.ADMIN_ADD_ITEMS_NUMBER, new Integer(adminsBelowAddQuestions));
+		//settings.set(EvalSettings.??????, adminViewInstQuestion);
+		//settings.set(EvalSettings.??????, adminSuperModifyQues);
+		
+		//General
+		settings.set(EvalSettings.FROM_EMAIL_ADDRESS, genHelpdeskEmail);
+		settings.set(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS, new Integer(genResponsesBeforeViewResult));
+		settings.set(EvalSettings.NOT_AVAILABLE_ALLOWED, genNaAllowed);
+		settings.set(EvalSettings.ITEMS_ALLOWED_IN_QUESTION_BLOCK, new Integer(genMaxQuestionsInBlock));
+		settings.set(EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY, genTemplateSharing);
+		//settings.set(EvalSettings.?????, genDefaultQuestionCategory);
+		//settings.set(EvalSettings.?????, genUseStopDate);
+		settings.set(EvalSettings.USE_EXPERT_TEMPLATES, genUseExpertTemplate);
+		settings.set(EvalSettings.USE_EXPERT_ITEMS, genUseExpertQuestion);
+		//settings.set(EvalSettings.?????, genUseSameViewDate);
 		
 		return AdministrateProducer.VIEW_ID;
 	}
