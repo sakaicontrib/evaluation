@@ -219,4 +219,9 @@
 		<property name="messageLocator" ref="messageLocator" />				
 	</bean>
 
+	<bean class="org.sakaiproject.evaluation.tool.producers.ScaleControlProducer">
+		<property name="external" 
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+		<property name="messageLocator" ref="messageLocator" />			
+	</bean>
 </beans>

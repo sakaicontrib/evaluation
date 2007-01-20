@@ -77,7 +77,9 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
 					new SimpleViewParameters(ControlPanelProducer.VIEW_ID));
 		}
 		UIInternalLink.make(tofill, "summary-toplink", messageLocator.getMessage("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID)); //$NON-NLS-1$ //$NON-NLS-2$
-
+		UIInternalLink.make(tofill, "control-scales-toplink", messageLocator.getMessage("administrate.top.control.scales"),  //$NON-NLS-1$ //$NON-NLS-2$
+				new SimpleViewParameters(ScaleControlProducer.VIEW_ID));			
+	
 		//System Settings
 		UIForm form = UIForm.make(tofill, "basic-form"); //$NON-NLS-1$		
 		UIOutput.make(form, "system-settings-header", messageLocator.getMessage("administrate.system.settings.header")); //$NON-NLS-1$ //$NON-NLS-2$

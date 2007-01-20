@@ -120,6 +120,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/producers/PreviewItemProducer.jav
 tool/src/java/org/sakaiproject/evaluation/tool/producers/RemoveEvalProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/RemoveQuestionProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/RemoveTemplateProducer.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/producers/ScaleControlProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/SummaryProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/TakeEvalProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/TemplateItemProducer.java -text
@@ -159,6 +160,7 @@ tool/src/webapp/content/templates/preview_item.html -text
 tool/src/webapp/content/templates/remove_evaluation.html -text
 tool/src/webapp/content/templates/remove_question.html -text
 tool/src/webapp/content/templates/remove_template.html -text
+tool/src/webapp/content/templates/scale_control.html -text
 tool/src/webapp/content/templates/summary.html -text
 tool/src/webapp/content/templates/take_eval.html -text
 tool/src/webapp/content/templates/template_item.html -text
