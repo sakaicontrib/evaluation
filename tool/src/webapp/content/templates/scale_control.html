@@ -1,0 +1,61 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+	<title rsf:id="administrate-title">Scale Control</title>
+	<link href="/library/skin/tool_base.css" type="text/css" rel="stylesheet" media="all" />
+	<link href="/library/skin/default/tool.css" type="text/css" rel="stylesheet" media="all" />
+	<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+	<script type="text/javascript" language="JavaScript" src="/library/js/headscripts.js"></script>
+</head>
+<body rsf:id="scr=sakai-body">
+<div class="portletBody">
+	<div class="navIntraTool">
+		<a rsf:id="summary-toplink" href="summary.html">Summary</a>
+		<a rsf:id="control-panel-toplink" href="control_panel.html">Control Panel</a>
+	</div>
+
+	<div>
+		<ul class="breadCrumb">
+			<li class="breadCrumb"><a rsf:id="summary-toplink" href="summary.html">Summary</a></li>
+			<li class="breadCrumb"><a rsf:id="administrate-toplink" href="administrate.html">Administrate</a></li>
+			<li class="breadCrumb" rsf:id="scale-control-title">Scales</li>
+		</ul>
+	</div>
+	
+	<div>
+		<a rsf:id="add-new-scale-link" href="scale_modify.html">Add new scale</a>
+		<br/>
+		<b><span rsf:id="scales-control-heading">Scales Control</span></b>
+	</div>	
+	
+    <div rsf:id="verticalDisplay:">
+		<table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "100%">
+			<tr>
+				<td align="left" width="5%" valign="top">
+					<span rsf:id="scale-no">#</span>.&nbsp;
+				</td>
+				<td width="75%" valign="top"><span rsf:id="scale-title">Scale title</span></td>
+				<td width="10%" valign="top"><a rsf:id="modify-sidelink" href="scale_modify.html">Modify</a></td>
+				<td width="10%" valign="top"><a rsf:id="remove-sidelink" href="scale_modify.html">Remove</a></td>
+			</tr>
+			
+			<tr rsf:id="scaleOptions:"> 
+				<td width="5%">&nbsp;</td>
+				<td align="left" width="75%">
+					<span rsf:id="scale-option-label">Scale option label</span>
+				</td>
+				<td>&nbsp;</td>
+			</tr>
+			
+			<tr> 
+				<td width="100%">
+					<b><span rsf:id="ideal-scale-point">Ideal scale point:</span></b>&nbsp;<span rsf:id="ideal-value">Ideal value</span>
+				</td>
+			</tr>
+		</table>
+    </div>
+
+</div>
+</body>
+</html>
