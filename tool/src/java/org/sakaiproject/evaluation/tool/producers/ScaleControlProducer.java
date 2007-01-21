@@ -83,15 +83,29 @@ public class ScaleControlProducer implements ViewComponentProducer, NavigationCa
 		//Get all the scales that are owned by a user
 		List scaleList = scalesLogic.getScalesForUser(currentUserId, null);
 		for (int i = 0; i < scaleList.size(); ++i){
+
 			EvalScale scale = (EvalScale) scaleList.get(i);
-			
 			UIBranchContainer listOfScales = UIBranchContainer.make(tofill, "verticalDisplay:");
 			UIOutput.make(listOfScales, "scale-no", new Integer(i+1).toString()); //$NON-NLS-1$ //$NON-NLS-2$
 			UIOutput.make(listOfScales, "scale-title", scale.getTitle()); //$NON-NLS-1$ //$NON-NLS-2$
-			UIOutput.make(listOfScales, "modify-sidelink", messageLocator.getMessage("scalecontrol.modify.link")); //$NON-NLS-1$ //$NON-NLS-2$
-			UIOutput.make(listOfScales, "remove-sidelink", messageLocator.getMessage("scalecontrol.remove.link")); //$NON-NLS-1$ //$NON-NLS-2$
-			UIOutput.make(listOfScales, "ideal-scale-point", messageLocator.getMessage("scalecontrol.ideal.scale.title")); //$NON-NLS-1$ //$NON-NLS-2$
 			
+			//Use can modify / remove scale only if it is not locked.
+			if (scalesLogic.canControlScale(currentUserId, scale.getId())) {
+				UIOutput.make(listOfScales, "modify-sidelink", messageLocator.getMessage("scalecontrol.modify.link")); //$NON-NLS-1$ //$NON-NLS-2$
+				UIOutput.make(listOfScales, "remove-sidelink", messageLocator.getMessage("scalecontrol.remove.link")); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+
+			//Display the scale options vertically
+			//ASCII value of 'a' = 97 so initial value is 96.
+			char[] startOptionsNo = {96};
+			for (int j = 0; j < scale.getOptions().length; ++j){
+				UIBranchContainer scaleOptions = UIBranchContainer.make(listOfScales, "scaleOptions:");
+				startOptionsNo[0]++;
+				UIOutput.make(scaleOptions, "scale-option-no", new String(startOptionsNo)); //$NON-NLS-1$ //$NON-NLS-2$
+				UIOutput.make(scaleOptions, "scale-option-label", (scale.getOptions())[j]); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			
+			UIOutput.make(listOfScales, "ideal-scale-point", messageLocator.getMessage("scalecontrol.ideal.scale.title")); //$NON-NLS-1$ //$NON-NLS-2$
 			//If no ideal value is set then display "None" on webpage
 			if (scale.getIdeal() == null)
 				UIOutput.make(listOfScales, "ideal-value", "None");
