@@ -220,6 +220,8 @@
 	</bean>
 
 	<bean class="org.sakaiproject.evaluation.tool.producers.ScaleControlProducer">
+		<property name="scalesLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalScalesLogic" />
 		<property name="external" 
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="messageLocator" ref="messageLocator" />			
