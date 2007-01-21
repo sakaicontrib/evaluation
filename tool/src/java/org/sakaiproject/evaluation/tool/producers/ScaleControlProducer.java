@@ -17,7 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.EvalScalesLogic;
+import org.sakaiproject.evaluation.model.EvalScale;
 
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -42,6 +43,10 @@ public class ScaleControlProducer implements ViewComponentProducer, NavigationCa
 		return VIEW_ID;
 	}
 
+	private EvalScalesLogic scalesLogic;
+	public void setScalesLogic(EvalScalesLogic scalesLogic) {
+		this.scalesLogic = scalesLogic;
+	}
 	private EvalExternalLogic external;
 	public void setExternal(EvalExternalLogic external) {
 		this.external = external;
@@ -75,10 +80,24 @@ public class ScaleControlProducer implements ViewComponentProducer, NavigationCa
 		UIOutput.make(tofill, "add-new-scale-link", messageLocator.getMessage("scalecontrol.add.new.scale.link")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(tofill, "scales-control-heading", messageLocator.getMessage("scalecontrol.page.heading")); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		UIBranchContainer listOfScales = UIBranchContainer.make(tofill, "verticalDisplay:");
-		UIOutput.make(listOfScales, "modify-sidelink", messageLocator.getMessage("scalecontrol.modify.link")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(listOfScales, "remove-sidelink", messageLocator.getMessage("scalecontrol.remove.link")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(listOfScales, "ideal-scale-point", messageLocator.getMessage("scalecontrol.ideal.scale.title")); //$NON-NLS-1$ //$NON-NLS-2$
+		//Get all the scales that are owned by a user
+		List scaleList = scalesLogic.getScalesForUser(currentUserId, null);
+		for (int i = 0; i < scaleList.size(); ++i){
+			EvalScale scale = (EvalScale) scaleList.get(i);
+			
+			UIBranchContainer listOfScales = UIBranchContainer.make(tofill, "verticalDisplay:");
+			UIOutput.make(listOfScales, "scale-no", new Integer(i+1).toString()); //$NON-NLS-1$ //$NON-NLS-2$
+			UIOutput.make(listOfScales, "scale-title", scale.getTitle()); //$NON-NLS-1$ //$NON-NLS-2$
+			UIOutput.make(listOfScales, "modify-sidelink", messageLocator.getMessage("scalecontrol.modify.link")); //$NON-NLS-1$ //$NON-NLS-2$
+			UIOutput.make(listOfScales, "remove-sidelink", messageLocator.getMessage("scalecontrol.remove.link")); //$NON-NLS-1$ //$NON-NLS-2$
+			UIOutput.make(listOfScales, "ideal-scale-point", messageLocator.getMessage("scalecontrol.ideal.scale.title")); //$NON-NLS-1$ //$NON-NLS-2$
+			
+			//If no ideal value is set then display "None" on webpage
+			if (scale.getIdeal() == null)
+				UIOutput.make(listOfScales, "ideal-value", "None");
+			else
+				UIOutput.make(listOfScales, "ideal-value", scale.getIdeal());
+		 }
 	}
 	
 	public List reportNavigationCases() {
