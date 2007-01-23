@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.TemplateBean;
+import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 
 
 import uk.org.ponder.messageutil.MessageLocator;
@@ -33,6 +34,7 @@ import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UISelectChoice;
+import uk.org.ponder.rsf.flow.jsfnav.DynamicNavigationCaseReporter;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
@@ -46,7 +48,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  * @author: Rui Feng (fengr@vt.edu)
  */
 
-public class ModifyBlockProducer implements ViewComponentProducer,NavigationCaseReporter{
+public class ModifyBlockProducer implements ViewComponentProducer,NavigationCaseReporter,DynamicNavigationCaseReporter{
 	public static final String VIEW_ID = "modify_block"; //$NON-NLS-1$
 	private TemplateBean templateBean;
 	
@@ -66,6 +68,9 @@ public class ModifyBlockProducer implements ViewComponentProducer,NavigationCase
 
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {	
 
+
+	    System.out.println("modBlock: templateBean.getCurrTemplate.getId()="+templateBean.getCurrTemplate().getId());
+		
 		UIOutput.make(tofill, "modify-block-title", messageLocator.getMessage("modifyblock.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(tofill, "create-eval-title", messageLocator.getMessage("createeval.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
 		
@@ -150,7 +155,7 @@ public class ModifyBlockProducer implements ViewComponentProducer,NavigationCase
 		
 		i.add(new NavigationCase(PreviewItemProducer.VIEW_ID, new SimpleViewParameters(PreviewItemProducer.VIEW_ID)));
 		i.add(new NavigationCase("modify_block", new SimpleViewParameters("modify_block"))); //$NON-NLS-1$ //$NON-NLS-2$
-		i.add(new NavigationCase("template_modify", new SimpleViewParameters("template_modify"))); //$NON-NLS-1$ //$NON-NLS-2$
+		i.add(new NavigationCase("template_modify", new EvalViewParameters("template_modify", templateBean.getCurrTemplate().getId(), ModifyBlockProducer.VIEW_ID))); //$NON-NLS-1$ //$NON-NLS-2$
 	
 		return i;
 	}

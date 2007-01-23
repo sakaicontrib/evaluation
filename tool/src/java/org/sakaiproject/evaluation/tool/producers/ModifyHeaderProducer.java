@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.TemplateBean;
+import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 
 
 import uk.org.ponder.messageutil.MessageLocator;
@@ -30,6 +31,7 @@ import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UISelectChoice;
+import uk.org.ponder.rsf.flow.jsfnav.DynamicNavigationCaseReporter;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
@@ -43,7 +45,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  * @author: Rui Feng (fengr@vt.edu)
  */
 
-public class ModifyHeaderProducer implements ViewComponentProducer,NavigationCaseReporter{
+public class ModifyHeaderProducer implements ViewComponentProducer,NavigationCaseReporter,DynamicNavigationCaseReporter{
 	public static final String VIEW_ID = "modify_header";
 	private TemplateBean templateBean;
 
@@ -112,7 +114,7 @@ public class ModifyHeaderProducer implements ViewComponentProducer,NavigationCas
 		List i = new ArrayList();
 
 		i.add(new NavigationCase(PreviewItemProducer.VIEW_ID, new SimpleViewParameters(PreviewItemProducer.VIEW_ID)));
-		i.add(new NavigationCase(TemplateModifyProducer.VIEW_ID, new SimpleViewParameters(TemplateModifyProducer.VIEW_ID)));
+		i.add(new NavigationCase(TemplateModifyProducer.VIEW_ID, new EvalViewParameters(TemplateModifyProducer.VIEW_ID, templateBean.getCurrTemplate().getId(), ModifyBlockProducer.VIEW_ID)));
 
 		return i;
 	}
