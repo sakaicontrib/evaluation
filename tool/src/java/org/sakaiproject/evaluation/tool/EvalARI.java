@@ -2,11 +2,9 @@ package org.sakaiproject.evaluation.tool;
 
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
-import org.sakaiproject.evaluation.tool.producers.TemplateItemProducer;
 
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionResultInterpreter;
-import uk.org.ponder.rsf.flow.errors.ViewExceptionStrategy;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
@@ -24,10 +22,10 @@ public class EvalARI implements ActionResultInterpreter {
 	}
 	
 public ARIResult interpretActionResult(ViewParameters incoming, Object result) {
+    // clearly not one of our views
+    if (!(result instanceof String)) return null;
     ARIResult togo = new ARIResult();
-    String s=(String)result;
-    System.out.println("We're in ARIResult");
-    System.out.println("s:"+s);
+    String s = (String)result;
     if(s.substring(0,11).equals("new-item:::")){
     	System.out.println("New item, bbean tid:"+templateBBean.templateId);
     	EvalViewParameters evalViewParams=(EvalViewParameters)incoming;
