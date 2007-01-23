@@ -39,12 +39,6 @@
 		<property name="scalesLogic" 
 			ref="org.sakaiproject.evaluation.logic.EvalScalesLogic" />
 	</bean>
-
-	<bean id="administrativeBean"
-			class="org.sakaiproject.evaluation.tool.AdministrativeBean">
-		<property name="settings" 
-			ref="org.sakaiproject.evaluation.logic.EvalSettings" />							
-	</bean>
   
     <bean id="settingsBean"
       class="org.sakaiproject.evaluation.tool.SettingsWBL">

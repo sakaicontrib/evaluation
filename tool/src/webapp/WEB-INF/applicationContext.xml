@@ -19,7 +19,7 @@
 	<bean name="requestAddressibleBeans"
 		class="uk.org.ponder.springutil.StringListFactory">
 		<property name="strings">
-			<value>templateBean, evaluationBean, administrativeBean, settingsBean</value>
+			<value>templateBean, evaluationBean, settingsBean</value>
 		</property>
 	</bean>
 
