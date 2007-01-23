@@ -74,7 +74,7 @@ public class EvalSettingsImpl implements EvalSettings {
 	 * @see org.sakaiproject.evaluation.logic.EvaluationSettings#set(java.lang.Object, java.lang.Object)
 	 */
 	public boolean set(String settingConstant, Object settingValue) {
-		log.debug("Setting admin setting for: " + settingConstant);
+		log.debug("Setting admin setting to ("+settingValue+") for: " + settingConstant);
 		String name = EvaluationSettingsParse.getName(settingConstant);
 		String type = EvaluationSettingsParse.getType(settingConstant);
 

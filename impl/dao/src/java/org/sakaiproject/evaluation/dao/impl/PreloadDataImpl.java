@@ -50,7 +50,10 @@ public class PreloadDataImpl {
 	}
 
 	/**
-	 * Preload the default system configuration settings
+	 * Preload the default system configuration settings<br/>
+	 * <b>Note:</b> If you attempt to save a null value here in the preload
+	 * it will cause this to fail, just comment out or do not include the setting
+	 * you want to "save" as null to have the effect without causing a failure
 	 */
 	public void preloadEvalConfig(){
 
@@ -70,10 +73,11 @@ public class PreloadDataImpl {
 					EvaluationSettingsParse.getName(
 						EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS),
 					Boolean.TRUE.toString()) );
-			evaluationDao.save( new EvalConfig( new Date(), 
-					EvaluationSettingsParse.getName(
-						EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE),
-					Boolean.FALSE.toString()) );
+			// leave this out to allow setting in the evals
+//			evaluationDao.save( new EvalConfig( new Date(), 
+//					EvaluationSettingsParse.getName(
+//						EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE),
+//					EvalConstants.INSTRUCTOR_REQUIRED) );
 			evaluationDao.save( new EvalConfig( new Date(), 
 					EvaluationSettingsParse.getName(
 						EvalSettings.INSTRUCTOR_ADD_ITEMS_NUMBER),
@@ -102,12 +106,12 @@ public class PreloadDataImpl {
 					EvaluationSettingsParse.getName(
 						EvalSettings.ADMIN_VIEW_BELOW_RESULTS),
 					Boolean.FALSE.toString()) );
-
-			// Default general settings
 			evaluationDao.save( new EvalConfig( new Date(), 
 					EvaluationSettingsParse.getName(
-						EvalSettings.STANDARD_EVALUATION_TERM),
-					"Evaluation") );
+						EvalSettings.ADMIN_VIEW_INSTRUCTOR_ADDED_RESULTS),
+					Boolean.FALSE.toString()) );
+
+			// Default general settings
 			evaluationDao.save( new EvalConfig( new Date(), 
 					EvaluationSettingsParse.getName(
 						EvalSettings.FROM_EMAIL_ADDRESS),
@@ -144,6 +148,19 @@ public class PreloadDataImpl {
 					EvaluationSettingsParse.getName(
 						EvalSettings.EVAL_RECENTLY_CLOSED_DAYS),
 					Integer.valueOf(10).toString()) );
+
+			evaluationDao.save( new EvalConfig( new Date(), 
+					EvaluationSettingsParse.getName(
+						EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY),
+					Boolean.FALSE.toString()) );
+			evaluationDao.save( new EvalConfig( new Date(), 
+					EvaluationSettingsParse.getName(
+						EvalSettings.EVAL_USE_STOP_DATE),
+					Boolean.FALSE.toString()) );
+			evaluationDao.save( new EvalConfig( new Date(), 
+					EvaluationSettingsParse.getName(
+						EvalSettings.EVAL_USE_CUSTOM_VIEW_DATES),
+					Boolean.FALSE.toString()) );
 
 			log.info("Preloaded " + evaluationDao.countAll(EvalConfig.class) + " evaluation system EvalConfig items");
 		}

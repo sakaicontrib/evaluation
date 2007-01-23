@@ -48,9 +48,9 @@ public interface EvalSettings {
 	 */
 	public static final String INSTRUCTOR_ALLOWED_EMAIL_STUDENTS = "INSTRUCTOR_ALLOWED_EMAIL_STUDENTS:java.lang.Boolean";
 	/**
-	 * CONSTANT: Does the instructor have to use evaluations from above in the hierarchy - {@see java.lang.Boolean}, default False
+	 * CONSTANT: Does the instructor have to use evaluations from above in the hierarchy - {@see java.lang.String}, default Configurable
 	 */
-	public static final String INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE = "INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE:java.lang.Boolean";
+	public static final String INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE = "INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE:java.lang.String";
 	/**
 	 * CONSTANT: How many items is the instructor allowed to add to an evaluation from above in the hierarchy - {@see java.lang.Integer}, default 5
 	 */
@@ -77,11 +77,11 @@ public interface EvalSettings {
 	 * CONSTANT: Admin is allowed to view results from items added below them in the hierarchy - {@see java.lang.Boolean}, default False
 	 */
 	public static final String ADMIN_VIEW_BELOW_RESULTS = "ADMIN_VIEW_BELOW_RESULTS:java.lang.Boolean";
-
 	/**
-	 * CONSTANT: This is the standard term used within the system to refer to an Evaluation - {@see java.lang.String}, default "Evaluation"
+	 * CONSTANT: Admin is allowed to view results from items added by instructors below them in the hierarchy - {@see java.lang.Boolean}, default False
 	 */
-	public static final String STANDARD_EVALUATION_TERM = "STANDARD_EVALUATION_TERM:java.lang.String";
+	public static final String ADMIN_VIEW_INSTRUCTOR_ADDED_RESULTS = "ADMIN_VIEW_INSTRUCTOR_ADDED_RESULTS:java.lang.Boolean";
+
 	/**
 	 * CONSTANT: This is the standard from email address used when sending reminders - {@see java.lang.String}, default "helpdesk@institution.edu"
 	 */
@@ -116,38 +116,26 @@ public interface EvalSettings {
 	 */
 	public static final String USE_EXPERT_ITEMS = "USE_EXPERT_ITEMS:java.lang.Boolean";
 	/**
+	 * CONSTANT: Allow item authors to select a category for items - {@see java.lang.Boolean}, default True<br/>
+	 * <b>Note:</b> If this is FALSE/NULL then the category is always set to course category
+	 */
+	public static final String ITEM_USE_COURSE_CATEGORY_ONLY = "ITEM_USE_COURSE_CATEGORY_ONLY:java.lang.Boolean";
+
+	/**
 	 * CONSTANT: How many days old can an eval be and still be recently closed - {@see java.lang.Integer}, default 10<br/>
 	 * It must be less than or equal to this many days old to count as recent
 	 */
 	public static final String EVAL_RECENTLY_CLOSED_DAYS = "EVAL_RECENTLY_CLOSED_DAYS:java.lang.Integer";
-
 	/**
-	 * Defines the allowed values for the Integer constants in pulldowns
+	 * CONSTANT: Allow users to set the stop date when creating evaluations - {@see java.lang.Boolean}, default True<br/>
+	 * <b>Note:</b> Stop date should default to the due date when the user cannot set it
 	 */
-	public static final Integer[] PULLDOWN_INTEGER_VALUES = 
-		new Integer[] {Integer.valueOf(0), Integer.valueOf(1), Integer.valueOf(2),
-			Integer.valueOf(3), Integer.valueOf(4), Integer.valueOf(5),
-			Integer.valueOf(6), Integer.valueOf(7), Integer.valueOf(8),
-			Integer.valueOf(9), Integer.valueOf(10), Integer.valueOf(15),
-			Integer.valueOf(20), Integer.valueOf(25), Integer.valueOf(50)};
-
+	public static final String EVAL_USE_STOP_DATE = "EVAL_USE_STOP_DATE:java.lang.Boolean";
 	/**
-	 * Values to be used for the template sharing pulldown (sets order)<br/>
-	 * Corresponds to the following:<br/>
-	 * Owner - Visiblity set by owner (default)<br/>
-	 * Private - Visible to owner only<br/>
-	 * Visible - Visible to any admin<br/>
-	 * Shared - Editable by same level<br/>
-	 * Public - Editable by any admin
+	 * CONSTANT: Allow users to set custom view dates for evaluations - {@see java.lang.Boolean}, default True<br/>
+	 * <b>Note:</b> If this is FALSE/NULL then the custom date boxes do not appear and are not used, only the global view date is used
 	 */
-	public static final String[] PULLDOWN_TEMPLATE_SHARING_VALUES =
-		new String[] {
-			EvalConstants.SHARING_OWNER, 
-			EvalConstants.SHARING_PRIVATE,
-			EvalConstants.SHARING_VISIBLE, 
-			EvalConstants.SHARING_SHARED, 
-			EvalConstants.SHARING_PUBLIC
-		};
+	public static final String EVAL_USE_CUSTOM_VIEW_DATES = "EVAL_USE_CUSTOM_VIEW_DATES:java.lang.Boolean";
 
 
 	/**
