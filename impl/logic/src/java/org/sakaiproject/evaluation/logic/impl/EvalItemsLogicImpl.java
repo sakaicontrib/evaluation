@@ -267,7 +267,6 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 	 */
 	public void saveTemplateItem(EvalTemplateItem templateItem, String userId) {
 		log.debug("templateItem:" + templateItem.getId() + ", userId:" + userId);
-		// TODO Auto-generated method stub
 
 		// set the date modified
 		templateItem.setLastModified( new Date() );
