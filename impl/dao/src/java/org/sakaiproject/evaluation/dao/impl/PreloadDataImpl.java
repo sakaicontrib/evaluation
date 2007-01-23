@@ -9,7 +9,7 @@
  * 
  * Contributors:
  * Aaron Zeckoski (aaronz@vt.edu) - primary
- * 
+ * Antranig Basman (antranig@caret.cam.ac.uk)
  *****************************************************************************/
 
 package org.sakaiproject.evaluation.dao.impl;
@@ -49,6 +49,19 @@ public class PreloadDataImpl {
 		preloadScales();
 	}
 
+    private void saveConfig(String key, boolean value) {
+      saveConfig(key, value? "true" : "false");
+    }
+    
+    private void saveConfig(String key, int value) {
+      saveConfig(key, Integer.toString(value));
+    }
+    private void saveConfig(String key, String value) {
+      evaluationDao.save( new EvalConfig( new Date(), 
+          EvaluationSettingsParse.getName(
+              key), value));
+    }
+    
 	/**
 	 * Preload the default system configuration settings<br/>
 	 * <b>Note:</b> If you attempt to save a null value here in the preload
@@ -56,111 +69,43 @@ public class PreloadDataImpl {
 	 * you want to "save" as null to have the effect without causing a failure
 	 */
 	public void preloadEvalConfig(){
-
-		//check if there are any EvalConfig items present
-		if(evaluationDao.findAll(EvalConfig.class).isEmpty()) {
-
+		// check if there are any EvalConfig items present
+		if (evaluationDao.findAll(EvalConfig.class).isEmpty()) {
 			// Default Instructor system settings
-			evaluationDao.save( new EvalConfig( new Date(), 
-					EvaluationSettingsParse.getName(
-						EvalSettings.INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS),
-					Boolean.TRUE.toString()) );
-			evaluationDao.save( new EvalConfig( new Date(), 
-					EvaluationSettingsParse.getName(
-						EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS),
-					Boolean.TRUE.toString()) );
-			evaluationDao.save( new EvalConfig( new Date(), 
-					EvaluationSettingsParse.getName(
-						EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS),
-					Boolean.TRUE.toString()) );
+			saveConfig(EvalSettings.INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS, true);
+            saveConfig(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS, true);
+			saveConfig(EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS, true);
 			// leave this out to allow setting in the evals
-//			evaluationDao.save( new EvalConfig( new Date(), 
-//					EvaluationSettingsParse.getName(
-//						EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE),
-//					EvalConstants.INSTRUCTOR_REQUIRED) );
-			evaluationDao.save( new EvalConfig( new Date(), 
-					EvaluationSettingsParse.getName(
-						EvalSettings.INSTRUCTOR_ADD_ITEMS_NUMBER),
-					Integer.valueOf(5).toString()) );
+//          saveConfig(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE), 
+//            EvalConstants.INSTRUCTOR_REQUIRED));
+
+			saveConfig(EvalSettings.INSTRUCTOR_ADD_ITEMS_NUMBER, 5);
 
 			// Default Student settings
-			evaluationDao.save( new EvalConfig( new Date(), 
-					EvaluationSettingsParse.getName(
-						EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED),
-					Boolean.TRUE.toString()) );
-			evaluationDao.save( new EvalConfig( new Date(), 
-					EvaluationSettingsParse.getName(
-						EvalSettings.STUDENT_MODIFY_RESPONSES),
-					Boolean.FALSE.toString()) );
-			evaluationDao.save( new EvalConfig( new Date(), 
-					EvaluationSettingsParse.getName(
-						EvalSettings.STUDENT_VIEW_RESULTS),
-					Boolean.FALSE.toString()) );
+			saveConfig(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED, true);
+            saveConfig(EvalSettings.STUDENT_MODIFY_RESPONSES, false);
+            saveConfig(EvalSettings.STUDENT_VIEW_RESULTS, false);
 
 			// Default Admin settings
-			evaluationDao.save( new EvalConfig( new Date(), 
-					EvaluationSettingsParse.getName(
-						EvalSettings.ADMIN_ADD_ITEMS_NUMBER),
-					Integer.valueOf(5).toString()) );
-			evaluationDao.save( new EvalConfig( new Date(), 
-					EvaluationSettingsParse.getName(
-						EvalSettings.ADMIN_VIEW_BELOW_RESULTS),
-					Boolean.FALSE.toString()) );
-			evaluationDao.save( new EvalConfig( new Date(), 
-					EvaluationSettingsParse.getName(
-						EvalSettings.ADMIN_VIEW_INSTRUCTOR_ADDED_RESULTS),
-					Boolean.FALSE.toString()) );
+			saveConfig(EvalSettings.ADMIN_ADD_ITEMS_NUMBER, 5);
+            saveConfig(EvalSettings.ADMIN_VIEW_BELOW_RESULTS, false);
+            saveConfig(EvalSettings.ADMIN_VIEW_INSTRUCTOR_ADDED_RESULTS, false);
 
 			// Default general settings
-			evaluationDao.save( new EvalConfig( new Date(), 
-					EvaluationSettingsParse.getName(
-						EvalSettings.FROM_EMAIL_ADDRESS),
-					"helpdesk@institution.edu") );
-			evaluationDao.save( new EvalConfig( new Date(), 
-					EvaluationSettingsParse.getName(
-						EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS),
-					Integer.valueOf(5).toString()) );
-			evaluationDao.save( new EvalConfig( new Date(), 
-					EvaluationSettingsParse.getName(
-						EvalSettings.NOT_AVAILABLE_ALLOWED),
-					Boolean.TRUE.toString()) );
-			evaluationDao.save( new EvalConfig( new Date(), 
-					EvaluationSettingsParse.getName(
-						EvalSettings.ITEMS_ALLOWED_IN_QUESTION_BLOCK),
-					Integer.valueOf(10).toString()) );
-			evaluationDao.save( new EvalConfig( new Date(), 
-					EvaluationSettingsParse.getName(
-						EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY),
-					EvalConstants.SHARING_OWNER) );
-			evaluationDao.save( new EvalConfig( new Date(), 
-					EvaluationSettingsParse.getName(
-						EvalSettings.USE_EXPERT_TEMPLATES),
-					Boolean.TRUE.toString()) );
-			evaluationDao.save( new EvalConfig( new Date(), 
-					EvaluationSettingsParse.getName(
-						EvalSettings.USE_EXPERT_ITEMS),
-					Boolean.TRUE.toString()) );
-			evaluationDao.save( new EvalConfig( new Date(), 
-					EvaluationSettingsParse.getName(
-						EvalSettings.REQUIRE_COMMENTS_BLOCK),
-					Boolean.TRUE.toString()) );
-			evaluationDao.save( new EvalConfig( new Date(), 
-					EvaluationSettingsParse.getName(
-						EvalSettings.EVAL_RECENTLY_CLOSED_DAYS),
-					Integer.valueOf(10).toString()) );
+            saveConfig(EvalSettings.FROM_EMAIL_ADDRESS,	"helpdesk@institution.edu");
+            saveConfig(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS, 5);
+            saveConfig(EvalSettings.NOT_AVAILABLE_ALLOWED, true);
+            saveConfig(EvalSettings.ITEMS_ALLOWED_IN_QUESTION_BLOCK, 10);
+            saveConfig(EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY, 
+					EvalConstants.SHARING_OWNER);
+			saveConfig(EvalSettings.USE_EXPERT_TEMPLATES, true);
+			saveConfig(EvalSettings.USE_EXPERT_ITEMS, true);
+            saveConfig(EvalSettings.REQUIRE_COMMENTS_BLOCK, true);
+            saveConfig(EvalSettings.EVAL_RECENTLY_CLOSED_DAYS, 10);
 
-			evaluationDao.save( new EvalConfig( new Date(), 
-					EvaluationSettingsParse.getName(
-						EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY),
-					Boolean.FALSE.toString()) );
-			evaluationDao.save( new EvalConfig( new Date(), 
-					EvaluationSettingsParse.getName(
-						EvalSettings.EVAL_USE_STOP_DATE),
-					Boolean.FALSE.toString()) );
-			evaluationDao.save( new EvalConfig( new Date(), 
-					EvaluationSettingsParse.getName(
-						EvalSettings.EVAL_USE_CUSTOM_VIEW_DATES),
-					Boolean.FALSE.toString()) );
+			saveConfig(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY, false);
+			saveConfig(EvalSettings.EVAL_USE_STOP_DATE, false);
+            saveConfig(EvalSettings.EVAL_USE_CUSTOM_VIEW_DATES, false);
 
 			log.info("Preloaded " + evaluationDao.countAll(EvalConfig.class) + " evaluation system EvalConfig items");
 		}
@@ -185,6 +130,14 @@ public class PreloadDataImpl {
 		}
 	}
 	
+    private void saveScale(String title, String[] options) {
+      evaluationDao.save(new EvalScale(new Date(), 
+            ADMIN_OWNER, title, 
+            EvalConstants.SHARING_PUBLIC, Boolean.TRUE, 
+            "", 
+            EvalConstants.SCALE_IDEAL_HIGH, options, Boolean.TRUE) );
+    }
+    
 	/**
 	 * Preload the default expert built scales into the database
 	 */
@@ -192,117 +145,40 @@ public class PreloadDataImpl {
 
 		// check if there are any scales present
 		if(evaluationDao.findAll(EvalScale.class).isEmpty()) {
-
 			// NOTE: If you change the number of hidden scales on this page then
 			// you will need to change the testFindByExample test in EvaluationDaoImplTest also
 
 			// initial VT scales
-			String[] options1 = {"Strongly Disagree","Disagree","Uncertain","Agree","Strongly agree"};
-			evaluationDao.save(new EvalScale(new Date(), 
-					ADMIN_OWNER, "Agree disagree scale", 
-					EvalConstants.SHARING_PUBLIC, Boolean.TRUE, 
-					"", 
-					EvalConstants.SCALE_IDEAL_HIGH,	options1, Boolean.TRUE) );
-
-			String[] options2 = {"Hardly ever","Occasionally","Sometimes","Frequently","Always"};
-			evaluationDao.save(new EvalScale(new Date(), 
-					ADMIN_OWNER, "Frequency scale",
-					EvalConstants.SHARING_PUBLIC, Boolean.TRUE, 
-					"", 
-					EvalConstants.SCALE_IDEAL_NONE, options2, Boolean.TRUE) );
-
-			String[] options3 = {"Poor","Fair","Good","Excellent"};
-			evaluationDao.save(new EvalScale(new Date(),
-					ADMIN_OWNER, "Relative rating scale",
-					EvalConstants.SHARING_PUBLIC, Boolean.TRUE, 
-					"", 
-					EvalConstants.SCALE_IDEAL_HIGH, options3, Boolean.TRUE) );
-
-			String[] options4 = {"Less than Average","Average","More than Average"};
-			evaluationDao.save(new EvalScale(new Date(),
-					ADMIN_OWNER, "Averages scale",
-					EvalConstants.SHARING_PUBLIC, Boolean.TRUE, 
-					"", 
-					EvalConstants.SCALE_IDEAL_HIGH, options4, Boolean.TRUE) );
-
-			// initial demographic scales
-			String[] options5 = {"Female","Male"};
-			evaluationDao.save(new EvalScale(new Date(),
-					ADMIN_OWNER, "Gender scale",
-					EvalConstants.SHARING_PUBLIC, Boolean.TRUE, 
-					"", 
-					EvalConstants.SCALE_IDEAL_NONE, options5, Boolean.TRUE) );
-
-			String[] options6 = {"Req. in Major","Req. out of Major","Elective filling Req.","Free Elec. in Major","Free Elec. out of Major"};
-			evaluationDao.save(new EvalScale(new Date(),
-					ADMIN_OWNER, "Class requirements scale",
-					EvalConstants.SHARING_PUBLIC, Boolean.TRUE, 
-					"", 
-					EvalConstants.SCALE_IDEAL_NONE, options6, Boolean.TRUE) );
-
-			String[] options7 = {"Fresh","Soph","Junior","Senior","Master","Doctoral"};
-			evaluationDao.save(new EvalScale(new Date(),
-					ADMIN_OWNER, "Student year scale",
-					EvalConstants.SHARING_PUBLIC, Boolean.TRUE, 
-					"", 
-					EvalConstants.SCALE_IDEAL_NONE, options7, Boolean.TRUE) );
-
-			String[] options8 = {"F","D","C","B","A","Pass"};
-			evaluationDao.save(new EvalScale(new Date(),
-					ADMIN_OWNER, "Student grade scale",
-					EvalConstants.SHARING_PUBLIC, Boolean.TRUE, 
-					"", 
-					EvalConstants.SCALE_IDEAL_HIGH, options8, Boolean.TRUE) );
-
-			String[] options9 = {"MGT","MSCI","MKTG","FIN","ACIS","ECON","OTHER"};
-			evaluationDao.save(new EvalScale(new Date(),
-					ADMIN_OWNER, "Business major scale",
-					EvalConstants.SHARING_PUBLIC, Boolean.TRUE, 
-					"", 
-					EvalConstants.SCALE_IDEAL_HIGH, options9, Boolean.TRUE) );
-
-			String[] options10 = {"Freshman","Sophomore","Junior","Senior","Graduate"};
-			evaluationDao.save(new EvalScale(new Date(),
-					ADMIN_OWNER, "Business student yr scale",
-					EvalConstants.SHARING_PUBLIC, Boolean.TRUE, 
-					"", 
-					EvalConstants.SCALE_IDEAL_HIGH, options10, Boolean.TRUE) );
-			
-			// initial expert scales
-			String[] optionsA = {"Not effective","Somewhat effective","Moderately effective","Effective","Very effective"};
-			evaluationDao.save(new EvalScale(new Date(),
-					ADMIN_OWNER, "Effectiveness scale",
-					EvalConstants.SHARING_PUBLIC, Boolean.TRUE, 
-					"", 
-					EvalConstants.SCALE_IDEAL_HIGH, optionsA, Boolean.TRUE) );
-
-			String[] optionsB = {"Unsatisfactory","Inadequate","Adequate","Good","Excellent"};
-			evaluationDao.save(new EvalScale(new Date(),
-					ADMIN_OWNER, "Adequate scale",
-					EvalConstants.SHARING_PUBLIC, Boolean.TRUE, 
-					"", 
-					EvalConstants.SCALE_IDEAL_HIGH, optionsB, Boolean.TRUE) );
-
-			String[] optionsC = {"Much less","Less","Some","More","Much more"};
-			evaluationDao.save(new EvalScale(new Date(),
-					ADMIN_OWNER, "Relationships scale",
-					EvalConstants.SHARING_PUBLIC, Boolean.TRUE, 
-					"", 
-					EvalConstants.SCALE_IDEAL_NONE, optionsC, Boolean.TRUE) );
-
-			String[] optionsD = {"Very low","High","Moderately high","High","Very high"};
-			evaluationDao.save(new EvalScale(new Date(),
-					ADMIN_OWNER, "Low high scale",
-					EvalConstants.SHARING_PUBLIC, Boolean.TRUE, 
-					"", 
-					EvalConstants.SCALE_IDEAL_HIGH, optionsD, Boolean.TRUE) );
-
-			String[] optionsE = {"Too slow", "Appropriate", "Too fast"};
-			evaluationDao.save(new EvalScale(new Date(),
-					ADMIN_OWNER, "Speed scale",
-					EvalConstants.SHARING_PUBLIC, Boolean.TRUE, 
-					"", 
-					EvalConstants.SCALE_IDEAL_MID, optionsE, Boolean.TRUE) );
+          saveScale("Agree disagree scale", 
+              new String[]{"Strongly Disagree","Disagree","Uncertain","Agree","Strongly agree"});
+          saveScale("Frequency scale", 
+              new String[] {"Hardly ever","Occasionally","Sometimes","Frequently","Always"});
+		  saveScale("Relative rating scale",
+              new String[] {"Poor","Fair","Good","Excellent"});
+		  saveScale("Averages scale", 
+              new String[] {"Less than Average","Average","More than Average"});
+          // initial demographic scales
+          saveScale("Gender scale", new String[] {"Female","Male"});
+          saveScale("Class requirements scale", 
+              new String[] {"Req. in Major","Req. out of Major","Elective filling Req.","Free Elec. in Major","Free Elec. out of Major"});
+          saveScale( "Student year scale", 
+              new String[] {"Fresh","Soph","Junior","Senior","Master","Doctoral"});
+		  saveScale("Student grade scale", new String[] {"F","D","C","B","A","Pass"});
+		  saveScale("Business major scale", 
+              new String[] {"MGT","MSCI","MKTG","FIN","ACIS","ECON","OTHER"});
+          saveScale("Business student yr scale",
+              new String[] {"Freshman","Sophomore","Junior","Senior","Graduate"});
+          // initial expert scales
+		  saveScale("Effectiveness scale", 
+              new String[] {"Not effective","Somewhat effective","Moderately effective","Effective","Very effective"});
+		  saveScale("Adequacy scale", 
+              new String[] {"Unsatisfactory","Inadequate","Adequate","Good","Excellent"});
+          saveScale("Relationships scale",
+              new String[] {"Much less","Less","Some","More","Much more"});
+          saveScale("Low high scale",
+              new String[] {"Very low","High","Moderately high","High","Very high"});
+          saveScale("Speed scale",
+              new String[] {"Too slow", "Appropriate", "Too fast"});
 			
 			log.info("Preloaded " + evaluationDao.countAll(EvalScale.class) + " evaluation scales");
 		}
