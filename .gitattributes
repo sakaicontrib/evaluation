@@ -97,6 +97,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/EvaluationBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/EvaluationConstant.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ItemBlockUtils.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ReportHandlerHook.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/SettingsWBL.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/TemplateBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/bundle/messages_en.properties -text
 tool/src/java/org/sakaiproject/evaluation/tool/params/CSVReportViewParams.java -text
