@@ -14,7 +14,6 @@
 
 package org.sakaiproject.evaluation.logic;
 
-import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 /**
  * This allows access to and control of all system settings for the evaluation
