@@ -44,7 +44,13 @@
 			class="org.sakaiproject.evaluation.tool.AdministrativeBean">
 		<property name="settings" 
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />							
-	</bean>	
+	</bean>
+  
+    <bean id="settingsBean"
+      class="org.sakaiproject.evaluation.tool.SettingsWBL">
+       <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings"/>
+       <property name="leafParser" ref="staticLeafParser"/>
+    </bean>
 	
 	<bean id="handlerHook"
 		class="org.sakaiproject.evaluation.tool.ReportHandlerHook">	

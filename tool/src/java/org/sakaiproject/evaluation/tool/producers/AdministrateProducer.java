@@ -20,6 +20,7 @@ import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 
+import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
@@ -62,8 +63,15 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
 	private EvalSettings settings;
 	public void setSettings(EvalSettings settings) {
 		this.settings = settings;
-	}	
-	
+    }
+    
+    private String ADMIN_WBL = "settingsBean";
+    
+    private void makeBoolean(UIContainer parent, String ID, String adminkey) {
+      // Must use "composePath" here since admin keys currently contain periods
+      UIBoundBoolean.make(parent, ID, adminkey == null? null : PathUtil.composePath(ADMIN_WBL, adminkey)); 
+    }
+    
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 		String currentUserId = external.getCurrentUserId();
 		boolean userAdmin = external.isUserAdmin(currentUserId);
@@ -92,7 +100,7 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
 
 		//Instructor Settings
 		UIOutput.make(form, "instructor-settings-header", messageLocator.getMessage("administrate.instructor.settings.header")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIBoundBoolean.make(form, "instructors-eval-create", "#{administrativeBean.instCreateTemplate}", (Boolean)(settings.get(EvalSettings.INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS))); //$NON-NLS-1$ //$NON-NLS-2$
+        makeBoolean(form, "instructors-eval-create", EvalSettings.INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS); //$NON-NLS-1$ 
 		UIOutput.make(form, "instructors-eval-create-note", messageLocator.getMessage("administrate.instructors.eval.create.note")); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		//Select for whether instructors can view results or not
@@ -105,7 +113,7 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
 		instViewResults.optionnames = instViewResultsValues;	
 		UIOutput.make(form, "instructors-view-results-note", messageLocator.getMessage("administrate.instructors.view.results.note")); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		UIBoundBoolean.make(form, "instructors-email-students", "#{administrativeBean.instSendEmail}", (Boolean)(settings.get(EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS))); //$NON-NLS-1$ //$NON-NLS-2$
+		makeBoolean(form, "instructors-email-students", EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS); //$NON-NLS-1$ 
 		UIOutput.make(form, "instructors-email-students-note", messageLocator.getMessage("administrate.instructors.email.students.note")); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		//Select for whether instructors must use evaluations from above
@@ -170,9 +178,9 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
 										((Integer)settings.get(EvalSettings.ADMIN_ADD_ITEMS_NUMBER)).toString()); 
 		UIOutput.make(form, "admin-hierarchy-num-questions-note", messageLocator.getMessage("administrate.admin.hierarchy.num.questions.note")); //$NON-NLS-1$ //$NON-NLS-2$
 
-		UIBoundBoolean.make(form, "admin-view-instructor-questions", "#{administrativeBean.adminViewInstQuestion}", null); //$NON-NLS-1$ //$NON-NLS-2$
+		makeBoolean(form, "admin-view-instructor-questions", null); //$NON-NLS-1$ 
 		UIOutput.make(form, "admin-view-instructor-questions-note", messageLocator.getMessage("administrate.admin.view.instructor.questions.note"));		 //$NON-NLS-1$ //$NON-NLS-2$
-		UIBoundBoolean.make(form, "admin-super-modify-question", "#{administrativeBean.adminSuperModifyQues}", null); //$NON-NLS-1$ //$NON-NLS-2$
+		makeBoolean(form, "admin-super-modify-question", null); //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(form, "admin-super-modify-question-note", messageLocator.getMessage("administrate.admin.super.modify.question.note")); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		UIOutput.make(form, "general-settings-header", messageLocator.getMessage("administrate.general.settings.header"));		 //$NON-NLS-1$ //$NON-NLS-2$
@@ -187,7 +195,7 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
 												((Integer)settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS)).toString());
 		UIOutput.make(form, "general-responses-before-view-note", messageLocator.getMessage("administrate.general.responses.before.view.note"));		 //$NON-NLS-1$ //$NON-NLS-2$
 		
-		UIBoundBoolean.make(form, "general-na-allowed", "#{administrativeBean.genNaAllowed}", (Boolean)(settings.get(EvalSettings.NOT_AVAILABLE_ALLOWED))); //$NON-NLS-1$ //$NON-NLS-2$
+		makeBoolean(form, "general-na-allowed", EvalSettings.NOT_AVAILABLE_ALLOWED); //$NON-NLS-1$ 
 		UIOutput.make(form, "general-na-allowed-note", messageLocator.getMessage("administrate.general.na.allowed.note"));	 //$NON-NLS-1$ //$NON-NLS-2$
 		
 		// Select for maximum number of questions in a block
@@ -225,13 +233,13 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
 		defaultQuesCategory.optionnames = defaultQuesCategoryValues;	
 		UIOutput.make(form, "general-default-question-category", messageLocator.getMessage("administrate.general.default.question.category.note"));	 //$NON-NLS-1$ //$NON-NLS-2$
 		
-		UIBoundBoolean.make(form, "general-use-stop-date", "#{administrativeBean.genUseStopDate}", null); //$NON-NLS-1$ //$NON-NLS-2$
+		makeBoolean(form, "general-use-stop-date", null); //$NON-NLS-1$ 
 		UIOutput.make(form, "general-use-stop-date-note", messageLocator.getMessage("administrate.general.use.stop.date.note"));		 //$NON-NLS-1$ //$NON-NLS-2$
-		UIBoundBoolean.make(form, "general-expert-templates", "#{administrativeBean.genUseExpertTemplate}", (Boolean)(settings.get(EvalSettings.USE_EXPERT_TEMPLATES))); //$NON-NLS-1$ //$NON-NLS-2$
+		makeBoolean(form, "general-expert-templates", EvalSettings.USE_EXPERT_TEMPLATES); //$NON-NLS-1$ 
 		UIOutput.make(form, "general-expert-templates-note", messageLocator.getMessage("administrate.general.expert.templates.note"));	 //$NON-NLS-1$ //$NON-NLS-2$
-		UIBoundBoolean.make(form, "general-expert-questions", "#{administrativeBean.genUseExpertQuestion}", (Boolean)(settings.get(EvalSettings.USE_EXPERT_ITEMS))); //$NON-NLS-1$ //$NON-NLS-2$
+		makeBoolean(form, "general-expert-questions", EvalSettings.USE_EXPERT_ITEMS); 
 		UIOutput.make(form, "general-expert-questions-note", messageLocator.getMessage("administrate.general.expert.questions.note"));		 //$NON-NLS-1$ //$NON-NLS-2$
-		UIBoundBoolean.make(form, "general-same-view-date", "#{administrativeBean.genUseSameViewDate}", null); //$NON-NLS-1$ //$NON-NLS-2$
+		makeBoolean(form, "general-same-view-date",  null); //$NON-NLS-1$ 
 		UIOutput.make(form, "general-same-view-date-note", messageLocator.getMessage("administrate.general.same.view.date.note"));	 //$NON-NLS-1$ //$NON-NLS-2$
 
 		// Save settings button
