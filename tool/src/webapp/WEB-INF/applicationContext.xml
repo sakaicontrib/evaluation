@@ -16,12 +16,27 @@
 	</bean>
 
 	<!-- the beans listed here are allowed access to values (security) -->
-	<bean name="requestAddressibleBeans"
-		class="uk.org.ponder.springutil.StringListFactory">
-		<property name="strings">
-			<value>templateBean, evaluationBean, settingsBean</value>
-		</property>
-	</bean>
+	<bean parent="requestAddressibleParent">
+		<property name="value" value="templateBean, evaluationBean, templateBBean, itemsBean, templateBeanLocator, templateItemBeanLocator, settingsBean"/>
+ 	</bean>	
+
+	<bean id="EvalARIProxy" parent="RSACBridgeProxy">
+          <property name="targetBeanName">
+            <idref bean="EvalARI"/>
+          </property>
+        </bean>
+
+	  <bean name="actionResultInterpreter"
+	    class="uk.org.ponder.rsf.flow.DelegatingARI">
+	    <property name="ARIList">
+	      <list>
+	        <ref bean="JSFNavigationARI" />
+	        <ref bean="EvalARIProxy" />	        
+	        <ref bean="nullActionResultInterpreter" />
+	      </list>
+	    </property>
+	  </bean>
+	
 
 	<!-- The beans listed here are session beans (they stick around) -->
 	<bean id="myBeanScope" parent="beanScopeParent">

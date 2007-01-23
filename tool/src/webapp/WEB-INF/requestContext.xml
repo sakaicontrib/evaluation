@@ -39,12 +39,43 @@
 		<property name="scalesLogic" 
 			ref="org.sakaiproject.evaluation.logic.EvalScalesLogic" />
 	</bean>
-  
+
     <bean id="settingsBean"
       class="org.sakaiproject.evaluation.tool.SettingsWBL">
        <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings"/>
        <property name="leafParser" ref="staticLeafParser"/>
     </bean>
+	
+	<!-- request scope backing beans here -->
+	<bean id="EvalARI"
+		class="org.sakaiproject.evaluation.tool.EvalARI" >
+		<property name="templateBBean" ref="templateBBean" />	
+		<property name="itemsBean" ref="itemsBean" />			
+	</bean>
+
+	<bean id="templateBBean"
+			class="org.sakaiproject.evaluation.tool.TemplateBBean"
+			init-method="init">
+		<property name="external" 
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+		<property name="templatesLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />	
+		<property name="itemsLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />					
+	</bean>
+	
+	<bean id="itemsBean"
+			class="org.sakaiproject.evaluation.tool.ItemsBean"
+			init-method="init">
+		<property name="external" 
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+		<property name="itemsLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />	
+		<property name="scalesLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalScalesLogic" />
+		<property name="templatesLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />	
+	</bean>	
 	
 	<bean id="handlerHook"
 		class="org.sakaiproject.evaluation.tool.ReportHandlerHook">	
@@ -57,6 +88,21 @@
 			ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />		
 	</bean>
 
+	<bean id="templateBeanLocator"
+		class="org.sakaiproject.evaluation.tool.TemplateBeanLocator" >
+		<property name="templatesLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />	
+		<property name="external" 
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />			
+	</bean>
+
+	<bean id="templateItemBeanLocator"
+		class="org.sakaiproject.evaluation.tool.TemplateItemBeanLocator" >
+		<property name="itemsLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />	
+		<property name="external" 
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />			
+	</bean>	
 
 	<!-- producers here -->
 	<bean class="org.sakaiproject.evaluation.tool.producers.SummaryProducer">
@@ -97,15 +143,25 @@
 
 	<bean class="org.sakaiproject.evaluation.tool.producers.TemplateProducer" >
 		<property name="messageLocator" ref="messageLocator" />
+		<property name="templateBBean" ref="templateBBean" />			
 	</bean>
 
 	<bean class="org.sakaiproject.evaluation.tool.producers.TemplateModifyProducer">
 		<property name="messageLocator" ref="messageLocator" />	
-		<property name="templateBean" ref="templateBean" />				
+		<property name="templateBean" ref="templateBean" />		
+		<property name="templateBBean" ref="templateBBean" />	
+		<property name="itemsBean" ref="itemsBean" />			
 	</bean>
 
 	<bean class="org.sakaiproject.evaluation.tool.producers.TemplateItemProducer" >
 		<property name="templateBean" ref="templateBean" />
+		<property name="itemsBean" ref="itemsBean" />		
+		<property name="external" 
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />	
+		<property name="itemsLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />		
+		<property name="templatesLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
 		<property name="messageLocator" ref="messageLocator" />			
 	</bean>
 
@@ -208,7 +264,7 @@
 		<property name="evalsLogic" 
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />		
 		<property name="messageLocator" ref="messageLocator" />		
-		<property name="locale" ref="requestLocale"/>						
+		<property name="locale" ref="requestLocale"/>
 	</bean>
 
 	<bean class="org.sakaiproject.evaluation.tool.producers.RemoveTemplateProducer">

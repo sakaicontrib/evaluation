@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
+import org.sakaiproject.evaluation.tool.TemplateBBean;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 
 import uk.org.ponder.messageutil.MessageLocator;
@@ -30,6 +31,7 @@ import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
+import uk.org.ponder.rsf.flow.jsfnav.DynamicNavigationCaseReporter;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
@@ -44,18 +46,25 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * @author: Rui Feng (fengr@vt.edu)
  */
 
-public class TemplateProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
+public class TemplateProducer implements ViewComponentProducer, ViewParamsReporter {
 	public static final String VIEW_ID = "template_title_desc"; 
 	public String getViewID() {
 		return VIEW_ID;
 	}
 
+	private Long currTemplateId;
+	
 	private MessageLocator messageLocator;
 	public void setMessageLocator(MessageLocator messageLocator) {
 		this.messageLocator = messageLocator;
 	}	
 	
-
+	private TemplateBBean templateBBean;
+	
+	public void setTemplateBBean(TemplateBBean templateBBean) {
+		this.templateBBean = templateBBean;
+	}
+	
 	/*
 	 * 1) accessing this page trough "Create Template" link --
 	 * 2) accessing through "Modify Template Title/Description" link on ModifyTemplate page
@@ -66,7 +75,17 @@ public class TemplateProducer implements ViewComponentProducer, ViewParamsReport
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {		
 		
 		EvalViewParameters evalViewParams = (EvalViewParameters)viewparams;
-		
+		String templateOTP=null;
+		String templateOTPBinding=null;
+		if(evalViewParams.templateId!=null){
+		    currTemplateId=evalViewParams.templateId;
+			templateOTPBinding="templateBeanLocator."+currTemplateId;
+		}
+		else{
+			templateOTPBinding="templateBeanLocator.new1";
+		}
+	    templateOTP=templateOTPBinding+".";	
+	    
 		UIOutput.make(tofill, "template-title-desc-title", messageLocator.getMessage("modifytemplatetitledesc.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		UIInternalLink.make(tofill, "summary-toplink", messageLocator.getMessage("summary.page.title"),  //$NON-NLS-1$ //$NON-NLS-2$
@@ -76,15 +95,16 @@ public class TemplateProducer implements ViewComponentProducer, ViewParamsReport
 		UIOutput.make(form, "title-header", messageLocator.getMessage("modifytemplatetitledesc.title.header")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(form, "description-header", messageLocator.getMessage("modifytemplatetitledesc.description.header")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(form, "description-note", messageLocator.getMessage("modifytemplatetitledesc.description.note")); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		UIInput.make(form, "title", "#{templateBean.title}");
-		UIInput.make(form, "description", "#{templateBean.description}");
+		UICommand saveCmd=UICommand.make(form, "addContinue",messageLocator.getMessage("modifytemplatetitledesc.save.button"), "#{templateBBean.updateTemplateTitleDesc}"); 
+		saveCmd.parameters.add(new UIELBinding("#{templateBBean.currTemplate}",new ELReference(templateOTPBinding)));		
+		UIInput.make(form, "title", templateOTP+"title");
+		UIInput.make(form, "description", templateOTP+"description");
 
+		
 		//dropdown list		
 		UISelect combo = UISelect.make(form, "sharing");
 		combo.selection = new UIInput();
-		combo.selection.valuebinding = new ELReference("#{templateBean.modifier}");
-		//combo.selection.valuebinding = new ELReference("#{templateBean.template.sharing}");
+		combo.selection.valuebinding = new ELReference(templateOTP+"sharing");
 		UIBoundList comboValues = new UIBoundList();
 		comboValues.setValue(EvaluationConstant.MODIFIER_VALUES);
 		combo.optionlist = comboValues;
@@ -92,7 +112,7 @@ public class TemplateProducer implements ViewComponentProducer, ViewParamsReport
 		String[] sharingList = 
 		{
 			messageLocator.getMessage("modifytemplatetitledesc.sharing.private"),
-			messageLocator.getMessage("modifytemplatetitledesc.sharing.visible")
+			messageLocator.getMessage("modifytemplatetitledesc.sharing.visible"),
 			//messageLocator.getMessage("modifytemplatetitledesc.sharing.shared"),
 			//messageLocator.getMessage("modifytemplatetitledesc.sharing.public")
 		};
@@ -103,21 +123,7 @@ public class TemplateProducer implements ViewComponentProducer, ViewParamsReport
 		
 		UIOutput.make(form, "cancel-button", messageLocator.getMessage("general.cancel.button"));
 		
-		if(evalViewParams.templateId!=null){
-			UICommand saveCmd=UICommand.make(form, "addContinue",messageLocator.getMessage("modifytemplatetitledesc.save.button"), "#{templateBean.saveTemplate}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			saveCmd.parameters.add(new UIELBinding("#{templateBean.templateId}",evalViewParams.templateId.toString()));		
-		}
-		else 
-			UICommand.make(form, "addContinue",messageLocator.getMessage("modifytemplatetitledesc.continue.button"), "#{templateBean.createTemplateAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-	}
-	
-	public List reportNavigationCases() {
-		List i = new ArrayList();
-		
-		i.add(new NavigationCase(TemplateModifyProducer.VIEW_ID, new SimpleViewParameters(TemplateModifyProducer.VIEW_ID)));
-		
-		return i;
 	}
 
 

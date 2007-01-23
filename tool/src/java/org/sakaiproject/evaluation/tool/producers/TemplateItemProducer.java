@@ -17,8 +17,17 @@ package org.sakaiproject.evaluation.tool.producers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.sakaiproject.evaluation.logic.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.EvalItemsLogic;
+import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
+import org.sakaiproject.evaluation.model.EvalItem;
+import org.sakaiproject.evaluation.model.EvalTemplateItem;
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
+import org.sakaiproject.evaluation.tool.ItemsBean;
 import org.sakaiproject.evaluation.tool.TemplateBean;
+import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
+import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
 
 
 import uk.org.ponder.messageutil.MessageLocator;
@@ -27,6 +36,7 @@ import uk.org.ponder.rsf.components.UIBoundList;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
@@ -40,6 +50,7 @@ import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
 /**
  * Page for Create, modify,preview, delete a Scaled/Suvey type Item
@@ -47,15 +58,36 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  * @author: Rui Feng (fengr@vt.edu)
  */
 
-public class TemplateItemProducer implements ViewComponentProducer,NavigationCaseReporter {
+public class TemplateItemProducer implements ViewComponentProducer,ViewParamsReporter {
 	public static final String VIEW_ID = "template_item"; //$NON-NLS-1$
 
 	private TemplateBean templateBean;
 
+	private Long templateItemId;
+	private Long templateId;
+	
+	private EvalItemsLogic itemsLogic;
+	public void setItemsLogic(EvalItemsLogic itemsLogic) {
+		this.itemsLogic = itemsLogic;
+	}	
+	private EvalTemplatesLogic templatesLogic;
+	public void setTemplatesLogic( EvalTemplatesLogic templatesLogic) {
+		this.templatesLogic = templatesLogic;
+	}
+	private EvalExternalLogic external;
+	public void setExternal(EvalExternalLogic external) {
+		this.external = external;
+	}
+	
 	public void setTemplateBean(TemplateBean templateBean) {
 		this.templateBean = templateBean;
 	}
 
+	private ItemsBean itemsBean;
+	public void setItemsBean(ItemsBean itemsBean) {
+		this.itemsBean = itemsBean;
+	}
+	
 	private MessageLocator messageLocator;
 	public void setMessageLocator(MessageLocator messageLocator) {
 		this.messageLocator = messageLocator;
@@ -68,6 +100,37 @@ public class TemplateItemProducer implements ViewComponentProducer,NavigationCas
 
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
+		TemplateItemViewParameters templateItemViewParams = (TemplateItemViewParameters) viewparams;
+		
+		String templateItemOTP=null;
+		String templateItemOTPBinding=null;
+		if(templateItemViewParams.templateItemId!=null){
+		    templateItemId=templateItemViewParams.templateItemId;
+			templateItemOTPBinding="templateItemBeanLocator."+templateItemId;
+		}
+		else{
+			templateItemOTPBinding="templateItemBeanLocator.new1";
+			
+		}
+	    templateItemOTP=templateItemOTPBinding+".";	
+	    templateId=templateItemViewParams.templateId;
+		
+	/*	EvalTemplateItem templateItem=new EvalTemplateItem();
+		templateItem.setItem(new EvalItem());
+
+		if(templateItemViewParams.templateItemId==null){
+			System.out.println(templateItemViewParams.templateId);
+			templateItem.getItem().setClassification(EvalConstants.ITEM_TYPE_SCALED);
+			templateItem.setDisplayOrder(new Integer(itemsLogic.getTemplateItemsForTemplate(templateItemViewParams.templateId, external.getCurrentUserId()).size()));
+			templateItem.setOwner(external.getCurrentUserId());
+			itemsBean.newItemInit(templateItemViewParams.templateId, EvalConstants.ITEM_TYPE_SCALED);			
+		}
+		else{
+			templateItem = itemsLogic.getTemplateItemById(templateItemId);
+			
+			itemsBean.fetchTemplateItem(templateItemViewParams.templateItemId);
+		}*/
+		
 		UIOutput.make(tofill, "modify-item-title", messageLocator.getMessage("templateitem.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(tofill, "create-eval-title", messageLocator.getMessage("createeval.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -78,37 +141,38 @@ public class TemplateItemProducer implements ViewComponentProducer,NavigationCas
 
 		UIOutput.make(form, "item-header", messageLocator.getMessage("modifyitem.item.header"));	//TODO: exception: can not get property
 		//UIOutput.make(form, "item-header","Item" );
-		UIOutput.make(form,"itemNo",null,"#{templateBean.currItemNo}"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIOutput.make(form,"itemNo",null,"1."); //$NON-NLS-1$ //$NON-NLS-2$
 
-		UIOutput.make(form,"itemClassification",null,"#{templateBean.itemClassification}");
+		UIOutput.make(form,"itemClassification",null,"Scaled");
 		UIOutput.make(form, "added-by", messageLocator.getMessage("modifyitem.added.by"));  //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(form, "userInfo",null, "#{templateBean.userId}");
+		/** TODO - fetch id of owner */
+		UIOutput.make(form, "userInfo",null, templateItemOTP+"owner");
 		
-		if(templateBean.currentItem != null){
+		if(templateItemViewParams.templateItemId != null){
 			UIBranchContainer showLink = UIBranchContainer.make(form, "showRemoveLink:");
 			UIInternalLink.make(showLink, "remove_link", messageLocator.getMessage("modifyitem.remove.link"), new SimpleViewParameters("remove_question"));	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 
 		UIOutput.make(form, "question-text-header", messageLocator.getMessage("modifyitem.question.text.header")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIInput.make(form,"item_text", "#{templateBean.itemText}"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIInput.make(form,"item_text", templateItemOTP+"item.itemText"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		UIOutput.make(form, "scale-type-header", messageLocator.getMessage("templateitem.scale.type.header")); //$NON-NLS-1$ //$NON-NLS-2$
 		//dropdown list for "Scale Type"
 		UISelect combo = UISelect.make(form, "scaleList"); //$NON-NLS-1$
 		combo.selection = new UIInput();
-		combo.selection.valuebinding = new ELReference("#{templateBean.scaleId}"); //$NON-NLS-1$
+		combo.selection.valuebinding = new ELReference("#{itemsBean.scaleId}"); //$NON-NLS-1$
 		UIBoundList comboValues = new UIBoundList();
-		comboValues.valuebinding=new ELReference("#{templateBean.scaleValues}"); //$NON-NLS-1$
+		comboValues.valuebinding=new ELReference("#{itemsBean.scaleValues}"); //$NON-NLS-1$
 		combo.optionlist = comboValues;
 		UIBoundList comboNames = new UIBoundList();
-		comboNames.valuebinding=new ELReference("#{templateBean.scaleLabels}"); //$NON-NLS-1$
+		comboNames.valuebinding=new ELReference("#{itemsBean.scaleLabels}"); //$NON-NLS-1$
 		combo.optionnames = comboNames;
 
 		UIOutput.make(form, "scale-display-header", messageLocator.getMessage("templateitem.scale.display.header")); //$NON-NLS-1$ //$NON-NLS-2$
 		//drop down list for "Scale Display Setting"
 		UISelect sl = UISelect.make(form, "scaleDisplaySetting"); //$NON-NLS-1$
 		sl.selection = new UIInput();
-		sl.selection.valuebinding = new ELReference("#{templateBean.scaleDisplaySetting}");
+		sl.selection.valuebinding = new ELReference(templateItemOTP+"scaleDisplaySetting");
 		
 		String[] scaleLabelList = 
 		{
@@ -128,7 +192,7 @@ public class TemplateItemProducer implements ViewComponentProducer,NavigationCas
 		sl.optionlist = slValues;
 
 		UIOutput.make(form, "add-na-header", messageLocator.getMessage("modifyitem.add.na.header"));			 //$NON-NLS-1$ //$NON-NLS-2$
-		UIBoundBoolean.make(form, "item_NA", "#{templateBean.itemNA}",null); //$NON-NLS-1$ //$NON-NLS-2$
+		UIBoundBoolean.make(form, "item_NA", templateItemOTP+"item.usesNA",null); //$NON-NLS-1$ //$NON-NLS-2$
 
 		UIOutput.make(form, "item-category-header", messageLocator.getMessage("modifyitem.item.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(form, "course-category-header", messageLocator.getMessage("modifyitem.course.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -140,28 +204,39 @@ public class TemplateItemProducer implements ViewComponentProducer,NavigationCas
 			messageLocator.getMessage("modifyitem.instructor.category.header"),
 		};
 		UISelect radios = UISelect.make(form, "item_category", EvaluationConstant.ITEM_CATEGORY_VALUES,
-				courseCategoryList, "#{templateBean.itemCategory}",null);
+				courseCategoryList, templateItemOTP+"itemCategory",null);
 		
 		String selectID = radios.getFullID();
 		UISelectChoice.make(form, "item_category_C", selectID, 0); //$NON-NLS-1$
 		UISelectChoice.make(form, "item_category_I", selectID, 1);	 //$NON-NLS-1$
 
-		UICommand.make(form, "cancelItemAction",  messageLocator.getMessage("general.cancel.button"), "#{templateBean.cancelItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		UICommand.make(form, "cancelItemAction",  messageLocator.getMessage("general.cancel.button"), "#{itemsBean.cancelItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-		UICommand.make(form, "saveItemAction",  messageLocator.getMessage("modifyitem.save.button"), "#{templateBean.saveItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		UICommand saveCmd = UICommand.make(form, "saveItemAction",  messageLocator.getMessage("modifyitem.save.button"), "#{itemsBean.saveItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		//saveCmd.parameters.add(new UIELBinding(templateItemOTP+"template",templatesLogic.getTemplateById(templateId)));
+		saveCmd.parameters.add(new UIELBinding(templateItemOTP+"item.classification",EvalConstants.ITEM_TYPE_SCALED));	
+		saveCmd.parameters.add(new UIELBinding("#{itemsBean.templateItem}",new ELReference(templateItemOTPBinding)));
+		saveCmd.parameters.add(new UIELBinding("#{itemsBean.templateId}",templateId));
 
-		UICommand.make(form, "previewItemAction",  messageLocator.getMessage("modifyitem.preview.button"), "#{templateBean.previewItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		
+		UICommand.make(form, "previewItemAction",  messageLocator.getMessage("modifyitem.preview.button"), "#{itemsBean.previewItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	}
 
-	public List reportNavigationCases() {
+/*	public List reportNavigationCases() {
 		List i = new ArrayList();
 
 		i.add(new NavigationCase(PreviewItemProducer.VIEW_ID, new SimpleViewParameters(PreviewItemProducer.VIEW_ID)));
 		i.add(new NavigationCase(TemplateModifyProducer.VIEW_ID, new SimpleViewParameters(TemplateModifyProducer.VIEW_ID)));
 
 		return i;
+	}*/
+
+	public ViewParameters getViewParameters() {
+		return new TemplateItemViewParameters(VIEW_ID, null, null, null);
 	}
+
+
 
 
 }
