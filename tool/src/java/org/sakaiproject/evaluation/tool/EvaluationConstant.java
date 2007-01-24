@@ -21,6 +21,7 @@ import java.util.Map;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.producers.ModifyEssayProducer;
 import org.sakaiproject.evaluation.tool.producers.ModifyHeaderProducer;
+import org.sakaiproject.evaluation.tool.producers.ModifyScaledProducer;
 
 /**
  * This class holds the tool constants only, application data constants come from
@@ -67,6 +68,7 @@ public class EvaluationConstant {
     static {
       classToView.put(EvalConstants.ITEM_TYPE_TEXT, ModifyEssayProducer.VIEW_ID);
       classToView.put(EvalConstants.ITEM_TYPE_HEADER, ModifyHeaderProducer.VIEW_ID);
+      classToView.put(EvalConstants.ITEM_TYPE_SCALED, ModifyScaledProducer.VIEW_ID);
       // TODO: add remaining views here
     }
     /** For a given item classification, return the ID of the view which

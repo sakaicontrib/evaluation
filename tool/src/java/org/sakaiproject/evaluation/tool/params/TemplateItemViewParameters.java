@@ -12,32 +12,31 @@
  *****************************************************************************/
 package org.sakaiproject.evaluation.tool.params;
 
-import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
-
 /**
- * This is a view parameters class which defines the variables that are
- * passed from one page to another
+ * This is a view parameters class which defines the variables that are passed
+ * from one page to another
+ * 
  * @author Sakai App Builder -AZ
  */
-public class TemplateItemViewParameters extends SimpleViewParameters {
-	
-	public Long templateId; 
-	public Long templateItemId;
-	public String originalPage;
-	
-	public TemplateItemViewParameters() {
-	}
+public class TemplateItemViewParameters extends EvalViewParameters {
 
-	public TemplateItemViewParameters(String viewID, Long templateId, Long templateItemId, String originalPage) {
-		this.viewID = viewID;
-		this.templateId = templateId;
-		this.templateItemId = templateItemId;
-		this.originalPage = originalPage;
-	}
+  public Long templateItemId;
 
-// RSF 0.7 no longer requires this to be declared (need to build from 2671+)
-//	public String getParseSpec() {
-//		// include a comma delimited list of the public properties in this class
-//		return super.getParseSpec() + ",templateId,originalPage";
-//	}
+  public TemplateItemViewParameters() {
+  }
+
+  public TemplateItemViewParameters(String viewID, Long templateId,
+      Long templateItemId) {
+    this.viewID = viewID;
+    this.templateId = templateId;
+    this.templateItemId = templateItemId;
+  }
+
+  // RSF getParseSpec inference only works for directly derived classes of
+  // SVP in 0.7
+  public String getParseSpec() {
+    // include a comma delimited list of the public properties in this class
+    return super.getParseSpec() + ",templateId,templateItemId";
+  }
+
 }

@@ -47,7 +47,8 @@ import uk.org.ponder.rsf.viewstate.ViewStateHandler;
  * @author: Kapil Ahuja (kahuja@vt.edu)
  */
 
-public class TemplateModifyProducer implements ViewComponentProducer,ViewParamsReporter{
+public class TemplateModifyProducer implements ViewComponentProducer,
+  ViewParamsReporter {
 	
 	public static final String VIEW_ID = "template_modify"; //$NON-NLS-1$
 	public String getViewID() {
@@ -76,7 +77,7 @@ public class TemplateModifyProducer implements ViewComponentProducer,ViewParamsR
     private ViewStateHandler viewStateHandler;
 	
     private ViewParameters deriveTarget(String viewID, Long templateId) {
-      return new TemplateItemViewParameters(viewID, templateId, null, VIEW_ID);
+      return new TemplateItemViewParameters(viewID, templateId, null);
     }
     private String[] convertViews(String[] viewIDs, Long templateId) {
       String[] togo = new String[viewIDs.length];
@@ -222,7 +223,7 @@ public class TemplateModifyProducer implements ViewComponentProducer,ViewParamsR
                 
                 String targetview = EvaluationConstant.classificationToView(myTemplateItem.getItem().getClassification());
                 ViewParameters target = 
-                  new TemplateItemViewParameters(targetview, myTemplateItem.getTemplate().getId(), myTemplateItem.getId(), evalViewParams.viewID);
+                  new TemplateItemViewParameters(targetview, myTemplateItem.getTemplate().getId(), myTemplateItem.getId());
                 
                 UIInternalLink.make(radiobranch, "modify_row_item",
                     messageLocator.getMessage("modifytemplate.modify.link"),

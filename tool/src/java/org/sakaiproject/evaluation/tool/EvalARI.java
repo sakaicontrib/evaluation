@@ -23,18 +23,12 @@ public class EvalARI implements ActionResultInterpreter {
       return null;
     ARIResult togo = new ARIResult();
     String s = (String) result;
-    // TODO:!!! new-item::: is not used.
-    if (s.substring(0, 11).equals("new-item:::")) {
-      EvalViewParameters evalViewParams = (EvalViewParameters) incoming;
-      togo.resultingview = new TemplateItemViewParameters(s.substring(11),
-          itemsBean.templateId, null, evalViewParams.viewID);
-    }
     // TODO: fold templateItmeProducer into the Wrapper system!
     // From ItemsBean via templateItemProducer
-    else if (s.substring(0, 15).equals("item-created:::")) {
+    if (s.substring(0, 15).equals("item-created:::")) {
       TemplateItemViewParameters templateItemViewParams = (TemplateItemViewParameters) incoming;
       togo.resultingview = new EvalViewParameters(s.substring(15),
-          itemsBean.templateId, templateItemViewParams.viewID);
+          itemsBean.templateId);
     }
     else
       return null;

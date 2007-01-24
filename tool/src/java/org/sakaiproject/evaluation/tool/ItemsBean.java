@@ -27,7 +27,6 @@ import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
-import org.sakaiproject.evaluation.tool.producers.TemplateModifyProducer;
 
 /**
  * This request-scope bean handles item creation and modification.
@@ -52,8 +51,6 @@ public class ItemsBean {
 	public EvalTemplateItem templateItem;
 	
 	//The following fields below belong to template_item.html
-	
-
 	
 	/** "Item Text" text area */
 	public Long scaleId;
@@ -174,7 +171,7 @@ public class ItemsBean {
 		templateItem.getItem().setScale(scalesLogic.getScaleById(scaleId));
 		itemsLogic.saveItem(templateItem.getItem(), external.getCurrentUserId());
 		itemsLogic.saveTemplateItem(templateItem, external.getCurrentUserId());
-		return "item-created:::"+TemplateModifyProducer.VIEW_ID;
+		return "success";
 		}
 	
 	public void newItemInit(Long templateId, String classification) {
@@ -185,7 +182,6 @@ public class ItemsBean {
 
 	public void fetchTemplateItem(Long templateItemId) {
 		templateItem=itemsLogic.getTemplateItemById(templateItemId);
-		
 	}
 	
 }
