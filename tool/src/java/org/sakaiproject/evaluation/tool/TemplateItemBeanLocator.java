@@ -31,6 +31,7 @@ import uk.org.ponder.beanutil.BeanLocator;
  */
 
 public class TemplateItemBeanLocator implements BeanLocator {
+    public static final String NEW_PREFIX = "new";
 	
 	private EvalItemsLogic itemsLogic;
 	public void setItemsLogic( EvalItemsLogic itemsLogic) {
@@ -46,8 +47,8 @@ public class TemplateItemBeanLocator implements BeanLocator {
 	
 	public Object locateBean(String path) {
 		Object togo=delivered.get(path);
-		if(togo==null){
-			if(path.startsWith("new")){
+		if (togo == null){
+			if(path.startsWith(NEW_PREFIX)){
 				togo = new EvalTemplateItem(new Date(), 
 										external.getCurrentUserId(), 
 										null, 

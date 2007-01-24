@@ -97,6 +97,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/EvaluationBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/EvaluationConstant.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ItemBlockUtils.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ItemsBean.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/LocalTemplateLogic.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ReportHandlerHook.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/SettingsWBL.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/TemplateBBean.java -text
@@ -134,6 +135,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/producers/TemplateModifyProducer.
 tool/src/java/org/sakaiproject/evaluation/tool/producers/TemplateProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ViewEssayResponseProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ViewReportProducer.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/wrapper/EntityRewriteWrapper.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/wrapper/ModelAccessWrapperInvoker.java -text
 tool/src/webapp/WEB-INF/applicationContext.xml -text
 tool/src/webapp/WEB-INF/classes/log4j.properties -text

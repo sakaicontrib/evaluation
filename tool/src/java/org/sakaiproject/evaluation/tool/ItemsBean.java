@@ -23,15 +23,10 @@ import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalScalesLogic;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
-import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
-import org.sakaiproject.evaluation.model.constant.EvalConstants;
-import org.sakaiproject.evaluation.tool.producers.ModifyEssayProducer;
-import org.sakaiproject.evaluation.tool.producers.ModifyHeaderProducer;
-import org.sakaiproject.evaluation.tool.producers.TemplateItemProducer;
 import org.sakaiproject.evaluation.tool.producers.TemplateModifyProducer;
 
 /**
@@ -166,42 +161,6 @@ public class ItemsBean {
 
 	public void setScaleLabels(List scaleLabels) {
 		this.scaleLabels = scaleLabels;
-	}
-	
-	//method binding to the "Add" button on template_modify.html
-	public String addItemAction(){
-		if(templateItem.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)){
-			//"Short Answer/Essay"
-			return "new-item:::"+ModifyEssayProducer.VIEW_ID;
-		}else if(templateItem.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_HEADER)){
-			//"Text Header"
-			return "new-item:::"+ModifyHeaderProducer.VIEW_ID;
-		}/*TODO-How do we handle blocks here
-		else if(this.itemClassification.equals(EvalConstants.ITEM_TYPE_BLOCK)){
-			//"Question Block"
-			this.idealColor = Boolean.FALSE;
-			this.queList = new ArrayList();
-			queList.add("");
-			queList.add("");
-			queList.add("");
-			return ModifyBlockProducer.VIEW_ID;
-		}*/else  //for "Scale/Suvey" type
-		System.out.println("We're heading to EvalARI");
-			return "new-item:::"+TemplateItemProducer.VIEW_ID;
-		
-	}
-	
-	public String modifyRowItemAction(){
-		System.out.println("we're here");
-		templateItem=itemsLogic.getTemplateItemById(templateItem.getId());
-		if(templateItem.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)){
-			return "mod-item:::"+ModifyEssayProducer.VIEW_ID;
-		}
-		else if(templateItem.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_HEADER)){
-			//"Text Header"
-			return "mod-item:::"+ModifyHeaderProducer.VIEW_ID;
-		}
-		else return "mod-item:::"+TemplateItemProducer.VIEW_ID;
 	}
 	
 	public String cancelItemAction(){return null;}

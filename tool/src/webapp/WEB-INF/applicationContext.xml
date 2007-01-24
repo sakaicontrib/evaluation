@@ -4,63 +4,89 @@
 <!-- Aaron Zeckoski (aaronz@vt.edu) -->
 <beans>
 
-	<!-- Configure the location of the messages files -->
-	<bean id="messageLocator" class="uk.org.ponder.springutil.SpringMessageLocator">
-		<property name="messageSource">
-			<bean class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-				<property name="basename" value="classpath:org/sakaiproject/evaluation/tool/bundle/messages" />
-				<property name="cacheSeconds" value="10" />
-			</bean>
-		</property>
-		<property name="localeGetter" ref="requestLocaleProxy" />
-	</bean>
+  <!-- Configure the location of the messages files -->
+  <bean id="messageLocator"
+    class="uk.org.ponder.springutil.SpringMessageLocator">
+    <property name="messageSource">
+      <bean
+        class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="basename"
+          value="classpath:org/sakaiproject/evaluation/tool/bundle/messages" />
+        <property name="cacheSeconds" value="10" />
+      </bean>
+    </property>
+    <property name="localeGetter" ref="requestLocaleProxy" />
+  </bean>
 
-	<!-- the beans listed here are allowed access to values (security) -->
-	<bean parent="requestAddressibleParent">
-		<property name="value" value="templateBean, evaluationBean, templateBBean, itemsBean, templateBeanLocator, templateItemBeanLocator, settingsBean"/>
- 	</bean>	
+  <!-- the beans listed here are allowed access to values (security) -->
+  <bean parent="requestAddressibleParent">
+    <property name="value"
+      value="templateBean, evaluationBean, templateBBean, itemsBean, templateBeanLocator, templateItemBeanLocator, settingsBean" />
+  </bean>
 
-	<bean id="EvalARIProxy" parent="RSACBridgeProxy">
-          <property name="targetBeanName">
-            <idref bean="EvalARI"/>
-          </property>
-        </bean>
+  <bean id="EvalARIProxy" parent="RSACBridgeProxy">
+    <property name="targetBeanName">
+      <idref bean="EvalARI" />
+    </property>
+  </bean>
 
-	  <bean name="actionResultInterpreter"
-	    class="uk.org.ponder.rsf.flow.DelegatingARI">
-	    <property name="ARIList">
-	      <list>
-	        <ref bean="JSFNavigationARI" />
-	        <ref bean="EvalARIProxy" />	        
-	        <ref bean="nullActionResultInterpreter" />
-	      </list>
-	    </property>
-	  </bean>
-	
+  <bean name="actionResultInterpreter"
+    class="uk.org.ponder.rsf.flow.DelegatingARI">
+    <property name="ARIList">
+      <list>
+        <ref bean="JSFNavigationARI" />
+        <ref bean="EvalARIProxy" />
+        <ref bean="nullActionResultInterpreter" />
+      </list>
+    </property>
+  </bean>
 
-	<!-- The beans listed here are session beans (they stick around) -->
-	<bean id="myBeanScope" parent="beanScopeParent">
-		<property name="copyPreservingBeans"
-			value="templateBean, evaluationBean" />
-		<property name="exclusive" value="true" />
-	</bean>
+  <bean id="localTemplateLogic"
+    class="org.sakaiproject.evaluation.tool.LocalTemplateLogic">
+    <property name="templatesLogic"
+      ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
+    <property name="external"
+      ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+    <property name="itemsLogic"
+      ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
+  </bean>
 
-	<!-- define any XML producer files -->
-	<bean id="siteMap" parent="siteMapDef" />
+  <!-- The beans listed here are session beans (they stick around) -->
+  <bean id="myBeanScope" parent="beanScopeParent">
+    <property name="copyPreservingBeans" value="templateBean, evaluationBean" />
+    <property name="exclusive" value="true" />
+  </bean>
 
-	<!-- special wrapper beans which work with genericdao to allow hibernate lazy inits -->
-	<bean id="org.sakaiproject.evaluation.ModelAccessWrapperInvoker"
-		class="org.sakaiproject.evaluation.tool.wrapper.ModelAccessWrapperInvoker">
-		<property name="evaluationDao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
-	</bean>
+  <!-- define any XML producer files -->
+  <bean id="siteMap" parent="siteMapDef" />
 
-	<bean id="modelAccessBracketer"
-		class="uk.org.ponder.rsac.BeanFetchBracketer">
-		<property name="targetBeanName">
-			<idref bean="rootHandlerBean" />
-		</property>
-		<property name="wrappingBean"
-			ref="org.sakaiproject.evaluation.ModelAccessWrapperInvoker" />
-	</bean>
+  <!-- A wrapper bean that will rewrite outgoing URL state that refers to
+  freshly saved entities -->
+
+  <bean id="entityRewriteWrapperProxy" parent="RSACBridgeProxy">
+    <property name="targetBeanName" value="entityRewriteWrapper" />
+  </bean>
+  
+  <bean class="uk.org.ponder.rsac.BeanFetchBracketer">
+    <property name="targetBeanName">
+      <idref bean="rootHandlerBean" />
+    </property>
+    <property name="wrappingBean" ref="entityRewriteWrapperProxy" />
+  </bean>
+
+  <!-- special wrapper beans which work with genericdao to allow hibernate lazy inits -->
+  <bean id="org.sakaiproject.evaluation.ModelAccessWrapperInvoker"
+    class="org.sakaiproject.evaluation.tool.wrapper.ModelAccessWrapperInvoker">
+    <property name="evaluationDao"
+      ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+  </bean>
+
+  <bean class="uk.org.ponder.rsac.BeanFetchBracketer">
+    <property name="targetBeanName">
+      <idref bean="rootHandlerBean" />
+    </property>
+    <property name="wrappingBean"
+      ref="org.sakaiproject.evaluation.ModelAccessWrapperInvoker" />
+  </bean>
 
 </beans>

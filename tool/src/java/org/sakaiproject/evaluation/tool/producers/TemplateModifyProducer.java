@@ -13,42 +13,31 @@
  *****************************************************************************/
 package org.sakaiproject.evaluation.tool.producers;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.sakaiproject.evaluation.logic.EvalItemsLogic;
-import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
-import org.sakaiproject.evaluation.tool.ItemsBean;
-import org.sakaiproject.evaluation.tool.TemplateBBean;
-import org.sakaiproject.evaluation.tool.TemplateBean;
+import org.sakaiproject.evaluation.tool.LocalTemplateLogic;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.params.PreviewEvalParameters;
-
+import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
 
 import uk.org.ponder.messageutil.MessageLocator;
-import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
-import uk.org.ponder.rsf.components.UIBoundList;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
-import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
-import uk.org.ponder.rsf.components.UIInput;
-import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIOutput;
-import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
-import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
-import uk.org.ponder.rsf.state.scope.ScopedBeanManager;
+import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
+import uk.org.ponder.rsf.viewstate.ViewStateHandler;
 
 
 /**
@@ -65,26 +54,6 @@ public class TemplateModifyProducer implements ViewComponentProducer,ViewParamsR
 		return VIEW_ID;
 	}
 	
-	private Long currTemplateId;
-	
-	private TemplateBean templateBean;
-	
-	public void setTemplateBean(TemplateBean templateBean) {
-		this.templateBean = templateBean;
-	}
-
-	private ItemsBean itemsBean;
-	
-	public void setItemsBean(ItemsBean itemsBean) {
-		this.itemsBean = itemsBean;
-	}
-	
-	private TemplateBBean templateBBean;
-	
-	public void setTemplateBBean(TemplateBBean templateBBean) {
-		this.templateBBean = templateBBean;
-	}	
-	
 	private MessageLocator messageLocator;
 	public void setMessageLocator(MessageLocator messageLocator) {
 		this.messageLocator = messageLocator;
@@ -94,8 +63,29 @@ public class TemplateModifyProducer implements ViewComponentProducer,ViewParamsR
 		return new EvalViewParameters(VIEW_ID, null, null);
 	}
 	
+    private LocalTemplateLogic localTemplateLogic;
+    
+    public void setLocalTemplateLogic(LocalTemplateLogic localTemplateLogic) {
+      this.localTemplateLogic = localTemplateLogic;
+    }
+
+    public void setViewStateHandler(ViewStateHandler viewStateHandler) {
+      this.viewStateHandler = viewStateHandler;
+    }
+    
+    private ViewStateHandler viewStateHandler;
 	
-	
+    private ViewParameters deriveTarget(String viewID, Long templateId) {
+      return new TemplateItemViewParameters(viewID, templateId, null, VIEW_ID);
+    }
+    private String[] convertViews(String[] viewIDs, Long templateId) {
+      String[] togo = new String[viewIDs.length];
+      for (int i = 0; i < viewIDs.length; ++ i) {
+        togo[i] = viewStateHandler.getFullURL(deriveTarget(viewIDs[i], templateId));
+      }
+      return togo;
+    }
+    
 	/*
 	 *  1) access this page through "Continue and Add Questions" button on Template page
 	 *  2) access this page through links on Control Panel or other
@@ -107,10 +97,10 @@ public class TemplateModifyProducer implements ViewComponentProducer,ViewParamsR
 
 		EvalViewParameters evalViewParams = (EvalViewParameters) viewparams;
 		
-	    System.out.println("templateBBean.templateId="+evalViewParams.templateId.toString());
-	    templateBBean.fetchCurrTemplate(evalViewParams.templateId);
-	    currTemplateId=evalViewParams.templateId;
-		String templateOTPBinding="templateBeanLocator."+currTemplateId;
+	    System.out.println("templateBBean.templateId="+evalViewParams.templateId);
+        Long templateId = evalViewParams.templateId;
+        
+		String templateOTPBinding="templateBeanLocator."+templateId;
 	    String templateOTP=templateOTPBinding+".";	
 	    
 		UIOutput.make(tofill, "modify-template-title", messageLocator.getMessage("modifytemplate.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -123,41 +113,42 @@ public class TemplateModifyProducer implements ViewComponentProducer,ViewParamsR
 		//preview link
 		UIInternalLink.make(form, "preview_eval_link", 
 				new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID, null,
-						currTemplateId,null, TemplateModifyProducer.VIEW_ID));
+						templateId,null, TemplateModifyProducer.VIEW_ID));
 	
 		UIOutput.make(form, "preview-eval-desc", messageLocator.getMessage("modifytemplate.preview.eval.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(form, "add-item-note", messageLocator.getMessage("modifytemplate.add.item.note")); //$NON-NLS-1$ //$NON-NLS-2$
 		
+        String[] labels = 
+        {
+            messageLocator.getMessage("modifytemplate.itemtype.scaled"),
+            messageLocator.getMessage("modifytemplate.itemtype.text"),
+            messageLocator.getMessage("modifytemplate.itemtype.header"),
+            messageLocator.getMessage("modifytemplate.itemtype.block"),
+            messageLocator.getMessage("modifytemplate.itemtype.expert")
+        };
+        String[] viewIDs = {
+            // NB TIP are all dummies
+            TemplateItemProducer.VIEW_ID, 
+            ModifyEssayProducer.VIEW_ID,
+            ModifyHeaderProducer.VIEW_ID,
+            TemplateItemProducer.VIEW_ID, 
+            TemplateItemProducer.VIEW_ID
+        };
+        String[] values = convertViews(viewIDs, templateId);
+        
 		//dropdown list
-		UISelect combo = UISelect.make(form, "itemClassification"); //$NON-NLS-1$
-		combo.selection = new UIInput();
-		combo.selection.valuebinding = new ELReference("#{itemsBean.templateItem.item.classification}");	
-		UIBoundList comboNames = new UIBoundList();
-		String[] itemClassificationList = 
-		{
-			messageLocator.getMessage("modifytemplate.itemtype.scaled"),
-			messageLocator.getMessage("modifytemplate.itemtype.text"),
-			messageLocator.getMessage("modifytemplate.itemtype.header"),
-			messageLocator.getMessage("modifytemplate.itemtype.block"),
-			messageLocator.getMessage("modifytemplate.itemtype.expert")
-		};
+		UISelect.make(form, "itemClassification", values, labels,
+            values[1], false); //$NON-NLS-1$
 		
-		comboNames.setValue(itemClassificationList);
-		combo.optionnames = comboNames;
-		UIBoundList comboValues = new UIBoundList();
-		comboValues.setValue(EvaluationConstant.ITEM_CLASSIFICATION_VALUES);
-		combo.optionlist = comboValues;	
+	    UICommand.make(form, "add_questions", messageLocator.getMessage("modifytemplate.add.item.button")); //$NON-NLS-1$ //$NON-NLS-2$
+        List templateItemsList = localTemplateLogic.fetchTemplateItems(templateId);
 		
-		//command button:"Add"
-		//TODO - When dynamic navigation cases can pull values from request-scope beans in the current render cycle, we can make this a link
-		UICommand addCmd=UICommand.make(form, "add_questions", messageLocator.getMessage("modifytemplate.add.item.button"), "#{itemsBean.addItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		addCmd.parameters.add(new UIELBinding("#{itemsBean.templateId}",currTemplateId));	
-		
-		if(templateBBean.getTemplateItemsListSize() > 0){
-			UIInternalLink.make(form, "begin_eval_link", new EvalViewParameters(EvaluationStartProducer.VIEW_ID, 
-						currTemplateId, TemplateModifyProducer.VIEW_ID));
-		}else{
-			UIOutput.make(form, "begin-eval-dummylink", messageLocator.getMessage("modifytemplate.begin.eval.link"));	
+		if (templateItemsList.isEmpty()){
+          UIOutput.make(form, "begin-eval-dummylink", messageLocator.getMessage("modifytemplate.begin.eval.link")); 
+		}
+        else{
+          UIInternalLink.make(form, "begin_eval_link", new EvalViewParameters(EvaluationStartProducer.VIEW_ID, 
+                templateId, TemplateModifyProducer.VIEW_ID));
 		}
 		
 		UIOutput.make(form, "univ-level-header", messageLocator.getMessage("modifytemplate.univ.level.header")); //$NON-NLS-1$ //$NON-NLS-2$			
@@ -172,7 +163,7 @@ public class TemplateModifyProducer implements ViewComponentProducer,ViewParamsR
 				messageLocator.getMessage("modifytemplate.modify.title.desc.link"),
 				new EvalViewParameters(
 						TemplateProducer.VIEW_ID, 
-						currTemplateId, 
+						templateId, 
 						TemplateModifyProducer.VIEW_ID));
 		
 		UIOutput.make(form, "description-header", messageLocator.getMessage("modifytemplate.description.header")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -185,20 +176,16 @@ public class TemplateModifyProducer implements ViewComponentProducer,ViewParamsR
 		//TODO - itemsBean.changeDisplayOrder
 		UICommand.make(form2,"hiddenBtn","#{templateBBean.changeDisplayOrder}"); 
 		
-		//display each item in the template	
-		//List l= templateBean.itemDisplayList;
-		List l = templateBBean.templateItemsList;
-		//TODO-get itemsListSize
 		//UIOutput.make(form,"itemCount",null,"#{templateBBean.itemsListSize}");
-		if (l!= null && l.size() >0) {
-			String[] strArr = new String[l.size()];
-		    for(int h=0; h<l.size();h++){
-		    	strArr[h]= Integer.toString(h+1);
+		if (templateItemsList!= null && templateItemsList.size() >0) {
+			String[] strArr = new String[templateItemsList.size()];
+		    for (int h = 0; h < templateItemsList.size(); h++){
+		    	strArr[h] = Integer.toString(h+1);
 		    }
 		    			
-		    for(int i=0;i<l.size();i++){
+		    for(int i = 0; i<templateItemsList.size(); i++){
 		    	//ItemDisplay currItemDisplay=(ItemDisplay) l.get(i);
-		    	EvalTemplateItem myTemplateItem = (EvalTemplateItem) l.get(i);
+		    	EvalTemplateItem myTemplateItem = (EvalTemplateItem) templateItemsList.get(i);
 
 		    	UIBranchContainer radiobranch = UIBranchContainer.make(form2,"itemrow:header", Integer.toString(i)); //$NON-NLS-1$
 				UIOutput.make(radiobranch, "item-num-header", messageLocator.getMessage("modifytemplate.item.num.header")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -234,9 +221,14 @@ public class TemplateModifyProducer implements ViewComponentProducer,ViewParamsR
 								PreviewItemProducer.VIEW_ID, 
 								myTemplateItem.getId(), 
 								TemplateModifyProducer.VIEW_ID));
-				
-				UICommand modifyCmd=UICommand.make(radiobranch,"modify_row_item",messageLocator.getMessage("modifytemplate.modify.link"),"#{itemsBean.modifyRowItemAction}");
-				modifyCmd.parameters.add(new UIELBinding("#{itemsBean.templateItem.id}",myTemplateItem.getId()));
+                
+                String targetview = EvaluationConstant.classificationToView(myTemplateItem.getItem().getClassification());
+                ViewParameters target = 
+                  new TemplateItemViewParameters(targetview, myTemplateItem.getTemplate().getId(), myTemplateItem.getId(), evalViewParams.viewID);
+                
+                UIInternalLink.make(radiobranch, "modify_row_item",
+                    messageLocator.getMessage("modifytemplate.modify.link"),
+                    target);
 				
 				//UICommand removeCmd=UICommand.make(radiobranch,"remove_row_item","#{templateBean.removeRowItemAction}");
 				//removeCmd.parameters.add(new UIELBinding("#{itemsBean.currTemplateItemId}",Integer.toString(i)));
@@ -304,6 +296,7 @@ public class TemplateModifyProducer implements ViewComponentProducer,ViewParamsR
 		}else  //for "Scale/Suvey" type
 			return TemplateItemProducer.VIEW_ID;
 	}
+
 
 
 	

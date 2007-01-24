@@ -50,19 +50,12 @@
 	<!-- request scope backing beans here -->
 	<bean id="EvalARI"
 		class="org.sakaiproject.evaluation.tool.EvalARI">
-		<property name="templateBBean" ref="templateBBean" />
 		<property name="itemsBean" ref="itemsBean" />
 	</bean>
 
 	<bean id="templateBBean"
-		class="org.sakaiproject.evaluation.tool.TemplateBBean"
-		init-method="init">
-		<property name="external"
-			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-		<property name="templatesLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
-		<property name="itemsLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
+		class="org.sakaiproject.evaluation.tool.TemplateBBean">
+	  <property name="templateBeanLocator" ref="templateBeanLocator"/>
 	</bean>
 
 	<bean id="itemsBean"
@@ -91,11 +84,14 @@
 
 	<bean id="templateBeanLocator"
 		class="org.sakaiproject.evaluation.tool.TemplateBeanLocator">
-		<property name="templatesLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
-		<property name="external"
-			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+	   <property name="localTemplateLogic" ref="localTemplateLogic"/>
 	</bean>
+
+  <bean id="EntityRewriteWrapper" 
+    class="org.sakaiproject.evaluation.tool.wrapper.EntityRewriteWrapper">
+    <property name="ARIResult" ref="ARIResult"/>
+    <property name="templateBeanLocator" ref="templateBeanLocator"/>
+  </bean>
 
 	<bean id="templateItemBeanLocator"
 		class="org.sakaiproject.evaluation.tool.TemplateItemBeanLocator">
@@ -148,15 +144,12 @@
 	<bean
 		class="org.sakaiproject.evaluation.tool.producers.TemplateProducer">
 		<property name="messageLocator" ref="messageLocator" />
-		<property name="templateBBean" ref="templateBBean" />
 	</bean>
 
 	<bean
 		class="org.sakaiproject.evaluation.tool.producers.TemplateModifyProducer">
 		<property name="messageLocator" ref="messageLocator" />
-		<property name="templateBean" ref="templateBean" />
-		<property name="templateBBean" ref="templateBBean" />
-		<property name="itemsBean" ref="itemsBean" />
+    <property name="localTemplateLogic" ref="localTemplateLogic"/>
 	</bean>
 
 	<bean

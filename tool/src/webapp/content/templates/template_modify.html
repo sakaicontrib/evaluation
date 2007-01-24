@@ -1,6 +1,6 @@
 <!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
+<html xmlns:rsf="http://ponder.org.uk/rsf">
 <head>
 	<title rsf:id="modify-template-title">Modify Template</title>
     <link href="/library/skin/tool_base.css" type="text/css" rel="stylesheet" media="all"/>
@@ -49,6 +49,7 @@
 		<option value="H">####</option>
 		<option value="X">#####</option>
 		</select>
+    <!--  TODO!! Add Javascript to onclick to navigate to selected value -->
 	<input rsf:id="add_questions" type="submit" value="Add"/>
 	</td>
 </tr>
@@ -102,10 +103,10 @@
 			<td width="10%" class="borderMid">&nbsp;
 			</td>
 			<td width="10%" class="borderLeft">
-				<a href="#" rsf:id="preview_row_item">Preview</a>
+				<a href="preview-item.html" rsf:id="preview_row_item">Preview</a>
 			</td>
 			<td width="10%" class="borderLeft">
-				<input rsf:id="modify_row_item" type="submit" value="Modify" class="makeLink" onclick="javascript:setTargetToSelf();" />
+				<a href="modify_essay.html" rsf:id="modify_row_item">Modify</a>
 			</td>
 			<td width="10%" class="borderRight">
 				<input rsf:id="remove_row_item" type="submit" value="Remove" class="makeLink" onclick="javascript:setTargetToSelf();" />
