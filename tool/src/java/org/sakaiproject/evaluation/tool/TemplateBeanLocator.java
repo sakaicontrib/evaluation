@@ -12,13 +12,10 @@
  *****************************************************************************/
 package org.sakaiproject.evaluation.tool;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 
 import uk.org.ponder.beanutil.BeanLocator;
