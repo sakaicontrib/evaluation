@@ -3,6 +3,7 @@
  */
 package org.sakaiproject.evaluation.tool;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -40,8 +41,13 @@ public class LocalTemplateLogic {
   }
 
   public List fetchTemplateItems(Long templateId) {
+    if (templateId == null) {
+      return new ArrayList();
+    }
+    else {
     return itemsLogic.getTemplateItemsForTemplate(templateId, external
         .getCurrentUserId());
+    }
   }
   
   public void saveTemplate(EvalTemplate tosave) {
