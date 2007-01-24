@@ -1,28 +1,47 @@
 <!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns:rsf="http://ponder.org.uk/rsf">
+<html>
 <head>
-	<title rsf:id="modify-template-title">Modify Template</title>
-    <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
-    <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
-    <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+	<title rsf:id="modify-item-title">Modify Item</title>
+    <link href="/library/skin/tool_base.css" type="text/css" rel="stylesheet" media="all"/>
+    <link href="/library/skin/default/tool.css" type="text/css" rel="stylesheet" media="all"/>
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
-    <script type="text/javascript" language="JavaScript" src="../js/selectLink.js"/>
-
-	<script language="JavaScript">
-		function setTargetToBlank() {
-			document.modify_form_rows.target = "_blank";		
-		}
-		function setTargetToSelf(temp) {
-			document.modify_form_rows.target = "_self";	
-		}	
-
+    <script type="text/javascript" language="JavaScript" src="/library/js/headscripts.js"></script>
+    <script>
+    	var flag = "";
+    	
+		function validateForm(){  
+			
+			if (flag=="cancel")
+			{
+				document.item_form.target = "_self";		
+				return true;
+			}
+			else
+			{
+				if(document.item_form.item_text.value == "")
+				{
+					alert("Please enter the item text");
+	       			return false;
+	       		}
+	       		else
+	       		{ 
+	       			if (flag=="save")
+	       				document.item_form.target = "_self";
+	       			//This is for preview	
+	       			else
+	       				document.item_form.target = "_blank";	
+	       				
+	       			return true;
+	       		}
+	       	}
+  	  }    	
     </script>
+ 
 </head>
 
-<body>
+<body rsf:id="scr=sakai-body">
 <div class="portletBody">
-
 	<div class="navIntraTool">
 		<a rsf:id="administrate-toplink" href="administrate.html">Administrate</a>
 		<a rsf:id="summary-toplink" href="summary.html">Summary</a>
@@ -31,114 +50,90 @@
 	<div>
 	<ul class="breadCrumb">
 		<li class="breadCrumb"><a rsf:id="summary-toplink" href="summary.html">Summary</a></li>
-		<li class="breadCrumb" rsf:id="modify-template-title">Modify Template</li>				
+		<li class="breadCrumb" rsf:id="create-eval-header">Create Evaluation</li>
+		<li class="breadCrumb" rsf:id="modify-item-title">Modify Item</li>					
 	</ul>
 	</div>
-<form rsf:id="modifyForm">
-<table width="85%" cellpadding="0" cellspacing="0">
-<tr>
-	<td colspan="2">		
-		<a href="#" rsf:id="preview_eval_link" target="_blank">View a preview</a>
-		<span rsf:id="preview-eval-desc"> of this template as an evaluation</span>
-	</td>
-	<td>&nbsp;</td>
-	<td align="right"><b><span rsf:id="add-item-note">Add Item:</span></b>
-	<select id="itemClassification-selection" rsf:id="itemClassification">
-	  <option value="#URL-1">Scaled/Survey</option>
-      <option value="#URL-2" selected="selected">Short Answer/Essay</option>
-      <option value="#URL-3">Text Header</option>
-      <option value="#URL-4">Question Block</option>
-      <option value="#URL-5">Expert</option>
-	</select>
-    <!--  TODO!! Add Javascript to onclick to navigate to selected value -->
-	<input rsf:id="add_questions" type="button" value="Add" 
-       onclick="EvalSystem.operateSelectLink(this.id, 'itemClassification-selection')"/>
-	</td>
-</tr>
- <tr>
-	<td colspan="2" align="left">
-		<a href="#" rsf:id="begin_eval_link">Begin an evaluation using this template</a>
-		<span rsf:id="begin-eval-dummylink">Begin an evaluation using this template</span>
-	</td>	
-
-	<td>&nbsp;</td>
-	<td align="right" style="font-weight:bold;"><span rsf:id="univ-level-header">University Level - </span><label rsf:id="itemCount"  style="font-weight:bold;">#</label><span rsf:id="existing-items"> existing items</span></td>
-</tr> 
-<tr>
-	<td colspan="2"><b><span rsf:id="template-title-header">Template Title: </span></b><label rsf:id="title">Title</label></td>
-	<td>&nbsp;</td>
-	<td align="right"><a href="#" rsf:id="modify_title_desc_link">Modify Template Title/Description</a></td>
-</tr>
-<tr>
-	<td colspan="4"><b><span rsf:id="description-header">Description:  </span></b><label rsf:id="description">Template description goes here, this would be notes for other admins or yourself</label></td>
-</tr>  
-</table>
-
-</form>
-
-<br/>
-
-<table width="85%" class="sample" cellspacing="0" cellpadding="0">
-<tr>
-	<td align="left"><span rsf:id="eval-sample">Evaluation: Evaluation title here</span></td>
-	<td align="right"><span rsf:id="course-sample">Course: Course title here</span></td>
-</tr>
-</table>
-
-<br/>
- 
-<form rsf:id="modifyFormRows" name="modify_form_rows" method="post">
-<input type="submit" rsf:id="hiddenBtn" name="hiddenBtn" style="visibility:hidden;"/>
-	<table width="83%" style="border-collapse: collapse;">
-		<tr rsf:id="itemrow:header">		
-			<td width="15%" class="borderLeft" colspan="2"><b><span rsf:id="item-num-header">Item:</span></b> 
-  			<select rsf:id="itemNum" onchange="javascript:setTargetToSelf();document.modify_form_rows.hiddenBtn.click();">
-				<option value="1">1</option>
-				<option value="2">2</option>
-				<option value="3">3</option>		
-			</select> 
-			</td>
-			<td width="45%" class="borderLeft" style="font-weight:bold;">
-				<label rsf:id="itemClassificationLabel" style="font-weight:bold;">Scale/Survey</label> 
-				<label rsf:id="scaleDisplaySetting" style="font-weight:bold;">Compact-Colored</label>		
-			</td>
-			<td width="10%" class="borderMid">&nbsp;
-			</td>
-			<td width="10%" class="borderLeft">
-				<a href="preview-item.html" rsf:id="preview_row_item">Preview</a>
-			</td>
-			<td width="10%" class="borderLeft">
-				<a href="modify_essay.html" rsf:id="modify_row_item">Modify</a>
-			</td>
-			<td width="10%" class="borderRight">
-				<input rsf:id="remove_row_item" type="submit" value="Remove" class="makeLink" onclick="javascript:setTargetToSelf();" />
-			</td>		
+	<br/>
+  <form  name="item_form" rsf:id="itemForm" method="post" onsubmit="javascript:return validateForm();"> 
+		<table width="70%" border="0" cellspacing="0" cellpadding="5">
+		 <tr><td colspan="2" width="100%">
+			<table class="sample" cellspacing="0" cellpadding="0" width="100%">
+				<tr>
+					<td width = "20%" align = "left" style="font-weight:bold;">
+						<span rsf:id="item-header">Item</span> <label name="itemNo" rsf:id="itemNo" style="font-weight:bold;">1</label> :
+					</td>
+					<td width = "35%" align = "left" >
+						<label name="itemClassification" rsf:id="itemClassification" style="font-weight:bold;">####</label>
+					</td>
+					<td width = "25%" align = "center" >
+						<i><span rsf:id="added-by">added by</span> <label name="userInfo" rsf:id="userInfo">#####</label></i>
+					</td>
+					<td width = "20%" align = "center">
+						<div rsf:id="showRemoveLink:">
+							<a href="#" name="remove_link" rsf:id="remove_link">Remove</a>
+						</div>
+					 </td>
+				</tr>
+			</table>	
+		 </td></tr>
+		 
+		 <tr><td colspan="2" align="left"><b><span rsf:id="question-text-header">Question Text : </span></b>
+		 </td></tr>
+		 
+		 <tr><td colspan="2" width="100%">
+		 <textarea name="item_text" rsf:id="item_text" cols="80" rows="5"></textarea>
+		 </td></tr>
+		 
+		 <tr>
+		 <td  width="30%"><b><span rsf:id="scale-type-header">Scale Type:</span></b></td>
+		 <td width="70%"><select name="scaleList" rsf:id="scaleList">
+           		<option value="one" selected="true">2 pt - Gender Scale (Male, Female)</option>
+           		   		</select></td>
+		 </tr>
+		
+		<tr>
+		<td width="30%"><b><span rsf:id="scale-display-header">Scale Display Setting:</span></b></td>
+		<td width="70%"><select name="scaleDisplaySetting" rsf:id="scaleDisplaySetting">
+				<option value="F">####### #######</option>
+				<option value="C">#</option>
+				<option value="CC">##</option>		
+			</select></td>
 		</tr>
 		
-		<tr rsf:id="itemrow:text">
-			<td width="3%" valign="top"><label rsf:id="queNo" style="font-weight:bold;">#</label><b>.</b>&nbsp;</td>
-			<td rsf:id="itemText" colspan="3" valign="top" width="67%">########</td>
-			<td align="center" valign="top" colspan="2" style="font-weight:bold;" width="20%">
-				<label rsf:id="scaleType">Agree disagree scale</label>
-			</td>
-			<td align="right" width="10%" valign="top">
-			<div rsf:id="showNA:">
-				<input type="radio" rsf:id="itemNA" /><span rsf:id="na-desc">N/A</span>
-			</div>
-			</td>		
-		</tr>
+		<tr>
+		<td width="30%"><b><span rsf:id="add-na-header">Add N/A (not available):</span></b></td>
+		<td width="70%"><input type="checkbox" name="item_NA" rsf:id="item_NA" value="" checked="" /></td>
+		</tr>				
 		
-		<tr rsf:id="itemrow:blockItems">
-			<td width="3%">&nbsp;</td>
-			<td colspan="6">&nbsp;&nbsp;&nbsp;
-				<label rsf:id="childItemId" style="font-weight:bold;">#</label>.&nbsp;
-				<label rsf:id="childItemText">###</label>
-			</td>
-		</tr>
-	</table>
+		<tr>
+		<td width="30%" ><b><span rsf:id="item-category-header">Item Category :</span></b></td>
+		<td width="70%">
+	 
+		<span rsf:id="item_category"/>
+	        <label for="item_category_C" rsf:id="course-category-header">Course</label>
+	        <input type="radio" name="item_category_C" rsf:id="item_category_C"/>
+	        <label for="item_category_I" rsf:id="instructor-category-header">Instructor</label>
+	        <input type="radio" name="item_category_I" rsf:id="item_category_I" />
 	
-</form>
+	    </td>
+		</tr>	
 
+		<tr>
+		<td width="30%" align="left">
+	   <input name="cancelItemAction" rsf:id="cancelItemAction" type="submit" value="Cancel" onclick="javascript:flag='cancel';"/> 
+
+		</td>
+		<td align="right" width="70%">
+		<input name="previewItemAction" rsf:id="previewItemAction" type="submit" value="Preview item" onclick="javascript:flag='preview';"/> 
+			&nbsp;
+	 	<input name="saveItemAction" rsf:id="saveItemAction" type="submit" value="Save item" onclick="javascript:flag='save';"/>  
+		</td>
+		</tr>
+		
+	</table>	
+			
+	</form>
 </div>
 </body>
 </html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf">
+<head>
+	<title rsf:id="modify-template-title">Modify Template</title>
+    <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+    <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+    <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+    <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+    <script type="text/javascript" language="JavaScript" src="../js/selectLink.js"/>
+
+	<script language="JavaScript">
+		function setTargetToBlank() {
+			document.modify_form_rows.target = "_blank";		
+		}
+		function setTargetToSelf(temp) {
+			document.modify_form_rows.target = "_self";	
+		}	
+
+    </script>
+</head>
+
+<body>
+<div class="portletBody">
+
+	<div class="navIntraTool">
+		<a rsf:id="administrate-toplink" href="administrate.html">Administrate</a>
+		<a rsf:id="summary-toplink" href="summary.html">Summary</a>
+	</div>
+
+	<div>
+	<ul class="breadCrumb">
+		<li class="breadCrumb"><a rsf:id="summary-toplink" href="summary.html">Summary</a></li>
+		<li class="breadCrumb" rsf:id="modify-template-title">Modify Template</li>				
+	</ul>
+	</div>
+<form rsf:id="modifyForm">
+<table width="85%" cellpadding="0" cellspacing="0">
+<tr>
+	<td colspan="2">		
+		<a href="#" rsf:id="preview_eval_link" target="_blank">View a preview</a>
+		<span rsf:id="preview-eval-desc"> of this template as an evaluation</span>
+	</td>
+	<td>&nbsp;</td>
+	<td align="right"><b><span rsf:id="add-item-note">Add Item:</span></b>
+	<select id="itemClassification-selection" rsf:id="itemClassification">
+	  <option value="#URL-1">Scaled/Survey</option>
+      <option value="#URL-2" selected="selected">Short Answer/Essay</option>
+      <option value="#URL-3">Text Header</option>
+      <option value="#URL-4">Question Block</option>
+      <option value="#URL-5">Expert</option>
+	</select>
+    <!--  TODO!! Add Javascript to onclick to navigate to selected value -->
+	<input rsf:id="add_questions" type="button" value="Add" 
+       onclick="EvalSystem.operateSelectLink(this.id, 'itemClassification-selection')"/>
+	</td>
+</tr>
+ <tr>
+	<td colspan="2" align="left">
+		<a href="#" rsf:id="begin_eval_link">Begin an evaluation using this template</a>
+		<span rsf:id="begin-eval-dummylink">Begin an evaluation using this template</span>
+	</td>	
+
+	<td>&nbsp;</td>
+	<td align="right" style="font-weight:bold;"><span rsf:id="univ-level-header">University Level - </span><label rsf:id="itemCount"  style="font-weight:bold;">#</label><span rsf:id="existing-items"> existing items</span></td>
+</tr> 
+<tr>
+	<td colspan="2"><b><span rsf:id="template-title-header">Template Title: </span></b><label rsf:id="title">Title</label></td>
+	<td>&nbsp;</td>
+	<td align="right"><a href="#" rsf:id="modify_title_desc_link">Modify Template Title/Description</a></td>
+</tr>
+<tr>
+	<td colspan="4"><b><span rsf:id="description-header">Description:  </span></b><label rsf:id="description">Template description goes here, this would be notes for other admins or yourself</label></td>
+</tr>  
+</table>
+
+</form>
+
+<br/>
+
+<table width="85%" class="sample" cellspacing="0" cellpadding="0">
+<tr>
+	<td align="left"><span rsf:id="eval-sample">Evaluation: Evaluation title here</span></td>
+	<td align="right"><span rsf:id="course-sample">Course: Course title here</span></td>
+</tr>
+</table>
+
+<br/>
+ 
+<form rsf:id="modifyFormRows" name="modify_form_rows" method="post">
+<input type="submit" rsf:id="hiddenBtn" name="hiddenBtn" style="visibility:hidden;"/>
+	<table width="83%" style="border-collapse: collapse;">
+		<tr rsf:id="itemrow:header">		
+			<td width="15%" class="borderLeft" colspan="2"><b><span rsf:id="item-num-header">Item:</span></b> 
+  			<select rsf:id="itemNum" onchange="javascript:setTargetToSelf();document.modify_form_rows.hiddenBtn.click();">
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>		
+			</select> 
+			</td>
+			<td width="45%" class="borderLeft" style="font-weight:bold;">
+				<label rsf:id="itemClassificationLabel" style="font-weight:bold;">Scale/Survey</label> 
+				<label rsf:id="scaleDisplaySetting" style="font-weight:bold;">Compact-Colored</label>		
+			</td>
+			<td width="10%" class="borderMid">&nbsp;
+			</td>
+			<td width="10%" class="borderLeft">
+				<a href="preview-item.html" rsf:id="preview_row_item">Preview</a>
+			</td>
+			<td width="10%" class="borderLeft">
+				<a href="modify_essay.html" rsf:id="modify_row_item">Modify</a>
+			</td>
+			<td width="10%" class="borderRight">
+				<input rsf:id="remove_row_item" type="submit" value="Remove" class="makeLink" onclick="javascript:setTargetToSelf();" />
+			</td>		
+		</tr>
+		
+		<tr rsf:id="itemrow:text">
+			<td width="3%" valign="top"><label rsf:id="queNo" style="font-weight:bold;">#</label><b>.</b>&nbsp;</td>
+			<td rsf:id="itemText" colspan="3" valign="top" width="67%">########</td>
+			<td align="center" valign="top" colspan="2" style="font-weight:bold;" width="20%">
+				<label rsf:id="scaleType">Agree disagree scale</label>
+			</td>
+			<td align="right" width="10%" valign="top">
+			<div rsf:id="showNA:">
+				<input type="radio" rsf:id="itemNA" /><span rsf:id="na-desc">N/A</span>
+			</div>
+			</td>		
+		</tr>
+		
+		<tr rsf:id="itemrow:blockItems">
+			<td width="3%">&nbsp;</td>
+			<td colspan="6">&nbsp;&nbsp;&nbsp;
+				<label rsf:id="childItemId" style="font-weight:bold;">#</label>.&nbsp;
+				<label rsf:id="childItemText">###</label>
+			</td>
+		</tr>
+	</table>
+	
+</form>
+
+</div>
+</body>
+</html>
