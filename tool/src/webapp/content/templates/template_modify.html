@@ -3,10 +3,11 @@
 <html xmlns:rsf="http://ponder.org.uk/rsf">
 <head>
 	<title rsf:id="modify-template-title">Modify Template</title>
-    <link href="/library/skin/tool_base.css" type="text/css" rel="stylesheet" media="all"/>
-    <link href="/library/skin/default/tool.css" type="text/css" rel="stylesheet" media="all"/>
+    <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+    <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+    <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
-    <script type="text/javascript" language="JavaScript" src="/library/js/headscripts.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../js/selectLink.js"/>
 
 	<script language="JavaScript">
 		function setTargetToBlank() {
@@ -19,7 +20,7 @@
     </script>
 </head>
 
-<body rsf:id="scr=sakai-body">
+<body>
 <div class="portletBody">
 
 	<div class="navIntraTool">
@@ -33,7 +34,7 @@
 		<li class="breadCrumb" rsf:id="modify-template-title">Modify Template</li>				
 	</ul>
 	</div>
-<form rsf:id="modifyForm" name="modifyForm" method="post">
+<form rsf:id="modifyForm">
 <table width="85%" cellpadding="0" cellspacing="0">
 <tr>
 	<td colspan="2">		
@@ -42,15 +43,16 @@
 	</td>
 	<td>&nbsp;</td>
 	<td align="right"><b><span rsf:id="add-item-note">Add Item:</span></b>
-	<select rsf:id="itemClassification">
-		<option value="S">##### ############</option>
-		<option value="B">##</option>
-		<option value="E">###</option>
-		<option value="H">####</option>
-		<option value="X">#####</option>
-		</select>
+	<select id="itemClassification-selection" rsf:id="itemClassification">
+	  <option value="#URL-1">Scaled/Survey</option>
+      <option value="#URL-2" selected="selected">Short Answer/Essay</option>
+      <option value="#URL-3">Text Header</option>
+      <option value="#URL-4">Question Block</option>
+      <option value="#URL-5">Expert</option>
+	</select>
     <!--  TODO!! Add Javascript to onclick to navigate to selected value -->
-	<input rsf:id="add_questions" type="submit" value="Add"/>
+	<input rsf:id="add_questions" type="button" value="Add" 
+       onclick="EvalSystem.operateSelectLink(this.id, 'itemClassification-selection')"/>
 	</td>
 </tr>
  <tr>
