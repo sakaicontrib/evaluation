@@ -23,45 +23,45 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 
 import uk.org.ponder.beanutil.BeanLocator;
 
-
 /**
- * This is the OTP bean used to locate templates.
+ * This is the OTP bean used to locate templates items
  * 
- * @author 
+ * @author
  */
 
 public class TemplateItemBeanLocator implements BeanLocator {
-    public static final String NEW_PREFIX = "new";
-	
-	private EvalItemsLogic itemsLogic;
-	public void setItemsLogic( EvalItemsLogic itemsLogic) {
-		this.itemsLogic = itemsLogic;
-	}
-	
-	private EvalExternalLogic external;
-	public void setExternal(EvalExternalLogic external) {
-		this.external = external;
-	}
-	
-	private Map delivered = new HashMap();
-	
-	public Object locateBean(String path) {
-		Object togo=delivered.get(path);
-		if (togo == null){
-			if(path.startsWith(NEW_PREFIX)){
-				togo = new EvalTemplateItem(new Date(), 
-										external.getCurrentUserId(), 
-										null, 
-										new EvalItem(new Date(), external.getCurrentUserId(), "", "", "", new Boolean(false)),
-										null,
-										"");
-			}else{ 
-				togo=itemsLogic.getTemplateItemById(new Long(Long.parseLong(path.trim())));
-			}
-			delivered.put(path, togo);
-		}
-		return togo;
-	}
+  public static final String NEW_PREFIX = "new";
+  public static String NEW_1 = NEW_PREFIX + "1";
 
+  private EvalItemsLogic itemsLogic;
+
+  public void setItemsLogic(EvalItemsLogic itemsLogic) {
+    this.itemsLogic = itemsLogic;
+  }
+
+  private EvalExternalLogic external;
+
+  public void setExternal(EvalExternalLogic external) {
+    this.external = external;
+  }
+
+  private Map delivered = new HashMap();
+
+  public Object locateBean(String path) {
+    Object togo = delivered.get(path);
+    if (togo == null) {
+      if (path.startsWith(NEW_PREFIX)) {
+        togo = new EvalTemplateItem(new Date(), external.getCurrentUserId(),
+            null, new EvalItem(new Date(), external.getCurrentUserId(), "", "",
+                "", new Boolean(false)), null, "");
+      }
+      else {
+        togo = itemsLogic.getTemplateItemById(new Long(Long.parseLong(path
+            .trim())));
+      }
+      delivered.put(path, togo);
+    }
+    return togo;
+  }
 
 }
