@@ -1,12 +1,12 @@
 <!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
+<html xmlns:rsf="http://ponder.org.uk/rsf">
 <head>
-	<title rsf:id="control-panel-title">ControlPanel</title>
-    <link href="/library/skin/tool_base.css" type="text/css" rel="stylesheet" media="all"/>
-    <link href="/library/skin/default/tool.css" type="text/css" rel="stylesheet" media="all"/>
-	<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
-    <script type="text/javascript" language="JavaScript" src="/library/js/headscripts.js"></script>
+   <title rsf:id="control-panel-title">ControlPanel</title>
+   <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+   <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+   <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+   <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
 </head>
 
 <body rsf:id="scr=sakai-body">
@@ -53,7 +53,8 @@
 			</tr>
 			<tr rsf:id="templateList:">
 				<td align="left">
-					&nbsp;<input rsf:id="templateTitleButton" value="Title" type="submit" class="makeLinkLeft"/>			
+					&nbsp;
+               <a rsf:id="template-modify">Title</a>
 				</td>
 				<!-- <td align="center"><a href="#" name="copy_link" >Copy</a></td> -->
 				<td rsf:id="templateOwner" align="center" nowrap="true">owner displayname</td>					
