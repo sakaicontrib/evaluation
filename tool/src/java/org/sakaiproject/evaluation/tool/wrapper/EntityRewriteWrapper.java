@@ -15,6 +15,13 @@ import uk.org.ponder.rsf.viewstate.AnyViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.util.RunnableInvoker;
 
+/** An interceptor for the outgoing URLs from action cycles that applies the
+ * IDs from freshly saved entities to the templateId field in an outgoing
+ * EvalViewParameters. This is a temporary measure to get the
+ * application working, in as close as possible to its final form, until
+ * RSF is upgraded to allow "local ARIs" or some equivalent system.
+ */
+
 public class EntityRewriteWrapper implements RunnableInvoker {
 
   private ARIResult ariresult;
@@ -39,11 +46,10 @@ public class EntityRewriteWrapper implements RunnableInvoker {
     this.templateBeanLocator = templateBeanLocator;
   }
 
-  // Returns true for those states which are part of the "new" transition system
+  // Acts only on those states which are part of the "new" transition system.
   // Standard semantics - if there was an incoming ID, outgoing will be the same
   // if incoming is blank, and OTP bean contains a new entity, outgoing will be
-  // the
-  // new entity.
+  // the new entity.
   private void rewriteOutgoing(EvalViewParameters outgoing) {
     if (incoming.viewID.equals(TemplateModifyProducer.VIEW_ID)
         || incoming.viewID.equals(TemplateProducer.VIEW_ID)) {
