@@ -119,40 +119,59 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
         makeBoolean(form, "instructors-eval-create", EvalSettings.INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS); //$NON-NLS-1$ 
 		UIOutput.make(form, "instructors-eval-create-note", messageLocator.getMessage("administrate.instructors.eval.create.note")); //$NON-NLS-1$ //$NON-NLS-2$
 		
-        // TODO: missing setting
         //Select for whether instructors can view results or not
-        makeSelect(form, "instructors-view-results", EvaluationConstant.ADMINSTRATIVE_SETTING_OPTIONS, null);
+        String[] administrateConfigurableList = 
+        {
+            messageLocator.getMessage("administrate.true.label"),
+            messageLocator.getMessage("administrate.false.label"),
+            messageLocator.getMessage("administrate.configurable.label")
+        };		
+        makeSelect(form, "instructors-view-results", //$NON-NLS-1$ 
+        		administrateConfigurableList, 
+        		EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
 	    UIOutput.make(form, "instructors-view-results-note", messageLocator.getMessage("administrate.instructors.view.results.note")); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		makeBoolean(form, "instructors-email-students", EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS); //$NON-NLS-1$ 
 		UIOutput.make(form, "instructors-email-students-note", messageLocator.getMessage("administrate.instructors.email.students.note")); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		//Select for whether instructors must use evaluations from above
-          // TODO: missing setting
-        makeSelect(form, "instructors-hierarchy", EvaluationConstant.ADMINSTRATIVE_SETTING_OPTIONS, null);
-		UIOutput.make(form, "instructors-hierarchy-note", messageLocator.getMessage("administrate.instructors.hierarchy.email.note")); //$NON-NLS-1$ //$NON-NLS-2$
+        String[] hierarchyOptionList = 
+        {
+            messageLocator.getMessage("evalsettings.instructors.label.opt.in"),
+            messageLocator.getMessage("evalsettings.instructors.label.opt.out"),
+            messageLocator.getMessage("evalsettings.instructors.label.required"),
+            messageLocator.getMessage("administrate.configurable.label")
+        };
+        makeSelect(form, "instructors-hierarchy", //$NON-NLS-1$ 
+        		hierarchyOptionList, 
+        		EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE);
+		UIOutput.make(form, "instructors-hierarchy-note", messageLocator.getMessage("administrate.instructors.hierarchy.note")); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		//Select for number of questions intructors can add
-        makeSelect(form, "instructors-num-questions", EvaluationConstant.NUM_QUESTIONS_INST_ADMINS, EvalSettings.INSTRUCTOR_ADD_ITEMS_NUMBER);
-		
+        makeSelect(form, "instructors-num-questions", //$NON-NLS-1$ 
+        		EvaluationConstant.PULLDOWN_INTEGER_VALUES, 
+        		EvalSettings.INSTRUCTOR_ADD_ITEMS_NUMBER);
 		UIOutput.make(form, "instructors-num-questions-note", messageLocator.getMessage("administrate.instructors.num.questions.note")); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		// Student Settings
 		UIOutput.make(form, "student-settings-header", messageLocator.getMessage("administrate.student.settings.header")); //$NON-NLS-1$ //$NON-NLS-2$
 
 		//Select for whether students can leave questions unanswered or not
-           // TODO: missing setting
-		makeSelect(form, "students-unanswered", EvaluationConstant.ADMINSTRATIVE_SETTING_OPTIONS, null); //$NON-NLS-1$
+		makeSelect(form, "students-unanswered",	//$NON-NLS-1$ 
+				administrateConfigurableList, 
+				EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED); 
 		UIOutput.make(form, "students-unanswered-note", messageLocator.getMessage("administrate.students.unanswered.note")); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		//Select for whether student can modify responses upto due date
-          // TODO: missing setting
-		makeSelect(form, "students-modify-responses", EvaluationConstant.ADMINSTRATIVE_SETTING_OPTIONS, null); //$NON-NLS-1$
+		makeSelect(form, "students-modify-responses", //$NON-NLS-1$ 
+				administrateConfigurableList, 
+				EvalSettings.STUDENT_MODIFY_RESPONSES); 
 		UIOutput.make(form, "students-modify-responses-note", messageLocator.getMessage("administrate.students.modify.responses.note")); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		//Select for whether students can view results
-           // TODO: missing setting
-		makeSelect(form, "students-view-results", EvaluationConstant.ADMINSTRATIVE_SETTING_OPTIONS, null);
+		makeSelect(form, "students-view-results", //$NON-NLS-1$
+				administrateConfigurableList, 
+				EvalSettings.STUDENT_VIEW_RESULTS);
 		UIOutput.make(form, "students-view-results-note", messageLocator.getMessage("administrate.students.view.results.note")); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		// Administrator Settings
@@ -160,14 +179,14 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
 
 		//Select for number of questions admins can add
 		makeSelect(form, "admin-hierarchy-num-questions", //$NON-NLS-1$
-										EvaluationConstant.NUM_QUESTIONS_INST_ADMINS,
-										EvalSettings.ADMIN_ADD_ITEMS_NUMBER); 
+				EvaluationConstant.PULLDOWN_INTEGER_VALUES,
+				EvalSettings.ADMIN_ADD_ITEMS_NUMBER); 
 		UIOutput.make(form, "admin-hierarchy-num-questions-note", messageLocator.getMessage("administrate.admin.hierarchy.num.questions.note")); //$NON-NLS-1$ //$NON-NLS-2$
 
-		makeBoolean(form, "admin-view-instructor-questions", null); //$NON-NLS-1$ 
-		UIOutput.make(form, "admin-view-instructor-questions-note", messageLocator.getMessage("administrate.admin.view.instructor.questions.note"));		 //$NON-NLS-1$ //$NON-NLS-2$
-		makeBoolean(form, "admin-super-modify-question", null); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(form, "admin-super-modify-question-note", messageLocator.getMessage("administrate.admin.super.modify.question.note")); //$NON-NLS-1$ //$NON-NLS-2$
+		makeBoolean(form, "admin-view-instructor-added-results", EvalSettings.ADMIN_VIEW_INSTRUCTOR_ADDED_RESULTS); //$NON-NLS-1$ 
+		UIOutput.make(form, "admin-view-instructor-added-results-note", messageLocator.getMessage("administrate.admin.view.instructor.added.results.note"));		 //$NON-NLS-1$ //$NON-NLS-2$
+		makeBoolean(form, "admin-view-below-results", EvalSettings.ADMIN_VIEW_BELOW_RESULTS); //$NON-NLS-1$ 
+		UIOutput.make(form, "admin-view-below-results-note", messageLocator.getMessage("administrate.admin.view.below.results.note"));		 //$NON-NLS-1$ //$NON-NLS-2$
 		
 		UIOutput.make(form, "general-settings-header", messageLocator.getMessage("administrate.general.settings.header"));		 //$NON-NLS-1$ //$NON-NLS-2$
 		makeInput(form, "general-helpdesk-email", EvalSettings.FROM_EMAIL_ADDRESS);
@@ -175,48 +194,57 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
 		
 		// Select for number of responses before results could be viewed
 		makeSelect(form, "general-responses-before-view",  
-            EvaluationConstant.NUM_RESPONSES_BEFORE_VIEW_RESULTS,
-			EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS);
+				EvaluationConstant.PULLDOWN_INTEGER_VALUES,
+				EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS);
 		UIOutput.make(form, "general-responses-before-view-note", messageLocator.getMessage("administrate.general.responses.before.view.note"));		 //$NON-NLS-1$ //$NON-NLS-2$
 		
 		makeBoolean(form, "general-na-allowed", EvalSettings.NOT_AVAILABLE_ALLOWED); //$NON-NLS-1$ 
 		UIOutput.make(form, "general-na-allowed-note", messageLocator.getMessage("administrate.general.na.allowed.note"));	 //$NON-NLS-1$ //$NON-NLS-2$
 		
 		// Select for maximum number of questions in a block
-		makeSelect(form, "general-max-questions-block",						//$NON-NLS-1$
-					EvaluationConstant.MAX_QUESTIONS_IN_BLOCK,
-					EvalSettings.ITEMS_ALLOWED_IN_QUESTION_BLOCK);
+		makeSelect(form, "general-max-questions-block",	//$NON-NLS-1$
+				EvaluationConstant.PULLDOWN_INTEGER_VALUES,
+				EvalSettings.ITEMS_ALLOWED_IN_QUESTION_BLOCK);
 		UIOutput.make(form, "general-max-questions-block-note", messageLocator.getMessage("administrate.general.max.questions.block.note"));		 //$NON-NLS-1$ //$NON-NLS-2$
 		
 		// Select for template sharing and visibility settings
         String[] sharingList = 
         {
+            messageLocator.getMessage("administrate.sharing.owner"),
             messageLocator.getMessage("modifytemplatetitledesc.sharing.private"),
-            messageLocator.getMessage("modifytemplatetitledesc.sharing.visible"),
-            messageLocator.getMessage("modifytemplatetitledesc.sharing.shared"),
             messageLocator.getMessage("modifytemplatetitledesc.sharing.public")
         };
-        // TODO: missing setting
-        makeSelect(form, "general-template-sharing", sharingList, null);
+        makeSelect(form, "general-template-sharing",  //$NON-NLS-1$ 
+        		sharingList, 
+        		EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY);
 		UIOutput.make(form, "general-template-sharing-note", messageLocator.getMessage("administrate.general.template.sharing.note"));		 //$NON-NLS-1$ //$NON-NLS-2$
 		
 		//Select for whether question category would be course or instructor
-          // TODO: missing setting
-		makeSelect(form, "general-default-question", EvaluationConstant.ADMINSTRATIVE_SETTING_OPTIONS, null);
+		makeSelect(form, "general-default-question", //$NON-NLS-1$ 
+				administrateConfigurableList, 
+				EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
 		UIOutput.make(form, "general-default-question-category", messageLocator.getMessage("administrate.general.default.question.category.note"));	 //$NON-NLS-1$ //$NON-NLS-2$
 		
-		makeBoolean(form, "general-use-stop-date", null); //$NON-NLS-1$ 
+		makeBoolean(form, "general-use-stop-date", EvalSettings.EVAL_USE_STOP_DATE); //$NON-NLS-1$ 
 		UIOutput.make(form, "general-use-stop-date-note", messageLocator.getMessage("administrate.general.use.stop.date.note"));		 //$NON-NLS-1$ //$NON-NLS-2$
 		makeBoolean(form, "general-expert-templates", EvalSettings.USE_EXPERT_TEMPLATES); //$NON-NLS-1$ 
 		UIOutput.make(form, "general-expert-templates-note", messageLocator.getMessage("administrate.general.expert.templates.note"));	 //$NON-NLS-1$ //$NON-NLS-2$
 		makeBoolean(form, "general-expert-questions", EvalSettings.USE_EXPERT_ITEMS); 
 		UIOutput.make(form, "general-expert-questions-note", messageLocator.getMessage("administrate.general.expert.questions.note"));		 //$NON-NLS-1$ //$NON-NLS-2$
-		makeBoolean(form, "general-same-view-date",  null); //$NON-NLS-1$ 
+		makeBoolean(form, "general-same-view-date",  EvalSettings.EVAL_USE_CUSTOM_VIEW_DATES); //$NON-NLS-1$ 
 		UIOutput.make(form, "general-same-view-date-note", messageLocator.getMessage("administrate.general.same.view.date.note"));	 //$NON-NLS-1$ //$NON-NLS-2$
+		makeBoolean(form, "general-require-comments-block",  EvalSettings.REQUIRE_COMMENTS_BLOCK); //$NON-NLS-1$ 
+		UIOutput.make(form, "general-require-comments-block-note", messageLocator.getMessage("administrate.general.require.comments.block.note"));	 //$NON-NLS-1$ //$NON-NLS-2$
 
+		//Number of days old can an eval be and still be recently closed
+		makeSelect(form, "general-eval-closed-still-recent", //$NON-NLS-1$
+				EvaluationConstant.PULLDOWN_INTEGER_VALUES,
+				EvalSettings.EVAL_RECENTLY_CLOSED_DAYS); 
+		UIOutput.make(form, "general-eval-closed-still-recent-note", messageLocator.getMessage("administrate.general.eval.closed.still.recent.note")); //$NON-NLS-1$ //$NON-NLS-2$
+		
 		// Save settings button
         // NB no action now required
-		UICommand.make(form, "saveSettings", messageLocator.getMessage("administrate.save.settings.button"), null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$		
+		UICommand.make(form, "saveSettings", messageLocator.getMessage("administrate.save.settings.button"), null); //$NON-NLS-1$ //$NON-NLS-2$	
 	}
 	
 	public List reportNavigationCases() {
