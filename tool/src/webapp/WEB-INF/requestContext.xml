@@ -156,15 +156,7 @@
 	</bean>
 
 	<bean
-		class="org.sakaiproject.evaluation.tool.producers.TemplateItemProducer">
-		<property name="templateBean" ref="templateBean" />
-		<property name="itemsBean" ref="itemsBean" />
-		<property name="external"
-			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-		<property name="itemsLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
-		<property name="templatesLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
+		class="org.sakaiproject.evaluation.tool.producers.ModifyScaledProducer">
 		<property name="messageLocator" ref="messageLocator" />
 	</bean>
 
