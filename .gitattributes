@@ -173,7 +173,7 @@ tool/src/webapp/content/templates/remove_template.html -text
 tool/src/webapp/content/templates/scale_control.html -text
 tool/src/webapp/content/templates/summary.html -text
 tool/src/webapp/content/templates/take_eval.html -text
-tool/src/webapp/content/templates/template_item.html -text
+tool/src/webapp/content/templates/template_modify.html -text
 tool/src/webapp/content/templates/template_title_desc.html -text
 tool/src/webapp/content/templates/view_essay_response.html -text
 tool/src/webapp/content/templates/view_report.html -text
