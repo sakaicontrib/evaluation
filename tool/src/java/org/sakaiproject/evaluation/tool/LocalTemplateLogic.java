@@ -57,6 +57,7 @@ public class LocalTemplateLogic {
   public EvalTemplate newTemplate() {
     EvalTemplate currTemplate = new EvalTemplate(new Date(), external.getCurrentUserId(),
         null, "private", Boolean.FALSE);
+    currTemplate.setDescription(""); // TODO - somehow gives DataIntegrityViolation if null
     return currTemplate;
   }
 }

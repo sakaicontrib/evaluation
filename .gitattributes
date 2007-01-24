@@ -152,6 +152,7 @@ tool/src/webapp/content/images/ideal-low.jpg -text
 tool/src/webapp/content/images/ideal-mid.jpg -text
 tool/src/webapp/content/images/ideal-none.jpg -text
 tool/src/webapp/content/js/evalEditSettings.js -text
+tool/src/webapp/content/js/selectLink.js -text
 tool/src/webapp/content/templates/administrate.html -text
 tool/src/webapp/content/templates/control_panel.html -text
 tool/src/webapp/content/templates/evaluation_assign.html -text
