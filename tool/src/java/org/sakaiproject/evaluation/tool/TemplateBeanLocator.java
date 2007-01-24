@@ -14,6 +14,7 @@ package org.sakaiproject.evaluation.tool;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
@@ -30,31 +31,39 @@ import uk.org.ponder.beanutil.BeanLocator;
  */
 
 public class TemplateBeanLocator implements BeanLocator {
-	
-	private EvalTemplatesLogic templatesLogic;
-	public void setTemplatesLogic( EvalTemplatesLogic templatesLogic) {
-		this.templatesLogic = templatesLogic;
-	}
-	private EvalExternalLogic external;
-	public void setExternal(EvalExternalLogic external) {
-		this.external = external;
-	}
+	public static final String NEW_PREFIX = "new";
+    public static String NEW_1 = NEW_PREFIX +"1";
+    
+    private LocalTemplateLogic localTemplateLogic;
+  
+    public void setLocalTemplateLogic(LocalTemplateLogic localTemplateLogic) {
+      this.localTemplateLogic = localTemplateLogic;
+    }
 	
 	private Map delivered = new HashMap();
 	
 	public Object locateBean(String path) {
 		Object togo=delivered.get(path);
-		if(togo==null){
-			if(path.startsWith("new")){
-				togo = new EvalTemplate(new Date(), external.getCurrentUserId(),
-						"", "", Boolean.FALSE);
-			}else{ 
-				togo=templatesLogic.getTemplateById(new Long(Long.parseLong(path.trim())));
+		if (togo == null){
+			if(path.startsWith(NEW_PREFIX)){
+				togo = localTemplateLogic.newTemplate();
+			}
+            else { 
+				togo = localTemplateLogic.fetchTemplate(new Long(Long.parseLong(path.trim())));
 			}
 			delivered.put(path, togo);
 		}
 		return togo;
 	}
 
-
+	public void saveAll() {
+      for (Iterator it = delivered.keySet().iterator(); it.hasNext();) {
+        String key = (String) it.next();
+        EvalTemplate template = (EvalTemplate) delivered.get(key);
+        if (key.startsWith(NEW_PREFIX)) {
+         // could do stuff here
+        }
+        localTemplateLogic.saveTemplate(template);
+      }
+    }
 }

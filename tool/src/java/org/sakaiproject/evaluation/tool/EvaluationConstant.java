@@ -15,7 +15,12 @@
 
 package org.sakaiproject.evaluation.tool;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
+import org.sakaiproject.evaluation.tool.producers.ModifyEssayProducer;
+import org.sakaiproject.evaluation.tool.producers.ModifyHeaderProducer;
 
 /**
  * This class holds the tool constants only, application data constants come from
@@ -57,6 +62,19 @@ public class EvaluationConstant {
 		ITEM_TYPE_EXISTING
 	};
 
+    private static Map classToView = new HashMap();
+    
+    static {
+      classToView.put(EvalConstants.ITEM_TYPE_TEXT, ModifyEssayProducer.VIEW_ID);
+      classToView.put(EvalConstants.ITEM_TYPE_HEADER, ModifyHeaderProducer.VIEW_ID);
+      // TODO: add remaining views here
+    }
+    /** For a given item classification, return the ID of the view which
+     * deals with it.
+     */
+    public static String classificationToView(String classVal) {
+      return(String) classToView.get(classVal);
+    }
 
 	//For template_modify and preview_item.html
 	public static String[] STEPPED_IMAGE_URLS = new String[] {
