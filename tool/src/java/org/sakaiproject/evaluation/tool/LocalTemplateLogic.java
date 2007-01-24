@@ -56,7 +56,7 @@ public class LocalTemplateLogic {
   
   public EvalTemplate newTemplate() {
     EvalTemplate currTemplate = new EvalTemplate(new Date(), external.getCurrentUserId(),
-        null, null, Boolean.FALSE);
+        null, "private", Boolean.FALSE);
     return currTemplate;
   }
 }
