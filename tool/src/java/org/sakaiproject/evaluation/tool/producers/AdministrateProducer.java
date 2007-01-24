@@ -231,7 +231,7 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
 		UIOutput.make(form, "general-expert-templates-note", messageLocator.getMessage("administrate.general.expert.templates.note"));	 //$NON-NLS-1$ //$NON-NLS-2$
 		makeBoolean(form, "general-expert-questions", EvalSettings.USE_EXPERT_ITEMS); 
 		UIOutput.make(form, "general-expert-questions-note", messageLocator.getMessage("administrate.general.expert.questions.note"));		 //$NON-NLS-1$ //$NON-NLS-2$
-		makeBoolean(form, "general-same-view-date",  EvalSettings.EVAL_USE_CUSTOM_VIEW_DATES); //$NON-NLS-1$ 
+		makeBoolean(form, "general-same-view-date",  EvalSettings.EVAL_USE_SAME_VIEW_DATES); //$NON-NLS-1$ 
 		UIOutput.make(form, "general-same-view-date-note", messageLocator.getMessage("administrate.general.same.view.date.note"));	 //$NON-NLS-1$ //$NON-NLS-2$
 		makeBoolean(form, "general-require-comments-block",  EvalSettings.REQUIRE_COMMENTS_BLOCK); //$NON-NLS-1$ 
 		UIOutput.make(form, "general-require-comments-block-note", messageLocator.getMessage("administrate.general.require.comments.block.note"));	 //$NON-NLS-1$ //$NON-NLS-2$
