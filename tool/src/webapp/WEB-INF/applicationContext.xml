@@ -62,16 +62,13 @@
 
   <!-- A wrapper bean that will rewrite outgoing URL state that refers to
   freshly saved entities -->
-
-  <bean id="entityRewriteWrapperProxy" parent="RSACBridgeProxy">
-    <property name="targetBeanName" value="entityRewriteWrapper" />
-  </bean>
   
-  <bean class="uk.org.ponder.rsac.BeanFetchBracketer">
-    <property name="targetBeanName">
-      <idref bean="rootHandlerBean" />
+  <bean parent="alterationWrapperParent">
+   <property name="value">
+     <bean id="entityRewriteWrapperProxy" parent="RSACBridgeProxy">
+      <property name="targetBeanName" value="entityRewriteWrapper" />
+     </bean>
     </property>
-    <property name="wrappingBean" ref="entityRewriteWrapperProxy" />
   </bean>
 
   <!-- special wrapper beans which work with genericdao to allow hibernate lazy inits -->
