@@ -13,6 +13,7 @@
 	<div class="navIntraTool">
 		<a rsf:id="summary-toplink" href="summary.html">Summary</a>
 		<a rsf:id="control-panel-toplink" href="control_panel.html">Control Panel</a>
+		<a rsf:id="control-scales-toplink" href="scale_control.html">Control Scales</a>
 	</div>
 
 	<div>
@@ -23,9 +24,6 @@
 	</div>
 
 	<form  rsf:id="basic-form" method="post">
-		
-		<a rsf:id="control-scales-toplink" href="scale_control.html">Control Scales</a>
-		<br/>
 		
 		<h3 rsf:id="system-settings-header">System Settings</h3>
 		<p class="noteText" rsf:id="system-settings-instructions">
@@ -128,18 +126,18 @@
 			</tr>
 			<tr>
 				<td class="checktable1">
-					<input type="checkbox" rsf:id="admin-view-instructor-questions"/>
+					<input type="checkbox" rsf:id="admin-view-instructor-added-results"/>
 				</td>
 				<td class="checktable2">
-					<span rsf:id="admin-view-instructor-questions-note">Admins allowed to view instructor added question results</span>
+					<span rsf:id="admin-view-instructor-added-results-note">Admins allowed to view instructor added question results</span>
 				</td>
 			</tr>
 			<tr>
 				<td class="checktable1">
-					<input type="checkbox" rsf:id="admin-super-modify-question"/>
+					<input type="checkbox" rsf:id="admin-view-below-results"/>
 				</td>
 				<td class="checktable2">
-					<span rsf:id="admin-super-modify-question-note">Only super admins may modify question text after eval start</span>
+					<span rsf:id="admin-view-below-results-note">Admins allowed to view results from items added below them in the hierarchy</span>
 				</td>
 			</tr>
 		</table>
@@ -227,6 +225,23 @@
 				<td class="checktable2">
 					<span rsf:id="general-same-view-date-note">Use same view date for all users<br/>
 					(or use seperate dates for students, instructors, admins)</span>
+				</td>
+			</tr>
+			<tr>
+				<td class="checktable1">
+					<input type="checkbox" rsf:id="general-require-comments-block"/>
+				</td>
+				<td class="checktable2">
+					<span rsf:id="general-require-comments-block-note">Require a comments block to be included in every evaluation</span>
+				</td>
+			</tr>
+			<tr>
+				<td class="checktable1" width="5%">
+					<select rsf:id="general-eval-closed-still-recent">
+					</select>
+				</td>
+				<td class="checktable2">
+					<span rsf:id="general-eval-closed-still-recent-note">Number of days old can an eval be and still be recently closed</span>
 				</td>
 			</tr>
 		</table>

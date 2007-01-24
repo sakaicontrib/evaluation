@@ -113,16 +113,11 @@ public class EvaluationConstant {
 	public static final Integer DEFAULT_ROWS = new Integer(2);
 	
 	// For main administrative page
-	public static final String[] NUM_QUESTIONS_INST_ADMINS = new String[] {
-		"0", "1", "2", "3", "4", "5", "8", "10", "15", "20"};	
-
-	public static final String[] NUM_RESPONSES_BEFORE_VIEW_RESULTS = new String[] {
-		"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15", "20"};	
-
-	public static final String[] MAX_QUESTIONS_IN_BLOCK = new String[] {
-		"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "12", "15", "18", "20"};	
-
-	public static final String[] ADMINSTRATIVE_SETTING_OPTIONS = new String[] {
-		"Yes", "No", "Configurable"};	
+	/**
+	 * Defines the allowed values for the Integer constants in pulldowns
+	 */
+	public static final String[] PULLDOWN_INTEGER_VALUES = new String[] {
+		"0", "1", "2", "3", "4", "5", "6", "7", "8", 
+		"9", "10", "12", "15", "18", "20", "25", "50"};	
 }
 
