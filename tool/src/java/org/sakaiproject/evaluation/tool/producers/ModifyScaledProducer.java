@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
+import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
 
 import uk.org.ponder.messageutil.MessageLocator;
@@ -35,6 +36,7 @@ import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UISelectChoice;
+import uk.org.ponder.rsf.flow.jsfnav.DynamicNavigationCaseReporter;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
@@ -50,7 +52,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  */
 
 public class ModifyScaledProducer implements ViewComponentProducer,
-    ViewParamsReporter, NavigationCaseReporter {
+    ViewParamsReporter, DynamicNavigationCaseReporter {
   public static final String VIEW_ID = "modify_scaled"; //$NON-NLS-1$
 
   private MessageLocator messageLocator;
@@ -62,14 +64,16 @@ public class ModifyScaledProducer implements ViewComponentProducer,
   public String getViewID() {
     return VIEW_ID;
   }
-
+  // Permissible since is a request-scope producer. Accessed from NavigationCases
+  private Long templateId; 
+  
   public void fillComponents(UIContainer tofill, ViewParameters viewparams,
       ComponentChecker checker) {
     TemplateItemViewParameters templateItemViewParams = (TemplateItemViewParameters) viewparams;
 
     String templateItemOTP = null;
     String templateItemOTPBinding = null;
-    Long templateId = templateItemViewParams.templateId;
+    templateId = templateItemViewParams.templateId;
     Long templateItemId = templateItemViewParams.templateItemId;
 
     if (templateItemId != null) {
@@ -213,17 +217,17 @@ public class ModifyScaledProducer implements ViewComponentProducer,
 
   public List reportNavigationCases() {
     List i = new ArrayList();
-
+ // TODO: Preview navigation is incorrect
     i.add(new NavigationCase(PreviewItemProducer.VIEW_ID,
         new SimpleViewParameters(PreviewItemProducer.VIEW_ID)));
-    i.add(new NavigationCase(TemplateModifyProducer.VIEW_ID,
-        new SimpleViewParameters(TemplateModifyProducer.VIEW_ID)));
+    i.add(new NavigationCase("success",
+        new EvalViewParameters(TemplateModifyProducer.VIEW_ID, templateId)));
 
     return i;
   }
 
   public ViewParameters getViewParameters() {
-    return new TemplateItemViewParameters(VIEW_ID, null, null, null);
+    return new TemplateItemViewParameters();
   }
 
 }

@@ -43,10 +43,4 @@ public class EvalViewParameters extends SimpleViewParameters {
 		this.templateId = templateId;
 		this.originalPage = originalPage;
 	}
-
-// RSF 0.7 no longer requires this to be declared (need to build from 2671+)
-//	public String getParseSpec() {
-//		// include a comma delimited list of the public properties in this class
-//		return super.getParseSpec() + ",templateId,originalPage";
-//	}
 }
