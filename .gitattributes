@@ -121,6 +121,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyBlockProducer.jav
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyEmailProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyEssayProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyHeaderProducer.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyScaledProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/PreviewEmailProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/PreviewEvalProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/PreviewItemProducer.java -text

@@ -60,7 +60,7 @@ public class TemplateModifyProducer implements ViewComponentProducer,ViewParamsR
 	}	
 	
 	public ViewParameters getViewParameters() {
-		return new EvalViewParameters(VIEW_ID, null, null);
+		return new EvalViewParameters();
 	}
 	
     private LocalTemplateLogic localTemplateLogic;
@@ -128,11 +128,11 @@ public class TemplateModifyProducer implements ViewComponentProducer,ViewParamsR
         };
         String[] viewIDs = {
             // NB TIP are all dummies
-            TemplateItemProducer.VIEW_ID, 
+            ModifyScaledProducer.VIEW_ID, 
             ModifyEssayProducer.VIEW_ID,
             ModifyHeaderProducer.VIEW_ID,
-            TemplateItemProducer.VIEW_ID, 
-            TemplateItemProducer.VIEW_ID
+            ModifyScaledProducer.VIEW_ID, 
+            ModifyScaledProducer.VIEW_ID
         };
         String[] values = convertViews(viewIDs, templateId);
         
@@ -148,7 +148,7 @@ public class TemplateModifyProducer implements ViewComponentProducer,ViewParamsR
 		}
         else{
           UIInternalLink.make(form, "begin_eval_link", new EvalViewParameters(EvaluationStartProducer.VIEW_ID, 
-                templateId, TemplateModifyProducer.VIEW_ID));
+                templateId));
 		}
 		
 		UIOutput.make(form, "univ-level-header", messageLocator.getMessage("modifytemplate.univ.level.header")); //$NON-NLS-1$ //$NON-NLS-2$			
@@ -163,8 +163,7 @@ public class TemplateModifyProducer implements ViewComponentProducer,ViewParamsR
 				messageLocator.getMessage("modifytemplate.modify.title.desc.link"),
 				new EvalViewParameters(
 						TemplateProducer.VIEW_ID, 
-						templateId, 
-						TemplateModifyProducer.VIEW_ID));
+						templateId));
 		
 		UIOutput.make(form, "description-header", messageLocator.getMessage("modifytemplate.description.header")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(form, "description",null, templateOTP+"description");	
@@ -219,8 +218,7 @@ public class TemplateModifyProducer implements ViewComponentProducer,ViewParamsR
 						messageLocator.getMessage("modifytemplate.preview.link"),
 						new EvalViewParameters(
 								PreviewItemProducer.VIEW_ID, 
-								myTemplateItem.getId(), 
-								TemplateModifyProducer.VIEW_ID));
+								myTemplateItem.getId()));
                 
                 String targetview = EvaluationConstant.classificationToView(myTemplateItem.getItem().getClassification());
                 ViewParameters target = 
@@ -237,8 +235,7 @@ public class TemplateModifyProducer implements ViewComponentProducer,ViewParamsR
 						messageLocator.getMessage("modifytemplate.preview.link"),
 						new EvalViewParameters(
 								RemoveQuestionProducer.VIEW_ID, 
-								myTemplateItem.getId(), 
-								TemplateModifyProducer.VIEW_ID));
+								myTemplateItem.getId()));
 				
 				UIBranchContainer radiobranch2 = UIBranchContainer.make(form2,"itemrow:text", Integer.toString(i)); //$NON-NLS-1$
 				UIOutput.make(radiobranch2,"queNo",Integer.toString(i+1));	 //$NON-NLS-1$
@@ -294,7 +291,7 @@ public class TemplateModifyProducer implements ViewComponentProducer,ViewParamsR
 			//"Question Block"
 			return ModifyBlockProducer.VIEW_ID;
 		}else  //for "Scale/Suvey" type
-			return TemplateItemProducer.VIEW_ID;
+			return ModifyScaledProducer.VIEW_ID;
 	}
 
 

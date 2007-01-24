@@ -37,7 +37,7 @@ import org.sakaiproject.evaluation.tool.producers.ModifyHeaderProducer;
 import org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer;
 import org.sakaiproject.evaluation.tool.producers.PreviewItemProducer;
 import org.sakaiproject.evaluation.tool.producers.RemoveQuestionProducer;
-import org.sakaiproject.evaluation.tool.producers.TemplateItemProducer;
+import org.sakaiproject.evaluation.tool.producers.ModifyScaledProducer;
 import org.sakaiproject.evaluation.tool.producers.TemplateModifyProducer;
 import org.sakaiproject.evaluation.tool.producers.TemplateProducer;
 
@@ -344,7 +344,7 @@ public class TemplateBean {
 			queList.add("");
 			return ModifyBlockProducer.VIEW_ID;
 		}*/else  //for "Scale/Suvey" type
-			return TemplateItemProducer.VIEW_ID;
+			return ModifyScaledProducer.VIEW_ID;
 	}
 	
 
@@ -613,7 +613,7 @@ public class TemplateBean {
 		    	this.scaleDisplaySetting = currentItem.getScaleDisplaySetting();
 		    	this.itemNA = currentItem.getUsesNA();	
 		    	
-		    	return TemplateItemProducer.VIEW_ID;
+		    	return ModifyScaledProducer.VIEW_ID;
 			}else if(this.itemClassification.equals(EvalConstants.ITEM_TYPE_TEXT)) {
 				//"Short Answer/Essay"
 				this.displayRows = currentItem.getDisplayRows();				
@@ -656,7 +656,7 @@ public class TemplateBean {
 			
 		}
 		
-		return TemplateItemProducer.VIEW_ID;
+		return ModifyScaledProducer.VIEW_ID;
 	}
 
 	
