@@ -148,11 +148,9 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 						.toString(i));
 
 				EvalTemplate template1 = (EvalTemplate) (templateList.get(i));
+                UIInternalLink.make(templatesRb, "template-modify", template1.getTitle(), 
+                    new EvalViewParameters(TemplateModifyProducer.VIEW_ID, template1.getId()));
 
-				UICommand templateUIC = UICommand.make(templatesRb, "templateTitleButton", template1.getTitle(), //$NON-NLS-1$
-										"#{templateBean.modifyExistingTemplate}"); //$NON-NLS-1$
-				templateUIC.parameters.add(new UIELBinding("#{templateBean.templateId}", template1.getId())); //$NON-NLS-1$
-				
 				String ownerId = template1.getOwner();
 				UIOutput.make(templatesRb, "templateOwner", external.getUserDisplayName(ownerId)); //$NON-NLS-1$
 				
@@ -160,7 +158,7 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 				UIOutput.make(templatesRb, "lastUpdate", df.format(date1)); //$NON-NLS-1$
 				
 				UIInternalLink.make(templatesRb, "deleteTemplateLink", new EvalViewParameters( //$NON-NLS-1$
-						RemoveTemplateProducer.VIEW_ID,template1.getId(), ControlPanelProducer.VIEW_ID));
+						RemoveTemplateProducer.VIEW_ID,template1.getId()));
 
 			}// end of for loop
 		}
@@ -253,7 +251,7 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 					
 					//Use EvalViewParameter to pass Evaluatio ID
 					UIInternalLink.make(queuedEvalsRb, "deleteEvalLink", new EvalViewParameters( //$NON-NLS-1$
-							RemoveEvalProducer.VIEW_ID, eval1.getId(), ControlPanelProducer.VIEW_ID));
+							RemoveEvalProducer.VIEW_ID, eval1.getId()));
 
 				} // end of for loop
 			}
@@ -341,7 +339,7 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 					UIOutput.make(closedEvalsRb, "reponseRate", ctResponses + "/"+ ctEnrollments +" - "+percentage +"%"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 					UIInternalLink.make(closedEvalsRb, "viewReportLink", messageLocator.getMessage("controlpanel.eval.report.link"),  //$NON-NLS-1$ //$NON-NLS-2$
 							new EvalViewParameters(ViewReportProducer.VIEW_ID, 
-								eval1.getId(), ControlPanelProducer.VIEW_ID));	
+								eval1.getId()));	
 				} // end of for loop
 			}
 

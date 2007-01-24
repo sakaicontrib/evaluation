@@ -27,7 +27,17 @@ public class EvalViewParameters extends SimpleViewParameters {
 	
 	public EvalViewParameters() {
 	}
-
+   /** NB - only two views left (ModifyEmailProducer and PreviewEmailProducer) that
+    * are still relying on the "originalPage" system, use this constructor by
+    * default - AMB. */
+    public EvalViewParameters(String viewID, Long templateId) {
+        this.viewID = viewID;
+        this.templateId = templateId;
+    }
+    /**
+     * Please use 2-argument constructor for all new code.
+     * @deprecated
+     */
 	public EvalViewParameters(String viewID, Long templateId, String originalPage) {
 		this.viewID = viewID;
 		this.templateId = templateId;
