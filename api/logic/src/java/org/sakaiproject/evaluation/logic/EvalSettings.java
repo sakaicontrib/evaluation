@@ -126,15 +126,15 @@ public interface EvalSettings {
 	 */
 	public static final String EVAL_RECENTLY_CLOSED_DAYS = "EVAL_RECENTLY_CLOSED_DAYS:java.lang.Integer";
 	/**
-	 * CONSTANT: Allow users to set the stop date when creating evaluations - {@see java.lang.Boolean}, default True<br/>
+	 * CONSTANT: Allow users to set the stop date when creating evaluations - {@see java.lang.Boolean}, default False<br/>
 	 * <b>Note:</b> Stop date should default to the due date when the user cannot set it
 	 */
 	public static final String EVAL_USE_STOP_DATE = "EVAL_USE_STOP_DATE:java.lang.Boolean";
 	/**
-	 * CONSTANT: Allow users to set custom view dates for evaluations - {@see java.lang.Boolean}, default True<br/>
-	 * <b>Note:</b> If this is FALSE/NULL then the custom date boxes do not appear and are not used, only the global view date is used
+	 * CONSTANT: Users must use same view dates for all users looking at evaluation results - {@see java.lang.Boolean}, default True<br/>
+	 * <b>Note:</b> If this is FALSE/NULL then the custom date boxes appear and are used (otherwise only the global view date is used)
 	 */
-	public static final String EVAL_USE_CUSTOM_VIEW_DATES = "EVAL_USE_CUSTOM_VIEW_DATES:java.lang.Boolean";
+	public static final String EVAL_USE_SAME_VIEW_DATES = "EVAL_USE_SAME_VIEW_DATES:java.lang.Boolean";
 
 
 	/**
