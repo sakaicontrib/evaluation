@@ -96,11 +96,9 @@ public class TemplateProducer implements ViewComponentProducer,
         .getMessage("modifytemplatetitledesc.description.header")); //$NON-NLS-1$ //$NON-NLS-2$
     UIOutput.make(form, "description-note", messageLocator
         .getMessage("modifytemplatetitledesc.description.note")); //$NON-NLS-1$ //$NON-NLS-2$
-    UICommand saveCmd = UICommand.make(form, "addContinue", messageLocator
+    UICommand.make(form, "addContinue", messageLocator
         .getMessage("modifytemplatetitledesc.save.button"),
         "#{templateBBean.updateTemplateTitleDesc}");
-    saveCmd.parameters.add(new UIELBinding("#{templateBBean.currTemplate}",
-        new ELReference(templateOTPBinding)));
     UIInput.make(form, "title", templateOTP + "title");
     UIInput.make(form, "description", templateOTP + "description");
 
