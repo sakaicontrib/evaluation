@@ -969,6 +969,11 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertTrue(ids.contains( etdl.templateItem3A.getId() ));
 		Assert.assertTrue(ids.contains( etdl.templateItem5A.getId() ));
 
+		// check that the return order is correct
+		Assert.assertEquals( 1, ((EvalTemplateItem)l.get(0)).getDisplayOrder().intValue() );
+		Assert.assertEquals( 2, ((EvalTemplateItem)l.get(1)).getDisplayOrder().intValue() );
+		Assert.assertEquals( 3, ((EvalTemplateItem)l.get(2)).getDisplayOrder().intValue() );
+
 		// test getting all items by valid templates
 		l = items.getTemplateItemsForTemplate( etdl.templatePublic.getId(), null );
 		Assert.assertNotNull( l );
@@ -999,6 +1004,10 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.templateItem3U.getId() ));
 		Assert.assertTrue(ids.contains( etdl.templateItem5U.getId() ));
+
+		// check that the return order is correct
+		Assert.assertEquals( 1, ((EvalTemplateItem)l.get(0)).getDisplayOrder().intValue() );
+		Assert.assertEquals( 2, ((EvalTemplateItem)l.get(1)).getDisplayOrder().intValue() );
 
 		// owner should see all items
 		l = items.getTemplateItemsForTemplate( etdl.templateUnused.getId(), 

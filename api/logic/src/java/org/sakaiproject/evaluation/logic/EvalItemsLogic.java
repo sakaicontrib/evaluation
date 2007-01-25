@@ -115,7 +115,8 @@ public interface EvalItemsLogic {
 	 * A template item represents a specific instance of an item in a specific template<br/>
 	 * Validates display settings based on the type of item, creates the association between
 	 * the template and this templateItem and the item and this templateItem,
-	 * fills in default optional values
+	 * fills in default optional values, sets the display order correctly for newly
+	 * created items (to the next available number)
 	 * 
 	 * @param templateItem a templateItem object to be saved
 	 * @param userId the internal user id (not username)
@@ -144,7 +145,7 @@ public interface EvalItemsLogic {
 	 * @param templateId the unique id of an EvalTemplate object
 	 * @param userId the internal user id (not username), if this is null then
 	 * it will return all items in the template
-	 * @return a list of {@link EvalTemplateItem} objects
+	 * @return a list of {@link EvalTemplateItem} objects, ordered by displayOrder
 	 */
 	public List getTemplateItemsForTemplate(Long templateId, String userId);
 
