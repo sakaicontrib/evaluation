@@ -19,6 +19,7 @@ import java.util.List;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalScalesLogic;
 import org.sakaiproject.evaluation.model.EvalScale;
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -106,11 +107,20 @@ public class ScaleControlProducer implements ViewComponentProducer, NavigationCa
 			}
 			
 			UIOutput.make(listOfScales, "ideal-scale-point", messageLocator.getMessage("scalecontrol.ideal.scale.title")); //$NON-NLS-1$ //$NON-NLS-2$
-			//If no ideal value is set then display "None" on webpage
+			
+			//Based on the scale ideal value in the database, pick the corresponding from the messages file.
 			if (scale.getIdeal() == null)
-				UIOutput.make(listOfScales, "ideal-value", "None");
-			else
-				UIOutput.make(listOfScales, "ideal-value", scale.getIdeal());
+				UIOutput.make(listOfScales, "ideal-value", 
+						messageLocator.getMessage("scalecontrol.ideal.scale.option.label.none"));
+			else if (scale.getIdeal().equals(EvalConstants.SCALE_IDEAL_MID))
+				UIOutput.make(listOfScales, "ideal-value", 
+						messageLocator.getMessage("scalecontrol.ideal.scale.option.label.mid"));
+			else if (scale.getIdeal().equals(EvalConstants.SCALE_IDEAL_HIGH))
+				UIOutput.make(listOfScales, "ideal-value",
+						messageLocator.getMessage("scalecontrol.ideal.scale.option.label.high"));
+			else 
+				UIOutput.make(listOfScales, "ideal-value", 
+						messageLocator.getMessage("scalecontrol.ideal.scale.option.label.low"));
 		 }
 	}
 	

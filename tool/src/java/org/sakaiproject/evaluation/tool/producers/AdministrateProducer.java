@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 
 import uk.org.ponder.beanutil.PathUtil;
@@ -72,7 +73,7 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
       UIBoundBoolean.make(parent, ID, adminkey == null? null : PathUtil.composePath(ADMIN_WBL, adminkey)); 
     }
     
-    private void makeSelect(UIContainer parent, String ID, String[] values, String adminkey) {
+    private void makeSelect(UIContainer parent, String ID, String[] values, String[] labels, String adminkey) {
       UISelect selection = UISelect.make(parent, ID); 
       selection.selection = new UIInput();
       if (adminkey != null) {
@@ -81,7 +82,9 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
       UIBoundList selectvalues = new UIBoundList();
       selectvalues.setValue(values);
       selection.optionlist = selectvalues;
-      selection.optionnames = selectvalues;    
+      UIBoundList selectlabels = new UIBoundList();
+      selectlabels.setValue(labels);
+      selection.optionnames = selectlabels;    
     }
     
     private void makeInput(UIContainer parent, String ID, String adminkey) {
@@ -128,6 +131,7 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
         };		
         makeSelect(form, "instructors-view-results", //$NON-NLS-1$ 
         		administrateConfigurableList, 
+        		administrateConfigurableList, 
         		EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
 	    UIOutput.make(form, "instructors-view-results-note", messageLocator.getMessage("administrate.instructors.view.results.note")); //$NON-NLS-1$ //$NON-NLS-2$
 		
@@ -144,11 +148,13 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
         };
         makeSelect(form, "instructors-hierarchy", //$NON-NLS-1$ 
         		hierarchyOptionList, 
+        		hierarchyOptionList, 
         		EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE);
 		UIOutput.make(form, "instructors-hierarchy-note", messageLocator.getMessage("administrate.instructors.hierarchy.note")); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		//Select for number of questions intructors can add
         makeSelect(form, "instructors-num-questions", //$NON-NLS-1$ 
+        		EvaluationConstant.PULLDOWN_INTEGER_VALUES, 
         		EvaluationConstant.PULLDOWN_INTEGER_VALUES, 
         		EvalSettings.INSTRUCTOR_ADD_ITEMS_NUMBER);
 		UIOutput.make(form, "instructors-num-questions-note", messageLocator.getMessage("administrate.instructors.num.questions.note")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -159,17 +165,20 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
 		//Select for whether students can leave questions unanswered or not
 		makeSelect(form, "students-unanswered",	//$NON-NLS-1$ 
 				administrateConfigurableList, 
+				administrateConfigurableList, 
 				EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED); 
 		UIOutput.make(form, "students-unanswered-note", messageLocator.getMessage("administrate.students.unanswered.note")); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		//Select for whether student can modify responses upto due date
 		makeSelect(form, "students-modify-responses", //$NON-NLS-1$ 
 				administrateConfigurableList, 
+				administrateConfigurableList, 
 				EvalSettings.STUDENT_MODIFY_RESPONSES); 
 		UIOutput.make(form, "students-modify-responses-note", messageLocator.getMessage("administrate.students.modify.responses.note")); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		//Select for whether students can view results
 		makeSelect(form, "students-view-results", //$NON-NLS-1$
+				administrateConfigurableList, 
 				administrateConfigurableList, 
 				EvalSettings.STUDENT_VIEW_RESULTS);
 		UIOutput.make(form, "students-view-results-note", messageLocator.getMessage("administrate.students.view.results.note")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -179,6 +188,7 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
 
 		//Select for number of questions admins can add
 		makeSelect(form, "admin-hierarchy-num-questions", //$NON-NLS-1$
+				EvaluationConstant.PULLDOWN_INTEGER_VALUES,
 				EvaluationConstant.PULLDOWN_INTEGER_VALUES,
 				EvalSettings.ADMIN_ADD_ITEMS_NUMBER); 
 		UIOutput.make(form, "admin-hierarchy-num-questions-note", messageLocator.getMessage("administrate.admin.hierarchy.num.questions.note")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -195,6 +205,7 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
 		// Select for number of responses before results could be viewed
 		makeSelect(form, "general-responses-before-view",  
 				EvaluationConstant.PULLDOWN_INTEGER_VALUES,
+				EvaluationConstant.PULLDOWN_INTEGER_VALUES,
 				EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS);
 		UIOutput.make(form, "general-responses-before-view-note", messageLocator.getMessage("administrate.general.responses.before.view.note"));		 //$NON-NLS-1$ //$NON-NLS-2$
 		
@@ -204,23 +215,32 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
 		// Select for maximum number of questions in a block
 		makeSelect(form, "general-max-questions-block",	//$NON-NLS-1$
 				EvaluationConstant.PULLDOWN_INTEGER_VALUES,
+				EvaluationConstant.PULLDOWN_INTEGER_VALUES,
 				EvalSettings.ITEMS_ALLOWED_IN_QUESTION_BLOCK);
 		UIOutput.make(form, "general-max-questions-block-note", messageLocator.getMessage("administrate.general.max.questions.block.note"));		 //$NON-NLS-1$ //$NON-NLS-2$
 		
 		// Select for template sharing and visibility settings
-        String[] sharingList = 
+		String[] sharingValues = 
+        {
+            EvalConstants.SHARING_OWNER,
+            EvalConstants.SHARING_PRIVATE,
+            EvalConstants.SHARING_PUBLIC
+        };
+        String[] sharingLabels = 
         {
             messageLocator.getMessage("administrate.sharing.owner"),
             messageLocator.getMessage("modifytemplatetitledesc.sharing.private"),
             messageLocator.getMessage("modifytemplatetitledesc.sharing.public")
         };
         makeSelect(form, "general-template-sharing",  //$NON-NLS-1$ 
-        		sharingList, 
+        		sharingValues, 
+        		sharingLabels, 
         		EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY);
 		UIOutput.make(form, "general-template-sharing-note", messageLocator.getMessage("administrate.general.template.sharing.note"));		 //$NON-NLS-1$ //$NON-NLS-2$
 		
 		//Select for whether question category would be course or instructor
 		makeSelect(form, "general-default-question", //$NON-NLS-1$ 
+				administrateConfigurableList, 
 				administrateConfigurableList, 
 				EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
 		UIOutput.make(form, "general-default-question-category", messageLocator.getMessage("administrate.general.default.question.category.note"));	 //$NON-NLS-1$ //$NON-NLS-2$
@@ -238,6 +258,7 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
 
 		//Number of days old can an eval be and still be recently closed
 		makeSelect(form, "general-eval-closed-still-recent", //$NON-NLS-1$
+				EvaluationConstant.PULLDOWN_INTEGER_VALUES,
 				EvaluationConstant.PULLDOWN_INTEGER_VALUES,
 				EvalSettings.EVAL_RECENTLY_CLOSED_DAYS); 
 		UIOutput.make(form, "general-eval-closed-still-recent-note", messageLocator.getMessage("administrate.general.eval.closed.still.recent.note")); //$NON-NLS-1$ //$NON-NLS-2$
