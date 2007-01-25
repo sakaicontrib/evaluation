@@ -15,6 +15,8 @@
 package org.sakaiproject.evaluation.logic.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -489,6 +491,7 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 			// TODO - check if this user can see this item (must be either taking a related eval or must somehow control the template)
 			l.add(eti);
 		}
+		Collections.sort(l, new TemplateItemDisplayOrderComparator());
 		return l;
 	}
 
@@ -570,6 +573,14 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 			return true;
 		} else {
 			throw new SecurityException("User ("+userId+") cannot control template item ("+templateItem.getId()+") without permissions");
+		}
+	}
+
+	protected static class TemplateItemDisplayOrderComparator implements Comparator {
+		public int compare(Object ti0, Object ti1) {
+			// expects to get Evaluation objects
+			return ((EvalTemplateItem)ti0).getDisplayOrder().
+				compareTo(((EvalTemplateItem)ti1).getDisplayOrder());
 		}
 	}
 
