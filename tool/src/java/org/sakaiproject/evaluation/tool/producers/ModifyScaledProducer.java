@@ -17,8 +17,11 @@ package org.sakaiproject.evaluation.tool.producers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.sakaiproject.evaluation.logic.EvalItemsLogic;
+import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
+import org.sakaiproject.evaluation.tool.ItemsBean;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
 
@@ -64,6 +67,17 @@ public class ModifyScaledProducer implements ViewComponentProducer,
   public String getViewID() {
     return VIEW_ID;
   }
+  
+  //TODO-shouldn't need these in producer, necessary to preload scaleId until we have a darreshaper
+  private ItemsBean itemsBean;
+  public void setItemsBean(ItemsBean itemsBean) {
+		this.itemsBean = itemsBean;
+	}
+  private EvalItemsLogic itemsLogic;
+  public void setItemsLogic(EvalItemsLogic itemsLogic) {
+		this.itemsLogic = itemsLogic;
+	}
+  
   // Permissible since is a request-scope producer. Accessed from NavigationCases
   private Long templateId; 
   
@@ -83,7 +97,14 @@ public class ModifyScaledProducer implements ViewComponentProducer,
       templateItemOTPBinding = "templateItemBeanLocator.new1";
     }
     templateItemOTP = templateItemOTPBinding + ".";
-
+    
+    //TODO - replace with darreshaper
+    if(templateItemId!=null){
+	    EvalTemplateItem myTemplateItem=itemsLogic.getTemplateItemById(templateItemId);
+	    if(myTemplateItem.getItem().getScale()!=null){
+	    	itemsBean.scaleId=itemsLogic.getTemplateItemById(templateItemId).getItem().getScale().getId();
+	    }
+    }
     /*
      * EvalTemplateItem templateItem=new EvalTemplateItem();
      * templateItem.setItem(new EvalItem());
@@ -119,7 +140,7 @@ public class ModifyScaledProducer implements ViewComponentProducer,
     // UIOutput.make(form, "item-header","Item" );
     UIOutput.make(form, "itemNo", null, "1."); //$NON-NLS-1$ //$NON-NLS-2$
 
-    UIOutput.make(form, "itemClassification", null, "Scaled");
+    UIOutput.make(form, "itemClassification", null, EvalConstants.ITEM_TYPE_SCALED);
     UIOutput.make(form,
         "added-by", messageLocator.getMessage("modifyitem.added.by")); //$NON-NLS-1$ //$NON-NLS-2$
     /** TODO - fetch id of owner */
@@ -195,9 +216,8 @@ public class ModifyScaledProducer implements ViewComponentProducer,
     UISelectChoice.make(form, "item_category_C", selectID, 0); //$NON-NLS-1$
     UISelectChoice.make(form, "item_category_I", selectID, 1); //$NON-NLS-1$
 
-    UICommand.make(form, "cancelItemAction", messageLocator
-        .getMessage("general.cancel.button"), "#{itemsBean.cancelItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
+	UIOutput.make(form, "cancel-button", messageLocator.getMessage("general.cancel.button"));
+	
     UICommand saveCmd = UICommand.make(form, "saveItemAction", messageLocator
         .getMessage("modifyitem.save.button"), "#{itemsBean.saveItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     // saveCmd.parameters.add(new
@@ -209,11 +229,11 @@ public class ModifyScaledProducer implements ViewComponentProducer,
     saveCmd.parameters.add(new UIELBinding("#{itemsBean.templateId}",
         templateId));
 
-    UICommand.make(form, "previewItemAction", messageLocator
-        .getMessage("modifyitem.preview.button"),
-        "#{itemsBean.previewItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
-  }
+    //TODO-Preview new/modified items
+	/*    UICommand.make(form, "previewItemAction", messageLocator
+	        .getMessage("modifyitem.preview.button"),
+	        "#{itemsBean.previewItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+  */}
 
   public List reportNavigationCases() {
     List i = new ArrayList();
@@ -229,5 +249,9 @@ public class ModifyScaledProducer implements ViewComponentProducer,
   public ViewParameters getViewParameters() {
     return new TemplateItemViewParameters();
   }
+
+
+
+
 
 }

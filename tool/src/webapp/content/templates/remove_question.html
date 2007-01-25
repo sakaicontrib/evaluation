@@ -590,7 +590,7 @@
 	
 	<tr>
 		<td align="left" colspan="1" width="73%">
-			<input type="submit" value="Cancel" rsf:id="cancelRemoveAction"/>
+			<input type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" rsf:id="cancel-button" />
 		</td>
 		<td align="right" colspan="1" width="27%">
 			<input type="submit" value="Remove Question" rsf:id="removeQuestionAction"/>

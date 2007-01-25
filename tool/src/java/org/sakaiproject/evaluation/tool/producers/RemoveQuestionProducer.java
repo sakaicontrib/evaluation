@@ -19,17 +19,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.model.EvalScale;
+import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.TemplateBean;
+import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
+import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
 
 
+import uk.org.ponder.beanutil.BeanGetter;
 import uk.org.ponder.messageutil.MessageLocator;
+import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
@@ -48,6 +55,7 @@ import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
 /**
  * This page is to remove an Item(all kind of Item type) from DAO
@@ -55,7 +63,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  * @author: Rui Feng (fengr@vt.edu)
  */
 
-public class RemoveQuestionProducer implements ViewComponentProducer, NavigationCaseReporter {
+public class RemoveQuestionProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
 	public static final String VIEW_ID = "remove_question"; //$NON-NLS-1$
 	
 	public String getViewID() {
@@ -67,14 +75,32 @@ public class RemoveQuestionProducer implements ViewComponentProducer, Navigation
 		this.messageLocator = messageLocator;
 	}
 	
-	private TemplateBean templateBean;
-	public void setTemplateBean(TemplateBean templateBean) {
-		this.templateBean = templateBean;
+	private BeanGetter rbg;
+	public void setRequestBeanGetter(BeanGetter rbg) {
+	    this.rbg = rbg;
+	 }
+
+	private EvalItemsLogic itemsLogic;
+	public void setItemsLogic( EvalItemsLogic itemsLogic) {
+		this.itemsLogic = itemsLogic;
 	}
 
-
+	public Long templateId;
+	
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {	
 
+		TemplateItemViewParameters templateItemViewParams = (TemplateItemViewParameters) viewparams;
+		
+        Long templateItemId = templateItemViewParams.templateItemId;
+        templateId=templateItemViewParams.templateId;
+		String templateItemOTPBinding="templateItemBeanLocator."+templateItemId;
+	    String templateItemOTP=templateItemOTPBinding+".";			
+	    
+        //EvalTemplateItem myTemplateItem=(EvalTemplateItem)rbg.getBean(templateItemOTPBinding);	
+        EvalTemplateItem myTemplateItem=itemsLogic.getTemplateItemById(templateItemId);
+        System.out.println("templateItemId"+templateItemId.toString());
+        System.out.println("itemtext"+myTemplateItem.getItem().getItemText());
+        
 		UIOutput.make(tofill, "remove-question-title", messageLocator.getMessage("removequestion.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(tofill, "modify-template-title", messageLocator.getMessage("modifytemplate.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
 		
@@ -85,22 +111,23 @@ public class RemoveQuestionProducer implements ViewComponentProducer, Navigation
 		
 		UIOutput.make(form, "remove-question-confirm-pre-name", messageLocator.getMessage("removequestion.confirm.pre.name")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(form, "remove-question-confirm-post-name", messageLocator.getMessage("removequestion.confirm.post.name")); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		if(templateBean.itemClassification.equals(EvalConstants.ITEM_TYPE_SCALED)){ //"Scaled/Survey"
-			EvalScale  scale = templateBean.itemPreview.getScale();
+
+		if(myTemplateItem.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)){ //"Scaled/Survey"
+			EvalScale  scale = myTemplateItem.getItem().getScale();
 			String[] scaleOptions = scale.getOptions();
 			int optionCount = scaleOptions.length;
 			String scaleValues[] = new String[optionCount];
 			String scaleLabels[] = new String[optionCount];
 			
-			
-			if (templateBean.scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_COMPACT)) { //"Compact"
-				
+			String scaleDisplaySetting=myTemplateItem.getScaleDisplaySetting();
+			if (scaleDisplaySetting==null)scaleDisplaySetting=myTemplateItem.getItem().getScaleDisplaySetting();
+			System.out.println("scaledisplaySetting"+scaleDisplaySetting);
+			if (scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_COMPACT)) { //"Compact"
 				UIBranchContainer compact = UIBranchContainer.make(tofill, "compactDisplay:"); //$NON-NLS-1$
 
 				//Item text
-				UIOutput.make(compact, "queNo",null,"#{templateBean.currItemNo}"); //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(compact, "itemText", null, "#{templateBean.itemText}"); //$NON-NLS-1$ //$NON-NLS-2$
+				UIOutput.make(compact, "queNo", myTemplateItem.getDisplayOrder().toString()); //$NON-NLS-1$ //$NON-NLS-2$
+				UIOutput.make(compact, "itemText", myTemplateItem.getItem().getItemText()); //$NON-NLS-1$ //$NON-NLS-2$
 				
 				//Start label
 				String compactDisplayStart = scaleOptions[0];		
@@ -130,19 +157,21 @@ public class RemoveQuestionProducer implements ViewComponentProducer, Navigation
 				//End label
 				UIOutput.make(compact, "compactDisplayEnd", compactDisplayEnd);			 //$NON-NLS-1$
 				
-				if(templateBean.itemNA != null && templateBean.itemNA.booleanValue()== true){
+				Boolean usesNA=myTemplateItem.getUsesNA();
+				if(usesNA==null)usesNA=myTemplateItem.getItem().getUsesNA();
+				if(usesNA != null && usesNA.booleanValue()== true){
 					UIBranchContainer radiobranch3 = UIBranchContainer.make(compact,"showNA:"); //$NON-NLS-1$
-					UIBoundBoolean.make(radiobranch3, "itemNA",templateBean.itemNA); //$NON-NLS-1$
+					UIBoundBoolean.make(radiobranch3, "itemNA",usesNA); //$NON-NLS-1$
 					UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				
-			}else if (templateBean.scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_COMPACT_COLORED)) { //"Compact Colored"
+			}else if (scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_COMPACT_COLORED)) { //"Compact Colored"
 
 				UIBranchContainer compactColored = UIBranchContainer.make(tofill, "compactDisplayColored:"); //$NON-NLS-1$
 
 				//Item text
-				UIOutput.make(compactColored, "queNo",null,"#{templateBean.currItemNo}"); //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(compactColored, "itemText", null, "#{templateBean.itemText}"); //$NON-NLS-1$ //$NON-NLS-2$
+				UIOutput.make(compactColored, "queNo", myTemplateItem.getDisplayOrder().toString()); //$NON-NLS-1$ //$NON-NLS-2$
+				UIOutput.make(compactColored, "itemText", myTemplateItem.getItem().getItemText()); //$NON-NLS-1$ //$NON-NLS-2$
 				
 				//Get the scale ideal value (none, low, mid, high )
 				String ideal = scale.getIdeal(); 
@@ -220,21 +249,25 @@ public class RemoveQuestionProducer implements ViewComponentProducer, Navigation
 					UISelectChoice.make(radioBranchSecond, "dummyRadioValueSecond", selectID, i); //$NON-NLS-1$
 			    }
 				
-			    if(templateBean.itemNA != null && templateBean.itemNA.booleanValue()== true){
+				Boolean usesNA=myTemplateItem.getUsesNA();
+				if(usesNA==null)usesNA=myTemplateItem.getItem().getUsesNA();
+				if(usesNA != null && usesNA.booleanValue()== true){
 					UIBranchContainer radiobranch3 = UIBranchContainer.make(compactColored,"showNA:"); //$NON-NLS-1$
-					UIBoundBoolean.make(radiobranch3, "itemNA",templateBean.itemNA); //$NON-NLS-1$
+					UIBoundBoolean.make(radiobranch3, "itemNA",usesNA); //$NON-NLS-1$
 					UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
-			}else if (templateBean.scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_FULL)) { //"Full"
+			}else if (scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_FULL)) { //"Full"
 				
 				UIBranchContainer full = UIBranchContainer.make(tofill, "fullDisplay:"); //$NON-NLS-1$
 
 				//Item text
-				UIOutput.make(full, "queNo",null,"#{templateBean.currItemNo}"); //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(full, "itemText", null, "#{templateBean.itemText}"); //$NON-NLS-1$ //$NON-NLS-2$
-				if(templateBean.itemNA != null && templateBean.itemNA.booleanValue()== true){
+				UIOutput.make(full, "queNo", myTemplateItem.getDisplayOrder().toString()); //$NON-NLS-1$ //$NON-NLS-2$
+				UIOutput.make(full, "itemText", myTemplateItem.getItem().getItemText()); //$NON-NLS-1$ //$NON-NLS-2$
+				Boolean usesNA=myTemplateItem.getUsesNA();
+				if(usesNA==null)usesNA=myTemplateItem.getItem().getUsesNA();
+				if(usesNA != null && usesNA.booleanValue()== true){
 					UIBranchContainer radiobranch3 = UIBranchContainer.make(full,"showNA:"); //$NON-NLS-1$
-					UIBoundBoolean.make(radiobranch3, "itemNA",templateBean.itemNA); //$NON-NLS-1$
+					UIBoundBoolean.make(radiobranch3, "itemNA",usesNA); //$NON-NLS-1$
 					UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				
@@ -258,16 +291,20 @@ public class RemoveQuestionProducer implements ViewComponentProducer, Navigation
 					UISelectLabel.make(radiobranch, "dummyRadioLabel", selectID, i); //$NON-NLS-1$
 			    }
 				
-			}else if (templateBean.scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_FULL_COLORED)) { //"Full Colored"
+			}else if (scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_FULL_COLORED)) { //"Full Colored"
 				
 				UIBranchContainer fullColored = UIBranchContainer.make(tofill, "fullDisplayColored:"); //$NON-NLS-1$
 
+				System.out.println("itemText"+myTemplateItem.getItem().getItemText());
+				
 				//Item text
-				UIOutput.make(fullColored, "queNo",null,"#{templateBean.currItemNo}"); //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(fullColored, "itemText", null, "#{templateBean.itemText}"); //$NON-NLS-1$ //$NON-NLS-2$
-				if(templateBean.itemNA != null && templateBean.itemNA.booleanValue()== true){
+				UIOutput.make(fullColored, "queNo", myTemplateItem.getDisplayOrder().toString()); //$NON-NLS-1$ //$NON-NLS-2$
+				UIOutput.make(fullColored, "itemText", myTemplateItem.getItem().getItemText()); //$NON-NLS-1$ //$NON-NLS-2$
+				Boolean usesNA=myTemplateItem.getUsesNA();
+				if(usesNA==null)usesNA=myTemplateItem.getItem().getUsesNA();
+				if(usesNA != null && usesNA.booleanValue()== true){
 					UIBranchContainer radiobranch3 = UIBranchContainer.make(fullColored,"showNA:"); //$NON-NLS-1$
-					UIBoundBoolean.make(radiobranch3, "itemNA",templateBean.itemNA); //$NON-NLS-1$
+					UIBoundBoolean.make(radiobranch3, "itemNA",usesNA); //$NON-NLS-1$
 					UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				//Get the scale ideal value (none, low, mid, high )
@@ -307,16 +344,18 @@ public class RemoveQuestionProducer implements ViewComponentProducer, Navigation
 					UISelectLabel.make(radiobranch, "dummyRadioLabel", selectID, i); //$NON-NLS-1$
 			    }
 				
-			}else if (templateBean.scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED)) { //stepped
+			}else if (scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED)) { //stepped
 				
 				UIBranchContainer stepped = UIBranchContainer.make(tofill, "steppedDisplay:"); //$NON-NLS-1$
 				
 				//Item text
-				UIOutput.make(stepped, "queNo",null,"#{templateBean.currItemNo}"); //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(stepped, "itemText", null, "#{templateBean.itemText}"); //$NON-NLS-1$ //$NON-NLS-2$
-				if(templateBean.itemNA != null && templateBean.itemNA.booleanValue()== true){
+				UIOutput.make(stepped, "queNo", myTemplateItem.getDisplayOrder().toString()); //$NON-NLS-1$ //$NON-NLS-2$
+				UIOutput.make(stepped, "itemText", myTemplateItem.getItem().getItemText()); //$NON-NLS-1$ //$NON-NLS-2$
+				Boolean usesNA=myTemplateItem.getUsesNA();
+				if(usesNA==null)usesNA=myTemplateItem.getItem().getUsesNA();
+				if(usesNA != null && usesNA.booleanValue()== true){
 					UIBranchContainer radiobranch3 = UIBranchContainer.make(stepped,"showNA:"); //$NON-NLS-1$
-					UIBoundBoolean.make(radiobranch3, "itemNA",templateBean.itemNA); //$NON-NLS-1$
+					UIBoundBoolean.make(radiobranch3, "itemNA",usesNA); //$NON-NLS-1$
 					UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				
@@ -353,16 +392,18 @@ public class RemoveQuestionProducer implements ViewComponentProducer, Navigation
 					UISelectChoice.make(radioValueBranch, "dummyRadioValue", selectID, i); //$NON-NLS-1$
 			    }
 				
-			}else if (templateBean.scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED)) { //"Stepped Colored"
+			}else if (scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED)) { //"Stepped Colored"
 
 				UIBranchContainer steppedColored = UIBranchContainer.make(tofill, "steppedDisplayColored:"); //$NON-NLS-1$
 
 				//Item text
-				UIOutput.make(steppedColored, "queNo",null,"#{templateBean.currItemNo}"); //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(steppedColored, "itemText", null, "#{templateBean.itemText}"); //$NON-NLS-1$ //$NON-NLS-2$
-				if(templateBean.itemNA != null && templateBean.itemNA.booleanValue()== true){
+				UIOutput.make(steppedColored, "queNo", myTemplateItem.getDisplayOrder().toString()); //$NON-NLS-1$ //$NON-NLS-2$
+				UIOutput.make(steppedColored, "itemText", myTemplateItem.getItem().getItemText()); //$NON-NLS-1$ //$NON-NLS-2$
+				Boolean usesNA=myTemplateItem.getUsesNA();
+				if(usesNA==null)usesNA=myTemplateItem.getItem().getUsesNA();
+				if(usesNA != null && usesNA.booleanValue()== true){
 					UIBranchContainer radiobranch3 = UIBranchContainer.make(steppedColored,"showNA:"); //$NON-NLS-1$
-					UIBoundBoolean.make(radiobranch3, "itemNA",templateBean.itemNA); //$NON-NLS-1$
+					UIBoundBoolean.make(radiobranch3, "itemNA",usesNA); //$NON-NLS-1$
 					UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				//Get the scale ideal value (none, low, mid, high )
@@ -424,11 +465,13 @@ public class RemoveQuestionProducer implements ViewComponentProducer, Navigation
 				//This is for vertical			
 				UIBranchContainer vertical = UIBranchContainer.make(tofill, "verticalDisplay:"); //$NON-NLS-1$
 				//Item text
-				UIOutput.make(vertical, "queNo",null,"#{templateBean.currItemNo}"); //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(vertical, "itemText", null, "#{templateBean.itemText}"); //$NON-NLS-1$ //$NON-NLS-2$
-				if(templateBean.itemNA != null && templateBean.itemNA.booleanValue()== true){
+				UIOutput.make(vertical, "queNo", myTemplateItem.getDisplayOrder().toString()); //$NON-NLS-1$ //$NON-NLS-2$
+				UIOutput.make(vertical, "itemText", myTemplateItem.getItem().getItemText()); //$NON-NLS-1$ //$NON-NLS-2$
+				Boolean usesNA=myTemplateItem.getUsesNA();
+				if(usesNA==null)usesNA=myTemplateItem.getItem().getUsesNA();
+				if(usesNA != null && usesNA.booleanValue()== true){
 					UIBranchContainer radiobranch3 = UIBranchContainer.make(vertical,"showNA:"); //$NON-NLS-1$
-					UIBoundBoolean.make(radiobranch3, "itemNA",templateBean.itemNA); //$NON-NLS-1$
+					UIBoundBoolean.make(radiobranch3, "itemNA",usesNA); //$NON-NLS-1$
 					UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				
@@ -454,44 +497,50 @@ public class RemoveQuestionProducer implements ViewComponentProducer, Navigation
 			    }
 				
 			}
-		}else if(templateBean.itemClassification.equals(EvalConstants.ITEM_TYPE_TEXT)){ //"Short Answer/Essay"
+		}else if(myTemplateItem.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)){ //"Short Answer/Essay"
 			UIBranchContainer essay = UIBranchContainer.make(tofill, "essayType:"); //$NON-NLS-1$
 			//Item text
-			UIOutput.make(essay, "queNo",null,"#{templateBean.currItemNo}"); //$NON-NLS-1$ //$NON-NLS-2$
-			UIOutput.make(essay, "itemText", null, "#{templateBean.itemText}"); //$NON-NLS-1$ //$NON-NLS-2$
-			if(templateBean.itemNA != null && templateBean.itemNA.booleanValue()== true){
+			UIOutput.make(essay, "queNo", myTemplateItem.getDisplayOrder().toString()); //$NON-NLS-1$ //$NON-NLS-2$
+			UIOutput.make(essay, "itemText", myTemplateItem.getItem().getItemText()); //$NON-NLS-1$ //$NON-NLS-2$
+			Boolean usesNA=myTemplateItem.getUsesNA();
+			if(usesNA==null)usesNA=myTemplateItem.getItem().getUsesNA();
+			if(usesNA != null && usesNA.booleanValue()== true){
 				UIBranchContainer radiobranch3 = UIBranchContainer.make(essay,"showNA:"); //$NON-NLS-1$
-				UIBoundBoolean.make(radiobranch3, "itemNA",templateBean.itemNA); //$NON-NLS-1$
+				UIBoundBoolean.make(radiobranch3, "itemNA",usesNA); //$NON-NLS-1$
 				UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
 			UIInput textarea = UIInput.make(essay,"essayBox",null ); //$NON-NLS-1$
 			Map attrmap = new HashMap();
 			
+			Integer displayRows=myTemplateItem.getDisplayRows();
+			if(displayRows==null)myTemplateItem.getItem().getDisplayRows();
 			String rowNum; 
-			if (templateBean.displayRows == null)
+			if (displayRows == null)
 				rowNum = EvaluationConstant.DEFAULT_ROWS.toString();
 			else
-				rowNum = templateBean.displayRows.toString();
+				rowNum = displayRows.toString();
 			
 			attrmap.put("rows", rowNum); //$NON-NLS-1$
 			textarea.decorators = new DecoratorList(new UIFreeAttributeDecorator(attrmap)); 
 			
-		}else if(templateBean.itemClassification.equals(EvalConstants.ITEM_TYPE_HEADER)){ //"Text Header"
+		}else if(myTemplateItem.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_HEADER)){ //"Text Header"
 			UIBranchContainer header = UIBranchContainer.make(tofill, "essayType:"); //$NON-NLS-1$
-			UIOutput.make(header, "queNo",null,"#{templateBean.currItemNo}"); //$NON-NLS-1$ //$NON-NLS-2$
-			UIOutput.make(header, "itemText", null, "#{templateBean.itemText}"); //$NON-NLS-1$ //$NON-NLS-2$
+			UIOutput.make(header, "queNo",myTemplateItem.getDisplayOrder().toString()); //$NON-NLS-1$ //$NON-NLS-2$
+			UIOutput.make(header, "itemText", myTemplateItem.getItem().getItemText()); //$NON-NLS-1$ //$NON-NLS-2$
 
-		// TODO - changed to ITEM_TYPE_SCALED so it will COMPILE - AZ
-		}else if(templateBean.itemClassification.equals(EvalConstants.ITEM_TYPE_SCALED)&& 
+		// TODO - Make block work
+		}/**else if(myTemplateItem.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)&& 
 				templateBean.scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED)){ //"Question Block","Stepped"
 			UIBranchContainer blockStepped = UIBranchContainer.make(tofill, "blockStepped:"); //$NON-NLS-1$
 			
 			UIOutput.make(blockStepped, "itemNo",null,"#{templateBean.currItemNo}"); //$NON-NLS-1$ //$NON-NLS-2$
 			UIOutput.make(blockStepped, "itemText", null, "#{templateBean.itemText}"); //$NON-NLS-1$ //$NON-NLS-2$
-			if(templateBean.itemNA != null && templateBean.itemNA.booleanValue()== true){
+			Boolean usesNA=myTemplateItem.getUsesNA();
+			if(usesNA==null)usesNA=myTemplateItem.getItem().getUsesNA();
+			if(usesNA != null && usesNA.booleanValue()== true){
 				UIBranchContainer radiobranch3 = UIBranchContainer.make(blockStepped,"showNA:"); //$NON-NLS-1$
-				UIBoundBoolean.make(radiobranch3, "itemNA",templateBean.itemNA); //$NON-NLS-1$
+				UIBoundBoolean.make(radiobranch3, "itemNA",usesNA); //$NON-NLS-1$
 				UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
@@ -540,15 +589,17 @@ public class RemoveQuestionProducer implements ViewComponentProducer, Navigation
 					
 			}
 
-		// TODO - changed to ITEM_TYPE_SCALED so it will COMPILE - AZ
-		}else if(templateBean.itemClassification.equals(EvalConstants.ITEM_TYPE_SCALED)&& 
+		// TODO - changed to ITEM_TYPE_SCALED so it will COMPILE - AZ should be Block
+		}*//**else if(templateBean.itemClassification.equals(EvalConstants.ITEM_TYPE_SCALED)&& 
 				templateBean.scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED)){ //"Question Block","Stepped Colored"
 			UIBranchContainer blockSteppedColored = UIBranchContainer.make(tofill, "blockSteppedColored:"); //$NON-NLS-1$
 			UIOutput.make(blockSteppedColored, "itemNo",null,"#{templateBean.currItemNo}"); //$NON-NLS-1$ //$NON-NLS-2$
 			UIOutput.make(blockSteppedColored, "itemText", null, "#{templateBean.itemText}"); //$NON-NLS-1$ //$NON-NLS-2$
-			if(templateBean.itemNA != null && templateBean.itemNA.booleanValue()== true){
+			Boolean usesNA=myTemplateItem.getUsesNA();
+			if(usesNA==null)usesNA=myTemplateItem.getItem().getUsesNA();
+			if(usesNA != null && usesNA.booleanValue()== true){
 				UIBranchContainer radiobranch3 = UIBranchContainer.make(blockSteppedColored,"showNA:"); //$NON-NLS-1$
-				UIBoundBoolean.make(radiobranch3, "itemNA",templateBean.itemNA); //$NON-NLS-1$
+				UIBoundBoolean.make(radiobranch3, "itemNA",usesNA); //$NON-NLS-1$
 				UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
@@ -617,21 +668,22 @@ public class RemoveQuestionProducer implements ViewComponentProducer, Navigation
 				}
 			}
 			
-		}
-		
-		UICommand.make(form, "cancelRemoveAction", messageLocator.getMessage("general.cancel.button"),  //$NON-NLS-1$ //$NON-NLS-2$
-				"#{templateBean.cancelRemoveAction}"); //$NON-NLS-1$
-		UICommand.make(form, "removeQuestionAction", messageLocator.getMessage("removequestion.remove.button"),  //$NON-NLS-1$ //$NON-NLS-2$
-				"#{templateBean.removeQuestionAction}"); //$NON-NLS-1$
-		
+		}*/
+		UIOutput.make(form, "cancel-button", messageLocator.getMessage("general.cancel.button"));
+		UICommand rmvBtn=UICommand.make(form, "removeQuestionAction", messageLocator.getMessage("removequestion.remove.button"),  //$NON-NLS-1$ //$NON-NLS-2$
+				"#{itemsBean.removeItemAction}"); //$NON-NLS-1$
+		rmvBtn.parameters.add(new UIELBinding("#{itemsBean.templateItem}", new ELReference(templateItemOTPBinding)));
 	}
 
 	public List reportNavigationCases() {
 		List i = new ArrayList();
 		
-		i.add(new NavigationCase(TemplateModifyProducer.VIEW_ID, new SimpleViewParameters(TemplateModifyProducer.VIEW_ID)));
+		i.add(new NavigationCase("removed", new EvalViewParameters(TemplateModifyProducer.VIEW_ID, templateId)));
 		return i;
 	}
 	
-	
+	  public ViewParameters getViewParameters() {
+		    return new TemplateItemViewParameters();
+		  }
+	  
 }

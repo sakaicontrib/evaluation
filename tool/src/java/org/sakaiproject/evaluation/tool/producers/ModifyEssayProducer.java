@@ -15,8 +15,11 @@ package org.sakaiproject.evaluation.tool.producers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.TemplateBean;
+import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
+import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
 
 
 import uk.org.ponder.messageutil.MessageLocator;
@@ -26,18 +29,21 @@ import uk.org.ponder.rsf.components.UIBoundList;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UISelectChoice;
+import uk.org.ponder.rsf.flow.jsfnav.DynamicNavigationCaseReporter;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
 /**
  * Page for Create, modify, preview, delete a Short Answer/Essay type Item
@@ -45,7 +51,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  * @author: Rui Feng (fengr@vt.edu)
  */
 
-public class ModifyEssayProducer implements ViewComponentProducer,NavigationCaseReporter{
+public class ModifyEssayProducer implements ViewComponentProducer,ViewParamsReporter,NavigationCaseReporter,DynamicNavigationCaseReporter{
 	public static final String VIEW_ID = "modify_essay"; //$NON-NLS-1$
 	private TemplateBean templateBean;
 
@@ -62,9 +68,25 @@ public class ModifyEssayProducer implements ViewComponentProducer,NavigationCase
 		this.templateBean = templateBean;
 	}
 
-
+	  // Permissible since is a request-scope producer. Accessed from NavigationCases
+	  private Long templateId; 
 
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+	    TemplateItemViewParameters templateItemViewParams = (TemplateItemViewParameters) viewparams;
+
+	    String templateItemOTP = null;
+	    String templateItemOTPBinding = null;
+	    templateId = templateItemViewParams.templateId;
+	    Long templateItemId = templateItemViewParams.templateItemId;
+
+	    if (templateItemId != null) {
+	      templateItemOTPBinding = "templateItemBeanLocator." + templateItemId;
+	    }
+	    else {
+	      templateItemOTPBinding = "templateItemBeanLocator.new1";
+	    }
+	    templateItemOTP = templateItemOTPBinding + ".";
+		
 		UIOutput.make(tofill, "modify-essay-title", messageLocator.getMessage("modifyessay.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(tofill, "create-eval-title", messageLocator.getMessage("createeval.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -75,18 +97,22 @@ public class ModifyEssayProducer implements ViewComponentProducer,NavigationCase
 
 		UIOutput.make(form, "item-header", messageLocator.getMessage("modifyitem.item.header"));	//TODO: exception: can not get property
 		//UIOutput.make(form, "item-header","Item" );
-		UIOutput.make(form,"itemNo",null,"#{templateBean.currItemNo}");
+		UIOutput.make(form,"itemNo",null,"1.");
 
 		UIOutput.make(form, "added-by", messageLocator.getMessage("modifyitem.added.by"));  //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(form,"itemClassification",null,"#{templateBean.itemClassification}");		 //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(form, "userInfo",null, "#{templateBean.userId}");	 //$NON-NLS-1$ //$NON-NLS-2$
+		UIOutput.make(form,"itemClassification",null,EvalConstants.ITEM_TYPE_TEXT);		 //$NON-NLS-1$ //$NON-NLS-2$
+		UIOutput.make(form, "userInfo",null, templateItemOTP + "owner");	 //$NON-NLS-1$ //$NON-NLS-2$
 
-		if(templateBean.currentItem!= null){
-			UIBranchContainer showLink = UIBranchContainer.make(form, "showRemoveLink:"); //$NON-NLS-1$
-			UIInternalLink.make(showLink, "remove_link", messageLocator.getMessage("modifyitem.remove.link"), new SimpleViewParameters("remove_question"));	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
+	    if (templateItemViewParams.templateItemId != null) {
+	        UIBranchContainer showLink = UIBranchContainer.make(form,
+	            "showRemoveLink:");
+	        UIInternalLink.make(showLink, "remove_link", messageLocator
+	            .getMessage("modifyitem.remove.link"), new SimpleViewParameters(
+	            "remove_question")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	    }
+	    
 		UIOutput.make(form, "question-text-header", messageLocator.getMessage("modifyitem.question.text.header")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIInput.make(form,"item_text", "#{templateBean.itemText}"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIInput.make(form,"item_text", templateItemOTP + "item.itemText"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		UIOutput.make(form, "response-size-header", messageLocator.getMessage("modifyessay.response.size.header")); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -94,7 +120,7 @@ public class ModifyEssayProducer implements ViewComponentProducer,NavigationCase
 		//dropdown list for "Scale Type"
 		UISelect combo = UISelect.make(form, "scaleList"); //$NON-NLS-1$
 		combo.selection = new UIInput();
-		combo.selection.valuebinding = new ELReference("#{templateBean.displayRows}"); //$NON-NLS-1$
+		combo.selection.valuebinding = new ELReference(templateItemOTP+"item.displayRows"); //$NON-NLS-1$
 		UIBoundList comboValues = new UIBoundList();
 		comboValues.setValue(new String[] {"2", "3", "4","5"});		 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		combo.optionlist = comboValues;
@@ -103,7 +129,7 @@ public class ModifyEssayProducer implements ViewComponentProducer,NavigationCase
 		combo.optionnames = comboNames;
 
 		UIOutput.make(form, "add-na-header", messageLocator.getMessage("modifyitem.add.na.header"));			 //$NON-NLS-1$ //$NON-NLS-2$
-		UIBoundBoolean.make(form, "item_NA", "#{templateBean.itemNA}",null); //$NON-NLS-1$ //$NON-NLS-2$
+	    UIBoundBoolean.make(form, "item_NA", templateItemOTP + "item.usesNA", null); //$NON-NLS-1$ //$NON-NLS-2$
 
 		UIOutput.make(form, "item-category-header", messageLocator.getMessage("modifyitem.item.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(form, "course-category-header", messageLocator.getMessage("modifyitem.course.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -115,25 +141,43 @@ public class ModifyEssayProducer implements ViewComponentProducer,NavigationCase
 			messageLocator.getMessage("modifyitem.instructor.category.header"),
 		};
 		UISelect radios = UISelect.make(form, "item_category", EvaluationConstant.ITEM_CATEGORY_VALUES,
-				courseCategoryList, "#{templateBean.itemCategory}",null);
+				courseCategoryList, templateItemOTP + "itemCategory",null);
 		
 		String selectID = radios.getFullID();
 		UISelectChoice.make(form, "item_category_C", selectID, 0); //$NON-NLS-1$
 		UISelectChoice.make(form, "item_category_I", selectID, 1);	 //$NON-NLS-1$
 
-		UICommand.make(form, "cancelEssayAction", messageLocator.getMessage("general.cancel.button"), "#{templateBean.cancelEssayAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		UIOutput.make(form, "cancel-button", messageLocator.getMessage("general.cancel.button"));
+		
+	        UICommand saveCmd = UICommand.make(form, "saveEssayAction", messageLocator
+	            .getMessage("modifyitem.save.button"), "#{itemsBean.saveItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	        // saveCmd.parameters.add(new
+	        // UIELBinding(templateItemOTP+"template",templatesLogic.getTemplateById(templateId)));
+	        saveCmd.parameters.add(new UIELBinding(templateItemOTP
+	            + "item.classification", EvalConstants.ITEM_TYPE_TEXT));
+	        saveCmd.parameters.add(new UIELBinding("#{itemsBean.templateItem}",
+	            new ELReference(templateItemOTPBinding)));
+	        saveCmd.parameters.add(new UIELBinding("#{itemsBean.templateId}",
+	            templateId));
 
-		UICommand.make(form, "saveEssayAction", messageLocator.getMessage("modifyitem.save.button"), "#{templateBean.saveEssayAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
-		UICommand.make(form, "previewEssayAction", messageLocator.getMessage("modifyitem.preview.button"), "#{templateBean.previewEssayAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	        UICommand.make(form, "previewEssayAction", messageLocator
+	            .getMessage("modifyitem.preview.button"),
+	            "#{itemsBean.previewItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	public List reportNavigationCases() {
 		List i = new ArrayList();
 
 		i.add(new NavigationCase(PreviewItemProducer.VIEW_ID, new SimpleViewParameters(PreviewItemProducer.VIEW_ID)));
-		i.add(new NavigationCase(TemplateModifyProducer.VIEW_ID, new SimpleViewParameters(TemplateModifyProducer.VIEW_ID)));
+	    i.add(new NavigationCase("success",
+	            new EvalViewParameters(TemplateModifyProducer.VIEW_ID, templateId)));
+	    i.add(new NavigationCase("cancel", 
+	    		new EvalViewParameters(TemplateModifyProducer.VIEW_ID, templateId)));
 		return i;
 	}
 
+	  public ViewParameters getViewParameters() {
+		    return new TemplateItemViewParameters();
+		  }
+	
 }
