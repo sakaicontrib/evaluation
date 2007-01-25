@@ -160,8 +160,12 @@ public class ItemsBean {
 		this.scaleLabels = scaleLabels;
 	}
 	
-	public String cancelItemAction(){return null;}
+	public String cancelItemAction(){
+		return "cancel";
+	}
+	
 	public String previewItemAction(){return null;}
+	
 	public String saveItemAction(){
 		System.out.println("We're in save item action");
 		templateItem.getItem().setScaleDisplaySetting(templateItem.getScaleDisplaySetting());
