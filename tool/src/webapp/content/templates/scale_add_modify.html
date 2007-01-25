@@ -1,0 +1,112 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+	<title rsf:id="scale-add-modify-title">Add/Modify Scale</title>
+	<link href="/library/skin/tool_base.css" type="text/css" rel="stylesheet" media="all" />
+	<link href="/library/skin/default/tool.css" type="text/css" rel="stylesheet" media="all" />
+	<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+	<script type="text/javascript" language="JavaScript" src="/library/js/headscripts.js"></script>
+</head>
+<body rsf:id="scr=sakai-body">
+<div class="portletBody">
+	<div class="navIntraTool">
+		<a rsf:id="summary-toplink" href="summary.html">Summary</a>
+		<a rsf:id="control-panel-toplink" href="control_panel.html">Control Panel</a>
+	</div>
+
+	<div>
+		<ul class="breadCrumb">
+			<li class="breadCrumb"><a rsf:id="summary-toplink" href="summary.html">Summary</a></li>
+			<li class="breadCrumb"><a rsf:id="administrate-toplink" href="administrate.html">Administrate</a></li>
+			<li class="breadCrumb"><a rsf:id="scale-control-toplink" href="scale_control.html">Control Scales</li>
+			<li class="breadCrumb" rsf:id="scale-add-modify-title">Add/Modify Scale</li>
+		</ul>
+	</div>
+	
+	<div>
+		<b><span rsf:id="scale-add-modify-title">Add/Modify Scale</span></b>
+	</div>	
+
+	<br/>
+	
+	<table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "90%">
+		<tr>
+			<td width="2%">
+				&nbsp;
+			</td>
+			<td align="left" valign="top">
+				<span rsf:id="scale-title-note">Title</span>:
+				<input rsf:id="scale-title" type="text" value="" maxlength="100" size="30"/>
+				<a rsf:id="scale-remove-link" href="">Remove Scale</a>
+			</td>
+		</tr>
+	</table>
+	
+	<br/>
+	
+	<table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "90%">
+		<tr rsf:id="scaleOptions:"> 
+			<td width="10%">
+				&nbsp;
+			</td>
+			<td align="left" valign="top">
+				<input rsf:id="scale-option-label" type="text"/>
+				&nbsp;
+				<input rsf:id="scale-remove-option" type="submit" value="Remove"/>
+			</td>
+		</tr>
+		<tr> 
+			<td width="10%">
+				&nbsp;
+			</td>
+			<td align="left" valign="top">
+				<input rsf:id="scale-add-point" type="submit" value="Add Scale Point"/>  
+			</td>
+		</tr>
+	</table>
+	
+	<br/>
+	
+	<table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "90%">
+		<tr> 
+			<td width="2%">
+				&nbsp;
+			</td>
+			<td align="left" valign="top">
+				<b>Ideal</b>&nbsp;-&nbsp;indicate the position of the "best" answer in this scale (used for graphs and coloring):
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" align="center" rsf:id="scaleIdealOptions:">
+				<label rsf:id="scale-ideal-option-label"/>
+				<input type="radio" rsf:id="scale-ideal-option-value" />
+			</td>
+		</tr>
+		<tr> 
+			<td width="2%">
+				&nbsp;
+			</td>
+			<td align="left" valign="top">
+				<b>Hidden</b>&nbsp;-
+				<input type="checkbox" rsf:id="scale-hidden"/>
+				<I>This scale is not visible in the interface (pull down menus)</I> 
+			</td>
+		</tr>
+	</table>
+	
+	<br/>
+	
+	<table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "70%">
+		<tr>
+			<td width="50%" align="left">
+				<input rsf:id="scale-add-modify-cancel-button" type="button" value="Cancel" onclick="javascript:history.go(-1);/>  
+			</td>
+			<td width="50%" align="right">
+				<input rsf:id="scale-add-modify-save-button" type="submit" value="Save Scale"/>  
+			</td>
+		</tr>
+	</table>
+</div>
+</body>
+</html>
