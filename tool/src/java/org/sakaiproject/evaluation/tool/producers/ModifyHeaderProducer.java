@@ -98,7 +98,7 @@ public class ModifyHeaderProducer implements ViewComponentProducer,ViewParamsRep
 		//UIOutput.make(form, "item-header","Item" );
 		UIOutput.make(form, "added-by-header", messageLocator.getMessage("modifyitem.added.by"));  //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(form,"itemNo",null,"1.");
-		UIOutput.make(form,"itemClassification",null,"Text Header");
+		UIOutput.make(form,"itemClassification",null, EvalConstants.ITEM_TYPE_HEADER);
 		UIOutput.make(form, "userInfo",null, templateItemOTP + "owner");
 
 	    if (templateItemViewParams.templateItemId != null) {
@@ -128,9 +128,8 @@ public class ModifyHeaderProducer implements ViewComponentProducer,ViewParamsRep
 		UISelectChoice.make(form, "item_category_C", selectID, 0);
 		UISelectChoice.make(form, "item_category_I", selectID, 1);
 
-	    UICommand.make(form, "cancelHeaderAction", messageLocator
-	            .getMessage("general.cancel.button"), "#{itemsBean.cancelItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
+		UIOutput.make(form, "cancel-button", messageLocator.getMessage("general.cancel.button"));
+		
 	        UICommand saveCmd = UICommand.make(form, "saveHeaderAction", messageLocator
 	            .getMessage("modifyitem.save.button"), "#{itemsBean.saveItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	        // saveCmd.parameters.add(new

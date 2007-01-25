@@ -18,7 +18,9 @@ import java.util.Map;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
+import org.sakaiproject.evaluation.logic.EvalScalesLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
+import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 
 import uk.org.ponder.beanutil.BeanLocator;
@@ -39,6 +41,11 @@ public class TemplateItemBeanLocator implements BeanLocator {
     this.itemsLogic = itemsLogic;
   }
 
+  private EvalScalesLogic scalesLogic;
+  public void setScalesLogic(EvalScalesLogic scalesLogic) {
+		this.scalesLogic = scalesLogic;
+	}
+  
   private EvalExternalLogic external;
 
   public void setExternal(EvalExternalLogic external) {
@@ -51,9 +58,11 @@ public class TemplateItemBeanLocator implements BeanLocator {
     Object togo = delivered.get(path);
     if (togo == null) {
       if (path.startsWith(NEW_PREFIX)) {
-        togo = new EvalTemplateItem(new Date(), external.getCurrentUserId(),
-            null, new EvalItem(new Date(), external.getCurrentUserId(), "", "",
-                "", new Boolean(false)), null, "");
+        EvalItem newItem=new EvalItem(new Date(), external.getCurrentUserId(), "", "",
+                "", new Boolean(false));
+    	  togo = new EvalTemplateItem(new Date(), external.getCurrentUserId(),
+            null, newItem, null, "");
+        
       }
       else {
         togo = itemsLogic.getTemplateItemById(new Long(Long.parseLong(path
@@ -63,5 +72,7 @@ public class TemplateItemBeanLocator implements BeanLocator {
     }
     return togo;
   }
+
+
 
 }

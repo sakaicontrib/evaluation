@@ -166,13 +166,20 @@ public class ItemsBean {
 	
 	public String previewItemAction(){return null;}
 	
+	public String removeItemAction(){
+		itemsLogic.deleteTemplateItem(templateItem.getId(), external.getCurrentUserId());
+		return "removed";
+	}
+	
+	public String cancelRemoveAction(){return null;}
+	
 	public String saveItemAction(){
 		System.out.println("We're in save item action");
 		templateItem.getItem().setScaleDisplaySetting(templateItem.getScaleDisplaySetting());
-		templateItem.setDisplayOrder(new Integer(itemsLogic.getTemplateItemsForTemplate(templateId, external.getCurrentUserId()).size()));
+		if(templateItem.getId()==null){templateItem.setDisplayOrder(new Integer(itemsLogic.getTemplateItemsForTemplate(templateId, external.getCurrentUserId()).size()));}
 		templateItem.setTemplate(templatesLogic.getTemplateById(templateId));
 		templateItem.getItem().setSharing(templateItem.getTemplate().getSharing());
-		templateItem.getItem().setScale(scalesLogic.getScaleById(scaleId));
+		if(scaleId!=null)templateItem.getItem().setScale(scalesLogic.getScaleById(scaleId));
 		itemsLogic.saveItem(templateItem.getItem(), external.getCurrentUserId());
 		itemsLogic.saveTemplateItem(templateItem, external.getCurrentUserId());
 		return "success";

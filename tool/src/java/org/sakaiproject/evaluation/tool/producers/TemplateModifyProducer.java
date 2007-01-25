@@ -143,7 +143,6 @@ public class TemplateModifyProducer implements ViewComponentProducer,
 		
 	    UICommand.make(form, "add_questions", messageLocator.getMessage("modifytemplate.add.item.button")); //$NON-NLS-1$ //$NON-NLS-2$
         List templateItemsList = localTemplateLogic.fetchTemplateItems(templateId);
-		
 		if (templateItemsList.isEmpty()){
           UIOutput.make(form, "begin-eval-dummylink", messageLocator.getMessage("modifytemplate.begin.eval.link")); 
 		}
@@ -231,11 +230,13 @@ public class TemplateModifyProducer implements ViewComponentProducer,
 				
 				//UICommand removeCmd=UICommand.make(radiobranch,"remove_row_item","#{templateBean.removeRowItemAction}");
 				//removeCmd.parameters.add(new UIELBinding("#{itemsBean.currTemplateItemId}",Integer.toString(i)));
-				UIInternalLink.make(form, 
-						"preview_row_item", 
-						messageLocator.getMessage("modifytemplate.preview.link"),
-						new EvalViewParameters(
+                System.out.println("tiid"+myTemplateItem.getId()+" itemtext: "+myTemplateItem.getItem().getItemText());
+				UIInternalLink.make(radiobranch, 
+						"remove_row_item", 
+						messageLocator.getMessage("modifytemplate.remove.link"),
+						new TemplateItemViewParameters(
 								RemoveQuestionProducer.VIEW_ID, 
+								templateId,
 								myTemplateItem.getId()));
 				
 				UIBranchContainer radiobranch2 = UIBranchContainer.make(form2,"itemrow:text", Integer.toString(i)); //$NON-NLS-1$
@@ -274,8 +275,6 @@ public class TemplateModifyProducer implements ViewComponentProducer,
 					}
 				}		
 				*/
-
-	
 		    }//end of for loop
 		}
 		
