@@ -16,15 +16,19 @@ package org.sakaiproject.evaluation.tool.producers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.TemplateBean;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
+import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
 
 
 import uk.org.ponder.messageutil.MessageLocator;
+import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
@@ -38,6 +42,7 @@ import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
 /**
  * Page for Create, modify,preview, delete a Header type Item
@@ -45,7 +50,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  * @author: Rui Feng (fengr@vt.edu)
  */
 
-public class ModifyHeaderProducer implements ViewComponentProducer,NavigationCaseReporter,DynamicNavigationCaseReporter{
+public class ModifyHeaderProducer implements ViewComponentProducer,ViewParamsReporter,NavigationCaseReporter,DynamicNavigationCaseReporter{
 	public static final String VIEW_ID = "modify_header";
 	private TemplateBean templateBean;
 
@@ -61,9 +66,26 @@ public class ModifyHeaderProducer implements ViewComponentProducer,NavigationCas
 	public String getViewID() {
 		return VIEW_ID;
 	}
-
+	
+	  // Permissible since is a request-scope producer. Accessed from NavigationCases
+	  private Long templateId; 
+	  
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+	    TemplateItemViewParameters templateItemViewParams = (TemplateItemViewParameters) viewparams;
 
+	    String templateItemOTP = null;
+	    String templateItemOTPBinding = null;
+	    templateId = templateItemViewParams.templateId;
+	    Long templateItemId = templateItemViewParams.templateItemId;
+
+	    if (templateItemId != null) {
+	      templateItemOTPBinding = "templateItemBeanLocator." + templateItemId;
+	    }
+	    else {
+	      templateItemOTPBinding = "templateItemBeanLocator.new1";
+	    }
+	    templateItemOTP = templateItemOTPBinding + ".";
+	    
 		UIInternalLink.make(tofill, "summary-toplink", messageLocator.getMessage("summary.page.title"),
 				new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
@@ -75,16 +97,20 @@ public class ModifyHeaderProducer implements ViewComponentProducer,NavigationCas
 		UIOutput.make(form, "item-header", messageLocator.getMessage("modifyitem.item.header"));	//TODO: exception: can not get property
 		//UIOutput.make(form, "item-header","Item" );
 		UIOutput.make(form, "added-by-header", messageLocator.getMessage("modifyitem.added.by"));  //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(form,"itemNo",null,"#{templateBean.currItemNo}");
-		UIOutput.make(form,"itemClassification",null,"#{templateBean.itemClassification}");
-		UIOutput.make(form, "userInfo",null, "#{templateBean.userId}");
+		UIOutput.make(form,"itemNo",null,"1.");
+		UIOutput.make(form,"itemClassification",null,"Text Header");
+		UIOutput.make(form, "userInfo",null, templateItemOTP + "owner");
 
-		if(templateBean.currentItem != null){
-			UIBranchContainer showLink = UIBranchContainer.make(form, "showRemoveLink:");
-			UIInternalLink.make(showLink, "remove_link", messageLocator.getMessage("modifyitem.remove.link"), new SimpleViewParameters("remove_question"));
-		}
+	    if (templateItemViewParams.templateItemId != null) {
+	        UIBranchContainer showLink = UIBranchContainer.make(form,
+	            "showRemoveLink:");
+	        UIInternalLink.make(showLink, "remove_link", messageLocator
+	            .getMessage("modifyitem.remove.link"), new SimpleViewParameters(
+	            "remove_question")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	    }
+	    
 		UIOutput.make(form, "question-text-header", messageLocator.getMessage("modifyitem.question.text.header")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIInput.make(form,"item_text", "#{templateBean.itemText}");
+		UIInput.make(form,"item_text", templateItemOTP + "item.itemText");
 
 
 		UIOutput.make(form, "item-category-header", messageLocator.getMessage("modifyitem.item.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -97,26 +123,43 @@ public class ModifyHeaderProducer implements ViewComponentProducer,NavigationCas
 			messageLocator.getMessage("modifyitem.instructor.category.header"),
 		};
 		UISelect radios = UISelect.make(form, "item_category", EvaluationConstant.ITEM_CATEGORY_VALUES,
-				courseCategoryList, "#{templateBean.itemCategory}",null);
+				courseCategoryList, templateItemOTP + "itemCategory",null);
 		String selectID = radios.getFullID();
 		UISelectChoice.make(form, "item_category_C", selectID, 0);
 		UISelectChoice.make(form, "item_category_I", selectID, 1);
 
-		UICommand.make(form, "cancelHeaderAction", messageLocator.getMessage("general.cancel.button"), "#{templateBean.cancelHeaderAction}");
+	    UICommand.make(form, "cancelHeaderAction", messageLocator
+	            .getMessage("general.cancel.button"), "#{itemsBean.cancelItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-		UICommand.make(form, "saveHeaderAction", messageLocator.getMessage("modifyitem.save.button"), "#{templateBean.saveHeaderAction}");
+	        UICommand saveCmd = UICommand.make(form, "saveHeaderAction", messageLocator
+	            .getMessage("modifyitem.save.button"), "#{itemsBean.saveItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	        // saveCmd.parameters.add(new
+	        // UIELBinding(templateItemOTP+"template",templatesLogic.getTemplateById(templateId)));
+	        saveCmd.parameters.add(new UIELBinding(templateItemOTP
+	            + "item.classification", EvalConstants.ITEM_TYPE_HEADER));
+	        saveCmd.parameters.add(new UIELBinding("#{itemsBean.templateItem}",
+	            new ELReference(templateItemOTPBinding)));
+	        saveCmd.parameters.add(new UIELBinding("#{itemsBean.templateId}",
+	            templateId));
 
-		UICommand.make(form, "previewHeaderAction", messageLocator.getMessage("modifyitem.preview.button"), "#{templateBean.previewHeaderAction}");
-
+	        UICommand.make(form, "previewHeaderAction", messageLocator
+	            .getMessage("modifyitem.preview.button"),
+	            "#{itemsBean.previewItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	public List reportNavigationCases() {
 		List i = new ArrayList();
 
 		i.add(new NavigationCase(PreviewItemProducer.VIEW_ID, new SimpleViewParameters(PreviewItemProducer.VIEW_ID)));
-		i.add(new NavigationCase(TemplateModifyProducer.VIEW_ID, new EvalViewParameters(TemplateModifyProducer.VIEW_ID, templateBean.getCurrTemplate().getId(), ModifyBlockProducer.VIEW_ID)));
-
+	    i.add(new NavigationCase("success",
+	            new EvalViewParameters(TemplateModifyProducer.VIEW_ID, templateId)));
+	    i.add(new NavigationCase("cancel", 
+	    		new EvalViewParameters(TemplateModifyProducer.VIEW_ID, templateId)));
 		return i;
 	}
 
+	  public ViewParameters getViewParameters() {
+		    return new TemplateItemViewParameters();
+		  }
+	
 }
