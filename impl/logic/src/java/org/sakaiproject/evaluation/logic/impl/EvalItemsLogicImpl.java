@@ -370,6 +370,19 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 			throw new IllegalStateException("This template ("+template.getId()+") is locked, templateItems and items cannot be changed");
 		}
 
+		// get the template items count to set display order for new templateItems
+		if (templateItem.getId() == null) {
+			// new item
+			int itemsCount = 0;
+			if (template.getTemplateItems() != null) {
+				itemsCount = template.getTemplateItems().size();
+			}
+			templateItem.setDisplayOrder( new Integer(itemsCount + 1) );
+		} else {
+			// existing item
+			// TODO - check if the display orders are set to a value that is used already?
+		}
+
 		// set the default values for unspecified optional values
 		if (templateItem.getItemCategory() == null) {
 			if (item.getCategory() == null) {

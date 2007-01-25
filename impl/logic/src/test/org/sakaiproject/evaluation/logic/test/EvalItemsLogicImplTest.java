@@ -660,7 +660,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		// test saving a new templateItem actually creates the linkage in the item and template
 		EvalTemplateItem eiTest1 = new EvalTemplateItem( null, 
 				EvalTestDataLoad.ADMIN_USER_ID, etdl.templateAdminNoItems, etdl.item5, 
-				new Integer(2), EvalConstants.ITEM_CATEGORY_COURSE, 
+				null, EvalConstants.ITEM_CATEGORY_COURSE, 
 				new Integer(3), null, Boolean.FALSE, null, null);
 		items.saveTemplateItem( eiTest1, 
 				EvalTestDataLoad.ADMIN_USER_ID);
@@ -677,10 +677,13 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertTrue( eiTest1.getItem().getTemplateItems().contains(eiTest1) );
 		Assert.assertTrue( eiTest1.getTemplate().getTemplateItems().contains(eiTest1) );
 
+		// make sure the displayOrder is set correctly when null (to 1)
+		Assert.assertEquals( 1, eiTest1.getDisplayOrder().intValue() );
+
 		// test saving a valid templateItem
 		items.saveTemplateItem( new EvalTemplateItem( new Date(), 
 				EvalTestDataLoad.ADMIN_USER_ID, etdl.templateAdminNoItems, etdl.item7, 
-				new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE, 
+				new Integer(2), EvalConstants.ITEM_CATEGORY_COURSE, 
 				new Integer(3), null, Boolean.FALSE, null, null),
 			EvalTestDataLoad.ADMIN_USER_ID);
 
@@ -694,7 +697,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		// test saving valid templateItem with empty required fields (inherit from item)
 		EvalTemplateItem eiTest2 = new EvalTemplateItem( null, 
 				EvalTestDataLoad.ADMIN_USER_ID, etdl.templateAdminNoItems, etdl.item4, 
-				new Integer(2), null, 
+				new Integer(99), null, 
 				null, null, null, null, null);
 		items.saveTemplateItem( eiTest2, 
 				EvalTestDataLoad.ADMIN_USER_ID);
@@ -707,6 +710,9 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertTrue( eiTest2.getItemCategory().equals(etdl.item4.getCategory()) );
 		Assert.assertTrue( eiTest2.getScaleDisplaySetting().equals(etdl.item4.getScaleDisplaySetting()) );
 		// not checking is UsesNA is equal because it is null in the item
+
+		// make sure the displayOrder is set correctly when set wrong (to 3)
+		Assert.assertEquals( 3, eiTest2.getDisplayOrder().intValue() );
 
 		// test saving templateItem with no item fails
 		try {
