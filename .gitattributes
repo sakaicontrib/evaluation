@@ -170,6 +170,7 @@ tool/src/webapp/content/templates/preview_item.html -text
 tool/src/webapp/content/templates/remove_evaluation.html -text
 tool/src/webapp/content/templates/remove_question.html -text
 tool/src/webapp/content/templates/remove_template.html -text
+tool/src/webapp/content/templates/scale_add_modify.html -text
 tool/src/webapp/content/templates/scale_control.html -text
 tool/src/webapp/content/templates/summary.html -text
 tool/src/webapp/content/templates/take_eval.html -text
