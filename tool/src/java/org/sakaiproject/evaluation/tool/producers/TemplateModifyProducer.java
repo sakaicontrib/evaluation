@@ -222,11 +222,12 @@ public class TemplateModifyProducer implements ViewComponentProducer,
 				
 				//UICommand previewCmd=UICommand.make(radiobranch,"preview_row_item","#{templateBean.previewRowItemAction}");
 				//previewCmd.parameters.add(new UIELBinding("#{itemsBean.currTemplateItemId}",Integer.toString(i)));
-				UIInternalLink.make(form, 
+				UIInternalLink.make(radiobranch, 
 						"preview_row_item", 
 						messageLocator.getMessage("modifytemplate.preview.link"),
-						new EvalViewParameters(
-								PreviewItemProducer.VIEW_ID, 
+						new TemplateItemViewParameters(
+								RemoveQuestionProducer.VIEW_ID, 
+								templateId,
 								myTemplateItem.getId()));
                 
                 String targetview = EvaluationConstant.classificationToView(myTemplateItem.getItem().getClassification());
