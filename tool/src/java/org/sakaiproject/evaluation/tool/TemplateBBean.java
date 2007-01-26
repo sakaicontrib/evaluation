@@ -82,20 +82,23 @@ public class TemplateBBean {
 
   // NB - this implementation depends on Hibernate reference equality
   // semantics!!
+  // Guarantees output sequence is consecutive without duplicates, and will
+  // prefer honoring user sequence requests so long as they are not inconsistent.
   public void saveReorder() {
-    Long templateId = null;
     Map delivered = templateItemBeanLocator.getDeliveredBeans();
     List ordered = localTemplateLogic.fetchTemplateItems(templateId);
     for (int i = 1; i <= ordered.size();) {
       EvalTemplateItem item = (EvalTemplateItem) ordered.get(i - 1);
+      int itnum = item.getDisplayOrder().intValue();
       if (i < ordered.size()) {
         EvalTemplateItem next = (EvalTemplateItem) ordered.get(i);
-        if (item.getDisplayOrder().equals(next.getDisplayOrder())) {
-          if (delivered.get(next.getDisplayOrder()) == item) {
-            emit(item, i++); emit(next, i++); continue;
+        int nextnum = next.getDisplayOrder().intValue();
+        if (itnum == nextnum) {
+          if (delivered.containsValue(item) ^ (itnum == i)) {
+            emit(next, i++); emit(item, i++); continue;
           }
           else {
-            emit(next, i++); emit(item, i++); continue;
+            emit(item, i++); emit(next, i++); continue;
           }
         }
       }
