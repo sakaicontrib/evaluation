@@ -52,6 +52,7 @@
 	<bean id="EvalARI"
 		class="org.sakaiproject.evaluation.tool.EvalARI">
 		<property name="itemsBean" ref="itemsBean" />
+		<property name="templateBBean" ref="templateBBean" />
 	</bean>
 
 	<bean id="templateBBean"
