@@ -17,7 +17,6 @@ import java.util.List;
 
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
-import org.sakaiproject.evaluation.tool.TemplateBean;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
 
@@ -53,7 +52,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
 public class ModifyEssayProducer implements ViewComponentProducer,ViewParamsReporter,NavigationCaseReporter,DynamicNavigationCaseReporter{
 	public static final String VIEW_ID = "modify_essay"; //$NON-NLS-1$
-	private TemplateBean templateBean;
+
 
 	public String getViewID() {
 		return  VIEW_ID;
@@ -62,10 +61,6 @@ public class ModifyEssayProducer implements ViewComponentProducer,ViewParamsRepo
 	private MessageLocator messageLocator;
 	public void setMessageLocator(MessageLocator messageLocator) {
 		this.messageLocator = messageLocator;
-	}
-
-	public void setTemplateBean(TemplateBean templateBean) {
-		this.templateBean = templateBean;
 	}
 
 	  // Permissible since is a request-scope producer. Accessed from NavigationCases

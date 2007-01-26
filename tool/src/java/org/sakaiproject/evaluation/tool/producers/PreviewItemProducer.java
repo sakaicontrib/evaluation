@@ -22,7 +22,6 @@ import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
-import org.sakaiproject.evaluation.tool.TemplateBean;
 import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
 
 import uk.org.ponder.messageutil.MessageLocator;

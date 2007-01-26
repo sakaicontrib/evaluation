@@ -180,7 +180,9 @@ public class EvaluationBean {
 			listOfAnswers.add("");
 		}
 		
-		log.debug("Initializing the TemplateBean....");
+		//no more TemplateBean - wdh
+		//log.debug("Initializing the TemplateBean....");
+		
 		/*
 		if (logic == null) {
 			throw new NullPointerException("logic is null");
