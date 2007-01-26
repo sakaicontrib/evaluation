@@ -169,8 +169,9 @@
 
 	<bean
 		class="org.sakaiproject.evaluation.tool.producers.PreviewItemProducer">
-		<property name="templateBean" ref="templateBean" />
 		<property name="messageLocator" ref="messageLocator" />
+		<property name="itemsLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
 	</bean>
 
 	<bean

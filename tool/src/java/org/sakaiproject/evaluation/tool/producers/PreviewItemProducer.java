@@ -17,10 +17,13 @@ import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.model.EvalScale;
+import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.TemplateBean;
+import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
 
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
@@ -41,6 +44,7 @@ import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
 /**
  * Preview all kinds of Item: Block, Scaled/Survey, Short Answer/essay, Header type
@@ -49,17 +53,17 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  * @author:Kapil Ahuja (kahuja@vt.edu)
  */
 
-public class PreviewItemProducer implements ViewComponentProducer {
+public class PreviewItemProducer implements ViewComponentProducer, ViewParamsReporter {
 	public static final String VIEW_ID = "preview_item";
-	
-	private TemplateBean templateBean;	
-	public void setTemplateBean(TemplateBean templateBean) {
-		this.templateBean = templateBean;
-	}
 
 	private MessageLocator messageLocator;
 	public void setMessageLocator(MessageLocator messageLocator) {
 		this.messageLocator = messageLocator;
+	}
+	
+	private EvalItemsLogic itemsLogic;
+	public void setItemsLogic( EvalItemsLogic itemsLogic) {
+		this.itemsLogic = itemsLogic;
 	}
 	
 	public String getViewID() {
@@ -68,6 +72,14 @@ public class PreviewItemProducer implements ViewComponentProducer {
 
 
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {	
+		TemplateItemViewParameters templateItemViewParams = (TemplateItemViewParameters) viewparams;
+		
+        Long templateItemId = templateItemViewParams.templateItemId;
+		String templateItemOTPBinding="templateItemBeanLocator."+templateItemId;
+	    String templateItemOTP=templateItemOTPBinding+".";			
+
+        EvalTemplateItem myTemplateItem=itemsLogic.getTemplateItemById(templateItemId);
+
 		UIOutput.make(tofill, "modify-template-title","Modify Template");
 		//UIOutput.make(tofill, "modify-template-title", messageLocator.getMessage("templatemodify.page.title"));//TODO: exception: can not get property
 		UIOutput.make(tofill, "preview-item-title", messageLocator.getMessage("previewitem.page.title"));
@@ -76,21 +88,21 @@ public class PreviewItemProducer implements ViewComponentProducer {
 		UIInternalLink.make(tofill, "summary-toplink", messageLocator.getMessage("summary.page.title"), 
 				new SimpleViewParameters(SummaryProducer.VIEW_ID));		
 		
-		if(templateBean.itemClassification.equals(EvalConstants.ITEM_TYPE_SCALED)){//"Scaled/Survey"
+		if(myTemplateItem.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)){//"Scaled/Survey"
 			
-			EvalScale  scale = templateBean.itemPreview.getScale();
+			EvalScale  scale = myTemplateItem.getItem().getScale();
 			String[] scaleOptions = scale.getOptions();
 			int optionCount = scaleOptions.length;
 			String scaleValues[] = new String[optionCount];
 			String scaleLabels[] = new String[optionCount];
 			
-			if (templateBean.scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_COMPACT)) {//"Compact"
+			if (myTemplateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_COMPACT)) {//"Compact"
 				
 				UIBranchContainer compact = UIBranchContainer.make(tofill, "compactDisplay:");
 
 				//Item text
-				UIOutput.make(compact, "queNo",null,"#{templateBean.currItemNo}");
-				UIOutput.make(compact, "itemText", null, "#{templateBean.itemText}");
+				UIOutput.make(compact, "queNo",null,myTemplateItem.getDisplayOrder().toString());
+				UIOutput.make(compact, "itemText", null, myTemplateItem.getItem().getItemText());
 
 				//Start label
 				String compactDisplayStart = scaleOptions[0];		
@@ -117,19 +129,21 @@ public class PreviewItemProducer implements ViewComponentProducer {
 				
 				//End label		
 			    UIOutput.make(compact, "compactDisplayEnd", compactDisplayEnd);	
-			    if(templateBean.itemNA !=null && templateBean.itemNA.booleanValue()== true){
-					UIBranchContainer radiobranch3 = UIBranchContainer.make(compact,"showNA:");
-					UIBoundBoolean.make(radiobranch3, "itemNA",templateBean.itemNA);
-					UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc"));
+				Boolean usesNA=myTemplateItem.getUsesNA();
+				if(usesNA==null)usesNA=myTemplateItem.getItem().getUsesNA();
+				if(usesNA != null && usesNA.booleanValue()== true){
+					UIBranchContainer radiobranch3 = UIBranchContainer.make(compact,"showNA:"); //$NON-NLS-1$
+					UIBoundBoolean.make(radiobranch3, "itemNA",usesNA); //$NON-NLS-1$
+					UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				
-			}else if (templateBean.scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_COMPACT_COLORED)) {//"Compact Colored"
+			}else if (myTemplateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_COMPACT_COLORED)) {//"Compact Colored"
 
 				UIBranchContainer compactColored = UIBranchContainer.make(tofill, "compactDisplayColored:");
 
 				//Item text
-				UIOutput.make(compactColored, "queNo",null,"#{templateBean.currItemNo}");
-				UIOutput.make(compactColored, "itemText", null, "#{templateBean.itemText}");
+				UIOutput.make(compactColored, "queNo",null,myTemplateItem.getDisplayOrder().toString());
+				UIOutput.make(compactColored, "itemText", null, myTemplateItem.getItem().getItemText());
 				
 				//Get the scale ideal value (none, low, mid, high )
 				String ideal = scale.getIdeal();
@@ -206,24 +220,26 @@ public class PreviewItemProducer implements ViewComponentProducer {
 					UISelectChoice.make(radioBranchSecond, "dummyRadioValueSecond", selectID, i);
 			    }
 				
-			    if(templateBean.itemNA !=null && templateBean.itemNA.booleanValue()== true){
-					UIBranchContainer radiobranch3 = UIBranchContainer.make(compactColored,"showNA:");
-					UIBoundBoolean.make(radiobranch3, "itemNA",templateBean.itemNA);
-					UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc"));
-
+				Boolean usesNA=myTemplateItem.getUsesNA();
+				if(usesNA==null)usesNA=myTemplateItem.getItem().getUsesNA();
+				if(usesNA != null && usesNA.booleanValue()== true){
+					UIBranchContainer radiobranch3 = UIBranchContainer.make(compactColored,"showNA:"); //$NON-NLS-1$
+					UIBoundBoolean.make(radiobranch3, "itemNA",usesNA); //$NON-NLS-1$
+					UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
-			}else if (templateBean.scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_FULL)) {//"Full"
+			}else if (myTemplateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_FULL)) {//"Full"
 				
 				UIBranchContainer full = UIBranchContainer.make(tofill, "fullDisplay:");
 
 				//Item text
-				UIOutput.make(full, "queNo",null,"#{templateBean.currItemNo}");
-				UIOutput.make(full, "itemText", null, "#{templateBean.itemText}");
-				if( templateBean.itemNA !=null && templateBean.itemNA.booleanValue()== true){
-					UIBranchContainer radiobranch3 = UIBranchContainer.make(full,"showNA:");
-					UIBoundBoolean.make(radiobranch3, "itemNA",templateBean.itemNA);
-					UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc"));
-
+				UIOutput.make(full, "queNo",null,myTemplateItem.getDisplayOrder().toString());
+				UIOutput.make(full, "itemText", null, myTemplateItem.getItem().getItemText());
+				Boolean usesNA=myTemplateItem.getUsesNA();
+				if(usesNA==null)usesNA=myTemplateItem.getItem().getUsesNA();
+				if(usesNA != null && usesNA.booleanValue()== true){
+					UIBranchContainer radiobranch3 = UIBranchContainer.make(full,"showNA:"); //$NON-NLS-1$
+					UIBoundBoolean.make(radiobranch3, "itemNA",usesNA); //$NON-NLS-1$
+					UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 
 				for (int count = 0; count < optionCount; count++) {
@@ -243,18 +259,19 @@ public class PreviewItemProducer implements ViewComponentProducer {
 					UISelectLabel.make(radiobranch, "dummyRadioLabel", selectID, i);
 			    }
 				
-			}else if (templateBean.scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_FULL_COLORED)) {//"Full Colored"
+			}else if (myTemplateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_FULL_COLORED)) {//"Full Colored"
 				
 				UIBranchContainer fullColored = UIBranchContainer.make(tofill, "fullDisplayColored:");
 
 				//Item text
-				UIOutput.make(fullColored, "queNo",null,"#{templateBean.currItemNo}");
-				UIOutput.make(fullColored, "itemText", null, "#{templateBean.itemText}");
-				if(templateBean.itemNA !=null && templateBean.itemNA.booleanValue()== true){
-					UIBranchContainer radiobranch3 = UIBranchContainer.make(fullColored,"showNA:");
-					UIBoundBoolean.make(radiobranch3, "itemNA",templateBean.itemNA);
-					UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc"));
-
+				UIOutput.make(fullColored, "queNo",null,myTemplateItem.getDisplayOrder().toString());
+				UIOutput.make(fullColored, "itemText", null, myTemplateItem.getItem().getItemText());
+				Boolean usesNA=myTemplateItem.getUsesNA();
+				if(usesNA==null)usesNA=myTemplateItem.getItem().getUsesNA();
+				if(usesNA != null && usesNA.booleanValue()== true){
+					UIBranchContainer radiobranch3 = UIBranchContainer.make(fullColored,"showNA:"); //$NON-NLS-1$
+					UIBoundBoolean.make(radiobranch3, "itemNA",usesNA); //$NON-NLS-1$
+					UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				//Get the scale ideal value (none, low, mid, high )
 				String ideal = scale.getIdeal(); 
@@ -292,18 +309,19 @@ public class PreviewItemProducer implements ViewComponentProducer {
 					UISelectLabel.make(radiobranch, "dummyRadioLabel", selectID, i);
 			    }
 				
-			}else if (templateBean.scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED)) {//"Stepped"
+			}else if (myTemplateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED)) {//"Stepped"
 				
 				UIBranchContainer stepped = UIBranchContainer.make(tofill, "steppedDisplay:");
 				
 				//Item text
-				UIOutput.make(stepped, "queNo",null,"#{templateBean.currItemNo}");
-				UIOutput.make(stepped, "itemText", null, "#{templateBean.itemText}");
-				if(templateBean.itemNA !=null && templateBean.itemNA.booleanValue()== true){
-					UIBranchContainer radiobranch3 = UIBranchContainer.make(stepped,"showNA:");
-					UIBoundBoolean.make(radiobranch3, "itemNA",templateBean.itemNA);
-					UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc"));
-
+				UIOutput.make(stepped, "queNo",null,myTemplateItem.getDisplayOrder().toString());
+				UIOutput.make(stepped, "itemText", null, myTemplateItem.getItem().getItemText());
+				Boolean usesNA=myTemplateItem.getUsesNA();
+				if(usesNA==null)usesNA=myTemplateItem.getItem().getUsesNA();
+				if(usesNA != null && usesNA.booleanValue()== true){
+					UIBranchContainer radiobranch3 = UIBranchContainer.make(stepped,"showNA:"); //$NON-NLS-1$
+					UIBoundBoolean.make(radiobranch3, "itemNA",usesNA); //$NON-NLS-1$
+					UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				//Radio Buttons
 				for (int count = 1; count <= optionCount; count++) {
@@ -336,18 +354,19 @@ public class PreviewItemProducer implements ViewComponentProducer {
 					UISelectChoice.make(radioValueBranch, "dummyRadioValue", selectID, i);
 			    }
 				
-			}else if (templateBean.scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED)) {//"Stepped Colored"
+			}else if (myTemplateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED)) {//"Stepped Colored"
 
 				UIBranchContainer steppedColored = UIBranchContainer.make(tofill, "steppedDisplayColored:");
 
 				//Item text
-				UIOutput.make(steppedColored, "queNo",null,"#{templateBean.currItemNo}");
-				UIOutput.make(steppedColored, "itemText", null, "#{templateBean.itemText}");
-				if( templateBean.itemNA !=null && templateBean.itemNA.booleanValue()== true){
-					UIBranchContainer radiobranch3 = UIBranchContainer.make(steppedColored,"showNA:");
-					UIBoundBoolean.make(radiobranch3, "itemNA",templateBean.itemNA);
-					UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc"));
-
+				UIOutput.make(steppedColored, "queNo",null,myTemplateItem.getDisplayOrder().toString());
+				UIOutput.make(steppedColored, "itemText", null, myTemplateItem.getItem().getItemText());
+				Boolean usesNA=myTemplateItem.getUsesNA();
+				if(usesNA==null)usesNA=myTemplateItem.getItem().getUsesNA();
+				if(usesNA != null && usesNA.booleanValue()== true){
+					UIBranchContainer radiobranch3 = UIBranchContainer.make(steppedColored,"showNA:"); //$NON-NLS-1$
+					UIBoundBoolean.make(radiobranch3, "itemNA",usesNA); //$NON-NLS-1$
+					UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				//Get the scale ideal value (none, low, mid, high )
 				String ideal = scale.getIdeal();
@@ -407,13 +426,14 @@ public class PreviewItemProducer implements ViewComponentProducer {
 				//This is for vertical			
 				UIBranchContainer vertical = UIBranchContainer.make(tofill, "verticalDisplay:");
 				//Item text
-				UIOutput.make(vertical, "queNo",null,"#{templateBean.currItemNo}");
-				UIOutput.make(vertical, "itemText", null, "#{templateBean.itemText}");
-				if(templateBean.itemNA !=null &&templateBean.itemNA.booleanValue()== true){
-					UIBranchContainer radiobranch3 = UIBranchContainer.make(vertical,"showNA:");
-					UIBoundBoolean.make(radiobranch3, "itemNA",templateBean.itemNA);
-					UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc"));
-
+				UIOutput.make(vertical, "queNo",null,myTemplateItem.getDisplayOrder().toString());
+				UIOutput.make(vertical, "itemText", null, myTemplateItem.getItem().getItemText());
+				Boolean usesNA=myTemplateItem.getUsesNA();
+				if(usesNA==null)usesNA=myTemplateItem.getItem().getUsesNA();
+				if(usesNA != null && usesNA.booleanValue()== true){
+					UIBranchContainer radiobranch3 = UIBranchContainer.make(vertical,"showNA:"); //$NON-NLS-1$
+					UIBoundBoolean.make(radiobranch3, "itemNA",usesNA); //$NON-NLS-1$
+					UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				//Radio Buttons
 				for (int count = 0; count < optionCount; count++) {
@@ -435,45 +455,47 @@ public class PreviewItemProducer implements ViewComponentProducer {
 			    }
 				
 			}
-		}else if(templateBean.itemClassification.equals(EvalConstants.ITEM_TYPE_TEXT)){//"Short Answer/Essay"
+		}else if(myTemplateItem.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)){//"Short Answer/Essay"
 			UIBranchContainer essay = UIBranchContainer.make(tofill, "essayType:");
 			//Item text
-			UIOutput.make(essay, "queNo",null,"#{templateBean.currItemNo}");
-			UIOutput.make(essay, "itemText", null, "#{templateBean.itemText}");
-			if(templateBean.itemNA !=null && templateBean.itemNA.booleanValue()== true){
-				UIBranchContainer radiobranch3 = UIBranchContainer.make(essay,"showNA:");
-				UIBoundBoolean.make(radiobranch3, "itemNA",templateBean.itemNA);
-				UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc"));
-
+			UIOutput.make(essay, "queNo",null,myTemplateItem.getDisplayOrder().toString());
+			UIOutput.make(essay, "itemText", null, myTemplateItem.getItem().getItemText());
+			Boolean usesNA=myTemplateItem.getUsesNA();
+			if(usesNA==null)usesNA=myTemplateItem.getItem().getUsesNA();
+			if(usesNA != null && usesNA.booleanValue()== true){
+				UIBranchContainer radiobranch3 = UIBranchContainer.make(essay,"showNA:"); //$NON-NLS-1$
+				UIBoundBoolean.make(radiobranch3, "itemNA",usesNA); //$NON-NLS-1$
+				UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
 			UIInput textarea = UIInput.make(essay,"essayBox",null );
 			Map attrmap = new HashMap();
-			String rowNum = templateBean.displayRows.toString();
+			String rowNum = myTemplateItem.getDisplayRows().toString();
 			attrmap.put("rows", rowNum);
 			textarea.decorators = new DecoratorList(new UIFreeAttributeDecorator(attrmap)); 
   
-		}else if(templateBean.itemClassification.equals(EvalConstants.ITEM_TYPE_HEADER)){//"Text Header"
+		}else if(myTemplateItem.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_HEADER)){//"Text Header"
 			UIBranchContainer header = UIBranchContainer.make(tofill, "headerType:");
-			UIOutput.make(header, "queNo",null,"#{templateBean.currItemNo}");
-			UIOutput.make(header, "itemText", null, "#{templateBean.itemText}");
+			UIOutput.make(header, "queNo",null,myTemplateItem.getDisplayOrder().toString());
+			UIOutput.make(header, "itemText", null, myTemplateItem.getItem().getItemText());
 	
-		// TODO - changed so it will COMPILE - AZ
-		}else if(templateBean.itemClassification.equals(EvalConstants.ITEM_TYPE_SCALED)
-				&& templateBean.scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED)){
+		// TODO - changed so it will COMPILE - AZ - needs block support
+		}/*else if(myTemplateItem.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)
+				&& myTemplateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED)){
 			//"Question Block","Stepped"
 			UIBranchContainer blockStepped = UIBranchContainer.make(tofill, "blockStepped:");
 			
-			UIOutput.make(blockStepped, "itemNo",null,"#{templateBean.currItemNo}");
-			UIOutput.make(blockStepped, "itemText", null, "#{templateBean.itemText}");
-			if(templateBean.itemNA !=null && templateBean.itemNA.booleanValue()== true){
-				UIBranchContainer radiobranch3 = UIBranchContainer.make(blockStepped,"showNA:");
-				UIBoundBoolean.make(radiobranch3, "itemNA",templateBean.itemNA);
-				UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc"));
-
+			UIOutput.make(blockStepped, "itemNo",null,myTemplateItem.getDisplayOrder().toString());
+			UIOutput.make(blockStepped, "itemText", null, myTemplateItem.getItem().getItemText());
+			Boolean usesNA=myTemplateItem.getUsesNA();
+			if(usesNA==null)usesNA=myTemplateItem.getItem().getUsesNA();
+			if(usesNA != null && usesNA.booleanValue()== true){
+				UIBranchContainer radiobranch3 = UIBranchContainer.make(blockStepped,"showNA:"); //$NON-NLS-1$
+				UIBoundBoolean.make(radiobranch3, "itemNA",usesNA); //$NON-NLS-1$
+				UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			//Radio Buttons
-			EvalScale  scale = templateBean.itemPreview.getScale();
+			EvalScale  scale = myTemplateItem.getItem().getScale();
 			String[] scaleOptions = scale.getOptions();
 			int optionCount = scaleOptions.length;
 			String scaleValues[] = new String[optionCount];
@@ -513,14 +535,14 @@ public class PreviewItemProducer implements ViewComponentProducer {
 					
 		    	}
 		
-		}
-		// TODO - changed so it will COMPILE - AZ
-		else if(templateBean.itemClassification.equals(EvalConstants.ITEM_TYPE_SCALED)&&
-				templateBean.scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED)){
+		}*/
+		// TODO - changed so it will COMPILE - AZ - needs block support
+		/*else if(myTemplateItem.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)&&
+				myTemplateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED)){
 			//"Question Block","Stepped Colored"
 			UIBranchContainer blockSteppedColored = UIBranchContainer.make(tofill, "blockSteppedColored:");
-			UIOutput.make(blockSteppedColored, "itemNo",null,"#{templateBean.currItemNo}");
-			UIOutput.make(blockSteppedColored, "itemText", null, "#{templateBean.itemText}");
+			UIOutput.make(blockSteppedColored, "itemNo",null,myTemplateItem.getDisplayOrder().toString());
+			UIOutput.make(blockSteppedColored, "itemText", null, myTemplateItem.getItem().getItemText());
 			if( templateBean.itemNA != null && templateBean.itemNA.booleanValue()== true){
 				UIBranchContainer radiobranch3 = UIBranchContainer.make(blockSteppedColored,"showNA:");
 				UIBoundBoolean.make(radiobranch3, "itemNA",templateBean.itemNA);
@@ -528,7 +550,7 @@ public class PreviewItemProducer implements ViewComponentProducer {
 
 			}
 			
-			EvalScale  scale = templateBean.itemPreview.getScale();
+			EvalScale  scale = myTemplateItem.getItem().getScale();
 			String[] scaleOptions = scale.getOptions();
 			int optionCount = scaleOptions.length;
 			String scaleValues[] = new String[optionCount];
@@ -592,9 +614,14 @@ public class PreviewItemProducer implements ViewComponentProducer {
 				}
 			}
 			
-		}
+		}*/
 		
 		UIOutput.make(tofill, "close-button", messageLocator.getMessage("general.close.window.button"));
 		
 	}
+	
+	  public ViewParameters getViewParameters() {
+		    return new TemplateItemViewParameters();
+		  }
+	
 }
