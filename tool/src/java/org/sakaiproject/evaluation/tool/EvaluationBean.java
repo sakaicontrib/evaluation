@@ -59,9 +59,9 @@ import org.sakaiproject.evaluation.tool.producers.SummaryProducer;
 /**
  * This is the backing bean of the create evaluation process
  * 
- * @author Aaron Zeckoski (aaronz@vt.edu)
- * @author Kapil Ahuja (kahuja@vt.edu)
  * @author Rui Feng (fengr@vt.edu)
+ * @author Kapil Ahuja (kahuja@vt.edu)
+ * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 
 public class EvaluationBean {
@@ -388,6 +388,9 @@ public class EvaluationBean {
 	//method binding to the "Done" button on evaluation_assign_confirm.html
 	public String doneAssignmentAction() {	
 
+		// need to load the template here before we try to save it because it is stale -AZ
+		eval.setTemplate( templatesLogic.getTemplateById( eval.getTemplate().getId() ) );
+
 		/*
 		 * Email template section
 		 */
@@ -453,7 +456,6 @@ public class EvaluationBean {
 		if (eval.getUnregisteredAllowed() == null)
 			eval.setUnregisteredAllowed(Boolean.FALSE);
 		
-		//logic.saveEvaluation(eval, logic.getCurrentUserId());
 		/*
 		 * check if start date is the same as today's date, set startDate as today's date & time, 
 		 * as when we parse the string to a date, the time filed by default is zero
@@ -462,16 +464,11 @@ public class EvaluationBean {
 		
 		evalsLogic.saveEvaluation(eval, external.getCurrentUserId());
 		
-		/*
-		 * Now save the selected courses (AKA sites).
-		 * All the selected site id's are needed to be saved in the database one by one. 
-		 */
+		// Now save the selected contexts
 		for (int count = 0; count < this.selectedSakaiSiteIds.length; count++) {
-			
 			EvalAssignContext assignCourse = new EvalAssignContext(new Date(), 
 					external.getCurrentUserId(), selectedSakaiSiteIds[count], 
 					Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, eval);
-			//logic.saveAssignContext(assignCourse, logic.getCurrentUserId());
 			assignsLogic.saveAssignContext(assignCourse, external.getCurrentUserId());
 		}
 
