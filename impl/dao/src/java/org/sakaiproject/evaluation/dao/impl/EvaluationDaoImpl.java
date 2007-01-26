@@ -190,6 +190,9 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 		}
 		String hqlQuery = makeTemplateHQL(userId, includeEmpty, publicTemplates, false, false);
 
+		// add ordering to returned values
+		hqlQuery += " order by template.sharing, template.title";
+
 		List l = new ArrayList();
 		try {
 			l = getHibernateTemplate().find(hqlQuery);
