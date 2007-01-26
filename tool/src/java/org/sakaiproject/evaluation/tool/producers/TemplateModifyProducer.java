@@ -24,11 +24,14 @@ import org.sakaiproject.evaluation.tool.params.PreviewEvalParameters;
 import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
 
 import uk.org.ponder.messageutil.MessageLocator;
+import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
+import uk.org.ponder.rsf.components.UIBoundList;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIForm;
+import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
@@ -190,7 +193,7 @@ public class TemplateModifyProducer implements ViewComponentProducer,
 				UIOutput.make(radiobranch, "item-num-header", messageLocator.getMessage("modifytemplate.item.num.header")); //$NON-NLS-1$ //$NON-NLS-2$
 			
 				//DISPLAY ORDER
-			/*	UISelect sl = UISelect.make(radiobranch, "itemNum");
+				UISelect sl = UISelect.make(radiobranch, "itemNum");
 				sl.selection = new UIInput();
 				sl.selection.valuebinding = new ELReference("#{templateBBean.templateItemsList." + i +".displayOrder"+"}");
 				UIBoundList slNames = new UIBoundList();
@@ -198,7 +201,7 @@ public class TemplateModifyProducer implements ViewComponentProducer,
 				sl.optionnames = slNames;
 				UIBoundList slValues = new UIBoundList();
 		    	slValues.setValue(strArr);
-				sl.optionlist = slValues;*/
+				sl.optionlist = slValues;
 								
 				//String itemClassificationLabel = (currItemDisplay.getItem()).getClassification();
 				String itemClassificationLabel = myTemplateItem.getItem().getClassification();
