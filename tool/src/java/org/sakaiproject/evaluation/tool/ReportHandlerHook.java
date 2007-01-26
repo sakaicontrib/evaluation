@@ -83,17 +83,14 @@ public class ReportHandlerHook implements HandlerHook {
 	 * @see uk.org.ponder.rsf.processor.HandlerHook#handle()
 	 */
 	public boolean handle() {
-		log.debug("Handling report");
 		// get viewparams so we know what to generate
 		CSVReportViewParams crvp;
 		if (viewparams instanceof CSVReportViewParams) {
 			crvp = (CSVReportViewParams) viewparams;
 		} else {
-			// someone passed the wrong set of view params
-			log.error("viewparams not received, or not an instance of CSVReportViewParams");
 			return false;
 		}
-
+        log.debug("Handling report");
 		// get evaluation and template from DAO
 		EvalEvaluation evaluation = evalsLogic.getEvaluationById(crvp.evalId);//logic.getEvaluationById(crvp.evalId);
 		//EvalTemplate template = logic.getTemplateById(evaluation.getTemplate().getId());
@@ -227,12 +224,6 @@ public class ReportHandlerHook implements HandlerHook {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see uk.org.ponder.rsf.processor.HandlerHook#setHandlerHook(uk.org.ponder.rsf.processor.HandlerHook)
-	 */
-	public void setHandlerHook(HandlerHook arg0) {
-		// don't bother with this for now -AZ
-	}
 /*
 	private static class ReportItemOrderComparator implements Comparator {
 		public int compare(Object eval0, Object eval1) {
