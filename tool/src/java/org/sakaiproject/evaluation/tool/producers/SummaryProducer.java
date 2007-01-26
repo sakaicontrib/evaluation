@@ -123,15 +123,13 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 				new SimpleViewParameters(ControlPanelProducer.VIEW_ID));
 			UIInternalLink.make(tofill, "create-template-toplink", //$NON-NLS-1$
 					messageLocator.getMessage("createtemplate.page.title"),  //$NON-NLS-1$
-					new EvalViewParameters(TemplateProducer.VIEW_ID, 
-						null, SummaryProducer.VIEW_ID));
+					new EvalViewParameters(TemplateProducer.VIEW_ID, null));
 		}
 
 		if ( beginEvaluation ) {
 			UIInternalLink.make(tofill, "begin-evaluation-toplink", //$NON-NLS-1$
 				messageLocator.getMessage("beginevaluation.page.title"),  //$NON-NLS-1$
-				new EvalViewParameters(EvaluationStartProducer.VIEW_ID,
-					null, SummaryProducer.VIEW_ID));
+				new EvalViewParameters(EvaluationStartProducer.VIEW_ID, null));
 		}
 
 		if (userAdmin) {
@@ -289,8 +287,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 							new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID,
 									eval.getId(),eval.getTemplate().getId(),null, SummaryProducer.VIEW_ID) );
 					UIInternalLink.make(evalrow, "viewReportLink", messageLocator.getMessage("viewreport.page.title"),  //$NON-NLS-1$ //$NON-NLS-2$
-							new EvalViewParameters(ViewReportProducer.VIEW_ID, 
-								eval.getId(), SummaryProducer.VIEW_ID));					
+							new EvalViewParameters(ViewReportProducer.VIEW_ID, eval.getId() ));					
 				} else {
 					// TODO - this needs to use a viewparam instead -AZ (assigned to fengr)
 					/*
@@ -308,7 +305,6 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 				UIOutput.make(evalrow, "evalAdminDate", df.format(date) ); //$NON-NLS-1$
 			}
 		}
-
 
 
 		/*
@@ -356,15 +352,13 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			if ( createTemplate ) {
 				UIInternalLink.make(toolsBC, "createTemplateLink", //$NON-NLS-1$
 					messageLocator.getMessage("createtemplate.page.title"), //$NON-NLS-1$
-					new EvalViewParameters(TemplateProducer.VIEW_ID, 
-						null, SummaryProducer.VIEW_ID));
+					new EvalViewParameters(TemplateProducer.VIEW_ID, null));
 			}
 
 			if ( beginEvaluation ) {
 				UIInternalLink.make(toolsBC, "beginEvaluationLink", //$NON-NLS-1$
 					messageLocator.getMessage("beginevaluation.page.title"), //$NON-NLS-1$
-					new EvalViewParameters(EvaluationStartProducer.VIEW_ID,
-						null, SummaryProducer.VIEW_ID));
+					new EvalViewParameters(EvaluationStartProducer.VIEW_ID, null));
 			}
 		}
 
