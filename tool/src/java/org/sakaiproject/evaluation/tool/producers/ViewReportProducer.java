@@ -79,7 +79,7 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 	}
 	
 	public ViewParameters getViewParameters() {
-		return new EvalViewParameters(VIEW_ID, null, null);
+		return new EvalViewParameters(VIEW_ID, null);
 	}	
 	
 	/**

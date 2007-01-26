@@ -125,7 +125,7 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 		EssayResponseParams essayResponseParams = (EssayResponseParams) viewparams;
 		UIInternalLink.make(tofill, "viewReportLink", messageLocator.getMessage("viewreport.page.title"), 
 				new EvalViewParameters(ViewReportProducer.VIEW_ID, 
-					essayResponseParams.evalId, SummaryProducer.VIEW_ID));		
+					essayResponseParams.evalId));		
 		//output single set of essay responses
 		if(essayResponseParams.itemId != null){
 			//we are actually passing EvalTemplateItem ID
