@@ -1,5 +1,5 @@
 /******************************************************************************
- * TemplateBean.java - created by whumphri@vt.edu on Jan 16, 2007
+ * TemplateBBean.java - created by whumphri@vt.edu on Jan 16, 2007
  * 
  * Copyright (c) 2007 Virginia Polytechnic Institute and State University
  * Licensed under the Educational Community License version 1.0

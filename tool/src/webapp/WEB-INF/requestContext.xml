@@ -191,13 +191,11 @@
 
 	<bean
 		class="org.sakaiproject.evaluation.tool.producers.ModifyEssayProducer">
-		<property name="templateBean" ref="templateBean" />
 		<property name="messageLocator" ref="messageLocator" />
 	</bean>
 
 	<bean
 		class="org.sakaiproject.evaluation.tool.producers.ModifyHeaderProducer">
-		<property name="templateBean" ref="templateBean" />
 		<property name="messageLocator" ref="messageLocator" />
 	</bean>
 

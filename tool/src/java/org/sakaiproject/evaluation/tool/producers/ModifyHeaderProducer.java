@@ -18,7 +18,6 @@ import java.util.List;
 
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
-import org.sakaiproject.evaluation.tool.TemplateBean;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
 
@@ -52,11 +51,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
 public class ModifyHeaderProducer implements ViewComponentProducer,ViewParamsReporter,NavigationCaseReporter,DynamicNavigationCaseReporter{
 	public static final String VIEW_ID = "modify_header";
-	private TemplateBean templateBean;
 
-	public void setTemplateBean(TemplateBean templateBean) {
-		this.templateBean = templateBean;
-	}
 
 	private MessageLocator messageLocator;
 	public void setMessageLocator(MessageLocator messageLocator) {
