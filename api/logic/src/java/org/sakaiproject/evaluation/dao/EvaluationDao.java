@@ -40,7 +40,7 @@ public interface EvaluationDao extends CompleteGenericDao {
 	 * what to include in the return
 	 * @param includeEmpty if true then include templates with no items in them, else only return 
 	 * templates with at least one item
-	 * @return a List of EvalTemplate objects
+	 * @return a List of EvalTemplate objects, ordered by sharing and title alphabetic
 	 */
 	public List getVisibleTemplates(String userId, String[] sharingConstants, boolean includeEmpty);
 
