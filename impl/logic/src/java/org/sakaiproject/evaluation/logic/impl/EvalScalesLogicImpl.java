@@ -28,6 +28,7 @@ import org.sakaiproject.evaluation.logic.EvalScalesLogic;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.utils.EvalUtils;
+import org.sakaiproject.genericdao.api.finders.ByPropsFinder;
 
 
 /**
@@ -104,7 +105,7 @@ public class EvalScalesLogicImpl implements EvalScalesLogic {
 			}
 		}
 
-		// TODO - fill in any default values and nulls here
+		// fill in any default values and nulls here
 		if (scale.getLocked() == null) {
 			scale.setLocked( Boolean.FALSE );
 		}
@@ -177,21 +178,30 @@ public class EvalScalesLogicImpl implements EvalScalesLogic {
 		if (getPrivate) {
 			String[] props;
 			Object[] values;
+			int[] comps;
 			if (isAdmin) {
 				props = new String[] { "sharing" };
 				values = new Object[] { EvalConstants.SHARING_PRIVATE };
+				comps = new int[] {ByPropsFinder.EQUALS};
 			} else {
 				props = new String[] { "sharing", "owner" };
 				values = new Object[] { EvalConstants.SHARING_PRIVATE, userId };				
+				comps = new int[] {ByPropsFinder.EQUALS, ByPropsFinder.EQUALS};
 			}
-			s.addAll( dao.findByProperties(EvalScale.class, props, values) );
+			s.addAll( dao.findByProperties(EvalScale.class, 
+					props, 
+					values,
+					comps,
+					new String[] {"title"}) );
 		}
 
 		// handle public sharing items
 		if (getPublic) {
 			s.addAll( dao.findByProperties(EvalScale.class, 
 					new String[] { "sharing" }, 
-					new Object[] { EvalConstants.SHARING_PUBLIC } ) );
+					new Object[] { EvalConstants.SHARING_PUBLIC },
+					new int[] {ByPropsFinder.EQUALS},
+					new String[] {"title"}) );
 		}
 
 		return new ArrayList(s);
