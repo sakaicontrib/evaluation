@@ -263,6 +263,7 @@
 			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
 		<property name="responsesLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
+		<property name="messageLocator" ref="messageLocator" />			
 	</bean>
 
 	<bean
