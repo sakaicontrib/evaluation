@@ -16,12 +16,6 @@ public class EvalARI implements ActionResultInterpreter {
   public void setItemsBean(ItemsBean itemsBean) {
     this.itemsBean = itemsBean;
   }
-  
-  private TemplateBBean templateBBean;
-  
-  public void setTemplateBBean(TemplateBBean templateBBean) {
-	  this.templateBBean = templateBBean;
-  }
 
   public ARIResult interpretActionResult(ViewParameters incoming, Object result) {
     // Avoid acting for views where not required.

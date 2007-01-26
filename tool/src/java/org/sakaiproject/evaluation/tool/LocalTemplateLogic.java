@@ -10,7 +10,9 @@ import java.util.List;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
+import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplate;
+import org.sakaiproject.evaluation.model.EvalTemplateItem;
 
 /*
  * A "Local DAO" to focus dependencies and centralise fetching logic for the
@@ -39,6 +41,10 @@ public class LocalTemplateLogic {
   public EvalTemplate fetchTemplate(Long templateId) {
     return templatesLogic.getTemplateById(templateId);
   }
+  
+  public EvalTemplateItem fetchTemplateItem(Long itemId) {
+    return itemsLogic.getTemplateItemById(itemId);
+  }
 
   public List fetchTemplateItems(Long templateId) {
     if (templateId == null) {
@@ -54,10 +60,21 @@ public class LocalTemplateLogic {
     templatesLogic.saveTemplate(tosave, external.getCurrentUserId());
   }
   
+  public void saveTemplateItem(EvalTemplateItem tosave) {
+    itemsLogic.saveTemplateItem(tosave, external.getCurrentUserId());
+  }
+  
   public EvalTemplate newTemplate() {
     EvalTemplate currTemplate = new EvalTemplate(new Date(), external.getCurrentUserId(),
         null, "private", Boolean.FALSE);
     currTemplate.setDescription(""); // TODO - somehow gives DataIntegrityViolation if null
     return currTemplate;
+  }
+  
+  public EvalTemplateItem newTemplateItem() {
+    EvalItem newItem = new EvalItem(new Date(), external.getCurrentUserId(), "", "",
+        "", new Boolean(false));
+    return new EvalTemplateItem(new Date(), external.getCurrentUserId(),
+        null, newItem, null, "");
   }
 }
