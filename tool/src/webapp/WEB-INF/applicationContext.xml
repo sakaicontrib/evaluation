@@ -53,7 +53,8 @@
 
   <!-- The beans listed here are session beans (they stick around) -->
   <bean id="myBeanScope" parent="beanScopeParent">
-    <property name="copyPreservingBeans" value="templateBean, evaluationBean" />
+    <property name="copyPreservingBeans"
+      value="templateBean, evaluationBean" />
     <property name="exclusive" value="true" />
   </bean>
 
@@ -61,13 +62,21 @@
   <bean id="siteMap" parent="siteMapDef" />
 
   <!-- A wrapper bean that will rewrite outgoing URL state that refers to
-  freshly saved entities -->
-  
+    freshly saved entities -->
+
   <bean parent="alterationWrapperParent">
-   <property name="value">
-     <bean id="entityRewriteWrapperProxy" parent="RSACBridgeProxy">
-      <property name="targetBeanName" value="entityRewriteWrapper" />
-     </bean>
+    <property name="value">
+      <bean parent="RSACBridgeProxy">
+        <property name="targetBeanName" value="entityRewriteWrapper" />
+      </bean>
+    </property>
+  </bean>
+
+  <bean parent="handlerHookParent">
+    <property name="value">
+      <bean parent="RSACBridgeProxy">
+        <property name="targetBeanName" value="reportHandlerHook" />
+      </bean>
     </property>
   </bean>
 

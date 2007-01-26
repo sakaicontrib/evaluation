@@ -74,7 +74,7 @@
 			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
 	</bean>
 
-	<bean parent="handlerHookParent"
+	<bean id="reportHandlerHook"
 		class="org.sakaiproject.evaluation.tool.ReportHandlerHook">
 		<property name="viewparams" ref="viewParameters" />
 		<property name="response" ref="httpServletResponse" />
