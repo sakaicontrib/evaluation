@@ -56,7 +56,7 @@
 
 	<bean id="templateBBean"
 		class="org.sakaiproject.evaluation.tool.TemplateBBean">
-	  <property name="templateBeanLocator" ref="templateBeanLocator"/>
+		<property name="templateBeanLocator" ref="templateBeanLocator" />
 	</bean>
 
 	<bean id="itemsBean"
@@ -85,16 +85,16 @@
 
 	<bean id="templateBeanLocator"
 		class="org.sakaiproject.evaluation.tool.TemplateBeanLocator">
-	   <property name="localTemplateLogic" ref="localTemplateLogic"/>
+		<property name="localTemplateLogic" ref="localTemplateLogic" />
 	</bean>
 
-  <bean id="entityRewriteWrapper" 
-    class="org.sakaiproject.evaluation.tool.wrapper.EntityRewriteWrapper">
-    <property name="ARIResult" ref="ARIResult"/>
-    <property name="templateBeanLocator" ref="templateBeanLocator"/>
-    <property name="requestType" ref="requestType"/>
-    <property name="viewParameters" ref="viewParameters"/>
-  </bean>
+	<bean id="entityRewriteWrapper"
+		class="org.sakaiproject.evaluation.tool.wrapper.EntityRewriteWrapper">
+		<property name="ARIResult" ref="ARIResult" />
+		<property name="templateBeanLocator" ref="templateBeanLocator" />
+		<property name="requestType" ref="requestType" />
+		<property name="viewParameters" ref="viewParameters" />
+	</bean>
 
 	<bean id="templateItemBeanLocator"
 		class="org.sakaiproject.evaluation.tool.TemplateItemBeanLocator">
@@ -103,7 +103,7 @@
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="scalesLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalScalesLogic" />			
+			ref="org.sakaiproject.evaluation.logic.EvalScalesLogic" />
 	</bean>
 
 	<!-- producers here -->
@@ -154,16 +154,16 @@
 	<bean
 		class="org.sakaiproject.evaluation.tool.producers.TemplateModifyProducer">
 		<property name="messageLocator" ref="messageLocator" />
-    <property name="localTemplateLogic" ref="localTemplateLogic"/>
-    <property name="viewStateHandler" ref="viewStateHandler"/>
+		<property name="localTemplateLogic" ref="localTemplateLogic" />
+		<property name="viewStateHandler" ref="viewStateHandler" />
 	</bean>
 
 	<bean
 		class="org.sakaiproject.evaluation.tool.producers.ModifyScaledProducer">
 		<property name="messageLocator" ref="messageLocator" />
 		<property name="itemsBean" ref="itemsBean" />
-				<property name="itemsLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />	
+		<property name="itemsLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
 	</bean>
 
 	<bean
@@ -188,7 +188,7 @@
 		<property name="messageLocator" ref="messageLocator" />
 		<property name="requestBeanGetter" ref="ELEvaluator" />
 		<property name="itemsLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />		
+			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
 	</bean>
 
 	<bean
