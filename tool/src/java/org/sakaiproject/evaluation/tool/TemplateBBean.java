@@ -63,7 +63,7 @@ public class TemplateBBean {
 	public String changeDisplayOrder(){
 		//TODO - needs a rewrite
 		System.out.println("Display order changed!");
-		return "reorder";
+		return "reordered";
 	}
 
 }

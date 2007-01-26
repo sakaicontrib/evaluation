@@ -184,18 +184,24 @@ public class TemplateModifyProducer implements ViewComponentProducer,
 		    for (int h = 0; h < templateItemsList.size(); h++){
 		    	strArr[h] = Integer.toString(h+1);
 		    }
-		    			
+		    		
+		    String templateItemOTPBinding;
+		    String templateItemOTP;
 		    for(int i = 0; i<templateItemsList.size(); i++){
 		    	//ItemDisplay currItemDisplay=(ItemDisplay) l.get(i);
 		    	EvalTemplateItem myTemplateItem = (EvalTemplateItem) templateItemsList.get(i);
-
+		    	
+		    	templateItemOTPBinding="templateItemBeanLocator."+myTemplateItem.getId();
+		    	templateItemOTP=templateItemOTPBinding+".";
+		    	
+		    	
 		    	UIBranchContainer radiobranch = UIBranchContainer.make(form2,"itemrow:header", Integer.toString(i)); //$NON-NLS-1$
 				UIOutput.make(radiobranch, "item-num-header", messageLocator.getMessage("modifytemplate.item.num.header")); //$NON-NLS-1$ //$NON-NLS-2$
 			
 				//DISPLAY ORDER
 				UISelect sl = UISelect.make(radiobranch, "itemNum");
 				sl.selection = new UIInput();
-				sl.selection.valuebinding = new ELReference("#{templateBBean.templateItemsList." + i +".displayOrder"+"}");
+				sl.selection.valuebinding = new ELReference(templateItemOTP+"displayOrder");
 				UIBoundList slNames = new UIBoundList();
 				slNames.setValue(strArr);
 				sl.optionnames = slNames;
@@ -233,7 +239,7 @@ public class TemplateModifyProducer implements ViewComponentProducer,
 				
 				//UICommand removeCmd=UICommand.make(radiobranch,"remove_row_item","#{templateBean.removeRowItemAction}");
 				//removeCmd.parameters.add(new UIELBinding("#{itemsBean.currTemplateItemId}",Integer.toString(i)));
-                System.out.println("tiid"+myTemplateItem.getId()+" itemtext: "+myTemplateItem.getItem().getItemText());
+                //System.out.println("tiid"+myTemplateItem.getId()+" itemtext: "+myTemplateItem.getItem().getItemText());
 				UIInternalLink.make(radiobranch, 
 						"remove_row_item", 
 						messageLocator.getMessage("modifytemplate.remove.link"),
