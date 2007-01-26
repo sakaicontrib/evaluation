@@ -8,62 +8,99 @@
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
  * 
  * Contributors:
+ * Antranig Basman
  * Will Humphries (whumphri@vt.edu)
- * Rui Feng (fengr@vt.edu)
- * Kapil Ahuja (kahuja@vt.edu)
  *****************************************************************************/
 package org.sakaiproject.evaluation.tool;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.sakaiproject.evaluation.model.EvalTemplateItem;
 
 /**
  * This request-scope bean handles template creation and modification.
  * 
- * @author will Humphries (whumphri@vt.edu), Rui Feng (fengr@vt.edu), Kapil Ahuja (kahuja@vt.edu)
+ * @author Antranig Basman
+ * @author will Humphries (whumphri@vt.edu)
  */
 
 public class TemplateBBean {
-	/*
-	 * VARIABLE DECLARATIONS 
-	 */
-	private static Log log = LogFactory.getLog(TemplateBean.class);
-	
-    private TemplateBeanLocator templateBeanLocator;
+  /*
+   * VARIABLE DECLARATIONS
+   */
+  private static Log log = LogFactory.getLog(TemplateBean.class);
 
-	public void setTemplateBeanLocator(TemplateBeanLocator templateBeanLocator) {
-      this.templateBeanLocator = templateBeanLocator;
+  private TemplateBeanLocator templateBeanLocator;
+
+  public void setTemplateBeanLocator(TemplateBeanLocator templateBeanLocator) {
+    this.templateBeanLocator = templateBeanLocator;
+  }
+
+  private TemplateItemBeanLocator templateItemBeanLocator;
+
+  public void setTemplateItemBeanLocator(
+      TemplateItemBeanLocator templateItemBeanLocator) {
+    this.templateItemBeanLocator = templateItemBeanLocator;
+  }
+
+  private LocalTemplateLogic localTemplateLogic;
+
+  public void setLocalTemplateLogic(LocalTemplateLogic localTemplateLogic) {
+    this.localTemplateLogic = localTemplateLogic;
+  }
+
+  /**
+   * If the template is not saved, button will show text "continue and add
+   * question" method binding to the "continue and add question" button on
+   * template_title_description.html replaces TemplateBean.createTemplateAction,
+   * but template is added to db here.
+   */
+  public String createTemplateAction() {
+    templateBeanLocator.saveAll();
+    return "success";
+  }
+
+  /**
+   * If the template is already stored, button will show text "Save" method
+   * binding to the "Save" button on template_title_description.html replaces
+   * TemplateBean.saveTemplate()
+   */
+  public String updateTemplateTitleDesc() {
+    templateBeanLocator.saveAll();
+    return "success";
+  }
+
+  public Long templateId;
+
+  private void emit(EvalTemplateItem toemit, int outindex) {
+    toemit.setDisplayOrder(new Integer(outindex));
+    localTemplateLogic.saveTemplateItem(toemit);
+  }
+
+  // NB - this implementation depends on Hibernate reference equality
+  // semantics!!
+  public void saveReorder() {
+    Long templateId = null;
+    Map delivered = templateItemBeanLocator.getDeliveredBeans();
+    List ordered = localTemplateLogic.fetchTemplateItems(templateId);
+    for (int i = 1; i <= ordered.size();) {
+      EvalTemplateItem item = (EvalTemplateItem) ordered.get(i - 1);
+      if (i < ordered.size()) {
+        EvalTemplateItem next = (EvalTemplateItem) ordered.get(i);
+        if (item.getDisplayOrder().equals(next.getDisplayOrder())) {
+          if (delivered.get(next.getDisplayOrder()) == item) {
+            emit(item, i++); emit(next, i++); continue;
+          }
+          else {
+            emit(next, i++); emit(item, i++); continue;
+          }
+        }
+      }
+      emit(item, i++);
     }
-
-    /**
-	 * If the template is not saved, button will show text "continue and add question"
-	 * method binding to the "continue and add question" button on template_title_description.html
-	 * replaces TemplateBean.createTemplateAction, but template is added to db here.
-	 * */	
-	public String createTemplateAction() {
-        templateBeanLocator.saveAll();
-		return "success";
-	}
-	
-	/**
-	 * If the template is already stored, button will show text "Save"
-	 * method binding to the "Save" button on template_title_description.html
-	 * replaces TemplateBean.saveTemplate()
-	*/
-	public String updateTemplateTitleDesc() {
-      templateBeanLocator.saveAll();
-      return "success";
-	}
-	
-	/**
-	 * method binding to the hidden button with rsf:id="hiddenBtn" on template_modify page
-	 * used to change displayOrder of each item when the onChange event of dropdown 
-	 * 		(displayOrder #)on template_modify.gtml fired
-	 */
-	public String changeDisplayOrder(){
-		//TODO - needs a rewrite
-		System.out.println("Display order changed!");
-		return "reordered";
-	}
-
+  }
+  
 }

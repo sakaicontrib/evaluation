@@ -7,17 +7,8 @@
     <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
     <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
-    <script type="text/javascript" language="JavaScript" src="../js/selectLink.js"/>
+    <script type="text/javascript" language="JavaScript" src="../js/selectLink.js"></script>
 
-	<script language="JavaScript">
-		function setTargetToBlank() {
-			document.modify_form_rows.target = "_blank";		
-		}
-		function setTargetToSelf(temp) {
-			document.modify_form_rows.target = "_self";	
-		}	
-
-    </script>
 </head>
 
 <body>
@@ -88,11 +79,12 @@
 <br/>
  
 <form rsf:id="modifyFormRows" name="modify_form_rows" method="post">
-<input type="submit" rsf:id="hiddenBtn" name="hiddenBtn" style="visibility:hidden;"/>
+<input type="submit" rsf:id="hiddenBtn" id="hiddenBtn" style="visibility:hidden;"/>
 	<table width="83%" style="border-collapse: collapse;">
-		<tr rsf:id="itemrow:header">		
-			<td width="15%" class="borderLeft" colspan="2"><b><span rsf:id="item-num-header">Item:</span></b> 
-  			<select rsf:id="itemNum" onchange="javascript:setTargetToSelf();document.modify_form_rows.hiddenBtn.click();">
+		<tr rsf:id="itemrow:header" id="itemrow:header:0">		
+			<td width="15%" class="borderLeft" colspan="2">
+            <b><span rsf:id="item-num-header">Item:</span></b> 
+  			  <select rsf:id="itemNum" id="itemrow:header:0:itemNum-selection">
 				<option value="1">1</option>
 				<option value="2">2</option>
 				<option value="3">3</option>		
@@ -136,7 +128,9 @@
 			</td>
 		</tr>
 	</table>
-	
+<script rsf:id="decorateSelects">
+  EvalSystem.decorateReorderSelects("", 1);
+</script>	
 </form>
 
 </div>

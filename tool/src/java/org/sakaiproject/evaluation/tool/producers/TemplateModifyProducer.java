@@ -23,6 +23,7 @@ import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.params.PreviewEvalParameters;
 import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
 
+import uk.org.ponder.htmlutil.HTMLUtil;
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
@@ -30,11 +31,13 @@ import uk.org.ponder.rsf.components.UIBoundList;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
+import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
@@ -104,8 +107,8 @@ public class TemplateModifyProducer implements ViewComponentProducer,
 	    System.out.println("templateBBean.templateId="+evalViewParams.templateId);
         Long templateId = evalViewParams.templateId;
         
-		String templateOTPBinding="templateBeanLocator."+templateId;
-	    String templateOTP=templateOTPBinding+".";	
+		String templateOTPBinding = "templateBeanLocator." + templateId;
+	    String templateOTP = templateOTPBinding+".";	
 	    
 		UIOutput.make(tofill, "modify-template-title", messageLocator.getMessage("modifytemplate.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
 		
@@ -131,12 +134,11 @@ public class TemplateModifyProducer implements ViewComponentProducer,
             messageLocator.getMessage("modifytemplate.itemtype.expert")
         };
         String[] viewIDs = {
-            // NB TIP are all dummies
             ModifyScaledProducer.VIEW_ID, 
             ModifyEssayProducer.VIEW_ID,
             ModifyHeaderProducer.VIEW_ID,
-            ModifyScaledProducer.VIEW_ID, 
-            ModifyScaledProducer.VIEW_ID
+            ModifyBlockProducer.VIEW_ID, 
+            ModifyScaledProducer.VIEW_ID // TODO: which view for this
         };
         String[] values = convertViews(viewIDs, templateId);
         
@@ -175,11 +177,17 @@ public class TemplateModifyProducer implements ViewComponentProducer,
 		UIOutput.make(tofill, "course-sample", messageLocator.getMessage("modifytemplate.course.sample")); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		UIForm form2 = UIForm.make(tofill, "modifyFormRows");	 //$NON-NLS-1$
-		//TODO - itemsBean.changeDisplayOrder
-		UICommand.make(form2,"hiddenBtn","#{templateBBean.changeDisplayOrder}"); 
+		UICommand reorder = 
+          UICommand.make(form2, "hiddenBtn", "#{templateBBean.saveReorder}");
+        reorder.parameters.add(new UIELBinding("#{templateBBean.templateId}", 
+            templateId));
 		
 		//UIOutput.make(form,"itemCount",null,"#{templateBBean.itemsListSize}");
 		if (templateItemsList!= null && templateItemsList.size() >0) {
+            UIVerbatim.make(form2, "decorateSelects", 
+            HTMLUtil.emitJavascriptCall("EvalSystem.decorateReorderSelects", 
+                    new String[]{"", Integer.toString(templateItemsList.size())} ));
+          
 			String[] strArr = new String[templateItemsList.size()];
 		    for (int h = 0; h < templateItemsList.size(); h++){
 		    	strArr[h] = Integer.toString(h+1);
@@ -187,15 +195,14 @@ public class TemplateModifyProducer implements ViewComponentProducer,
 		    		
 		    String templateItemOTPBinding;
 		    String templateItemOTP;
-		    for(int i = 0; i<templateItemsList.size(); i++){
-		    	//ItemDisplay currItemDisplay=(ItemDisplay) l.get(i);
+		    for (int i = 0; i < templateItemsList.size(); i++){
 		    	EvalTemplateItem myTemplateItem = (EvalTemplateItem) templateItemsList.get(i);
 		    	
-		    	templateItemOTPBinding="templateItemBeanLocator."+myTemplateItem.getId();
-		    	templateItemOTP=templateItemOTPBinding+".";
+		    	templateItemOTPBinding = "templateItemBeanLocator."+myTemplateItem.getId();
+		    	templateItemOTP = templateItemOTPBinding+".";
 		    	
-		    	
-		    	UIBranchContainer radiobranch = UIBranchContainer.make(form2,"itemrow:header", Integer.toString(i)); //$NON-NLS-1$
+		    	UIBranchContainer radiobranch = 
+                   UIBranchContainer.make(form2,"itemrow:header", Integer.toString(i)); //$NON-NLS-1$
 				UIOutput.make(radiobranch, "item-num-header", messageLocator.getMessage("modifytemplate.item.num.header")); //$NON-NLS-1$ //$NON-NLS-2$
 			
 				//DISPLAY ORDER
