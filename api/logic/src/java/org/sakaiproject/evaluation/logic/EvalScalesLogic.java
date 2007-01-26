@@ -61,7 +61,7 @@ public interface EvalScalesLogic {
 	/**
 	 * Get evaluation scales that are visible to the supplied user
 	 * (includes owned scales and public or shared scales), can
-	 * optionally get just owned scales
+	 * optionally get just owned scales, scales are sorted
 	 * 
 	 * @param userId the internal user id (not username)
 	 * @param sharingConstant a SHARING constant from 
@@ -70,7 +70,7 @@ public interface EvalScalesLogic {
 	 * user, if set to a sharing constant then return just the visible
 	 * scales that match that sharing setting (can be used to get all
 	 * scales owned by this user for example)
-	 * @return a List of EvalScale objects
+	 * @return a List of EvalScale objects (in alpha order with private scales, then public, then others)
 	 */
 	public List getScalesForUser(String userId, String sharingConstant);
 
