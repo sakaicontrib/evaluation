@@ -216,8 +216,10 @@
 
 	<bean
 		class="org.sakaiproject.evaluation.tool.producers.EvaluationSettingsProducer">
-		<property name="evaluationBean" ref="evaluationBean" />
 		<property name="messageLocator" ref="messageLocator" />
+		<property name="settings"
+			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+		<property name="evaluationBean" ref="evaluationBean" />
 	</bean>
 
 	<bean
