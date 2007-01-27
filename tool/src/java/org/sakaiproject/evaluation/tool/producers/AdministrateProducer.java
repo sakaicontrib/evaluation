@@ -138,8 +138,23 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
 		makeBoolean(form, "instructors-email-students", EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS); //$NON-NLS-1$ 
 		UIOutput.make(form, "instructors-email-students-note", messageLocator.getMessage("administrate.instructors.email.students.note")); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		//Select for whether instructors must use evaluations from above
-        String[] hierarchyOptionList = 
+		/*
+		 * Non-Javadoc comments.
+		 * Select for whether instructors must use evaluations from above.
+		 * 
+		 * Note: The values should be irrespective of i18n as they are stored in database. 
+		 * Here the 4th values that is "messageLocator.getMessage("administrate.configurable.label")"
+		 * is actually converted to a NULL inside SettingsWBL.java so does not matter to be 
+		 * language specific here.
+		 */
+        String[] hierarchyOptionValues = 
+        {
+            EvalConstants.INSTRUCTOR_OPT_IN,
+            EvalConstants.INSTRUCTOR_OPT_OUT,
+            EvalConstants.INSTRUCTOR_REQUIRED,
+            messageLocator.getMessage("administrate.configurable.label")
+        };
+        String[] hierarchyOptionLabels = 
         {
             messageLocator.getMessage("evalsettings.instructors.label.opt.in"),
             messageLocator.getMessage("evalsettings.instructors.label.opt.out"),
@@ -147,8 +162,8 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
             messageLocator.getMessage("administrate.configurable.label")
         };
         makeSelect(form, "instructors-hierarchy", //$NON-NLS-1$ 
-        		hierarchyOptionList, 
-        		hierarchyOptionList, 
+        		hierarchyOptionValues, 
+        		hierarchyOptionLabels, 
         		EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE);
 		UIOutput.make(form, "instructors-hierarchy-note", messageLocator.getMessage("administrate.instructors.hierarchy.note")); //$NON-NLS-1$ //$NON-NLS-2$
 		

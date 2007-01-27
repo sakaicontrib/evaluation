@@ -25,6 +25,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * Obviates the need for a backing bean for administrative functionality.
  * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
+ * @author Kapil Ahuja (kahuja@caret.cam.ac.uk)
  */
 public class SettingsWBL implements WriteableBeanLocator {
 	private StaticLeafParser leafParser;
@@ -63,25 +64,19 @@ public class SettingsWBL implements WriteableBeanLocator {
 	public void set(String beanname, Object toset) {
 	  
 		/*
-		 * Fields inside the if block are not directly mapped to those in database.
-		 * Thus parsing them.
+		 * Fields inside isFieldToBeParsed are not directly mapped to those in database.
+		 * Thus parsing them.  
 		 *       
 		 * Note: If the value of field is null it means that this particular value should be
 		 * deleted from the table. 
 		 */ 
-		if (  beanname.equals(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS) ||
-				beanname.equals(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE) ||
-				beanname.equals(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED) ||
-				beanname.equals(EvalSettings.STUDENT_MODIFY_RESPONSES) ||
-				beanname.equals(EvalSettings.STUDENT_VIEW_RESULTS) ||
-				beanname.equals(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY) ) {
-			  
+		if ( isFieldToBeParsed(beanname) ) {
 			if ( ((String)toset).equals(messageLocator.getMessage("administrate.configurable.label")) ) 
 				toset = null;
 			else if ( ((String)toset).equals(messageLocator.getMessage("administrate.true.label")) ) 
-				toset = new Boolean(true);
+				toset = Boolean.TRUE;
 			else if ( ((String)toset).equals(messageLocator.getMessage("administrate.false.label")) ) 
-				toset = new Boolean(false);
+				toset = Boolean.FALSE;
 			else {
 				//do nothing
 			}
@@ -89,7 +84,7 @@ public class SettingsWBL implements WriteableBeanLocator {
 		else {
 			/*
 			 *  The UI has already converted Booleans.
-			 *  this is primarily to catch Integers and strings. 
+			 *  This is primarily to catch Integers and Strings. 
 			 */
 			if (toset instanceof String) {
 				Class proptype = getPropertyType(beanname);
@@ -107,26 +102,39 @@ public class SettingsWBL implements WriteableBeanLocator {
 		Object toget = evalSettings.get(path);
 		
 		/*
-		 * Fields inside the if block are not directly mapped to those in database.
+		 * Fields inside isFieldToBeParsed are not directly mapped to those in database.
 		 * Thus parsing them.  
 		 */
-		if ( path.equals(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS) ||
-				path.equals(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE) ||
-				path.equals(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED) ||
-				path.equals(EvalSettings.STUDENT_MODIFY_RESPONSES) ||
-				path.equals(EvalSettings.STUDENT_VIEW_RESULTS) ||
-				path.equals(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY)) {
-		
+		if ( isFieldToBeParsed(path) ) {
 			if (toget == null)
 				toget = messageLocator.getMessage("administrate.configurable.label");
-			else if ( (toget instanceof Boolean) && ((Boolean)toget).booleanValue() )
-				toget = messageLocator.getMessage("administrate.true.label");
-			else if ( (toget instanceof Boolean) && !(((Boolean)toget).booleanValue()) )
-				toget = messageLocator.getMessage("administrate.false.label");
+			else if (toget instanceof Boolean) {
+				if ( ((Boolean)toget).booleanValue() )
+					toget = messageLocator.getMessage("administrate.true.label");
+				else 
+					toget = messageLocator.getMessage("administrate.false.label");
+			}
 			else {
 				//do nothing
 			}
 		}
 		return toget;
+	}
+	
+	
+	/*
+	 * Removing duplication of code by moving "if" block in this method. 
+	 */
+	private boolean isFieldToBeParsed (String path) {
+
+		if ( path.equals(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS) ||
+				path.equals(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE) ||
+				path.equals(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED) ||
+				path.equals(EvalSettings.STUDENT_MODIFY_RESPONSES) ||
+				path.equals(EvalSettings.STUDENT_VIEW_RESULTS) ||
+				path.equals(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY) ) 
+			return true;
+		else
+			return false;
 	}
 }

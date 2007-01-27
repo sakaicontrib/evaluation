@@ -106,31 +106,39 @@
 				</td>
 			</tr>
 		</table>
+		<div rsf:id="showResultsToStudents:">			
+			<table border="0" cellspacing="0" cellpadding="0" width="90%">
+				<tr>
+					<td width="2%">&nbsp;</td>
+					<td width="50%" align="left" valign="top" nowrap="Y">
+						<input type="checkbox" name="student_view_results" rsf:id="studentViewResults"/>&nbsp;<span rsf:id="eval-results-viewable-students">Students in the courses this evaluation is assigned to</span>
+					</td>
+					<td width="44%" align="right" valign="top">
+						<input type="text" name="students_date" rsf:id="studentsDate" value="MM/DD/YYYY" size="12" maxlength="10"/>
+					</td>
+					<td width="4%" align="right" valign="top">
+						<img src="#" rsf:id="calenderImageForResultsToStudents" />
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div rsf:id="showResultsToInst:">			
+			<table border="0" cellspacing="0" cellpadding="0" width="90%">
+				<tr>
+					<td width="2%">&nbsp;</td>
+					<td width="50%" align="left" valign="top" nowrap="Y">
+						<input type="checkbox" name="instructor_view_results" rsf:id="instructorViewResults"/>&nbsp;<span rsf:id="eval-results-viewable-instructors">Instructors in the courses this evaluation is assigned to</span>
+					</td>
+					<td width="44%" align="right" valign="top">
+						<input type="text" name="instructor_date" rsf:id="instructorsDate" value="MM/DD/YYYY" size="12" maxlength="10"/>
+					</td>
+					<td width="4%" align="right" valign="top">
+						<img src="#" rsf:id="calenderImageForResultsToInst" />
+					</td>
+				</tr>
+			</table>
+		</div>
 		<table border="0" cellspacing="0" cellpadding="0" width="90%">
-			<tr>
-				<td width="2%">&nbsp;</td>
-				<td width="50%" align="left" valign="top" nowrap="Y">
-					<input type="checkbox" name="student_view_results" rsf:id="studentViewResults"/>&nbsp;<span rsf:id="eval-results-viewable-students">Students in the courses this evaluation is assigned to</span>
-				</td>
-				<td width="44%" align="right" valign="top">
-					<input type="text" name="students_date" rsf:id="studentsDate" value="MM/DD/YYYY" size="12" maxlength="10"/>
-				</td>
-				<td width="4%" align="right" valign="top">
-					<img src="#" rsf:id="calenderImage" />
-				</td>
-			</tr>
-			<tr>
-				<td width="2%">&nbsp;</td>
-				<td width="50%" align="left" valign="top" nowrap="Y">
-					<input type="checkbox" name="instructor_view_results" rsf:id="instructorViewResults"/>&nbsp;<span rsf:id="eval-results-viewable-instructors">Instructors in the courses this evaluation is assigned to</span>
-				</td>
-				<td width="44%" align="right" valign="top">
-					<input type="text" name="instructor_date" rsf:id="instructorsDate" value="MM/DD/YYYY" size="12" maxlength="10"/>
-				</td>
-				<td width="4%" align="right" valign="top">
-					<img src="#" rsf:id="calenderImage" />
-				</td>
-			</tr>
 			<tr>
 				<td colspan="4">
 					<I><span rsf:id="eval-results-viewable-admin-note">* Note that admins above in the hierarchy can view the results UNLESS the private box is checked</span></I>
@@ -144,31 +152,43 @@
 					<b><span rsf:id="student-completion-settings-header">Student Completion Settings:</span></b>
 				</td>
 			</tr>
-			<tr>
-				<td width="45%" align="right" valign="top" nowrap="Y">
-					<span rsf:id="blank-responses-allowed-desc">Blank non-text question responses allowed:</span>&nbsp;<input type="checkbox" name="blank_responses_allowed" rsf:id="blankResponsesAllowed"/>
-				</td>
-				<td width="55%" align="right" valign="top">
-					<i><span rsf:id="blank-responses-allowed-note">Students are always warned when reponses are left blank</span></i>
-				</td>
-			</tr>
-			<tr>
-				<td width="45%" align="right" valign="top" nowrap="Y">
-					<span rsf:id="modify-responses-allowed-desc">Modification of responses allowed:</span>&nbsp;<input type="checkbox" name="modify_responses_allowed" rsf:id="modifyResponsesAllowed"/>
-				</td>
-				<td width="55%" align="right" valign="top">
-					<i><span rsf:id="modify-responses-allowed-note">Students may submit reponses once only if unchecked</span></i>
-				</td>
-			</tr>
-			<tr>
-				<td width="45%" align="right" valign="top" nowrap="Y">
-					<span rsf:id="unregistered-allowed-desc">Unregistered students not allowed to complete:</span>&nbsp;<input type="checkbox" name="unregistered_allowed" rsf:id="unregisteredAllowed"/>
-				</td>
-				<td width="55%" align="right" valign="top">
-					<i><span rsf:id="unregistered-allowed-note">Students may only complete evaluation if officially registered</span></i>
-				</td>
-			</tr>
 		</table>
+		<div rsf:id="showBlankQuestionAllowedToStut:">			
+			<table border="0" cellspacing="0" cellpadding="0" width="90%">
+				<tr>
+					<td width="45%" align="right" valign="top" nowrap="Y">
+						<span rsf:id="blank-responses-allowed-desc">Blank non-text question responses allowed:</span>&nbsp;<input type="checkbox" name="blank_responses_allowed" rsf:id="blankResponsesAllowed"/>
+					</td>
+					<td width="55%" align="right" valign="top">
+						<i><span rsf:id="blank-responses-allowed-note">Students are always warned when reponses are left blank</span></i>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div rsf:id="showModifyResponsesAllowedToStu:">			
+			<table border="0" cellspacing="0" cellpadding="0" width="90%">
+				<tr>
+					<td width="45%" align="right" valign="top" nowrap="Y">
+						<span rsf:id="modify-responses-allowed-desc">Modification of responses allowed:</span>&nbsp;<input type="checkbox" name="modify_responses_allowed" rsf:id="modifyResponsesAllowed"/>
+					</td>
+					<td width="55%" align="right" valign="top">
+						<i><span rsf:id="modify-responses-allowed-note">Students may submit reponses once only if unchecked</span></i>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div rsf:id="showUnregAllowedOption:">			
+			<table border="0" cellspacing="0" cellpadding="0" width="90%">
+				<tr>
+					<td width="45%" align="right" valign="top" nowrap="Y">
+						<span rsf:id="unregistered-allowed-desc">Unregistered students not allowed to complete:</span>&nbsp;<input type="checkbox" name="unregistered_allowed" rsf:id="unregisteredAllowed"/>
+					</td>
+					<td width="55%" align="right" valign="top">
+						<i><span rsf:id="unregistered-allowed-note">Students may only complete evaluation if officially registered</span></i>
+					</td>
+				</tr>
+			</table>
+		</div>
 		<br/>
 		<table border="0" cellspacing="0" cellpadding="0" width="90%">
 			<tr>
@@ -182,17 +202,34 @@
 					<i><span rsf:id="admin-settings-instructions">This setting allows you to give the instructor control over whether or not to use the evaluation or require it.</span></i>
 				</td>
 			</tr>
-			<tr>
-				<td width="2%" valign="middle" style="height:40px;">&nbsp;</td>
-				<td width="23%" align="left" valign="middle" style="height:40px;" nowrap="Y">
-					<span rsf:id="instructor-opt-desc">Instructor opt in setting:</span>&nbsp;
-				</td>
-				<td width="75%" align="left" valign="middle" style="height:40px;">
-					<select name="instructor_opt" rsf:id="instructorOpt">
-					</select>
-				</td>
-			</tr>
 		</table>
+		<div rsf:id="showInstUseFromAboveOptions:">			
+			<table border="0" cellspacing="0" cellpadding="0" width="90%">
+				<tr>
+					<td width="2%" valign="middle" style="height:40px;">&nbsp;</td>
+					<td width="23%" align="left" valign="middle" style="height:40px;" nowrap="Y">
+						<span rsf:id="instructor-opt-desc">Instructor opt in setting:</span>&nbsp;
+					</td>
+					<td width="75%" align="left" valign="middle" style="height:40px;">
+						<select name="instructor_opt" rsf:id="instructorOpt">
+						</select>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div rsf:id="showInstUseFromAboveLabel:">			
+			<table border="0" cellspacing="0" cellpadding="0" width="90%">
+				<tr>
+					<td width="2%" valign="middle" style="height:40px;">&nbsp;</td>
+					<td width="23%" align="left" valign="middle" style="height:40px;" nowrap="Y">
+						<span rsf:id="instructor-opt-desc">Instructor opt in setting:</span>&nbsp;
+					</td>
+					<td width="75%" align="left" valign="middle" style="height:40px;">
+						<b><span rsf:id="instUseFromAboveValue"></span></b>
+					</td>
+				</tr>
+			</table>
+		</div>
 		<br/>
 		<table border="0" cellspacing="0" cellpadding="0" width="90%">
 			<tr>
