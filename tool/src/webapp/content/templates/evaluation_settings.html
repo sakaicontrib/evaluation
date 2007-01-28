@@ -113,12 +113,19 @@
 					<td width="50%" align="left" valign="top" nowrap="Y">
 						<input type="checkbox" name="student_view_results" rsf:id="studentViewResults"/>&nbsp;<span rsf:id="eval-results-viewable-students">Students in the courses this evaluation is assigned to</span>
 					</td>
-					<td width="44%" align="right" valign="top">
-						<input type="text" name="students_date" rsf:id="studentsDate" value="MM/DD/YYYY" size="12" maxlength="10"/>
-					</td>
-					<td width="4%" align="right" valign="top">
-						<img src="#" rsf:id="calenderImageForResultsToStudents" />
-					</td>
+					<span rsf:id="showResultsToStuDate:">
+						<td width="44%" align="right" valign="top">
+							<input type="text" name="students_date" rsf:id="studentsDate" value="MM/DD/YYYY" size="12" maxlength="10"/>
+						</td>
+						<td width="4%" align="right" valign="top">
+							<img src="#" rsf:id="calenderImageForResultsToStudents" />
+						</td>
+					</span>
+					<span rsf:id="showResultsToStuLabel:">
+						<td width="48%" align="right" valign="top">
+							<I><span rsf:id="eval-results-stu-inst-date-label">Results viewable on "View Date"</span></I>
+						</td>
+					</span>
 				</tr>
 			</table>
 		</div>
@@ -129,12 +136,19 @@
 					<td width="50%" align="left" valign="top" nowrap="Y">
 						<input type="checkbox" name="instructor_view_results" rsf:id="instructorViewResults"/>&nbsp;<span rsf:id="eval-results-viewable-instructors">Instructors in the courses this evaluation is assigned to</span>
 					</td>
-					<td width="44%" align="right" valign="top">
-						<input type="text" name="instructor_date" rsf:id="instructorsDate" value="MM/DD/YYYY" size="12" maxlength="10"/>
-					</td>
-					<td width="4%" align="right" valign="top">
-						<img src="#" rsf:id="calenderImageForResultsToInst" />
-					</td>
+					<span rsf:id="showResultsToInstDate:">
+						<td width="44%" align="right" valign="top">
+							<input type="text" name="instructor_date" rsf:id="instructorsDate" value="MM/DD/YYYY" size="12" maxlength="10"/>
+						</td>
+						<td width="4%" align="right" valign="top">
+							<img src="#" rsf:id="calenderImageForResultsToInst" />
+						</td>
+					</span>
+					<span rsf:id="showResultsToInstLabel:">
+						<td width="48%" align="right" valign="top">
+							<I><span rsf:id="eval-results-stu-inst-date-label">Results viewable on "View Date"</span></I>
+						</td>
+					</span>
 				</tr>
 			</table>
 		</div>
@@ -146,13 +160,15 @@
 			</tr>
 		</table>
 		<br/>
-		<table border="0" cellspacing="0" cellpadding="0" width="90%">
-			<tr>
-				<td colspan="2">
-					<b><span rsf:id="student-completion-settings-header">Student Completion Settings:</span></b>
-				</td>
-			</tr>
-		</table>
+		<div rsf:id="showStudentCompletionDiv:">			
+			<table border="0" cellspacing="0" cellpadding="0" width="90%">
+				<tr>
+					<td colspan="2">
+						<b><span rsf:id="student-completion-settings-header">Student Completion Settings:</span></b>
+					</td>
+				</tr>
+			</table>
+		</div>
 		<div rsf:id="showBlankQuestionAllowedToStut:">			
 			<table border="0" cellspacing="0" cellpadding="0" width="90%">
 				<tr>
@@ -262,7 +278,7 @@
 			<tr>
 				<td width="2%" valign="middle" style="height:40px;">&nbsp;</td>
 				<td width="38%" align="left" valign="middle" style="height:40px;" nowrap="Y">
-					<span rsf:id="reminder-noresponders-header">Email reminder to non-respondent students:</span>&nbsp;
+					<span rsf:id="eval-from-email-header">HELPDESK EMAIL:</span>&nbsp;
 				</td>
 				<td width="60%" align="left" valign="middle" style="height:40px;">
 					<input type="text" name="reminder_from_email" rsf:id="reminderFromEmail" size="25" maxlength="25"/>

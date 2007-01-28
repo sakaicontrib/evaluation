@@ -142,20 +142,40 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		UIOutput.make(form, "eval-results-viewable-private", messageLocator.getMessage("evalsettings.results.viewable.private")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(form, "private-warning-desc", messageLocator.getMessage("evalsettings.private.warning.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIBoundBoolean.make(form, "resultsPrivate", "#{evaluationBean.eval.resultsPrivate}", null); //$NON-NLS-1$ //$NON-NLS-2$
+
+		/*
+		 * Non Javadoc comment.
+		 * Variable is used to decide whether to show the view date textbox for student 
+		 * and instructor separately or not.
+		 */
+		boolean sameViewDateForAll = ((Boolean) settings.get(EvalSettings.EVAL_USE_SAME_VIEW_DATES)).booleanValue();
 		
 		/*
 		 * Non Javadoc comment.
 		 * Show the settings below only if "EvalSettings.STUDENT_VIEW_RESULTS" is set as configurable 
 		 * i.e. null in the database OR is set as true in database.
 		 */
-		if ( settings.get(EvalSettings.STUDENT_VIEW_RESULTS) == null ||
-				((Boolean)settings.get(EvalSettings.STUDENT_VIEW_RESULTS)).booleanValue() ) {
+		Boolean tempValue = (Boolean) settings.get(EvalSettings.STUDENT_VIEW_RESULTS);
+		if ( tempValue == null || tempValue.booleanValue() ) {
 
-			UIBranchContainer showResultsToStudents = UIBranchContainer.make(form, "showResultsToStudents:"); //$NON-NLS-1$
-			UIOutput.make(showResultsToStudents, "eval-results-viewable-students", messageLocator.getMessage("evalsettings.results.viewable.students"));		 //$NON-NLS-1$ //$NON-NLS-2$
-			UIBoundBoolean.make(showResultsToStudents, "studentViewResults", "#{evaluationBean.studentViewResults}", null); //$NON-NLS-1$ //$NON-NLS-2$
-			UIInput.make(showResultsToStudents, "studentsDate", "#{evaluationBean.studentsDate}", null); //$NON-NLS-1$ //$NON-NLS-2$
-			UILink.make(showResultsToStudents, "calenderImageForResultsToStudents", "$context/content/images/calendar.gif");		 //$NON-NLS-1$ //$NON-NLS-2$
+			UIBranchContainer showResultsToStudents = UIBranchContainer.make(form, "showResultsToStudents:"); 	//$NON-NLS-1$
+			UIOutput.make(showResultsToStudents, "eval-results-viewable-students", 								//$NON-NLS-1$ 
+					messageLocator.getMessage("evalsettings.results.viewable.students")); 						//$NON-NLS-1$
+			UIBoundBoolean stuViewCheckbox = UIBoundBoolean.make(showResultsToStudents, 
+					"studentViewResults", "#{evaluationBean.studentViewResults}", tempValue); 					//$NON-NLS-1$ //$NON-NLS-2$
+			setDisabledAttribute(tempValue, stuViewCheckbox);
+			
+			//If same view date all then show a label else show a text box.
+			if ( sameViewDateForAll ) {
+				UIBranchContainer showResultsToStuLabel = UIBranchContainer.make(showResultsToStudents, "showResultsToStuLabel:"); 	//$NON-NLS-1$
+				UIOutput.make(showResultsToStuLabel, "eval-results-stu-inst-date-label", 											//$NON-NLS-1$ 
+						messageLocator.getMessage("evalsettings.results.stu.inst.date.label")); 									//$NON-NLS-1$
+			}
+			else {
+				UIBranchContainer showResultsToStuDate = UIBranchContainer.make(showResultsToStudents, "showResultsToStuDate:");	//$NON-NLS-1$
+				UIInput.make(showResultsToStuDate, "studentsDate", "#{evaluationBean.studentsDate}", null); 						//$NON-NLS-1$ //$NON-NLS-2$
+				UILink.make(showResultsToStuDate, "calenderImageForResultsToStudents", "$context/content/images/calendar.gif");		//$NON-NLS-1$ //$NON-NLS-2$
+			}
 		}
 		
 		/*
@@ -163,31 +183,50 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		 * Show the settings below only if "EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS" is set as configurable 
 		 * i.e. null in the database OR is set as true in database.
 		 */
-		if ( settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS) == null ||
-				((Boolean)settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS)).booleanValue() ) {
+		tempValue = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
+		if ( tempValue == null || tempValue.booleanValue() ) {
 
-			UIBranchContainer showResultsToInst = UIBranchContainer.make(form, "showResultsToInst:"); //$NON-NLS-1$
-			UIOutput.make(showResultsToInst, "eval-results-viewable-instructors", messageLocator.getMessage("evalsettings.results.viewable.instructors")); //$NON-NLS-1$ //$NON-NLS-2$
-			UIBoundBoolean.make(showResultsToInst, "instructorViewResults", "#{evaluationBean.instructorViewResults}", null); //$NON-NLS-1$ //$NON-NLS-2$
-			UIInput.make(showResultsToInst, "instructorsDate", "#{evaluationBean.instructorsDate}", null); //$NON-NLS-1$ //$NON-NLS-2$
-			UILink.make(showResultsToInst, "calenderImageForResultsToInst", "$context/content/images/calendar.gif");		 //$NON-NLS-1$ //$NON-NLS-2$
+			UIBranchContainer showResultsToInst = UIBranchContainer.make(form, "showResultsToInst:");	//$NON-NLS-1$
+			UIOutput.make(showResultsToInst, "eval-results-viewable-instructors", 						//$NON-NLS-1$
+					messageLocator.getMessage("evalsettings.results.viewable.instructors"));  			//$NON-NLS-1$
+			UIBoundBoolean instViewCheckbox = UIBoundBoolean.make(showResultsToInst, 
+					"instructorViewResults", "#{evaluationBean.instructorViewResults}", tempValue); 	//$NON-NLS-1$ //$NON-NLS-2$
+			setDisabledAttribute(tempValue, instViewCheckbox);
+
+			//If same view date all then show a label else show a text box.
+			if ( sameViewDateForAll ) {
+				UIBranchContainer showResultsToInstLabel = UIBranchContainer.make(showResultsToInst, "showResultsToInstLabel:"); 	//$NON-NLS-1$
+				UIOutput.make(showResultsToInstLabel, "eval-results-stu-inst-date-label", 											//$NON-NLS-1$
+						messageLocator.getMessage("evalsettings.results.stu.inst.date.label"));  									//$NON-NLS-1$
+			}
+			else {
+				UIBranchContainer showResultsToInstDate = UIBranchContainer.make(showResultsToInst, "showResultsToInstDate:"); 	//$NON-NLS-1$
+				UIInput.make(showResultsToInstDate, "instructorsDate", "#{evaluationBean.instructorsDate}", null); 				//$NON-NLS-1$ //$NON-NLS-2$
+				UILink.make(showResultsToInstDate, "calenderImageForResultsToInst", "$context/content/images/calendar.gif"); 	//$NON-NLS-1$ //$NON-NLS-2$
+			}
 		}
 
 		UIOutput.make(form, "eval-results-viewable-admin-note", messageLocator.getMessage("evalsettings.results.viewable.admin.note")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(form, "student-completion-settings-header", messageLocator.getMessage("evalsettings.student.completion.settings.header")); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		/*
 		 * Non Javadoc comment.
 		 * Show the settings below only if "EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED" is set as configurable 
 		 * i.e. null in the database OR is set as true in database.
+		 * 
+		 * Note: The variable showStudentCompletionHeader is used to show "student-completion-settings-header"
+		 * It is true only if either of the three "if's" below are evaluated to true.
 		 */
-		if ( settings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED) == null ||
-				((Boolean)settings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED)).booleanValue() ) {
+		boolean showStudentCompletionHeader = false;
+		tempValue = (Boolean) settings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED);
+		if ( tempValue == null || tempValue.booleanValue() ) {
 
+			showStudentCompletionHeader = true;
 			UIBranchContainer showBlankQuestionAllowedToStut = UIBranchContainer.make(form, "showBlankQuestionAllowedToStut:"); //$NON-NLS-1$
 			UIOutput.make(showBlankQuestionAllowedToStut, "blank-responses-allowed-desc", messageLocator.getMessage("evalsettings.blank.responses.allowed.desc"));		 //$NON-NLS-1$ //$NON-NLS-2$
 			UIOutput.make(showBlankQuestionAllowedToStut, "blank-responses-allowed-note", messageLocator.getMessage("evalsettings.blank.responses.allowed.note"));	 //$NON-NLS-1$ //$NON-NLS-2$
-			UIBoundBoolean.make(showBlankQuestionAllowedToStut, "blankResponsesAllowed", "#{evaluationBean.eval.blankResponsesAllowed}", null); //$NON-NLS-1$ //$NON-NLS-2$
+			UIBoundBoolean stuLeaveUnanswered = UIBoundBoolean.make(showBlankQuestionAllowedToStut, 
+					"blankResponsesAllowed", "#{evaluationBean.eval.blankResponsesAllowed}", tempValue); //$NON-NLS-1$ //$NON-NLS-2$
+			setDisabledAttribute(tempValue, stuLeaveUnanswered);
 		}
 
 		/*
@@ -195,21 +234,36 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		 * Show the settings below only if "EvalSettings.STUDENT_MODIFY_RESPONSES" is set as configurable 
 		 * i.e. null in the database OR is set as true in database.
 		 */
-		if ( settings.get(EvalSettings.STUDENT_MODIFY_RESPONSES) == null ||
-				((Boolean)settings.get(EvalSettings.STUDENT_MODIFY_RESPONSES)).booleanValue() ) {
+		tempValue = (Boolean) settings.get(EvalSettings.STUDENT_MODIFY_RESPONSES);
+		if ( tempValue == null || tempValue.booleanValue() ) {
 
+			showStudentCompletionHeader = true;
 			UIBranchContainer showModifyResponsesAllowedToStu = UIBranchContainer.make(form, "showModifyResponsesAllowedToStu:"); //$NON-NLS-1$
 			UIOutput.make(showModifyResponsesAllowedToStu, "modify-responses-allowed-desc", messageLocator.getMessage("evalsettings.modify.responses.allowed.desc"));	 //$NON-NLS-1$ //$NON-NLS-2$
 			UIOutput.make(showModifyResponsesAllowedToStu, "modify-responses-allowed-note", messageLocator.getMessage("evalsettings.modify.responses.allowed.note"));	 //$NON-NLS-1$ //$NON-NLS-2$
-			UIBoundBoolean.make(showModifyResponsesAllowedToStu, "modifyResponsesAllowed", "#{evaluationBean.eval.modifyResponsesAllowed}", null); //$NON-NLS-1$ //$NON-NLS-2$
+			UIBoundBoolean stuModifyResponses = UIBoundBoolean.make(showModifyResponsesAllowedToStu, 
+					"modifyResponsesAllowed", "#{evaluationBean.eval.modifyResponsesAllowed}", tempValue); //$NON-NLS-1$ //$NON-NLS-2$
+			setDisabledAttribute(tempValue, stuModifyResponses);
 		}
 		
 		//This options are commented for some time.
 		if (false){
+
+			showStudentCompletionHeader = true;
 			UIBranchContainer showUnregAllowedOption = UIBranchContainer.make(form, "showUnregAllowedOption:"); //$NON-NLS-1$
 			UIOutput.make(showUnregAllowedOption, "unregistered-allowed-desc", messageLocator.getMessage("evalsettings.unregistered.allowed.desc"));	 //$NON-NLS-1$ //$NON-NLS-2$
 			UIOutput.make(showUnregAllowedOption, "unregistered-allowed-note", messageLocator.getMessage("evalsettings.unregistered.allowed.note"));	 //$NON-NLS-1$ //$NON-NLS-2$
 			UIBoundBoolean.make(showUnregAllowedOption, "unregisteredAllowed", "#{evaluationBean.eval.unregisteredAllowed}", null); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+
+		/*
+		 * Non Javadoc comment.
+		 * Continued from the note above, that is show "student-completion-settings-header" 
+		 * only if there are any student completion settings to be displayed on the page.
+		 */
+		if (showStudentCompletionHeader) {
+			UIBranchContainer showStudentCompletionDiv = UIBranchContainer.make(form, "showStudentCompletionDiv:"); //$NON-NLS-1$
+			UIOutput.make(showStudentCompletionDiv, "student-completion-settings-header", messageLocator.getMessage("evalsettings.student.completion.settings.header")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		UIOutput.make(form, "admin-settings-header", messageLocator.getMessage("evalsettings.admin.settings.header")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -257,8 +311,8 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 			
 		
 		UIOutput.make(form, "eval-reminder-settings-header", messageLocator.getMessage("evalsettings.reminder.settings.header")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(form, "eval-available-mail-desc", messageLocator.getMessage("evalsettings.available.mail.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIInternalLink.make(form, "emailAvailable_link", messageLocator.getMessage("evalsettings.available.mail.link"), new EvalViewParameters(PreviewEmailProducer.VIEW_ID, null, "available"));	 //$NON-NLS-1$ //$NON-NLS-2$
+		UIOutput.make(form, "eval-available-mail-desc", messageLocator.getMessage("evalsettings.available.mail.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(form, "reminder-noresponders-header", messageLocator.getMessage("evalsettings.reminder.noresponders.header")); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		//Reminder email select box
@@ -285,6 +339,8 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		reminder.optionnames = reminderNames;
 		
 		UIInternalLink.make(form, "emailReminder_link", messageLocator.getMessage("evalsettings.reminder.mail.link"), new EvalViewParameters(PreviewEmailProducer.VIEW_ID, null, "reminder"));	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		UIOutput.make(form, "eval-reminder-mail-desc", messageLocator.getMessage("evalsettings.reminder.mail.desc")); //$NON-NLS-1$ //$NON-NLS-2$
+		UIOutput.make(form, "eval-from-email-header", messageLocator.getMessage("evalsettings.from.email.header")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIInput.make(form, "reminderFromEmail", "#{evaluationBean.eval.reminderFromEmail}", null); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		/*
@@ -308,4 +364,14 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 	
 		return i;
 	}
+	
+	// If the value is true then make the checkbox disabled
+	private void setDisabledAttribute(Boolean tempValue, UIBoundBoolean stuViewCheckbox) {
+		if (tempValue != null) {
+			Map attrmap = new HashMap();
+			attrmap.put("disabled", "true");
+			stuViewCheckbox.decorators = new DecoratorList(new UIFreeAttributeDecorator(attrmap)); 
+		}
+	}
+	
 }
