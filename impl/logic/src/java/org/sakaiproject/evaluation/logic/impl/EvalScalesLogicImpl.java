@@ -16,9 +16,7 @@ package org.sakaiproject.evaluation.logic.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -132,6 +130,11 @@ public class EvalScalesLogicImpl implements EvalScalesLogic {
 			throw new IllegalArgumentException("Cannot find scale with id: " + scaleId);
 		}
 
+		// cannot remove expert scales
+		if (scale.getExpert().booleanValue()) {
+			throw new IllegalStateException("Cannot remove expert scale: " + scaleId);
+		}
+
 		// check perms and remove
 		if (checkUserControlScale(userId, scale)) {
 			dao.delete(scale);
@@ -149,7 +152,7 @@ public class EvalScalesLogicImpl implements EvalScalesLogic {
 	public List getScalesForUser(String userId, String sharingConstant) {
 		log.debug("userId: " + userId + ", sharingConstant: " + sharingConstant );
 
-		Set s = new HashSet();
+		List l = new ArrayList();
 
 		// get admin state
 		boolean isAdmin = external.isUserAdmin(userId);
@@ -188,7 +191,7 @@ public class EvalScalesLogicImpl implements EvalScalesLogic {
 				values = new Object[] { EvalConstants.SHARING_PRIVATE, userId };				
 				comps = new int[] {ByPropsFinder.EQUALS, ByPropsFinder.EQUALS};
 			}
-			s.addAll( dao.findByProperties(EvalScale.class, 
+			l.addAll( dao.findByProperties(EvalScale.class, 
 					props, 
 					values,
 					comps,
@@ -197,14 +200,14 @@ public class EvalScalesLogicImpl implements EvalScalesLogic {
 
 		// handle public sharing items
 		if (getPublic) {
-			s.addAll( dao.findByProperties(EvalScale.class, 
+			l.addAll( dao.findByProperties(EvalScale.class, 
 					new String[] { "sharing" }, 
 					new Object[] { EvalConstants.SHARING_PUBLIC },
 					new int[] {ByPropsFinder.EQUALS},
 					new String[] {"title"}) );
 		}
 
-		return new ArrayList(s);
+		return l;
 	}
 
 
