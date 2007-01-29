@@ -505,6 +505,7 @@ public class EvaluationBean {
 		// from the webpage, it needs to always come from the server
 		EvalResponse response = new EvalResponse(new Date(), 
 				external.getCurrentUserId(), sakaiContext, new Date(), eval);
+		response.setEndTime(new Date());
 		/*
 		 * From the list of items make the hashmap with key as item_id and item
 		 * object as value. This is done so that it is easy in the for loop below.
