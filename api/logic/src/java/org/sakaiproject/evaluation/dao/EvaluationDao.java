@@ -17,6 +17,10 @@ package org.sakaiproject.evaluation.dao;
 import java.util.List;
 import java.util.Set;
 
+import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.model.EvalItem;
+import org.sakaiproject.evaluation.model.EvalScale;
+import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.genericdao.api.CompleteGenericDao;
 
@@ -83,5 +87,51 @@ public interface EvaluationDao extends CompleteGenericDao {
 	 * @param templateItems the array of {@link EvalTemplateItem} to remove 
 	 */
 	public void removeTemplateItems(EvalTemplateItem[] templateItems);
+
+	// LOCKING METHODS
+
+	/**
+	 * End of the chain, logic is very simple, 
+	 * set unlock state if scale is not already unlocked and if there
+	 * are no items that are locking it<br/>
+	 * <b>Note:</b> scales cannot be locked directly
+	 * 
+	 * @param scale
+	 * @return true if success, false otherwise
+	 */
+	public boolean unlockScale(EvalScale scale);
+
+	/**
+	 * Set lock state if item is not already at that lock state,
+	 * lock associated scale if it does not match OR
+	 * unlock associated scale if not locked by other item(s) 
+	 * 
+	 * @param item
+	 * @param lockState if true then lock this item, otherwise unlock it
+	 * @return true if success, false otherwise
+	 */
+	public boolean lockItem(EvalItem item, Boolean lockState);
+
+	/**
+	 * Set lock state if template is not already at that lock state,
+	 * lock associated item(s) if they do not match OR
+	 * unlock associated item(s) if not locked by other template(s) 
+	 * 
+	 * @param template
+	 * @param lockState if true then lock this template, otherwise unlock it
+	 * @return true if success, false otherwise
+	 */
+	public boolean lockTemplate(EvalTemplate template, Boolean lockState);
+
+	/**
+	 * Lock evaluation if not already locked,
+	 * lock associated template if not locked
+	 * <b>Note:</b> Evaluations cannot be unlocked currently
+	 * (since responses cannot be removed)
+	 * 
+	 * @param evaluation
+	 * @return true if success, false otherwise
+	 */
+	public boolean lockEvaluation(EvalEvaluation evaluation);
 
 }

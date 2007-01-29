@@ -367,7 +367,7 @@ public class EvalTestDataLoad {
 		scale4 = new EvalScale(new Date(), ADMIN_USER_ID, "Scale 4", 
 				EvalConstants.SHARING_PRIVATE, EXPERT, 
 				"description", 
-				EvalConstants.SCALE_IDEAL_NONE, options3, UNLOCKED);
+				EvalConstants.SCALE_IDEAL_NONE, options3, LOCKED);
 
 		item1 = new EvalItem(new Date(), ADMIN_USER_ID, ITEM_TEXT, 
 				EvalConstants.SHARING_PUBLIC, EvalConstants.ITEM_TYPE_SCALED, EXPERT);

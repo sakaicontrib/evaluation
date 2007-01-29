@@ -14,6 +14,7 @@
 
 package org.sakaiproject.evaluation.dao.test;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -21,6 +22,8 @@ import junit.framework.Assert;
 
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.model.EvalItem;
+import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -40,6 +43,13 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 	protected EvaluationDao evaluationDao;
 
 	private EvalTestDataLoad etdl;
+
+	private EvalScale scaleLocked;
+	private EvalItem itemLocked;
+	private EvalItem itemUnlocked;
+	private EvalTemplate templateLocked;
+	private EvalEvaluation evalLocked;
+	private EvalResponse evalResponse;
 
 	protected String[] getConfigLocations() {
 		// point to the needed spring config files, must be on the classpath
@@ -77,7 +87,25 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 	// run this before each test starts and as part of the transaction
 	protected void onSetUpInTransaction() {
 		// preload additional data if desired
-		
+		String[] optionsA = {"Male", "Female", "Unknown"};
+		scaleLocked = new EvalScale(new Date(), EvalTestDataLoad.ADMIN_USER_ID, "Scale Alpha", 
+				EvalConstants.SHARING_PRIVATE, EvalTestDataLoad.NOT_EXPERT, 
+				"description", EvalConstants.SCALE_IDEAL_NONE, optionsA, EvalTestDataLoad.LOCKED);
+		evaluationDao.save( scaleLocked );
+
+		itemLocked = new EvalItem(new Date(), EvalTestDataLoad.MAINT_USER_ID, "Header type locked", 
+				EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_HEADER, EvalTestDataLoad.NOT_EXPERT);
+		itemLocked.setLocked(EvalTestDataLoad.LOCKED);
+		evaluationDao.save( itemLocked );
+
+		itemUnlocked = new EvalItem(new Date(), EvalTestDataLoad.MAINT_USER_ID, "Header type locked", 
+				EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_HEADER, EvalTestDataLoad.NOT_EXPERT);
+		itemUnlocked.setScale(etdl.scale2);
+		itemUnlocked.setScaleDisplaySetting( EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL );
+		itemUnlocked.setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
+		itemUnlocked.setLocked(EvalTestDataLoad.UNLOCKED);
+		evaluationDao.save( itemUnlocked );
+
 	}
 
 	/**
@@ -413,6 +441,157 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 		Assert.assertTrue( template.getTemplateItems().isEmpty() );
 
 	}
+
+
+	// LOCKING tests
+
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#lockScale(org.sakaiproject.evaluation.model.EvalScale, java.lang.Boolean)}.
+	 */
+	public void testUnlockScale() {
+
+		// check that new scale cannot be unlocked
+		try {
+			evaluationDao.unlockScale( 
+				new EvalScale(new Date(), 
+					EvalTestDataLoad.ADMIN_USER_ID, "new scale", 
+					EvalConstants.SHARING_PRIVATE, Boolean.FALSE)
+				);
+			Assert.fail("Should have thrown an exception");
+		} catch (IllegalStateException e) {
+			Assert.assertNotNull(e);
+		}
+
+		// check that locked scale gets unlocked (no locking item)
+		Assert.assertTrue( scaleLocked.getLocked().booleanValue() );
+		Assert.assertTrue( evaluationDao.unlockScale( scaleLocked ) );
+		Assert.assertFalse( scaleLocked.getLocked().booleanValue() );
+
+		// check that locked scale that is locked by an item cannot be unlocked
+		EvalScale scale1 = (EvalScale) evaluationDao.findById(EvalScale.class, etdl.scale1.getId());
+		Assert.assertTrue( scale1.getLocked().booleanValue() );
+		Assert.assertFalse( evaluationDao.unlockScale( scale1 ) );
+		Assert.assertTrue( scale1.getLocked().booleanValue() );
+
+	}
+
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#lockItem(org.sakaiproject.evaluation.model.EvalItem, java.lang.Boolean)}.
+	 */
+	public void testLockItem() {
+
+		// check that new item cannot be locked/unlocked
+		try {
+			evaluationDao.lockItem(
+				new EvalItem( new Date(), EvalTestDataLoad.ADMIN_USER_ID, 
+						"something", EvalConstants.SHARING_PRIVATE, 
+						EvalConstants.ITEM_TYPE_HEADER, Boolean.FALSE),
+				Boolean.TRUE);
+			Assert.fail("Should have thrown an exception");
+		} catch (IllegalStateException e) {
+			Assert.assertNotNull(e);
+		}
+
+		try {
+			evaluationDao.lockItem(
+				new EvalItem( new Date(), EvalTestDataLoad.ADMIN_USER_ID, 
+						"something else", EvalConstants.SHARING_PRIVATE, 
+						EvalConstants.ITEM_TYPE_HEADER, Boolean.FALSE),
+				Boolean.FALSE);
+			Assert.fail("Should have thrown an exception");
+		} catch (IllegalStateException e) {
+			Assert.assertNotNull(e);
+		}
+
+		// check that unlocked item gets locked (no scale)
+		Assert.assertFalse( etdl.item7.getLocked().booleanValue() );
+		Assert.assertTrue( evaluationDao.lockItem( etdl.item7, Boolean.TRUE ) );
+		Assert.assertTrue( etdl.item7.getLocked().booleanValue() );
+
+		// check that locked item does nothing bad if locked again (no scale, not used)
+		Assert.assertTrue( itemLocked.getLocked().booleanValue() );
+		Assert.assertFalse( evaluationDao.lockItem( itemLocked, Boolean.TRUE ) );
+		Assert.assertTrue( itemLocked.getLocked().booleanValue() );
+
+		// check that locked item gets unlocked (no scale, not used)
+		Assert.assertTrue( itemLocked.getLocked().booleanValue() );
+		Assert.assertTrue( evaluationDao.lockItem( itemLocked, Boolean.FALSE ) );
+		Assert.assertFalse( itemLocked.getLocked().booleanValue() );
+
+		// check that locked item that is locked by a template cannot be unlocked
+		Assert.assertTrue( etdl.item1.getLocked().booleanValue() );
+		Assert.assertFalse( evaluationDao.lockItem( etdl.item1, Boolean.FALSE ) );
+		Assert.assertTrue( etdl.item1.getLocked().booleanValue() );
+
+		// check that locked item that is locked by a template can be locked without exception
+		Assert.assertTrue( etdl.item1.getLocked().booleanValue() );
+		Assert.assertFalse( evaluationDao.lockItem( etdl.item1, Boolean.TRUE ) );
+		Assert.assertTrue( etdl.item1.getLocked().booleanValue() );
+
+		// verify that associated scale is unlocked
+		Assert.assertFalse( itemUnlocked.getScale().getLocked().booleanValue() );
+
+		// check that unlocked item gets locked (scale)
+		Assert.assertFalse( itemUnlocked.getLocked().booleanValue() );
+		Assert.assertTrue( evaluationDao.lockItem( itemUnlocked, Boolean.TRUE ) );
+		Assert.assertTrue( itemUnlocked.getLocked().booleanValue() );
+
+		// verify that associated scale gets locked
+		Assert.assertTrue( itemUnlocked.getScale().getLocked().booleanValue() );
+
+		// check that locked item gets unlocked (scale)
+
+		// verify that associated scale gets unlocked
+
+		// check that locked item gets unlocked (scale locked by another item)
+
+		// verify that associated scale does not get unlocked
+
+		// TODO - fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#lockTemplate(org.sakaiproject.evaluation.model.EvalTemplate, java.lang.Boolean)}.
+	 */
+	public void testLockTemplate() {
+
+		// check that new template cannot be locked/unlocked
+
+		// check that unlocked template gets locked (no items)
+
+		// check that locked template gets unlocked (no items)
+
+		// check that locked template that is locked by an evaluation cannot be unlocked
+
+		// check that unlocked template gets locked (items)
+
+		// verify that related items are locked also
+
+		// check that locked template gets unlocked (items)
+
+		// verify that related items are unlocked also
+
+		// check that locked template gets unlocked (item locked by another template)
+
+		// verify that associated item locked by other template does not get unlocked
+
+		// TODO - fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#lockEvaluation(org.sakaiproject.evaluation.model.EvalEvaluation)}.
+	 */
+	public void testLockEvaluation() {
+
+		// check that new evaluation cannot be locked/unlocked
+
+		// check that unlocked evaluation gets locked
+
+		// verify that associated template gets locked
+
+		// TODO - fail("Not yet implemented");
+	}
+
 
 	/**
 	 * Add anything that supports the unit tests below here
