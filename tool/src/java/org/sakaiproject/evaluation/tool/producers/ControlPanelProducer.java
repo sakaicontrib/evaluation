@@ -190,13 +190,10 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 		
 			for (int j = 0; j < evals.size(); j++) {
 				EvalEvaluation myEval = (EvalEvaluation) evals.get(j);
-				Date dueDate = myEval.getDueDate();
- 				calendar.setTime(dueDate);
- 				calendar.add(Calendar.DATE, +1);
- 				Date dummyDueDate = calendar.getTime();
-				if (today.before(myEval.getStartDate())) {
+ 				String evalStatus=evaluationsLogic.getEvaluationState(myEval.getId());
+				if (evalStatus==EvalConstants.EVALUATION_STATE_INQUEUE) {
 					queuedEvals.add(myEval);
-				} else if (today.after(dummyDueDate)) {
+				} else if (evalStatus==EvalConstants.EVALUATION_STATE_CLOSED || evalStatus==EvalConstants.EVALUATION_STATE_VIEWABLE) {
 					closedEvals.add(myEval);
 				} else {
 					activeEvals.add(myEval);
@@ -318,7 +315,7 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 				UIOutput.make(closedEvalTable, "eval-title-header", messageLocator.getMessage("controlpanel.eval.title.header")); //$NON-NLS-1$ //$NON-NLS-2$
 				UIOutput.make(closedEvalTable, "eval-due-date-header", messageLocator.getMessage("controlpanel.eval.due.date.header")); //$NON-NLS-1$ //$NON-NLS-2$
 				UIOutput.make(closedEvalTable, "eval-response-rate-header", messageLocator.getMessage("controlpanel.eval.response.rate.header"));				 //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(closedEvalTable, "eval-settings-header", messageLocator.getMessage("controlpanel.eval.settings.header")); //$NON-NLS-1$ //$NON-NLS-2$
+				UIOutput.make(closedEvalTable, "eval-settings-header", messageLocator.getMessage("controlpanel.eval.report.header")); //$NON-NLS-1$ //$NON-NLS-2$
 
 				
 				for (int i = 0; i < closedEvals.size(); i++) {
@@ -337,9 +334,15 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 					long percentage = Math.round(per*100);
 					
 					UIOutput.make(closedEvalsRb, "reponseRate", ctResponses + "/"+ ctEnrollments +" - "+percentage +"%"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-					UIInternalLink.make(closedEvalsRb, "viewReportLink", messageLocator.getMessage("controlpanel.eval.report.link"),  //$NON-NLS-1$ //$NON-NLS-2$
-							new EvalViewParameters(ViewReportProducer.VIEW_ID, 
-								eval1.getId()));	
+					if(evaluationsLogic.getEvaluationState(eval1.getId())==EvalConstants.EVALUATION_STATE_VIEWABLE){
+						UIInternalLink.make(closedEvalsRb, "viewReportLink", messageLocator.getMessage("controlpanel.eval.report.link"),  //$NON-NLS-1$ //$NON-NLS-2$
+								new EvalViewParameters(ViewReportProducer.VIEW_ID, 
+									eval1.getId()));	
+					}
+					else{
+						UIOutput.make(closedEvalsRb, "viewReportLabel", messageLocator.getMessage("controlpanel.eval.report.viewable.on"));
+						UIOutput.make(closedEvalsRb, "closedEvalViewDate", df.format(eval1.getViewDate())); //$NON-NLS-1$
+					}
 				} // end of for loop
 			}
 

@@ -187,6 +187,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 					// find the object in the list matching the context and evalId,
 					// leave as null if not found -AZ
 					EvalResponse response = null;
+
 					for (int k=0; k<evalResponses.size(); k++) {
 						EvalResponse er = (EvalResponse) evalResponses.get(k);
 						if (context.equals(er.getContext()) &&
@@ -225,7 +226,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			}
 		}
 
-		/*
+		/**
 		 * for the evaluations admin box
 		 */
 		List evals = evaluationsLogic.getVisibleEvaluationsForUser(currentUserId, true);
@@ -235,7 +236,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 					messageLocator.getMessage("summary.evaluations.admin"),  //$NON-NLS-1$
 					new SimpleViewParameters(ControlPanelProducer.VIEW_ID) );
 			UIForm evalAdminForm = UIForm.make(evalAdminBC , "evalAdminForm"); //$NON-NLS-1$
-
+			
 			UIOutput.make(evalAdminForm, "evaladmin-header-title", messageLocator.getMessage("summary.header.title") ); //$NON-NLS-1$ //$NON-NLS-2$
 			UIOutput.make(evalAdminForm, "evaladmin-header-status", messageLocator.getMessage("summary.header.status") ); //$NON-NLS-1$ //$NON-NLS-2$
 			UIOutput.make(evalAdminForm, "evaladmin-header-date", messageLocator.getMessage("summary.header.date") ); //$NON-NLS-1$ //$NON-NLS-2$
@@ -243,65 +244,50 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			for (Iterator iter = evals.iterator(); iter.hasNext();) {
 				EvalEvaluation eval = (EvalEvaluation) iter.next();
 
-				String status = messageLocator.getMessage("unknown.caps"); //$NON-NLS-1$
-				String label = "Label"; //$NON-NLS-1$
-				Date date = eval.getDueDate();
-				boolean closed = false;
-
-				Date today = new Date();
-				/* 
-				 * if due day is the same date as current date, it should be considered active
-				 */
-				Calendar calendar = new GregorianCalendar(); // could also use DefaultGregorianFactory from PonderUtilCore here
- 				calendar.setTime(eval.getDueDate());
- 				calendar.add(Calendar.DATE, 1);
- 				Date adjustedDueDate = calendar.getTime();
-				
- 				if (eval.getStartDate().after(today)) {
-					// pending (in Queue)
-					status = messageLocator.getMessage("summary.status.in.queue"); //$NON-NLS-1$
-					label = messageLocator.getMessage("summary.label.starts"); //$NON-NLS-1$
-					date = eval.getStartDate();
-				} else if (adjustedDueDate.after(today)) {
-					// active
-					status = messageLocator.getMessage("summary.status.active"); //$NON-NLS-1$
-					label = messageLocator.getMessage("summary.label.due"); //$NON-NLS-1$
-				} else {
-					// closed
-					label = messageLocator.getMessage("summary.label.closed"); //$NON-NLS-1$
-					closed = true;
-				}
-
 				UIBranchContainer evalrow = UIBranchContainer.make(evalAdminForm, 
 						"evalAdminList:", eval.getId().toString() ); //$NON-NLS-1$
 				
-				/*
-				 * TODO:--fengr
+				Date date;
+				
+				String evalStatus=evaluationsLogic.getEvaluationState(eval.getId());
+				if (evalStatus==EvalConstants.EVALUATION_STATE_INQUEUE){
+					date=eval.getStartDate();
+				}
+				else if (evalStatus==EvalConstants.EVALUATION_STATE_ACTIVE){
+					date=eval.getDueDate();
+				}
+				else if (evalStatus==EvalConstants.EVALUATION_STATE_DUE){
+					date=eval.getStartDate();
+				}
+				else if (evalStatus==EvalConstants.EVALUATION_STATE_CLOSED){
+					date=eval.getViewDate();
+				}
+				else if (evalStatus==EvalConstants.EVALUATION_STATE_VIEWABLE){
+					date=eval.getViewDate();
+					UIInternalLink.make(evalrow, "viewReportLink", messageLocator.getMessage("viewreport.page.title"),  //$NON-NLS-1$ //$NON-NLS-2$
+							new EvalViewParameters(ViewReportProducer.VIEW_ID, eval.getId() ));		
+				}
+				else date=eval.getStartDate();
+
+				
+				/**
+				 * 
 				 * 1) if a evaluation is queued, title link go to EditSettings page with populated data
 				 * 2) if a evaluation is active, title link go to EditSettings page with populated data
 				 * but start date should be disabled
 				 * 3) if a evaluation is closed, title link go to previewEval page with populated data
 				 */
-				if (closed) {
+				if (evalStatus==EvalConstants.EVALUATION_STATE_CLOSED || evalStatus==EvalConstants.EVALUATION_STATE_VIEWABLE){
 					UIInternalLink.make(evalrow, "evalAdminTitleLink_preview", eval.getTitle(),  //$NON-NLS-1$
 							new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID,
 									eval.getId(),eval.getTemplate().getId(),null, SummaryProducer.VIEW_ID) );
-					UIInternalLink.make(evalrow, "viewReportLink", messageLocator.getMessage("viewreport.page.title"),  //$NON-NLS-1$ //$NON-NLS-2$
-							new EvalViewParameters(ViewReportProducer.VIEW_ID, eval.getId() ));					
 				} else {
-					// TODO - this needs to use a viewparam instead -AZ (assigned to fengr)
-					/*
-					UIInternalLink.make(evalrow, "evalAdminTitleLink", eval.getTitle(), 
-							new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID,
-									eval.getId(), SummaryProducer.VIEW_ID) );
-					*/
 					UICommand evalEditUIC = UICommand.make(evalrow, "evalAdminTitleLink_edit", eval.getTitle(), //$NON-NLS-1$
 						"#{evaluationBean.editEvalSettingAction}"); //$NON-NLS-1$
 					evalEditUIC.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", eval.getId())); //$NON-NLS-1$
-
-					UIOutput.make(evalrow, "evalAdminStatus", status ); //$NON-NLS-1$
 				}
-				UIOutput.make(evalrow, "evalAdminDateLabel", label ); //$NON-NLS-1$
+				UIOutput.make(evalrow, "evalAdminStatus", messageLocator.getMessage("summary.status."+evalStatus) ); //$NON-NLS-1$
+				UIOutput.make(evalrow, "evalAdminDateLabel", messageLocator.getMessage("summary.label."+evalStatus) ); //$NON-NLS-1$
 				UIOutput.make(evalrow, "evalAdminDate", df.format(date) ); //$NON-NLS-1$
 			}
 		}
