@@ -24,10 +24,15 @@ import java.util.TreeSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
+import org.hibernate.criterion.Restrictions;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.model.EvalAssignContext;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.model.EvalItem;
+import org.sakaiproject.evaluation.model.EvalScale;
+import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.utils.EvalUtils;
@@ -281,6 +286,137 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 //		}
 //		return new Integer(max.intValue() + 1);
 //	}
+
+	// LOCKING METHODS
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#unlockScale(org.sakaiproject.evaluation.model.EvalScale)
+	 */
+	public boolean unlockScale(EvalScale scale) {
+		if (scale.getId() == null) {
+			throw new IllegalStateException("Cannot unlock an unsaved scale object");
+		}
+
+		if (! scale.getLocked().booleanValue()) {
+			// already unlocked
+			return false;
+		} else {
+			DetachedCriteria dc = DetachedCriteria.forClass(EvalItem.class)
+				.add( Restrictions.eq( "locked", Boolean.TRUE ) )
+				.add( Restrictions.eq( "scale.id", scale.getId() ) )
+				.setProjection( Projections.rowCount() );
+			if ( ((Integer) getHibernateTemplate().findByCriteria( dc ).get(0)).intValue() > 0 ) {
+				// this is locked by something, we cannot unlock it
+				return false;
+			}
+
+			scale.setLocked( Boolean.FALSE );
+			getHibernateTemplate().update( scale );
+			return true;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#lockItem(org.sakaiproject.evaluation.model.EvalItem, java.lang.Boolean)
+	 */
+	public boolean lockItem(EvalItem item, Boolean lockState) {
+		if (item.getId() == null) {
+			throw new IllegalStateException("Cannot change lock state on an unsaved item object");
+		}
+
+		if (lockState.booleanValue()) {
+			// locking this item
+			if (item.getLocked().booleanValue()) {
+				// already locked, no change
+				return false;
+			} else {
+				// lock item and associated scale (if set)
+				item.setLocked( Boolean.TRUE );
+				if (item.getScale() != null) {
+					EvalScale scale = item.getScale();
+					if (! scale.getLocked().booleanValue()) {
+						scale.setLocked( Boolean.TRUE );
+						getHibernateTemplate().update( scale );
+					}
+				}
+				getHibernateTemplate().update( item );
+				return true;
+			}
+		} else {
+			// unlocking this item
+			if (! item.getLocked().booleanValue()) {
+				// already unlocked, no change
+				return false;
+			} else {
+				// unlock item (if not locked elsewhere)
+				String hqlQuery = "from EvalTemplateItem as ti where ti.item.id = '" + item.getId() + "' and ti.template.locked = true";
+				if ( count(hqlQuery) > 0 ) {
+					// this is locked by something, we cannot unlock it
+					return false;
+				}
+
+				// unlock associated scale if there is one
+				if (item.getScale() != null) {
+					unlockScale( item.getScale() );
+				}
+
+				// unlock item
+				item.setLocked( Boolean.FALSE );
+				getHibernateTemplate().update( item );
+				return true;
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#lockTemplate(org.sakaiproject.evaluation.model.EvalTemplate, java.lang.Boolean)
+	 */
+	public boolean lockTemplate(EvalTemplate template, Boolean lockState) {
+		if (template.getId() == null) {
+			throw new IllegalStateException("Cannot change lock state on an unsaved template object");
+		}
+
+		if (lockState.booleanValue()) {
+			// locking this item
+			if (template.getLocked().booleanValue()) {
+				// already locked, no change
+				return false;
+			} else {
+				template.setLocked( Boolean.TRUE );
+				getHibernateTemplate().update( template );
+				return true;
+			}
+		} else {
+			// unlocking this item
+			if (! template.getLocked().booleanValue()) {
+				// already unlocked, no change
+				return false;
+			} else {
+				template.setLocked( Boolean.FALSE );
+				getHibernateTemplate().update( template );
+				return true;
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#lockEvaluation(org.sakaiproject.evaluation.model.EvalEvaluation)
+	 */
+	public boolean lockEvaluation(EvalEvaluation evaluation) {
+		if (evaluation.getId() == null) {
+			throw new IllegalStateException("Cannot change lock state on an unsaved evaluation object");
+		}
+
+		if (evaluation.getLocked().booleanValue()) {
+			// already locked, no change
+			return false;
+		} else {
+			evaluation.setLocked( Boolean.TRUE );
+			getHibernateTemplate().update( evaluation );
+			return true;
+		}
+	}
+
 
 
 

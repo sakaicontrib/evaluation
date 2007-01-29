@@ -38,7 +38,7 @@
 		</property>
 		<property name="transactionAttributes">
 			<props>
-				<prop key="*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,+java.lang.RuntimeException</prop>
 			</props>
 		</property>
 	</bean>
