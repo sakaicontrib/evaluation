@@ -310,6 +310,9 @@ public class EvaluationBean {
 		 * as when we parse the string to a date, the time filed by default is zero
 		 * */
 		checkEvalStartDate(eval);
+
+		//See the commend with the method at the end of this class.
+		checkDueDate();
 		
 		evalsLogic.saveEvaluation(eval, external.getCurrentUserId());
 		
@@ -463,6 +466,9 @@ public class EvaluationBean {
 		 * as when we parse the string to a date, the time filed by default is zero
 		 * */
 		checkEvalStartDate(eval);
+
+		//See the commend with the method at the end of this class.
+		checkDueDate();
 		
 		evalsLogic.saveEvaluation(eval, external.getCurrentUserId());
 		
@@ -870,7 +876,37 @@ public class EvaluationBean {
 			
 			myEval.setStartDate(calendar.getTime());		
 		}	
+	}
+	
+	/*
+	 * Non-Javadoc comments:
+	 * EVALSYS-7: We are not taking time from the user for any dates (start, due, view),
+	 * but for the start date we are adding the time in above checkEvalStartDate method. 
+	 * In logic layer there is a check that due date should not be before start date. 
+	 * Thus, if due date is same as start date then we need to make the time of due date 
+	 * to be 1 second more that start date - kahuja.
+	 * 
+	 */
+	private void checkDueDate() {
+
+		Calendar calendarStart = new GregorianCalendar();
+		calendarStart.setTime(eval.getStartDate());
+		int year_start = calendarStart.get(Calendar.YEAR);
+		int month_start = calendarStart.get(Calendar.MONTH);
+		int day_start = calendarStart.get(Calendar.DAY_OF_MONTH);
 		
-	} 
+		Calendar calendarDue = new GregorianCalendar();
+		calendarDue.setTime(eval.getDueDate());
+		int year_due = calendarDue.get(Calendar.YEAR);
+		int month_due = calendarDue.get(Calendar.MONTH);
+		int day_due = calendarDue.get(Calendar.DAY_OF_MONTH);
+		
+		if ( year_start == year_due && month_start == month_due && day_start == day_due ){
+			calendarDue.setTime(eval.getStartDate());
+			calendarDue.add(Calendar.SECOND, 1);
+			eval.setDueDate(calendarDue.getTime());
+			eval.setStopDate(eval.getDueDate());
+		}
+	}
 }
 
