@@ -254,10 +254,10 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 					date=eval.getStartDate();
 				}
 				else if (evalStatus==EvalConstants.EVALUATION_STATE_ACTIVE){
-					date=eval.getDueDate();
+					date=eval.getStopDate();
 				}
 				else if (evalStatus==EvalConstants.EVALUATION_STATE_DUE){
-					date=eval.getStartDate();
+					date=eval.getDueDate();
 				}
 				else if (evalStatus==EvalConstants.EVALUATION_STATE_CLOSED){
 					date=eval.getViewDate();
