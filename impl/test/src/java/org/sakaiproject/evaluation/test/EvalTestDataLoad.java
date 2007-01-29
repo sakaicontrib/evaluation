@@ -686,6 +686,7 @@ public class EvalTestDataLoad {
 		dao.save(scale1);
 		dao.save(scale2);
 		dao.save(scale3);
+		dao.save(scale4);
 
 		//dao.save(templateShared);
 		//dao.save(templateVisible);

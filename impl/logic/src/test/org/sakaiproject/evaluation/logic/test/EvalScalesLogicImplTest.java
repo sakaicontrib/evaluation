@@ -270,7 +270,7 @@ public class EvalScalesLogicImplTest extends AbstractTransactionalSpringContextT
 		// get all visible scales (admin should see all)
 		l = scales.getScalesForUser(EvalTestDataLoad.ADMIN_USER_ID, null);
 		Assert.assertNotNull(l);
-		Assert.assertEquals(3 + preloadedCount, l.size()); // include 15 preloaded
+		Assert.assertEquals(4 + preloadedCount, l.size()); // include 15 preloaded
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.scale1.getId() ));
 		Assert.assertTrue(ids.contains( etdl.scale2.getId() ));
@@ -297,15 +297,21 @@ public class EvalScalesLogicImplTest extends AbstractTransactionalSpringContextT
 		// attempt to get SHARING_OWNER scales (returns same as null)
 		l = scales.getScalesForUser(EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.SHARING_OWNER);
 		Assert.assertNotNull(l);
-		Assert.assertEquals(3 + preloadedCount, l.size());
+		Assert.assertEquals(4 + preloadedCount, l.size());
 
 		// get all private scales (admin should see all private)
 		l = scales.getScalesForUser(EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.SHARING_PRIVATE);
 		Assert.assertNotNull(l);
-		Assert.assertEquals(2, l.size());
+		Assert.assertEquals(3, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.scale2.getId() ));
 		Assert.assertTrue(ids.contains( etdl.scale3.getId() ));
+		Assert.assertTrue(ids.contains( etdl.scale4.getId() ));
+
+		// check that the return order is correct
+		Assert.assertEquals( etdl.scale2.getId(), ids.get(0) );
+		Assert.assertEquals( etdl.scale3.getId(), ids.get(1) );
+		Assert.assertEquals( etdl.scale4.getId(), ids.get(2) );
 
 		// get all private scales (maint should see own only)
 		l = scales.getScalesForUser(EvalTestDataLoad.MAINT_USER_ID, EvalConstants.SHARING_PRIVATE);
