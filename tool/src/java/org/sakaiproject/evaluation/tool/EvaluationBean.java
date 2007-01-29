@@ -857,9 +857,17 @@ public class EvaluationBean {
 		int month_today = calendar.get(Calendar.MONTH);
 		int day_today = calendar.get(Calendar.DAY_OF_MONTH);
 	
-		if(year_start == year_today && month_start == month_today && day_start == day_today){
+		if(year_start == year_today && month_start == month_today && day_start == day_today) {
+			
+			/*
+			 * Non-javadoc comment.
+			 * EVALSYS-8: We do not need to add these 5 minutes. This is because
+			 * the buffer check done by Aaron in logic layer is to prevent the 
+			 * user from entering dates that are in too much in past - kahuja.   
+			 */
 			//need to set time a little big later than new Date(), otherwise exception
-			calendar.add(Calendar.MINUTE, 5);
+			//calendar.add(Calendar.MINUTE, 5);
+			
 			myEval.setStartDate(calendar.getTime());		
 		}	
 		
