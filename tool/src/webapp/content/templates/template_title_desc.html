@@ -56,21 +56,26 @@
 		</td>
 	</tr>	
 </table>
-
 <br/>
-
-<table border="0" cellspacing="0" cellpadding="0" width="65%">	
-	<tr>
-		<td colspan="2">
-		<select rsf:id="sharing">
-			<option value="private">Private - Template is private (visible to you only)</option>
-			<option value="visible">Visible - Template is visible to any admin</option>
-			<option value="shared">Shared - Template is modifiable by admins at hierarchy level of owner</option>
-			<option value="public">Public - Template is modifiable by any admin</option>
-		</select>
-		</td>
-	</tr>
-</table>
+<div rsf:id="showSharingOptions:">			
+	<table border="0" cellspacing="0" cellpadding="0" width="65%">	
+		<tr>
+			<td colspan="2">
+				<select rsf:id="sharing">
+				</select>
+			</td>
+		</tr>
+	</table>
+</div>
+<div rsf:id="showSharingLabel:">			
+	<table border="0" cellspacing="0" cellpadding="0" width="65%">	
+		<tr>
+			<td colspan="2">
+				<b><span rsf:id="sharingValueToDisplay"></span></b>
+			</td>
+		</tr>
+	</table>
+</div>
 <br/>
 <table border="0" cellspacing="0" cellpadding="0" width="65%">	
 	<tr>
