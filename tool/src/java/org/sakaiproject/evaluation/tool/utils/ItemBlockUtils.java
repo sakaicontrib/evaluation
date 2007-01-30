@@ -11,7 +11,7 @@
  * Rui Feng (fengr@vt.edu)
  *****************************************************************************/
 
-package org.sakaiproject.evaluation.tool;
+package org.sakaiproject.evaluation.tool.utils;
 
 import java.util.ArrayList;
 import java.util.List;

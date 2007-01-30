@@ -32,8 +32,8 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
-import org.sakaiproject.evaluation.tool.ItemBlockUtils;
 import org.sakaiproject.evaluation.tool.params.PreviewEvalParameters;
+import org.sakaiproject.evaluation.tool.utils.ItemBlockUtils;
 
 
 import uk.org.ponder.messageutil.MessageLocator;
