@@ -433,9 +433,8 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 		}
 		if ( external.countContextsForUser(userId, EvalConstants.PERM_ASSIGN_EVALUATION) > 0 ) {
 			log.debug("User has permission to assign evaluation in at least one site");
-			// TODO - this check needs to be more robust at some point
-			// currently we are ignoring shared and visible templates
-			/**
+
+			/*
 			 * TODO - Hierarchy
 			 * visible and shared sharing methods are meant to work by relating the hierarchy level of 
 			 * the owner with the sharing setting in the template, however, that was when 
@@ -444,8 +443,18 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 			 * so we will have to add in a table which will track the hierarchy levels and
 			 * link them to the template. This will be a very simple but necessary table.
 			 */
-			if ( dao.countVisibleTemplates(userId, 
-					new String[] {EvalConstants.SHARING_PUBLIC}, false) > 0 ) {
+
+			/*
+			 * If the person is not an admin (super or any kind, currently we just have super admin) 
+			 * then system settings should be checked whether they can create templates 
+			 * or not. This is because if they cannot create templates then they cannot start 
+			 * evaluations also - kahuja.
+			 * 
+			 * TODO - this check needs to be more robust at some point
+			 * currently we are ignoring shared and visible templates - aaronz.
+			 */
+			if ( ((Boolean)settings.get(EvalSettings.INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS)).booleanValue() && 
+					dao.countVisibleTemplates(userId, new String[] {EvalConstants.SHARING_PUBLIC}, false) > 0 ) {
 				return true;
 			}
 		}
