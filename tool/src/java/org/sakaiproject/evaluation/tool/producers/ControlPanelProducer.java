@@ -228,15 +228,18 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 					// vary the display depending on the number of contexts assigned
 					int contextCount = evaluationsLogic.countEvaluationContexts(eval1.getId());
 					if (contextCount > 1) {
-						UICommand queuedEvalAssigned = UICommand.make(queuedEvalsRb, 
-								"queuedEvalAssigned", contextCount+"courses", //$NON-NLS-1$ //$NON-NLS-2$
-								"#{evaluationBean.evalAssigned}"); //$NON-NLS-1$
-						queuedEvalAssigned.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", eval1.getId())); //$NON-NLS-1$
+						//UICommand queuedEvalAssigned = UICommand.make(queuedEvalsRb, 
+						//		"queuedEvalAssigned", contextCount+"courses", //$NON-NLS-1$ //$NON-NLS-2$
+						//		"#{evaluationBean.evalAssigned}"); //$NON-NLS-1$
+						//queuedEvalAssigned.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", eval1.getId())); //$NON-NLS-1$
+						UIOutput.make(queuedEvalsRb, "queuedEvalAssignedLabel", contextCount+" courses");
 					} else {
-						UICommand queuedEvalAssigned = UICommand.make(queuedEvalsRb,
-								"queuedEvalAssigned", getTitleForFirstEvalContext(eval1.getId()), //$NON-NLS-1$
-								"#{evaluationBean.evalAssigned}"); //$NON-NLS-1$
-						queuedEvalAssigned.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", eval1.getId())); //$NON-NLS-1$
+						//UICommand queuedEvalAssigned = UICommand.make(queuedEvalsRb,
+						//		"queuedEvalAssigned", getTitleForFirstEvalContext(eval1.getId()), //$NON-NLS-1$
+						//		"#{evaluationBean.evalAssigned}"); //$NON-NLS-1$
+						//queuedEvalAssigned.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", eval1.getId())); //$NON-NLS-1$
+						UIOutput.make(queuedEvalsRb, "queuedEvalAssignedLabel", getTitleForFirstEvalContext(eval1.getId()));
+
 					}
 
 					UIOutput.make(queuedEvalsRb, "queuedEvalStartDate", df.format(eval1.getStartDate())); //$NON-NLS-1$
@@ -282,12 +285,12 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 						UICommand activeEvalAssigned = UICommand.make(activeEvalsRb, 
 								"activeEvalAssigned", count+"courses", //$NON-NLS-1$ //$NON-NLS-2$
 								"#{evaluationBean.evalAssigned}"); //$NON-NLS-1$
-						activeEvalAssigned.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", eval1.getId())); //$NON-NLS-1$
+						activeEvalAssigned.parameters.add(new UIELBinding("#{evaluationBean.evalId}", eval1.getId())); //$NON-NLS-1$
 					} else {
 						UICommand activeEvalAssigned = UICommand.make(activeEvalsRb, 
 								"activeEvalAssigned", getTitleForFirstEvalContext(eval1.getId()), //$NON-NLS-1$
 								"#{evaluationBean.evalAssigned}"); //$NON-NLS-1$
-						activeEvalAssigned.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", eval1.getId())); //$NON-NLS-1$
+						activeEvalAssigned.parameters.add(new UIELBinding("#{evaluationBean.evalId}", eval1.getId())); //$NON-NLS-1$
 					}
 
 					UIOutput.make(activeEvalsRb, "activeEvalStartDate", df.format(eval1.getStartDate())); //$NON-NLS-1$

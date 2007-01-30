@@ -107,7 +107,7 @@ public class EvaluationBean {
 	private List listOfTemplates;
 	
 	//TODO: need to merge with public field: eval, now use other string to avoid failing of other page 
-	public String evalId; //used to ELBinding to the evaluation ID to be removed on Control Panel
+	public Long evalId; //used to ELBinding to the evaluation ID to be removed on Control Panel
 	public String tmplId; //used to ELBinding To the template ID to be removed on Control Panel 
 
 	private static Log log = LogFactory.getLog(EvaluationBean.class);
@@ -390,12 +390,13 @@ public class EvaluationBean {
 		return siteIdsTitle;
 	}
 */
-	//method binding to the "Done" button on evaluation_assign_confirm.html
+	/**method binding to the "Done" button on evaluation_assign_confirm.html
+	 * TODO-Add support for coming here from control panel - wdh
+	 */
 	public String doneAssignmentAction() {	
 
 		// need to load the template here before we try to save it because it is stale -AZ
 		eval.setTemplate( templatesLogic.getTemplateById( eval.getTemplate().getId() ) );
-
 		/*
 		 * Email template section
 		 */
@@ -405,7 +406,7 @@ public class EvaluationBean {
 		//availableTemplate = logic.getEmailTemplate(true);
 		availableTemplate = emailsLogic.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
 		
-		if(emailAvailableTxt.equals(availableTemplate.getMessage())){
+		if(emailAvailableTxt==null || emailAvailableTxt.equals(availableTemplate.getMessage())){
 			//do nothing as the template has not been modified.
 		} else {
 			availableTemplate = new EvalEmailTemplate(new Date(),
@@ -420,7 +421,7 @@ public class EvaluationBean {
 		//reminderTemplate = logic.getEmailTemplate(false);
 		reminderTemplate = emailsLogic.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_REMINDER);
 		
-		if(emailReminderTxt.equals(reminderTemplate.getMessage())){
+		if(emailReminderTxt==null || emailReminderTxt.equals(reminderTemplate.getMessage())){
 			//do nothing as the template has not been modified.
 		}else {
 			reminderTemplate = new EvalEmailTemplate(new Date(),
@@ -436,11 +437,11 @@ public class EvaluationBean {
 		 */
 		eval.setLastModified(new Date());
 		eval.setOwner(external.getCurrentUserId());
-		eval.setStartDate(changeStringToDate(this.startDate));
-		eval.setDueDate(changeStringToDate(this.dueDate));
-		eval.setViewDate(changeStringToDate(this.viewDate));
-		eval.setStudentsDate(changeStringToDate(this.studentsDate));
-		eval.setInstructorsDate(changeStringToDate(this.instructorsDate));
+		if(this.startDate!=null)eval.setStartDate(changeStringToDate(this.startDate));
+		if(this.dueDate!=null)eval.setDueDate(changeStringToDate(this.dueDate));
+		if(this.viewDate!=null)eval.setViewDate(changeStringToDate(this.viewDate));
+		if(this.studentsDate!=null)eval.setStudentsDate(changeStringToDate(this.studentsDate));
+		if(this.instructorsDate!=null)eval.setInstructorsDate(changeStringToDate(this.instructorsDate));
 
 		//This was needed by columbia so on HTML page not shown. Here making equal to due date. 
 		eval.setStopDate(eval.getDueDate());
@@ -654,7 +655,7 @@ public class EvaluationBean {
 	public String evalAssigned(){		
 		
 		//eval = logic.getEvaluationById(eval.getId());
-		eval = evalsLogic.getEvaluationById(eval.getId());
+		eval = evalsLogic.getEvaluationById(evalId);
 		
 		//List l = logic.getAssignContextsByEvalId(eval.getId());
 		List l = assignsLogic.getAssignContextsByEvalId(eval.getId());
@@ -691,7 +692,7 @@ public class EvaluationBean {
 		Long id = new Long("-1");
 		EvalEvaluation eval1 =null;
 		try{
-			id = Long.valueOf(evalId);
+			id = evalId;
 		}catch(NumberFormatException fe){	
 			log.fatal(fe);
 		}
