@@ -16,6 +16,8 @@ package org.sakaiproject.evaluation.tool.producers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.TemplateBeanLocator;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
@@ -23,6 +25,7 @@ import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.UIBoundList;
+import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIELBinding;
@@ -47,8 +50,9 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
 public class TemplateProducer implements ViewComponentProducer,
     ViewParamsReporter, NavigationCaseReporter {
-  public static final String VIEW_ID = "template_title_desc";
 
+  public static final String VIEW_ID = "template_title_desc";
+  
   public String getViewID() {
     return VIEW_ID;
   }
@@ -56,9 +60,13 @@ public class TemplateProducer implements ViewComponentProducer,
   private Long templateId;
 
   private MessageLocator messageLocator;
-
   public void setMessageLocator(MessageLocator messageLocator) {
     this.messageLocator = messageLocator;
+  }
+  
+  private EvalSettings settings;
+  public void setSettings(EvalSettings settings) {
+	this.settings = settings;
   }
 
   /*
@@ -102,26 +110,54 @@ public class TemplateProducer implements ViewComponentProducer,
     UIInput.make(form, "title", templateOTP + "title");
     UIInput.make(form, "description", templateOTP + "description");
 
-    // dropdown list
-    UISelect combo = UISelect.make(form, "sharing");
-    combo.selection = new UIInput();
-    combo.selection.valuebinding = new ELReference(templateOTP + "sharing");
-    UIBoundList comboValues = new UIBoundList();
-    comboValues.setValue(EvaluationConstant.MODIFIER_VALUES);
-    combo.optionlist = comboValues;
-    UIBoundList comboNames = new UIBoundList();
-    String[] sharingList = {
-        messageLocator.getMessage("modifytemplatetitledesc.sharing.private"),
-        messageLocator.getMessage("modifytemplatetitledesc.sharing.visible"),
-    // messageLocator.getMessage("modifytemplatetitledesc.sharing.shared"),
-    // messageLocator.getMessage("modifytemplatetitledesc.sharing.public")
-    };
-    comboNames.setValue(sharingList);
-    combo.optionnames = comboNames;
+	/*
+	 * (Non-javadoc)
+	 * If "EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY" is set EvalConstants.SHARING_OWNER,
+	 * then it means that owner can decide what sharing settings to chose. In other words, it 
+	 * means that show the sharing/visibility dropdown.
+	 */
+	if ( ((String)settings.get(EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY)).
+			equals(EvalConstants.SHARING_OWNER)) {
 
-    // EvalTemplate tpl= templateBean.getCurrTemplate();
+		UIBranchContainer showSharingOptions = UIBranchContainer.make(form, "showSharingOptions:"); //$NON-NLS-1$
+	    UISelect combo = UISelect.make(showSharingOptions, "sharing"); //$NON-NLS-1$
+	    combo.selection = new UIInput();
+	    combo.selection.valuebinding = new ELReference(templateOTP + "sharing"); //$NON-NLS-1$
+	    UIBoundList comboValues = new UIBoundList();
+	    comboValues.setValue(EvaluationConstant.MODIFIER_VALUES);
+	    combo.optionlist = comboValues;
+	    UIBoundList comboNames = new UIBoundList();
+	    String[] sharingList = {
+	        messageLocator.getMessage("modifytemplatetitledesc.sharing.private"), //$NON-NLS-1$
+	        messageLocator.getMessage("modifytemplatetitledesc.sharing.public")   //$NON-NLS-1$
+	    //  messageLocator.getMessage("modifytemplatetitledesc.sharing.visible")  //$NON-NLS-1$
+	    //  messageLocator.getMessage("modifytemplatetitledesc.sharing.shared")   //$NON-NLS-1$
+	    };
+	    comboNames.setValue(sharingList);
+	    combo.optionnames = comboNames;
+	}
+	else {
+		UIBranchContainer showSharingLabel = UIBranchContainer.make(form, "showSharingLabel:"); //$NON-NLS-1$
+		String sharingValueToSave = (String) settings.get(EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY);
+		String sharingValueToDisplay;
+		
+		if ( (EvalConstants.SHARING_PRIVATE).equals(sharingValueToSave) )
+			sharingValueToDisplay = messageLocator.getMessage("modifytemplatetitledesc.sharing.private"); //$NON-NLS-1$ 
+		else if ( (EvalConstants.SHARING_PUBLIC).equals(sharingValueToSave) )
+			sharingValueToDisplay = messageLocator.getMessage("modifytemplatetitledesc.sharing.public");  //$NON-NLS-1$ 
+		else if ( (EvalConstants.SHARING_VISIBLE).equals(sharingValueToSave) )
+			sharingValueToDisplay = messageLocator.getMessage("modifytemplatetitledesc.sharing.visible"); //$NON-NLS-1$ 
+		else
+			sharingValueToDisplay = messageLocator.getMessage("modifytemplatetitledesc.sharing.shared");  //$NON-NLS-1$ 
+			
+		//Displaying the label of sharing value set as system property
+		UIOutput.make(showSharingLabel, "sharingValueToDisplay", sharingValueToDisplay); //$NON-NLS-1$
+		
+		//Doing the binding of this sharing value so that it can be saved in the database
+		form.parameters.add(new UIELBinding(templateOTP + "sharing", sharingValueToSave)); //$NON-NLS-1$
+	}    
 
-    UIOutput.make(form, "cancel-button", messageLocator
+	UIOutput.make(form, "cancel-button", messageLocator
         .getMessage("general.cancel.button"));
   }
 
