@@ -20,6 +20,7 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.sakaiproject.evaluation.dao.EvaluationDao;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.impl.EvalTemplatesLogicImpl;
 import org.sakaiproject.evaluation.logic.test.stubs.EvalExternalLogicStub;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -47,7 +48,7 @@ public class EvalTemplatesLogicImplTest extends AbstractTransactionalSpringConte
 		// point to the needed spring config files, must be on the classpath
 		// (add component/src/webapp/WEB-INF to the build path in Eclipse),
 		// they also need to be referenced in the project.xml file
-		return new String[] {"hibernate-test.xml", "spring-hibernate.xml"};
+		return new String[] {"hibernate-test.xml", "spring-hibernate.xml", "logic-support.xml"};
 	}
 
 	// run this before each test starts
@@ -73,6 +74,10 @@ public class EvalTemplatesLogicImplTest extends AbstractTransactionalSpringConte
 		etdl = ptd.getEtdl();
 
 		// load up any other needed spring beans
+		EvalSettings settings = (EvalSettings) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalSettings");
+		if (settings == null) {
+			throw new NullPointerException("EvalSettings could not be retrieved from spring context");
+		}
 
 		// setup the mock objects if needed
 
@@ -80,6 +85,7 @@ public class EvalTemplatesLogicImplTest extends AbstractTransactionalSpringConte
 		templates = new EvalTemplatesLogicImpl();
 		templates.setDao(evaluationDao);
 		templates.setExternalLogic( new EvalExternalLogicStub() );
+		templates.setSettings(settings);
 
 	}
 

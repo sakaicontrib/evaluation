@@ -21,6 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -46,6 +47,11 @@ public class EvalTemplatesLogicImpl implements EvalTemplatesLogic {
 	public void setExternalLogic(EvalExternalLogic external) {
 		this.external = external;
 	}
+
+	private EvalSettings settings;
+	public void setSettings(EvalSettings settings) {
+		this.settings = settings;
+    }
 
 
 	// INIT method
@@ -161,7 +167,8 @@ public class EvalTemplatesLogicImpl implements EvalTemplatesLogic {
 	 */
 	public List getTemplatesForUser(String userId, String sharingConstant, boolean includeEmpty) {
 		log.debug("sharingConstant: " + sharingConstant + ", userId: " + userId);
-		/**
+
+		/*
 		 * TODO - Hierarchy
 		 * visible and shared sharing methods are meant to work by relating the hierarchy level of 
 		 * the owner with the sharing setting in the template, however, that was when 
@@ -231,8 +238,15 @@ public class EvalTemplatesLogicImpl implements EvalTemplatesLogic {
 			return true;
 		}
 
-		// TODO - make this check system wide and not context specific
-		if ( external.countContextsForUser(userId, EvalConstants.PERM_WRITE_TEMPLATE) > 0 ) {
+		/*
+		 * If the person is not an admin (super or any kind, currently we just have super admin) 
+		 * then system settings should be checked whether they can create templates 
+		 * or not - kahuja.
+		 * 
+		 * TODO - make this check system wide and not context specific - aaronz.
+		 */
+		if ( ((Boolean)settings.get(EvalSettings.INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS)).booleanValue() && 
+				external.countContextsForUser(userId, EvalConstants.PERM_WRITE_TEMPLATE) > 0 ) {
 			return true;
 		}
 		return false;

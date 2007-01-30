@@ -104,6 +104,8 @@
 			ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
 		<property name="externalLogic" 
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+		<property name="settings" 
+			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 	</bean>
 
 </beans>
