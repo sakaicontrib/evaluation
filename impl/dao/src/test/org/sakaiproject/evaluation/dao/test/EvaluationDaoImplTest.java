@@ -47,7 +47,6 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 	private EvalScale scaleLocked;
 	private EvalItem itemLocked;
 	private EvalItem itemUnlocked;
-	private EvalTemplate templateLocked;
 	private EvalEvaluation evalLocked;
 	private EvalResponse evalResponse;
 
@@ -540,14 +539,24 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 		Assert.assertTrue( itemUnlocked.getScale().getLocked().booleanValue() );
 
 		// check that locked item gets unlocked (scale)
+		Assert.assertTrue( itemUnlocked.getLocked().booleanValue() );
+		Assert.assertTrue( evaluationDao.lockItem( itemUnlocked, Boolean.FALSE ) );
+		Assert.assertFalse( itemUnlocked.getLocked().booleanValue() );
 
 		// verify that associated scale gets unlocked
+		Assert.assertFalse( itemUnlocked.getScale().getLocked().booleanValue() );
 
 		// check that locked item gets unlocked (scale locked by another item)
+		Assert.assertTrue( etdl.item4.getScale().getLocked().booleanValue() );
+		Assert.assertTrue( evaluationDao.lockItem( etdl.item4, Boolean.TRUE ) );
+		Assert.assertTrue( etdl.item4.getLocked().booleanValue() );
+
+		Assert.assertTrue( evaluationDao.lockItem( etdl.item4, Boolean.FALSE ) );
+		Assert.assertFalse( etdl.item4.getLocked().booleanValue() );
 
 		// verify that associated scale does not get unlocked
+		Assert.assertTrue( etdl.item4.getScale().getLocked().booleanValue() );
 
-		// TODO - fail("Not yet implemented");
 	}
 
 	/**
@@ -556,12 +565,52 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 	public void testLockTemplate() {
 
 		// check that new template cannot be locked/unlocked
+		try {
+			evaluationDao.lockTemplate(
+				new EvalTemplate(new Date(), EvalTestDataLoad.ADMIN_USER_ID, "new template one", 
+						"description", EvalConstants.SHARING_PRIVATE, EvalTestDataLoad.NOT_EXPERT, 
+						"expert desc", null, EvalTestDataLoad.LOCKED),
+				Boolean.TRUE);
+			Assert.fail("Should have thrown an exception");
+		} catch (IllegalStateException e) {
+			Assert.assertNotNull(e);
+		}
+
+		try {
+			evaluationDao.lockTemplate(
+				new EvalTemplate(new Date(), EvalTestDataLoad.ADMIN_USER_ID, "new template two", 
+						"description", EvalConstants.SHARING_PRIVATE, EvalTestDataLoad.NOT_EXPERT, 
+						"expert desc", null, EvalTestDataLoad.LOCKED),
+				Boolean.FALSE);
+			Assert.fail("Should have thrown an exception");
+		} catch (IllegalStateException e) {
+			Assert.assertNotNull(e);
+		}
 
 		// check that unlocked template gets locked (no items)
+		Assert.assertFalse( etdl.templateAdminNoItems.getLocked().booleanValue() );
+		Assert.assertTrue( evaluationDao.lockTemplate( etdl.templateAdminNoItems, Boolean.TRUE ) );
+		Assert.assertTrue( etdl.templateAdminNoItems.getLocked().booleanValue() );
+
+		// check that locked template is ok with getting locked again (no problems)
+		Assert.assertTrue( etdl.templateAdminNoItems.getLocked().booleanValue() );
+		Assert.assertFalse( evaluationDao.lockTemplate( etdl.templateAdminNoItems, Boolean.TRUE ) );
+		Assert.assertTrue( etdl.templateAdminNoItems.getLocked().booleanValue() );
 
 		// check that locked template gets unlocked (no items)
+		Assert.assertTrue( etdl.templateAdminNoItems.getLocked().booleanValue() );
+		Assert.assertTrue( evaluationDao.lockTemplate( etdl.templateAdminNoItems, Boolean.FALSE ) );
+		Assert.assertFalse( etdl.templateAdminNoItems.getLocked().booleanValue() );
 
 		// check that locked template that is locked by an evaluation cannot be unlocked
+		Assert.assertTrue( etdl.templatePublic.getLocked().booleanValue() );
+		Assert.assertFalse( evaluationDao.lockTemplate( etdl.templatePublic, Boolean.FALSE ) );
+		Assert.assertTrue( etdl.templatePublic.getLocked().booleanValue() );
+
+		// check that locked template that is locked by an evaluation can be locked without exception
+		Assert.assertTrue( etdl.templatePublic.getLocked().booleanValue() );
+		Assert.assertFalse( evaluationDao.lockTemplate( etdl.templatePublic, Boolean.TRUE ) );
+		Assert.assertTrue( etdl.templatePublic.getLocked().booleanValue() );
 
 		// check that unlocked template gets locked (items)
 
