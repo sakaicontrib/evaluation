@@ -293,6 +293,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#unlockScale(org.sakaiproject.evaluation.model.EvalScale)
 	 */
 	public boolean unlockScale(EvalScale scale) {
+		log.info("scale:" + scale.getId());
 		if (scale.getId() == null) {
 			throw new IllegalStateException("Cannot unlock an unsaved scale object");
 		}
@@ -307,6 +308,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 				.setProjection( Projections.rowCount() );
 			if ( ((Integer) getHibernateTemplate().findByCriteria( dc ).get(0)).intValue() > 0 ) {
 				// this is locked by something, we cannot unlock it
+				log.info("Cannot unlock scale ("+scale.getId()+"), it is locked elsewhere");
 				return false;
 			}
 
@@ -320,6 +322,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#lockItem(org.sakaiproject.evaluation.model.EvalItem, java.lang.Boolean)
 	 */
 	public boolean lockItem(EvalItem item, Boolean lockState) {
+		log.info("item:" + item.getId() + ", lockState:" + lockState);
 		if (item.getId() == null) {
 			throw new IllegalStateException("Cannot change lock state on an unsaved item object");
 		}
@@ -352,17 +355,19 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 				String hqlQuery = "from EvalTemplateItem as ti where ti.item.id = '" + item.getId() + "' and ti.template.locked = true";
 				if ( count(hqlQuery) > 0 ) {
 					// this is locked by something, we cannot unlock it
+					log.info("Cannot unlock item ("+item.getId()+"), it is locked elsewhere");
 					return false;
 				}
+
+				// unlock item
+				item.setLocked( Boolean.FALSE );
+				getHibernateTemplate().update( item );
 
 				// unlock associated scale if there is one
 				if (item.getScale() != null) {
 					unlockScale( item.getScale() );
 				}
 
-				// unlock item
-				item.setLocked( Boolean.FALSE );
-				getHibernateTemplate().update( item );
 				return true;
 			}
 		}
@@ -372,28 +377,50 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#lockTemplate(org.sakaiproject.evaluation.model.EvalTemplate, java.lang.Boolean)
 	 */
 	public boolean lockTemplate(EvalTemplate template, Boolean lockState) {
+		log.info("template:" + template.getId() + ", lockState:" + lockState);
 		if (template.getId() == null) {
 			throw new IllegalStateException("Cannot change lock state on an unsaved template object");
 		}
 
 		if (lockState.booleanValue()) {
-			// locking this item
+			// locking this template
 			if (template.getLocked().booleanValue()) {
 				// already locked, no change
 				return false;
 			} else {
+				// lock template and associated items (if set)
 				template.setLocked( Boolean.TRUE );
+				if (template.getTemplateItems() != null && 
+						template.getTemplateItems().size() > 0) {
+					// TODO - loop through and lock all related items
+				}
 				getHibernateTemplate().update( template );
 				return true;
 			}
 		} else {
-			// unlocking this item
+			// unlocking this template
 			if (! template.getLocked().booleanValue()) {
 				// already unlocked, no change
 				return false;
 			} else {
+				// unlock template (if not locked elsewhere)
+				String hqlQuery = "from EvalEvaluation as eval where eval.template.id = '" + template.getId() + "' and eval.locked = true";
+				if ( count(hqlQuery) > 0 ) {
+					// this is locked by something, we cannot unlock it
+					log.info("Cannot unlock template ("+template.getId()+"), it is locked elsewhere");
+					return false;
+				}
+
+				// unlock template
 				template.setLocked( Boolean.FALSE );
 				getHibernateTemplate().update( template );
+
+				// unlock associated items if there are any
+				if (template.getTemplateItems() != null && 
+						template.getTemplateItems().size() > 0) {
+					// TODO - loop through and unlock all related items
+				}
+
 				return true;
 			}
 		}
@@ -403,6 +430,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#lockEvaluation(org.sakaiproject.evaluation.model.EvalEvaluation)
 	 */
 	public boolean lockEvaluation(EvalEvaluation evaluation) {
+		log.info("evaluation:" + evaluation.getId());
 		if (evaluation.getId() == null) {
 			throw new IllegalStateException("Cannot change lock state on an unsaved evaluation object");
 		}
