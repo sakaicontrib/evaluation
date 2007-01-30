@@ -36,6 +36,7 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.params.CSVReportViewParams;
 import org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer;
+import org.sakaiproject.evaluation.tool.utils.ItemBlockUtils;
 
 import uk.org.ponder.rsf.processor.HandlerHook;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
