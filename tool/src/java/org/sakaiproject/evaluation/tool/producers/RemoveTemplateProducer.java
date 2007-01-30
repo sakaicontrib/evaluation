@@ -110,7 +110,7 @@ public class RemoveTemplateProducer implements ViewComponentProducer, Navigation
 					String sEmail = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
 					UILink.make(noRemoveDiv, "noremove-note-email", sEmail, "mailto:" + sEmail);
 					
-					UIOutput.make(noRemoveDiv, "noremove-note-end", messageLocator.getMessage("removetemplate.noremove.note.post.name")); //$NON-NLS-1$ //$NON-NLS-2$
+					UIOutput.make(noRemoveDiv, "noremove-note-end", messageLocator.getMessage("removetemplate.noremove.note.end")); //$NON-NLS-1$ //$NON-NLS-2$
 					UIOutput.make(noRemoveDiv, "eval-title-header", messageLocator.getMessage("removetemplate.eval.title.header")); //$NON-NLS-1$ //$NON-NLS-2$
 					UIOutput.make(noRemoveDiv, "assigned-header", messageLocator.getMessage("removetemplate.assigned.header")); //$NON-NLS-1$ //$NON-NLS-2$
 					UIOutput.make(noRemoveDiv, "start-date-header", messageLocator.getMessage("removetemplate.start.date.header")); //$NON-NLS-1$ //$NON-NLS-2$
