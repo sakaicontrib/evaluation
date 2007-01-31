@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.tool.EvaluationBean;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
@@ -78,6 +79,11 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 	private EvaluationBean evaluationBean;
 	public void setEvaluationBean(EvaluationBean evaluationBean) {
 		this.evaluationBean = evaluationBean;
+	}
+	
+	private EvalExternalLogic externalLogic;
+	public void setExternalLogic(EvalExternalLogic externalLogic) {
+		this.externalLogic = externalLogic;
 	}
 	
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
@@ -140,7 +146,9 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		UILink.make(form, "calenderImage", "$context/content/images/calendar.gif");		 //$NON-NLS-1$ //$NON-NLS-2$
 		
 		UIOutput.make(form, "eval-results-viewable-header", messageLocator.getMessage("evalsettings.results.viewable.header")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(form, "eval-results-viewable-private", messageLocator.getMessage("evalsettings.results.viewable.private")); //$NON-NLS-1$ //$NON-NLS-2$
+		UIOutput.make(form, "eval-results-viewable-private-start", messageLocator.getMessage("evalsettings.results.viewable.private.start")); //$NON-NLS-1$ //$NON-NLS-2$
+		UIOutput.make(form, "eval-results-viewable-private-middle", messageLocator.getMessage("evalsettings.results.viewable.private.middle")); //$NON-NLS-1$ //$NON-NLS-2$
+		UIOutput.make(form, "userInfo", externalLogic.getUserDisplayName(externalLogic.getCurrentUserId()));	 //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(form, "private-warning-desc", messageLocator.getMessage("evalsettings.private.warning.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIBoundBoolean.make(form, "resultsPrivate", "#{evaluationBean.eval.resultsPrivate}", null); //$NON-NLS-1$ //$NON-NLS-2$
 
