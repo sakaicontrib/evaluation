@@ -17,6 +17,7 @@ package org.sakaiproject.evaluation.dao.impl;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -392,7 +393,11 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 				template.setLocked( Boolean.TRUE );
 				if (template.getTemplateItems() != null && 
 						template.getTemplateItems().size() > 0) {
-					// TODO - loop through and lock all related items
+					// loop through and lock all related items
+					for (Iterator iter = template.getTemplateItems().iterator(); iter.hasNext();) {
+						EvalTemplateItem eti = (EvalTemplateItem) iter.next();
+						lockItem(eti.getItem(), Boolean.TRUE);
+					}
 				}
 				getHibernateTemplate().update( template );
 				return true;
@@ -418,7 +423,11 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 				// unlock associated items if there are any
 				if (template.getTemplateItems() != null && 
 						template.getTemplateItems().size() > 0) {
-					// TODO - loop through and unlock all related items
+					// loop through and unlock all related items
+					for (Iterator iter = template.getTemplateItems().iterator(); iter.hasNext();) {
+						EvalTemplateItem eti = (EvalTemplateItem) iter.next();
+						lockItem(eti.getItem(), Boolean.FALSE);
+					}
 				}
 
 				return true;
@@ -439,6 +448,12 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 			// already locked, no change
 			return false;
 		} else {
+			// lock evaluation and associated template
+			EvalTemplate template = evaluation.getTemplate();
+			if (! template.getLocked().booleanValue()) {
+				lockTemplate(template, Boolean.TRUE);
+			}
+
 			evaluation.setLocked( Boolean.TRUE );
 			getHibernateTemplate().update( evaluation );
 			return true;
