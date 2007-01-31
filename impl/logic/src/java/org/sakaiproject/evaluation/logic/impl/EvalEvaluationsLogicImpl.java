@@ -38,6 +38,7 @@ import org.sakaiproject.evaluation.model.EvalAssignContext;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalTemplate;
+import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.utils.EvalUtils;
 import org.springframework.aop.framework.ProxyFactoryBean;
@@ -167,18 +168,25 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 				evaluation.getTemplate().getTemplateItems().size() <= 0) {
 			throw new IllegalArgumentException("Evaluations must include a template and the template must have at least one item in it");
 		}
+		log.error("AZ: template ("+evaluation.getTemplate().getId()+","+evaluation.getTemplate().getTitle()+"), templateitems count: " + evaluation.getTemplate().getTemplateItems().size() + ":" 
+				+ evaluation.getTemplate().getTemplateItems());
+		for (Iterator iter = evaluation.getTemplate().getTemplateItems().iterator(); iter.hasNext();) {
+			EvalTemplateItem eti = (EvalTemplateItem) iter.next();
+			log.error("AZ2: templateItem: " + eti.getItem().getId() + "," + eti.getItem().getItemText());
+		}
 
-		// TODO - fill in any default values and nulls here
+		// fill in any default values and nulls here
 		if (evaluation.getLocked() == null) {
 			evaluation.setLocked( Boolean.FALSE );
 		}
 
-		// TODO - add system setting checks for things like allowing users to modify responses
-		if (evaluation.getBlankResponsesAllowed() == null) {
-			evaluation.setBlankResponsesAllowed( Boolean.TRUE );
-		}
+		// system setting checks for things like allowing users to modify responses
 		Boolean systemBlankResponses = (Boolean) settings.get( EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED );
-		if ( systemBlankResponses != null ) {
+		if ( systemBlankResponses == null ) {
+			if (evaluation.getBlankResponsesAllowed() == null) {
+				evaluation.setBlankResponsesAllowed( Boolean.FALSE );
+			}
+		} else {
 			evaluation.setBlankResponsesAllowed( systemBlankResponses );
 		}
 

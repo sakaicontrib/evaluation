@@ -28,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -52,6 +53,11 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 	private EvalExternalLogic external;
 	public void setExternalLogic(EvalExternalLogic external) {
 		this.external = external;
+	}
+
+	private EvalSettings settings;
+	public void setSettings(EvalSettings settings) {
+		this.settings = settings;
 	}
 
 
@@ -135,20 +141,31 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 		if (item.getLocked() == null) {
 			item.setLocked( Boolean.FALSE );
 		}
-		if (item.getUsesNA() == null) {
-			item.setUsesNA( Boolean.FALSE ); // TODO - should use the system setting
+		// check the NOT_AVAILABLE_ALLOWED system setting
+		Boolean naAllowed = (Boolean)settings.get(EvalSettings.NOT_AVAILABLE_ALLOWED);
+		if (naAllowed == null) {
+			// can set NA
+			if (item.getUsesNA() == null) {
+				item.setUsesNA( Boolean.FALSE );
+			}
+		} else {
+			// must use the system setting
+			item.setUsesNA( naAllowed );
 		}
 		if (item.getCategory() == null) {
 			item.setCategory( EvalConstants.ITEM_CATEGORY_COURSE );
 		}
 
 		if (checkUserControlItem(userId, item)) {
-			if (item.getLocked().booleanValue() == true) {
-				// TODO - add logic to lock associated scales here
-				log.error("TODO - Locking associated scales not implemented yet");
-			}
 			dao.save(item);
 			log.info("User ("+userId+") saved item ("+item.getId()+"), title: " + item.getItemText());
+
+			if (item.getLocked().booleanValue() == true) {
+				// lock item and associated scales
+				log.info("Locking item ("+item.getId()+") and associated scale");
+				dao.lockItem(item, Boolean.TRUE);
+			}
+
 			return;
 		}
 
@@ -174,11 +191,15 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 		}
 
 		if (checkUserControlItem(userId, item)) {
-			if (item.getLocked().booleanValue() == true) {
-				// TODO - add logic to unlock associated scales here
-				log.error("TODO - Unlocking locked items not implemented yet");
-			}
 			dao.delete(item);
+			log.info("User ("+userId+") removed item ("+item.getId()+"), title: " + item.getItemText());
+
+			if (item.getLocked().booleanValue()) {
+				// unlock associated scales
+				log.info("Unlocking associated scale for item ("+item.getId()+")");
+				dao.unlockScale( item.getScale() );
+			}
+
 			return;
 		}
 		
@@ -394,17 +415,24 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 			}
 		}
 		if (templateItem.getUsesNA() == null) {
-			if (item.getUsesNA() == null) {
-				templateItem.setUsesNA( Boolean.FALSE ); // TODO - use system setting
+			// check the NOT_AVAILABLE_ALLOWED system setting
+			Boolean naAllowed = (Boolean)settings.get(EvalSettings.NOT_AVAILABLE_ALLOWED);
+			if (naAllowed == null) {
+				// can set NA
+				if (templateItem.getUsesNA() == null) {
+					templateItem.setUsesNA( Boolean.FALSE );
+				}
 			} else {
-				templateItem.setUsesNA(item.getUsesNA());
+				// must use the system setting
+				templateItem.setUsesNA( naAllowed );
 			}
 		}
 
 		if (checkUserControlTemplateItem(userId, templateItem)) {
 			if (template.getLocked().booleanValue() == true) {
-				// TODO - add logic to lock associated items here
-				log.error("TODO - Locking associated items not implemented yet");
+				// lock item and associated scales
+				log.info("Locking item ("+item.getId()+") and associated scale");
+				dao.lockItem(item, Boolean.TRUE);
 			}
 
 			if (templateItem.getId() == null) {

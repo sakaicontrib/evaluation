@@ -23,6 +23,7 @@ import java.util.Set;
 import junit.framework.Assert;
 
 import org.sakaiproject.evaluation.dao.EvaluationDao;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl;
 import org.sakaiproject.evaluation.logic.test.stubs.EvalExternalLogicStub;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -51,7 +52,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		// point to the needed spring config files, must be on the classpath
 		// (add component/src/webapp/WEB-INF to the build path in Eclipse),
 		// they also need to be referenced in the project.xml file
-		return new String[] {"hibernate-test.xml", "spring-hibernate.xml"};
+		return new String[] {"hibernate-test.xml", "spring-hibernate.xml", "logic-support.xml"};
 	}
 
 	// run this before each test starts
@@ -77,6 +78,10 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		etdl = ptd.getEtdl();
 
 		// load up any other needed spring beans
+		EvalSettings settings = (EvalSettings) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalSettings");
+		if (settings == null) {
+			throw new NullPointerException("EvalSettings could not be retrieved from spring context");
+		}
 
 		// setup the mock objects if needed
 
@@ -84,6 +89,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		items = new EvalItemsLogicImpl();
 		items.setDao(evaluationDao);
 		items.setExternalLogic( new EvalExternalLogicStub() );
+		items.setSettings(settings);
 
 	}
 
@@ -657,9 +663,12 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl#saveTemplateItem(org.sakaiproject.evaluation.model.EvalTemplateItem, java.lang.String)}.
 	 */
 	public void testSaveTemplateItem() {
+		// load up a no items template to work with
+		EvalTemplate noItems = (EvalTemplate) evaluationDao.findById(EvalTemplate.class, etdl.templateAdminNoItems.getId());
+
 		// test saving a new templateItem actually creates the linkage in the item and template
 		EvalTemplateItem eiTest1 = new EvalTemplateItem( null, 
-				EvalTestDataLoad.ADMIN_USER_ID, etdl.templateAdminNoItems, etdl.item5, 
+				EvalTestDataLoad.ADMIN_USER_ID, noItems, etdl.item5, 
 				null, EvalConstants.ITEM_CATEGORY_COURSE, 
 				new Integer(3), null, Boolean.FALSE, null, null);
 		items.saveTemplateItem( eiTest1, 
@@ -670,7 +679,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertNotNull( eiTest1.getTemplate().getTemplateItems() );
 		// verify items are there
 		Assert.assertEquals( eiTest1.getItem().getId(), etdl.item5.getId() );
-		Assert.assertEquals( eiTest1.getTemplate().getId(), etdl.templateAdminNoItems.getId() );
+		Assert.assertEquals( eiTest1.getTemplate().getId(), noItems.getId() );
 		// check if the templateItem is contained in the new sets
 		Assert.assertEquals( 4, eiTest1.getItem().getTemplateItems().size() );
 		Assert.assertEquals( 1, eiTest1.getTemplate().getTemplateItems().size() );
@@ -682,7 +691,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 
 		// test saving a valid templateItem
 		items.saveTemplateItem( new EvalTemplateItem( new Date(), 
-				EvalTestDataLoad.ADMIN_USER_ID, etdl.templateAdminNoItems, etdl.item7, 
+				EvalTestDataLoad.ADMIN_USER_ID, noItems, etdl.item7, 
 				new Integer(2), EvalConstants.ITEM_CATEGORY_COURSE, 
 				new Integer(3), null, Boolean.FALSE, null, null),
 			EvalTestDataLoad.ADMIN_USER_ID);
@@ -696,7 +705,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 
 		// test saving valid templateItem with empty required fields (inherit from item)
 		EvalTemplateItem eiTest2 = new EvalTemplateItem( null, 
-				EvalTestDataLoad.ADMIN_USER_ID, etdl.templateAdminNoItems, etdl.item4, 
+				EvalTestDataLoad.ADMIN_USER_ID, noItems, etdl.item4, 
 				new Integer(99), null, 
 				null, null, null, null, null);
 		items.saveTemplateItem( eiTest2, 

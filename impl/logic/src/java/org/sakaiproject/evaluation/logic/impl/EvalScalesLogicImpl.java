@@ -93,6 +93,8 @@ public class EvalScalesLogicImpl implements EvalScalesLogic {
 		// check locking not changed
 		if (scale.getId() != null) {
 			// existing scale, don't allow change to locked setting
+
+			// TODO - this does not work -AZ
 			EvalScale existingScale = (EvalScale) dao.findById(EvalScale.class, scale.getId());
 			if (scale == null) {
 				throw new IllegalArgumentException("Cannot find scale with id: " + scale.getId());
