@@ -135,14 +135,54 @@
 			}
 		}
 		
-		if (Date.parse(dateDue.value) < Date.parse(dateStart.value)){
+		if (Date.parse(dateDue.value) < Date.parse(dateStart.value)) {
 			alert("You cannot select due date before start date. Please select a different due date and submit the form");
 			return false;
-		}//View date check is only for admins
-		else if (Date.parse(dateView.value) <= Date.parse(dateDue.value)){
+		}
+		//View date check is for admins
+		else if (Date.parse(dateView.value) <= Date.parse(dateDue.value)) {
 			alert("You cannot select view results date same as due date or before due date. Please select a different view results date and submit the form");
 			return false;
-		}else{ 
+		}
+		//Check for student and instructor view dates only if results private is not checked.
+		else if ( !(document.getElementById('resultsPrivate').checked) ){
+		 
+			//Following check is for student view dates
+			var viewResultsFlagStu = document.getElementById('showResultsToStudents:::studentViewResults');
+			if (viewResultsFlagStu != null && viewResultsFlagStu.checked) {
+				var dateViewStu = document.getElementById('showResultsToStudents:::showResultsToStuDate:::studentsDate');
+				if (isDate(dateViewStu.value)==false){
+					dateViewStu.focus();
+					return false;
+				}
+				else if (Date.parse(dateViewStu.value) <= Date.parse(dateDue.value)) {
+					alert("You cannot select view results date for students to be same as due date or before due date. Please select a different view results date for students and submit the form");
+					dateViewStu.focus();
+					return false;
+				}else { 
+					//Do nothing as there is a return true at the very end
+				}
+			}
+			
+			//Following check is for instructor view dates
+			var viewResultsFlagInst = document.getElementById('showResultsToInst:::instructorViewResults');
+			if (viewResultsFlagInst != null && viewResultsFlagInst.checked) {
+				var dateViewInst = document.getElementById('showResultsToInst:::showResultsToInstDate:::instructorsDate');
+				if (isDate(dateViewInst.value)==false){
+					dateViewInst.focus();
+					return false;
+				}
+				else if (Date.parse(dateViewInst.value) <= Date.parse(dateDue.value)) {
+					alert("You cannot select view results date for instructors to be same as due date or before due date. Please select a different view results date for instructors and submit the form");
+					dateViewInst.focus();
+					return false;
+				}else { 
+					//Do nothing as there is a return true at the very end
+				}
+			}		
+			return true;
+		}
+		else {
 			return true;
 		}
  	}
