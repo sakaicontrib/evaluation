@@ -158,8 +158,8 @@ public class EvalScalesLogicImplTest extends AbstractTransactionalSpringContextT
 		// TODO - CANNOT RUN THIS TEST BECAUSE OF HIBERNATE ISSUE
 //		// test that LOCKED cannot be changed to FALSE on existing scales
 //		try {
-//			testScale2.setLocked(Boolean.FALSE);
-//			scales.saveScale(testScale2, EvalTestDataLoad.MAINT_USER_ID);
+//			testScale1.setLocked(Boolean.FALSE);
+//			scales.saveScale(testScale1, EvalTestDataLoad.ADMIN_USER_ID);
 //			Assert.fail("Should have thrown exception");
 //		} catch (IllegalArgumentException e) {
 //			Assert.assertNotNull(e);

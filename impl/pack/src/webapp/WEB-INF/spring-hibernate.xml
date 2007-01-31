@@ -42,9 +42,7 @@
 				<prop key="count*">PROPAGATION_REQUIRED,readOnly</prop>
 				<prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
 				<prop key="*">PROPAGATION_REQUIRED</prop>
-<!-- This will allow tests to throw exceptions and continue -AZ
-				<prop key="*">PROPAGATION_REQUIRED,+java.lang.RuntimeException</prop>
--->
+<!--				<prop key="*">PROPAGATION_REQUIRED,+java.lang.RuntimeException</prop>-->
 			</props>
 		</property>
 	</bean>
