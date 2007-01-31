@@ -92,9 +92,9 @@ public class EvalTestDataLoad {
 	public final static Boolean UNLOCKED = Boolean.FALSE;
 
 	public final static String ANSWER_TEXT = "text answer";
-	public final static Integer ANSWER_SCALED_ONE = Integer.valueOf(1);
-	public final static Integer ANSWER_SCALED_TWO = Integer.valueOf(2);
-	public final static Integer ANSWER_SCALED_THREE = Integer.valueOf(3);
+	public final static Integer ANSWER_SCALED_ONE = new Integer(1);
+	public final static Integer ANSWER_SCALED_TWO = new Integer(2);
+	public final static Integer ANSWER_SCALED_THREE = new Integer(3);
 
 	public final static String EMAIL_MESSAGE = "This is a big long email message";
 	
@@ -232,6 +232,10 @@ public class EvalTestDataLoad {
 	 * Evaluation Active (ends tomorrow), viewable 3 days, MAINT_USER_ID owns, templatePublic, NO responses, 1 AC
 	 */
 	public EvalEvaluation evaluationActiveUntaken;
+	/**
+	 * Evaluation Due (stopped yesterday, due tomorrow), MAINT_USER_ID owns, templatePublic, NO responses, No ACs
+	 */
+//	public EvalEvaluation evaluationDueUntaken;
 	/**
 	 * Evaluation Complete (ended yesterday, viewable tomorrow), ADMIN_USER_ID owns, templateAdmin, 2 responses, 2 ACs, recently closed
 	 */
@@ -514,28 +518,6 @@ public class EvalTestDataLoad {
 		item6.setTemplateItems( new HashSet() );
 		item6.getTemplateItems().add( templateItem6UU );
 
-
-		// TODO - change these to no longer use the old linking method
-//		Set s = new HashSet();
-//		s.add(templateUser);
-//		s.add(templatePublic);
-//		item1.setTemplates(s);
-//		s.remove(templateUser);
-//		s.add(templateAdmin);
-//		item2.setTemplates(s);
-//		s = new HashSet();
-//		s.add(templateUnused);
-//		s.add(templatePublicUnused);
-//		item3.setTemplates(s);
-//		s = new HashSet();
-//		s.add(templateAdmin);
-//		s.add(templateUser);
-//		s.add(templateUnused);
-//		item5.setTemplates(s);
-//		s = new HashSet();
-//		s.add(templateUserUnused);
-//		item6.setTemplates(s);
-
 		// init the evaluation times
 		Calendar calendar = GregorianCalendar.getInstance();
 		calendar.add(Calendar.HOUR, 2); // put today slightly in the future
@@ -563,38 +545,43 @@ public class EvalTestDataLoad {
 		evaluationNew = new EvalEvaluation(new Date(), MAINT_USER_ID, "Eval new", null, 
 				tomorrow, threeDaysFuture, threeDaysFuture, fourDaysFuture, null, null,
 				EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.INSTRUCTOR_OPT_IN, 
-				Integer.valueOf(1), null, null, null, null, templatePublic, null,
+				new Integer(1), null, null, null, null, templatePublic, null,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, UNLOCKED);
 		// Evaluation not started yet (starts tomorrow), ADMIN
 		evaluationNewAdmin = new EvalEvaluation(new Date(), ADMIN_USER_ID, "Eval admin", null, 
 				tomorrow, threeDaysFuture, threeDaysFuture, fourDaysFuture,  null, null,
 				EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.INSTRUCTOR_OPT_IN, 
-				Integer.valueOf(1), null, null, null, null, templateAdmin, null,
+				new Integer(1), null, null, null, null, templateAdmin, null,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, UNLOCKED);
 		// Evaluation Active (ends today), viewable tomorrow
 		evaluationActive = new EvalEvaluation(new Date(), MAINT_USER_ID, "Eval active", null, 
 				yesterday, today, today, tomorrow, null, null,
 				EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.INSTRUCTOR_OPT_IN, 
-				Integer.valueOf(1), null, null, null, null, templatePublic, null,
+				new Integer(1), null, null, null, null, templatePublic, null,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, LOCKED);
 		// Evaluation Active (ends tomorrow), viewable 3 days
 		evaluationActiveUntaken = new EvalEvaluation(new Date(), MAINT_USER_ID, "Eval active not taken", null, 
 				yesterday, tomorrow, tomorrow, threeDaysFuture, null, null,
 				EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.INSTRUCTOR_OPT_IN, 
-				Integer.valueOf(1), null, null, null, null, templatePublic, null,
+				new Integer(1), null, null, null, null, templatePublic, null,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, UNLOCKED);
-		// TODO - add in an evaluation in the DUE state?
+		// evaluation in the DUE state
+//		evaluationDueUntaken = new EvalEvaluation(new Date(), MAINT_USER_ID, "Eval due not taken", null, 
+//				threeDaysAgo, yesterday, tomorrow, threeDaysFuture, null, null,
+//				EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.INSTRUCTOR_OPT_IN, 
+//				new Integer(1), null, null, null, null, templatePublic, null,
+//				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, UNLOCKED);
 		// Evaluation Complete (ended yesterday, viewable tomorrow), recent close
 		evaluationClosed = new EvalEvaluation(new Date(), ADMIN_USER_ID, "Eval closed", null, 
 				threeDaysAgo, yesterday, yesterday, tomorrow, null, null,
 				EvalConstants.EVALUATION_STATE_CLOSED, EvalConstants.INSTRUCTOR_OPT_IN, 
-				Integer.valueOf(2), null, null, null, null, templateAdmin, null,
+				new Integer(2), null, null, null, null, templateAdmin, null,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, LOCKED);
 		// evaluation complete (3 days ago) and viewable (yesterday)
 		evaluationViewable = new EvalEvaluation(new Date(), ADMIN_USER_ID, "Eval viewable", null, 
 				twentyDaysAgo, twentyDaysAgo, twentyDaysAgo, fifteenDaysAgo, null, null,
 				EvalConstants.EVALUATION_STATE_VIEWABLE, EvalConstants.INSTRUCTOR_OPT_IN, 
-				Integer.valueOf(2), null, null, null, null, templateUser, null,
+				new Integer(2), null, null, null, null, templateUser, null,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, LOCKED);
 
 		// email templates
@@ -726,6 +713,7 @@ public class EvalTestDataLoad {
 		dao.save(evaluationNewAdmin);
 		dao.save(evaluationActive);
 		dao.save(evaluationActiveUntaken);
+//		dao.save(evaluationDueUntaken);
 		dao.save(evaluationClosed);
 		dao.save(evaluationViewable);
 

@@ -23,7 +23,6 @@ import junit.framework.Assert;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
-import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -47,8 +46,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 	private EvalScale scaleLocked;
 	private EvalItem itemLocked;
 	private EvalItem itemUnlocked;
-	private EvalEvaluation evalLocked;
-	private EvalResponse evalResponse;
+	private EvalEvaluation evalUnLocked;
 
 	protected String[] getConfigLocations() {
 		// point to the needed spring config files, must be on the classpath
@@ -104,6 +102,13 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 		itemUnlocked.setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
 		itemUnlocked.setLocked(EvalTestDataLoad.UNLOCKED);
 		evaluationDao.save( itemUnlocked );
+
+		evalUnLocked = new EvalEvaluation(new Date(), EvalTestDataLoad.MAINT_USER_ID, "Eval active not taken", null, 
+				etdl.yesterday, etdl.tomorrow, etdl.tomorrow, etdl.threeDaysFuture, null, null,
+				EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.INSTRUCTOR_OPT_IN, 
+				new Integer(1), null, null, null, null, etdl.templatePublicUnused, null,
+				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, EvalTestDataLoad.UNLOCKED);
+		evaluationDao.save( evalUnLocked );
 
 	}
 
@@ -449,6 +454,17 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 	 */
 	public void testUnlockScale() {
 
+		// check that locked scale gets unlocked (no locking item)
+		Assert.assertTrue( scaleLocked.getLocked().booleanValue() );
+		Assert.assertTrue( evaluationDao.unlockScale( scaleLocked ) );
+		Assert.assertFalse( scaleLocked.getLocked().booleanValue() );
+
+		// check that locked scale that is locked by an item cannot be unlocked
+		EvalScale scale1 = (EvalScale) evaluationDao.findById(EvalScale.class, etdl.scale1.getId());
+		Assert.assertTrue( scale1.getLocked().booleanValue() );
+		Assert.assertFalse( evaluationDao.unlockScale( scale1 ) );
+		Assert.assertTrue( scale1.getLocked().booleanValue() );
+
 		// check that new scale cannot be unlocked
 		try {
 			evaluationDao.unlockScale( 
@@ -461,46 +477,12 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 			Assert.assertNotNull(e);
 		}
 
-		// check that locked scale gets unlocked (no locking item)
-		Assert.assertTrue( scaleLocked.getLocked().booleanValue() );
-		Assert.assertTrue( evaluationDao.unlockScale( scaleLocked ) );
-		Assert.assertFalse( scaleLocked.getLocked().booleanValue() );
-
-		// check that locked scale that is locked by an item cannot be unlocked
-		EvalScale scale1 = (EvalScale) evaluationDao.findById(EvalScale.class, etdl.scale1.getId());
-		Assert.assertTrue( scale1.getLocked().booleanValue() );
-		Assert.assertFalse( evaluationDao.unlockScale( scale1 ) );
-		Assert.assertTrue( scale1.getLocked().booleanValue() );
-
 	}
 
 	/**
 	 * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#lockItem(org.sakaiproject.evaluation.model.EvalItem, java.lang.Boolean)}.
 	 */
 	public void testLockItem() {
-
-		// check that new item cannot be locked/unlocked
-		try {
-			evaluationDao.lockItem(
-				new EvalItem( new Date(), EvalTestDataLoad.ADMIN_USER_ID, 
-						"something", EvalConstants.SHARING_PRIVATE, 
-						EvalConstants.ITEM_TYPE_HEADER, Boolean.FALSE),
-				Boolean.TRUE);
-			Assert.fail("Should have thrown an exception");
-		} catch (IllegalStateException e) {
-			Assert.assertNotNull(e);
-		}
-
-		try {
-			evaluationDao.lockItem(
-				new EvalItem( new Date(), EvalTestDataLoad.ADMIN_USER_ID, 
-						"something else", EvalConstants.SHARING_PRIVATE, 
-						EvalConstants.ITEM_TYPE_HEADER, Boolean.FALSE),
-				Boolean.FALSE);
-			Assert.fail("Should have thrown an exception");
-		} catch (IllegalStateException e) {
-			Assert.assertNotNull(e);
-		}
 
 		// check that unlocked item gets locked (no scale)
 		Assert.assertFalse( etdl.item7.getLocked().booleanValue() );
@@ -557,35 +539,24 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 		// verify that associated scale does not get unlocked
 		Assert.assertTrue( etdl.item4.getScale().getLocked().booleanValue() );
 
-	}
-
-	/**
-	 * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#lockTemplate(org.sakaiproject.evaluation.model.EvalTemplate, java.lang.Boolean)}.
-	 */
-	public void testLockTemplate() {
-
-		// check that new template cannot be locked/unlocked
+		// check that new item cannot be locked/unlocked
 		try {
-			evaluationDao.lockTemplate(
-				new EvalTemplate(new Date(), EvalTestDataLoad.ADMIN_USER_ID, "new template one", 
-						"description", EvalConstants.SHARING_PRIVATE, EvalTestDataLoad.NOT_EXPERT, 
-						"expert desc", null, EvalTestDataLoad.LOCKED),
+			evaluationDao.lockItem(
+				new EvalItem( new Date(), EvalTestDataLoad.ADMIN_USER_ID, 
+						"something", EvalConstants.SHARING_PRIVATE, 
+						EvalConstants.ITEM_TYPE_HEADER, Boolean.FALSE),
 				Boolean.TRUE);
 			Assert.fail("Should have thrown an exception");
 		} catch (IllegalStateException e) {
 			Assert.assertNotNull(e);
 		}
 
-		try {
-			evaluationDao.lockTemplate(
-				new EvalTemplate(new Date(), EvalTestDataLoad.ADMIN_USER_ID, "new template two", 
-						"description", EvalConstants.SHARING_PRIVATE, EvalTestDataLoad.NOT_EXPERT, 
-						"expert desc", null, EvalTestDataLoad.LOCKED),
-				Boolean.FALSE);
-			Assert.fail("Should have thrown an exception");
-		} catch (IllegalStateException e) {
-			Assert.assertNotNull(e);
-		}
+	}
+
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#lockTemplate(org.sakaiproject.evaluation.model.EvalTemplate, java.lang.Boolean)}.
+	 */
+	public void testLockTemplate() {
 
 		// check that unlocked template gets locked (no items)
 		Assert.assertFalse( etdl.templateAdminNoItems.getLocked().booleanValue() );
@@ -613,18 +584,50 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 		Assert.assertTrue( etdl.templatePublic.getLocked().booleanValue() );
 
 		// check that unlocked template gets locked (items)
+		Assert.assertFalse( etdl.item6.getLocked().booleanValue() );
+		Assert.assertFalse( etdl.templateUserUnused.getLocked().booleanValue() );
+		Assert.assertTrue( evaluationDao.lockTemplate( etdl.templateUserUnused, Boolean.TRUE ) );
+		Assert.assertTrue( etdl.templateUserUnused.getLocked().booleanValue() );
 
 		// verify that related items are locked also
+		Assert.assertTrue( etdl.item6.getLocked().booleanValue() );
 
 		// check that locked template gets unlocked (items)
+		Assert.assertTrue( etdl.templateUserUnused.getLocked().booleanValue() );
+		Assert.assertTrue( evaluationDao.lockTemplate( etdl.templateUserUnused, Boolean.FALSE ) );
+		Assert.assertFalse( etdl.templateUserUnused.getLocked().booleanValue() );
 
 		// verify that related items are unlocked also
+		Assert.assertFalse( etdl.item6.getLocked().booleanValue() );
 
-		// check that locked template gets unlocked (item locked by another template)
+		// check unlocked template with locked items can be locked
+		Assert.assertFalse( etdl.templateUnused.getLocked().booleanValue() );
+		Assert.assertTrue( evaluationDao.lockTemplate( etdl.templateUnused, Boolean.TRUE ) );
+		Assert.assertTrue( etdl.templateUnused.getLocked().booleanValue() );
 
-		// verify that associated item locked by other template does not get unlocked
+		// check that locked template gets unlocked (items locked by another template)
+		Assert.assertTrue( etdl.item3.getLocked().booleanValue() );
+		Assert.assertTrue( etdl.item5.getLocked().booleanValue() );
+		Assert.assertTrue( etdl.templateUnused.getLocked().booleanValue() );
+		Assert.assertTrue( evaluationDao.lockTemplate( etdl.templateUnused, Boolean.FALSE ) );
+		Assert.assertFalse( etdl.templateUnused.getLocked().booleanValue() );
 
-		// TODO - fail("Not yet implemented");
+		// verify that associated items locked by other template do not get unlocked
+		Assert.assertTrue( etdl.item3.getLocked().booleanValue() );
+		Assert.assertTrue( etdl.item5.getLocked().booleanValue() );
+
+		// check that new template cannot be locked/unlocked
+		try {
+			evaluationDao.lockTemplate(
+				new EvalTemplate(new Date(), EvalTestDataLoad.ADMIN_USER_ID, "new template one", 
+						"description", EvalConstants.SHARING_PRIVATE, EvalTestDataLoad.NOT_EXPERT, 
+						"expert desc", null, EvalTestDataLoad.LOCKED),
+				Boolean.TRUE);
+			Assert.fail("Should have thrown an exception");
+		} catch (IllegalStateException e) {
+			Assert.assertNotNull(e);
+		}
+
 	}
 
 	/**
@@ -632,13 +635,29 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 	 */
 	public void testLockEvaluation() {
 
-		// check that new evaluation cannot be locked/unlocked
-
 		// check that unlocked evaluation gets locked
+		Assert.assertFalse( etdl.templatePublicUnused.getLocked().booleanValue() );
+		Assert.assertFalse( evalUnLocked.getLocked().booleanValue() );
+		Assert.assertTrue( evaluationDao.lockEvaluation( evalUnLocked ) );
+		Assert.assertTrue( evalUnLocked.getLocked().booleanValue() );
 
 		// verify that associated template gets locked
+		Assert.assertTrue( etdl.templatePublicUnused.getLocked().booleanValue() );
 
-		// TODO - fail("Not yet implemented");
+		// check that new evaluation cannot be locked
+		try {
+			evaluationDao.lockEvaluation(
+				new EvalEvaluation(new Date(), EvalTestDataLoad.MAINT_USER_ID, "Eval new", null, 
+					etdl.tomorrow, etdl.threeDaysFuture, etdl.threeDaysFuture, etdl.fourDaysFuture, null, null,
+					EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.INSTRUCTOR_OPT_IN, 
+					new Integer(1), null, null, null, null, etdl.templatePublic, null,
+					Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, EvalTestDataLoad.UNLOCKED)
+				);
+			Assert.fail("Should have thrown an exception");
+		} catch (IllegalStateException e) {
+			Assert.assertNotNull(e);
+		}
+
 	}
 
 
