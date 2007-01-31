@@ -35,6 +35,7 @@ import uk.org.ponder.rsf.components.UIBoundList;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
@@ -159,11 +160,20 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		if ( tempValue == null || tempValue.booleanValue() ) {
 
 			UIBranchContainer showResultsToStudents = UIBranchContainer.make(form, "showResultsToStudents:"); 	//$NON-NLS-1$
-			UIOutput.make(showResultsToStudents, "eval-results-viewable-students", 								//$NON-NLS-1$ 
-					messageLocator.getMessage("evalsettings.results.viewable.students")); 						//$NON-NLS-1$
-			UIBoundBoolean stuViewCheckbox = UIBoundBoolean.make(showResultsToStudents, 
-					"studentViewResults", "#{evaluationBean.studentViewResults}", tempValue); 					//$NON-NLS-1$ //$NON-NLS-2$
-			setDisabledAttribute(tempValue, stuViewCheckbox);
+			UIOutput.make(showResultsToStudents, "eval-results-viewable-students", messageLocator.getMessage("evalsettings.results.viewable.students")); //$NON-NLS-1$ //$NON-NLS-2$
+			
+			//If system setting was null implies normal checkbox. If it was TRUE then a disabled selected checkbox 
+			if (tempValue == null) {
+				UIBoundBoolean.make(showResultsToStudents, "studentViewResults", "#{evaluationBean.studentViewResults}", tempValue); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			else {
+				//Display only (disabled) and selected check box 
+				UIBoundBoolean stuViewCheckbox = UIBoundBoolean.make(showResultsToStudents, "studentViewResults", tempValue); //$NON-NLS-1$ 
+				setDisabledAttribute(stuViewCheckbox);
+
+				// As we have disabled the check box => RSF will not bind the value => binding it explicitly.
+				form.parameters.add(new UIELBinding("#{evaluationBean.studentViewResults}", tempValue)); //$NON-NLS-1$
+			}
 			
 			//If same view date all then show a label else show a text box.
 			if ( sameViewDateForAll ) {
@@ -187,11 +197,20 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		if ( tempValue == null || tempValue.booleanValue() ) {
 
 			UIBranchContainer showResultsToInst = UIBranchContainer.make(form, "showResultsToInst:");	//$NON-NLS-1$
-			UIOutput.make(showResultsToInst, "eval-results-viewable-instructors", 						//$NON-NLS-1$
-					messageLocator.getMessage("evalsettings.results.viewable.instructors"));  			//$NON-NLS-1$
-			UIBoundBoolean instViewCheckbox = UIBoundBoolean.make(showResultsToInst, 
-					"instructorViewResults", "#{evaluationBean.instructorViewResults}", tempValue); 	//$NON-NLS-1$ //$NON-NLS-2$
-			setDisabledAttribute(tempValue, instViewCheckbox);
+			UIOutput.make(showResultsToInst, "eval-results-viewable-instructors", messageLocator.getMessage("evalsettings.results.viewable.instructors")); //$NON-NLS-1$ //$NON-NLS-2$
+			
+			//If system setting was null implies normal checkbox. If it was TRUE then a disabled selected checkbox 
+			if (tempValue == null) {
+				UIBoundBoolean.make(showResultsToInst, "instructorViewResults", "#{evaluationBean.instructorViewResults}", tempValue); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			else {
+				//Display only (disabled) and selected check box 
+				UIBoundBoolean instViewCheckbox = UIBoundBoolean.make(showResultsToInst, "instructorViewResults", tempValue); //$NON-NLS-1$ 
+				setDisabledAttribute(instViewCheckbox);
+
+				// As we have disabled the check box => RSF will not bind the value => binding it explicitly.
+				form.parameters.add(new UIELBinding("#{evaluationBean.instructorViewResults}", tempValue)); //$NON-NLS-1$
+			}
 
 			//If same view date all then show a label else show a text box.
 			if ( sameViewDateForAll ) {
@@ -222,11 +241,21 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 
 			showStudentCompletionHeader = true;
 			UIBranchContainer showBlankQuestionAllowedToStut = UIBranchContainer.make(form, "showBlankQuestionAllowedToStut:"); //$NON-NLS-1$
-			UIOutput.make(showBlankQuestionAllowedToStut, "blank-responses-allowed-desc", messageLocator.getMessage("evalsettings.blank.responses.allowed.desc"));		 //$NON-NLS-1$ //$NON-NLS-2$
-			UIOutput.make(showBlankQuestionAllowedToStut, "blank-responses-allowed-note", messageLocator.getMessage("evalsettings.blank.responses.allowed.note"));	 //$NON-NLS-1$ //$NON-NLS-2$
-			UIBoundBoolean stuLeaveUnanswered = UIBoundBoolean.make(showBlankQuestionAllowedToStut, 
-					"blankResponsesAllowed", "#{evaluationBean.eval.blankResponsesAllowed}", tempValue); //$NON-NLS-1$ //$NON-NLS-2$
-			setDisabledAttribute(tempValue, stuLeaveUnanswered);
+			UIOutput.make(showBlankQuestionAllowedToStut, "blank-responses-allowed-desc", messageLocator.getMessage("evalsettings.blank.responses.allowed.desc")); //$NON-NLS-1$ //$NON-NLS-2$
+			UIOutput.make(showBlankQuestionAllowedToStut, "blank-responses-allowed-note", messageLocator.getMessage("evalsettings.blank.responses.allowed.note")); //$NON-NLS-1$ //$NON-NLS-2$
+			
+			//If system setting was null implies normal checkbox. If it was TRUE then a disabled selected checkbox 
+			if (tempValue == null) {
+				UIBoundBoolean.make(showBlankQuestionAllowedToStut, "blankResponsesAllowed", "#{evaluationBean.eval.blankResponsesAllowed}", tempValue); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			else {
+				//Display only (disabled) and selected check box 
+				UIBoundBoolean stuLeaveUnanswered = UIBoundBoolean.make(showBlankQuestionAllowedToStut, "blankResponsesAllowed", tempValue); //$NON-NLS-1$
+				setDisabledAttribute(stuLeaveUnanswered);
+
+				// As we have disabled the check box => RSF will not bind the value => binding it explicitly.
+				form.parameters.add(new UIELBinding("#{evaluationBean.eval.blankResponsesAllowed}", tempValue)); //$NON-NLS-1$
+			}
 		}
 
 		/*
@@ -241,9 +270,19 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 			UIBranchContainer showModifyResponsesAllowedToStu = UIBranchContainer.make(form, "showModifyResponsesAllowedToStu:"); //$NON-NLS-1$
 			UIOutput.make(showModifyResponsesAllowedToStu, "modify-responses-allowed-desc", messageLocator.getMessage("evalsettings.modify.responses.allowed.desc"));	 //$NON-NLS-1$ //$NON-NLS-2$
 			UIOutput.make(showModifyResponsesAllowedToStu, "modify-responses-allowed-note", messageLocator.getMessage("evalsettings.modify.responses.allowed.note"));	 //$NON-NLS-1$ //$NON-NLS-2$
-			UIBoundBoolean stuModifyResponses = UIBoundBoolean.make(showModifyResponsesAllowedToStu, 
-					"modifyResponsesAllowed", "#{evaluationBean.eval.modifyResponsesAllowed}", tempValue); //$NON-NLS-1$ //$NON-NLS-2$
-			setDisabledAttribute(tempValue, stuModifyResponses);
+			
+			//If system setting was null implies normal checkbox. If it was TRUE then a disabled selected checkbox 
+			if (tempValue == null) {
+				UIBoundBoolean.make(showModifyResponsesAllowedToStu, "modifyResponsesAllowed", "#{evaluationBean.eval.modifyResponsesAllowed}", tempValue); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			else {
+				//Display only (disabled) and selected check box 
+				UIBoundBoolean stuModifyResponses = UIBoundBoolean.make(showModifyResponsesAllowedToStu, "modifyResponsesAllowed", tempValue); //$NON-NLS-1$
+				setDisabledAttribute(stuModifyResponses);
+
+				// As we have disabled the check box => RSF will not bind the value => binding it explicitly.
+				form.parameters.add(new UIELBinding("#{evaluationBean.eval.modifyResponsesAllowed}", tempValue)); //$NON-NLS-1$
+			}
 		}
 		
 		//This options are commented for some time.
@@ -298,15 +337,27 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		else {
 			UIBranchContainer showInstUseFromAboveLabel = UIBranchContainer.make(form, "showInstUseFromAboveLabel:"); //$NON-NLS-1$
 			String instUseFromAboveValue = (String) settings.get(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE);
+			String instUseFromAboveLabel;
 			
 			if ( (EvalConstants.INSTRUCTOR_OPT_IN).equals(instUseFromAboveValue) )
-				instUseFromAboveValue = messageLocator.getMessage("evalsettings.instructors.label.opt.in"); //$NON-NLS-1$ 
+				instUseFromAboveLabel = messageLocator.getMessage("evalsettings.instructors.label.opt.in"); //$NON-NLS-1$ 
 			else if ( (EvalConstants.INSTRUCTOR_OPT_OUT).equals(instUseFromAboveValue) )
-				instUseFromAboveValue = messageLocator.getMessage("evalsettings.instructors.label.opt.out"); //$NON-NLS-1$ 
+				instUseFromAboveLabel = messageLocator.getMessage("evalsettings.instructors.label.opt.out"); //$NON-NLS-1$ 
 			else
-				instUseFromAboveValue = messageLocator.getMessage("evalsettings.instructors.label.required"); //$NON-NLS-1$ 
+				instUseFromAboveLabel = messageLocator.getMessage("evalsettings.instructors.label.required"); //$NON-NLS-1$ 
 				
-			UIOutput.make(showInstUseFromAboveLabel, "instUseFromAboveValue", instUseFromAboveValue); //$NON-NLS-1$ 
+			/*
+			 * Displaying the label corresponding to INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE 
+			 * value set as system property. 
+			 */
+			UIOutput.make(showInstUseFromAboveLabel, "instUseFromAboveLabel", instUseFromAboveLabel); //$NON-NLS-1$ 
+
+			/*
+			 * Doing the binding of this INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE 
+			 * value so that it can be saved in the database 
+			 */
+			form.parameters.add(new UIELBinding("#{evaluationBean.eval.instructorOpt}", //$NON-NLS-1$ 
+					instUseFromAboveValue)); 
 		}
 			
 		
@@ -365,13 +416,11 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		return i;
 	}
 	
-	// If the value is true then make the checkbox disabled
-	private void setDisabledAttribute(Boolean tempValue, UIBoundBoolean stuViewCheckbox) {
-		if (tempValue != null) {
-			Map attrmap = new HashMap();
-			attrmap.put("disabled", "true");
-			stuViewCheckbox.decorators = new DecoratorList(new UIFreeAttributeDecorator(attrmap)); 
-		}
+	// Make the checkbox disabled
+	private void setDisabledAttribute(UIBoundBoolean checkbox) {
+		Map attrmap = new HashMap();
+		attrmap.put("disabled", "true");
+		checkbox.decorators = new DecoratorList(new UIFreeAttributeDecorator(attrmap)); 
 	}
 	
 }
