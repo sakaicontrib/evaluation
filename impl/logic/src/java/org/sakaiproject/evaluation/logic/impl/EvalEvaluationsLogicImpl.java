@@ -38,7 +38,6 @@ import org.sakaiproject.evaluation.model.EvalAssignContext;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalTemplate;
-import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.utils.EvalUtils;
 import org.springframework.aop.framework.ProxyFactoryBean;
@@ -48,10 +47,6 @@ import org.springframework.aop.target.SingletonTargetSource;
  * Implementation for EvalEvaluationsLogic
  * (Note for developers - do not modify this without permission from the author)<br/>
  * 
- * TODO - Need a way to make sure the states of the evaluation are adjusted correctly
- * (using some kind of hourly check or maybe a scheduler), also need to put in the logic
- * to handle locking and unlocking correctly
- *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
@@ -79,24 +74,24 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 		log.debug("Init");
 	}
 
-    // Non-API method used from interceptor.
-    // Semantics - throws exception on forbidden operation.
+	// Non-API method used from interceptor.
+	// Semantics - throws exception on forbidden operation.
 	public void modifyEvaluation(EvalEvaluation evaluation, String method) {
-      if (method.startsWith("set")) {
-        String userId = external.getCurrentUserId();
-        // check the user control permissions
-        if (! canUserControlEvaluation(userId, evaluation) ) {
-            throw new SecurityException("User ("+userId+") attempted to update existing evaluation ("+evaluation.getId()+") without permissions");
-        }
-        String state = EvalUtils.getEvaluationState(evaluation);        
-        
-        String property = Character.toLowerCase(method.charAt(3)) + method.substring(4);
-        if (!EvaluationModificationRegistry.isPermittedModification(state, property)) {
-          throw new IllegalArgumentException("Cannot change state of evaluation with " +
-              method + " when it is in state " + state);
-        }
-      }
-    }
+		if (method.startsWith("set")) {
+			String userId = external.getCurrentUserId();
+			// check the user control permissions
+			if (! canUserControlEvaluation(userId, evaluation) ) {
+				throw new SecurityException("User ("+userId+") attempted to update existing evaluation ("+evaluation.getId()+") without permissions");
+			}
+			String state = EvalUtils.getEvaluationState(evaluation);        
+
+			String property = Character.toLowerCase(method.charAt(3)) + method.substring(4);
+			if (!EvaluationModificationRegistry.isPermittedModification(state, property)) {
+				throw new IllegalArgumentException("Cannot change state of evaluation with " +
+						method + " when it is in state " + state);
+			}
+		}
+	}
 	// EVALUATIONS
 
 	/* (non-Javadoc)
@@ -135,15 +130,15 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 			if (evaluation.getStartDate().before(today)) {
 				throw new IllegalArgumentException(
 						"start date (" + evaluation.getStartDate() +
-						") cannot occur in the past for new evaluations");
+				") cannot occur in the past for new evaluations");
 			} else if (evaluation.getDueDate().before(today)) {
 				throw new IllegalArgumentException(
 						"due date (" + evaluation.getDueDate() +
-						") cannot occur in the past for new evaluations");
+				") cannot occur in the past for new evaluations");
 			} else if (evaluation.getStopDate().before(today)) {
 				throw new IllegalArgumentException(
 						"stop date (" + evaluation.getStopDate() +
-						") cannot occur in the past for new evaluations");
+				") cannot occur in the past for new evaluations");
 			}
 
 			// make sure the state is set correctly
@@ -155,11 +150,11 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 			}
 
 		} else { // updating existing evaluation
-		  if (evaluation.getClass() == EvalEvaluation.class) {
-            throw new IllegalStateException("Attempt to save non-persistent instance of Evaluation with id " + evaluation.getId() + 
-                ": to continue working with this entity you must refetch it using getEvaluationById");      
-          }
-          // All other checks have been moved to interceptor
+			if (evaluation.getClass() == EvalEvaluation.class) {
+				throw new IllegalStateException("Attempt to save non-persistent instance of Evaluation with id " + evaluation.getId() + 
+				": to continue working with this entity you must refetch it using getEvaluationById");      
+			}
+			// All other checks have been moved to interceptor
 		}
 
 		// make sure we are not using a blank template here
@@ -167,12 +162,6 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 				evaluation.getTemplate().getTemplateItems() == null ||
 				evaluation.getTemplate().getTemplateItems().size() <= 0) {
 			throw new IllegalArgumentException("Evaluations must include a template and the template must have at least one item in it");
-		}
-		log.error("AZ: template ("+evaluation.getTemplate().getId()+","+evaluation.getTemplate().getTitle()+"), templateitems count: " + evaluation.getTemplate().getTemplateItems().size() + ":" 
-				+ evaluation.getTemplate().getTemplateItems());
-		for (Iterator iter = evaluation.getTemplate().getTemplateItems().iterator(); iter.hasNext();) {
-			EvalTemplateItem eti = (EvalTemplateItem) iter.next();
-			log.error("AZ2: templateItem: " + eti.getItem().getId() + "," + eti.getItem().getItemText());
 		}
 
 		// fill in any default values and nulls here
@@ -190,23 +179,28 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 			evaluation.setBlankResponsesAllowed( systemBlankResponses );
 		}
 
-		// TODO - update the states of templates used in this evaluation to locked when this is locked
-
 		dao.save(evaluation);
-		log.info("User ("+userId+") saved evaluation ("+evaluation.getId()+"), title: " + evaluation.getTitle());	}
+		log.info("User ("+userId+") saved evaluation ("+evaluation.getId()+"), title: " + evaluation.getTitle());
+
+		if (evaluation.getLocked().booleanValue()) {
+			// lock evaluation and associated template
+			log.info("Locking evaluation ("+evaluation.getId()+") and associated template ("+evaluation.getTemplate().getId()+")");
+			dao.lockEvaluation(evaluation);			
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see edu.vt.sakai.evaluation.logic.EvalEvaluationsLogic#deleteEvaluation(java.lang.Long, java.lang.String)
 	 */
 	public void deleteEvaluation(Long evaluationId, String userId) {
 		log.debug("evalId: " + evaluationId + ",userId: " + userId);
-		EvalEvaluation eval = (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);
-		if (eval == null) {
+		EvalEvaluation evaluation = (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);
+		if (evaluation == null) {
 			log.warn("Cannot find evaluation to delete with id: " + evaluationId);
 			return;
 		}
 
-		if ( canUserRemoveEval(userId, eval) ) {
+		if ( canUserRemoveEval(userId, evaluation) ) {
 			Set[] entitySets = new HashSet[3];
 			// remove associated AssignContexts
 			List acs = dao.findByProperties(EvalAssignContext.class, 
@@ -218,26 +212,26 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 			// remove associated unused email templates
 			Set emailSet = new HashSet();
 			entitySets[1] = emailSet;
-			if (eval.getAvailableEmailTemplate() != null) {
-				if (eval.getAvailableEmailTemplate().getDefaultType() == null) {
+			if (evaluation.getAvailableEmailTemplate() != null) {
+				if (evaluation.getAvailableEmailTemplate().getDefaultType() == null) {
 					// only remove non-default templates
-					Long emailTemplateId = eval.getAvailableEmailTemplate().getId();
+					Long emailTemplateId = evaluation.getAvailableEmailTemplate().getId();
 					if ( dao.countByProperties(EvalEvaluation.class, 
 							new String[] {"availableEmailTemplate.id"}, 
 							new Object[] {emailTemplateId}) <= 1 ) {
 						// template was only used in this evaluation
-						emailSet.add( eval.getAvailableEmailTemplate() );
+						emailSet.add( evaluation.getAvailableEmailTemplate() );
 					}
 				}
 			}
-			if (eval.getReminderEmailTemplate() != null) {
-				if (eval.getReminderEmailTemplate().getDefaultType() == null) {
-					Long emailTemplateId = eval.getReminderEmailTemplate().getId();
+			if (evaluation.getReminderEmailTemplate() != null) {
+				if (evaluation.getReminderEmailTemplate().getDefaultType() == null) {
+					Long emailTemplateId = evaluation.getReminderEmailTemplate().getId();
 					if ( dao.countByProperties(EvalEvaluation.class, 
 							new String[] {"reminderEmailTemplate.id"}, 
 							new Object[] {emailTemplateId}) <= 1 ) {
 						// template was only used in this evaluation
-						emailSet.add( eval.getReminderEmailTemplate() );
+						emailSet.add( evaluation.getReminderEmailTemplate() );
 					}
 				}
 			}
@@ -245,15 +239,18 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 			// add eval to a set to be removed
 			Set evalSet = new HashSet();
 			entitySets[2] = evalSet;
-			evalSet.add(eval);
+			evalSet.add(evaluation);
 
-			// TODO - update the states of templates used in this evaluation to unlocked (if not used elsewhere)
-			log.error("Locking templates not implemented yet");
+			if (evaluation.getLocked().booleanValue()) {
+				// unlock evaluation and associated template
+				log.info("Unlocking associated template ("+evaluation.getTemplate().getId()+") for eval ("+evaluation.getId()+")");
+				dao.lockTemplate(evaluation.getTemplate(), Boolean.FALSE);
+			}
 
 			// remove the evaluation and related items in one transaction
 			dao.deleteMixedSet(entitySets);
 			//dao.delete(eval);
-			log.info("User ("+userId+") removed evaluation ("+evaluationId+"), title: " + eval.getTitle());
+			log.info("User ("+userId+") removed evaluation ("+evaluationId+"), title: " + evaluation.getTitle());
 			return;
 		}
 
@@ -267,22 +264,10 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 	public EvalEvaluation getEvaluationById(Long evaluationId) {
 		log.debug("evalId: " + evaluationId);
 		EvalEvaluation togo = (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);
-        return wrapEvaluationProxy(togo);
+		return wrapEvaluationProxy(togo);
 	}
 
-	private EvalEvaluation wrapEvaluationProxy(EvalEvaluation togo) {
-      if (togo != null && togo.getId() != null) {
-        ProxyFactoryBean pfb = new ProxyFactoryBean();
-        pfb.setProxyTargetClass(true);
-        pfb.setTargetSource(new SingletonTargetSource(togo));
-        pfb.addAdvice(new EvaluationInterceptor(this));
-        return (EvalEvaluation) pfb.getObject();
-      }
-      else return togo;
-  }
-
-
-  /* (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see edu.vt.sakai.evaluation.logic.EvalEvaluationsLogic#getEvaluationsByTemplateId(java.lang.Long)
 	 */
 	public List getEvaluationsByTemplateId(Long templateId) {
@@ -371,12 +356,12 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 				EvalEvaluation eval = (EvalEvaluation) it.next();
 				evalIds[j] = (Long) eval.getId();
 			}
-	
+
 			// now get the responses for all the returned evals
 			List l = dao.findByProperties(EvalResponse.class, 
 					new String[] {"owner", "evaluation.id"}, 
 					new Object[] {userId, evalIds});
-	
+
 			// Iterate through and remove the evals this user already took
 			for (int i = 0; i < l.size(); i++) {
 				EvalResponse er = (EvalResponse) l.get(i);
@@ -524,7 +509,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 		// check the user permissions
 		if ( ! external.isUserAdmin(userId) && 
 				! external.isUserAllowedInContext(userId, 
-							EvalConstants.PERM_TAKE_EVALUATION, context) ) {
+						EvalConstants.PERM_TAKE_EVALUATION, context) ) {
 			log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") without permission");
 			return false;
 		}
@@ -636,6 +621,24 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 			}
 		}
 		return state;
+	}
+
+
+	/**
+	 * Wrap the persistent object so that the interceptor can track it
+	 * 
+	 * @param togo
+	 * @return
+	 */
+	private EvalEvaluation wrapEvaluationProxy(EvalEvaluation togo) {
+		if (togo != null && togo.getId() != null) {
+			ProxyFactoryBean pfb = new ProxyFactoryBean();
+			pfb.setProxyTargetClass(true);
+			pfb.setTargetSource(new SingletonTargetSource(togo));
+			pfb.addAdvice(new EvaluationInterceptor(this));
+			return (EvalEvaluation) pfb.getObject();
+		}
+		else return togo;
 	}
 
 }

@@ -27,7 +27,14 @@ import org.sakaiproject.genericdao.api.CompleteGenericDao;
 /**
  * This is the more specific Evaluation data access interface,
  * it should contain specific DAO methods, the generic ones
- * are included from the GenericDao already
+ * are included from the GenericDao already<br/>
+ * <br/>
+ * <b>LOCKING methods note:</b><br/>
+ * The locking logic is designed to make it easier to know if an entity should or should not be changed or removed<br/> 
+ * Locked entities can never be removed via the APIs and should not be removed with direct access to the DB<br/>
+ * Locking handled as indicated here:<br/>
+ * http://bugs.sakaiproject.org/confluence/display/EVALSYS/Evaluation+Implementation
+ * 
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */

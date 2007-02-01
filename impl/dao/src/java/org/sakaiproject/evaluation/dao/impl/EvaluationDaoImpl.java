@@ -42,7 +42,8 @@ import org.springframework.dao.DataAccessException;
 
 
 /**
- * Implementations for any methods from the EvaluationDao interface
+ * Implementations for any methods from the EvaluationDao interface<br/>
+ * Includes locking method implementations
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
