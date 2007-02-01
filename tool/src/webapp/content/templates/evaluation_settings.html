@@ -81,7 +81,7 @@
 				<td width="5%">&nbsp;</td>
 				<td width="8%" align="left" valign="top" nowrap="Y"><span rsf:id="eval-view-date-header">View Date:</span>&nbsp;</td>
 				<td width="10%" align="left" valign="top">
-					<input type="text" name="view_date" rsf:id="viewDate" value="MM/DD/YYYY" size="12" maxlength="10"/>
+					<input type="text" name="view_date" rsf:id="viewDate" value="MM/DD/YYYY" size="12" maxlength="10" onChange="javascript:updateStuInstDates();"/>
 				</td>
 				<td width="4%" align="center" valign="top">
 					<img src="#" rsf:id="calenderImage" />
@@ -98,10 +98,10 @@
 			</tr>
 			<tr>
 				<td width="2%">&nbsp;</td>
-				<td width="30%" align="left" valign="top" nowrap="Y">
+				<td width="50%" align="left" valign="top" nowrap="Y">
 					<input type="checkbox" name="results_private" rsf:id="resultsPrivate"/>&nbsp;<span rsf:id="eval-results-viewable-private-start">Private</span> (<span rsf:id="eval-results-viewable-private-middle">owner only</span> - <label name="userInfo" rsf:id="userInfo"/>)
 				</td>
-				<td width="68%" align="right" valign="top">
+				<td width="48%" align="right" valign="top">
 					<I><b><span rsf:id="private-warning-note">Note:</span></b> <span rsf:id="private-warning-desc">Checking the private box overrides settings below</span></I>
 				</td>
 			</tr>

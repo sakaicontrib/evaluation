@@ -398,51 +398,62 @@ public class EvaluationBean {
 
 		// need to load the template here before we try to save it because it is stale -AZ
 		eval.setTemplate( templatesLogic.getTemplateById( eval.getTemplate().getId() ) );
-		/*
-		 * Email template section
-		 */
+
+		// Email template section
 		EvalEmailTemplate availableTemplate,reminderTemplate;
 
 		//Save email available template
-		//availableTemplate = logic.getEmailTemplate(true);
 		availableTemplate = emailsLogic.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
 		
 		if(emailAvailableTxt==null || emailAvailableTxt.equals(availableTemplate.getMessage())){
 			//do nothing as the template has not been modified.
 		} else {
-			availableTemplate = new EvalEmailTemplate(new Date(),
-					external.getCurrentUserId(), emailAvailableTxt);
-			//logic.saveEmailTemplate(availableTemplate, external.getCurrentUserId());
+			availableTemplate = new EvalEmailTemplate(new Date(), external.getCurrentUserId(), emailAvailableTxt);
 			emailsLogic.saveEmailTemplate(availableTemplate, external.getCurrentUserId());
 			
 		}
 		eval.setAvailableEmailTemplate(availableTemplate);
 		
 		//Save the email reminder template
-		//reminderTemplate = logic.getEmailTemplate(false);
 		reminderTemplate = emailsLogic.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_REMINDER);
 		
 		if(emailReminderTxt==null || emailReminderTxt.equals(reminderTemplate.getMessage())){
 			//do nothing as the template has not been modified.
 		}else {
-			reminderTemplate = new EvalEmailTemplate(new Date(),
-					external.getCurrentUserId(), emailReminderTxt);
-			//logic.saveEmailTemplate(reminderTemplate, logic.getCurrentUserId());
+			reminderTemplate = new EvalEmailTemplate(new Date(), external.getCurrentUserId(), emailReminderTxt);
 			emailsLogic.saveEmailTemplate(reminderTemplate, external.getCurrentUserId());
 		}
 		eval.setReminderEmailTemplate(reminderTemplate);
 	
-
-		/*
-		 * The main evaluation section with all the settings.
-		 */
+		//The main evaluation section with all the settings.
 		eval.setLastModified(new Date());
 		eval.setOwner(external.getCurrentUserId());
 		if(this.startDate!=null)eval.setStartDate(changeStringToDate(this.startDate));
 		if(this.dueDate!=null)eval.setDueDate(changeStringToDate(this.dueDate));
 		if(this.viewDate!=null)eval.setViewDate(changeStringToDate(this.viewDate));
-		if(this.studentsDate!=null)eval.setStudentsDate(changeStringToDate(this.studentsDate));
-		if(this.instructorsDate!=null)eval.setInstructorsDate(changeStringToDate(this.instructorsDate));
+
+		/*
+		 * If "EVAL_USE_SAME_VIEW_DATES" system setting (admin setting) flag is set 
+		 * as true then don't look for student and instructor dates, instead make them
+		 * same as admin view date. If not then get the student and instructor view dates.
+		 */ 
+		boolean sameViewDateForAll = ((Boolean) settings.get(EvalSettings.EVAL_USE_SAME_VIEW_DATES)).booleanValue();
+		if (sameViewDateForAll) {
+			
+			if (studentViewResults != null && studentViewResults.booleanValue())
+				eval.setStudentsDate(changeStringToDate(this.viewDate));
+			
+			if (instructorViewResults != null && instructorViewResults.booleanValue())
+				eval.setInstructorsDate(changeStringToDate(this.viewDate));
+		}
+		else {
+			
+			if (studentViewResults != null && studentViewResults.booleanValue())
+				eval.setStudentsDate(changeStringToDate(this.studentsDate));
+			
+			if (instructorViewResults != null && instructorViewResults.booleanValue())
+				eval.setInstructorsDate(changeStringToDate(this.instructorsDate));
+		}
 
 		//This was needed by columbia so on HTML page not shown. Here making equal to due date. 
 		eval.setStopDate(eval.getDueDate());
@@ -466,10 +477,10 @@ public class EvaluationBean {
 		/*
 		 * check if start date is the same as today's date, set startDate as today's date & time, 
 		 * as when we parse the string to a date, the time filed by default is zero
-		 * */
+		 */
 		checkEvalStartDate(eval);
 
-		//See the commend with the method at the end of this class.
+		//See the comment with the method at the end of this class.
 		checkDueDate();
 		
 		evalsLogic.saveEvaluation(eval, external.getCurrentUserId());
@@ -484,7 +495,6 @@ public class EvaluationBean {
 
 		// now reset the eval item here
 		eval = new EvalEvaluation();
-
 	    return ControlPanelProducer.VIEW_ID;
 	}
 	
