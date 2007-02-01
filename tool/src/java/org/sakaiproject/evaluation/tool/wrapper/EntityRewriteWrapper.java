@@ -6,6 +6,7 @@ package org.sakaiproject.evaluation.tool.wrapper;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.tool.TemplateBeanLocator;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
+import org.sakaiproject.evaluation.tool.producers.ModifyBlockProducer;
 import org.sakaiproject.evaluation.tool.producers.ModifyEssayProducer;
 import org.sakaiproject.evaluation.tool.producers.ModifyHeaderProducer;
 import org.sakaiproject.evaluation.tool.producers.ModifyScaledProducer;
@@ -60,6 +61,7 @@ public class EntityRewriteWrapper implements RunnableInvoker {
         || incoming.viewID.equals(ModifyScaledProducer.VIEW_ID)
         || incoming.viewID.equals(ModifyHeaderProducer.VIEW_ID)
         || incoming.viewID.equals(ModifyEssayProducer.VIEW_ID)
+        || incoming.viewID.equals(ModifyBlockProducer.VIEW_ID)
         || incoming.viewID.equals(RemoveQuestionProducer.VIEW_ID)) {
       EvalViewParameters ineval = (EvalViewParameters) incoming;
       if (ineval.templateId != null) {

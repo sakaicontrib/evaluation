@@ -27,6 +27,7 @@ import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 /**
  * This request-scope bean handles item creation and modification.
@@ -181,6 +182,23 @@ public class ItemsBean {
 		if(scaleId!=null)templateItem.getItem().setScale(scalesLogic.getScaleById(scaleId));
 		itemsLogic.saveItem(templateItem.getItem(), external.getCurrentUserId());
 		itemsLogic.saveTemplateItem(templateItem, external.getCurrentUserId());
+		return "success";
+		}
+	
+	public String saveBlockItemAction(){
+	
+		if(idealColor != null && idealColor == Boolean.TRUE)
+			templateItem.setScaleDisplaySetting(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED);
+		else 
+			templateItem.setScaleDisplaySetting(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED);
+		templateItem.setBlockParent(Boolean.TRUE);
+		templateItem.getItem().setScaleDisplaySetting(templateItem.getScaleDisplaySetting());
+		templateItem.setTemplate(templatesLogic.getTemplateById(templateId));
+		templateItem.getItem().setSharing(templateItem.getTemplate().getSharing());
+		if(scaleId!=null)templateItem.getItem().setScale(scalesLogic.getScaleById(scaleId));
+		itemsLogic.saveItem(templateItem.getItem(), external.getCurrentUserId());
+		itemsLogic.saveTemplateItem(templateItem, external.getCurrentUserId());
+		//TODO: child items
 		return "success";
 		}
 	
