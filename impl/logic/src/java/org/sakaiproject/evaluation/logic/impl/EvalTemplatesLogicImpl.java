@@ -113,12 +113,15 @@ public class EvalTemplatesLogicImpl implements EvalTemplatesLogic {
 		}
 
 		if (checkUserControlTemplate(userId, template)) {
-			if (template.getLocked().booleanValue() == true) {
-				// TODO - add logic to lock associated items here
-				log.error("TODO - Locking associated items not implemented yet");
-			}
 			dao.save(template);
 			log.info("User ("+userId+") saved template ("+template.getId()+"), title: " + template.getTitle());
+
+			if (template.getLocked().booleanValue() == true) {
+				// lock template and associated items
+				log.info("Locking template ("+template.getId()+") and associated items");
+				dao.lockTemplate(template, Boolean.TRUE);
+			}
+
 			return;
 		}
 
@@ -144,8 +147,9 @@ public class EvalTemplatesLogicImpl implements EvalTemplatesLogic {
 
 		if (checkUserControlTemplate(userId, template)) {
 			if (template.getLocked().booleanValue() == true) {
-				// TODO - add logic to unlock associated items here
-				log.error("TODO - Unlocking locked items not implemented yet");
+				// unlock template and associated items
+				log.info("Unlocking template ("+template.getId()+") and associated items");
+				dao.lockTemplate(template, Boolean.FALSE);
 			}
 
 			if ( template.getTemplateItems().size() > 0 ) {

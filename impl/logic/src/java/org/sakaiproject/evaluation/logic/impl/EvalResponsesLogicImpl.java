@@ -177,12 +177,6 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
 				//checkAnswersValidForEval(response);
 			}
 
-			if (response.getEndTime() != null) {
-				// the response is complete
-				// TODO - add logic to lock associated evaluations here
-				log.error("TODO - Locking associated evaluations not implemented yet");
-			}
-
 			// save everything in one transaction
 			Set[] entitySets = new Set[2];
 
@@ -192,6 +186,12 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
 			entitySets[1] = response.getAnswers();
 
 			dao.saveMixedSet(entitySets);
+
+			if (response.getEndTime() != null) {
+				// the response is complete so lock evaluation
+				log.info("Locking evaluation ("+response.getEvaluation().getId()+") and associated entities");
+				dao.lockEvaluation(response.getEvaluation());
+			}
 
 			int answerCount = response.getAnswers() == null ? 0 : response.getAnswers().size();
 			log.info("User ("+userId+") saved response ("+response.getId()+"), context (" + 
