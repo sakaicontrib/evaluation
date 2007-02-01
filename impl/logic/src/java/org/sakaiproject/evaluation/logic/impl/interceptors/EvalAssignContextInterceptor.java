@@ -16,29 +16,37 @@ package org.sakaiproject.evaluation.logic.impl.interceptors;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.model.EvalAssignContext;
 
 
 /**
+ * This interceptor uses methods in the other logic APIs to enforce "modify"
+ * rules for persistent objects by doing checks whenever any method on the 
+ * intercepted object is accessed
  * 
- * @author Antranig Basman (so you should blame him mostly)
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class EvalAssignContextInterceptor implements MethodInterceptor {
-	private final Log log = LogFactory.getLog(getClass());
 
-	public Object invoke(MethodInvocation arg0) throws Throwable {
-		log.info("In the EvalAssignContextInterceptor");
-		EvalAssignContext target = (EvalAssignContext) arg0.getThis();
-		if (arg0.getMethod().getName().equals("setContext")) {
-			String newContext = (String)arg0.getArguments()[0];
-			if (! target.getContext().equals(newContext)) {
-				throw new IllegalArgumentException("Cannot update context ("+target.getContext()+
-						") for an existing AC, context ("+target.getContext()+")");
-			}
+	public Object invoke(MethodInvocation invocation) throws Throwable {
+		String method = invocation.getMethod().getName();
+		EvalAssignContext eac = (EvalAssignContext) invocation.getThis();
+		if (method.equals("equals")) {
+			return Boolean.valueOf(testEquals(eac, (EvalAssignContext) invocation.getArguments()[0]));
 		}
-		return arg0.proceed();
+		if (eac.getId() != null) {
+			// check if this eac can be modified in this way
+			//evalEvaluationsLogicImpl.modifyEvaluation(eval, invocation.getMethod().getName());
+		}
+		return invocation.proceed();
 	}
+
+	private boolean testEquals(EvalAssignContext i1, EvalAssignContext i2) {
+		if (i1.getClass() == EvalAssignContext.class ^ i2.getClass() == EvalAssignContext.class) {
+			throw new IllegalArgumentException("Illegal comparison of EvalAssignContext - " +
+			" can only compare persistent entities with other persistent entities");
+		}
+		return i1.getId().equals(i2.getId());
+	}
+
 }
