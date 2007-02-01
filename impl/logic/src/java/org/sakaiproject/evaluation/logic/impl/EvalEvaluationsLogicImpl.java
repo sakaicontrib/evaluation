@@ -31,7 +31,6 @@ import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.impl.interceptors.EvaluationInterceptor;
 import org.sakaiproject.evaluation.logic.impl.interceptors.EvaluationModificationRegistry;
 import org.sakaiproject.evaluation.logic.model.Context;
 import org.sakaiproject.evaluation.model.EvalAssignContext;
@@ -40,8 +39,6 @@ import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.utils.EvalUtils;
-import org.springframework.aop.framework.ProxyFactoryBean;
-import org.springframework.aop.target.SingletonTargetSource;
 
 /**
  * Implementation for EvalEvaluationsLogic
@@ -166,6 +163,11 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 				throw new IllegalStateException("Attempt to save non-persistent instance of Evaluation with id " + evaluation.getId() + 
 				": to continue working with this entity you must refetch it using getEvaluationById");      
 			}
+
+			if (! canUserControlEvaluation(userId, evaluation) ) {
+				throw new SecurityException("User ("+userId+") attempted to update existing evaluation ("+evaluation.getId()+") without permissions");
+			}
+
 			// All other checks have been moved to interceptor
 		}
 
@@ -275,8 +277,10 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 	 */
 	public EvalEvaluation getEvaluationById(Long evaluationId) {
 		log.debug("evalId: " + evaluationId);
-		EvalEvaluation togo = (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);
-		return wrapEvaluationProxy(togo);
+//		 TODO - Interceptor strategy is hopeless, removing for now -AZ
+//		EvalEvaluation togo = (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);
+//		return wrapEvaluationProxy(togo);
+		return (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);
 	}
 
 	/* (non-Javadoc)
@@ -642,15 +646,16 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 	 * @param togo
 	 * @return
 	 */
-	private EvalEvaluation wrapEvaluationProxy(EvalEvaluation togo) {
-		if (togo != null && togo.getId() != null) {
-			ProxyFactoryBean pfb = new ProxyFactoryBean();
-			pfb.setProxyTargetClass(true);
-			pfb.setTargetSource(new SingletonTargetSource(togo));
-			pfb.addAdvice(new EvaluationInterceptor(this));
-			return (EvalEvaluation) pfb.getObject();
-		}
-		else return togo;
-	}
+// TODO - Interceptor strategy is hopeless, removing for now -AZ
+//	private EvalEvaluation wrapEvaluationProxy(EvalEvaluation togo) {
+//		if (togo != null && togo.getId() != null) {
+//			ProxyFactoryBean pfb = new ProxyFactoryBean();
+//			pfb.setProxyTargetClass(true);
+//			pfb.setTargetSource(new SingletonTargetSource(togo));
+//			pfb.addAdvice(new EvaluationInterceptor(this));
+//			return (EvalEvaluation) pfb.getObject();
+//		}
+//		else return togo;
+//	}
 
 }
