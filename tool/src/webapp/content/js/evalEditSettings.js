@@ -186,3 +186,15 @@
 			return true;
 		}
  	}
+ 	
+ 	function updateStuInstDates() {
+		var dateView = document.getElementById('viewDate');
+		var dateViewStu = document.getElementById('showResultsToStudents:::showResultsToStuDate:::studentsDate');
+		var dateViewInst = document.getElementById('showResultsToInst:::showResultsToInstDate:::instructorsDate');
+		
+		if (dateViewStu != null) 
+			dateViewStu.value = dateView.value;
+			
+		if (dateViewInst != null) 
+			dateViewInst.value = dateView.value;
+ 	} 	
