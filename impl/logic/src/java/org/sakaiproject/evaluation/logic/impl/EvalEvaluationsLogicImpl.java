@@ -74,24 +74,36 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 		log.debug("Init");
 	}
 
-	// Non-API method used from interceptor.
-	// Semantics - throws exception on forbidden operation.
-	public void modifyEvaluation(EvalEvaluation evaluation, String method) {
-		if (method.startsWith("set")) {
-			String userId = external.getCurrentUserId();
-			// check the user control permissions
-			if (! canUserControlEvaluation(userId, evaluation) ) {
-				throw new SecurityException("User ("+userId+") attempted to update existing evaluation ("+evaluation.getId()+") without permissions");
-			}
-			String state = EvalUtils.getEvaluationState(evaluation);        
 
+	/**
+	 * Non-API method used from interceptor<br/>
+	 * Semantics - throws exception on forbidden operation<br/>
+	 * Do NOT use this method outside the logic layer or even outside the interceptor!
+	 * 
+	 * @param evaluation an evaluation persistent object
+	 * @param method a method being called on the evaluation persistent object
+	 */
+	public void modifyEvaluation(EvalEvaluation evaluation, String method) {
+		// we only care to do these checks when object is modified (set is called)
+		if (method.startsWith("set")) {
+			String state = EvalUtils.getEvaluationState(evaluation);        
+			// strip off the "set" part and fix case at beginning to get the name of the property we are setting
 			String property = Character.toLowerCase(method.charAt(3)) + method.substring(4);
+			// check if this property can be changed while evaluation is in this state
 			if (!EvaluationModificationRegistry.isPermittedModification(state, property)) {
 				throw new IllegalArgumentException("Cannot change state of evaluation with " +
 						method + " when it is in state " + state);
 			}
+
+			// check the user control permissions
+			// This check is more expensive than the others so we do those first -AZ
+			String userId = external.getCurrentUserId();
+			if (! canUserControlEvaluation(userId, evaluation) ) {
+				throw new SecurityException("User ("+userId+") attempted to update existing evaluation ("+evaluation.getId()+") without permissions");
+			}
 		}
 	}
+
 	// EVALUATIONS
 
 	/* (non-Javadoc)

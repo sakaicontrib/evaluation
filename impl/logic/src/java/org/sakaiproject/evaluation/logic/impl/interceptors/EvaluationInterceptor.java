@@ -9,6 +9,7 @@
  * 
  * Contributors:
  * Antranig Basman
+ * Aaron Zeckoski (aaronz@vt.edu)
  * 
  *****************************************************************************/
 
@@ -22,11 +23,12 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 
 /**
  * This interceptor uses methods in the other logic APIs to enforce "modify"
- * rules for persistent objects by doing checks whenever any method on the 
- * intercepted object is accessed (modifyEvaluation filters to only look at
- * set methods)
+ * rules for persistent evaluation objects by doing checks whenever any method on the 
+ * intercepted object is accessed
+ * (modifyEvaluation filters to only look at set methods)
  * 
  * @author Antranig Basman
+ * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class EvaluationInterceptor implements MethodInterceptor {
 	private EvalEvaluationsLogicImpl evalEvaluationsLogicImpl;
