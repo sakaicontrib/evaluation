@@ -186,8 +186,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 			//If same view date all then show a label else show a text box.
 			if ( sameViewDateForAll ) {
 				UIBranchContainer showResultsToStuLabel = UIBranchContainer.make(showResultsToStudents, "showResultsToStuLabel:"); 	//$NON-NLS-1$
-				UIOutput.make(showResultsToStuLabel, "eval-results-stu-inst-date-label", 											//$NON-NLS-1$ 
-						messageLocator.getMessage("evalsettings.results.stu.inst.date.label")); 									//$NON-NLS-1$
+				UIOutput.make(showResultsToStuLabel, "eval-results-stu-inst-date-label", messageLocator.getMessage("evalsettings.results.stu.inst.date.label")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			else {
 				UIBranchContainer showResultsToStuDate = UIBranchContainer.make(showResultsToStudents, "showResultsToStuDate:");	//$NON-NLS-1$
@@ -223,8 +222,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 			//If same view date all then show a label else show a text box.
 			if ( sameViewDateForAll ) {
 				UIBranchContainer showResultsToInstLabel = UIBranchContainer.make(showResultsToInst, "showResultsToInstLabel:"); 	//$NON-NLS-1$
-				UIOutput.make(showResultsToInstLabel, "eval-results-stu-inst-date-label", 											//$NON-NLS-1$
-						messageLocator.getMessage("evalsettings.results.stu.inst.date.label"));  									//$NON-NLS-1$
+				UIOutput.make(showResultsToInstLabel, "eval-results-stu-inst-date-label", messageLocator.getMessage("evalsettings.results.stu.inst.date.label")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			else {
 				UIBranchContainer showResultsToInstDate = UIBranchContainer.make(showResultsToInst, "showResultsToInstDate:"); 	//$NON-NLS-1$
@@ -313,61 +311,66 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 			UIOutput.make(showStudentCompletionDiv, "student-completion-settings-header", messageLocator.getMessage("evalsettings.student.completion.settings.header")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
-		UIOutput.make(form, "admin-settings-header", messageLocator.getMessage("evalsettings.admin.settings.header")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(form, "admin-settings-instructions", messageLocator.getMessage("evalsettings.admin.settings.instructions")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(form, "instructor-opt-desc", messageLocator.getMessage("evalsettings.instructor.opt.desc")); //$NON-NLS-1$ //$NON-NLS-2$
-		
 		/*
-		 * Non Javadoc comment.
+		 * Non-Javadoc comment.
+		 * If the person is an admin (any kind), then only we need to show
+		 * these instructor opt in/out settings.
+		 * 
 		 * If "EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE" is set as configurable 
 		 * i.e. null in the database then show the instructor opt select box.
 		 * Else just show the value as label. 
 		 */
-		if ( settings.get(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE) == null ) {
-
-			UIBranchContainer showInstUseFromAboveOptions = UIBranchContainer.make(form, "showInstUseFromAboveOptions:"); //$NON-NLS-1$
-			UISelect inst = UISelect.make(showInstUseFromAboveOptions, "instructorOpt"); //$NON-NLS-1$
-			inst.selection = new UIInput();
-			inst.selection.valuebinding = new ELReference("#{evaluationBean.eval.instructorOpt}"); //$NON-NLS-1$
-			UIBoundList instValues = new UIBoundList();
-			instValues.setValue(EvaluationConstant.INSTRUCTOR_OPT_VALUES);
-			inst.optionlist = instValues;
-			String[] instructorOptLabels = 
-			{
-				messageLocator.getMessage("evalsettings.instructors.label.opt.in"),
-				messageLocator.getMessage("evalsettings.instructors.label.opt.out"),
-				messageLocator.getMessage("evalsettings.instructors.label.required")
-			};
-			UIBoundList instNames = new UIBoundList();
-			instNames.setValue(instructorOptLabels);
-			inst.optionnames = instNames;
-		}
-		else {
-			UIBranchContainer showInstUseFromAboveLabel = UIBranchContainer.make(form, "showInstUseFromAboveLabel:"); //$NON-NLS-1$
-			String instUseFromAboveValue = (String) settings.get(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE);
-			String instUseFromAboveLabel;
+		if ( externalLogic.isUserAdmin(externalLogic.getCurrentUserId()) ) {
 			
-			if ( (EvalConstants.INSTRUCTOR_OPT_IN).equals(instUseFromAboveValue) )
-				instUseFromAboveLabel = messageLocator.getMessage("evalsettings.instructors.label.opt.in"); //$NON-NLS-1$ 
-			else if ( (EvalConstants.INSTRUCTOR_OPT_OUT).equals(instUseFromAboveValue) )
-				instUseFromAboveLabel = messageLocator.getMessage("evalsettings.instructors.label.opt.out"); //$NON-NLS-1$ 
-			else
-				instUseFromAboveLabel = messageLocator.getMessage("evalsettings.instructors.label.required"); //$NON-NLS-1$ 
+			UIBranchContainer showInstUseFromAbove = UIBranchContainer.make(form, "showInstUseFromAbove:"); //$NON-NLS-1$
+			UIOutput.make(showInstUseFromAbove, "admin-settings-header", messageLocator.getMessage("evalsettings.admin.settings.header")); //$NON-NLS-1$ //$NON-NLS-2$
+			UIOutput.make(showInstUseFromAbove, "admin-settings-instructions", messageLocator.getMessage("evalsettings.admin.settings.instructions")); //$NON-NLS-1$ //$NON-NLS-2$
+			UIOutput.make(showInstUseFromAbove, "instructor-opt-desc", messageLocator.getMessage("evalsettings.instructor.opt.desc")); //$NON-NLS-1$ //$NON-NLS-2$
+			
+			if ( settings.get(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE) == null ) {
+	
+				UIBranchContainer showInstUseFromAboveOptions = UIBranchContainer.make(showInstUseFromAbove, "showInstUseFromAboveOptions:"); //$NON-NLS-1$
+				UISelect inst = UISelect.make(showInstUseFromAboveOptions, "instructorOpt"); //$NON-NLS-1$
+				inst.selection = new UIInput();
+				inst.selection.valuebinding = new ELReference("#{evaluationBean.eval.instructorOpt}"); //$NON-NLS-1$
+				UIBoundList instValues = new UIBoundList();
+				instValues.setValue(EvaluationConstant.INSTRUCTOR_OPT_VALUES);
+				inst.optionlist = instValues;
+				String[] instructorOptLabels = 
+				{
+					messageLocator.getMessage("evalsettings.instructors.label.opt.in"),
+					messageLocator.getMessage("evalsettings.instructors.label.opt.out"),
+					messageLocator.getMessage("evalsettings.instructors.label.required")
+				};
+				UIBoundList instNames = new UIBoundList();
+				instNames.setValue(instructorOptLabels);
+				inst.optionnames = instNames;
+			}
+			else {
+				UIBranchContainer showInstUseFromAboveLabel = UIBranchContainer.make(showInstUseFromAbove, "showInstUseFromAboveLabel:"); //$NON-NLS-1$
+				String instUseFromAboveValue = (String) settings.get(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE);
+				String instUseFromAboveLabel;
 				
-			/*
-			 * Displaying the label corresponding to INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE 
-			 * value set as system property. 
-			 */
-			UIOutput.make(showInstUseFromAboveLabel, "instUseFromAboveLabel", instUseFromAboveLabel); //$NON-NLS-1$ 
-
-			/*
-			 * Doing the binding of this INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE 
-			 * value so that it can be saved in the database 
-			 */
-			form.parameters.add(new UIELBinding("#{evaluationBean.eval.instructorOpt}", //$NON-NLS-1$ 
-					instUseFromAboveValue)); 
-		}
-			
+				if ( (EvalConstants.INSTRUCTOR_OPT_IN).equals(instUseFromAboveValue) )
+					instUseFromAboveLabel = messageLocator.getMessage("evalsettings.instructors.label.opt.in"); //$NON-NLS-1$ 
+				else if ( (EvalConstants.INSTRUCTOR_OPT_OUT).equals(instUseFromAboveValue) )
+					instUseFromAboveLabel = messageLocator.getMessage("evalsettings.instructors.label.opt.out"); //$NON-NLS-1$ 
+				else
+					instUseFromAboveLabel = messageLocator.getMessage("evalsettings.instructors.label.required"); //$NON-NLS-1$ 
+					
+				/*
+				 * Displaying the label corresponding to INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE 
+				 * value set as system property. 
+				 */
+				UIOutput.make(showInstUseFromAboveLabel, "instUseFromAboveLabel", instUseFromAboveLabel); //$NON-NLS-1$ 
+	
+				/*
+				 * Doing the binding of this INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE 
+				 * value so that it can be saved in the database 
+				 */
+				form.parameters.add(new UIELBinding("#{evaluationBean.eval.instructorOpt}", instUseFromAboveValue)); //$NON-NLS-1$  
+			}
+		} //end of if check for admin
 		
 		UIOutput.make(form, "eval-reminder-settings-header", messageLocator.getMessage("evalsettings.reminder.settings.header")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIInternalLink.make(form, "emailAvailable_link", messageLocator.getMessage("evalsettings.available.mail.link"), new EvalViewParameters(PreviewEmailProducer.VIEW_ID, null, "available"));	 //$NON-NLS-1$ //$NON-NLS-2$
