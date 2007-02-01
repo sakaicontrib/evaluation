@@ -154,8 +154,8 @@
 	
 		
 		<tr>
-		<td width="20%" align="left">
-	    <input name="cancelBlockAction" rsf:id="cancelBlockAction" type="submit" value="Cancel" onclick="javascript:flag='cancel';"/> 
+		<td width="20%" align="left"> 
+		<input type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" rsf:id="cancel-button" />
 		</td>
 		<td align="right" width="80%">
 		<input name="previewBlockAction" rsf:id="previewBlockAction" type="submit" value="Preview item" onclick="javascript:flag='preview';"/> 

@@ -203,7 +203,6 @@
 
 	<bean
 		class="org.sakaiproject.evaluation.tool.producers.ModifyBlockProducer">
-		<property name="templateBean" ref="templateBean" />
 		<property name="messageLocator" ref="messageLocator" />
 	</bean>
 
