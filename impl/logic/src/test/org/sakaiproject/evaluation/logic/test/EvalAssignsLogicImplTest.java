@@ -239,6 +239,8 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 //			Assert.assertNotNull(e);
 //		}
 
+		// TODO - test that evaluation cannot be changed
+		
 	}
 
 	/**
