@@ -33,7 +33,7 @@
 				<i rsf:id="notifications-higher-level">An evaluation has been assigned from a higher level:</i>
 				<table cellspacing="0" cellpadding="0" width="99%">
 					<tr>
-						<td width="50%"><a href="#">Evaluation: Eval Title 1</a></td>
+						<td width="50%"><a href="evaluation_settings.html">Evaluation: Eval Title 1</a></td>
 						<td>Items you have added: 0</td>
 					</tr>
 					<tr>
@@ -61,7 +61,7 @@
 						<table cellspacing="0" cellpadding="0" width="99%">
 							<tr rsf:id="evaluationsCourseList:">
 								<td width="60%">
-									<a rsf:id="evaluationCourseLink" href="#">Course Title 1</a>
+									<a rsf:id="evaluationCourseLink" href="take_eval.html">Course Title 1</a>
 								</td>
 								<td width="40%" align="center" nowrap="true">
 									<span rsf:id="evaluationCourseStatus">Completed</span>
@@ -74,7 +74,7 @@
 
 			<div rsf:id="evalAdminBox:" class="summaryBox">			
 				<A rsf:id="evaladmin-title" href="control_panel.html" class="summaryHeader">Evaluations Admin</A>
-				<form rsf:id="evalAdminForm">
+				<form rsf:id="evalAdminForm" action="evaluation_settings.html">
 				<table cellspacing="0" cellpadding="0" width="99%" class="listHier">
 				<thead>
 					<tr>
@@ -86,12 +86,12 @@
 				<tbody>
 					<tr rsf:id="evalAdminList:">
 						<td align="left" width="50%">
-						<!--  <a rsf:id="evalAdminTitleLink" href="#">Evaluation Title 1</a> -->
+						<!--  <a rsf:id="evalAdminTitleLink" href="evaluation_settings.html">Evaluation Title 1</a> -->
 						<input rsf:id="evalAdminTitleLink_edit" value="Title" type="submit" class="makeLinkLeft"/>
-						<a rsf:id="evalAdminTitleLink_preview" href="#">Evaluation Title 1</a>
+						<a rsf:id="evalAdminTitleLink_preview" href="preview_eval.html">Evaluation Title 1</a>
 						</td>
 						<td align="left" width="25%" nowrap="true">
-							<span rsf:id="evalAdminStatus">Starts</span> <a href="#" rsf:id="viewReportLink"></a>
+							<span rsf:id="evalAdminStatus">Starts</span> <a href="view_report.html" rsf:id="viewReportLink"></a>
 						</td>
 						<td width="25%" nowrap="true">
 							<span rsf:id="evalAdminDateLabel">Starts</span>: 
@@ -131,9 +131,9 @@
 				<div rsf:id="tools-title" class="summaryHeader">Evaluation Tools</div>
 				<ul class="summaryToolList">
 				<!--  <li  rsf:id="createTemplateLink"><a href="#" rsf:id="payload-component">Create Template</a></li> -->
-					<a href="#" rsf:id="createTemplateLink">Create Template</a>
+					<a href="template_title_desc.html" rsf:id="createTemplateLink">Create Template</a>
 					<br/>
-					<a href="#"	rsf:id="beginEvaluationLink">Begin Evaluation</a>
+					<a href="evaluation_start.html" rsf:id="beginEvaluationLink">Begin Evaluation</a>
 				</ul>
 			</div>
 		</td>
