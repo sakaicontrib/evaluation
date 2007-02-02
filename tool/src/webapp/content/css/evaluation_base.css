@@ -141,6 +141,13 @@ LI.breadCrumb {
 	padding: 0px;
 }
 
+LI.breadCrumbCurrent {
+	font-weight: bold;
+	display: inline; 
+	margin-right: 4px; 
+	padding: 0px;
+}
+
 A.breadCrumb {
 	font-weight: bold;
 	margin: 0px;
@@ -196,6 +203,38 @@ input:hover.makeLinkRight {
 	cursor: hand;
 }
 
+/* render link as a button */
+a:link.makeButton, a:visited.makeButton
+{
+  float: left;
+  margin: 2px 5px 2px 5px;
+  padding: 2px;
+  width: 100px;
+  border-top: 2px solid #cccccc;
+  border-bottom: 2px solid #666666;
+  border-left: 2px solid #cccccc;
+  border-right: 2px solid #666666;
+  background: #f1f1f1;
+  text-align: center;
+  text-decoration: none;
+  font: normal 10pt Verdana;
+  color: black;
+}
+
+a:hover.makeButton
+{
+  background: #FFFFFF;
+  color: #3333CC;
+}
+
+a:active.makeButton
+{
+  border-bottom: 2px solid #cccccc;
+  border-top: 2px solid #666666;
+  border-right: 2px solid #cccccc;
+  border-left: 2px solid #666666;
+}
+
 /* administrate view */
 td.checktable1 {
 	text-align: right;
@@ -208,4 +247,33 @@ td.checktable2 {
 .noteText {
 	font-size: 90%;
 	font-style: italic;
+}
+
+.expertItem {
+	font-size: 12pt;
+}
+
+.expertItemCategory {
+	font-size: 10pt;
+}
+
+.expertItemsHeader {
+	font-weight: bold;
+	font-size: 12pt;
+	color: #990033;
+}
+
+.expertItemsText {
+	font-size: 11pt;
+}
+
+.expertItemsDesc {
+	font-size: 10pt;
+	text-indent: 1em;
+}
+
+.expertItemCategoryCurrent {
+	font-weight: bold;
+	font-size: 12pt;
+	color: #009933;
 }
