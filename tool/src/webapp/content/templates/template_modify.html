@@ -89,8 +89,11 @@
 				<option value="2">2</option>
 				<option value="3">3</option>		
 			</select> 
+			<div rsf:id="showCB:">
+            	<input type="checkbox" rsf:id="blockCheckBox" value="" checked=""/>
+            </div>
 			</td>
-			<td width="45%" class="borderLeft" style="font-weight:bold;">
+			<td width="15%" class="borderLeft" style="font-weight:bold;">
 				<label rsf:id="itemClassificationLabel" style="font-weight:bold;">Scale/Survey</label> 
 				<label rsf:id="scaleDisplaySetting" style="font-weight:bold;">Compact-Colored</label>		
 			</td>
@@ -131,6 +134,12 @@
 <script rsf:id="decorateSelects">
   EvalSystem.decorateReorderSelects("", 1);
 </script>	
+</form>
+
+<br/><br/>
+
+<form rsf:id="createBlockForm" name="create_block_form" method="get" target="_self" action="modify_block.html">
+	<input rsf:id="createBlockBtn" type="submit" value="Create Block"/>
 </form>
 
 </div>

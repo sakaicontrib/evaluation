@@ -13,8 +13,11 @@
  *****************************************************************************/
 package org.sakaiproject.evaluation.tool.producers;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
@@ -38,6 +41,8 @@ import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UIVerbatim;
+import uk.org.ponder.rsf.components.decorators.DecoratorList;
+import uk.org.ponder.rsf.components.decorators.UIFreeAttributeDecorator;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
@@ -197,6 +202,7 @@ public class TemplateModifyProducer implements ViewComponentProducer,
 		    String templateItemOTP;
 		    for (int i = 0; i < templateItemsList.size(); i++){
 		    	EvalTemplateItem myTemplateItem = (EvalTemplateItem) templateItemsList.get(i);
+		    	EvalItem myItem =  myTemplateItem.getItem();
 		    	
 		    	templateItemOTPBinding = "templateItemBeanLocator."+myTemplateItem.getId();
 		    	templateItemOTP = templateItemOTPBinding+".";
@@ -204,7 +210,21 @@ public class TemplateModifyProducer implements ViewComponentProducer,
 		    	UIBranchContainer radiobranch = 
                    UIBranchContainer.make(form2,"itemrow:header", Integer.toString(i)); //$NON-NLS-1$
 				UIOutput.make(radiobranch, "item-num-header", messageLocator.getMessage("modifytemplate.item.num.header")); //$NON-NLS-1$ //$NON-NLS-2$
-			
+				
+				//only show Block Check box for scaled type(scale, block)
+				if(myItem.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)){
+					UIBranchContainer rbShowBlockCB = UIBranchContainer.make(radiobranch,"showCB:");
+					//TODO: binding to TemplateItem ID?check with Aaron
+					UIBoundBoolean blockCB = UIBoundBoolean.make(rbShowBlockCB, "blockCheckBox", Boolean.FALSE); 
+					//dynamically add check box's name as: block-<scale_id>-<templateItem_id>
+					Map attrmap = new HashMap();
+					String name = "block-" + myTemplateItem.getItem().getScale().getId()
+							+ "-" + myTemplateItem.getId() ;
+					attrmap.put("name", name);
+					attrmap.put("id", name);
+					blockCB.decorators = new DecoratorList(new UIFreeAttributeDecorator(attrmap)); 
+				}
+					
 				//DISPLAY ORDER
 				UISelect sl = UISelect.make(radiobranch, "itemNum");
 				sl.selection = new UIInput();
@@ -295,6 +315,9 @@ public class TemplateModifyProducer implements ViewComponentProducer,
 		    }//end of for loop
 		}
 		
+		//the create block form
+		UIForm blockForm = UIForm.make(tofill, "createBlockForm",new SimpleViewParameters(ModifyBlockProducer.VIEW_ID));
+		UICommand.make(blockForm, "createBlockBtn",messageLocator.getMessage("modifytemplate.createblock.button"),null);
 	}
 
 	private String modifyItemLinkType(EvalTemplateItem t){
