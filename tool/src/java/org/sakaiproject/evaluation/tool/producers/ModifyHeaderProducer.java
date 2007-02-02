@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.tool.producers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
@@ -58,12 +59,17 @@ public class ModifyHeaderProducer implements ViewComponentProducer,ViewParamsRep
 		this.messageLocator = messageLocator;
 	}
 
+	private EvalSettings settings;
+	public void setSettings(EvalSettings settings) {
+	  this.settings = settings;
+	}
+
 	public String getViewID() {
 		return VIEW_ID;
 	}
 	
-	  // Permissible since is a request-scope producer. Accessed from NavigationCases
-	  private Long templateId; 
+	// Permissible since is a request-scope producer. Accessed from NavigationCases
+	private Long templateId; 
 	  
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 	    TemplateItemViewParameters templateItemViewParams = (TemplateItemViewParameters) viewparams;
@@ -107,38 +113,64 @@ public class ModifyHeaderProducer implements ViewComponentProducer,ViewParamsRep
 		UIOutput.make(form, "question-text-header", messageLocator.getMessage("modifyitem.question.text.header")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIInput.make(form,"item_text", templateItemOTP + "item.itemText");
 
+		/*
+		 * (non-javadoc)
+		 * If the system setting (admin setting) for "EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY"
+		 * is set as true then all items default to "Course". If it is set to false, then all items 
+		 * default to "Instructor". If it is set to null then user is given the option to choose between
+		 * "Course" and "Instructor".
+		 */
+		Boolean isDefaultCourse = (Boolean) settings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
+		//Means show both options (course and instructor)
+		if (isDefaultCourse == null) {
+			
+			UIBranchContainer showItemCategory = UIBranchContainer.make(form, "showItemCategory:"); //$NON-NLS-1$
+			UIOutput.make(showItemCategory, "item-category-header", messageLocator.getMessage("modifyitem.item.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
+			UIOutput.make(showItemCategory, "course-category-header", messageLocator.getMessage("modifyitem.course.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
+			UIOutput.make(showItemCategory, "instructor-category-header", messageLocator.getMessage("modifyitem.instructor.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
 
-		UIOutput.make(form, "item-category-header", messageLocator.getMessage("modifyitem.item.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(form, "course-category-header", messageLocator.getMessage("modifyitem.course.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(form, "instructor-category-header", messageLocator.getMessage("modifyitem.instructor.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
-		//Radio Buttons for "Item Category"
-		String[] courseCategoryList = 
-		{
-			messageLocator.getMessage("modifyitem.course.category.header"),
-			messageLocator.getMessage("modifyitem.instructor.category.header"),
-		};
-		UISelect radios = UISelect.make(form, "item_category", EvaluationConstant.ITEM_CATEGORY_VALUES,
-				courseCategoryList, templateItemOTP + "itemCategory",null);
-		String selectID = radios.getFullID();
-		UISelectChoice.make(form, "item_category_C", selectID, 0);
-		UISelectChoice.make(form, "item_category_I", selectID, 1);
+			//Radio Buttons for "Item Category"
+			String[] courseCategoryList = 
+			{
+				messageLocator.getMessage("modifyitem.course.category.header"),
+				messageLocator.getMessage("modifyitem.instructor.category.header"),
+			};
+			UISelect radios = UISelect.make(showItemCategory, "item_category", 
+					EvaluationConstant.ITEM_CATEGORY_VALUES, courseCategoryList, 
+					templateItemOTP + "itemCategory", null);
+			String selectID = radios.getFullID();
+			UISelectChoice.make(showItemCategory, "item_category_C", selectID, 0);
+			UISelectChoice.make(showItemCategory, "item_category_I", selectID, 1);
+		}
+		//Default is course
+		else if (isDefaultCourse.booleanValue()) {
+
+			//Do not show on the page, just bind it explicitly.
+			form.parameters.add(new UIELBinding(templateItemOTP + "itemCategory", EvaluationConstant.ITEM_CATEGORY_VALUES[0])); //$NON-NLS-1$
+		}
+		//Default is instructor
+		else {
+
+			//Do not show on the page, just bind it explicitly.
+			form.parameters.add(new UIELBinding(templateItemOTP + "itemCategory", EvaluationConstant.ITEM_CATEGORY_VALUES[1])); //$NON-NLS-1$
+		}
 
 		UIOutput.make(form, "cancel-button", messageLocator.getMessage("general.cancel.button"));
 		
-	        UICommand saveCmd = UICommand.make(form, "saveHeaderAction", messageLocator
-	            .getMessage("modifyitem.save.button"), "#{itemsBean.saveItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	        // saveCmd.parameters.add(new
-	        // UIELBinding(templateItemOTP+"template",templatesLogic.getTemplateById(templateId)));
-	        saveCmd.parameters.add(new UIELBinding(templateItemOTP
-	            + "item.classification", EvalConstants.ITEM_TYPE_HEADER));
-	        saveCmd.parameters.add(new UIELBinding("#{itemsBean.templateItem}",
-	            new ELReference(templateItemOTPBinding)));
-	        saveCmd.parameters.add(new UIELBinding("#{itemsBean.templateId}",
-	            templateId));
+        UICommand saveCmd = UICommand.make(form, "saveHeaderAction", messageLocator
+            .getMessage("modifyitem.save.button"), "#{itemsBean.saveItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        // saveCmd.parameters.add(new
+        // UIELBinding(templateItemOTP+"template",templatesLogic.getTemplateById(templateId)));
+        saveCmd.parameters.add(new UIELBinding(templateItemOTP
+            + "item.classification", EvalConstants.ITEM_TYPE_HEADER));
+        saveCmd.parameters.add(new UIELBinding("#{itemsBean.templateItem}",
+            new ELReference(templateItemOTPBinding)));
+        saveCmd.parameters.add(new UIELBinding("#{itemsBean.templateId}",
+            templateId));
 
-	        UICommand.make(form, "previewHeaderAction", messageLocator
-	            .getMessage("modifyitem.preview.button"),
-	            "#{itemsBean.previewItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        UICommand.make(form, "previewHeaderAction", messageLocator
+            .getMessage("modifyitem.preview.button"),
+            "#{itemsBean.previewItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	public List reportNavigationCases() {
