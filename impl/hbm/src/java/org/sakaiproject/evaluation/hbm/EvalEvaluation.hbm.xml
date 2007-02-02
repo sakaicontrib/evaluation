@@ -54,7 +54,7 @@
         </property>
         <!-- what options do instructors have for using this evaluation (opt in, opt out, reqd, etc.) -->
         <property name="instructorOpt" type="java.lang.String">
-            <column name="INSTRUCTOR_OPT" not-null="true" length="255" />
+            <column name="INSTRUCTOR_OPT" length="255" />
         </property>
         <!-- the reminder interval in days -->
         <property name="reminderDays" type="java.lang.Integer">
