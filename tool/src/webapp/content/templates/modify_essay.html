@@ -95,40 +95,39 @@
            	</select>
          </td>
 		 </tr>
-			
-		<tr>
-		<td width="20%"><b><span rsf:id="add-na-header">Add N/A (not available):</span></b></td>
-		<td width="80%"><input type="checkbox" name="item_NA" rsf:id="item_NA" value="" checked="" /></td>
-		</tr>				
+
+		<span rsf:id="showNA:">			
+			<tr>
+				<td width="20%"><b><span rsf:id="add-na-header">Add N/A (not available):</span></b></td>
+				<td width="80%"><input type="checkbox" name="item_NA" rsf:id="item_NA" value="" checked="" /></td>
+			</tr>				
+		</span>
 		
-		<tr>
-		<td width="20%" ><b><span rsf:id="item-category-header">Item Category :</span></b></td>
-		<td width="80%">
-	 
-		<span rsf:id="item_category"/>
-	        <label for="item_category_C" rsf:id="course-category-header">Course</label>
-	        <input type="radio" name="item_category_C" rsf:id="item_category_C"/>
-	        <label for="item_category_I" rsf:id="instructor-category-header">Instructor</label>
-	        <input type="radio" name="item_category_I" rsf:id="item_category_I" />
-	
-	    </td>
-		</tr>	
+		<span rsf:id="showItemCategory:">			
+			<tr>
+				<td width="20%" ><b><span rsf:id="item-category-header">Item Category :</span></b></td>
+				<td width="80%">
+					<span rsf:id="item_category"/>
+			        <label for="item_category_C" rsf:id="course-category-header">Course</label>
+			        <input type="radio" name="item_category_C" rsf:id="item_category_C"/>
+			        <label for="item_category_I" rsf:id="instructor-category-header">Instructor</label>
+			        <input type="radio" name="item_category_I" rsf:id="item_category_I" />
+			    </td>
+			</tr>	
+		</span>
 
 		<tr>
-		<td width="20%" align="left">
-			<input type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" rsf:id="cancel-button" />
-		</td>
-		<td align="right" width="80%">
-		<input name="previewEssayAction" rsf:id="previewEssayAction" type="submit" value="Preview item" onclick="javascript:flag='preview';"/> 
-			&nbsp;
-	 	<input name="saveEssayAction" rsf:id="saveEssayAction" type="submit" value="Save item" onclick="javascript:flag='save';"/>  
-		</td>
+			<td width="20%" align="left">
+				<input type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" rsf:id="cancel-button" />
+			</td>
+			<td align="right" width="80%">
+				<input name="previewEssayAction" rsf:id="previewEssayAction" type="submit" value="Preview item" onclick="javascript:flag='preview';"/> 
+				&nbsp;
+			 	<input name="saveEssayAction" rsf:id="saveEssayAction" type="submit" value="Save item" onclick="javascript:flag='save';"/>  
+			</td>
 		</tr>
-		
 	</table>	
-			
-	</form>
-	
+</form>
 </div>	
 </body>
 </html>

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
@@ -58,9 +59,13 @@ public class ModifyScaledProducer implements ViewComponentProducer,
   public static final String VIEW_ID = "modify_scaled"; //$NON-NLS-1$
 
   private MessageLocator messageLocator;
-
   public void setMessageLocator(MessageLocator messageLocator) {
     this.messageLocator = messageLocator;
+  }
+
+  private EvalSettings settings;
+  public void setSettings(EvalSettings settings) {
+	this.settings = settings;
   }
 
   public String getViewID() {
@@ -193,27 +198,62 @@ public class ModifyScaledProducer implements ViewComponentProducer,
     slValues.setValue(EvaluationConstant.SCALE_DISPLAY_SETTING_VALUES);
     sl.optionlist = slValues;
 
-    UIOutput.make(form,
-        "add-na-header", messageLocator.getMessage("modifyitem.add.na.header")); //$NON-NLS-1$ //$NON-NLS-2$
-    UIBoundBoolean.make(form, "item_NA", templateItemOTP + "item.usesNA", null); //$NON-NLS-1$ //$NON-NLS-2$
+	/*
+	 * (non-javadoc)
+	 * If the system setting (admin setting) for "EvalSettings.NOT_AVAILABLE_ALLOWED" is 
+	 * set as true then only we need to show the item_NA checkbox.  
+	 */
+	if ( ((Boolean)settings.get(EvalSettings.NOT_AVAILABLE_ALLOWED)).booleanValue() ) {
+		UIBranchContainer showNA = UIBranchContainer.make(form, "showNA:"); //$NON-NLS-1$
+	    UIOutput.make(showNA,
+	    		"add-na-header", messageLocator.getMessage("modifyitem.add.na.header")); //$NON-NLS-1$ //$NON-NLS-2$
+	    UIBoundBoolean.make(showNA, "item_NA", templateItemOTP + "item.usesNA", null); //$NON-NLS-1$ //$NON-NLS-2$
+	}    
 
-    UIOutput.make(form, "item-category-header", messageLocator
-        .getMessage("modifyitem.item.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
-    UIOutput.make(form, "course-category-header", messageLocator
-        .getMessage("modifyitem.course.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
-    UIOutput.make(form, "instructor-category-header", messageLocator
-        .getMessage("modifyitem.instructor.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
-    // Radio Buttons for "Item Category"
-    String[] courseCategoryList = {
-        messageLocator.getMessage("modifyitem.course.category.header"),
-        messageLocator.getMessage("modifyitem.instructor.category.header"), };
-    UISelect radios = UISelect.make(form, "item_category",
-        EvaluationConstant.ITEM_CATEGORY_VALUES, courseCategoryList,
-        templateItemOTP + "itemCategory", null);
+	/*
+	 * (non-javadoc)
+	 * If the system setting (admin setting) for "EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY"
+	 * is set as true then all items default to "Course". If it is set to false, then all items 
+	 * default to "Instructor". If it is set to null then user is given the option to choose between
+	 * "Course" and "Instructor".
+	 */
+	Boolean isDefaultCourse = (Boolean) settings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
+	//Means show both options (course and instructor)
+	if (isDefaultCourse == null) {
+		
+		UIBranchContainer showItemCategory = 
+			UIBranchContainer.make(form, "showItemCategory:"); //$NON-NLS-1$
+	    UIOutput.make(showItemCategory, "item-category-header", messageLocator
+	        .getMessage("modifyitem.item.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
+        UIOutput.make(showItemCategory, "course-category-header", messageLocator
+            .getMessage("modifyitem.course.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
+        UIOutput.make(showItemCategory, "instructor-category-header", messageLocator
+            .getMessage("modifyitem.instructor.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
+        
+        // Radio Buttons for "Item Category"
+        String[] courseCategoryList = {
+            messageLocator.getMessage("modifyitem.course.category.header"),
+            messageLocator.getMessage("modifyitem.instructor.category.header"), };
+        UISelect radios = UISelect.make(showItemCategory, "item_category",
+            EvaluationConstant.ITEM_CATEGORY_VALUES, courseCategoryList,
+            templateItemOTP + "itemCategory", null);
 
-    String selectID = radios.getFullID();
-    UISelectChoice.make(form, "item_category_C", selectID, 0); //$NON-NLS-1$
-    UISelectChoice.make(form, "item_category_I", selectID, 1); //$NON-NLS-1$
+        String selectID = radios.getFullID();
+        UISelectChoice.make(showItemCategory, "item_category_C", selectID, 0); //$NON-NLS-1$
+        UISelectChoice.make(showItemCategory, "item_category_I", selectID, 1); //$NON-NLS-1$
+	}
+	//Default is course
+	else if (isDefaultCourse.booleanValue()) {
+
+		//Do not show on the page, just bind it explicitly.
+		form.parameters.add(new UIELBinding(templateItemOTP + "itemCategory", EvaluationConstant.ITEM_CATEGORY_VALUES[0])); //$NON-NLS-1$
+	}
+	//Default is instructor
+	else {
+
+		//Do not show on the page, just bind it explicitly.
+		form.parameters.add(new UIELBinding(templateItemOTP + "itemCategory", EvaluationConstant.ITEM_CATEGORY_VALUES[1])); //$NON-NLS-1$
+	}	
 
 	UIOutput.make(form, "cancel-button", messageLocator.getMessage("general.cancel.button"));
 	
