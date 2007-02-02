@@ -149,7 +149,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 				EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
 				etdl.today, etdl.tomorrow, etdl.threeDaysFuture, etdl.fourDaysFuture, 
 				EvalConstants.EVALUATION_STATE_INQUEUE, 
-				EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(1), etdl.templatePublic);
+				Integer.valueOf(1), etdl.templatePublic);
 		evaluations.saveEvaluation( eval, EvalTestDataLoad.MAINT_USER_ID );
 		EvalEvaluation checkEval = evaluations.getEvaluationById(eval.getId());
 		Assert.assertNotNull(checkEval);
@@ -161,7 +161,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 				EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
 				etdl.today, etdl.tomorrow, etdl.tomorrow, etdl.threeDaysFuture, 
 				EvalConstants.EVALUATION_STATE_INQUEUE, 
-				EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(1), etdl.templatePublic), 
+				Integer.valueOf(1), etdl.templatePublic), 
 			EvalTestDataLoad.MAINT_USER_ID );
 
 		// try to save invalid evaluations
@@ -173,7 +173,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 					EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
 					etdl.today, etdl.tomorrow, null, etdl.fourDaysFuture,
 					EvalConstants.EVALUATION_STATE_INQUEUE, 
-					EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(1), etdl.templatePublic),
+					Integer.valueOf(1), etdl.templatePublic),
 				EvalTestDataLoad.MAINT_USER_ID );
 			Assert.fail("Should have thrown exception");
 		} catch (NullPointerException e) {
@@ -186,7 +186,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 					EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
 					etdl.today, null, etdl.threeDaysFuture, etdl.fourDaysFuture,
 					EvalConstants.EVALUATION_STATE_INQUEUE, 
-					EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(1), etdl.templatePublic),
+					Integer.valueOf(1), etdl.templatePublic),
 				EvalTestDataLoad.MAINT_USER_ID );
 			Assert.fail("Should have thrown exception");
 		} catch (NullPointerException e) {
@@ -200,7 +200,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 					EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
 					etdl.threeDaysFuture, etdl.tomorrow, etdl.tomorrow, etdl.fourDaysFuture, 
 					EvalConstants.EVALUATION_STATE_INQUEUE, 
-					EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(1), etdl.templatePublic),
+					Integer.valueOf(1), etdl.templatePublic),
 				EvalTestDataLoad.MAINT_USER_ID );
 			Assert.fail("Should have thrown exception");
 		} catch (IllegalArgumentException e) {
@@ -212,7 +212,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 					EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
 					etdl.tomorrow, etdl.tomorrow, etdl.tomorrow, etdl.fourDaysFuture, 
 					EvalConstants.EVALUATION_STATE_INQUEUE, 
-					EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(1), etdl.templatePublic),
+					Integer.valueOf(1), etdl.templatePublic),
 				EvalTestDataLoad.MAINT_USER_ID );
 			Assert.fail("Should have thrown exception");
 		} catch (IllegalArgumentException e) {
@@ -225,7 +225,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 					EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
 					etdl.today, etdl.threeDaysFuture, etdl.tomorrow, etdl.fourDaysFuture, 
 					EvalConstants.EVALUATION_STATE_INQUEUE, 
-					EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(1), etdl.templatePublic),
+					Integer.valueOf(1), etdl.templatePublic),
 				EvalTestDataLoad.MAINT_USER_ID );
 			Assert.fail("Should have thrown exception");
 		} catch (IllegalArgumentException e) {
@@ -238,7 +238,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 					EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
 					etdl.today, etdl.tomorrow, etdl.tomorrow, etdl.tomorrow,
 					EvalConstants.EVALUATION_STATE_INQUEUE, 
-					EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(1), etdl.templatePublic),
+					Integer.valueOf(1), etdl.templatePublic),
 				EvalTestDataLoad.MAINT_USER_ID );
 			Assert.fail("Should have thrown exception");
 		} catch (IllegalArgumentException e) {
@@ -252,7 +252,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 					EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
 					etdl.yesterday, etdl.tomorrow, etdl.threeDaysFuture, etdl.fourDaysFuture,
 					EvalConstants.EVALUATION_STATE_INQUEUE, 
-					EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(1), etdl.templatePublic),
+					Integer.valueOf(1), etdl.templatePublic),
 				EvalTestDataLoad.MAINT_USER_ID );
 			Assert.fail("Should have thrown exception");
 		} catch (IllegalArgumentException e) {
@@ -265,7 +265,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 					EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
 					etdl.yesterday, etdl.yesterday, etdl.tomorrow, etdl.fourDaysFuture,
 					EvalConstants.EVALUATION_STATE_INQUEUE, 
-					EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(1), etdl.templatePublic),
+					Integer.valueOf(1), etdl.templatePublic),
 				EvalTestDataLoad.MAINT_USER_ID );
 			Assert.fail("Should have thrown exception");
 		} catch (IllegalArgumentException e) {
@@ -278,7 +278,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 					EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
 					etdl.today, etdl.tomorrow, etdl.threeDaysFuture, etdl.fourDaysFuture,
 					EvalConstants.EVALUATION_STATE_INQUEUE, 
-					EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(1), etdl.templatePublic),
+					Integer.valueOf(1), etdl.templatePublic),
 				EvalTestDataLoad.USER_ID );
 			Assert.fail("Should have thrown exception");
 		} catch (SecurityException e) {
@@ -291,7 +291,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 					EvalTestDataLoad.ADMIN_USER_ID, "Eval valid title", 
 					etdl.today, etdl.tomorrow, etdl.tomorrow, etdl.threeDaysFuture, 
 					EvalConstants.EVALUATION_STATE_INQUEUE, 
-					EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(1), etdl.templateAdminNoItems), 
+					Integer.valueOf(1), etdl.templateAdminNoItems), 
 				EvalTestDataLoad.ADMIN_USER_ID );
 			Assert.fail("Should have thrown exception");
 		} catch (IllegalArgumentException e) {
@@ -303,7 +303,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 					EvalTestDataLoad.ADMIN_USER_ID, "Eval valid title", 
 					etdl.today, etdl.tomorrow, etdl.tomorrow, etdl.threeDaysFuture, 
 					EvalConstants.EVALUATION_STATE_INQUEUE, 
-					EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(1), null), 
+					Integer.valueOf(1), null), 
 				EvalTestDataLoad.ADMIN_USER_ID );
 			Assert.fail("Should have thrown exception");
 		} catch (IllegalArgumentException e) {
