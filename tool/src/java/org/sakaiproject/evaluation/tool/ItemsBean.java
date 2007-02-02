@@ -101,6 +101,7 @@ public class ItemsBean {
 	 * INITIALIZATION
 	 */
 	public void init() {
+		log.debug("INIT");
 		if (itemsLogic == null || external==null || scalesLogic==null) {
 			throw new NullPointerException("logic is null");
 		}
