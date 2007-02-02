@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.tool.producers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
@@ -68,7 +69,12 @@ public class TemplateProducer implements ViewComponentProducer,
   public void setSettings(EvalSettings settings) {
 	this.settings = settings;
   }
-
+	
+  private EvalExternalLogic externalLogic;
+  public void setExternalLogic(EvalExternalLogic externalLogic) {
+	this.externalLogic = externalLogic;
+  }
+	
   /*
    * 1) accessing this page trough "Create Template" link -- 2) accessing
    * through "Modify Template Title/Description" link on ModifyTemplate page
@@ -115,40 +121,62 @@ public class TemplateProducer implements ViewComponentProducer,
 	 * If "EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY" is set EvalConstants.SHARING_OWNER,
 	 * then it means that owner can decide what sharing settings to chose. In other words, it 
 	 * means that show the sharing/visibility dropdown.
+	 * Else just show the label for what has been set in system setting (admin setting)
+	 * i.e. "EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY".
 	 */
 	if ( ((String)settings.get(EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY)).
 			equals(EvalConstants.SHARING_OWNER)) {
 
-		UIBranchContainer showSharingOptions = UIBranchContainer.make(form, "showSharingOptions:"); //$NON-NLS-1$
-	    UISelect combo = UISelect.make(showSharingOptions, "sharing"); //$NON-NLS-1$
-	    combo.selection = new UIInput();
-	    combo.selection.valuebinding = new ELReference(templateOTP + "sharing"); //$NON-NLS-1$
-	    UIBoundList comboValues = new UIBoundList();
-	    comboValues.setValue(EvaluationConstant.MODIFIER_VALUES);
-	    combo.optionlist = comboValues;
-	    UIBoundList comboNames = new UIBoundList();
-	    String[] sharingList = {
-	        messageLocator.getMessage("modifytemplatetitledesc.sharing.private"), //$NON-NLS-1$
-	        messageLocator.getMessage("modifytemplatetitledesc.sharing.public")   //$NON-NLS-1$
-	    //  messageLocator.getMessage("modifytemplatetitledesc.sharing.visible")  //$NON-NLS-1$
-	    //  messageLocator.getMessage("modifytemplatetitledesc.sharing.shared")   //$NON-NLS-1$
-	    };
-	    comboNames.setValue(sharingList);
-	    combo.optionnames = comboNames;
+		/*
+		 * Dropdown values are visible only for admins.
+		 * For instructors (non-admin) we just show the private label
+		 */
+		if ( externalLogic.isUserAdmin(externalLogic.getCurrentUserId()) ) {
+			
+			UIBranchContainer showSharingOptions = UIBranchContainer.make(form, "showSharingOptions:"); //$NON-NLS-1$
+		    UISelect combo = UISelect.make(showSharingOptions, "sharing"); //$NON-NLS-1$
+		    combo.selection = new UIInput();
+		    combo.selection.valuebinding = new ELReference(templateOTP + "sharing"); //$NON-NLS-1$
+		    UIBoundList comboValues = new UIBoundList();
+		    comboValues.setValue(EvaluationConstant.MODIFIER_VALUES);
+		    combo.optionlist = comboValues;
+		    UIBoundList comboNames = new UIBoundList();
+		    String[] sharingList = {
+		        messageLocator.getMessage("modifytemplatetitledesc.sharing.private"), //$NON-NLS-1$
+		        messageLocator.getMessage("modifytemplatetitledesc.sharing.public")   //$NON-NLS-1$
+				// Commented as visible and shared are not used as of now - kahuja.
+		        // messageLocator.getMessage("modifytemplatetitledesc.sharing.visible")  //$NON-NLS-1$
+		        // messageLocator.getMessage("modifytemplatetitledesc.sharing.shared")   //$NON-NLS-1$
+		    };
+		    comboNames.setValue(sharingList);
+		    combo.optionnames = comboNames;
+		}
+		else {
+			/*
+			 * Displaying the sharing label private.
+			 * Doing the binding of sharing value private. 
+			 */
+			UIBranchContainer showSharingLabel = UIBranchContainer.make(form, "showSharingLabel:"); //$NON-NLS-1$
+			UIOutput.make(showSharingLabel, "sharingValueToDisplay", messageLocator.getMessage("modifytemplatetitledesc.sharing.private")); //$NON-NLS-1$ //$NON-NLS-2$
+			form.parameters.add(new UIELBinding(templateOTP + "sharing", EvalConstants.SHARING_PRIVATE)); //$NON-NLS-1$
+		}
 	}
 	else {
 		UIBranchContainer showSharingLabel = UIBranchContainer.make(form, "showSharingLabel:"); //$NON-NLS-1$
 		String sharingValueToSave = (String) settings.get(EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY);
-		String sharingValueToDisplay;
+		String sharingValueToDisplay = "";
 		
 		if ( (EvalConstants.SHARING_PRIVATE).equals(sharingValueToSave) )
 			sharingValueToDisplay = messageLocator.getMessage("modifytemplatetitledesc.sharing.private"); //$NON-NLS-1$ 
 		else if ( (EvalConstants.SHARING_PUBLIC).equals(sharingValueToSave) )
-			sharingValueToDisplay = messageLocator.getMessage("modifytemplatetitledesc.sharing.public");  //$NON-NLS-1$ 
+			sharingValueToDisplay = messageLocator.getMessage("modifytemplatetitledesc.sharing.public");  //$NON-NLS-1$
+		/*
+		Commented as visible and shared are not used as of now - kahuja.
 		else if ( (EvalConstants.SHARING_VISIBLE).equals(sharingValueToSave) )
 			sharingValueToDisplay = messageLocator.getMessage("modifytemplatetitledesc.sharing.visible"); //$NON-NLS-1$ 
 		else
-			sharingValueToDisplay = messageLocator.getMessage("modifytemplatetitledesc.sharing.shared");  //$NON-NLS-1$ 
+			sharingValueToDisplay = messageLocator.getMessage("modifytemplatetitledesc.sharing.shared");  //$NON-NLS-1$
+		*/ 
 			
 		//Displaying the label of sharing value set as system property
 		UIOutput.make(showSharingLabel, "sharingValueToDisplay", sharingValueToDisplay); //$NON-NLS-1$
