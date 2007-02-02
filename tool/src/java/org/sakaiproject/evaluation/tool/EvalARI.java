@@ -1,7 +1,6 @@
 package org.sakaiproject.evaluation.tool;
 
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
-import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
 
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionResultInterpreter;
@@ -26,7 +25,8 @@ public class EvalARI implements ActionResultInterpreter {
     // TODO: fold templateItmeProducer into the Wrapper system!
     // From ItemsBean via templateItemProducer
     if (s.substring(0, 15).equals("item-created:::")) {
-      TemplateItemViewParameters templateItemViewParams = (TemplateItemViewParameters) incoming;
+      // AZ - commented out this since it did not seem to do anything and was causing a warning (Feb 2, 07)	
+      //TemplateItemViewParameters templateItemViewParams = (TemplateItemViewParameters) incoming;
       togo.resultingview = new EvalViewParameters(s.substring(15),
           itemsBean.templateId);
     }

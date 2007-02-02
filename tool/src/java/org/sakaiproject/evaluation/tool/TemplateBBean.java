@@ -11,6 +11,7 @@
  * Antranig Basman
  * Will Humphries (whumphri@vt.edu)
  *****************************************************************************/
+
 package org.sakaiproject.evaluation.tool;
 
 import java.util.List;
@@ -28,82 +29,82 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
  */
 
 public class TemplateBBean {
-  /*
-   * VARIABLE DECLARATIONS
-   */
-  private static Log log = LogFactory.getLog(TemplateBean.class);
 
-  private TemplateBeanLocator templateBeanLocator;
+	private static Log log = LogFactory.getLog(TemplateBean.class);
 
-  public void setTemplateBeanLocator(TemplateBeanLocator templateBeanLocator) {
-    this.templateBeanLocator = templateBeanLocator;
-  }
+	private TemplateBeanLocator templateBeanLocator;
+	public void setTemplateBeanLocator(TemplateBeanLocator templateBeanLocator) {
+		this.templateBeanLocator = templateBeanLocator;
+	}
 
-  private TemplateItemBeanLocator templateItemBeanLocator;
+	private TemplateItemBeanLocator templateItemBeanLocator;
+	public void setTemplateItemBeanLocator(
+			TemplateItemBeanLocator templateItemBeanLocator) {
+		this.templateItemBeanLocator = templateItemBeanLocator;
+	}
 
-  public void setTemplateItemBeanLocator(
-      TemplateItemBeanLocator templateItemBeanLocator) {
-    this.templateItemBeanLocator = templateItemBeanLocator;
-  }
+	private LocalTemplateLogic localTemplateLogic;
+	public void setLocalTemplateLogic(LocalTemplateLogic localTemplateLogic) {
+		this.localTemplateLogic = localTemplateLogic;
+	}
 
-  private LocalTemplateLogic localTemplateLogic;
+	/**
+	 * If the template is not saved, button will show text "continue and add
+	 * question" method binding to the "continue and add question" button on
+	 * template_title_description.html replaces TemplateBean.createTemplateAction,
+	 * but template is added to db here.
+	 */
+	public String createTemplateAction() {
+		log.debug("create template");
+		templateBeanLocator.saveAll();
+		return "success";
+	}
 
-  public void setLocalTemplateLogic(LocalTemplateLogic localTemplateLogic) {
-    this.localTemplateLogic = localTemplateLogic;
-  }
+	/**
+	 * If the template is already stored, button will show text "Save" method
+	 * binding to the "Save" button on template_title_description.html replaces
+	 * TemplateBean.saveTemplate()
+	 */
+	public String updateTemplateTitleDesc() {
+		log.debug("update template title/desc");
+		templateBeanLocator.saveAll();
+		return "success";
+	}
 
-  /**
-   * If the template is not saved, button will show text "continue and add
-   * question" method binding to the "continue and add question" button on
-   * template_title_description.html replaces TemplateBean.createTemplateAction,
-   * but template is added to db here.
-   */
-  public String createTemplateAction() {
-    templateBeanLocator.saveAll();
-    return "success";
-  }
+	public Long templateId;
 
-  /**
-   * If the template is already stored, button will show text "Save" method
-   * binding to the "Save" button on template_title_description.html replaces
-   * TemplateBean.saveTemplate()
-   */
-  public String updateTemplateTitleDesc() {
-    templateBeanLocator.saveAll();
-    return "success";
-  }
+	private void emit(EvalTemplateItem toemit, int outindex) {
+		log.debug("EvalTemplateItem toemit: " + toemit.getId() + ", outindex: " + outindex);
+		toemit.setDisplayOrder(new Integer(outindex));
+		localTemplateLogic.saveTemplateItem(toemit);
+	}
 
-  public Long templateId;
+	/**
+	 * NB - this implementation depends on Hibernate reference equality semantics!!
+	 * Guarantees output sequence is consecutive without duplicates, and will
+	 * prefer honoring user sequence requests so long as they are not inconsistent.
+	 */
+	public void saveReorder() {
+		log.debug("save items reordering");
+		Map delivered = templateItemBeanLocator.getDeliveredBeans();
+		List ordered = localTemplateLogic.fetchTemplateItems(templateId);
+		for (int i = 1; i <= ordered.size();) {
+			EvalTemplateItem item = (EvalTemplateItem) ordered.get(i - 1);
+			int itnum = item.getDisplayOrder().intValue();
+			if (i < ordered.size()) {
+				EvalTemplateItem next = (EvalTemplateItem) ordered.get(i);
+				int nextnum = next.getDisplayOrder().intValue();
+				if (itnum == nextnum) {
+					if (delivered.containsValue(item) ^ (itnum == i)) {
+						emit(next, i++); emit(item, i++); continue;
+					}
+					else {
+						emit(item, i++); emit(next, i++); continue;
+					}
+				}
+			}
+			emit(item, i++);
+		}
+	}
 
-  private void emit(EvalTemplateItem toemit, int outindex) {
-    toemit.setDisplayOrder(new Integer(outindex));
-    localTemplateLogic.saveTemplateItem(toemit);
-  }
-
-  // NB - this implementation depends on Hibernate reference equality
-  // semantics!!
-  // Guarantees output sequence is consecutive without duplicates, and will
-  // prefer honoring user sequence requests so long as they are not inconsistent.
-  public void saveReorder() {
-    Map delivered = templateItemBeanLocator.getDeliveredBeans();
-    List ordered = localTemplateLogic.fetchTemplateItems(templateId);
-    for (int i = 1; i <= ordered.size();) {
-      EvalTemplateItem item = (EvalTemplateItem) ordered.get(i - 1);
-      int itnum = item.getDisplayOrder().intValue();
-      if (i < ordered.size()) {
-        EvalTemplateItem next = (EvalTemplateItem) ordered.get(i);
-        int nextnum = next.getDisplayOrder().intValue();
-        if (itnum == nextnum) {
-          if (delivered.containsValue(item) ^ (itnum == i)) {
-            emit(next, i++); emit(item, i++); continue;
-          }
-          else {
-            emit(item, i++); emit(next, i++); continue;
-          }
-        }
-      }
-      emit(item, i++);
-    }
-  }
-  
 }
