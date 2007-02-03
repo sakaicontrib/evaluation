@@ -215,39 +215,42 @@ public class EvaluationBean {
 	//method binding to the "Continue to Settings" button on evaluation_start.html
 	public String continueToSettingsAction() {
 		
-		//Initializing 
+		/*
+		 * Initializing all the bind variables used in EvaluationSettingsProducer. 
+		 */
+		SimpleDateFormat simpleDate = new SimpleDateFormat("MM/dd/yyyy");
+		startDate = simpleDate.format(new Date());
+		dueDate = "MM/DD/YYYY";
+		stopDate = "MM/DD/YYYY";
+		viewDate = "MM/DD/YYYY";
+		
+		//results viewable settings
+		eval.setResultsPrivate(Boolean.FALSE);
+		studentViewResults = Boolean.FALSE;
+		studentsDate = "MM/DD/YYYY";
+		instructorViewResults = Boolean.TRUE;
+		instructorsDate = "MM/DD/YYYY";
+		
+		//student completion settings
 		eval.setBlankResponsesAllowed(Boolean.TRUE);
-
-		//eval.setReminderFromEmail(EvaluationConstant.HELP_DESK_ID);
+		eval.setModifyResponsesAllowed(Boolean.FALSE);
+		eval.setUnregisteredAllowed(Boolean.FALSE);
+		
+		//admin settings
+		eval.setInstructorOpt(null);
+		
+		//email settings
+		emailAvailableTxt = emailsLogic.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE).getMessage();// available template
+		eval.setReminderDays(new Integer(EvaluationConstant.REMINDER_EMAIL_DAYS_VALUES[1]));
+		emailReminderTxt =  emailsLogic.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_REMINDER).getMessage();;//reminder email
 		String s = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
 		eval.setReminderFromEmail(s);
-		
-		
-		instructorViewResults = Boolean.TRUE;
-		eval.setReminderDays( new Integer(1));
-	
-		//emailAvailableTxt = logic.getEmailTemplate(true).getMessage(); //true if available template
-		//emailReminderTxt = logic.getEmailTemplate(false).getMessage();//false if reminder email
-		
-		emailAvailableTxt = emailsLogic.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE).getMessage();// available template
-		emailReminderTxt =  emailsLogic.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_REMINDER).getMessage();;//reminder email
-				
-		SimpleDateFormat simpleDate = new SimpleDateFormat("MM/dd/yyyy");
-		this.startDate = simpleDate.format(new Date());
-		this.dueDate = "MM/DD/YYYY";
-		this.stopDate = "MM/DD/YYYY";
-		this.viewDate = "MM/DD/YYYY";
-		this.studentsDate = "MM/DD/YYYY";
-		this.instructorsDate = "MM/DD/YYYY";
 
-		//listOfTemplates = logic.getTemplatesToDisplay(logic.getCurrentUserId());
+		//find the template associated with this evaluation
 		listOfTemplates = templatesLogic.getTemplatesForUser(external.getCurrentUserId(), null, false);
-		
 		int count = 0;
-		
 		if (listOfTemplates != null) {
 			while (count < listOfTemplates.size()) {
-				
 				EvalTemplate temp = (EvalTemplate)listOfTemplates.get(count);
 				if (temp.getId().longValue()== this.templateId.longValue()){
 					eval.setTemplate(temp);
@@ -256,8 +259,8 @@ public class EvaluationBean {
 				count++;
 			}
 		} 
-	
-	
+		
+		//returning the view id	
 	    return EvaluationSettingsProducer.VIEW_ID;
 	}
 	
@@ -391,46 +394,22 @@ public class EvaluationBean {
 		return siteIdsTitle;
 	}
 */
-	/**method binding to the "Done" button on evaluation_assign_confirm.html
-	 * TODO-Add support for coming here from control panel - wdh
+	/**
+	 * Method binding to the "Done" button on evaluation_assign_confirm.html
+	 * When come from control panel then saveSettingsAction method is called. 
 	 */
 	public String doneAssignmentAction() {	
 
 		// need to load the template here before we try to save it because it is stale -AZ
 		eval.setTemplate( templatesLogic.getTemplateById( eval.getTemplate().getId() ) );
 
-		// Email template section
-		EvalEmailTemplate availableTemplate,reminderTemplate;
-
-		//Save email available template
-		availableTemplate = emailsLogic.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
-		
-		if(emailAvailableTxt==null || emailAvailableTxt.equals(availableTemplate.getMessage())){
-			//do nothing as the template has not been modified.
-		} else {
-			availableTemplate = new EvalEmailTemplate(new Date(), external.getCurrentUserId(), emailAvailableTxt);
-			emailsLogic.saveEmailTemplate(availableTemplate, external.getCurrentUserId());
-			
-		}
-		eval.setAvailableEmailTemplate(availableTemplate);
-		
-		//Save the email reminder template
-		reminderTemplate = emailsLogic.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_REMINDER);
-		
-		if(emailReminderTxt==null || emailReminderTxt.equals(reminderTemplate.getMessage())){
-			//do nothing as the template has not been modified.
-		}else {
-			reminderTemplate = new EvalEmailTemplate(new Date(), external.getCurrentUserId(), emailReminderTxt);
-			emailsLogic.saveEmailTemplate(reminderTemplate, external.getCurrentUserId());
-		}
-		eval.setReminderEmailTemplate(reminderTemplate);
-	
 		//The main evaluation section with all the settings.
 		eval.setLastModified(new Date());
 		eval.setOwner(external.getCurrentUserId());
-		if(this.startDate!=null)eval.setStartDate(changeStringToDate(this.startDate));
-		if(this.dueDate!=null)eval.setDueDate(changeStringToDate(this.dueDate));
-		if(this.viewDate!=null)eval.setViewDate(changeStringToDate(this.viewDate));
+		eval.setStartDate(changeStringToDate(startDate));
+		eval.setDueDate(changeStringToDate(dueDate));
+		eval.setStopDate(eval.getDueDate());            //needed by columbia so as of now making equal to due date
+		eval.setViewDate(changeStringToDate(viewDate));
 
 		/*
 		 * If "EVAL_USE_SAME_VIEW_DATES" system setting (admin setting) flag is set 
@@ -440,52 +419,63 @@ public class EvaluationBean {
 		boolean sameViewDateForAll = ((Boolean) settings.get(EvalSettings.EVAL_USE_SAME_VIEW_DATES)).booleanValue();
 		if (sameViewDateForAll) {
 			
-			if (studentViewResults != null && studentViewResults.booleanValue())
-				eval.setStudentsDate(changeStringToDate(this.viewDate));
+			if (studentViewResults.booleanValue())
+				eval.setStudentsDate(changeStringToDate(viewDate));
 			
-			if (instructorViewResults != null && instructorViewResults.booleanValue())
-				eval.setInstructorsDate(changeStringToDate(this.viewDate));
+			if (instructorViewResults.booleanValue())
+				eval.setInstructorsDate(changeStringToDate(viewDate));
 		}
 		else {
 			
-			if (studentViewResults != null && studentViewResults.booleanValue())
-				eval.setStudentsDate(changeStringToDate(this.studentsDate));
+			if (studentViewResults.booleanValue())
+				eval.setStudentsDate(changeStringToDate(studentsDate));
 			
-			if (instructorViewResults != null && instructorViewResults.booleanValue())
-				eval.setInstructorsDate(changeStringToDate(this.instructorsDate));
+			if (instructorViewResults.booleanValue())
+				eval.setInstructorsDate(changeStringToDate(instructorsDate));
 		}
 
-		//This was needed by columbia so on HTML page not shown. Here making equal to due date. 
-		eval.setStopDate(eval.getDueDate());
+		// Email template section
+		EvalEmailTemplate availableTemplate, reminderTemplate;
+
+		//Save email available template
+		availableTemplate = emailsLogic.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
+		if ( emailAvailableTxt.equals(availableTemplate.getMessage()) ) {
+			//do nothing as the template has not been modified.
+		} 
+		else {
+			availableTemplate = new EvalEmailTemplate(new Date(), external.getCurrentUserId(), emailAvailableTxt);
+			emailsLogic.saveEmailTemplate(availableTemplate, external.getCurrentUserId());
+		}
+		eval.setAvailableEmailTemplate(availableTemplate);
 		
-		/*
-		 * All the checkboxes in the database are marked not null.
-		 * So when the user does not select a checkbox, we make the value FALSE. 
-		 */
-		if (eval.getResultsPrivate() == null)
-			eval.setResultsPrivate(Boolean.FALSE);
-		
-		if (eval.getBlankResponsesAllowed() == null)
-			eval.setBlankResponsesAllowed(Boolean.FALSE);
-		
-		if (eval.getModifyResponsesAllowed() == null)
-			eval.setModifyResponsesAllowed(Boolean.FALSE);
-		
-		if (eval.getUnregisteredAllowed() == null)
-			eval.setUnregisteredAllowed(Boolean.FALSE);
-		
+		//Save the email reminder template
+		reminderTemplate = emailsLogic.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_REMINDER);
+		if ( emailReminderTxt.equals(reminderTemplate.getMessage()) ) {
+			//do nothing as the template has not been modified.
+		}
+		else {
+			reminderTemplate = new EvalEmailTemplate(new Date(), external.getCurrentUserId(), emailReminderTxt);
+			emailsLogic.saveEmailTemplate(reminderTemplate, external.getCurrentUserId());
+		}
+		eval.setReminderEmailTemplate(reminderTemplate);
+	
 		/*
 		 * check if start date is the same as today's date, set startDate as today's date & time, 
 		 * as when we parse the string to a date, the time filed by default is zero
 		 */
 		checkEvalStartDate(eval);
 
-		//See the comment with the method at the end of this class.
+		/*
+		 * If the due date is same as start date then we need to make the time of due date 
+		 * to be 1 second more that start date.
+		 * (for details see the comment at the start of checkDueDate() method)
+		 */		
 		checkDueDate();
-		
+
+		//save the evaluation
 		evalsLogic.saveEvaluation(eval, external.getCurrentUserId());
 		
-		// Now save the selected contexts
+		//now save the selected contexts
 		for (int count = 0; count < this.selectedSakaiSiteIds.length; count++) {
 			EvalAssignContext assignCourse = new EvalAssignContext(new Date(), 
 					external.getCurrentUserId(), selectedSakaiSiteIds[count], 
@@ -493,7 +483,7 @@ public class EvaluationBean {
 			assignsLogic.saveAssignContext(assignCourse, external.getCurrentUserId());
 		}
 
-		// now reset the eval item here
+		//now reset the eval item here
 		eval = new EvalEvaluation();
 	    return ControlPanelProducer.VIEW_ID;
 	}

@@ -196,9 +196,11 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		}
 		
 		/*
-		 * Non Javadoc comment.
-		 * Show the settings below only if "EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS" is set as configurable 
-		 * i.e. null in the database OR is set as true in database.
+		 * (non-javadoc) 
+		 * If "EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS" is set as configurable i.e. NULL 
+		 * in the database OR is set as TRUE in database, then show the checkbox.
+		 * Else do not show the checkbox and just bind the value to FALSE because this value 
+		 * is initalized to TRUE in EvaluationBean continueToSettingsAction method.
 		 */
 		tempValue = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
 		if ( tempValue == null || tempValue.booleanValue() ) {
@@ -230,13 +232,18 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 				UILink.make(showResultsToInstDate, "calenderImageForResultsToInst", "$context/content/images/calendar.gif"); 	//$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
+		else {
+			form.parameters.add(new UIELBinding("#{evaluationBean.instructorViewResults}", Boolean.FALSE)); //$NON-NLS-1$
+		}
 
 		UIOutput.make(form, "eval-results-viewable-admin-note", messageLocator.getMessage("evalsettings.results.viewable.admin.note")); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		/*
-		 * Non Javadoc comment.
-		 * Show the settings below only if "EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED" is set as configurable 
-		 * i.e. null in the database OR is set as true in database.
+		 * (non-javadoc) 
+		 * If "EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED" is set as configurable i.e. NULL 
+		 * in the database OR is set as TRUE in database, then show the checkbox.
+		 * Else do not show the checkbox and just bind the value to FALSE because this value 
+		 * is initalized to TRUE in EvaluationBean continueToSettingsAction method.
 		 * 
 		 * Note: The variable showStudentCompletionHeader is used to show "student-completion-settings-header"
 		 * It is true only if either of the three "if's" below are evaluated to true.
@@ -262,6 +269,9 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 				// As we have disabled the check box => RSF will not bind the value => binding it explicitly.
 				form.parameters.add(new UIELBinding("#{evaluationBean.eval.blankResponsesAllowed}", tempValue)); //$NON-NLS-1$
 			}
+		}
+		else {
+			form.parameters.add(new UIELBinding("#{evaluationBean.eval.blankResponsesAllowed}", Boolean.FALSE)); //$NON-NLS-1$
 		}
 
 		/*
@@ -312,13 +322,9 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		}
 
 		/*
-		 * Non-Javadoc comment.
+		 * (non-javadoc)
 		 * If the person is an admin (any kind), then only we need to show
 		 * these instructor opt in/out settings.
-		 * 
-		 * If "EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE" is set as configurable 
-		 * i.e. null in the database then show the instructor opt select box.
-		 * Else just show the value as label. 
 		 */
 		if ( externalLogic.isUserAdmin(externalLogic.getCurrentUserId()) ) {
 			
@@ -326,7 +332,12 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 			UIOutput.make(showInstUseFromAbove, "admin-settings-header", messageLocator.getMessage("evalsettings.admin.settings.header")); //$NON-NLS-1$ //$NON-NLS-2$
 			UIOutput.make(showInstUseFromAbove, "admin-settings-instructions", messageLocator.getMessage("evalsettings.admin.settings.instructions")); //$NON-NLS-1$ //$NON-NLS-2$
 			UIOutput.make(showInstUseFromAbove, "instructor-opt-desc", messageLocator.getMessage("evalsettings.instructor.opt.desc")); //$NON-NLS-1$ //$NON-NLS-2$
-			
+
+			/*
+			 * If "EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE" is set as configurable 
+			 * i.e. NULL in the database then show the instructor opt select box.
+			 * Else just show the value as label. 
+			 */
 			if ( settings.get(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE) == null ) {
 	
 				UIBranchContainer showInstUseFromAboveOptions = UIBranchContainer.make(showInstUseFromAbove, "showInstUseFromAboveOptions:"); //$NON-NLS-1$
@@ -370,7 +381,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 				 */
 				form.parameters.add(new UIELBinding("#{evaluationBean.eval.instructorOpt}", instUseFromAboveValue)); //$NON-NLS-1$  
 			}
-		} //end of if check for admin
+		} 
 		
 		UIOutput.make(form, "eval-reminder-settings-header", messageLocator.getMessage("evalsettings.reminder.settings.header")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIInternalLink.make(form, "emailAvailable_link", messageLocator.getMessage("evalsettings.available.mail.link"), new EvalViewParameters(PreviewEmailProducer.VIEW_ID, null, "available"));	 //$NON-NLS-1$ //$NON-NLS-2$
