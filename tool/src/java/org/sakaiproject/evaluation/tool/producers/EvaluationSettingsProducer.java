@@ -1,5 +1,5 @@
 /******************************************************************************
- * EvaluationStartProducer.java - created by kahuja@vt.edu on Oct 05, 2006
+ * EvaluationSettingsProducer.java - created by kahuja@vt.edu on Oct 05, 2006
  * 
  * Copyright (c) 2007 Virginia Polytechnic Institute and State University
  * Licensed under the Educational Community License version 1.0
@@ -8,8 +8,8 @@
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
  * 
  * Contributors:
- * Rui Feng (fengr@vt.edu)
  * Kapil Ahuja (kahuja@vt.edu)
+ * Rui Feng (fengr@vt.edu)
  *****************************************************************************/
 package org.sakaiproject.evaluation.tool.producers;
 
@@ -53,41 +53,64 @@ import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /**
- * Setting misc options on a Evaluation page
+ * This producer is used to render the evaluation settings page.
+ * It is used when user either creates a new evaluation (coming
+ * forward from "Start Evaluation" page or coming backward from
+ * "Assign Evaluation to courses" page) or from control panel to
+ * edit the existing settings.
  * 
  * @author:Kapil Ahuja (kahuja@vt.edu)
- * @author: Rui Feng (fengr@vt.edu)
+ * @author:Rui Feng (fengr@vt.edu)
  */
-
 public class EvaluationSettingsProducer implements ViewComponentProducer, NavigationCaseReporter {
+
+	/**
+	 * This is used for navigation within the system.
+	 */
 	public static final String VIEW_ID = "evaluation_settings"; //$NON-NLS-1$
-	
+
+	/**
+	 * Used to return the view id of this producer. The view id is used for 
+	 * navigation within the system.
+	 * @return view id of this producer
+	 */
 	public String getViewID() {
 		return VIEW_ID;
 	}
 
+	// Spring injection 
 	private MessageLocator messageLocator;
 	public void setMessageLocator(MessageLocator messageLocator) {
 		this.messageLocator = messageLocator;
 	}
 	
+	// Spring injection 
 	private EvalSettings settings;
 	public void setSettings(EvalSettings settings) {
 		this.settings = settings;
     }
     
+	// Spring injection 
 	private EvaluationBean evaluationBean;
 	public void setEvaluationBean(EvaluationBean evaluationBean) {
 		this.evaluationBean = evaluationBean;
 	}
 	
+	// Spring injection 
 	private EvalExternalLogic externalLogic;
 	public void setExternalLogic(EvalExternalLogic externalLogic) {
 		this.externalLogic = externalLogic;
 	}
 	
+	/* 
+	 * (non-Javadoc)
+	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, 
+	 * 																uk.org.ponder.rsf.viewstate.ViewParameters, 
+	 * 																uk.org.ponder.rsf.view.ComponentChecker)
+	 */
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 		
+		//Displaying the top link, page title, page description, and creating the HTML form 
 		UIOutput.make(tofill, "eval-settings-title", messageLocator.getMessage("evalsettings.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIInternalLink.make(tofill, "summary-toplink", messageLocator.getMessage("summary.page.title"),  //$NON-NLS-1$ //$NON-NLS-2$
 							new SimpleViewParameters(SummaryProducer.VIEW_ID));	
@@ -152,17 +175,18 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		UIOutput.make(form, "private-warning-desc", messageLocator.getMessage("evalsettings.private.warning.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIBoundBoolean.make(form, "resultsPrivate", "#{evaluationBean.eval.resultsPrivate}", null); //$NON-NLS-1$ //$NON-NLS-2$
 
-		/*
-		 * Non Javadoc comment.
+		/* 
+		 * (non-Javadoc)
 		 * Variable is used to decide whether to show the view date textbox for student 
 		 * and instructor separately or not.
 		 */
 		boolean sameViewDateForAll = ((Boolean) settings.get(EvalSettings.EVAL_USE_SAME_VIEW_DATES)).booleanValue();
 		
-		/*
-		 * Non Javadoc comment.
-		 * Show the settings below only if "EvalSettings.STUDENT_VIEW_RESULTS" is set as configurable 
-		 * i.e. null in the database OR is set as true in database.
+		/* 
+		 * (non-Javadoc)
+		 * If "EvalSettings.STUDENT_VIEW_RESULTS" is set as configurable i.e. NULL 
+		 * in the database OR is set as TRUE in database, then show the checkbox.
+		 * Else do not show the checkbox and just bind the value to FALSE.
 		 */
 		Boolean tempValue = (Boolean) settings.get(EvalSettings.STUDENT_VIEW_RESULTS);
 		if ( tempValue == null || tempValue.booleanValue() ) {
@@ -194,13 +218,15 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 				UILink.make(showResultsToStuDate, "calenderImageForResultsToStudents", "$context/content/images/calendar.gif");		//$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
+		else {
+			form.parameters.add(new UIELBinding("#{evaluationBean.studentViewResults}", Boolean.FALSE)); //$NON-NLS-1$
+		}
 		
 		/*
 		 * (non-javadoc) 
 		 * If "EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS" is set as configurable i.e. NULL 
 		 * in the database OR is set as TRUE in database, then show the checkbox.
-		 * Else do not show the checkbox and just bind the value to FALSE because this value 
-		 * is initalized to TRUE in EvaluationBean continueToSettingsAction method.
+		 * Else do not show the checkbox and just bind the value to FALSE.
 		 */
 		tempValue = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
 		if ( tempValue == null || tempValue.booleanValue() ) {
@@ -242,8 +268,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		 * (non-javadoc) 
 		 * If "EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED" is set as configurable i.e. NULL 
 		 * in the database OR is set as TRUE in database, then show the checkbox.
-		 * Else do not show the checkbox and just bind the value to FALSE because this value 
-		 * is initalized to TRUE in EvaluationBean continueToSettingsAction method.
+		 * Else do not show the checkbox and just bind the value to FALSE.
 		 * 
 		 * Note: The variable showStudentCompletionHeader is used to show "student-completion-settings-header"
 		 * It is true only if either of the three "if's" below are evaluated to true.
@@ -275,9 +300,10 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		}
 
 		/*
-		 * Non Javadoc comment.
-		 * Show the settings below only if "EvalSettings.STUDENT_MODIFY_RESPONSES" is set as configurable 
-		 * i.e. null in the database OR is set as true in database.
+		 * (non-javadoc) 
+		 * If "EvalSettings.STUDENT_MODIFY_RESPONSES" is set as configurable i.e. NULL 
+		 * in the database OR is set as TRUE in database, then show the checkbox.
+		 * Else do not show the checkbox and just bind the value to FALSE.
 		 */
 		tempValue = (Boolean) settings.get(EvalSettings.STUDENT_MODIFY_RESPONSES);
 		if ( tempValue == null || tempValue.booleanValue() ) {
@@ -300,6 +326,9 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 				form.parameters.add(new UIELBinding("#{evaluationBean.eval.modifyResponsesAllowed}", tempValue)); //$NON-NLS-1$
 			}
 		}
+		else {
+			form.parameters.add(new UIELBinding("#{evaluationBean.eval.modifyResponsesAllowed}", Boolean.FALSE)); //$NON-NLS-1$
+		}
 		
 		//This options are commented for some time.
 		if (false){
@@ -312,7 +341,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		}
 
 		/*
-		 * Non Javadoc comment.
+		 * (non-javadoc) 
 		 * Continued from the note above, that is show "student-completion-settings-header" 
 		 * only if there are any student completion settings to be displayed on the page.
 		 */
@@ -334,6 +363,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 			UIOutput.make(showInstUseFromAbove, "instructor-opt-desc", messageLocator.getMessage("evalsettings.instructor.opt.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 
 			/*
+			 * (non-javadoc) 
 			 * If "EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE" is set as configurable 
 			 * i.e. NULL in the database then show the instructor opt select box.
 			 * Else just show the value as label. 
@@ -370,12 +400,14 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 					instUseFromAboveLabel = messageLocator.getMessage("evalsettings.instructors.label.required"); //$NON-NLS-1$ 
 					
 				/*
+				 * (non-javadoc) 
 				 * Displaying the label corresponding to INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE 
 				 * value set as system property. 
 				 */
 				UIOutput.make(showInstUseFromAboveLabel, "instUseFromAboveLabel", instUseFromAboveLabel); //$NON-NLS-1$ 
 	
 				/*
+				 * (non-javadoc) 
 				 * Doing the binding of this INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE 
 				 * value so that it can be saved in the database 
 				 */
@@ -417,6 +449,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		UIInput.make(form, "reminderFromEmail", "#{evaluationBean.eval.reminderFromEmail}", null); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		/*
+		 * (non-javadoc) 
 		 * if this evaluation is already saved, show "Save Settings" button
 		 * else this is the "Continue to Assign to Courses" button
 		 */
@@ -428,6 +461,10 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 
 	}
 	
+	/* 
+	 * (non-Javadoc)
+	 * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
+	 */
 	public List reportNavigationCases() {
 		List i = new ArrayList();
 		
@@ -437,8 +474,12 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 	
 		return i;
 	}
-	
-	// Make the checkbox disabled
+
+	/*
+	 * (non-Javadoc)
+	 * This method is used to make the checkbox appear disabled
+	 * where ever needed.
+	 */
 	private void setDisabledAttribute(UIBoundBoolean checkbox) {
 		Map attrmap = new HashMap();
 		attrmap.put("disabled", "true");
