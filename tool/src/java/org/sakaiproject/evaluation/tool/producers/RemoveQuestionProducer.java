@@ -524,7 +524,7 @@ public class RemoveQuestionProducer implements ViewComponentProducer, ViewParams
 			textarea.decorators = new DecoratorList(new UIFreeAttributeDecorator(attrmap)); 
 			
 		}else if(myTemplateItem.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_HEADER)){ //"Text Header"
-			UIBranchContainer header = UIBranchContainer.make(tofill, "essayType:"); //$NON-NLS-1$
+			UIBranchContainer header = UIBranchContainer.make(tofill, "headerType:"); //$NON-NLS-1$
 			UIOutput.make(header, "queNo",myTemplateItem.getDisplayOrder().toString()); //$NON-NLS-1$ //$NON-NLS-2$
 			UIOutput.make(header, "itemText", myTemplateItem.getItem().getItemText()); //$NON-NLS-1$ //$NON-NLS-2$
 

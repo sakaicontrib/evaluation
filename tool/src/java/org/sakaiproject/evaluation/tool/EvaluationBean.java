@@ -81,12 +81,6 @@ public class EvaluationBean {
 	public String instructorsDate;
 	public int[] enrollment;
 	
-	//Stores the reference when student is submitting the evaluation for a course.
-	public String sakaiContext;
-	
-	//Stores the answer for each item
-	public List listOfItems = new ArrayList();  
-	public List listOfAnswers = new ArrayList();  
 
 	/*
 	 * These 2 values are bound here because they are not in Evaluation POJO 
@@ -169,17 +163,6 @@ public class EvaluationBean {
 	 * INITIALIZATION
 	 */
 	public void init() {
-		
-		/*
-		 * TODO: TO BE REMOVED - CHECK WITH AARON.
-		 * The reason this is there because we need to bind answers to a list.
-		 * We know there is better way of doing this: that is making the link on 
-		 * summary page as button but we that requires removal of EvalTakeViewParameters. 
-		 */ 
-		for (int count = 0; count < 100; count++) {
-			listOfItems.add("");
-			listOfAnswers.add("");
-		}
 		
 		//no more TemplateBean - wdh
 		//log.debug("Initializing the TemplateBean....");
@@ -496,124 +479,6 @@ public class EvaluationBean {
 	
 	public void clearEvaluation(){
 		this.eval = new EvalEvaluation(); 
-	}
-	
-	//method binding to the "Submit Evaluation" button take_eval.html
-	public String submitEvaluation() {
-
-		/*
-		 * Get the evaluation object which contains template object
-		 * which contains the list of items.
-		 */
-		//eval = logic.getEvaluationById(eval.getId());
-		eval = evalsLogic.getEvaluationById(eval.getId());
-		
-		//TODO: start date to be picked from webpage
-		// Not sure what the comment above means but you should never get a time started
-		// from the webpage, it needs to always come from the server
-		EvalResponse response = new EvalResponse(new Date(), 
-				external.getCurrentUserId(), sakaiContext, new Date(), eval);
-		response.setEndTime(new Date());
-		/*
-		 * From the list of items make the hashmap with key as item_id and item
-		 * object as value. This is done so that it is easy in the for loop below.
-		 * 
-		 */ 
-		//Object evalItems[] = ((EvalTemplate)eval.getTemplate()).getItems().toArray();
-		//get all items
-	/*	List allItems = new ArrayList(((EvalTemplate)eval.getTemplate()).getItems());
-		
-		HashMap itemMap = new HashMap();
-		for(int i=0; i < allItems.size(); i++ ){
-			EvalItem evalItem = (EvalItem)allItems.get(i);	
-			//filter out the block parent item
-			if(evalItem.getBlockParent()== null){
-				itemMap.put(evalItem.getId().toString(), evalItem);
-			}else if(evalItem.getBlockParent().booleanValue() == false) {			
-				itemMap.put(evalItem.getId().toString(), evalItem);
-			}
-				
-		}
-		*/
-		List allItems = new ArrayList(((EvalTemplate)eval.getTemplate()).getTemplateItems());
-		
-		HashMap itemMap = new HashMap();
-		for(int i=0; i < allItems.size(); i++ ){
-			EvalTemplateItem evalTemplateItem = (EvalTemplateItem)allItems.get(i);	
-			EvalItem evalItem = evalTemplateItem.getItem();
-			//filter out the block parent item
-			if(evalTemplateItem.getBlockParent()== null){
-				itemMap.put(evalItem.getId().toString(), evalItem);
-			}else if(evalTemplateItem.getBlockParent().booleanValue() == false) {			
-				itemMap.put(evalItem.getId().toString(), evalItem);
-			}
-				
-		}
-		
-/*
-		Object evalItems[] = ((EvalTemplate)eval.getTemplate()).getItems().toArray();
-		HashMap itemMap = new HashMap();
-		for (int i = 0; i < evalItems.length; i++) {
-			EvalItem evalItem = (EvalItem)evalItems[i];
-			
-			// If it is a block pararent then get all child items and  add to the map.  
-			if(evalItem.getBlockParent().booleanValue() == true) {
-				
-				Integer blockID = new Integer(evalItem.getId().intValue());
-				//TODO: wait for aaron's logic layer method
-				List childItemsList = logic.findItem(blockID);
-				for (int j = 0; j < childItemsList.size(); j++) {
-					EvalItem childItem = (EvalItem)childItemsList.get(j);
-					itemMap.put(childItem.getId().toString(), childItem);
-				}
-			}
-			else{
-				itemMap.put(evalItem.getId().toString(), evalItem);
-			}
-		}
-	*/
-		
-		for (int count=0; count < listOfAnswers.size(); count++) {
-			
-			//if the answer is left blank then do not insert
-			if (listOfAnswers.get(count).equals("")) {
-				//do nothing
-			}
-			else {
-				//create the answer object and add to responses
-				EvalItem item = (EvalItem)itemMap.get(listOfItems.get(count));
-				EvalAnswer ans = new EvalAnswer(new Date(), item, response);
-				
-				//if ( (ans.getItem()).getClassification().equals("Short Answer/Essay") )
-				if ( (ans.getItem()).getClassification().equals(EvalConstants.ITEM_TYPE_TEXT) )
-					ans.setText((listOfAnswers.get(count)).toString());
-				else
-					ans.setNumeric(new Integer((listOfAnswers.get(count)).toString()));
-				
-				response.getAnswers().add(ans);
-			}
-		}
-		
-		//Finally save
-		//logic.saveResponse(response);
-		responsesLogic.saveResponse(response,external.getCurrentUserId());
-		
-		//clearing the answers
-		listOfItems = new ArrayList();  
-		listOfAnswers = new ArrayList();
-		
-		/*
-		 * TODO: TO BE REMOVED - CHECK WITH AARON.
-		 * The reason this is there because we need to bind answers to a list.
-		 * We know there is better way of doing this: that is making the link on 
-		 * summary page as button but we that requires removal of EvalTakeViewParameters. 
-		 */ 
-		for (int count = 0; count < 100; count++) {
-			listOfItems.add("");
-			listOfAnswers.add("");
-		}
-		
-		return SummaryProducer.VIEW_ID;
 	}
 	
 	//method binding to "Start Evaluation" link/commans on Control Panel Page

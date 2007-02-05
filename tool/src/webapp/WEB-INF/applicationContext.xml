@@ -21,7 +21,7 @@
   <!-- the beans listed here are allowed access to values (security) -->
   <bean parent="requestAddressibleParent">
     <property name="value"
-      value="templateBean, evaluationBean, templateBBean, itemsBean, templateBeanLocator, templateItemBeanLocator, settingsBean" />
+      value="templateBean, evaluationBean, templateBBean, itemsBean, templateBeanLocator, templateItemBeanLocator, answersBeanLocator, evaluationBeanLocator, takeEvalBean, settingsBean" />
   </bean>
 
   <bean id="EvalARIProxy" parent="RSACBridgeProxy">

@@ -78,7 +78,7 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 	    String templateItemOTP=templateItemOTPBinding+".";			
 
         EvalTemplateItem myTemplateItem=itemsLogic.getTemplateItemById(templateItemId);
-
+        System.out.println("TEMPLATEITEMID:"+templateItemId+" TEMPLATEITEMTEXT:"+myTemplateItem.getItem().getItemText());
 		UIOutput.make(tofill, "modify-template-title","Modify Template");
 		//UIOutput.make(tofill, "modify-template-title", messageLocator.getMessage("templatemodify.page.title"));//TODO: exception: can not get property
 		UIOutput.make(tofill, "preview-item-title", messageLocator.getMessage("previewitem.page.title"));
@@ -100,8 +100,8 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 				UIBranchContainer compact = UIBranchContainer.make(tofill, "compactDisplay:");
 
 				//Item text
-				UIOutput.make(compact, "queNo",null,myTemplateItem.getDisplayOrder().toString());
-				UIOutput.make(compact, "itemText", null, myTemplateItem.getItem().getItemText());
+				UIOutput.make(compact, "queNo", myTemplateItem.getDisplayOrder().toString());
+				UIOutput.make(compact, "itemText", myTemplateItem.getItem().getItemText());
 
 				//Start label
 				String compactDisplayStart = scaleOptions[0];		
@@ -141,8 +141,8 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 				UIBranchContainer compactColored = UIBranchContainer.make(tofill, "compactDisplayColored:");
 
 				//Item text
-				UIOutput.make(compactColored, "queNo",null,myTemplateItem.getDisplayOrder().toString());
-				UIOutput.make(compactColored, "itemText", null, myTemplateItem.getItem().getItemText());
+				UIOutput.make(compactColored, "queNo", myTemplateItem.getDisplayOrder().toString());
+				UIOutput.make(compactColored, "itemText", myTemplateItem.getItem().getItemText());
 				
 				//Get the scale ideal value (none, low, mid, high )
 				String ideal = scale.getIdeal();
@@ -231,8 +231,8 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 				UIBranchContainer full = UIBranchContainer.make(tofill, "fullDisplay:");
 
 				//Item text
-				UIOutput.make(full, "queNo",null,myTemplateItem.getDisplayOrder().toString());
-				UIOutput.make(full, "itemText", null, myTemplateItem.getItem().getItemText());
+				UIOutput.make(full, "queNo", myTemplateItem.getDisplayOrder().toString());
+				UIOutput.make(full, "itemText", myTemplateItem.getItem().getItemText());
 				Boolean usesNA=myTemplateItem.getUsesNA();
 				if(usesNA==null)usesNA=myTemplateItem.getItem().getUsesNA();
 				if(usesNA != null && usesNA.booleanValue()== true){
@@ -263,8 +263,8 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 				UIBranchContainer fullColored = UIBranchContainer.make(tofill, "fullDisplayColored:");
 
 				//Item text
-				UIOutput.make(fullColored, "queNo",null,myTemplateItem.getDisplayOrder().toString());
-				UIOutput.make(fullColored, "itemText", null, myTemplateItem.getItem().getItemText());
+				UIOutput.make(fullColored, "queNo", myTemplateItem.getDisplayOrder().toString());
+				UIOutput.make(fullColored, "itemText", myTemplateItem.getItem().getItemText());
 				Boolean usesNA=myTemplateItem.getUsesNA();
 				if(usesNA==null)usesNA=myTemplateItem.getItem().getUsesNA();
 				if(usesNA != null && usesNA.booleanValue()== true){
@@ -313,8 +313,8 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 				UIBranchContainer stepped = UIBranchContainer.make(tofill, "steppedDisplay:");
 				
 				//Item text
-				UIOutput.make(stepped, "queNo",null,myTemplateItem.getDisplayOrder().toString());
-				UIOutput.make(stepped, "itemText", null, myTemplateItem.getItem().getItemText());
+				UIOutput.make(stepped, "queNo", myTemplateItem.getDisplayOrder().toString());
+				UIOutput.make(stepped, "itemText", myTemplateItem.getItem().getItemText());
 				Boolean usesNA=myTemplateItem.getUsesNA();
 				if(usesNA==null)usesNA=myTemplateItem.getItem().getUsesNA();
 				if(usesNA != null && usesNA.booleanValue()== true){
@@ -358,8 +358,8 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 				UIBranchContainer steppedColored = UIBranchContainer.make(tofill, "steppedDisplayColored:");
 
 				//Item text
-				UIOutput.make(steppedColored, "queNo",null,myTemplateItem.getDisplayOrder().toString());
-				UIOutput.make(steppedColored, "itemText", null, myTemplateItem.getItem().getItemText());
+				UIOutput.make(steppedColored, "queNo", myTemplateItem.getDisplayOrder().toString());
+				UIOutput.make(steppedColored, "itemText", myTemplateItem.getItem().getItemText());
 				Boolean usesNA=myTemplateItem.getUsesNA();
 				if(usesNA==null)usesNA=myTemplateItem.getItem().getUsesNA();
 				if(usesNA != null && usesNA.booleanValue()== true){
@@ -425,8 +425,8 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 				//This is for vertical			
 				UIBranchContainer vertical = UIBranchContainer.make(tofill, "verticalDisplay:");
 				//Item text
-				UIOutput.make(vertical, "queNo",null,myTemplateItem.getDisplayOrder().toString());
-				UIOutput.make(vertical, "itemText", null, myTemplateItem.getItem().getItemText());
+				UIOutput.make(vertical, "queNo", myTemplateItem.getDisplayOrder().toString());
+				UIOutput.make(vertical, "itemText", myTemplateItem.getItem().getItemText());
 				Boolean usesNA=myTemplateItem.getUsesNA();
 				if(usesNA==null)usesNA=myTemplateItem.getItem().getUsesNA();
 				if(usesNA != null && usesNA.booleanValue()== true){
@@ -457,8 +457,8 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 		}else if(myTemplateItem.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)){//"Short Answer/Essay"
 			UIBranchContainer essay = UIBranchContainer.make(tofill, "essayType:");
 			//Item text
-			UIOutput.make(essay, "queNo",null,myTemplateItem.getDisplayOrder().toString());
-			UIOutput.make(essay, "itemText", null, myTemplateItem.getItem().getItemText());
+			UIOutput.make(essay, "queNo", myTemplateItem.getDisplayOrder().toString());
+			UIOutput.make(essay, "itemText", myTemplateItem.getItem().getItemText());
 			Boolean usesNA=myTemplateItem.getUsesNA();
 			if(usesNA==null)usesNA=myTemplateItem.getItem().getUsesNA();
 			if(usesNA != null && usesNA.booleanValue()== true){
@@ -474,9 +474,10 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 			textarea.decorators = new DecoratorList(new UIFreeAttributeDecorator(attrmap)); 
   
 		}else if(myTemplateItem.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_HEADER)){//"Text Header"
+	        System.out.println("IN HEADER");
 			UIBranchContainer header = UIBranchContainer.make(tofill, "headerType:");
-			UIOutput.make(header, "queNo",null,myTemplateItem.getDisplayOrder().toString());
-			UIOutput.make(header, "itemText", null, myTemplateItem.getItem().getItemText());
+			UIOutput.make(header, "queNo", myTemplateItem.getDisplayOrder().toString());
+			UIOutput.make(header, "itemText", myTemplateItem.getItem().getItemText());
 	
 		// TODO - changed so it will COMPILE - AZ - needs block support
 		}/*else if(myTemplateItem.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)
