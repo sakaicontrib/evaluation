@@ -319,31 +319,20 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 					throw new IllegalArgumentException("Item blockid must be null for scaled type items");
 				} else if (templateItem.getDisplayRows() != null) {
 					throw new IllegalArgumentException("Item displayRows must be null for scaled type items");
-				} else if (templateItem.getBlockParent() != null) {
-					throw new IllegalArgumentException("Item blockParent must be null for scaled type items");
 				}
 			} else {
+				// this is related to a block
 				if (templateItem.getBlockParent().booleanValue() ) {
 					// this is the parent item for this block
 					if (templateItem.getScaleDisplaySetting() == null) {
-						if (item.getScaleDisplaySetting() == null) {
-							throw new IllegalArgumentException("Item scale display setting must be included for parent block item");
-						} else {
-							templateItem.setScaleDisplaySetting(item.getScaleDisplaySetting());
-						}
+						throw new IllegalArgumentException("Template Item scale display setting must be included for parent block item");
 					} else if (templateItem.getBlockId() != null) {
 						throw new IllegalArgumentException("Item blockid must be null for parent block item");
-					} else if (templateItem.getDisplayOrder() != null) {
-						throw new IllegalArgumentException("Item display order must be null for parent block item");
 					}
 				} else {
 					// this is a child block item
 					if (templateItem.getBlockId() == null) {
 						throw new IllegalArgumentException("Item blockid must be specified for child block items");
-					} else if (templateItem.getItemCategory() != null) {
-						throw new IllegalArgumentException("Item category must be null for child block items");
-					} else if (templateItem.getScaleDisplaySetting() != null) {
-						throw new IllegalArgumentException("Item scale display setting must be null for child block item");
 					}
 				}
 
