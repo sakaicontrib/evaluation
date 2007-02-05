@@ -8,7 +8,7 @@
     <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
     <script type="text/javascript" language="JavaScript" src="../js/selectLink.js"></script>
-
+	<script type="text/javascript" language="JavaScript" src="../js/blockUtils.js"></script>
 </head>
 
 <body>
@@ -134,12 +134,15 @@
 <script rsf:id="decorateSelects">
   EvalSystem.decorateReorderSelects("", 1);
 </script>	
+
 </form>
 
 <br/><br/>
 
 <form rsf:id="createBlockForm" name="create_block_form" method="get" target="_self" action="modify_block.html">
-	<input rsf:id="createBlockBtn" type="submit" value="Create Block"/>
+	<input type="hidden" name="templateItemIds"/>
+	<input rsf:id="createBlockBtn" name="createBlockBtn"  type="submit" value="Create Block" 
+		onclick="javascript: return extractSelectedItems(this);"/>
 </form>
 
 </div>
