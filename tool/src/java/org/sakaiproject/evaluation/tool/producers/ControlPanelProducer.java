@@ -148,9 +148,12 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 						.toString(i));
 
 				EvalTemplate template1 = (EvalTemplate) (templateList.get(i));
-                UIInternalLink.make(templatesRb, "template-modify", template1.getTitle(), 
+                if(template1.getLocked()==new Boolean(false)){
+				UIInternalLink.make(templatesRb, "template-modify", template1.getTitle(), 
                     new EvalViewParameters(TemplateModifyProducer.VIEW_ID, template1.getId()));
-
+                }else{
+                	UIOutput.make(templatesRb, "template-modify-label", template1.getTitle());
+                }
 				String ownerId = template1.getOwner();
 				UIOutput.make(templatesRb, "templateOwner", external.getUserDisplayName(ownerId)); //$NON-NLS-1$
 				
