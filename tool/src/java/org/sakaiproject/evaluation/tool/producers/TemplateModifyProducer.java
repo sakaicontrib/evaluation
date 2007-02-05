@@ -22,6 +22,7 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.LocalTemplateLogic;
+import org.sakaiproject.evaluation.tool.params.BlockIdsParameters;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.params.PreviewEvalParameters;
 import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
@@ -214,13 +215,10 @@ public class TemplateModifyProducer implements ViewComponentProducer,
 				//only show Block Check box for scaled type(scale, block)
 				if(myItem.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)){
 					UIBranchContainer rbShowBlockCB = UIBranchContainer.make(radiobranch,"showCB:");
-					//TODO: binding to TemplateItem ID?check with Aaron
 					UIBoundBoolean blockCB = UIBoundBoolean.make(rbShowBlockCB, "blockCheckBox", Boolean.FALSE); 
-					//dynamically add check box's name as: block-<scale_id>-<templateItem_id>
 					Map attrmap = new HashMap();
 					String name = "block-" + myTemplateItem.getItem().getScale().getId()
 							+ "-" + myTemplateItem.getId() ;
-					attrmap.put("name", name);
 					attrmap.put("id", name);
 					blockCB.decorators = new DecoratorList(new UIFreeAttributeDecorator(attrmap)); 
 				}
@@ -314,9 +312,8 @@ public class TemplateModifyProducer implements ViewComponentProducer,
 				*/
 		    }//end of for loop
 		}
-		
 		//the create block form
-		UIForm blockForm = UIForm.make(tofill, "createBlockForm",new SimpleViewParameters(ModifyBlockProducer.VIEW_ID));
+		UIForm blockForm = UIForm.make(tofill, "createBlockForm",new BlockIdsParameters(ModifyBlockProducer.VIEW_ID,templateId));
 		UICommand.make(blockForm, "createBlockBtn",messageLocator.getMessage("modifytemplate.createblock.button"),null);
 	}
 

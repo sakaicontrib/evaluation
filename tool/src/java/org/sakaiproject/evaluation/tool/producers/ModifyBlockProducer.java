@@ -15,12 +15,13 @@ package org.sakaiproject.evaluation.tool.producers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.TemplateBean;
+import org.sakaiproject.evaluation.tool.params.BlockIdsParameters;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
-import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
 
 
 import uk.org.ponder.messageutil.MessageLocator;
@@ -54,22 +55,47 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
 public class ModifyBlockProducer implements ViewComponentProducer,ViewParamsReporter,DynamicNavigationCaseReporter{
 	public static final String VIEW_ID = "modify_block"; //$NON-NLS-1$
-
+	public String getViewID() {
+		return VIEW_ID;
+	}
 	
 	private MessageLocator messageLocator;
 	public void setMessageLocator(MessageLocator messageLocator) {
 		this.messageLocator = messageLocator;
 	}	
 	
-	public String getViewID() {
-		return VIEW_ID;
+	private EvalItemsLogic itemsLogic;
+
+	public void setItemsLogic(EvalItemsLogic itemsLogic) {
+	    this.itemsLogic = itemsLogic;
 	}
-	
+
 	// Permissible since is a request-scope producer. Accessed from NavigationCases
 	private Long templateId; 
 
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {	
-		TemplateItemViewParameters templateItemViewParams = (TemplateItemViewParameters) viewparams;
+		BlockIdsParameters evParameters = (BlockIdsParameters)viewparams;
+		
+		if(evParameters != null && evParameters.templateItemIds != null){
+			templateId =  evParameters.templateId;
+			String blockParentItemOTP = null;
+		    String blockParentItemOTPBinding = null;
+		    
+			System.out.println("templateId="+evParameters.templateId);
+			System.out.println("block item ids="+evParameters.templateItemIds);
+			
+			//analyze the string of templateItemIds
+			String[] strIds = evParameters.templateItemIds.split(",");
+			EvalTemplateItem templateItems[] = new EvalTemplateItem[strIds.length];
+			for(int i=0; i< strIds.length;i++){
+				System.out.println("checked id["+i+"]="+ strIds[i]);
+				templateItems[i]= itemsLogic.getTemplateItemById(Long.valueOf(strIds[i]));
+				//TODO:check if each templateItem has the same scale, otherwise throw error 
+			}
+			
+			
+		}
+/*		TemplateItemViewParameters templateItemViewParams = (TemplateItemViewParameters) viewparams;
 
 	    String templateItemOTP = null;
 	    String templateItemOTPBinding = null;
@@ -83,9 +109,9 @@ public class ModifyBlockProducer implements ViewComponentProducer,ViewParamsRepo
 	      templateItemOTPBinding = "templateItemBeanLocator.new1";
 	    }
 	    templateItemOTP = templateItemOTPBinding + ".";
-	  
+	*/  
 	    //TODO - replace with darreshaper
-	    if(templateItemId!=null){
+//	    if(templateItemId!=null){
 		    /*TODO
 		      
 		     EvalTemplateItem myTemplateItem=itemsLogic.getTemplateItemById(templateItemId);
@@ -93,8 +119,8 @@ public class ModifyBlockProducer implements ViewComponentProducer,ViewParamsRepo
 		    	itemsBean.scaleId=itemsLogic.getTemplateItemById(templateItemId).getItem().getScale().getId();
 		    }
 		    */
-	    }
-		
+	//    }
+	
 		UIOutput.make(tofill, "modify-block-title", messageLocator.getMessage("modifyblock.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(tofill, "create-eval-title", messageLocator.getMessage("createeval.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
 		
@@ -110,17 +136,17 @@ public class ModifyBlockProducer implements ViewComponentProducer,ViewParamsRepo
 		
 		
 		UIOutput.make(form, "added-by", messageLocator.getMessage("modifyitem.added.by")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(form, "userInfo", null, templateItemOTP + "owner");
+		//UIOutput.make(form, "userInfo", null, templateItemOTP + "owner");
 		
 		//TODO: should pass the item ID to RemoveQuestion page
-		if (templateItemId != null) {
+		/*if (templateItemId != null) {
 			UIBranchContainer showLink = UIBranchContainer.make(form, "showRemoveLink:");
 			UIInternalLink.make(showLink, "remove_link", messageLocator.getMessage("modifyitem.remove.link"), 
 					new SimpleViewParameters( "remove_question")); 
 		}
-		
+		*/
 		UIOutput.make(form, "item-header-text-header", messageLocator.getMessage("modifyblock.item.header.text.header")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIInput.make(form,"item_text", templateItemOTP + "item.itemText"); //$NON-NLS-1$ //$NON-NLS-2$
+		//UIInput.make(form,"item_text", templateItemOTP + "item.itemText"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		UIOutput.make(form, "scale-type-header", messageLocator.getMessage("modifyblock.scale.type.header")); //$NON-NLS-1$ //$NON-NLS-2$
 		//dropdown list for "Scale Type"
@@ -135,7 +161,7 @@ public class ModifyBlockProducer implements ViewComponentProducer,ViewParamsRepo
 		combo.optionnames = comboNames;
 		
 		UIOutput.make(form,"add-na-header",messageLocator.getMessage("modifyitem.add.na.header")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIBoundBoolean.make(form, "item_NA", templateItemOTP + "item.usesNA", null); //$NON-NLS-1$ //$NON-NLS-2$
+		//UIBoundBoolean.make(form, "item_NA", templateItemOTP + "item.usesNA", null); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		UIOutput.make(form,"ideal-coloring-header",messageLocator.getMessage("modifyblock.ideal.coloring.header")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIBoundBoolean.make(form, "idealColor", "#{itemsBean.idealColor}",null); //$NON-NLS-1$ //$NON-NLS-2$
@@ -149,14 +175,14 @@ public class ModifyBlockProducer implements ViewComponentProducer,ViewParamsRepo
 			messageLocator.getMessage("modifyitem.course.category.header"),
 			messageLocator.getMessage("modifyitem.instructor.category.header"),
 		};
-	    UISelect radios = UISelect.make(form, "item_category",
+	  /*  UISelect radios = UISelect.make(form, "item_category",
 	            EvaluationConstant.ITEM_CATEGORY_VALUES, courseCategoryList,
 	            templateItemOTP + "itemCategory", null);
 
 		String selectID = radios.getFullID();
 		UISelectChoice.make(form, "item_category_C", selectID, 0); //$NON-NLS-1$
 		UISelectChoice.make(form, "item_category_I", selectID, 1);	 //$NON-NLS-1$
-		
+		*/
 		UIOutput.make(form,"items-header","Items:"); 
 /*	TODO	
 		int queNo =  templateBean.queList.size();
@@ -185,12 +211,13 @@ public class ModifyBlockProducer implements ViewComponentProducer,ViewParamsRepo
 		UIOutput.make(form, "cancel-button", messageLocator.getMessage("general.cancel.button"));
 		UICommand saveCmd = UICommand.make(form, "saveBlockAction", messageLocator.getMessage("modifyitem.save.button"), 
 				"#{itemsBean.saveBlockItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		saveCmd.parameters.add(new UIELBinding(templateItemOTP
+/*		saveCmd.parameters.add(new UIELBinding(templateItemOTP
 			        + "item.classification", EvalConstants.ITEM_TYPE_SCALED));
 			    saveCmd.parameters.add(new UIELBinding("#{itemsBean.templateItem}",
 			        new ELReference(templateItemOTPBinding)));
 			    saveCmd.parameters.add(new UIELBinding("#{itemsBean.templateId}",
 			        templateId));
+			        */
 		/*TODO: preview new/modified Block item
 		 * 
 		UICommand.make(form, "previewBlockAction", messageLocator.getMessage("modifyitem.preview.button"), "#{templateBean.previewBlockAction}"); 
@@ -208,8 +235,8 @@ public class ModifyBlockProducer implements ViewComponentProducer,ViewParamsRepo
 	}
 
 	public ViewParameters getViewParameters() {
-		return new TemplateItemViewParameters();
+		return new BlockIdsParameters();
 	}
 
-
+	
 }
