@@ -16,9 +16,7 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -185,12 +183,8 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 			List queuedEvals = new ArrayList();
 			List activeEvals = new ArrayList();
 			List closedEvals = new ArrayList();
-			/* 
-			 * if due day is the same date as current date, it should be considered active
-			 */
-			Calendar calendar = new GregorianCalendar();			
-			Date today = new Date();
-		
+
+			// check the state of the eval to determine display data
 			for (int j = 0; j < evals.size(); j++) {
 				EvalEvaluation myEval = (EvalEvaluation) evals.get(j);
  				String evalStatus=evaluationsLogic.getEvaluationState(myEval.getId());
