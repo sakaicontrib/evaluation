@@ -94,6 +94,7 @@ tool/project.properties -text
 tool/project.xml -text
 tool/src/java/org/sakaiproject/evaluation/tool/EvalARI.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/EvaluationBean.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/EvaluationBeanLocator.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/EvaluationConstant.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ItemsBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/LocalTemplateLogic.java -text
