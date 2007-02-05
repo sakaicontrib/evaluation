@@ -89,6 +89,14 @@
 		class="org.sakaiproject.evaluation.tool.TemplateBeanLocator">
 		<property name="localTemplateLogic" ref="localTemplateLogic" />
 	</bean>
+	
+	<bean id="evaluationBeanLocator"
+		class="org.sakaiproject.evaluation.tool.EvaluationBeanLocator">
+		<property name="external"
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+		<property name="evalsLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+	</bean>	
 
 	<bean id="entityRewriteWrapper"
 		class="org.sakaiproject.evaluation.tool.wrapper.EntityRewriteWrapper">
