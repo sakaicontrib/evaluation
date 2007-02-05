@@ -60,12 +60,7 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
 	public void setMessageLocator(MessageLocator messageLocator) {
 		this.messageLocator = messageLocator;
 	}
-	
-	private EvalSettings settings;
-	public void setSettings(EvalSettings settings) {
-		this.settings = settings;
-    }
-    
+
     private String ADMIN_WBL = "settingsBean";
     
     private void makeBoolean(UIContainer parent, String ID, String adminkey) {
