@@ -85,7 +85,9 @@ public class EvalTemplatesLogicImpl implements EvalTemplatesLogic {
 			throw new IllegalArgumentException("Invalid sharing constant ("+template.getSharing()+") set for template ("+template.getTitle()+")");
 		} else if ( EvalConstants.SHARING_PUBLIC.equals(template.getSharing()) ) {
 			// test if non-admin trying to set public sharing
-			if (! external.isUserAdmin(userId) ) {
+			String system_sharing = (String) settings.get(EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY);
+			if (! EvalConstants.SHARING_PUBLIC.equals(system_sharing) &&
+					! external.isUserAdmin(userId) ) {
 				throw new IllegalArgumentException("Only admins can set template ("+template.getTitle()+") sharing to public");
 			}
 		}
