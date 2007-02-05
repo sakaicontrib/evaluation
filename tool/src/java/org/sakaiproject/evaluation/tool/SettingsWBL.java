@@ -22,44 +22,48 @@ import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 /**
- * Obviates the need for a backing bean for administrative functionality.
+ * Obviates the need for a backing bean for administrative functionality 
+ * (this is a WritableBeanLocator). 
  * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * @author Kapil Ahuja (kahuja@caret.cam.ac.uk)
  */
 public class SettingsWBL implements WriteableBeanLocator {
-	private StaticLeafParser leafParser;
+	
+	// Spring injection 
 	private EvalSettings evalSettings;
-	private MessageLocator messageLocator;
-	  
 	public void setEvalSettings(EvalSettings evalSettings) {
 		this.evalSettings = evalSettings;
 	}
 	
+	// Spring injection 
+	private StaticLeafParser leafParser;
 	public void setLeafParser(StaticLeafParser leafParser) {
 		this.leafParser = leafParser;
 	}
 	
+	// Spring injection 
+	private MessageLocator messageLocator;
 	public void setMessageLocator(MessageLocator messageLocator) {
 		this.messageLocator = messageLocator;
 	}
 	  
+	/**
+	 * Simply tells the user that remove functionality is not 
+	 * supported (this is done by throwing an exception).
+	 * 
+	 * @param beanname -  Name of the property that has to be removed    
+	 * @return throws a new UnsupportedOperationException exception
+	 */
 	public boolean remove(String beanname) {
 		throw new UnsupportedOperationException("Removal not supported from SettingsWBL");
 	}
 	  
-	private static Class getPropertyType(String propname) {
-		String typename = EvaluationSettingsParse.getType(propname);
-		try {
-			return Class.forName(typename);
-		}
-		catch (Exception e) {
-			throw UniversalRuntimeException.accumulate(e, "Could not look up " + typename + " to a class");
-		}
-	}
-
-	/*
-	 * Sets the data from producer to EvalSettings. 
+	/**
+	 * Sets the data from producer to EvalSettings (database). 
+	 * 
+	 * @param beanname -  Name of the property to be set    
+	 * @param toset -  Value of the property to be set    
 	 */
 	public void set(String beanname, Object toset) {
 	  
@@ -94,8 +98,12 @@ public class SettingsWBL implements WriteableBeanLocator {
 		evalSettings.set(beanname, toset);
 	}
 
-	/*
-	 * Gets the data from EvalSettings and returns to producer. 
+	/**
+	 * Gets the data from EvalSettings (database) and returns to producer. 
+	 * 
+	 * @param path -  Name of the property whose value has to be fetched 
+	 * 				  from database
+	 * @return Value of the property obtained from database
 	 */
 	public Object locateBean(String path) {
 		  
@@ -121,9 +129,24 @@ public class SettingsWBL implements WriteableBeanLocator {
 		return toget;
 	}
 	
+	/*
+	 * (non-javadoc)
+	 * Uses java.lang.Class to find the class for a given property. 
+	 */
+	private static Class getPropertyType(String propname) {
+		String typename = EvaluationSettingsParse.getType(propname);
+		try {
+			return Class.forName(typename);
+		}
+		catch (Exception e) {
+			throw UniversalRuntimeException.accumulate(e, "Could not look up " + typename + " to a class");
+		}
+	}
 	
 	/*
-	 * Removing duplication of code by moving "if" block in this method. 
+	 * (non-javadoc)
+	 * Removing duplication of code in "get" and "set" methods 
+	 * by moving "if" block in this method. 
 	 */
 	private boolean isFieldToBeParsed (String path) {
 
