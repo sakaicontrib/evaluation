@@ -146,7 +146,7 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 						.toString(i));
 
 				EvalTemplate template1 = (EvalTemplate) (templateList.get(i));
-                if(template1.getLocked()==new Boolean(false)){
+                if(template1.getLocked().equals(new Boolean(false))){
 				UIInternalLink.make(templatesRb, "template-modify", template1.getTitle(), 
                     new EvalViewParameters(TemplateModifyProducer.VIEW_ID, template1.getId()));
                 }else{

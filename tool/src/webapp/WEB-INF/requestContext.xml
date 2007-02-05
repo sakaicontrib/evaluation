@@ -54,6 +54,11 @@
 		<property name="itemsBean" ref="itemsBean" />
 	</bean>
 
+	<bean id="takeEvalBean"
+		class="org.sakaiproject.evaluation.tool.TakeEvalBean">
+	  <property name="answersBeanLocator" ref="answersBeanLocator" />
+	</bean>
+
 	<bean id="templateBBean"
 		class="org.sakaiproject.evaluation.tool.TemplateBBean">
 	  <property name="templateBeanLocator" ref="templateBeanLocator" />
@@ -96,6 +101,14 @@
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="evalsLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+	</bean>	
+
+	<bean id="answersBeanLocator"
+		class="org.sakaiproject.evaluation.tool.AnswersBeanLocator">
+		<property name="external"
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+		<property name="responsesLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
 	</bean>	
 
 	<bean id="entityRewriteWrapper"

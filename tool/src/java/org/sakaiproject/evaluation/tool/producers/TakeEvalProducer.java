@@ -33,6 +33,7 @@ import org.sakaiproject.evaluation.tool.params.EvalTakeViewParameters;
 import org.sakaiproject.evaluation.tool.utils.ItemBlockUtils;
 
 import uk.org.ponder.messageutil.MessageLocator;
+import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
@@ -96,6 +97,12 @@ public class TakeEvalProducer implements ViewComponentProducer,
 	//This variable is used for binding the items to a list in evaluationBean
 	private int totalItemsAdded = 0;
 	
+	
+    String  newAnswerOTPBinding = "answersBeanLocator.new";
+    String newAnswerOTP = newAnswerOTPBinding + ".";
+    String evalOTPBinding="evaluationBeanLocator";
+    String evalOTP = evalOTPBinding+".";
+
 	/**
 	 * 
 	 * @param bl=
@@ -126,6 +133,9 @@ public class TakeEvalProducer implements ViewComponentProducer,
 
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams,
 			ComponentChecker checker) {
+		
+
+
 		
 		UIOutput.make(tofill, "take-eval-title", messageLocator.getMessage("takeeval.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
 		
@@ -159,11 +169,8 @@ public class TakeEvalProducer implements ViewComponentProducer,
 		
 		UIForm form = UIForm.make(tofill, "evaluationForm"); //$NON-NLS-1$
 
-		//Binding the EvalEvaluation object id to the EvalEvaluation object id in EvaluationBean.
-		form.parameters.add( new UIELBinding("#{evaluationBean.eval.id}", eval.getId()) ); //$NON-NLS-1$
-		
-		//Binding the sakaiContext (aka course) to the sakaiContext in EvaluationBean.
-		form.parameters.add( new UIELBinding("#{evaluationBean.sakaiContext}", evalTakeViewParams.context) ); //$NON-NLS-1$
+		//Binding the EvalEvaluation object to the EvalEvaluation object in TakeEvaluationBean.
+		form.parameters.add( new UIELBinding("#{takeEvalBean.eval}", new ELReference(evalOTP+eval.getId()))); //$NON-NLS-1$
 
 		EvalTemplate template = eval.getTemplate();
 
@@ -219,20 +226,26 @@ public class TakeEvalProducer implements ViewComponentProducer,
 			}
 		} // end of for loop
 		
-		UICommand.make(form, "submitEvaluation", messageLocator.getMessage("takeeval.submit.button"), "#{evaluationBean.submitEvaluation}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		UICommand.make(form, "submitEvaluation", messageLocator.getMessage("takeeval.submit.button"), "#{takeEvalBean.submitEvaluation}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
 	} // end of method
 
 	private void doFillComponent(EvalTemplateItem myTempItem, int i,
 			UIBranchContainer radiobranch, UIContainer tofill, UIContainer form,List itemsList) {
+	
+	    String templateItemOTPBinding = "templateItemBeanLocator." + myTempItem.getId();		
+		String templateItemOTP = templateItemOTPBinding + ".";
 
-		EvalItem myItem = myTempItem.getItem();
+		
+	    EvalItem myItem = myTempItem.getItem();
+		
+		String currAnswerOTP=newAnswerOTPBinding + totalItemsAdded+".";
 		
 		if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)) { //"Scaled/Survey"
 
 			// Bind item id to list of items in evaluation bean.
 			form.parameters.add( new UIELBinding
-					("#{evaluationBean.listOfItems." + totalItemsAdded + "}",myItem.getId().toString()) );		
+					(currAnswerOTP + "item",new ELReference(templateItemOTP+"item")) );		
 			
 /*			ItemDisplay itemDisplay = new ItemDisplay(myItem);
 			String values[] = itemDisplay.getScaleValues();
@@ -267,8 +280,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 				UIOutput.make(compact, "itemText", myItem.getItemText()); //$NON-NLS-1$
 				UIOutput.make(compact, "compactDisplayStart", compactDisplayStart);
 				UISelect radios = UISelect.make(compact, "dummyRadio", scaleValues,
-						scaleLabels, "#{evaluationBean.listOfAnswers." + 
-							totalItemsAdded + "}", null); //$NON-NLS-1$
+						scaleLabels, currAnswerOTP+"numeric", null); //$NON-NLS-1$
 				radios.optionnames = UIOutputMany.make(scaleLabels);
 
 				String selectID = radios.getFullID();
@@ -354,8 +366,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 				UILink.make(compactRadioContainer, "idealImage", idealImage); //$NON-NLS-1$
 
 				UISelect radios = UISelect.make(compactRadioContainer, 
-						"dummyRadio", scaleValues, scaleLabels, "#{evaluationBean.listOfAnswers." + 
-								totalItemsAdded + "}", null);
+						"dummyRadio", scaleValues, scaleLabels, currAnswerOTP+"numeric", null);
 				
 				radios.optionnames = UIOutputMany.make(scaleLabels);
 				String selectID = radios.getFullID();
@@ -418,8 +429,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 					// Radio Buttons
 					UISelect radios = UISelect.make(full, 
 							"dummyRadio", scaleValues,scaleLabels,
-								"#{evaluationBean.listOfAnswers." + 
-									totalItemsAdded + "}", null);
+							currAnswerOTP+"numeric", null);
 					
 					radios.optionnames = UIOutputMany.make(scaleLabels);
 					String selectID = radios.getFullID();
@@ -437,8 +447,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 					
 					UISelect radios = UISelect.make(vertical, 
 							"dummyRadio", scaleValues, scaleLabels,
-								"#{evaluationBean.listOfAnswers." + 
-									totalItemsAdded + "}", null);
+							currAnswerOTP+"numeric", null);
 					
 					radios.optionnames = UIOutputMany.make(scaleLabels);
 					String selectID = radios.getFullID();
@@ -470,8 +479,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 					UILink.make(fullColored, "idealImage", idealImage); //$NON-NLS-1$
 
 					UISelect radios = UISelect.make(fullColored, 
-							"dummyRadio",scaleValues, scaleLabels,"#{evaluationBean.listOfAnswers." + 
-									totalItemsAdded + "}", null);
+							"dummyRadio",scaleValues, scaleLabels,currAnswerOTP+"numeric", null);
 
 					radios.optionnames = UIOutputMany.make(scaleLabels);
 
@@ -508,8 +516,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 				
 				UISelect radios = UISelect.make(stepped, 
 						"dummyRadio", scaleValues, scaleLabels,
-							"#{evaluationBean.listOfAnswers." + 
-								totalItemsAdded + "}", null); 
+						currAnswerOTP+"numeric", null); 
 				
 				radios.optionnames = UIOutputMany.make(scaleLabels);
 				String selectID = radios.getFullID();
@@ -577,8 +584,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 				
 				UISelect radios = UISelect.make(steppedColored, 
 						"dummyRadio", scaleValues, scaleLabels,
-							"#{evaluationBean.listOfAnswers." + 
-								totalItemsAdded + "}", null); 
+						currAnswerOTP+"numeric", null); 
 				
 				radios.optionnames = UIOutputMany.make(scaleLabels);
 				String selectID = radios.getFullID();
@@ -694,6 +700,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 				List childItems = ItemBlockUtils.getChildItmes(itemsList, blockID);
 				if (childItems != null && childItems.size() > 0) {
 					for (int j = 0; j < childItems.size(); j++) {
+						String currChildBlockAnswerOTP=newAnswerOTPBinding+"child"+j;
 						UIBranchContainer queRow = UIBranchContainer.make(
 								block, "queRow:", Integer.toString(j)); //$NON-NLS-1$
 
@@ -701,15 +708,16 @@ public class TakeEvalProducer implements ViewComponentProducer,
 						EvalTemplateItem tempItemChild = (EvalTemplateItem) childItems.get(j);
 						EvalItem child = tempItemChild.getItem();
 						
+					    String childItemOTPBinding = "templateItemBeanLocator." + tempItemChild.getId();		
+						String childItemOTP = childItemOTPBinding + ".";
+						
 						// Bind item id to list of items in evaluation bean.
 						form.parameters.add( new UIELBinding
-								("#{evaluationBean.listOfItems." +  //$NON-NLS-1$
-										totalItemsAdded + "}",	 //$NON-NLS-1$
-											child.getId().toString()) );		
+								(currChildBlockAnswerOTP+"item", new ELReference(childItemOTP+"item")) );		
 						
 						// Bind answer to list of answers in evaluation bean.
 						UISelect radios = UISelect.make(queRow, "dummyRadio",scaleValues, scaleLabels, 
-									"#{evaluationBean.listOfAnswers."+ totalItemsAdded + "}", null); //$NON-NLS-1$
+								currChildBlockAnswerOTP+"numeric", null); //$NON-NLS-1$
 						totalItemsAdded++;
 						
 						radios.optionnames = UIOutputMany.make(scaleLabels);
@@ -813,6 +821,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 				List childItems = ItemBlockUtils.getChildItmes(itemsList, blockID);
 				if (childItems != null && childItems.size() > 0) {
 					for (int j = 0; j < childItems.size(); j++) {
+						String currChildBlockAnswerOTP=newAnswerOTPBinding+"child"+j;
 						UIBranchContainer queRow = UIBranchContainer.make(
 								blockSteppedColored, "queRow:", Integer //$NON-NLS-1$
 										.toString(j));
@@ -822,17 +831,16 @@ public class TakeEvalProducer implements ViewComponentProducer,
 						EvalTemplateItem tempItemChild = (EvalTemplateItem) childItems.get(j);
 						EvalItem child = tempItemChild.getItem();
 
+					    String childItemOTPBinding = "templateItemBeanLocator." + tempItemChild.getId();		
+						String childItemOTP = childItemOTPBinding + ".";
+						
 						// Bind item id to list of items in evaluation bean.
 						form.parameters.add( new UIELBinding
-								("#{evaluationBean.listOfItems."+  //$NON-NLS-1$
-										totalItemsAdded + "}",	 //$NON-NLS-1$
-											child.getId().toString()) );		
+								(currChildBlockAnswerOTP+"item", new ELReference(childItemOTP+"item")) );			
 						
 						// Bind the answers to list of answers in evaluation bean.
-						UISelect radios = UISelect.make(queRow, "dummyRadio",  //$NON-NLS-1$
-								scaleValues,	scaleLabels, 
-									"#{evaluationBean.listOfAnswers."  //$NON-NLS-1$
-										+ totalItemsAdded + "}", null); //$NON-NLS-1$
+						UISelect radios = UISelect.make(queRow, "dummyRadio",
+								scaleValues, scaleLabels, currChildBlockAnswerOTP+"numeric", null);
 						totalItemsAdded++;
 
 						radios.optionnames = UIOutputMany.make(scaleLabels);
@@ -874,14 +882,12 @@ public class TakeEvalProducer implements ViewComponentProducer,
 				UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
-			// Binding item id to list of items in evaluation bean.
+			// Bind item id to list of items in evaluation bean.
 			form.parameters.add( new UIELBinding
-					("#{evaluationBean.listOfItems." + totalItemsAdded + "}",
-							myItem.getId().toString()) );		
+					(currAnswerOTP + "item",new ELReference(templateItemOTP+"item")) );				
 			
 			//Binding answer to this item to list of answers in evaluation bean
-			UIInput textarea = UIInput.make(essay, "essayBox",
-					"#{evaluationBean.listOfAnswers." + totalItemsAdded + "}"); //$NON-NLS-1$ //$NON-NLS-2$
+			UIInput textarea = UIInput.make(essay, "essayBox", currAnswerOTP+"text"); //$NON-NLS-1$ //$NON-NLS-2$
 			totalItemsAdded++;
 			
 			Map attrmap = new HashMap();
@@ -904,7 +910,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 	public List reportNavigationCases() {
 		List i = new ArrayList();
 
-		i.add(new NavigationCase(SummaryProducer.VIEW_ID, new SimpleViewParameters(SummaryProducer.VIEW_ID)));
+		i.add(new NavigationCase("success", new SimpleViewParameters(SummaryProducer.VIEW_ID)));
 
 		return i;
 	}

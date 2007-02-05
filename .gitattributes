@@ -92,6 +92,7 @@ impl/test/src/java/org/sakaiproject/evaluation/test/PreloadTestData.java -text
 /project.xml -text
 tool/project.properties -text
 tool/project.xml -text
+tool/src/java/org/sakaiproject/evaluation/tool/AnswersBeanLocator.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/EvalARI.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/EvaluationBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/EvaluationBeanLocator.java -text
@@ -100,6 +101,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/ItemsBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/LocalTemplateLogic.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ReportHandlerHook.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/SettingsWBL.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/TakeEvalBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/TemplateBBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/TemplateBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/TemplateBeanLocator.java -text

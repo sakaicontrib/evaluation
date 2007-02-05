@@ -251,7 +251,7 @@ public class TemplateModifyProducer implements ViewComponentProducer,
 						"preview_row_item", 
 						messageLocator.getMessage("modifytemplate.preview.link"),
 						new TemplateItemViewParameters(
-								RemoveQuestionProducer.VIEW_ID, 
+								PreviewItemProducer.VIEW_ID, 
 								templateId,
 								myTemplateItem.getId()));
                 
