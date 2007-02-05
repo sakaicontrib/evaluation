@@ -9,6 +9,8 @@
  * 
  * Contributors:
  * Aaron Zeckoski (aaronz@vt.edu)
+ * Kapil Ahuja (kahuja@vt.edu)
+ * Antranig Basman (antranig@caret.cam.ac.uk)
  *****************************************************************************/
 
 package org.sakaiproject.evaluation.tool.producers;
@@ -43,49 +45,46 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  * Handles administration of the evaluation system
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
+ * @author Kapil Ahuja (kahuja@vt.edu)
+ * @author Antranig Basman (antranig@caret.cam.ac.uk)
  */
 public class AdministrateProducer implements ViewComponentProducer, NavigationCaseReporter {
 
+	/**
+	 * This is used for navigation within the system.
+	 */
 	public static final String VIEW_ID = "administrate"; //$NON-NLS-1$
+
+	/**
+	 * Used to return the view id of this producer. The view id is used for 
+	 * navigation within the system.
+	 * @return view id of this producer
+	 */
 	public String getViewID() {
 		return VIEW_ID;
 	}
 
+	// Spring injection 
 	private EvalExternalLogic external;
 	public void setExternal(EvalExternalLogic external) {
 		this.external = external;
 	}
 
+	// Spring injection 
 	private MessageLocator messageLocator;
 	public void setMessageLocator(MessageLocator messageLocator) {
 		this.messageLocator = messageLocator;
 	}
-
+	
+	// Used to prepare the path for WritableBeanLocator
     private String ADMIN_WBL = "settingsBean";
-    
-    private void makeBoolean(UIContainer parent, String ID, String adminkey) {
-      // Must use "composePath" here since admin keys currently contain periods
-      UIBoundBoolean.make(parent, ID, adminkey == null? null : PathUtil.composePath(ADMIN_WBL, adminkey)); 
-    }
-    
-    private void makeSelect(UIContainer parent, String ID, String[] values, String[] labels, String adminkey) {
-      UISelect selection = UISelect.make(parent, ID); 
-      selection.selection = new UIInput();
-      if (adminkey != null) {
-        selection.selection.valuebinding = new ELReference(PathUtil.composePath(ADMIN_WBL, adminkey));
-      }
-      UIBoundList selectvalues = new UIBoundList();
-      selectvalues.setValue(values);
-      selection.optionlist = selectvalues;
-      UIBoundList selectlabels = new UIBoundList();
-      selectlabels.setValue(labels);
-      selection.optionnames = selectlabels;    
-    }
-    
-    private void makeInput(UIContainer parent, String ID, String adminkey) {
-      UIInput.make(parent, ID, PathUtil.composePath(ADMIN_WBL, adminkey));
-    }
-    
+
+	/* 
+	 * (non-Javadoc)
+	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, 
+	 * 																uk.org.ponder.rsf.viewstate.ViewParameters, 
+	 * 																uk.org.ponder.rsf.view.ComponentChecker)
+	 */
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 		String currentUserId = external.getCurrentUserId();
 		boolean userAdmin = external.isUserAdmin(currentUserId);
@@ -134,7 +133,7 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
 		UIOutput.make(form, "instructors-email-students-note", messageLocator.getMessage("administrate.instructors.email.students.note")); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		/*
-		 * Non-Javadoc comments.
+		 * (non-Javadoc)
 		 * Select for whether instructors must use evaluations from above.
 		 * 
 		 * Note: The values should be irrespective of i18n as they are stored in database. 
@@ -277,10 +276,48 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
         // NB no action now required
 		UICommand.make(form, "saveSettings", messageLocator.getMessage("administrate.save.settings.button"), null); //$NON-NLS-1$ //$NON-NLS-2$	
 	}
-	
+
+	/* 
+	 * (non-Javadoc)
+	 * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
+	 */
 	public List reportNavigationCases() {
 		List i = new ArrayList();
-		//TODO
 		return i;
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * This method is used to render checkboxes.
+	 */
+    private void makeBoolean(UIContainer parent, String ID, String adminkey) {
+      // Must use "composePath" here since admin keys currently contain periods
+      UIBoundBoolean.make(parent, ID, adminkey == null? null : PathUtil.composePath(ADMIN_WBL, adminkey)); 
+    }
+    
+	/*
+	 * (non-Javadoc)
+	 * This is a common method used to render dropdowns (select boxes).
+	 */
+    private void makeSelect(UIContainer parent, String ID, String[] values, String[] labels, String adminkey) {
+      UISelect selection = UISelect.make(parent, ID); 
+      selection.selection = new UIInput();
+      if (adminkey != null) {
+        selection.selection.valuebinding = new ELReference(PathUtil.composePath(ADMIN_WBL, adminkey));
+      }
+      UIBoundList selectvalues = new UIBoundList();
+      selectvalues.setValue(values);
+      selection.optionlist = selectvalues;
+      UIBoundList selectlabels = new UIBoundList();
+      selectlabels.setValue(labels);
+      selection.optionnames = selectlabels;    
+    }
+    
+	/*
+	 * (non-Javadoc)
+	 * This is a common method used to render text boxes.
+	 */
+    private void makeInput(UIContainer parent, String ID, String adminkey) {
+      UIInput.make(parent, ID, PathUtil.composePath(ADMIN_WBL, adminkey));
+    }
 }
