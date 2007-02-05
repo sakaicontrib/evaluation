@@ -104,6 +104,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/TemplateBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/TemplateBeanLocator.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/TemplateItemBeanLocator.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/bundle/messages_en.properties -text
+tool/src/java/org/sakaiproject/evaluation/tool/params/BlockIdsParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/params/CSVReportViewParams.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/params/EssayResponseParams.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/params/EvalTakeViewParameters.java -text
@@ -151,6 +152,7 @@ tool/src/webapp/content/images/ideal-high.jpg -text
 tool/src/webapp/content/images/ideal-low.jpg -text
 tool/src/webapp/content/images/ideal-mid.jpg -text
 tool/src/webapp/content/images/ideal-none.jpg -text
+tool/src/webapp/content/js/blockUtils.js -text
 tool/src/webapp/content/js/evalEditSettings.js -text
 tool/src/webapp/content/js/selectLink.js -text
 tool/src/webapp/content/templates/administrate.html -text
