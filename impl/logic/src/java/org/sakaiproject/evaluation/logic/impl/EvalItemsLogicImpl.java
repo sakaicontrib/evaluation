@@ -384,12 +384,26 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 
 		// get the template items count to set display order for new templateItems
 		if (templateItem.getId() == null) {
-			// new item
-			int itemsCount = 0;
-			if (template.getTemplateItems() != null) {
-				itemsCount = template.getTemplateItems().size();
+			if (templateItem.getBlockParent() != null &&
+					templateItem.getBlockParent().booleanValue() &&
+					templateItem.getDisplayOrder() != null) {
+				// if this a block parent then we allow the display order to be set
+			} else {
+				// new item
+				int itemsCount = 0;
+				if (template.getTemplateItems() != null) {
+					// TODO - write a DAO method to do this faster
+					for (Iterator iter = template.getTemplateItems().iterator(); iter.hasNext();) {
+						EvalTemplateItem eti = (EvalTemplateItem) iter.next();
+						if (eti.getBlockId() == null) {
+							// only count items which are not children of a block
+							itemsCount++;
+						}
+					}
+					//itemsCount = template.getTemplateItems().size();
+				}
+				templateItem.setDisplayOrder( new Integer(itemsCount + 1) );
 			}
-			templateItem.setDisplayOrder( new Integer(itemsCount + 1) );
 		} else {
 			// existing item
 			// TODO - check if the display orders are set to a value that is used already?

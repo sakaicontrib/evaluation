@@ -720,7 +720,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertTrue( eiTest2.getScaleDisplaySetting().equals(etdl.item4.getScaleDisplaySetting()) );
 		// not checking is UsesNA is equal because it is null in the item
 
-		// make sure the displayOrder is set correctly when set wrong (to 3)
+		// make sure the displayOrder is set correctly (to 3) when set wrong
 		Assert.assertEquals( 3, eiTest2.getDisplayOrder().intValue() );
 
 		// test saving templateItem with no item fails
