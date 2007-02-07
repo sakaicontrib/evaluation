@@ -109,6 +109,12 @@ public class TakeEvalProducer implements ViewComponentProducer,
 	 *            true: test if there is any "Course" item
 	 * @param bl=
 	 *            false: test if there is any "Instructor" item
+	 * TODO - rewrite this
+	 * @deprecated aside from this being an invalid javadoc comment, this is a 
+	 * bad way to do things, you are assuming there are only 2 types of item
+	 * categories which is already not the case (there are 3 currently), this
+	 * logic needs to be removed and rewritten -AZ
+	 * 
 	 */
 	private boolean findItemCategory(boolean bl, List itemList) {
 		boolean rs = false;
