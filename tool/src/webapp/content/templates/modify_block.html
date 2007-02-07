@@ -96,14 +96,14 @@
 		 <tr><td colspan="2" width="100%">
 		 <textarea name="item_text" rsf:id="item_text" cols="80" rows="5"></textarea>
 		 </td></tr>
-		 
+	
 		 <tr>
 		 <td  width="20%"><b><span rsf:id="scale-type-header">Scale Type:</span></b></td>
-		 <td width="80%"><select name="scaleList" rsf:id="scaleList">
-           		<option value="one" selected="true">2 pt - Gender Scale (Male, Female)</option>
-           		   		</select></td>
+		 <td width="80%" >
+		 	<label name="scaleLabel" rsf:id="scaleLabel" style="font-weight:bold;"/>
+         </td>
 		 </tr>
-				
+
 		<tr>
 		<td width="20%"><b><span rsf:id="add-na-header">Add N/A (not available):</span></b></td>
 		<td width="80%"><input type="checkbox" name="item_NA" rsf:id="item_NA" value="" /></td>
@@ -134,24 +134,22 @@
 		<tr>
 		<td colspan="2">
 			<table  name="itemTable" border="0" cellspacing="0" cellpadding="0" width="100%">
-				<tr rsf:id="queRow:">
-					<td width="85%">
-						<input type="text" rsf:id="queText"  value="" maxlength="100" style="width:99%; height:18px; ; "/>			
-					</td>
-					<td width="15%" align="right">
-			   			 <input type="submit" rsf:id="removeQue" value="Remove" onclick="javascript:flag='remove';"/> 			
+				<tr rsf:id="queRow:">					
+					<td colspan="2">
+						<label rsf:id="childOrder" style="font-weight:bold;">1</label>&nbsp;
+						<input type="text" rsf:id="queText"  value="" maxlength="100" style="width:80%; height:18px; ; " disabled="true"/>			
 					</td>
 				</tr>
 			</table>
 		</td>
 		</tr>
-		
+<!--  	
 		<tr>
 		<td colspan="2">
 			<input  rsf:id="addItemToBlock" type="submit" value="Add Item to Block" onclick="javascript:flag='add';"/>	
 		</td>	
 		</tr>
-	
+-->
 		
 		<tr>
 		<td width="20%" align="left"> 

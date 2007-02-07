@@ -1,3 +1,4 @@
+//TODO:javacsript need to enforce at least 2 check box are checked
 function extractSelectedItems(submitButton) {
 	sourceForm = document.getElementById("modifyFormRows");
 	destinationForm = submitButton.form;

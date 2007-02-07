@@ -59,7 +59,10 @@ public class LocalTemplateLogic {
   public void saveTemplate(EvalTemplate tosave) {
     templatesLogic.saveTemplate(tosave, external.getCurrentUserId());
   }
-  
+  public void saveItem(EvalItem tosave) {
+	    itemsLogic.saveItem(tosave, external.getCurrentUserId());
+	  }
+	  
   public void saveTemplateItem(EvalTemplateItem tosave) {
     itemsLogic.saveTemplateItem(tosave, external.getCurrentUserId());
   }
