@@ -186,6 +186,7 @@ public class ItemsBean {
 		return "success";
 		}
 	
+	/* TODO: be removed
 	public String saveBlockItemAction(){
 	
 		if(idealColor != null && idealColor == Boolean.TRUE)
@@ -202,7 +203,7 @@ public class ItemsBean {
 		//TODO: child items
 		return "success";
 		}
-	
+	*/
 	public void newItemInit(Long templateId, String classification) {
 		templateItem.setDisplayOrder(new Integer(itemsLogic.getTemplateItemsForTemplate(templateId, external.getCurrentUserId()).size()));
 		templateItem.getItem().setClassification(classification);

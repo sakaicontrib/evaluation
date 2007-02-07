@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
@@ -26,6 +27,7 @@ import org.sakaiproject.evaluation.tool.params.BlockIdsParameters;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.params.PreviewEvalParameters;
 import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
+import org.sakaiproject.evaluation.tool.utils.ItemBlockUtils;
 
 import uk.org.ponder.htmlutil.HTMLUtil;
 import uk.org.ponder.messageutil.MessageLocator;
@@ -76,11 +78,10 @@ public class TemplateModifyProducer implements ViewComponentProducer,
 		return new EvalViewParameters();
 	}
 	
-    private LocalTemplateLogic localTemplateLogic;
-    
-    public void setLocalTemplateLogic(LocalTemplateLogic localTemplateLogic) {
-      this.localTemplateLogic = localTemplateLogic;
-    }
+	private EvalItemsLogic itemsLogic;
+	public void setItemsLogic( EvalItemsLogic itemsLogic) {
+		this.itemsLogic = itemsLogic;
+	}
 
     public void setViewStateHandler(ViewStateHandler viewStateHandler) {
       this.viewStateHandler = viewStateHandler;
@@ -153,7 +154,10 @@ public class TemplateModifyProducer implements ViewComponentProducer,
             values[1], false); //$NON-NLS-1$
 		
 	    UICommand.make(form, "add_questions", messageLocator.getMessage("modifytemplate.add.item.button")); //$NON-NLS-1$ //$NON-NLS-2$
-        List templateItemsList = localTemplateLogic.fetchTemplateItems(templateId);
+        
+	    List l = itemsLogic.getTemplateItemsForTemplate(templateId,null);
+        List templateItemsList = ItemBlockUtils.getNonChildItems(l);//need to get all nonchild items
+        
 		if (templateItemsList.isEmpty()){
           UIOutput.make(form, "begin-eval-dummylink", messageLocator.getMessage("modifytemplate.begin.eval.link")); 
 		}
@@ -255,13 +259,23 @@ public class TemplateModifyProducer implements ViewComponentProducer,
 								templateId,
 								myTemplateItem.getId()));
                 
-                String targetview = EvaluationConstant.classificationToView(myTemplateItem.getItem().getClassification());
-                ViewParameters target = 
-                  new TemplateItemViewParameters(targetview, myTemplateItem.getTemplate().getId(), myTemplateItem.getId());
-                
-                UIInternalLink.make(radiobranch, "modify_row_item",
-                    messageLocator.getMessage("modifytemplate.modify.link"),
-                    target);
+				//if it is a Block item
+				if(myTemplateItem.getBlockParent() != null && myTemplateItem.getBlockParent().booleanValue()== true){
+					BlockIdsParameters target = new BlockIdsParameters(ModifyBlockProducer.VIEW_ID,
+							templateId,myTemplateItem.getId().toString());  
+					UIInternalLink.make(radiobranch, "modify_row_item",
+		                        messageLocator.getMessage("modifytemplate.modify.link"),target);
+					  
+				}else{	//if it is non-block item	              
+					  String targetview = EvaluationConstant.classificationToView(myTemplateItem.getItem().getClassification());
+		              ViewParameters target = 
+		                  new TemplateItemViewParameters(targetview, myTemplateItem.getTemplate().getId(), myTemplateItem.getId()); 
+		              UIInternalLink.make(radiobranch, "modify_row_item",
+		                        messageLocator.getMessage("modifytemplate.modify.link"),
+		                        target);
+				}
+			
+
 				
 				//UICommand removeCmd=UICommand.make(radiobranch,"remove_row_item","#{templateBean.removeRowItemAction}");
 				//removeCmd.parameters.add(new UIELBinding("#{itemsBean.currTemplateItemId}",Integer.toString(i)));
@@ -294,22 +308,17 @@ public class TemplateModifyProducer implements ViewComponentProducer,
 					UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				
-		/* TODO; get BLOCK child item
-				if(myItem.getBlockParent().booleanValue()== true){
-					//get child items
-					Integer blockID = new Integer(myItem.getId().intValue());
-					List childItems = logic.findItem(blockID);
-					
-					if(childItems != null && childItems.size()>0){
-						for(int k =0; k< childItems.size(); k++){
-							UIBranchContainer childRow = UIBranchContainer.make(form2,"itemrow:blockItems", Integer.toString(k));
-							EvalItem child = (EvalItem) childItems.get(k);
-							UIOutput.make(childRow,"childItemId",Integer.toString(k+1));	
-							UIOutput.make(childRow,"childItemText",child.getItemText());	
-						}
-					}
-				}		
-				*/
+				//rendering block child items
+				if(myTemplateItem.getBlockParent()!= null && myTemplateItem.getBlockParent().booleanValue()== true){
+					Integer parentID = new Integer(myTemplateItem.getId().intValue());
+					List childList = ItemBlockUtils.getChildItmes(l,parentID);
+					for(int k=0; k< childList.size();k++){
+						UIBranchContainer childRow = UIBranchContainer.make(form2,"itemrow:blockItems", Integer.toString(k));
+						EvalTemplateItem childTI = (EvalTemplateItem)childList.get(k);
+						UIOutput.make(childRow,"childItemId",childTI.getDisplayOrder().toString());	
+						UIOutput.make(childRow,"childItemText",childTI.getItem().getItemText());
+					}		
+				}
 		    }//end of for loop
 		}
 		//the create block form

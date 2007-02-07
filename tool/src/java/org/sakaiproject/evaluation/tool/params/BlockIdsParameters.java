@@ -29,14 +29,14 @@ public class BlockIdsParameters extends SimpleViewParameters {
 
 
 	}
-/*
+
 	public BlockIdsParameters(String viewID, Long templateId, String templateItemIds) {
 		this.viewID = viewID;
 		this.templateId = templateId;
 		this.templateItemIds = templateItemIds;
 
 	}
-*/
+
 	public String getParseSpec() {
 		// include a comma delimited list of the public properties in this class
 		return super.getParseSpec() + ",templateId,templateItemIds";
