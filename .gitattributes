@@ -92,6 +92,7 @@ impl/test/src/java/org/sakaiproject/evaluation/test/PreloadTestData.java -text
 /project.xml -text
 tool/project.properties -text
 tool/project.xml -text
+tool/src/java/org/sakaiproject/evaluation/tool/AnswersBeanLocator.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/EvalARI.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/EvaluationBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/EvaluationBeanLocator.java -text
