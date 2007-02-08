@@ -51,6 +51,17 @@
 			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
 	</bean>
 
+	<bean id="localResponsesLogic"
+	  class="org.sakaiproject.evaluation.tool.LocalResponsesLogic">
+	  <property name="external"
+	    ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+	  <property name="responsesLogic"
+	    ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic">
+	  </property>
+	  <property name="itemsLogic"
+	    ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
+	</bean>
+
 	<!-- The beans listed here are session beans (they stick around) -->
 	<bean id="myBeanScope" parent="beanScopeParent">
 		<property name="copyPreservingBeans"
