@@ -144,7 +144,7 @@ public class ReportHandlerHook implements HandlerHook {
 						currRow.add(labels[currAnswer.getNumeric().intValue()]);
 					}
 				}
-				else if (item1.getClassification().equals(EvaluationConstant.ITEM_TYPE_BLOCK)) {//"Question Block"
+				else if (item1.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK)) {//"Question Block"
 					String labels[] = item1.getScale().getOptions();
 					//add the block description to the top row
 					topRow.add(item1.getItemText());

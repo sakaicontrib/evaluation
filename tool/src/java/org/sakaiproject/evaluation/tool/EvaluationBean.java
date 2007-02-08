@@ -670,7 +670,7 @@ public class EvaluationBean {
 				EvalTemplateItem tempItem = (EvalTemplateItem) ncItemsList.get(i);
 				EvalItem item1 = tempItem.getItem();
 				//need to check if it is a Block parent, delete child items first
-				if(item1.getClassification().equals(EvaluationConstant.ITEM_TYPE_BLOCK) && 
+				if(item1.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK) && 
 						tempItem.getBlockParent().booleanValue()== true){
 					Long parentID = tempItem.getId();
 					Integer blockID = new Integer(parentID.intValue());

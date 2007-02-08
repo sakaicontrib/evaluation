@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.tool.renderers;
 
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIJointContainer;
@@ -42,4 +43,10 @@ public interface ItemRenderer {
 	 */
 	public UIJointContainer renderItem(UIContainer tofill, EvalTemplateItem templateItem, int displayNumber, boolean disabled);
 
+	/**
+	 * Indicates the type of item this renderer handles
+	 * 
+	 * @return an ITEM_TYPE constant from {@link EvalConstants}
+	 */
+	public String getRenderType();
 }

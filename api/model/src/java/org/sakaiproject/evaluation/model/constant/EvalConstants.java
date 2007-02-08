@@ -93,6 +93,14 @@ public class EvalConstants {
 	 * does not count as an actual question item
 	 */
 	public static final String ITEM_TYPE_HEADER = "Header";
+	/**
+	 * Item type (itemClassification) setting:
+	 * <b>Note:</b> This is a special type for rendering blocks only, 
+	 * if you attempt to save an item or templateItem with this type 
+	 * it will fail, only use this in the presentation layer
+	 * (see implementation notes for details on blocks)
+	 */
+	public static final String ITEM_TYPE_BLOCK = "Block";
 
 	/**
 	 * Item category (itemCategory) setting:

@@ -1,5 +1,5 @@
 /******************************************************************************
- * ItemRendererImpl.java - created by aaronz@vt.edu
+ * TemplateItemUtils.java - created by aaronz@vt.edu on Feb 7, 2007
  * 
  * Copyright (c) 2007 Virginia Polytechnic Institute and State University
  * Licensed under the Educational Community License version 1.0
@@ -12,71 +12,48 @@
  * 
  *****************************************************************************/
 
-package org.sakaiproject.evaluation.tool.renderers;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+package org.sakaiproject.evaluation.tool.utils;
 
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
-import uk.org.ponder.rsf.components.UIContainer;
-import uk.org.ponder.rsf.components.UIJointContainer;
-
 /**
- * The implementation for the ItemRenderer class
- * 
+ * Utilities for dealing with templateItem objects
+ *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class ItemRendererImpl implements ItemRenderer {
+public class TemplateItemUtils {
 
-	private Map renderImpls = new HashMap();
-	public void setRenderTypes(List types) {
-		for (Iterator iter = types.iterator(); iter.hasNext();) {
-			ItemRenderer ir = (ItemRenderer) iter.next();
-			renderImpls.put(ir.getRenderType(), ir);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#renderItem(org.sakaiproject.evaluation.model.EvalTemplateItem, uk.org.ponder.rsf.components.UIContainer, java.lang.Integer, boolean)
+	/**
+	 * Return a constant from {@link EvalConstants} indicating the type of item for
+	 * this specific templateItem
+	 * 
+	 * @param templateItem a templateItem persistent object
+	 * @return an ITEM_TYPE string from {@link EvalConstants}
 	 */
-	public UIJointContainer renderItem(UIContainer tofill, EvalTemplateItem templateItem, int displayNumber, boolean disabled) {
-		// figure out the type of item and then call the appropriate renderer
-
+	public static String getTemplateItemType(EvalTemplateItem templateItem) {
 		if (EvalConstants.ITEM_TYPE_HEADER.equals(templateItem.getItem().getClassification())) {
-			
+			return EvalConstants.ITEM_TYPE_HEADER;
 		} else if (EvalConstants.ITEM_TYPE_TEXT.equals(templateItem.getItem().getClassification())) {
-			
+			return EvalConstants.ITEM_TYPE_TEXT;
 		} else if (EvalConstants.ITEM_TYPE_SCALED.equals(templateItem.getItem().getClassification())) {
 			// scaled has a special case where it might be a block so check for this and handle it correctly
 			if (templateItem.getBlockParent() != null) {
 				// item is part of a block
 				if (templateItem.getBlockParent().booleanValue()) {
 					// this is a block parent so handle it a special way
+					return EvalConstants.ITEM_TYPE_BLOCK;
 				} else {
 					// this is a block child so die
 					throw new IllegalArgumentException("Cannot render block child items alone, they are rendered with the parent when it gets rendered");
 				}
 			} else {
 				// item is a normal scaled item
+				return EvalConstants.ITEM_TYPE_SCALED;
 			}
 		} else {
 			throw new IllegalStateException("Cannot identify this item classification:" + templateItem.getItem().getClassification());
 		}
-
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#getRenderType()
-	 */
-	public String getRenderType() {
-		// this handles no specific type so return null
-		return null;
 	}
 
 }

@@ -44,7 +44,6 @@ public class EvaluationConstant {
 	};
 
 	//For template_modify.html
-	public static final String ITEM_TYPE_BLOCK = "Block";
 	public static final String ITEM_TYPE_EXPERT = "Expert";
 	public static final String ITEM_TYPE_EXISTING = "Existing";
 
@@ -58,7 +57,7 @@ public class EvaluationConstant {
 		EvalConstants.ITEM_TYPE_SCALED, 
 		EvalConstants.ITEM_TYPE_TEXT, 
 		EvalConstants.ITEM_TYPE_HEADER, 
-		ITEM_TYPE_BLOCK,
+		EvalConstants.ITEM_TYPE_BLOCK,
 		ITEM_TYPE_EXPERT,
 		ITEM_TYPE_EXISTING
 	};
