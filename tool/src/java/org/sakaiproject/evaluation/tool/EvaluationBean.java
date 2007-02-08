@@ -21,10 +21,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
-
 import java.util.List;
-
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -34,15 +31,12 @@ import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
-import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
-import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignContext;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
-import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
@@ -55,16 +49,13 @@ import org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer;
 import org.sakaiproject.evaluation.tool.producers.SummaryProducer;
 import org.sakaiproject.evaluation.tool.utils.ItemBlockUtils;
 
-
-
 /**
- * This is the backing bean of the create evaluation process
+ * This is the backing bean of the evaluation process.
  * 
  * @author Rui Feng (fengr@vt.edu)
  * @author Kapil Ahuja (kahuja@vt.edu)
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-
 public class EvaluationBean {
 	
 	/*
@@ -81,7 +72,6 @@ public class EvaluationBean {
 	public String instructorsDate;
 	public int[] enrollment;
 	
-
 	/*
 	 * These 2 values are bound here because they are not in Evaluation POJO 
 	 * and we need to store them when coming back to settings page from assign page.
@@ -95,107 +85,67 @@ public class EvaluationBean {
 	public String emailAvailableTxt;
 	public String emailReminderTxt; 
 
-	// Used on assign confirm page. That is saved to avoid going to database again.
-//	private Map siteIdsTitle;			
-
 	//Used to link the proper template object with the evaluation 
 	private List listOfTemplates;
 	
 	//TODO: need to merge with public field: eval, now use other string to avoid failing of other page 
-	public Long evalId; //used to ELBinding to the evaluation ID to be removed on Control Panel
-	public String tmplId; //used to ELBinding To the template ID to be removed on Control Panel 
+	public Long evalId; 	//used to ELBinding to the evaluation ID to be removed on Control Panel
+	public String tmplId; 	//used to ELBinding To the template ID to be removed on Control Panel 
 
 	private static Log log = LogFactory.getLog(EvaluationBean.class);
-	
-/*	//Indicate the latest origination of EvalStart page
-	private String evalStartFlag ;
-	public void setEvalStartFlag(String flag){
-		this.evalStartFlag = flag;
-	}
-*/
-/*
-	private EvaluationLogic logic;
-	public void setLogic(EvaluationLogic logic) {
-		this.logic = logic;
-	}
-*/
+
+	//Spring injection
 	private EvalExternalLogic external;
 	public void setExternal(EvalExternalLogic external) {
 		this.external = external;
 	}
 	
+	//Spring injection
 	private EvalTemplatesLogic templatesLogic;
 	public void setTemplatesLogic( EvalTemplatesLogic templatesLogic) {
 		this.templatesLogic = templatesLogic;
 	}
 	
+	//Spring injection
 	private EvalItemsLogic itemsLogic;
 	public void setItemsLogic( EvalItemsLogic itemsLogic) {
 		this.itemsLogic = itemsLogic;
 	}
 	
+	//Spring injection
 	private EvalEvaluationsLogic evalsLogic;
 	public void setEvalsLogic(EvalEvaluationsLogic evalsLogic) {
 		this.evalsLogic = evalsLogic;
 	}
 	
+	//Spring injection
 	private EvalAssignsLogic assignsLogic;
 	public void setAssignsLogic(EvalAssignsLogic assignsLogic) {
 		this.assignsLogic = assignsLogic;
 	}
 	
-	private EvalResponsesLogic responsesLogic;	
-	public void setResponsesLogic(EvalResponsesLogic responsesLogic) {
-		this.responsesLogic = responsesLogic;
-	}
-	
+	//Spring injection
 	private EvalEmailsLogic emailsLogic;	
 	public void setEmailsLogic(EvalEmailsLogic emailsLogic) {
 		this.emailsLogic = emailsLogic;
 	}
 	
+	//Spring injection
 	private EvalSettings settings;
 	public void setSettings(EvalSettings settings) {
 		this.settings = settings;
 	}
 	
 	/*
-	 * INITIALIZATION
-	 */
-	public void init() {
-		
-		//no more TemplateBean - wdh
-		//log.debug("Initializing the TemplateBean....");
-		
-		/*
-		if (logic == null) {
-			throw new NullPointerException("logic is null");
-		}*/
-	}
-
-	
-	/*
 	 * MAJOR METHOD DEFINITIONS
 	 */
 	
-	 // @deprecated - will be removed before release
-/*	public List getTemplatesToDisplay() {
-		//Get the list of templates from the logic layer.
-		return logic.getTemplatesToDisplay(logic.getCurrentUserId());
-	}
-*/
-	//method binding to the "Cancel" button on evaluation_start.html
-/*	REMOVED
- * public String cancelEvalStartAction(){
-		if(this.evalStartFlag!=null && this.evalStartFlag.equals(TemplateModifyProducer.VIEW_ID))
-			return TemplateModifyProducer.VIEW_ID;		
-		else 
-			return SummaryProducer.VIEW_ID;//default coming from Summary page
-		
-	}
-*/	
-	
-	//method binding to the "Continue to Settings" button on evaluation_start.html
+	/**
+	 * Method binding to the "Continue to Settings" button on 
+	 * evaluation_start.html.
+	 * 
+	 * @return View id that sends the control to evaluation settings page.
+	 */
 	public String continueToSettingsAction() {
 		
 		/*
@@ -247,76 +197,126 @@ public class EvaluationBean {
 	    return EvaluationSettingsProducer.VIEW_ID;
 	}
 	
-
-	//method binding to the "Continue to Assign to Courses" button on the evaluation_setting.html
+	/**
+	 * Method binding to the "Continue to Assign to Courses" button on the 
+	 * evaluation_setting.html.
+	 * 
+	 * @return View id that sends the control to assign page.
+	 */
 	public String continueAssigningAction()	{	
-		
+
 		//Clear the selected sites 
 		selectedSakaiSiteIds = null;
-		
 		return EvaluationAssignProducer.VIEW_ID;
 	}
 
-	//method binding to the "Save Settings" button on the evaluation_setting.html
+	/**
+	 * Method binding to the "Save Settings" button on the 
+	 * evaluation_setting.html.
+	 * 
+	 * @return View id that sends the control to control panel 
+	 * 			or summary.
+	 */
 	public String saveSettingsAction() {	
-		//TODO - Save the settings only
-	
+
 		eval.setLastModified(new Date());
+		
 		/*
-		 * if evaluation is active, startDate is disabled, and so it is null value
-		 * only save startDate for queued evaluation
+		 * If it is a queued evaluation then get value from startDate variable.
+		 * 
+		 * Else (for active evaluations), start sate is disabled and so there is a 
+		 * null value set in startDate variable. So pick value what was already there
+		 * in the eval object, but we need to convert the already stored date to 
+		 * java.util.Date format. This is because by default it is java.sql.Timestamp.
 		 */
 		Date today = new Date();
-		if(today.before(eval.getStartDate())){
-			eval.setStartDate(changeStringToDate(this.startDate));
+		if (today.before(eval.getStartDate())) {
+			eval.setStartDate(changeStringToDate(startDate));
+		}
+		else {
+			Date startDateFromUtil = eval.getStartDate();
+			eval.setStartDate(startDateFromUtil);
 		}
 		
-		eval.setDueDate(changeStringToDate(this.dueDate));
-		eval.setViewDate(changeStringToDate(this.viewDate));
-		eval.setStudentsDate(changeStringToDate(this.studentsDate));
-		eval.setInstructorsDate(changeStringToDate(this.instructorsDate));
-
-		//This was needed by columbia so on HTML page not shown. Here making equal to due date. 
-		eval.setStopDate(eval.getDueDate());
+		eval.setDueDate(changeStringToDate(dueDate));
+		eval.setViewDate(changeStringToDate(viewDate));
+		eval.setStudentsDate(changeStringToDate(studentsDate));
+		eval.setInstructorsDate(changeStringToDate(instructorsDate));
 	
-		if (eval.getResultsPrivate() == null)
-			eval.setResultsPrivate(Boolean.FALSE);
-		
-		if (eval.getBlankResponsesAllowed() == null)
-			eval.setBlankResponsesAllowed(Boolean.FALSE);
-		
-		if (eval.getModifyResponsesAllowed() == null)
-			eval.setModifyResponsesAllowed(Boolean.FALSE);
-		
-		if (eval.getUnregisteredAllowed() == null)
-			eval.setUnregisteredAllowed(Boolean.FALSE);
-		
-		//logic.saveEvaluation(eval, logic.getCurrentUserId());
 		/*
 		 * check if start date is the same as today's date, set startDate as today's date time, 
 		 * as when we parse the string to a date, the time filed by default is zero
-		 * */
+		 */
 		checkEvalStartDate(eval);
 
-		//See the commend with the method at the end of this class.
+		/*
+		 * If the due date is same as start date then we need to make the time of due date 
+		 * to be 1 second more that start date.
+		 * (for details see the comment at the start of checkDueDate() method)
+		 */		
 		checkDueDate();
 		
-		evalsLogic.saveEvaluation(eval, external.getCurrentUserId());
+		// Needed by columbia so as of now making equal to due date		
+		eval.setStopDate(eval.getDueDate());
 		
+		//Need to fetch the object again as Hibernate session has expired
+		EvalEvaluation evalInDB = evalsLogic.getEvaluationById(eval.getId());
+		
+		//Now copying the data from eval to evalInDB
+		evalInDB.setStartDate(eval.getStartDate());
+		evalInDB.setStopDate(eval.getStopDate());
+		evalInDB.setDueDate(eval.getDueDate());
+		evalInDB.setViewDate(eval.getViewDate());
+
+		evalInDB.setResultsPrivate(eval.getResultsPrivate());
+		evalInDB.setStudentsDate(eval.getStudentsDate());
+		evalInDB.setInstructorsDate(eval.getInstructorsDate());
+		
+		evalInDB.setBlankResponsesAllowed(eval.getBlankResponsesAllowed());
+		evalInDB.setModifyResponsesAllowed(eval.getModifyResponsesAllowed());
+		evalInDB.setUnregisteredAllowed(eval.getUnregisteredAllowed());
+
+		evalInDB.setInstructorOpt(eval.getInstructorOpt());
+
+		evalInDB.setAvailableEmailTemplate(eval.getAvailableEmailTemplate());
+		evalInDB.setReminderFromEmail(eval.getReminderFromEmail());
+		evalInDB.setReminderEmailTemplate(eval.getReminderEmailTemplate());
+		evalInDB.setReminderDays(eval.getReminderDays());
+		
+		evalInDB.setLastModified(eval.getLastModified());
+
+		evalsLogic.saveEvaluation(evalInDB, external.getCurrentUserId());
 	    return ControlPanelProducer.VIEW_ID;
 	}
 	
-	//method binding to the "Cancel" button on the evaluation_assign.html
+	/**
+	 * Method binding to the "Cancel" button on the 
+	 * evaluation_assign.html.
+	 * 
+	 * @return View id that sends the control to summary page.
+	 */
 	public String cancelAssignAction() {	
 	    return SummaryProducer.VIEW_ID;
 	}
 	
-	//method binding to the "Edit Settings" button on the evaluation_assign.html
+	/**
+	 * Method binding to the "Edit Settings" button 
+	 * on the evaluation_assign.html.
+	 * 
+	 * @return View id that sends the control to settings page.
+	 */
 	public String backToSettingsAction() {	
 	    return EvaluationSettingsProducer.VIEW_ID;
 	}
 
-	//method binding to the "Save Assigned Courses" button on the evaluation_assign.html
+	/**
+	 * Method binding to the "Save Assigned Courses" button 
+	 * on the evaluation_assign.html.
+	 * 
+	 * @return View id which either sends the control to assign page 
+	 * 			(if no courses are selected) or to assign confirm page
+	 * 			if atleast one course is selected.
+	 */
 	public String confirmAssignCoursesAction() {	
 
 		//At least 1 site check box need to be checked.
@@ -324,62 +324,66 @@ public class EvaluationBean {
 			return EvaluationAssignProducer.VIEW_ID;
 		}
 		else {
-			//enrollment = logic.getEnrollment(selectedSakaiSiteIds);
 			//get enrollemnt on by one 
 			enrollment =  new int[selectedSakaiSiteIds.length];
 			for(int i =0; i<selectedSakaiSiteIds.length; i++){
 				Set s = external.getUserIdsForContext(selectedSakaiSiteIds[i], EvalConstants.PERM_TAKE_EVALUATION);
 				enrollment[i] = s.size();				
 			}
-
 			return EvaluationAssignConfirmProducer.VIEW_ID;
 		}
 	}
 
-	/*
-	 * method binding to the "Save Changes" button on the modify_email.html for 
-	 * 	the original link from email_available
+	/**
+	 * Method binding to the "Save Changes" button on the modify_email.html for 
+	 * the original link from email_available
+	 * 
+	 * @return String that is used to determine the place where control is to be sent
+	 * 			in ModifyEmailProducer (reportNavigationCases method)
 	 */
 	public String saveAvailableEmailTemplate(){
 		return "available";
 	}
 
-	/*
-	 * method binding to the "Save Changes" button on the modify_email.html for 
-	 * 	original link from email_reminder
+	/**
+	 * Method binding to the "Save Changes" button on the modify_email.html for 
+	 * original link from email_reminder
+	 *
+	 * @return String that is used to determine the place where control is to be sent
+	 * 			in ModifyEmailProducer (reportNavigationCases method)
 	 */
 	public String saveReminderEmailTemplate(){
 		return "reminder";
 	}
 	
-	/*
-	 * method binding to the "Modify this Email Template" button on the preview_email.html for 
-	 * 	the original link from email_available
+	/**
+	 * Method binding to the "Modify this Email Template" button on the preview_email.html for 
+	 * the original link from email_available.
+	 * 
+	 * @return String that is used to determine the place where control is to be sent
+	 * 			in PreviewEmailProducer (reportNavigationCases method)
 	 */
 	public String modifyAvailableEmailTemplate(){
 		return "available";
 	}
 	
 
-	/*
-	 * method binding to the "Modify this Email Template" button on the preview_email.html for 
-	 * 	the original link from email_reminder
+	/**
+	 * Method binding to the "Modify this Email Template" button on the preview_email.html for 
+	 * the original link from email_reminder.
+	 * 
+	 * @return String that is used to determine the place where control is to be sent
+	 * 			in PreviewEmailProducer (reportNavigationCases method)
 	 */
 	public String modifyReminderEmailTemplate(){
 		return "reminder";
 	}
 
-	
-	
-	  //@deprecated This is a pointless passthrough method	 
-/*	public Map getSites() {
-		siteIdsTitle = logic.getSites();
-		return siteIdsTitle;
-	}
-*/
 	/**
 	 * Method binding to the "Done" button on evaluation_assign_confirm.html
-	 * When come from control panel then saveSettingsAction method is called. 
+	 * When come from control panel then saveSettingsAction method is called.
+	 * 
+	 * @return view id telling RSF where to send the control
 	 */
 	public String doneAssignmentAction() {	
 
@@ -391,7 +395,6 @@ public class EvaluationBean {
 		eval.setOwner(external.getCurrentUserId());
 		eval.setStartDate(changeStringToDate(startDate));
 		eval.setDueDate(changeStringToDate(dueDate));
-		eval.setStopDate(eval.getDueDate());            //needed by columbia so as of now making equal to due date
 		eval.setViewDate(changeStringToDate(viewDate));
 
 		/*
@@ -455,6 +458,9 @@ public class EvaluationBean {
 		 */		
 		checkDueDate();
 
+		// Needed by columbia so as of now making equal to due date
+		eval.setStopDate(eval.getDueDate());            
+
 		//save the evaluation
 		evalsLogic.saveEvaluation(eval, external.getCurrentUserId());
 		
@@ -471,51 +477,91 @@ public class EvaluationBean {
 	    return ControlPanelProducer.VIEW_ID;
 	}
 	
-	//method binding to evaluation_assign_confirm page: "Change Assigned Courses" button
+	/**
+	 * Method binding to "Change Assigned Courses" button on 
+	 * evaluation_assign_confirm page and link for courses assigned 
+	 * on control panel (for queued evaluations). 
+	 * 
+	 * @return View id that sends the control to assign page.
+	 */
 	public String changeAssignedCourseAction(){
+
 		//TODO: for quued evaluation coming from control panel page 
 		return EvaluationAssignProducer.VIEW_ID;
 	}
 	
+	/**
+	 * Makes a new evaluation object residing in this session bean.
+	 */	
 	public void clearEvaluation(){
 		this.eval = new EvalEvaluation(); 
 	}
 	
-	//method binding to "Start Evaluation" link/commans on Control Panel Page
+	/**
+	 * Method binding to "Start Evaluation" link/commans on 
+	 * the Control Panel page.
+	 *
+	 * @return View id that sends the control to evaluation start page.
+	 */	
 	public String startEvaluation(){
-		
 		clearEvaluation();
-		
 		return EvaluationStartProducer.VIEW_ID;
 	}
 	
-	/*
-	 * method binding to
+	/**
+	 * This method prepares backing Bean data  for EditSettings page.
+	 * It binds to:
 	 * 1) Control Panel page: edit command button/link
 	 * 2) Summary page: evalAdminTitleLink for queued, active evaluation
 	 * 
-	 * This method is prepareing backing Bean data  for EditSettings page
+	 * @return View id sending the control to evaluation settings producer.
 	 */
-	
 	public String editEvalSettingAction(){
 	
-		//eval = logic.getEvaluationById(eval.getId());
 		eval = evalsLogic.getEvaluationById(eval.getId());
 			
 		DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
-		//not -null field
 		startDate = df.format(eval.getStartDate()); 
 		stopDate = df.format(eval.getStopDate());   
 		dueDate = df.format(eval.getDueDate());
 		viewDate = df.format(eval.getViewDate());
-		if(eval.getStudentsDate() != null) 
-			studentsDate = df.format(eval.getStudentsDate());
-		if(eval.getInstructorsDate() != null)
-			instructorsDate = df.format(eval.getInstructorsDate());
 		
+		/*
+		 * If student date is not null then set the date and also 
+		 * make the checkbox checked. Else make the checkbox unchecked. 
+		 */
+		if (eval.getStudentsDate() != null) { 
+			studentViewResults = Boolean.TRUE;
+			studentsDate = df.format(eval.getStudentsDate());
+		}
+		else {
+			studentViewResults = Boolean.FALSE;
+			studentsDate = "MM/DD/YYYY";
+		}
+		
+		/*
+		 * If instructor date is not null then set the date and also 
+		 * make the checkbox checked. Else make the checkbox unchecked. 
+		 */
+		if (eval.getInstructorsDate() != null) {
+			instructorViewResults = Boolean.TRUE;
+			instructorsDate = df.format(eval.getInstructorsDate());
+		}
+		else {
+			instructorViewResults = Boolean.FALSE;
+			instructorsDate = "MM/DD/YYYY";
+		}
 
 		return EvaluationSettingsProducer.VIEW_ID;
 	}
+
+	
+	
+	
+	/*
+	 * TO BE CLEANED FROM THIS POINT ONWARDS (GOING DOWN).
+	 * ABOVE IS CLEANED AND COMMENTED - kahuja (7th Feb 2007).
+	 */
 	
 	//method binding to control panel page "Assigned" Link/Command
 	public String evalAssigned(){		
