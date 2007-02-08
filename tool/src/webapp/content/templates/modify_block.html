@@ -67,6 +67,13 @@
 	</div>
 
 	<br/>
+<div rsf:id="errorPage:">
+<label name="errorMsg" rsf:id="errorMsg" style="font-weight:bold;color:red;">####</label>
+<br/><br/>
+<input type="button" value="Back" onclick="javascript:history.go(-1);return false;" rsf:id="back-button" />	
+</div>
+
+<div rsf:id="blockPage:">
   <form  name="block_form" rsf:id="blockForm" method="post" onsubmit="javascript:return validateForm();"> 
 		<table id="blockTable" name="blockTable" width="70%" border="0" cellspacing="0" cellpadding="5">
 		 <tr><td colspan="2" width="100%">
@@ -165,6 +172,7 @@
 	</table>	
 			
 	</form>
+	</div>
 	
 </div>	
 </body>
