@@ -18,11 +18,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.model.EvalAnswer;
+import org.sakaiproject.evaluation.model.EvalResponse;
 
 import uk.org.ponder.beanutil.BeanLocator;
 
 /**
- * This is the OTP bean used to locate templates items
+ * This is the OTP bean used to locate Answers. The OTP path key is 
+ * actually the ID of the enclosed ITEM, not that of the Answer itself!
  * 
  * @author
  */
@@ -32,57 +34,43 @@ public class AnswersBeanLocator implements BeanLocator {
 
   private Map delivered = new HashMap();
 
+  private EvalResponse parent;
+
+  private LocalResponsesLogic localResponsesLogic;
+
+  public AnswersBeanLocator(EvalResponse parent,
+      LocalResponsesLogic localResponsesLogic) {
+    this.parent = parent;
+    this.localResponsesLogic = localResponsesLogic;
+    loadMap(parent.getAnswers());
+  }
+
   public Object locateBean(String path) {
     Object togo = delivered.get(path);
-    //no answer has been created for this item-response pairing, so we'll make one. 
-    //we don't use the new prefix, because the producer has no way of knowing if 
-    //an answer has been created for the given item, even if a response exists.
+    // no answer has been created for this item-response pairing, so we'll make
+    // one. we don't use the new prefix, because the producer has no way of knowing
+    // if an answer has been created for the given item, even if a response exists.
     if (togo == null) {
-      togo=new EvalAnswer();
+      Long itemId = Long.valueOf(path);
+      togo = localResponsesLogic.newAnswer(parent, itemId);
+      parent.getAnswers().add(togo);
       delivered.put(path, togo);
     }
     return togo;
   }
 
-  /** Package-protected access to "dead" list of delivered beans */
-  Map getDeliveredBeans() {
-    return delivered;
-  }
-  
-  /** returns a HashSet containing the EvalAnswers in delivered*/
-  public Set fetchSet(){
-	  return delivered.entrySet();
-  }
-    
-  /** loads a HashMap with the answers provided. The key used to
-   * access an answer will be of the form <responseNum>.<itemNum>.<field>
+  /**
+   * loads a HashMap with the answers provided. The key used to access an answer
+   * will be of the form <responseNum>.<itemId>.<field>
+   * 
    * @param answers - HashSet of answers
-   * @param evalID - id of evaluation associated with current resposne
    */
-  public void loadMap(Set answers, Long evalId){
-		for (Iterator it = answers.iterator(); it.hasNext();) {
-	        String key = (String) it.next();
-	        EvalAnswer answer = (EvalAnswer) delivered.get(key);
-	        delivered.put(evalId+"."+answer.getItem().getId(), answer);
-	    }
+  public void loadMap(Set answers) {
+    for (Iterator it = answers.iterator(); it.hasNext();) {
+      String key = (String) it.next();
+      EvalAnswer answer = (EvalAnswer) delivered.get(key);
+      delivered.put(answer.getItem().getId(), answer);
+    }
   }
-  
-	/*This method is not needed, ResponseBeanLocator saves for us.
-	 public void saveAll(EvalEvaluation eval) {
-		
-		//outer for loop - iterate through hashmap
-		//inner for loop - find the other one and replace numeric and text
-		
-		EvalResponse response = new EvalResponse(new Date(), 
-			external.getCurrentUserId(), external.getCurrentContext(), new Date(), eval);
-		response.setEndTime(new Date()); 
-		for (Iterator it = delivered.keySet().iterator(); it.hasNext();) {
-	        String key = (String) it.next();
-	        EvalAnswer answer = (EvalAnswer) delivered.get(key);
-	        answer.setLastModified(new Date());
-	        answer.setResponse(response);
-	        response.getAnswers().add(answer);
-	    }
-		responsesLogic.saveResponse(response,external.getCurrentUserId());
-	}*/
+
 }
