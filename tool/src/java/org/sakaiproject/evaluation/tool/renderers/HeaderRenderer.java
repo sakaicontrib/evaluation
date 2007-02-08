@@ -36,8 +36,7 @@ public class HeaderRenderer implements ItemRenderer {
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#renderItem(org.sakaiproject.evaluation.model.EvalTemplateItem, uk.org.ponder.rsf.components.UIContainer, java.lang.Integer, boolean)
 	 */
-	public UIJointContainer renderItem(EvalTemplateItem templateItem, UIContainer tofill, Integer displayNumber,
-			boolean disabled) {
+	public UIJointContainer renderItem(UIContainer tofill, EvalTemplateItem templateItem, int displayNumber, boolean disabled) {
 		UIJointContainer container = new UIJointContainer(tofill.parent, tofill.ID, 
 		        COMPONENT_ID);
 
