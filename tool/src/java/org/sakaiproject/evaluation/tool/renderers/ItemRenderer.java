@@ -33,13 +33,13 @@ public interface ItemRenderer {
 	 * <b>Note:</b> No not attempt to pass a block child item to this, it will not render it and will
 	 * throw an exception
 	 * 
+	 * @param tofill any RSF {@link UIContainer} object which will contain the rendered item
 	 * @param templateItem the templateItem to render (if you only have an item then
 	 * simply create an {@link EvalTemplateItem} and wrap the item in it)
-	 * @param tofill any RSF {@link UIContainer} object which will contain the rendered item
-	 * @param displayNumber the number to display next to this item (if null then render no number)
+	 * @param displayNumber the number to display next to this item (if 0 or less then display none)
 	 * @param disabled if true, then the item is rendered as disabled and cannot be submitted, if false, the item can be submitted
 	 * @return a {@link UIJointContainer} which has been populated correctly
 	 */
-	public UIJointContainer renderItem(EvalTemplateItem templateItem, UIContainer tofill, Integer displayNumber, boolean disabled);
+	public UIJointContainer renderItem(UIContainer tofill, EvalTemplateItem templateItem, int displayNumber, boolean disabled);
 
 }
