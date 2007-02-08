@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.tool.renderers;
 
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
@@ -44,6 +45,13 @@ public class HeaderRenderer implements ItemRenderer {
 		UIVerbatim.make(header, "itemText", templateItem.getItem().getItemText()); //$NON-NLS-1$
 
 		return container;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#getRenderType()
+	 */
+	public String getRenderType() {
+		return EvalConstants.ITEM_TYPE_HEADER;
 	}
 
 }

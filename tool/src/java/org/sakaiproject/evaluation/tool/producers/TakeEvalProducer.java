@@ -636,7 +636,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 			 */ 
 			totalItemsAdded++;
 
-		} else if (myItem.getClassification().equals(EvaluationConstant.ITEM_TYPE_BLOCK) 
+		} else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK) 
 				&& myTempItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED)) { //"Question Block","Stepped"
 			UIBranchContainer block = UIBranchContainer.make(radiobranch,
 					"blockStepped:"); //$NON-NLS-1$
@@ -743,7 +743,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 
 			} // end of get child block item
 
-		} else if (myItem.getClassification().equals(EvaluationConstant.ITEM_TYPE_BLOCK) 
+		} else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK) 
 				&& myTempItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED)) { //"Question Block","Stepped Colored"
 
 			UIBranchContainer blockSteppedColored = UIBranchContainer.make(

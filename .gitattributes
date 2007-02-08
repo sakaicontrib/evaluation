@@ -142,6 +142,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/renderers/HeaderRenderer.java -te
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/ItemRenderer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/ItemRendererImpl.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/utils/ItemBlockUtils.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/utils/TemplateItemUtils.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/wrapper/EntityRewriteWrapper.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/wrapper/ModelAccessWrapperInvoker.java -text
 tool/src/webapp/WEB-INF/applicationContext.xml -text

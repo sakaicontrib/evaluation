@@ -111,7 +111,7 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 				throw new IllegalArgumentException("Item displayRows cannot be included for header type items");
 			}
 		} else {
-			throw new IllegalArgumentException("Invalid item classification specified ("+item.getClassification()+"), you must use the ITEM_TYPE constants to indicate classification");
+			throw new IllegalArgumentException("Invalid item classification specified ("+item.getClassification()+"), you must use the ITEM_TYPE constants to indicate classification (and cannot use BLOCK)");
 		}
 
 		// check the sharing constants
@@ -366,7 +366,7 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 				throw new IllegalArgumentException("Item blockParent must be null for header type items");
 			}
 		} else {
-			throw new IllegalArgumentException("Invalid item classification specified ("+item.getClassification()+"), you must use the ITEM_TYPE constants to indicate classification");
+			throw new IllegalArgumentException("Invalid item classification specified ("+item.getClassification()+"), you must use the ITEM_TYPE constants to indicate classification (and cannot use BLOCK)");
 		}
 
 		// get template and check it

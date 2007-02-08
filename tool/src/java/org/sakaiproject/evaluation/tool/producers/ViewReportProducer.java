@@ -237,7 +237,7 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 		    }
 
 
-		} else if (myItem.getClassification().equals(EvaluationConstant.ITEM_TYPE_BLOCK)) {		 //$NON-NLS-1$
+		} else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK)) {		 //$NON-NLS-1$
 
 			UIBranchContainer block = UIBranchContainer.make(radiobranch,"block:"); //$NON-NLS-1$
 			UIOutput.make(block, "itemNum", (new Integer(i + 1)).toString()); //$NON-NLS-1$

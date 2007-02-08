@@ -656,7 +656,7 @@ private void doFillComponent(EvalTemplateItem myTempItem, int i,
 
 		}
 
-	} else if (myItem.getClassification().equals(EvaluationConstant.ITEM_TYPE_BLOCK)
+	} else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK)
 			&& myTempItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED)) { //"Question Block" "Stepped" type
 		
 		UIBranchContainer block = UIBranchContainer.make(radiobranch,
@@ -736,7 +736,7 @@ private void doFillComponent(EvalTemplateItem myTempItem, int i,
 
 		} // end of get child block item
 
-	} else if (myItem.getClassification().equals(EvaluationConstant.ITEM_TYPE_BLOCK) 
+	} else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK) 
 			&& myTempItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED)) { //"Question Block","Stepped Colored"
 
 		UIBranchContainer blockSteppedColored = UIBranchContainer.make(
