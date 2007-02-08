@@ -116,7 +116,7 @@
 
 	<bean id="entityRewriteWrapper"
 		class="org.sakaiproject.evaluation.tool.wrapper.EntityRewriteWrapper">
-		<property name="ARIResult" ref="ARIResultProxy" />
+		<property name="ARIResult" ref="ARIResult" />
 		<property name="templateBeanLocator" ref="templateBeanLocator" />
 		<property name="requestType" ref="requestType" />
 		<property name="viewParameters" ref="viewParameters" />
