@@ -30,8 +30,8 @@ public class TakeEvalBean {
 
 	public EvalEvaluation eval;
 	
-	private AnswersBeanLocator answersBeanLocator;
-	public void setAnswersBeanLocator(AnswersBeanLocator answersBeanLocator) {
+	private ResponseBeanLocator answersBeanLocator;
+	public void setAnswersBeanLocator(ResponseBeanLocator answersBeanLocator) {
 		this.answersBeanLocator = answersBeanLocator;
 	}
 
