@@ -159,10 +159,11 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 			}
 
 		} else { // updating existing evaluation
-			if (evaluation.getClass() == EvalEvaluation.class) {
-				throw new IllegalStateException("Attempt to save non-persistent instance of Evaluation with id " + evaluation.getId() + 
-				": to continue working with this entity you must refetch it using getEvaluationById");      
-			}
+// No longer used with the interceptor gone -AZ
+//			if (evaluation.getClass() == EvalEvaluation.class) {
+//				throw new IllegalStateException("Attempt to save non-persistent instance of Evaluation with id " + evaluation.getId() + 
+//				": to continue working with this entity you must refetch it using getEvaluationById");      
+//			}
 
 			if (! canUserControlEvaluation(userId, evaluation) ) {
 				throw new SecurityException("User ("+userId+") attempted to update existing evaluation ("+evaluation.getId()+") without permissions");
