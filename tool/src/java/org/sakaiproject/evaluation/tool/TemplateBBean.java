@@ -108,7 +108,9 @@ public class TemplateBBean {
 	public void saveReorder() {
 		log.debug("save items reordering");
 		Map delivered = templateItemBeanLocator.getDeliveredBeans();
-		List ordered = localTemplateLogic.fetchTemplateItems(templateId);
+		//List ordered = localTemplateLogic.fetchTemplateItems(templateId);
+		List l = itemsLogic.getTemplateItemsForTemplate(templateId,null);
+		List ordered = ItemBlockUtils.getNonChildItems(l);
 		for (int i = 1; i <= ordered.size();) {
 			EvalTemplateItem item = (EvalTemplateItem) ordered.get(i - 1);
 			int itnum = item.getDisplayOrder().intValue();
@@ -132,10 +134,10 @@ public class TemplateBBean {
 		log.debug("Save Block items");		
 		//get the first child' Scale ID, TemplateId, displayOrder
 		String[] strIds = childTemplateItemIds.split(",");
-	
-		
+
 		Map delivered = templateItemBeanLocator.getDeliveredBeans();
 		if(strIds.length >1){//creating new Block
+			//create new block from normal scaled type			//create new block from multiple existing block
 			//save Block parent
 			EvalTemplateItem first = itemsLogic.getTemplateItemById(Long.valueOf(strIds[0]));
 			Integer originalDO = first.getDisplayOrder();
@@ -170,7 +172,7 @@ public class TemplateBBean {
 				if(child.getBlockParent() != Boolean.FALSE) child.setBlockParent(Boolean.FALSE);
 				child.setDisplayOrder(new Integer(i+1));
 				child.setBlockId(parentId);
-			//should child scaledisplaySetting, useNA, itemCategory been reset?-check with Aaron
+		
 			}
 			
 			//shifting all the others's order

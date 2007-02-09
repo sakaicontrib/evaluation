@@ -160,7 +160,7 @@ public class ReportHandlerHook implements HandlerHook {
 						Integer blockID = new Integer(parentID.intValue());
 
 					//List blockChildItems = logic.findItem(blockID);
-					List blockChildItems = ItemBlockUtils.getChildItmes(allItems, blockID);
+					List blockChildItems = ItemBlockUtils.getChildItems(allItems, blockID);
 					if (blockChildItems != null && blockChildItems.size() > 0) {
 							//for each child item
 							for (int j = 0; j < blockChildItems.size(); j++) {

@@ -703,7 +703,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 				
 			//	List childItems = logic.findItem(blockID);
 				
-				List childItems = ItemBlockUtils.getChildItmes(itemsList, blockID);
+				List childItems = ItemBlockUtils.getChildItems(itemsList, blockID);
 				if (childItems != null && childItems.size() > 0) {
 					for (int j = 0; j < childItems.size(); j++) {
 						String currChildBlockAnswerOTP=newAnswerOTPBinding+"child"+j;
@@ -824,7 +824,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 				Integer blockID = new Integer(parentID.intValue());
 				
 				//List childItems = logic.findItem(blockID);
-				List childItems = ItemBlockUtils.getChildItmes(itemsList, blockID);
+				List childItems = ItemBlockUtils.getChildItems(itemsList, blockID);
 				if (childItems != null && childItems.size() > 0) {
 					for (int j = 0; j < childItems.size(); j++) {
 						String currChildBlockAnswerOTP=newAnswerOTPBinding+"child"+j;
