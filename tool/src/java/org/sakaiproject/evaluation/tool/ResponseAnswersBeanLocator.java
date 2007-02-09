@@ -32,7 +32,7 @@ public class ResponseAnswersBeanLocator implements BeanLocator {
     if (togo == null) {
       
       EvalResponse parent = (EvalResponse) responseBeanLocator.locateBean(path);
-      //togo = new AnswersBeanLocator(parent, localResponsesLogic);
+      togo = new AnswersBeanLocator(parent, localResponsesLogic);
       delivered.put(path, togo);
   }
   return togo;

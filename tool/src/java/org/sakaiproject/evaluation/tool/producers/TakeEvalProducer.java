@@ -91,17 +91,27 @@ public class TakeEvalProducer implements ViewComponentProducer,
 	}	
 	
 	public ViewParameters getViewParameters() {
-		return new EvalTakeViewParameters(VIEW_ID, null, null);
+		return new EvalTakeViewParameters(VIEW_ID, null, null, null);
 	}
 	
 	//This variable is used for binding the items to a list in evaluationBean
 	private int totalItemsAdded = 0;
 	
 	
-    String  newAnswerOTPBinding = "answersBeanLocator.new";
-    String newAnswerOTP = newAnswerOTPBinding + ".";
+    String responseOTPBinding = "responseBeanLocator";
+    String responseOTP = responseOTPBinding + ".";
+    String newResponseOTPBinding = responseOTP + "new";
+    String newResponseOTP = newResponseOTPBinding + ".";
+  
+    String responseAnswersOTPBinding = "responseAnswersBeanLocator";
+    String responseAnswersOTP = responseAnswersOTPBinding + ".";
+    String newResponseAnswersOTPBinding = responseAnswersOTP + "new";
+    String newResponseAnswersOTP = newResponseAnswersOTPBinding + ".";    
+    
     String evalOTPBinding="evaluationBeanLocator";
     String evalOTP = evalOTPBinding+".";
+    Long responseId;
+    Long evalId;
 
 	/**
 	 * 
@@ -155,6 +165,8 @@ public class TakeEvalProducer implements ViewComponentProducer,
 		
 		EvalTakeViewParameters evalTakeViewParams = (EvalTakeViewParameters) viewparams;
 		EvalEvaluation eval = evalsLogic.getEvaluationById(evalTakeViewParams.evaluationId);
+		responseId=evalTakeViewParams.responseId;
+		evalId=evalTakeViewParams.evaluationId;
 		if(eval !=null && evalTakeViewParams.context !=null){
 			UIOutput.make(tofill, "evalTitle", eval.getTitle()); //$NON-NLS-1$
 			//get course title: from sakaicontext to course title
@@ -178,6 +190,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 		//Binding the EvalEvaluation object to the EvalEvaluation object in TakeEvaluationBean.
 		form.parameters.add( new UIELBinding("#{takeEvalBean.eval}", new ELReference(evalOTP+eval.getId()))); //$NON-NLS-1$
 
+		
 		EvalTemplate template = eval.getTemplate();
 
 		// get items(parent items, child items --need to set order
@@ -244,8 +257,13 @@ public class TakeEvalProducer implements ViewComponentProducer,
 
 		
 	    EvalItem myItem = myTempItem.getItem();
-		
-		String currAnswerOTP=newAnswerOTPBinding + totalItemsAdded+".";
+	    String currAnswerOTP;
+	    if(responseId==null){
+			currAnswerOTP=newResponseAnswersOTP + myTempItem.getItem().getId()+".";
+		}
+	    else{
+	    	currAnswerOTP=responseAnswersOTP + responseId + "." + myTempItem.getItem().getId() + ".";
+	    }
 		
 		if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)) { //"Scaled/Survey"
 
@@ -706,7 +724,6 @@ public class TakeEvalProducer implements ViewComponentProducer,
 				List childItems = ItemBlockUtils.getChildItems(itemsList, blockID);
 				if (childItems != null && childItems.size() > 0) {
 					for (int j = 0; j < childItems.size(); j++) {
-						String currChildBlockAnswerOTP=newAnswerOTPBinding+"child"+j;
 						UIBranchContainer queRow = UIBranchContainer.make(
 								block, "queRow:", Integer.toString(j)); //$NON-NLS-1$
 
@@ -716,6 +733,15 @@ public class TakeEvalProducer implements ViewComponentProducer,
 						
 					    String childItemOTPBinding = "templateItemBeanLocator." + tempItemChild.getId();		
 						String childItemOTP = childItemOTPBinding + ".";
+						
+						//String currChildBlockAnswerOTP=newAnswerOTPBinding+"child"+j;
+						String currChildBlockAnswerOTP;
+						if(responseId==null){
+							currChildBlockAnswerOTP=newResponseAnswersOTP + child.getId()+".";
+						}
+					    else{
+					    	currChildBlockAnswerOTP=responseAnswersOTP + responseId + "." + child.getId() + ".";
+					    }
 						
 						// Bind item id to list of items in evaluation bean.
 						form.parameters.add( new UIELBinding
@@ -827,7 +853,6 @@ public class TakeEvalProducer implements ViewComponentProducer,
 				List childItems = ItemBlockUtils.getChildItems(itemsList, blockID);
 				if (childItems != null && childItems.size() > 0) {
 					for (int j = 0; j < childItems.size(); j++) {
-						String currChildBlockAnswerOTP=newAnswerOTPBinding+"child"+j;
 						UIBranchContainer queRow = UIBranchContainer.make(
 								blockSteppedColored, "queRow:", Integer //$NON-NLS-1$
 										.toString(j));
@@ -839,6 +864,15 @@ public class TakeEvalProducer implements ViewComponentProducer,
 
 					    String childItemOTPBinding = "templateItemBeanLocator." + tempItemChild.getId();		
 						String childItemOTP = childItemOTPBinding + ".";
+						
+						//String currChildBlockAnswerOTP=newAnswerOTPBinding+"child"+j;
+						String currChildBlockAnswerOTP;
+						if(responseId==null){
+							currChildBlockAnswerOTP=newResponseAnswersOTP + child.getId()+".";
+						}
+					    else{
+					    	currChildBlockAnswerOTP=responseAnswersOTP + responseId + "." + child.getId() + ".";
+					    }
 						
 						// Bind item id to list of items in evaluation bean.
 						form.parameters.add( new UIELBinding

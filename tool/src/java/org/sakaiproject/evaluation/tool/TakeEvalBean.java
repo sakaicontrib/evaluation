@@ -30,9 +30,9 @@ public class TakeEvalBean {
 
 	public EvalEvaluation eval;
 	
-	private ResponseBeanLocator answersBeanLocator;
-	public void setAnswersBeanLocator(ResponseBeanLocator answersBeanLocator) {
-		this.answersBeanLocator = answersBeanLocator;
+	private ResponseBeanLocator responseBeanLocator;
+	public void setResponseBeanLocator(ResponseBeanLocator responseBeanLocator) {
+		this.responseBeanLocator = responseBeanLocator;
 	}
 
 	/**
@@ -40,7 +40,7 @@ public class TakeEvalBean {
 	 */
 	public String submitEvaluation() {
 		log.debug("create response");
-		answersBeanLocator.saveAll(eval);
+		responseBeanLocator.saveAll(eval);
 		return "success";
 	}
 }

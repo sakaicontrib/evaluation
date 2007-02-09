@@ -25,6 +25,7 @@ import java.util.Map;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.logic.model.Context;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -79,6 +80,11 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		this.responsesLogic = responsesLogic;
 	}
 
+	private EvalSettings settings;
+	public void setSettings(EvalSettings settings) {
+		this.settings = settings;
+	}
+	
 	private EvalTemplatesLogic templatesLogic;
 	public void setTemplatesLogic(EvalTemplatesLogic templatesLogic) {
 		this.templatesLogic = templatesLogic;
@@ -207,16 +213,25 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 					 */
 					// set status
 					if (response != null && response.getEndTime() != null) {
-						// preview only when completed
-						UIInternalLink.make(evalcourserow, "evaluationCourseLink", title,  //$NON-NLS-1$
-								new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID,
-										eval.getId(),eval.getTemplate().getId(),context, SummaryProducer.VIEW_ID) );
-						status = messageLocator.getMessage("summary.status.completed"); //$NON-NLS-1$
+						if( ((Boolean)settings.get(EvalSettings.STUDENT_MODIFY_RESPONSES)).booleanValue()){
+							// take eval link when pending
+							UIInternalLink.make(evalcourserow, "evaluationCourseLink", title,  //$NON-NLS-1$
+									new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID,
+											eval.getId(), response.getId(), context) );
+							status = messageLocator.getMessage("summary.status.pending"); //$NON-NLS-1$							
+						}
+						else{
+							// preview only when completed
+							UIInternalLink.make(evalcourserow, "evaluationCourseLink", title,  //$NON-NLS-1$
+									new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID,
+											eval.getId(),eval.getTemplate().getId(),context, SummaryProducer.VIEW_ID) );
+							status = messageLocator.getMessage("summary.status.completed"); //$NON-NLS-1$
+						}
 					} else {
 						// take eval link when pending
 						UIInternalLink.make(evalcourserow, "evaluationCourseLink", title,  //$NON-NLS-1$
 								new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID,
-										eval.getId(), context) );
+										eval.getId(), null, context) );
 						status = messageLocator.getMessage("summary.status.pending"); //$NON-NLS-1$
 					}
 					UIOutput.make(evalcourserow, "evaluationCourseStatus", status );					 //$NON-NLS-1$

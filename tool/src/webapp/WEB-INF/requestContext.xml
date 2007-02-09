@@ -53,7 +53,7 @@
 
 	<bean id="takeEvalBean"
 		class="org.sakaiproject.evaluation.tool.TakeEvalBean">
-	  <property name="answersBeanLocator" ref="answersBeanLocator" />
+	  <property name="responseBeanLocator" ref="responseBeanLocator" />
 	</bean>
 
 	<bean id="templateBBean"
@@ -113,6 +113,9 @@
 	  <property name="responseBeanLocator" ref="responseBeanLocator" />
 	</bean>
 
+	<bean id="answersBeanLocator"
+	  class="org.sakaiproject.evaluation.tool.ResponseAnswersBeanLocator">
+	</bean>
 
 	<bean id="entityRewriteWrapper"
 		class="org.sakaiproject.evaluation.tool.wrapper.EntityRewriteWrapper">
@@ -138,6 +141,8 @@
 			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
 		<property name="responsesLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
+		<property name="settings"
+			ref="org.sakaiproject.evaluation.logic.EvalSettings" />			
 		<property name="messageLocator" ref="messageLocator" />
 		<property name="locale" ref="sakai-Locale" />
 	</bean>
