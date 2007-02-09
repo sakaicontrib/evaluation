@@ -17,7 +17,6 @@ package org.sakaiproject.evaluation.tool.renderers;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
-import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIJointContainer;
 import uk.org.ponder.rsf.components.UIVerbatim;
@@ -35,14 +34,12 @@ public class HeaderRenderer implements ItemRenderer {
 	public static final String COMPONENT_ID = "render-item-header:";
 
 	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#renderItem(org.sakaiproject.evaluation.model.EvalTemplateItem, uk.org.ponder.rsf.components.UIContainer, java.lang.Integer, boolean)
+	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#renderItem(uk.org.ponder.rsf.components.UIContainer, java.lang.String, org.sakaiproject.evaluation.model.EvalTemplateItem, int, boolean)
 	 */
-	public UIJointContainer renderItem(UIContainer tofill, EvalTemplateItem templateItem, int displayNumber, boolean disabled) {
-		UIJointContainer container = new UIJointContainer(tofill.parent, tofill.ID, 
-		        COMPONENT_ID);
+	public UIJointContainer renderItem(UIContainer parent, String ID, String binding, EvalTemplateItem templateItem, int displayNumber, boolean disabled) {
+		UIJointContainer container = new UIJointContainer(parent.parent, ID, COMPONENT_ID);
 
-		UIBranchContainer header = UIBranchContainer.make(container, "headerType:"); //$NON-NLS-1$
-		UIVerbatim.make(header, "itemText", templateItem.getItem().getItemText()); //$NON-NLS-1$
+		UIVerbatim.make(container, "itemText", templateItem.getItem().getItemText()); //$NON-NLS-1$
 
 		return container;
 	}

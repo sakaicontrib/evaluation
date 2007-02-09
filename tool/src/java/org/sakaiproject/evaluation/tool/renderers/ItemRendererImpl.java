@@ -20,13 +20,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
-import org.sakaiproject.evaluation.model.constant.EvalConstants;
+import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIJointContainer;
 
 /**
- * The implementation for the ItemRenderer class
+ * The main implementation for the ItemRenderer class which allows the presentation programmers
+ * to simply inject and use a single class for all rendering of items
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
@@ -40,35 +41,21 @@ public class ItemRendererImpl implements ItemRenderer {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#renderItem(org.sakaiproject.evaluation.model.EvalTemplateItem, uk.org.ponder.rsf.components.UIContainer, java.lang.Integer, boolean)
-	 */
-	public UIJointContainer renderItem(UIContainer tofill, EvalTemplateItem templateItem, int displayNumber, boolean disabled) {
-		// figure out the type of item and then call the appropriate renderer
-
-		if (EvalConstants.ITEM_TYPE_HEADER.equals(templateItem.getItem().getClassification())) {
-			
-		} else if (EvalConstants.ITEM_TYPE_TEXT.equals(templateItem.getItem().getClassification())) {
-			
-		} else if (EvalConstants.ITEM_TYPE_SCALED.equals(templateItem.getItem().getClassification())) {
-			// scaled has a special case where it might be a block so check for this and handle it correctly
-			if (templateItem.getBlockParent() != null) {
-				// item is part of a block
-				if (templateItem.getBlockParent().booleanValue()) {
-					// this is a block parent so handle it a special way
-				} else {
-					// this is a block child so die
-					throw new IllegalArgumentException("Cannot render block child items alone, they are rendered with the parent when it gets rendered");
-				}
-			} else {
-				// item is a normal scaled item
-			}
-		} else {
-			throw new IllegalStateException("Cannot identify this item classification:" + templateItem.getItem().getClassification());
+	public void init() {
+		// just check that the renderImpls are inited
+		if (renderImpls == null) {
+			throw new IllegalStateException("The renderTypes must be set before this class can be used");
 		}
+	}
 
-		// TODO Auto-generated method stub
-		return null;
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#renderItem(uk.org.ponder.rsf.components.UIContainer, java.lang.String, org.sakaiproject.evaluation.model.EvalTemplateItem, int, boolean)
+	 */
+	public UIJointContainer renderItem(UIContainer parent, String ID, String binding, EvalTemplateItem templateItem, int displayNumber, boolean disabled) {
+		// figure out the type of item and then call the appropriate renderer
+		String itemTypeConstant = TemplateItemUtils.getTemplateItemType(templateItem);
+		ItemRenderer renderer = (ItemRenderer) renderImpls.get( itemTypeConstant );
+		return renderer.renderItem(parent, ID, binding, templateItem, displayNumber, disabled);
 	}
 
 	/* (non-Javadoc)
