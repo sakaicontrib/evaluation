@@ -29,6 +29,7 @@ public class TakeEvalBean {
 	private static Log log = LogFactory.getLog(TemplateBean.class);
 
 	public EvalEvaluation eval;
+	public String context;
 	
 	private ResponseBeanLocator responseBeanLocator;
 	public void setResponseBeanLocator(ResponseBeanLocator responseBeanLocator) {
@@ -40,7 +41,7 @@ public class TakeEvalBean {
 	 */
 	public String submitEvaluation() {
 		log.debug("create response");
-		responseBeanLocator.saveAll(eval);
+		responseBeanLocator.saveAll(eval, context);
 		return "success";
 	}
 }

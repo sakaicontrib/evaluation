@@ -112,6 +112,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
     String evalOTP = evalOTPBinding+".";
     Long responseId;
     Long evalId;
+    String context;
 
 	/**
 	 * 
@@ -167,6 +168,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 		EvalEvaluation eval = evalsLogic.getEvaluationById(evalTakeViewParams.evaluationId);
 		responseId=evalTakeViewParams.responseId;
 		evalId=evalTakeViewParams.evaluationId;
+		context=evalTakeViewParams.context;
 		if(eval !=null && evalTakeViewParams.context !=null){
 			UIOutput.make(tofill, "evalTitle", eval.getTitle()); //$NON-NLS-1$
 			//get course title: from sakaicontext to course title
@@ -189,7 +191,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 
 		//Binding the EvalEvaluation object to the EvalEvaluation object in TakeEvaluationBean.
 		form.parameters.add( new UIELBinding("#{takeEvalBean.eval}", new ELReference(evalOTP+eval.getId()))); //$NON-NLS-1$
-
+		form.parameters.add( new UIELBinding("#{takeEvalBean.context}", evalTakeViewParams.context));
 		
 		EvalTemplate template = eval.getTemplate();
 
@@ -264,7 +266,6 @@ public class TakeEvalProducer implements ViewComponentProducer,
 	    else{
 	    	currAnswerOTP=responseAnswersOTP + responseId + "." + myTempItem.getItem().getId() + ".";
 	    }
-		
 		if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)) { //"Scaled/Survey"
 
 			// Bind item id to list of items in evaluation bean.

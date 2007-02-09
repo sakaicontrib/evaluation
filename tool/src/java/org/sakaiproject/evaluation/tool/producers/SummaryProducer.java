@@ -184,57 +184,60 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 				List contexts = (List) evalContexts.get(eval.getId());
 				for (int j=0; j<contexts.size(); j++) {
 					Context ctxt = (Context) contexts.get(j);
-					String context = ctxt.context;
-					String title = ctxt.title;
-					String status = messageLocator.getMessage("unknown.caps"); //$NON-NLS-1$
-
-					// find the object in the list matching the context and evalId,
-					// leave as null if not found -AZ
-					EvalResponse response = null;
-
-					for (int k=0; k<evalResponses.size(); k++) {
-						EvalResponse er = (EvalResponse) evalResponses.get(k);
-						if (context.equals(er.getContext()) &&
-								eval.getId().equals(er.getEvaluation().getId())) {
-							response = er;
-							break;
+					//check that the user can take evaluations in this context
+					if(external.isUserAllowedInContext(external.getCurrentUserId(), EvalConstants.PERM_TAKE_EVALUATION, ctxt.context)){
+						String context = ctxt.context;
+						String title = ctxt.title;
+						String status = messageLocator.getMessage("unknown.caps"); //$NON-NLS-1$
+	
+						// find the object in the list matching the context and evalId,
+						// leave as null if not found -AZ
+						EvalResponse response = null;
+	
+						for (int k=0; k<evalResponses.size(); k++) {
+							EvalResponse er = (EvalResponse) evalResponses.get(k);
+							if (context.equals(er.getContext()) &&
+									eval.getId().equals(er.getEvaluation().getId())) {
+								response = er;
+								break;
+							}
 						}
-					}
-
-					if (context.equals(currentContext)) {
-						// TODO - do something when the context matches
-					}
-
-					UIBranchContainer evalcourserow = UIBranchContainer.make(evalrow, 
-							"evaluationsCourseList:", context ); //$NON-NLS-1$
-
-					/*	TODO: -fengr
-					 * should consider case:if a evaluation is closed, and student have not take it yet
-					 */
-					// set status
-					if (response != null && response.getEndTime() != null) {
-						if( ((Boolean)settings.get(EvalSettings.STUDENT_MODIFY_RESPONSES)).booleanValue()){
+	
+						if (context.equals(currentContext)) {
+							// TODO - do something when the context matches
+						}
+	
+						UIBranchContainer evalcourserow = UIBranchContainer.make(evalrow, 
+								"evaluationsCourseList:", context ); //$NON-NLS-1$
+	
+						/*	TODO: -fengr
+						 * should consider case:if a evaluation is closed, and student have not take it yet
+						 */
+						// set status
+						if (response != null && response.getEndTime() != null) {
+							if(eval.getModifyResponsesAllowed().booleanValue()){
+								// take eval link when pending
+								UIInternalLink.make(evalcourserow, "evaluationCourseLink", title,  //$NON-NLS-1$
+										new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID,
+												eval.getId(), response.getId(), context) );
+								status = messageLocator.getMessage("summary.status.pending"); //$NON-NLS-1$							
+							}
+							else{
+								// preview only when completed
+								UIInternalLink.make(evalcourserow, "evaluationCourseLink", title,  //$NON-NLS-1$
+										new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID,
+												eval.getId(),eval.getTemplate().getId(),context, SummaryProducer.VIEW_ID) );
+								status = messageLocator.getMessage("summary.status.completed"); //$NON-NLS-1$
+							}
+						} else {
 							// take eval link when pending
 							UIInternalLink.make(evalcourserow, "evaluationCourseLink", title,  //$NON-NLS-1$
 									new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID,
-											eval.getId(), response.getId(), context) );
-							status = messageLocator.getMessage("summary.status.pending"); //$NON-NLS-1$							
+											eval.getId(), null, context) );
+							status = messageLocator.getMessage("summary.status.pending"); //$NON-NLS-1$
 						}
-						else{
-							// preview only when completed
-							UIInternalLink.make(evalcourserow, "evaluationCourseLink", title,  //$NON-NLS-1$
-									new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID,
-											eval.getId(),eval.getTemplate().getId(),context, SummaryProducer.VIEW_ID) );
-							status = messageLocator.getMessage("summary.status.completed"); //$NON-NLS-1$
-						}
-					} else {
-						// take eval link when pending
-						UIInternalLink.make(evalcourserow, "evaluationCourseLink", title,  //$NON-NLS-1$
-								new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID,
-										eval.getId(), null, context) );
-						status = messageLocator.getMessage("summary.status.pending"); //$NON-NLS-1$
+						UIOutput.make(evalcourserow, "evaluationCourseStatus", status );					 //$NON-NLS-1$
 					}
-					UIOutput.make(evalcourserow, "evaluationCourseStatus", status );					 //$NON-NLS-1$
 				}
 			}
 		}

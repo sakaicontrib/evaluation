@@ -35,7 +35,7 @@ public class LocalResponsesLogic {
   
   public EvalResponse newResponse() {
     EvalResponse togo = new EvalResponse(new Date(), external
-        .getCurrentUserId(), external.getCurrentContext(), new Date(), null);
+        .getCurrentUserId(), new String(), new Date(), null);
     togo.setEndTime(new Date());
     return togo;
   }
@@ -58,6 +58,19 @@ public class LocalResponsesLogic {
     throw new IllegalArgumentException("Could not locate response for eval id "
        + evalId + " userID " + userId +" in context " + context); 
         
+  }
+  
+  /**
+   * This function takes a string containing a response id, and returns
+   * the EvalResponse object corresponding to that id.
+   * @param responseIdString - string containing the id of the desired response
+   * @return The EvalResponse object corresponding to the given id.
+   */
+  public EvalResponse getResponseById(String responseIdString) {
+	    Long responseId = Long.valueOf(responseIdString);
+	    System.out.println("attempting to fetch response with id:"+responseId);
+	    EvalResponse response = responsesLogic.getResponseById(responseId);
+	    return response;	       
   }
 
   public void saveResponse(EvalResponse response) {
