@@ -28,6 +28,17 @@ import org.sakaiproject.evaluation.model.EvalResponse;
 public interface EvalResponsesLogic {
 
 	/**
+	 * Get a response by its unique id<br/>
+	 * A response represents a single user response to an evaluation in a specific context<br/>
+	 * Note: this should mostly be used for OTP and not for normal fetching which
+	 * should use the other methods in this API
+	 * 
+	 * @param responseId the id of an EvalResponse object
+	 * @return an {@link EvalResponse} object or null if not found
+	 */
+	public EvalResponse getResponseById(Long responseId);
+
+	/**
 	 * Get the responses for the supplied evaluations for this user<br/>
 	 * Note that this can return multiple responses in the case where an evaluation
 	 * is assigned to multiple contexts that this user is part of, do not assume
