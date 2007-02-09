@@ -67,6 +67,10 @@ public class LocalTemplateLogic {
     itemsLogic.saveTemplateItem(tosave, external.getCurrentUserId());
   }
   
+  public void deleteTemplateItem(Long id) {
+	    itemsLogic.deleteTemplateItem(id, external.getCurrentUserId());
+  }
+  
   public EvalTemplate newTemplate() {
     EvalTemplate currTemplate = new EvalTemplate(new Date(), external.getCurrentUserId(),
         null, "private", Boolean.FALSE);

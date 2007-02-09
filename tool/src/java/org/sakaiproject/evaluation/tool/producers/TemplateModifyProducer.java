@@ -13,6 +13,7 @@
  *****************************************************************************/
 package org.sakaiproject.evaluation.tool.producers;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import org.sakaiproject.evaluation.tool.params.BlockIdsParameters;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.params.PreviewEvalParameters;
 import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
+import org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer.EvaluationItemOrderComparator;
 import org.sakaiproject.evaluation.tool.utils.ItemBlockUtils;
 
 import uk.org.ponder.htmlutil.HTMLUtil;
@@ -157,6 +159,7 @@ public class TemplateModifyProducer implements ViewComponentProducer,
         
 	    List l = itemsLogic.getTemplateItemsForTemplate(templateId,null);
         List templateItemsList = ItemBlockUtils.getNonChildItems(l);//need to get all nonchild items
+        Collections.sort(templateItemsList, new EvaluationItemOrderComparator());	
         
 		if (templateItemsList.isEmpty()){
           UIOutput.make(form, "begin-eval-dummylink", messageLocator.getMessage("modifytemplate.begin.eval.link")); 
