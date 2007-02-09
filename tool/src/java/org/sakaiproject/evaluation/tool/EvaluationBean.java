@@ -633,7 +633,7 @@ public class EvaluationBean {
 					Long parentID = tempItem.getId();
 					Integer blockID = new Integer(parentID.intValue());
 				
-					List childItems = ItemBlockUtils.getChildItmes(allItems, blockID);
+					List childItems = ItemBlockUtils.getChildItems(allItems, blockID);
 					if (childItems != null && childItems.size() >0 ) {
 						
 						for (int k = 0; k < childItems.size(); k++) {

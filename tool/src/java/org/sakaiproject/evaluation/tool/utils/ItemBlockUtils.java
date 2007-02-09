@@ -38,7 +38,7 @@ public class ItemBlockUtils {
 	}
 
 //	return the child items which assocaited with the BlockParentId
-	public static List getChildItmes(List tempItemsList, Integer blockParentId){
+	public static List getChildItems(List tempItemsList, Integer blockParentId){
 		List childItemsList = new ArrayList();
 		
 		for(int i= 0; i< tempItemsList.size(); i++){

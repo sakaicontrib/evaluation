@@ -311,7 +311,7 @@ public class TemplateModifyProducer implements ViewComponentProducer,
 				//rendering block child items
 				if(myTemplateItem.getBlockParent()!= null && myTemplateItem.getBlockParent().booleanValue()== true){
 					Integer parentID = new Integer(myTemplateItem.getId().intValue());
-					List childList = ItemBlockUtils.getChildItmes(l,parentID);
+					List childList = ItemBlockUtils.getChildItems(l,parentID);
 					for(int k=0; k< childList.size();k++){
 						UIBranchContainer childRow = UIBranchContainer.make(form2,"itemrow:blockItems", Integer.toString(k));
 						EvalTemplateItem childTI = (EvalTemplateItem)childList.get(k);

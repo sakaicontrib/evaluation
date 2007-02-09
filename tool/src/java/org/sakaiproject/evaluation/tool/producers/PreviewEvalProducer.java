@@ -713,7 +713,7 @@ private void doFillComponent(EvalTemplateItem myTempItem, int i,
 			Integer blockID = new Integer(parentID.intValue());
 			//List childItems = logic.findItem(blockID);
 			//get child items associated with this Block parent ID
-			List childItems = ItemBlockUtils.getChildItmes(itemsList, blockID);
+			List childItems = ItemBlockUtils.getChildItems(itemsList, blockID);
 			
 			if (childItems != null && childItems.size() > 0) {
 				for (int j = 0; j < childItems.size(); j++) {
@@ -809,7 +809,7 @@ private void doFillComponent(EvalTemplateItem myTempItem, int i,
 			Long parentID = myTempItem.getId();
 			Integer blockID = new Integer(parentID.intValue());
 			//List childItems = logic.findItem(blockID);
-			List childItems = ItemBlockUtils.getChildItmes(itemsList, blockID);
+			List childItems = ItemBlockUtils.getChildItems(itemsList, blockID);
 			
 			if (childItems != null && childItems.size() > 0) {
 				for (int j = 0; j < childItems.size(); j++) {
