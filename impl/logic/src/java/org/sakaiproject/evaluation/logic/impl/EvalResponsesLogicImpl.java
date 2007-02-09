@@ -30,6 +30,7 @@ import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalResponse;
+import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.utils.EvalUtils;
 import org.sakaiproject.genericdao.api.finders.ByPropsFinder;
@@ -67,6 +68,15 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
 	}
 
 
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalResponsesLogic#getResponseById(java.lang.Long)
+	 */
+	public EvalResponse getResponseById(Long responseId) {
+		log.debug("responseId: " + responseId );
+		// get the response by passing in id
+		return (EvalResponse) dao.findById(EvalResponse.class, responseId);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalResponsesLogic#getEvaluationResponses(java.lang.String, java.lang.Long[])

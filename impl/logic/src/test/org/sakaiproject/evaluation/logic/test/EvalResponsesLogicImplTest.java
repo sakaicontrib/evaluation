@@ -118,6 +118,25 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 	 */
 
 
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalResponsesLogicImpl#getResponseById(Long))}.
+	 */
+	public void testGetResponseById() {
+		EvalResponse response = null;
+
+		response = responses.getResponseById( etdl.response1.getId() );
+		Assert.assertNotNull(response);
+		Assert.assertEquals(etdl.response1.getId(), response.getId());
+
+		response = responses.getResponseById( etdl.response2.getId() );
+		Assert.assertNotNull(response);
+		Assert.assertEquals(etdl.response2.getId(), response.getId());
+
+		// test get eval by invalid id
+		response = responses.getResponseById( EvalTestDataLoad.INVALID_LONG_ID );
+		Assert.assertNull(response);
+	}
+
 
 	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalResponsesLogicImpl#getEvaluationResponses(java.lang.String, java.lang.Long[])}.
