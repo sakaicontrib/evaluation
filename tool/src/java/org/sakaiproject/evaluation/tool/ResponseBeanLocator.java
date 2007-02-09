@@ -41,12 +41,15 @@ public class ResponseBeanLocator implements BeanLocator {
 
   public Object locateBean(String path) {
     Object togo = delivered.get(path);
+    System.out.println("Attempted to fetch responseId:"+path+" from map");
+    System.out.println("togo:"+togo);
     if (togo == null) {
       if (path.startsWith(NEW_PREFIX)) {
         togo = localResponsesLogic.newResponse();
       }
       else {
-        togo = localResponsesLogic.fetchResponseById(path);
+        togo = localResponsesLogic.getResponseById(path);
+        System.out.println("togo:"+togo);
       }
       delivered.put(path, togo);
     }
@@ -58,11 +61,14 @@ public class ResponseBeanLocator implements BeanLocator {
     return delivered;
   }
 
-  public void saveAll(EvalEvaluation eval) {
+  public void saveAll(EvalEvaluation eval, String context) {
     for (Iterator it = delivered.keySet().iterator(); it.hasNext();) {
       String key = (String) it.next();
       EvalResponse response = (EvalResponse) delivered.get(key);
-      if(response.getId()==null)response.setEvaluation(eval);
+      if(response.getId()==null){
+    	  response.setEvaluation(eval);
+    	  response.setContext(context);
+      }
       response.setEndTime(new Date());
       localResponsesLogic.saveResponse(response); 
     }

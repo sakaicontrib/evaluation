@@ -68,7 +68,7 @@ public class AnswersBeanLocator implements BeanLocator {
   public void loadMap(Set answers) {
     for (Iterator it = answers.iterator(); it.hasNext();) {
       EvalAnswer answer = (EvalAnswer) it.next();
-      delivered.put(answer.getItem().getId(), answer);
+      delivered.put(answer.getItem().getId().toString(), answer);
     }
   }
 

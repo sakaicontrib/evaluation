@@ -39,6 +39,6 @@ public class EvalTakeViewParameters extends SimpleViewParameters {
 
 	public String getParseSpec() {
 		// include a comma delimited list of the public properties in this class
-		return super.getParseSpec() + ",evaluationId,context";
+		return super.getParseSpec() + ",evaluationId,responseId,context";
 	}
 }
