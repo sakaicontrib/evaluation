@@ -24,14 +24,16 @@ import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 public class EvalTakeViewParameters extends SimpleViewParameters {
 	
 	public Long evaluationId; 
+	public Long responseId;
 	public String context;
 	
 	public EvalTakeViewParameters() {
 	}
 
-	public EvalTakeViewParameters(String viewID, Long evaluationId, String context) {
+	public EvalTakeViewParameters(String viewID, Long evaluationId, Long responseId, String context) {
 		this.viewID = viewID;
 		this.evaluationId = evaluationId;
+		this.responseId = responseId;
 		this.context = context;
 	}
 

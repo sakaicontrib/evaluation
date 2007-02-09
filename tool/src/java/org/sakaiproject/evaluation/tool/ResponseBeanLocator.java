@@ -12,6 +12,7 @@
  *****************************************************************************/
 package org.sakaiproject.evaluation.tool;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -61,6 +62,8 @@ public class ResponseBeanLocator implements BeanLocator {
     for (Iterator it = delivered.keySet().iterator(); it.hasNext();) {
       String key = (String) it.next();
       EvalResponse response = (EvalResponse) delivered.get(key);
+      if(response.getId()==null)response.setEvaluation(eval);
+      response.setEndTime(new Date());
       localResponsesLogic.saveResponse(response); 
     }
   }
