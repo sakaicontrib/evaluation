@@ -45,7 +45,7 @@ public class TextRenderer implements ItemRenderer {
 	/**
 	 * This identifies the template component associated with this renderer
 	 */
-	public static final String COMPONENT_ID = "render-item-text:";
+	public static final String COMPONENT_ID = "render-text-item:";
 
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#renderItem(uk.org.ponder.rsf.components.UIContainer, java.lang.String, org.sakaiproject.evaluation.model.EvalTemplateItem, int, boolean)
