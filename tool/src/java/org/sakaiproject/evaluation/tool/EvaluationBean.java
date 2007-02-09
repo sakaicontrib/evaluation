@@ -219,8 +219,6 @@ public class EvaluationBean {
 	 */
 	public String saveSettingsAction() {	
 
-		eval.setLastModified(new Date());
-		
 		/*
 		 * If it is a queued evaluation then get value from startDate variable.
 		 * 
@@ -231,38 +229,23 @@ public class EvaluationBean {
 		 */
 		Date today = new Date();
 		if (today.before(eval.getStartDate())) {
-			eval.setStartDate(changeStringToDate(startDate));
+			//Do nothing as start date is properly set in the evaluation bean.
 		}
 		else {
-			Date startDateFromUtil = eval.getStartDate();
-			eval.setStartDate(startDateFromUtil);
+			//Use the start date already in eval object
+			DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+			startDate = df.format(eval.getStartDate()); 
 		}
 		
-		eval.setDueDate(changeStringToDate(dueDate));
-		eval.setViewDate(changeStringToDate(viewDate));
-		eval.setStudentsDate(changeStringToDate(studentsDate));
-		eval.setInstructorsDate(changeStringToDate(instructorsDate));
-	
-		/*
-		 * check if start date is the same as today's date, set startDate as today's date time, 
-		 * as when we parse the string to a date, the time filed by default is zero
-		 */
-		checkEvalStartDate(eval);
-
-		/*
-		 * If the due date is same as start date then we need to make the time of due date 
-		 * to be 1 second more that start date.
-		 * (for details see the comment at the start of checkDueDate() method)
-		 */		
-		checkDueDate();
-		
-		// Needed by columbia so as of now making equal to due date		
-		eval.setStopDate(eval.getDueDate());
+		//Perform common tasks
+		commonSaveTasks();
 		
 		//Need to fetch the object again as Hibernate session has expired
 		EvalEvaluation evalInDB = evalsLogic.getEvaluationById(eval.getId());
 		
 		//Now copying the data from eval to evalInDB
+		evalInDB.setLastModified(eval.getLastModified());
+		
 		evalInDB.setStartDate(eval.getStartDate());
 		evalInDB.setStopDate(eval.getStopDate());
 		evalInDB.setDueDate(eval.getDueDate());
@@ -282,10 +265,11 @@ public class EvaluationBean {
 		evalInDB.setReminderFromEmail(eval.getReminderFromEmail());
 		evalInDB.setReminderEmailTemplate(eval.getReminderEmailTemplate());
 		evalInDB.setReminderDays(eval.getReminderDays());
-		
-		evalInDB.setLastModified(eval.getLastModified());
 
 		evalsLogic.saveEvaluation(evalInDB, external.getCurrentUserId());
+		
+		//now reset the eval item here
+		clearEvaluation();
 	    return ControlPanelProducer.VIEW_ID;
 	}
 	
@@ -391,76 +375,11 @@ public class EvaluationBean {
 		eval.setTemplate( templatesLogic.getTemplateById( eval.getTemplate().getId() ) );
 
 		//The main evaluation section with all the settings.
-		eval.setLastModified(new Date());
 		eval.setOwner(external.getCurrentUserId());
-		eval.setStartDate(changeStringToDate(startDate));
-		eval.setDueDate(changeStringToDate(dueDate));
-		eval.setViewDate(changeStringToDate(viewDate));
 
-		/*
-		 * If "EVAL_USE_SAME_VIEW_DATES" system setting (admin setting) flag is set 
-		 * as true then don't look for student and instructor dates, instead make them
-		 * same as admin view date. If not then get the student and instructor view dates.
-		 */ 
-		boolean sameViewDateForAll = ((Boolean) settings.get(EvalSettings.EVAL_USE_SAME_VIEW_DATES)).booleanValue();
-		if (sameViewDateForAll) {
-			
-			if (studentViewResults.booleanValue())
-				eval.setStudentsDate(changeStringToDate(viewDate));
-			
-			if (instructorViewResults.booleanValue())
-				eval.setInstructorsDate(changeStringToDate(viewDate));
-		}
-		else {
-			
-			if (studentViewResults.booleanValue())
-				eval.setStudentsDate(changeStringToDate(studentsDate));
-			
-			if (instructorViewResults.booleanValue())
-				eval.setInstructorsDate(changeStringToDate(instructorsDate));
-		}
-
-		// Email template section
-		EvalEmailTemplate availableTemplate, reminderTemplate;
-
-		//Save email available template
-		availableTemplate = emailsLogic.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
-		if ( emailAvailableTxt.equals(availableTemplate.getMessage()) ) {
-			//do nothing as the template has not been modified.
-		} 
-		else {
-			availableTemplate = new EvalEmailTemplate(new Date(), external.getCurrentUserId(), emailAvailableTxt);
-			emailsLogic.saveEmailTemplate(availableTemplate, external.getCurrentUserId());
-		}
-		eval.setAvailableEmailTemplate(availableTemplate);
+		//Perform common tasks
+		commonSaveTasks();		
 		
-		//Save the email reminder template
-		reminderTemplate = emailsLogic.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_REMINDER);
-		if ( emailReminderTxt.equals(reminderTemplate.getMessage()) ) {
-			//do nothing as the template has not been modified.
-		}
-		else {
-			reminderTemplate = new EvalEmailTemplate(new Date(), external.getCurrentUserId(), emailReminderTxt);
-			emailsLogic.saveEmailTemplate(reminderTemplate, external.getCurrentUserId());
-		}
-		eval.setReminderEmailTemplate(reminderTemplate);
-	
-		/*
-		 * check if start date is the same as today's date, set startDate as today's date & time, 
-		 * as when we parse the string to a date, the time filed by default is zero
-		 */
-		checkEvalStartDate(eval);
-
-		/*
-		 * If the due date is same as start date then we need to make the time of due date 
-		 * to be 1 second more that start date.
-		 * (for details see the comment at the start of checkDueDate() method)
-		 */		
-		checkDueDate();
-
-		// Needed by columbia so as of now making equal to due date
-		eval.setStopDate(eval.getDueDate());            
-
 		//save the evaluation
 		evalsLogic.saveEvaluation(eval, external.getCurrentUserId());
 		
@@ -473,7 +392,7 @@ public class EvaluationBean {
 		}
 
 		//now reset the eval item here
-		eval = new EvalEvaluation();
+		clearEvaluation();
 	    return ControlPanelProducer.VIEW_ID;
 	}
 	
@@ -551,27 +470,23 @@ public class EvaluationBean {
 			instructorViewResults = Boolean.FALSE;
 			instructorsDate = "MM/DD/YYYY";
 		}
-
+		
+		//email settings
+		emailAvailableTxt = eval.getAvailableEmailTemplate().getMessage(); // available template
+		emailReminderTxt =  eval.getReminderEmailTemplate().getMessage();  //reminder email
+		
 		return EvaluationSettingsProducer.VIEW_ID;
 	}
-
 	
-	
-	
-	/*
-	 * TO BE CLEANED FROM THIS POINT ONWARDS (GOING DOWN).
-	 * ABOVE IS CLEANED AND COMMENTED - kahuja (7th Feb 2007).
+	/**
+	 * Method binding to control panel page "Assigned" Link/Command.
+	 * 
+	 * @return View id sending the control to assign confirm page.
 	 */
-	
-	//method binding to control panel page "Assigned" Link/Command
-	public String evalAssigned(){		
+	public String evalAssigned() {		
 		
-		//eval = logic.getEvaluationById(eval.getId());
 		eval = evalsLogic.getEvaluationById(evalId);
-		
-		//List l = logic.getAssignContextsByEvalId(eval.getId());
 		List l = assignsLogic.getAssignContextsByEvalId(eval.getId());
-		
 		if(l!=null && l.size() >0){
 			selectedSakaiSiteIds = new String[l.size()];
 			for(int i =0; i< l.size(); i++){
@@ -580,39 +495,46 @@ public class EvaluationBean {
 			}
 		}
 	
-		//enrollment = logic.getEnrollment(selectedSakaiSiteIds);
 		enrollment =  new int[selectedSakaiSiteIds.length];
 		for(int i =0; i<selectedSakaiSiteIds.length; i++){
 			Set s = external.getUserIdsForContext(selectedSakaiSiteIds[i], EvalConstants.PERM_TAKE_EVALUATION);
 			enrollment[i] = s.size();				
 		}
-
 		return EvaluationAssignConfirmProducer.VIEW_ID;
 	}
 	
-	//method binding to the "Cancel" button  on the remove_evaluation.html
+	/**
+	 * Method binding to the "Cancel" button on the remove_evaluation.html.
+	 * 
+	 * @return View id sending the control to control panel page.
+	 */
 	public String cancelRemoveEvalAction(){
-		
-		
 		return ControlPanelProducer.VIEW_ID;
 	}
 	
-	//method binding to the "Remove Evaluation" button  on the remove_evalaution.html
+	/**
+	 * Method binding to the "Remove Evaluation" button  
+	 * on the remove_evalaution.html
+	 * 
+	 * @return View id sending the control to control panel page.
+	 */
 	public String removeEvalAction(){
-		log.warn("remove evaluation action");
 		
 		Long id = new Long("-1");
 		EvalEvaluation eval1 =null;
-		try{
+		try {
 			id = evalId;
-		}catch(NumberFormatException fe){	
+		}
+		catch (NumberFormatException fe) {	
 			log.fatal(fe);
 		}
-		if(id.intValue()== -1) 
+		
+		if (id.intValue() == -1) 
 			log.error("Error inside removeEvalAction()");
 		else
-			//eval1 = logic.getEvaluationById(id);
 			eval1 = evalsLogic.getEvaluationById(id);
+		
+		//TODO: Revisit this explanation and commented code below
 		/**
 		 * WARNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		 * ***************************************
@@ -626,122 +548,197 @@ public class EvaluationBean {
 		 * Remove this logic and use the appropriate method in the logic layer
 		 * *************************************** 
 		 */
-
-	/*	if(eval1 != null){
+		/*
+		if(eval1 != null){
 			//delete evaluation, need to deleted entry in AssignCourse Table
-			//List l = logic.getAssignContextsByEvalId(eval1.getId());
 			List l = assignsLogic.getAssignContextsByEvalId(eval1.getId());
 			if(l !=null && l.size() >0){
 				for (int i=0; i<l.size(); i++) {
 					EvalAssignContext eac = (EvalAssignContext) l.get(i);
-					//logic.deleteAssignContext(eac.getId(), logic.getCurrentUserId());
 					assignsLogic.deleteAssignContext(eac.getId(), external.getCurrentUserId());
 				}
 			}
-			//logic.deleteEvaluation(eval1.getId(), logic.getCurrentUserId());
 			evalsLogic.deleteEvaluation(eval1.getId(), external.getCurrentUserId());
 		}
 		*/		
-		//ONLY Queued Evaluations has delete link
 	
 		evalsLogic.deleteEvaluation(eval1.getId(), external.getCurrentUserId());
-		
 		return ControlPanelProducer.VIEW_ID;
 	}
 	
-	//TODO: TO BE REMOVED:method binding to Summary page :evalAdminTitleLink for closed evaluation
+	/**
+	 * Method binding to Summary page :evalAdminTitleLink 
+	 * for closed evaluation.
+	 * 
+	 * @return View id sending the control to preview eval page.
+	 */	
+	//TODO: TO BE REMOVED (old comment not sure why? - kahuja 8th Feb 2007)
 	public String previewEvalAction(){
-	
 		return PreviewEvalProducer.VIEW_ID;
 	}
 	
-	//method binding to the "Cancel" button  on the remove_template.html
+	/**
+	 * Method binding to the "Cancel" button 
+	 * on the remove_template.html
+	 * 
+	 * @return View id sending the control to control panel page.
+	 */	
 	public String cancelRemoveTemplateAction(){
-		
 		return ControlPanelProducer.VIEW_ID;
 	}
 	
-	//method binding to the "Remove Template" button  on the remove_template.html
+	/**
+	 * Method binding to the "Remove Template" button 
+	 * on the remove_template.html.
+	 * 
+	 * @return View id sending the control to control panel page.
+	 */	
+	//TODO: This is not the place for anything related to templates - kahuja (8th Feb 2007)
+	//		Thus this method should be done using template bean locator.
 	public String removeTemplateAction(){
 
 		String currentUserId = external.getCurrentUserId();
 	
 		Long id = new Long("-1");
-		EvalTemplate template1 =null;
-		try{
+		EvalTemplate template1 = null;
+		
+		try {
 			id = Long.valueOf(tmplId);
-		}catch(NumberFormatException fe){	
+		}
+		catch (NumberFormatException fe) {	
 			log.fatal(fe);
 		}
-		if(id.intValue()== -1) 
+		
+		if (id.intValue() == -1) 
 			log.error("Error inside removeEvalAction()");
 		else
-			//template1 = logic.getTemplateById(id);
 			template1 = templatesLogic.getTemplateById(id);
 		
-		if(template1 != null){
-			//delete template, need to deleted items entry
-			//Set items = template1.getItems();//get all the items
-			/*
-			List allItems = new ArrayList(template1.getItems());			
-			//filter out the block child items, to get a list non-child items
-			List ncItemsList = ItemBlockUtils.getNonChildItems(allItems);
+		if (template1 != null) {
 			
-			for(int i = 0; i < ncItemsList.size(); i++){
-				EvalItem item = (EvalItem) ncItemsList.get(i);
-				
-				//need to check if it is a Block parent, delete child items first
-				if(item.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK) && 
-						item.getBlockParent().booleanValue()== true){
-					Long parentID = item.getId();
-					Integer blockID = new Integer(parentID.intValue());
-				
-					//List childItems = logic.findItem(blockID);
-					List childItems = ItemBlockUtils.getChildItmes(allItems, blockID);
-					if(childItems !=null && childItems.size() >0 ){
-						for(int k=0; k< childItems.size();k++){
-							EvalItem cItem = (EvalItem) childItems.get(k);
-							//logic.deleteItem(cItem.getId(), currentUserId);
-							itemsLogic.deleteItem(cItem.getId(), currentUserId);
-						}
-					}
-				}//end of check: block child
-				itemsLogic.deleteItem(item.getId(), currentUserId);
-				*/
 			List allItems = new ArrayList(template1.getTemplateItems());			
+
 			//filter out the block child items, to get a list non-child items
 			List ncItemsList = ItemBlockUtils.getNonChildItems(allItems);
 			
-			for(int i = 0; i < ncItemsList.size(); i++){
+			for (int i = 0; i < ncItemsList.size(); i++) {
+				
 				EvalTemplateItem tempItem = (EvalTemplateItem) ncItemsList.get(i);
 				EvalItem item1 = tempItem.getItem();
+				
 				//need to check if it is a Block parent, delete child items first
-				if(item1.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK) && 
-						tempItem.getBlockParent().booleanValue()== true){
+				if (item1.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK) && 
+						tempItem.getBlockParent().booleanValue() == true) {
+					
 					Long parentID = tempItem.getId();
 					Integer blockID = new Integer(parentID.intValue());
 				
-					//List childItems = logic.findItem(blockID);
 					List childItems = ItemBlockUtils.getChildItmes(allItems, blockID);
-					if(childItems !=null && childItems.size() >0 ){
-						for(int k=0; k< childItems.size();k++){
+					if (childItems != null && childItems.size() >0 ) {
+						
+						for (int k = 0; k < childItems.size(); k++) {
 							EvalTemplateItem tItem = (EvalTemplateItem) childItems.get(k);
-							//logic.deleteItem(cItem.getId(), currentUserId);
 							itemsLogic.deleteTemplateItem(tItem.getId(), currentUserId);
 						}
 					}
 				}//end of check: block child
 			
-				//logic.deleteItem(item, currentUserId);
 				itemsLogic.deleteTemplateItem(tempItem.getId(), currentUserId);
 			}
-			//logic.deleteTemplate(template1);
 			templatesLogic.deleteTemplate(template1.getId(), currentUserId);
 		}
 		return ControlPanelProducer.VIEW_ID;
 	}
 	
+	/**
+	 * Private method used to perform common tasks related to
+	 * saving settings for the first time (called from 
+	 * doneAssignmentAction method) and saving other times 
+	 * (called from saveSettingsAction method).  
+	 */
+	private void commonSaveTasks() {
+
+		eval.setLastModified(new Date());
+		eval.setStartDate(changeStringToDate(startDate));
+		eval.setDueDate(changeStringToDate(dueDate));
+		eval.setViewDate(changeStringToDate(viewDate));
+		
+		/*
+		 * If "EVAL_USE_SAME_VIEW_DATES" system setting (admin setting) flag is set 
+		 * as true then don't look for student and instructor dates, instead make them
+		 * same as admin view date. If not then get the student and instructor view dates.
+		 */ 
+		boolean sameViewDateForAll = ((Boolean) settings.get(EvalSettings.EVAL_USE_SAME_VIEW_DATES)).booleanValue();
+		
+		//Make it null in case the administrative settings change then this should also change
+		eval.setStudentsDate(null);
+		eval.setInstructorsDate(null);
+		
+		if (sameViewDateForAll) {
+			
+			if (studentViewResults.booleanValue())
+				eval.setStudentsDate(changeStringToDate(viewDate));
+			
+			if (instructorViewResults.booleanValue())
+				eval.setInstructorsDate(changeStringToDate(viewDate));
+		}
+		else {
+			
+			if (studentViewResults.booleanValue())
+				eval.setStudentsDate(changeStringToDate(studentsDate));
+			
+			if (instructorViewResults.booleanValue())
+				eval.setInstructorsDate(changeStringToDate(instructorsDate));
+		}
+		
+		// Email template section
+		EvalEmailTemplate availableTemplate, reminderTemplate;
+
+		//Save email available template
+		availableTemplate = emailsLogic.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
+		if ( emailAvailableTxt.equals(availableTemplate.getMessage()) ) {
+			//do nothing as the template has not been modified.
+		} 
+		else {
+			availableTemplate = new EvalEmailTemplate(new Date(), external.getCurrentUserId(), emailAvailableTxt);
+			emailsLogic.saveEmailTemplate(availableTemplate, external.getCurrentUserId());
+		}
+		eval.setAvailableEmailTemplate(availableTemplate);
+		
+		//Save the email reminder template
+		reminderTemplate = emailsLogic.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_REMINDER);
+		if ( emailReminderTxt.equals(reminderTemplate.getMessage()) ) {
+			//do nothing as the template has not been modified.
+		}
+		else {
+			reminderTemplate = new EvalEmailTemplate(new Date(), external.getCurrentUserId(), emailReminderTxt);
+			emailsLogic.saveEmailTemplate(reminderTemplate, external.getCurrentUserId());
+		}
+		eval.setReminderEmailTemplate(reminderTemplate);
 	
+		/*
+		 * check if start date is the same as today's date, set startDate as today's date time, 
+		 * as when we parse the string to a date, the time filed by default is zero
+		 */
+		checkEvalStartDate();
+
+		/*
+		 * If the due date is same as start date then we need to make the time of due date 
+		 * to be 1 second more that start date.
+		 * (for details see the comment at the start of checkDueDate() method)
+		 */		
+		checkDueDate();
+		
+		// Needed by columbia so as of now making equal to due date		
+		eval.setStopDate(eval.getDueDate());
+	}
+
+	/**
+	 * Private method used to convert the String to java.util.Date. 
+	 * 
+	 * @param Date in String format ("MM/dd/yyyy").
+	 * @return java.util.Date
+	 */	
 	private Date changeStringToDate (String dateStr) {
 		Date returnDate = null;
 		
@@ -755,17 +752,20 @@ public class EvaluationBean {
 			}
 		}
 		return returnDate;
-	} 
+	}
 	
-	
-	private void checkEvalStartDate(EvalEvaluation myEval){
+	/**
+	 * Private method used to add current time to the start date if
+	 * start date (without time) is same as today's date (without time).  
+	 */	
+	private void checkEvalStartDate() {
 		
 		/*
-		 * check if start date is the same as today's date, set startDate as today's date time, 
-		 * as when we parse the string to a date, the time filed by default is
-		 * */
+		 * Set startDate as today's date time as when we parse the string to a date, 
+		 * the time filed by default.
+		 */
 		Calendar calendar = new GregorianCalendar();
-		calendar.setTime(myEval.getStartDate());
+		calendar.setTime(eval.getStartDate());
 		int year_start = calendar.get(Calendar.YEAR);
 		int month_start = calendar.get(Calendar.MONTH);
 		int day_start = calendar.get(Calendar.DAY_OF_MONTH);
@@ -777,29 +777,21 @@ public class EvaluationBean {
 		int day_today = calendar.get(Calendar.DAY_OF_MONTH);
 	
 		if(year_start == year_today && month_start == month_today && day_start == day_today) {
-			
-			/*
-			 * Non-javadoc comment.
-			 * EVALSYS-8: We do not need to add these 5 minutes. This is because
-			 * the buffer check done by Aaron in logic layer is to prevent the 
-			 * user from entering dates that are in too much in past - kahuja.   
-			 */
-			//need to set time a little big later than new Date(), otherwise exception
-			//calendar.add(Calendar.MINUTE, 5);
-			
-			myEval.setStartDate(calendar.getTime());		
+			eval.setStartDate(calendar.getTime());		
 		}	
 	}
 	
-	/*
-	 * Non-Javadoc comments:
-	 * EVALSYS-7: We are not taking time from the user for any dates (start, due, view),
-	 * but for the start date we are adding the time in above checkEvalStartDate method. 
+	/**
+	 * Private method used to add current time to the due date if
+	 * due date (without time) is same as start date (without time).  
+	 *
+	 * This needed because we are not taking time from the user for any dates (start, due, view)
+	 * and for the start date we are adding the time in above checkEvalStartDate method. 
 	 * In logic layer there is a check that due date should not be before start date. 
 	 * Thus, if due date is same as start date then we need to make the time of due date 
-	 * to be 1 second more that start date - kahuja.
-	 * 
+	 * to be 11:59 PM.
 	 */
+	//TODO: There should be some minimum time between the start date and due date (EVALSYS-24)
 	private void checkDueDate() {
 
 		Calendar calendarStart = new GregorianCalendar();
@@ -814,12 +806,16 @@ public class EvaluationBean {
 		int month_due = calendarDue.get(Calendar.MONTH);
 		int day_due = calendarDue.get(Calendar.DAY_OF_MONTH);
 		
+		/*
+		 * The due date is of the form 17th, Jan 2007 12:00 AM
+		 * Thus adding a 23 hours and 59 minutes to get:
+		 * 17th, Jan 2007 11:59 PM
+		 */ 
 		if ( year_start == year_due && month_start == month_due && day_start == day_due ){
-			calendarDue.setTime(eval.getStartDate());
-			calendarDue.add(Calendar.SECOND, 1);
+			calendarDue.setTime(eval.getDueDate());
+			calendarDue.add(Calendar.HOUR, 23);
+			calendarDue.add(Calendar.MINUTE, 59);
 			eval.setDueDate(calendarDue.getTime());
-			eval.setStopDate(eval.getDueDate());
 		}
 	}
 }
-
