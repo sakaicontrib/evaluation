@@ -122,10 +122,11 @@
 		</property>
 	</bean>
   
-	<!-- this needs to contain all item renderer and other evolver html templates -->
+	<!-- this needs to contain all item renderer and other evolver html templates,
+		templateResourceBase should end with / and not begin with one -->
 	<bean id="componentTemplateContributor"
 		parent="templateContributorParent">
-		<property name="templateResourceBase" value="/component-templates/" />
+		<property name="templateResourceBase" value="component-templates/" />
 		<property name="templateNames"
 			value="render_header_item,render_text_item" />
 	</bean>
