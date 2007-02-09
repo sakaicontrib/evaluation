@@ -51,7 +51,7 @@ public class TextRenderer implements ItemRenderer {
 	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#renderItem(uk.org.ponder.rsf.components.UIContainer, java.lang.String, org.sakaiproject.evaluation.model.EvalTemplateItem, int, boolean)
 	 */
 	public UIJointContainer renderItem(UIContainer parent, String ID, String binding, EvalTemplateItem templateItem, int displayNumber, boolean disabled) {
-		UIJointContainer container = new UIJointContainer(parent.parent, ID, COMPONENT_ID);
+		UIJointContainer container = new UIJointContainer(parent, ID, COMPONENT_ID);
 
 		UIOutput.make(container, "itemNum", displayNumber>0?displayNumber+"":" " ); //$NON-NLS-1$
 		UIOutput.make(container, "itemText", templateItem.getItem().getItemText()); //$NON-NLS-1$
@@ -83,7 +83,7 @@ public class TextRenderer implements ItemRenderer {
 	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#getRenderType()
 	 */
 	public String getRenderType() {
-		return EvalConstants.ITEM_TYPE_HEADER;
+		return EvalConstants.ITEM_TYPE_TEXT;
 	}
 
 }

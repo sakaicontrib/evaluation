@@ -11,11 +11,10 @@
  * Rui Feng (fengr@vt.edu)
  * Kapil Ahuja (kahuja@vt.edu)
  *****************************************************************************/
+
 package org.sakaiproject.evaluation.tool.producers;
 
 import java.awt.Color;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.model.EvalScale;
@@ -23,12 +22,12 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
+import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
 
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
-import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UILink;
 import uk.org.ponder.rsf.components.UIOutput;
@@ -38,7 +37,6 @@ import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.UISelectLabel;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIColourDecorator;
-import uk.org.ponder.rsf.components.decorators.UIFreeAttributeDecorator;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
@@ -51,9 +49,11 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * @author: Rui Feng (fengr@vt.edu)
  * @author:Kapil Ahuja (kahuja@vt.edu)
  */
-
 public class PreviewItemProducer implements ViewComponentProducer, ViewParamsReporter {
 	public static final String VIEW_ID = "preview_item";
+	public String getViewID() {
+		return VIEW_ID;
+	}
 
 	private MessageLocator messageLocator;
 	public void setMessageLocator(MessageLocator messageLocator) {
@@ -64,9 +64,10 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 	public void setItemsLogic( EvalItemsLogic itemsLogic) {
 		this.itemsLogic = itemsLogic;
 	}
-	
-	public String getViewID() {
-		return VIEW_ID;
+
+	ItemRenderer itemRenderer;
+	public void setItemRenderer(ItemRenderer itemRenderer) {
+		this.itemRenderer = itemRenderer;
 	}
 
 
@@ -421,7 +422,7 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 					UISelectChoice.make(radioBranchSecond, "dummyRadioValueSecond", selectID, i);
 			    }
 				
-			}else {
+			}else { // TODO - do NOT use an else here, there might be other types stored and you do not want to attempt to render them as vertical -AZ
 				//This is for vertical			
 				UIBranchContainer vertical = UIBranchContainer.make(tofill, "verticalDisplay:");
 				//Item text
@@ -453,7 +454,13 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 					UISelectLabel.make(radiobranch, "dummyRadioLabel", selectID, i);
 			    }
 				
-			}
+			} 
+		} else {
+			// use the evolver
+			itemRenderer.renderItem(tofill, "previewed-item:", null, myTemplateItem, 0, false);
+		}
+
+/* TODO - using evolvers instead
 		}else if(myTemplateItem.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)){//"Short Answer/Essay"
 			UIBranchContainer essay = UIBranchContainer.make(tofill, "essayType:");
 			//Item text
@@ -478,9 +485,10 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 			UIBranchContainer header = UIBranchContainer.make(tofill, "headerType:");
 			UIOutput.make(header, "queNo", myTemplateItem.getDisplayOrder().toString());
 			UIOutput.make(header, "itemText", myTemplateItem.getItem().getItemText());
-	
+*/
 		// TODO - changed so it will COMPILE - AZ - needs block support
-		}/*else if(myTemplateItem.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)
+/*
+		else if(myTemplateItem.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)
 				&& myTemplateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED)){
 			//"Question Block","Stepped"
 			UIBranchContainer blockStepped = UIBranchContainer.make(tofill, "blockStepped:");

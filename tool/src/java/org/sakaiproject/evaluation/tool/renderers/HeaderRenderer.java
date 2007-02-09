@@ -37,7 +37,7 @@ public class HeaderRenderer implements ItemRenderer {
 	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#renderItem(uk.org.ponder.rsf.components.UIContainer, java.lang.String, org.sakaiproject.evaluation.model.EvalTemplateItem, int, boolean)
 	 */
 	public UIJointContainer renderItem(UIContainer parent, String ID, String binding, EvalTemplateItem templateItem, int displayNumber, boolean disabled) {
-		UIJointContainer container = new UIJointContainer(parent.parent, ID, COMPONENT_ID);
+		UIJointContainer container = new UIJointContainer(parent, ID, COMPONENT_ID);
 
 		UIVerbatim.make(container, "itemText", templateItem.getItem().getItemText()); //$NON-NLS-1$
 
