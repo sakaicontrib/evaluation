@@ -8,8 +8,7 @@
 	<bean id="messageLocator"
 		class="uk.org.ponder.springutil.SpringMessageLocator">
 		<property name="messageSource">
-			<bean
-				class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+			<bean class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
 				<property name="basename"
 					value="classpath:org/sakaiproject/evaluation/tool/bundle/messages" />
 				<property name="cacheSeconds" value="10" />
@@ -110,12 +109,25 @@
 
 	<!-- the renderers list must line up with the code in the ItemRendererImpl -->
 	<bean id="org.sakaiproject.evaluation.tool.renderers.ItemRenderer"
-			class="org.sakaiproject.evaluation.tool.renderers.ItemRendererImpl">
+		class="org.sakaiproject.evaluation.tool.renderers.ItemRendererImpl"
+		init-method="init">
 		<property name="renderTypes">
 			<list>
-				<bean class="org.sakaiproject.evaluation.tool.renderers.HeaderRenderer" />
+				<bean class="org.sakaiproject.evaluation.tool.renderers.HeaderRenderer">
+				</bean>
+				<bean class="org.sakaiproject.evaluation.tool.renderers.TextRenderer">
+					<property name="messageLocator" ref="messageLocator" />
+				</bean>
 			</list>
 		</property>
+	</bean>
+  
+	<!-- this needs to contain all item renderer and other evolver html templates -->
+	<bean id="componentTemplateContributor"
+		parent="templateContributorParent">
+		<property name="templateResourceBase" value="/component-templates/" />
+		<property name="templateNames"
+			value="render_header_item,render_text_item" />
 	</bean>
 
 </beans>
