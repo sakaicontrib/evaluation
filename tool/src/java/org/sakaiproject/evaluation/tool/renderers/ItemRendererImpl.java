@@ -43,7 +43,7 @@ public class ItemRendererImpl implements ItemRenderer {
 
 	public void init() {
 		// just check that the renderImpls are inited
-		if (renderImpls == null) {
+		if (renderImpls.size() <= 0) {
 			throw new IllegalStateException("The renderTypes must be set before this class can be used");
 		}
 	}
@@ -55,6 +55,9 @@ public class ItemRendererImpl implements ItemRenderer {
 		// figure out the type of item and then call the appropriate renderer
 		String itemTypeConstant = TemplateItemUtils.getTemplateItemType(templateItem);
 		ItemRenderer renderer = (ItemRenderer) renderImpls.get( itemTypeConstant );
+		if (renderer == null) {
+			throw new IllegalStateException("No renderer available for this item type: " + itemTypeConstant);
+		}
 		return renderer.renderItem(parent, ID, binding, templateItem, displayNumber, disabled);
 	}
 
