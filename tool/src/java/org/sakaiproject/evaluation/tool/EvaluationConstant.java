@@ -88,7 +88,8 @@ public class EvaluationConstant {
 		"$context/content/images/ideal-none.jpg",
 		"$context/content/images/ideal-low.jpg",
 		"$context/content/images/ideal-mid.jpg",
-		"$context/content/images/ideal-high.jpg"};
+		"$context/content/images/ideal-high.jpg",
+		"$context/content/images/ideal-outside.jpg"};
 
 	public static String BLUE_COLOR = "#6699ff";
 	public static String GREEN_COLOR = "#00d600";

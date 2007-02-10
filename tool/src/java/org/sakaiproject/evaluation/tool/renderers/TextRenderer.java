@@ -53,7 +53,7 @@ public class TextRenderer implements ItemRenderer {
 	public UIJointContainer renderItem(UIContainer parent, String ID, String binding, EvalTemplateItem templateItem, int displayNumber, boolean disabled) {
 		UIJointContainer container = new UIJointContainer(parent, ID, COMPONENT_ID);
 
-		UIOutput.make(container, "itemNum", displayNumber>0?displayNumber+"":" " ); //$NON-NLS-1$
+		UIOutput.make(container, "itemNum", displayNumber>0?displayNumber+"":"0" ); //$NON-NLS-1$
 		UIOutput.make(container, "itemText", templateItem.getItem().getItemText()); //$NON-NLS-1$
 		if ( templateItem.getUsesNA().booleanValue() ) {
 			UIBranchContainer NAbranch = UIBranchContainer.make(container, "showNA:"); //$NON-NLS-1$
