@@ -45,10 +45,11 @@ import au.com.bytecode.opencsv.CSVWriter;
 
 /**
  * Handles the generation of a CSV file for exporting results
- *
+ * 
+ * @author Rui Feng (fengr@vt.edu)
  * @author Will Humphries (whumphri@vt.edu)
  * @author Aaron Zeckoski (aaronz@vt.edu)
- * @author Rui Feng (fengr@vt.edu)
+ *
  */
 public class ReportHandlerHook implements HandlerHook {
 

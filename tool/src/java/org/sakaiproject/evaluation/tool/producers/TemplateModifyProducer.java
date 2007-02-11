@@ -29,6 +29,7 @@ import org.sakaiproject.evaluation.tool.params.PreviewEvalParameters;
 import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
 import org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer.EvaluationItemOrderComparator;
 import org.sakaiproject.evaluation.tool.utils.ItemBlockUtils;
+import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
 import uk.org.ponder.htmlutil.HTMLUtil;
 import uk.org.ponder.messageutil.MessageLocator;
@@ -138,14 +139,14 @@ public class TemplateModifyProducer implements ViewComponentProducer,
             messageLocator.getMessage("modifytemplate.itemtype.scaled"),
             messageLocator.getMessage("modifytemplate.itemtype.text"),
             messageLocator.getMessage("modifytemplate.itemtype.header"),
-            messageLocator.getMessage("modifytemplate.itemtype.block"),
+           // messageLocator.getMessage("modifytemplate.itemtype.block"),
             messageLocator.getMessage("modifytemplate.itemtype.expert")
         };
         String[] viewIDs = {
             ModifyScaledProducer.VIEW_ID, 
             ModifyEssayProducer.VIEW_ID,
             ModifyHeaderProducer.VIEW_ID,
-            ModifyBlockProducer.VIEW_ID, 
+          //  ModifyBlockProducer.VIEW_ID, 
             TemplateModifyProducer.VIEW_ID // TODO: which view for this
         };
         String[] values = convertViews(viewIDs, templateId);
@@ -250,9 +251,7 @@ public class TemplateModifyProducer implements ViewComponentProducer,
 					scaleDisplaySettingLabel = "-" + scaleDisplaySettingLabel;
 				else scaleDisplaySettingLabel = "";
 				UIOutput.make(radiobranch,"scaleDisplaySetting",scaleDisplaySettingLabel);	
-				
-				//UICommand previewCmd=UICommand.make(radiobranch,"preview_row_item","#{templateBean.previewRowItemAction}");
-				//previewCmd.parameters.add(new UIELBinding("#{itemsBean.currTemplateItemId}",Integer.toString(i)));
+			
 				UIInternalLink.make(radiobranch, 
 						"preview_row_item", 
 						messageLocator.getMessage("modifytemplate.preview.link"),
@@ -303,11 +302,13 @@ public class TemplateModifyProducer implements ViewComponentProducer,
 				UIOutput.make(radiobranch2,"scaleType",title); //$NON-NLS-1$
 				
 				//Boolean useNA= currItemDisplay.getItem().getUsesNA();
-				Boolean useNA= myTemplateItem.getUsesNA();
-				if(useNA != null && useNA.booleanValue()== true){
-					UIBranchContainer radiobranch3 = UIBranchContainer.make(radiobranch2,"showNA:", Integer.toString(i)); //$NON-NLS-1$
-					UIBoundBoolean.make(radiobranch3, "itemNA",useNA); //$NON-NLS-1$
-					UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
+				if( !TemplateItemUtils.getTemplateItemType(myTemplateItem).equals(EvalConstants.ITEM_TYPE_HEADER)){
+					Boolean useNA= myTemplateItem.getUsesNA();
+					if(useNA != null && useNA.booleanValue()== true){
+						UIBranchContainer radiobranch3 = UIBranchContainer.make(radiobranch2,"showNA:", Integer.toString(i)); //$NON-NLS-1$
+						UIBoundBoolean.make(radiobranch3, "itemNA",useNA); //$NON-NLS-1$
+						UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
+					}
 				}
 				
 				//rendering block child items
