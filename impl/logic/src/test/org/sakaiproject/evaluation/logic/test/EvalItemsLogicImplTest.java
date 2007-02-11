@@ -111,8 +111,8 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		// to the templates the way we think it is
 		List ids = null;
 
-		// check the full count of perloaded items
-		Assert.assertEquals(10, evaluationDao.countAll(EvalTemplateItem.class) );
+		// check the full count of preloaded items
+		Assert.assertEquals(13, evaluationDao.countAll(EvalTemplateItem.class) );
 
 		EvalTemplate template = (EvalTemplate) 
 			evaluationDao.findById(EvalTemplate.class, etdl.templateAdmin.getId());
@@ -423,7 +423,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		// test getting all items for the admin user
 		l = items.getItemsForUser(EvalTestDataLoad.ADMIN_USER_ID, null);
 		Assert.assertNotNull( l );
-		Assert.assertEquals(8, l.size());
+		Assert.assertEquals(9, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item1.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item2.getId() ));
@@ -433,12 +433,13 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertTrue(ids.contains( etdl.item6.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item7.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item8.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item9.getId() ));
 
 		// same as getting all items
 		l = items.getItemsForUser(EvalTestDataLoad.ADMIN_USER_ID, 
 				EvalConstants.SHARING_OWNER);
 		Assert.assertNotNull( l );
-		Assert.assertEquals(8, l.size());
+		Assert.assertEquals(9, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item1.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item2.getId() ));
@@ -448,6 +449,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertTrue(ids.contains( etdl.item6.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item7.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item8.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item9.getId() ));
 
 		// test getting all items for the maint user
 		l = items.getItemsForUser(EvalTestDataLoad.MAINT_USER_ID, null);
@@ -474,7 +476,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		l = items.getItemsForUser(EvalTestDataLoad.ADMIN_USER_ID,
 				EvalConstants.SHARING_PRIVATE);
 		Assert.assertNotNull( l );
-		Assert.assertEquals(6, l.size());
+		Assert.assertEquals(7, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item3.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item4.getId() ));
@@ -482,6 +484,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertTrue(ids.contains( etdl.item6.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item7.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item8.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item9.getId() ));
 
 		// test getting private items for the maint user
 		l = items.getItemsForUser(EvalTestDataLoad.MAINT_USER_ID, 
@@ -1053,6 +1056,58 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		} catch (IllegalArgumentException e) {
 			Assert.assertNotNull(e);
 		}
+	}
+
+
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl#getBlockChildTemplateItemsForBlockParent(Long, boolean)}.
+	 */
+	public void testGetBlockChildTemplateItemsForBlockParent() {
+		List l = null;
+		List ids = null;
+
+		// test getting child block items
+		l = items.getBlockChildTemplateItemsForBlockParent( etdl.templateItem9B.getId(), false );
+		Assert.assertNotNull( l );
+		Assert.assertEquals(2, l.size());
+		ids = EvalTestDataLoad.makeIdList(l);
+		Assert.assertTrue(ids.contains( etdl.templateItem2B.getId() ));
+		Assert.assertTrue(ids.contains( etdl.templateItem3B.getId() ));
+
+		// check that the return order is correct
+		Assert.assertEquals( 1, ((EvalTemplateItem)l.get(0)).getDisplayOrder().intValue() );
+		Assert.assertEquals( 2, ((EvalTemplateItem)l.get(1)).getDisplayOrder().intValue() );
+
+		// test getting child block items and parent
+		l = items.getBlockChildTemplateItemsForBlockParent( etdl.templateItem9B.getId(), true );
+		Assert.assertNotNull( l );
+		Assert.assertEquals(3, l.size());
+		ids = EvalTestDataLoad.makeIdList(l);
+		Assert.assertTrue(ids.contains( etdl.templateItem9B.getId() ));
+		Assert.assertTrue(ids.contains( etdl.templateItem2B.getId() ));
+		Assert.assertTrue(ids.contains( etdl.templateItem3B.getId() ));
+
+		// check that the return order is correct
+		Assert.assertEquals( 1, ((EvalTemplateItem)l.get(0)).getDisplayOrder().intValue() );
+		Assert.assertEquals( 1, ((EvalTemplateItem)l.get(1)).getDisplayOrder().intValue() );
+		Assert.assertEquals( 2, ((EvalTemplateItem)l.get(2)).getDisplayOrder().intValue() );
+
+		// test getting child items from invalid templateItem fails
+		try {
+			items.getBlockChildTemplateItemsForBlockParent( EvalTestDataLoad.INVALID_LONG_ID, false );
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+			Assert.assertNotNull(e);
+		}
+
+		// test getting child items from non-parent templateItem fails
+		try {
+			items.getBlockChildTemplateItemsForBlockParent( etdl.templateItem2A.getId(), false );
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+			Assert.assertNotNull(e);
+		}
+
 	}
 
 

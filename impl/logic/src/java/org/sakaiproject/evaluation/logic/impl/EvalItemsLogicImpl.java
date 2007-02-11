@@ -34,6 +34,7 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.utils.EvalUtils;
+import org.sakaiproject.genericdao.api.finders.ByPropsFinder;
 
 
 /**
@@ -523,6 +524,37 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 			l.add(eti);
 		}
 		Collections.sort(l, new TemplateItemDisplayOrderComparator());
+		return l;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalItemsLogic#getBlockChildTemplateItemsForBlockParent(java.lang.Long, boolean)
+	 */
+	public List getBlockChildTemplateItemsForBlockParent(Long parentId, boolean includeParent) {
+		
+		// get the templateItem by id to verify parent exists
+		EvalTemplateItem templateItem = (EvalTemplateItem) dao.findById(EvalTemplateItem.class, parentId);
+		if (templateItem == null) {
+			throw new IllegalArgumentException("Cannot find block parent templateItem with id: " + parentId);
+		}
+
+		if (templateItem.getBlockParent() == null ||
+				templateItem.getBlockParent().booleanValue() == false) {
+			throw new IllegalArgumentException("Cannot request child block items for a templateItem which is not a block parent: " + templateItem.getId());
+		}
+
+		List l = new ArrayList();
+		if (includeParent) {
+			l.add(templateItem);
+		}
+
+		l.addAll( dao.findByProperties(EvalTemplateItem.class, 
+				new String[] { "blockId" }, 
+				new Object[] { parentId },
+				new int[] { ByPropsFinder.EQUALS },
+				new String[] { "displayOrder" }) );
+
 		return l;
 	}
 

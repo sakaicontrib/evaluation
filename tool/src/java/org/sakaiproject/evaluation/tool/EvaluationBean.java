@@ -630,10 +630,8 @@ public class EvaluationBean {
 				if (item1.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK) && 
 						tempItem.getBlockParent().booleanValue() == true) {
 					
-					Long parentID = tempItem.getId();
-					Integer blockID = new Integer(parentID.intValue());
-				
-					List childItems = ItemBlockUtils.getChildItems(allItems, blockID);
+					Long parentID = tempItem.getId();				
+					List childItems = ItemBlockUtils.getChildItems(allItems, parentID);
 					if (childItems != null && childItems.size() >0 ) {
 						
 						for (int k = 0; k < childItems.size(); k++) {

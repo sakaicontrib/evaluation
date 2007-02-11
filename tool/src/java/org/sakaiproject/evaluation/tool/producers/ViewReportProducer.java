@@ -277,10 +277,9 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 			// get child block item text
 			if (myTempItem.getBlockParent()!=null && myTempItem.getBlockParent().booleanValue() == true) {
 				Long parentID = myTempItem.getId();
-				Integer blockID = new Integer(parentID.intValue());
 				
 				//List childItems = logic.findItem(blockID);
-				List childItems = ItemBlockUtils.getChildItems(itemsList, blockID);
+				List childItems = ItemBlockUtils.getChildItems(itemsList, parentID);
 				if (childItems != null && childItems.size() > 0) {
 					for (int j = 0; j < childItems.size(); j++) {
 						UIBranchContainer queRow = UIBranchContainer.make(

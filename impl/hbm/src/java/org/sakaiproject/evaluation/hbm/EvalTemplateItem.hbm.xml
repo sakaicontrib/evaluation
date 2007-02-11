@@ -50,8 +50,8 @@
         <property name="blockParent" type="java.lang.Boolean">
             <column name="BLOCK_PARENT" />
         </property>
-        <!-- what is the unique id of this block if in a block -->
-        <property name="blockId" type="java.lang.Integer">
+        <!-- what is the id of this block (should be the templateItem id of the block parent) -->
+        <property name="blockId" type="java.lang.Long">
             <column name="BLOCK_ID" index="eval_templateitem_blockid" />
         </property>
     </class>

@@ -317,7 +317,7 @@ public class EvalTemplatesLogicImplTest extends AbstractTransactionalSpringConte
 		// test getting all templates for admin user (should include all templates)
 		l = templates.getTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, null, true);
 		Assert.assertNotNull(l);
-		Assert.assertEquals(7, l.size());
+		Assert.assertEquals(8, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.templateAdmin.getId() ));
 		Assert.assertTrue(ids.contains( etdl.templateAdminNoItems.getId() ));
@@ -326,11 +326,12 @@ public class EvalTemplatesLogicImplTest extends AbstractTransactionalSpringConte
 		Assert.assertTrue(ids.contains( etdl.templateUnused.getId() ));
 		Assert.assertTrue(ids.contains( etdl.templateUser.getId() ));
 		Assert.assertTrue(ids.contains( etdl.templateUserUnused.getId() ));
+		Assert.assertTrue(ids.contains( etdl.templateAdminBlock.getId() ));
 
 		// test getting all non-empty templates for admin user
 		l = templates.getTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, null, false);
 		Assert.assertNotNull(l);
-		Assert.assertEquals(6, l.size());
+		Assert.assertEquals(7, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(! ids.contains( etdl.templateAdminNoItems.getId() ));
 		Assert.assertTrue(ids.contains( etdl.templateAdmin.getId() ));
@@ -339,6 +340,7 @@ public class EvalTemplatesLogicImplTest extends AbstractTransactionalSpringConte
 		Assert.assertTrue(ids.contains( etdl.templateUnused.getId() ));
 		Assert.assertTrue(ids.contains( etdl.templateUser.getId() ));
 		Assert.assertTrue(ids.contains( etdl.templateUserUnused.getId() ));
+		Assert.assertTrue(ids.contains( etdl.templateAdminBlock.getId() ));
 
 		// test getting all templates for maint user
 		l = templates.getTemplatesForUser(EvalTestDataLoad.MAINT_USER_ID, null, true);
@@ -362,29 +364,31 @@ public class EvalTemplatesLogicImplTest extends AbstractTransactionalSpringConte
 		// test using SHARING_OWNER same as null (getting all templates)
 		l = templates.getTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.SHARING_OWNER, true);
 		Assert.assertNotNull(l);
-		Assert.assertEquals(7, l.size());
+		Assert.assertEquals(8, l.size());
 
 		// test getting private templates for admin (admin should see all private)
 		l = templates.getTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.SHARING_PRIVATE, true);
 		Assert.assertNotNull(l);
-		Assert.assertEquals(5, l.size());
+		Assert.assertEquals(6, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.templateAdmin.getId() ));
 		Assert.assertTrue(ids.contains( etdl.templateAdminNoItems.getId() ));
 		Assert.assertTrue(ids.contains( etdl.templateUnused.getId() ));
 		Assert.assertTrue(ids.contains( etdl.templateUser.getId() ));
 		Assert.assertTrue(ids.contains( etdl.templateUserUnused.getId() ));
+		Assert.assertTrue(ids.contains( etdl.templateAdminBlock.getId() ));
 
 		// test getting non-empty private templates for admin
 		l = templates.getTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.SHARING_PRIVATE, false);
 		Assert.assertNotNull(l);
-		Assert.assertEquals(4, l.size());
+		Assert.assertEquals(5, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(! ids.contains( etdl.templateAdminNoItems.getId() ));
 		Assert.assertTrue(ids.contains( etdl.templateAdmin.getId() ));
 		Assert.assertTrue(ids.contains( etdl.templateUnused.getId() ));
 		Assert.assertTrue(ids.contains( etdl.templateUser.getId() ));
 		Assert.assertTrue(ids.contains( etdl.templateUserUnused.getId() ));
+		Assert.assertTrue(ids.contains( etdl.templateAdminBlock.getId() ));
 
 		// test getting private templates for maint user
 		l = templates.getTemplatesForUser(EvalTestDataLoad.MAINT_USER_ID, EvalConstants.SHARING_PRIVATE, true);

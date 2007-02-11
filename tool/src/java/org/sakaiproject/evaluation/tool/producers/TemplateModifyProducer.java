@@ -23,7 +23,6 @@ import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
-import org.sakaiproject.evaluation.tool.LocalTemplateLogic;
 import org.sakaiproject.evaluation.tool.params.BlockIdsParameters;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.params.PreviewEvalParameters;
@@ -313,8 +312,7 @@ public class TemplateModifyProducer implements ViewComponentProducer,
 				
 				//rendering block child items
 				if(myTemplateItem.getBlockParent()!= null && myTemplateItem.getBlockParent().booleanValue()== true){
-					Integer parentID = new Integer(myTemplateItem.getId().intValue());
-					List childList = ItemBlockUtils.getChildItems(l,parentID);
+					List childList = ItemBlockUtils.getChildItems(l, myTemplateItem.getId());
 					for(int k=0; k< childList.size();k++){
 						UIBranchContainer childRow = UIBranchContainer.make(form2,"itemrow:blockItems", Integer.toString(k));
 						EvalTemplateItem childTI = (EvalTemplateItem)childList.get(k);
@@ -329,19 +327,20 @@ public class TemplateModifyProducer implements ViewComponentProducer,
 		UICommand.make(blockForm, "createBlockBtn",messageLocator.getMessage("modifytemplate.createblock.button"),null);
 	}
 
-	private String modifyItemLinkType(EvalTemplateItem t){
-		if(t.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)){
-			return ModifyEssayProducer.VIEW_ID;
-		}else if(t.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_HEADER)){
-			//"Text Header"
-			return ModifyHeaderProducer.VIEW_ID;
-		}
-		else if(t.getBlockParent()!=null){
-			//"Question Block"
-			return ModifyBlockProducer.VIEW_ID;
-		}else  //for "Scale/Suvey" type
-			return ModifyScaledProducer.VIEW_ID;
-	}
+	// TODO - remove this unused method -AZ
+//	private String modifyItemLinkType(EvalTemplateItem t){
+//		if(t.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)){
+//			return ModifyEssayProducer.VIEW_ID;
+//		}else if(t.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_HEADER)){
+//			//"Text Header"
+//			return ModifyHeaderProducer.VIEW_ID;
+//		}
+//		else if(t.getBlockParent()!=null){
+//			//"Question Block"
+//			return ModifyBlockProducer.VIEW_ID;
+//		}else  //for "Scale/Suvey" type
+//			return ModifyScaledProducer.VIEW_ID;
+//	}
 
 
 

@@ -240,7 +240,7 @@ public class ModifyBlockProducer implements ViewComponentProducer,ViewParamsRepo
 					//get Block child item
 					EvalTemplate template = templateItems[0].getTemplate();
 					List l = itemsLogic.getTemplateItemsForTemplate(template.getId(),null);
-					List childList = ItemBlockUtils.getChildItems(l,new Integer(templateItems[0].getId().intValue()));				
+					List childList = ItemBlockUtils.getChildItems(l, templateItems[0].getId() );				
 					for(int i= 0; i< childList.size();i++){
 						EvalTemplateItem child = (EvalTemplateItem)childList.get(i);
 						UIBranchContainer radiobranch = UIBranchContainer.make(form,"queRow:",Integer.toString(i)); //$NON-NLS-1$
@@ -255,8 +255,7 @@ public class ModifyBlockProducer implements ViewComponentProducer,ViewParamsRepo
 						for(int i= 0;i< templateItems.length; i++){
 							if(TemplateItemUtils.getTemplateItemType(templateItems[i]).equals(EvalConstants.ITEM_TYPE_BLOCK) ){
 								
-								Integer parentId = new Integer(templateItems[i].getId().intValue());
-								List childs = ItemBlockUtils.getChildItems(allTemplateItems, parentId);
+								List childs = ItemBlockUtils.getChildItems(allTemplateItems, templateItems[i].getId());
 								
 								for(int k=0; k< childs.size();k++){
 									EvalTemplateItem myChild = (EvalTemplateItem)childs.get(k);

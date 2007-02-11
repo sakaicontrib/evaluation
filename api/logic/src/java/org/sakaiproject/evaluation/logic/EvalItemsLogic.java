@@ -150,6 +150,20 @@ public interface EvalItemsLogic {
 	public List getTemplateItemsForTemplate(Long templateId, String userId);
 
 
+	// BLOCKS
+
+	/**
+	 * Get the child block templateItems for a parent templateItem,
+	 * optionally include the parent templateItem,
+	 * returns the items in display order (with parent first if requested)
+	 * 
+	 * @param parentId the unique id of the parent {@link EvalTemplateItem} object
+	 * @param includeParent if false then only return child items, if true then return the entire block (parent and child items)
+	 * @return a List of {@link EvalTemplateItem} objects
+	 */
+	public List getBlockChildTemplateItemsForBlockParent(Long parentId, boolean includeParent);
+
+
 	// PERMISSIONS
 
 	/**
