@@ -8,8 +8,8 @@
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
  * 
  * Contributors:
- * Antranig Basman
  * Rui Feng
+ * Antranig Basman
  * Will Humphries (whumphri@vt.edu)
  *****************************************************************************/
 
@@ -32,8 +32,8 @@ import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 /**
  * This request-scope bean handles template creation and modification.
  * 
+ * @author Rui Feng (fengr@vt.edu)
  * @author Antranig Basman
- * @author Rui Feng
  * @author will Humphries (whumphri@vt.edu)
  */
 
