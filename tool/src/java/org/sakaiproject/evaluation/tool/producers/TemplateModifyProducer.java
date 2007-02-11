@@ -146,13 +146,13 @@ public class TemplateModifyProducer implements ViewComponentProducer,
             ModifyEssayProducer.VIEW_ID,
             ModifyHeaderProducer.VIEW_ID,
             ModifyBlockProducer.VIEW_ID, 
-            ModifyScaledProducer.VIEW_ID // TODO: which view for this
+            TemplateModifyProducer.VIEW_ID // TODO: which view for this
         };
         String[] values = convertViews(viewIDs, templateId);
         
 		//dropdown list
 		UISelect.make(form, "itemClassification", values, labels,
-            values[1], false); //$NON-NLS-1$
+            values[0], false); //$NON-NLS-1$
 		
 	    UICommand.make(form, "add_questions", messageLocator.getMessage("modifytemplate.add.item.button")); //$NON-NLS-1$ //$NON-NLS-2$
         
