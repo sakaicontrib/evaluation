@@ -33,7 +33,7 @@ public class EvalTemplateItem implements java.io.Serializable {
 
 	private Boolean blockParent;
 
-	private Integer blockId;
+	private Long blockId;
 
 	// Constructors
 
@@ -55,7 +55,7 @@ public class EvalTemplateItem implements java.io.Serializable {
 	/** full constructor */
 	public EvalTemplateItem(Date lastModified, String owner, EvalTemplate template, EvalItem item,
 			Integer displayOrder, String itemCategory, Integer displayRows, String scaleDisplaySetting, Boolean usesNA,
-			Boolean blockParent, Integer blockId) {
+			Boolean blockParent, Long blockId) {
 		this.lastModified = lastModified;
 		this.owner = owner;
 		this.template = template;
@@ -158,11 +158,11 @@ public class EvalTemplateItem implements java.io.Serializable {
 		this.blockParent = blockParent;
 	}
 
-	public Integer getBlockId() {
+	public Long getBlockId() {
 		return this.blockId;
 	}
 
-	public void setBlockId(Integer blockId) {
+	public void setBlockId(Long blockId) {
 		this.blockId = blockId;
 	}
 

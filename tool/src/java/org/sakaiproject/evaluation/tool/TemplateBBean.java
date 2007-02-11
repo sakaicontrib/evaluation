@@ -156,16 +156,14 @@ public class TemplateBBean {
 				localTemplateLogic.saveItem(parent.getItem());
 				localTemplateLogic.saveTemplateItem(parent);
 				
-				Integer parentId = new Integer(parent.getId().intValue());
+				Long parentId = parent.getId();
 				int orderNo = ItemBlockUtils.getChildItems(allTemplateItems, parentId).size();
 				//save child, delete other existing block parent
 				for(int i=1;  i< strIds.length; i++){
 					EvalTemplateItem eti = itemsLogic.getTemplateItemById(Long.valueOf(strIds[i]));
 					
-					if(TemplateItemUtils.getTemplateItemType(eti).equals(EvalConstants.ITEM_TYPE_BLOCK)){
-						Integer itemId = new Integer(eti.getId().intValue());
-					
-						List myChilds = ItemBlockUtils.getChildItems(allTemplateItems, itemId);
+					if(TemplateItemUtils.getTemplateItemType(eti).equals(EvalConstants.ITEM_TYPE_BLOCK)){					
+						List myChilds = ItemBlockUtils.getChildItems(allTemplateItems, eti.getId());
 						for(int j=0; j< myChilds.size();j++){
 							EvalTemplateItem child = (EvalTemplateItem)myChilds.get(j);
 							child.setBlockId(parentId);
@@ -210,7 +208,7 @@ public class TemplateBBean {
 				
 				//Save Block Child
 				System.out.println("parentId="+ parent.getId());
-				Integer parentId = new Integer(parent.getId().intValue());
+				Long parentId = parent.getId();
 				for(int i=0; i<strIds.length; i++){
 					EvalTemplateItem child = itemsLogic.getTemplateItemById(Long.valueOf(strIds[i]));
 					if(child.getBlockParent() != Boolean.FALSE) child.setBlockParent(Boolean.FALSE);
