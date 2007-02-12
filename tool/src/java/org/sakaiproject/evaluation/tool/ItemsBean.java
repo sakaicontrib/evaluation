@@ -177,6 +177,7 @@ public class ItemsBean {
 	public String saveItemAction(){
 		System.out.println("We're in save item action");
 		templateItem.getItem().setScaleDisplaySetting(templateItem.getScaleDisplaySetting());
+		templateItem.getItem().setUsesNA(templateItem.getUsesNA());
 		templateItem.setTemplate(templatesLogic.getTemplateById(templateId));
 		templateItem.getItem().setSharing(templateItem.getTemplate().getSharing());
 		templateItem.getItem().setCategory(templateItem.getItemCategory());

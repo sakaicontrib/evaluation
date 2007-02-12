@@ -152,7 +152,7 @@ public class ModifyEssayProducer implements ViewComponentProducer,ViewParamsRepo
 		if ( ((Boolean)settings.get(EvalSettings.NOT_AVAILABLE_ALLOWED)).booleanValue() ) {
 			UIBranchContainer showNA = UIBranchContainer.make(form, "showNA:"); //$NON-NLS-1$
 			UIOutput.make(showNA, "add-na-header", messageLocator.getMessage("modifyitem.add.na.header")); //$NON-NLS-1$ //$NON-NLS-2$
-			UIBoundBoolean.make(showNA, "item_NA", templateItemOTP + "item.usesNA", null); //$NON-NLS-1$ //$NON-NLS-2$
+			UIBoundBoolean.make(showNA, "item_NA", templateItemOTP + "usesNA", null); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		/*
