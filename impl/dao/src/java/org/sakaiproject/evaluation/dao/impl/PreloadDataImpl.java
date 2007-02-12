@@ -88,7 +88,8 @@ public class PreloadDataImpl {
 			saveConfig(EvalSettings.REQUIRE_COMMENTS_BLOCK, true);
 			saveConfig(EvalSettings.EVAL_RECENTLY_CLOSED_DAYS, 10);
 
-			saveConfig(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY, false);
+			// default is configurable (unset)
+			//saveConfig(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY, false);
 			saveConfig(EvalSettings.EVAL_USE_STOP_DATE, false);
 			saveConfig(EvalSettings.EVAL_USE_SAME_VIEW_DATES, true);
 
