@@ -15,7 +15,10 @@ package org.sakaiproject.evaluation.tool.producers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
+import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
@@ -63,6 +66,15 @@ public class ModifyEssayProducer implements ViewComponentProducer,ViewParamsRepo
 	public void setMessageLocator(MessageLocator messageLocator) {
 		this.messageLocator = messageLocator;
 	}
+	private EvalTemplatesLogic templatesLogic;
+	public void setTemplatesLogic( EvalTemplatesLogic templatesLogic) {
+			this.templatesLogic = templatesLogic;
+	}
+	
+	private EvalExternalLogic external;
+	public void setExternal(EvalExternalLogic external) {
+			this.external = external;
+	}
 	
 	private EvalSettings settings;
 	public void setSettings(EvalSettings settings) {
@@ -79,7 +91,9 @@ public class ModifyEssayProducer implements ViewComponentProducer,ViewParamsRepo
 	    String templateItemOTPBinding = null;
 	    templateId = templateItemViewParams.templateId;
 	    Long templateItemId = templateItemViewParams.templateItemId;
-
+	    
+	    EvalTemplate template = templatesLogic.getTemplateById(templateId);
+	    
 	    if (templateItemId != null) {
 	      templateItemOTPBinding = "templateItemBeanLocator." + templateItemId;
 	    }
@@ -102,8 +116,9 @@ public class ModifyEssayProducer implements ViewComponentProducer,ViewParamsRepo
 
 		UIOutput.make(form, "added-by", messageLocator.getMessage("modifyitem.added.by"));  //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(form,"itemClassification",EvalConstants.ITEM_TYPE_TEXT);		 //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(form, "userInfo",null, templateItemOTP + "owner");	 //$NON-NLS-1$ //$NON-NLS-2$
-
+		//UIOutput.make(form, "userInfo",null, templateItemOTP + "owner");	 //$NON-NLS-1$ //$NON-NLS-2$
+		UIOutput.make(form, "userInfo",external.getUserDisplayName(template.getOwner()), templateItemOTP + "owner");
+		
 	    if (templateItemViewParams.templateItemId != null) {
 	        UIBranchContainer showLink = UIBranchContainer.make(form,
 	            "showRemoveLink:");
