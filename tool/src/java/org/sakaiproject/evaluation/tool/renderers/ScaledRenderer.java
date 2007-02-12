@@ -59,6 +59,8 @@ public class ScaledRenderer implements ItemRenderer {
 		UIJointContainer container = new UIJointContainer(parent, ID, COMPONENT_ID);
 
 		if (displayNumber <= 0) displayNumber = 0;
+		String initValue = null;
+		if (binding == null) initValue = "";
 
 		EvalScale scale = templateItem.getItem().getScale();
 		String[] scaleOptions = scale.getOptions();
@@ -138,9 +140,13 @@ public class ScaledRenderer implements ItemRenderer {
 			}
 
 			UISelect radios = UISelect.make(compactRadioContainer, 
-					"dummyRadio", scaleValues, scaleLabels, binding, null);
-			radios.optionnames = UIOutputMany.make(scaleLabels);
+					"dummyRadio", scaleValues, scaleLabels, binding, initValue);
 			String selectID = radios.getFullID();
+			
+			if (disabled) {
+				radios.selection.willinput = false;
+				radios.selection.fossilize = false;
+			}
 
 			for (int j = 0; j < scaleValues.length; ++j) {
 				if (colored) {
@@ -185,10 +191,14 @@ public class ScaledRenderer implements ItemRenderer {
 				UIBranchContainer full = UIBranchContainer.make(radiobranchFullRow, "fullDisplay:"); //$NON-NLS-1$
 				
 				// Radio Buttons
-				UISelect radios = UISelect.make(full, "dummyRadio", scaleValues,scaleLabels, binding, null);
-				
-				radios.optionnames = UIOutputMany.make(scaleLabels);
+				UISelect radios = UISelect.make(full, "dummyRadio", scaleValues,scaleLabels, binding, null);				
 				String selectID = radios.getFullID();
+
+				if (disabled) {
+					radios.selection.willinput = false;
+					radios.selection.fossilize = false;
+				}
+
 				for (int j = 0; j < scaleValues.length; ++j) {
 					UIBranchContainer radiobranchNested = UIBranchContainer
 							.make(full, "scaleOptions:", Integer.toString(j));
@@ -201,10 +211,14 @@ public class ScaledRenderer implements ItemRenderer {
 				UIBranchContainer vertical = UIBranchContainer.make(
 						radiobranchFullRow, "verticalDisplay:"); //$NON-NLS-1$
 				
-				UISelect radios = UISelect.make(vertical, "dummyRadio", scaleValues, scaleLabels, binding, null);
-				
-				radios.optionnames = UIOutputMany.make(scaleLabels);
+				UISelect radios = UISelect.make(vertical, "dummyRadio", scaleValues, scaleLabels, binding, initValue);
 				String selectID = radios.getFullID();
+
+				if (disabled) {
+					radios.selection.willinput = false;
+					radios.selection.fossilize = false;
+				}
+
 				for (int j = 0; j < scaleValues.length; ++j) {
 					UIBranchContainer radiobranchInside = UIBranchContainer
 							.make(vertical, "scaleOptions:", Integer.toString(j));
@@ -231,10 +245,14 @@ public class ScaledRenderer implements ItemRenderer {
 
 				UILink.make(fullColored, "idealImage", idealImage); //$NON-NLS-1$
 
-				UISelect radios = UISelect.make(fullColored, "dummyRadio", scaleValues, scaleLabels, binding, null);
-				radios.optionnames = UIOutputMany.make(scaleLabels);
-
+				UISelect radios = UISelect.make(fullColored, "dummyRadio", scaleValues, scaleLabels, binding, initValue);
 				String selectID = radios.getFullID();
+
+				if (disabled) {
+					radios.selection.willinput = false;
+					radios.selection.fossilize = false;
+				}
+
 				for (int j = 0; j < scaleValues.length; ++j) {
 					UIBranchContainer radiobranchInside = UIBranchContainer
 							.make(fullColored, "scaleOptions:", Integer.toString(j));
@@ -258,10 +276,13 @@ public class ScaledRenderer implements ItemRenderer {
 				scaleLabels[optionCount - count] = scaleOptions[count-1];
 			}
 			
-			UISelect radios = UISelect.make(stepped, "dummyRadio", scaleValues, scaleLabels, binding, null); 
-			
-			radios.optionnames = UIOutputMany.make(scaleLabels);
+			UISelect radios = UISelect.make(stepped, "dummyRadio", scaleValues, scaleLabels, binding, initValue); 
 			String selectID = radios.getFullID();
+
+			if (disabled) {
+				radios.selection.willinput = false;
+				radios.selection.fossilize = false;
+			}
 
 			for (int j = 0; j < scaleValues.length; ++j) {
 				UIBranchContainer radioTopLabelBranch = UIBranchContainer
@@ -317,10 +338,14 @@ public class ScaledRenderer implements ItemRenderer {
 				scaleLabels[optionCount - count] = scaleOptions[count-1];
 			}
 
-			UISelect radios = UISelect.make(steppedColored, "dummyRadio", scaleValues, scaleLabels, binding, null); 
-			
-			radios.optionnames = UIOutputMany.make(scaleLabels);
+			UISelect radios = UISelect.make(steppedColored, "dummyRadio", scaleValues, scaleLabels, binding, initValue); 
 			String selectID = radios.getFullID();
+
+			if (disabled) {
+				radios.selection.willinput = false;
+				radios.selection.fossilize = false;
+			}
+
 			for (int j = 0; j < scaleValues.length; ++j) {
 				UIBranchContainer rowBranch = UIBranchContainer.make(
 						steppedColored, "rowBranch:", Integer.toString(j)); //$NON-NLS-1$
