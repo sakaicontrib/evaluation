@@ -1,5 +1,5 @@
 /******************************************************************************
- * TemplateBBean.java - created by whumphri@vt.edu on Jan 16, 2007
+ * TemplateBBean.java - created on Jan 16, 2007
  * 
  * Copyright (c) 2007 Virginia Polytechnic Institute and State University
  * Licensed under the Educational Community License version 1.0
@@ -113,7 +113,7 @@ public class TemplateBBean {
 		Map delivered = templateItemBeanLocator.getDeliveredBeans();
 		//List ordered = localTemplateLogic.fetchTemplateItems(templateId);
 		List l = itemsLogic.getTemplateItemsForTemplate(templateId,null);
-		List ordered = ItemBlockUtils.getNonChildItems(l);
+		List ordered = ItemBlockUtils.getNonChildItems(l);//to fix re-order error
 		for (int i = 1; i <= ordered.size();) {
 			EvalTemplateItem item = (EvalTemplateItem) ordered.get(i - 1);
 			int itnum = item.getDisplayOrder().intValue();
