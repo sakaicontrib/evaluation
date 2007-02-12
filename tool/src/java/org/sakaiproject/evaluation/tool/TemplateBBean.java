@@ -65,7 +65,7 @@ public class TemplateBBean {
 	
 	public Long templateId;
 	public Boolean idealColor;
-	public Long scaleId;
+	//public Long scaleId;
 	public Integer originalDisplayOrder;
 	public String childTemplateItemIds;
 	
@@ -182,7 +182,6 @@ public class TemplateBBean {
 				//create new block from normal scaled type
 				parent = (EvalTemplateItem)delivered.get(TemplateItemBeanLocator.NEW_1);					
 				parent.setTemplate(template);	
-				//System.out.println("orginal display order="+first.getDisplayOrder());		
 				parent.setDisplayOrder(originalDisplayOrder);
 				parent.getItem().setScale(first.getItem().getScale());
 				
