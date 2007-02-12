@@ -81,7 +81,9 @@ public class LocalTemplateLogic {
   public EvalTemplateItem newTemplateItem() {
     EvalItem newItem = new EvalItem(new Date(), external.getCurrentUserId(), "", "",
         "", new Boolean(false));
-    return new EvalTemplateItem(new Date(), external.getCurrentUserId(),
+    EvalTemplateItem newTemplateItem = new EvalTemplateItem(new Date(), external.getCurrentUserId(),
         null, newItem, null, EvaluationConstant.ITEM_CATEGORY_VALUES[0]);
+    newTemplateItem.setUsesNA(new Boolean(false));
+     return newTemplateItem;
   }
 }

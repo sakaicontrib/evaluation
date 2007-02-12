@@ -147,6 +147,7 @@ public class TemplateBBean {
 				if(parent == null) parent = first ;
 				setIdealColorforBlockParent(parent);
 				parent.setDisplayOrder(originalDisplayOrder);
+				parent.getItem().setUsesNA(parent.getUsesNA());
 				localTemplateLogic.saveItem(parent.getItem());
 				localTemplateLogic.saveTemplateItem(parent);
 				
@@ -188,7 +189,7 @@ public class TemplateBBean {
 				parent.setBlockParent(Boolean.TRUE);
 				parent.getItem().setClassification(EvalConstants.ITEM_TYPE_SCALED);
 				parent.getItem().setSharing(parent.getTemplate().getSharing());
-		
+				parent.getItem().setUsesNA(parent.getUsesNA());
 				if(idealColor != null && idealColor == Boolean.TRUE){
 					parent.setScaleDisplaySetting(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED);
 					parent.getItem().setScaleDisplaySetting(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED);
@@ -243,7 +244,7 @@ public class TemplateBBean {
 			parent = (EvalTemplateItem)delivered.get(strIds[0]);	
 			if(parent!= null){
 				setIdealColorforBlockParent(parent);
-			
+				parent.getItem().setUsesNA(parent.getUsesNA());
 				localTemplateLogic.saveItem(parent.getItem());
 				localTemplateLogic.saveTemplateItem(parent);	
 			}
