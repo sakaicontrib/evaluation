@@ -144,14 +144,13 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 		}
 		// check the NOT_AVAILABLE_ALLOWED system setting
 		Boolean naAllowed = (Boolean)settings.get(EvalSettings.NOT_AVAILABLE_ALLOWED);
-		if (naAllowed == null) {
+		if (naAllowed.booleanValue()) {
 			// can set NA
 			if (item.getUsesNA() == null) {
 				item.setUsesNA( Boolean.FALSE );
 			}
 		} else {
-			// must use the system setting
-			item.setUsesNA( naAllowed );
+			item.setUsesNA( Boolean.FALSE );
 		}
 		if (item.getCategory() == null) {
 			item.setCategory( EvalConstants.ITEM_CATEGORY_COURSE );
@@ -418,18 +417,14 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 				templateItem.setItemCategory(item.getCategory());
 			}
 		}
-		if (templateItem.getUsesNA() == null) {
-			// check the NOT_AVAILABLE_ALLOWED system setting
-			Boolean naAllowed = (Boolean)settings.get(EvalSettings.NOT_AVAILABLE_ALLOWED);
-			if (naAllowed == null) {
-				// can set NA
-				if (templateItem.getUsesNA() == null) {
-					templateItem.setUsesNA( Boolean.FALSE );
-				}
-			} else {
-				// must use the system setting
-				templateItem.setUsesNA( naAllowed );
+		Boolean naAllowed = (Boolean)settings.get(EvalSettings.NOT_AVAILABLE_ALLOWED);
+		if (naAllowed.booleanValue()) {
+			// can set NA
+			if (templateItem.getUsesNA() == null) {
+				templateItem.setUsesNA( Boolean.FALSE );
 			}
+		} else {
+			templateItem.setUsesNA( Boolean.FALSE );
 		}
 
 		if (checkUserControlTemplateItem(userId, templateItem)) {
