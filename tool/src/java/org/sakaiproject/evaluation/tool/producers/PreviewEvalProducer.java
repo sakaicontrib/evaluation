@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.logic.model.Context;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -34,6 +35,7 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.params.PreviewEvalParameters;
 import org.sakaiproject.evaluation.tool.utils.ItemBlockUtils;
+import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
 
 import uk.org.ponder.messageutil.MessageLocator;
@@ -85,6 +87,11 @@ public void setExternal(EvalExternalLogic external) {
 private EvalTemplatesLogic templatesLogic;
 public void setTemplatesLogic(EvalTemplatesLogic templatesLogic) {
 	this.templatesLogic = templatesLogic;
+}
+
+private EvalItemsLogic itemsLogic;
+public void setItemsLogic( EvalItemsLogic itemsLogic) {
+	this.itemsLogic = itemsLogic;
 }
 
 private MessageLocator messageLocator;
@@ -297,8 +304,8 @@ private void doFillComponent(EvalTemplateItem myTempItem, int i,
 	
 	EvalItem myItem = myTempItem.getItem();
 	
-	if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)) { //scaled
-
+	//if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)) { //scaled
+	if(TemplateItemUtils.getTemplateItemType(myTempItem).equals(EvalConstants.ITEM_TYPE_SCALED)){//normal scaled
 		EvalScale  scale =  myItem.getScale();
 		String[] scaleOptions = scale.getOptions();
 		int optionCount = scaleOptions.length;
@@ -656,7 +663,7 @@ private void doFillComponent(EvalTemplateItem myTempItem, int i,
 
 		}
 
-	} else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK)
+	} else if (TemplateItemUtils.getTemplateItemType(myTempItem).equals(EvalConstants.ITEM_TYPE_BLOCK)
 			&& myTempItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED)) { //"Question Block" "Stepped" type
 		
 		UIBranchContainer block = UIBranchContainer.make(radiobranch,
@@ -707,34 +714,21 @@ private void doFillComponent(EvalTemplateItem myTempItem, int i,
 			UILink.make(radioBottomLabelBranch, "bottomImage", EvaluationConstant.STEPPED_IMAGE_URLS[2]);
 		}
 		// get child block item text
-
-		if (myTempItem.getBlockParent()!=null && myTempItem.getBlockParent().booleanValue() == true) {
-			Long parentID = myTempItem.getId();
-			//get child items associated with this Block parent ID
-			List childItems = ItemBlockUtils.getChildItems(itemsList, parentID);
+	  	List childList = itemsLogic.getBlockChildTemplateItemsForBlockParent(myTempItem.getId(), false);
+		for(int j = 0; j< childList.size(); j++){
+			UIBranchContainer queRow = UIBranchContainer.make(block,"queRow:", Integer.toString(j));
+			EvalTemplateItem child = (EvalTemplateItem)childList.get(j);
+			String txt = child.getItem().getItemText();
+			UIOutput.make(queRow,"queNo",Integer.toString(j+1));	
+			UIOutput.make(queRow,"queText",txt);
+			for(int k=0;k< scaleValues.length; k++){
+				UIBranchContainer bc1 = UIBranchContainer.make(queRow, "scaleValueOptions:", Integer.toString(k));
+				UISelectChoice.make(bc1, "dummyRadioValue", selectID, k);
+			}
 			
-			if (childItems != null && childItems.size() > 0) {
-				for (int j = 0; j < childItems.size(); j++) {
-					UIBranchContainer queRow = UIBranchContainer.make(
-							block, "queRow:", Integer.toString(j)); //$NON-NLS-1$
-					EvalTemplateItem tempItemChild = (EvalTemplateItem) childItems.get(j);
-					EvalItem child = tempItemChild.getItem();
-					
-					UIOutput.make(queRow, "queNo", Integer.toString(j + 1)); //$NON-NLS-1$
-					UIOutput.make(queRow, "queText", child.getItemText()); //$NON-NLS-1$
-					for (int k = 0; k < scaleValues.length; k++) {
-						UIBranchContainer bc1 = UIBranchContainer.make(
-								queRow, "scaleValueOptions:", Integer //$NON-NLS-1$
-										.toString(k));
-						UISelectChoice.make(bc1, "dummyRadioValue", //$NON-NLS-1$
-								selectID, k);
-					}
-				}
-			}// end of if
+    	}
 
-		} // end of get child block item
-
-	} else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK) 
+	} else if (TemplateItemUtils.getTemplateItemType(myTempItem).equals(EvalConstants.ITEM_TYPE_BLOCK)
 			&& myTempItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED)) { //"Question Block","Stepped Colored"
 
 		UIBranchContainer blockSteppedColored = UIBranchContainer.make(
@@ -801,7 +795,32 @@ private void doFillComponent(EvalTemplateItem myTempItem, int i,
 			UILink.make(bottomLabelBranch, "bottomImage",EvaluationConstant.STEPPED_IMAGE_URLS[2]);
 
 		}
+		List childList = itemsLogic.getBlockChildTemplateItemsForBlockParent(myTempItem.getId(), false);
+		for (int j = 0; j < childList.size(); j++) {
+			UIBranchContainer queRow = UIBranchContainer.make(
+					blockSteppedColored, "queRow:", Integer //$NON-NLS-1$
+							.toString(j));
+			EvalTemplateItem child = (EvalTemplateItem) childList.get(j);
+			
+			UIOutput.make(queRow, "queNo", Integer.toString(j + 1)); 
+			UIOutput.make(queRow, "queText", child.getItem().getItemText()); 
+			UILink.make(queRow, "idealImage", idealImage);
+			for (int k = 0; k < scaleValues.length; k++) {
+				UIBranchContainer radioBranchFirst = UIBranchContainer
+						.make(queRow, "scaleOptionsFirst:", Integer //$NON-NLS-1$
+								.toString(k));
+				UISelectChoice.make(radioBranchFirst,
+						"dummyRadioValueFirst", selectID, k); //$NON-NLS-1$
 
+				UIBranchContainer radioBranchSecond = UIBranchContainer
+						.make(queRow, "scaleOptionsSecond:", //$NON-NLS-1$
+								Integer.toString(k));
+				UISelectChoice.make(radioBranchSecond,
+						"dummyRadioValueSecond", selectID, k); //$NON-NLS-1$
+			}
+			
+		}
+/*
 		// get child block item text
 		if (myTempItem.getBlockParent()!= null && myTempItem.getBlockParent().booleanValue() == true) {
 			Long parentID = myTempItem.getId();
@@ -836,7 +855,7 @@ private void doFillComponent(EvalTemplateItem myTempItem, int i,
 			}// end of if
 
 		} // end of get child block item
-
+*/
 	}// else if (myItem.getClassification().equals("Short Answer/Essay")) { //$NON-NLS-1$
 	else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)) {
 		UIBranchContainer essay = UIBranchContainer.make(radiobranch,
