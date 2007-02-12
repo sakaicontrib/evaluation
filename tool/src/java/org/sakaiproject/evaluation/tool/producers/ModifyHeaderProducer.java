@@ -167,9 +167,11 @@ public class ModifyHeaderProducer implements ViewComponentProducer,ViewParamsRep
         saveCmd.parameters.add(new UIELBinding("#{itemsBean.templateId}",
             templateId));
 
-        UICommand.make(form, "previewHeaderAction", messageLocator
-            .getMessage("modifyitem.preview.button"),
-            "#{itemsBean.previewItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        /**    //TODO-Preview new/modified items
+         *UICommand.make(form, "previewHeaderAction", messageLocator
+         *    .getMessage("modifyitem.preview.button"),
+         *    "#{itemsBean.previewItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		 */
 	}
 
 	public List reportNavigationCases() {
