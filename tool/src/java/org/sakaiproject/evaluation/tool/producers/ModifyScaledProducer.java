@@ -160,7 +160,7 @@ public class ModifyScaledProducer implements ViewComponentProducer,
     UIOutput.make(form, "itemClassification", EvalConstants.ITEM_TYPE_SCALED);
     UIOutput.make(form,
         "added-by", messageLocator.getMessage("modifyitem.added.by")); //$NON-NLS-1$ //$NON-NLS-2$
-   // UIOutput.make(form, "userInfo", null, templateItemOTP + "owner");
+  
     UIOutput.make(form, "userInfo", external.getUserDisplayName(template.getOwner()));
 
     if (templateItemViewParams.templateItemId != null) {
@@ -272,8 +272,6 @@ public class ModifyScaledProducer implements ViewComponentProducer,
 	
     UICommand saveCmd = UICommand.make(form, "saveItemAction", messageLocator
         .getMessage("modifyitem.save.button"), "#{itemsBean.saveItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    // saveCmd.parameters.add(new
-    // UIELBinding(templateItemOTP+"template",templatesLogic.getTemplateById(templateId)));
     saveCmd.parameters.add(new UIELBinding(templateItemOTP
         + "item.classification", EvalConstants.ITEM_TYPE_SCALED));
     saveCmd.parameters.add(new UIELBinding("#{itemsBean.templateItem}",

@@ -116,7 +116,7 @@ public class ModifyEssayProducer implements ViewComponentProducer,ViewParamsRepo
 
 		UIOutput.make(form, "added-by", messageLocator.getMessage("modifyitem.added.by"));  //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(form,"itemClassification",EvalConstants.ITEM_TYPE_TEXT);		 //$NON-NLS-1$ //$NON-NLS-2$
-		//UIOutput.make(form, "userInfo",null, templateItemOTP + "owner");	 //$NON-NLS-1$ //$NON-NLS-2$
+	
 		UIOutput.make(form, "userInfo",external.getUserDisplayName(template.getOwner()), templateItemOTP + "owner");
 		
 	    if (templateItemViewParams.templateItemId != null) {
@@ -201,8 +201,7 @@ public class ModifyEssayProducer implements ViewComponentProducer,ViewParamsRepo
 		
         UICommand saveCmd = UICommand.make(form, "saveEssayAction", messageLocator
             .getMessage("modifyitem.save.button"), "#{itemsBean.saveItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        // saveCmd.parameters.add(new
-        // UIELBinding(templateItemOTP+"template",templatesLogic.getTemplateById(templateId)));
+        
         saveCmd.parameters.add(new UIELBinding(templateItemOTP
             + "item.classification", EvalConstants.ITEM_TYPE_TEXT));
         saveCmd.parameters.add(new UIELBinding("#{itemsBean.templateItem}",
