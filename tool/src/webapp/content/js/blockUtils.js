@@ -18,7 +18,7 @@ sourceForm.elements[a].checked) {
 		}
 		destinationForm.templateItemIds.value=idList;
 	
-		alert("ids="+destinationForm.templateItemIds.value);
+		//alert("ids="+destinationForm.templateItemIds.value);
 		if(count < 2){
 		 alert("you must select at least 2 items to create a block");
 		 return false; 
