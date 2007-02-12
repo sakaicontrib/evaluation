@@ -10,7 +10,6 @@
  * Contributors:
  * Rui Feng
  * Antranig Basman
- * Will Humphries (whumphri@vt.edu)
  *****************************************************************************/
 
 package org.sakaiproject.evaluation.tool;
@@ -62,11 +61,7 @@ public class TemplateBBean {
 		this.itemsLogic = itemsLogic;
 	}
 	
-	/*
-	private EvalScalesLogic scalesLogic;
-	public void setScalesLogic(EvalScalesLogic scalesLogic) {
-		this.scalesLogic = scalesLogic;
-	}*/
+	
 	
 	public Long templateId;
 	public Boolean idealColor;
@@ -136,7 +131,6 @@ public class TemplateBBean {
 	public String saveBlockItemAction(){
 		log.debug("Save Block items");
 		
-		//get the first child' Scale ID, TemplateId, displayOrder
 		String[] strIds = childTemplateItemIds.split(",");
 		EvalTemplateItem parent =null;
 		

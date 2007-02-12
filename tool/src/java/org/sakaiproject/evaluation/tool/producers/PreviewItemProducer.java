@@ -135,10 +135,8 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 					UILink.make(radioBottomLabelBranch, "bottomImage", EvaluationConstant.STEPPED_IMAGE_URLS[2]);				
 			    }	
 					//get child block item text
-			    	List allItems = itemsLogic.getTemplateItemsForTemplate(templateItem.getTemplate().getId(), null);
-			    	List childList = ItemBlockUtils.getChildItems(allItems,templateItem.getId());
-			    
-			    	  for(int j = 0; j< childList.size(); j++){
+			    	List childList = itemsLogic.getBlockChildTemplateItemsForBlockParent(templateItem.getId(), false);
+			    	for(int j = 0; j< childList.size(); j++){
 						UIBranchContainer queRow = UIBranchContainer.make(blockStepped,"queRow:", Integer.toString(j));
 						EvalTemplateItem child = (EvalTemplateItem)childList.get(j);
 						String txt = child.getItem().getItemText();
@@ -150,7 +148,6 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 						}
 						
 			    	}
-				
 			}else if(templateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED)){
 				UIBranchContainer blockSteppedColored = UIBranchContainer.make(tofill, "blockSteppedColored:");
 				
@@ -187,7 +184,6 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 					idealImage = EvaluationConstant.COLORED_IMAGE_URLS[2];
 				else
 					idealImage = EvaluationConstant.COLORED_IMAGE_URLS[3];
-			//	UILink.make(blockSteppedColored, "idealImage", idealImage);
 				
 				//Radio Buttons
 				
@@ -212,9 +208,9 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 					
 			    }	    
 				//get child block item text
-		    	List allItems = itemsLogic.getTemplateItemsForTemplate(templateItem.getTemplate().getId(), null);
-		    	List childList = ItemBlockUtils.getChildItems(allItems,templateItem.getId());
-		    	
+		    	//List allItems = itemsLogic.getTemplateItemsForTemplate(templateItem.getTemplate().getId(), null);
+		    	//List childList = ItemBlockUtils.getChildItems(allItems,templateItem.getId());
+			    List childList = itemsLogic.getBlockChildTemplateItemsForBlockParent(templateItem.getId(), false);
 			    for(int j = 0; j< childList.size(); j++){
 			    	
 					UIBranchContainer queRow = UIBranchContainer.make(blockSteppedColored,"queRow:", Integer.toString(j));
