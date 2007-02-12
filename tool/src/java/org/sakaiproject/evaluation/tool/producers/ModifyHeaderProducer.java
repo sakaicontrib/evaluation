@@ -95,11 +95,10 @@ public class ModifyHeaderProducer implements ViewComponentProducer,ViewParamsRep
 
 		UIForm form = UIForm.make(tofill, "headerForm");
 
-		UIOutput.make(form, "item-header", messageLocator.getMessage("modifyitem.item.header"));	//TODO: exception: can not get property
-		//UIOutput.make(form, "item-header","Item" );
+		UIOutput.make(form, "item-header", messageLocator.getMessage("modifyitem.item.header"));	
 		UIOutput.make(form, "added-by-header", messageLocator.getMessage("modifyitem.added.by"));  //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(form,"itemNo",null,"1.");
-		UIOutput.make(form,"itemClassification",null, EvalConstants.ITEM_TYPE_HEADER);
+		UIOutput.make(form,"itemClassification",EvalConstants.ITEM_TYPE_HEADER);
 		UIOutput.make(form, "userInfo",null, templateItemOTP + "owner");
 
 	    if (templateItemViewParams.templateItemId != null) {
