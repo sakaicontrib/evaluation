@@ -1,5 +1,5 @@
 /******************************************************************************
- * TemplateItemProducer.java - created by fengr@vt.edu on Aug 21, 2006
+ * ModifyScaledProducerProducer.java - created by fengr@vt.edu on Aug 21, 2006
  *
  * Copyright (c) 2007 Virginia Polytechnic Institute and State University
  * Licensed under the Educational Community License version 1.0
@@ -139,12 +139,10 @@ public class ModifyScaledProducer implements ViewComponentProducer,
     UIForm form = UIForm.make(tofill, "itemForm"); //$NON-NLS-1$
 
     UIOutput.make(form,
-        "item-header", messageLocator.getMessage("modifyitem.item.header")); // TODO:
-    // exception: can not get property
-    // UIOutput.make(form, "item-header","Item" );
+        "item-header", messageLocator.getMessage("modifyitem.item.header")); 
     UIOutput.make(form, "itemNo", null, "1."); //$NON-NLS-1$ //$NON-NLS-2$
 
-    UIOutput.make(form, "itemClassification", null, EvalConstants.ITEM_TYPE_SCALED);
+    UIOutput.make(form, "itemClassification", EvalConstants.ITEM_TYPE_SCALED);
     UIOutput.make(form,
         "added-by", messageLocator.getMessage("modifyitem.added.by")); //$NON-NLS-1$ //$NON-NLS-2$
     /** TODO - fetch id of owner */

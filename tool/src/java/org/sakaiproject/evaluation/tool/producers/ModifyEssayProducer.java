@@ -101,7 +101,7 @@ public class ModifyEssayProducer implements ViewComponentProducer,ViewParamsRepo
 		UIOutput.make(form,"itemNo",null,"1.");
 
 		UIOutput.make(form, "added-by", messageLocator.getMessage("modifyitem.added.by"));  //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(form,"itemClassification",null,EvalConstants.ITEM_TYPE_TEXT);		 //$NON-NLS-1$ //$NON-NLS-2$
+		UIOutput.make(form,"itemClassification",EvalConstants.ITEM_TYPE_TEXT);		 //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(form, "userInfo",null, templateItemOTP + "owner");	 //$NON-NLS-1$ //$NON-NLS-2$
 
 	    if (templateItemViewParams.templateItemId != null) {
