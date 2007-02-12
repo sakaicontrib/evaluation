@@ -15,6 +15,7 @@ package org.sakaiproject.evaluation.tool.producers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -62,6 +63,11 @@ public class ModifyBlockProducer implements ViewComponentProducer,ViewParamsRepo
 	public void setMessageLocator(MessageLocator messageLocator) {
 		this.messageLocator = messageLocator;
 	}	
+	
+	private EvalExternalLogic external;
+	public void setExternal(EvalExternalLogic external) {
+		this.external = external;
+	}
 	
 	private EvalItemsLogic itemsLogic;
 
@@ -163,20 +169,17 @@ public class ModifyBlockProducer implements ViewComponentProducer,ViewParamsRepo
 				UIOutput.make(form,"itemNo","1."); //TODO:
 				UIOutput.make(form,"itemClassification",messageLocator.getMessage("modifytemplate.itemtype.block"));
 				UIOutput.make(form, "added-by", messageLocator.getMessage("modifyitem.added.by"));
-				UIOutput.make(form, "userInfo",templateItems[0].getOwner());
+				UIOutput.make(form, "userInfo",external.getUserDisplayName(templateItems[0].getOwner()));
 				//TODO: remove link
 				
 				UIOutput.make(form, "item-header-text-header", messageLocator.getMessage("modifyblock.item.header.text.header"));
-				//UIInput.make(form, "item_text", "templateItemBeanLocator.new1."+"item.itemText", null);
 				
 			    UIOutput.make(form, "scale-type-header", messageLocator.getMessage("modifyblock.scale.type.header")); 
 				UIOutput.make(form, "scaleLabel",templateItems[0].getItem().getScale().getTitle());
 				
 				UIOutput.make(form,"add-na-header",messageLocator.getMessage("modifyitem.add.na.header")); //$NON-NLS-1$ //$NON-NLS-2$
-				//UIBoundBoolean.make(form, "item_NA",  "templateItemBeanLocator.new1."+ "usesNA", null); //$NON-NLS-1$ //$NON-NLS-2$
 				
 				UIOutput.make(form,"ideal-coloring-header",messageLocator.getMessage("modifyblock.ideal.coloring.header")); //$NON-NLS-1$ //$NON-NLS-2$
-				//UIBoundBoolean.make(form, "idealColor", "#{templateBBean.idealColor}",null); //$NON-NLS-1$ //$NON-NLS-2$
 				
 				UIOutput.make(form,"item-category-header",messageLocator.getMessage("modifyitem.item.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
 				UIOutput.make(form,"course-category-header",messageLocator.getMessage("modifyitem.course.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
