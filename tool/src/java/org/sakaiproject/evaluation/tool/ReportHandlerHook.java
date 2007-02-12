@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
+import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -37,6 +38,7 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.params.CSVReportViewParams;
 import org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer;
 import org.sakaiproject.evaluation.tool.utils.ItemBlockUtils;
+import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
 import uk.org.ponder.rsf.processor.HandlerHook;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
@@ -71,6 +73,11 @@ public class ReportHandlerHook implements HandlerHook {
 		this.viewparams = viewparams;
 	}
 	
+	private EvalItemsLogic itemsLogic;
+	public void setItemsLogic( EvalItemsLogic itemsLogic) {
+		this.itemsLogic = itemsLogic;
+	}
+
 	private EvalEvaluationsLogic evalsLogic;
 	public void setEvalsLogic(EvalEvaluationsLogic evalsLogic) {
 		this.evalsLogic = evalsLogic;
@@ -94,8 +101,7 @@ public class ReportHandlerHook implements HandlerHook {
 		}
         log.debug("Handling report");
 		// get evaluation and template from DAO
-		EvalEvaluation evaluation = evalsLogic.getEvaluationById(crvp.evalId);//logic.getEvaluationById(crvp.evalId);
-		//EvalTemplate template = logic.getTemplateById(evaluation.getTemplate().getId());
+		EvalEvaluation evaluation = evalsLogic.getEvaluationById(crvp.evalId);
 		EvalTemplate template = evaluation.getTemplate();
 		
 		Writer stringWriter = new StringWriter();
@@ -105,7 +111,7 @@ public class ReportHandlerHook implements HandlerHook {
 		List responseRows = new ArrayList();//holds response rows
 
 		//determine number of responses
-		int numOfResponses = responsesLogic.countResponses(crvp.evalId, null); //logic.countResponses(crvp.evalId, null);
+		int numOfResponses = responsesLogic.countResponses(crvp.evalId, null); 
 
 		//add a row for each response
 		for(int i=0; i<numOfResponses; i++){
@@ -114,29 +120,26 @@ public class ReportHandlerHook implements HandlerHook {
 		}
 
 		//get all items
-		//List allItems = new ArrayList(template.getItems());
 		List allItems = new ArrayList(template.getTemplateItems());
 		
 		if (! allItems.isEmpty()) {
 			//filter out the block child items, to get a list non-child items
 			List ncItemsList = ItemBlockUtils.getNonChildItems(allItems);
-			
-			//Collections.sort(childItems, new ReportItemOrderComparator());
 			Collections.sort(ncItemsList,new PreviewEvalProducer.EvaluationItemOrderComparator());
 			//for each item
 			for (int i = 0; i < ncItemsList.size(); i++) {
 				//fetch the item
-				//EvalItem item1 = (EvalItem) ncItemsList.get(i);
 				EvalTemplateItem tempItem1 = (EvalTemplateItem) ncItemsList.get(i);
 				EvalItem item1 = (EvalItem) tempItem1.getItem();
 				
-				//if the item is scaled
-				if(item1.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)){
+				//if the item is normal scaled
+				//if(item1.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)){
+				if(TemplateItemUtils.getTemplateItemType(tempItem1).equals(EvalConstants.ITEM_TYPE_SCALED)){
 					String labels[] = item1.getScale().getOptions();
 					//add the item description to the top row
 					topRow.add(item1.getItemText());
 					//get all answers to this item within this evaluation
-					List itemAnswers = responsesLogic.getEvalAnswers(item1.getId(), crvp.evalId);//logic.getEvalAnswers(item1.getId(), crvp.evalId);
+					List itemAnswers = responsesLogic.getEvalAnswers(item1.getId(), crvp.evalId);
 					//for each response row
 					for(int j=0; j<numOfResponses; j++){
 						List currRow = (List)responseRows.get(j);
@@ -145,7 +148,8 @@ public class ReportHandlerHook implements HandlerHook {
 						currRow.add(labels[currAnswer.getNumeric().intValue()]);
 					}
 				}
-				else if (item1.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK)) {//"Question Block"
+				//else if (item1.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK)) {//"Question Block"
+				else if(TemplateItemUtils.getTemplateItemType(tempItem1).equals(EvalConstants.ITEM_TYPE_BLOCK)){
 					String labels[] = item1.getScale().getOptions();
 					//add the block description to the top row
 					topRow.add(item1.getItemText());
@@ -156,7 +160,24 @@ public class ReportHandlerHook implements HandlerHook {
 					}
 
 					//get child block items
-				if (tempItem1.getBlockParent()!=null && tempItem1.getBlockParent().booleanValue() == true) {
+					List childList = itemsLogic.getBlockChildTemplateItemsForBlockParent(tempItem1.getId(), false);
+					for (int j = 0; j < childList.size(); j++) {
+						EvalTemplateItem tempItemChild = (EvalTemplateItem) childList.get(j);
+						EvalItem child = tempItemChild.getItem();
+						//add child's text to top row
+						topRow.add(child.getItemText());
+						//get all answers to the child item within this eval
+						List itemAnswers = responsesLogic.getEvalAnswers(child.getId(), crvp.evalId);
+						//for each response row
+						for(int y=0; y<numOfResponses;y++){
+							List currRow = (List)responseRows.get(y);
+							EvalAnswer currAnswer=(EvalAnswer)itemAnswers.get(y);
+							//add the answer to item within the current response to the output row
+							currRow.add(labels[currAnswer.getNumeric().intValue()]);
+						}
+					}
+				/*
+					if (tempItem1.getBlockParent()!=null && tempItem1.getBlockParent().booleanValue() == true) {
 					Long parentID = item1.getId();
 
 					//List blockChildItems = logic.findItem(blockID);
@@ -180,7 +201,7 @@ public class ReportHandlerHook implements HandlerHook {
 							}
 						}// end of if
 					} // end of get child block item
-
+				*/
 				}
 			}
 
@@ -225,15 +246,7 @@ public class ReportHandlerHook implements HandlerHook {
 		}
 	}
 
-/*
-	private static class ReportItemOrderComparator implements Comparator {
-		public int compare(Object eval0, Object eval1) {
-			// expects to get EvalItem objects
-			return ((EvalItem)eval0).getId().
-				compareTo(((EvalItem)eval1).getId());
-		}
-	}
-*/
+
 
 
 }
