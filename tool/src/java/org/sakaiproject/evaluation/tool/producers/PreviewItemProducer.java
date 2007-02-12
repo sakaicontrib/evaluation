@@ -235,7 +235,7 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 
 		} else {
 			// use the renderer evolver
-			itemRenderer.renderItem(tofill, "previewed-item:", null, templateItem, 0, false);
+			itemRenderer.renderItem(tofill, "previewed-item:", null, templateItem, 0, true);
 		}
 
 		UIOutput.make(tofill, "close-button", messageLocator.getMessage("general.close.window.button"));
