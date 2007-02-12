@@ -92,6 +92,7 @@ public class PreloadDataImpl {
 			//saveConfig(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY, false);
 			saveConfig(EvalSettings.EVAL_USE_STOP_DATE, false);
 			saveConfig(EvalSettings.EVAL_USE_SAME_VIEW_DATES, true);
+			saveConfig(EvalSettings.EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE, 4);
 
 			log.info("Preloaded " + evaluationDao.countAll(EvalConfig.class) + " evaluation system EvalConfig items");
 		}

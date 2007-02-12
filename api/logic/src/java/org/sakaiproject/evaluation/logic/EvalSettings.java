@@ -135,7 +135,11 @@ public interface EvalSettings {
 	 * <b>Note:</b> If this is FALSE/NULL then the custom date boxes appear and are used (otherwise only the global view date is used)
 	 */
 	public static final String EVAL_USE_SAME_VIEW_DATES = "EVAL_USE_SAME_VIEW_DATES:java.lang.Boolean";
-
+	/**
+	 * CONSTANT: Minimum time difference (in hours) allowed between start date and 
+	 * due date of the evaluation - {@see java.lang.Integer}, default 4<br/>
+	 */
+	public static final String EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE = "EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE:java.lang.Integer";
 
 	/**
 	 * Allows for getting the value of a system setting based on the constant,
