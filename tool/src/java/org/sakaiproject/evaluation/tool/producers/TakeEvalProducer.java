@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
@@ -31,6 +32,7 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.params.EvalTakeViewParameters;
 import org.sakaiproject.evaluation.tool.utils.ItemBlockUtils;
+import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.ELReference;
@@ -84,7 +86,10 @@ public class TakeEvalProducer implements ViewComponentProducer,
 	public void setExternal(EvalExternalLogic external) {
 		this.external = external;
 	}
-	
+	private EvalItemsLogic itemsLogic;
+	public void setItemsLogic( EvalItemsLogic itemsLogic) {
+		this.itemsLogic = itemsLogic;
+	}
 	private MessageLocator messageLocator;
 	public void setMessageLocator(MessageLocator messageLocator) {
 		this.messageLocator = messageLocator;
@@ -151,9 +156,6 @@ public class TakeEvalProducer implements ViewComponentProducer,
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams,
 			ComponentChecker checker) {
 		
-
-
-		
 		UIOutput.make(tofill, "take-eval-title", messageLocator.getMessage("takeeval.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		UIInternalLink.make(tofill, "summary-toplink", messageLocator.getMessage("summary.page.title"),  //$NON-NLS-1$ //$NON-NLS-2$
@@ -201,8 +203,6 @@ public class TakeEvalProducer implements ViewComponentProducer,
 	
 		//filter out the block child items, to get a list non-child items
 		List ncItemsList = ItemBlockUtils.getNonChildItems(allItems);
-		// We know that for an evaluation child items will not be empty so no check needed here
-		//Collections.sort(allItems, new PreviewEvalProducer.EvaluationItemOrderComparator());
 		Collections.sort(ncItemsList, new PreviewEvalProducer.EvaluationItemOrderComparator());
 		
 		// check if there is any "Course" items or "Instructor" items;
@@ -266,24 +266,21 @@ public class TakeEvalProducer implements ViewComponentProducer,
 	    else{
 	    	currAnswerOTP=responseAnswersOTP + responseId + "." + myTempItem.getItem().getId() + ".";
 	    }
-		if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)) { //"Scaled/Survey"
-
+		
+	   // if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)) {
+	    if(TemplateItemUtils.getTemplateItemType(myTempItem).equals(EvalConstants.ITEM_TYPE_SCALED)){ //Normal "Scaled/Survey"
+	    	
 			// Bind item id to list of items in evaluation bean.
 			form.parameters.add( new UIELBinding
 					(currAnswerOTP + "item",new ELReference(templateItemOTP+"item")) );		
 			
-/*			ItemDisplay itemDisplay = new ItemDisplay(myItem);
-			String values[] = itemDisplay.getScaleValues();
-			String labels[] = itemDisplay.getScaleLabels();
-*/
+
 			EvalScale  scale =  myItem.getScale();
 			String[] scaleOptions = scale.getOptions();
 			int optionCount = scaleOptions.length;
 			String scaleValues[] = new String[optionCount];
 			String scaleLabels[] = new String[optionCount];
 			
-		//	String setting = myItem.getScaleDisplaySetting();
-		//	Boolean useNA = myItem.getUsesNA();
 			String setting = myTempItem.getScaleDisplaySetting();
 			Boolean useNA = myTempItem.getUsesNA();
 			
@@ -655,26 +652,24 @@ public class TakeEvalProducer implements ViewComponentProducer,
 			 */ 
 			totalItemsAdded++;
 
-		} else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK) 
-				&& myTempItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED)) { //"Question Block","Stepped"
-			UIBranchContainer block = UIBranchContainer.make(radiobranch,
+		}
+	    //else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK) 
+		//		&& myTempItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED)) { //"Question Block","Stepped"
+	    else if( TemplateItemUtils.getTemplateItemType(myTempItem).equals(EvalConstants.ITEM_TYPE_BLOCK)
+	    		&& myTempItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED)){ 
+	    	UIBranchContainer block = UIBranchContainer.make(radiobranch,
 					"blockStepped:"); //$NON-NLS-1$
 			UIOutput.make(block, "itemNum", (new Integer(i + 1)).toString()); //$NON-NLS-1$
 			UIOutput.make(block, "itemText", myItem.getItemText()); //$NON-NLS-1$
 			Boolean useNA = myTempItem.getUsesNA();
-			//Boolean useNA = myItem.getUsesNA();
-			
-			if (useNA.booleanValue() == true) {
+			if (useNA !=null && useNA.booleanValue() == true) {
 				UIBranchContainer radiobranch3 = UIBranchContainer.make(block,
 						"showNA:"); //$NON-NLS-1$
 				UIBoundBoolean.make(radiobranch3, "itemNA", useNA); //$NON-NLS-1$
 				UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			// Radio Buttons
-/*			ItemDisplay itemDisplay = new ItemDisplay(myItem);
-			String values[] = itemDisplay.getScaleValues();
-			String labels[] = itemDisplay.getScaleLabels();
-*/
+
 			EvalScale  scale = myItem.getScale();
 			String[] scaleOptions = scale.getOptions();
 			int optionCount = scaleOptions.length;
@@ -714,13 +709,52 @@ public class TakeEvalProducer implements ViewComponentProducer,
 			}
 
 			// get child block item text
-		
+			List childList = itemsLogic.getBlockChildTemplateItemsForBlockParent(myTempItem.getId(), false);
+			for (int j = 0; j < childList.size(); j++) {
+				UIBranchContainer queRow = UIBranchContainer.make(
+						block, "queRow:", Integer.toString(j));
+				//	Get child item
+				EvalTemplateItem tempItemChild = (EvalTemplateItem) childList.get(j);
+				EvalItem child = tempItemChild.getItem();
+				
+			    String childItemOTPBinding = "templateItemBeanLocator." + tempItemChild.getId();		
+				String childItemOTP = childItemOTPBinding + ".";
+				
+				//String currChildBlockAnswerOTP=newAnswerOTPBinding+"child"+j;
+				String currChildBlockAnswerOTP;
+				if(responseId==null){
+					currChildBlockAnswerOTP=newResponseAnswersOTP + child.getId()+".";
+				}
+			    else{
+			    	currChildBlockAnswerOTP=responseAnswersOTP + responseId + "." + child.getId() + ".";
+			    }
+//				 Bind item id to list of items in evaluation bean.
+				form.parameters.add( new UIELBinding
+						(currChildBlockAnswerOTP+"item", new ELReference(childItemOTP+"item")) );		
+				
+				// Bind answer to list of answers in evaluation bean.
+				UISelect radios = UISelect.make(queRow, "dummyRadio",scaleValues, scaleLabels, 
+						currChildBlockAnswerOTP+"numeric", null); //$NON-NLS-1$
+				totalItemsAdded++;
+				
+				radios.optionnames = UIOutputMany.make(scaleLabels);
+				String selectID = radios.getFullID();
+				
+				UIOutput.make(queRow, "queNo", Integer.toString(j + 1)); //$NON-NLS-1$
+				UIOutput.make(queRow, "queText", child.getItemText()); //$NON-NLS-1$
+				for (int k = 0; k < scaleValues.length; k++) {
+					UIBranchContainer bc1 = UIBranchContainer.make(
+							queRow, "scaleValueOptions:", Integer //$NON-NLS-1$
+									.toString(k));
+					UISelectChoice.make(bc1, "dummyRadioValue", //$NON-NLS-1$
+							selectID, k);
+				}
+			}
+/*		
 			if (myTempItem.getBlockParent()!= null && myTempItem.getBlockParent().booleanValue() == true) {
 
 				Long parentID = myTempItem.getId();
-				
-			//	List childItems = logic.findItem(blockID);
-				
+					
 				List childItems = ItemBlockUtils.getChildItems(itemsList, parentID);
 				if (childItems != null && childItems.size() > 0) {
 					for (int j = 0; j < childItems.size(); j++) {
@@ -768,18 +802,18 @@ public class TakeEvalProducer implements ViewComponentProducer,
 				}// end of if
 
 			} // end of get child block item
-
-		} else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK) 
-				&& myTempItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED)) { //"Question Block","Stepped Colored"
-
+*/
+		} //else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK) 
+		//		&& myTempItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED)) { //"Question Block","Stepped Colored"
+	    else if(TemplateItemUtils.getTemplateItemType(myTempItem).equals(EvalConstants.ITEM_TYPE_BLOCK)
+	    		&& myTempItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED)){
 			UIBranchContainer blockSteppedColored = UIBranchContainer.make(
 					radiobranch, "blockSteppedColored:"); //$NON-NLS-1$
 			UIOutput.make(blockSteppedColored, "itemNum", (new Integer(i + 1)).toString());
-			UIOutput
-					.make(blockSteppedColored, "itemText", myItem.getItemText()); //$NON-NLS-1$
-			//Boolean useNA = myItem.getUsesNA();
+			UIOutput.make(blockSteppedColored, "itemText", myItem.getItemText()); //$NON-NLS-1$
+
 			Boolean useNA = myTempItem.getUsesNA();
-			if (useNA.booleanValue() == true) {
+			if (useNA != null && useNA.booleanValue() == true) {
 				UIBranchContainer radiobranch3 = UIBranchContainer.make(
 						blockSteppedColored, "showNA:"); //$NON-NLS-1$
 				UIBoundBoolean.make(radiobranch3, "itemNA", useNA); //$NON-NLS-1$
@@ -810,10 +844,6 @@ public class TakeEvalProducer implements ViewComponentProducer,
 				idealImage = EvaluationConstant.COLORED_IMAGE_URLS[3];
 
 			// Radio Buttons
-	/*		ItemDisplay itemDisplay = new ItemDisplay(myItem);
-			String values[] = itemDisplay.getScaleValues();
-			String labels[] = itemDisplay.getScaleLabels();
-*/
 			UISelect radioLabel = UISelect.make(blockSteppedColored, 
 					"radioLabel", scaleValues, scaleLabels, null, false); //$NON-NLS-1$
 			radioLabel.optionnames = UIOutputMany.make(scaleLabels);
@@ -844,7 +874,60 @@ public class TakeEvalProducer implements ViewComponentProducer,
 			}
 		
 			// get child block item text
-			if (myTempItem.getBlockParent()!= null && myTempItem.getBlockParent().booleanValue() == true) {
+			List childList = itemsLogic.getBlockChildTemplateItemsForBlockParent(myTempItem.getId(), false);
+			for (int j = 0; j < childList.size(); j++) {
+				UIBranchContainer queRow = UIBranchContainer.make(
+						blockSteppedColored, "queRow:", Integer //$NON-NLS-1$
+								.toString(j));
+
+				//get the child item
+
+				EvalTemplateItem tempItemChild = (EvalTemplateItem) childList.get(j);
+				EvalItem child = tempItemChild.getItem();
+
+			    String childItemOTPBinding = "templateItemBeanLocator." + tempItemChild.getId();		
+				String childItemOTP = childItemOTPBinding + ".";
+				
+				//String currChildBlockAnswerOTP=newAnswerOTPBinding+"child"+j;
+				String currChildBlockAnswerOTP;
+				if(responseId==null){
+					currChildBlockAnswerOTP=newResponseAnswersOTP + child.getId()+".";
+				}
+			    else{
+			    	currChildBlockAnswerOTP=responseAnswersOTP + responseId + "." + child.getId() + ".";
+			    }
+				
+				// Bind item id to list of items in evaluation bean.
+				form.parameters.add( new UIELBinding
+						(currChildBlockAnswerOTP+"item", new ELReference(childItemOTP+"item")) );			
+				
+				// Bind the answers to list of answers in evaluation bean.
+				UISelect radios = UISelect.make(queRow, "dummyRadio",
+						scaleValues, scaleLabels, currChildBlockAnswerOTP+"numeric", null);
+				totalItemsAdded++;
+
+				radios.optionnames = UIOutputMany.make(scaleLabels);
+				String selectID = radios.getFullID();
+				
+				UIOutput.make(queRow, "queNo", Integer.toString(j + 1)); //$NON-NLS-1$
+				UIOutput.make(queRow, "queText", child.getItemText()); //$NON-NLS-1$
+				UILink.make(queRow, "idealImage", idealImage); //$NON-NLS-1$
+				for (int k = 0; k < scaleValues.length; k++) {
+					UIBranchContainer radioBranchFirst = UIBranchContainer
+							.make(queRow, "scaleOptionsFirst:", Integer //$NON-NLS-1$
+									.toString(k));
+					UISelectChoice.make(radioBranchFirst,
+							"dummyRadioValueFirst", selectID, k); //$NON-NLS-1$
+
+					UIBranchContainer radioBranchSecond = UIBranchContainer
+							.make(queRow, "scaleOptionsSecond:", //$NON-NLS-1$
+									Integer.toString(k));
+					UISelectChoice.make(radioBranchSecond,
+							"dummyRadioValueSecond", selectID, k); //$NON-NLS-1$
+				}
+			}
+			
+/*			if (myTempItem.getBlockParent()!= null && myTempItem.getBlockParent().booleanValue() == true) {
 		
 				Long parentID = myTempItem.getId();
 				
@@ -905,7 +988,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 				}// end of if
 
 			} // end of get child block item
-
+*/
 		} else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)) { //"Short Answer/Essay"
 
 			UIBranchContainer essay = UIBranchContainer.make(radiobranch,

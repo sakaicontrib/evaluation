@@ -53,7 +53,7 @@
 
 	<bean id="takeEvalBean"
 		class="org.sakaiproject.evaluation.tool.TakeEvalBean">
-	  <property name="responseBeanLocator" ref="responseBeanLocator" />
+	 <property name="responseBeanLocator" ref="responseBeanLocator" />
 	</bean>
 
 	<bean id="templateBBean"
@@ -319,6 +319,8 @@
 		class="org.sakaiproject.evaluation.tool.producers.TakeEvalProducer">
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+		<property name="itemsLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
 		<property name="evalsLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
 		<property name="messageLocator" ref="messageLocator" />
