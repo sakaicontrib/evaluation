@@ -210,9 +210,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 						UIBranchContainer evalcourserow = UIBranchContainer.make(evalrow, 
 								"evaluationsCourseList:", context ); //$NON-NLS-1$
 	
-						/*	TODO: -fengr
-						 * should consider case:if a evaluation is closed, and student have not take it yet
-						 */
+				
 						// set status
 						if (response != null && response.getEndTime() != null) {
 							if(eval.getModifyResponsesAllowed().booleanValue()){

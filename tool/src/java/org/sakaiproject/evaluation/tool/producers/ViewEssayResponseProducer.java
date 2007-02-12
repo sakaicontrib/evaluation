@@ -1,5 +1,5 @@
 /******************************************************************************
- * ViewReportProducer.java - created by whumphri@vt.edu on Oct 05, 2006
+ * ViewReportProducer.java - created on Oct 05, 2006
  * 
  * Copyright (c) 2007 Virginia Polytechnic Institute and State University
  * Licensed under the Educational Community License version 1.0
@@ -8,8 +8,9 @@
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
  * 
  * Contributors:
- * Will Humphries (whumphri@vt.edu)
+ * 
  * Rui Feng (fengr@vt.edu)
+ * Will Humphries (whumphri@vt.edu)
  *****************************************************************************/
 package org.sakaiproject.evaluation.tool.producers;
 
@@ -49,8 +50,8 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 /**
  * rendering the Short Answer/Essay part report of an evaluation
  * 
- * @author:Will Humphries (whumphri@vt.edu)
  * @author: Rui Feng (fengr@vt.edu)
+ * @author:Will Humphries (whumphri@vt.edu)
  */
 
 public class ViewEssayResponseProducer implements ViewComponentProducer, NavigationCaseReporter, ViewParamsReporter {

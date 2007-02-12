@@ -534,33 +534,6 @@ public class EvaluationBean {
 		else
 			eval1 = evalsLogic.getEvaluationById(id);
 		
-		//TODO: Revisit this explanation and commented code below
-		/**
-		 * WARNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		 * ***************************************
-		 * This removal of contexts associated with the deleted evaluation should
-		 * be happening at the logic layer so there are not errors like this
-		 * one! For example, you are removing the contexts here but you should
-		 * be also removing the email templates. You also are not checking whether
-		 * this evaluation should be removed, it looks like you are allowing it
-		 * to be removed regardless of the fact that it may have associated
-		 * responses and answers (which is a HUGE problem) -AZ
-		 * Remove this logic and use the appropriate method in the logic layer
-		 * *************************************** 
-		 */
-		/*
-		if(eval1 != null){
-			//delete evaluation, need to deleted entry in AssignCourse Table
-			List l = assignsLogic.getAssignContextsByEvalId(eval1.getId());
-			if(l !=null && l.size() >0){
-				for (int i=0; i<l.size(); i++) {
-					EvalAssignContext eac = (EvalAssignContext) l.get(i);
-					assignsLogic.deleteAssignContext(eac.getId(), external.getCurrentUserId());
-				}
-			}
-			evalsLogic.deleteEvaluation(eval1.getId(), external.getCurrentUserId());
-		}
-		*/		
 	
 		evalsLogic.deleteEvaluation(eval1.getId(), external.getCurrentUserId());
 		return ControlPanelProducer.VIEW_ID;
