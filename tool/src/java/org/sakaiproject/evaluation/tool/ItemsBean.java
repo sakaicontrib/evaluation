@@ -180,6 +180,7 @@ public class ItemsBean {
 		templateItem.getItem().setScaleDisplaySetting(templateItem.getScaleDisplaySetting());
 		templateItem.setTemplate(templatesLogic.getTemplateById(templateId));
 		templateItem.getItem().setSharing(templateItem.getTemplate().getSharing());
+		templateItem.getItem().setCategory(templateItem.getItemCategory());
 		if(scaleId!=null)templateItem.getItem().setScale(scalesLogic.getScaleById(scaleId));
 		itemsLogic.saveItem(templateItem.getItem(), external.getCurrentUserId());
 		itemsLogic.saveTemplateItem(templateItem, external.getCurrentUserId());
