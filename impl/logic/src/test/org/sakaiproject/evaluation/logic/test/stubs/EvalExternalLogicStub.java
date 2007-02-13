@@ -369,4 +369,13 @@ public class EvalExternalLogicStub implements EvalExternalLogic {
 		return c;
 	}
 
+	/**
+	 * check if the options entered were nulls
+	 */
+	public void sendEmails(String from, String[] to, String subject, String message) {
+		if (from == null || to == null || subject == null || message == null) {
+			throw new NullPointerException("All params are required (none can be null)");
+		}
+	}
+
 }

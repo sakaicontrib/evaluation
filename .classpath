@@ -41,5 +41,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/user-api"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/util-api"/>
 	<classpathentry kind="var" path="MAVEN_REPO/log4j/jars/log4j-1.2.9.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/email-api"/>
+	<classpathentry kind="var" path="MAVEN_REPO/javamail/jars/mail-1.3.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

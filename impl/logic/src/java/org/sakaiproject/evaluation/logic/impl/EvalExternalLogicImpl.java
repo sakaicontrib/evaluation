@@ -15,15 +15,20 @@
 package org.sakaiproject.evaluation.logic.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.authz.api.AuthzGroupService;
 import org.sakaiproject.authz.api.FunctionManager;
 import org.sakaiproject.authz.api.SecurityService;
+import org.sakaiproject.email.api.EmailService;
 import org.sakaiproject.entity.api.EntityManager;
 import org.sakaiproject.entity.api.Reference;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
@@ -56,6 +61,11 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	private AuthzGroupService authzGroupService;
 	public void setAuthzGroupService(AuthzGroupService authzGroupService) {
 		this.authzGroupService = authzGroupService;
+	}
+
+	private EmailService emailService;
+	public void setEmailService(EmailService emailService) {
+		this.emailService = emailService;
 	}
 
 	private EntityManager entityManager;
@@ -256,6 +266,40 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalExternalLogic#sendEmails(java.lang.String, java.lang.String[], java.lang.String, java.lang.String)
+	 */
+	public void sendEmails(String from, String[] toUserIds, String subject, String message) {
+		InternetAddress fromAddress;
+		try {
+			fromAddress = new InternetAddress(from);
+		} catch (AddressException e) {
+			throw new IllegalArgumentException("Invalid from address: " + from);
+		}
+
+		// handle the list of TO addresses
+		List userIds = Arrays.asList( toUserIds );
+		List l = userDirectoryService.getUsers( userIds );
+
+		if (l == null || l.size() <= 0) {
+			throw new IllegalArgumentException("Could not get users from any provided userIds");
+		}
+
+		InternetAddress[] toAddresses = new InternetAddress[ l.size() ];
+		InternetAddress[] replyTo = new InternetAddress[ l.size() ];
+		for (int i = 0; i < l.size(); i++) {
+			User u = (User) l.get(i);
+			try {
+				InternetAddress toAddress = new InternetAddress( u.getEmail() );
+				toAddresses[i] = toAddress;
+				replyTo[i] = fromAddress;
+			} catch (AddressException e) {
+				throw new IllegalArgumentException("Invalid to address: " + toUserIds[i]);
+			}
+		}
+
+		emailService.sendMail(fromAddress, toAddresses, subject, message, null, replyTo, null);
+	}
 
 
 	/**
@@ -295,4 +339,5 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		}
 		return EvalConstants.CONTEXT_TYPE_UNKNOWN;
 	}
+
 }

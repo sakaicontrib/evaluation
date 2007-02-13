@@ -23,12 +23,14 @@ import org.sakaiproject.evaluation.logic.model.Context;
 /**
  * Handles getting and sending of information that is external to the evaluation system,
  * includes user information, group/course/site information, and security checks<br/>
- * <b>Note:</b> Meant to be used internally in the evaluation system app only<br/>
- * (Note for developers - do not modify this without permission from the project lead)
+ * <b>Note:</b> Meant to be used internally in the evaluation system app only, please
+ * do not call these methods outside the evaluation tool or logic layer
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public interface EvalExternalLogic {
+
+	// USERS
 
 	/**
 	 * @return the internal unique user id of the current user (not username)
@@ -58,6 +60,7 @@ public interface EvalExternalLogic {
 	public boolean isUserAdmin(String userId);
 
 
+	// PERMISSIONS
 
 	/**
 	 * Check if a user has a specified permission within a context, primarily
@@ -71,6 +74,7 @@ public interface EvalExternalLogic {
 	public boolean isUserAllowedInContext(String userId, String permission, String context);
 
 
+	// CONTEXTS
 
 	/**
 	 * @return the current group context for the current session
@@ -93,6 +97,9 @@ public interface EvalExternalLogic {
 	 * @return the displayable title or warning text if it cannot be found
 	 */
 	public String getDisplayTitle(String context);
+
+
+	// ENROLLMENTS
 
 	/**
 	 * Get a list of all user ids that have a specific permission in a context
@@ -121,5 +128,19 @@ public interface EvalExternalLogic {
 	 * @return the count of the contexts that the user has a permission in
 	 */
 	public int countContextsForUser(String userId, String permission);
+
+	// EMAIL
+
+	/**
+	 * Send emails to a set of users (can send to a single user
+	 * by specifying an array with one item only), gets the email addresses
+	 * for the users ids
+	 * 
+	 * @param from the email address this email appears to come from
+	 * @param toUserIds the userIds this message should be sent to
+	 * @param subject the message subject
+	 * @param message the message to send
+	 */
+	public void sendEmails(String from, String[] toUserIds, String subject, String message);
 
 }
