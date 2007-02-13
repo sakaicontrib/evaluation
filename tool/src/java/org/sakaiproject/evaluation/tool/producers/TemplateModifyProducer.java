@@ -275,11 +275,7 @@ public class TemplateModifyProducer implements ViewComponentProducer,
 		                        messageLocator.getMessage("modifytemplate.modify.link"),
 		                        target);
 				}
-			
 
-				
-				//UICommand removeCmd=UICommand.make(radiobranch,"remove_row_item","#{templateBean.removeRowItemAction}");
-				//removeCmd.parameters.add(new UIELBinding("#{itemsBean.currTemplateItemId}",Integer.toString(i)));
                 //System.out.println("tiid"+myTemplateItem.getId()+" itemtext: "+myTemplateItem.getItem().getItemText());
 				UIInternalLink.make(radiobranch, 
 						"remove_row_item", 
