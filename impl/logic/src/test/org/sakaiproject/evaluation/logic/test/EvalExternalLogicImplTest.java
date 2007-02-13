@@ -23,6 +23,7 @@ import junit.framework.Assert;
 import org.easymock.MockControl;
 import org.sakaiproject.authz.api.AuthzGroupService;
 import org.sakaiproject.authz.api.SecurityService;
+import org.sakaiproject.email.api.EmailService;
 import org.sakaiproject.entity.api.EntityManager;
 import org.sakaiproject.evaluation.logic.impl.EvalExternalLogicImpl;
 import org.sakaiproject.evaluation.logic.model.Context;
@@ -58,6 +59,8 @@ public class EvalExternalLogicImplTest extends AbstractTransactionalSpringContex
 
 	private AuthzGroupService authzGroupService;
 	private MockControl authzGroupServiceControl;
+	private EmailService emailService;
+	private MockControl emailServiceControl;
 	private EntityManager entityManager;
 	private MockControl entityManagerControl;
 	private SecurityService securityService;
@@ -83,6 +86,8 @@ public class EvalExternalLogicImplTest extends AbstractTransactionalSpringContex
 		// setup the mock objects
 		authzGroupServiceControl = MockControl.createControl(AuthzGroupService.class);
 		authzGroupService = (AuthzGroupService) authzGroupServiceControl.getMock();
+		emailServiceControl = MockControl.createControl(EmailService.class);
+		emailService = (EmailService) emailServiceControl.getMock();
 		entityManagerControl = MockControl.createControl(EntityManager.class);
 		entityManager = (EntityManager) entityManagerControl.getMock();
 		securityServiceControl = MockControl.createControl(SecurityService.class);
@@ -99,6 +104,7 @@ public class EvalExternalLogicImplTest extends AbstractTransactionalSpringContex
 		// create and setup the object to be tested
 		external = new EvalExternalLogicImpl();
 		external.setAuthzGroupService(authzGroupService);
+		external.setEmailService(emailService);
 		external.setEntityManager(entityManager);
 		external.setSecurityService(securityService);
 		external.setSessionManager(sessionManager);
@@ -472,4 +478,50 @@ public class EvalExternalLogicImplTest extends AbstractTransactionalSpringContex
 		siteServiceControl.verify();
 	}
 
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicImpl#isUserAllowedInContext(java.lang.String, java.lang.String, java.lang.String)}.
+	 */
+	public void testSendEmails() {
+		// cannot test this for now since easymock is making my life hard -AZ
+
+//		userDirectoryService.getUsers( null );
+//		userDirectoryServiceControl.setDefaultMatcher(MockControl.ALWAYS_MATCHER); // since this is a collection
+//		List l = new ArrayList();
+//		userDirectoryServiceControl.setReturnValue(l, MockControl.ZERO_OR_MORE);
+
+//		emailService.sendMail(from, to, subject, content, headerTo, replyTo, additionalHeaders);
+//		emailServiceControl.setDefaultMatcher(MockControl.ALWAYS_MATCHER); // since this is a collection
+//		emailServiceControl.setReturnValue(true, MockControl.ZERO_OR_MORE);
+
+		// activate the mock objects
+//		userDirectoryServiceControl.replay();
+//		emailServiceControl.replay();
+
+//		// make sure this throws an illegal argument exception
+//		try {
+//			external.sendEmails("azeckoski@gmail.com", new String[] {"azeckoski@gmail.com"}, "test subject", "test message");
+//			Assert.fail("Should have thrown exception");
+//		} catch (IllegalArgumentException e) {
+//			Assert.assertNotNull(e);
+//		}
+//
+//		// check that null values cause exception
+//		try {
+//			external.sendEmails(null, new String[] {"azeckoski@gmail.com"}, "subject", "message");
+//			Assert.fail("Should have thrown exception");
+//		} catch (NullPointerException e) {
+//			Assert.assertNotNull(e);
+//		}
+//
+//		try {
+//			external.sendEmails("aaronz@vt.edu", new String[] {"azeckoski@gmail.com"}, "subject", null);
+//			Assert.fail("Should have thrown exception");
+//		} catch (NullPointerException e) {
+//			Assert.assertNotNull(e);
+//		}
+
+		// verify the mock objects were used
+//		userDirectoryServiceControl.verify();
+//		emailServiceControl.verify();
+	}
 }

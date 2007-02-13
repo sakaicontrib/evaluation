@@ -29,6 +29,7 @@ public class TestUser implements User {
 	private String userId;
 	private String userEid = "fakeEid";
 	private String displayName = "Fake DisplayName";
+	private String email = "fake@fake.com";
 
 	/**
 	 * Construct an empty test user with an id set
@@ -60,6 +61,12 @@ public class TestUser implements User {
 		this.displayName = displayName;
 	}
 
+	public TestUser(String userId, String userEid, String displayName, String email) {
+		this.userId = userId;
+		this.userEid = userEid;
+		this.displayName = displayName;
+		this.email = email;
+	}
 
 	public boolean checkPassword(String pw) {
 		// TODO Auto-generated method stub
@@ -85,8 +92,7 @@ public class TestUser implements User {
 	}
 
 	public String getEmail() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.email;
 	}
 
 	public String getFirstName() {
