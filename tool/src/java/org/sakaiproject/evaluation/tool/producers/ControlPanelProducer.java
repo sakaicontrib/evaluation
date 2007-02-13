@@ -121,8 +121,9 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 		// Create new template link
 		if (createTemplate) {
 			UIForm createTemplateForm = UIForm.make(tofill, "create-template-form"); //$NON-NLS-1$
-			UICommand.make(createTemplateForm, "createTemplateLink", messageLocator.getMessage("controlpanel.create.template.link"), //$NON-NLS-1$ //$NON-NLS-2$
-									"#{templateBean.createNewTemplate}"); //$NON-NLS-1$
+			UIInternalLink.make(createTemplateForm, "createTemplateLink", //$NON-NLS-1$
+					messageLocator.getMessage("createtemplate.page.title"), //$NON-NLS-1$
+					new EvalViewParameters(TemplateProducer.VIEW_ID, null));
 			UIOutput.make(createTemplateForm, "eval-templates-header", messageLocator.getMessage("controlpanel.eval.templates.header")); //$NON-NLS-1$ //$NON-NLS-2$
 			/*UIInternalLink.make(createTemplateForm, "createTemplateLink", new EvalViewParameters(TemplateProducer.VIEW_ID, null,
 				ControlPanelProducer.VIEW_ID));*/

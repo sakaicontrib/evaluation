@@ -38,7 +38,7 @@ import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
 public class TemplateBBean {
 
-	private static Log log = LogFactory.getLog(TemplateBean.class);
+	private static Log log = LogFactory.getLog(TemplateBBean.class);
 
 	private TemplateBeanLocator templateBeanLocator;
 	public void setTemplateBeanLocator(TemplateBeanLocator templateBeanLocator) {

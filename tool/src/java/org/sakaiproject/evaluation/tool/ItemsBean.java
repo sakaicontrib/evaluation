@@ -41,7 +41,7 @@ public class ItemsBean {
 	/*
 	 * VARIABLE DECLARATIONS 
 	 */
-	private static Log log = LogFactory.getLog(TemplateBean.class);
+	private static Log log = LogFactory.getLog(ItemsBean.class);
 
 	/** 
 	 * Point to the value of dropdown list (Scale/Survey,Question Block,TextHeader,etc) 

@@ -26,7 +26,7 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 
 public class TakeEvalBean {
 
-	private static Log log = LogFactory.getLog(TemplateBean.class);
+	private static Log log = LogFactory.getLog(TakeEvalBean.class);
 
 	public EvalEvaluation eval;
 	public String context;

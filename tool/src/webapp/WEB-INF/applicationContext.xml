@@ -20,7 +20,7 @@
 	<!-- the beans listed here are allowed access to values (security) -->
 	<bean parent="requestAddressibleParent">
 		<property name="value"
-			value="templateBean, evaluationBean, templateBBean, itemsBean, templateBeanLocator, templateItemBeanLocator, answersBeanLocator, responseAnswersBeanLocator, responseBeanLocator, evaluationBeanLocator, takeEvalBean, settingsBean" />
+			value="evaluationBean, templateBBean, itemsBean, templateBeanLocator, templateItemBeanLocator, answersBeanLocator, responseAnswersBeanLocator, responseBeanLocator, evaluationBeanLocator, takeEvalBean, settingsBean" />
 	</bean>
 
 	<bean id="EvalARIProxy" parent="RSACBridgeProxy">
@@ -64,7 +64,7 @@
 	<!-- The beans listed here are session beans (they stick around) -->
 	<bean id="myBeanScope" parent="beanScopeParent">
 		<property name="copyPreservingBeans"
-			value="templateBean, evaluationBean" />
+			value="evaluationBean" />
 		<property name="exclusive" value="true" />
 	</bean>
 

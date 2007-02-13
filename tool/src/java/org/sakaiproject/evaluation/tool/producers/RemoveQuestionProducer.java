@@ -232,8 +232,6 @@ public class RemoveQuestionProducer implements ViewComponentProducer, ViewParams
 				
 				UILink.make(compactRadioContainer, "idealImage", idealImage); //$NON-NLS-1$
 				
-			//	String values [] = (templateBean.itemDisplayPreview).getScaleValues();
-			//	String labels [] = (templateBean.itemDisplayPreview).getScaleLabels();
 				UISelect radios = UISelect.make(compactRadioContainer, "dummyRadio", scaleValues, scaleLabels, null, false); //$NON-NLS-1$
 				
 				radios.optionnames = UIOutputMany.make(scaleLabels);
@@ -276,8 +274,6 @@ public class RemoveQuestionProducer implements ViewComponentProducer, ViewParams
 					scaleLabels[count] = scaleOptions[count];	
 				}
 				//Radio Buttons
-				//String values [] = (templateBean.itemDisplayPreview).getScaleValues();
-				//String labels [] = (templateBean.itemDisplayPreview).getScaleLabels();
 				UISelect radios = UISelect.make(full, "dummyRadio", scaleValues, scaleLabels, null, false); //$NON-NLS-1$
 				
 				radios.optionnames = UIOutputMany.make(scaleLabels);
@@ -307,7 +303,7 @@ public class RemoveQuestionProducer implements ViewComponentProducer, ViewParams
 					UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				//Get the scale ideal value (none, low, mid, high )
-				String ideal = scale.getIdeal();//templateBean.itemDisplayPreview.getItem().getScale().getIdeal(); 
+				String ideal = scale.getIdeal();
 
 				//Set the ideal image
 				String idealImage = ""; //$NON-NLS-1$
@@ -329,8 +325,7 @@ public class RemoveQuestionProducer implements ViewComponentProducer, ViewParams
 					scaleValues[count] = new Integer(count).toString();
 					scaleLabels[count] = scaleOptions[count];	
 				}
-				//String values [] = (templateBean.itemDisplayPreview).getScaleValues();
-				//String labels [] = (templateBean.itemDisplayPreview).getScaleLabels();
+
 				UISelect radios = UISelect.make(fullColored, "dummyRadio", scaleValues, scaleLabels, null, false); //$NON-NLS-1$
 				
 				radios.optionnames = UIOutputMany.make(scaleLabels);
@@ -364,8 +359,6 @@ public class RemoveQuestionProducer implements ViewComponentProducer, ViewParams
 				}
 				
 				//Radio Buttons
-				//String values [] = (templateBean.itemDisplayPreview).getScaleValues();
-				//String labels [] = (templateBean.itemDisplayPreview).getScaleLabels();
 				UISelect radios = UISelect.make(stepped, "dummyRadio", scaleValues, scaleLabels, null, false); //$NON-NLS-1$
 				
 				radios.optionnames = UIOutputMany.make(scaleLabels);
@@ -406,7 +399,7 @@ public class RemoveQuestionProducer implements ViewComponentProducer, ViewParams
 					UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				//Get the scale ideal value (none, low, mid, high )
-				String ideal = scale.getIdeal(); //templateBean.itemDisplayPreview.getItem().getScale().getIdeal();
+				String ideal = scale.getIdeal(); 
 				
 				String idealImage = ""; //$NON-NLS-1$
 				if (ideal ==  null)
@@ -426,8 +419,6 @@ public class RemoveQuestionProducer implements ViewComponentProducer, ViewParams
 					scaleLabels[optionCount - count] = scaleOptions[count-1];
 				}
 				//Radio Buttons
-				//String values [] = (templateBean.itemDisplayPreview).getScaleValues();
-				//String labels [] = (templateBean.itemDisplayPreview).getScaleLabels();
 				UISelect radios = UISelect.make(steppedColored, "dummyRadio", scaleValues, scaleLabels, null, false); //$NON-NLS-1$
 				
 				radios.optionnames = UIOutputMany.make(scaleLabels);
@@ -481,8 +472,6 @@ public class RemoveQuestionProducer implements ViewComponentProducer, ViewParams
 				}
 				
 				//Radio Buttons
-				//String values [] = (templateBean.itemDisplayPreview).getScaleValues();
-				//String labels [] = (templateBean.itemDisplayPreview).getScaleLabels();
 				UISelect radios = UISelect.make(vertical, "dummyRadio", scaleValues, scaleLabels, null, false); //$NON-NLS-1$
 				
 				radios.optionnames = UIOutputMany.make(scaleLabels);
@@ -528,146 +517,7 @@ public class RemoveQuestionProducer implements ViewComponentProducer, ViewParams
 			UIOutput.make(header, "queNo",myTemplateItem.getDisplayOrder().toString()); //$NON-NLS-1$ //$NON-NLS-2$
 			UIOutput.make(header, "itemText", myTemplateItem.getItem().getItemText()); //$NON-NLS-1$ //$NON-NLS-2$
 
-		// TODO - Make block work
-		}/**else if(myTemplateItem.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)&& 
-				templateBean.scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED)){ //"Question Block","Stepped"
-			UIBranchContainer blockStepped = UIBranchContainer.make(tofill, "blockStepped:"); //$NON-NLS-1$
-			
-			UIOutput.make(blockStepped, "itemNo",null,"#{templateBean.currItemNo}"); //$NON-NLS-1$ //$NON-NLS-2$
-			UIOutput.make(blockStepped, "itemText", null, "#{templateBean.itemText}"); //$NON-NLS-1$ //$NON-NLS-2$
-			Boolean usesNA=myTemplateItem.getUsesNA();
-			if(usesNA==null)usesNA=myTemplateItem.getItem().getUsesNA();
-			if(usesNA != null && usesNA.booleanValue()== true){
-				UIBranchContainer radiobranch3 = UIBranchContainer.make(blockStepped,"showNA:"); //$NON-NLS-1$
-				UIBoundBoolean.make(radiobranch3, "itemNA",usesNA); //$NON-NLS-1$
-				UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			
-
-			EvalScale  scale = templateBean.itemPreview.getScale();
-			String[] scaleOptions = scale.getOptions();
-			int optionCount = scaleOptions.length;
-			String scaleValues[] = new String[optionCount];
-			String scaleLabels[] = new String[optionCount];
-
-			for (int count = 1; count <= optionCount; count++) {
-				scaleValues[optionCount - count] = new Integer(optionCount - count).toString();
-				scaleLabels[optionCount - count] = scaleOptions[count-1];
-			}
-			
-			//Radio Buttons
-			//String values [] = (templateBean.itemDisplayPreview).getScaleValues();
-			//String labels [] = (templateBean.itemDisplayPreview).getScaleLabels();
-			
-			UISelect radios = UISelect.make(blockStepped, "dummyRadio", scaleValues, scaleLabels, null, false); //$NON-NLS-1$
-			radios.optionnames = UIOutputMany.make(scaleLabels);		
-		    String selectID = radios.getFullID();
-		    for (int i = 0; i < scaleValues.length; ++i) 
-		    {
-				UIBranchContainer radioTopLabelBranch = UIBranchContainer.make(blockStepped, "scaleTopLabelOptions:", Integer.toString(i)); //$NON-NLS-1$
-				UISelectLabel.make(radioTopLabelBranch, "dummyTopRadioLabel", selectID, i); //$NON-NLS-1$
-				UILink.make(radioTopLabelBranch, "cornerImage", EvaluationConstant.STEPPED_IMAGE_URLS[0]); //$NON-NLS-1$
-				//This branch container is created to help in creating the middle images after the LABEL
-			    for (int k = 0; k < i; ++k) {
-			    	UIBranchContainer radioTopLabelAfterBranch = UIBranchContainer.make(radioTopLabelBranch, "scaleTopLabelAfterOptions:", Integer.toString(k)); //$NON-NLS-1$
-					UILink.make(radioTopLabelAfterBranch, "middleImage", EvaluationConstant.STEPPED_IMAGE_URLS[1]); //$NON-NLS-1$
-			    }
-				UIBranchContainer radioBottomLabelBranch = UIBranchContainer.make(blockStepped, "scaleBottomLabelOptions:", Integer.toString(i)); //$NON-NLS-1$
-				UILink.make(radioBottomLabelBranch, "bottomImage", EvaluationConstant.STEPPED_IMAGE_URLS[2]);				 //$NON-NLS-1$
-		    }	
-				//get child block item text
-			for(int j = 0; j< templateBean.queList.size(); j++){
-					UIBranchContainer queRow = UIBranchContainer.make(blockStepped,"queRow:", Integer.toString(j)); //$NON-NLS-1$
-					String txt = (String)templateBean.queList.get(j);
-					UIOutput.make(queRow,"queNo",Integer.toString(j+1));	 //$NON-NLS-1$
-					UIOutput.make(queRow,"queText",txt); //$NON-NLS-1$
-					for(int k=0;k< scaleValues.length; k++){
-						UIBranchContainer bc1 = UIBranchContainer.make(queRow, "scaleValueOptions:", Integer.toString(k)); //$NON-NLS-1$
-						UISelectChoice.make(bc1, "dummyRadioValue", selectID, k); //$NON-NLS-1$
-					}
-					
-			}
-
-		// TODO - changed to ITEM_TYPE_SCALED so it will COMPILE - AZ should be Block
-		}*//**else if(templateBean.itemClassification.equals(EvalConstants.ITEM_TYPE_SCALED)&& 
-				templateBean.scaleDisplaySetting.equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED)){ //"Question Block","Stepped Colored"
-			UIBranchContainer blockSteppedColored = UIBranchContainer.make(tofill, "blockSteppedColored:"); //$NON-NLS-1$
-			UIOutput.make(blockSteppedColored, "itemNo",null,"#{templateBean.currItemNo}"); //$NON-NLS-1$ //$NON-NLS-2$
-			UIOutput.make(blockSteppedColored, "itemText", null, "#{templateBean.itemText}"); //$NON-NLS-1$ //$NON-NLS-2$
-			Boolean usesNA=myTemplateItem.getUsesNA();
-			if(usesNA==null)usesNA=myTemplateItem.getItem().getUsesNA();
-			if(usesNA != null && usesNA.booleanValue()== true){
-				UIBranchContainer radiobranch3 = UIBranchContainer.make(blockSteppedColored,"showNA:"); //$NON-NLS-1$
-				UIBoundBoolean.make(radiobranch3, "itemNA",usesNA); //$NON-NLS-1$
-				UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			
-			EvalScale  scale = templateBean.itemPreview.getScale();
-			String[] scaleOptions = scale.getOptions();
-			int optionCount = scaleOptions.length;
-			String scaleValues[] = new String[optionCount];
-			String scaleLabels[] = new String[optionCount];
-
-			for (int count = 1; count <= optionCount; count++) {
-				scaleValues[optionCount - count] = new Integer(optionCount - count).toString();
-				scaleLabels[optionCount - count] = scaleOptions[count-1];
-			}
-			
-			//Get the scale ideal value (none, low, mid, high )
-			String ideal = scale.getIdeal(); //templateBean.itemDisplayPreview.getItem().getScale().getIdeal();
-			String idealImage = ""; //$NON-NLS-1$
-			if (ideal ==  null)
-				idealImage = EvaluationConstant.COLORED_IMAGE_URLS[0];
-			else if (ideal.equals("low")) //$NON-NLS-1$
-				idealImage = EvaluationConstant.COLORED_IMAGE_URLS[1];
-			else if (ideal.equals("mid")) //$NON-NLS-1$
-				idealImage = EvaluationConstant.COLORED_IMAGE_URLS[2];
-			else
-				idealImage = EvaluationConstant.COLORED_IMAGE_URLS[3];
-		//	UILink.make(blockSteppedColored, "idealImage", idealImage);
-			
-			//Radio Buttons
-			//String values [] = (templateBean.itemDisplayPreview).getScaleValues();
-			//String labels [] = (templateBean.itemDisplayPreview).getScaleLabels();
-			UISelect radios = UISelect.make(blockSteppedColored, "dummyRadio", scaleValues, scaleLabels, null, false); //$NON-NLS-1$
-			radios.optionnames = UIOutputMany.make(scaleLabels);
-		    String selectID = radios.getFullID();
-		    for (int i = 0; i < scaleValues.length; ++i) {
-				UIBranchContainer rowBranch = UIBranchContainer.make(blockSteppedColored, "rowBranch:", Integer.toString(i));				 //$NON-NLS-1$
-			    //Actual label
-				UISelectLabel.make(rowBranch, "topLabel", selectID, i);				 //$NON-NLS-1$
-				//Corner Image
-				UILink.make(rowBranch, "cornerImage", EvaluationConstant.STEPPED_IMAGE_URLS[0]); //$NON-NLS-1$
-				//This branch container is created to help in creating the middle images after the LABEL
-			    for (int k = 0; k < i; ++k) 
-			    {
-			    	UIBranchContainer afterTopLabelBranch = UIBranchContainer.make(rowBranch, "afterTopLabelBranch:", Integer.toString(k)); //$NON-NLS-1$
-					UILink.make(afterTopLabelBranch, "middleImage", EvaluationConstant.STEPPED_IMAGE_URLS[1]); //$NON-NLS-1$
-			    }
-
-				UIBranchContainer bottomLabelBranch = UIBranchContainer.make(blockSteppedColored, "bottomLabelBranch:", Integer.toString(i)); //$NON-NLS-1$
-				UILink.make(bottomLabelBranch, "bottomImage", EvaluationConstant.STEPPED_IMAGE_URLS[2]); //$NON-NLS-1$
-				
-		    }
-		    
-			//get child block item text
-		    for(int j = 0; j< templateBean.queList.size(); j++){
-		    	
-				UIBranchContainer queRow = UIBranchContainer.make(blockSteppedColored,"queRow:", Integer.toString(j)); //$NON-NLS-1$
-				String txt = (String)templateBean.queList.get(j);
-				UIOutput.make(queRow,"queNo",Integer.toString(j+1));	 //$NON-NLS-1$
-				UIOutput.make(queRow,"queText",txt); //$NON-NLS-1$
-				UILink.make(queRow, "idealImage", idealImage); //$NON-NLS-1$
-				for(int k=0;k< scaleValues.length; k++){
-					UIBranchContainer radioBranchFirst = UIBranchContainer.make(queRow, "scaleOptionsFirst:", Integer.toString(k)); //$NON-NLS-1$
-					UISelectChoice.make(radioBranchFirst, "dummyRadioValueFirst", selectID, k); //$NON-NLS-1$
-
-					UIBranchContainer radioBranchSecond = UIBranchContainer.make(queRow, "scaleOptionsSecond:", Integer.toString(k)); //$NON-NLS-1$
-					UISelectChoice.make(radioBranchSecond, "dummyRadioValueSecond", selectID, k); //$NON-NLS-1$
-				}
-			}
-			
-		}*/
+		}
 		UIOutput.make(form, "cancel-button", messageLocator.getMessage("general.cancel.button"));
 		UICommand rmvBtn=UICommand.make(form, "removeQuestionAction", messageLocator.getMessage("removequestion.remove.button"),  //$NON-NLS-1$ //$NON-NLS-2$
 				"#{itemsBean.removeItemAction}"); //$NON-NLS-1$
