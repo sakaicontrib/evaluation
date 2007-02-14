@@ -23,6 +23,7 @@
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 	</bean>
 
+
 	<!-- request scope backing beans here -->
 	<bean id="settingsBean"
 		class="org.sakaiproject.evaluation.tool.SettingsWBL">
@@ -32,7 +33,6 @@
 		<property name="messageLocator" ref="messageLocator" />
 	</bean>
 
-	<!-- request scope backing beans here -->
 	<bean id="EvalARI"
 		class="org.sakaiproject.evaluation.tool.EvalARI">
 		<property name="itemsBean" ref="itemsBean" />
