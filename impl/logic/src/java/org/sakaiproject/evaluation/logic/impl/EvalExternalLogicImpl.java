@@ -144,6 +144,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		return "Unknown DisplayName";
 	}
 
+
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.external.EvalExternalLogic#isUserAdmin(java.lang.String)
 	 */
@@ -152,6 +153,22 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		return securityService.isSuperUser(userId);
 	}
 
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.external.EvalExternalLogic#makeContextObject(java.lang.String)
+	 */
+	public Context makeContextObject(String context) {
+		// TODO - make this work for other context types
+		try {
+			Site site = siteService.getSite(context);
+			return new Context( context, site.getTitle(), 
+					getContextType(SAKAI_SITE_TYPE) );
+		} catch (IdUnusedException e) {
+			// invalid site Id returned
+			log.error("Could not get site from context:" + context, e);
+		}
+		return null;
+	}
 
 
 	/* (non-Javadoc)
@@ -174,6 +191,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		}
 		return "Unknown DisplayTitle";
 	}
+
 
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.external.EvalExternalLogic#countContextsForUser(java.lang.String, java.lang.String)
@@ -228,6 +246,13 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.externals.ExternalContexts#countUserIdsForContext(java.lang.String, java.lang.String)
+	 */
+	public int countUserIdsForContext(String context, String permission) {
+		return getUserIdsForContext(context, permission).size();
+	}
+
+	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.external.EvalExternalLogic#getUserIdsForContext(java.lang.String, java.lang.String)
 	 */
 	public Set getUserIdsForContext(String context, String permission) {
@@ -236,23 +261,6 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		azGroups.add(reference);
 		return authzGroupService.getUsersIsAllowed(permission, azGroups);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.external.EvalExternalLogic#makeContextObject(java.lang.String)
-	 */
-	public Context makeContextObject(String context) {
-		// TODO - make this work for other context types
-		try {
-			Site site = siteService.getSite(context);
-			return new Context( context, site.getTitle(), 
-					getContextType(SAKAI_SITE_TYPE) );
-		} catch (IdUnusedException e) {
-			// invalid site Id returned
-			log.error("Could not get site from context:" + context, e);
-		}
-		return null;
-	}
-
 
 
 	/* (non-Javadoc)

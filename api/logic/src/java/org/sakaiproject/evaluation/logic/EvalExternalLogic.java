@@ -14,10 +14,8 @@
 
 package org.sakaiproject.evaluation.logic;
 
-import java.util.List;
-import java.util.Set;
-
-import org.sakaiproject.evaluation.logic.model.Context;
+import org.sakaiproject.evaluation.logic.externals.ExternalContexts;
+import org.sakaiproject.evaluation.logic.externals.ExternalUsers;
 
 
 /**
@@ -28,29 +26,9 @@ import org.sakaiproject.evaluation.logic.model.Context;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public interface EvalExternalLogic {
+public interface EvalExternalLogic extends ExternalUsers, ExternalContexts {
 
-	// USERS
-
-	/**
-	 * @return the internal unique user id of the current user (not username)
-	 */
-	public String getCurrentUserId();
-
-	/**
-	 * @param userId the internal user id (not username)
-	 * @return the username or warning text if it cannot be found
-	 */
-	public String getUserUsername(String userId);
-
-	/**
-	 * Gets the displayable name for a user id<br/>
-	 * <b>Warning</b>: This method is expensive so be careful when calling it
-	 * 
-	 * @param userId the internal user id (not username)
-	 * @return the user display name or warning text if it cannot be found
-	 */
-	public String getUserDisplayName(String userId);
+	// PERMISSIONS
 
 	/**
 	 * Check if this user has super admin access in the evaluation system
@@ -58,9 +36,6 @@ public interface EvalExternalLogic {
 	 * @return true if the user has admin access, false otherwise
 	 */
 	public boolean isUserAdmin(String userId);
-
-
-	// PERMISSIONS
 
 	/**
 	 * Check if a user has a specified permission within a context, primarily
@@ -73,61 +48,6 @@ public interface EvalExternalLogic {
 	 */
 	public boolean isUserAllowedInContext(String userId, String permission, String context);
 
-
-	// CONTEXTS
-
-	/**
-	 * @return the current group context for the current session
-	 * (represents the current location of the user in the system)
-	 */
-	public String getCurrentContext();
-
-	/**
-	 * Construct a Context object based on the context string id
-	 * 
-	 * @param context the internal context (represents a site or group)
-	 * @return a Context object or null if not found
-	 */
-	public Context makeContextObject(String context);
-
-	/**
-	 * Get the title associated with a context
-	 * 
-	 * @param context the internal context (represents a site or group)
-	 * @return the displayable title or warning text if it cannot be found
-	 */
-	public String getDisplayTitle(String context);
-
-
-	// ENROLLMENTS
-
-	/**
-	 * Get a list of all user ids that have a specific permission in a context
-	 * 
-	 * @param context a context (group/site)
-	 * @param permission a permission string constant
-	 * @return a List of Strings which represent the user Ids of all users in the site with that permission
-	 */
-	public Set getUserIdsForContext(String context, String permission);
-
-	/**
-	 * Get a list of all contexts that a user has a specific permission in
-	 * (use {@link #countContextsForUser(String, String)} if you just need the number)
-	 * 
-	 * @param userId the internal user id (not username)
-	 * @param permission a permission string constant
-	 * @return a List of {@link Context} objects
-	 */
-	public List getContextsForUser(String userId, String permission);
-
-	/**
-	 * Get a count of all contexts that a user has a specific permission in
-	 * 
-	 * @param userId the internal user id (not username)
-	 * @param permission a permission string constant
-	 * @return the count of the contexts that the user has a permission in
-	 */
-	public int countContextsForUser(String userId, String permission);
 
 	// EMAIL
 

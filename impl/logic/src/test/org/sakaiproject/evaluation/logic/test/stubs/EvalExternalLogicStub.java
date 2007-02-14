@@ -194,6 +194,14 @@ public class EvalExternalLogicStub implements EvalExternalLogic {
 		return s;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.externals.ExternalContexts#countUserIdsForContext(java.lang.String, java.lang.String)
+	 */
+	public int countUserIdsForContext(String context, String permission) {
+		// just use the other stub method
+		return getUserIdsForContext(context, permission).size();
+	}
+
 	/**
 	 * Note: Admin has all perms in all sites
 	 * 2 sites:<br/>
