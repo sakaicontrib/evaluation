@@ -89,8 +89,9 @@ public interface EvalEmailsLogic {
 	 * 
 	 * @param evaluationId the id of an EvalEvaluation object
 	 * @param includeOwner if true then send an email to the owner (creator of this evaluation) also, else do not include the owner
+	 * @return an array of the messages that were sent
 	 */
-	public void sendEvalCreatedNotifications(Long evaluationId, boolean includeOwner);
+	public String[] sendEvalCreatedNotifications(Long evaluationId, boolean includeOwner);
 
 	/**
 	 * Send notifications to evaluators that there is an evaluation ready for them to take
@@ -100,8 +101,9 @@ public interface EvalEmailsLogic {
 	 * @param evaluationId the id of an EvalEvaluation object
 	 * @param includeEvaluatees if true, include notification to the evaluatees (probably instructors) that
 	 * if they have not opted into an evaluation which is opt-in, otherwise this does nothing
+	 * @return an array of the messages that were sent
 	 */
-	public void sendEvalAvailableNotifications(Long evaluationId, boolean includeEvaluatees);
+	public String[] sendEvalAvailableNotifications(Long evaluationId, boolean includeEvaluatees);
 
 	/**
 	 * Send reminder notifications to all users who are taking an evaluation,
@@ -111,8 +113,9 @@ public interface EvalEmailsLogic {
 	 * 
 	 * @param evaluationId the id of an EvalEvaluation object
 	 * @param includeConstant a constant to indicate what users should receive the notification, EMAIL_INCLUDE from {@link EvalConstants}
+	 * @return an array of the messages that were sent
 	 */
-	public void sendEvalReminderNotifications(Long evaluationId, String includeConstant);
+	public String[] sendEvalReminderNotifications(Long evaluationId, String includeConstant);
 
 	/**
 	 * Send notifications that the evaluation is now complete and the results are viewable,
@@ -124,7 +127,8 @@ public interface EvalEmailsLogic {
 	 * @param includeEvaluatees if true, include notifications to all evaluated users
 	 * @param includeAdmins if true, include notifications to all admins above the contexts and
 	 * eval groups evaluated in this evaluation, otherwise include evaluatees only
+	 * @return an array of the messages that were sent
 	 */
-	public void sendEvalResultsNotifications(Long evaluationId, boolean includeEvaluatees, boolean includeAdmins);
+	public String[] sendEvalResultsNotifications(Long evaluationId, boolean includeEvaluatees, boolean includeAdmins);
 
 }

@@ -346,6 +346,7 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#sendEvalAvailableNotifications(java.lang.Long, boolean)}.
 	 */
 	public void testSendEvalAvailableNotifications() {
+		emailTemplates.sendEvalAvailableNotifications(etdl.evaluationActive.getId(), false);
 		// TODO fail("Not yet implemented");
 	}
 
@@ -353,6 +354,7 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#sendEvalCreatedNotifications(java.lang.Long, boolean)}.
 	 */
 	public void testSendEvalCreatedNotifications() {
+		emailTemplates.sendEvalCreatedNotifications(etdl.evaluationActive.getId(), false);
 		// TODO fail("Not yet implemented");
 	}
 
@@ -360,6 +362,7 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#sendEvalReminderNotifications(java.lang.Long, java.lang.String)}.
 	 */
 	public void testSendEvalReminderNotifications() {
+		emailTemplates.sendEvalReminderNotifications(etdl.evaluationActive.getId(), EvalConstants.EMAIL_INCLUDE_NONTAKERS);
 		// TODO fail("Not yet implemented");
 	}
 
@@ -367,6 +370,7 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#sendEvalResultsNotifications(java.lang.Long, boolean, boolean)}.
 	 */
 	public void testSendEvalResultsNotifications() {
+		emailTemplates.sendEvalResultsNotifications(etdl.evaluationActive.getId(), false, false);
 		// TODO fail("Not yet implemented");
 	}
 

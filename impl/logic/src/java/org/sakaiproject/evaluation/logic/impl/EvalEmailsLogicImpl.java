@@ -266,38 +266,42 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
 	// sending emails
 
-	public void sendEvalAvailableNotifications(Long evaluationId, boolean includeEvaluatees) {
+	public String[] sendEvalAvailableNotifications(Long evaluationId, boolean includeEvaluatees) {
 		log.debug("evaluationId: " + evaluationId + ", includeEvaluatees: " + includeEvaluatees);
 		// TODO Auto-generated method stub
 		
 		log.error("Method not implemented yet!");
+		return null;
 
 	}
 
 
-	public void sendEvalCreatedNotifications(Long evaluationId, boolean includeOwner) {
+	public String[] sendEvalCreatedNotifications(Long evaluationId, boolean includeOwner) {
 		log.debug("evaluationId: " + evaluationId + ", includeOwner: " + includeOwner);
 		// TODO Auto-generated method stub
 		
 		log.error("Method not implemented yet!");
+		return null;
 
 	}
 
 
-	public void sendEvalReminderNotifications(Long evaluationId, String includeConstant) {
+	public String[] sendEvalReminderNotifications(Long evaluationId, String includeConstant) {
 		log.debug("evaluationId: " + evaluationId + ", includeConstant: " + includeConstant);
 		// TODO Auto-generated method stub
 		
 		log.error("Method not implemented yet!");
+		return null;
 
 	}
 
 
-	public void sendEvalResultsNotifications(Long evaluationId, boolean includeEvaluatees, boolean includeAdmins) {
+	public String[] sendEvalResultsNotifications(Long evaluationId, boolean includeEvaluatees, boolean includeAdmins) {
 		log.debug("evaluationId: " + evaluationId + ", includeEvaluatees: " + includeEvaluatees + ", includeAdmins: " + includeAdmins);
 		// TODO Auto-generated method stub
 		
 		log.error("Method not implemented yet!");
+		return null;
 
 	}
 }
