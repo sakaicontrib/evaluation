@@ -17,7 +17,7 @@ api/logic/src/java/org/sakaiproject/evaluation/logic/EvalSettings.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalTemplatesLogic.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvaluationSettingsParse.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/ExternalContexts.java -text
-api/logic/src/java/org/sakaiproject/evaluation/logic/externals/ExternalCourses.java -text
+api/logic/src/java/org/sakaiproject/evaluation/logic/externals/ExternalEvalGroups.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/ExternalUsers.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/model/Context.java -text
 api/model/project.xml -text
