@@ -406,6 +406,31 @@ public class EvalExternalLogicImplTest extends AbstractTransactionalSpringContex
 	}
 
 	/**
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicImpl#getUserIdsForContext(java.lang.String, java.lang.String)}.
+	 */
+	public void testCountUserIdsForContext() {
+		// set up mock objects with return values
+		authzGroupService.getUsersIsAllowed(EvalConstants.PERM_WRITE_TEMPLATE, null);
+		// have to use the always matcher here since the 2nd argument is a Set
+		authzGroupServiceControl.setDefaultMatcher(MockControl.ALWAYS_MATCHER);
+		Set users = new HashSet();
+		users.add(EvalTestDataLoad.MAINT_USER_ID);
+		authzGroupServiceControl.setReturnValue(users);
+
+		// activate the mock objects
+		authzGroupServiceControl.replay();
+		siteServiceControl.replay();
+
+		// mock objects needed here
+		int count = external.countUserIdsForContext(EvalTestDataLoad.CONTEXT1, EvalConstants.PERM_WRITE_TEMPLATE);
+		Assert.assertEquals(1, count);
+
+		// verify the mock objects were used
+		authzGroupServiceControl.verify();
+		siteServiceControl.verify();
+	}
+
+	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicImpl#makeContextObject(java.lang.String)}.
 	 */
 	public void testMakeContextObject() {

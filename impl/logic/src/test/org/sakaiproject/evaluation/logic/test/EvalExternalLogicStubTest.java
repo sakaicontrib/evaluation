@@ -167,6 +167,16 @@ public class EvalExternalLogicStubTest extends TestCase {
 	}
 
 	/**
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicStub#countUserIdsForContext(java.lang.String, java.lang.String)}.
+	 */
+	public void testCountUserIdsForContext() {
+
+		int count = external.countUserIdsForContext(EvalTestDataLoad.CONTEXT1, EvalConstants.PERM_WRITE_TEMPLATE);
+		Assert.assertEquals(1, count);
+
+	}
+
+	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicStub#makeContextObject(java.lang.String)}.
 	 */
 	public void testMakeContextObject() {
