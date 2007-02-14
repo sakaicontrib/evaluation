@@ -15,10 +15,11 @@
 package org.sakaiproject.evaluation.logic;
 
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 /**
- * Handles all logic associated with processing email and email templates
- * (Note for developers - do not modify this without permission from the project lead)
+ * Handles all logic associated with processing email and email templates,
+ * also handles sending emails
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
@@ -77,4 +78,53 @@ public interface EvalEmailsLogic {
 	 * @return true if the user can control the email template at this time, false otherwise
 	 */
 	public boolean canControlEmailTemplate(String userId, Long evaluationId, Long emailTemplateId);
+
+
+	// NOTIFICATION methods
+
+	/**
+	 * Send notifications to evaluatees (and owner if desired) that a new evaluation
+	 * has been created, includes links directly to add their own questions and details
+	 * about the dates for the evaluation
+	 * 
+	 * @param evaluationId the id of an EvalEvaluation object
+	 * @param includeOwner if true then send an email to the owner (creator of this evaluation) also, else do not include the owner
+	 */
+	public void sendEvalCreatedNotifications(Long evaluationId, boolean includeOwner);
+
+	/**
+	 * Send notifications to evaluators that there is an evaluation ready for them to take
+	 * and includes information about the evaluation (dates), also includes links to
+	 * take the evaluation in "one-click" (i.e. link directly to the take_eval page)
+	 * 
+	 * @param evaluationId the id of an EvalEvaluation object
+	 * @param includeEvaluatees if true, include notification to the evaluatees (probably instructors) that
+	 * if they have not opted into an evaluation which is opt-in, otherwise this does nothing
+	 */
+	public void sendEvalAvailableNotifications(Long evaluationId, boolean includeEvaluatees);
+
+	/**
+	 * Send reminder notifications to all users who are taking an evaluation,
+	 * these include a direct link to the evaluation and information about the
+	 * context being evaluated and the dates of the evaluation, 
+	 * uses the reminder template and the users to include can be controlled
+	 * 
+	 * @param evaluationId the id of an EvalEvaluation object
+	 * @param includeConstant a constant to indicate what users should receive the notification, EMAIL_INCLUDE from {@link EvalConstants}
+	 */
+	public void sendEvalReminderNotifications(Long evaluationId, String includeConstant);
+
+	/**
+	 * Send notifications that the evaluation is now complete and the results are viewable,
+	 * includes stats for the evaluation (response rate, etc.) and links directly to
+	 * the results page for this evaluation, owner of the evaluation is always included
+	 * in the notification
+	 * 
+	 * @param evaluationId the id of an EvalEvaluation object
+	 * @param includeEvaluatees if true, include notifications to all evaluated users
+	 * @param includeAdmins if true, include notifications to all admins above the contexts and
+	 * eval groups evaluated in this evaluation, otherwise include evaluatees only
+	 */
+	public void sendEvalResultsNotifications(Long evaluationId, boolean includeEvaluatees, boolean includeAdmins);
+
 }

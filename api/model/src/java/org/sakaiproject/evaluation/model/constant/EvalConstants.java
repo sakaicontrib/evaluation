@@ -280,6 +280,19 @@ public class EvalConstants {
 		"3) Click on '[Course Title:]' link. \n" +
 		"4) Click on '[Evaluation Title:]' link. \n";
 
+	/**
+	 * Notification: Include all users who have not taken the evaluation yet
+	 */
+	public final static String EMAIL_INCLUDE_NONTAKERS = "nontakers";
+	/**
+	 * Notification: Include all users who have responded to the evaluation
+	 */
+	public final static String EMAIL_INCLUDE_RESPONDENTS = "respondents";
+	/**
+	 * Notification: Include all users for the evaluation
+	 */
+	public final static String EMAIL_INCLUDE_ALL = "all";
+
 
 	/**
 	 * Evaluation state: Cannot determine the state, this evaluation is invalid in some way

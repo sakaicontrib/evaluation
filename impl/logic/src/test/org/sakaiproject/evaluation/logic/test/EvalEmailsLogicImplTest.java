@@ -340,4 +340,34 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 
 	}
 
+
+
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#sendEvalAvailableNotifications(java.lang.Long, boolean)}.
+	 */
+	public void testSendEvalAvailableNotifications() {
+		// TODO fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#sendEvalCreatedNotifications(java.lang.Long, boolean)}.
+	 */
+	public void testSendEvalCreatedNotifications() {
+		// TODO fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#sendEvalReminderNotifications(java.lang.Long, java.lang.String)}.
+	 */
+	public void testSendEvalReminderNotifications() {
+		// TODO fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#sendEvalResultsNotifications(java.lang.Long, boolean, boolean)}.
+	 */
+	public void testSendEvalResultsNotifications() {
+		// TODO fail("Not yet implemented");
+	}
+
 }

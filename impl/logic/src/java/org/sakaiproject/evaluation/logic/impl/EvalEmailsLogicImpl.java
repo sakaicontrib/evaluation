@@ -262,4 +262,42 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			throw new IllegalStateException("Cannot modify email template in running evaluation ("+eval.getId()+")");
 		}
 	}
+
+
+	// sending emails
+
+	public void sendEvalAvailableNotifications(Long evaluationId, boolean includeEvaluatees) {
+		log.debug("evaluationId: " + evaluationId + ", includeEvaluatees: " + includeEvaluatees);
+		// TODO Auto-generated method stub
+		
+		log.error("Method not implemented yet!");
+
+	}
+
+
+	public void sendEvalCreatedNotifications(Long evaluationId, boolean includeOwner) {
+		log.debug("evaluationId: " + evaluationId + ", includeOwner: " + includeOwner);
+		// TODO Auto-generated method stub
+		
+		log.error("Method not implemented yet!");
+
+	}
+
+
+	public void sendEvalReminderNotifications(Long evaluationId, String includeConstant) {
+		log.debug("evaluationId: " + evaluationId + ", includeConstant: " + includeConstant);
+		// TODO Auto-generated method stub
+		
+		log.error("Method not implemented yet!");
+
+	}
+
+
+	public void sendEvalResultsNotifications(Long evaluationId, boolean includeEvaluatees, boolean includeAdmins) {
+		log.debug("evaluationId: " + evaluationId + ", includeEvaluatees: " + includeEvaluatees + ", includeAdmins: " + includeAdmins);
+		// TODO Auto-generated method stub
+		
+		log.error("Method not implemented yet!");
+
+	}
 }
