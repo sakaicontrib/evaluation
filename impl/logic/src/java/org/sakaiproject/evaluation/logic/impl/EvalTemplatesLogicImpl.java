@@ -115,7 +115,11 @@ public class EvalTemplatesLogicImpl implements EvalTemplatesLogic {
 		}
 
 		if (checkUserControlTemplate(userId, template)) {
-			dao.save(template);
+			try {
+				dao.save(template);
+			} catch (org.springframework.dao.DataIntegrityViolationException e) {
+				throw new IllegalArgumentException("Data integrity violation: Probably using a duplicate title for this template, title must be unique");
+			}
 			log.info("User ("+userId+") saved template ("+template.getId()+"), title: " + template.getTitle());
 
 			if (template.getLocked().booleanValue() == true) {

@@ -233,7 +233,7 @@ public class EvalTemplatesLogicImplTest extends AbstractTransactionalSpringConte
 					EvalTestDataLoad.NOT_EXPERT), 
 					EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");
-		} catch (RuntimeException e) {
+		} catch (IllegalArgumentException e) {
 			Assert.assertNotNull(e);
 		}
 
