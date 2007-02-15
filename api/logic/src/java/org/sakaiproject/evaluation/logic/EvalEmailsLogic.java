@@ -49,7 +49,7 @@ public interface EvalEmailsLogic {
 	 * {@link org.sakaiproject.evaluation.model.constant.EvalConstants} to indicate the type
 	 * @return the default email template matching the supplied type
 	 */
-	public EvalEmailTemplate getDefaultEmailTemplate(int emailTemplateTypeConstant);
+	public EvalEmailTemplate getDefaultEmailTemplate(String emailTemplateTypeConstant);
 
 
 	// PERMISSIONS
@@ -65,7 +65,7 @@ public interface EvalEmailsLogic {
 	 * {@link org.sakaiproject.evaluation.model.constant.EvalConstants} to indicate the type
 	 * @return true if the user can control the email template at this time, false otherwise
 	 */
-	public boolean canControlEmailTemplate(String userId, Long evaluationId, int emailTemplateTypeConstant);
+	public boolean canControlEmailTemplate(String userId, Long evaluationId, String emailTemplateTypeConstant);
 
 	/**
 	 * Check if a user can control (modify or delete) a given 
