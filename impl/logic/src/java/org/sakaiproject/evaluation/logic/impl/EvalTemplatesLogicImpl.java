@@ -27,6 +27,7 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.utils.EvalUtils;
+import org.sakaiproject.genericdao.api.finders.ByPropsFinder;
 
 
 /**
@@ -109,17 +110,17 @@ public class EvalTemplatesLogicImpl implements EvalTemplatesLogic {
 			}
 		}
 
+		if (! checkTemplateTitleUnused(template.getTitle(), template.getId())) {
+			throw new IllegalArgumentException("This title ("+template.getTitle()+") is already in use, title must be unique");
+		}
+
 		// fill in any default values and nulls here
 		if (template.getLocked() == null) {
 			template.setLocked( Boolean.FALSE );
 		}
 
 		if (checkUserControlTemplate(userId, template)) {
-			try {
-				dao.save(template);
-			} catch (org.springframework.dao.DataIntegrityViolationException e) {
-				throw new IllegalArgumentException("Data integrity violation: Probably using a duplicate title for this template, title must be unique");
-			}
+			dao.save(template);
 			log.info("User ("+userId+") saved template ("+template.getId()+"), title: " + template.getTitle());
 
 			if (template.getLocked().booleanValue() == true) {
@@ -286,6 +287,33 @@ public class EvalTemplatesLogicImpl implements EvalTemplatesLogic {
 			return true;
 		} else {
 			throw new SecurityException("User ("+userId+") cannot control template ("+template.getId()+") without permissions");
+		}
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalTemplatesLogic#checkTemplateTitleUnused(java.lang.String)
+	 */
+	public boolean checkTemplateTitleUnused(String title, Long templateId) {
+		log.debug("title: " + title + ", templateId: " + templateId);
+		int count = -1;
+		if (templateId == null) {
+			count = dao.countByProperties(EvalTemplate.class, 
+				new String[] {"title"},
+				new Object[] {title},
+				new int[] {ByPropsFinder.EQUALS} );
+		} else {
+			count = dao.countByProperties(EvalTemplate.class, 
+					new String[] {"title", "id"},
+					new Object[] {title, templateId},
+					new int[] {ByPropsFinder.EQUALS, ByPropsFinder.NOT_EQUALS} );			
+		}
+
+		log.error("size: " + count);
+		if (count == 0) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 

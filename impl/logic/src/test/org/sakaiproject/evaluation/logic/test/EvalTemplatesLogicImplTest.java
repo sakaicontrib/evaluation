@@ -480,4 +480,24 @@ public class EvalTemplatesLogicImplTest extends AbstractTransactionalSpringConte
 
 	}
 
+
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalTemplatesLogicImpl#checkTemplateTitleUnused(java.lang.String)}.
+	 */
+	public void testCheckTemplateTitleUnused() {
+		// check that new unique title is ok
+		Assert.assertTrue( templates.checkTemplateTitleUnused("my crazy title xzxzxz234123421341234", null) );
+
+		Assert.assertTrue( templates.checkTemplateTitleUnused("my crazy title 2389473234243209342742702347027", null) );
+
+		// check existing title fails
+		Assert.assertFalse( templates.checkTemplateTitleUnused( etdl.templateAdmin.getTitle(), null ) );
+
+		Assert.assertFalse( templates.checkTemplateTitleUnused( etdl.templatePublic.getTitle(), null ) );
+
+		// check existing is ok with exclude
+		Assert.assertTrue( templates.checkTemplateTitleUnused(etdl.templateAdmin.getTitle(), etdl.templateAdmin.getId()) );
+
+	}
+
 }
