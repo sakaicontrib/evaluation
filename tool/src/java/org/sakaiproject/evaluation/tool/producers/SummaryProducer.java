@@ -25,7 +25,6 @@ import java.util.Map;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
-import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.logic.model.Context;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -78,11 +77,6 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 	private EvalResponsesLogic responsesLogic;
 	public void setResponsesLogic(EvalResponsesLogic responsesLogic) {
 		this.responsesLogic = responsesLogic;
-	}
-
-	private EvalSettings settings;
-	public void setSettings(EvalSettings settings) {
-		this.settings = settings;
 	}
 	
 	private EvalTemplatesLogic templatesLogic;
