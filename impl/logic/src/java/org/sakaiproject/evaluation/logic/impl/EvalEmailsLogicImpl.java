@@ -110,20 +110,17 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#getDefaultEmailTemplate(int)
 	 */
-	public EvalEmailTemplate getDefaultEmailTemplate(int emailTemplateTypeConstant) {
+	public EvalEmailTemplate getDefaultEmailTemplate(String emailTemplateTypeConstant) {
 		log.debug("emailTemplateTypeConstant: " + emailTemplateTypeConstant);
 
 		// check and get type
 		String templateType;
-		switch (emailTemplateTypeConstant) {
-			case EvalConstants.EMAIL_TEMPLATE_AVAILABLE:
-				templateType = EvalConstants.EMAIL_TEMPLATE_DEFAULT_AVAILABLE;
-				break;
-			case EvalConstants.EMAIL_TEMPLATE_REMINDER:
-				templateType = EvalConstants.EMAIL_TEMPLATE_DEFAULT_REMINDER;
-				break;
-			default:
-				throw new IllegalArgumentException("Invalid emailTemplateTypeConstant: " + emailTemplateTypeConstant);
+		if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailTemplateTypeConstant)) {
+			templateType = EvalConstants.EMAIL_TEMPLATE_DEFAULT_AVAILABLE;			
+		} else if (EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailTemplateTypeConstant)) {
+			templateType = EvalConstants.EMAIL_TEMPLATE_DEFAULT_REMINDER;			
+		} else {
+			throw new IllegalArgumentException("Invalid emailTemplateTypeConstant: " + emailTemplateTypeConstant);			
 		}
 
 		// fetch template by type
@@ -143,7 +140,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#canControlEmailTemplate(java.lang.String, java.lang.Long, int)
 	 */
-	public boolean canControlEmailTemplate(String userId, Long evaluationId, int emailTemplateTypeConstant) {
+	public boolean canControlEmailTemplate(String userId, Long evaluationId, String emailTemplateTypeConstant) {
 		log.debug("userId: " + userId + ", evaluationId: " + evaluationId + ", emailTemplateTypeConstant: " + emailTemplateTypeConstant);
 
 		// get evaluation
@@ -154,15 +151,12 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
 		// check the type constant
 		EvalEmailTemplate emailTemplate;
-		switch (emailTemplateTypeConstant) {
-		case EvalConstants.EMAIL_TEMPLATE_AVAILABLE:
+		if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailTemplateTypeConstant)) {
 			emailTemplate = eval.getAvailableEmailTemplate();
-			break;
-		case EvalConstants.EMAIL_TEMPLATE_REMINDER:
+		} else if (EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailTemplateTypeConstant)) {
 			emailTemplate = eval.getReminderEmailTemplate();
-			break;
-		default:
-			throw new IllegalArgumentException("Invalid emailTemplateTypeConstant: " + emailTemplateTypeConstant);
+		} else {
+			throw new IllegalArgumentException("Invalid emailTemplateTypeConstant: " + emailTemplateTypeConstant);			
 		}
 
 		// check the permissions and state

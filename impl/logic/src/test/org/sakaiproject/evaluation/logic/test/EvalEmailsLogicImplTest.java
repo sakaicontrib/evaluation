@@ -193,7 +193,7 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 
 		// test invalid constant causes failure
 		try {
-			emailTemplate = emailTemplates.getDefaultEmailTemplate( -1 );
+			emailTemplate = emailTemplates.getDefaultEmailTemplate( EvalTestDataLoad.INVALID_CONSTANT_STRING );
 			Assert.fail("Should have thrown exception");
 		} catch (RuntimeException e) {
 			Assert.assertNotNull(e);

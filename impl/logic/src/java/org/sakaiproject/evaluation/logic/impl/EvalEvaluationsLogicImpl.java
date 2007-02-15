@@ -159,11 +159,8 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 			}
 
 		} else { // updating existing evaluation
-// No longer used with the interceptor gone -AZ
-//			if (evaluation.getClass() == EvalEvaluation.class) {
-//				throw new IllegalStateException("Attempt to save non-persistent instance of Evaluation with id " + evaluation.getId() + 
-//				": to continue working with this entity you must refetch it using getEvaluationById");      
-//			}
+			// make sure the state is set correctly
+			fixReturnEvalState(evaluation, false);
 
 			if (! canUserControlEvaluation(userId, evaluation) ) {
 				throw new SecurityException("User ("+userId+") attempted to update existing evaluation ("+evaluation.getId()+") without permissions");
@@ -196,6 +193,11 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 
 		dao.save(evaluation);
 		log.info("User ("+userId+") saved evaluation ("+evaluation.getId()+"), title: " + evaluation.getTitle());
+
+		// How to check the state of the evaluation (match to the constants)
+		if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(evaluation.getState()) ) {
+			// this eval is in-queue (not started yet)
+		}
 
 		if (evaluation.getLocked().booleanValue()) {
 			// lock evaluation and associated template
