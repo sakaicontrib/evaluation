@@ -229,8 +229,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 					EvalEvaluation eval = ac.getEvaluation();
 					if (activeOnly) {
 						// only return the active evaluations
-						if ( EvalUtils.getEvaluationState(eval) == 
-								EvalConstants.EVALUATION_STATE_ACTIVE ) {
+						if ( EvalConstants.EVALUATION_STATE_ACTIVE.equals( EvalUtils.getEvaluationState(eval) ) ) {
 							evals.add(ac.getEvaluation());
 						}
 					} else {
