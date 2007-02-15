@@ -1,6 +1,6 @@
 package org.sakaiproject.evaluation.model;
 
-// Generated Jan 18, 2007 3:54:56 PM by Hibernate Tools 3.2.0.beta6a
+// Generated Feb 15, 2007 3:42:04 PM by Hibernate Tools 3.2.0.beta6a
 
 import java.util.Date;
 
@@ -15,6 +15,8 @@ public class EvalAnswer implements java.io.Serializable {
 
 	private Date lastModified;
 
+	private EvalTemplateItem templateItem;
+
 	private EvalItem item;
 
 	private EvalResponse response;
@@ -23,6 +25,8 @@ public class EvalAnswer implements java.io.Serializable {
 
 	private Integer numeric;
 
+	private String associated;
+
 	// Constructors
 
 	/** default constructor */
@@ -30,19 +34,22 @@ public class EvalAnswer implements java.io.Serializable {
 	}
 
 	/** minimal constructor */
-	public EvalAnswer(Date lastModified, EvalItem item, EvalResponse response) {
+	public EvalAnswer(Date lastModified, EvalTemplateItem templateItem, EvalResponse response) {
 		this.lastModified = lastModified;
-		this.item = item;
+		this.templateItem = templateItem;
 		this.response = response;
 	}
 
 	/** full constructor */
-	public EvalAnswer(Date lastModified, EvalItem item, EvalResponse response, String text, Integer numeric) {
+	public EvalAnswer(Date lastModified, EvalTemplateItem templateItem, EvalItem item, EvalResponse response,
+			String text, Integer numeric, String associated) {
 		this.lastModified = lastModified;
+		this.templateItem = templateItem;
 		this.item = item;
 		this.response = response;
 		this.text = text;
 		this.numeric = numeric;
+		this.associated = associated;
 	}
 
 	// Property accessors
@@ -60,6 +67,14 @@ public class EvalAnswer implements java.io.Serializable {
 
 	public void setLastModified(Date lastModified) {
 		this.lastModified = lastModified;
+	}
+
+	public EvalTemplateItem getTemplateItem() {
+		return this.templateItem;
+	}
+
+	public void setTemplateItem(EvalTemplateItem templateItem) {
+		this.templateItem = templateItem;
 	}
 
 	public EvalItem getItem() {
@@ -92,6 +107,14 @@ public class EvalAnswer implements java.io.Serializable {
 
 	public void setNumeric(Integer numeric) {
 		this.numeric = numeric;
+	}
+
+	public String getAssociated() {
+		return this.associated;
+	}
+
+	public void setAssociated(String associated) {
+		this.associated = associated;
 	}
 
 }

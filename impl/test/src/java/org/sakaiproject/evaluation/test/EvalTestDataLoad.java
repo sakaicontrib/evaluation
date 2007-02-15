@@ -634,19 +634,19 @@ public class EvalTestDataLoad {
 		evaluationActive.setReminderEmailTemplate(emailTemplate3);
 
 		// context assignments
-		assign1 = new EvalAssignContext(new Date(), MAINT_USER_ID, CONTEXT1, Boolean.FALSE, 
+		assign1 = new EvalAssignContext(new Date(), MAINT_USER_ID, CONTEXT1, Boolean.TRUE, 
 				Boolean.TRUE, Boolean.FALSE, evaluationActive);
-		assign2 = new EvalAssignContext(new Date(), MAINT_USER_ID, CONTEXT1, Boolean.FALSE, 
+		assign2 = new EvalAssignContext(new Date(), MAINT_USER_ID, CONTEXT1, Boolean.TRUE, 
 				Boolean.TRUE, Boolean.FALSE, evaluationActiveUntaken);
-		assign3 = new EvalAssignContext(new Date(), ADMIN_USER_ID, CONTEXT1, Boolean.FALSE, 
+		assign3 = new EvalAssignContext(new Date(), ADMIN_USER_ID, CONTEXT1, Boolean.TRUE, 
 				Boolean.TRUE, Boolean.FALSE, evaluationClosed);
-		assign4 = new EvalAssignContext(new Date(), MAINT_USER_ID, CONTEXT2, Boolean.FALSE, 
+		assign4 = new EvalAssignContext(new Date(), MAINT_USER_ID, CONTEXT2, Boolean.TRUE, 
 				Boolean.TRUE, Boolean.FALSE, evaluationClosed);
-		assign5 = new EvalAssignContext(new Date(), ADMIN_USER_ID, CONTEXT2, Boolean.FALSE, 
+		assign5 = new EvalAssignContext(new Date(), ADMIN_USER_ID, CONTEXT2, Boolean.TRUE, 
 				Boolean.TRUE, Boolean.FALSE, evaluationViewable);
-		assign6 = new EvalAssignContext(new Date(), MAINT_USER_ID, CONTEXT1, Boolean.FALSE, 
+		assign6 = new EvalAssignContext(new Date(), MAINT_USER_ID, CONTEXT1, Boolean.TRUE, 
 				Boolean.TRUE, Boolean.FALSE, evaluationNewAdmin);
-		assign7 = new EvalAssignContext(new Date(), ADMIN_USER_ID, CONTEXT2, Boolean.FALSE, 
+		assign7 = new EvalAssignContext(new Date(), ADMIN_USER_ID, CONTEXT2, Boolean.TRUE, 
 				Boolean.TRUE, Boolean.FALSE, evaluationNewAdmin);
 
 		// now init response data for the evaluations
@@ -663,18 +663,18 @@ public class EvalTestDataLoad {
 		response6 = new EvalResponse(new Date(), USER_ID, CONTEXT2, 
 				new Date(), today, null, evaluationClosed);
 
-		answer1_1 = new EvalAnswer(new Date(), item1, response1, null, ANSWER_SCALED_ONE);
+		answer1_1 = new EvalAnswer(new Date(), templateItem1P, item1, response1, null, ANSWER_SCALED_ONE, null);
 
-		answer2_2 = new EvalAnswer(new Date(), item2, response2, null, ANSWER_SCALED_ONE);
-		answer2_5 = new EvalAnswer(new Date(), item5, response2, ANSWER_TEXT, null);
+		answer2_2 = new EvalAnswer(new Date(), templateItem2A, item2, response2, null, ANSWER_SCALED_ONE, null);
+		answer2_5 = new EvalAnswer(new Date(), templateItem5A, item5, response2, ANSWER_TEXT, null, null);
 
-		answer3_2 = new EvalAnswer(new Date(), item2, response3, null, ANSWER_SCALED_TWO);
+		answer3_2 = new EvalAnswer(new Date(), templateItem3A, item2, response3, null, ANSWER_SCALED_TWO, null);
 		// left the text answer blank
 
-		answer4_1 = new EvalAnswer(new Date(), item1, response4, null, ANSWER_SCALED_THREE);
-		answer4_5 = new EvalAnswer(new Date(), item5, response4, ANSWER_TEXT, null);
+		answer4_1 = new EvalAnswer(new Date(), templateItem1User, item1, response4, null, ANSWER_SCALED_THREE, null);
+		answer4_5 = new EvalAnswer(new Date(), templateItem5User, item5, response4, ANSWER_TEXT, null, null);
 
-		answer5_1 = new EvalAnswer(new Date(), item1, response5, null, ANSWER_SCALED_TWO);
+		answer5_1 = new EvalAnswer(new Date(), templateItem5User, item1, response5, null, ANSWER_SCALED_TWO, null);
 		// left the text answer blank
 
 		// associate the answers

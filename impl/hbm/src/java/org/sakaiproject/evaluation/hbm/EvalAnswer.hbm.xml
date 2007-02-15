@@ -12,8 +12,11 @@
         <property name="lastModified" type="java.util.Date">
             <column name="LAST_MODIFIED" not-null="true" />
         </property>
+        <many-to-one name="templateItem" class="org.sakaiproject.evaluation.model.EvalTemplateItem" foreign-key="ANSWER_TEMPLATEITEM_FKC" lazy="proxy" fetch="select">
+            <column name="TEMPLATEITEM_FK" not-null="true" />
+        </many-to-one>
         <many-to-one name="item" class="org.sakaiproject.evaluation.model.EvalItem" foreign-key="ANSWER_ITEM_FKC" lazy="proxy" fetch="select">
-            <column name="ITEM_FK" not-null="true" />
+            <column name="ITEM_FK" />
         </many-to-one>
         <many-to-one name="response" class="org.sakaiproject.evaluation.model.EvalResponse" foreign-key="ANSWER_RESPONSE_FKC" lazy="proxy" fetch="select">
             <column name="RESPONSE_FK" not-null="true" />
@@ -25,6 +28,12 @@
         <!-- the numeric answer if the associated item requires a number response -->
         <property name="numeric" type="java.lang.Integer" index="eval_answer_num">
             <column name="NUM_ANSWER" />
+        </property>
+        <!-- if this answer is associated with an instructor or 
+        	environment or other then place the unique id here
+        	(type from the associated templateItem) -->
+        <property name="associated" type="java.lang.String">
+            <column name="ASSOCIATED" />
         </property>
     </class>
 </hibernate-mapping>

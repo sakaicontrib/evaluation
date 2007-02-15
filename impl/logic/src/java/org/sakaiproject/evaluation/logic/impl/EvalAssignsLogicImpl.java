@@ -100,6 +100,29 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 						") for an existing AC, eval ("+existingAC.getEvaluation().getId()+")");
 			}
 
+			// fill in defaults
+			if (assignContext.getInstructorApproval() == null) {
+				if ( EvalConstants.INSTRUCTOR_OPT_IN.equals(eval.getInstructorOpt()) ) {
+					assignContext.setInstructorApproval( Boolean.FALSE );
+				} else {
+					assignContext.setInstructorApproval( Boolean.TRUE );
+				}
+			}
+			if (assignContext.getInstructorsViewResults() == null) {
+				if (eval.getInstructorsDate() != null) {
+					assignContext.setInstructorsViewResults( Boolean.TRUE );
+				} else {
+					assignContext.setInstructorsViewResults( Boolean.FALSE );
+				}
+			}
+			if (assignContext.getStudentsViewResults() == null) {
+				if (eval.getStudentsDate() != null) {
+					assignContext.setStudentsViewResults( Boolean.TRUE );
+				} else {
+					assignContext.setStudentsViewResults( Boolean.FALSE );
+				}
+			}
+
 			// allow any other changes
 			dao.save(assignContext);
 			log.info("User ("+userId+") updated existing AC ("+assignContext.getId()+") properties");

@@ -73,9 +73,11 @@ public interface EvaluationDao extends CompleteGenericDao {
 	 * 
 	 * @param contexts an array of Sakai contexts to return active evals for
 	 * @param activeOnly if true, only include active evaluations, if false, include all evaluations
+	 * @param includeUnApproved if true, include the evaluations for contexts which have not been instructor approved yet,
+	 * you should not include these when displaying evaluations to users to take or sending emails
 	 * @return a Set of EvalEvaluation objects which are active
 	 */
-	public Set getEvaluationsByContexts(String[] contexts, boolean activeOnly);
+	public Set getEvaluationsByContexts(String[] contexts, boolean activeOnly, boolean includeUnApproved);
 
 	/**
 	 * Returns all answers to the given item associated with 

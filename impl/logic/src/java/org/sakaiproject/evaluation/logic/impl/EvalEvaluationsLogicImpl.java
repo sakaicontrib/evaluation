@@ -159,6 +159,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 			}
 
 		} else { // updating existing evaluation
+
 			// make sure the state is set correctly
 			fixReturnEvalState(evaluation, false);
 
@@ -180,8 +181,19 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 		if (evaluation.getLocked() == null) {
 			evaluation.setLocked( Boolean.FALSE );
 		}
+		if (evaluation.getResultsPrivate() == null) {
+			evaluation.setResultsPrivate( Boolean.FALSE );
+		}
 
 		// system setting checks for things like allowing users to modify responses
+		Boolean systemModifyResponses = (Boolean) settings.get( EvalSettings.STUDENT_MODIFY_RESPONSES );
+		if ( systemModifyResponses == null ) {
+			if ( evaluation.getModifyResponsesAllowed() == null ) {
+				evaluation.setModifyResponsesAllowed( Boolean.FALSE );
+			}
+		} else {
+			evaluation.setBlankResponsesAllowed( systemModifyResponses );
+		}
 		Boolean systemBlankResponses = (Boolean) settings.get( EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED );
 		if ( systemBlankResponses == null ) {
 			if (evaluation.getBlankResponsesAllowed() == null) {
@@ -363,7 +375,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 		}
 
 		// get the evaluations
-		Set s = dao.getEvaluationsByContexts( contexts, activeOnly );
+		Set s = dao.getEvaluationsByContexts( contexts, activeOnly, false );
 
 		if (untakenOnly) {
 			// filter out the evaluations this user already took
@@ -525,21 +537,27 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 			return false;
 		}
 
-		// check the user permissions
-		if ( ! external.isUserAdmin(userId) && 
-				! external.isUserAllowedInContext(userId, 
-						EvalConstants.PERM_TAKE_EVALUATION, context) ) {
-			log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") without permission");
-			return false;
-		}
-
 		// check that the context is valid for this evaluation
-		int evalAssignedContexts = dao.countByProperties(EvalAssignContext.class, 
+		List acs = dao.findByProperties(EvalAssignContext.class, 
 				new String[] {"evaluation.id", "context"}, 
 				new Object[] {evaluationId, context});
-		if (evalAssignedContexts <= 0) {
+		if (acs.size() <= 0) {
 			log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") in this context (" + context + "), not assigned");
-			return false;			
+			return false;
+		} else {
+			// make sure instructor approval is true
+			EvalAssignContext eac = (EvalAssignContext) acs.get(0);
+			if (! eac.getInstructorApproval().booleanValue() ) {
+				log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") in this context (" + context + "), instructor has not approved");
+				return false;
+			}
+		}
+
+		// check the user permissions
+		if ( ! external.isUserAdmin(userId) && 
+				! external.isUserAllowedInContext(userId, EvalConstants.PERM_TAKE_EVALUATION, context) ) {
+			log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") without permission");
+			return false;
 		}
 
 		// check if the user already took this evaluation
@@ -564,8 +582,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 					return false;
 				}
 			}
-		}			
-
+		}
 
 		return true;
 	}
