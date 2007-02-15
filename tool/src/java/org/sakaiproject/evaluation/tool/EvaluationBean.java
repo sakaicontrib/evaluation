@@ -385,9 +385,12 @@ public class EvaluationBean {
 		
 		//now save the selected contexts
 		for (int count = 0; count < this.selectedSakaiSiteIds.length; count++) {
+			Boolean instApproval = Boolean.TRUE;
+			//If instructors must optIn, set approval to false. otherwise it is always true.
+			if(eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_OPT_IN))instApproval=Boolean.FALSE;
 			EvalAssignContext assignCourse = new EvalAssignContext(new Date(), 
 					external.getCurrentUserId(), selectedSakaiSiteIds[count], 
-					Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, eval);
+					instApproval, Boolean.TRUE, Boolean.FALSE, eval);
 			assignsLogic.saveAssignContext(assignCourse, external.getCurrentUserId());
 		}
 
