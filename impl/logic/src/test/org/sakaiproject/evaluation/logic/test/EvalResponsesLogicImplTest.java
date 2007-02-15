@@ -430,7 +430,7 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 		EvalResponse responseAns = new EvalResponse( new Date(), EvalTestDataLoad.USER_ID, 
 				EvalTestDataLoad.CONTEXT1, new Date(), etdl.evaluationActiveUntaken);
 		responseAns.setAnswers( new HashSet() );
-		EvalAnswer answer1_1 = new EvalAnswer( new Date(), etdl.item1, responseAns, "text", null);
+		EvalAnswer answer1_1 = new EvalAnswer( new Date(), etdl.templateItem1P, etdl.item1, responseAns, "text", null, null);
 		responseAns.getAnswers().add( answer1_1 );
 		responses.saveResponse( responseAns, EvalTestDataLoad.USER_ID);
 		Assert.assertNotNull(responseAns.getId());
@@ -443,7 +443,7 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 		// test adding answers to an already created response is ok
 		// make sure the answer is saved also
 		responseNone.setAnswers( new HashSet() );
-		EvalAnswer answer2_1 = new EvalAnswer( new Date(), etdl.item1, responseNone, null, Integer.valueOf(1));
+		EvalAnswer answer2_1 = new EvalAnswer( new Date(), etdl.templateItem1P, etdl.item1, responseNone, null, Integer.valueOf(1), null);
 		responseNone.getAnswers().add( answer2_1 );
 		responses.saveResponse( responseNone, EvalTestDataLoad.STUDENT_USER_ID);
 		Assert.assertNotNull(answer2_1.getId());

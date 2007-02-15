@@ -213,7 +213,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#getEvaluationsByContexts(java.lang.String[], boolean, boolean)
 	 */
-	public Set getEvaluationsByContexts(String[] contexts, boolean activeOnly) {
+	public Set getEvaluationsByContexts(String[] contexts, boolean activeOnly, boolean includeUnApproved) {
 		Set evals = new TreeSet(new EvaluationDateComparator());
 		if (contexts.length > 0) {
 			DetachedCriteria dc = DetachedCriteria.forClass(EvalAssignContext.class)
@@ -221,18 +221,22 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 
 			List assignedCourses = getHibernateTemplate().findByCriteria(dc);
 			for (int i=0;i<assignedCourses.size();i++) {
-				EvalAssignContext ac = (EvalAssignContext) assignedCourses.get(i);
 				// Note: This is inefficient, it is still retrieving ALL of the evaluations
-				EvalEvaluation eval = ac.getEvaluation();
-				if (activeOnly) {
-					// only return the active evaluations
-					if ( EvalUtils.getEvaluationState(eval) == 
-							EvalConstants.EVALUATION_STATE_ACTIVE ) {
+				EvalAssignContext ac = (EvalAssignContext) assignedCourses.get(i);
+				if (includeUnApproved ||
+						ac.getInstructorApproval().booleanValue()) {
+					// only include approved evals or all if requested
+					EvalEvaluation eval = ac.getEvaluation();
+					if (activeOnly) {
+						// only return the active evaluations
+						if ( EvalUtils.getEvaluationState(eval) == 
+								EvalConstants.EVALUATION_STATE_ACTIVE ) {
+							evals.add(ac.getEvaluation());
+						}
+					} else {
+						// return all evaluations
 						evals.add(ac.getEvaluation());
 					}
-				} else {
-					// return all evaluations
-					evals.add(ac.getEvaluation());
 				}
 			}
 		}

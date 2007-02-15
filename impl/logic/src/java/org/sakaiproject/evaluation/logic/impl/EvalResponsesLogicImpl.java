@@ -30,6 +30,7 @@ import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalResponse;
+import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.utils.EvalUtils;
 import org.sakaiproject.genericdao.api.finders.ByPropsFinder;
@@ -182,8 +183,9 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
 			// check to make sure answers are valid for this evaluation
 			if (response.getAnswers() != null &&
 					! response.getAnswers().isEmpty()) {
-				// TODO - this is not doing anything yet
-				//checkAnswersValidForEval(response);
+				checkAnswersValidForEval(response);
+			} else {
+				response.setAnswers( new HashSet() );
 			}
 
 			// save everything in one transaction
@@ -267,30 +269,54 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
 
 	/**
 	 * Checks the answers in the response for validity<br/>
-	 * NOT WORKING YET
 	 * 
 	 * @param response
 	 * @return true if all answers valid, exception otherwise
 	 */
 	protected boolean checkAnswersValidForEval(EvalResponse response) {
-		// TODO - this should be calling a method somewhere else
+
+		// get a list of the valid templateItems for this evaluation
+		// maybe this should use a method elsewhere?
 		Long templateId = response.getEvaluation().getTemplate().getId();
+		List templateItems = dao.findByProperties(EvalTemplateItem.class,
+				new String[] {"template.id"},
+				new Object[] {templateId} );
+		Set templateItemIds = new HashSet();
+		for (int i=0; i<templateItems.size(); i++) {
+			templateItemIds.add( ((EvalTemplateItem)templateItems.get(i)).getId() );
+		}
 
-		Long[] itemIds = new Long[response.getAnswers().size()];
-		int i = 0;
-		for (Iterator iter = response.getAnswers().iterator(); iter.hasNext(); i++) {
+		// check the answers
+		for (Iterator iter = response.getAnswers().iterator(); iter.hasNext();) {
 			EvalAnswer answer = (EvalAnswer) iter.next();
-			itemIds[i] = answer.getItem().getId();
-		}
+			if (answer.getNumeric() == null && answer.getText() == null) {
+				throw new IllegalArgumentException("Cannot save blank answers: answer for templateItem: " + answer.getTemplateItem().getId());
+			}
 
-		int count = dao.countByProperties(EvalItem.class,
-				new String[] {"id", "templates.id"},
-				new Object[] {itemIds, templateId} );
-		if (count != itemIds.length) {
-			throw new IllegalArgumentException("Invalid answers in the response, answers must correspond to items in this evaluation");
-		}
+			// verify the base state of new answers
+			if (answer.getId() == null) {
+				// force the item to be set correctly
+				answer.setItem( answer.getTemplateItem().getItem() );
 
-		// TODO - check if numerical answers are valid
+				// check that the associated id is filled in for associated items
+				if ( EvalConstants.ITEM_CATEGORY_COURSE.equals( answer.getTemplateItem().getItemCategory() ) ) {
+					if (answer.getAssociated() != null) {
+						throw new IllegalArgumentException("Course answers must have the associated field blank, for templateItem: " + answer.getTemplateItem().getId());
+					}
+				} else if ( EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals( answer.getTemplateItem().getItemCategory() ) ) {
+					if (answer.getAssociated() == null) {
+						throw new IllegalArgumentException("Instructor answers must have the associated field filled in with the instructor userId, for templateItem: " + answer.getTemplateItem().getId());
+					}
+				}
+
+				// make sure answer is associated with a valid templateItem for this evaluation
+				if (! templateItemIds.contains( answer.getTemplateItem().getId() ) ) {
+					throw new IllegalArgumentException("This answer templateItem ("+answer.getTemplateItem().getId()+") is not part of this evaluation ("+response.getEvaluation().getTitle()+")");
+				}
+			}
+
+			// TODO - check if numerical answers are valid
+		}
 
 		return true;
 	}

@@ -20,12 +20,15 @@
         <property name="context" type="java.lang.String" index="eval_assign_context">
             <column name="CONTEXT" not-null="true" length="255" />
         </property> 
+        <!-- This indicates if the instructor has approved the evaluation for this AC -->
         <property name="instructorApproval" type="java.lang.Boolean">
             <column name="INSTRUCTOR_APPROVAL" not-null="true" />
         </property>
+        <!-- can instructors view the results for this AC -->
         <property name="instructorsViewResults" type="java.lang.Boolean">
             <column name="INSTRUCTORS_VIEW_RESULTS" not-null="true" />
         </property>
+        <!-- can students view the results for this AC -->
         <property name="studentsViewResults" type="java.lang.Boolean">
             <column name="STUDENTS_VIEW_RESULTS" not-null="true" />
         </property>
