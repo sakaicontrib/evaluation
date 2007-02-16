@@ -13,6 +13,7 @@
 package org.sakaiproject.evaluation.tool.utils;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.sakaiproject.evaluation.logic.EvalSettings;
@@ -45,7 +46,7 @@ public class EvaluationDateUtil {
 		 * Getting the system setting that tells what should be the 
 		 * minimum time difference between start date and due date.
 		 */
-		int mimTime = ((Integer)evalSettings.get(EvalSettings.EVAL_USE_STOP_DATE)).intValue();
+		int minHours = ((Integer)evalSettings.get(EvalSettings.EVAL_USE_STOP_DATE)).intValue();
 		
 		/*
 		 * If the difference between start date and due date is less than
@@ -62,21 +63,40 @@ public class EvaluationDateUtil {
 		//- Look if the two methods can be done without the elaborate Calendar stuff. 
 		//- Test whole thing
 		//- Verify the logic with Aaron.
-		if ( (eval.getStartDate().getHours() - eval.getDueDate().getHours()) < mimTime ) {
-		
-		}
-		else {
 
-			/*
-			 * The due date is of the form 17th, Jan 2007 12:00 AM
-			 * Thus adding a 23 hours and 59 minutes to get:
-			 * 17th, Jan 2007 11:59 PM.
-			 */ 
+		if ( getHoursDifference(eval.getStartDate(), eval.getDueDate()) < minHours ) {
 			Calendar calendarDue = new GregorianCalendar();
+
+			// Try to set the due date to the end of the day first
+			// (maybe we should always just add the minHours)???? -AZ
+			// The due date is of the form 17th, Jan 2007 12:00 AM (by default)
+			// set the hour and minute to make it the end of the day (adding is risky)
 			calendarDue.setTime(eval.getDueDate());
-			calendarDue.add(Calendar.HOUR, 23);
-			calendarDue.add(Calendar.MINUTE, 59);
+			calendarDue.set(Calendar.HOUR, 23);
+			calendarDue.set(Calendar.MINUTE, 59);
 			eval.setDueDate(calendarDue.getTime());
+
+			if (getHoursDifference(eval.getStartDate(), eval.getDueDate()) < minHours) {
+				// if that did not work then add the minHours to the startdate
+				calendarDue = new GregorianCalendar();
+				calendarDue.setTime(eval.getStartDate());
+				calendarDue.add(Calendar.HOUR, minHours);
+				eval.setDueDate(calendarDue.getTime());
+				// no need to check again, this should be fine now
+			}
 		}
 	}
+
+	/**
+	 * Find the number of hours between 2 dates
+	 * 
+	 * @param date1
+	 * @param date2
+	 * @return number of hours (can be negative, will round)
+	 */
+	public int getHoursDifference(Date date1, Date date2) {
+		long millisecondsDifference = date1.getTime() - date2.getTime();
+		return (int) millisecondsDifference / (60*60*1000);
+	}
+
 }

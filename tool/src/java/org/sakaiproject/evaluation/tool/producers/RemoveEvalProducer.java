@@ -101,7 +101,7 @@ public class RemoveEvalProducer implements ViewComponentProducer,ViewParamsRepor
 					UIOutput.make(form, "evalAssigned", count + " courses"); //$NON-NLS-1$ //$NON-NLS-2$
 				else{
 					Long[] evalIds = {eval.getId()};
-					Map evalContexts = evalsLogic.getEvaluationContexts(evalIds);
+					Map evalContexts = evalsLogic.getEvaluationContexts(evalIds, false);
 					List contexts = (List) evalContexts.get(eval.getId());
 					Context ctxt = (Context) contexts.get(0);
 					String title = ctxt.title;
