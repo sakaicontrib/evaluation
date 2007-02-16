@@ -661,7 +661,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 	 */
 	public void testGetEvaluationContexts() {
 		Map m = evaluations.getEvaluationContexts( 
-				new Long[] { etdl.evaluationClosed.getId() } );
+				new Long[] { etdl.evaluationClosed.getId() }, true );
 		Assert.assertNotNull(m);
 		List contexts = (List) m.get( etdl.evaluationClosed.getId() );
 		Assert.assertNotNull(contexts);
@@ -670,7 +670,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 		Assert.assertTrue( contexts.get(1) instanceof Context );
 
 		m = evaluations.getEvaluationContexts( 
-				new Long[] { etdl.evaluationActive.getId() } );
+				new Long[] { etdl.evaluationActive.getId() }, true );
 		Assert.assertNotNull(m);
 		contexts = (List) m.get( etdl.evaluationActive.getId() );
 		Assert.assertNotNull(contexts);
@@ -680,7 +680,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 
 		// test no assigned contexts
 		m = evaluations.getEvaluationContexts( 
-				new Long[] { etdl.evaluationNew.getId() } );
+				new Long[] { etdl.evaluationNew.getId() }, true );
 		Assert.assertNotNull(m);
 		contexts = (List) m.get( etdl.evaluationNew.getId() );
 		Assert.assertNotNull(contexts);
@@ -688,7 +688,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 
 		// test invalid
 		m = evaluations.getEvaluationContexts( 
-				new Long[] { EvalTestDataLoad.INVALID_LONG_ID } );
+				new Long[] { EvalTestDataLoad.INVALID_LONG_ID }, true );
 		Assert.assertNotNull(m);
 		contexts = (List) m.get( EvalTestDataLoad.INVALID_LONG_ID );
 		Assert.assertNotNull(contexts);

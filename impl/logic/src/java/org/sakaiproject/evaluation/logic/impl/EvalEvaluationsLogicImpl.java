@@ -415,9 +415,9 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 	}
 
 	/* (non-Javadoc)
-	 * @see edu.vt.sakai.evaluation.logic.EvalEvaluationsLogic#getEvaluationContexts(java.lang.Long[])
+	 * @see org.sakaiproject.evaluation.logic.EvalEvaluationsLogic#getEvaluationContexts(java.lang.Long[], boolean)
 	 */
-	public Map getEvaluationContexts(Long[] evaluationIds) {
+	public Map getEvaluationContexts(Long[] evaluationIds, boolean includeUnApproved) {
 		log.debug("evalIds: " + evaluationIds);
 		Map evals = new TreeMap();
 
@@ -428,8 +428,17 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 		}
 
 		// get all the contexts for the given eval ids in one storage call
-		List l = dao.findByProperties(EvalAssignContext.class,
-				new String[] {"evaluation.id"},  new Object[] {evaluationIds});
+		List l = new ArrayList();
+		if (includeUnApproved) {
+			l = dao.findByProperties(EvalAssignContext.class,
+				new String[] {"evaluation.id"}, 
+				new Object[] {evaluationIds} );
+		} else {
+			// only include those that are approved
+			l = dao.findByProperties(EvalAssignContext.class,
+					new String[] {"evaluation.id", "instructorApproval"}, 
+					new Object[] {evaluationIds, Boolean.TRUE} );
+		}
 		for (int i=0; i<l.size(); i++) {
 			EvalAssignContext eac = (EvalAssignContext) l.get(i);
 			String context = eac.getContext();

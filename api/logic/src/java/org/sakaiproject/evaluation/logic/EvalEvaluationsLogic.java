@@ -121,9 +121,11 @@ public interface EvalEvaluationsLogic {
 	 * Get a map of the Contexts for an array of evaluation ids
 	 * 
 	 * @param evaluationId an array of the ids of EvalEvaluation objects
+	 * @param includeUnApproved if true, include the evaluation contexts which have not been instructor approved yet,
+	 * you should not include these when displaying evaluations to users to take or sending emails
 	 * @return a Map of evaluationId (Long) -> List of Context objects
 	 */
-	public Map getEvaluationContexts(Long[] evaluationIds);
+	public Map getEvaluationContexts(Long[] evaluationIds, boolean includeUnApproved);
 
 	/**
 	 * Count the number of contexts assigned for an evaluation id
