@@ -51,4 +51,11 @@ public class HeaderRenderer implements ItemRenderer {
 		return EvalConstants.ITEM_TYPE_HEADER;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#getRenderedBlockChildItemIds()
+	 */
+	public Long[] getRenderedBlockChildItemIds() {
+		return new Long[] {};
+	}
+
 }

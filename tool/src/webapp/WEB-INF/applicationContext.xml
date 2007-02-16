@@ -121,6 +121,10 @@
 				<bean class="org.sakaiproject.evaluation.tool.renderers.ScaledRenderer">
 					<property name="messageLocator" ref="messageLocator" />
 				</bean>
+				<bean class="org.sakaiproject.evaluation.tool.renderers.BlockRenderer">
+					<property name="messageLocator" ref="messageLocator" />
+					<property name="itemsLogic" ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
+				</bean>
 			</list>
 		</property>
 	</bean>
@@ -128,10 +132,10 @@
 	<!-- this needs to contain all item renderer and other evolver html templates,
 		baseDirectory should end with / and not begin with one -->
 	<bean id="componentTemplateContributor"
-		parent="templateContributorParent">
+			parent="templateContributorParent">
 		<property name="baseDirectory" value="component-templates/" />
 		<property name="templateNames"
-			value="render_header_item,render_text_item,render_scaled_item" />
+			value="render_header_item, render_text_item, render_scaled_item, render_block_item" />
 		<property name="expected" value="true" />
 	</bean>
 

@@ -86,4 +86,11 @@ public class TextRenderer implements ItemRenderer {
 		return EvalConstants.ITEM_TYPE_TEXT;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#getRenderedBlockChildItemIds()
+	 */
+	public Long[] getRenderedBlockChildItemIds() {
+		return new Long[] {};
+	}
+
 }

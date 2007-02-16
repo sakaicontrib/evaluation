@@ -38,7 +38,7 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
  */
 
 public class ItemsBean {
-	
+
 	/*
 	 * VARIABLE DECLARATIONS 
 	 */
@@ -50,47 +50,47 @@ public class ItemsBean {
 	 */
 
 	public EvalTemplateItem templateItem;
-	
+
 	//The following fields below belong to template_item.html
-	
+
 	/** "Item Text" text area */
 	public Long scaleId;
 	private List scaleValues; 			//"Scale Type" drop down list
 	private List scaleLabels; 			//"Scale Type" drop down list 
-	
+
 	//	The following fields below belong to modify_block.html
 	public Boolean idealColor;
 	public List queList;
 	public String currQueNo;
-	
+
 	public String currRowNo;	
-	
+
 	public String classification;
 	public Long templateId;
-	
+
 	private EvalItemsLogic itemsLogic;
 	public void setItemsLogic( EvalItemsLogic itemsLogic) {
 		this.itemsLogic = itemsLogic;
 	}
-	
+
 	private EvalTemplatesLogic templatesLogic;
 	public void setTemplatesLogic( EvalTemplatesLogic templatesLogic) {
 		this.templatesLogic = templatesLogic;
 	}
-	
+
 	private EvalExternalLogic external;
 	public void setExternal(EvalExternalLogic external) {
 		this.external = external;
 	}
-	
+
 	private EvalScalesLogic scalesLogic;
 
 
-	
+
 	public void setScalesLogic(EvalScalesLogic scalesLogic) {
 		this.scalesLogic = scalesLogic;
 	}
-	
+
 	public ItemsBean() {
 		templateItem = new EvalTemplateItem();
 		templateItem.setItem(new EvalItem());
@@ -106,18 +106,18 @@ public class ItemsBean {
 			throw new NullPointerException("logic is null");
 		}
 	}
-	
+
 	/*
 	 * SETTER AND GETTER DEFINITIONS
 	 */
-	
+
 	public List getScaleValues() {
 		//get scale values and labels from DAO
 		List lst = null;
 		String scaleOptionsStr = "";
 		this.scaleValues = new ArrayList();
 		this.scaleLabels = new ArrayList();
-		
+
 		lst = scalesLogic.getScalesForUser(external.getCurrentUserId(), null);//logic.getScales(Boolean.FALSE);	
 		for (int count=0; count < lst.size(); count++) {					
 			scaleOptionsStr = "";
@@ -128,16 +128,16 @@ public class ItemsBean {
 					scaleOptionsStr = scaleOptionsArr[innerCount];
 				else
 					scaleOptionsStr = scaleOptionsStr + ", " + scaleOptionsArr[innerCount];
-				
+
 			}//end of inner for
-			
+
 			EvalScale sl=(EvalScale)lst.get(count);					
 			this.scaleValues.add((sl.getId()).toString());			
 			this.scaleLabels.add(scaleOptionsArr.length + 
-		             			" pt - " + 
-		             			sl.getTitle() + 
-		             			" ("  + scaleOptionsStr + ")");			
-			
+					" pt - " + 
+					sl.getTitle() + 
+					" ("  + scaleOptionsStr + ")");			
+
 		} //end of outer loop
 		return scaleValues;
 	}
@@ -145,7 +145,7 @@ public class ItemsBean {
 	public void setScaleValues(List scaleValues) {
 		this.scaleValues = scaleValues;
 	}
-	
+
 	public List getScaleLabels() {
 		/* 
 		 * make sure if getScaleValue() was called first, getScaleLabels() 
@@ -153,30 +153,29 @@ public class ItemsBean {
 		 * 
 		 * */
 		if (scaleLabels == null)
-			 getScaleValues();
-			
+			getScaleValues();
+
 		return scaleLabels;
 	}
 
 	public void setScaleLabels(List scaleLabels) {
 		this.scaleLabels = scaleLabels;
 	}
-	
+
 	public String cancelItemAction(){
 		return "cancel";
 	}
-	
+
 	public String previewItemAction(){return null;}
-	
+
 	public String removeItemAction(){
 		itemsLogic.deleteTemplateItem(templateItem.getId(), external.getCurrentUserId());
 		return "removed";
 	}
-	
+
 	public String cancelRemoveAction(){return null;}
-	
+
 	public String saveItemAction(){
-		System.out.println("We're in save item action");
 		templateItem.getItem().setScaleDisplaySetting(templateItem.getScaleDisplaySetting());
 		templateItem.getItem().setUsesNA(templateItem.getUsesNA());
 		templateItem.setTemplate(templatesLogic.getTemplateById(templateId));
@@ -186,8 +185,7 @@ public class ItemsBean {
 		itemsLogic.saveItem(templateItem.getItem(), external.getCurrentUserId());
 		itemsLogic.saveTemplateItem(templateItem, external.getCurrentUserId());
 		return "success";
-		}
-	
+	}
 
 	public void newItemInit(Long templateId, String classification) {
 		templateItem.setDisplayOrder(new Integer(itemsLogic.getTemplateItemsForTemplate(templateId, external.getCurrentUserId()).size()));
@@ -198,5 +196,5 @@ public class ItemsBean {
 	public void fetchTemplateItem(Long templateItemId) {
 		templateItem=itemsLogic.getTemplateItemById(templateItemId);
 	}
-	
+
 }
