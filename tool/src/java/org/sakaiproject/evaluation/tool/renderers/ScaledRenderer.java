@@ -392,6 +392,14 @@ public class ScaledRenderer implements ItemRenderer {
 		return EvalConstants.ITEM_TYPE_SCALED;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#getRenderedBlockChildItemIds()
+	 */
+	public Long[] getRenderedBlockChildItemIds() {
+		return new Long[] {};
+	}
+
+
 	private void handleNA(UIContainer container, boolean useNA) {
 		if (useNA) {
 			UIBranchContainer radiobranch3 = UIBranchContainer.make(container, "showNA:"); //$NON-NLS-1$

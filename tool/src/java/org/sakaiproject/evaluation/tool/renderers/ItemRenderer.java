@@ -32,7 +32,9 @@ public interface ItemRenderer {
 	/**
 	 * Renders an item correctly in a view based on the type and the settings stored within it<br/>
 	 * <b>Note:</b> No not attempt to pass a block child item to this, it will not render it and will
-	 * throw an exception
+	 * throw an exception, also, for block parents you should pass the binding with
+	 * an included char sequence ([childTID:]) that will be replaced by the child templateItemId:<br/> 
+	 * Example: "myBean.something.[childTID:].numeric"
 	 * 
 	 * @param parent any RSF {@link UIContainer} object which will contain the rendered item
 	 * @param ID the (RSF) ID of this component
@@ -51,4 +53,15 @@ public interface ItemRenderer {
 	 * @return an ITEM_TYPE constant from {@link EvalConstants}
 	 */
 	public String getRenderType();
+
+	/**
+	 * Get child templateItemIds from the recent item rendering, allows
+	 * bindings or finding out how many child items were rendered
+	 * 
+	 * @return an array which contains all the child templateItemIds for the
+	 * last item which was rendered (will be empty array unless the item has
+	 * children like a block)
+	 */
+	public Long[] getRenderedBlockChildItemIds();
+
 }

@@ -77,4 +77,11 @@ public class ItemRendererImpl implements ItemRenderer {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#getRenderedBlockChildItemIds()
+	 */
+	public Long[] getRenderedBlockChildItemIds() {
+		return null;
+	}
+
 }
