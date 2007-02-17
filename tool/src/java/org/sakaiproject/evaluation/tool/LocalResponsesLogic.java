@@ -15,7 +15,10 @@
 package org.sakaiproject.evaluation.tool;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -93,6 +96,15 @@ public class LocalResponsesLogic {
 
 	public void saveResponse(EvalResponse response) {
 		log.debug("Response: " + response.getId() );
+		//strip out responses with no value set for numeric or text
+		Set answers=response.getAnswers();
+		Set newAnswers=new HashSet(0);
+		for (Iterator it = answers.iterator(); it.hasNext();) {
+			EvalAnswer answer = (EvalAnswer) it.next();
+			if(answer.getNumeric()!=null || answer.getText()!=null)
+				newAnswers.add(answer);
+		}
+		response.setAnswers(newAnswers);
 		responsesLogic.saveResponse(response, external.getCurrentUserId());
 	}
 }
