@@ -14,6 +14,8 @@
 
 package org.sakaiproject.evaluation.tool.utils;
 
+import java.util.List;
+
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
@@ -54,6 +56,25 @@ public class TemplateItemUtils {
 		} else {
 			throw new IllegalStateException("Cannot identify this item classification:" + templateItem.getItem().getClassification());
 		}
+	}
+
+	/**
+	 * Check a list of {@link EvalTemplateItem} objects for a specific category
+	 * 
+	 * @param itemTypeConstant and ITEM_CATEGORY constant from {@link EvalConstants}
+	 * @param itemList a list of {@link EvalTemplateItem} objects
+	 * @return true if there is a templateItem in the list that matches the provided category
+	 */
+	public static boolean checkTemplateItemsCategoryExists(String itemTypeConstant, List itemList) {
+
+		for (int j = 0; j < itemList.size(); j++) {
+			EvalTemplateItem templateItem = (EvalTemplateItem) itemList.get(j);
+			if ( itemTypeConstant.equals( templateItem.getItemCategory() ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 }

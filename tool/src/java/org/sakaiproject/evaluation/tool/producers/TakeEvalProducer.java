@@ -31,6 +31,7 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.params.EvalTakeViewParameters;
+import org.sakaiproject.evaluation.tool.utils.ComparatorsUtils;
 import org.sakaiproject.evaluation.tool.utils.ItemBlockUtils;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
@@ -119,39 +120,6 @@ public class TakeEvalProducer implements ViewComponentProducer,
     Long evalId;
     String context;
 
-	/**
-	 * 
-	 * @param bl=
-	 *            true: test if there is any "Course" item
-	 * @param bl=
-	 *            false: test if there is any "Instructor" item
-	 * TODO - rewrite this
-	 * @deprecated aside from this being an invalid javadoc comment, this is a 
-	 * bad way to do things, you are assuming there are only 2 types of item
-	 * categories which is already not the case (there are 3 currently), this
-	 * logic needs to be removed and rewritten -AZ
-	 * 
-	 */
-	private boolean findItemCategory(boolean bl, List itemList) {
-		boolean rs = false;
-
-		for (int j = 0; j < itemList.size(); j++) {
-			EvalTemplateItem tempItem1 = (EvalTemplateItem) itemList.get(j);
-			String category = tempItem1.getItemCategory();
-			if (bl && category.equals(EvalConstants.ITEM_CATEGORY_COURSE)) { //"Course"
-				rs = true;
-				break;
-			}
-
-			if (bl == false && category.equals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR)) { //"Instructor"
-				rs = true;
-				break;
-			}
-		}
-
-		return rs;
-	}
-
 
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams,
 			ComponentChecker checker) {
@@ -203,19 +171,22 @@ public class TakeEvalProducer implements ViewComponentProducer,
 	
 		//filter out the block child items, to get a list non-child items
 		List ncItemsList = ItemBlockUtils.getNonChildItems(allItems);
-		Collections.sort(ncItemsList, new PreviewEvalProducer.EvaluationItemOrderComparator());
+		Collections.sort(ncItemsList, new ComparatorsUtils.TemplateItemComparatorByOrder());
 		
 		// check if there is any "Course" items or "Instructor" items;
 		UIBranchContainer courseSection = null;
 		UIBranchContainer instructorSection = null;
-		if (this.findItemCategory(true,ncItemsList)){
-			courseSection = UIBranchContainer.make(form,"courseSection:"); //$NON-NLS-1$
-			UIOutput.make(courseSection, "course-questions-header", messageLocator.getMessage("takeeval.course.questions.header")); //$NON-NLS-1$ //$NON-NLS-2$
+
+		if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_COURSE, ncItemsList))	{	
+			courseSection = UIBranchContainer.make(tofill,"courseSection:"); //$NON-NLS-1$
+			UIOutput.make(courseSection, "course-questions-header", messageLocator.getMessage("takeeval.course.questions.header"));  //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		if (this.findItemCategory(false, ncItemsList)){
-			instructorSection = UIBranchContainer.make(form,"instructorSection:"); //$NON-NLS-1$
-			UIOutput.make(instructorSection, "instructor-questions-header", messageLocator.getMessage("takeeval.instructor.questions.header"));			 //$NON-NLS-1$ //$NON-NLS-2$
+
+		if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, ncItemsList))	{	
+			instructorSection = UIBranchContainer.make(tofill,"instructorSection:"); //$NON-NLS-1$
+			UIOutput.make(instructorSection, "instructor-questions-header", messageLocator.getMessage("takeeval.instructor.questions.header"));  //$NON-NLS-1$ //$NON-NLS-2$
 		}
+
 		for (int i = 0; i <ncItemsList.size(); i++) {
 			//EvalItem item1 = (EvalItem) ncItemsList.get(i);
 			EvalTemplateItem tempItem1 = (EvalTemplateItem) ncItemsList.get(i);

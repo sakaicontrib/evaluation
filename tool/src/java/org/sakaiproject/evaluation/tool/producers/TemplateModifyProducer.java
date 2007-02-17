@@ -27,7 +27,7 @@ import org.sakaiproject.evaluation.tool.params.BlockIdsParameters;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.params.PreviewEvalParameters;
 import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
-import org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer.EvaluationItemOrderComparator;
+import org.sakaiproject.evaluation.tool.utils.ComparatorsUtils;
 import org.sakaiproject.evaluation.tool.utils.ItemBlockUtils;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
@@ -159,7 +159,7 @@ public class TemplateModifyProducer implements ViewComponentProducer,
         
 	    List l = itemsLogic.getTemplateItemsForTemplate(templateId,null);
         List templateItemsList = ItemBlockUtils.getNonChildItems(l);//need to get all nonchild items
-        Collections.sort(templateItemsList, new EvaluationItemOrderComparator());	
+        Collections.sort(templateItemsList, new ComparatorsUtils.TemplateItemComparatorByOrder());	
         
 		if (templateItemsList.isEmpty()){
           UIOutput.make(form, "begin-eval-dummylink", messageLocator.getMessage("modifytemplate.begin.eval.link")); 
