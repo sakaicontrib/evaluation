@@ -83,9 +83,20 @@ public interface ExternalEvalGroups {
 	 * Return a Context object which represents a collection of users (a course or 
 	 * group or collection in this case) based on the unique id (context string)
 	 * 
-	 * @param context the unique id of an external course
+	 * @param context the unique id of an external eval group
 	 * @return a Context object or null if not found
 	 */
 	public Context getContextByGroupId(String context);
+
+	/**
+	 * Check if a user has a specified permission/role within an eval group
+	 * 
+	 * @param userId the internal user id (not username)
+	 * @param permission a permission string PERM constant from {@link EvalConstants},
+	 * <b>Note</b>: only take evaluation and be evaluated are supported
+	 * @param context the unique id of an external eval group
+	 * @return true if allowed, false otherwise
+	 */
+	public boolean isUserAllowedInGroup(String userId, String permission, String context);
 
 }
