@@ -107,9 +107,9 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 
 	// PROVIDERS
 
-	private EvalGroupsProvider externalEvalGroups;
-	public void setExternalEvalGroups(EvalGroupsProvider externalEvalGroups) {
-		this.externalEvalGroups = externalEvalGroups;
+	private EvalGroupsProvider evalGroupsProvider;
+	public void setEvalGroupsProvider(EvalGroupsProvider evalGroupsProvider) {
+		this.evalGroupsProvider = evalGroupsProvider;
 	}
 
 
@@ -120,8 +120,8 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		registerPermissions();
 
 		// setup providers
-		if (externalEvalGroups == null) {
-			externalEvalGroups = (EvalGroupsProvider) ComponentManager.get(EvalGroupsProvider.class.getName());
+		if (evalGroupsProvider == null) {
+			evalGroupsProvider = (EvalGroupsProvider) ComponentManager.get(EvalGroupsProvider.class.getName());
 		}
 	}
 
@@ -183,8 +183,8 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 			log.debug("Could not get site from context:" + context, e);
 
 			// use external provider
-			if (externalEvalGroups != null) {
-				c = externalEvalGroups.getContextByGroupId(context);
+			if (evalGroupsProvider != null) {
+				c = evalGroupsProvider.getContextByGroupId(context);
 			}
 		}
 
@@ -211,8 +211,8 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 			Site site = siteService.getSite(context);
 			return site.getTitle();
 		} catch (IdUnusedException e) {
-			if (externalEvalGroups != null) {
-				Context c = externalEvalGroups.getContextByGroupId(context);
+			if (evalGroupsProvider != null) {
+				Context c = evalGroupsProvider.getContextByGroupId(context);
 				return c.title;
 			}
 		}
@@ -244,11 +244,11 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		}
 
 		// also check provider
-		if (externalEvalGroups != null) {
+		if (evalGroupsProvider != null) {
 			if (EvalConstants.PERM_BE_EVALUATED.equals(permission) ||
 					EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
 				log.debug("Using eval groups provider: userId: " + userId + ", permission: " + permission);
-				count += externalEvalGroups.countEvalGroupsForUser(userId, permission);
+				count += evalGroupsProvider.countEvalGroupsForUser(userId, permission);
 			}
 		}
 
@@ -286,11 +286,11 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		}
 
 		// also check provider
-		if (externalEvalGroups != null) {
+		if (evalGroupsProvider != null) {
 			if (EvalConstants.PERM_BE_EVALUATED.equals(permission) ||
 					EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
 				log.debug("Using eval groups provider: userId: " + userId + ", permission: " + permission);
-				l.addAll( externalEvalGroups.getEvalGroupsForUser(userId, permission) );
+				l.addAll( evalGroupsProvider.getEvalGroupsForUser(userId, permission) );
 			}
 		}
 
@@ -305,11 +305,11 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		int count = getUserIdsForContext(context, permission).size();
 
 		// also check provider
-		if (externalEvalGroups != null) {
+		if (evalGroupsProvider != null) {
 			if (EvalConstants.PERM_BE_EVALUATED.equals(permission) ||
 					EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
 				log.debug("Using eval groups provider: context: " + context + ", permission: " + permission);
-				count += externalEvalGroups.countUserIdsForEvalGroups(new String[] {context}, permission);
+				count += evalGroupsProvider.countUserIdsForEvalGroups(new String[] {context}, permission);
 			}
 		}
 
@@ -326,11 +326,11 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		Set userIds = authzGroupService.getUsersIsAllowed(permission, azGroups);
 
 		// also check provider
-		if (externalEvalGroups != null) {
+		if (evalGroupsProvider != null) {
 			if (EvalConstants.PERM_BE_EVALUATED.equals(permission) ||
 					EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
 				log.debug("Using eval groups provider: context: " + context + ", permission: " + permission);
-				userIds.addAll( externalEvalGroups.getUserIdsForEvalGroups(new String[] {context}, permission) );
+				userIds.addAll( evalGroupsProvider.getUserIdsForEvalGroups(new String[] {context}, permission) );
 			}
 		}
 
@@ -348,11 +348,11 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		}
 
 		// also check provider
-		if (externalEvalGroups != null) {
+		if (evalGroupsProvider != null) {
 			if (EvalConstants.PERM_BE_EVALUATED.equals(permission) ||
 					EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
 				log.debug("Using eval groups provider: userId: " + userId + ", permission: " + permission + ", context: " + context);
-				if ( externalEvalGroups.isUserAllowedInGroup(userId, permission, context) ) {
+				if ( evalGroupsProvider.isUserAllowedInGroup(userId, permission, context) ) {
 					return true;
 				}
 			}
