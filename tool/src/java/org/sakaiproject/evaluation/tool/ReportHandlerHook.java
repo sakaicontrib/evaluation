@@ -36,7 +36,7 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.params.CSVReportViewParams;
-import org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer;
+import org.sakaiproject.evaluation.tool.utils.ComparatorsUtils;
 import org.sakaiproject.evaluation.tool.utils.ItemBlockUtils;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
@@ -125,7 +125,7 @@ public class ReportHandlerHook implements HandlerHook {
 		if (! allItems.isEmpty()) {
 			//filter out the block child items, to get a list non-child items
 			List ncItemsList = ItemBlockUtils.getNonChildItems(allItems);
-			Collections.sort(ncItemsList,new PreviewEvalProducer.EvaluationItemOrderComparator());
+			Collections.sort(ncItemsList,new ComparatorsUtils.TemplateItemComparatorByOrder());
 			//for each item
 			for (int i = 0; i < ncItemsList.size(); i++) {
 				//fetch the item

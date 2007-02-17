@@ -31,7 +31,9 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.params.EssayResponseParams;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
+import org.sakaiproject.evaluation.tool.utils.ComparatorsUtils;
 import org.sakaiproject.evaluation.tool.utils.ItemBlockUtils;
+import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -69,56 +71,25 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 	public void setEvalsLogic(EvalEvaluationsLogic evalsLogic) {
 		this.evalsLogic = evalsLogic;
 	}
-	
+
 	private EvalResponsesLogic responsesLogic;	
 	public void setResponsesLogic(EvalResponsesLogic responsesLogic) {
 		this.responsesLogic = responsesLogic;
 	}
-	
+
 	private MessageLocator messageLocator;
 	public void setMessageLocator(MessageLocator messageLocator) {
 		this.messageLocator = messageLocator;
 	}
-	
+
 	public ViewParameters getViewParameters() {
 		return new EssayResponseParams(VIEW_ID, null, null);
 	}	
-	
-	/**
-	 * 
-	 * @param bl=
-	 *            true: test if there is any "Course" item
-	 * @param bl=
-	 *            false: test if there is any "Instructor" item
-	 */
-	private boolean findItemCategory(boolean bl, List itemList) {
-		boolean rs = false;
 
-		for (int j = 0; j < itemList.size(); j++) {
-			EvalTemplateItem tempItem1 = (EvalTemplateItem) itemList.get(j);
-			EvalItem item1 = tempItem1.getItem();
-			String category = tempItem1.getItemCategory();
-			String classification = item1.getClassification();
-			if (bl && category.equals(EvalConstants.ITEM_CATEGORY_COURSE) 
-					&& classification.equals(EvalConstants.ITEM_TYPE_TEXT)) {
-				//"Course","Short Answer/Essay"
-				rs = true;
-				break;
-			}
 
-			if (bl == false && category.equals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR) 
-					&& classification.equals(EvalConstants.ITEM_TYPE_TEXT)) {
-				//"Instructor","Short Answer/Essay"
-				rs = true;
-				break;
-			}
-		}
 
-		return rs;
-	}	
-	
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
-		
+
 		UIOutput.make(tofill, "view-essay-title",  messageLocator.getMessage("viewessay.page.title"));
 		UIInternalLink.make(tofill, "summary-toplink", messageLocator.getMessage("summary.page.title"),
 				new SimpleViewParameters(SummaryProducer.VIEW_ID)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -126,17 +97,16 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 		EssayResponseParams essayResponseParams = (EssayResponseParams) viewparams;
 		UIInternalLink.make(tofill, "viewReportLink", messageLocator.getMessage("viewreport.page.title"), 
 				new EvalViewParameters(ViewReportProducer.VIEW_ID, 
-					essayResponseParams.evalId));		
+						essayResponseParams.evalId));		
 		//output single set of essay responses
 		if(essayResponseParams.itemId != null){
 			//we are actually passing EvalTemplateItem ID
 			//EvalItem myItem = itemsLogic.getItemById(essayResponseParams.itemId);//EvalItem myItem = logic.getItemById(essayResponseParams.itemId);
 			EvalTemplateItem myTempItem = itemsLogic.getTemplateItemById(essayResponseParams.itemId);
 			EvalItem myItem = myTempItem.getItem();
-			
-			//String cat = myItem.getCategory();
+
 			String cat = myTempItem.getItemCategory();
-			
+
 			UIBranchContainer radiobranch = null;
 			UIBranchContainer courseSection = null;
 			UIBranchContainer instructorSection = null;
@@ -158,7 +128,7 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 			}
 
 		}
-		
+
 		//prepare sets of responses for each essay question
 		else if (essayResponseParams.evalId != null) {
 			EvalEvaluation evaluation = evalsLogic.getEvaluationById(essayResponseParams.evalId);
@@ -172,28 +142,30 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 			List allItems = new ArrayList(template.getTemplateItems());
 
 			if (! allItems.isEmpty()) {
-			
+
 				List ncItemsList = ItemBlockUtils.getNonChildItems(allItems);
-				Collections.sort(ncItemsList, new PreviewEvalProducer.EvaluationItemOrderComparator());	
-				
+				Collections.sort(ncItemsList, new ComparatorsUtils.TemplateItemComparatorByOrder());	
+
 				//Collections.sort(childItems, new ReportItemOrderComparator());
-			
+
 				// check if there is any "Course" items or "Instructor" items;
 				UIBranchContainer courseSection = null;
 				UIBranchContainer instructorSection = null;
-				if (this.findItemCategory(true, ncItemsList))
-					courseSection = UIBranchContainer.make(tofill,
-							"courseSection:");
-				if (this.findItemCategory(false, ncItemsList))
-					instructorSection = UIBranchContainer.make(tofill,
-							"instructorSection:");
-				
+
+				if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_COURSE, ncItemsList))	{	
+					courseSection = UIBranchContainer.make(tofill,"courseSection:"); //$NON-NLS-1$
+				}
+
+				if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, ncItemsList))	{	
+					instructorSection = UIBranchContainer.make(tofill,"instructorSection:"); //$NON-NLS-1$
+				}
+
 				for (int i = 0; i < ncItemsList.size(); i++) {
 					EvalTemplateItem tempItem1 = (EvalTemplateItem) ncItemsList.get(i);
 					EvalItem item1 = tempItem1.getItem();
 					//String cat = item1.getCategory();
 					String cat = tempItem1.getItemCategory();
-					
+
 					UIBranchContainer radiobranch = null;
 					if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_COURSE) 
 							&& item1.getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)){
@@ -205,7 +177,7 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 									new UIColourDecorator(
 											null,
 											Color
-													.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
+											.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
 
 						this.doFillComponent(item1, evaluation.getId(), i, radiobranch,
 								courseSection);
@@ -219,7 +191,7 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 									new UIColourDecorator(
 											null,
 											Color
-													.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
+											.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
 						this.doFillComponent(item1, evaluation.getId(), i, radiobranch,
 								instructorSection);
 					}
@@ -228,28 +200,28 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 			}
 
 		}
-		
+
 	}
-	
+
 	private void doFillComponent(EvalItem myItem, Long evalId, int i,
 			UIBranchContainer radiobranch, UIContainer tofill) {
 
-		if  (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)) {
+		if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)) {
 			//"Short Answer/Essay"
 			UIBranchContainer essay = UIBranchContainer.make(radiobranch,
 			"essayType:");
 			UIOutput.make(essay, "itemNum", (new Integer(i + 1)).toString());
 			UIOutput.make(essay, "itemText", myItem.getItemText());
-			
+
 			List itemAnswers= responsesLogic.getEvalAnswers(myItem.getId(), evalId);
-			
-				//count the number of answers that match this one
-				for(int y=0; y<itemAnswers.size();y++){
-			    	UIBranchContainer answerbranch = UIBranchContainer.make(essay, "answers:", Integer.toString(y));
-					EvalAnswer curr=(EvalAnswer)itemAnswers.get(y);
-					UIOutput.make(answerbranch, "answerNum", new Integer(y+1).toString());
-					UIOutput.make(answerbranch, "itemAnswer", curr.getText());					
-				}
+
+			//count the number of answers that match this one
+			for(int y=0; y<itemAnswers.size();y++){
+				UIBranchContainer answerbranch = UIBranchContainer.make(essay, "answers:", Integer.toString(y));
+				EvalAnswer curr=(EvalAnswer)itemAnswers.get(y);
+				UIOutput.make(answerbranch, "answerNum", new Integer(y+1).toString());
+				UIOutput.make(answerbranch, "itemAnswer", curr.getText());					
+			}
 		}
 	}
 
@@ -258,8 +230,5 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 
 		return i;
 	}
-
-
-
 
 }

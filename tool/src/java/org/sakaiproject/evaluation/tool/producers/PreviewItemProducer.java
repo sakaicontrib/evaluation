@@ -54,7 +54,7 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 		this.itemsLogic = itemsLogic;
 	}
 
-	ItemRenderer itemRenderer;
+	private ItemRenderer itemRenderer;
 	public void setItemRenderer(ItemRenderer itemRenderer) {
 		this.itemRenderer = itemRenderer;
 	}
