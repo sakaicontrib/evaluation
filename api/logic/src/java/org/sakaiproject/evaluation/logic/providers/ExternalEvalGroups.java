@@ -12,7 +12,7 @@
  * 
  *****************************************************************************/
 
-package org.sakaiproject.evaluation.logic.externals;
+package org.sakaiproject.evaluation.logic.providers;
 
 import java.util.List;
 import java.util.Set;
