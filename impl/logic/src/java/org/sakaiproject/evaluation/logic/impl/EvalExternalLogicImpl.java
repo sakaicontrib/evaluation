@@ -34,7 +34,7 @@ import org.sakaiproject.entity.api.EntityManager;
 import org.sakaiproject.entity.api.Reference;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.model.Context;
-import org.sakaiproject.evaluation.logic.providers.ExternalEvalGroups;
+import org.sakaiproject.evaluation.logic.providers.EvalGroupsProvider;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.exception.IdUnusedException;
 import org.sakaiproject.site.api.Site;
@@ -107,8 +107,8 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 
 	// PROVIDERS
 
-	private ExternalEvalGroups externalEvalGroups;
-	public void setExternalEvalGroups(ExternalEvalGroups externalEvalGroups) {
+	private EvalGroupsProvider externalEvalGroups;
+	public void setExternalEvalGroups(EvalGroupsProvider externalEvalGroups) {
 		this.externalEvalGroups = externalEvalGroups;
 	}
 
@@ -121,7 +121,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 
 		// setup providers
 		if (externalEvalGroups == null) {
-			externalEvalGroups = (ExternalEvalGroups) ComponentManager.get(ExternalEvalGroups.class.getName());
+			externalEvalGroups = (EvalGroupsProvider) ComponentManager.get(EvalGroupsProvider.class.getName());
 		}
 	}
 
