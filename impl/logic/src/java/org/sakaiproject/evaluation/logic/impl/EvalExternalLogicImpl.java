@@ -28,10 +28,12 @@ import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.authz.api.AuthzGroupService;
 import org.sakaiproject.authz.api.FunctionManager;
 import org.sakaiproject.authz.api.SecurityService;
+import org.sakaiproject.component.cover.ComponentManager;
 import org.sakaiproject.email.api.EmailService;
 import org.sakaiproject.entity.api.EntityManager;
 import org.sakaiproject.entity.api.Reference;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups;
 import org.sakaiproject.evaluation.logic.model.Context;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.exception.IdUnusedException;
@@ -103,12 +105,24 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		this.userDirectoryService = userDirectoryService;
 	}
 
+	// PROVIDERS
+
+	private ExternalEvalGroups externalEvalGroups;
+	public void setExternalEvalGroups(ExternalEvalGroups externalEvalGroups) {
+		this.externalEvalGroups = externalEvalGroups;
+	}
+
 
 	public void init() {
 		log.debug("init, register security perms");
 		
 		// register Sakai permissions for this tool
 		registerPermissions();
+
+		// setup providers
+		if (externalEvalGroups == null) {
+			externalEvalGroups = (ExternalEvalGroups) ComponentManager.get(ExternalEvalGroups.class.getName());
+		}
 	}
 
 
@@ -159,15 +173,25 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	 */
 	public Context makeContextObject(String context) {
 		// TODO - make this work for other context types
+		Context c = null;
 		try {
 			Site site = siteService.getSite(context);
-			return new Context( context, site.getTitle(), 
+			c = new Context( context, site.getTitle(), 
 					getContextType(SAKAI_SITE_TYPE) );
 		} catch (IdUnusedException e) {
-			// invalid site Id returned
-			log.error("Could not get site from context:" + context, e);
+			// invalid site Id
+			log.debug("Could not get site from context:" + context, e);
+
+			// use external provider
+			if (externalEvalGroups != null) {
+				c = externalEvalGroups.getContextByGroupId(context);
+			}
 		}
-		return null;
+
+		if (c == null)
+			log.error("Could not get site from context:" + context);
+
+		return c;
 	}
 
 
@@ -187,8 +211,13 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 			Site site = siteService.getSite(context);
 			return site.getTitle();
 		} catch (IdUnusedException e) {
-			log.warn("Cannot get the site from context (may not be a site):" + context);
+			if (externalEvalGroups != null) {
+				Context c = externalEvalGroups.getContextByGroupId(context);
+				return c.title;
+			}
 		}
+
+		log.warn("Cannot get the info about context:" + context);
 		return "Unknown DisplayTitle";
 	}
 
@@ -197,6 +226,8 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	 * @see org.sakaiproject.evaluation.logic.external.EvalExternalLogic#countContextsForUser(java.lang.String, java.lang.String)
 	 */
 	public int countContextsForUser(String userId, String permission) {
+		log.debug("userId: " + userId + ", permission: " + permission);
+
 		// TODO - make this handle non-Sites also
 		int count = 0;
 		Set authzGroupIds = authzGroupService.getAuthzGroupsIsAllowed(userId, permission, null);
@@ -211,6 +242,16 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 				}
 			}
 		}
+
+		// also check provider
+		if (externalEvalGroups != null) {
+			if (EvalConstants.PERM_BE_EVALUATED.equals(permission) ||
+					EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
+				log.debug("Using eval groups provider: userId: " + userId + ", permission: " + permission);
+				count += externalEvalGroups.countEvalGroupsForUser(userId, permission);
+			}
+		}
+
 		return count;
 	}
 
@@ -218,6 +259,8 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	 * @see org.sakaiproject.evaluation.logic.external.EvalExternalLogic#getContextsForUser(java.lang.String, java.lang.String)
 	 */
 	public List getContextsForUser(String userId, String permission) {
+		log.debug("userId: " + userId + ", permission: " + permission);
+
 		// TODO - make this handle non-Sites also
 		log.info("Sites for user:" + userId + ", permission: " + permission);
 		List l = new ArrayList();
@@ -241,6 +284,16 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 				}
 			}
 		}
+
+		// also check provider
+		if (externalEvalGroups != null) {
+			if (EvalConstants.PERM_BE_EVALUATED.equals(permission) ||
+					EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
+				log.debug("Using eval groups provider: userId: " + userId + ", permission: " + permission);
+				l.addAll( externalEvalGroups.getEvalGroupsForUser(userId, permission) );
+			}
+		}
+
 		if (l.isEmpty()) log.warn("Empty list of sites for user:" + userId + ", permission: " + permission);
 		return l;
 	}
@@ -249,7 +302,18 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	 * @see org.sakaiproject.evaluation.logic.externals.ExternalContexts#countUserIdsForContext(java.lang.String, java.lang.String)
 	 */
 	public int countUserIdsForContext(String context, String permission) {
-		return getUserIdsForContext(context, permission).size();
+		int count = getUserIdsForContext(context, permission).size();
+
+		// also check provider
+		if (externalEvalGroups != null) {
+			if (EvalConstants.PERM_BE_EVALUATED.equals(permission) ||
+					EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
+				log.debug("Using eval groups provider: context: " + context + ", permission: " + permission);
+				count += externalEvalGroups.countUserIdsForEvalGroups(new String[] {context}, permission);
+			}
+		}
+
+		return count;
 	}
 
 	/* (non-Javadoc)
@@ -259,7 +323,18 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		String reference = getReference(context);
 		List azGroups = new ArrayList();
 		azGroups.add(reference);
-		return authzGroupService.getUsersIsAllowed(permission, azGroups);
+		Set userIds = authzGroupService.getUsersIsAllowed(permission, azGroups);
+
+		// also check provider
+		if (externalEvalGroups != null) {
+			if (EvalConstants.PERM_BE_EVALUATED.equals(permission) ||
+					EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
+				log.debug("Using eval groups provider: context: " + context + ", permission: " + permission);
+				userIds.addAll( externalEvalGroups.getUserIdsForEvalGroups(new String[] {context}, permission) );
+			}
+		}
+
+		return userIds;
 	}
 
 
@@ -271,6 +346,18 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		if ( securityService.unlock(userId, permission, reference) ) {
 			return true;
 		}
+
+		// also check provider
+		if (externalEvalGroups != null) {
+			if (EvalConstants.PERM_BE_EVALUATED.equals(permission) ||
+					EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
+				log.debug("Using eval groups provider: userId: " + userId + ", permission: " + permission + ", context: " + context);
+				if ( externalEvalGroups.isUserAllowedInGroup(userId, permission, context) ) {
+					return true;
+				}
+			}
+		}
+
 		return false;
 	}
 
