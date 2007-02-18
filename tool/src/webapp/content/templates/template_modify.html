@@ -29,7 +29,7 @@
 <table width="85%" cellpadding="0" cellspacing="0">
 <tr>
 	<td colspan="2">		
-		<a href="#" rsf:id="preview_eval_link" target="_blank">View a preview</a>
+		<a href="preview_eval.html" rsf:id="preview_eval_link" target="_blank">View a preview</a>
 		<span rsf:id="preview-eval-desc"> of this template as an evaluation</span>
 	</td>
 	<td>&nbsp;</td>
@@ -53,15 +53,21 @@
 	</td>	
 
 	<td>&nbsp;</td>
-	<td align="right" style="font-weight:bold;"><span rsf:id="univ-level-header">University Level - </span><label rsf:id="itemCount"  style="font-weight:bold;">#</label><span rsf:id="existing-items"> existing items</span></td>
+	<td align="right" style="font-weight:bold;">
+  <span rsf:id="univ-level-header">University Level - </span>
+  <label rsf:id="itemCount"  style="font-weight:bold;">#</label>
+  <span rsf:id="existing-items"> existing items</span></td>
 </tr> 
 <tr>
-	<td colspan="2"><b><span rsf:id="template-title-header">Template Title: </span></b><label rsf:id="title">Title</label></td>
+	<td colspan="2"><b><label rsf:id="template-title-header">Template Title: </label></b>
+  <span rsf:id="title">Title</span></td>
 	<td>&nbsp;</td>
 	<td align="right"><a href="#" rsf:id="modify_title_desc_link">Modify Template Title/Description</a></td>
 </tr>
-<tr>
-	<td colspan="4"><b><span rsf:id="description-header">Description:  </span></b><label rsf:id="description">Template description goes here, this would be notes for other admins or yourself</label></td>
+<tr rsf:id="description-switch:">
+	<td colspan="4"><b><label rsf:id="description-header">Description:  </label></b>
+   <div style="display:inline" rsf:id="description">Template description goes here, this would be notes for other admins or yourself</div>
+   </td>
 </tr>  
 </table>
 

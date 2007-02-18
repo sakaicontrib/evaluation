@@ -179,6 +179,6 @@ public class RemoveTemplateProducer implements ViewComponentProducer, Navigation
 	}
 
 	public ViewParameters getViewParameters() {
-		return new EvalViewParameters(VIEW_ID, null, null);
+		return new EvalViewParameters();
 	}
 }

@@ -32,11 +32,4 @@ public class TemplateItemViewParameters extends EvalViewParameters {
     this.templateItemId = templateItemId;
   }
 
-  // RSF getParseSpec inference only works for directly derived classes of
-  // SVP in 0.7
-  public String getParseSpec() {
-    // include a comma delimited list of the public properties in this class
-    return super.getParseSpec() + ",templateId,templateItemId";
-  }
-
 }

@@ -3,140 +3,133 @@
 
 <!-- Aaron Zeckoski (aaronz@vt.edu) -->
 <beans>
+  <!-- Configure the location of the messages files -->
+  <bean id="messageLocator"
+    class="uk.org.ponder.springutil.SpringMessageLocator">
+    <property name="messageSource">
+      <bean
+        class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="basename"
+          value="classpath:org/sakaiproject/evaluation/tool/bundle/messages" />
+        <property name="cacheSeconds" value="10" />
+      </bean>
+    </property>
+    <property name="localeGetter" ref="requestLocaleProxy" />
+  </bean>
 
-	<!-- Configure the location of the messages files -->
-	<bean id="messageLocator"
-		class="uk.org.ponder.springutil.SpringMessageLocator">
-		<property name="messageSource">
-			<bean class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-				<property name="basename"
-					value="classpath:org/sakaiproject/evaluation/tool/bundle/messages" />
-				<property name="cacheSeconds" value="10" />
-			</bean>
-		</property>
-		<property name="localeGetter" ref="requestLocaleProxy" />
-	</bean>
+  <!-- the beans listed here are allowed access to values (security) -->
+  <bean parent="requestAddressibleParent">
+    <property name="value"
+      value="evaluationBean, templateBBean, itemsBean, templateBeanLocator, templateItemBeanLocator, answersBeanLocator, responseAnswersBeanLocator, responseBeanLocator, evaluationBeanLocator, takeEvalBean, settingsBean" />
+  </bean>
 
-	<!-- the beans listed here are allowed access to values (security) -->
-	<bean parent="requestAddressibleParent">
-		<property name="value"
-			value="evaluationBean, templateBBean, itemsBean, templateBeanLocator, templateItemBeanLocator, answersBeanLocator, responseAnswersBeanLocator, responseBeanLocator, evaluationBeanLocator, takeEvalBean, settingsBean" />
-	</bean>
+  <bean id="localTemplateLogic"
+    class="org.sakaiproject.evaluation.tool.LocalTemplateLogic">
+    <property name="templatesLogic"
+      ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
+    <property name="external"
+      ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+    <property name="itemsLogic"
+      ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
+  </bean>
 
-	<bean id="EvalARIProxy" parent="RSACBridgeProxy">
-		<property name="targetBeanName">
-			<idref bean="EvalARI" />
-		</property>
-	</bean>
+  <bean id="localResponsesLogic"
+    class="org.sakaiproject.evaluation.tool.LocalResponsesLogic">
+    <property name="external"
+      ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+    <property name="responsesLogic"
+      ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic">
+    </property>
+    <property name="itemsLogic"
+      ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
+  </bean>
 
-	<bean name="actionResultInterpreter"
-		class="uk.org.ponder.rsf.flow.DelegatingARI">
-		<property name="ARIList">
-			<list>
-				<ref bean="JSFNavigationARI" />
-				<ref bean="EvalARIProxy" />
-				<ref bean="nullActionResultInterpreter" />
-			</list>
-		</property>
-	</bean>
+  <!-- The beans listed here are session beans (they stick around) -->
+  <bean id="myBeanScope" parent="beanScopeParent">
+    <property name="copyPreservingBeans" value="evaluationBean" />
+    <property name="exclusive" value="true" />
+  </bean>
 
-	<bean id="localTemplateLogic"
-		class="org.sakaiproject.evaluation.tool.LocalTemplateLogic">
-		<property name="templatesLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
-		<property name="external"
-			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-		<property name="itemsLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
-	</bean>
+  <!-- define any XML producer files -->
+  <bean id="siteMap" parent="siteMapDef" />
 
-	<bean id="localResponsesLogic"
-	  class="org.sakaiproject.evaluation.tool.LocalResponsesLogic">
-	  <property name="external"
-	    ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-	  <property name="responsesLogic"
-	    ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic">
-	  </property>
-	  <property name="itemsLogic"
-	    ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
-	</bean>
+  <bean parent="ActionResultInterceptorParent">
+    <property name="value">
+      <bean
+        class="org.sakaiproject.evaluation.tool.wrapper.EvalActionResultInterceptor">
+        <property name="templateBeanLocator">
+          <bean parent="RSACBridgeProxy">
+            <property name="targetBeanName" value="templateBeanLocator" />
+          </bean>
+        </property>
+      </bean>
+    </property>
+  </bean>
 
-	<!-- The beans listed here are session beans (they stick around) -->
-	<bean id="myBeanScope" parent="beanScopeParent">
-		<property name="copyPreservingBeans"
-			value="evaluationBean" />
-		<property name="exclusive" value="true" />
-	</bean>
+  <bean parent="handlerHookParent">
+    <property name="value">
+      <bean parent="RSACBridgeProxy">
+        <property name="targetBeanName" value="reportHandlerHook" />
+      </bean>
+    </property>
+  </bean>
 
-	<!-- define any XML producer files -->
-	<bean id="siteMap" parent="siteMapDef" />
+  <!-- special wrapper beans which work with genericdao to allow hibernate lazy inits -->
+  <bean id="org.sakaiproject.evaluation.ModelAccessWrapperInvoker"
+    class="org.sakaiproject.evaluation.tool.wrapper.ModelAccessWrapperInvoker">
+    <property name="evaluationDao"
+      ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+  </bean>
 
-	<!-- A wrapper bean that will rewrite outgoing URL state that refers to
-		freshly saved entities -->
+  <bean class="uk.org.ponder.rsac.BeanFetchBracketer">
+    <property name="targetBeanName">
+      <idref bean="rootHandlerBean" />
+    </property>
+    <property name="wrappingBean"
+      ref="org.sakaiproject.evaluation.ModelAccessWrapperInvoker" />
+  </bean>
 
-	<bean parent="alterationWrapperParent">
-		<property name="value">
-			<bean parent="RSACBridgeProxy">
-				<property name="targetBeanName"
-					value="entityRewriteWrapper" />
-			</bean>
-		</property>
-	</bean>
+  <!-- the renderers list must line up with the code in the ItemRendererImpl -->
+  <bean id="org.sakaiproject.evaluation.tool.renderers.ItemRenderer"
+    class="org.sakaiproject.evaluation.tool.renderers.ItemRendererImpl"
+    init-method="init">
+    <property name="renderTypes">
+      <list>
+        <bean
+          class="org.sakaiproject.evaluation.tool.renderers.HeaderRenderer">
+        </bean>
+        <bean class="org.sakaiproject.evaluation.tool.renderers.TextRenderer">
+          <property name="messageLocator" ref="messageLocator" />
+        </bean>
+        <bean
+          class="org.sakaiproject.evaluation.tool.renderers.ScaledRenderer">
+          <property name="messageLocator" ref="messageLocator" />
+        </bean>
+        <bean
+          class="org.sakaiproject.evaluation.tool.renderers.BlockRenderer">
+          <property name="messageLocator" ref="messageLocator" />
+          <property name="itemsLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
+        </bean>
+      </list>
+    </property>
+  </bean>
 
-	<bean parent="handlerHookParent">
-		<property name="value">
-			<bean parent="RSACBridgeProxy">
-				<property name="targetBeanName"
-					value="reportHandlerHook" />
-			</bean>
-		</property>
-	</bean>
+  <!-- Override this definition from RSF-evolvers, to reflect the fact we are
+    serving the RSF components templates from our own webapp (as provided using
+    the "partial WAR" build strategy -->
+  <bean id="componentsTemplateResourceBase" class="java.lang.String">
+    <constructor-arg value="/" />
+  </bean>
 
-	<!-- special wrapper beans which work with genericdao to allow hibernate lazy inits -->
-	<bean id="org.sakaiproject.evaluation.ModelAccessWrapperInvoker"
-		class="org.sakaiproject.evaluation.tool.wrapper.ModelAccessWrapperInvoker">
-		<property name="evaluationDao"
-			ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
-	</bean>
-
-	<bean class="uk.org.ponder.rsac.BeanFetchBracketer">
-		<property name="targetBeanName">
-			<idref bean="rootHandlerBean" />
-		</property>
-		<property name="wrappingBean"
-			ref="org.sakaiproject.evaluation.ModelAccessWrapperInvoker" />
-	</bean>
-
-	<!-- the renderers list must line up with the code in the ItemRendererImpl -->
-	<bean id="org.sakaiproject.evaluation.tool.renderers.ItemRenderer"
-		class="org.sakaiproject.evaluation.tool.renderers.ItemRendererImpl"
-		init-method="init">
-		<property name="renderTypes">
-			<list>
-				<bean class="org.sakaiproject.evaluation.tool.renderers.HeaderRenderer">
-				</bean>
-				<bean class="org.sakaiproject.evaluation.tool.renderers.TextRenderer">
-					<property name="messageLocator" ref="messageLocator" />
-				</bean>
-				<bean class="org.sakaiproject.evaluation.tool.renderers.ScaledRenderer">
-					<property name="messageLocator" ref="messageLocator" />
-				</bean>
-				<bean class="org.sakaiproject.evaluation.tool.renderers.BlockRenderer">
-					<property name="messageLocator" ref="messageLocator" />
-					<property name="itemsLogic" ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
-				</bean>
-			</list>
-		</property>
-	</bean>
-  
-	<!-- this needs to contain all item renderer and other evolver html templates,
-		baseDirectory should end with / and not begin with one -->
-	<bean id="componentTemplateContributor"
-			parent="templateContributorParent">
-		<property name="baseDirectory" value="component-templates/" />
-		<property name="templateNames"
-			value="render_header_item, render_text_item, render_scaled_item, render_block_item" />
-		<property name="expected" value="true" />
-	</bean>
+  <!-- this needs to contain all item renderer and other evolver html templates,
+    baseDirectory should end with / and not begin with one -->
+  <bean id="evaluationComponentTemplateContributor"
+    parent="templateContributorParent">
+    <property name="baseDirectory" value="component-templates/" />
+    <property name="templateNames"
+      value="render_header_item, render_text_item, render_scaled_item, render_block_item" />
+    <property name="expected" value="true" />
+  </bean>
 
 </beans>

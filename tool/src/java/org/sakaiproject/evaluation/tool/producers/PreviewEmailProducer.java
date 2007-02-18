@@ -16,9 +16,9 @@ package org.sakaiproject.evaluation.tool.producers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationBean;
-import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
-
+import org.sakaiproject.evaluation.tool.params.EmailViewParameters;
 
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UICommand;
@@ -41,73 +41,82 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * @author: Rui Feng (fengr@vt.edu)
  */
 
-public class PreviewEmailProducer implements ViewComponentProducer,NavigationCaseReporter, ViewParamsReporter {
+public class PreviewEmailProducer implements ViewComponentProducer,
+    NavigationCaseReporter, ViewParamsReporter {
 
-	private final static String BREAK = "<br/>";  //$NON-NLS-1$
-	private EvaluationBean evaluationBean;
-	public static final String VIEW_ID = "preview_email"; //$NON-NLS-1$
-	
-	public void setEvaluationBean(EvaluationBean evaluationBean) {
-		this.evaluationBean = evaluationBean;
-	}
+  private final static String BREAK = "<br/>"; //$NON-NLS-1$
+  private EvaluationBean evaluationBean;
+  public static final String VIEW_ID = "preview_email"; //$NON-NLS-1$
 
-	private MessageLocator messageLocator;
-	public void setMessageLocator(MessageLocator messageLocator) {
-		this.messageLocator = messageLocator;
-	}	
-	
-	public String getViewID() {
-		return VIEW_ID;
-	}
+  public void setEvaluationBean(EvaluationBean evaluationBean) {
+    this.evaluationBean = evaluationBean;
+  }
 
-	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+  private MessageLocator messageLocator;
 
-		UIOutput.make(tofill, "preview-email-title", messageLocator.getMessage("previewemail.page.title"));	 //$NON-NLS-1$ //$NON-NLS-2$
-		UIInternalLink.make(tofill, "summary-toplink", messageLocator.getMessage("summary.page.title"),  //$NON-NLS-1$ //$NON-NLS-2$
-				new SimpleViewParameters(SummaryProducer.VIEW_ID));			
-		UIOutput.make(tofill, "create-eval-title", messageLocator.getMessage("createeval.page.title"));	 //$NON-NLS-1$ //$NON-NLS-2$
-		
-		UIOutput.make(tofill, "preview-email-header", messageLocator.getMessage("previewemail.header")); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		EvalViewParameters evalViewParams = (EvalViewParameters) viewparams;
-		
-		String emailText = null;
-		
-		UIForm form = UIForm.make(tofill, "previewEmailForm"); //$NON-NLS-1$
-			
-		UIOutput.make(form, "preview-email-desc", messageLocator.getMessage("previewemail.desc")); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		UIOutput.make(form, "close-button", messageLocator.getMessage("general.close.window.button"));
-		
-		if( evalViewParams.originalPage.equals("available")){ //$NON-NLS-1$
-			UICommand.make(form, "modifyEmailTemplate", messageLocator.getMessage("previewemail.modify.button"), "#{evaluationBean.modifyAvailableEmailTemplate}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+  public void setMessageLocator(MessageLocator messageLocator) {
+    this.messageLocator = messageLocator;
+  }
 
-			emailText = evaluationBean.emailAvailableTxt;
-			emailText = emailText.replaceAll("<", "&lt;"); //$NON-NLS-1$ //$NON-NLS-2$
-			emailText = emailText.replaceAll(">", "&gt;"); //$NON-NLS-1$ //$NON-NLS-2$
-			emailText = emailText.replaceAll("\n", BREAK); //$NON-NLS-1$
-			UIVerbatim.make(form,"previewEmailText", emailText); //$NON-NLS-1$
-		}
-		if( evalViewParams.originalPage.equals("reminder")){ //$NON-NLS-1$
-			UICommand.make(form, "modifyEmailTemplate", messageLocator.getMessage("previewemail.modify.button"), "#{evaluationBean.modifyReminderEmailTemplate}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+  public String getViewID() {
+    return VIEW_ID;
+  }
 
-			emailText = evaluationBean.emailReminderTxt;
-			emailText = emailText.replaceAll("<", "&lt;"); //$NON-NLS-1$ //$NON-NLS-2$
-			emailText = emailText.replaceAll(">", "&gt;"); //$NON-NLS-1$ //$NON-NLS-2$
-			emailText = emailText.replaceAll("\n", BREAK); //$NON-NLS-1$
-			UIVerbatim.make(form,"previewEmailText", emailText); //$NON-NLS-1$
-		}
-	}
+  public void fillComponents(UIContainer tofill, ViewParameters viewparams,
+      ComponentChecker checker) {
 
-	public List reportNavigationCases() {
-		List i = new ArrayList();
-		
-		i.add(new NavigationCase("available", new EvalViewParameters(ModifyEmailProducer.VIEW_ID, null, "available"))); //$NON-NLS-1$ //$NON-NLS-2$
-		i.add(new NavigationCase("reminder", new EvalViewParameters(ModifyEmailProducer.VIEW_ID, null, "reminder"))); //$NON-NLS-1$ //$NON-NLS-2$
-		return i;
-	}
+    UIOutput.make(tofill, "preview-email-title", messageLocator
+        .getMessage("previewemail.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
+    UIInternalLink.make(tofill,
+        "summary-toplink", messageLocator.getMessage("summary.page.title"), //$NON-NLS-1$ //$NON-NLS-2$
+        new SimpleViewParameters(SummaryProducer.VIEW_ID));
+    UIOutput.make(tofill, "create-eval-title", messageLocator
+        .getMessage("createeval.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
 
-	public ViewParameters getViewParameters() {
-		return new EvalViewParameters(VIEW_ID, null, null);
-	}	
+    UIOutput.make(tofill, "preview-email-header", messageLocator
+        .getMessage("previewemail.header")); //$NON-NLS-1$ //$NON-NLS-2$
+
+    EmailViewParameters emailViewParams = (EmailViewParameters) viewparams;
+
+    UIForm form = UIForm.make(tofill, "previewEmailForm"); //$NON-NLS-1$
+
+    UIOutput.make(form,
+        "preview-email-desc", messageLocator.getMessage("previewemail.desc")); //$NON-NLS-1$ //$NON-NLS-2$
+
+    UIOutput.make(form, "close-button", messageLocator
+        .getMessage("general.close.window.button"));
+    String emailText = "";
+    String actionBinding = null;
+
+    if (emailViewParams.emailType
+        .equals(EvalConstants.EMAIL_TEMPLATE_AVAILABLE)) {
+      actionBinding = "#{evaluationBean.modifyAvailableEmailTemplate}";
+      emailText = evaluationBean.emailAvailableTxt;
+
+    }
+    if (emailViewParams.emailType.equals(EvalConstants.EMAIL_TEMPLATE_REMINDER)) {
+      actionBinding = "#{evaluationBean.modifyReminderEmailTemplate}"; //$NON-NLS-1$ 
+      emailText = evaluationBean.emailReminderTxt;
+    }
+    emailText = emailText.replaceAll("\n", BREAK); //$NON-NLS-1$
+    UICommand.make(form, "modifyEmailTemplate", messageLocator
+        .getMessage("previewemail.modify.button"), actionBinding);
+    UIVerbatim.make(form, "previewEmailText", emailText); //$NON-NLS-1$
+  }
+
+  public List reportNavigationCases() {
+    List i = new ArrayList();
+
+    i.add(new NavigationCase("available", new EmailViewParameters(
+        ModifyEmailProducer.VIEW_ID, null,
+        EvalConstants.EMAIL_TEMPLATE_AVAILABLE))); //$NON-NLS-1$ //$NON-NLS-2$
+    i.add(new NavigationCase("reminder", new EmailViewParameters(
+        ModifyEmailProducer.VIEW_ID, null,
+        EvalConstants.EMAIL_TEMPLATE_REMINDER))); //$NON-NLS-1$ //$NON-NLS-2$
+    return i;
+  }
+
+  public ViewParameters getViewParameters() {
+    return new EmailViewParameters();
+  }
 }
