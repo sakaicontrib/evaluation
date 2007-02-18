@@ -33,11 +33,6 @@
 		<property name="messageLocator" ref="messageLocator" />
 	</bean>
 
-	<bean id="EvalARI"
-		class="org.sakaiproject.evaluation.tool.EvalARI">
-		<property name="itemsBean" ref="itemsBean" />
-	</bean>
-
 	<bean id="takeEvalBean"
 		class="org.sakaiproject.evaluation.tool.TakeEvalBean">
 	 <property name="responseBeanLocator" ref="responseBeanLocator" />
@@ -51,7 +46,7 @@
       <property name="itemsLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
 	</bean>
-
+  
 	<bean id="itemsBean"
 		class="org.sakaiproject.evaluation.tool.ItemsBean"
 		init-method="init">
@@ -106,18 +101,18 @@
 	  class="org.sakaiproject.evaluation.tool.ResponseAnswersBeanLocator">
 	</bean>
 
-	<bean id="entityRewriteWrapper"
-		class="org.sakaiproject.evaluation.tool.wrapper.EntityRewriteWrapper">
-		<property name="ARIResult" ref="ARIResult" />
-		<property name="templateBeanLocator" ref="templateBeanLocator" />
-		<property name="requestType" ref="requestType" />
-		<property name="viewParameters" ref="viewParameters" />
-	</bean>
-
 	<bean id="templateItemBeanLocator"
 		class="org.sakaiproject.evaluation.tool.TemplateItemBeanLocator">
         <property name="localTemplateLogic" ref="localTemplateLogic" />
 	</bean>
+
+  <!-- evolver definitions here -->
+  
+  <!-- for now we will just hardwire the rich text control for this app to be
+    the Sakai FCKEditor-based rich text control -->
+  <bean id="richTextEvolver" class="org.springframework.beans.factory.config.BeanReferenceFactoryBean">
+    <property name="targetBeanName" value="sakaiFCKTextEvolver"/>
+  </bean>
 
 	<!-- producers here -->
 	<bean
@@ -131,7 +126,7 @@
 		<property name="responsesLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
 		<property name="messageLocator" ref="messageLocator" />
-		<property name="locale" ref="sakai-Locale" />
+		<property name="locale" ref="requestLocale" />
 	</bean>
 
 	<bean
@@ -147,7 +142,7 @@
 		<property name="responsesLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
 		<property name="messageLocator" ref="messageLocator" />
-		<property name="locale" ref="sakai-Locale" />
+		<property name="locale" ref="requestLocale" />
 	</bean>
 
 	<bean
@@ -164,13 +159,13 @@
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 		<property name="externalLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+    <property name="richTextEvolver" ref="richTextEvolver"/>
 	</bean>
 
 	<bean
 		class="org.sakaiproject.evaluation.tool.producers.TemplateModifyProducer">
 		<property name="messageLocator" ref="messageLocator" />
-		<property name="itemsLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
+    <property name="localTemplateLogic" ref="localTemplateLogic"/>
 		<property name="viewStateHandler" ref="viewStateHandler" />
 	</bean>
 

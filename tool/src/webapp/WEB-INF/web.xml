@@ -12,12 +12,22 @@
         
   <context-param>
     <param-name>contextConfigLocation</param-name>
-    <param-value>classpath:conf/rsf-config.xml, classpath:conf/blank-applicationContext.xml, classpath:conf/sakai-applicationContext.xml, /WEB-INF/applicationContext.xml</param-value>
+    <param-value>classpath:conf/rsf-config.xml, 
+    classpath:conf/blank-applicationContext.xml, 
+    classpath:conf/sakai-applicationContext.xml, 
+    classpath:conf/components-applicationContext.xml,
+    classpath:conf/sakaiComponents-applicationContext.xml,
+    /WEB-INF/applicationContext.xml</param-value>
   </context-param>
 
   <context-param>
     <param-name>requestContextConfigLocation</param-name>
-    <param-value>classpath:conf/rsf-requestscope-config.xml, classpath:conf/blank-requestContext.xml, classpath:conf/sakai-requestContext.xml, /WEB-INF/requestContext.xml</param-value>
+    <param-value>classpath:conf/rsf-requestscope-config.xml, 
+    classpath:conf/blank-requestContext.xml, 
+    classpath:conf/sakai-requestContext.xml, 
+    classpath:conf/components-requestContext.xml,
+    classpath:conf/sakaiComponents-requestContext.xml,
+    /WEB-INF/requestContext.xml</param-value>
   </context-param>
 
   <filter>
@@ -27,7 +37,7 @@
 
   <filter-mapping>
       <filter-name>sakai.request</filter-name>
-      <url-pattern>/faces/*</url-pattern>
+      <servlet-name>sakai.rsf.evaluation</servlet-name>
       <dispatcher>REQUEST</dispatcher>
       <dispatcher>FORWARD</dispatcher>
       <dispatcher>INCLUDE</dispatcher>

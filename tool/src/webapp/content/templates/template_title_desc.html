@@ -1,14 +1,14 @@
 <!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
+<html xmlns:rsf="http://ponder.org.uk/rsf">
 <head>
 	<title rsf:id="template-title-desc-title">Modify Template Title/Desc.</title> 
-    <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
-    <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
-    <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+  <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+  <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+  <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
 	<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />    
     
-    <script language="JavaScript">
+  <script language="JavaScript">
 	function validateForm(){  
         if(document.form1.title.value == "")
         	return false;
@@ -52,7 +52,9 @@
 	</tr>
 	<tr>
 		<td colspan="2">
-			<textarea name="description" rsf:id="description" cols="90" rows="4"></textarea>
+      <div rsf:id="description:">
+			<textarea name="description" rsf:id="description-dummy" cols="90" rows="4"></textarea>
+      </div>
 		</td>
 	</tr>	
 </table>

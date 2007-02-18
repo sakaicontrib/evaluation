@@ -157,6 +157,16 @@
 			</properties>
 		</dependency>
 
+    <dependency>
+      <groupId>rsfutil</groupId>
+      <artifactId>RSFComponents-evolvers</artifactId>
+      <version>${rsfutil.version}</version>
+      <type>jar</type>
+      <properties>
+        <war.bundle>true</war.bundle>
+      </properties>
+    </dependency>
+
 		<dependency>
 			<groupId>sakairsf</groupId>
 			<artifactId>sakairsf</artifactId>
@@ -166,6 +176,26 @@
 				<war.bundle>true</war.bundle>
 			</properties>
 		</dependency>
+    
+    <dependency>
+      <groupId>sakairsf</groupId>
+      <artifactId>SakaiRSFComponents-templates</artifactId>
+      <version>${rsfutil.version}-sakai_2.2.x</version>
+      <type>war</type>
+      <properties>
+        <explode>true</explode>
+      </properties>
+    </dependency>
+    
+    <dependency>
+      <groupId>sakairsf</groupId>
+      <artifactId>SakaiRSFComponents-evolvers</artifactId>
+      <version>${rsfutil.version}-sakai_2.2.x</version>
+      <type>jar</type>
+      <properties>
+        <war.bundle>true</war.bundle>
+      </properties>
+    </dependency>
 
 		<!-- XML pull parser (RSF requires this) -->
 		<dependency>

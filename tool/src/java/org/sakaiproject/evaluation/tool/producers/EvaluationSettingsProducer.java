@@ -27,6 +27,7 @@ import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.tool.EvaluationBean;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
+import org.sakaiproject.evaluation.tool.params.EmailViewParameters;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 
 import uk.org.ponder.messageutil.MessageLocator;
@@ -416,7 +417,9 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		} 
 		
 		UIOutput.make(form, "eval-reminder-settings-header", messageLocator.getMessage("evalsettings.reminder.settings.header")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIInternalLink.make(form, "emailAvailable_link", messageLocator.getMessage("evalsettings.available.mail.link"), new EvalViewParameters(PreviewEmailProducer.VIEW_ID, null, "available"));	 //$NON-NLS-1$ //$NON-NLS-2$
+		UIInternalLink.make(form, "emailAvailable_link", messageLocator.getMessage("evalsettings.available.mail.link"), 
+            new EmailViewParameters(PreviewEmailProducer.VIEW_ID, null, 
+                EvalConstants.EMAIL_TEMPLATE_AVAILABLE));	 //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(form, "eval-available-mail-desc", messageLocator.getMessage("evalsettings.available.mail.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(form, "reminder-noresponders-header", messageLocator.getMessage("evalsettings.reminder.noresponders.header")); //$NON-NLS-1$ //$NON-NLS-2$
 		
@@ -443,7 +446,8 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		reminderNames.setValue(reminderEmailDaysLabels);
 		reminder.optionnames = reminderNames;
 		
-		UIInternalLink.make(form, "emailReminder_link", messageLocator.getMessage("evalsettings.reminder.mail.link"), new EvalViewParameters(PreviewEmailProducer.VIEW_ID, null, "reminder"));	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		UIInternalLink.make(form, "emailReminder_link", messageLocator.getMessage("evalsettings.reminder.mail.link"), 
+            new EmailViewParameters(PreviewEmailProducer.VIEW_ID, null, EvalConstants.EMAIL_TEMPLATE_REMINDER));	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		UIOutput.make(form, "eval-reminder-mail-desc", messageLocator.getMessage("evalsettings.reminder.mail.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(form, "eval-from-email-header", messageLocator.getMessage("evalsettings.from.email.header")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIInput.make(form, "reminderFromEmail", "#{evaluationBean.eval.reminderFromEmail}", null); //$NON-NLS-1$ //$NON-NLS-2$
@@ -468,7 +472,8 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 	public List reportNavigationCases() {
 		List i = new ArrayList();
 		
-		i.add(new NavigationCase(EvaluationStartProducer.VIEW_ID, new EvalViewParameters(EvaluationStartProducer.VIEW_ID, null, EvaluationSettingsProducer.VIEW_ID)));
+		i.add(new NavigationCase(EvaluationStartProducer.VIEW_ID, 
+            new EvalViewParameters(EvaluationStartProducer.VIEW_ID, null)));
 		i.add(new NavigationCase(ControlPanelProducer.VIEW_ID, new SimpleViewParameters(ControlPanelProducer.VIEW_ID)));
 		i.add(new NavigationCase(EvaluationAssignProducer.VIEW_ID, new SimpleViewParameters(EvaluationAssignProducer.VIEW_ID)));
 	

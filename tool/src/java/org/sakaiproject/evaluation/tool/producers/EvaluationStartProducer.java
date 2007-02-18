@@ -154,6 +154,6 @@ public class EvaluationStartProducer implements ViewComponentProducer, Navigatio
 	}
 	
 	public ViewParameters getViewParameters() {
-		return new EvalViewParameters(VIEW_ID, null, null);
+		return new EvalViewParameters();
 	}
 }

@@ -133,7 +133,7 @@ public class RemoveEvalProducer implements ViewComponentProducer,ViewParamsRepor
 	}
 
 	public ViewParameters getViewParameters() {
-		return new EvalViewParameters(VIEW_ID, null, null);
+		return new EvalViewParameters();
 	}
 	
 	

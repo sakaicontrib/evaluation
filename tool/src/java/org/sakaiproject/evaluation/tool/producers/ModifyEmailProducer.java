@@ -16,6 +16,8 @@ package org.sakaiproject.evaluation.tool.producers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
+import org.sakaiproject.evaluation.tool.params.EmailViewParameters;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 
 
@@ -66,16 +68,16 @@ public class ModifyEmailProducer implements ViewComponentProducer, NavigationCas
 		
 		UIOutput.make(form, "modify-text-instructions", messageLocator.getMessage("modifyemail.modify.text.instructions")); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		EvalViewParameters evalViewParams = (EvalViewParameters) viewparams;
+		EmailViewParameters emailViewParams = (EmailViewParameters) viewparams;
 		
 		UIOutput.make(form, "close-button", messageLocator.getMessage("general.close.window.button"));
 		
-		if( evalViewParams.originalPage.equals("available")){ //$NON-NLS-1$
+		if( emailViewParams.emailType.equals(EvalConstants.EMAIL_TEMPLATE_AVAILABLE)){ //$NON-NLS-1$
 			UIInput.make(form,"emailTemplate","#{evaluationBean.emailAvailableTxt}", null); //$NON-NLS-1$ //$NON-NLS-2$
 			UICommand.make(form, "saveEmailTemplate", messageLocator.getMessage("modifyemail.save.changes.link"), "#{evaluationBean.saveAvailableEmailTemplate}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		
-		if( evalViewParams.originalPage.equals("reminder")){ //$NON-NLS-1$
+		if( emailViewParams.emailType.equals(EvalConstants.EMAIL_TEMPLATE_REMINDER)){ //$NON-NLS-1$
 			UIInput.make(form,"emailTemplate","#{evaluationBean.emailReminderTxt}", null); //$NON-NLS-1$ //$NON-NLS-2$
 			UICommand.make(form, "saveEmailTemplate", messageLocator.getMessage("modifyemail.save.changes.link"), "#{evaluationBean.saveReminderEmailTemplate}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
@@ -84,15 +86,15 @@ public class ModifyEmailProducer implements ViewComponentProducer, NavigationCas
 
 	public List reportNavigationCases() {
 		List i = new ArrayList();
-		
-		i.add(new NavigationCase("available", new EvalViewParameters(PreviewEmailProducer.VIEW_ID, null, "available"))); //$NON-NLS-1$ //$NON-NLS-2$
-		i.add(new NavigationCase("reminder", new EvalViewParameters(PreviewEmailProducer.VIEW_ID, null, "reminder"))); //$NON-NLS-1$ //$NON-NLS-2$
-		
+		i.add(new NavigationCase(EvalConstants.EMAIL_TEMPLATE_AVAILABLE, 
+            new EmailViewParameters(PreviewEmailProducer.VIEW_ID, null, EvalConstants.EMAIL_TEMPLATE_AVAILABLE))); //$NON-NLS-1$ //$NON-NLS-2$
+		i.add(new NavigationCase(EvalConstants.EMAIL_TEMPLATE_REMINDER, 
+            new EmailViewParameters(PreviewEmailProducer.VIEW_ID, null, EvalConstants.EMAIL_TEMPLATE_REMINDER))); //$NON-NLS-1$ //$NON-NLS-2$
 		return i;
 	}
 
 	public ViewParameters getViewParameters() {
-		return new EvalViewParameters(VIEW_ID, null, null);
+		return new EmailViewParameters();
 	}		
 
 }

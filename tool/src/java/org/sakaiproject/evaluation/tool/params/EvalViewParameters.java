@@ -20,10 +20,8 @@ import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
  * passed from one page to another
  * @author Sakai App Builder -AZ
  */
-public class EvalViewParameters extends SimpleViewParameters {
-	
+public class EvalViewParameters extends SimpleViewParameters {	
 	public Long templateId; 
-	public String originalPage;
 	
 	public EvalViewParameters() {
 	}
@@ -34,13 +32,5 @@ public class EvalViewParameters extends SimpleViewParameters {
         this.viewID = viewID;
         this.templateId = templateId;
     }
-    /**
-     * Please use 2-argument constructor for all new code.
-     * @deprecated
-     */
-	public EvalViewParameters(String viewID, Long templateId, String originalPage) {
-		this.viewID = viewID;
-		this.templateId = templateId;
-		this.originalPage = originalPage;
-	}
+   
 }

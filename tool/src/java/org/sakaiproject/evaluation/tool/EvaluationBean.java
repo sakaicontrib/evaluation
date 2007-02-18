@@ -326,7 +326,7 @@ public class EvaluationBean {
 	 * 			in ModifyEmailProducer (reportNavigationCases method)
 	 */
 	public String saveAvailableEmailTemplate(){
-		return "available";
+      return EvalConstants.EMAIL_TEMPLATE_AVAILABLE;
 	}
 
 	/**
@@ -337,7 +337,7 @@ public class EvaluationBean {
 	 * 			in ModifyEmailProducer (reportNavigationCases method)
 	 */
 	public String saveReminderEmailTemplate(){
-		return "reminder";
+      return EvalConstants.EMAIL_TEMPLATE_REMINDER;
 	}
 	
 	/**
@@ -348,7 +348,7 @@ public class EvaluationBean {
 	 * 			in PreviewEmailProducer (reportNavigationCases method)
 	 */
 	public String modifyAvailableEmailTemplate(){
-		return "available";
+       return EvalConstants.EMAIL_TEMPLATE_AVAILABLE;
 	}
 	
 
@@ -360,7 +360,7 @@ public class EvaluationBean {
 	 * 			in PreviewEmailProducer (reportNavigationCases method)
 	 */
 	public String modifyReminderEmailTemplate(){
-		return "reminder";
+		return EvalConstants.EMAIL_TEMPLATE_REMINDER;
 	}
 
 	/**

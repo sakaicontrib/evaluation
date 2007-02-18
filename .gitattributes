@@ -93,10 +93,10 @@ impl/test/src/java/org/sakaiproject/evaluation/test/EvalTestDataLoad.java -text
 impl/test/src/java/org/sakaiproject/evaluation/test/PreloadTestData.java -text
 /project.properties -text
 /project.xml -text
+tool/maven.xml -text
 tool/project.properties -text
 tool/project.xml -text
 tool/src/java/org/sakaiproject/evaluation/tool/AnswersBeanLocator.java -text
-tool/src/java/org/sakaiproject/evaluation/tool/EvalARI.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/EvaluationBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/EvaluationBeanLocator.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/EvaluationConstant.java -text
@@ -114,6 +114,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/TemplateItemBeanLocator.java -tex
 tool/src/java/org/sakaiproject/evaluation/tool/bundle/messages_en.properties -text
 tool/src/java/org/sakaiproject/evaluation/tool/params/BlockIdsParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/params/CSVReportViewParams.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/params/EmailViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/params/EssayResponseParams.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/params/EvalTakeViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/params/EvalViewParameters.java -text
@@ -153,8 +154,9 @@ tool/src/java/org/sakaiproject/evaluation/tool/renderers/TextRenderer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/utils/ComparatorsUtils.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/utils/EvaluationDateUtil.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/utils/ItemBlockUtils.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/utils/RSFUtils.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/utils/TemplateItemUtils.java -text
-tool/src/java/org/sakaiproject/evaluation/tool/wrapper/EntityRewriteWrapper.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/wrapper/EvalActionResultInterceptor.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/wrapper/ModelAccessWrapperInvoker.java -text
 tool/src/webapp/WEB-INF/applicationContext.xml -text
 tool/src/webapp/WEB-INF/classes/log4j.properties -text
