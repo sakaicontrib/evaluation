@@ -174,11 +174,9 @@ public class TemplateModifyProducer implements ViewComponentProducer,
         RSFUtils.targetLabel(header, title);
 		
 		UIInternalLink.make(tofill, 
-				"modify_title_desc_link", 
-				messageLocator.getMessage("modifytemplate.modify.title.desc.link"),
-				new EvalViewParameters(
-						TemplateProducer.VIEW_ID, 
-						templateId));
+		  "modify_title_desc_link", 
+		  messageLocator.getMessage("modifytemplate.modify.title.desc.link"),
+		   new EvalViewParameters(TemplateProducer.VIEW_ID, templateId));
 		if (template.getDescription() != null && 
             !template.getDescription().trim().equals("")) {
           UIBranchContainer descbranch = UIBranchContainer.make(tofill, "description-switch:");
@@ -283,7 +281,7 @@ public class TemplateModifyProducer implements ViewComponentProducer,
 				UIBranchContainer radiobranch2 = UIBranchContainer.make(form2,"itemrow:text", Integer.toString(i)); //$NON-NLS-1$
 				UIOutput.make(radiobranch2,"queNo",Integer.toString(i+1));	 //$NON-NLS-1$
 				//UIOutput.make(radiobranch2,"itemText",currItemDisplay.getItem().getItemText());	
-				UIOutput.make(radiobranch2,"itemText",myTemplateItem.getItem().getItemText());	
+				UIVerbatim.make(radiobranch2,"itemText",myTemplateItem.getItem().getItemText());	
 				
 				String scaletitle = ""; //$NON-NLS-1$				
 			//	if(currItemDisplay.getItem().getScale() != null)
@@ -309,7 +307,7 @@ public class TemplateModifyProducer implements ViewComponentProducer,
 						UIBranchContainer childRow = UIBranchContainer.make(form2,"itemrow:blockItems", Integer.toString(k));
 						EvalTemplateItem childTI = (EvalTemplateItem)childList.get(k);
 						UIOutput.make(childRow,"childItemId",childTI.getDisplayOrder().toString());	
-						UIOutput.make(childRow,"childItemText",childTI.getItem().getItemText());
+						UIVerbatim.make(childRow,"childItemText",childTI.getItem().getItemText());
 					}		
 				}
 		    }//end of for loop

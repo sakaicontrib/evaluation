@@ -8,44 +8,22 @@
     <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
     <script>
-    	var flag = "";
+   	var flag = "";
     	
 		function validateForm(){  
 			
-			if (flag=="cancel")
-			{
-				document.block_form.target = "_self";		
-				return true;
-			}else if(flag =="add")
-			{
-				document.block_form.target = "_self";		
-				return true;
-			}else if(flag == "remove"){
+			if (flag=="cancel" || flag =="add" || flag == "remove")	{
 				document.block_form.target = "_self";		
 				return true;
 			}
-			else
-			{
-				if(document.block_form.item_text.value == "")
-				{
-					alert("Please enter the item text");
-	       			return false;
-	       		}
-	       		else
-	       		{ 
-	       			if (flag=="save")
-	       				document.block_form.target = "_self";
-	       			
-	       			//This is for preview	
-	       			else
-	       				document.block_form.target = "_blank";	
-	       				
-	       			return true;
-	       		}
-	       	}    	
-  	  }    	
-  	  
-  	 
+			else if (flag=="save") {
+        document.block_form.target = "_self";
+        }
+      //This is for preview 
+      else
+        document.block_form.target = "_blank";  
+      return true;
+    }
     </script>
  
 </head>
@@ -101,7 +79,9 @@
 		 </td></tr>
 		 
 		 <tr><td colspan="2" width="100%">
-		 <textarea name="item_text" rsf:id="item_text" cols="80" rows="5"></textarea>
+     <div rsf:id="item_text:">
+       <textarea name="item_text-dummy" rsf:id="item_text-dummy" cols="80" rows="5"></textarea>
+     </div>
 		 </td></tr>
 	
 		 <tr>

@@ -27,6 +27,7 @@ import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIJointContainer;
 import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIFreeAttributeDecorator;
 
@@ -54,7 +55,7 @@ public class TextRenderer implements ItemRenderer {
 		UIJointContainer container = new UIJointContainer(parent, ID, COMPONENT_ID);
 
 		UIOutput.make(container, "itemNum", displayNumber>0?displayNumber+"":"0" ); //$NON-NLS-1$
-		UIOutput.make(container, "itemText", templateItem.getItem().getItemText()); //$NON-NLS-1$
+		UIVerbatim.make(container, "itemText", templateItem.getItem().getItemText()); //$NON-NLS-1$
 		if ( templateItem.getUsesNA().booleanValue() ) {
 			UIBranchContainer NAbranch = UIBranchContainer.make(container, "showNA:"); //$NON-NLS-1$
 			UIBoundBoolean.make(NAbranch, "itemNA", templateItem.getUsesNA()); //$NON-NLS-1$

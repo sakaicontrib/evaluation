@@ -130,13 +130,14 @@ public class ReportHandlerHook implements HandlerHook {
 			for (int i = 0; i < ncItemsList.size(); i++) {
 				//fetch the item
 				EvalTemplateItem tempItem1 = (EvalTemplateItem) ncItemsList.get(i);
-				EvalItem item1 = (EvalItem) tempItem1.getItem();
+				EvalItem item1 = tempItem1.getItem();
 				
 				//if the item is normal scaled
 				//if(item1.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)){
 				if(TemplateItemUtils.getTemplateItemType(tempItem1).equals(EvalConstants.ITEM_TYPE_SCALED)){
 					String labels[] = item1.getScale().getOptions();
 					//add the item description to the top row
+					// TODO: This is now rich text, needs flattening/rendering
 					topRow.add(item1.getItemText());
 					//get all answers to this item within this evaluation
 					List itemAnswers = responsesLogic.getEvalAnswers(item1.getId(), crvp.evalId);

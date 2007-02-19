@@ -45,6 +45,7 @@ import uk.org.ponder.rsf.components.UIOutputMany;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.UISelectLabel;
+import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIColourDecorator;
 import uk.org.ponder.rsf.components.decorators.UIFreeAttributeDecorator;
@@ -126,7 +127,7 @@ public class RemoveQuestionProducer implements ViewComponentProducer, ViewParams
 
 				//Item text
 				UIOutput.make(compact, "queNo", myTemplateItem.getDisplayOrder().toString()); //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(compact, "itemText", myTemplateItem.getItem().getItemText()); //$NON-NLS-1$ //$NON-NLS-2$
+				UIVerbatim.make(compact, "itemText", myTemplateItem.getItem().getItemText()); //$NON-NLS-1$ //$NON-NLS-2$
 				
 				//Start label
 				String compactDisplayStart = scaleOptions[0];		

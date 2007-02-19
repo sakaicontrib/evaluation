@@ -166,8 +166,8 @@ public class BlockRenderer implements ItemRenderer {
 
 				// get the child item
 				EvalTemplateItem childTemplateItem = (EvalTemplateItem) childList.get(j);
-				EvalItem childItem = (EvalItem) childTemplateItem.getItem();
-				children.add( childTemplateItem.getId() );
+				EvalItem childItem = childTemplateItem.getItem();
+				children.add(childTemplateItem.getId());
 
 				// For the radio buttons
 				UIBranchContainer childRow = UIBranchContainer.make(blockStepped, "childRow:", new Integer(j).toString() ); //$NON-NLS-1$

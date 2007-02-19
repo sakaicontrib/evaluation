@@ -155,6 +155,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/utils/ComparatorsUtils.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/utils/EvaluationDateUtil.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/utils/ItemBlockUtils.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/utils/RSFUtils.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/utils/ScaledUtils.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/utils/TemplateItemUtils.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/wrapper/EvalActionResultInterceptor.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/wrapper/ModelAccessWrapperInvoker.java -text

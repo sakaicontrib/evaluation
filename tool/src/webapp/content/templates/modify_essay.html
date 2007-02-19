@@ -8,34 +8,27 @@
     <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
     <script>
-    	var flag = "";
-    	
-		function validateForm(){  
-			
-			if (flag=="cancel")
-			{
+    var flag = "";
+		function validateForm() {	
+			if (flag=="cancel") {
 				document.essay_form.target = "_self";		
 				return true;
 			}
-			else
-			{
-				if(document.essay_form.item_text.value == "")
-				{
-					alert("Please enter the item text");
-	       			return false;
-	       		}
-	       		else
-	       		{ 
-	       			if (flag=="save")
-	       				document.essay_form.target = "_self";
-	       			//This is for preview	
-	       			else
-	       				document.essay_form.target = "_blank";	
-	       				
-	       			return true;
-	       		}
-	       	}
-  	  }    	
+			else if (flag=="save") {
+	    	document.essay_form.target = "_self";
+	    	//This is for preview	
+        }
+ 			else {
+ 				document.essay_form.target = "_blank";	
+        }
+      // TODO: implement proper validation. Also name cannot be computed in this
+      // way any more from RichText.
+      return true;
+		  if (document.essay_form.item_text.value == "") {
+			  alert("Please enter the item text");
+	      return false;
+	      }
+      }
     </script>
  
 </head>
@@ -83,29 +76,28 @@
 		 </td></tr>
 		 
 		 <tr><td colspan="2" width="100%">
-		 <textarea name="item_text" rsf:id="item_text" cols="80" rows="5"></textarea>
+     <div rsf:id="item_text:">
+		   <textarea name="item_text-dummy" rsf:id="item_text-dummy" cols="80" rows="5"></textarea>
+     </div>
 		 </td></tr>
 		 
 		 <tr>
-		 <td  width="20%"><b><span rsf:id="response-size-header">Response Size:</span></b></td>
+		 <td width="20%"><b><span rsf:id="response-size-header">Response Size: </span></b></td>
 		 <td width="80%">
-		 	<select name="scaleList" rsf:id="scaleList">
-           		<option value="one" selected="true">2 lines</option>
-           		<option value="two" >5 lines</option>
-           	</select>
-         </td>
+		 <select name="scaleList" rsf:id="scaleList">
+        <option value="one" selected="true">2 lines</option>
+        <option value="two" >5 lines</option>
+     </select>
+     </td>
 		 </tr>
 
-		<span rsf:id="showNA:">			
-			<tr>
+			<tr rsf:id="showNA:">
 				<td width="20%"><b><span rsf:id="add-na-header">Add N/A (not available):</span></b></td>
 				<td width="80%"><input type="checkbox" name="item_NA" rsf:id="item_NA" value="" checked="" /></td>
 			</tr>				
-		</span>
 		
-		<span rsf:id="showItemCategory:">			
-			<tr>
-				<td width="20%" ><b><span rsf:id="item-category-header">Item Category :</span></b></td>
+			<tr rsf:id="showItemCategory:">
+				<td width="20%" ><b><span rsf:id="item-category-header">Item Category: </span></b></td>
 				<td width="80%">
 					<span rsf:id="item_category"/>
 			        <label for="item_category_C" rsf:id="course-category-header">Course</label>
@@ -114,7 +106,6 @@
 			        <input type="radio" name="item_category_I" rsf:id="item_category_I" />
 			    </td>
 			</tr>	
-		</span>
 
 		<tr>
 			<td width="20%" align="left">

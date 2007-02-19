@@ -20,6 +20,7 @@ import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
+import org.sakaiproject.evaluation.tool.utils.ScaledUtils;
 
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
@@ -31,6 +32,7 @@ import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.UISelectLabel;
+import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIColourDecorator;
 
@@ -86,7 +88,7 @@ public class ScaledRenderer implements ItemRenderer {
 			}
 
 			UIOutput.make(compact, "itemNum", displayNumber+"" ); //$NON-NLS-1$ //$NON-NLS-2$
-			UIOutput.make(compact, "itemText", templateItem.getItem().getItemText()); //$NON-NLS-1$
+			UIVerbatim.make(compact, "itemText", templateItem.getItem().getItemText()); //$NON-NLS-1$
 
 			// Compact start and end label containers
 			UIBranchContainer compactStartContainer = UIBranchContainer.make(compact, "compactStartContainer:"); //$NON-NLS-1$
@@ -96,46 +98,17 @@ public class ScaledRenderer implements ItemRenderer {
 			UIOutput.make(compactStartContainer, "compactDisplayStart", compactDisplayStart);
 			UIOutput.make(compactEndContainer, "compactDisplayEnd", compactDisplayEnd);
 
-			String idealImage = ""; //$NON-NLS-1$
 			if (colored) {
-				String ideal = scale.getIdeal();
-				// Finding the colors for compact start and end labels
-				Color startColor = null;
-				Color endColor = null;
-				// Get the scale ideal value (none, low, mid, high )
-				if (ideal == null) {
-					// When no ideal is specified then just plain blue for both start and end
-					startColor = Color.decode(EvaluationConstant.BLUE_COLOR);
-					endColor = Color.decode(EvaluationConstant.BLUE_COLOR);
-					idealImage = EvaluationConstant.COLORED_IMAGE_URLS[0];
-				} else if (EvalConstants.SCALE_IDEAL_LOW.equals(ideal)) {
-					startColor = Color.decode(EvaluationConstant.GREEN_COLOR);
-					endColor = Color.decode(EvaluationConstant.RED_COLOR);
-					idealImage = EvaluationConstant.COLORED_IMAGE_URLS[1];
-				} else if (EvalConstants.SCALE_IDEAL_MID.equals(ideal)) {
-					startColor = Color.decode(EvaluationConstant.RED_COLOR);
-					endColor = Color.decode(EvaluationConstant.RED_COLOR);
-					idealImage = EvaluationConstant.COLORED_IMAGE_URLS[2];
-				} else if (EvalConstants.SCALE_IDEAL_HIGH.equals(ideal)) {
-					startColor = Color.decode(EvaluationConstant.RED_COLOR);
-					endColor = Color.decode(EvaluationConstant.GREEN_COLOR);
-					idealImage = EvaluationConstant.COLORED_IMAGE_URLS[3];
-				} else if (EvalConstants.SCALE_IDEAL_OUTSIDE.equals(ideal)) {
-					startColor = Color.decode(EvaluationConstant.GREEN_COLOR);
-					endColor = Color.decode(EvaluationConstant.GREEN_COLOR);
-					idealImage = EvaluationConstant.COLORED_IMAGE_URLS[4];
-				} else {
-					// use no decorators
-				}
-
-				compactStartContainer.decorators = new DecoratorList(new UIColourDecorator(null, startColor));
-				compactEndContainer.decorators = new DecoratorList(new UIColourDecorator(null, endColor));
+				compactStartContainer.decorators = 
+					new DecoratorList(new UIColourDecorator(null, ScaledUtils.getStartColor(scale)));
+				compactEndContainer.decorators = 
+					new DecoratorList(new UIColourDecorator(null, ScaledUtils.getEndColor(scale)));
 			}
 
 			// For the radio buttons
 			UIBranchContainer compactRadioContainer = UIBranchContainer.make(compact, "compactRadioContainer:"); //$NON-NLS-1$
 			if (colored) {
-				UILink.make(compactRadioContainer, "idealImage", idealImage); //$NON-NLS-1$
+				UILink.make(compactRadioContainer, "idealImage", ScaledUtils.getIdealImageURL(scale)); //$NON-NLS-1$
 			}
 
 			UISelect radios = UISelect.make(compactRadioContainer, 
@@ -175,7 +148,7 @@ public class ScaledRenderer implements ItemRenderer {
 			}
 
 			UIOutput.make(fullFirst, "itemNum", displayNumber+"" ); //$NON-NLS-1$ //$NON-NLS-2$
-			UIOutput.make(fullFirst, "itemText", templateItem.getItem().getItemText()); //$NON-NLS-1$
+			UIVerbatim.make(fullFirst, "itemText", templateItem.getItem().getItemText()); //$NON-NLS-1$
 
 			handleNA(fullFirst, templateItem.getUsesNA().booleanValue());
 
@@ -228,21 +201,8 @@ public class ScaledRenderer implements ItemRenderer {
 				}
 			} else if ( EvalConstants.ITEM_SCALE_DISPLAY_FULL_COLORED.equals(scaleDisplaySetting) ) {
 				UIBranchContainer fullColored = UIBranchContainer.make(radiobranchFullRow,"fullDisplayColored:"); //$NON-NLS-1$
-				// Get the scale ideal value (none, low, mid, high )
-				String ideal = scale.getIdeal(); 
 
-				// Set the ideal image
-				String idealImage = ""; //$NON-NLS-1$
-				if (ideal == null)
-					idealImage = EvaluationConstant.COLORED_IMAGE_URLS[0];
-				else if (ideal.equals("low")) //$NON-NLS-1$
-					idealImage = EvaluationConstant.COLORED_IMAGE_URLS[1];
-				else if (ideal.equals("mid")) //$NON-NLS-1$
-					idealImage = EvaluationConstant.COLORED_IMAGE_URLS[2];
-				else
-					idealImage = EvaluationConstant.COLORED_IMAGE_URLS[3];
-
-				UILink.make(fullColored, "idealImage", idealImage); //$NON-NLS-1$
+				UILink.make(fullColored, "idealImage", ScaledUtils.getIdealImageURL(scale)); //$NON-NLS-1$
 
 				UISelect radios = UISelect.make(fullColored, "dummyRadio", scaleValues, scaleLabels, binding, initValue);
 				String selectID = radios.getFullID();
@@ -318,19 +278,7 @@ public class ScaledRenderer implements ItemRenderer {
 
 			handleNA(steppedColored, templateItem.getUsesNA().booleanValue());
 
-			// Get the scale ideal value (none, low, mid, high )
-			String ideal = scale.getIdeal();//myItem.getScale().getIdeal();
-			String idealImage = ""; //$NON-NLS-1$
-			if (ideal == null)
-				idealImage = EvaluationConstant.COLORED_IMAGE_URLS[0];
-			else if (ideal.equals("low")) //$NON-NLS-1$
-				idealImage = EvaluationConstant.COLORED_IMAGE_URLS[1];
-			else if (ideal.equals("mid")) //$NON-NLS-1$
-				idealImage = EvaluationConstant.COLORED_IMAGE_URLS[2];
-			else
-				idealImage = EvaluationConstant.COLORED_IMAGE_URLS[3];
-
-			UILink.make(steppedColored, "idealImage", idealImage); //$NON-NLS-1$
+			UILink.make(steppedColored,  "idealImage", ScaledUtils.getIdealImageURL(scale)); //$NON-NLS-1$
 			
 			for (int count = 1; count <= optionCount; count++) {
 				scaleValues[optionCount - count] = new Integer(optionCount - count).toString();
@@ -379,9 +327,7 @@ public class ScaledRenderer implements ItemRenderer {
 				UISelectChoice.make(radioBranchSecond,
 						"dummyRadioValueSecond", selectID, j); //$NON-NLS-1$
 			}
-
 		}
-
 		return container;
 	}
 
