@@ -8,34 +8,28 @@
     <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
     <script>
-    	var flag = "";
-    	
-		function validateForm(){  
-			
+    var flag = "";
+		function validateForm() {	
 			if (flag=="cancel")
 			{
 				document.header_form.target = "_self";		
 				return true;
 			}
-			else
-			{
-				if(document.header_form.item_text.value == "")
-				{
-					alert("Please enter the item text");
-	       			return false;
-	       		}
-	       		else
-	       		{ 
-	       			if (flag=="save")
-	       				document.header_form.target = "_self";
-	       			//This is for preview	
-	       			else
-	       				document.header_form.target = "_blank";	
-	       				
-	       			return true;
-	       		}
-	       	}
-  	  }    	
+			else if (flag=="save") {
+	    	document.header_form.target = "_self";
+	    	//This is for preview	
+        }
+ 			else {
+ 				document.header_form.target = "_blank";	
+        }
+      // TODO: implement proper validation. Also name cannot be computed in this
+      // way any more from RichText.
+      return true;
+		  if (document.header_form.item_text.value == "") {
+			  alert("Please enter the item text");
+	      return false;
+	      }
+      }
     </script>
  
 </head>
@@ -86,23 +80,23 @@
 		</tr>
 		 
 		<tr>
-			<td colspan="2" width="100%">
-				<textarea name="item_text" rsf:id="item_text" cols="80" rows="5"></textarea>
-			</td>
+		<td colspan="2" width="100%">
+    <div rsf:id="item_text:">
+		  <textarea name="item_text-dummy" rsf:id="item_text-dummy" cols="80" rows="5"></textarea>
+    </div>
+		</td>
 		</tr>
 		 
-		<span rsf:id="showItemCategory:">			
-			<tr>
-				<td width="20%" ><b><span rsf:id="item-category-header">Item Category :</span></b></td>
-				<td width="80%">
-					<span rsf:id="item_category"/>
-			        <label for="item_category_C" rsf:id="course-category-header">Course</label>
-			        <input type="radio" name="item_category_C" rsf:id="item_category_C"/>
-			        <label for="item_category_I" rsf:id="instructor-category-header">Instructor</label>
-			        <input type="radio" name="item_category_I" rsf:id="item_category_I" />
-			    </td>
+    <tr rsf:id="showItemCategory:">
+		  <td width="20%" ><b><span rsf:id="item-category-header">Item Category :</span></b></td>
+			<td width="80%">
+			  <span rsf:id="item_category"/>
+			  <label for="item_category_C" rsf:id="course-category-header">Course</label>
+			  <input type="radio" name="item_category_C" rsf:id="item_category_C"/>
+			  <label for="item_category_I" rsf:id="instructor-category-header">Instructor</label>
+			  <input type="radio" name="item_category_I" rsf:id="item_category_I" />
+			  </td>
 			</tr>
-		</span>	
 
 		<tr>
 			<td width="20%" align="left">

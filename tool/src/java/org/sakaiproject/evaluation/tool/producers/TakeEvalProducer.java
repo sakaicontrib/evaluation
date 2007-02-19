@@ -325,7 +325,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 				
 				UIOutput.make(compact, "itemNum", (new Integer(i + 1)) //$NON-NLS-1$
 						.toString());
-				UIOutput.make(compact, "itemText", myItem.getItemText()); //$NON-NLS-1$
+				UIVerbatim.make(compact, "itemText", myItem.getItemText()); //$NON-NLS-1$
 				UIOutput.make(compact, "compactDisplayStart", compactDisplayStart);
 				UISelect radios = UISelect.make(compact, "dummyRadio", scaleValues,
 						scaleLabels, currAnswerOTP+"numeric", null); //$NON-NLS-1$
@@ -351,7 +351,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 						radiobranch, "compactDisplayColored:"); //$NON-NLS-1$
 
 				UIOutput.make(compactColored, "itemNum", (new Integer(i + 1)).toString());
-				UIOutput.make(compactColored, "itemText", myItem.getItemText()); //$NON-NLS-1$
+				UIVerbatim.make(compactColored, "itemText", myItem.getItemText()); //$NON-NLS-1$
 				// Get the scale ideal value (none, low, mid, high )
 				String ideal = scale.getIdeal();
 				// Compact start and end label containers
