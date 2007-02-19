@@ -120,8 +120,16 @@ public class LocalResponsesLogic {
 		Set newAnswers=new HashSet(0);
 		for (Iterator it = answers.iterator(); it.hasNext();) {
 			EvalAnswer answer = (EvalAnswer) it.next();
-			if(answer.getNumeric()!=null || answer.getText()!=null)
+			if(answer.getNumeric()!=null || answer.getText()!=null){
+				/**If the numeric and text fields are left null, batch update will fail when several answers of different types are modified
+				 * This is the error that is triggered within the sakai generic dao:
+				 * java.sql.BatchUpdateException: Driver can not re-execute prepared statement when a parameter has been changed from a streaming 
+				 * type to an intrinsic data type without calling clearParameters() first.
+				 */
+				if(answer.getNumeric()==null)answer.setNumeric(new Integer(-1));
+				if(answer.getText()==null)answer.setText(new String(""));				
 				newAnswers.add(answer);
+			}
 		}
 		response.setAnswers(newAnswers);
 		responsesLogic.saveResponse(response, external.getCurrentUserId());
