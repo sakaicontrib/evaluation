@@ -663,18 +663,18 @@ public class EvalTestDataLoad {
 		response6 = new EvalResponse(new Date(), USER_ID, CONTEXT2, 
 				new Date(), today, null, evaluationClosed);
 
-		answer1_1 = new EvalAnswer(new Date(), templateItem1P, item1, response1, null, ANSWER_SCALED_ONE, null);
+		answer1_1 = new EvalAnswer(new Date(), templateItem1P, item1, response1, null, ANSWER_SCALED_ONE, null, null);
 
-		answer2_2 = new EvalAnswer(new Date(), templateItem2A, item2, response2, null, ANSWER_SCALED_ONE, null);
-		answer2_5 = new EvalAnswer(new Date(), templateItem5A, item5, response2, ANSWER_TEXT, null, null);
+		answer2_2 = new EvalAnswer(new Date(), templateItem2A, item2, response2, null, ANSWER_SCALED_ONE, null, null);
+		answer2_5 = new EvalAnswer(new Date(), templateItem5A, item5, response2, ANSWER_TEXT, null, MAINT_USER_ID, EvalConstants.ITEM_CATEGORY_INSTRUCTOR);
 
-		answer3_2 = new EvalAnswer(new Date(), templateItem3A, item2, response3, null, ANSWER_SCALED_TWO, null);
+		answer3_2 = new EvalAnswer(new Date(), templateItem3A, item2, response3, null, ANSWER_SCALED_TWO, null, null);
 		// left the text answer blank
 
-		answer4_1 = new EvalAnswer(new Date(), templateItem1User, item1, response4, null, ANSWER_SCALED_THREE, null);
-		answer4_5 = new EvalAnswer(new Date(), templateItem5User, item5, response4, ANSWER_TEXT, null, null);
+		answer4_1 = new EvalAnswer(new Date(), templateItem1User, item1, response4, null, ANSWER_SCALED_THREE, null, null);
+		answer4_5 = new EvalAnswer(new Date(), templateItem5User, item5, response4, ANSWER_TEXT, null, MAINT_USER_ID, EvalConstants.ITEM_CATEGORY_INSTRUCTOR);
 
-		answer5_1 = new EvalAnswer(new Date(), templateItem5User, item1, response5, null, ANSWER_SCALED_TWO, null);
+		answer5_1 = new EvalAnswer(new Date(), templateItem5User, item1, response5, null, ANSWER_SCALED_TWO, MAINT_USER_ID, EvalConstants.ITEM_CATEGORY_INSTRUCTOR);
 		// left the text answer blank
 
 		// associate the answers

@@ -300,13 +300,23 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
 
 				// check that the associated id is filled in for associated items
 				if ( EvalConstants.ITEM_CATEGORY_COURSE.equals( answer.getTemplateItem().getItemCategory() ) ) {
-					if (answer.getAssociated() != null) {
-						throw new IllegalArgumentException("Course answers must have the associated field blank, for templateItem: " + answer.getTemplateItem().getId());
+					if (answer.getAssociatedId() != null) {
+						log.warn("Course answers should have the associated id field blank, for templateItem: " + answer.getTemplateItem().getId());
 					}
+					answer.setAssociatedId( null );
+					answer.setAssociatedType( null );
 				} else if ( EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals( answer.getTemplateItem().getItemCategory() ) ) {
-					if (answer.getAssociated() == null) {
+					if (answer.getAssociatedId() == null) {
 						throw new IllegalArgumentException("Instructor answers must have the associated field filled in with the instructor userId, for templateItem: " + answer.getTemplateItem().getId());
 					}
+					answer.setAssociatedType( EvalConstants.ITEM_CATEGORY_INSTRUCTOR );
+				} else if ( EvalConstants.ITEM_CATEGORY_ENVIRONMENT.equals( answer.getTemplateItem().getItemCategory() ) ) {
+					if (answer.getAssociatedId() == null) {
+						throw new IllegalArgumentException("Environment answers must have the associated field filled in with the unique environment id, for templateItem: " + answer.getTemplateItem().getId());
+					}
+					answer.setAssociatedType( EvalConstants.ITEM_CATEGORY_ENVIRONMENT );
+				} else {
+					throw new IllegalArgumentException("Do not know how to handle a templateItem category of ("+answer.getTemplateItem().getItemCategory()+") for templateItem: " + answer.getTemplateItem().getId());					
 				}
 
 				// make sure answer is associated with a valid templateItem for this evaluation
@@ -315,7 +325,7 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
 				}
 			}
 
-			// TODO - check if numerical answers are valid
+			// TODO - check if numerical answers are valid?
 		}
 
 		return true;
