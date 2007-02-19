@@ -51,24 +51,23 @@ public class AnswersBeanLocator implements BeanLocator {
     // one. we don't use the new prefix, because the producer has no way of knowing
     // if an answer has been created for the given item, even if a response exists.
     if (togo == null) {
-      Long itemId = Long.valueOf(path);
-      togo = localResponsesLogic.newAnswer(parent, itemId);
-      parent.getAnswers().add(togo);
-      delivered.put(path, togo);
+    	if(path.startsWith(NEW_PREFIX)) togo = localResponsesLogic.newAnswer(parent);
+    	parent.getAnswers().add(togo);
+        delivered.put(path, togo);
     }
     return togo;
   }
 
   /**
    * loads a HashMap with the answers provided. The key used to access an answer
-   * will be of the form <responseNum>.<itemId>.<field>
+   * will be of the form <responseNum>.<answerId>.<field>
    * 
    * @param answers - HashSet of answers
    */
   public void loadMap(Set answers) {
     for (Iterator it = answers.iterator(); it.hasNext();) {
       EvalAnswer answer = (EvalAnswer) it.next();
-      delivered.put(answer.getItem().getId().toString(), answer);
+      delivered.put(answer.getId().toString(), answer);
     }
   }
 
