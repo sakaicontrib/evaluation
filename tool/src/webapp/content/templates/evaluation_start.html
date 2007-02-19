@@ -46,13 +46,15 @@
 			</tr>
 			<tr>
 				<td>
-					<textarea name="instructions" rsf:id="instructions" rows="4" cols="60"></textarea>
+          <div rsf:id="instructions:">
+					  <textarea name="instructions-dummy" rsf:id="instructions-dummy" rows="4" cols="60"></textarea>
+          </div>
 				</td>
 			</tr>
-			
+    </table>			
 			<!-- This block (choose template) is not visible if the user came 
 				 from a screen where they had already chosen the template. -->
-		    <div rsf:id="chooseTemplate:">
+		  <table rsf:id="chooseTemplate:" border = "0" cellspacing = "0" cellpadding = "0" width = "70%" >
 				<tr>
 					<td>&nbsp;</td>
 				</tr>
@@ -74,9 +76,8 @@
 								<th width="20%" align="left">&nbsp;<span rsf:id="template-owner-header">Owner</span></th>
 								<th width="30%" align="center">&nbsp;</th>
 							</tr>
-							<span rsf:id="templateRadio"/>
 							<tr rsf:id="templateOptions:"> 
-								<td>
+								<td><span rsf:id="templateRadio"/>
 									&nbsp;<input type="radio" rsf:id="radioValue"/>
 									<label rsf:id="radioLabel">Template Title 1</label>
 								</td>
@@ -86,9 +87,8 @@
 						</table>
 					</td>
 				</tr>
-			</div>
-			
-		</table>
+			</table>
+
 		<br/>
 		<table border = "0" cellspacing = "0" cellpadding = "0" width = "70%">
 			<tr>
