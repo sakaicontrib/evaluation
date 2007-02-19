@@ -25,6 +25,7 @@ import java.util.Set;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
+import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
@@ -32,6 +33,7 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
+import org.sakaiproject.evaluation.tool.LocalResponsesLogic;
 import org.sakaiproject.evaluation.tool.params.EvalTakeViewParameters;
 import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
 import org.sakaiproject.evaluation.tool.utils.ComparatorsUtils;
@@ -109,6 +111,11 @@ public class TakeEvalProducer implements ViewComponentProducer,
 		return new EvalTakeViewParameters(VIEW_ID, null, null, null);
 	}
 	
+	private LocalResponsesLogic localResponsesLogic;
+  public void setLocalResponsesLogic(LocalResponsesLogic localResponsesLogic) {
+	    this.localResponsesLogic = localResponsesLogic;
+	  }
+	  
 	//This variable is used for binding the items to a list in evaluationBean
 	private int totalItemsAdded = 0;
 	
@@ -182,10 +189,16 @@ public class TakeEvalProducer implements ViewComponentProducer,
 		List ncItemsList = ItemBlockUtils.getNonChildItems(allItems);
 		Collections.sort(ncItemsList, new ComparatorsUtils.TemplateItemComparatorByOrder());
 		
-		// check if there is any "Course" items or "Instructor" items;
+		HashMap answerMap=null;
+		if(responseId!=null) {
+			answerMap = localResponsesLogic.getAnswersMapByTempItemAndAssociated(responseId);
+		}
+		
+		// these will be used if there are any "Course" items or "Instructor" items, respectively
 		UIBranchContainer courseSection = null;
 		UIBranchContainer instructorSection = null;
 		int displayNumber=1;
+		int renderedItemCount=0;
 		if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_COURSE, ncItemsList))	{	
 			courseSection = UIBranchContainer.make(form,"courseSection:"); //$NON-NLS-1$
 			UIOutput.make(courseSection, "course-questions-header", messageLocator.getMessage("takeeval.course.questions.header")); //$NON-NLS-1$ //$NON-NLS-2$			
@@ -204,13 +217,26 @@ public class TakeEvalProducer implements ViewComponentProducer,
 					
 					//set up OTP paths
 				    String currAnswerOTP;
-				    if (responseId == null) currAnswerOTP = newResponseAnswersOTP + tempItem1.getId()+".";
-					else currAnswerOTP = responseAnswersOTP + responseId + "." + tempItem1.getId() + ".";
+				    if (responseId == null) {
+				    	currAnswerOTP = newResponseAnswersOTP + "new" + renderedItemCount +".";
+				    }
+					else {
+						//if the user has answered this question before, point at their response
+						EvalAnswer currAnswer=(EvalAnswer)answerMap.get(tempItem1.getId()+"null"+"null");
+						
+						if(currAnswer==null) {
+							currAnswerOTP = newResponseAnswersOTP + "new" + renderedItemCount +".";
+						}
+						else {
+							currAnswerOTP = responseAnswersOTP + responseId + "." + currAnswer.getId() + ".";
+						}
+					}
+					
 
 					//bind the current EvalTemplateItem's EvalItem to the current EvalAnswer's EvalItem
 					form.parameters.add( new UIELBinding
-							(currAnswerOTP + "item",new ELReference("templateItemBeanLocator." + tempItem1.getId()+ "." + "item")) );	
-				    
+							(currAnswerOTP + "templateItem",new ELReference("templateItemBeanLocator." + tempItem1.getId())) );	
+				    					
 					//update curranswerOTP for binding the UI input element (UIInput, UISelect, etc.)
 				    if(tempItem1.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)) currAnswerOTP+="numeric";
 				    if(tempItem1.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)) currAnswerOTP+="text";	
@@ -221,6 +247,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 					//if we displayed 1 item, increment by 1
 					if(tempItem1.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)|
 						tempItem1.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_TEXT))displayNumber++;
+					renderedItemCount++;
 				}
 			}
 			UIOutput.make(courseSection, "course-questions-header", messageLocator.getMessage("takeeval.course.questions.header")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -245,15 +272,21 @@ public class TakeEvalProducer implements ViewComponentProducer,
 						
 						//set up OTP paths
 					    String currAnswerOTP;
-					    if (responseId == null) currAnswerOTP = newResponseAnswersOTP + tempItem1.getId()+".";
-						else currAnswerOTP = responseAnswersOTP + responseId + "." + tempItem1.getId() + ".";
+					    
+					    if (responseId == null) currAnswerOTP = newResponseAnswersOTP + "new" + renderedItemCount +".";
+						else {
+							//if the user has answered this question before, point at their response
+							EvalAnswer currAnswer=(EvalAnswer)answerMap.get(tempItem1.getId()+instructor);
+							if(currAnswer==null)currAnswerOTP = newResponseAnswersOTP + "new" + renderedItemCount +".";
+							else currAnswerOTP = responseAnswersOTP + responseId + "." + currAnswer.getId() + ".";
+						}
 						
 						//bind the current EvalTemplateItem's EvalItem to the current EvalAnswer's EvalItem
 						form.parameters.add( new UIELBinding
-								(currAnswerOTP + "item",new ELReference("templateItemBeanLocator." + tempItem1.getId()+ "." + "item")) );	
+								(currAnswerOTP + "templateItem",new ELReference("templateItemBeanLocator." + tempItem1.getId())) );	
 						
 						//bind the current instructor id to the current EvalAnswer.associated
-						form.parameters.add( new UIELBinding(currAnswerOTP + "associated", instructor) );						
+						form.parameters.add( new UIELBinding(currAnswerOTP + "associatedId", instructor) );
 						
 						//update curranswerOTP for binding the UI input element (UIInput, UISelect, etc.)
 					    if(tempItem1.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)) currAnswerOTP+="numeric";
@@ -265,7 +298,8 @@ public class TakeEvalProducer implements ViewComponentProducer,
 						//if we displayed 1 item, increment by 1
 						if(tempItem1.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)|
 							tempItem1.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_TEXT))displayNumber++;
-					    
+						
+						renderedItemCount++;
 						//this.doFillComponent(tempItem1, i, radiobranch,instructorSection, form,allItems);
 					}
 				} // end of for loop				

@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.tool;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -57,13 +58,31 @@ public class LocalResponsesLogic {
 		return togo;
 	}
 
-	public EvalAnswer newAnswer(EvalResponse response, Long templateItemId) {
-		log.debug("Response: " + response.getId() + ", templateItemId: " + templateItemId);
-		EvalTemplateItem templateItem = itemsLogic.getTemplateItemById(templateItemId);
-		EvalAnswer answer = new EvalAnswer(new Date(), templateItem, response);
+	public EvalAnswer newAnswer(EvalResponse response) {
+		log.debug("new answer, Response: " + response.getId());
+		EvalAnswer answer = new EvalAnswer(new Date(), null, response);
 		return answer;
 	}
 
+	/**
+	 * Get a map of answers for the given response, where the key to
+	 * access a given response is the unique pairing of templateItemId and
+	 * the associated field of the answer (instructor id, environment key, etc.)
+	 * 
+	 * @param response the response we want to get the answers for
+	 * @return a hashmap of answers, where an answer's key = <templateItemId>+<answer.associated>
+	 */	
+	public HashMap getAnswersMapByTempItemAndAssociated(Long responseId) {
+		EvalResponse response=responsesLogic.getResponseById(responseId);
+		HashMap map = new HashMap();
+		Set answers=response.getAnswers();
+	    for (Iterator it = answers.iterator(); it.hasNext();) {
+	        EvalAnswer answer = (EvalAnswer) it.next();
+	        map.put(answer.getTemplateItem().getId().toString()+answer.getAssociatedType()+answer.getAssociatedId(), answer);
+	      }
+		return map;
+	}
+	
 	public EvalResponse fetchResponseById(String evalIdstring) {
 		Long evalId = Long.valueOf(evalIdstring);
 		log.debug("Evaluation: " + evalId );

@@ -325,6 +325,9 @@
 		<property name="evalsLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
 		<property name="messageLocator" ref="messageLocator" />
+		<property name="itemRenderer" 
+			ref="org.sakaiproject.evaluation.tool.renderers.ItemRenderer" />
+		<property name="localResponsesLogic" ref="localResponsesLogic" />		
 	</bean>
 
 	<bean
