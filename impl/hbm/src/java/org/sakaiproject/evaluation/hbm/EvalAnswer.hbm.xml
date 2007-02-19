@@ -30,10 +30,14 @@
             <column name="NUM_ANSWER" />
         </property>
         <!-- if this answer is associated with an instructor or 
-        	environment or other then place the unique id here
-        	(type from the associated templateItem) -->
-        <property name="associated" type="java.lang.String">
-            <column name="ASSOCIATED" />
+        	environment or other then place the unique id here -->
+        <property name="associatedId" type="java.lang.String">
+            <column name="ASSOCIATED_ID" />
+        </property>
+        <!-- stores the type of the association (only set if associated id is set),
+        	uses constant strings -->
+        <property name="associatedType" type="java.lang.String">
+            <column name="ASSOCIATED_TYPE" />
         </property>
     </class>
 </hibernate-mapping>

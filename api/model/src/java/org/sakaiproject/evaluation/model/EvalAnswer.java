@@ -1,6 +1,6 @@
 package org.sakaiproject.evaluation.model;
 
-// Generated Feb 15, 2007 3:42:04 PM by Hibernate Tools 3.2.0.beta6a
+// Generated Feb 19, 2007 9:05:09 AM by Hibernate Tools 3.2.0.beta6a
 
 import java.util.Date;
 
@@ -25,7 +25,9 @@ public class EvalAnswer implements java.io.Serializable {
 
 	private Integer numeric;
 
-	private String associated;
+	private String associatedId;
+
+	private String associatedType;
 
 	// Constructors
 
@@ -42,14 +44,15 @@ public class EvalAnswer implements java.io.Serializable {
 
 	/** full constructor */
 	public EvalAnswer(Date lastModified, EvalTemplateItem templateItem, EvalItem item, EvalResponse response,
-			String text, Integer numeric, String associated) {
+			String text, Integer numeric, String associatedId, String associatedType) {
 		this.lastModified = lastModified;
 		this.templateItem = templateItem;
 		this.item = item;
 		this.response = response;
 		this.text = text;
 		this.numeric = numeric;
-		this.associated = associated;
+		this.associatedId = associatedId;
+		this.associatedType = associatedType;
 	}
 
 	// Property accessors
@@ -109,12 +112,20 @@ public class EvalAnswer implements java.io.Serializable {
 		this.numeric = numeric;
 	}
 
-	public String getAssociated() {
-		return this.associated;
+	public String getAssociatedId() {
+		return this.associatedId;
 	}
 
-	public void setAssociated(String associated) {
-		this.associated = associated;
+	public void setAssociatedId(String associatedId) {
+		this.associatedId = associatedId;
+	}
+
+	public String getAssociatedType() {
+		return this.associatedType;
+	}
+
+	public void setAssociatedType(String associatedType) {
+		this.associatedType = associatedType;
 	}
 
 }

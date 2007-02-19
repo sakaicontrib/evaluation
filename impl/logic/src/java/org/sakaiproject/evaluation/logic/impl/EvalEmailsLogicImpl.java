@@ -260,6 +260,17 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
 	// sending emails
 
+	public String[] sendEvalCreatedNotifications(Long evaluationId, boolean includeOwner) {
+		log.debug("evaluationId: " + evaluationId + ", includeOwner: " + includeOwner);
+		// TODO Auto-generated method stub
+
+		
+
+		log.error("Method not implemented yet!");
+		return null;
+
+	}
+
 	public String[] sendEvalAvailableNotifications(Long evaluationId, boolean includeEvaluatees) {
 		log.debug("evaluationId: " + evaluationId + ", includeEvaluatees: " + includeEvaluatees);
 		// TODO Auto-generated method stub
@@ -269,17 +280,6 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
 	}
 
-
-	public String[] sendEvalCreatedNotifications(Long evaluationId, boolean includeOwner) {
-		log.debug("evaluationId: " + evaluationId + ", includeOwner: " + includeOwner);
-		// TODO Auto-generated method stub
-		
-		log.error("Method not implemented yet!");
-		return null;
-
-	}
-
-
 	public String[] sendEvalReminderNotifications(Long evaluationId, String includeConstant) {
 		log.debug("evaluationId: " + evaluationId + ", includeConstant: " + includeConstant);
 		// TODO Auto-generated method stub
@@ -288,7 +288,6 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		return null;
 
 	}
-
 
 	public String[] sendEvalResultsNotifications(Long evaluationId, boolean includeEvaluatees, boolean includeAdmins) {
 		log.debug("evaluationId: " + evaluationId + ", includeEvaluatees: " + includeEvaluatees + ", includeAdmins: " + includeAdmins);
