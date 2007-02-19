@@ -23,6 +23,7 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
  * Utility class for date manipulations.  
  * 
  * @author Kapil Ahuja (kahuja@vt.edu)
+ * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class EvaluationDateUtil {
 	
@@ -46,7 +47,8 @@ public class EvaluationDateUtil {
 		 * Getting the system setting that tells what should be the 
 		 * minimum time difference between start date and due date.
 		 */
-		int minHours = ((Integer)evalSettings.get(EvalSettings.EVAL_USE_STOP_DATE)).intValue();
+		int minHours = ((Integer)evalSettings.
+				get(EvalSettings.EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE)).intValue();
 		
 		/*
 		 * If the difference between start date and due date is less than
@@ -56,34 +58,16 @@ public class EvaluationDateUtil {
 		 */
 
 		//TODO remaining tasks for this class are:
-		//- Complete the this method for comparion and adding.
-		//- Email Aaron to create property with some initialization.
 		//- Work on administrative side of this.
 		//- Move the other method from evaluationBean also here and remove two from Bean.
-		//- Look if the two methods can be done without the elaborate Calendar stuff. 
-		//- Test whole thing
-		//- Verify the logic with Aaron.
+		//- Test.
 
-		if ( getHoursDifference(eval.getStartDate(), eval.getDueDate()) < minHours ) {
+		if (getHoursDifference(eval.getStartDate(), eval.getDueDate()) < minHours) {
+
 			Calendar calendarDue = new GregorianCalendar();
-
-			// Try to set the due date to the end of the day first
-			// (maybe we should always just add the minHours)???? -AZ
-			// The due date is of the form 17th, Jan 2007 12:00 AM (by default)
-			// set the hour and minute to make it the end of the day (adding is risky)
-			calendarDue.setTime(eval.getDueDate());
-			calendarDue.set(Calendar.HOUR, 23);
-			calendarDue.set(Calendar.MINUTE, 59);
+			calendarDue.setTime(eval.getStartDate());
+			calendarDue.add(Calendar.HOUR, minHours);
 			eval.setDueDate(calendarDue.getTime());
-
-			if (getHoursDifference(eval.getStartDate(), eval.getDueDate()) < minHours) {
-				// if that did not work then add the minHours to the startdate
-				calendarDue = new GregorianCalendar();
-				calendarDue.setTime(eval.getStartDate());
-				calendarDue.add(Calendar.HOUR, minHours);
-				eval.setDueDate(calendarDue.getTime());
-				// no need to check again, this should be fine now
-			}
 		}
 	}
 
