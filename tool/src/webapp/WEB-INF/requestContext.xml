@@ -35,18 +35,19 @@
 
 	<bean id="takeEvalBean"
 		class="org.sakaiproject.evaluation.tool.TakeEvalBean">
-	 <property name="responseBeanLocator" ref="responseBeanLocator" />
+		<property name="responseBeanLocator" ref="responseBeanLocator" />
 	</bean>
 
 	<bean id="templateBBean"
 		class="org.sakaiproject.evaluation.tool.TemplateBBean">
-	  <property name="templateBeanLocator" ref="templateBeanLocator" />
-      <property name="localTemplateLogic" ref="localTemplateLogic"/>
-      <property name="templateItemBeanLocator" ref="templateItemBeanLocator"/>
-      <property name="itemsLogic"
+		<property name="templateBeanLocator" ref="templateBeanLocator" />
+		<property name="localTemplateLogic" ref="localTemplateLogic" />
+		<property name="templateItemBeanLocator"
+			ref="templateItemBeanLocator" />
+		<property name="itemsLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
 	</bean>
-  
+
 	<bean id="itemsBean"
 		class="org.sakaiproject.evaluation.tool.ItemsBean"
 		init-method="init">
@@ -77,7 +78,7 @@
 		class="org.sakaiproject.evaluation.tool.TemplateBeanLocator">
 		<property name="localTemplateLogic" ref="localTemplateLogic" />
 	</bean>
-	
+
 	<bean id="evaluationBeanLocator"
 		class="org.sakaiproject.evaluation.tool.EvaluationBeanLocator">
 		<property name="external"
@@ -87,32 +88,33 @@
 	</bean>
 
 	<bean id="responseBeanLocator"
-	  class="org.sakaiproject.evaluation.tool.ResponseBeanLocator">
-	  <property name="localResponsesLogic" ref="localResponsesLogic" />
+		class="org.sakaiproject.evaluation.tool.ResponseBeanLocator">
+		<property name="localResponsesLogic" ref="localResponsesLogic" />
 	</bean>
 
 	<bean id="responseAnswersBeanLocator"
-	  class="org.sakaiproject.evaluation.tool.ResponseAnswersBeanLocator">
-	  <property name="localResponsesLogic" ref="localResponsesLogic" />
-	  <property name="responseBeanLocator" ref="responseBeanLocator" />
+		class="org.sakaiproject.evaluation.tool.ResponseAnswersBeanLocator">
+		<property name="localResponsesLogic" ref="localResponsesLogic" />
+		<property name="responseBeanLocator" ref="responseBeanLocator" />
 	</bean>
 
 	<bean id="answersBeanLocator"
-	  class="org.sakaiproject.evaluation.tool.ResponseAnswersBeanLocator">
+		class="org.sakaiproject.evaluation.tool.ResponseAnswersBeanLocator">
 	</bean>
 
 	<bean id="templateItemBeanLocator"
 		class="org.sakaiproject.evaluation.tool.TemplateItemBeanLocator">
-        <property name="localTemplateLogic" ref="localTemplateLogic" />
+		<property name="localTemplateLogic" ref="localTemplateLogic" />
 	</bean>
 
-  <!-- evolver definitions here -->
-  
-  <!-- for now we will just hardwire the rich text control for this app to be
-    the Sakai FCKEditor-based rich text control -->
-  <bean id="richTextEvolver" class="org.springframework.beans.factory.config.BeanReferenceFactoryBean">
-    <property name="targetBeanName" value="sakaiFCKTextEvolver"/>
-  </bean>
+	<!-- evolver definitions here -->
+
+	<!-- for now we will just hardwire the rich text control for this app to be
+		the Sakai FCKEditor-based rich text control -->
+	<bean id="richTextEvolver"
+		class="org.springframework.beans.factory.config.BeanReferenceFactoryBean">
+		<property name="targetBeanName" value="sakaiFCKTextEvolver" />
+	</bean>
 
 	<!-- producers here -->
 	<bean
@@ -159,13 +161,12 @@
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 		<property name="externalLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-    <property name="richTextEvolver" ref="plainTextInputEvolver"/>
 	</bean>
 
 	<bean
 		class="org.sakaiproject.evaluation.tool.producers.TemplateModifyProducer">
 		<property name="messageLocator" ref="messageLocator" />
-    <property name="localTemplateLogic" ref="localTemplateLogic"/>
+		<property name="localTemplateLogic" ref="localTemplateLogic" />
 		<property name="viewStateHandler" ref="viewStateHandler" />
 	</bean>
 
@@ -181,7 +182,7 @@
 			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
 		<property name="settings"
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-    <property name="richTextEvolver" ref="richTextEvolver"/>
+		<property name="richTextEvolver" ref="richTextEvolver" />
 	</bean>
 
 	<bean
@@ -189,7 +190,7 @@
 		<property name="messageLocator" ref="messageLocator" />
 		<property name="itemsLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
-		<property name="itemRenderer" 
+		<property name="itemRenderer"
 			ref="org.sakaiproject.evaluation.tool.renderers.ItemRenderer" />
 	</bean>
 
@@ -201,7 +202,7 @@
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
 		<property name="templatesLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
-		<property name="itemRenderer" 
+		<property name="itemRenderer"
 			ref="org.sakaiproject.evaluation.tool.renderers.ItemRenderer" />
 		<property name="messageLocator" ref="messageLocator" />
 	</bean>
@@ -223,7 +224,7 @@
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="settings"
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-    <property name="richTextEvolver" ref="richTextEvolver"/>
+		<property name="richTextEvolver" ref="richTextEvolver" />
 	</bean>
 
 	<bean
@@ -235,7 +236,7 @@
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="settings"
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-    <property name="richTextEvolver" ref="richTextEvolver"/>
+		<property name="richTextEvolver" ref="richTextEvolver" />
 	</bean>
 
 	<bean
@@ -245,7 +246,7 @@
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="itemsLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
-    <property name="richTextEvolver" ref="richTextEvolver"/>
+		<property name="richTextEvolver" ref="richTextEvolver" />
 	</bean>
 
 	<bean
@@ -255,7 +256,7 @@
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="messageLocator" ref="messageLocator" />
-    <property name="richTextEvolver" ref="richTextEvolver"/>
+		<property name="richTextEvolver" ref="richTextEvolver" />
 	</bean>
 
 	<bean
@@ -313,7 +314,7 @@
 			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
 		<property name="responsesLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
-		<property name="messageLocator" ref="messageLocator" />			
+		<property name="messageLocator" ref="messageLocator" />
 	</bean>
 
 	<bean

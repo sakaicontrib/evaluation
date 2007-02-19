@@ -1,5 +1,5 @@
 /******************************************************************************
- * TemplateProducer.java - created by fengr@vt.edu on Aug 21, 2006
+ * TemplateProducer.java - created on Aug 21, 2006
  * 
  * Copyright (c) 2007 Virginia Polytechnic Institute and State University
  * Licensed under the Educational Community License version 1.0
@@ -8,10 +8,10 @@
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
  * 
  * Contributors:
- * Rui Feng (fengr@vt.edu)
  * Antranig Basman (antranig@caret.cam.ac.uk)
  * Kapil Ahuja (kahuja@vt.edu)
  *****************************************************************************/
+
 package org.sakaiproject.evaluation.tool.producers;
 
 import java.util.ArrayList;
@@ -34,7 +34,6 @@ import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
-import uk.org.ponder.rsf.evolvers.TextInputEvolver;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
@@ -44,161 +43,137 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
 /**
- * Page for start creating a template
+ * view to start creating a template and for modifying the template settings
+ * (title, description, sharing)
  * 
- * @author: Rui Feng (fengr@vt.edu)
+ * @author: Kapil Ahuja (kahuja@vt.edu)
  */
+public class TemplateProducer 
+	implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
 
-public class TemplateProducer implements ViewComponentProducer,
-    ViewParamsReporter, NavigationCaseReporter {
+	public static final String VIEW_ID = "template_title_desc";
+	public String getViewID() {
+		return VIEW_ID;
+	}
 
-  public static final String VIEW_ID = "template_title_desc";
+	private MessageLocator messageLocator;
+	public void setMessageLocator(MessageLocator messageLocator) {
+		this.messageLocator = messageLocator;
+	}
 
-  public String getViewID() {
-    return VIEW_ID;
-  }
+	private EvalSettings settings;
+	public void setSettings(EvalSettings settings) {
+		this.settings = settings;
+	}
 
-  private MessageLocator messageLocator;
+	private EvalExternalLogic externalLogic;
+	public void setExternalLogic(EvalExternalLogic externalLogic) {
+		this.externalLogic = externalLogic;
+	}
 
-  public void setMessageLocator(MessageLocator messageLocator) {
-    this.messageLocator = messageLocator;
-  }
 
-  private EvalSettings settings;
+	/*
+	 * 1) accessing this page trough "Create Template" link -- 2) accessing
+	 * through "Modify Template Title/Description" link on ModifyTemplate page
+	 * 2-1) no template been save in DAO 2-2) existing template in DAO
+	 * 
+	 */
+	public void fillComponents(UIContainer tofill, ViewParameters viewparams,
+			ComponentChecker checker) {
+		EvalViewParameters evalViewParams = (EvalViewParameters) viewparams;
 
-  public void setSettings(EvalSettings settings) {
-    this.settings = settings;
-  }
+		// setup the OTP binding strings
+		String templateOTPBinding = null;
+		if (evalViewParams.templateId != null) {
+			templateOTPBinding = "templateBeanLocator." + evalViewParams.templateId; //$NON-NLS-1$
+		} else {
+			templateOTPBinding = "templateBeanLocator." + TemplateBeanLocator.NEW_1; //$NON-NLS-1$
+		}
+		String templateOTP = templateOTPBinding + "."; //$NON-NLS-1$
 
-  private EvalExternalLogic externalLogic;
+		UIOutput.make(tofill, "template-title-desc-title", messageLocator.getMessage("modifytemplatetitledesc.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
 
-  public void setExternalLogic(EvalExternalLogic externalLogic) {
-    this.externalLogic = externalLogic;
-  }
+		UIInternalLink.make(tofill,	"summary-toplink", messageLocator.getMessage("summary.page.title"), //$NON-NLS-1$ //$NON-NLS-2$
+				new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
-  private TextInputEvolver richTextEvolver;
+		UIForm form = UIForm.make(tofill, "basic-form"); //$NON-NLS-1$
+		UIOutput.make(form, "title-header", messageLocator
+				.getMessage("modifytemplatetitledesc.title.header")); //$NON-NLS-1$ //$NON-NLS-2$
+		UIOutput.make(form, "description-header", messageLocator
+				.getMessage("modifytemplatetitledesc.description.header")); //$NON-NLS-1$ //$NON-NLS-2$
+		UIOutput.make(form, "description-note", messageLocator
+				.getMessage("modifytemplatetitledesc.description.note")); //$NON-NLS-1$ //$NON-NLS-2$
 
-  public void setRichTextEvolver(TextInputEvolver richTextEvolver) {
-    this.richTextEvolver = richTextEvolver;
-  }
+		UICommand.make(form, "addContinue", messageLocator
+				.getMessage("modifytemplatetitledesc.save.button"),
+				"#{templateBBean.updateTemplateTitleDesc}");
 
-  /*
-   * 1) accessing this page trough "Create Template" link -- 2) accessing
-   * through "Modify Template Title/Description" link on ModifyTemplate page
-   * 2-1) no template been save in DAO 2-2) existing template in DAO
-   * 
-   */
-  public void fillComponents(UIContainer tofill, ViewParameters viewparams,
-      ComponentChecker checker) {
-    EvalViewParameters evalViewParams = (EvalViewParameters) viewparams;
+		UIInput.make(form, "title", templateOTP + "title");
+		UIInput.make(form, "description", templateOTP + "description"); //$NON-NLS-1$ //$NON-NLS-2$
 
-    String templateOTPBinding = null;
-    if (evalViewParams.templateId != null) {
-      templateOTPBinding = "templateBeanLocator." + evalViewParams.templateId;
-    }
-    else {
-      templateOTPBinding = "templateBeanLocator." + TemplateBeanLocator.NEW_1;
-    }
-    String templateOTP = templateOTPBinding + ".";
+		/*
+		 * (Non-javadoc) If "EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY" is set
+		 * EvalConstants.SHARING_OWNER, then it means that owner can decide what
+		 * sharing settings to chose. In other words, it means that show the
+		 * sharing/visibility dropdown. Else just show the label for what has been
+		 * set in system setting (admin setting) i.e.
+		 * "EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY".
+		 */
+		String sharingkey = null;
+		String sharingValue = (String) settings.get(EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY);
+		if ( EvalConstants.SHARING_OWNER.equals(sharingValue) ) {
+			/*
+			 * Dropdown values are visible only for admins. For instructors
+			 * (non-admin) we just show the private label
+			 */
+			if (externalLogic.isUserAdmin(externalLogic.getCurrentUserId())) {
+				UIBranchContainer showSharingOptions = UIBranchContainer.make(form,	"showSharingOptions:"); //$NON-NLS-1$
+				String[] sharingList = {
+						messageLocator
+						.getMessage("modifytemplatetitledesc.sharing.private"), //$NON-NLS-1$
+						messageLocator.getMessage("modifytemplatetitledesc.sharing.public") //$NON-NLS-1$
+				};
+				UISelect.make(showSharingOptions, "sharing",
+						EvaluationConstant.MODIFIER_VALUES, sharingList, templateOTP
+						+ "sharing", null);
+			}
+			else {
+				sharingkey = "modifytemplatetitledesc.sharing.private";
+				form.parameters.add(new UIELBinding(templateOTP + "sharing", EvalConstants.SHARING_PRIVATE)); //$NON-NLS-1$
+			}
+		} else {
+			if ((EvalConstants.SHARING_PRIVATE).equals(sharingValue))
+				sharingkey = "modifytemplatetitledesc.sharing.private"; //$NON-NLS-1$
+			else if ((EvalConstants.SHARING_PUBLIC).equals(sharingValue))
+				sharingkey = "modifytemplatetitledesc.sharing.public"; //$NON-NLS-1$
 
-    UIOutput.make(tofill, "template-title-desc-title", messageLocator
-        .getMessage("modifytemplatetitledesc.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
+			// Doing the binding of this sharing value so that it can be persisted
+			form.parameters.add(new UIELBinding(templateOTP + "sharing", sharingValue)); //$NON-NLS-1$
+		}
 
-    UIInternalLink.make(tofill,
-        "summary-toplink", messageLocator.getMessage("summary.page.title"), //$NON-NLS-1$ //$NON-NLS-2$
-        new SimpleViewParameters(SummaryProducer.VIEW_ID));
+		if (sharingkey != null) {
+			// Displaying the sharing label
+			UIOutput.make(form, "sharingValueToDisplay", messageLocator.getMessage(sharingkey)); //$NON-NLS-1$
+		}
 
-    UIForm form = UIForm.make(tofill, "basic-form"); //$NON-NLS-1$
-    UIOutput.make(form, "title-header", messageLocator
-        .getMessage("modifytemplatetitledesc.title.header")); //$NON-NLS-1$ //$NON-NLS-2$
-    UIOutput.make(form, "description-header", messageLocator
-        .getMessage("modifytemplatetitledesc.description.header")); //$NON-NLS-1$ //$NON-NLS-2$
-    UIOutput.make(form, "description-note", messageLocator
-        .getMessage("modifytemplatetitledesc.description.note")); //$NON-NLS-1$ //$NON-NLS-2$
-    UICommand.make(form, "addContinue", messageLocator
-        .getMessage("modifytemplatetitledesc.save.button"),
-        "#{templateBBean.updateTemplateTitleDesc}");
-    UIInput.make(form, "title", templateOTP + "title");
-    UIInput descinput = UIInput.make(form, "description:", templateOTP
-        + "description");
-    richTextEvolver.evolveTextInput(descinput);
+		UIOutput.make(form, "cancel-button", messageLocator.getMessage("general.cancel.button"));
+	}
 
-    /*
-     * (Non-javadoc) If "EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY" is set
-     * EvalConstants.SHARING_OWNER, then it means that owner can decide what
-     * sharing settings to chose. In other words, it means that show the
-     * sharing/visibility dropdown. Else just show the label for what has been
-     * set in system setting (admin setting) i.e.
-     * "EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY".
-     */
-    String sharingkey = null;
-    String sharingValue = (String) settings
-        .get(EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY);
-    if (sharingValue.equals(EvalConstants.SHARING_OWNER)) {
-      /*
-       * Dropdown values are visible only for admins. For instructors
-       * (non-admin) we just show the private label
-       */
-      if (externalLogic.isUserAdmin(externalLogic.getCurrentUserId())) {
+	/* (non-Javadoc)
+	 * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
+	 */
+	public ViewParameters getViewParameters() {
+		return new EvalViewParameters();
+	}
 
-        UIBranchContainer showSharingOptions = UIBranchContainer.make(form,
-            "showSharingOptions:"); //$NON-NLS-1$
-        // Commented as visible and shared are not used as of now - kahuja.
-        // messageLocator.getMessage("modifytemplatetitledesc.sharing.visible")
-        // //$NON-NLS-1$
-        // messageLocator.getMessage("modifytemplatetitledesc.sharing.shared")
-        // //$NON-NLS-1$
-        String[] sharingList = {
-            messageLocator
-                .getMessage("modifytemplatetitledesc.sharing.private"), //$NON-NLS-1$
-            messageLocator.getMessage("modifytemplatetitledesc.sharing.public") //$NON-NLS-1$
-        };
-        UISelect.make(showSharingOptions, "sharing",
-            EvaluationConstant.MODIFIER_VALUES, sharingList, templateOTP
-                + "sharing", null);
-      }
-      else {
-        sharingkey = "modifytemplatetitledesc.sharing.private";
-        form.parameters.add(new UIELBinding(
-            templateOTP + "sharing", EvalConstants.SHARING_PRIVATE)); //$NON-NLS-1$
-      }
-    }
-    else {
-      if ((EvalConstants.SHARING_PRIVATE).equals(sharingValue))
-        sharingkey = "modifytemplatetitledesc.sharing.private";
-      else if ((EvalConstants.SHARING_PUBLIC).equals(sharingValue))
-        sharingkey = "modifytemplatetitledesc.sharing.public"; //$NON-NLS-1$
-
-      // Doing the binding of this sharing value so that it can be saved in the
-      // database
-      form.parameters.add(new UIELBinding(
-          templateOTP + "sharing", sharingValue)); //$NON-NLS-1$
-    }
-
-    if (sharingkey != null) {
-      /*
-       * Displaying the sharing label private. Doing the binding of sharing
-       * value private.
-       */
-      UIBranchContainer showSharingLabel = UIBranchContainer.make(form,
-          "showSharingLabel:"); //$NON-NLS-1$
-      UIOutput.make(showSharingLabel,
-          "sharingValueToDisplay", messageLocator.getMessage(sharingkey)); //$NON-NLS-1$ //$NON-NLS-2$
-    }
-
-    UIOutput.make(form, "cancel-button", messageLocator
-        .getMessage("general.cancel.button"));
-  }
-
-  public ViewParameters getViewParameters() {
-    return new EvalViewParameters();
-  }
-
-  public List reportNavigationCases() {
-    List togo = new ArrayList();
-    togo.add(new NavigationCase("success", new EvalViewParameters(
-        TemplateModifyProducer.VIEW_ID, null)));
-    return togo;
-  }
+	/* (non-Javadoc)
+	 * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
+	 */
+	public List reportNavigationCases() {
+		List togo = new ArrayList();
+		togo.add(new NavigationCase("success", new EvalViewParameters(
+				TemplateModifyProducer.VIEW_ID, null)));
+		return togo;
+	}
 
 }
