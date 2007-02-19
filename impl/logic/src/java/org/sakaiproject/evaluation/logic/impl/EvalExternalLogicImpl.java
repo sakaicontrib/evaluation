@@ -365,6 +365,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	 * @see org.sakaiproject.evaluation.logic.EvalExternalLogic#sendEmails(java.lang.String, java.lang.String[], java.lang.String, java.lang.String)
 	 */
 	public void sendEmails(String from, String[] toUserIds, String subject, String message) {
+
 		InternetAddress fromAddress;
 		try {
 			fromAddress = new InternetAddress(from);

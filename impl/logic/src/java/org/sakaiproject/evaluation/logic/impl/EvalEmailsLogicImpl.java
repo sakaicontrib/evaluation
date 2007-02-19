@@ -22,6 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
@@ -45,6 +46,11 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 	private EvalExternalLogic external;
 	public void setExternalLogic(EvalExternalLogic external) {
 		this.external = external;
+	}
+
+	private EvalSettings settings;
+	public void setSettings(EvalSettings settings) {
+		this.settings = settings;
 	}
 
 
@@ -262,11 +268,33 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
 	public String[] sendEvalCreatedNotifications(Long evaluationId, boolean includeOwner) {
 		log.debug("evaluationId: " + evaluationId + ", includeOwner: " + includeOwner);
-		// TODO Auto-generated method stub
 
-		
+		// get evaluation
+		EvalEvaluation eval = (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);
+		if (eval == null) {
+			throw new IllegalArgumentException("Cannot find evaluation with this id: " + evaluationId);
+		}
 
-		log.error("Method not implemented yet!");
+		// get the email template
+		EvalEmailTemplate emailTemplate = getDefaultEmailTemplate( EvalConstants.EMAIL_TEMPLATE_CREATED );
+		if (emailTemplate == null) {
+			throw new IllegalStateException("Cannot find email template: " + EvalConstants.EMAIL_TEMPLATE_CREATED);
+		}
+
+		// get the complete list of users to send these emails to
+		String[] toUserIds = new String[] {"aaronz"}; // TODO
+
+		// replace the text of the template with real values
+		String message = emailTemplate.getMessage(); // TODO
+
+		// send the actual emails
+		String from = (String) settings.get( EvalSettings.FROM_EMAIL_ADDRESS );
+		external.sendEmails(from, 
+				toUserIds, 
+				"New evaluation created: " + eval.getTitle(), 
+				message);
+
+		log.error("Method not completed yet!");
 		return null;
 
 	}
