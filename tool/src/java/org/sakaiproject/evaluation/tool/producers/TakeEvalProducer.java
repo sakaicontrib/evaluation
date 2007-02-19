@@ -257,7 +257,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 			//for each instructor, make a branch containing all instructor questions
 			for (Iterator it = instructors.iterator(); it.hasNext();) {
 				String instructor = (String) it.next();
-				instructorSection = UIBranchContainer.make(form,"instructorSection:"); //$NON-NLS-1$
+				instructorSection = UIBranchContainer.make(form,"instructorSection:", "inst"+displayNumber); //$NON-NLS-1$
 				UIOutput.make(instructorSection, "instructor-questions-header", messageLocator.getMessage("takeeval.instructor.questions.header")+" "+external.getUserDisplayName(instructor));	
 				for (int i = 0; i <ncItemsList.size(); i++) {
 					EvalTemplateItem tempItem1 = (EvalTemplateItem) ncItemsList.get(i);
@@ -276,7 +276,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 					    if (responseId == null) currAnswerOTP = newResponseAnswersOTP + "new" + renderedItemCount +".";
 						else {
 							//if the user has answered this question before, point at their response
-							EvalAnswer currAnswer=(EvalAnswer)answerMap.get(tempItem1.getId()+instructor);
+							EvalAnswer currAnswer=(EvalAnswer)answerMap.get(tempItem1.getId()+EvalConstants.ITEM_CATEGORY_INSTRUCTOR+instructor);
 							if(currAnswer==null)currAnswerOTP = newResponseAnswersOTP + "new" + renderedItemCount +".";
 							else currAnswerOTP = responseAnswersOTP + responseId + "." + currAnswer.getId() + ".";
 						}
