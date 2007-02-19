@@ -39,6 +39,7 @@ import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIColourDecorator;
 import uk.org.ponder.rsf.view.ComponentChecker;
@@ -51,7 +52,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * This is the producer page for preview a template or evaluation
  * 
  * @author: Rui Feng (fengr@vt.edu)
- * @author:Kapil Ahuja (kahuja@vt.edu)
+ * @author: Kapil Ahuja (kahuja@vt.edu)
  */
 public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsReporter {
 
@@ -139,7 +140,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 
 					}
 					if (eval.getInstructions() != null)
-						UIOutput.make(tofill, "instruction",eval.getInstructions()); //$NON-NLS-1$
+						UIVerbatim.make(tofill, "instruction", eval.getInstructions()); //$NON-NLS-1$
 					else UIOutput.make(tofill, "instruction", messageLocator.getMessage("previeweval.instructions.default")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}

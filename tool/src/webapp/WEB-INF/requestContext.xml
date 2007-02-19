@@ -159,7 +159,7 @@
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 		<property name="externalLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-    <property name="richTextEvolver" ref="richTextEvolver"/>
+    <property name="richTextEvolver" ref="plainTextInputEvolver"/>
 	</bean>
 
 	<bean
@@ -251,6 +251,7 @@
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="messageLocator" ref="messageLocator" />
+    <property name="richTextEvolver" ref="richTextEvolver"/>
 	</bean>
 
 	<bean

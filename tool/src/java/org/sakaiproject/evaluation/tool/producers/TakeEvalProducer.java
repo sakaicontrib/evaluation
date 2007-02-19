@@ -14,18 +14,17 @@
 package org.sakaiproject.evaluation.tool.producers;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
-import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
@@ -43,8 +42,8 @@ import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
-import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UICommand;
+import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
@@ -55,6 +54,7 @@ import uk.org.ponder.rsf.components.UIOutputMany;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.UISelectLabel;
+import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIColourDecorator;
 import uk.org.ponder.rsf.components.decorators.UIFreeAttributeDecorator;
@@ -62,8 +62,8 @@ import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
-import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
 
@@ -163,7 +163,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 		}
 		
 		
-		UIOutput.make(tofill, "evalInstruction", eval.getInstructions()); //$NON-NLS-1$
+		UIVerbatim.make(tofill, "evalInstruction", eval.getInstructions()); //$NON-NLS-1$
 		
 		
 		UIForm form = UIForm.make(tofill, "evaluationForm"); //$NON-NLS-1$
@@ -204,8 +204,8 @@ public class TakeEvalProducer implements ViewComponentProducer,
 					
 					//set up OTP paths
 				    String currAnswerOTP;
-				    if(responseId==null) currAnswerOTP=newResponseAnswersOTP + tempItem1.getId()+".";
-					else currAnswerOTP=responseAnswersOTP + responseId + "." + tempItem1.getId() + ".";
+				    if (responseId == null) currAnswerOTP = newResponseAnswersOTP + tempItem1.getId()+".";
+					else currAnswerOTP = responseAnswersOTP + responseId + "." + tempItem1.getId() + ".";
 
 					//bind the current EvalTemplateItem's EvalItem to the current EvalAnswer's EvalItem
 					form.parameters.add( new UIELBinding
@@ -245,8 +245,8 @@ public class TakeEvalProducer implements ViewComponentProducer,
 						
 						//set up OTP paths
 					    String currAnswerOTP;
-					    if(responseId==null) currAnswerOTP=newResponseAnswersOTP + tempItem1.getId()+".";
-						else currAnswerOTP=responseAnswersOTP + responseId + "." + tempItem1.getId() + ".";
+					    if (responseId == null) currAnswerOTP = newResponseAnswersOTP + tempItem1.getId()+".";
+						else currAnswerOTP = responseAnswersOTP + responseId + "." + tempItem1.getId() + ".";
 						
 						//bind the current EvalTemplateItem's EvalItem to the current EvalAnswer's EvalItem
 						form.parameters.add( new UIELBinding
