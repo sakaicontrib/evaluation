@@ -83,7 +83,8 @@
 </table>
 
 <br/>
- 
+<form rsf:id="modifyFormRows" name="modify_form_rows" method="post">
+<input type="submit" rsf:id="hiddenBtn" id="hiddenBtn" style="visibility:hidden;"/>
 	<table width="83%" style="border-collapse: collapse;">
 		<tr rsf:id="itemrow:header" id="itemrow:header:0">		
 			<td width="15%" class="borderLeft" colspan="2">
@@ -135,8 +136,7 @@
 			</td>
 		</tr>
 	</table>
-<form rsf:id="modifyFormRows" name="modify_form_rows" method="post">
-<input type="submit" rsf:id="hiddenBtn" id="hiddenBtn" style="visibility:hidden;"/>
+
 <script rsf:id="decorateSelects">
   EvalSystem.decorateReorderSelects("", 1);
 </script>	
