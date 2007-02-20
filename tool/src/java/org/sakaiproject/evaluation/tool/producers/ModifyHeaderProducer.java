@@ -208,9 +208,9 @@ public class ModifyHeaderProducer implements ViewComponentProducer,
 		i.add(new NavigationCase(PreviewItemProducer.VIEW_ID,
 				new SimpleViewParameters(PreviewItemProducer.VIEW_ID)));
 		i.add(new NavigationCase("success", new EvalViewParameters(
-				TemplateModifyProducer.VIEW_ID, null)));
+				ModifyTemplateItemsProducer.VIEW_ID, null)));
 		i.add(new NavigationCase("cancel", new EvalViewParameters(
-				TemplateModifyProducer.VIEW_ID, null)));
+				ModifyTemplateItemsProducer.VIEW_ID, null)));
 		return i;
 	}
 

@@ -110,7 +110,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 		UIOutput.make(tofill, "instructions-title-header", messageLocator.getMessage("previeweval.instructions.title.header")); //$NON-NLS-1$ //$NON-NLS-2$
 
 		if (previewEvalViewParams.originalPage != null){
-			if (previewEvalViewParams.originalPage.equals(TemplateModifyProducer.VIEW_ID) || 
+			if (previewEvalViewParams.originalPage.equals(ModifyTemplateItemsProducer.VIEW_ID) || 
 					previewEvalViewParams.originalPage.equals(EvaluationStartProducer.VIEW_ID) ){
 				//get template ID
 				UIOutput.make(tofill, "evalTitle", messageLocator.getMessage("previeweval.evaluation.title.default"));//no evaluation title, use dummy //$NON-NLS-1$ //$NON-NLS-2$

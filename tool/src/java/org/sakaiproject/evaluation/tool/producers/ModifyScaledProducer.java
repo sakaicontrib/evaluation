@@ -300,7 +300,7 @@ public class ModifyScaledProducer implements ViewComponentProducer,
 		i.add(new NavigationCase(PreviewItemProducer.VIEW_ID,
 				new SimpleViewParameters(PreviewItemProducer.VIEW_ID)));
 		i.add(new NavigationCase("success", new EvalViewParameters(
-				TemplateModifyProducer.VIEW_ID, null)));
+				ModifyTemplateItemsProducer.VIEW_ID, null)));
 
 		return i;
 	}

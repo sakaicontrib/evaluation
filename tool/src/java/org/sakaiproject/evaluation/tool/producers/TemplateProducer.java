@@ -162,7 +162,7 @@ public class TemplateProducer
 	public List reportNavigationCases() {
 		List togo = new ArrayList();
 		togo.add(new NavigationCase("success", new EvalViewParameters(
-				TemplateModifyProducer.VIEW_ID, null)));
+				ModifyTemplateItemsProducer.VIEW_ID, null)));
 		return togo;
 	}
 

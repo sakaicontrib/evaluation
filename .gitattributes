@@ -133,6 +133,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyEmailProducer.jav
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyEssayProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyHeaderProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyScaledProducer.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyTemplateItemsProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/PreviewEmailProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/PreviewEvalProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/PreviewItemProducer.java -text
@@ -143,7 +144,6 @@ tool/src/java/org/sakaiproject/evaluation/tool/producers/ScaleAddModifyProducer.
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ScaleControlProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/SummaryProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/TakeEvalProducer.java -text
-tool/src/java/org/sakaiproject/evaluation/tool/producers/TemplateModifyProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/TemplateProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ViewEssayResponseProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ViewReportProducer.java -text
@@ -196,6 +196,7 @@ tool/src/webapp/content/templates/modify_email.html -text
 tool/src/webapp/content/templates/modify_essay.html -text
 tool/src/webapp/content/templates/modify_header.html -text
 tool/src/webapp/content/templates/modify_scaled.html -text
+tool/src/webapp/content/templates/modify_template_items.html -text
 tool/src/webapp/content/templates/preview_email.html -text
 tool/src/webapp/content/templates/preview_eval.html -text
 tool/src/webapp/content/templates/preview_item.html -text
@@ -207,7 +208,6 @@ tool/src/webapp/content/templates/scale_control.html -text
 tool/src/webapp/content/templates/summary.html -text
 tool/src/webapp/content/templates/take_eval.html -text
 tool/src/webapp/content/templates/template_item.html -text
-tool/src/webapp/content/templates/template_modify.html -text
 tool/src/webapp/content/templates/template_title_desc.html -text
 tool/src/webapp/content/templates/view_essay_response.html -text
 tool/src/webapp/content/templates/view_report.html -text

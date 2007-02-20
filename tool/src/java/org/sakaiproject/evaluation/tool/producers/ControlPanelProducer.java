@@ -149,7 +149,7 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 				EvalTemplate template1 = (EvalTemplate) (templateList.get(i));
                 if(template1.getLocked().equals(new Boolean(false))){
 				UIInternalLink.make(templatesRb, "template-modify", template1.getTitle(), 
-                    new EvalViewParameters(TemplateModifyProducer.VIEW_ID, template1.getId()));
+                    new EvalViewParameters(ModifyTemplateItemsProducer.VIEW_ID, template1.getId()));
                 }else{
                 	UIOutput.make(templatesRb, "template-modify-label", template1.getTitle());
                 }
@@ -355,8 +355,8 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 	public List reportNavigationCases() {
 		List i = new ArrayList();
 		
-		i.add(new NavigationCase(TemplateModifyProducer.VIEW_ID, new SimpleViewParameters(
-				TemplateModifyProducer.VIEW_ID)));
+		i.add(new NavigationCase(ModifyTemplateItemsProducer.VIEW_ID, new SimpleViewParameters(
+				ModifyTemplateItemsProducer.VIEW_ID)));
 		i.add(new NavigationCase(TemplateProducer.VIEW_ID, new SimpleViewParameters(
 				TemplateProducer.VIEW_ID)));
 		i.add(new NavigationCase(EvaluationSettingsProducer.VIEW_ID, new SimpleViewParameters(
