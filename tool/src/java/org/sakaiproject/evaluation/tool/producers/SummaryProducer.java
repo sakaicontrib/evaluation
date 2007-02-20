@@ -121,7 +121,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 				new SimpleViewParameters(ControlPanelProducer.VIEW_ID));
 			UIInternalLink.make(tofill, "create-template-toplink", //$NON-NLS-1$
 					messageLocator.getMessage("createtemplate.page.title"),  //$NON-NLS-1$
-					new EvalViewParameters(TemplateProducer.VIEW_ID, null));
+					new EvalViewParameters(ModifyTemplateProducer.VIEW_ID, null));
 		}
 
 		if ( beginEvaluation ) {
@@ -346,7 +346,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			if ( createTemplate ) {
 				UIInternalLink.make(toolsBC, "createTemplateLink", //$NON-NLS-1$
 					messageLocator.getMessage("createtemplate.page.title"), //$NON-NLS-1$
-					new EvalViewParameters(TemplateProducer.VIEW_ID, null));
+					new EvalViewParameters(ModifyTemplateProducer.VIEW_ID, null));
 			}
 
 			if ( beginEvaluation ) {

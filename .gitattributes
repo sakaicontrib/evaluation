@@ -134,6 +134,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyEssayProducer.jav
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyHeaderProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyScaledProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyTemplateItemsProducer.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyTemplateProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/PreviewEmailProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/PreviewEvalProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/PreviewItemProducer.java -text
@@ -144,7 +145,6 @@ tool/src/java/org/sakaiproject/evaluation/tool/producers/ScaleAddModifyProducer.
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ScaleControlProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/SummaryProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/TakeEvalProducer.java -text
-tool/src/java/org/sakaiproject/evaluation/tool/producers/TemplateProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ViewEssayResponseProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ViewReportProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/BlockRenderer.java -text
@@ -196,6 +196,7 @@ tool/src/webapp/content/templates/modify_email.html -text
 tool/src/webapp/content/templates/modify_essay.html -text
 tool/src/webapp/content/templates/modify_header.html -text
 tool/src/webapp/content/templates/modify_scaled.html -text
+tool/src/webapp/content/templates/modify_template.html -text
 tool/src/webapp/content/templates/modify_template_items.html -text
 tool/src/webapp/content/templates/preview_email.html -text
 tool/src/webapp/content/templates/preview_eval.html -text
@@ -208,7 +209,6 @@ tool/src/webapp/content/templates/scale_control.html -text
 tool/src/webapp/content/templates/summary.html -text
 tool/src/webapp/content/templates/take_eval.html -text
 tool/src/webapp/content/templates/template_item.html -text
-tool/src/webapp/content/templates/template_title_desc.html -text
 tool/src/webapp/content/templates/view_essay_response.html -text
 tool/src/webapp/content/templates/view_report.html -text
 tool/src/webapp/tools/sakai.evaluation.tool.xml -text

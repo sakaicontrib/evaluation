@@ -172,7 +172,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer,
 
 		UIInternalLink.make(tofill, "modify_title_desc_link", 
 				UIMessage.make("modifytemplate.modify.title.desc.link"),
-				new EvalViewParameters(TemplateProducer.VIEW_ID, templateId));
+				new EvalViewParameters(ModifyTemplateProducer.VIEW_ID, templateId));
 		if (template.getDescription() != null
 				&& !template.getDescription().trim().equals("")) {
 			UIBranchContainer descbranch = UIBranchContainer.make(tofill,
