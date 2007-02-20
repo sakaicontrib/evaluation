@@ -35,7 +35,6 @@ import org.sakaiproject.evaluation.tool.utils.RSFUtils;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
 import uk.org.ponder.htmlutil.HTMLUtil;
-import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
@@ -43,6 +42,7 @@ import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
+import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UIVerbatim;
@@ -64,276 +64,277 @@ import uk.org.ponder.rsf.viewstate.ViewStateHandler;
  */
 
 public class TemplateModifyProducer implements ViewComponentProducer,
-  ViewParamsReporter {
-	
+		ViewParamsReporter {
+
 	public static final String VIEW_ID = "template_modify"; //$NON-NLS-1$
+
 	public String getViewID() {
 		return VIEW_ID;
 	}
-    
-    public ViewParameters getViewParameters() {
-        return new EvalViewParameters();
-    }
-    
-	private MessageLocator messageLocator;
-	public void setMessageLocator(MessageLocator messageLocator) {
-		this.messageLocator = messageLocator;
-	}	
 
-	
-    private ViewStateHandler viewStateHandler;
-    public void setViewStateHandler(ViewStateHandler viewStateHandler) {
-      this.viewStateHandler = viewStateHandler;
-    }
-    
-    private LocalTemplateLogic localTemplateLogic;
-    
-    public void setLocalTemplateLogic(LocalTemplateLogic localTemplateLogic) {
-      this.localTemplateLogic = localTemplateLogic;
-    }
-    
-    private ViewParameters deriveTarget(String viewID, Long templateId) {
-      return new TemplateItemViewParameters(viewID, templateId, null);
-    }
+	public ViewParameters getViewParameters() {
+		return new EvalViewParameters();
+	}
 
-    private String[] convertViews(String[] viewIDs, Long templateId) {
-      String[] togo = new String[viewIDs.length];
-      for (int i = 0; i < viewIDs.length; ++ i) {
-        togo[i] = viewStateHandler.getFullURL(deriveTarget(viewIDs[i], templateId));
-      }
-      return togo;
-    }
-    
+	private ViewStateHandler viewStateHandler;
+
+	public void setViewStateHandler(ViewStateHandler viewStateHandler) {
+		this.viewStateHandler = viewStateHandler;
+	}
+
+	private LocalTemplateLogic localTemplateLogic;
+
+	public void setLocalTemplateLogic(LocalTemplateLogic localTemplateLogic) {
+		this.localTemplateLogic = localTemplateLogic;
+	}
+
+	private ViewParameters deriveTarget(String viewID, Long templateId) {
+		return new TemplateItemViewParameters(viewID, templateId, null);
+	}
+
+	private String[] convertViews(String[] viewIDs, Long templateId) {
+		String[] togo = new String[viewIDs.length];
+		for (int i = 0; i < viewIDs.length; ++i) {
+			togo[i] = viewStateHandler
+					.getFullURL(deriveTarget(viewIDs[i], templateId));
+		}
+		return togo;
+	}
+
 	/*
-	 *  1) access this page through "Continue and Add Questions" button on Template page
-	 *  2) access this page through links on Control Panel or other
-	 *  3) access this page through "Save" button on Template page
-	 *  
-	 * 
+	 * 1) access this page through "Continue and Add Questions" button on Template
+	 * page 2) access this page through links on Control Panel or other 3) access
+	 * this page through "Save" button on Template page
 	 */
-	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+	public void fillComponents(UIContainer tofill, ViewParameters viewparams,
+			ComponentChecker checker) {
 
 		EvalViewParameters evalViewParams = (EvalViewParameters) viewparams;
-		
-	    System.out.println("templateBBean.templateId="+evalViewParams.templateId);
-        Long templateId = evalViewParams.templateId;
-        EvalTemplate template = localTemplateLogic.fetchTemplate(templateId);
-	    
-		UIOutput.make(tofill, "modify-template-title", messageLocator.getMessage("modifytemplate.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		UIInternalLink.make(tofill, "summary-toplink", messageLocator.getMessage("summary.page.title"),  //$NON-NLS-1$ //$NON-NLS-2$
-							new SimpleViewParameters(SummaryProducer.VIEW_ID));			
-		
+
+		System.out.println("templateBBean.templateId=" + evalViewParams.templateId);
+		Long templateId = evalViewParams.templateId;
+		EvalTemplate template = localTemplateLogic.fetchTemplate(templateId);
+
+		UIMessage.make(tofill, "modify-template-title", "modifytemplate.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
+
+		UIInternalLink.make(tofill,
+				"summary-toplink", UIMessage.make("summary.page.title"), //$NON-NLS-1$ //$NON-NLS-2$
+				new SimpleViewParameters(SummaryProducer.VIEW_ID));
+
 		UIForm form = UIForm.make(tofill, "modifyForm"); //$NON-NLS-1$
-		
-		//preview link
-		UIInternalLink.make(tofill, "preview_eval_link", 
-				new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID, null,
-						templateId, null, TemplateModifyProducer.VIEW_ID));
-	
-		UIOutput.make(tofill, "preview-eval-desc", messageLocator.getMessage("modifytemplate.preview.eval.desc")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(form, "add-item-note", messageLocator.getMessage("modifytemplate.add.item.note")); //$NON-NLS-1$ //$NON-NLS-2$
-		
-        String[] labels = RSFUtils.fetchMessages(messageLocator, 
-            new String[] {"modifytemplate.itemtype.scaled", 
-            "modifytemplate.itemtype.text", "modifytemplate.itemtype.header",
-            "modifytemplate.itemtype.expert"});
-        String[] viewIDs = {
-            ModifyScaledProducer.VIEW_ID, 
-            ModifyEssayProducer.VIEW_ID,
-            ModifyHeaderProducer.VIEW_ID,
-          //  ModifyBlockProducer.VIEW_ID, 
-            TemplateModifyProducer.VIEW_ID // TODO: which view for this
-        };
-        String[] values = convertViews(viewIDs, templateId);
-        
-		//dropdown list
-		UISelect.make(form, "itemClassification", values, labels,
-            values[0], false); //$NON-NLS-1$
-		
-	    UICommand.make(form, "add_questions", messageLocator.getMessage("modifytemplate.add.item.button")); //$NON-NLS-1$ //$NON-NLS-2$
-        
-	    List l = localTemplateLogic.fetchTemplateItems(templateId);
-        List templateItemsList = ItemBlockUtils.getNonChildItems(l);
-        Collections.sort(templateItemsList, new ComparatorsUtils.TemplateItemComparatorByOrder());	
-        
-		if (templateItemsList.isEmpty()){
-          UIOutput.make(tofill, "begin-eval-dummylink", messageLocator.getMessage("modifytemplate.begin.eval.link")); 
-		}
-        else{
-          UIInternalLink.make(tofill, "begin_eval_link", new EvalViewParameters(EvaluationStartProducer.VIEW_ID, 
-                templateId));
-		}
-		
-		UIOutput.make(tofill, "univ-level-header", messageLocator.getMessage("modifytemplate.univ.level.header")); //$NON-NLS-1$ //$NON-NLS-2$			
 
-		UIOutput.make(tofill, "existing-items", messageLocator.getMessage("modifytemplate.existing.items")); //$NON-NLS-1$ //$NON-NLS-2$
-	
-		UIOutput header = UIOutput.make(tofill, "template-title-header", messageLocator.getMessage("modifytemplate.template.title.header")); //$NON-NLS-1$ //$NON-NLS-2$
+		// preview link
+		UIInternalLink.make(tofill, "preview_eval_link", new PreviewEvalParameters(
+				PreviewEvalProducer.VIEW_ID, null, templateId, null,
+				TemplateModifyProducer.VIEW_ID));
+
+		UIMessage.make(tofill, "preview-eval-desc",
+				"modifytemplate.preview.eval.desc"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(form, "add-item-note", "modifytemplate.add.item.note"); //$NON-NLS-1$ //$NON-NLS-2$
+
+		String[] labels = new String[] {
+				"modifytemplate.itemtype.scaled", "modifytemplate.itemtype.text",
+				"modifytemplate.itemtype.header", "modifytemplate.itemtype.expert" };
+		String[] viewIDs = { ModifyScaledProducer.VIEW_ID,
+				ModifyEssayProducer.VIEW_ID, ModifyHeaderProducer.VIEW_ID,
+				// ModifyBlockProducer.VIEW_ID,
+				TemplateModifyProducer.VIEW_ID // TODO: which view for this
+		};
+		String[] values = convertViews(viewIDs, templateId);
+
+		// dropdown list
+		UISelect.make(form, "itemClassification", values, labels, values[0], false).setMessageKeys(); //$NON-NLS-1$
+
+		UICommand.make(form, "add_questions", UIMessage.make("modifytemplate.add.item.button")); //$NON-NLS-1$ //$NON-NLS-2$
+
+		List l = localTemplateLogic.fetchTemplateItems(templateId);
+		List templateItemsList = ItemBlockUtils.getNonChildItems(l);
+		Collections.sort(templateItemsList,
+				new ComparatorsUtils.TemplateItemComparatorByOrder());
+
+		if (templateItemsList.isEmpty()) {
+			UIMessage.make(tofill, "begin-eval-dummylink",
+					"modifytemplate.begin.eval.link");
+		} else {
+			UIInternalLink.make(tofill, "begin_eval_link", new EvalViewParameters(
+					EvaluationStartProducer.VIEW_ID, templateId));
+		}
+
+		UIMessage.make(tofill,
+				"univ-level-header", "modifytemplate.univ.level.header"); //$NON-NLS-1$ //$NON-NLS-2$			
+
+		UIMessage.make(tofill, "existing-items", "modifytemplate.existing.items"); //$NON-NLS-1$ //$NON-NLS-2$
+
+		UIMessage header = UIMessage.make(tofill,
+				"template-title-header", "modifytemplate.template.title.header"); //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput title = UIOutput.make(tofill, "title", template.getTitle());
-        RSFUtils.targetLabel(header, title);
-		
-		UIInternalLink.make(tofill, 
-		  "modify_title_desc_link", 
-		  messageLocator.getMessage("modifytemplate.modify.title.desc.link"),
-		   new EvalViewParameters(TemplateProducer.VIEW_ID, templateId));
-		if (template.getDescription() != null && 
-            !template.getDescription().trim().equals("")) {
-          UIBranchContainer descbranch = UIBranchContainer.make(tofill, "description-switch:");
-		  UIOutput descheader = 
-            UIOutput.make(descbranch, "description-header", messageLocator.getMessage("modifytemplate.description.header")); //$NON-NLS-1$ //$NON-NLS-2$
-		  UIVerbatim description = 
-            UIVerbatim.make(descbranch, "description", template.getDescription());
-          RSFUtils.targetLabel(descheader, description);
-        }
+		RSFUtils.targetLabel(header, title);
 
-		UIOutput.make(tofill, "eval-sample", messageLocator.getMessage("modifytemplate.eval.sample")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(tofill, "course-sample", messageLocator.getMessage("modifytemplate.course.sample")); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		UIForm form2 = UIForm.make(tofill, "modifyFormRows");	 //$NON-NLS-1$
-		UICommand reorder = 
-          UICommand.make(form2, "hiddenBtn", "#{templateBBean.saveReorder}");
-        reorder.parameters.add(new UIELBinding("#{templateBBean.templateId}", 
-            templateId));
-		
-		//UIOutput.make(form,"itemCount",null,"#{templateBBean.itemsListSize}");
-		if (templateItemsList!= null && templateItemsList.size() >0) {
-            UIVerbatim.make(form2, "decorateSelects", 
-            HTMLUtil.emitJavascriptCall("EvalSystem.decorateReorderSelects", 
-                    new String[]{"", Integer.toString(templateItemsList.size())} ));
-          
+		UIInternalLink.make(tofill, "modify_title_desc_link", 
+				UIMessage.make("modifytemplate.modify.title.desc.link"),
+				new EvalViewParameters(TemplateProducer.VIEW_ID, templateId));
+		if (template.getDescription() != null
+				&& !template.getDescription().trim().equals("")) {
+			UIBranchContainer descbranch = UIBranchContainer.make(tofill,
+					"description-switch:");
+			UIMessage descheader = UIMessage.make(descbranch,
+					"description-header", "modifytemplate.description.header"); //$NON-NLS-1$ //$NON-NLS-2$
+			UIVerbatim description = UIVerbatim.make(descbranch, "description",
+					template.getDescription());
+			RSFUtils.targetLabel(descheader, description);
+		}
+
+		UIMessage.make(tofill, "eval-sample", "modifytemplate.eval.sample"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "course-sample", "modifytemplate.course.sample"); //$NON-NLS-1$ //$NON-NLS-2$
+
+		UIForm form2 = UIForm.make(tofill, "modifyFormRows"); //$NON-NLS-1$
+		UICommand reorder = UICommand.make(form2, "hiddenBtn",
+				"#{templateBBean.saveReorder}");
+		reorder.parameters.add(new UIELBinding("#{templateBBean.templateId}",
+				templateId));
+
+		// UIOutput.make(form,"itemCount",null,"#{templateBBean.itemsListSize}");
+		if (templateItemsList != null && templateItemsList.size() > 0) {
+			UIVerbatim.make(form2, "decorateSelects", HTMLUtil.emitJavascriptCall(
+					"EvalSystem.decorateReorderSelects", new String[] { "",
+							Integer.toString(templateItemsList.size()) }));
+
 			String[] strArr = new String[templateItemsList.size()];
-		    for (int h = 0; h < templateItemsList.size(); h++){
-		    	strArr[h] = Integer.toString(h+1);
-		    }
-		    		
-		    String templateItemOTPBinding;
-		    String templateItemOTP;
-		    for (int i = 0; i < templateItemsList.size(); i++){
-		    	EvalTemplateItem myTemplateItem = (EvalTemplateItem) templateItemsList.get(i);
-		    	EvalItem myItem =  myTemplateItem.getItem();
-		    	
-		    	templateItemOTPBinding = "templateItemBeanLocator."+myTemplateItem.getId();
-		    	templateItemOTP = templateItemOTPBinding+".";
-		    	
-		    	UIBranchContainer radiobranch = 
-                   UIBranchContainer.make(form2,"itemrow:header", Integer.toString(i)); //$NON-NLS-1$
-				UIOutput.make(radiobranch, "item-num-header", messageLocator.getMessage("modifytemplate.item.num.header")); //$NON-NLS-1$ //$NON-NLS-2$
-				
-				//only show Block Check box for scaled type(scale, block)
-				if(myItem.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)){
-					UIBranchContainer rbShowBlockCB = UIBranchContainer.make(radiobranch,"showCB:");
-					UIBoundBoolean blockCB = UIBoundBoolean.make(rbShowBlockCB, "blockCheckBox", Boolean.FALSE); 
+			for (int h = 0; h < templateItemsList.size(); h++) {
+				strArr[h] = Integer.toString(h + 1);
+			}
+
+			String templateItemOTPBinding;
+			String templateItemOTP;
+			for (int i = 0; i < templateItemsList.size(); i++) {
+				EvalTemplateItem myTemplateItem = (EvalTemplateItem) templateItemsList
+						.get(i);
+				EvalItem myItem = myTemplateItem.getItem();
+
+				templateItemOTPBinding = "templateItemBeanLocator."
+						+ myTemplateItem.getId();
+				templateItemOTP = templateItemOTPBinding + ".";
+
+				UIBranchContainer radiobranch = UIBranchContainer.make(form2,
+						"itemrow:header", Integer.toString(i)); //$NON-NLS-1$
+				UIMessage.make(radiobranch,
+						"item-num-header", "modifytemplate.item.num.header"); //$NON-NLS-1$ //$NON-NLS-2$
+
+				// only show Block Check box for scaled type(scale, block)
+				if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)) {
+					UIBranchContainer rbShowBlockCB = UIBranchContainer.make(radiobranch,
+							"showCB:");
+					UIBoundBoolean blockCB = UIBoundBoolean.make(rbShowBlockCB,
+							"blockCheckBox", Boolean.FALSE);
 					Map attrmap = new HashMap();
 					String name = "block-" + myTemplateItem.getItem().getScale().getId()
-							+ "-" + myTemplateItem.getId() ;
+							+ "-" + myTemplateItem.getId();
 					attrmap.put("id", name);
-					blockCB.decorators = new DecoratorList(new UIFreeAttributeDecorator(attrmap)); 
-				}
-					
-				//DISPLAY ORDER
-				UISelect.make(radiobranch, "itemNum", strArr, templateItemOTP+"displayOrder", null);
-								
-				//String itemClassificationLabel = (currItemDisplay.getItem()).getClassification();
-				String itemClassificationLabel = myTemplateItem.getItem().getClassification();
-				UIOutput.make(radiobranch,"itemClassificationLabel",itemClassificationLabel);
-				//String scaleDisplaySettingLabel = (currItemDisplay.getItem()).getScaleDisplaySetting();
-				String scaleDisplaySettingLabel = myTemplateItem.getScaleDisplaySetting();
-				
-				if (scaleDisplaySettingLabel != null)
-					scaleDisplaySettingLabel = "-" + scaleDisplaySettingLabel;
-				else scaleDisplaySettingLabel = "";
-				UIOutput.make(radiobranch,"scaleDisplaySetting",scaleDisplaySettingLabel);	
-			
-				UIInternalLink.make(radiobranch, 
-						"preview_row_item", 
-						messageLocator.getMessage("modifytemplate.preview.link"),
-						new TemplateItemViewParameters(
-								PreviewItemProducer.VIEW_ID, 
-								templateId,
-								myTemplateItem.getId()));
-                
-				//if it is a Block item
-				if (myTemplateItem.getBlockParent() != null && myTemplateItem.getBlockParent().booleanValue()== true){
-					BlockIdsParameters target = new BlockIdsParameters(ModifyBlockProducer.VIEW_ID,
-							templateId,myTemplateItem.getId().toString());  
-					UIInternalLink.make(radiobranch, "modify_row_item",
-		                        messageLocator.getMessage("modifytemplate.modify.link"),target);
-					  
-				}else{	//if it is non-block item	              
-					  String targetview = EvaluationConstant.classificationToView(myTemplateItem.getItem().getClassification());
-		              ViewParameters target = 
-		                  new TemplateItemViewParameters(targetview, myTemplateItem.getTemplate().getId(), myTemplateItem.getId()); 
-		              UIInternalLink.make(radiobranch, "modify_row_item",
-		                        messageLocator.getMessage("modifytemplate.modify.link"),
-		                        target);
+					blockCB.decorators = new DecoratorList(new UIFreeAttributeDecorator(
+							attrmap));
 				}
 
-                //System.out.println("tiid"+myTemplateItem.getId()+" itemtext: "+myTemplateItem.getItem().getItemText());
-				UIInternalLink.make(radiobranch, 
-						"remove_row_item", 
-						messageLocator.getMessage("modifytemplate.remove.link"),
-						new TemplateItemViewParameters(
-								RemoveQuestionProducer.VIEW_ID, 
-								templateId,
-								myTemplateItem.getId()));
-				
-				UIBranchContainer radiobranch2 = UIBranchContainer.make(form2,"itemrow:text", Integer.toString(i)); //$NON-NLS-1$
-				UIOutput.make(radiobranch2,"queNo",Integer.toString(i+1));	 //$NON-NLS-1$
-				//UIOutput.make(radiobranch2,"itemText",currItemDisplay.getItem().getItemText());	
-				UIVerbatim.make(radiobranch2,"itemText",myTemplateItem.getItem().getItemText());	
-				
+				// DISPLAY ORDER
+				UISelect.make(radiobranch, "itemNum", strArr, templateItemOTP
+						+ "displayOrder", null);
+
+				// String itemClassificationLabel =
+				// (currItemDisplay.getItem()).getClassification();
+				String itemClassificationLabel = myTemplateItem.getItem()
+						.getClassification();
+				UIOutput.make(radiobranch, "itemClassificationLabel",
+						itemClassificationLabel);
+				// String scaleDisplaySettingLabel =
+				// (currItemDisplay.getItem()).getScaleDisplaySetting();
+				String scaleDisplaySettingLabel = myTemplateItem
+						.getScaleDisplaySetting();
+
+				if (scaleDisplaySettingLabel != null)
+					scaleDisplaySettingLabel = " - " + scaleDisplaySettingLabel;
+				else
+					scaleDisplaySettingLabel = "";
+				UIOutput.make(radiobranch, "scaleDisplaySetting",
+						scaleDisplaySettingLabel);
+
+				UIInternalLink.make(radiobranch, "preview_row_item", 
+						UIMessage.make("modifytemplate.preview.link"),
+						new TemplateItemViewParameters(PreviewItemProducer.VIEW_ID,
+								templateId, myTemplateItem.getId()));
+
+				// if it is a Block item
+				if (myTemplateItem.getBlockParent() != null
+						&& myTemplateItem.getBlockParent().booleanValue() == true) {
+					BlockIdsParameters target = new BlockIdsParameters(
+							ModifyBlockProducer.VIEW_ID, templateId, myTemplateItem.getId()
+									.toString());
+					UIInternalLink.make(radiobranch, "modify_row_item", 
+							UIMessage.make("modifytemplate.modify.link"), target);
+
+				} else { // if it is non-block item
+					String targetview = EvaluationConstant
+							.classificationToView(myTemplateItem.getItem()
+									.getClassification());
+					ViewParameters target = new TemplateItemViewParameters(targetview,
+							myTemplateItem.getTemplate().getId(), myTemplateItem.getId());
+					UIInternalLink.make(radiobranch, "modify_row_item", 
+							UIMessage.make("modifytemplate.modify.link"), target);
+				}
+
+				// System.out.println("tiid"+myTemplateItem.getId()+" itemtext:
+				// "+myTemplateItem.getItem().getItemText());
+				UIInternalLink.make(radiobranch, "remove_row_item", 
+						UIMessage.make("modifytemplate.remove.link"),
+						new TemplateItemViewParameters(RemoveQuestionProducer.VIEW_ID,
+								templateId, myTemplateItem.getId()));
+
+				UIBranchContainer radiobranch2 = UIBranchContainer.make(form2,
+						"itemrow:text", Integer.toString(i)); //$NON-NLS-1$
+				UIOutput.make(radiobranch2, "queNo", Integer.toString(i + 1)); //$NON-NLS-1$
+				// UIOutput.make(radiobranch2,"itemText",currItemDisplay.getItem().getItemText());
+				UIVerbatim.make(radiobranch2, "itemText", myTemplateItem.getItem()
+						.getItemText());
+
 				String scaletitle = ""; //$NON-NLS-1$				
-			//	if(currItemDisplay.getItem().getScale() != null)
-			//		title = currItemDisplay.getItem().getScale().getTitle();
+				// if(currItemDisplay.getItem().getScale() != null)
+				// title = currItemDisplay.getItem().getScale().getTitle();
 				if (myTemplateItem.getItem().getScale() != null)
 					scaletitle = myTemplateItem.getItem().getScale().getTitle();
 				UIOutput.make(radiobranch2, "scaleType", scaletitle); //$NON-NLS-1$
-				
-				//Boolean useNA= currItemDisplay.getItem().getUsesNA();
-				if ( !TemplateItemUtils.getTemplateItemType(myTemplateItem).equals(EvalConstants.ITEM_TYPE_HEADER)){
-					Boolean useNA= myTemplateItem.getUsesNA();
-					if(useNA != null && useNA.booleanValue()== true){
-						UIBranchContainer radiobranch3 = UIBranchContainer.make(radiobranch2,"showNA:", Integer.toString(i)); //$NON-NLS-1$
-						UIBoundBoolean.make(radiobranch3, "itemNA",useNA); //$NON-NLS-1$
-						UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
+
+				// Boolean useNA= currItemDisplay.getItem().getUsesNA();
+				if (!TemplateItemUtils.getTemplateItemType(myTemplateItem).equals(
+						EvalConstants.ITEM_TYPE_HEADER)) {
+					Boolean useNA = myTemplateItem.getUsesNA();
+					if (useNA != null && useNA.booleanValue() == true) {
+						UIBranchContainer radiobranch3 = UIBranchContainer.make(
+								radiobranch2, "showNA:", Integer.toString(i)); //$NON-NLS-1$
+						UIBoundBoolean.make(radiobranch3, "itemNA", useNA); //$NON-NLS-1$
+						UIMessage.make(radiobranch3, "na-desc", "viewitem.na.desc"); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
-				
-				//rendering block child items
-				if(myTemplateItem.getBlockParent()!= null && myTemplateItem.getBlockParent().booleanValue()== true){
-					List childList = ItemBlockUtils.getChildItems(l, myTemplateItem.getId());
-					for(int k=0; k< childList.size();k++){
-						UIBranchContainer childRow = UIBranchContainer.make(form2,"itemrow:blockItems", Integer.toString(k));
-						EvalTemplateItem childTI = (EvalTemplateItem)childList.get(k);
-						UIOutput.make(childRow,"childItemId",childTI.getDisplayOrder().toString());	
-						UIVerbatim.make(childRow,"childItemText",childTI.getItem().getItemText());
-					}		
+
+				// rendering block child items
+				if (myTemplateItem.getBlockParent() != null
+						&& myTemplateItem.getBlockParent().booleanValue() == true) {
+					List childList = ItemBlockUtils.getChildItems(l, myTemplateItem
+							.getId());
+					for (int k = 0; k < childList.size(); k++) {
+						UIBranchContainer childRow = UIBranchContainer.make(form2,
+								"itemrow:blockItems", Integer.toString(k));
+						EvalTemplateItem childTI = (EvalTemplateItem) childList.get(k);
+						UIOutput.make(childRow, "childItemId", childTI.getDisplayOrder()
+								.toString());
+						UIVerbatim.make(childRow, "childItemText", childTI.getItem()
+								.getItemText());
+					}
 				}
-		    }//end of for loop
+			}// end of for loop
 		}
-		//the create block form
-		UIForm blockForm = UIForm.make(tofill, "createBlockForm",new BlockIdsParameters(ModifyBlockProducer.VIEW_ID, templateId, null));
-		UICommand.make(blockForm, "createBlockBtn",messageLocator.getMessage("modifytemplate.createblock.button"),null);
+		// the create block form
+		UIForm blockForm = UIForm.make(tofill, "createBlockForm",
+				new BlockIdsParameters(ModifyBlockProducer.VIEW_ID, templateId, null));
+		UICommand.make(blockForm, "createBlockBtn", 
+				UIMessage.make("modifytemplate.createblock.button"), null);
 	}
 
-	// TODO - remove this unused method -AZ
-//	private String modifyItemLinkType(EvalTemplateItem t){
-//		if(t.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)){
-//			return ModifyEssayProducer.VIEW_ID;
-//		}else if(t.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_HEADER)){
-//			//"Text Header"
-//			return ModifyHeaderProducer.VIEW_ID;
-//		}
-//		else if(t.getBlockParent()!=null){
-//			//"Question Block"
-//			return ModifyBlockProducer.VIEW_ID;
-//		}else  //for "Scale/Suvey" type
-//			return ModifyScaledProducer.VIEW_ID;
-//	}
-
 }
-
-
-
-

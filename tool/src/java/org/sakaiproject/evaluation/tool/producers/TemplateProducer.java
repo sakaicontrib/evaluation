@@ -24,7 +24,6 @@ import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.TemplateBeanLocator;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 
-import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
@@ -32,6 +31,7 @@ import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
+import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
@@ -54,11 +54,6 @@ public class TemplateProducer
 	public static final String VIEW_ID = "template_title_desc";
 	public String getViewID() {
 		return VIEW_ID;
-	}
-
-	private MessageLocator messageLocator;
-	public void setMessageLocator(MessageLocator messageLocator) {
-		this.messageLocator = messageLocator;
 	}
 
 	private EvalSettings settings;
@@ -91,21 +86,17 @@ public class TemplateProducer
 		}
 		String templateOTP = templateOTPBinding + "."; //$NON-NLS-1$
 
-		UIOutput.make(tofill, "template-title-desc-title", messageLocator.getMessage("modifytemplatetitledesc.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "template-title-desc-title", "modifytemplatetitledesc.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		UIInternalLink.make(tofill,	"summary-toplink", messageLocator.getMessage("summary.page.title"), //$NON-NLS-1$ //$NON-NLS-2$
+		UIInternalLink.make(tofill,	"summary-toplink", UIMessage.make("summary.page.title"), //$NON-NLS-1$ //$NON-NLS-2$
 				new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
 		UIForm form = UIForm.make(tofill, "basic-form"); //$NON-NLS-1$
-		UIOutput.make(form, "title-header", messageLocator
-				.getMessage("modifytemplatetitledesc.title.header")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(form, "description-header", messageLocator
-				.getMessage("modifytemplatetitledesc.description.header")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(form, "description-note", messageLocator
-				.getMessage("modifytemplatetitledesc.description.note")); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(form, "title-header", "modifytemplatetitledesc.title.header"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(form, "description-header", "modifytemplatetitledesc.description.header"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(form, "description-note", "modifytemplatetitledesc.description.note"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		UICommand.make(form, "addContinue", messageLocator
-				.getMessage("modifytemplatetitledesc.save.button"),
+		UICommand.make(form, "addContinue", UIMessage.make("modifytemplatetitledesc.save.button"),
 				"#{templateBBean.updateTemplateTitleDesc}");
 
 		UIInput.make(form, "title", templateOTP + "title");
@@ -129,13 +120,12 @@ public class TemplateProducer
 			if (externalLogic.isUserAdmin(externalLogic.getCurrentUserId())) {
 				UIBranchContainer showSharingOptions = UIBranchContainer.make(form,	"showSharingOptions:"); //$NON-NLS-1$
 				String[] sharingList = {
-						messageLocator
-						.getMessage("modifytemplatetitledesc.sharing.private"), //$NON-NLS-1$
-						messageLocator.getMessage("modifytemplatetitledesc.sharing.public") //$NON-NLS-1$
+						"modifytemplatetitledesc.sharing.private", //$NON-NLS-1$
+						"modifytemplatetitledesc.sharing.public" //$NON-NLS-1$
 				};
 				UISelect.make(showSharingOptions, "sharing",
 						EvaluationConstant.MODIFIER_VALUES, sharingList, templateOTP
-						+ "sharing", null);
+						+ "sharing", null).setMessageKeys();
 			}
 			else {
 				sharingkey = "modifytemplatetitledesc.sharing.private";
@@ -153,10 +143,10 @@ public class TemplateProducer
 
 		if (sharingkey != null) {
 			// Displaying the sharing label
-			UIOutput.make(form, "sharingValueToDisplay", messageLocator.getMessage(sharingkey)); //$NON-NLS-1$
+			UIMessage.make(form, "sharingValueToDisplay", sharingkey); //$NON-NLS-1$
 		}
 
-		UIOutput.make(form, "cancel-button", messageLocator.getMessage("general.cancel.button"));
+		UIMessage.make(form, "cancel-button", "general.cancel.button");
 	}
 
 	/* (non-Javadoc)
