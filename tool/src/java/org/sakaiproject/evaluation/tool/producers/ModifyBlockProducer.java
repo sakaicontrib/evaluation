@@ -290,8 +290,6 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 			} else {
 				if (createFromBlock) {// render the first block child , then others,
 					// possibly other block child
-					// TODO: wait for Aaron' s logic layer method to get child
-					// TemplateItems providing parent ID
 					List allTemplateItems = itemsLogic.getTemplateItemsForTemplate(
 							templateId, null);
 					int orderNo = 0;
