@@ -170,6 +170,7 @@ public class ItemsBean {
 
 	public String removeItemAction(){
 		itemsLogic.deleteTemplateItem(templateItem.getId(), external.getCurrentUserId());
+		//TODO: add logic for split Block item
 		return "removed";
 	}
 

@@ -138,7 +138,6 @@ public class RemoveTemplateProducer implements ViewComponentProducer, Navigation
 								Context ctxt = (Context) contexts.get(0);
 								String title = ctxt.title;
 								UIOutput.make(evalsRb, "evalAssigned",title);
-								//UIOutput.make(evalsRb, "evalAssigned", logic.getCourseTitle(eval1.getId())); 
 							}
 
 							UIOutput.make(evalsRb, "evalStartDate", df.format(eval1.getStartDate())); //$NON-NLS-1$
