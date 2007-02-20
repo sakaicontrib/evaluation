@@ -16,13 +16,17 @@ package org.sakaiproject.evaluation.logic.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
+import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.model.Context;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
@@ -51,6 +55,11 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 	private EvalSettings settings;
 	public void setSettings(EvalSettings settings) {
 		this.settings = settings;
+	}
+
+	private EvalEvaluationsLogic evaluationLogic;
+	public void setEvaluationLogic(EvalEvaluationsLogic evaluationLogic) {
+		this.evaluationLogic = evaluationLogic;
 	}
 
 
@@ -281,18 +290,44 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			throw new IllegalStateException("Cannot find email template: " + EvalConstants.EMAIL_TEMPLATE_CREATED);
 		}
 
-		// get the complete list of users to send these emails to
-		String[] toUserIds = new String[] {"aaronz"}; // TODO
+		// get the associated contexts for this evaluation
+		Map evalContexts = evaluationLogic.getEvaluationContexts(new Long[] {evaluationId}, true);
+		// only one possible map key so we can assume evaluationId
+		List contexts = (List) evalContexts.get(evaluationId);
+		log.debug("Found " + contexts.size() + " contexts for new evaluation: " + evaluationId);
 
-		// replace the text of the template with real values
-		String message = emailTemplate.getMessage(); // TODO
+		// loop through contexts to get the complete list of users to send these emails to
+		for (int i=0; i<contexts.size(); i++) {
+			Context ctxt = (Context) contexts.get(i);
+			Set userIdsSet = external.getUserIdsForContext(ctxt.context, EvalConstants.PERM_BE_EVALUATED);
+			if (! includeOwner && userIdsSet.contains(eval.getOwner())) {
+				userIdsSet.remove(eval.getOwner());
+			}
 
-		// send the actual emails
-		String from = (String) settings.get( EvalSettings.FROM_EMAIL_ADDRESS );
-		external.sendEmails(from, 
-				toUserIds, 
-				"New evaluation created: " + eval.getTitle(), 
-				message);
+			// log and exit if there is no one to send email to
+			if (userIdsSet.size() == 0) {
+				log.info("No users to send " + EvalConstants.EMAIL_TEMPLATE_CREATED + 
+						" message to for new evaluation: " + evaluationId);
+				return new String[] {};
+			}
+
+			// turn the set into an array
+			String[] toUserIds = (String[]) userIdsSet.toArray(new String[] {});
+			log.debug("Found " + toUserIds.length + " users (" + toUserIds + 
+					") to send " + EvalConstants.EMAIL_TEMPLATE_CREATED + 
+					" notification to for new evaluation:" + evaluationId);
+
+			// replace the text of the template with real values
+			String message = emailTemplate.getMessage(); // TODO
+
+			// send the actual emails
+			String from = (String) settings.get( EvalSettings.FROM_EMAIL_ADDRESS );
+			external.sendEmails(from, 
+					toUserIds, 
+					"New evaluation created: " + eval.getTitle(), 
+					message);
+
+		}
 
 		log.error("Method not completed yet!");
 		return null;
