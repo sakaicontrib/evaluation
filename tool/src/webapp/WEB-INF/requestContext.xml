@@ -156,7 +156,6 @@
 
 	<bean
 		class="org.sakaiproject.evaluation.tool.producers.TemplateProducer">
-		<property name="messageLocator" ref="messageLocator" />
 		<property name="settings"
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 		<property name="externalLogic"
@@ -165,7 +164,6 @@
 
 	<bean
 		class="org.sakaiproject.evaluation.tool.producers.TemplateModifyProducer">
-		<property name="messageLocator" ref="messageLocator" />
 		<property name="localTemplateLogic" ref="localTemplateLogic" />
 		<property name="viewStateHandler" ref="viewStateHandler" />
 	</bean>
