@@ -528,7 +528,7 @@ public class RemoveQuestionProducer implements ViewComponentProducer, ViewParams
 	public List reportNavigationCases() {
 		List i = new ArrayList();
 		
-		i.add(new NavigationCase("removed", new EvalViewParameters(TemplateModifyProducer.VIEW_ID, templateId)));
+		i.add(new NavigationCase("removed", new EvalViewParameters(ModifyTemplateItemsProducer.VIEW_ID, templateId)));
 		return i;
 	}
 	

@@ -63,10 +63,10 @@ import uk.org.ponder.rsf.viewstate.ViewStateHandler;
  * @author: Antranig Basman (antranig@caret.cam.ac.uk)
  */
 
-public class TemplateModifyProducer implements ViewComponentProducer,
+public class ModifyTemplateItemsProducer implements ViewComponentProducer,
 		ViewParamsReporter {
 
-	public static final String VIEW_ID = "template_modify"; //$NON-NLS-1$
+	public static final String VIEW_ID = "modify_template_items"; //$NON-NLS-1$
 
 	public String getViewID() {
 		return VIEW_ID;
@@ -126,7 +126,7 @@ public class TemplateModifyProducer implements ViewComponentProducer,
 		// preview link
 		UIInternalLink.make(tofill, "preview_eval_link", new PreviewEvalParameters(
 				PreviewEvalProducer.VIEW_ID, null, templateId, null,
-				TemplateModifyProducer.VIEW_ID));
+				ModifyTemplateItemsProducer.VIEW_ID));
 
 		UIMessage.make(tofill, "preview-eval-desc",
 				"modifytemplate.preview.eval.desc"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -138,7 +138,7 @@ public class TemplateModifyProducer implements ViewComponentProducer,
 		String[] viewIDs = { ModifyScaledProducer.VIEW_ID,
 				ModifyEssayProducer.VIEW_ID, ModifyHeaderProducer.VIEW_ID,
 				// ModifyBlockProducer.VIEW_ID,
-				TemplateModifyProducer.VIEW_ID // TODO: which view for this
+				ModifyTemplateItemsProducer.VIEW_ID // TODO: which view for this
 		};
 		String[] values = convertViews(viewIDs, templateId);
 
