@@ -32,7 +32,6 @@ import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
-import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
@@ -48,10 +47,10 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * 
  * @author: Kapil Ahuja (kahuja@vt.edu)
  */
-public class TemplateProducer 
+public class ModifyTemplateProducer 
 	implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
 
-	public static final String VIEW_ID = "template_title_desc";
+	public static final String VIEW_ID = "modify_template";
 	public String getViewID() {
 		return VIEW_ID;
 	}

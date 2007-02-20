@@ -123,7 +123,7 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 			UIForm createTemplateForm = UIForm.make(tofill, "create-template-form"); //$NON-NLS-1$
 			UIInternalLink.make(createTemplateForm, "createTemplateLink", //$NON-NLS-1$
 					messageLocator.getMessage("createtemplate.page.title"), //$NON-NLS-1$
-					new EvalViewParameters(TemplateProducer.VIEW_ID, null));
+					new EvalViewParameters(ModifyTemplateProducer.VIEW_ID, null));
 			UIOutput.make(createTemplateForm, "eval-templates-header", messageLocator.getMessage("controlpanel.eval.templates.header")); //$NON-NLS-1$ //$NON-NLS-2$
 			/*UIInternalLink.make(createTemplateForm, "createTemplateLink", new EvalViewParameters(TemplateProducer.VIEW_ID, null,
 				ControlPanelProducer.VIEW_ID));*/
@@ -357,8 +357,8 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 		
 		i.add(new NavigationCase(ModifyTemplateItemsProducer.VIEW_ID, new SimpleViewParameters(
 				ModifyTemplateItemsProducer.VIEW_ID)));
-		i.add(new NavigationCase(TemplateProducer.VIEW_ID, new SimpleViewParameters(
-				TemplateProducer.VIEW_ID)));
+		i.add(new NavigationCase(ModifyTemplateProducer.VIEW_ID, new SimpleViewParameters(
+				ModifyTemplateProducer.VIEW_ID)));
 		i.add(new NavigationCase(EvaluationSettingsProducer.VIEW_ID, new SimpleViewParameters(
 				EvaluationSettingsProducer.VIEW_ID)));
 		i.add(new NavigationCase(EvaluationStartProducer.VIEW_ID, new SimpleViewParameters(
