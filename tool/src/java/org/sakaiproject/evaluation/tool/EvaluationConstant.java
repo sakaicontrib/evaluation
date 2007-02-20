@@ -139,5 +139,12 @@ public class EvaluationConstant {
 	public static final String[] PULLDOWN_INTEGER_VALUES = new String[] {
 		"0", "1", "2", "3", "4", "5", "6", "7", "8", 
 		"9", "10", "12", "15", "18", "20", "25", "50"};	
+
+	/**
+	 * Defines the allowed values for minimum time difference (in hours) 
+	 * between start and due date of an evaluation.
+	 */
+	public static final String[] MINIMUM_TIME_DIFFERENCE = new String[] {
+		"4", "8", "12", "16", "20", "24", "36", "48"};	
 }
 

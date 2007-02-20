@@ -272,6 +272,13 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
 				EvalSettings.EVAL_RECENTLY_CLOSED_DAYS); 
 		UIOutput.make(form, "general-eval-closed-still-recent-note", messageLocator.getMessage("administrate.general.eval.closed.still.recent.note")); //$NON-NLS-1$ //$NON-NLS-2$
 		
+		//Minimum time difference (in hours) between the start date and due date
+		makeSelect(form, "general-mim-time-diff-between-dates", //$NON-NLS-1$
+				EvaluationConstant.MINIMUM_TIME_DIFFERENCE,
+				EvaluationConstant.MINIMUM_TIME_DIFFERENCE,
+				EvalSettings.EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE); 
+		UIOutput.make(form, "general-mim-time-diff-between-dates-note", messageLocator.getMessage("administrate.general.eval.mim.time.diff.between.dates")); //$NON-NLS-1$ //$NON-NLS-2$
+		
 		// Save settings button
         // NB no action now required
 		UICommand.make(form, "saveSettings", messageLocator.getMessage("administrate.save.settings.button"), null); //$NON-NLS-1$ //$NON-NLS-2$	
