@@ -87,14 +87,16 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 
 		Long templateId = evParameters.templateId;
 
-		System.out.println("templateId=" + evParameters.templateId);
-		System.out.println("block item ids=" + evParameters.templateItemIds);
-
-		boolean modify = false;// this variable indicate if it is for modify
-		// existing Block
-		boolean validScaleIds = true;// this variable indicate if the passed Ids
-		// have the same scale
-		Integer firstDO = null;// the first items's original displayOrder
+		//System.out.println("templateId=" + evParameters.templateId);
+		//System.out.println("block item ids=" + evParameters.templateItemIds);
+		
+		//this variable indicate if it is for modify existing Block
+		boolean modify = false;
+		//this variable indicate if the passed Ids have the same scale
+		boolean validScaleIds = true;
+		//the first items's original displayOrder
+		Integer firstDO = null;
+		
 		String templateItemIds = evParameters.templateItemIds;
 		boolean createFromBlock = false;
 
