@@ -282,8 +282,7 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 							"queRow:", Integer.toString(i)); //$NON-NLS-1$
 					UIOutput.make(radiobranch, "childOrder", child.getDisplayOrder()
 							.toString());
-					// TODO: This should be rich text but it would seem no way there is
-					// space. NB this is now serious security hole for HTML injection. 
+					//Child text can not be changes as BLOCK specification 
 					UIInput.make(radiobranch, "queText", null, child.getItem()
 							.getItemText());
 				}

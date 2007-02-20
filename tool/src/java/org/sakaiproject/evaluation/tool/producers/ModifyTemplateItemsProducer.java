@@ -138,8 +138,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer,
 		String[] viewIDs = { ModifyScaledProducer.VIEW_ID,
 				ModifyEssayProducer.VIEW_ID, ModifyHeaderProducer.VIEW_ID,
 				// ModifyBlockProducer.VIEW_ID,
-				ModifyTemplateItemsProducer.VIEW_ID // TODO: which view for this
-		};
+				ModifyTemplateItemsProducer.VIEW_ID };
 		String[] values = convertViews(viewIDs, templateId);
 
 		// dropdown list
@@ -193,7 +192,6 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer,
 		reorder.parameters.add(new UIELBinding("#{templateBBean.templateId}",
 				templateId));
 
-		// UIOutput.make(form,"itemCount",null,"#{templateBBean.itemsListSize}");
 		if (templateItemsList != null && templateItemsList.size() > 0) {
 			UIVerbatim.make(form2, "decorateSelects", HTMLUtil.emitJavascriptCall(
 					"EvalSystem.decorateReorderSelects", new String[] { "",
@@ -238,14 +236,11 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer,
 				UISelect.make(radiobranch, "itemNum", strArr, templateItemOTP
 						+ "displayOrder", null);
 
-				// String itemClassificationLabel =
-				// (currItemDisplay.getItem()).getClassification();
 				String itemClassificationLabel = myTemplateItem.getItem()
 						.getClassification();
 				UIOutput.make(radiobranch, "itemClassificationLabel",
 						itemClassificationLabel);
-				// String scaleDisplaySettingLabel =
-				// (currItemDisplay.getItem()).getScaleDisplaySetting();
+
 				String scaleDisplaySettingLabel = myTemplateItem
 						.getScaleDisplaySetting();
 
@@ -280,8 +275,6 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer,
 							UIMessage.make("modifytemplate.modify.link"), target);
 				}
 
-				// System.out.println("tiid"+myTemplateItem.getId()+" itemtext:
-				// "+myTemplateItem.getItem().getItemText());
 				UIInternalLink.make(radiobranch, "remove_row_item", 
 						UIMessage.make("modifytemplate.remove.link"),
 						new TemplateItemViewParameters(RemoveQuestionProducer.VIEW_ID,
@@ -290,18 +283,15 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer,
 				UIBranchContainer radiobranch2 = UIBranchContainer.make(form2,
 						"itemrow:text", Integer.toString(i)); //$NON-NLS-1$
 				UIOutput.make(radiobranch2, "queNo", Integer.toString(i + 1)); //$NON-NLS-1$
-				// UIOutput.make(radiobranch2,"itemText",currItemDisplay.getItem().getItemText());
 				UIVerbatim.make(radiobranch2, "itemText", myTemplateItem.getItem()
 						.getItemText());
 
 				String scaletitle = ""; //$NON-NLS-1$				
-				// if(currItemDisplay.getItem().getScale() != null)
-				// title = currItemDisplay.getItem().getScale().getTitle();
+
 				if (myTemplateItem.getItem().getScale() != null)
 					scaletitle = myTemplateItem.getItem().getScale().getTitle();
 				UIOutput.make(radiobranch2, "scaleType", scaletitle); //$NON-NLS-1$
 
-				// Boolean useNA= currItemDisplay.getItem().getUsesNA();
 				if (!TemplateItemUtils.getTemplateItemType(myTemplateItem).equals(
 						EvalConstants.ITEM_TYPE_HEADER)) {
 					Boolean useNA = myTemplateItem.getUsesNA();
