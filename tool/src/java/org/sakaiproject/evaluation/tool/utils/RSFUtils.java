@@ -3,7 +3,6 @@
  */
 package org.sakaiproject.evaluation.tool.utils;
 
-import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
@@ -19,17 +18,7 @@ import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
  */
 
 public class RSFUtils {
-  /** Fetches an array of message keys into an array of resolved messages. 
-   * Primarily useful for internationalised selection controls. 
-   */
-  public static String[] fetchMessages(MessageLocator locator, String[] keys) {
-    String[] togo = new String[keys.length];
-    for (int i = 0; i < keys.length; ++ i) {
-      togo[i] = locator.getMessage(keys[i]);
-    }
-    return togo;
-  }
-  
+ 
   public static void targetLabel(UIComponent label, UIComponent target) {
     label.decorators = new DecoratorList(new UILabelTargetDecorator(target));
   }
