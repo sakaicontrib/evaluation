@@ -247,9 +247,14 @@ public class TemplateBBean {
 				setIdealColorforBlockParent(parent);
 				parent.getItem().setUsesNA(parent.getUsesNA());
 				parent.getItem().setCategory(parent.getItemCategory());
-				localTemplateLogic.saveItem(parent.getItem());
-				localTemplateLogic.saveTemplateItem(parent);	
+				
+			}else{
+				parent = itemsLogic.getTemplateItemById(Long.valueOf(strIds[0]));
+				setIdealColorforBlockParent(parent);
 			}
+			localTemplateLogic.saveItem(parent.getItem());
+			localTemplateLogic.saveTemplateItem(parent);	
+			
 		}
 
 		return "success";	
