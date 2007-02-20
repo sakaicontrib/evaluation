@@ -155,7 +155,7 @@
 	</bean>
 
 	<bean
-		class="org.sakaiproject.evaluation.tool.producers.TemplateProducer">
+		class="org.sakaiproject.evaluation.tool.producers.ModifyTemplateProducer">
 		<property name="settings"
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 		<property name="externalLogic"
@@ -163,7 +163,7 @@
 	</bean>
 
 	<bean
-		class="org.sakaiproject.evaluation.tool.producers.TemplateModifyProducer">
+		class="org.sakaiproject.evaluation.tool.producers.ModifyTemplateItemsProducer">
 		<property name="localTemplateLogic" ref="localTemplateLogic" />
 		<property name="viewStateHandler" ref="viewStateHandler" />
 	</bean>
