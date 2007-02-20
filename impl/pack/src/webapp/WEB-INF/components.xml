@@ -57,6 +57,8 @@
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="settings" 
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+		<property name="evaluationLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
 	</bean>
 
 	<bean id="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic"
