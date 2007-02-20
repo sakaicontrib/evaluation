@@ -47,6 +47,7 @@ import org.sakaiproject.evaluation.tool.producers.EvaluationSettingsProducer;
 import org.sakaiproject.evaluation.tool.producers.EvaluationStartProducer;
 import org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer;
 import org.sakaiproject.evaluation.tool.producers.SummaryProducer;
+import org.sakaiproject.evaluation.tool.utils.EvaluationDateUtil;
 import org.sakaiproject.evaluation.tool.utils.ItemBlockUtils;
 
 /**
@@ -134,6 +135,12 @@ public class EvaluationBean {
 	private EvalSettings settings;
 	public void setSettings(EvalSettings settings) {
 		this.settings = settings;
+	}
+
+	//Spring injection
+	private EvaluationDateUtil dateUtil;	
+	public void setDateUtil (EvaluationDateUtil dateUtil) {
+		this.dateUtil = dateUtil;
 	}
 	
 	/*
@@ -696,12 +703,8 @@ public class EvaluationBean {
 		 */
 		checkEvalStartDate();
 
-		/*
-		 * If the due date is same as start date then we need to make the time of due date 
-		 * to be 1 second more that start date.
-		 * (for details see the comment at the start of checkDueDate() method)
-		 */		
-		checkDueDate();
+		// Ensure minimum time difference between start and due date.
+		dateUtil.updateDueDate(eval);
 		
 		// Needed by columbia so as of now making equal to due date		
 		eval.setStopDate(eval.getDueDate());
@@ -753,43 +756,5 @@ public class EvaluationBean {
 		if(year_start == year_today && month_start == month_today && day_start == day_today) {
 			eval.setStartDate(calendar.getTime());		
 		}	
-	}
-	
-	/**
-	 * Private method used to add current time to the due date if
-	 * due date (without time) is same as start date (without time).  
-	 *
-	 * This needed because we are not taking time from the user for any dates (start, due, view)
-	 * and for the start date we are adding the time in above checkEvalStartDate method. 
-	 * In logic layer there is a check that due date should not be before start date. 
-	 * Thus, if due date is same as start date then we need to make the time of due date 
-	 * to be 11:59 PM.
-	 */
-	//TODO: There should be some minimum time between the start date and due date (EVALSYS-24)
-	private void checkDueDate() {
-
-		Calendar calendarStart = new GregorianCalendar();
-		calendarStart.setTime(eval.getStartDate());
-		int year_start = calendarStart.get(Calendar.YEAR);
-		int month_start = calendarStart.get(Calendar.MONTH);
-		int day_start = calendarStart.get(Calendar.DAY_OF_MONTH);
-		
-		Calendar calendarDue = new GregorianCalendar();
-		calendarDue.setTime(eval.getDueDate());
-		int year_due = calendarDue.get(Calendar.YEAR);
-		int month_due = calendarDue.get(Calendar.MONTH);
-		int day_due = calendarDue.get(Calendar.DAY_OF_MONTH);
-		
-		/*
-		 * The due date is of the form 17th, Jan 2007 12:00 AM
-		 * Thus adding a 23 hours and 59 minutes to get:
-		 * 17th, Jan 2007 11:59 PM
-		 */ 
-		if ( year_start == year_due && month_start == month_due && day_start == day_due ){
-			calendarDue.setTime(eval.getDueDate());
-			calendarDue.add(Calendar.HOUR, 23);
-			calendarDue.add(Calendar.MINUTE, 59);
-			eval.setDueDate(calendarDue.getTime());
-		}
 	}
 }

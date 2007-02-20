@@ -54,15 +54,10 @@ public class EvaluationDateUtil {
 		 * If the difference between start date and due date is less than
 		 * the minmum value set as system settings, then update the due date
 		 * to reflect this minimum time difference.
-		 * Else update the due date to have time as 23:59 PM of that day.
+		 * Note: Arguments to getHoursDifference() method should have due date as 
+		 *       first date and start date as second date.
 		 */
-
-		//TODO remaining tasks for this class are:
-		//- Work on administrative side of this.
-		//- Move the other method from evaluationBean also here and remove two from Bean.
-		//- Test.
-
-		if (getHoursDifference(eval.getStartDate(), eval.getDueDate()) < minHours) {
+		if (getHoursDifference(eval.getDueDate(), eval.getStartDate()) < minHours) {
 
 			Calendar calendarDue = new GregorianCalendar();
 			calendarDue.setTime(eval.getStartDate());

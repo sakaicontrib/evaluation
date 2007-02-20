@@ -21,6 +21,8 @@
 			ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
 		<property name="settings"
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+		<property name="dateUtil"
+			ref="org.sakaiproject.evaluation.tool.utils.EvaluationDateUtil" />
 	</bean>
 
 
@@ -358,4 +360,9 @@
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="messageLocator" ref="messageLocator" />
 	</bean>
+	
+	<bean class="org.sakaiproject.evaluation.tool.utils.EvaluationDateUtil">
+		<property name="evalSettings"
+			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+	</bean>	
 </beans>
