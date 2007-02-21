@@ -16,6 +16,7 @@
 package org.sakaiproject.evaluation.tool;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -28,6 +29,10 @@ import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
+import org.sakaiproject.evaluation.tool.utils.ComparatorsUtils;
+import org.sakaiproject.evaluation.tool.utils.ItemBlockUtils;
+import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
 /**
  * This request-scope bean handles item creation and modification.
@@ -169,8 +174,57 @@ public class ItemsBean {
 	public String previewItemAction(){return null;}
 
 	public String removeItemAction(){
-		itemsLogic.deleteTemplateItem(templateItem.getId(), external.getCurrentUserId());
-		//TODO: add logic for split Block item
+		
+		List allTemplateItems = itemsLogic.getTemplateItemsForTemplate(templateItem.getTemplate().getId(), null);
+		List noChildList = ItemBlockUtils.getNonChildItems(allTemplateItems);
+		Collections.sort(noChildList, new ComparatorsUtils.TemplateItemComparatorByOrder());
+		
+		if(TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_BLOCK)){
+			
+			int parentDO = templateItem.getDisplayOrder().intValue();//block parent's displayOrder
+			List childList = itemsLogic.getBlockChildTemplateItemsForBlockParent(templateItem.getId(), false);
+			
+			//delete parent
+			Long itemId = templateItem.getItem().getId();
+			itemsLogic.deleteTemplateItem(templateItem.getId(), external.getCurrentUserId());
+			itemsLogic.deleteItem(itemId, external.getCurrentUserId());		
+			
+			//modify child
+			for(int i=0; i<childList.size(); i++){
+				EvalTemplateItem  child = (EvalTemplateItem)childList.get(i);
+				child.setBlockParent(null);
+				child.setBlockId(null);
+				child.setDisplayOrder(new Integer(parentDO+i));
+				itemsLogic.saveTemplateItem(child, external.getCurrentUserId());
+			}
+			
+			//shift display-orderer all the items below
+			for(int i=parentDO; i< noChildList.size(); i++){
+				EvalTemplateItem eti = (EvalTemplateItem) noChildList.get(i);
+				int order = eti.getDisplayOrder().intValue();
+				if(order > parentDO){
+					eti.setDisplayOrder(new Integer(order+ childList.size()-1));
+					itemsLogic.saveTemplateItem(eti, external.getCurrentUserId());
+				}
+			}
+			
+		}else{//non- block case
+			int oldDisplayOrder = templateItem.getDisplayOrder().intValue();
+			itemsLogic.deleteTemplateItem(templateItem.getId(), external.getCurrentUserId());
+			
+			//shift display Order of items below	
+			for(int i= oldDisplayOrder;i< noChildList.size(); i++){
+				EvalTemplateItem eti = (EvalTemplateItem) noChildList.get(i);
+				int order = eti.getDisplayOrder().intValue();
+				if(order > oldDisplayOrder){
+					eti.setDisplayOrder(new Integer(order -1));
+					itemsLogic.saveTemplateItem(eti, external.getCurrentUserId());
+				}
+			}//end of for loop			
+		}
+
+		
+		
 		return "removed";
 	}
 
