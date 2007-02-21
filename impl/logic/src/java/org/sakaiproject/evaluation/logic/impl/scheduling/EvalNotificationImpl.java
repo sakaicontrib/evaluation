@@ -1,4 +1,4 @@
-package org.sakaiproject.evaluation.logic.impl.notification;
+package org.sakaiproject.evaluation.logic.impl.scheduling;
 
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;

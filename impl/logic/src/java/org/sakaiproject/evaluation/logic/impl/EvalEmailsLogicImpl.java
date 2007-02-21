@@ -14,7 +14,10 @@
 
 package org.sakaiproject.evaluation.logic.impl;
 
+import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +30,7 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.model.Context;
+import org.sakaiproject.evaluation.logic.utils.TextTemplateLogicUtils;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
@@ -275,8 +279,16 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
 	// sending emails
 
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendEvalCreatedNotifications(java.lang.Long, boolean)
+	 */
 	public String[] sendEvalCreatedNotifications(Long evaluationId, boolean includeOwner) {
 		log.debug("evaluationId: " + evaluationId + ", includeOwner: " + includeOwner);
+
+		// TODO - use a date which is related to the current users locale
+		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM); // , locale);
+
+		String from = (String) settings.get( EvalSettings.FROM_EMAIL_ADDRESS );
 
 		// get evaluation
 		EvalEvaluation eval = (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);
@@ -296,51 +308,131 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		List contexts = (List) evalContexts.get(evaluationId);
 		log.debug("Found " + contexts.size() + " contexts for new evaluation: " + evaluationId);
 
-		// loop through contexts to get the complete list of users to send these emails to
+		List sentMessages = new ArrayList();
+		// loop through contexts and send emails to correct users in each context
 		for (int i=0; i<contexts.size(); i++) {
-			Context ctxt = (Context) contexts.get(i);
-			Set userIdsSet = external.getUserIdsForContext(ctxt.context, EvalConstants.PERM_BE_EVALUATED);
+			Context context = (Context) contexts.get(i);
+			Set userIdsSet = external.getUserIdsForContext(context.context, EvalConstants.PERM_BE_EVALUATED);
 			if (! includeOwner && userIdsSet.contains(eval.getOwner())) {
 				userIdsSet.remove(eval.getOwner());
 			}
 
-			// log and exit if there is no one to send email to
-			if (userIdsSet.size() == 0) {
-				log.info("No users to send " + EvalConstants.EMAIL_TEMPLATE_CREATED + 
-						" message to for new evaluation: " + evaluationId);
-				return new String[] {};
-			}
+			// skip ahead if there is no one to send to
+			if (userIdsSet.size() == 0) continue;
 
 			// turn the set into an array
 			String[] toUserIds = (String[]) userIdsSet.toArray(new String[] {});
 			log.debug("Found " + toUserIds.length + " users (" + toUserIds + 
 					") to send " + EvalConstants.EMAIL_TEMPLATE_CREATED + 
-					" notification to for new evaluation:" + evaluationId);
+					" notification to for new evaluation (" + evaluationId + 
+					") and context (" + context.context + ")");
 
 			// replace the text of the template with real values
-			String message = emailTemplate.getMessage(); // TODO
+			Map replacementValues = new HashMap();
+			replacementValues.put("EvalTitle", eval.getTitle() );
+			replacementValues.put("EvalStartDate", df.format(eval.getStartDate()) );
+			replacementValues.put("EvalDueDate", df.format(eval.getDueDate()) );
+			replacementValues.put("EvalResultsDate", df.format(eval.getViewDate()) );
+			replacementValues.put("ContextTitle", context.title);
+			replacementValues.put("HelpdeskEmail", from);
+			replacementValues.put("URLtoAddItems", "http://something"); // TODO
+			replacementValues.put("URLtoTakeEval", "http://something"); // TODO
+			replacementValues.put("URLtoViewResults", "http://something"); // TODO
+			replacementValues.put("URLtoSystem", "http://something"); // TODO
+			String message = TextTemplateLogicUtils.processTextTemplate(emailTemplate.getMessage(), 
+					replacementValues);
 
-			// send the actual emails
-			String from = (String) settings.get( EvalSettings.FROM_EMAIL_ADDRESS );
+			// store sent messages to return
+			sentMessages.add(message);
+
+			// send the actual emails for this context
 			external.sendEmails(from, 
 					toUserIds, 
 					"New evaluation created: " + eval.getTitle(), 
 					message);
-
+			log.info("Sent evaluation created message to " + toUserIds.length + " users");
 		}
 
-		log.error("Method not completed yet!");
-		return null;
-
+		return (String[]) sentMessages.toArray( new String[] {} );
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendEvalAvailableNotifications(java.lang.Long, boolean)
+	 */
 	public String[] sendEvalAvailableNotifications(Long evaluationId, boolean includeEvaluatees) {
 		log.debug("evaluationId: " + evaluationId + ", includeEvaluatees: " + includeEvaluatees);
-		// TODO Auto-generated method stub
-		
-		log.error("Method not implemented yet!");
-		return null;
 
+		// TODO - use a date which is related to the current users locale
+		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM); // , locale);
+
+		String from = (String) settings.get( EvalSettings.FROM_EMAIL_ADDRESS );
+
+		// get evaluation
+		EvalEvaluation eval = (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);
+		if (eval == null) {
+			throw new IllegalArgumentException("Cannot find evaluation with this id: " + evaluationId);
+		}
+
+		// get the email template
+		EvalEmailTemplate emailTemplate = getDefaultEmailTemplate( EvalConstants.EMAIL_TEMPLATE_AVAILABLE );
+		if (emailTemplate == null) {
+			throw new IllegalStateException("Cannot find email template: " + EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
+		}
+
+		// get the associated contexts for this evaluation
+		Map evalContexts = evaluationLogic.getEvaluationContexts(new Long[] {evaluationId}, false);
+		// only one possible map key so we can assume evaluationId
+		List contexts = (List) evalContexts.get(evaluationId);
+		log.debug("Found " + contexts.size() + " contexts for available evaluation: " + evaluationId);
+
+		List sentMessages = new ArrayList();
+		// loop through contexts and send emails to correct users in each context
+		for (int i=0; i<contexts.size(); i++) {
+			Context context = (Context) contexts.get(i);
+			Set userIdsSet = external.getUserIdsForContext(context.context, EvalConstants.PERM_TAKE_EVALUATION);
+
+			// skip ahead if there is no one to send to
+			if (userIdsSet.size() == 0) continue;
+
+			// turn the set into an array
+			String[] toUserIds = (String[]) userIdsSet.toArray(new String[] {});
+			log.debug("Found " + toUserIds.length + " users (" + toUserIds + 
+					") to send " + EvalConstants.EMAIL_TEMPLATE_CREATED + 
+					" notification to for available evaluation (" + evaluationId + 
+					") and context (" + context.context + ")");
+
+			// replace the text of the template with real values
+			Map replacementValues = new HashMap();
+			replacementValues.put("EvalTitle", eval.getTitle() );
+			replacementValues.put("EvalStartDate", df.format(eval.getStartDate()) );
+			replacementValues.put("EvalDueDate", df.format(eval.getDueDate()) );
+			replacementValues.put("EvalResultsDate", df.format(eval.getViewDate()) );
+			replacementValues.put("ContextTitle", context.title);
+			replacementValues.put("HelpdeskEmail", from);
+			replacementValues.put("URLtoAddItems", "http://something"); // TODO
+			replacementValues.put("URLtoTakeEval", "http://something"); // TODO
+			replacementValues.put("URLtoViewResults", "http://something"); // TODO
+			replacementValues.put("URLtoSystem", "http://something"); // TODO
+			String message = TextTemplateLogicUtils.processTextTemplate(emailTemplate.getMessage(), 
+					replacementValues);
+
+			// store sent messages to return
+			sentMessages.add(message);
+
+			// send the actual emails for this context
+			external.sendEmails(from, 
+					toUserIds, 
+					"New evaluation created: " + eval.getTitle(), 
+					message);
+			log.info("Sent evaluation available message to " + toUserIds.length + " users");
+
+			if (includeEvaluatees) {
+				// TODO
+				log.error("includeEvaluatees Not implemented");
+			}
+		}
+
+		return (String[]) sentMessages.toArray( new String[] {} );
 	}
 
 	public String[] sendEvalReminderNotifications(Long evaluationId, String includeConstant) {

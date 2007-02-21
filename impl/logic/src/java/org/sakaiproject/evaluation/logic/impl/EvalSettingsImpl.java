@@ -21,7 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.EvaluationSettingsParse;
+import org.sakaiproject.evaluation.logic.utils.SettingsLogicUtils;
 import org.sakaiproject.evaluation.model.EvalConfig;
 
 
@@ -54,8 +54,8 @@ public class EvalSettingsImpl implements EvalSettings {
 	 */
 	public Object get(String settingConstant) {
 		log.debug("Getting admin setting for: " + settingConstant);
-		String name = EvaluationSettingsParse.getName(settingConstant);
-		String type = EvaluationSettingsParse.getType(settingConstant);
+		String name = SettingsLogicUtils.getName(settingConstant);
+		String type = SettingsLogicUtils.getType(settingConstant);
 
 		EvalConfig c = getConfigByName(name);
 		if (c == null) { return null; }
@@ -75,8 +75,8 @@ public class EvalSettingsImpl implements EvalSettings {
 	 */
 	public boolean set(String settingConstant, Object settingValue) {
 		log.debug("Setting admin setting to ("+settingValue+") for: " + settingConstant);
-		String name = EvaluationSettingsParse.getName(settingConstant);
-		String type = EvaluationSettingsParse.getType(settingConstant);
+		String name = SettingsLogicUtils.getName(settingConstant);
+		String type = SettingsLogicUtils.getType(settingConstant);
 
 		// retrieve the current setting if it exists
 		EvalConfig c = getConfigByName(name);

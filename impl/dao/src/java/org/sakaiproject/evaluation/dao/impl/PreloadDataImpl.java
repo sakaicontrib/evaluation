@@ -20,7 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.EvaluationSettingsParse;
+import org.sakaiproject.evaluation.logic.utils.SettingsLogicUtils;
 import org.sakaiproject.evaluation.model.EvalConfig;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalScale;
@@ -107,7 +107,7 @@ public class PreloadDataImpl {
 	}
 
 	private void saveConfig(String key, String value) {
-		evaluationDao.save(new EvalConfig(new Date(), EvaluationSettingsParse.getName(key), value));
+		evaluationDao.save(new EvalConfig(new Date(), SettingsLogicUtils.getName(key), value));
 	}
 
 

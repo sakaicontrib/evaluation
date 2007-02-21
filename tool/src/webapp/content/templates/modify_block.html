@@ -54,7 +54,8 @@
 <div rsf:id="blockPage:">
   <form  name="block_form" rsf:id="blockForm" method="post" onsubmit="javascript:return validateForm();"> 
 		<table id="blockTable" name="blockTable" width="70%" border="0" cellspacing="0" cellpadding="5">
-		 <tr><td colspan="2" width="100%">
+		 <tr>
+		 <td colspan="2" width="100%">
 			<table class="sample" cellspacing="0" cellpadding="0" width="100%">
 				<tr>
 					<td width = "20%" align = "left" style="font-weight:bold;">
@@ -73,72 +74,72 @@
 					 </td>
 				</tr>
 			</table>	
-		 </td></tr>
+		 </td>
+		 </tr>
 		 
-		 <tr><td colspan="2" align="left"><b><span rsf:id="item-header-text-header">Item Header Text :</span> </b>
-		 </td></tr>
+		 <tr>
+		 	<td colspan="2" align="left">
+		 		<b><span rsf:id="item-header-text-header">Item Header Text :</span></b>
+		 	</td>
+		 </tr>
 		 
-		 <tr><td colspan="2" width="100%">
-     <div rsf:id="item_text:">
-       <textarea name="item_text-dummy" rsf:id="item_text-dummy" cols="80" rows="5"></textarea>
-     </div>
-		 </td></tr>
+		 <tr>
+			 <td colspan="2" width="100%">
+			     <div rsf:id="item_text:">
+			       <textarea name="item_text-dummy" rsf:id="item_text-dummy" cols="80" rows="5"></textarea>
+			     </div>
+			 </td>
+		 </tr>
 	
 		 <tr>
-		 <td  width="20%"><b><span rsf:id="scale-type-header">Scale Type:</span></b></td>
-		 <td width="80%" >
-		 	<label name="scaleLabel" rsf:id="scaleLabel" style="font-weight:bold;"/>
-         </td>
+			<td colspan="2">
+				<b><span rsf:id="scale-type-header">Scale Type:</span></b>&nbsp;
+				<span name="scaleLabel" rsf:id="scaleLabel">Title of scale (scale points)</span>
+			</td>
 		 </tr>
 
 		<tr>
-		<td width="20%"><b><span rsf:id="add-na-header">Add N/A (not available):</span></b></td>
-		<td width="80%"><input type="checkbox" name="item_NA" rsf:id="item_NA" value="" /></td>
+			<td colspan="2">
+				<b><span rsf:id="add-na-header">Add N/A (not available):</span></b>&nbsp;
+				<input type="checkbox" name="item_NA" rsf:id="item_NA" value="" />
+			</td>
 		</tr>				
 		
 		<tr>
-		<td width="20%"><b><span rsf:id="ideal-coloring-header">Use Ideal Coloring:</span></b></td>
-		<td width="80%"><input type="checkbox" name="idealColor" rsf:id="idealColor" value="" /></td>
+			<td colspan="2">
+				<b><span rsf:id="ideal-coloring-header">Use Ideal Coloring:</span></b>&nbsp;
+				<input type="checkbox" name="idealColor" rsf:id="idealColor" value="" />
+			</td>
 		</tr>
 		
 		<tr>
-		<td width="20%" ><b><span rsf:id="item-category-header">Item Category :</span></b></td>
-		<td width="80%"> 
-		<span rsf:id="item_category"/>
-	        <label for="item_category_C" rsf:id="course-category-header">Course</label>
-	        <input type="radio" name="item_category_C" rsf:id="item_category_C"/>
-	        <label for="item_category_I" rsf:id="instructor-category-header">Instructor</label>
-	       <input type="radio" name="item_category_I" rsf:id="item_category_I" />
-	    </td>
+			<td colspan="2">
+				<b><span rsf:id="item-category-header">Item Category :</span></b>&nbsp;
+				<span rsf:id="item_category"/>
+		        <label for="item_category_C" rsf:id="course-category-header">Course</label>
+		        <input type="radio" name="item_category_C" rsf:id="item_category_C"/>
+		        <label for="item_category_I" rsf:id="instructor-category-header">Instructor</label>
+		       	<input type="radio" name="item_category_I" rsf:id="item_category_I" />
+			</td>
 		</tr>	
-		
+
 		<tr>
-		<td colspan="2" align="left"><b>
-		<span rsf:id="items-header">Items:</span>
-		</b></td>
+			<td colspan="2" align="left">
+				<b><span rsf:id="items-header">Items:</span></b>
+			</td>
 		</tr>
-		
+
 		<tr>
-		<td colspan="2">
-			<table  name="itemTable" border="0" cellspacing="0" cellpadding="0" width="100%">
-				<tr rsf:id="queRow:">					
-					<td colspan="2">
-						<label rsf:id="childOrder" style="font-weight:bold;">1</label>&nbsp;
-						<div  rsf:id="queText" style="width:80%; height:18px;" >			
-                          Child item text here
-                        </div>
-					</td>
-				</tr>
-			</table>
-		</td>
+			<td colspan="2" style="border:2px solid black;">
+				<div rsf:id="queRow:">
+					<span rsf:id="childOrder" style="font-weight:bold;">1</span>.&nbsp;
+					<span rsf:id="queText">
+						Child item text here
+					</span>
+				</div>
+			</td>
 		</tr>
-<!--  	
-		<tr>
-		<td colspan="2">
-			<input  rsf:id="addItemToBlock" type="submit" value="Add Item to Block" onclick="javascript:flag='add';"/>	
-		</td>	
-		</tr>
--->
+
 		
 		<tr>
 		<td width="20%" align="left"> 

@@ -22,7 +22,6 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 /**
  * This class contains various model related utils needed in many areas
- * <b>WARNING:</b> do NOT use these methods outside the logic or DAO layers
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */

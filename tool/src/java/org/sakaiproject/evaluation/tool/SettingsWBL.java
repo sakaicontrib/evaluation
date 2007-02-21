@@ -14,7 +14,7 @@
 package org.sakaiproject.evaluation.tool;
 
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.EvaluationSettingsParse;
+import org.sakaiproject.evaluation.logic.utils.SettingsLogicUtils;
 
 import uk.org.ponder.beanutil.WriteableBeanLocator;
 import uk.org.ponder.conversion.StaticLeafParser;
@@ -134,7 +134,7 @@ public class SettingsWBL implements WriteableBeanLocator {
 	 * Uses java.lang.Class to find the class for a given property. 
 	 */
 	private static Class getPropertyType(String propname) {
-		String typename = EvaluationSettingsParse.getType(propname);
+		String typename = SettingsLogicUtils.getType(propname);
 		try {
 			return Class.forName(typename);
 		}
