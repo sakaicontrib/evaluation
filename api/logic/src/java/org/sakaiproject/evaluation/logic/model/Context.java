@@ -14,7 +14,6 @@
 
 package org.sakaiproject.evaluation.logic.model;
 
-import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 
@@ -35,9 +34,9 @@ public class Context {
 	 */
 	public String title = "Unknown";
 	/**
-	 * The type of this context (use the constants in {@link EvalExternalLogic})
+	 * The type of this context (use the CONTEXT_TYPE constants in {@link EvalConstants})
 	 */
-	public int type = EvalConstants.CONTEXT_TYPE_UNKNOWN;
+	public String type = EvalConstants.CONTEXT_TYPE_UNKNOWN;
 
 
 	/**
@@ -48,7 +47,7 @@ public class Context {
 	/**
 	 * Standard Constructor
 	 */
-	public Context(String context, String title, int type) {
+	public Context(String context, String title, String type) {
 		this.context = context;
 		this.title = title;
 		this.type = type;

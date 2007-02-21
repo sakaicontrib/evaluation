@@ -42,15 +42,19 @@ public class EvalConstants {
 	/**
 	 * Context class: Unknown type
 	 */
-	public final static int CONTEXT_TYPE_UNKNOWN = 0;
+	public final static String CONTEXT_TYPE_UNKNOWN = "Unknown";
 	/**
 	 * Context class: Site type (represents a course or project site)
 	 */
-	public final static int CONTEXT_TYPE_SITE = 1;
+	public final static String CONTEXT_TYPE_SITE = "Site";
 	/**
 	 * Context class: Group type (represents a subgroup within a site)
 	 */
-	public final static int CONTEXT_TYPE_GROUP = 2;
+	public final static String CONTEXT_TYPE_GROUP = "Group";
+	/**
+	 * Context class: Provided type (represents an eval group from a provider)
+	 */
+	public final static String CONTEXT_TYPE_PROVIDED = "Provided";
 
 	/**
 	 * Scale ideal setting: no selection of this scale is the ideal one
@@ -379,5 +383,26 @@ public class EvalConstants {
 	 * <br/>States: InQueue -> Active -> Due -> Closed -> Viewable
 	 */
 	public static final String EVALUATION_STATE_VIEWABLE = "Viewable";
+
+	/**
+	 * Hierarchy Permission:
+	 * User may view all data at the associated hierarchy node and below,
+	 * user has no power to change any data, data includes: 
+	 * evaluations, eval results, templates, items, scales
+	 */
+	public static final String HIERARCHY_PERM_VIEW_DATA = "HierarchyViewData";
+	/**
+	 * Hierarchy Permission:
+	 * User may assign an evaluation to the associated hierarchy node and any 
+	 * nodes or eval groups below it, user may also control any existing evalaution
+	 * at this current hierarchy node (but not below it)
+	 */
+	public static final String HIERARCHY_PERM_ASSIGN_EVALUATION = "HierarchyAssignEval";
+	/**
+	 * Hierarchy Permission:
+	 * User may control all templates data at the associated hierarchy node and below,
+	 * this includes templates, items, and scales
+	 */ 
+	public static final String HIERARCHY_PERM_CONTROL_TEMPLATES = "HierarchyControlTemplates";
 
 }

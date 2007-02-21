@@ -29,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.authz.api.AuthzGroupService;
 import org.sakaiproject.authz.api.FunctionManager;
 import org.sakaiproject.authz.api.SecurityService;
+import org.sakaiproject.component.api.ServerConfigurationService;
 import org.sakaiproject.component.cover.ComponentManager;
 import org.sakaiproject.email.api.EmailService;
 import org.sakaiproject.entity.api.EntityManager;
@@ -40,6 +41,7 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.exception.IdUnusedException;
 import org.sakaiproject.site.api.Site;
 import org.sakaiproject.site.api.SiteService;
+import org.sakaiproject.site.api.ToolConfiguration;
 import org.sakaiproject.tool.api.SessionManager;
 import org.sakaiproject.tool.api.ToolManager;
 import org.sakaiproject.user.api.User;
@@ -85,6 +87,11 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	private SecurityService securityService;
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
+	}
+
+	private ServerConfigurationService serverConfigurationService;
+	public void setServerConfigurationService(ServerConfigurationService serverConfigurationService) {
+		this.serverConfigurationService = serverConfigurationService;
 	}
 
 	private SessionManager sessionManager;
@@ -192,11 +199,15 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 					getContextType(SAKAI_SITE_TYPE) );
 		} catch (IdUnusedException e) {
 			// invalid site Id
-			log.debug("Could not get site from context:" + context, e);
+			log.debug("Could not get sakai site from context:" + context, e);
 
+		}
+
+		if (c == null) {
 			// use external provider
 			if (evalGroupsProvider != null) {
 				c = evalGroupsProvider.getContextByGroupId(context);
+				c.type = EvalConstants.CONTEXT_TYPE_PROVIDED;
 			}
 		}
 
@@ -302,7 +313,12 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 			if (EvalConstants.PERM_BE_EVALUATED.equals(permission) ||
 					EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
 				log.debug("Using eval groups provider: userId: " + userId + ", permission: " + permission);
-				l.addAll( evalGroupsProvider.getEvalGroupsForUser(userId, permission) );
+				List eg = evalGroupsProvider.getEvalGroupsForUser(userId, permission);
+				for (Iterator iter = eg.iterator(); iter.hasNext();) {
+					Context c = (Context) iter.next();
+					c.type = EvalConstants.CONTEXT_TYPE_PROVIDED;
+					l.add(c);
+				}
 			}
 		}
 
@@ -410,6 +426,26 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	}
 
 
+	// URLs
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalExternalLogic#getServerUrl()
+	 */
+	public String getServerUrl() {
+		return serverConfigurationService.getPortalUrl();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalExternalLogic#getToolUrl()
+	 */
+	public String getToolUrl() {
+		//ToolConfiguration tc = new ToolConfiguration();
+		String toolId = "ToolIDhere"; //tc.getId(); // TODO
+		return getServerUrl() + "/tool/" + toolId;
+	}
+
+
+
 	/**
 	 * Register the various permissions
 	 */
@@ -437,9 +473,9 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	 * Returns the appropriate internal site type identifier based on the given string
 	 * 
 	 * @param sakaiType a type identifier used in Sakai (should be a constant from Sakai)
-	 * @return an int representing a constant from EvalExternalLogic
+	 * @return a CONTEXT_TYPE constant from {@link EvalConstants}
 	 */
-	private int getContextType(String sakaiType) {
+	private String getContextType(String sakaiType) {
 		if (sakaiType.equals(SAKAI_SITE_TYPE)) {
 			return EvalConstants.CONTEXT_TYPE_SITE;
 		} else if (sakaiType.equals(SAKAI_GROUP_TYPE)) {

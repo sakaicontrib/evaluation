@@ -392,4 +392,12 @@ public class EvalExternalLogicStub implements EvalExternalLogic {
 		}
 	}
 
+	public String getServerUrl() {
+		return "http://localhost:8080/portal/";
+	}
+
+	public String getToolUrl() {
+		return getServerUrl() + "some/tool/specific/stuff/";
+	}
+
 }
