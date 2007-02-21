@@ -161,7 +161,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 							UIOutput.make(tofill, "courseTitle",count+"courses"); //$NON-NLS-1$ //$NON-NLS-2$
 						}else{
 							Long[] evalIds = {eval.getId()};
-							Map evalContexts = evalsLogic.getEvaluationContexts(evalIds, false);
+							Map evalContexts = evalsLogic.getEvaluationContexts(evalIds, true);
 							List contexts = (List) evalContexts.get(eval.getId());
 							Context ctxt = (Context) contexts.get(0);
 							String title = ctxt.title;
