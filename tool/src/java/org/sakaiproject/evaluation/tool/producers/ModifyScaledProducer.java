@@ -137,23 +137,7 @@ public class ModifyScaledProducer implements ViewComponentProducer,
 						.getItem().getScale().getId();
 			}
 		}
-		/*
-		 * EvalTemplateItem templateItem=new EvalTemplateItem();
-		 * templateItem.setItem(new EvalItem());
-		 * 
-		 * if(templateItemViewParams.templateItemId==null){
-		 * System.out.println(templateItemViewParams.templateId);
-		 * templateItem.getItem().setClassification(EvalConstants.ITEM_TYPE_SCALED);
-		 * templateItem.setDisplayOrder(new
-		 * Integer(itemsLogic.getTemplateItemsForTemplate(templateItemViewParams.templateId,
-		 * external.getCurrentUserId()).size()));
-		 * templateItem.setOwner(external.getCurrentUserId());
-		 * itemsBean.newItemInit(templateItemViewParams.templateId,
-		 * EvalConstants.ITEM_TYPE_SCALED); } else{ templateItem =
-		 * itemsLogic.getTemplateItemById(templateItemId);
-		 * 
-		 * itemsBean.fetchTemplateItem(templateItemViewParams.templateItemId); }
-		 */
+		
 
 		UIOutput.make(tofill, "modify-item-title", messageLocator
 				.getMessage("templateitem.page.title")); //$NON-NLS-1$ //$NON-NLS-2$

@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
@@ -75,6 +76,12 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 	private EvalItemsLogic itemsLogic;
 	public void setItemsLogic(EvalItemsLogic itemsLogic) {
 		this.itemsLogic = itemsLogic;
+	}
+	
+	private EvalSettings settings;
+
+	public void setSettings(EvalSettings settings) {
+		this.settings = settings;
 	}
 
 	private TextInputEvolver richTextEvolver;
@@ -202,24 +209,20 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 					.getMessage("modifyblock.scale.type.header"));
 			UIOutput.make(form, "scaleLabel", templateItems[0].getItem().getScale()
 					.getTitle());
-
-			UIOutput.make(form, "add-na-header", messageLocator
-					.getMessage("modifyitem.add.na.header")); //$NON-NLS-1$ //$NON-NLS-2$
-
 			UIOutput.make(form, "ideal-coloring-header", messageLocator
 					.getMessage("modifyblock.ideal.coloring.header")); //$NON-NLS-1$ //$NON-NLS-2$
 
-			UIOutput.make(form, "item-category-header", messageLocator
-					.getMessage("modifyitem.item.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
-			UIOutput.make(form, "course-category-header", messageLocator
-					.getMessage("modifyitem.course.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
-			UIOutput.make(form, "instructor-category-header", messageLocator
-					.getMessage("modifyitem.instructor.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
-			// Radio Buttons for "Item Category"
-			String[] courseCategoryList = {
-					messageLocator.getMessage("modifyitem.course.category.header"),
-					messageLocator.getMessage("modifyitem.instructor.category.header"), };
 
+			/*
+			 * (non-javadoc) If the system setting (admin setting) for
+			 * "EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY" is set as true then all
+			 * items default to "Course". If it is set to false, then all items default
+			 * to "Instructor". If it is set to null then user is given the option to
+			 * choose between "Course" and "Instructor".
+			 */
+			Boolean isDefaultCourse = (Boolean) settings
+					.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
+			
 			UISelect radios = null;
 			String itemPath = null;
 			if (modify) {// modify existing block
@@ -233,10 +236,8 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 					UIBoundBoolean.make(form, "idealColor",
 							"#{templateBBean.idealColor}", null);
 
-				radios = UISelect.make(form, "item_category",
-						EvaluationConstant.ITEM_CATEGORY_VALUES, courseCategoryList,
-						"templateItemBeanLocator." + templateItems[0].getId()
-								+ ".itemCategory", null);
+				//categorySettings(isDefaultCourse,itemPath, form);
+								
 			} else {// create new block
 				// creat new block from multiple existing Block and other scaled item
 				if (createFromBlock) {
@@ -249,30 +250,46 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 					else
 						UIBoundBoolean.make(form, "idealColor",
 								"#{templateBBean.idealColor}", null);
-
+					
+					//categorySettings(isDefaultCourse,itemPath, form);
+					/*
 					radios = UISelect.make(form, "item_category",
 							EvaluationConstant.ITEM_CATEGORY_VALUES, courseCategoryList,
-							"templateItemBeanLocator.new1." + "itemCategory", null);
+							itemPath + ".itemCategory", null);*/
 				} else {
 					// selected items are all normal scaled type
 					itemPath = "templateItemBeanLocator.new1";
 					UIBoundBoolean.make(form, "idealColor",
 							"#{templateBBean.idealColor}", null);
-					radios = UISelect.make(form, "item_category",
+/*					radios = UISelect.make(form, "item_category",
 							EvaluationConstant.ITEM_CATEGORY_VALUES, courseCategoryList,
 							"templateItemBeanLocator.new1." + "itemCategory", null);
+			*/
+					//categorySettings(isDefaultCourse,itemPath, form);
 				}
+
 			}
+			
+			categorySettings(isDefaultCourse,itemPath, form);
+			
 			String itemPathD = itemPath + ".";
 			UIInput itemtext = UIInput.make(form, "item_text:", itemPathD
 					+ "item.itemText", null);
 			richTextEvolver.evolveTextInput(itemtext);
-			UIBoundBoolean.make(form, "item_NA", itemPathD + "usesNA", null);
-
-			String selectID = radios.getFullID();
-			UISelectChoice.make(form, "item_category_C", selectID, 0); //$NON-NLS-1$
-			UISelectChoice.make(form, "item_category_I", selectID, 1);
-
+			
+			/*
+			 * (non-javadoc) If the system setting (admin setting) for
+			 * "EvalSettings.NOT_AVAILABLE_ALLOWED" is set as true then only we need to
+			 * show the item_NA checkbox.
+			 */
+			if (((Boolean) settings.get(EvalSettings.NOT_AVAILABLE_ALLOWED))
+					.booleanValue()) {
+				UIBranchContainer showNA = UIBranchContainer.make(form, "showNA:");
+				UIOutput.make(showNA,"add-na-header", 
+						messageLocator.getMessage("modifyitem.add.na.header")); //$NON-NLS-1$ //$NON-NLS-2$
+				UIBoundBoolean.make(form, "item_NA", itemPathD + "usesNA", null);
+			}
+			
 			// render the items below
 			UIOutput.make(form, "items-header", "Items:");
 
@@ -337,6 +354,45 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 		UIVerbatim.make(radiobranch, "queText", item.getItem().getItemText());
 	}
 
+	
+	private void categorySettings(Boolean isDefaultCourse,String itemPath,UIForm form){
+		if (isDefaultCourse == null){
+			UIBranchContainer showItemCategory = UIBranchContainer.make(form,
+				"showItemCategory:"); //$NON-NLS-1$
+			UIOutput.make(showItemCategory, "item-category-header", messageLocator
+				.getMessage("modifyitem.item.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
+			UIOutput.make(showItemCategory, "course-category-header", messageLocator
+				.getMessage("modifyitem.course.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
+			UIOutput.make(showItemCategory, "instructor-category-header",
+				messageLocator.getMessage("modifyitem.instructor.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
+			//	Radio Buttons for "Item Category"
+			String[] courseCategoryList = {
+					messageLocator.getMessage("modifyitem.course.category.header"),
+					messageLocator.getMessage("modifyitem.instructor.category.header"), };
+			UISelect radios = UISelect.make(showItemCategory, "item_category",
+					EvaluationConstant.ITEM_CATEGORY_VALUES, courseCategoryList,
+					itemPath + ".itemCategory", null);
+/*			
+			UISelect radios = UISelect.make(showItemCategory, "item_category",
+					EvaluationConstant.ITEM_CATEGORY_VALUES, courseCategoryList,
+					"templateItemBeanLocator." + templateItems[0].getId()
+					+ ".itemCategory", null);
+*/
+			String selectID = radios.getFullID();
+			UISelectChoice.make(showItemCategory, "item_category_C", selectID, 0); //$NON-NLS-1$
+			UISelectChoice.make(showItemCategory, "item_category_I", selectID, 1); //$NON-NLS-1$
+		}else{
+			/*
+			form.parameters.add(new UIELBinding("templateItemBeanLocator." + templateItems[0].getId()
+					+ ".itemCategory",
+					EvaluationConstant.ITEM_CATEGORY_VALUES[isDefaultCourse
+							.booleanValue() ? 0 : 1])); */
+			form.parameters.add(new UIELBinding(itemPath + ".itemCategory",
+					EvaluationConstant.ITEM_CATEGORY_VALUES[isDefaultCourse
+							.booleanValue() ? 0 : 1]));
+		}
+	}
+	
 	public List reportNavigationCases() {
 		List i = new ArrayList();
 
