@@ -14,9 +14,6 @@
 
 package org.sakaiproject.evaluation.tool;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -58,19 +55,18 @@ import org.sakaiproject.evaluation.tool.utils.ItemBlockUtils;
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class EvaluationBean {
-	
 	/*
 	 * VARIABLE DECLARATIONS 
 	 */
 	public EvalEvaluation eval = new EvalEvaluation();
 	public String[] selectedSakaiSiteIds;
 	public Long templateId = new Long(1L);
-	public String startDate;
-	public String stopDate;
-	public String dueDate;
-	public String viewDate;
-	public String studentsDate;
-	public String instructorsDate;
+	public Date startDate;
+	public Date stopDate;
+	public Date dueDate;
+	public Date viewDate;
+	public Date studentsDate;
+	public Date instructorsDate;
 	public int[] enrollment;
 	
 	/*
@@ -158,18 +154,12 @@ public class EvaluationBean {
 		/*
 		 * Initializing all the bind variables used in EvaluationSettingsProducer. 
 		 */
-		SimpleDateFormat simpleDate = new SimpleDateFormat("MM/dd/yyyy");
-		startDate = simpleDate.format(new Date());
-		dueDate = "MM/DD/YYYY";
-		stopDate = "MM/DD/YYYY";
-		viewDate = "MM/DD/YYYY";
+		startDate = new Date();
 		
 		//results viewable settings
 		eval.setResultsPrivate(Boolean.FALSE);
 		studentViewResults = Boolean.FALSE;
-		studentsDate = "MM/DD/YYYY";
 		instructorViewResults = Boolean.TRUE;
-		instructorsDate = "MM/DD/YYYY";
 		
 		//student completion settings
 		eval.setBlankResponsesAllowed(Boolean.TRUE);
@@ -182,7 +172,7 @@ public class EvaluationBean {
 		//email settings
 		emailAvailableTxt = emailsLogic.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE).getMessage();// available template
 		eval.setReminderDays(new Integer(EvaluationConstant.REMINDER_EMAIL_DAYS_VALUES[1]));
-		emailReminderTxt =  emailsLogic.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_REMINDER).getMessage();;//reminder email
+		emailReminderTxt =  emailsLogic.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_REMINDER).getMessage();//reminder email
 		String s = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
 		eval.setReminderFromEmail(s);
 
@@ -225,7 +215,6 @@ public class EvaluationBean {
 	 * 			or summary.
 	 */
 	public String saveSettingsAction() {	
-
 		/*
 		 * If it is a queued evaluation then get value from startDate variable.
 		 * 
@@ -239,9 +228,7 @@ public class EvaluationBean {
 			//Do nothing as start date is properly set in the evaluation bean.
 		}
 		else {
-			//Use the start date already in eval object
-			DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
-			startDate = df.format(eval.getStartDate()); 
+			startDate = eval.getStartDate(); 
 		}
 		
 		//Perform common tasks
@@ -316,8 +303,8 @@ public class EvaluationBean {
 		}
 		else {
 			//get enrollemnt on by one 
-			enrollment =  new int[selectedSakaiSiteIds.length];
-			for(int i =0; i<selectedSakaiSiteIds.length; i++){
+			enrollment = new int[selectedSakaiSiteIds.length];
+			for (int i = 0; i<selectedSakaiSiteIds.length; i++){
 				Set s = external.getUserIdsForContext(selectedSakaiSiteIds[i], EvalConstants.PERM_TAKE_EVALUATION);
 				enrollment[i] = s.size();				
 			}
@@ -357,7 +344,6 @@ public class EvaluationBean {
 	public String modifyAvailableEmailTemplate(){
        return EvalConstants.EMAIL_TEMPLATE_AVAILABLE;
 	}
-	
 
 	/**
 	 * Method binding to the "Modify this Email Template" button on the preview_email.html for 
@@ -445,28 +431,20 @@ public class EvaluationBean {
 	 * 
 	 * @return View id sending the control to evaluation settings producer.
 	 */
-	public String editEvalSettingAction(){
-	
+	public String editEvalSettingAction(){	
 		eval = evalsLogic.getEvaluationById(eval.getId());
 			
-		DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
-		startDate = df.format(eval.getStartDate()); 
-		stopDate = df.format(eval.getStopDate());   
-		dueDate = df.format(eval.getDueDate());
-		viewDate = df.format(eval.getViewDate());
+		startDate = eval.getStartDate(); 
+		stopDate = eval.getStopDate();   
+		dueDate = eval.getDueDate();
+		viewDate = eval.getViewDate();
 		
 		/*
 		 * If student date is not null then set the date and also 
 		 * make the checkbox checked. Else make the checkbox unchecked. 
 		 */
-		if (eval.getStudentsDate() != null) { 
-			studentViewResults = Boolean.TRUE;
-			studentsDate = df.format(eval.getStudentsDate());
-		}
-		else {
-			studentViewResults = Boolean.FALSE;
-			studentsDate = "MM/DD/YYYY";
-		}
+		studentsDate = eval.getStudentsDate();
+		studentViewResults = eval.getStudentsDate() == null? Boolean.FALSE: Boolean.TRUE;
 		
 		/*
 		 * If instructor date is not null then set the date and also 
@@ -474,11 +452,11 @@ public class EvaluationBean {
 		 */
 		if (eval.getInstructorsDate() != null) {
 			instructorViewResults = Boolean.TRUE;
-			instructorsDate = df.format(eval.getInstructorsDate());
+			instructorsDate = eval.getInstructorsDate();
 		}
 		else {
 			instructorViewResults = Boolean.FALSE;
-			instructorsDate = "MM/DD/YYYY";
+			instructorsDate = null;
 		}
 		
 		//email settings
@@ -529,23 +507,7 @@ public class EvaluationBean {
 	 * @return View id sending the control to control panel page.
 	 */
 	public String removeEvalAction(){
-		
-		Long id = new Long("-1");
-		EvalEvaluation eval1 =null;
-		try {
-			id = evalId;
-		}
-		catch (NumberFormatException fe) {	
-			log.fatal(fe);
-		}
-		
-		if (id.intValue() == -1) 
-			log.error("Error inside removeEvalAction()");
-		else
-			eval1 = evalsLogic.getEvaluationById(id);
-		
-	
-		evalsLogic.deleteEvaluation(eval1.getId(), external.getCurrentUserId());
+		evalsLogic.deleteEvaluation(evalId, external.getCurrentUserId());
 		return ControlPanelProducer.VIEW_ID;
 	}
 	
@@ -640,9 +602,9 @@ public class EvaluationBean {
 	private void commonSaveTasks() {
 
 		eval.setLastModified(new Date());
-		eval.setStartDate(changeStringToDate(startDate));
-		eval.setDueDate(changeStringToDate(dueDate));
-		eval.setViewDate(changeStringToDate(viewDate));
+		eval.setStartDate(startDate);
+		eval.setDueDate(dueDate);
+		eval.setViewDate(viewDate);
 		
 		/*
 		 * If "EVAL_USE_SAME_VIEW_DATES" system setting (admin setting) flag is set 
@@ -658,18 +620,18 @@ public class EvaluationBean {
 		if (sameViewDateForAll) {
 			
 			if (studentViewResults.booleanValue())
-				eval.setStudentsDate(changeStringToDate(viewDate));
+				eval.setStudentsDate(viewDate);
 			
 			if (instructorViewResults.booleanValue())
-				eval.setInstructorsDate(changeStringToDate(viewDate));
+				eval.setInstructorsDate(viewDate);
 		}
 		else {
 			
 			if (studentViewResults.booleanValue())
-				eval.setStudentsDate(changeStringToDate(studentsDate));
+				eval.setStudentsDate(studentsDate);
 			
 			if (instructorViewResults.booleanValue())
-				eval.setInstructorsDate(changeStringToDate(instructorsDate));
+				eval.setInstructorsDate(instructorsDate);
 		}
 		
 		// Email template section
@@ -710,27 +672,6 @@ public class EvaluationBean {
 		eval.setStopDate(eval.getDueDate());
 	}
 
-	/**
-	 * Private method used to convert the String to java.util.Date. 
-	 * 
-	 * @param Date in String format ("MM/dd/yyyy").
-	 * @return java.util.Date
-	 */	
-	private Date changeStringToDate (String dateStr) {
-		Date returnDate = null;
-		
-		if(dateStr != null && dateStr.length()>0) {	
-			try{
-				DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
-				returnDate = formatter.parse(dateStr);
-			}
-			catch (ParseException e) 	{	
-				log.error(e);
-			}
-		}
-		return returnDate;
-	}
-	
 	/**
 	 * Private method used to add current time to the start date if
 	 * start date (without time) is same as today's date (without time).  

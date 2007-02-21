@@ -138,7 +138,8 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer,
 		String[] viewIDs = { ModifyScaledProducer.VIEW_ID,
 				ModifyEssayProducer.VIEW_ID, ModifyHeaderProducer.VIEW_ID,
 				// ModifyBlockProducer.VIEW_ID,
-				ModifyTemplateItemsProducer.VIEW_ID };
+				ModifyTemplateItemsProducer.VIEW_ID // TODO: View for expert items not written yet
+				};
 		String[] values = convertViews(viewIDs, templateId);
 
 		// dropdown list

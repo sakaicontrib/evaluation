@@ -24,7 +24,7 @@
 		<li class="breadCrumb" rsf:id="eval-settings-title">Evaluation Settings</li>
 	</ul>
 	</div>
-	 <form name="eval_settings_form" rsf:id="evalSettingsForm" method="post"  onsubmit="javascript:return validateSettingsForm(this);"> 
+	 <form name="eval_settings_form" rsf:id="evalSettingsForm" method="post" > 
 	
 		<table border="0" cellspacing="0" cellpadding="0" width="90%">
 			<tr>
@@ -40,28 +40,30 @@
 			</tr>
 			<tr>
 				<td width="5%">&nbsp;</td>
-				<td width="8%" align="left" valign="top" nowrap="Y"><span rsf:id="eval-start-date-header">Start Date:</span>&nbsp;</td>
-				<td width="10%" align="left" valign="top">
-					<input type="text" name="start_date" rsf:id="startDate" value="MM/DD/YYYY" size="12" maxlength="10"/>
+				<td width="8%" align="left" valign="top" nowrap="Y">
+                  <span rsf:id="eval-start-date-header">Start Date:</span>&nbsp;</td>
+				<td width="23%" align="left" valign="top">
+                <div style="display:inline" rsf:id="startDate:">
+				  <input type="text" name="start_date_dummy" value="MM/DD/YYYY" size="12" maxlength="10"/>
+                  <img src="../images/calendar.gif" />
+                </div>
 				</td>
-				<td width="4%" align="center" valign="top">
-					<img src="#" rsf:id="calenderImage" />
-				</td>
-				<td width="73%" align="left">&nbsp;<span rsf:id="eval-start-date-desc">Users may begin submitting evaluation responses on this date</span></td>
+				<td width="64%" align="left">&nbsp;<span rsf:id="eval-start-date-desc">Users may begin submitting evaluation responses on this date</span></td>
 			</tr>
 		</table>
 		<div rsf:id="showStopDate:">			
 			<table border="0" cellspacing="0" cellpadding="0" width="90%">
 				<tr>
-					<td width="5%">&nbsp;</td>
-					<td width="8%" align="left" valign="top" nowrap="Y"><span rsf:id="eval-stop-date-header">Stop Date:</span>&nbsp;</td>
-					<td width="10%" align="left" valign="top">
-						<input type="text" name="stop_date" rsf:id="stopDate" value="MM/DD/YYYY" size="12" maxlength="10"/>
-					</td>
-					<td width="4%" align="center" valign="top">
-						<img src="#" rsf:id="calenderImageForStop" />
-					</td>
-					<td width="73%" align="left">&nbsp;</td>
+				<td width="5%">&nbsp;</td>
+				<td width="8%" align="left" valign="top" nowrap="Y">
+                   <span rsf:id="eval-stop-date-header">Stop Date:</span>&nbsp;</td>
+				<td width="23%" align="left" valign="top">
+                 <div style="display:inline" rsf:id="stopDate:">
+				  <input type="text" name="date_dummy" value="MM/DD/YYYY" size="12" maxlength="10"/>
+                  <img src="../images/calendar.gif" />
+                </div>
+				</td>
+					<td width="64%" align="left">&nbsp;</td>
 				</tr>
 			</table>
 		</div>
@@ -69,24 +71,24 @@
 			<tr>
 				<td width="5%">&nbsp;</td>
 				<td width="8%" align="left" valign="top" nowrap="Y"><span rsf:id="eval-due-date-header">Due Date:</span>&nbsp;</td>
-				<td width="10%" align="left" valign="top">
-					<input type="text" name="due_date" rsf:id="dueDate" value="MM/DD/YYYY" size="12" maxlength="10"/>
+				<td width="23%" align="left" valign="top">
+                 <div style="display:inline" rsf:id="dueDate:">
+				  <input type="text" name="date_dummy" value="MM/DD/YYYY" size="12" maxlength="10"/>
+                  <img src="../images/calendar.gif" />
+                </div>
 				</td>
-				<td width="4%" align="center" valign="top">
-					<img src="#" rsf:id="calenderImage" />
-				</td>
-				<td width="73%" align="left">&nbsp;</td>
+				<td width="64%" align="left">&nbsp;</td>
 			</tr>
 			<tr>
 				<td width="5%">&nbsp;</td>
 				<td width="8%" align="left" valign="top" nowrap="Y"><span rsf:id="eval-view-date-header">View Date:</span>&nbsp;</td>
-				<td width="10%" align="left" valign="top">
-					<input type="text" name="view_date" rsf:id="viewDate" value="MM/DD/YYYY" size="12" maxlength="10" onChange="javascript:updateStuInstDates();"/>
+				<td width="23%" align="left" valign="top">
+                 <div style="display:inline" rsf:id="dueDate:">
+				  <input type="text" name="date_dummy" value="MM/DD/YYYY" size="12" maxlength="10"/>
+                  <img src="../images/calendar.gif" />
+                </div>
 				</td>
-				<td width="4%" align="center" valign="top">
-					<img src="#" rsf:id="calenderImage" />
-				</td>
-				<td width="73%" align="left">&nbsp;<span rsf:id="eval-view-date-desc">Results are not viewable until this date</span></td>
+				<td width="64%" align="left">&nbsp;<span rsf:id="eval-view-date-desc">Results are not viewable until this date</span></td>
 			</tr>
 		</table>
 		<br/>
@@ -102,7 +104,7 @@
 					<input type="checkbox" name="results_private" rsf:id="resultsPrivate"/>&nbsp;<span rsf:id="eval-results-viewable-private-start">Private</span> (<span rsf:id="eval-results-viewable-private-middle">owner only</span> - <label name="userInfo" rsf:id="userInfo"/>)
 				</td>
 				<td width="48%" align="right" valign="top">
-					<I><b><span rsf:id="private-warning-note">Note:</span></b> <span rsf:id="private-warning-desc">Checking the private box overrides settings below</span></I>
+					<i><b><span rsf:id="private-warning-note">Note:</span></b> <span rsf:id="private-warning-desc">Checking the private box overrides settings below</span></i>
 				</td>
 			</tr>
 		</table>
@@ -113,19 +115,13 @@
 					<td width="50%" align="left" valign="top" nowrap="Y">
 						<input type="checkbox" name="student_view_results" rsf:id="studentViewResults"/>&nbsp;<span rsf:id="eval-results-viewable-students">Students in the courses this evaluation is assigned to</span>
 					</td>
-					<span rsf:id="showResultsToStuDate:">
-						<td width="44%" align="right" valign="top">
-							<input type="text" name="students_date" rsf:id="studentsDate" value="MM/DD/YYYY" size="12" maxlength="10"/>
-						</td>
-						<td width="4%" align="right" valign="top">
-							<img src="#" rsf:id="calenderImageForResultsToStudents" />
-						</td>
-					</span>
-					<span rsf:id="showResultsToStuLabel:">
 						<td width="48%" align="right" valign="top">
-							<I><span rsf:id="eval-results-stu-inst-date-label">Results viewable on "View Date"</span></I>
+							<span rsf:id="eval-results-stu-inst-date-label">Results viewable on "View Date"</span>
+                             <div rsf:id="studentsDate:" style="display:inline">
+                              <input type="text" name="dummy_date" value="MM/DD/YYYY" size="12" maxlength="10"/>
+                              <img src="#" rsf:id="calenderImageForResultsToInst" />
+                            </div>
 						</td>
-					</span>
 				</tr>
 			</table>
 		</div>
@@ -136,26 +132,20 @@
 					<td width="50%" align="left" valign="top" nowrap="Y">
 						<input type="checkbox" name="instructor_view_results" rsf:id="instructorViewResults"/>&nbsp;<span rsf:id="eval-results-viewable-instructors">Instructors in the courses this evaluation is assigned to</span>
 					</td>
-					<span rsf:id="showResultsToInstDate:">
-						<td width="44%" align="right" valign="top">
-							<input type="text" name="instructor_date" rsf:id="instructorsDate" value="MM/DD/YYYY" size="12" maxlength="10"/>
-						</td>
-						<td width="4%" align="right" valign="top">
-							<img src="#" rsf:id="calenderImageForResultsToInst" />
-						</td>
-					</span>
-					<span rsf:id="showResultsToInstLabel:">
 						<td width="48%" align="right" valign="top">
-							<I><span rsf:id="eval-results-stu-inst-date-label">Results viewable on "View Date"</span></I>
+							<span rsf:id="eval-results-stu-inst-date-label">Results viewable on "View Date"</span>
+                            <div rsf:id="instructorsDate:" style="display:inline">
+                              <input type="text" name="dummy_date" value="MM/DD/YYYY" size="12" maxlength="10"/>
+                              <img src="#" rsf:id="calenderImageForResultsToInst" />
+                            </div>
 						</td>
-					</span>
 				</tr>
 			</table>
 		</div>
 		<table border="0" cellspacing="0" cellpadding="0" width="90%">
 			<tr>
 				<td colspan="4">
-					<I><span rsf:id="eval-results-viewable-admin-note">* Note that admins above in the hierarchy can view the results UNLESS the private box is checked</span></I>
+					<span rsf:id="eval-results-viewable-admin-note">* Note that admins above in the hierarchy can view the results UNLESS the private box is checked</span>
 				</td>
 			</tr>
 		</table>
