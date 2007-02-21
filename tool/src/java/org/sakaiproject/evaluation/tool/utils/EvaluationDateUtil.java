@@ -51,18 +51,37 @@ public class EvaluationDateUtil {
 				get(EvalSettings.EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE)).intValue();
 		
 		/*
+		 * Find the difference between view date and due date so that after 
+		 * due date is updated, add the same difference to view date again 
+		 * (precision is miliseconds). Also casting to 'int' is fine as the 
+		 * difference between view and due dates is not expected to be very 
+		 * large.
+		 */  
+		int diffBetViewDue = (int) (eval.getViewDate().getTime() 
+				- eval.getDueDate().getTime());
+		
+		/*
 		 * If the difference between start date and due date is less than
 		 * the minmum value set as system settings, then update the due date
-		 * to reflect this minimum time difference.
+		 * to reflect this minimum time difference. After that update the view
+		 * date also.
+		 * 
 		 * Note: Arguments to getHoursDifference() method should have due date as 
 		 *       first date and start date as second date.
 		 */
 		if (getHoursDifference(eval.getDueDate(), eval.getStartDate()) < minHours) {
 
+			// Update due date
 			Calendar calendarDue = new GregorianCalendar();
 			calendarDue.setTime(eval.getStartDate());
 			calendarDue.add(Calendar.HOUR, minHours);
 			eval.setDueDate(calendarDue.getTime());
+			
+			// Update view date
+			Calendar calendarView = new GregorianCalendar();
+			calendarView.setTime(eval.getDueDate());
+			calendarView.add(Calendar.MILLISECOND, diffBetViewDue);
+			eval.setViewDate(calendarView.getTime());
 		}
 	}
 
