@@ -38,6 +38,7 @@ import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UISelectChoice;
+import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.evolvers.TextInputEvolver;
 import uk.org.ponder.rsf.flow.jsfnav.DynamicNavigationCaseReporter;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
@@ -280,13 +281,7 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 						.getId());
 				for (int i = 0; i < childList.size(); i++) {
 					EvalTemplateItem child = (EvalTemplateItem) childList.get(i);
-					UIBranchContainer radiobranch = UIBranchContainer.make(form,
-							"queRow:", Integer.toString(i)); //$NON-NLS-1$
-					UIOutput.make(radiobranch, "childOrder", child.getDisplayOrder()
-							.toString());
-					//Child text can not be changes as BLOCK specification 
-					UIInput.make(radiobranch, "queText", null, child.getItem()
-							.getItemText());
+					emitItem(form, child, child.getDisplayOrder().intValue());
 				}
 			} else {
 				if (createFromBlock) {// render the first block child , then others,
@@ -303,38 +298,21 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 
 							for (int k = 0; k < childs.size(); k++) {
 								EvalTemplateItem myChild = (EvalTemplateItem) childs.get(k);
-								UIBranchContainer radiobranch = UIBranchContainer.make(form,
-										"queRow:", Integer.toString(orderNo)); //$NON-NLS-1$
-								UIOutput.make(radiobranch, "childOrder", Integer
-										.toString(orderNo + 1));
-								// TODO: This should be rich text but it would seem no way there is
-								// space. NB this is now serious security hole for HTML injection. 
-								UIInput.make(radiobranch, "queText", null, myChild.getItem()
-										.getItemText());
+								emitItem(form, myChild, orderNo + 1);
 								orderNo++;
 							}
 						} else {// normal scale type
-							UIBranchContainer radiobranch = UIBranchContainer.make(form,
-									"queRow:", Integer.toString(orderNo)); //$NON-NLS-1$
-							UIOutput.make(radiobranch, "childOrder", Integer
-									.toString(orderNo + 1));
-							UIInput.make(radiobranch, "queText", null, templateItems[i]
-									.getItem().getItemText());
-							orderNo++;
+							emitItem(form, templateItems[i], orderNo + 1);
+							orderNo ++;
 						}
 					}
 
 				} else {
 					// selected items are all normal scaled type
 					for (int i = 0; i < templateItems.length; i++) {
-						UIBranchContainer radiobranch = UIBranchContainer.make(form,
-								"queRow:", Integer.toString(i)); //$NON-NLS-1$
-						UIOutput.make(radiobranch, "childOrder", Integer.toString(i + 1));
-						UIInput.make(radiobranch, "queText", null, templateItems[i]
-								.getItem().getItemText());
+						emitItem(form, templateItems[i], i + 1);
 					}
 				}
-
 			}
 
 			UIOutput.make(form, "cancel-button", messageLocator
@@ -346,9 +324,14 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 					"#{templateBBean.childTemplateItemIds}", templateItemIds));
 			saveCmd.parameters.add(new UIELBinding(
 					"#{templateBBean.originalDisplayOrder}", firstDO));
-
 		}
-
+	}
+	
+	private void emitItem(UIContainer tofill, EvalTemplateItem item, int index) {
+		UIBranchContainer radiobranch = UIBranchContainer.make(tofill,
+				"queRow:", item.getId().toString()); //$NON-NLS-1$
+		UIOutput.make(radiobranch, "childOrder", Integer.toString(index));
+		UIVerbatim.make(radiobranch, "queText", item.getItem().getItemText());
 	}
 
 	public List reportNavigationCases() {
