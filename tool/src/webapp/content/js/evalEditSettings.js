@@ -6,7 +6,12 @@
 	* 4) View date cannot be before or same as due date
 	*TODO: need to validate email format
 */
-	
+
+// NB - all logic in this file is now disabled after introduction of date
+// widgets. This should all really be performed in server-side logic, if
+// AJAX load can be tolerated. At the very least all of this logic needs to
+// be internationalised. AMB
+
 	// Declaring valid date character, minimum year and maximum year
 	var dtCh= "/";
 	var minYear=1900;

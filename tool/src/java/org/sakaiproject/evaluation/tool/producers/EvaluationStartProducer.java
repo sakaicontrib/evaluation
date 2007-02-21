@@ -36,6 +36,8 @@ import uk.org.ponder.rsf.components.UIOutputMany;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.UISelectLabel;
+import uk.org.ponder.rsf.components.decorators.DecoratorList;
+import uk.org.ponder.rsf.components.decorators.UITextDimensionsDecorator;
 import uk.org.ponder.rsf.evolvers.TextInputEvolver;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
@@ -69,15 +71,16 @@ public class EvaluationStartProducer implements ViewComponentProducer, Navigatio
 	}
 	
 	private MessageLocator messageLocator;
+
 	public void setMessageLocator(MessageLocator messageLocator) {
 		this.messageLocator = messageLocator;
 	}
 
-    private TextInputEvolver richTextEvolver;
+	private TextInputEvolver richTextEvolver;
 
-    public void setRichTextEvolver(TextInputEvolver richTextEvolver) {
-        this.richTextEvolver = richTextEvolver;
-    }
+	public void setRichTextEvolver(TextInputEvolver richTextEvolver) {
+		this.richTextEvolver = richTextEvolver;
+	}
 	
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
@@ -96,7 +99,8 @@ public class EvaluationStartProducer implements ViewComponentProducer, Navigatio
 		
 		UIInput.make(form, "title", "#{evaluationBean.eval.title}"); //$NON-NLS-1$ //$NON-NLS-2$
 		UIInput instructions = UIInput.make(form, "instructions:", "#{evaluationBean.eval.instructions}"); //$NON-NLS-1$ //$NON-NLS-2$
-        richTextEvolver.evolveTextInput(instructions);
+		instructions.decorators = new DecoratorList(new UITextDimensionsDecorator(60, 4));
+		richTextEvolver.evolveTextInput(instructions);
 
 		// Code to make bottom table containing the list of templates when coming from Summary or Edit Settings page.
 		if ( evalViewParams.templateId == null ) {

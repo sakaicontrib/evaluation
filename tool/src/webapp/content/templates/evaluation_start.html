@@ -33,10 +33,11 @@
 	
 	<h2 rsf:id="start-eval-header">Start a new evaluation</h2>
 	<form name="start_eval_form" rsf:id="basic-form" method="post">
-		<table border = "0" cellspacing = "0" cellpadding = "0" width = "70%">
+		<table border="0" cellspacing="0" cellpadding="0" width="70%">
 			<tr>
 				<td>
-					<span rsf:id="title-header">Title:</span>&nbsp;&nbsp;<input name="title" rsf:id="title" type="text" value="" maxlength="30" style="width:340px; height:20px; ; "/>
+					<span rsf:id="title-header">Title:</span>&nbsp;&nbsp;
+           <input name="title" rsf:id="title" type="text" value="" maxlength="255" style="width:340px;"/>
 				</td>
 			</tr>
 			<tr>
@@ -47,7 +48,7 @@
 			<tr>
 				<td>
           <div rsf:id="instructions:">
-					  <textarea name="instructions-dummy" rsf:id="instructions-dummy" rows="4" cols="60"></textarea>
+		     <textarea name="instructions-dummy" rsf:id="instructions-dummy" rows="4" cols="60"></textarea>
           </div>
 				</td>
 			</tr>
