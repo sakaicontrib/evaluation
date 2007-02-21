@@ -51,7 +51,7 @@ public class TextRenderer implements ItemRenderer {
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#renderItem(uk.org.ponder.rsf.components.UIContainer, java.lang.String, org.sakaiproject.evaluation.model.EvalTemplateItem, int, boolean)
 	 */
-	public UIJointContainer renderItem(UIContainer parent, String ID, String binding, EvalTemplateItem templateItem, int displayNumber, boolean disabled) {
+	public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled) {
 		UIJointContainer container = new UIJointContainer(parent, ID, COMPONENT_ID);
 
 		UIOutput.make(container, "itemNum", displayNumber>0?displayNumber+"":"0" ); //$NON-NLS-1$
@@ -62,13 +62,7 @@ public class TextRenderer implements ItemRenderer {
 			UIOutput.make(NAbranch, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
-// Do this stuff outside of this render block in the producer -AZ
-//		// Bind item id to list of items in evaluation bean.
-//		form.parameters.add( new UIELBinding
-//				(currAnswerOTP + "item",new ELReference(templateItemOTP+"item")) );				
-//		totalItemsAdded++;
-
-		UIInput textarea = UIInput.make(container, "essayBox", binding); //$NON-NLS-1$ //$NON-NLS-2$
+		UIInput textarea = UIInput.make(container, "essayBox", bindings[0]); //$NON-NLS-1$ //$NON-NLS-2$
 
 		Map attrmap = new HashMap();
 		attrmap.put("rows", templateItem.getDisplayRows().toString()); //$NON-NLS-1$
@@ -85,13 +79,6 @@ public class TextRenderer implements ItemRenderer {
 	 */
 	public String getRenderType() {
 		return EvalConstants.ITEM_TYPE_TEXT;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#getRenderedBlockChildItemIds()
-	 */
-	public Long[] getRenderedBlockChildItemIds() {
-		return new Long[] {};
 	}
 
 }

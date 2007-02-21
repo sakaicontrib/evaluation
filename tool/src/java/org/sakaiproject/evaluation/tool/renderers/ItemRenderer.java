@@ -31,21 +31,19 @@ public interface ItemRenderer {
 
 	/**
 	 * Renders an item correctly in a view based on the type and the settings stored within it<br/>
-	 * <b>Note:</b> No not attempt to pass a block child item to this, it will not render it and will
-	 * throw an exception, also, for block parents you should pass the binding with
-	 * an included char sequence ([childTID:]) that will be replaced by the child templateItemId:<br/> 
-	 * Example: "myBean.something.[childTID:].numeric"
 	 * 
 	 * @param parent any RSF {@link UIContainer} object which will contain the rendered item
 	 * @param ID the (RSF) ID of this component
-	 * @param binding An EL expression to be used as the value binding for the contained String value, can be null if no binding
+	 * @param bindings an array of EL expressions to be used as the value binding for the contained String value, can be null if no binding,
+	 * use an array with one item for most types but if you are rendering a block then you should pass in the child item bindings in
+	 * display order, do not include a binding for the parent
 	 * @param templateItem the templateItem to render (if you only have an item then
 	 * simply create an {@link EvalTemplateItem} and wrap the item in it)
 	 * @param displayNumber the number to display next to this item (if 0 or less then display none)
 	 * @param disabled if true, then the item is rendered as disabled and cannot be submitted, if false, the item can be submitted
 	 * @return a {@link UIJointContainer} which has been populated correctly
 	 */
-	public UIJointContainer renderItem(UIContainer parent, String ID, String binding, EvalTemplateItem templateItem, int displayNumber, boolean disabled);
+	public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled);
 
 	/**
 	 * Indicates the type of item this renderer handles
@@ -53,15 +51,5 @@ public interface ItemRenderer {
 	 * @return an ITEM_TYPE constant from {@link EvalConstants}
 	 */
 	public String getRenderType();
-
-	/**
-	 * Get child templateItemIds from the recent item rendering, allows
-	 * bindings or finding out how many child items were rendered
-	 * 
-	 * @return an array which contains all the child templateItemIds for the
-	 * last item which was rendered (will be empty array unless the item has
-	 * children like a block)
-	 */
-	public Long[] getRenderedBlockChildItemIds();
 
 }

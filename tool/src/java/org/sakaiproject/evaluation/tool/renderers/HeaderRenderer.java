@@ -36,7 +36,7 @@ public class HeaderRenderer implements ItemRenderer {
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#renderItem(uk.org.ponder.rsf.components.UIContainer, java.lang.String, org.sakaiproject.evaluation.model.EvalTemplateItem, int, boolean)
 	 */
-	public UIJointContainer renderItem(UIContainer parent, String ID, String binding, EvalTemplateItem templateItem, int displayNumber, boolean disabled) {
+	public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled) {
 		UIJointContainer container = new UIJointContainer(parent, ID, COMPONENT_ID);
 
 		UIVerbatim.make(container, "itemText", templateItem.getItem().getItemText()); //$NON-NLS-1$
@@ -49,13 +49,6 @@ public class HeaderRenderer implements ItemRenderer {
 	 */
 	public String getRenderType() {
 		return EvalConstants.ITEM_TYPE_HEADER;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#getRenderedBlockChildItemIds()
-	 */
-	public Long[] getRenderedBlockChildItemIds() {
-		return new Long[] {};
 	}
 
 }

@@ -51,7 +51,7 @@ public class ItemRendererImpl implements ItemRenderer {
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#renderItem(uk.org.ponder.rsf.components.UIContainer, java.lang.String, org.sakaiproject.evaluation.model.EvalTemplateItem, int, boolean)
 	 */
-	public UIJointContainer renderItem(UIContainer parent, String ID, String binding, EvalTemplateItem templateItem, int displayNumber, boolean disabled) {
+	public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled) {
 		// do a quick check to make sure stuff is ok
 		if (templateItem == null) {
 			throw new IllegalArgumentException("templateItem cannot be null");
@@ -60,13 +60,17 @@ public class ItemRendererImpl implements ItemRenderer {
 			throw new IllegalArgumentException("item (from templateItem.getItem()) cannot be null");
 		}
 
+		if (bindings != null && bindings.length == 0) {
+			bindings = null;
+		}
+
 		// figure out the type of item and then call the appropriate renderer
 		String itemTypeConstant = TemplateItemUtils.getTemplateItemType(templateItem);
 		ItemRenderer renderer = (ItemRenderer) renderImpls.get( itemTypeConstant );
 		if (renderer == null) {
 			throw new IllegalStateException("No renderer available for this item type: " + itemTypeConstant);
 		}
-		return renderer.renderItem(parent, ID, binding, templateItem, displayNumber, disabled);
+		return renderer.renderItem(parent, ID, bindings, templateItem, displayNumber, disabled);
 	}
 
 	/* (non-Javadoc)
@@ -74,13 +78,6 @@ public class ItemRendererImpl implements ItemRenderer {
 	 */
 	public String getRenderType() {
 		// this handles no specific type so return null
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#getRenderedBlockChildItemIds()
-	 */
-	public Long[] getRenderedBlockChildItemIds() {
 		return null;
 	}
 
