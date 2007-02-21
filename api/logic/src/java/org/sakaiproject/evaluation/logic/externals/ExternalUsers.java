@@ -14,6 +14,8 @@
 
 package org.sakaiproject.evaluation.logic.externals;
 
+import java.util.Locale;
+
 /**
  * This interface provides methods to get user information into the evaluation system
  * 
@@ -41,4 +43,6 @@ public interface ExternalUsers {
 	 */
 	public String getUserDisplayName(String userId);
 
+	
+	public Locale getUserLocale(String userId);
 }

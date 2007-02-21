@@ -63,4 +63,6 @@ public interface EvalExternalLogic extends ExternalUsers, ExternalContexts {
 	 */
 	public void sendEmails(String from, String[] toUserIds, String subject, String message);
 
+	// URLS
+
 }

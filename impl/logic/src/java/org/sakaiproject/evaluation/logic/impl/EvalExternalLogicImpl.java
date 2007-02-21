@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.mail.internet.AddressException;
@@ -44,6 +45,7 @@ import org.sakaiproject.tool.api.ToolManager;
 import org.sakaiproject.user.api.User;
 import org.sakaiproject.user.api.UserDirectoryService;
 import org.sakaiproject.user.api.UserNotDefinedException;
+import org.sakaiproject.util.ResourceLoader;
 
 
 /**
@@ -165,6 +167,16 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	public boolean isUserAdmin(String userId) {
 		log.info("Checking is eval super admin for: " + userId);
 		return securityService.isSuperUser(userId);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#getUserLocale(java.lang.String)
+	 */
+	public Locale getUserLocale(String userId) {
+		log.debug("userId: " + userId);
+		// TODO - this sucks because there is no way to get the locale for anything but the
+		// current user.... terrible -AZ
+		return new ResourceLoader().getLocale();
 	}
 
 

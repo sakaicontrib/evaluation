@@ -56,12 +56,12 @@ public class ScaledRenderer implements ItemRenderer {
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#renderItem(uk.org.ponder.rsf.components.UIContainer, java.lang.String, org.sakaiproject.evaluation.model.EvalTemplateItem, int, boolean)
 	 */
-	public UIJointContainer renderItem(UIContainer parent, String ID, String binding, EvalTemplateItem templateItem, int displayNumber, boolean disabled) {
+	public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled) {
 		UIJointContainer container = new UIJointContainer(parent, ID, COMPONENT_ID);
 
 		if (displayNumber <= 0) displayNumber = 0;
 		String initValue = null;
-		if (binding == null) initValue = "";
+		if (bindings == null) initValue = "";
 
 		EvalScale scale = templateItem.getItem().getScale();
 		String[] scaleOptions = scale.getOptions();
@@ -112,7 +112,7 @@ public class ScaledRenderer implements ItemRenderer {
 			}
 
 			UISelect radios = UISelect.make(compactRadioContainer, 
-					"dummyRadio", scaleValues, scaleLabels, binding, initValue);
+					"dummyRadio", scaleValues, scaleLabels, bindings[0], initValue);
 			String selectID = radios.getFullID();
 			
 			if (disabled) {
@@ -163,7 +163,7 @@ public class ScaledRenderer implements ItemRenderer {
 				UIBranchContainer full = UIBranchContainer.make(radiobranchFullRow, "fullDisplay:"); //$NON-NLS-1$
 				
 				// Radio Buttons
-				UISelect radios = UISelect.make(full, "dummyRadio", scaleValues,scaleLabels, binding, null);				
+				UISelect radios = UISelect.make(full, "dummyRadio", scaleValues,scaleLabels, bindings[0], null);				
 				String selectID = radios.getFullID();
 
 				if (disabled) {
@@ -183,7 +183,7 @@ public class ScaledRenderer implements ItemRenderer {
 				UIBranchContainer vertical = UIBranchContainer.make(
 						radiobranchFullRow, "verticalDisplay:"); //$NON-NLS-1$
 				
-				UISelect radios = UISelect.make(vertical, "dummyRadio", scaleValues, scaleLabels, binding, initValue);
+				UISelect radios = UISelect.make(vertical, "dummyRadio", scaleValues, scaleLabels, bindings[0], initValue);
 				String selectID = radios.getFullID();
 
 				if (disabled) {
@@ -204,7 +204,7 @@ public class ScaledRenderer implements ItemRenderer {
 
 				UILink.make(fullColored, "idealImage", ScaledUtils.getIdealImageURL(scale)); //$NON-NLS-1$
 
-				UISelect radios = UISelect.make(fullColored, "dummyRadio", scaleValues, scaleLabels, binding, initValue);
+				UISelect radios = UISelect.make(fullColored, "dummyRadio", scaleValues, scaleLabels, bindings[0], initValue);
 				String selectID = radios.getFullID();
 
 				if (disabled) {
@@ -235,7 +235,7 @@ public class ScaledRenderer implements ItemRenderer {
 				scaleLabels[optionCount - count] = scaleOptions[count-1];
 			}
 			
-			UISelect radios = UISelect.make(stepped, "dummyRadio", scaleValues, scaleLabels, binding, initValue); 
+			UISelect radios = UISelect.make(stepped, "dummyRadio", scaleValues, scaleLabels, bindings[0], initValue); 
 			String selectID = radios.getFullID();
 
 			if (disabled) {
@@ -285,7 +285,7 @@ public class ScaledRenderer implements ItemRenderer {
 				scaleLabels[optionCount - count] = scaleOptions[count-1];
 			}
 
-			UISelect radios = UISelect.make(steppedColored, "dummyRadio", scaleValues, scaleLabels, binding, initValue); 
+			UISelect radios = UISelect.make(steppedColored, "dummyRadio", scaleValues, scaleLabels, bindings[0], initValue); 
 			String selectID = radios.getFullID();
 
 			if (disabled) {
@@ -336,13 +336,6 @@ public class ScaledRenderer implements ItemRenderer {
 	 */
 	public String getRenderType() {
 		return EvalConstants.ITEM_TYPE_SCALED;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#getRenderedBlockChildItemIds()
-	 */
-	public Long[] getRenderedBlockChildItemIds() {
-		return new Long[] {};
 	}
 
 

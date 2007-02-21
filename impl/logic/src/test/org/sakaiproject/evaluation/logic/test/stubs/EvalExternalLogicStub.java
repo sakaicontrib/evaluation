@@ -17,6 +17,7 @@ package org.sakaiproject.evaluation.logic.test.stubs;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
@@ -360,6 +361,11 @@ public class EvalExternalLogicStub implements EvalExternalLogic {
 		}
 		return false;
 	}
+
+	public Locale getUserLocale(String userId) {
+		return Locale.US;
+	}
+
 
 	/**
 	 * Return Context objects based on data from the data load class

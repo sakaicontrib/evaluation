@@ -14,7 +14,6 @@
 
 package org.sakaiproject.evaluation.tool.renderers;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
@@ -57,16 +56,11 @@ public class BlockRenderer implements ItemRenderer {
 	 */
 	public static final String COMPONENT_ID = "render-block-item:";
 
-	/**
-	 * Contains the list of block child templateItem IDs for the current and most recent render cycle
-	 */
-	private List children = new ArrayList();
-
 
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#renderItem(uk.org.ponder.rsf.components.UIContainer, java.lang.String, org.sakaiproject.evaluation.model.EvalTemplateItem, int, boolean)
 	 */
-	public UIJointContainer renderItem(UIContainer parent, String ID, String binding, EvalTemplateItem templateItem, int displayNumber, boolean disabled) {
+	public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled) {
 
 		// check to make sure we are only dealing with block parents
 		if (templateItem.getBlockParent() == null) {
@@ -80,10 +74,7 @@ public class BlockRenderer implements ItemRenderer {
 
 		if (displayNumber <= 0) displayNumber = 0;
 		String initValue = null;
-		if (binding == null) initValue = "";
-
-		// clear out the children array
-		children.clear();
+		if (bindings == null) initValue = "";
 
 		EvalScale scale = templateItem.getItem().getScale();
 		String[] scaleOptions = scale.getOptions();
@@ -167,7 +158,6 @@ public class BlockRenderer implements ItemRenderer {
 				// get the child item
 				EvalTemplateItem childTemplateItem = (EvalTemplateItem) childList.get(j);
 				EvalItem childItem = childTemplateItem.getItem();
-				children.add(childTemplateItem.getId());
 
 				// For the radio buttons
 				UIBranchContainer childRow = UIBranchContainer.make(blockStepped, "childRow:", new Integer(j).toString() ); //$NON-NLS-1$
@@ -180,10 +170,7 @@ public class BlockRenderer implements ItemRenderer {
 				UIOutput.make(childRow, "childText", childItem.getItemText()); //$NON-NLS-1$
 
 				// Bind the answers to a list of answers in evaluation bean
-				String childBinding = null;
-				if (binding != null) {
-					childBinding = binding.replaceFirst("\\[childTID\\:\\]", childTemplateItem.getId().toString());
-				}
+				String childBinding = bindings[j];
 				UISelect childRadios = UISelect.make(childRow, "dummyRadio",
 						scaleValues, scaleLabels, childBinding, initValue);
 				String selectID = childRadios.getFullID();
@@ -218,13 +205,6 @@ public class BlockRenderer implements ItemRenderer {
 	 */
 	public String getRenderType() {
 		return EvalConstants.ITEM_TYPE_BLOCK;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#getRenderedBlockChildItemIds()
-	 */
-	public Long[] getRenderedBlockChildItemIds() {
-		return (Long[]) children.toArray( new Long[] {} );
 	}
 
 
