@@ -225,33 +225,33 @@ public class EvalConstants {
 	 * EmailTemplate message setting:
 	 * This is the default template for when the evaluation is available for users to take<br/>
 	 * Replaceable strings:<br/>
-	 * [EvalTitle:] - the title of this evaluation
-	 * [EvalStartDate:] - the start date of this evaluation
-	 * [EvalDueDate:] - the due date of this evaluation
-	 * [EvalResultsDate:] - the view results date of this evaluation
-	 * [UserDisplayName:] - the displayname for this user
-	 * [ContextTitle:] - the title to the site/course/group/evalGroup which this evaluation is assigned to for this user
-	 * [HelpdeskEmail:] - the email address for the helpdesk (or the support contact)
-	 * [URLtoAddItems:] - the direct URL for evaluatees to add items to evals assigned from above
-	 * [URLtoTakeEval:] - the direct URL for evaluators to take this evaluation
-	 * [URLtoViewResults:] - the direct URL to view results for this evaluation
-	 * [URLtoSystem:] - the main URL to the system this is running in
+	 * $EvalTitle - the title of this evaluation
+	 * $EvalStartDate - the start date of this evaluation
+	 * $EvalDueDate - the due date of this evaluation
+	 * $EvalResultsDate - the view results date of this evaluation
+	 * $UserDisplayName - the displayname for this user
+	 * $ContextTitle - the title to the site/course/group/evalGroup which this evaluation is assigned to for this user
+	 * $HelpdeskEmail - the email address for the helpdesk (or the support contact)
+	 * $URLtoAddItems - the direct URL for evaluatees to add items to evals assigned from above
+	 * $URLtoTakeEval - the direct URL for evaluators to take this evaluation
+	 * $URLtoViewResults - the direct URL to view results for this evaluation
+	 * $URLtoSystem - the main URL to the system this is running in
 	 */
 	public static final String EMAIL_TEMPLATE_CREATED_TEXT = 
-		"All information submitted to the Evaluation System is confidential. Instructors cannot identify which submissions belong to which students. Students are required to login to the system for the sole purpose of providing students access to the appropriate evaluations for their associated courses. Instructors can only view general statistics as allowed by the university. Please send privacy concerns to [HelpdeskEmail:]. \n" +
+		"All information submitted to the Evaluation System is confidential. Instructors cannot identify which submissions belong to which students. Students are required to login to the system for the sole purpose of providing students access to the appropriate evaluations for their associated courses. Instructors can only view general statistics as allowed by the university. Please send privacy concerns to $HelpdeskEmail. \n" +
 		"\n" +
-		"Dear [UserDisplayName:],\n" +
+		"Dear $UserDisplayName,\n" +
 		"\n" +
-		"An evaluation ([EvalTitle:]) has been created for: [ContextTitle:].\n" +
+		"An evaluation ($EvalTitle) has been created for: $ContextTitle.\n" +
 		"\n" +
-		"You may add items to this evaluation until [EvalStartDate:] using the following link:\n" +
-		"[URLtoAddItems:] \n" +
+		"You may add items to this evaluation until $EvalStartDate using the following link:\n" +
+		"$URLtoAddItems \n" +
 		"\n" +
-		"The evaluation will run from [EvalStartDate:] to [EvalDueDate:] and the results of the evaluation will be viewable on [EvalResultsDate:].\n" +
+		"The evaluation will run from $EvalStartDate to $EvalDueDate and the results of the evaluation will be viewable on $EvalResultsDate.\n" +
 		"\n" +		
 		"Thank you for your cooperation.\n" +
 		"------------------------------------------------------------\n" +
-		"Should you encounter any technical difficulty in working with the evaluation, please send an email to [HelpdeskEmail:] clearly indicating the problem you encountered. For any other concerns please contact your department.\n";
+		"Should you encounter any technical difficulty in working with the evaluation, please send an email to $HelpdeskEmail clearly indicating the problem you encountered. For any other concerns please contact your department.\n";
 
 
 	/**
@@ -269,26 +269,26 @@ public class EvalConstants {
 	 * This is the default template for when the evaluation is available for users to take
 	 */
 	public static final String EMAIL_AVAILABLE_DEFAULT_TEXT = 
-		"All information submitted to the Evaluation System is confidential. Instructors cannot identify which submissions belong to which students. Students are required to login to the system for the sole purpose of providing students access to the appropriate evaluations for their associated courses. Instructors can only view general statistics as allowed by the university. Please send privacy concerns to [HelpdeskEmail:]. \n" +
+		"All information submitted to the Evaluation System is confidential. Instructors cannot identify which submissions belong to which students. Students are required to login to the system for the sole purpose of providing students access to the appropriate evaluations for their associated courses. Instructors can only view general statistics as allowed by the university. Please send privacy concerns to $HelpdeskEmail. \n" +
 		"\n" +
-		"Dear [UserDisplayName:],\n" +
+		"Dear $UserDisplayName,\n" +
 		"\n" +
-		"An evaluation ([EvalTitle:]) for: [ContextTitle:] is ready to be filled out. Please complete this evaluation by [EvalDueDate:] at the latest.\n" +
+		"An evaluation ($EvalTitle) for: $ContextTitle is ready to be filled out. Please complete this evaluation by $EvalDueDate at the latest.\n" +
 		"\n" +
 		"You may access the evaluation at:\n" +
-		"[URLtoTakeEval:] \n" +
+		"$URLtoTakeEval \n" +
 		"If the above link is not working then please follow the Alternate Instructions at the bottom of the message. \n" +
 		"Enter the site using your username and password. You may submit the evaluation once only. \n" +
 		"\n" +
 		"Thank you for your participation.\n" +
 		"------------------------------------------------------------\n" +
-		"Should you encounter any technical difficulty in filling out the evaluation, please send an email to [HelpdeskEmail:] clearly indicating the problem you encountered. For any other concerns please contact your department.\n" +
+		"Should you encounter any technical difficulty in filling out the evaluation, please send an email to $HelpdeskEmail clearly indicating the problem you encountered. For any other concerns please contact your department.\n" +
 		"\n" +
 		"Alternate Instructions: \n" +
-		"1) Go to [URLtoSystem:] \n" +
+		"1) Go to $URLtoSystem \n" +
 		"2) Enter your username and password and click on 'Login' button. \n" +
 		"3) Click on 'Evaluation System' in the left navigation menu under My Workspace. \n" +
-		"4) Click on '[EvalTitle:]' link under '[ContextTitle:]'. \n";
+		"4) Click on '$EvalTitle' link under '$ContextTitle'. \n";
 
 
 	/**
@@ -306,26 +306,26 @@ public class EvalConstants {
 	 * This is the default template for when the evaluation reminder is sent out
 	 */
 	public static final String EMAIL_REMINDER_DEFAULT_TEXT = 
-		"All information submitted to the Evaluation System is confidential. Instructors cannot identify which submissions belong to which students. Students are required to login to the system for the sole purpose of providing students access to the appropriate evaluations for their associated courses. Instructors can only view general statistics as allowed by the university. Please send privacy concerns to [HelpdeskEmail:]. \n" +
+		"All information submitted to the Evaluation System is confidential. Instructors cannot identify which submissions belong to which students. Students are required to login to the system for the sole purpose of providing students access to the appropriate evaluations for their associated courses. Instructors can only view general statistics as allowed by the university. Please send privacy concerns to $HelpdeskEmail. \n" +
 		"\n" +
-		"Dear [UserDisplayName:],\n" +
+		"Dear $UserDisplayName,\n" +
 		"\n" +
-		"We are still awaiting the completion of an evaluation ([EvalTitle:]) for: [ContextTitle:]. \n" +
+		"We are still awaiting the completion of an evaluation ($EvalTitle) for: $ContextTitle. \n" +
 		"\n" +
 		"You may access the evaluation at: \n" +
-		"[URLtoTakeEval:] \n" +
+		"$URLtoTakeEval \n" +
 		"If the above link is not working then please follow the Alternate Instructions at the bottom of the message. \n" +
-		"Enter the site using your username and password. Please submit your evaluation by [Due Date:]. \n" +
+		"Enter the site using your username and password. Please submit your evaluation by $Due Date. \n" +
 		"\n" +
 		"Thank you for your participation.\n" +
 		"------------------------------------------------------------\n" +
-		"Should you encounter any technical difficulty in filling out the evaluation, please send an email to [HelpdeskEmail:] clearly indicating the problem you encountered. For any other concerns please contact your department.\n" +
+		"Should you encounter any technical difficulty in filling out the evaluation, please send an email to $HelpdeskEmail clearly indicating the problem you encountered. For any other concerns please contact your department.\n" +
 		"\n" +
 		"Alternate Instructions: \n" +
-		"1) Go to [URLtoSystem:] \n" +
+		"1) Go to $URLtoSystem \n" +
 		"2) Enter your username and password and click on 'Login' button. \n" +
 		"3) Click on 'Evaluation System' in the left navigation menu under My Workspace. \n" +
-		"4) Click on '[EvalTitle:]' link under '[ContextTitle:]'. \n";
+		"4) Click on '$EvalTitle' link under '$ContextTitle'. \n";
 
 	/**
 	 * Notification: Include all users who have not taken the evaluation yet

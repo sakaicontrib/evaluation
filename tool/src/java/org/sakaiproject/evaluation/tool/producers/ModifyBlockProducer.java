@@ -273,6 +273,9 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 			UISelectChoice.make(form, "item_category_C", selectID, 0); //$NON-NLS-1$
 			UISelectChoice.make(form, "item_category_I", selectID, 1);
 
+			// render the items below
+			UIOutput.make(form, "items-header", "Items:");
+
 			if (modify) {// for modify existing block item
 				// get Block child item
 				EvalTemplate template = templateItems[0].getTemplate();

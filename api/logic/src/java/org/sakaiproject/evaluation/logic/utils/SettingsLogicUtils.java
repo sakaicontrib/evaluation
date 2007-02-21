@@ -1,5 +1,5 @@
 /******************************************************************************
- * EvaluationSettingsParse.java - created by aaronz@vt.edu
+ * SettingsLogicUtils.java - created by aaronz@vt.edu
  * 
  * Copyright (c) 2007 Virginia Polytechnic Institute and State University
  * Licensed under the Educational Community License version 1.0
@@ -12,16 +12,16 @@
  * 
  *****************************************************************************/
 
-package org.sakaiproject.evaluation.logic;
+package org.sakaiproject.evaluation.logic.utils;
 
 /**
- * This is a weird location but it will have to do for now, 
- * it handles the parsing of the settings constants in a uniform way
- * <b>WARNING:</b> Do NOT use this outside the logic layer
+ * This is a weird location but it will have to do for now,
+ * This util has a set of static methods which are used to process data
+ * in a uniform way but limits the dependencies
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class EvaluationSettingsParse {
+public class SettingsLogicUtils {
 
 	public static final String DEFAULT_TYPE = "java.lang.String";
 
@@ -66,4 +66,5 @@ public class EvaluationSettingsParse {
 		}
 		return constant.trim();
 	}
+
 }

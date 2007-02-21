@@ -15,11 +15,12 @@ api/logic/src/java/org/sakaiproject/evaluation/logic/EvalResponsesLogic.java -te
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalScalesLogic.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalSettings.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalTemplatesLogic.java -text
-api/logic/src/java/org/sakaiproject/evaluation/logic/EvaluationSettingsParse.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/ExternalContexts.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/ExternalUsers.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/model/Context.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/providers/EvalGroupsProvider.java -text
+api/logic/src/java/org/sakaiproject/evaluation/logic/utils/SettingsLogicUtils.java -text
+api/logic/src/java/org/sakaiproject/evaluation/logic/utils/TextTemplateLogicUtils.java -text
 api/model/project.xml -text
 api/model/src/java/org/sakaiproject/evaluation/model/EvalAnswer.java -text
 api/model/src/java/org/sakaiproject/evaluation/model/EvalAssignContext.java -text
@@ -67,8 +68,8 @@ impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalTemplatesLogicImp
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvalAssignContextInterceptor.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvaluationInterceptor.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvaluationModificationRegistry.java -text
-impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/notification/EvalNotificationImpl.java -text
-impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/notification/EvalNotificationLogicImpl.java -text
+impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalNotificationImpl.java -text
+impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalNotificationLogicImpl.java -text
 impl/logic/src/test/log4j.properties -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalAssignsLogicImplTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalEmailsLogicImplTest.java -text
