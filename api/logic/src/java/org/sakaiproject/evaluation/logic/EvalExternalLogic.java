@@ -65,4 +65,14 @@ public interface EvalExternalLogic extends ExternalUsers, ExternalContexts {
 
 	// URLS
 
+	/**
+	 * @return the URL directly to the main server portal this tool is installed in
+	 */
+	public String getServerUrl();
+
+	/**
+	 * @return the URL directly to the tool itself (the root of the tool)
+	 */
+	public String getToolUrl();
+
 }
