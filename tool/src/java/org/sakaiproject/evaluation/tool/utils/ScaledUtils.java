@@ -9,7 +9,6 @@ import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 
-import uk.org.ponder.arrayutil.ArrayUtil;
 import uk.org.ponder.stringutil.StringUtil;
 
 /**
@@ -29,16 +28,16 @@ public class ScaledUtils {
 	
 	public static String[] startColours = {
 		EvaluationConstant.BLUE_COLOR, 
-		EvaluationConstant.RED_COLOR,
-		EvaluationConstant.RED_COLOR,
 		EvaluationConstant.GREEN_COLOR,
+		EvaluationConstant.RED_COLOR,
+		EvaluationConstant.RED_COLOR,
 		EvaluationConstant.GREEN_COLOR};
 	
 	public static String[] endColours = {
 		EvaluationConstant.BLUE_COLOR, 
+		EvaluationConstant.RED_COLOR,
+		EvaluationConstant.RED_COLOR,
 		EvaluationConstant.GREEN_COLOR,
-		EvaluationConstant.RED_COLOR,
-		EvaluationConstant.RED_COLOR,
 		EvaluationConstant.GREEN_COLOR};
 	
 	public static int idealToIndex(String ideal) {
