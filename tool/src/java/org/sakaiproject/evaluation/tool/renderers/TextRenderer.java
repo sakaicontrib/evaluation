@@ -61,8 +61,12 @@ public class TextRenderer implements ItemRenderer {
 			UIBoundBoolean.make(NAbranch, "itemNA", templateItem.getUsesNA()); //$NON-NLS-1$
 			UIOutput.make(NAbranch, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-
-		UIInput textarea = UIInput.make(container, "essayBox", bindings[0]); //$NON-NLS-1$ //$NON-NLS-2$
+		UIInput textarea;
+		if(bindings != null){
+			textarea= UIInput.make(container, "essayBox", bindings[0]);
+		}else{
+			textarea = UIInput.make(container, "essayBox",null,templateItem.getItem().getItemText());
+		}
 
 		Map attrmap = new HashMap();
 		attrmap.put("rows", templateItem.getDisplayRows().toString()); //$NON-NLS-1$
