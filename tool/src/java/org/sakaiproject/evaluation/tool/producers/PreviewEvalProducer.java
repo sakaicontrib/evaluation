@@ -15,7 +15,6 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -30,8 +29,6 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.params.PreviewEvalParameters;
 import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
-import org.sakaiproject.evaluation.tool.utils.ComparatorsUtils;
-import org.sakaiproject.evaluation.tool.utils.ItemBlockUtils;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
 import uk.org.ponder.messageutil.MessageLocator;
@@ -197,9 +194,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 			 * */
 			if (! allItems.isEmpty()) {
 				//filter out the block child items, to get a list non-child items
-				List ncItemsList = ItemBlockUtils.getNonChildItems(allItems);
-
-				Collections.sort( ncItemsList, new ComparatorsUtils.TemplateItemComparatorByOrder() );		
+				List ncItemsList = TemplateItemUtils.getNonChildItems(allItems);
 
 				// check if there is any "Course" items or "Instructor" items;
 				UIBranchContainer courseSection = null;

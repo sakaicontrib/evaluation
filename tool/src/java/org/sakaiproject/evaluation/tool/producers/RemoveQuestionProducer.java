@@ -94,7 +94,7 @@ public class RemoveQuestionProducer implements ViewComponentProducer, ViewParams
 		UIOutput.make(tofill, "remove-question-confirm-post-name", messageLocator.getMessage("removequestion.confirm.post.name")); //$NON-NLS-1$ //$NON-NLS-2$
 
 		//if it is a block item, show information 
-		if(TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_BLOCK)){
+		if(TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)){
 			UIBranchContainer showBlockInfo = UIBranchContainer.make(tofill, "showBlockInfo:");
 			UIOutput.make(showBlockInfo, "remove-question-spilt-block", messageLocator.getMessage("removequestion.spilt.block")); 
 

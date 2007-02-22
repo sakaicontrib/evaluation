@@ -37,7 +37,6 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.params.CSVReportViewParams;
 import org.sakaiproject.evaluation.tool.utils.ComparatorsUtils;
-import org.sakaiproject.evaluation.tool.utils.ItemBlockUtils;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
 import uk.org.ponder.rsf.processor.HandlerHook;
@@ -124,7 +123,7 @@ public class ReportHandlerHook implements HandlerHook {
 		
 		if (! allItems.isEmpty()) {
 			//filter out the block child items, to get a list non-child items
-			List ncItemsList = ItemBlockUtils.getNonChildItems(allItems);
+			List ncItemsList = TemplateItemUtils.getNonChildItems(allItems);
 			Collections.sort(ncItemsList,new ComparatorsUtils.TemplateItemComparatorByOrder());
 			//for each item
 			for (int i = 0; i < ncItemsList.size(); i++) {
@@ -150,7 +149,7 @@ public class ReportHandlerHook implements HandlerHook {
 					}
 				}
 				//else if (item1.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK)) {//"Question Block"
-				else if(TemplateItemUtils.getTemplateItemType(tempItem1).equals(EvalConstants.ITEM_TYPE_BLOCK)){
+				else if(TemplateItemUtils.getTemplateItemType(tempItem1).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)){
 					String labels[] = item1.getScale().getOptions();
 					//add the block description to the top row
 					topRow.add(item1.getItemText());

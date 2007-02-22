@@ -57,7 +57,7 @@ public class EvaluationConstant {
 		EvalConstants.ITEM_TYPE_SCALED, 
 		EvalConstants.ITEM_TYPE_TEXT, 
 		EvalConstants.ITEM_TYPE_HEADER, 
-		EvalConstants.ITEM_TYPE_BLOCK,
+		EvalConstants.ITEM_TYPE_BLOCK_PARENT,
 		ITEM_TYPE_EXPERT,
 		ITEM_TYPE_EXISTING
 	};

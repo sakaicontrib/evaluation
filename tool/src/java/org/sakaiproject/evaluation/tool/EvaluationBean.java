@@ -34,7 +34,6 @@ import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
@@ -46,7 +45,7 @@ import org.sakaiproject.evaluation.tool.producers.EvaluationStartProducer;
 import org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer;
 import org.sakaiproject.evaluation.tool.producers.SummaryProducer;
 import org.sakaiproject.evaluation.tool.utils.EvaluationDateUtil;
-import org.sakaiproject.evaluation.tool.utils.ItemBlockUtils;
+import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
 /**
  * This is the backing bean of the evaluation process.
@@ -544,6 +543,7 @@ public class EvaluationBean {
 	 */	
 	//TODO: This is not the place for anything related to templates - kahuja (8th Feb 2007)
 	//		Thus this method should be done using template bean locator.
+	// Is this actually being used??? -AZ
 	public String removeTemplateAction(){
 
 		String currentUserId = external.getCurrentUserId();
@@ -568,21 +568,17 @@ public class EvaluationBean {
 			List allItems = new ArrayList(template1.getTemplateItems());			
 
 			//filter out the block child items, to get a list non-child items
-			List ncItemsList = ItemBlockUtils.getNonChildItems(allItems);
-			
+			List ncItemsList = TemplateItemUtils.getNonChildItems(allItems);
 			for (int i = 0; i < ncItemsList.size(); i++) {
 				
-				EvalTemplateItem tempItem = (EvalTemplateItem) ncItemsList.get(i);
-				EvalItem item1 = tempItem.getItem();
+				EvalTemplateItem templateItem = (EvalTemplateItem) ncItemsList.get(i);
 				
 				//need to check if it is a Block parent, delete child items first
-				if (item1.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK) && 
-						tempItem.getBlockParent().booleanValue() == true) {
+				if ( TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT) ) {
 					
-					Long parentID = tempItem.getId();				
-					List childItems = ItemBlockUtils.getChildItems(allItems, parentID);
+					Long parentID = templateItem.getId();				
+					List childItems = TemplateItemUtils.getChildItems(allItems, parentID);
 					if (childItems != null && childItems.size() >0 ) {
-						
 						for (int k = 0; k < childItems.size(); k++) {
 							EvalTemplateItem tItem = (EvalTemplateItem) childItems.get(k);
 							itemsLogic.deleteTemplateItem(tItem.getId(), currentUserId);
@@ -590,7 +586,7 @@ public class EvaluationBean {
 					}
 				}//end of check: block child
 			
-				itemsLogic.deleteTemplateItem(tempItem.getId(), currentUserId);
+				itemsLogic.deleteTemplateItem(templateItem.getId(), currentUserId);
 			}
 			templatesLogic.deleteTemplate(template1.getId(), currentUserId);
 		}

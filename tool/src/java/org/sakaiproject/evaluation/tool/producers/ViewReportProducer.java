@@ -8,14 +8,13 @@
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
  * 
  * Contributors:
- * Rui Feng (fengr@vt.edu)
  * Will Humphries (whumphri@vt.edu)
  *****************************************************************************/
+
 package org.sakaiproject.evaluation.tool.producers;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
@@ -32,10 +31,7 @@ import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.params.CSVReportViewParams;
 import org.sakaiproject.evaluation.tool.params.EssayResponseParams;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
-import org.sakaiproject.evaluation.tool.utils.ComparatorsUtils;
-import org.sakaiproject.evaluation.tool.utils.ItemBlockUtils;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
-
 
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
@@ -53,11 +49,9 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
 /**
- * rendering the report of an evaluation
+ * rendering the report results from an evaluation
  * 
- * @author: Rui Feng (fengr@vt.edu)
  * @author:Will Humphries (whumphri@vt.edu)
- * 
  */
 
 public class ViewReportProducer implements ViewComponentProducer, NavigationCaseReporter, ViewParamsReporter {
@@ -112,8 +106,7 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 			if (! allItems.isEmpty()) {
 				
 				//filter out the block child items, to get a list non-child items
-				List ncItemsList = ItemBlockUtils.getNonChildItems(allItems);				
-				Collections.sort(ncItemsList,new ComparatorsUtils.TemplateItemComparatorByOrder());
+				List ncItemsList = TemplateItemUtils.getNonChildItems(allItems);
 				
 				// check if there is any "Course" items or "Instructor" items;
 				UIBranchContainer courseSection = null;
@@ -213,7 +206,7 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 
 
 		} //else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK)) {		 //$NON-NLS-1$
-		else if(TemplateItemUtils.getTemplateItemType(myTempItem).equals(EvalConstants.ITEM_TYPE_BLOCK)){
+		else if(TemplateItemUtils.getTemplateItemType(myTempItem).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)){
 			UIBranchContainer block = UIBranchContainer.make(radiobranch,"block:"); //$NON-NLS-1$
 			UIOutput.make(block, "itemNum", (new Integer(i + 1)).toString()); //$NON-NLS-1$
 			UIOutput.make(block, "itemText", myItem.getItemText()); //$NON-NLS-1$

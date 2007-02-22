@@ -14,7 +14,6 @@
 
 package org.sakaiproject.evaluation.tool;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -24,8 +23,6 @@ import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
-import org.sakaiproject.evaluation.tool.utils.ComparatorsUtils;
-import org.sakaiproject.evaluation.tool.utils.ItemBlockUtils;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
 /**
@@ -106,9 +103,8 @@ public class TemplateBBean {
 	public void saveReorder() {
 		log.debug("save items reordering");
 		Map delivered = templateItemBeanLocator.getDeliveredBeans();
-		//List ordered = localTemplateLogic.fetchTemplateItems(templateId);
 		List l = itemsLogic.getTemplateItemsForTemplate(templateId,null);
-		List ordered = ItemBlockUtils.getNonChildItems(l);//to fix re-order error
+		List ordered = TemplateItemUtils.getNonChildItems(l);
 		for (int i = 1; i <= ordered.size();) {
 			EvalTemplateItem item = (EvalTemplateItem) ordered.get(i - 1);
 			int itnum = item.getDisplayOrder().intValue();
@@ -141,7 +137,7 @@ public class TemplateBBean {
 			EvalTemplate template = first.getTemplate();
 			List allTemplateItems = itemsLogic.getTemplateItemsForTemplate(template.getId(), null);
 
-			if(TemplateItemUtils.getTemplateItemType(first).equals(EvalConstants.ITEM_TYPE_BLOCK)){
+			if(TemplateItemUtils.getTemplateItemType(first).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)){
 				//create new block from multiple existing block
 				parent = (EvalTemplateItem)delivered.get(strIds[0]);
 				if(parent == null) parent = first ;
@@ -153,13 +149,13 @@ public class TemplateBBean {
 				localTemplateLogic.saveTemplateItem(parent);
 
 				Long parentId = parent.getId();
-				int orderNo = ItemBlockUtils.getChildItems(allTemplateItems, parentId).size();
+				int orderNo = TemplateItemUtils.getChildItems(allTemplateItems, parentId).size();
 				//save child, delete other existing block parent
 				for(int i=1;  i< strIds.length; i++){
 					EvalTemplateItem eti = itemsLogic.getTemplateItemById(Long.valueOf(strIds[i]));
 
-					if(TemplateItemUtils.getTemplateItemType(eti).equals(EvalConstants.ITEM_TYPE_BLOCK)){					
-						List myChilds = ItemBlockUtils.getChildItems(allTemplateItems, eti.getId());
+					if(TemplateItemUtils.getTemplateItemType(eti).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)){					
+						List myChilds = TemplateItemUtils.getChildItems(allTemplateItems, eti.getId());
 						for(int j=0; j< myChilds.size();j++){
 							EvalTemplateItem child = (EvalTemplateItem)myChilds.get(j);
 							child.setBlockId(parentId);
@@ -217,8 +213,7 @@ public class TemplateBBean {
 
 			//shifting all the others's order
 			allTemplateItems = itemsLogic.getTemplateItemsForTemplate(template.getId(), null);
-			List noChildList = ItemBlockUtils.getNonChildItems(allTemplateItems);
-			Collections.sort(noChildList, new ComparatorsUtils.TemplateItemComparatorByOrder());					
+			List noChildList = TemplateItemUtils.getNonChildItems(allTemplateItems);
 			for(int i=0; i<noChildList.size();i++){
 				EvalTemplateItem  eti =(EvalTemplateItem)noChildList.get(i);
 				//get parent's PO
@@ -230,8 +225,7 @@ public class TemplateBBean {
 				}		
 			}
 
-			noChildList = ItemBlockUtils.getNonChildItems(allTemplateItems);
-			Collections.sort(noChildList, new ComparatorsUtils.TemplateItemComparatorByOrder());	
+			noChildList = TemplateItemUtils.getNonChildItems(allTemplateItems);
 			for(int i=0; i<noChildList.size();i++){
 				EvalTemplateItem  eti =(EvalTemplateItem)noChildList.get(i);
 				//System.out.println("item id="+ eti.getId().longValue()+";item ["+i+"].order="+eti.getDisplayOrder().intValue());
