@@ -79,6 +79,7 @@ public class BlockRenderer implements ItemRenderer {
 		EvalScale scale = templateItem.getItem().getScale();
 		String[] scaleOptions = scale.getOptions();
 		int optionCount = scaleOptions.length;
+System.out.println("BLOCK-RENDER: scale length: " + optionCount);
 		String scaleValues[] = new String[optionCount];
 		String scaleLabels[] = new String[optionCount];
 
@@ -101,6 +102,8 @@ public class BlockRenderer implements ItemRenderer {
 				scaleValues[optionCount - count] = new Integer(optionCount - count).toString();
 				scaleLabels[optionCount - count] = scaleOptions[count-1];
 			}
+System.out.println("BLOCK-RENDER: scaleValues: " + scaleValues);
+System.out.println("BLOCK-RENDER: scaleLabels: " + scaleLabels);
 
 			// handle ideal coloring
 			String idealImage = ""; //$NON-NLS-1$
