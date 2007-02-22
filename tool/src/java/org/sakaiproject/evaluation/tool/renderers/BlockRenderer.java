@@ -170,7 +170,9 @@ public class BlockRenderer implements ItemRenderer {
 				UIOutput.make(childRow, "childText", childItem.getItemText()); //$NON-NLS-1$
 
 				// Bind the answers to a list of answers in evaluation bean
-				String childBinding = bindings[j];
+				String childBinding =null;
+				if(bindings!= null)
+					childBinding = bindings[j];
 				UISelect childRadios = UISelect.make(childRow, "dummyRadio",
 						scaleValues, scaleLabels, childBinding, initValue);
 				String selectID = childRadios.getFullID();
