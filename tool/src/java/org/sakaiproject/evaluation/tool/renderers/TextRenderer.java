@@ -52,21 +52,22 @@ public class TextRenderer implements ItemRenderer {
 	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#renderItem(uk.org.ponder.rsf.components.UIContainer, java.lang.String, org.sakaiproject.evaluation.model.EvalTemplateItem, int, boolean)
 	 */
 	public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled) {
+
 		UIJointContainer container = new UIJointContainer(parent, ID, COMPONENT_ID);
 
-		UIOutput.make(container, "itemNum", displayNumber>0?displayNumber+"":"0" ); //$NON-NLS-1$
+		if (displayNumber <= 0) displayNumber = 0;
+		String initValue = null;
+		if (bindings[0] == null) initValue = "";
+
+		UIOutput.make(container, "itemNum", displayNumber+"" ); //$NON-NLS-1$
 		UIVerbatim.make(container, "itemText", templateItem.getItem().getItemText()); //$NON-NLS-1$
 		if ( templateItem.getUsesNA().booleanValue() ) {
 			UIBranchContainer NAbranch = UIBranchContainer.make(container, "showNA:"); //$NON-NLS-1$
 			UIBoundBoolean.make(NAbranch, "itemNA", templateItem.getUsesNA()); //$NON-NLS-1$
 			UIOutput.make(NAbranch, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		UIInput textarea;
-		if(bindings != null){
-			textarea= UIInput.make(container, "essayBox", bindings[0]);
-		}else{
-			textarea = UIInput.make(container, "essayBox",null,templateItem.getItem().getItemText());
-		}
+
+		UIInput textarea = UIInput.make(container, "essayBox", bindings[0], initValue); //$NON-NLS-1$ //$NON-NLS-2$
 
 		Map attrmap = new HashMap();
 		attrmap.put("rows", templateItem.getDisplayRows().toString()); //$NON-NLS-1$

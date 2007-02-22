@@ -61,7 +61,7 @@ public class ScaledRenderer implements ItemRenderer {
 
 		if (displayNumber <= 0) displayNumber = 0;
 		String initValue = null;
-		if (bindings == null) initValue = "";
+		if (bindings[0] == null) initValue = "";
 
 		EvalScale scale = templateItem.getItem().getScale();
 		String[] scaleOptions = scale.getOptions();

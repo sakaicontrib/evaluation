@@ -14,7 +14,9 @@
 
 package org.sakaiproject.evaluation.tool.renderers;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
@@ -33,6 +35,9 @@ import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.UISelectLabel;
+import uk.org.ponder.rsf.components.UIVerbatim;
+import uk.org.ponder.rsf.components.decorators.DecoratorList;
+import uk.org.ponder.rsf.components.decorators.UIFreeAttributeDecorator;
 
 /**
  * This handles the rendering of scaled type items
@@ -70,16 +75,21 @@ public class BlockRenderer implements ItemRenderer {
 			throw new IllegalArgumentException("Block renderer can only work for block parents, this templateItem ("+templateItem.getId()+") is a block child");
 		}
 
+		// check that the child count matches the bindings count
+		List childList = itemsLogic.getBlockChildTemplateItemsForBlockParent(templateItem.getId(), false);
+		if ( !disabled && (childList.size() != bindings.length) ) {
+			throw new IllegalArgumentException("The bindings array ("+bindings.length+") must match the size of the block child count ("+childList.size()+")");
+		}
+
 		UIJointContainer container = new UIJointContainer(parent, ID, COMPONENT_ID);
 
 		if (displayNumber <= 0) displayNumber = 0;
 		String initValue = null;
-		if (bindings == null) initValue = "";
+		if (bindings[0] == null) initValue = "";
 
 		EvalScale scale = templateItem.getItem().getScale();
 		String[] scaleOptions = scale.getOptions();
 		int optionCount = scaleOptions.length;
-System.out.println("BLOCK-RENDER: scale length: " + optionCount);
 		String scaleValues[] = new String[optionCount];
 		String scaleLabels[] = new String[optionCount];
 
@@ -93,17 +103,14 @@ System.out.println("BLOCK-RENDER: scale length: " + optionCount);
 			// setup simple variables to make code more clear
 			boolean colored = EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED.equals(scaleDisplaySetting);
 
-			// put in the block header text
-			UIOutput.make(blockStepped, "itemText", templateItem.getItem().getItemText()); //$NON-NLS-1$
-
 			handleNA(blockStepped, templateItem.getUsesNA().booleanValue());
 
 			for (int count = 1; count <= optionCount; count++) {
-				scaleValues[optionCount - count] = new Integer(optionCount - count).toString();
+				scaleValues[optionCount - count] = Integer.toString(optionCount - count);
 				scaleLabels[optionCount - count] = scaleOptions[count-1];
 			}
-System.out.println("BLOCK-RENDER: scaleValues: " + scaleValues);
-System.out.println("BLOCK-RENDER: scaleLabels: " + scaleLabels);
+//System.out.println("BLOCK-RENDER: scaleValues: " + ArrayUtil.toString(scaleValues));
+//System.out.println("BLOCK-RENDER: scaleLabels: " + ArrayUtil.toString(scaleLabels));
 
 			// handle ideal coloring
 			String idealImage = ""; //$NON-NLS-1$
@@ -131,9 +138,19 @@ System.out.println("BLOCK-RENDER: scaleLabels: " + scaleLabels);
 					"radioLabel", scaleValues, scaleLabels, null, false); //$NON-NLS-1$
 			String selectIDLabel = radioLabel.getFullID();
 
+			// the scale rendering loop
 			for (int j = 0; j < scaleValues.length; ++j) {
 				UIBranchContainer rowBranch = UIBranchContainer.make(
 						blockStepped, "rowBranch:", Integer.toString(j)); //$NON-NLS-1$
+
+				// put in the block header text (only once)
+				if (j == 0) {
+					UIVerbatim headerText = UIVerbatim.make(rowBranch, "itemText", templateItem.getItem().getItemText()); //$NON-NLS-1$
+					Map map = new HashMap();
+					map.put("rowspan", (optionCount + 1) + "");
+					headerText.decorators =
+						new DecoratorList(new UIFreeAttributeDecorator(map));
+				}
 
 				// Actual label
 				UISelectLabel.make(rowBranch, "topLabel", selectIDLabel, j); //$NON-NLS-1$
@@ -141,21 +158,18 @@ System.out.println("BLOCK-RENDER: scaleLabels: " + scaleLabels);
 				// Corner Image
 				UILink.make(rowBranch, "cornerImage", EvaluationConstant.STEPPED_IMAGE_URLS[0]);
 
-				// This branch container is created to help in creating the
-				// middle images after the LABEL
+				// This branch container is created to help in creating the middle images after the LABEL
 				for (int k = 0; k < j; ++k) {
-					UIBranchContainer afterTopLabelBranch = UIBranchContainer.make(rowBranch, "afterTopLabelBranch:", Integer.toString(k));
+					UIBranchContainer afterTopLabelBranch = UIBranchContainer.make(rowBranch, "afterTopLabelBranch:", Integer.toString(k)); //$NON-NLS-1$
 					UILink.make(afterTopLabelBranch, "middleImage", EvaluationConstant.STEPPED_IMAGE_URLS[1]); //$NON-NLS-1$	
 				}
 
-				UIBranchContainer bottomLabelBranch = UIBranchContainer.make(
-						blockStepped, "bottomLabelBranch:", Integer.toString(j));
-				UILink.make(bottomLabelBranch, "bottomImage", EvaluationConstant.STEPPED_IMAGE_URLS[2]);
-
+				// the down arrow images
+				UIBranchContainer bottomLabelBranch = UIBranchContainer.make(blockStepped, "bottomLabelBranch:", Integer.toString(j)); //$NON-NLS-1$
+				UILink.make(bottomLabelBranch, "bottomImage", EvaluationConstant.STEPPED_IMAGE_URLS[2]); //$NON-NLS-1$
 			}
 		
-			// get child block item text
-			List childList = itemsLogic.getBlockChildTemplateItemsForBlockParent(templateItem.getId(), false);
+			// the child items rendering loop
 			for (int j = 0; j < childList.size(); j++) {
 
 				// get the child item
@@ -172,10 +186,11 @@ System.out.println("BLOCK-RENDER: scaleLabels: " + scaleLabels);
 				UIOutput.make(childRow, "childNum", new Integer(displayNumber + j).toString() ); //$NON-NLS-1$
 				UIOutput.make(childRow, "childText", childItem.getItemText()); //$NON-NLS-1$
 
-				// Bind the answers to a list of answers in evaluation bean
-				String childBinding =null;
-				if(bindings!= null)
+				// Bind the answers to a list of answers in evaluation bean (if enabled)
+				String childBinding = null;
+				if (!disabled && bindings != null) {
 					childBinding = bindings[j];
+				}
 				UISelect childRadios = UISelect.make(childRow, "dummyRadio",
 						scaleValues, scaleLabels, childBinding, initValue);
 				String selectID = childRadios.getFullID();
@@ -187,16 +202,16 @@ System.out.println("BLOCK-RENDER: scaleLabels: " + scaleLabels);
 
 				for (int k = 0; k < scaleValues.length; ++k) {
 					if (colored) {
-						UIBranchContainer radioBranchFirst = UIBranchContainer.make(childRow, 
-								"scaleOptionsFake:", new Integer(j).toString()); //$NON-NLS-1$
+						UIBranchContainer radioBranchFirst = 
+							UIBranchContainer.make(childRow, "scaleOptionsFake:", Integer.toString(k)); //$NON-NLS-1$
 						UISelectChoice.make(radioBranchFirst,
-								"dummyRadioValueFake", selectID, j); //$NON-NLS-1$
+								"dummyRadioValueFake", selectID, k); //$NON-NLS-1$
 					}
 
-					UIBranchContainer radioBranchSecond = UIBranchContainer.make(childRow, 
-							"scaleOptionsReal:", new Integer(j).toString()); //$NON-NLS-1$
+					UIBranchContainer radioBranchSecond = 
+						UIBranchContainer.make(childRow, "scaleOptionsReal:", Integer.toString(k)); //$NON-NLS-1$
 					UISelectChoice.make(radioBranchSecond,
-							"dummyRadioValueReal", selectID, j); //$NON-NLS-1$
+							"dummyRadioValueReal", selectID, k); //$NON-NLS-1$
 				}
 
 			}
