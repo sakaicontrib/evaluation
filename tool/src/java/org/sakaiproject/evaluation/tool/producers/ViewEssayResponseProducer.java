@@ -16,7 +16,6 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
@@ -31,8 +30,6 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.params.EssayResponseParams;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
-import org.sakaiproject.evaluation.tool.utils.ComparatorsUtils;
-import org.sakaiproject.evaluation.tool.utils.ItemBlockUtils;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
 import uk.org.ponder.messageutil.MessageLocator;
@@ -142,11 +139,7 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 			List allItems = new ArrayList(template.getTemplateItems());
 
 			if (! allItems.isEmpty()) {
-
-				List ncItemsList = ItemBlockUtils.getNonChildItems(allItems);
-				Collections.sort(ncItemsList, new ComparatorsUtils.TemplateItemComparatorByOrder());	
-
-				//Collections.sort(childItems, new ReportItemOrderComparator());
+				List ncItemsList = TemplateItemUtils.getNonChildItems(allItems);
 
 				// check if there is any "Course" items or "Instructor" items;
 				UIBranchContainer courseSection = null;

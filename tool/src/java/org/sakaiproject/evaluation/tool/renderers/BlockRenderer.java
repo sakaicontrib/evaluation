@@ -224,7 +224,7 @@ public class BlockRenderer implements ItemRenderer {
 	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#getRenderType()
 	 */
 	public String getRenderType() {
-		return EvalConstants.ITEM_TYPE_BLOCK;
+		return EvalConstants.ITEM_TYPE_BLOCK_PARENT;
 	}
 
 

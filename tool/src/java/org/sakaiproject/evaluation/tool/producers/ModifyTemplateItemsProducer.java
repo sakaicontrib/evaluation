@@ -14,7 +14,6 @@
  *****************************************************************************/
 package org.sakaiproject.evaluation.tool.producers;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,8 +28,6 @@ import org.sakaiproject.evaluation.tool.params.BlockIdsParameters;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.params.PreviewEvalParameters;
 import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
-import org.sakaiproject.evaluation.tool.utils.ComparatorsUtils;
-import org.sakaiproject.evaluation.tool.utils.ItemBlockUtils;
 import org.sakaiproject.evaluation.tool.utils.RSFUtils;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
@@ -148,10 +145,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer,
 		UICommand.make(form, "add_questions", UIMessage.make("modifytemplate.add.item.button")); //$NON-NLS-1$ //$NON-NLS-2$
 
 		List l = localTemplateLogic.fetchTemplateItems(templateId);
-		List templateItemsList = ItemBlockUtils.getNonChildItems(l);
-		Collections.sort(templateItemsList,
-				new ComparatorsUtils.TemplateItemComparatorByOrder());
-
+		List templateItemsList = TemplateItemUtils.getNonChildItems(l);
 		if (templateItemsList.isEmpty()) {
 			UIMessage.make(tofill, "begin-eval-dummylink",
 					"modifytemplate.begin.eval.link");
@@ -307,7 +301,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer,
 				// rendering block child items
 				if (myTemplateItem.getBlockParent() != null
 						&& myTemplateItem.getBlockParent().booleanValue() == true) {
-					List childList = ItemBlockUtils.getChildItems(l, myTemplateItem
+					List childList = TemplateItemUtils.getChildItems(l, myTemplateItem
 							.getId());
 					for (int k = 0; k < childList.size(); k++) {
 						UIBranchContainer childRow = UIBranchContainer.make(form2,

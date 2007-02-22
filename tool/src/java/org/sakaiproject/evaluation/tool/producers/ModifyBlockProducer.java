@@ -24,7 +24,6 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.params.BlockIdsParameters;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
-import org.sakaiproject.evaluation.tool.utils.ItemBlockUtils;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
 import uk.org.ponder.messageutil.MessageLocator;
@@ -222,8 +221,7 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 			 */
 			Boolean isDefaultCourse = (Boolean) settings
 					.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
-			
-			UISelect radios = null;
+
 			String itemPath = null;
 			if (modify) {// modify existing block
 				itemPath = "templateItemBeanLocator." + templateItems[0].getId();
@@ -297,8 +295,7 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 				// get Block child item
 				EvalTemplate template = templateItems[0].getTemplate();
 				List l = itemsLogic.getTemplateItemsForTemplate(template.getId(), null);
-				List childList = ItemBlockUtils.getChildItems(l, templateItems[0]
-						.getId());
+				List childList = TemplateItemUtils.getChildItems(l, templateItems[0].getId());
 				for (int i = 0; i < childList.size(); i++) {
 					EvalTemplateItem child = (EvalTemplateItem) childList.get(i);
 					emitItem(form, child, child.getDisplayOrder().intValue());
@@ -311,13 +308,13 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 					int orderNo = 0;
 					for (int i = 0; i < templateItems.length; i++) {
 						if (TemplateItemUtils.getTemplateItemType(templateItems[i]).equals(
-								EvalConstants.ITEM_TYPE_BLOCK)) {
+								EvalConstants.ITEM_TYPE_BLOCK_PARENT)) {
 
-							List childs = ItemBlockUtils.getChildItems(allTemplateItems,
+							List children = TemplateItemUtils.getChildItems(allTemplateItems,
 									templateItems[i].getId());
 
-							for (int k = 0; k < childs.size(); k++) {
-								EvalTemplateItem myChild = (EvalTemplateItem) childs.get(k);
+							for (int k = 0; k < children.size(); k++) {
+								EvalTemplateItem myChild = (EvalTemplateItem) children.get(k);
 								emitItem(form, myChild, orderNo + 1);
 								orderNo++;
 							}

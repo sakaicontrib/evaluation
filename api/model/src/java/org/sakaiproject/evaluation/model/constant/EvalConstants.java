@@ -99,12 +99,21 @@ public class EvalConstants {
 	public static final String ITEM_TYPE_HEADER = "Header";
 	/**
 	 * Item type (itemClassification) setting:
-	 * <b>Note:</b> This is a special type for rendering blocks only, 
+	 * <b>Note:</b> This is a special type for rendering blocks only 
+	 * and identifies this as a block parent, 
 	 * if you attempt to save an item or templateItem with this type 
 	 * it will fail, only use this in the presentation layer
 	 * (see implementation notes for details on blocks)
 	 */
-	public static final String ITEM_TYPE_BLOCK = "Block";
+	public static final String ITEM_TYPE_BLOCK_PARENT = "BlockParent";
+	/**
+	 * Item type (itemClassification) setting:
+	 * <b>Note:</b> This is a special type for identifying block children only, 
+	 * if you attempt to save an item or templateItem with this type 
+	 * it will fail, only use this in the presentation layer
+	 * (see implementation notes for details on blocks)
+	 */
+	public static final String ITEM_TYPE_BLOCK_CHILD = "BlockChild";
 
 	/**
 	 * Item category (itemCategory) setting:

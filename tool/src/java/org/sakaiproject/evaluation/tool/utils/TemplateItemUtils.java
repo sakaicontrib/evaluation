@@ -14,6 +14,8 @@
 
 package org.sakaiproject.evaluation.tool.utils;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -44,10 +46,10 @@ public class TemplateItemUtils {
 				// item is part of a block
 				if (templateItem.getBlockParent().booleanValue()) {
 					// this is a block parent so handle it a special way
-					return EvalConstants.ITEM_TYPE_BLOCK;
+					return EvalConstants.ITEM_TYPE_BLOCK_PARENT;
 				} else {
-					// this is a block child so die
-					throw new IllegalArgumentException("Cannot render block child items alone, they are rendered with the parent when it gets rendered");
+					// this is a block child
+					return EvalConstants.ITEM_TYPE_BLOCK_CHILD;
 				}
 			} else {
 				// item is a normal scaled item
@@ -67,14 +69,124 @@ public class TemplateItemUtils {
 	 */
 	public static boolean checkTemplateItemsCategoryExists(String itemTypeConstant, List itemList) {
 
-		for (int j = 0; j < itemList.size(); j++) {
-			EvalTemplateItem templateItem = (EvalTemplateItem) itemList.get(j);
+		for (int i = 0; i < itemList.size(); i++) {
+			EvalTemplateItem templateItem = (EvalTemplateItem) itemList.get(i);
 			if ( itemTypeConstant.equals( templateItem.getItemCategory() ) ) {
 				return true;
 			}
 		}
-
 		return false;
+	}
+
+	/**
+	 * Reorder a list of templateItems to be in the correct displayOrder,
+	 * this does not change the displayOrder values, it simply places everything in the
+	 * correct order in the returned list
+	 * 
+	 * @param templateItemsList a List of {@link EvalTemplateItem} objects from a template
+	 * @return a List of {@link EvalTemplateItem} objects
+	 */
+	public static List orderTemplateItems(List templateItemsList) {
+		List orderedItemsList = new ArrayList();
+
+		List nonChildrenItems = getNonChildItems(templateItemsList);
+		for (int i=0; i<nonChildrenItems.size(); i++) {
+			EvalTemplateItem templateItem = (EvalTemplateItem) nonChildrenItems.get(i);
+			String type = getTemplateItemType(templateItem);
+			orderedItemsList.add(templateItem);
+			if (EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(type)) {
+				List childrenItems = getChildItems(templateItemsList, templateItem.getId());
+				for (int j=0; j<childrenItems.size(); j++) {
+					EvalTemplateItem childItem = (EvalTemplateItem) childrenItems.get(i);
+					orderedItemsList.add(childItem);
+				}
+			}
+		}
+
+		return orderedItemsList;
+	}
+
+
+	/**
+	 * Return a list of answerable items only in the correct order,
+	 * does not include block parents or header items or any item that
+	 * cannot be answered
+	 * 
+	 * @param tempItemsList a List of {@link EvalTemplateItem} objects from a template
+	 * @return a List of {@link EvalTemplateItem} objects
+	 */
+	public static List getAnswerableTemplateItems(List templateItemsList) {		
+		List answerableItemsList = new ArrayList();
+
+		List orderedItems = orderTemplateItems(templateItemsList);
+
+		for (int i=0; i<orderedItems.size(); i++) {
+			EvalTemplateItem templateItem = (EvalTemplateItem) orderedItems.get(i);
+			String type = getTemplateItemType(templateItem);
+			if (EvalConstants.ITEM_TYPE_HEADER.equals(type)) {
+				continue;
+			}
+			if (EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(type)) {
+				continue;
+			}
+			answerableItemsList.add(templateItem);
+		}
+
+		return answerableItemsList;
+	}
+
+	// BLOCKS
+
+	/**
+	 * filter out the Block child items, and only return non-child items, return then
+	 * in correctly sorted display order
+	 * 
+	 * @param tempItemsList a List of {@link EvalTemplateItem} objects in a template
+	 * @return a List of {@link EvalTemplateItem} objects without any block child objects
+	 */
+	public static List getNonChildItems(List templateItemsList) {
+		List nonChildItemsList = new ArrayList();
+
+		for (int i=0; i<templateItemsList.size(); i++) {
+			EvalTemplateItem templateItem = (EvalTemplateItem) templateItemsList.get(i);
+			String type = getTemplateItemType(templateItem);
+			if (EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(type)) {
+				continue;
+			}
+			nonChildItemsList.add(templateItem);
+		}
+
+		// fix the order
+		Collections.sort(nonChildItemsList, 
+				new ComparatorsUtils.TemplateItemComparatorByOrder() );
+		return nonChildItemsList;
+	}
+
+	/**
+	 * return the child items which are associated with a block parent Id in the correct
+	 * display order
+	 * 
+	 * @param tempItemsList a List of {@link EvalTemplateItem} objects in a template
+	 * @param blockParentId a unique identifier for an {@link EvalTemplateItem} which is a block parent
+	 * @return a List of {@link EvalTemplateItem} objects or empty if none found
+	 */
+	public static List getChildItems(List templateItemsList, Long blockParentId) {
+		List childItemsList = new ArrayList();
+
+		for (int i=0; i<templateItemsList.size(); i++) {
+			EvalTemplateItem templateItem = (EvalTemplateItem) templateItemsList.get(i);
+			String type = getTemplateItemType(templateItem);
+			if (EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(type)) {
+				if ( blockParentId.equals(templateItem.getBlockId()) ) {
+					childItemsList.add(templateItem);
+				}
+			}
+		}
+
+		// fix the order
+		Collections.sort(childItemsList, 
+				new ComparatorsUtils.TemplateItemComparatorByOrder() );
+		return childItemsList;
 	}
 
 }

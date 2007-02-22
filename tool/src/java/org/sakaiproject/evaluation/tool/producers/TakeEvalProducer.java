@@ -16,7 +16,6 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -34,8 +33,6 @@ import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.LocalResponsesLogic;
 import org.sakaiproject.evaluation.tool.params.EvalTakeViewParameters;
 import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
-import org.sakaiproject.evaluation.tool.utils.ComparatorsUtils;
-import org.sakaiproject.evaluation.tool.utils.ItemBlockUtils;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
 import uk.org.ponder.messageutil.MessageLocator;
@@ -108,10 +105,6 @@ public class TakeEvalProducer implements ViewComponentProducer,
 		this.localResponsesLogic = localResponsesLogic;
 	}
 
-	//This variable is used for binding the items to a list in evaluationBean
-	private int totalItemsAdded = 0;
-
-
     String responseOTPBinding = "responseBeanLocator";
     String responseOTP = responseOTPBinding + ".";
     String newResponseOTPBinding = responseOTP + "new";
@@ -180,8 +173,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 		List allItems = new ArrayList(template.getTemplateItems());
 	
 		//filter out the block child items, to get a list non-child items
-		List ncItemsList = ItemBlockUtils.getNonChildItems(allItems);
-		Collections.sort(ncItemsList, new ComparatorsUtils.TemplateItemComparatorByOrder());
+		List ncItemsList = TemplateItemUtils.getNonChildItems(allItems);
 		
 		HashMap answerMap=null;
 		if(responseId!=null) {

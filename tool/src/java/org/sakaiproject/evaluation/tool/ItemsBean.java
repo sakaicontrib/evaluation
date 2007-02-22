@@ -16,7 +16,6 @@
 package org.sakaiproject.evaluation.tool;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -30,8 +29,6 @@ import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
-import org.sakaiproject.evaluation.tool.utils.ComparatorsUtils;
-import org.sakaiproject.evaluation.tool.utils.ItemBlockUtils;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
 /**
@@ -176,10 +173,8 @@ public class ItemsBean {
 	public String removeItemAction(){
 		
 		List allTemplateItems = itemsLogic.getTemplateItemsForTemplate(templateItem.getTemplate().getId(), null);
-		List noChildList = ItemBlockUtils.getNonChildItems(allTemplateItems);
-		Collections.sort(noChildList, new ComparatorsUtils.TemplateItemComparatorByOrder());
-		
-		if(TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_BLOCK)){
+		List noChildList = TemplateItemUtils.getNonChildItems(allTemplateItems);
+		if (TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)) {
 			
 			int parentDO = templateItem.getDisplayOrder().intValue();//block parent's displayOrder
 			List childList = itemsLogic.getBlockChildTemplateItemsForBlockParent(templateItem.getId(), false);
