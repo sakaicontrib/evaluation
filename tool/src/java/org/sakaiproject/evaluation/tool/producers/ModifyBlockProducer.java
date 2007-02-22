@@ -91,16 +91,13 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams,
 			ComponentChecker checker) {
 		BlockIdsParameters evParameters = (BlockIdsParameters) viewparams;
-
 		Long templateId = evParameters.templateId;
-
-		//System.out.println("templateId=" + evParameters.templateId);
-		//System.out.println("block item ids=" + evParameters.templateItemIds);
 		
-		//this variable indicate if it is for modify existing Block
+		//thisindicate if it is for modify existing Block
 		boolean modify = false;
-		//this variable indicate if the passed Ids have the same scale
+		//this indicate if the passed Ids have the same scale
 		boolean validScaleIds = true;
+		boolean validChildsNo = true; //this is to enforce settings of maximun Number of child text in a block
 		//the first items's original displayOrder
 		Integer firstDO = null;
 		
@@ -122,6 +119,7 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 		if (strIds.length == 1 && templateItems[0] != null)
 			modify = true;
 
+		
 		// check if each templateItem has the same scale, otherwise show warning
 		// text
 		if (templateItems.length > 1) {
@@ -138,7 +136,29 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 			}
 		}
 
-		if (!modify && validScaleIds) {// creating new block with the same scale
+		//enforce system settings of maximum number of child items for new Block creation
+		if(!modify && validScaleIds ){
+			//if not have same scale, skip this block
+			
+			int maxChildsNo = ((Integer)settings.get(EvalSettings.ITEMS_ALLOWED_IN_QUESTION_BLOCK)).intValue();
+			//get actual total number of no-parent item(block childs + normal scaled type)
+			int actualChildsNo = 0;
+			for(int i=0; i<templateItems.length; i++){
+				if(TemplateItemUtils.getTemplateItemType(templateItems[i]).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)){
+					//get number of childs
+					List l = itemsLogic.getBlockChildTemplateItemsForBlockParent(templateItems[i].getId(), false);
+					actualChildsNo = actualChildsNo + l.size();
+				}else{
+					actualChildsNo++;
+				}					
+			}//end of for loop
+			System.out.println("total number of childsin a block="+ actualChildsNo+
+					", maximum number of childs allowed in block="+maxChildsNo);
+			if(actualChildsNo > maxChildsNo)
+				validChildsNo =false;
+		}
+		
+		if (!modify && validScaleIds && validChildsNo) {// creating new block with the same scale
 			// case
 			boolean shift = false;
 			// get the first Block ID if any, and shift it to the first of the
@@ -175,16 +195,24 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 				"summary-toplink", messageLocator.getMessage("summary.page.title"), //$NON-NLS-1$ //$NON-NLS-2$
 				new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
-		if (!validScaleIds) {
+		
+		if (!validScaleIds ||!validChildsNo) {
 			// show error page with back button
 			UIBranchContainer showError = UIBranchContainer
 					.make(tofill, "errorPage:");
-			UIOutput.make(showError, "errorMsg", messageLocator
-					.getMessage("modifyblock.error.message"));
+			if(!validScaleIds){
+				
+				UIOutput.make(showError, "errorMsg", messageLocator
+					.getMessage("modifyblock.error.scale.message"));
+			}else{ 
+				UIOutput.make(showError, "errorMsg", messageLocator
+					.getMessage("modifyblock.error.numberofblockChilds.message"));
+			}
+			
 			UIOutput.make(showError, "back-button", messageLocator
 					.getMessage("modifyblock.back.button"));
 
-		} else {// render block page
+		}else {// render block page
 
 			UIBranchContainer showBlock = UIBranchContainer
 					.make(tofill, "blockPage:");
