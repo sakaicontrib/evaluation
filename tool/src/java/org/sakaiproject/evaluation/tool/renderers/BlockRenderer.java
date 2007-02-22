@@ -141,7 +141,7 @@ public class BlockRenderer implements ItemRenderer {
 			// the scale rendering loop
 			for (int j = 0; j < scaleValues.length; ++j) {
 				UIBranchContainer rowBranch = UIBranchContainer.make(
-						blockStepped, "rowBranch:", Integer.toString(j)); //$NON-NLS-1$
+						blockStepped, "blockRowBranch:", Integer.toString(j)); //$NON-NLS-1$
 
 				// put in the block header text (only once)
 				if (j == 0) {
@@ -160,12 +160,12 @@ public class BlockRenderer implements ItemRenderer {
 
 				// This branch container is created to help in creating the middle images after the LABEL
 				for (int k = 0; k < j; ++k) {
-					UIBranchContainer afterTopLabelBranch = UIBranchContainer.make(rowBranch, "afterTopLabelBranch:", Integer.toString(k)); //$NON-NLS-1$
+					UIBranchContainer afterTopLabelBranch = UIBranchContainer.make(rowBranch, "blockAfterTopLabelBranch:", Integer.toString(k)); //$NON-NLS-1$
 					UILink.make(afterTopLabelBranch, "middleImage", EvaluationConstant.STEPPED_IMAGE_URLS[1]); //$NON-NLS-1$	
 				}
 
 				// the down arrow images
-				UIBranchContainer bottomLabelBranch = UIBranchContainer.make(blockStepped, "bottomLabelBranch:", Integer.toString(j)); //$NON-NLS-1$
+				UIBranchContainer bottomLabelBranch = UIBranchContainer.make(blockStepped, "blockBottomLabelBranch:", Integer.toString(j)); //$NON-NLS-1$
 				UILink.make(bottomLabelBranch, "bottomImage", EvaluationConstant.STEPPED_IMAGE_URLS[2]); //$NON-NLS-1$
 			}
 		
