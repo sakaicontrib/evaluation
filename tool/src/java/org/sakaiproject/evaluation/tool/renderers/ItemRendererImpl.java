@@ -60,7 +60,8 @@ public class ItemRendererImpl implements ItemRenderer {
 			throw new IllegalArgumentException("item (from templateItem.getItem()) cannot be null");
 		}
 
-		if (bindings != null && bindings.length == 0) {
+		if (bindings == null || 
+				(bindings != null && bindings.length == 0) ) {
 			bindings = new String[] {null};
 		}
 
