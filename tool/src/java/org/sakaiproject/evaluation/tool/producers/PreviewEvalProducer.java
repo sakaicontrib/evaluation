@@ -199,7 +199,6 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 				//filter out the block child items, to get a list non-child items
 				List ncItemsList = ItemBlockUtils.getNonChildItems(allItems);
 
-				//Collections.sort(allItems, new EvaluationItemOrderComparator());
 				Collections.sort( ncItemsList, new ComparatorsUtils.TemplateItemComparatorByOrder() );		
 
 				// check if there is any "Course" items or "Instructor" items;
