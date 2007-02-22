@@ -18,13 +18,16 @@ import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
 import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
+import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.ELReference;
+import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIELBinding;
@@ -90,6 +93,13 @@ public class RemoveQuestionProducer implements ViewComponentProducer, ViewParams
 		UIOutput.make(tofill, "remove-question-confirm-pre-name", messageLocator.getMessage("removequestion.confirm.pre.name")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(tofill, "remove-question-confirm-post-name", messageLocator.getMessage("removequestion.confirm.post.name")); //$NON-NLS-1$ //$NON-NLS-2$
 
+		//if it is a block item, show information 
+		if(TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_BLOCK)){
+			UIBranchContainer showBlockInfo = UIBranchContainer.make(tofill, "showBlockInfo:");
+			UIOutput.make(showBlockInfo, "remove-question-spilt-block", messageLocator.getMessage("removequestion.spilt.block")); 
+
+		}
+		
 		//use the renderer evolver
 		itemRenderer.renderItem(tofill, "remove-item:", null, templateItem, 0, true);
 	
