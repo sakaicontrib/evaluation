@@ -1,6 +1,6 @@
 package org.sakaiproject.evaluation.model;
 
-// Generated Feb 15, 2007 3:42:04 PM by Hibernate Tools 3.2.0.beta6a
+// Generated Feb 22, 2007 9:51:10 AM by Hibernate Tools 3.2.0.beta6a
 
 import java.util.Date;
 import java.util.HashSet;
@@ -36,20 +36,20 @@ public class EvalResponse implements java.io.Serializable {
 	}
 
 	/** minimal constructor */
-	public EvalResponse(Date lastModified, String owner, String context, Date startTime, EvalEvaluation evaluation) {
+	public EvalResponse(Date lastModified, String owner, String evalGroupId, Date startTime, EvalEvaluation evaluation) {
 		this.lastModified = lastModified;
 		this.owner = owner;
-		this.evalGroupId = context;
+		this.evalGroupId = evalGroupId;
 		this.startTime = startTime;
 		this.evaluation = evaluation;
 	}
 
 	/** full constructor */
-	public EvalResponse(Date lastModified, String owner, String context, Date startTime, Date endTime, Set answers,
+	public EvalResponse(Date lastModified, String owner, String evalGroupId, Date startTime, Date endTime, Set answers,
 			EvalEvaluation evaluation) {
 		this.lastModified = lastModified;
 		this.owner = owner;
-		this.evalGroupId = context;
+		this.evalGroupId = evalGroupId;
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.answers = answers;
@@ -85,8 +85,8 @@ public class EvalResponse implements java.io.Serializable {
 		return this.evalGroupId;
 	}
 
-	public void setEvalGroupId(String context) {
-		this.evalGroupId = context;
+	public void setEvalGroupId(String evalGroupId) {
+		this.evalGroupId = evalGroupId;
 	}
 
 	public Date getStartTime() {
