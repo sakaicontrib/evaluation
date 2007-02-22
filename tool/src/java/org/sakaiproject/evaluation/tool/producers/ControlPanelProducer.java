@@ -26,7 +26,7 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
-import org.sakaiproject.evaluation.model.EvalAssignContext;
+import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
@@ -379,8 +379,8 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 	 */
 	private String getTitleForFirstEvalContext(Long evaluationId) {
 		List acs = assignsLogic.getAssignContextsByEvalId(evaluationId);
-		EvalAssignContext eac = (EvalAssignContext) acs.get(0);
-		return external.getDisplayTitle( eac.getContext() );
+		EvalAssignGroup eac = (EvalAssignGroup) acs.get(0);
+		return external.getDisplayTitle( eac.getEvalGroupId() );
 	}
 
 	/**
@@ -394,8 +394,8 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 
 		List l = assignsLogic.getAssignContextsByEvalId(evaluationId);
 		for (int i=0; i<l.size(); i++) {
-			EvalAssignContext eac = (EvalAssignContext) l.get(i);
-			String context = eac.getContext();
+			EvalAssignGroup eac = (EvalAssignGroup) l.get(i);
+			String context = eac.getEvalGroupId();
 			Set userIds = external.getUserIdsForContext(context, EvalConstants.PERM_TAKE_EVALUATION);
 			totalEnrollments = totalEnrollments + userIds.size();
 		}

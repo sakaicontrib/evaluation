@@ -29,7 +29,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
-import org.sakaiproject.evaluation.model.EvalAssignContext;
+import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
@@ -216,13 +216,13 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 	public Set getEvaluationsByContexts(String[] contexts, boolean activeOnly, boolean includeUnApproved) {
 		Set evals = new TreeSet(new EvaluationDateComparator());
 		if (contexts.length > 0) {
-			DetachedCriteria dc = DetachedCriteria.forClass(EvalAssignContext.class)
+			DetachedCriteria dc = DetachedCriteria.forClass(EvalAssignGroup.class)
 				.add( Property.forName("context").in(contexts));
 
 			List assignedCourses = getHibernateTemplate().findByCriteria(dc);
 			for (int i=0;i<assignedCourses.size();i++) {
 				// Note: This is inefficient, it is still retrieving ALL of the evaluations
-				EvalAssignContext ac = (EvalAssignContext) assignedCourses.get(i);
+				EvalAssignGroup ac = (EvalAssignGroup) assignedCourses.get(i);
 				if (includeUnApproved ||
 						ac.getInstructorApproval().booleanValue()) {
 					// only include approved evals or all if requested

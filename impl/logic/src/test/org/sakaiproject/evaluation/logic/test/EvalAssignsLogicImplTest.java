@@ -22,7 +22,7 @@ import junit.framework.Assert;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.impl.EvalAssignsLogicImpl;
 import org.sakaiproject.evaluation.logic.test.stubs.EvalExternalLogicStub;
-import org.sakaiproject.evaluation.model.EvalAssignContext;
+import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
@@ -96,60 +96,60 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalAssignsLogicImpl#saveAssignContext(org.sakaiproject.evaluation.model.EvalAssignContext, java.lang.String)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalAssignsLogicImpl#saveAssignContext(org.sakaiproject.evaluation.model.EvalAssignGroup, java.lang.String)}.
 	 */
 	public void testSaveAssignContext() {
 
 		// test adding context to inqueue eval
-		EvalAssignContext eacNew = new EvalAssignContext(new Date(), 
+		EvalAssignGroup eacNew = new EvalAssignGroup(new Date(), 
 				EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.CONTEXT1, 
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
 				etdl.evaluationNew);
 		assigns.saveAssignContext(eacNew, EvalTestDataLoad.MAINT_USER_ID);
 
 		// check save worked
-		List l = evaluationDao.findByProperties(EvalAssignContext.class, 
+		List l = evaluationDao.findByProperties(EvalAssignGroup.class, 
 				new String[] {"evaluation.id"}, new Object[] {etdl.evaluationNew.getId()});
 		Assert.assertNotNull(l);
 		Assert.assertEquals(1, l.size());
 		Assert.assertTrue(l.contains(eacNew));
 
 		// test adding context to active eval
-		EvalAssignContext eacActive = new EvalAssignContext(new Date(), 
+		EvalAssignGroup eacActive = new EvalAssignGroup(new Date(), 
 				EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.CONTEXT2, 
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
 				etdl.evaluationActive);
 		assigns.saveAssignContext(eacActive, EvalTestDataLoad.MAINT_USER_ID);
 
 		// check save worked
-		l = evaluationDao.findByProperties(EvalAssignContext.class, 
+		l = evaluationDao.findByProperties(EvalAssignGroup.class, 
 				new String[] {"evaluation.id"}, new Object[] {etdl.evaluationActive.getId()});
 		Assert.assertNotNull(l);
 		Assert.assertEquals(2, l.size());
 		Assert.assertTrue(l.contains(eacActive));
 
 		// test modify safe part while active
-		EvalAssignContext testEac1 = (EvalAssignContext) evaluationDao.
-			findById( EvalAssignContext.class, etdl.assign1.getId() );
+		EvalAssignGroup testEac1 = (EvalAssignGroup) evaluationDao.
+			findById( EvalAssignGroup.class, etdl.assign1.getId() );
 		testEac1.setStudentsViewResults( Boolean.TRUE );
 		assigns.saveAssignContext(testEac1, EvalTestDataLoad.MAINT_USER_ID);
 
 		// test modify safe part while closed
-		EvalAssignContext testEac2 = (EvalAssignContext) evaluationDao.
-			findById( EvalAssignContext.class, etdl.assign4.getId() );
+		EvalAssignGroup testEac2 = (EvalAssignGroup) evaluationDao.
+			findById( EvalAssignGroup.class, etdl.assign4.getId() );
 		testEac2.setStudentsViewResults( Boolean.TRUE );
 		assigns.saveAssignContext(testEac2, EvalTestDataLoad.MAINT_USER_ID);
 
 		// test admin can modify un-owned context
-		EvalAssignContext testEac3 = (EvalAssignContext) evaluationDao.
-			findById( EvalAssignContext.class, etdl.assign6.getId() );
+		EvalAssignGroup testEac3 = (EvalAssignGroup) evaluationDao.
+			findById( EvalAssignGroup.class, etdl.assign6.getId() );
 		testEac3.setStudentsViewResults( Boolean.TRUE );
 		assigns.saveAssignContext(testEac3, EvalTestDataLoad.ADMIN_USER_ID);
 
 
 		// test cannot add duplicate context to in-queue eval
 		try {
-			assigns.saveAssignContext( new EvalAssignContext(new Date(), 
+			assigns.saveAssignContext( new EvalAssignGroup(new Date(), 
 					EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.CONTEXT1, 
 					Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
 					etdl.evaluationNew),
@@ -161,7 +161,7 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 
 		// test cannot add duplicate context to active eval
 		try {
-			assigns.saveAssignContext( new EvalAssignContext(new Date(), 
+			assigns.saveAssignContext( new EvalAssignGroup(new Date(), 
 					EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.CONTEXT1, 
 					Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
 					etdl.evaluationActive),
@@ -173,7 +173,7 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 
 		// test user without perm cannot add context to eval
 		try {
-			assigns.saveAssignContext( new EvalAssignContext(new Date(), 
+			assigns.saveAssignContext( new EvalAssignGroup(new Date(), 
 					EvalTestDataLoad.USER_ID, EvalTestDataLoad.CONTEXT1, 
 					Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
 					etdl.evaluationNew), 
@@ -185,7 +185,7 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 
 		// test cannot add context to closed eval
 		try {
-			assigns.saveAssignContext( new EvalAssignContext(new Date(), 
+			assigns.saveAssignContext( new EvalAssignGroup(new Date(), 
 					EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.CONTEXT1, 
 					Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
 					etdl.evaluationViewable), 
@@ -248,11 +248,11 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 	 */
 	public void testDeleteAssignContext() {
 		// save some ACs to test removing
-		EvalAssignContext eac1 = new EvalAssignContext(new Date(), 
+		EvalAssignGroup eac1 = new EvalAssignGroup(new Date(), 
 				EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.CONTEXT1, 
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
 				etdl.evaluationNew);
-		EvalAssignContext eac2 = new EvalAssignContext(new Date(), 
+		EvalAssignGroup eac2 = new EvalAssignGroup(new Date(), 
 				EvalTestDataLoad.ADMIN_USER_ID, EvalTestDataLoad.CONTEXT2, 
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
 				etdl.evaluationNew);
@@ -260,7 +260,7 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 		evaluationDao.save(eac2);
 
 		// check save worked
-		List l = evaluationDao.findByProperties(EvalAssignContext.class, 
+		List l = evaluationDao.findByProperties(EvalAssignGroup.class, 
 				new String[] {"evaluation.id"}, new Object[] {etdl.evaluationNew.getId()});
 		Assert.assertNotNull(l);
 		Assert.assertEquals(2, l.size());
@@ -274,7 +274,7 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 		assigns.deleteAssignContext( etdl.assign6.getId(), EvalTestDataLoad.MAINT_USER_ID );
 
 		// check save worked
-		l = evaluationDao.findByProperties(EvalAssignContext.class, 
+		l = evaluationDao.findByProperties(EvalAssignGroup.class, 
 				new String[] {"evaluation.id"}, new Object[] {etdl.evaluationNew.getId()});
 		Assert.assertNotNull(l);
 		Assert.assertEquals(1, l.size());

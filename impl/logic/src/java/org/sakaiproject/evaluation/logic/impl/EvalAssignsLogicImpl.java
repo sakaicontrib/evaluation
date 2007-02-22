@@ -22,7 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.model.EvalAssignContext;
+import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.utils.EvalUtils;
@@ -58,8 +58,8 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalAssignsLogic#saveAssignContext(org.sakaiproject.evaluation.model.EvalAssignContext, java.lang.String)
 	 */
-	public void saveAssignContext(EvalAssignContext assignContext, String userId) {
-		log.debug("userId: " + userId + ", context: " + assignContext.getContext());
+	public void saveAssignContext(EvalAssignGroup assignContext, String userId) {
+		log.debug("userId: " + userId + ", context: " + assignContext.getEvalGroupId());
 
 		// set the date modified
 		assignContext.setLastModified( new Date() );
@@ -72,18 +72,18 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 				// check for duplicate AC first
 				if ( checkRemoveDuplicateAC(assignContext) ) {
 					throw new IllegalStateException("Duplicate mapping error, there is already an AC that defines a link from context: " + 
-							assignContext.getContext() + " to eval: " + eval.getId());
+							assignContext.getEvalGroupId() + " to eval: " + eval.getId());
 				}
 
 				dao.save(assignContext);
 				log.info("User ("+userId+") created a new AC ("+assignContext.getId()+"), " +
-						"linked context ("+assignContext.getContext()+") with eval ("+eval.getId()+")");
+						"linked context ("+assignContext.getEvalGroupId()+") with eval ("+eval.getId()+")");
 			}
 		} else {
 			// updating an existing AC
 
 			// fetch the existing AC out of the DB to compare it
-			EvalAssignContext existingAC = (EvalAssignContext) dao.findById(EvalAssignContext.class, assignContext.getId());
+			EvalAssignGroup existingAC = (EvalAssignGroup) dao.findById(EvalAssignGroup.class, assignContext.getId());
 			//log.info("AZQ: current AC("+existingAC.getId()+"): ctxt:" + existingAC.getContext() + ", eval:" + existingAC.getEvaluation().getId());
 
 			// check the user control permissions
@@ -92,9 +92,9 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 			}
 
 			// cannot change the evaluation or context so fail if they have been changed
-			if (! existingAC.getContext().equals(assignContext.getContext())) {
-				throw new IllegalArgumentException("Cannot update context ("+assignContext.getContext()+
-						") for an existing AC, context ("+existingAC.getContext()+")");
+			if (! existingAC.getEvalGroupId().equals(assignContext.getEvalGroupId())) {
+				throw new IllegalArgumentException("Cannot update context ("+assignContext.getEvalGroupId()+
+						") for an existing AC, context ("+existingAC.getEvalGroupId()+")");
 			} else if (! existingAC.getEvaluation().getId().equals(eval.getId())) {
 				throw new IllegalArgumentException("Cannot update eval ("+eval.getId()+
 						") for an existing AC, eval ("+existingAC.getEvaluation().getId()+")");
@@ -136,7 +136,7 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 		log.debug("userId: " + userId + ", assignContextId: " + assignContextId);
 
 		// get AC
-		EvalAssignContext assignContext = (EvalAssignContext) dao.findById(EvalAssignContext.class, assignContextId);
+		EvalAssignGroup assignContext = (EvalAssignGroup) dao.findById(EvalAssignGroup.class, assignContextId);
 		if (assignContext == null) {
 			throw new IllegalArgumentException("Cannot find assign context with this id: " + assignContextId);
 		}
@@ -163,7 +163,7 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 			throw new IllegalArgumentException("Cannot find evaluation with this id: " + evaluationId);
 		}
 
-		return dao.findByProperties(EvalAssignContext.class, 
+		return dao.findByProperties(EvalAssignGroup.class, 
 				new String[] {"evaluation.id"}, 
 				new Object[] {evaluationId});
 	}
@@ -198,7 +198,7 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 		log.debug("userId: " + userId + ", assignContextId: " + assignContextId);
 
 		// get AC
-		EvalAssignContext assignContext = (EvalAssignContext) dao.findById(EvalAssignContext.class, assignContextId);
+		EvalAssignGroup assignContext = (EvalAssignGroup) dao.findById(EvalAssignGroup.class, assignContextId);
 		if (assignContext == null) {
 			throw new IllegalArgumentException("Cannot find assign context with this id: " + assignContextId);
 		}
@@ -219,7 +219,7 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 	 * @param assignContext
 	 * @return true if can, false otherwise
 	 */
-	private boolean checkControlAC(String userId, EvalAssignContext assignContext) {
+	private boolean checkControlAC(String userId, EvalAssignGroup assignContext) {
 		log.debug("userId: " + userId + ", assignContext: " + assignContext.getId());
 
 		// check user permissions (just owner and super at this point)
@@ -264,7 +264,7 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 	 * @param assignContext
 	 * @return true if they can, throw exceptions otherwise
 	 */
-	private boolean checkRemoveAC(String userId, EvalAssignContext assignContext) {
+	private boolean checkRemoveAC(String userId, EvalAssignGroup assignContext) {
 		log.debug("userId: " + userId + ", assignContextId: " + assignContext.getId());
 
 		// get evaluation from AC
@@ -288,13 +288,13 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 	 * @param ac
 	 * @return true if duplicate found
 	 */
-	private boolean checkRemoveDuplicateAC(EvalAssignContext ac) {
+	private boolean checkRemoveDuplicateAC(EvalAssignGroup ac) {
 		log.debug("assignContext: " + ac.getId());
 
 //		log.info("AZ1: current AC("+ac.getId()+"): ctxt:" + ac.getContext() + ", eval:" + ac.getEvaluation().getId());
-		List l = dao.findByProperties(EvalAssignContext.class, 
+		List l = dao.findByProperties(EvalAssignGroup.class, 
 				new String[] {"context", "evaluation.id"}, 
-				new Object[] {ac.getContext(), ac.getEvaluation().getId()});
+				new Object[] {ac.getEvalGroupId(), ac.getEvaluation().getId()});
 		if ( (ac.getId() == null && l.size() >= 1) || 
 				(ac.getId() != null && l.size() >= 2) ) {
 			// there is an existing AC which does the same mapping

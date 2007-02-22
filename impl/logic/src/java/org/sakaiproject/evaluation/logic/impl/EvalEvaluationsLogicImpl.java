@@ -33,7 +33,7 @@ import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.impl.interceptors.EvaluationModificationRegistry;
 import org.sakaiproject.evaluation.logic.model.Context;
-import org.sakaiproject.evaluation.model.EvalAssignContext;
+import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalTemplate;
@@ -232,7 +232,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 		if ( canUserRemoveEval(userId, evaluation) ) {
 			Set[] entitySets = new HashSet[3];
 			// remove associated AssignContexts
-			List acs = dao.findByProperties(EvalAssignContext.class, 
+			List acs = dao.findByProperties(EvalAssignGroup.class, 
 					new String[] {"evaluation.id"}, 
 					new Object[] {evaluationId});
 			Set assignSet = new HashSet(acs);
@@ -409,7 +409,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 	 */
 	public int countEvaluationContexts(Long evaluationId) {
 		log.debug("evalId: " + evaluationId);
-		return dao.countByProperties(EvalAssignContext.class, 
+		return dao.countByProperties(EvalAssignGroup.class, 
 				new String[] {"evaluation.id"}, 
 				new Object[] {evaluationId});
 	}
@@ -430,18 +430,18 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 		// get all the contexts for the given eval ids in one storage call
 		List l = new ArrayList();
 		if (includeUnApproved) {
-			l = dao.findByProperties(EvalAssignContext.class,
+			l = dao.findByProperties(EvalAssignGroup.class,
 				new String[] {"evaluation.id"}, 
 				new Object[] {evaluationIds} );
 		} else {
 			// only include those that are approved
-			l = dao.findByProperties(EvalAssignContext.class,
+			l = dao.findByProperties(EvalAssignGroup.class,
 					new String[] {"evaluation.id", "instructorApproval"}, 
 					new Object[] {evaluationIds, Boolean.TRUE} );
 		}
 		for (int i=0; i<l.size(); i++) {
-			EvalAssignContext eac = (EvalAssignContext) l.get(i);
-			String context = eac.getContext();
+			EvalAssignGroup eac = (EvalAssignGroup) l.get(i);
+			String context = eac.getEvalGroupId();
 
 			// put stuff in inner list
 			Long evalId = eac.getEvaluation().getId();
@@ -547,7 +547,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 		}
 
 		// check that the context is valid for this evaluation
-		List acs = dao.findByProperties(EvalAssignContext.class, 
+		List acs = dao.findByProperties(EvalAssignGroup.class, 
 				new String[] {"evaluation.id", "context"}, 
 				new Object[] {evaluationId, context});
 		if (acs.size() <= 0) {
@@ -555,7 +555,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 			return false;
 		} else {
 			// make sure instructor approval is true
-			EvalAssignContext eac = (EvalAssignContext) acs.get(0);
+			EvalAssignGroup eac = (EvalAssignGroup) acs.get(0);
 			if (! eac.getInstructorApproval().booleanValue() ) {
 				log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") in this context (" + context + "), instructor has not approved");
 				return false;

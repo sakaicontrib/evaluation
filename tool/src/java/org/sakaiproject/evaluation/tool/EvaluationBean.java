@@ -30,7 +30,7 @@ import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
-import org.sakaiproject.evaluation.model.EvalAssignContext;
+import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
@@ -381,7 +381,7 @@ public class EvaluationBean {
 			Boolean instApproval = Boolean.TRUE;
 			//If instructors must optIn, set approval to false. otherwise it is always true.
 			if(eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_OPT_IN))instApproval=Boolean.FALSE;
-			EvalAssignContext assignCourse = new EvalAssignContext(new Date(), 
+			EvalAssignGroup assignCourse = new EvalAssignGroup(new Date(), 
 					external.getCurrentUserId(), selectedSakaiSiteIds[count], 
 					instApproval, Boolean.TRUE, Boolean.FALSE, eval);
 			assignsLogic.saveAssignContext(assignCourse, external.getCurrentUserId());
@@ -478,8 +478,8 @@ public class EvaluationBean {
 		if(l!=null && l.size() >0){
 			selectedSakaiSiteIds = new String[l.size()];
 			for(int i =0; i< l.size(); i++){
-				EvalAssignContext eac = (EvalAssignContext) l.get(i);
-				selectedSakaiSiteIds[i] = eac.getContext();
+				EvalAssignGroup eac = (EvalAssignGroup) l.get(i);
+				selectedSakaiSiteIds[i] = eac.getEvalGroupId();
 			}
 		}
 	
