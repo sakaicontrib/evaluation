@@ -102,8 +102,8 @@ public class EvaluationSettingsProducer implements ViewComponentProducer,
 
 		// Displaying the top link, page title, page description, and creating the
 		// HTML form
-		UIOutput.make(tofill, "eval-settings-title", "evalsettings.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
-		UIInternalLink.make(tofill, "summary-toplink", "summary.page.title", //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "eval-settings-title", "evalsettings.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), //$NON-NLS-1$ //$NON-NLS-2$
 				new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
 		UIForm form = UIForm.make(tofill, "evalSettingsForm"); //$NON-NLS-1$
