@@ -21,7 +21,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.model.Context;
+import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 
@@ -51,7 +51,7 @@ public class EvalExternalLogicStub implements EvalExternalLogic {
 	 * 2) CONTEXT2/SITE2_ID -
 	 * USER_ID and STUDENT_USER_ID can take eval, MAINT_USER_ID can be evaluated but can not admin (cannot take)<br/>
 	 */
-	public int countContextsForUser(String userId, String permission) {
+	public int countEvalGroupsForUser(String userId, String permission) {
 		if ( EvalTestDataLoad.ADMIN_USER_ID.equals(userId) ) {
 			return 2;
 		} else if ( EvalTestDataLoad.MAINT_USER_ID.equals(userId) ) {
@@ -104,21 +104,21 @@ public class EvalExternalLogicStub implements EvalExternalLogic {
 	 * 2) CONTEXT2/SITE2_ID -
 	 * USER_ID and STUDENT_USER_ID can take eval, MAINT_USER_ID can be evaluated but can not admin (cannot take)<br/>
 	 */
-	public List getContextsForUser(String userId, String permission) {
+	public List getEvalGroupsForUser(String userId, String permission) {
 		List l = new ArrayList();
 		if ( EvalTestDataLoad.ADMIN_USER_ID.equals(userId) ) {
-			l.add( makeContextObject(EvalTestDataLoad.CONTEXT1) );
-			l.add( makeContextObject(EvalTestDataLoad.CONTEXT2) );
+			l.add( makeEvalGroupObject(EvalTestDataLoad.CONTEXT1) );
+			l.add( makeEvalGroupObject(EvalTestDataLoad.CONTEXT2) );
 		} else if ( EvalTestDataLoad.MAINT_USER_ID.equals(userId) ) {
 			if ( EvalConstants.PERM_ASSIGN_EVALUATION.equals(permission) ) {
-				l.add( makeContextObject(EvalTestDataLoad.CONTEXT1) );
+				l.add( makeEvalGroupObject(EvalTestDataLoad.CONTEXT1) );
 			} else if ( EvalConstants.PERM_BE_EVALUATED.equals(permission) ) {
-				l.add( makeContextObject(EvalTestDataLoad.CONTEXT1) );
-				l.add( makeContextObject(EvalTestDataLoad.CONTEXT2) );
+				l.add( makeEvalGroupObject(EvalTestDataLoad.CONTEXT1) );
+				l.add( makeEvalGroupObject(EvalTestDataLoad.CONTEXT2) );
 			} else if ( EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
 				// nothing
 			} else if ( EvalConstants.PERM_WRITE_TEMPLATE.equals(permission) ) {
-				l.add( makeContextObject(EvalTestDataLoad.CONTEXT1) );
+				l.add( makeEvalGroupObject(EvalTestDataLoad.CONTEXT1) );
 			} else {
 				// nothing
 			}
@@ -128,8 +128,8 @@ public class EvalExternalLogicStub implements EvalExternalLogic {
 			} else if ( EvalConstants.PERM_BE_EVALUATED.equals(permission) ) {
 				// nothing
 			} else if ( EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
-				l.add( makeContextObject(EvalTestDataLoad.CONTEXT1) );
-				l.add( makeContextObject(EvalTestDataLoad.CONTEXT2) );
+				l.add( makeEvalGroupObject(EvalTestDataLoad.CONTEXT1) );
+				l.add( makeEvalGroupObject(EvalTestDataLoad.CONTEXT2) );
 			} else if ( EvalConstants.PERM_WRITE_TEMPLATE.equals(permission) ) {
 				// nothing
 			} else {
@@ -141,7 +141,7 @@ public class EvalExternalLogicStub implements EvalExternalLogic {
 			} else if ( EvalConstants.PERM_BE_EVALUATED.equals(permission) ) {
 				// nothing
 			} else if ( EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
-				l.add( makeContextObject(EvalTestDataLoad.CONTEXT2) );
+				l.add( makeEvalGroupObject(EvalTestDataLoad.CONTEXT2) );
 			} else if ( EvalConstants.PERM_WRITE_TEMPLATE.equals(permission) ) {
 				// nothing
 			} else {
@@ -161,7 +161,7 @@ public class EvalExternalLogicStub implements EvalExternalLogic {
 	 * 2) CONTEXT2/SITE2_ID -
 	 * USER_ID and STUDENT_USER_ID can take eval, MAINT_USER_ID can be evaluated but can not admin (cannot take)<br/>
 	 */
-	public Set getUserIdsForContext(String context, String permission) {
+	public Set getUserIdsForEvalGroup(String context, String permission) {
 		Set s = new HashSet();
 		// Maybe should add the admin user here? -AZ
 		if ( EvalTestDataLoad.CONTEXT1.equals(context) ) {
@@ -198,9 +198,9 @@ public class EvalExternalLogicStub implements EvalExternalLogic {
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.externals.ExternalContexts#countUserIdsForContext(java.lang.String, java.lang.String)
 	 */
-	public int countUserIdsForContext(String context, String permission) {
+	public int countUserIdsForEvalGroup(String context, String permission) {
 		// just use the other stub method
-		return getUserIdsForContext(context, permission).size();
+		return getUserIdsForEvalGroup(context, permission).size();
 	}
 
 	/**
@@ -211,7 +211,7 @@ public class EvalExternalLogicStub implements EvalExternalLogic {
 	 * 2) CONTEXT2/SITE2_ID -
 	 * USER_ID and STUDENT_USER_ID can take eval, MAINT_USER_ID can be evaluated but can not admin (cannot take)<br/>
 	 */
-	public boolean isUserAllowedInContext(String userId, String permission, String context) {
+	public boolean isUserAllowedInEvalGroup(String userId, String permission, String context) {
 		if ( EvalTestDataLoad.ADMIN_USER_ID.equals(userId) ) {
 			return true;
 		} else if ( EvalTestDataLoad.MAINT_USER_ID.equals(userId) ) {
@@ -301,7 +301,7 @@ public class EvalExternalLogicStub implements EvalExternalLogic {
 	/**
 	 * Always assume the current context is CONTEXT1
 	 */
-	public String getCurrentContext() {
+	public String getCurrentEvalGroup() {
 		return EvalTestDataLoad.CONTEXT1;
 	}
 
@@ -371,14 +371,14 @@ public class EvalExternalLogicStub implements EvalExternalLogic {
 	 * Return Context objects based on data from the data load class
 	 * CONTEXT1 = Site, CONTEXT2 = Group
 	 */
-	public Context makeContextObject(String context) {
-		Context c = new Context(context, null, EvalConstants.CONTEXT_TYPE_UNKNOWN);
+	public EvalGroup makeEvalGroupObject(String context) {
+		EvalGroup c = new EvalGroup(context, null, EvalConstants.GROUP_TYPE_UNKNOWN);
 		if ( EvalTestDataLoad.CONTEXT1.equals(context) ) {
 			c.title = EvalTestDataLoad.CONTEXT1_TITLE;
-			c.type = EvalConstants.CONTEXT_TYPE_SITE;
+			c.type = EvalConstants.GROUP_TYPE_SITE;
 		} else if ( EvalTestDataLoad.CONTEXT2.equals(context) ) {
 			c.title = EvalTestDataLoad.CONTEXT2_TITLE;			
-			c.type = EvalConstants.CONTEXT_TYPE_GROUP;
+			c.type = EvalConstants.GROUP_TYPE_GROUP;
 		}
 		return c;
 	}

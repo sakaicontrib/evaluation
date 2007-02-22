@@ -305,7 +305,7 @@ public class EvaluationBean {
 			//get enrollemnt on by one 
 			enrollment = new int[selectedSakaiSiteIds.length];
 			for (int i = 0; i<selectedSakaiSiteIds.length; i++){
-				Set s = external.getUserIdsForContext(selectedSakaiSiteIds[i], EvalConstants.PERM_TAKE_EVALUATION);
+				Set s = external.getUserIdsForEvalGroup(selectedSakaiSiteIds[i], EvalConstants.PERM_TAKE_EVALUATION);
 				enrollment[i] = s.size();				
 			}
 			return EvaluationAssignConfirmProducer.VIEW_ID;
@@ -485,7 +485,7 @@ public class EvaluationBean {
 	
 		enrollment =  new int[selectedSakaiSiteIds.length];
 		for(int i =0; i<selectedSakaiSiteIds.length; i++){
-			Set s = external.getUserIdsForContext(selectedSakaiSiteIds[i], EvalConstants.PERM_TAKE_EVALUATION);
+			Set s = external.getUserIdsForEvalGroup(selectedSakaiSiteIds[i], EvalConstants.PERM_TAKE_EVALUATION);
 			enrollment[i] = s.size();				
 		}
 		return EvaluationAssignConfirmProducer.VIEW_ID;

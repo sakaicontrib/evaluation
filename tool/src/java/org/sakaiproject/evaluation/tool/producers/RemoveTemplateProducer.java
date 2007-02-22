@@ -21,7 +21,7 @@ import java.util.Map;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
-import org.sakaiproject.evaluation.logic.model.Context;
+import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
@@ -135,7 +135,7 @@ public class RemoveTemplateProducer implements ViewComponentProducer, Navigation
 								Long[] evalIds = {eval1.getId()};
 								Map evalContexts = evalsLogic.getEvaluationContexts(evalIds, true);
 								List contexts = (List) evalContexts.get(eval1.getId());
-								Context ctxt = (Context) contexts.get(0);
+								EvalGroup ctxt = (EvalGroup) contexts.get(0);
 								String title = ctxt.title;
 								UIOutput.make(evalsRb, "evalAssigned",title);
 							}

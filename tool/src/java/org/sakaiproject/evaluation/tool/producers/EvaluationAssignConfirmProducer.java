@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.model.Context;
+import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationBean;
 
@@ -85,13 +85,13 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, N
 		String[] selectedIds = evaluationBean.selectedSakaiSiteIds;
 		int[] enrollment = evaluationBean.enrollment;
 		
-		List evaluatedContexts = external.getContextsForUser(external.getCurrentUserId(), EvalConstants.PERM_BE_EVALUATED);
+		List evaluatedContexts = external.getEvalGroupsForUser(external.getCurrentUserId(), EvalConstants.PERM_BE_EVALUATED);
 		Map allIdTitleMap = new HashMap();  //Map allIdTitleMap = evaluationBean.getSites();
 		for (int i=0; i< evaluatedContexts.size(); i++) {
-			Context c = (Context) evaluatedContexts.get(i);
+			EvalGroup c = (EvalGroup) evaluatedContexts.get(i);
 			//ids[i] = c.context;
 			//labels[i] = c.title;
-			allIdTitleMap.put(c.context, c.title);
+			allIdTitleMap.put(c.evalGroupId, c.title);
 		}
 		UIOutput.make(tofill, "eval-assign-desc-prename", messageLocator.getMessage("evaluationassignconfirm.eval.assign.desc.prename")); //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(tofill, "eval-assign-desc-postname", messageLocator.getMessage("evaluationassignconfirm.eval.assign.desc.postname")); //$NON-NLS-1$ //$NON-NLS-2$

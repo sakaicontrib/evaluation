@@ -257,7 +257,7 @@ public class EvalTemplatesLogicImpl implements EvalTemplatesLogic {
 		 * TODO - make this check system wide and not context specific - aaronz.
 		 */
 		if ( ((Boolean)settings.get(EvalSettings.INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS)).booleanValue() && 
-				external.countContextsForUser(userId, EvalConstants.PERM_WRITE_TEMPLATE) > 0 ) {
+				external.countEvalGroupsForUser(userId, EvalConstants.PERM_WRITE_TEMPLATE) > 0 ) {
 			return true;
 		}
 		return false;

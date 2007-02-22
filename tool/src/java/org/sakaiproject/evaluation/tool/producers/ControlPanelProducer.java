@@ -396,7 +396,7 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 		for (int i=0; i<l.size(); i++) {
 			EvalAssignGroup eac = (EvalAssignGroup) l.get(i);
 			String context = eac.getEvalGroupId();
-			Set userIds = external.getUserIdsForContext(context, EvalConstants.PERM_TAKE_EVALUATION);
+			Set userIds = external.getUserIdsForEvalGroup(context, EvalConstants.PERM_TAKE_EVALUATION);
 			totalEnrollments = totalEnrollments + userIds.size();
 		}
 		return totalEnrollments;

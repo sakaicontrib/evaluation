@@ -89,7 +89,7 @@ public class LocalResponsesLogic {
 
 		String userId = external.getCurrentUserId();
 		List responses = responsesLogic.getEvaluationResponses(userId, new Long[] {evalId});
-		String context = external.getCurrentContext();
+		String context = external.getCurrentEvalGroup();
 		for (int i = 0; i < responses.size(); ++ i) {
 			EvalResponse response = (EvalResponse) responses.get(i);
 			if (response.getContext().equals(context)) return response;

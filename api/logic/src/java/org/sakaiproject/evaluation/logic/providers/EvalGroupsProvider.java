@@ -17,7 +17,7 @@ package org.sakaiproject.evaluation.logic.providers;
 import java.util.List;
 import java.util.Set;
 
-import org.sakaiproject.evaluation.logic.model.Context;
+import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 /**
@@ -76,7 +76,7 @@ public interface EvalGroupsProvider {
 	 * @param userId the internal user id (not username)
 	 * @param permission a permission string PERM constant from {@link EvalConstants},
 	 * <b>Note</b>: only take evaluation and be evaluated are supported
-	 * @return a List of {@link Context} objects representing eval groups
+	 * @return a List of {@link EvalGroup} objects representing eval groups
 	 */
 	public List getEvalGroupsForUser(String userId, String permission);
 
@@ -99,7 +99,7 @@ public interface EvalGroupsProvider {
 	 * @param groupId the unique id of an external eval group
 	 * @return a Context object or null if not found
 	 */
-	public Context getContextByGroupId(String groupId);
+	public EvalGroup getContextByGroupId(String groupId);
 
 	/**
 	 * Check if a user has a specified permission/role within an eval group

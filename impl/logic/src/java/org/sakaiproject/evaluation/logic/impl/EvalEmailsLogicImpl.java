@@ -29,7 +29,7 @@ import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.model.Context;
+import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.utils.TextTemplateLogicUtils;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -311,8 +311,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		List sentMessages = new ArrayList();
 		// loop through contexts and send emails to correct users in each context
 		for (int i=0; i<contexts.size(); i++) {
-			Context context = (Context) contexts.get(i);
-			Set userIdsSet = external.getUserIdsForContext(context.context, EvalConstants.PERM_BE_EVALUATED);
+			EvalGroup context = (EvalGroup) contexts.get(i);
+			Set userIdsSet = external.getUserIdsForEvalGroup(context.evalGroupId, EvalConstants.PERM_BE_EVALUATED);
 			if (! includeOwner && userIdsSet.contains(eval.getOwner())) {
 				userIdsSet.remove(eval.getOwner());
 			}
@@ -325,7 +325,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			log.debug("Found " + toUserIds.length + " users (" + toUserIds + 
 					") to send " + EvalConstants.EMAIL_TEMPLATE_CREATED + 
 					" notification to for new evaluation (" + evaluationId + 
-					") and context (" + context.context + ")");
+					") and context (" + context.evalGroupId + ")");
 
 			// replace the text of the template with real values
 			Map replacementValues = new HashMap();
@@ -388,8 +388,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		List sentMessages = new ArrayList();
 		// loop through contexts and send emails to correct users in each context
 		for (int i=0; i<contexts.size(); i++) {
-			Context context = (Context) contexts.get(i);
-			Set userIdsSet = external.getUserIdsForContext(context.context, EvalConstants.PERM_TAKE_EVALUATION);
+			EvalGroup context = (EvalGroup) contexts.get(i);
+			Set userIdsSet = external.getUserIdsForEvalGroup(context.evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
 
 			// skip ahead if there is no one to send to
 			if (userIdsSet.size() == 0) continue;
@@ -399,7 +399,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			log.debug("Found " + toUserIds.length + " users (" + toUserIds + 
 					") to send " + EvalConstants.EMAIL_TEMPLATE_CREATED + 
 					" notification to for available evaluation (" + evaluationId + 
-					") and context (" + context.context + ")");
+					") and context (" + context.evalGroupId + ")");
 
 			// replace the text of the template with real values
 			Map replacementValues = new HashMap();

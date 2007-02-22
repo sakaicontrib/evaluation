@@ -245,7 +245,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 			UIOutput.make(courseSection, "course-questions-header", messageLocator.getMessage("takeeval.course.questions.header")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, ncItemsList))	{	
-			Set instructors = external.getUserIdsForContext(context, EvalConstants.PERM_BE_EVALUATED);
+			Set instructors = external.getUserIdsForEvalGroup(context, EvalConstants.PERM_BE_EVALUATED);
 			//for each instructor, make a branch containing all instructor questions
 			for (Iterator it = instructors.iterator(); it.hasNext();) {
 				String instructor = (String) it.next();
