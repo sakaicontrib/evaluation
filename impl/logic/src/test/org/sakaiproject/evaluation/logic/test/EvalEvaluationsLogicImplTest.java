@@ -25,7 +25,7 @@ import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl;
 import org.sakaiproject.evaluation.logic.model.Context;
 import org.sakaiproject.evaluation.logic.test.stubs.EvalExternalLogicStub;
-import org.sakaiproject.evaluation.model.EvalAssignContext;
+import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalScale;
@@ -343,14 +343,14 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 		}
 
 		// attempt to remove evaluation with assigned contexts (check for cleanup)
-		int countACs = evaluationDao.countByProperties(EvalAssignContext.class, 
+		int countACs = evaluationDao.countByProperties(EvalAssignGroup.class, 
 				new String[] { "evaluation.id" }, 
 				new Object[] { etdl.evaluationNewAdmin.getId() });
 		Assert.assertEquals(2, countACs);
 		evaluations.deleteEvaluation(etdl.evaluationNewAdmin.getId(), EvalTestDataLoad.ADMIN_USER_ID);
 		eval = evaluations.getEvaluationById(etdl.evaluationNewAdmin.getId());
 		Assert.assertNull(eval);
-		countACs = evaluationDao.countByProperties(EvalAssignContext.class, 
+		countACs = evaluationDao.countByProperties(EvalAssignGroup.class, 
 				new String[] { "evaluation.id" }, 
 				new Object[] { etdl.evaluationNewAdmin.getId() });
 		Assert.assertEquals(0, countACs);

@@ -16,7 +16,7 @@ package org.sakaiproject.evaluation.logic;
 
 import java.util.List;
 
-import org.sakaiproject.evaluation.model.EvalAssignContext;
+import org.sakaiproject.evaluation.model.EvalAssignGroup;
 
 
 /**
@@ -42,7 +42,7 @@ public interface EvalAssignsLogic {
 	 * @param assignContext the object to save, represents a link from a single context to an evaluation
 	 * @param userId the internal user id (not username)
 	 */
-	public void saveAssignContext(EvalAssignContext assignContext, String userId);
+	public void saveAssignContext(EvalAssignGroup assignContext, String userId);
 
 	/**
 	 * Remove the context assignment, used to make a linkage from
