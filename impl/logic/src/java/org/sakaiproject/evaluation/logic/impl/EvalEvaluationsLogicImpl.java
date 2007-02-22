@@ -32,7 +32,7 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.impl.interceptors.EvaluationModificationRegistry;
-import org.sakaiproject.evaluation.logic.model.Context;
+import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
@@ -366,12 +366,12 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 	 * @see edu.vt.sakai.evaluation.logic.EvalEvaluationsLogic#getEvaluationsForUser(java.lang.String, boolean, boolean)
 	 */
 	public List getEvaluationsForUser(String userId, boolean activeOnly, boolean untakenOnly) {
-		List takeContexts = external.getContextsForUser(userId, EvalConstants.PERM_TAKE_EVALUATION);
+		List takeContexts = external.getEvalGroupsForUser(userId, EvalConstants.PERM_TAKE_EVALUATION);
 
 		String[] contexts = new String[takeContexts.size()];
 		for (int i=0; i<takeContexts.size(); i++) {
-			Context c = (Context) takeContexts.get(i);
-			contexts[i] = c.context;
+			EvalGroup c = (EvalGroup) takeContexts.get(i);
+			contexts[i] = c.evalGroupId;
 		}
 
 		// get the evaluations
@@ -446,7 +446,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 			// put stuff in inner list
 			Long evalId = eac.getEvaluation().getId();
 			List innerList = (List) evals.get(evalId);
-			innerList.add( external.makeContextObject(context) );
+			innerList.add( external.makeEvalGroupObject(context) );
 		}
 		return evals;
 	}
@@ -464,7 +464,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 			// there is at least one template
 			return true;
 		}
-		if ( external.countContextsForUser(userId, EvalConstants.PERM_ASSIGN_EVALUATION) > 0 ) {
+		if ( external.countEvalGroupsForUser(userId, EvalConstants.PERM_ASSIGN_EVALUATION) > 0 ) {
 			log.debug("User has permission to assign evaluation in at least one site");
 
 			/*
@@ -564,7 +564,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 
 		// check the user permissions
 		if ( ! external.isUserAdmin(userId) && 
-				! external.isUserAllowedInContext(userId, EvalConstants.PERM_TAKE_EVALUATION, context) ) {
+				! external.isUserAllowedInEvalGroup(userId, EvalConstants.PERM_TAKE_EVALUATION, context) ) {
 			log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") without permission");
 			return false;
 		}

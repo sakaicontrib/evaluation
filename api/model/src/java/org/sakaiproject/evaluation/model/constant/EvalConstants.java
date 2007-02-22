@@ -40,21 +40,21 @@ public class EvalConstants {
 	public final static String PERM_TAKE_EVALUATION = "eval.take.evaluation";
 
 	/**
-	 * Context class: Unknown type
+	 * EvalGroup class: Unknown type
 	 */
-	public final static String CONTEXT_TYPE_UNKNOWN = "Unknown";
+	public final static String GROUP_TYPE_UNKNOWN = "Unknown";
 	/**
-	 * Context class: Site type (represents a course or project site)
+	 * EvalGroup class: Site type (represents a course or project site)
 	 */
-	public final static String CONTEXT_TYPE_SITE = "Site";
+	public final static String GROUP_TYPE_SITE = "Site";
 	/**
-	 * Context class: Group type (represents a subgroup within a site)
+	 * EvalGroup class: Group type (represents a subgroup within a site)
 	 */
-	public final static String CONTEXT_TYPE_GROUP = "Group";
+	public final static String GROUP_TYPE_GROUP = "Group";
 	/**
-	 * Context class: Provided type (represents an eval group from a provider)
+	 * EvalGroup class: Provided type (represents an eval group from a provider)
 	 */
-	public final static String CONTEXT_TYPE_PROVIDED = "Provided";
+	public final static String GROUP_TYPE_PROVIDED = "Provided";
 
 	/**
 	 * Scale ideal setting: no selection of this scale is the ideal one

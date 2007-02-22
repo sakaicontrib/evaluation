@@ -1,5 +1,5 @@
 /******************************************************************************
- * Context.java - created by aaronz@vt.edu on Dec 24, 2006
+ * EvalGroup.java - created by aaronz@vt.edu on Dec 24, 2006
  * 
  * Copyright (c) 2007 Virginia Polytechnic Institute and State University
  * Licensed under the Educational Community License version 1.0
@@ -18,37 +18,42 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 
 /**
- * This pea represents a context (often a site or group),
- * the context is the location of the user
+ * This pea represents an evalGroup (often a site or group),
+ * the eval group is a collection of users
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class Context {
+public class EvalGroup {
 
 	/**
-	 * The context string which is the unique identifier for this
+	 * The evalGroup ID string which is the unique identifier for this
 	 */
-	public String context = "defaultContext";
+	public String evalGroupId;
 	/**
-	 * The displayable title of this context
+	 * The displayable title of this evalGroup
 	 */
 	public String title = "Unknown";
 	/**
-	 * The type of this context (use the CONTEXT_TYPE constants in {@link EvalConstants})
+	 * The type of this evalGroup (use the GROUP_TYPE constants in {@link EvalConstants})
 	 */
-	public String type = EvalConstants.CONTEXT_TYPE_UNKNOWN;
+	public String type = EvalConstants.GROUP_TYPE_UNKNOWN;
 
 
 	/**
 	 * Empty Constructor
 	 */
-	public Context() {}
+	public EvalGroup() {}
 
 	/**
-	 * Standard Constructor
+	 * Full Constructor
+	 * 
+	 * @param evalGroupId unique id for this evalGroup
+	 * @param title the display title of this group
+	 * @param type the type of this group
+	 * (use the GROUP_TYPE constants in {@link EvalConstants})
 	 */
-	public Context(String context, String title, String type) {
-		this.context = context;
+	public EvalGroup(String evalGroupId, String title, String type) {
+		this.evalGroupId = evalGroupId;
 		this.title = title;
 		this.type = type;
 	}

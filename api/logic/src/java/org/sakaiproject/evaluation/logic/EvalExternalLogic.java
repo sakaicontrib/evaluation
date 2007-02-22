@@ -14,7 +14,7 @@
 
 package org.sakaiproject.evaluation.logic;
 
-import org.sakaiproject.evaluation.logic.externals.ExternalContexts;
+import org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups;
 import org.sakaiproject.evaluation.logic.externals.ExternalUsers;
 
 
@@ -26,7 +26,7 @@ import org.sakaiproject.evaluation.logic.externals.ExternalUsers;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public interface EvalExternalLogic extends ExternalUsers, ExternalContexts {
+public interface EvalExternalLogic extends ExternalUsers, ExternalEvalGroups {
 
 	// PERMISSIONS
 
@@ -43,10 +43,10 @@ public interface EvalExternalLogic extends ExternalUsers, ExternalContexts {
 	 * 
 	 * @param userId the internal user id (not username)
 	 * @param permission a permission string constant
-	 * @param context the internal context (represents a site or group)
+	 * @param evalGroupId the internal unique eval group ID (represents a site or group)
 	 * @return true if allowed, false otherwise
 	 */
-	public boolean isUserAllowedInContext(String userId, String permission, String context);
+	public boolean isUserAllowedInEvalGroup(String userId, String permission, String evalGroupId);
 
 
 	// EMAIL

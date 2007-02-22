@@ -20,7 +20,7 @@ import java.util.Set;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
-import org.sakaiproject.evaluation.logic.model.Context;
+import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.test.stubs.EvalExternalLogicStub;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
@@ -107,11 +107,11 @@ public class EvalExternalLogicStubTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicStub#getCurrentContext()}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicStub#getCurrentEvalGroup()}.
 	 */
 	public void testGetCurrentContext() {
 
-		String context = external.getCurrentContext();
+		String context = external.getCurrentEvalGroup();
 		Assert.assertNotNull(context);
 		Assert.assertEquals(EvalTestDataLoad.CONTEXT1, context);
 
@@ -133,32 +133,32 @@ public class EvalExternalLogicStubTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicStub#countContextsForUser(java.lang.String, java.lang.String)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicStub#countEvalGroupsForUser(java.lang.String, java.lang.String)}.
 	 */
 	public void testCountContextsForUser() {
 
-		int count = external.countContextsForUser(EvalTestDataLoad.USER_ID, EvalConstants.PERM_TAKE_EVALUATION);
+		int count = external.countEvalGroupsForUser(EvalTestDataLoad.USER_ID, EvalConstants.PERM_TAKE_EVALUATION);
 		Assert.assertEquals(2, count);
 
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicStub#getContextsForUser(java.lang.String, java.lang.String)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicStub#getEvalGroupsForUser(java.lang.String, java.lang.String)}.
 	 */
 	public void testGetContextsForUser() {
 
-		List l = external.getContextsForUser(EvalTestDataLoad.USER_ID, EvalConstants.PERM_TAKE_EVALUATION);
+		List l = external.getEvalGroupsForUser(EvalTestDataLoad.USER_ID, EvalConstants.PERM_TAKE_EVALUATION);
 		Assert.assertNotNull(l);
 		Assert.assertEquals(2, l.size());
 
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicStub#getUserIdsForContext(java.lang.String, java.lang.String)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicStub#getUserIdsForEvalGroup(java.lang.String, java.lang.String)}.
 	 */
 	public void testGetUserIdsForContext() {
 
-		Set s = external.getUserIdsForContext(EvalTestDataLoad.CONTEXT1, EvalConstants.PERM_WRITE_TEMPLATE);
+		Set s = external.getUserIdsForEvalGroup(EvalTestDataLoad.CONTEXT1, EvalConstants.PERM_WRITE_TEMPLATE);
 		Assert.assertNotNull(s);
 		Assert.assertEquals(1, s.size());
 		Assert.assertTrue(s.contains(EvalTestDataLoad.MAINT_USER_ID));
@@ -167,49 +167,49 @@ public class EvalExternalLogicStubTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicStub#countUserIdsForContext(java.lang.String, java.lang.String)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicStub#countUserIdsForEvalGroup(java.lang.String, java.lang.String)}.
 	 */
 	public void testCountUserIdsForContext() {
 
-		int count = external.countUserIdsForContext(EvalTestDataLoad.CONTEXT1, EvalConstants.PERM_WRITE_TEMPLATE);
+		int count = external.countUserIdsForEvalGroup(EvalTestDataLoad.CONTEXT1, EvalConstants.PERM_WRITE_TEMPLATE);
 		Assert.assertEquals(1, count);
 
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicStub#makeContextObject(java.lang.String)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicStub#makeEvalGroupObject(java.lang.String)}.
 	 */
 	public void testMakeContextObject() {
 
-		Context c = external.makeContextObject(EvalTestDataLoad.CONTEXT1);
+		EvalGroup c = external.makeEvalGroupObject(EvalTestDataLoad.CONTEXT1);
 		Assert.assertNotNull(c);
 		Assert.assertEquals(EvalTestDataLoad.CONTEXT1_TITLE, c.title);
 
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicStub#isUserAllowedInContext(java.lang.String, java.lang.String, java.lang.String)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicStub#isUserAllowedInEvalGroup(java.lang.String, java.lang.String, java.lang.String)}.
 	 */
 	public void testIsUserAllowedInContext() {
 
-		Assert.assertTrue( external.isUserAllowedInContext(
+		Assert.assertTrue( external.isUserAllowedInEvalGroup(
 				EvalTestDataLoad.ADMIN_USER_ID, 
 				EvalConstants.PERM_WRITE_TEMPLATE, 
 				EvalTestDataLoad.CONTEXT1) );
-		Assert.assertTrue( external.isUserAllowedInContext(
+		Assert.assertTrue( external.isUserAllowedInEvalGroup(
 				EvalTestDataLoad.MAINT_USER_ID, 
 				EvalConstants.PERM_ASSIGN_EVALUATION, 
 				EvalTestDataLoad.CONTEXT1) );
-		Assert.assertTrue( external.isUserAllowedInContext(
+		Assert.assertTrue( external.isUserAllowedInEvalGroup(
 				EvalTestDataLoad.USER_ID, 
 				EvalConstants.PERM_TAKE_EVALUATION, 
 				EvalTestDataLoad.CONTEXT1) );
 
-		Assert.assertFalse( external.isUserAllowedInContext(
+		Assert.assertFalse( external.isUserAllowedInEvalGroup(
 				EvalTestDataLoad.MAINT_USER_ID, 
 				EvalConstants.PERM_TAKE_EVALUATION, 
 				EvalTestDataLoad.CONTEXT1) );
-		Assert.assertFalse( external.isUserAllowedInContext(
+		Assert.assertFalse( external.isUserAllowedInEvalGroup(
 				EvalTestDataLoad.USER_ID, 
 				EvalConstants.PERM_BE_EVALUATED, 
 				EvalTestDataLoad.CONTEXT1) );

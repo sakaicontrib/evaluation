@@ -26,7 +26,7 @@ import org.sakaiproject.authz.api.SecurityService;
 import org.sakaiproject.email.api.EmailService;
 import org.sakaiproject.entity.api.EntityManager;
 import org.sakaiproject.evaluation.logic.impl.EvalExternalLogicImpl;
-import org.sakaiproject.evaluation.logic.model.Context;
+import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.test.stubs.TestPlacement;
 import org.sakaiproject.evaluation.logic.test.stubs.TestReference;
 import org.sakaiproject.evaluation.logic.test.stubs.TestSite;
@@ -281,7 +281,7 @@ public class EvalExternalLogicImplTest extends AbstractTransactionalSpringContex
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicImpl#getCurrentContext()}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicImpl#getCurrentEvalGroup()}.
 	 */
 	public void testGetCurrentContext() {
 		// set up this mock object
@@ -292,7 +292,7 @@ public class EvalExternalLogicImplTest extends AbstractTransactionalSpringContex
 		toolManagerControl.replay();
 
 		// mock object is needed here
-		String context = external.getCurrentContext();
+		String context = external.getCurrentEvalGroup();
 		Assert.assertNotNull(context);
 		Assert.assertEquals(EvalTestDataLoad.CONTEXT1, context);
 
@@ -323,7 +323,7 @@ public class EvalExternalLogicImplTest extends AbstractTransactionalSpringContex
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicImpl#countContextsForUser(java.lang.String, java.lang.String)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicImpl#countEvalGroupsForUser(java.lang.String, java.lang.String)}.
 	 */
 	public void testCountContextsForUser() {
 		// set up mock objects with return values
@@ -340,7 +340,7 @@ public class EvalExternalLogicImplTest extends AbstractTransactionalSpringContex
 		entityManagerControl.replay();
 
 		// mock objects needed here
-		int count = external.countContextsForUser(EvalTestDataLoad.USER_ID, EvalConstants.PERM_TAKE_EVALUATION);
+		int count = external.countEvalGroupsForUser(EvalTestDataLoad.USER_ID, EvalConstants.PERM_TAKE_EVALUATION);
 		Assert.assertEquals(2, count);
 
 		// verify the mock objects were used
@@ -349,7 +349,7 @@ public class EvalExternalLogicImplTest extends AbstractTransactionalSpringContex
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicImpl#getContextsForUser(java.lang.String, java.lang.String)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicImpl#getEvalGroupsForUser(java.lang.String, java.lang.String)}.
 	 */
 	public void testGetContextsForUser() {
 		// set up mock objects with return values
@@ -367,7 +367,7 @@ public class EvalExternalLogicImplTest extends AbstractTransactionalSpringContex
 		siteServiceControl.replay();
 
 		// mock objects needed here
-		List l = external.getContextsForUser(EvalTestDataLoad.USER_ID, EvalConstants.PERM_TAKE_EVALUATION);
+		List l = external.getEvalGroupsForUser(EvalTestDataLoad.USER_ID, EvalConstants.PERM_TAKE_EVALUATION);
 		Assert.assertNotNull(l);
 		Assert.assertEquals(2, l.size());
 
@@ -378,7 +378,7 @@ public class EvalExternalLogicImplTest extends AbstractTransactionalSpringContex
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicImpl#getUserIdsForContext(java.lang.String, java.lang.String)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicImpl#getUserIdsForEvalGroup(java.lang.String, java.lang.String)}.
 	 */
 	public void testGetUserIdsForContext() {
 		// set up mock objects with return values
@@ -394,7 +394,7 @@ public class EvalExternalLogicImplTest extends AbstractTransactionalSpringContex
 		siteServiceControl.replay();
 
 		// mock objects needed here
-		Set s = external.getUserIdsForContext(EvalTestDataLoad.CONTEXT1, EvalConstants.PERM_WRITE_TEMPLATE);
+		Set s = external.getUserIdsForEvalGroup(EvalTestDataLoad.CONTEXT1, EvalConstants.PERM_WRITE_TEMPLATE);
 		Assert.assertNotNull(s);
 		Assert.assertEquals(1, s.size());
 		Assert.assertTrue(s.contains(EvalTestDataLoad.MAINT_USER_ID));
@@ -406,7 +406,7 @@ public class EvalExternalLogicImplTest extends AbstractTransactionalSpringContex
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicImpl#getUserIdsForContext(java.lang.String, java.lang.String)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicImpl#getUserIdsForEvalGroup(java.lang.String, java.lang.String)}.
 	 */
 	public void testCountUserIdsForContext() {
 		// set up mock objects with return values
@@ -422,7 +422,7 @@ public class EvalExternalLogicImplTest extends AbstractTransactionalSpringContex
 		siteServiceControl.replay();
 
 		// mock objects needed here
-		int count = external.countUserIdsForContext(EvalTestDataLoad.CONTEXT1, EvalConstants.PERM_WRITE_TEMPLATE);
+		int count = external.countUserIdsForEvalGroup(EvalTestDataLoad.CONTEXT1, EvalConstants.PERM_WRITE_TEMPLATE);
 		Assert.assertEquals(1, count);
 
 		// verify the mock objects were used
@@ -431,7 +431,7 @@ public class EvalExternalLogicImplTest extends AbstractTransactionalSpringContex
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicImpl#makeContextObject(java.lang.String)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicImpl#makeEvalGroupObject(java.lang.String)}.
 	 */
 	public void testMakeContextObject() {
 		// set up mock objects with return values
@@ -440,7 +440,7 @@ public class EvalExternalLogicImplTest extends AbstractTransactionalSpringContex
 		siteServiceControl.replay();
 
 		// mock objects needed here
-		Context c = external.makeContextObject(EvalTestDataLoad.CONTEXT1);
+		EvalGroup c = external.makeEvalGroupObject(EvalTestDataLoad.CONTEXT1);
 		Assert.assertNotNull(c);
 		Assert.assertEquals(EvalTestDataLoad.CONTEXT1_TITLE, c.title);
 
@@ -449,7 +449,7 @@ public class EvalExternalLogicImplTest extends AbstractTransactionalSpringContex
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicImpl#isUserAllowedInContext(java.lang.String, java.lang.String, java.lang.String)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicImpl#isUserAllowedInEvalGroup(java.lang.String, java.lang.String, java.lang.String)}.
 	 */
 	public void testIsUserAllowedInContext() {
 		// set up mock objects with return values
@@ -476,24 +476,24 @@ public class EvalExternalLogicImplTest extends AbstractTransactionalSpringContex
 		siteServiceControl.replay();
 
 		// mock objects needed here
-		Assert.assertTrue( external.isUserAllowedInContext(
+		Assert.assertTrue( external.isUserAllowedInEvalGroup(
 				EvalTestDataLoad.ADMIN_USER_ID, 
 				EvalConstants.PERM_WRITE_TEMPLATE, 
 				EvalTestDataLoad.CONTEXT1) );
-		Assert.assertTrue( external.isUserAllowedInContext(
+		Assert.assertTrue( external.isUserAllowedInEvalGroup(
 				EvalTestDataLoad.MAINT_USER_ID, 
 				EvalConstants.PERM_ASSIGN_EVALUATION, 
 				EvalTestDataLoad.CONTEXT1) );
-		Assert.assertTrue( external.isUserAllowedInContext(
+		Assert.assertTrue( external.isUserAllowedInEvalGroup(
 				EvalTestDataLoad.USER_ID, 
 				EvalConstants.PERM_TAKE_EVALUATION, 
 				EvalTestDataLoad.CONTEXT1) );
 
-		Assert.assertFalse( external.isUserAllowedInContext(
+		Assert.assertFalse( external.isUserAllowedInEvalGroup(
 				EvalTestDataLoad.MAINT_USER_ID, 
 				EvalConstants.PERM_TAKE_EVALUATION, 
 				EvalTestDataLoad.CONTEXT1) );
-		Assert.assertFalse( external.isUserAllowedInContext(
+		Assert.assertFalse( external.isUserAllowedInEvalGroup(
 				EvalTestDataLoad.USER_ID, 
 				EvalConstants.PERM_BE_EVALUATED, 
 				EvalTestDataLoad.CONTEXT1) );
@@ -504,7 +504,7 @@ public class EvalExternalLogicImplTest extends AbstractTransactionalSpringContex
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicImpl#isUserAllowedInContext(java.lang.String, java.lang.String, java.lang.String)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicImpl#isUserAllowedInEvalGroup(java.lang.String, java.lang.String, java.lang.String)}.
 	 */
 	public void testSendEmails() {
 		// cannot test this for now since easymock is making my life hard -AZ

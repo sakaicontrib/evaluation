@@ -26,7 +26,7 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
-import org.sakaiproject.evaluation.logic.model.Context;
+import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
@@ -102,7 +102,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 
 		// local variables used in the render logic
 		String currentUserId = external.getCurrentUserId();
-		String currentContext = external.getCurrentContext();
+		String currentContext = external.getCurrentEvalGroup();
 		boolean userAdmin = external.isUserAdmin(currentUserId);
 		boolean createTemplate = templatesLogic.canCreateTemplate(currentUserId);
 		boolean beginEvaluation = evaluationsLogic.canBeginEvaluation(currentUserId);
@@ -177,10 +177,10 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 
 				List contexts = (List) evalContexts.get(eval.getId());
 				for (int j=0; j<contexts.size(); j++) {
-					Context ctxt = (Context) contexts.get(j);
+					EvalGroup ctxt = (EvalGroup) contexts.get(j);
 					//check that the user can take evaluations in this context
-					if(external.isUserAllowedInContext(external.getCurrentUserId(), EvalConstants.PERM_TAKE_EVALUATION, ctxt.context)){
-						String context = ctxt.context;
+					if(external.isUserAllowedInEvalGroup(external.getCurrentUserId(), EvalConstants.PERM_TAKE_EVALUATION, ctxt.evalGroupId)){
+						String context = ctxt.evalGroupId;
 						String title = ctxt.title;
 						String status = messageLocator.getMessage("unknown.caps"); //$NON-NLS-1$
 	
@@ -312,10 +312,10 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			UIOutput.make(contextsBC, "sitelisting-title", messageLocator.getMessage("summary.sitelisting.title") ); //$NON-NLS-1$ //$NON-NLS-2$
 
 			UIOutput.make(contextsBC, "sitelisting-evaluated-text", messageLocator.getMessage("summary.sitelisting.evaluated") ); //$NON-NLS-1$ //$NON-NLS-2$
-			List evaluatedContexts = external.getContextsForUser(currentUserId, EvalConstants.PERM_BE_EVALUATED);
+			List evaluatedContexts = external.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_BE_EVALUATED);
 			if (evaluatedContexts.size() > 0) {
 				for (int i=0; i<evaluatedContexts.size(); i++) {
-					Context c = (Context) evaluatedContexts.get(i);
+					EvalGroup c = (EvalGroup) evaluatedContexts.get(i);
 					UIBranchContainer evaluatedBC = UIBranchContainer.make(contextsBC, "evaluatedList:"); //$NON-NLS-1$
 					UIOutput.make(evaluatedBC, "evaluatedListTitle", c.title); //$NON-NLS-1$
 				}
@@ -324,10 +324,10 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			}
 
 			UIOutput.make(contextsBC, "sitelisting-evaluate-text", messageLocator.getMessage("summary.sitelisting.evaluate") ); //$NON-NLS-1$ //$NON-NLS-2$
-			List evaluateContexts = external.getContextsForUser(currentUserId, EvalConstants.PERM_TAKE_EVALUATION);
+			List evaluateContexts = external.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_TAKE_EVALUATION);
 			if (evaluateContexts.size() > 0) {
 				for (int i=0; i<evaluateContexts.size(); i++) {
-					Context c = (Context) evaluateContexts.get(i);
+					EvalGroup c = (EvalGroup) evaluateContexts.get(i);
 					UIBranchContainer evaluateBC = UIBranchContainer.make(contextsBC, "evaluateList:"); //$NON-NLS-1$
 					UIOutput.make(evaluateBC, "evaluateListTitle", c.title); //$NON-NLS-1$
 				}

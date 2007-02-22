@@ -23,7 +23,7 @@ import junit.framework.Assert;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl;
-import org.sakaiproject.evaluation.logic.model.Context;
+import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.test.stubs.EvalExternalLogicStub;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
@@ -666,8 +666,8 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 		List contexts = (List) m.get( etdl.evaluationClosed.getId() );
 		Assert.assertNotNull(contexts);
 		Assert.assertEquals(2, contexts.size());
-		Assert.assertTrue( contexts.get(0) instanceof Context );
-		Assert.assertTrue( contexts.get(1) instanceof Context );
+		Assert.assertTrue( contexts.get(0) instanceof EvalGroup );
+		Assert.assertTrue( contexts.get(1) instanceof EvalGroup );
 
 		m = evaluations.getEvaluationContexts( 
 				new Long[] { etdl.evaluationActive.getId() }, true );
@@ -675,8 +675,8 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 		contexts = (List) m.get( etdl.evaluationActive.getId() );
 		Assert.assertNotNull(contexts);
 		Assert.assertEquals(1, contexts.size());
-		Assert.assertTrue( contexts.get(0) instanceof Context );
-		Assert.assertEquals( EvalTestDataLoad.CONTEXT1, ((Context) contexts.get(0)).context );
+		Assert.assertTrue( contexts.get(0) instanceof EvalGroup );
+		Assert.assertEquals( EvalTestDataLoad.CONTEXT1, ((EvalGroup) contexts.get(0)).evalGroupId );
 
 		// test no assigned contexts
 		m = evaluations.getEvaluationContexts( 

@@ -20,7 +20,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
-import org.sakaiproject.evaluation.logic.model.Context;
+import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 
@@ -103,7 +103,7 @@ public class RemoveEvalProducer implements ViewComponentProducer,ViewParamsRepor
 					Long[] evalIds = {eval.getId()};
 					Map evalContexts = evalsLogic.getEvaluationContexts(evalIds, true);
 					List contexts = (List) evalContexts.get(eval.getId());
-					Context ctxt = (Context) contexts.get(0);
+					EvalGroup ctxt = (EvalGroup) contexts.get(0);
 					String title = ctxt.title;
 					UIOutput.make(form, "evalAssigned",title);
 					//UIOutput.make(form, "evalAssigned", logic.getCourseTitle(eval.getId()));

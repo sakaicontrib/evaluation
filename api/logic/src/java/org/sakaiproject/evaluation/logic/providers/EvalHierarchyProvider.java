@@ -16,7 +16,7 @@ package org.sakaiproject.evaluation.logic.providers;
 
 import java.util.Set;
 
-import org.sakaiproject.evaluation.logic.model.Context;
+import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.HierarchyNode;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
@@ -113,7 +113,7 @@ public interface EvalHierarchyProvider {
 	 * child nodes of this node
 	 * 
 	 * @param nodeId a unique id for a hierarchy node
-	 * @return a Set of {@link Context} objects representing the eval groups beneath this hierarchy node
+	 * @return a Set of {@link EvalGroup} objects representing the eval groups beneath this hierarchy node
 	 */
 	public Set getEvalGroupsForNode(String nodeId);
 

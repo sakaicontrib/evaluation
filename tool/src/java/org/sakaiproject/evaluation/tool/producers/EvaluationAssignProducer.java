@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.model.Context;
+import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 import uk.org.ponder.messageutil.MessageLocator;
@@ -78,13 +78,13 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
 		UIOutput.make(form, "assign-eval-instructions-post", messageLocator.getMessage("assigneval.instructions.post")); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		
-		List sites = external.getContextsForUser(external.getCurrentUserId(), EvalConstants.PERM_BE_EVALUATED);
+		List sites = external.getEvalGroupsForUser(external.getCurrentUserId(), EvalConstants.PERM_BE_EVALUATED);
 		if(sites.size() >0){
 			String[] ids = new String[sites.size()];
 			String[] labels = new String[sites.size()];
 			for (int i=0; i< sites.size(); i++) {
-				Context c = (Context) sites.get(i);
-				ids[i] = c.context;
+				EvalGroup c = (EvalGroup) sites.get(i);
+				ids[i] = c.evalGroupId;
 				labels[i] = c.title;
 			}
 			
