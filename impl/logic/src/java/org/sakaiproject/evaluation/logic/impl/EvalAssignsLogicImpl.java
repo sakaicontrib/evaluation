@@ -293,7 +293,7 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 
 //		log.info("AZ1: current AC("+ac.getId()+"): ctxt:" + ac.getContext() + ", eval:" + ac.getEvaluation().getId());
 		List l = dao.findByProperties(EvalAssignGroup.class, 
-				new String[] {"context", "evaluation.id"}, 
+				new String[] {"evalGroupId", "evaluation.id"}, 
 				new Object[] {ac.getEvalGroupId(), ac.getEvaluation().getId()});
 		if ( (ac.getId() == null && l.size() >= 1) || 
 				(ac.getId() != null && l.size() >= 2) ) {

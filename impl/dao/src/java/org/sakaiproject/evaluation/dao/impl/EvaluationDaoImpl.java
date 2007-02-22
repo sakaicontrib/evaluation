@@ -213,11 +213,11 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#getEvaluationsByContexts(java.lang.String[], boolean, boolean)
 	 */
-	public Set getEvaluationsByContexts(String[] contexts, boolean activeOnly, boolean includeUnApproved) {
+	public Set getEvaluationsByEvalGroups(String[] evalGroupIds, boolean activeOnly, boolean includeUnApproved) {
 		Set evals = new TreeSet(new EvaluationDateComparator());
-		if (contexts.length > 0) {
+		if (evalGroupIds.length > 0) {
 			DetachedCriteria dc = DetachedCriteria.forClass(EvalAssignGroup.class)
-				.add( Property.forName("context").in(contexts));
+				.add( Property.forName("evalGroupId").in(evalGroupIds));
 
 			List assignedCourses = getHibernateTemplate().findByCriteria(dc);
 			for (int i=0;i<assignedCourses.size();i++) {

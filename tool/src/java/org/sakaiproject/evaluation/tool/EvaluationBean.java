@@ -30,6 +30,7 @@ import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
+import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -381,8 +382,11 @@ public class EvaluationBean {
 			Boolean instApproval = Boolean.TRUE;
 			//If instructors must optIn, set approval to false. otherwise it is always true.
 			if(eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_OPT_IN))instApproval=Boolean.FALSE;
+			// check the selected eval groups
+			EvalGroup group = external.makeEvalGroupObject( selectedSakaiSiteIds[count] );
+			// create the assign group
 			EvalAssignGroup assignCourse = new EvalAssignGroup(new Date(), 
-					external.getCurrentUserId(), selectedSakaiSiteIds[count], 
+					external.getCurrentUserId(), group.evalGroupId, group.type,
 					instApproval, Boolean.TRUE, Boolean.FALSE, eval);
 			assignsLogic.saveAssignContext(assignCourse, external.getCurrentUserId());
 		}

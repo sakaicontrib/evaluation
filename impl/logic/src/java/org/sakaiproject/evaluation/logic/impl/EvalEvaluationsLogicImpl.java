@@ -366,16 +366,16 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 	 * @see edu.vt.sakai.evaluation.logic.EvalEvaluationsLogic#getEvaluationsForUser(java.lang.String, boolean, boolean)
 	 */
 	public List getEvaluationsForUser(String userId, boolean activeOnly, boolean untakenOnly) {
-		List takeContexts = external.getEvalGroupsForUser(userId, EvalConstants.PERM_TAKE_EVALUATION);
+		List takeGroups = external.getEvalGroupsForUser(userId, EvalConstants.PERM_TAKE_EVALUATION);
 
-		String[] contexts = new String[takeContexts.size()];
-		for (int i=0; i<takeContexts.size(); i++) {
-			EvalGroup c = (EvalGroup) takeContexts.get(i);
-			contexts[i] = c.evalGroupId;
+		String[] evalGroupIds = new String[takeGroups.size()];
+		for (int i=0; i<takeGroups.size(); i++) {
+			EvalGroup c = (EvalGroup) takeGroups.get(i);
+			evalGroupIds[i] = c.evalGroupId;
 		}
 
 		// get the evaluations
-		Set s = dao.getEvaluationsByContexts( contexts, activeOnly, false );
+		Set s = dao.getEvaluationsByEvalGroups( evalGroupIds, activeOnly, false );
 
 		if (untakenOnly) {
 			// filter out the evaluations this user already took
@@ -529,8 +529,8 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 	/* (non-Javadoc)
 	 * @see edu.vt.sakai.evaluation.logic.EvalEvaluationsLogic#canTakeEvaluation(java.lang.String, java.lang.Long, java.lang.String)
 	 */
-	public boolean canTakeEvaluation(String userId, Long evaluationId, String context) {
-		log.debug("evalId: " + evaluationId + ", userId: " + userId + ", context: " + context);
+	public boolean canTakeEvaluation(String userId, Long evaluationId, String evalGroupId) {
+		log.debug("evalId: " + evaluationId + ", userId: " + userId + ", evalGroupId: " + evalGroupId);
 
 		// grab the evaluation itself first
 		EvalEvaluation eval = (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);
@@ -548,36 +548,36 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 
 		// check that the context is valid for this evaluation
 		List acs = dao.findByProperties(EvalAssignGroup.class, 
-				new String[] {"evaluation.id", "context"}, 
-				new Object[] {evaluationId, context});
+				new String[] {"evaluation.id", "evalGroupId"}, 
+				new Object[] {evaluationId, evalGroupId});
 		if (acs.size() <= 0) {
-			log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") in this context (" + context + "), not assigned");
+			log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") in this context (" + evalGroupId + "), not assigned");
 			return false;
 		} else {
 			// make sure instructor approval is true
 			EvalAssignGroup eac = (EvalAssignGroup) acs.get(0);
 			if (! eac.getInstructorApproval().booleanValue() ) {
-				log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") in this context (" + context + "), instructor has not approved");
+				log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") in this context (" + evalGroupId + "), instructor has not approved");
 				return false;
 			}
 		}
 
 		// check the user permissions
 		if ( ! external.isUserAdmin(userId) && 
-				! external.isUserAllowedInEvalGroup(userId, EvalConstants.PERM_TAKE_EVALUATION, context) ) {
+				! external.isUserAllowedInEvalGroup(userId, EvalConstants.PERM_TAKE_EVALUATION, evalGroupId) ) {
 			log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") without permission");
 			return false;
 		}
 
 		// check if the user already took this evaluation
 		int evalResponsesForUser = dao.countByProperties(EvalResponse.class, 
-				new String[] {"owner", "evaluation.id", "context"}, 
-				new Object[] {userId, evaluationId, context});
+				new String[] {"owner", "evaluation.id", "evalGroupId"}, 
+				new Object[] {userId, evaluationId, evalGroupId});
 		if (evalResponsesForUser > 0) {
 			// check if persistent object is the one that already exists
 			List l = dao.findByProperties(EvalResponse.class, 
-					new String[] {"owner", "evaluation.id", "context"}, 
-					new Object[] {userId, evaluationId, context});
+					new String[] {"owner", "evaluation.id", "evalGroupId"}, 
+					new Object[] {userId, evaluationId, evalGroupId});
 			EvalResponse response = (EvalResponse) l.get(0);
 			if (response.getId() == null && l.size() == 1) {
 				// all is ok, the "existing" response is a hibernate persistent object

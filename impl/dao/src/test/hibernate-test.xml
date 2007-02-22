@@ -32,7 +32,7 @@
 		<property name="mappingResources">
 			<list>
 				<value>org/sakaiproject/evaluation/hbm/EvalAnswer.hbm.xml</value>
-				<value>org/sakaiproject/evaluation/hbm/EvalAssignContext.hbm.xml</value>
+				<value>org/sakaiproject/evaluation/hbm/EvalAssignGroup.hbm.xml</value>
 				<value>org/sakaiproject/evaluation/hbm/EvalConfig.hbm.xml</value>
 				<value>org/sakaiproject/evaluation/hbm/EvalEmailTemplate.hbm.xml</value>
 				<value>org/sakaiproject/evaluation/hbm/EvalEvaluation.hbm.xml</value>

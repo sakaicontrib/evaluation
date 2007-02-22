@@ -116,24 +116,24 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalResponsesLogic#countResponses(java.lang.Long, java.lang.String)
 	 */
-	public int countResponses(Long evaluationId, String context) {
-		log.debug("evaluationId: " + evaluationId + ", context: " + context);
+	public int countResponses(Long evaluationId, String evalGroupId) {
+		log.debug("evaluationId: " + evaluationId + ", evalGroupId: " + evalGroupId);
 
 		if ( dao.countByProperties(EvalEvaluation.class, 
 				new String[] {"id"}, new Object[] {evaluationId} ) <= 0 ) {
 			throw new IllegalArgumentException("Could not find evaluation with id: " + evaluationId);
 		}
 
-		if (context == null) {
-			// returns count of all responses in all contexts if context is null
+		if (evalGroupId == null) {
+			// returns count of all responses in all eval groups if evalGroupId is null
 			return dao.countByProperties(EvalResponse.class,
 					new String[] {"evaluation.id"},
 					new Object[] {evaluationId} );
 		} else {
 			// returns count of responses in this context only if set
 			return dao.countByProperties(EvalResponse.class,
-					new String[] {"evaluation.id", "context"},
-					new Object[] {evaluationId, context} );			
+					new String[] {"evaluation.id", "evalGroupId"},
+					new Object[] {evaluationId, evalGroupId} );			
 		}
 	}
 
