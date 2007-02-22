@@ -126,7 +126,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
     String evalOTP = evalOTPBinding+".";
     Long responseId;
     Long evalId;
-    String context;
+    String evalGroupId;
 
 	int displayNumber=1;
 	int renderedItemCount=0;
@@ -146,10 +146,10 @@ public class TakeEvalProducer implements ViewComponentProducer,
 		
 		EvalTakeViewParameters evalTakeViewParams = (EvalTakeViewParameters) viewparams;
 		EvalEvaluation eval = evalsLogic.getEvaluationById(evalTakeViewParams.evaluationId);
-		responseId=evalTakeViewParams.responseId;
-		evalId=evalTakeViewParams.evaluationId;
-		context=evalTakeViewParams.context;
-		if(eval !=null && evalTakeViewParams.context !=null){
+		responseId = evalTakeViewParams.responseId;
+		evalId = evalTakeViewParams.evaluationId;
+		evalGroupId = evalTakeViewParams.context;
+		if(eval !=null && evalTakeViewParams.context != null){
 			UIOutput.make(tofill, "evalTitle", eval.getTitle()); //$NON-NLS-1$
 			//get course title: from sakaicontext to course title
 			//String title = logic.getDisplayTitle(evalTakeViewParams.context);
@@ -213,7 +213,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 			UIOutput.make(courseSection, "course-questions-header", messageLocator.getMessage("takeeval.course.questions.header")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, ncItemsList))	{	
-			Set instructors = external.getUserIdsForContext(context, EvalConstants.PERM_BE_EVALUATED);
+			Set instructors = external.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED);
 			//for each instructor, make a branch containing all instructor questions
 			for (Iterator it = instructors.iterator(); it.hasNext();) {
 				String instructor = (String) it.next();

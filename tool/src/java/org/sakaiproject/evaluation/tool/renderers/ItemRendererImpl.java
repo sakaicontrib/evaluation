@@ -61,7 +61,7 @@ public class ItemRendererImpl implements ItemRenderer {
 		}
 
 		if (bindings != null && bindings.length == 0) {
-			bindings = null;
+			bindings = new String[] {null};
 		}
 
 		// figure out the type of item and then call the appropriate renderer
