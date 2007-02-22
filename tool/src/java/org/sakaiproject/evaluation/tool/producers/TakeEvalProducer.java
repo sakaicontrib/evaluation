@@ -128,7 +128,9 @@ public class TakeEvalProducer implements ViewComponentProducer,
     Long evalId;
     String context;
 
-
+	int displayNumber=1;
+	int renderedItemCount=0;
+    
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams,
 			ComponentChecker checker) {
 		
@@ -189,8 +191,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 		// these will be used if there are any "Course" items or "Instructor" items, respectively
 		UIBranchContainer courseSection = null;
 		UIBranchContainer instructorSection = null;
-		int displayNumber=1;
-		int renderedItemCount=0;
+
 		if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_COURSE, ncItemsList))	{	
 			courseSection = UIBranchContainer.make(form,"courseSection:"); //$NON-NLS-1$
 			UIOutput.make(courseSection, "course-questions-header", messageLocator.getMessage("takeeval.course.questions.header")); //$NON-NLS-1$ //$NON-NLS-2$			
@@ -206,103 +207,131 @@ public class TakeEvalProducer implements ViewComponentProducer,
 					if (i % 2 == 1) {
 						radiobranch.decorators = new DecoratorList(new UIColourDecorator(null,Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
 					}
-					
-					//set up OTP paths
-				    String currAnswerOTP;
-				    if (responseId == null) {
-				    	currAnswerOTP = newResponseAnswersOTP + "new" + renderedItemCount +".";
-				    }
-					else {
-						//if the user has answered this question before, point at their response
-						EvalAnswer currAnswer=(EvalAnswer)answerMap.get(tempItem1.getId()+"null"+"null");
-						
-						if(currAnswer==null) {
-							currAnswerOTP = newResponseAnswersOTP + "new" + renderedItemCount +".";
-						}
-						else {
-							currAnswerOTP = responseAnswersOTP + responseId + "." + currAnswer.getId() + ".";
-						}
-					}
-					
-
-					//bind the current EvalTemplateItem's EvalItem to the current EvalAnswer's EvalItem
-					form.parameters.add( new UIELBinding
-							(currAnswerOTP + "templateItem",new ELReference("templateItemBeanLocator." + tempItem1.getId())) );	
-				    					
-					//update curranswerOTP for binding the UI input element (UIInput, UISelect, etc.)
-				    if(tempItem1.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)) currAnswerOTP+="numeric";
-				    if(tempItem1.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)) currAnswerOTP+="text";	
-				    if(tempItem1.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_HEADER)) currAnswerOTP=null;
-					
-					//this.doFillComponent(tempItem1, i, radiobranch,courseSection, form,allItems);
-					itemRenderer.renderItem(radiobranch, "rendered-item:", new String[] {currAnswerOTP}, tempItem1, displayNumber, false);
-					//if we displayed 1 item, increment by 1
-					if(tempItem1.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)|
-						tempItem1.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_TEXT))displayNumber++;
-					renderedItemCount++;
+					renderItemPrep(radiobranch, form, tempItem1, answerMap, "null", "null");
 				}
 			}
 			UIOutput.make(courseSection, "course-questions-header", messageLocator.getMessage("takeeval.course.questions.header")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, ncItemsList))	{	
-			Set instructors = external.getUserIdsForEvalGroup(context, EvalConstants.PERM_BE_EVALUATED);
+			Set instructors = external.getUserIdsForContext(context, EvalConstants.PERM_BE_EVALUATED);
 			//for each instructor, make a branch containing all instructor questions
 			for (Iterator it = instructors.iterator(); it.hasNext();) {
 				String instructor = (String) it.next();
 				instructorSection = UIBranchContainer.make(form,"instructorSection:", "inst"+displayNumber); //$NON-NLS-1$
 				UIOutput.make(instructorSection, "instructor-questions-header", messageLocator.getMessage("takeeval.instructor.questions.header")+" "+external.getUserDisplayName(instructor));	
+				//for each item in this evaluation
 				for (int i = 0; i <ncItemsList.size(); i++) {
 					EvalTemplateItem tempItem1 = (EvalTemplateItem) ncItemsList.get(i);
-
 					String cat = tempItem1.getItemCategory();
 					UIBranchContainer radiobranch = null;
 					
+					//if the given item is of type instructor, render it here
 					if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR)) { //"Instructor"
 						radiobranch = UIBranchContainer.make(instructorSection,
 								"itemrow:first", Integer.toString(i)); //$NON-NLS-1$
 						if (i % 2 == 1) radiobranch.decorators = new DecoratorList(new UIColourDecorator(null, Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
-						
-						//set up OTP paths
-					    String currAnswerOTP;
-					    
-					    if (responseId == null) currAnswerOTP = newResponseAnswersOTP + "new" + renderedItemCount +".";
-						else {
-							//if the user has answered this question before, point at their response
-							EvalAnswer currAnswer=(EvalAnswer)answerMap.get(tempItem1.getId()+EvalConstants.ITEM_CATEGORY_INSTRUCTOR+instructor);
-							if(currAnswer==null)currAnswerOTP = newResponseAnswersOTP + "new" + renderedItemCount +".";
-							else currAnswerOTP = responseAnswersOTP + responseId + "." + currAnswer.getId() + ".";
-						}
-						
-						//bind the current EvalTemplateItem's EvalItem to the current EvalAnswer's EvalItem
-						form.parameters.add( new UIELBinding
-								(currAnswerOTP + "templateItem",new ELReference("templateItemBeanLocator." + tempItem1.getId())) );	
-						
-						//bind the current instructor id to the current EvalAnswer.associated
-						form.parameters.add( new UIELBinding(currAnswerOTP + "associatedId", instructor) );
-						
-						//update curranswerOTP for binding the UI input element (UIInput, UISelect, etc.)
-					    if(tempItem1.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)) currAnswerOTP+="numeric";
-					    if(tempItem1.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)) currAnswerOTP+="text";	
-					    if(tempItem1.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_HEADER)) currAnswerOTP=null;
-
-						itemRenderer.renderItem(radiobranch, "rendered-item:",  new String[] {currAnswerOTP}, tempItem1, displayNumber, false);
-						//if we displayed 1 item, increment by 1
-						if(tempItem1.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)|
-							tempItem1.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_TEXT))displayNumber++;
-						
-						renderedItemCount++;
-						//this.doFillComponent(tempItem1, i, radiobranch,instructorSection, form,allItems);
+						renderItemPrep(radiobranch, form, tempItem1, answerMap, cat, instructor);
 					}
 				} // end of for loop				
 			}
 		}
-
-		
 		UICommand.make(form, "submitEvaluation", messageLocator.getMessage("takeeval.submit.button"), "#{takeEvalBean.submitEvaluation}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		
 	} // end of method
 
+	private void renderItemPrep(UIBranchContainer radiobranch, UIForm form, EvalTemplateItem tempItem1, HashMap answerMap, String itemCategory, String associatedId) {
+	    //holds array of bindings for child block items
+		String[] caOTP=null;					
+	    //holds list of block child items if tempItem1 is a block parent
+	    List childList=null;
+	    //if tempItem1 is a blockParent
+		if (tempItem1.getBlockParent() != null
+				&& tempItem1.getBlockParent().booleanValue() == true) {
+			//get the child items of tempItem1
+			childList = itemsLogic.getBlockChildTemplateItemsForBlockParent(tempItem1.getId(), false);
+			caOTP = new String[childList.size()];
+			//for each child item, construct a binding
+			for (int j = 0; j < childList.size(); j++) {
+				EvalTemplateItem currChildItem = (EvalTemplateItem)childList.get(j);
+				//set up OTP paths
+			    if (responseId == null) {
+			    	caOTP[j] = newResponseAnswersOTP + "new" + (renderedItemCount) +".";
+			    }
+				else {
+					//if the user has answered this question before, point at their response
+					EvalAnswer currAnswer=(EvalAnswer)answerMap.get(currChildItem.getId()+itemCategory+associatedId);
+					
+					if(currAnswer==null) {
+						caOTP[j] = newResponseAnswersOTP + "new" + (renderedItemCount) +".";
+					}
+					else {
+						caOTP[j] = responseAnswersOTP + responseId + "." + currAnswer.getId() + ".";
+					}
+				}
 
+				//bind the current EvalTemplateItem's EvalItem to the current EvalAnswer's EvalItem
+				form.parameters.add( new UIELBinding
+						(caOTP[j] + "templateItem",new ELReference("templateItemBeanLocator." + currChildItem.getId())) );	
+				if(itemCategory.equals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR) | itemCategory.equals(EvalConstants.ITEM_CATEGORY_ENVIRONMENT)){
+					//bind the current instructor id to the current EvalAnswer.associated
+					form.parameters.add( new UIELBinding(caOTP[j] + "associatedId", associatedId) );						
+				}	
+				//set up binding for UISelect
+				caOTP[j]+="numeric";  
+				renderedItemCount++;
+			}
+		}
+		//single item being rendered
+		else if(tempItem1.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_SCALED) | 
+				tempItem1.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)){
+			//set up OTP paths for scaled/text type items
+		    String currAnswerOTP;
+		    if (responseId == null) {
+		    	currAnswerOTP = newResponseAnswersOTP + "new" + renderedItemCount +".";
+		    }
+			else {
+				//if the user has answered this question before, point at their response
+				EvalAnswer currAnswer=(EvalAnswer)answerMap.get(tempItem1.getId()+"null"+"null");
+				
+				if(currAnswer==null) {
+					currAnswerOTP = newResponseAnswersOTP + "new" + renderedItemCount +".";
+				}
+				else {
+					currAnswerOTP = responseAnswersOTP + responseId + "." + currAnswer.getId() + ".";
+				}
+			}
+			//bind the current EvalTemplateItem's EvalItem to the current EvalAnswer's EvalItem
+			form.parameters.add( new UIELBinding
+					(currAnswerOTP + "templateItem",new ELReference("templateItemBeanLocator." + tempItem1.getId())) );	
+			if(itemCategory.equals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR) | itemCategory.equals(EvalConstants.ITEM_CATEGORY_ENVIRONMENT)){			
+				//bind the current instructor id to the current EvalAnswer.associated
+				form.parameters.add( new UIELBinding(currAnswerOTP + "associatedId", associatedId) );
+			}
+			//update curranswerOTP for binding the UI input element (UIInput, UISelect, etc.)
+			if(tempItem1.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)){
+		    	caOTP = new String[] {currAnswerOTP+"numeric"};
+		    }
+			if(tempItem1.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)) {
+		    	caOTP = new String[] {currAnswerOTP+"text"};
+		    }	
+		}
+		//***Render the item.***
+		itemRenderer.renderItem(radiobranch, "rendered-item:", caOTP, tempItem1, displayNumber, false);
+
+		//***Increment counters***
+		//if we displayed a block, renderedItem has been incremented, increment displayNumber by the number of blockChildren
+		if(tempItem1.getBlockParent() != null
+				&& tempItem1.getBlockParent().booleanValue() == true){
+			displayNumber += childList.size();
+		}
+		//if we displayed 1 item, increment by 1
+		else if(tempItem1.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_TEXT) | 
+				tempItem1.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)){
+			displayNumber++;
+			renderedItemCount++;
+		}
+		
+	}
+	
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
 	 */
