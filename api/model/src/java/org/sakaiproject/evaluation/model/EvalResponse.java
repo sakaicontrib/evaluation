@@ -19,7 +19,7 @@ public class EvalResponse implements java.io.Serializable {
 
 	private String owner;
 
-	private String context;
+	private String evalGroupId;
 
 	private Date startTime;
 
@@ -39,7 +39,7 @@ public class EvalResponse implements java.io.Serializable {
 	public EvalResponse(Date lastModified, String owner, String context, Date startTime, EvalEvaluation evaluation) {
 		this.lastModified = lastModified;
 		this.owner = owner;
-		this.context = context;
+		this.evalGroupId = context;
 		this.startTime = startTime;
 		this.evaluation = evaluation;
 	}
@@ -49,7 +49,7 @@ public class EvalResponse implements java.io.Serializable {
 			EvalEvaluation evaluation) {
 		this.lastModified = lastModified;
 		this.owner = owner;
-		this.context = context;
+		this.evalGroupId = context;
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.answers = answers;
@@ -81,12 +81,12 @@ public class EvalResponse implements java.io.Serializable {
 		this.owner = owner;
 	}
 
-	public String getContext() {
-		return this.context;
+	public String getEvalGroupId() {
+		return this.evalGroupId;
 	}
 
-	public void setContext(String context) {
-		this.context = context;
+	public void setEvalGroupId(String context) {
+		this.evalGroupId = context;
 	}
 
 	public Date getStartTime() {

@@ -92,7 +92,7 @@ public class LocalResponsesLogic {
 		String context = external.getCurrentEvalGroup();
 		for (int i = 0; i < responses.size(); ++ i) {
 			EvalResponse response = (EvalResponse) responses.get(i);
-			if (response.getContext().equals(context)) return response;
+			if (response.getEvalGroupId().equals(context)) return response;
 		}
 		throw new IllegalArgumentException("Could not locate response for eval id "
 				+ evalId + " userID " + userId +" in context " + context); 
