@@ -110,9 +110,14 @@ public class ScaledRenderer implements ItemRenderer {
 			if (colored) {
 				UILink.make(compactRadioContainer, "idealImage", ScaledUtils.getIdealImageURL(scale)); //$NON-NLS-1$
 			}
-
-			UISelect radios = UISelect.make(compactRadioContainer, 
+			UISelect radios;
+			if(bindings!= null){
+				radios = UISelect.make(compactRadioContainer, 
 					"dummyRadio", scaleValues, scaleLabels, bindings[0], initValue);
+			}else {
+				radios = UISelect.make(compactRadioContainer, 
+						"dummyRadio", scaleValues, scaleLabels, null, initValue);
+			}
 			String selectID = radios.getFullID();
 			
 			if (disabled) {
@@ -164,6 +169,7 @@ public class ScaledRenderer implements ItemRenderer {
 				
 				// Radio Buttons
 				UISelect radios = UISelect.make(full, "dummyRadio", scaleValues,scaleLabels, bindings[0], null);				
+				
 				String selectID = radios.getFullID();
 
 				if (disabled) {
