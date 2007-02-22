@@ -10,6 +10,7 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 
 import uk.org.ponder.arrayutil.ArrayUtil;
+import uk.org.ponder.stringutil.StringUtil;
 
 /**
  * Utilities for manipulating scales.
@@ -41,7 +42,10 @@ public class ScaledUtils {
 		EvaluationConstant.GREEN_COLOR};
 	
 	public static int idealToIndex(String ideal) {
-		return ideal == null? 0 : ArrayUtil.indexOf(idealKeys, ideal);
+		for (int i = 0; i < idealKeys.length; ++ i) {
+			if (StringUtil.equals(ideal, idealKeys[i])) return i;
+		}
+		return -1;
 	}
 	
 	public static int idealIndex(EvalScale scale) {
