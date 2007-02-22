@@ -67,7 +67,7 @@ public class ResponseBeanLocator implements BeanLocator {
       EvalResponse response = (EvalResponse) delivered.get(key);
       if(response.getId()==null){
     	  response.setEvaluation(eval);
-    	  response.setContext(context);
+    	  response.setEvalGroupId(context);
       }
       response.setEndTime(new Date());
       localResponsesLogic.saveResponse(response); 

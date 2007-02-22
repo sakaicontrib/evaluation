@@ -17,9 +17,9 @@
             <column name="OWNER" not-null="true" length="255" />
         </property>
         <!-- a unique ID for this eval group, the context in Sakai (siteId sometimes) -->
-        <property name="evalGroupId" type="java.lang.String" index="eval_evalgroup_id">
-            <column name="eval_group" not-null="true" length="255" />
-        </property> 
+        <property name="evalGroupId" type="java.lang.String" index="eval_assign_groupid">
+            <column name="group_id" not-null="true" length="255" />
+        </property>
         <!-- This indicates if the instructor has approved the evaluation for this AC -->
         <property name="instructorApproval" type="java.lang.Boolean">
             <column name="INSTRUCTOR_APPROVAL" not-null="true" />

@@ -16,9 +16,9 @@
         <property name="owner" type="java.lang.String" index="eval_response_owner">
             <column name="OWNER" not-null="true" length="255" />
         </property>
-        <!-- this should be the context (site or group) -->
-        <property name="context" type="java.lang.String" index="eval_response_context">
-            <column name="CONTEXT" not-null="true" length="255" />
+        <!-- a unique ID for this eval group, the context in Sakai (siteId sometimes) -->
+        <property name="evalGroupId" type="java.lang.String" index="eval_response_groupid">
+            <column name="group_id" not-null="true" length="255" />
         </property>
         <!-- This is the time when this response was initiated -->
         <property name="startTime" type="java.util.Date">

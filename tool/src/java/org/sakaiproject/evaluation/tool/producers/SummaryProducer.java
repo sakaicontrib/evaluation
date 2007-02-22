@@ -190,7 +190,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 	
 						for (int k=0; k<evalResponses.size(); k++) {
 							EvalResponse er = (EvalResponse) evalResponses.get(k);
-							if (context.equals(er.getContext()) &&
+							if (context.equals(er.getEvalGroupId()) &&
 									eval.getId().equals(er.getEvaluation().getId())) {
 								response = er;
 								break;
