@@ -25,6 +25,7 @@ import org.sakaiproject.evaluation.logic.test.stubs.EvalExternalLogicStub;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalScale;
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.PreloadTestData;
 import org.springframework.test.AbstractTransactionalSpringContextTests;
@@ -103,7 +104,7 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 		// test adding context to inqueue eval
 		EvalAssignGroup eacNew = new EvalAssignGroup(new Date(), 
 				EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.CONTEXT1, 
-				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
+				EvalConstants.GROUP_TYPE_SITE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
 				etdl.evaluationNew);
 		assigns.saveAssignContext(eacNew, EvalTestDataLoad.MAINT_USER_ID);
 
@@ -116,7 +117,7 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 
 		// test adding context to active eval
 		EvalAssignGroup eacActive = new EvalAssignGroup(new Date(), 
-				EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.CONTEXT2, 
+				EvalConstants.GROUP_TYPE_SITE, EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.CONTEXT2, 
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
 				etdl.evaluationActive);
 		assigns.saveAssignContext(eacActive, EvalTestDataLoad.MAINT_USER_ID);
@@ -151,7 +152,7 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 		try {
 			assigns.saveAssignContext( new EvalAssignGroup(new Date(), 
 					EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.CONTEXT1, 
-					Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
+					EvalConstants.GROUP_TYPE_SITE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
 					etdl.evaluationNew),
 					EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");
@@ -163,7 +164,7 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 		try {
 			assigns.saveAssignContext( new EvalAssignGroup(new Date(), 
 					EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.CONTEXT1, 
-					Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
+					EvalConstants.GROUP_TYPE_SITE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
 					etdl.evaluationActive),
 					EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");
@@ -175,7 +176,7 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 		try {
 			assigns.saveAssignContext( new EvalAssignGroup(new Date(), 
 					EvalTestDataLoad.USER_ID, EvalTestDataLoad.CONTEXT1, 
-					Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
+					EvalConstants.GROUP_TYPE_SITE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
 					etdl.evaluationNew), 
 					EvalTestDataLoad.USER_ID);
 			Assert.fail("Should have thrown exception");
@@ -187,7 +188,7 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 		try {
 			assigns.saveAssignContext( new EvalAssignGroup(new Date(), 
 					EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.CONTEXT1, 
-					Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
+					EvalConstants.GROUP_TYPE_SITE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
 					etdl.evaluationViewable), 
 					EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");
@@ -250,11 +251,11 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 		// save some ACs to test removing
 		EvalAssignGroup eac1 = new EvalAssignGroup(new Date(), 
 				EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.CONTEXT1, 
-				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
+				EvalConstants.GROUP_TYPE_SITE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
 				etdl.evaluationNew);
 		EvalAssignGroup eac2 = new EvalAssignGroup(new Date(), 
 				EvalTestDataLoad.ADMIN_USER_ID, EvalTestDataLoad.CONTEXT2, 
-				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
+				EvalConstants.GROUP_TYPE_SITE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
 				etdl.evaluationNew);
 		evaluationDao.save(eac1);
 		evaluationDao.save(eac2);

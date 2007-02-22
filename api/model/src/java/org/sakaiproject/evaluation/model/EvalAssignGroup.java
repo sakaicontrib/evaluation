@@ -1,6 +1,6 @@
 package org.sakaiproject.evaluation.model;
 
-// Generated Feb 22, 2007 9:51:10 AM by Hibernate Tools 3.2.0.beta6a
+// Generated Feb 22, 2007 10:16:02 AM by Hibernate Tools 3.2.0.beta6a
 
 import java.util.Date;
 
@@ -19,6 +19,8 @@ public class EvalAssignGroup implements java.io.Serializable {
 
 	private String evalGroupId;
 
+	private String evalGroupType;
+
 	private Boolean instructorApproval;
 
 	private Boolean instructorsViewResults;
@@ -34,11 +36,13 @@ public class EvalAssignGroup implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public EvalAssignGroup(Date lastModified, String owner, String evalGroupId, Boolean instructorApproval,
-			Boolean instructorsViewResults, Boolean studentsViewResults, EvalEvaluation evaluation) {
+	public EvalAssignGroup(Date lastModified, String owner, String evalGroupId, String evalGroupType,
+			Boolean instructorApproval, Boolean instructorsViewResults, Boolean studentsViewResults,
+			EvalEvaluation evaluation) {
 		this.lastModified = lastModified;
 		this.owner = owner;
 		this.evalGroupId = evalGroupId;
+		this.evalGroupType = evalGroupType;
 		this.instructorApproval = instructorApproval;
 		this.instructorsViewResults = instructorsViewResults;
 		this.studentsViewResults = studentsViewResults;
@@ -76,6 +80,14 @@ public class EvalAssignGroup implements java.io.Serializable {
 
 	public void setEvalGroupId(String evalGroupId) {
 		this.evalGroupId = evalGroupId;
+	}
+
+	public String getEvalGroupType() {
+		return this.evalGroupType;
+	}
+
+	public void setEvalGroupType(String evalGroupType) {
+		this.evalGroupType = evalGroupType;
 	}
 
 	public Boolean getInstructorApproval() {

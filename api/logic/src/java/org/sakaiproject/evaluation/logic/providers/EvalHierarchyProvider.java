@@ -14,6 +14,7 @@
 
 package org.sakaiproject.evaluation.logic.providers;
 
+import java.util.List;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
@@ -106,6 +107,17 @@ public interface EvalHierarchyProvider {
 	 * @return true if the user has this permission, false otherwise
 	 */
 	public boolean checkUserNodePerm(String userId, String nodeId, String hierarchyPermConstant);
+
+
+	/**
+	 * Gets the list of nodes in the path from an eval group to the root node,
+	 * should be in order with the first node being the root node and the last node being
+	 * the parent node for the given eval group
+	 *  
+	 * @param evalGroupId the unique ID of an eval group
+	 * @return a List of {@link HierarchyNode} objects (ordered from root to evalgroup)
+	 */
+	public List getNodesAboveEvalGroup(String evalGroupId);
 
 	/**
 	 * Get the set of eval groups beneath a specific hierarachy node, note that this should only

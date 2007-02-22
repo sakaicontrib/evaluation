@@ -634,20 +634,20 @@ public class EvalTestDataLoad {
 		evaluationActive.setReminderEmailTemplate(emailTemplate3);
 
 		// context assignments
-		assign1 = new EvalAssignGroup(new Date(), MAINT_USER_ID, CONTEXT1, Boolean.TRUE, 
-				Boolean.TRUE, Boolean.FALSE, evaluationActive);
-		assign2 = new EvalAssignGroup(new Date(), MAINT_USER_ID, CONTEXT1, Boolean.TRUE, 
-				Boolean.TRUE, Boolean.FALSE, evaluationActiveUntaken);
-		assign3 = new EvalAssignGroup(new Date(), ADMIN_USER_ID, CONTEXT1, Boolean.TRUE, 
-				Boolean.TRUE, Boolean.FALSE, evaluationClosed);
-		assign4 = new EvalAssignGroup(new Date(), MAINT_USER_ID, CONTEXT2, Boolean.TRUE, 
-				Boolean.TRUE, Boolean.FALSE, evaluationClosed);
-		assign5 = new EvalAssignGroup(new Date(), ADMIN_USER_ID, CONTEXT2, Boolean.TRUE, 
-				Boolean.TRUE, Boolean.FALSE, evaluationViewable);
-		assign6 = new EvalAssignGroup(new Date(), MAINT_USER_ID, CONTEXT1, Boolean.TRUE, 
-				Boolean.TRUE, Boolean.FALSE, evaluationNewAdmin);
-		assign7 = new EvalAssignGroup(new Date(), ADMIN_USER_ID, CONTEXT2, Boolean.TRUE, 
-				Boolean.TRUE, Boolean.FALSE, evaluationNewAdmin);
+		assign1 = new EvalAssignGroup(new Date(), MAINT_USER_ID, CONTEXT1, EvalConstants.GROUP_TYPE_SITE, 
+				Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationActive);
+		assign2 = new EvalAssignGroup(new Date(), MAINT_USER_ID, CONTEXT1, EvalConstants.GROUP_TYPE_SITE, 
+				Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationActiveUntaken);
+		assign3 = new EvalAssignGroup(new Date(), ADMIN_USER_ID, CONTEXT1, EvalConstants.GROUP_TYPE_SITE, 
+				Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationClosed);
+		assign4 = new EvalAssignGroup(new Date(), MAINT_USER_ID, CONTEXT2, EvalConstants.GROUP_TYPE_SITE, 
+				Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationClosed);
+		assign5 = new EvalAssignGroup(new Date(), ADMIN_USER_ID, CONTEXT2, EvalConstants.GROUP_TYPE_SITE, 
+				Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationViewable);
+		assign6 = new EvalAssignGroup(new Date(), MAINT_USER_ID, CONTEXT1, EvalConstants.GROUP_TYPE_SITE, 
+				Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationNewAdmin);
+		assign7 = new EvalAssignGroup(new Date(), ADMIN_USER_ID, CONTEXT2, EvalConstants.GROUP_TYPE_SITE, 
+				Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationNewAdmin);
 
 		// now init response data for the evaluations
 		response1 = new EvalResponse(new Date(), USER_ID, CONTEXT1, 

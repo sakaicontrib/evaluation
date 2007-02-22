@@ -13,7 +13,7 @@
 		<property name="persistentClasses">
 			<list>
 				<value>org.sakaiproject.evaluation.model.EvalAnswer</value>
-				<value>org.sakaiproject.evaluation.model.EvalAssignContext</value>
+				<value>org.sakaiproject.evaluation.model.EvalAssignGroup</value>
 				<value>org.sakaiproject.evaluation.model.EvalConfig</value>
 				<value>org.sakaiproject.evaluation.model.EvalEmailTemplate</value>
 				<value>org.sakaiproject.evaluation.model.EvalEvaluation</value>

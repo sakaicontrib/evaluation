@@ -260,7 +260,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 		List ids = null;
 
 		// test getting evaluations by context
-		s = evaluationDao.getEvaluationsByContexts(
+		s = evaluationDao.getEvaluationsByEvalGroups(
 				new String[] {EvalTestDataLoad.CONTEXT1}, false, true);
 		Assert.assertNotNull(s);
 		Assert.assertEquals(4, s.size());
@@ -270,7 +270,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 		Assert.assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
 		Assert.assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
 
-		s = evaluationDao.getEvaluationsByContexts(
+		s = evaluationDao.getEvaluationsByEvalGroups(
 				new String[] {EvalTestDataLoad.CONTEXT2}, false, true);
 		Assert.assertNotNull(s);
 		Assert.assertEquals(3, s.size());
@@ -280,13 +280,13 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 		Assert.assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
 		Assert.assertTrue(ids.contains( etdl.evaluationViewable.getId() ));
 
-		s = evaluationDao.getEvaluationsByContexts(
+		s = evaluationDao.getEvaluationsByEvalGroups(
 				new String[] {"invalid context"}, false, true);
 		Assert.assertNotNull(s);
 		Assert.assertEquals(0, s.size());
 
 		// test that the get active part works
-		s = evaluationDao.getEvaluationsByContexts(
+		s = evaluationDao.getEvaluationsByEvalGroups(
 				new String[] {EvalTestDataLoad.CONTEXT1}, true, true);
 		Assert.assertNotNull(s);
 		Assert.assertEquals(2, s.size());
@@ -294,20 +294,20 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 		Assert.assertTrue(ids.contains( etdl.evaluationActive.getId() ));
 		Assert.assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
 
-		s = evaluationDao.getEvaluationsByContexts(
+		s = evaluationDao.getEvaluationsByEvalGroups(
 				new String[] {EvalTestDataLoad.CONTEXT2}, true, true);
 		Assert.assertNotNull(s);
 		Assert.assertEquals(0, s.size());
 
 		// test getting from an invalid context
-		s = evaluationDao.getEvaluationsByContexts(
+		s = evaluationDao.getEvaluationsByEvalGroups(
 				new String[] {EvalTestDataLoad.INVALID_CONTEXT}, true, true);
 		Assert.assertNotNull(s);
 		Assert.assertEquals(0, s.size());		
 
 		// test invalid
 		try {
-			s = evaluationDao.getEvaluationsByContexts(null, false, true);
+			s = evaluationDao.getEvaluationsByEvalGroups(null, false, true);
 			Assert.fail("Should have thrown an exception");
 		} catch (RuntimeException e) {
 			Assert.assertNotNull(e);
