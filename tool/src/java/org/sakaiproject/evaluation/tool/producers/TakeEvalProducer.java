@@ -252,8 +252,9 @@ public class TakeEvalProducer implements ViewComponentProducer,
 					//if the user has answered this question before, point at their response
 					EvalAnswer currAnswer=(EvalAnswer)answerMap.get(currChildItem.getId()+itemCategory+associatedId);
 					
+					//there is an existing response, but there is no answer
 					if(currAnswer==null) {
-						caOTP[j] = newResponseAnswersOTP + "new" + (renderedItemCount) +".";
+						caOTP[j] = responseAnswersOTP + responseId + "." + "new" + (renderedItemCount) +".";
 					}
 					else {
 						caOTP[j] = responseAnswersOTP + responseId + "." + currAnswer.getId() + ".";
@@ -285,7 +286,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 				EvalAnswer currAnswer=(EvalAnswer)answerMap.get(tempItem1.getId()+"null"+"null");
 				
 				if(currAnswer==null) {
-					currAnswerOTP = newResponseAnswersOTP + "new" + renderedItemCount +".";
+					currAnswerOTP = responseAnswersOTP + responseId + "." + "new" + (renderedItemCount) +".";
 				}
 				else {
 					currAnswerOTP = responseAnswersOTP + responseId + "." + currAnswer.getId() + ".";
