@@ -213,7 +213,7 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 							PreviewEvalProducer.VIEW_ID, eval1.getId(),eval1.getTemplate().getId(), null, ControlPanelProducer.VIEW_ID));
 					
 					// vary the display depending on the number of contexts assigned
-					int contextCount = evaluationsLogic.countEvaluationContexts(eval1.getId());
+					int contextCount = evaluationsLogic.countEvaluationGroups(eval1.getId());
 					if (contextCount > 1) {
 				
 						UIOutput.make(queuedEvalsRb, "queuedEvalAssignedLabel", contextCount+" courses");
@@ -261,7 +261,7 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 					UIInternalLink.make(activeEvalsRb, "activeEvalTitle", eval1.getTitle(),new PreviewEvalParameters( //$NON-NLS-1$
 							PreviewEvalProducer.VIEW_ID, eval1.getId(),eval1.getTemplate().getId(), null, ControlPanelProducer.VIEW_ID));
 					
-					int count = evaluationsLogic.countEvaluationContexts(eval1.getId());
+					int count = evaluationsLogic.countEvaluationGroups(eval1.getId());
 					if (count > 1) {
 						UICommand activeEvalAssigned = UICommand.make(activeEvalsRb, 
 								"activeEvalAssigned", count+"courses", //$NON-NLS-1$ //$NON-NLS-2$
@@ -361,7 +361,7 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 	 * @return title of first context returned
 	 */
 	private String getTitleForFirstEvalContext(Long evaluationId) {
-		List acs = assignsLogic.getAssignContextsByEvalId(evaluationId);
+		List acs = assignsLogic.getAssignGroupsByEvalId(evaluationId);
 		EvalAssignGroup eac = (EvalAssignGroup) acs.get(0);
 		return external.getDisplayTitle( eac.getEvalGroupId() );
 	}
@@ -375,7 +375,7 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 	private int getTotalEnrollmentsForEval(Long evaluationId) {
 		int totalEnrollments = 0;
 
-		List l = assignsLogic.getAssignContextsByEvalId(evaluationId);
+		List l = assignsLogic.getAssignGroupsByEvalId(evaluationId);
 		for (int i=0; i<l.size(); i++) {
 			EvalAssignGroup eac = (EvalAssignGroup) l.get(i);
 			String context = eac.getEvalGroupId();

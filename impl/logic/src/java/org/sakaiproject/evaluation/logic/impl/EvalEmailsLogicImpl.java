@@ -285,9 +285,6 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 	public String[] sendEvalCreatedNotifications(Long evaluationId, boolean includeOwner) {
 		log.debug("evaluationId: " + evaluationId + ", includeOwner: " + includeOwner);
 
-		// TODO - use a date which is related to the current users locale
-		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM); // , locale);
-
 		String from = (String) settings.get( EvalSettings.FROM_EMAIL_ADDRESS );
 
 		// get evaluation
@@ -303,16 +300,16 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		}
 
 		// get the associated contexts for this evaluation
-		Map evalContexts = evaluationLogic.getEvaluationContexts(new Long[] {evaluationId}, true);
+		Map evalGroups = evaluationLogic.getEvaluationGroups(new Long[] {evaluationId}, true);
 		// only one possible map key so we can assume evaluationId
-		List contexts = (List) evalContexts.get(evaluationId);
-		log.debug("Found " + contexts.size() + " contexts for new evaluation: " + evaluationId);
+		List groups = (List) evalGroups.get(evaluationId);
+		log.debug("Found " + groups.size() + " contexts for new evaluation: " + evaluationId);
 
 		List sentMessages = new ArrayList();
 		// loop through contexts and send emails to correct users in each context
-		for (int i=0; i<contexts.size(); i++) {
-			EvalGroup context = (EvalGroup) contexts.get(i);
-			Set userIdsSet = external.getUserIdsForEvalGroup(context.evalGroupId, EvalConstants.PERM_BE_EVALUATED);
+		for (int i=0; i<groups.size(); i++) {
+			EvalGroup group = (EvalGroup) groups.get(i);
+			Set userIdsSet = external.getUserIdsForEvalGroup(group.evalGroupId, EvalConstants.PERM_BE_EVALUATED);
 			if (! includeOwner && userIdsSet.contains(eval.getOwner())) {
 				userIdsSet.remove(eval.getOwner());
 			}
@@ -325,22 +322,13 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			log.debug("Found " + toUserIds.length + " users (" + toUserIds + 
 					") to send " + EvalConstants.EMAIL_TEMPLATE_CREATED + 
 					" notification to for new evaluation (" + evaluationId + 
-					") and context (" + context.evalGroupId + ")");
+					") and context (" + group.evalGroupId + ")");
 
 			// replace the text of the template with real values
 			Map replacementValues = new HashMap();
-			replacementValues.put("EvalTitle", eval.getTitle() );
-			replacementValues.put("EvalStartDate", df.format(eval.getStartDate()) );
-			replacementValues.put("EvalDueDate", df.format(eval.getDueDate()) );
-			replacementValues.put("EvalResultsDate", df.format(eval.getViewDate()) );
-			replacementValues.put("ContextTitle", context.title);
 			replacementValues.put("HelpdeskEmail", from);
-			replacementValues.put("URLtoAddItems", "http://something"); // TODO
-			replacementValues.put("URLtoTakeEval", "http://something"); // TODO
-			replacementValues.put("URLtoViewResults", "http://something"); // TODO
-			replacementValues.put("URLtoSystem", "http://something"); // TODO
-			String message = TextTemplateLogicUtils.processTextTemplate(emailTemplate.getMessage(), 
-					replacementValues);
+			String message = makeEmailMessage(emailTemplate.getMessage(), 
+					eval, group, replacementValues);
 
 			// store sent messages to return
 			sentMessages.add(message);
@@ -362,9 +350,6 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 	public String[] sendEvalAvailableNotifications(Long evaluationId, boolean includeEvaluatees) {
 		log.debug("evaluationId: " + evaluationId + ", includeEvaluatees: " + includeEvaluatees);
 
-		// TODO - use a date which is related to the current users locale
-		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM); // , locale);
-
 		String from = (String) settings.get( EvalSettings.FROM_EMAIL_ADDRESS );
 
 		// get evaluation
@@ -379,17 +364,17 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			throw new IllegalStateException("Cannot find email template: " + EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
 		}
 
-		// get the associated contexts for this evaluation
-		Map evalContexts = evaluationLogic.getEvaluationContexts(new Long[] {evaluationId}, false);
+		// get the associated eval groups for this evaluation
+		Map evalGroupIds = evaluationLogic.getEvaluationGroups(new Long[] {evaluationId}, false);
 		// only one possible map key so we can assume evaluationId
-		List contexts = (List) evalContexts.get(evaluationId);
-		log.debug("Found " + contexts.size() + " contexts for available evaluation: " + evaluationId);
+		List groups = (List) evalGroupIds.get(evaluationId);
+		log.debug("Found " + groups.size() + " groups for available evaluation: " + evaluationId);
 
 		List sentMessages = new ArrayList();
 		// loop through contexts and send emails to correct users in each context
-		for (int i=0; i<contexts.size(); i++) {
-			EvalGroup context = (EvalGroup) contexts.get(i);
-			Set userIdsSet = external.getUserIdsForEvalGroup(context.evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
+		for (int i=0; i<groups.size(); i++) {
+			EvalGroup group = (EvalGroup) groups.get(i);
+			Set userIdsSet = external.getUserIdsForEvalGroup(group.evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
 
 			// skip ahead if there is no one to send to
 			if (userIdsSet.size() == 0) continue;
@@ -399,22 +384,13 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			log.debug("Found " + toUserIds.length + " users (" + toUserIds + 
 					") to send " + EvalConstants.EMAIL_TEMPLATE_CREATED + 
 					" notification to for available evaluation (" + evaluationId + 
-					") and context (" + context.evalGroupId + ")");
+					") and group (" + group.evalGroupId + ")");
 
 			// replace the text of the template with real values
 			Map replacementValues = new HashMap();
-			replacementValues.put("EvalTitle", eval.getTitle() );
-			replacementValues.put("EvalStartDate", df.format(eval.getStartDate()) );
-			replacementValues.put("EvalDueDate", df.format(eval.getDueDate()) );
-			replacementValues.put("EvalResultsDate", df.format(eval.getViewDate()) );
-			replacementValues.put("ContextTitle", context.title);
 			replacementValues.put("HelpdeskEmail", from);
-			replacementValues.put("URLtoAddItems", "http://something"); // TODO
-			replacementValues.put("URLtoTakeEval", "http://something"); // TODO
-			replacementValues.put("URLtoViewResults", "http://something"); // TODO
-			replacementValues.put("URLtoSystem", "http://something"); // TODO
-			String message = TextTemplateLogicUtils.processTextTemplate(emailTemplate.getMessage(), 
-					replacementValues);
+			String message = makeEmailMessage(emailTemplate.getMessage(), 
+					eval, group, replacementValues);
 
 			// store sent messages to return
 			sentMessages.add(message);
@@ -427,7 +403,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			log.info("Sent evaluation available message to " + toUserIds.length + " users");
 
 			if (includeEvaluatees) {
-				// TODO
+				// TODO Not done yet
 				log.error("includeEvaluatees Not implemented");
 			}
 		}
@@ -452,4 +428,43 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		return null;
 
 	}
+
+	/**
+	 * Builds the email message from a template and a bunch of variables
+	 * (passed in and otherwise)
+	 * 
+	 * @param messageTemplate
+	 * @param eval
+	 * @param group
+	 * @param replacementValues a map of String -> String representing $keys in the template to replace with text values
+	 * @return the processed message template with replacements and logic handled
+	 */
+	private String makeEmailMessage(String messageTemplate, EvalEvaluation eval, EvalGroup group, Map replacementValues) {
+		// replace the text of the template with real values
+		if (replacementValues == null) {
+			replacementValues = new HashMap();
+		}
+		replacementValues.put("EvalTitle", eval.getTitle() );
+
+		// TODO - use a date which is related to the current users locale
+		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM); //, locale);
+
+		replacementValues.put("EvalStartDate", df.format(eval.getStartDate()) );
+		replacementValues.put("EvalDueDate", df.format(eval.getDueDate()) );
+		replacementValues.put("EvalResultsDate", df.format(eval.getViewDate()) );
+		replacementValues.put("EvalGroupTitle", group.title);
+
+		// TODO check these URLS once I can get the right tool url
+		replacementValues.put("URLtoAddItems", 
+				external.getToolUrl() + "/instructor_add?evaluationId=" + eval.getId());
+		replacementValues.put("URLtoTakeEval", 
+				external.getToolUrl() + "/take_eval?evaluationId=" + eval.getId() +
+				"&evalGroupId=" + group.evalGroupId);
+		replacementValues.put("URLtoViewResults", 
+				external.getToolUrl() + "/view_report?evaluationId=" + eval.getId());
+		replacementValues.put("URLtoSystem", external.getServerUrl());
+
+		return TextTemplateLogicUtils.processTextTemplate(messageTemplate, replacementValues);
+	}
+
 }

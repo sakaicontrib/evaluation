@@ -119,12 +119,12 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 					EvalEvaluation eval = evalsLogic.getEvaluationById(previewEvalViewParams.evaluationId);
 					UIOutput.make(tofill, "evalTitle", eval.getTitle()); //$NON-NLS-1$
 
-					int count = evalsLogic.countEvaluationContexts(eval.getId());
+					int count = evalsLogic.countEvaluationGroups(eval.getId());
 					if (count > 1){
 						UIOutput.make(tofill, "courseTitle",count+"courses"); //$NON-NLS-1$ //$NON-NLS-2$
 					}else{
 						Long[] evalIds = {eval.getId()};
-						Map evalContexts = evalsLogic.getEvaluationContexts(evalIds, false);
+						Map evalContexts = evalsLogic.getEvaluationGroups(evalIds, false);
 						List contexts = (List) evalContexts.get(eval.getId());
 						EvalGroup ctxt = (EvalGroup) contexts.get(0);
 						String title = ctxt.title;
@@ -149,12 +149,12 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 						//get course title from context
 						UIOutput.make(tofill, "courseTitle",external.getDisplayTitle(previewEvalViewParams.context)); 
 					}else{ //get evalID, need to get assigned courses from eval ID
-						int count = evalsLogic.countEvaluationContexts(eval.getId());
+						int count = evalsLogic.countEvaluationGroups(eval.getId());
 						if (count > 1){
 							UIOutput.make(tofill, "courseTitle",count+"courses"); //$NON-NLS-1$ //$NON-NLS-2$
 						}else{
 							Long[] evalIds = {eval.getId()};
-							Map evalContexts = evalsLogic.getEvaluationContexts(evalIds, true);
+							Map evalContexts = evalsLogic.getEvaluationGroups(evalIds, true);
 							List contexts = (List) evalContexts.get(eval.getId());
 							EvalGroup ctxt = (EvalGroup) contexts.get(0);
 							String title = ctxt.title;

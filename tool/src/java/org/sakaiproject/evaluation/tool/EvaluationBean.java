@@ -387,7 +387,7 @@ public class EvaluationBean {
 			EvalAssignGroup assignCourse = new EvalAssignGroup(new Date(), 
 					external.getCurrentUserId(), group.evalGroupId, group.type,
 					instApproval, Boolean.TRUE, Boolean.FALSE, eval);
-			assignsLogic.saveAssignContext(assignCourse, external.getCurrentUserId());
+			assignsLogic.saveAssignGroup(assignCourse, external.getCurrentUserId());
 		}
 
 		//now reset the eval item here
@@ -477,7 +477,7 @@ public class EvaluationBean {
 	public String evalAssigned() {		
 		
 		eval = evalsLogic.getEvaluationById(evalId);
-		List l = assignsLogic.getAssignContextsByEvalId(eval.getId());
+		List l = assignsLogic.getAssignGroupsByEvalId(eval.getId());
 		if(l!=null && l.size() >0){
 			selectedSakaiSiteIds = new String[l.size()];
 			for(int i =0; i< l.size(); i++){

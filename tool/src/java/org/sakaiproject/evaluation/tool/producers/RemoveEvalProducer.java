@@ -95,13 +95,13 @@ public class RemoveEvalProducer implements ViewComponentProducer,ViewParamsRepor
 				UIOutput.make(form, "start-date-header", messageLocator.getMessage("removeeval.start.date.header")); //$NON-NLS-1$ //$NON-NLS-2$
 				UIOutput.make(form, "due-date-header", messageLocator.getMessage("removeeval.due.date.header")); //$NON-NLS-1$ //$NON-NLS-2$
 				
-				int count = evalsLogic.countEvaluationContexts(eval.getId());
+				int count = evalsLogic.countEvaluationGroups(eval.getId());
 				//int count = logic.countEvaluationContexts(eval.getId());
 				if (count > 1)
 					UIOutput.make(form, "evalAssigned", count + " courses"); //$NON-NLS-1$ //$NON-NLS-2$
 				else{
 					Long[] evalIds = {eval.getId()};
-					Map evalContexts = evalsLogic.getEvaluationContexts(evalIds, true);
+					Map evalContexts = evalsLogic.getEvaluationGroups(evalIds, true);
 					List contexts = (List) evalContexts.get(eval.getId());
 					EvalGroup ctxt = (EvalGroup) contexts.get(0);
 					String title = ctxt.title;

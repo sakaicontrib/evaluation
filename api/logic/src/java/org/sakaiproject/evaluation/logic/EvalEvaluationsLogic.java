@@ -17,7 +17,9 @@ package org.sakaiproject.evaluation.logic;
 import java.util.List;
 import java.util.Map;
 
+import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.model.EvalTemplate;
 
 
 /**
@@ -61,7 +63,7 @@ public interface EvalEvaluationsLogic {
 	 * removes all associated course assignments and email templates 
 	 * (if they are not default or associated with other evaluations)
 	 * 
-	 * @param evaluationId the id of an EvalEvaluation object
+	 * @param evaluationId the id of an {@link EvalEvaluation} object
 	 * @param userId the internal user id (not username)
 	 */
 	public void deleteEvaluation(Long evaluationId, String userId);
@@ -69,7 +71,7 @@ public interface EvalEvaluationsLogic {
 	/**
 	 * Get an evaluation based on its unique id
 	 * 
-	 * @param evaluationId the unique id of an EvalEvaluation object
+	 * @param evaluationId the unique id of an {@link EvalEvaluation} object
 	 * @return the evaluation object or null if not found
 	 */	
 	public EvalEvaluation getEvaluationById(Long evaluationId);
@@ -77,16 +79,16 @@ public interface EvalEvaluationsLogic {
 	/**
 	 * Get a list of evaluations for a template id
 	 * 
-	 * @param templateId the id of an EvalTemplate object
-	 * @return a List of EvalEvaluation objects (empty if none exist)
+	 * @param templateId the id of an {@link EvalTemplate} object
+	 * @return a List of {@link EvalEvaluation} objects (empty if none exist)
 	 */
 	public List getEvaluationsByTemplateId(Long templateId);
 
 	/**
 	 * Count the number of evaluations for a template id
 	 * 
-	 * @param templateId the id of an EvalTemplate object
-	 * @return the count of Evaluation objects
+	 * @param templateId the id of an {@link EvalTemplate} object
+	 * @return the count of {@link EvalEvaluation} objects
 	 */
 	public int countEvaluationsByTemplateId(Long templateId);
 
@@ -98,7 +100,7 @@ public interface EvalEvaluationsLogic {
 	 * @param userId the internal user id (not username)
 	 * @param recentOnly if true return recently closed evaluations only 
 	 * (still returns all active and in queue evaluations), if false return all closed evaluations
-	 * @return a List of EvalEvaluation objects
+	 * @return a List of {@link EvalEvaluation} objects
 	 */
 	public List getVisibleEvaluationsForUser(String userId, boolean recentOnly);
 
@@ -110,31 +112,31 @@ public interface EvalEvaluationsLogic {
 	 * @param activeOnly if true, only include active evaluations, if false, include all evaluations
 	 * @param untakenOnly if true, include only the evaluations which have NOT been taken, 
 	 * if false, include all evaluations
-	 * @return a List of EvalEvaluation objects (sorted by DueDate)
+	 * @return a List of {@link EvalEvaluation} objects (sorted by DueDate)
 	 */
 	public List getEvaluationsForUser(String userId, boolean activeOnly, boolean untakenOnly);
 
 
-	// CONTEXTS
+	// EVAL GROUPS
 
 	/**
-	 * Get a map of the Contexts for an array of evaluation ids
+	 * Get a map of the EvalGroups for an array of evaluation ids
 	 * 
-	 * @param evaluationId an array of the ids of EvalEvaluation objects
+	 * @param evaluationId an array of the ids of {@link EvalEvaluation} objects
 	 * @param includeUnApproved if true, include the evaluation contexts which have not been instructor approved yet,
 	 * you should not include these when displaying evaluations to users to take or sending emails
-	 * @return a Map of evaluationId (Long) -> List of Context objects
+	 * @return a Map of evaluationId (Long) -> List of {@link EvalGroup} objects
 	 */
-	public Map getEvaluationContexts(Long[] evaluationIds, boolean includeUnApproved);
+	public Map getEvaluationGroups(Long[] evaluationIds, boolean includeUnApproved);
 
 	/**
-	 * Count the number of contexts assigned for an evaluation id
-	 * (this is much faster than the related method: {@link #getEvaluationContexts(Long[])}
+	 * Count the number of eval groups assigned for an evaluation id
+	 * (this is much faster than the related method: {@link #getEvaluationGroups(Long[], boolean)})
 	 * 
-	 * @param evaluationId the id of an EvalEvaluation object
-	 * @return the count of contexts
+	 * @param evaluationId the id of an {@link EvalEvaluation} object
+	 * @return the count of eval groups
 	 */
-	public int countEvaluationContexts(Long evaluationId);
+	public int countEvaluationGroups(Long evaluationId);
 
 
 	// PERMISSIONS
