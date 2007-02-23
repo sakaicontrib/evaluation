@@ -24,12 +24,11 @@ import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 
-
-import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
+import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
@@ -56,12 +55,7 @@ public class RemoveEvalProducer implements ViewComponentProducer,ViewParamsRepor
 	public void setEvalsLogic(EvalEvaluationsLogic evalsLogic) {
 		this.evalsLogic = evalsLogic;
 	}
-	
-	private MessageLocator messageLocator;
-	public void setMessageLocator(MessageLocator messageLocator) {
-		this.messageLocator = messageLocator;
-	}	
-	
+		
 	private Locale locale;
 	public void setLocale(Locale locale){
 		this.locale=locale;
@@ -75,7 +69,7 @@ public class RemoveEvalProducer implements ViewComponentProducer,ViewParamsRepor
 		 * 2)double check if the evaluation is queued for future??? if this page is 
 				accessed from page other than ControlPanel
 		 */
-		UIOutput.make(tofill, "remove-eval-title", messageLocator.getMessage("removeeval.page.title"));	 //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "remove-eval-title", "removeeval.page.title");	 //$NON-NLS-1$ //$NON-NLS-2$
 
 		
 		EvalViewParameters evalViewParams = (EvalViewParameters) viewparams;
@@ -85,15 +79,15 @@ public class RemoveEvalProducer implements ViewComponentProducer,ViewParamsRepor
 			//EvalEvaluation eval = logic.getEvaluationById(evalViewParams.templateId);
 			if(eval != null){
 				UIForm form = UIForm.make(tofill, "removeEvalForm"); //$NON-NLS-1$
-				UIOutput.make(form, "remove-eval-confirm-pre-name", messageLocator.getMessage("removeeval.confirm.pre.name")); //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(form, "remove-eval-confirm-pre-name", "removeeval.confirm.pre.name"); //$NON-NLS-1$ //$NON-NLS-2$
 				UIOutput.make(form, "evalTitle", eval.getTitle()); //$NON-NLS-1$
-				UIOutput.make(form, "remove-eval-confirm-post-name", messageLocator.getMessage("removeeval.confirm.post.name"));	 //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(form, "remove-eval-note", messageLocator.getMessage("removeeval.note")); //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(form, "remove-eval-confirm-post-name", "removeeval.confirm.post.name");	 //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(form, "remove-eval-note", "removeeval.note"); //$NON-NLS-1$ //$NON-NLS-2$
 				
-				UIOutput.make(form, "eval-title-header", messageLocator.getMessage("removeeval.title.header")); //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(form, "assigned-header", messageLocator.getMessage("removeeval.assigned.header")); //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(form, "start-date-header", messageLocator.getMessage("removeeval.start.date.header")); //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(form, "due-date-header", messageLocator.getMessage("removeeval.due.date.header")); //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(form, "eval-title-header","removeeval.title.header"); //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(form, "assigned-header", "removeeval.assigned.header"); //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(form, "start-date-header", "removeeval.start.date.header"); //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(form, "due-date-header", "removeeval.due.date.header"); //$NON-NLS-1$ //$NON-NLS-2$
 				
 				int count = evalsLogic.countEvaluationGroups(eval.getId());
 				//int count = logic.countEvaluationContexts(eval.getId());
@@ -106,7 +100,6 @@ public class RemoveEvalProducer implements ViewComponentProducer,ViewParamsRepor
 					EvalGroup ctxt = (EvalGroup) contexts.get(0);
 					String title = ctxt.title;
 					UIOutput.make(form, "evalAssigned",title);
-					//UIOutput.make(form, "evalAssigned", logic.getCourseTitle(eval.getId()));
 				}
 				
 				DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
@@ -114,10 +107,10 @@ public class RemoveEvalProducer implements ViewComponentProducer,ViewParamsRepor
 				UIOutput.make(form, "evalStartDate", df.format(eval.getStartDate())); //$NON-NLS-1$
 				UIOutput.make(form, "evalDueDate", df.format(eval.getDueDate())); //$NON-NLS-1$
 				
-				UICommand.make(form, "cancelRemoveEvalAction", messageLocator.getMessage("general.cancel.button"),  //$NON-NLS-1$ //$NON-NLS-2$
+				UICommand.make(form, "cancelRemoveEvalAction", UIMessage.make("general.cancel.button"),  //$NON-NLS-1$ //$NON-NLS-2$
 						"#{evaluationBean.cancelRemoveEvalAction}"); //$NON-NLS-1$
 				
-				UICommand removeCmd = UICommand.make(form, "removeEvalAction", messageLocator.getMessage("removeeval.remove.button"),  //$NON-NLS-1$ //$NON-NLS-2$
+				UICommand removeCmd = UICommand.make(form, "removeEvalAction", UIMessage.make("removeeval.remove.button"),  //$NON-NLS-1$ //$NON-NLS-2$
 									"#{evaluationBean.removeEvalAction}");  //$NON-NLS-1$
 				removeCmd.parameters.add(new UIELBinding("#{evaluationBean.evalId}",eval.getId().toString()));				 //$NON-NLS-1$
 			

@@ -25,7 +25,6 @@ import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
 import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
-import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
@@ -33,7 +32,7 @@ import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
-import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
@@ -53,11 +52,6 @@ public class RemoveQuestionProducer implements ViewComponentProducer, ViewParams
 	
 	public String getViewID() {
 		return VIEW_ID;
-	}
-
-	private MessageLocator messageLocator;
-	public void setMessageLocator(MessageLocator messageLocator) {
-		this.messageLocator = messageLocator;
 	}
 
 	private EvalItemsLogic itemsLogic;
@@ -84,19 +78,19 @@ public class RemoveQuestionProducer implements ViewComponentProducer, ViewParams
         String templateItemOTPBinding="templateItemBeanLocator."+templateItemId;		
         EvalTemplateItem templateItem = itemsLogic.getTemplateItemById(templateItemId);
       
-		UIOutput.make(tofill, "remove-question-title", messageLocator.getMessage("removequestion.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(tofill, "modify-template-title", messageLocator.getMessage("modifytemplate.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
+        UIMessage.make(tofill, "remove-question-title", "removequestion.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
+        UIMessage.make(tofill, "modify-template-title", "modifytemplate.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		UIInternalLink.make(tofill, "summary-toplink", messageLocator.getMessage("summary.page.title"),  //$NON-NLS-1$ //$NON-NLS-2$
+		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"),
 				new SimpleViewParameters(SummaryProducer.VIEW_ID));	
 		
-		UIOutput.make(tofill, "remove-question-confirm-pre-name", messageLocator.getMessage("removequestion.confirm.pre.name")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(tofill, "remove-question-confirm-post-name", messageLocator.getMessage("removequestion.confirm.post.name")); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "remove-question-confirm-pre-name", "removequestion.confirm.pre.name"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "remove-question-confirm-post-name", "removequestion.confirm.post.name"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		//if it is a block item, show information 
 		if(TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)){
 			UIBranchContainer showBlockInfo = UIBranchContainer.make(tofill, "showBlockInfo:");
-			UIOutput.make(showBlockInfo, "remove-question-spilt-block", messageLocator.getMessage("removequestion.spilt.block")); 
+			UIMessage.make(showBlockInfo, "remove-question-spilt-block", "removequestion.spilt.block"); 
 
 		}
 		
@@ -104,8 +98,8 @@ public class RemoveQuestionProducer implements ViewComponentProducer, ViewParams
 		itemRenderer.renderItem(tofill, "remove-item:", null, templateItem, 0, true);
 	
 		UIForm form = UIForm.make(tofill, "removeQuestionForm");
-		UIOutput.make(form, "cancel-button", messageLocator.getMessage("general.cancel.button"));
-		UICommand rmvBtn=UICommand.make(form, "removeQuestionAction", messageLocator.getMessage("removequestion.remove.button"),  
+		UIMessage.make(form, "cancel-button", "general.cancel.button");
+		UICommand rmvBtn=UICommand.make(form, "removeQuestionAction", UIMessage.make("removequestion.remove.button"),  
 				"#{itemsBean.removeItemAction}"); //$NON-NLS-1$
 		rmvBtn.parameters.add(new UIELBinding("#{itemsBean.templateItem}", new ELReference(templateItemOTPBinding)));
 	}

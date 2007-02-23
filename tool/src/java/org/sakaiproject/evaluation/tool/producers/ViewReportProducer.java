@@ -33,11 +33,11 @@ import org.sakaiproject.evaluation.tool.params.EssayResponseParams;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
-import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIInternalLink;
+import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIColourDecorator;
@@ -76,11 +76,6 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 		this.itemsLogic = itemsLogic;
 	}
 
-	private MessageLocator messageLocator;
-	public void setMessageLocator(MessageLocator messageLocator) {
-		this.messageLocator = messageLocator;
-	}
-	
 	public ViewParameters getViewParameters() {
 		return new EvalViewParameters(VIEW_ID, null);
 	}	
@@ -88,17 +83,17 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 
 
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
-		UIOutput.make(tofill, "view-report-title", messageLocator.getMessage("viewreport.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "view-report-title","viewreport.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		UIInternalLink.make(tofill, "summary-toplink", messageLocator.getMessage("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID)); //$NON-NLS-1$ //$NON-NLS-2$
+		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID)); //$NON-NLS-1$ //$NON-NLS-2$
 
 		EvalViewParameters previewEvalViewParams = (EvalViewParameters) viewparams;
 		if (previewEvalViewParams.templateId != null) {
-			UIInternalLink.make(tofill, "fullEssayResponse", messageLocator.getMessage("viewreport.view.essays"), new EssayResponseParams(ViewEssayResponseProducer.VIEW_ID, previewEvalViewParams.templateId)); //$NON-NLS-1$ //$NON-NLS-2$
+			UIInternalLink.make(tofill, "fullEssayResponse", UIMessage.make("viewreport.view.essays"), new EssayResponseParams(ViewEssayResponseProducer.VIEW_ID, previewEvalViewParams.templateId)); //$NON-NLS-1$ //$NON-NLS-2$
 			EvalEvaluation evaluation = evalsLogic.getEvaluationById(previewEvalViewParams.templateId);//logic.getEvaluationById(previewEvalViewParams.templateId);
 			// get template from DAO 
 			EvalTemplate template = evaluation.getTemplate();
-			UIInternalLink.make(tofill, "csvResultsReport", messageLocator.getMessage("viewreport.view.csv"), new CSVReportViewParams("csvResultsReport", template.getId(), previewEvalViewParams.templateId)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			UIInternalLink.make(tofill, "csvResultsReport", UIMessage.make("viewreport.view.csv"), new CSVReportViewParams("csvResultsReport", template.getId(), previewEvalViewParams.templateId)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			// get items(parent items, child items --need to set order
 
 			List allItems = new ArrayList(template.getTemplateItems());
@@ -114,12 +109,12 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 
 				if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_COURSE, ncItemsList))	{	
 					courseSection = UIBranchContainer.make(tofill,"courseSection:"); //$NON-NLS-1$
-					UIOutput.make(courseSection, "report-course-questions", messageLocator.getMessage("viewreport.itemlist.coursequestions")); //$NON-NLS-1$ //$NON-NLS-2$
+					UIMessage.make(courseSection, "report-course-questions", "viewreport.itemlist.coursequestions"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 
 				if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, ncItemsList))	{	
 					instructorSection = UIBranchContainer.make(tofill,"instructorSection:"); //$NON-NLS-1$
-					UIOutput.make(instructorSection, "report-instructor-questions", messageLocator.getMessage("viewreport.itemlist.instructorquestions")); //$NON-NLS-1$ //$NON-NLS-2$
+					UIMessage.make(instructorSection, "report-instructor-questions", "viewreport.itemlist.instructorquestions"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 
 				for (int i = 0; i < ncItemsList.size(); i++) {

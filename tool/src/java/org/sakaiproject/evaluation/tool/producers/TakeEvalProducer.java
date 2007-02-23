@@ -35,7 +35,6 @@ import org.sakaiproject.evaluation.tool.params.EvalTakeViewParameters;
 import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
-import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
@@ -43,6 +42,7 @@ import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
+import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
@@ -86,11 +86,6 @@ public class TakeEvalProducer implements ViewComponentProducer,
 		this.itemsLogic = itemsLogic;
 	}
 
-	private MessageLocator messageLocator;
-	public void setMessageLocator(MessageLocator messageLocator) {
-		this.messageLocator = messageLocator;
-	}	
-
 	ItemRenderer itemRenderer;
 	public void setItemRenderer(ItemRenderer itemRenderer) {
 		this.itemRenderer = itemRenderer;
@@ -127,14 +122,14 @@ public class TakeEvalProducer implements ViewComponentProducer,
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams,
 			ComponentChecker checker) {
 		
-		UIOutput.make(tofill, "take-eval-title", messageLocator.getMessage("takeeval.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "take-eval-title", "takeeval.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		UIInternalLink.make(tofill, "summary-toplink", messageLocator.getMessage("summary.page.title"),  //$NON-NLS-1$ //$NON-NLS-2$
+		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"),  //$NON-NLS-1$ //$NON-NLS-2$
 				new SimpleViewParameters(SummaryProducer.VIEW_ID));			
 		
-		UIOutput.make(tofill, "eval-title-header", messageLocator.getMessage("takeeval.eval.title.header")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(tofill, "course-title-header", messageLocator.getMessage("takeeval.course.title.header")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(tofill, "instructions-header", messageLocator.getMessage("takeeval.instructions.header"));	 //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "eval-title-header", "takeeval.eval.title.header"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "course-title-header", "takeeval.course.title.header"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "instructions-header", "takeeval.instructions.header");	 //$NON-NLS-1$ //$NON-NLS-2$
 		
 		
 		EvalTakeViewParameters evalTakeViewParams = (EvalTakeViewParameters) viewparams;
@@ -153,7 +148,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 			if(et.getDescription() != null)
 				UIOutput.make(tofill, "description", et.getDescription()); //$NON-NLS-1$
 			else
-				UIOutput.make(tofill, "description", messageLocator.getMessage("takeeval.description.filler")); //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(tofill, "description", "takeeval.description.filler"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		
@@ -186,7 +181,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 
 		if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_COURSE, ncItemsList))	{	
 			courseSection = UIBranchContainer.make(form,"courseSection:"); //$NON-NLS-1$
-			UIOutput.make(courseSection, "course-questions-header", messageLocator.getMessage("takeeval.course.questions.header")); //$NON-NLS-1$ //$NON-NLS-2$			
+			UIMessage.make(courseSection, "course-questions-header", "takeeval.course.questions.header"); //$NON-NLS-1$ //$NON-NLS-2$			
 			for (int i = 0; i <ncItemsList.size(); i++) {
 				//EvalItem item1 = (EvalItem) ncItemsList.get(i);
 				EvalTemplateItem tempItem1 = (EvalTemplateItem) ncItemsList.get(i);
@@ -202,7 +197,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 					renderItemPrep(radiobranch, form, tempItem1, answerMap, "null", "null");
 				}
 			}
-			UIOutput.make(courseSection, "course-questions-header", messageLocator.getMessage("takeeval.course.questions.header")); //$NON-NLS-1$ //$NON-NLS-2$
+			UIMessage.make(courseSection, "course-questions-header", "takeeval.course.questions.header"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, ncItemsList))	{	
 			Set instructors = external.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED);
@@ -210,7 +205,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 			for (Iterator it = instructors.iterator(); it.hasNext();) {
 				String instructor = (String) it.next();
 				instructorSection = UIBranchContainer.make(form,"instructorSection:", "inst"+displayNumber); //$NON-NLS-1$
-				UIOutput.make(instructorSection, "instructor-questions-header", messageLocator.getMessage("takeeval.instructor.questions.header")+" "+external.getUserDisplayName(instructor));	
+				UIOutput.make(instructorSection, "instructor-questions-header",UIMessage.make("takeeval.instructor.questions.header")+" "+external.getUserDisplayName(instructor));	
 				//for each item in this evaluation
 				for (int i = 0; i <ncItemsList.size(); i++) {
 					EvalTemplateItem tempItem1 = (EvalTemplateItem) ncItemsList.get(i);
@@ -227,7 +222,7 @@ public class TakeEvalProducer implements ViewComponentProducer,
 				} // end of for loop				
 			}
 		}
-		UICommand.make(form, "submitEvaluation", messageLocator.getMessage("takeeval.submit.button"), "#{takeEvalBean.submitEvaluation}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		UICommand.make(form, "submitEvaluation", UIMessage.make("takeeval.submit.button"), "#{takeEvalBean.submitEvaluation}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	} // end of method
 
 	private void renderItemPrep(UIBranchContainer radiobranch, UIForm form, EvalTemplateItem tempItem1, HashMap answerMap, String itemCategory, String associatedId) {

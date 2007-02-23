@@ -26,8 +26,6 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 
-
-import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
@@ -35,6 +33,7 @@ import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UILink;
+import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
@@ -71,11 +70,6 @@ public class RemoveTemplateProducer implements ViewComponentProducer, Navigation
 		this.settings = settings;
 	}
 
-	private MessageLocator messageLocator;
-	public void setMessageLocator(MessageLocator messageLocator) {
-		this.messageLocator = messageLocator;
-	}
-
 	
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 		/*
@@ -87,10 +81,10 @@ public class RemoveTemplateProducer implements ViewComponentProducer, Navigation
 		 *  4) about template with closed evaluation case
 		 */
 		
-		UIOutput.make(tofill, "remove-template-title", messageLocator.getMessage("removetemplate.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(tofill, "control-panel-title", messageLocator.getMessage("modifytemplate.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "remove-template-title", "removetemplate.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "control-panel-title","modifytemplate.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		UIInternalLink.make(tofill, "summary-toplink", messageLocator.getMessage("summary.page.title"),  //$NON-NLS-1$ //$NON-NLS-2$
+		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"),  //$NON-NLS-1$ //$NON-NLS-2$
 				new SimpleViewParameters(SummaryProducer.VIEW_ID));	
 
 		EvalViewParameters evalViewParams = (EvalViewParameters) viewparams;
@@ -103,18 +97,18 @@ public class RemoveTemplateProducer implements ViewComponentProducer, Navigation
 				if(count > 0) {
 					//Can not delete section
 					UIBranchContainer noRemoveDiv = UIBranchContainer.make(tofill,"noRemoveDiv:"); //$NON-NLS-1$
-					UIOutput.make(noRemoveDiv, "warning-header", messageLocator.getMessage("removetemplate.warning.header")); //$NON-NLS-1$ //$NON-NLS-2$
-					UIOutput.make(noRemoveDiv, "noremove-note-start", messageLocator.getMessage("removetemplate.noremove.note.pre.name")); //$NON-NLS-1$ //$NON-NLS-2$
-					UIOutput.make(noRemoveDiv, "noremove-note-middle", messageLocator.getMessage("removetemplate.noremove.note.post.name")); //$NON-NLS-1$ //$NON-NLS-2$
+					UIMessage.make(noRemoveDiv, "warning-header", "removetemplate.warning.header"); //$NON-NLS-1$ //$NON-NLS-2$
+					UIMessage.make(noRemoveDiv, "noremove-note-start", "removetemplate.noremove.note.pre.name"); //$NON-NLS-1$ //$NON-NLS-2$
+					UIMessage.make(noRemoveDiv, "noremove-note-middle", "removetemplate.noremove.note.post.name"); //$NON-NLS-1$ //$NON-NLS-2$
 					
 					String sEmail = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
 					UILink.make(noRemoveDiv, "noremove-note-email", sEmail, "mailto:" + sEmail);
 					
-					UIOutput.make(noRemoveDiv, "noremove-note-end", messageLocator.getMessage("removetemplate.noremove.note.end")); //$NON-NLS-1$ //$NON-NLS-2$
-					UIOutput.make(noRemoveDiv, "eval-title-header", messageLocator.getMessage("removetemplate.eval.title.header")); //$NON-NLS-1$ //$NON-NLS-2$
-					UIOutput.make(noRemoveDiv, "assigned-header", messageLocator.getMessage("removetemplate.assigned.header")); //$NON-NLS-1$ //$NON-NLS-2$
-					UIOutput.make(noRemoveDiv, "start-date-header", messageLocator.getMessage("removetemplate.start.date.header")); //$NON-NLS-1$ //$NON-NLS-2$
-					UIOutput.make(noRemoveDiv, "due-date-header", messageLocator.getMessage("removetemplate.due.date.header")); //$NON-NLS-1$ //$NON-NLS-2$
+					UIMessage.make(noRemoveDiv, "noremove-note-end", "removetemplate.noremove.note.end"); //$NON-NLS-1$ //$NON-NLS-2$
+					UIMessage.make(noRemoveDiv, "eval-title-header", "removetemplate.eval.title.header"); //$NON-NLS-1$ //$NON-NLS-2$
+					UIMessage.make(noRemoveDiv, "assigned-header", "removetemplate.assigned.header"); //$NON-NLS-1$ //$NON-NLS-2$
+					UIMessage.make(noRemoveDiv, "start-date-header", "removetemplate.start.date.header"); //$NON-NLS-1$ //$NON-NLS-2$
+					UIMessage.make(noRemoveDiv, "due-date-header", "removetemplate.due.date.header"); //$NON-NLS-1$ //$NON-NLS-2$
 					
 					UIOutput.make(noRemoveDiv, "NoTemplateTitle", template.getTitle()); //$NON-NLS-1$
 					
@@ -145,7 +139,7 @@ public class RemoveTemplateProducer implements ViewComponentProducer, Navigation
 						}//end of for loop
 					}//end of if block
 					
-					UIOutput.make(noRemoveDiv, "cancel-button", messageLocator.getMessage("general.cancel.button"));
+					UIMessage.make(noRemoveDiv, "cancel-button", "general.cancel.button");
 
 					
 				}else{
@@ -153,12 +147,12 @@ public class RemoveTemplateProducer implements ViewComponentProducer, Navigation
 					//first delete items associated with this template
 					UIBranchContainer removeDiv = UIBranchContainer.make(tofill,"removeDiv:"); //$NON-NLS-1$
 					UIForm form = UIForm.make(removeDiv, "removeTemplateForm"); //$NON-NLS-1$
-					UIOutput.make(form, "remove-template-confirm-pre-name", messageLocator.getMessage("removetemplate.confirm.pre.name")); //$NON-NLS-1$ //$NON-NLS-2$
-							UIOutput.make(form, "remove-template-confirm-post-name", messageLocator.getMessage("removetemplate.confirm.post.name")); //$NON-NLS-1$ //$NON-NLS-2$
+					UIMessage.make(form, "remove-template-confirm-pre-name", "removetemplate.confirm.pre.name"); //$NON-NLS-1$ //$NON-NLS-2$
+					UIMessage.make(form, "remove-template-confirm-post-name", "removetemplate.confirm.post.name"); //$NON-NLS-1$ //$NON-NLS-2$
 					UIOutput.make(form, "templateTitle", template.getTitle()); //$NON-NLS-1$
-					UICommand.make(form, "cancelRemoveTemplateAction", messageLocator.getMessage("general.cancel.button"),  //$NON-NLS-1$ //$NON-NLS-2$
+					UICommand.make(form, "cancelRemoveTemplateAction", UIMessage.make("general.cancel.button"),  //$NON-NLS-1$ //$NON-NLS-2$
 							"#{evaluationBean.cancelRemoveTemplateAction}"); //$NON-NLS-1$
-					UICommand removeCmd = UICommand.make(form, "removeTemplateAction", messageLocator.getMessage("removetemplate.remove.button"),  //$NON-NLS-1$ //$NON-NLS-2$
+					UICommand removeCmd = UICommand.make(form, "removeTemplateAction", UIMessage.make("removetemplate.remove.button"),  //$NON-NLS-1$ //$NON-NLS-2$
 										"#{evaluationBean.removeTemplateAction}"); //$NON-NLS-1$
 					
 					removeCmd.parameters.add(new UIELBinding("#{evaluationBean.tmplId}",template.getId().toString())); //$NON-NLS-1$
