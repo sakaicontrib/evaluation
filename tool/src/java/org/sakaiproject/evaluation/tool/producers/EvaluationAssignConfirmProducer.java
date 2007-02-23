@@ -24,12 +24,12 @@ import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationBean;
 
-import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
+import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
@@ -52,10 +52,6 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, N
 		return VIEW_ID;
 	}
 	
-	private MessageLocator messageLocator;
-	public void setMessageLocator(MessageLocator messageLocator) {
-		this.messageLocator = messageLocator;
-	}	
 	
 	private EvalExternalLogic external;
 	public void setExternal(EvalExternalLogic external) {
@@ -71,14 +67,14 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, N
 
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
-		UIOutput.make(tofill, "confirm-assignment-title", messageLocator.getMessage("evaluationassignconfirm.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "confirm-assignment-title","evaluationassignconfirm.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		UIInternalLink.make(tofill, "summary-toplink", messageLocator.getMessage("summary.page.title"),  //$NON-NLS-1$ //$NON-NLS-2$
+		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"),  //$NON-NLS-1$ //$NON-NLS-2$
 							new SimpleViewParameters(SummaryProducer.VIEW_ID));			
 
-		UIOutput.make(tofill, "create-evaluation-title", messageLocator.getMessage("createeval.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(tofill, "assign-evaluation-title", messageLocator.getMessage("assigneval.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(tofill, "confirm-assignment-title", messageLocator.getMessage("evaluationassignconfirm.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "create-evaluation-title", "createeval.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "assign-evaluation-title", "assigneval.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "confirm-assignment-title", "evaluationassignconfirm.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		UIOutput.make(tofill, "evaluationTitle", null, "#{evaluationBean.eval.title}");		 //$NON-NLS-1$ //$NON-NLS-2$
 		//Get selected id's and all id + title map.
@@ -93,11 +89,11 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, N
 			//labels[i] = c.title;
 			allIdTitleMap.put(c.evalGroupId, c.title);
 		}
-		UIOutput.make(tofill, "eval-assign-desc-prename", messageLocator.getMessage("evaluationassignconfirm.eval.assign.desc.prename")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(tofill, "eval-assign-desc-postname", messageLocator.getMessage("evaluationassignconfirm.eval.assign.desc.postname")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(tofill, "courses-selected-header", messageLocator.getMessage("evaluationassignconfirm.courses.selected.header")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(tofill, "title-header", messageLocator.getMessage("evaluationassignconfirm.title.header")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(tofill, "enrollment-header", messageLocator.getMessage("evaluationassignconfirm.enrollment.header")); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "eval-assign-desc-prename", "evaluationassignconfirm.eval.assign.desc.prename"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "eval-assign-desc-postname", "evaluationassignconfirm.eval.assign.desc.postname"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "courses-selected-header", "evaluationassignconfirm.courses.selected.header"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "title-header", "evaluationassignconfirm.title.header"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "enrollment-header","evaluationassignconfirm.enrollment.header"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 	    for (int i = 0; i < selectedIds.length; ++i) 
 	    {
@@ -129,8 +125,8 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, N
 		
 		UIBranchContainer showButtons = UIBranchContainer.make(tofill, "showButtons:"); //$NON-NLS-1$
 		UIForm evalAssignForm = UIForm.make(showButtons, "evalAssignForm"); //$NON-NLS-1$
-		UICommand.make(evalAssignForm, "doneAssignment", messageLocator.getMessage("evaluationassignconfirm.done.button"), "#{evaluationBean.doneAssignmentAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		UICommand.make(evalAssignForm, "changeAssignedCourse", messageLocator.getMessage("evaluationassignconfirm.changes.assigned.courses.button"),  //$NON-NLS-1$ //$NON-NLS-2$
+		UICommand.make(evalAssignForm, "doneAssignment", UIMessage.make("evaluationassignconfirm.done.button"), "#{evaluationBean.doneAssignmentAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		UICommand.make(evalAssignForm, "changeAssignedCourse",UIMessage.make("evaluationassignconfirm.changes.assigned.courses.button"),  //$NON-NLS-1$ //$NON-NLS-2$
 				"#{evaluationBean.changeAssignedCourseAction}"); //$NON-NLS-1$
 	}
 	

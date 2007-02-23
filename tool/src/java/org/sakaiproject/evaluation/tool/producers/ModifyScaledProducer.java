@@ -29,7 +29,6 @@ import org.sakaiproject.evaluation.tool.ItemsBean;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
 
-import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBoundList;
@@ -40,6 +39,7 @@ import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
+import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UISelectChoice;
@@ -62,11 +62,6 @@ public class ModifyScaledProducer implements ViewComponentProducer,
 		ViewParamsReporter, DynamicNavigationCaseReporter {
 	public static final String VIEW_ID = "modify_scaled"; //$NON-NLS-1$
 
-	private MessageLocator messageLocator;
-
-	public void setMessageLocator(MessageLocator messageLocator) {
-		this.messageLocator = messageLocator;
-	}
 
 	private EvalExternalLogic external;
 
@@ -139,24 +134,20 @@ public class ModifyScaledProducer implements ViewComponentProducer,
 		}
 		
 
-		UIOutput.make(tofill, "modify-item-title", messageLocator
-				.getMessage("templateitem.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(tofill, "create-eval-title", messageLocator
-				.getMessage("createeval.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "modify-item-title", "templateitem.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "create-eval-title", "createeval.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		UIInternalLink.make(tofill,
-				"summary-toplink", messageLocator.getMessage("summary.page.title"), //$NON-NLS-1$ //$NON-NLS-2$
+		UIInternalLink.make(tofill,"summary-toplink", UIMessage.make("summary.page.title"), //$NON-NLS-1$ //$NON-NLS-2$
 				new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
 		UIForm form = UIForm.make(tofill, "itemForm"); //$NON-NLS-1$
 
-		UIOutput.make(form, "item-header", messageLocator
-				.getMessage("modifyitem.item.header"));
+		UIMessage.make(form, "item-header", "modifyitem.item.header");
 		UIOutput.make(form, "itemNo", null, "1."); //$NON-NLS-1$ //$NON-NLS-2$
 
 		UIOutput.make(form, "itemClassification", EvalConstants.ITEM_TYPE_SCALED);
-		UIOutput.make(form,
-				"added-by", messageLocator.getMessage("modifyitem.added.by")); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(form,
+				"added-by", "modifyitem.added.by"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		UIOutput.make(form, "userInfo", external.getUserDisplayName(template
 				.getOwner()));
@@ -164,19 +155,16 @@ public class ModifyScaledProducer implements ViewComponentProducer,
 		if (templateItemViewParams.templateItemId != null) {
 			UIBranchContainer showLink = UIBranchContainer.make(form,
 					"showRemoveLink:");
-			UIInternalLink.make(showLink, "remove_link", messageLocator
-					.getMessage("modifyitem.remove.link"), new SimpleViewParameters(
-					"remove_question")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			UIInternalLink.make(showLink, "remove_link", UIMessage.make("modifyitem.remove.link"), 
+					new SimpleViewParameters("remove_question")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 
-		UIOutput.make(form, "question-text-header", messageLocator
-				.getMessage("modifyitem.question.text.header")); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(form, "question-text-header","modifyitem.question.text.header"); //$NON-NLS-1$ //$NON-NLS-2$
 		UIInput itemText = UIInput.make(form,
 				"item_text:", templateItemOTP + "item.itemText"); //$NON-NLS-1$ //$NON-NLS-2$
 		richTextEvolver.evolveTextInput(itemText);
 
-		UIOutput.make(form, "scale-type-header", messageLocator
-				.getMessage("templateitem.scale.type.header")); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(form, "scale-type-header","templateitem.scale.type.header"); //$NON-NLS-1$ //$NON-NLS-2$
 		// dropdown list for "Scale Type"
 		UISelect combo = UISelect.make(form, "scaleList"); //$NON-NLS-1$
 		combo.selection = new UIInput();
@@ -188,16 +176,15 @@ public class ModifyScaledProducer implements ViewComponentProducer,
 		comboNames.valuebinding = new ELReference("#{itemsBean.scaleLabels}"); //$NON-NLS-1$
 		combo.optionnames = comboNames;
 
-		UIOutput.make(form, "scale-display-header", messageLocator
-				.getMessage("templateitem.scale.display.header")); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(form, "scale-display-header", "templateitem.scale.display.header"); //$NON-NLS-1$ //$NON-NLS-2$
 		String[] scaleLabelList = {
-				messageLocator.getMessage("templateitem.scale.select.compact"),
-				messageLocator.getMessage("templateitem.scale.select.compactc"),
-				messageLocator.getMessage("templateitem.scale.select.full"),
-				messageLocator.getMessage("templateitem.scale.select.fullc"),
-				messageLocator.getMessage("templateitem.scale.select.stepped"),
-				messageLocator.getMessage("templateitem.scale.select.steppedc"),
-				messageLocator.getMessage("templateitem.scale.select.vertical") };
+				"templateitem.scale.select.compact",
+				"templateitem.scale.select.compactc",
+				"templateitem.scale.select.full",
+				"templateitem.scale.select.fullc",
+				"templateitem.scale.select.stepped",
+				"templateitem.scale.select.steppedc",
+				"templateitem.scale.select.vertical" };
 		// drop down list for "Scale Display Setting"
 		UISelect.make(form, "scaleDisplaySetting",
 				EvaluationConstant.SCALE_DISPLAY_SETTING_VALUES, scaleLabelList,
@@ -211,10 +198,7 @@ public class ModifyScaledProducer implements ViewComponentProducer,
 		if (((Boolean) settings.get(EvalSettings.NOT_AVAILABLE_ALLOWED))
 				.booleanValue()) {
 			UIBranchContainer showNA = UIBranchContainer.make(form, "showNA:"); //$NON-NLS-1$
-			UIOutput
-					.make(
-							showNA,
-							"add-na-header", messageLocator.getMessage("modifyitem.add.na.header")); //$NON-NLS-1$ //$NON-NLS-2$
+			UIMessage.make(showNA,"add-na-header", "modifyitem.add.na.header"); //$NON-NLS-1$ //$NON-NLS-2$
 			UIBoundBoolean.make(showNA, "item_NA", templateItemOTP + "usesNA", null); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
@@ -232,17 +216,14 @@ public class ModifyScaledProducer implements ViewComponentProducer,
 
 			UIBranchContainer showItemCategory = UIBranchContainer.make(form,
 					"showItemCategory:"); //$NON-NLS-1$
-			UIOutput.make(showItemCategory, "item-category-header", messageLocator
-					.getMessage("modifyitem.item.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
-			UIOutput.make(showItemCategory, "course-category-header", messageLocator
-					.getMessage("modifyitem.course.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
-			UIOutput.make(showItemCategory, "instructor-category-header",
-					messageLocator.getMessage("modifyitem.instructor.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
+			UIMessage.make(showItemCategory, "item-category-header", "modifyitem.item.category.header"); //$NON-NLS-1$ //$NON-NLS-2$
+			UIMessage.make(showItemCategory, "course-category-header", "modifyitem.course.category.header"); //$NON-NLS-1$ //$NON-NLS-2$
+			UIMessage.make(showItemCategory, "instructor-category-header","modifyitem.instructor.category.header"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			// Radio Buttons for "Item Category"
 			String[] courseCategoryList = {
-					messageLocator.getMessage("modifyitem.course.category.header"),
-					messageLocator.getMessage("modifyitem.instructor.category.header"), };
+					"modifyitem.course.category.header",
+					"modifyitem.instructor.category.header" };
 			UISelect radios = UISelect.make(showItemCategory, "item_category",
 					EvaluationConstant.ITEM_CATEGORY_VALUES, courseCategoryList,
 					templateItemOTP + "itemCategory", null);
@@ -258,11 +239,9 @@ public class ModifyScaledProducer implements ViewComponentProducer,
 							.booleanValue() ? 0 : 1])); //$NON-NLS-1$
 		}
 
-		UIOutput.make(form, "cancel-button", messageLocator
-				.getMessage("general.cancel.button"));
+		UIMessage.make(form, "cancel-button","general.cancel.button");
 
-		UICommand saveCmd = UICommand.make(form, "saveItemAction", messageLocator
-				.getMessage("modifyitem.save.button"), "#{itemsBean.saveItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		UICommand saveCmd = UICommand.make(form, "saveItemAction", UIMessage.make("modifyitem.save.button"), "#{itemsBean.saveItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		saveCmd.parameters.add(new UIELBinding(templateItemOTP
 				+ "item.classification", EvalConstants.ITEM_TYPE_SCALED));
 		saveCmd.parameters.add(new UIELBinding("#{itemsBean.templateItem}",

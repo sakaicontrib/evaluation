@@ -26,7 +26,6 @@ import org.sakaiproject.evaluation.tool.params.BlockIdsParameters;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
-import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
@@ -35,6 +34,7 @@ import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
+import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UISelectChoice;
@@ -62,11 +62,7 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 		return VIEW_ID;
 	}
 
-	private MessageLocator messageLocator;
-	public void setMessageLocator(MessageLocator messageLocator) {
-		this.messageLocator = messageLocator;
-	}
-
+	
 	private EvalExternalLogic external;
 	public void setExternal(EvalExternalLogic external) {
 		this.external = external;
@@ -186,13 +182,11 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 			}
 		}
 
-		UIOutput.make(tofill, "modify-block-title", messageLocator
-				.getMessage("modifyblock.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(tofill, "create-eval-title", messageLocator
-				.getMessage("createeval.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "modify-block-title", "modifyblock.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "create-eval-title", "createeval.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		UIInternalLink.make(tofill,
-				"summary-toplink", messageLocator.getMessage("summary.page.title"), //$NON-NLS-1$ //$NON-NLS-2$
+				"summary-toplink", UIMessage.make("summary.page.title"), //$NON-NLS-1$ //$NON-NLS-2$
 				new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
 		
@@ -202,15 +196,12 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 					.make(tofill, "errorPage:");
 			if(!validScaleIds){
 				
-				UIOutput.make(showError, "errorMsg", messageLocator
-					.getMessage("modifyblock.error.scale.message"));
+				UIMessage.make(showError, "errorMsg", "modifyblock.error.scale.message");
 			}else{ 
-				UIOutput.make(showError, "errorMsg", messageLocator
-					.getMessage("modifyblock.error.numberofblockChilds.message"));
+				UIMessage.make(showError, "errorMsg", "modifyblock.error.numberofblockChilds.message");
 			}
 			
-			UIOutput.make(showError, "back-button", messageLocator
-					.getMessage("modifyblock.back.button"));
+			UIMessage.make(showError, "back-button","modifyblock.back.button");
 
 		}else {// render block page
 
@@ -218,26 +209,19 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 					.make(tofill, "blockPage:");
 			UIForm form = UIForm.make(showBlock, "blockForm"); //$NON-NLS-1$
 
-			UIOutput.make(form,
-					"item-header", messageLocator.getMessage("modifyitem.item.header")); //$NON-NLS-1$ //$NON-NLS-2$
+			UIMessage.make(form,"item-header", "modifyitem.item.header"); //$NON-NLS-1$ //$NON-NLS-2$
 			UIOutput.make(form, "itemNo", "1."); // TODO:
-			UIOutput.make(form, "itemClassification", messageLocator
-					.getMessage("modifytemplate.itemtype.block"));
-			UIOutput.make(form, "added-by", messageLocator
-					.getMessage("modifyitem.added.by"));
-			UIOutput.make(form, "userInfo", external
-					.getUserDisplayName(templateItems[0].getOwner()));
+			UIMessage.make(form, "itemClassification", "modifytemplate.itemtype.block");
+			UIMessage.make(form, "added-by", "modifyitem.added.by");
+			UIOutput.make(form, "userInfo", external.getUserDisplayName(templateItems[0].getOwner()));
 			// TODO: remove link
 
-			UIOutput.make(form, "item-header-text-header", messageLocator
-					.getMessage("modifyblock.item.header.text.header"));
+			UIMessage.make(form, "item-header-text-header","modifyblock.item.header.text.header");
 
-			UIOutput.make(form, "scale-type-header", messageLocator
-					.getMessage("modifyblock.scale.type.header"));
+			UIMessage.make(form, "scale-type-header","modifyblock.scale.type.header");
 			UIOutput.make(form, "scaleLabel", templateItems[0].getItem().getScale()
 					.getTitle());
-			UIOutput.make(form, "ideal-coloring-header", messageLocator
-					.getMessage("modifyblock.ideal.coloring.header")); //$NON-NLS-1$ //$NON-NLS-2$
+			UIMessage.make(form, "ideal-coloring-header", "modifyblock.ideal.coloring.header"); //$NON-NLS-1$ //$NON-NLS-2$
 
 
 			/*
@@ -311,13 +295,12 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 			if (((Boolean) settings.get(EvalSettings.NOT_AVAILABLE_ALLOWED))
 					.booleanValue()) {
 				UIBranchContainer showNA = UIBranchContainer.make(form, "showNA:");
-				UIOutput.make(showNA,"add-na-header", 
-						messageLocator.getMessage("modifyitem.add.na.header")); //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(showNA,"add-na-header", "modifyitem.add.na.header"); //$NON-NLS-1$ //$NON-NLS-2$
 				UIBoundBoolean.make(form, "item_NA", itemPathD + "usesNA", null);
 			}
 			
 			// render the items below
-			UIOutput.make(form, "items-header", "Items:");
+			UIMessage.make(form, "items-header", "modifyitem.item.header");
 
 			if (modify) {// for modify existing block item
 				// get Block child item
@@ -360,10 +343,9 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 				}
 			}
 
-			UIOutput.make(form, "cancel-button", messageLocator
-					.getMessage("general.cancel.button"));
+			UIMessage.make(form, "cancel-button", "general.cancel.button");
 			UICommand saveCmd = UICommand.make(form, "saveBlockAction",
-					messageLocator.getMessage("modifyitem.save.button"),
+					UIMessage.make("modifyitem.save.button"),
 					"#{templateBBean.saveBlockItemAction}");
 			saveCmd.parameters.add(new UIELBinding(
 					"#{templateBBean.childTemplateItemIds}", templateItemIds));
@@ -384,16 +366,17 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 		if (isDefaultCourse == null){
 			UIBranchContainer showItemCategory = UIBranchContainer.make(form,
 				"showItemCategory:"); //$NON-NLS-1$
-			UIOutput.make(showItemCategory, "item-category-header", messageLocator
-				.getMessage("modifyitem.item.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
-			UIOutput.make(showItemCategory, "course-category-header", messageLocator
-				.getMessage("modifyitem.course.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
-			UIOutput.make(showItemCategory, "instructor-category-header",
-				messageLocator.getMessage("modifyitem.instructor.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
+			UIMessage.make(showItemCategory, "item-category-header",
+					"modifyitem.item.category.header"); //$NON-NLS-1$ //$NON-NLS-2$
+			UIMessage.make(showItemCategory, "course-category-header", 
+					"modifyitem.course.category.header"); //$NON-NLS-1$ //$NON-NLS-2$
+			UIMessage.make(showItemCategory, "instructor-category-header",
+					"modifyitem.instructor.category.header"); //$NON-NLS-1$ //$NON-NLS-2$
 			//	Radio Buttons for "Item Category"
 			String[] courseCategoryList = {
-					messageLocator.getMessage("modifyitem.course.category.header"),
-					messageLocator.getMessage("modifyitem.instructor.category.header"), };
+					"modifyitem.course.category.header",
+					"modifyitem.instructor.category.header"
+					};
 			UISelect radios = UISelect.make(showItemCategory, "item_category",
 					EvaluationConstant.ITEM_CATEGORY_VALUES, courseCategoryList,
 					itemPath + ".itemCategory", null);

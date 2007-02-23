@@ -20,12 +20,12 @@ import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
-import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
+import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UISelectChoice;
@@ -47,10 +47,6 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
 	public static final String VIEW_ID = "evaluation_assign"; //$NON-NLS-1$
 
 
-	private MessageLocator messageLocator;
-	public void setMessageLocator(MessageLocator messageLocator) {
-		this.messageLocator = messageLocator;
-	}	
 	
 	private EvalExternalLogic external;
 	public void setExternal(EvalExternalLogic external) {
@@ -63,9 +59,9 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
 
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 		
-		UIOutput.make(tofill, "assign-eval-ext-title", messageLocator.getMessage("assigneval.page.ext.title")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(tofill, "create-eval-title", messageLocator.getMessage("createeval.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(tofill, "assign-eval-title", messageLocator.getMessage("assigneval.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "assign-eval-ext-title", "assigneval.page.ext.title"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "create-eval-title", "createeval.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "assign-eval-title", "assigneval.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		
 		UIInternalLink.make(tofill, "summary-toplink", new SimpleViewParameters(SummaryProducer.VIEW_ID));	 //$NON-NLS-1$
@@ -74,8 +70,8 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
 		
 		UIOutput.make(form, "evaluationTitle", null, "#{evaluationBean.eval.title}"); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		UIOutput.make(form, "assign-eval-instructions-pre", messageLocator.getMessage("assigneval.instructions.pre")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(form, "assign-eval-instructions-post", messageLocator.getMessage("assigneval.instructions.post")); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(form, "assign-eval-instructions-pre", "assigneval.instructions.pre"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(form, "assign-eval-instructions-post", "assigneval.instructions.post"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		
 		List sites = external.getEvalGroupsForUser(external.getCurrentUserId(), EvalConstants.PERM_BE_EVALUATED);
@@ -109,38 +105,16 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
     	 *  	at uk.org.ponder.rsf.uitype.StringArrayUIType.valueUnchanged(StringArrayUIType.java:23)
 		 *  ..."
 		 */
-/*		Map sites = evaluationBean.getSites();
-		if ( sites !=null) {
+
 		
-			//Preparing the string array of template ids and corresponding title's 
-			Object[] idObjects = sites.keySet().toArray();
-			String[] ids = new String[idObjects.length];
-			for (int count = 0; count < idObjects.length; count++)
-				ids[count] = (String) idObjects[count];
-			
-			Object[] labels = sites.values().toArray();
-			
-			
-		    UISelect siteCheckboxes = UISelect.makeMultiple(form, "siteCheckboxes", ids, "#{evaluationBean.selectedSakaiSiteIds}", null); //$NON-NLS-1$ //$NON-NLS-2$
-		    String selectID = siteCheckboxes.getFullID();
-		    
-		   for (int i = 0; i < ids.length; ++i) 
-		    {
-		    	UIBranchContainer checkboxRow = UIBranchContainer.make(form, "sites:"); //$NON-NLS-1$
-				UISelectChoice.make(checkboxRow, "siteId", selectID, i); //$NON-NLS-1$
-				UIOutput.make(checkboxRow, "siteTitle", (String) labels[i]); //$NON-NLS-1$
-		    }
-		}
-	*/	
+		UIMessage.make(form, "name-header", "assigneval.name.header"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(form, "select-header", "assigneval.select.header");		 //$NON-NLS-1$ //$NON-NLS-2$
 		
-		UIOutput.make(form, "name-header", messageLocator.getMessage("assigneval.name.header")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(form, "select-header", messageLocator.getMessage("assigneval.select.header"));		 //$NON-NLS-1$ //$NON-NLS-2$
+		UICommand.make(form, "cancel-button", UIMessage.make("general.cancel.button"), "#{evaluationBean.cancelAssignAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
-		UICommand.make(form, "cancel-button", messageLocator.getMessage("general.cancel.button"), "#{evaluationBean.cancelAssignAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		UICommand.make(form, "editSettings", UIMessage.make("assigneval.edit.settings.button"), "#{evaluationBean.backToSettingsAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
-		UICommand.make(form, "editSettings", messageLocator.getMessage("assigneval.edit.settings.button"), "#{evaluationBean.backToSettingsAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		
-		UICommand.make(form, "confirmAssignCourses", messageLocator.getMessage("assigneval.save.assigned.button"), "#{evaluationBean.confirmAssignCoursesAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		UICommand.make(form, "confirmAssignCourses", UIMessage.make("assigneval.save.assigned.button"), "#{evaluationBean.confirmAssignCoursesAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	public List reportNavigationCases() {

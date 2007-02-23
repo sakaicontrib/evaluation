@@ -24,7 +24,6 @@ import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
 
-import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -34,6 +33,7 @@ import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
+import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UISelectChoice;
@@ -59,11 +59,6 @@ public class ModifyEssayProducer implements ViewComponentProducer,
 
 	public String getViewID() {
 		return VIEW_ID;
-	}
-
-	private MessageLocator messageLocator;
-	public void setMessageLocator(MessageLocator messageLocator) {
-		this.messageLocator = messageLocator;
 	}
 
 	private EvalTemplatesLogic templatesLogic;
@@ -103,25 +98,20 @@ public class ModifyEssayProducer implements ViewComponentProducer,
 		}
 		templateItemOTP = templateItemOTPBinding + ".";
 
-		UIOutput.make(tofill, "modify-essay-title", messageLocator
-				.getMessage("modifyessay.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(tofill, "create-eval-title", messageLocator
-				.getMessage("createeval.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "modify-essay-title", "modifyessay.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "create-eval-title", "createeval.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		UIInternalLink.make(tofill,
-				"summary-toplink", messageLocator.getMessage("summary.page.title"), //$NON-NLS-1$ //$NON-NLS-2$
+				"summary-toplink", UIMessage.make("summary.page.title"), //$NON-NLS-1$ //$NON-NLS-2$
 				new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
 		UIForm form = UIForm.make(tofill, "essayForm"); //$NON-NLS-1$
 
-		UIOutput.make(form, "item-header", messageLocator
-				.getMessage("modifyitem.item.header"));
+		UIMessage.make(form, "item-header", "modifyitem.item.header");
 
-		// UIOutput.make(form, "item-header","Item" );
 		UIOutput.make(form, "itemNo", null, "1.");
 
-		UIOutput.make(form,
-				"added-by", messageLocator.getMessage("modifyitem.added.by")); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(form,"added-by", "modifyitem.added.by"); //$NON-NLS-1$ //$NON-NLS-2$
 		UIOutput.make(form, "itemClassification", EvalConstants.ITEM_TYPE_TEXT); //$NON-NLS-1$ //$NON-NLS-2$
 
 		EvalTemplate template = templatesLogic.getTemplateById(templateId);
@@ -132,18 +122,15 @@ public class ModifyEssayProducer implements ViewComponentProducer,
 		if (templateItemViewParams.templateItemId != null) {
 			UIBranchContainer showLink = UIBranchContainer.make(form,
 					"showRemoveLink:");
-			UIInternalLink.make(showLink, "remove_link", messageLocator
-					.getMessage("modifyitem.remove.link"), new SimpleViewParameters(
-					"remove_question")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			UIInternalLink.make(showLink, "remove_link", UIMessage.make("modifyitem.remove.link"),
+					new SimpleViewParameters("remove_question")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 
-		UIOutput.make(form, "question-text-header", messageLocator
-				.getMessage("modifyitem.question.text.header")); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(form, "question-text-header", "modifyitem.question.text.header"); //$NON-NLS-1$ //$NON-NLS-2$
 		UIInput itemText = UIInput.make(form, "item_text:", templateItemOTP + "item.itemText"); //$NON-NLS-1$ //$NON-NLS-2$
 		richTextEvolver.evolveTextInput(itemText);
 
-		UIOutput.make(form, "response-size-header", messageLocator
-				.getMessage("modifyessay.response.size.header")); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(form, "response-size-header","modifyessay.response.size.header"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// dropdown list for "Scale Type"
 		UISelect.make(form, "scaleList", 
@@ -158,8 +145,7 @@ public class ModifyEssayProducer implements ViewComponentProducer,
 		if (((Boolean) settings.get(EvalSettings.NOT_AVAILABLE_ALLOWED))
 				.booleanValue()) {
 			UIBranchContainer showNA = UIBranchContainer.make(form, "showNA:"); //$NON-NLS-1$
-			UIOutput.make(showNA, "add-na-header", messageLocator
-					.getMessage("modifyitem.add.na.header")); //$NON-NLS-1$ //$NON-NLS-2$
+			UIMessage.make(showNA, "add-na-header","modifyitem.add.na.header"); //$NON-NLS-1$ //$NON-NLS-2$
 			UIBoundBoolean.make(showNA, "item_NA", templateItemOTP + "usesNA", null); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
@@ -177,17 +163,16 @@ public class ModifyEssayProducer implements ViewComponentProducer,
 
 			UIBranchContainer showItemCategory = UIBranchContainer.make(form,
 					"showItemCategory:"); //$NON-NLS-1$
-			UIOutput.make(showItemCategory, "item-category-header", messageLocator
-					.getMessage("modifyitem.item.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
-			UIOutput.make(showItemCategory, "course-category-header", messageLocator
-					.getMessage("modifyitem.course.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
-			UIOutput.make(showItemCategory, "instructor-category-header",
-					messageLocator.getMessage("modifyitem.instructor.category.header")); //$NON-NLS-1$ //$NON-NLS-2$
+			UIMessage.make(showItemCategory, "item-category-header", 
+					"modifyitem.item.category.header"); //$NON-NLS-1$ //$NON-NLS-2$
+			UIMessage.make(showItemCategory, "course-category-header", "modifyitem.course.category.header"); //$NON-NLS-1$ //$NON-NLS-2$
+			UIMessage.make(showItemCategory, "instructor-category-header",
+					"modifyitem.instructor.category.header"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			// Radio Buttons for "Item Category"
 			String[] courseCategoryList = {
-					messageLocator.getMessage("modifyitem.course.category.header"),
-					messageLocator.getMessage("modifyitem.instructor.category.header"), };
+					"modifyitem.course.category.header",
+					"modifyitem.instructor.category.header" };
 			UISelect radios = UISelect.make(showItemCategory, "item_category",
 					EvaluationConstant.ITEM_CATEGORY_VALUES, courseCategoryList,
 					templateItemOTP + "itemCategory", null);
@@ -202,11 +187,10 @@ public class ModifyEssayProducer implements ViewComponentProducer,
 							.booleanValue() ? 0 : 1])); //$NON-NLS-1$
 		}
 
-		UIOutput.make(form, "cancel-button", messageLocator
-				.getMessage("general.cancel.button"));
+		UIMessage.make(form, "cancel-button", "general.cancel.button");
 
-		UICommand saveCmd = UICommand.make(form, "saveEssayAction", messageLocator
-				.getMessage("modifyitem.save.button"), "#{itemsBean.saveItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		UICommand saveCmd = UICommand.make(form, "saveEssayAction", UIMessage.make("modifyitem.save.button"),
+				"#{itemsBean.saveItemAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		saveCmd.parameters.add(new UIELBinding(templateItemOTP
 				+ "item.classification", EvalConstants.ITEM_TYPE_TEXT));
