@@ -31,10 +31,10 @@ import org.sakaiproject.evaluation.tool.params.PreviewEvalParameters;
 import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
-import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIInternalLink;
+import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
@@ -73,10 +73,6 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 		this.templatesLogic = templatesLogic;
 	}
 
-	private MessageLocator messageLocator;
-	public void setMessageLocator(MessageLocator messageLocator) {
-		this.messageLocator = messageLocator;
-	}
 
 
 	private ItemRenderer itemRenderer;
@@ -94,25 +90,25 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 
 		//TODO - i18n UIBoundBoolean's for N/a
 
-		UIOutput.make(tofill,"control-panel-title", messageLocator.getMessage("controlpanel.page.title"));		 //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(tofill, "preview-eval-title", messageLocator.getMessage("previeweval.page.title"));		 //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill,"control-panel-title", "controlpanel.page.title");		 //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "preview-eval-title", "previeweval.page.title");		 //$NON-NLS-1$ //$NON-NLS-2$
 
-		UIInternalLink.make(tofill, "summary-toplink", messageLocator.getMessage("summary.page.title"),  //$NON-NLS-1$ //$NON-NLS-2$
+		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"),  //$NON-NLS-1$ //$NON-NLS-2$
 				new SimpleViewParameters(SummaryProducer.VIEW_ID));		
 
 		PreviewEvalParameters previewEvalViewParams = (PreviewEvalParameters)viewparams;
 
-		UIOutput.make(tofill, "evaluation-title-header", messageLocator.getMessage("previeweval.evaluation.title.header")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(tofill, "course-title-header", messageLocator.getMessage("previeweval.course.title.header")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(tofill, "instructions-title-header", messageLocator.getMessage("previeweval.instructions.title.header")); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "evaluation-title-header", "previeweval.evaluation.title.header"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "course-title-header", "previeweval.course.title.header"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "instructions-title-header", "previeweval.instructions.title.header"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		if (previewEvalViewParams.originalPage != null){
 			if (previewEvalViewParams.originalPage.equals(ModifyTemplateItemsProducer.VIEW_ID) || 
 					previewEvalViewParams.originalPage.equals(EvaluationStartProducer.VIEW_ID) ){
 				//get template ID
-				UIOutput.make(tofill, "evalTitle", messageLocator.getMessage("previeweval.evaluation.title.default"));//no evaluation title, use dummy //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(tofill, "courseTitle", messageLocator.getMessage("previeweval.course.title.default"));//no course title, use dummy //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(tofill, "instruction", messageLocator.getMessage("previeweval.instructions.default"));//no instruction, use dummy //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(tofill, "evalTitle", "previeweval.evaluation.title.default");//no evaluation title, use dummy //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(tofill, "courseTitle", "previeweval.course.title.default");//no course title, use dummy //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(tofill, "instruction", "previeweval.instructions.default");//no instruction, use dummy //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
 			if (previewEvalViewParams.originalPage.equals(ControlPanelProducer.VIEW_ID)){
@@ -138,7 +134,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 					}
 					if (eval.getInstructions() != null)
 						UIVerbatim.make(tofill, "instruction", eval.getInstructions()); //$NON-NLS-1$
-					else UIOutput.make(tofill, "instruction", messageLocator.getMessage("previeweval.instructions.default")); //$NON-NLS-1$ //$NON-NLS-2$
+					else UIMessage.make(tofill, "instruction", "previeweval.instructions.default"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 
@@ -168,7 +164,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 					}
 					if (eval.getInstructions() != null)
 						UIOutput.make(tofill, "instruction",eval.getInstructions()); //$NON-NLS-1$
-					else UIOutput.make(tofill, "instruction", messageLocator.getMessage("previeweval.instructions.default")); //$NON-NLS-1$ //$NON-NLS-2$
+					else UIMessage.make(tofill, "instruction", "previeweval.instructions.default"); //$NON-NLS-1$ //$NON-NLS-2$
 
 				}
 			} //end of: if (previewEvalViewParams.originalPage.equals(SummaryProducer.VIEW_ID))
@@ -202,12 +198,12 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 
 				if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_COURSE, ncItemsList))	{	
 					courseSection = UIBranchContainer.make(tofill,"courseSection:"); //$NON-NLS-1$
-					UIOutput.make(courseSection, "course-questions-header", messageLocator.getMessage("previeweval.course.questions.header"));  //$NON-NLS-1$ //$NON-NLS-2$
+					UIMessage.make(courseSection, "course-questions-header", "previeweval.course.questions.header");  //$NON-NLS-1$ //$NON-NLS-2$
 				}
 
 				if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, ncItemsList))	{	
 					instructorSection = UIBranchContainer.make(tofill,"instructorSection:"); //$NON-NLS-1$
-					UIOutput.make(instructorSection, "instructor-questions-header", messageLocator.getMessage("previeweval.instructor.questions.header"));  //$NON-NLS-1$ //$NON-NLS-2$
+					UIMessage.make(instructorSection, "instructor-questions-header", "previeweval.instructor.questions.header");  //$NON-NLS-1$ //$NON-NLS-2$
 				}
 
 				for (int i = 0; i < ncItemsList.size(); i++) {	

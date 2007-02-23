@@ -33,13 +33,13 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.params.PreviewEvalParameters;
 
-import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
+import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
@@ -87,11 +87,6 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 		this.external = external;
 	}
 
-	private MessageLocator messageLocator;
-	public void setMessageLocator(MessageLocator messageLocator) {
-		this.messageLocator = messageLocator;
-	}
-
 	private Locale locale;
 	public void setLocale(Locale locale) {
 		this.locale = locale;
@@ -107,27 +102,26 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 		// use a date which is related to the current users locale
 		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
 
-		UIOutput.make(tofill, "control-panel-title", messageLocator.getMessage("controlpanel.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "control-panel-title", "controlpanel.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		/*
 		 * top links here
 		 */
 		if (userAdmin) {
-			UIInternalLink.make(tofill, "administrate-toplink", messageLocator.getMessage("administrate.page.title"), new SimpleViewParameters(AdministrateProducer.VIEW_ID)); //$NON-NLS-1$ //$NON-NLS-2$
+			UIInternalLink.make(tofill, "administrate-toplink", UIMessage.make("administrate.page.title"), new SimpleViewParameters(AdministrateProducer.VIEW_ID)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
-		UIInternalLink.make(tofill, "summary-toplink", messageLocator.getMessage("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID)); //$NON-NLS-1$ //$NON-NLS-2$
+		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID)); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// Create new template link
 		if (createTemplate) {
 			UIForm createTemplateForm = UIForm.make(tofill, "create-template-form"); //$NON-NLS-1$
 			UIInternalLink.make(createTemplateForm, "createTemplateLink", //$NON-NLS-1$
-					messageLocator.getMessage("createtemplate.page.title"), //$NON-NLS-1$
+					UIMessage.make("createtemplate.page.title"), //$NON-NLS-1$
 					new EvalViewParameters(ModifyTemplateProducer.VIEW_ID, null));
-			UIOutput.make(createTemplateForm, "eval-templates-header", messageLocator.getMessage("controlpanel.eval.templates.header")); //$NON-NLS-1$ //$NON-NLS-2$
-			/*UIInternalLink.make(createTemplateForm, "createTemplateLink", new EvalViewParameters(TemplateProducer.VIEW_ID, null,
-				ControlPanelProducer.VIEW_ID));*/
-			UIOutput.make(createTemplateForm, "template-desc-note", messageLocator.getMessage("controlpanel.template.desc.note")); //$NON-NLS-1$ //$NON-NLS-2$
+			UIMessage.make(createTemplateForm, "eval-templates-header", "controlpanel.eval.templates.header"); //$NON-NLS-1$ //$NON-NLS-2$
+
+			UIMessage.make(createTemplateForm, "template-desc-note","controlpanel.template.desc.note"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		// get template List
@@ -138,9 +132,9 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 
 			UIForm templateForm = UIForm.make(templates, "template-form"); //$NON-NLS-1$
 
-			UIOutput.make(templateForm, "template-title-header", messageLocator.getMessage("controlpanel.template.title.header"));	 //$NON-NLS-1$ //$NON-NLS-2$
-			UIOutput.make(templateForm, "owner-header", messageLocator.getMessage("controlpanel.owner.header")); //$NON-NLS-1$ //$NON-NLS-2$
-			UIOutput.make(templateForm, "last-update-header", messageLocator.getMessage("controlpanel.last.update.header")); //$NON-NLS-1$ //$NON-NLS-2$
+			UIMessage.make(templateForm, "template-title-header", "controlpanel.template.title.header");	 //$NON-NLS-1$ //$NON-NLS-2$
+			UIMessage.make(templateForm, "owner-header", "controlpanel.owner.header"); //$NON-NLS-1$ //$NON-NLS-2$
+			UIMessage.make(templateForm, "last-update-header", "controlpanel.last.update.header"); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			for (int i = 0; i < templateList.size(); i++) {
 				UIBranchContainer templatesRb = UIBranchContainer.make(templateForm, "templateList:", Integer //$NON-NLS-1$
@@ -169,12 +163,10 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 		// Begin eval link
 		if (beginEvaluation) {
 			UIForm startEvalForm = UIForm.make(tofill, "start-evaluation-form"); //$NON-NLS-1$
-			UICommand.make(startEvalForm, "startEvalLink", messageLocator.getMessage("starteval.page.title"), //$NON-NLS-1$ //$NON-NLS-2$
+			UICommand.make(startEvalForm, "startEvalLink", UIMessage.make("starteval.page.title"), //$NON-NLS-1$ //$NON-NLS-2$
 									"#{evaluationBean.startEvaluation}"); //$NON-NLS-1$
-			/*UIInternalLink.make(tofill, "startEvalLink", new EvalViewParameters(EvaluationStartProducer.VIEW_ID, null,
-				ControlPanelProducer.VIEW_ID));*/
-			UIOutput.make(startEvalForm, "queued-eval-header", messageLocator.getMessage("controlpanel.queued.eval.header")); //$NON-NLS-1$ //$NON-NLS-2$
-			UIOutput.make(startEvalForm, "evals-not-started-header", messageLocator.getMessage("controlpanel.evals.not.started.header")); //$NON-NLS-1$ //$NON-NLS-2$
+			UIMessage.make(startEvalForm, "queued-eval-header", "controlpanel.queued.eval.header"); //$NON-NLS-1$ //$NON-NLS-2$
+			UIMessage.make(startEvalForm, "evals-not-started-header", "controlpanel.evals.not.started.header"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		// get all the visible evaluation to current user
@@ -204,11 +196,11 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 				UIBranchContainer queuedEvalTable = UIBranchContainer.make(tofill, "queuedEvalTable:"); //$NON-NLS-1$
 				UIForm queuedEvalForm = UIForm.make(queuedEvalTable, "queuedEvalForm"); //$NON-NLS-1$
 
-				UIOutput.make(queuedEvalForm, "eval-title-header", messageLocator.getMessage("controlpanel.eval.title.header")); //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(queuedEvalForm, "eval-assigned-header", messageLocator.getMessage("controlpanel.eval.assigned.header")); //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(queuedEvalForm, "eval-start-date-header", messageLocator.getMessage("controlpanel.eval.start.date.header")); //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(queuedEvalForm, "eval-due-date-header", messageLocator.getMessage("controlpanel.eval.due.date.header")); //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(queuedEvalForm, "eval-settings-header", messageLocator.getMessage("controlpanel.eval.settings.header")); //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(queuedEvalForm, "eval-title-header", "controlpanel.eval.title.header"); //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(queuedEvalForm, "eval-assigned-header","controlpanel.eval.assigned.header"); //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(queuedEvalForm, "eval-start-date-header", "controlpanel.eval.start.date.header"); //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(queuedEvalForm, "eval-due-date-header", "controlpanel.eval.due.date.header"); //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(queuedEvalForm, "eval-settings-header", "controlpanel.eval.settings.header"); //$NON-NLS-1$ //$NON-NLS-2$
 				
 				
 				for (int i = 0; i < queuedEvals.size(); i++) {
@@ -216,26 +208,17 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 							Integer.toString(i));
 
 					EvalEvaluation eval1 = (EvalEvaluation) (queuedEvals.get(i));
-/*
-					UIInternalLink.make(queuedEvalsRb, "queuedEvalTitle", eval1.getTitle(), new EvalViewParameters(
-									PreviewEvalProducer.VIEW_ID, eval1.getId(), ControlPanelProducer.VIEW_ID));
-	*/			
+		
 					UIInternalLink.make(queuedEvalsRb, "queuedEvalTitle", eval1.getTitle(), new PreviewEvalParameters( //$NON-NLS-1$
 							PreviewEvalProducer.VIEW_ID, eval1.getId(),eval1.getTemplate().getId(), null, ControlPanelProducer.VIEW_ID));
 					
 					// vary the display depending on the number of contexts assigned
 					int contextCount = evaluationsLogic.countEvaluationContexts(eval1.getId());
 					if (contextCount > 1) {
-						//UICommand queuedEvalAssigned = UICommand.make(queuedEvalsRb, 
-						//		"queuedEvalAssigned", contextCount+"courses", //$NON-NLS-1$ //$NON-NLS-2$
-						//		"#{evaluationBean.evalAssigned}"); //$NON-NLS-1$
-						//queuedEvalAssigned.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", eval1.getId())); //$NON-NLS-1$
+				
 						UIOutput.make(queuedEvalsRb, "queuedEvalAssignedLabel", contextCount+" courses");
 					} else {
-						//UICommand queuedEvalAssigned = UICommand.make(queuedEvalsRb,
-						//		"queuedEvalAssigned", getTitleForFirstEvalContext(eval1.getId()), //$NON-NLS-1$
-						//		"#{evaluationBean.evalAssigned}"); //$NON-NLS-1$
-						//queuedEvalAssigned.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", eval1.getId())); //$NON-NLS-1$
+					
 						UIOutput.make(queuedEvalsRb, "queuedEvalAssignedLabel", getTitleForFirstEvalContext(eval1.getId()));
 
 					}
@@ -243,7 +226,7 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 					UIOutput.make(queuedEvalsRb, "queuedEvalStartDate", df.format(eval1.getStartDate())); //$NON-NLS-1$
 					UIOutput.make(queuedEvalsRb, "queuedEvalDueDate", df.format(eval1.getDueDate())); //$NON-NLS-1$
 					
-					UICommand queuedEvalEdit = UICommand.make(queuedEvalsRb, "queuedEvalEditLink", messageLocator.getMessage("controlpanel.eval.edit.link"), //$NON-NLS-1$ //$NON-NLS-2$
+					UICommand queuedEvalEdit = UICommand.make(queuedEvalsRb, "queuedEvalEditLink", UIMessage.make("controlpanel.eval.edit.link"), //$NON-NLS-1$ //$NON-NLS-2$
 												"#{evaluationBean.editEvalSettingAction}"); //$NON-NLS-1$
 					queuedEvalEdit.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", eval1.getId())); //$NON-NLS-1$
 					
@@ -254,8 +237,8 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 				} // end of for loop
 			}
 
-			UIOutput.make(tofill, "active-eval-header-title", messageLocator.getMessage("controlpanel.active.eval.header.title")); //$NON-NLS-1$ //$NON-NLS-2$
-			UIOutput.make(tofill, "active-eval-header-desc", messageLocator.getMessage("controlpanel.active.eval.header.desc")); //$NON-NLS-1$ //$NON-NLS-2$
+			UIMessage.make(tofill, "active-eval-header-title", "controlpanel.active.eval.header.title"); //$NON-NLS-1$ //$NON-NLS-2$
+			UIMessage.make(tofill, "active-eval-header-desc", "controlpanel.active.eval.header.desc"); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			// display Active Evaluation Table
 			if (activeEvals != null && activeEvals.size() > 0) {
@@ -263,12 +246,12 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 				UIBranchContainer activeEvalTable = UIBranchContainer.make(tofill, "activeEvalTable:"); //$NON-NLS-1$
 				UIForm activeEvalForm = UIForm.make(activeEvalTable, "activeEvalForm"); //$NON-NLS-1$
 				
-				UIOutput.make(activeEvalForm, "eval-title-header", messageLocator.getMessage("controlpanel.eval.title.header")); //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(activeEvalForm, "eval-assigned-header", messageLocator.getMessage("controlpanel.eval.assigned.header")); //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(activeEvalForm, "eval-start-date-header", messageLocator.getMessage("controlpanel.eval.start.date.header")); //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(activeEvalForm, "eval-due-date-header", messageLocator.getMessage("controlpanel.eval.due.date.header")); //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(activeEvalForm, "eval-users-header", messageLocator.getMessage("controlpanel.eval.users.header"));				 //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(activeEvalForm, "eval-settings-header", messageLocator.getMessage("controlpanel.eval.settings.header")); //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(activeEvalForm, "eval-title-header", "controlpanel.eval.title.header"); //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(activeEvalForm, "eval-assigned-header", "controlpanel.eval.assigned.header"); //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(activeEvalForm, "eval-start-date-header", "controlpanel.eval.start.date.header"); //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(activeEvalForm, "eval-due-date-header", "controlpanel.eval.due.date.header"); //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(activeEvalForm, "eval-users-header", "controlpanel.eval.users.header");				 //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(activeEvalForm, "eval-settings-header","controlpanel.eval.settings.header"); //$NON-NLS-1$ //$NON-NLS-2$
 				
 				for (int i = 0; i < activeEvals.size(); i++) {
 					UIBranchContainer activeEvalsRb = UIBranchContainer.make(activeEvalForm, "activeEvalList:", //$NON-NLS-1$
@@ -294,7 +277,7 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 					UIOutput.make(activeEvalsRb, "activeEvalStartDate", df.format(eval1.getStartDate())); //$NON-NLS-1$
 					UIOutput.make(activeEvalsRb, "activeEvalDueDate", df.format(eval1.getDueDate())); //$NON-NLS-1$
 					
-					UICommand activeEvalEdit = UICommand.make(activeEvalsRb, "activeEvalEditLink", messageLocator.getMessage("controlpanel.eval.edit.link"), //$NON-NLS-1$ //$NON-NLS-2$
+					UICommand activeEvalEdit = UICommand.make(activeEvalsRb, "activeEvalEditLink", UIMessage.make("controlpanel.eval.edit.link"), //$NON-NLS-1$ //$NON-NLS-2$
 											"#{evaluationBean.editEvalSettingAction}"); //$NON-NLS-1$
 					activeEvalEdit.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", eval1.getId())); //$NON-NLS-1$
 					
@@ -306,17 +289,17 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 				} // end of for loop
 			}
 
-			UIOutput.make(tofill, "eval-closed-header-title", messageLocator.getMessage("controlpanel.eval.closed.header.title")); //$NON-NLS-1$ //$NON-NLS-2$
-			UIOutput.make(tofill, "eval-closed-header-desc", messageLocator.getMessage("controlpanel.eval.closed.header.desc")); //$NON-NLS-1$ //$NON-NLS-2$
+			UIMessage.make(tofill, "eval-closed-header-title", "controlpanel.eval.closed.header.title"); //$NON-NLS-1$ //$NON-NLS-2$
+			UIMessage.make(tofill, "eval-closed-header-desc", "controlpanel.eval.closed.header.desc"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			// display closed Evaluation Table
 			if (closedEvals != null && closedEvals.size() > 0) {
 				UIBranchContainer closedEvalTable = UIBranchContainer.make(tofill, "closedEvalTable:"); //$NON-NLS-1$
 
-				UIOutput.make(closedEvalTable, "eval-title-header", messageLocator.getMessage("controlpanel.eval.title.header")); //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(closedEvalTable, "eval-due-date-header", messageLocator.getMessage("controlpanel.eval.due.date.header")); //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(closedEvalTable, "eval-response-rate-header", messageLocator.getMessage("controlpanel.eval.response.rate.header"));				 //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(closedEvalTable, "eval-settings-header", messageLocator.getMessage("controlpanel.eval.report.header")); //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(closedEvalTable, "eval-title-header", "controlpanel.eval.title.header"); //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(closedEvalTable, "eval-due-date-header", "controlpanel.eval.due.date.header"); //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(closedEvalTable, "eval-response-rate-header", "controlpanel.eval.response.rate.header");				 //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(closedEvalTable, "eval-settings-header", "controlpanel.eval.report.header"); //$NON-NLS-1$ //$NON-NLS-2$
 
 				
 				for (int i = 0; i < closedEvals.size(); i++) {
@@ -336,12 +319,12 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 					
 					UIOutput.make(closedEvalsRb, "reponseRate", ctResponses + "/"+ ctEnrollments +" - "+percentage +"%"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 					if(evaluationsLogic.getEvaluationState(eval1.getId())==EvalConstants.EVALUATION_STATE_VIEWABLE){
-						UIInternalLink.make(closedEvalsRb, "viewReportLink", messageLocator.getMessage("controlpanel.eval.report.link"),  //$NON-NLS-1$ //$NON-NLS-2$
+						UIInternalLink.make(closedEvalsRb, "viewReportLink", UIMessage.make("controlpanel.eval.report.link"),  //$NON-NLS-1$ //$NON-NLS-2$
 								new EvalViewParameters(ViewReportProducer.VIEW_ID, 
 									eval1.getId()));	
 					}
 					else{
-						UIOutput.make(closedEvalsRb, "viewReportLabel", messageLocator.getMessage("controlpanel.eval.report.viewable.on"));
+						UIMessage.make(closedEvalsRb, "viewReportLabel", "controlpanel.eval.report.viewable.on");
 						UIOutput.make(closedEvalsRb, "closedEvalViewDate", df.format(eval1.getViewDate())); //$NON-NLS-1$
 					}
 				} // end of for loop

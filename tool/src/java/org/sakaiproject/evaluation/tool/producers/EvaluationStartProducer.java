@@ -22,8 +22,6 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.params.PreviewEvalParameters;
 
-
-import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
@@ -31,6 +29,7 @@ import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
+import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UIOutputMany;
 import uk.org.ponder.rsf.components.UISelect;
@@ -70,11 +69,6 @@ public class EvaluationStartProducer implements ViewComponentProducer, Navigatio
 		return VIEW_ID;
 	}
 	
-	private MessageLocator messageLocator;
-
-	public void setMessageLocator(MessageLocator messageLocator) {
-		this.messageLocator = messageLocator;
-	}
 
 	private TextInputEvolver richTextEvolver;
 
@@ -84,18 +78,18 @@ public class EvaluationStartProducer implements ViewComponentProducer, Navigatio
 	
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
-		UIInternalLink.make(tofill, "summary-toplink", messageLocator.getMessage("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID));			 //$NON-NLS-1$ //$NON-NLS-2$
+		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID));			 //$NON-NLS-1$ //$NON-NLS-2$
 		
-		UIOutput.make(tofill, "start-eval-title", messageLocator.getMessage("starteval.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(tofill, "start-eval-header", messageLocator.getMessage("starteval.header")); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "start-eval-title", "starteval.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "start-eval-header", "starteval.header"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		EvalViewParameters evalViewParams = (EvalViewParameters) viewparams;
 
 		UIForm form = UIForm.make(tofill, "basic-form"); //$NON-NLS-1$
 		
-		UIOutput.make(form, "title-header", messageLocator.getMessage("starteval.title.header")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(form, "instructions-header", messageLocator.getMessage("starteval.instructions.header")); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(form, "instructions-desc", messageLocator.getMessage("starteval.instructions.desc")); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(form, "title-header","starteval.title.header"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(form, "instructions-header", "starteval.instructions.header"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(form, "instructions-desc", "starteval.instructions.desc"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		UIInput.make(form, "title", "#{evaluationBean.eval.title}"); //$NON-NLS-1$ //$NON-NLS-2$
 		UIInput instructions = UIInput.make(form, "instructions:", "#{evaluationBean.eval.instructions}"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -122,10 +116,10 @@ public class EvaluationStartProducer implements ViewComponentProducer, Navigatio
 					owners[count] = ((EvalTemplate)(templateList.get(count))).getOwner();
 				}
 				
-				UIOutput.make(chooseTemplate, "choose-template-header", messageLocator.getMessage("starteval.choose.template.header")); //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(chooseTemplate, "choose-template-desc", messageLocator.getMessage("starteval.choose.template.desc")); //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(chooseTemplate, "template-title-header", messageLocator.getMessage("starteval.template.title.header")); //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(chooseTemplate, "template-owner-header", messageLocator.getMessage("starteval.template.ownder.header")); //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(chooseTemplate, "choose-template-header", "starteval.choose.template.header"); //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(chooseTemplate, "choose-template-desc", "starteval.choose.template.desc"); //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(chooseTemplate, "template-title-header", "starteval.template.title.header"); //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(chooseTemplate, "template-owner-header", "starteval.template.ownder.header"); //$NON-NLS-1$ //$NON-NLS-2$
 				UISelect radios = UISelect.make(chooseTemplate, "templateRadio", values, labels, "#{evaluationBean.templateId}",null); //$NON-NLS-1$ //$NON-NLS-2$
 
 				radios.optionnames = UIOutputMany.make(labels);
@@ -138,7 +132,7 @@ public class EvaluationStartProducer implements ViewComponentProducer, Navigatio
 
 				//	UIOutput.make(radiobranch,"radioOwner", logic.getUserDisplayName( owners[i])); //$NON-NLS-1$
 					UIOutput.make(radiobranch,"radioOwner", external.getUserDisplayName( owners[i]));
-					UIInternalLink.make(radiobranch, "viewPreview_link", messageLocator.getMessage("starteval.view.preview.link"),  //$NON-NLS-1$ //$NON-NLS-2$
+					UIInternalLink.make(radiobranch, "viewPreview_link", UIMessage.make("starteval.view.preview.link"),  //$NON-NLS-1$ //$NON-NLS-2$
 							new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID,null, new Long(values[i]),null, EvaluationStartProducer.VIEW_ID));
 			    }
 			}
@@ -148,10 +142,9 @@ public class EvaluationStartProducer implements ViewComponentProducer, Navigatio
 					evalViewParams.templateId) );
 		}
 
-		//UICommand.make(form, "cancel-button", messageLocator.getMessage("general.cancel.button"), "#{evaluationBean.cancelEvalStartAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		UIOutput.make(form, "cancel-button", messageLocator.getMessage("general.cancel.button"));
+		UIMessage.make(form, "cancel-button", "general.cancel.button");
 
-		UICommand.make(form, "continueToSettings", messageLocator.getMessage("starteval.continue.settings.link"), "#{evaluationBean.continueToSettingsAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		UICommand.make(form, "continueToSettings", UIMessage.make("starteval.continue.settings.link"), "#{evaluationBean.continueToSettingsAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	public List reportNavigationCases() {
