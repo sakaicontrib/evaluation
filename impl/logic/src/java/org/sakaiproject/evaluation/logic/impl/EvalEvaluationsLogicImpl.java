@@ -407,7 +407,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 	/* (non-Javadoc)
 	 * @see edu.vt.sakai.evaluation.logic.EvalEvaluationsLogic#countEvaluationContexts(java.lang.Long)
 	 */
-	public int countEvaluationContexts(Long evaluationId) {
+	public int countEvaluationGroups(Long evaluationId) {
 		log.debug("evalId: " + evaluationId);
 		return dao.countByProperties(EvalAssignGroup.class, 
 				new String[] {"evaluation.id"}, 
@@ -417,7 +417,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalEvaluationsLogic#getEvaluationContexts(java.lang.Long[], boolean)
 	 */
-	public Map getEvaluationContexts(Long[] evaluationIds, boolean includeUnApproved) {
+	public Map getEvaluationGroups(Long[] evaluationIds, boolean includeUnApproved) {
 		log.debug("evalIds: " + evaluationIds);
 		Map evals = new TreeMap();
 
@@ -427,7 +427,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 			evals.put(evaluationIds[i], innerList);
 		}
 
-		// get all the contexts for the given eval ids in one storage call
+		// get all the evalGroupIds for the given eval ids in one storage call
 		List l = new ArrayList();
 		if (includeUnApproved) {
 			l = dao.findByProperties(EvalAssignGroup.class,
@@ -441,12 +441,12 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 		}
 		for (int i=0; i<l.size(); i++) {
 			EvalAssignGroup eac = (EvalAssignGroup) l.get(i);
-			String context = eac.getEvalGroupId();
+			String evalGroupId = eac.getEvalGroupId();
 
 			// put stuff in inner list
 			Long evalId = eac.getEvaluation().getId();
 			List innerList = (List) evals.get(evalId);
-			innerList.add( external.makeEvalGroupObject(context) );
+			innerList.add( external.makeEvalGroupObject(evalGroupId) );
 		}
 		return evals;
 	}
@@ -546,18 +546,18 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 			return false;
 		}
 
-		// check that the context is valid for this evaluation
+		// check that the evalGroupId is valid for this evaluation
 		List acs = dao.findByProperties(EvalAssignGroup.class, 
 				new String[] {"evaluation.id", "evalGroupId"}, 
 				new Object[] {evaluationId, evalGroupId});
 		if (acs.size() <= 0) {
-			log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") in this context (" + evalGroupId + "), not assigned");
+			log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") in this evalGroupId (" + evalGroupId + "), not assigned");
 			return false;
 		} else {
 			// make sure instructor approval is true
 			EvalAssignGroup eac = (EvalAssignGroup) acs.get(0);
 			if (! eac.getInstructorApproval().booleanValue() ) {
-				log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") in this context (" + evalGroupId + "), instructor has not approved");
+				log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") in this evalGroupId (" + evalGroupId + "), instructor has not approved");
 				return false;
 			}
 		}
@@ -583,7 +583,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 				// all is ok, the "existing" response is a hibernate persistent object
 				// WARNING: this is a bit of a hack though
 			} else {
-				// user already has a response saved for this evaluation and context
+				// user already has a response saved for this evaluation and evalGroupId
 				if (eval.getModifyResponsesAllowed() == null || 
 						eval.getModifyResponsesAllowed().booleanValue() == false) {
 					// user cannot modify existing responses

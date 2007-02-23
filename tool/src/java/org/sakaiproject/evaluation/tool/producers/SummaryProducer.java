@@ -162,7 +162,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			}
 
 			// now fetch all the information we care about for these evaluations at once (for speed)
-			Map evalContexts = evaluationsLogic.getEvaluationContexts(evalIds, false);
+			Map evalContexts = evaluationsLogic.getEvaluationGroups(evalIds, false);
 			List evalResponses = responsesLogic.getEvaluationResponses(currentUserId, evalIds);
 
 			for (Iterator itEvals = evalsToTake.iterator(); itEvals.hasNext();) {

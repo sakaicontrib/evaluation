@@ -128,12 +128,12 @@ public class RemoveTemplateProducer implements ViewComponentProducer, Navigation
 							EvalEvaluation eval1 = (EvalEvaluation) l.get(i);
 							UIOutput.make(evalsRb, "evalTitle", eval1.getTitle()); //$NON-NLS-1$
 
-							int ct = evalsLogic.countEvaluationContexts(eval1.getId());
+							int ct = evalsLogic.countEvaluationGroups(eval1.getId());
 							if (ct > 1)
 								UIOutput.make(evalsRb, "evalAssigned", count + " courses"); //$NON-NLS-1$ //$NON-NLS-2$
 							else{
 								Long[] evalIds = {eval1.getId()};
-								Map evalContexts = evalsLogic.getEvaluationContexts(evalIds, true);
+								Map evalContexts = evalsLogic.getEvaluationGroups(evalIds, true);
 								List contexts = (List) evalContexts.get(eval1.getId());
 								EvalGroup ctxt = (EvalGroup) contexts.get(0);
 								String title = ctxt.title;

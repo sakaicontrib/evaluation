@@ -58,7 +58,7 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalAssignsLogic#saveAssignContext(org.sakaiproject.evaluation.model.EvalAssignContext, java.lang.String)
 	 */
-	public void saveAssignContext(EvalAssignGroup assignContext, String userId) {
+	public void saveAssignGroup(EvalAssignGroup assignContext, String userId) {
 		log.debug("userId: " + userId + ", context: " + assignContext.getEvalGroupId());
 
 		// set the date modified
@@ -132,7 +132,7 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalAssignsLogic#deleteAssignContext(java.lang.Long, java.lang.String)
 	 */
-	public void deleteAssignContext(Long assignContextId, String userId) {
+	public void deleteAssignGroup(Long assignContextId, String userId) {
 		log.debug("userId: " + userId + ", assignContextId: " + assignContextId);
 
 		// get AC
@@ -154,7 +154,7 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalAssignsLogic#getAssignContextsByEvalId(java.lang.Long)
 	 */
-	public List getAssignContextsByEvalId(Long evaluationId) {
+	public List getAssignGroupsByEvalId(Long evaluationId) {
 		log.debug("evaluationId: " + evaluationId);
 
 		// get evaluation to check id
@@ -194,7 +194,7 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalAssignsLogic#canDeleteAssignContext(java.lang.String, java.lang.Long)
 	 */
-	public boolean canDeleteAssignContext(String userId, Long assignContextId) {
+	public boolean canDeleteAssignGroup(String userId, Long assignContextId) {
 		log.debug("userId: " + userId + ", assignContextId: " + assignContextId);
 
 		// get AC
