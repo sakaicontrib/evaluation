@@ -32,10 +32,10 @@ import org.sakaiproject.evaluation.tool.params.EssayResponseParams;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
-import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIInternalLink;
+import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIColourDecorator;
@@ -74,11 +74,6 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 		this.responsesLogic = responsesLogic;
 	}
 
-	private MessageLocator messageLocator;
-	public void setMessageLocator(MessageLocator messageLocator) {
-		this.messageLocator = messageLocator;
-	}
-
 	public ViewParameters getViewParameters() {
 		return new EssayResponseParams(VIEW_ID, null, null);
 	}	
@@ -87,12 +82,12 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
-		UIOutput.make(tofill, "view-essay-title",  messageLocator.getMessage("viewessay.page.title"));
-		UIInternalLink.make(tofill, "summary-toplink", messageLocator.getMessage("summary.page.title"),
+		UIMessage.make(tofill, "view-essay-title", "viewessay.page.title");
+		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"),
 				new SimpleViewParameters(SummaryProducer.VIEW_ID)); //$NON-NLS-1$ //$NON-NLS-2$
 
 		EssayResponseParams essayResponseParams = (EssayResponseParams) viewparams;
-		UIInternalLink.make(tofill, "viewReportLink", messageLocator.getMessage("viewreport.page.title"), 
+		UIInternalLink.make(tofill, "viewReportLink", UIMessage.make("viewreport.page.title"), 
 				new EvalViewParameters(ViewReportProducer.VIEW_ID, 
 						essayResponseParams.evalId));		
 		//output single set of essay responses
@@ -110,14 +105,14 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 			if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_COURSE)) {//"Course"
 				courseSection = UIBranchContainer.make(tofill,
 				"courseSection:");	
-				UIOutput.make(courseSection, "course-questions-header", messageLocator.getMessage("takeeval.course.questions.header")); //$NON-NLS-1$ //$NON-NLS-2$			
+				UIMessage.make(courseSection, "course-questions-header", "takeeval.course.questions.header"); //$NON-NLS-1$ //$NON-NLS-2$			
 				radiobranch = UIBranchContainer.make(courseSection,
 						"itemrow:first", Integer.toString(0));
 				this.doFillComponent(myItem, essayResponseParams.evalId, 0, radiobranch,
 						courseSection);
 			} else if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR)) {//"Instructor"
 				instructorSection = UIBranchContainer.make(tofill,"instructorSection:");		
-				UIOutput.make(instructorSection, "instructor-questions-header", messageLocator.getMessage("takeeval.instructor.questions.header"));			 //$NON-NLS-1$ //$NON-NLS-2$		
+				UIMessage.make(instructorSection, "instructor-questions-header","takeeval.instructor.questions.header");			 //$NON-NLS-1$ //$NON-NLS-2$		
 				radiobranch = UIBranchContainer.make(instructorSection,
 						"itemrow:first", Integer.toString(0));
 				this.doFillComponent(myItem, essayResponseParams.evalId, 0, radiobranch,

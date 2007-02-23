@@ -129,7 +129,6 @@
 			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
 		<property name="responsesLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
-		<property name="messageLocator" ref="messageLocator" />
 		<property name="locale" ref="requestLocale" />
 	</bean>
 
@@ -145,7 +144,6 @@
 			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
 		<property name="responsesLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
-		<property name="messageLocator" ref="messageLocator" />
 		<property name="locale" ref="requestLocale" />
 	</bean>
 
@@ -172,7 +170,6 @@
 
 	<bean
 		class="org.sakaiproject.evaluation.tool.producers.ModifyScaledProducer">
-		<property name="messageLocator" ref="messageLocator" />
 		<property name="itemsBean" ref="itemsBean" />
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
@@ -204,13 +201,10 @@
 			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
 		<property name="itemRenderer"
 			ref="org.sakaiproject.evaluation.tool.renderers.ItemRenderer" />
-		<property name="messageLocator" ref="messageLocator" />
 	</bean>
 
 	<bean
 		class="org.sakaiproject.evaluation.tool.producers.RemoveQuestionProducer">
-		<property name="messageLocator" ref="messageLocator" />
-	<!--  	<property name="requestBeanGetter" ref="ELEvaluator" /> -->
 		<property name="itemsLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
 		<property name="itemRenderer"
@@ -219,7 +213,6 @@
 
 	<bean
 		class="org.sakaiproject.evaluation.tool.producers.ModifyEssayProducer">
-		<property name="messageLocator" ref="messageLocator" />
 		<property name="templatesLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
 		<property name="external"
@@ -231,7 +224,6 @@
 
 	<bean
 		class="org.sakaiproject.evaluation.tool.producers.ModifyHeaderProducer">
-		<property name="messageLocator" ref="messageLocator" />
 		<property name="templatesLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
 		<property name="external"
@@ -243,7 +235,6 @@
 
 	<bean
 		class="org.sakaiproject.evaluation.tool.producers.ModifyBlockProducer">
-		<property name="messageLocator" ref="messageLocator" />
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="itemsLogic"
@@ -259,7 +250,6 @@
 			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-		<property name="messageLocator" ref="messageLocator" />
 		<property name="richTextEvolver" ref="richTextEvolver" />
 	</bean>
 
@@ -277,7 +267,6 @@
 		class="org.sakaiproject.evaluation.tool.producers.EvaluationAssignProducer">
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-		<property name="messageLocator" ref="messageLocator" />
 	</bean>
 
 	<bean
@@ -285,18 +274,15 @@
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="evaluationBean" ref="evaluationBean" />
-		<property name="messageLocator" ref="messageLocator" />
 	</bean>
 
 	<bean
 		class="org.sakaiproject.evaluation.tool.producers.PreviewEmailProducer">
 		<property name="evaluationBean" ref="evaluationBean" />
-		<property name="messageLocator" ref="messageLocator" />
 	</bean>
 
 	<bean
 		class="org.sakaiproject.evaluation.tool.producers.ModifyEmailProducer">
-		<property name="messageLocator" ref="messageLocator" />
 	</bean>
 
 	<bean
@@ -307,7 +293,6 @@
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
 		<property name="responsesLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
-		<property name="messageLocator" ref="messageLocator" />
 	</bean>
 
 	<bean
@@ -318,7 +303,6 @@
 			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
 		<property name="responsesLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
-		<property name="messageLocator" ref="messageLocator" />
 	</bean>
 
 	<bean
@@ -329,7 +313,6 @@
 			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
 		<property name="evalsLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
-		<property name="messageLocator" ref="messageLocator" />
 		<property name="itemRenderer" 
 			ref="org.sakaiproject.evaluation.tool.renderers.ItemRenderer" />
 		<property name="localResponsesLogic" ref="localResponsesLogic" />		
@@ -339,7 +322,6 @@
 		class="org.sakaiproject.evaluation.tool.producers.RemoveEvalProducer">
 		<property name="evalsLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
-		<property name="messageLocator" ref="messageLocator" />
 		<property name="locale" ref="requestLocale" />
 	</bean>
 
@@ -351,7 +333,6 @@
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
 		<property name="settings"
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-		<property name="messageLocator" ref="messageLocator" />
 	</bean>
 
 	<bean
@@ -360,7 +341,6 @@
 			ref="org.sakaiproject.evaluation.logic.EvalScalesLogic" />
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-		<property name="messageLocator" ref="messageLocator" />
 	</bean>
 	
 	<bean class="org.sakaiproject.evaluation.tool.utils.EvaluationDateUtil">

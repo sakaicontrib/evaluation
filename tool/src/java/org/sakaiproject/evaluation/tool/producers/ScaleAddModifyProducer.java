@@ -20,11 +20,11 @@ import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalScalesLogic;
 import org.sakaiproject.evaluation.model.EvalScale;
 
-import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
+import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
@@ -57,11 +57,6 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, Navigation
 		this.external = external;
 	}
 
-	// Spring injection 
-	private MessageLocator messageLocator;
-	public void setMessageLocator(MessageLocator messageLocator) {
-		this.messageLocator = messageLocator;
-	}	
 	
 	/* 
 	 * (non-Javadoc)
@@ -81,15 +76,15 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, Navigation
 		/*
 		 * top menu links and bread crumbs here
 		 */
-		UIInternalLink.make(tofill, "summary-toplink", messageLocator.getMessage("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID)); //$NON-NLS-1$ //$NON-NLS-2$
+		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID)); //$NON-NLS-1$ //$NON-NLS-2$
 		if (userAdmin) {
-			UIInternalLink.make(tofill, "control-panel-toplink", messageLocator.getMessage("controlpanel.page.title"), //$NON-NLS-1$ //$NON-NLS-2$
+			UIInternalLink.make(tofill, "control-panel-toplink", UIMessage.make("controlpanel.page.title"), //$NON-NLS-1$ //$NON-NLS-2$
 					new SimpleViewParameters(ControlPanelProducer.VIEW_ID));
 		}
-		UIInternalLink.make(tofill, "administrate-toplink", messageLocator.getMessage("administrate.page.title"), new SimpleViewParameters(AdministrateProducer.VIEW_ID)); //$NON-NLS-1$ //$NON-NLS-2$
-		UIInternalLink.make(tofill, "scale-control-toplink", messageLocator.getMessage("scalecontrol.page.title"), new SimpleViewParameters(ScaleControlProducer.VIEW_ID) ); //$NON-NLS-1$ //$NON-NLS-2$
+		UIInternalLink.make(tofill, "administrate-toplink", UIMessage.make("administrate.page.title"), new SimpleViewParameters(AdministrateProducer.VIEW_ID)); //$NON-NLS-1$ //$NON-NLS-2$
+		UIInternalLink.make(tofill, "scale-control-toplink", UIMessage.make("scalecontrol.page.title"), new SimpleViewParameters(ScaleControlProducer.VIEW_ID) ); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		UIOutput.make(tofill, "scale-add-modify-title", messageLocator.getMessage("scaleaddmodify.page.title")); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "scale-add-modify-title", "scaleaddmodify.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
 		UIInput.make(tofill, "title", "#{templateBean.title}");
 		
 		//Get all the scales that are owned by a user
@@ -103,8 +98,8 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, Navigation
 			
 			//Use can modify / remove scale only if it is not locked.
 			if (scalesLogic.canControlScale(currentUserId, scale.getId())) {
-				UIOutput.make(listOfScales, "modify-sidelink", messageLocator.getMessage("scalecontrol.modify.link")); //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(listOfScales, "remove-sidelink", messageLocator.getMessage("scalecontrol.remove.link")); //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(listOfScales, "modify-sidelink","scalecontrol.modify.link"); //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(listOfScales, "remove-sidelink", "scalecontrol.remove.link"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
 			//Display the scale options vertically
@@ -117,7 +112,7 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, Navigation
 				UIOutput.make(scaleOptions, "scale-option-label", (scale.getOptions())[j]); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
-			UIOutput.make(listOfScales, "ideal-scale-point", messageLocator.getMessage("scalecontrol.ideal.scale.title")); //$NON-NLS-1$ //$NON-NLS-2$
+			UIMessage.make(listOfScales, "ideal-scale-point", "scalecontrol.ideal.scale.title"); //$NON-NLS-1$ //$NON-NLS-2$
 			//If no ideal value is set then display "None" on webpage
 			if (scale.getIdeal() == null)
 				UIOutput.make(listOfScales, "ideal-value", "None");
