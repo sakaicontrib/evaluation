@@ -20,21 +20,20 @@
 	<div>
 	<ul class="breadCrumb">
 		<li class="breadCrumb"><a rsf:id="summary-toplink" href="summary.html">Summary</a></li>
-		<li class="breadCrumb" rsf:id="create-evaluation-title">Create Evaluation</li>
-		<li class="breadCrumb" rsf:id="assign-evaluation-title">Assign Evaluation</li>					
+		<li class="breadCrumb" rsf:id="create-evaluation-title">Start Eval</li>
+		<li class="breadCrumb" rsf:id="eval-settings-title">Settings</li>
+		<li class="breadCrumb" rsf:id="assign-evaluation-title">Assign Groups</li>					
 		<li class="breadCrumb" rsf:id="confirm-assignment-title">Confirm Assignment</li>
 	</ul>
 	</div>
-	<table border="0" cellspacing="0" cellpadding="0" width="90%">
-		<tr>
-			<td align = "left">
-				<b><span rsf:id="eval-assign-desc-prename">You have chosen to assign the evaluation </span></b>
-				<label name="evaluation_title" rsf:id="evaluationTitle" style="font-weight:bold;"/>
-				<b><span rsf:id="eval-assign-desc-postname"> to the following course(s). You may adjust the courses assigned to this evaluation up to the start date of the evaluation.</span></b>
-			</td>
-		</tr>
-	</table>
-	<br/>
+
+	<div>
+		<b><span rsf:id="eval-assign-desc-prename">You have chosen to assign the evaluation </span></b>
+		<label name="evaluation_title" rsf:id="evaluationTitle" style="font-weight:bold;"/>
+		<b><span rsf:id="eval-assign-desc-postname"> to the following course(s). 
+			You may adjust the courses assigned to this evaluation up to the start date of the evaluation.</span></b>
+	</div>
+
 	<b><span rsf:id="courses-selected-header">Individual Courses Selected:</span></b>
 	<table border = "1" cellspacing = "0" cellpadding = "0" width="90%">
 		<tr>
@@ -61,30 +60,17 @@
 	<table border="0" cellspacing="0" cellpadding="0" width="90%">	
 		<tr>
 			<td width="50%" align="left">
-				<input type="submit" name="done" value="Done" rsf:id="doneAssignment"/>
+				<input type="submit" name="change" value="Change Assigned Courses" rsf:id="changeAssignedCourse"/> 
 			</td>
 			<td align="right" width="50%">
-				<input type="submit" name="change" value="Change Assigned Courses" rsf:id="changeAssignedCourse"/> 
+				<input type="submit" name="done" value="Done" rsf:id="doneAssignment"/>
 			</td>
 		</tr>
 	</table>
 	</form>
 	</div>
-	
-	<!--  
-	<table border="0" cellspacing="0" cellpadding="0" width="90%">	
-		<tr>
-			<td width="50%" align="left">
-				<form rsf:id="dummyForm">
-					<input type="submit" name="done" value="Done" rsf:id="doneAssignment"/>
-				</form>
-			</td>
-			<td align="right" width="50%">
-				<input type="button" name="change" value="Change Assigned Courses" onclick = "javascript:history.back();"/> 
-			</td>
-		</tr>
-	</table>
-	-->
-</div>		
+
+</div>
+		
 </body>
 </html>
