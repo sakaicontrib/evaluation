@@ -20,10 +20,9 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
 import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
 
-import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIInternalLink;
-import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
@@ -43,12 +42,12 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 	public String getViewID() {
 		return VIEW_ID;
 	}
-
+/*
 	private MessageLocator messageLocator;
 	public void setMessageLocator(MessageLocator messageLocator) {
 		this.messageLocator = messageLocator;
 	}
-
+*/
 	private EvalItemsLogic itemsLogic;
 	public void setItemsLogic( EvalItemsLogic itemsLogic) {
 		this.itemsLogic = itemsLogic;
@@ -65,11 +64,11 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 	 */
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {	
 
-		UIOutput.make(tofill, "preview-item-title", messageLocator.getMessage("previewitem.page.title"));
+		UIMessage.make(tofill, "preview-item-title", "previewitem.page.title");
 
-		UIInternalLink.make(tofill, "summary-toplink", messageLocator.getMessage("summary.page.title"), 
+		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), 
 				new SimpleViewParameters(SummaryProducer.VIEW_ID));
-		UIOutput.make(tofill, "modify-template-title", messageLocator.getMessage("modifytemplate.page.title"));
+		UIMessage.make(tofill, "modify-template-title", "modifytemplate.page.title");
 
 		// get templateItem to preview from VPs
 		TemplateItemViewParameters templateItemViewParams = (TemplateItemViewParameters) viewparams;
@@ -80,7 +79,7 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 		itemRenderer.renderItem(tofill, "previewed-item:", null, templateItem, 0, true);
 
 		// render the close button
-		UIOutput.make(tofill, "close-button", messageLocator.getMessage("general.close.window.button"));
+		UIMessage.make(tofill, "close-button","general.close.window.button");
 	}
 
 	/* (non-Javadoc)
