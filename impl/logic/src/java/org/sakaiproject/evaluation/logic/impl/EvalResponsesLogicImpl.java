@@ -140,7 +140,7 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalResponsesLogic#getEvalAnswers(java.lang.Long, java.lang.Long)
 	 */
-	public List getEvalAnswers(Long itemId, Long evaluationId) {
+	public List getEvalAnswers(Long itemId, Long evaluationId, String[] evalGroupIds) {
 		log.debug("itemId: " + itemId + ", evaluationId: " + evaluationId);
 
 		if ( dao.countByProperties(EvalItem.class, 
@@ -153,7 +153,7 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
 			throw new IllegalArgumentException("Could not find evaluation with id: " + evaluationId);
 		}
 
-		return dao.getAnswers(itemId, evaluationId);
+		return dao.getAnswers(itemId, evaluationId, evalGroupIds);
 	}
 
 	/* (non-Javadoc)

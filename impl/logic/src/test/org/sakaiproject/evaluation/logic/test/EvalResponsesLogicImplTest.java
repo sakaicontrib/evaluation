@@ -281,27 +281,27 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 		List ids = null;
 
 		// retrieve one answer for an eval
-		l = responses.getEvalAnswers( etdl.item1.getId(), etdl.evaluationActive.getId() );
+		l = responses.getEvalAnswers( etdl.item1.getId(), etdl.evaluationActive.getId(), null );
 		Assert.assertNotNull(l);
 		Assert.assertEquals(1, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.answer1_1.getId() ));
 
-		l = responses.getEvalAnswers( etdl.item5.getId(), etdl.evaluationClosed.getId() );
+		l = responses.getEvalAnswers( etdl.item5.getId(), etdl.evaluationClosed.getId(), null );
 		Assert.assertNotNull(l);
 		Assert.assertEquals(1, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.answer2_5.getId() ));
 
 		// retrieve multiple answers for an eval
-		l = responses.getEvalAnswers( etdl.item1.getId(), etdl.evaluationViewable.getId() );
+		l = responses.getEvalAnswers( etdl.item1.getId(), etdl.evaluationViewable.getId(), null );
 		Assert.assertNotNull(l);
 		Assert.assertEquals(2, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.answer4_1.getId() ));
 		Assert.assertTrue(ids.contains( etdl.answer5_1.getId() ));
 
-		l = responses.getEvalAnswers( etdl.item2.getId(), etdl.evaluationClosed.getId() );
+		l = responses.getEvalAnswers( etdl.item2.getId(), etdl.evaluationClosed.getId(), null );
 		Assert.assertNotNull(l);
 		Assert.assertEquals(2, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
@@ -309,22 +309,24 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 		Assert.assertTrue(ids.contains( etdl.answer3_2.getId() ));
 
 		// retrieve no answers for an eval item
-		l = responses.getEvalAnswers( etdl.item1.getId(), etdl.evaluationActiveUntaken.getId() );
+		l = responses.getEvalAnswers( etdl.item1.getId(), etdl.evaluationActiveUntaken.getId(), null );
 		Assert.assertNotNull(l);
 		Assert.assertEquals(0, l.size());
 
+		// TODO - add checls which only retrieve partial results for an eval (limit eval groups)
+		
 		// TODO - check that invalid item/eval combinations cause failure?
 
 		// check that invalid ids cause failure
 		try {
-			l = responses.getEvalAnswers( EvalTestDataLoad.INVALID_LONG_ID, etdl.evaluationActiveUntaken.getId() );
+			l = responses.getEvalAnswers( EvalTestDataLoad.INVALID_LONG_ID, etdl.evaluationActiveUntaken.getId(), null );
 			Assert.fail("Should have thrown exception");
 		} catch (IllegalArgumentException e) {
 			Assert.assertNotNull(e);
 		}
 
 		try {
-			l = responses.getEvalAnswers( etdl.item1.getId(), EvalTestDataLoad.INVALID_LONG_ID );
+			l = responses.getEvalAnswers( etdl.item1.getId(), EvalTestDataLoad.INVALID_LONG_ID, null );
 			Assert.fail("Should have thrown exception");
 		} catch (IllegalArgumentException e) {
 			Assert.assertNotNull(e);

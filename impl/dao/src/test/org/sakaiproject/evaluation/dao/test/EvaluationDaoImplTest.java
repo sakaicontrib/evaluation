@@ -329,33 +329,46 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 		Assert.assertTrue(ids.contains( etdl.answer2_2.getId() ));
 		Assert.assertTrue(ids.contains( etdl.answer2_5.getId() ));
 
-		l = evaluationDao.getAnswers(etdl.item2.getId(), etdl.evaluationClosed.getId());
+		l = evaluationDao.getAnswers(etdl.item2.getId(), etdl.evaluationClosed.getId(), null);
 		Assert.assertNotNull(l);
 		Assert.assertEquals(2, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.answer2_2.getId() ));
 		Assert.assertTrue(ids.contains( etdl.answer3_2.getId() ));
 
-		l = evaluationDao.getAnswers(etdl.item5.getId(), etdl.evaluationClosed.getId());
+		// test restricting to groups
+		l = evaluationDao.getAnswers(etdl.item2.getId(), etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.CONTEXT1});
+		Assert.assertNotNull(l);
+		Assert.assertEquals(1, l.size());
+		ids = EvalTestDataLoad.makeIdList(l);
+		Assert.assertTrue(ids.contains( etdl.answer2_2.getId() ));
+
+		l = evaluationDao.getAnswers(etdl.item2.getId(), etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.CONTEXT2});
+		Assert.assertNotNull(l);
+		Assert.assertEquals(1, l.size());
+		ids = EvalTestDataLoad.makeIdList(l);
+		Assert.assertTrue(ids.contains( etdl.answer3_2.getId() ));
+
+		l = evaluationDao.getAnswers(etdl.item5.getId(), etdl.evaluationClosed.getId(), null);
 		Assert.assertNotNull(l);
 		Assert.assertEquals(1, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.answer2_5.getId() ));
 
 		// test item that is not in this evaluation
-		l = evaluationDao.getAnswers(etdl.item3.getId(), etdl.evaluationClosed.getId());
+		l = evaluationDao.getAnswers(etdl.item3.getId(), etdl.evaluationClosed.getId(), null);
 		Assert.assertNotNull(l);
 		Assert.assertEquals(0, l.size());
 
 		// test invalid eval id
 		// TODO - this should probably throw an exception
-		l = evaluationDao.getAnswers(etdl.item1.getId(), Long.valueOf(999));
+		l = evaluationDao.getAnswers(etdl.item1.getId(), Long.valueOf(999), null);
 		Assert.assertNotNull(l);
 		Assert.assertEquals(0, l.size());
 
 		// test invalid item id
 		// TODO - this should probably throw an exception
-		l = evaluationDao.getAnswers(Long.valueOf(999), etdl.evaluationClosed.getId());
+		l = evaluationDao.getAnswers(Long.valueOf(999), etdl.evaluationClosed.getId(), null);
 		Assert.assertNotNull(l);
 		Assert.assertEquals(0, l.size());
 	}

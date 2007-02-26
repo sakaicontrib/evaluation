@@ -139,7 +139,7 @@ public class ReportHandlerHook implements HandlerHook {
 					// TODO: This is now rich text, needs flattening/rendering
 					topRow.add(item1.getItemText());
 					//get all answers to this item within this evaluation
-					List itemAnswers = responsesLogic.getEvalAnswers(item1.getId(), crvp.evalId);
+					List itemAnswers = responsesLogic.getEvalAnswers(item1.getId(), crvp.evalId, null);
 					//for each response row
 					for(int j=0; j<numOfResponses; j++){
 						List currRow = (List)responseRows.get(j);
@@ -167,7 +167,7 @@ public class ReportHandlerHook implements HandlerHook {
 						//add child's text to top row
 						topRow.add(child.getItemText());
 						//get all answers to the child item within this eval
-						List itemAnswers = responsesLogic.getEvalAnswers(child.getId(), crvp.evalId);
+						List itemAnswers = responsesLogic.getEvalAnswers(child.getId(), crvp.evalId, null);
 						//for each response row
 						for(int y=0; y<numOfResponses;y++){
 							List currRow = (List)responseRows.get(y);
