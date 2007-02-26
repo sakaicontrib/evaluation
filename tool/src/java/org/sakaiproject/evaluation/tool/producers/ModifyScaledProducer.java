@@ -188,7 +188,7 @@ public class ModifyScaledProducer implements ViewComponentProducer,
 		// drop down list for "Scale Display Setting"
 		UISelect.make(form, "scaleDisplaySetting",
 				EvaluationConstant.SCALE_DISPLAY_SETTING_VALUES, scaleLabelList,
-				templateItemOTP + "scaleDisplaySetting", null); //$NON-NLS-1$
+				templateItemOTP + "scaleDisplaySetting", null).setMessageKeys(); //$NON-NLS-1$
 
 		/*
 		 * (non-javadoc) If the system setting (admin setting) for
