@@ -345,4 +345,10 @@
 		<property name="evalSettings"
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 	</bean>	
+	
+	<bean
+		class="org.sakaiproject.evaluation.tool.producers.ScaleAddModifyProducer">
+		<property name="external"
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+	</bean>	
 </beans>
