@@ -15,9 +15,12 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
+import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
 import org.sakaiproject.evaluation.model.EvalAnswer;
@@ -66,6 +69,11 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 		this.evalsLogic = evalsLogic;
 	}
 	
+	private EvalExternalLogic external;
+	public void setExternal(EvalExternalLogic external) {
+		this.external = external;
+	}
+	
 	private EvalResponsesLogic responsesLogic;	
 	public void setResponsesLogic(EvalResponsesLogic responsesLogic) {
 		this.responsesLogic = responsesLogic;
@@ -80,20 +88,20 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 		return new EvalViewParameters(VIEW_ID, null);
 	}	
 
-
+	//String evalGroupId;
 
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 		UIMessage.make(tofill, "view-report-title","viewreport.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID)); //$NON-NLS-1$ //$NON-NLS-2$
 
-		EvalViewParameters previewEvalViewParams = (EvalViewParameters) viewparams;
-		if (previewEvalViewParams.templateId != null) {
-			UIInternalLink.make(tofill, "fullEssayResponse", UIMessage.make("viewreport.view.essays"), new EssayResponseParams(ViewEssayResponseProducer.VIEW_ID, previewEvalViewParams.templateId)); //$NON-NLS-1$ //$NON-NLS-2$
-			EvalEvaluation evaluation = evalsLogic.getEvaluationById(previewEvalViewParams.templateId);//logic.getEvaluationById(previewEvalViewParams.templateId);
+		EvalViewParameters evalViewParams = (EvalViewParameters) viewparams;
+		if (evalViewParams.templateId != null) {
+			UIInternalLink.make(tofill, "fullEssayResponse", UIMessage.make("viewreport.view.essays"), new EssayResponseParams(ViewEssayResponseProducer.VIEW_ID, evalViewParams.templateId)); //$NON-NLS-1$ //$NON-NLS-2$
+			EvalEvaluation evaluation = evalsLogic.getEvaluationById(evalViewParams.templateId);//logic.getEvaluationById(previewEvalViewParams.templateId);
 			// get template from DAO 
 			EvalTemplate template = evaluation.getTemplate();
-			UIInternalLink.make(tofill, "csvResultsReport", UIMessage.make("viewreport.view.csv"), new CSVReportViewParams("csvResultsReport", template.getId(), previewEvalViewParams.templateId)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			UIInternalLink.make(tofill, "csvResultsReport", UIMessage.make("viewreport.view.csv"), new CSVReportViewParams("csvResultsReport", template.getId(), evalViewParams.templateId)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			// get items(parent items, child items --need to set order
 
 			List allItems = new ArrayList(template.getTemplateItems());
@@ -109,44 +117,55 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 
 				if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_COURSE, ncItemsList))	{	
 					courseSection = UIBranchContainer.make(tofill,"courseSection:"); //$NON-NLS-1$
-					UIMessage.make(courseSection, "report-course-questions", "viewreport.itemlist.coursequestions"); //$NON-NLS-1$ //$NON-NLS-2$
+					UIMessage.make(courseSection, "report-course-questions", "viewreport.itemlist.coursequestions"); //$NON-NLS-1$ //$NON-NLS-2$		
+					for (int i = 0; i <ncItemsList.size(); i++) {
+						//EvalItem item1 = (EvalItem) ncItemsList.get(i);
+						EvalTemplateItem tempItem1 = (EvalTemplateItem) ncItemsList.get(i);
+						
+						String cat = tempItem1.getItemCategory();
+						UIBranchContainer radiobranch = null;
+						
+						if (cat.equals(EvalConstants.ITEM_CATEGORY_COURSE)) { //"Course"
+							radiobranch = UIBranchContainer.make(courseSection,
+									"itemrow:first", Integer.toString(i)); //$NON-NLS-1$
+							if (i % 2 == 1)
+								radiobranch.decorators = new DecoratorList(
+										new UIColourDecorator(null,Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
+
+							this.doFillComponent(tempItem1, evaluation.getId(), i, radiobranch,
+									courseSection,allItems);
+						}
+					}
 				}
 
 				if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, ncItemsList))	{	
-					instructorSection = UIBranchContainer.make(tofill,"instructorSection:"); //$NON-NLS-1$
-					UIMessage.make(instructorSection, "report-instructor-questions", "viewreport.itemlist.instructorquestions"); //$NON-NLS-1$ //$NON-NLS-2$
+					//Set instructors = external.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED);
+					//for each instructor, make a branch containing all instructor questions
+					//for (Iterator it = instructors.iterator(); it.hasNext();) {
+						//String instructor = (String) it.next();
+						instructorSection = UIBranchContainer.make(tofill,"instructorSection:"); //$NON-NLS-1$
+						UIMessage.make(instructorSection, "report-instructor-questions", "viewreport.itemlist.instructorquestions"); //$NON-NLS-1$ //$NON-NLS-2$
+						//for each item in this evaluation
+						for (int i = 0; i <ncItemsList.size(); i++) {
+							EvalTemplateItem tempItem1 = (EvalTemplateItem) ncItemsList.get(i);
+							String cat = tempItem1.getItemCategory();
+							UIBranchContainer radiobranch = null;
+							
+							//if the given item is of type instructor, render it here
+							if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR)) { //"Instructor"
+								radiobranch = UIBranchContainer.make(instructorSection,
+										"itemrow:first", Integer.toString(i)); //$NON-NLS-1$
+								if (i % 2 == 1)
+									radiobranch.decorators = new DecoratorList(
+											new UIColourDecorator(
+													null,
+													Color
+															.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
+								this.doFillComponent(tempItem1, evaluation.getId(), i, radiobranch, instructorSection, allItems);
+							}
+						} // end of for loop				
+					//}
 				}
-
-				for (int i = 0; i < ncItemsList.size(); i++) {
-					//EvalItem item1 = (EvalItem) ncItemsList.get(i);
-					EvalTemplateItem tempItem1 = (EvalTemplateItem) ncItemsList.get(i);
-					
-					//String cat = item1.getCategory();
-					String cat = tempItem1.getItemCategory();
-					UIBranchContainer radiobranch = null;
-					if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_COURSE)) { //"Course"
-						radiobranch = UIBranchContainer.make(courseSection,
-								"itemrow:first", Integer.toString(i)); //$NON-NLS-1$
-						if (i % 2 == 1)
-							radiobranch.decorators = new DecoratorList(
-									new UIColourDecorator(null,Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
-
-						this.doFillComponent(tempItem1, evaluation.getId(), i, radiobranch,
-								courseSection,allItems);
-					} else if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR)) { //"Instructor"
-						radiobranch = UIBranchContainer.make(instructorSection,
-								"itemrow:first", Integer.toString(i)); //$NON-NLS-1$
-						if (i % 2 == 1)
-							radiobranch.decorators = new DecoratorList(
-									new UIColourDecorator(
-											null,
-											Color
-													.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
-						this.doFillComponent(tempItem1, evaluation.getId(), i, radiobranch,
-								instructorSection,allItems);
-					}
-				} // end of for loop
-
 			}
 
 		}
@@ -182,12 +201,15 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 				UIBoundBoolean.make(radiobranch3, "itemNA", useNA); //$NON-NLS-1$
 			}		
 			
+			//String[] egid = new String[0];
+			//egid[0]=evalGroupId;
+			
 			List itemAnswers = responsesLogic.getEvalAnswers(myItem.getId(), evalId, null);
 
 		    for (int x = 0; x < scaleLabels.length; ++x) 
 		    {
 		    	UIBranchContainer answerbranch = UIBranchContainer.make(scaledSurvey, "answers:", Integer.toString(x)); //$NON-NLS-1$
-				UIOutput.make(answerbranch, "responseText", scaleLabels[x], (new Integer(x)).toString()); //$NON-NLS-1$
+				UIOutput.make(answerbranch, "responseText", scaleOptions[x]); //$NON-NLS-1$
 				int answers=0;
 				//count the number of answers that match this one
 				for(int y=0; y<itemAnswers.size();y++){
@@ -244,7 +266,12 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 				
 				UIOutput.make(queRow, "queNo", Integer.toString(j + 1)); //$NON-NLS-1$
 				UIOutput.make(queRow, "queText", child.getItemText()); //$NON-NLS-1$
-				List itemAnswers = responsesLogic.getEvalAnswers(child.getId(), evalId, null);
+				
+				//String[] egid = new String[1];
+				//egid[0]=evalGroupId;
+				
+				List itemAnswers = responsesLogic.getEvalAnswers(myItem.getId(), evalId, null);
+				
 				   for (int x = 0; x < scaleLabels.length; ++x) 
 				    {
 				    	UIBranchContainer answerbranch = UIBranchContainer.make(queRow, "answers:", Integer.toString(x)); //$NON-NLS-1$
