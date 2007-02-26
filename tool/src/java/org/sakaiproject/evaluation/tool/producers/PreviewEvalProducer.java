@@ -18,10 +18,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -67,7 +69,12 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 	public void setExternal(EvalExternalLogic external) {
 		this.external = external;
 	}
-
+	
+	private EvalAssignsLogic assignsLogic;
+	public void setAssignsLogic(EvalAssignsLogic assignsLogic) {
+		this.assignsLogic = assignsLogic;
+	}
+	
 	private EvalTemplatesLogic templatesLogic;
 	public void setTemplatesLogic(EvalTemplatesLogic templatesLogic) {
 		this.templatesLogic = templatesLogic;
@@ -123,13 +130,18 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 					if (count > 1){
 						UIOutput.make(tofill, "courseTitle",count+"courses"); //$NON-NLS-1$ //$NON-NLS-2$
 					}else{
+						/*
+						List acs = assignsLogic.getAssignGroupsByEvalId(eval.getId());
+						EvalAssignGroup eac = (EvalAssignGroup) acs.get(0);
+						String title =  external.getDisplayTitle( eac.getEvalGroupId());
+						UIOutput.make(tofill, "courseTitle",title);*/
+					
 						Long[] evalIds = {eval.getId()};
-						Map evalContexts = evalsLogic.getEvaluationGroups(evalIds, false);
+						Map evalContexts = evalsLogic.getEvaluationGroups(evalIds, true);
 						List contexts = (List) evalContexts.get(eval.getId());
 						EvalGroup ctxt = (EvalGroup) contexts.get(0);
 						String title = ctxt.title;
 						UIOutput.make(tofill, "courseTitle",title);
-						//UIOutput.make(tofill, "courseTitle",logic.getCourseTitle(eval.getId()));
 
 					}
 					if (eval.getInstructions() != null)
@@ -159,7 +171,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 							EvalGroup ctxt = (EvalGroup) contexts.get(0);
 							String title = ctxt.title;
 							UIOutput.make(tofill, "courseTitle",title);
-							//UIOutput.make(tofill, "courseTitle",logic.getCourseTitle(eval.getId())); //$NON-NLS-1$
+
 						}
 					}
 					if (eval.getInstructions() != null)
