@@ -17,15 +17,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.EvalScalesLogic;
 import org.sakaiproject.evaluation.model.EvalScale;
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
+import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
+import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.UIOutputMany;
+import uk.org.ponder.rsf.components.UISelect;
+import uk.org.ponder.rsf.components.UISelectChoice;
+import uk.org.ponder.rsf.components.UISelectLabel;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
@@ -46,18 +52,11 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, Navigation
 	}
 
 	// Spring injection 
-	private EvalScalesLogic scalesLogic;
-	public void setScalesLogic(EvalScalesLogic scalesLogic) {
-		this.scalesLogic = scalesLogic;
-	}
-
-	// Spring injection 
 	private EvalExternalLogic external;
 	public void setExternal(EvalExternalLogic external) {
 		this.external = external;
 	}
 
-	
 	/* 
 	 * (non-Javadoc)
 	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, 
@@ -76,49 +75,110 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, Navigation
 		/*
 		 * top menu links and bread crumbs here
 		 */
-		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID)); //$NON-NLS-1$ //$NON-NLS-2$
+		UIInternalLink.make(tofill, "summary-toplink", 											//$NON-NLS-1$ 
+				UIMessage.make("summary.page.title"), 											//$NON-NLS-1$ 
+				new SimpleViewParameters(SummaryProducer.VIEW_ID)); 							//$NON-NLS-1$ 
 		if (userAdmin) {
-			UIInternalLink.make(tofill, "control-panel-toplink", UIMessage.make("controlpanel.page.title"), //$NON-NLS-1$ //$NON-NLS-2$
-					new SimpleViewParameters(ControlPanelProducer.VIEW_ID));
+			UIInternalLink.make(tofill, "control-panel-toplink",								//$NON-NLS-1$  
+					UIMessage.make("controlpanel.page.title"), 									//$NON-NLS-1$ 
+					new SimpleViewParameters(ControlPanelProducer.VIEW_ID));					//$NON-NLS-1$ 
 		}
-		UIInternalLink.make(tofill, "administrate-toplink", UIMessage.make("administrate.page.title"), new SimpleViewParameters(AdministrateProducer.VIEW_ID)); //$NON-NLS-1$ //$NON-NLS-2$
-		UIInternalLink.make(tofill, "scale-control-toplink", UIMessage.make("scalecontrol.page.title"), new SimpleViewParameters(ScaleControlProducer.VIEW_ID) ); //$NON-NLS-1$ //$NON-NLS-2$
+		UIInternalLink.make(tofill, "administrate-toplink",										//$NON-NLS-1$  
+				UIMessage.make("administrate.page.title"), 										//$NON-NLS-1$ 
+				new SimpleViewParameters(AdministrateProducer.VIEW_ID)); 						//$NON-NLS-1$ 
 		
-		UIMessage.make(tofill, "scale-add-modify-title", "scaleaddmodify.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
-		UIInput.make(tofill, "title", "#{templateBean.title}");
+		UIInternalLink.make(tofill, "scale-control-toplink", 									//$NON-NLS-1$ 
+				UIMessage.make("scalecontrol.page.title"), 										//$NON-NLS-1$ 
+				new SimpleViewParameters(ScaleControlProducer.VIEW_ID) ); 						//$NON-NLS-1$ 
 		
-		//Get all the scales that are owned by a user
-		List scaleList = scalesLogic.getScalesForUser(currentUserId, null);
-		for (int i = 0; i < scaleList.size(); ++i){
+		// Page title
+		UIMessage.make(tofill, "scale-add-modify-title", 										//$NON-NLS-1$ 
+				"scaleaddmodify.page.title"); 													//$NON-NLS-1$
+		
+		/*
+		 * Title and remove - we don't need a locked check here because
+		 * a person can come on this page only if the scale is not locked.
+		 */  
+		UIMessage.make(tofill, "scale-title-note", 												//$NON-NLS-1$ 
+				"scaleaddmodify.scale.title.note");	 											//$NON-NLS-1$
 
-			EvalScale scale = (EvalScale) scaleList.get(i);
-			UIBranchContainer listOfScales = UIBranchContainer.make(tofill, "verticalDisplay:");
-			UIOutput.make(listOfScales, "scale-no", new Integer(i+1).toString()); //$NON-NLS-1$ //$NON-NLS-2$
-			UIOutput.make(listOfScales, "scale-title", scale.getTitle()); //$NON-NLS-1$ //$NON-NLS-2$
+		//TODO
+		UIInput.make(tofill, "scale-title", "?????");  											//$NON-NLS-1$ //$NON-NLS-2$
+		
+		//TODO
+		UIInternalLink.make(tofill, "scale-remove-link", 										//$NON-NLS-1$ 
+				UIMessage.make("scaleaddmodify.remove.scale.link"), 							//$NON-NLS-1$
+				PreviewEmailProducer.VIEW_ID);
+		
+		//TODO
+		EvalScale scale = null;
+		for (int j = 0; j < scale.getOptions().length; ++j){
+			UIBranchContainer scaleOptions = UIBranchContainer.make(tofill, "scaleOptions:"); 	//$NON-NLS-1$
+			UIOutput.make(scaleOptions, "scale-option-label", (scale.getOptions())[j]); 		//$NON-NLS-1$
 			
-			//Use can modify / remove scale only if it is not locked.
-			if (scalesLogic.canControlScale(currentUserId, scale.getId())) {
-				UIMessage.make(listOfScales, "modify-sidelink","scalecontrol.modify.link"); //$NON-NLS-1$ //$NON-NLS-2$
-				UIMessage.make(listOfScales, "remove-sidelink", "scalecontrol.remove.link"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
+			//TODO
+			UICommand.make(tofill, "scale-remove-option", 										//$NON-NLS-1$
+					UIMessage.make("scaleaddmodify.remove.scale.option.button"),				//$NON-NLS-1$
+					"#{evaluationBean.saveSettingsAction}");   									//$NON-NLS-1$											
+		}
+		
+		//TODO
+		UICommand.make(tofill, "scale-add-point", 												//$NON-NLS-1$
+				UIMessage.make("scaleaddmodify.add.scale.option.button"),						//$NON-NLS-1$
+				"#{evaluationBean.saveSettingsAction}");   										//$NON-NLS-1$		
+		
+		UIMessage.make(tofill, "ideal-note-start", 												//$NON-NLS-1$ 
+				"scaleaddmodify.scale.ideal.note.start"); 										//$NON-NLS-1$
 
-			//Display the scale options vertically
-			//ASCII value of 'a' = 97 so initial value is 96.
-			char[] startOptionsNo = {96};
-			for (int j = 0; j < scale.getOptions().length; ++j){
-				UIBranchContainer scaleOptions = UIBranchContainer.make(listOfScales, "scaleOptions:");
-				startOptionsNo[0]++;
-				UIOutput.make(scaleOptions, "scale-option-no", new String(startOptionsNo)); //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(scaleOptions, "scale-option-label", (scale.getOptions())[j]); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			
-			UIMessage.make(listOfScales, "ideal-scale-point", "scalecontrol.ideal.scale.title"); //$NON-NLS-1$ //$NON-NLS-2$
-			//If no ideal value is set then display "None" on webpage
-			if (scale.getIdeal() == null)
-				UIOutput.make(listOfScales, "ideal-value", "None");
-			else
-				UIOutput.make(listOfScales, "ideal-value", scale.getIdeal());
-		 }
+		UIMessage.make(tofill, "ideal-note-main-text", 											//$NON-NLS-1$ 
+				"scaleaddmodify.scale.ideal.note.main.text"); 									//$NON-NLS-1$
+
+		//Ideal scale values radio buttons
+		String[] scaleIdealValues = {
+				EvalConstants.SCALE_IDEAL_NONE,
+				EvalConstants.SCALE_IDEAL_LOW,
+				EvalConstants.SCALE_IDEAL_HIGH,
+				EvalConstants.SCALE_IDEAL_MID};
+
+		String[] scaleIdealLabels = {
+			"scalecontrol.ideal.scale.option.label.none",
+			"scalecontrol.ideal.scale.option.label.low",
+			"scalecontrol.ideal.scale.option.label.high",
+			"scalecontrol.ideal.scale.option.label.mid" 
+		};
+		
+		//TODO
+		UISelect radios = UISelect.make(tofill, "scaleIdealValues",
+				scaleIdealValues, scaleIdealLabels,
+				null, null).setMessageKeys();
+		
+		radios.optionnames = UIOutputMany.make(scaleIdealLabels);
+
+	    String selectID = radios.getFullID();
+	    for (int i = 0; i < scaleIdealValues.length; ++i) {
+			UIBranchContainer radiobranch = UIBranchContainer.make(tofill, 
+					"scaleIdealValues:", Integer.toString(i)); 									//$NON-NLS-1$
+			UISelectChoice.make(radiobranch, "scale-ideal-value", selectID, i); 				//$NON-NLS-1$
+			UISelectLabel.make(radiobranch, "scale-ideal-label", selectID, i); 					//$NON-NLS-1$
+	    }
+		
+		//TODO
+		UIBoundBoolean.make(tofill, "scale-hidden",												//$NON-NLS-1$ 
+				"#{evaluationBean.eval.unregisteredAllowed}", null); 							//$NON-NLS-1$
+		
+		UIMessage.make(tofill, "scale-hidden-note", 											//$NON-NLS-1$ 
+				"scaleaddmodify.scale.hidden.note"); 											//$NON-NLS-1$
+
+		//TODO
+		UICommand.make(tofill, "scale-add-modify-cancel-button", 								//$NON-NLS-1$
+				UIMessage.make("scaleaddmodify.cancel.button"),									//$NON-NLS-1$
+				"#{evaluationBean.saveSettingsAction}");   										//$NON-NLS-1$											
+
+		//TODO
+		UICommand.make(tofill, "scale-add-modify-save-button", 									//$NON-NLS-1$
+				UIMessage.make("scaleaddmodify.save.scale.button"),								//$NON-NLS-1$
+				"#{evaluationBean.saveSettingsAction}");   										//$NON-NLS-1$											
+
 	}
 	
 	/* 

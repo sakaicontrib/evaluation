@@ -74,13 +74,15 @@
 				&nbsp;
 			</td>
 			<td align="left" valign="top">
-				<b>Ideal</b>&nbsp;-&nbsp;indicate the position of the "best" answer in this scale (used for graphs and coloring):
+				<b><span rsf:id="ideal-note-start">Ideal</span></b>
+				&nbsp;-&nbsp;
+				<span rsf:id="ideal-note-main-text">indicate the position of the "best" answer in this scale (used for graphs and coloring):</span>
 			</td>
 		</tr>
 		<tr>
-			<td colspan="2" align="center" rsf:id="scaleIdealOptions:">
-				<label rsf:id="scale-ideal-option-label"/>
-				<input type="radio" rsf:id="scale-ideal-option-value" />
+			<td colspan="2" align="center" rsf:id="scaleIdealValues:">
+				<label rsf:id="scale-ideal-label"/>
+				<input type="radio" rsf:id="scale-ideal-value" />
 			</td>
 		</tr>
 		<tr> 
@@ -90,7 +92,9 @@
 			<td align="left" valign="top">
 				<b>Hidden</b>&nbsp;-
 				<input type="checkbox" rsf:id="scale-hidden"/>
-				<I>This scale is not visible in the interface (pull down menus)</I> 
+				<label rsf:id="scale-hidden-note">
+					<I>This scale is not visible in the interface (pull down menus)</I>
+				</label>
 			</td>
 		</tr>
 	</table>
