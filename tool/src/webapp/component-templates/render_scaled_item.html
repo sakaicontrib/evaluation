@@ -10,14 +10,14 @@
 <!-- html template for the scaled item renderer -AZ -->
 <div rsf:id="render-scaled-item:">
 
-<!-- DIV tag for Compact -->
 <div rsf:id="compactDisplay:">
+<!-- Compact DISPLAY -->
 <table border="0" cellspacing="0" cellpadding="0" rules="none" width="100%">
 	<tr>
 		<td width="3%" valign="top" style="font-weight:bold;">
 			<span rsf:id="itemNum">0</span>.&nbsp;
 		</td>
-		<td width="72%" valign="top" align="left">
+		<td width="82%" valign="top" align="left">
 			<span rsf:id="itemText" />
 		</td>
 		<td width="15%" nowrap="true" valign="top" style="height:24px;">
@@ -63,8 +63,8 @@
 </table>
 </div>
 
-<!--  DIV tag for Full, Full Colored, Vertical  -->
 <div rsf:id="fullType:">
+<!-- Full, Full Colored, Vertical DISPLAY -->
 <table border="0" cellspacing="0" cellpadding="0" rules="none" width="100%">
 	<tr>
 		<td width="3%" valign="top" style="font-weight:bold;">
@@ -85,34 +85,35 @@
 		<td width="3%" valign="top">&nbsp;</td>
 		<td width="97%" colspan="2">
 
-		<!-- DIV tag for Vertical display -->
 		<div rsf:id="verticalDisplay:">
-			<table border="0" cellspacing="0" cellpadding="0" rules="none"
-				width="100%">
-				<span rsf:id="dummyRadio" />
+			<!-- DIV tag for Vertical display -->
+			<span rsf:id="dummyRadio" />
+			<table border="0" cellspacing="0" cellpadding="0" rules="none" width="100%">
 				<tr rsf:id="scaleOptions:">
-					<td align="left">&nbsp;&nbsp;&nbsp; <input type="radio"
-						rsf:id="dummyRadioValue" /> <label style="font-weight:bold;"
-						rsf:id="dummyRadioLabel" /></td>
+					<td align="left">
+						&nbsp;&nbsp;&nbsp;
+						<input type="radio" rsf:id="dummyRadioValue" />
+						<span style="font-weight:bold;" rsf:id="dummyRadioLabel" />
+					</td>
 				</tr>
 			</table>
 		</div>
 
-		<!-- DIV tag for full display  -->
 		<div rsf:id="fullDisplay:">
+			<!-- DIV tag for full display  -->
+			<span rsf:id="dummyRadio" />
 			<table border="0" cellspacing="0" cellpadding="0" width="100%">
 				<tr>
-					<span rsf:id="dummyRadio" />
-					<td nowrap="Y" align="center" style="height:24px;"
-						rsf:id="scaleOptions:"><label style="font-weight:bold;"
-						rsf:id="dummyRadioLabel" /> <input type="radio"
-						rsf:id="dummyRadioValue" /></td>
+					<td nowrap="Y" align="center" style="height:24px;" rsf:id="scaleOptions:">
+						<span style="font-weight:bold;" rsf:id="dummyRadioLabel" />
+						<input type="radio" rsf:id="dummyRadioValue" />
+					</td>
 				</tr>
 			</table>
 		</div>
 
-		<!-- DIV tag for Full Colored display -->
 		<div rsf:id="fullDisplayColored:">
+			<!-- DIV tag for Full Colored display -->
 			<table border="0" cellspacing="0" cellpadding="0" rules="none" width="100%">
 				<tr>
 					<td nowrap="Y" valign="top" style="height:24px;">
@@ -121,13 +122,13 @@
 								<img src="#" style="width:100%;height:24px;" rsf:id="idealImage" />
 							</div>
 							<div style="width:100%; display:block; position:absolute; z-index:6;background-color:transparent;">
+								<span rsf:id="dummyRadio" />
 								<table border="0" cellspacing="0" cellpadding="0" width="100%">
 									<tr>
-										<span rsf:id="dummyRadio" />
-										<td nowrap="Y" align="center" valign="top" style="height:24px;"
-											rsf:id="scaleOptions:"><label style="font-weight:bold;"
-											rsf:id="dummyRadioLabel" /> <input type="radio"
-											rsf:id="dummyRadioValue" /></td>
+										<td nowrap="Y" align="center" valign="top" style="height:24px;" rsf:id="scaleOptions:">
+											<label style="font-weight:bold;" rsf:id="dummyRadioLabel" />
+											<input type="radio" rsf:id="dummyRadioValue" />
+										</td>
 									</tr>
 								</table>
 							</div>
@@ -147,10 +148,10 @@
 	<tr rsf:id="scaleTopLabelOptions:">
 		<td width="3%">&nbsp;</td>
 		<td width="87%">&nbsp;</td>
-		<td width="10%" nowrap="Y">
+		<td width="10%" nowrap="true">
 		<table border="0" cellspacing="0" cellpadding="0" width="100%">
 			<tr>
-				<td nowrap="Y" align="right"><label style="font-weight:bold;"
+				<td nowrap="true" align="right"><label style="font-weight:bold;"
 					rsf:id="dummyTopRadioLabel" />&nbsp; <img align="top" src="#"
 					rsf:id="cornerImage" /> <span rsf:id="scaleTopLabelAfterOptions:">
 				<img align="top" src="#" rsf:id="middleImage" /> </span></td>
@@ -162,14 +163,14 @@
 	<tr>
 		<td width="3%">&nbsp;</td>
 		<td width="87%">&nbsp;</td>
-		<td width="10%" nowrap="Y">
+		<td width="10%" nowrap="true">
 		<table border="0" cellspacing="0" cellpadding="0" width="100%">
 			<tr>
 				<td align="right" width="70%">
 				<div rsf:id="showNA:"><input type="radio" rsf:id="itemNA" /><span
 					rsf:id="na-desc">N/A</span></div>
 				</td>
-				<td nowrap="Y" align="right"><span
+				<td nowrap="true" align="right"><span
 					rsf:id="scaleBottomLabelOptions:"> <img align="top" src="#"
 					rsf:id="bottomImage" /> </span></td>
 			</tr>
@@ -181,11 +182,11 @@
 		<td width="3%" valign="top"><label style="font-weight:bold;"
 			rsf:id="itemNum">#</label><b>.</b>&nbsp;</td>
 		<td width="87%" valign="top"><label rsf:id="itemText" /></td>
-		<td width="10%" nowrap="Y" valign="top">
+		<td width="10%" nowrap="true" valign="top">
 		<table border="0" cellspacing="0" cellpadding="0" width="100%">
 			<tr>
 				<span rsf:id="dummyRadio" />
-				<td nowrap="Y" align="right"><span rsf:id="scaleValueOptions:">
+				<td nowrap="true" align="right"><span rsf:id="scaleValueOptions:">
 				&nbsp;<input type="radio" rsf:id="dummyRadioValue" /> </span></td>
 			</tr>
 		</table>
@@ -203,10 +204,10 @@
 			<tr rsf:id="rowBranch:">
 				<td width="3%">&nbsp;</td>
 				<td width="87%">&nbsp;</td>
-				<td width="10%" nowrap="Y">
+				<td width="10%" nowrap="true">
 				<table border="0" cellspacing="0" cellpadding="0" width="100%">
 					<tr>
-						<td nowrap="Y" align="right"><label style="font-weight:bold;"
+						<td nowrap="true" align="right"><label style="font-weight:bold;"
 							rsf:id="topLabel" />&nbsp; <img align="top" src="#"
 							rsf:id="cornerImage" /> <span rsf:id="afterTopLabelBranch:">
 						<img align="top" src="#" rsf:id="middleImage" /> </span></td>
@@ -218,14 +219,14 @@
 			<tr>
 				<td width="3%">&nbsp;</td>
 				<td width="87%">&nbsp;</td>
-				<td width="10%" nowrap="Y">
+				<td width="10%" nowrap="true">
 				<table border="0" cellspacing="0" cellpadding="0" width="100%">
 					<tr>
 						<td align="right" width="40%">
 						<div rsf:id="showNA:"><input type="radio" rsf:id="itemNA" /><span
 							rsf:id="na-desc">N/A</span></div>
 						</td>
-						<td nowrap="Y" align="right"><span
+						<td nowrap="true" align="right"><span
 							rsf:id="bottomLabelBranch:"> <img align="top" src="#"
 							rsf:id="bottomImage" /> </span></td>
 					</tr>
@@ -242,11 +243,11 @@
 				<td width="3%" valign="top"><label style="font-weight:bold;"
 					rsf:id="itemNum">#</label><b>.</b>&nbsp;</td>
 				<td width="87%" valign="top"><label rsf:id="itemText" /></td>
-				<td width="10%" nowrap="Y" valign="top" style="height:24px;">
+				<td width="10%" nowrap="true" valign="top" style="height:24px;">
 				<table border="0" cellspacing="0" cellpadding="0" width="100%">
 					<tr>
 						<td align="left">&nbsp;</td>
-						<td width="70%" align="left" nowrap="Y" valign="top"
+						<td width="70%" align="left" nowrap="true" valign="top"
 							style="height:24px;"><!--This div logic is written by Aaron so not touched - Kapil-->
 						<div style="width:100%;position:relative;">
 						<div style="width:100%;display:block;position:absolute;z-index:5;">
