@@ -44,26 +44,26 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  */
 
 public class EvaluationAssignProducer implements ViewComponentProducer, NavigationCaseReporter {
+
 	public static final String VIEW_ID = "evaluation_assign"; //$NON-NLS-1$
+	public String getViewID() {
+		return VIEW_ID;
+	}
 
-
-	
 	private EvalExternalLogic external;
 	public void setExternal(EvalExternalLogic external) {
 		this.external = external;
 	}
-	
-	public String getViewID() {
-		return VIEW_ID;
-	}
+
 
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 		
 		UIMessage.make(tofill, "assign-eval-ext-title", "assigneval.page.ext.title"); //$NON-NLS-1$ //$NON-NLS-2$
 		UIMessage.make(tofill, "create-eval-title", "createeval.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "eval-settings-title", "evalsettings.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
 		UIMessage.make(tofill, "assign-eval-title", "assigneval.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		
+
+
 		UIInternalLink.make(tofill, "summary-toplink", new SimpleViewParameters(SummaryProducer.VIEW_ID));	 //$NON-NLS-1$
 		
 		UIForm form = UIForm.make(tofill, "evalAssignForm"); //$NON-NLS-1$

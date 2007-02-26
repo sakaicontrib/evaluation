@@ -61,9 +61,8 @@ public class PreloadDataImpl {
 			saveConfig(EvalSettings.INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS, true);
 			saveConfig(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS, true);
 			saveConfig(EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS, true);
-			// leave this out to allow setting in the evals
-			// saveConfig(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE),
-			// EvalConstants.INSTRUCTOR_REQUIRED));
+			// leave this out to use the setting in the evaluation
+			//saveConfig(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE, EvalConstants.INSTRUCTOR_OPT_OUT);
 
 			saveConfig(EvalSettings.INSTRUCTOR_ADD_ITEMS_NUMBER, 5);
 

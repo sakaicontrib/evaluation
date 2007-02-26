@@ -60,32 +60,28 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  */
 public class EvaluationSettingsProducer implements ViewComponentProducer,
 		NavigationCaseReporter {
-	public static final String VIEW_ID = "evaluation_settings"; //$NON-NLS-1$
 
+	public static final String VIEW_ID = "evaluation_settings"; //$NON-NLS-1$
 	public String getViewID() {
 		return VIEW_ID;
 	}
 
 	private EvalSettings settings;
-
 	public void setSettings(EvalSettings settings) {
 		this.settings = settings;
 	}
 
 	private EvaluationBean evaluationBean;
-
 	public void setEvaluationBean(EvaluationBean evaluationBean) {
 		this.evaluationBean = evaluationBean;
 	}
 
 	private EvalExternalLogic externalLogic;
-
 	public void setExternalLogic(EvalExternalLogic externalLogic) {
 		this.externalLogic = externalLogic;
 	}
 
 	private DateInputEvolver dateevolver;
-
 	public void setDateEvolver(DateInputEvolver dateevolver) {
 		this.dateevolver = dateevolver;
 	}
@@ -109,8 +105,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer,
 		UIForm form = UIForm.make(tofill, "evalSettingsForm"); //$NON-NLS-1$
 		UIMessage.make(form, "settings-desc-header",
 				"evalsettings.settings.desc.header"); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput
-				.make(form, "evaluationTitle", null, "#{evaluationBean.eval.title}"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIOutput.make(form, "evaluationTitle", null, "#{evaluationBean.eval.title}"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		Date today = new Date();
 		Calendar calendar = new GregorianCalendar();
@@ -119,8 +114,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer,
 		UIMessage.make(form, "eval-dates-header", "evalsettings.dates.header"); //$NON-NLS-1$ //$NON-NLS-2$
 		UIMessage.make(form,
 				"eval-start-date-header", "evalsettings.start.date.header"); //$NON-NLS-1$ //$NON-NLS-2$
-		UIMessage
-				.make(form, "eval-start-date-desc", "evalsettings.start.date.desc"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(form, "eval-start-date-desc", "evalsettings.start.date.desc"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		UIInput startDate = UIInput.make(form,
 				"startDate:", "#{evaluationBean.startDate}", null); //$NON-NLS-1$ //$NON-NLS-2$	
@@ -415,7 +409,8 @@ public class EvaluationSettingsProducer implements ViewComponentProducer,
 			 * set as configurable i.e. NULL in the database then show the instructor
 			 * opt select box. Else just show the value as label.
 			 */
-			String[] instructorOptLabels = { "evalsettings.instructors.label.opt.in",
+			String[] instructorOptLabels = { 
+					"evalsettings.instructors.label.opt.in",
 					"evalsettings.instructors.label.opt.out",
 					"evalsettings.instructors.label.required" };
 			if (settings.get(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE) == null) {
