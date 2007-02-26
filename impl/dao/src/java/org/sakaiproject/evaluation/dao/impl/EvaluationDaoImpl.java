@@ -264,8 +264,8 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 
 		String hqlQuery = "from EvalAnswer as answer where answer.item.id='" + itemId.toString() + "'" +
 			" and answer.response.id in " +
-			"(select response.id from EvalResponse as response where response.evaluation.id='" + evalId.toString() + "'" + groupsHQL + ") " + 
-			" order by response.id";
+			"(select response.id from EvalResponse as response where response.evaluation.id='" + evalId.toString() + "'" + 
+			groupsHQL + " order by response.id)";
 		return getHibernateTemplate().find( hqlQuery );
 	}
 
