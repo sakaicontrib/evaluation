@@ -122,8 +122,8 @@ public class EvaluationConstant {
 	 * Evaluation settings: Values for instructor options for using evaluations from above
 	 */
 	public static final String[] INSTRUCTOR_OPT_VALUES = new String[] {
-		EvalConstants.INSTRUCTOR_OPT_IN, 
 		EvalConstants.INSTRUCTOR_OPT_OUT, 
+		EvalConstants.INSTRUCTOR_OPT_IN, 
 		EvalConstants.INSTRUCTOR_REQUIRED
 	};
 

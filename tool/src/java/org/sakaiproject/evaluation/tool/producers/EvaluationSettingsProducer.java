@@ -410,8 +410,8 @@ public class EvaluationSettingsProducer implements ViewComponentProducer,
 			 * opt select box. Else just show the value as label.
 			 */
 			String[] instructorOptLabels = { 
-					"evalsettings.instructors.label.opt.in",
 					"evalsettings.instructors.label.opt.out",
+					"evalsettings.instructors.label.opt.in",
 					"evalsettings.instructors.label.required" };
 			if (settings.get(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE) == null) {
 				UIBranchContainer showInstUseFromAboveOptions = UIBranchContainer.make(
