@@ -201,7 +201,7 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 			UIOutput.make(essay, "itemNum", (new Integer(i + 1)).toString());
 			UIOutput.make(essay, "itemText", myItem.getItemText());
 
-			List itemAnswers= responsesLogic.getEvalAnswers(myItem.getId(), evalId);
+			List itemAnswers= responsesLogic.getEvalAnswers(myItem.getId(), evalId, null);
 
 			//count the number of answers that match this one
 			for(int y=0; y<itemAnswers.size();y++){

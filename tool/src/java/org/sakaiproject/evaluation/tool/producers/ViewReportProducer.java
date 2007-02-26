@@ -182,8 +182,8 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 				UIBoundBoolean.make(radiobranch3, "itemNA", useNA); //$NON-NLS-1$
 			}		
 			
-			List itemAnswers = responsesLogic.getEvalAnswers(myItem.getId(), evalId);//logic.getEvalAnswers(myItem.getId(), evalId);
-			
+			List itemAnswers = responsesLogic.getEvalAnswers(myItem.getId(), evalId, null);
+
 		    for (int x = 0; x < scaleLabels.length; ++x) 
 		    {
 		    	UIBranchContainer answerbranch = UIBranchContainer.make(scaledSurvey, "answers:", Integer.toString(x)); //$NON-NLS-1$
@@ -244,8 +244,7 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 				
 				UIOutput.make(queRow, "queNo", Integer.toString(j + 1)); //$NON-NLS-1$
 				UIOutput.make(queRow, "queText", child.getItemText()); //$NON-NLS-1$
-				//List itemAnswers=logic.getEvalAnswers(child.getId(), evalId);
-				List itemAnswers = responsesLogic.getEvalAnswers(child.getId(), evalId);
+				List itemAnswers = responsesLogic.getEvalAnswers(child.getId(), evalId, null);
 				   for (int x = 0; x < scaleLabels.length; ++x) 
 				    {
 				    	UIBranchContainer answerbranch = UIBranchContainer.make(queRow, "answers:", Integer.toString(x)); //$NON-NLS-1$

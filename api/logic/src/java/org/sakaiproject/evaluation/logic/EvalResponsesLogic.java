@@ -54,25 +54,28 @@ public interface EvalResponsesLogic {
 
 	/**
 	 * Count the number of responses for an evaluation,
-	 * can count responses for an entire evaluation regardless of context
-	 * or just responses for a specific context
+	 * can count responses for an entire evaluation regardless of eval group
+	 * or just responses for a specific group
 	 * 
 	 * @param evaluationId the id of an EvalEvaluation object
-	 * @param context the internal context (represents a site or group),
-	 * if null, include count for all contexts
+	 * @param evalGroupId the internal evalGroupId (represents a site or group),
+	 * if null, include count for all eval groups
 	 * @return the count of associated responses
 	 */
-	public int countResponses(Long evaluationId, String context);
+	public int countResponses(Long evaluationId, String evalGroupId);
 
 	/**
 	 * Get the answers associated with this item and with a response to this evaluation,
-	 * (i.e. item answers submitted as part of a response to the given evaluation)
+	 * (i.e. item answers submitted as part of a response to the given evaluation) within
+	 * the given evalGroupsIds
 	 * 
 	 * @param itemId the id of an EvalItem object
 	 * @param evaluationId the id of an EvalEvaluation object
+	 * @param evalGroupIds the internal eval group ids (represents a site or group),
+	 * if null, include count for all eval groups for this evaluation
 	 * @return a list of EvalAnswer objects
 	 */
-	public List getEvalAnswers(Long itemId, Long evaluationId);
+	public List getEvalAnswers(Long itemId, Long evaluationId, String[] evalGroupIds);
 
 	/**
 	 * Saves a single response from a single user with all associated Answers,

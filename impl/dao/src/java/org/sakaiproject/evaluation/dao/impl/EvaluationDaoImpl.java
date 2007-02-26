@@ -249,15 +249,23 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 	 * select from eval_answer where item_fk=$itemId and response_fk in 
 	 * (select id from eval_response where evaluation_fk=$evalId)
 	 */
-	public List getAnswers(Long itemId, Long evalId) {
-		 // from EvalAnswer where item_fk=itemId and response_fk in 
-		 // (select id from eval_response where eval_response.evaluation_fk=$evaluationId)
-		StringBuffer hqlQuery = new StringBuffer ("from EvalAnswer where item_fk=");
-		hqlQuery.append(itemId.toString());
-		hqlQuery.append(" and response_fk in (select evalr.id from EvalResponse as evalr where evaluation_fk=");
-		hqlQuery.append(evalId.toString());
-		hqlQuery.append(") order by response_fk");
-		return getHibernateTemplate().find(hqlQuery.toString());
+	public List getAnswers(Long itemId, Long evalId, String[] evalGroupIds) {
+		String groupsHQL = "";
+		if (evalGroupIds != null && evalGroupIds.length > 0) {
+			groupsHQL = " and response.evalGroupId in (";
+			for (int i = 0; i < evalGroupIds.length; i++) {
+				groupsHQL += "'" + evalGroupIds[i] + "'";
+				if (i != 0) {
+					groupsHQL += ",";
+				}
+			}
+			groupsHQL += ") ";
+		}
+		String hqlQuery = "from EvalAnswer where item_fk=" + itemId.toString() + 
+			" and response_fk in (select response.id from EvalResponse as response where evaluation_fk=" + evalId.toString() + ") " + 
+			groupsHQL +
+			" order by response_fk";
+		return getHibernateTemplate().find( hqlQuery );
 	}
 
 
