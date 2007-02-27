@@ -126,7 +126,13 @@ public class EvaluationConstant {
 		EvalConstants.INSTRUCTOR_OPT_IN, 
 		EvalConstants.INSTRUCTOR_REQUIRED
 	};
-
+	
+	/**
+	 * Modify Essay: Page pulldown constants for reponse size
+	 */
+	public static final String[] RESPONSE_SIZE_VALUES = new String[] {
+		"2", "3", "4", "5" };
+	
 	/**
 	 * The default number of rows to use when displaying a textarea type input box
 	 */

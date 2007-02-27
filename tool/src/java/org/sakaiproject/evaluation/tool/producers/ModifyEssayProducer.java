@@ -132,12 +132,19 @@ public class ModifyEssayProducer implements ViewComponentProducer,
 		richTextEvolver.evolveTextInput(itemText);
 
 		UIMessage.make(form, "response-size-header","modifyessay.response.size.header"); //$NON-NLS-1$ //$NON-NLS-2$
-
-		// dropdown list for "Scale Type"
+		
+		String[] reponseLabelList = {
+				"modifyessay.response.select.size.2",
+				"modifyessay.response.select.size.3",
+				"modifyessay.response.select.size.4",
+				"modifyessay.response.select.size.5"
+				
+		};
+		
+		// dropdown list for "Response size"
 		UISelect.make(form, "responseSize", 
-				new String[] { "2", "3", "4", "5" }, 
-				new String[] {"2 lines", "3 lines", "4 lines", "5 lines"}, templateItemOTP
-				+ "item.displayRows", null);
+				EvaluationConstant.RESPONSE_SIZE_VALUES, reponseLabelList, templateItemOTP
+				+ "item.displayRows", null).setMessageKeys();
 		/*
 		 * If the system setting (admin setting) for
 		 * "EvalSettings.NOT_AVAILABLE_ALLOWED" is set as true then only we need to
