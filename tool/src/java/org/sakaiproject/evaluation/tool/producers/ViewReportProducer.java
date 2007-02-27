@@ -89,6 +89,7 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 	}	
 
 	//String evalGroupId;
+	int displayNumber=1;
 
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 		UIMessage.make(tofill, "view-report-title","viewreport.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -132,8 +133,9 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 								radiobranch.decorators = new DecoratorList(
 										new UIColourDecorator(null,Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
 
-							this.doFillComponent(tempItem1, evaluation.getId(), i, radiobranch,
+							this.doFillComponent(tempItem1, evaluation.getId(), displayNumber, radiobranch,
 									courseSection,allItems);
+							displayNumber++;
 						}
 					}
 				}
@@ -162,6 +164,7 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 													Color
 															.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
 								this.doFillComponent(tempItem1, evaluation.getId(), i, radiobranch, instructorSection, allItems);
+								displayNumber++;
 							}
 						} // end of for loop				
 					//}
@@ -191,7 +194,7 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 			UIBranchContainer scaledSurvey = UIBranchContainer.make(radiobranch,
 			"scaledSurvey:"); //$NON-NLS-1$
 
-			UIOutput.make(scaledSurvey, "itemNum", (new Integer(i + 1)) //$NON-NLS-1$
+			UIOutput.make(scaledSurvey, "itemNum", (new Integer(i)) //$NON-NLS-1$
 				.toString());
 			UIOutput.make(scaledSurvey, "itemText", myItem.getItemText());	 //$NON-NLS-1$
 			
@@ -225,7 +228,7 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 		} //else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK)) {		 //$NON-NLS-1$
 		else if(TemplateItemUtils.getTemplateItemType(myTempItem).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)){
 			UIBranchContainer block = UIBranchContainer.make(radiobranch,"block:"); //$NON-NLS-1$
-			UIOutput.make(block, "itemNum", (new Integer(i + 1)).toString()); //$NON-NLS-1$
+			UIOutput.make(block, "itemNum", (new Integer(i)).toString()); //$NON-NLS-1$
 			UIOutput.make(block, "itemText", myItem.getItemText()); //$NON-NLS-1$
 			
 			//Boolean useNA = myItem.getUsesNA();
@@ -264,13 +267,13 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 				EvalTemplateItem tempItemChild = (EvalTemplateItem) childList.get(j);
 				EvalItem child = tempItemChild.getItem();
 				
-				UIOutput.make(queRow, "queNo", Integer.toString(j + 1)); //$NON-NLS-1$
+				UIOutput.make(queRow, "queNo", Integer.toString(displayNumber+j)); //$NON-NLS-1$
 				UIOutput.make(queRow, "queText", child.getItemText()); //$NON-NLS-1$
 				
 				//String[] egid = new String[1];
 				//egid[0]=evalGroupId;
 				
-				List itemAnswers = responsesLogic.getEvalAnswers(myItem.getId(), evalId, null);
+				List itemAnswers = responsesLogic.getEvalAnswers(child.getId(), evalId, null);
 				
 				   for (int x = 0; x < scaleLabels.length; ++x) 
 				    {
@@ -285,47 +288,13 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 						}
 						UIOutput.make(answerbranch, "responseTotal", (new Integer(answers)).toString(), (new Integer(x)).toString());				 //$NON-NLS-1$
 				    }
+				//the loop in fillComponents will increment once, so we skip increment on the first iteration of this for loop
+			    if(j>0)	displayNumber++;
 			}
-/*			if (myTempItem.getBlockParent()!=null && myTempItem.getBlockParent().booleanValue() == true) {
-				Long parentID = myTempItem.getId();
-				
-				//List childItems = logic.findItem(blockID);
-				List childItems = ItemBlockUtils.getChildItems(itemsList, parentID);
-				if (childItems != null && childItems.size() > 0) {
-					for (int j = 0; j < childItems.size(); j++) {
-						UIBranchContainer queRow = UIBranchContainer.make(
-								block, "queRow:", Integer.toString(j)); //$NON-NLS-1$
-	
-						EvalTemplateItem tempItemChild = (EvalTemplateItem) childItems.get(j);
-						EvalItem child = tempItemChild.getItem();
-						
-						UIOutput.make(queRow, "queNo", Integer.toString(j + 1)); //$NON-NLS-1$
-						UIOutput.make(queRow, "queText", child.getItemText()); //$NON-NLS-1$
-						//List itemAnswers=logic.getEvalAnswers(child.getId(), evalId);
-						List itemAnswers = responsesLogic.getEvalAnswers(child.getId(), evalId);
-						
-					    for (int x = 0; x < scaleLabels.length; ++x) 
-					    {
-					    	UIBranchContainer answerbranch = UIBranchContainer.make(queRow, "answers:", Integer.toString(x)); //$NON-NLS-1$
-							int answers=0;
-							//count the number of answers that match this one
-							for(int y=0; y<itemAnswers.size();y++){
-								EvalAnswer curr=(EvalAnswer)itemAnswers.get(y);
-								if(curr.getNumeric().intValue()==x){
-									answers++;
-								}
-							}
-							UIOutput.make(answerbranch, "responseTotal", (new Integer(answers)).toString(), (new Integer(x)).toString());				 //$NON-NLS-1$
-					    }
-					}
-				}// end of if
-
-			} // end of get child block item
-			*/
 		} else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)) { //"Short Answer/Essay"
 		UIBranchContainer essay = UIBranchContainer.make(radiobranch,
 			"essayType:"); //$NON-NLS-1$
-			UIOutput.make(essay, "itemNum", (new Integer(i + 1)).toString()); //$NON-NLS-1$
+			UIOutput.make(essay, "itemNum", (new Integer(i)).toString()); //$NON-NLS-1$
 			UIOutput.make(essay, "itemText", myItem.getItemText()); //$NON-NLS-1$
 			
 			UIInternalLink.make(essay, "essayResponse", new EssayResponseParams(ViewEssayResponseProducer.VIEW_ID,evalId,myTempItem.getId()));
@@ -333,8 +302,9 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 		} else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_HEADER)) { //"Text Header"
 			UIBranchContainer header = UIBranchContainer.make(radiobranch,
 			"headerType:"); //$NON-NLS-1$
-			UIOutput.make(header, "itemNum", (new Integer(i + 1)).toString()); //$NON-NLS-1$
+			UIOutput.make(header, "itemNum", (new Integer(i)).toString()); //$NON-NLS-1$
 			UIOutput.make(header, "itemText", myItem.getItemText()); //$NON-NLS-1$
+			displayNumber--;
 		}
 	}
 	
