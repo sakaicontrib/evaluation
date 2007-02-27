@@ -25,6 +25,7 @@ import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -87,6 +88,12 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 		this.external = external;
 	}
 
+	private EvalSettings settings;
+
+	public void setSettings(EvalSettings settings) {
+		this.settings = settings;
+	}
+	
 	private Locale locale;
 	public void setLocale(Locale locale) {
 		this.locale = locale;
@@ -319,9 +326,18 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 					
 					UIOutput.make(closedEvalsRb, "reponseRate", ctResponses + "/"+ ctEnrollments +" - "+percentage +"%"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 					if(evaluationsLogic.getEvaluationState(eval1.getId())==EvalConstants.EVALUATION_STATE_VIEWABLE){
-						UIInternalLink.make(closedEvalsRb, "viewReportLink", UIMessage.make("controlpanel.eval.report.link"),  //$NON-NLS-1$ //$NON-NLS-2$
-								new EvalViewParameters(ViewReportProducer.VIEW_ID, 
-									eval1.getId()));	
+						Integer respReqToViewResults = (Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS);
+						if( (respReqToViewResults.intValue()<=ctResponses) | (ctResponses>=ctEnrollments) ){
+							UIInternalLink.make(closedEvalsRb, "viewReportLink", UIMessage.make("controlpanel.eval.report.link"),  //$NON-NLS-1$ //$NON-NLS-2$
+									new EvalViewParameters(ViewReportProducer.VIEW_ID, 
+										eval1.getId()));	
+						}
+						else{
+							UIMessage.make(closedEvalsRb, "viewReportLabel", "controlpanel.eval.report.awaiting.responses");
+						}
+
+						
+
 					}
 					else{
 						UIMessage.make(closedEvalsRb, "viewReportLabel", "controlpanel.eval.report.viewable.on");
