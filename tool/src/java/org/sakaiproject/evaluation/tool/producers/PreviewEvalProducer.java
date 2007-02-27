@@ -18,12 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
-import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -69,12 +67,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 	public void setExternal(EvalExternalLogic external) {
 		this.external = external;
 	}
-	
-	private EvalAssignsLogic assignsLogic;
-	public void setAssignsLogic(EvalAssignsLogic assignsLogic) {
-		this.assignsLogic = assignsLogic;
-	}
-	
+
 	private EvalTemplatesLogic templatesLogic;
 	public void setTemplatesLogic(EvalTemplatesLogic templatesLogic) {
 		this.templatesLogic = templatesLogic;
