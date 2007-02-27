@@ -119,11 +119,12 @@ public class ModifyEssayProducer implements ViewComponentProducer,
 		UIOutput.make(form, "userInfo", external.getUserDisplayName(template
 				.getOwner()), templateItemOTP + "owner");
 
-		if (templateItemViewParams.templateItemId != null) {
+		if (templateItemId != null) {
 			UIBranchContainer showLink = UIBranchContainer.make(form,
 					"showRemoveLink:");
 			UIInternalLink.make(showLink, "remove_link", UIMessage.make("modifyitem.remove.link"),
-					new SimpleViewParameters("remove_question")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					new TemplateItemViewParameters(RemoveQuestionProducer.VIEW_ID,
+							templateId, templateItemId)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 
 		UIMessage.make(form, "question-text-header", "modifyitem.question.text.header"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -133,7 +134,7 @@ public class ModifyEssayProducer implements ViewComponentProducer,
 		UIMessage.make(form, "response-size-header","modifyessay.response.size.header"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// dropdown list for "Scale Type"
-		UISelect.make(form, "scaleList", 
+		UISelect.make(form, "responseSize", 
 				new String[] { "2", "3", "4", "5" }, 
 				new String[] {"2 lines", "3 lines", "4 lines", "5 lines"}, templateItemOTP
 				+ "item.displayRows", null);
