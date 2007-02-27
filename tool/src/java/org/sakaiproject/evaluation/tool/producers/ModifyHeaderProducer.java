@@ -59,25 +59,21 @@ public class ModifyHeaderProducer implements ViewComponentProducer,
 
 
 	private EvalTemplatesLogic templatesLogic;
-
 	public void setTemplatesLogic(EvalTemplatesLogic templatesLogic) {
 		this.templatesLogic = templatesLogic;
 	}
 
 	private EvalExternalLogic external;
-
 	public void setExternal(EvalExternalLogic external) {
 		this.external = external;
 	}
 
 	private EvalSettings settings;
-
 	public void setSettings(EvalSettings settings) {
 		this.settings = settings;
 	}
 
 	private TextInputEvolver richTextEvolver;
-
 	public void setRichTextEvolver(TextInputEvolver richTextEvolver) {
 		this.richTextEvolver = richTextEvolver;
 	}
@@ -118,11 +114,12 @@ public class ModifyHeaderProducer implements ViewComponentProducer,
 		UIOutput.make(form, "userInfo", external.getUserDisplayName(template
 				.getOwner()));
 
-		if (templateItemViewParams.templateItemId != null) {
+		if (templateItemId != null) {
 			UIBranchContainer showLink = UIBranchContainer.make(form,
 					"showRemoveLink:");
 			UIInternalLink.make(showLink, "remove_link", UIMessage.make("modifyitem.remove.link"), 
-					new SimpleViewParameters("remove_question")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					new TemplateItemViewParameters(RemoveQuestionProducer.VIEW_ID,
+							templateId, templateItemId)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 
 		UIMessage.make(form, "question-text-header", "modifyitem.question.text.header"); //$NON-NLS-1$ //$NON-NLS-2$
