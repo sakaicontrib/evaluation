@@ -205,7 +205,8 @@ public class TakeEvalProducer implements ViewComponentProducer,
 			for (Iterator it = instructors.iterator(); it.hasNext();) {
 				String instructor = (String) it.next();
 				instructorSection = UIBranchContainer.make(form,"instructorSection:", "inst"+displayNumber); //$NON-NLS-1$
-				UIOutput.make(instructorSection, "instructor-questions-header",UIMessage.make("takeeval.instructor.questions.header")+" "+external.getUserDisplayName(instructor));	
+				//UIOutput.make(instructorSection, "instructor-questions-header",UIMessage.make("takeeval.instructor.questions.header")+" "+external.getUserDisplayName(instructor));	
+				UIMessage.make(instructorSection, "instructor-questions-header","takeeval.instructor.questions.header", new Object[] { external.getUserDisplayName(instructor) });
 				//for each item in this evaluation
 				for (int i = 0; i <ncItemsList.size(); i++) {
 					EvalTemplateItem tempItem1 = (EvalTemplateItem) ncItemsList.get(i);
