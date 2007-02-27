@@ -64,19 +64,16 @@ public class ModifyScaledProducer implements ViewComponentProducer,
 
 
 	private EvalExternalLogic external;
-
 	public void setExternal(EvalExternalLogic external) {
 		this.external = external;
 	}
 
 	private EvalTemplatesLogic templatesLogic;
-
 	public void setTemplatesLogic(EvalTemplatesLogic templatesLogic) {
 		this.templatesLogic = templatesLogic;
 	}
 
 	private EvalSettings settings;
-
 	public void setSettings(EvalSettings settings) {
 		this.settings = settings;
 	}
@@ -86,7 +83,6 @@ public class ModifyScaledProducer implements ViewComponentProducer,
 	}
 
 	private TextInputEvolver richTextEvolver;
-
 	public void setRichTextEvolver(TextInputEvolver richTextEvolver) {
 		this.richTextEvolver = richTextEvolver;
 	}
@@ -94,13 +90,11 @@ public class ModifyScaledProducer implements ViewComponentProducer,
 	// TODO-shouldn't need these in producer, necessary to preload scaleId until
 	// we have a darreshaper
 	private ItemsBean itemsBean;
-
 	public void setItemsBean(ItemsBean itemsBean) {
 		this.itemsBean = itemsBean;
 	}
 
 	private EvalItemsLogic itemsLogic;
-
 	public void setItemsLogic(EvalItemsLogic itemsLogic) {
 		this.itemsLogic = itemsLogic;
 	}
@@ -152,11 +146,13 @@ public class ModifyScaledProducer implements ViewComponentProducer,
 		UIOutput.make(form, "userInfo", external.getUserDisplayName(template
 				.getOwner()));
 
-		if (templateItemViewParams.templateItemId != null) {
+		if (templateItemId != null) {
 			UIBranchContainer showLink = UIBranchContainer.make(form,
 					"showRemoveLink:");
-			UIInternalLink.make(showLink, "remove_link", UIMessage.make("modifyitem.remove.link"), 
-					new SimpleViewParameters("remove_question")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+			UIInternalLink.make(showLink, "remove_link", UIMessage.make("modifytemplate.remove.link"),
+					new TemplateItemViewParameters(RemoveQuestionProducer.VIEW_ID,
+							templateId, templateItemId));
 		}
 
 		UIMessage.make(form, "question-text-header","modifyitem.question.text.header"); //$NON-NLS-1$ //$NON-NLS-2$
