@@ -40,8 +40,6 @@
     <property name="responsesLogic"
       ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic">
     </property>
-    <property name="itemsLogic"
-      ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
   </bean>
 
   <!-- The beans listed here are session beans (they stick around) -->

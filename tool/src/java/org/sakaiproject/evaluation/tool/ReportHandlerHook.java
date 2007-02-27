@@ -132,7 +132,6 @@ public class ReportHandlerHook implements HandlerHook {
 				EvalItem item1 = tempItem1.getItem();
 				
 				//if the item is normal scaled
-				//if(item1.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)){
 				if(TemplateItemUtils.getTemplateItemType(tempItem1).equals(EvalConstants.ITEM_TYPE_SCALED)){
 					String labels[] = item1.getScale().getOptions();
 					//add the item description to the top row
@@ -148,7 +147,6 @@ public class ReportHandlerHook implements HandlerHook {
 						currRow.add(labels[currAnswer.getNumeric().intValue()]);
 					}
 				}
-				//else if (item1.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK)) {//"Question Block"
 				else if(TemplateItemUtils.getTemplateItemType(tempItem1).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)){
 					String labels[] = item1.getScale().getOptions();
 					//add the block description to the top row
@@ -176,32 +174,6 @@ public class ReportHandlerHook implements HandlerHook {
 							currRow.add(labels[currAnswer.getNumeric().intValue()]);
 						}
 					}
-				/*
-					if (tempItem1.getBlockParent()!=null && tempItem1.getBlockParent().booleanValue() == true) {
-					Long parentID = item1.getId();
-
-					//List blockChildItems = logic.findItem(blockID);
-					List blockChildItems = ItemBlockUtils.getChildItems(allItems, parentID);
-					if (blockChildItems != null && blockChildItems.size() > 0) {
-							//for each child item
-							for (int j = 0; j < blockChildItems.size(); j++) {
-								EvalTemplateItem tempItemChild = (EvalTemplateItem) blockChildItems.get(j);
-								EvalItem child = tempItemChild.getItem();
-								//add child's text to top row
-								topRow.add(child.getItemText());
-								//get all answers to the child item within this eval
-								List itemAnswers = responsesLogic.getEvalAnswers(child.getId(), crvp.evalId);
-								//for each response row
-								for(int y=0; y<numOfResponses;y++){
-									List currRow = (List)responseRows.get(y);
-									EvalAnswer currAnswer=(EvalAnswer)itemAnswers.get(y);
-									//add the answer to item within the current response to the output row
-									currRow.add(labels[currAnswer.getNumeric().intValue()]);
-								}
-							}
-						}// end of if
-					} // end of get child block item
-				*/
 				}
 			}
 

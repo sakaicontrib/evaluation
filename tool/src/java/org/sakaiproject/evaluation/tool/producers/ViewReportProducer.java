@@ -15,12 +15,9 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
-import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
 import org.sakaiproject.evaluation.model.EvalAnswer;
@@ -69,10 +66,6 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 		this.evalsLogic = evalsLogic;
 	}
 	
-	private EvalExternalLogic external;
-	public void setExternal(EvalExternalLogic external) {
-		this.external = external;
-	}
 	
 	private EvalResponsesLogic responsesLogic;	
 	public void setResponsesLogic(EvalResponsesLogic responsesLogic) {

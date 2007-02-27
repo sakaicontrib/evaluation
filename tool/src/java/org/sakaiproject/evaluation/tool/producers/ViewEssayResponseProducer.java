@@ -93,7 +93,6 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 		//output single set of essay responses
 		if(essayResponseParams.itemId != null){
 			//we are actually passing EvalTemplateItem ID
-			//EvalItem myItem = itemsLogic.getItemById(essayResponseParams.itemId);//EvalItem myItem = logic.getItemById(essayResponseParams.itemId);
 			EvalTemplateItem myTempItem = itemsLogic.getTemplateItemById(essayResponseParams.itemId);
 			EvalItem myItem = myTempItem.getItem();
 
@@ -124,17 +123,15 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 		//prepare sets of responses for each essay question
 		else if (essayResponseParams.evalId != null) {
 			EvalEvaluation evaluation = evalsLogic.getEvaluationById(essayResponseParams.evalId);
-			//EvalEvaluation evaluation = logic.getEvaluationById(essayResponseParams.evalId);
 			// get template from DAO 
 			EvalTemplate template = evaluation.getTemplate();
 
 			// get items(parent items, child items --need to set order
 
-			//List childItems = new ArrayList(template.getItems());
 			List allItems = new ArrayList(template.getTemplateItems());
 
 			if (! allItems.isEmpty()) {
-				List ncItemsList = TemplateItemUtils.getNonChildItems(allItems);
+				List ncItemsList = TemplateItemUtils.getNonChildItems(allItems); //already sorted by displayOrder
 
 				// check if there is any "Course" items or "Instructor" items;
 				UIBranchContainer courseSection = null;
@@ -151,7 +148,6 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 				for (int i = 0; i < ncItemsList.size(); i++) {
 					EvalTemplateItem tempItem1 = (EvalTemplateItem) ncItemsList.get(i);
 					EvalItem item1 = tempItem1.getItem();
-					//String cat = item1.getCategory();
 					String cat = tempItem1.getItemCategory();
 
 					UIBranchContainer radiobranch = null;

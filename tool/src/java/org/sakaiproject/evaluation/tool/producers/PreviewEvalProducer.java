@@ -83,7 +83,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 
 	/* 
 	 * 1). Preview Template --getting data from DAO --DONE
-	 * 2). Preview Evalution -- by passing Evalution ID,course--TO BE DONE
+	 * 2). Preview Evaluation -- by passing Evalution ID,course--TO BE DONE
 	 */
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams,
 			ComponentChecker checker) {
@@ -123,12 +123,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 					if (count > 1){
 						UIOutput.make(tofill, "courseTitle",count+"courses"); //$NON-NLS-1$ //$NON-NLS-2$
 					}else{
-						/*
-						List acs = assignsLogic.getAssignGroupsByEvalId(eval.getId());
-						EvalAssignGroup eac = (EvalAssignGroup) acs.get(0);
-						String title =  external.getDisplayTitle( eac.getEvalGroupId());
-						UIOutput.make(tofill, "courseTitle",title);*/
-					
+				
 						Long[] evalIds = {eval.getId()};
 						Map evalContexts = evalsLogic.getEvaluationGroups(evalIds, true);
 						List contexts = (List) evalContexts.get(eval.getId());
