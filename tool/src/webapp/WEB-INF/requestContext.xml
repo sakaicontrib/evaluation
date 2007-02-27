@@ -129,6 +129,10 @@
 			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
 		<property name="responsesLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
+		<property name="settings"
+			ref="org.sakaiproject.evaluation.logic.EvalSettings" />		
+		<property name="assignsLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalAssignsLogic" />				
 		<property name="locale" ref="requestLocale" />
 	</bean>
 
@@ -144,6 +148,8 @@
 			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
 		<property name="responsesLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
+		<property name="settings"
+			ref="org.sakaiproject.evaluation.logic.EvalSettings" />					
 		<property name="locale" ref="requestLocale" />
 	</bean>
 
