@@ -20,6 +20,7 @@ import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
+import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
@@ -56,6 +57,9 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, Navigation
 	public void setExternal(EvalExternalLogic external) {
 		this.external = external;
 	}
+	
+	// Used to prepare the path for WritableBeanLocator
+    private String SCALES_WBL = "scalesBean";
 
 	/* 
 	 * (non-Javadoc)
@@ -103,8 +107,9 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, Navigation
 				"scaleaddmodify.scale.title.note");	 											//$NON-NLS-1$
 
 		//TODO
-		UIInput.make(tofill, "scale-title", "?????");  											//$NON-NLS-1$ //$NON-NLS-2$
+		makeInput(tofill, "scale-title", "1");  											//$NON-NLS-1$ //$NON-NLS-2$
 		
+		/*
 		//TODO
 		UIInternalLink.make(tofill, "scale-remove-link", 										//$NON-NLS-1$ 
 				UIMessage.make("scaleaddmodify.remove.scale.link"), 							//$NON-NLS-1$
@@ -161,11 +166,12 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, Navigation
 			UISelectChoice.make(radiobranch, "scale-ideal-value", selectID, i); 				//$NON-NLS-1$
 			UISelectLabel.make(radiobranch, "scale-ideal-label", selectID, i); 					//$NON-NLS-1$
 	    }
+	    */
 		
 		//TODO
-		UIBoundBoolean.make(tofill, "scale-hidden",												//$NON-NLS-1$ 
-				"#{evaluationBean.eval.unregisteredAllowed}", null); 							//$NON-NLS-1$
+		//makeBoolean(tofill, "scale-hidden", "SCALE_HIDDEN"); 									//$NON-NLS-1$ //$NON-NLS-2$
 		
+		/*
 		UIMessage.make(tofill, "scale-hidden-note", 											//$NON-NLS-1$ 
 				"scaleaddmodify.scale.hidden.note"); 											//$NON-NLS-1$
 
@@ -177,7 +183,8 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, Navigation
 		//TODO
 		UICommand.make(tofill, "scale-add-modify-save-button", 									//$NON-NLS-1$
 				UIMessage.make("scaleaddmodify.save.scale.button"),								//$NON-NLS-1$
-				"#{evaluationBean.saveSettingsAction}");   										//$NON-NLS-1$											
+				"#{evaluationBean.saveSettingsAction}");   										//$NON-NLS-1$
+		*/											
 
 	}
 	
@@ -189,4 +196,21 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, Navigation
 		List i = new ArrayList();
 		return i;
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * This method is used to render checkboxes.
+	 */
+    private void makeBoolean(UIContainer parent, String ID, String adminkey) {
+      // Must use "composePath" here since admin keys currently contain periods
+      UIBoundBoolean.make(parent, ID, adminkey == null? null : PathUtil.composePath(SCALES_WBL, adminkey)); 
+    }
+	
+	/*
+	 * (non-Javadoc)
+	 * This is a common method used to render text boxes.
+	 */
+    private void makeInput(UIContainer parent, String ID, String adminkey) {
+      UIInput.make(parent, ID, PathUtil.composePath(SCALES_WBL, adminkey));
+    }	
 }

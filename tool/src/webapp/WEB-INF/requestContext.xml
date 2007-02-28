@@ -27,6 +27,13 @@
 
 
 	<!-- request scope backing beans here -->
+	<bean id="scalesBean"
+		class="org.sakaiproject.evaluation.tool.ScalesWBL">
+		<property name="evalScalesLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalScalesLogic" />
+		<property name="leafParser" ref="staticLeafParser" />
+	</bean>
+		
 	<bean id="settingsBean"
 		class="org.sakaiproject.evaluation.tool.SettingsWBL">
 		<property name="evalSettings"
