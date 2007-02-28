@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
+import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
+import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
@@ -33,6 +35,7 @@ import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
+import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
@@ -58,6 +61,13 @@ public class RemoveQuestionProducer implements ViewComponentProducer, ViewParams
 	public void setItemsLogic( EvalItemsLogic itemsLogic) {
 		this.itemsLogic = itemsLogic;
 	}
+	
+	//Spring injection
+	private EvalTemplatesLogic templatesLogic;
+	public void setTemplatesLogic( EvalTemplatesLogic templatesLogic) {
+		this.templatesLogic = templatesLogic;
+	}
+	
 	private ItemRenderer itemRenderer;
 	public void setItemRenderer(ItemRenderer itemRenderer) {
 		this.itemRenderer = itemRenderer;
@@ -74,7 +84,8 @@ public class RemoveQuestionProducer implements ViewComponentProducer, ViewParams
 		
         Long templateItemId = templateItemViewParams.templateItemId;
         templateId=templateItemViewParams.templateId;
-		
+		EvalTemplate template = templatesLogic.getTemplateById(templateId);
+        
         String templateItemOTPBinding="templateItemBeanLocator."+templateItemId;		
         EvalTemplateItem templateItem = itemsLogic.getTemplateItemById(templateItemId);
       
@@ -85,6 +96,10 @@ public class RemoveQuestionProducer implements ViewComponentProducer, ViewParams
 				new SimpleViewParameters(SummaryProducer.VIEW_ID));	
 		
 		UIMessage.make(tofill, "remove-question-confirm-pre-name", "removequestion.confirm.pre.name"); //$NON-NLS-1$ //$NON-NLS-2$
+		//TODO: queNo
+		UIMessage.make(tofill, "remove-question-confirm-mid-name", "removequestion.confirm.mid.name");
+		
+		UIOutput.make(tofill,"templateTitle",template.getTitle());
 		UIMessage.make(tofill, "remove-question-confirm-post-name", "removequestion.confirm.post.name"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		//if it is a block item, show information 
