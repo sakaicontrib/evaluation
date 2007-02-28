@@ -152,5 +152,13 @@ public class EvaluationConstant {
 	 */
 	public static final String[] MINIMUM_TIME_DIFFERENCE = new String[] {
 		"4", "8", "12", "16", "20", "24", "36", "48"};	
+	
+	/**
+	 * Administrative (system settings) page, 
+	 * values corresponding to "Yes", "No", "Configurable"  
+	 */
+	public static final String ADMIN_BOOLEAN_YES = "1";
+	public static final String ADMIN_BOOLEAN_NO = "0";
+	public static final String ADMIN_BOOLEAN_CONFIGURABLE = "-1";
 }
 

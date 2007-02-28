@@ -42,12 +42,6 @@ public class SettingsWBL implements WriteableBeanLocator {
 		this.leafParser = leafParser;
 	}
 	
-	// Spring injection 
-	private MessageLocator messageLocator;
-	public void setMessageLocator(MessageLocator messageLocator) {
-		this.messageLocator = messageLocator;
-	}
-	  
 	/**
 	 * Simply tells the user that remove functionality is not 
 	 * supported (this is done by throwing an exception).
@@ -75,11 +69,11 @@ public class SettingsWBL implements WriteableBeanLocator {
 		 * deleted from the table. 
 		 */ 
 		if ( isFieldToBeParsed(beanname) ) {
-			if ( ((String)toset).equals(messageLocator.getMessage("administrate.configurable.label")) ) 
+			if ( ((String)toset).equals(EvaluationConstant.ADMIN_BOOLEAN_CONFIGURABLE) ) 
 				toset = null;
-			else if ( ((String)toset).equals(messageLocator.getMessage("administrate.true.label")) ) 
+			else if ( ((String)toset).equals(EvaluationConstant.ADMIN_BOOLEAN_YES) ) 
 				toset = Boolean.TRUE;
-			else if ( ((String)toset).equals(messageLocator.getMessage("administrate.false.label")) ) 
+			else if ( ((String)toset).equals(EvaluationConstant.ADMIN_BOOLEAN_NO) ) 
 				toset = Boolean.FALSE;
 			else {
 				//do nothing
@@ -115,12 +109,12 @@ public class SettingsWBL implements WriteableBeanLocator {
 		 */
 		if ( isFieldToBeParsed(path) ) {
 			if (toget == null)
-				toget = messageLocator.getMessage("administrate.configurable.label");
+				toget = EvaluationConstant.ADMIN_BOOLEAN_CONFIGURABLE;
 			else if (toget instanceof Boolean) {
 				if ( ((Boolean)toget).booleanValue() )
-					toget = messageLocator.getMessage("administrate.true.label");
+					toget = EvaluationConstant.ADMIN_BOOLEAN_YES;
 				else 
-					toget = messageLocator.getMessage("administrate.false.label");
+					toget = EvaluationConstant.ADMIN_BOOLEAN_NO;
 			}
 			else {
 				//do nothing
