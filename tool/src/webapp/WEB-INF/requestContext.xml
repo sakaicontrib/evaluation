@@ -32,7 +32,6 @@
 		<property name="evalSettings"
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 		<property name="leafParser" ref="staticLeafParser" />
-		<property name="messageLocator" ref="messageLocator" />
 	</bean>
 
 	<bean id="takeEvalBean"
