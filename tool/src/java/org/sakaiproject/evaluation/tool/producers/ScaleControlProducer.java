@@ -20,6 +20,7 @@ import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalScalesLogic;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
+import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
@@ -87,8 +88,14 @@ public class ScaleControlProducer implements ViewComponentProducer, NavigationCa
 			
 			//Use can modify / remove scale only if it is not locked.
 			if (scalesLogic.canControlScale(currentUserId, scale.getId())) {
-				UIMessage.make(listOfScales, "modify-sidelink", "scalecontrol.modify.link"); //$NON-NLS-1$ //$NON-NLS-2$
-				UIMessage.make(listOfScales, "remove-sidelink", "scalecontrol.remove.link"); //$NON-NLS-1$ //$NON-NLS-2$
+				
+				UIInternalLink.make(listOfScales, "modify-sidelink", 				//$NON-NLS-1$ 
+						UIMessage.make("scalecontrol.modify.link"), 				//$NON-NLS-1$
+						new SimpleViewParameters(ScaleAddModifyProducer.VIEW_ID)); 
+
+				UIInternalLink.make(listOfScales, "remove-sidelink", 				//$NON-NLS-1$ 
+						UIMessage.make("scalecontrol.remove.link"), 				//$NON-NLS-1$
+						new SimpleViewParameters(ScaleAddModifyProducer.VIEW_ID)); 
 			}
 
 			//Display the scale options vertically
