@@ -31,11 +31,11 @@ public class EvalConstants {
 	 */
 	public final static String PERM_ASSIGN_EVALUATION = "eval.assign.evaluation";
 	/**
-	 * Permission: User can be evaluated for any context they have this permission in
+	 * Permission: User can be evaluated for any group they have this permission in
 	 */
 	public final static String PERM_BE_EVALUATED = "eval.be.evaluated";
 	/**
-	 * Permission: User can take an evaluation for any context they have this permission in
+	 * Permission: User can take an evaluation for any group they have this permission in
 	 */
 	public final static String PERM_TAKE_EVALUATION = "eval.take.evaluation";
 

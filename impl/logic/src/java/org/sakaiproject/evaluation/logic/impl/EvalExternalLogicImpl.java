@@ -270,7 +270,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 			if (EvalConstants.PERM_BE_EVALUATED.equals(permission) ||
 					EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
 				log.debug("Using eval groups provider: userId: " + userId + ", permission: " + permission);
-				count += evalGroupsProvider.countEvalGroupsForUser(userId, permission);
+				count += evalGroupsProvider.countEvalGroupsForUser(userId, translatePermission(permission));
 			}
 		}
 
@@ -312,7 +312,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 			if (EvalConstants.PERM_BE_EVALUATED.equals(permission) ||
 					EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
 				log.debug("Using eval groups provider: userId: " + userId + ", permission: " + permission);
-				List eg = evalGroupsProvider.getEvalGroupsForUser(userId, permission);
+				List eg = evalGroupsProvider.getEvalGroupsForUser(userId, translatePermission(permission));
 				for (Iterator iter = eg.iterator(); iter.hasNext();) {
 					EvalGroup c = (EvalGroup) iter.next();
 					c.type = EvalConstants.GROUP_TYPE_PROVIDED;
@@ -336,7 +336,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 			if (EvalConstants.PERM_BE_EVALUATED.equals(permission) ||
 					EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
 				log.debug("Using eval groups provider: context: " + evalGroupId + ", permission: " + permission);
-				count += evalGroupsProvider.countUserIdsForEvalGroups(new String[] {evalGroupId}, permission);
+				count += evalGroupsProvider.countUserIdsForEvalGroups(new String[] {evalGroupId}, translatePermission(permission));
 			}
 		}
 
@@ -357,7 +357,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 			if (EvalConstants.PERM_BE_EVALUATED.equals(permission) ||
 					EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
 				log.debug("Using eval groups provider: context: " + evalGroupId + ", permission: " + permission);
-				userIds.addAll( evalGroupsProvider.getUserIdsForEvalGroups(new String[] {evalGroupId}, permission) );
+				userIds.addAll( evalGroupsProvider.getUserIdsForEvalGroups(new String[] {evalGroupId}, translatePermission(permission)) );
 			}
 		}
 
@@ -379,7 +379,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 			if (EvalConstants.PERM_BE_EVALUATED.equals(permission) ||
 					EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
 				log.debug("Using eval groups provider: userId: " + userId + ", permission: " + permission + ", evalGroupId: " + evalGroupId);
-				if ( evalGroupsProvider.isUserAllowedInGroup(userId, permission, evalGroupId) ) {
+				if ( evalGroupsProvider.isUserAllowedInGroup(userId, translatePermission(permission), evalGroupId) ) {
 					return true;
 				}
 			}
@@ -481,6 +481,21 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 			return EvalConstants.GROUP_TYPE_GROUP;
 		}
 		return EvalConstants.GROUP_TYPE_UNKNOWN;
+	}
+
+	/**
+	 * Simple method to translate one constant into another
+	 * (this allows the provider to have no dependency on the model)
+	 * @param permission a PERM constant from {@link EvalConstants}
+	 * @return the translated constant from {@link EvalGroupsProvider}
+	 */
+	private String translatePermission(String permission) {
+		if (EvalConstants.PERM_TAKE_EVALUATION.equals(permission)) {
+			return EvalGroupsProvider.PERM_TAKE_EVALUATION;
+		} else if (EvalConstants.PERM_BE_EVALUATED.equals(permission)) {
+			return EvalGroupsProvider.PERM_BE_EVALUATED;
+		}
+		return "UNKNOWN";
 	}
 
 }
