@@ -20,7 +20,6 @@ import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalScalesLogic;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
-import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
@@ -73,8 +72,11 @@ public class ScaleControlProducer implements ViewComponentProducer, NavigationCa
 		}
 		UIInternalLink.make(tofill, "administrate-toplink", UIMessage.make("administrate.page.title"), new SimpleViewParameters(AdministrateProducer.VIEW_ID)); //$NON-NLS-1$ //$NON-NLS-2$
 		UIMessage.make(tofill, "scale-control-title", "scalecontrol.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
+
+		UIInternalLink.make(tofill, "add-new-scale-link", 					//$NON-NLS-1$ 
+				UIMessage.make("scalecontrol.add.new.scale.link"), 			//$NON-NLS-1$
+				new SimpleViewParameters(ScaleAddModifyProducer.VIEW_ID));
 		
-		UIMessage.make(tofill, "add-new-scale-link", "scalecontrol.add.new.scale.link"); //$NON-NLS-1$ //$NON-NLS-2$
 		UIMessage.make(tofill, "scales-control-heading", "scalecontrol.page.heading"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		//Get all the scales that are owned by a user

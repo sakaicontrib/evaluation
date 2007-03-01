@@ -25,6 +25,7 @@ import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
@@ -99,43 +100,45 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, Navigation
 		UIMessage.make(tofill, "scale-add-modify-title", 										//$NON-NLS-1$ 
 				"scaleaddmodify.page.title"); 													//$NON-NLS-1$
 		
+		UIForm form = UIForm.make(tofill, "basic-form"); //$NON-NLS-1$		
+		
 		/*
 		 * Title and remove - we don't need a locked check here because
 		 * a person can come on this page only if the scale is not locked.
 		 */  
-		UIMessage.make(tofill, "scale-title-note", 												//$NON-NLS-1$ 
+		UIMessage.make(form, "scale-title-note", 												//$NON-NLS-1$ 
 				"scaleaddmodify.scale.title.note");	 											//$NON-NLS-1$
 
 		//TODO
-		makeInput(tofill, "scale-title", "1");  											//$NON-NLS-1$ //$NON-NLS-2$
+		makeInput(form, "scale-title", "1");  													//$NON-NLS-1$ //$NON-NLS-2$
 		
 		/*
 		//TODO
-		UIInternalLink.make(tofill, "scale-remove-link", 										//$NON-NLS-1$ 
+		UIInternalLink.make(form, "scale-remove-link", 											//$NON-NLS-1$ 
 				UIMessage.make("scaleaddmodify.remove.scale.link"), 							//$NON-NLS-1$
 				PreviewEmailProducer.VIEW_ID);
 		
 		//TODO
 		EvalScale scale = null;
 		for (int j = 0; j < scale.getOptions().length; ++j){
-			UIBranchContainer scaleOptions = UIBranchContainer.make(tofill, "scaleOptions:"); 	//$NON-NLS-1$
+			UIBranchContainer scaleOptions = UIBranchContainer.make(form, "scaleOptions:"); 	//$NON-NLS-1$
 			UIOutput.make(scaleOptions, "scale-option-label", (scale.getOptions())[j]); 		//$NON-NLS-1$
 			
 			//TODO
-			UICommand.make(tofill, "scale-remove-option", 										//$NON-NLS-1$
+			UICommand.make(form, "scale-remove-option", 										//$NON-NLS-1$
 					UIMessage.make("scaleaddmodify.remove.scale.option.button"),				//$NON-NLS-1$
 					"#{evaluationBean.saveSettingsAction}");   									//$NON-NLS-1$											
 		}
 		
 		//TODO
-		UICommand.make(tofill, "scale-add-point", 												//$NON-NLS-1$
+		UICommand.make(form, "scale-add-point", 												//$NON-NLS-1$
 				UIMessage.make("scaleaddmodify.add.scale.option.button"),						//$NON-NLS-1$
 				"#{evaluationBean.saveSettingsAction}");   										//$NON-NLS-1$		
 		
-		UIMessage.make(tofill, "ideal-note-start", 												//$NON-NLS-1$ 
+		UIMessage.make(form, "ideal-note-start", 												//$NON-NLS-1$ 
 				"scaleaddmodify.scale.ideal.note.start"); 										//$NON-NLS-1$
 
-		UIMessage.make(tofill, "ideal-note-main-text", 											//$NON-NLS-1$ 
+		UIMessage.make(form, "ideal-note-main-text", 											//$NON-NLS-1$ 
 				"scaleaddmodify.scale.ideal.note.main.text"); 									//$NON-NLS-1$
 
 		//Ideal scale values radio buttons
@@ -153,7 +156,7 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, Navigation
 		};
 		
 		//TODO
-		UISelect radios = UISelect.make(tofill, "scaleIdealValues",
+		UISelect radios = UISelect.make(form, "scaleIdealValues",
 				scaleIdealValues, scaleIdealLabels,
 				null, null).setMessageKeys();
 		
@@ -161,7 +164,7 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, Navigation
 
 	    String selectID = radios.getFullID();
 	    for (int i = 0; i < scaleIdealValues.length; ++i) {
-			UIBranchContainer radiobranch = UIBranchContainer.make(tofill, 
+			UIBranchContainer radiobranch = UIBranchContainer.make(form, 
 					"scaleIdealValues:", Integer.toString(i)); 									//$NON-NLS-1$
 			UISelectChoice.make(radiobranch, "scale-ideal-value", selectID, i); 				//$NON-NLS-1$
 			UISelectLabel.make(radiobranch, "scale-ideal-label", selectID, i); 					//$NON-NLS-1$
@@ -169,19 +172,19 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, Navigation
 	    */
 		
 		//TODO
-		//makeBoolean(tofill, "scale-hidden", "SCALE_HIDDEN"); 									//$NON-NLS-1$ //$NON-NLS-2$
+		//makeBoolean(form, "scale-hidden", "SCALE_HIDDEN"); 									//$NON-NLS-1$ //$NON-NLS-2$
 		
 		/*
-		UIMessage.make(tofill, "scale-hidden-note", 											//$NON-NLS-1$ 
+		UIMessage.make(form, "scale-hidden-note", 												//$NON-NLS-1$ 
 				"scaleaddmodify.scale.hidden.note"); 											//$NON-NLS-1$
 
 		//TODO
-		UICommand.make(tofill, "scale-add-modify-cancel-button", 								//$NON-NLS-1$
+		UICommand.make(form, "scale-add-modify-cancel-button", 									//$NON-NLS-1$
 				UIMessage.make("scaleaddmodify.cancel.button"),									//$NON-NLS-1$
 				"#{evaluationBean.saveSettingsAction}");   										//$NON-NLS-1$											
 
 		//TODO
-		UICommand.make(tofill, "scale-add-modify-save-button", 									//$NON-NLS-1$
+		UICommand.make(form, "scale-add-modify-save-button", 									//$NON-NLS-1$
 				UIMessage.make("scaleaddmodify.save.scale.button"),								//$NON-NLS-1$
 				"#{evaluationBean.saveSettingsAction}");   										//$NON-NLS-1$
 		*/											
