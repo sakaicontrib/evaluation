@@ -63,7 +63,11 @@ public class ScalesWBL implements WriteableBeanLocator {
 	 * @param toset -  Value of the property to be set    
 	 */
 	public void set(String beanname, Object toset) {
-		evalScalesLogic.saveScale(null, null);
+		
+		System.out.println(" beanname = " + beanname);
+		System.out.println(" toset = " + toset);
+		
+		//evalScalesLogic.saveScale(null, null);
 	}
 
 	/**
