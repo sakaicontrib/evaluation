@@ -24,6 +24,7 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.params.BlockIdsParameters;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
+import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
 import uk.org.ponder.rsf.components.UIBoundBoolean;
@@ -214,8 +215,16 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 			UIMessage.make(form, "itemClassification", "modifytemplate.itemtype.block");
 			UIMessage.make(form, "added-by", "modifyitem.added.by");
 			UIOutput.make(form, "userInfo", external.getUserDisplayName(templateItems[0].getOwner()));
-			// TODO: remove link
+			//  remove link
+			if (modify) {
+				UIBranchContainer showLink = UIBranchContainer.make(form,
+						"showRemoveLink:");
 
+				UIInternalLink.make(showLink, "remove_link", UIMessage.make("modifytemplate.remove.link"),
+						new TemplateItemViewParameters(RemoveQuestionProducer.VIEW_ID,
+								templateId,templateItems[0].getId()));
+			}
+			
 			UIMessage.make(form, "item-header-text-header","modifyblock.item.header.text.header");
 
 			UIMessage.make(form, "scale-type-header","modifyblock.scale.type.header");
@@ -261,21 +270,12 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 						UIBoundBoolean.make(form, "idealColor",
 								"#{templateBBean.idealColor}", null);
 					
-					//categorySettings(isDefaultCourse,itemPath, form);
-					/*
-					radios = UISelect.make(form, "item_category",
-							EvaluationConstant.ITEM_CATEGORY_VALUES, courseCategoryList,
-							itemPath + ".itemCategory", null);*/
 				} else {
 					// selected items are all normal scaled type
 					itemPath = "templateItemBeanLocator.new1";
 					UIBoundBoolean.make(form, "idealColor",
 							"#{templateBBean.idealColor}", null);
-/*					radios = UISelect.make(form, "item_category",
-							EvaluationConstant.ITEM_CATEGORY_VALUES, courseCategoryList,
-							"templateItemBeanLocator.new1." + "itemCategory", null);
-			*/
-					//categorySettings(isDefaultCourse,itemPath, form);
+
 				}
 
 			}
@@ -380,21 +380,12 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 			UISelect radios = UISelect.make(showItemCategory, "item_category",
 					EvaluationConstant.ITEM_CATEGORY_VALUES, courseCategoryList,
 					itemPath + ".itemCategory", null);
-/*			
-			UISelect radios = UISelect.make(showItemCategory, "item_category",
-					EvaluationConstant.ITEM_CATEGORY_VALUES, courseCategoryList,
-					"templateItemBeanLocator." + templateItems[0].getId()
-					+ ".itemCategory", null);
-*/
+
 			String selectID = radios.getFullID();
 			UISelectChoice.make(showItemCategory, "item_category_C", selectID, 0); //$NON-NLS-1$
 			UISelectChoice.make(showItemCategory, "item_category_I", selectID, 1); //$NON-NLS-1$
 		}else{
-			/*
-			form.parameters.add(new UIELBinding("templateItemBeanLocator." + templateItems[0].getId()
-					+ ".itemCategory",
-					EvaluationConstant.ITEM_CATEGORY_VALUES[isDefaultCourse
-							.booleanValue() ? 0 : 1])); */
+		
 			form.parameters.add(new UIELBinding(itemPath + ".itemCategory",
 					EvaluationConstant.ITEM_CATEGORY_VALUES[isDefaultCourse
 							.booleanValue() ? 0 : 1]));
