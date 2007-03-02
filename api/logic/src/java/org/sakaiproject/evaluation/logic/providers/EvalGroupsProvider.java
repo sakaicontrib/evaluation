@@ -48,7 +48,7 @@ public interface EvalGroupsProvider {
 	/**
 	 * Permission: User can be evaluated for any eval group they have this permission in
 	 */
-	public final static String PERM_BE_EVALUATED = "provider.by.evaluated";
+	public final static String PERM_BE_EVALUATED = "provider.be.evaluated";
 	/**
 	 * Permission: User can take an evaluation for any eval group they have this permission in
 	 */
