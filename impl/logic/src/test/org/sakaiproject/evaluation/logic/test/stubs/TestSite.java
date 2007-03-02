@@ -696,4 +696,14 @@ public class TestSite implements Site {
 
 	}
 
+	public boolean isCustomPageOrdered() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public void setCustomPageOrdered(boolean custom) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
