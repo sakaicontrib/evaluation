@@ -18,7 +18,12 @@ import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalScale;
+import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
+import org.sakaiproject.evaluation.tool.LocalScaleLogic;
+import org.sakaiproject.evaluation.tool.LocalTemplateLogic;
+import org.sakaiproject.evaluation.tool.params.EvalScaleParameters;
+import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 
 import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
@@ -39,13 +44,14 @@ import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
 /**
  * Handles scale addition, removal, and modification.
  * 
  * @author Kapil Ahuja (kahuja@vt.edu)
  */
-public class ScaleAddModifyProducer implements ViewComponentProducer, NavigationCaseReporter {
+public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
 
 	// RSF specific
 	public static final String VIEW_ID = "scale_add_modify"; //$NON-NLS-1$
@@ -59,8 +65,10 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, Navigation
 		this.external = external;
 	}
 	
-	// Used to prepare the path for WritableBeanLocator
-    private String SCALES_WBL = "scalesBean";
+	private LocalScaleLogic localScaleLogic;
+	public void setLocalScaleLogic(LocalScaleLogic localScaleLogic) {
+		this.localScaleLogic = localScaleLogic;
+	}
 
 	/* 
 	 * (non-Javadoc)
@@ -76,6 +84,21 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, Navigation
 			// Security check and denial
 			throw new SecurityException("Non-admin users may not access this page");
 		}
+		
+		EvalScaleParameters evalScaleParams = (EvalScaleParameters) viewparams;
+		Long scaleId = evalScaleParams.scaleId;
+		
+		/*
+		 * scaleId as -1 implies that new scale.
+		 * Else means modify the scale with the scaleId passed.
+		 * 
+		 *  TODO: Remove functionality
+		 */ 
+		EvalScale scale;
+		if (scaleId.equals(new Long("-1")))
+			scale = localScaleLogic.newScale();
+		else
+			scale = localScaleLogic.fetchScale(scaleId);		
 
 		/*
 		 * top menu links and bread crumbs here
@@ -109,8 +132,7 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, Navigation
 		UIMessage.make(form, "scale-title-note", 												//$NON-NLS-1$ 
 				"scaleaddmodify.scale.title.note");	 											//$NON-NLS-1$
 
-		//TODO
-		makeInput(form, "scale-title", "1");  													//$NON-NLS-1$ //$NON-NLS-2$
+		UIOutput.make(form, "scale-title", scale.getTitle());									//$NON-NLS-1$
 		
 		/*
 		//TODO
@@ -200,20 +222,7 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, Navigation
 		return i;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * This method is used to render checkboxes.
-	 */
-    private void makeBoolean(UIContainer parent, String ID, String adminkey) {
-      // Must use "composePath" here since admin keys currently contain periods
-      UIBoundBoolean.make(parent, ID, adminkey == null? null : PathUtil.composePath(SCALES_WBL, adminkey)); 
-    }
-	
-	/*
-	 * (non-Javadoc)
-	 * This is a common method used to render text boxes.
-	 */
-    private void makeInput(UIContainer parent, String ID, String adminkey) {
-      UIInput.make(parent, ID, PathUtil.composePath(SCALES_WBL, adminkey));
-    }	
+	public ViewParameters getViewParameters() {
+		return new EvalScaleParameters(VIEW_ID, null);
+	}	
 }

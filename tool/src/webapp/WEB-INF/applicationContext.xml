@@ -42,6 +42,14 @@
     </property>
   </bean>
 
+  <bean id="localScaleLogic"
+    class="org.sakaiproject.evaluation.tool.LocalScaleLogic">
+    <property name="scalesLogic"
+      ref="org.sakaiproject.evaluation.logic.EvalScalesLogic" />
+    <property name="external"
+      ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+  </bean>
+  
   <!-- The beans listed here are session beans (they stick around) -->
   <bean id="myBeanScope" parent="beanScopeParent">
     <property name="copyPreservingBeans" value="evaluationBean" />
