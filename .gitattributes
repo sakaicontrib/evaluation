@@ -107,11 +107,11 @@ tool/src/java/org/sakaiproject/evaluation/tool/EvaluationBeanLocator.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/EvaluationConstant.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ItemsBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/LocalResponsesLogic.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/LocalScaleLogic.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/LocalTemplateLogic.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ReportHandlerHook.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ResponseAnswersBeanLocator.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ResponseBeanLocator.java -text
-tool/src/java/org/sakaiproject/evaluation/tool/ScalesWBL.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/SettingsWBL.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/TakeEvalBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/TemplateBBean.java -text
@@ -122,6 +122,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/params/BlockIdsParameters.java -t
 tool/src/java/org/sakaiproject/evaluation/tool/params/CSVReportViewParams.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/params/EmailViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/params/EssayResponseParams.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/params/EvalScaleParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/params/EvalTakeViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/params/EvalViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/params/PreviewEvalParameters.java -text
