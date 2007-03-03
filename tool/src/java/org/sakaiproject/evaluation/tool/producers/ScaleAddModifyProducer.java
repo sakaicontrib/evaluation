@@ -134,25 +134,19 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParams
 
 		UIOutput.make(form, "scale-title", scale.getTitle());									//$NON-NLS-1$
 		
-		/*
-		//TODO
 		UIInternalLink.make(form, "scale-remove-link", 											//$NON-NLS-1$ 
 				UIMessage.make("scaleaddmodify.remove.scale.link"), 							//$NON-NLS-1$
 				PreviewEmailProducer.VIEW_ID);
 		
-		//TODO
-		EvalScale scale = null;
 		for (int j = 0; j < scale.getOptions().length; ++j){
 			UIBranchContainer scaleOptions = UIBranchContainer.make(form, "scaleOptions:"); 	//$NON-NLS-1$
 			UIOutput.make(scaleOptions, "scale-option-label", (scale.getOptions())[j]); 		//$NON-NLS-1$
 			
-			//TODO
 			UICommand.make(form, "scale-remove-option", 										//$NON-NLS-1$
 					UIMessage.make("scaleaddmodify.remove.scale.option.button"),				//$NON-NLS-1$
 					"#{evaluationBean.saveSettingsAction}");   									//$NON-NLS-1$											
 		}
 		
-		//TODO
 		UICommand.make(form, "scale-add-point", 												//$NON-NLS-1$
 				UIMessage.make("scaleaddmodify.add.scale.option.button"),						//$NON-NLS-1$
 				"#{evaluationBean.saveSettingsAction}");   										//$NON-NLS-1$		
@@ -177,39 +171,33 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParams
 			"scalecontrol.ideal.scale.option.label.mid" 
 		};
 		
-		//TODO
-		UISelect radios = UISelect.make(form, "scaleIdealValues",
+		UISelect radios = UISelect.make(form, "scaleIdealRadio",
 				scaleIdealValues, scaleIdealLabels,
-				null, null).setMessageKeys();
-		
+				null, scale.getIdeal());
 		radios.optionnames = UIOutputMany.make(scaleIdealLabels);
+		radios.setMessageKeys();
 
 	    String selectID = radios.getFullID();
 	    for (int i = 0; i < scaleIdealValues.length; ++i) {
 			UIBranchContainer radiobranch = UIBranchContainer.make(form, 
-					"scaleIdealValues:", Integer.toString(i)); 									//$NON-NLS-1$
-			UISelectChoice.make(radiobranch, "scale-ideal-value", selectID, i); 				//$NON-NLS-1$
+					"scaleIdealOptions:", Integer.toString(i)); 								//$NON-NLS-1$
 			UISelectLabel.make(radiobranch, "scale-ideal-label", selectID, i); 					//$NON-NLS-1$
+			UISelectChoice.make(radiobranch, "scale-ideal-value", selectID, i); 				//$NON-NLS-1$
 	    }
-	    */
 		
-		//TODO
-		//makeBoolean(form, "scale-hidden", "SCALE_HIDDEN"); 									//$NON-NLS-1$ //$NON-NLS-2$
+		UIBoundBoolean.make(form, "scale-hidden", "SCALE_HIDDEN");								//$NON-NLS-1$ //$NON-NLS-2$
+	    
 		
-		/*
 		UIMessage.make(form, "scale-hidden-note", 												//$NON-NLS-1$ 
 				"scaleaddmodify.scale.hidden.note"); 											//$NON-NLS-1$
 
-		//TODO
 		UICommand.make(form, "scale-add-modify-cancel-button", 									//$NON-NLS-1$
 				UIMessage.make("scaleaddmodify.cancel.button"),									//$NON-NLS-1$
 				"#{evaluationBean.saveSettingsAction}");   										//$NON-NLS-1$											
 
-		//TODO
 		UICommand.make(form, "scale-add-modify-save-button", 									//$NON-NLS-1$
 				UIMessage.make("scaleaddmodify.save.scale.button"),								//$NON-NLS-1$
 				"#{evaluationBean.saveSettingsAction}");   										//$NON-NLS-1$
-		*/											
 
 	}
 	
