@@ -367,5 +367,6 @@
 		class="org.sakaiproject.evaluation.tool.producers.ScaleAddModifyProducer">
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+		<property name="localScaleLogic" ref="localScaleLogic" />
 	</bean>	
 </beans>

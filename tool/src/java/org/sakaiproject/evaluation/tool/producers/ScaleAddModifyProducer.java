@@ -22,9 +22,7 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.LocalScaleLogic;
 import org.sakaiproject.evaluation.tool.params.EvalScaleParameters;
-import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 
-import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
@@ -32,7 +30,6 @@ import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
-import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UIOutputMany;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UISelectChoice;
@@ -64,6 +61,11 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParams
 		this.external = external;
 	}
 	
+    private LocalScaleLogic localScaleLogic;
+    public void setLocalScaleLogic(LocalScaleLogic localScaleLogic) {
+      this.localScaleLogic = localScaleLogic;
+    }
+    
 	/* 
 	 * (non-Javadoc)
 	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, 
@@ -81,6 +83,12 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParams
 		
 		EvalScaleParameters evalScaleParams = (EvalScaleParameters) viewparams;
 		Long scaleId = evalScaleParams.scaleId;
+		
+		/*
+		 * Fetching the scale from LocalScaleLogic just because 
+		 * we need the number of scale options.
+		 */ 
+		EvalScale scale = localScaleLogic.fetchScale(scaleId);
 		
 		/*
 		 * top menu links and bread crumbs here
@@ -120,22 +128,18 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParams
 		UIInternalLink.make(form, "scale-remove-link", 											//$NON-NLS-1$ 
 				UIMessage.make("scaleaddmodify.remove.scale.link"), 							//$NON-NLS-1$
 				PreviewEmailProducer.VIEW_ID);
-		/*
-		for (int j = 0; j < scale.getOptions().length; ++j){
-			UIBranchContainer scaleOptions = UIBranchContainer.make(form, "scaleOptions:"); 	//$NON-NLS-1$
-			UIOutput.make(scaleOptions, "scale-option-label", (scale.getOptions())[j]); 		//$NON-NLS-1$
 
-			//TODO: I have no idea how this remove button is supposed to work
+		for (int j = 0; j < scale.getOptions().length; ++j){
+			UIBranchContainer scaleOptions = UIBranchContainer.make(form, "scaleOptions:",		//$NON-NLS-1$ 
+					Integer.toString(j)); 	
+			UIInput.make(scaleOptions, "scale-option-label", path + "options." + j); 			//$NON-NLS-1$
+
 			UICommand.make(form, "scale-remove-option", 										//$NON-NLS-1$
-					UIMessage.make("scaleaddmodify.remove.scale.option.button"),				//$NON-NLS-1$
-					"#{evaluationBean.saveSettingsAction}");   									//$NON-NLS-1$											
+					UIMessage.make("scaleaddmodify.remove.scale.option.button"));   			//$NON-NLS-1$										
 		}
 		
-		//TODO: this is a add button just javascript
 		UICommand.make(form, "scale-add-point", 												//$NON-NLS-1$
-				UIMessage.make("scaleaddmodify.add.scale.option.button"),						//$NON-NLS-1$
-				"#{evaluationBean.saveSettingsAction}");   										//$NON-NLS-1$		
-		*/
+				UIMessage.make("scaleaddmodify.add.scale.option.button"));						//$NON-NLS-1$		
 		
 		UIMessage.make(form, "ideal-note-start", 												//$NON-NLS-1$ 
 				"scaleaddmodify.scale.ideal.note.start"); 										//$NON-NLS-1$
