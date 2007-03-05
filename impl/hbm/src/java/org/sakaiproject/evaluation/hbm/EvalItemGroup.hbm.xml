@@ -12,16 +12,22 @@
         <property name="lastModified" type="java.util.Date">
             <column name="LAST_MODIFIED" not-null="true" />
         </property>
-        <!-- the type of grouping (category, objective, etc.) -->
+        <!-- the type/level of grouping (category, objective, etc.),
+        	goes Category => Objective => Items -->
         <property name="type" type="java.lang.String" length="255" not-null="true" />
         <!-- the title of this grouping (for display) -->
         <property name="title" type="java.lang.String" length="80" not-null="true" />
         <!-- the description of this grouping (should provide info to the user about usage) -->
         <property name="description" type="text" />
-        <!-- linkage to the item -->
-        <many-to-one name="item" class="org.sakaiproject.evaluation.model.EvalItem" fetch="join">
-        	<column name="item_id" not-null="true" />
-        </many-to-one>
-        <!-- NEED TO SOMEHOW REPRESENT THE PARENT AND CHILD GROUPS -->
+        <!-- linkage to the items in this itemgroup -->
+        <set name="groupItems" fetch="join">
+            <key column="IG_ITEM_ID" />
+            <one-to-many class="org.sakaiproject.evaluation.model.EvalItem" />
+        </set>
+        <!-- linkage to the other groups in this itemGroup -->
+        <set name="groupGroups" fetch="join">
+            <key column="IG_ITEMGROUP_ID" />
+            <one-to-many class="org.sakaiproject.evaluation.model.EvalItemGroup" />
+        </set>
 	</class>
 </hibernate-mapping>

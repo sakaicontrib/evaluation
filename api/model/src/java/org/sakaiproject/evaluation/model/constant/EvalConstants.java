@@ -407,4 +407,17 @@ public class EvalConstants {
 	 */ 
 	public static final String HIERARCHY_PERM_CONTROL_TEMPLATES = "HierarchyControlTemplates";
 
+	/**
+	 * ItemGroup Type: Category (root group type)<br/>
+	 * Can contain Objective type groups or Items, must have no parent groups<br/>
+	 * Category => Objective => Item
+	 */
+	public static final String ITEM_GROUP_TYPE_CATEGORY = "ItemGroupCategory";
+	/**
+	 * ItemGroup Type: Objective (subgroup of Category)<br/>
+	 * Can contain Items, must have at least one category parent group<br/>
+	 * Category => Objective => Item
+	 */
+	public static final String ITEM_GROUP_TYPE_OBJECTIVE = "ItemGroupObjective";
+
 }
