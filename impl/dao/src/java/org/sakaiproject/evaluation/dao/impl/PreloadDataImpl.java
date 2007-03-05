@@ -196,7 +196,7 @@ public class PreloadDataImpl {
 	public void preloadExpertItems() {
 
 		// check if there are any items present
-		if (evaluationDao.findAll(EvalScale.class).isEmpty()) {
+		if (evaluationDao.findAll(EvalItem.class).isEmpty()) {
 			// NOTE: If you change the number of items here
 			// you will need to update the test in EvalItemsLogicImplTest also
 
