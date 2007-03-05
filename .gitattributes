@@ -9,6 +9,7 @@ api/logic/src/java/org/sakaiproject/evaluation/dao/EvaluationDao.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalAssignsLogic.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalEmailsLogic.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalEvaluationsLogic.java -text
+api/logic/src/java/org/sakaiproject/evaluation/logic/EvalExpertItemsLogic.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalExternalLogic.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalItemsLogic.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalResponsesLogic.java -text

@@ -309,7 +309,6 @@ public class EvalTemplatesLogicImpl implements EvalTemplatesLogic {
 					new int[] {ByPropsFinder.EQUALS, ByPropsFinder.NOT_EQUALS} );			
 		}
 
-		log.error("size: " + count);
 		if (count == 0) {
 			return true;
 		} else {
