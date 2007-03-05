@@ -230,6 +230,8 @@
 		class="org.sakaiproject.evaluation.tool.producers.ModifyEssayProducer">
 		<property name="templatesLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
+		<property name="itemsLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="settings"
@@ -241,6 +243,8 @@
 		class="org.sakaiproject.evaluation.tool.producers.ModifyHeaderProducer">
 		<property name="templatesLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
+		<property name="itemsLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="settings"
