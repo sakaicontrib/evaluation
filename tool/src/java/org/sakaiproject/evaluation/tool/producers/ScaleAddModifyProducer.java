@@ -18,14 +18,11 @@ import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalScale;
-import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
+import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.LocalScaleLogic;
-import org.sakaiproject.evaluation.tool.LocalTemplateLogic;
 import org.sakaiproject.evaluation.tool.params.EvalScaleParameters;
-import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 
-import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
@@ -65,11 +62,6 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParams
 		this.external = external;
 	}
 	
-	private LocalScaleLogic localScaleLogic;
-	public void setLocalScaleLogic(LocalScaleLogic localScaleLogic) {
-		this.localScaleLogic = localScaleLogic;
-	}
-
 	/* 
 	 * (non-Javadoc)
 	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, 
@@ -88,18 +80,6 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParams
 		EvalScaleParameters evalScaleParams = (EvalScaleParameters) viewparams;
 		Long scaleId = evalScaleParams.scaleId;
 		
-		/*
-		 * scaleId as -1 implies that new scale.
-		 * Else means modify the scale with the scaleId passed.
-		 * 
-		 *  TODO: Remove functionality
-		 */ 
-		EvalScale scale;
-		if (scaleId.equals(new Long("-1")))
-			scale = localScaleLogic.newScale();
-		else
-			scale = localScaleLogic.fetchScale(scaleId);		
-
 		/*
 		 * top menu links and bread crumbs here
 		 */
@@ -131,25 +111,29 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParams
 		 */  
 		UIMessage.make(form, "scale-title-note", 												//$NON-NLS-1$ 
 				"scaleaddmodify.scale.title.note");	 											//$NON-NLS-1$
-
-		UIOutput.make(form, "scale-title", scale.getTitle());									//$NON-NLS-1$
+		
+		String path = "scaleBeanLocator." + scaleId + ".";
+		UIInput.make(form, "scale-title", path + "title");										//$NON-NLS-1$
 		
 		UIInternalLink.make(form, "scale-remove-link", 											//$NON-NLS-1$ 
 				UIMessage.make("scaleaddmodify.remove.scale.link"), 							//$NON-NLS-1$
 				PreviewEmailProducer.VIEW_ID);
-		
+		/*
 		for (int j = 0; j < scale.getOptions().length; ++j){
 			UIBranchContainer scaleOptions = UIBranchContainer.make(form, "scaleOptions:"); 	//$NON-NLS-1$
 			UIOutput.make(scaleOptions, "scale-option-label", (scale.getOptions())[j]); 		//$NON-NLS-1$
-			
+
+			//TODO: I have no idea how this remove button is supposed to work
 			UICommand.make(form, "scale-remove-option", 										//$NON-NLS-1$
 					UIMessage.make("scaleaddmodify.remove.scale.option.button"),				//$NON-NLS-1$
 					"#{evaluationBean.saveSettingsAction}");   									//$NON-NLS-1$											
 		}
 		
+		//TODO: this is a add button just javascript
 		UICommand.make(form, "scale-add-point", 												//$NON-NLS-1$
 				UIMessage.make("scaleaddmodify.add.scale.option.button"),						//$NON-NLS-1$
 				"#{evaluationBean.saveSettingsAction}");   										//$NON-NLS-1$		
+		*/
 		
 		UIMessage.make(form, "ideal-note-start", 												//$NON-NLS-1$ 
 				"scaleaddmodify.scale.ideal.note.start"); 										//$NON-NLS-1$
@@ -173,7 +157,7 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParams
 		
 		UISelect radios = UISelect.make(form, "scaleIdealRadio",
 				scaleIdealValues, scaleIdealLabels,
-				null, scale.getIdeal());
+				path + "ideal", null);
 		radios.optionnames = UIOutputMany.make(scaleIdealLabels);
 		radios.setMessageKeys();
 
@@ -185,19 +169,23 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParams
 			UISelectChoice.make(radiobranch, "scale-ideal-value", selectID, i); 				//$NON-NLS-1$
 	    }
 		
-		UIBoundBoolean.make(form, "scale-hidden", "SCALE_HIDDEN");								//$NON-NLS-1$ //$NON-NLS-2$
-	    
+		String[] sharingList = {
+				"scaleaddmodify.sharing.private", 												//$NON-NLS-1$
+				"scaleaddmodify.sharing.public" 												//$NON-NLS-1$
+		};
+		UISelect.make(form, "scale-sharing",													//$NON-NLS-1$ 
+				EvaluationConstant.MODIFIER_VALUES, sharingList, 	
+				path + "sharing", null).setMessageKeys();										//$NON-NLS-1$ 
 		
 		UIMessage.make(form, "scale-hidden-note", 												//$NON-NLS-1$ 
 				"scaleaddmodify.scale.hidden.note"); 											//$NON-NLS-1$
 
 		UICommand.make(form, "scale-add-modify-cancel-button", 									//$NON-NLS-1$
-				UIMessage.make("scaleaddmodify.cancel.button"),									//$NON-NLS-1$
-				"#{evaluationBean.saveSettingsAction}");   										//$NON-NLS-1$											
+				UIMessage.make("scaleaddmodify.cancel.button"));								//$NON-NLS-1$
 
 		UICommand.make(form, "scale-add-modify-save-button", 									//$NON-NLS-1$
 				UIMessage.make("scaleaddmodify.save.scale.button"),								//$NON-NLS-1$
-				"#{evaluationBean.saveSettingsAction}");   										//$NON-NLS-1$
+				"#{scaleBean.saveScale}");   													//$NON-NLS-1$
 
 	}
 	

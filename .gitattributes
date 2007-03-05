@@ -113,6 +113,8 @@ tool/src/java/org/sakaiproject/evaluation/tool/LocalTemplateLogic.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ReportHandlerHook.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ResponseAnswersBeanLocator.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ResponseBeanLocator.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/ScaleBean.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/ScaleBeanLocator.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/SettingsWBL.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/TakeEvalBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/TemplateBBean.java -text
