@@ -34,6 +34,11 @@
 		<property name="leafParser" ref="staticLeafParser" />
 	</bean>
 
+	<bean id="scaleBean"
+		class="org.sakaiproject.evaluation.tool.ScaleBean">
+		<property name="scaleBeanLocator" ref="scaleBeanLocator" />
+	</bean>
+
 	<bean id="takeEvalBean"
 		class="org.sakaiproject.evaluation.tool.TakeEvalBean">
 		<property name="responseBeanLocator" ref="responseBeanLocator" />
@@ -86,6 +91,11 @@
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="evalsLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+	</bean>
+
+	<bean id="scaleBeanLocator"
+		class="org.sakaiproject.evaluation.tool.ScaleBeanLocator">
+		<property name="localScaleLogic" ref="localScaleLogic" />
 	</bean>
 
 	<bean id="responseBeanLocator"
@@ -355,7 +365,6 @@
 	
 	<bean
 		class="org.sakaiproject.evaluation.tool.producers.ScaleAddModifyProducer">
-		<property name="localScaleLogic" ref="localScaleLogic" />
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 	</bean>	
