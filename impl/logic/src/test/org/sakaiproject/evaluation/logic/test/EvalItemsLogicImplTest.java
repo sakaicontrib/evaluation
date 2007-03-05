@@ -419,11 +419,13 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 	public void testGetItemsForUser() {
 		List l = null;
 		List ids = null;
+		// NOTE: 15 preloaded public expert items to take into account currently
+		int preloadedCount = 32;
 
 		// test getting all items for the admin user
 		l = items.getItemsForUser(EvalTestDataLoad.ADMIN_USER_ID, null);
 		Assert.assertNotNull( l );
-		Assert.assertEquals(9, l.size());
+		Assert.assertEquals(9 + preloadedCount, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item1.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item2.getId() ));
@@ -439,7 +441,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		l = items.getItemsForUser(EvalTestDataLoad.ADMIN_USER_ID, 
 				EvalConstants.SHARING_OWNER);
 		Assert.assertNotNull( l );
-		Assert.assertEquals(9, l.size());
+		Assert.assertEquals(9 + preloadedCount, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item1.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item2.getId() ));
@@ -454,7 +456,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		// test getting all items for the maint user
 		l = items.getItemsForUser(EvalTestDataLoad.MAINT_USER_ID, null);
 		Assert.assertNotNull( l );
-		Assert.assertEquals(7, l.size());
+		Assert.assertEquals(7 + preloadedCount, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item1.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item2.getId() ));
@@ -467,7 +469,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		// test getting all items for the normal user
 		l = items.getItemsForUser(EvalTestDataLoad.USER_ID, null);
 		Assert.assertNotNull( l );
-		Assert.assertEquals(2, l.size());
+		Assert.assertEquals(2 + preloadedCount, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item1.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item2.getId() ));
@@ -508,7 +510,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		l = items.getItemsForUser(EvalTestDataLoad.ADMIN_USER_ID, 
 				EvalConstants.SHARING_PUBLIC);
 		Assert.assertNotNull( l );
-		Assert.assertEquals(2, l.size());
+		Assert.assertEquals(2 + preloadedCount, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item1.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item2.getId() ));
@@ -517,7 +519,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		l = items.getItemsForUser(EvalTestDataLoad.MAINT_USER_ID, 
 				EvalConstants.SHARING_PUBLIC);
 		Assert.assertNotNull( l );
-		Assert.assertEquals(2, l.size());
+		Assert.assertEquals(2 + preloadedCount, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item1.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item2.getId() ));
@@ -526,7 +528,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		l = items.getItemsForUser(EvalTestDataLoad.USER_ID, 
 				EvalConstants.SHARING_PUBLIC);
 		Assert.assertNotNull( l );
-		Assert.assertEquals(2, l.size());
+		Assert.assertEquals(2 + preloadedCount, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item1.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item2.getId() ));
@@ -534,7 +536,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		// test getting items for invalid user returns public only
 		l = items.getItemsForUser( EvalTestDataLoad.INVALID_USER_ID, null );
 		Assert.assertNotNull( l );
-		Assert.assertEquals(2, l.size());
+		Assert.assertEquals(2 + preloadedCount, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item1.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item2.getId() ));
