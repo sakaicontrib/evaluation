@@ -17,13 +17,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.model.EvalTemplate;
+import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
+import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
 import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -62,7 +65,12 @@ public class ModifyHeaderProducer implements ViewComponentProducer,
 	public void setTemplatesLogic(EvalTemplatesLogic templatesLogic) {
 		this.templatesLogic = templatesLogic;
 	}
-
+	
+	private EvalItemsLogic itemsLogic;
+	public void setItemsLogic(EvalItemsLogic itemsLogic) {
+		this.itemsLogic = itemsLogic;
+	}
+	
 	private EvalExternalLogic external;
 	public void setExternal(EvalExternalLogic external) {
 		this.external = external;
@@ -109,7 +117,20 @@ public class ModifyHeaderProducer implements ViewComponentProducer,
 
 		UIMessage.make(form, "item-header", "modifyitem.item.header");
 		UIMessage.make(form,"added-by-header", "modifyitem.added.by"); //$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(form, "itemNo", null, "1.");
+
+		if(templateItemId != null){			
+			
+			EvalTemplateItem ti = itemsLogic.getTemplateItemById(templateItemId);
+			UIOutput.make(form, "itemNo",ti.getDisplayOrder().toString()); //$NON-NLS-1$ //$NON-NLS-2$
+			
+		}else{
+			List l = itemsLogic.getTemplateItemsForTemplate(templateId, external.getCurrentUserId());
+			List templateItemsList = TemplateItemUtils.getNonChildItems(l);			
+			Integer no = new Integer(templateItemsList.size()+1);
+			UIOutput.make(form, "itemNo",no.toString());
+		}
+		
+		
 		UIOutput.make(form, "itemClassification", EvalConstants.ITEM_TYPE_HEADER);
 		UIOutput.make(form, "userInfo", external.getUserDisplayName(template
 				.getOwner()));
