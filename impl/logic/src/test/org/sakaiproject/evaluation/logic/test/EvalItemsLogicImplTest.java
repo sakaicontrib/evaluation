@@ -419,7 +419,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 	public void testGetItemsForUser() {
 		List l = null;
 		List ids = null;
-		// NOTE: 15 preloaded public expert items to take into account currently
+		// NOTE: 32 preloaded public expert items to take into account currently
 		int preloadedCount = 32;
 
 		// test getting all items for the admin user

@@ -114,4 +114,13 @@
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 	</bean>
 
+	<bean id="org.sakaiproject.evaluation.logic.EvalExpertItemsLogic"
+			class="org.sakaiproject.evaluation.logic.impl.EvalExpertItemsLogicImpl"
+			init-method="init">
+		<property name="dao" 
+			ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+		<property name="externalLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+	</bean>
+
 </beans>

@@ -35,6 +35,7 @@ import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
+import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
@@ -132,7 +133,7 @@ public class EvalTestDataLoad {
 	 */
 	public EvalItem item1;
 	/**
-	 * Item that is used in {@link #templateAdmin}, 
+	 * Item that is used in {@link #templateAdmin}, expert,
 	 * locked, scaled, MAINT_USER_ID owns, public
 	 */
 	public EvalItem item2;
@@ -337,6 +338,28 @@ public class EvalTestDataLoad {
 	public EvalAnswer answer4_5;
 	public EvalAnswer answer5_1;
 
+	// ITEM GROUPS
+	/**
+	 * Category with 2 objectives, {@link #objectiveA1} and {@link #objectiveA2} and no items
+	 */
+	public EvalItemGroup categoryA;
+	/**
+	 * Category with no objectives and 1 item {@link #item1}
+	 */
+	public EvalItemGroup categoryB;
+	/**
+	 * Category with no items (empty)
+	 */
+	public EvalItemGroup categoryC;
+	/**
+	 * Objective with 2 items, {@link #item2} and {@link #item6}
+	 */
+	public EvalItemGroup objectiveA1;
+	/**
+	 * Objerctive with no items (empty)
+	 */
+	public EvalItemGroup objectiveA2;
+
 	// some date objects
 	public Date twentyDaysAgo;
 	public Date fifteenDaysAgo;
@@ -392,7 +415,7 @@ public class EvalTestDataLoad {
 		item1.setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
 		item1.setLocked(LOCKED);
 		item2 = new EvalItem(new Date(), MAINT_USER_ID, ITEM_TEXT, 
-				EvalConstants.SHARING_PUBLIC, EvalConstants.ITEM_TYPE_SCALED, NOT_EXPERT);
+				EvalConstants.SHARING_PUBLIC, EvalConstants.ITEM_TYPE_SCALED, EXPERT);
 		item2.setScale(scale1);
 		item2.setScaleDisplaySetting( EvalConstants.ITEM_SCALE_DISPLAY_FULL );
 		item2.setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
@@ -703,6 +726,27 @@ public class EvalTestDataLoad {
 		answers = new HashSet();
 		response6.setAnswers(answers); // left all answers blank
 
+		// catgories and objectives
+		Set itemsA1 = new HashSet();
+		itemsA1.add( item2 );
+		itemsA1.add( item6 );
+		objectiveA1 = new EvalItemGroup(new Date(), EvalConstants.ITEM_GROUP_TYPE_OBJECTIVE,
+				"A1", "description", itemsA1, null);
+		objectiveA2 = new EvalItemGroup(new Date(), EvalConstants.ITEM_GROUP_TYPE_OBJECTIVE,
+				"A2", "description", null, null);
+
+		Set objsA = new HashSet();
+		objsA.add( objectiveA1 );
+		objsA.add( objectiveA2 );
+		categoryA = new EvalItemGroup(new Date(), EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
+				"A", "description", null, objsA);
+		Set itemsB = new HashSet();
+		itemsB.add( item1 );
+		categoryB = new EvalItemGroup(new Date(), EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
+				"B", "description", itemsB, null);
+		categoryC = new EvalItemGroup(new Date(), EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
+				"C", "description", null, null);
+
 	}
 
 	/**
@@ -788,6 +832,13 @@ public class EvalTestDataLoad {
 		dao.save(answer4_1);
 		dao.save(answer4_5);
 		dao.save(answer5_1);
+
+		dao.save(objectiveA1);
+		dao.save(objectiveA2);
+
+		dao.save(categoryA);
+		dao.save(categoryB);
+		dao.save(categoryC);
 	}
 
 	/**
