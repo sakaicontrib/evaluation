@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.tool.utils;
 
 import java.util.Comparator;
+
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 
 /**

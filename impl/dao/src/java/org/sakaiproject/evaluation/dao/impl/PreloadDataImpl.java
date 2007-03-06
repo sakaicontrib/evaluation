@@ -283,6 +283,7 @@ public class PreloadDataImpl {
 					"Assignments", "Measure the perception of out of class assignments", itemSet, null) );
 
 			log.info("Preloaded " + evaluationDao.countAll(EvalItem.class) + " evaluation items");
+			log.info("Preloaded " + evaluationDao.countAll(EvalItemGroup.class) + " evaluation item groups");
 		}
 
 	}
