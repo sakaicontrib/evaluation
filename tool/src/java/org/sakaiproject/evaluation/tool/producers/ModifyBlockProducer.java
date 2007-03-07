@@ -211,12 +211,15 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 			UIForm form = UIForm.make(showBlock, "blockForm"); //$NON-NLS-1$
 
 			UIMessage.make(form,"item-header", "modifyitem.item.header"); //$NON-NLS-1$ //$NON-NLS-2$
-			UIOutput.make(form, "itemNo", "1."); // TODO:
+		
+			UIOutput.make(form, "itemNo", firstDO.toString());
+			
 			UIMessage.make(form, "itemClassification", "modifytemplate.itemtype.block");
 			UIMessage.make(form, "added-by", "modifyitem.added.by");
 			UIOutput.make(form, "userInfo", external.getUserDisplayName(templateItems[0].getOwner()));
 			//  remove link
 			if (modify) {
+							
 				UIBranchContainer showLink = UIBranchContainer.make(form,
 						"showRemoveLink:");
 
@@ -245,6 +248,7 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 
 			String itemPath = null;
 			if (modify) {// modify existing block
+				
 				itemPath = "templateItemBeanLocator." + templateItems[0].getId();
 				if (templateItems[0].getScaleDisplaySetting() != null
 						&& templateItems[0].getScaleDisplaySetting().equals(
@@ -260,6 +264,7 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 			} else {// create new block
 				// creat new block from multiple existing Block and other scaled item
 				if (createFromBlock) {
+						
 					itemPath = "templateItemBeanLocator." + templateItems[0].getId();
 					if (templateItems[0].getScaleDisplaySetting() != null
 							&& templateItems[0].getScaleDisplaySetting().equals(
@@ -271,7 +276,7 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 								"#{templateBBean.idealColor}", null);
 					
 				} else {
-					// selected items are all normal scaled type
+					// selected items are all normal scaled type				
 					itemPath = "templateItemBeanLocator.new1";
 					UIBoundBoolean.make(form, "idealColor",
 							"#{templateBBean.idealColor}", null);
