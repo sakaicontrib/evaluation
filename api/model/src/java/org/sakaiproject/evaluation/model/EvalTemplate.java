@@ -1,6 +1,6 @@
 package org.sakaiproject.evaluation.model;
 
-// Generated 05-Mar-2007 17:49:20 by Hibernate Tools 3.2.0.b9
+// Generated 07-Mar-2007 14:04:08 by Hibernate Tools 3.2.0.b9
 
 import java.util.Date;
 import java.util.HashSet;
@@ -34,8 +34,7 @@ public class EvalTemplate implements java.io.Serializable {
 	public EvalTemplate() {
 	}
 
-	public EvalTemplate(Date lastModified, String owner, String title,
-			String sharing, Boolean expert) {
+	public EvalTemplate(Date lastModified, String owner, String title, String sharing, Boolean expert) {
 		this.lastModified = lastModified;
 		this.owner = owner;
 		this.title = title;
@@ -43,9 +42,8 @@ public class EvalTemplate implements java.io.Serializable {
 		this.expert = expert;
 	}
 
-	public EvalTemplate(Date lastModified, String owner, String title,
-			String description, String sharing, Boolean expert,
-			String expertDescription, Set templateItems, Boolean locked) {
+	public EvalTemplate(Date lastModified, String owner, String title, String description, String sharing,
+			Boolean expert, String expertDescription, Set templateItems, Boolean locked) {
 		this.lastModified = lastModified;
 		this.owner = owner;
 		this.title = title;

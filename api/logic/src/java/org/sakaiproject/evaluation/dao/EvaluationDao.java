@@ -19,6 +19,7 @@ import java.util.Set;
 
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
+import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -98,6 +99,20 @@ public interface EvaluationDao extends CompleteGenericDao {
 	 * @param templateItems the array of {@link EvalTemplateItem} to remove 
 	 */
 	public void removeTemplateItems(EvalTemplateItem[] templateItems);
+
+	/**
+	 * Get item groups contained within a specific group<br/>
+	 * <b>Note:</b> If parent is null then get all the highest level groups
+	 * 
+	 * @param parentItemGroupId the unique id of an {@link EvalItemGroup}, if null then get all the highest level groups
+	 * @param userId the internal user id (not username)
+	 * @param includeEmpty if true then include all groups (even those with nothing in them), else return only groups
+	 * which contain other groups or other items
+	 * @param includeExpert if true then include expert groups only, else include non-expert groups only
+	 * @return a List of {@link EvalItemGroup} objects, ordered by title alphabetically
+	 */
+	public List getItemGroups(Long parentItemGroupId, String userId, boolean includeEmpty, boolean includeExpert);
+
 
 	// LOCKING METHODS
 

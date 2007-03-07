@@ -25,6 +25,8 @@ import java.util.TreeSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
@@ -32,6 +34,7 @@ import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
+import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -291,6 +294,36 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 		log.info("Removed "+deleteTemplateItems.size()+" template items");
 	}
 
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#getItemGroups(java.lang.Long, java.lang.String, boolean, boolean)
+	 */
+	public List getItemGroups(Long parentItemGroupId, String userId, boolean includeEmpty, boolean includeExpert) {
+
+		DetachedCriteria dc = DetachedCriteria.forClass(EvalItemGroup.class)
+			.add( Expression.eq("expert", new Boolean(includeExpert) ) );
+
+		if (parentItemGroupId == null) {
+			dc.add( Expression.isNull("parent") );
+		} else {
+			dc.add( Property.forName("parent.id").eq(parentItemGroupId) );
+		}
+
+		if (!includeEmpty) {
+			String hqlQuery = "select distinct eig.parent.id from EvalItemGroup eig where eig.parent is not null";
+			List parentIds = getHibernateTemplate().find( hqlQuery );
+
+			// only include categories with items OR groups using them as a parent
+			dc.add( Restrictions.disjunction()
+				.add( Property.forName("groupItems").isNotEmpty() )
+				.add( Property.forName("id").in( parentIds ) )
+			);
+		}
+
+		dc.addOrder( Order.asc("title") );
+
+		return getHibernateTemplate().findByCriteria(dc);
+	}
 
 //	public Integer getNextBlockId() {
 //		String hqlQuery = "select max(item.blockId) from EvalItem item";

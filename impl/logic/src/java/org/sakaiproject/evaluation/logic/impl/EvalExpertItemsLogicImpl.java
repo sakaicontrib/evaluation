@@ -61,54 +61,54 @@ public class EvalExpertItemsLogicImpl implements EvalExpertItemsLogic {
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalExpertItemsLogic#getItemGroups(java.lang.Long, java.lang.String, boolean)
 	 */
-	public List getItemGroups(Long parentItemGroupId, String userId, boolean includeEmpty) {
-		log.debug("parentItemGroupId:" + parentItemGroupId + ", userId:" + userId + ", includeEmpty:" + includeEmpty);
+	public List getItemGroups(Long parentItemGroupId, String userId, boolean includeEmpty, boolean includeExpert) {
+		log.debug("parentItemGroupId:" + parentItemGroupId + ", userId:" + userId + ", includeEmpty:" + includeEmpty + ", includeExpert:" + includeExpert);
 
-		List groups = new ArrayList();
-
-		if (parentItemGroupId == null) {
-			// get all top level groups
-			List l = dao.findByProperties(EvalItemGroup.class, 
-					new String[] { "type" }, 
-					new Object[] { EvalConstants.ITEM_GROUP_TYPE_CATEGORY }, 
-					new int[] { ByPropsFinder.EQUALS }, 
-					new String[] { "title" } );
-
-			// get rid of duplicates (why the heck is hibernate giving me duplicates anyway!)
-			for (Iterator iter = l.iterator(); iter.hasNext();) {
-				EvalItemGroup itemGroup = (EvalItemGroup) iter.next();
-				if (! groups.contains(itemGroup)) {
-					groups.add(itemGroup);
-				}
-			}
-
-		} else {
-			// get the item group by id
+		// check this parent is real
+		if (parentItemGroupId != null) {
 			EvalItemGroup itemGroup = (EvalItemGroup) dao.findById(EvalItemGroup.class, parentItemGroupId);
 			if (itemGroup == null) {
 				throw new IllegalArgumentException("Cannot find parent itemGroup with id: " + parentItemGroupId);
 			}
-
-			if ( itemGroup.getGroupGroups() != null ) {
-				groups = new ArrayList( itemGroup.getGroupGroups() );
-				Collections.sort(groups, new ItemGroupComparatorByTitle() );
-			}
 		}
 
-		
+//		List groups = new ArrayList();
+//
+//		if (parentItemGroupId == null) {
+//			// get all top level groups
+//			groups = dao.findByProperties(EvalItemGroup.class, 
+//					new String[] { "parent", "expert" }, 
+//					new Object[] { "", new Boolean(includeExpert) }, 
+//					new int[] { ByPropsFinder.NULL, ByPropsFinder.EQUALS }, 
+//					new String[] { "title" } );				
+//
+//		} else {
+//			groups = dao.findByProperties(EvalItemGroup.class, 
+//					new String[] { "parent.id", "expert" }, 
+//					new Object[] { parentItemGroupId, new Boolean(includeExpert) }, 
+//					new int[] { ByPropsFinder.EQUALS, ByPropsFinder.EQUALS }, 
+//					new String[] { "title" } );
+//
+//		}
+//
+//		if (!includeEmpty) {
+//
+//			groups = dao.findByProperties(EvalItemGroup.class, 
+//					new String[] { "parent.id", "expert" }, 
+//					new Object[] { parentItemGroupId, new Boolean(includeExpert) }, 
+//					new int[] { ByPropsFinder.EQUALS, ByPropsFinder.EQUALS }, 
+//					new String[] { "title" } );
+//
+//			// get rid of the empty item groups
+//			for (Iterator iter = groups.iterator(); iter.hasNext();) {
+//				EvalItemGroup itemGroup = (EvalItemGroup) iter.next();
+//				if ( (itemGroup.getGroupItems() == null || itemGroup.getGroupItems().isEmpty()) ) {
+//					iter.remove();
+//				}
+//			}
+//		}
 
-		if (!includeEmpty) {
-			// get rid of the empty item groups
-			for (Iterator iter = groups.iterator(); iter.hasNext();) {
-				EvalItemGroup itemGroup = (EvalItemGroup) iter.next();
-				if ( (itemGroup.getGroupGroups() == null || itemGroup.getGroupGroups().isEmpty()) &&
-						(itemGroup.getGroupItems() == null || itemGroup.getGroupItems().isEmpty()) ) {
-					iter.remove();
-				}
-			}
-		}
-
-		return groups;
+		return dao.getItemGroups(parentItemGroupId, userId, includeEmpty, includeExpert);
 	}
 
 	/* (non-Javadoc)

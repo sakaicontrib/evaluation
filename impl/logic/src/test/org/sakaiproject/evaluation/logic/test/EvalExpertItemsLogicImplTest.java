@@ -94,7 +94,7 @@ public class EvalExpertItemsLogicImplTest extends AbstractTransactionalSpringCon
 
 	public void testPreloadedData() {
 		// check the full count of preloaded items
-		Assert.assertEquals(16, evaluationDao.countAll(EvalItemGroup.class) );
+		Assert.assertEquals(17, evaluationDao.countAll(EvalItemGroup.class) );
 	}
 
 	/**
@@ -106,19 +106,32 @@ public class EvalExpertItemsLogicImplTest extends AbstractTransactionalSpringCon
 
 		// NOTE: preloaded groups to take into account
 
-		// check all top level groups
-		eItems = expertItems.getItemGroups(null, EvalTestDataLoad.ADMIN_USER_ID, true);
+		// check all expert top level groups
+		eItems = expertItems.getItemGroups(null, EvalTestDataLoad.ADMIN_USER_ID, true, true);
 		Assert.assertNotNull( eItems );
-		Assert.assertEquals(3 + 4, eItems.size()); // 4 preloaded top level groups
+		Assert.assertEquals(3 + 4, eItems.size()); // 4 preloaded top level expert groups
 		ids = EvalTestDataLoad.makeIdList(eItems);
 		Assert.assertTrue(ids.contains( etdl.categoryA.getId() ));
 		Assert.assertTrue(ids.contains( etdl.categoryB.getId() ));
 		Assert.assertTrue(ids.contains( etdl.categoryC.getId() ));
+		Assert.assertTrue(! ids.contains( etdl.categoryD.getId() ));
+		Assert.assertTrue(! ids.contains( etdl.objectiveA1.getId() ));
+		Assert.assertTrue(! ids.contains( etdl.objectiveA2.getId() ));
+
+		// check all non-expert top level groups
+		eItems = expertItems.getItemGroups(null, EvalTestDataLoad.ADMIN_USER_ID, true, false);
+		Assert.assertNotNull( eItems );
+		Assert.assertEquals(1, eItems.size());
+		ids = EvalTestDataLoad.makeIdList(eItems);
+		Assert.assertTrue(! ids.contains( etdl.categoryA.getId() ));
+		Assert.assertTrue(! ids.contains( etdl.categoryB.getId() ));
+		Assert.assertTrue(! ids.contains( etdl.categoryC.getId() ));
+		Assert.assertTrue(ids.contains( etdl.categoryD.getId() ));
 		Assert.assertTrue(! ids.contains( etdl.objectiveA1.getId() ));
 		Assert.assertTrue(! ids.contains( etdl.objectiveA2.getId() ));
 
 		// check all contained groups (objectives) in a parent (category)
-		eItems = expertItems.getItemGroups(etdl.categoryA.getId(), EvalTestDataLoad.ADMIN_USER_ID, true);
+		eItems = expertItems.getItemGroups(etdl.categoryA.getId(), EvalTestDataLoad.ADMIN_USER_ID, true, true);
 		Assert.assertNotNull( eItems );
 		Assert.assertEquals(2, eItems.size());
 		ids = EvalTestDataLoad.makeIdList(eItems);
@@ -126,7 +139,7 @@ public class EvalExpertItemsLogicImplTest extends AbstractTransactionalSpringCon
 		Assert.assertTrue(ids.contains( etdl.objectiveA2.getId() ));
 
 		// check only non-empty top level groups
-		eItems = expertItems.getItemGroups(null, EvalTestDataLoad.ADMIN_USER_ID, false);
+		eItems = expertItems.getItemGroups(null, EvalTestDataLoad.ADMIN_USER_ID, false, true);
 		Assert.assertNotNull( eItems );
 		Assert.assertEquals(2 + 4, eItems.size()); // 4 preloaded non-empty top level groups
 		ids = EvalTestDataLoad.makeIdList(eItems);
@@ -134,20 +147,20 @@ public class EvalExpertItemsLogicImplTest extends AbstractTransactionalSpringCon
 		Assert.assertTrue(ids.contains( etdl.categoryB.getId() ));
 
 		// check only non-empty contained groups
-		eItems = expertItems.getItemGroups(etdl.categoryA.getId(), EvalTestDataLoad.ADMIN_USER_ID, false);
+		eItems = expertItems.getItemGroups(etdl.categoryA.getId(), EvalTestDataLoad.ADMIN_USER_ID, false, true);
 		Assert.assertNotNull( eItems );
 		Assert.assertEquals(1, eItems.size());
 		ids = EvalTestDataLoad.makeIdList(eItems);
 		Assert.assertTrue(ids.contains( etdl.objectiveA1.getId() ));		
 
 		// check trying to get groups from empty group
-		eItems = expertItems.getItemGroups(etdl.categoryC.getId(), EvalTestDataLoad.ADMIN_USER_ID, false);
+		eItems = expertItems.getItemGroups(etdl.categoryC.getId(), EvalTestDataLoad.ADMIN_USER_ID, false, true);
 		Assert.assertNotNull( eItems );
 		Assert.assertEquals(0, eItems.size());
 
 		// test attempting to use invalid item group id
 		try {
-			eItems = expertItems.getItemGroups(EvalTestDataLoad.INVALID_LONG_ID, EvalTestDataLoad.ADMIN_USER_ID, false);
+			eItems = expertItems.getItemGroups(EvalTestDataLoad.INVALID_LONG_ID, EvalTestDataLoad.ADMIN_USER_ID, false, true);
 			Assert.fail("Should have thrown exception");
 		} catch (IllegalArgumentException e) {
 			Assert.assertNotNull(e);

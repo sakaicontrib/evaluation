@@ -1,6 +1,6 @@
 package org.sakaiproject.evaluation.model;
 
-// Generated 05-Mar-2007 17:49:20 by Hibernate Tools 3.2.0.b9
+// Generated 07-Mar-2007 14:04:08 by Hibernate Tools 3.2.0.b9
 
 import java.util.Date;
 import java.util.HashSet;
@@ -46,8 +46,8 @@ public class EvalItem implements java.io.Serializable {
 	public EvalItem() {
 	}
 
-	public EvalItem(Date lastModified, String owner, String itemText,
-			String sharing, String classification, Boolean expert) {
+	public EvalItem(Date lastModified, String owner, String itemText, String sharing, String classification,
+			Boolean expert) {
 		this.lastModified = lastModified;
 		this.owner = owner;
 		this.itemText = itemText;
@@ -56,11 +56,9 @@ public class EvalItem implements java.io.Serializable {
 		this.expert = expert;
 	}
 
-	public EvalItem(Date lastModified, String owner, String itemText,
-			String description, String sharing, String classification,
-			Boolean expert, String expertDescription, EvalScale scale,
-			Set templateItems, Boolean usesNA, Integer displayRows,
-			String scaleDisplaySetting, String category, Boolean locked) {
+	public EvalItem(Date lastModified, String owner, String itemText, String description, String sharing,
+			String classification, Boolean expert, String expertDescription, EvalScale scale, Set templateItems,
+			Boolean usesNA, Integer displayRows, String scaleDisplaySetting, String category, Boolean locked) {
 		this.lastModified = lastModified;
 		this.owner = owner;
 		this.itemText = itemText;

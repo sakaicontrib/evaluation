@@ -35,18 +35,19 @@ public interface EvalExpertItemsLogic {
 	 * @param userId the internal user id (not username)
 	 * @param includeEmpty if true then include all groups (even those with nothing in them), else return only groups
 	 * which contain other groups or other items
+	 * @param includeExpert if true then include expert groups only, else include non-expert groups only
 	 * @return a List of {@link EvalItemGroup} objects, ordered by title alphabetically
 	 */
-	public List getItemGroups(Long parentItemGroupId, String userId, boolean includeEmpty);
+	public List getItemGroups(Long parentItemGroupId, String userId, boolean includeEmpty, boolean includeExpert);
 
 	/**
 	 * Get all items contained within an item group (this does NOT retrieve items contained within subgroups of the given group)
 	 * 
 	 * @param itemGroupId the unique id of an {@link EvalItemGroup}
-	 * @param expertOnly if true, then retrieve only expert items, otherwise get all items
+	 * @param includeExpert if true then include expert groups only, else include non-expert groups only
 	 * @return a List of {@link EvalItem} objects, ordered by title alphabetically
 	 */
-	public List getItemsInItemGroup(Long itemGroupId, boolean expertOnly);
+	public List getItemsInItemGroup(Long itemGroupId, boolean includeExpert);
 
 
 	/**
@@ -57,7 +58,8 @@ public interface EvalExpertItemsLogic {
 	 * @param itemGroup a previously persisted {@link EvalItemGroup} object
 	 * @param userId the internal user id (not username)
 	 * @param parentCategoryId the parent category id for this item group, this must be null if the
-	 * group is of type CATEGORY but must NOT be null if any other group type is used
+	 * group is of type CATEGORY but should NOT be null if any other group type is used 
+	 * (you may instead insert the actual parent group if you like)
 	 */
 	public void createItemGroup(EvalItemGroup itemGroup, String userId, Long parentCategoryId);
 

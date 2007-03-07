@@ -202,85 +202,76 @@ public class PreloadDataImpl {
 
 			// create expert items
 			Set itemSet;
-			Set groupSet;
-	
+
 			// student development
-			groupSet = new HashSet();
-	
+			EvalItemGroup newCategory = saveCategoryGroup("Student Development", "Determine how student development is perceived", null);
+
 			itemSet = new HashSet();
 			itemSet.add( saveScaledExpertItem("I learned a good deal of factual material in this course", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
 			itemSet.add( saveScaledExpertItem("I gained a good understanding of principals and concepts in this field", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
 			itemSet.add( saveScaledExpertItem("I developed the a working knowledge of this field", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
-			groupSet.add( saveObjectiveGroup("Knowledge", "", itemSet) );
-	
+			saveObjectiveGroup("Knowledge", "", itemSet, newCategory);
+
 			itemSet = new HashSet();
 			itemSet.add( saveScaledExpertItem("I participated actively in group discussions", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
 			itemSet.add( saveScaledExpertItem("I developed leadership skills within this group", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
 			itemSet.add( saveScaledExpertItem("I developed new friendships within this group", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
-			groupSet.add( saveObjectiveGroup("Participation", "", itemSet) );
-	
+			saveObjectiveGroup("Participation", "", itemSet, newCategory);
+
 			itemSet = new HashSet();
 			itemSet.add( saveScaledExpertItem("I gained a better understanding of myself through this course", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
 			itemSet.add( saveScaledExpertItem("I developed a greater sense of personal responsibility", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
 			itemSet.add( saveScaledExpertItem("I increased my awareness of my own interests and talents", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
-			groupSet.add( saveObjectiveGroup("Self-concept", "", itemSet) );
-	
+			saveObjectiveGroup("Self-concept", "", itemSet, newCategory);
+
 			itemSet = new HashSet();
 			itemSet.add( saveScaledExpertItem("Group activities contributed significantly to my learning", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
 			itemSet.add( saveScaledExpertItem("Collaborative group activities helped me learn the materials", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
 			itemSet.add( saveScaledExpertItem("Working with others in the group helpded me learn more effectively", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
-			groupSet.add( saveObjectiveGroup("Interaction", "", itemSet) );
-	
-			evaluationDao.save( new EvalItemGroup(new Date(), EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
-					"Student Development", "Determine how student development is perceived", null, groupSet) );
-	
-	
+			saveObjectiveGroup("Interaction", "", itemSet, newCategory);
+
+
 			// instructor effectiveness
-			groupSet = new HashSet();
-	
+			newCategory = saveCategoryGroup("Instructor Effectiveness", "Determine the perceived effectiveness of the instructor", null);
+
 			itemSet = new HashSet();
 			itemSet.add( saveScaledExpertItem("The instructor explained material clearly and understandably", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_INSTRUCTOR) );
 			itemSet.add( saveScaledExpertItem("The instructor handled questions well", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_INSTRUCTOR) );
 			itemSet.add( saveScaledExpertItem("The instructor appeared to have a thorough knowledge of the subject and field", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_INSTRUCTOR) );
 			itemSet.add( saveScaledExpertItem("The instructor taught in a manner that served my needs", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_INSTRUCTOR) );
-			groupSet.add( saveObjectiveGroup("Skill", "", itemSet) );
-	
+			saveObjectiveGroup("Skill", "", itemSet, newCategory);
+
 			itemSet = new HashSet();
 			itemSet.add( saveScaledExpertItem("The instructor was friendly", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_INSTRUCTOR) );
 			itemSet.add( saveScaledExpertItem("The instructor was permissive and flexible", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_INSTRUCTOR) );
 			itemSet.add( saveScaledExpertItem("The instructor treated students with respect", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_INSTRUCTOR) );
-			groupSet.add( saveObjectiveGroup("Climate", "", itemSet) );
-	
+			saveObjectiveGroup("Climate", "", itemSet, newCategory);
+
 			itemSet = new HashSet();
 			itemSet.add( saveScaledExpertItem("The instructor suggested specific ways students could improve", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_INSTRUCTOR) );
 			itemSet.add( saveScaledExpertItem("The instructor gave positive feedback when students did especially well", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_INSTRUCTOR) );
 			itemSet.add( saveScaledExpertItem("The instructor kept students informed of their progress", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_INSTRUCTOR) );
-			groupSet.add( saveObjectiveGroup("Feedback", "", itemSet) );
-	
-			evaluationDao.save( new EvalItemGroup(new Date(), EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
-					"Instructor Effectiveness", "Determine the perceived effectiveness of the instructor", null, groupSet) );
-	
-	
+			saveObjectiveGroup("Feedback", "", itemSet, newCategory);
+
+
 			itemSet = new HashSet();
 			itemSet.add( saveScaledExpertItem("Examinations covered the important aspects of the course", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
 			itemSet.add( saveScaledExpertItem("Exams were creative and required original thought", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
 			itemSet.add( saveScaledExpertItem("Exams were reasonable in length and difficulty", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
 			itemSet.add( saveScaledExpertItem("Examination items were clearly worded", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
 			itemSet.add( saveScaledExpertItem("Exam length was appropriate for the time alloted", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
-	
-			evaluationDao.save( new EvalItemGroup(new Date(), EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
-					"Exams", "Measure the perception of examinations", itemSet, null) );
-	
-	
+
+			saveCategoryGroup("Exams", "Measure the perception of examinations", itemSet);
+
 			itemSet = new HashSet();
 			itemSet.add( saveScaledExpertItem("Assignments were interesting and stimulating", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
 			itemSet.add( saveScaledExpertItem("Assignments made students think", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
 			itemSet.add( saveScaledExpertItem("Assignments required a reasonable amount of time and effort", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
 			itemSet.add( saveScaledExpertItem("Assignments were relevant to what was presented", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
 			itemSet.add( saveScaledExpertItem("Assignments were graded fairly", null, null, agreeDisagree, EvalConstants.ITEM_CATEGORY_COURSE) );
-	
-			evaluationDao.save( new EvalItemGroup(new Date(), EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
-					"Assignments", "Measure the perception of out of class assignments", itemSet, null) );
+
+			saveCategoryGroup("Assignments", "Measure the perception of out of class assignments", itemSet);
+
 
 			log.info("Preloaded " + evaluationDao.countAll(EvalItem.class) + " evaluation items");
 			log.info("Preloaded " + evaluationDao.countAll(EvalItemGroup.class) + " evaluation item groups");
@@ -297,10 +288,18 @@ public class PreloadDataImpl {
 		return item;
 	}
 
-	private EvalItemGroup saveObjectiveGroup(String title, String description, Set items) {
+	private EvalItemGroup saveObjectiveGroup(String title, String description, Set items, EvalItemGroup parentGroup) {
 		EvalItemGroup group = new EvalItemGroup(new Date(), EvalConstants.ITEM_GROUP_TYPE_OBJECTIVE,
-				title, description, items, null);
+				title, description, Boolean.TRUE, parentGroup, items);
 		evaluationDao.save( group );
 		return group;
 	}
+
+	private EvalItemGroup saveCategoryGroup(String title, String description, Set items) {
+		EvalItemGroup group = new EvalItemGroup(new Date(), EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
+				title, description, Boolean.TRUE, null, items);
+		evaluationDao.save( group );
+		return group;
+	}
+
 }
