@@ -271,13 +271,15 @@
 		<table border="0" cellspacing="0" cellpadding="0" width="90%">	
 			<tr>
 				<td width="30%" align="left">
-				<!--  <input name="cancel_setting" rsf:id="cancelSetting" type="submit" value="Cancel" /> -->
-				<input name="cancel_setting" type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" rsf:id="cancel-button"/>
+					<span rsf:id="firstTime:">
+						<input name="cancel_setting" type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" rsf:id="cancel-button"/>
+					</span>
+					<span rsf:id="subsequentTimes:">
+						<input name="cancel_setting" type="submit" value="Cancel" rsf:id="cancel-button"/>
+					</span>
 				</td>
 				
 				<td align="right" width="90%">
-				<!--  	<input name="save_settings_action" rsf:id="saveSettings" type="submit" value="Save Settings"/> -->
-					&nbsp;
 					<input name="continue_assigning" rsf:id="continueAssigning" type="submit" value="Continue to Assign to Courses"/>  
 				</td>
 			</tr>

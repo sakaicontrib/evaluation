@@ -481,15 +481,26 @@ public class EvaluationSettingsProducer implements ViewComponentProducer,
 		 * button else this is the "Continue to Assign to Courses" button
 		 */
 		if (evaluationBean.eval.getId() == null) {
-			UICommand.make(form, "continueAssigning", UIMessage
-					.make("evalsettings.continue.assigning.link"),
-					"#{evaluationBean.continueAssigningAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			UICommand.make(form, "continueAssigning", UIMessage					//$NON-NLS-1$
+					.make("evalsettings.continue.assigning.link"),				//$NON-NLS-1$
+					"#{evaluationBean.continueAssigningAction}"); 				//$NON-NLS-1$
+			
+			UIBranchContainer firstTime = UIBranchContainer.make(form, 
+					"firstTime:"); 												//$NON-NLS-1$
+			UIMessage.make(firstTime, "cancel-button", 							//$NON-NLS-1$ 
+					"general.cancel.button");   								//$NON-NLS-1$ 
+			
 		} else {
-			UICommand.make(form, "continueAssigning", UIMessage
-					.make("evalsettings.save.settings.link"),
-					"#{evaluationBean.saveSettingsAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$	
+			UICommand.make(form, "continueAssigning", UIMessage					//$NON-NLS-1$
+					.make("evalsettings.save.settings.link"),					//$NON-NLS-1$
+					"#{evaluationBean.saveSettingsAction}"); 					//$NON-NLS-1$	
+
+			UIBranchContainer subsequentTimes = UIBranchContainer.make(form, 
+					"subsequentTimes:"); 										//$NON-NLS-1$
+			UICommand.make(subsequentTimes, "cancel-button", UIMessage			//$NON-NLS-1$
+					.make("general.cancel.button"),								//$NON-NLS-1$
+					"#{evaluationBean.cancelSettingsAction}"); 					//$NON-NLS-1$	
 		}
-		UIMessage.make(form, "cancel-button", "general.cancel.button");
 	}
 
 	/*

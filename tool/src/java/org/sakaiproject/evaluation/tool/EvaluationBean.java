@@ -269,6 +269,24 @@ public class EvaluationBean {
 	
 	/**
 	 * Method binding to the "Cancel" button on the 
+	 * evaluation_setting.html when editing an existing
+	 * evaluation (that is not for new evaluation because
+	 * then the cancel button is just history.back).
+	 * 
+	 * @return View id that sends the control to 
+	 * 			control panel
+	 */
+	public String cancelSettingsAction() {	
+
+		// Reset the eval item here
+		clearEvaluation();
+		
+	    return ControlPanelProducer.VIEW_ID;
+	}	
+	
+	
+	/**
+	 * Method binding to the "Cancel" button on the 
 	 * evaluation_assign.html.
 	 * 
 	 * @return View id that sends the control to summary page.
@@ -422,7 +440,30 @@ public class EvaluationBean {
 	 * @return View id that sends the control to evaluation start page.
 	 */	
 	public String startEvaluation(){
-		clearEvaluation();
+		
+		/*
+		 * Start evaluation page can be reached from three different places:
+		 * (a) The "Modify Template" page by clicking on:
+		 * 		"Begin an evaluation using this template" internal link.
+		 * 
+		 * (b) The summary page by clicking on "Begin Evaluation" internal link.
+		 * 
+		 * (c) This one i.e. control panel page by clicking on "Start Evaluation" 
+		 *  	command button (that calls this method).
+		 *  
+		 * As bean cannot be cleared from internal links, so not clearing the 
+		 * bean here in command button too. Ideally this command button should 
+		 * also be converted to an internal link. 
+		 * 
+		 * Also, clearing bean at the above three places is not important as it 
+		 * is being cleared at three places where it is important:
+		 * - saveSettingsAction
+		 * - cancelSettingsAction
+		 * - doneAssignmentAction
+		 * 
+		 * kahuja on March 7th, 2007
+		 */
+		
 		return EvaluationStartProducer.VIEW_ID;
 	}
 	
