@@ -340,23 +340,27 @@ public class EvalTestDataLoad {
 
 	// ITEM GROUPS
 	/**
-	 * Category with 2 objectives, {@link #objectiveA1} and {@link #objectiveA2} and no items
+	 * Category with 2 objectives, {@link #objectiveA1} and {@link #objectiveA2} and no items, expert
 	 */
 	public EvalItemGroup categoryA;
 	/**
-	 * Category with no objectives and 1 item {@link #item1}
+	 * Category with no objectives and 1 item {@link #item1}, expert
 	 */
 	public EvalItemGroup categoryB;
 	/**
-	 * Category with no items (empty)
+	 * Category with no items (empty), expert
 	 */
 	public EvalItemGroup categoryC;
 	/**
-	 * Objective with 2 items, {@link #item2} and {@link #item6}
+	 * Category with no items (empty), not expert
+	 */
+	public EvalItemGroup categoryD;
+	/**
+	 * Objective with 2 items, {@link #item2} and {@link #item6}, expert
 	 */
 	public EvalItemGroup objectiveA1;
 	/**
-	 * Objerctive with no items (empty)
+	 * Objerctive with no items (empty), expert
 	 */
 	public EvalItemGroup objectiveA2;
 
@@ -727,25 +731,24 @@ public class EvalTestDataLoad {
 		response6.setAnswers(answers); // left all answers blank
 
 		// catgories and objectives
+		categoryA = new EvalItemGroup(new Date(), EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
+				"A", "description", Boolean.TRUE, null, null);
+		Set itemsB = new HashSet();
+		itemsB.add( item1 );
+		categoryB = new EvalItemGroup(new Date(), EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
+				"B", "description", Boolean.TRUE, null, itemsB);
+		categoryC = new EvalItemGroup(new Date(), EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
+				"C", "description", Boolean.TRUE, null, null);
+		categoryD = new EvalItemGroup(new Date(), EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
+				"D", "description", Boolean.FALSE, null, null);
+
 		Set itemsA1 = new HashSet();
 		itemsA1.add( item2 );
 		itemsA1.add( item6 );
 		objectiveA1 = new EvalItemGroup(new Date(), EvalConstants.ITEM_GROUP_TYPE_OBJECTIVE,
-				"A1", "description", itemsA1, null);
+				"A1", "description", Boolean.TRUE, categoryA, itemsA1);
 		objectiveA2 = new EvalItemGroup(new Date(), EvalConstants.ITEM_GROUP_TYPE_OBJECTIVE,
-				"A2", "description", null, null);
-
-		Set objsA = new HashSet();
-		objsA.add( objectiveA1 );
-		objsA.add( objectiveA2 );
-		categoryA = new EvalItemGroup(new Date(), EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
-				"A", "description", null, objsA);
-		Set itemsB = new HashSet();
-		itemsB.add( item1 );
-		categoryB = new EvalItemGroup(new Date(), EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
-				"B", "description", itemsB, null);
-		categoryC = new EvalItemGroup(new Date(), EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
-				"C", "description", null, null);
+				"A2", "description", Boolean.TRUE, categoryA, null);
 
 	}
 
@@ -833,12 +836,13 @@ public class EvalTestDataLoad {
 		dao.save(answer4_5);
 		dao.save(answer5_1);
 
-		dao.save(objectiveA1);
-		dao.save(objectiveA2);
-
 		dao.save(categoryA);
 		dao.save(categoryB);
 		dao.save(categoryC);
+		dao.save(categoryD);
+
+		dao.save(objectiveA1);
+		dao.save(objectiveA2);
 	}
 
 	/**

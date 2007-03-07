@@ -1,6 +1,6 @@
 package org.sakaiproject.evaluation.model;
 
-// Generated 05-Mar-2007 17:49:20 by Hibernate Tools 3.2.0.b9
+// Generated 07-Mar-2007 14:04:08 by Hibernate Tools 3.2.0.b9
 
 import java.util.Date;
 

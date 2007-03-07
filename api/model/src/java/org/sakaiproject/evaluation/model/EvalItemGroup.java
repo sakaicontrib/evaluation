@@ -1,6 +1,6 @@
 package org.sakaiproject.evaluation.model;
 
-// Generated 05-Mar-2007 17:49:20 by Hibernate Tools 3.2.0.b9
+// Generated 07-Mar-2007 14:04:08 by Hibernate Tools 3.2.0.b9
 
 import java.util.Date;
 import java.util.HashSet;
@@ -21,9 +21,11 @@ public class EvalItemGroup implements java.io.Serializable {
 
 	private String description;
 
-	private Set groupItems = new HashSet(0);
+	private Boolean expert;
 
-	private Set groupGroups = new HashSet(0);
+	private EvalItemGroup parent;
+
+	private Set groupItems = new HashSet(0);
 
 	public EvalItemGroup() {
 	}
@@ -34,14 +36,15 @@ public class EvalItemGroup implements java.io.Serializable {
 		this.title = title;
 	}
 
-	public EvalItemGroup(Date lastModified, String type, String title,
-			String description, Set groupItems, Set groupGroups) {
+	public EvalItemGroup(Date lastModified, String type, String title, String description, Boolean expert,
+			EvalItemGroup parent, Set groupItems) {
 		this.lastModified = lastModified;
 		this.type = type;
 		this.title = title;
 		this.description = description;
+		this.expert = expert;
+		this.parent = parent;
 		this.groupItems = groupItems;
-		this.groupGroups = groupGroups;
 	}
 
 	public Long getId() {
@@ -84,20 +87,28 @@ public class EvalItemGroup implements java.io.Serializable {
 		this.description = description;
 	}
 
+	public Boolean getExpert() {
+		return this.expert;
+	}
+
+	public void setExpert(Boolean expert) {
+		this.expert = expert;
+	}
+
+	public EvalItemGroup getParent() {
+		return this.parent;
+	}
+
+	public void setParent(EvalItemGroup parent) {
+		this.parent = parent;
+	}
+
 	public Set getGroupItems() {
 		return this.groupItems;
 	}
 
 	public void setGroupItems(Set groupItems) {
 		this.groupItems = groupItems;
-	}
-
-	public Set getGroupGroups() {
-		return this.groupGroups;
-	}
-
-	public void setGroupGroups(Set groupGroups) {
-		this.groupGroups = groupGroups;
 	}
 
 }
