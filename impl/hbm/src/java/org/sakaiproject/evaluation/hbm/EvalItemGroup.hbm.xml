@@ -10,7 +10,11 @@
             <generator class="native" />
         </id>
         <property name="lastModified" type="java.util.Date">
-            <column name="LAST_MODIFIED" not-null="true" />
+            <column name="LAST_MODIFIED" />
+        </property>
+        <!-- this should be the internal userId -->
+        <property name="owner" type="java.lang.String" index="eval_itemgroup_owner">
+            <column name="OWNER" not-null="true" length="255" />
         </property>
         <!-- the type/level of grouping (category, objective, etc.), goes Category => Objective => Items -->
         <property name="type" type="java.lang.String" length="255" not-null="true"  index="eval_itemgroup_type" />

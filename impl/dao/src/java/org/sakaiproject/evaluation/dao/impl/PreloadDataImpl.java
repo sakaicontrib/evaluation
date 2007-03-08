@@ -289,14 +289,14 @@ public class PreloadDataImpl {
 	}
 
 	private EvalItemGroup saveObjectiveGroup(String title, String description, Set items, EvalItemGroup parentGroup) {
-		EvalItemGroup group = new EvalItemGroup(new Date(), EvalConstants.ITEM_GROUP_TYPE_OBJECTIVE,
+		EvalItemGroup group = new EvalItemGroup(new Date(), ADMIN_OWNER, EvalConstants.ITEM_GROUP_TYPE_OBJECTIVE,
 				title, description, Boolean.TRUE, parentGroup, items);
 		evaluationDao.save( group );
 		return group;
 	}
 
 	private EvalItemGroup saveCategoryGroup(String title, String description, Set items) {
-		EvalItemGroup group = new EvalItemGroup(new Date(), EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
+		EvalItemGroup group = new EvalItemGroup(new Date(), ADMIN_OWNER, EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
 				title, description, Boolean.TRUE, null, items);
 		evaluationDao.save( group );
 		return group;

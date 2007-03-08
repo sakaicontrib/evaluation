@@ -29,7 +29,6 @@ import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
-import org.sakaiproject.genericdao.api.finders.ByPropsFinder;
 
 /**
  * Implementation for the expert items api
@@ -72,42 +71,6 @@ public class EvalExpertItemsLogicImpl implements EvalExpertItemsLogic {
 			}
 		}
 
-//		List groups = new ArrayList();
-//
-//		if (parentItemGroupId == null) {
-//			// get all top level groups
-//			groups = dao.findByProperties(EvalItemGroup.class, 
-//					new String[] { "parent", "expert" }, 
-//					new Object[] { "", new Boolean(includeExpert) }, 
-//					new int[] { ByPropsFinder.NULL, ByPropsFinder.EQUALS }, 
-//					new String[] { "title" } );				
-//
-//		} else {
-//			groups = dao.findByProperties(EvalItemGroup.class, 
-//					new String[] { "parent.id", "expert" }, 
-//					new Object[] { parentItemGroupId, new Boolean(includeExpert) }, 
-//					new int[] { ByPropsFinder.EQUALS, ByPropsFinder.EQUALS }, 
-//					new String[] { "title" } );
-//
-//		}
-//
-//		if (!includeEmpty) {
-//
-//			groups = dao.findByProperties(EvalItemGroup.class, 
-//					new String[] { "parent.id", "expert" }, 
-//					new Object[] { parentItemGroupId, new Boolean(includeExpert) }, 
-//					new int[] { ByPropsFinder.EQUALS, ByPropsFinder.EQUALS }, 
-//					new String[] { "title" } );
-//
-//			// get rid of the empty item groups
-//			for (Iterator iter = groups.iterator(); iter.hasNext();) {
-//				EvalItemGroup itemGroup = (EvalItemGroup) iter.next();
-//				if ( (itemGroup.getGroupItems() == null || itemGroup.getGroupItems().isEmpty()) ) {
-//					iter.remove();
-//				}
-//			}
-//		}
-
 		return dao.getItemGroups(parentItemGroupId, userId, includeEmpty, includeExpert);
 	}
 
@@ -144,52 +107,137 @@ public class EvalExpertItemsLogicImpl implements EvalExpertItemsLogic {
 
 
 	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.EvalExpertItemsLogic#createItemGroup(org.sakaiproject.evaluation.model.EvalItemGroup, java.lang.String, java.lang.Long)
+	 * @see org.sakaiproject.evaluation.logic.EvalExpertItemsLogic#getItemGroupById(java.lang.Long)
 	 */
-	public void createItemGroup(EvalItemGroup itemGroup, String userId, Long parentCategoryId) {
-		log.debug("itemGroup:" + itemGroup.getTitle() + ", userId:" + userId + ", parentCategoryId:" + parentCategoryId);
+	public EvalItemGroup getItemGroupById(Long itemGroupId) {
+		log.debug("itemGroupId:" + itemGroupId );
 
-		// set the date modified
-		itemGroup.setLastModified( new Date() );
-
-		// TODO Auto-generated method stub
-
+		return (EvalItemGroup) dao.findById(EvalItemGroup.class, itemGroupId);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.EvalExpertItemsLogic#updateItemGroup(org.sakaiproject.evaluation.model.EvalItemGroup, java.lang.String)
+	 * @see org.sakaiproject.evaluation.logic.EvalExpertItemsLogic#saveItemGroup(org.sakaiproject.evaluation.model.EvalItemGroup, java.lang.String)
 	 */
-	public void updateItemGroup(EvalItemGroup itemGroup, String userId) {
+	public void saveItemGroup(EvalItemGroup itemGroup, String userId) {
 		log.debug("itemGroup:" + itemGroup.getId() + ", userId:" + userId);
 
 		// set the date modified
 		itemGroup.setLastModified( new Date() );
 
-		// TODO Auto-generated method stub
+		// fill in the default settings for optional unspecified values
+		if ( itemGroup.getExpert() == null ) {
+			itemGroup.setExpert( Boolean.FALSE );
+		}
 
+		// check only admin can create expert item groups
+		if ( itemGroup.getExpert().booleanValue() && ! external.isUserAdmin(userId) ) {
+			throw new IllegalArgumentException("Only admins can create expert item groups");
+		}
+
+		// check that the type is valid
+		if ( itemGroup.getType() == null ) {
+			throw new IllegalArgumentException("Item group type cannot be null");
+		}
+		if ( itemGroup.getExpert().booleanValue() && ! checkItemGroupType( itemGroup.getType() ) ) {
+			throw new IllegalArgumentException("Invalid item group type for expert group: " + itemGroup.getType() );
+		}
+
+		// check that the parent is set correctly
+		if ( EvalConstants.ITEM_GROUP_TYPE_OBJECTIVE.equals( itemGroup.getType() ) && itemGroup.getParent() == null ) {
+			throw new IllegalArgumentException("Cannot have a null parent for an objective type item group: " + itemGroup.getType() );
+		} else if ( EvalConstants.ITEM_GROUP_TYPE_CATEGORY.equals( itemGroup.getType() ) && itemGroup.getParent() != null ) {
+			throw new IllegalArgumentException("Cannot have a parent for a category type item group: " + itemGroup.getType() );
+		}
+
+		// check user can create or update item group
+		if (checkUserControlItemGroup(userId, itemGroup)) {
+			dao.save(itemGroup);
+
+			log.info("User ("+userId+") saved itemGroup ("+itemGroup.getId()+"), " + " of type ("+ itemGroup.getType()+")");
+			return;		
+		}
+
+		// should not get here so die if we do
+		throw new RuntimeException("User ("+userId+") could NOT save itemGroup ("+itemGroup.getId()+")");
 	}
 
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalExpertItemsLogic#removeItemGroup(java.lang.Long, java.lang.String, boolean)
 	 */
-	public boolean removeItemGroup(Long itemGroupId, String userId,	boolean removeNonEmptyGroup) {
+	public void removeItemGroup(Long itemGroupId, String userId, boolean removeNonEmptyGroup) {
 		log.debug("itemGroupId:" + itemGroupId + ", userId:" + userId + ", removeNonEmptyGroup:" + removeNonEmptyGroup);
 
-		// TODO Auto-generated method stub
+		// get the item by id
+		EvalItemGroup itemGroup = (EvalItemGroup) dao.findById(EvalItemGroup.class, itemGroupId);
+		if (itemGroup == null) {
+			throw new IllegalArgumentException("Cannot find item group item with id: " + itemGroupId);
+		}
+
+		// check user can create or update item group
+		if (checkUserControlItemGroup(userId, itemGroup)) {
+
+			if (! removeNonEmptyGroup) {
+				// not empty cannot be removed
+				List l = dao.getItemGroups(itemGroup.getId(), userId, true, true);
+				if (l.size() > 0) {
+					throw new IllegalStateException("Cannot remove non-empty item group: " + itemGroupId);
+				}
+			}
+
+			dao.delete(itemGroup);
+
+			log.info("User ("+userId+") removed itemGroup ("+itemGroup.getId()+"), " + " of type ("+ itemGroup.getType()+")");
+			return;		
+		}
+
+		// should not get here so die if we do
+		throw new RuntimeException("User ("+userId+") could NOT remove itemGroup ("+itemGroup.getId()+")");
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalExpertItemsLogic#canUpdateItemGroup(java.lang.String, java.lang.Long)
+	 */
+	public boolean canUpdateItemGroup(String userId, Long itemGroupId) {
+		log.debug("itemGroupId:" + itemGroupId + ", userId:" + userId);
+
+		// get the item by id
+		EvalItemGroup itemGroup = (EvalItemGroup) dao.findById(EvalItemGroup.class, itemGroupId);
+		if (itemGroup == null) {
+			throw new IllegalArgumentException("Cannot find item group item with id: " + itemGroupId);
+		}
+
+		// check perms
+		try {
+			return checkUserControlItemGroup(userId, itemGroup);
+		} catch (RuntimeException e) {
+			log.info(e.getMessage());
+		}
 		return false;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.EvalExpertItemsLogic#canControlItemGroup(java.lang.String, java.lang.Long)
+	 * @see org.sakaiproject.evaluation.logic.EvalExpertItemsLogic#canRemoveItemGroup(java.lang.String, java.lang.Long)
 	 */
-	public boolean canControlItemGroup(String userId, Long itemGroupId) {
+	public boolean canRemoveItemGroup(String userId, Long itemGroupId) {
 		log.debug("itemGroupId:" + itemGroupId + ", userId:" + userId);
 
-		// TODO Auto-generated method stub
+		// get the item by id
+		EvalItemGroup itemGroup = (EvalItemGroup) dao.findById(EvalItemGroup.class, itemGroupId);
+		if (itemGroup == null) {
+			throw new IllegalArgumentException("Cannot find item group item with id: " + itemGroupId);
+		}
+
+		// check perms
+		try {
+			return checkUserControlItemGroup(userId, itemGroup);
+		} catch (RuntimeException e) {
+			log.info(e.getMessage());
+		}
 		return false;
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalExpertItemsLogic#addGroupsToItemGroup(java.lang.Long, java.lang.Long[])
 	 */
@@ -230,6 +278,33 @@ public class EvalExpertItemsLogicImpl implements EvalExpertItemsLogic {
 			// expects to get EvalItem objects, compare by Id
 			return ( (EvalItem) item0).getId().
 				compareTo( ( (EvalItem) item1).getId() );
+		}
+	}
+
+	/**
+	 * Check if an item group type is valid
+	 * @param itemGroupTypeConstant
+	 * @return true if valid, false otherwise
+	 */
+	public static boolean checkItemGroupType(String itemGroupTypeConstant) {
+		if ( EvalConstants.ITEM_GROUP_TYPE_CATEGORY.equals(itemGroupTypeConstant) ||
+				EvalConstants.ITEM_GROUP_TYPE_OBJECTIVE.equals(itemGroupTypeConstant) ) {
+			return true;
+		}
+		return false;
+	}
+
+
+	protected boolean checkUserControlItemGroup(String userId, EvalItemGroup itemGroup) {
+		log.debug("itemGroup: " + itemGroup.getId() + ", userId: " + userId);
+
+		// check ownership or super user
+		if ( external.isUserAdmin(userId) ) {
+			return true;
+		} else if ( itemGroup.getOwner().equals(userId) ) {
+			return true;
+		} else {
+			throw new SecurityException("User ("+userId+") cannot control item group ("+itemGroup.getId()+") without permissions");
 		}
 	}
 

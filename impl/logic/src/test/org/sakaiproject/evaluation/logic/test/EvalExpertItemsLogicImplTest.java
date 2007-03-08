@@ -14,6 +14,7 @@
 
 package org.sakaiproject.evaluation.logic.test;
 
+import java.util.Date;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -24,6 +25,7 @@ import org.sakaiproject.evaluation.logic.test.stubs.EvalExternalLogicStub;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.model.EvalScale;
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.PreloadTestData;
 import org.springframework.test.AbstractTransactionalSpringContextTests;
@@ -206,32 +208,184 @@ public class EvalExpertItemsLogicImplTest extends AbstractTransactionalSpringCon
 
 	}
 
+
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExpertItemsLogicImpl#createItemGroup(org.sakaiproject.evaluation.model.EvalItemGroup, java.lang.String, java.lang.Long)}.
+	 * Test method for {@link EvalExpertItemsLogicImpl#getItemGroupById(Long)}
 	 */
-	public void testCreateItemGroup() {
-		//fail("Not yet implemented"); // TODO
+	public void testGetItemGroupById() {
+		EvalItemGroup itemGroup = null;
+
+		// test getting valid items by id
+		itemGroup = expertItems.getItemGroupById( etdl.categoryA.getId() );
+		Assert.assertNotNull(itemGroup);
+		Assert.assertEquals(etdl.categoryA.getId(), itemGroup.getId());
+
+		itemGroup = expertItems.getItemGroupById( etdl.objectiveA1.getId() );
+		Assert.assertNotNull(itemGroup);
+		Assert.assertEquals(etdl.objectiveA1.getId(), itemGroup.getId());
+
+		// test get eval by invalid id returns null
+		itemGroup = expertItems.getItemGroupById( EvalTestDataLoad.INVALID_LONG_ID );
+		Assert.assertNull(itemGroup);
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExpertItemsLogicImpl#updateItemGroup(org.sakaiproject.evaluation.model.EvalItemGroup, java.lang.String)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExpertItemsLogicImpl#saveItemGroup(org.sakaiproject.evaluation.model.EvalItemGroup, java.lang.String)}.
 	 */
-	public void testUpdateItemGroup() {
-		//fail("Not yet implemented"); // TODO
+	public void testSaveItemGroup() {
+
+		// test create a valid group
+		EvalItemGroup newCategory = new EvalItemGroup(EvalTestDataLoad.ADMIN_USER_ID, 
+				EvalConstants.ITEM_GROUP_TYPE_CATEGORY, "new category");
+		expertItems.saveItemGroup(newCategory, EvalTestDataLoad.ADMIN_USER_ID);
+		Assert.assertNotNull( newCategory.getId() );
+
+		// check that defaults were filled in
+		Assert.assertNotNull( newCategory.getLastModified() );
+		Assert.assertNotNull( newCategory.getExpert() );
+		Assert.assertEquals( newCategory.getExpert().booleanValue(), false );
+		Assert.assertNull( newCategory.getParent() );
+
+		// test that creating subgroup without parent causes failure
+		EvalItemGroup newObjective = new EvalItemGroup(EvalTestDataLoad.ADMIN_USER_ID, 
+				EvalConstants.ITEM_GROUP_TYPE_OBJECTIVE, "new objective");
+		try {
+			expertItems.saveItemGroup(newObjective, EvalTestDataLoad.ADMIN_USER_ID);
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+			Assert.assertNotNull(e);
+			//Assert.fail(e.getMessage()); // check the reason for failure
+		}
+
+		// test create a valid subgroup
+		newObjective.setParent( newCategory );
+		expertItems.saveItemGroup(newObjective, EvalTestDataLoad.ADMIN_USER_ID);
+
+		// test non-admin cannot create expert group
+		EvalItemGroup newExpertGroup = new EvalItemGroup(EvalTestDataLoad.ADMIN_USER_ID, 
+				EvalConstants.ITEM_GROUP_TYPE_CATEGORY, "new expert");
+		newExpertGroup.setExpert( Boolean.TRUE );
+		try {
+			expertItems.saveItemGroup(newExpertGroup, EvalTestDataLoad.MAINT_USER_ID);
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+			Assert.assertNotNull(e);
+		}
+
+		// test admin can create expert group
+		expertItems.saveItemGroup(newExpertGroup, EvalTestDataLoad.ADMIN_USER_ID);
+		Assert.assertNotNull( newExpertGroup.getId() );
+
+		// test creating invalid expert group type fails
+		try {
+			expertItems.saveItemGroup( 
+				new EvalItemGroup(new Date(), EvalTestDataLoad.ADMIN_USER_ID, EvalTestDataLoad.INVALID_CONSTANT_STRING,
+						"test", "desc", Boolean.TRUE, null, null), 
+				EvalTestDataLoad.ADMIN_USER_ID);
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+			Assert.assertNotNull(e);
+		}
+
+		// test creating top level category with parent fails
+		try {
+			expertItems.saveItemGroup( 
+				new EvalItemGroup(new Date(), EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
+						"test", "desc", Boolean.FALSE, newCategory, null), 
+				EvalTestDataLoad.ADMIN_USER_ID);
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+			Assert.assertNotNull(e);
+		}
+
+		// test trying to put objective as a top level category
+		try {
+			expertItems.saveItemGroup( 
+				new EvalItemGroup(new Date(), EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.ITEM_GROUP_TYPE_OBJECTIVE,
+						"test", "desc", Boolean.FALSE, null, null), 
+				EvalTestDataLoad.ADMIN_USER_ID);
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+			Assert.assertNotNull(e);
+		}
+
 	}
 
 	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExpertItemsLogicImpl#removeItemGroup(java.lang.Long, java.lang.String, boolean)}.
 	 */
 	public void testRemoveItemGroup() {
-		//fail("Not yet implemented"); // TODO
+
+		// test cannot remove item groups without permission
+		try {
+			expertItems.removeItemGroup(etdl.categoryD.getId(), EvalTestDataLoad.MAINT_USER_ID, false);
+			Assert.fail("Should have thrown exception");
+		} catch (SecurityException e) {
+			Assert.assertNotNull(e);
+			//Assert.fail(e.getMessage()); // check the reason for failure
+		}
+
+		// test can remove empty categories
+		expertItems.removeItemGroup(etdl.categoryD.getId(), EvalTestDataLoad.ADMIN_USER_ID, false);
+		Assert.assertNull( expertItems.getItemGroupById(etdl.categoryD.getId()) );
+
+		// test cannot remove non-empty categories when flag set
+		try {
+			expertItems.removeItemGroup(etdl.categoryA.getId(), EvalTestDataLoad.ADMIN_USER_ID, false);
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalStateException e) {
+			Assert.assertNotNull(e);
+			//Assert.fail(e.getMessage()); // check the reason for failure
+		}
+
+		// test can remove non-empty categories when flag unset
+		expertItems.removeItemGroup(etdl.categoryA.getId(), EvalTestDataLoad.ADMIN_USER_ID, true);
+		Assert.assertNull( expertItems.getItemGroupById(etdl.categoryA.getId()) );
+
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExpertItemsLogicImpl#canControlItemGroup(java.lang.String, java.lang.Long)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExpertItemsLogicImpl#canUpdateItemGroup(String, Long)}.
 	 */
-	public void testCanControlItemGroup() {
-		//fail("Not yet implemented"); // TODO
+	public void testCanUpdateItemGroup() {
+		// test can control owned items
+		Assert.assertTrue( expertItems.canUpdateItemGroup(EvalTestDataLoad.ADMIN_USER_ID, etdl.categoryA.getId() ) );
+		Assert.assertTrue( expertItems.canUpdateItemGroup(EvalTestDataLoad.ADMIN_USER_ID, etdl.objectiveA1.getId() ) );
+
+		// test cannot control unowned items
+		Assert.assertFalse( expertItems.canUpdateItemGroup(EvalTestDataLoad.MAINT_USER_ID, etdl.categoryA.getId() ) );
+		Assert.assertFalse( expertItems.canUpdateItemGroup(EvalTestDataLoad.MAINT_USER_ID, etdl.objectiveA1.getId() ) );
+
+		// test invalid item id causes failure
+		try {
+			expertItems.canUpdateItemGroup(EvalTestDataLoad.ADMIN_USER_ID, EvalTestDataLoad.INVALID_LONG_ID );
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+			Assert.assertNotNull(e);
+		}
+
+	}
+
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExpertItemsLogicImpl#canRemoveItemGroup(String, Long)}.
+	 */
+	public void testCanRemoveItemGroup() {
+		// test can control owned items
+		Assert.assertTrue( expertItems.canRemoveItemGroup(EvalTestDataLoad.ADMIN_USER_ID, etdl.categoryA.getId() ) );
+		Assert.assertTrue( expertItems.canRemoveItemGroup(EvalTestDataLoad.ADMIN_USER_ID, etdl.objectiveA1.getId() ) );
+
+		// test cannot control unowned items
+		Assert.assertFalse( expertItems.canRemoveItemGroup(EvalTestDataLoad.MAINT_USER_ID, etdl.categoryA.getId() ) );
+		Assert.assertFalse( expertItems.canRemoveItemGroup(EvalTestDataLoad.MAINT_USER_ID, etdl.objectiveA1.getId() ) );
+
+		// test invalid item id causes failure
+		try {
+			expertItems.canRemoveItemGroup(EvalTestDataLoad.ADMIN_USER_ID, EvalTestDataLoad.INVALID_LONG_ID );
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+			Assert.assertNotNull(e);
+		}
+
 	}
 
 	/**

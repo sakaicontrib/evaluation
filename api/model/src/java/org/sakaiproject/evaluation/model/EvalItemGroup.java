@@ -1,6 +1,6 @@
 package org.sakaiproject.evaluation.model;
 
-// Generated 07-Mar-2007 14:04:08 by Hibernate Tools 3.2.0.b9
+// Generated 07-Mar-2007 17:44:27 by Hibernate Tools 3.2.0.b9
 
 import java.util.Date;
 import java.util.HashSet;
@@ -14,6 +14,8 @@ public class EvalItemGroup implements java.io.Serializable {
 	private Long id;
 
 	private Date lastModified;
+
+	private String owner;
 
 	private String type;
 
@@ -30,15 +32,16 @@ public class EvalItemGroup implements java.io.Serializable {
 	public EvalItemGroup() {
 	}
 
-	public EvalItemGroup(Date lastModified, String type, String title) {
-		this.lastModified = lastModified;
+	public EvalItemGroup(String owner, String type, String title) {
+		this.owner = owner;
 		this.type = type;
 		this.title = title;
 	}
 
-	public EvalItemGroup(Date lastModified, String type, String title, String description, Boolean expert,
-			EvalItemGroup parent, Set groupItems) {
+	public EvalItemGroup(Date lastModified, String owner, String type, String title, String description,
+			Boolean expert, EvalItemGroup parent, Set groupItems) {
 		this.lastModified = lastModified;
+		this.owner = owner;
 		this.type = type;
 		this.title = title;
 		this.description = description;
@@ -61,6 +64,14 @@ public class EvalItemGroup implements java.io.Serializable {
 
 	public void setLastModified(Date lastModified) {
 		this.lastModified = lastModified;
+	}
+
+	public String getOwner() {
+		return this.owner;
+	}
+
+	public void setOwner(String owner) {
+		this.owner = owner;
 	}
 
 	public String getType() {
