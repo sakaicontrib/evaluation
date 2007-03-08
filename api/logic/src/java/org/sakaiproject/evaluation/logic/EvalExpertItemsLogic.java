@@ -51,27 +51,20 @@ public interface EvalExpertItemsLogic {
 
 
 	/**
-	 * Creates a new item group (category, objective, etc.)<br/>
-	 * note that there are special rules about the various group 
-	 * types (indicated by {@link EvalConstants#ITEM_GROUP_TYPE}) which must be adhered to
-	 * 
-	 * @param itemGroup a previously persisted {@link EvalItemGroup} object
-	 * @param userId the internal user id (not username)
-	 * @param parentCategoryId the parent category id for this item group, this must be null if the
-	 * group is of type CATEGORY but should NOT be null if any other group type is used 
-	 * (you may instead insert the actual parent group if you like)
+	 * @param itemGroupId the unique id of an {@link EvalItemGroup}
+	 * @return an {@link EvalItemGroup} object or null if none found
 	 */
-	public void createItemGroup(EvalItemGroup itemGroup, String userId, Long parentCategoryId);
+	public EvalItemGroup getItemGroupById(Long itemGroupId);
 
 	/**
 	 * Save a new item group (category, objective, etc.)<br/>
-	 * All aspects of the category can be changed at any time, note that there are special rules about the
+	 * All aspects of the group can be changed at any time, note that there are special rules about the
 	 * various group types (indicated by {@link EvalConstants#ITEM_GROUP_TYPE}) which must be adhered to
 	 * 
 	 * @param itemGroup a previously persisted {@link EvalItemGroup} object
 	 * @param userId the internal user id (not username)
 	 */
-	public void updateItemGroup(EvalItemGroup itemGroup, String userId);
+	public void saveItemGroup(EvalItemGroup itemGroup, String userId);
 
 	/**
 	 * Remove an item group<br/>
@@ -81,18 +74,27 @@ public interface EvalExpertItemsLogic {
 	 * @param userId the internal user id (not username)
 	 * @param removeNonEmptyGroup if true, then remove groups which contain items, otherwise do not remove
 	 * groups which contain items
-	 * @return true if the group was removed, false or exception otherwise
 	 */
-	public boolean removeItemGroup(Long itemGroupId, String userId, boolean removeNonEmptyGroup);
+	public void removeItemGroup(Long itemGroupId, String userId, boolean removeNonEmptyGroup);
 
 	/**
-	 * Check if a user can control (modify, remove) a specific item group
+	 * Check if a user can update a specific item group
 	 * 
 	 * @param userId the internal user id (not username)
 	 * @param itemGroupId the unique id of an {@link EvalItemGroup}
-	 * @return true if the item group can be controlled by this user, false otherwise
+	 * @return true if the item group can be updated by this user, false otherwise
 	 */
-	public boolean canControlItemGroup(String userId, Long itemGroupId);
+	public boolean canUpdateItemGroup(String userId, Long itemGroupId);
+
+	/**
+	 * Check if a user can remove a specific item group, 
+	 * cannot remove groups which are not empty
+	 * 
+	 * @param userId the internal user id (not username)
+	 * @param itemGroupId the unique id of an {@link EvalItemGroup}
+	 * @return true if the item group can be removed by this user, false otherwise
+	 */
+	public boolean canRemoveItemGroup(String userId, Long itemGroupId);
 
 
 	/**

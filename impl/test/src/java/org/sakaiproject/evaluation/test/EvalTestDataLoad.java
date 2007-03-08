@@ -731,23 +731,23 @@ public class EvalTestDataLoad {
 		response6.setAnswers(answers); // left all answers blank
 
 		// catgories and objectives
-		categoryA = new EvalItemGroup(new Date(), EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
+		categoryA = new EvalItemGroup(new Date(), EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
 				"A", "description", Boolean.TRUE, null, null);
 		Set itemsB = new HashSet();
 		itemsB.add( item1 );
-		categoryB = new EvalItemGroup(new Date(), EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
+		categoryB = new EvalItemGroup(new Date(), EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
 				"B", "description", Boolean.TRUE, null, itemsB);
-		categoryC = new EvalItemGroup(new Date(), EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
+		categoryC = new EvalItemGroup(new Date(), EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
 				"C", "description", Boolean.TRUE, null, null);
-		categoryD = new EvalItemGroup(new Date(), EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
+		categoryD = new EvalItemGroup(new Date(), EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
 				"D", "description", Boolean.FALSE, null, null);
 
 		Set itemsA1 = new HashSet();
 		itemsA1.add( item2 );
 		itemsA1.add( item6 );
-		objectiveA1 = new EvalItemGroup(new Date(), EvalConstants.ITEM_GROUP_TYPE_OBJECTIVE,
+		objectiveA1 = new EvalItemGroup(new Date(), EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.ITEM_GROUP_TYPE_OBJECTIVE,
 				"A1", "description", Boolean.TRUE, categoryA, itemsA1);
-		objectiveA2 = new EvalItemGroup(new Date(), EvalConstants.ITEM_GROUP_TYPE_OBJECTIVE,
+		objectiveA2 = new EvalItemGroup(new Date(), EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.ITEM_GROUP_TYPE_OBJECTIVE,
 				"A2", "description", Boolean.TRUE, categoryA, null);
 
 	}
