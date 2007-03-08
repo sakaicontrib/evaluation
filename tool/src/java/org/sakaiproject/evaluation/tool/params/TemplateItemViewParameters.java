@@ -18,7 +18,7 @@ package org.sakaiproject.evaluation.tool.params;
  * 
  * @author Sakai App Builder -AZ
  */
-public class TemplateItemViewParameters extends EvalViewParameters {
+public class TemplateItemViewParameters extends TemplateViewParameters {
 
   public Long templateItemId;
 

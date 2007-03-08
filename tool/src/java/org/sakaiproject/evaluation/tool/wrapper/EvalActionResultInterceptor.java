@@ -5,7 +5,7 @@ package org.sakaiproject.evaluation.tool.wrapper;
 
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.tool.TemplateBeanLocator;
-import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
+import org.sakaiproject.evaluation.tool.params.TemplateViewParameters;
 
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionResultInterceptor;
@@ -32,10 +32,10 @@ public class EvalActionResultInterceptor implements ActionResultInterceptor {
   
   public void interceptActionResult(ARIResult result, ViewParameters incoming,
       Object actionReturn) {
-    if (incoming instanceof EvalViewParameters
-        && result.resultingView instanceof EvalViewParameters) {
-      EvalViewParameters ineval = (EvalViewParameters) incoming;
-      EvalViewParameters outgoing = (EvalViewParameters) result.resultingView;
+    if (incoming instanceof TemplateViewParameters
+        && result.resultingView instanceof TemplateViewParameters) {
+      TemplateViewParameters ineval = (TemplateViewParameters) incoming;
+      TemplateViewParameters outgoing = (TemplateViewParameters) result.resultingView;
       if (ineval.templateId != null) {
         outgoing.templateId = ineval.templateId;
       }

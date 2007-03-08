@@ -22,7 +22,7 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
-import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
+import org.sakaiproject.evaluation.tool.params.TemplateViewParameters;
 import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
 import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
@@ -126,7 +126,7 @@ public class RemoveQuestionProducer implements ViewComponentProducer, ViewParams
 	public List reportNavigationCases() {
 		List i = new ArrayList();
 		
-		i.add(new NavigationCase("removed", new EvalViewParameters(ModifyTemplateItemsProducer.VIEW_ID, templateId)));
+		i.add(new NavigationCase("removed", new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, templateId)));
 		return i;
 	}
 	

@@ -388,18 +388,4 @@ public class EvalExpertItemsLogicImplTest extends AbstractTransactionalSpringCon
 
 	}
 
-	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExpertItemsLogicImpl#addGroupsToItemGroup(java.lang.Long, java.lang.Long[])}.
-	 */
-	public void testAddGroupsToItemGroup() {
-		//fail("Not yet implemented"); // TODO
-	}
-
-	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExpertItemsLogicImpl#addItemsToItemGroup(java.lang.Long, java.lang.Long[])}.
-	 */
-	public void testAddItemsToItemGroup() {
-		//fail("Not yet implemented"); // TODO
-	}
-
 }

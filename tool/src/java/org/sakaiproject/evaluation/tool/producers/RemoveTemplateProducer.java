@@ -24,7 +24,7 @@ import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
-import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
+import org.sakaiproject.evaluation.tool.params.TemplateViewParameters;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
@@ -87,7 +87,7 @@ public class RemoveTemplateProducer implements ViewComponentProducer, Navigation
 		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"),  //$NON-NLS-1$ //$NON-NLS-2$
 				new SimpleViewParameters(SummaryProducer.VIEW_ID));	
 
-		EvalViewParameters evalViewParams = (EvalViewParameters) viewparams;
+		TemplateViewParameters evalViewParams = (TemplateViewParameters) viewparams;
 		
 		if(evalViewParams.templateId !=null){
 			
@@ -172,6 +172,6 @@ public class RemoveTemplateProducer implements ViewComponentProducer, Navigation
 	}
 
 	public ViewParameters getViewParameters() {
-		return new EvalViewParameters();
+		return new TemplateViewParameters();
 	}
 }

@@ -30,7 +30,7 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.params.CSVReportViewParams;
 import org.sakaiproject.evaluation.tool.params.EssayResponseParams;
-import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
+import org.sakaiproject.evaluation.tool.params.TemplateViewParameters;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
 import uk.org.ponder.rsf.components.UIBoundBoolean;
@@ -78,7 +78,7 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 	}
 
 	public ViewParameters getViewParameters() {
-		return new EvalViewParameters(VIEW_ID, null);
+		return new TemplateViewParameters(VIEW_ID, null);
 	}	
 
 	//String evalGroupId;
@@ -89,7 +89,7 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 		
 		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID)); //$NON-NLS-1$ //$NON-NLS-2$
 
-		EvalViewParameters evalViewParams = (EvalViewParameters) viewparams;
+		TemplateViewParameters evalViewParams = (TemplateViewParameters) viewparams;
 		if (evalViewParams.templateId != null) {
 			UIInternalLink.make(tofill, "fullEssayResponse", UIMessage.make("viewreport.view.essays"), new EssayResponseParams(ViewEssayResponseProducer.VIEW_ID, evalViewParams.templateId)); //$NON-NLS-1$ //$NON-NLS-2$
 			EvalEvaluation evaluation = evalsLogic.getEvaluationById(evalViewParams.templateId);//logic.getEvaluationById(previewEvalViewParams.templateId);

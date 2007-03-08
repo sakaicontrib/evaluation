@@ -20,15 +20,15 @@ import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
  * passed from one page to another
  * @author Sakai App Builder -AZ
  */
-public class EvalViewParameters extends SimpleViewParameters {	
+public class TemplateViewParameters extends SimpleViewParameters {	
 	public Long templateId; 
 	
-	public EvalViewParameters() {
+	public TemplateViewParameters() {
 	}
    /** NB - only two views left (ModifyEmailProducer and PreviewEmailProducer) that
     * are still relying on the "originalPage" system, use this constructor by
     * default - AMB. */
-    public EvalViewParameters(String viewID, Long templateId) {
+    public TemplateViewParameters(String viewID, Long templateId) {
         this.viewID = viewID;
         this.templateId = templateId;
     }

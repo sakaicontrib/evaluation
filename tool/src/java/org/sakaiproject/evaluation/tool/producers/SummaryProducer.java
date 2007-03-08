@@ -35,7 +35,7 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.params.EvalTakeViewParameters;
-import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
+import org.sakaiproject.evaluation.tool.params.TemplateViewParameters;
 import org.sakaiproject.evaluation.tool.params.PreviewEvalParameters;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -131,13 +131,13 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 				new SimpleViewParameters(ControlPanelProducer.VIEW_ID));
 			UIInternalLink.make(tofill, "create-template-toplink", //$NON-NLS-1$
 					UIMessage.make("createtemplate.page.title"),  //$NON-NLS-1$
-					new EvalViewParameters(ModifyTemplateProducer.VIEW_ID, null));
+					new TemplateViewParameters(ModifyTemplateProducer.VIEW_ID, null));
 		}
 
 		if ( beginEvaluation ) {
 			UIInternalLink.make(tofill, "begin-evaluation-toplink", //$NON-NLS-1$
 					UIMessage.make("beginevaluation.page.title"),  //$NON-NLS-1$
-				new EvalViewParameters(EvaluationStartProducer.VIEW_ID, null));
+				new TemplateViewParameters(EvaluationStartProducer.VIEW_ID, null));
 		}
 
 		if (userAdmin) {
@@ -291,7 +291,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 					Integer respReqToViewResults = (Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS);
 					if( (respReqToViewResults.intValue()<=ctResponses) | (ctResponses>=ctEnrollments) ){
 					UIInternalLink.make(evalrow, "viewReportLink", UIMessage.make("viewreport.page.title"),  //$NON-NLS-1$ //$NON-NLS-2$
-							new EvalViewParameters(ViewReportProducer.VIEW_ID, eval.getId() ));	
+							new TemplateViewParameters(ViewReportProducer.VIEW_ID, eval.getId() ));	
 					}
 					else{
 					UIMessage.make(evalrow, "evalAdminStatus", "summary.status."+evalStatus); //$NON-NLS-1$
@@ -368,13 +368,13 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			if ( createTemplate ) {
 				UIInternalLink.make(toolsBC, "createTemplateLink", //$NON-NLS-1$
 					UIMessage.make("createtemplate.page.title"), //$NON-NLS-1$
-					new EvalViewParameters(ModifyTemplateProducer.VIEW_ID, null));
+					new TemplateViewParameters(ModifyTemplateProducer.VIEW_ID, null));
 			}
 
 			if ( beginEvaluation ) {
 				UIInternalLink.make(toolsBC, "beginEvaluationLink", //$NON-NLS-1$
 					UIMessage.make("beginevaluation.page.title"), //$NON-NLS-1$
-					new EvalViewParameters(EvaluationStartProducer.VIEW_ID, null));
+					new TemplateViewParameters(EvaluationStartProducer.VIEW_ID, null));
 			}
 		}
 

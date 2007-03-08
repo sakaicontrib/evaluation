@@ -19,7 +19,7 @@ import java.util.List;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.model.EvalTemplate;
-import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
+import org.sakaiproject.evaluation.tool.params.TemplateViewParameters;
 import org.sakaiproject.evaluation.tool.params.PreviewEvalParameters;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -83,7 +83,7 @@ public class EvaluationStartProducer implements ViewComponentProducer, Navigatio
 		UIMessage.make(tofill, "start-eval-title", "starteval.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
 		UIMessage.make(tofill, "start-eval-header", "starteval.header"); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		EvalViewParameters evalViewParams = (EvalViewParameters) viewparams;
+		TemplateViewParameters evalViewParams = (TemplateViewParameters) viewparams;
 
 		UIForm form = UIForm.make(tofill, "basic-form"); //$NON-NLS-1$
 		
@@ -158,6 +158,6 @@ public class EvaluationStartProducer implements ViewComponentProducer, Navigatio
 	}
 	
 	public ViewParameters getViewParameters() {
-		return new EvalViewParameters();
+		return new TemplateViewParameters();
 	}
 }

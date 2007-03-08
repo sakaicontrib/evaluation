@@ -314,8 +314,7 @@
 			ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
 	</bean>
 
-	<bean
-		class="org.sakaiproject.evaluation.tool.producers.ViewEssayResponseProducer">
+	<bean class="org.sakaiproject.evaluation.tool.producers.ViewEssayResponseProducer">
 		<property name="evalsLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
 		<property name="itemsLogic"
@@ -324,8 +323,7 @@
 			ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
 	</bean>
 
-	<bean
-		class="org.sakaiproject.evaluation.tool.producers.TakeEvalProducer">
+	<bean class="org.sakaiproject.evaluation.tool.producers.TakeEvalProducer">
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="itemsLogic"
@@ -337,15 +335,13 @@
 		<property name="localResponsesLogic" ref="localResponsesLogic" />		
 	</bean>
 
-	<bean
-		class="org.sakaiproject.evaluation.tool.producers.RemoveEvalProducer">
+	<bean class="org.sakaiproject.evaluation.tool.producers.RemoveEvalProducer">
 		<property name="evalsLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
 		<property name="locale" ref="requestLocale" />
 	</bean>
 
-	<bean
-		class="org.sakaiproject.evaluation.tool.producers.RemoveTemplateProducer">
+	<bean class="org.sakaiproject.evaluation.tool.producers.RemoveTemplateProducer">
 		<property name="templatesLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
 		<property name="evalsLogic"
@@ -354,23 +350,27 @@
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 	</bean>
 
-	<bean
-		class="org.sakaiproject.evaluation.tool.producers.ScaleControlProducer">
+	<bean class="org.sakaiproject.evaluation.tool.producers.ScaleControlProducer">
 		<property name="scalesLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalScalesLogic" />
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 	</bean>
-	
+
 	<bean class="org.sakaiproject.evaluation.tool.utils.EvaluationDateUtil">
 		<property name="evalSettings"
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 	</bean>	
-	
-	<bean
-		class="org.sakaiproject.evaluation.tool.producers.ScaleAddModifyProducer">
+
+	<bean class="org.sakaiproject.evaluation.tool.producers.ScaleAddModifyProducer">
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="localScaleLogic" ref="localScaleLogic" />
-	</bean>	
+	</bean>
+
+	<bean class="org.sakaiproject.evaluation.tool.producers.ExpertCategoryProducer">
+		<property name="expertItemsLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalExpertItemsLogic" />
+	</bean>
+
 </beans>

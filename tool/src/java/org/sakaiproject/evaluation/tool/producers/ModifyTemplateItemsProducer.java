@@ -25,7 +25,7 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.LocalTemplateLogic;
 import org.sakaiproject.evaluation.tool.params.BlockIdsParameters;
-import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
+import org.sakaiproject.evaluation.tool.params.TemplateViewParameters;
 import org.sakaiproject.evaluation.tool.params.PreviewEvalParameters;
 import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
 import org.sakaiproject.evaluation.tool.utils.RSFUtils;
@@ -64,23 +64,20 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer,
 		ViewParamsReporter {
 
 	public static final String VIEW_ID = "modify_template_items"; //$NON-NLS-1$
-
 	public String getViewID() {
 		return VIEW_ID;
 	}
 
 	public ViewParameters getViewParameters() {
-		return new EvalViewParameters();
+		return new TemplateViewParameters();
 	}
 
 	private ViewStateHandler viewStateHandler;
-
 	public void setViewStateHandler(ViewStateHandler viewStateHandler) {
 		this.viewStateHandler = viewStateHandler;
 	}
 
 	private LocalTemplateLogic localTemplateLogic;
-
 	public void setLocalTemplateLogic(LocalTemplateLogic localTemplateLogic) {
 		this.localTemplateLogic = localTemplateLogic;
 	}
@@ -106,7 +103,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer,
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams,
 			ComponentChecker checker) {
 
-		EvalViewParameters evalViewParams = (EvalViewParameters) viewparams;
+		TemplateViewParameters evalViewParams = (TemplateViewParameters) viewparams;
 
 		System.out.println("templateBBean.templateId=" + evalViewParams.templateId);
 		Long templateId = evalViewParams.templateId;
@@ -130,13 +127,17 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer,
 		UIMessage.make(form, "add-item-note", "modifytemplate.add.item.note"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		String[] labels = new String[] {
-				"modifytemplate.itemtype.scaled", "modifytemplate.itemtype.text",
-				"modifytemplate.itemtype.header", "modifytemplate.itemtype.expert" };
-		String[] viewIDs = { ModifyScaledProducer.VIEW_ID,
-				ModifyEssayProducer.VIEW_ID, ModifyHeaderProducer.VIEW_ID,
-				// ModifyBlockProducer.VIEW_ID,
-				ModifyTemplateItemsProducer.VIEW_ID // TODO: View for expert items not written yet
-				};
+				"modifytemplate.itemtype.scaled", 
+				"modifytemplate.itemtype.text",
+				"modifytemplate.itemtype.header", 
+				"modifytemplate.itemtype.expert"
+			};
+		String[] viewIDs = { 
+				ModifyScaledProducer.VIEW_ID,
+				ModifyEssayProducer.VIEW_ID, 
+				ModifyHeaderProducer.VIEW_ID,
+				ExpertCategoryProducer.VIEW_ID
+			};
 		String[] values = convertViews(viewIDs, templateId);
 
 		// dropdown list
@@ -150,7 +151,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer,
 			UIMessage.make(tofill, "begin-eval-dummylink",
 					"modifytemplate.begin.eval.link");
 		} else {
-			UIInternalLink.make(tofill, "begin_eval_link", new EvalViewParameters(
+			UIInternalLink.make(tofill, "begin_eval_link", new TemplateViewParameters(
 					EvaluationStartProducer.VIEW_ID, templateId));
 		}
 
@@ -166,7 +167,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer,
 
 		UIInternalLink.make(tofill, "modify_title_desc_link", 
 				UIMessage.make("modifytemplate.modify.title.desc.link"),
-				new EvalViewParameters(ModifyTemplateProducer.VIEW_ID, templateId));
+				new TemplateViewParameters(ModifyTemplateProducer.VIEW_ID, templateId));
 		if (template.getDescription() != null
 				&& !template.getDescription().trim().equals("")) {
 			UIBranchContainer descbranch = UIBranchContainer.make(tofill,

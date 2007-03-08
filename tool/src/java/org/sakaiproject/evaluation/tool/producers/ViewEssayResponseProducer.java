@@ -29,7 +29,7 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.params.EssayResponseParams;
-import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
+import org.sakaiproject.evaluation.tool.params.TemplateViewParameters;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -88,7 +88,7 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 
 		EssayResponseParams essayResponseParams = (EssayResponseParams) viewparams;
 		UIInternalLink.make(tofill, "viewReportLink", UIMessage.make("viewreport.page.title"), 
-				new EvalViewParameters(ViewReportProducer.VIEW_ID, 
+				new TemplateViewParameters(ViewReportProducer.VIEW_ID, 
 						essayResponseParams.evalId));		
 		//output single set of essay responses
 		if(essayResponseParams.itemId != null){

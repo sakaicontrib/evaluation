@@ -22,7 +22,7 @@ import java.util.Map;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
+import org.sakaiproject.evaluation.tool.params.TemplateViewParameters;
 
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
@@ -72,7 +72,7 @@ public class RemoveEvalProducer implements ViewComponentProducer,ViewParamsRepor
 		UIMessage.make(tofill, "remove-eval-title", "removeeval.page.title");	 //$NON-NLS-1$ //$NON-NLS-2$
 
 		
-		EvalViewParameters evalViewParams = (EvalViewParameters) viewparams;
+		TemplateViewParameters evalViewParams = (TemplateViewParameters) viewparams;
 		
 		if(evalViewParams.templateId !=null){
 			EvalEvaluation eval = evalsLogic.getEvaluationById(evalViewParams.templateId);
@@ -126,7 +126,7 @@ public class RemoveEvalProducer implements ViewComponentProducer,ViewParamsRepor
 	}
 
 	public ViewParameters getViewParameters() {
-		return new EvalViewParameters();
+		return new TemplateViewParameters();
 	}
 	
 	

@@ -23,7 +23,7 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.params.BlockIdsParameters;
-import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
+import org.sakaiproject.evaluation.tool.params.TemplateViewParameters;
 import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
@@ -402,7 +402,7 @@ public class ModifyBlockProducer implements ViewComponentProducer,
 
 		i.add(new NavigationCase(PreviewItemProducer.VIEW_ID,
 				new SimpleViewParameters(PreviewItemProducer.VIEW_ID)));
-		i.add(new NavigationCase("success", new EvalViewParameters(
+		i.add(new NavigationCase("success", new TemplateViewParameters(
 				ModifyTemplateItemsProducer.VIEW_ID, null)));
 
 		return i;

@@ -22,7 +22,7 @@ import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.TemplateBeanLocator;
-import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
+import org.sakaiproject.evaluation.tool.params.TemplateViewParameters;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
@@ -74,7 +74,7 @@ public class ModifyTemplateProducer
 	 */
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams,
 			ComponentChecker checker) {
-		EvalViewParameters evalViewParams = (EvalViewParameters) viewparams;
+		TemplateViewParameters evalViewParams = (TemplateViewParameters) viewparams;
 
 		// setup the OTP binding strings
 		String templateOTPBinding = null;
@@ -152,7 +152,7 @@ public class ModifyTemplateProducer
 	 * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
 	 */
 	public ViewParameters getViewParameters() {
-		return new EvalViewParameters();
+		return new TemplateViewParameters();
 	}
 
 	/* (non-Javadoc)
@@ -160,7 +160,7 @@ public class ModifyTemplateProducer
 	 */
 	public List reportNavigationCases() {
 		List togo = new ArrayList();
-		togo.add(new NavigationCase("success", new EvalViewParameters(
+		togo.add(new NavigationCase("success", new TemplateViewParameters(
 				ModifyTemplateItemsProducer.VIEW_ID, null)));
 		return togo;
 	}

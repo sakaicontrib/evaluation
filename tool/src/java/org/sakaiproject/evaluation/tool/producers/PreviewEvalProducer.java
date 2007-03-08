@@ -244,8 +244,11 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 	}
 
 
+	/* (non-Javadoc)
+	 * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
+	 */
 	public ViewParameters getViewParameters() {
-		return new PreviewEvalParameters(VIEW_ID, null,null,null,null);
+		return new PreviewEvalParameters();
 	}
 
 }

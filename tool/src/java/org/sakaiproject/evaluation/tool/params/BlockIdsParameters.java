@@ -13,7 +13,7 @@
  *****************************************************************************/
 package org.sakaiproject.evaluation.tool.params;
 
-public class BlockIdsParameters extends EvalViewParameters {
+public class BlockIdsParameters extends TemplateViewParameters {
   public String templateItemIds;
 
   public BlockIdsParameters() {

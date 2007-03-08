@@ -96,23 +96,4 @@ public interface EvalExpertItemsLogic {
 	 */
 	public boolean canRemoveItemGroup(String userId, Long itemGroupId);
 
-
-	/**
-	 * Add a set of groups as subgroups (children) for a specific parent item group
-	 * 
-	 * @param itemGroupId the unique id of an {@link EvalItemGroup}
-	 * @param itemGroupIds the unique ids of {@link EvalItemGroup} objects, cannot be category type
-	 * @return true if groups were added correctly, false otherwise
-	 */
-	public boolean addGroupsToItemGroup(Long parentItemGroupId, Long[] childItemGroupIds);
-
-	/**
-	 * Add a set of items as children (contained in) of a specific item group
-	 * 
-	 * @param itemGroupId the unique id of an {@link EvalItemGroup}
-	 * @param itemIds the unique ids of {@link EvalItem} objects
-	 * @return true if items were added correctly, false otherwise
-	 */
-	public boolean addItemsToItemGroup(Long itemGroupId, Long[] itemIds);
-
 }

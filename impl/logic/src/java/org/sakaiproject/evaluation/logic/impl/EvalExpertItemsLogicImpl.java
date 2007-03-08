@@ -238,27 +238,6 @@ public class EvalExpertItemsLogicImpl implements EvalExpertItemsLogic {
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.EvalExpertItemsLogic#addGroupsToItemGroup(java.lang.Long, java.lang.Long[])
-	 */
-	public boolean addGroupsToItemGroup(Long parentItemGroupId, Long[] childItemGroupIds) {
-		log.debug("parentItemGroupId:" + parentItemGroupId + ", childItemGroupIds length:" + childItemGroupIds.length);
-
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.EvalExpertItemsLogic#addItemsToItemGroup(java.lang.Long, java.lang.Long[])
-	 */
-	public boolean addItemsToItemGroup(Long itemGroupId, Long[] itemIds) {
-		log.debug("itemGroupId:" + itemGroupId + ", itemIds length:" + itemIds.length);
-
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-
 	/**
 	 * static class to sort EvalTemplateItem objects by DisplayOrder
 	 */
