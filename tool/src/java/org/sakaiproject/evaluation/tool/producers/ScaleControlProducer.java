@@ -89,16 +89,37 @@ public class ScaleControlProducer implements ViewComponentProducer, NavigationCa
 			UIOutput.make(listOfScales, "scale-no", new Integer(i+1).toString()); //$NON-NLS-1$ //$NON-NLS-2$
 			UIOutput.make(listOfScales, "scale-title", scale.getTitle()); //$NON-NLS-1$ //$NON-NLS-2$
 			
-			//Use can modify / remove scale only if it is not locked.
-			if (scalesLogic.canControlScale(currentUserId, scale.getId())) {
-				
-				UIInternalLink.make(listOfScales, "modify-sidelink", 				//$NON-NLS-1$ 
-						UIMessage.make("scalecontrol.modify.link"), 				//$NON-NLS-1$
-						new EvalScaleParameters(ScaleAddModifyProducer.VIEW_ID, scale.getId())); 
-
-				UIInternalLink.make(listOfScales, "remove-sidelink", 				//$NON-NLS-1$ 
-						UIMessage.make("scalecontrol.remove.link"), 				//$NON-NLS-1$
-						new EvalScaleParameters(ScaleAddModifyProducer.VIEW_ID, scale.getId())); 
+			/*
+			 * If scale is locked do nothing. Else checking that whether 
+			 * this user can control the scale for modification / delete.
+			 * 
+			 * Note that although canControlScale does a locked check,
+			 * it is better to avoid a cycle by checking the local data
+			 * i.e. getLocked() call.
+			 */
+			if (scale.getLocked().booleanValue()) {
+				//do nothing
+			}
+			else {
+				if (scalesLogic.canControlScale(currentUserId, scale.getId())) {
+					
+					UIInternalLink.make(listOfScales, "modify-sidelink", 				//$NON-NLS-1$ 
+							UIMessage.make("scalecontrol.modify.link"), 				//$NON-NLS-1$
+							new EvalScaleParameters(ScaleAddModifyProducer.VIEW_ID, scale.getId()));
+					
+					/*
+					 * Expert scales cannot be deleted. In other words, only 
+					 * non-expert scales can be deleted / removed. 
+					 */ 
+					if (scale.getExpert().booleanValue()) {
+						//do nothing
+					}
+					else  {
+						UIInternalLink.make(listOfScales, "remove-sidelink", 				//$NON-NLS-1$ 
+								UIMessage.make("scalecontrol.remove.link"), 				//$NON-NLS-1$
+								new EvalScaleParameters(RemoveScaleProducer.VIEW_ID, scale.getId()));
+					}
+				}
 			}
 
 			//Display the scale options vertically

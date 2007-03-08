@@ -25,10 +25,8 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 public class ScaleBean {
 
 	private static Log log = LogFactory.getLog(ScaleBean.class);
+	public Long scaleId;
 
-	public EvalEvaluation eval;
-	public String context;
-	
 	private ScaleBeanLocator scaleBeanLocator;
 	public void setScaleBeanLocator(ScaleBeanLocator scaleBeanLocator) {
 		this.scaleBeanLocator = scaleBeanLocator;
@@ -37,6 +35,12 @@ public class ScaleBean {
 	public String saveScale() {
 		log.debug("create scale");
 		scaleBeanLocator.saveAll();
+		return "success";
+	}
+	
+	public String deleteScale() {
+		log.debug("delete scale");
+		scaleBeanLocator.deleteScale(scaleId);
 		return "success";
 	}
 }
