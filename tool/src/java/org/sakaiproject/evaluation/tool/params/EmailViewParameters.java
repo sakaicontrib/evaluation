@@ -4,7 +4,7 @@
 package org.sakaiproject.evaluation.tool.params;
 
 
-public class EmailViewParameters extends EvalViewParameters {
+public class EmailViewParameters extends TemplateViewParameters {
   /** This takes on one of the two values 
    * EvalConstants.EMAIL_TEMPLATE_AVAILABLE or 
    * EvalConstants.EMAIL_TEMPLATE_REMINDER*/

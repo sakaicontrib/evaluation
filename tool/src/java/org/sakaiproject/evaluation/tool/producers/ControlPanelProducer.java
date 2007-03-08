@@ -31,7 +31,7 @@ import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
-import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
+import org.sakaiproject.evaluation.tool.params.TemplateViewParameters;
 import org.sakaiproject.evaluation.tool.params.PreviewEvalParameters;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -125,7 +125,7 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 			UIForm createTemplateForm = UIForm.make(tofill, "create-template-form"); //$NON-NLS-1$
 			UIInternalLink.make(createTemplateForm, "createTemplateLink", //$NON-NLS-1$
 					UIMessage.make("createtemplate.page.title"), //$NON-NLS-1$
-					new EvalViewParameters(ModifyTemplateProducer.VIEW_ID, null));
+					new TemplateViewParameters(ModifyTemplateProducer.VIEW_ID, null));
 			UIMessage.make(createTemplateForm, "eval-templates-header", "controlpanel.eval.templates.header"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			UIMessage.make(createTemplateForm, "template-desc-note","controlpanel.template.desc.note"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -150,7 +150,7 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 				EvalTemplate template1 = (EvalTemplate) (templateList.get(i));
                 if(template1.getLocked().equals(new Boolean(false))){
 				UIInternalLink.make(templatesRb, "template-modify", template1.getTitle(), 
-                    new EvalViewParameters(ModifyTemplateItemsProducer.VIEW_ID, template1.getId()));
+                    new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, template1.getId()));
                 }else{
                 	UIOutput.make(templatesRb, "template-modify-label", template1.getTitle());
                 }
@@ -160,7 +160,7 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 				Date date1 = template1.getLastModified();
 				UIOutput.make(templatesRb, "lastUpdate", df.format(date1)); //$NON-NLS-1$
 				
-				UIInternalLink.make(templatesRb, "deleteTemplateLink", new EvalViewParameters( //$NON-NLS-1$
+				UIInternalLink.make(templatesRb, "deleteTemplateLink", new TemplateViewParameters( //$NON-NLS-1$
 						RemoveTemplateProducer.VIEW_ID,template1.getId()));
 
 			}// end of for loop
@@ -238,7 +238,7 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 					queuedEvalEdit.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", eval1.getId())); //$NON-NLS-1$
 					
 					//Use EvalViewParameter to pass Evaluatio ID
-					UIInternalLink.make(queuedEvalsRb, "deleteEvalLink", new EvalViewParameters( //$NON-NLS-1$
+					UIInternalLink.make(queuedEvalsRb, "deleteEvalLink", new TemplateViewParameters( //$NON-NLS-1$
 							RemoveEvalProducer.VIEW_ID, eval1.getId()));
 
 				} // end of for loop
@@ -329,7 +329,7 @@ public class ControlPanelProducer implements ViewComponentProducer, NavigationCa
 						Integer respReqToViewResults = (Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS);
 						if( (respReqToViewResults.intValue()<=ctResponses) | (ctResponses>=ctEnrollments) ){
 							UIInternalLink.make(closedEvalsRb, "viewReportLink", UIMessage.make("controlpanel.eval.report.link"),  //$NON-NLS-1$ //$NON-NLS-2$
-									new EvalViewParameters(ViewReportProducer.VIEW_ID, 
+									new TemplateViewParameters(ViewReportProducer.VIEW_ID, 
 										eval1.getId()));	
 						}
 						else{

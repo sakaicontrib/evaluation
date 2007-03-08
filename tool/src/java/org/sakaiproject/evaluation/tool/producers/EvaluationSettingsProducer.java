@@ -25,7 +25,7 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationBean;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.params.EmailViewParameters;
-import org.sakaiproject.evaluation.tool.params.EvalViewParameters;
+import org.sakaiproject.evaluation.tool.params.TemplateViewParameters;
 
 import uk.org.ponder.arrayutil.ArrayUtil;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
@@ -512,7 +512,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer,
 		List i = new ArrayList();
 
 		i.add(new NavigationCase(EvaluationStartProducer.VIEW_ID,
-				new EvalViewParameters(EvaluationStartProducer.VIEW_ID, null)));
+				new TemplateViewParameters(EvaluationStartProducer.VIEW_ID, null)));
 		i.add(new NavigationCase(ControlPanelProducer.VIEW_ID,
 				new SimpleViewParameters(ControlPanelProducer.VIEW_ID)));
 		i.add(new NavigationCase(EvaluationAssignProducer.VIEW_ID,
