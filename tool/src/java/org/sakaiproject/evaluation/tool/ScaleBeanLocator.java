@@ -61,4 +61,8 @@ public class ScaleBeanLocator implements BeanLocator {
         localScaleLogic.saveScale(scale);
       }
     }
+	
+	public void deleteScale(Long scaleId) {
+		localScaleLogic.deleteScale(scaleId);
+	}
 }
