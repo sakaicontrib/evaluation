@@ -40,7 +40,7 @@ public class LocalScaleLogic {
 	public EvalScale newScale() {
 		EvalScale currScale = new EvalScale(new Date(), 
 				external.getCurrentUserId(), null, "private", Boolean.FALSE);
-		currScale.setOptions(new String[]{""});
+		currScale.setOptions(new String[]{"", ""});
 		return currScale;
 	}
 }
