@@ -31,6 +31,7 @@ import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
+import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UIOutputMany;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UISelectChoice;
@@ -134,7 +135,7 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParams
 				"scaleaddmodify.scale.title.note");	 											//$NON-NLS-1$
 		
 		UIInput.make(form, "scale-title", path + "title");										//$NON-NLS-1$
-
+		
 		/* 
 		 * Expert scales cannot be deleted. In other words, only non-expert
 		 * scales can be deleted / removed.
@@ -163,6 +164,7 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParams
 			}
 		}
 
+		// Scale options
 		for (int j = 0; j < scale.getOptions().length; ++j){
 			UIBranchContainer scaleOptions = UIBranchContainer.make(form, "scaleOptions:",		//$NON-NLS-1$ 
 					Integer.toString(j)); 	
@@ -171,6 +173,11 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParams
 			UICommand.make(form, "scale-remove-option", 										//$NON-NLS-1$
 					UIMessage.make("scaleaddmodify.remove.scale.option.button"));   			//$NON-NLS-1$										
 		}
+		
+		// Used by javascript
+		UIOutput.make(form, "scale-options-path", path + "options.");							//$NON-NLS-1$ //$NON-NLS-2$
+		UIOutput.make(form, "scale-options-num",												//$NON-NLS-1$ 
+				new Integer(scale.getOptions().length).toString());
 		
 		UICommand.make(form, "scale-add-point", 												//$NON-NLS-1$
 				UIMessage.make("scaleaddmodify.add.scale.option.button"));						//$NON-NLS-1$		
