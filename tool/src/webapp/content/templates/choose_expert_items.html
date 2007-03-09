@@ -13,7 +13,7 @@
 <div class="portletBody">
 
 <div class="navIntraTool">
-	<a rsf:id="control-panel-toplink" href="control_panel.html">Control Panel</a>
+	<a rsf:id="summary-toplink" href="summary.html">Summary</a>
 </div>
 
 <div>
@@ -29,7 +29,7 @@
 <div>
 	<span rsf:id="expert-items" class="expertItem">Expert Items:</span>
 	<a rsf:id="choose-category-1-link" href="choose_expert_category.html" class="expertItemCategory">(1) Choose Category</a> =>
-	<a rsf:id="choose-objective-2" href="choose_expert_objective.html" class="expertItemCategory">(2) Choose Objective</a> =>
+	<a rsf:id="choose-objective-2-link" href="choose_expert_objective.html" class="expertItemCategory">(2) Choose Objective</a> =>
 	<span rsf:id="choose-items-3" class="expertItemCategoryCurrent">(3) Choose Items</span>
 </div>
 
@@ -57,22 +57,26 @@
 	<tbody>
 		<tr rsf:id="expert-item-list:">
 			<td align="center" nowrap="true" valign="top">
-				<input rsf:id="insert-item-checkbox" type="checkbox" />
+				<input id="id1" rsf:id="insert-item-checkbox" type="checkbox" />
 			</td>
 			<td align="left" valign="top">
-				<span rsf:id="item-text">Item Text (the text entered for the item itself will appear here, it is possibly quite long</span><br/>
-				<span rsf:id="item-scale">Item Scale (the title of the scale and the points in parens)</span><br/>
-				<div rsf:id="item-expert-desc" class="expertItemsDesc">Expert description (the description of what this item is good for assessing and where it should be used</div>
+				<label rsf:id="item-label" for="id1">
+					<span rsf:id="item-text">Item Text (the text entered for the item itself will appear here, it is possibly quite long</span><br/>
+					<span rsf:id="item-scale">Item Scale (the title of the scale and the points in parens)</span><br/>
+					<span rsf:id="item-expert-desc" class="expertItemsDesc">Expert description (the description of what this item is good for assessing and where it should be used</span>
+				</label>
 			</td>
 		</tr>
 		<tr rsf:id="expert-item-list:">
 			<td align="center" nowrap="true" valign="top">
-				<input rsf:id="insert-item-checkbox" type="checkbox" />
+				<input id ="id2" rsf:id="insert-item-checkbox" type="checkbox" />
 			</td>
 			<td align="left" valign="top">
-				<span rsf:id="item-text">Item Text 2 (the text entered for the item itself will appear here, it is possibly quite long</span><br/>
-				<span rsf:id="item-scale">Item Scale (the title of the scale and the points in parens)</span><br/>
-				<div rsf:id="item-expert-desc" class="expertItemsDesc">Expert description (the description of what this item is good for assessing and where it should be used</div>
+				<label rsf:id="item-label" for="id2">
+					<span rsf:id="item-text">Item Text (the text entered for the item itself will appear here, it is possibly quite long</span><br/>
+					<span rsf:id="item-scale">Item Scale (the title of the scale and the points in parens)</span><br/>
+					<span rsf:id="item-expert-desc" class="expertItemsDesc">Expert description (the description of what this item is good for assessing and where it should be used</span>
+				</label>
 			</td>
 		</tr>
 	</tbody>
@@ -81,7 +85,7 @@
 <table width="99%">
 	<tr>
 		<td align="left">
-			<a rsf:id="modify-template" href="template_modify.html" class="makeButton">Cancel</a>
+			<a rsf:id="cancel-expert-items" href="template_modify.html" class="makeButton">Cancel</a>
 		</td>
 		<td align="right">
 			<input rsf:id="insert-items-command" type="submit" value="Insert Items" />
