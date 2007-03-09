@@ -45,6 +45,13 @@
             <artifactId>sakai-evaluation-test</artifactId>
             <version>${sakai.version}</version>
         </dependency>
+        
+        <dependency>
+            <groupId>sakaiproject</groupId>
+            <artifactId>sakai-scheduler-api</artifactId>
+            <version>${sakai.version}</version>
+        </dependency>
+        
 
         <!-- generic DAO -->
         <dependency>
