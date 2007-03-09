@@ -56,6 +56,13 @@
                 <artifactId>velocity</artifactId>
                 <version>1.4</version>
         </dependency>
+        
+       <!-- Quartz scheduling -->
+		<dependency>
+			<groupId>quartz</groupId>
+			<artifactId>quartz</artifactId>
+			<version>1.5.2</version>
+		</dependency>
 
 	</dependencies>
 
