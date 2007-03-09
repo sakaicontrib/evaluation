@@ -420,4 +420,82 @@ public class EvalConstants {
 	 */
 	public static final String ITEM_GROUP_TYPE_OBJECTIVE = "ItemGroupObjective";
 
+	/**
+	 * Quartz:
+	 * Identifier for Job group name and Job type in scheduling 
+	 * Evaluation creation notification jobs.
+	 */
+	public static final String QRTZ_EVALUATION_NOTIFY_CREATED = "EvaluationNotifyCreated";
+	
+	/**
+	 * Quartz:
+	 * Identifier for Job group name and Job type in scheduling 
+	 * Evaluation available notification jobs.
+	 * 
+	 */
+	public static final String QRTZ_EVALUATION_NOTIFY_AVAILABLE = "EvaluationNotifyAvailable";
+	
+	/**
+	 * Quartz:
+	 * Identifier for Job group name and Job type in scheduling 
+	 * Evaluation available reminder notification jobs.
+	 */
+	public static final String QRTZ_EVALUATION_NOTIFY_REMINDER = "EvaluationNotifyReminder";
+	
+	/**
+	 * Quartz:
+	 * Identifier for Job group name and Job type in scheduling 
+	 * Evaluation results viewable notification jobs.
+	 */
+	public static final String QRTZ_EVALUATION_NOTIFY_VIEWABLE = "EvaluationNotifyViewable";
+	
+	/**
+	 * Quartz:
+	 * Identifier used Job group name and Job type in scheduling 
+	 * Evaluation state change to Active.
+	 */
+	public static final String QRTZ_EVALUATION_CHANGE_TO_ACTIVE = "EvaluationChangeStateToActive";
+	
+	/**
+	 * Quartz:
+	 * Identifier for Job group name and Job type in scheduling 
+	 * Evaluation state change to Due.
+	 */
+	public static final String QRTZ_EVALUATION_CHANGE_TO_DUE = "EvaluationChangeStateToDue";
+	
+	/**
+	 * Quartz:
+	 * Identifier used Job group name and Job type in scheduling 
+	 * Evaluation state change to Closed.
+	 * 
+	 */
+	public static final String QRTZ_EVALUATION_CHANGE_TO_CLOSED = "EvaluationChangeStateToClosed";
+	
+	/**
+	 * Quartz:
+	 * Identifier for Job group name and Job type in scheduling 
+	 * Evaluation state change to Viewable.
+	 */
+	public static final String QRTZ_EVALUATION_CHANGE_TO_VIEWABLE = "EvaluationChangeSateToViewable";
+	
+	/**
+	 * Quartz:
+	 * Identifier for Job group name and Job type in scheduling 
+	 * removal of jobs from the job scheduler.
+	 * 
+	 */
+	public static final String QRTZ_EVALUATION_CLEAR_SCHEDULER = "EvaluationClearScheduler";
+
+	/**
+	 * Quartz: 
+	 * JobDataMap attribute name mapped to Evaluation id.
+	 */
+	public static final String JOB_DATA_MAP_EVALUATION_ID = "EvaluationId";
+
+	/**
+	 * Quartz:
+	 * JobDataMap attribute name mapped to Job type.
+	 */
+	public static final String JOB_DATA_MAP_JOB_TYPE = "JobType";
+
 }
