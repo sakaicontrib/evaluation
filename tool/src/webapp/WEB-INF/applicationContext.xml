@@ -20,7 +20,9 @@
   <!-- the beans listed here are allowed access to values (security) -->
   <bean parent="requestAddressibleParent">
     <property name="value"
-      value="evaluationBean, templateBBean, itemsBean, templateBeanLocator, templateItemBeanLocator, answersBeanLocator, responseAnswersBeanLocator, responseBeanLocator, evaluationBeanLocator, takeEvalBean, settingsBean, scaleBean, scaleBeanLocator" />
+      value="evaluationBean, templateBBean, itemsBean, expertItemsBean, 
+      	templateBeanLocator, templateItemBeanLocator, answersBeanLocator, responseAnswersBeanLocator, 
+      	responseBeanLocator, evaluationBeanLocator, takeEvalBean, settingsBean, scaleBean, scaleBeanLocator" />
   </bean>
 
   <bean id="localTemplateLogic"
