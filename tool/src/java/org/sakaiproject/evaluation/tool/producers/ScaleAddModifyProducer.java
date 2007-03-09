@@ -21,6 +21,7 @@ import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.LocalScaleLogic;
+import org.sakaiproject.evaluation.tool.ScaleBeanLocator;
 import org.sakaiproject.evaluation.tool.params.EvalScaleParameters;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -85,10 +86,23 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParams
 		Long scaleId = evalScaleParams.scaleId;
 		
 		/*
-		 * Fetching the scale from LocalScaleLogic just because 
-		 * we need the number of scale options.
-		 */ 
-		EvalScale scale = localScaleLogic.fetchScale(scaleId);
+		 * Fetching the scale from LocalScaleLogic because: 
+		 * a) we need the number of scale options,
+		 * b) Need to do the check whether the scale is expert or not.
+		 * 
+		 */
+		EvalScale scale;
+		String path;
+		if (scaleId.equals(EvaluationConstant.NEW_SCALE)) {
+			// new scale
+			scale = localScaleLogic.newScale();
+			path = "scaleBeanLocator." + ScaleBeanLocator.NEW_1 + ".";							//$NON-NLS-1$ 
+		}
+		else {
+			//scale exists
+			scale = localScaleLogic.fetchScale(scaleId);
+			path = "scaleBeanLocator." + scaleId + ".";											//$NON-NLS-1$ 
+		}
 		
 		/*
 		 * top menu links and bread crumbs here
@@ -119,7 +133,6 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParams
 		UIMessage.make(form, "scale-title-note", 												//$NON-NLS-1$ 
 				"scaleaddmodify.scale.title.note");	 											//$NON-NLS-1$
 		
-		String path = "scaleBeanLocator." + scaleId + ".";
 		UIInput.make(form, "scale-title", path + "title");										//$NON-NLS-1$
 
 		/* 
@@ -137,10 +150,17 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParams
 			//do nothing
 		}
 		else  {
-			UIBranchContainer scaleRemove = UIBranchContainer.make(form, "scaleRemove:");			//$NON-NLS-1$ 
-			UIInternalLink.make(scaleRemove, "scale-remove-link", 									//$NON-NLS-1$ 
-					UIMessage.make("scaleaddmodify.remove.scale.link"), 							//$NON-NLS-1$
-					new EvalScaleParameters(RemoveScaleProducer.VIEW_ID, scaleId));
+			
+			// New scales don't need a remove link
+			if (scaleId.equals(EvaluationConstant.NEW_SCALE)) {
+				// do nothing
+			}
+			else {
+				UIBranchContainer scaleRemove = UIBranchContainer.make(form, "scaleRemove:");	//$NON-NLS-1$ 
+				UIInternalLink.make(scaleRemove, "scale-remove-link", 							//$NON-NLS-1$ 
+						UIMessage.make("scaleaddmodify.remove.scale.link"), 					//$NON-NLS-1$
+						new EvalScaleParameters(RemoveScaleProducer.VIEW_ID, scaleId));
+			}
 		}
 
 		for (int j = 0; j < scale.getOptions().length; ++j){

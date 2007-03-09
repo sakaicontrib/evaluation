@@ -160,5 +160,11 @@ public class EvaluationConstant {
 	public static final String ADMIN_BOOLEAN_YES = "1";
 	public static final String ADMIN_BOOLEAN_NO = "0";
 	public static final String ADMIN_BOOLEAN_CONFIGURABLE = "-1";
+	
+	/**
+	 * Used to pass the flag that this is a new scale between the 
+	 * scale add modify and scale control pages. 
+	 */ 
+	public static final Long NEW_SCALE = new Long("-1");
 }
 
