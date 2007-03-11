@@ -85,7 +85,7 @@ public class EvalNotificationImpl implements StatefulJob {
 			}
 			
 			//Job parameters
-			Long evalId = context.getJobDetail().getJobDataMap().getLong(EvalConstants.JOB_DATA_MAP_EVALUATION_ID);
+			Long evalId = new Long(context.getJobDetail().getJobDataMap().getLong(EvalConstants.JOB_DATA_MAP_EVALUATION_ID));
 			String jobType = context.getJobDetail().getJobDataMap().getString(EvalConstants.JOB_DATA_MAP_JOB_TYPE);
 			
 			//Perform parameter checks
