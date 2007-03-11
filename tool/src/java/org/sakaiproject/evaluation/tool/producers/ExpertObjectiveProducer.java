@@ -14,19 +14,28 @@
 
 package org.sakaiproject.evaluation.tool.producers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalExpertItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
+import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.tool.params.ExpertItemViewParameters;
 import org.sakaiproject.evaluation.tool.params.TemplateViewParameters;
 
+import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
+import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIELBinding;
+import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
+import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
+import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
@@ -38,7 +47,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class ExpertObjectiveProducer implements ViewComponentProducer, ViewParamsReporter {
+public class ExpertObjectiveProducer implements ViewComponentProducer, NavigationCaseReporter, ViewParamsReporter {
 
 	/**
 	 * Used for navigation within the system, this must match with the template name
@@ -92,31 +101,92 @@ public class ExpertObjectiveProducer implements ViewComponentProducer, ViewParam
 		UIMessage.make(tofill, "category", "expert.category");
 		EvalItemGroup category = expertItemsLogic.getItemGroupById(categoryId);
 		UIOutput.make(tofill, "category-current", category.getTitle() );
-		UIMessage.make(tofill, "objective", "expert.objective");
-		UIMessage.make(tofill, "objective-instructions", "expert.objective.instructions");
-
-		UIMessage.make(tofill, "description", "expert.description");
 
 		// set the VP to the correct target for items
 		eivp.viewID = ExpertItemsProducer.VIEW_ID;
 
 		// loop through all non-empty expert objectives
 		List expertObjectives = expertItemsLogic.getItemGroups(categoryId, currentUserId, false, true);
-		for (int i = 0; i < expertObjectives.size(); i++) {
-			EvalItemGroup objective = (EvalItemGroup) expertObjectives.get(i);
-			UIBranchContainer objectives = UIBranchContainer.make(tofill, "expert-objective-list:", objective.getId().toString());
-			eivp.objectiveId = objective.getId();
-			UIInternalLink.make(objectives, "objective-title-link", objective.getTitle(), eivp); //$NON-NLS-1$
-			if (objective.getDescription() != null && objective.getDescription().length() > 0) {
-				UIOutput.make(objectives, "objective-description", objective.getDescription()); //$NON-NLS-1$
-			} else {
-				UIMessage.make(objectives, "objective-no-description", "expert.no.description"); //$NON-NLS-1$
+		if (expertObjectives.size() > 0) {
+			UIBranchContainer.make(tofill, "objective-header:");
+
+			UIMessage.make(tofill, "objective", "expert.objective");
+			UIMessage.make(tofill, "objective-instructions", "expert.objective.instructions");
+
+			UIMessage.make(tofill, "description", "expert.description");
+
+			for (int i = 0; i < expertObjectives.size(); i++) {
+				EvalItemGroup objective = (EvalItemGroup) expertObjectives.get(i);
+				UIBranchContainer objectives = UIBranchContainer.make(tofill, "expert-objective-list:", objective.getId().toString());
+				eivp.objectiveId = objective.getId();
+				UIInternalLink.make(objectives, "objective-title-link", objective.getTitle(), eivp); //$NON-NLS-1$
+				if (objective.getDescription() != null && objective.getDescription().length() > 0) {
+					UIOutput.make(objectives, "objective-description", objective.getDescription()); //$NON-NLS-1$
+				} else {
+					UIMessage.make(objectives, "objective-no-description", "expert.no.description"); //$NON-NLS-1$ //$NON-NLS-2$
+				}
 			}
 		}
 
-		// create the cancel link
-		UIInternalLink.make(tofill, "cancel-expert-items", UIMessage.make("expert.items.cancel"), 
-				new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, templateId) );
+		List expertItems = expertItemsLogic.getItemsInItemGroup(categoryId, true);
+
+		if (expertObjectives.size() > 0 && expertItems.size() > 0) {
+			UIBranchContainer branch = UIBranchContainer.make(tofill, "objective-or-choice:");
+			UIMessage.make(branch, "objective-or-text", "expert.objective.or"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+
+		if (expertItems.size() > 0) {
+			UIBranchContainer.make(tofill, "items-header:");
+
+			UIForm form = UIForm.make(tofill, "insert-items-form");
+
+			UIMessage.make(form, "items", "expert.items");
+			UIMessage.make(form, "items-instructions", "expert.items.instructions");
+
+			// loop through all expert items
+			for (int i = 0; i < expertItems.size(); i++) {
+				EvalItem expertItem = (EvalItem) expertItems.get(i);
+				UIBranchContainer items = UIBranchContainer.make(form, "expert-item-list:", expertItem.getId().toString());
+				UIBoundBoolean checkbox = UIBoundBoolean.make(items, "insert-item-checkbox", "#{expertItemsBean.selectedIds." + expertItem.getId() + "}");
+				UILabelTargetDecorator.targetLabel(UIOutput.make(items, "item-label"), checkbox);
+				UIOutput.make(items, "item-text", expertItem.getItemText()); //$NON-NLS-1$
+				if (expertItem.getScale() != null) {
+					String scaleText = expertItem.getScale().getTitle() + " (";
+					for (int j = 0; j < expertItem.getScale().getOptions().length; j++) {
+						scaleText += (j==0?"":",") + expertItem.getScale().getOptions()[j];
+					}
+					scaleText += ")";
+					UIOutput.make(items, "item-scale", scaleText); //$NON-NLS-1$
+				}
+				if (expertItem.getExpertDescription() != null) {
+					UIOutput.make(items, "item-expert-desc", expertItem.getExpertDescription()); //$NON-NLS-1$
+				}
+			}
+
+			// create the cancel link
+			UIInternalLink.make(form, "cancel-expert-items", UIMessage.make("expert.items.cancel"), 
+					new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, templateId) );
+
+			// create the Insert Items button
+			UICommand addItemsCommand = UICommand.make(form, "insert-items-command", UIMessage.make("expert.items.insert"), //$NON-NLS-1$
+				"#{expertItemsBean.processActionAddItems}"); //$NON-NLS-1$
+			addItemsCommand.parameters.add(new UIELBinding("#{expertItemsBean.templateId}", templateId)); //$NON-NLS-1$
+		} else {
+			// create the cancel link
+			UIInternalLink.make(tofill, "cancel-expert-items", UIMessage.make("expert.items.cancel"), 
+					new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, templateId) );
+		}
+	}
+
+
+	/* 
+	 * (non-Javadoc)
+	 * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
+	 */
+	public List reportNavigationCases() {
+		List i = new ArrayList();
+		i.add(new NavigationCase("success", new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, null) ) );
+		return i;
 	}
 
 	/* (non-Javadoc)

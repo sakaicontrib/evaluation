@@ -273,6 +273,13 @@ td.checktable2 {
 	text-indent: 1em;
 }
 
+.expertItemsScale {
+	display: block;
+	font-size: 11pt;
+	text-indent: 1em;
+	font-style: italic;
+}
+
 .expertItemCategoryCurrent {
 	font-weight: bold;
 	font-size: 12pt;
