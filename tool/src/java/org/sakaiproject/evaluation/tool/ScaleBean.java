@@ -15,7 +15,6 @@ package org.sakaiproject.evaluation.tool;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.sakaiproject.evaluation.model.EvalEvaluation;
 
 /**
  * This request-scope bean handles scale creation and modification.

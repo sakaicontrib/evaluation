@@ -20,12 +20,12 @@ import java.util.Map;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
-import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIJointContainer;
+import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
@@ -37,11 +37,6 @@ import uk.org.ponder.rsf.components.decorators.UIFreeAttributeDecorator;
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class TextRenderer implements ItemRenderer {
-
-	private MessageLocator messageLocator;
-	public void setMessageLocator(MessageLocator messageLocator) {
-		this.messageLocator = messageLocator;
-	}
 
 	/**
 	 * This identifies the template component associated with this renderer
@@ -63,8 +58,8 @@ public class TextRenderer implements ItemRenderer {
 		UIVerbatim.make(container, "itemText", templateItem.getItem().getItemText()); //$NON-NLS-1$
 		if ( templateItem.getUsesNA().booleanValue() ) {
 			UIBranchContainer NAbranch = UIBranchContainer.make(container, "showNA:"); //$NON-NLS-1$
-			UIBoundBoolean.make(NAbranch, "itemNA", templateItem.getUsesNA()); //$NON-NLS-1$
-			UIOutput.make(NAbranch, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
+			UIBoundBoolean.make(NAbranch, "itemNA"); //$NON-NLS-1$
+			UIMessage.make(NAbranch, "na-desc", "viewitem.na.desc"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		UIInput textarea = UIInput.make(container, "essayBox", bindings[0], initValue); //$NON-NLS-1$ //$NON-NLS-2$

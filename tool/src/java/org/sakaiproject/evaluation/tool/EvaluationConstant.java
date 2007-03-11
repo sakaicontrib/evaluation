@@ -166,5 +166,10 @@ public class EvaluationConstant {
 	 * scale add modify and scale control pages. 
 	 */ 
 	public static final Long NEW_SCALE = new Long("-1");
+
+	/**
+	 * The value stored when a student responds N/A
+	 */
+	public static final String NA_VALUE = "-1";
 }
 

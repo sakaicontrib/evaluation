@@ -18,7 +18,6 @@ import org.sakaiproject.evaluation.logic.utils.SettingsLogicUtils;
 
 import uk.org.ponder.beanutil.WriteableBeanLocator;
 import uk.org.ponder.conversion.StaticLeafParser;
-import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 /**
