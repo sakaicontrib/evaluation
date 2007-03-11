@@ -25,12 +25,11 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 
-import uk.org.ponder.messageutil.MessageLocator;
-import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIJointContainer;
 import uk.org.ponder.rsf.components.UILink;
+import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UISelectChoice;
@@ -45,11 +44,6 @@ import uk.org.ponder.rsf.components.decorators.UIFreeAttributeDecorator;
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class BlockRenderer implements ItemRenderer {
-
-	private MessageLocator messageLocator;
-	public void setMessageLocator(MessageLocator messageLocator) {
-		this.messageLocator = messageLocator;
-	}
 
 	private EvalItemsLogic itemsLogic;
 	public void setItemsLogic( EvalItemsLogic itemsLogic) {
@@ -90,6 +84,10 @@ public class BlockRenderer implements ItemRenderer {
 		EvalScale scale = templateItem.getItem().getScale();
 		String[] scaleOptions = scale.getOptions();
 		int optionCount = scaleOptions.length;
+
+		// handle NA
+		boolean usesNA = templateItem.getUsesNA().booleanValue();
+
 		String scaleValues[] = new String[optionCount];
 		String scaleLabels[] = new String[optionCount];
 
@@ -103,12 +101,11 @@ public class BlockRenderer implements ItemRenderer {
 			// setup simple variables to make code more clear
 			boolean colored = EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED.equals(scaleDisplaySetting);
 
-			handleNA(blockStepped, templateItem.getUsesNA().booleanValue());
-
 			for (int count = 1; count <= optionCount; count++) {
 				scaleValues[optionCount - count] = Integer.toString(optionCount - count);
 				scaleLabels[optionCount - count] = scaleOptions[count-1];
 			}
+
 //System.out.println("BLOCK-RENDER: scaleValues: " + ArrayUtil.toString(scaleValues));
 //System.out.println("BLOCK-RENDER: scaleLabels: " + ArrayUtil.toString(scaleLabels));
 
@@ -134,12 +131,18 @@ public class BlockRenderer implements ItemRenderer {
 			}
 
 			// Radio Buttons
-			UISelect radioLabel = UISelect.make(blockStepped, 
-					"radioLabel", scaleValues, scaleLabels, null, false); //$NON-NLS-1$
+			UISelect radioLabel = UISelect.make(blockStepped, "radioLabel", scaleValues, scaleLabels, null, false); //$NON-NLS-1$
 			String selectIDLabel = radioLabel.getFullID();
 
-			// the scale rendering loop
-			for (int j = 0; j < scaleValues.length; ++j) {
+			if (usesNA) {
+				scaleValues = appendArray(scaleValues, EvaluationConstant.NA_VALUE);
+				scaleLabels = appendArray(scaleLabels, "");
+				UIMessage.make(blockStepped, "na-desc", "viewitem.na.desc");
+			}
+
+			int scaleLength = scaleValues.length;
+			int limit = usesNA? scaleLength - 1: scaleLength;  // skip the NA value at the end
+			for (int j = 0; j < limit; ++j) {
 				UIBranchContainer rowBranch = UIBranchContainer.make(
 						blockStepped, "blockRowBranch:", Integer.toString(j)); //$NON-NLS-1$
 
@@ -168,7 +171,7 @@ public class BlockRenderer implements ItemRenderer {
 				UIBranchContainer bottomLabelBranch = UIBranchContainer.make(blockStepped, "blockBottomLabelBranch:", Integer.toString(j)); //$NON-NLS-1$
 				UILink.make(bottomLabelBranch, "bottomImage", EvaluationConstant.STEPPED_IMAGE_URLS[2]); //$NON-NLS-1$
 			}
-		
+
 			// the child items rendering loop
 			for (int j = 0; j < childList.size(); j++) {
 
@@ -200,7 +203,11 @@ public class BlockRenderer implements ItemRenderer {
 					childRadios.selection.fossilize = false;
 				}
 
-				for (int k = 0; k < scaleValues.length; ++k) {
+				if (usesNA) {
+					UISelectChoice.make(childRow, "na-input", selectID, scaleLength - 1); //$NON-NLS-1$
+				}
+
+				for (int k = 0; k < limit; ++k) {
 					if (colored) {
 						UIBranchContainer radioBranchFirst = 
 							UIBranchContainer.make(childRow, "scaleOptionsFake:", Integer.toString(k)); //$NON-NLS-1$
@@ -227,13 +234,11 @@ public class BlockRenderer implements ItemRenderer {
 		return EvalConstants.ITEM_TYPE_BLOCK_PARENT;
 	}
 
-
-	private void handleNA(UIContainer container, boolean useNA) {
-		if (useNA) {
-			UIBranchContainer radiobranch3 = UIBranchContainer.make(container, "showNA:"); //$NON-NLS-1$
-			UIBoundBoolean.make(radiobranch3, "itemNA", useNA); //$NON-NLS-1$
-			UIOutput.make(radiobranch3, "na-desc", messageLocator.getMessage("viewitem.na.desc")); //$NON-NLS-1$ //$NON-NLS-2$
-		}
+	private String[] appendArray(String[] array, String value) {
+		String[] newArray = new String[array.length + 1];
+		System.arraycopy( array, 0, newArray, 0, array.length );
+		newArray[newArray.length-1] = value;
+		return newArray;
 	}
 
 }
