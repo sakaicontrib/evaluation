@@ -2,7 +2,7 @@
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title rsf:id="page-title">Expert Items - Choose Items</title>
+	<title rsf:id="page-title">Items - Choose Items</title>
 	<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter"	type="text/css" rel="stylesheet" media="all" />
 	<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all" />
 	<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
@@ -14,35 +14,28 @@
 
 <div class="navIntraTool">
 	<a rsf:id="summary-toplink" href="summary.html">Summary</a>
+	<a rsf:id="modify-items-link" href="modify_items.html">Items</a>
 </div>
 
 <div>
 	<ul class="breadCrumb">
-		<li class="breadCrumb"><a rsf:id="modify-template" href="template_modify.html">Template</a></li>
-		<li class="breadCrumb" rsf:id="expert-items">Expert Items:</li>
-		<li class="breadCrumb"><a rsf:id="expert-items-category-link" href="choose_expert_category.html">Category</a></li>
-		<li class="breadCrumb"><a rsf:id="expert-items-objective-link" href="choose_expert_objective.html">Objective</a></li>
-		<li class="breadCrumbCurrent" rsf:id="expert-items-items">Items</li>
+		<li class="breadCrumb"><a rsf:id="modify-template-link" href="template_modify.html">Template</a></li>
+		<li class="breadCrumb"><a rsf:id="modify-items-link" href="modify_items.html">Items</a>:</li>
+		<li class="breadCrumbCurrent" rsf:id="items-items">Choose Items</li>
 	</ul>
 </div>
 
-<div>
-	<span rsf:id="expert-items" class="item">Expert Items:</span>
-	<a rsf:id="choose-category-1-link" href="choose_expert_category.html" class="expertItemCategory">(1) Choose Category</a> =>
-	<a rsf:id="choose-objective-2-link" href="choose_expert_objective.html" class="expertItemCategory">(2) Choose Objective</a> =>
-	<span rsf:id="choose-items-3" class="expertItemCategoryCurrent">(3) Choose Items</span>
-</div>
-
-<div>
-	<span rsf:id="category" class="itemsHeader">Category</span> :
-	<span rsf:id="category-current" class="itemsText">Current Category</span>
-	<br/>
-	<span rsf:id="objective" class="itemsHeader">Objective</span> :
-	<span rsf:id="objective-current" class="itemsText">Current Objective</span>
-	<br/>
-	<span rsf:id="items" class="itemsHeader">Items</span> :
-	<span rsf:id="items-instructions" class="itemsText">Check the items you want to use in your template and click the Insert button at the bottom</span>
-	<br/>
+<div style="width:99%;">
+	<div rsf:id="searchText" style="float:left;">
+		<span rsf:id="search-current" class="SearchHeader">Current Search</span> :
+		<span rsf:id="search-current-value" class="SearchText">Search Text</span>
+	</div>
+	<div style="float:right;">
+		<form rsf:id="search-form" action="choose_existing_items.html" method="get">
+			<input rsf:id="search-box" type="text" size="25" maxlength="100" />
+			<input rsf:id="search-command" type="submit" value="Search" />
+		</form>
+	</div>
 </div>
 
 <form rsf:id="insert-items-form" method="post" action="template_modify.html" style="margin:0px;">
@@ -51,11 +44,11 @@
 	<thead>
 		<tr>
 			<th align="center" width="5%">&nbsp;&nbsp;</th>
-			<th rsf:id="items" align="left" width="95%">Expert Items</th>
+			<th rsf:id="items" align="left" width="95%">Items</th>
 		</tr>
 	</thead>
 	<tbody>
-		<tr rsf:id="expert-item-list:">
+		<tr rsf:id="item-list:">
 			<td align="center" nowrap="true" valign="top">
 				<input id="id1" rsf:id="insert-item-checkbox" type="checkbox" />
 			</td>
@@ -63,11 +56,10 @@
 				<label rsf:id="item-label" for="id1">
 					<span rsf:id="item-text">Item Text (the text entered for the item itself will appear here, it is possibly quite long</span><br/>
 					<span rsf:id="item-scale" class="itemsScale">Item Scale (the title of the scale and the points in parens)</span>
-					<span rsf:id="item-expert-desc" class="itemsDesc">Expert description (the description of what this item is good for assessing and where it should be used</span>
 				</label>
 			</td>
 		</tr>
-		<tr rsf:id="expert-item-list:">
+		<tr rsf:id="item-list:">
 			<td align="center" nowrap="true" valign="top">
 				<input id ="id2" rsf:id="insert-item-checkbox" type="checkbox" />
 			</td>
@@ -75,7 +67,6 @@
 				<label rsf:id="item-label" for="id2">
 					<span rsf:id="item-text">Item Text (the text entered for the item itself will appear here, it is possibly quite long</span><br/>
 					<span rsf:id="item-scale" class="itemsScale">Item Scale (the title of the scale and the points in parens)</span>
-					<span rsf:id="item-expert-desc" class="itemsDesc">Expert description (the description of what this item is good for assessing and where it should be used</span>
 				</label>
 			</td>
 		</tr>
@@ -85,7 +76,7 @@
 <table width="99%">
 	<tr>
 		<td align="left">
-			<a rsf:id="cancel-expert-items" href="template_modify.html" class="makeButton">Cancel</a>
+			<a rsf:id="cancel-items" href="template_modify.html" class="makeButton">Cancel</a>
 		</td>
 		<td align="right">
 			<input rsf:id="insert-items-command" type="submit" value="Insert Items" />

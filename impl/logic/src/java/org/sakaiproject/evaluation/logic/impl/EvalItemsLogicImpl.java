@@ -29,6 +29,7 @@ import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.utils.ArrayUtils;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -208,10 +209,10 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.EvalItemsLogic#getItemsForUser(java.lang.String, java.lang.String)
+	 * @see org.sakaiproject.evaluation.logic.EvalItemsLogic#getItemsForUser(java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public List getItemsForUser(String userId, String sharingConstant) {
-		log.debug("sharingConstant:" + sharingConstant + ", userId:" + userId);
+	public List getItemsForUser(String userId, String sharingConstant, String filter) {
+		log.debug("sharingConstant:" + sharingConstant + ", userId:" + userId + ", filter:" + filter);
 
 		Set s = new HashSet();
 
@@ -240,23 +241,38 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 
 		// handle private sharing items
 		if (getPrivate) {
-			String[] props;
-			Object[] values;
-			if (isAdmin) {
-				props = new String[] { "sharing" };
-				values = new Object[] { EvalConstants.SHARING_PRIVATE };
-			} else {
-				props = new String[] { "sharing", "owner" };
-				values = new Object[] { EvalConstants.SHARING_PRIVATE, userId };				
+			String[] props = new String[] { "sharing" };
+			Object[] values = new Object[] { EvalConstants.SHARING_PRIVATE };
+			int[] comparisons = new int[] { ByPropsFinder.EQUALS };
+
+			if (!isAdmin) {
+				props = ArrayUtils.appendArray(props, "owner");
+				values = ArrayUtils.appendArray(values, userId);
+				comparisons = ArrayUtils.appendArray(comparisons, ByPropsFinder.EQUALS);
 			}
-			s.addAll( dao.findByProperties(EvalItem.class, props, values) );
+
+			if (filter != null && filter.length() > 0) {
+				props = ArrayUtils.appendArray(props, "itemText");
+				values = ArrayUtils.appendArray(values, "%" + filter + "%");
+				comparisons = ArrayUtils.appendArray(comparisons, ByPropsFinder.LIKE);
+			}
+
+			s.addAll( dao.findByProperties(EvalItem.class, props, values, comparisons) );
 		}
 
 		// handle public sharing items
 		if (getPublic) {
-			s.addAll( dao.findByProperties(EvalItem.class, 
-					new String[] { "sharing" }, 
-					new Object[] { EvalConstants.SHARING_PUBLIC } ) );
+			String[] props = new String[] { "sharing" };
+			Object[] values = new Object[] { EvalConstants.SHARING_PUBLIC };
+			int[] comparisons = new int[] { ByPropsFinder.EQUALS };
+
+			if (filter != null && filter.length() > 0) {
+				props = ArrayUtils.appendArray(props, "itemText");
+				values = ArrayUtils.appendArray(values, "%" + filter + "%");
+				comparisons = ArrayUtils.appendArray(comparisons, ByPropsFinder.LIKE);
+			}
+
+			s.addAll( dao.findByProperties(EvalItem.class, props, values, comparisons) );
 		}
 
 		return new ArrayList(s);

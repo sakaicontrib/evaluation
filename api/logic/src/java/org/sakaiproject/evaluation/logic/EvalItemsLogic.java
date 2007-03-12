@@ -74,9 +74,11 @@ public interface EvalItemsLogic {
 	 * user, if set to a sharing constant then return just the visible
 	 * items that match that sharing setting (can be used to get all
 	 * items owned by this user for example)
+	 * @param filter text which will filter the returned items to those which have
+	 * a portion that matches this text, if null or blank string then matches all
 	 * @return a list of {@link EvalItem} objects
 	 */
-	public List getItemsForUser(String userId, String sharingConstant);
+	public List getItemsForUser(String userId, String sharingConstant, String filter);
 
 	/**
 	 * Get a list of items in a template that are visible to a user, 

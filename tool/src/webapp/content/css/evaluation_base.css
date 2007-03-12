@@ -249,35 +249,36 @@ td.checktable2 {
 	font-style: italic;
 }
 
+.itemsHeader {
+	font-weight: bold;
+	font-size: 12pt;
+	color: #990033;
+}
+
+.itemsText {
+	font-size: 11pt;
+}
+
+.itemsDesc {
+	display: block;
+	font-size: 10pt;
+	text-indent: 1em;
+}
+
+.itemsScale {
+	display: block;
+	font-size: 11pt;
+	text-indent: 1em;
+	font-style: italic;
+}
+
+
 .expertItem {
 	font-size: 12pt;
 }
 
 .expertItemCategory {
 	font-size: 10pt;
-}
-
-.expertItemsHeader {
-	font-weight: bold;
-	font-size: 12pt;
-	color: #990033;
-}
-
-.expertItemsText {
-	font-size: 11pt;
-}
-
-.expertItemsDesc {
-	display: block;
-	font-size: 10pt;
-	text-indent: 1em;
-}
-
-.expertItemsScale {
-	display: block;
-	font-size: 11pt;
-	text-indent: 1em;
-	font-style: italic;
 }
 
 .expertItemCategoryCurrent {
