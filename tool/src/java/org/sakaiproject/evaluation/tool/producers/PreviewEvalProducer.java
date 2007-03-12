@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -73,14 +74,18 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 		this.templatesLogic = templatesLogic;
 	}
 
-
+	private EvalItemsLogic itemsLogic;
+	public void setItemsLogic( EvalItemsLogic itemsLogic) {
+		this.itemsLogic = itemsLogic;
+	}
 
 	private ItemRenderer itemRenderer;
 	public void setItemRenderer(ItemRenderer itemRenderer) {
 		this.itemRenderer = itemRenderer;
 	}
 
-
+	int displayedItems=1;//used to determine the number to display next to each item
+	int colorCounter=0;//used to determine whether to color the background of an item
 	/* 
 	 * 1). Preview Template --getting data from DAO --DONE
 	 * 2). Preview Evaluation -- by passing Evalution ID,course--TO BE DONE
@@ -196,53 +201,79 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 				UIBranchContainer courseSection = null;
 				UIBranchContainer instructorSection = null;
 
+				
 				if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_COURSE, ncItemsList))	{	
+					colorCounter=0;
 					courseSection = UIBranchContainer.make(tofill,"courseSection:"); //$NON-NLS-1$
 					UIMessage.make(courseSection, "course-questions-header", "previeweval.course.questions.header");  //$NON-NLS-1$ //$NON-NLS-2$
+					for (int i = 0; i < ncItemsList.size(); i++) {	
+						EvalTemplateItem templateItem = (EvalTemplateItem) ncItemsList.get(i);
+						
+						String cat = templateItem.getItemCategory();
+						UIBranchContainer itemsBranch = null;
+						if (cat == null) {
+							throw new IllegalStateException("Template item with null category found: " + templateItem.getId() );
+						} else if (EvalConstants.ITEM_CATEGORY_COURSE.equals(cat)) {
+							doFillComponent(courseSection, templateItem, colorCounter);
+							ncItemsList.remove(i);
+							i--;
+							colorCounter++;
+						} 
+					}// end of for loop	
 				}
 
 				if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, ncItemsList))	{	
+					colorCounter=0;
 					instructorSection = UIBranchContainer.make(tofill,"instructorSection:"); //$NON-NLS-1$
 					UIMessage.make(instructorSection, "instructor-questions-header", "previeweval.instructor.questions.header");  //$NON-NLS-1$ //$NON-NLS-2$
+					for (int i = 0; i < ncItemsList.size(); i++) {	
+						EvalTemplateItem templateItem = (EvalTemplateItem) ncItemsList.get(i);
+						
+						String cat = templateItem.getItemCategory();
+						UIBranchContainer itemsBranch = null;
+						if (cat == null) {
+							throw new IllegalStateException("Template item with null category found: " + templateItem.getId() );
+						} else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(cat)) {
+							doFillComponent(instructorSection, templateItem, colorCounter);
+							ncItemsList.remove(i);
+							i--;
+							colorCounter++;
+						} 
+					}// end of for loop		
+				}
+				if(ncItemsList.size()>0){
+					throw new IllegalStateException("Items found with categories that are not rendered");
 				}
 
-				for (int i = 0; i < ncItemsList.size(); i++) {	
-					EvalTemplateItem templateItem = (EvalTemplateItem) ncItemsList.get(i);
+				
 
-					String cat = templateItem.getItemCategory();
-					UIBranchContainer itemsBranch = null;
-					if (cat == null) {
-						throw new IllegalStateException("Template item with null category found: " + templateItem.getId() );
-					} else if (EvalConstants.ITEM_CATEGORY_COURSE.equals(cat)) {
-						itemsBranch = UIBranchContainer.make(courseSection,
-								"itemrow:first", Integer.toString(i)); //$NON-NLS-1$
-
-						//this.doFillComponent(templateItem, i, radiobranch,courseSection, allItems);
-
-					} else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(cat)) {
-						itemsBranch = UIBranchContainer.make(instructorSection,
-								"itemrow:first", Integer.toString(i)); //$NON-NLS-1$
-
-						//this.doFillComponent(templateItem, i, radiobranch,instructorSection,allItems);
-
-					} else {
-						throw new IllegalStateException("No handling for this category available: " + cat);
-					}
-
-					if ( itemsBranch != null ) {
-						// use the renderer evolver
-						itemRenderer.renderItem(itemsBranch, "previewed-item:", null, templateItem, i, true);
-
-						if (i % 2 == 1) {
-							itemsBranch.decorators = new DecoratorList( new UIColourDecorator(null,
-									Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)) );
-						}
-					}
-				} // end of for loop
 			}//end of:if (! allItems.isEmpty())
 		} //end of:if (previewEvalViewParams.originalPage != null)
 	}
 
+	
+	private void doFillComponent(UIBranchContainer section, EvalTemplateItem templateItem, int colorCounter){
+
+		UIBranchContainer itemsBranch = null;
+		itemsBranch = UIBranchContainer.make(section,
+				"itemrow:first", Integer.toString(displayedItems)); //$NON-NLS-1$
+
+			// use the renderer evolver
+			itemRenderer.renderItem(itemsBranch, "previewed-item:", null, templateItem, displayedItems, true);
+			if(TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)){
+				List childList = itemsLogic.getBlockChildTemplateItemsForBlockParent(templateItem.getId(), false);
+				displayedItems+=childList.size();
+			}
+			else if(TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_HEADER)) displayedItems+=0;
+			else displayedItems++;
+			//increment by 1 if not block, else increment by num of block children
+			
+			if (colorCounter % 2 == 1) {
+				itemsBranch.decorators = new DecoratorList( new UIColourDecorator(null,
+						Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)) );
+			}
+
+	}
 
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()

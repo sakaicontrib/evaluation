@@ -224,6 +224,8 @@
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
 		<property name="templatesLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
+		<property name="itemsLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />		
 		<property name="itemRenderer"
 			ref="org.sakaiproject.evaluation.tool.renderers.ItemRenderer" />
 	</bean>
