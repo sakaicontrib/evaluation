@@ -40,7 +40,7 @@
 
 <form rsf:id="insert-items-form" method="post" action="template_modify.html" style="margin:0px;">
 
-<table width="99%" summary="Column 1 has checkboxes used to select items, Column 2 has information about items">
+<table width="99%" summary="Column 1 has checkboxes used to select items, Column 2 has information about items" cellpadding="4" cellspacing="0">
 	<thead>
 		<tr>
 			<th align="center" width="5%">&nbsp;&nbsp;</th>
@@ -53,17 +53,17 @@
 				<input id="id1" rsf:id="insert-item-checkbox" type="checkbox" />
 			</td>
 			<td align="left" valign="top">
-				<label rsf:id="item-label" for="id1">
+				<label rsf:id="item-label" for="id1" style="margin-bottom:10px;">
 					<span rsf:id="item-text">Item Text (the text entered for the item itself will appear here, it is possibly quite long</span><br/>
 					<span rsf:id="item-scale" class="itemsScale">Item Scale (the title of the scale and the points in parens)</span>
 				</label>
 			</td>
 		</tr>
-		<tr rsf:id="item-list:">
+		<tr rsf:id="item-list:" class="itemsListOddLine">
 			<td align="center" nowrap="true" valign="top">
 				<input id ="id2" rsf:id="insert-item-checkbox" type="checkbox" />
 			</td>
-			<td align="left" valign="top">
+			<td align="left" valign="top" style="margin-bottom:4px;">
 				<label rsf:id="item-label" for="id2">
 					<span rsf:id="item-text">Item Text (the text entered for the item itself will appear here, it is possibly quite long</span><br/>
 					<span rsf:id="item-scale" class="itemsScale">Item Scale (the title of the scale and the points in parens)</span>

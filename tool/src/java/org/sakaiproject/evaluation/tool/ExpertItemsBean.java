@@ -78,18 +78,15 @@ public class ExpertItemsBean {
 			Long itemId = new Long((String) iter.next());
 			EvalItem item = itemsLogic.getItemById(itemId);
 			if (item == null) {
-				log.error("Invalid item id for expert item: " + itemId);
-				continue;
-			} else if (! item.getExpert().booleanValue()) {
-				log.error("Invalid item, not expert item: " + itemId);
+				log.error("Invalid item id: " + itemId);
 				continue;
 			}
-			log.debug("Checking to add expert item:" + itemId);
+			log.debug("Checking to add item:" + itemId);
 			if (selectedIds.get(itemId.toString()) == Boolean.TRUE) {
 				EvalTemplateItem templateItem = 
 					new EvalTemplateItem(new Date(), currentUserId,	template, item, null, null);
 				itemsLogic.saveTemplateItem(templateItem, currentUserId);
-				log.info("Adding new expert item (" + item.getId() + ") to template (" + template.getId() + ") via templateItem (" + templateItem.getId() + ")");
+				log.info("Added new item (" + item.getId() + ") to template (" + template.getId() + ") via templateItem (" + templateItem.getId() + ")");
 			}
 		}
 

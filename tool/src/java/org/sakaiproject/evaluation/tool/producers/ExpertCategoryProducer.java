@@ -26,7 +26,9 @@ import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
-import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.UIVerbatim;
+import uk.org.ponder.rsf.components.decorators.DecoratorList;
+import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
@@ -99,10 +101,14 @@ public class ExpertCategoryProducer implements ViewComponentProducer, ViewParams
 		for (int i = 0; i < expertCategories.size(); i++) {
 			EvalItemGroup category = (EvalItemGroup) expertCategories.get(i);
 			UIBranchContainer categories = UIBranchContainer.make(tofill, "expert-category-list:", category.getId().toString());
+			if (i % 2 == 0) {
+				categories.decorators = new DecoratorList( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
+			}
+
 			eivp.categoryId = category.getId();
 			UIInternalLink.make(categories, "category-title-link", category.getTitle(), eivp); //$NON-NLS-1$
 			if (category.getDescription() != null && category.getDescription().length() > 0) {
-				UIOutput.make(categories, "category-description", category.getDescription()); //$NON-NLS-1$
+				UIVerbatim.make(categories, "category-description", category.getDescription()); //$NON-NLS-1$
 			} else {
 				UIMessage.make(categories, "category-no-description", "expert.no.description"); //$NON-NLS-1$
 			}

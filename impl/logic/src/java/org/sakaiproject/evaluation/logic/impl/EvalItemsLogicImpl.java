@@ -112,8 +112,16 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 			} else if (item.getDisplayRows() != null) {
 				throw new IllegalArgumentException("Item displayRows cannot be included for header type items");
 			}
+		} else if ( EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(item.getClassification()) ) {
+			if (item.getScale() == null) {
+				throw new IllegalArgumentException("Item scale must be specified for block parent type items");
+			} else if (item.getScaleDisplaySetting() == null) {
+				throw new IllegalArgumentException("Item scale display setting must be specified for block parent type items");
+			} else if (item.getDisplayRows() != null) {
+				throw new IllegalArgumentException("Item displayRows cannot be included for block parent type items");
+			}
 		} else {
-			throw new IllegalArgumentException("Invalid item classification specified ("+item.getClassification()+"), you must use the ITEM_TYPE constants to indicate classification (and cannot use BLOCK)");
+			throw new IllegalArgumentException("Invalid item classification specified ("+item.getClassification()+"), you must use the ITEM_TYPE constants to indicate classification (and cannot use BLOCK_CHILD)");
 		}
 
 		// check the sharing constants
@@ -209,10 +217,10 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.EvalItemsLogic#getItemsForUser(java.lang.String, java.lang.String, java.lang.String)
+	 * @see org.sakaiproject.evaluation.logic.EvalItemsLogic#getItemsForUser(java.lang.String, java.lang.String, java.lang.String, boolean)
 	 */
-	public List getItemsForUser(String userId, String sharingConstant, String filter) {
-		log.debug("sharingConstant:" + sharingConstant + ", userId:" + userId + ", filter:" + filter);
+	public List getItemsForUser(String userId, String sharingConstant, String filter, boolean includeExpert) {
+		log.debug("sharingConstant:" + sharingConstant + ", userId:" + userId + ", filter:" + filter  + ", includeExpert:" + includeExpert);
 
 		Set s = new HashSet();
 
@@ -239,40 +247,54 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 			getPublic = true;
 		}
 
+		String[] props = new String[] { "classification" };
+		Object[] values = new Object[] { EvalConstants.ITEM_TYPE_BLOCK_PARENT };
+		int[] comparisons = new int[] { ByPropsFinder.NOT_EQUALS };
+
+		if (!includeExpert) {
+			props = ArrayUtils.appendArray(props, "expert");
+			values = ArrayUtils.appendArray(values, Boolean.TRUE);
+			comparisons = ArrayUtils.appendArray(comparisons, ByPropsFinder.NOT_EQUALS);
+		}
+
+		if (filter != null && filter.length() > 0) {
+			props = ArrayUtils.appendArray(props, "itemText");
+			values = ArrayUtils.appendArray(values, "%" + filter + "%");
+			comparisons = ArrayUtils.appendArray(comparisons, ByPropsFinder.LIKE);
+		}
+
 		// handle private sharing items
 		if (getPrivate) {
-			String[] props = new String[] { "sharing" };
-			Object[] values = new Object[] { EvalConstants.SHARING_PRIVATE };
-			int[] comparisons = new int[] { ByPropsFinder.EQUALS };
+			String[] privateProps = ArrayUtils.appendArray(props, "sharing");
+			Object[] privateValues = ArrayUtils.appendArray(values, EvalConstants.SHARING_PRIVATE);
+			int[] privateComparisons = ArrayUtils.appendArray(comparisons, ByPropsFinder.EQUALS);
 
 			if (!isAdmin) {
-				props = ArrayUtils.appendArray(props, "owner");
-				values = ArrayUtils.appendArray(values, userId);
-				comparisons = ArrayUtils.appendArray(comparisons, ByPropsFinder.EQUALS);
+				privateProps = ArrayUtils.appendArray(privateProps, "owner");
+				privateValues = ArrayUtils.appendArray(privateValues, userId);
+				privateComparisons = ArrayUtils.appendArray(privateComparisons, ByPropsFinder.EQUALS);
 			}
 
-			if (filter != null && filter.length() > 0) {
-				props = ArrayUtils.appendArray(props, "itemText");
-				values = ArrayUtils.appendArray(values, "%" + filter + "%");
-				comparisons = ArrayUtils.appendArray(comparisons, ByPropsFinder.LIKE);
-			}
+			s.addAll( dao.findByProperties(EvalItem.class, privateProps, privateValues, privateComparisons, new String[] {"id"}) );
+		}
 
-			s.addAll( dao.findByProperties(EvalItem.class, props, values, comparisons) );
+		for (Iterator iter = s.iterator(); iter.hasNext();) {
+			EvalItem element = (EvalItem) iter.next();
+			log.error("private Items: " + element.getId() + ":" + element.getItemText() + ":" + element.getClassification());
 		}
 
 		// handle public sharing items
 		if (getPublic) {
-			String[] props = new String[] { "sharing" };
-			Object[] values = new Object[] { EvalConstants.SHARING_PUBLIC };
-			int[] comparisons = new int[] { ByPropsFinder.EQUALS };
+			String[] publicProps = ArrayUtils.appendArray(props, "sharing");
+			Object[] publicValues = ArrayUtils.appendArray(values, EvalConstants.SHARING_PUBLIC);
+			int[] publicComparisons = ArrayUtils.appendArray(comparisons, ByPropsFinder.EQUALS);
 
-			if (filter != null && filter.length() > 0) {
-				props = ArrayUtils.appendArray(props, "itemText");
-				values = ArrayUtils.appendArray(values, "%" + filter + "%");
-				comparisons = ArrayUtils.appendArray(comparisons, ByPropsFinder.LIKE);
-			}
+			s.addAll( dao.findByProperties(EvalItem.class, publicProps, publicValues, publicComparisons, new String[] {"id"}) );
+		}
 
-			s.addAll( dao.findByProperties(EvalItem.class, props, values, comparisons) );
+		for (Iterator iter = s.iterator(); iter.hasNext();) {
+			EvalItem element = (EvalItem) iter.next();
+			log.error("all Items: " + element.getId() + ":" + element.getItemText() + ":" + element.getClassification());
 		}
 
 		return new ArrayList(s);
@@ -338,24 +360,26 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 				}
 			} else {
 				// this is related to a block
-				if (templateItem.getBlockParent().booleanValue() ) {
-					// this is the parent item for this block
-					if (templateItem.getScaleDisplaySetting() == null) {
-						throw new IllegalArgumentException("Template Item scale display setting must be included for parent block item");
-					} else if (templateItem.getBlockId() != null) {
-						throw new IllegalArgumentException("Item blockid must be null for parent block item");
-					}
-				} else {
+				if ( templateItem.getBlockParent() != null ) {
 					// this is a child block item
 					if (templateItem.getBlockId() == null) {
 						throw new IllegalArgumentException("Item blockid must be specified for child block items");
+					} else if (templateItem.getDisplayRows() != null) {
+						throw new IllegalArgumentException("Item displayRows must be null for block type items");
 					}
 				}
 
-				// general block item checks
-				if (templateItem.getDisplayRows() != null) {
-					throw new IllegalArgumentException("Item displayRows must be null for block type items");
-				}
+			}
+		} else if ( EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(item.getClassification()) ) {
+			// this is a block parent item (created just to hold the block parent text)
+			if (templateItem.getBlockParent() == null || !templateItem.getBlockParent().booleanValue() ) {
+				throw new IllegalArgumentException("Template Item block parent must be TRUE for parent block item");
+			} else if (templateItem.getScaleDisplaySetting() == null) {
+				throw new IllegalArgumentException("Template Item scale display setting must be included for parent block item");
+			} else if (templateItem.getBlockId() != null) {
+				throw new IllegalArgumentException("Item blockid must be null for parent block item");
+			} else if (templateItem.getDisplayRows() != null) {
+				throw new IllegalArgumentException("Item displayRows must be null for block type items");
 			}
 		} else if ( EvalConstants.ITEM_TYPE_TEXT.equals(item.getClassification()) ) {
 			if (templateItem.getDisplayRows() == null) {

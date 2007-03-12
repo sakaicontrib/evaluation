@@ -65,7 +65,8 @@ public interface EvalItemsLogic {
 	/**
 	 * Get a list of all the items visible to a specific user,
 	 * can limit it to only items owned by that user or
-	 * items by sharing level
+	 * items by sharing level, can exclude expert items<br/>
+	 * <b>Note:</b> Does not include any block items (parents)
 	 * 
 	 * @param userId the internal user id (not username)
 	 * @param sharingConstant a SHARING constant from 
@@ -76,9 +77,10 @@ public interface EvalItemsLogic {
 	 * items owned by this user for example)
 	 * @param filter text which will filter the returned items to those which have
 	 * a portion that matches this text, if null or blank string then matches all
+	 * @param includeExpert if true, then include expert Items, if false, leave out expert items
 	 * @return a list of {@link EvalItem} objects
 	 */
-	public List getItemsForUser(String userId, String sharingConstant, String filter);
+	public List getItemsForUser(String userId, String sharingConstant, String filter, boolean includeExpert);
 
 	/**
 	 * Get a list of items in a template that are visible to a user, 

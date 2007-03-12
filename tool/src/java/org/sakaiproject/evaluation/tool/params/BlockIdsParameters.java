@@ -11,19 +11,19 @@
  * Antranig Basman (antranig@caret.cam.ac.uk)
  * Rui Feng (fengr@vt.edu)
  *****************************************************************************/
+
 package org.sakaiproject.evaluation.tool.params;
 
 public class BlockIdsParameters extends TemplateViewParameters {
-  public String templateItemIds;
+	public String templateItemIds;
 
-  public BlockIdsParameters() {
-  }
+	public BlockIdsParameters() {
+	}
 
-  public BlockIdsParameters(String viewID, Long templateId,
-      String templateItemIds) {
-    this.viewID = viewID;
-    this.templateId = templateId;
-    this.templateItemIds = templateItemIds;
-  }
+	public BlockIdsParameters(String viewID, Long templateId, String templateItemIds) {
+		this.viewID = viewID;
+		this.templateId = templateId;
+		this.templateItemIds = templateItemIds;
+	}
 
 }

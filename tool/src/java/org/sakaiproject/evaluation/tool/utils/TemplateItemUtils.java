@@ -40,17 +40,13 @@ public class TemplateItemUtils {
 			return EvalConstants.ITEM_TYPE_HEADER;
 		} else if (EvalConstants.ITEM_TYPE_TEXT.equals(templateItem.getItem().getClassification())) {
 			return EvalConstants.ITEM_TYPE_TEXT;
+		} else if (EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(templateItem.getItem().getClassification())) {
+			return EvalConstants.ITEM_TYPE_BLOCK_PARENT;
 		} else if (EvalConstants.ITEM_TYPE_SCALED.equals(templateItem.getItem().getClassification())) {
 			// scaled has a special case where it might be a block so check for this and handle it correctly
 			if (templateItem.getBlockParent() != null) {
-				// item is part of a block
-				if (templateItem.getBlockParent().booleanValue()) {
-					// this is a block parent so handle it a special way
-					return EvalConstants.ITEM_TYPE_BLOCK_PARENT;
-				} else {
-					// this is a block child
-					return EvalConstants.ITEM_TYPE_BLOCK_CHILD;
-				}
+				// item is part of a block so must be a child
+				return EvalConstants.ITEM_TYPE_BLOCK_CHILD;
 			} else {
 				// item is a normal scaled item
 				return EvalConstants.ITEM_TYPE_SCALED;

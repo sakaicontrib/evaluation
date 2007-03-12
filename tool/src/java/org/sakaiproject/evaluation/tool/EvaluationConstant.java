@@ -43,45 +43,27 @@ public class EvaluationConstant {
 //		EvalConstants.SHARING_SHARED
 	};
 
-	//For template_modify.html
-	public static final String ITEM_TYPE_EXPERT = "Expert";
-	public static final String ITEM_TYPE_EXISTING = "Existing";
 
-	/**
-	 * The values for the Add Item pulldown
-	 * <b>Note:</b> This only includes the types for items which are stored in
-	 * the item, expert and the like should be added on to this and simply
-	 * should use constants defined in this file somewhere as the VALUES
+	private static Map classToView = new HashMap();
+	static {
+		classToView.put(EvalConstants.ITEM_TYPE_SCALED, ModifyScaledProducer.VIEW_ID);
+		classToView.put(EvalConstants.ITEM_TYPE_TEXT, ModifyEssayProducer.VIEW_ID);
+		classToView.put(EvalConstants.ITEM_TYPE_HEADER, ModifyHeaderProducer.VIEW_ID);
+		// TODO: add remaining views here
+	}
+
+	/** For a given item classification, return the ID of the view which
+	 * deals with it.
 	 */
-	public static String[] ITEM_CLASSIFICATION_VALUES = new String[] {
-		EvalConstants.ITEM_TYPE_SCALED, 
-		EvalConstants.ITEM_TYPE_TEXT, 
-		EvalConstants.ITEM_TYPE_HEADER, 
-		EvalConstants.ITEM_TYPE_BLOCK_PARENT,
-		ITEM_TYPE_EXPERT,
-		ITEM_TYPE_EXISTING
-	};
-
-    private static Map classToView = new HashMap();
-    
-    static {
-      classToView.put(EvalConstants.ITEM_TYPE_TEXT, ModifyEssayProducer.VIEW_ID);
-      classToView.put(EvalConstants.ITEM_TYPE_HEADER, ModifyHeaderProducer.VIEW_ID);
-      classToView.put(EvalConstants.ITEM_TYPE_SCALED, ModifyScaledProducer.VIEW_ID);
-      // TODO: add remaining views here
-    }
-    /** For a given item classification, return the ID of the view which
-     * deals with it.
-     */
-    public static String classificationToView(String classVal) {
-      return(String) classToView.get(classVal);
-    }
+	public static String classificationToView(String classVal) {
+		return(String) classToView.get(classVal);
+	}
 
 	//For template_modify and preview_item.html
 	public static String[] STEPPED_IMAGE_URLS = new String[] {
 		"$context/content/images/corner.gif",
 		"$context/content/images/down-line.gif",
-		"$context/content/images/down-arrow.gif" };
+	"$context/content/images/down-arrow.gif" };
 
 	//For preview_item.html
 	public static String[] COLORED_IMAGE_URLS = new String[] {
@@ -89,7 +71,7 @@ public class EvaluationConstant {
 		"$context/content/images/ideal-low.jpg",
 		"$context/content/images/ideal-mid.jpg",
 		"$context/content/images/ideal-high.jpg",
-		"$context/content/images/ideal-outside.jpg"};
+	"$context/content/images/ideal-outside.jpg"};
 
 	public static String BLUE_COLOR = "#6699ff";
 	public static String GREEN_COLOR = "#00d600";
@@ -126,18 +108,18 @@ public class EvaluationConstant {
 		EvalConstants.INSTRUCTOR_OPT_IN, 
 		EvalConstants.INSTRUCTOR_REQUIRED
 	};
-	
+
 	/**
 	 * Modify Essay: Page pulldown constants for reponse size
 	 */
 	public static final String[] RESPONSE_SIZE_VALUES = new String[] {
 		"2", "3", "4", "5" };
-	
+
 	/**
 	 * The default number of rows to use when displaying a textarea type input box
 	 */
 	public static final Integer DEFAULT_ROWS = new Integer(2);
-	
+
 	// For main administrative page
 	/**
 	 * Defines the allowed values for the Integer constants in pulldowns
@@ -152,7 +134,7 @@ public class EvaluationConstant {
 	 */
 	public static final String[] MINIMUM_TIME_DIFFERENCE = new String[] {
 		"4", "8", "12", "16", "20", "24", "36", "48"};	
-	
+
 	/**
 	 * Administrative (system settings) page, 
 	 * values corresponding to "Yes", "No", "Configurable"  
@@ -160,7 +142,7 @@ public class EvaluationConstant {
 	public static final String ADMIN_BOOLEAN_YES = "1";
 	public static final String ADMIN_BOOLEAN_NO = "0";
 	public static final String ADMIN_BOOLEAN_CONFIGURABLE = "-1";
-	
+
 	/**
 	 * Used to pass the flag that this is a new scale between the 
 	 * scale add modify and scale control pages. 
