@@ -157,7 +157,9 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer,
 
 		UIMessage.make(tofill,
 				"univ-level-header", "modifytemplate.univ.level.header"); //$NON-NLS-1$ //$NON-NLS-2$			
-
+		//get count of existing items
+		Integer count = new Integer(templateItemsList.size());
+		UIOutput.make(tofill,"itemCount",count.toString());
 		UIMessage.make(tofill, "existing-items", "modifytemplate.existing.items"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		UIMessage header = UIMessage.make(tofill,
