@@ -20,70 +20,70 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
  */
 
 public class LocalTemplateLogic {
-  private EvalItemsLogic itemsLogic;
+	private EvalItemsLogic itemsLogic;
 
-  public void setItemsLogic(EvalItemsLogic itemsLogic) {
-    this.itemsLogic = itemsLogic;
-  }
+	public void setItemsLogic(EvalItemsLogic itemsLogic) {
+		this.itemsLogic = itemsLogic;
+	}
 
-  private EvalTemplatesLogic templatesLogic;
+	private EvalTemplatesLogic templatesLogic;
 
-  public void setTemplatesLogic(EvalTemplatesLogic templatesLogic) {
-    this.templatesLogic = templatesLogic;
-  }
+	public void setTemplatesLogic(EvalTemplatesLogic templatesLogic) {
+		this.templatesLogic = templatesLogic;
+	}
 
-  private EvalExternalLogic external;
+	private EvalExternalLogic external;
 
-  public void setExternal(EvalExternalLogic external) {
-    this.external = external;
-  }
+	public void setExternal(EvalExternalLogic external) {
+		this.external = external;
+	}
 
-  public EvalTemplate fetchTemplate(Long templateId) {
-    return templatesLogic.getTemplateById(templateId);
-  }
-  
-  public EvalTemplateItem fetchTemplateItem(Long itemId) {
-    return itemsLogic.getTemplateItemById(itemId);
-  }
+	public EvalTemplate fetchTemplate(Long templateId) {
+		return templatesLogic.getTemplateById(templateId);
+	}
 
-  public List fetchTemplateItems(Long templateId) {
-    if (templateId == null) {
-      return new ArrayList();
-    }
-    else {
-    return itemsLogic.getTemplateItemsForTemplate(templateId, external
-        .getCurrentUserId());
-    }
-  }
-  
-  public void saveTemplate(EvalTemplate tosave) {
-    templatesLogic.saveTemplate(tosave, external.getCurrentUserId());
-  }
-  public void saveItem(EvalItem tosave) {
-	    itemsLogic.saveItem(tosave, external.getCurrentUserId());
-	  }
-	  
-  public void saveTemplateItem(EvalTemplateItem tosave) {
-    itemsLogic.saveTemplateItem(tosave, external.getCurrentUserId());
-  }
-  
-  public void deleteTemplateItem(Long id) {
-	    itemsLogic.deleteTemplateItem(id, external.getCurrentUserId());
-  }
-  
-  public EvalTemplate newTemplate() {
-    EvalTemplate currTemplate = new EvalTemplate(new Date(), external.getCurrentUserId(),
-        null, "private", Boolean.FALSE);
-    currTemplate.setDescription(""); // TODO - somehow gives DataIntegrityViolation if null
-    return currTemplate;
-  }
-  
-  public EvalTemplateItem newTemplateItem() {
-    EvalItem newItem = new EvalItem(new Date(), external.getCurrentUserId(), "", "",
-        "", new Boolean(false));
-    EvalTemplateItem newTemplateItem = new EvalTemplateItem(new Date(), external.getCurrentUserId(),
-        null, newItem, null, EvaluationConstant.ITEM_CATEGORY_VALUES[0]);
-    newTemplateItem.setUsesNA(new Boolean(false));
-     return newTemplateItem;
-  }
+	public EvalTemplateItem fetchTemplateItem(Long itemId) {
+		return itemsLogic.getTemplateItemById(itemId);
+	}
+
+	public List fetchTemplateItems(Long templateId) {
+		if (templateId == null) {
+			return new ArrayList();
+		}
+		else {
+			return itemsLogic.getTemplateItemsForTemplate(templateId, external
+					.getCurrentUserId());
+		}
+	}
+
+	public void saveTemplate(EvalTemplate tosave) {
+		templatesLogic.saveTemplate(tosave, external.getCurrentUserId());
+	}
+	public void saveItem(EvalItem tosave) {
+		itemsLogic.saveItem(tosave, external.getCurrentUserId());
+	}
+
+	public void saveTemplateItem(EvalTemplateItem tosave) {
+		itemsLogic.saveTemplateItem(tosave, external.getCurrentUserId());
+	}
+
+	public void deleteTemplateItem(Long id) {
+		itemsLogic.deleteTemplateItem(id, external.getCurrentUserId());
+	}
+
+	public EvalTemplate newTemplate() {
+		EvalTemplate currTemplate = new EvalTemplate(new Date(), external.getCurrentUserId(),
+				null, "private", Boolean.FALSE);
+		currTemplate.setDescription(""); // TODO - somehow gives DataIntegrityViolation if null
+		return currTemplate;
+	}
+
+	public EvalTemplateItem newTemplateItem() {
+		EvalItem newItem = new EvalItem(new Date(), external.getCurrentUserId(), "", "",
+				"", new Boolean(false));
+		EvalTemplateItem newTemplateItem = new EvalTemplateItem(new Date(), external.getCurrentUserId(),
+				null, newItem, null, EvaluationConstant.ITEM_CATEGORY_VALUES[0]);
+		newTemplateItem.setUsesNA(new Boolean(false));
+		return newTemplateItem;
+	}
 }

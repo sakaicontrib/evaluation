@@ -455,7 +455,7 @@ public class EvalTestDataLoad {
 				EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_HEADER, NOT_EXPERT);
 		item8.setLocked(UNLOCKED);
 		item9 = new EvalItem(new Date(), ADMIN_USER_ID, ITEM_TEXT, 
-				EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_SCALED, NOT_EXPERT);
+				EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_BLOCK_PARENT, NOT_EXPERT);
 		item9.setScale(scale1);
 		item9.setScaleDisplaySetting( EvalConstants.ITEM_SCALE_DISPLAY_STEPPED );
 		item9.setCategory(EvalConstants.ITEM_CATEGORY_COURSE);

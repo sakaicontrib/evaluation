@@ -251,39 +251,42 @@ td.checktable2 {
 
 .itemsHeader {
 	font-weight: bold;
-	font-size: 12pt;
+	font-size: 1.1em;
 	color: #990033;
 }
 
 .itemsText {
-	font-size: 11pt;
+	font-size: 1.0em;
 }
 
 .itemsDesc {
 	display: block;
-	font-size: 10pt;
+	font-size: 0.8em;
 	text-indent: 1em;
 }
 
 .itemsScale {
 	display: block;
-	font-size: 11pt;
+	font-size: 0.9em;
 	text-indent: 1em;
 	font-style: italic;
 }
 
 
 .expertItem {
-	font-size: 12pt;
+	font-size: 1.1em;
 }
 
 .expertItemCategory {
-	font-size: 10pt;
+	font-size: 0.9em;
 }
 
 .expertItemCategoryCurrent {
 	font-weight: bold;
-	font-size: 12pt;
+	font-size: 1.1em;
 	color: #009933;
 }
 
+.itemsListOddLine {
+	background-color: #E1E1E1;
+}

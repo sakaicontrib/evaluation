@@ -100,9 +100,8 @@ public class EvalConstants {
 	/**
 	 * Item type (itemClassification) setting:
 	 * <b>Note:</b> This is a special type for rendering blocks only 
-	 * and identifies this as a block parent, 
-	 * if you attempt to save an item or templateItem with this type 
-	 * it will fail, only use this in the presentation layer
+	 * and identifies this as a block parent, generally this should
+	 * only be set when creating item blocks and should not be used otherwise
 	 * (see implementation notes for details on blocks)
 	 */
 	public static final String ITEM_TYPE_BLOCK_PARENT = "BlockParent";

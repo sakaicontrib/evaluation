@@ -122,20 +122,21 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer,
 				PreviewEvalProducer.VIEW_ID, null, templateId, null,
 				ModifyTemplateItemsProducer.VIEW_ID));
 
-		UIMessage.make(tofill, "preview-eval-desc",
-				"modifytemplate.preview.eval.desc"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "preview-eval-desc",	"modifytemplate.preview.eval.desc"); //$NON-NLS-1$ //$NON-NLS-2$
 		UIMessage.make(form, "add-item-note", "modifytemplate.add.item.note"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		String[] labels = new String[] {
 				"modifytemplate.itemtype.scaled", 
 				"modifytemplate.itemtype.text",
 				"modifytemplate.itemtype.header", 
+				"modifytemplate.itemtype.existing",
 				"modifytemplate.itemtype.expert"
 			};
 		String[] viewIDs = { 
 				ModifyScaledProducer.VIEW_ID,
 				ModifyEssayProducer.VIEW_ID, 
 				ModifyHeaderProducer.VIEW_ID,
+				ExistingItemsProducer.VIEW_ID,
 				ExpertCategoryProducer.VIEW_ID
 			};
 		String[] values = convertViews(viewIDs, templateId);
@@ -216,8 +217,9 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer,
 				UIMessage.make(radiobranch,
 						"item-num-header", "modifytemplate.item.num.header"); //$NON-NLS-1$ //$NON-NLS-2$
 
-				// only show Block Check box for scaled type(scale, block)
-				if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)) {
+				// only show Block Check box for scaled and block parents
+				if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_SCALED) ||
+						myItem.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT) ) {
 					UIBranchContainer rbShowBlockCB = UIBranchContainer.make(radiobranch,
 							"showCB:");
 					UIBoundBoolean blockCB = UIBoundBoolean.make(rbShowBlockCB,
@@ -264,9 +266,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer,
 							UIMessage.make("modifytemplate.modify.link"), target);
 
 				} else { // if it is non-block item
-					String targetview = EvaluationConstant
-							.classificationToView(myTemplateItem.getItem()
-									.getClassification());
+					String targetview = EvaluationConstant.classificationToView(myTemplateItem.getItem().getClassification());
 					ViewParameters target = new TemplateItemViewParameters(targetview,
 							myTemplateItem.getTemplate().getId(), myTemplateItem.getId());
 					UIInternalLink.make(radiobranch, "modify_row_item", 

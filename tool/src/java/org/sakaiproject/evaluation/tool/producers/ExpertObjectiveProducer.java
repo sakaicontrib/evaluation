@@ -33,7 +33,10 @@ import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.UIVerbatim;
+import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
+import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
@@ -118,10 +121,14 @@ public class ExpertObjectiveProducer implements ViewComponentProducer, Navigatio
 			for (int i = 0; i < expertObjectives.size(); i++) {
 				EvalItemGroup objective = (EvalItemGroup) expertObjectives.get(i);
 				UIBranchContainer objectives = UIBranchContainer.make(tofill, "expert-objective-list:", objective.getId().toString());
+				if (i % 2 == 0) {
+					objectives.decorators = new DecoratorList( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
+				}
+
 				eivp.objectiveId = objective.getId();
 				UIInternalLink.make(objectives, "objective-title-link", objective.getTitle(), eivp); //$NON-NLS-1$
 				if (objective.getDescription() != null && objective.getDescription().length() > 0) {
-					UIOutput.make(objectives, "objective-description", objective.getDescription()); //$NON-NLS-1$
+					UIVerbatim.make(objectives, "objective-description", objective.getDescription()); //$NON-NLS-1$
 				} else {
 					UIMessage.make(objectives, "objective-no-description", "expert.no.description"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
@@ -147,9 +154,13 @@ public class ExpertObjectiveProducer implements ViewComponentProducer, Navigatio
 			for (int i = 0; i < expertItems.size(); i++) {
 				EvalItem expertItem = (EvalItem) expertItems.get(i);
 				UIBranchContainer items = UIBranchContainer.make(form, "expert-item-list:", expertItem.getId().toString());
+				if (i % 2 == 0) {
+					items.decorators = new DecoratorList( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
+				}
+
 				UIBoundBoolean checkbox = UIBoundBoolean.make(items, "insert-item-checkbox", "#{expertItemsBean.selectedIds." + expertItem.getId() + "}");
 				UILabelTargetDecorator.targetLabel(UIOutput.make(items, "item-label"), checkbox);
-				UIOutput.make(items, "item-text", expertItem.getItemText()); //$NON-NLS-1$
+				UIVerbatim.make(items, "item-text", expertItem.getItemText()); //$NON-NLS-1$
 				if (expertItem.getScale() != null) {
 					String scaleText = expertItem.getScale().getTitle() + " (";
 					for (int j = 0; j < expertItem.getScale().getOptions().length; j++) {
@@ -159,7 +170,7 @@ public class ExpertObjectiveProducer implements ViewComponentProducer, Navigatio
 					UIOutput.make(items, "item-scale", scaleText); //$NON-NLS-1$
 				}
 				if (expertItem.getExpertDescription() != null) {
-					UIOutput.make(items, "item-expert-desc", expertItem.getExpertDescription()); //$NON-NLS-1$
+					UIVerbatim.make(items, "item-expert-desc", expertItem.getExpertDescription()); //$NON-NLS-1$
 				}
 			}
 

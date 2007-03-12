@@ -111,6 +111,8 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		// to the templates the way we think it is
 		List ids = null;
 
+		Assert.assertEquals(41, evaluationDao.countAll(EvalItem.class) );
+
 		// check the full count of preloaded items
 		Assert.assertEquals(13, evaluationDao.countAll(EvalTemplateItem.class) );
 
@@ -423,9 +425,9 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		int preloadedCount = 32;
 
 		// test getting all items for the admin user
-		l = items.getItemsForUser(EvalTestDataLoad.ADMIN_USER_ID, null, null);
+		l = items.getItemsForUser(EvalTestDataLoad.ADMIN_USER_ID, null, null, true);
 		Assert.assertNotNull( l );
-		Assert.assertEquals(9 + preloadedCount, l.size());
+		Assert.assertEquals(8 + preloadedCount, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item1.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item2.getId() ));
@@ -435,13 +437,12 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertTrue(ids.contains( etdl.item6.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item7.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item8.getId() ));
-		Assert.assertTrue(ids.contains( etdl.item9.getId() ));
 
 		// same as getting all items
 		l = items.getItemsForUser(EvalTestDataLoad.ADMIN_USER_ID, 
-				EvalConstants.SHARING_OWNER, null);
+				EvalConstants.SHARING_OWNER, null, true);
 		Assert.assertNotNull( l );
-		Assert.assertEquals(9 + preloadedCount, l.size());
+		Assert.assertEquals(8 + preloadedCount, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item1.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item2.getId() ));
@@ -451,10 +452,9 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertTrue(ids.contains( etdl.item6.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item7.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item8.getId() ));
-		Assert.assertTrue(ids.contains( etdl.item9.getId() ));
 
 		// test getting all items for the maint user
-		l = items.getItemsForUser(EvalTestDataLoad.MAINT_USER_ID, null, null);
+		l = items.getItemsForUser(EvalTestDataLoad.MAINT_USER_ID, null, null, true);
 		Assert.assertNotNull( l );
 		Assert.assertEquals(7 + preloadedCount, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
@@ -466,8 +466,18 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertTrue(ids.contains( etdl.item6.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item8.getId() ));
 
+		// test getting all items for the maint user without expert items
+		l = items.getItemsForUser(EvalTestDataLoad.MAINT_USER_ID, null, null, false);
+		Assert.assertNotNull( l );
+		Assert.assertEquals(4, l.size());
+		ids = EvalTestDataLoad.makeIdList(l);
+		Assert.assertTrue(ids.contains( etdl.item3.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item4.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item5.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item8.getId() ));
+
 		// test getting all items for the normal user
-		l = items.getItemsForUser(EvalTestDataLoad.USER_ID, null, null);
+		l = items.getItemsForUser(EvalTestDataLoad.USER_ID, null, null, true);
 		Assert.assertNotNull( l );
 		Assert.assertEquals(2 + preloadedCount, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
@@ -476,9 +486,9 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 
 		// test getting private items for the admin user (all private items)
 		l = items.getItemsForUser(EvalTestDataLoad.ADMIN_USER_ID,
-				EvalConstants.SHARING_PRIVATE, null);
+				EvalConstants.SHARING_PRIVATE, null, true);
 		Assert.assertNotNull( l );
-		Assert.assertEquals(7, l.size());
+		Assert.assertEquals(6, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item3.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item4.getId() ));
@@ -486,21 +496,31 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertTrue(ids.contains( etdl.item6.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item7.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item8.getId() ));
-		Assert.assertTrue(ids.contains( etdl.item9.getId() ));
 
 		// test getting private all private items with filter
 		l = items.getItemsForUser(EvalTestDataLoad.ADMIN_USER_ID,
-				EvalConstants.SHARING_PRIVATE, "do you think");
+				EvalConstants.SHARING_PRIVATE, "do you think", true);
 		Assert.assertNotNull( l );
-		Assert.assertEquals(3, l.size());
+		Assert.assertEquals(2, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item3.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item4.getId() ));
-		Assert.assertTrue(ids.contains( etdl.item9.getId() ));
+
+		// test getting private all private items, expert excluded
+		l = items.getItemsForUser(EvalTestDataLoad.ADMIN_USER_ID,
+				EvalConstants.SHARING_PRIVATE, null, false);
+		Assert.assertNotNull( l );
+		Assert.assertEquals(5, l.size());
+		ids = EvalTestDataLoad.makeIdList(l);
+		Assert.assertTrue(ids.contains( etdl.item3.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item4.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item5.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item7.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item8.getId() ));
 
 		// test getting private items for the maint user
 		l = items.getItemsForUser(EvalTestDataLoad.MAINT_USER_ID, 
-				EvalConstants.SHARING_PRIVATE, null);
+				EvalConstants.SHARING_PRIVATE, null, true);
 		Assert.assertNotNull( l );
 		Assert.assertEquals(5, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
@@ -512,13 +532,13 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 
 		// test getting private items for the user
 		l = items.getItemsForUser(EvalTestDataLoad.USER_ID, 
-				EvalConstants.SHARING_PRIVATE, null);
+				EvalConstants.SHARING_PRIVATE, null, true);
 		Assert.assertNotNull( l );
 		Assert.assertEquals(0, l.size());
 
 		// test getting public items for the admin user
 		l = items.getItemsForUser(EvalTestDataLoad.ADMIN_USER_ID, 
-				EvalConstants.SHARING_PUBLIC, null);
+				EvalConstants.SHARING_PUBLIC, null, true);
 		Assert.assertNotNull( l );
 		Assert.assertEquals(2 + preloadedCount, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
@@ -527,7 +547,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 
 		// test getting public items for the maint user
 		l = items.getItemsForUser(EvalTestDataLoad.MAINT_USER_ID, 
-				EvalConstants.SHARING_PUBLIC, null);
+				EvalConstants.SHARING_PUBLIC, null, true);
 		Assert.assertNotNull( l );
 		Assert.assertEquals(2 + preloadedCount, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
@@ -536,7 +556,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 
 		// test getting public items for the user
 		l = items.getItemsForUser(EvalTestDataLoad.USER_ID, 
-				EvalConstants.SHARING_PUBLIC, null);
+				EvalConstants.SHARING_PUBLIC, null, true);
 		Assert.assertNotNull( l );
 		Assert.assertEquals(2 + preloadedCount, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
@@ -544,7 +564,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertTrue(ids.contains( etdl.item2.getId() ));
 
 		// test getting items for invalid user returns public only
-		l = items.getItemsForUser( EvalTestDataLoad.INVALID_USER_ID, null, null);
+		l = items.getItemsForUser( EvalTestDataLoad.INVALID_USER_ID, null, null, true);
 		Assert.assertNotNull( l );
 		Assert.assertEquals(2 + preloadedCount, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
@@ -554,7 +574,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		// test invalid sharing constant causes failure
 		try {
 			items.getItemsForUser(EvalTestDataLoad.ADMIN_USER_ID, 
-					EvalTestDataLoad.INVALID_CONSTANT_STRING, null);
+					EvalTestDataLoad.INVALID_CONSTANT_STRING, null, true);
 			Assert.fail("Should have thrown exception");
 		} catch (IllegalArgumentException e) {
 			Assert.assertNotNull(e);
