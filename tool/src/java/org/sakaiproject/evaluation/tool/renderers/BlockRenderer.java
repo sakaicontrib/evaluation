@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
+import org.sakaiproject.evaluation.logic.utils.ArrayUtils;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -135,8 +136,8 @@ public class BlockRenderer implements ItemRenderer {
 			String selectIDLabel = radioLabel.getFullID();
 
 			if (usesNA) {
-				scaleValues = appendArray(scaleValues, EvaluationConstant.NA_VALUE);
-				scaleLabels = appendArray(scaleLabels, "");
+				scaleValues = ArrayUtils.appendArray(scaleValues, EvaluationConstant.NA_VALUE);
+				scaleLabels = ArrayUtils.appendArray(scaleLabels, "");
 				UIMessage.make(blockStepped, "na-desc", "viewitem.na.desc");
 			}
 
@@ -232,13 +233,6 @@ public class BlockRenderer implements ItemRenderer {
 	 */
 	public String getRenderType() {
 		return EvalConstants.ITEM_TYPE_BLOCK_PARENT;
-	}
-
-	private String[] appendArray(String[] array, String value) {
-		String[] newArray = new String[array.length + 1];
-		System.arraycopy( array, 0, newArray, 0, array.length );
-		newArray[newArray.length-1] = value;
-		return newArray;
 	}
 
 }

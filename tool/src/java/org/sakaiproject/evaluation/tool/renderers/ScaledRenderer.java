@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.tool.renderers;
 
 import java.awt.Color;
 
+import org.sakaiproject.evaluation.logic.utils.ArrayUtils;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
@@ -108,8 +109,8 @@ public class ScaledRenderer implements ItemRenderer {
 			}
 
 			if (usesNA) {
-				scaleValues = appendArray(scaleValues, EvaluationConstant.NA_VALUE);
-				scaleLabels = appendArray(scaleLabels, "");
+				scaleValues = ArrayUtils.appendArray(scaleValues, EvaluationConstant.NA_VALUE);
+				scaleLabels = ArrayUtils.appendArray(scaleLabels, "");
 			}
 
 			UISelect radios = UISelect.make(compactRadioContainer, "dummyRadio", scaleValues, scaleLabels, bindings[0], initValue);
@@ -183,8 +184,8 @@ public class ScaledRenderer implements ItemRenderer {
 			}
 
 			if (usesNA) {
-				scaleValues = appendArray(scaleValues, EvaluationConstant.NA_VALUE);
-				scaleLabels = appendArray(scaleLabels, "");
+				scaleValues = ArrayUtils.appendArray(scaleValues, EvaluationConstant.NA_VALUE);
+				scaleLabels = ArrayUtils.appendArray(scaleLabels, "");
 			}
 
 			UISelect radios = UISelect.make(displayContainer, "dummyRadio", scaleValues, scaleLabels, bindings[0], initValue);
@@ -237,8 +238,8 @@ public class ScaledRenderer implements ItemRenderer {
 			}
 
 			if (usesNA) {
-				scaleValues = appendArray(scaleValues, EvaluationConstant.NA_VALUE);
-				scaleLabels = appendArray(scaleLabels, "");
+				scaleValues = ArrayUtils.appendArray(scaleValues, EvaluationConstant.NA_VALUE);
+				scaleLabels = ArrayUtils.appendArray(scaleLabels, "");
 			}
 
 			UISelect radios = UISelect.make(stepped, "dummyRadio", scaleValues, scaleLabels, bindings[0], initValue); 
@@ -306,11 +307,4 @@ public class ScaledRenderer implements ItemRenderer {
 		return EvalConstants.ITEM_TYPE_SCALED;
 	}
 
-
-	private String[] appendArray(String[] array, String value) {
-		String[] newArray = new String[array.length + 1];
-		System.arraycopy( array, 0, newArray, 0, array.length );
-		newArray[newArray.length-1] = value;
-		return newArray;
-	}
 }

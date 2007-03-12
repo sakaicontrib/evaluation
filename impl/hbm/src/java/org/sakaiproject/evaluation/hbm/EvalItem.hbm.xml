@@ -45,7 +45,7 @@
             <column name="SCALE_FK" />
         </many-to-one>
 		<!-- maps from items to templates via the itemtemplate joining table -->
-        <set name="templateItems" inverse="true" fetch="join">
+        <set name="templateItems" inverse="true">
             <key column="item_id" not-null="true" />
             <one-to-many class="org.sakaiproject.evaluation.model.EvalTemplateItem" />
         </set>
