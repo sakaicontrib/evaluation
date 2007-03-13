@@ -9,6 +9,61 @@
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
     <script type="text/javascript" language="JavaScript" src="../js/selectLink.js"></script>
 	<script type="text/javascript" language="JavaScript" src="../js/blockUtils.js"></script>
+	<script type="text/javascript" language="JavaScript" src="../js/jquery/jquery.js"></script>
+	<script type="text/javascript" language="JavaScript" src="../js/jquery/form.js"></script>
+	<script type="text/javascript" language="JavaScript" src="../js/jquery/interface/iutil.js"></script>
+	<script type="text/javascript" language="JavaScript" src="../js/jquery/interface/idrag.js"></script>
+	<script type="text/javascript" language="JavaScript" src="../js/jquery/interface/idrop.js"></script>
+	<script type="text/javascript" language="JavaScript" src="../js/jquery/interface/isortables.js"></script>
+	
+	<script type="text/javascript" language="JavaScript">
+		
+		var savedList = null;
+		
+		function saveOrder(form) {
+			
+			disableOrderButtons();
+			
+			savedList = new Array();
+			
+			$("ol.itemList > li").each(
+				function(item) {
+					savedList.push(this);
+				}
+			);
+			
+			$(form).ajaxSubmit();
+			
+		}
+		
+		function revertOrder() {
+			
+			disableOrderButtons();
+			
+			// iterate through savedList
+				// 1. find savedList[i] in itemList (in the DOM)
+				// 2. remove item
+				// 3. append to bottom of list
+			
+			for (i in savedList) {
+				savedList[i].getElementsByTagName("label")[0].firstChild.nodeValue = new String(parseInt(i) + 1);
+				$(savedList[i]).remove().appendTo("div#itemTable > ol#itemList");
+			}
+			
+		}
+		
+		function enableOrderButtons() {
+			document.getElementById("revertOrderButton").disabled = false;
+			document.getElementById("saveReorderButton").disabled = false;
+		}
+		
+		function disableOrderButtons() {
+			document.getElementById("revertOrderButton").disabled = true;
+			document.getElementById("saveReorderButton").disabled = true;
+		}
+		
+	</script>
+	
 </head>
 
 <body>
@@ -83,6 +138,113 @@
 </table>
 
 <br/>
+
+<form rsf:id="modifyFormRows" name="modify_form_rows" method="post">
+
+<input type="button" disabled="true" value="Revert Order" id="revertOrderButton" onclick="revertOrder();" />
+<input type="submit" disabled="true" value="Save Order" id="saveReorderButton" rsf:id="saveReorderButton" onclick="saveOrder(this.form); return false;" />
+
+<div id="itemTable">
+	<ol id="itemList" class="itemList">
+		<li class="itemRow" id="item-row:" rsf:id="item-row:">
+			
+			<table width="100%">
+				<tr>
+					
+					<td width="5%" class="itemNumCell">
+						<span rsf:id="showCB:"><input type="checkbox" rsf:id="blockCheckBox" value="" checked=""/></span>
+						<label class="itemNum" id="item-num" rsf:id="item-num">Item Num</label><label>.</label>
+					</td>
+					
+					<td>
+						<table width="95%" border="1">
+							<tr>
+								<td>
+									
+									<div class="itemFirstLine">
+										<input type="hidden" name="hidden-item-num" value="#" id="hidden-item-num" rsf:id="hidden-item-num" />
+										<span class="itemDesc">
+											<label class="itemClassification" id="item-classification" rsf:id="item-classification">Item Classification</label>
+											<label class="scaleDisplay" id="scale-display" rsf:id="scale-display">Scale Display</label>
+										</span>
+										<span class="itemLink">
+											<a href="#" rsf:id="preview-row-item" target="_blank">Preview</a>
+										</span>
+										<span class="itemLink">
+											<a href="#" rsf:id="modify-row-item">Modify</a>
+										</span>
+										<span class="itemLink">
+											<a href="#" rsf:id="remove-row-item">Remove</a>
+										</span>
+									</div>
+									
+									<div class="itemSecondLine">
+										<span class="itemText">
+											<label class="itemText" id="item-text" rsf:id="item-text">Item Text</label>
+											<span class="blockItem" id="block-item:" rsf:id="block-item:">
+												<br />
+												<span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+												<label class="childItemNum" id="child-item-num" rsf:id="child-item-num">Child Item Num</label>.
+												<label class="childItemText" id="child-item-text" rsf:id="child-item-text">Child Item Text</label>
+											</span>
+										</span>
+										<span class="scaleDesc">
+											<label class="scaleType" id="scale-type" rsf:id="scale-type">Scale Type</label>
+											<label class="itemNA" id="item-na" rsf:id="item-na">N/A</label>
+										</span>
+									</div>
+									
+								</td>
+							</tr>
+						</table>
+					</td>
+
+				</tr>
+			</table>
+			
+		</li>
+	</ol>
+</div>
+
+<script type="text/javascript">
+	$(document).ready(
+		function () {
+			
+			$("ol.itemList").Sortable(
+				{
+					accept: 		"itemRow",
+					activeclass: 	"sortableactive",
+					axis:			"vertically",
+					hoverclass: 	"sortablehover",
+					helperclass: 	"sorthelper",
+					onchange:		function(data) {
+										var list = data[0].o.itemList;
+										for (i in list) {
+											document.getElementById(list[i] + "item-num").firstChild.nodeValue = new String(parseInt(i) + 1);
+											document.getElementById(list[i] + "hidden-item-num").value = i;
+										}
+										enableOrderButtons();
+									},
+					opacity: 		0.5,
+					tolerance:		"intersect"
+				}
+			);
+			
+			savedList = new Array();
+			
+			$("ol.itemList > li").each(
+				function(item) {
+					savedList.push(this);
+				}
+			);
+			
+		}
+	);
+</script>
+
+</form>
+
+<!--
 <form rsf:id="modifyFormRows" name="modify_form_rows" method="post">
 <input type="submit" rsf:id="hiddenBtn" id="hiddenBtn" style="visibility:hidden;"/>
 	<table width="83%" style="border-collapse: collapse;">
@@ -142,6 +304,7 @@
 </script>	
 
 </form>
+-->
 
 <br/><br/>
 

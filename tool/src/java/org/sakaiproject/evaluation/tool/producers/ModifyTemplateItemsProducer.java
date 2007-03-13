@@ -38,6 +38,7 @@ import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
+import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
@@ -146,8 +147,8 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer,
 
 		UICommand.make(form, "add_questions", UIMessage.make("modifytemplate.add.item.button")); //$NON-NLS-1$ //$NON-NLS-2$
 
-		List l = localTemplateLogic.fetchTemplateItems(templateId);
-		List templateItemsList = TemplateItemUtils.getNonChildItems(l);
+		List itemList = localTemplateLogic.fetchTemplateItems(templateId);
+		List templateItemsList = TemplateItemUtils.getNonChildItems(itemList);
 		if (templateItemsList.isEmpty()) {
 			UIMessage.make(tofill, "begin-eval-dummylink",
 					"modifytemplate.begin.eval.link");
@@ -184,7 +185,119 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer,
 
 		UIMessage.make(tofill, "eval-sample", "modifytemplate.eval.sample"); //$NON-NLS-1$ //$NON-NLS-2$
 		UIMessage.make(tofill, "course-sample", "modifytemplate.course.sample"); //$NON-NLS-1$ //$NON-NLS-2$
-
+		
+		
+		UIForm form2 = UIForm.make(tofill, "modifyFormRows");	 //$NON-NLS-1$
+		
+		UICommand saveReorderButton = UICommand.make(form2, "saveReorderButton", "#{templateBBean.saveReorder}");
+		saveReorderButton.parameters.add(new UIELBinding("#{templateBBean.templateId}", templateId));
+		
+		if ((templateItemsList != null) && (templateItemsList.size() > 0)) {
+			
+			String sCurItemNum = null;
+			String templateItemOTPBinding = null;
+			String templateItemOTP = null;
+			
+			for (int i = 0; i < templateItemsList.size(); i++) {
+				
+				EvalTemplateItem templateItem = (EvalTemplateItem) templateItemsList.get(i);
+				sCurItemNum = Integer.toString(i);
+				templateItemOTPBinding = "templateItemBeanLocator." + templateItem.getId();
+				templateItemOTP = templateItemOTPBinding + ".";
+				
+				UIBranchContainer itemBranch = UIBranchContainer.make(form2, "item-row:", sCurItemNum);
+				
+				// item num
+				
+				// only show Block Check box for scaled type(scale, block)
+				if (templateItem.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)) {
+					UIBranchContainer rbShowBlockCB = UIBranchContainer.make(itemBranch, "showCB:");
+					UIBoundBoolean blockCB = UIBoundBoolean.make(rbShowBlockCB, "blockCheckBox", Boolean.FALSE);
+					Map attrmap = new HashMap();
+					String name = "block-" + templateItem.getItem().getScale().getId() + "-" + templateItem.getId();
+					attrmap.put("id", name);
+					blockCB.decorators = new DecoratorList(new UIFreeAttributeDecorator(attrmap));
+				}
+				
+				UIOutput.make(itemBranch, "item-num", new Integer(i + 1).toString());
+				
+				// line 1
+				
+				UIInput.make(itemBranch, "hidden-item-num", templateItemOTP + "displayOrder", sCurItemNum);
+				
+				UIOutput.make(itemBranch, "item-classification", templateItem.getItem().getClassification());
+				
+				String scaleDisplaySettingLabel = templateItem.getScaleDisplaySetting();
+				
+				if (scaleDisplaySettingLabel != null)
+					scaleDisplaySettingLabel = " - " + scaleDisplaySettingLabel;
+				else
+					scaleDisplaySettingLabel = "";
+				
+				UIOutput.make(itemBranch, "scale-display", scaleDisplaySettingLabel);
+				
+				UIInternalLink.make(
+						itemBranch,
+						"preview-row-item", 
+						UIMessage.make("modifytemplate.preview.link"), 
+						new TemplateItemViewParameters(PreviewItemProducer.VIEW_ID, templateId, templateItem.getId())
+				);
+				
+				// if it is a block item
+				if ((templateItem.getBlockParent() != null) && (templateItem.getBlockParent().booleanValue() == true)) {
+					BlockIdsParameters target = new BlockIdsParameters(ModifyBlockProducer.VIEW_ID, templateId, templateItem.getId().toString());
+					UIInternalLink.make(itemBranch, "modify-row-item", UIMessage.make("modifytemplate.modify.link"), target);
+				}
+				
+				// if it is a non-block item
+				else {
+					String targetView = EvaluationConstant.classificationToView(templateItem.getItem().getClassification());
+					ViewParameters target = new TemplateItemViewParameters(targetView, templateItem.getTemplate().getId(), templateItem.getId());
+					UIInternalLink.make(itemBranch, "modify-row-item", UIMessage.make("modifytemplate.modify.link"), target);
+				}
+				
+				UIInternalLink.make(
+						itemBranch,
+						"remove-row-item",
+						UIMessage.make("modifytemplate.remove.link"),
+						new TemplateItemViewParameters(RemoveQuestionProducer.VIEW_ID, templateId, templateItem.getId())
+				);
+				
+				// line 2
+				
+				UIOutput.make(itemBranch, "item-text", templateItem.getItem().getItemText());
+				
+				// rendering block child items
+				if ((templateItem.getBlockParent() != null) && (templateItem.getBlockParent().booleanValue() == true)) {
+					
+					List childList = TemplateItemUtils.getChildItems(itemList, templateItem.getId());
+					
+					for (int k = 0; k < childList.size(); k ++) {
+						UIBranchContainer childRow = UIBranchContainer.make(itemBranch, "block-item:", Integer.toString(k));
+						EvalTemplateItem childTemplateItem = (EvalTemplateItem) childList.get(k);
+						UIOutput.make(childRow, "child-item-num", childTemplateItem.getDisplayOrder().toString());
+						UIVerbatim.make(childRow, "child-item-text", childTemplateItem.getItem().getItemText());
+					}
+					
+				}
+				
+				if(templateItem.getItem().getScale() != null)
+					UIOutput.make(itemBranch, "scale-type", templateItem.getItem().getScale().getTitle());
+				
+				if (!TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_HEADER)) {
+					
+					Boolean usesNA = templateItem.getUsesNA();
+					
+					if ((usesNA != null) && (usesNA.booleanValue()))
+						UIMessage.make(itemBranch, "item-na", "viewitem.na.desc");
+					
+				}
+				
+			}
+			
+		}
+		
+		/*
 		UIForm form2 = UIForm.make(tofill, "modifyFormRows"); //$NON-NLS-1$
 		UICommand reorder = UICommand.make(form2, "hiddenBtn",
 				"#{templateBBean.saveReorder}");
@@ -304,7 +417,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer,
 				// rendering block child items
 				if (myTemplateItem.getBlockParent() != null
 						&& myTemplateItem.getBlockParent().booleanValue() == true) {
-					List childList = TemplateItemUtils.getChildItems(l, myTemplateItem
+					List childList = TemplateItemUtils.getChildItems(itemList, myTemplateItem
 							.getId());
 					for (int k = 0; k < childList.size(); k++) {
 						UIBranchContainer childRow = UIBranchContainer.make(form2,
@@ -318,6 +431,8 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer,
 				}
 			}// end of for loop
 		}
+		*/
+		
 		// the create block form
 		UIForm blockForm = UIForm.make(tofill, "createBlockForm",
 				new BlockIdsParameters(ModifyBlockProducer.VIEW_ID, templateId, null));

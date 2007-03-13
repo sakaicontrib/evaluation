@@ -10,6 +10,63 @@ form {
 	margin:0px;
 }
 
+DIV#itemTable {
+	width: 85%;
+	margin-top: 12px;
+	margin-bottom: 12px;
+}
+
+OL.itemList {
+	list-style-type: none;
+	marker-offset: 0;
+}
+
+LI.itemRow {
+	width: 100%;
+}
+
+TD.itemNumCell {
+	width: 5%;
+	padding-left: 1%;
+	padding-right: 1%;
+	text-align: right;
+}
+
+LABEL.itemNum {
+	text-align: right;
+	font-weight: bold;
+}
+
+SPAN.itemDesc {
+	width: 64%;
+	float: left;
+	text-align: center;
+}
+
+SPAN.itemLink {
+	width: 12%;
+	float: left;
+	text-align: center;
+}
+
+DIV.itemSecondLine {
+	clear: left;
+}
+
+SPAN.itemText {
+	width: 65%;
+	float: left;
+}
+
+LABEL.childItemNum {
+	font-weight: bold;
+}
+
+SPAN.scaleDesc {
+	width: 35%;
+	float: left;
+}
+
 table.sample {
 	border-width: 1px 1px 1px 1px;
 	border-spacing: 1px;
