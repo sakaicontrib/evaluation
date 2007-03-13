@@ -52,17 +52,22 @@ public class PreloadDataImpl {
 
 
 	public void init() {
-		preloadEvalConfig();
-		preloadEmailTemplate();
-		preloadScales();
-		preloadExpertItems();
+		try {
+			preloadEvalConfig();
+			preloadEmailTemplate();
+			preloadScales();
+			preloadExpertItems();
+		} catch (Exception e) {
+			// Better to log here since Sakai Spring reporting is a bit hit-or-miss
+			log.error("Error preloading data for Evaluation", e);
+		}
 	}
 
 	/**
 	 * Preload the default system configuration settings<br/> <b>Note:</b> If
-	 * you attempt to save a null value here in the preload it will cause this
-	 * to fail, just comment out or do not include the setting you want to
-	 * "save" as null to have the effect without causing a failure
+	 * you attempt to save a null value here in the preload it will cause this to
+	 * fail, just comment out or do not include the setting you want to "save" as
+	 * null to have the effect without causing a failure
 	 */
 	public void preloadEvalConfig() {
 		// check if there are any EvalConfig items present
