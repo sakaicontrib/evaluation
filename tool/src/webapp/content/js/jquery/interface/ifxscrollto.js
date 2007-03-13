@@ -10,4 +10,102 @@
  *   
  *
  */
-eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--){d[e(c)]=k[c]||e(c)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('4.10.X({m:7(d,6,3){o=4.d(d);C 9.12(\'L\',7(){v 4.K.m(9,o,6,3)})},14:7(d,6,3){C 9.19(7(){4(\'a[@O*="#"]\',9).17(7(e){E=9.O.16(\'#\');4(\'#\'+E[1]).m(d,6,3);C J})})}});4.K.m=7(e,o,6,3){q z=9;z.o=o;z.e=e;z.6=/S|Q/.Z(6)?6:J;z.3=3;p=4.I.11(e);s=4.I.T();z.M=7(){U(z.A);z.A=V;4.W(z.e,\'L\')};z.t=(v G).F();s.h=s.h>s.H?(s.h-s.H):s.h;s.w=s.w>s.N?(s.w-s.N):s.w;z.g=p.y>s.h?s.h:p.y;z.j=p.x>s.w?s.w:p.x;z.8=s.t;z.b=s.l;z.D=7(){q t=(v G).F();q n=t-z.t;q p=n/z.o.i;f(t>=z.o.i+z.t){z.M();1a(7(){z.B(z.g,z.j)},13)}c{f(!z.6||z.6==\'S\'){f(!4.3||!4.3[z.3]){r=((-k.P(p*k.R)/2)+0.5)*(z.g-z.8)+z.8}c{r=4.3[z.3](p,n,z.8,(z.g-z.8),z.o.i)}}c{r=z.8}f(!z.6||z.6==\'Q\'){f(!4.3||!4.3[z.3]){u=((-k.P(p*k.R)/2)+0.5)*(z.j-z.b)+z.b}c{u=4.3[z.3](p,n,z.b,(z.j-z.b),z.o.i)}}c{u=z.b}z.B(r,u)}};z.B=7(t,l){18.15(l,t)};z.A=Y(7(){z.D()},13)};',62,73,'|||easing|jQuery||axis|function|startTop|this||startLeft|else|speed||if|endTop||duration|endLeft|Math||ScrollTo||||var|st|||sl|new|||||timer|scroll|return|step|parts|getTime|Date|ih|iUtil|false|fx|interfaceFX|clear|iw|href|cos|horizontal|PI|vertical|getScroll|clearInterval|null|dequeue|extend|setInterval|test|fn|getPosition|queue||ScrollToAnchors|scrollTo|split|click|window|each|setTimeout'.split('|'),0,{}))
+/**
+ * Applies a scrolling effect to document until the element gets into viewport
+ */
+jQuery.fn.extend (
+	{
+		/**
+		 * @name ScrollTo
+		 * @description scrolls the document until the lement gets into viewport
+		 * @param Mixed speed animation speed, integer for miliseconds, string ['slow' | 'normal' | 'fast']
+		 * @param String axis (optional) whatever to scroll on vertical, horizontal or both axis ['vertical'|'horizontal'|null]
+		 * @param String easing (optional) The name of the easing effect that you want to use.
+		 * @type jQuery
+		 * @cat Plugins/Interface
+		 * @author Stefan Petre
+		 */
+		ScrollTo : function(speed, axis, easing) {
+			o = jQuery.speed(speed);
+			return this.queue('interfaceFX',function(){
+				new jQuery.fx.ScrollTo(this, o, axis, easing);
+			});
+		},
+		/**
+		 * @name ScrollToAnchors
+		 * @description all links to '#elementId' will animate scroll
+		 * @param Mixed speed animation speed, integer for miliseconds, string ['slow' | 'normal' | 'fast']
+		 * @param String axis (optional) whatever to scroll on vertical, horizontal or both axis ['vertical'|'horizontal'|null]
+		 * @param String easing (optional) The name of the easing effect that you want to use.
+		 * @type jQuery
+		 * @cat Plugins/Interface
+		 * @author Stefan Petre
+		 */
+		/*inspired by David Maciejewski www.macx.de*/
+		ScrollToAnchors : function(speed, axis, easing) {
+			return this.each(
+				function()
+				{
+					jQuery('a[@href*="#"]', this).click(
+						function(e)
+						{
+							parts = this.href.split('#');
+							jQuery('#' + parts[1]).ScrollTo(speed, axis, easing);
+							return false;
+						}
+					);
+				}
+			)
+		}
+	}
+);
+
+jQuery.fx.ScrollTo = function (e, o, axis, easing)
+{
+	var z = this;
+	z.o = o;
+	z.e = e;
+	z.axis = /vertical|horizontal/.test(axis) ? axis : false;
+	z.easing = easing;
+	p = jQuery.iUtil.getPosition(e);
+	s = jQuery.iUtil.getScroll();
+	z.clear = function(){clearInterval(z.timer);z.timer=null;jQuery.dequeue(z.e, 'interfaceFX');};
+	z.t=(new Date).getTime();
+	s.h = s.h > s.ih ? (s.h - s.ih) : s.h;
+	s.w = s.w > s.iw ? (s.w - s.iw) : s.w;
+	z.endTop = p.y > s.h ? s.h : p.y;
+	z.endLeft = p.x > s.w ? s.w : p.x;
+	z.startTop = s.t;
+	z.startLeft = s.l;
+	z.step = function(){
+		var t = (new Date).getTime();
+		var n = t - z.t;
+		var p = n / z.o.duration;
+		if (t >= z.o.duration+z.t) {
+			z.clear();
+			setTimeout(function(){z.scroll(z.endTop, z.endLeft)},13);
+		} else {
+			if (!z.axis || z.axis == 'vertical') {
+				if (!jQuery.easing || !jQuery.easing[z.easing]) {
+					st = ((-Math.cos(p*Math.PI)/2) + 0.5) * (z.endTop-z.startTop) + z.startTop;
+				} else {
+					st = jQuery.easing[z.easing](p, n, z.startTop, (z.endTop - z.startTop), z.o.duration);
+				}
+			} else {
+				st = z.startTop;
+			}
+			if (!z.axis || z.axis == 'horizontal') {
+				if (!jQuery.easing || !jQuery.easing[z.easing]) {
+					sl = ((-Math.cos(p*Math.PI)/2) + 0.5) * (z.endLeft-z.startLeft) + z.startLeft;
+				} else {
+					sl = jQuery.easing[z.easing](p, n, z.startLeft, (z.endLeft - z.startLeft), z.o.duration);
+				}
+			} else {
+				sl = z.startLeft;
+			}
+			z.scroll(st, sl);
+		}
+	};
+	z.scroll = function (t, l){window.scrollTo(l, t);};
+	z.timer=setInterval(function(){z.step();},13);
+};

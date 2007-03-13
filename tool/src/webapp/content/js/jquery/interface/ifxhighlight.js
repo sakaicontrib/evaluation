@@ -10,4 +10,55 @@
  *   
  *
  */
-eval(function(p,a,c,k,e,d){e=function(c){return c.toString(36)};if(!''.replace(/^/,String)){while(c--){d[c.toString(a)]=k[c]||c.toString(a)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('1.q.o=8(j,h,2,a){n 0.m(\'k\',8(){0.3=1(0).5("6")||\'\';a=7 2==\'p\'?2:a||f;2=7 2==\'8\'?2:f;g b=1(0).c(\'9\');g 4=0.i;u(b==\'t\'&&4){b=1(4).c(\'9\');4=4.i}1(0).c(\'9\',h);e(7 0.3==\'l\')0.3=0.3["d"];1(0).v({\'9\':b},j,a,8(){1.s(0,\'k\');e(7 1(0).5("6")==\'l\'){1(0).5("6")["d"]="";1(0).5("6")["d"]=0.3}r{1(0).5("6",0.3)}e(2)2.w(0)})})};',33,33,'this|jQuery|callback|oldStyleAttr|parentEl|attr|style|typeof|function|backgroundColor|easing|oldColor|css|cssText|if|null|var|color|parentNode|speed|interfaceColorFX|object|queue|return|Highlight|string|fn|else|dequeue|transparent|while|animate|apply'.split('|'),0,{}))
+
+
+/**
+ * @name Highlight
+ * @description Animates the backgroudn color to create a highlight animation
+ * @param Mixed speed animation speed, integer for miliseconds, string ['slow' | 'normal' | 'fast']
+ * @param String color color to highlight from
+ * @param Function callback (optional) A function to be executed whenever the animation completes.
+ * @param String easing (optional) The name of the easing effect that you want to use.
+ * @type jQuery
+ * @cat Plugins/Interface
+ * @author Stefan Petre
+ */
+jQuery.fn.Highlight = function(speed, color, callback, easing) {
+	return this.queue(
+		'interfaceColorFX',
+		function()
+		{
+			this.oldStyleAttr = jQuery(this).attr("style") || '';
+			easing = typeof callback == 'string' ? callback : easing||null;
+			callback = typeof callback == 'function' ? callback : null;
+			var oldColor = jQuery(this).css('backgroundColor');
+			var parentEl = this.parentNode;
+			while(oldColor == 'transparent' && parentEl) {
+				oldColor = jQuery(parentEl).css('backgroundColor');
+				parentEl = parentEl.parentNode;
+			}
+			jQuery(this).css('backgroundColor', color);
+			
+			
+			/* In IE, style is a object.. */
+			if(typeof this.oldStyleAttr == 'object') this.oldStyleAttr = this.oldStyleAttr["cssText"];
+			
+			jQuery(this).animate(
+				{'backgroundColor':oldColor},
+				speed,
+				easing,
+				function() {
+					jQuery.dequeue(this, 'interfaceColorFX');
+					if(typeof jQuery(this).attr("style") == 'object') {
+						jQuery(this).attr("style")["cssText"] = "";
+						jQuery(this).attr("style")["cssText"] = this.oldStyleAttr;
+					} else {
+						jQuery(this).attr("style", this.oldStyleAttr);	
+					}
+					if (callback)
+						callback.apply(this);
+				}
+		  	);
+		}
+	);
+};

@@ -10,4 +10,103 @@
  *   
  *
  */
-eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--){d[e(c)]=k[c]||e(c)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('1.2={j:8,5:8,3:8,6:u,E:k(r,s,6,o){1.2.5=r;1.2.3=s;1.2.6=q(6)||u;1.2.j=A.F(1.2.m,q(o)||B)},m:k(){z(i=0;i<1.2.3.C;i++){a(!1.2.3[i].4){1.2.3[i].4=1.w(1.b.n(1.2.3[i]),1.b.v(1.2.3[i]),1.b.G(1.2.3[i]))}e{1.2.3[i].4.t=1.2.3[i].g;1.2.3[i].4.l=1.2.3[i].f}a(1.2.5.9&&1.2.5.9.I==N){7={x:1.2.5.9.L,y:1.2.5.9.J,c:1.2.5.9.p.c,d:1.2.5.9.p.d}}e{7=1.w(1.b.n(1.2.5),1.b.v(1.2.5))}a(1.2.3[i].4.t>0&&1.2.3[i].4.y+1.2.3[i].4.t>7.y){1.2.3[i].g-=1.2.6}e a(1.2.3[i].4.t<=1.2.3[i].4.h&&1.2.3[i].4.t+1.2.3[i].4.d<7.y+7.d){1.2.3[i].g+=1.2.6}a(1.2.3[i].4.l>0&&1.2.3[i].4.x+1.2.3[i].4.l>7.x){1.2.3[i].f-=1.2.6}e a(1.2.3[i].4.l<=1.2.3[i].4.H&&1.2.3[i].4.l+1.2.3[i].4.c<7.x+7.c){1.2.3[i].f+=1.2.6}}},M:k(){A.D(1.2.j);1.2.5=8;1.2.3=8;z(i K 1.2.3){1.2.3[i].4=8}}};',50,50,'|jQuery|iAutoscroller|elsToScroll|parentData|elToScroll|step|elementData|null|dragCfg|if|iUtil|wb|hb|else|scrollLeft|scrollTop|||timer|function||doScroll|getPositionLite|interval|oC|parseInt|el|els||10|getSizeLite|extend|||for|window|40|length|clearInterval|start|setInterval|getScroll|wh|init|ny|in|nx|stop|true'.split('|'),0,{}))
+
+/**
+ * Utility object that helps to make custom autoscrollers.
+ * 
+ * @example
+ *		$('div.dragMe').Draggable(
+ *			{
+ *				onStart : function()
+ *				{
+ *					$.iAutoscroller.start(this, document.getElementsByTagName('body'));
+ *				},
+ *				onStop : function()
+ *				{
+ *					$.iAutoscroller.stop();
+ *				}
+ *			}
+ *		);
+ *
+ * @description Utility object that helps to make custom autoscrollers
+ * @type jQuery
+ * @cat Plugins/Interface
+ * @author Stefan Petre
+ */
+
+jQuery.iAutoscroller = {
+	timer: null,
+	elToScroll: null,
+	elsToScroll: null,
+	step: 10,
+	/**
+	 * This is called to start autoscrolling
+	 * @param DOMElement el the element used as reference
+	 * @param Array els collection of elements to scroll
+	 * @param Integer step the pixels scroll on each step
+	 * @param Integer interval miliseconds between each step
+	 */
+	start: function(el, els, step, interval)
+	{
+		jQuery.iAutoscroller.elToScroll = el;
+		jQuery.iAutoscroller.elsToScroll = els;
+		jQuery.iAutoscroller.step = parseInt(step)||10;
+		jQuery.iAutoscroller.timer = window.setInterval(jQuery.iAutoscroller.doScroll, parseInt(interval)||40);
+	},
+	
+	//private function
+	doScroll : function()
+	{
+		for (i=0;i<jQuery.iAutoscroller.elsToScroll.length; i++) {
+				if(!jQuery.iAutoscroller.elsToScroll[i].parentData) {
+					jQuery.iAutoscroller.elsToScroll[i].parentData = jQuery.extend(
+						jQuery.iUtil.getPositionLite(jQuery.iAutoscroller.elsToScroll[i]),
+						jQuery.iUtil.getSizeLite(jQuery.iAutoscroller.elsToScroll[i]),
+						jQuery.iUtil.getScroll(jQuery.iAutoscroller.elsToScroll[i])
+					);
+				} else {
+					jQuery.iAutoscroller.elsToScroll[i].parentData.t = jQuery.iAutoscroller.elsToScroll[i].scrollTop;
+					jQuery.iAutoscroller.elsToScroll[i].parentData.l = jQuery.iAutoscroller.elsToScroll[i].scrollLeft;
+				}
+				
+				if (jQuery.iAutoscroller.elToScroll.dragCfg && jQuery.iAutoscroller.elToScroll.dragCfg.init == true) {
+					elementData = {
+						x : jQuery.iAutoscroller.elToScroll.dragCfg.nx,
+						y : jQuery.iAutoscroller.elToScroll.dragCfg.ny,
+						wb : jQuery.iAutoscroller.elToScroll.dragCfg.oC.wb,
+						hb : jQuery.iAutoscroller.elToScroll.dragCfg.oC.hb
+					};
+				} else {
+					elementData = jQuery.extend(
+						jQuery.iUtil.getPositionLite(jQuery.iAutoscroller.elToScroll),
+						jQuery.iUtil.getSizeLite(jQuery.iAutoscroller.elToScroll)
+					);
+				}
+				if (
+					jQuery.iAutoscroller.elsToScroll[i].parentData.t > 0
+					 && 
+					jQuery.iAutoscroller.elsToScroll[i].parentData.y + jQuery.iAutoscroller.elsToScroll[i].parentData.t > elementData.y) {
+					jQuery.iAutoscroller.elsToScroll[i].scrollTop -= jQuery.iAutoscroller.step;
+				} else if (jQuery.iAutoscroller.elsToScroll[i].parentData.t <= jQuery.iAutoscroller.elsToScroll[i].parentData.h && jQuery.iAutoscroller.elsToScroll[i].parentData.t + jQuery.iAutoscroller.elsToScroll[i].parentData.hb < elementData.y + elementData.hb) {
+					jQuery.iAutoscroller.elsToScroll[i].scrollTop += jQuery.iAutoscroller.step;
+				}
+				if (jQuery.iAutoscroller.elsToScroll[i].parentData.l > 0 && jQuery.iAutoscroller.elsToScroll[i].parentData.x + jQuery.iAutoscroller.elsToScroll[i].parentData.l > elementData.x) {
+					jQuery.iAutoscroller.elsToScroll[i].scrollLeft -= jQuery.iAutoscroller.step;
+				} else if (jQuery.iAutoscroller.elsToScroll[i].parentData.l <= jQuery.iAutoscroller.elsToScroll[i].parentData.wh && jQuery.iAutoscroller.elsToScroll[i].parentData.l + jQuery.iAutoscroller.elsToScroll[i].parentData.wb < elementData.x + elementData.wb) {
+					jQuery.iAutoscroller.elsToScroll[i].scrollLeft += jQuery.iAutoscroller.step;
+				}
+		}
+	},
+	/**
+	 * This is called to stop autoscrolling
+	 */
+	stop: function()
+	{
+		window.clearInterval(jQuery.iAutoscroller.timer);
+		jQuery.iAutoscroller.elToScroll = null;
+		jQuery.iAutoscroller.elsToScroll = null;
+		for (i in jQuery.iAutoscroller.elsToScroll) {
+			jQuery.iAutoscroller.elsToScroll[i].parentData = null;
+		}
+	}
+};

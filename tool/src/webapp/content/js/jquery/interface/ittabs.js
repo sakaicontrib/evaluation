@@ -10,4 +10,83 @@
  *   
  *
  *
-eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--){d[e(c)]=k[c]||e(c)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('3.7={c:5(e){k=e.E||e.B||-1;4(k==9){4(h.b){h.b.C=f;h.b.F=8}n{e.y();e.u()}4(2.s){v.x.w().D="\\t";2.i=5(){2.j();2.i=N}}n 4(2.l){a=2.P;o=2.M;2.d=2.d.H(0,a)+"\\t"+2.d.K(o);2.l(a+1,a+1);2.j()}g 8}},m:5(){g 2.r(5(){4(2.6&&2.6==f){3(2).I(\'q\',3.7.c);2.6=8}})},p:5(){g 2.r(5(){4(2.J==\'L\'&&(!2.6||2.6==8)){3(2).Q(\'q\',3.7.c);2.6=f}})}};3.O.G({z:3.7.p,A:3.7.m});',53,53,'||this|jQuery|if|function|hasTabsEnabled|iTTabs|false||start|event|doTab|value||true|return|window|onblur|focus|pressedKey|setSelectionRange|destroy|else|end|build|keydown|each|createTextRange||stopPropagation|document|createRange|selection|preventDefault|EnableTabs|DisableTabs|keyCode|cancelBubble|text|charCode|returnValue|extend|substring|unbind|tagName|substr|TEXTAREA|selectionEnd|null|fn|selectionStart|bind'.split('|'),0,{}))
+ */
+
+jQuery.iTTabs =
+{
+	doTab : function(e)
+	{
+		pressedKey = e.charCode || e.keyCode || -1;
+		if (pressedKey == 9) {
+			if (window.event) {
+				window.event.cancelBubble = true;
+				window.event.returnValue = false;
+			} else {
+				e.preventDefault();
+				e.stopPropagation();
+			}
+			if (this.createTextRange) {
+				document.selection.createRange().text="\t";
+				this.onblur = function() { this.focus(); this.onblur = null; };
+			} else if (this.setSelectionRange) {
+				start = this.selectionStart;
+				end = this.selectionEnd;
+				this.value = this.value.substring(0, start) + "\t" + this.value.substr(end);
+				this.setSelectionRange(start + 1, start + 1);
+				this.focus();
+			}
+			return false;
+		}
+	},
+	destroy : function()
+	{
+		return this.each(
+			function()
+			{
+				if (this.hasTabsEnabled && this.hasTabsEnabled == true) {
+					jQuery(this).unbind('keydown', jQuery.iTTabs.doTab);
+					this.hasTabsEnabled = false;
+				}
+			}
+		);
+	},
+	build : function()
+	{
+		return this.each(
+			function()
+			{
+				if (this.tagName == 'TEXTAREA' && (!this.hasTabsEnabled || this.hasTabsEnabled == false)) {
+					jQuery(this).bind('keydown', jQuery.iTTabs.doTab);
+					this.hasTabsEnabled = true;
+				}
+			}
+		);			
+	}
+};
+
+jQuery.fn.extend (
+	{
+		/**
+		 * Enable tabs in textareas
+		 * 
+		 * @name EnableTabs
+		 * @description Enable tabs in textareas
+		 *
+		 * @type jQuery
+		 * @cat Plugins/Interface
+		 * @author Stefan Petre
+		 */
+		EnableTabs : jQuery.iTTabs.build,
+		/**
+		 * Disable tabs in textareas
+		 * 
+		 * @name DisableTabs
+		 * @description Disable tabs in textareas
+		 *
+		 * @type jQuery
+		 * @cat Plugins/Interface
+		 * @author Stefan Petre
+		 */
+		DisableTabs : jQuery.iTTabs.destroy
+	}
+);

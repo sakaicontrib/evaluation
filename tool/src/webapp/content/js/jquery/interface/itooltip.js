@@ -10,4 +10,175 @@
  *   
  *
  */
-eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--){d[e(c)]=k[c]||e(c)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('2.4={c:o,p:f,D:o,O:g(e){2.4.p=I;2.4.A(e,9,I)},L:g(e){5(2.4.c!=9)H;2.4.p=f;2.4.E(e,9)},A:g(e,3,p){5(2.4.c!=o)H;5(!3){3=9}2.4.c=3;8=2.1d(2.q.1c(3),2.q.10(3));r=2(3);b=r.v(\'b\');J=r.v(\'J\');5(b){2.4.D=b;r.v(\'b\',\'\');2(\'#12\').N(b);5(J)2(\'#W\').N(J.1j(\'1k://\',\'\'));U 2(\'#W\').N(\'\');a=2(\'#s\');5(3.7.d){a.P(0).d=3.7.d}U{a.P(0).d=\'\'}Q=2.q.10(a.P(0));11=p&&3.7.i==\'S\'?\'R\':3.7.i;1e(11){F\'B\':h=8.y-Q.X;l=8.x;t;F\'G\':h=8.y;l=8.x-Q.Z;t;F\'17\':h=8.y;l=8.x+8.Z;t;F\'S\':2(\'K\').z(\'u\',2.4.u);n=2.q.Y(e);h=n.y+15;l=n.x+15;t;1h:h=8.y+8.X;l=8.x;t}a.T({B:h+\'C\',G:l+\'C\'});5(3.7.w==f){a.A()}U{a.1o(3.7.w)}5(3.7.j)3.7.j.19(3);r.z(\'1a\',2.4.E).z(\'18\',2.4.L)}},u:g(e){5(2.4.c==o){2(\'K\').M(\'u\',2.4.u);H}n=2.q.Y(e);2(\'#s\').T({B:n.y+15+\'C\',G:n.x+15+\'C\'})},E:g(e,3){5(!3){3=9}5(2.4.p!=I&&2.4.c==3){2.4.c=o;2(\'#s\').1s(1);2(3).v(\'b\',2.4.D).M(\'1a\',2.4.E).M(\'18\',2.4.L);5(3.7.k)3.7.k.19(3);2.4.D=o}},13:g(6){5(!2.4.a){2(\'K\').1p(\'<m V="s"><m V="12"></m><m V="W"></m></m>\');2(\'#s\').T({i:\'1r\',1q:1u,1t:\'1m\'});2.4.a=I}H 9.1n(g(){5(2.v(9,\'b\')){9.7={i:/B|R|G|17|S/.1f(6.i)?6.i:\'R\',d:6.d?6.d:f,w:6.w?6.w:f,j:6.j&&6.j.16==14?6.j:f,k:6.k&&6.k.16==14?6.k:f};1l 3=2(9);3.z(\'1g\',2.4.A);3.z(\'O\',2.4.O)}})}};2.1i.1b=2.4.13;',62,93,'||jQuery|el|iTooltip|if|options|tooltipCFG|pos|this|helper|title|current|className||false|function|ny|position|onShow|onHide|nx|div|pointer|null|focused|iUtil|jEl|tooltipHelper|break|mousemove|attr|delay|||bind|show|top|px|oldTitle|hide|case|left|return|true|href|body|hidefocused|unbind|html|focus|get|helperSize|bottom|mouse|css|else|id|tooltipURL|hb|getPointer|wb|getSize|filteredPosition|tooltipTitle|build|Function||constructor|right|blur|apply|mouseout|ToolTip|getPosition|extend|switch|test|mouseover|default|fn|replace|http|var|none|each|fadeIn|append|zIndex|absolute|fadeOut|display|3000'.split('|'),0,{}))
+
+/**
+ * Creates tooltips using title attribute
+ *
+ * 
+ * 
+ * @name ToolTip
+ * @description Creates tooltips using title attribute
+ * @param Hash hash A hash of parameters
+ * @option String position tooltip's position ['top'|'left'|'right'|'bottom'|'mouse']
+ * @options Function onShow (optional) A function to be executed whenever the tooltip is displayed
+ * @options Function onHide (optional) A function to be executed whenever the tooltip is hidden
+ *
+ * @type jQuery
+ * @cat Plugins/Interface
+ * @author Stefan Petre
+ */
+jQuery.iTooltip = {
+	current : null,
+	focused : false,
+	oldTitle : null,
+	focus : function(e)
+	{
+		jQuery.iTooltip.focused = true;
+		jQuery.iTooltip.show(e, this, true);
+	},
+	hidefocused : function(e)
+	{
+		if (jQuery.iTooltip.current != this)
+			return ;
+		jQuery.iTooltip.focused = false;
+		jQuery.iTooltip.hide(e, this);
+	},
+	show : function(e, el, focused)
+	{
+		if (jQuery.iTooltip.current != null)
+			return ;
+		if (!el) {
+			el = this;
+		}
+		
+		jQuery.iTooltip.current = el;
+		pos = jQuery.extend(
+			jQuery.iUtil.getPosition(el),
+			jQuery.iUtil.getSize(el)
+		);
+		jEl = jQuery(el);
+		title = jEl.attr('title');
+		href = jEl.attr('href');
+		if (title) {
+			jQuery.iTooltip.oldTitle = title;
+			jEl.attr('title','');
+			jQuery('#tooltipTitle').html(title);
+			if (href)
+				jQuery('#tooltipURL').html(href.replace('http://', ''));
+			else 
+				jQuery('#tooltipURL').html('');
+			helper = jQuery('#tooltipHelper');
+			if(el.tooltipCFG.className){
+				helper.get(0).className = el.tooltipCFG.className;
+			} else {
+				helper.get(0).className = '';
+			}
+			helperSize = jQuery.iUtil.getSize(helper.get(0));
+			filteredPosition = focused && el.tooltipCFG.position == 'mouse' ? 'bottom' : el.tooltipCFG.position;
+			
+			switch (filteredPosition) {
+				case 'top':
+					ny = pos.y - helperSize.hb;
+					nx = pos.x;
+				break;
+				case 'left' :
+					ny = pos.y;
+					nx = pos.x - helperSize.wb;
+				break;
+				case 'right' :
+					ny = pos.y;
+					nx = pos.x + pos.wb;
+				break;
+				case 'mouse' :
+					jQuery('body').bind('mousemove', jQuery.iTooltip.mousemove);
+					pointer = jQuery.iUtil.getPointer(e);
+					ny = pointer.y + 15;
+					nx = pointer.x + 15;
+				break;
+				default :
+					ny = pos.y + pos.hb;
+					nx = pos.x;
+				break;
+			}
+			helper.css(
+				{
+					top 	: ny + 'px',
+					left	: nx + 'px'
+				}
+			);
+			if (el.tooltipCFG.delay == false) {
+				helper.show();
+			} else {
+				helper.fadeIn(el.tooltipCFG.delay);
+			}
+			if (el.tooltipCFG.onShow) 
+				el.tooltipCFG.onShow.apply(el);
+			jEl.bind('mouseout',jQuery.iTooltip.hide)
+			   .bind('blur',jQuery.iTooltip.hidefocused);
+		}
+	},
+	mousemove : function(e)
+	{
+		if (jQuery.iTooltip.current == null) {
+			jQuery('body').unbind('mousemove', jQuery.iTooltip.mousemove);
+			return;	
+		}
+		pointer = jQuery.iUtil.getPointer(e);
+		jQuery('#tooltipHelper').css(
+			{
+				top 	: pointer.y + 15 + 'px',
+				left	: pointer.x + 15 + 'px'
+			}
+		);
+	},
+	hide : function(e, el)
+	{
+		if (!el) {
+			el = this;
+		}
+		if (jQuery.iTooltip.focused != true && jQuery.iTooltip.current == el) {
+			jQuery.iTooltip.current = null;
+			jQuery('#tooltipHelper').fadeOut(1);
+			jQuery(el)
+				.attr('title',jQuery.iTooltip.oldTitle)
+				.unbind('mouseout', jQuery.iTooltip.hide)
+				.unbind('blur', jQuery.iTooltip.hidefocused);
+			if (el.tooltipCFG.onHide) 
+				el.tooltipCFG.onHide.apply(el);
+			jQuery.iTooltip.oldTitle = null;
+		}
+	},
+	build : function(options)
+	{
+		if (!jQuery.iTooltip.helper)
+		{
+			jQuery('body').append('<div id="tooltipHelper"><div id="tooltipTitle"></div><div id="tooltipURL"></div></div>');
+			jQuery('#tooltipHelper').css(
+				{
+					position:	'absolute',
+					zIndex:		3000,
+					display: 	'none'
+				}
+			);
+			jQuery.iTooltip.helper = true;
+		}
+		return this.each(
+			function(){
+				if(jQuery.attr(this,'title')) {
+					this.tooltipCFG = {
+						position	: /top|bottom|left|right|mouse/.test(options.position) ? options.position : 'bottom',
+						className	: options.className ? options.className : false,
+						delay		: options.delay ? options.delay : false,
+						onShow		: options.onShow && options.onShow.constructor == Function ? options.onShow : false,
+						onHide		: options.onHide && options.onHide.constructor == Function ? options.onHide : false
+					};
+					var el = jQuery(this);
+					el.bind('mouseover',jQuery.iTooltip.show);
+					el.bind('focus',jQuery.iTooltip.focus);
+				}
+			}
+		);
+	}
+};
+
+jQuery.fn.ToolTip = jQuery.iTooltip.build;

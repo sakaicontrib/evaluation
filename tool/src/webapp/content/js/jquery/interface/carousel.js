@@ -10,4 +10,248 @@
  *
  */
 /**
-eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--){d[e(c)]=k[c]||e(c)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('5.J={10:c(o){Q a.Z(c(){D 3=a;D u=2*g.E/1a;D H=2*g.E;t(5(3).B(\'l\')!=\'17\'&&5(3).B(\'l\')!=\'L\'){5(3).B(\'l\',\'17\')}3.4={C:5(o.C,a),k:o.k,n:o.n,I:o.I,H:H,j:5.P.1x(a),l:5.P.1D(a),A:g.E/2,N:o.N,z:o.p,p:[],K:v,u:2*g.E/1a};3.4.1d=(3.4.j.w-3.4.k)/2;3.4.s=(3.4.j.h-3.4.n-3.4.n*3.4.z)/2;3.4.19=2*g.E/3.4.C.j();3.4.O=3.4.j.w/2;3.4.T=3.4.j.h/2-3.4.n*3.4.z;D G=Y.X(\'1l\');5(G).B({l:\'L\',1h:1,U:0,W:0});5(3).16(G);3.4.C.Z(c(m){V=5(\'1b\',a).1q(0);7=q(3.4.n*3.4.z);t(5.1k.1j){8=Y.X(\'1b\');5(8).B(\'l\',\'L\');8.1f=V.1f;8.9.1w=\'1z 1v:1u.1s.1t(1y=1B, 9=1, 1r=0, 1A=0, 1E=0, 1p=0)\'}11{8=Y.X(\'8\');t(8.13){b=8.13("1o");8.9.l=\'L\';8.9.7=7+\'f\';8.9.d=3.4.k+\'f\';8.7=7;8.d=3.4.k;b.1n();b.1m(0,7);b.1C(1,-1);b.1I(V,0,0,3.4.k,7);b.23();b.1X="1W-1V";D M=b.1U(0,0,0,7);M.15(1,"14(r, r, r, 1)");M.15(0,"14(r, r, r, 0.6)");b.1Y=M;t(24.1Z.21(\'22\')!=-1){b.1T()}11{b.1R(0,0,3.4.k,7)}}}3.4.p[m]=8;5(G).16(8)}).F(\'1K\',c(e){3.4.K=1J;3.4.i=3.4.u*0.1*3.4.i/g.18(3.4.i);Q v}).F(\'12\',c(e){3.4.K=v;Q v});5.J.R(3);3.4.i=3.4.u*0.2;3.4.1S=1G.1F(c(){3.4.A+=3.4.i;t(3.4.A>H)3.4.A=0;5.J.R(3)},20);5(3).F(\'12\',c(){3.4.i=3.4.u*0.2*3.4.i/g.18(3.4.i)}).F(\'1H\',c(e){t(3.4.K==v){1c=5.P.1L(e);1i=3.4.j.w-1c.x+3.4.l.x;3.4.i=3.4.N*3.4.u*(3.4.j.w/2-1i)/(3.4.j.w/2)}})})},R:c(3){3.4.C.Z(c(m){S=3.4.A+m*3.4.19;x=3.4.1d*g.1M(S);y=3.4.s*g.1Q(S);1g=q(1P*(3.4.s+y)/(2*3.4.s));1e=(3.4.s+y)/(2*3.4.s);d=q((3.4.k-3.4.I)*1e+3.4.I);7=q(d*3.4.n/3.4.k);a.9.U=3.4.T+y-7/2+"f";a.9.W=3.4.O+x-d/2+"f";a.9.d=d+"f";a.9.7=7+"f";a.9.1h=1g;3.4.p[m].9.U=q(3.4.T+y+7-1-7/2)+"f";3.4.p[m].9.W=q(3.4.O+x-d/2)+"f";3.4.p[m].9.d=d+"f";3.4.p[m].9.7=q(7*3.4.z)+"f"})}};5.1O.1N=5.J.10;',62,129,'|||el|carouselCfg|jQuery||height|canvas|style|this|context|function|width||px|Math||speed|size|itemWidth|position|nr|itemHeight|options|reflections|parseInt|255|radiusY|if|increment|false||||reflectionSize|start|css|items|var|PI|bind|reflexions|maxRotation|itemMinWidth|iCarousel|protectRotation|absolute|gradient|rotationSpeed|paddingX|iUtil|return|positionItems|angle|paddingY|top|image|left|createElement|document|each|build|else|mouseout|getContext|rgba|addColorStop|append|relative|abs|step|360|img|pointer|radiusX|parte|src|itemZIndex|zIndex|mousex|msie|browser|div|translate|save|2d|finishx|get|finishOpacity|Microsoft|Alpha|DXImageTransform|progid|filter|getSize|opacity|flipv|startx|60|scale|getPosition|starty|setInterval|window|mousemove|drawImage|true|mouseover|getPointer|cos|Carousel|fn|100|sin|fillRect|rotationTimer|fill|createLinearGradient|out|destination|globalCompositeOperation|fillStyle|appVersion||indexOf|WebKit|restore|navigator'.split('|'),0,{}))
+ * Created a 3D Carousel from a list of images, with reflections and animated by mouse position
+ * 
+ * @example window.onload = 
+ *			function()
+ *			{
+ *				$('#carousel').Carousel(
+ *					{
+ *						itemWidth: 110,
+ *						itemHeight: 62,
+ *						itemMinWidth: 50,
+ *						items: 'a',
+ *						reflections: .5,
+ *						rotationSpeed: 1.8
+ *					}
+ *				);
+ *			}
+ * HTML
+ *			<div id="carousel">
+ *				<a href="" title=""><img src="" width="100%" /></a>
+ *				<a href="" title=""><img src="" width="100%" /></a>
+ *				<a href="" title=""><img src="" width="100%" /></a>
+ *				<a href="" title=""><img src="" width="100%" /></a>
+ *				<a href="" title=""><img src="" width="100%" /></a>
+ *			</div>
+ * CSS
+ *			#carousel
+ *			{
+ *				width: 700px;
+ *				height: 150px;
+ *				background-color: #111;
+ *				position: absolute;
+ *				top: 200px;
+ *				left: 100px;
+ *			}
+ *			#carousel a
+ *			{
+ *				position: absolute;
+ *				width: 110px;
+ *			}
+ *
+ * @desc Creates a 3D carousel from all images inside div tag with id 'carousel'
+ *
+ *
+ * @name 3D Carousel
+ * @description Created a 3D Carousel from a list of images, with reflections and animated by mouse position
+ * @param Hash hash A hash of parameters
+ * @option String items items selection
+ * @option Integer itemWidth the max width for each item
+ * @option Integer itemHeight the max height for each item
+ * @option Integer itemMinWidth the minimum width for each item, the height is automaticaly calculated to keep proportions
+ * @option Float rotationSpeed the speed for rotation animation
+ * @option Float reflectionSize the reflection size a fraction from items' height
+ *
+ * @type jQuery
+ * @cat Plugins/Interface
+ * @author Stefan Petre
+ */
+jQuery.iCarousel = {
+	
+	build : function(options)
+	{
+		return this.each(
+			function()
+			{
+				var el = this;
+				var increment = 2*Math.PI/360;
+				var maxRotation = 2*Math.PI;
+				if(jQuery(el).css('position') != 'relative' && jQuery(el).css('position') != 'absolute') {
+					jQuery(el).css('position', 'relative');
+				}
+				el.carouselCfg = {
+					items : jQuery(options.items, this),
+					itemWidth : options.itemWidth,
+					itemHeight : options.itemHeight,
+					itemMinWidth : options.itemMinWidth,
+					maxRotation : maxRotation,
+					size : jQuery.iUtil.getSize(this),
+					position : jQuery.iUtil.getPosition(this),
+					start : Math.PI/2,
+					rotationSpeed : options.rotationSpeed,
+					reflectionSize : options.reflections,
+					reflections : [],
+					protectRotation : false,
+					increment: 2*Math.PI/360
+				};
+				el.carouselCfg.radiusX = (el.carouselCfg.size.w - el.carouselCfg.itemWidth)/2;
+				el.carouselCfg.radiusY =  (el.carouselCfg.size.h - el.carouselCfg.itemHeight - el.carouselCfg.itemHeight * el.carouselCfg.reflectionSize)/2;
+				el.carouselCfg.step =  2*Math.PI/el.carouselCfg.items.size();
+				el.carouselCfg.paddingX = el.carouselCfg.size.w/2;
+				el.carouselCfg.paddingY = el.carouselCfg.size.h/2 - el.carouselCfg.itemHeight * el.carouselCfg.reflectionSize;
+				var reflexions = document.createElement('div');
+				jQuery(reflexions)
+					.css(
+						{
+							position: 'absolute',
+							zIndex: 1,
+							top: 0,
+							left: 0
+						}
+					);
+				jQuery(el).append(reflexions);
+				el.carouselCfg.items
+					.each(
+						function(nr)
+						{
+							image = jQuery('img', this).get(0);
+							height = parseInt(el.carouselCfg.itemHeight*el.carouselCfg.reflectionSize);
+							if (jQuery.browser.msie) {
+								canvas = document.createElement('img');
+								jQuery(canvas).css('position', 'absolute');
+								canvas.src = image.src;				
+								canvas.style.filter = 'flipv progid:DXImageTransform.Microsoft.Alpha(opacity=60, style=1, finishOpacity=0, startx=0, starty=0, finishx=0)';
+					
+							} else {
+								canvas = document.createElement('canvas');
+								if (canvas.getContext) {
+									context = canvas.getContext("2d");
+									canvas.style.position = 'absolute';
+									canvas.style.height = height +'px';
+									canvas.style.width = el.carouselCfg.itemWidth+'px';
+									canvas.height = height;
+									canvas.width = el.carouselCfg.itemWidth;
+									context.save();
+						
+									context.translate(0,height);
+									context.scale(1,-1);
+									
+									context.drawImage(
+										image, 
+										0, 
+										0, 
+										el.carouselCfg.itemWidth, 
+										height
+									);
+					
+									context.restore();
+									
+									context.globalCompositeOperation = "destination-out";
+									var gradient = context.createLinearGradient(
+										0, 
+										0, 
+										0, 
+										height
+									);
+									
+									gradient.addColorStop(1, "rgba(255, 255, 255, 1)");
+									gradient.addColorStop(0, "rgba(255, 255, 255, 0.6)");
+						
+									context.fillStyle = gradient;
+									if (navigator.appVersion.indexOf('WebKit') != -1) {
+										context.fill();
+									} else {
+										context.fillRect(
+											0, 
+											0, 
+											el.carouselCfg.itemWidth, 
+											height
+										);
+									}
+								}
+							}
+							
+							el.carouselCfg.reflections[nr] = canvas;
+							jQuery(reflexions).append(canvas);
+						}
+					)
+					.bind(
+						'mouseover',
+						function(e)
+						{
+							el.carouselCfg.protectRotation = true;
+							el.carouselCfg.speed = el.carouselCfg.increment*0.1 * el.carouselCfg.speed / Math.abs(el.carouselCfg.speed);
+							return false;
+						}
+					)
+					.bind(
+						'mouseout',
+						function(e)
+						{
+							el.carouselCfg.protectRotation = false;
+							return false;
+						}
+					);
+				jQuery.iCarousel.positionItems(el);
+				el.carouselCfg.speed = el.carouselCfg.increment*0.2;
+				el.carouselCfg.rotationTimer = window.setInterval(
+					function()
+					{
+						el.carouselCfg.start += el.carouselCfg.speed;
+						if (el.carouselCfg.start > maxRotation)
+							el.carouselCfg.start = 0;
+						jQuery.iCarousel.positionItems(el);
+					},
+					20
+				);
+				jQuery(el)
+					.bind(
+						'mouseout',
+						function()
+						{
+							el.carouselCfg.speed = el.carouselCfg.increment*0.2 * el.carouselCfg.speed / Math.abs(el.carouselCfg.speed);
+						}
+					)
+					.bind(
+						'mousemove',
+						function(e)
+						{
+							if (el.carouselCfg.protectRotation == false) {
+								pointer = jQuery.iUtil.getPointer(e);
+								mousex =  el.carouselCfg.size.w - pointer.x + el.carouselCfg.position.x;
+								el.carouselCfg.speed = el.carouselCfg.rotationSpeed * el.carouselCfg.increment * (el.carouselCfg.size.w/2 - mousex) / (el.carouselCfg.size.w/2);
+							}
+						}
+					);
+			}
+		);
+	},
+
+	positionItems : function(el)
+	{
+		el.carouselCfg.items.each(
+			function (nr)
+			{
+				angle = el.carouselCfg.start+nr*el.carouselCfg.step;
+				x = el.carouselCfg.radiusX*Math.cos(angle);
+				y = el.carouselCfg.radiusY*Math.sin(angle) ;
+				itemZIndex = parseInt(100*(el.carouselCfg.radiusY+y)/(2*el.carouselCfg.radiusY));
+				parte = (el.carouselCfg.radiusY+y)/(2*el.carouselCfg.radiusY);
+				
+				width = parseInt((el.carouselCfg.itemWidth - el.carouselCfg.itemMinWidth) * parte + el.carouselCfg.itemMinWidth);
+				height = parseInt(width * el.carouselCfg.itemHeight / el.carouselCfg.itemWidth);
+				this.style.top = el.carouselCfg.paddingY + y - height/2 + "px";
+	     		this.style.left = el.carouselCfg.paddingX + x - width/2 + "px";
+	     		this.style.width = width + "px";
+	     		this.style.height = height + "px";
+	     		this.style.zIndex = itemZIndex;
+				el.carouselCfg.reflections[nr].style.top = parseInt(el.carouselCfg.paddingY + y + height - 1 - height/2) + "px";
+				el.carouselCfg.reflections[nr].style.left = parseInt(el.carouselCfg.paddingX + x - width/2) + "px";
+				el.carouselCfg.reflections[nr].style.width = width + "px";
+				el.carouselCfg.reflections[nr].style.height = parseInt(height * el.carouselCfg.reflectionSize) + "px";
+			}
+		);
+	}
+};
+jQuery.fn.Carousel = jQuery.iCarousel.build;

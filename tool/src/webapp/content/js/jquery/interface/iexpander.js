@@ -10,4 +10,105 @@
  *   
  *
  */
-eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--){d[e(c)]=k[c]||e(c)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('3.6={9:y,d:k(){a=4.T;7(!a)j;h={P:3(4).8(\'P\')||\'\',I:3(4).8(\'I\')||\'\',z:3(4).8(\'z\')||\'\',x:3(4).8(\'x\')||\'\',M:3(4).8(\'M\')||\'\',s:3(4).8(\'s\')||\'\',D:3(4).8(\'D\')||\'\',N:3(4).8(\'N\')||\'\'};3.6.9.8(h);c=3.6.A(a);c=c.K(H G("\\\\n","g"),"<V />");3.6.9.c(\'U\');l=3.6.9.o(0).O;3.6.9.c(c);e=3.6.9.o(0).O+l;7(4.b.5&&e>4.b.5[0]){e=4.b.5[0]}4.h.e=e+\'B\';7(4.p==\'C\'){f=3.6.9.o(0).W+l;7(4.b.5&&f>4.b.5[1]){f=4.b.5[1]}4.h.f=f+\'B\'}},A:k(a){m={\'&\':\'&X;\',\'<\':\'&Y;\',\'>\':\'&Z;\',\'"\':\'&S;\'};Q(i R m){a=a.K(H G(i,\'g\'),m[i])}j a},w:k(5){7(3.6.9==y){3(\'1h\',1g).1f(\'<r 1d="t" h="1e: 1j; 10: 0; 1m: 0; 1l: 1k;"></r>\');3.6.9=3(\'#t\')}j 4.1i(k(){7(/C|L/.J(4.p)){7(4.p==\'L\'){F=4.1b(\'1c\');7(!/a|14/.J(F)){j}}7(5&&(5.q==E||(5.q==13&&5.12==2))){7(5.q==E)5=[5,5];11{5[0]=u(5[0])||v;5[1]=u(5[1])||v}4.b={5:5}}3(4).15(3.6.d).16(3.6.d).1a(3.6.d);3.6.d.19(4)}})}};3.18.17=3.6.w;',62,85,'|||jQuery|this|limit|iExpander|if|css|helper|text|Expander|html|expand|width|height||style||return|function|spacer|entities||get|tagName|constructor|div|fontVariant|expanderHelper|parseInt|400|build|fontStyle|null|fontWeight|htmlEntities|px|TEXTAREA|letterSpacing|Number|elType|RegExp|new|fontSize|test|replace|INPUT|fontStretch|wordSpacing|offsetWidth|fontFamily|for|in|quot|value|pW|br|offsetHeight|amp|lt|gt|top|else|length|Array|password|blur|keyup|Autoexpand|fn|apply|keypress|getAttribute|type|id|position|append|document|body|each|absolute|hidden|visibility|left'.split('|'),0,{}))
+ 
+/**
+ * Expands text and textarea elements while new characters are typed to the a miximum width
+ *
+ * @name Expander
+ * @description Expands text and textarea elements while new characters are typed to the a miximum width
+ * @param Mixed limit integer if only expands in width, array if expands in width and height
+ * @type jQuery
+ * @cat Plugins/Interface
+ * @author Stefan Petre
+ */
+
+jQuery.iExpander =
+{
+	helper : null,
+	expand : function()
+	{
+		
+		text = this.value;
+		if (!text)
+			return;
+		style = {
+			fontFamily: jQuery(this).css('fontFamily')||'',
+			fontSize: jQuery(this).css('fontSize')||'',
+			fontWeight: jQuery(this).css('fontWeight')||'',
+			fontStyle: jQuery(this).css('fontStyle')||'',
+			fontStretch: jQuery(this).css('fontStretch')||'',
+			fontVariant: jQuery(this).css('fontVariant')||'',
+			letterSpacing: jQuery(this).css('letterSpacing')||'',
+			wordSpacing: jQuery(this).css('wordSpacing')||''
+		};
+		jQuery.iExpander.helper.css(style);
+		html = jQuery.iExpander.htmlEntities(text);
+		html = html.replace(new RegExp( "\\n", "g" ), "<br />");
+		jQuery.iExpander.helper.html('pW');
+		spacer = jQuery.iExpander.helper.get(0).offsetWidth;
+		jQuery.iExpander.helper.html(html);
+		width = jQuery.iExpander.helper.get(0).offsetWidth + spacer;
+		if (this.Expander.limit && width > this.Expander.limit[0]) {
+			width = this.Expander.limit[0];
+		}
+		this.style.width = width + 'px';
+		if (this.tagName == 'TEXTAREA') {
+			height = jQuery.iExpander.helper.get(0).offsetHeight + spacer;
+			if (this.Expander.limit && height > this.Expander.limit[1]) {
+				height = this.Expander.limit[1];
+			}
+			this.style.height = height + 'px';
+		}
+	},
+	htmlEntities : function(text)
+	{ 
+		entities = {
+			'&':'&amp;',
+			'<':'&lt;',
+			'>':'&gt;',
+			'"':'&quot;'
+		};
+		for(i in entities) {
+			text = text.replace(new RegExp(i,'g'),entities[i]);
+		}
+		return text;
+	},
+	build : function(limit)
+	{
+		if (jQuery.iExpander.helper == null) {
+			jQuery('body', document).append('<div id="expanderHelper" style="position: absolute; top: 0; left: 0; visibility: hidden;"></div>');
+			jQuery.iExpander.helper = jQuery('#expanderHelper');
+		}
+		return this.each(
+			function()
+			{
+				if (/TEXTAREA|INPUT/.test(this.tagName)) {
+					if (this.tagName == 'INPUT') {
+						elType = this.getAttribute('type');
+						if (!/text|password/.test(elType)) {
+							return;
+						}
+					}
+					if (limit && (limit.constructor == Number || (limit.constructor == Array && limit.length == 2))) {
+						if (limit.constructor == Number)
+							limit = [limit, limit];
+						else {
+							limit[0] = parseInt(limit[0])||400;
+							limit[1] = parseInt(limit[1])||400;
+						}
+						this.Expander = {
+							limit : limit
+						};
+					}
+					jQuery(this)
+						.blur(jQuery.iExpander.expand)
+						.keyup(jQuery.iExpander.expand)
+						.keypress(jQuery.iExpander.expand);
+					jQuery.iExpander.expand.apply(this);
+				}
+			}
+		);			
+	}
+};
+
+jQuery.fn.Autoexpand = jQuery.iExpander.build;

@@ -10,4 +10,413 @@
  *
  */
 
-eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--){d[e(c)]=k[c]||e(c)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('7.k={P:[],1O:O(){u.1t();5=u.14;p=7.E(5,\'p\');8(7.k.P[p]!=T){1k.1u(7.k.P[p])}f=5.4.s+1;8(5.4.e.A<f){f=1}e=7(\'g\',5.4.K);5.4.s=f;8(e.19()>0){e.1o(5.4.S,7.k.1j)}},20:O(){u.1t();5=u.14;p=7.E(5,\'p\');8(7.k.P[p]!=T){1k.1u(7.k.P[p])}f=5.4.s-1;e=7(\'g\',5.4.K);8(f<1){f=5.4.e.A}5.4.s=f;8(e.19()>0){e.1o(5.4.S,7.k.1j)}},1R:O(c){5=1B.1y(c);8(5.4.17){f=5.4.s;2k(f==5.4.s){f=1+C(2e.17()*5.4.e.A)}}B{f=5.4.s+1;8(5.4.e.A<f){f=1}}e=7(\'g\',5.4.K);5.4.s=f;8(e.19()>0){e.1o(5.4.S,7.k.1j)}},1d:O(o){12 5;8(o&&o.2m==2p){8(o.l){5=1B.1y(o.l.5);X=1k.2g.U.23("#");o.l.11=T;8(X.A==2){f=C(X[1]);1m=X[1].1Z(f,\'\');8(7.E(5,\'p\')!=1m){f=1}}B{f=1}}8(o.1f){o.1f.1t();5=o.1f.14.14;p=7.E(5,\'p\');8(7.k.P[p]!=T){1k.1u(7.k.P[p])}X=o.1f.U.23("#");f=C(X[1]);1m=X[1].1Z(f,\'\');8(7.E(5,\'p\')!=1m){f=1}}8(5.4.e.A<f||f<1){f=1}5.4.s=f;F=7.J.18(5);1T=7.J.2b(5);1X=7.J.26(5);8(5.4.v){5.4.v.o.9(\'q\',\'L\')}8(5.4.r){5.4.r.o.9(\'q\',\'L\')}8(5.4.l){y=C(1T.t)+C(1X.t);8(5.4.d){8(5.4.d.N==\'z\'){y+=5.4.d.D.G}B{F.h-=5.4.d.D.G}}8(5.4.j){8(5.4.j&&5.4.j.Y==\'z\'){y+=5.4.j.D.G}B{F.h-=5.4.j.D.G}}8(!5.4.1s){5.4.1W=o.l?o.l.V:(C(5.4.l.9(\'V\'))||0);5.4.1s=o.l?o.l.H:(C(5.4.l.9(\'H\'))||0)}5.4.l.9(\'z\',y+(F.h-5.4.1W)/2+\'n\');5.4.l.9(\'1h\',(F.1N-5.4.1s)/2+\'n\');5.4.l.9(\'q\',\'1x\')}e=7(\'g\',5.4.K);8(e.19()>0){e.1o(5.4.S,7.k.1j)}B{1l=7(\'a\',5.4.d.o).W(f-1);7(1l).16(5.4.d.Q);12 g=1J 1K();g.5=7.E(5,\'p\');g.f=f-1;g.I=5.4.e[5.4.s-1].I;8(g.1G){g.11=T;7.k.q.1U(g)}B{g.11=7.k.q}8(5.4.j){5.4.j.o.1w(5.4.e[f-1].15)}}}},1j:O(){5=u.14.14;5.4.K.9(\'q\',\'L\');8(5.4.d.Q){1l=7(\'a\',5.4.d.o).2c(5.4.d.Q).W(5.4.s-1);7(1l).16(5.4.d.Q)}12 g=1J 1K();g.5=7.E(5,\'p\');g.f=5.4.s-1;g.I=5.4.e[5.4.s-1].I;8(g.1G){g.11=T;7.k.q.1U(g)}B{g.11=7.k.q}8(5.4.j){5.4.j.o.1w(5.4.e[5.4.s-1].15)}},q:O(){5=1B.1y(u.5);8(5.4.v){5.4.v.o.9(\'q\',\'L\')}8(5.4.r){5.4.r.o.9(\'q\',\'L\')}F=7.J.18(5);y=0;8(5.4.d){8(5.4.d.N==\'z\'){y+=5.4.d.D.G}B{F.h-=5.4.d.D.G}}8(5.4.j){8(5.4.j&&5.4.j.Y==\'z\'){y+=5.4.j.D.G}B{F.h-=5.4.j.D.G}}2s=7(\'.1H\',5);y=y+(F.h-u.V)/2;x=(F.1N-u.H)/2;5.4.K.9(\'z\',y+\'n\').9(\'1h\',x+\'n\').1w(\'<g I="\'+u.I+\'" />\');5.4.K.2n(5.4.S);r=5.4.s+1;8(r>5.4.e.A){r=1}v=5.4.s-1;8(v<1){v=5.4.e.A}5.4.r.o.9(\'q\',\'1x\').9(\'z\',y+\'n\').9(\'1h\',x+2*u.H/3+\'n\').9(\'H\',u.H/3+\'n\').9(\'V\',u.V+\'n\').E(\'1p\',5.4.e[r-1].15);5.4.r.o.W(0).U=\'#\'+r+7.E(5,\'p\');5.4.v.o.9(\'q\',\'1x\').9(\'z\',y+\'n\').9(\'1h\',x+\'n\').9(\'H\',u.H/3+\'n\').9(\'V\',u.V+\'n\').E(\'1p\',5.4.e[v-1].15);5.4.v.o.W(0).U=\'#\'+v+7.E(5,\'p\')},25:O(o){8(!o||!o.m||7.k.P[o.m])1z;12 m=7(\'#\'+o.m);12 6=m.W(0);8(6.1a.M!=\'Z\'&&6.1a.M!=\'1Q\'){6.1a.M=\'1Q\'}6.1a.1M=\'1L\';8(m.19()==0)1z;6.4={};6.4.e=o.e?o.e:[];6.4.17=o.17&&o.17==2v||2i;1g=6.2t(\'2u\');28(i=0;i<1g.A;i++){13=6.4.e.A;6.4.e[13]={I:1g[i].I,15:1g[i].1p||1g[i].2l||\'\'}}8(6.4.e.A==0){1z}6.4.1I=7.2q(7.J.2r(6),7.J.18(6));6.4.1v=7.J.2b(6);6.4.1D=7.J.26(6);t=C(6.4.1v.t)+C(6.4.1D.t);b=C(6.4.1v.b)+C(6.4.1D.b);7(\'g\',6).2f();6.4.S=o.S?o.S:2d;8(o.N||o.1c||o.Q){6.4.d={};m.1i(\'<R 10="27"></R>\');6.4.d.o=7(\'.27\',6);8(o.1c){6.4.d.1c=o.1c;6.4.d.o.16(o.1c)}8(o.Q){6.4.d.Q=o.Q}6.4.d.o.9(\'M\',\'Z\').9(\'H\',6.4.1I.w+\'n\');8(o.N&&o.N==\'z\'){6.4.d.N=\'z\';6.4.d.o.9(\'z\',t+\'n\')}B{6.4.d.N=\'1b\';6.4.d.o.9(\'1b\',b+\'n\')}6.4.d.1r=o.1r?o.1r:\' \';28(12 i=0;i<6.4.e.A;i++){13=C(i)+1;6.4.d.o.1i(\'<a U="#\'+13+o.m+\'" 10="2j" 1p="\'+6.4.e[i].15+\'">\'+13+\'</a>\'+(13!=6.4.e.A?6.4.d.1r:\'\'))}7(\'a\',6.4.d.o).1C(\'1E\',O(){7.k.1d({1f:u})});6.4.d.D=7.J.18(6.4.d.o.W(0))}8(o.Y||o.1e){6.4.j={};m.1i(\'<R 10="29">&1F;</R>\');6.4.j.o=7(\'.29\',6);8(o.1e){6.4.j.1e=o.1e;6.4.j.o.16(o.1e)}6.4.j.o.9(\'M\',\'Z\').9(\'H\',6.4.1I.w+\'n\');8(o.Y&&o.Y==\'z\'){6.4.j.Y=\'z\';6.4.j.o.9(\'z\',(6.4.d&&6.4.d.N==\'z\'?6.4.d.D.G+t:t)+\'n\')}B{6.4.j.Y=\'1b\';6.4.j.o.9(\'1b\',(6.4.d&&6.4.d.N==\'1b\'?6.4.d.D.G+b:b)+\'n\')}6.4.j.D=7.J.18(6.4.j.o.W(0))}8(o.1n){6.4.r={1n:o.1n};m.1i(\'<a U="#2\'+o.m+\'" 10="1S">&1F;</a>\');6.4.r.o=7(\'.1S\',6);6.4.r.o.9(\'M\',\'Z\').9(\'q\',\'L\').9(\'1M\',\'1L\').9(\'1Y\',\'1P\').16(6.4.r.1n);6.4.r.o.1C(\'1E\',7.k.1O)}8(o.1q){6.4.v={1q:o.1q};m.1i(\'<a U="#0\'+o.m+\'" 10="1V">&1F;</a>\');6.4.v.o=7(\'.1V\',6);6.4.v.o.9(\'M\',\'Z\').9(\'q\',\'L\').9(\'1M\',\'1L\').9(\'1Y\',\'1P\').16(6.4.v.1q);6.4.v.o.1C(\'1E\',7.k.20)}m.22(\'<R 10="1H"></R>\');6.4.K=7(\'.1H\',6);6.4.K.9(\'M\',\'Z\').9(\'z\',\'24\').9(\'1h\',\'24\').9(\'q\',\'L\');8(o.l){m.22(\'<R 10="2a" 1a="q: L;"><g I="\'+o.l+\'" /></R>\');6.4.l=7(\'.2a\',6);6.4.l.9(\'M\',\'Z\');12 g=1J 1K();g.5=o.m;g.I=o.l;8(g.1G){g.11=T;7.k.1d({l:g})}B{g.11=O(){7.k.1d({l:u})}}}B{7.k.1d({m:6})}8(o.1A){21=C(o.1A)*2h}7.k.P[o.m]=o.1A?1k.2o(\'7.k.1R(\\\'\'+o.m+\'\\\')\',21):T}};7.5=7.k.25;',62,156,'||||ss|slideshow|el|jQuery|if|css||||slideslinks|images|slide|img|||slideCaption|islideshow|loader|container|px||id|display|nextslide|currentslide||this|prevslide||||top|length|else|parseInt|dimm|attr|slidePos|hb|width|src|iUtil|holder|none|position|linksPosition|function|slideshows|activeLinkClass|div|fadeDuration|null|href|height|get|url|captionPosition|absolute|class|onload|var|indic|parentNode|caption|addClass|random|getSize|size|style|bottom|linksClass|go|captionClass|link|imgs|left|append|showImage|window|lnk|show|nextslideClass|fadeOut|title|prevslideClass|linksSeparator|loaderWidth|blur|clearInterval|oPad|html|block|getElementById|return|autoplay|document|bind|oBor|click|nbsp|complete|slideshowHolder|oP|new|Image|hidden|overflow|wb|gonext|30px|relative|timer|slideshowNextSlide|slidePad|apply|slideshowPrevslide|loaderHeight|slideBor|fontSize|replace|goprev|time|prepend|split|0px|build|getBorder|slideshowLinks|for|slideshowCaption|slideshowLoader|getPadding|removeClass|500|Math|remove|location|1000|false|slideshowLink|while|alt|constructor|fadeIn|setInterval|Object|extend|getPosition|par|getElementsByTagName|IMG|true'.split('|'),0,{}))
+
+/**
+ * Creates an image slideshow. The slideshow can autoplay slides, each image can have caption, navigation links: next, prev, each slide. A page may have more then one slideshow, eachone working independently. Each slide can be bookmarked. The source images can be defined by JavaScript in slideshow options or by HTML placing images inside container.
+ *
+ * 
+ * 
+ * @name Slideshow
+ * @description Creates an image slideshow. The slideshow can autoplay slides, each image can have caption, navigation links: next, prev, each slide. A page may have more then one slideshow, eachone working independently. Each slide can be bookmarked. The source images can be defined by JavaScript in slideshow options or by HTML placing images inside container.
+ * @param Hash hash A hash of parameters
+ * @option String container container ID
+ * @option String loader path to loading indicator image
+ * @option String linksPosition (optional) images links position ['top'|'bottom'|null]
+ * @option String linksClass (optional) images links cssClass
+ * @option String linksSeparator (optional) images links separator
+ * @option Integer fadeDuration fade animation duration in miliseconds
+ * @option String activeLinkClass (optional) active image link CSS class
+ * @option String nextslideClass (optional) next image CSS class
+ * @option String prevslideClass (optional) previous image CSS class
+ * @option String captionPosition (optional) image caption position ['top'|'bottom'|null]
+ * @option String captionClass (optional) image caption CSS class
+ * @option String autoplay (optional) seconds to wait untill next images is displayed. This option will make the slideshow to autoplay.
+ * @option String random (optional) if slideshow autoplayes the images can be randomized
+ * @option Array images (optional) array of hash with keys 'src' (path to image) and 'cation' (image caption) for images
+ *
+ * @type jQuery
+ * @cat Plugins/Interface
+ * @author Stefan Petre
+ */
+jQuery.islideshow = {
+	slideshows: [],
+	gonext : function()
+	{
+		this.blur();
+		slideshow = this.parentNode;
+		id = jQuery.attr(slideshow, 'id');
+		if (jQuery.islideshow.slideshows[id] != null) {
+			window.clearInterval(jQuery.islideshow.slideshows[id]);
+		}
+		slide = slideshow.ss.currentslide + 1;
+		if (slideshow.ss.images.length < slide) {
+			slide = 1;
+		}
+		images = jQuery('img', slideshow.ss.holder);
+		slideshow.ss.currentslide = slide;
+		if (images.size() > 0) {
+			images.fadeOut(
+				slideshow.ss.fadeDuration,
+				jQuery.islideshow.showImage
+			);
+		}
+	},
+	goprev : function()
+	{
+		this.blur();
+		slideshow = this.parentNode;
+		id = jQuery.attr(slideshow, 'id');
+		if (jQuery.islideshow.slideshows[id] != null) {
+			window.clearInterval(jQuery.islideshow.slideshows[id]);
+		}
+		slide = slideshow.ss.currentslide - 1;
+		images = jQuery('img', slideshow.ss.holder);
+		if (slide < 1) {
+			slide = slideshow.ss.images.length ;
+		}
+		slideshow.ss.currentslide = slide;
+		if (images.size() > 0) {
+			images.fadeOut(
+				slideshow.ss.fadeDuration,
+				jQuery.islideshow.showImage
+			);
+		}
+	},
+	timer : function (c)
+	{
+		slideshow = document.getElementById(c);
+		if (slideshow.ss.random) {
+			slide = slideshow.ss.currentslide;
+			while(slide == slideshow.ss.currentslide) {
+				slide = 1 + parseInt(Math.random() * slideshow.ss.images.length);
+			}
+		} else {
+			slide = slideshow.ss.currentslide + 1;
+			if (slideshow.ss.images.length < slide) {
+				slide = 1;
+			}
+		}
+		images = jQuery('img', slideshow.ss.holder);
+		slideshow.ss.currentslide = slide;
+		if (images.size() > 0) {
+			images.fadeOut(
+				slideshow.ss.fadeDuration,
+				jQuery.islideshow.showImage
+			);
+		}
+	},
+	go : function(o)
+	{
+		var slideshow;
+		if (o && o.constructor == Object) {
+			if (o.loader) {
+				slideshow = document.getElementById(o.loader.slideshow);
+				url = window.location.href.split("#");
+				o.loader.onload = null;
+				if (url.length == 2) {
+					slide = parseInt(url[1]);
+					show = url[1].replace(slide,'');
+					if (jQuery.attr(slideshow,'id') != show) {
+						slide = 1;
+					}
+				} else {
+					slide = 1;
+				}
+			}
+			if(o.link) {
+				o.link.blur();
+				slideshow = o.link.parentNode.parentNode;
+				id = jQuery.attr(slideshow, 'id');
+				if (jQuery.islideshow.slideshows[id] != null) {
+					window.clearInterval(jQuery.islideshow.slideshows[id]);
+				}
+				url = o.link.href.split("#");
+				slide = parseInt(url[1]);
+				show = url[1].replace(slide,'');
+				if (jQuery.attr(slideshow,'id') != show) {
+					slide = 1;
+				}
+			}
+			if (slideshow.ss.images.length < slide || slide < 1) {
+				slide = 1;
+			}
+			slideshow.ss.currentslide = slide;
+			slidePos = jQuery.iUtil.getSize(slideshow);
+			slidePad = jQuery.iUtil.getPadding(slideshow);
+			slideBor = jQuery.iUtil.getBorder(slideshow);
+			if (slideshow.ss.prevslide) {
+				slideshow.ss.prevslide.o.css('display', 'none');
+			}
+			if (slideshow.ss.nextslide) {
+				slideshow.ss.nextslide.o.css('display', 'none');
+			}
+			
+			//center loader
+			if (slideshow.ss.loader) {
+				y = parseInt(slidePad.t) + parseInt(slideBor.t);
+				if (slideshow.ss.slideslinks) {
+					if (slideshow.ss.slideslinks.linksPosition == 'top') {
+						y += slideshow.ss.slideslinks.dimm.hb;
+					} else {
+						slidePos.h -= slideshow.ss.slideslinks.dimm.hb;
+					}
+				}
+				if (slideshow.ss.slideCaption) {
+					if (slideshow.ss.slideCaption && slideshow.ss.slideCaption.captionPosition == 'top') {
+						y += slideshow.ss.slideCaption.dimm.hb;
+					} else {
+						slidePos.h -= slideshow.ss.slideCaption.dimm.hb;
+					}
+				}
+				if (!slideshow.ss.loaderWidth) {
+					slideshow.ss.loaderHeight = o.loader ? o.loader.height : (parseInt(slideshow.ss.loader.css('height'))||0);
+					slideshow.ss.loaderWidth = o.loader ? o.loader.width : (parseInt(slideshow.ss.loader.css('width'))||0);
+				}
+				
+				slideshow.ss.loader.css('top', y + (slidePos.h - slideshow.ss.loaderHeight)/2 + 'px');
+				slideshow.ss.loader.css('left', (slidePos.wb - slideshow.ss.loaderWidth)/2 + 'px');
+				slideshow.ss.loader.css('display', 'block');
+			}
+			
+			//getimage
+			images = jQuery('img', slideshow.ss.holder);
+			if (images.size() > 0) {
+				images.fadeOut(
+					slideshow.ss.fadeDuration,
+					jQuery.islideshow.showImage
+				);
+			} else {
+				lnk = jQuery('a', slideshow.ss.slideslinks.o).get(slide-1);
+				jQuery(lnk).addClass(slideshow.ss.slideslinks.activeLinkClass);
+				var img = new Image();
+				img.slideshow = jQuery.attr(slideshow,'id');
+				img.slide = slide-1;
+				img.src = slideshow.ss.images[slideshow.ss.currentslide-1].src ;
+				if (img.complete) {
+					img.onload = null;
+					jQuery.islideshow.display.apply(img);
+				} else {
+					img.onload = jQuery.islideshow.display;
+				}
+				//slideshow.ss.holder.html('<img src="' + slideshow.ss.images[slide-1].src + '" />');
+				if (slideshow.ss.slideCaption) {
+					slideshow.ss.slideCaption.o.html(slideshow.ss.images[slide-1].caption);
+				}
+				//jQuery('img', slideshow.ss.holder).bind('load',jQuery.slideshowDisplay);
+			}
+		}
+	},
+	showImage : function()
+	{
+		slideshow = this.parentNode.parentNode;
+		slideshow.ss.holder.css('display','none');
+		if (slideshow.ss.slideslinks.activeLinkClass) {
+			lnk = jQuery('a', slideshow.ss.slideslinks.o).removeClass(slideshow.ss.slideslinks.activeLinkClass).get(slideshow.ss.currentslide - 1);
+			jQuery(lnk).addClass(slideshow.ss.slideslinks.activeLinkClass);
+		}
+		//slideshow.ss.holder.html('<img src="' + slideshow.ss.images[slideshow.ss.currentslide - 1].src + '" />');
+		
+		var img = new Image();
+		img.slideshow = jQuery.attr(slideshow,'id');
+		img.slide = slideshow.ss.currentslide - 1;
+		img.src = slideshow.ss.images[slideshow.ss.currentslide - 1].src ;
+		if (img.complete) {
+			img.onload = null;
+			jQuery.islideshow.display.apply(img);
+		} else {
+			img.onload = jQuery.islideshow.display;
+		}
+		if (slideshow.ss.slideCaption) {
+			slideshow.ss.slideCaption.o.html(slideshow.ss.images[slideshow.ss.currentslide-1].caption);
+		}
+		//jQuery('img', slideshow.ss.holder).bind('load',jQuery.slideshowDisplay);
+	},
+	display : function ()
+	{
+		slideshow = document.getElementById(this.slideshow);
+		if (slideshow.ss.prevslide) {
+			slideshow.ss.prevslide.o.css('display', 'none');
+		}
+		if (slideshow.ss.nextslide) {
+			slideshow.ss.nextslide.o.css('display', 'none');
+		}
+		slidePos = jQuery.iUtil.getSize(slideshow);
+		y = 0;
+		if (slideshow.ss.slideslinks) {
+			if (slideshow.ss.slideslinks.linksPosition == 'top') {
+				y += slideshow.ss.slideslinks.dimm.hb;
+			} else {
+				slidePos.h -= slideshow.ss.slideslinks.dimm.hb;
+			}
+		}
+		if (slideshow.ss.slideCaption) {
+			if (slideshow.ss.slideCaption && slideshow.ss.slideCaption.captionPosition == 'top') {
+				y += slideshow.ss.slideCaption.dimm.hb;
+			} else {
+				slidePos.h -= slideshow.ss.slideCaption.dimm.hb;
+			}
+		}
+		par = jQuery('.slideshowHolder', slideshow);
+		y = y + (slidePos.h - this.height)/2 ;
+		x = (slidePos.wb - this.width)/2;
+		slideshow.ss.holder.css('top', y + 'px').css('left', x + 'px').html('<img src="' + this.src + '" />');
+		slideshow.ss.holder.fadeIn(slideshow.ss.fadeDuration);
+		nextslide = slideshow.ss.currentslide + 1;
+		if (nextslide > slideshow.ss.images.length) {
+			nextslide = 1;
+		}
+		prevslide = slideshow.ss.currentslide - 1;
+		if (prevslide < 1) {
+			prevslide = slideshow.ss.images.length;
+		}
+		slideshow.ss.nextslide.o
+				.css('display','block')
+				.css('top', y + 'px')
+				.css('left', x + 2 * this.width/3 + 'px')
+				.css('width', this.width/3 + 'px')
+				.css('height', this.height + 'px')
+				.attr('title', slideshow.ss.images[nextslide-1].caption);
+		slideshow.ss.nextslide.o.get(0).href = '#' + nextslide + jQuery.attr(slideshow, 'id');
+		slideshow.ss.prevslide.o
+				.css('display','block')
+				.css('top', y + 'px')
+				.css('left', x + 'px')
+				.css('width', this.width/3 + 'px')
+				.css('height', this.height + 'px')
+				.attr('title', slideshow.ss.images[prevslide-1].caption);
+		slideshow.ss.prevslide.o.get(0).href = '#' + prevslide + jQuery.attr(slideshow, 'id');
+	},
+	build : function(o)
+	{
+		if (!o || !o.container || jQuery.islideshow.slideshows[o.container])
+			return;
+		var container = jQuery('#' + o.container);
+		var el = container.get(0);
+		
+		if (el.style.position != 'absolute' && el.style.position != 'relative') {
+			el.style.position = 'relative';
+		}
+		el.style.overflow = 'hidden';
+		if (container.size() == 0)
+			return;
+		el.ss = {};
+		
+		el.ss.images = o.images ? o.images : [];
+		el.ss.random = o.random && o.random == true || false;
+		imgs = el.getElementsByTagName('IMG');
+		for(i = 0; i< imgs.length; i++) {
+			indic = el.ss.images.length;
+			el.ss.images[indic] = {src:imgs[i].src, caption:imgs[i].title||imgs[i].alt||''};
+		}
+		
+		if (el.ss.images.length == 0) {
+			return;
+		}
+		
+		el.ss.oP = jQuery.extend(
+				jQuery.iUtil.getPosition(el),
+				jQuery.iUtil.getSize(el)
+			);
+		el.ss.oPad = jQuery.iUtil.getPadding(el);
+		el.ss.oBor = jQuery.iUtil.getBorder(el);
+		t = parseInt(el.ss.oPad.t) + parseInt(el.ss.oBor.t);
+		b = parseInt(el.ss.oPad.b) + parseInt(el.ss.oBor.b);
+		jQuery('img', el).remove();
+		el.ss.fadeDuration = o.fadeDuration ? o.fadeDuration : 500;
+		if (o.linksPosition || o.linksClass || o.activeLinkClass) {
+			el.ss.slideslinks = {};
+			container.append('<div class="slideshowLinks"></div>');
+			el.ss.slideslinks.o = jQuery('.slideshowLinks', el);
+			if (o.linksClass) {
+				el.ss.slideslinks.linksClass = o.linksClass;
+				el.ss.slideslinks.o.addClass(o.linksClass);
+			}
+			if (o.activeLinkClass) {
+				el.ss.slideslinks.activeLinkClass = o.activeLinkClass;
+			}
+			el.ss.slideslinks.o.css('position','absolute').css('width', el.ss.oP.w + 'px');
+			if (o.linksPosition && o.linksPosition == 'top') {
+				el.ss.slideslinks.linksPosition = 'top';
+				el.ss.slideslinks.o.css('top',t + 'px');
+			} else {
+				el.ss.slideslinks.linksPosition = 'bottom';
+				el.ss.slideslinks.o.css('bottom',b + 'px');
+			}
+			el.ss.slideslinks.linksSeparator = o.linksSeparator ? o.linksSeparator : ' ';
+			for (var i=0; i<el.ss.images.length; i++) {
+				indic = parseInt(i) + 1;
+				el.ss.slideslinks.o.append('<a href="#' + indic + o.container + '" class="slideshowLink" title="' + el.ss.images[i].caption + '">' + indic + '</a>' + (indic != el.ss.images.length ? el.ss.slideslinks.linksSeparator : ''));
+			}
+			jQuery('a', el.ss.slideslinks.o).bind(
+				'click',
+				function()
+				{
+					jQuery.islideshow.go({link:this})
+				}
+			);
+			el.ss.slideslinks.dimm = jQuery.iUtil.getSize(el.ss.slideslinks.o.get(0));
+		}
+		if (o.captionPosition || o.captionClass) {
+			el.ss.slideCaption = {};
+			container.append('<div class="slideshowCaption">&nbsp;</div>');
+			el.ss.slideCaption.o = jQuery('.slideshowCaption', el);
+			if (o.captionClass) {
+				el.ss.slideCaption.captionClass = o.captionClass;
+				el.ss.slideCaption.o.addClass(o.captionClass);
+			}
+			el.ss.slideCaption.o.css('position','absolute').css('width', el.ss.oP.w + 'px');
+			if (o.captionPosition&& o.captionPosition == 'top') {
+				el.ss.slideCaption.captionPosition = 'top';
+				el.ss.slideCaption.o.css('top', (el.ss.slideslinks && el.ss.slideslinks.linksPosition == 'top' ? el.ss.slideslinks.dimm.hb + t : t) + 'px');
+			} else {
+				el.ss.slideCaption.captionPosition = 'bottom';
+				el.ss.slideCaption.o.css('bottom', (el.ss.slideslinks && el.ss.slideslinks.linksPosition == 'bottom' ? el.ss.slideslinks.dimm.hb + b : b) + 'px');
+			}
+			el.ss.slideCaption.dimm = jQuery.iUtil.getSize(el.ss.slideCaption.o.get(0));
+		}
+		
+		if (o.nextslideClass) {
+			el.ss.nextslide = {nextslideClass:o.nextslideClass};
+			container.append('<a href="#2' + o.container + '" class="slideshowNextSlide">&nbsp;</a>');
+			el.ss.nextslide.o = jQuery('.slideshowNextSlide', el);
+			el.ss.nextslide.o.css('position', 'absolute').css('display', 'none').css('overflow','hidden').css('fontSize', '30px').addClass(el.ss.nextslide.nextslideClass);
+			el.ss.nextslide.o.bind('click', jQuery.islideshow.gonext);
+		}
+		if (o.prevslideClass) {
+			el.ss.prevslide= {prevslideClass:o.prevslideClass};
+			container.append('<a href="#0' + o.container + '" class="slideshowPrevslide">&nbsp;</a>');
+			el.ss.prevslide.o = jQuery('.slideshowPrevslide', el);
+			el.ss.prevslide.o.css('position', 'absolute').css('display', 'none').css('overflow','hidden').css('fontSize', '30px').addClass(el.ss.prevslide.prevslideClass);
+			el.ss.prevslide.o.bind('click', jQuery.islideshow.goprev);
+		}
+		
+		container.prepend('<div class="slideshowHolder"></div>');
+		el.ss.holder = jQuery('.slideshowHolder', el);
+		el.ss.holder.css('position','absolute').css('top','0px').css('left','0px').css('display', 'none');
+		if (o.loader) {
+			container.prepend('<div class="slideshowLoader" style="display: none;"><img src="' + o.loader + '" /></div>');
+			el.ss.loader = jQuery('.slideshowLoader', el);
+			el.ss.loader.css('position', 'absolute');
+			var img = new Image();
+			img.slideshow = o.container;
+			img.src = o.loader;
+			if (img.complete) {
+				img.onload = null;
+				jQuery.islideshow.go({loader:img});
+			} else {
+				img.onload = function()
+				{
+					jQuery.islideshow.go({loader:this});
+				};
+			}
+		} else {
+			jQuery.islideshow.go({container:el});
+		}
+		
+		if(o.autoplay) {
+			time = parseInt(o.autoplay) * 1000;
+		}
+		jQuery.islideshow.slideshows[o.container] = o.autoplay ? window.setInterval('jQuery.islideshow.timer(\'' + o.container + '\')', time) : null;
+	}
+};
+jQuery.slideshow = jQuery.islideshow.build;
