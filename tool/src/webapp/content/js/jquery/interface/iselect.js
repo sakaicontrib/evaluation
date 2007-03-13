@@ -10,4 +10,266 @@
  *
  *
  */
-eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--){d[e(c)]=k[c]||e(c)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('2.5=1k;2.F=c;2.8=1k;2.B=[];2.X=i(e){g 1d=e.1O||e.1N||-1;4(1d==17||1d==16){2.F=k}};2.Z=i(e){2.F=c};2.1n=i(e){3.f.6=2.C.1p(e);3.f.9=2.1R(2.C.1T(3),2.C.1S(3));3.f.7=2.C.1r(3);3.f.6.x-=3.f.9.x;3.f.6.y-=3.f.9.y;2(3).1e(2.5.1c(0));4(3.f.J)2.5.13(3.f.J).z(\'V\',\'1i\');2.5.z({V:\'1i\',1g:\'1h\',1l:\'1h\'});4(3.f.o){2.5.z(\'14\',3.f.o)}2.8=3;2.H=c;2.B=[];3.f.W.Y(i(){3.9={x:3.1L+(3.P&&!2.1f.1w?1v(3.P.1G)||0:0)+(2.8.q||0),y:3.1F+(3.P&&!2.1f.1w?1v(3.P.1H)||0:0)+(2.8.p||0),1o:3.1I,1C:3.1K};4(3.s==k){4(2.F==c){3.s=c;2(3).T(2.8.f.D)}v{2.H=k;2.B[2.B.1b]=2.E(3,\'A\')}}});2.U.11(3,[e]);2(G).m(\'1z\',2.U).m(\'1A\',2.1a);n c};2.U=i(e){4(!2.8)n;2.1q.11(2.8,[e])};2.1q=i(e){4(!2.8)n;g 6=2.C.1p(e);g 7=2.C.1r(2.8);6.x+=7.l-3.f.7.l-3.f.9.x;6.y+=7.t-3.f.7.t-3.f.9.y;g I=j.u(6.x,3.f.6.x);g N=j.u(j.Q(6.x-3.f.6.x),j.Q(3.f.7.w-I));g M=j.u(6.y,3.f.6.y);g L=j.u(j.Q(6.y-3.f.6.y),j.Q(3.f.7.h-M));4(3.p>0&&6.y-20<3.p){g d=j.u(7.t,10);M-=d;L+=d;3.p-=d}v 4(3.p+3.f.9.h<3.f.7.h&&6.y+20>3.p+3.f.9.h){g d=j.u(3.f.7.h-3.p,10);3.p+=d;4(3.p!=7.t)L+=d}4(3.q>0&&6.x-20<3.q){g d=j.u(7.l,10);I-=d;N+=d;3.q-=d}v 4(3.q+3.f.9.w<3.f.7.w&&6.x+20>3.q+3.f.9.w){g d=j.u(3.f.7.w-3.q,10);3.q+=d;4(3.q!=7.l)N+=d}2.5.z({1X:I+\'R\',1W:M+\'R\',1g:N+\'R\',1l:L+\'R\'});2.5.l=I+3.f.7.l;2.5.t=M+3.f.7.t;2.5.r=2.5.l+N;2.5.b=2.5.t+L;2.H=c;3.f.W.Y(i(){S=2.B.1U(2.E(3,\'A\'));4(!(3.9.x>2.5.r||(3.9.x+3.9.1o)<2.5.l||3.9.y>2.5.b||(3.9.y+3.9.1C)<2.5.t)){2.H=k;4(3.s!=k){3.s=k;2(3).13(2.8.f.D)}4(S!=-1){3.s=c;2(3).T(2.8.f.D)}}v 4((3.s==k)&&(S==-1)){3.s=c;2(3).T(2.8.f.D)}v 4((!3.s)&&(2.F==k)&&(S!=-1)){3.s=k;2(3).13(2.8.f.D)}});n c};2.1a=i(e){4(!2.8)n;2.1y.11(2.8,[e])};2.1y=i(e){2(G).1D(\'1z\',2.U).1D(\'1A\',2.1a);4(!2.8)n;2.5.z(\'V\',\'1B\');4(3.f.J)2.5.T(3.f.J);2.8=c;2(\'12\').1e(2.5.1c(0));4(2.H==k){4(3.f.K)3.f.K(2.15(2.E(3,\'A\')))}v{4(3.f.O)3.f.O(2.15(2.E(3,\'A\')))}2.B=[]};2.15=i(s){g h=\'\';g o=[];4(a=2(\'#\'+s)){a.1c(0).f.W.Y(i(){4(3.s==k){4(h.1b>0){h+=\'&\'}h+=s+\'[]=\'+2.E(3,\'A\');o[o.1b]=2.E(3,\'A\')}})}n{1M:h,o:o}};2.1Q.1P=i(o){4(!2.5){2(\'12\',G).1e(\'<1j A="5"></1j>\').m(\'18\',2.X).m(\'19\',2.Z);2.5=2(\'#5\');2.5.z({1t:\'1E\',V:\'1B\'});4(1V.1J){2(\'12\',G).m(\'18\',2.X).m(\'19\',2.Z)}v{2(G).m(\'18\',2.X).m(\'19\',2.Z)}}4(!o){o={}}n 3.Y(i(){4(3.1x)n;3.1x=k;3.f={a:o.1s,o:o.14?21(o.14):c,D:o.1m?o.1m:c,J:o.1u?o.1u:c,K:o.K?o.K:c,O:o.O?o.O:c};3.f.W=2(\'.\'+o.1s);2(3).m(\'1Z\',2.1n).z(\'1t\',\'1Y\')})};',62,126,'||jQuery|this|if|selectHelper|pointer|scr|selectdrug|pos|||false|diff|||var||function|Math|true||bind|return||scrollTop|scrollLeft||||min|else||||css|id|selectCurrent|iUtil|sc|attr|selectKeyHelper|document|selectedone|sx|hc|onselect|sh|sy|sw|onselectstop|currentStyle|abs|px|iIndex|removeClass|selectcheck|display|el|selectKeyDown|each|selectKeyUp||apply|body|addClass|opacity|Selectserialize|||keydown|keyup|selectstop|length|get|pressedKey|append|browser|width|0px|block|div|null|height|selectedclass|selectstart|wb|getPointer|selectcheckApply|getScroll|accept|position|helperclass|parseInt|opera|isSelectable|selectstopApply|mousemove|mouseup|none|hb|unbind|absolute|offsetTop|borderLeftWidth|borderTopWidth|offsetWidth|event|offsetHeight|offsetLeft|hash|keyCode|charCode|Selectable|fn|extend|getSize|getPosition|indexOf|window|top|left|relative|mousedown||parseFloat'.split('|'),0,{}))
+
+jQuery.selectHelper = null;
+jQuery.selectKeyHelper = false;
+jQuery.selectdrug = null;
+jQuery.selectCurrent = [];	// For current selection
+jQuery.selectKeyDown = function(e) {
+	var pressedKey = e.charCode || e.keyCode || -1;
+	if (pressedKey == 17 || pressedKey == 16) {
+		jQuery.selectKeyHelper = true;
+	}
+};
+jQuery.selectKeyUp = function(e) {
+	jQuery.selectKeyHelper = false;
+};
+jQuery.selectstart = function(e) {
+	this.f.pointer = jQuery.iUtil.getPointer(e);
+	this.f.pos = jQuery.extend(
+		jQuery.iUtil.getPosition(this), 
+		jQuery.iUtil.getSize(this)
+	);
+	
+	this.f.scr = jQuery.iUtil.getScroll(this);
+	this.f.pointer.x -= this.f.pos.x;
+	this.f.pointer.y -= this.f.pos.y;
+	jQuery(this).append(jQuery.selectHelper.get(0));
+	if (this.f.hc)
+		jQuery.selectHelper.addClass(this.f.hc).css('display','block');
+	jQuery.selectHelper.css(
+		{
+			display: 'block',
+			width: '0px',
+			height: '0px'
+		}
+	);
+	if (this.f.o) {
+		jQuery.selectHelper.css('opacity', this.f.o);
+	}
+
+	jQuery.selectdrug = this;
+	jQuery.selectedone = false;
+	jQuery.selectCurrent = [];	// For current selection state
+	this.f.el.each(
+		function ()
+		{
+			this.pos = {
+				x: this.offsetLeft + (this.currentStyle && !jQuery.browser.opera ?parseInt(this.currentStyle.borderLeftWidth)||0:0) + (jQuery.selectdrug.scrollLeft||0), 
+				y: this.offsetTop + (this.currentStyle && !jQuery.browser.opera ?parseInt(this.currentStyle.borderTopWidth)||0:0) + (jQuery.selectdrug.scrollTop||0),
+				wb: this.offsetWidth,
+				hb: this.offsetHeight
+			};
+			if (this.s == true) {
+				if (jQuery.selectKeyHelper == false) {
+					this.s = false;
+					jQuery(this).removeClass(jQuery.selectdrug.f.sc);
+				} else {
+					jQuery.selectedone = true;
+
+					// Save current state
+					jQuery.selectCurrent[jQuery.selectCurrent.length] = jQuery.attr(this,'id');
+				}
+			}
+		}
+	);
+	jQuery.selectcheck.apply(this, [e]);
+	jQuery(document)
+		.bind('mousemove', jQuery.selectcheck)
+		.bind('mouseup', jQuery.selectstop);
+	return false;
+};
+jQuery.selectcheck = function(e)
+{
+	if(!jQuery.selectdrug)
+		return;
+	jQuery.selectcheckApply.apply(jQuery.selectdrug, [e]);
+};
+jQuery.selectcheckApply = function(e)
+{
+	if(!jQuery.selectdrug)
+		return;
+	var pointer = jQuery.iUtil.getPointer(e);
+	
+	var scr = jQuery.iUtil.getScroll(jQuery.selectdrug);
+	pointer.x += scr.l - this.f.scr.l - this.f.pos.x;
+	pointer.y += scr.t - this.f.scr.t - this.f.pos.y;
+	
+	var sx = Math.min(pointer.x, this.f.pointer.x);
+	var sw = Math.min(Math.abs(pointer.x - this.f.pointer.x), Math.abs(this.f.scr.w - sx));
+	var sy = Math.min(pointer.y, this.f.pointer.y);
+	var sh = Math.min(Math.abs(pointer.y - this.f.pointer.y), Math.abs(this.f.scr.h - sy));
+	if (this.scrollTop > 0 && pointer.y - 20 < this.scrollTop) {
+		var diff = Math.min(scr.t, 10);
+		sy -= diff;
+		sh += diff;
+		this.scrollTop -= diff;
+	} else if (this.scrollTop+ this.f.pos.h < this.f.scr.h && pointer.y + 20 > this.scrollTop + this.f.pos.h) {
+		var diff = Math.min(this.f.scr.h - this.scrollTop, 10);
+		this.scrollTop += diff;
+		if (this.scrollTop != scr.t)
+			sh += diff;
+	}
+	if (this.scrollLeft > 0 && pointer.x - 20 < this.scrollLeft) {
+		var diff = Math.min(scr.l, 10);
+		sx -= diff;
+		sw += diff;
+		this.scrollLeft -= diff;
+	} else if (this.scrollLeft+ this.f.pos.w < this.f.scr.w && pointer.x + 20 > this.scrollLeft + this.f.pos.w) {
+		var diff = Math.min(this.f.scr.w - this.scrollLeft, 10);
+		this.scrollLeft += diff;
+		if (this.scrollLeft != scr.l)
+			sw += diff;
+	}
+	jQuery.selectHelper.css(
+		{
+			left:	sx + 'px',
+			top:	sy + 'px',
+			width:	sw + 'px',
+			height:	sh + 'px'
+		}
+	);
+	jQuery.selectHelper.l = sx + this.f.scr.l;
+	jQuery.selectHelper.t = sy + this.f.scr.t;
+	jQuery.selectHelper.r = jQuery.selectHelper.l + sw;
+	jQuery.selectHelper.b = jQuery.selectHelper.t + sh;
+	jQuery.selectedone = false;
+	this.f.el.each(
+		function () {
+			// Locate the current element in the current selection
+			iIndex = jQuery.selectCurrent.indexOf(jQuery.attr(this, 'id'));
+			// In case we are currently OVER an item
+			if (
+				! ( this.pos.x > jQuery.selectHelper.r
+				|| (this.pos.x + this.pos.wb) < jQuery.selectHelper.l
+				|| this.pos.y > jQuery.selectHelper.b
+				|| (this.pos.y + this.pos.hb) < jQuery.selectHelper.t
+				)
+			)
+			{
+				jQuery.selectedone = true;
+				if (this.s != true) {
+					this.s = true;
+					jQuery(this).addClass(jQuery.selectdrug.f.sc);
+				}
+
+				// Check to see if this item was previously selected, if so, unselect it
+				if (iIndex != -1) {
+					this.s = false;
+					jQuery(this).removeClass(jQuery.selectdrug.f.sc);
+				}
+			} else if (
+						(this.s == true) &&
+						(iIndex == -1)
+					) {
+				// If the item was marked as selected, but it was not selected when you started dragging unselect it.
+				this.s = false;
+				jQuery(this).removeClass(jQuery.selectdrug.f.sc);
+			} else if (
+						(!this.s) &&
+						(jQuery.selectKeyHelper == true) &&
+						(iIndex != -1)
+					) {
+				// Reselect the item if:
+				// - we ARE multiselecting,
+				// - dragged over an allready selected object (so it got unselected)
+				// - But then dragged the selection out of it again.
+				this.s = true;
+				jQuery(this).addClass(jQuery.selectdrug.f.sc);
+			}
+		}
+	);
+	return false;
+};
+jQuery.selectstop = function(e)
+{
+	if(!jQuery.selectdrug)
+		return;
+	jQuery.selectstopApply.apply(jQuery.selectdrug, [e]);
+};
+jQuery.selectstopApply = function(e)
+{
+	jQuery(document)
+		.unbind('mousemove', jQuery.selectcheck)
+		.unbind('mouseup', jQuery.selectstop);
+	if(!jQuery.selectdrug)
+		return;
+	jQuery.selectHelper.css('display','none');
+	if (this.f.hc)
+		jQuery.selectHelper.removeClass(this.f.hc);
+	jQuery.selectdrug = false;
+	jQuery('body').append(jQuery.selectHelper.get(0));
+	//
+	// In case we have selected some new items..
+	if (jQuery.selectedone == true) {
+		if (this.f.onselect)
+			this.f.onselect(jQuery.Selectserialize(jQuery.attr(this,'id')));
+	} else {
+		if (this.f.onselectstop)
+			this.f.onselectstop(jQuery.Selectserialize(jQuery.attr(this,'id')));
+	}
+	// Reset current selection
+	jQuery.selectCurrent = [];
+};
+
+jQuery.Selectserialize = function(s)
+{
+	var h = '';
+	var o = [];
+	if (a = jQuery('#' + s)) {
+		a.get(0).f.el.each(
+			function ()
+			{
+				if (this.s == true) {
+					if (h.length > 0) {
+						h += '&';
+					}
+					h += s + '[]=' + jQuery.attr(this,'id');
+					o[o.length] = jQuery.attr(this,'id');
+				}
+			}
+		);
+	}
+	return {hash:h, o:o};
+};
+jQuery.fn.Selectable = function(o)
+{
+	if (!jQuery.selectHelper) {
+		jQuery('body',document).append('<div id="selectHelper"></div>').bind('keydown', jQuery.selectKeyDown).bind('keyup', jQuery.selectKeyUp);
+		jQuery.selectHelper = jQuery('#selectHelper');
+		jQuery.selectHelper.css(
+			{
+				position:	'absolute',
+				display:	'none'
+			}
+		);
+
+		if (window.event) {
+			jQuery('body',document).bind('keydown', jQuery.selectKeyDown).bind('keyup', jQuery.selectKeyUp);
+		} else {
+			jQuery(document).bind('keydown', jQuery.selectKeyDown).bind('keyup', jQuery.selectKeyUp);
+		}
+	}
+
+    if (!o) {
+		o = {};
+	}
+    return this.each(
+		function()
+		{
+			if (this.isSelectable)
+				return;
+			this.isSelectable = true;
+			this.f = {
+				a : o.accept,
+				o : o.opacity ? parseFloat(o.opacity) : false,
+				sc : o.selectedclass ? o.selectedclass : false,
+				hc : o.helperclass ? o.helperclass : false,
+				onselect : o.onselect ? o.onselect : false,
+				onselectstop : o.onselectstop ? o.onselectstop : false
+			};
+			this.f.el = jQuery('.' + o.accept);
+			jQuery(this).bind('mousedown', jQuery.selectstart).css('position', 'relative');
+		}
+	);
+};

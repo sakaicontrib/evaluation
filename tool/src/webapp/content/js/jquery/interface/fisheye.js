@@ -10,4 +10,133 @@
  *
  */
 
-eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--){d[e(c)]=k[c]||e(c)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('4.h={H:9(d){T 7.F(9(){g 1=7;1.3={8:4(d.8,7),i:4(d.i,7),m:4.z.J(7),5:d.5,t:d.t,j:d.j,K:d.K,b:d.b,A:d.A};4.h.s(1,0);4(S).v(\'W\',9(){1.3.m=4.z.J(1);4.h.s(1,0);4.h.E(1)});4.h.E(1);1.3.8.v(\'O\',9(){4(1.3.t,7).l(0).a.I=\'P\'}).v(\'R\',9(){4(1.3.t,7).l(0).a.I=\'11\'});4(Z).v(\'10\',9(e){g p=4.z.Y(e);g c=0;k(1.3.b&&1.3.b==\'L\')g r=p.x-1.3.m.x-(1.w-1.3.5*1.3.8.n())/2-1.3.5/2;u k(1.3.b&&1.3.b==\'N\')g r=p.x-1.3.m.x-1.w+1.3.5*1.3.8.n();u g r=p.x-1.3.m.x;g M=B.G(p.y-1.3.m.y-1.X/2,2);1.3.8.F(9(q){6=B.Q(B.G(r-q*1.3.5,2)+M);6-=1.3.5/2;6=6<0?0:6;6=6>1.3.j?1.3.j:6;6=1.3.j-6;C=1.3.A*6/1.3.j;7.a.D=1.3.5+C+\'f\';7.a.o=1.3.5*q+c+\'f\';c+=C});4.h.s(1,c)})})},s:9(1,c){k(1.3.b)k(1.3.b==\'L\')1.3.i.l(0).a.o=(1.w-1.3.5*1.3.8.n())/2-c/2+\'f\';u k(1.3.b==\'o\')1.3.i.l(0).a.o=-c/1.3.8.n()+\'f\';u k(1.3.b==\'N\')1.3.i.l(0).a.o=(1.w-1.3.5*1.3.8.n())-c/2+\'f\';1.3.i.l(0).a.D=1.3.5*1.3.8.n()+c+\'f\'},E:9(1){1.3.8.F(9(q){7.a.D=1.3.5+\'f\';7.a.o=1.3.5*q+\'f\'})}};4.V.U=4.h.H;',62,64,'|el||fisheyeCfg|jQuery|itemWidth|distance|this|items|function|style|halign|toAdd|options||px|var|iFisheye|container|proximity|if|get|pos|size|left|pointer|nr|posx|positionContainer|itemsText|else|bind|offsetWidth|||iUtil|maxWidth|Math|extraWidth|width|positionItems|each|pow|build|display|getPosition|valign|center|posy|right|mouseover|block|sqrt|mouseout|window|return|Fisheye|fn|resize|offsetHeight|getPointer|document|mousemove|none'.split('|'),0,{}))
+/**
+ * Build a Fisheye menu from a list of links
+ *
+ * @name Fisheye
+ * @description Build a Fisheye menu from a list of links
+ * @param Hash hash A hash of parameters
+ * @option String items items selection
+ * @option String container container element
+ * @option Integer itemWidth the minimum width for each item
+ * @option Integer maxWidth the maximum width for each item
+ * @option String itemsText selection of element that contains the text for each item
+ * @option Integer proximity the distance from element that make item to interact
+ * @option String valign vertical alignment
+ * @option String halign horizontal alignment
+ *
+ * @type jQuery
+ * @cat Plugins/Interface
+ * @author Stefan Petre
+ */
+jQuery.iFisheye = {
+	
+	build : function(options)
+	{
+	
+		return this.each(
+			function()
+			{
+				var el = this;
+				el.fisheyeCfg = {
+					items : jQuery(options.items, this),
+					container: jQuery(options.container, this),
+					pos : jQuery.iUtil.getPosition(this),
+					itemWidth: options.itemWidth,
+					itemsText: options.itemsText,
+					proximity: options.proximity,
+					valign: options.valign,
+					halign: options.halign,
+					maxWidth : options.maxWidth
+				};
+				jQuery.iFisheye.positionContainer(el, 0);
+				jQuery(window).bind(
+					'resize',
+					function()
+					{
+						el.fisheyeCfg.pos = jQuery.iUtil.getPosition(el);
+						jQuery.iFisheye.positionContainer(el, 0);
+						jQuery.iFisheye.positionItems(el);
+					}
+				);
+				jQuery.iFisheye.positionItems(el);
+				el.fisheyeCfg.items
+					.bind(
+						'mouseover',
+						function()
+						{
+							jQuery(el.fisheyeCfg.itemsText, this).get(0).style.display = 'block';
+						}
+					)
+					.bind(
+						'mouseout',
+						function()
+						{
+							jQuery(el.fisheyeCfg.itemsText, this).get(0).style.display = 'none';
+						}
+					);
+				jQuery(document).bind(
+					'mousemove',
+					function(e)
+					{
+						var pointer = jQuery.iUtil.getPointer(e);
+						var toAdd = 0;
+						if (el.fisheyeCfg.halign && el.fisheyeCfg.halign == 'center')
+							var posx = pointer.x - el.fisheyeCfg.pos.x - (el.offsetWidth - el.fisheyeCfg.itemWidth * el.fisheyeCfg.items.size())/2 - el.fisheyeCfg.itemWidth/2;
+						else if (el.fisheyeCfg.halign && el.fisheyeCfg.halign == 'right')
+							var posx = pointer.x - el.fisheyeCfg.pos.x - el.offsetWidth + el.fisheyeCfg.itemWidth * el.fisheyeCfg.items.size();
+						else 
+							var posx = pointer.x - el.fisheyeCfg.pos.x;
+						var posy = Math.pow(pointer.y - el.fisheyeCfg.pos.y - el.offsetHeight/2,2);
+						el.fisheyeCfg.items.each(
+							function(nr)
+							{
+								distance = Math.sqrt(
+									Math.pow(posx - nr*el.fisheyeCfg.itemWidth, 2)
+									+ posy
+								);
+								distance -= el.fisheyeCfg.itemWidth/2;
+								
+								distance = distance < 0 ? 0 : distance;
+								distance = distance > el.fisheyeCfg.proximity ? el.fisheyeCfg.proximity : distance;
+								distance = el.fisheyeCfg.proximity - distance;
+								
+								extraWidth = el.fisheyeCfg.maxWidth * distance/el.fisheyeCfg.proximity;
+								
+								this.style.width = el.fisheyeCfg.itemWidth + extraWidth + 'px';
+								this.style.left = el.fisheyeCfg.itemWidth * nr + toAdd + 'px';
+								toAdd += extraWidth;
+							}
+						);
+						jQuery.iFisheye.positionContainer(el, toAdd);
+					}
+				);
+			}
+		)
+	},
+	
+	positionContainer : function(el, toAdd)
+	{
+		if (el.fisheyeCfg.halign)
+			if (el.fisheyeCfg.halign == 'center')
+				el.fisheyeCfg.container.get(0).style.left = (el.offsetWidth - el.fisheyeCfg.itemWidth * el.fisheyeCfg.items.size())/2 - toAdd/2 + 'px';
+			else if (el.fisheyeCfg.halign == 'left')
+				el.fisheyeCfg.container.get(0).style.left =  - toAdd/el.fisheyeCfg.items.size() + 'px';
+			else if (el.fisheyeCfg.halign == 'right')
+				el.fisheyeCfg.container.get(0).style.left =  (el.offsetWidth - el.fisheyeCfg.itemWidth * el.fisheyeCfg.items.size()) - toAdd/2 + 'px';
+		el.fisheyeCfg.container.get(0).style.width = el.fisheyeCfg.itemWidth * el.fisheyeCfg.items.size() + toAdd + 'px';
+	},
+	
+	positionItems : function(el)
+	{
+		el.fisheyeCfg.items.each(
+			function(nr)
+			{
+				this.style.width = el.fisheyeCfg.itemWidth + 'px';
+				this.style.left = el.fisheyeCfg.itemWidth * nr + 'px';
+			}
+		);
+	}
+};
+
+jQuery.fn.Fisheye = jQuery.iFisheye.build;

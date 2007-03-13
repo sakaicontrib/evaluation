@@ -10,4 +10,527 @@
  *  
  */
 
-eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--){d[e(c)]=k[c]||e(c)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('2.3={m:k,1m:k,J:k,1a:k,H:k,1Q:k,4:k,b:k,h:k,19:j(){2.3.1m.19();7(2.3.J){2.3.J.2z()}},R:j(){2.3.h=k;2.3.b=k;2.3.H=2.3.4.g;7(2.3.m.G(\'1i\')==\'22\'){7(2.3.4.5.f){1Y(2.3.4.5.f.E){C\'1O\':2.3.m.2H(2.3.4.5.f.M,2.3.19);D;C\'14\':2.3.m.3z(2.3.4.5.f.M,2.3.19);D;C\'1s\':2.3.m.3y(2.3.4.5.f.M,2.3.19);D}}v{2.3.m.2z()}7(2.3.4.5.X)2.3.4.5.X.1x(2.3.4,[2.3.m,2.3.J])}v{2.3.19()}F.1K(2.3.1a)},2f:j(){d 4=2.3.4;d A=2.3.1t(4);7(4&&A.o!=2.3.H&&A.o.a>=4.5.1u){2.3.H=A.o;2.3.1Q=A.o;16={c:2(4).2o(\'3p\')||\'c\',g:A.o};2.3l({E:\'3n\',16:2.3b(16),3I:j(28){4.5.B=2(\'o\',28);L=4.5.B.L();7(L>0){d P=\'\';4.5.B.1S(j(1v){P+=\'<1j 1c="\'+2(\'g\',6).O()+\'" 1e="\'+1v+\'" 10="26: 2a;">\'+2(\'O\',6).O()+\'</1j>\'});7(4.5.1p){d u=2(\'g\',4.5.B.q(0)).O();4.g=A.p+u+4.5.s+A.S;2.3.15(4,A.o.a!=u.a?(A.p.a+A.o.a):u.a,A.o.a!=u.a?(A.p.a+u.a):u.a)}7(L>0){2.3.1Z(4,P)}v{2.3.R()}}v{2.3.R()}},2W:4.5.1o})}},1Z:j(4,P){2.3.1m.2O(P);2.3.h=2(\'1j\',2.3.1m.q(0));2.3.h.3r(2.3.2e).2L(\'2M\',2.3.2g);d V=2.1f.2N(4);d L=2.1f.2D(4);2.3.m.G(\'1U\',V.y+L.21+\'1n\').G(\'1V\',V.x+\'1n\').2E(4.5.1r);7(2.3.J){2.3.J.G(\'1i\',\'22\').G(\'1U\',V.y+L.21+\'1n\').G(\'1V\',V.x+\'1n\').G(\'1I\',2.3.m.G(\'1I\')).G(\'23\',2.3.m.G(\'23\'))}2.3.b=0;2.3.h.q(0).12=4.5.Z;2.3.1g(4,4.5.B.q(0),\'17\');7(2.3.m.G(\'1i\')==\'1w\'){7(4.5.20){d 1H=2.1f.2V(4,N);d 1L=2.1f.2U(4,N);2.3.m.G(\'1I\',4.2S-(2.2T?(1H.l+1H.r+1L.l+1L.r):0)+\'1n\')}7(4.5.f){1Y(4.5.f.E){C\'1O\':2.3.m.33(4.5.f.M);D;C\'14\':2.3.m.32(4.5.f.M);D;C\'1s\':2.3.m.30(4.5.f.M);D}}v{2.3.m.2Q()}7(2.3.4.5.Y)2.3.4.5.Y.1x(2.3.4,[2.3.m,2.3.J])}},2b:j(){d 4=6;7(4.5.B){2.3.H=4.g;2.3.1Q=4.g;d P=\'\';4.5.B.1S(j(1v){g=2(\'g\',6).O().29();2d=4.g.29();7(g.2C(2d)==0){P+=\'<1j 1c="\'+2(\'g\',6).O()+\'" 1e="\'+1v+\'" 10="26: 2a;">\'+2(\'O\',6).O()+\'</1j>\'}});7(P!=\'\'){2.3.1Z(4,P);6.5.1A=N;t}}4.5.B=k;6.5.1A=n},15:j(c,1d,1B){7(c.1T){d W=c.1T();W.2J(N);W.2i("1R",1d);W.2Z("1R",-1B+1d);W.3L()}v 7(c.24){c.24(1d,1B)}v{7(c.T){c.T=1d;c.3A=1B}}c.2v()},2h:j(c){7(c.T)t c.T;v 7(c.1T){d W=1X.15.3a();d 25=W.3u();t 0-25.2i(\'1R\',-3C)}},1t:j(c){d I={g:c.g,p:\'\',S:\'\',o:\'\'};7(c.5.1q){d 1h=n;d T=2.3.2h(c)||0;d K=I.g.3D(c.5.s);2c(d i=0;i<K.a;i++){7((I.p.a+K[i].a>=T||T==0)&&!1h){7(I.p.a<=T)I.o=K[i];v I.S+=K[i]+(K[i]!=\'\'?c.5.s:\'\');1h=N}v 7(1h){I.S+=K[i]+(K[i]!=\'\'?c.5.s:\'\')}7(!1h){I.p+=K[i]+(K.a>1?c.5.s:\'\')}}}v{I.o=I.g}t I},1J:j(e){F.1K(2.3.1a);d 4=2.3.1t(6);d 11=e.2t||e.2B||-1;7(/13|27|35|36|38|1G|9/.1F(11)&&2.3.h){7(F.w){F.w.2y=N;F.w.2A=n}v{e.1P();e.1E()}7(2.3.b!=k)2.3.h.q(2.3.b||0).12=\'\';v 2.3.b=-1;1Y(11){C 9:C 13:7(2.3.b==-1)2.3.b=0;d b=2.3.h.q(2.3.b||0);d u=b.U(\'1c\');6.g=4.p+u+6.5.s+4.S;2.3.H=4.o;2.3.15(6,4.p.a+u.a+6.5.s.a,4.p.a+u.a+6.5.s.a);2.3.R();7(6.5.Q){1D=1b(b.U(\'1e\'))||0;2.3.1g(6,6.5.B.q(1D),\'Q\')}7(6.18)6.18(n);t 11!=13;D;C 27:6.g=4.p+2.3.H+6.5.s+4.S;6.5.B=k;2.3.R();7(6.18)6.18(n);t n;D;C 35:2.3.b=2.3.h.L()-1;D;C 36:2.3.b=0;D;C 38:2.3.b--;7(2.3.b<0)2.3.b=2.3.h.L()-1;D;C 1G:2.3.b++;7(2.3.b==2.3.h.L())2.3.b=0;D}2.3.1g(6,6.5.B.q(2.3.b||0),\'17\');2.3.h.q(2.3.b||0).12=6.5.Z;7(2.3.h.q(2.3.b||0).18)2.3.h.q(2.3.b||0).18(n);7(6.5.1p){d 1y=2.3.h.q(2.3.b||0).U(\'1c\');6.g=4.p+1y+6.5.s+4.S;7(2.3.H.a!=1y.a)2.3.15(6,4.p.a+2.3.H.a,4.p.a+1y.a)}t n}2.3.2b.1x(6);7(6.5.1A==n){7(4.o!=2.3.H&&4.o.a>=6.5.1u)2.3.1a=F.2w(2.3.2f,6.5.1k);7(2.3.h){2.3.R()}}t N},1g:j(c,o,E){7(c.5[E]){d 16={};1C=o.3i(\'*\');2c(i=0;i<1C.a;i++){16[1C[i].2q]=1C[i].3c.3d}c.5[E].1x(c,[16])}},2e:j(e){7(2.3.h){7(2.3.b!=k)2.3.h.q(2.3.b||0).12=\'\';2.3.h.q(2.3.b||0).12=\'\';2.3.b=1b(6.U(\'1e\'))||0;2.3.h.q(2.3.b||0).12=2.3.4.5.Z}},2g:j(w){F.1K(2.3.1a);w=w||2.w.3o(F.w);w.1P();w.1E();d 4=2.3.1t(2.3.4);d u=6.U(\'1c\');2.3.4.g=4.p+u+2.3.4.5.s+4.S;2.3.H=6.U(\'1c\');2.3.15(2.3.4,4.p.a+u.a+2.3.4.5.s.a,4.p.a+u.a+2.3.4.5.s.a);2.3.R();7(2.3.4.5.Q){1D=1b(6.U(\'1e\'))||0;2.3.1g(2.3.4,2.3.4.5.B.q(1D),\'Q\')}t n},2x:j(e){11=e.2t||e.2B||-1;7(/13|27|35|36|38|1G/.1F(11)&&2.3.h){7(F.w){F.w.2y=N;F.w.2A=n}v{e.1P();e.1E()}t n}},2j:j(8){7(!8.1o||!2.1f){t}7(!2.3.m){7(2.3j.3e){2(\'2m\',1X).2k(\'<J 10="1i:1w;V:2p;3f:3h:3g.3s.3t(3G=0);" 2l="2n" 3F="3E:n;" 3H="0" 3K="3J"></J>\');2.3.J=2(\'#2n\')}2(\'2m\',1X).2k(\'<2s 2l="2u" 10="V: 2p; 1U: 0; 1V: 0; z-2r: 3w; 1i: 1w;"><1W 10="3v: 0;3x: 0; 3B-10: 1w; z-2r: 2K;">&2P;</1W></2s>\');2.3.m=2(\'#2u\');2.3.1m=2(\'1W\',2.3.m)}t 6.1S(j(){7(6.2q!=\'2I\'&&6.U(\'E\')!=\'O\')t;6.5={};6.5.1o=8.1o;6.5.1u=1M.1N(1b(8.1u)||1);6.5.1r=8.1r?8.1r:\'\';6.5.Z=8.Z?8.Z:\'\';6.5.Q=8.Q&&8.Q.1l==1z?8.Q:k;6.5.Y=8.Y&&8.Y.1l==1z?8.Y:k;6.5.X=8.X&&8.X.1l==1z?8.X:k;6.5.17=8.17&&8.17.1l==1z?8.17:k;6.5.20=8.20||n;6.5.1q=8.1q||n;6.5.s=6.5.1q?(8.s||\', \'):\'\';6.5.1p=8.1p?N:n;6.5.1k=1M.1N(1b(8.1k)||2F);7(8.f&&8.f.1l==39){7(!8.f.E||!/1O|14|1s/.1F(8.f.E)){8.f.E=\'14\'}7(8.f.E==\'14\'&&!2.f.14)t;7(8.f.E==\'1s\'&&!2.f.37)t;8.f.M=1M.1N(1b(8.f.M)||34);7(8.f.M>6.5.1k){8.f.M=6.5.1k-2Y}6.5.f=8.f}6.5.B=k;6.5.1A=n;2(6).2o(\'1J\',\'2R\').2v(j(){2.3.4=6;2.3.H=6.g}).2G(2.3.2x).31(2.3.1J).2X(j(){2.3.1a=F.2w(2.3.R,3m)})})}};2.3q.3k=2.3.2j;',62,234,'||jQuery|iAuto|subject|autoCFG|this|if|options||length|selectedItem|field|var||fx|value|items||function|null||helper|false|item|pre|get||multipleSeparator|return|valueToAdd|else|event||||subjectValue|lastSuggestion|case|break|type|window|css|lastValue|fieldData|iframe|chunks|size|duration|true|text|toWrite|onSelect|clear|post|selectionStart|getAttribute|position|selRange|onHide|onShow|selectClass|style|pressedKey|className||slide|selection|data|onHighlight|scrollIntoView|empty|timer|parseInt|rel|start|dir|iUtil|applyOn|finishedPre|display|li|delay|constructor|content|px|source|autofill|multiple|helperClass|blind|getFieldValues|minchars|nr|none|apply|valToAdd|Function|inCache|end|childs|iteration|stopPropagation|test|40|borders|width|autocomplete|clearTimeout|paddings|Math|abs|fade|preventDefault|currentValue|character|each|createTextRange|top|left|ul|document|switch|writeItems|inputWidth|hb|block|height|setSelectionRange|selRange2|cursor||xml|toLowerCase|default|checkCache|for|inputValue|hoverItem|update|clickItem|getSelectionStart|moveStart|build|append|id|body|autocompleteIframe|attr|absolute|tagName|index|div|charCode|autocompleteHelper|focus|setTimeout|protect|cancelBubble|hide|returnValue|keyCode|indexOf|getSize|addClass|1000|keypress|fadeOut|INPUT|collapse|30002|bind|click|getPosition|html|nbsp|show|off|offsetWidth|boxModel|getBorder|getPadding|url|blur|100|moveEnd|BlindDown|keyup|SlideInUp|fadeIn|400|||BlindDirection||Object|createRange|param|firstChild|nodeValue|msie|filter|DXImageTransform|progid|getElementsByTagName|browser|Autocomplete|ajax|200|POST|fix|name|fn|mouseover|Microsoft|Alpha|duplicate|margin|30001|padding|BlindUp|SlideOutUp|selectionEnd|list|100000|split|javascript|src|opacity|frameborder|success|no|scrolling|select'.split('|'),0,{}))
+/**
+ * Attach AJAX driven autocomplete/sugestion box to text input fields.
+ *
+ * 
+ * 
+ * @name Autocomplete
+ * @description Attach AJAX driven autocomplete/sugestion box to text input fields.
+ * @param Hash hash A hash of parameters
+ * @option String source the URL to request
+ * @option Integer delay (optional) the delayed time to start the AJAX request
+ * @option Boolean autofill (optional) when true the first sugested value fills the input
+ * @option String helperClass (optional) the CSS class applied to sugestion box
+ * @option String selectClass (optional) the CSS class applied to selected/hovered item
+ * @option Integer minchars (optional) the number of characters needed before starting AJAX request
+ * @option Hash fx (optional) {type:[slide|blind|fade]; duration: integer} the fx type to apply to sugestion box and duration for that fx
+ * @option Function onSelect (optional) A function to be executed whenever an item it is selected
+ * @option Function onShow (optional) A function to be executed whenever the suggection box is displayed
+ * @option Function onHide (optional) A function to be executed whenever the suggection box is hidden
+ * @option Function onHighlight (optional) A function to be executed whenever an item it is highlighted
+ *
+ * @type jQuery
+ * @cat Plugins/Interface
+ * @author Stefan Petre
+ */
+jQuery.iAuto = {
+	helper : null,
+	content : null,
+	iframe: null,
+	timer : null,
+	lastValue: null,
+	currentValue: null,
+	subject: null,
+	selectedItem : null,
+	items: null,
+	
+	empty : function()
+	{
+		jQuery.iAuto.content.empty();
+		if (jQuery.iAuto.iframe) {
+			jQuery.iAuto.iframe.hide();
+		}
+	},
+
+	clear : function()
+	{
+		jQuery.iAuto.items = null;
+		jQuery.iAuto.selectedItem = null;
+		jQuery.iAuto.lastValue = jQuery.iAuto.subject.value;
+		if(jQuery.iAuto.helper.css('display') == 'block') {
+			if (jQuery.iAuto.subject.autoCFG.fx) {
+				switch(jQuery.iAuto.subject.autoCFG.fx.type) {
+					case 'fade':
+						jQuery.iAuto.helper.fadeOut(jQuery.iAuto.subject.autoCFG.fx.duration, jQuery.iAuto.empty);
+						break;
+					case 'slide':
+						jQuery.iAuto.helper.SlideOutUp(jQuery.iAuto.subject.autoCFG.fx.duration, jQuery.iAuto.empty);
+						break;
+					case 'blind':
+						jQuery.iAuto.helper.BlindUp(jQuery.iAuto.subject.autoCFG.fx.duration, jQuery.iAuto.empty);
+						break;
+				}
+			} else {
+				jQuery.iAuto.helper.hide();
+			}
+			if (jQuery.iAuto.subject.autoCFG.onHide)
+				jQuery.iAuto.subject.autoCFG.onHide.apply(jQuery.iAuto.subject, [jQuery.iAuto.helper, jQuery.iAuto.iframe]);
+		} else {
+			jQuery.iAuto.empty();
+		}
+		window.clearTimeout(jQuery.iAuto.timer);
+	},
+
+	update : function ()
+	{
+		var subject = jQuery.iAuto.subject;
+		var subjectValue = jQuery.iAuto.getFieldValues(subject);
+		//var selectionStart = jQuery.iAuto.getSelectionStart(subject);
+		if (subject && subjectValue.item != jQuery.iAuto.lastValue && subjectValue.item.length >= subject.autoCFG.minchars) {
+			jQuery.iAuto.lastValue = subjectValue.item;
+			jQuery.iAuto.currentValue = subjectValue.item;
+
+			data = {
+				field: jQuery(subject).attr('name')||'field',
+				value: subjectValue.item
+			};
+
+			jQuery.ajax(
+				{
+					type: 'POST',
+					data: jQuery.param(data),
+					success: function(xml)
+					{
+						subject.autoCFG.lastSuggestion = jQuery('item',xml);
+						size = subject.autoCFG.lastSuggestion.size();
+						if (size > 0) {
+							var toWrite = '';
+							subject.autoCFG.lastSuggestion.each(
+								function(nr)
+								{
+									toWrite += '<li rel="' + jQuery('value', this).text() + '" dir="' + nr + '" style="cursor: default;">' + jQuery('text', this).text() + '</li>';
+								}
+							);
+							if (subject.autoCFG.autofill) {
+								var valueToAdd = jQuery('value', subject.autoCFG.lastSuggestion.get(0)).text();
+								subject.value = subjectValue.pre + valueToAdd + subject.autoCFG.multipleSeparator + subjectValue.post;
+								jQuery.iAuto.selection(
+									subject, 
+									subjectValue.item.length != valueToAdd.length ? (subjectValue.pre.length + subjectValue.item.length) : valueToAdd.length,
+									subjectValue.item.length != valueToAdd.length ? (subjectValue.pre.length + valueToAdd.length) : valueToAdd.length
+								);
+							}
+							
+							if (size > 0) {
+								jQuery.iAuto.writeItems(subject, toWrite);
+							} else {
+								jQuery.iAuto.clear();
+							}
+						} else {
+							jQuery.iAuto.clear();
+						}
+					},
+					url : subject.autoCFG.source
+				}
+			);
+		}
+	},
+	
+	writeItems : function(subject, toWrite)
+	{
+		jQuery.iAuto.content.html(toWrite);
+		jQuery.iAuto.items = jQuery('li', jQuery.iAuto.content.get(0));
+		jQuery.iAuto.items
+			.mouseover(jQuery.iAuto.hoverItem)
+			.bind('click', jQuery.iAuto.clickItem);
+		var position = jQuery.iUtil.getPosition(subject);
+		var size = jQuery.iUtil.getSize(subject);
+		jQuery.iAuto.helper
+			.css('top', position.y + size.hb + 'px')
+			.css('left', position.x +  'px')
+			.addClass(subject.autoCFG.helperClass);
+		if (jQuery.iAuto.iframe) {
+			jQuery.iAuto.iframe
+				.css('display', 'block')
+				.css('top', position.y + size.hb + 'px')
+				.css('left', position.x +  'px')
+				.css('width', jQuery.iAuto.helper.css('width'))
+				.css('height', jQuery.iAuto.helper.css('height'));
+		}
+		jQuery.iAuto.selectedItem = 0;
+		jQuery.iAuto.items.get(0).className = subject.autoCFG.selectClass;
+		jQuery.iAuto.applyOn(subject,subject.autoCFG.lastSuggestion.get(0), 'onHighlight');
+		
+		if (jQuery.iAuto.helper.css('display') == 'none') {
+			if (subject.autoCFG.inputWidth) {
+				var borders = jQuery.iUtil.getPadding(subject, true);
+				var paddings = jQuery.iUtil.getBorder(subject, true);
+				jQuery.iAuto.helper.css('width', subject.offsetWidth - (jQuery.boxModel ? (borders.l + borders.r + paddings.l + paddings.r) : 0 ) + 'px');
+			}
+			if (subject.autoCFG.fx) {
+				switch(subject.autoCFG.fx.type) {
+					case 'fade':
+						jQuery.iAuto.helper.fadeIn(subject.autoCFG.fx.duration);
+						break;
+					case 'slide':
+						jQuery.iAuto.helper.SlideInUp(subject.autoCFG.fx.duration);
+						break;
+					case 'blind':
+						jQuery.iAuto.helper.BlindDown(subject.autoCFG.fx.duration);
+						break;
+				}
+			} else {
+				jQuery.iAuto.helper.show();
+			}
+			
+			if (jQuery.iAuto.subject.autoCFG.onShow)
+				jQuery.iAuto.subject.autoCFG.onShow.apply(jQuery.iAuto.subject, [jQuery.iAuto.helper, jQuery.iAuto.iframe]);
+		}
+	},
+	
+	checkCache : function()
+	{
+		var subject = this;
+		if (subject.autoCFG.lastSuggestion) {
+			
+			jQuery.iAuto.lastValue = subject.value;
+			jQuery.iAuto.currentValue = subject.value;
+			
+			var toWrite = '';
+			subject.autoCFG.lastSuggestion.each(
+				function(nr)
+				{
+					value = jQuery('value', this).text().toLowerCase();
+					inputValue = subject.value.toLowerCase();
+					if (value.indexOf(inputValue) == 0) {
+						toWrite += '<li rel="' + jQuery('value', this).text() + '" dir="' + nr + '" style="cursor: default;">' + jQuery('text', this).text() + '</li>';
+					}
+				}
+			);
+			
+			if (toWrite != '') {
+				jQuery.iAuto.writeItems(subject, toWrite);
+				
+				this.autoCFG.inCache = true;
+				return;
+			}
+		}
+		subject.autoCFG.lastSuggestion = null;
+		this.autoCFG.inCache = false;
+	},
+
+	selection : function(field, start, end)
+	{
+		if (field.createTextRange) {
+			var selRange = field.createTextRange();
+			selRange.collapse(true);
+			selRange.moveStart("character", start);
+			selRange.moveEnd("character", - end + start);
+			selRange.select();
+		} else if (field.setSelectionRange) {
+			field.setSelectionRange(start, end);
+		} else {
+			if (field.selectionStart) {
+				field.selectionStart = start;
+				field.selectionEnd = end;
+			}
+		}
+		field.focus();
+	},
+	
+	getSelectionStart : function(field)
+	{
+		if (field.selectionStart)
+			return field.selectionStart;
+		else if(field.createTextRange) {
+			var selRange = document.selection.createRange();
+			var selRange2 = selRange.duplicate();
+			return 0 - selRange2.moveStart('character', -100000);
+			//result.end = result.start + range.text.length;
+			/*var selRange = document.selection.createRange();
+			var isCollapsed = selRange.compareEndPoints("StartToEnd", selRange) == 0;
+			if (!isCollapsed)
+				selRange.collapse(true);
+			var bookmark = selRange.getBookmark();
+			return bookmark.charCodeAt(2) - 2;*/
+		}
+	},
+	
+	getFieldValues : function(field)
+	{
+		var fieldData = {
+			value: field.value,
+			pre: '',
+			post: '',
+			item: ''
+		};
+		
+		if(field.autoCFG.multiple) {
+			var finishedPre = false;
+			var selectionStart = jQuery.iAuto.getSelectionStart(field)||0;
+			var chunks = fieldData.value.split(field.autoCFG.multipleSeparator);
+			for (var i=0; i<chunks.length; i++) {
+				if(
+					(fieldData.pre.length + chunks[i].length >= selectionStart
+					 || 
+					selectionStart == 0)
+					 && 
+					!finishedPre 
+				) {
+					if (fieldData.pre.length <= selectionStart)
+						fieldData.item = chunks[i];
+					else 
+						fieldData.post += chunks[i] + (chunks[i] != '' ? field.autoCFG.multipleSeparator : '');
+					finishedPre = true;
+				} else if (finishedPre){
+					fieldData.post += chunks[i] + (chunks[i] != '' ? field.autoCFG.multipleSeparator : '');
+				}
+				if(!finishedPre) {
+					fieldData.pre += chunks[i] + (chunks.length > 1 ? field.autoCFG.multipleSeparator : '');
+				}
+			}
+		} else {
+			fieldData.item = fieldData.value;
+		}
+		return fieldData;
+	},
+	
+	autocomplete : function(e)
+	{
+		window.clearTimeout(jQuery.iAuto.timer);
+		var subject = jQuery.iAuto.getFieldValues(this);
+				
+		var pressedKey = e.charCode || e.keyCode || -1;
+		if (/13|27|35|36|38|40|9/.test(pressedKey) && jQuery.iAuto.items) {
+			if (window.event) {
+				window.event.cancelBubble = true;
+				window.event.returnValue = false;
+			} else {
+				e.preventDefault();
+				e.stopPropagation();
+			}
+			if (jQuery.iAuto.selectedItem != null) 
+				jQuery.iAuto.items.get(jQuery.iAuto.selectedItem||0).className = '';
+			else
+				jQuery.iAuto.selectedItem = -1;
+			switch(pressedKey) {
+				//enter
+				case 9:
+				case 13:
+					if (jQuery.iAuto.selectedItem == -1)
+						jQuery.iAuto.selectedItem = 0;
+					var selectedItem = jQuery.iAuto.items.get(jQuery.iAuto.selectedItem||0);
+					var valueToAdd = selectedItem.getAttribute('rel');
+					this.value = subject.pre + valueToAdd + this.autoCFG.multipleSeparator + subject.post;
+					jQuery.iAuto.lastValue = subject.item;
+					jQuery.iAuto.selection(
+						this, 
+						subject.pre.length + valueToAdd.length + this.autoCFG.multipleSeparator.length, 
+						subject.pre.length + valueToAdd.length + this.autoCFG.multipleSeparator.length
+					);
+					jQuery.iAuto.clear();
+					if (this.autoCFG.onSelect) {
+						iteration = parseInt(selectedItem.getAttribute('dir'))||0;
+						jQuery.iAuto.applyOn(this,this.autoCFG.lastSuggestion.get(iteration), 'onSelect');
+					}
+					if (this.scrollIntoView)
+						this.scrollIntoView(false);
+					return pressedKey != 13;
+					break;
+				//escape
+				case 27:
+					this.value = subject.pre + jQuery.iAuto.lastValue + this.autoCFG.multipleSeparator + subject.post;
+					this.autoCFG.lastSuggestion = null;
+					jQuery.iAuto.clear();
+					if (this.scrollIntoView)
+						this.scrollIntoView(false);
+					return false;
+					break;
+				//end
+				case 35:
+					jQuery.iAuto.selectedItem = jQuery.iAuto.items.size() - 1;
+					break;
+				//home
+				case 36:
+					jQuery.iAuto.selectedItem = 0;
+					break;
+				//up
+				case 38:
+					jQuery.iAuto.selectedItem --;
+					if (jQuery.iAuto.selectedItem < 0)
+						jQuery.iAuto.selectedItem = jQuery.iAuto.items.size() - 1;
+					break;
+				case 40:
+					jQuery.iAuto.selectedItem ++;
+					if (jQuery.iAuto.selectedItem == jQuery.iAuto.items.size())
+						jQuery.iAuto.selectedItem = 0;
+					break;
+			}
+			jQuery.iAuto.applyOn(this,this.autoCFG.lastSuggestion.get(jQuery.iAuto.selectedItem||0), 'onHighlight');
+			jQuery.iAuto.items.get(jQuery.iAuto.selectedItem||0).className = this.autoCFG.selectClass;
+			if (jQuery.iAuto.items.get(jQuery.iAuto.selectedItem||0).scrollIntoView)
+				jQuery.iAuto.items.get(jQuery.iAuto.selectedItem||0).scrollIntoView(false);
+			if(this.autoCFG.autofill) {
+				var valToAdd = jQuery.iAuto.items.get(jQuery.iAuto.selectedItem||0).getAttribute('rel');
+				this.value = subject.pre + valToAdd + this.autoCFG.multipleSeparator + subject.post;
+				if(jQuery.iAuto.lastValue.length != valToAdd.length)
+					jQuery.iAuto.selection(
+						this, 
+						subject.pre.length + jQuery.iAuto.lastValue.length, 
+						subject.pre.length + valToAdd.length
+					);
+			}
+			return false;
+		}
+		jQuery.iAuto.checkCache.apply(this);
+		
+		if (this.autoCFG.inCache == false) {
+			if (subject.item != jQuery.iAuto.lastValue && subject.item.length >= this.autoCFG.minchars)
+				jQuery.iAuto.timer = window.setTimeout(jQuery.iAuto.update, this.autoCFG.delay);
+			if (jQuery.iAuto.items) {
+				jQuery.iAuto.clear();
+			}
+		}
+		return true;
+	},
+
+	applyOn: function(field, item, type)
+	{
+		if (field.autoCFG[type]) {
+			var data = {};
+			childs = item.getElementsByTagName('*');
+			for(i=0; i<childs.length; i++){
+				data[childs[i].tagName] = childs[i].firstChild.nodeValue;
+			}
+			field.autoCFG[type].apply(field,[data]);
+		}
+	},
+	
+	hoverItem : function(e)
+	{
+		if (jQuery.iAuto.items) {
+			if (jQuery.iAuto.selectedItem != null) 
+				jQuery.iAuto.items.get(jQuery.iAuto.selectedItem||0).className = '';
+			jQuery.iAuto.items.get(jQuery.iAuto.selectedItem||0).className = '';
+			jQuery.iAuto.selectedItem = parseInt(this.getAttribute('dir'))||0;
+			jQuery.iAuto.items.get(jQuery.iAuto.selectedItem||0).className = jQuery.iAuto.subject.autoCFG.selectClass;
+		}
+	},
+
+	clickItem : function(event)
+	{	
+		window.clearTimeout(jQuery.iAuto.timer);
+		
+		event = event || jQuery.event.fix( window.event );
+		event.preventDefault();
+		event.stopPropagation();
+		var subject = jQuery.iAuto.getFieldValues(jQuery.iAuto.subject);
+		var valueToAdd = this.getAttribute('rel');
+		jQuery.iAuto.subject.value = subject.pre + valueToAdd + jQuery.iAuto.subject.autoCFG.multipleSeparator + subject.post;
+		jQuery.iAuto.lastValue = this.getAttribute('rel');
+		jQuery.iAuto.selection(
+			jQuery.iAuto.subject, 
+			subject.pre.length + valueToAdd.length + jQuery.iAuto.subject.autoCFG.multipleSeparator.length, 
+			subject.pre.length + valueToAdd.length + jQuery.iAuto.subject.autoCFG.multipleSeparator.length
+		);
+		jQuery.iAuto.clear();
+		if (jQuery.iAuto.subject.autoCFG.onSelect) {
+			iteration = parseInt(this.getAttribute('dir'))||0;
+			jQuery.iAuto.applyOn(jQuery.iAuto.subject,jQuery.iAuto.subject.autoCFG.lastSuggestion.get(iteration), 'onSelect');
+		}
+
+		return false;
+	},
+
+	protect : function(e)
+	{
+		pressedKey = e.charCode || e.keyCode || -1;
+		if (/13|27|35|36|38|40/.test(pressedKey) && jQuery.iAuto.items) {
+			if (window.event) {
+				window.event.cancelBubble = true;
+				window.event.returnValue = false;
+			} else {
+				e.preventDefault();
+				e.stopPropagation();
+			}
+			return false;
+		}
+	},
+
+	build : function(options)
+	{
+		if (!options.source || !jQuery.iUtil) {
+			return;
+		}
+
+		if (!jQuery.iAuto.helper) {
+			if (jQuery.browser.msie) {
+				jQuery('body', document).append('<iframe style="display:none;position:absolute;filter:progid:DXImageTransform.Microsoft.Alpha(opacity=0);" id="autocompleteIframe" src="javascript:false;" frameborder="0" scrolling="no"></iframe>');
+				jQuery.iAuto.iframe = jQuery('#autocompleteIframe');
+			}
+			jQuery('body', document).append('<div id="autocompleteHelper" style="position: absolute; top: 0; left: 0; z-index: 30001; display: none;"><ul style="margin: 0;padding: 0; list-style: none; z-index: 30002;">&nbsp;</ul></div>');
+			jQuery.iAuto.helper = jQuery('#autocompleteHelper');
+			jQuery.iAuto.content = jQuery('ul', jQuery.iAuto.helper);
+		}
+
+		return this.each(
+			function()
+			{
+				if (this.tagName != 'INPUT' && this.getAttribute('type') != 'text' )
+					return;
+				this.autoCFG = {};
+				this.autoCFG.source = options.source;
+				this.autoCFG.minchars = Math.abs(parseInt(options.minchars)||1);
+				this.autoCFG.helperClass = options.helperClass ? options.helperClass : '';
+				this.autoCFG.selectClass = options.selectClass ? options.selectClass : '';
+				this.autoCFG.onSelect = options.onSelect && options.onSelect.constructor == Function ? options.onSelect : null;
+				this.autoCFG.onShow = options.onShow && options.onShow.constructor == Function ? options.onShow : null;
+				this.autoCFG.onHide = options.onHide && options.onHide.constructor == Function ? options.onHide : null;
+				this.autoCFG.onHighlight = options.onHighlight && options.onHighlight.constructor == Function ? options.onHighlight : null;
+				this.autoCFG.inputWidth = options.inputWidth||false;
+				this.autoCFG.multiple = options.multiple||false;
+				this.autoCFG.multipleSeparator = this.autoCFG.multiple ? (options.multipleSeparator||', '):'';
+				this.autoCFG.autofill = options.autofill ? true : false;
+				this.autoCFG.delay = Math.abs(parseInt(options.delay)||1000);
+				if (options.fx && options.fx.constructor == Object) {
+					if (!options.fx.type || !/fade|slide|blind/.test(options.fx.type)) {
+						options.fx.type = 'slide';
+					}
+					if (options.fx.type == 'slide' && !jQuery.fx.slide)
+						return;
+					if (options.fx.type == 'blind' && !jQuery.fx.BlindDirection)
+						return;
+
+					options.fx.duration = Math.abs(parseInt(options.fx.duration)||400);
+					if (options.fx.duration > this.autoCFG.delay) {
+						options.fx.duration = this.autoCFG.delay - 100;
+					}
+					this.autoCFG.fx = options.fx;
+				}
+				this.autoCFG.lastSuggestion = null;
+				this.autoCFG.inCache = false;
+
+				jQuery(this)
+					.attr('autocomplete', 'off')
+					.focus(
+						function()
+						{
+							jQuery.iAuto.subject = this;
+							jQuery.iAuto.lastValue = this.value;
+						}
+					)
+					.keypress(jQuery.iAuto.protect)
+					.keyup(jQuery.iAuto.autocomplete)
+					
+					.blur(
+						function()
+						{
+							jQuery.iAuto.timer = window.setTimeout(jQuery.iAuto.clear, 200);
+						}
+					);
+			}
+		);
+	}
+};
+jQuery.fn.Autocomplete = jQuery.iAuto.build;

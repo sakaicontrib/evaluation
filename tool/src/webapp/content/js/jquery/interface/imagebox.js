@@ -10,4 +10,586 @@
  *
  */
 
-eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--){d[e(c)]=k[c]||e(c)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('4.5={6:{c:10,1S:\'2f/2z.1L\',1X:\'<1W 1l="2f/2y.1P" />\',2n:0.8,26:\'2u 2r\',23:\'2P\',Z:2L},2M:r,2O:r,O:n,13:r,1e:r,1D:j(1o){d(!4.5.1e||4.5.13)1f;1n 25=1o.2A||1o.2I||-1;2H(25){k 35:d(4.5.O)4.5.V(n,4(\'a[@12=\'+4.5.O+\']:2C\').b(0));R;k 36:d(4.5.O)4.5.V(n,4(\'a[@12=\'+4.5.O+\']:2D\').b(0));R;k 37:k 8:k 33:k 2G:k 2F:1n 1i=4(\'#14\');d(1i.b(0).A!=n){1i.b(0).A.1Y(1i.b(0))}R;k 38:R;k 39:k 34:k 32:k 2N:k 2E:1n 1h=4(\'#17\');d(1h.b(0).A!=n){1h.b(0).A.1Y(1h.b(0))}R;k 2B:R;k 27:4.5.1m();R}},2J:j(6){d(6)4.2K(4.5.6,6);d(2s.1o){4(\'1x\',f).T(\'1K\',4.5.1D)}2m{4(f).T(\'1K\',4.5.1D)}4(\'a\').2v(j(){I=4(11);22=I.i(\'12\')||\'\';2a=I.i(\'1d\')||\'\';1Q=/\\.1P|\\.2w|\\.2x|\\.1L|\\.2t/g;d(2a.1M().3h(1Q)!=n&&22.1M().3i(\'1N\')==0){I.T(\'1A\',4.5.V)}});d(4.1w.1v){1p=f.x(\'1p\');4(1p).i({p:\'1z\',1l:\'3g:r;\',3f:\'1O\',3d:\'1O\'}).9({U:\'G\',z:\'E\',q:\'0\',B:\'0\',3e:\'3j:3k.3p.3o(20=0)\'});4(\'1x\').m(1p)}18=f.x(\'W\');4(18).i(\'p\',\'1G\').9({z:\'E\',U:\'G\',q:\'0\',B:\'0\',20:0}).m(f.1a(\' \')).T(\'1A\',4.5.1m);N=f.x(\'W\');4(N).i(\'p\',\'2i\').9({21:4.5.6.c+\'7\'}).m(f.1a(\' \'));1C=f.x(\'W\');4(1C).i(\'p\',\'29\').9({21:4.5.6.c+\'7\',3n:4.5.6.c+\'7\'}).m(f.1a(\' \'));1H=f.x(\'a\');4(1H).i({p:\'3l\',1d:\'#\'}).9({z:\'E\',3m:4.5.6.c+\'7\',q:\'0\'}).m(4.5.6.1X).T(\'1A\',4.5.1m);X=f.x(\'W\');4(X).i(\'p\',\'1E\').9({z:\'1V\',1t:\'B\',1Z:\'0 1T\',1R:1}).m(N).m(1C).m(1H);o=f.x(\'1W\');o.1l=4.5.6.1S;4(o).i(\'p\',\'2q\').9({z:\'E\'});v=f.x(\'a\');4(v).i({p:\'14\',1d:\'#\'}).9({z:\'E\',U:\'G\',1g:\'S\',1U:\'G\'}).m(f.1a(\' \'));u=f.x(\'a\');4(u).i({p:\'17\',1d:\'#\'}).9({z:\'E\',1g:\'S\',1U:\'G\'}).m(f.1a(\' \'));D=f.x(\'W\');4(D).i(\'p\',\'2o\').9({U:\'G\',z:\'1V\',1g:\'S\',1t:\'B\',1Z:\'0 1T\',q:\'0\',B:\'0\',1R:2}).m([o,v,u]);J=f.x(\'W\');4(J).i(\'p\',\'1j\').9({U:\'G\',z:\'E\',1g:\'S\',q:\'0\',B:\'0\',1t:\'3b\',2V:\'3c\',2T:\'0\'}).m([D,X]);4(\'1x\').m(18).m(J)},V:j(e,19){I=19?4(19):4(11);1k=I.i(\'12\');1n Q,H,v,u;d(1k!=\'1N\'){4.5.O=1k;1c=4(\'a[@12=\'+1k+\']\');Q=1c.2W();H=1c.2X(19?19:11);v=1c.b(H-1);u=1c.b(H+1)}1b=I.i(\'1d\');N=I.i(\'3a\');l=4.1q.2Q();18=4(\'#1G\');d(!4.5.1e){4.5.1e=2g;d(4.1w.1v){4(\'#1z\').9(\'C\',L.P(l.2j,l.h)+\'7\').9(\'s\',L.P(l.1y,l.w)+\'7\').M()}18.9(\'C\',L.P(l.2j,l.h)+\'7\').9(\'s\',L.P(l.1y,l.w)+\'7\').M().2k(2l,4.5.6.2n,j(){4.5.1u(1b,N,l,Q,H,v,u)});4(\'#1j\').9(\'s\',L.P(l.1y,l.w)+\'7\')}2m{4(\'#14\').b(0).A=n;4(\'#17\').b(0).A=n;4.5.1u(1b,N,l,Q,H,v,u)}1f r},1u:j(1b,2Z,l,Q,H,v,u){4(\'#1B\').2p();1r=4(\'#14\');1r.Y();1s=4(\'#17\');1s.Y();o=4(\'#2q\');D=4(\'#2o\');J=4(\'#1j\');X=4(\'#1E\').9(\'1F\',\'S\');4(\'#2i\').2h(N);4.5.13=2g;d(Q)4(\'#29\').2h(4.5.6.26+\' \'+(H+1)+\' \'+4.5.6.23+\' \'+Q);d(v){1r.b(0).A=j(){11.24();4.5.V(n,v);1f r}}d(u){1s.b(0).A=j(){11.24();4.5.V(n,u);1f r}}o.M();16=4.1q.2c(D.b(0));y=L.P(16.2d,o.b(0).s+4.5.6.c*2);F=L.P(16.1I,o.b(0).C+4.5.6.c*2);o.9({B:(y-o.b(0).s)/2+\'7\',q:(F-o.b(0).C)/2+\'7\'});D.9({s:y+\'7\',C:F+\'7\'}).M();2b=4.1q.2U();J.9(\'q\',l.t+(2b.h/15)+\'7\');d(J.9(\'U\')==\'G\'){J.M().28(4.5.6.Z)}K=2Y 30;4(K).i(\'p\',\'1B\').T(\'31\',j(){y=K.s+4.5.6.c*2;F=K.C+4.5.6.c*2;o.Y();D.1J({C:F},16.1I!=F?4.5.6.Z:1,j(){D.1J({s:y},16.2d!=y?4.5.6.Z:1,j(){D.2S(K);4(K).9({z:\'E\',B:4.5.6.c+\'7\',q:4.5.6.c+\'7\'}).28(4.5.6.Z,j(){2e=4.1q.2c(X.b(0));d(v){1r.9({B:4.5.6.c+\'7\',q:4.5.6.c+\'7\',s:y/2-4.5.6.c*3+\'7\',C:F-4.5.6.c*2+\'7\'}).M()}d(u){1s.9({B:y/2+4.5.6.c*2+\'7\',q:4.5.6.c+\'7\',s:y/2-4.5.6.c*3+\'7\',C:F-4.5.6.c*2+\'7\'}).M()}X.9({s:y+\'7\',q:-2e.1I+\'7\',1F:\'2R\'}).1J({q:-1},4.5.6.Z,j(){4.5.13=r})})})})});K.1l=1b},1m:j(){4(\'#1B\').2p();4(\'#1j\').Y();4(\'#1E\').9(\'1F\',\'S\');4(\'#1G\').2k(2l,0,j(){4(11).Y();d(4.1w.1v){4(\'#1z\').Y()}});4(\'#14\').b(0).A=n;4(\'#17\').b(0).A=n;4.5.O=n;4.5.1e=r;4.5.13=r;1f r}};',62,212,'||||jQuery|ImageBox|options|px||css||get|border|if||document|||attr|function|case|pageSize|append|null|loader|id|top|false|width||nextImage|prevImage||createElement|containerW|position|onclick|left|height|container|absolute|containerH|none|iteration|el|outerContainer|imageEl|Math|show|captionText|currentRel|max|totalImages|break|hidden|bind|display|start|div|captionEl|hide|fadeDuration||this|rel|animationInProgress|ImageBoxPrevImage||containerSize|ImageBoxNextImage|overlay|elm|createTextNode|imageSrc|gallery|href|opened|return|overflow|nextEl|prevEl|ImageBoxOuterContainer|linkRel|src|hideImage|var|event|iframe|iUtil|prevImageEl|nextImageEl|textAlign|loadImage|msie|browser|body|iw|ImageBoxIframe|click|ImageBoxCurrentImage|captionImages|keyPressed|ImageBoxCaption|visibility|ImageBoxOverlay|closeEl|hb|animate|keyup|gif|toLowerCase|imagebox|no|jpg|imageTypes|zIndex|loaderSRC|auto|textDecoration|relative|img|closeHTML|apply|margin|opacity|paddingLeft|relAttr|textImageFrom|blur|pressedKey|textImage||fadeIn|ImageBoxCaptionImages|hrefAttr|clientSize|getSize|wb|captionSize|images|true|html|ImageBoxCaptionText|ih|fadeTo|300|else|overlayOpacity|ImageBoxContainer|remove|ImageBoxLoader|image|window|bmp|Showing|each|jpeg|png|close|loading|charCode|40|last|first|78|112|80|switch|keyCode|init|extend|400|imageLoaded|110|firstResize|from|getScroll|visible|prepend|lineHeigt|getClient|backgroundColor|size|index|new|captiontext|Image|load|||||||||title|center|transparent|scrolling|filter|frameborder|javascript|match|indexOf|progid|DXImageTransform|ImageBoxClose|right|paddingBottom|Alpha|Microsoft'.split('|'),0,{}))
+/**
+ * This a jQuery equivalent for Lightbox2. Alternative to image popups that will display images in an overlay. All links that have attribute 'rel' starting with 'imagebox' and link to an image will display the image inside the page. Galleries can by build buy giving the value 'imagebox-galname' to attribute 'rel'. Attribute 'title' will be used as caption.
+ * Keyboard navigation:
+ *  -  next image: arrow right, page down, 'n' key, space
+ *  -  previous image: arrow left, page up, 'p' key, backspace
+ *  -  close: escape
+ *
+ * CSS
+ *	#ImageBoxOverlay
+ *	{
+ *		background-color: #000;
+ *	}
+ *	#ImageBoxCaption
+ *	{
+ *		background-color: #F4F4EC;
+ *	}
+ *	#ImageBoxContainer
+ *	{
+ *		width: 250px;
+ *		height: 250px;
+ *		background-color: #F4F4EC;
+ *	}
+ *	#ImageBoxCaptionText
+ *	{
+ *		font-weight: bold;
+ *		padding-bottom: 5px;
+ *		font-size: 13px;
+ *		color: #000;
+ *	}
+ *	#ImageBoxCaptionImages
+ *	{
+ *		margin: 0;
+ *	}
+ *	#ImageBoxNextImage
+ *	{
+ *		background-image: url(images/imagebox/spacer.gif);
+ *		background-color: transparent;
+ *	}
+ *	#ImageBoxPrevImage
+ *	{
+ *		background-image: url(images/imagebox/spacer.gif);
+ *		background-color: transparent;
+ *	}
+ *	#ImageBoxNextImage:hover
+ *	{
+ *		background-image: url(images/imagebox/next_image.jpg);
+ *		background-repeat:	no-repeat;
+ *		background-position: right top;
+ *	}
+ *	#ImageBoxPrevImage:hover
+ *	{
+ *		background-image: url(images/imagebox/prev_image.jpg);
+ *		background-repeat:	no-repeat;
+ *		background-position: left bottom;
+ *	}
+ * 
+ * @name Imagebox
+ * @description This a jQuery equivalent for Lightbox2. Alternative to image popups that will display images in an overlay. All links that have attribute 'rel' starting with 'imagebox' and link to an image will display the image inside the page. Galleries can by build buy giving the value 'imagebox-galname' to attribute 'rel'. Attribute 'title' will be used as caption.
+ * @param Hash hash A hash of parameters
+ * @option Integer border border width
+ * @option String loaderSRC path to loading image
+ * @option String closeHTML path to close overlay image
+ * @option Float overlayOpacity opacity for overlay
+ * @option String textImage when a galalry it is build then the iteration is displayed
+ * @option String textImageFrom when a galalry it is build then the iteration is displayed
+ * @option Integer fadeDuration fade duration in miliseconds
+ *
+ * @type jQuery
+ * @cat Plugins/Interface
+ * @author Stefan Petre
+ */
+jQuery.ImageBox = {
+	options : {
+		border				: 10,
+		loaderSRC			: 'images/loading.gif',
+		closeHTML			: '<img src="images/close.jpg" />',
+		overlayOpacity		: 0.8,
+		textImage			: 'Showing image',
+		textImageFrom		: 'from',
+		fadeDuration		: 400
+	},
+	imageLoaded : false,
+	firstResize : false,
+	currentRel : null,
+	animationInProgress : false,
+	opened : false,
+	
+	keyPressed : function(event)
+	{
+		if(!jQuery.ImageBox.opened || jQuery.ImageBox.animationInProgress)
+			return;
+		var pressedKey = event.charCode || event.keyCode || -1;
+		switch (pressedKey)
+		{
+			//end
+			case 35:
+				if (jQuery.ImageBox.currentRel)
+					jQuery.ImageBox.start(null, jQuery('a[@rel=' + jQuery.ImageBox.currentRel+ ']:last').get(0));
+			break;
+			//home
+			case 36:
+				if (jQuery.ImageBox.currentRel)
+					jQuery.ImageBox.start(null, jQuery('a[@rel=' + jQuery.ImageBox.currentRel+ ']:first').get(0));
+			break;
+			//left
+			case 37:
+			//backspace
+			case 8:
+			//page up
+			case 33:
+			//p
+			case 80:
+			case 112:
+				var prevEl = jQuery('#ImageBoxPrevImage');
+				if(prevEl.get(0).onclick != null) {
+					prevEl.get(0).onclick.apply(prevEl.get(0));
+				}
+			break;
+			//up
+			case 38:
+			break;
+			//right
+			case 39:
+			//page down
+			case 34:
+			//space
+			case 32:
+			//n
+			case 110:
+			case 78:
+				var nextEl = jQuery('#ImageBoxNextImage');
+				if(nextEl.get(0).onclick != null) {
+					nextEl.get(0).onclick.apply(nextEl.get(0));
+				}
+			break;
+			//down;
+			case 40:
+			break;
+			//escape
+			case 27:
+				jQuery.ImageBox.hideImage();
+			break;
+		}
+	},
+	
+	init : function(options)
+	{
+		if (options)
+			jQuery.extend(jQuery.ImageBox.options, options);
+		if (window.event) {
+			jQuery('body',document).bind('keyup', jQuery.ImageBox.keyPressed);
+		} else {
+			jQuery(document).bind('keyup', jQuery.ImageBox.keyPressed);
+		}
+		jQuery('a').each(
+			function()
+			{
+				el 				= jQuery(this);
+				relAttr 		= el.attr('rel')||'';
+				hrefAttr 		= el.attr('href')||'';
+				imageTypes 		= /\.jpg|\.jpeg|\.png|\.gif|\.bmp/g;
+				if (hrefAttr.toLowerCase().match(imageTypes) != null && relAttr.toLowerCase().indexOf('imagebox') == 0) {
+					el.bind('click', jQuery.ImageBox.start);
+				}
+			}
+		);
+		if (jQuery.browser.msie) {
+			iframe = document.createElement('iframe');
+			jQuery(iframe)
+				.attr(
+					{
+						id			: 'ImageBoxIframe',
+						src			: 'javascript:false;',
+						frameborder	: 'no',
+						scrolling	: 'no'
+					}
+				)
+				.css (
+					{
+						display		: 'none',
+						position	: 'absolute',
+						top			: '0',
+						left		: '0',
+						filter		: 'progid:DXImageTransform.Microsoft.Alpha(opacity=0)'
+					}
+				);
+			jQuery('body').append(iframe);
+		}
+		
+		overlay	= document.createElement('div');
+		jQuery(overlay)
+			.attr('id', 'ImageBoxOverlay')
+			.css(
+				{
+					position	: 'absolute',
+					display		: 'none',
+					top			: '0',
+					left		: '0',
+					opacity		: 0
+				}
+			)
+			.append(document.createTextNode(' '))
+			.bind('click', jQuery.ImageBox.hideImage);
+		
+		captionText = document.createElement('div');
+		jQuery(captionText)
+			.attr('id', 'ImageBoxCaptionText')
+			.css(
+				{
+					paddingLeft		: jQuery.ImageBox.options.border + 'px'
+				}
+			)
+			.append(document.createTextNode(' '));
+			
+		captionImages = document.createElement('div');
+		jQuery(captionImages)
+			.attr('id', 'ImageBoxCaptionImages')
+			.css(
+				{
+					paddingLeft		: jQuery.ImageBox.options.border + 'px',
+					paddingBottom	: jQuery.ImageBox.options.border + 'px'
+				}
+			)
+			.append(document.createTextNode(' '));
+			
+		closeEl = document.createElement('a');
+		jQuery(closeEl)
+			.attr(
+				{
+					id			: 'ImageBoxClose',
+					href		: '#'
+				}
+			)
+			.css(
+				{
+					position	: 'absolute',
+					right		: jQuery.ImageBox.options.border + 'px',
+					top			: '0'
+				}
+			)
+			.append(jQuery.ImageBox.options.closeHTML)
+			.bind('click', jQuery.ImageBox.hideImage);
+			
+		captionEl = document.createElement('div');
+		jQuery(captionEl)
+			.attr('id', 'ImageBoxCaption')
+			.css(
+				{
+					position	: 'relative',
+					textAlign	: 'left',
+					margin		: '0 auto',
+					zIndex		: 1
+				}
+			)
+			.append(captionText)
+			.append(captionImages)
+			.append(closeEl);
+		
+		loader = document.createElement('img');
+		loader.src = jQuery.ImageBox.options.loaderSRC;
+		jQuery(loader)
+			.attr('id', 'ImageBoxLoader')
+			.css(
+				{
+					position	: 'absolute'
+				}
+			);
+			
+		prevImage = document.createElement('a');
+		jQuery(prevImage)
+			.attr(
+				{
+					id			: 'ImageBoxPrevImage',
+					href		: '#'
+				}
+			)
+			.css(
+				{
+					position		: 'absolute',
+					display			: 'none',
+					overflow		: 'hidden',
+					textDecoration	: 'none'
+				}
+			)
+			.append(document.createTextNode(' '));
+			
+		nextImage = document.createElement('a');
+		jQuery(nextImage)
+			.attr(
+				{
+					id			: 'ImageBoxNextImage',
+					href		: '#'
+				}
+			)
+			.css(
+				{
+					position		: 'absolute',
+					overflow		: 'hidden',
+					textDecoration	: 'none'
+				}
+			)
+			.append(document.createTextNode(' '));
+		
+		container = document.createElement('div');
+		jQuery(container)
+			.attr('id', 'ImageBoxContainer')
+			.css(
+				{
+					display		: 'none',
+					position	: 'relative',
+					overflow	: 'hidden',
+					textAlign	: 'left',
+					margin		: '0 auto',
+					top			: '0',
+					left		: '0',
+					zIndex		: 2
+				}
+			)
+			.append([loader, prevImage, nextImage]);
+		
+		outerContainer = document.createElement('div');
+		jQuery(outerContainer)
+			.attr('id', 'ImageBoxOuterContainer')
+			.css(
+				{
+					display		: 'none',
+					position	: 'absolute',
+					overflow	: 'hidden',
+					top			: '0',
+					left		: '0',
+					textAlign	: 'center',
+					backgroundColor : 'transparent',
+					lineHeigt	: '0'
+				}
+			)
+			.append([container,captionEl]);
+		
+		jQuery('body')
+			.append(overlay)
+			.append(outerContainer);
+	},
+	
+	start : function(e, elm)
+	{
+		el = elm ? jQuery(elm) : jQuery(this);
+		linkRel =  el.attr('rel');
+		var totalImages, iteration, prevImage, nextImage;
+		if (linkRel != 'imagebox') {
+			jQuery.ImageBox.currentRel = linkRel;
+			gallery = jQuery('a[@rel=' + linkRel + ']');
+			totalImages = gallery.size();
+			iteration = gallery.index(elm ? elm : this);
+			prevImage = gallery.get(iteration - 1);
+			nextImage = gallery.get(iteration + 1);
+		}
+		imageSrc =  el.attr('href');
+		captionText = el.attr('title');
+		pageSize = jQuery.iUtil.getScroll();
+		overlay = jQuery('#ImageBoxOverlay');
+		if (!jQuery.ImageBox.opened) {
+			jQuery.ImageBox.opened = true;
+			if (jQuery.browser.msie) {
+				jQuery('#ImageBoxIframe')
+					.css ('height', Math.max(pageSize.ih,pageSize.h) + 'px')
+					.css ('width', Math.max(pageSize.iw,pageSize.w) + 'px')
+					.show();
+			}
+			overlay
+				.css ('height', Math.max(pageSize.ih,pageSize.h) + 'px')
+				.css ('width', Math.max(pageSize.iw,pageSize.w) + 'px')
+				.show()
+				.fadeTo( 
+					300,
+					jQuery.ImageBox.options.overlayOpacity,
+					function()
+					{
+						jQuery.ImageBox.loadImage(
+							imageSrc, 
+							captionText, 
+							pageSize, 
+							totalImages, 
+							iteration,
+							prevImage,
+							nextImage
+						);
+					}
+				);
+			jQuery('#ImageBoxOuterContainer').css ('width', Math.max(pageSize.iw,pageSize.w) + 'px');
+		} else {
+			jQuery('#ImageBoxPrevImage').get(0).onclick = null;
+			jQuery('#ImageBoxNextImage').get(0).onclick = null;
+			jQuery.ImageBox.loadImage(
+				imageSrc, 
+				captionText, 
+				pageSize, 
+				totalImages, 
+				iteration,
+				prevImage,
+				nextImage
+			);
+		}
+		return false;
+	},
+		
+	loadImage : function(imageSrc, captiontext, pageSize, totalImages, iteration, prevImage, nextImage)
+	{
+		jQuery('#ImageBoxCurrentImage').remove();
+		prevImageEl = jQuery('#ImageBoxPrevImage');
+		prevImageEl.hide();
+		nextImageEl = jQuery('#ImageBoxNextImage');
+		nextImageEl.hide();
+		loader = jQuery('#ImageBoxLoader');
+		container = jQuery('#ImageBoxContainer');
+		outerContainer = jQuery('#ImageBoxOuterContainer');
+		captionEl = jQuery('#ImageBoxCaption').css('visibility', 'hidden');
+		jQuery('#ImageBoxCaptionText').html(captionText);
+		jQuery.ImageBox.animationInProgress = true;
+		if (totalImages)
+			jQuery('#ImageBoxCaptionImages').html(
+				jQuery.ImageBox.options.textImage 
+				+ ' ' + (iteration + 1) + ' '
+				+ jQuery.ImageBox.options.textImageFrom  
+				+ ' ' + totalImages
+			);
+		if (prevImage) {
+			prevImageEl.get(0).onclick = function()
+			{
+				this.blur();
+				jQuery.ImageBox.start(null, prevImage);
+				return false;
+			};
+		}
+		if (nextImage) {
+			nextImageEl.get(0).onclick =function()
+			{
+				this.blur();
+				jQuery.ImageBox.start(null, nextImage);
+				return false;
+			};
+		}
+		loader.show();
+		containerSize = jQuery.iUtil.getSize(container.get(0));
+		containerW = Math.max(containerSize.wb, loader.get(0).width + jQuery.ImageBox.options.border * 2);
+		containerH = Math.max(containerSize.hb, loader.get(0).height + jQuery.ImageBox.options.border * 2);
+		loader
+			.css(
+				{
+					left	: (containerW - loader.get(0).width)/2 + 'px',
+					top		: (containerH - loader.get(0).height)/2 + 'px'
+				}
+			);
+		container
+			.css(
+				{
+					width	: containerW + 'px',
+					height	: containerH + 'px'
+				}
+			)
+			.show();
+		clientSize = jQuery.iUtil.getClient();
+		outerContainer
+			.css('top', pageSize.t +  (clientSize.h / 15) + 'px');
+		if (outerContainer.css('display') == 'none') {
+			outerContainer
+				.show()
+				.fadeIn(
+					jQuery.ImageBox.options.fadeDuration
+				);
+		}
+		imageEl = new Image;
+		jQuery(imageEl)
+			.attr('id', 'ImageBoxCurrentImage')
+			.bind('load', 
+			function()
+			{
+				containerW = imageEl.width + jQuery.ImageBox.options.border * 2;
+				containerH = imageEl.height + jQuery.ImageBox.options.border * 2;
+				loader.hide();
+				container.animate(
+					{
+						height		: containerH
+					},
+					containerSize.hb != containerH ? jQuery.ImageBox.options.fadeDuration : 1,
+					function()
+					{
+						container.animate(
+							{
+								width		: containerW
+							},
+							containerSize.wb != containerW ? jQuery.ImageBox.options.fadeDuration : 1,
+							function()
+							{
+								container.prepend(imageEl);
+								jQuery(imageEl)
+									.css(
+										{
+											position	: 'absolute',
+											left		: jQuery.ImageBox.options.border + 'px',
+											top			: jQuery.ImageBox.options.border + 'px'
+										}
+									)
+									.fadeIn(
+										jQuery.ImageBox.options.fadeDuration,
+										function()
+										{
+											captionSize = jQuery.iUtil.getSize(captionEl.get(0));
+											if (prevImage) {
+												prevImageEl
+													.css(
+														{
+															left	: jQuery.ImageBox.options.border + 'px',
+															top		: jQuery.ImageBox.options.border + 'px',
+															width	: containerW/2 - jQuery.ImageBox.options.border * 3 + 'px',
+															height	: containerH - jQuery.ImageBox.options.border * 2 + 'px'
+														}
+													)
+													.show();
+											}
+											if (nextImage) {
+												nextImageEl
+													.css(
+														{
+															left	: containerW/2 + jQuery.ImageBox.options.border * 2 + 'px',
+															top		: jQuery.ImageBox.options.border + 'px',
+															width	: containerW/2 - jQuery.ImageBox.options.border * 3 + 'px',
+															height	: containerH - jQuery.ImageBox.options.border * 2 + 'px'
+														}
+													)
+													.show();
+											}
+											captionEl
+												.css(
+													{
+														width		: containerW + 'px',
+														top			: - captionSize.hb + 'px',
+														visibility	: 'visible'
+													}
+												)
+												.animate(
+													{
+														top		: -1
+													},
+													jQuery.ImageBox.options.fadeDuration,
+													function()
+													{
+														jQuery.ImageBox.animationInProgress = false;
+													}
+												);
+										}
+									);
+							}
+						);
+					}
+				);
+			}
+		);
+		imageEl.src = imageSrc;
+			
+	},
+	
+	hideImage : function()
+	{
+		jQuery('#ImageBoxCurrentImage').remove();
+		jQuery('#ImageBoxOuterContainer').hide();
+		jQuery('#ImageBoxCaption').css('visibility', 'hidden');
+		jQuery('#ImageBoxOverlay').fadeTo(
+			300, 
+			0, 
+			function(){
+				jQuery(this).hide();
+				if (jQuery.browser.msie) {
+					jQuery('#ImageBoxIframe').hide();
+				}
+			}
+		);
+		jQuery('#ImageBoxPrevImage').get(0).onclick = null;
+		jQuery('#ImageBoxNextImage').get(0).onclick = null;
+		jQuery.ImageBox.currentRel = null;
+		jQuery.ImageBox.opened = false;
+		jQuery.ImageBox.animationInProgress = false;
+		return false;
+	}
+};

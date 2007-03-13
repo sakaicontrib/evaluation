@@ -10,4 +10,156 @@
  *
  */
 
-eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--){d[e(c)]=k[c]||e(c)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('6.E={C:5(3){r 4.A(5(){h(!3.n||!3.p)r;I 1=4;1.2={l:3.l||J,n:3.n,p:3.p,f:3.f||\'z\',o:3.o||\'z\',8:3.8&&w 3.8==\'5\'?3.8:v,j:3.8&&w 3.j==\'5\'?3.j:v,9:3.9&&w 3.9==\'5\'?3.9:v,k:6(3.n,4),g:6(3.p,4),m:3.m||K,7:3.7||0};1.2.g.S().i(\'d\',\'N\').a(0).i({d:1.2.l+\'U\',q:\'D\'}).c();1.2.k.A(5(x){4.b=x}).R(5(){6(4).u(1.2.o)},5(){6(4).y(1.2.o)}).Q(\'O\',5(e){h(1.2.7==4.b)r;1.2.k.a(1.2.7).y(1.2.f).c().a(4.b).u(1.2.f).c();1.2.g.a(1.2.7).F({d:0},1.2.m,5(){4.B.q=\'T\';h(1.2.j){1.2.j.s(1,[4])}}).c().a(4.b).P().F({d:1.2.l},1.2.m,5(){4.B.q=\'D\';h(1.2.8){1.2.8.s(1,[4])}}).c();h(1.2.9){1.2.9.s(1,[4,1.2.g.t(4.b),1.2.k.t(1.2.7),1.2.g.t(1.2.7)])}1.2.7=4.b}).a(0).u(1.2.f).c();6(4).i(\'d\',6(4).i(\'d\')).i(\'H\',\'G\')})}};6.L.M=6.E.C;',57,57,'|el|accordionCfg|options|this|function|jQuery|currentPanel|onShow|onClick|eq|accordionPos|end|height||activeClass|panels|if|css|onHide|headers|panelHeight|speed|headerSelector|hoverClass|panelSelector|display|return|apply|get|addClass|false|typeof|nr|removeClass|fakeAccordionClass|each|style|build|block|iAccordion|animate|hidden|overflow|var|300|400|fn|Accordion|1px|click|show|bind|hover|hide|none|px'.split('|'),0,{}))
+/**
+ * Create an accordion from a HTML structure
+ *
+ * @example $('#myAccordion').Accordion(
+ *				{
+ *					headerSelector	: 'dt',
+ *					panelSelector	: 'dd',
+ *					activeClass		: 'myAccordionActive',
+ *					hoverClass		: 'myAccordionHover',
+ *					panelHeight		: 200,
+ *					speed			: 300
+ *				}
+ *			);
+ * @desc Converts definition list with id 'myAccordion' into an accordion width dt tags as headers and dd tags as panels
+ * 
+ * @name Accordion
+ * @description Create an accordion from a HTML structure
+ * @param Hash hash A hash of parameters
+ * @option Integer panelHeight the pannels' height
+ * @option String headerSelector selector for header elements
+ * @option String panelSelector selector for panel elements
+ * @option String activeClass (optional) CSS Class for active header
+ * @option String hoverClass (optional) CSS Class for hovered header
+ * @option Function onShow (optional) callback called whenever an pannel gets active
+ * @option Function onHide (optional) callback called whenever an pannel gets incative
+ * @option Function onClick (optional) callback called just before an panel gets active
+ * @option Mixed speed (optional) animation speed, integer for miliseconds, string ['slow' | 'normal' | 'fast']
+ * @option Integer crrentPanel (otional) the active panel on initialisation
+ *
+ * @type jQuery
+ * @cat Plugins/Interface
+ * @author Stefan Petre
+ */
+jQuery.iAccordion = {
+	build : function(options)
+	{
+		return this.each(
+			function()
+			{
+				if (!options.headerSelector || !options.panelSelector)
+					return;
+				var el = this;
+				el.accordionCfg = {
+					panelHeight			: options.panelHeight||300,
+					headerSelector		: options.headerSelector,
+					panelSelector		: options.panelSelector,
+					activeClass			: options.activeClass||'fakeAccordionClass',
+					hoverClass			: options.hoverClass||'fakeAccordionClass',
+					onShow				: options.onShow && typeof options.onShow == 'function' ? options.onShow : false,
+					onHide				: options.onShow && typeof options.onHide == 'function' ? options.onHide : false,
+					onClick				: options.onClick && typeof options.onClick == 'function' ? options.onClick : false,
+					headers				: jQuery(options.headerSelector, this),
+					panels				: jQuery(options.panelSelector, this),
+					speed				: options.speed||400,
+					currentPanel		: options.currentPanel||0
+				};
+				el.accordionCfg.panels
+					.hide()
+					.css('height', '1px')
+					.eq(0)
+					.css(
+						{
+							height: el.accordionCfg.panelHeight + 'px',
+							display: 'block'
+						}
+					)
+					.end();
+					
+				el.accordionCfg.headers
+				.each(
+					function(nr)
+					{
+						this.accordionPos = nr;
+					}
+				)
+				.hover(
+					function()
+					{
+						jQuery(this).addClass(el.accordionCfg.hoverClass);
+					},
+					function()
+					{
+						jQuery(this).removeClass(el.accordionCfg.hoverClass);
+					}
+				)
+				.bind(
+					'click',
+					function(e)
+					{
+						if (el.accordionCfg.currentPanel == this.accordionPos)
+							return;
+						el.accordionCfg.headers
+							.eq(el.accordionCfg.currentPanel)
+							.removeClass(el.accordionCfg.activeClass)
+							.end()
+							.eq(this.accordionPos)
+							.addClass(el.accordionCfg.activeClass)
+							.end();
+						el.accordionCfg.panels
+						.eq(el.accordionCfg.currentPanel)
+							.animate(
+								{height:0},
+								el.accordionCfg.speed,
+								function()
+								{
+									this.style.display = 'none';
+									if (el.accordionCfg.onHide) {
+										el.accordionCfg.onHide.apply(el, [this]);
+									}
+								}
+							)
+						.end()
+						.eq(this.accordionPos)
+							.show()
+							.animate (
+								{height:el.accordionCfg.panelHeight},
+								el.accordionCfg.speed,
+								function()
+								{
+									this.style.display = 'block';
+									if (el.accordionCfg.onShow) {
+										el.accordionCfg.onShow.apply(el, [this]);
+									}
+								}
+							)
+						.end();
+						
+						if (el.accordionCfg.onClick) {
+							el.accordionCfg.onClick.apply(
+								el, 
+								[
+									this, 
+									el.accordionCfg.panels.get(this.accordionPos),
+									el.accordionCfg.headers.get(el.accordionCfg.currentPanel),
+									el.accordionCfg.panels.get(el.accordionCfg.currentPanel)
+								]
+							);
+						}
+						el.accordionCfg.currentPanel = this.accordionPos;
+					}
+				)
+				.eq(0)
+				.addClass(el.accordionCfg.activeClass)
+				.end();
+				jQuery(this)
+					.css('height', jQuery(this).css('height'))
+					.css('overflow', 'hidden');
+			}
+		);
+	}
+};
+
+jQuery.fn.Accordion = jQuery.iAccordion.build;

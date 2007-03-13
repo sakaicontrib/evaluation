@@ -10,4 +10,218 @@
  *   
  *
  */
-eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--){d[e(c)]=k[c]||e(c)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('3.11.10({12:a(4,6,7){o 9.r(\'l\',a(){f 3.d.j(9,4,6,\'q\',\'p\',7)})},13:a(4,6,7){o 9.r(\'l\',a(){f 3.d.j(9,4,6,\'s\',\'p\',7)})},16:a(4,6,7){o 9.r(\'l\',a(){k(3.b(9,\'x\')==\'F\'){f 3.d.j(9,4,6,\'s\',\'t\',7)}A{f 3.d.j(9,4,6,\'s\',\'p\',7)}})},14:a(4,6,7){o 9.r(\'l\',a(){k(3.b(9,\'x\')==\'F\'){f 3.d.j(9,4,6,\'q\',\'t\',7)}A{f 3.d.j(9,4,6,\'q\',\'p\',7)}})},Z:a(4,6,7){o 9.r(\'l\',a(){f 3.d.j(9,4,6,\'q\',\'t\',7)})},X:a(4,6,7){o 9.r(\'l\',a(){f 3.d.j(9,4,6,\'s\',\'t\',7)})}});3.d.j=a(e,4,6,C,n,7){k(!3.Y(e)){3.V(e,\'l\');o M}N z=9;N E=M;z.8=3(e);z.7=O 6==\'18\'?6:7||P;z.6=O 6==\'a\'?6:P;z.n=n;z.4=4;z.5=3.1d.1a(e);z.c={};z.c.y=z.8.b(\'y\');z.c.x=z.8.b(\'x\');k(z.c.x==\'F\'){K=z.8.b(\'Q\');z.8.U();E=19}z.c.i=z.8.b(\'i\');z.c.g=z.8.b(\'g\');k(E){z.8.R();z.8.b(\'Q\',K)}z.c.J=z.5.w+\'D\';z.c.I=z.5.h+\'D\';z.c.G=z.8.b(\'G\');z.5.i=L(z.c.i)||0;z.5.g=L(z.c.g)||0;k(z.c.y!=\'W\'&&z.c.y!=\'1c\'){z.8.b(\'y\',\'W\')}z.8.b(\'G\',\'1b\').b(\'I\',n==\'t\'&&C==\'q\'?1:z.5.h+\'D\').b(\'J\',n==\'t\'&&C==\'s\'?1:z.5.w+\'D\');z.H=a(){z.8.b(z.c);k(z.n==\'p\')z.8.R();A z.8.U();3.V(z.8.B(0),\'l\')};17(C){S\'q\':z.u=f 3.d(z.8.B(0),3.4(4-15,z.7,6),\'I\');z.v=f 3.d(z.8.B(0),3.4(z.4,z.7,z.H),\'i\');k(z.n==\'p\'){z.u.m(z.5.h,0);z.v.m(z.5.i,z.5.i+z.5.h/2)}A{z.u.m(0,z.5.h);z.v.m(z.5.i+z.5.h/2,z.5.i)}T;S\'s\':z.u=f 3.d(z.8.B(0),3.4(4-15,z.7,6),\'J\');z.v=f 3.d(z.8.B(0),3.4(z.4,z.7,z.H),\'g\');k(z.n==\'p\'){z.u.m(z.5.w,0);z.v.m(z.5.g,z.5.g+z.5.w/2)}A{z.u.m(0,z.5.w);z.v.m(z.5.g+z.5.w/2,z.5.g)}T}};',62,76,'|||jQuery|speed|oldP|callback|easing|el|this|function|css|oldStyle|fx||new|left||top|OpenClose|if|interfaceFX|custom|type|return|close|vertically|queue|horizontally|open|eh|et||display|position||else|get|direction|px|restoreStyle|none|overflow|complete|height|width|oldVisibility|parseInt|false|var|typeof|null|visibility|hide|case|break|show|dequeue|relative|OpenHorizontally|fxCheckTag|OpenVertically|extend|fn|CloseVertically|CloseHorizontally|SwitchVertically||SwitchHorizontally|switch|string|true|getSize|hidden|absolute|iUtil'.split('|'),0,{}))
+
+/**
+ * Applies an open/close animation to element
+ */
+jQuery.fn.extend(
+	{
+		/**
+		 * @name CloseVertically
+		 * @description closes the element vertically
+		 * @param Mixed speed animation speed, integer for miliseconds, string ['slow' | 'normal' | 'fast']
+		 * @param Function callback (optional) A function to be executed whenever the animation completes.
+		 * @param String easing (optional) The name of the easing effect that you want to use.
+		 * @type jQuery
+		 * @cat Plugins/Interface
+		 * @author Stefan Petre
+		 */
+		CloseVertically : function (speed, callback, easing) {
+			return this.queue('interfaceFX', function(){
+				new jQuery.fx.OpenClose(this, speed, callback, 'vertically', 'close', easing);
+			});
+		},
+		
+		/**
+		 * @name CloseHorizontally
+		 * @description closes the element horizontally
+		 * @param Mixed speed animation speed, integer for miliseconds, string ['slow' | 'normal' | 'fast']
+		 * @param Function callback (optional) A function to be executed whenever the animation completes.
+		 * @param String easing (optional) The name of the easing effect that you want to use.
+		 * @type jQuery
+		 * @cat Plugins/Interface
+		 * @author Stefan Petre
+		 */
+		CloseHorizontally : function (speed, callback, easing) {
+			return this.queue('interfaceFX', function(){
+				new jQuery.fx.OpenClose(this, speed, callback, 'horizontally', 'close', easing);
+			});
+		},
+		
+		/**
+		 * @name SwitchHorizontally
+		 * @description opens/closes the element horizontally
+		 * @param Mixed speed animation speed, integer for miliseconds, string ['slow' | 'normal' | 'fast']
+		 * @param Function callback (optional) A function to be executed whenever the animation completes.
+		 * @param String easing (optional) The name of the easing effect that you want to use.
+		 * @type jQuery
+		 * @cat Plugins/Interface
+		 * @author Stefan Petre
+		 */
+		SwitchHorizontally : function (speed, callback, easing) 
+		{
+			return this.queue('interfaceFX', function(){
+				if (jQuery.css(this, 'display') == 'none') {
+					new jQuery.fx.OpenClose(this, speed, callback, 'horizontally', 'open', easing);
+				} else {
+					new jQuery.fx.OpenClose(this, speed, callback, 'horizontally', 'close', easing);
+				}
+			});
+		},
+		
+		/**
+		 * @name SwitchVertically
+		 * @description opens/closes the element vertically
+		 * @param Mixed speed animation speed, integer for miliseconds, string ['slow' | 'normal' | 'fast']
+		 * @param Function callback (optional) A function to be executed whenever the animation completes.
+		 * @param String easing (optional) The name of the easing effect that you want to use.
+		 * @type jQuery
+		 * @cat Plugins/Interface
+		 * @author Stefan Petre
+		 */
+		SwitchVertically : function (speed, callback, easing) 
+		{
+			return this.queue('interfaceFX', function(){
+				if (jQuery.css(this, 'display') == 'none') {
+					new jQuery.fx.OpenClose(this, speed, callback, 'vertically', 'open', easing);
+				} else {
+					new jQuery.fx.OpenClose(this, speed, callback, 'vertically', 'close', easing);
+				}
+			});
+		},
+		
+		/**
+		 * @name OpenVertically
+		 * @description opens the element vertically
+		 * @param Mixed speed animation speed, integer for miliseconds, string ['slow' | 'normal' | 'fast']
+		 * @param Function callback (optional) A function to be executed whenever the animation completes.
+		 * @param String easing (optional) The name of the easing effect that you want to use.
+		 * @type jQuery
+		 * @cat Plugins/Interface
+		 * @author Stefan Petre
+		 */
+		OpenVertically : function (speed, callback, easing) {
+			return this.queue('interfaceFX', function(){
+				new jQuery.fx.OpenClose(this, speed, callback, 'vertically', 'open', easing);
+			});
+		},
+		
+		/**
+		 * @name OpenHorizontally
+		 * @description opens the element horizontally
+		 * @param Mixed speed animation speed, integer for miliseconds, string ['slow' | 'normal' | 'fast']
+		 * @param Function callback (optional) A function to be executed whenever the animation completes.
+		 * @param String easing (optional) The name of the easing effect that you want to use.
+		 * @type jQuery
+		 * @cat Plugins/Interface
+		 * @author Stefan Petre
+		 */
+		OpenHorizontally : function (speed, callback, easing) {
+			return this.queue('interfaceFX', function(){
+				new jQuery.fx.OpenClose(this, speed, callback, 'horizontally', 'open', easing);
+			});
+		}
+	}
+);
+
+jQuery.fx.OpenClose = function (e, speed, callback, direction, type, easing)
+{
+	if (!jQuery.fxCheckTag(e)) {
+		jQuery.dequeue(e, 'interfaceFX');
+		return false;
+	}
+	var z = this;
+	var restoreStyle = false;
+	z.el = jQuery(e);
+	z.easing = typeof callback == 'string' ? callback : easing||null;
+	z.callback = typeof callback == 'function' ? callback : null;
+	z.type = type;
+	z.speed = speed;
+	z.oldP = jQuery.iUtil.getSize(e);
+	z.oldStyle = {};
+	z.oldStyle.position = z.el.css('position');
+	z.oldStyle.display = z.el.css('display');
+	if (z.oldStyle.display == 'none') {
+		oldVisibility = z.el.css('visibility');
+		z.el.show();
+		restoreStyle = true;
+	}
+	z.oldStyle.top = z.el.css('top');
+	z.oldStyle.left = z.el.css('left');
+	if (restoreStyle) {
+		z.el.hide();
+		z.el.css('visibility', oldVisibility);
+	}
+	z.oldStyle.width = z.oldP.w + 'px';
+	z.oldStyle.height = z.oldP.h + 'px';
+	z.oldStyle.overflow = z.el.css('overflow');
+	z.oldP.top = parseInt(z.oldStyle.top)||0;
+	z.oldP.left = parseInt(z.oldStyle.left)||0;
+	//z.el.show();
+	
+	if (z.oldStyle.position != 'relative' && z.oldStyle.position != 'absolute') {
+		z.el.css('position', 'relative');
+	}
+	z.el.css('overflow', 'hidden')
+		.css('height', type == 'open' && direction == 'vertically' ? 1 : z.oldP.h + 'px')
+		.css('width', type == 'open' && direction == 'horizontally' ? 1 : z.oldP.w + 'px');
+	
+	z.complete = function()
+	{
+		z.el.css(z.oldStyle);
+		if (z.type == 'close')
+			z.el.hide();
+		else 
+			z.el.show();
+		jQuery.dequeue(z.el.get(0), 'interfaceFX');
+	};
+	
+	switch (direction) {
+		case 'vertically':
+			z.eh = new jQuery.fx(
+				z.el.get(0),
+				jQuery.speed(speed-15, z.easing, callback),
+				'height'
+			);
+			z.et = new jQuery.fx(
+				z.el.get(0),
+				jQuery.speed(
+					z.speed,
+					z.easing,
+					z.complete
+				),
+				'top'
+			);
+			if (z.type == 'close') {
+				z.eh.custom(z.oldP.h,0);
+				z.et.custom(z.oldP.top, z.oldP.top + z.oldP.h/2);
+			} else {
+				z.eh.custom(0, z.oldP.h);
+				z.et.custom(z.oldP.top + z.oldP.h/2, z.oldP.top);
+			}
+		break;
+		case 'horizontally':
+			z.eh = new jQuery.fx(
+				z.el.get(0),
+				jQuery.speed(speed-15, z.easing, callback),
+				'width'
+			);
+			z.et = new jQuery.fx(
+				z.el.get(0),
+				jQuery.speed(
+					z.speed,
+					z.easing,
+					z.complete
+				),
+				'left'
+			);
+			if (z.type == 'close') {
+				z.eh.custom(z.oldP.w,0);
+				z.et.custom(z.oldP.left, z.oldP.left + z.oldP.w/2);
+			} else {
+				z.eh.custom(0, z.oldP.w);
+				z.et.custom(z.oldP.left + z.oldP.w/2, z.oldP.left);
+			}
+		break;
+	}
+};
