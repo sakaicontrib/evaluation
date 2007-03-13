@@ -95,7 +95,7 @@
 				<option value="3">3</option>		
 			</select>
 			<div rsf:id="showCB:">
-            	<input type="checkbox" rsf:id="blockCheckBox" value="" checked=""/>
+            	<input type="checkbox" rsf:id="blockCheckBox" value="" checked="" onclick="countCheckBox();"/>
             </div>
 			</td>
 			<td width="15%" class="borderLeft" style="font-weight:bold;">
@@ -147,7 +147,7 @@
 
 <form rsf:id="createBlockForm" name="create_block_form" method="get" target="_self" action="modify_block.html">
 	<input type="hidden" name="templateItemIds"/>
-	<input rsf:id="createBlockBtn" name="createBlockBtn"  type="submit" value="Create Block" 
+	<input rsf:id="createBlockBtn" name="create_block_btn" id="createBlockBtn" type="submit" value="Create Block" disabled="true"
 		onclick="javascript: return extractSelectedItems(this);"/>
 </form>
 
