@@ -106,7 +106,7 @@ public class TemplateBBean {
 	// Current Jquery implementation is only working as a result of auto-commit
 	// bug in DAO wrapper implementation.
 	public void saveReorder() { 
-		log.debug("save items reordering");
+		log.info("save items reordering");
 		Map delivered = templateItemBeanLocator.getDeliveredBeans();
 		List l = itemsLogic.getTemplateItemsForTemplate(templateId, null);
 		List ordered = TemplateItemUtils.getNonChildItems(l);

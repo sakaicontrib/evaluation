@@ -7,67 +7,17 @@
     <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
     <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
     <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
-    <script type="text/javascript" language="JavaScript" src="../js/selectLink.js"></script>
-	<script type="text/javascript" language="JavaScript" src="../js/blockUtils.js"></script>
+
 	<script type="text/javascript" language="JavaScript" src="../js/jquery/jquery.js"></script>
 	<script type="text/javascript" language="JavaScript" src="../js/jquery/form.js"></script>
 	<script type="text/javascript" language="JavaScript" src="../js/jquery/interface/iutil.js"></script>
 	<script type="text/javascript" language="JavaScript" src="../js/jquery/interface/idrag.js"></script>
 	<script type="text/javascript" language="JavaScript" src="../js/jquery/interface/idrop.js"></script>
 	<script type="text/javascript" language="JavaScript" src="../js/jquery/interface/isortables.js"></script>
-	
-	<script type="text/javascript" language="JavaScript">
-		
-		var savedList = null;
-		
-		function saveOrder(form) {
-			
-			disableOrderButtons();
-			
-			savedList = new Array();
-			
-			$("ol.itemList > li").each(
-				function(item) {
-					savedList.push(this);
-				}
-			);
-			
-			$(form).ajaxSubmit();
-			
-		}
-		
-		function revertOrder() {
-			
-			disableOrderButtons();
-			
-			// iterate through savedList
-				// 1. find savedList[i] in itemList (in the DOM)
-				// 2. remove item
-				// 3. append to bottom of list
-			
-			savedList.indexOf(','); // ie hack
-			
-			for (i in savedList) {
-				if (i != "indexOf") { // ie hack
-					document.getElementById(savedList[i].id + "item-num").firstChild.data = new String(parseInt(i) + 1);
-					$(savedList[i]).remove().appendTo("div#itemTable > ol#itemList");
-				}
-			}
-			
-		}
-		
-		function enableOrderButtons() {
-			document.getElementById("revertOrderButton").disabled = false;
-			document.getElementById("saveReorderButton").disabled = false;
-		}
-		
-		function disableOrderButtons() {
-			document.getElementById("revertOrderButton").disabled = true;
-			document.getElementById("saveReorderButton").disabled = true;
-		}
-		
-	</script>
-	
+
+	<script type="text/javascript" language="JavaScript" src="../js/blockUtils.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../js/selectLink.js"></script>
+	<script type="text/javascript" language="JavaScript" src="../js/reorderUtils.js"></script>
 </head>
 
 <body>
@@ -143,12 +93,86 @@
 </div>
 
 <form rsf:id="modifyFormRows" name="modify_form_rows" method="post">
+<input rsf:id="hiddenBtn" type="submit" id="hiddenBtn" style="display:none;" />
 
-<input type="button" disabled="true" value="Revert Order" id="revertOrderButton" onclick="revertOrder();" />
-<input type="submit" disabled="true" value="Save Order" id="saveReorderButton" rsf:id="saveReorderButton" onclick="saveOrder(this.form); return false;" />
+<div style="width:98%;">
+	<span style="float:left;">
+		<input rsf:id="revertOrderButton" type="button" disabled="true" value="Revert Order" id="revertOrderButton" />
+		<input rsf:id="saveReorderButton" type="submit" disabled="true" value="Save Order" id="saveReorderButton" />
+	</span>
+	<span rsf:id="orderingInstructions" style="float:right;" class="instructions">
+		Drag the items to reorder them and click save to set the new order or use the pulldowns to reorder a single item
+	</span>
+	<div class="cleaner">&nbsp;</div>
+</div>
 
 <div id="itemTable">
 	<ol id="itemList" class="itemList">
+
+		<li rsf:id="item-row:" class="itemRow" id="item-row::0:">
+			<input rsf:id="hidden-item-num" type="hidden" name="hidden-item-num" value="0" id="item-row::0:hidden-item-num" />
+			<div class="itemLine">
+				<label rsf:id="block-check-branch" class="itemCheckbox" for="cb0">
+					<input rsf:id="block-checkbox" type="checkbox" onclick="javascript: countCheckBox();" 
+						title="Mark item to use in block" id="cb0" />&nbsp;
+				</label>
+				<span class="itemType">
+					<span rsf:id="item-classification" class="itemClassification">Item Classification</span>
+					<span rsf:id="scale-display" class="scaleDisplay">- Scale Display Setting</span>
+				</span>
+				<span class="itemLink">
+					<a rsf:id="remove-row-item" href="remove_question.html">Remove</a>
+				</span>
+				<span class="itemLink">
+					<a rsf:id="modify-row-item" href="modify_scaled.html">Modify</a>
+				</span>
+				<span class="itemLink">
+					<a rsf:id="preview-row-item" href="preview_item.html" target="_blank">Preview</a>
+				</span>
+				<div class="cleaner">&nbsp;</div>
+			</div>
+
+			<div class="itemLine2">
+				<label class="itemNum" for="item-row::0:item-select-selection">
+					<select rsf:id="item-select" id="item-row::0:item-select-selection" class="selectReorder">
+						<option value="1" selected="selected">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>		
+					</select>
+					<span rsf:id="item-num" id="item-row::0:item-num">1</span>.&nbsp;
+				</label>
+				<span class="itemText">
+					<span rsf:id="item-text">Item Text - Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Vivamus in pede in ligula bibendum tincidunt. Quisque in dui a tellus ultricies posuere.</span>
+				</span>
+				<span class="scaleDesc">
+					<span rsf:id="scale-type" style="white-space:nowrap;">Scale Type</span>
+					&nbsp;
+					<span rsf:id="item-na" style="font-weight:bold;">N/A</span>
+				</span>
+				<div class="cleaner">&nbsp;</div>
+			</div>
+
+			<div rsf:id="block-children:" class="itemLine3">
+				<div rsf:id="child-item:" style="margin-left:2em;">
+					<span style="font-weight:bold;">
+						<span rsf:id="child-item-num">1</span>.
+					</span>
+					<span rsf:id="child-item-text">Child Item Text - Lorem ipsum dolor sit amet</span>
+				</div>
+				<div rsf:id="child-item:" style="margin-left:2em;">
+					<span style="font-weight:bold;">
+						<span rsf:id="child-item-num">2</span>.
+					</span>
+					<span rsf:id="child-item-text">Child Item Text - Lorem ipsum dolor sit amet</span>
+				</div>
+				<div rsf:id="child-item:" style="margin-left:2em;">
+					<span style="font-weight:bold;">
+						<span rsf:id="child-item-num">3</span>.
+					</span>
+					<span rsf:id="child-item-text">Child Item Text - Lorem ipsum dolor sit amet</span>
+				</div>
+			</div>
+		</li>
 
 		<li rsf:id="item-row:" class="itemRow" id="item-row::1:">
 			<input rsf:id="hidden-item-num" type="hidden" name="hidden-item-num" value="1" id="item-row::1:hidden-item-num" />
@@ -174,7 +198,14 @@
 			</div>
 
 			<div class="itemLine2">
-				<span class="itemNum"><span rsf:id="item-num" id="item-row::1:item-num">1</span>.&nbsp;</span>
+				<label class="itemNum" for="item-row::1:item-select-selection">
+					<select rsf:id="item-select" id="item-row::1:item-select-selection" class="selectReorder">
+						<option value="1">1</option>
+						<option value="2" selected="selected">2</option>
+						<option value="3">3</option>		
+					</select>
+					<span rsf:id="item-num" id="item-row::1:item-num">2</span>.&nbsp;
+				</label>
 				<span class="itemText">
 					<span rsf:id="item-text">Item Text - Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Vivamus in pede in ligula bibendum tincidunt. Quisque in dui a tellus ultricies posuere.</span>
 				</span>
@@ -232,7 +263,14 @@
 			</div>
 
 			<div class="itemLine2">
-				<span class="itemNum"><span rsf:id="item-num" id="item-row::2:item-num">2</span>.&nbsp;</span>
+				<label class="itemNum" for="item-row::2:item-select-selection">
+					<select rsf:id="item-select" id="item-row::2:item-select-selection" class="selectReorder">
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3" selected="selected">3</option>		
+					</select>
+					<span rsf:id="item-num" id="item-row::2:item-num">3</span>.&nbsp;
+				</label>
 				<span class="itemText">
 					<span rsf:id="item-text">Item Text - Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Vivamus in pede in ligula bibendum tincidunt. Quisque in dui a tellus ultricies posuere.</span>
 				</span>
@@ -246,114 +284,29 @@
 		</li>
 
 	</ol>
+
 </div>
 
-<script type="text/javascript">
-	$(document).ready(
-		function () {
-			$("ol.itemList").Sortable(
-				{
-					accept: 		"itemRow",
-					activeclass: 	"sortableactive",
-					axis:			"vertically",
-					hoverclass: 	"sortablehover",
-					helperclass: 	"sorthelper",
-					onchange:		function(data) {
-										var list = data[0].o.itemList;
-										list.indexOf(','); // ie hack
-										for (i in list) {
-											if (i != "indexOf") { // ie hack
-												document.getElementById(list[i] + "item-num").firstChild.data = new String(parseInt(i) + 1);
-												document.getElementById(list[i] + "hidden-item-num").value = i;
-											}
-										}
-										enableOrderButtons();
-									},
-					opacity: 		0.5,
-					tolerance:		"intersect"
-				}
-			);
-
-			savedList = new Array();
-
-			$("ol.itemList > li").each(
-				function(item) {
-					savedList.push(this);
-				}
-			);
-		}
-	);
-</script>
-
 </form>
-
-<!--
-<form rsf:id="modifyFormRows" name="modify_form_rows" method="post">
-<input type="submit" rsf:id="hiddenBtn" id="hiddenBtn" style="visibility:hidden;"/>
-	<table width="83%" style="border-collapse: collapse;">
-		<tr rsf:id="itemrow:header" id="itemrow:header:0">		
-			<td width="15%" class="borderLeft" colspan="2">
-            <b><span rsf:id="item-num-header">Item:</span></b> 
-  			  <select rsf:id="itemNum" id="itemrow:header:0:itemNum-selection">
-				<option value="1">1</option>
-				<option value="2">2</option>
-				<option value="3">3</option>		
-			</select>
-			<div rsf:id="showCB:">
-            	<input type="checkbox" rsf:id="blockCheckBox" value="" checked="" onclick="countCheckBox();"/>
-            </div>
-			</td>
-			<td width="15%" class="borderLeft" style="font-weight:bold;">
-				<label rsf:id="itemClassificationLabel" style="font-weight:bold;">Scale/Survey</label> 
-				<label rsf:id="scaleDisplaySetting" style="font-weight:bold;">Compact-Colored</label>		
-			</td>
-			<td width="10%" class="borderMid">&nbsp;
-			</td>
-			<td width="10%" class="borderLeft">
-				<a href="preview-item.html" rsf:id="preview_row_item" target="_blank">Preview</a>
-			</td>
-			<td width="10%" class="borderLeft">
-				<a href="modify_essay.html" rsf:id="modify_row_item">Modify</a>
-			</td>
-			<td width="10%" class="borderRight">
-				<a href="remove_question.html" rsf:id="remove_row_item">Remove</a>
-			</td>		
-		</tr>
-		
-		<tr rsf:id="itemrow:text">
-			<td width="3%" valign="top"><label rsf:id="queNo" style="font-weight:bold;">#</label><b>.</b>&nbsp;</td>
-			<td rsf:id="itemText" colspan="3" valign="top" width="67%">########</td>
-			<td align="center" valign="top" colspan="2" style="font-weight:bold;" width="20%">
-				<label rsf:id="scaleType">Agree disagree scale</label>
-			</td>
-			<td align="right" width="10%" valign="top">
-			<div rsf:id="showNA:">
-				<input type="radio" rsf:id="itemNA" /><span rsf:id="na-desc">N/A</span>
-			</div>
-			</td>		
-		</tr>
-		
-		<tr rsf:id="itemrow:blockItems">
-			<td width="3%">&nbsp;</td>
-			<td colspan="6">&nbsp;&nbsp;&nbsp;
-				<label rsf:id="childItemId" style="font-weight:bold;">#</label>.&nbsp;
-				<label rsf:id="childItemText">###</label>
-			</td>
-		</tr>
-	</table>
 
 <script rsf:id="decorateSelects">
-  EvalSystem.decorateReorderSelects("", 1);
-</script>	
+EvalSystem.decorateReorderSelects("", 1);
+</script>
 
-</form>
--->
 
-<form rsf:id="createBlockForm" name="create_block_form" method="get" target="_self" action="modify_block.html">
-	<input type="hidden" name="templateItemIds"/>
-	<input rsf:id="createBlockBtn" name="create_block_btn" id="createBlockBtn" type="submit" value="Create Block" disabled="true"
-		onclick="javascript: return extractSelectedItems(this);" style="background-color:#AACCFF;" />
-</form>
+<div style="width:98%;">
+	<div style="float:left;">
+		<form rsf:id="createBlockForm" name="create_block_form" method="get" target="_self" action="modify_block.html">
+			<input type="hidden" name="templateItemIds"/>
+			<input rsf:id="createBlockBtn" name="create_block_btn" id="createBlockBtn" type="submit" value="Create Block" disabled="true"
+				onclick="javascript: return extractSelectedItems(this);" style="background-color:#AACCFF;" />
+		</form>
+	</div>
+	<span rsf:id="blockInstructions" style="float:right;" class="instructions">
+		Check the boxes next to a set of items and click Create Block to make a block with the chosen items
+	</span>
+	<div class="cleaner">&nbsp;</div>
+</div>
 
 </div>
 </body>
