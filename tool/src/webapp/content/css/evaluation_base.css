@@ -7,65 +7,99 @@
 }
 
 form {
-	margin:0px;
+	margin: 0;
+	display: inline;
 }
 
+.oddrow {
+	background-color: #E1E1E1;
+}
+
+.cleaner {
+	clear:both;
+	height:1px;
+	font-size:1px;
+	border:none;
+	margin:0; padding:0;
+	background:transparent;
+}
+
+/**
+ * Styles for the drag and drop
+ */
 DIV#itemTable {
-	width: 85%;
-	margin-top: 12px;
-	margin-bottom: 12px;
+	width: 98%;
+	margin: 10px 6px;
 }
 
 OL.itemList {
 	list-style-type: none;
 	marker-offset: 0;
+	margin: 0;
+	padding: 0;
 }
 
 LI.itemRow {
 	width: 100%;
+	padding: 0;
+	margin: 0.2em;
+	border:2px solid #999999;
 }
 
-TD.itemNumCell {
-	width: 5%;
-	padding-left: 1%;
-	padding-right: 1%;
-	text-align: right;
+DIV.itemLine {
+	clear: left;
+	border-bottom: 2px solid #AAAAAA;
 }
 
-LABEL.itemNum {
-	text-align: right;
-	font-weight: bold;
-}
-
-SPAN.itemDesc {
-	width: 64%;
-	float: left;
-	text-align: center;
-}
-
-SPAN.itemLink {
-	width: 12%;
-	float: left;
-	text-align: center;
-}
-
-DIV.itemSecondLine {
+DIV.itemLine2 {
 	clear: left;
 }
 
-SPAN.itemText {
-	width: 65%;
-	float: left;
+DIV.itemLine3 {
+	clear: left;
+	border-top: 2px dashed #AAAAAA;
 }
 
-LABEL.childItemNum {
+LABEL.itemCheckbox {
+	float: left;
+	background-color:#AACCFF;
+}
+
+SPAN.itemType {
+	float: left;
+	text-align: left;
+	padding: 0 0.2em;
+}
+
+SPAN.itemLink {
+	width: 6%;
+	float: right;
+	text-align: center;
+	padding: 0 0.2em;
+	border-left:1px solid black;
+}
+
+SPAN.itemNum {
+	float: left;
+	text-align: left;
 	font-weight: bold;
+	padding: 0 0.3em;
+}
+
+SPAN.itemText {
+	float: left;
+	text-align: left;
+	width: 65%;
 }
 
 SPAN.scaleDesc {
-	width: 35%;
-	float: left;
+	width: 25%;
+	float: right;
+	text-align: right;
+	padding: 0 0.2em;
 }
+
+
 
 table.sample {
 	border-width: 1px 1px 1px 1px;

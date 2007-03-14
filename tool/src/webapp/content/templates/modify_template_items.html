@@ -69,75 +69,74 @@
 <body>
 <div class="portletBody">
 
-	<div class="navIntraTool">
-		<a rsf:id="administrate-toplink" href="administrate.html">Administrate</a>
-		<a rsf:id="summary-toplink" href="summary.html">Summary</a>
-	</div>
+<div class="navIntraTool"><a rsf:id="administrate-toplink"
+	href="administrate.html">Administrate</a> <a rsf:id="summary-toplink"
+	href="summary.html">Summary</a></div>
 
-	<div>
+<div>
 	<ul class="breadCrumb">
 		<li class="breadCrumb"><a rsf:id="summary-toplink" href="summary.html">Summary</a></li>
-		<li class="breadCrumb" rsf:id="modify-template-title">Modify Template</li>				
+		<li class="breadCrumb" rsf:id="modify-template-title">Modify Template</li>
 	</ul>
-	</div>
-<form rsf:id="modifyForm" name="modify_template_items_form">
-<table width="85%" cellpadding="0" cellspacing="0">
-<tr>
-	<td colspan="2">		
-		<a href="preview_eval.html" rsf:id="preview_eval_link" target="_blank">View a preview</a>
-		<span rsf:id="preview-eval-desc"> of this template as an evaluation</span>
-	</td>
-	<td>&nbsp;</td>
-	<td align="right"><b><span rsf:id="add-item-note">Add Item:</span></b>
-	<select id="itemClassification-selection" rsf:id="itemClassification">
-	  <option value="#URL-1">Scaled/Survey</option>
-      <option value="#URL-2" selected="selected">Short Answer/Essay</option>
-      <option value="#URL-3">Text Header</option>
-      <option value="#URL-4">Question Block</option>
-      <option value="#URL-5">Expert</option>
-	</select>
-    <!--  TODO!! Add Javascript to onclick to navigate to selected value -->
-	<input rsf:id="add_questions" type="button" value="Add" 
-       onclick="EvalSystem.operateSelectLink(this.id, 'itemClassification-selection')"/>
-	</td>
-</tr>
- <tr>
-	<td colspan="2" align="left">
-		<a href="#" rsf:id="begin_eval_link">Begin an evaluation using this template</a>
-		<span rsf:id="begin-eval-dummylink">Begin an evaluation using this template</span>
-	</td>	
+</div>
 
-	<td>&nbsp;</td>
-	<td align="right" style="font-weight:bold;">
-  	<span rsf:id="univ-level-header">University Level - </span>
-  	<span rsf:id="itemCount">#</span>
-  	<span rsf:id="existing-items"> existing items</span></td>
-</tr> 
-<tr>
-	<td colspan="2"><b><label rsf:id="template-title-header">Template Title: </label></b>
-  <span rsf:id="title">Title</span></td>
-	<td>&nbsp;</td>
-	<td align="right"><a href="#" rsf:id="modify_title_desc_link">Modify Template Title/Description</a></td>
-</tr>
-<tr rsf:id="description-switch:">
-	<td colspan="4"><b><label rsf:id="description-header">Description:  </label></b>
-   <div style="display:inline" rsf:id="description">Template description goes here, this would be notes for other admins or yourself</div>
-   </td>
-</tr>  
-</table>
+<div style="border:2px solid black; padding:4px; margin:8px;">
+	<table width="100%" cellpadding="4" cellspacing="0">
+		<tr>
+			<td align="left">
+				<a rsf:id="preview_eval_link" href="preview_eval.html" target="_blank">View a preview</a>
+				<span rsf:id="preview-eval-desc"> of this template as an evaluation</span>
+			</td>
+			<td align="right">
+				<span rsf:id="add-item-note" style="font-weight:bold;">Add Item:</span>
+				<form rsf:id="modifyForm" name="modify_template_items_form">
+					<select rsf:id="itemClassification"	id="itemClassification-selection">
+						<option value="#URL-1" selected="selected">Scaled/Survey</option>
+						<option value="#URL-2">Short Answer/Essay</option>
+						<option value="#URL-3">Text Header</option>
+						<option value="#URL-4">Question Block</option>
+						<option value="#URL-5">Expert</option>
+					</select>
+					<!--  TODO!! Add Javascript to onclick to navigate to selected value -->
+					<input rsf:id="add_questions" type="button" value="Add"
+						onclick="EvalSystem.operateSelectLink(this.id, 'itemClassification-selection')" />
+				</form>
+			</td>
+		</tr>
 
-</form>
+		<tr>
+			<td align="left">
+				<a href="evaluation_start.html" rsf:id="begin_eval_link">Begin an evaluation using this template</a>
+				<span rsf:id="begin-eval-dummylink" style="color:gray;"></span>
+			</td>
+			<td align="right">
+				<span rsf:id="level-header">Current Level - # existing items</span>
+			</td>
+		</tr>
 
-<br/>
+		<tr>
+			<td align="left">
+				<span rsf:id="template-title-header" style="font-weight:bold;">Template Title:</span>
+				<span rsf:id="title">Title</span>
+			</td>
+			<td align="right">
+				<a href="modify_template.html" rsf:id="modify_title_desc_link">Modify Template Title/Description</a>
+			</td>
+		</tr>
 
-<table width="85%" class="sample" cellspacing="0" cellpadding="0">
-<tr>
-	<td align="left"><span rsf:id="eval-sample">Evaluation: Evaluation title here</span></td>
-	<td align="right"><span rsf:id="course-sample">Course: Course title here</span></td>
-</tr>
-</table>
-
-<br/>
+		<tr rsf:id="description-switch:">
+			<td colspan="2">
+				<span rsf:id="description-header" style="font-weight:bold;">Description:</span>
+				<span rsf:id="description">Template description goes here, this would be notes for other admins or yourself,
+				Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Vivamus in pede in ligula bibendum tincidunt. 
+				Quisque in dui a tellus ultricies posuere. Donec consectetuer, nunc quis luctus dignissim, velit purus 
+				consequat eros, eu euismod nibh justo ac purus. Ut sed justo. Cras aliquet massa ut lacus. Vestibulum 
+				feugiat vehicula pede. Morbi rhoncus quam in elit. Etiam egestas, metus a volutpat lobortis, erat dui 
+				laoreet libero, nec pulvinar sem mi ac felis.</span>
+			</td>
+		</tr>
+	</table>
+</div>
 
 <form rsf:id="modifyFormRows" name="modify_form_rows" method="post">
 
@@ -146,70 +145,108 @@
 
 <div id="itemTable">
 	<ol id="itemList" class="itemList">
-		<li class="itemRow" id="item-row:" rsf:id="item-row:">
-			
-			<table width="100%">
-				<tr>
-					
-					<td width="5%" class="itemNumCell">
-						<span rsf:id="showCB:"><input type="checkbox" rsf:id="blockCheckBox" value="" checked="" onclick="countCheckBox();" /></span>
-						<label class="itemNum" id="item-num" rsf:id="item-num">Item Num</label><label>.</label>
-					</td>
-					
-					<td>
-						<table width="95%" border="1">
-							<tr>
-								<td>
-									
-									<div class="itemFirstLine">
-										<input type="hidden" name="hidden-item-num" value="#" id="hidden-item-num" rsf:id="hidden-item-num" />
-										<span class="itemDesc">
-											<label class="itemClassification" id="item-classification" rsf:id="item-classification">Item Classification</label>
-											<label class="scaleDisplay" id="scale-display" rsf:id="scale-display">Scale Display</label>
-										</span>
-										<span class="itemLink">
-											<a href="#" rsf:id="preview-row-item" target="_blank">Preview</a>
-										</span>
-										<span class="itemLink">
-											<a href="#" rsf:id="modify-row-item">Modify</a>
-										</span>
-										<span class="itemLink">
-											<a href="#" rsf:id="remove-row-item">Remove</a>
-										</span>
-									</div>
-									
-									<div class="itemSecondLine">
-										<span class="itemText">
-											<label class="itemText" id="item-text" rsf:id="item-text">Item Text</label>
-											<span class="blockItem" id="block-item:" rsf:id="block-item:">
-												<br />
-												<span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
-												<label class="childItemNum" id="child-item-num" rsf:id="child-item-num">Child Item Num</label>.
-												<label class="childItemText" id="child-item-text" rsf:id="child-item-text">Child Item Text</label>
-											</span>
-										</span>
-										<span class="scaleDesc">
-											<label class="scaleType" id="scale-type" rsf:id="scale-type">Scale Type</label>
-											<label class="itemNA" id="item-na" rsf:id="item-na">N/A</label>
-										</span>
-									</div>
-									
-								</td>
-							</tr>
-						</table>
-					</td>
 
-				</tr>
-			</table>
-			
+		<li rsf:id="item-row:" class="itemRow" id="item-row::1:">
+			<input rsf:id="hidden-item-num" type="hidden" name="hidden-item-num" value="1" id="item-row::1:hidden-item-num" />
+			<div class="itemLine">
+				<label rsf:id="block-check-branch" class="itemCheckbox" for="cb1">
+					<input rsf:id="block-checkbox" type="checkbox" onclick="javascript: countCheckBox();" 
+						title="Mark item to use in block" id="cb1" />&nbsp;
+				</label>
+				<span class="itemType">
+					<span rsf:id="item-classification" class="itemClassification">Item Classification</span>
+					<span rsf:id="scale-display" class="scaleDisplay">- Scale Display Setting</span>
+				</span>
+				<span class="itemLink">
+					<a rsf:id="remove-row-item" href="remove_question.html">Remove</a>
+				</span>
+				<span class="itemLink">
+					<a rsf:id="modify-row-item" href="modify_scaled.html">Modify</a>
+				</span>
+				<span class="itemLink">
+					<a rsf:id="preview-row-item" href="preview_item.html" target="_blank">Preview</a>
+				</span>
+				<div class="cleaner">&nbsp;</div>
+			</div>
+
+			<div class="itemLine2">
+				<span class="itemNum"><span rsf:id="item-num" id="item-row::1:item-num">1</span>.&nbsp;</span>
+				<span class="itemText">
+					<span rsf:id="item-text">Item Text - Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Vivamus in pede in ligula bibendum tincidunt. Quisque in dui a tellus ultricies posuere.</span>
+				</span>
+				<span class="scaleDesc">
+					<span rsf:id="scale-type" style="white-space:nowrap;">Scale Type</span>
+					&nbsp;
+					<span rsf:id="item-na" style="font-weight:bold;">N/A</span>
+				</span>
+				<div class="cleaner">&nbsp;</div>
+			</div>
+
+			<div rsf:id="block-children:" class="itemLine3">
+				<div rsf:id="child-item:" style="margin-left:2em;">
+					<span style="font-weight:bold;">
+						<span rsf:id="child-item-num">1</span>.
+					</span>
+					<span rsf:id="child-item-text">Child Item Text - Lorem ipsum dolor sit amet</span>
+				</div>
+				<div rsf:id="child-item:" style="margin-left:2em;">
+					<span style="font-weight:bold;">
+						<span rsf:id="child-item-num">2</span>.
+					</span>
+					<span rsf:id="child-item-text">Child Item Text - Lorem ipsum dolor sit amet</span>
+				</div>
+				<div rsf:id="child-item:" style="margin-left:2em;">
+					<span style="font-weight:bold;">
+						<span rsf:id="child-item-num">3</span>.
+					</span>
+					<span rsf:id="child-item-text">Child Item Text - Lorem ipsum dolor sit amet</span>
+				</div>
+			</div>
 		</li>
+
+		<li rsf:id="item-row:" class="itemRow" id="item-row::2:">
+			<input rsf:id="hidden-item-num" type="hidden" name="hidden-item-num" value="2" id="item-row::2:hidden-item-num" />
+			<div class="itemLine">
+				<label rsf:id="block-check-branch" class="itemCheckbox" for="cb2">
+					<input rsf:id="block-checkbox" type="checkbox" onclick="javascript: countCheckBox();" 
+						title="Mark item to use in block" id="cb2" />&nbsp;
+				</label>
+				<span class="itemType">
+					<span rsf:id="item-classification" class="itemClassification">Item Classification</span>
+					<span rsf:id="scale-display" class="scaleDisplay">- Scale Display Setting</span>
+				</span>
+				<span class="itemLink">
+					<a rsf:id="remove-row-item" href="remove_question.html">Remove</a>
+				</span>
+				<span class="itemLink">
+					<a rsf:id="modify-row-item" href="modify_scaled.html">Modify</a>
+				</span>
+				<span class="itemLink">
+					<a rsf:id="preview-row-item" href="preview_item.html" target="_blank">Preview</a>
+				</span>
+				<div class="cleaner">&nbsp;</div>
+			</div>
+
+			<div class="itemLine2">
+				<span class="itemNum"><span rsf:id="item-num" id="item-row::2:item-num">2</span>.&nbsp;</span>
+				<span class="itemText">
+					<span rsf:id="item-text">Item Text - Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Vivamus in pede in ligula bibendum tincidunt. Quisque in dui a tellus ultricies posuere.</span>
+				</span>
+				<span class="scaleDesc">
+					<span rsf:id="scale-type" style="white-space:nowrap;">Scale Type</span>
+					&nbsp;
+					<span rsf:id="item-na" style="font-weight:bold;">N/A</span>
+				</span>
+				<div class="cleaner">&nbsp;</div>
+			</div>
+		</li>
+
 	</ol>
 </div>
 
 <script type="text/javascript">
 	$(document).ready(
 		function () {
-			
 			$("ol.itemList").Sortable(
 				{
 					accept: 		"itemRow",
@@ -229,15 +266,14 @@
 					tolerance:		"intersect"
 				}
 			);
-			
+
 			savedList = new Array();
-			
+
 			$("ol.itemList > li").each(
 				function(item) {
 					savedList.push(this);
 				}
 			);
-			
 		}
 	);
 </script>
@@ -306,12 +342,10 @@
 </form>
 -->
 
-<br/><br/>
-
 <form rsf:id="createBlockForm" name="create_block_form" method="get" target="_self" action="modify_block.html">
 	<input type="hidden" name="templateItemIds"/>
 	<input rsf:id="createBlockBtn" name="create_block_btn" id="createBlockBtn" type="submit" value="Create Block" disabled="true"
-		onclick="javascript: return extractSelectedItems(this);"/>
+		onclick="javascript: return extractSelectedItems(this);" style="background-color:#AACCFF;" />
 </form>
 
 </div>

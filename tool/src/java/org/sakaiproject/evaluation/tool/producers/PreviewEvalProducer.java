@@ -210,7 +210,6 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 						EvalTemplateItem templateItem = (EvalTemplateItem) ncItemsList.get(i);
 						
 						String cat = templateItem.getItemCategory();
-						UIBranchContainer itemsBranch = null;
 						if (cat == null) {
 							throw new IllegalStateException("Template item with null category found: " + templateItem.getId() );
 						} else if (EvalConstants.ITEM_CATEGORY_COURSE.equals(cat)) {
@@ -230,7 +229,6 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 						EvalTemplateItem templateItem = (EvalTemplateItem) ncItemsList.get(i);
 						
 						String cat = templateItem.getItemCategory();
-						UIBranchContainer itemsBranch = null;
 						if (cat == null) {
 							throw new IllegalStateException("Template item with null category found: " + templateItem.getId() );
 						} else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(cat)) {
