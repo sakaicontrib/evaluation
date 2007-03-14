@@ -162,8 +162,8 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 
 
 		UIForm form2 = UIForm.make(tofill, "modifyFormRows");
-		UICommand reorder = UICommand.make(form2, "hiddenBtn", "#{templateBBean.saveReorder}");
-		reorder.parameters.add(new UIELBinding("#{templateBBean.templateId}", templateId));
+		UICommand.make(form2, "hiddenBtn", "#{templateBBean.saveReorder}");
+		form2.parameters.add(new UIELBinding("#{templateBBean.templateId}", templateId));
 
 		UIMessage.make(form2, "revertOrderButton", "modifytemplate.button.revert.order");
 		UICommand saveReorderButton = UICommand.make(form2, "saveReorderButton", 
