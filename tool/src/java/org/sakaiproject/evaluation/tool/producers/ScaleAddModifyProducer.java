@@ -29,13 +29,13 @@ import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
+import uk.org.ponder.rsf.components.UIInputMany;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
-import uk.org.ponder.rsf.components.UIOutput;
-import uk.org.ponder.rsf.components.UIOutputMany;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.UISelectLabel;
+import uk.org.ponder.rsf.evolvers.BoundedDynamicListInputEvolver;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
@@ -51,28 +51,37 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  */
 public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
 
-	// RSF specific
 	public static final String VIEW_ID = "scale_add_modify"; //$NON-NLS-1$
+
 	public String getViewID() {
 		return VIEW_ID;
 	}
 
-	// Spring injection 
 	private EvalExternalLogic external;
+
 	public void setExternal(EvalExternalLogic external) {
 		this.external = external;
 	}
-	
-    private LocalScaleLogic localScaleLogic;
-    public void setLocalScaleLogic(LocalScaleLogic localScaleLogic) {
-      this.localScaleLogic = localScaleLogic;
-    }
+
+	private LocalScaleLogic localScaleLogic;
+
+	public void setLocalScaleLogic(LocalScaleLogic localScaleLogic) {
+		this.localScaleLogic = localScaleLogic;
+	}
+
+	private BoundedDynamicListInputEvolver boundedDynamicListInputEvolver;
+
+	public void setBoundedDynamicListInputEvolver(
+			BoundedDynamicListInputEvolver boundedDynamicListInputEvolver) {
+		this.boundedDynamicListInputEvolver = boundedDynamicListInputEvolver;
+	}
     
-	/* 
+	/*
 	 * (non-Javadoc)
-	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, 
-	 * 																uk.org.ponder.rsf.viewstate.ViewParameters, 
-	 * 																uk.org.ponder.rsf.view.ComponentChecker)
+	 * 
+	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer,
+	 *      uk.org.ponder.rsf.viewstate.ViewParameters,
+	 *      uk.org.ponder.rsf.view.ComponentChecker)
 	 */
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 		String currentUserId = external.getCurrentUserId();
@@ -163,25 +172,16 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParams
 						new EvalScaleParameters(RemoveScaleProducer.VIEW_ID, scaleId));
 			}
 		}
+		
+		boundedDynamicListInputEvolver.setLabels(UIMessage.make("scaleaddmodify.remove.scale.option.button"), 
+				UIMessage.make("scaleaddmodify.add.scale.option.button"));
+		boundedDynamicListInputEvolver.setMinimumLength(2);
+		boundedDynamicListInputEvolver.setMaximumLength(20);
+	
+		UIInputMany modifypoints = UIInputMany.make(form, "modify-scale-points:", path + "options");
+		
+		boundedDynamicListInputEvolver.evolve(modifypoints);
 
-		// Scale options
-		for (int j = 0; j < scale.getOptions().length; ++j){
-			UIBranchContainer scaleOptions = UIBranchContainer.make(form, "scaleOptions:",		//$NON-NLS-1$ 
-					Integer.toString(j)); 	
-			UIInput.make(scaleOptions, "scale-option-label", path + "options." + j); 			//$NON-NLS-1$
-
-			UICommand.make(form, "scale-remove-option", 										//$NON-NLS-1$
-					UIMessage.make("scaleaddmodify.remove.scale.option.button"));   			//$NON-NLS-1$										
-		}
-		
-		// Used by javascript
-		UIOutput.make(form, "scale-options-path", path + "options.");							//$NON-NLS-1$ //$NON-NLS-2$
-		UIOutput.make(form, "scale-options-num",												//$NON-NLS-1$ 
-				new Integer(scale.getOptions().length).toString());
-		
-		UICommand.make(form, "scale-add-point", 												//$NON-NLS-1$
-				UIMessage.make("scaleaddmodify.add.scale.option.button"));						//$NON-NLS-1$		
-		
 		UIMessage.make(form, "ideal-note-start", 												//$NON-NLS-1$ 
 				"scaleaddmodify.scale.ideal.note.start"); 										//$NON-NLS-1$
 
@@ -204,9 +204,7 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParams
 		
 		UISelect radios = UISelect.make(form, "scaleIdealRadio",
 				scaleIdealValues, scaleIdealLabels,
-				path + "ideal", null);
-		radios.optionnames = UIOutputMany.make(scaleIdealLabels);
-		radios.setMessageKeys();
+				path + "ideal").setMessageKeys();
 
 	    String selectID = radios.getFullID();
 	    for (int i = 0; i < scaleIdealValues.length; ++i) {
@@ -222,7 +220,7 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParams
 		};
 		UISelect.make(form, "scale-sharing",													//$NON-NLS-1$ 
 				EvaluationConstant.MODIFIER_VALUES, sharingList, 	
-				path + "sharing", null).setMessageKeys();										//$NON-NLS-1$ 
+				path + "sharing").setMessageKeys();										//$NON-NLS-1$ 
 		
 		UIMessage.make(form, "scale-hidden-note", 												//$NON-NLS-1$ 
 				"scaleaddmodify.scale.hidden.note"); 											//$NON-NLS-1$
@@ -242,11 +240,12 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParams
 	 */
 	public List reportNavigationCases() {
 		List togo = new ArrayList();
-		togo.add(new NavigationCase("success", new SimpleViewParameters(ScaleControlProducer.VIEW_ID)));
+		togo.add(new NavigationCase("success", 
+				new SimpleViewParameters(ScaleControlProducer.VIEW_ID)));
 		return togo;
 	}
 	
 	public ViewParameters getViewParameters() {
-		return new EvalScaleParameters(VIEW_ID, null);
+		return new EvalScaleParameters();
 	}	
 }
