@@ -88,21 +88,24 @@ public class TemplateBBean {
 		templateBeanLocator.saveAll();
 		return "success";
 	}
-	/*
+	
 	private void emit(EvalTemplateItem toemit, int outindex) {
 		log.debug("EvalTemplateItem toemit: " + toemit.getId() + ", outindex: " + outindex);
 		toemit.setDisplayOrder(new Integer(outindex));
 		localTemplateLogic.saveTemplateItem(toemit);
 	}
-	*/
+	
 	/**
 	 * NB - this implementation depends on Hibernate reference equality
 	 * semantics!! Guarantees output sequence is consecutive without duplicates,
 	 * and will prefer honoring user sequence requests so long as they are not
 	 * inconsistent.
 	 */
-	public void saveReorder() { // this code is not necessary because the hidden item numbers are changed dynamically on the modify template items page
-		/*
+	// TODO: This method needs to be invoked via a BeanGuard, trapping any
+	// access to templateItemBeanLocator.*.displayOrder
+	// Current Jquery implementation is only working as a result of auto-commit
+	// bug in DAO wrapper implementation.
+	public void saveReorder() { 
 		log.debug("save items reordering");
 		Map delivered = templateItemBeanLocator.getDeliveredBeans();
 		List l = itemsLogic.getTemplateItemsForTemplate(templateId, null);
@@ -127,7 +130,6 @@ public class TemplateBBean {
 			}
 			emit(item, i++);
 		}
-		*/
 	}
 
 	/**
