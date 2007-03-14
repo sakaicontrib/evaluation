@@ -58,6 +58,11 @@
 		<property name="exclusive" value="true" />
 	</bean>
 
+  <bean parent="writeGuardParent">
+    <property name="guardedPath" value="templateItemBeanLocator.*.displayOrder"/>
+    <property name="guardMethod" value="templateBBean.saveReorder"/>
+  </bean>
+
 	<!-- define any XML producer files -->
 	<bean id="siteMap" parent="siteMapDef" />
 
