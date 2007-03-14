@@ -88,7 +88,8 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 		//thisindicate if it is for modify existing Block
 		boolean modify = false;
 		//this indicate if the passed Ids have the same scale
-		boolean validScaleIds = true;
+		//boolean validScaleIds = true;
+		
 		boolean validChildsNo = true; //this is to enforce settings of maximun Number of child text in a block
 		//the first items's original displayOrder
 		Integer firstDO = null;
@@ -110,9 +111,9 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 		if (strIds.length == 1 && templateItems[0] != null)
 			modify = true;
 
-		// check if each templateItem has the same scale, otherwise show warning
-		// text
-		if (templateItems.length > 1) {
+		// check if each templateItem has the same scale, otherwise show warning text
+//TOBE REMOVED
+/*		if (templateItems.length > 1) {
 			Long scaleId = templateItems[0].getItem().getScale().getId();
 			System.out.println("scale id[" + 0 + "]=" + scaleId.intValue());
 			for (int i = 1; i < templateItems.length; i++) {
@@ -125,11 +126,11 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 				}
 			}
 		}
-
+*/
 		//enforce system settings of maximum number of child items for new Block creation
-		if (!modify && validScaleIds) {
+		//if (!modify && validScaleIds) {
 			//if not have same scale, skip this block
-
+		if (!modify){
 			int maxChildsNo = ((Integer) settings.get(EvalSettings.ITEMS_ALLOWED_IN_QUESTION_BLOCK)).intValue();
 			//get actual total number of no-parent item(block childs + normal scaled type)
 			int actualChildsNo = 0;
@@ -149,8 +150,8 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 				validChildsNo = false;
 		}
 
-		if (!modify && validScaleIds && validChildsNo) {// creating new block with the same scale
-			// case
+		//if (!modify && validScaleIds && validChildsNo) {// creating new block with the same scalecase
+		if (!modify && validChildsNo) {// creating new block with the same scale case
 			boolean shift = false;
 			// get the first Block ID if any, and shift it to the first of the
 			// templateItems array
@@ -182,15 +183,16 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), //$NON-NLS-1$ //$NON-NLS-2$
 				new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
-		if (!validScaleIds || !validChildsNo) {
+		//if (!validScaleIds || !validChildsNo) {
+		if (!validChildsNo) {
 			// show error page with back button
 			UIBranchContainer showError = UIBranchContainer.make(tofill, "errorPage:");
-			if (!validScaleIds) {
+		/*	if (!validScaleIds) {
 
 				UIMessage.make(showError, "errorMsg", "modifyblock.error.scale.message");
-			} else {
+			} else {*/
 				UIMessage.make(showError, "errorMsg", "modifyblock.error.numberofblockChilds.message");
-			}
+			//}
 
 			UIMessage.make(showError, "back-button", "modifyblock.back.button");
 
