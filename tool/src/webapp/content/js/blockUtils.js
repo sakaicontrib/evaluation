@@ -1,25 +1,43 @@
-//TODO:Javacsript can check if checked Ids have the same scale ID
-
-
 function countCheckBox(){
-	//if total cout of checked checkbox > 2, enable "Create Block" button
-
+	//1)if total cout of checked checkbox > 2, enable "Create Block" button
+	//2) disable all boxes which are not using the same scale as the first one that is checked
 	sourceForm = document.modify_form_rows;
 	destinationForm = document.create_block_form;
 	submitButton = document.getElementById("createBlockBtn");
+	
 	var count = 0; //enforce at least 2 check box are checked	
+	var scaleId = "";
 	
 	if (sourceForm && destinationForm) {
 
 		// look for checkboxes which have IDs of the form "block-12-11" and keep track of the ones that are checked.
 		for (var a=0; a < sourceForm.elements.length; a++) {
-			if (sourceForm.elements[a].type=="checkbox" &&
-					sourceForm.elements[a].checked) {
-				count = count + 1;
+			var target = sourceForm.elements[a];
+			if(target.type == "checkbox"){
+				if(target.checked){
+					count = count +1;
+					if(count == 1){
+						scaleId = target.id.substring(target.id.indexOf('-')+1,target.id.lastIndexOf('-'));
+						
+						//disable other check box which has different scale id
+						 for(var b=0; b < sourceForm.elements.length; b++){
+							 var other = sourceForm.elements[b];
+							 if(other != target && other.type == "checkbox"){
+							 	var otherScaleId= other.id.substring(other.id.indexOf('-')+1,other.id.lastIndexOf('-'));
+							 	//alert("other scaleId ="+otherScaleId);
+							 	if(otherScaleId != scaleId)
+							 		other.disabled = true;
+							 	else other.disabled = false;	
+							 }
+						 }
+								 
+					}
+					
+				}
 			}
 		}
 	}
-	
+	//alert("scaleId= "+scaleId);
 	if(count < 2){ 
 		//alert("select less than 2 items,disable submit button");
 		submitButton.disabled = true;
