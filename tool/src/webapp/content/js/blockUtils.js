@@ -1,6 +1,7 @@
 function countCheckBox(){
 	//1)if total cout of checked checkbox > 2, enable "Create Block" button
 	//2) disable all boxes which are not using the same scale as the first one that is checked
+	//3)if no check box is checked, all the check box should be enabled
 	sourceForm = document.modify_form_rows;
 	destinationForm = document.create_block_form;
 	submitButton = document.getElementById("createBlockBtn");
@@ -38,7 +39,13 @@ function countCheckBox(){
 		}
 	}
 	//alert("scaleId= "+scaleId);
-	if(count < 2){ 
+	if(count < 1){ //no check box is checked, enable all the checkbox
+		for (var c=0; c < sourceForm.elements.length; c++){
+			if (sourceForm.elements[c].type=="checkbox")
+				sourceForm.elements[c].disabled = false;		
+		}
+		submitButton.disabled = true;
+	}else if(count < 2){ 
 		//alert("select less than 2 items,disable submit button");
 		submitButton.disabled = true;
 	}else{ 
