@@ -16,7 +16,6 @@
 	<script type="text/javascript" language="JavaScript" src="../js/jquery/interface/isortables.js"></script>
 
 	<script type="text/javascript" language="JavaScript" src="../js/blockUtils.js"></script>
-    <script type="text/javascript" language="JavaScript" src="../js/selectLink.js"></script>
 	<script type="text/javascript" language="JavaScript" src="../js/reorderUtils.js"></script>
 </head>
 
@@ -134,12 +133,11 @@
 
 			<div class="itemLine2">
 				<label class="itemNum" for="item-row::0:item-select-selection">
-					<select rsf:id="item-select" id="item-row::0:item-select-selection" class="selectReorder">
+					<select rsf:id="item-select" id="item-row::0:item-select-selection" class="selectReorder" title="Choose a new order for this item">
 						<option value="1" selected="selected">1</option>
 						<option value="2">2</option>
 						<option value="3">3</option>		
 					</select>
-					<span rsf:id="item-num" id="item-row::0:item-num">1</span>.&nbsp;
 				</label>
 				<span class="itemText">
 					<span rsf:id="item-text">Item Text - Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Vivamus in pede in ligula bibendum tincidunt. Quisque in dui a tellus ultricies posuere.</span>
@@ -199,12 +197,11 @@
 
 			<div class="itemLine2">
 				<label class="itemNum" for="item-row::1:item-select-selection">
-					<select rsf:id="item-select" id="item-row::1:item-select-selection" class="selectReorder">
+					<select rsf:id="item-select" id="item-row::1:item-select-selection" class="selectReorder" title="Choose a new order for this item">
 						<option value="1">1</option>
 						<option value="2" selected="selected">2</option>
 						<option value="3">3</option>		
 					</select>
-					<span rsf:id="item-num" id="item-row::1:item-num">2</span>.&nbsp;
 				</label>
 				<span class="itemText">
 					<span rsf:id="item-text">Item Text - Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Vivamus in pede in ligula bibendum tincidunt. Quisque in dui a tellus ultricies posuere.</span>
@@ -234,7 +231,6 @@
 					<span style="font-weight:bold;">
 						<span rsf:id="child-item-num">3</span>.
 					</span>
-					<span rsf:id="child-item-text">Child Item Text - Lorem ipsum dolor sit amet</span>
 				</div>
 			</div>
 		</li>
@@ -264,12 +260,11 @@
 
 			<div class="itemLine2">
 				<label class="itemNum" for="item-row::2:item-select-selection">
-					<select rsf:id="item-select" id="item-row::2:item-select-selection" class="selectReorder">
+					<select rsf:id="item-select" id="item-row::2:item-select-selection" class="selectReorder" title="Choose a new order for this item">
 						<option value="1">1</option>
 						<option value="2">2</option>
 						<option value="3" selected="selected">3</option>		
 					</select>
-					<span rsf:id="item-num" id="item-row::2:item-num">3</span>.&nbsp;
 				</label>
 				<span class="itemText">
 					<span rsf:id="item-text">Item Text - Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Vivamus in pede in ligula bibendum tincidunt. Quisque in dui a tellus ultricies posuere.</span>
@@ -290,7 +285,7 @@
 </form>
 
 <script rsf:id="decorateSelects">
-EvalSystem.decorateReorderSelects("", 1);
+EvalSystem.decorateReorderSelects("", 3);
 </script>
 
 
