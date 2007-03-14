@@ -45,9 +45,13 @@
 				// 2. remove item
 				// 3. append to bottom of list
 			
+			savedList.indexOf(','); // ie hack
+			
 			for (i in savedList) {
-				savedList[i].getElementsByTagName("label")[0].firstChild.nodeValue = new String(parseInt(i) + 1);
-				$(savedList[i]).remove().appendTo("div#itemTable > ol#itemList");
+				if (i != "indexOf") { // ie hack
+					document.getElementById(savedList[i].id + "item-num").firstChild.data = new String(parseInt(i) + 1);
+					$(savedList[i]).remove().appendTo("div#itemTable > ol#itemList");
+				}
 			}
 			
 		}
@@ -256,9 +260,12 @@
 					helperclass: 	"sorthelper",
 					onchange:		function(data) {
 										var list = data[0].o.itemList;
+										list.indexOf(','); // ie hack
 										for (i in list) {
-											document.getElementById(list[i] + "item-num").firstChild.nodeValue = new String(parseInt(i) + 1);
-											document.getElementById(list[i] + "hidden-item-num").value = i;
+											if (i != "indexOf") { // ie hack
+												document.getElementById(list[i] + "item-num").firstChild.data = new String(parseInt(i) + 1);
+												document.getElementById(list[i] + "hidden-item-num").value = i;
+											}
 										}
 										enableOrderButtons();
 									},
