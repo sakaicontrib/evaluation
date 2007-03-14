@@ -24,13 +24,15 @@ $(document).ready(
 			var domList = $("ol.itemList > li").get();
 			for (var i = 0; i < domList.length; i++) {
 				sortableIds.push(domList[i].id);
-				var itemNum = $it(domList[i].id + "item-num");
-				$(itemNum).removeClass("orderChanged");  
+				//var itemNum = $it(domList[i].id + "item-num");
+				//$(itemNum).removeClass("orderChanged");  
+				var itemSelect = $it(domList[i].id + "item-select-selection");
+				$(itemSelect).removeClass("orderChanged");
 			}
 		}
 		buildSortableIds();
 
-		var saveButton = $it("saveReorderButton");
+		var saveButton = document.getElementById("saveReorderButton");
 		saveButton.onclick = function() {
 			disableOrderButtons();
 			buildSortableIds();
@@ -40,13 +42,18 @@ $(document).ready(
 
         function setIndex(itemId, newindex) {
             var changed = sortableIds[newindex] != itemId;
-            var itemNum = $it(itemId + "item-num");
+            //var itemNum = $it(itemId + "item-num");
+            var itemSelect = document.getElementById(itemId + "item-select-selection");
 			if (changed) {
-				$(itemNum).addClass("orderChanged");
+				//$(itemNum).addClass("orderChanged");
+				$(itemSelect).addClass("orderChanged");
 			} else {
-				$(itemNum).removeClass("orderChanged");  
+				//$(itemNum).removeClass("orderChanged");  
+				$(itemSelect).removeClass("orderChanged");  
 			}
-        	itemNum.innerHTML = (parseInt(newindex) + 1);
+        	//itemNum.innerHTML = (parseInt(newindex) + 1);
+			itemSelect.selectedIndex = newindex;
+			// NOTE: might need to disable the pulldowns once the user drags
 			$it(itemId + "hidden-item-num").value = newindex;
 		}
 
@@ -83,11 +90,39 @@ $(document).ready(
 				tolerance:		"intersect"
 			}
 		);
-
-		savedList = new Array();
-
-		$("ol.itemList > li").each(
-			function(item) { savedList.push(this); }
-		);
 	}
 );
+
+var EvalSystem = function() {
+  function $it(elementID) {
+    return document.getElementById(elementID);
+  }
+
+  return {
+    getRelativeID: function (baseid, targetid) {
+      colpos = baseid.lastIndexOf(':');
+      return baseid.substring(0, colpos + 1) + targetid;
+    },    
+
+   // See http://www.pageresource.com/jscript/jdropbox.htm for general approach
+    operateSelectLink: function(linkid, localselectid) {
+      var selectid = EvalSystem.getRelativeID(linkid, localselectid);
+      var selection = $it(selectid);
+      var url = selection.options[selection.selectedIndex].value;
+      // See http://www.quirksmode.org/js/iframe.html for discussion
+      document.location.href = url;
+    },
+
+    decorateReorderSelects: function(namebase, count) {
+      var buttonid = namebase + "hiddenBtn";
+      var button = $it(buttonid);
+      for (var i = 0; i < count; ++ i) {
+        var selectid = namebase + "item-row::"+i+":item-select-selection";
+        var selection = $it(selectid);
+        selection.onchange = function() {
+        	button.click();
+        };
+      }
+    }
+  }
+}();

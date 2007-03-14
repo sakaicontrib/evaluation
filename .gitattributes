@@ -238,7 +238,6 @@ tool/src/webapp/content/js/jquery/interface/iutil.js -text
 tool/src/webapp/content/js/jquery/jquery.js -text
 tool/src/webapp/content/js/reorderUtils.js -text
 tool/src/webapp/content/js/scaleUtils.js -text
-tool/src/webapp/content/js/selectLink.js -text
 tool/src/webapp/content/templates/administrate.html -text
 tool/src/webapp/content/templates/choose_existing_items.html -text
 tool/src/webapp/content/templates/choose_expert_category.html -text

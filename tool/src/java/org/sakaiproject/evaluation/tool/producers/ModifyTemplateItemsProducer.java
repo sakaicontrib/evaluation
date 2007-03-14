@@ -162,13 +162,15 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 
 
 		UIForm form2 = UIForm.make(tofill, "modifyFormRows");
-		UICommand.make(form2, "hiddenBtn", "#{templateBBean.saveReorder}");
+		UICommand.make(form2, "hiddenBtn");
 		form2.parameters.add(new UIELBinding("#{templateBBean.templateId}", templateId));
 
-		UIMessage.make(form2, "revertOrderButton", "modifytemplate.button.revert.order");
+		UIMessage revertOrderButton = UIMessage.make(form2, "revertOrderButton", "modifytemplate.button.revert.order");
+		revertOrderButton.decorators = new DecoratorList( new UITooltipDecorator( UIMessage.make("modifytemplate.button.revert.order.title") ) );
 		UICommand saveReorderButton = UICommand.make(form2, "saveReorderButton", 
 				UIMessage.make("modifytemplate.button.save.order"), "#{templateBBean.saveReorder}");
 		saveReorderButton.parameters.add(new UIELBinding("#{templateBBean.templateId}", templateId));
+		saveReorderButton.decorators = new DecoratorList( new UITooltipDecorator( UIMessage.make("modifytemplate.button.save.order.title") ) );
 
 		UIMessage.make(form2, "orderingInstructions", "modifytemplate.instructions.reorder");
 
@@ -235,8 +237,9 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 
 
 				// second line
-				UIOutput.make(itemBranch, "item-num", new Integer(i + 1).toString());
-				UISelect.make(itemBranch, "item-select", itemNumArr, templateItemOTP + "displayOrder", null);
+				//UIOutput.make(itemBranch, "item-num", new Integer(i + 1).toString());
+				UISelect orderPulldown = UISelect.make(itemBranch, "item-select", itemNumArr, templateItemOTP + "displayOrder", null);
+				orderPulldown.decorators = new DecoratorList( new UITooltipDecorator( UIMessage.make("modifytemplate.select.order.title") ) );
 
 				UIVerbatim.make(itemBranch, "item-text", templateItem.getItem().getItemText());
 
@@ -275,8 +278,8 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 		// the create block form
 		UIForm blockForm = UIForm.make(tofill, "createBlockForm",
 				new BlockIdsParameters(ModifyBlockProducer.VIEW_ID, templateId, null));
-		UICommand.make(blockForm, "createBlockBtn", 
-				UIMessage.make("modifytemplate.createblock.button"), null);
+		UICommand createBlock = UICommand.make(blockForm, "createBlockBtn", UIMessage.make("modifytemplate.button.createblock") );
+		createBlock.decorators = new DecoratorList( new UITooltipDecorator( UIMessage.make("modifytemplate.button.createblock.title") ) );
 
 		UIMessage.make(form2, "blockInstructions", "modifytemplate.instructions.block");
 	}

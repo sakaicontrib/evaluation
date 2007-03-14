@@ -87,8 +87,8 @@ SPAN.itemLink {
 }
 
 SELECT.selectReorder {
-	font-size:10px;
 	cursor: auto;
+	font-weight: bold;
 }
 
 LABEL.itemNum {
