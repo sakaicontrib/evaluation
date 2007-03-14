@@ -15,6 +15,11 @@ form {
 	background-color: #E1E1E1;
 }
 
+.instructions {
+	font-size: 0.9em;
+	font-style: italic;
+}
+
 .cleaner {
 	clear:both;
 	height:1px;
@@ -43,7 +48,8 @@ LI.itemRow {
 	width: 100%;
 	padding: 0;
 	margin: 0.2em;
-	border:2px solid #999999;
+	border: 2px solid #999999;
+	cursor: move;
 }
 
 DIV.itemLine {
@@ -63,6 +69,7 @@ DIV.itemLine3 {
 LABEL.itemCheckbox {
 	float: left;
 	background-color:#AACCFF;
+	cursor: auto;
 }
 
 SPAN.itemType {
@@ -79,7 +86,12 @@ SPAN.itemLink {
 	border-left:1px solid black;
 }
 
-SPAN.itemNum {
+SELECT.selectReorder {
+	font-size:10px;
+	cursor: auto;
+}
+
+LABEL.itemNum {
 	float: left;
 	text-align: left;
 	font-weight: bold;
@@ -99,6 +111,9 @@ SPAN.scaleDesc {
 	padding: 0 0.2em;
 }
 
+.orderChanged {
+	background-color: #FFAA99;
+}
 
 
 table.sample {
