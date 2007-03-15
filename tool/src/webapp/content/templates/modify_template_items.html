@@ -33,63 +33,55 @@
 	</ul>
 </div>
 
-<div style="border:2px solid black; padding:4px; margin:8px;">
-	<table width="100%" cellpadding="4" cellspacing="0">
-		<tr>
-			<td align="left">
-				<a rsf:id="preview_eval_link" href="preview_eval.html" target="_blank">View a preview</a>
-				<span rsf:id="preview-eval-desc"> of this template as an evaluation</span>
-			</td>
-			<td align="right">
-				<span rsf:id="add-item-note" style="font-weight:bold;">Add Item:</span>
-				<form rsf:id="modifyForm" name="modify_template_items_form">
-					<select rsf:id="itemClassification"	id="itemClassification-selection">
-						<option value="#URL-1" selected="selected">Scaled/Survey</option>
-						<option value="#URL-2">Short Answer/Essay</option>
-						<option value="#URL-3">Text Header</option>
-						<option value="#URL-4">Question Block</option>
-						<option value="#URL-5">Expert</option>
-					</select>
-					<!--  TODO!! Add Javascript to onclick to navigate to selected value -->
-					<input rsf:id="add_questions" type="button" value="Add"
-						onclick="EvalSystem.operateSelectLink(this.id, 'itemClassification-selection')" />
-				</form>
-			</td>
-		</tr>
-
-		<tr>
-			<td align="left">
-				<a href="evaluation_start.html" rsf:id="begin_eval_link">Begin an evaluation using this template</a>
-				<span rsf:id="begin-eval-dummylink" style="color:gray;"></span>
-			</td>
-			<td align="right">
-				<span rsf:id="level-header">Current Level - # existing items</span>
-			</td>
-		</tr>
-
-		<tr>
-			<td align="left">
-				<span rsf:id="template-title-header" style="font-weight:bold;">Template Title:</span>
-				<span rsf:id="title">Title</span>
-			</td>
-			<td align="right">
-				<a href="modify_template.html" rsf:id="modify_title_desc_link">Modify Template Title/Description</a>
-			</td>
-		</tr>
-
-		<tr rsf:id="description-switch:">
-			<td colspan="2">
-				<span rsf:id="description-header" style="font-weight:bold;">Description:</span>
-				<span rsf:id="description">Template description goes here, this would be notes for other admins or yourself,
-				Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Vivamus in pede in ligula bibendum tincidunt. 
-				Quisque in dui a tellus ultricies posuere. Donec consectetuer, nunc quis luctus dignissim, velit purus 
-				consequat eros, eu euismod nibh justo ac purus. Ut sed justo. Cras aliquet massa ut lacus. Vestibulum 
-				feugiat vehicula pede. Morbi rhoncus quam in elit. Etiam egestas, metus a volutpat lobortis, erat dui 
-				laoreet libero, nec pulvinar sem mi ac felis.</span>
-			</td>
-		</tr>
-	</table>
+<div style="border:2px solid black; padding:6px; margin:8px;">
+	<div class="divrow">
+		<div class="leftcol">
+			<a rsf:id="preview_eval_link" href="preview_eval.html" target="_blank">View a preview</a>
+			<span rsf:id="preview-eval-desc"> of this template as an evaluation</span>
+		</div>
+		<div class="rightcol">
+			<span rsf:id="add-item-note" style="font-weight:bold;">Add Item:</span>
+			<form rsf:id="modifyForm" name="modify_template_items_form">
+				<select rsf:id="itemClassification"	id="itemClassification-selection">
+					<option value="#URL-1" selected="selected">Scaled/Survey</option>
+					<option value="#URL-2">Short Answer/Essay</option>
+					<option value="#URL-3">Text Header</option>
+					<option value="#URL-4">Question Block</option>
+					<option value="#URL-5">Expert</option>
+				</select>
+				<!--  TODO!! Add Javascript to onclick to navigate to selected value -->
+				<input rsf:id="add_questions" type="button" value="Add"
+					onclick="EvalSystem.operateSelectLink(this.id, 'itemClassification-selection')" />
+			</form>
+		</div>
+		<div class="cleaner">&nbsp;</div>
+	</div>
+	<div class="divrow">
+		<div class="leftcol">
+			<a href="evaluation_start.html" rsf:id="begin_eval_link">Begin an evaluation using this template</a>
+			<span rsf:id="begin-eval-dummylink" style="color:gray;"></span>
+		</div>
+		<div class="rightcol">
+			<span rsf:id="level-header">Current Level - # existing items</span>
+		</div>
+		<div class="cleaner">&nbsp;</div>
+	</div>
+	<div class="divrow">
+		<div class="leftcol">
+			<span rsf:id="template-title-header" style="font-weight:bold;">Template Title:</span>
+			<span rsf:id="title">Title</span>
+		</div>
+		<div class="rightcol">
+			<a href="modify_template.html" rsf:id="modify_title_desc_link">Modify Template Title/Description</a>
+		</div>
+		<div class="cleaner">&nbsp;</div>
+	</div>
+	<div class="divrow">
+		<span rsf:id="description-header" style="font-weight:bold;">Description:</span>
+		<span rsf:id="description">Template description goes here, this would be notes for other admins or yourself, Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Vivamus in pede in ligula bibendum tincidunt. Quisque in dui a tellus ultricies posuere. Donec consectetuer, nunc quis luctus dignissim, velit purus consequat eros, eu euismod nibh justo ac purus. Ut sed justo. Cras aliquet massa ut lacus. Vestibulum feugiat vehicula pede. Morbi rhoncus quam in elit. Etiam egestas, metus a volutpat lobortis, erat dui laoreet libero, nec pulvinar sem mi ac felis.</span>
+	</div>
 </div>
+
 
 <form rsf:id="modifyFormRows" name="modify_form_rows" method="post">
 <input rsf:id="hiddenBtn" type="submit" id="hiddenBtn" style="display:none;" />

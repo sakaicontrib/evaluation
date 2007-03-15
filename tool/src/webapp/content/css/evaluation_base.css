@@ -20,6 +20,9 @@ form {
 	font-style: italic;
 }
 
+/**
+ * Special style to force divs to be able to work right when floating in all browsers
+ */
 .cleaner {
 	clear:both;
 	height:1px;
@@ -28,6 +31,30 @@ form {
 	margin:0; padding:0;
 	background:transparent;
 }
+
+/**
+ * Styles for emulating tables
+ */
+DIV.divrow {
+	width: 99.5%;
+	padding: 0.2em;
+}
+
+DIV.leftcol {
+	float: left;
+	text-align: left;
+}
+
+DIV.centercol {
+	float: left;
+	text-align: center;
+}
+
+DIV.rightcol {
+	float: right;
+	text-align: right;
+}
+
 
 /**
  * Styles for the drag and drop
