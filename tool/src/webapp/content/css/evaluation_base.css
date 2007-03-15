@@ -75,13 +75,12 @@ LI.itemRow {
 	width: 100%;
 	padding: 0;
 	margin: 0.2em;
-	border: 2px solid #999999;
 	cursor: move;
 }
 
 DIV.itemLine {
 	clear: left;
-	border-bottom: 2px solid #AAAAAA;
+	border: 2px solid #AAAAAA;
 }
 
 DIV.itemLine2 {
@@ -90,19 +89,31 @@ DIV.itemLine2 {
 
 DIV.itemLine3 {
 	clear: left;
-	border-top: 2px dashed #AAAAAA;
+	border: 2px dashed #AAAAAA;
+	margin-left: 2em;
 }
 
 LABEL.itemCheckbox {
 	float: left;
 	background-color:#AACCFF;
 	cursor: auto;
+	margin: 0;
 }
 
 SPAN.itemType {
 	float: left;
 	text-align: left;
 	padding: 0 0.2em;
+}
+
+SPAN.itemRight {
+	font-size: 0.9em;
+	float: right;
+	text-align: center;
+	padding: 0 0.4em;
+	border-left: 1px solid black;
+	white-space: nowrap;
+	vertical-align: middle;
 }
 
 SPAN.itemLink {
@@ -122,7 +133,8 @@ LABEL.itemNum {
 	float: left;
 	text-align: left;
 	font-weight: bold;
-	padding: 0 0.3em;
+	padding-right: 0.3em;
+	margin: 0;
 }
 
 SPAN.itemText {
@@ -135,6 +147,11 @@ SPAN.scaleDesc {
 	width: 25%;
 	float: right;
 	text-align: right;
+	padding: 0 0.2em;
+}
+
+DIV.childItem {
+	font-size: 0.9em;
 	padding: 0 0.2em;
 }
 

@@ -18,6 +18,7 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import java.util.List;
 
+import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
@@ -78,6 +79,11 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 	private LocalTemplateLogic localTemplateLogic;
 	public void setLocalTemplateLogic(LocalTemplateLogic localTemplateLogic) {
 		this.localTemplateLogic = localTemplateLogic;
+	}
+
+	private EvalExternalLogic external;
+	public void setExternal(EvalExternalLogic external) {
+		this.external = external;
 	}
 
 	private ViewParameters deriveTarget(String viewID, Long templateId) {
@@ -217,6 +223,17 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 					String scaleDisplaySettingLabel = " - " + templateItem.getScaleDisplaySetting();
 					UIOutput.make(itemBranch, "scale-display", scaleDisplaySettingLabel);
 				}
+
+				String categoryMessage = "unknown.caps";
+				if ( EvalConstants.ITEM_CATEGORY_COURSE.equals(templateItem.getItemCategory()) ) {
+					categoryMessage = "modifyitem.course.category.header";
+				} else if ( EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(templateItem.getItemCategory()) ) {
+					categoryMessage = "modifyitem.instructor.category.header";
+				} else if ( EvalConstants.ITEM_CATEGORY_ENVIRONMENT.equals(templateItem.getItemCategory()) ) {
+					categoryMessage = "modifyitem.environment.category.header";
+				}
+				UIMessage.make(itemBranch, "item-category", categoryMessage);
+				UIOutput.make(itemBranch, "item-owner-name", external.getUserDisplayName(templateItem.getOwner()));
 
 				UIInternalLink.make(itemBranch, "preview-row-item", UIMessage.make("modifytemplate.preview.link"), 
 						new TemplateItemViewParameters(PreviewItemProducer.VIEW_ID, templateId, templateItem.getId()) );
