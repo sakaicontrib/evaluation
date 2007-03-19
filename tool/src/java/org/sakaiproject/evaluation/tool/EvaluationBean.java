@@ -37,7 +37,7 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
-import org.sakaiproject.evaluation.tool.producers.ControlPanelProducer;
+import org.sakaiproject.evaluation.tool.producers.ControlEvaluationsProducer;
 import org.sakaiproject.evaluation.tool.producers.EvaluationAssignConfirmProducer;
 import org.sakaiproject.evaluation.tool.producers.EvaluationAssignProducer;
 import org.sakaiproject.evaluation.tool.producers.EvaluationSettingsProducer;
@@ -264,7 +264,7 @@ public class EvaluationBean {
 		
 		//now reset the eval item here
 		clearEvaluation();
-	    return ControlPanelProducer.VIEW_ID;
+	    return ControlEvaluationsProducer.VIEW_ID;
 	}
 	
 	/**
@@ -281,7 +281,7 @@ public class EvaluationBean {
 		// Reset the eval item here
 		clearEvaluation();
 		
-	    return ControlPanelProducer.VIEW_ID;
+	    return ControlEvaluationsProducer.VIEW_ID;
 	}	
 	
 	
@@ -410,7 +410,7 @@ public class EvaluationBean {
 
 		//now reset the eval item here
 		clearEvaluation();
-	    return ControlPanelProducer.VIEW_ID;
+	    return ControlEvaluationsProducer.VIEW_ID;
 	}
 	
 	/**
@@ -541,7 +541,7 @@ public class EvaluationBean {
 	 * @return View id sending the control to control panel page.
 	 */
 	public String cancelRemoveEvalAction(){
-		return ControlPanelProducer.VIEW_ID;
+		return ControlEvaluationsProducer.VIEW_ID;
 	}
 	
 	/**
@@ -552,7 +552,7 @@ public class EvaluationBean {
 	 */
 	public String removeEvalAction(){
 		evalsLogic.deleteEvaluation(evalId, external.getCurrentUserId());
-		return ControlPanelProducer.VIEW_ID;
+		return ControlEvaluationsProducer.VIEW_ID;
 	}
 	
 	/**
@@ -573,7 +573,7 @@ public class EvaluationBean {
 	 * @return View id sending the control to control panel page.
 	 */	
 	public String cancelRemoveTemplateAction(){
-		return ControlPanelProducer.VIEW_ID;
+		return ControlEvaluationsProducer.VIEW_ID;
 	}
 	
 	/**
@@ -631,7 +631,7 @@ public class EvaluationBean {
 			}
 			templatesLogic.deleteTemplate(template1.getId(), currentUserId);
 		}
-		return ControlPanelProducer.VIEW_ID;
+		return ControlEvaluationsProducer.VIEW_ID;
 	}
 	
 	/**

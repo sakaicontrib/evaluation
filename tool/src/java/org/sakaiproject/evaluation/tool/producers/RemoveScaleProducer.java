@@ -44,7 +44,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 public class RemoveScaleProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
 
 	// RSF specific
-	public static final String VIEW_ID = "remove_scale"; //$NON-NLS-1$
+	public static final String VIEW_ID = "remove_scale";
 	public String getViewID() {
 		return VIEW_ID;
 	}
@@ -54,79 +54,60 @@ public class RemoveScaleProducer implements ViewComponentProducer, ViewParamsRep
 	public void setExternal(EvalExternalLogic external) {
 		this.external = external;
 	}
-	
-    private LocalScaleLogic localScaleLogic;
-    public void setLocalScaleLogic(LocalScaleLogic localScaleLogic) {
-      this.localScaleLogic = localScaleLogic;
-    }
-    
-	/* 
-	 * (non-Javadoc)
-	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, 
-	 * 																uk.org.ponder.rsf.viewstate.ViewParameters, 
-	 * 																uk.org.ponder.rsf.view.ComponentChecker)
+
+	private LocalScaleLogic localScaleLogic;
+	public void setLocalScaleLogic(LocalScaleLogic localScaleLogic) {
+		this.localScaleLogic = localScaleLogic;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
 	 */
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 		String currentUserId = external.getCurrentUserId();
 		boolean userAdmin = external.isUserAdmin(currentUserId);
 
-		if (! userAdmin) {
+		if (!userAdmin) {
 			// Security check and denial
 			throw new SecurityException("Non-admin users may not access this page");
 		}
-		
+
 		EvalScaleParameters evalScaleParams = (EvalScaleParameters) viewparams;
 		Long scaleId = evalScaleParams.scaleId;
-		
+
 		/*
 		 * Fetching the scale from LocalScaleLogic just because 
 		 * we need the number of scale options.
-		 */ 
+		 */
 		EvalScale scale = localScaleLogic.fetchScale(scaleId);
-		
+
 		/*
 		 * top menu links and bread crumbs here
 		 */
-		UIInternalLink.make(tofill, "summary-toplink", 											//$NON-NLS-1$ 
-				UIMessage.make("summary.page.title"), 											//$NON-NLS-1$ 
-				new SimpleViewParameters(SummaryProducer.VIEW_ID)); 							//$NON-NLS-1$ 
-		if (userAdmin) {
-			UIInternalLink.make(tofill, "control-panel-toplink",								//$NON-NLS-1$  
-					UIMessage.make("controlpanel.page.title"), 									//$NON-NLS-1$ 
-					new SimpleViewParameters(ControlPanelProducer.VIEW_ID));					//$NON-NLS-1$ 
-		}
-		UIInternalLink.make(tofill, "administrate-toplink",										//$NON-NLS-1$  
-				UIMessage.make("administrate.page.title"), 										//$NON-NLS-1$ 
-				new SimpleViewParameters(AdministrateProducer.VIEW_ID)); 						//$NON-NLS-1$ 
-		
-		UIInternalLink.make(tofill, "scale-control-toplink", 									//$NON-NLS-1$ 
-				UIMessage.make("scalecontrol.page.title"), 										//$NON-NLS-1$ 
-				new SimpleViewParameters(ScaleControlProducer.VIEW_ID) ); 						//$NON-NLS-1$ 
-		
+		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID));
+		UIInternalLink.make(tofill, "administrate-toplink", UIMessage.make("administrate.page.title"), new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+		UIInternalLink.make(tofill, "scale-control-toplink", UIMessage.make("scalecontrol.page.title"), new SimpleViewParameters(ScaleControlProducer.VIEW_ID));
+
 		// Page title
-		UIMessage.make(tofill, "remove-scale-title", 											//$NON-NLS-1$ 
-				"scaleremove.page.title"); 														//$NON-NLS-1$
-		
-		UIForm form = UIForm.make(tofill, "remove-scale-form"); 								//$NON-NLS-1$		
+		UIMessage.make(tofill, "page-title", "scaleremove.page.title");
 
-		UIMessage.make(form, "remove-scale-confirm-pre-name", 									//$NON-NLS-1$ 
-				"scaleremove.confirm.pre.name"); 												//$NON-NLS-1$
-		
-		UIOutput.make(form, "scale-title-displayed", scale.getTitle());							//$NON-NLS-1$
+		UIForm form = UIForm.make(tofill, "remove-scale-form");
 
-		UIMessage.make(form, "remove-scale-confirm-post-name", 									//$NON-NLS-1$ 
-				"scaleremove.confirm.post.name"); 												//$NON-NLS-1$
+		UIMessage.make(form, "remove-scale-confirm-pre-name", "scaleremove.confirm.pre.name");
 
-		UICommand.make(form, "remove-scale-cancel-button", 										//$NON-NLS-1$
-				UIMessage.make("scaleremove.cancel.button"));									//$NON-NLS-1$
+		UIOutput.make(form, "scale-title-displayed", scale.getTitle());
 
-		UICommand deleteCommand = UICommand.make(form, "remove-scale-remove-button", 										//$NON-NLS-1$
-				UIMessage.make("scaleremove.remove.scale.button"),								//$NON-NLS-1$
-				"#{scaleBean.deleteScale}");   													//$NON-NLS-1$
-		
+		UIMessage.make(form, "remove-scale-confirm-post-name", "scaleremove.confirm.post.name");
+
+		UICommand.make(form, "remove-scale-cancel-button", UIMessage.make("scaleremove.cancel.button"));
+
+		UICommand deleteCommand = UICommand.make(form, "remove-scale-remove-button", UIMessage.make("scaleremove.remove.scale.button"),
+				"#{scaleBean.deleteScale}");
+
 		deleteCommand.parameters.add(new UIELBinding("#{scaleBean.scaleId}", scaleId));
 	}
-	
+
 	/* 
 	 * (non-Javadoc)
 	 * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
@@ -136,8 +117,8 @@ public class RemoveScaleProducer implements ViewComponentProducer, ViewParamsRep
 		togo.add(new NavigationCase("success", new SimpleViewParameters(ScaleControlProducer.VIEW_ID)));
 		return togo;
 	}
-	
+
 	public ViewParameters getViewParameters() {
 		return new EvalScaleParameters(VIEW_ID, null);
-	}	
+	}
 }

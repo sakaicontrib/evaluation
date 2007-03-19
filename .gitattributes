@@ -140,7 +140,8 @@ tool/src/java/org/sakaiproject/evaluation/tool/params/PreviewEvalParameters.java
 tool/src/java/org/sakaiproject/evaluation/tool/params/TemplateItemViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/params/TemplateViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateProducer.java -text
-tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlPanelProducer.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlEvaluationsProducer.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlTemplatesProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/EvaluationAssignConfirmProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/EvaluationAssignProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/EvaluationSettingsProducer.java -text
@@ -243,7 +244,9 @@ tool/src/webapp/content/templates/choose_existing_items.html -text
 tool/src/webapp/content/templates/choose_expert_category.html -text
 tool/src/webapp/content/templates/choose_expert_items.html -text
 tool/src/webapp/content/templates/choose_expert_objective.html -text
-tool/src/webapp/content/templates/control_panel.html -text
+tool/src/webapp/content/templates/control_evaluations.html -text
+tool/src/webapp/content/templates/control_scales.html -text
+tool/src/webapp/content/templates/control_templates.html -text
 tool/src/webapp/content/templates/evaluation_assign.html -text
 tool/src/webapp/content/templates/evaluation_assign_confirm.html -text
 tool/src/webapp/content/templates/evaluation_settings.html -text
@@ -263,7 +266,6 @@ tool/src/webapp/content/templates/remove_question.html -text
 tool/src/webapp/content/templates/remove_scale.html -text
 tool/src/webapp/content/templates/remove_template.html -text
 tool/src/webapp/content/templates/scale_add_modify.html -text
-tool/src/webapp/content/templates/scale_control.html -text
 tool/src/webapp/content/templates/summary.html -text
 tool/src/webapp/content/templates/take_eval.html -text
 tool/src/webapp/content/templates/template_item.html -text

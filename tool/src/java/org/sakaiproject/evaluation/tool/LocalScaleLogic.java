@@ -43,4 +43,9 @@ public class LocalScaleLogic {
 		currScale.setOptions(new String[]{"", ""});
 		return currScale;
 	}
+
+	public boolean controlScale(Long scaleId) {
+		return scalesLogic.canControlScale(external.getCurrentUserId(), scaleId);
+	}
+
 }

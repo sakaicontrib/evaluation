@@ -316,42 +316,12 @@ input.makeLink {
 	text-decoration: underline;
 	cursor: pointer;
 }
+
 input:hover.makeLink {
-	font-weight: bold;
 	color: #993300;
 	cursor: hand;
 }
 
-input.makeLinkLeft {
-	padding: 0px;
-	margin: 0px;
-	color: blue;
-	background-color: transparent;
-	border: none;
-	text-decoration: underline;
-	text-align: left;
-	cursor: pointer;
-}
-input:hover.makeLinkLeft {
-	font-weight: bold;
-	color: #993300;
-	cursor: hand;
-}
-input.makeLinkRight {
-	padding: 0px;
-	margin: 0px;
-	color: blue;
-	background-color: transparent;
-	border: none;
-	text-decoration: underline;
-	text-align: right;
-	cursor: pointer;
-}
-input:hover.makeLinkRight {
-	font-weight: bold;
-	color: #993300;
-	cursor: hand;
-}
 
 /* render link as a button */
 a:link.makeButton, a:visited.makeButton

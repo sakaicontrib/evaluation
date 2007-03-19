@@ -94,7 +94,6 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 	}
 
 	private EvalSettings settings;
-
 	public void setSettings(EvalSettings settings) {
 		this.settings = settings;
 	}
@@ -125,25 +124,22 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		/*
 		 * top links here
 		 */
-		if (createTemplate) {
-			UIInternalLink.make(tofill, "control-panel-toplink", //$NON-NLS-1$
-					UIMessage.make("controlpanel.page.title"),  //$NON-NLS-1$
-				new SimpleViewParameters(ControlPanelProducer.VIEW_ID));
-			UIInternalLink.make(tofill, "create-template-toplink", //$NON-NLS-1$
-					UIMessage.make("createtemplate.page.title"),  //$NON-NLS-1$
-					new TemplateViewParameters(ModifyTemplateProducer.VIEW_ID, null));
-		}
-
-		if ( beginEvaluation ) {
-			UIInternalLink.make(tofill, "begin-evaluation-toplink", //$NON-NLS-1$
-					UIMessage.make("beginevaluation.page.title"),  //$NON-NLS-1$
-				new TemplateViewParameters(EvaluationStartProducer.VIEW_ID, null));
-		}
-
 		if (userAdmin) {
 			UIInternalLink.make(tofill, "administrate-toplink", //$NON-NLS-1$
 					UIMessage.make("administrate.page.title"),  //$NON-NLS-1$
 				new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+		}
+
+		if (createTemplate) {
+			UIInternalLink.make(tofill, "control-templates-link", //$NON-NLS-1$
+					UIMessage.make("controltemplates.page.title"),  //$NON-NLS-1$
+				new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
+		}
+
+		if (beginEvaluation) {
+			UIInternalLink.make(tofill, "control-evaluations-link", //$NON-NLS-1$
+					UIMessage.make("controlevaluations.page.title"),  //$NON-NLS-1$
+				new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
 		}
 
 		/*
@@ -252,7 +248,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			UIBranchContainer evalAdminBC = UIBranchContainer.make(tofill, "evalAdminBox:"); //$NON-NLS-1$
 			UIInternalLink.make(evalAdminBC, "evaladmin-title",  //$NON-NLS-1$
 					UIMessage.make("summary.evaluations.admin"),  //$NON-NLS-1$
-					new SimpleViewParameters(ControlPanelProducer.VIEW_ID) );
+					new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID) );
 			UIForm evalAdminForm = UIForm.make(evalAdminBC , "evalAdminForm"); //$NON-NLS-1$
 			
 			UIMessage.make(evalAdminForm, "evaladmin-header-title","summary.header.title"); //$NON-NLS-1$ //$NON-NLS-2$

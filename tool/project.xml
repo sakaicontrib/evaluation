@@ -18,6 +18,13 @@
 
 	<dependencies>
 
+        <dependency>
+            <groupId>sakaiproject</groupId>
+            <artifactId>sakai</artifactId>
+            <version>${sakai.plugin.version}</version>
+            <type>plugin</type>
+        </dependency>
+
 		<!-- Evaluation dependencies -->
 		<dependency>
 			<groupId>sakaiproject</groupId>
