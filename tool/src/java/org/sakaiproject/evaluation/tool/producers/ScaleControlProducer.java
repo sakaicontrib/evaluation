@@ -41,7 +41,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  */
 public class ScaleControlProducer implements ViewComponentProducer, NavigationCaseReporter {
 
-	public static final String VIEW_ID = "scale_control"; //$NON-NLS-1$
+	public static final String VIEW_ID = "control_scales";
 	public String getViewID() {
 		return VIEW_ID;
 	}
@@ -50,16 +50,20 @@ public class ScaleControlProducer implements ViewComponentProducer, NavigationCa
 	public void setScalesLogic(EvalScalesLogic scalesLogic) {
 		this.scalesLogic = scalesLogic;
 	}
+
 	private EvalExternalLogic external;
 	public void setExternal(EvalExternalLogic external) {
 		this.external = external;
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
+	 */
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 		String currentUserId = external.getCurrentUserId();
 		boolean userAdmin = external.isUserAdmin(currentUserId);
 
-		if (! userAdmin) {
+		if (!userAdmin) {
 			// Security check and denial
 			throw new SecurityException("Non-admin users may not access this page");
 		}
@@ -67,30 +71,24 @@ public class ScaleControlProducer implements ViewComponentProducer, NavigationCa
 		/*
 		 * top menu links and bread crumbs here
 		 */
-		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID)); //$NON-NLS-1$ //$NON-NLS-2$
-		if (userAdmin) {
-			UIInternalLink.make(tofill, "control-panel-toplink", UIMessage.make("controlpanel.page.title"), //$NON-NLS-1$ //$NON-NLS-2$
-					new SimpleViewParameters(ControlPanelProducer.VIEW_ID));
-		}
-		UIInternalLink.make(tofill, "administrate-toplink", UIMessage.make("administrate.page.title"), new SimpleViewParameters(AdministrateProducer.VIEW_ID)); //$NON-NLS-1$ //$NON-NLS-2$
-		UIMessage.make(tofill, "scale-control-title", "scalecontrol.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID));
+		UIInternalLink.make(tofill, "administrate-toplink", UIMessage.make("administrate.page.title"), new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+		UIMessage.make(tofill, "page-title", "scalecontrol.page.title");
 
-		UIInternalLink.make(tofill, "add-new-scale-link", 					//$NON-NLS-1$ 
-				UIMessage.make("scalecontrol.add.new.scale.link"), 			//$NON-NLS-1$
-				new EvalScaleParameters(ScaleAddModifyProducer.VIEW_ID, 
-				EvaluationConstant.NEW_SCALE));
-		
-		UIMessage.make(tofill, "scales-control-heading", "scalecontrol.page.heading"); //$NON-NLS-1$ //$NON-NLS-2$
-		
+		UIInternalLink.make(tofill, "add-new-scale-link", UIMessage.make("scalecontrol.add.new.scale.link"), new EvalScaleParameters(
+				ScaleAddModifyProducer.VIEW_ID, EvaluationConstant.NEW_SCALE));
+
+		UIMessage.make(tofill, "scales-control-heading", "scalecontrol.page.heading");
+
 		//Get all the scales that are owned by a user
 		List scaleList = scalesLogic.getScalesForUser(currentUserId, null);
-		for (int i = 0; i < scaleList.size(); ++i){
+		for (int i = 0; i < scaleList.size(); ++i) {
 
 			EvalScale scale = (EvalScale) scaleList.get(i);
 			UIBranchContainer listOfScales = UIBranchContainer.make(tofill, "verticalDisplay:");
-			UIOutput.make(listOfScales, "scale-no", new Integer(i+1).toString()); //$NON-NLS-1$ //$NON-NLS-2$
-			UIOutput.make(listOfScales, "scale-title", scale.getTitle()); //$NON-NLS-1$ //$NON-NLS-2$
-			
+			UIOutput.make(listOfScales, "scale-no", new Integer(i + 1).toString());
+			UIOutput.make(listOfScales, "scale-title", scale.getTitle());
+
 			/*
 			 * If scale is locked do nothing. Else checking that whether 
 			 * this user can control the scale for modification / delete.
@@ -101,57 +99,41 @@ public class ScaleControlProducer implements ViewComponentProducer, NavigationCa
 			 */
 			if (scale.getLocked().booleanValue()) {
 				//do nothing
-			}
-			else {
+			} else {
 				if (scalesLogic.canControlScale(currentUserId, scale.getId())) {
-					
-					UIInternalLink.make(listOfScales, "modify-sidelink", 				//$NON-NLS-1$ 
-							UIMessage.make("scalecontrol.modify.link"), 				//$NON-NLS-1$
-							new EvalScaleParameters(ScaleAddModifyProducer.VIEW_ID, scale.getId()));
-					
-					/*
-					 * Expert scales cannot be deleted. In other words, only 
-					 * non-expert scales can be deleted / removed. 
-					 */ 
-					if (scale.getExpert().booleanValue()) {
-						//do nothing
-					}
-					else  {
-						UIInternalLink.make(listOfScales, "remove-sidelink", 				//$NON-NLS-1$ 
-								UIMessage.make("scalecontrol.remove.link"), 				//$NON-NLS-1$
-								new EvalScaleParameters(RemoveScaleProducer.VIEW_ID, scale.getId()));
-					}
+
+					UIInternalLink.make(listOfScales, "modify-sidelink", UIMessage.make("scalecontrol.modify.link"), new EvalScaleParameters(
+							ScaleAddModifyProducer.VIEW_ID, scale.getId()));
+
+					UIInternalLink.make(listOfScales, "remove-sidelink", UIMessage.make("scalecontrol.remove.link"), new EvalScaleParameters(
+							RemoveScaleProducer.VIEW_ID, scale.getId()));
 				}
 			}
 
 			//Display the scale options vertically
 			//ASCII value of 'a' = 97 so initial value is 96.
-			char[] startOptionsNo = {96};
-			for (int j = 0; j < scale.getOptions().length; ++j){
+			char[] startOptionsNo = { 96 };
+			for (int j = 0; j < scale.getOptions().length; ++j) {
 				UIBranchContainer scaleOptions = UIBranchContainer.make(listOfScales, "scaleOptions:");
 				startOptionsNo[0]++;
-				UIOutput.make(scaleOptions, "scale-option-no", new String(startOptionsNo)); //$NON-NLS-1$ //$NON-NLS-2$
-				UIOutput.make(scaleOptions, "scale-option-label", (scale.getOptions())[j]); //$NON-NLS-1$ //$NON-NLS-2$
+				UIOutput.make(scaleOptions, "scale-option-no", new String(startOptionsNo));
+				UIOutput.make(scaleOptions, "scale-option-label", (scale.getOptions())[j]);
 			}
-			
-			UIMessage.make(listOfScales, "ideal-scale-point", "scalecontrol.ideal.scale.title"); //$NON-NLS-1$ //$NON-NLS-2$
-			
+
+			UIMessage.make(listOfScales, "ideal-scale-point", "scalecontrol.ideal.scale.title");
+
 			//Based on the scale ideal value in the database, pick the corresponding from the messages file.
 			if (scale.getIdeal() == null)
-				UIMessage.make(listOfScales, "ideal-value", 
-						"scalecontrol.ideal.scale.option.label.none");
+				UIMessage.make(listOfScales, "ideal-value", "scalecontrol.ideal.scale.option.label.none");
 			else if (scale.getIdeal().equals(EvalConstants.SCALE_IDEAL_MID))
-				UIMessage.make(listOfScales, "ideal-value", 
-						"scalecontrol.ideal.scale.option.label.mid");
+				UIMessage.make(listOfScales, "ideal-value", "scalecontrol.ideal.scale.option.label.mid");
 			else if (scale.getIdeal().equals(EvalConstants.SCALE_IDEAL_HIGH))
-				UIMessage.make(listOfScales, "ideal-value",
-						"scalecontrol.ideal.scale.option.label.high");
-			else 
-				UIMessage.make(listOfScales, "ideal-value", 
-						"scalecontrol.ideal.scale.option.label.low");
-		 }
+				UIMessage.make(listOfScales, "ideal-value", "scalecontrol.ideal.scale.option.label.high");
+			else
+				UIMessage.make(listOfScales, "ideal-value", "scalecontrol.ideal.scale.option.label.low");
+		}
 	}
-	
+
 	public List reportNavigationCases() {
 		List i = new ArrayList();
 		//TODO

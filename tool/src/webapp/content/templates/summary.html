@@ -11,134 +11,133 @@
 
 <body rsf:id="scr=sakai-body">
 <div class="portletBody">
-	<div class="navIntraTool">
-		<a rsf:id="administrate-toplink" href="administrate.html">Administrate</a>
-		<a rsf:id="control-panel-toplink" href="control_panel.html">Control Panel</a>
-		<a rsf:id="create-template-toplink" href="template_title_desc.html">Create Template</a>	
-		<a rsf:id="begin-evaluation-toplink" href="evaluation_start.html">Begin Evaluation</a>
-	</div>
 
-	<div>
-		<ul class="breadCrumb">
-			<li rsf:id="page-title" class="breadCrumb">Summary</li>
-		</ul>
-	</div>
+<div class="navIntraTool">
+	<a rsf:id="administrate-toplink" href="administrate.html">Administrate</a>
+	<a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a>
+	<a rsf:id="control-templates-link" href="control_templates.html">My Templates</a>
+	<a rsf:id="control-items-link" href="control_items.html">My Items</a>
+</div>
 
-	<table width="99%">
-		<tr>
-		<td width="60%" valign="top">
-			<div rsf:id="notificationsBox:" class="summaryBox">
-				<div rsf:id="notifications-title" class="summaryHeader">Notifications</div>
+<div>
+	<ul class="breadCrumb">
+		<li rsf:id="page-title" class="breadCrumb">Summary</li>
+	</ul>
+</div>
 
-				<i rsf:id="notifications-higher-level">An evaluation has been assigned from a higher level:</i>
+<table width="99%">
+	<tr>
+	<td width="60%" valign="top">
+		<div rsf:id="notificationsBox:" class="summaryBox">
+			<div rsf:id="notifications-title" class="summaryHeader">Notifications</div>
+
+			<i rsf:id="notifications-higher-level">An evaluation has been assigned from a higher level:</i>
+			<table cellspacing="0" cellpadding="0" width="99%">
+				<tr>
+					<td width="50%"><a href="evaluation_settings.html">Evaluation: Eval Title 1</a></td>
+					<td>Items you have added: 0</td>
+				</tr>
+				<tr>
+					<td>From: College of Science</td>
+					<td>Add/Modify before: 09/15/2005</td>
+				</tr>
+			</table>
+		</div>
+
+		<div rsf:id="evaluationsBox:" class="summaryBox">
+			<div rsf:id="evaluations-title" class="summaryHeader">Evaluations</div>
+			<div rsf:id="evaluationsList:">
 				<table cellspacing="0" cellpadding="0" width="99%">
 					<tr>
-						<td width="50%"><a href="evaluation_settings.html">Evaluation: Eval Title 1</a></td>
-						<td>Items you have added: 0</td>
-					</tr>
-					<tr>
-						<td>From: College of Science</td>
-						<td>Add/Modify before: 09/15/2005</td>
+						<td rsf:id="evaluationTitle" width="50%" align="left" nowrap="true">
+							Evaluation title 1
+						</td>
+						<td width="50%" align="right" nowrap="true">
+							<i><span rsf:id="evaluationStartDate">09/20/2005</span> to 
+							<span rsf:id="evaluationDueDate">09/27/2005</span></i>
+						</td>
 					</tr>
 				</table>
-			</div>
-
-			<div rsf:id="evaluationsBox:" class="summaryBox">
-				<div rsf:id="evaluations-title" class="summaryHeader">Evaluations</div>
-				<div rsf:id="evaluationsList:">
+				<div style="margin-left:1em;">
 					<table cellspacing="0" cellpadding="0" width="99%">
-						<tr>
-							<td rsf:id="evaluationTitle" width="50%" align="left" nowrap="true">
-								Evaluation title 1
+						<tr rsf:id="evaluationsCourseList:">
+							<td width="60%">
+								<a rsf:id="evaluationCourseLink" href="take_eval.html">Course Title 1</a>
 							</td>
-							<td width="50%" align="right" nowrap="true">
-								<i><span rsf:id="evaluationStartDate">09/20/2005</span> to 
-								<span rsf:id="evaluationDueDate">09/27/2005</span></i>
+							<td width="40%" align="center" nowrap="true">
+								<span rsf:id="evaluationCourseStatus">Completed</span>
 							</td>
 						</tr>
 					</table>
-					<div style="margin-left:1em;">
-						<table cellspacing="0" cellpadding="0" width="99%">
-							<tr rsf:id="evaluationsCourseList:">
-								<td width="60%">
-									<a rsf:id="evaluationCourseLink" href="take_eval.html">Course Title 1</a>
-								</td>
-								<td width="40%" align="center" nowrap="true">
-									<span rsf:id="evaluationCourseStatus">Completed</span>
-								</td>
-							</tr>
-						</table>
-					</div>
 				</div>
 			</div>
+		</div>
 
-			<div rsf:id="evalAdminBox:" class="summaryBox">			
-				<A rsf:id="evaladmin-title" href="control_panel.html" class="summaryHeader">Evaluations Admin</A>
-				<form rsf:id="evalAdminForm" action="evaluation_settings.html">
-				<table cellspacing="0" cellpadding="0" width="99%" class="listHier">
-				<thead>
-					<tr>
-						<th align="left" width="50%">Title</th>
-						<th align="left" width="25%">Status</th>
-						<th align="left" width="25%">Date</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr rsf:id="evalAdminList:">
-						<td align="left" width="50%">
-						<!--  <a rsf:id="evalAdminTitleLink" href="evaluation_settings.html">Evaluation Title 1</a> -->
-						<input rsf:id="evalAdminTitleLink_edit" value="Title" type="submit" class="makeLinkLeft"/>
-						<a rsf:id="evalAdminTitleLink_preview" href="preview_eval.html">Evaluation Title 1</a>
-						</td>
-						<td align="left" width="25%" nowrap="true">
-							<span rsf:id="evalAdminStatus">Starts</span> <a href="view_report.html" rsf:id="viewReportLink"></a>
-						</td>
-						<td width="25%" nowrap="true">
-							<span rsf:id="evalAdminDateLabel">Starts</span>: 
-							<span rsf:id="evalAdminDate">09/20/2005</span>
-						</td>
-					</tr>
-				</tbody>
-				</table>
-				</form>
-			</div>
-		</td>
+		<div rsf:id="evalAdminBox:" class="summaryBox">			
+			<A rsf:id="evaladmin-title" href="control_panel.html" class="summaryHeader">Evaluations Admin</A>
+			<form rsf:id="evalAdminForm" action="evaluation_settings.html">
+			<table cellspacing="0" cellpadding="0" width="99%" class="listHier">
+			<thead>
+				<tr>
+					<th align="left" width="50%">Title</th>
+					<th align="left" width="25%">Status</th>
+					<th align="left" width="25%">Date</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr rsf:id="evalAdminList:">
+					<td align="left" width="50%">
+					<!--  <a rsf:id="evalAdminTitleLink" href="evaluation_settings.html">Evaluation Title 1</a> -->
+					<input rsf:id="evalAdminTitleLink_edit" value="Title" type="submit" class="makeLink"/>
+					<a rsf:id="evalAdminTitleLink_preview" href="preview_eval.html">Evaluation Title 1</a>
+					</td>
+					<td align="left" width="25%" nowrap="true">
+						<span rsf:id="evalAdminStatus">Starts</span> <a href="view_report.html" rsf:id="viewReportLink"></a>
+					</td>
+					<td width="25%" nowrap="true">
+						<span rsf:id="evalAdminDateLabel">Starts</span>: 
+						<span rsf:id="evalAdminDate">09/20/2005</span>
+					</td>
+				</tr>
+			</tbody>
+			</table>
+			</form>
+		</div>
+	</td>
 
-		<td width="40%" valign="top">
-			<div rsf:id="siteListingBox:" class="summaryBox">
-				<div rsf:id="sitelisting-title" class="summaryHeader">Site/Group Listing</div>
+	<td width="40%" valign="top">
+		<div rsf:id="siteListingBox:" class="summaryBox">
+			<div rsf:id="sitelisting-title" class="summaryHeader">Site/Group Listing</div>
 
-				<div>
-					<div rsf:id="sitelisting-evaluated-text" class="listHeader">Sites you can be evaluated in:</div>
-					<ul class="summaryEvaluateList">
-						<li rsf:id="evaluatedList:"><span rsf:id="evaluatedListTitle">Site/Group Title</span></li>
-					</ul>
-					<span rsf:id="evaluatedListNone" class="noListItems">No items to list</span>
-				</div>
-
-				<br/>
-
-				<div>
-					<div rsf:id="sitelisting-evaluate-text" class="listHeader">Sites you can evaluate:</div>
-					<ul class="summaryEvaluateList">
-						<li rsf:id="evaluateList:"><span rsf:id="evaluateListTitle">Site/Group Title</span></li>
-					</ul>
-					<span rsf:id="evaluateListNone" class="noListItems">No items to list</span>
-				</div>
-			</div>
-
-			<div rsf:id="toolsBox:" class="summaryBox">
-				<div rsf:id="tools-title" class="summaryHeader">Evaluation Tools</div>
-				<ul class="summaryToolList">
-				<!--  <li  rsf:id="createTemplateLink"><a href="#" rsf:id="payload-component">Create Template</a></li> -->
-					<a href="template_title_desc.html" rsf:id="createTemplateLink">Create Template</a>
-					<br/>
-					<a href="evaluation_start.html" rsf:id="beginEvaluationLink">Begin Evaluation</a>
+			<div>
+				<div rsf:id="sitelisting-evaluated-text" class="listHeader">Sites you can be evaluated in:</div>
+				<ul class="summaryEvaluateList">
+					<li rsf:id="evaluatedList:"><span rsf:id="evaluatedListTitle">Site/Group Title</span></li>
 				</ul>
+				<span rsf:id="evaluatedListNone" class="noListItems">No items to list</span>
 			</div>
-		</td>
-	</tr>
-	</table>
+
+			<br/>
+
+			<div>
+				<div rsf:id="sitelisting-evaluate-text" class="listHeader">Sites you can evaluate:</div>
+				<ul class="summaryEvaluateList">
+					<li rsf:id="evaluateList:"><span rsf:id="evaluateListTitle">Site/Group Title</span></li>
+				</ul>
+				<span rsf:id="evaluateListNone" class="noListItems">No items to list</span>
+			</div>
+		</div>
+
+		<div rsf:id="toolsBox:" class="summaryBox">
+			<div rsf:id="tools-title" class="summaryHeader">Evaluation Tools</div>
+			<a href="template_title_desc.html" rsf:id="createTemplateLink">Create Template</a>
+			<br/>
+			<a href="evaluation_start.html" rsf:id="beginEvaluationLink">Begin Evaluation</a>
+		</div>
+	</td>
+</tr>
+</table>
+
 </div>
 </body>
 </html>

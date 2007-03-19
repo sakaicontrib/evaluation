@@ -1,0 +1,188 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   <title rsf:id="page-title">My Evaluations</title>
+   <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+   <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+   <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+   <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+</head>
+
+<body>
+<div class="portletBody">
+
+<div class="navIntraTool">
+	<a rsf:id="administrate-link" href="administrate.html">Administrate</a>
+	<a rsf:id="summary-link" href="summary.html">Summary</a>
+</div>
+
+<div>
+<ul class="breadCrumb">
+	<li class="breadCrumb"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+	<li class="breadCrumb" rsf:id="page-title">My Evaluations</li>
+</ul>
+</div>
+
+
+<div style="width:99%;">
+	<div class="divrow">
+		<div class="leftcol">
+			<span rsf:id="evals-inqueue-header" style="font-weight:bold;">In-Queue Evaluations</span>
+			-
+			<span rsf:id="evals-inqueue-description" style="font-style:italic;font-size:0.9em;">Your Evaluations in queue that have not started yet</span>
+		</div>
+		<div class="rightcol">
+			<form rsf:id="begin-evaluation-form" method="post">
+				<input rsf:id="begin-evaluation-link" value="Start Evaluation" type="submit" class="makeLink" />
+			</form>
+		</div>
+		<div class="cleaner">&nbsp;</div>
+	</div>
+</div>
+
+<div rsf:id="inqueue-eval-listing:">
+	<form rsf:id="inqueue-eval-form" method="post">
+	 	<table border="1" cellspacing="0" cellpadding="2" width="99%">
+		 	<thead>
+				<tr>
+					<th rsf:id="eval-title-header" width="50%" align="left">Evaluation Title</th>
+					<th rsf:id="eval-assigned-header" width="15%" align="center">Assigned</th>
+					<th rsf:id="eval-startdate-header" width="10%" align="center">Start Date</th>
+					<th rsf:id="eval-duedate-header" width="10%" align="center">Due Date</th>
+					<th rsf:id="eval-settings-header" width="10%" align="center">Settings</th>
+					<th width="5%" align="center">&nbsp;</th>
+				</tr>
+		 	</thead>
+		 	<tbody>
+				<tr rsf:id="inqueue-eval-row:"> 
+					<td>&nbsp;
+						<a rsf:id="inqueue-eval-link" href="preview_eval.html">Evaluation Title 1</a>
+					</td>
+					<td align="center">
+						<input rsf:id="inqueue-eval-assigned-link" type="submit" value="Course 1010" class="makeLink" />
+						<span rsf:id="inqueue-eval-assigned"></span>
+					</td>
+					<td rsf:id="inqueue-eval-startdate" align="center" nowrap="true" style="font-size:0.9em;">15/03/2007</td>					
+					<td rsf:id="inqueue-eval-duedate" align="center" nowrap="true" style="font-size:0.9em;">20/03/2007</td>	
+					<td align="center">
+						<input rsf:id="inqueue-eval-edit-link" type="submit" class="makeLink" value="Edit" />		
+					</td>
+					<td align="center">
+						<a rsf:id="inqueue-eval-delete-link" href="remove_evaluation.html">Delete</a>
+					</td>		
+				</tr>
+			</tbody>
+		</table>
+	</form>
+</div>
+<div rsf:id="no-inqueue-evals" style="font-style:italic;margin-left:2em;">No evaluations in-queue</div>
+
+<br/>
+
+
+<div style="width:99%;">
+	<div class="divrow">
+		<div class="leftcol">
+			<span rsf:id="evals-active-header" style="font-weight:bold;">Active Evaluations</span>
+			-
+			<span rsf:id="evals-active-description" style="font-style:italic;font-size:0.9em;">Your Evaluations currently active for users to take</span>
+		</div>
+		<div class="cleaner">&nbsp;</div>
+	</div>
+</div>
+
+<div rsf:id="active-eval-listing:">
+	<form rsf:id="active-eval-form" method="post">
+	 	<table border="1" cellspacing="0" cellpadding="2" width="99%">
+		 	<thead>
+				<tr>
+					<th rsf:id="eval-title-header" width="40%" align="left">Evaluation Title</th>
+					<th rsf:id="eval-assigned-header" width="15%" align="center">Assigned</th>
+					<th rsf:id="eval-users-header" width="10%" align="center">Users</th>
+					<th rsf:id="eval-startdate-header" width="10%" align="center">Start Date</th>
+					<th rsf:id="eval-duedate-header" width="10%" align="center">Due Date</th>
+					<th rsf:id="eval-settings-header" width="10%" align="center">Settings</th>
+					<th width="5%" align="center">&nbsp;</th>
+				</tr>
+		 	</thead>
+		 	<tbody>
+				<tr rsf:id="active-eval-row:"> 
+					<td>&nbsp;
+						<a rsf:id="active-eval-link" href="preview_eval.html">Evaluation Title 1</a>
+					</td>
+					<td align="center">
+						<input rsf:id="active-eval-assigned-link" type="submit" value="Course 1010" class="makeLink" />
+						<span rsf:id="active-eval-assigned"></span>
+					</td>
+					<td rsf:id="active-eval-response-rate" align="center">10/100</td>
+					<td rsf:id="active-eval-startdate" align="center" nowrap="true" style="font-size:0.9em;">15/03/2007</td>					
+					<td rsf:id="active-eval-duedate" align="center" nowrap="true" style="font-size:0.9em;">20/03/2007</td>	
+					<td align="center">
+						<input rsf:id="active-eval-edit-link" type="submit" class="makeLink" value="Edit" />		
+					</td>
+					<td align="center">
+						<a rsf:id="active-eval-delete-link" href="remove_evaluation.html">Delete</a>
+					</td>		
+				</tr>
+			</tbody>
+		</table>
+	</form>
+</div>
+<div rsf:id="no-active-evals" style="font-style:italic;margin-left:2em;">No active evaluations</div>
+
+<br/>
+
+
+<div style="width:99%;">
+	<div class="divrow">
+		<div class="leftcol">
+			<span rsf:id="evals-closed-header" style="font-weight:bold;">Closed Evaluations</span>
+			-
+			<span rsf:id="evals-closed-description" style="font-style:italic;font-size:0.9em;">Your Evaluations which have been completed</span>
+		</div>
+		<div class="cleaner">&nbsp;</div>
+	</div>
+</div>
+
+<div rsf:id="closed-eval-listing:">
+	<form rsf:id="closed-eval-form" method="post">
+	 	<table border="1" cellspacing="0" cellpadding="2" width="99%">
+		 	<thead>
+				<tr>
+					<th rsf:id="eval-title-header" width="35%" align="left">Evaluation Title</th>
+					<th rsf:id="eval-assigned-header" width="15%" align="center">Assigned</th>
+					<th rsf:id="eval-response-rate-header" width="15%" align="center">Response Rate</th>
+					<th rsf:id="eval-duedate-header" width="10%" align="center">Due Date</th>
+					<th rsf:id="eval-report-header" width="20%" align="center">Report</th>
+					<th width="5%" align="center">&nbsp;</th>
+				</tr>
+		 	</thead>
+		 	<tbody>
+				<tr rsf:id="closed-eval-row:"> 
+					<td>&nbsp;
+						<a rsf:id="closed-eval-link" href="preview_eval.html">Evaluation Title 1</a>
+					</td>
+					<td align="center">
+						<input rsf:id="closed-eval-assigned-link" type="submit" value="Course 1010" class="makeLink" />
+						<span rsf:id="closed-eval-assigned"></span>
+					</td>
+					<td rsf:id="closed-eval-response-rate" align="center" nowrap="true">40/50 - 80%</td>						
+					<td rsf:id="closed-eval-duedate" align="center" nowrap="true" style="font-size:0.9em;">20/03/2007</td>	
+					<td align="center">
+						<a rsf:id="closed-eval-report-link" href="view_report.html">Report</a>
+						<span rsf:id="closed-eval-message"></span>
+					</td>
+					<td align="center">
+						<a rsf:id="closed-eval-delete-link" href="remove_evaluation.html">Delete</a>
+					</td>		
+				</tr>
+			</tbody>
+		</table>
+	</form>
+</div>
+<div rsf:id="no-closed-evals" style="font-style:italic;margin-left:2em;">No closed evaluations</div>
+
+</div>
+</body>
+</html>

@@ -158,19 +158,28 @@
 	</bean>
 
 	<bean
-		class="org.sakaiproject.evaluation.tool.producers.ControlPanelProducer">
+		class="org.sakaiproject.evaluation.tool.producers.ControlEvaluationsProducer">
 		<property name="assignsLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalAssignsLogic" />
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="evaluationsLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
-		<property name="templatesLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
 		<property name="responsesLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
 		<property name="settings"
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />					
+		<property name="locale" ref="requestLocale" />
+	</bean>
+
+	<bean
+		class="org.sakaiproject.evaluation.tool.producers.ControlTemplatesProducer">
+		<property name="external"
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+		<property name="evaluationsLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+		<property name="templatesLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
 		<property name="locale" ref="requestLocale" />
 	</bean>
 

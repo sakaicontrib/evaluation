@@ -47,6 +47,6 @@
 	<classpathentry kind="var" path="MAVEN_REPO/quartz/jars/quartz-1.5.2.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/velocity/jars/velocity-1.4.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/util-util"/>
-	<classpathentry kind="src" path="/scheduler"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/scheduler"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

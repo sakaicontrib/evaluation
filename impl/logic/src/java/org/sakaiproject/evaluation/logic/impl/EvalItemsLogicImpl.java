@@ -280,7 +280,7 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 
 		for (Iterator iter = s.iterator(); iter.hasNext();) {
 			EvalItem element = (EvalItem) iter.next();
-			log.error("private Items: " + element.getId() + ":" + element.getItemText() + ":" + element.getClassification());
+			log.debug("private Items: " + element.getId() + ":" + element.getItemText() + ":" + element.getClassification());
 		}
 
 		// handle public sharing items
@@ -294,7 +294,7 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 
 		for (Iterator iter = s.iterator(); iter.hasNext();) {
 			EvalItem element = (EvalItem) iter.next();
-			log.error("all Items: " + element.getId() + ":" + element.getItemText() + ":" + element.getClassification());
+			log.debug("all Items: " + element.getId() + ":" + element.getItemText() + ":" + element.getClassification());
 		}
 
 		return new ArrayList(s);

@@ -1,0 +1,104 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   <title rsf:id="page-title">My Templates</title>
+   <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+   <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+   <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+   <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+</head>
+
+<body>
+<div class="portletBody">
+
+<div class="navIntraTool">
+	<a rsf:id="administrate-link" href="administrate.html">Administrate</a>
+	<a rsf:id="summary-link" href="summary.html">Summary</a>
+	<a rsf:id="control-evaluations-link" href="control-evaluations.html">My Evaluations</a>
+</div>
+
+<div>
+<ul class="breadCrumb">
+	<li class="breadCrumb"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+	<li class="breadCrumb" rsf:id="page-title">My Templates</li>
+</ul>
+</div>
+
+<div style="width:99%;">
+	<div class="divrow">
+		<div class="leftcol">
+			<span rsf:id="templates-header" style="font-weight:bold;">Evaluation Templates</span>
+			-
+			<span rsf:id="templates-description" style="font-style:italic;font-size:0.9em;">Templates store items in a layout and are used to create evaluations</span>
+		</div>
+		<div class="rightcol">
+			<a rsf:id="create-template-link" href="template_title_desc.html">Create Template</a>
+		</div>
+		<div class="cleaner">&nbsp;</div>
+	</div>
+</div>
+
+
+<!-- This block (list template) is not visible if there are no templates visible -->
+<div rsf:id="template-listing:">
+ 	<table border="1" cellspacing="0" cellpadding="2" width="99%">
+ 		<thead>
+			<tr>
+				<th rsf:id="template-title-header" width="55%" align="left">Template Title</th>
+				<!-- <th width="10%" align="center">&nbsp;</th> -->
+				<th rsf:id="template-owner-header" width="20%" align="center">Owner</th>
+				<th rsf:id="template-lastupdate-header" width="15%" align="center">Last Update</th>
+				<th width="10%" align="center">&nbsp;</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr rsf:id="template-row:">
+				<td align="left">&nbsp;
+	              <a rsf:id="template-modify-link" href="modify_template_items.html">Template Title</a>
+	              <span rsf:id="template-title"></span>
+				</td>
+				<!-- <td align="center"><a href="#" name="copy-template-link">Copy</a></td> -->
+				<td rsf:id="template-owner" align="center" nowrap="true">owner displayname</td>					
+				<td rsf:id="template-last-update" align="center" nowrap="true">11/11/2006</td>	
+				<td align="center">
+					<a rsf:id="delete-template-link" href="remove_template.html">Delete</a>
+					<span rsf:id="template-used"></span>
+				</td>	
+			</tr>
+			<tr rsf:id="template-row:">
+				<td align="left">&nbsp;
+	              <a rsf:id="template-modify-link" href="modify_template_items.html">Template Title</a>
+	              <span rsf:id="template-title"></span>
+				</td>
+				<!-- <td align="center"><a href="#" name="copy-template-link">Copy</a></td> -->
+				<td rsf:id="template-owner" align="center" nowrap="true">owner displayname</td>					
+				<td rsf:id="template-last-update" align="center" nowrap="true">25/03/2007</td>	
+				<td align="center">
+					<a rsf:id="delete-template-link" href="remove_template.html"></a>
+					<span rsf:id="template-used">In Use</span>
+				</td>	
+			</tr>
+		</tbody>
+	</table>
+</div>
+<div rsf:id="no-templates" style="font-style:italic;margin-left:2em;">No templates available</div>
+
+<br/>
+
+<div style="width:99%;">
+	<div class="divrow">
+		<div class="leftcol">
+			<a rsf:id="control-evaluations-link" href="control-evaluations.html">My Evaluations</a>
+		</div>
+		<div class="rightcol">
+			<a rsf:id="create-evaluation-link" href="evaluation-start.html">Start Evaluation</a>
+		</div>
+		<div class="cleaner">&nbsp;</div>
+	</div>
+</div>
+
+</div>
+</body>
+</html>

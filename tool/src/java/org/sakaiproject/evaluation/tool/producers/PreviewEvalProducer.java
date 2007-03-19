@@ -54,7 +54,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  */
 public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsReporter {
 
-	public static final String VIEW_ID = "preview_eval"; //$NON-NLS-1$
+	public static final String VIEW_ID = "preview_eval";
 	public String getViewID() {
 		return VIEW_ID;
 	}
@@ -95,38 +95,38 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 
 		//TODO - i18n UIBoundBoolean's for N/a
 
-		UIMessage.make(tofill,"control-panel-title", "controlpanel.page.title");		 //$NON-NLS-1$ //$NON-NLS-2$
-		UIMessage.make(tofill, "preview-eval-title", "previeweval.page.title");		 //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill,"control-panel-title", "controlpanel.page.title");		
+		UIMessage.make(tofill, "preview-eval-title", "previeweval.page.title");		
 
-		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"),  //$NON-NLS-1$ //$NON-NLS-2$
+		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), 
 				new SimpleViewParameters(SummaryProducer.VIEW_ID));		
 
 		PreviewEvalParameters previewEvalViewParams = (PreviewEvalParameters)viewparams;
 
-		UIMessage.make(tofill, "evaluation-title-header", "previeweval.evaluation.title.header"); //$NON-NLS-1$ //$NON-NLS-2$
-		UIMessage.make(tofill, "course-title-header", "previeweval.course.title.header"); //$NON-NLS-1$ //$NON-NLS-2$
-		UIMessage.make(tofill, "instructions-title-header", "previeweval.instructions.title.header"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "evaluation-title-header", "previeweval.evaluation.title.header");
+		UIMessage.make(tofill, "course-title-header", "previeweval.course.title.header");
+		UIMessage.make(tofill, "instructions-title-header", "previeweval.instructions.title.header");
 
 		if (previewEvalViewParams.originalPage != null){
 			if (previewEvalViewParams.originalPage.equals(ModifyTemplateItemsProducer.VIEW_ID) || 
 					previewEvalViewParams.originalPage.equals(EvaluationStartProducer.VIEW_ID) ){
 				//get template ID
-				UIMessage.make(tofill, "evalTitle", "previeweval.evaluation.title.default");//no evaluation title, use dummy //$NON-NLS-1$ //$NON-NLS-2$
-				UIMessage.make(tofill, "courseTitle", "previeweval.course.title.default");//no course title, use dummy //$NON-NLS-1$ //$NON-NLS-2$
-				UIMessage.make(tofill, "instruction", "previeweval.instructions.default");//no instruction, use dummy //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(tofill, "evalTitle", "previeweval.evaluation.title.default");//no evaluation title, use dummy
+				UIMessage.make(tofill, "courseTitle", "previeweval.course.title.default");//no course title, use dummy
+				UIMessage.make(tofill, "instruction", "previeweval.instructions.default");//no instruction, use dummy
 			}
 
-			if (previewEvalViewParams.originalPage.equals(ControlPanelProducer.VIEW_ID)){
+			if (previewEvalViewParams.originalPage.equals(ControlEvaluationsProducer.VIEW_ID)){
 
 				//get eval ID, need to get assigned courses from eval ID
 				if (previewEvalViewParams.evaluationId != null){
 
 					EvalEvaluation eval = evalsLogic.getEvaluationById(previewEvalViewParams.evaluationId);
-					UIOutput.make(tofill, "evalTitle", eval.getTitle()); //$NON-NLS-1$
+					UIOutput.make(tofill, "evalTitle", eval.getTitle());
 
 					int count = evalsLogic.countEvaluationGroups(eval.getId());
 					if (count > 1){
-						UIOutput.make(tofill, "courseTitle",count+"courses"); //$NON-NLS-1$ //$NON-NLS-2$
+						UIOutput.make(tofill, "courseTitle",count+"courses");
 					}else{
 				
 						Long[] evalIds = {eval.getId()};
@@ -138,8 +138,8 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 
 					}
 					if (eval.getInstructions() != null)
-						UIVerbatim.make(tofill, "instruction", eval.getInstructions()); //$NON-NLS-1$
-					else UIMessage.make(tofill, "instruction", "previeweval.instructions.default"); //$NON-NLS-1$ //$NON-NLS-2$
+						UIVerbatim.make(tofill, "instruction", eval.getInstructions());
+					else UIMessage.make(tofill, "instruction", "previeweval.instructions.default");
 				}
 			}
 
@@ -148,7 +148,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 				if (previewEvalViewParams.evaluationId != null){
 
 					EvalEvaluation eval = evalsLogic.getEvaluationById(previewEvalViewParams.evaluationId);
-					UIOutput.make(tofill, "evalTitle", eval.getTitle()); //$NON-NLS-1$
+					UIOutput.make(tofill, "evalTitle", eval.getTitle());
 
 					if (previewEvalViewParams.context != null){
 						//get course title from context
@@ -156,7 +156,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 					}else{ //get evalID, need to get assigned courses from eval ID
 						int count = evalsLogic.countEvaluationGroups(eval.getId());
 						if (count > 1){
-							UIOutput.make(tofill, "courseTitle",count+"courses"); //$NON-NLS-1$ //$NON-NLS-2$
+							UIOutput.make(tofill, "courseTitle",count+"courses");
 						}else{
 							Long[] evalIds = {eval.getId()};
 							Map evalContexts = evalsLogic.getEvaluationGroups(evalIds, true);
@@ -168,8 +168,8 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 						}
 					}
 					if (eval.getInstructions() != null)
-						UIOutput.make(tofill, "instruction",eval.getInstructions()); //$NON-NLS-1$
-					else UIMessage.make(tofill, "instruction", "previeweval.instructions.default"); //$NON-NLS-1$ //$NON-NLS-2$
+						UIOutput.make(tofill, "instruction",eval.getInstructions());
+					else UIMessage.make(tofill, "instruction", "previeweval.instructions.default");
 
 				}
 			} //end of: if (previewEvalViewParams.originalPage.equals(SummaryProducer.VIEW_ID))
@@ -181,8 +181,8 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 			//template = logic.getTemplateById(previewEvalViewParams.templateId);
 			if (template.getDescription() != null){
 				//show description
-				UIBranchContainer showDescr = UIBranchContainer.make(tofill, "showDescription:"); //$NON-NLS-1$
-				UIOutput.make(showDescr, "description", template.getDescription()); //$NON-NLS-1$
+				UIBranchContainer showDescr = UIBranchContainer.make(tofill, "showDescription:");
+				UIOutput.make(showDescr, "description", template.getDescription());
 			}
 
 
@@ -204,8 +204,8 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 				
 				if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_COURSE, ncItemsList))	{	
 					colorCounter=0;
-					courseSection = UIBranchContainer.make(tofill,"courseSection:"); //$NON-NLS-1$
-					UIMessage.make(courseSection, "course-questions-header", "previeweval.course.questions.header");  //$NON-NLS-1$ //$NON-NLS-2$
+					courseSection = UIBranchContainer.make(tofill,"courseSection:");
+					UIMessage.make(courseSection, "course-questions-header", "previeweval.course.questions.header"); 
 					for (int i = 0; i < ncItemsList.size(); i++) {	
 						EvalTemplateItem templateItem = (EvalTemplateItem) ncItemsList.get(i);
 						
@@ -223,8 +223,8 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 
 				if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, ncItemsList))	{	
 					colorCounter=0;
-					instructorSection = UIBranchContainer.make(tofill,"instructorSection:"); //$NON-NLS-1$
-					UIMessage.make(instructorSection, "instructor-questions-header", "previeweval.instructor.questions.header");  //$NON-NLS-1$ //$NON-NLS-2$
+					instructorSection = UIBranchContainer.make(tofill,"instructorSection:");
+					UIMessage.make(instructorSection, "instructor-questions-header", "previeweval.instructor.questions.header"); 
 					for (int i = 0; i < ncItemsList.size(); i++) {	
 						EvalTemplateItem templateItem = (EvalTemplateItem) ncItemsList.get(i);
 						
@@ -250,11 +250,15 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 	}
 
 	
+	/**
+	 * @param section
+	 * @param templateItem
+	 * @param colorCounter
+	 */
 	private void doFillComponent(UIBranchContainer section, EvalTemplateItem templateItem, int colorCounter){
-
 		UIBranchContainer itemsBranch = null;
 		itemsBranch = UIBranchContainer.make(section,
-				"itemrow:first", Integer.toString(displayedItems)); //$NON-NLS-1$
+				"itemrow:first", Integer.toString(displayedItems));
 
 			// use the renderer evolver
 			itemRenderer.renderItem(itemsBranch, "previewed-item:", null, templateItem, displayedItems, true);
