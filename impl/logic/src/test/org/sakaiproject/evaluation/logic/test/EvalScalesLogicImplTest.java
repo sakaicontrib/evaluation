@@ -142,6 +142,9 @@ public class EvalScalesLogicImplTest extends AbstractTransactionalSpringContextT
 		testScale2.setSharing(EvalConstants.SHARING_SHARED);
 		scales.saveScale(testScale2, EvalTestDataLoad.MAINT_USER_ID);
 
+		testScale2.setOptions(options1);
+		scales.saveScale(testScale2, EvalTestDataLoad.MAINT_USER_ID);
+
 		// test admin can edit any scale
 		testScale2.setIdeal(EvalConstants.SCALE_IDEAL_MID);
 		scales.saveScale(testScale2, EvalTestDataLoad.ADMIN_USER_ID);
