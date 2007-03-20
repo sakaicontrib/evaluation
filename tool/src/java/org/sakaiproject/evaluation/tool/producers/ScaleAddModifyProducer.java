@@ -17,8 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.model.EvalScale;
-import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.LocalScaleLogic;
 import org.sakaiproject.evaluation.tool.ScaleBeanLocator;
@@ -48,6 +46,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * Handles scale addition, removal, and modification.
  * 
  * @author Kapil Ahuja (kahuja@vt.edu)
+ * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
 
@@ -86,21 +85,11 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParams
 		EvalScaleParameters evalScaleParams = (EvalScaleParameters) viewparams;
 		Long scaleId = evalScaleParams.scaleId;
 
-		/*
-		 * Fetching the scale from LocalScaleLogic because: 
-		 * a) we need the number of scale options,
-		 * b) Need to do the check whether the scale is expert or not.
-		 * 
-		 */
-		EvalScale scale = null;
 		String path;
-		if (scaleId.equals(EvaluationConstant.NEW_SCALE)) {
+		if (scaleId == null) {
 			// new scale
-			scale = localScaleLogic.newScale();
-			path = "scaleBeanLocator." + ScaleBeanLocator.NEW_1 + ".";
+			path = "scaleBeanLocator." + ScaleBeanLocator.NEW_PREFIX + "1.";
 		} else {
-			//scale exists
-			scale = localScaleLogic.fetchScale(scaleId);
 			path = "scaleBeanLocator." + scaleId + ".";
 		}
 
@@ -108,9 +97,7 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParams
 		 * top menu links and bread crumbs here
 		 */
 		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID));
-
 		UIInternalLink.make(tofill, "administrate-toplink", UIMessage.make("administrate.page.title"), new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-
 		UIInternalLink.make(tofill, "scale-control-toplink", UIMessage.make("scalecontrol.page.title"), new SimpleViewParameters(ScaleControlProducer.VIEW_ID));
 
 		// Page title
@@ -124,53 +111,51 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParams
 		UIInput.make(form, "scale-title", path + "title");
 
 		// use the logic layer method to determine if scales can be controlled
-		if (localScaleLogic.controlScale(scale.getId())) {
-			// New scales don't need a remove link
-			if (scaleId.equals(EvaluationConstant.NEW_SCALE)) {
-				// do nothing
-			} else {
-				UIBranchContainer scaleRemove = UIBranchContainer.make(form, "scaleRemove:");
-				UIInternalLink.make(scaleRemove, "scale-remove-link", UIMessage.make("scaleaddmodify.remove.scale.link"), new EvalScaleParameters(
-						RemoveScaleProducer.VIEW_ID, scaleId));
-			}
+		if (scaleId != null && localScaleLogic.controlScale(scaleId)) {
+			UIInternalLink.make(form, "scale-remove-link", 
+					UIMessage.make("scaleaddmodify.remove.scale.link"), 
+					new EvalScaleParameters( RemoveScaleProducer.VIEW_ID, scaleId) );
 		}
 
-		boundedDynamicListInputEvolver.setLabels(UIMessage.make("scaleaddmodify.remove.scale.option.button"), UIMessage
-				.make("scaleaddmodify.add.scale.option.button"));
+		boundedDynamicListInputEvolver.setLabels(
+				UIMessage.make("scaleaddmodify.remove.scale.option.button"), 
+				UIMessage.make("scaleaddmodify.add.scale.option.button"));
 		boundedDynamicListInputEvolver.setMinimumLength(2);
 		boundedDynamicListInputEvolver.setMaximumLength(20);
 
-		UIInputMany modifypoints = UIInputMany.make(form, "modify-scale-points:", path + "options");
-
+		UIInputMany modifypoints = UIInputMany.make(form, 
+				"modify-scale-points:", path + "options");
 		boundedDynamicListInputEvolver.evolve(modifypoints);
 
 		UIMessage.make(form, "ideal-note-start", "scaleaddmodify.scale.ideal.note.start");
-
 		UIMessage.make(form, "ideal-note-main-text", "scaleaddmodify.scale.ideal.note.main.text");
 
-		//Ideal scale values radio buttons
-		String[] scaleIdealValues = { EvalConstants.SCALE_IDEAL_NONE, EvalConstants.SCALE_IDEAL_LOW, EvalConstants.SCALE_IDEAL_HIGH,
-				EvalConstants.SCALE_IDEAL_MID };
-
-		String[] scaleIdealLabels = { "scalecontrol.ideal.scale.option.label.none", "scalecontrol.ideal.scale.option.label.low",
-				"scalecontrol.ideal.scale.option.label.high", "scalecontrol.ideal.scale.option.label.mid" };
-
-		UISelect radios = UISelect.make(form, "scaleIdealRadio", scaleIdealValues, scaleIdealLabels, path + "ideal").setMessageKeys();
+		UISelect radios = UISelect.make(form, "scaleIdealRadio", 
+				EvaluationConstant.scaleIdealValues, 
+				EvaluationConstant.scaleIdealLabels, 
+				path + "ideal").setMessageKeys();
 
 		String selectID = radios.getFullID();
-		for (int i = 0; i < scaleIdealValues.length; ++i) {
+		for (int i = 0; i < EvaluationConstant.scaleIdealValues.length; ++i) {
 			UIBranchContainer radiobranch = UIBranchContainer.make(form, "scaleIdealOptions:", Integer.toString(i));
 			UISelectLabel.make(radiobranch, "scale-ideal-label", selectID, i);
 			UISelectChoice.make(radiobranch, "scale-ideal-value", selectID, i);
 		}
 
-		String[] sharingList = { "scaleaddmodify.sharing.private", "scaleaddmodify.sharing.public" };
-		UISelect.make(form, "scale-sharing", EvaluationConstant.MODIFIER_VALUES, sharingList, path + "sharing").setMessageKeys();
+		if (userAdmin) {
+			UIBranchContainer sharingBranch = UIBranchContainer.make(form, "sharing-branch:");
+			String[] sharingList = {
+					"scaleaddmodify.sharing.private", 
+					"scaleaddmodify.sharing.public"
+				};
+			UIMessage.make(sharingBranch, "scale-sharing-note", "scaleaddmodify.sharing.note");
+			UISelect.make(sharingBranch, "scale-sharing", 
+					EvaluationConstant.MODIFIER_VALUES, 
+					sharingList, path + "sharing").setMessageKeys();
+		}
 
-		UIMessage.make(form, "scale-hidden-note", "scaleaddmodify.scale.hidden.note");
-
+		// command buttons
 		UICommand.make(form, "scale-add-modify-cancel-button", UIMessage.make("scaleaddmodify.cancel.button"));
-
 		UICommand.make(form, "scale-add-modify-save-button", UIMessage.make("scaleaddmodify.save.scale.button"), "#{scaleBean.saveScale}");
 
 	}
@@ -185,6 +170,9 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParams
 		return togo;
 	}
 
+	/* (non-Javadoc)
+	 * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
+	 */
 	public ViewParameters getViewParameters() {
 		return new EvalScaleParameters();
 	}

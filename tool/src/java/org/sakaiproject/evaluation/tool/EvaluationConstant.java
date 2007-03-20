@@ -63,7 +63,7 @@ public class EvaluationConstant {
 	public static String[] STEPPED_IMAGE_URLS = new String[] {
 		"$context/content/images/corner.gif",
 		"$context/content/images/down-line.gif",
-	"$context/content/images/down-arrow.gif" };
+		"$context/content/images/down-arrow.gif" };
 
 	//For preview_item.html
 	public static String[] COLORED_IMAGE_URLS = new String[] {
@@ -71,7 +71,7 @@ public class EvaluationConstant {
 		"$context/content/images/ideal-low.jpg",
 		"$context/content/images/ideal-mid.jpg",
 		"$context/content/images/ideal-high.jpg",
-	"$context/content/images/ideal-outside.jpg"};
+		"$context/content/images/ideal-outside.jpg"};
 
 	public static String BLUE_COLOR = "#6699ff";
 	public static String GREEN_COLOR = "#00d600";
@@ -144,14 +144,29 @@ public class EvaluationConstant {
 	public static final String ADMIN_BOOLEAN_CONFIGURABLE = "-1";
 
 	/**
-	 * Used to pass the flag that this is a new scale between the 
-	 * scale add modify and scale control pages. 
-	 */ 
-	public static final Long NEW_SCALE = new Long("-1");
-
-	/**
 	 * The value stored when a student responds N/A
 	 */
 	public static final String NA_VALUE = "-1";
+
+	/**
+	 * Ideal scale values radio buttons (scale add/modify)
+	 */
+	public static final String[] scaleIdealValues = { 
+			EvalConstants.SCALE_IDEAL_NONE, 
+			EvalConstants.SCALE_IDEAL_LOW, 
+			EvalConstants.SCALE_IDEAL_HIGH,
+			EvalConstants.SCALE_IDEAL_MID
+		};
+
+	/**
+	 * Ideal scale values radio button labels (scale add/modify)
+	 */
+	public static final String[] scaleIdealLabels = {
+			"scalecontrol.ideal.scale.option.label.none", 
+			"scalecontrol.ideal.scale.option.label.low",
+			"scalecontrol.ideal.scale.option.label.high", 
+			"scalecontrol.ideal.scale.option.label.mid"
+		};
+
 }
 
