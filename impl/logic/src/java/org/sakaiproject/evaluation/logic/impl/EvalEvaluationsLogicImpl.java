@@ -643,11 +643,10 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 			throw new SecurityException("User ("+userId+") attempted to remove evaluation ("+eval.getId()+") without permissions");
 		}
 
-		// cannot remove evaluations unless they are still in queue
-		// (might adjust this to allow removal if no responses later)
-		if ( ! EvalConstants.EVALUATION_STATE_INQUEUE.equals(EvalUtils.getEvaluationState(eval)) ) {
-			log.warn("Cannot remove an evaluation ("+eval.getId()+") which has started");
-			throw new IllegalStateException("Cannot remove an evaluation ("+eval.getId()+") which has started");
+		// cannot remove evaluations unless there are no responses (not locked)
+		if ( eval.getLocked().booleanValue() ) {
+			log.warn("Cannot remove an evaluation ("+eval.getId()+") which is locked");
+			throw new IllegalStateException("Cannot remove an evaluation ("+eval.getId()+") which is locked");
 		}
 
 		return true;
