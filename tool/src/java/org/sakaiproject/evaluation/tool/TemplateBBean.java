@@ -108,7 +108,7 @@ public class TemplateBBean {
 	public void saveReorder() { 
 		log.info("save items reordering");
 		Map delivered = templateItemBeanLocator.getDeliveredBeans();
-		List l = itemsLogic.getTemplateItemsForTemplate(templateId, null);
+		List l = itemsLogic.getTemplateItemsForTemplate(templateId, null, null);
 		List ordered = TemplateItemUtils.getNonChildItems(l);
 		for (int i = 1; i <= ordered.size();) {
 			EvalTemplateItem item = (EvalTemplateItem) ordered.get(i - 1);
@@ -148,7 +148,7 @@ public class TemplateBBean {
 			EvalTemplateItem first = itemsLogic.getTemplateItemById(Long.valueOf(strIds[0]));
 
 			EvalTemplate template = first.getTemplate();
-			List allTemplateItems = itemsLogic.getTemplateItemsForTemplate(template.getId(), null);
+			List allTemplateItems = itemsLogic.getTemplateItemsForTemplate(template.getId(), null, null);
 
 			if (TemplateItemUtils.getTemplateItemType(first).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)) {
 				// create new block from multiple existing block
@@ -227,7 +227,7 @@ public class TemplateBBean {
 			}
 
 			// shifting all the others's order
-			allTemplateItems = itemsLogic.getTemplateItemsForTemplate(template.getId(), null);
+			allTemplateItems = itemsLogic.getTemplateItemsForTemplate(template.getId(), null, null);
 			List noChildList = TemplateItemUtils.getNonChildItems(allTemplateItems);
 			for (int i = 0; i < noChildList.size(); i++) {
 				EvalTemplateItem eti = (EvalTemplateItem) noChildList.get(i);

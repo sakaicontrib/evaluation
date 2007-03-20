@@ -23,6 +23,45 @@ package org.sakaiproject.evaluation.model.constant;
 public class EvalConstants {
 
 	/**
+	 * Template type: this is a normal type of template created by a user
+	 * and used to start evaluations
+	 */
+	public final static String TEMPLATE_TYPE_STANDARD = "standard";
+	/**
+	 * Template type: this is an added items template and only used for storing
+	 * items added to an evaluation, it cannot be used to start an evaluation
+	 */
+	public final static String TEMPLATE_TYPE_ADDED = "added";
+
+	/**
+	 * Hierarchy level: this is a special case level which indicates that
+	 * these things are at the top level of the hierarchy (nothing is above),
+	 * use the constant as the node id {@link #HIERARCHY_NODE_ID_TOP}
+	 */
+	public final static String HIERARCHY_LEVEL_TOP = "toplevel";
+	/**
+	 * Hierarchy node: this is a special case id which represents the top
+	 * level of the hierarchy
+	 */
+	public final static String HIERARCHY_NODE_ID_TOP = "000topid";
+	/**
+	 * Hierarchy level: this is the non-special case level that all items 
+	 * not at the special levels for instructor added items should
+	 * have, the node id would be an actual hierarchy node id
+	 */
+	public final static String HIERARCHY_LEVEL_NODE = "nodelevel";
+	/**
+	 * Hierarchy level: instructor level instructor added items exist at this special level,
+	 * the userId of the instructor should be used as the node id
+	 */
+	public final static String HIERARCHY_LEVEL_INSTRUCTOR = "instructor";
+	/**
+	 * Hierarchy level: group level instructor added items exist at this at this special level,
+	 * the groupId of the group should be used as the node id
+	 */
+	public final static String HIERARCHY_LEVEL_GROUP = "group";
+
+	/**
 	 * Permission: User can create, update, delete evaluation templates
 	 */
 	public final static String PERM_WRITE_TEMPLATE = "eval.write.template";

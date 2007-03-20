@@ -13,6 +13,7 @@ import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 /*
  * A "Local DAO" to focus dependencies and centralise fetching logic for the
@@ -51,8 +52,8 @@ public class LocalTemplateLogic {
 			return new ArrayList();
 		}
 		else {
-			return itemsLogic.getTemplateItemsForTemplate(templateId, external
-					.getCurrentUserId());
+			return itemsLogic.getTemplateItemsForTemplate(templateId, 
+					external.getCurrentUserId(), null);
 		}
 	}
 
@@ -72,17 +73,24 @@ public class LocalTemplateLogic {
 	}
 
 	public EvalTemplate newTemplate() {
-		EvalTemplate currTemplate = new EvalTemplate(new Date(), external.getCurrentUserId(),
+		EvalTemplate currTemplate = new EvalTemplate(new Date(), 
+				external.getCurrentUserId(), EvalConstants.TEMPLATE_TYPE_STANDARD, 
 				null, "private", Boolean.FALSE);
-		currTemplate.setDescription(""); // TODO - somehow gives DataIntegrityViolation if null
+		currTemplate.setDescription(""); // Note- somehow gives DataIntegrityViolation if null
 		return currTemplate;
 	}
 
 	public EvalTemplateItem newTemplateItem() {
+		String level = EvalConstants.HIERARCHY_LEVEL_TOP;
+		String nodeId = EvalConstants.HIERARCHY_NODE_ID_TOP;
+
+		// TODO - this should respect the current level the user is at
+
 		EvalItem newItem = new EvalItem(new Date(), external.getCurrentUserId(), "", "",
 				"", new Boolean(false));
-		EvalTemplateItem newTemplateItem = new EvalTemplateItem(new Date(), external.getCurrentUserId(),
-				null, newItem, null, EvaluationConstant.ITEM_CATEGORY_VALUES[0]);
+		EvalTemplateItem newTemplateItem = new EvalTemplateItem( new Date(), 
+				external.getCurrentUserId(), null, newItem, null, 
+				EvaluationConstant.ITEM_CATEGORY_VALUES[0], level, nodeId);
 		newTemplateItem.setUsesNA(new Boolean(false));
 		return newTemplateItem;
 	}

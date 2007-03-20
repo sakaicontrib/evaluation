@@ -106,7 +106,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 		evalUnLocked = new EvalEvaluation(new Date(), EvalTestDataLoad.MAINT_USER_ID, "Eval active not taken", null, 
 				etdl.yesterday, etdl.tomorrow, etdl.tomorrow, etdl.threeDaysFuture, null, null,
 				EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.INSTRUCTOR_OPT_IN, 
-				new Integer(1), null, null, null, null, etdl.templatePublicUnused, null,
+				new Integer(1), null, null, null, null, etdl.templatePublicUnused, null, null,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, EvalTestDataLoad.UNLOCKED);
 		evaluationDao.save( evalUnLocked );
 
@@ -634,7 +634,8 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 		// check that new template cannot be locked/unlocked
 		try {
 			evaluationDao.lockTemplate(
-				new EvalTemplate(new Date(), EvalTestDataLoad.ADMIN_USER_ID, "new template one", 
+				new EvalTemplate(new Date(), EvalTestDataLoad.ADMIN_USER_ID, 
+						EvalConstants.TEMPLATE_TYPE_STANDARD, "new template one", 
 						"description", EvalConstants.SHARING_PRIVATE, EvalTestDataLoad.NOT_EXPERT, 
 						"expert desc", null, EvalTestDataLoad.LOCKED),
 				Boolean.TRUE);
@@ -665,7 +666,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 				new EvalEvaluation(new Date(), EvalTestDataLoad.MAINT_USER_ID, "Eval new", null, 
 					etdl.tomorrow, etdl.threeDaysFuture, etdl.threeDaysFuture, etdl.fourDaysFuture, null, null,
 					EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.INSTRUCTOR_OPT_IN, 
-					new Integer(1), null, null, null, null, etdl.templatePublic, null,
+					new Integer(1), null, null, null, null, etdl.templatePublic, null, null,
 					Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, EvalTestDataLoad.UNLOCKED)
 				);
 			Assert.fail("Should have thrown an exception");

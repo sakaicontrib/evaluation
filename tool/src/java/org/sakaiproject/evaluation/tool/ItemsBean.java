@@ -178,7 +178,7 @@ public class ItemsBean {
 
 	public String removeItemAction() {
 
-		List allTemplateItems = itemsLogic.getTemplateItemsForTemplate(templateItem.getTemplate().getId(), null);
+		List allTemplateItems = itemsLogic.getTemplateItemsForTemplate(templateItem.getTemplate().getId(), null, null);
 		List noChildList = TemplateItemUtils.getNonChildItems(allTemplateItems);
 		if (TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)) {
 			int parentDO = templateItem.getDisplayOrder().intValue();
@@ -244,8 +244,6 @@ public class ItemsBean {
 	}
 
 	public void newItemInit(Long templateId, String classification) {
-		templateItem.setDisplayOrder(new Integer(itemsLogic.getTemplateItemsForTemplate(templateId,
-				external.getCurrentUserId()).size()));
 		templateItem.getItem().setClassification(classification);
 		this.templateId = templateId;
 	}

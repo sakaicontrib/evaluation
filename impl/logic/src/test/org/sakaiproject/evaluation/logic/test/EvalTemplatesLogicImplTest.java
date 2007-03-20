@@ -130,14 +130,16 @@ public class EvalTemplatesLogicImplTest extends AbstractTransactionalSpringConte
 		String test_title = "test template title";
 		// test saving a valid template
 		templates.saveTemplate( new EvalTemplate( new Date(), 
-				EvalTestDataLoad.MAINT_USER_ID, test_title, 
+				EvalTestDataLoad.MAINT_USER_ID, 
+				EvalConstants.TEMPLATE_TYPE_STANDARD, test_title, 
 				EvalConstants.SHARING_PRIVATE, 
 				EvalTestDataLoad.NOT_EXPERT), 
 				EvalTestDataLoad.MAINT_USER_ID);
 
 		// test saving valid template locked
 		templates.saveTemplate( new EvalTemplate( new Date(), 
-				EvalTestDataLoad.ADMIN_USER_ID, "admin test template", 
+				EvalTestDataLoad.ADMIN_USER_ID, 
+				EvalConstants.TEMPLATE_TYPE_STANDARD, "admin test template", 
 				"desc", EvalConstants.SHARING_PRIVATE, EvalTestDataLoad.EXPERT, 
 				"expert desc", null, EvalTestDataLoad.LOCKED), 
 				EvalTestDataLoad.ADMIN_USER_ID);
@@ -145,7 +147,8 @@ public class EvalTemplatesLogicImplTest extends AbstractTransactionalSpringConte
 		// test user without perms cannot create template
 		try {
 			templates.saveTemplate( new EvalTemplate( new Date(), 
-					EvalTestDataLoad.USER_ID, "user test title 1", 
+					EvalTestDataLoad.USER_ID, 
+					EvalConstants.TEMPLATE_TYPE_STANDARD, "user test title 1", 
 					EvalConstants.SHARING_PRIVATE, 
 					EvalTestDataLoad.NOT_EXPERT), 
 					EvalTestDataLoad.USER_ID);
@@ -228,7 +231,8 @@ public class EvalTemplatesLogicImplTest extends AbstractTransactionalSpringConte
 		// test cannot save 2 templates with same title
 		try {
 			templates.saveTemplate( new EvalTemplate( new Date(), 
-					EvalTestDataLoad.MAINT_USER_ID, test_title, 
+					EvalTestDataLoad.MAINT_USER_ID, 
+					EvalConstants.TEMPLATE_TYPE_STANDARD, test_title, 
 					EvalConstants.SHARING_PRIVATE, 
 					EvalTestDataLoad.NOT_EXPERT), 
 					EvalTestDataLoad.MAINT_USER_ID);

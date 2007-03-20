@@ -82,13 +82,13 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 
 		boolean atleastOnePredicate = false;
 		StringBuffer query = 
-			new StringBuffer("from EvalTemplate as template");
+			new StringBuffer("from EvalTemplate as template where template.type = '" + EvalConstants.TEMPLATE_TYPE_STANDARD + "' ");
 
 		// do not include templates which have no items in them
 		if (!includeEmpty) {
-			query.append(" where template.templateItems.size > 0 and ");
+			query.append(" and template.templateItems.size > 0 and ");
 		} else {
-			query.append(" where ");
+			query.append(" and ");
 		}
 
 		if (userId == null) {
@@ -167,25 +167,6 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#getVisibleTemplates(java.lang.String, java.lang.String[], boolean)
 	 */
 	public List getVisibleTemplates(String userId, String[] sharingConstants, boolean includeEmpty) {
-		/*
-		 * TO BE TESTED - 17 Oct 2006 - KAPIL DetachedCriteria dc =
-		 * DetachedCriteria.forClass(Template.class);
-		 * 
-		 * if (userId != null) { dc.add(Restrictions.eq("sharing",
-		 * PRIVATE_MODIFIER)); dc.add(Restrictions.conjunction());
-		 * dc.add(Restrictions.eq("owner", userId)); }
-		 * 
-		 * if (visibleTemplates) { dc.add(Restrictions.disjunction());
-		 * dc.add(Restrictions.eq("sharing", VISIBLE_MODIFIER)); }
-		 * 
-		 * if (sharedTemplates) { dc.add(Restrictions.disjunction());
-		 * dc.add(Restrictions.eq("sharing", SHARED_MODIFIER)); }
-		 * 
-		 * if (publicTemplates) { dc.add(Restrictions.disjunction());
-		 * dc.add(Restrictions.eq("sharing", PUBLIC_MODIFIER)); }
-		 * 
-		 * TO BE TESTED return getHibernateTemplate().findByCriteria(dc);
-		 */
 
 		boolean publicTemplates = false;
 		for (int i = 0; i < sharingConstants.length; i++) {
@@ -494,10 +475,16 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 			// already locked, no change
 			return false;
 		} else {
-			// lock evaluation and associated template
+			// lock evaluation and associated templatea
 			EvalTemplate template = evaluation.getTemplate();
 			if (! template.getLocked().booleanValue()) {
 				lockTemplate(template, Boolean.TRUE);
+			}
+
+			EvalTemplate addedTemplate = evaluation.getAddedTemplate();
+			if (addedTemplate != null &&
+					! addedTemplate.getLocked().booleanValue()) {
+				lockTemplate(addedTemplate, Boolean.TRUE);
 			}
 
 			evaluation.setLocked( Boolean.TRUE );

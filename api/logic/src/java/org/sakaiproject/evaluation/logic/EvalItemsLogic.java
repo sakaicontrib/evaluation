@@ -141,17 +141,21 @@ public interface EvalItemsLogic {
 
 	/**
 	 * Get all the templateItems for this template that are visible to a user, 
-	 * most of the time you will want to just get the items by getting the 
-	 * templateItems from the template itself,
-	 * but if you do not have the template OR you need the templateItems
-	 * restricted to visibility to a specific user then use this method
+	 * use this when you need the templateItems restricted to visibility to a 
+	 * specific user (this is almost every case), can limit items to a certain
+	 * hierarchy level<br/> 
+	 * Note: you could also get the items by getting the templateItems from the 
+	 * template itself but this is more risky since you so not know what the
+	 * user should see
 	 * 
 	 * @param templateId the unique id of an EvalTemplate object
 	 * @param userId the internal user id (not username), if this is null then
 	 * it will return all items in the template
+	 * @param hierarchyLevel may be null, if this is set then only return the items
+	 * at the given hierarchy level
 	 * @return a list of {@link EvalTemplateItem} objects, ordered by displayOrder
 	 */
-	public List getTemplateItemsForTemplate(Long templateId, String userId);
+	public List getTemplateItemsForTemplate(Long templateId, String userId, String hierarchyLevel);
 
 
 	// BLOCKS
