@@ -247,6 +247,7 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 			getPublic = true;
 		}
 
+		// leave out the block parent items
 		String[] props = new String[] { "classification" };
 		Object[] values = new Object[] { EvalConstants.ITEM_TYPE_BLOCK_PARENT };
 		int[] comparisons = new int[] { ByPropsFinder.NOT_EQUALS };
@@ -307,7 +308,7 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 		log.debug("templateId:" + templateId + ", userId:" + userId);
 
 		List l = new ArrayList();
-		for (Iterator iter = getTemplateItemsForTemplate(templateId, userId).iterator(); iter.hasNext();) {
+		for (Iterator iter = getTemplateItemsForTemplate(templateId, userId, null).iterator(); iter.hasNext();) {
 			EvalTemplateItem eti = (EvalTemplateItem) iter.next();
 			l.add(eti.getItem());
 		}
@@ -541,10 +542,10 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.EvalItemsLogic#getTemplateItemsForTemplate(java.lang.Long)
+	 * @see org.sakaiproject.evaluation.logic.EvalItemsLogic#getTemplateItemsForTemplate(java.lang.Long, java.lang.String, java.lang.String)
 	 */
-	public List getTemplateItemsForTemplate(Long templateId, String userId) {
-		log.debug("templateId:" + templateId);
+	public List getTemplateItemsForTemplate(Long templateId, String userId, String hierarchyLevel) {
+		log.debug("templateId:" + templateId + ", userId:" + userId + ", hierarchyLevel:" + hierarchyLevel);
 
 		// check if the template is a valid one
 		EvalTemplate template = (EvalTemplate) dao.findById(EvalTemplate.class, templateId);
@@ -552,13 +553,15 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 			throw new IllegalArgumentException("Cannot find template with id: " + templateId);
 		}
 
-		List l = new ArrayList();
-		for (Iterator iter = template.getTemplateItems().iterator(); iter.hasNext();) {
-			EvalTemplateItem eti = (EvalTemplateItem) iter.next();
-			// TODO - check if this user can see this item (must be either taking a related eval or must somehow control the template)
-			l.add(eti);
-		}
-		Collections.sort(l, new TemplateItemDisplayOrderComparator());
+		String[] props = new String[] { "template.id" };
+		Object[] values = new Object[] { templateId };
+		int[] comparisons = new int[] { ByPropsFinder.EQUALS };
+
+		// TODO - check if this user can see this item (must be either taking a related eval or must somehow control the template)
+
+		List l = dao.findByProperties(EvalTemplateItem.class, 
+				props, values, comparisons,
+				new String[] { "displayOrder" } );
 		return l;
 	}
 

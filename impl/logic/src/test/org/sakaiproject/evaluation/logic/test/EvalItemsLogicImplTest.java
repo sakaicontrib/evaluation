@@ -705,6 +705,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		EvalTemplateItem eiTest1 = new EvalTemplateItem( null, 
 				EvalTestDataLoad.ADMIN_USER_ID, noItems, etdl.item5, 
 				null, EvalConstants.ITEM_CATEGORY_COURSE, 
+				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
 				new Integer(3), null, Boolean.FALSE, null, null);
 		items.saveTemplateItem( eiTest1, 
 				EvalTestDataLoad.ADMIN_USER_ID);
@@ -728,6 +729,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		items.saveTemplateItem( new EvalTemplateItem( new Date(), 
 				EvalTestDataLoad.ADMIN_USER_ID, noItems, etdl.item7, 
 				new Integer(2), EvalConstants.ITEM_CATEGORY_COURSE, 
+				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
 				new Integer(3), null, Boolean.FALSE, null, null),
 			EvalTestDataLoad.ADMIN_USER_ID);
 
@@ -735,6 +737,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		items.saveTemplateItem( new EvalTemplateItem( new Date(), 
 				EvalTestDataLoad.MAINT_USER_ID, etdl.templateUnused, etdl.item2, 
 				new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
+				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
 				null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null),
 			EvalTestDataLoad.MAINT_USER_ID);
 
@@ -742,6 +745,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		EvalTemplateItem eiTest2 = new EvalTemplateItem( null, 
 				EvalTestDataLoad.ADMIN_USER_ID, noItems, etdl.item4, 
 				new Integer(99), null, 
+				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
 				null, null, null, null, null);
 		items.saveTemplateItem( eiTest2, 
 				EvalTestDataLoad.ADMIN_USER_ID);
@@ -763,6 +767,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 			items.saveTemplateItem( new EvalTemplateItem( new Date(), 
 					EvalTestDataLoad.MAINT_USER_ID, etdl.templateUnused, null, 
 					new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
+					EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
 					null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null),
 				EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");
@@ -775,6 +780,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 			items.saveTemplateItem( new EvalTemplateItem( new Date(), 
 					EvalTestDataLoad.MAINT_USER_ID, null, etdl.item3, 
 					new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
+					EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
 					null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null),
 				EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");
@@ -787,6 +793,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 			items.saveTemplateItem( new EvalTemplateItem( new Date(), 
 					EvalTestDataLoad.MAINT_USER_ID, etdl.templateUnused, etdl.item4, 
 					new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
+					EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
 					new Integer(2), EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null),
 				EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");
@@ -799,6 +806,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 			items.saveTemplateItem( new EvalTemplateItem( new Date(), 
 					EvalTestDataLoad.MAINT_USER_ID, etdl.templateUnused, etdl.item6, 
 					new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
+					EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
 					new Integer(4), EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null),
 				EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");
@@ -825,6 +833,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 			items.saveTemplateItem( new EvalTemplateItem( new Date(), 
 					EvalTestDataLoad.MAINT_USER_ID, etdl.templateUnused, etdl.item8, 
 					new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
+					EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
 					new Integer(1), EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null),
 				EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");
@@ -1005,7 +1014,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		List ids = null;
 
 		// test getting all items by valid templates
-		l = items.getTemplateItemsForTemplate( etdl.templateAdmin.getId(), null );
+		l = items.getTemplateItemsForTemplate( etdl.templateAdmin.getId(), null, null );
 		Assert.assertNotNull( l );
 		Assert.assertEquals(3, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
@@ -1019,21 +1028,21 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertEquals( 3, ((EvalTemplateItem)l.get(2)).getDisplayOrder().intValue() );
 
 		// test getting all items by valid templates
-		l = items.getTemplateItemsForTemplate( etdl.templatePublic.getId(), null );
+		l = items.getTemplateItemsForTemplate( etdl.templatePublic.getId(), null, null );
 		Assert.assertNotNull( l );
 		Assert.assertEquals(1, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.templateItem1P.getId() ));
 
 		// test getting items from template with no items
-		l = items.getTemplateItemsForTemplate( etdl.templateAdminNoItems.getId(), null );
+		l = items.getTemplateItemsForTemplate( etdl.templateAdminNoItems.getId(), null, null );
 		Assert.assertNotNull( l );
 		Assert.assertEquals(0, l.size());
 
 		// test getting items for specific user returns correct items
 		// admin should get all items
 		l = items.getTemplateItemsForTemplate( etdl.templateAdmin.getId(), 
-				EvalTestDataLoad.ADMIN_USER_ID );
+				EvalTestDataLoad.ADMIN_USER_ID, null );
 		Assert.assertNotNull( l );
 		Assert.assertEquals(3, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
@@ -1042,7 +1051,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertTrue(ids.contains( etdl.templateItem5A.getId() ));
 
 		l = items.getTemplateItemsForTemplate( etdl.templateUnused.getId(), 
-				EvalTestDataLoad.ADMIN_USER_ID );
+				EvalTestDataLoad.ADMIN_USER_ID, null );
 		Assert.assertNotNull( l );
 		Assert.assertEquals(2, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
@@ -1055,7 +1064,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 
 		// owner should see all items
 		l = items.getTemplateItemsForTemplate( etdl.templateUnused.getId(), 
-				EvalTestDataLoad.MAINT_USER_ID );
+				EvalTestDataLoad.MAINT_USER_ID, null );
 		Assert.assertNotNull( l );
 		Assert.assertEquals(2, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
@@ -1063,7 +1072,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertTrue(ids.contains( etdl.templateItem5U.getId() ));
 
 		l = items.getTemplateItemsForTemplate( etdl.templateUser.getId(), 
-				EvalTestDataLoad.USER_ID );
+				EvalTestDataLoad.USER_ID, null );
 		Assert.assertNotNull( l );
 		Assert.assertEquals(2, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
@@ -1072,7 +1081,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 
 		// TODO - takers should see items at their level (one level) if they have access
 		l = items.getTemplateItemsForTemplate( etdl.templateUser.getId(), 
-				EvalTestDataLoad.STUDENT_USER_ID );
+				EvalTestDataLoad.STUDENT_USER_ID, null );
 		Assert.assertNotNull( l );
 		Assert.assertEquals(2, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
@@ -1083,7 +1092,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 
 		// test getting items from invalid template fails
 		try {
-			items.getTemplateItemsForTemplate( EvalTestDataLoad.INVALID_LONG_ID, null );
+			items.getTemplateItemsForTemplate( EvalTestDataLoad.INVALID_LONG_ID, null, null );
 			Assert.fail("Should have thrown exception");
 		} catch (IllegalArgumentException e) {
 			Assert.assertNotNull(e);

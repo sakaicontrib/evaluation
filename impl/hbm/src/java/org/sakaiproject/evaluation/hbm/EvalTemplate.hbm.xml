@@ -16,6 +16,10 @@
         <property name="owner" type="java.lang.String" index="eval_template_owner">
             <column name="OWNER" not-null="true" length="255" />
         </property>
+        <!-- template type, indicates if this is a standard template or an added items template (for now) -->
+        <property name="type" type="java.lang.String">
+            <column name="TYPE" not-null="true" length="255" />
+        </property>
         <!-- a unique title for this template -->
         <property name="title" type="java.lang.String">
             <column name="TITLE" not-null="true" length="255" unique="true" />

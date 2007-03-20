@@ -145,7 +145,7 @@ public class ModifyScaledProducer implements ViewComponentProducer,
 			UIOutput.make(form, "itemNo",ti.getDisplayOrder().toString()); //$NON-NLS-1$ //$NON-NLS-2$
 			
 		}else{
-			List l = itemsLogic.getTemplateItemsForTemplate(templateId, external.getCurrentUserId());
+			List l = itemsLogic.getTemplateItemsForTemplate(templateId, external.getCurrentUserId(), null);
 			List templateItemsList = TemplateItemUtils.getNonChildItems(l);			
 			Integer no = new Integer(templateItemsList.size()+1);
 			UIOutput.make(form, "itemNo",no.toString());

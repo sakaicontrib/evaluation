@@ -463,71 +463,92 @@ public class EvalTestDataLoad {
 
 		//templateShared = new EvalTemplate(new Date(), ADMIN_USER_ID, "Template shared", EvalConstants.SHARING_SHARED, UNLOCKED, NOT_EXPERT);
 		//templateVisible = new EvalTemplate(new Date(), ADMIN_USER_ID, "Template visible", EvalConstants.SHARING_VISIBLE, UNLOCKED, NOT_EXPERT);
-		templateAdmin = new EvalTemplate(new Date(), ADMIN_USER_ID, "Template admin", 
+		templateAdmin = new EvalTemplate(new Date(), ADMIN_USER_ID, 
+				EvalConstants.TEMPLATE_TYPE_STANDARD, "Template admin", 
 				"description", EvalConstants.SHARING_PRIVATE, NOT_EXPERT, 
 				"expert desc", null, LOCKED);
-		templateAdminNoItems = new EvalTemplate(new Date(), ADMIN_USER_ID, "Template admin no items", 
+		templateAdminNoItems = new EvalTemplate(new Date(), ADMIN_USER_ID, 
+				EvalConstants.TEMPLATE_TYPE_STANDARD, "Template admin no items", 
 				"description", EvalConstants.SHARING_PRIVATE, NOT_EXPERT, 
 				"not expert desc", null, UNLOCKED);
-		templatePublicUnused = new EvalTemplate(new Date(), ADMIN_USER_ID, "Template unused public", 
+		templatePublicUnused = new EvalTemplate(new Date(), ADMIN_USER_ID, 
+				EvalConstants.TEMPLATE_TYPE_STANDARD, "Template unused public", 
 				"description", EvalConstants.SHARING_PUBLIC, NOT_EXPERT, 
 				"expert desc", null, UNLOCKED);
-		templatePublic = new EvalTemplate(new Date(), MAINT_USER_ID, "Template maint public", 
+		templatePublic = new EvalTemplate(new Date(), MAINT_USER_ID, 
+				EvalConstants.TEMPLATE_TYPE_STANDARD, "Template maint public", 
 				"description", EvalConstants.SHARING_PUBLIC, EXPERT, 
 				"expert desc", null, LOCKED);
-		templateUnused = new EvalTemplate(new Date(), MAINT_USER_ID, "Template maint unused", 
+		templateUnused = new EvalTemplate(new Date(), MAINT_USER_ID, 
+				EvalConstants.TEMPLATE_TYPE_STANDARD, "Template maint unused", 
 				"description", EvalConstants.SHARING_PRIVATE, NOT_EXPERT, 
 				"expert desc", null, UNLOCKED);
-		templateUser = new EvalTemplate(new Date(), USER_ID, "Template user", 
+		templateUser = new EvalTemplate(new Date(), USER_ID, 
+				EvalConstants.TEMPLATE_TYPE_STANDARD, "Template user", 
 				"description", EvalConstants.SHARING_PRIVATE, NOT_EXPERT, 
 				"expert desc", null, LOCKED);
-		templateUserUnused = new EvalTemplate(new Date(), USER_ID, "Template user unused", 
+		templateUserUnused = new EvalTemplate(new Date(), USER_ID, 
+				EvalConstants.TEMPLATE_TYPE_STANDARD, "Template user unused", 
 				"description", EvalConstants.SHARING_PRIVATE, EXPERT, 
 				"expert desc", null, UNLOCKED);
-		templateAdminBlock = new EvalTemplate(new Date(), ADMIN_USER_ID, "Template admin with block", 
+		templateAdminBlock = new EvalTemplate(new Date(), ADMIN_USER_ID, 
+				EvalConstants.TEMPLATE_TYPE_STANDARD, "Template admin with block", 
 				"description", EvalConstants.SHARING_PRIVATE, NOT_EXPERT, 
 				"expert desc", null, UNLOCKED);
 
 		// assign items to templates
 		templateItem1User = new EvalTemplateItem( new Date(), USER_ID, 
 				templateUser, item1, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
+				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
 				null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, null, null);
 		templateItem1P = new EvalTemplateItem( new Date(), MAINT_USER_ID, 
 				templatePublic, item1, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
+				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
 				null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, null, null);
 		templateItem2A = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
 				templateAdmin, item2, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
+				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
 				null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, null, null);
 		templateItem3A = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
 				templateAdmin, item3, new Integer(2), EvalConstants.ITEM_CATEGORY_COURSE,
+				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
 				null, EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL, Boolean.FALSE, null, null);
 		templateItem3U = new EvalTemplateItem( new Date(), MAINT_USER_ID, 
 				templateUnused, item3, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
+				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
 				null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, null, null);
 		templateItem3PU = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
 				templatePublicUnused, item3, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
+				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
 				null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, null, null);
 		templateItem5A = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
 				templateAdmin, item5, new Integer(3), EvalConstants.ITEM_CATEGORY_INSTRUCTOR,
+				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
 				new Integer(3), null, Boolean.FALSE, null, null);
 		templateItem5User = new EvalTemplateItem( new Date(), USER_ID, 
 				templateUser, item5, new Integer(2), EvalConstants.ITEM_CATEGORY_INSTRUCTOR,
+				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
 				new Integer(2), null, Boolean.FALSE, null, null);
 		templateItem5U = new EvalTemplateItem( new Date(), MAINT_USER_ID, 
 				templateUnused, item5, new Integer(2), EvalConstants.ITEM_CATEGORY_INSTRUCTOR,
+				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
 				new Integer(3), null, Boolean.FALSE, null, null);
 		templateItem6UU = new EvalTemplateItem( new Date(), USER_ID, 
 				templateUserUnused, item6, new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE,
+				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
 				new Integer(4), null, Boolean.FALSE, null, null);
 		// items block
 		templateItem9B = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
 				templateAdminBlock, item9, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
+				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
 				null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, Boolean.TRUE, null);
 		templateItem2B = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
 				templateAdminBlock, item2, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
+				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
 				null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, Boolean.FALSE, templateItem9B.getId() );
 		templateItem3B = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
 				templateAdminBlock, item3, new Integer(2), EvalConstants.ITEM_CATEGORY_COURSE,
+				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
 				null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, Boolean.FALSE, templateItem9B.getId() );
 
 		// associate the templates with the link
@@ -613,25 +634,25 @@ public class EvalTestDataLoad {
 		evaluationNew = new EvalEvaluation(new Date(), MAINT_USER_ID, "Eval new", null, 
 				tomorrow, threeDaysFuture, threeDaysFuture, fourDaysFuture, null, null,
 				EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.INSTRUCTOR_OPT_IN, 
-				new Integer(1), null, null, null, null, templatePublic, null,
+				new Integer(1), null, null, null, null, templatePublic, null, null,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, UNLOCKED);
 		// Evaluation not started yet (starts tomorrow), ADMIN
 		evaluationNewAdmin = new EvalEvaluation(new Date(), ADMIN_USER_ID, "Eval admin", null, 
 				tomorrow, threeDaysFuture, threeDaysFuture, fourDaysFuture,  null, null,
 				EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.INSTRUCTOR_OPT_IN, 
-				new Integer(1), null, null, null, null, templateAdmin, null,
+				new Integer(1), null, null, null, null, templateAdmin, null, null,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, UNLOCKED);
 		// Evaluation Active (ends today), viewable tomorrow
 		evaluationActive = new EvalEvaluation(new Date(), MAINT_USER_ID, "Eval active", null, 
 				yesterday, today, today, tomorrow, null, null,
 				EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.INSTRUCTOR_OPT_IN, 
-				new Integer(1), null, null, null, null, templatePublic, null,
+				new Integer(1), null, null, null, null, templatePublic, null, null,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, LOCKED);
 		// Evaluation Active (ends tomorrow), viewable 3 days
 		evaluationActiveUntaken = new EvalEvaluation(new Date(), MAINT_USER_ID, "Eval active not taken", null, 
 				yesterday, tomorrow, tomorrow, threeDaysFuture, null, null,
 				EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.INSTRUCTOR_OPT_IN, 
-				new Integer(1), null, null, null, null, templatePublic, null,
+				new Integer(1), null, null, null, null, templatePublic, null, null,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, UNLOCKED);
 		// evaluation in the DUE state
 //		evaluationDueUntaken = new EvalEvaluation(new Date(), MAINT_USER_ID, "Eval due not taken", null, 
@@ -643,13 +664,13 @@ public class EvalTestDataLoad {
 		evaluationClosed = new EvalEvaluation(new Date(), ADMIN_USER_ID, "Eval closed", null, 
 				threeDaysAgo, yesterday, yesterday, tomorrow, null, null,
 				EvalConstants.EVALUATION_STATE_CLOSED, EvalConstants.INSTRUCTOR_OPT_IN, 
-				new Integer(2), null, null, null, null, templateAdmin, null,
+				new Integer(2), null, null, null, null, templateAdmin, null, null,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, LOCKED);
 		// evaluation complete (3 days ago) and viewable (yesterday)
 		evaluationViewable = new EvalEvaluation(new Date(), ADMIN_USER_ID, "Eval viewable", null, 
 				twentyDaysAgo, twentyDaysAgo, twentyDaysAgo, fifteenDaysAgo, null, null,
 				EvalConstants.EVALUATION_STATE_VIEWABLE, EvalConstants.INSTRUCTOR_OPT_IN, 
-				new Integer(2), null, null, null, null, templateUser, null,
+				new Integer(2), null, null, null, null, templateUser, null, null,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, LOCKED);
 
 		// email templates

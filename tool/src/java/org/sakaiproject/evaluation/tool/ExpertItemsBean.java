@@ -27,6 +27,7 @@ import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 /**
  * The backing bean for expert items adding
@@ -64,15 +65,22 @@ public class ExpertItemsBean {
 	}
 
 	/**
-	 * Creates templateItems to add expert items to a template
+	 * Creates templateItems to add items to a template
 	 * @return the status location
 	 */
 	public String processActionAddItems() {
 		log.debug("in process action add items, selectedItems=" + selectedIds.size());
 
 		String currentUserId = external.getCurrentUserId();
+		String level = EvalConstants.HIERARCHY_LEVEL_TOP;
+		String nodeId = EvalConstants.HIERARCHY_NODE_ID_TOP;
 
 		EvalTemplate template = templatesLogic.getTemplateById(templateId);
+		if (EvalConstants.TEMPLATE_TYPE_ADDED.equals( template.getType() )) {
+			// TODO change the level and node based on current settings
+			level = EvalConstants.HIERARCHY_LEVEL_INSTRUCTOR;
+			nodeId = currentUserId;
+		}
 
 		for (Iterator iter = selectedIds.keySet().iterator(); iter.hasNext(); ) {
 			Long itemId = new Long((String) iter.next());
@@ -84,7 +92,8 @@ public class ExpertItemsBean {
 			log.debug("Checking to add item:" + itemId);
 			if (selectedIds.get(itemId.toString()) == Boolean.TRUE) {
 				EvalTemplateItem templateItem = 
-					new EvalTemplateItem(new Date(), currentUserId,	template, item, null, null);
+					new EvalTemplateItem(new Date(), currentUserId,	
+							template, item, null, null, level, nodeId);
 				itemsLogic.saveTemplateItem(templateItem, currentUserId);
 				log.info("Added new item (" + item.getId() + ") to template (" + template.getId() + ") via templateItem (" + templateItem.getId() + ")");
 			}

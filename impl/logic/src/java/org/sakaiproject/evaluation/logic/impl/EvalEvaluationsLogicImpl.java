@@ -175,6 +175,16 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 				evaluation.getTemplate().getTemplateItems() == null ||
 				evaluation.getTemplate().getTemplateItems().size() <= 0) {
 			throw new IllegalArgumentException("Evaluations must include a template and the template must have at least one item in it");
+		} else if (! EvalConstants.TEMPLATE_TYPE_STANDARD.equals(evaluation.getTemplate().getType())) {
+			throw new IllegalArgumentException("Evaluations cannot use templates of type: " + evaluation.getTemplate().getType() + 
+					" as the primary template");			
+		}
+
+		// check the added template for type
+		if (evaluation.getAddedTemplate() != null &&
+				! EvalConstants.TEMPLATE_TYPE_ADDED.equals(evaluation.getTemplate().getType()) ) {
+			throw new IllegalArgumentException("Evaluations cannot use templates of type: " + evaluation.getTemplate().getType() + 
+					" as the added template, must be " + EvalConstants.TEMPLATE_TYPE_ADDED);			
 		}
 
 		// fill in any default values and nulls here

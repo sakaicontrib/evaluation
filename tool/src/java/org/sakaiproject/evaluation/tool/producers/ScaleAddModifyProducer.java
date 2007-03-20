@@ -33,6 +33,7 @@ import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.UISelectLabel;
+import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
 import uk.org.ponder.rsf.evolvers.BoundedDynamicListInputEvolver;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
@@ -114,7 +115,7 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParams
 		if (scaleId != null && localScaleLogic.controlScale(scaleId)) {
 			UIInternalLink.make(form, "scale-remove-link", 
 					UIMessage.make("scaleaddmodify.remove.scale.link"), 
-					new EvalScaleParameters( RemoveScaleProducer.VIEW_ID, scaleId) );
+				new EvalScaleParameters(RemoveScaleProducer.VIEW_ID, scaleId) );
 		}
 
 		boundedDynamicListInputEvolver.setLabels(
@@ -138,8 +139,9 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParams
 		String selectID = radios.getFullID();
 		for (int i = 0; i < EvaluationConstant.scaleIdealValues.length; ++i) {
 			UIBranchContainer radiobranch = UIBranchContainer.make(form, "scaleIdealOptions:", Integer.toString(i));
-			UISelectLabel.make(radiobranch, "scale-ideal-label", selectID, i);
-			UISelectChoice.make(radiobranch, "scale-ideal-value", selectID, i);
+			UISelectLabel label = UISelectLabel.make(radiobranch, "scale-ideal-label", selectID, i);
+			UISelectChoice choice = UISelectChoice.make(radiobranch, "scale-ideal-value", selectID, i);
+			UILabelTargetDecorator.targetLabel(label, choice);
 		}
 
 		if (userAdmin) {

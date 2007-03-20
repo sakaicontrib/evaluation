@@ -1,6 +1,6 @@
 package org.sakaiproject.evaluation.model;
 
-// Generated 07-Mar-2007 14:04:08 by Hibernate Tools 3.2.0.b9
+// Generated Mar 20, 2007 10:08:13 AM by Hibernate Tools 3.2.0.beta6a
 
 import java.util.Date;
 import java.util.HashSet;
@@ -11,11 +11,15 @@ import java.util.Set;
  */
 public class EvalTemplate implements java.io.Serializable {
 
+	// Fields    
+
 	private Long id;
 
 	private Date lastModified;
 
 	private String owner;
+
+	private String type;
 
 	private String title;
 
@@ -31,21 +35,28 @@ public class EvalTemplate implements java.io.Serializable {
 
 	private Boolean locked;
 
+	// Constructors
+
+	/** default constructor */
 	public EvalTemplate() {
 	}
 
-	public EvalTemplate(Date lastModified, String owner, String title, String sharing, Boolean expert) {
+	/** minimal constructor */
+	public EvalTemplate(Date lastModified, String owner, String type, String title, String sharing, Boolean expert) {
 		this.lastModified = lastModified;
 		this.owner = owner;
+		this.type = type;
 		this.title = title;
 		this.sharing = sharing;
 		this.expert = expert;
 	}
 
-	public EvalTemplate(Date lastModified, String owner, String title, String description, String sharing,
-			Boolean expert, String expertDescription, Set templateItems, Boolean locked) {
+	/** full constructor */
+	public EvalTemplate(Date lastModified, String owner, String type, String title, String description, String sharing, Boolean expert,
+			String expertDescription, Set templateItems, Boolean locked) {
 		this.lastModified = lastModified;
 		this.owner = owner;
+		this.type = type;
 		this.title = title;
 		this.description = description;
 		this.sharing = sharing;
@@ -55,6 +66,7 @@ public class EvalTemplate implements java.io.Serializable {
 		this.locked = locked;
 	}
 
+	// Property accessors
 	public Long getId() {
 		return this.id;
 	}
@@ -77,6 +89,14 @@ public class EvalTemplate implements java.io.Serializable {
 
 	public void setOwner(String owner) {
 		this.owner = owner;
+	}
+
+	public String getType() {
+		return this.type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	public String getTitle() {

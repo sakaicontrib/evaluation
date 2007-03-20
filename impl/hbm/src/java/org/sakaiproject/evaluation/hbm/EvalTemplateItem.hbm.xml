@@ -34,6 +34,15 @@
         <property name="itemCategory" type="java.lang.String">
             <column name="ITEM_CATEGORY" length="255" not-null="true" />
         </property>
+        <!-- the hierarchy level of this template item (e.g. instructor, course, college, ...),
+        	from the constants file HIERARCHY_LEVEL -->
+        <property name="hierarchyLevel" type="java.lang.String">
+            <column name="HIERARCHY_LEVEL" length="255" not-null="true" />
+        </property>
+        <!-- this is the unique id of the hierarchy node this template item is at -->
+        <property name="hierarchyNodeId" type="java.lang.String">
+            <column name="HIERARCHY_NODE_ID" length="255" not-null="true" />
+        </property>
         <!-- how big should the text box be when rendering this item -->
         <property name="displayRows" type="java.lang.Integer">
             <column name="DISPLAY_ROWS" />
