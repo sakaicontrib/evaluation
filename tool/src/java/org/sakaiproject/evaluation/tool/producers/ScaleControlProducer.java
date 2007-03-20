@@ -20,7 +20,6 @@ import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalScalesLogic;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
-import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.params.EvalScaleParameters;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -75,8 +74,9 @@ public class ScaleControlProducer implements ViewComponentProducer, NavigationCa
 		UIInternalLink.make(tofill, "administrate-toplink", UIMessage.make("administrate.page.title"), new SimpleViewParameters(AdministrateProducer.VIEW_ID));
 		UIMessage.make(tofill, "page-title", "scalecontrol.page.title");
 
-		UIInternalLink.make(tofill, "add-new-scale-link", UIMessage.make("scalecontrol.add.new.scale.link"), new EvalScaleParameters(
-				ScaleAddModifyProducer.VIEW_ID, EvaluationConstant.NEW_SCALE));
+		UIInternalLink.make(tofill, "add-new-scale-link", 
+				UIMessage.make("scalecontrol.add.new.scale.link"), 
+				new EvalScaleParameters(ScaleAddModifyProducer.VIEW_ID, null));
 
 		UIMessage.make(tofill, "scales-control-heading", "scalecontrol.page.heading");
 

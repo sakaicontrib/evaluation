@@ -10,6 +10,7 @@
  * Contributors:
  * Kapil Ahuja (kahuja@vt.edu)
  *****************************************************************************/
+
 package org.sakaiproject.evaluation.tool;
 
 import java.util.HashMap;
@@ -24,26 +25,25 @@ import uk.org.ponder.beanutil.BeanLocator;
  * This is the OTP bean used to locate scales.
  * 
  * @author Kapil Ahuja (kahuja@vt.edu)
+ * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-
 public class ScaleBeanLocator implements BeanLocator {
-	public static final String NEW_PREFIX = "new";
-    public static String NEW_1 = NEW_PREFIX +"1";
-    
-    private LocalScaleLogic localScaleLogic;
-    public void setLocalScaleLogic(LocalScaleLogic localScaleLogic) {
-      this.localScaleLogic = localScaleLogic;
-    }
-	
+	public static final String NEW_PREFIX = "new ";
+
+	private LocalScaleLogic localScaleLogic;
+
+	public void setLocalScaleLogic(LocalScaleLogic localScaleLogic) {
+		this.localScaleLogic = localScaleLogic;
+	}
+
 	private Map delivered = new HashMap();
-	
+
 	public Object locateBean(String path) {
-		Object togo=delivered.get(path);
-		if (togo == null){
-			if(path.startsWith(NEW_PREFIX)){
+		Object togo = delivered.get(path);
+		if (togo == null) {
+			if (path.startsWith(NEW_PREFIX)) {
 				togo = localScaleLogic.newScale();
-			}
-            else { 
+			} else {
 				togo = localScaleLogic.fetchScale(new Long(Long.parseLong(path.trim())));
 			}
 			delivered.put(path, togo);
@@ -52,16 +52,16 @@ public class ScaleBeanLocator implements BeanLocator {
 	}
 
 	public void saveAll() {
-      for (Iterator it = delivered.keySet().iterator(); it.hasNext();) {
-        String key = (String) it.next();
-        EvalScale scale = (EvalScale) delivered.get(key);
-        if (key.startsWith(NEW_PREFIX)) {
-        	// could do stuff here
-        }
-        localScaleLogic.saveScale(scale);
-      }
-    }
-	
+		for (Iterator it = delivered.keySet().iterator(); it.hasNext();) {
+			String key = (String) it.next();
+			EvalScale scale = (EvalScale) delivered.get(key);
+			if (key.startsWith(NEW_PREFIX)) {
+				// could do stuff here
+			}
+			localScaleLogic.saveScale(scale);
+		}
+	}
+
 	public void deleteScale(Long scaleId) {
 		localScaleLogic.deleteScale(scaleId);
 	}

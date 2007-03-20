@@ -11,136 +11,107 @@
 </head>
 <body>
 <div class="portletBody">
-	<div class="navIntraTool">
-		<a rsf:id="summary-toplink" href="summary.html">Summary</a>
-		<a rsf:id="control-panel-toplink" href="control_panel.html">Control Panel</a>
+
+<div class="navIntraTool">
+	<a rsf:id="summary-toplink" href="summary.html">Summary</a>
+	<a rsf:id="control-panel-toplink" href="control_panel.html">Control Panel</a>
+</div>
+
+<div>
+	<ul class="breadCrumb">
+		<li class="breadCrumb"><a rsf:id="summary-toplink" href="summary.html">Summary</a></li>
+		<li class="breadCrumb"><a rsf:id="administrate-toplink" href="administrate.html">Administrate</a></li>
+		<li class="breadCrumb" rsf:id="page-title">Add/Modify Scale</li>
+	</ul>
+</div>
+
+<br/>
+
+<form  rsf:id="basic-form" method="post">
+	<div style="margin-left:0.5em;">
+		<span rsf:id="scale-title-note" style="font-weight:bold;">Title</span>:
+		<input rsf:id="scale-title" type="text" value="" maxlength="100" size="30"/>
+		&nbsp;
+		<a rsf:id="scale-remove-link" href="remove_scale.html">Remove Scale</a>
 	</div>
 
-	<div>
-		<ul class="breadCrumb">
-			<li class="breadCrumb"><a rsf:id="summary-toplink" href="summary.html">Summary</a></li>
-			<li class="breadCrumb"><a rsf:id="administrate-toplink" href="administrate.html">Administrate</a></li>
-			<li class="breadCrumb" rsf:id="page-title">Add/Modify Scale</li>
-		</ul>
-	</div>
-	
-	<div>
-		<b><span rsf:id="page-title">Add/Modify Scale</span></b>
-	</div>	
-
-	<br/>
-
-	<form  rsf:id="basic-form" method="post">
-		<table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "90%">
-			<tr>
-				<td width="2%">
-					&nbsp;
-				</td>
-				<td align="left" valign="top">
-					<span rsf:id="scale-title-note">Title</span>:
-					<input rsf:id="scale-title" type="text" value="" maxlength="100" size="30"/>
-					<span rsf:id="scaleRemove:"><a rsf:id="scale-remove-link" href="remove_scale.html">Remove Scale</a></span>
-				</td>
-			</tr>
-		</table>
-		
-		<br/>
+	<div style="margin-left:3em;margin-top:0.5em;margin-bottom:0.5em;">
 		<div rsf:id="modify-scale-points:">
-		<table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "90%">
-			<tr>
-				<td width="10%">
+		<!-- start div for evolver widget - contents below are dummy -->
+			<span id="myOldSpan">
+				<span rsf:id="scaleOptions:" id="">
+					<input rsf:id="scale-option-label" type="text"/>
 					&nbsp;
-				</td>
-				<td align="left" valign="top">
-					<span id="myOldSpan">
-						<span rsf:id="scaleOptions:" id="">
-							<input rsf:id="scale-option-label" type="text"/>
-							&nbsp;
-							<input rsf:id="scale-remove-option" type="button" value="Remove" onclick="javascript:removeOldElement(this)" />
-							<br/>
-						</span>
-					</span>
-				</td>
-			</tr>
-		</table>
-		<table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "90%">
-			<tr>
-				<td width="10%">
+					<input rsf:id="scale-remove-option" type="button" value="Remove" onclick="javascript:removeOldElement(this)" />
+					<br/>
+				</span>
+			</span>
+	
+			<span id="myOldSpan">
+				<span rsf:id="scaleOptions:" id="">
+					<input rsf:id="scale-option-label" type="text"/>
 					&nbsp;
-				</td>
-				<td align="left" valign="top">
-					<input rsf:id="scale-options-path" type="hidden" name="scale-options-path"/>
-					<input rsf:id="scale-options-num" type="hidden" name="scale-options-num"/>
-					<span id="myNewSpan"> </span>
-				</td>
-			</tr>
-		</table>
-		<table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "90%">
-			<tr> 
-				<td width="10%">
-					&nbsp;
-				</td>
-				<td align="left" valign="top">
-					<input rsf:id="scale-add-point" type="button" value="Add Scale Point" onclick="javascript:addScaleOption();"/>  
-				</td>
-			</tr>
-		</table>
-        </div> <!-- End div for evolver widget - contents above are dummy -->
+					<input rsf:id="scale-remove-option" type="button" value="Remove" onclick="javascript:removeOldElement(this)" />
+					<br/>
+				</span>
+			</span>
+	
+			<input rsf:id="scale-options-path" type="hidden" name="scale-options-path"/>
+			<input rsf:id="scale-options-num" type="hidden" name="scale-options-num"/>
+			<span id="myNewSpan"> </span>
+	
+			<input rsf:id="scale-add-point" type="button" value="Add Scale Point" onclick="javascript:addScaleOption();"/>  
+		<!-- End div for evolver widget - contents above are dummy -->
+		</div>
+	</div>
 
-		<br/>
-		
-		<table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "90%">
-			<tr> 
-				<td width="2%">
-					&nbsp;
-				</td>
-				<td align="left" valign="top">
-					<span rsf:id="ideal-note-start">Ideal</span>
-					&nbsp;-&nbsp;
-					<span rsf:id="ideal-note-main-text">indicate the position of the "best" answer in this scale (used for graphs and coloring):</span>
-				</td>
-			</tr>
-		</table>
-		
-		<table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "90%">
+	<div style="margin-left:0.5em;">
+		<span rsf:id="ideal-note-start" style="font-weight:bold;">Ideal</span>
+		-
+		<span rsf:id="ideal-note-main-text" style="font-style:italic;">indicate the position of the "best" answer in this scale (used for graphs and coloring):</span>
+	</div>
+
+	<div style="width:99%;margin-left:0.5em;margin-bottom:0.5em;">
+		<div class="divrow">
 			<span rsf:id="scaleIdealRadio"/>
-			<tr>
-				<td align="center" rsf:id="scaleIdealOptions:">
-					<label rsf:id="scale-ideal-label"/>
-					<input type="radio" rsf:id="scale-ideal-value" />
-				</td>
-			</tr>
-		</table>
+			<div rsf:id="scaleIdealOptions:" class="leftcol" style="padding:0 1em;">
+				<label rsf:id="scale-ideal-label">Ideal label</label>
+				<input type="radio" rsf:id="scale-ideal-value" />
+			</div>
+			<div rsf:id="scaleIdealOptions:" class="leftcol" style="padding:0 1em;">
+				<label rsf:id="scale-ideal-label">Ideal label</label>
+				<input type="radio" rsf:id="scale-ideal-value" />
+			</div>
+			<div rsf:id="scaleIdealOptions:" class="leftcol" style="padding:0 1em;">
+				<label rsf:id="scale-ideal-label">Ideal label</label>
+				<input type="radio" rsf:id="scale-ideal-value" />
+			</div>
+			<div class="cleaner">&nbsp;</div>
+		</div>
+	</div>
 
-		<br/>
-		
-		<table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "90%">
-			<tr> 
-				<td width="2%">
-					&nbsp;
-				</td>
-				<td align="left" valign="top">
-					<select rsf:id="scale-sharing">
-						<option>Sharing option 1</option>
-						<option>Sharing option 2</option>
-					</select>
-				</td>
-			</tr>
-		</table>
-		
-		<br/>
+	<div rsf:id="sharing-branch:" style="margin-left:0.5em;margin-bottom:1em;">
+		<span rsf:id="scale-sharing-note" style="font-weight:bold;">Sharing</span>:
+		<select rsf:id="scale-sharing">
+			<option>Sharing option 1</option>
+			<option>Sharing option 2</option>
+		</select>
+	</div>
 
-		<table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "70%">
-			<tr>
-				<td width="50%" align="left">
-					<input rsf:id="scale-add-modify-cancel-button" type="button" value="Cancel" onclick="javascript:history.go(-1);"/>  
-				</td>
-				<td width="50%" align="right">
-					<input rsf:id="scale-add-modify-save-button" type="submit" value="Save Scale"/>  
-				</td>
-			</tr>
-		</table>
-	 </form>
+	<div style="width:95%;">
+		<div class="divrow">
+			<div class="leftcol">
+				<input rsf:id="scale-add-modify-cancel-button" type="button" value="Cancel" onclick="javascript:history.go(-1);"/>  
+			</div>
+			<div class="rightcol">
+				<input rsf:id="scale-add-modify-save-button" type="submit" value="Save Scale"/>  
+			</div>
+			<div class="cleaner">&nbsp;</div>
+		</div>
+	</div>
+
+</form>
+
 </div>
 </body>
 </html>
