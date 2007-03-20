@@ -85,6 +85,25 @@ public class ScaleControlProducer implements ViewComponentProducer, NavigationCa
 		for (int i = 0; i < scaleList.size(); ++i) {
 
 			EvalScale scale = (EvalScale) scaleList.get(i);
+
+// NOTE - thise code was here to vet the new scales code, it passed this test -AZ
+//			if (i == 0) {
+//				System.out.println("Changing scale: " + scale.getTitle() + ":" + scale.getOptions().length);
+//				long random = Math.round( Math.random() * 10 );
+//				long random2 = Math.round( Math.random() * 3 );
+//				String[] options;
+//				if (random2 <= 1) {
+//					options = new String[] {"az1"+random, "az2"+random, "az3"+random};
+//				} else if (random2 <= 2) {
+//					options = new String[] {"az1"+random, "az2"+random, "az3"+random, "az4"+random, "az5"+random};
+//				} else {
+//					options = new String[] {"az1"+random, "az2"+random, "az3"+random, "az4"+random, "az5"+random, "az6"+random, "az7"+random};
+//				}
+//				scale.setOptions(options);
+//				scalesLogic.saveScale(scale, currentUserId);
+//				System.out.println("Changed scale: " + scale.getTitle() + ":" + scale.getOptions().length);
+//			}
+
 			UIBranchContainer listOfScales = UIBranchContainer.make(tofill, "verticalDisplay:");
 			UIOutput.make(listOfScales, "scale-no", new Integer(i + 1).toString());
 			UIOutput.make(listOfScales, "scale-title", scale.getTitle());
