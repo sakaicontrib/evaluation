@@ -461,6 +461,55 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 
 	}
 
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#getTemplateItemsByTemplate(java.lang.Long, java.lang.String[], java.lang.String[], java.lang.String[])}.
+	 */
+	public void testGetTemplateItemsByTemplate() {
+		List l = null;
+		List ids = null;
+
+		// test the basic return of items in the template
+		l = evaluationDao.getTemplateItemsByTemplate(etdl.templateAdmin.getId(), 
+				null, null, null);
+		Assert.assertNotNull(l);
+		Assert.assertEquals(3, l.size());
+		ids = EvalTestDataLoad.makeIdList(l);
+		Assert.assertTrue(ids.contains( etdl.templateItem2A.getId() ));
+		Assert.assertTrue(ids.contains( etdl.templateItem3A.getId() ));
+		Assert.assertTrue(ids.contains( etdl.templateItem5A.getId() ));
+
+		// check that the return order is correct
+		Assert.assertEquals( 1, ((EvalTemplateItem)l.get(0)).getDisplayOrder().intValue() );
+		Assert.assertEquals( 2, ((EvalTemplateItem)l.get(1)).getDisplayOrder().intValue() );
+		Assert.assertEquals( 3, ((EvalTemplateItem)l.get(2)).getDisplayOrder().intValue() );
+
+		// test getting just the top level items
+		l = evaluationDao.getTemplateItemsByTemplate(etdl.templateAdminComplex.getId(), 
+				null, null, null);
+		Assert.assertNotNull(l);
+		Assert.assertEquals(0, l.size());
+
+		// test getting instructor items
+		l = evaluationDao.getTemplateItemsByTemplate(etdl.templateAdminComplex.getId(), 
+				null, new String[] { EvalTestDataLoad.MAINT_USER_ID }, null);
+		Assert.assertNotNull(l);
+		Assert.assertEquals(1, l.size());
+		ids = EvalTestDataLoad.makeIdList(l);
+		Assert.assertTrue(ids.contains( etdl.templateItem10AC1.getId() ));
+
+		// test getting course items
+		l = evaluationDao.getTemplateItemsByTemplate(etdl.templateAdminComplex.getId(), 
+				null, null, 
+				new String[] { EvalTestDataLoad.CONTEXT1, EvalTestDataLoad.CONTEXT2 });
+		Assert.assertNotNull(l);
+		Assert.assertEquals(2, l.size());
+		ids = EvalTestDataLoad.makeIdList(l);
+		Assert.assertTrue(ids.contains( etdl.templateItem10AC2.getId() ));
+		Assert.assertTrue(ids.contains( etdl.templateItem10AC3.getId() ));
+
+		//fail("Not yet implemented"); // TODO
+	}
+
 
 	// LOCKING tests
 

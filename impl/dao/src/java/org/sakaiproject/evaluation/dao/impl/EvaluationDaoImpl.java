@@ -31,6 +31,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
+import org.sakaiproject.evaluation.logic.utils.ArrayUtils;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
@@ -50,8 +51,9 @@ import org.springframework.dao.DataAccessException;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
-		EvaluationDao {
+public class EvaluationDaoImpl
+	extends HibernateCompleteGenericDao
+		implements EvaluationDao {
 
 	private static Log log = LogFactory.getLog(EvaluationDaoImpl.class);
 
@@ -236,14 +238,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 	public List getAnswers(Long itemId, Long evalId, String[] evalGroupIds) {
 		String groupsHQL = "";
 		if (evalGroupIds != null && evalGroupIds.length > 0) {
-			groupsHQL = " and response.evalGroupId in (";
-			for (int i = 0; i < evalGroupIds.length; i++) {
-				groupsHQL += "'" + evalGroupIds[i] + "'";
-				if (i != 0) {
-					groupsHQL += ",";
-				}
-			}
-			groupsHQL += ") ";
+			groupsHQL = " and response.evalGroupId in " + arrayToCommaString(evalGroupIds);
 		}
 
 		String hqlQuery = "from EvalAnswer as answer where answer.item.id='" + itemId.toString() + "'" +
@@ -304,6 +299,71 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 		dc.addOrder( Order.asc("title") );
 
 		return getHibernateTemplate().findByCriteria(dc);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#getTemplateItemsByTemplate(java.lang.Long, java.lang.String[], java.lang.String[], java.lang.String[])
+	 */
+	public List getTemplateItemsByTemplate(Long templateId, String[] nodeIds, String[] instructorIds, String[] groupIds) {
+
+		String hql = "from EvalTemplateItem ti where ti.template.id = ? " +
+				"and (ti.hierarchyLevel = ?";
+		Object[] params = new Object[] {templateId, EvalConstants.HIERARCHY_LEVEL_TOP};
+
+		if (nodeIds != null && nodeIds.length > 0) {
+			hql += " or (ti.hierarchyLevel = ? and ti.hierarchyNodeId in " + 
+				arrayToCommaString(nodeIds) + " ) ";
+			params = ArrayUtils.appendArray(params, EvalConstants.HIERARCHY_LEVEL_NODE);
+		}
+
+		if (instructorIds != null && instructorIds.length > 0) {
+			hql += " or (ti.hierarchyLevel = ? and ti.hierarchyNodeId in " + 
+				arrayToCommaString(instructorIds) + " ) ";
+			params = ArrayUtils.appendArray(params, EvalConstants.HIERARCHY_LEVEL_INSTRUCTOR);
+		}
+
+		if (groupIds != null && groupIds.length > 0) {
+			hql += " or (ti.hierarchyLevel = ? and ti.hierarchyNodeId in " + 
+				arrayToCommaString(groupIds) + " ) ";
+			params = ArrayUtils.appendArray(params, EvalConstants.HIERARCHY_LEVEL_GROUP);
+		}
+
+		hql += ") order by ti.displayOrder";
+		System.out.println("HQL: " + hql);
+		for (int i = 0; i < params.length; i++) {
+			System.out.println(i + "=" + params[i]);			
+		}
+
+		return getHibernateTemplate().find(hql, params);
+
+//		DetachedCriteria dc = DetachedCriteria.forClass(EvalTemplateItem.class)
+//			.add( Expression.eq("template.id", templateId) );
+//
+//		dc.add( Property.forName("hierarchyLevel").eq(EvalConstants.HIERARCHY_LEVEL_TOP) );
+//
+//		if (nodeIds != null && nodeIds.length > 0) {
+//			dc.add( Restrictions.conjunction()
+//					.add( Property.forName("hierarchyLevel").eq(EvalConstants.HIERARCHY_LEVEL_NODE) )
+//					.add( Property.forName("hierarchyNodeId").in( nodeIds ) )
+//				);
+//		}
+//
+//		if (instructorIds != null && instructorIds.length > 0) {
+//			dc.add( Restrictions.conjunction()
+//					.add( Property.forName("hierarchyLevel").eq(EvalConstants.HIERARCHY_LEVEL_INSTRUCTOR) )
+//					.add( Property.forName("hierarchyNodeId").in( instructorIds ) )
+//				);
+//		}
+//
+//		if (groupIds != null && groupIds.length > 0) {
+//			dc.add( Restrictions.conjunction()
+//					.add( Property.forName("hierarchyLevel").eq(EvalConstants.HIERARCHY_LEVEL_GROUP) )
+//					.add( Property.forName("hierarchyNodeId").in( groupIds ) )
+//				);
+//		}
+//	
+//		dc.addOrder( Order.asc("displayOrder") );
+
 	}
 
 //	public Integer getNextBlockId() {
@@ -493,9 +553,29 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements
 		}
 	}
 
+	/**
+	 * produce a comma demlimited string like "item1','item2','item3" from a string array
+	 * 
+	 * @param array any array of String
+	 * @return string like "item1','item2','item3"
+	 */
+	private String arrayToCommaString(String[] array) {
+		String cds = "('";
+		for (int i = 0; i < array.length; i++) {
+			if (i > 0)
+				cds += "','" + array[i];
+			else
+				cds += array[i];
+		}
+		cds += "')";
+		return cds;
+	}
 
-
-
+	/**
+	 * 
+	 *
+	 * @author Aaron Zeckoski (aaronz@vt.edu)
+	 */
 	private static class EvaluationDateComparator implements Comparator {
 		public int compare(Object eval0, Object eval1) {
 			// expects to get Evaluation objects
