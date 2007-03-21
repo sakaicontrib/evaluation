@@ -287,7 +287,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 					Integer respReqToViewResults = (Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS);
 					if( (respReqToViewResults.intValue()<=ctResponses) | (ctResponses>=ctEnrollments) ){
 					UIInternalLink.make(evalrow, "viewReportLink", UIMessage.make("viewreport.page.title"),  //$NON-NLS-1$ //$NON-NLS-2$
-							new TemplateViewParameters(ViewReportProducer.VIEW_ID, eval.getId() ));	
+							new TemplateViewParameters(ChooseReportGroupsProducer.VIEW_ID, eval.getId() ));	
 					}
 					else{
 					UIMessage.make(evalrow, "evalAdminStatus", "summary.status."+evalStatus); //$NON-NLS-1$

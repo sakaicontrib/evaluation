@@ -15,6 +15,7 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
@@ -28,6 +29,7 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
+import org.sakaiproject.evaluation.tool.ReportsBean;
 import org.sakaiproject.evaluation.tool.params.CSVReportViewParams;
 import org.sakaiproject.evaluation.tool.params.EssayResponseParams;
 import org.sakaiproject.evaluation.tool.params.TemplateViewParameters;
@@ -76,13 +78,20 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 	public void setItemsLogic( EvalItemsLogic itemsLogic) {
 		this.itemsLogic = itemsLogic;
 	}
-
+	
+	public ReportsBean reportsBean;
+	public void setReportsBean(ReportsBean reportsBean) {
+		this.reportsBean = reportsBean;
+	}
+	
 	public ViewParameters getViewParameters() {
 		return new TemplateViewParameters(VIEW_ID, null);
 	}	
 
 	//String evalGroupId;
 	int displayNumber=1;
+	
+	String[] groupIds;
 
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 		UIMessage.make(tofill, "view-report-title","viewreport.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -99,9 +108,14 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 			// get items(parent items, child items --need to set order
 
 			List allItems = new ArrayList(template.getTemplateItems());
-			
+			groupIds = new String[reportsBean.groupIds.size()];
 			if (! allItems.isEmpty()) {
-				
+				int c=0;
+			    for (Iterator it = reportsBean.groupIds.keySet().iterator(); it.hasNext();) {
+			    	String currGroupId = (String)it.next();
+			    	groupIds[c]=currGroupId;
+			    	c++;
+			    }
 				//filter out the block child items, to get a list non-child items
 				List ncItemsList = TemplateItemUtils.getNonChildItems(allItems);
 				
@@ -109,6 +123,8 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 				UIBranchContainer courseSection = null;
 				UIBranchContainer instructorSection = null;
 
+				
+				
 				if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_COURSE, ncItemsList))	{	
 					courseSection = UIBranchContainer.make(tofill,"courseSection:"); //$NON-NLS-1$
 					UIMessage.make(courseSection, "report-course-questions", "viewreport.itemlist.coursequestions"); //$NON-NLS-1$ //$NON-NLS-2$		
@@ -200,7 +216,7 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 			//String[] egid = new String[0];
 			//egid[0]=evalGroupId;
 			
-			List itemAnswers = responsesLogic.getEvalAnswers(myItem.getId(), evalId, null);
+			List itemAnswers = responsesLogic.getEvalAnswers(myItem.getId(), evalId, groupIds);
 
 		    for (int x = 0; x < scaleLabels.length; ++x) 
 		    {
@@ -266,7 +282,7 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 				//String[] egid = new String[1];
 				//egid[0]=evalGroupId;
 				
-				List itemAnswers = responsesLogic.getEvalAnswers(child.getId(), evalId, null);
+				List itemAnswers = responsesLogic.getEvalAnswers(child.getId(), evalId, groupIds);
 				
 				   for (int x = 0; x < scaleLabels.length; ++x) 
 				    {
@@ -306,6 +322,8 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 
 		return i;
 	}
+
+
 
 
 
