@@ -167,6 +167,10 @@ public class EvalTestDataLoad {
 	 * Item that is a parent block item, unlocked, ADMIN_USER_ID owns, private
 	 */
 	public EvalItem item9;
+	/**
+	 * Item that is used in {@link #templateAdminComplex}, MAINT_USER_ID owns, private (used in various template items)
+	 */
+	public EvalItem item10;
 
 	// TEMPLATE ITEMS
 	public EvalTemplateItem templateItem1User;
@@ -182,6 +186,9 @@ public class EvalTestDataLoad {
 	public EvalTemplateItem templateItem2B;
 	public EvalTemplateItem templateItem3B;
 	public EvalTemplateItem templateItem9B;
+	public EvalTemplateItem templateItem10AC1;
+	public EvalTemplateItem templateItem10AC2;
+	public EvalTemplateItem templateItem10AC3;
 
 
 	// TEMPLATES
@@ -227,6 +234,13 @@ public class EvalTestDataLoad {
 	 * <br/>1 block item with 2 child items {@link #item2} and {@link #item3} and parent {@link #item9}
 	 */
 	public EvalTemplate templateAdminBlock;
+	/**
+	 * Added type template in {@link #evaluationClosed} , private, ADMIN_USER_ID owns, unlocked, not expert
+	 * <br/>Includes various hierarchy items:<br/>
+	 * 1 instructor item {@link #templateItem10AC1} <br/>
+	 * 2 group items {@link #templateItem10AC2} and {@link #templateItem10AC3}
+	 */
+	public EvalTemplate templateAdminComplex;
 
 	// EVALUATIONS
 	/**
@@ -460,6 +474,11 @@ public class EvalTestDataLoad {
 		item9.setScaleDisplaySetting( EvalConstants.ITEM_SCALE_DISPLAY_STEPPED );
 		item9.setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
 		item9.setLocked(UNLOCKED);
+		item10 = new EvalItem(new Date(), MAINT_USER_ID, "Textual instructor added", 
+				EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_TEXT, NOT_EXPERT);
+		item10.setDisplayRows( new Integer(4) );
+		item10.setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
+		item10.setLocked(UNLOCKED);
 
 		//templateShared = new EvalTemplate(new Date(), ADMIN_USER_ID, "Template shared", EvalConstants.SHARING_SHARED, UNLOCKED, NOT_EXPERT);
 		//templateVisible = new EvalTemplate(new Date(), ADMIN_USER_ID, "Template visible", EvalConstants.SHARING_VISIBLE, UNLOCKED, NOT_EXPERT);
@@ -493,6 +512,10 @@ public class EvalTestDataLoad {
 				"expert desc", null, UNLOCKED);
 		templateAdminBlock = new EvalTemplate(new Date(), ADMIN_USER_ID, 
 				EvalConstants.TEMPLATE_TYPE_STANDARD, "Template admin with block", 
+				"description", EvalConstants.SHARING_PRIVATE, NOT_EXPERT, 
+				"expert desc", null, UNLOCKED);
+		templateAdminComplex = new EvalTemplate(new Date(), ADMIN_USER_ID, 
+				EvalConstants.TEMPLATE_TYPE_ADDED, "Template admin added", 
 				"description", EvalConstants.SHARING_PRIVATE, NOT_EXPERT, 
 				"expert desc", null, UNLOCKED);
 
@@ -550,6 +573,19 @@ public class EvalTestDataLoad {
 				templateAdminBlock, item3, new Integer(2), EvalConstants.ITEM_CATEGORY_COURSE,
 				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
 				null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, Boolean.FALSE, templateItem9B.getId() );
+		// added items
+		templateItem10AC1 = new EvalTemplateItem( new Date(), MAINT_USER_ID, 
+				templateAdminComplex, item10, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
+				EvalConstants.HIERARCHY_LEVEL_INSTRUCTOR, MAINT_USER_ID,
+				new Integer(2), null, Boolean.FALSE, null, null);
+		templateItem10AC2 = new EvalTemplateItem( new Date(), MAINT_USER_ID, 
+				templateAdminComplex, item10, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
+				EvalConstants.HIERARCHY_LEVEL_GROUP, CONTEXT1,
+				new Integer(2), null, Boolean.FALSE, null, null);
+		templateItem10AC3 = new EvalTemplateItem( new Date(), MAINT_USER_ID, 
+				templateAdminComplex, item10, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
+				EvalConstants.HIERARCHY_LEVEL_GROUP, CONTEXT2,
+				new Integer(2), null, Boolean.FALSE, null, null);
 
 		// associate the templates with the link
 		templateAdmin.setTemplateItems( new HashSet() );
@@ -579,6 +615,11 @@ public class EvalTestDataLoad {
 		templateAdminBlock.getTemplateItems().add( templateItem2B );
 		templateAdminBlock.getTemplateItems().add( templateItem3B );
 
+		templateAdminComplex.setTemplateItems( new HashSet() );
+		templateAdminComplex.getTemplateItems().add( templateItem10AC1 );
+		templateAdminComplex.getTemplateItems().add( templateItem10AC2 );
+		templateAdminComplex.getTemplateItems().add( templateItem10AC3 );
+
 		// associate the items with the link
 		item1.setTemplateItems( new HashSet() );
 		item1.getTemplateItems().add( templateItem1P );
@@ -606,6 +647,11 @@ public class EvalTestDataLoad {
 
 		item9.setTemplateItems( new HashSet() );
 		item9.getTemplateItems().add( templateItem9B );
+
+		item10.setTemplateItems( new HashSet() );
+		item10.getTemplateItems().add( templateItem10AC1 );
+		item10.getTemplateItems().add( templateItem10AC2 );
+		item10.getTemplateItems().add( templateItem10AC3 );
 
 		// init the evaluation times
 		Calendar calendar = GregorianCalendar.getInstance();
@@ -664,7 +710,7 @@ public class EvalTestDataLoad {
 		evaluationClosed = new EvalEvaluation(new Date(), ADMIN_USER_ID, "Eval closed", null, 
 				threeDaysAgo, yesterday, yesterday, tomorrow, null, null,
 				EvalConstants.EVALUATION_STATE_CLOSED, EvalConstants.INSTRUCTOR_OPT_IN, 
-				new Integer(2), null, null, null, null, templateAdmin, null, null,
+				new Integer(2), null, null, null, null, templateAdmin, templateAdminComplex, null,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, LOCKED);
 		// evaluation complete (3 days ago) and viewable (yesterday)
 		evaluationViewable = new EvalEvaluation(new Date(), ADMIN_USER_ID, "Eval viewable", null, 
@@ -794,6 +840,7 @@ public class EvalTestDataLoad {
 		dao.save(templateUser);
 		dao.save(templateUserUnused);
 		dao.save(templateAdminBlock);
+		dao.save(templateAdminComplex);
 
 		dao.save(item1);
 		dao.save(item2);
@@ -804,6 +851,7 @@ public class EvalTestDataLoad {
 		dao.save(item7);
 		dao.save(item8);
 		dao.save(item9);
+		dao.save(item10);
 
 		dao.save(templateItem1User);
 		dao.save(templateItem1P);
@@ -821,6 +869,10 @@ public class EvalTestDataLoad {
 		dao.save(templateItem2B);
 		templateItem3B.setBlockId( templateItem9B.getId() );
 		dao.save(templateItem3B);
+		// added items
+		dao.save(templateItem10AC1);
+		dao.save(templateItem10AC2);
+		dao.save(templateItem10AC3);
 
 		dao.save(emailTemplate1);
 		dao.save(emailTemplate2);

@@ -113,6 +113,19 @@ public interface EvaluationDao extends CompleteGenericDao {
 	 */
 	public List getItemGroups(Long parentItemGroupId, String userId, boolean includeEmpty, boolean includeExpert);
 
+	/**
+	 * Get all the templateItems for this template limited by the various hierarchy
+	 * settings specified, always returns the top hierarchy level set of items,
+	 * will include the template items limited by the various hierarchy levels and
+	 * ids of the parts of the nodes
+	 * 
+	 * @param templateId the unique id of an EvalTemplate object
+	 * @param nodeIds may be null, includes hierarchy nodeIds
+	 * @param instructorIds may be null, includes userIds of instructors
+	 * @param groupIds may be null, includes unique ids for groups
+	 * @return a list of {@link EvalTemplateItem} objects, ordered by displayOrder
+	 */
+	public List getTemplateItemsByTemplate(Long templateId, String[] nodeIds, String[] instructorIds, String[] groupIds);
 
 	// LOCKING METHODS
 
