@@ -24,6 +24,11 @@
 		<property name="dateUtil"
 			ref="org.sakaiproject.evaluation.tool.utils.EvaluationDateUtil" />
 	</bean>
+	
+	<bean id="reportsBean"	
+		class="org.sakaiproject.evaluation.tool.ReportsBean">	
+	</bean>
+	
 
 
 	<!-- request scope backing beans here -->
@@ -155,6 +160,14 @@
 		<property name="assignsLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalAssignsLogic" />				
 		<property name="locale" ref="requestLocale" />
+	</bean>
+
+	<bean
+		class="org.sakaiproject.evaluation.tool.producers.ChooseReportGroupsProducer">
+		<property name="evalsLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+		<property name="reportsBean"
+			ref="reportsBean" />				
 	</bean>
 
 	<bean
@@ -337,6 +350,8 @@
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
 		<property name="responsesLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
+		<property name="reportsBean"
+			ref="reportsBean" />			
 	</bean>
 
 	<bean class="org.sakaiproject.evaluation.tool.producers.ViewEssayResponseProducer">

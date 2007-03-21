@@ -118,6 +118,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/LocalResponsesLogic.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/LocalScaleLogic.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/LocalTemplateLogic.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ReportHandlerHook.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/ReportsBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ResponseAnswersBeanLocator.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ResponseBeanLocator.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ScaleBean.java -text
@@ -137,9 +138,11 @@ tool/src/java/org/sakaiproject/evaluation/tool/params/EvalScaleParameters.java -
 tool/src/java/org/sakaiproject/evaluation/tool/params/EvalTakeViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/params/ExpertItemViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/params/PreviewEvalParameters.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/params/ReportGroupsParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/params/TemplateItemViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/params/TemplateViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateProducer.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/producers/ChooseReportGroupsProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlEvaluationsProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlTemplatesProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/EvaluationAssignConfirmProducer.java -text
@@ -265,6 +268,7 @@ tool/src/webapp/content/templates/remove_evaluation.html -text
 tool/src/webapp/content/templates/remove_question.html -text
 tool/src/webapp/content/templates/remove_scale.html -text
 tool/src/webapp/content/templates/remove_template.html -text
+tool/src/webapp/content/templates/report_groups.html -text
 tool/src/webapp/content/templates/scale_add_modify.html -text
 tool/src/webapp/content/templates/summary.html -text
 tool/src/webapp/content/templates/take_eval.html -text

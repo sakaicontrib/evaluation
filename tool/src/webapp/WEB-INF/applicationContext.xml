@@ -20,7 +20,7 @@
 	<!-- the beans listed here are allowed access to values (security) -->
 	<bean parent="requestAddressibleParent">
 		<property name="value"
-			value="evaluationBean, templateBBean, itemsBean, expertItemsBean, 
+			value="evaluationBean, reportsBean, templateBBean, itemsBean, expertItemsBean, 
       	templateBeanLocator, templateItemBeanLocator, answersBeanLocator, responseAnswersBeanLocator, 
       	responseBeanLocator, evaluationBeanLocator, takeEvalBean, settingsBean, scaleBean, scaleBeanLocator" />
 	</bean>
@@ -57,6 +57,10 @@
 		<property name="copyPreservingBeans" value="evaluationBean" />
 		<property name="exclusive" value="true" />
 	</bean>
+
+	  <bean parent="copyPreservingParent">
+    <property name="value" value="reportsBean"/>
+  </bean>
 
   <bean parent="writeGuardParent">
     <property name="guardedPath" value="templateItemBeanLocator.*.displayOrder"/>
