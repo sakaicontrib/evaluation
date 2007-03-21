@@ -109,7 +109,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		UIMessage.make(form, "eval-start-date-header", "evalsettings.start.date.header");
 		UIMessage.make(form, "eval-start-date-desc", "evalsettings.start.date.desc");
 
-		UIInput startDate = UIInput.make(form, "startDate:", "#{evaluationBean.startDate}", null);	
+		UIInput startDate = UIInput.make(form, "startDate:", "#{evaluationBean.startDate}");	
 		if (evaluationBean.eval.getId() != null) {
 			// queued evalution
 			if (today.before(evaluationBean.eval.getStartDate())) {
@@ -131,19 +131,19 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		if (((Boolean) settings.get(EvalSettings.EVAL_USE_STOP_DATE)).booleanValue()) {
 			UIBranchContainer showStopDate = UIBranchContainer.make(form, "showStopDate:");
 			UIMessage.make(showStopDate, "eval-stop-date-header", "evalsettings.stop.date.header");
-			UIInput stopDate = UIInput.make(showStopDate, "stopDate:", "#{evaluationBean.stopDate}", null);
+			UIInput stopDate = UIInput.make(showStopDate, "stopDate:", "#{evaluationBean.stopDate}");
 			dateevolver.evolveDateInput(stopDate, calendar.getTime());
 		}
 
 		calendar.add(Calendar.DATE, 1);
 		UIMessage.make(form, "eval-due-date-header", "evalsettings.due.date.header");
-		UIInput dueDate = UIInput.make(form, "dueDate:", "#{evaluationBean.dueDate}", null);
+		UIInput dueDate = UIInput.make(form, "dueDate:", "#{evaluationBean.dueDate}");
 		dateevolver.evolveDateInput(dueDate, calendar.getTime());
 
 		calendar.add(Calendar.DATE, 1);
 		UIMessage.make(form, "eval-view-date-header", "evalsettings.view.date.header");
 		UIMessage.make(form, "eval-view-date-desc", "evalsettings.view.date.desc");
-		UIInput viewDate = UIInput.make(form, "viewDate:", "#{evaluationBean.viewDate}", null);
+		UIInput viewDate = UIInput.make(form, "viewDate:", "#{evaluationBean.viewDate}");
 		dateevolver.evolveDateInput(viewDate, calendar.getTime());
 
 		UIMessage.make(form, "eval-results-viewable-header", "evalsettings.results.viewable.header");
@@ -151,7 +151,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		UIMessage.make(form, "eval-results-viewable-private-middle", "evalsettings.results.viewable.private.middle");
 		UIOutput.make(form, "userInfo", externalLogic.getUserDisplayName(externalLogic.getCurrentUserId()));
 		UIMessage.make(form, "private-warning-desc", "evalsettings.private.warning.desc");
-		UIBoundBoolean.make(form, "resultsPrivate", "#{evaluationBean.eval.resultsPrivate}", null);
+		UIBoundBoolean.make(form, "resultsPrivate", "#{evaluationBean.eval.resultsPrivate}");
 
 		/*
 		 * (non-Javadoc) Variable is used to decide whether to show the view date
@@ -188,7 +188,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 			if (sameViewDateForAll) {
 				UIMessage.make(showResultsToStudents, "eval-results-stu-inst-date-label", "evalsettings.results.stu.inst.date.label");
 			} else {
-				UIInput studentsDate = UIInput.make(showResultsToStudents, "studentsDate:", "#{evaluationBean.studentsDate}", null);
+				UIInput studentsDate = UIInput.make(showResultsToStudents, "studentsDate:", "#{evaluationBean.studentsDate}");
 				dateevolver.evolveDateInput(studentsDate, calendar.getTime());
 			}
 		} else {
@@ -226,7 +226,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 				UIMessage.make(showResultsToInstLabel, "eval-results-stu-inst-date-label", "evalsettings.results.stu.inst.date.label");
 			} else {
 				UIBranchContainer showResultsToInstDate = UIBranchContainer.make(showResultsToInst, "showResultsToInstDate:");
-				UIInput instructorsDate = UIInput.make(showResultsToInstDate, "instructorsDate:", "#{evaluationBean.instructorsDate}", null);
+				UIInput instructorsDate = UIInput.make(showResultsToInstDate, "instructorsDate:", "#{evaluationBean.instructorsDate}");
 				dateevolver.evolveDateInput(instructorsDate, calendar.getTime());
 			}
 		} else {
@@ -307,7 +307,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 			UIBranchContainer showUnregAllowedOption = UIBranchContainer.make(form, "showUnregAllowedOption:");
 			UIMessage.make(showUnregAllowedOption, "unregistered-allowed-desc", "evalsettings.unregistered.allowed.desc");
 			UIMessage.make(showUnregAllowedOption, "unregistered-allowed-note", "evalsettings.unregistered.allowed.note");
-			UIBoundBoolean.make(showUnregAllowedOption, "unregisteredAllowed", "#{evaluationBean.eval.unregisteredAllowed}", null);
+			UIBoundBoolean.make(showUnregAllowedOption, "unregisteredAllowed", "#{evaluationBean.eval.unregisteredAllowed}");
 		}
 		/*
 		 * (non-javadoc) Continued from the note above, that is show
@@ -338,7 +338,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 				UIBranchContainer showInstUseFromAboveOptions = UIBranchContainer.make(showInstUseFromAbove, "showInstUseFromAboveOptions:");
 
 				UISelect.make(showInstUseFromAboveOptions, "instructorOpt", EvaluationConstant.INSTRUCTOR_OPT_VALUES, instructorOptLabels,
-						"#{evaluationBean.eval.instructorOpt}", null).setMessageKeys();
+						"#{evaluationBean.eval.instructorOpt}").setMessageKeys();
 			} else {
 				UIBranchContainer showInstUseFromAboveLabel = UIBranchContainer.make(showInstUseFromAbove, "showInstUseFromAboveLabel:");
 				String instUseFromAboveValue = (String) settings.get(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE);
@@ -363,13 +363,13 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		// Reminder email select box
 		UISelect.make(form, "reminderDays", 
 				EvaluationConstant.REMINDER_EMAIL_DAYS_VALUES, reminderEmailDaysLabels, 
-				"#{evaluationBean.eval.reminderDays}", null).setMessageKeys();
+				"#{evaluationBean.eval.reminderDays}").setMessageKeys();
 
 		UIInternalLink.make(form, "emailReminder_link", UIMessage.make("evalsettings.reminder.mail.link"), new EmailViewParameters(
 				PreviewEmailProducer.VIEW_ID, null, EvalConstants.EMAIL_TEMPLATE_REMINDER));
 		UIMessage.make(form, "eval-reminder-mail-desc", "evalsettings.reminder.mail.desc");
 		UIMessage.make(form, "eval-from-email-header", "evalsettings.from.email.header");
-		UIInput.make(form, "reminderFromEmail", "#{evaluationBean.eval.reminderFromEmail}", null);
+		UIInput.make(form, "reminderFromEmail", "#{evaluationBean.eval.reminderFromEmail}");
 
 		// if this evaluation is already saved, show "Save Settings" button else this is the "Continue to Assign to Courses" button
 		if (evaluationBean.eval.getId() == null) {
@@ -392,7 +392,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 	 */
 	public List reportNavigationCases() {
 		List i = new ArrayList();
-
+    // Physical templateId is filled in by global Interceptor
 		i.add(new NavigationCase(EvaluationStartProducer.VIEW_ID, new TemplateViewParameters(EvaluationStartProducer.VIEW_ID, null)));
 		i.add(new NavigationCase(ControlEvaluationsProducer.VIEW_ID, new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID)));
 		i.add(new NavigationCase(EvaluationAssignProducer.VIEW_ID, new SimpleViewParameters(EvaluationAssignProducer.VIEW_ID)));
