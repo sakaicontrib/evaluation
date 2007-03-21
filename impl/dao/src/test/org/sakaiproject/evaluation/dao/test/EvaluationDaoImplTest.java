@@ -507,7 +507,25 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 		Assert.assertTrue(ids.contains( etdl.templateItem10AC2.getId() ));
 		Assert.assertTrue(ids.contains( etdl.templateItem10AC3.getId() ));
 
-		//fail("Not yet implemented"); // TODO
+		// test getting both together
+		l = evaluationDao.getTemplateItemsByTemplate(etdl.templateAdminComplex.getId(), 
+				null, new String[] { EvalTestDataLoad.MAINT_USER_ID }, 
+				new String[] { EvalTestDataLoad.CONTEXT1, EvalTestDataLoad.CONTEXT2 });
+		Assert.assertNotNull(l);
+		Assert.assertEquals(3, l.size());
+		ids = EvalTestDataLoad.makeIdList(l);
+		Assert.assertTrue(ids.contains( etdl.templateItem10AC1.getId() ));
+		Assert.assertTrue(ids.contains( etdl.templateItem10AC2.getId() ));
+		Assert.assertTrue(ids.contains( etdl.templateItem10AC3.getId() ));
+
+		// test that a bunch of invalid stuff simply returns no results
+		l = evaluationDao.getTemplateItemsByTemplate(etdl.templateAdminComplex.getId(), 
+				new String[] { EvalTestDataLoad.INVALID_CONSTANT_STRING }, 
+				new String[] { EvalTestDataLoad.INVALID_CONSTANT_STRING, EvalTestDataLoad.INVALID_CONSTANT_STRING }, 
+				new String[] { EvalTestDataLoad.INVALID_CONSTANT_STRING, EvalTestDataLoad.INVALID_CONSTANT_STRING, EvalTestDataLoad.INVALID_CONSTANT_STRING });
+		Assert.assertNotNull(l);
+		Assert.assertEquals(0, l.size());
+
 	}
 
 
