@@ -16,21 +16,19 @@ package org.sakaiproject.evaluation.tool.params;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 
 /**
- * This is a view parameters class which defines the variables that are
- * passed from one page to another
- * @author Sakai App Builder -AZ
+ * This is a view parameters class which defines the variables that are passed
+ * from one page to another, for a simple view which is centered on a particular
+ * EvalTemplate object within the evaluation system.
  */
-public class TemplateViewParameters extends SimpleViewParameters {	
-	public Long templateId; 
-	
+public class TemplateViewParameters extends SimpleViewParameters {
+	public Long templateId;
+
 	public TemplateViewParameters() {
 	}
-   /** NB - only two views left (ModifyEmailProducer and PreviewEmailProducer) that
-    * are still relying on the "originalPage" system, use this constructor by
-    * default - AMB. */
-    public TemplateViewParameters(String viewID, Long templateId) {
-        this.viewID = viewID;
-        this.templateId = templateId;
-    }
-   
+
+	public TemplateViewParameters(String viewID, Long templateId) {
+		this.viewID = viewID;
+		this.templateId = templateId;
+	}
+
 }
