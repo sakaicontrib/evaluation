@@ -16,6 +16,7 @@ api/logic/src/java/org/sakaiproject/evaluation/logic/EvalResponsesLogic.java -te
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalScalesLogic.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalSettings.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalTemplatesLogic.java -text
+api/logic/src/java/org/sakaiproject/evaluation/logic/externals/EvalJobLogic.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/ExternalEvalGroups.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/ExternalUsers.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/model/EvalGroup.java -text
