@@ -26,6 +26,7 @@ import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
+import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
@@ -67,7 +68,27 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
 		log.debug("Init");
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalResponsesLogic#getNonResponders(java.lang.Long)
+	 */
+	public Set getNonResponders(Long evaluationId, EvalGroup group) {
 
+		Long[] evaluationIds = {evaluationId};
+		Set userIds = new HashSet();
+
+		//get everyone permitted to take the evaluation
+		Set ids = external.getUserIdsForEvalGroup(group.evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
+		for(Iterator i = ids.iterator(); i.hasNext();) {
+			String userId = (String)i.next();
+
+			//if this user hasn't submitted a response, add the user's id
+			if(getEvaluationResponses(userId, evaluationIds).isEmpty()) {
+				userIds.add(userId);
+			}
+		}
+		return userIds;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalResponsesLogic#getResponseById(java.lang.Long)
