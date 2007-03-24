@@ -15,7 +15,9 @@
 package org.sakaiproject.evaluation.logic;
 
 import java.util.List;
+import java.util.Set;
 
+import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalResponse;
 
 
@@ -26,6 +28,16 @@ import org.sakaiproject.evaluation.model.EvalResponse;
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public interface EvalResponsesLogic {
+	
+	/**
+	 * Get a set of user ids of users who are in an EvalGroup assigned to
+	 * this EvalEvaluation and permitted to take the evaluation but have 
+	 * not yet responsed.
+	 * 
+	 * @param evaluationId the EvalEvaluation id
+	 * @return a List of user ids
+	 */
+	public Set getNonResponders(Long evaluationId, EvalGroup group);
 
 	/**
 	 * Get a response by its unique id<br/>
