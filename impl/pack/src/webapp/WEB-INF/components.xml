@@ -59,6 +59,8 @@
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 		<property name="evaluationLogic" 
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+		<property name="evalResponsesLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
 	</bean>
 
 	<bean id="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic"
@@ -70,6 +72,9 @@
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="settings" 
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+		<property name="evalJobLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalJobLogic" />
+			
 	</bean>
 
 	<bean id="org.sakaiproject.evaluation.logic.EvalItemsLogic"
@@ -122,19 +127,22 @@
 		<property name="externalLogic" 
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 	</bean>
-	
-	<bean id="org.sakaiproject.evaluation.logic.externals.JobSchedulerFacade"
-			class="org.sakaiproject.evaluation.logic.impl.scheduling.JobSchedulerSakaiImpl"
-			init-method="init">
+		<bean id="org.sakaiproject.evaluation.logic.EvalJobLogic"
+		class="org.sakaiproject.evaluation.logic.impl.scheduling.EvalJobLogicImpl"
+		init-method="init">
+		<property name="scheduledInvocationManager"
+			ref="org.sakaiproject.api.app.scheduler.ScheduledInvocationManager" />
+		<property name="timeService"
+			ref="org.sakaiproject.time.api.TimeService" />
 	</bean>
 	
-	<bean id="org.sakaiproject.evaluation.logic.externals.EvalNotificationLogic"
-			class="org.sakaiproject.evaluation.logic.impl.scheduling.EvalNotificationLogicImpl"
+	<bean id="org.sakaiproject.evaluation.logic.externals.EvalTransition"
+			class="org.sakaiproject.evaluation.logic.impl.scheduling.EvalTransitionImpl"
 			init-method="init">
-			<property name="jobSchedulerFacade" 
-				ref="org.sakaiproject.evaluation.logic.externals.JobSchedulerFacade" />
+			<property name="emails" 
+				ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
 			<property name="evalEvaluationsLogic"
 				ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
 	</bean>
-	
+
 </beans>
