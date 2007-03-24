@@ -31,6 +31,7 @@ import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
 import org.sakaiproject.evaluation.logic.impl.interceptors.EvaluationModificationRegistry;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
@@ -58,6 +59,11 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 	private EvalExternalLogic external;
 	public void setExternalLogic(EvalExternalLogic external) {
 		this.external = external;
+	}
+	
+	private EvalJobLogic evalJobLogic;
+	public void setEvalJobLogic(EvalJobLogic evalJobLogic) {
+		this.evalJobLogic = evalJobLogic;
 	}
 
 	private EvalSettings settings;
@@ -108,6 +114,8 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 	 */
 	public void saveEvaluation(EvalEvaluation evaluation, String userId) {
 		log.debug("evalId: " + evaluation.getId() + ",userId: " + userId);
+		
+		boolean newEvaluation = false;
 
 		// set the date modified
 		evaluation.setLastModified( new Date() );
@@ -135,6 +143,9 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 		calendar.add(Calendar.MINUTE, -15); // put today a bit in the past (15 minutes)
 		Date today = calendar.getTime();
 		if (evaluation.getId() == null) { // creating new evaluation
+			
+			newEvaluation = true;
+
 			// test if new evaluation occurs in the past
 			if (evaluation.getStartDate().before(today)) {
 				throw new IllegalArgumentException(
@@ -215,6 +226,19 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 
 		dao.save(evaluation);
 		log.info("User ("+userId+") saved evaluation ("+evaluation.getId()+"), title: " + evaluation.getTitle());
+
+		/* call logic to manage Quartz scheduled jobs */
+		try
+		{
+			if(newEvaluation)
+				evalJobLogic.processNewEvaluation(evaluation);
+			else {
+				evalJobLogic.processEvaluationChange(evaluation);
+			}
+		}
+		catch (Exception e) {
+			log.warn("EvalJobLogic: evaluation "+evaluation.getId()+" "+ evaluation.getTitle() +" "+ e);
+		}
 
 		// How to check the state of the evaluation (match to the constants)
 		if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(evaluation.getState()) ) {
