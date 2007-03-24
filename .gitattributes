@@ -19,7 +19,6 @@ api/logic/src/java/org/sakaiproject/evaluation/logic/EvalTemplatesLogic.java -te
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/EvalNotificationLogic.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/ExternalEvalGroups.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/ExternalUsers.java -text
-api/logic/src/java/org/sakaiproject/evaluation/logic/externals/JobSchedulerFacade.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/model/EvalGroup.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/model/HierarchyNode.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/providers/EvalGroupsProvider.java -text
