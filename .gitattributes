@@ -75,7 +75,6 @@ impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/Evaluati
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvaluationModificationRegistry.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalNotificationImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalNotificationLogicImpl.java -text
-impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/JobSchedulerSakaiImpl.java -text
 impl/logic/src/test/log4j.properties -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalAssignsLogicImplTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalEmailsLogicImplTest.java -text
