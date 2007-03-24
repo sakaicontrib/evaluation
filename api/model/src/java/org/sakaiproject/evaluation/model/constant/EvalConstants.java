@@ -370,6 +370,30 @@ public class EvalConstants {
 		"2) Enter your username and password and click on 'Login' button. \n" +
 		"3) Click on 'Evaluation System' in the left navigation menu under My Workspace. \n" +
 		"4) Click on '$EvalTitle' link under '$EvalGroupTitle'. \n";
+	
+	public static final String EMAIL_TEMPLATE_RESULTS = "Results";
+
+	public static final String EMAIL_TEMPLATE_DEFAULT_RESULTS = "defaultResults";
+
+	public static final String EMAIL_RESULTS_DEFAULT_TEXT = 
+		"All information submitted to the Evaluation System is confidential. Instructors cannot identify which submissions belong to which students. Students are required to login to the system for the sole purpose of providing students access to the appropriate evaluations for their associated courses. Instructors can only view general statistics as allowed by the university. Please send privacy concerns to $HelpdeskEmail. \n" +
+		"\n" +
+		"The results of an evaluation ($EvalTitle) for: $EvalGroupTitle are available now.\n" +
+		"\n" +
+		"You may access the evaluation results at: \n" +
+		"$URLtoViewResultsl \n" +
+		"If the above link is not working then please follow the Alternate Instructions at the bottom of the message. \n" +
+		"Enter the site using your username and password. \n" +
+		"\n" +
+		"Thank you for your participation.\n" +
+		"------------------------------------------------------------\n" +
+		"Should you encounter any technical difficulty in viewing the evaluation results, please send an email to $HelpdeskEmail clearly indicating the problem you encountered. For any other concerns please contact your department.\n" +
+		"\n" +
+		"Alternate Instructions: \n" +
+		"1) Go to $URLtoSystem \n" +
+		"2) Enter your username and password and click on 'Login' button. \n" +
+		"3) Click on 'Evaluation System' in the left navigation menu under My Workspace. \n" +
+		"4) Click on '$EvalTitle' link under '$EvalGroupTitle'. \n";
 
 	/**
 	 * Notification: Include all users who have not taken the evaluation yet
@@ -457,83 +481,40 @@ public class EvalConstants {
 	 * Category => Objective => Item
 	 */
 	public static final String ITEM_GROUP_TYPE_OBJECTIVE = "ItemGroupObjective";
-
-	/**
-	 * Quartz:
-	 * Identifier for Job group name and Job type in scheduling 
-	 * Evaluation creation notification jobs.
-	 */
-	public static final String QRTZ_EVALUATION_NOTIFY_CREATED = "EvaluationNotifyCreated";
 	
 	/**
-	 * Quartz:
-	 * Identifier for Job group name and Job type in scheduling 
-	 * Evaluation available notification jobs.
+	 * ScheduledInvocationManager: ScheduledInvocationCommand jobType
+	 * Fix EvalEvaulation state based on current date and dates from EvalEvaulation.
 	 * 
 	 */
-	public static final String QRTZ_EVALUATION_NOTIFY_AVAILABLE = "EvaluationNotifyAvailable";
-	
-	/**
-	 * Quartz:
-	 * Identifier for Job group name and Job type in scheduling 
-	 * Evaluation available reminder notification jobs.
-	 */
-	public static final String QRTZ_EVALUATION_NOTIFY_REMINDER = "EvaluationNotifyReminder";
-	
-	/**
-	 * Quartz:
-	 * Identifier for Job group name and Job type in scheduling 
-	 * Evaluation results viewable notification jobs.
-	 */
-	public static final String QRTZ_EVALUATION_NOTIFY_VIEWABLE = "EvaluationNotifyViewable";
-	
-	/**
-	 * Quartz:
-	 * Identifier used Job group name and Job type in scheduling 
-	 * Evaluation state change to Active.
-	 */
-	public static final String QRTZ_EVALUATION_CHANGE_TO_ACTIVE = "EvaluationChangeStateToActive";
-	
-	/**
-	 * Quartz:
-	 * Identifier for Job group name and Job type in scheduling 
-	 * Evaluation state change to Due.
-	 */
-	public static final String QRTZ_EVALUATION_CHANGE_TO_DUE = "EvaluationChangeStateToDue";
-	
-	/**
-	 * Quartz:
-	 * Identifier used Job group name and Job type in scheduling 
-	 * Evaluation state change to Closed.
-	 * 
-	 */
-	public static final String QRTZ_EVALUATION_CHANGE_TO_CLOSED = "EvaluationChangeStateToClosed";
-	
-	/**
-	 * Quartz:
-	 * Identifier for Job group name and Job type in scheduling 
-	 * Evaluation state change to Viewable.
-	 */
-	public static final String QRTZ_EVALUATION_CHANGE_TO_VIEWABLE = "EvaluationChangeSateToViewable";
-	
-	/**
-	 * Quartz:
-	 * Identifier for Job group name and Job type in scheduling 
-	 * removal of jobs from the job scheduler.
-	 * 
-	 */
-	public static final String QRTZ_EVALUATION_CLEAR_SCHEDULER = "EvaluationClearScheduler";
+	public static final String SCHEDULED_CMD_FIX_STATE = "fixState";
 
 	/**
-	 * Quartz: 
-	 * JobDataMap attribute name mapped to Evaluation id.
+	 * ScheduledInvocationManager: ScheduledInvocationCommand jobType
+	 * Send email saying EvalEvaulation is available, linked.
+	 * 
 	 */
-	public static final String JOB_DATA_MAP_EVALUATION_ID = "EvaluationId";
+	public static final String SCHEDULED_CMD_SEND_ACTIVE = "sendActive";
 
 	/**
-	 * Quartz:
-	 * JobDataMap attribute name mapped to Job type.
+	 * ScheduledInvocationManager: ScheduledInvocationCommand jobType
+	 * Send email saying EvalEvaluation has been created.
+	 * 
 	 */
-	public static final String JOB_DATA_MAP_JOB_TYPE = "JobType";
+	public static final String SCHEDULED_CMD_SEND_CREATED = "sendCreated";
+
+	/**
+	 * ScheduledInvocationManager: ScheduledInvocationCommand jobType
+	 * Send email reminder to non-responders.
+	 * 
+	 */
+	public static final String SCHEDULED_CMD_SEND_REMINDER = "sendReminder";
+
+	/**
+	 * ScheduledInvocationManager: ScheduledInvocationCommand jobType
+	 * Send email saying EvalEvaulation results are viewable.
+	 * 
+	 */
+	public static final String SCHEDULED_CMD_SEND_VIEWABLE = "sendViewable";
 
 }
