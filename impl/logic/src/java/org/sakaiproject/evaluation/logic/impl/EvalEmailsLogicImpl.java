@@ -18,6 +18,7 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,6 +29,7 @@ import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.utils.TextTemplateLogicUtils;
@@ -65,7 +67,11 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 	public void setEvaluationLogic(EvalEvaluationsLogic evaluationLogic) {
 		this.evaluationLogic = evaluationLogic;
 	}
-
+	
+	private EvalResponsesLogic evalResponsesLogic;
+	public void setEvalResponsesLogic(EvalResponsesLogic evalResponsesLogic) {
+		this.evalResponsesLogic = evalResponsesLogic;
+	}
 
 	// INIT method
 	public void init() {
@@ -410,24 +416,161 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
 		return (String[]) sentMessages.toArray( new String[] {} );
 	}
-
+	
 	public String[] sendEvalReminderNotifications(Long evaluationId, String includeConstant) {
 		log.debug("evaluationId: " + evaluationId + ", includeConstant: " + includeConstant);
-		// TODO Auto-generated method stub
+		if(includeConstant == null || 
+				(includeConstant != EvalConstants.EMAIL_INCLUDE_NONTAKERS || includeConstant !=  EvalConstants.EMAIL_INCLUDE_ALL)) {
+			log.error("includeConstant null or unknown");
+			return null;
+		}
+
+		String from = (String) settings.get( EvalSettings.FROM_EMAIL_ADDRESS );
 		
-		log.error("Method not implemented yet!");
-		return null;
+		// get evaluation
+		EvalEvaluation eval = (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);
+		if (eval == null) {
+			throw new IllegalArgumentException("Cannot find evaluation with this id: " + evaluationId);
+		}
+		
+		// get the email template
+		EvalEmailTemplate emailTemplate = getDefaultEmailTemplate( EvalConstants.EMAIL_TEMPLATE_REMINDER );
 
+		if (emailTemplate == null) {
+			throw new IllegalStateException("Cannot find email template: " + EvalConstants.EMAIL_TEMPLATE_REMINDER);
+		}
+
+		List sentMessages = new ArrayList();
+
+		// get the associated eval groups for this evaluation
+		Map evalGroupIds = evaluationLogic.getEvaluationGroups(new Long[] {evaluationId}, false);
+
+		// only one possible map key so we can assume evaluationId
+		List groups = (List) evalGroupIds.get(evaluationId);
+		log.debug("Found " + groups.size() + " groups for available evaluation: " + evaluationId);
+		Set userIdsSet = new HashSet();
+
+		// loop through contexts and send emails to correct users in each context
+		for (int i=0; i<groups.size(); i++) {
+			EvalGroup group = (EvalGroup) groups.get(i);
+			userIdsSet.clear();
+			if(EvalConstants.EMAIL_INCLUDE_NONTAKERS.equals(includeConstant)) {
+				userIdsSet.addAll(evalResponsesLogic.getNonResponders(evaluationId, group));
+			}
+			else if(EvalConstants.EMAIL_INCLUDE_ALL.equals(includeConstant)) {
+				userIdsSet.addAll(evalResponsesLogic.getNonResponders(evaluationId, group));
+				userIdsSet.addAll(external.getUserIdsForEvalGroup(group.evalGroupId, EvalConstants.PERM_BE_EVALUATED));
+			}
+
+			// skip ahead if there is no one to send to
+			if (userIdsSet.size() == 0) continue;
+
+			// turn the set into an array
+			String[] toUserIds = (String[]) userIdsSet.toArray(new String[] {});
+			log.debug("Found " + toUserIds.length + " users (" + toUserIds + 
+					") to send " + EvalConstants.EMAIL_TEMPLATE_REMINDER + 
+					" notification to for available evaluation (" + evaluationId + 
+					") and group (" + group.evalGroupId + ")");
+
+			// replace the text of the template with real values
+			Map replacementValues = new HashMap();
+			replacementValues.put("HelpdeskEmail", from);
+			String message = makeEmailMessage(emailTemplate.getMessage(), 
+					eval, group, replacementValues);
+			
+			// store sent messages to return
+			sentMessages.add(message);
+
+			// send the actual emails for this context
+			external.sendEmails(from, 
+					toUserIds, 
+					"New evaluation created: " + eval.getTitle(), 
+					message);
+			log.info("Sent evaluation available message to " + toUserIds.length + " users");
+		}
+		return (String[]) sentMessages.toArray( new String[] {} );
 	}
-
+	
 	public String[] sendEvalResultsNotifications(Long evaluationId, boolean includeEvaluatees, boolean includeAdmins) {
 		log.debug("evaluationId: " + evaluationId + ", includeEvaluatees: " + includeEvaluatees + ", includeAdmins: " + includeAdmins);
-		// TODO Auto-generated method stub
-		
-		log.error("Method not implemented yet!");
-		return null;
+		String from = (String) settings.get( EvalSettings.FROM_EMAIL_ADDRESS );
 
+		// get evaluation
+		EvalEvaluation eval = (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);
+		if (eval == null) {
+			throw new IllegalArgumentException("Cannot find evaluation with this id: " + evaluationId);
+		}
+
+		// get the email template
+		EvalEmailTemplate emailTemplate = getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_RESULTS);
+
+		if (emailTemplate == null) {
+			throw new IllegalStateException("Cannot find email template: " + EvalConstants.EMAIL_TEMPLATE_RESULTS);
+		}
+
+		List sentMessages = new ArrayList();
+
+		// get the associated eval groups for this evaluation
+		Map evalGroupIds = evaluationLogic.getEvaluationGroups(new Long[] {evaluationId}, false);
+
+		// only one possible map key so we can assume evaluationId
+		List groups = (List) evalGroupIds.get(evaluationId);
+		log.debug("Found " + groups.size() + " groups for available evaluation: " + evaluationId);
+		Set userIdsSet = new HashSet();
+
+		// loop through contexts and send emails to correct users in each context
+		for (int i=0; i<groups.size(); i++) {
+			EvalGroup group = (EvalGroup) groups.get(i);
+			userIdsSet.clear();
+			if(includeEvaluatees) {
+				userIdsSet.addAll(external.getUserIdsForEvalGroup(group.evalGroupId, EvalConstants.PERM_TAKE_EVALUATION));
+			}
+			if(includeAdmins) {
+				userIdsSet.addAll(external.getUserIdsForEvalGroup(group.evalGroupId, EvalConstants.PERM_BE_EVALUATED));
+			}
+
+			// skip ahead if there is no one to send to
+			if (userIdsSet.size() == 0) continue;
+
+			// turn the set into an array
+			String[] toUserIds = (String[]) userIdsSet.toArray(new String[] {});
+			log.debug("Found " + toUserIds.length + " users (" + toUserIds + 
+					") to send " + EvalConstants.EMAIL_TEMPLATE_REMINDER + 
+					" notification to for available evaluation (" + evaluationId + 
+					") and group (" + group.evalGroupId + ")");
+
+			// replace the text of the template with real values
+			Map replacementValues = new HashMap();
+			replacementValues.put("HelpdeskEmail", from);
+			String message = makeEmailMessage(emailTemplate.getMessage(), 
+					eval, group, replacementValues);
+
+			// store sent messages to return
+			sentMessages.add(message);
+
+			// send the actual emails for this context
+			external.sendEmails(from, 
+					toUserIds, 
+					"New evaluation created: " + eval.getTitle(), 
+					message);
+			log.info("Sent evaluation available message to " + toUserIds.length + " users");
+
+			/*TODO 
+			if(EvalConstants.EMAIL_INCLUDE_ALL.equals(includeConstant)) {
+			}
+			boolean includeEvaluatees = true;
+			if (includeEvaluatees) {
+				// TODO Not done yet
+				log.error("includeEvaluatees Not implemented");
+			}
+		}
+		return (String[]) sentMessages.toArray( new String[] {} );
+		*/
+		}
+		return null;
 	}
+
+
 
 	/**
 	 * Builds the email message from a template and a bunch of variables
