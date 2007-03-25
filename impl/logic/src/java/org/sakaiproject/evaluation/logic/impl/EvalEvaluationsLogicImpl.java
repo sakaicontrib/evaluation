@@ -31,7 +31,7 @@ import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
+//import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
 import org.sakaiproject.evaluation.logic.impl.interceptors.EvaluationModificationRegistry;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
@@ -61,10 +61,12 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 		this.external = external;
 	}
 	
+	/*
 	private EvalJobLogic evalJobLogic;
 	public void setEvalJobLogic(EvalJobLogic evalJobLogic) {
 		this.evalJobLogic = evalJobLogic;
 	}
+	*/
 
 	private EvalSettings settings;
 	public void setSettings(EvalSettings settings) {
@@ -115,7 +117,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 	public void saveEvaluation(EvalEvaluation evaluation, String userId) {
 		log.debug("evalId: " + evaluation.getId() + ",userId: " + userId);
 		
-		boolean newEvaluation = false;
+		//boolean newEvaluation = false;
 
 		// set the date modified
 		evaluation.setLastModified( new Date() );
@@ -144,7 +146,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 		Date today = calendar.getTime();
 		if (evaluation.getId() == null) { // creating new evaluation
 			
-			newEvaluation = true;
+			//newEvaluation = true;
 
 			// test if new evaluation occurs in the past
 			if (evaluation.getStartDate().before(today)) {
@@ -227,7 +229,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 		dao.save(evaluation);
 		log.info("User ("+userId+") saved evaluation ("+evaluation.getId()+"), title: " + evaluation.getTitle());
 
-		/* call logic to manage Quartz scheduled jobs */
+		/* call logic to manage Quartz scheduled jobs
 		try
 		{
 			if(newEvaluation)
@@ -239,6 +241,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 		catch (Exception e) {
 			log.warn("EvalJobLogic: evaluation "+evaluation.getId()+" "+ evaluation.getTitle() +" "+ e);
 		}
+		*/
 
 		// How to check the state of the evaluation (match to the constants)
 		if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(evaluation.getState()) ) {
