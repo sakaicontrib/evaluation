@@ -39,6 +39,8 @@ import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
+import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
@@ -49,7 +51,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class ControlEvaluationsProducer implements ViewComponentProducer {
+public class ControlEvaluationsProducer implements ViewComponentProducer, NavigationCaseReporter {
 
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.rsf.view.ViewComponentProducer#getViewID()
@@ -360,6 +362,22 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
+	 */
+	public List reportNavigationCases() {
+		List i = new ArrayList();
+		
+		i.add(new NavigationCase(EvaluationSettingsProducer.VIEW_ID, new SimpleViewParameters(
+				EvaluationSettingsProducer.VIEW_ID)));
+		i.add(new NavigationCase(EvaluationStartProducer.VIEW_ID, new SimpleViewParameters(
+				EvaluationStartProducer.VIEW_ID)));
+		i.add(new NavigationCase(EvaluationAssignConfirmProducer.VIEW_ID, new SimpleViewParameters(
+				EvaluationAssignConfirmProducer.VIEW_ID)));
+		
+		return i;
+	}	
+	
 	/**
 	 * Gets the title for the first returned context for this evaluation,
 	 * should only be used when there is only one context assigned to an eval
@@ -391,5 +409,4 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
 		}
 		return totalEnrollments;
 	}
-
 }
