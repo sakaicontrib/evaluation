@@ -1,8 +1,6 @@
 /**********************************************************************************
- * $URL$
- * $Id$
- ***********************************************************************************
- *
+ * EvalTransitionImpl.java - created by rwellis@umich.edu
+ * 
  * Copyright (c) 2005, 2006 The Sakai Foundation.
  * 
  * Licensed under the Educational Community License, Version 1.0 (the "License"); 
@@ -26,19 +24,16 @@ import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalTransition;
-import org.sakaiproject.evaluation.model.EvalEvaluation;
 
 /**
  * Work to be done at EvalEvalation transition points.
  * 
  * @author rwellis
- *
+ * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class EvalTransitionImpl implements EvalTransition {
 	
 	private static Log log = LogFactory.getLog(EvalTransitionImpl.class);
-	
-	private EvalEvaluation eval;
 	
 	private EvalEmailsLogic emails;
 	public void setEmails(EvalEmailsLogic emails) {
@@ -59,8 +54,10 @@ public class EvalTransitionImpl implements EvalTransition {
 	 */
 	public void fixState(Long evalId) {
 		log.info("fixState, eval id " + evalId);
-		eval = evalEvaluationsLogic.getEvaluationById(evalId);
-		evalEvaluationsLogic.saveEvaluation(eval, eval.getOwner());
+//		eval = evalEvaluationsLogic.getEvaluationById(evalId);
+//		evalEvaluationsLogic.saveEvaluation(eval, eval.getOwner());
+		// this fixes the state of the evaluation -AZ
+		evalEvaluationsLogic.getEvaluationState(evalId);
 	}
 
 
@@ -71,7 +68,7 @@ public class EvalTransitionImpl implements EvalTransition {
 	public void sendActive(Long evalId) {
 		log.info("sendActive, eval id " + evalId);
 		boolean includeEvaluatees = true;
-		String[] sentMessages = emails.sendEvalAvailableNotifications(evalId, includeEvaluatees);
+		emails.sendEvalAvailableNotifications(evalId, includeEvaluatees);
 	}
 
 
@@ -82,7 +79,7 @@ public class EvalTransitionImpl implements EvalTransition {
 	public void sendCreated(Long evalId) {
 		log.info("sendCreated, " + evalId);
 		boolean includeOwner = true;
-		String[] sentMessages = emails.sendEvalCreatedNotifications(evalId, includeOwner);
+		emails.sendEvalCreatedNotifications(evalId, includeOwner);
 	}
 
 
@@ -93,7 +90,7 @@ public class EvalTransitionImpl implements EvalTransition {
 	public void sendReminder(Long evalId) {
 		log.info("sendReminder, " + evalId);
 		String includeConstant = null;
-		String[] sentMessages = emails.sendEvalReminderNotifications(evalId, includeConstant);
+		emails.sendEvalReminderNotifications(evalId, includeConstant);
 	}
 
 
@@ -105,6 +102,6 @@ public class EvalTransitionImpl implements EvalTransition {
 		log.info("sendViewable, " + evalId);
 		boolean includeEvaluatees = true;
 		boolean includeAdmins = true;
-		String[] sentMessages = emails.sendEvalResultsNotifications(evalId, includeEvaluatees, includeAdmins);
+		emails.sendEvalResultsNotifications(evalId, includeEvaluatees, includeAdmins);
 	}
 }
