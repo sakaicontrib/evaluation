@@ -552,6 +552,10 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 			throw new IllegalArgumentException("Cannot find template with id: " + templateId);
 		}
 
+		// TODO - make this use the new dao method -AZ
+		//String[] nodeIds = null;
+		//dao.getTemplateItemsByTemplate(templateId, nodeIds, instructorIds, groupIds);
+
 		String[] props = new String[] { "template.id" };
 		Object[] values = new Object[] { templateId };
 		int[] comparisons = new int[] { ByPropsFinder.EQUALS };
