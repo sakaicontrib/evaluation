@@ -70,7 +70,7 @@
 	<!-- define any XML producer files -->
 	<bean id="siteMap" parent="siteMapDef" />
 
-	<bean parent="ActionResultInterceptorParent">
+	<bean parent="actionResultInterceptorParent">
 		<property name="value">
 			<bean
 				class="org.sakaiproject.evaluation.tool.wrapper.EvalActionResultInterceptor">
