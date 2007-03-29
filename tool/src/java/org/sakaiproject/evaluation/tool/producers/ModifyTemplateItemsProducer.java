@@ -163,7 +163,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 		if (template.getDescription() != null && !template.getDescription().trim().equals("")) {
 			UIBranchContainer descbranch = UIBranchContainer.make(tofill, "description-switch:");
 			UIMessage.make(descbranch, "description-header", "modifytemplate.description.header"); //$NON-NLS-1$ //$NON-NLS-2$
-			UIVerbatim.make(descbranch, "description", template.getDescription());
+			UIOutput.make(descbranch, "description", template.getDescription());
 		}
 
 
