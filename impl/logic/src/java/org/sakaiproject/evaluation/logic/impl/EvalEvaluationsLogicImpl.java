@@ -225,6 +225,14 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 		} else {
 			evaluation.setBlankResponsesAllowed( systemBlankResponses );
 		}
+		String systemInstructorOpt = (String) settings.get( EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE );
+		if ( systemInstructorOpt == null ) {
+			if (evaluation.getInstructorOpt() == null) {
+				evaluation.setInstructorOpt( EvalConstants.INSTRUCTOR_OPT_OUT );
+			}
+		} else {
+			evaluation.setInstructorOpt( systemInstructorOpt );
+		}
 
 		dao.save(evaluation);
 		log.info("User ("+userId+") saved evaluation ("+evaluation.getId()+"), title: " + evaluation.getTitle());
