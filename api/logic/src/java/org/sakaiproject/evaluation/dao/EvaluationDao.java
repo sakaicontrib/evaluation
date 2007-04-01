@@ -42,9 +42,9 @@ import org.sakaiproject.genericdao.api.CompleteGenericDao;
 public interface EvaluationDao extends CompleteGenericDao {
 
 	/**
-	 * Find templates visible for a user based on 4 predicates:
-	 * "private" and owned by someone, "public", 
-	 * (shared and visible not handled yet)
+	 * Find templates visible for a user, only includes standard type templates,
+	 * (does not include templates that hold added items, 
+	 * "private" and owned by someone, "public", (shared and visible not handled yet)
 	 * 
 	 * @param userId Sakai internal user id, owner of the private templates to be selected,
 	 * if it is null then all "Private" templates returned, if empty string then no private templates
