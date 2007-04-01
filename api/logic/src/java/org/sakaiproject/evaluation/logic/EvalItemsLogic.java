@@ -142,8 +142,8 @@ public interface EvalItemsLogic {
 	/**
 	 * Get all the templateItems for this template that are visible to a user, 
 	 * use this when you need the templateItems restricted to visibility to a 
-	 * specific user (this is almost every case), can limit items to a certain
-	 * hierarchy level<br/> 
+	 * specific user (probably for editing template items in a template), 
+	 * can limit items to a certain hierarchy level<br/> 
 	 * Note: you could also get the items by getting the templateItems from the 
 	 * template itself but this is more risky since you so not know what the
 	 * user should see

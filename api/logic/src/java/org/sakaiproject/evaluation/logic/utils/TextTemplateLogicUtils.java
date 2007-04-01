@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
+import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
@@ -52,8 +53,11 @@ public class TextTemplateLogicUtils {
 		}
 
 		// setup velocity
+		VelocityEngine ve = null;
 		try {
-			Velocity.init();
+			// trying out creating a new instance of velocity -AZ
+			ve = new VelocityEngine();
+			ve.init();
 		} catch (Exception e) {
 			throw new RuntimeException("Could not initialize velocity", e);
 		}
@@ -64,7 +68,7 @@ public class TextTemplateLogicUtils {
 		Writer output = new StringWriter();
 		boolean result = false;
 		try {
-			result = Velocity.evaluate(context, output, "textProcess", textTemplate);
+			result = ve.evaluate(context, output, "textProcess", textTemplate);
 		} catch (ParseErrorException e) {
 			throw new RuntimeException("Velocity parsing error: ", e);
 		} catch (MethodInvocationException e) {
