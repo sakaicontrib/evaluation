@@ -26,7 +26,6 @@ api/logic/src/java/org/sakaiproject/evaluation/logic/providers/EvalGroupsProvide
 api/logic/src/java/org/sakaiproject/evaluation/logic/providers/EvalHierarchyProvider.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/utils/ArrayUtils.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/utils/SettingsLogicUtils.java -text
-api/logic/src/java/org/sakaiproject/evaluation/logic/utils/TextTemplateLogicUtils.java -text
 api/model/project.xml -text
 api/model/src/java/org/sakaiproject/evaluation/model/EvalAnswer.java -text
 api/model/src/java/org/sakaiproject/evaluation/model/EvalAssignGroup.java -text
@@ -77,6 +76,7 @@ impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/Evaluati
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvaluationModificationRegistry.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalJobLogicImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalTransitionImpl.java -text
+impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/utils/TextTemplateLogicUtils.java -text
 impl/logic/src/test/log4j.properties -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalAssignsLogicImplTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalEmailsLogicImplTest.java -text
