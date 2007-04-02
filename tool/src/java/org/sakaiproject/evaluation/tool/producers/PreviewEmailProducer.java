@@ -94,10 +94,10 @@ public class PreviewEmailProducer implements ViewComponentProducer,
   public List reportNavigationCases() {
     List i = new ArrayList();
 
-    i.add(new NavigationCase("available", new EmailViewParameters(
+    i.add(new NavigationCase(EvalConstants.EMAIL_TEMPLATE_AVAILABLE, new EmailViewParameters(
         ModifyEmailProducer.VIEW_ID, null,
         EvalConstants.EMAIL_TEMPLATE_AVAILABLE))); //$NON-NLS-1$ //$NON-NLS-2$
-    i.add(new NavigationCase("reminder", new EmailViewParameters(
+    i.add(new NavigationCase(EvalConstants.EMAIL_TEMPLATE_REMINDER, new EmailViewParameters(
         ModifyEmailProducer.VIEW_ID, null,
         EvalConstants.EMAIL_TEMPLATE_REMINDER))); //$NON-NLS-1$ //$NON-NLS-2$
     return i;
