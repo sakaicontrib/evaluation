@@ -188,7 +188,7 @@ public class BlockRenderer implements ItemRenderer {
 
 				// put in the item information (number and text)
 				UIOutput.make(childRow, "childNum", new Integer(displayNumber + j).toString() ); //$NON-NLS-1$
-				UIOutput.make(childRow, "childText", childItem.getItemText()); //$NON-NLS-1$
+				UIVerbatim.make(childRow, "childText", childItem.getItemText()); //$NON-NLS-1$
 
 				// Bind the answers to a list of answers in evaluation bean (if enabled)
 				String childBinding = null;
