@@ -94,6 +94,13 @@
 			<version>1.5.2</version>
 		</dependency>
 
+		<!-- velocity for processing text templates -->
+        <dependency>
+                <groupId>velocity</groupId>
+                <artifactId>velocity</artifactId>
+                <version>1.4</version>
+        </dependency>
+
 
 		<!-- Various Sakai dependencies -->
 		<dependency>
