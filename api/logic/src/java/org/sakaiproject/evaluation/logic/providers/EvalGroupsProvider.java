@@ -105,13 +105,15 @@ public interface EvalGroupsProvider {
 	public int countEvalGroupsForUser(String userId, String permission);
 
 	/**
-	 * Return a Context object which represents a collection of users (a course or 
-	 * group or collection in this case) based on the unique group id
+	 * Return a group object (which represents a collection of users, a course or 
+	 * group or collection in this case) based on the unique group id, this allows the
+	 * system to obtain the title and other meta data related to a group using the
+	 * unique id of the group
 	 * 
 	 * @param groupId the unique id of an external eval group
-	 * @return a Context object or null if not found
+	 * @return a {@link EvalGroup} object or null if not found
 	 */
-	public EvalGroup getContextByGroupId(String groupId);
+	public EvalGroup getGroupByGroupId(String groupId);
 
 	/**
 	 * Check if a user has a specified permission/role within an eval group
