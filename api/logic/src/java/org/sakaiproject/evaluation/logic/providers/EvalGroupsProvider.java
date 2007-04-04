@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 /**
  * This interface provides methods to get external eval groups and enrollments into the
@@ -40,6 +41,9 @@ import org.sakaiproject.evaluation.logic.model.EvalGroup;
  * and only handle the cases indicated (do not try to handle all possible permissions)<br/>
  * <b>Note</b>: Specifically this allows us to reference eval groups and enrollments which
  * are not stored in something like Sakai
+ * <br/>
+ * <b>Note</b>: If the type is set for the {@link EvalGroup} object then it should be EvalConstants.GROUP_TYPE_PROVIDED,
+ * however, this should not be necessary
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
