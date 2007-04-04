@@ -205,7 +205,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		if (c == null) {
 			// use external provider
 			if (evalGroupsProvider != null) {
-				c = evalGroupsProvider.getContextByGroupId(evalGroupId);
+				c = evalGroupsProvider.getGroupByGroupId(evalGroupId);
 				c.type = EvalConstants.GROUP_TYPE_PROVIDED;
 			}
 		}
@@ -234,7 +234,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 			return site.getTitle();
 		} catch (IdUnusedException e) {
 			if (evalGroupsProvider != null) {
-				EvalGroup c = evalGroupsProvider.getContextByGroupId(evalGroupId);
+				EvalGroup c = evalGroupsProvider.getGroupByGroupId(evalGroupId);
 				return c.title;
 			}
 		}
