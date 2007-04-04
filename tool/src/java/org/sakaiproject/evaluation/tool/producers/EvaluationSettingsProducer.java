@@ -101,14 +101,11 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		UIMessage.make(form, "settings-desc-header", "evalsettings.settings.desc.header");
 		UIOutput.make(form, "evaluationTitle", null, "#{evaluationBean.eval.title}");
 
-		Date today = new Date();
-		Calendar calendar = new GregorianCalendar();
-		calendar.setTime(today);
-
 		UIMessage.make(form, "eval-dates-header", "evalsettings.dates.header");
 		UIMessage.make(form, "eval-start-date-header", "evalsettings.start.date.header");
 		UIMessage.make(form, "eval-start-date-desc", "evalsettings.start.date.desc");
 
+		Date today = new Date();
 		UIInput startDate = UIInput.make(form, "startDate:", "#{evaluationBean.startDate}");	
 		if (evaluationBean.eval.getId() != null) {
 			// queued evalution
@@ -123,28 +120,25 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		} else {
 			UIInput.make(form, "evalStatus", null, "new");
 		}
-		dateevolver.evolveDateInput(startDate, calendar.getTime());
+		dateevolver.evolveDateInput(startDate, evaluationBean.startDate);
 
-		calendar.add(Calendar.DATE, 1);
 		// Show the "Stop date" text box only if it is set as yes in the System
 		// settings
 		if (((Boolean) settings.get(EvalSettings.EVAL_USE_STOP_DATE)).booleanValue()) {
 			UIBranchContainer showStopDate = UIBranchContainer.make(form, "showStopDate:");
 			UIMessage.make(showStopDate, "eval-stop-date-header", "evalsettings.stop.date.header");
 			UIInput stopDate = UIInput.make(showStopDate, "stopDate:", "#{evaluationBean.stopDate}");
-			dateevolver.evolveDateInput(stopDate, calendar.getTime());
+			dateevolver.evolveDateInput(stopDate, evaluationBean.stopDate);
 		}
 
-		calendar.add(Calendar.DATE, 1);
 		UIMessage.make(form, "eval-due-date-header", "evalsettings.due.date.header");
 		UIInput dueDate = UIInput.make(form, "dueDate:", "#{evaluationBean.dueDate}");
-		dateevolver.evolveDateInput(dueDate, calendar.getTime());
+		dateevolver.evolveDateInput(dueDate, evaluationBean.dueDate);
 
-		calendar.add(Calendar.DATE, 1);
 		UIMessage.make(form, "eval-view-date-header", "evalsettings.view.date.header");
 		UIMessage.make(form, "eval-view-date-desc", "evalsettings.view.date.desc");
 		UIInput viewDate = UIInput.make(form, "viewDate:", "#{evaluationBean.viewDate}");
-		dateevolver.evolveDateInput(viewDate, calendar.getTime());
+		dateevolver.evolveDateInput(viewDate, evaluationBean.viewDate);
 
 		UIMessage.make(form, "eval-results-viewable-header", "evalsettings.results.viewable.header");
 		UIMessage.make(form, "eval-results-viewable-private-start", "evalsettings.results.viewable.private.start");
@@ -189,7 +183,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 				UIMessage.make(showResultsToStudents, "eval-results-stu-inst-date-label", "evalsettings.results.stu.inst.date.label");
 			} else {
 				UIInput studentsDate = UIInput.make(showResultsToStudents, "studentsDate:", "#{evaluationBean.studentsDate}");
-				dateevolver.evolveDateInput(studentsDate, calendar.getTime());
+				dateevolver.evolveDateInput(studentsDate, evaluationBean.studentsDate);
 			}
 		} else {
 			form.parameters.add(new UIELBinding("#{evaluationBean.studentViewResults}", Boolean.FALSE));
@@ -222,12 +216,10 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 
 			// If same view date all then show a label else show a text box.
 			if (sameViewDateForAll) {
-				UIBranchContainer showResultsToInstLabel = UIBranchContainer.make(showResultsToInst, "showResultsToInstLabel:");
-				UIMessage.make(showResultsToInstLabel, "eval-results-stu-inst-date-label", "evalsettings.results.stu.inst.date.label");
+				UIMessage.make(showResultsToInst, "eval-results-stu-inst-date-label", "evalsettings.results.stu.inst.date.label");
 			} else {
-				UIBranchContainer showResultsToInstDate = UIBranchContainer.make(showResultsToInst, "showResultsToInstDate:");
-				UIInput instructorsDate = UIInput.make(showResultsToInstDate, "instructorsDate:", "#{evaluationBean.instructorsDate}");
-				dateevolver.evolveDateInput(instructorsDate, calendar.getTime());
+				UIInput instructorsDate = UIInput.make(showResultsToInst, "instructorsDate:", "#{evaluationBean.instructorsDate}");
+				dateevolver.evolveDateInput(instructorsDate, evaluationBean.instructorsDate);
 			}
 		} else {
 			form.parameters.add(new UIELBinding("#{evaluationBean.instructorViewResults}", Boolean.FALSE));

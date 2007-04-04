@@ -154,7 +154,21 @@ public class EvaluationBean {
 		/*
 		 * Initializing all the bind variables used in EvaluationSettingsProducer. 
 		 */
-		startDate = new Date();
+		Date today = new Date();
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(today);
+		startDate = calendar.getTime();
+		
+		calendar.add(Calendar.DATE, 1);
+		stopDate = calendar.getTime();
+
+		calendar.add(Calendar.DATE, 1);
+		dueDate = calendar.getTime();
+
+		calendar.add(Calendar.DATE, 1);
+		viewDate = calendar.getTime();
+		studentsDate = calendar.getTime();
+		instructorsDate = calendar.getTime();
 		
 		//results viewable settings
 		eval.setResultsPrivate(Boolean.FALSE);
