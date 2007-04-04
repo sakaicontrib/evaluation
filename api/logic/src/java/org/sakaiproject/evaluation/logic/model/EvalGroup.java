@@ -38,7 +38,6 @@ public class EvalGroup {
 	 */
 	public String type = EvalConstants.GROUP_TYPE_UNKNOWN;
 
-
 	/**
 	 * Empty Constructor
 	 */
