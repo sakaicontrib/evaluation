@@ -46,6 +46,7 @@ import org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer;
 import org.sakaiproject.evaluation.tool.producers.SummaryProducer;
 import org.sakaiproject.evaluation.tool.utils.EvaluationDateUtil;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
+import org.sakaiproject.util.FormattedText;
 
 /**
  * This is the backing bean of the evaluation process.
@@ -350,9 +351,41 @@ public class EvaluationBean {
 	 * 
 	 * @return String that is used to determine the place where control is to be sent
 	 * 			in ModifyEmailProducer (reportNavigationCases method)
+	 * @throws SecurityException 
 	 */
-	public String saveAvailableEmailTemplate(){
-      return EvalConstants.EMAIL_TEMPLATE_AVAILABLE;
+	public String saveAvailableEmailTemplate() throws SecurityException {
+		
+		/* 
+		 * Avoiding XSS attacks here.
+		 * TODO: Need to make nicer by sending a red message to the screen.
+		 * 
+		 * Note: The code here is similar to the one in saveReminderEmailTemplate
+		 * method, but the two cannot be merged efficiently as in one available 
+		 * email is changed and in other the reminder email (nevertheless
+		 * they can still be merged).
+		 */
+		StringBuffer errorMessages = new StringBuffer();
+		emailAvailableTxt = FormattedText.processFormattedText(emailAvailableTxt, errorMessages);
+		
+		if (errorMessages.length() != 0) {
+			
+			Long tempEvalId = eval.getId();
+
+			// New evaluation
+			if (tempEvalId == null) { 
+				emailAvailableTxt = emailsLogic.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE).getMessage();
+			}
+			// Existing evaluation
+			else { 
+				eval = evalsLogic.getEvaluationById(eval.getId());
+				emailAvailableTxt = eval.getAvailableEmailTemplate().getMessage();
+			}
+
+			// Finally throw exception so that same page with same user text, is displayed
+			throw new SecurityException("XSS attack possible! " + errorMessages);
+		}
+		
+		return EvalConstants.EMAIL_TEMPLATE_AVAILABLE;
 	}
 
 	/**
@@ -361,9 +394,34 @@ public class EvaluationBean {
 	 *
 	 * @return String that is used to determine the place where control is to be sent
 	 * 			in ModifyEmailProducer (reportNavigationCases method)
+	 * @throws SecurityException 
 	 */
-	public String saveReminderEmailTemplate(){
-      return EvalConstants.EMAIL_TEMPLATE_REMINDER;
+	public String saveReminderEmailTemplate() throws SecurityException {
+
+		// Avoiding XSS attacks
+		// TODO: Need to make nicer by sending a red message to the screen.
+		StringBuffer errorMessages = new StringBuffer();
+		emailReminderTxt = FormattedText.processFormattedText(emailReminderTxt, errorMessages);
+
+		if (errorMessages.length() != 0) {
+
+			Long tempEvalId = eval.getId();
+
+			// New evaluation
+			if (tempEvalId == null) { 
+				emailReminderTxt =  emailsLogic.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_REMINDER).getMessage();//reminder email
+			}
+			// Existing evaluation
+			else { 
+				eval = evalsLogic.getEvaluationById(eval.getId());
+				emailReminderTxt = eval.getReminderEmailTemplate().getMessage();
+			}
+			
+			// Finally throw exception so that same page with same user text, is displayed
+			throw new SecurityException("XSS attack possible! " + errorMessages);
+		}
+
+		return EvalConstants.EMAIL_TEMPLATE_REMINDER;
 	}
 	
 	/**
