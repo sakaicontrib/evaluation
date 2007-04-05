@@ -569,6 +569,12 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 	}
 
 
+	public List getTemplateItemsForEvaluation(Long evalId, String userId, String hierarchyLevel) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalItemsLogic#getBlockChildTemplateItemsForBlockParent(java.lang.Long, boolean)
 	 */
