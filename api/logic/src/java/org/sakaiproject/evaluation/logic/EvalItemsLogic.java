@@ -16,7 +16,9 @@ package org.sakaiproject.evaluation.logic;
 
 import java.util.List;
 
+import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
+import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 
 
@@ -148,15 +150,24 @@ public interface EvalItemsLogic {
 	 * template itself but this is more risky since you so not know what the
 	 * user should see
 	 * 
-	 * @param templateId the unique id of an EvalTemplate object
+	 * @param templateId the unique id of an {@link EvalTemplate} object
 	 * @param userId the internal user id (not username), if this is null then
 	 * it will return all items in the template
 	 * @param hierarchyLevel may be null, if this is set then only return the items
-	 * at the given hierarchy level
+	 * at the given hierarchy level else return items all all hierarchy levels
 	 * @return a list of {@link EvalTemplateItem} objects, ordered by displayOrder
 	 */
 	public List getTemplateItemsForTemplate(Long templateId, String userId, String hierarchyLevel);
 
+	/**
+	 * @param evalId the unique id of an {@link EvalEvaluation} object
+	 * @param userId the internal user id (not username), if this is null then
+	 * it will return all items in the template
+	 * @param hierarchyLevel may be null, if this is set then only return the items
+	 * at the given hierarchy level else return items all all hierarchy levels
+	 * @return a list of {@link EvalTemplateItem} objects, ordered by displayOrder
+	 */
+	public List getTemplateItemsForEvaluation(Long evalId, String userId, String hierarchyLevel);
 
 	// BLOCKS
 

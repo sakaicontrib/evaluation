@@ -130,6 +130,9 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		// setup providers
 		if (evalGroupsProvider == null) {
 			evalGroupsProvider = (EvalGroupsProvider) ComponentManager.get(EvalGroupsProvider.class.getName());
+			if (evalGroupsProvider != null) {
+				log.info("EvalGroupsProvider found...");
+			}
 		}
 	}
 
@@ -321,7 +324,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 			}
 		}
 
-		if (l.isEmpty()) log.warn("Empty list of sites for user:" + userId + ", permission: " + permission);
+		if (l.isEmpty()) log.warn("Empty list of groups for user:" + userId + ", permission: " + permission);
 		return l;
 	}
 
