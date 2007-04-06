@@ -140,10 +140,14 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
 		// check and get type
 		String templateType;
-		if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailTemplateTypeConstant)) {
+		if (EvalConstants.EMAIL_TEMPLATE_CREATED.equals(emailTemplateTypeConstant)) {
+			templateType = EvalConstants.EMAIL_TEMPLATE_DEFAULT_CREATED;	
+		} else if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailTemplateTypeConstant)) {
 			templateType = EvalConstants.EMAIL_TEMPLATE_DEFAULT_AVAILABLE;			
 		} else if (EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailTemplateTypeConstant)) {
-			templateType = EvalConstants.EMAIL_TEMPLATE_DEFAULT_REMINDER;			
+			templateType = EvalConstants.EMAIL_TEMPLATE_DEFAULT_REMINDER;
+		} else if (EvalConstants.EMAIL_TEMPLATE_RESULTS.equals(emailTemplateTypeConstant)) {
+				templateType = EvalConstants.EMAIL_TEMPLATE_DEFAULT_RESULTS;	
 		} else {
 			throw new IllegalArgumentException("Invalid emailTemplateTypeConstant: " + emailTemplateTypeConstant);			
 		}
@@ -420,7 +424,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 	public String[] sendEvalReminderNotifications(Long evaluationId, String includeConstant) {
 		log.debug("evaluationId: " + evaluationId + ", includeConstant: " + includeConstant);
 		if(includeConstant == null || 
-				(includeConstant != EvalConstants.EMAIL_INCLUDE_NONTAKERS || includeConstant !=  EvalConstants.EMAIL_INCLUDE_ALL)) {
+				!(includeConstant == EvalConstants.EMAIL_INCLUDE_NONTAKERS || includeConstant ==  EvalConstants.EMAIL_INCLUDE_ALL)) {
 			log.error("includeConstant null or unknown");
 			return null;
 		}
