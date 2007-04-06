@@ -170,6 +170,12 @@
             <artifactId>commons-logging</artifactId>
             <version>1.0.4</version>
         </dependency>
+        
+        <dependency>
+			<groupId>velocity</groupId>
+			<artifactId>velocity</artifactId>
+			<version>1.4</version>
+		</dependency>
 
 
 		<!-- testing dependencies -->
