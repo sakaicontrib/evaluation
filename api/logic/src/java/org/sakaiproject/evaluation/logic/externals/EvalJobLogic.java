@@ -24,8 +24,8 @@ package org.sakaiproject.evaluation.logic.externals;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 
 /**
- * Handle the scheduling of jobs taking action at transitions points in EvalEvaulation
- * state.
+ * Handle the scheduling of jobs and taking action
+ * when an EvalEvaluation changes state.
  * 
  * @author rwellis
  *
@@ -33,22 +33,31 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 public interface EvalJobLogic {
 	
 	/**
-	 * Handle job scheduling when an EvalEvaluation is changed. EvalEvaluation
-	 * change might arise from the editing and saving an Evaluation or a
-	 * job that fixes state.
+	 * Handle job scheduling changes when a date changed 
+	 * by editing and saving an Evaluation necessitates
+	 * rescheduling a job.
 	 * 
-	 * @param eval the Evaluation.
+	 * @param eval the EvalEvaluation
 	 * @throws Exception
 	 */
 	public void processEvaluationChange(EvalEvaluation eval) throws Exception;
 	
 	/**
-	 * Handle job schedluing when an EvalEvaulation is created. Send email
-	 * notification of EvalEvaulation creation and schedule a job to
-	 * fix state when start date is reached.
+	 * Handle job scheduling when an EvalEvaluation is created.
+	 * Send email notification of EvalEvaluation creation and 
+	 * schedule a job to make the EvalEvaluation active when the 
+	 * start date is reached.
 	 *  
-	 * @param eval the Evaluation.
+	 * @param eval the EvalEvaluation
 	 * @throws Exception
 	 */
 	public void processNewEvaluation(EvalEvaluation eval) throws Exception;
+	
+	/**
+	 * Handle sending email and starting jobs when a scheduled job 
+	 * calls this method.
+	 * 
+	 * @param evaluationId the id of the EvalEvaluation
+	 */
+	public void jobAction(Long evaluationId);
 }
