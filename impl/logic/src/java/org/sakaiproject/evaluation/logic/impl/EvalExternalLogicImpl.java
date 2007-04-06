@@ -446,8 +446,6 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		return getServerUrl() + "/tool/" + toolId;
 	}
 
-
-
 	/**
 	 * Register the various permissions
 	 */
