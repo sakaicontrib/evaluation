@@ -20,7 +20,14 @@
 	</properties>
 
 	<dependencies>
-
+	
+		<!-- velocity for processing text templates -->
+        <dependency>
+            <groupId>velocity</groupId>
+            <artifactId>velocity</artifactId>
+            <version>1.4</version>
+        </dependency> 
+        
 		<!-- our plugin so we can run maven from this directory for testing -->
 		<dependency>
 				<groupId>sakaiproject</groupId>
@@ -42,6 +49,12 @@
 			<artifactId>sakai-entity-api</artifactId>
 			<version>${sakai.version}</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>sakaiproject</groupId>
+			<artifactId>sakai-scheduler-api</artifactId>
+			<version>${sakai.version}</version>
+		</dependency>
 
         <!-- generic DAO -->
         <dependency>
@@ -49,7 +62,7 @@
                 <artifactId>generic-dao</artifactId>
                 <version>0.9</version>
         </dependency>
-        
+
        <!-- Quartz scheduling -->
 		<dependency>
 			<groupId>quartz</groupId>
