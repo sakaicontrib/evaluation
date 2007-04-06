@@ -17,12 +17,16 @@
 			init-method="init">
 		<property name="authzGroupService" 
 			ref="org.sakaiproject.authz.api.AuthzGroupService" />
+		<property name="emailService"
+			ref="org.sakaiproject.email.api.EmailService" />
 		<property name="entityManager" 
 			ref="org.sakaiproject.entity.api.EntityManager" />
 		<property name="functionManager" 
 			ref="org.sakaiproject.authz.api.FunctionManager" />
 		<property name="securityService" 
 			ref="org.sakaiproject.authz.api.SecurityService" />
+		<property name="serverConfigurationService" 
+			ref="org.sakaiproject.component.api.ServerConfigurationService" />
 		<property name="sessionManager" 
 			ref="org.sakaiproject.tool.api.SessionManager" />
 		<property name="siteService"
@@ -31,6 +35,7 @@
 			ref="org.sakaiproject.tool.api.ToolManager" />
 		<property name="userDirectoryService"
 			ref="org.sakaiproject.user.api.UserDirectoryService" />
+
 	</bean>
 
 
@@ -68,10 +73,13 @@
 			init-method="init">
 		<property name="dao" 
 			ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+		<property name="evalJobLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalJobLogic" />
 		<property name="externalLogic" 
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="settings" 
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+
 	</bean>
 
 	<bean id="org.sakaiproject.evaluation.logic.EvalItemsLogic"
@@ -124,22 +132,25 @@
 		<property name="externalLogic" 
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 	</bean>
-		<bean id="org.sakaiproject.evaluation.logic.EvalJobLogic"
+	
+	<bean id="org.sakaiproject.evaluation.logic.EvalJobLogic"
 		class="org.sakaiproject.evaluation.logic.impl.scheduling.EvalJobLogicImpl"
 		init-method="init">
+		<property name="emails"
+			ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
+		<property name="evalEvaluationsLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
 		<property name="scheduledInvocationManager"
 			ref="org.sakaiproject.api.app.scheduler.ScheduledInvocationManager" />
 		<property name="timeService"
 			ref="org.sakaiproject.time.api.TimeService" />
 	</bean>
 	
-	<bean id="org.sakaiproject.evaluation.logic.externals.EvalTransition"
-			class="org.sakaiproject.evaluation.logic.impl.scheduling.EvalTransitionImpl"
+	<bean id="org.sakaiproject.evaluation.logic.externals.EvalScheduledInvocation" 
+			class="org.sakaiproject.evaluation.logic.impl.scheduling.EvalScheduledInvocationImpl" 
 			init-method="init">
-			<property name="emails" 
-				ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
-			<property name="evalEvaluationsLogic"
-				ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+			<property name="evalJobLogic"
+				ref="org.sakaiproject.evaluation.logic.EvalJobLogic" />
 	</bean>
 
 </beans>
