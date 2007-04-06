@@ -484,37 +484,31 @@ public class EvalConstants {
 	
 	/**
 	 * ScheduledInvocationManager: ScheduledInvocationCommand jobType
-	 * Fix EvalEvaulation state based on current date and dates from EvalEvaulation.
 	 * 
 	 */
-	public static final String SCHEDULED_CMD_FIX_STATE = "fixState";
+	public static final String JOB_TYPE_ACTIVE = "scheduledActive";
 
 	/**
 	 * ScheduledInvocationManager: ScheduledInvocationCommand jobType
-	 * Send email saying EvalEvaulation is available, linked.
 	 * 
 	 */
-	public static final String SCHEDULED_CMD_SEND_ACTIVE = "sendActive";
+	public static final String JOB_TYPE_DUE = "scheduledDue";
 
 	/**
 	 * ScheduledInvocationManager: ScheduledInvocationCommand jobType
-	 * Send email saying EvalEvaluation has been created.
 	 * 
 	 */
-	public static final String SCHEDULED_CMD_SEND_CREATED = "sendCreated";
+	public static final String JOB_TYPE_CLOSED = "scheduledClosed";
 
 	/**
 	 * ScheduledInvocationManager: ScheduledInvocationCommand jobType
-	 * Send email reminder to non-responders.
 	 * 
 	 */
-	public static final String SCHEDULED_CMD_SEND_REMINDER = "sendReminder";
+	public static final String JOB_TYPE_VIEWABLE = "scheduledViewable";
 
 	/**
 	 * ScheduledInvocationManager: ScheduledInvocationCommand jobType
-	 * Send email saying EvalEvaulation results are viewable.
 	 * 
 	 */
-	public static final String SCHEDULED_CMD_SEND_VIEWABLE = "sendViewable";
-
+	public static final String JOB_TYPE_REMINDER = "scheduledReminder";
 }
