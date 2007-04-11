@@ -131,7 +131,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 		List activeEvals = new ArrayList();
 		List closedEvals = new ArrayList();
 
-		List evals = evaluationsLogic.getVisibleEvaluationsForUser(external.getCurrentUserId(), true);
+		List evals = evaluationsLogic.getVisibleEvaluationsForUser(external.getCurrentUserId(), true, false);
 		for (int j = 0; j < evals.size(); j++) {
 			// get queued, active, closed evaluations by date
 			// check the state of the eval to determine display data

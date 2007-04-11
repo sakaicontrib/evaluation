@@ -100,9 +100,11 @@ public interface EvalEvaluationsLogic {
 	 * @param userId the internal user id (not username)
 	 * @param recentOnly if true return recently closed evaluations only 
 	 * (still returns all active and in queue evaluations), if false return all closed evaluations
+	 * @param showNotOwned if true for a non-admin user, then return all 
+	 * evaluations which are both owned and not-owned, else only return the owned evaluations.
 	 * @return a List of {@link EvalEvaluation} objects
 	 */
-	public List getVisibleEvaluationsForUser(String userId, boolean recentOnly);
+	public List getVisibleEvaluationsForUser(String userId, boolean recentOnly, boolean showNotOwned);
 
 	/**
 	 * Get all evaluations that can be taken by this user,

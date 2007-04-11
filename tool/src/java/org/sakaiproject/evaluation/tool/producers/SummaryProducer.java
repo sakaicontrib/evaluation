@@ -243,7 +243,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		/**
 		 * for the evaluations admin box
 		 */
-		List evals = evaluationsLogic.getVisibleEvaluationsForUser(currentUserId, true);
+		List evals = evaluationsLogic.getVisibleEvaluationsForUser(currentUserId, true, true);
 		if (! evals.isEmpty()) {
 			UIBranchContainer evalAdminBC = UIBranchContainer.make(tofill, "evalAdminBox:"); //$NON-NLS-1$
 			UIInternalLink.make(evalAdminBC, "evaladmin-title",  //$NON-NLS-1$
