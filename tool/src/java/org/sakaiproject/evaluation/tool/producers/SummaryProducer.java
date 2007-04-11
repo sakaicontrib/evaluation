@@ -243,8 +243,47 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		/**
 		 * for the evaluations admin box
 		 */
+
+		/*
+		 * In the list of parameters:
+		 * first true => get recent only, and 
+		 * second true => get not-owned evals.
+		 */
 		List evals = evaluationsLogic.getVisibleEvaluationsForUser(currentUserId, true, true);
-		if (! evals.isEmpty()) {
+		
+		/*
+		 * If the person is an admin, then just point new evals to
+		 * existing object.  
+		 * If the person is not an admin then only show owned evals + 
+		 * not-owned evals that are available for viewing results.  
+		 */
+		List newEvals;
+		if (userAdmin) {
+			newEvals =  evals;
+		} else {
+			newEvals = new ArrayList();
+			int numEvals = evals.size();
+			Date currentDate = new Date();
+			
+			for (int count = 0; count < numEvals; count++) {
+				EvalEvaluation evaluation = (EvalEvaluation) evals.get(count);
+
+				// Add the owned evals
+				if (currentUserId.equals(evaluation.getOwner())) {
+					newEvals.add(evaluation); 
+				} else {
+					// From the not-owned evals show those 
+					// that are available for viewing results.
+					if (currentDate.before(evaluation.getViewDate())) {
+						// Do nothing
+					} else {
+						newEvals.add(evaluation); 
+					}
+				}
+			}
+		}
+		
+		if (! newEvals.isEmpty()) {
 			UIBranchContainer evalAdminBC = UIBranchContainer.make(tofill, "evalAdminBox:"); //$NON-NLS-1$
 			UIInternalLink.make(evalAdminBC, "evaladmin-title",  //$NON-NLS-1$
 					UIMessage.make("summary.evaluations.admin"),  //$NON-NLS-1$
@@ -255,7 +294,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			UIMessage.make(evalAdminForm, "evaladmin-header-status", "summary.header.status"); //$NON-NLS-1$ //$NON-NLS-2$
 			UIMessage.make(evalAdminForm, "evaladmin-header-date", "summary.header.date"); //$NON-NLS-1$ //$NON-NLS-2$
 
-			for (Iterator iter = evals.iterator(); iter.hasNext();) {
+			for (Iterator iter = newEvals.iterator(); iter.hasNext();) {
 				EvalEvaluation eval = (EvalEvaluation) iter.next();
 
 				UIBranchContainer evalrow = UIBranchContainer.make(evalAdminForm, 
