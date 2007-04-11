@@ -65,6 +65,10 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 		assignContext.setLastModified( new Date() );
 
 		EvalEvaluation eval = assignContext.getEvaluation();
+		if (eval == null || eval.getId() == null) {
+			throw new IllegalStateException("Evaluation (" + eval.getId() + ") is not set or not saved for assignContext (" + 
+					assignContext.getId() + "), evalgroupId: " + assignContext.getEvalGroupId() );
+		}
 
 		if (assignContext.getId() == null) {
 			// creating new AC
