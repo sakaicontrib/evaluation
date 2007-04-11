@@ -529,14 +529,14 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 }
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl#getVisibleEvaluationsForUser(java.lang.String, boolean)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl#getVisibleEvaluationsForUser(java.lang.String, boolean, boolean)}.
 	 */
 	public void testGetVisibleEvaluationsForUser() {
 		// test getting visible evals for the maint user
 		List evals = null;
 		List ids = null;
 
-		evals = evaluations.getVisibleEvaluationsForUser(EvalTestDataLoad.MAINT_USER_ID, false);
+		evals = evaluations.getVisibleEvaluationsForUser(EvalTestDataLoad.MAINT_USER_ID, false, false);
 		Assert.assertNotNull(evals);
 		Assert.assertEquals(3, evals.size());
 		ids = EvalTestDataLoad.makeIdList(evals);
@@ -545,19 +545,19 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 		Assert.assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
 
 		// test getting visible evals for the admin user (should be all)
-		evals = evaluations.getVisibleEvaluationsForUser(EvalTestDataLoad.ADMIN_USER_ID, false);
+		evals = evaluations.getVisibleEvaluationsForUser(EvalTestDataLoad.ADMIN_USER_ID, false, false);
 		Assert.assertNotNull(evals);
 		Assert.assertEquals(6, evals.size());
 
 		// test getting recent closed evals for the admin user
-		evals = evaluations.getVisibleEvaluationsForUser(EvalTestDataLoad.ADMIN_USER_ID, true);
+		evals = evaluations.getVisibleEvaluationsForUser(EvalTestDataLoad.ADMIN_USER_ID, true, false);
 		Assert.assertNotNull(evals);
 		Assert.assertEquals(5, evals.size());
 		ids = EvalTestDataLoad.makeIdList(evals);
 		Assert.assertTrue(! ids.contains( etdl.evaluationViewable.getId() ));
 
 		// test getting visible evals for the normal user (should be none)
-		evals = evaluations.getVisibleEvaluationsForUser(EvalTestDataLoad.USER_ID, false);
+		evals = evaluations.getVisibleEvaluationsForUser(EvalTestDataLoad.USER_ID, false, false);
 		Assert.assertNotNull(evals);
 		Assert.assertEquals(0, evals.size());
 
