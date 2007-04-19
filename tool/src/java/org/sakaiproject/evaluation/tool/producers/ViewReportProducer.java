@@ -100,11 +100,9 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 
 		TemplateViewParameters evalViewParams = (TemplateViewParameters) viewparams;
 		if (evalViewParams.templateId != null) {
-			UIInternalLink.make(tofill, "fullEssayResponse", UIMessage.make("viewreport.view.essays"), new EssayResponseParams(ViewEssayResponseProducer.VIEW_ID, evalViewParams.templateId)); //$NON-NLS-1$ //$NON-NLS-2$
 			EvalEvaluation evaluation = evalsLogic.getEvaluationById(evalViewParams.templateId);//logic.getEvaluationById(previewEvalViewParams.templateId);
 			// get template from DAO 
 			EvalTemplate template = evaluation.getTemplate();
-			UIInternalLink.make(tofill, "csvResultsReport", UIMessage.make("viewreport.view.csv"), new CSVReportViewParams("csvResultsReport", template.getId(), evalViewParams.templateId)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			// get items(parent items, child items --need to set order
 
 			List allItems = new ArrayList(template.getTemplateItems());
@@ -116,7 +114,10 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 			    	groupIds[c]=currGroupId;
 			    	c++;
 			    }
-				//filter out the block child items, to get a list non-child items
+				UIInternalLink.make(tofill, "fullEssayResponse", UIMessage.make("viewreport.view.essays"), new EssayResponseParams(ViewEssayResponseProducer.VIEW_ID, evalViewParams.templateId, groupIds)); //$NON-NLS-1$ //$NON-NLS-2$
+				UIInternalLink.make(tofill, "csvResultsReport", UIMessage.make("viewreport.view.csv"), new CSVReportViewParams("csvResultsReport", template.getId(), evalViewParams.templateId)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+			    //filter out the block child items, to get a list non-child items
 				List ncItemsList = TemplateItemUtils.getNonChildItems(allItems);
 				
 				// check if there is any "Course" items or "Instructor" items;
@@ -306,7 +307,7 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 			UIOutput.make(essay, "itemNum", (new Integer(i)).toString()); //$NON-NLS-1$
 			UIOutput.make(essay, "itemText", myItem.getItemText()); //$NON-NLS-1$
 			
-			UIInternalLink.make(essay, "essayResponse", new EssayResponseParams(ViewEssayResponseProducer.VIEW_ID,evalId,myTempItem.getId()));
+			UIInternalLink.make(essay, "essayResponse", new EssayResponseParams(ViewEssayResponseProducer.VIEW_ID, evalId, myTempItem.getId(), groupIds));
 						 //$NON-NLS-1$
 		} else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_HEADER)) { //"Text Header"
 			UIBranchContainer header = UIBranchContainer.make(radiobranch,

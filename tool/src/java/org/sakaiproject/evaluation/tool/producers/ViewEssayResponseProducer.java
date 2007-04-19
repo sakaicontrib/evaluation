@@ -1,5 +1,5 @@
 /******************************************************************************
- * ViewReportProducer.java - created on Oct 05, 2006
+ * ViewEssayResponseProducer.java - created on Oct 05, 2006
  * 
  * Copyright (c) 2007 Virginia Polytechnic Institute and State University
  * Licensed under the Educational Community License version 1.0
@@ -75,7 +75,7 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 	}
 
 	public ViewParameters getViewParameters() {
-		return new EssayResponseParams(VIEW_ID, null, null);
+		return new EssayResponseParams(VIEW_ID, null, null, null);
 	}	
 
 
@@ -89,7 +89,13 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 		EssayResponseParams essayResponseParams = (EssayResponseParams) viewparams;
 		UIInternalLink.make(tofill, "viewReportLink", UIMessage.make("viewreport.page.title"), 
 				new TemplateViewParameters(ViewReportProducer.VIEW_ID, 
-						essayResponseParams.evalId));		
+						essayResponseParams.evalId));	
+		
+		/*
+		 * Note: The groups id's would always be passed
+		 * whether it is for single item or all the items.
+		 */ 
+		
 		//output single set of essay responses
 		if(essayResponseParams.itemId != null){
 			//we are actually passing EvalTemplateItem ID
@@ -107,14 +113,14 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 				UIMessage.make(courseSection, "course-questions-header", "takeeval.course.questions.header"); //$NON-NLS-1$ //$NON-NLS-2$			
 				radiobranch = UIBranchContainer.make(courseSection,
 						"itemrow:first", Integer.toString(0));
-				this.doFillComponent(myItem, essayResponseParams.evalId, 0, radiobranch,
+				this.doFillComponent(myItem, essayResponseParams.evalId, 0, essayResponseParams.groupIds, radiobranch,
 						courseSection);
 			} else if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR)) {//"Instructor"
 				instructorSection = UIBranchContainer.make(tofill,"instructorSection:");		
 				UIMessage.make(instructorSection, "instructor-questions-header","takeeval.instructor.questions.header");			 //$NON-NLS-1$ //$NON-NLS-2$		
 				radiobranch = UIBranchContainer.make(instructorSection,
 						"itemrow:first", Integer.toString(0));
-				this.doFillComponent(myItem, essayResponseParams.evalId, 0, radiobranch,
+				this.doFillComponent(myItem, essayResponseParams.evalId, 0, essayResponseParams.groupIds, radiobranch,
 						instructorSection);
 			}
 
@@ -163,7 +169,7 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 											Color
 											.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
 
-						this.doFillComponent(item1, evaluation.getId(), i, radiobranch,
+						this.doFillComponent(item1, evaluation.getId(), i, essayResponseParams.groupIds, radiobranch,
 								courseSection);
 					} else if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR) &&
 							item1.getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)) {
@@ -176,7 +182,7 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 											null,
 											Color
 											.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
-						this.doFillComponent(item1, evaluation.getId(), i, radiobranch,
+						this.doFillComponent(item1, evaluation.getId(), i, essayResponseParams.groupIds, radiobranch,
 								instructorSection);
 					}
 				} // end of for loop
@@ -187,7 +193,7 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 
 	}
 
-	private void doFillComponent(EvalItem myItem, Long evalId, int i,
+	private void doFillComponent(EvalItem myItem, Long evalId, int i, String[] groupIds, 
 			UIBranchContainer radiobranch, UIContainer tofill) {
 
 		if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)) {
@@ -197,7 +203,7 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 			UIOutput.make(essay, "itemNum", (new Integer(i + 1)).toString());
 			UIOutput.make(essay, "itemText", myItem.getItemText());
 
-			List itemAnswers= responsesLogic.getEvalAnswers(myItem.getId(), evalId, null);
+			List itemAnswers= responsesLogic.getEvalAnswers(myItem.getId(), evalId, groupIds);
 
 			//count the number of answers that match this one
 			for(int y=0; y<itemAnswers.size();y++){
