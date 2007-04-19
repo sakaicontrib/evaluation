@@ -496,9 +496,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 			// only include those that are approved
 			l = dao.findByProperties(EvalAssignGroup.class,
 					new String[] {"evaluation.id", "instructorApproval"}, 
-					new Object[] {evaluationIds, Boolean.FALSE} );
-					// TODO revert to below - value in db table is 0 so no groups being returned
-					//new Object[] {evaluationIds, Boolean.TRUE} );
+					new Object[] {evaluationIds, Boolean.TRUE} );
 		}
 		for (int i=0; i<l.size(); i++) {
 			EvalAssignGroup eac = (EvalAssignGroup) l.get(i);
