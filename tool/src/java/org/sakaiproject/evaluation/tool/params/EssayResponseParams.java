@@ -25,24 +25,39 @@ public class EssayResponseParams extends SimpleViewParameters {
 
 	public Long evalId; 
 	public Long itemId;
+	
+	/* Note:
+	 * Made the groupsIds as a string array as currently view params
+	 * only supports bounded collections. From:
+	 * http://www2.caret.cam.ac.uk/rsfwiki/Wiki.jsp?page=ViewParameters
+	 * 
+	 * "ViewParameters are currently capable of dealing with serialisation 
+	 * of a bounded collection of leaf types within its object tree 
+	 * (Strings, Integers, Longs etc.). Before 1.0, the ViewParameters 
+	 * system will be upgraded to support unbounded collections (Lists, 
+	 * Maps, etc.) to allow use cases such as a dynamically sized set of 
+	 * sorting table controls within a view, etc. "
+	 * - kahuja (Apr 19th 2007)
+	 */
+	public String[] groupIds;
 
 	public EssayResponseParams() {}
 
-	public EssayResponseParams(String viewID, Long evalId) {
+	public EssayResponseParams(String viewID, Long evalId,  String[] groupIds) {
 		this.viewID = viewID;
 		this.evalId = evalId;
-		this.itemId = null;
+		this.groupIds = groupIds;
 	}
 
-	
-	public EssayResponseParams(String viewID, Long evalId, Long itemId) {
+	public EssayResponseParams(String viewID, Long evalId, Long itemId,  String[] groupIds) {
 		this.viewID = viewID;
 		this.evalId = evalId;
 		this.itemId = itemId;
+		this.groupIds = groupIds;
 	}
 	
 	public String getParseSpec() {
 		// include a comma delimited list of the public properties in this class
-		return super.getParseSpec() + ",evalId,itemId";
+		return super.getParseSpec() + ",evalId,itemId,groupIds";
 	}
 }
