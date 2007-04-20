@@ -94,12 +94,16 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 	String[] groupIds;
 
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+
 		UIMessage.make(tofill, "view-report-title","viewreport.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID)); //$NON-NLS-1$ //$NON-NLS-2$
 
 		TemplateViewParameters evalViewParams = (TemplateViewParameters) viewparams;
 		if (evalViewParams.templateId != null) {
+			
+			// bread crumbs
+			UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID)); //$NON-NLS-1$ //$NON-NLS-2$
+			UIInternalLink.make(tofill, "report-groups-title", UIMessage.make("reportgroups.page.title"), new TemplateViewParameters(ChooseReportGroupsProducer.VIEW_ID, evalViewParams.templateId)); //$NON-NLS-1$ //$NON-NLS-2$
+			
 			EvalEvaluation evaluation = evalsLogic.getEvaluationById(evalViewParams.templateId);//logic.getEvaluationById(previewEvalViewParams.templateId);
 			// get template from DAO 
 			EvalTemplate template = evaluation.getTemplate();

@@ -50,14 +50,14 @@ public class ChooseReportGroupsProducer implements ViewComponentProducer, Naviga
 	}
 	
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+
 		UIMessage.make(tofill, "report-groups-title","reportgroups.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
-		
 		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID)); //$NON-NLS-1$ //$NON-NLS-2$
-		
 
 		TemplateViewParameters evalViewParams = (TemplateViewParameters) viewparams;
 		if (evalViewParams.templateId != null) {
 			UIForm form = UIForm.make(tofill, "report-groups-form");
+			UIMessage.make(form , "report-group-main-message", "reportgroups.main.message"); //$NON-NLS-1$ //$NON-NLS-2$		
 			Long[] evalIds = {evalViewParams.templateId};
 			Map evalGroups = evalsLogic.getEvaluationGroups(evalIds, false);
 			List groups = (List) evalGroups.get(evalViewParams.templateId);

@@ -82,12 +82,16 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
-		UIMessage.make(tofill, "view-essay-title", "viewessay.page.title");
-		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"),
-				new SimpleViewParameters(SummaryProducer.VIEW_ID)); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "view-essay-title", "viewessay.page.title");								//$NON-NLS-1$ //$NON-NLS-2$
+		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"),			//$NON-NLS-1$ //$NON-NLS-2$
+				new SimpleViewParameters(SummaryProducer.VIEW_ID)); 
 
 		EssayResponseParams essayResponseParams = (EssayResponseParams) viewparams;
-		UIInternalLink.make(tofill, "viewReportLink", UIMessage.make("viewreport.page.title"), 
+		UIInternalLink.make(tofill, "report-groups-title", UIMessage.make("reportgroups.page.title"), 	//$NON-NLS-1$ //$NON-NLS-2$ 
+				new TemplateViewParameters(ChooseReportGroupsProducer.VIEW_ID, 
+						essayResponseParams.evalId)); 
+		
+		UIInternalLink.make(tofill, "viewReportLink", UIMessage.make("viewreport.page.title"), 			//$NON-NLS-1$ //$NON-NLS-2$
 				new TemplateViewParameters(ViewReportProducer.VIEW_ID, 
 						essayResponseParams.evalId));	
 		

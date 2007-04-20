@@ -2,7 +2,7 @@
      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title rsf:id="view-report-title">View Report</title>
+	<title rsf:id="report-groups-title">Choose Report Groups</title>
   <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
   <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
   <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
@@ -12,21 +12,29 @@
 <body>
 <div class="portletBody">
 	<div class="navIntraTool">
-		<a rsf:id="administrate-toplink" href="administrate.html">Administrate</a>
 		<a rsf:id="summary-toplink" href="summary.html">Summary</a>
 	</div>
 
 	<div>
 	<ul class="breadCrumb">
 		<li class="breadCrumb"><a rsf:id="summary-toplink" href="summary.html">Summary</a></li>
-		<li class="breadCrumb" rsf:id="view-report-title">View Report</li>
+		<li class="breadCrumb" rsf:id="report-groups-title">Choose Report Groups</li>
 	</ul>
 	</div>
 	<br/>
 	
 	<form name="report_groups_form" rsf:id="report-groups-form" method="post" > 
 		<table border="0" cellspacing="0" cellpadding="0" width="90%">
-			<tr><td>Choose the groups you would like to view results for. Results will be displayed in aggregate.</td></tr><tr><td>&nbsp;</td></tr>
+			<tr>
+				<td>
+					<span rsf:id="report-group-main-message">
+						Choose the groups you would like to view results for. Results will be displayed in aggregate.
+					</span>
+				</td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+			</tr>
 		</table>
 		<div rsf:id="groupRow:">
 			<table border="0" cellspacing="0" cellpadding="0" width="90%">
