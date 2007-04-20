@@ -337,7 +337,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 					if (respReqToViewResults <= ctResponses || ctResponses >= ctEnrollments) {
 						UIInternalLink.make(evaluationRow, "closed-eval-report-link", 
 								UIMessage.make("controlevaluations.eval.report.link"),
-								new TemplateViewParameters(ViewReportProducer.VIEW_ID, evaluation.getId()));
+								new TemplateViewParameters(ChooseReportGroupsProducer.VIEW_ID, evaluation.getId() ));	
 					} else {
 						UIMessage.make(evaluationRow, "closed-eval-message", 
 								"controlevaluations.eval.report.awaiting.responses");
