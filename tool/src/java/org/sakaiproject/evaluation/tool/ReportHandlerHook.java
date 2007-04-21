@@ -141,22 +141,37 @@ public class ReportHandlerHook implements HandlerHook {
 				EvalTemplateItem tempItem1 = (EvalTemplateItem) ncItemsList.get(i);
 				EvalItem item1 = tempItem1.getItem();
 				
-				//if the item is normal scaled
-				if(TemplateItemUtils.getTemplateItemType(tempItem1).equals(EvalConstants.ITEM_TYPE_SCALED)){
-					String labels[] = item1.getScale().getOptions();
+				//if the item is normal scaled or text (essay)
+				if(TemplateItemUtils.getTemplateItemType(tempItem1).equals(EvalConstants.ITEM_TYPE_SCALED) ||
+				   TemplateItemUtils.getTemplateItemType(tempItem1).equals(EvalConstants.ITEM_TYPE_TEXT)) {
+					
 					//add the item description to the top row
 					// TODO: This is now rich text, needs flattening/rendering
 					topRow.add(item1.getItemText());
+					
 					//get all answers to this item within this evaluation
 					List itemAnswers = responsesLogic.getEvalAnswers(item1.getId(), crvp.evalId, crvp.groupIds);
+					
 					//for each response row
 					for(int j=0; j<numOfResponses; j++){
 						List currRow = (List)responseRows.get(j);
 						EvalAnswer currAnswer=(EvalAnswer)itemAnswers.get(j);
-						//add the answer to item within the current response to the output row
-						currRow.add(labels[currAnswer.getNumeric().intValue()]);
+						
+						/*
+						 * Add the answer to item within the current response to the output row.
+						 * If scaled type item then look up the label 
+						 * else (i.e. text/essay type item) just add the text.
+						 */
+						if (TemplateItemUtils.getTemplateItemType(tempItem1).equals(EvalConstants.ITEM_TYPE_SCALED)) {
+							String labels[] = item1.getScale().getOptions();
+							currRow.add(labels[currAnswer.getNumeric().intValue()]);
+						}
+						else {
+							currRow.add(currAnswer.getText());
+						}
 					}
 				}
+				// block parent type (block child handled inside this)
 				else if(TemplateItemUtils.getTemplateItemType(tempItem1).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)){
 					String labels[] = item1.getScale().getOptions();
 					//add the block description to the top row
@@ -184,6 +199,14 @@ public class ReportHandlerHook implements HandlerHook {
 							currRow.add(labels[currAnswer.getNumeric().intValue()]);
 						}
 					}
+				}
+				// for block child 
+				else if(TemplateItemUtils.getTemplateItemType(tempItem1).equals(EvalConstants.ITEM_TYPE_BLOCK_CHILD)){
+					// do nothing as they are already handled inside block parent
+				}
+				// for header type items
+				else {
+					// TODO: check with Aaron what to do in this case (kahuja - 22nd Apr 2007).
 				}
 			}
 
