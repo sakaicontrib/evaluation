@@ -32,6 +32,7 @@ import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.ReportsBean;
 import org.sakaiproject.evaluation.tool.params.CSVReportViewParams;
 import org.sakaiproject.evaluation.tool.params.EssayResponseParams;
+import org.sakaiproject.evaluation.tool.params.ReportParameters;
 import org.sakaiproject.evaluation.tool.params.TemplateViewParameters;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
@@ -85,7 +86,7 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 	}
 	
 	public ViewParameters getViewParameters() {
-		return new TemplateViewParameters(VIEW_ID, null);
+		return new ReportParameters(VIEW_ID, null, null);
 	}	
 
 	//String evalGroupId;
@@ -97,29 +98,44 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 
 		UIMessage.make(tofill, "view-report-title","viewreport.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		TemplateViewParameters evalViewParams = (TemplateViewParameters) viewparams;
-		if (evalViewParams.templateId != null) {
+		ReportParameters reportParams = (ReportParameters) viewparams;
+		if (reportParams.templateId != null) {
 			
 			// bread crumbs
 			UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID)); //$NON-NLS-1$ //$NON-NLS-2$
-			UIInternalLink.make(tofill, "report-groups-title", UIMessage.make("reportgroups.page.title"), new TemplateViewParameters(ChooseReportGroupsProducer.VIEW_ID, evalViewParams.templateId)); //$NON-NLS-1$ //$NON-NLS-2$
+			UIInternalLink.make(tofill, "report-groups-title", UIMessage.make("reportgroups.page.title"), new TemplateViewParameters(ChooseReportGroupsProducer.VIEW_ID, reportParams.templateId)); //$NON-NLS-1$ //$NON-NLS-2$
 			
-			EvalEvaluation evaluation = evalsLogic.getEvaluationById(evalViewParams.templateId);//logic.getEvaluationById(previewEvalViewParams.templateId);
+			EvalEvaluation evaluation = evalsLogic.getEvaluationById(reportParams.templateId);
+
 			// get template from DAO 
 			EvalTemplate template = evaluation.getTemplate();
-			// get items(parent items, child items --need to set order
 
+			// get items(parent items, child items --need to set order
 			List allItems = new ArrayList(template.getTemplateItems());
-			groupIds = new String[reportsBean.groupIds.size()];
 			if (! allItems.isEmpty()) {
-				int c=0;
-			    for (Iterator it = reportsBean.groupIds.keySet().iterator(); it.hasNext();) {
-			    	String currGroupId = (String)it.next();
-			    	groupIds[c]=currGroupId;
-			    	c++;
-			    }
-				UIInternalLink.make(tofill, "fullEssayResponse", UIMessage.make("viewreport.view.essays"), new EssayResponseParams(ViewEssayResponseProducer.VIEW_ID, evalViewParams.templateId, groupIds)); //$NON-NLS-1$ //$NON-NLS-2$
-				UIInternalLink.make(tofill, "csvResultsReport", UIMessage.make("viewreport.view.csv"), new CSVReportViewParams("csvResultsReport", template.getId(), evalViewParams.templateId)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				
+				/* 
+				 * If the report params has groupId's as null
+				 * it means that coming for the first time from 
+				 * choose report groups page.
+				 * Else it means coming via bread crumbs from essay 
+				 * response page.
+				 */
+				if (reportParams.groupIds == null) {
+					groupIds = new String[reportsBean.groupIds.size()];
+					int c=0;
+				    for (Iterator it = reportsBean.groupIds.keySet().iterator(); it.hasNext();) {
+				    	String currGroupId = (String)it.next();
+				    	groupIds[c]=currGroupId;
+				    	c++;
+				    }
+				}
+				else {
+					groupIds = reportParams.groupIds;
+				}
+				
+				UIInternalLink.make(tofill, "fullEssayResponse", UIMessage.make("viewreport.view.essays"), new EssayResponseParams(ViewEssayResponseProducer.VIEW_ID, reportParams.templateId, groupIds)); //$NON-NLS-1$ //$NON-NLS-2$
+				UIInternalLink.make(tofill, "csvResultsReport", UIMessage.make("viewreport.view.csv"), new CSVReportViewParams("csvResultsReport", template.getId(), reportParams.templateId, groupIds)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 			    //filter out the block child items, to get a list non-child items
 				List ncItemsList = TemplateItemUtils.getNonChildItems(allItems);

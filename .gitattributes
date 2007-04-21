@@ -137,7 +137,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/params/EvalScaleParameters.java -
 tool/src/java/org/sakaiproject/evaluation/tool/params/EvalTakeViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/params/ExpertItemViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/params/PreviewEvalParameters.java -text
-tool/src/java/org/sakaiproject/evaluation/tool/params/ReportGroupsParameters.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/params/ReportParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/params/TemplateItemViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/params/TemplateViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateProducer.java -text

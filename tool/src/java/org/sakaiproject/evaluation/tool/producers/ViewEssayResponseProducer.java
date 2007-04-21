@@ -29,6 +29,7 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.params.EssayResponseParams;
+import org.sakaiproject.evaluation.tool.params.ReportParameters;
 import org.sakaiproject.evaluation.tool.params.TemplateViewParameters;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
@@ -92,8 +93,8 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 						essayResponseParams.evalId)); 
 		
 		UIInternalLink.make(tofill, "viewReportLink", UIMessage.make("viewreport.page.title"), 			//$NON-NLS-1$ //$NON-NLS-2$
-				new TemplateViewParameters(ViewReportProducer.VIEW_ID, 
-						essayResponseParams.evalId));	
+				new ReportParameters(ViewReportProducer.VIEW_ID, 
+						essayResponseParams.evalId, essayResponseParams.groupIds));	
 		
 		/*
 		 * Note: The groups id's would always be passed

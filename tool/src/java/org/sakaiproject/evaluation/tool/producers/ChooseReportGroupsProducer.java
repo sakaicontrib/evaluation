@@ -7,7 +7,6 @@ import java.util.Map;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.tool.ReportsBean;
-import org.sakaiproject.evaluation.tool.params.ReportGroupsParameters;
 import org.sakaiproject.evaluation.tool.params.TemplateViewParameters;
 
 import uk.org.ponder.rsf.components.UIBoundBoolean;

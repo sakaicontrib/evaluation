@@ -109,8 +109,18 @@ public class ReportHandlerHook implements HandlerHook {
 		List topRow = new ArrayList();		//holds top row (item text)
 		List responseRows = new ArrayList();//holds response rows
 
-		//determine number of responses
-		int numOfResponses = responsesLogic.countResponses(crvp.evalId, null); 
+		/* 
+		 * Get the total responses for all groups.
+		 * 
+		 * TODO: Aaron should modify the responsesLogic.countResponses 
+		 * method to take the string array of groups instead of just 
+		 * current string (i.e. one group). 
+		 */
+		int numOfResponses = 0;
+		for (int count = 0; count < crvp.groupIds.length; count++) {
+			numOfResponses = numOfResponses 
+				+ responsesLogic.countResponses(crvp.evalId, crvp.groupIds[count]);
+		}
 
 		//add a row for each response
 		for(int i=0; i<numOfResponses; i++){
@@ -138,7 +148,7 @@ public class ReportHandlerHook implements HandlerHook {
 					// TODO: This is now rich text, needs flattening/rendering
 					topRow.add(item1.getItemText());
 					//get all answers to this item within this evaluation
-					List itemAnswers = responsesLogic.getEvalAnswers(item1.getId(), crvp.evalId, null);
+					List itemAnswers = responsesLogic.getEvalAnswers(item1.getId(), crvp.evalId, crvp.groupIds);
 					//for each response row
 					for(int j=0; j<numOfResponses; j++){
 						List currRow = (List)responseRows.get(j);
@@ -165,7 +175,7 @@ public class ReportHandlerHook implements HandlerHook {
 						//add child's text to top row
 						topRow.add(child.getItemText());
 						//get all answers to the child item within this eval
-						List itemAnswers = responsesLogic.getEvalAnswers(child.getId(), crvp.evalId, null);
+						List itemAnswers = responsesLogic.getEvalAnswers(child.getId(), crvp.evalId, crvp.groupIds);
 						//for each response row
 						for(int y=0; y<numOfResponses;y++){
 							List currRow = (List)responseRows.get(y);
