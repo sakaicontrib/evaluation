@@ -1,5 +1,5 @@
 /******************************************************************************
- * CSVReportViewParams.java - created by aaronz@vt.edu
+ * EssayResponseParams.java - created by aaronz@vt.edu
  * 
  * Copyright (c) 2007 Virginia Polytechnic Institute and State University
  * Licensed under the Educational Community License version 1.0
@@ -17,9 +17,8 @@ package org.sakaiproject.evaluation.tool.params;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 
 /**
- * 
- * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
+ * @author Kapil Ahuja (kahuja@vt.edu)
  */
 public class EssayResponseParams extends SimpleViewParameters {
 
@@ -43,7 +42,7 @@ public class EssayResponseParams extends SimpleViewParameters {
 
 	public EssayResponseParams() {}
 
-	public EssayResponseParams(String viewID, Long evalId,  String[] groupIds) {
+	public EssayResponseParams(String viewID, Long evalId, String[] groupIds) {
 		this.viewID = viewID;
 		this.evalId = evalId;
 		this.groupIds = groupIds;
