@@ -498,13 +498,23 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 	public String[] sendEvalResultsNotifications(Long evaluationId, boolean includeEvaluatees, boolean includeAdmins) {
 		log.debug("evaluationId: " + evaluationId + ", includeEvaluatees: " + includeEvaluatees + ", includeAdmins: " + includeAdmins);
 		String from = (String) settings.get( EvalSettings.FROM_EMAIL_ADDRESS );
+		
+		/*TODO deprecated?
+		if(EvalConstants.EMAIL_INCLUDE_ALL.equals(includeConstant)) {
+		}
+		boolean includeEvaluatees = true;
+		if (includeEvaluatees) {
+			// TODO Not done yet
+			log.error("includeEvaluatees Not implemented");
+		}
+		*/
 
 		// get evaluation
 		EvalEvaluation eval = (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);
 		if (eval == null) {
 			throw new IllegalArgumentException("Cannot find evaluation with this id: " + evaluationId);
 		}
-
+		
 		// get the email template
 		EvalEmailTemplate emailTemplate = getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_RESULTS);
 
@@ -521,7 +531,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		List groups = (List) evalGroupIds.get(evaluationId);
 		log.debug("Found " + groups.size() + " groups for available evaluation: " + evaluationId);
 		Set userIdsSet = new HashSet();
-
+		
 		// loop through contexts and send emails to correct users in each context
 		for (int i=0; i<groups.size(); i++) {
 			EvalGroup group = (EvalGroup) groups.get(i);
@@ -532,7 +542,12 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			if(includeAdmins) {
 				userIdsSet.addAll(external.getUserIdsForEvalGroup(group.evalGroupId, EvalConstants.PERM_BE_EVALUATED));
 			}
-
+			
+			//if results are private just send to owner
+			if(eval.getResultsPrivate().booleanValue()) {
+				userIdsSet.add(eval.getOwner());
+			}
+			
 			// skip ahead if there is no one to send to
 			if (userIdsSet.size() == 0) continue;
 
@@ -559,19 +574,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 					message);
 			log.info("Sent evaluation available message to " + toUserIds.length + " users");
 
-			/*TODO 
-			if(EvalConstants.EMAIL_INCLUDE_ALL.equals(includeConstant)) {
-			}
-			boolean includeEvaluatees = true;
-			if (includeEvaluatees) {
-				// TODO Not done yet
-				log.error("includeEvaluatees Not implemented");
-			}
 		}
 		return (String[]) sentMessages.toArray( new String[] {} );
-		*/
-		}
-		return null;
 	}
 
 
