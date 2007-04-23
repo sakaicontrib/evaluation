@@ -26,6 +26,7 @@ import org.sakaiproject.api.app.scheduler.DelayedInvocation;
 import org.sakaiproject.api.app.scheduler.ScheduledInvocationManager;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
+import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
@@ -58,6 +59,10 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	private EvalEvaluationsLogic evalEvaluationsLogic;
 	public void setEvalEvaluationsLogic(EvalEvaluationsLogic evalEvaluationsLogic) {
 		this.evalEvaluationsLogic = evalEvaluationsLogic;
+	}
+	private EvalExternalLogic externalLogic;
+	public void setExternalLogic(EvalExternalLogic externalLogic) {
+		this.externalLogic = externalLogic;
 	}
 	private ScheduledInvocationManager scheduledInvocationManager;
 	public void setScheduledInvocationManager(ScheduledInvocationManager scheduledInvocationManager) {
@@ -190,48 +195,54 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	 * 
 	 * @param evalId the EvalEvaluation id
 	 */
-	private void removeAllScheduledInvocations(Long evalId) {
+	public void removeScheduledInvocations(Long evalId) {
 		
-		//TODO be selective based on the state of the EvalEvaluation when deleted
-		String opaqueContext = null;
-		DelayedInvocation[] invocations = null;
+		if(evalId == null) return;
+		String userId = externalLogic.getCurrentUserId();
+		if(evalEvaluationsLogic.canRemoveEvaluation(userId, evalId)) {
 		
-		opaqueContext = evalId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_ACTIVE;
-		invocations = scheduledInvocationManager.findDelayedInvocations(COMPONENT_ID, opaqueContext);
-		for(int i = 0; i < invocations.length; i++) {
-			scheduledInvocationManager.deleteDelayedInvocation(invocations[i].uuid);
-		}
-		opaqueContext = evalId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_DUE;
-		invocations = scheduledInvocationManager.findDelayedInvocations(COMPONENT_ID, opaqueContext);
-		for(int i = 0; i < invocations.length; i++) {
-			scheduledInvocationManager.deleteDelayedInvocation(invocations[i].uuid);
-		}
-		opaqueContext = evalId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_CLOSED;
-		invocations = scheduledInvocationManager.findDelayedInvocations(COMPONENT_ID, opaqueContext);
-		for(int i = 0; i < invocations.length; i++) {
-			scheduledInvocationManager.deleteDelayedInvocation(invocations[i].uuid);
-		}
-		opaqueContext = evalId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_REMINDER;
-		invocations = scheduledInvocationManager.findDelayedInvocations(COMPONENT_ID, opaqueContext);
-		for(int i = 0; i < invocations.length; i++) {
-			scheduledInvocationManager.deleteDelayedInvocation(invocations[i].uuid);
-		}
-		opaqueContext = evalId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_VIEWABLE;
-		invocations = scheduledInvocationManager.findDelayedInvocations(COMPONENT_ID, opaqueContext);
-		for(int i = 0; i < invocations.length; i++) {
-			scheduledInvocationManager.deleteDelayedInvocation(invocations[i].uuid);
-		}
-		opaqueContext = evalId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS;
-		invocations = scheduledInvocationManager.findDelayedInvocations(COMPONENT_ID, opaqueContext);
-		for(int i = 0; i < invocations.length; i++) {
-			scheduledInvocationManager.deleteDelayedInvocation(invocations[i].uuid);
-		}
-		opaqueContext = evalId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS;
-		invocations = scheduledInvocationManager.findDelayedInvocations(COMPONENT_ID, opaqueContext);
-		for(int i = 0; i < invocations.length; i++) {
-			scheduledInvocationManager.deleteDelayedInvocation(invocations[i].uuid);
+			//TODO be selective based on the state of the EvalEvaluation when deleted
+			String opaqueContext = null;
+			DelayedInvocation[] invocations = null;
+			
+			opaqueContext = evalId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_ACTIVE;
+			invocations = scheduledInvocationManager.findDelayedInvocations(COMPONENT_ID, opaqueContext);
+			for(int i = 0; i < invocations.length; i++) {
+				scheduledInvocationManager.deleteDelayedInvocation(invocations[i].uuid);
+			}
+			opaqueContext = evalId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_DUE;
+			invocations = scheduledInvocationManager.findDelayedInvocations(COMPONENT_ID, opaqueContext);
+			for(int i = 0; i < invocations.length; i++) {
+				scheduledInvocationManager.deleteDelayedInvocation(invocations[i].uuid);
+			}
+			opaqueContext = evalId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_CLOSED;
+			invocations = scheduledInvocationManager.findDelayedInvocations(COMPONENT_ID, opaqueContext);
+			for(int i = 0; i < invocations.length; i++) {
+				scheduledInvocationManager.deleteDelayedInvocation(invocations[i].uuid);
+			}
+			opaqueContext = evalId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_REMINDER;
+			invocations = scheduledInvocationManager.findDelayedInvocations(COMPONENT_ID, opaqueContext);
+			for(int i = 0; i < invocations.length; i++) {
+				scheduledInvocationManager.deleteDelayedInvocation(invocations[i].uuid);
+			}
+			opaqueContext = evalId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_VIEWABLE;
+			invocations = scheduledInvocationManager.findDelayedInvocations(COMPONENT_ID, opaqueContext);
+			for(int i = 0; i < invocations.length; i++) {
+				scheduledInvocationManager.deleteDelayedInvocation(invocations[i].uuid);
+			}
+			opaqueContext = evalId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS;
+			invocations = scheduledInvocationManager.findDelayedInvocations(COMPONENT_ID, opaqueContext);
+			for(int i = 0; i < invocations.length; i++) {
+				scheduledInvocationManager.deleteDelayedInvocation(invocations[i].uuid);
+			}
+			opaqueContext = evalId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS;
+			invocations = scheduledInvocationManager.findDelayedInvocations(COMPONENT_ID, opaqueContext);
+			for(int i = 0; i < invocations.length; i++) {
+				scheduledInvocationManager.deleteDelayedInvocation(invocations[i].uuid);
+			}
 		}
 	}
+
 
 	/*
 	 * (non-Javadoc)
