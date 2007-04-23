@@ -272,6 +272,10 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 		}
 
 		if ( canUserRemoveEval(userId, evaluation) ) {
+			
+			//remove all scheduled job invocations
+			evalJobLogic.removeScheduledInvocations(evaluationId);
+			
 			Set[] entitySets = new HashSet[3];
 			// remove associated AssignContexts
 			List acs = dao.findByProperties(EvalAssignGroup.class, 
@@ -322,9 +326,6 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 			dao.deleteMixedSet(entitySets);
 			//dao.delete(eval);
 			log.info("User ("+userId+") removed evaluation ("+evaluationId+"), title: " + evaluation.getTitle());
-			
-			//remove all scheduled job invocations
-			evalJobLogic.removeScheduledInvocations(evaluationId);
 			return;
 		}
 
