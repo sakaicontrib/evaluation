@@ -322,6 +322,9 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 			dao.deleteMixedSet(entitySets);
 			//dao.delete(eval);
 			log.info("User ("+userId+") removed evaluation ("+evaluationId+"), title: " + evaluation.getTitle());
+			
+			//remove all scheduled job invocations
+			evalJobLogic.removeScheduledInvocations(evaluationId);
 			return;
 		}
 

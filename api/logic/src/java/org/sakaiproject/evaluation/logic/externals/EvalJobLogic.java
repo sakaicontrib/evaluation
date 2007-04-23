@@ -61,4 +61,11 @@ public interface EvalJobLogic {
 	 * @param jobType the job type from EvalConstants
 	 */
 	public void jobAction(Long evaluationId, String jobType);
+	
+	/**
+	 * Remove all outstanding scheduled job invocations for this EvalEvaluation.
+	 * 
+	 * @param evalId the EvalEvaluation identifier
+	 */
+	public void removeScheduledInvocations(Long evalId);
 }
