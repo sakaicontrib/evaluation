@@ -61,8 +61,6 @@ public class EvalScheduledInvocationImpl implements EvalScheduledInvocation {
 		
 		/*
 		 *	opaqueContext provides evaluation id and job type.
-		 *  Both parts are used in EvalJobLogic but only id is
-		 *  used here.
 		 */
 		String[] parts = opaqueContext.split("/");
 		if(parts.length != 2) {
@@ -70,9 +68,10 @@ public class EvalScheduledInvocationImpl implements EvalScheduledInvocation {
 		}
 		String id = parts[0];
 		Long evalId = Long.valueOf(id);
+		String jobType = parts[1];
 		
 		//call method to fix state, send email and/or schedule a job
-		evalJobLogic.jobAction(evalId);
+		evalJobLogic.jobAction(evalId, jobType);
 	}
 }
 

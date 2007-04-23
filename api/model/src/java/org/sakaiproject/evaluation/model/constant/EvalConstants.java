@@ -502,9 +502,24 @@ public class EvalConstants {
 
 	/**
 	 * ScheduledInvocationManager: ScheduledInvocationCommand jobType
+	 * When separate student and instructor view date is not set
 	 * 
 	 */
 	public static final String JOB_TYPE_VIEWABLE = "scheduledViewable";
+	
+	/**
+	 * ScheduledInvocationManager: ScheduledInvocationCommand jobType
+	 * When separate instructor view date is set
+	 * 
+	 */
+	public static final String JOB_TYPE_VIEWABLE_INSTRUCTORS = "scheduledViewableInstructors";
+	
+	/**
+	 * ScheduledInvocationManager: ScheduledInvocationCommand jobType
+	 * When separate student view date is set
+	 * 
+	 */
+	public static final String JOB_TYPE_VIEWABLE_STUDENTS = "scheduledViewableStudents";
 
 	/**
 	 * ScheduledInvocationManager: ScheduledInvocationCommand jobType

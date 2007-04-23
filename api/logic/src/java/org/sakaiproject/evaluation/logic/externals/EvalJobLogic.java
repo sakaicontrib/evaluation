@@ -58,6 +58,7 @@ public interface EvalJobLogic {
 	 * calls this method.
 	 * 
 	 * @param evaluationId the id of the EvalEvaluation
+	 * @param jobType the job type from EvalConstants
 	 */
-	public void jobAction(Long evaluationId);
+	public void jobAction(Long evaluationId, String jobType);
 }

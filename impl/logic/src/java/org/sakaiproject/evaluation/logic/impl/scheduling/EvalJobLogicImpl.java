@@ -42,7 +42,7 @@ import org.sakaiproject.time.api.TimeService;
  */
 public class EvalJobLogicImpl implements EvalJobLogic {
 	
-//	TODO jleasia: track events
+	//TODO jleasia: track events
 
 	private static Log log = LogFactory.getLog(EvalJobLogicImpl.class);
 	
@@ -73,26 +73,6 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	}
 	
 	public EvalJobLogicImpl() {
-	}
-	
-	/**
-	 * See if there is a component invocation matching an EvalEvaluation
-	 * and job type scheduled through the ScheduledInvocationManager.</br>
-	 * Invocations are removed from the database after 
-	 * being run, so any that are found are for pending jobs.
-	 * 
-	 * @param evalId the EvalEvaluation id
-	 * @param jobType the type of job (from EvalConstants SCHEDULED_CMD constants)
-	 * @return true if there are delayed invocations, false otherwise
-	 */
-	private boolean isPending(Long evalId, String jobType){
-		boolean exists = false;
-		String id = evalId.toString();
-		String opaqueContext = id + SEPARATOR + jobType;
-		if(scheduledInvocationManager.findDelayedInvocations(COMPONENT_ID, opaqueContext).length > 0)
-			exists = true;
-		log.debug(this + ".isPending for evalId " + evalId +  " jobType " + jobType + " is " + exists);
-		return exists;
 	}
 	
 	/**
@@ -162,22 +142,20 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 		long start = 0;
 		
 		//if the due date is sooner, any reminders after the due date should be removed
-		if(isPending(evaluationId, EvalConstants.JOB_TYPE_REMINDER)) {
-			DelayedInvocation[] invocations = scheduledInvocationManager.findDelayedInvocations(COMPONENT_ID, opaqueContext);
-			lastReminder = invocations[0];
-			for(int i = 0; i < invocations.length; i++) {
-				
-				//remove reminders after the due date
-				DelayedInvocation invocation = invocations[i];
-				Date runAt = invocation.date;
-				if(runAt.after(eval.getDueDate())) {
-					scheduledInvocationManager.deleteDelayedInvocation(invocations[i].uuid);
-					log.debug(this + ".fixReminders for eval " + evaluationId + ": removed reminder scheduled at " + runAt.toString());
-				}
-				else {
-					if(invocation.date.after(lastReminder.date)) {
-						lastReminder = invocation;
-					}
+		DelayedInvocation[] invocations = scheduledInvocationManager.findDelayedInvocations(COMPONENT_ID, opaqueContext);
+		lastReminder = invocations[0];
+		for(int i = 0; i < invocations.length; i++) {
+			
+			//remove reminders after the due date
+			DelayedInvocation invocation = invocations[i];
+			Date runAt = invocation.date;
+			if(runAt.after(eval.getDueDate())) {
+				scheduledInvocationManager.deleteDelayedInvocation(invocations[i].uuid);
+				log.debug(this + ".fixReminders for eval " + evaluationId + ": removed reminder scheduled at " + runAt.toString());
+			}
+			else {
+				if(invocation.date.after(lastReminder.date)) {
+					lastReminder = invocation;
 				}
 			}
 		}
@@ -243,6 +221,16 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 		for(int i = 0; i < invocations.length; i++) {
 			scheduledInvocationManager.deleteDelayedInvocation(invocations[i].uuid);
 		}
+		opaqueContext = evalId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS;
+		invocations = scheduledInvocationManager.findDelayedInvocations(COMPONENT_ID, opaqueContext);
+		for(int i = 0; i < invocations.length; i++) {
+			scheduledInvocationManager.deleteDelayedInvocation(invocations[i].uuid);
+		}
+		opaqueContext = evalId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS;
+		invocations = scheduledInvocationManager.findDelayedInvocations(COMPONENT_ID, opaqueContext);
+		for(int i = 0; i < invocations.length; i++) {
+			scheduledInvocationManager.deleteDelayedInvocation(invocations[i].uuid);
+		}
 	}
 
 	/*
@@ -282,42 +270,32 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 		}
 		try {
 			if(EvalConstants.EVALUATION_STATE_INQUEUE.equals(eval.getState())) {
-				
-				//if there an active job invocation outstanding
-				if(isPending(eval.getId(), EvalConstants.JOB_TYPE_ACTIVE)) {
-					
-					//make sure active job invocation date matches EvalEvaluation start date
-					checkInvocationDate(eval, EvalConstants.JOB_TYPE_ACTIVE, eval.getStartDate());
-				}
+
+				//make sure active job invocation date matches EvalEvaluation start date
+				checkInvocationDate(eval, EvalConstants.JOB_TYPE_ACTIVE, eval.getStartDate());
 			}
 			else if(EvalConstants.EVALUATION_STATE_ACTIVE.equals(eval.getState())) {
-				
-				//if there a due job invocation outstanding
-				if(isPending(eval.getId(), EvalConstants.JOB_TYPE_DUE)) {
-					
-					/* make sure due job invocation start date matches EvalEaluation due date
-					 * and moving the due date is reflected in reminders
-					 */
-					checkInvocationDate(eval, EvalConstants.JOB_TYPE_DUE, eval.getDueDate());
-				}
+
+				/* make sure due job invocation start date matches EvalEaluation due date
+				 * and moving the due date is reflected in reminders
+				 */
+				checkInvocationDate(eval, EvalConstants.JOB_TYPE_DUE, eval.getDueDate());
 			}
 			else if (EvalConstants.EVALUATION_STATE_DUE.equals(eval.getState())) {
 
-				//if there a closed job invocation outstanding
-				if(isPending(eval.getId(), EvalConstants.JOB_TYPE_CLOSED)) {
-					
-					//make sure closed job invocation start date matches EvalEvaluation stop date
-					checkInvocationDate(eval, EvalConstants.JOB_TYPE_CLOSED, eval.getStopDate());
-				}
+				//make sure closed job invocation start date matches EvalEvaluation stop date
+				checkInvocationDate(eval, EvalConstants.JOB_TYPE_CLOSED, eval.getStopDate());
 			}
 			else if (EvalConstants.EVALUATION_STATE_CLOSED.equals(eval.getState())) {
 
-				//if there a viewable job invocation outstanding1
-				if(isPending(eval.getId(), EvalConstants.JOB_TYPE_VIEWABLE)) {
-					
-					//make sure invocation start date matches EvalEvaluation view date 
-					checkInvocationDate(eval, EvalConstants.JOB_TYPE_VIEWABLE, eval.getViewDate());
-				}
+				//make sure view job invocation start date matches EvalEvaluation view date 
+				checkInvocationDate(eval, EvalConstants.JOB_TYPE_VIEWABLE, eval.getViewDate());
+				
+				//make sure view by instructors job invocation start date matches EvalEvaluation instructor's date
+				checkInvocationDate(eval, EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS, eval.getInstructorsDate());
+				
+				//make sure view by students job invocation start date matches EvalEvaluation student's date
+				checkInvocationDate(eval, EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS, eval.getStudentsDate());
 			}
 		}
 		catch(Exception e)
@@ -376,7 +354,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	 * (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.externals.EvalJobLogic#jobAction(java.lang.Long)
 	 */
-	public void jobAction(Long evaluationId) {
+	public void jobAction(Long evaluationId, String jobType) {
 		
 		/* Note: If interactive response time is too slow waiting for
 		 * mail to be sent, sending mail could be done as another type
@@ -401,10 +379,21 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 			scheduleJob(eval.getId(), eval.getStopDate(), EvalConstants.JOB_TYPE_CLOSED);
 		}
 		else if(EvalConstants.EVALUATION_STATE_CLOSED.equals(state)) {
-			scheduleJob(eval.getId(), eval.getViewDate(), EvalConstants.JOB_TYPE_VIEWABLE);
+			Date instructorViewDate = eval.getInstructorsDate();
+			Date studentViewDate = eval.getStudentsDate();
+			if(instructorViewDate == null && studentViewDate == null)
+				//use same view date for all users
+				scheduleJob(eval.getId(), eval.getViewDate(), EvalConstants.JOB_TYPE_VIEWABLE);
+			else {
+				//use separate view dates
+				scheduleJob(eval.getId(), instructorViewDate, EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS);
+				scheduleJob(eval.getId(), studentViewDate, EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS);
+			}
 		}
 		else if(EvalConstants.EVALUATION_STATE_VIEWABLE.equals(state)) {
-			sendViewableEmail(evaluationId);
+			
+			//send results viewable notification to owner if private, or all if not
+			sendViewableEmail(evaluationId, jobType, eval.getResultsPrivate());
 		}
 	}
 	
@@ -445,14 +434,43 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	}
 
 	/**
-	 * Send email that the results of an evaluation may be viewed now.
+	 * Send email that the results of an evaluation may be viewed now.</br>
+	 * Notification may be sent to owner only, instructors and students together or
+	 * separately.
 	 * 
 	 * @param evalId the EvalEvaluation id
+	 * @param the job type fom EvalConstants
 	 */
-	public void sendViewableEmail(Long evalId) {
+	public void sendViewableEmail(Long evalId, String jobType, Boolean resultsPrivate) {
+		
 		boolean includeEvaluatees = true;
 		boolean includeAdmins = true;
-		String[] sentMessages = emails.sendEvalResultsNotifications(evalId, includeEvaluatees, includeAdmins);
-		log.debug(this + ".sendViewableEmail: for evalId " + evalId + " sentMessages " + sentMessages.toString());
+		
+		//if results are private, only send notification to owner
+		if(resultsPrivate.booleanValue()) {
+			includeEvaluatees = false;
+			includeAdmins = false;
+			String[] sentMessages = emails.sendEvalResultsNotifications(evalId, includeEvaluatees, includeAdmins);
+			log.debug(this + ".sendViewableEmail: for evalId " + evalId + " sentMessages " + sentMessages.toString());
+		}
+		else {
+			if(EvalConstants.JOB_TYPE_VIEWABLE.equals(jobType)) {
+				String[] sentMessages = emails.sendEvalResultsNotifications(evalId, includeEvaluatees, includeAdmins);
+				log.debug(this + ".sendViewableEmail: for evalId " + evalId + " sentMessages " + sentMessages.toString());
+			}
+			else if(EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS.equals(jobType)) {
+				includeEvaluatees = false;
+				String[] sentMessages = emails.sendEvalResultsNotifications(evalId, includeEvaluatees, includeAdmins);
+				log.debug(this + ".sendViewableEmail: for evalId " + evalId + " sentMessages " + sentMessages.toString());
+			}
+			else if(EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS.equals(jobType)) {
+				includeAdmins = false;
+				String[] sentMessages = emails.sendEvalResultsNotifications(evalId, includeEvaluatees, includeAdmins);
+				log.debug(this + ".sendViewableEmail: for evalId " + evalId + " sentMessages " + sentMessages.toString());
+			}
+			else {
+				log.warn(this + ".sendViewableEmail: for evalId " + evalId + " unrecognized job type " + jobType);
+			}
+		}
 	}
 }
