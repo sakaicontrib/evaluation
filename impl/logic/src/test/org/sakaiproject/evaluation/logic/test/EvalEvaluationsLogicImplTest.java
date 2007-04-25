@@ -20,8 +20,10 @@ import java.util.Map;
 
 import junit.framework.Assert;
 
+import org.easymock.MockControl;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
 import org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.test.stubs.EvalExternalLogicStub;
@@ -46,6 +48,9 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 
 	private EvaluationDao evaluationDao;
 	private EvalTestDataLoad etdl;
+
+	private EvalJobLogic evalJobLogic;
+	private MockControl evalJobLogicControl;
 
 	protected String[] getConfigLocations() {
 		// point to the needed spring config files, must be on the classpath
@@ -83,12 +88,20 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 		}
 
 		// setup the mock objects if needed
+		evalJobLogicControl = MockControl.createControl(EvalJobLogic.class);
+		evalJobLogic = (EvalJobLogic) evalJobLogicControl.getMock();
+
+		// this mock object is simply keeping us from getting a null when evalJobLogic is accessed 
+		evalJobLogic.removeScheduledInvocations(EvalTestDataLoad.INVALID_LONG_ID); // expect this to be called
+		evalJobLogicControl.setDefaultMatcher(MockControl.ALWAYS_MATCHER);
+		//evalJobLogicControl.setDefaultReturnValue(true); // NO return required here since the return is void
 
 		// create and setup the object to be tested
 		evaluations = new EvalEvaluationsLogicImpl();
 		evaluations.setDao(evaluationDao);
 		evaluations.setExternalLogic( new EvalExternalLogicStub() );
 		evaluations.setSettings(settings);
+		evaluations.setEvalJobLogic(evalJobLogic); // set to the mock object
 
 	}
 

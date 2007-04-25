@@ -335,6 +335,74 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 	}
 
 	/**
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalResponsesLogicImpl#getEvalResponseIds(Long, String[])}.
+	 */
+	public void testGetEvalResponseIds() {
+		List l = null;
+
+		// retrieve all response Ids for an evaluation
+		l = responses.getEvalResponseIds(etdl.evaluationClosed.getId(), null);
+		Assert.assertNotNull(l);
+		Assert.assertEquals(3, l.size());
+		Assert.assertTrue(l.contains( etdl.response2.getId() ));
+		Assert.assertTrue(l.contains( etdl.response3.getId() ));
+		Assert.assertTrue(l.contains( etdl.response6.getId() ));
+
+		l = responses.getEvalResponseIds(etdl.evaluationClosed.getId(), new String[] {});
+		Assert.assertNotNull(l);
+		Assert.assertEquals(3, l.size());
+		Assert.assertTrue(l.contains( etdl.response2.getId() ));
+		Assert.assertTrue(l.contains( etdl.response3.getId() ));
+		Assert.assertTrue(l.contains( etdl.response6.getId() ));
+
+		// retrieve all response Ids for an evaluation using all groups
+		l = responses.getEvalResponseIds(etdl.evaluationClosed.getId(), 
+				new String[] {EvalTestDataLoad.CONTEXT1, EvalTestDataLoad.CONTEXT2});
+		Assert.assertNotNull(l);
+		Assert.assertEquals(3, l.size());
+		Assert.assertTrue(l.contains( etdl.response2.getId() ));
+		Assert.assertTrue(l.contains( etdl.response3.getId() ));
+		Assert.assertTrue(l.contains( etdl.response6.getId() ));
+
+		// retrieve all response Ids for an evaluation in one group only
+		l = responses.getEvalResponseIds(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.CONTEXT1});
+		Assert.assertNotNull(l);
+		Assert.assertEquals(1, l.size());
+		Assert.assertTrue(l.contains( etdl.response2.getId() ));
+
+		// retrieve all response Ids for an evaluation in one group only
+		l = responses.getEvalResponseIds(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.CONTEXT2});
+		Assert.assertNotNull(l);
+		Assert.assertEquals(2, l.size());
+		Assert.assertTrue(l.contains( etdl.response3.getId() ));
+		Assert.assertTrue(l.contains( etdl.response6.getId() ));
+
+		l = responses.getEvalResponseIds(etdl.evaluationActive.getId(), new String[] {EvalTestDataLoad.CONTEXT1});
+		Assert.assertNotNull(l);
+		Assert.assertEquals(1, l.size());
+		Assert.assertTrue(l.contains( etdl.response1.getId() ));
+
+		// try to get responses for an eval group that is not associated with this eval
+		l = responses.getEvalResponseIds(etdl.evaluationActive.getId(), new String[] {EvalTestDataLoad.CONTEXT2});
+		Assert.assertNotNull(l);
+		Assert.assertEquals(0, l.size());
+
+		// try to get responses for an eval with no responses
+		l = responses.getEvalResponseIds(etdl.evaluationActiveUntaken.getId(), null);
+		Assert.assertNotNull(l);
+		Assert.assertEquals(0, l.size());
+		
+		// check that invalid eval ids cause failure
+		try {
+			l = responses.getEvalResponseIds( EvalTestDataLoad.INVALID_LONG_ID, null );
+			Assert.fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+			Assert.assertNotNull(e);
+		}
+
+	}
+
+	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalResponsesLogicImpl#saveResponse(org.sakaiproject.evaluation.model.EvalResponse, String)}.
 	 */
 	public void testSaveResponse() {

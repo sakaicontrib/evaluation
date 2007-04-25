@@ -553,6 +553,23 @@ public class EvaluationDaoImpl
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#getResponseIds(java.lang.Long, java.lang.String[])
+	 *
+	 * SQL - $ indicates the variable must be inserted into the string
+	 * select id from eval_response where evaluation_fk=$evalId
+	 */
+	public List getResponseIds(Long evalId, String[] evalGroupIds) {
+		String groupsHQL = "";
+		if (evalGroupIds != null && evalGroupIds.length > 0) {
+			groupsHQL = " and response.evalGroupId in " + arrayToCommaString(evalGroupIds);
+		}
+
+		String hqlQuery = "SELECT response.id from EvalResponse as response where response.evaluation.id='" + evalId.toString() + "'" + 
+			groupsHQL + " order by response.id";
+		return getHibernateTemplate().find( hqlQuery );
+	}
+
 	/**
 	 * produce a comma demlimited string like "item1','item2','item3" from a string array
 	 * 

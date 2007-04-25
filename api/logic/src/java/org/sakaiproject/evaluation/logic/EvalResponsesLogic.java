@@ -90,6 +90,16 @@ public interface EvalResponsesLogic {
 	public List getEvalAnswers(Long itemId, Long evaluationId, String[] evalGroupIds);
 
 	/**
+	 * Get the response ids associated with an evaluation and particular eval groups
+	 * 
+	 * @param evaluationId the id of an EvalEvaluation object
+	 * @param evalGroupIds the internal eval group ids (represents a site or group),
+	 * if null or empty array, include count for all eval groups for this evaluation
+	 * @return a list of response ids, in order by response id
+	 */
+	public List getEvalResponseIds(Long evaluationId, String[] evalGroupIds);
+
+	/**
 	 * Saves a single response from a single user with all associated Answers,
 	 * checks to make sure this user has not already saved this response or
 	 * makes sure they are allowed to overwrite it, saves all associated
