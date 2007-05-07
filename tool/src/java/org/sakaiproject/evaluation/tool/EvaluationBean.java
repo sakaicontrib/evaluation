@@ -56,6 +56,9 @@ import org.sakaiproject.util.FormattedText;
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class EvaluationBean {
+
+	private static Log log = LogFactory.getLog(EvaluationBean.class);
+
 	/*
 	 * VARIABLE DECLARATIONS 
 	 */
@@ -89,8 +92,6 @@ public class EvaluationBean {
 	//TODO: need to merge with public field: eval, now use other string to avoid failing of other page 
 	public Long evalId; 	//used to ELBinding to the evaluation ID to be removed on Control Panel
 	public String tmplId; 	//used to ELBinding To the template ID to be removed on Control Panel 
-
-	private static Log log = LogFactory.getLog(EvaluationBean.class);
 
 	//Spring injection
 	private EvalExternalLogic external;
@@ -771,18 +772,28 @@ public class EvaluationBean {
 			emailsLogic.saveEmailTemplate(reminderTemplate, external.getCurrentUserId());
 		}
 		eval.setReminderEmailTemplate(reminderTemplate);
-	
+
 		/*
 		 * check if start date is the same as today's date, set startDate as today's date time, 
 		 * as when we parse the string to a date, the time filed by default is zero
 		 */
 		checkEvalStartDate();
 
+		// force the due date and stop date to the end of the day
+		eval.setDueDate( EvaluationDateUtil.getEndOfDayDate( eval.getDueDate() ) );
+		if (eval.getStopDate() != null) {
+			log.info("Forcing date to end of day for non null stop date: " + eval.getStopDate());
+			eval.setStopDate( EvaluationDateUtil.getEndOfDayDate( eval.getStopDate() ) );
+		}
+
 		// Ensure minimum time difference between start and due date.
 		dateUtil.updateDueDate(eval);
-		
-		// Needed by columbia so as of now making equal to due date		
-		eval.setStopDate(eval.getDueDate());
+
+		// set stop date to the due date if not set
+		if (eval.getStopDate() == null) {
+			log.info("Setting the null stop date to the due date: " + eval.getDueDate());
+			eval.setStopDate(eval.getDueDate());
+		}
 	}
 
 	/**
