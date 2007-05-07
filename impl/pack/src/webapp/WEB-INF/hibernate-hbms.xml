@@ -5,9 +5,8 @@
 <beans>
 
 	<!-- Add our HBM files to the Sakai global session factory -->
-	<bean
-		id="org.sakaiproject.springframework.orm.hibernate.impl.AdditionalHibernateMappingsImpl.evaluation"
-		class="org.sakaiproject.springframework.orm.hibernate.impl.AdditionalHibernateMappingsImpl">
+	<bean id="org.sakaiproject.springframework.orm.hibernate.impl.AdditionalHibernateMappingsImpl.evaluation"
+			class="org.sakaiproject.springframework.orm.hibernate.impl.AdditionalHibernateMappingsImpl">
 		<property name="mappingResources">
 			<list>
 				<value>org/sakaiproject/evaluation/hbm/EvalAnswer.hbm.xml</value>
