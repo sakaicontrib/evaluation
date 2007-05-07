@@ -11,12 +11,11 @@
  * Kapil Ahuja (kahuja@vt.edu)
  * Rui Feng (fengr@vt.edu)
  *****************************************************************************/
+
 package org.sakaiproject.evaluation.tool.producers;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
