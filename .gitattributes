@@ -127,6 +127,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/TakeEvalBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/TemplateBBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/TemplateBeanLocator.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/TemplateItemBeanLocator.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/bundle/messages.properties -text
 tool/src/java/org/sakaiproject/evaluation/tool/bundle/messages_en.properties -text
 tool/src/java/org/sakaiproject/evaluation/tool/params/BlockIdsParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/params/CSVReportViewParams.java -text
