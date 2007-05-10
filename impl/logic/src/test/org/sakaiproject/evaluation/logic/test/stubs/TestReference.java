@@ -183,4 +183,9 @@ public class TestReference implements Reference {
 		return false;
 	}
 
+	public void updateReference(String ref) {
+		// TODO Auto-generated method stub
+		this.reference = ref;
+	}
+
 }
