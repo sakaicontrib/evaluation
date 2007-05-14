@@ -191,6 +191,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 			Assert.fail("Should have thrown exception");
 		} catch (NullPointerException e) {
 			Assert.assertNotNull(e);
+			//Assert.fail("Exception: " + e.getMessage()); // see why failing
 		}
 
 		// test due date must be set
@@ -204,6 +205,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 			Assert.fail("Should have thrown exception");
 		} catch (NullPointerException e) {
 			Assert.assertNotNull(e);
+			//Assert.fail("Exception: " + e.getMessage()); // see why failing
 		}
 
 		// try save evaluation with dates that are out of order
@@ -218,6 +220,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 			Assert.fail("Should have thrown exception");
 		} catch (IllegalArgumentException e) {
 			Assert.assertNotNull(e);
+			//Assert.fail("Exception: " + e.getMessage()); // see why failing
 		}
 
 		try {
@@ -230,6 +233,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 			Assert.fail("Should have thrown exception");
 		} catch (IllegalArgumentException e) {
 			Assert.assertNotNull(e);
+			//Assert.fail("Exception: " + e.getMessage()); // see why failing
 		}
 
 		// test stop date must be same as or after due date
@@ -243,6 +247,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 			Assert.fail("Should have thrown exception");
 		} catch (IllegalArgumentException e) {
 			Assert.assertNotNull(e);
+			//Assert.fail("Exception: " + e.getMessage()); // see why failing
 		}
 
 		// test view date must be after stop date and due date
@@ -256,6 +261,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 			Assert.fail("Should have thrown exception");
 		} catch (IllegalArgumentException e) {
 			Assert.assertNotNull(e);
+			//Assert.fail("Exception: " + e.getMessage()); // see why failing
 		}
 
 		// try save new evaluation with dates that are in the past
@@ -270,6 +276,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 			Assert.fail("Should have thrown exception");
 		} catch (IllegalArgumentException e) {
 			Assert.assertNotNull(e);
+			//Assert.fail("Exception: " + e.getMessage()); // see why failing
 		}
 
 		// test due date in the past
@@ -283,6 +290,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 			Assert.fail("Should have thrown exception");
 		} catch (IllegalArgumentException e) {
 			Assert.assertNotNull(e);
+			//Assert.fail("Exception: " + e.getMessage()); // see why failing
 		}
 
 		// test create eval when do not have permission (USER_ID)
@@ -296,6 +304,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 			Assert.fail("Should have thrown exception");
 		} catch (SecurityException e) {
 			Assert.assertNotNull(e);
+			//Assert.fail("Exception: " + e.getMessage()); // see why failing
 		}
 
 		// test saving an evaluation with an empty template fails
@@ -309,6 +318,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 			Assert.fail("Should have thrown exception");
 		} catch (IllegalArgumentException e) {
 			Assert.assertNotNull(e);
+			//Assert.fail("Exception: " + e.getMessage()); // see why failing
 		}
 
 		try {
@@ -321,6 +331,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 			Assert.fail("Should have thrown exception");
 		} catch (IllegalArgumentException e) {
 			Assert.assertNotNull(e);
+			//Assert.fail("Exception: " + e.getMessage()); // see why failing
 		}
 
 	}

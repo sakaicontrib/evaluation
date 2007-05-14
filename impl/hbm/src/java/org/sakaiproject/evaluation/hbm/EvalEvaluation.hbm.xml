@@ -29,12 +29,12 @@
             <column name="START_DATE" not-null="true" />
         </property>
         <!-- date when users are told the evaluation is ending (notification only) -->
-        <property name="stopDate" type="java.util.Date">
-            <column name="STOP_DATE" not-null="true" />
-        </property>
-        <!-- last date to complete the evaluation, may not submit it or begin taking it after this date, not active after this date -->
         <property name="dueDate" type="java.util.Date">
             <column name="DUE_DATE" not-null="true" />
+        </property>
+        <!-- last date to complete the evaluation, may not submit it or begin taking it after this date, not active after this date -->
+        <property name="stopDate" type="java.util.Date">
+            <column name="STOP_DATE" not-null="true" />
         </property>
         <!-- date at which results of this evaluation are visible in general (must be after due date) -->
         <property name="viewDate" type="java.util.Date">

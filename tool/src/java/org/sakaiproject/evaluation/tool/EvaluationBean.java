@@ -66,8 +66,8 @@ public class EvaluationBean {
 	public String[] selectedSakaiSiteIds;
 	public Long templateId = new Long(1L);
 	public Date startDate;
-	public Date stopDate;
 	public Date dueDate;
+	public Date stopDate;
 	public Date viewDate;
 	public Date studentsDate;
 	public Date instructorsDate;
@@ -160,15 +160,17 @@ public class EvaluationBean {
 		Calendar calendar = new GregorianCalendar();
 		calendar.setTime(today);
 		startDate = calendar.getTime();
-		
-		calendar.add(Calendar.DATE, 1);
-		stopDate = calendar.getTime();
 
 		calendar.add(Calendar.DATE, 1);
 		dueDate = calendar.getTime();
 
+		// assign stop date to equal due date for now
+		//calendar.add(Calendar.DATE, 1);
+		stopDate = calendar.getTime();
+
 		calendar.add(Calendar.DATE, 1);
 		viewDate = calendar.getTime();
+
 		studentsDate = calendar.getTime();
 		instructorsDate = calendar.getTime();
 		
@@ -539,7 +541,7 @@ public class EvaluationBean {
 		
 		return EvaluationStartProducer.VIEW_ID;
 	}
-	
+
 	/**
 	 * This method prepares backing Bean data  for EditSettings page.
 	 * It binds to:
@@ -550,19 +552,19 @@ public class EvaluationBean {
 	 */
 	public String editEvalSettingAction(){	
 		eval = evalsLogic.getEvaluationById(eval.getId());
-			
-		startDate = eval.getStartDate(); 
-		stopDate = eval.getStopDate();   
+
+		startDate = eval.getStartDate();
 		dueDate = eval.getDueDate();
+		stopDate = eval.getStopDate();
 		viewDate = eval.getViewDate();
-		
+
 		/*
 		 * If student date is not null then set the date and also 
 		 * make the checkbox checked. Else make the checkbox unchecked. 
 		 */
 		studentsDate = eval.getStudentsDate();
 		studentViewResults = eval.getStudentsDate() == null? Boolean.FALSE: Boolean.TRUE;
-		
+
 		/*
 		 * If instructor date is not null then set the date and also 
 		 * make the checkbox checked. Else make the checkbox unchecked. 
@@ -570,19 +572,18 @@ public class EvaluationBean {
 		if (eval.getInstructorsDate() != null) {
 			instructorViewResults = Boolean.TRUE;
 			instructorsDate = eval.getInstructorsDate();
-		}
-		else {
+		} else {
 			instructorViewResults = Boolean.FALSE;
 			instructorsDate = null;
 		}
-		
+
 		//email settings
 		emailAvailableTxt = eval.getAvailableEmailTemplate().getMessage(); // available template
 		emailReminderTxt =  eval.getReminderEmailTemplate().getMessage();  //reminder email
-		
+
 		return EvaluationSettingsProducer.VIEW_ID;
 	}
-	
+
 	/**
 	 * Method binding to control panel page "Assigned" Link/Command.
 	 * 

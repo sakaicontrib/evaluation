@@ -25,9 +25,9 @@ public class EvalEvaluation implements java.io.Serializable {
 
 	private Date startDate;
 
-	private Date stopDate;
-
 	private Date dueDate;
+
+	private Date stopDate;
 
 	private Date viewDate;
 
@@ -72,7 +72,7 @@ public class EvalEvaluation implements java.io.Serializable {
 	}
 
 	/** minimal constructor */
-	public EvalEvaluation(Date lastModified, String owner, String title, Date startDate, Date stopDate, Date dueDate, Date viewDate, String state,
+	public EvalEvaluation(Date lastModified, String owner, String title, Date startDate, Date dueDate, Date stopDate, Date viewDate, String state,
 			Integer reminderDays, EvalTemplate template) {
 		this.lastModified = lastModified;
 		this.owner = owner;
@@ -87,7 +87,7 @@ public class EvalEvaluation implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public EvalEvaluation(Date lastModified, String owner, String title, String instructions, Date startDate, Date stopDate, Date dueDate, Date viewDate,
+	public EvalEvaluation(Date lastModified, String owner, String title, String instructions, Date startDate, Date dueDate, Date stopDate, Date viewDate,
 			Date studentsDate, Date instructorsDate, String state, String instructorOpt, Integer reminderDays, String reminderFromEmail, String termId,
 			EvalEmailTemplate availableEmailTemplate, EvalEmailTemplate reminderEmailTemplate, EvalTemplate template, EvalTemplate addedTemplate,
 			Set responses, Boolean resultsPrivate, Boolean blankResponsesAllowed, Boolean modifyResponsesAllowed, Boolean unregisteredAllowed, Boolean locked) {

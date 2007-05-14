@@ -121,23 +121,25 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		}
 		dateevolver.evolveDateInput(startDate, evaluationBean.startDate);
 
-		// Show the "Stop date" text box only if it is set as yes in the System
-		// settings
+		UIMessage.make(form, "eval-due-date-header", "evalsettings.due.date.header");
+		UIMessage.make(form, "eval-due-date-desc", "evalsettings.due.date.desc");
+		UIInput dueDate = UIInput.make(form, "dueDate:", "#{evaluationBean.dueDate}");
+		dateevolver.evolveDateInput(dueDate, evaluationBean.dueDate);
+
+		// Show the "Stop date" text box only if allowed in the System settings
 		if (((Boolean) settings.get(EvalSettings.EVAL_USE_STOP_DATE)).booleanValue()) {
 			UIBranchContainer showStopDate = UIBranchContainer.make(form, "showStopDate:");
 			UIMessage.make(showStopDate, "eval-stop-date-header", "evalsettings.stop.date.header");
+			UIMessage.make(showStopDate, "eval-stop-date-desc", "evalsettings.stop.date.desc");
 			UIInput stopDate = UIInput.make(showStopDate, "stopDate:", "#{evaluationBean.stopDate}");
 			dateevolver.evolveDateInput(stopDate, evaluationBean.stopDate);
 		}
-
-		UIMessage.make(form, "eval-due-date-header", "evalsettings.due.date.header");
-		UIInput dueDate = UIInput.make(form, "dueDate:", "#{evaluationBean.dueDate}");
-		dateevolver.evolveDateInput(dueDate, evaluationBean.dueDate);
 
 		UIMessage.make(form, "eval-view-date-header", "evalsettings.view.date.header");
 		UIMessage.make(form, "eval-view-date-desc", "evalsettings.view.date.desc");
 		UIInput viewDate = UIInput.make(form, "viewDate:", "#{evaluationBean.viewDate}");
 		dateevolver.evolveDateInput(viewDate, evaluationBean.viewDate);
+
 
 		UIMessage.make(form, "eval-results-viewable-header", "evalsettings.results.viewable.header");
 		UIMessage.make(form, "eval-results-viewable-private-start", "evalsettings.results.viewable.private.start");
