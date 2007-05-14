@@ -152,24 +152,41 @@ public class EvaluationBean {
 	 * @return View id that sends the control to evaluation settings page.
 	 */
 	public String continueToSettingsAction() {
-		
-		/*
-		 * Initializing all the bind variables used in EvaluationSettingsProducer. 
-		 */
-		Date today = new Date();
+		// Initializing all the bind variables used in EvaluationSettingsProducer. 
 		Calendar calendar = new GregorianCalendar();
-		calendar.setTime(today);
-		startDate = calendar.getTime();
+		calendar.setTime( new Date() );
+		if (startDate == null) {
+			startDate = calendar.getTime();
+			log.info("Setting start date to default of: " + startDate);
+		}
 
 		calendar.add(Calendar.DATE, 1);
-		dueDate = calendar.getTime();
+		if (dueDate == null) {
+			Calendar cal = new GregorianCalendar();
+			cal.setTime(calendar.getTime());
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			dueDate = cal.getTime();
+			log.info("Setting due date to default of: " + dueDate);
+		}
 
 		// assign stop date to equal due date for now
-		//calendar.add(Calendar.DATE, 1);
-		stopDate = calendar.getTime();
+		if (stopDate == null) {
+			Calendar cal = new GregorianCalendar();
+			cal.setTime(calendar.getTime());
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			stopDate = cal.getTime();
+			log.info("Setting stop date to default of: " + stopDate);
+		}
 
 		calendar.add(Calendar.DATE, 1);
-		viewDate = calendar.getTime();
+		if (viewDate == null) {
+			viewDate = calendar.getTime();
+			log.info("Setting view date to default of: " + viewDate);
+		}
 
 		studentsDate = calendar.getTime();
 		instructorsDate = calendar.getTime();
@@ -716,11 +733,11 @@ public class EvaluationBean {
 	 */
 	private void commonSaveTasks() {
 
-		eval.setLastModified(new Date());
 		eval.setStartDate(startDate);
 		eval.setDueDate(dueDate);
+		eval.setStopDate(stopDate);
 		eval.setViewDate(viewDate);
-		
+
 		/*
 		 * If "EVAL_USE_SAME_VIEW_DATES" system setting (admin setting) flag is set 
 		 * as true then don't look for student and instructor dates, instead make them
