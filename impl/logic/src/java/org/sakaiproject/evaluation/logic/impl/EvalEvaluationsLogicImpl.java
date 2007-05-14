@@ -126,7 +126,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 					"due date (" + evaluation.getDueDate() +
 					") must occur after start date (" + 
 					evaluation.getStartDate() + "), can occur on the same date but not at the same time");
-		} else if (evaluation.getDueDate().compareTo(evaluation.getStopDate()) < 0 ) {
+		} else if (evaluation.getDueDate().compareTo(evaluation.getStopDate()) > 0 ) {
 			throw new IllegalArgumentException(
 					"stop date (" + evaluation.getStopDate() +
 					") must occur on or after due date (" + 

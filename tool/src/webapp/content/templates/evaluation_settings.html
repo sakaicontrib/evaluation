@@ -38,7 +38,7 @@ YAHOO.widget.Logger.enableBrowserConsole();
 	
 		<table border="0" cellspacing="0" cellpadding="0" width="90%">
 			<tr>
-				<td colspan = "5" align = "left"><span rsf:id="settings-desc-header">Modify Evaluation Settings for </span><label name="evaluation_title" rsf:id="evaluationTitle" style="font-weight:bold;">The title of the evaluation goes here</label></td>
+				<td colspan="5" align="left"><span rsf:id="settings-desc-header">Modify Evaluation Settings for </span><label id="evaluation_title" rsf:id="evaluationTitle" style="font-weight:bold;">The title of the evaluation goes here</label></td>
 			</tr>
 		</table>
 		<br/>
@@ -50,7 +50,7 @@ YAHOO.widget.Logger.enableBrowserConsole();
 			</tr>
 			<tr>
 				<td width="5%">&nbsp;</td>
-				<td width="8%" align="left" valign="top" nowrap="Y">
+				<td width="8%" align="left" valign="top" nowrap="nowrap">
                   <span rsf:id="eval-start-date-header">Start Date:</span>&nbsp;</td>
 				<td width="23%" align="left" valign="top">
                 <div style="display:inline" rsf:id="startDate:">
@@ -58,50 +58,54 @@ YAHOO.widget.Logger.enableBrowserConsole();
                   <img src="../images/calendar.gif" />
                 </div>
 				</td>
-				<td width="64%" align="left">&nbsp;<span rsf:id="eval-start-date-desc">Users may begin submitting evaluation responses on this date</span></td>
+				<td rsf:id="eval-start-date-desc" width="64%" align="left">
+					Users may begin submitting evaluation responses on this date
+				</td>
 			</tr>
-		</table>
-		<div rsf:id="showStopDate:">			
-			<table border="0" cellspacing="0" cellpadding="0" width="90%">
-				<tr>
+			<tr>
 				<td width="5%">&nbsp;</td>
-				<td width="8%" align="left" valign="top" nowrap="Y">
+				<td width="8%" align="left" valign="top" nowrap="nowrap"><span rsf:id="eval-due-date-header">Due Date:</span>&nbsp;</td>
+				<td width="23%" align="left" valign="top">
+	                <div style="display:inline" rsf:id="dueDate:">
+						<input type="text" name="date_dummy" value="MM/DD/YYYY" size="12" maxlength="10"/>
+						<img src="../images/calendar.gif" />
+            	    </div>
+				</td>
+				<td rsf:id="eval-due-date-desc" width="64%" align="left">
+					Evaluation ends on this date, no more responses after this date
+				</td>
+			</tr>
+			<tr rsf:id="showStopDate:">
+				<td width="5%">&nbsp;</td>
+				<td width="8%" align="left" valign="top" nowrap="nowrap">
                    <span rsf:id="eval-stop-date-header">Stop Date:</span>&nbsp;</td>
 				<td width="23%" align="left" valign="top">
-                 <div style="display:inline" rsf:id="stopDate:">
-				  <input type="text" name="date_dummy" value="MM/DD/YYYY" size="12" maxlength="10"/>
-                  <img src="../images/calendar.gif" />
-                </div>
+					<div style="display:inline" rsf:id="stopDate:">
+						<input type="text" name="date_dummy" value="MM/DD/YYYY" size="12" maxlength="10"/>
+						<img src="../images/calendar.gif" />
+					</div>
 				</td>
-					<td width="64%" align="left">&nbsp;</td>
-				</tr>
-			</table>
-		</div>
-		<table border="0" cellspacing="0" cellpadding="0" width="90%">
-			<tr>
-				<td width="5%">&nbsp;</td>
-				<td width="8%" align="left" valign="top" nowrap="Y"><span rsf:id="eval-due-date-header">Due Date:</span>&nbsp;</td>
-				<td width="23%" align="left" valign="top">
-                 <div style="display:inline" rsf:id="dueDate:">
-				  <input type="text" name="date_dummy" value="MM/DD/YYYY" size="12" maxlength="10"/>
-                  <img src="../images/calendar.gif" />
-                </div>
+				<td rsf:id="eval-stop-date-desc" width="64%" align="left">
+					Users may still submit responses up until this date (defines a grace period)
 				</td>
-				<td width="64%" align="left">&nbsp;</td>
 			</tr>
 			<tr>
 				<td width="5%">&nbsp;</td>
-				<td width="8%" align="left" valign="top" nowrap="Y"><span rsf:id="eval-view-date-header">View Date:</span>&nbsp;</td>
+				<td width="8%" align="left" valign="top" nowrap="nowrap"><span rsf:id="eval-view-date-header">View Date:</span>&nbsp;</td>
 				<td width="23%" align="left" valign="top">
-                 <div style="display:inline" rsf:id="viewDate:">
-				  <input type="text" name="date_dummy" value="MM/DD/YYYY" size="12" maxlength="10"/>
-                  <img src="../images/calendar.gif" />
-                </div>
+	                <div style="display:inline" rsf:id="viewDate:">
+						<input type="text" name="date_dummy" value="MM/DD/YYYY" size="12" maxlength="10"/>
+						<img src="../images/calendar.gif" />
+	                </div>
 				</td>
-				<td width="64%" align="left">&nbsp;<span rsf:id="eval-view-date-desc">Results are not viewable until this date</span></td>
+				<td rsf:id="eval-view-date-desc" width="64%" align="left">
+					Results are not viewable until this date
+				</td>
 			</tr>
 		</table>
+
 		<br/>
+
 		<table border="0" cellspacing="0" cellpadding="0" width="90%">
 			<tr>
 				<td colspan="3">
@@ -110,8 +114,8 @@ YAHOO.widget.Logger.enableBrowserConsole();
 			</tr>
 			<tr>
 				<td width="2%">&nbsp;</td>
-				<td width="50%" align="left" valign="top" nowrap="Y">
-					<input type="checkbox" name="results_private" rsf:id="resultsPrivate"/>&nbsp;<span rsf:id="eval-results-viewable-private-start">Private</span> (<span rsf:id="eval-results-viewable-private-middle">owner only</span> - <label name="userInfo" rsf:id="userInfo"/>)
+				<td width="50%" align="left" valign="top" nowrap="nowrap">
+					<input type="checkbox" name="results_private" rsf:id="resultsPrivate"/>&nbsp;<span rsf:id="eval-results-viewable-private-start">Private</span> (<span rsf:id="eval-results-viewable-private-middle">owner only</span> - <label id="userInfo" rsf:id="userInfo"/>)
 				</td>
 				<td width="48%" align="right" valign="top">
 					<i><b><span rsf:id="private-warning-note">Note:</span></b> <span rsf:id="private-warning-desc">Checking the private box overrides settings below</span></i>
@@ -122,14 +126,14 @@ YAHOO.widget.Logger.enableBrowserConsole();
 			<table border="0" cellspacing="0" cellpadding="0" width="90%">
 				<tr>
 					<td width="2%">&nbsp;</td>
-					<td width="50%" align="left" valign="top" nowrap="Y">
+					<td width="50%" align="left" valign="top" nowrap="nowrap">
 						<input type="checkbox" name="student_view_results" rsf:id="studentViewResults"/>&nbsp;<span rsf:id="eval-results-viewable-students">Students in the courses this evaluation is assigned to</span>
 					</td>
 						<td width="48%" align="right" valign="top">
 							<span rsf:id="eval-results-stu-inst-date-label">Results viewable on "View Date"</span>
                              <div rsf:id="studentsDate:" style="display:inline">
                               <input type="text" name="dummy_date" value="MM/DD/YYYY" size="12" maxlength="10"/>
-                              <img src="#" rsf:id="calenderImageForResultsToInst" />
+                              <img src="../images/calendar.gif" />
                             </div>
 						</td>
 				</tr>
@@ -139,14 +143,14 @@ YAHOO.widget.Logger.enableBrowserConsole();
 			<table border="0" cellspacing="0" cellpadding="0" width="90%">
 				<tr>
 					<td width="2%">&nbsp;</td>
-					<td width="50%" align="left" valign="top" nowrap="Y">
+					<td width="50%" align="left" valign="top" nowrap="nowrap">
 						<input type="checkbox" name="instructor_view_results" rsf:id="instructorViewResults"/>&nbsp;<span rsf:id="eval-results-viewable-instructors">Instructors in the courses this evaluation is assigned to</span>
 					</td>
 						<td width="48%" align="right" valign="top">
 							<span rsf:id="eval-results-stu-inst-date-label">Results viewable on "View Date"</span>
                             <div rsf:id="instructorsDate:" style="display:inline">
                               <input type="text" name="dummy_date" value="MM/DD/YYYY" size="12" maxlength="10"/>
-                              <img src="#" rsf:id="calenderImageForResultsToInst" />
+                              <img src="../images/calendar.gif" />
                             </div>
 						</td>
 				</tr>
@@ -155,10 +159,12 @@ YAHOO.widget.Logger.enableBrowserConsole();
 		<table border="0" cellspacing="0" cellpadding="0" width="90%">
 			<tr>
 				<td colspan="4">
-					<span rsf:id="eval-results-viewable-admin-note">* Note that admins above in the hierarchy can view the results UNLESS the private box is checked</span>
+					<span rsf:id="eval-results-viewable-admin-note" style="font-style: italic;">* Note that admins above in the hierarchy can view the results UNLESS the private box is checked</span>
 				</td>
 			</tr>
 		</table>
+
+
 		<div rsf:id="showStudentCompletionDiv:">			
 			<br/>
 			<table border="0" cellspacing="0" cellpadding="0" width="90%">
@@ -172,7 +178,7 @@ YAHOO.widget.Logger.enableBrowserConsole();
 		<div rsf:id="showBlankQuestionAllowedToStut:">			
 			<table border="0" cellspacing="0" cellpadding="0" width="90%">
 				<tr>
-					<td width="45%" align="right" valign="top" nowrap="Y">
+					<td width="45%" align="right" valign="top" nowrap="nowrap">
 						<span rsf:id="blank-responses-allowed-desc">Blank non-text question responses allowed:</span>&nbsp;<input type="checkbox" name="blank_responses_allowed" rsf:id="blankResponsesAllowed"/>
 					</td>
 					<td width="55%" align="right" valign="top">
@@ -184,7 +190,7 @@ YAHOO.widget.Logger.enableBrowserConsole();
 		<div rsf:id="showModifyResponsesAllowedToStu:">			
 			<table border="0" cellspacing="0" cellpadding="0" width="90%">
 				<tr>
-					<td width="45%" align="right" valign="top" nowrap="Y">
+					<td width="45%" align="right" valign="top" nowrap="nowrap">
 						<span rsf:id="modify-responses-allowed-desc">Modification of responses allowed:</span>&nbsp;<input type="checkbox" name="modify_responses_allowed" rsf:id="modifyResponsesAllowed"/>
 					</td>
 					<td width="55%" align="right" valign="top">
@@ -196,7 +202,7 @@ YAHOO.widget.Logger.enableBrowserConsole();
 		<div rsf:id="showUnregAllowedOption:">			
 			<table border="0" cellspacing="0" cellpadding="0" width="90%">
 				<tr>
-					<td width="45%" align="right" valign="top" nowrap="Y">
+					<td width="45%" align="right" valign="top" nowrap="nowrap">
 						<span rsf:id="unregistered-allowed-desc">Unregistered students not allowed to complete:</span>&nbsp;<input type="checkbox" name="unregistered_allowed" rsf:id="unregisteredAllowed"/>
 					</td>
 					<td width="55%" align="right" valign="top">
@@ -221,7 +227,7 @@ YAHOO.widget.Logger.enableBrowserConsole();
 				</tr>
 				<tr>
 					<td width="2%" valign="middle" style="height:40px;">&nbsp;</td>
-					<td width="23%" align="left" valign="middle" style="height:40px;" nowrap="Y">
+					<td width="23%" align="left" valign="middle" style="height:40px;" nowrap="nowrap">
 						<span rsf:id="instructor-opt-desc">Instructor opt in setting:</span>&nbsp;
 					</td>
 					<td width="75%" align="left" valign="middle" style="height:40px;">
@@ -251,7 +257,7 @@ YAHOO.widget.Logger.enableBrowserConsole();
 			</tr>
 			<tr>
 				<td width="2%" valign="middle" style="height:40px;">&nbsp;</td>
-				<td width="38%" align="left" valign="middle" style="height:40px;" nowrap="Y">
+				<td width="38%" align="left" valign="middle" style="height:40px;" nowrap="nowrap">
 					<span rsf:id="reminder-noresponders-header">Email reminder to non-respondent students:</span>&nbsp;
 				</td>
 				<td width="60%" align="left" valign="middle" style="height:40px;">
@@ -267,7 +273,7 @@ YAHOO.widget.Logger.enableBrowserConsole();
 			</tr>
 			<tr>
 				<td width="2%" valign="middle" style="height:40px;">&nbsp;</td>
-				<td width="38%" align="left" valign="middle" style="height:40px;" nowrap="Y">
+				<td width="38%" align="left" valign="middle" style="height:40px;" nowrap="nowrap">
 					<span rsf:id="eval-from-email-header">HELPDESK EMAIL:</span>&nbsp;
 				</td>
 				<td width="60%" align="left" valign="middle" style="height:40px;">

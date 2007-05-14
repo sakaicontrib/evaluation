@@ -189,11 +189,10 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 						String context = ctxt.evalGroupId;
 						String title = ctxt.title;
 						String status = "unknown.caps"; //$NON-NLS-1$
-	
+
 						// find the object in the list matching the context and evalId,
 						// leave as null if not found -AZ
 						EvalResponse response = null;
-	
 						for (int k=0; k<evalResponses.size(); k++) {
 							EvalResponse er = (EvalResponse) evalResponses.get(k);
 							if (context.equals(er.getEvalGroupId()) &&
@@ -202,25 +201,23 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 								break;
 							}
 						}
-	
+
 						if (context.equals(currentContext)) {
 							// TODO - do something when the context matches
 						}
-	
+
 						UIBranchContainer evalcourserow = UIBranchContainer.make(evalrow, 
 								"evaluationsCourseList:", context ); //$NON-NLS-1$
-	
-				
+
 						// set status
 						if (response != null && response.getEndTime() != null) {
-							if(eval.getModifyResponsesAllowed().booleanValue()){
+							if (eval.getModifyResponsesAllowed().booleanValue()) {
 								// take eval link when pending
 								UIInternalLink.make(evalcourserow, "evaluationCourseLink", title,  //$NON-NLS-1$
 										new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID,
 												eval.getId(), response.getId(), context) );
 								status = "summary.status.pending"; //$NON-NLS-1$							
-							}
-							else{
+							} else {
 								// preview only when completed
 								UIInternalLink.make(evalcourserow, "evaluationCourseLink", title,  //$NON-NLS-1$
 										new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID,

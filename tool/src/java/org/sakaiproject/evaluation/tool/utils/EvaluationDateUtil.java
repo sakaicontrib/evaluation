@@ -77,8 +77,17 @@ public class EvaluationDateUtil {
 			log.info("Fixing eval (" + eval.getId() + ") due date from " + eval.getDueDate() + " to " + calendarDue.getTime());
 			eval.setDueDate(calendarDue.getTime());
 
+			// Update stop date if needed
+			if (eval.getStopDate().before(eval.getDueDate())) {
+				Calendar calendarView = new GregorianCalendar();
+				calendarView.setTime(eval.getStopDate());
+				calendarView.add(Calendar.MILLISECOND, diffBetViewDue);
+				log.info("Fixing the stop date from " + eval.getStopDate() + " to " + calendarView.getTime());
+				eval.setStopDate(calendarView.getTime());
+			}
+
 			// Update view date if needed
-			if (eval.getViewDate().before(eval.getDueDate())) {
+			if (eval.getViewDate().before(eval.getStopDate())) {
 				Calendar calendarView = new GregorianCalendar();
 				calendarView.setTime(eval.getViewDate());
 				calendarView.add(Calendar.MILLISECOND, diffBetViewDue);
