@@ -73,7 +73,7 @@ public class EvaluationDateUtil {
 			// Update due date
 			Calendar calendarDue = new GregorianCalendar();
 			calendarDue.setTime(eval.getStartDate());
-			calendarDue.add(Calendar.HOUR, minHours);
+			calendarDue.add(Calendar.HOUR_OF_DAY, minHours);
 			log.info("Fixing eval (" + eval.getId() + ") due date from " + eval.getDueDate() + " to " + calendarDue.getTime());
 			eval.setDueDate(calendarDue.getTime());
 
@@ -109,7 +109,7 @@ public class EvaluationDateUtil {
 	public static Date getEndOfDayDate(Date d) {
 		Calendar cal = new GregorianCalendar();
 		cal.setTime(d);
-		cal.set(Calendar.HOUR, 23);
+		cal.set(Calendar.HOUR_OF_DAY, 23);
 		cal.set(Calendar.MINUTE, 59);
 		cal.set(Calendar.SECOND, 59);
 		log.info("Setting a date to the end of the day from " + d + " to " + cal.getTime());
@@ -125,7 +125,7 @@ public class EvaluationDateUtil {
 	public static boolean isTimeMidnight(Date d) {
 		Calendar cal = new GregorianCalendar();
 		cal.setTime(d);
-		if (cal.get(Calendar.HOUR) == 0 && cal.get(Calendar.MINUTE) == 0 && cal.get(Calendar.SECOND) == 0) {
+		if (cal.get(Calendar.HOUR_OF_DAY) == 0 && cal.get(Calendar.MINUTE) == 0 && cal.get(Calendar.SECOND) == 0) {
 			return true;
 		}
 		return false;
