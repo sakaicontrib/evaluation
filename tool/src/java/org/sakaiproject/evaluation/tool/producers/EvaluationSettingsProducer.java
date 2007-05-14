@@ -191,6 +191,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 				UIMessage.make(showResultsToStudents, "eval-results-stu-inst-date-label", "evalsettings.results.stu.inst.date.label");
 			} else {
 				UIInput studentsDate = UIInput.make(showResultsToStudents, "studentsDate:", "#{evaluationBean.studentsDate}");
+				dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);
 				dateevolver.evolveDateInput(studentsDate, evaluationBean.studentsDate);
 			}
 		} else {
@@ -218,8 +219,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 				UIBoundBoolean instViewCheckbox = UIBoundBoolean.make(showResultsToInst, "instructorViewResults", tempValue);
 				setDisabledAttribute(instViewCheckbox);
 
-				// As we have disabled the check box => RSF will not bind the value =>
-				// binding it explicitly.
+				// As we have disabled the check box => RSF will not bind the value => binding it explicitly.
 				form.parameters.add(new UIELBinding("#{evaluationBean.instructorViewResults}", tempValue));
 			}
 
@@ -228,6 +228,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 				UIMessage.make(showResultsToInst, "eval-results-stu-inst-date-label", "evalsettings.results.stu.inst.date.label");
 			} else {
 				UIInput instructorsDate = UIInput.make(showResultsToInst, "instructorsDate:", "#{evaluationBean.instructorsDate}");
+				dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);
 				dateevolver.evolveDateInput(instructorsDate, evaluationBean.instructorsDate);
 			}
 		} else {
