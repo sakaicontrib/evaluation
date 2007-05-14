@@ -111,8 +111,24 @@ public class EvaluationDateUtil {
 		cal.setTime(d);
 		cal.set(Calendar.HOUR, 23);
 		cal.set(Calendar.MINUTE, 59);
+		cal.set(Calendar.SECOND, 59);
 		log.info("Setting a date to the end of the day from " + d + " to " + cal.getTime());
 		return cal.getTime();
+	}
+
+	/**
+	 * Check if the time portion of a date is set to midnight and return true if it is
+	 * 
+	 * @param d a {@link Date} object
+	 * @return true if time is midnight (00:00:00), false otherwise
+	 */
+	public static boolean isTimeMidnight(Date d) {
+		Calendar cal = new GregorianCalendar();
+		cal.setTime(d);
+		if (cal.get(Calendar.HOUR) == 0 && cal.get(Calendar.MINUTE) == 0 && cal.get(Calendar.SECOND) == 0) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
