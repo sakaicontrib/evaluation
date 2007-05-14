@@ -224,7 +224,7 @@ public class ScaledRenderer implements ItemRenderer {
 			boolean colored = EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED.equals(scaleDisplaySetting);
 
 			UIOutput.make(stepped, "itemNum", displayNumber+"" ); //$NON-NLS-1$ //$NON-NLS-2$
-			UIOutput.make(stepped, "itemText", templateItem.getItem().getItemText()); //$NON-NLS-1$
+			UIVerbatim.make(stepped, "itemText", templateItem.getItem().getItemText()); //$NON-NLS-1$
 
 			UIBranchContainer coloredBranch = null;
 			if (colored) {
