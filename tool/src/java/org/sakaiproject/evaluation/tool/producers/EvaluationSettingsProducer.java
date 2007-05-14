@@ -40,7 +40,7 @@ import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIDisabledDecorator;
-import uk.org.ponder.rsf.evolvers.DateInputEvolver;
+import uk.org.ponder.rsf.evolvers.FormatAwareDateInputEvolver;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
@@ -54,8 +54,8 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  * page or coming backward from "Assign Evaluation to courses" page) or from
  * control panel to edit the existing settings.
  * 
- * @author:Kapil Ahuja (kahuja@vt.edu)
- * @author:Rui Feng (fengr@vt.edu)
+ * @author Kapil Ahuja (kahuja@vt.edu)
+ * @author Rui Feng (fengr@vt.edu)
  */
 public class EvaluationSettingsProducer implements ViewComponentProducer, NavigationCaseReporter {
 
@@ -79,8 +79,15 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		this.externalLogic = externalLogic;
 	}
 
-	private DateInputEvolver dateevolver;
-	public void setDateEvolver(DateInputEvolver dateevolver) {
+	/*
+	 * You can change the date input to accept time as well by uncommenting the lines like this:
+	 * dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_TIME_INPUT);
+	 * and commenting out lines like this:
+	 * dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);
+	 * -AZ
+	 */
+	private FormatAwareDateInputEvolver dateevolver;
+	public void setDateEvolver(FormatAwareDateInputEvolver dateevolver) {
 		this.dateevolver = dateevolver;
 	}
 
@@ -107,23 +114,26 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		Date today = new Date();
 		UIInput startDate = UIInput.make(form, "startDate:", "#{evaluationBean.startDate}");	
 		if (evaluationBean.eval.getId() != null) {
-			// queued evalution
 			if (today.before(evaluationBean.eval.getStartDate())) {
+				// queued evalution
 				UIInput.make(form, "evalStatus", null, "queued");
-			}
-			// started evaluation
-			else {
+			} else {
+				// started evaluation
 				startDate.decorators = new DecoratorList(new UIDisabledDecorator());
 				UIInput.make(form, "evalStatus", null, "active");
 			}
 		} else {
 			UIInput.make(form, "evalStatus", null, "new");
 		}
+		dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);
+		//dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_TIME_INPUT);
 		dateevolver.evolveDateInput(startDate, evaluationBean.startDate);
 
 		UIMessage.make(form, "eval-due-date-header", "evalsettings.due.date.header");
 		UIMessage.make(form, "eval-due-date-desc", "evalsettings.due.date.desc");
 		UIInput dueDate = UIInput.make(form, "dueDate:", "#{evaluationBean.dueDate}");
+		dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);
+		//dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_TIME_INPUT);
 		dateevolver.evolveDateInput(dueDate, evaluationBean.dueDate);
 
 		// Show the "Stop date" text box only if allowed in the System settings
@@ -132,12 +142,16 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 			UIMessage.make(showStopDate, "eval-stop-date-header", "evalsettings.stop.date.header");
 			UIMessage.make(showStopDate, "eval-stop-date-desc", "evalsettings.stop.date.desc");
 			UIInput stopDate = UIInput.make(showStopDate, "stopDate:", "#{evaluationBean.stopDate}");
+			dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);
+			//dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_TIME_INPUT);
 			dateevolver.evolveDateInput(stopDate, evaluationBean.stopDate);
 		}
 
 		UIMessage.make(form, "eval-view-date-header", "evalsettings.view.date.header");
 		UIMessage.make(form, "eval-view-date-desc", "evalsettings.view.date.desc");
 		UIInput viewDate = UIInput.make(form, "viewDate:", "#{evaluationBean.viewDate}");
+		dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);
+		//dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_TIME_INPUT);
 		dateevolver.evolveDateInput(viewDate, evaluationBean.viewDate);
 
 
@@ -148,20 +162,13 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		UIMessage.make(form, "private-warning-desc", "evalsettings.private.warning.desc");
 		UIBoundBoolean.make(form, "resultsPrivate", "#{evaluationBean.eval.resultsPrivate}");
 
-		/*
-		 * (non-Javadoc) Variable is used to decide whether to show the view date
-		 * textbox for student and instructor separately or not.
-		 */
+		// Variable is used to decide whether to show the view date textbox for student and instructor separately or not.
 		boolean sameViewDateForAll = ((Boolean) settings.get(EvalSettings.EVAL_USE_SAME_VIEW_DATES)).booleanValue();
-		/*
-		 * (non-Javadoc) If "EvalSettings.STUDENT_VIEW_RESULTS" is set as
-		 * configurable i.e. NULL in the database OR is set as TRUE in database,
-		 * then show the checkbox. Else do not show the checkbox and just bind the
-		 * value to FALSE.
-		 */
+		// If "EvalSettings.STUDENT_VIEW_RESULTS" is set as configurable i.e. NULL in the database OR is set as TRUE in database,
+		// then show the checkbox. Else do not show the checkbox and just bind the value to FALSE.
 		Boolean tempValue = (Boolean) settings.get(EvalSettings.STUDENT_VIEW_RESULTS);
-		if (tempValue == null || tempValue.booleanValue()) {
 
+		if (tempValue == null || tempValue.booleanValue()) {
 			UIBranchContainer showResultsToStudents = UIBranchContainer.make(form, "showResultsToStudents:");
 			UIMessage.make(showResultsToStudents, "eval-results-viewable-students", "evalsettings.results.viewable.students");
 
@@ -189,6 +196,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		} else {
 			form.parameters.add(new UIELBinding("#{evaluationBean.studentViewResults}", Boolean.FALSE));
 		}
+
 		/*
 		 * (non-javadoc) If "EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS" is set as
 		 * configurable i.e. NULL in the database OR is set as TRUE in database,

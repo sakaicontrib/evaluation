@@ -780,9 +780,11 @@ public class EvaluationBean {
 		 */
 		checkEvalStartDate();
 
-		// force the due date and stop date to the end of the day
-		eval.setDueDate( EvaluationDateUtil.getEndOfDayDate( eval.getDueDate() ) );
-		if (eval.getStopDate() != null) {
+		// force the due date and stop date to the end of the day if set to 00:00:00
+		if ( EvaluationDateUtil.isTimeMidnight( eval.getDueDate() ) ) {
+			eval.setDueDate( EvaluationDateUtil.getEndOfDayDate( eval.getDueDate() ) );
+		}
+		if (eval.getStopDate() != null && EvaluationDateUtil.isTimeMidnight( eval.getStopDate() ) ) {
 			log.info("Forcing date to end of day for non null stop date: " + eval.getStopDate());
 			eval.setStopDate( EvaluationDateUtil.getEndOfDayDate( eval.getStopDate() ) );
 		}
