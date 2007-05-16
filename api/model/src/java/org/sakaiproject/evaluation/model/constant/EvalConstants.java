@@ -259,11 +259,10 @@ public class EvalConstants {
 	 */
 	public static final String INSTRUCTOR_REQUIRED = "Required";
 
-
 	/**
-	 * EmailTemplate: defaultType: Identifies the default available template
+	 * EmailTemplate: defaultType: Identifies the default created template
 	 */
-	public final static String EMAIL_TEMPLATE_DEFAULT_CREATED = "defaultAvailable";
+	public final static String EMAIL_TEMPLATE_DEFAULT_CREATED = "defaultCreated";
 	/**
 	 * EmailTemplate search setting:
 	 * This identifies a template as the "evaluation created template",
@@ -274,7 +273,7 @@ public class EvalConstants {
 	public static final String EMAIL_TEMPLATE_CREATED = "Created";
 	/**
 	 * EmailTemplate message setting:
-	 * This is the default template for when the evaluation is available for users to take<br/>
+	 * This is the default template for when the evaluation is created, to which an instructor may add questions<br/>
 	 * Replaceable strings:<br/>
 	 * $EvalTitle - the title of this evaluation
 	 * $EvalStartDate - the start date of this evaluation
@@ -287,7 +286,7 @@ public class EvalConstants {
 	 * $URLtoViewResults - the direct URL to view results for this evaluation
 	 * $URLtoSystem - the main URL to the system this is running in
 	 */
-	public static final String EMAIL_TEMPLATE_CREATED_TEXT = 
+	public static final String EMAIL_CREATED_DEFAULT_TEXT = 
 		"All information submitted to the Evaluation System is confidential. Instructors cannot identify which submissions belong to which students. Students are required to login to the system for the sole purpose of providing students access to the appropriate evaluations for their associated courses. Instructors can only view general statistics as allowed by the university. Please send privacy concerns to $HelpdeskEmail. \n" +
 		"\n" +
 		"An evaluation ($EvalTitle) has been created for: $EvalGroupTitle.\n" +
@@ -300,7 +299,6 @@ public class EvalConstants {
 		"Thank you for your cooperation.\n" +
 		"------------------------------------------------------------\n" +
 		"Should you encounter any technical difficulty in working with the evaluation, please send an email to $HelpdeskEmail clearly indicating the problem you encountered. For any other concerns please contact your department.\n";
-
 
 	/**
 	 * EmailTemplate: defaultType: Identifies the default available template
