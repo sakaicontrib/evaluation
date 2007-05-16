@@ -124,7 +124,6 @@ public class PreloadDataImpl {
 		evaluationDao.save(new EvalConfig(new Date(), SettingsLogicUtils.getName(key), value));
 	}
 
-
 	/**
 	 * Preload the default email template
 	 */
@@ -134,9 +133,13 @@ public class PreloadDataImpl {
 		if (evaluationDao.findAll(EvalEmailTemplate.class).isEmpty()) {
 
 			evaluationDao.save(new EvalEmailTemplate(new Date(), ADMIN_OWNER,
+					EvalConstants.EMAIL_CREATED_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_DEFAULT_CREATED));
+			evaluationDao.save(new EvalEmailTemplate(new Date(), ADMIN_OWNER,
 					EvalConstants.EMAIL_AVAILABLE_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_DEFAULT_AVAILABLE));
 			evaluationDao.save(new EvalEmailTemplate(new Date(), ADMIN_OWNER,
 					EvalConstants.EMAIL_REMINDER_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_DEFAULT_REMINDER));
+			evaluationDao.save(new EvalEmailTemplate(new Date(), ADMIN_OWNER,
+					EvalConstants.EMAIL_RESULTS_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_DEFAULT_RESULTS));
 
 			log.info("Preloaded " + evaluationDao.countAll(EvalEmailTemplate.class) + " evaluation EmailTemplates");
 		}
