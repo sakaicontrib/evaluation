@@ -166,24 +166,24 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		boolean sameViewDateForAll = ((Boolean) settings.get(EvalSettings.EVAL_USE_SAME_VIEW_DATES)).booleanValue();
 		// If "EvalSettings.STUDENT_VIEW_RESULTS" is set as configurable i.e. NULL in the database OR is set as TRUE in database,
 		// then show the checkbox. Else do not show the checkbox and just bind the value to FALSE.
-		Boolean tempValue = (Boolean) settings.get(EvalSettings.STUDENT_VIEW_RESULTS);
+		Boolean studentSetting = (Boolean) settings.get(EvalSettings.STUDENT_VIEW_RESULTS);
 
-		if (tempValue == null || tempValue.booleanValue()) {
+		if (studentSetting == null || studentSetting.booleanValue()) {
 			UIBranchContainer showResultsToStudents = UIBranchContainer.make(form, "showResultsToStudents:");
 			UIMessage.make(showResultsToStudents, "eval-results-viewable-students", "evalsettings.results.viewable.students");
 
 			// If system setting was null implies normal checkbox. If it was TRUE then
 			// a disabled selected checkbox
-			if (tempValue == null) {
-				UIBoundBoolean.make(showResultsToStudents, "studentViewResults", "#{evaluationBean.studentViewResults}", tempValue);
+			if (studentSetting == null) {
+				UIBoundBoolean.make(showResultsToStudents, "studentViewResults", "#{evaluationBean.studentViewResults}", studentSetting);
 			} else {
 				// Display only (disabled) and selected check box
-				UIBoundBoolean stuViewCheckbox = UIBoundBoolean.make(showResultsToStudents, "studentViewResults", tempValue);
+				UIBoundBoolean stuViewCheckbox = UIBoundBoolean.make(showResultsToStudents, "studentViewResults", studentSetting);
 				setDisabledAttribute(stuViewCheckbox);
 
 				// As we have disabled the check box => RSF will not bind the value =>
 				// binding it explicitly.
-				form.parameters.add(new UIELBinding("#{evaluationBean.studentViewResults}", tempValue));
+				form.parameters.add(new UIELBinding("#{evaluationBean.studentViewResults}", studentSetting));
 			}
 
 			// If same view date all then show a label else show a text box.
@@ -204,23 +204,23 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		 * then show the checkbox. Else do not show the checkbox and just bind the
 		 * value to FALSE.
 		 */
-		tempValue = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
-		if (tempValue == null || tempValue.booleanValue()) {
+		studentSetting = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
+		if (studentSetting == null || studentSetting.booleanValue()) {
 
 			UIBranchContainer showResultsToInst = UIBranchContainer.make(form, "showResultsToInst:");
 			UIMessage.make(showResultsToInst, "eval-results-viewable-instructors", "evalsettings.results.viewable.instructors");
 
 			// If system setting was null implies normal checkbox. If it was TRUE then
 			// a disabled selected checkbox
-			if (tempValue == null) {
-				UIBoundBoolean.make(showResultsToInst, "instructorViewResults", "#{evaluationBean.instructorViewResults}", tempValue);
+			if (studentSetting == null) {
+				UIBoundBoolean.make(showResultsToInst, "instructorViewResults", "#{evaluationBean.instructorViewResults}", studentSetting);
 			} else {
 				// Display only (disabled) and selected check box
-				UIBoundBoolean instViewCheckbox = UIBoundBoolean.make(showResultsToInst, "instructorViewResults", tempValue);
+				UIBoundBoolean instViewCheckbox = UIBoundBoolean.make(showResultsToInst, "instructorViewResults", studentSetting);
 				setDisabledAttribute(instViewCheckbox);
 
 				// As we have disabled the check box => RSF will not bind the value => binding it explicitly.
-				form.parameters.add(new UIELBinding("#{evaluationBean.instructorViewResults}", tempValue));
+				form.parameters.add(new UIELBinding("#{evaluationBean.instructorViewResults}", studentSetting));
 			}
 
 			// If same view date all then show a label else show a text box.
@@ -248,8 +248,8 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		 * three "if's" below are evaluated to true.
 		 */
 		boolean showStudentCompletionHeader = false;
-		tempValue = (Boolean) settings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED);
-		if (tempValue == null || tempValue.booleanValue()) {
+		studentSetting = (Boolean) settings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED);
+		if (studentSetting == null || studentSetting.booleanValue()) {
 
 			showStudentCompletionHeader = true;
 			UIBranchContainer showBlankQuestionAllowedToStut = UIBranchContainer.make(form, "showBlankQuestionAllowedToStut:");
@@ -258,16 +258,16 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 
 			// If system setting was null implies normal checkbox. If it was TRUE then
 			// a disabled selected checkbox
-			if (tempValue == null) {
-				UIBoundBoolean.make(showBlankQuestionAllowedToStut, "blankResponsesAllowed", "#{evaluationBean.eval.blankResponsesAllowed}", tempValue);
+			if (studentSetting == null) {
+				UIBoundBoolean.make(showBlankQuestionAllowedToStut, "blankResponsesAllowed", "#{evaluationBean.eval.blankResponsesAllowed}", studentSetting);
 			} else {
 				// Display only (disabled) and selected check box
-				UIBoundBoolean stuLeaveUnanswered = UIBoundBoolean.make(showBlankQuestionAllowedToStut, "blankResponsesAllowed", tempValue);
+				UIBoundBoolean stuLeaveUnanswered = UIBoundBoolean.make(showBlankQuestionAllowedToStut, "blankResponsesAllowed", studentSetting);
 				setDisabledAttribute(stuLeaveUnanswered);
 
 				// As we have disabled the check box => RSF will not bind the value =>
 				// binding it explicitly.
-				form.parameters.add(new UIELBinding("#{evaluationBean.eval.blankResponsesAllowed}", tempValue));
+				form.parameters.add(new UIELBinding("#{evaluationBean.eval.blankResponsesAllowed}", studentSetting));
 			}
 		} else {
 			form.parameters.add(new UIELBinding("#{evaluationBean.eval.blankResponsesAllowed}", Boolean.FALSE));
@@ -279,8 +279,8 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		 * then show the checkbox. Else do not show the checkbox and just bind the
 		 * value to FALSE.
 		 */
-		tempValue = (Boolean) settings.get(EvalSettings.STUDENT_MODIFY_RESPONSES);
-		if (tempValue == null || tempValue.booleanValue()) {
+		studentSetting = (Boolean) settings.get(EvalSettings.STUDENT_MODIFY_RESPONSES);
+		if (studentSetting == null || studentSetting.booleanValue()) {
 
 			showStudentCompletionHeader = true;
 			UIBranchContainer showModifyResponsesAllowedToStu = UIBranchContainer.make(form, "showModifyResponsesAllowedToStu:");
@@ -289,90 +289,115 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 
 			// If system setting was null implies normal checkbox. If it was TRUE then
 			// a disabled selected checkbox
-			if (tempValue == null) {
-				UIBoundBoolean.make(showModifyResponsesAllowedToStu, "modifyResponsesAllowed", "#{evaluationBean.eval.modifyResponsesAllowed}", tempValue);
+			if (studentSetting == null) {
+				UIBoundBoolean.make(showModifyResponsesAllowedToStu, "modifyResponsesAllowed", "#{evaluationBean.eval.modifyResponsesAllowed}", studentSetting);
 			} else {
 				// Display only (disabled) and selected check box
-				UIBoundBoolean stuModifyResponses = UIBoundBoolean.make(showModifyResponsesAllowedToStu, "modifyResponsesAllowed", tempValue);
+				UIBoundBoolean stuModifyResponses = UIBoundBoolean.make(showModifyResponsesAllowedToStu, "modifyResponsesAllowed", studentSetting);
 				setDisabledAttribute(stuModifyResponses);
 
-				// As we have disabled the check box => RSF will not bind the value =>
-				// binding it explicitly.
-				form.parameters.add(new UIELBinding("#{evaluationBean.eval.modifyResponsesAllowed}", tempValue));
+				// Since we have disabled the check box => RSF will not bind the value => binding it explicitly.
+				form.parameters.add(new UIELBinding("#{evaluationBean.eval.modifyResponsesAllowed}", studentSetting));
 			}
 		} else {
 			form.parameters.add(new UIELBinding("#{evaluationBean.eval.modifyResponsesAllowed}", Boolean.FALSE));
 		}
-		// This options are commented for some time.
-		if (false) {
-			showStudentCompletionHeader = true;
-			UIBranchContainer showUnregAllowedOption = UIBranchContainer.make(form, "showUnregAllowedOption:");
-			UIMessage.make(showUnregAllowedOption, "unregistered-allowed-desc", "evalsettings.unregistered.allowed.desc");
-			UIMessage.make(showUnregAllowedOption, "unregistered-allowed-note", "evalsettings.unregistered.allowed.note");
-			UIBoundBoolean.make(showUnregAllowedOption, "unregisteredAllowed", "#{evaluationBean.eval.unregisteredAllowed}");
-		}
+
+		// Not sure why this block is here so I commented it out -AZ
+//		if (false) {
+//			showStudentCompletionHeader = true;
+//			UIBranchContainer showUnregAllowedOption = UIBranchContainer.make(form, "showUnregAllowedOption:");
+//			UIMessage.make(showUnregAllowedOption, "unregistered-allowed-desc", "evalsettings.unregistered.allowed.desc");
+//			UIMessage.make(showUnregAllowedOption, "unregistered-allowed-note", "evalsettings.unregistered.allowed.note");
+//			UIBoundBoolean.make(showUnregAllowedOption, "unregisteredAllowed", "#{evaluationBean.eval.unregisteredAllowed}");
+//		}
+
 		/*
-		 * (non-javadoc) Continued from the note above, that is show
-		 * "student-completion-settings-header" only if there are any student
+		 * Continued from the note above, that is show "student-completion-settings-header" only if there are any student
 		 * completion settings to be displayed on the page.
 		 */
 		if (showStudentCompletionHeader) {
 			UIBranchContainer showStudentCompletionDiv = UIBranchContainer.make(form, "showStudentCompletionDiv:");
 			UIMessage.make(showStudentCompletionDiv, "student-completion-settings-header", "evalsettings.student.completion.settings.header");
 		}
-		/*
-		 * (non-javadoc) If the person is an admin (any kind), then only we need to
-		 * show these instructor opt in/out settings.
-		 */
-		if (externalLogic.isUserAdmin(externalLogic.getCurrentUserId())) {
-			UIBranchContainer showInstUseFromAbove = UIBranchContainer.make(form, "showInstUseFromAbove:");
-			UIMessage.make(showInstUseFromAbove, "admin-settings-header", "evalsettings.admin.settings.header");
-			UIMessage.make(showInstUseFromAbove, "admin-settings-instructions", "evalsettings.admin.settings.instructions");
-			UIMessage.make(showInstUseFromAbove, "instructor-opt-desc", "evalsettings.instructor.opt.desc");
-			/*
-			 * (non-javadoc) If "EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE" is
-			 * set as configurable i.e. NULL in the database then show the instructor
-			 * opt select box. Else just show the value as label.
-			 */
-			String[] instructorOptLabels = { "evalsettings.instructors.label.opt.out", "evalsettings.instructors.label.opt.in",
-					"evalsettings.instructors.label.required" };
-			if (settings.get(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE) == null) {
-				UIBranchContainer showInstUseFromAboveOptions = UIBranchContainer.make(showInstUseFromAbove, "showInstUseFromAboveOptions:");
 
-				UISelect.make(showInstUseFromAboveOptions, "instructorOpt", EvaluationConstant.INSTRUCTOR_OPT_VALUES, instructorOptLabels,
-						"#{evaluationBean.eval.instructorOpt}").setMessageKeys();
+		// ADMIN SETTINGS SECTION
+		UIMessage.make(form, "admin-settings-header", "evalsettings.admin.settings.header");
+		
+		UIMessage.make(form, "auth-control-instructions", "evalsettings.auth.control.instructions");
+		UIMessage.make(form, "auth-control-header", "evalsettings.auth.control.header");
+
+		String[] authControlLabels = { 
+				"evalsettings.auth.control.label.required", 
+				"evalsettings.auth.control.label.key",
+				"evalsettings.auth.control.label.none"
+			};
+		UISelect.make(form, "auth-control-choose", EvaluationConstant.AUTHCONTROL_VALUES, 
+				authControlLabels, "#{evaluationBean.eval.authControl}").setMessageKeys();
+
+		if (externalLogic.isUserAdmin(externalLogic.getCurrentUserId())) {
+			// If the person is an admin (any kind), then we need to show these instructor opt in/out settings
+
+			UIMessage.make(form, "instructor-opt-instructions", "evalsettings.admin.settings.instructions");
+			UIMessage.make(form, "instructor-opt-header", "evalsettings.instructor.opt.desc");
+
+			// If "EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE" is set as configurable 
+			// i.e. NULL in the database then show the instructor opt select box. Else just show the value as label
+			String[] instructorOptLabels = { 
+					"evalsettings.instructors.label.opt.out", 
+					"evalsettings.instructors.label.opt.in",
+					"evalsettings.instructors.label.required"
+				};
+			String instUseFromAboveValue = (String) settings.get(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE);
+			if (instUseFromAboveValue == null) {
+				UISelect.make(form, "instructorOpt", EvaluationConstant.INSTRUCTOR_OPT_VALUES, 
+						instructorOptLabels, "#{evaluationBean.eval.instructorOpt}").setMessageKeys();
 			} else {
-				UIBranchContainer showInstUseFromAboveLabel = UIBranchContainer.make(showInstUseFromAbove, "showInstUseFromAboveLabel:");
-				String instUseFromAboveValue = (String) settings.get(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE);
 				int index = ArrayUtil.indexOf(EvaluationConstant.INSTRUCTOR_OPT_VALUES, instUseFromAboveValue);
 				String instUseFromAboveLabel = instructorOptLabels[index];
 				// Displaying the label corresponding to INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE value set as system property
-				UIMessage.make(showInstUseFromAboveLabel, "instUseFromAboveLabel", instUseFromAboveLabel);
+				UIMessage.make(form, "instructorOptLabel", instUseFromAboveLabel);
 				// Doing the binding of this INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE value so that it can be saved in the database
 				form.parameters.add(new UIELBinding("#{evaluationBean.eval.instructorOpt}", instUseFromAboveValue));
 			}
 		}
 
+
+		// EVALUATION REMINDERS SECTION
 		UIMessage.make(form, "eval-reminder-settings-header", "evalsettings.reminder.settings.header");
-		UIInternalLink.make(form, "emailAvailable_link", UIMessage.make("evalsettings.available.mail.link"), new EmailViewParameters(
-				PreviewEmailProducer.VIEW_ID, null, EvalConstants.EMAIL_TEMPLATE_AVAILABLE));
+
+		// email available template link
+		UIInternalLink.make(form, "emailAvailable_link", UIMessage.make("evalsettings.available.mail.link"), 
+				new EmailViewParameters(PreviewEmailProducer.VIEW_ID, null, EvalConstants.EMAIL_TEMPLATE_AVAILABLE));
 		UIMessage.make(form, "eval-available-mail-desc", "evalsettings.available.mail.desc");
+
+		// email reminder control
 		UIMessage.make(form, "reminder-noresponders-header", "evalsettings.reminder.noresponders.header");
-
-		String[] reminderEmailDaysLabels = { "evalsettings.reminder.days.0", "evalsettings.reminder.days.1", "evalsettings.reminder.days.2",
-				"evalsettings.reminder.days.3", "evalsettings.reminder.days.4", "evalsettings.reminder.days.5", "evalsettings.reminder.days.6",
+		String[] reminderEmailDaysLabels = { 
+				"evalsettings.reminder.days.0", 
+				"evalsettings.reminder.days.1", 
+				"evalsettings.reminder.days.2",
+				"evalsettings.reminder.days.3", 
+				"evalsettings.reminder.days.4", 
+				"evalsettings.reminder.days.5", 
+				"evalsettings.reminder.days.6",
 				"evalsettings.reminder.days.7" };
-		// Reminder email select box
-		UISelect.make(form, "reminderDays", 
-				EvaluationConstant.REMINDER_EMAIL_DAYS_VALUES, reminderEmailDaysLabels, 
-				"#{evaluationBean.eval.reminderDays}").setMessageKeys();
+		UISelect.make(form, "reminderDays", EvaluationConstant.REMINDER_EMAIL_DAYS_VALUES, 
+				reminderEmailDaysLabels, "#{evaluationBean.eval.reminderDays}").setMessageKeys();
 
-		UIInternalLink.make(form, "emailReminder_link", UIMessage.make("evalsettings.reminder.mail.link"), new EmailViewParameters(
-				PreviewEmailProducer.VIEW_ID, null, EvalConstants.EMAIL_TEMPLATE_REMINDER));
+		// email reminder template link
+		UIInternalLink.make(form, "emailReminder_link", UIMessage.make("evalsettings.reminder.mail.link"), 
+				new EmailViewParameters(PreviewEmailProducer.VIEW_ID, null, EvalConstants.EMAIL_TEMPLATE_REMINDER));
 		UIMessage.make(form, "eval-reminder-mail-desc", "evalsettings.reminder.mail.desc");
+
+		// email from address control
+		String defaultEmail = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
+		UIMessage.make(form, "eval-from-email-note", "evalsettings.email.sent.from", new String[] {defaultEmail});
 		UIMessage.make(form, "eval-from-email-header", "evalsettings.from.email.header");
 		UIInput.make(form, "reminderFromEmail", "#{evaluationBean.eval.reminderFromEmail}");
 
+
+		// EVAL SETTINGS SAVING CONTROLS
 		// if this evaluation is already saved, show "Save Settings" button else this is the "Continue to Assign to Courses" button
 		if (evaluationBean.eval.getId() == null) {
 			UICommand.make(form, "continueAssigning", UIMessage.make("evalsettings.continue.assigning.link"), "#{evaluationBean.continueAssigningAction}");

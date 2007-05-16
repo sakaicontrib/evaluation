@@ -205,6 +205,9 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 		if (evaluation.getResultsPrivate() == null) {
 			evaluation.setResultsPrivate( Boolean.FALSE );
 		}
+		if (evaluation.getAuthControl() == null) {
+			evaluation.setAuthControl( EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ );
+		}
 
 		// system setting checks for things like allowing users to modify responses
 		Boolean systemModifyResponses = (Boolean) settings.get( EvalSettings.STUDENT_MODIFY_RESPONSES );

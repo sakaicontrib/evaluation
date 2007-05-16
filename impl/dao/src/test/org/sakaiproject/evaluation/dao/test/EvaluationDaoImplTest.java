@@ -107,7 +107,8 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 				etdl.yesterday, etdl.tomorrow, etdl.tomorrow, etdl.threeDaysFuture, null, null,
 				EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.INSTRUCTOR_OPT_IN, 
 				new Integer(1), null, null, null, null, etdl.templatePublicUnused, null, null,
-				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, EvalTestDataLoad.UNLOCKED);
+				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, EvalTestDataLoad.UNLOCKED,
+				EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ);
 		evaluationDao.save( evalUnLocked );
 
 	}
@@ -734,7 +735,8 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 					etdl.tomorrow, etdl.threeDaysFuture, etdl.threeDaysFuture, etdl.fourDaysFuture, null, null,
 					EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.INSTRUCTOR_OPT_IN, 
 					new Integer(1), null, null, null, null, etdl.templatePublic, null, null,
-					Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, EvalTestDataLoad.UNLOCKED)
+					Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, EvalTestDataLoad.UNLOCKED,
+					EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ)
 				);
 			Assert.fail("Should have thrown an exception");
 		} catch (IllegalStateException e) {

@@ -135,6 +135,15 @@ public class EvaluationConstant {
 		"0", "1", "2", "4", "8", "12", "16", "20", "24", "36", "48", "96"};	
 
 	/**
+	 * Defines the allowed values for the auth control pulldown in the evaluation settings
+	 */
+	public static final String[] AUTHCONTROL_VALUES = new String[] {
+		EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ,
+		EvalConstants.EVALUATION_AUTHCONTROL_KEY,
+		EvalConstants.EVALUATION_AUTHCONTROL_NONE
+	};
+
+	/**
 	 * Administrative (system settings) page, 
 	 * values corresponding to "Yes", "No", "Configurable"  
 	 */

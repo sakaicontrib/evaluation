@@ -448,6 +448,21 @@ public class EvalConstants {
 	 */
 	public static final String EVALUATION_STATE_VIEWABLE = "Viewable";
 
+
+	/**
+	 * Evaluation authentication control: Authentication required to access this evaluation
+	 */
+	public static final String EVALUATION_AUTHCONTROL_AUTH_REQ = "AUTH";
+	/**
+	 * Evaluation authentication control: Authentication key required to access this evaluation (no central auth needed)
+	 */
+	public static final String EVALUATION_AUTHCONTROL_KEY = "KEY";
+	/**
+	 * Evaluation authentication control: Authentication not required to access this evaluation (anonymous allowed)
+	 */
+	public static final String EVALUATION_AUTHCONTROL_NONE = "NONE";
+
+
 	/**
 	 * Hierarchy Permission:
 	 * User may view all data at the associated hierarchy node and below,
