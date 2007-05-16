@@ -107,7 +107,8 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 				EvalConstants.EVALUATION_STATE_CLOSED, EvalConstants.INSTRUCTOR_OPT_IN, 
 				Integer.valueOf(2), null, null, null, null, etdl.templateAdmin, null, null,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, 
-				EvalTestDataLoad.LOCKED);
+				EvalTestDataLoad.LOCKED,
+				EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ);
 		evaluationDao.save(evaluationClosedTwo);
 	}
 
