@@ -62,9 +62,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * @author: Will Humphries (whumphri@vt.edu)
  * @author: Kapil Ahuja (kahuja@vt.edu)
  */
-
-public class TakeEvalProducer implements ViewComponentProducer,
-	ViewParamsReporter, NavigationCaseReporter {
+public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
 
 	public static final String VIEW_ID = "take_eval"; //$NON-NLS-1$
 	public String getViewID() {
