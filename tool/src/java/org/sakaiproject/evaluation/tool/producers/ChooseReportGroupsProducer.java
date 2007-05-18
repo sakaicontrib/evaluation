@@ -36,55 +36,57 @@ public class ChooseReportGroupsProducer implements ViewComponentProducer, Naviga
 
 	public ViewParameters getViewParameters() {
 		return new TemplateViewParameters(VIEW_ID, null);
-	}	
+	}
 
 	private EvalEvaluationsLogic evalsLogic;
 	public void setEvalsLogic(EvalEvaluationsLogic evalsLogic) {
 		this.evalsLogic = evalsLogic;
 	}
-	
+
 	public ReportsBean reportsBean;
 	public void setReportsBean(ReportsBean reportsBean) {
 		this.reportsBean = reportsBean;
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
+	 */
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
-		UIMessage.make(tofill, "report-groups-title","reportgroups.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
-		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID)); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "report-groups-title", "reportgroups.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIInternalLink.make(tofill, "summary-toplink", 
+				UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
 		TemplateViewParameters evalViewParams = (TemplateViewParameters) viewparams;
 		if (evalViewParams.templateId != null) {
 			UIForm form = UIForm.make(tofill, "report-groups-form");
-			UIMessage.make(form , "report-group-main-message", "reportgroups.main.message"); //$NON-NLS-1$ //$NON-NLS-2$		
-			Long[] evalIds = {evalViewParams.templateId};
+			UIMessage.make(form, "report-group-main-message", "reportgroups.main.message"); //$NON-NLS-1$ //$NON-NLS-2$		
+			Long[] evalIds = { evalViewParams.templateId };
 			Map evalGroups = evalsLogic.getEvaluationGroups(evalIds, false);
 			List groups = (List) evalGroups.get(evalViewParams.templateId);
 			form.parameters.add(new UIELBinding("#{reportsBean.evalId}", evalViewParams.templateId));
 			UIBranchContainer groupBranch = null;
-			//fxn call to backing bean to set groups in backing bean, and make a list there
-			//reportGroupsBean.setPossiblegroups(groups);
-			for(int i=0;i<groups.size();i++){
-				groupBranch=UIBranchContainer.make(form,"groupRow:",new Integer(i).toString());
+			// fxn call to backing bean to set groups in backing bean, and make
+			// a list there
+			// reportGroupsBean.setPossiblegroups(groups);
+			for (int i = 0; i < groups.size(); i++) {
+				groupBranch = UIBranchContainer.make(form, "groupRow:", i+"");
 				EvalGroup currGroup = (EvalGroup) groups.get(i);
-				//checkbox - groupCheck
+				// checkbox - groupCheck
 				UIBoundBoolean.make(groupBranch, "groupCheck",
-						"#{reportsBean.groupIds."+currGroup.evalGroupId+"}", Boolean.FALSE); //$NON-NLS-1$ //$NON-NLS-2$
-				//uioutput - groupname
+						"#{reportsBean.groupIds." + currGroup.evalGroupId + "}", Boolean.FALSE); //$NON-NLS-1$ //$NON-NLS-2$
+				// uioutput - groupname
 				UIOutput.make(groupBranch, "groupName", currGroup.title);
 			}
-			//uicommand submit
-			UICommand.make(form, "viewReport", UIMessage					//$NON-NLS-1$
-					.make("general.submit.button"), "#{reportsBean.chooseGroupsAction}"); 	
+			// uicommand submit
+			UICommand.make(form, "viewReport", UIMessage.make("general.submit.button"), "#{reportsBean.chooseGroupsAction}");
 		}
-		
-		
+
 	}
-	
+
 	public List reportNavigationCases() {
 		List i = new ArrayList();
 		i.add(new NavigationCase("success", new TemplateViewParameters(ViewReportProducer.VIEW_ID, null), ARIResult.FLOW_ONESTEP));
-
 		return i;
 	}
 }

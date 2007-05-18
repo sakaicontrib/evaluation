@@ -88,7 +88,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
 			String selectID = siteCheckboxes.getFullID();
 			    
 			for (int i = 0; i < ids.length; ++i){
-			    UIBranchContainer checkboxRow = UIBranchContainer.make(form, "sites:"); //$NON-NLS-1$
+			    UIBranchContainer checkboxRow = UIBranchContainer.make(form, "sites:", i+""); //$NON-NLS-1$
 				UISelectChoice.make(checkboxRow, "siteId", selectID, i); //$NON-NLS-1$
 				UIOutput.make(checkboxRow, "siteTitle", (String) labels[i]); //$NON-NLS-1$
 			 }

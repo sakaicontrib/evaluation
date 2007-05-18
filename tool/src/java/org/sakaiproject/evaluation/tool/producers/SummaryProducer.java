@@ -174,8 +174,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			for (Iterator itEvals = evalsToTake.iterator(); itEvals.hasNext();) {
 				EvalEvaluation eval = (EvalEvaluation) itEvals.next();
 
-				UIBranchContainer evalrow = UIBranchContainer.make(evalBC, 
-						"evaluationsList:", eval.getId().toString() ); //$NON-NLS-1$
+				UIBranchContainer evalrow = UIBranchContainer.make(evalBC, "evaluationsList:", eval.getId().toString() ); //$NON-NLS-1$
 
 				UIOutput.make(evalrow, "evaluationTitle", eval.getTitle() ); //$NON-NLS-1$
 				UIOutput.make(evalrow, "evaluationStartDate", df.format(eval.getStartDate()) ); //$NON-NLS-1$
@@ -206,8 +205,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 							// TODO - do something when the context matches
 						}
 
-						UIBranchContainer evalcourserow = UIBranchContainer.make(evalrow, 
-								"evaluationsCourseList:", context ); //$NON-NLS-1$
+						UIBranchContainer evalcourserow = UIBranchContainer.make(evalrow, "evaluationsCourseList:", context ); //$NON-NLS-1$
 
 						// set status
 						if (response != null && response.getEndTime() != null) {
@@ -370,7 +368,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			if (evaluatedContexts.size() > 0) {
 				for (int i=0; i<evaluatedContexts.size(); i++) {
 					EvalGroup c = (EvalGroup) evaluatedContexts.get(i);
-					UIBranchContainer evaluatedBC = UIBranchContainer.make(contextsBC, "evaluatedList:"); //$NON-NLS-1$
+					UIBranchContainer evaluatedBC = UIBranchContainer.make(contextsBC, "evaluatedList:", i+""); //$NON-NLS-1$
 					UIOutput.make(evaluatedBC, "evaluatedListTitle", c.title); //$NON-NLS-1$
 				}
 			} else {
@@ -382,7 +380,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			if (evaluateContexts.size() > 0) {
 				for (int i=0; i<evaluateContexts.size(); i++) {
 					EvalGroup c = (EvalGroup) evaluateContexts.get(i);
-					UIBranchContainer evaluateBC = UIBranchContainer.make(contextsBC, "evaluateList:"); //$NON-NLS-1$
+					UIBranchContainer evaluateBC = UIBranchContainer.make(contextsBC, "evaluateList:", i+""); //$NON-NLS-1$
 					UIOutput.make(evaluateBC, "evaluateListTitle", c.title); //$NON-NLS-1$
 				}
 			} else {

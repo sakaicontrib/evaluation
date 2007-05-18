@@ -54,7 +54,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
 public class EvaluationStartProducer implements ViewComponentProducer, NavigationCaseReporter, ViewParamsReporter {
 	
-	public static final String VIEW_ID = "evaluation_start"; //$NON-NLS-1$
+	public static final String VIEW_ID = "evaluation_start";
 		
 	private EvalExternalLogic external;
 	public void setExternal(EvalExternalLogic external) {
@@ -78,21 +78,21 @@ public class EvaluationStartProducer implements ViewComponentProducer, Navigatio
 	
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
-		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID));			 //$NON-NLS-1$ //$NON-NLS-2$
+		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID));			
 		
-		UIMessage.make(tofill, "start-eval-title", "starteval.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
-		UIMessage.make(tofill, "start-eval-header", "starteval.header"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "start-eval-title", "starteval.page.title");
+		UIMessage.make(tofill, "start-eval-header", "starteval.header");
 		
 		TemplateViewParameters evalViewParams = (TemplateViewParameters) viewparams;
 
-		UIForm form = UIForm.make(tofill, "basic-form"); //$NON-NLS-1$
+		UIForm form = UIForm.make(tofill, "basic-form");
 		
-		UIMessage.make(form, "title-header","starteval.title.header"); //$NON-NLS-1$ //$NON-NLS-2$
-		UIMessage.make(form, "instructions-header", "starteval.instructions.header"); //$NON-NLS-1$ //$NON-NLS-2$
-		UIMessage.make(form, "instructions-desc", "starteval.instructions.desc"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(form, "title-header","starteval.title.header");
+		UIMessage.make(form, "instructions-header", "starteval.instructions.header");
+		UIMessage.make(form, "instructions-desc", "starteval.instructions.desc");
 		
-		UIInput.make(form, "title", "#{evaluationBean.eval.title}"); //$NON-NLS-1$ //$NON-NLS-2$
-		UIInput instructions = UIInput.make(form, "instructions:", "#{evaluationBean.eval.instructions}"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIInput.make(form, "title", "#{evaluationBean.eval.title}");
+		UIInput instructions = UIInput.make(form, "instructions:", "#{evaluationBean.eval.instructions}");
 		instructions.decorators = new DecoratorList(new UITextDimensionsDecorator(60, 4));
 		richTextEvolver.evolveTextInput(instructions);
 
@@ -101,9 +101,8 @@ public class EvaluationStartProducer implements ViewComponentProducer, Navigatio
 
 			//List templateList = evaluationBean.getTemplatesToDisplay();
 			List templateList = templatesLogic.getTemplatesForUser(external.getCurrentUserId(), null, false);
-			if(templateList !=null && templateList.size()>0){
-				
-				UIBranchContainer chooseTemplate = UIBranchContainer.make(form, "chooseTemplate:"); //$NON-NLS-1$
+			if (templateList != null && templateList.size() > 0) {
+				UIBranchContainer chooseTemplate = UIBranchContainer.make(form, "chooseTemplate:");
 
 				//Preparing the string array of template titles and corresponding id's 
 				String[] values = new String[templateList.size()];
@@ -116,47 +115,51 @@ public class EvaluationStartProducer implements ViewComponentProducer, Navigatio
 					owners[count] = ((EvalTemplate)(templateList.get(count))).getOwner();
 				}
 				
-				UIMessage.make(chooseTemplate, "choose-template-header", "starteval.choose.template.header"); //$NON-NLS-1$ //$NON-NLS-2$
-				UIMessage.make(chooseTemplate, "choose-template-desc", "starteval.choose.template.desc"); //$NON-NLS-1$ //$NON-NLS-2$
-				UIMessage.make(chooseTemplate, "template-title-header", "starteval.template.title.header"); //$NON-NLS-1$ //$NON-NLS-2$
-				UIMessage.make(chooseTemplate, "template-owner-header", "starteval.template.ownder.header"); //$NON-NLS-1$ //$NON-NLS-2$
-				UISelect radios = UISelect.make(chooseTemplate, "templateRadio", values, labels, "#{evaluationBean.templateId}",null); //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(chooseTemplate, "choose-template-header", "starteval.choose.template.header");
+				UIMessage.make(chooseTemplate, "choose-template-desc", "starteval.choose.template.desc");
+				UIMessage.make(chooseTemplate, "template-title-header", "starteval.template.title.header");
+				UIMessage.make(chooseTemplate, "template-owner-header", "starteval.template.ownder.header");
+				UISelect radios = UISelect.make(chooseTemplate, "templateRadio", values, labels, "#{evaluationBean.templateId}",null);
 
 				radios.optionnames = UIOutputMany.make(labels);
 
 			    String selectID = radios.getFullID();
 			    for (int i = 0; i < values.length; ++i) {
-					UIBranchContainer radiobranch = UIBranchContainer.make(chooseTemplate, "templateOptions:", Integer.toString(i)); //$NON-NLS-1$
-					UISelectChoice.make(radiobranch, "radioValue", selectID, i); //$NON-NLS-1$
-					UISelectLabel.make(radiobranch, "radioLabel", selectID, i); //$NON-NLS-1$
+					UIBranchContainer radiobranch = UIBranchContainer.make(chooseTemplate, "templateOptions:", i+"");
+					UISelectChoice.make(radiobranch, "radioValue", selectID, i);
+					UISelectLabel.make(radiobranch, "radioLabel", selectID, i);
 
-				//	UIOutput.make(radiobranch,"radioOwner", logic.getUserDisplayName( owners[i])); //$NON-NLS-1$
+				//	UIOutput.make(radiobranch,"radioOwner", logic.getUserDisplayName( owners[i]));
 					UIOutput.make(radiobranch,"radioOwner", external.getUserDisplayName( owners[i]));
-					UIInternalLink.make(radiobranch, "viewPreview_link", UIMessage.make("starteval.view.preview.link"),  //$NON-NLS-1$ //$NON-NLS-2$
+					UIInternalLink.make(radiobranch, "viewPreview_link", UIMessage.make("starteval.view.preview.link"), 
 							new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID,null, new Long(values[i]),null, EvaluationStartProducer.VIEW_ID));
 			    }
 			}
-	
-		} else {	
-			form.parameters.add( new UIELBinding("#{evaluationBean.templateId}", //$NON-NLS-1$
-					evalViewParams.templateId) );
+		} else {
+			form.parameters.add( new UIELBinding("#{evaluationBean.templateId}", evalViewParams.templateId) );
 		}
 
 		UIMessage.make(form, "cancel-button", "general.cancel.button");
-
-		UICommand.make(form, "continueToSettings", UIMessage.make("starteval.continue.settings.link"), "#{evaluationBean.continueToSettingsAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		UICommand.make(form, "continueToSettings", UIMessage.make("starteval.continue.settings.link"), "#{evaluationBean.continueToSettingsAction}"); //$NON-NLS-3$
 	}
 	
+	/* (non-Javadoc)
+	 * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
+	 */
 	public List reportNavigationCases() {
 		List i = new ArrayList();
-
-		i.add(new NavigationCase(EvaluationSettingsProducer.VIEW_ID, new SimpleViewParameters(EvaluationSettingsProducer.VIEW_ID)));
-		i.add(new NavigationCase(ModifyTemplateItemsProducer.VIEW_ID, new SimpleViewParameters(ModifyTemplateItemsProducer.VIEW_ID)));
-		i.add(new NavigationCase(SummaryProducer.VIEW_ID, new SimpleViewParameters(SummaryProducer.VIEW_ID)));
-
+		i.add(new NavigationCase(EvaluationSettingsProducer.VIEW_ID, 
+				new SimpleViewParameters(EvaluationSettingsProducer.VIEW_ID)));
+		i.add(new NavigationCase(ModifyTemplateItemsProducer.VIEW_ID, 
+				new SimpleViewParameters(ModifyTemplateItemsProducer.VIEW_ID)));
+		i.add(new NavigationCase(SummaryProducer.VIEW_ID, 
+				new SimpleViewParameters(SummaryProducer.VIEW_ID)));
 		return i;
 	}
 	
+	/* (non-Javadoc)
+	 * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
+	 */
 	public ViewParameters getViewParameters() {
 		return new TemplateViewParameters();
 	}

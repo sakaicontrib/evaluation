@@ -59,7 +59,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
 public class ViewReportProducer implements ViewComponentProducer, NavigationCaseReporter, ViewParamsReporter {
 
-	public static final String VIEW_ID = "view_report"; //$NON-NLS-1$
+	public static final String VIEW_ID = "view_report";
 	public String getViewID() {
 		return VIEW_ID;
 	}
@@ -96,14 +96,14 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
-		UIMessage.make(tofill, "view-report-title","viewreport.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "view-report-title","viewreport.page.title"); //$NON-NLS-2$
 
 		ReportParameters reportParams = (ReportParameters) viewparams;
 		if (reportParams.templateId != null) {
 			
 			// bread crumbs
-			UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID)); //$NON-NLS-1$ //$NON-NLS-2$
-			UIInternalLink.make(tofill, "report-groups-title", UIMessage.make("reportgroups.page.title"), new TemplateViewParameters(ChooseReportGroupsProducer.VIEW_ID, reportParams.templateId)); //$NON-NLS-1$ //$NON-NLS-2$
+			UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID)); //$NON-NLS-2$
+			UIInternalLink.make(tofill, "report-groups-title", UIMessage.make("reportgroups.page.title"), new TemplateViewParameters(ChooseReportGroupsProducer.VIEW_ID, reportParams.templateId)); //$NON-NLS-2$
 			
 			EvalEvaluation evaluation = evalsLogic.getEvaluationById(reportParams.templateId);
 
@@ -134,8 +134,8 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 					groupIds = reportParams.groupIds;
 				}
 				
-				UIInternalLink.make(tofill, "fullEssayResponse", UIMessage.make("viewreport.view.essays"), new EssayResponseParams(ViewEssayResponseProducer.VIEW_ID, reportParams.templateId, groupIds)); //$NON-NLS-1$ //$NON-NLS-2$
-				UIInternalLink.make(tofill, "csvResultsReport", UIMessage.make("viewreport.view.csv"), new CSVReportViewParams("csvResultsReport", template.getId(), reportParams.templateId, groupIds)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				UIInternalLink.make(tofill, "fullEssayResponse", UIMessage.make("viewreport.view.essays"), new EssayResponseParams(ViewEssayResponseProducer.VIEW_ID, reportParams.templateId, groupIds)); //$NON-NLS-2$
+				UIInternalLink.make(tofill, "csvResultsReport", UIMessage.make("viewreport.view.csv"), new CSVReportViewParams("csvResultsReport", template.getId(), reportParams.templateId, groupIds)); //$NON-NLS-2$ //$NON-NLS-3$
 
 			    //filter out the block child items, to get a list non-child items
 				List ncItemsList = TemplateItemUtils.getNonChildItems(allItems);
@@ -147,8 +147,8 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 				
 				
 				if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_COURSE, ncItemsList))	{	
-					courseSection = UIBranchContainer.make(tofill,"courseSection:"); //$NON-NLS-1$
-					UIMessage.make(courseSection, "report-course-questions", "viewreport.itemlist.coursequestions"); //$NON-NLS-1$ //$NON-NLS-2$		
+					courseSection = UIBranchContainer.make(tofill,"courseSection:");
+					UIMessage.make(courseSection, "report-course-questions", "viewreport.itemlist.coursequestions"); //$NON-NLS-2$		
 					for (int i = 0; i <ncItemsList.size(); i++) {
 						//EvalItem item1 = (EvalItem) ncItemsList.get(i);
 						EvalTemplateItem tempItem1 = (EvalTemplateItem) ncItemsList.get(i);
@@ -157,8 +157,7 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 						UIBranchContainer radiobranch = null;
 						
 						if (cat.equals(EvalConstants.ITEM_CATEGORY_COURSE)) { //"Course"
-							radiobranch = UIBranchContainer.make(courseSection,
-									"itemrow:first", Integer.toString(i)); //$NON-NLS-1$
+							radiobranch = UIBranchContainer.make(courseSection,	"itemrow:first", i+"");
 							if (i % 2 == 1)
 								radiobranch.decorators = new DecoratorList(
 										new UIColourDecorator(null,Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
@@ -175,8 +174,8 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 					//for each instructor, make a branch containing all instructor questions
 					//for (Iterator it = instructors.iterator(); it.hasNext();) {
 						//String instructor = (String) it.next();
-						instructorSection = UIBranchContainer.make(tofill,"instructorSection:"); //$NON-NLS-1$
-						UIMessage.make(instructorSection, "report-instructor-questions", "viewreport.itemlist.instructorquestions"); //$NON-NLS-1$ //$NON-NLS-2$
+						instructorSection = UIBranchContainer.make(tofill,"instructorSection:");
+						UIMessage.make(instructorSection, "report-instructor-questions", "viewreport.itemlist.instructorquestions"); //$NON-NLS-2$
 						//for each item in this evaluation
 						for (int i = 0; i <ncItemsList.size(); i++) {
 							EvalTemplateItem tempItem1 = (EvalTemplateItem) ncItemsList.get(i);
@@ -186,7 +185,7 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 							//if the given item is of type instructor, render it here
 							if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR)) { //"Instructor"
 								radiobranch = UIBranchContainer.make(instructorSection,
-										"itemrow:first", Integer.toString(i)); //$NON-NLS-1$
+										"itemrow:first", i+"");
 								if (i % 2 == 1)
 									radiobranch.decorators = new DecoratorList(
 											new UIColourDecorator(
@@ -221,17 +220,15 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 			
 			Boolean useNA = myTempItem.getUsesNA();
 			
-			UIBranchContainer scaledSurvey = UIBranchContainer.make(radiobranch,
-			"scaledSurvey:"); //$NON-NLS-1$
+			UIBranchContainer scaledSurvey = UIBranchContainer.make(radiobranch, "scaledSurvey:");
 
-			UIOutput.make(scaledSurvey, "itemNum", (new Integer(i)) //$NON-NLS-1$
+			UIOutput.make(scaledSurvey, "itemNum", (new Integer(i))
 				.toString());
-			UIOutput.make(scaledSurvey, "itemText", myItem.getItemText());	 //$NON-NLS-1$
+			UIOutput.make(scaledSurvey, "itemText", myItem.getItemText());	
 			
 			if (useNA.booleanValue() == true) {
-				UIBranchContainer radiobranch3 = UIBranchContainer.make(
-						scaledSurvey, "showNA:"); //$NON-NLS-1$
-				UIBoundBoolean.make(radiobranch3, "itemNA", useNA); //$NON-NLS-1$
+				UIBranchContainer radiobranch3 = UIBranchContainer.make(scaledSurvey, "showNA:");
+				UIBoundBoolean.make(radiobranch3, "itemNA", useNA);
 			}		
 			
 			//String[] egid = new String[0];
@@ -239,34 +236,30 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 			
 			List itemAnswers = responsesLogic.getEvalAnswers(myItem.getId(), evalId, groupIds);
 
-		    for (int x = 0; x < scaleLabels.length; ++x) 
-		    {
-		    	UIBranchContainer answerbranch = UIBranchContainer.make(scaledSurvey, "answers:", Integer.toString(x)); //$NON-NLS-1$
-				UIOutput.make(answerbranch, "responseText", scaleOptions[x]); //$NON-NLS-1$
+		    for (int x = 0; x < scaleLabels.length; x++) {
+		    	UIBranchContainer answerbranch = UIBranchContainer.make(scaledSurvey, "answers:", x+"");
+				UIOutput.make(answerbranch, "responseText", scaleOptions[x]);
 				int answers=0;
 				//count the number of answers that match this one
-				for(int y=0; y<itemAnswers.size();y++){
+				for (int y=0; y<itemAnswers.size(); y++) {
 					EvalAnswer curr=(EvalAnswer)itemAnswers.get(y);
 					if(curr.getNumeric().intValue()==x){
 						answers++;
 					}
 				}
-				UIOutput.make(answerbranch, "responseTotal", (new Integer(answers)).toString(), (new Integer(x)).toString());				 //$NON-NLS-1$
+				UIOutput.make(answerbranch, "responseTotal", answers+"", x+"");
 		    }
 
-
-		} //else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_BLOCK)) {		 //$NON-NLS-1$
-		else if(TemplateItemUtils.getTemplateItemType(myTempItem).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)){
-			UIBranchContainer block = UIBranchContainer.make(radiobranch,"block:"); //$NON-NLS-1$
-			UIOutput.make(block, "itemNum", (new Integer(i)).toString()); //$NON-NLS-1$
-			UIOutput.make(block, "itemText", myItem.getItemText()); //$NON-NLS-1$
+		} else if (TemplateItemUtils.getTemplateItemType(myTempItem).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)) {
+			UIBranchContainer block = UIBranchContainer.make(radiobranch,"block:");
+			UIOutput.make(block, "itemNum", i+"");
+			UIOutput.make(block, "itemText", myItem.getItemText());
 			
 			//Boolean useNA = myItem.getUsesNA();
 			Boolean useNA = myTempItem.getUsesNA();
-			if (useNA !=null && useNA.booleanValue() == true) {
-				UIBranchContainer radiobranch3 = UIBranchContainer.make(block,
-						"showNA:"); //$NON-NLS-1$
-				UIBoundBoolean.make(radiobranch3, "itemNA", useNA); //$NON-NLS-1$
+			if (useNA != null && useNA.booleanValue() == true) {
+				UIBranchContainer radiobranch3 = UIBranchContainer.make(block, "showNA:");
+				UIBoundBoolean.make(radiobranch3, "itemNA", useNA);
 			}
 			// Radio Buttons
 	
@@ -282,23 +275,21 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 			}
 			
 			//render answer options
-			for(int p=0; p < scaleLabels.length; ++p){
-			UIBranchContainer responseTexts = UIBranchContainer.make(
-					block, "responseTexts:", Integer.toString(p));			
-			UIOutput.make(responseTexts, "responseText", scaleLabels[p], (new Integer(p).toString())); //$NON-NLS-1$
+			for (int p = 0; p < scaleLabels.length; p++) {
+				UIBranchContainer responseTexts = UIBranchContainer.make(block, "responseTexts:", p+"");			
+				UIOutput.make(responseTexts, "responseText", scaleLabels[p], p+"");
 			}
 
 			// get child block item text
 			List childList = itemsLogic.getBlockChildTemplateItemsForBlockParent(myTempItem.getId(), false);
 			for (int j = 0; j < childList.size(); j++) {
-				UIBranchContainer queRow = UIBranchContainer.make(
-						block, "queRow:", Integer.toString(j)); //$NON-NLS-1$
+				UIBranchContainer queRow = UIBranchContainer.make(block, "queRow:", j+"");
 
 				EvalTemplateItem tempItemChild = (EvalTemplateItem) childList.get(j);
 				EvalItem child = tempItemChild.getItem();
 				
-				UIOutput.make(queRow, "queNo", Integer.toString(displayNumber+j)); //$NON-NLS-1$
-				UIOutput.make(queRow, "queText", child.getItemText()); //$NON-NLS-1$
+				UIOutput.make(queRow, "queNo", (displayNumber+j)+"");
+				UIOutput.make(queRow, "queText", child.getItemText());
 				
 				//String[] egid = new String[1];
 				//egid[0]=evalGroupId;
@@ -307,7 +298,7 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 				
 				   for (int x = 0; x < scaleLabels.length; ++x) 
 				    {
-				    	UIBranchContainer answerbranch = UIBranchContainer.make(queRow, "answers:", Integer.toString(x)); //$NON-NLS-1$
+				    	UIBranchContainer answerbranch = UIBranchContainer.make(queRow, "answers:", x+"");
 						int answers=0;
 						//count the number of answers that match this one
 						for(int y=0; y<itemAnswers.size();y++){
@@ -316,37 +307,29 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 								answers++;
 							}
 						}
-						UIOutput.make(answerbranch, "responseTotal", (new Integer(answers)).toString(), (new Integer(x)).toString());				 //$NON-NLS-1$
+						UIOutput.make(answerbranch, "responseTotal", (new Integer(answers)).toString(), (new Integer(x)).toString());				
 				    }
 				//the loop in fillComponents will increment once, so we skip increment on the first iteration of this for loop
 			    if(j>0)	displayNumber++;
 			}
 		} else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)) { //"Short Answer/Essay"
-		UIBranchContainer essay = UIBranchContainer.make(radiobranch,
-			"essayType:"); //$NON-NLS-1$
-			UIOutput.make(essay, "itemNum", (new Integer(i)).toString()); //$NON-NLS-1$
-			UIOutput.make(essay, "itemText", myItem.getItemText()); //$NON-NLS-1$
+			UIBranchContainer essay = UIBranchContainer.make(radiobranch, "essayType:");
+			UIOutput.make(essay, "itemNum", i+"");
+			UIOutput.make(essay, "itemText", myItem.getItemText());
 			
 			UIInternalLink.make(essay, "essayResponse", new EssayResponseParams(ViewEssayResponseProducer.VIEW_ID, evalId, myTempItem.getId(), groupIds));
-						 //$NON-NLS-1$
+						
 		} else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_HEADER)) { //"Text Header"
-			UIBranchContainer header = UIBranchContainer.make(radiobranch,
-			"headerType:"); //$NON-NLS-1$
-			UIOutput.make(header, "itemNum", (new Integer(i)).toString()); //$NON-NLS-1$
-			UIOutput.make(header, "itemText", myItem.getItemText()); //$NON-NLS-1$
+			UIBranchContainer header = UIBranchContainer.make(radiobranch, "headerType:");
+			UIOutput.make(header, "itemNum", i+"");
+			UIOutput.make(header, "itemText", myItem.getItemText());
 			displayNumber--;
 		}
 	}
 	
 	public List reportNavigationCases() {
 		List i = new ArrayList();
-
 		return i;
 	}
-
-
-
-
-
 
 }

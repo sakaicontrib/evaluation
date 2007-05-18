@@ -239,7 +239,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 						} 
 					}// end of for loop		
 				}
-				if(ncItemsList.size()>0){
+				if (ncItemsList.size() > 0) {
 					throw new IllegalStateException("Items found with categories that are not rendered");
 				}
 
@@ -257,24 +257,24 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 	 */
 	private void doFillComponent(UIBranchContainer section, EvalTemplateItem templateItem, int colorCounter){
 		UIBranchContainer itemsBranch = null;
-		itemsBranch = UIBranchContainer.make(section,
-				"itemrow:first", Integer.toString(displayedItems));
+		itemsBranch = UIBranchContainer.make(section, "itemrow:first", Integer.toString(displayedItems));
 
-			// use the renderer evolver
-			itemRenderer.renderItem(itemsBranch, "previewed-item:", null, templateItem, displayedItems, true);
-			if(TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)){
-				List childList = itemsLogic.getBlockChildTemplateItemsForBlockParent(templateItem.getId(), false);
-				displayedItems+=childList.size();
-			}
-			else if(TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_HEADER)) displayedItems+=0;
-			else displayedItems++;
-			//increment by 1 if not block, else increment by num of block children
-			
-			if (colorCounter % 2 == 1) {
-				itemsBranch.decorators = new DecoratorList( new UIColourDecorator(null,
-						Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)) );
-			}
+		// use the renderer evolver
+		itemRenderer.renderItem(itemsBranch, "previewed-item:", null, templateItem, displayedItems, true);
+		if(TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)){
+			List childList = itemsLogic.getBlockChildTemplateItemsForBlockParent(templateItem.getId(), false);
+			displayedItems += childList.size();
+		} else if (TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_HEADER)) { 
+			// no change, do not count header
+		} else {
+			displayedItems++;
+		}
+		//increment by 1 if not block, else increment by num of block children
 
+		if (colorCounter % 2 == 1) {
+			itemsBranch.decorators = new DecoratorList( new UIColourDecorator(null,
+					Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)) );
+		}
 	}
 
 	/* (non-Javadoc)

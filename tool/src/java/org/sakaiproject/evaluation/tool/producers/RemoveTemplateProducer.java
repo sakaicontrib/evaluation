@@ -118,11 +118,10 @@ public class RemoveTemplateProducer implements ViewComponentProducer, Navigation
 					
 					//get related evaluations
 					List l = evalsLogic.getEvaluationsByTemplateId(template.getId());
-					if(l != null && l.size() >0){
+					if (l != null && l.size() > 0) {
 						DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
-						for(int i =0; i< l.size(); i++){
-							UIBranchContainer evalsRb = UIBranchContainer.make(noRemoveDiv, "evalList:", Integer
-									.toString(i));
+						for (int i = 0; i < l.size(); i++) {
+							UIBranchContainer evalsRb = UIBranchContainer.make(noRemoveDiv, "evalList:", i+"");
 							EvalEvaluation eval1 = (EvalEvaluation) l.get(i);
 							UIOutput.make(evalsRb, "evalTitle", eval1.getTitle());
 

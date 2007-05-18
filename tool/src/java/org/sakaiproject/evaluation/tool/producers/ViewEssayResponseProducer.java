@@ -113,20 +113,17 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 			UIBranchContainer courseSection = null;
 			UIBranchContainer instructorSection = null;
 			if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_COURSE)) {//"Course"
-				courseSection = UIBranchContainer.make(tofill,
-				"courseSection:");	
+				courseSection = UIBranchContainer.make(tofill, "courseSection:");	
 				UIMessage.make(courseSection, "course-questions-header", "takeeval.course.questions.header"); //$NON-NLS-1$ //$NON-NLS-2$			
-				radiobranch = UIBranchContainer.make(courseSection,
-						"itemrow:first", Integer.toString(0));
-				this.doFillComponent(myItem, essayResponseParams.evalId, 0, essayResponseParams.groupIds, radiobranch,
-						courseSection);
+				radiobranch = UIBranchContainer.make(courseSection, "itemrow:first", "0");
+				this.doFillComponent(myItem, essayResponseParams.evalId, 0, essayResponseParams.groupIds, 
+						radiobranch, courseSection);
 			} else if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR)) {//"Instructor"
 				instructorSection = UIBranchContainer.make(tofill,"instructorSection:");		
 				UIMessage.make(instructorSection, "instructor-questions-header","takeeval.instructor.questions.header");			 //$NON-NLS-1$ //$NON-NLS-2$		
-				radiobranch = UIBranchContainer.make(instructorSection,
-						"itemrow:first", Integer.toString(0));
-				this.doFillComponent(myItem, essayResponseParams.evalId, 0, essayResponseParams.groupIds, radiobranch,
-						instructorSection);
+				radiobranch = UIBranchContainer.make(instructorSection, "itemrow:first", "0");
+				this.doFillComponent(myItem, essayResponseParams.evalId, 0, essayResponseParams.groupIds, 
+						radiobranch, instructorSection);
 			}
 
 		}
@@ -149,11 +146,11 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 				UIBranchContainer instructorSection = null;
 
 				if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_COURSE, ncItemsList))	{	
-					courseSection = UIBranchContainer.make(tofill,"courseSection:"); //$NON-NLS-1$
+					courseSection = UIBranchContainer.make(tofill, "courseSection:"); //$NON-NLS-1$
 				}
 
 				if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, ncItemsList))	{	
-					instructorSection = UIBranchContainer.make(tofill,"instructorSection:"); //$NON-NLS-1$
+					instructorSection = UIBranchContainer.make(tofill, "instructorSection:"); //$NON-NLS-1$
 				}
 
 				for (int i = 0; i < ncItemsList.size(); i++) {
@@ -165,30 +162,22 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 					if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_COURSE) 
 							&& item1.getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)){
 						//"Course","Short Answer/Essay"
-						radiobranch = UIBranchContainer.make(courseSection,
-								"itemrow:first", Integer.toString(i));
+						radiobranch = UIBranchContainer.make(courseSection,	"itemrow:first", i+"");
 						if (i % 2 == 1)
 							radiobranch.decorators = new DecoratorList(
-									new UIColourDecorator(
-											null,
-											Color
-											.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
+									new UIColourDecorator(null, Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
 
-						this.doFillComponent(item1, evaluation.getId(), i, essayResponseParams.groupIds, radiobranch,
-								courseSection);
+						this.doFillComponent(item1, evaluation.getId(), i, essayResponseParams.groupIds, 
+								radiobranch, courseSection);
 					} else if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR) &&
 							item1.getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)) {
 						//"Instructor","Short Answer/Essay"
-						radiobranch = UIBranchContainer.make(instructorSection,
-								"itemrow:first", Integer.toString(i));
+						radiobranch = UIBranchContainer.make(instructorSection,	"itemrow:first", i+"");
 						if (i % 2 == 1)
 							radiobranch.decorators = new DecoratorList(
-									new UIColourDecorator(
-											null,
-											Color
-											.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
-						this.doFillComponent(item1, evaluation.getId(), i, essayResponseParams.groupIds, radiobranch,
-								instructorSection);
+									new UIColourDecorator(null,	Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
+						this.doFillComponent(item1, evaluation.getId(), i, essayResponseParams.groupIds, 
+								radiobranch, instructorSection);
 					}
 				} // end of for loop
 
@@ -203,16 +192,15 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 
 		if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)) {
 			//"Short Answer/Essay"
-			UIBranchContainer essay = UIBranchContainer.make(radiobranch,
-			"essayType:");
-			UIOutput.make(essay, "itemNum", (new Integer(i + 1)).toString());
+			UIBranchContainer essay = UIBranchContainer.make(radiobranch, "essayType:");
+			UIOutput.make(essay, "itemNum", (i+1)+"");
 			UIOutput.make(essay, "itemText", myItem.getItemText());
 
 			List itemAnswers= responsesLogic.getEvalAnswers(myItem.getId(), evalId, groupIds);
 
 			//count the number of answers that match this one
-			for(int y=0; y<itemAnswers.size();y++){
-				UIBranchContainer answerbranch = UIBranchContainer.make(essay, "answers:", Integer.toString(y));
+			for (int y=0; y < itemAnswers.size(); y++){
+				UIBranchContainer answerbranch = UIBranchContainer.make(essay, "answers:", y+"");
 				EvalAnswer curr=(EvalAnswer)itemAnswers.get(y);
 				UIOutput.make(answerbranch, "answerNum", new Integer(y+1).toString());
 				UIOutput.make(answerbranch, "itemAnswer", curr.getText());					
@@ -222,7 +210,6 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 
 	public List reportNavigationCases() {
 		List i = new ArrayList();
-
 		return i;
 	}
 

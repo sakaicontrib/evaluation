@@ -275,7 +275,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 						UIBranchContainer blockChildren = UIBranchContainer.make(itemBranch, "block-children:");
 						for (int k = 0; k < childList.size(); k++) {
 							EvalTemplateItem child = (EvalTemplateItem) childList.get(k);
-							UIBranchContainer childRow = UIBranchContainer.make(blockChildren, "child-item:", Integer.toString(k));
+							UIBranchContainer childRow = UIBranchContainer.make(blockChildren, "child-item:", k+"");
 							UIOutput.make(childRow, "child-item-num", child.getDisplayOrder().toString());
 							UIVerbatim.make(childRow, "child-item-text", child.getItem().getItemText());
 						}

@@ -138,7 +138,7 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParams
 
 		String selectID = radios.getFullID();
 		for (int i = 0; i < EvaluationConstant.scaleIdealValues.length; ++i) {
-			UIBranchContainer radiobranch = UIBranchContainer.make(form, "scaleIdealOptions:", Integer.toString(i));
+			UIBranchContainer radiobranch = UIBranchContainer.make(form, "scaleIdealOptions:", i+"");
 			UISelectLabel label = UISelectLabel.make(radiobranch, "scale-ideal-label", selectID, i);
 			UISelectChoice choice = UISelectChoice.make(radiobranch, "scale-ideal-value", selectID, i);
 			UILabelTargetDecorator.targetLabel(label, choice);

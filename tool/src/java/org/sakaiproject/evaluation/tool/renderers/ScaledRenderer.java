@@ -126,13 +126,13 @@ public class ScaledRenderer implements ItemRenderer {
 			for (int j = 0; j < limit; ++j) {
 				if (colored) {
 					UIBranchContainer radioBranchFirst = UIBranchContainer.make(compactRadioContainer, 
-							"scaleOptionsFake:", new Integer(j).toString()); //$NON-NLS-1$
+							"scaleOptionsFake:", j+""); //$NON-NLS-1$
 					UISelectChoice.make(radioBranchFirst,
 							"dummyRadioValueFake", selectID, j); //$NON-NLS-1$
 				}
 
 				UIBranchContainer radioBranchSecond = UIBranchContainer.make(compactRadioContainer, 
-						"scaleOptionsReal:", new Integer(j).toString()); //$NON-NLS-1$
+						"scaleOptionsReal:", j+""); //$NON-NLS-1$
 				UISelectChoice.make(radioBranchSecond,
 						"dummyRadioValueReal", selectID, j); //$NON-NLS-1$
 			}
@@ -141,8 +141,7 @@ public class ScaledRenderer implements ItemRenderer {
 				UIBranchContainer radiobranch3 = UIBranchContainer.make(container, "showNA:"); //$NON-NLS-1$
 				UISelectChoice choice = UISelectChoice.make(radiobranch3, "na-input", selectID, scaleLength - 1); //$NON-NLS-1$
 				UILabelTargetDecorator.targetLabel(
-						UIMessage.make(radiobranch3, "na-desc", "viewitem.na.desc"),
-						choice);
+						UIMessage.make(radiobranch3, "na-desc", "viewitem.na.desc"), choice);
 			}
 
 		} else if (EvalConstants.ITEM_SCALE_DISPLAY_FULL.equals(scaleDisplaySetting) || 
@@ -200,7 +199,7 @@ public class ScaledRenderer implements ItemRenderer {
 			int limit = usesNA? scaleLength - 1: scaleLength;  // skip the NA value at the end
 			for (int j = 0; j < limit; ++j) {
 				UIBranchContainer radiobranchNested = UIBranchContainer
-						.make(displayContainer, "scaleOptions:", Integer.toString(j));
+						.make(displayContainer, "scaleOptions:", j+"");
 				UISelectChoice choice = UISelectChoice.make(radiobranchNested, "dummyRadioValue", selectID, j); //$NON-NLS-1$
 				UILabelTargetDecorator.targetLabel(
 						UISelectLabel.make(radiobranchNested, "dummyRadioLabel", selectID, j),
@@ -255,7 +254,7 @@ public class ScaledRenderer implements ItemRenderer {
 			UISelectLabel[] labels = new UISelectLabel[limit];
 			UISelectChoice[] choices = new UISelectChoice[limit];
 			for (int j = 0; j < limit; ++j) {
-				UIBranchContainer rowBranch = UIBranchContainer.make(stepped, "rowBranch:", Integer.toString(j)); //$NON-NLS-1$
+				UIBranchContainer rowBranch = UIBranchContainer.make(stepped, "rowBranch:", j+""); //$NON-NLS-1$
 
 				// Actual label
 				labels[limit-j-1] = UISelectLabel.make(rowBranch, "topLabel", selectID, j); //$NON-NLS-1$
@@ -265,20 +264,20 @@ public class ScaledRenderer implements ItemRenderer {
 
 				// create middle images after the item label
 				for (int k = 0; k < j; ++k) {
-					UIBranchContainer afterTopLabelBranch = UIBranchContainer.make(rowBranch, "afterTopLabelBranch:",Integer.toString(k));
+					UIBranchContainer afterTopLabelBranch = UIBranchContainer.make(rowBranch, "afterTopLabelBranch:", k+"");
 					UILink.make(afterTopLabelBranch, "middleImage",	EvaluationConstant.STEPPED_IMAGE_URLS[1]);
 				}
 
 				// create bottom (down arrow) image
-				UIBranchContainer bottomLabelBranch = UIBranchContainer.make(stepped, "bottomLabelBranch:", Integer.toString(j));
+				UIBranchContainer bottomLabelBranch = UIBranchContainer.make(stepped, "bottomLabelBranch:", j+"");
 				UILink.make(bottomLabelBranch, "bottomImage", EvaluationConstant.STEPPED_IMAGE_URLS[2]);
 
 				if (colored) {
-					UIBranchContainer radioBranchFirst = UIBranchContainer.make(coloredBranch, "scaleOptionsFirst:", Integer.toString(j));
+					UIBranchContainer radioBranchFirst = UIBranchContainer.make(coloredBranch, "scaleOptionsFirst:", j+"");
 					choices[j] = UISelectChoice.make(radioBranchFirst, "dummyRadioValueFirst", selectID, j); //$NON-NLS-1$
 				}
 
-				UIBranchContainer radioBranchSecond = UIBranchContainer.make(stepped, "scaleOptionsSecond:",Integer.toString(j));
+				UIBranchContainer radioBranchSecond = UIBranchContainer.make(stepped, "scaleOptionsSecond:", j+"");
 				UISelectChoice choice = UISelectChoice.make(radioBranchSecond, "dummyRadioValueSecond", selectID, j); //$NON-NLS-1$
 				if (!colored) {
 					choices[j] = choice;
