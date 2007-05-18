@@ -132,10 +132,11 @@ public class EvalScalesLogicImpl implements EvalScalesLogic {
 			throw new IllegalArgumentException("Cannot find scale with id: " + scaleId);
 		}
 
-		// cannot remove expert scales
-		if (scale.getExpert().booleanValue()) {
-			throw new IllegalStateException("Cannot remove expert scale: " + scaleId);
-		}
+		// ADMIN CAN REMOVE EXPERT SCALES -AZ
+//		// cannot remove expert scales
+//		if (scale.getExpert().booleanValue()) {
+//			throw new IllegalStateException("Cannot remove expert scale: " + scaleId);
+//		}
 
 		// check perms and remove
 		if (checkUserControlScale(userId, scale)) {

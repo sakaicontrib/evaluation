@@ -163,7 +163,7 @@ public class ModifyScaledProducer implements ViewComponentProducer,
 					"showRemoveLink:");
 
 			UIInternalLink.make(showLink, "remove_link", UIMessage.make("modifytemplate.remove.link"),
-					new TemplateItemViewParameters(RemoveQuestionProducer.VIEW_ID,
+					new TemplateItemViewParameters(RemoveTemplateItemProducer.VIEW_ID,
 							templateId, templateItemId));
 		}
 

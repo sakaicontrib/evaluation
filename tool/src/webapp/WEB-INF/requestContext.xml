@@ -254,7 +254,7 @@
 	</bean>
 
 	<bean
-		class="org.sakaiproject.evaluation.tool.producers.RemoveQuestionProducer">
+		class="org.sakaiproject.evaluation.tool.producers.RemoveTemplateItemProducer">
 		<property name="itemsLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
 		<property name="templatesLogic"
@@ -389,7 +389,7 @@
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 	</bean>
 
-	<bean class="org.sakaiproject.evaluation.tool.producers.ScaleControlProducer">
+	<bean class="org.sakaiproject.evaluation.tool.producers.ControlScalesProducer">
 		<property name="scalesLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalScalesLogic" />
 		<property name="external"

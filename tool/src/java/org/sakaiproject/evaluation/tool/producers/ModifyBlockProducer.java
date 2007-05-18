@@ -214,7 +214,7 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 				UIBranchContainer showLink = UIBranchContainer.make(form, "showRemoveLink:");
 
 				UIInternalLink.make(showLink, "remove_link", UIMessage.make("modifytemplate.remove.link"),
-						new TemplateItemViewParameters(RemoveQuestionProducer.VIEW_ID, templateId, templateItems[0]
+						new TemplateItemViewParameters(RemoveTemplateItemProducer.VIEW_ID, templateId, templateItems[0]
 								.getId()));
 			}
 

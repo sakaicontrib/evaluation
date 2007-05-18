@@ -193,10 +193,11 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 			throw new IllegalArgumentException("Cannot find item with id: " + itemId);
 		}
 
-		// cannot remove expert items
-		if (item.getExpert().booleanValue() == true) {
-			throw new IllegalStateException("Cannot remove expert item ("+itemId+")");
-		}
+		// ADMIN USER CAN REMOVE EXPERT ITEMS -AZ
+//		// cannot remove expert items
+//		if (item.getExpert().booleanValue() == true) {
+//			throw new IllegalStateException("Cannot remove expert item ("+itemId+")");
+//		}
 
 		if (checkUserControlItem(userId, item)) {
 			dao.delete(item);

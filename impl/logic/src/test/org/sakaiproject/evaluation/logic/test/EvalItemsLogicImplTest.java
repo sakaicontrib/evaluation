@@ -386,14 +386,20 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 			Assert.assertNotNull(e);
 		}
 
-		// test cannot remove expert item
-		try {
-			items.deleteItem(etdl.item6.getId(), 
-					EvalTestDataLoad.ADMIN_USER_ID);
-			Assert.fail("Should have thrown exception");
-		} catch (IllegalStateException e) {
-			Assert.assertNotNull(e);
-		}
+		// ADMIN CAN REMOVE EXPERT ITEMS NOW -AZ
+//		// test cannot remove expert item
+//		try {
+//			items.deleteItem(etdl.item6.getId(), 
+//					EvalTestDataLoad.ADMIN_USER_ID);
+//			Assert.fail("Should have thrown exception");
+//		} catch (IllegalStateException e) {
+//			Assert.assertNotNull(e);
+//		}
+
+		// test removing expert item ok for admin
+		items.deleteItem(etdl.item6.getId(), 
+				EvalTestDataLoad.ADMIN_USER_ID);
+		Assert.assertNull( items.getItemById(etdl.item6.getId()) );
 
 		// test removing unused item OK
 		items.deleteItem(etdl.item4.getId(), 

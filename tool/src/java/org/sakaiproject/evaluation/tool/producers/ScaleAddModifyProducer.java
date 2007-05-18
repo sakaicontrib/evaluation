@@ -99,7 +99,7 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParams
 		 */
 		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID));
 		UIInternalLink.make(tofill, "administrate-toplink", UIMessage.make("administrate.page.title"), new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-		UIInternalLink.make(tofill, "scale-control-toplink", UIMessage.make("scalecontrol.page.title"), new SimpleViewParameters(ScaleControlProducer.VIEW_ID));
+		UIInternalLink.make(tofill, "scale-control-toplink", UIMessage.make("scalecontrol.page.title"), new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
 
 		// Page title
 		UIMessage.make(tofill, "page-title", "scaleaddmodify.page.title");
@@ -168,7 +168,7 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParams
 	 */
 	public List reportNavigationCases() {
 		List togo = new ArrayList();
-		togo.add(new NavigationCase("success", new SimpleViewParameters(ScaleControlProducer.VIEW_ID)));
+		togo.add(new NavigationCase("success", new SimpleViewParameters(ControlScalesProducer.VIEW_ID)));
 		return togo;
 	}
 
