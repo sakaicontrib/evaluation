@@ -1,5 +1,5 @@
 /******************************************************************************
- * ExternalEvalGroups.java - created by aaronz@vt.edu
+ * EvalGroupsProvider.java - created by aaronz@vt.edu
  * 
  * Copyright (c) 2007 Virginia Polytechnic Institute and State University
  * Licensed under the Educational Community License version 1.0
