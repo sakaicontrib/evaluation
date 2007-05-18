@@ -96,7 +96,7 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
 			new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
 
 		UIInternalLink.make(tofill, "control-scales-toplink",UIMessage.make("administrate.top.control.scales"),  //$NON-NLS-2$
-				new SimpleViewParameters(ScaleControlProducer.VIEW_ID));			
+				new SimpleViewParameters(ControlScalesProducer.VIEW_ID));			
 	
 		//System Settings
 		UIForm form = UIForm.make(tofill, "basic-form");		

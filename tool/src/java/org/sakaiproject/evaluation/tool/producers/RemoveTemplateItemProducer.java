@@ -50,9 +50,9 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * @author: Rui Feng (fengr@vt.edu)
  */
 
-public class RemoveQuestionProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
-	public static final String VIEW_ID = "remove_question"; //$NON-NLS-1$
-	
+public class RemoveTemplateItemProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
+
+	public static final String VIEW_ID = "remove_templateitem"; //$NON-NLS-1$
 	public String getViewID() {
 		return VIEW_ID;
 	}

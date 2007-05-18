@@ -139,7 +139,7 @@ public class ModifyHeaderProducer implements ViewComponentProducer,
 			UIBranchContainer showLink = UIBranchContainer.make(form,
 					"showRemoveLink:");
 			UIInternalLink.make(showLink, "remove_link", UIMessage.make("modifyitem.remove.link"), 
-					new TemplateItemViewParameters(RemoveQuestionProducer.VIEW_ID,
+					new TemplateItemViewParameters(RemoveTemplateItemProducer.VIEW_ID,
 							templateId, templateItemId)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 

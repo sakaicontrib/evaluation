@@ -250,7 +250,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 				}
 
 				UIInternalLink.make(itemBranch,	"remove-row-item", UIMessage.make("modifytemplate.remove.link"),
-						new TemplateItemViewParameters(RemoveQuestionProducer.VIEW_ID, templateId, templateItem.getId()) );
+						new TemplateItemViewParameters(RemoveTemplateItemProducer.VIEW_ID, templateId, templateItem.getId()) );
 
 
 				// second line

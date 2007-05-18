@@ -38,7 +38,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  * 
  * @author Kapil Ahuja (kahuja@vt.edu)
  */
-public class ScaleControlProducer implements ViewComponentProducer, NavigationCaseReporter {
+public class ControlScalesProducer implements ViewComponentProducer, NavigationCaseReporter {
 
 	public static final String VIEW_ID = "control_scales";
 	public String getViewID() {
@@ -113,24 +113,22 @@ public class ScaleControlProducer implements ViewComponentProducer, NavigationCa
 			 * this user can control the scale for modification / delete.
 			 * 
 			 * Note that although canControlScale does a locked check,
-			 * it is better to avoid a cycle by checking the local data
-			 * i.e. getLocked() call.
+			 * it is more efficient to avoid a cycle by checking the local data first (i.e. getLocked() call)
 			 */
-			if (scale.getLocked().booleanValue()) {
-				//do nothing
-			} else {
+			if (! scale.getLocked().booleanValue()) {
 				if (scalesLogic.canControlScale(currentUserId, scale.getId())) {
-
-					UIInternalLink.make(listOfScales, "modify-sidelink", UIMessage.make("scalecontrol.modify.link"), new EvalScaleParameters(
-							ScaleAddModifyProducer.VIEW_ID, scale.getId()));
-
-					UIInternalLink.make(listOfScales, "remove-sidelink", UIMessage.make("scalecontrol.remove.link"), new EvalScaleParameters(
-							RemoveScaleProducer.VIEW_ID, scale.getId()));
+					UIInternalLink.make(listOfScales, "modify-sidelink", 
+							UIMessage.make("scalecontrol.modify.link"), 
+							new EvalScaleParameters(ScaleAddModifyProducer.VIEW_ID, scale.getId()));
+					UIInternalLink.make(listOfScales, "remove-sidelink", 
+							UIMessage.make("scalecontrol.remove.link"), 
+							new EvalScaleParameters(RemoveScaleProducer.VIEW_ID, scale.getId()));
 				}
 			}
 
-			//Display the scale options vertically
-			//ASCII value of 'a' = 97 so initial value is 96.
+			// Display the scale options vertically
+			// ASCII value of 'a' = 97 so initial value is 96.
+			// This is kinda weird, not sure it is really needed -AZ
 			char[] startOptionsNo = { 96 };
 			for (int j = 0; j < scale.getOptions().length; ++j) {
 				UIBranchContainer scaleOptions = UIBranchContainer.make(listOfScales, "scaleOptions:");
@@ -141,15 +139,19 @@ public class ScaleControlProducer implements ViewComponentProducer, NavigationCa
 
 			UIMessage.make(listOfScales, "ideal-scale-point", "scalecontrol.ideal.scale.title");
 
-			//Based on the scale ideal value in the database, pick the corresponding from the messages file.
+			// Based on the scale ideal value, pick the corresponding i18n message
 			if (scale.getIdeal() == null)
 				UIMessage.make(listOfScales, "ideal-value", "scalecontrol.ideal.scale.option.label.none");
 			else if (scale.getIdeal().equals(EvalConstants.SCALE_IDEAL_MID))
 				UIMessage.make(listOfScales, "ideal-value", "scalecontrol.ideal.scale.option.label.mid");
 			else if (scale.getIdeal().equals(EvalConstants.SCALE_IDEAL_HIGH))
 				UIMessage.make(listOfScales, "ideal-value", "scalecontrol.ideal.scale.option.label.high");
-			else
+			else if (scale.getIdeal().equals(EvalConstants.SCALE_IDEAL_LOW))
 				UIMessage.make(listOfScales, "ideal-value", "scalecontrol.ideal.scale.option.label.low");
+			else if (scale.getIdeal().equals(EvalConstants.SCALE_IDEAL_OUTSIDE))
+				UIMessage.make(listOfScales, "ideal-value", "scalecontrol.ideal.scale.option.label.outside");
+			else
+				UIMessage.make(listOfScales, "ideal-value", "unknown.caps");
 		}
 	}
 
