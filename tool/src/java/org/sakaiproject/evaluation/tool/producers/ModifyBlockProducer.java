@@ -56,7 +56,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  */
 
 public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsReporter, DynamicNavigationCaseReporter {
-	public static final String VIEW_ID = "modify_block"; //$NON-NLS-1$
+	public static final String VIEW_ID = "modify_block";
 	public String getViewID() {
 		return VIEW_ID;
 	}
@@ -81,11 +81,14 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 		this.richTextEvolver = richTextEvolver;
 	}
 
+	/* (non-Javadoc)
+	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
+	 */
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 		BlockIdsParameters evParameters = (BlockIdsParameters) viewparams;
 		Long templateId = evParameters.templateId;
 
-		//thisindicate if it is for modify existing Block
+		//this indicate if it is for modify existing Block
 		boolean modify = false;
 		//this indicate if the passed Ids have the same scale
 		//boolean validScaleIds = true;
@@ -101,7 +104,7 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 		String[] strIds = evParameters.templateItemIds.split(",");
 		EvalTemplateItem templateItems[] = new EvalTemplateItem[strIds.length];
 		for (int i = 0; i < strIds.length; i++) {
-			System.out.println("checked id[" + i + "]=" + strIds[i]);
+			//System.out.println("checked id[" + i + "]=" + strIds[i]);
 			templateItems[i] = itemsLogic.getTemplateItemById(Long.valueOf(strIds[i]));
 		}
 
@@ -112,24 +115,7 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 			modify = true;
 
 		// check if each templateItem has the same scale, otherwise show warning text
-//TOBE REMOVED
-/*		if (templateItems.length > 1) {
-			Long scaleId = templateItems[0].getItem().getScale().getId();
-			System.out.println("scale id[" + 0 + "]=" + scaleId.intValue());
-			for (int i = 1; i < templateItems.length; i++) {
-				Long myScaleId = templateItems[i].getItem().getScale().getId();
-				System.out.println("scale id[" + i + "]=" + myScaleId.intValue());
-				if (!myScaleId.equals(scaleId)) {
-					validScaleIds = false;
-					System.out.println("scale is not same");
-					break;
-				}
-			}
-		}
-*/
-		//enforce system settings of maximum number of child items for new Block creation
-		//if (!modify && validScaleIds) {
-			//if not have same scale, skip this block
+		// enforce system settings of maximum number of child items for new Block creation
 		if (!modify){
 			int maxChildsNo = ((Integer) settings.get(EvalSettings.ITEMS_ALLOWED_IN_QUESTION_BLOCK)).intValue();
 			//get actual total number of no-parent item(block childs + normal scaled type)
@@ -143,9 +129,8 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 				} else {
 					actualChildsNo++;
 				}
-			}//end of for loop
-			System.out.println("total number of childsin a block=" + actualChildsNo
-					+ ", maximum number of childs allowed in block=" + maxChildsNo);
+			} //end of for loop
+			//System.out.println("total number of childsin a block=" + actualChildsNo + ", maximum number of childs allowed in block=" + maxChildsNo);
 			if (actualChildsNo > maxChildsNo)
 				validChildsNo = false;
 		}
@@ -183,21 +168,14 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), //$NON-NLS-1$ //$NON-NLS-2$
 				new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
-		//if (!validScaleIds || !validChildsNo) {
 		if (!validChildsNo) {
 			// show error page with back button
 			UIBranchContainer showError = UIBranchContainer.make(tofill, "errorPage:");
-		/*	if (!validScaleIds) {
-
-				UIMessage.make(showError, "errorMsg", "modifyblock.error.scale.message");
-			} else {*/
-				UIMessage.make(showError, "errorMsg", "modifyblock.error.numberofblockChilds.message");
-			//}
-
+			UIMessage.make(showError, "errorMsg", "modifyblock.error.numberofblockChilds.message");
 			UIMessage.make(showError, "back-button", "modifyblock.back.button");
 
-		} else {// render block page
-
+		} else {
+			// render block page
 			UIBranchContainer showBlock = UIBranchContainer.make(tofill, "blockPage:");
 			UIForm form = UIForm.make(showBlock, "blockForm"); //$NON-NLS-1$
 
@@ -209,13 +187,11 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 			UIMessage.make(form, "added-by", "modifyitem.added.by");
 			UIOutput.make(form, "userInfo", external.getUserDisplayName(templateItems[0].getOwner()));
 			//  remove link
+
 			if (modify) {
-
 				UIBranchContainer showLink = UIBranchContainer.make(form, "showRemoveLink:");
-
 				UIInternalLink.make(showLink, "remove_link", UIMessage.make("modifytemplate.remove.link"),
-						new TemplateItemViewParameters(RemoveTemplateItemProducer.VIEW_ID, templateId, templateItems[0]
-								.getId()));
+						new TemplateItemViewParameters(RemoveTemplateItemProducer.VIEW_ID, templateId, templateItems[0].getId()));
 			}
 
 			UIMessage.make(form, "item-header-text-header", "modifyblock.item.header.text.header");
@@ -238,8 +214,7 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 
 				itemPath = "templateItemBeanLocator." + templateItems[0].getId();
 				if (templateItems[0].getScaleDisplaySetting() != null
-						&& templateItems[0].getScaleDisplaySetting().equals(
-								EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED))
+						&& templateItems[0].getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED))
 					UIBoundBoolean.make(form, "idealColor", "#{templateBBean.idealColor}", Boolean.TRUE);
 				else
 					UIBoundBoolean.make(form, "idealColor", "#{templateBBean.idealColor}", null);
@@ -247,9 +222,8 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 				//categorySettings(isDefaultCourse,itemPath, form);
 
 			} else {// create new block
-				// creat new block from multiple existing Block and other scaled item
+				// create new block from multiple existing Block and other scaled item
 				if (createFromBlock) {
-
 					itemPath = "templateItemBeanLocator." + templateItems[0].getId();
 					if (templateItems[0].getScaleDisplaySetting() != null
 							&& templateItems[0].getScaleDisplaySetting().equals(
@@ -262,9 +236,7 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 					// selected items are all normal scaled type				
 					itemPath = "templateItemBeanLocator.new1";
 					UIBoundBoolean.make(form, "idealColor", "#{templateBBean.idealColor}", null);
-
 				}
-
 			}
 
 			categorySettings(isDefaultCourse, itemPath, form);

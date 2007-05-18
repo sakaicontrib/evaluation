@@ -83,7 +83,6 @@ public class ControlScalesProducer implements ViewComponentProducer, NavigationC
 		//Get all the scales that are owned by a user
 		List scaleList = scalesLogic.getScalesForUser(currentUserId, null);
 		for (int i = 0; i < scaleList.size(); ++i) {
-
 			EvalScale scale = (EvalScale) scaleList.get(i);
 
 // NOTE - thise code was here to vet the new scales code, it passed this test -AZ
@@ -104,8 +103,8 @@ public class ControlScalesProducer implements ViewComponentProducer, NavigationC
 //				System.out.println("Changed scale: " + scale.getTitle() + ":" + scale.getOptions().length);
 //			}
 
-			UIBranchContainer listOfScales = UIBranchContainer.make(tofill, "verticalDisplay:");
-			UIOutput.make(listOfScales, "scale-no", new Integer(i + 1).toString());
+			UIBranchContainer listOfScales = UIBranchContainer.make(tofill, "verticalDisplay:", i+"");
+			UIOutput.make(listOfScales, "scale-no", (i + 1)+"");
 			UIOutput.make(listOfScales, "scale-title", scale.getTitle());
 
 			/*
@@ -131,7 +130,7 @@ public class ControlScalesProducer implements ViewComponentProducer, NavigationC
 			// This is kinda weird, not sure it is really needed -AZ
 			char[] startOptionsNo = { 96 };
 			for (int j = 0; j < scale.getOptions().length; ++j) {
-				UIBranchContainer scaleOptions = UIBranchContainer.make(listOfScales, "scaleOptions:");
+				UIBranchContainer scaleOptions = UIBranchContainer.make(listOfScales, "scaleOptions:", j+"");
 				startOptionsNo[0]++;
 				UIOutput.make(scaleOptions, "scale-option-no", new String(startOptionsNo));
 				UIOutput.make(scaleOptions, "scale-option-label", (scale.getOptions())[j]);

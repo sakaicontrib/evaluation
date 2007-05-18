@@ -144,8 +144,7 @@ public class BlockRenderer implements ItemRenderer {
 			int scaleLength = scaleValues.length;
 			int limit = usesNA? scaleLength - 1: scaleLength;  // skip the NA value at the end
 			for (int j = 0; j < limit; ++j) {
-				UIBranchContainer rowBranch = UIBranchContainer.make(
-						blockStepped, "blockRowBranch:", Integer.toString(j)); //$NON-NLS-1$
+				UIBranchContainer rowBranch = UIBranchContainer.make(blockStepped, "blockRowBranch:", j+""); //$NON-NLS-1$
 
 				// put in the block header text (only once)
 				if (j == 0) {
@@ -164,12 +163,12 @@ public class BlockRenderer implements ItemRenderer {
 
 				// This branch container is created to help in creating the middle images after the LABEL
 				for (int k = 0; k < j; ++k) {
-					UIBranchContainer afterTopLabelBranch = UIBranchContainer.make(rowBranch, "blockAfterTopLabelBranch:", Integer.toString(k)); //$NON-NLS-1$
+					UIBranchContainer afterTopLabelBranch = UIBranchContainer.make(rowBranch, "blockAfterTopLabelBranch:", k+""); //$NON-NLS-1$
 					UILink.make(afterTopLabelBranch, "middleImage", EvaluationConstant.STEPPED_IMAGE_URLS[1]); //$NON-NLS-1$	
 				}
 
 				// the down arrow images
-				UIBranchContainer bottomLabelBranch = UIBranchContainer.make(blockStepped, "blockBottomLabelBranch:", Integer.toString(j)); //$NON-NLS-1$
+				UIBranchContainer bottomLabelBranch = UIBranchContainer.make(blockStepped, "blockBottomLabelBranch:", j+""); //$NON-NLS-1$
 				UILink.make(bottomLabelBranch, "bottomImage", EvaluationConstant.STEPPED_IMAGE_URLS[2]); //$NON-NLS-1$
 			}
 
@@ -181,7 +180,7 @@ public class BlockRenderer implements ItemRenderer {
 				EvalItem childItem = childTemplateItem.getItem();
 
 				// For the radio buttons
-				UIBranchContainer childRow = UIBranchContainer.make(blockStepped, "childRow:", new Integer(j).toString() ); //$NON-NLS-1$
+				UIBranchContainer childRow = UIBranchContainer.make(blockStepped, "childRow:", j+"" ); //$NON-NLS-1$
 				if (colored) {
 					UILink.make(childRow, "idealImage", idealImage); //$NON-NLS-1$
 				}
@@ -211,13 +210,13 @@ public class BlockRenderer implements ItemRenderer {
 				for (int k = 0; k < limit; ++k) {
 					if (colored) {
 						UIBranchContainer radioBranchFirst = 
-							UIBranchContainer.make(childRow, "scaleOptionsFake:", Integer.toString(k)); //$NON-NLS-1$
+							UIBranchContainer.make(childRow, "scaleOptionsFake:", k+""); //$NON-NLS-1$
 						UISelectChoice.make(radioBranchFirst,
 								"dummyRadioValueFake", selectID, k); //$NON-NLS-1$
 					}
 
 					UIBranchContainer radioBranchSecond = 
-						UIBranchContainer.make(childRow, "scaleOptionsReal:", Integer.toString(k)); //$NON-NLS-1$
+						UIBranchContainer.make(childRow, "scaleOptionsReal:", k+""); //$NON-NLS-1$
 					UISelectChoice.make(radioBranchSecond,
 							"dummyRadioValueReal", selectID, k); //$NON-NLS-1$
 				}

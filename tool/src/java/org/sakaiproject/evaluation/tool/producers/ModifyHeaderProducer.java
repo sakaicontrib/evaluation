@@ -136,8 +136,7 @@ public class ModifyHeaderProducer implements ViewComponentProducer,
 				.getOwner()));
 
 		if (templateItemId != null) {
-			UIBranchContainer showLink = UIBranchContainer.make(form,
-					"showRemoveLink:");
+			UIBranchContainer showLink = UIBranchContainer.make(form, "showRemoveLink:");
 			UIInternalLink.make(showLink, "remove_link", UIMessage.make("modifyitem.remove.link"), 
 					new TemplateItemViewParameters(RemoveTemplateItemProducer.VIEW_ID,
 							templateId, templateItemId)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -159,8 +158,7 @@ public class ModifyHeaderProducer implements ViewComponentProducer,
 		// Means show both options (course and instructor)
 		if (isDefaultCourse == null) {
 
-			UIBranchContainer showItemCategory = UIBranchContainer.make(form,
-					"showItemCategory:"); //$NON-NLS-1$
+			UIBranchContainer showItemCategory = UIBranchContainer.make(form, "showItemCategory:"); //$NON-NLS-1$
 			UIMessage.make(showItemCategory, "item-category-header","modifyitem.item.category.header");
 			UIMessage.make(showItemCategory, "course-category-header","modifyitem.course.category.header");
 			UIMessage.make(showItemCategory, "instructor-category-header",

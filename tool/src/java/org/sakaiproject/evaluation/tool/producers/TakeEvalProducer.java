@@ -188,7 +188,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 				UIBranchContainer radiobranch = null;
 				
 				if (cat.equals(EvalConstants.ITEM_CATEGORY_COURSE)) { //"Course"
-					radiobranch = UIBranchContainer.make(courseSection, "itemrow:first", Integer.toString(i)); //$NON-NLS-1$
+					radiobranch = UIBranchContainer.make(courseSection, "itemrow:first", i+""); //$NON-NLS-1$
 					if (i % 2 == 1) {
 						radiobranch.decorators = new DecoratorList(new UIColourDecorator(null,Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
 					}
@@ -214,7 +214,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 					//if the given item is of type instructor, render it here
 					if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR)) { //"Instructor"
 						radiobranch = UIBranchContainer.make(instructorSection,
-								"itemrow:first", Integer.toString(i)); //$NON-NLS-1$
+								"itemrow:first", i+""); //$NON-NLS-1$
 						if (i % 2 == 1) radiobranch.decorators = new DecoratorList(new UIColourDecorator(null, Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
 						renderItemPrep(radiobranch, form, tempItem1, answerMap, cat, instructor);
 					}

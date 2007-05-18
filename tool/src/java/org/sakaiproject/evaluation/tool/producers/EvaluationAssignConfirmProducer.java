@@ -67,16 +67,16 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, N
 	 */
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
-		UIMessage.make(tofill, "confirm-assignment-title", "evaluationassignconfirm.page.title"); //$NON-NLS-2$
+		UIMessage.make(tofill, "confirm-assignment-title", "evaluationassignconfirm.page.title");
 
-		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), //$NON-NLS-2$
+		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"),
 				new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
-		UIMessage.make(tofill, "create-evaluation-title", "createeval.page.title"); //$NON-NLS-2$
-		UIMessage.make(tofill, "assign-evaluation-title", "assigneval.page.title"); //$NON-NLS-2$
-		UIMessage.make(tofill, "confirm-assignment-title", "evaluationassignconfirm.page.title"); //$NON-NLS-2$
+		UIMessage.make(tofill, "create-evaluation-title", "createeval.page.title");
+		UIMessage.make(tofill, "assign-evaluation-title", "assigneval.page.title");
+		UIMessage.make(tofill, "confirm-assignment-title", "evaluationassignconfirm.page.title");
 
-		UIOutput.make(tofill, "evaluationTitle", null, "#{evaluationBean.eval.title}"); //$NON-NLS-2$
+		UIOutput.make(tofill, "evaluationTitle", null, "#{evaluationBean.eval.title}");
 		//Get selected id's and all id + title map.
 		String[] selectedIds = evaluationBean.selectedSakaiSiteIds;
 		int[] enrollment = evaluationBean.enrollment;
@@ -89,26 +89,22 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, N
 			//labels[i] = c.title;
 			allIdTitleMap.put(c.evalGroupId, c.title);
 		}
-		UIMessage.make(tofill, "eval-assign-desc-prename", "evaluationassignconfirm.eval.assign.desc.prename"); //$NON-NLS-2$
-		UIMessage.make(tofill, "eval-assign-desc-postname", "evaluationassignconfirm.eval.assign.desc.postname"); //$NON-NLS-2$
-		UIMessage.make(tofill, "courses-selected-header", "evaluationassignconfirm.courses.selected.header"); //$NON-NLS-2$
-		UIMessage.make(tofill, "title-header", "evaluationassignconfirm.title.header"); //$NON-NLS-2$
-		UIMessage.make(tofill, "enrollment-header", "evaluationassignconfirm.enrollment.header"); //$NON-NLS-2$
+		UIMessage.make(tofill, "eval-assign-desc-prename", "evaluationassignconfirm.eval.assign.desc.prename");
+		UIMessage.make(tofill, "eval-assign-desc-postname", "evaluationassignconfirm.eval.assign.desc.postname");
+		UIMessage.make(tofill, "courses-selected-header", "evaluationassignconfirm.courses.selected.header");
+		UIMessage.make(tofill, "title-header", "evaluationassignconfirm.title.header");
+		UIMessage.make(tofill, "enrollment-header", "evaluationassignconfirm.enrollment.header");
 
 		for (int i = 0; i < selectedIds.length; ++i) {
-			UIBranchContainer siteRow = UIBranchContainer.make(tofill, "sites:");
+			UIBranchContainer siteRow = UIBranchContainer.make(tofill, "sites:", selectedIds[i]);
 			UIOutput.make(siteRow, "siteTitle", (String) allIdTitleMap.get(selectedIds[i]));
-
-			UIOutput.make(siteRow, "enrollment", "" + enrollment[i] + ""); //$NON-NLS-2$ //$NON-NLS-3$
+			UIOutput.make(siteRow, "enrollment", enrollment[i] + "");
 		}
 
-		/*
-		 * show submit buttons for first time evaluation creation && Queued Evaluation case
-		 * 
-		 * */
-		if (evaluationBean.eval.getId() == null) {//first time evaluation creation
+		// show submit buttons for first time evaluation creation && Queued Evaluation case
+		if (evaluationBean.eval.getId() == null) {
+			//first time evaluation creation
 			showButtonsForm(tofill);
-
 		} else {
 			//check if evaluation	is queued;Closed,started evaluation can not be changed
 			Date today = new Date();
@@ -123,8 +119,10 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, N
 	private void showButtonsForm(UIContainer tofill) {
 		UIBranchContainer showButtons = UIBranchContainer.make(tofill, "showButtons:");
 		UIForm evalAssignForm = UIForm.make(showButtons, "evalAssignForm");
-		UICommand.make(evalAssignForm, "doneAssignment", UIMessage.make("evaluationassignconfirm.done.button"), "#{evaluationBean.doneAssignmentAction}"); //$NON-NLS-2$ //$NON-NLS-3$
-		UICommand.make(evalAssignForm, "changeAssignedCourse", UIMessage.make("evaluationassignconfirm.changes.assigned.courses.button"), //$NON-NLS-2$
+		UICommand.make(evalAssignForm, "doneAssignment", 
+				UIMessage.make("evaluationassignconfirm.done.button"), "#{evaluationBean.doneAssignmentAction}");
+		UICommand.make(evalAssignForm, "changeAssignedCourse", 
+				UIMessage.make("evaluationassignconfirm.changes.assigned.courses.button"),
 				"#{evaluationBean.changeAssignedCourseAction}");
 	}
 

@@ -159,9 +159,7 @@ public class ModifyScaledProducer implements ViewComponentProducer,
 				.getOwner()));
 
 		if (templateItemId != null) {
-			UIBranchContainer showLink = UIBranchContainer.make(form,
-					"showRemoveLink:");
-
+			UIBranchContainer showLink = UIBranchContainer.make(form, "showRemoveLink:");
 			UIInternalLink.make(showLink, "remove_link", UIMessage.make("modifytemplate.remove.link"),
 					new TemplateItemViewParameters(RemoveTemplateItemProducer.VIEW_ID,
 							templateId, templateItemId));
@@ -222,8 +220,7 @@ public class ModifyScaledProducer implements ViewComponentProducer,
 		// Means show both options (course and instructor)
 		if (isDefaultCourse == null) {
 
-			UIBranchContainer showItemCategory = UIBranchContainer.make(form,
-					"showItemCategory:"); //$NON-NLS-1$
+			UIBranchContainer showItemCategory = UIBranchContainer.make(form, "showItemCategory:"); //$NON-NLS-1$
 			UIMessage.make(showItemCategory, "item-category-header", "modifyitem.item.category.header"); //$NON-NLS-1$ //$NON-NLS-2$
 			UIMessage.make(showItemCategory, "course-category-header", "modifyitem.course.category.header"); //$NON-NLS-1$ //$NON-NLS-2$
 			UIMessage.make(showItemCategory, "instructor-category-header","modifyitem.instructor.category.header"); //$NON-NLS-1$ //$NON-NLS-2$
