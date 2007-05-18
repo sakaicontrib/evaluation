@@ -63,6 +63,8 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  */
 public class SummaryProducer implements ViewComponentProducer, DefaultView, NavigationCaseReporter  {
 
+	private final int maxGroupsToDisplay = 5;
+
 	public static final String VIEW_ID = "summary"; //$NON-NLS-1$
 	public String getViewID() {
 		return VIEW_ID;
@@ -102,6 +104,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 	public void setLocale(Locale locale) {
 		this.locale = locale;
 	}
+
 
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
@@ -367,8 +370,13 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			List evaluatedContexts = external.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_BE_EVALUATED);
 			if (evaluatedContexts.size() > 0) {
 				for (int i=0; i<evaluatedContexts.size(); i++) {
-					EvalGroup c = (EvalGroup) evaluatedContexts.get(i);
+					if (i > maxGroupsToDisplay) {
+						UIMessage.make(contextsBC, "evaluatedListNone", "summary.sitelisting.maxshown", 
+								new Object[] { new Integer(evaluatedContexts.size() - maxGroupsToDisplay) });
+						break;
+					}
 					UIBranchContainer evaluatedBC = UIBranchContainer.make(contextsBC, "evaluatedList:", i+""); //$NON-NLS-1$
+					EvalGroup c = (EvalGroup) evaluatedContexts.get(i);
 					UIOutput.make(evaluatedBC, "evaluatedListTitle", c.title); //$NON-NLS-1$
 				}
 			} else {
@@ -379,8 +387,13 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			List evaluateContexts = external.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_TAKE_EVALUATION);
 			if (evaluateContexts.size() > 0) {
 				for (int i=0; i<evaluateContexts.size(); i++) {
-					EvalGroup c = (EvalGroup) evaluateContexts.get(i);
+					if (i > maxGroupsToDisplay) {
+						UIMessage.make(contextsBC, "evaluateListNone", "summary.sitelisting.maxshown", 
+								new Object[] { new Integer(evaluateContexts.size() - maxGroupsToDisplay) });
+						break;
+					}
 					UIBranchContainer evaluateBC = UIBranchContainer.make(contextsBC, "evaluateList:", i+""); //$NON-NLS-1$
+					EvalGroup c = (EvalGroup) evaluateContexts.get(i);
 					UIOutput.make(evaluateBC, "evaluateListTitle", c.title); //$NON-NLS-1$
 				}
 			} else {

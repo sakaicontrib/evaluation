@@ -45,7 +45,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 public class EvaluationAssignProducer implements ViewComponentProducer, NavigationCaseReporter {
 
-	public static final String VIEW_ID = "evaluation_assign"; //$NON-NLS-1$
+	public static final String VIEW_ID = "evaluation_assign";
 	public String getViewID() {
 		return VIEW_ID;
 	}
@@ -58,41 +58,42 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
 
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 		
-		UIMessage.make(tofill, "assign-eval-ext-title", "assigneval.page.ext.title"); //$NON-NLS-1$ //$NON-NLS-2$
-		UIMessage.make(tofill, "create-eval-title", "createeval.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
-		UIMessage.make(tofill, "eval-settings-title", "evalsettings.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
-		UIMessage.make(tofill, "assign-eval-title", "assigneval.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "assign-eval-ext-title", "assigneval.page.ext.title");
+		UIMessage.make(tofill, "create-eval-title", "createeval.page.title");
+		UIMessage.make(tofill, "eval-settings-title", "evalsettings.page.title");
+		UIMessage.make(tofill, "assign-eval-title", "assigneval.page.title");
 
 
-		UIInternalLink.make(tofill, "summary-toplink", new SimpleViewParameters(SummaryProducer.VIEW_ID));	 //$NON-NLS-1$
+		UIInternalLink.make(tofill, "summary-toplink", new SimpleViewParameters(SummaryProducer.VIEW_ID));	
 		
-		UIForm form = UIForm.make(tofill, "evalAssignForm"); //$NON-NLS-1$
+		UIForm form = UIForm.make(tofill, "evalAssignForm");
 		
-		UIOutput.make(form, "evaluationTitle", null, "#{evaluationBean.eval.title}"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIOutput.make(form, "evaluationTitle", null, "#{evaluationBean.eval.title}");
 		
-		UIMessage.make(form, "assign-eval-instructions-pre", "assigneval.instructions.pre"); //$NON-NLS-1$ //$NON-NLS-2$
-		UIMessage.make(form, "assign-eval-instructions-post", "assigneval.instructions.post"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(form, "assign-eval-instructions-pre", "assigneval.instructions.pre");
+		UIMessage.make(form, "assign-eval-instructions-post", "assigneval.instructions.post");
 		
 		
 		List sites = external.getEvalGroupsForUser(external.getCurrentUserId(), EvalConstants.PERM_BE_EVALUATED);
-		if(sites.size() >0){
+		if (sites.size() > 0) {
 			String[] ids = new String[sites.size()];
 			String[] labels = new String[sites.size()];
-			for (int i=0; i< sites.size(); i++) {
+			for (int i=0; i < sites.size(); i++) {
 				EvalGroup c = (EvalGroup) sites.get(i);
 				ids[i] = c.evalGroupId;
 				labels[i] = c.title;
 			}
 			
-			UISelect siteCheckboxes = UISelect.makeMultiple(form, "siteCheckboxes", ids, "#{evaluationBean.selectedSakaiSiteIds}", null); //$NON-NLS-1$ //$NON-NLS-2$
+			UISelect siteCheckboxes = UISelect.makeMultiple(form, "siteCheckboxes", ids, "#{evaluationBean.selectedSakaiSiteIds}", null);
 			String selectID = siteCheckboxes.getFullID();
 			    
-			for (int i = 0; i < ids.length; ++i){
-			    UIBranchContainer checkboxRow = UIBranchContainer.make(form, "sites:", i+""); //$NON-NLS-1$
-				UISelectChoice.make(checkboxRow, "siteId", selectID, i); //$NON-NLS-1$
-				UIOutput.make(checkboxRow, "siteTitle", (String) labels[i]); //$NON-NLS-1$
+			for (int i = 0; i < ids.length; i++){
+			    UIBranchContainer checkboxRow = UIBranchContainer.make(form, "sites:", i+"");
+				UISelectChoice.make(checkboxRow, "siteId", selectID, i);
+				UIOutput.make(checkboxRow, "siteTitle", (String) labels[i]);
 			 }
 		}
+
 		/*
 		 * TODO: If more than one course is selected and you come back to this page from confirm page,
 		 * then without changing the selection you again go to confirm page, you get a null pointer
@@ -106,24 +107,21 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
 		 *  ..."
 		 */
 
-		
-		UIMessage.make(form, "name-header", "assigneval.name.header"); //$NON-NLS-1$ //$NON-NLS-2$
-		UIMessage.make(form, "select-header", "assigneval.select.header");		 //$NON-NLS-1$ //$NON-NLS-2$
-		
-		UICommand.make(form, "cancel-button", UIMessage.make("general.cancel.button"), "#{evaluationBean.cancelAssignAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		
-		UICommand.make(form, "editSettings", UIMessage.make("assigneval.edit.settings.button"), "#{evaluationBean.backToSettingsAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		
-		UICommand.make(form, "confirmAssignCourses", UIMessage.make("assigneval.save.assigned.button"), "#{evaluationBean.confirmAssignCoursesAction}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		UIMessage.make(form, "name-header", "assigneval.name.header");
+		UIMessage.make(form, "select-header", "assigneval.select.header");		
+		UICommand.make(form, "cancel-button", UIMessage.make("general.cancel.button"), "#{evaluationBean.cancelAssignAction}");
+		UICommand.make(form, "editSettings", UIMessage.make("assigneval.edit.settings.button"), "#{evaluationBean.backToSettingsAction}");
+		UICommand.make(form, "confirmAssignCourses", UIMessage.make("assigneval.save.assigned.button"), "#{evaluationBean.confirmAssignCoursesAction}");
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
+	 */
 	public List reportNavigationCases() {
 		List i = new ArrayList();
-
 		i.add(new NavigationCase(SummaryProducer.VIEW_ID, new SimpleViewParameters(SummaryProducer.VIEW_ID)));
 		i.add(new NavigationCase(EvaluationSettingsProducer.VIEW_ID, new SimpleViewParameters(EvaluationSettingsProducer.VIEW_ID)));
 		i.add(new NavigationCase(EvaluationAssignConfirmProducer.VIEW_ID, new SimpleViewParameters(EvaluationAssignConfirmProducer.VIEW_ID)));
-
 		return i;
 	}
 }
