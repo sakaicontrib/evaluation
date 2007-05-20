@@ -153,8 +153,8 @@ public class PreloadDataImpl {
 
 		// check if there are any scales present
 		if (evaluationDao.findAll(EvalScale.class).isEmpty()) {
-			// NOTE: If you change the number of scales here (11 currently)
-			// you will need to update the test in EvaluationDaoImplTest and EvalScalesLogicImplTest also
+			// NOTE: If you change the number of scales here (14 currently),
+			// you will need to update the test in EvalScalesLogicImplTest also
 
 			// initial expert scales
 			agreeDisagree = saveScale("Agree disagree scale", EvalConstants.SCALE_IDEAL_HIGH,
@@ -174,8 +174,16 @@ public class PreloadDataImpl {
 					new String[] { "Much less", "Less", "Some", "More", "Much more" });
 			saveScale("Low high scale", EvalConstants.SCALE_IDEAL_NONE,
 					new String[] { "Very low", "High", "Moderately high", "High", "Very high" });
+			saveScale("Correctness scale", EvalConstants.SCALE_IDEAL_HIGH,
+					new String[] { "No", "Somewhat", "Mostly", "Yes" });
+
+			// measurement scales
 			saveScale("Speed scale", EvalConstants.SCALE_IDEAL_MID,
-					new String[] { "Too slow", "Appropriate", "Too fast" });
+					new String[] { "Too slow", "Okay", "Too fast" });
+			saveScale("Size scale", EvalConstants.SCALE_IDEAL_MID,
+					new String[] { "Too small", "Okay", "Too large" });
+			saveScale("Length scale", EvalConstants.SCALE_IDEAL_MID,
+					new String[] { "Too short", "Okay", "Too long" });
 
 			// initial demographic scales
 			saveScale("Gender scale", EvalConstants.SCALE_IDEAL_NONE, 
