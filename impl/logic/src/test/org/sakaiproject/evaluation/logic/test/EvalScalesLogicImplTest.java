@@ -269,8 +269,8 @@ public class EvalScalesLogicImplTest extends AbstractTransactionalSpringContextT
 	public void testGetScalesForUser() {
 		List l = null;
 		List ids = null;
-		// NOTE: 11 preloaded public scales to take into account currently
-		int preloadedCount = 11;
+		// NOTE: 14 preloaded public scales to take into account currently
+		int preloadedCount = 14;
 
 		// get all visible scales (admin should see all)
 		l = scales.getScalesForUser(EvalTestDataLoad.ADMIN_USER_ID, null);
