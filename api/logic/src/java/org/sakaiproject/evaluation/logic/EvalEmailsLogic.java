@@ -85,7 +85,9 @@ public interface EvalEmailsLogic {
 	/**
 	 * Send notifications to evaluatees (and owner if desired) that a new evaluation
 	 * has been created, includes links directly to add their own questions and details
-	 * about the dates for the evaluation
+	 * about the dates for the evaluation. If questions may be added by instructor
+	 * include that in the notification. If instructor may opt in or opt out include
+	 * that in the notification.
 	 * 
 	 * @param evaluationId the id of an EvalEvaluation object
 	 * @param includeOwner if true then send an email to the owner (creator of this evaluation) also, else do not include the owner
@@ -99,11 +101,23 @@ public interface EvalEmailsLogic {
 	 * take the evaluation in "one-click" (i.e. link directly to the take_eval page)
 	 * 
 	 * @param evaluationId the id of an EvalEvaluation object
-	 * @param includeEvaluatees if true, include notification to the evaluatees (probably instructors) that
-	 * if they have not opted into an evaluation which is opt-in, otherwise this does nothing
+	 * @param includeEvaluatees if true, if evaluatees (probably instructors)
+	 * have not opted into an evaluation which is opt-in include notification, otherwise this does nothing
 	 * @return an array of the messages that were sent
 	 */
 	public String[] sendEvalAvailableNotifications(Long evaluationId, boolean includeEvaluatees);
+	
+	/**
+	 * Send late notification to evaluators that there is an evaluation ready for them to take
+	 * and includes information about the evaluation (dates), also includes links to
+	 * take the evaluation in "one-click" (i.e. link directly to the take_eval page)
+	 * Called from EvalAssignGroup if an instructor opts-in after receiving an email sent on the 
+	 * Start Date saying that an evaluation may be taken if the instructor opts-in
+	 * @param evaluationId the identifier for the EvalEvaluation that may be taken
+	 * @param evalGroupId the identifier for the EvalGroup to be notified
+	 * @return an array of the messages that were sent
+	 */
+	public String[] sendEvalAvailableGroupNotification(Long evaluationId, String evalGroupId);
 
 	/**
 	 * Send reminder notifications to all users who are taking an evaluation,

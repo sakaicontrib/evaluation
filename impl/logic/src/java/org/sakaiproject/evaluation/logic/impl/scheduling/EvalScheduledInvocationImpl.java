@@ -34,7 +34,7 @@ import org.sakaiproject.evaluation.logic.externals.EvalScheduledInvocation;
  */
 public class EvalScheduledInvocationImpl implements EvalScheduledInvocation {
 	
-	private static Log log = LogFactory.getLog(EvalScheduledInvocation.class);
+	private static Log log = LogFactory.getLog(EvalScheduledInvocationImpl.class);
 	
 	private EvalJobLogic evalJobLogic;
 	public void setEvalJobLogic(EvalJobLogic evalJobLogic) {
@@ -58,6 +58,9 @@ public class EvalScheduledInvocationImpl implements EvalScheduledInvocation {
 			log.warn(this + " opaqueContext is null or empty");
 			return;
 		}
+		
+		if(log.isDebugEnabled())
+			log.debug("EvalScheduledInvocationImpl.execute(" + opaqueContext + ")");
 		
 		/*
 		 *	opaqueContext provides evaluation id and job type.

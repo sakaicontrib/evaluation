@@ -137,6 +137,8 @@ public class PreloadDataImpl {
 			evaluationDao.save(new EvalEmailTemplate(new Date(), ADMIN_OWNER,
 					EvalConstants.EMAIL_AVAILABLE_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_DEFAULT_AVAILABLE));
 			evaluationDao.save(new EvalEmailTemplate(new Date(), ADMIN_OWNER,
+					EvalConstants.EMAIL_AVAILABLE_OPT_IN_TEXT, EvalConstants.EMAIL_TEMPLATE_DEFAULT_AVAILABLE_OPT_IN));
+			evaluationDao.save(new EvalEmailTemplate(new Date(), ADMIN_OWNER,
 					EvalConstants.EMAIL_REMINDER_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_DEFAULT_REMINDER));
 			evaluationDao.save(new EvalEmailTemplate(new Date(), ADMIN_OWNER,
 					EvalConstants.EMAIL_RESULTS_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_DEFAULT_RESULTS));
