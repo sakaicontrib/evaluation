@@ -137,6 +137,9 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			UIInternalLink.make(tofill, "control-templates-link", //$NON-NLS-1$
 					UIMessage.make("controltemplates.page.title"),  //$NON-NLS-1$
 				new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
+			UIInternalLink.make(tofill, "control-items-link", //$NON-NLS-1$
+					UIMessage.make("controlitems.page.title"),  //$NON-NLS-1$
+				new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
 		}
 
 		if (beginEvaluation) {

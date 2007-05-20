@@ -28,6 +28,7 @@ import org.sakaiproject.evaluation.tool.params.BlockIdsParameters;
 import org.sakaiproject.evaluation.tool.params.PreviewEvalParameters;
 import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
 import org.sakaiproject.evaluation.tool.params.TemplateViewParameters;
+import org.sakaiproject.evaluation.tool.renderers.AddItemControlRenderer;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
 import uk.org.ponder.htmlutil.HTMLUtil;
@@ -52,7 +53,6 @@ import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
-import uk.org.ponder.rsf.viewstate.ViewStateHandler;
 
 /**
  * This is the main page for handling various operations to template, items,
@@ -71,11 +71,6 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 		return new TemplateViewParameters();
 	}
 
-	private ViewStateHandler viewStateHandler;
-	public void setViewStateHandler(ViewStateHandler viewStateHandler) {
-		this.viewStateHandler = viewStateHandler;
-	}
-
 	private LocalTemplateLogic localTemplateLogic;
 	public void setLocalTemplateLogic(LocalTemplateLogic localTemplateLogic) {
 		this.localTemplateLogic = localTemplateLogic;
@@ -86,18 +81,11 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 		this.external = external;
 	}
 
-	private ViewParameters deriveTarget(String viewID, Long templateId) {
-		return new TemplateItemViewParameters(viewID, templateId, null);
+	private AddItemControlRenderer addItemControlRenderer;
+	public void setAddItemControlRenderer(AddItemControlRenderer addItemControlRenderer) {
+		this.addItemControlRenderer = addItemControlRenderer;
 	}
 
-	private String[] convertViews(String[] viewIDs, Long templateId) {
-		String[] togo = new String[viewIDs.length];
-		for (int i = 0; i < viewIDs.length; ++i) {
-			togo[i] = viewStateHandler
-					.getFullURL(deriveTarget(viewIDs[i], templateId));
-		}
-		return togo;
-	}
 
 	/*
 	 * 1) access this page through "Continue and Add Questions" button on Template
@@ -118,8 +106,8 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 				new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID, null, templateId, null, ModifyTemplateItemsProducer.VIEW_ID));
 
 		UIMessage.make(tofill, "preview-eval-desc",	"modifytemplate.preview.eval.desc"); //$NON-NLS-1$ //$NON-NLS-2$
-		UIMessage.make(tofill, "add-item-note", "modifytemplate.add.item.note"); //$NON-NLS-1$ //$NON-NLS-2$
 
+		UIMessage.make(tofill, "add-item-note", "modifytemplate.add.item.note");
 		String[] labels = new String[] {
 				"modifytemplate.itemtype.scaled", 
 				"modifytemplate.itemtype.text",
@@ -134,11 +122,8 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 				ExistingItemsProducer.VIEW_ID,
 				ExpertCategoryProducer.VIEW_ID
 			};
-		String[] values = convertViews(viewIDs, templateId);
-
-		UIForm form = UIForm.make(tofill, "modifyForm"); //$NON-NLS-1$
-		UISelect.make(form, "itemClassification", values, labels, values[0], false).setMessageKeys(); //$NON-NLS-1$
-		UICommand.make(form, "add_questions", UIMessage.make("modifytemplate.add.item.button")); //$NON-NLS-1$ //$NON-NLS-2$
+		addItemControlRenderer.renderControl(tofill, "add-item-control:", viewIDs, labels, 
+				UIMessage.make("modifytemplate.add.item.button"), templateId);
 
 		List itemList = localTemplateLogic.fetchTemplateItems(templateId);
 		List templateItemsList = TemplateItemUtils.getNonChildItems(itemList);
