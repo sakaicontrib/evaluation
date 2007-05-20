@@ -153,33 +153,46 @@ public class PreloadDataImpl {
 
 		// check if there are any scales present
 		if (evaluationDao.findAll(EvalScale.class).isEmpty()) {
-			// NOTE: If you change the number of scales here
+			// NOTE: If you change the number of scales here (11 currently)
 			// you will need to update the test in EvaluationDaoImplTest and EvalScalesLogicImplTest also
 
-			// initial VT scales
-			agreeDisagree = saveScale("Agree disagree scale", new String[] { "Strongly Disagree", "Disagree", "Uncertain", "Agree",
-					"Strongly agree" });
-			saveScale("Frequency scale", new String[] { "Hardly ever", "Occasionally", "Sometimes", "Frequently",
-					"Always" });
-			saveScale("Relative rating scale", new String[] { "Poor", "Fair", "Good", "Excellent" });
-			saveScale("Averages scale", new String[] { "Less than Average", "Average", "More than Average" });
-			// initial demographic scales
-			saveScale("Gender scale", new String[] { "Female", "Male" });
-			saveScale("Class requirements scale", new String[] { "Req. in Major", "Req. out of Major",
-					"Elective filling Req.", "Free Elec. in Major", "Free Elec. out of Major" });
-			saveScale("Student year scale", new String[] { "Fresh", "Soph", "Junior", "Senior", "Master", "Doctoral" });
-			saveScale("Student grade scale", new String[] { "F", "D", "C", "B", "A", "Pass" });
-			saveScale("Business major scale", new String[] { "MGT", "MSCI", "MKTG", "FIN", "ACIS", "ECON", "OTHER" });
-			saveScale("Business student yr scale", new String[] { "Freshman", "Sophomore", "Junior", "Senior",
-					"Graduate" });
 			// initial expert scales
-			saveScale("Effectiveness scale", new String[] { "Not effective", "Somewhat effective",
-					"Moderately effective", "Effective", "Very effective" });
-			saveScale("Adequacy scale",
+			agreeDisagree = saveScale("Agree disagree scale", EvalConstants.SCALE_IDEAL_HIGH,
+					new String[] { "Strongly Disagree", "Disagree", "Uncertain", "Agree", "Strongly agree" });
+			saveScale("Frequency scale", EvalConstants.SCALE_IDEAL_NONE,
+					new String[] { "Hardly ever", "Occasionally", "Sometimes", "Frequently", "Always" });
+			saveScale("Relative rating scale", EvalConstants.SCALE_IDEAL_HIGH, 
+					new String[] { "Poor", "Fair", "Good", "Excellent" });
+			saveScale("Averages scale", EvalConstants.SCALE_IDEAL_NONE,
+					new String[] { "Less than Average", "Average", "More than Average" });
+			saveScale("Effectiveness scale", EvalConstants.SCALE_IDEAL_HIGH,
+					new String[] { "Not effective", "Somewhat effective", 
+						"Moderately effective", "Effective", "Very effective" });
+			saveScale("Adequacy scale", EvalConstants.SCALE_IDEAL_HIGH,
 					new String[] { "Unsatisfactory", "Inadequate", "Adequate", "Good", "Excellent" });
-			saveScale("Relationships scale", new String[] { "Much less", "Less", "Some", "More", "Much more" });
-			saveScale("Low high scale", new String[] { "Very low", "High", "Moderately high", "High", "Very high" });
-			saveScale("Speed scale", new String[] { "Too slow", "Appropriate", "Too fast" });
+			saveScale("Relationships scale", EvalConstants.SCALE_IDEAL_NONE,
+					new String[] { "Much less", "Less", "Some", "More", "Much more" });
+			saveScale("Low high scale", EvalConstants.SCALE_IDEAL_NONE,
+					new String[] { "Very low", "High", "Moderately high", "High", "Very high" });
+			saveScale("Speed scale", EvalConstants.SCALE_IDEAL_MID,
+					new String[] { "Too slow", "Appropriate", "Too fast" });
+
+			// initial demographic scales
+			saveScale("Gender scale", EvalConstants.SCALE_IDEAL_NONE, 
+					new String[] { "Female", "Male" });
+			saveScale("Grade (A-F) scale", EvalConstants.SCALE_IDEAL_NONE, 
+					new String[] { "F", "D", "C", "B", "A", "Pass" });
+
+			// Commented out VT specific scales -AZ
+//			saveScale("Student year scale", EvalConstants.SCALE_IDEAL_NONE, 
+//					new String[] { "Fresh", "Soph", "Junior", "Senior", "Master", "Doctoral" });
+//			saveScale("Business major scale", EvalConstants.SCALE_IDEAL_NONE, 
+//					new String[] { "MGT", "MSCI", "MKTG", "FIN", "ACIS", "ECON", "OTHER" });
+//			saveScale("Business student yr scale", EvalConstants.SCALE_IDEAL_NONE,
+//					new String[] { "Freshman", "Sophomore", "Junior", "Senior",	"Graduate" });
+//			saveScale("Class requirements scale", EvalConstants.SCALE_IDEAL_NONE, 
+//					new String[] { "Req. in Major", "Req. out of Major",
+//						"Elective filling Req.", "Free Elec. in Major", "Free Elec. out of Major" });
 
 			log.info("Preloaded " + evaluationDao.countAll(EvalScale.class) + " evaluation scales");
 		}
@@ -187,12 +200,13 @@ public class PreloadDataImpl {
 
 	/**
 	 * @param title
+	 * @param ideal
 	 * @param options
 	 * @return a persisted {@link EvalScale}
 	 */
-	private EvalScale saveScale(String title, String[] options) {
+	private EvalScale saveScale(String title, String ideal, String[] options) {
 		EvalScale scale = new EvalScale(new Date(), ADMIN_OWNER, title, EvalConstants.SHARING_PUBLIC, Boolean.TRUE,
-				"", EvalConstants.SCALE_IDEAL_HIGH, options, Boolean.TRUE);
+				"", ideal, options, Boolean.FALSE);
 		evaluationDao.save(scale);
 		return scale;
 	}
