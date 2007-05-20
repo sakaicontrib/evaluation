@@ -271,9 +271,10 @@ public class EvalConstants {
 	 * evaluation starts
 	 */
 	public static final String EMAIL_TEMPLATE_CREATED = "Created";
+	
 	/**
 	 * EmailTemplate message setting:
-	 * This is the default template for when the evaluation is created, to which an instructor may add questions<br/>
+	 * This is the default template for when the evaluation is created<br/>
 	 * Replaceable strings:<br/>
 	 * $EvalTitle - the title of this evaluation
 	 * $EvalStartDate - the start date of this evaluation
@@ -290,15 +291,51 @@ public class EvalConstants {
 		"All information submitted to the Evaluation System is confidential. Instructors cannot identify which submissions belong to which students. Students are required to login to the system for the sole purpose of providing students access to the appropriate evaluations for their associated courses. Instructors can only view general statistics as allowed by the university. Please send privacy concerns to $HelpdeskEmail. \n" +
 		"\n" +
 		"An evaluation ($EvalTitle) has been created for: $EvalGroupTitle.\n" +
-		"\n" +
-		"You may add items to this evaluation until $EvalStartDate using the following link:\n" +
-		"$URLtoAddItems \n" +
+		"\n" + "SUBSTITUTABLE TEXT" +
 		"\n" +
 		"The evaluation will run from $EvalStartDate to $EvalDueDate and the results of the evaluation will be viewable on $EvalResultsDate.\n" +
 		"\n" +		
 		"Thank you for your cooperation.\n" +
 		"------------------------------------------------------------\n" +
 		"Should you encounter any technical difficulty in working with the evaluation, please send an email to $HelpdeskEmail clearly indicating the problem you encountered. For any other concerns please contact your department.\n";
+	
+	/**
+	 * EmailTemplate message setting:
+	 * This is text that must be replaced in EMAIL_CREATED_DEFAULT_TEXT<br/>
+	 * It may be replaced by text containing nothing, EMAIL_CREATED_OPT_IN_TEXT or 
+	 * EMAIL_CREATED_OPT_OUT_TEXT, and/or EMAIL_CREATED_ADD_ITEMS_TEXT.
+	 */
+	public static final String EMAIL_CREATED_SUBSTITUTABLE_TEXT = "SUBSTITUTABLE TEXT";
+	
+	/**
+	 * EmailTemplate message setting:
+	 * This is the substitute text for when an evaluation is created to which an instructor may add items<br/>
+	 * Replaceable strings:<br/>
+	 * $URLtoOptIn - the direct URL for evaluators to opt in to use this evaluation
+	 * 
+	 */
+	public static final String EMAIL_CREATED_ADD_ITEMS_TEXT = "You may add items to this evaluation until $EvalStartDate using the following link:\n" +
+		"$URLtoAddItems \n";
+	
+	/**
+	 * EmailTemplate message setting:
+	 * This is the substitute text for when an evaluation is created to which an instructor may opt in<br/>
+	 * Replaceable strings:<br/>
+	 * $URLtoOptIn - the direct URL for evaluators to opt in to use this evaluation
+	 * 
+	 */
+	public static final String EMAIL_CREATED_OPT_IN_TEXT = 
+		"Its use is optional. To use the evaluation, you must opt in by using the following link:\n $URLtoOptIn \n\n" + 
+		"If you do not opt in, the evaluation will not be used.";
+	
+	/**
+	 * EmailTemplate message setting:
+	 * This is the substitute text for when an evaluation is created to which an instructor may opt out<br/>
+	 * Replaceable strings:<br/>
+	 * $URLtoOptOut - the direct URL for evaluators to opt in to use this evaluation
+	 */
+	public static final String EMAIL_CREATED_OPT_OUT_TEXT = 
+		"Its use is optional. The evaluation will be used unless you opt out by using the following link:\n $URLtoOptOut \n\n";
 
 	/**
 	 * EmailTemplate: defaultType: Identifies the default available template
@@ -313,6 +350,14 @@ public class EvalConstants {
 	/**
 	 * EmailTemplate message setting:
 	 * This is the default template for when the evaluation is available for users to take
+	 * * Replaceable strings:<br/>
+	 * $EvalTitle - the title of this evaluation
+	 * $EvalDueDate - the due date of this evaluation
+	 * $EvalResultsDate - the view results date of this evaluation
+	 * $EvalGroupTitle - the title to the site/course/group/evalGroup which this evaluation is assigned to for this user
+	 * $HelpdeskEmail - the email address for the helpdesk (or the support contact)
+	 * $URLtoTakeEval - the direct URL for evaluators to take this evaluation
+	 * $URLtoSystem - the main URL to the system this is running in
 	 */
 	public static final String EMAIL_AVAILABLE_DEFAULT_TEXT = 
 		"All information submitted to the Evaluation System is confidential. Instructors cannot identify which submissions belong to which students. Students are required to login to the system for the sole purpose of providing students access to the appropriate evaluations for their associated courses. Instructors can only view general statistics as allowed by the university. Please send privacy concerns to $HelpdeskEmail. \n" +
@@ -327,6 +372,49 @@ public class EvalConstants {
 		"Thank you for your participation.\n" +
 		"------------------------------------------------------------\n" +
 		"Should you encounter any technical difficulty in filling out the evaluation, please send an email to $HelpdeskEmail clearly indicating the problem you encountered. For any other concerns please contact your department.\n" +
+		"\n" +
+		"Alternate Instructions: \n" +
+		"1) Go to $URLtoSystem \n" +
+		"2) Enter your username and password and click on 'Login' button. \n" +
+		"3) Click on 'Evaluation System' in the left navigation menu under My Workspace. \n" +
+		"4) Click on '$EvalTitle' link under '$EvalGroupTitle'. \n";
+	
+	/**
+	 * EmailTemplate: defaultType: Identifies the default available opt-in template
+	 */
+	public final static String EMAIL_TEMPLATE_DEFAULT_AVAILABLE_OPT_IN = "defaultOptIn";
+	/**
+	 * EmailTemplate search setting:
+	 * This identifies a template as the "instructor must opt in for availability template",
+	 * used when the evaluation is available for users to take
+	 */
+	public static final String EMAIL_TEMPLATE_AVAILABLE_OPT_IN = "OptIn";
+	/**
+	 * EmailTemplate message setting:
+	 * This is the default template for when instructor must opt in for the evaluation to be available for users to take
+	 * Replaceable strings:<br/>
+	 * $EvalTitle - the title of this evaluation
+	 * $EvalStartDate - the start date of this evaluation
+	 * $EvalDueDate - the due date of this evaluation
+	 * $EvalResultsDate - the view results date of this evaluation
+	 * $EvalGroupTitle - the title to the site/course/group/evalGroup which this evaluation is assigned to for this user
+	 * $HelpdeskEmail - the email address for the helpdesk (or the support contact)
+	 * $URLtoOptIn - the direct URL for evaluators to opt in to use this evaluation
+	 * $URLtoSystem - the main URL to the system this is running in
+	 */
+	public static final String EMAIL_AVAILABLE_OPT_IN_TEXT = 
+		"All information submitted to the Evaluation System is confidential. Instructors cannot identify which submissions belong to which students. Students are required to login to the system for the sole purpose of providing students access to the appropriate evaluations for their associated courses. Instructors can only view general statistics as allowed by the university. Please send privacy concerns to $HelpdeskEmail. \n" +
+		"\n" +
+		"An evaluation ($EvalTitle) for: $EvalGroupTitle is ready to be filled out. However, you have not opted to use this evaluation.\n" +
+		"\n" +
+		"If you now wish to use the evaluation, you may do so by opting in at:\n" +
+		"$URLtoOptIn \n" +
+		"If the above link is not working then please follow the Alternate Instructions at the bottom of the message. \n" +
+		"Enter the site using your username and password. \n" +
+		"\n" +
+		"Thank you for your participation.\n" +
+		"------------------------------------------------------------\n" +
+		"Should you encounter any technical difficulty in opting in to the evaluation, please send an email to $HelpdeskEmail clearly indicating the problem you encountered. For any other concerns please contact your department.\n" +
 		"\n" +
 		"Alternate Instructions: \n" +
 		"1) Go to $URLtoSystem \n" +
@@ -494,6 +582,12 @@ public class EvalConstants {
 	 * Category => Objective => Item
 	 */
 	public static final String ITEM_GROUP_TYPE_OBJECTIVE = "ItemGroupObjective";
+	
+	/**
+	 * ScheduledInvocationManager: ScheduledInvocationCommand jobType
+	 * 
+	 */
+	public static final String JOB_TYPE_CREATED = "scheduledCreated";
 	
 	/**
 	 * ScheduledInvocationManager: ScheduledInvocationCommand jobType

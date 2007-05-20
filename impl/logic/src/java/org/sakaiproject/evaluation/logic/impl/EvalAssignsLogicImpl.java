@@ -21,6 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
+import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -41,12 +42,16 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 	public void setDao(EvaluationDao dao) {
 		this.dao = dao;
 	}
-
-	private EvalExternalLogic external;
-	public void setExternalLogic(EvalExternalLogic external) {
-		this.external = external;
+	
+	private EvalEmailsLogic emails;
+	public void setEmails(EvalEmailsLogic emails) {
+		this.emails = emails;
 	}
 
+	private EvalExternalLogic external;
+	public void setExternal(EvalExternalLogic external) {
+		this.external = external;
+	}
 
 	// INIT method
 	public void init() {
@@ -112,6 +117,14 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 					assignContext.setInstructorApproval( Boolean.TRUE );
 				}
 			}
+			
+			// if a late instructor opt-in, notify students in this group that an evaluation is available
+			if(EvalConstants.INSTRUCTOR_OPT_IN.equals(eval.getInstructorOpt()) && 
+					assignContext.getInstructorApproval().booleanValue() && 
+					assignContext.getEvaluation().getStartDate().before(new Date())) {
+				emails.sendEvalAvailableGroupNotification(assignContext.getEvaluation().getId(), assignContext.getEvalGroupId());
+			}
+			
 			if (assignContext.getInstructorsViewResults() == null) {
 				if (eval.getInstructorsDate() != null) {
 					assignContext.setInstructorsViewResults( Boolean.TRUE );

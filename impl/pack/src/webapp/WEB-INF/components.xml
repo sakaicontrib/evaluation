@@ -38,27 +38,18 @@
 
 	</bean>
 
-
 	<!-- Bring in any logic support beans -->
 	<import resource="logic-support.xml" />
 
-
 	<!-- create the various other logic beans -->
-	<bean id="org.sakaiproject.evaluation.logic.EvalAssignsLogic"
-			class="org.sakaiproject.evaluation.logic.impl.EvalAssignsLogicImpl"
-			init-method="init">
-		<property name="dao" 
-			ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
-		<property name="externalLogic" 
-			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-	</bean>
-
 	<bean id="org.sakaiproject.evaluation.logic.EvalEmailsLogic"
 			class="org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl"
 			init-method="init">
 		<property name="dao" 
 			ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
-		<property name="externalLogic" 
+		<property name="assignsLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalAssignsLogic" />
+		<property name="external" 
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="settings" 
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
@@ -67,7 +58,18 @@
 		<property name="evalResponsesLogic" 
 			ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
 	</bean>
-
+	
+	<bean id="org.sakaiproject.evaluation.logic.EvalAssignsLogic"
+			class="org.sakaiproject.evaluation.logic.impl.EvalAssignsLogicImpl"
+			init-method="init">
+		<property name="dao" 
+			ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+		<property name="emails" 
+			ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
+		<property name="external" 
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+	</bean>
+	
 	<bean id="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic"
 			class="org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl"
 			init-method="init">
@@ -144,6 +146,8 @@
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="scheduledInvocationManager"
 			ref="org.sakaiproject.api.app.scheduler.ScheduledInvocationManager" />
+		<property name="settings" 
+			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 		<property name="timeService"
 			ref="org.sakaiproject.time.api.TimeService" />
 	</bean>
