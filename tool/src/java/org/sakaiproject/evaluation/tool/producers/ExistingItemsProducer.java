@@ -106,7 +106,7 @@ public class ExistingItemsProducer implements ViewComponentProducer, NavigationC
 
 		UIForm form = UIForm.make(tofill, "insert-items-form");
 
-		// loop through all expert items
+		// loop through all existing items
 		List existingItems = itemsLogic.getItemsForUser(currentUserId, null, null, false);
 		for (int i = 0; i < existingItems.size(); i++) {
 			EvalItem item = (EvalItem) existingItems.get(i);

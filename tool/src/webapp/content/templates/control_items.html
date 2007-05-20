@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   <title rsf:id="page-title">My Items</title>
+   <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+   <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+   <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+   <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+   <script rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript" src="../js/evalUtils.js"></script>
+</head>
+
+<body>
+<div class="portletBody">
+
+<div class="navIntraTool">
+	<a rsf:id="administrate-link" href="administrate.html">Administrate</a>
+	<a rsf:id="summary-link" href="summary.html">Summary</a>
+	<a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a>
+	<a rsf:id="control-templates-link" href="control_templates.html">My Templates</a>
+</div>
+
+<div>
+	<ul class="breadCrumb">
+		<li class="breadCrumb"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+		<li class="breadCrumb" rsf:id="page-title">My Items</li>
+	</ul>
+</div>
+
+<div style="width:99%;">
+	<div class="divrow">
+		<div class="leftcol">
+			<span rsf:id="items-header" style="font-weight:bold;">Items</span> -
+			<span rsf:id="items-description" style="font-style:italic;font-size:0.9em;">questions or statements which the evaluator responds to</span>
+		</div>
+		<div class="rightcol" style="white-space:nowrap;">
+			<span rsf:id="add-item-header" style="font-weight:bold;">Add Item:</span>
+			<div rsf:id="add-item-control:">
+				<form name="modify_template_items_form">
+					<select id="itemClassification-selection">
+						<option value="modify_scaled.html" selected="selected">Scaled/Survey</option>
+						<option value="modify_essay.html">Short Answer/Essay</option>
+						<option value="modify_header.html">Text Header</option>
+					</select>
+					<input id="add_questions" type="button" value="Add"
+						onclick="EvalSystem.operateSelectLink(this.id, 'itemClassification-selection')" />
+				</form>
+			</div>
+		</div>
+		<div class="cleaner">&nbsp;</div>
+	</div>
+</div>
+
+<!-- TODO - make the search part do something -AZ
+<div style="width:99%;">
+	<div class="divrow">
+		<div class="leftcol" style="font-size:0.9em;">
+			<span rsf:id="search-current" style="font-weight:bold;">Current Search</span> :
+			<span rsf:id="search-current-value">Search Text</span>
+		</div>
+		<div class="rightcol">
+			<form rsf:id="search-form" action="control_items.html" method="get" style="font-size:0.7em;">
+				<input rsf:id="search-box" type="text" size="25" maxlength="100" style="font-size:1em;"/>
+				<input rsf:id="search-command" type="submit" value="Search" style="font-size:1em;"/>
+			</form>
+		</div>
+		<div class="cleaner">&nbsp;</div>
+	</div>
+</div>
+-->
+
+<!-- This block (list items) is not visible if there are no items visible -->
+<div rsf:id="item-listing:">
+	<div rsf:id="item-row:">
+		<div class="divrow" style="width:99%;font-size:0.9em;">
+			<div class="leftcol">
+				<span rsf:id="item-classification">Item Classification</span>
+				<span rsf:id="item-scale" style="font-style: italic;">
+					- Item Scale (the title of the scale and the points in parens)
+				</span>
+			</div>
+			<div class="rightcol" style="margin:0em 1em;">
+				<a rsf:id="item-remove-link" href="remove_item.html">Delete</a>
+				<span rsf:id="item-remove-dummy"></span>
+			</div>
+			<div class="rightcol" style="margin:0em 1em;">
+				<a rsf:id="item-modify-link" href="modify_scaled.html">Edit</a>
+				<span rsf:id="item-modify-dummy"></span>
+			</div>
+			<div class="rightcol" style="margin:0em 1em;">
+				<a rsf:id="item-preview-link" href="preview_item.html">Preview</a>
+			</div>
+			<div class="rightcol" style="margin:0em 1em;">
+				<!-- <a href="#" name="copy-item-link">Copy</a> -->
+				<span rsf:id="item-owner">owner displayname</span>
+			</div>
+			<div class="cleaner">&nbsp;</div>
+		</div>
+		<div class="divrow" style="width:99%;">
+			<div class="leftcol">
+				<span rsf:id="item-text">Item Text (the text entered for the item itself will appear here, it is possibly quite long</span>
+			</div>
+			<div class="cleaner">&nbsp;</div>
+		</div>
+	</div>
+	<div rsf:id="item-row:" class="itemsListOddLine">
+		<div class="divrow" style="width:99%;font-size:0.9em;">
+			<div class="leftcol">
+				<span rsf:id="item-classification">Item Classification</span>
+				<span rsf:id="item-scale" style="font-style: italic;">
+					- Item Scale (the title of the scale and the points in parens)
+				</span>
+			</div>
+			<div class="rightcol" style="margin:0em 1em;">
+				<a rsf:id="item-remove-link" href="remove_item.html">Delete</a>
+				<span rsf:id="item-remove-dummy"></span>
+			</div>
+			<div class="rightcol" style="margin:0em 1em;">
+				<a rsf:id="item-modify-link" href="modify_scaled.html">Edit</a>
+				<span rsf:id="item-modify-dummy"></span>
+			</div>
+			<div class="rightcol" style="margin:0em 1em;">
+				<a rsf:id="item-preview-link" href="preview_item.html">Preview</a>
+			</div>
+			<div class="rightcol" style="margin:0em 1em;">
+				<!-- <a href="#" name="copy-item-link">Copy</a> -->
+				<span rsf:id="item-owner">owner displayname</span>
+			</div>
+			<div class="cleaner">&nbsp;</div>
+		</div>
+		<div class="divrow" style="width:99%;">
+			<div class="leftcol">
+				<span rsf:id="item-text">Item Text (the text entered for the item itself will appear here, it is possibly quite long</span>
+			</div>
+			<div class="cleaner">&nbsp;</div>
+		</div>
+	</div>
+</div>
+<div rsf:id="no-items" style="font-style:italic;margin-left:2em;">No items available</div>
+
+</div>
+</body>
+</html>

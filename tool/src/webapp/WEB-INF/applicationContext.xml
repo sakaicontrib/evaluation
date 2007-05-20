@@ -128,6 +128,11 @@
 		</property>
 	</bean>
 
+	<bean id="org.sakaiproject.evaluation.tool.renderers.AddItemControlRenderer"
+		class="org.sakaiproject.evaluation.tool.renderers.AddItemControlRenderer">
+		<property name="viewStateHandler" ref="viewStateHandler" />
+	</bean>
+
 	<!-- Override this definition from RSF-evolvers, to reflect the fact we are
 		serving the RSF components templates from our own webapp (as provided using
 		the "partial WAR" build strategy -->
@@ -142,7 +147,7 @@
 		parent="templateContributorParent">
 		<property name="baseDirectory" value="component-templates/" />
 		<property name="templateNames"
-			value="render_header_item, render_text_item, render_scaled_item, render_block_item" />
+			value="render_header_item, render_text_item, render_scaled_item, render_block_item, render_add_item_control" />
 		<property name="expected" value="true" />
 	</bean>
 

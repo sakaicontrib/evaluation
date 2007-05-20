@@ -15,6 +15,7 @@
 	<script type="text/javascript" language="JavaScript" src="../js/jquery/interface/idrop.js"></script>
 	<script type="text/javascript" language="JavaScript" src="../js/jquery/interface/isortables.js"></script>
 
+	<script type="text/javascript" language="JavaScript" src="../js/evalUtils.js"></script>
 	<script type="text/javascript" language="JavaScript" src="../js/blockUtils.js"></script>
 	<script type="text/javascript" language="JavaScript" src="../js/reorderUtils.js"></script>
 </head>
@@ -22,9 +23,10 @@
 <body>
 <div class="portletBody">
 
-<div class="navIntraTool"><a rsf:id="administrate-toplink"
-	href="administrate.html">Administrate</a> <a rsf:id="summary-toplink"
-	href="summary.html">Summary</a></div>
+<div class="navIntraTool">
+	<a rsf:id="administrate-toplink" href="administrate.html">Administrate</a>
+	<a rsf:id="summary-toplink"	href="summary.html">Summary</a>
+</div>
 
 <div>
 	<ul class="breadCrumb">
@@ -39,20 +41,21 @@
 			<a rsf:id="preview_eval_link" href="preview_eval.html" target="_blank">View a preview</a>
 			<span rsf:id="preview-eval-desc"> of this template as an evaluation</span>
 		</div>
-		<div class="rightcol">
+		<div class="rightcol" style="white-space:nowrap;">
 			<span rsf:id="add-item-note" style="font-weight:bold;">Add Item:</span>
-			<form rsf:id="modifyForm" name="modify_template_items_form">
-				<select rsf:id="itemClassification"	id="itemClassification-selection">
-					<option value="#URL-1" selected="selected">Scaled/Survey</option>
-					<option value="#URL-2">Short Answer/Essay</option>
-					<option value="#URL-3">Text Header</option>
-					<option value="#URL-4">Question Block</option>
-					<option value="#URL-5">Expert</option>
-				</select>
-				<!--  TODO!! Add Javascript to onclick to navigate to selected value -->
-				<input rsf:id="add_questions" type="button" value="Add"
-					onclick="EvalSystem.operateSelectLink(this.id, 'itemClassification-selection')" />
-			</form>
+			<div rsf:id="add-item-control:">
+				<form name="modify_template_items_form">
+					<select	id="itemClassification-selection">
+						<option value="modify_scaled.html" selected="selected">Scaled/Survey</option>
+						<option value="modify_essay.html">Short Answer/Essay</option>
+						<option value="modify_header.html">Text Header</option>
+						<option value="modify_block.html">Question Block</option>
+						<option value="choose_expert_category.html">Expert</option>
+					</select>
+					<input id="add_questions" type="button" value="Add"
+						onclick="EvalSystem.operateSelectLink(this.id, 'itemClassification-selection')" />
+				</form>
+			</div>
 		</div>
 		<div class="cleaner">&nbsp;</div>
 	</div>
@@ -88,8 +91,8 @@
 
 <div style="width:98%;">
 	<span style="float:left;">
-		<input rsf:id="revertOrderButton" type="button" disabled="true" value="Revert Order" id="revertOrderButton" />
-		<input rsf:id="saveReorderButton" type="submit" disabled="true" value="Save Order" id="saveReorderButton" />
+		<input rsf:id="revertOrderButton" type="button" disabled="disabled" value="Revert Order" id="revertOrderButton" />
+		<input rsf:id="saveReorderButton" type="submit" disabled="disabled" value="Save Order" id="saveReorderButton" />
 	</span>
 	<span rsf:id="orderingInstructions" style="float:right;" class="instructions">
 		Drag the items to reorder them and click save to set the new order or use the pulldowns to reorder a single item
@@ -298,7 +301,7 @@ EvalSystem.decorateReorderSelects("", 3);
 	<div style="float:left;">
 		<form rsf:id="createBlockForm" name="create_block_form" method="get" target="_self" action="modify_block.html">
 			<input type="hidden" name="templateItemIds"/>
-			<input rsf:id="createBlockBtn" name="create_block_btn" id="createBlockBtn" type="submit" value="Create Block" disabled="true"
+			<input rsf:id="createBlockBtn" name="create_block_btn" id="createBlockBtn" type="submit" value="Create Block" disabled="disabled"
 				onclick="javascript: return extractSelectedItems(this);" style="background-color:#AACCFF;" />
 		</form>
 	</div>

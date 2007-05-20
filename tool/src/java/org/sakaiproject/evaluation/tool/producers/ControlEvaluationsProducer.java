@@ -25,6 +25,7 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
@@ -82,6 +83,11 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 		this.evaluationsLogic = evaluationsLogic;
 	}
 
+	private EvalTemplatesLogic templatesLogic;
+	public void setTemplatesLogic(EvalTemplatesLogic templatesLogic) {
+		this.templatesLogic = templatesLogic;
+	}
+
 	private EvalResponsesLogic responsesLogic;
 	public void setResponsesLogic(EvalResponsesLogic responsesLogic) {
 		this.responsesLogic = responsesLogic;
@@ -101,6 +107,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 		// local variables used in the render logic
 		String currentUserId = external.getCurrentUserId();
 		boolean userAdmin = external.isUserAdmin(currentUserId);
+		boolean createTemplate = templatesLogic.canCreateTemplate(currentUserId);
 		boolean beginEvaluation = evaluationsLogic.canBeginEvaluation(currentUserId);
 		// use a date which is related to the current users locale
 		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
@@ -119,6 +126,15 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 			UIInternalLink.make(tofill, "administrate-link", 
 					UIMessage.make("administrate.page.title"),
 				new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+		}
+
+		if (createTemplate) {
+			UIInternalLink.make(tofill, "control-templates-link", //$NON-NLS-1$
+					UIMessage.make("controltemplates.page.title"),  //$NON-NLS-1$
+				new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
+			UIInternalLink.make(tofill, "control-items-link", //$NON-NLS-1$
+					UIMessage.make("controlitems.page.title"),  //$NON-NLS-1$
+				new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
 		}
 
 		if (!beginEvaluation) {

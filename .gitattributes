@@ -144,6 +144,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/params/TemplateViewParameters.jav
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ChooseReportGroupsProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlEvaluationsProducer.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlItemsProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlScalesProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlTemplatesProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/EvaluationAssignConfirmProducer.java -text
@@ -173,6 +174,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/producers/SummaryProducer.java -t
 tool/src/java/org/sakaiproject/evaluation/tool/producers/TakeEvalProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ViewEssayResponseProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ViewReportProducer.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/renderers/AddItemControlRenderer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/BlockRenderer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/HeaderRenderer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/ItemRenderer.java -text
@@ -191,6 +193,7 @@ tool/src/webapp/WEB-INF/classes/log4j.properties -text
 tool/src/webapp/WEB-INF/requestContext.xml -text
 tool/src/webapp/WEB-INF/sitemap.xml -text
 tool/src/webapp/WEB-INF/web.xml -text
+tool/src/webapp/component-templates/render_add_item_control.html -text
 tool/src/webapp/component-templates/render_block_item.html -text
 tool/src/webapp/component-templates/render_header_item.html -text
 tool/src/webapp/component-templates/render_scaled_item.html -text
@@ -206,6 +209,7 @@ tool/src/webapp/content/images/ideal-mid.jpg -text
 tool/src/webapp/content/images/ideal-none.jpg -text
 tool/src/webapp/content/js/blockUtils.js -text
 tool/src/webapp/content/js/evalEditSettings.js -text
+tool/src/webapp/content/js/evalUtils.js -text
 tool/src/webapp/content/js/jquery/form.js -text
 tool/src/webapp/content/js/jquery/interface/.project -text
 tool/src/webapp/content/js/jquery/interface/accordion.js -text
@@ -248,6 +252,7 @@ tool/src/webapp/content/templates/choose_expert_category.html -text
 tool/src/webapp/content/templates/choose_expert_items.html -text
 tool/src/webapp/content/templates/choose_expert_objective.html -text
 tool/src/webapp/content/templates/control_evaluations.html -text
+tool/src/webapp/content/templates/control_items.html -text
 tool/src/webapp/content/templates/control_scales.html -text
 tool/src/webapp/content/templates/control_templates.html -text
 tool/src/webapp/content/templates/evaluation_assign.html -text
