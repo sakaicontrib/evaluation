@@ -273,8 +273,8 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 			throw new NullPointerException("Notification of a new evaluation failed, because the evaluation state was null.");
 		
 		//send created email if instructor can add questions or opt-in or opt-out
-		Integer InstructorAddItemNumber = (Integer)settings.get(EvalSettings.INSTRUCTOR_ADD_ITEMS_NUMBER);
-		if(InstructorAddItemNumber != null && InstructorAddItemNumber.intValue() > 0) {
+		int instructorAdds = ((Integer)settings.get(EvalSettings.INSTRUCTOR_ADD_ITEMS_NUMBER)).intValue();
+		if(instructorAdds > 0 || !eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_REQUIRED)) {
 			
 			/* Note: email cannot be sent at this point, because it precedes saveAssignGroup,
 			 * so we schedule email for ten minutes from now, also giving instructor ten minutes 
