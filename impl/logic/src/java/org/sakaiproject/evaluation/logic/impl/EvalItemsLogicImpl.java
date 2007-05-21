@@ -467,6 +467,13 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 		} else {
 			templateItem.setUsesNA( Boolean.FALSE );
 		}
+		// defaults for hierarchy level of template items
+		if (templateItem.getHierarchyLevel() == null) {
+			templateItem.setHierarchyLevel(EvalConstants.HIERARCHY_LEVEL_TOP);
+		}
+		if (templateItem.getHierarchyNodeId() == null) {
+			templateItem.setHierarchyNodeId(EvalConstants.HIERARCHY_NODE_ID_TOP);
+		}
 
 		if (checkUserControlTemplateItem(userId, templateItem)) {
 			if (template.getLocked().booleanValue() == true) {

@@ -183,6 +183,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/viewparams/EvalScaleParameters.ja
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/EvalTakeViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ExpertItemViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/PreviewEvalParameters.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/viewparams/PreviewItemViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ReportParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/TemplateItemViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/TemplateViewParameters.java -text
