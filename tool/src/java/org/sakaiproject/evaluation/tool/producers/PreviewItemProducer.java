@@ -16,9 +16,11 @@
 package org.sakaiproject.evaluation.tool.producers;
 
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
+import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
-import org.sakaiproject.evaluation.tool.viewparams.TemplateItemViewParameters;
+import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
+import org.sakaiproject.evaluation.tool.viewparams.PreviewItemViewParameters;
 
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIInternalLink;
@@ -67,9 +69,16 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 		UIMessage.make(tofill, "modify-template-title", "modifytemplate.page.title");
 
 		// get templateItem to preview from VPs
-		TemplateItemViewParameters templateItemViewParams = (TemplateItemViewParameters) viewparams;
-		Long templateItemId = templateItemViewParams.templateItemId;		
-		EvalTemplateItem templateItem = itemsLogic.getTemplateItemById(templateItemId);
+		PreviewItemViewParameters previewItemViewParams = (PreviewItemViewParameters) viewparams;
+		EvalTemplateItem templateItem = null;
+		if (previewItemViewParams.templateItemId != null) {
+			templateItem = itemsLogic.getTemplateItemById(previewItemViewParams.templateItemId);
+		} else if (previewItemViewParams.itemId != null) {
+			EvalItem item = itemsLogic.getItemById(previewItemViewParams.itemId);
+			templateItem = TemplateItemUtils.makeTemplateItem(item);
+		} else {
+			throw new IllegalArgumentException("Must have itemId or templateItemId to do preview");
+		}
 
 		// use the renderer evolver
 		itemRenderer.renderItem(tofill, "previewed-item:", null, templateItem, 0, true);
@@ -82,7 +91,7 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 	 * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
 	 */
 	public ViewParameters getViewParameters() {
-		return new TemplateItemViewParameters();
+		return new PreviewItemViewParameters();
 	}
 
 }

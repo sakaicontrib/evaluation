@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
@@ -183,6 +184,31 @@ public class TemplateItemUtils {
 		Collections.sort(childItemsList, 
 				new ComparatorsUtils.TemplateItemComparatorByOrder() );
 		return childItemsList;
+	}
+
+	/**
+	 * Creates an {@link EvalTemplateItem} object from an {@link EvalItem} object by inferring
+	 * the necessary paramters for previewing or rendering when only an item is available, 
+	 * does NOT create a persistent object<br/>
+	 * NOTE: template is set to null
+	 * 
+	 * @param item any item object (could be persistent)
+	 * @return a non-persistent template item object
+	 */
+	public static EvalTemplateItem makeTemplateItem(EvalItem item) {
+		if (item == null) {
+			throw new IllegalArgumentException("Cannot create template item from null item");
+		}
+
+		EvalTemplateItem templateItem = new EvalTemplateItem(item.getLastModified(), item.getOwner(), null, item,
+				new Integer(1), item.getCategory(), EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP);
+		templateItem.setUsesNA(Boolean.TRUE);
+		if ( EvalConstants.ITEM_TYPE_SCALED.equals(item.getClassification()) ) {
+			templateItem.setScaleDisplaySetting(EvalConstants.ITEM_SCALE_DISPLAY_FULL_COLORED);
+		} else if ( EvalConstants.ITEM_TYPE_TEXT.equals(item.getClassification()) ) {
+			templateItem.setDisplayRows(new Integer(3));
+		}
+		return templateItem;
 	}
 
 }

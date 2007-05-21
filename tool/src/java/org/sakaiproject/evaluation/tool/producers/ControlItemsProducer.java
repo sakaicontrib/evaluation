@@ -24,6 +24,7 @@ import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.tool.renderers.AddItemControlRenderer;
+import org.sakaiproject.evaluation.tool.viewparams.PreviewItemViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -37,6 +38,7 @@ import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
 /**
  * This lists items for users so they can add, modify, remove them
@@ -50,11 +52,6 @@ public class ControlItemsProducer implements ViewComponentProducer {
 		return VIEW_ID;
 	}
 
-
-	private Locale locale;
-	public void setLocale(Locale locale) {
-		this.locale = locale;
-	}
 
 	private EvalExternalLogic external;
 	public void setExternal(EvalExternalLogic external) {
@@ -79,6 +76,11 @@ public class ControlItemsProducer implements ViewComponentProducer {
 	private AddItemControlRenderer addItemControlRenderer;
 	public void setAddItemControlRenderer(AddItemControlRenderer addItemControlRenderer) {
 		this.addItemControlRenderer = addItemControlRenderer;
+	}
+
+	private Locale locale;
+	public void setLocale(Locale locale) {
+		this.locale = locale;
 	}
 
 
@@ -162,9 +164,8 @@ public class ControlItemsProducer implements ViewComponentProducer {
 					UIOutput.make(itemBranch, "item-scale", scaleDisplaySettingLabel);
 				}
 
-				// TODO - make this link work when we have somewhere for it to go
 				UIInternalLink.make(itemBranch, "item-preview-link", UIMessage.make("controlitems.preview.link"), 
-						new SimpleViewParameters(SummaryProducer.VIEW_ID));
+						new PreviewItemViewParameters(PreviewItemProducer.VIEW_ID, item.getId(), null) );
 
 				UIOutput.make(itemBranch, "item-owner", external.getUserDisplayName( item.getOwner()) );
 				UIOutput.make(itemBranch, "item-text", item.getItemText());

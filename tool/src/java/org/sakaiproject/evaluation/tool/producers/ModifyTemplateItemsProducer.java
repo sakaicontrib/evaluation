@@ -28,6 +28,7 @@ import org.sakaiproject.evaluation.tool.renderers.AddItemControlRenderer;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.tool.viewparams.BlockIdsParameters;
 import org.sakaiproject.evaluation.tool.viewparams.PreviewEvalParameters;
+import org.sakaiproject.evaluation.tool.viewparams.PreviewItemViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateItemViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
@@ -65,10 +66,6 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 	public static final String VIEW_ID = "modify_template_items"; //$NON-NLS-1$
 	public String getViewID() {
 		return VIEW_ID;
-	}
-
-	public ViewParameters getViewParameters() {
-		return new TemplateViewParameters();
 	}
 
 	private LocalTemplateLogic localTemplateLogic;
@@ -221,7 +218,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 				UIOutput.make(itemBranch, "item-owner-name", external.getUserDisplayName(templateItem.getOwner()));
 
 				UIInternalLink.make(itemBranch, "preview-row-item", UIMessage.make("modifytemplate.preview.link"), 
-						new TemplateItemViewParameters(PreviewItemProducer.VIEW_ID, templateId, templateItem.getId()) );
+						new PreviewItemViewParameters(PreviewItemProducer.VIEW_ID, null, templateItem.getId()) );
 
 				if ((templateItem.getBlockParent() != null) && (templateItem.getBlockParent().booleanValue() == true)) {
 					// if it is a block item
@@ -284,6 +281,13 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 		createBlock.decorators = new DecoratorList( new UITooltipDecorator( UIMessage.make("modifytemplate.button.createblock.title") ) );
 
 		UIMessage.make(form2, "blockInstructions", "modifytemplate.instructions.block");
+	}
+
+	/* (non-Javadoc)
+	 * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
+	 */
+	public ViewParameters getViewParameters() {
+		return new TemplateViewParameters();
 	}
 
 }
