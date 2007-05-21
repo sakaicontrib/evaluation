@@ -19,7 +19,9 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.easymock.MockControl;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
+import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.impl.EvalAssignsLogicImpl;
 import org.sakaiproject.evaluation.logic.test.stubs.EvalExternalLogicStub;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
@@ -42,6 +44,9 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 
 	private EvaluationDao evaluationDao;
 	private EvalTestDataLoad etdl;
+	
+	private EvalEmailsLogic emails;
+	private MockControl emailsControl;
 
 	protected String[] getConfigLocations() {
 		// point to the needed spring config files, must be on the classpath
@@ -75,12 +80,20 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 		// load up any other needed spring beans
 
 		// setup the mock objects if needed
+		emailsControl = MockControl.createControl(EvalEmailsLogic.class);
+		emails = (EvalEmailsLogic) emailsControl.getMock();
+		
+		//this mock object is simply keeping us from getting a null when emails is accessed 
+		emails.sendEvalAvailableGroupNotification(EvalTestDataLoad.INVALID_LONG_ID, EvalTestDataLoad.CONTEXT2); // expect this to be called
+		emailsControl.setDefaultMatcher(MockControl.ALWAYS_MATCHER);
+		emailsControl.setReturnValue(EvalTestDataLoad.EMPTY_STRING_ARRAY, MockControl.ZERO_OR_MORE);
+		emailsControl.replay();
 
-		// create and setup the object to be tested
+		//create and setup the object to be tested
 		assigns = new EvalAssignsLogicImpl();
 		assigns.setDao(evaluationDao);
 		assigns.setExternalLogic( new EvalExternalLogicStub() );
-
+		assigns.setEmails(emails); // set to the mock object
 	}
 
 	// run this before each test starts and as part of the transaction

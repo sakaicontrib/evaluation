@@ -61,9 +61,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		this.assignsLogic = assignsLogic;
 	}
 
-	private EvalExternalLogic external;
-	public void setExternal(EvalExternalLogic external) {
-		this.external = external;
+	private EvalExternalLogic externalLogic;
+	public void setExternalLogic(EvalExternalLogic externalLogic) {
+		this.externalLogic = externalLogic;
 	}
 
 	private EvalSettings settings;
@@ -258,7 +258,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 	 * @return true if they can
 	 */
 	protected boolean canUserControlEmailTemplate(String userId, EvalEmailTemplate emailTemplate) {
-		if ( external.isUserAdmin(userId) ) {
+		if ( externalLogic.isUserAdmin(userId) ) {
 			return true;
 		} else if ( emailTemplate.getOwner().equals(userId) ) {
 			return true;
@@ -283,7 +283,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 				// check eval user permissions (just owner and super at this point)
 				// TODO - find a way to centralize this check
 				if (userId.equals(eval.getOwner()) ||
-						external.isUserAdmin(userId)) {
+						externalLogic.isUserAdmin(userId)) {
 					return true;
 				} else {
 					throw new SecurityException("User ("+userId+") cannot control email template in evaluation ("+eval.getId()+"), do not have permission");
@@ -335,7 +335,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		// loop through contexts and send emails to correct users in each context
 		for (int i=0; i<groups.size(); i++) {
 			EvalGroup group = (EvalGroup) groups.get(i);
-			Set userIdsSet = external.getUserIdsForEvalGroup(group.evalGroupId, EvalConstants.PERM_BE_EVALUATED);
+			Set userIdsSet = externalLogic.getUserIdsForEvalGroup(group.evalGroupId, EvalConstants.PERM_BE_EVALUATED);
 			if (! includeOwner && userIdsSet.contains(eval.getOwner())) {
 				userIdsSet.remove(eval.getOwner());
 			}
@@ -362,7 +362,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			sentMessages.add(email);
 
 			// send the actual emails for this context
-			external.sendEmails(from, 
+			externalLogic.sendEmails(from, 
 					toUserIds, 
 					"New evaluation created: " + eval.getTitle(), 
 					message);
@@ -448,7 +448,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			EvalGroup group = (EvalGroup) groups.get(i);
 			if(eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_REQUIRED)) {
 				//notify students
-				userIdsSet = external.getUserIdsForEvalGroup(group.evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
+				userIdsSet = externalLogic.getUserIdsForEvalGroup(group.evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
 				studentNotification = true;
 			}
 			else {
@@ -458,14 +458,14 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 					if(assignGroup.getEvalGroupId().equals(group.evalGroupId)) {
 						if(assignGroup.getInstructorApproval().booleanValue()) {
 							//instructor has opted-in, notify students
-							userIdsSet = external.getUserIdsForEvalGroup(group.evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
+							userIdsSet = externalLogic.getUserIdsForEvalGroup(group.evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
 							studentNotification = true;
 							break;
 						}
 						else {
 							if(eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_OPT_IN) && includeEvaluatees) {
 								// instructor has not opted-in, notify instructors
-								userIdsSet = external.getUserIdsForEvalGroup(group.evalGroupId, EvalConstants.PERM_BE_EVALUATED);
+								userIdsSet = externalLogic.getUserIdsForEvalGroup(group.evalGroupId, EvalConstants.PERM_BE_EVALUATED);
 								studentNotification = false;
 								break;
 							}
@@ -500,7 +500,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			sentMessages.add(message);
 
 			// send the actual emails for this context
-			external.sendEmails(from, 
+			externalLogic.sendEmails(from, 
 					toUserIds, 
 					"New evaluation created: " + eval.getTitle(), 
 					message);
@@ -545,7 +545,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		List sentMessages = new ArrayList();
 		
 		//get student ids
-		Set userIdsSet = external.getUserIdsForEvalGroup(group.evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
+		Set userIdsSet = externalLogic.getUserIdsForEvalGroup(group.evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
 		if (userIdsSet.size() == 0) return (String[])sentMessages.toArray(new String[] {});
 		String[] toUserIds = (String[]) userIdsSet.toArray(new String[] {});
 		
@@ -558,7 +558,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		sentMessages.add(message);
 
 		// send the actual emails for this context
-		external.sendEmails(from, 
+		externalLogic.sendEmails(from, 
 				toUserIds, 
 				"New evaluation created: " + eval.getTitle(), 
 				message);
@@ -636,7 +636,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			}
 			else if(EvalConstants.EMAIL_INCLUDE_ALL.equals(includeConstant)) {
 				userIdsSet.addAll(evalResponsesLogic.getNonResponders(evaluationId, group));
-				userIdsSet.addAll(external.getUserIdsForEvalGroup(group.evalGroupId, EvalConstants.PERM_BE_EVALUATED));
+				userIdsSet.addAll(externalLogic.getUserIdsForEvalGroup(group.evalGroupId, EvalConstants.PERM_BE_EVALUATED));
 			}
 
 			// skip ahead if there is no one to send to
@@ -659,7 +659,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			sentMessages.add(message);
 
 			// send the actual emails for this context
-			external.sendEmails(from, 
+			externalLogic.sendEmails(from, 
 					toUserIds, 
 					"New evaluation created: " + eval.getTitle(), 
 					message);
@@ -714,10 +714,10 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			EvalGroup group = (EvalGroup) groups.get(i);
 			userIdsSet.clear();
 			if(includeEvaluatees) {
-				userIdsSet.addAll(external.getUserIdsForEvalGroup(group.evalGroupId, EvalConstants.PERM_TAKE_EVALUATION));
+				userIdsSet.addAll(externalLogic.getUserIdsForEvalGroup(group.evalGroupId, EvalConstants.PERM_TAKE_EVALUATION));
 			}
 			if(includeAdmins) {
-				userIdsSet.addAll(external.getUserIdsForEvalGroup(group.evalGroupId, EvalConstants.PERM_BE_EVALUATED));
+				userIdsSet.addAll(externalLogic.getUserIdsForEvalGroup(group.evalGroupId, EvalConstants.PERM_BE_EVALUATED));
 			}
 			
 			//if results are private just send to owner
@@ -745,7 +745,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			sentMessages.add(message);
 
 			// send the actual emails for this context
-			external.sendEmails(from, 
+			externalLogic.sendEmails(from, 
 					toUserIds, 
 					"New evaluation created: " + eval.getTitle(), 
 					message);
@@ -784,13 +784,13 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
 		// TODO check these URLS once I can get the right tool url
 		replacementValues.put("URLtoAddItems", 
-				external.getToolUrl() + "/instructor_add?evaluationId=" + eval.getId());
+				externalLogic.getToolUrl() + "/instructor_add?evaluationId=" + eval.getId());
 		replacementValues.put("URLtoTakeEval", 
-				external.getToolUrl() + "/take_eval?evaluationId=" + eval.getId() +
+				externalLogic.getToolUrl() + "/take_eval?evaluationId=" + eval.getId() +
 				"&evalGroupId=" + group.evalGroupId);
 		replacementValues.put("URLtoViewResults", 
-				external.getToolUrl() + "/view_report?evaluationId=" + eval.getId());
-		replacementValues.put("URLtoSystem", external.getServerUrl());
+				externalLogic.getToolUrl() + "/view_report?evaluationId=" + eval.getId());
+		replacementValues.put("URLtoSystem", externalLogic.getServerUrl());
 
 		return TextTemplateLogicUtils.processTextTemplate(messageTemplate, replacementValues);
 	}
