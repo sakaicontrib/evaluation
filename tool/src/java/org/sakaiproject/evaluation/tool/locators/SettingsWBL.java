@@ -11,10 +11,12 @@
  * Antranig Basman (antranig@caret.cam.ac.uk)
  * Kapil Ahuja (kahuja@vt.edu)
  *****************************************************************************/
-package org.sakaiproject.evaluation.tool;
+
+package org.sakaiproject.evaluation.tool.locators;
 
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.utils.SettingsLogicUtils;
+import org.sakaiproject.evaluation.tool.EvaluationConstant;
 
 import uk.org.ponder.beanutil.WriteableBeanLocator;
 import uk.org.ponder.conversion.StaticLeafParser;

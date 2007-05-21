@@ -23,6 +23,8 @@ import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
+import org.sakaiproject.evaluation.tool.locators.TemplateBeanLocator;
+import org.sakaiproject.evaluation.tool.locators.TemplateItemBeanLocator;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
 /**

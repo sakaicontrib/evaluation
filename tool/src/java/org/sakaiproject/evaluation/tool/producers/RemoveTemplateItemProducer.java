@@ -49,10 +49,9 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * 
  * @author: Rui Feng (fengr@vt.edu)
  */
-
 public class RemoveTemplateItemProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
 
-	public static final String VIEW_ID = "remove_templateitem"; //$NON-NLS-1$
+	public static final String VIEW_ID = "remove_templateitem";
 	public String getViewID() {
 		return VIEW_ID;
 	}
@@ -74,7 +73,7 @@ public class RemoveTemplateItemProducer implements ViewComponentProducer, ViewPa
 	}
 
 	public Long templateId;
-	
+
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
 	 */
@@ -89,18 +88,18 @@ public class RemoveTemplateItemProducer implements ViewComponentProducer, ViewPa
         String templateItemOTPBinding="templateItemBeanLocator."+templateItemId;		
         EvalTemplateItem templateItem = itemsLogic.getTemplateItemById(templateItemId);
       
-        UIMessage.make(tofill, "remove-question-title", "removequestion.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
-        UIMessage.make(tofill, "modify-template-title", "modifytemplate.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
+        UIMessage.make(tofill, "remove-question-title", "removequestion.page.title");
+        UIMessage.make(tofill, "modify-template-title", "modifytemplate.page.title");
 		
 		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"),
 				new SimpleViewParameters(SummaryProducer.VIEW_ID));	
 		
-		UIMessage.make(tofill, "remove-question-confirm-pre-name", "removequestion.confirm.pre.name"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "remove-question-confirm-pre-name", "removequestion.confirm.pre.name");
 		//TODO: queNo
 		UIMessage.make(tofill, "remove-question-confirm-mid-name", "removequestion.confirm.mid.name");
 		
 		UIOutput.make(tofill,"templateTitle",template.getTitle());
-		UIMessage.make(tofill, "remove-question-confirm-post-name", "removequestion.confirm.post.name"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "remove-question-confirm-post-name", "removequestion.confirm.post.name");
 
 		//if it is a block item, show information 
 		if(TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)){
@@ -108,33 +107,33 @@ public class RemoveTemplateItemProducer implements ViewComponentProducer, ViewPa
 			UIMessage.make(showBlockInfo, "remove-question-spilt-block", "removequestion.spilt.block"); 
 
 		}
-		
+
 		//use the renderer evolver
 		itemRenderer.renderItem(tofill, "remove-item:", null, templateItem, 0, true);
 	
 		UIForm form = UIForm.make(tofill, "removeQuestionForm");
 		UIMessage.make(form, "cancel-button", "general.cancel.button");
 		UICommand rmvBtn=UICommand.make(form, "removeQuestionAction", UIMessage.make("removequestion.remove.button"),  
-				"#{itemsBean.removeItemAction}"); //$NON-NLS-1$
+				"#{itemsBean.removeItemAction}");
 		rmvBtn.parameters.add(new UIELBinding("#{itemsBean.templateItem}", new ELReference(templateItemOTPBinding)));
 	}
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
 	 */
 	public List reportNavigationCases() {
 		List i = new ArrayList();
-		
+		i.add(new NavigationCase("removedItem", new SimpleViewParameters(ControlItemsProducer.VIEW_ID)));
 		i.add(new NavigationCase("removed", new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, templateId)));
 		return i;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
 	 */
 	public ViewParameters getViewParameters() {
 		   return new TemplateItemViewParameters();
 	}
-	  
+
 }
