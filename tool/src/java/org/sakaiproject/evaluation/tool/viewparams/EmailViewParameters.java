@@ -1,7 +1,7 @@
 /*
  * Created on 18 Feb 2007
  */
-package org.sakaiproject.evaluation.tool.params;
+package org.sakaiproject.evaluation.tool.viewparams;
 
 
 public class EmailViewParameters extends TemplateViewParameters {

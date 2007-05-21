@@ -17,8 +17,8 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
-import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
 import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
+import org.sakaiproject.evaluation.tool.viewparams.TemplateItemViewParameters;
 
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIInternalLink;
@@ -42,12 +42,7 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 	public String getViewID() {
 		return VIEW_ID;
 	}
-/*
-	private MessageLocator messageLocator;
-	public void setMessageLocator(MessageLocator messageLocator) {
-		this.messageLocator = messageLocator;
-	}
-*/
+
 	private EvalItemsLogic itemsLogic;
 	public void setItemsLogic( EvalItemsLogic itemsLogic) {
 		this.itemsLogic = itemsLogic;
@@ -68,6 +63,7 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 
 		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), 
 				new SimpleViewParameters(SummaryProducer.VIEW_ID));
+
 		UIMessage.make(tofill, "modify-template-title", "modifytemplate.page.title");
 
 		// get templateItem to preview from VPs
@@ -79,7 +75,7 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 		itemRenderer.renderItem(tofill, "previewed-item:", null, templateItem, 0, true);
 
 		// render the close button
-		UIMessage.make(tofill, "close-button","general.close.window.button");
+		UIMessage.make(tofill, "close-button", "general.close.window.button");
 	}
 
 	/* (non-Javadoc)

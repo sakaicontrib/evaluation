@@ -10,7 +10,7 @@
  * Contributors:
  * Will Humphries (whumphri@vt.edu)
  *****************************************************************************/
-package org.sakaiproject.evaluation.tool.params;
+package org.sakaiproject.evaluation.tool.viewparams;
 
 /**
  * This is a view parameters class which defines the variables that are passed

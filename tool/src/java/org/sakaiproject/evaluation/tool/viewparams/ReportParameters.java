@@ -12,7 +12,7 @@
  * 
  *****************************************************************************/
 
-package org.sakaiproject.evaluation.tool.params;
+package org.sakaiproject.evaluation.tool.viewparams;
 
 /**
  * View params which pass chosen groups to the view reports page

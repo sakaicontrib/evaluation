@@ -20,8 +20,8 @@ import java.util.List;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
-import org.sakaiproject.evaluation.tool.params.ChooseItemViewParameters;
-import org.sakaiproject.evaluation.tool.params.TemplateViewParameters;
+import org.sakaiproject.evaluation.tool.viewparams.ChooseItemViewParameters;
+import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;

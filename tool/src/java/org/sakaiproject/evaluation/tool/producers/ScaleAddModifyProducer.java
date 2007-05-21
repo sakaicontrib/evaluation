@@ -20,7 +20,7 @@ import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.LocalScaleLogic;
 import org.sakaiproject.evaluation.tool.ScaleBeanLocator;
-import org.sakaiproject.evaluation.tool.params.EvalScaleParameters;
+import org.sakaiproject.evaluation.tool.viewparams.EvalScaleParameters;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;

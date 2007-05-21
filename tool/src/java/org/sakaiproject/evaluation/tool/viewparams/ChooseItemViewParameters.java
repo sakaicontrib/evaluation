@@ -12,7 +12,7 @@
  * 
  *****************************************************************************/
 
-package org.sakaiproject.evaluation.tool.params;
+package org.sakaiproject.evaluation.tool.viewparams;
 
 /**
  * View params for passing template id and search information for choosing items to insert into templates

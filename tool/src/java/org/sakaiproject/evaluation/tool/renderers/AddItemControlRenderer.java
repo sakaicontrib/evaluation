@@ -14,7 +14,7 @@
 
 package org.sakaiproject.evaluation.tool.renderers;
 
-import org.sakaiproject.evaluation.tool.params.TemplateItemViewParameters;
+import org.sakaiproject.evaluation.tool.viewparams.TemplateItemViewParameters;
 
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;

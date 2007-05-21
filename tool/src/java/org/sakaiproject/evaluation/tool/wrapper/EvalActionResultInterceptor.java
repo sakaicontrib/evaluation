@@ -5,7 +5,7 @@ package org.sakaiproject.evaluation.tool.wrapper;
 
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.tool.TemplateBeanLocator;
-import org.sakaiproject.evaluation.tool.params.TemplateViewParameters;
+import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionResultInterceptor;
