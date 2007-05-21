@@ -20,8 +20,8 @@ import java.util.List;
 import org.sakaiproject.evaluation.logic.EvalExpertItemsLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
-import org.sakaiproject.evaluation.tool.params.ExpertItemViewParameters;
-import org.sakaiproject.evaluation.tool.params.TemplateViewParameters;
+import org.sakaiproject.evaluation.tool.viewparams.ExpertItemViewParameters;
+import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;

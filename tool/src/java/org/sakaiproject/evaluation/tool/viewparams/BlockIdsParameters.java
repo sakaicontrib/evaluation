@@ -12,7 +12,7 @@
  * Rui Feng (fengr@vt.edu)
  *****************************************************************************/
 
-package org.sakaiproject.evaluation.tool.params;
+package org.sakaiproject.evaluation.tool.viewparams;
 
 public class BlockIdsParameters extends TemplateViewParameters {
 	public String templateItemIds;

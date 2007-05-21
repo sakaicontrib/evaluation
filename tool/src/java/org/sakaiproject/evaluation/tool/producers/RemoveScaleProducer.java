@@ -19,7 +19,7 @@ import java.util.List;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.tool.LocalScaleLogic;
-import org.sakaiproject.evaluation.tool.params.EvalScaleParameters;
+import org.sakaiproject.evaluation.tool.viewparams.EvalScaleParameters;
 
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;

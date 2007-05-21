@@ -11,7 +11,7 @@
  * Aaron Zeckoski (aaronz@vt.edu)
  *****************************************************************************/
 
-package org.sakaiproject.evaluation.tool.params;
+package org.sakaiproject.evaluation.tool.viewparams;
 
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 
