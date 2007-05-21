@@ -20,7 +20,7 @@ import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
-import org.sakaiproject.evaluation.tool.viewparams.PreviewItemViewParameters;
+import org.sakaiproject.evaluation.tool.viewparams.ItemViewParameters;
 
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIInternalLink;
@@ -69,7 +69,7 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 		UIMessage.make(tofill, "modify-template-title", "modifytemplate.page.title");
 
 		// get templateItem to preview from VPs
-		PreviewItemViewParameters previewItemViewParams = (PreviewItemViewParameters) viewparams;
+		ItemViewParameters previewItemViewParams = (ItemViewParameters) viewparams;
 		EvalTemplateItem templateItem = null;
 		if (previewItemViewParams.templateItemId != null) {
 			templateItem = itemsLogic.getTemplateItemById(previewItemViewParams.templateItemId);
@@ -91,7 +91,7 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 	 * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
 	 */
 	public ViewParameters getViewParameters() {
-		return new PreviewItemViewParameters();
+		return new ItemViewParameters();
 	}
 
 }

@@ -141,15 +141,13 @@ public interface EvaluationDao extends CompleteGenericDao {
 	// LOCKING METHODS
 
 	/**
-	 * End of the chain, logic is very simple, 
-	 * set unlock state if scale is not already unlocked and if there
-	 * are no items that are locking it<br/>
-	 * <b>Note:</b> scales cannot be locked directly
+	 * Set lock state if scale is not already at that lock state
 	 * 
 	 * @param scale
+	 * @param lockState if true then lock this scale, otherwise unlock it
 	 * @return true if success, false otherwise
 	 */
-	public boolean unlockScale(EvalScale scale);
+	public boolean lockScale(EvalScale scale, Boolean lockState);
 
 	/**
 	 * Set lock state if item is not already at that lock state,

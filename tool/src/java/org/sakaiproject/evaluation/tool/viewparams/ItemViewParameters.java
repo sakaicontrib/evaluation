@@ -1,5 +1,5 @@
 /******************************************************************************
- * PreviewItemViewParameters.java - created by aaronz on 21 Mar 2007
+ * ItemViewParameters.java - created by aaronz on 21 Mar 2007
  * 
  * Copyright (c) 2007 Centre for Academic Research in Educational Technologies
  * Licensed under the Educational Community License version 1.0
@@ -14,7 +14,6 @@
 
 package org.sakaiproject.evaluation.tool.viewparams;
 
-import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 
 /**
  * View params for passing item/templateItem ids to allow previewing of single items,
@@ -23,17 +22,24 @@ import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class PreviewItemViewParameters extends SimpleViewParameters {
+public class ItemViewParameters extends TemplateViewParameters {
 
 	public Long itemId;
 	public Long templateItemId;
 
-	public PreviewItemViewParameters() { }
+	public ItemViewParameters() { }
 
-	public PreviewItemViewParameters(String viewID, Long itemId, Long templateItemId) {
+	public ItemViewParameters(String viewID, Long itemId, Long templateItemId) {
 		this.viewID = viewID;
 		this.itemId = itemId;
 		this.templateItemId = templateItemId;
+	}
+
+	public ItemViewParameters(String viewID, Long itemId, Long templateItemId, Long templateId) {
+		this.viewID = viewID;
+		this.itemId = itemId;
+		this.templateItemId = templateItemId;
+		this.templateId = templateId;
 	}
 
 }

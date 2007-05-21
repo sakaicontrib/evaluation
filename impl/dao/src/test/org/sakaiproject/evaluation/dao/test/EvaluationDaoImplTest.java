@@ -535,25 +535,30 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 	/**
 	 * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#lockScale(org.sakaiproject.evaluation.model.EvalScale, java.lang.Boolean)}.
 	 */
-	public void testUnlockScale() {
+	public void testLockScale() {
 
 		// check that locked scale gets unlocked (no locking item)
 		Assert.assertTrue( scaleLocked.getLocked().booleanValue() );
-		Assert.assertTrue( evaluationDao.unlockScale( scaleLocked ) );
+		Assert.assertTrue( evaluationDao.lockScale( scaleLocked, Boolean.FALSE ) );
 		Assert.assertFalse( scaleLocked.getLocked().booleanValue() );
+		// check that unlocking an unlocked scale is not a problem
+		Assert.assertFalse( evaluationDao.lockScale( scaleLocked, Boolean.FALSE ) );
 
 		// check that locked scale that is locked by an item cannot be unlocked
 		EvalScale scale1 = (EvalScale) evaluationDao.findById(EvalScale.class, etdl.scale1.getId());
 		Assert.assertTrue( scale1.getLocked().booleanValue() );
-		Assert.assertFalse( evaluationDao.unlockScale( scale1 ) );
+		Assert.assertFalse( evaluationDao.lockScale( scale1, Boolean.FALSE ) );
 		Assert.assertTrue( scale1.getLocked().booleanValue() );
+		// check that locking a locked scale is not a problem
+		Assert.assertFalse( evaluationDao.lockScale( scale1, Boolean.TRUE ) );
 
 		// check that new scale cannot be unlocked
 		try {
-			evaluationDao.unlockScale( 
+			evaluationDao.lockScale( 
 				new EvalScale(new Date(), 
 					EvalTestDataLoad.ADMIN_USER_ID, "new scale", 
-					EvalConstants.SHARING_PRIVATE, Boolean.FALSE)
+					EvalConstants.SHARING_PRIVATE, Boolean.FALSE),
+					Boolean.FALSE
 				);
 			Assert.fail("Should have thrown an exception");
 		} catch (IllegalStateException e) {

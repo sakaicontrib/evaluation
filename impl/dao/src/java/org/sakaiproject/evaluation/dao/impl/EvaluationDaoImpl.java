@@ -378,31 +378,47 @@ public class EvaluationDaoImpl
 	// LOCKING METHODS
 
 	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#unlockScale(org.sakaiproject.evaluation.model.EvalScale)
+	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#lockScale(org.sakaiproject.evaluation.model.EvalScale, java.lang.Boolean)
 	 */
-	public boolean unlockScale(EvalScale scale) {
+	public boolean lockScale(EvalScale scale, Boolean lockState) {
 		log.info("scale:" + scale.getId());
 		if (scale.getId() == null) {
-			throw new IllegalStateException("Cannot unlock an unsaved scale object");
+			throw new IllegalStateException("Cannot change lock state on an unsaved scale object");
 		}
 
-		if (! scale.getLocked().booleanValue()) {
-			// already unlocked
-			return false;
-		} else {
-			DetachedCriteria dc = DetachedCriteria.forClass(EvalItem.class)
-				.add( Restrictions.eq( "locked", Boolean.TRUE ) )
-				.add( Restrictions.eq( "scale.id", scale.getId() ) )
-				.setProjection( Projections.rowCount() );
-			if ( ((Integer) getHibernateTemplate().findByCriteria( dc ).get(0)).intValue() > 0 ) {
-				// this is locked by something, we cannot unlock it
-				log.info("Cannot unlock scale ("+scale.getId()+"), it is locked elsewhere");
+		if (lockState.booleanValue()) {
+			// locking this scale
+			if (scale.getLocked().booleanValue()) {
+				// already locked, no change
 				return false;
+			} else {
+				// lock scale
+				scale.setLocked( Boolean.TRUE );
+				getHibernateTemplate().update( scale );
+				return true;
 			}
+		} else {
+			// unlocking this scale
+			if (! scale.getLocked().booleanValue()) {
+				// already unlocked, no change
+				return false;
+			} else {
+				// unlock scale (if not locked elsewhere)
+				DetachedCriteria dc = DetachedCriteria.forClass(EvalItem.class)
+					.add( Restrictions.eq( "locked", Boolean.TRUE ) )
+					.add( Restrictions.eq( "scale.id", scale.getId() ) )
+					.setProjection( Projections.rowCount() );
+				if ( ((Integer) getHibernateTemplate().findByCriteria( dc ).get(0)).intValue() > 0 ) {
+					// this is locked by something, we cannot unlock it
+					log.info("Cannot unlock scale ("+scale.getId()+"), it is locked elsewhere");
+					return false;
+				}
 
-			scale.setLocked( Boolean.FALSE );
-			getHibernateTemplate().update( scale );
-			return true;
+				// unlock scale
+				scale.setLocked( Boolean.FALSE );
+				getHibernateTemplate().update( scale );
+				return true;
+			}
 		}
 	}
 
@@ -424,11 +440,7 @@ public class EvaluationDaoImpl
 				// lock item and associated scale (if set)
 				item.setLocked( Boolean.TRUE );
 				if (item.getScale() != null) {
-					EvalScale scale = item.getScale();
-					if (! scale.getLocked().booleanValue()) {
-						scale.setLocked( Boolean.TRUE );
-						getHibernateTemplate().update( scale );
-					}
+					lockScale( item.getScale(), Boolean.TRUE );
 				}
 				getHibernateTemplate().update( item );
 				return true;
@@ -453,7 +465,7 @@ public class EvaluationDaoImpl
 
 				// unlock associated scale if there is one
 				if (item.getScale() != null) {
-					unlockScale( item.getScale() );
+					lockScale( item.getScale(), Boolean.FALSE );
 				}
 
 				return true;

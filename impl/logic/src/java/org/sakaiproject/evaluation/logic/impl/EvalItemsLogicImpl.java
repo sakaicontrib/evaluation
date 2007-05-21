@@ -30,6 +30,7 @@ import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.utils.ArrayUtils;
 import org.sakaiproject.evaluation.model.EvalItem;
+import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
@@ -168,10 +169,10 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 			dao.save(item);
 			log.info("User ("+userId+") saved item ("+item.getId()+"), title: " + item.getItemText());
 
-			if (item.getLocked().booleanValue() == true) {
-				// lock item and associated scales
-				log.info("Locking item ("+item.getId()+") and associated scale");
-				dao.lockItem(item, Boolean.TRUE);
+			if (item.getLocked().booleanValue() == true && item.getScale() != null) {
+				// lock associated scale
+				log.info("Locking scale ("+item.getScale().getTitle()+") associated with new item ("+item.getId()+")");
+				dao.lockScale( item.getScale(), Boolean.FALSE );
 			}
 
 			return;
@@ -200,13 +201,14 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 //		}
 
 		if (checkUserControlItem(userId, item)) {
+			EvalScale scale = item.getScale();
 			dao.delete(item);
 			log.info("User ("+userId+") removed item ("+item.getId()+"), title: " + item.getItemText());
 
-			if (item.getLocked().booleanValue()) {
+			if (item.getLocked().booleanValue() && scale != null) {
 				// unlock associated scales
-				log.info("Unlocking associated scale for item ("+item.getId()+")");
-				dao.unlockScale( item.getScale() );
+				log.info("Unlocking associated scale ("+scale.getTitle()+") for removed item ("+item.getId()+")");
+				dao.lockScale( scale, Boolean.FALSE );
 			}
 
 			return;
@@ -476,11 +478,9 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 		}
 
 		if (checkUserControlTemplateItem(userId, templateItem)) {
-			if (template.getLocked().booleanValue() == true) {
-				// lock item and associated scales
-				log.info("Locking item ("+item.getId()+") and associated scale");
-				dao.lockItem(item, Boolean.TRUE);
-			}
+			// lock related item and associated scales
+			log.info("Locking item ("+item.getId()+") and associated scale");
+			dao.lockItem(item, Boolean.TRUE);
 
 			if (templateItem.getId() == null) {
 				// if this is a new templateItem then associate it with 
@@ -539,8 +539,11 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 
 		// check if this templateItem can be removed (checks if associated template is locked)
 		if (checkUserControlTemplateItem(userId, templateItem)) {
+			EvalItem item = templateItem.getItem();
 			// remove the templateItem and update all linkages
 			dao.removeTemplateItems( new EvalTemplateItem[] {templateItem} );
+			// attempt to unlock the related item
+			dao.lockItem(item, Boolean.FALSE);
 			return;
 		}
 		
