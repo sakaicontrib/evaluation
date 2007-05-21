@@ -48,9 +48,9 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 		this.emails = emails;
 	}
 
-	private EvalExternalLogic external;
-	public void setExternal(EvalExternalLogic external) {
-		this.external = external;
+	private EvalExternalLogic externalLogic;
+	public void setExternalLogic(EvalExternalLogic externalLogic) {
+		this.externalLogic = externalLogic;
 	}
 
 	// INIT method
@@ -241,7 +241,7 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 
 		// check user permissions (just owner and super at this point)
 		if ( userId.equals(assignContext.getOwner()) ||
-				external.isUserAdmin(userId) ) {
+				externalLogic.isUserAdmin(userId) ) {
 			return true;
 		} else {
 			return false;
@@ -265,7 +265,7 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 			// check eval user permissions (just owner and super at this point)
 			// TODO - find a way to centralize this check
 			if (userId.equals(eval.getOwner()) ||
-					external.isUserAdmin(userId)) {
+					externalLogic.isUserAdmin(userId)) {
 				return true;
 			} else {
 				throw new SecurityException("User ("+userId+") cannot create assign context in evaluation ("+eval.getId()+"), do not have permission");

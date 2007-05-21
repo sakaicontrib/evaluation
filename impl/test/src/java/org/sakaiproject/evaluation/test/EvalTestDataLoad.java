@@ -107,6 +107,7 @@ public class EvalTestDataLoad {
 	public final static Set EMPTY_SET = new HashSet();
 	public final static List EMPTY_LIST = new ArrayList();
 	public final static Map EMPTY_MAP = new HashMap();
+	public final static String[] EMPTY_STRING_ARRAY = new String[0];
 
 	// SCALES
 	/**
