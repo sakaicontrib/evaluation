@@ -191,7 +191,7 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 			if (modify) {
 				UIBranchContainer showLink = UIBranchContainer.make(form, "showRemoveLink:");
 				UIInternalLink.make(showLink, "remove_link", UIMessage.make("modifytemplate.remove.link"),
-						new TemplateItemViewParameters(RemoveTemplateItemProducer.VIEW_ID, templateId, templateItems[0].getId()));
+						new TemplateItemViewParameters(RemoveItemProducer.VIEW_ID, templateId, templateItems[0].getId()));
 			}
 
 			UIMessage.make(form, "item-header-text-header", "modifyblock.item.header.text.header");
@@ -212,7 +212,7 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 			String itemPath = null;
 			if (modify) {// modify existing block
 
-				itemPath = "templateItemBeanLocator." + templateItems[0].getId();
+				itemPath = "templateItemWBL." + templateItems[0].getId();
 				if (templateItems[0].getScaleDisplaySetting() != null
 						&& templateItems[0].getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED))
 					UIBoundBoolean.make(form, "idealColor", "#{templateBBean.idealColor}", Boolean.TRUE);
@@ -224,7 +224,7 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 			} else {// create new block
 				// create new block from multiple existing Block and other scaled item
 				if (createFromBlock) {
-					itemPath = "templateItemBeanLocator." + templateItems[0].getId();
+					itemPath = "templateItemWBL." + templateItems[0].getId();
 					if (templateItems[0].getScaleDisplaySetting() != null
 							&& templateItems[0].getScaleDisplaySetting().equals(
 									EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED))
@@ -234,7 +234,7 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 
 				} else {
 					// selected items are all normal scaled type				
-					itemPath = "templateItemBeanLocator.new1";
+					itemPath = "templateItemWBL.new1";
 					UIBoundBoolean.make(form, "idealColor", "#{templateBBean.idealColor}", null);
 				}
 			}

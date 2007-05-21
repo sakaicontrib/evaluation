@@ -28,7 +28,7 @@ import org.sakaiproject.evaluation.tool.renderers.AddItemControlRenderer;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.tool.viewparams.BlockIdsParameters;
 import org.sakaiproject.evaluation.tool.viewparams.PreviewEvalParameters;
-import org.sakaiproject.evaluation.tool.viewparams.PreviewItemViewParameters;
+import org.sakaiproject.evaluation.tool.viewparams.ItemViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateItemViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
@@ -175,7 +175,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 			for (int i = 0; i < templateItemsList.size(); i++) {
 				EvalTemplateItem templateItem = (EvalTemplateItem) templateItemsList.get(i);
 				sCurItemNum = Integer.toString(i);
-				templateItemOTPBinding = "templateItemBeanLocator." + templateItem.getId();
+				templateItemOTPBinding = "templateItemWBL." + templateItem.getId();
 				templateItemOTP = templateItemOTPBinding + ".";
 				
 				UIBranchContainer itemBranch = UIBranchContainer.make(form2, "item-row:", sCurItemNum);
@@ -218,7 +218,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 				UIOutput.make(itemBranch, "item-owner-name", external.getUserDisplayName(templateItem.getOwner()));
 
 				UIInternalLink.make(itemBranch, "preview-row-item", UIMessage.make("modifytemplate.preview.link"), 
-						new PreviewItemViewParameters(PreviewItemProducer.VIEW_ID, null, templateItem.getId()) );
+						new ItemViewParameters(PreviewItemProducer.VIEW_ID, null, templateItem.getId()) );
 
 				if ((templateItem.getBlockParent() != null) && (templateItem.getBlockParent().booleanValue() == true)) {
 					// if it is a block item
@@ -231,8 +231,9 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 					UIInternalLink.make(itemBranch, "modify-row-item", UIMessage.make("modifytemplate.modify.link"), target);
 				}
 
-				UIInternalLink.make(itemBranch,	"remove-row-item", UIMessage.make("modifytemplate.remove.link"),
-						new TemplateItemViewParameters(RemoveTemplateItemProducer.VIEW_ID, templateId, templateItem.getId()) );
+				UIInternalLink.make(itemBranch,	"remove-row-item", 
+						UIMessage.make("modifytemplate.remove.link"),
+						new ItemViewParameters(RemoveItemProducer.VIEW_ID, null, templateItem.getId(), templateId) );
 
 
 				// second line

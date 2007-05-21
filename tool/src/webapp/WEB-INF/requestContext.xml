@@ -32,7 +32,7 @@
 
 
 	<!-- request scope backing beans here -->
-	<bean id="settingsBean"
+	<bean id="settingsWBL"
 		class="org.sakaiproject.evaluation.tool.locators.SettingsWBL">
 		<property name="evalSettings"
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
@@ -54,7 +54,7 @@
 		<property name="templateBeanLocator" ref="templateBeanLocator" />
 		<property name="localTemplateLogic" ref="localTemplateLogic" />
 		<property name="templateItemBeanLocator"
-			ref="templateItemBeanLocator" />
+			ref="templateItemWBL" />
 		<property name="itemsLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
 	</bean>
@@ -129,8 +129,13 @@
 		class="org.sakaiproject.evaluation.tool.locators.ResponseAnswersBeanLocator">
 	</bean>
 
-	<bean id="templateItemBeanLocator"
-		class="org.sakaiproject.evaluation.tool.locators.TemplateItemBeanLocator">
+	<bean id="templateItemWBL"
+		class="org.sakaiproject.evaluation.tool.locators.TemplateItemWBL">
+		<property name="localTemplateLogic" ref="localTemplateLogic" />
+	</bean>
+
+	<bean id="itemWBL"
+		class="org.sakaiproject.evaluation.tool.locators.ItemBeanWBL">
 		<property name="localTemplateLogic" ref="localTemplateLogic" />
 	</bean>
 
@@ -259,12 +264,9 @@
 			ref="org.sakaiproject.evaluation.tool.renderers.ItemRenderer" />
 	</bean>
 
-	<bean
-		class="org.sakaiproject.evaluation.tool.producers.RemoveTemplateItemProducer">
+	<bean class="org.sakaiproject.evaluation.tool.producers.RemoveItemProducer">
 		<property name="itemsLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
-		<property name="templatesLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />	
 		<property name="itemRenderer"
 			ref="org.sakaiproject.evaluation.tool.renderers.ItemRenderer" />	
 	</bean>

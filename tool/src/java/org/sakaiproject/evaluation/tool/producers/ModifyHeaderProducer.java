@@ -101,9 +101,9 @@ public class ModifyHeaderProducer implements ViewComponentProducer,
 
 		EvalTemplate template = templatesLogic.getTemplateById(templateId);
 		if (templateItemId != null) {
-			templateItemOTPBinding = "templateItemBeanLocator." + templateItemId;
+			templateItemOTPBinding = "templateItemWBL." + templateItemId;
 		} else {
-			templateItemOTPBinding = "templateItemBeanLocator.new1";
+			templateItemOTPBinding = "templateItemWBL.new1";
 		}
 		templateItemOTP = templateItemOTPBinding + ".";
 
@@ -138,8 +138,8 @@ public class ModifyHeaderProducer implements ViewComponentProducer,
 		if (templateItemId != null) {
 			UIBranchContainer showLink = UIBranchContainer.make(form, "showRemoveLink:");
 			UIInternalLink.make(showLink, "remove_link", UIMessage.make("modifyitem.remove.link"), 
-					new TemplateItemViewParameters(RemoveTemplateItemProducer.VIEW_ID,
-							templateId, templateItemId)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					new TemplateItemViewParameters(RemoveItemProducer.VIEW_ID,
+							templateId, templateItemId));
 		}
 
 		UIMessage.make(form, "question-text-header", "modifyitem.question.text.header"); //$NON-NLS-1$ //$NON-NLS-2$

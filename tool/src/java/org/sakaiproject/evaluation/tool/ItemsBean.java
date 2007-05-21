@@ -28,8 +28,6 @@ import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
-import org.sakaiproject.evaluation.model.constant.EvalConstants;
-import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
 /**
  * This request-scope bean handles item creation and modification.
@@ -37,8 +35,8 @@ import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
  * @author Will Humphries (whumphri@vt.edu)
  * @author Rui Feng (fengr@vt.edu)
  * @author Kapil Ahuja (kahuja@vt.edu)
+ * @deprecated This needs to be completely removed -AZ
  */
-
 public class ItemsBean {
 
 	/*
@@ -55,50 +53,40 @@ public class ItemsBean {
 	public EvalTemplateItem templateItem;
 
 	// The following fields below belong to template_item.html
-
-	/** "Item Text" text area */
 	public Long scaleId;
-
 	private List scaleValues; // "Scale Type" drop down list
-
 	private List scaleLabels; // "Scale Type" drop down list
 
 	// The following fields below belong to modify_block.html
 	public Boolean idealColor;
-
 	public List queList;
-
 	public String currQueNo;
-
 	public String currRowNo;
-
 	public String classification;
-
 	public Long templateId;
 
-	private EvalItemsLogic itemsLogic;
 
+	private EvalItemsLogic itemsLogic;
 	public void setItemsLogic(EvalItemsLogic itemsLogic) {
 		this.itemsLogic = itemsLogic;
 	}
 
 	private EvalTemplatesLogic templatesLogic;
-
 	public void setTemplatesLogic(EvalTemplatesLogic templatesLogic) {
 		this.templatesLogic = templatesLogic;
 	}
 
 	private EvalExternalLogic external;
-
 	public void setExternal(EvalExternalLogic external) {
 		this.external = external;
 	}
 
 	private EvalScalesLogic scalesLogic;
-
 	public void setScalesLogic(EvalScalesLogic scalesLogic) {
 		this.scalesLogic = scalesLogic;
 	}
+
+
 
 	public ItemsBean() {
 		templateItem = new EvalTemplateItem();
@@ -106,31 +94,26 @@ public class ItemsBean {
 		templateItem.setTemplate(new EvalTemplate());
 	}
 
+
 	/*
 	 * INITIALIZATION
 	 */
 	public void init() {
 		log.debug("INIT");
-		if (itemsLogic == null || external == null || scalesLogic == null) {
-			throw new NullPointerException("logic is null");
-		}
 	}
 
-	/*
-	 * SETTER AND GETTER DEFINITIONS
-	 */
-
+	// GETTERS and SETTERS
 	public List getScaleValues() {
 		// get scale values and labels from DAO
-		List lst = null;
+		List list = null;
 		String scaleOptionsStr = "";
 		this.scaleValues = new ArrayList();
 		this.scaleLabels = new ArrayList();
 
-		lst = scalesLogic.getScalesForUser(external.getCurrentUserId(), null);// logic.getScales(Boolean.FALSE);
-		for (int count = 0; count < lst.size(); count++) {
+		list = scalesLogic.getScalesForUser(external.getCurrentUserId(), null);// logic.getScales(Boolean.FALSE);
+		for (int count = 0; count < list.size(); count++) {
 			scaleOptionsStr = "";
-			String[] scaleOptionsArr = ((EvalScale) lst.get(count)).getOptions();
+			String[] scaleOptionsArr = ((EvalScale) list.get(count)).getOptions();
 			for (int innerCount = 0; innerCount < scaleOptionsArr.length; innerCount++) {
 
 				if (scaleOptionsStr == "")
@@ -138,9 +121,9 @@ public class ItemsBean {
 				else
 					scaleOptionsStr = scaleOptionsStr + ", " + scaleOptionsArr[innerCount];
 
-			}// end of inner for
+			} // end of inner for
 
-			EvalScale sl = (EvalScale) lst.get(count);
+			EvalScale sl = (EvalScale) list.get(count);
 			this.scaleValues.add((sl.getId()).toString());
 			this.scaleLabels.add(scaleOptionsArr.length + " pt - " + sl.getTitle() + " (" + scaleOptionsStr + ")");
 
@@ -153,11 +136,7 @@ public class ItemsBean {
 	}
 
 	public List getScaleLabels() {
-		/*
-		 * make sure if getScaleValue() was called first, getScaleLabels() will
-		 * not be called again
-		 * 
-		 */
+		// make sure if getScaleValue() was called first, getScaleLabels() will not be called again
 		if (scaleLabels == null)
 			getScaleValues();
 
@@ -168,62 +147,15 @@ public class ItemsBean {
 		this.scaleLabels = scaleLabels;
 	}
 
+
+	// ACTION METHODS
+
 	public String cancelItemAction() {
 		return "cancel";
 	}
 
 	public String previewItemAction() {
 		return null;
-	}
-
-	public String removeItemAction() {
-
-		List allTemplateItems = itemsLogic.getTemplateItemsForTemplate(templateItem.getTemplate().getId(), null, null);
-		List noChildList = TemplateItemUtils.getNonChildItems(allTemplateItems);
-		if (TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)) {
-			int parentDO = templateItem.getDisplayOrder().intValue();
-			List childList = itemsLogic.getBlockChildTemplateItemsForBlockParent(templateItem.getId(), false);
-
-			// delete parent
-			Long itemId = templateItem.getItem().getId();
-			itemsLogic.deleteTemplateItem(templateItem.getId(), external.getCurrentUserId());
-			itemsLogic.deleteItem(itemId, external.getCurrentUserId());
-
-			// modify child
-			for (int i = 0; i < childList.size(); i++) {
-				EvalTemplateItem child = (EvalTemplateItem) childList.get(i);
-				child.setBlockParent(null);
-				child.setBlockId(null);
-				child.setDisplayOrder(new Integer(parentDO + i));
-				itemsLogic.saveTemplateItem(child, external.getCurrentUserId());
-			}
-
-			// shift display-orderer all the items below
-			for (int i = parentDO; i < noChildList.size(); i++) {
-				EvalTemplateItem eti = (EvalTemplateItem) noChildList.get(i);
-				int order = eti.getDisplayOrder().intValue();
-				if (order > parentDO) {
-					eti.setDisplayOrder(new Integer(order + childList.size() - 1));
-					itemsLogic.saveTemplateItem(eti, external.getCurrentUserId());
-				}
-			}
-
-		} else { // non- block case
-			int oldDisplayOrder = templateItem.getDisplayOrder().intValue();
-			itemsLogic.deleteTemplateItem(templateItem.getId(), external.getCurrentUserId());
-
-			// shift display Order of items below
-			for (int i = oldDisplayOrder; i < noChildList.size(); i++) {
-				EvalTemplateItem eti = (EvalTemplateItem) noChildList.get(i);
-				int order = eti.getDisplayOrder().intValue();
-				if (order > oldDisplayOrder) {
-					eti.setDisplayOrder(new Integer(order - 1));
-					itemsLogic.saveTemplateItem(eti, external.getCurrentUserId());
-				}
-			}// end of for loop
-		}
-
-		return "removed";
 	}
 
 	public String cancelRemoveAction() {

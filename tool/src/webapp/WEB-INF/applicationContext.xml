@@ -21,8 +21,9 @@
 	<bean parent="requestAddressibleParent">
 		<property name="value"
 			value="evaluationBean, reportsBean, templateBBean, itemsBean, expertItemsBean, 
-      	templateBeanLocator, templateItemBeanLocator, answersBeanLocator, responseAnswersBeanLocator, 
-      	responseBeanLocator, evaluationBeanLocator, takeEvalBean, settingsBean, scaleBean, scaleBeanLocator" />
+      			templateBeanLocator, templateItemWBL, answersBeanLocator, responseAnswersBeanLocator, 
+      			responseBeanLocator, evaluationBeanLocator, takeEvalBean, settingsBean, 
+      			scaleBean, scaleBeanLocator, itemWBL" />
 	</bean>
 
 	<bean id="localTemplateLogic"
@@ -63,7 +64,7 @@
   </bean>
 
   <bean parent="writeGuardParent">
-    <property name="guardedPath" value="templateItemBeanLocator.*.displayOrder"/>
+    <property name="guardedPath" value="templateItemWBL.*.displayOrder"/>
     <property name="guardMethod" value="templateBBean.saveReorder"/>
   </bean>
 

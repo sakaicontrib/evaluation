@@ -112,9 +112,9 @@ public class ModifyScaledProducer implements ViewComponentProducer,
 		EvalTemplate template = templatesLogic.getTemplateById(templateId);
 
 		if (templateItemId != null) {
-			templateItemOTPBinding = "templateItemBeanLocator." + templateItemId;
+			templateItemOTPBinding = "templateItemWBL." + templateItemId;
 		} else {
-			templateItemOTPBinding = "templateItemBeanLocator.new1";
+			templateItemOTPBinding = "templateItemWBL.new1";
 		}
 		templateItemOTP = templateItemOTPBinding + ".";
 
@@ -161,7 +161,7 @@ public class ModifyScaledProducer implements ViewComponentProducer,
 		if (templateItemId != null) {
 			UIBranchContainer showLink = UIBranchContainer.make(form, "showRemoveLink:");
 			UIInternalLink.make(showLink, "remove_link", UIMessage.make("modifytemplate.remove.link"),
-					new TemplateItemViewParameters(RemoveTemplateItemProducer.VIEW_ID,
+					new TemplateItemViewParameters(RemoveItemProducer.VIEW_ID,
 							templateId, templateItemId));
 		}
 

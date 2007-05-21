@@ -8,8 +8,8 @@
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
  * 
  * Contributors:
- * Rui Feng
  * Antranig Basman
+ * Rui Feng
  *****************************************************************************/
 
 package org.sakaiproject.evaluation.tool;
@@ -23,18 +23,19 @@ import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
+import org.sakaiproject.evaluation.tool.locators.ItemBeanWBL;
 import org.sakaiproject.evaluation.tool.locators.TemplateBeanLocator;
-import org.sakaiproject.evaluation.tool.locators.TemplateItemBeanLocator;
+import org.sakaiproject.evaluation.tool.locators.TemplateItemWBL;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 
 /**
- * This request-scope bean handles template creation and modification.
+ * This request-scope bean handles template creation and modification and actions related
+ * to templates, template items, and items
  * 
- * @author Rui Feng (fengr@vt.edu)
- * @author Antranig Basman
  * @author Will Humphries (whumphri@vt.edu)
+ * @author Antranig Basman
+ * @author Rui Feng (fengr@vt.edu)
  */
-
 public class TemplateBBean {
 
 	private static Log log = LogFactory.getLog(TemplateBBean.class);
@@ -44,9 +45,14 @@ public class TemplateBBean {
 		this.templateBeanLocator = templateBeanLocator;
 	}
 
-	private TemplateItemBeanLocator templateItemBeanLocator;
-	public void setTemplateItemBeanLocator(TemplateItemBeanLocator templateItemBeanLocator) {
-		this.templateItemBeanLocator = templateItemBeanLocator;
+	private TemplateItemWBL templateItemWBL;
+	public void setTemplateItemBeanLocator(TemplateItemWBL templateItemWBL) {
+		this.templateItemWBL = templateItemWBL;
+	}
+
+	private ItemBeanWBL itemBeanWBL;
+	public void setItemBeanLocator(ItemBeanWBL itemBeanWBL) {
+		this.itemBeanWBL = itemBeanWBL;
 	}
 
 	private LocalTemplateLogic localTemplateLogic;
@@ -59,15 +65,14 @@ public class TemplateBBean {
 		this.itemsLogic = itemsLogic;
 	}
 
+
 	public Long templateId;
-
 	public Boolean idealColor;
-
-	// public Long scaleId;
 	public Integer originalDisplayOrder;
-
 	public String childTemplateItemIds;
 
+
+	// TEMPLATES
 	/**
 	 * If the template is not saved, button will show text "continue and add
 	 * question" method binding to the "continue and add question" button on
@@ -90,7 +95,15 @@ public class TemplateBBean {
 		templateBeanLocator.saveAll();
 		return "success";
 	}
-	
+
+	// TEMPLATE ITEMS
+
+	public String removeTemplateItemAction() {
+		log.debug("remove template item");
+		// TODO
+		return "success";
+	}
+
 	private void emit(EvalTemplateItem toemit, int outindex) {
 		log.debug("EvalTemplateItem toemit: " + toemit.getId() + ", outindex: " + outindex);
 		toemit.setDisplayOrder(new Integer(outindex));
@@ -104,12 +117,12 @@ public class TemplateBBean {
 	 * inconsistent.
 	 */
 	// TODO: This method needs to be invoked via a BeanGuard, trapping any
-	// access to templateItemBeanLocator.*.displayOrder
+	// access to templateItemWBL.*.displayOrder
 	// Current Jquery implementation is only working as a result of auto-commit
 	// bug in DAO wrapper implementation.
 	public void saveReorder() { 
 		log.info("save items reordering");
-		Map delivered = templateItemBeanLocator.getDeliveredBeans();
+		Map delivered = templateItemWBL.getDeliveredBeans();
 		List l = itemsLogic.getTemplateItemsForTemplate(templateId, null, null);
 		List ordered = TemplateItemUtils.getNonChildItems(l);
 		for (int i = 1; i <= ordered.size();) {
@@ -135,7 +148,7 @@ public class TemplateBBean {
 	}
 
 	/**
-	 * Action to save a block type
+	 * Action to save a block type item
 	 * 
 	 * @return
 	 */
@@ -145,7 +158,7 @@ public class TemplateBBean {
 		String[] strIds = childTemplateItemIds.split(",");
 		EvalTemplateItem parent = null;
 
-		Map delivered = templateItemBeanLocator.getDeliveredBeans();
+		Map delivered = templateItemWBL.getDeliveredBeans();
 		if (strIds.length > 1) {// creating new Block case
 			EvalTemplateItem first = itemsLogic.getTemplateItemById(Long.valueOf(strIds[0]));
 
@@ -193,7 +206,7 @@ public class TemplateBBean {
 
 			} else {
 				// create new block from a set of normal scaled type items
-				parent = (EvalTemplateItem) delivered.get(TemplateItemBeanLocator.NEW_1);
+				parent = (EvalTemplateItem) delivered.get(TemplateItemWBL.NEW_1);
 				parent.setTemplate(template);
 				parent.setDisplayOrder(originalDisplayOrder);
 				parent.getItem().setScale(first.getItem().getScale());
@@ -272,7 +285,6 @@ public class TemplateBBean {
 	}
 
 	private void setIdealColorforBlockParent(EvalTemplateItem eti) {
-
 		if (idealColor != null) {// only reset when this feild is changed
 			if (idealColor == Boolean.TRUE) {
 				eti.setScaleDisplaySetting(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED);
@@ -283,5 +295,9 @@ public class TemplateBBean {
 			}
 		}
 	}
+
+
+	// ITEMS
+
 
 }

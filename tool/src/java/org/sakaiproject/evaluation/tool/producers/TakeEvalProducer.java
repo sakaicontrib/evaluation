@@ -257,7 +257,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 
 				//bind the current EvalTemplateItem's EvalItem to the current EvalAnswer's EvalItem
 				form.parameters.add( new UIELBinding
-						(caOTP[j] + "templateItem",new ELReference("templateItemBeanLocator." + currChildItem.getId())) );	
+						(caOTP[j] + "templateItem",new ELReference("templateItemWBL." + currChildItem.getId())) );	
 				if(itemCategory.equals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR) | itemCategory.equals(EvalConstants.ITEM_CATEGORY_ENVIRONMENT)){
 					//bind the current instructor id to the current EvalAnswer.associated
 					form.parameters.add( new UIELBinding(caOTP[j] + "associatedId", associatedId) );						
@@ -288,7 +288,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 			}
 			//bind the current EvalTemplateItem's EvalItem to the current EvalAnswer's EvalItem
 			form.parameters.add( new UIELBinding
-					(currAnswerOTP + "templateItem",new ELReference("templateItemBeanLocator." + tempItem1.getId())) );	
+					(currAnswerOTP + "templateItem",new ELReference("templateItemWBL." + tempItem1.getId())) );	
 			if(itemCategory.equals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR) | itemCategory.equals(EvalConstants.ITEM_CATEGORY_ENVIRONMENT)){			
 				//bind the current instructor id to the current EvalAnswer.associated
 				form.parameters.add( new UIELBinding(currAnswerOTP + "associatedId", associatedId) );
