@@ -33,7 +33,7 @@
 
 	<!-- request scope backing beans here -->
 	<bean id="settingsBean"
-		class="org.sakaiproject.evaluation.tool.SettingsWBL">
+		class="org.sakaiproject.evaluation.tool.locators.SettingsWBL">
 		<property name="evalSettings"
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 		<property name="leafParser" ref="staticLeafParser" />
@@ -97,12 +97,12 @@
 
 	<!-- bean locators here -->
 	<bean id="templateBeanLocator"
-		class="org.sakaiproject.evaluation.tool.TemplateBeanLocator">
+		class="org.sakaiproject.evaluation.tool.locators.TemplateBeanLocator">
 		<property name="localTemplateLogic" ref="localTemplateLogic" />
 	</bean>
 
 	<bean id="evaluationBeanLocator"
-		class="org.sakaiproject.evaluation.tool.EvaluationBeanLocator">
+		class="org.sakaiproject.evaluation.tool.locators.EvaluationBeanLocator">
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="evalsLogic"
@@ -110,27 +110,27 @@
 	</bean>
 
 	<bean id="scaleBeanLocator"
-		class="org.sakaiproject.evaluation.tool.ScaleBeanLocator">
+		class="org.sakaiproject.evaluation.tool.locators.ScaleBeanLocator">
 		<property name="localScaleLogic" ref="localScaleLogic" />
 	</bean>
 
 	<bean id="responseBeanLocator"
-		class="org.sakaiproject.evaluation.tool.ResponseBeanLocator">
+		class="org.sakaiproject.evaluation.tool.locators.ResponseBeanLocator">
 		<property name="localResponsesLogic" ref="localResponsesLogic" />
 	</bean>
 
 	<bean id="responseAnswersBeanLocator"
-		class="org.sakaiproject.evaluation.tool.ResponseAnswersBeanLocator">
+		class="org.sakaiproject.evaluation.tool.locators.ResponseAnswersBeanLocator">
 		<property name="localResponsesLogic" ref="localResponsesLogic" />
 		<property name="responseBeanLocator" ref="responseBeanLocator" />
 	</bean>
 
 	<bean id="answersBeanLocator"
-		class="org.sakaiproject.evaluation.tool.ResponseAnswersBeanLocator">
+		class="org.sakaiproject.evaluation.tool.locators.ResponseAnswersBeanLocator">
 	</bean>
 
 	<bean id="templateItemBeanLocator"
-		class="org.sakaiproject.evaluation.tool.TemplateItemBeanLocator">
+		class="org.sakaiproject.evaluation.tool.locators.TemplateItemBeanLocator">
 		<property name="localTemplateLogic" ref="localTemplateLogic" />
 	</bean>
 

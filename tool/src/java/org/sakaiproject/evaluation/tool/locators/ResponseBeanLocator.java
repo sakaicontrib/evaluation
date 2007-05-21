@@ -10,7 +10,7 @@
  * Contributors:
  * Will Humphries (whumphri@vt.edu)
  *****************************************************************************/
-package org.sakaiproject.evaluation.tool;
+package org.sakaiproject.evaluation.tool.locators;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
+import org.sakaiproject.evaluation.tool.LocalResponsesLogic;
 
 import uk.org.ponder.beanutil.BeanLocator;
 

@@ -21,7 +21,7 @@ import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
-import org.sakaiproject.evaluation.tool.TemplateBeanLocator;
+import org.sakaiproject.evaluation.tool.locators.TemplateBeanLocator;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;

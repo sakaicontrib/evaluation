@@ -11,13 +11,14 @@
  * Kapil Ahuja (kahuja@vt.edu)
  *****************************************************************************/
 
-package org.sakaiproject.evaluation.tool;
+package org.sakaiproject.evaluation.tool.locators;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.sakaiproject.evaluation.model.EvalScale;
+import org.sakaiproject.evaluation.tool.LocalScaleLogic;
 
 import uk.org.ponder.beanutil.BeanLocator;
 

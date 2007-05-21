@@ -17,6 +17,7 @@ package org.sakaiproject.evaluation.tool;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.tool.locators.ResponseBeanLocator;
 
 /**
  * This request-scope bean handles template creation and modification.

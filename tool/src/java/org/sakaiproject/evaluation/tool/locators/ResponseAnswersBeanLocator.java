@@ -1,12 +1,13 @@
 /*
  * Created on 8 Feb 2007
  */
-package org.sakaiproject.evaluation.tool;
+package org.sakaiproject.evaluation.tool.locators;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.sakaiproject.evaluation.model.EvalResponse;
+import org.sakaiproject.evaluation.tool.LocalResponsesLogic;
 
 import uk.org.ponder.beanutil.BeanLocator;
 
