@@ -40,24 +40,24 @@ public class TemplateBBean {
 
 	private static Log log = LogFactory.getLog(TemplateBBean.class);
 
-	private TemplateBeanLocator templateBeanLocator;
-	public void setTemplateBeanLocator(TemplateBeanLocator templateBeanLocator) {
-		this.templateBeanLocator = templateBeanLocator;
-	}
-
-	private TemplateItemWBL templateItemWBL;
-	public void setTemplateItemBeanLocator(TemplateItemWBL templateItemWBL) {
-		this.templateItemWBL = templateItemWBL;
-	}
-
-	private ItemBeanWBL itemBeanWBL;
-	public void setItemBeanLocator(ItemBeanWBL itemBeanWBL) {
-		this.itemBeanWBL = itemBeanWBL;
-	}
-
 	private LocalTemplateLogic localTemplateLogic;
 	public void setLocalTemplateLogic(LocalTemplateLogic localTemplateLogic) {
 		this.localTemplateLogic = localTemplateLogic;
+	}
+
+	private ItemBeanWBL itemBeanWBL;
+	public void setItemBeanWBL(ItemBeanWBL itemBeanWBL) {
+		this.itemBeanWBL = itemBeanWBL;
+	}
+
+	private TemplateItemWBL templateItemWBL;
+	public void setTemplateItemWBL(TemplateItemWBL templateItemWBL) {
+		this.templateItemWBL = templateItemWBL;
+	}
+
+	private TemplateBeanLocator templateBeanLocator;
+	public void setTemplateBeanLocator(TemplateBeanLocator templateBeanLocator) {
+		this.templateBeanLocator = templateBeanLocator;
 	}
 
 	private EvalItemsLogic itemsLogic;
@@ -98,11 +98,12 @@ public class TemplateBBean {
 
 	// TEMPLATE ITEMS
 
-	public String removeTemplateItemAction() {
-		log.debug("remove template item");
-		// TODO
+	public String saveTemplateItemAction() {
+		log.debug("create template item");
+		templateItemWBL.saveAll();
 		return "success";
 	}
+
 
 	private void emit(EvalTemplateItem toemit, int outindex) {
 		log.debug("EvalTemplateItem toemit: " + toemit.getId() + ", outindex: " + outindex);
@@ -298,6 +299,10 @@ public class TemplateBBean {
 
 
 	// ITEMS
-
+	public String saveItemAction() {
+		log.debug("create item");
+		itemBeanWBL.saveAll();
+		return "success";
+	}
 
 }

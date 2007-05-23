@@ -1,5 +1,5 @@
 /******************************************************************************
- * ScaleAddModifyProducer.java - created by kahuja@vt.edu
+ * ModifyScaleProducer.java - created by kahuja@vt.edu
  * 
  * Copyright (c) 2007 Virginia Polytechnic Institute and State University
  * Licensed under the Educational Community License version 1.0
@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.EvalScalesLogic;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
-import org.sakaiproject.evaluation.tool.LocalScaleLogic;
 import org.sakaiproject.evaluation.tool.locators.ScaleBeanLocator;
 import org.sakaiproject.evaluation.tool.viewparams.EvalScaleParameters;
 
@@ -49,9 +49,9 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * @author Kapil Ahuja (kahuja@vt.edu)
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
+public class ModifyScaleProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
 
-	public static final String VIEW_ID = "scale_add_modify";
+	public static final String VIEW_ID = "modify_scale";
 	public String getViewID() {
 		return VIEW_ID;
 	}
@@ -61,9 +61,9 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParams
 		this.external = external;
 	}
 
-	private LocalScaleLogic localScaleLogic;
-	public void setLocalScaleLogic(LocalScaleLogic localScaleLogic) {
-		this.localScaleLogic = localScaleLogic;
+	private EvalScalesLogic scalesLogic;
+	public void setScalesLogic(EvalScalesLogic scalesLogic) {
+		this.scalesLogic = scalesLogic;
 	}
 
 	private BoundedDynamicListInputEvolver boundedDynamicListInputEvolver;
@@ -112,7 +112,8 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParams
 		UIInput.make(form, "scale-title", path + "title");
 
 		// use the logic layer method to determine if scales can be controlled
-		if (scaleId != null && localScaleLogic.controlScale(scaleId)) {
+		if (scaleId != null && 
+				scalesLogic.canControlScale(currentUserId, scaleId)) {
 			UIInternalLink.make(form, "scale-remove-link", 
 					UIMessage.make("scaleaddmodify.remove.scale.link"), 
 				new EvalScaleParameters(RemoveScaleProducer.VIEW_ID, scaleId) );
@@ -146,19 +147,17 @@ public class ScaleAddModifyProducer implements ViewComponentProducer, ViewParams
 
 		if (userAdmin) {
 			UIBranchContainer sharingBranch = UIBranchContainer.make(form, "sharing-branch:");
-			String[] sharingList = {
-					"scaleaddmodify.sharing.private", 
-					"scaleaddmodify.sharing.public"
-				};
 			UIMessage.make(sharingBranch, "scale-sharing-note", "scaleaddmodify.sharing.note");
 			UISelect.make(sharingBranch, "scale-sharing", 
-					EvaluationConstant.MODIFIER_VALUES, 
-					sharingList, path + "sharing").setMessageKeys();
+					EvaluationConstant.SHARING_VALUES, 
+					EvaluationConstant.SHARING_LABELS_PROPS, 
+					path + "sharing").setMessageKeys();
 		}
 
 		// command buttons
-		UICommand.make(form, "scale-add-modify-cancel-button", UIMessage.make("scaleaddmodify.cancel.button"));
-		UICommand.make(form, "scale-add-modify-save-button", UIMessage.make("scaleaddmodify.save.scale.button"), "#{scaleBean.saveScale}");
+		UIMessage.make(form, "scale-add-modify-cancel-button", "general.cancel.button");
+		UICommand.make(form, "scale-add-modify-save-button", 
+				UIMessage.make("scaleaddmodify.save.scale.button"), "#{scaleBean.saveScaleAction}");
 
 	}
 

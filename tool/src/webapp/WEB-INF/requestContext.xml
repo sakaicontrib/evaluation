@@ -4,6 +4,29 @@
 <!-- Aaron Zeckoski (aaronz@vt.edu), Rui Feng(fengr@vt.edu)-->
 <beans>
 
+	<!-- specialty beans -->
+
+	<!-- for now we will just hardwire the rich text control for this app to be
+		the Sakai FCKEditor-based rich text control -->
+	<bean id="richTextEvolver"
+		class="org.springframework.beans.factory.config.BeanReferenceFactoryBean">
+		<property name="targetBeanName" value="sakaiFCKTextEvolver" />
+	</bean>
+
+	<!-- allows us to identify entities used in OTP on the EL path -->
+<!--	<bean id="id-defunnel"-->
+<!--		class="uk.org.ponder.rsf.state.entity.IDDefunnellingReshaper">-->
+<!--		<property name="beanModelAlterer" ref="DARApplier" />-->
+<!--		<property name="mappingContext" ref="ELMappingContext" />-->
+<!--		<property name="requestBeanLocator" ref="RSACSafeBeanLocator" />-->
+<!--		<property name="entityNameInferrer" ref="evalEntityNameInferrer" />-->
+<!--	</bean>-->
+<!---->
+<!--	<bean id="evalEntityNameInferrer"-->
+<!--		class="org.sakaiproject.evaluation.tool.locators.EntityNameInferrerImpl">-->
+<!--	</bean>-->
+
+
 	<!-- session scope backing beans here -->
 	<bean id="evaluationBean"
 		class="org.sakaiproject.evaluation.tool.EvaluationBean">
@@ -30,15 +53,7 @@
 	</bean>
 	
 
-
 	<!-- request scope backing beans here -->
-	<bean id="settingsWBL"
-		class="org.sakaiproject.evaluation.tool.locators.SettingsWBL">
-		<property name="evalSettings"
-			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-		<property name="leafParser" ref="staticLeafParser" />
-	</bean>
-
 	<bean id="scaleBean"
 		class="org.sakaiproject.evaluation.tool.ScaleBean">
 		<property name="scaleBeanLocator" ref="scaleBeanLocator" />
@@ -51,10 +66,10 @@
 
 	<bean id="templateBBean"
 		class="org.sakaiproject.evaluation.tool.TemplateBBean">
-		<property name="templateBeanLocator" ref="templateBeanLocator" />
 		<property name="localTemplateLogic" ref="localTemplateLogic" />
-		<property name="templateItemBeanLocator"
-			ref="templateItemWBL" />
+		<property name="itemBeanWBL" ref="itemWBL" />
+		<property name="templateItemWBL" ref="templateItemWBL" />
+		<property name="templateBeanLocator" ref="templateBeanLocator" />
 		<property name="itemsLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
 	</bean>
@@ -96,9 +111,35 @@
 	</bean>
 
 	<!-- bean locators here -->
+	<bean id="settingsBean"
+		class="org.sakaiproject.evaluation.tool.locators.SettingsWBL">
+		<property name="evalSettings"
+			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+		<property name="leafParser" ref="staticLeafParser" />
+	</bean>
+
 	<bean id="templateBeanLocator"
 		class="org.sakaiproject.evaluation.tool.locators.TemplateBeanLocator">
-		<property name="localTemplateLogic" ref="localTemplateLogic" />
+		<property name="localTemplateLogic" 
+			ref="localTemplateLogic" />
+	</bean>
+
+	<bean id="templateItemWBL"
+		class="org.sakaiproject.evaluation.tool.locators.TemplateItemWBL">
+		<property name="localTemplateLogic" 
+			ref="localTemplateLogic" />
+	</bean>
+
+	<bean id="itemWBL"
+		class="org.sakaiproject.evaluation.tool.locators.ItemBeanWBL">
+		<property name="localTemplateLogic" 
+			ref="localTemplateLogic" />
+	</bean>
+
+	<bean id="scaleBeanLocator"
+		class="org.sakaiproject.evaluation.tool.locators.ScaleBeanLocator">
+		<property name="localTemplateLogic" 
+			ref="localTemplateLogic" />
 	</bean>
 
 	<bean id="evaluationBeanLocator"
@@ -109,19 +150,16 @@
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
 	</bean>
 
-	<bean id="scaleBeanLocator"
-		class="org.sakaiproject.evaluation.tool.locators.ScaleBeanLocator">
-		<property name="localScaleLogic" ref="localScaleLogic" />
-	</bean>
-
 	<bean id="responseBeanLocator"
 		class="org.sakaiproject.evaluation.tool.locators.ResponseBeanLocator">
-		<property name="localResponsesLogic" ref="localResponsesLogic" />
+		<property name="localResponsesLogic" 
+			ref="localResponsesLogic" />
 	</bean>
 
 	<bean id="responseAnswersBeanLocator"
 		class="org.sakaiproject.evaluation.tool.locators.ResponseAnswersBeanLocator">
-		<property name="localResponsesLogic" ref="localResponsesLogic" />
+		<property name="localResponsesLogic" 
+			ref="localResponsesLogic" />
 		<property name="responseBeanLocator" ref="responseBeanLocator" />
 	</bean>
 
@@ -129,28 +167,12 @@
 		class="org.sakaiproject.evaluation.tool.locators.ResponseAnswersBeanLocator">
 	</bean>
 
-	<bean id="templateItemWBL"
-		class="org.sakaiproject.evaluation.tool.locators.TemplateItemWBL">
-		<property name="localTemplateLogic" ref="localTemplateLogic" />
-	</bean>
-
-	<bean id="itemWBL"
-		class="org.sakaiproject.evaluation.tool.locators.ItemBeanWBL">
-		<property name="localTemplateLogic" ref="localTemplateLogic" />
-	</bean>
 
 	<!-- evolver definitions here -->
 
-	<!-- for now we will just hardwire the rich text control for this app to be
-		the Sakai FCKEditor-based rich text control -->
-	<bean id="richTextEvolver"
-		class="org.springframework.beans.factory.config.BeanReferenceFactoryBean">
-		<property name="targetBeanName" value="sakaiFCKTextEvolver" />
-	</bean>
 
 	<!-- producers here -->
-	<bean
-		class="org.sakaiproject.evaluation.tool.producers.SummaryProducer">
+	<bean class="org.sakaiproject.evaluation.tool.producers.SummaryProducer">
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="evaluationsLogic"
@@ -166,11 +188,9 @@
 		<property name="locale" ref="requestLocale" />
 	</bean>
 
-	<bean class="org.sakaiproject.evaluation.tool.producers.ChooseReportGroupsProducer">
-		<property name="evalsLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
-		<property name="reportsBean"
-			ref="reportsBean" />				
+	<bean class="org.sakaiproject.evaluation.tool.producers.AdministrateProducer">
+		<property name="external"
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 	</bean>
 
 	<bean class="org.sakaiproject.evaluation.tool.producers.ControlEvaluationsProducer">
@@ -180,6 +200,8 @@
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="evaluationsLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+		<property name="templatesLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
 		<property name="responsesLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
 		<property name="settings"
@@ -197,6 +219,22 @@
 		<property name="locale" ref="requestLocale" />
 	</bean>
 
+	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyTemplateProducer">
+		<property name="settings"
+			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+		<property name="externalLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+	</bean>
+
+	<bean class="org.sakaiproject.evaluation.tool.producers.RemoveTemplateProducer">
+		<property name="templatesLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
+		<property name="evalsLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+		<property name="settings"
+			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+	</bean>
+
 	<bean class="org.sakaiproject.evaluation.tool.producers.ControlItemsProducer">
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
@@ -206,25 +244,23 @@
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
 		<property name="itemsLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
-		<property name="addItemControlRenderer" 
-			ref="org.sakaiproject.evaluation.tool.renderers.AddItemControlRenderer" />
-		<property name="locale" ref="requestLocale" />
 	</bean>
 
-	<bean class="org.sakaiproject.evaluation.tool.producers.AdministrateProducer">
+	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyItemProducer">
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-	</bean>
-
-	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyTemplateProducer">
+		<property name="itemsLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
+		<property name="scalesLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalScalesLogic" />
 		<property name="settings"
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-		<property name="externalLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+		<property name="richTextEvolver" ref="richTextEvolver" />
 	</bean>
 
 	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyTemplateItemsProducer">
-		<property name="localTemplateLogic" ref="localTemplateLogic" />
+		<property name="localTemplateLogic" 
+			ref="localTemplateLogic" />
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="addItemControlRenderer" 
@@ -271,8 +307,7 @@
 			ref="org.sakaiproject.evaluation.tool.renderers.ItemRenderer" />	
 	</bean>
 
-	<bean
-		class="org.sakaiproject.evaluation.tool.producers.ModifyEssayProducer">
+	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyEssayProducer">
 		<property name="templatesLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
 		<property name="itemsLogic"
@@ -284,8 +319,7 @@
 		<property name="richTextEvolver" ref="richTextEvolver" />
 	</bean>
 
-	<bean
-		class="org.sakaiproject.evaluation.tool.producers.ModifyHeaderProducer">
+	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyHeaderProducer">
 		<property name="templatesLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
 		<property name="itemsLogic"
@@ -297,8 +331,7 @@
 		<property name="richTextEvolver" ref="richTextEvolver" />
 	</bean>
 
-	<bean
-		class="org.sakaiproject.evaluation.tool.producers.ModifyBlockProducer">
+	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyBlockProducer">
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="itemsLogic"
@@ -308,8 +341,7 @@
 		<property name="richTextEvolver" ref="richTextEvolver" />
 	</bean>
 
-	<bean
-		class="org.sakaiproject.evaluation.tool.producers.EvaluationStartProducer">
+	<bean class="org.sakaiproject.evaluation.tool.producers.EvaluationStartProducer">
 		<property name="templatesLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
 		<property name="external"
@@ -317,8 +349,7 @@
 		<property name="richTextEvolver" ref="richTextEvolver" />
 	</bean>
 
-	<bean
-		class="org.sakaiproject.evaluation.tool.producers.EvaluationSettingsProducer">
+	<bean class="org.sakaiproject.evaluation.tool.producers.EvaluationSettingsProducer">
 		<property name="settings"
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 		<property name="evaluationBean" ref="evaluationBean" />
@@ -327,26 +358,22 @@
         <property name="dateEvolver" ref="fieldDateInputEvolver"/>
 	</bean>
 
-	<bean
-		class="org.sakaiproject.evaluation.tool.producers.EvaluationAssignProducer">
+	<bean class="org.sakaiproject.evaluation.tool.producers.EvaluationAssignProducer">
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 	</bean>
 
-	<bean
-		class="org.sakaiproject.evaluation.tool.producers.EvaluationAssignConfirmProducer">
+	<bean class="org.sakaiproject.evaluation.tool.producers.EvaluationAssignConfirmProducer">
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="evaluationBean" ref="evaluationBean" />
 	</bean>
 
-	<bean
-		class="org.sakaiproject.evaluation.tool.producers.PreviewEmailProducer">
+	<bean class="org.sakaiproject.evaluation.tool.producers.PreviewEmailProducer">
 		<property name="evaluationBean" ref="evaluationBean" />
 	</bean>
 
-	<bean
-		class="org.sakaiproject.evaluation.tool.producers.ModifyEmailProducer">
+	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyEmailProducer">
 	</bean>
 
 	<bean
@@ -361,6 +388,13 @@
 			ref="reportsBean" />			
 	</bean>
 
+	<bean class="org.sakaiproject.evaluation.tool.producers.ChooseReportGroupsProducer">
+		<property name="evalsLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+		<property name="reportsBean"
+			ref="reportsBean" />				
+	</bean>
+
 	<bean class="org.sakaiproject.evaluation.tool.producers.ViewEssayResponseProducer">
 		<property name="evalsLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
@@ -369,6 +403,7 @@
 		<property name="responsesLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
 	</bean>
+
 
 	<bean class="org.sakaiproject.evaluation.tool.producers.TakeEvalProducer">
 		<property name="external"
@@ -379,22 +414,14 @@
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
 		<property name="itemRenderer" 
 			ref="org.sakaiproject.evaluation.tool.renderers.ItemRenderer" />
-		<property name="localResponsesLogic" ref="localResponsesLogic" />		
+		<property name="localResponsesLogic" 
+			ref="localResponsesLogic" />		
 	</bean>
 
 	<bean class="org.sakaiproject.evaluation.tool.producers.RemoveEvalProducer">
 		<property name="evalsLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
 		<property name="locale" ref="requestLocale" />
-	</bean>
-
-	<bean class="org.sakaiproject.evaluation.tool.producers.RemoveTemplateProducer">
-		<property name="templatesLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
-		<property name="evalsLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
-		<property name="settings"
-			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 	</bean>
 
 	<bean class="org.sakaiproject.evaluation.tool.producers.ControlScalesProducer">
@@ -409,17 +436,19 @@
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 	</bean>	
 
-	<bean class="org.sakaiproject.evaluation.tool.producers.ScaleAddModifyProducer">
+	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyScaleProducer">
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-		<property name="localScaleLogic" ref="localScaleLogic" />
+		<property name="scalesLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalScalesLogic" />
         <property name="boundedDynamicListInputEvolver" ref="standardDynamicListInputEvolver"/>
 	</bean>
 
 	<bean class="org.sakaiproject.evaluation.tool.producers.RemoveScaleProducer">
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-		<property name="localScaleLogic" ref="localScaleLogic" />
+		<property name="localTemplateLogic" 
+			ref="localTemplateLogic" />
 	</bean>
 
 	<!-- EXPERT items views -->

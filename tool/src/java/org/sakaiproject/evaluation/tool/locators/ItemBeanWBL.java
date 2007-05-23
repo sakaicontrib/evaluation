@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.tool.locators;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.sakaiproject.evaluation.model.EvalItem;
@@ -71,6 +72,17 @@ public class ItemBeanWBL implements WriteableBeanLocator {
 	 */
 	public void set(String beanname, Object toset) {
 		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	public void saveAll() {
+		for (Iterator it = delivered.keySet().iterator(); it.hasNext();) {
+			String key = (String) it.next();
+			EvalItem item = (EvalItem) delivered.get(key);
+			if (key.startsWith(NEW_PREFIX)) {
+				// add in extra logic needed for new items here
+			}
+			localTemplateLogic.saveItem(item);
+		}
 	}
 
 }

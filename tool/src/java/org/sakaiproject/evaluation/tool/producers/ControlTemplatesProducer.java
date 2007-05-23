@@ -50,11 +50,6 @@ public class ControlTemplatesProducer implements ViewComponentProducer {
 	}
 
 
-	private Locale locale;
-	public void setLocale(Locale locale) {
-		this.locale = locale;
-	}
-
 	private EvalExternalLogic external;
 	public void setExternal(EvalExternalLogic external) {
 		this.external = external;
@@ -68,6 +63,11 @@ public class ControlTemplatesProducer implements ViewComponentProducer {
 	private EvalEvaluationsLogic evaluationsLogic;
 	public void setEvaluationsLogic(EvalEvaluationsLogic evaluationsLogic) {
 		this.evaluationsLogic = evaluationsLogic;
+	}
+
+	private Locale locale;
+	public void setLocale(Locale locale) {
+		this.locale = locale;
 	}
 
 
@@ -114,7 +114,7 @@ public class ControlTemplatesProducer implements ViewComponentProducer {
 					UIMessage.make("controlevaluations.page.title"), 
 				new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
 			UIInternalLink.make(tofill, "begin-evaluation-link", 
-					UIMessage.make("beginevaluation.page.title"), 
+					UIMessage.make("starteval.page.title"), 
 				new TemplateViewParameters(EvaluationStartProducer.VIEW_ID, null));
 		}
 
@@ -128,11 +128,11 @@ public class ControlTemplatesProducer implements ViewComponentProducer {
 		// get templates for the current user
 		List templates = templatesLogic.getTemplatesForUser(currentUserId, null, true);
 		if (templates.size() > 0) {
-			UIBranchContainer templateListing = UIBranchContainer.make(tofill, "template-listing:"); //$NON-NLS-1$
+			UIBranchContainer templateListing = UIBranchContainer.make(tofill, "template-listing:");
 
-			UIMessage.make(templateListing, "template-title-header", "controlpanel.template.title.header");	 //$NON-NLS-1$ //$NON-NLS-2$
-			UIMessage.make(templateListing, "template-owner-header", "controlpanel.owner.header"); //$NON-NLS-1$ //$NON-NLS-2$
-			UIMessage.make(templateListing, "template-lastupdate-header", "controlpanel.last.update.header"); //$NON-NLS-1$ //$NON-NLS-2$
+			UIMessage.make(templateListing, "template-title-header", "controltemplates.template.title.header");	
+			UIMessage.make(templateListing, "template-owner-header", "controltemplates.template.owner.header");
+			UIMessage.make(templateListing, "template-lastupdate-header", "controltemplates.template.lastupdate.header");
 
 			for (int i = 0; i < templates.size(); i++) {
 				EvalTemplate template = (EvalTemplate) (templates.get(i));

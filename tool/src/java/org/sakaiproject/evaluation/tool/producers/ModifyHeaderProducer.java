@@ -111,7 +111,7 @@ public class ModifyHeaderProducer implements ViewComponentProducer,
 				new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
 		UIMessage.make(tofill, "modify-header-title", "modifyheader.page.title");
-		UIMessage.make(tofill, "create-eval-title", "createeval.page.title");
+		UIMessage.make(tofill, "create-eval-title", "starteval.page.title");
 
 		UIForm form = UIForm.make(tofill, "headerForm");
 

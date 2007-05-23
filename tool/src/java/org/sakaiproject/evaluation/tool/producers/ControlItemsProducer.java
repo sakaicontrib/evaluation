@@ -14,24 +14,24 @@
 
 package org.sakaiproject.evaluation.tool.producers;
 
-import java.text.DateFormat;
 import java.util.List;
-import java.util.Locale;
 
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
-import org.sakaiproject.evaluation.tool.renderers.AddItemControlRenderer;
+import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.viewparams.ItemViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.view.ComponentChecker;
@@ -72,16 +72,6 @@ public class ControlItemsProducer implements ViewComponentProducer {
 		this.itemsLogic = itemsLogic;
 	}
 
-	private AddItemControlRenderer addItemControlRenderer;
-	public void setAddItemControlRenderer(AddItemControlRenderer addItemControlRenderer) {
-		this.addItemControlRenderer = addItemControlRenderer;
-	}
-
-	private Locale locale;
-	public void setLocale(Locale locale) {
-		this.locale = locale;
-	}
-
 
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
@@ -93,8 +83,6 @@ public class ControlItemsProducer implements ViewComponentProducer {
 		boolean userAdmin = external.isUserAdmin(currentUserId);
 		boolean createTemplate = templatesLogic.canCreateTemplate(currentUserId);
 		boolean beginEvaluation = evaluationsLogic.canBeginEvaluation(currentUserId);
-		// use a date which is related to the current users locale
-		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
 
 		// page title
 		UIMessage.make(tofill, "page-title", "controlitems.page.title");
@@ -123,29 +111,25 @@ public class ControlItemsProducer implements ViewComponentProducer {
 					UIMessage.make("controlevaluations.page.title"), 
 				new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
 			UIInternalLink.make(tofill, "begin-evaluation-link", 
-					UIMessage.make("beginevaluation.page.title"), 
+					UIMessage.make("starteval.page.title"), 
 				new TemplateViewParameters(EvaluationStartProducer.VIEW_ID, null));
 		}
 
 		UIMessage.make(tofill, "items-header", "controlitems.items.header");
 		UIMessage.make(tofill, "items-description", "controlitems.items.description");
 
+		// use get form to submit the type of item to create
 		UIMessage.make(tofill, "add-item-header", "controlitems.items.add");
-		String[] viewIDs = { 
-				ModifyScaledProducer.VIEW_ID,
-				ModifyEssayProducer.VIEW_ID, 
-				ModifyHeaderProducer.VIEW_ID
-			};
-		String[] labels = new String[] {
-				"modifytemplate.itemtype.scaled", 
-				"modifytemplate.itemtype.text",
-				"modifytemplate.itemtype.header"
-			};
-		addItemControlRenderer.renderControl(tofill, "add-item-control:", viewIDs, labels, 
-				UIMessage.make("modifytemplate.add.item.button"), null);
-
+		UIForm addItemForm = UIForm.make(tofill, "add-item-form", 
+				new ItemViewParameters(ModifyItemProducer.VIEW_ID, null));
+		UISelect.make(addItemForm, "item-classification-list", 
+				EvaluationConstant.ITEM_CLASSIFICATION_VALUES, 
+				EvaluationConstant.ITEM_CLASSIFICATION_LABELS_PROPS, 
+				"#{itemClassification}").setMessageKeys();
+		UIMessage.make(addItemForm, "add-item-button", "controlitems.items.add.button");
+		
 		// get items for the current user
-		List userItems = itemsLogic.getItemsForUser(currentUserId, null, null, false);
+		List userItems = itemsLogic.getItemsForUser(currentUserId, null, null, userAdmin);
 		if (userItems.size() > 0) {
 			UIBranchContainer itemListing = UIBranchContainer.make(tofill, "item-listing:");
 
@@ -164,18 +148,21 @@ public class ControlItemsProducer implements ViewComponentProducer {
 				}
 
 				UIInternalLink.make(itemBranch, "item-preview-link", UIMessage.make("controlitems.preview.link"), 
-						new ItemViewParameters(PreviewItemProducer.VIEW_ID, item.getId(), null) );
+						new ItemViewParameters(PreviewItemProducer.VIEW_ID, item.getId(), (Long)null) );
 
 				UIOutput.make(itemBranch, "item-owner", external.getUserDisplayName( item.getOwner()) );
+				if (item.getExpert().booleanValue() == true) {
+					// label expert items
+					UIMessage.make(itemBranch, "item-expert", "controlitems.expert.label");
+				}
 				UIOutput.make(itemBranch, "item-text", item.getItemText());
 
 				if ( itemsLogic.canControlItem(currentUserId, item.getId()) ) {
                 	// item controllable
 					UIInternalLink.make(itemBranch, "item-remove-link", UIMessage.make("controlitems.remove.link"), 
 							new ItemViewParameters(RemoveItemProducer.VIEW_ID, item.getId(), null));
-					// TODO - make this link work when we have somewhere for it to go
 					UIInternalLink.make(itemBranch, "item-modify-link", UIMessage.make("controlitems.modify.link"), 
-							new SimpleViewParameters(SummaryProducer.VIEW_ID));
+							new ItemViewParameters(ModifyItemProducer.VIEW_ID, item.getId(), null));
 				} else {
                 	// item not controllable
 					UIMessage.make(itemBranch, "item-remove-dummy", "controlitems.remove.link");

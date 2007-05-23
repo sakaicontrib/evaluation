@@ -174,7 +174,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	 * @see org.sakaiproject.evaluation.logic.external.EvalExternalLogic#isUserAdmin(java.lang.String)
 	 */
 	public boolean isUserAdmin(String userId) {
-		log.info("Checking is eval super admin for: " + userId);
+		log.debug("Checking is eval super admin for: " + userId);
 		return securityService.isSuperUser(userId);
 	}
 

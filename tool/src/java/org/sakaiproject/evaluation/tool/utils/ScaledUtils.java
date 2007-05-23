@@ -4,6 +4,8 @@
 package org.sakaiproject.evaluation.tool.utils;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
@@ -62,5 +64,44 @@ public class ScaledUtils {
 	public static Color getEndColor(EvalScale scale) {
 		return Color.decode(endColours[idealIndex(scale)]);
 	}
-	
+
+	/**
+	 * Produce scale labels for a list of scales that can be used in a pulldown menu
+	 * 
+	 * @param scales a list of {@link EvalScale}
+	 * @return an array of labels for the passed in scales
+	 */
+	public static String[] getScaleLabels(List scales) {
+		List scaleLabels = new ArrayList();
+		for (int i = 0; i < scales.size(); i++) {
+			EvalScale scale = (EvalScale) scales.get(i);
+			String scaleOptionsStr = "";
+			String[] scaleOptionsArr = scale.getOptions();
+			for (int j = 0; j < scaleOptionsArr.length; j++) {
+				if (scaleOptionsStr.equals("")) {
+					scaleOptionsStr = scaleOptionsArr[j];
+				} else {
+					scaleOptionsStr = scaleOptionsStr + ", " + scaleOptionsArr[j];
+				}
+			}
+			scaleLabels.add(scaleOptionsArr.length + " pt - " + scale.getTitle() + " (" + scaleOptionsStr + ")");
+		}
+		return (String[]) scaleLabels.toArray(new String[] {});
+	}
+
+	/**
+	 * Produce values for a list of scales that can be used in a pulldown menu
+	 * 
+	 * @param scales a list of {@link EvalScale}
+	 * @return an array of values for the passed in scales
+	 */
+	public static String[] getScaleValues(List scales) {
+		List scaleValues = new ArrayList();
+		for (int i = 0; i < scales.size(); i++) {
+			EvalScale scale = (EvalScale) scales.get(i);
+			scaleValues.add(scale.getId().toString());
+		}
+		return (String[]) scaleValues.toArray(new String[] {});
+	}
+
 }

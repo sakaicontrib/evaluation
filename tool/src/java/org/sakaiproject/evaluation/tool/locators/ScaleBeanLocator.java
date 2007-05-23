@@ -18,7 +18,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.sakaiproject.evaluation.model.EvalScale;
-import org.sakaiproject.evaluation.tool.LocalScaleLogic;
+import org.sakaiproject.evaluation.tool.LocalTemplateLogic;
 
 import uk.org.ponder.beanutil.BeanLocator;
 
@@ -29,12 +29,13 @@ import uk.org.ponder.beanutil.BeanLocator;
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class ScaleBeanLocator implements BeanLocator {
+
 	public static final String NEW_PREFIX = "new ";
+	public static String NEW_1 = NEW_PREFIX + "1";
 
-	private LocalScaleLogic localScaleLogic;
-
-	public void setLocalScaleLogic(LocalScaleLogic localScaleLogic) {
-		this.localScaleLogic = localScaleLogic;
+	private LocalTemplateLogic localTemplateLogic;
+	public void setLocalTemplateLogic(LocalTemplateLogic localTemplateLogic) {
+		this.localTemplateLogic = localTemplateLogic;
 	}
 
 	private Map delivered = new HashMap();
@@ -43,9 +44,9 @@ public class ScaleBeanLocator implements BeanLocator {
 		Object togo = delivered.get(path);
 		if (togo == null) {
 			if (path.startsWith(NEW_PREFIX)) {
-				togo = localScaleLogic.newScale();
+				togo = localTemplateLogic.newScale();
 			} else {
-				togo = localScaleLogic.fetchScale(new Long(Long.parseLong(path.trim())));
+				togo = localTemplateLogic.fetchScale(new Long(Long.parseLong(path.trim())));
 			}
 			delivered.put(path, togo);
 		}
@@ -59,11 +60,12 @@ public class ScaleBeanLocator implements BeanLocator {
 			if (key.startsWith(NEW_PREFIX)) {
 				// could do stuff here
 			}
-			localScaleLogic.saveScale(scale);
+			localTemplateLogic.saveScale(scale);
 		}
 	}
 
 	public void deleteScale(Long scaleId) {
-		localScaleLogic.deleteScale(scaleId);
+		localTemplateLogic.deleteScale(scaleId);
 	}
+
 }

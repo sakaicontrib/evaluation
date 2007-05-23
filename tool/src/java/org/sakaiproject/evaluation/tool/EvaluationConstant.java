@@ -36,13 +36,20 @@ public class EvaluationConstant {
 	/**
 	 * The values for all sharing menus
 	 */
-	public static String[] MODIFIER_VALUES = new String[] {
+	public static String[] SHARING_VALUES = new String[] {
 		EvalConstants.SHARING_PRIVATE, 
 		EvalConstants.SHARING_PUBLIC
 //		EvalConstants.SHARING_VISIBLE,
 //		EvalConstants.SHARING_SHARED
 	};
 
+	// should match with SHARING_VALUES
+	public static String[] SHARING_LABELS_PROPS = new String[] {
+		"sharing.private",
+		"sharing.public"
+//		"sharing.visible",
+//		"sharing.shared"
+	};
 
 	private static Map classToView = new HashMap();
 	static {
@@ -78,7 +85,7 @@ public class EvaluationConstant {
 	public static String RED_COLOR = "#ff0000";
 	public static String LIGHT_GRAY_COLOR = "#CCCCFF";
 
-	//For template_item.html
+	// For pulldowns which show the scale display settings
 	public static String[] SCALE_DISPLAY_SETTING_VALUES = new String[]{
 		EvalConstants.ITEM_SCALE_DISPLAY_COMPACT,
 		EvalConstants.ITEM_SCALE_DISPLAY_COMPACT_COLORED,
@@ -89,10 +96,27 @@ public class EvaluationConstant {
 		EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL
 	};
 
+	// should match the order of the array above, should include the properties strings only (no real labels)
+	public static String[] SCALE_DISPLAY_SETTING_LABELS_PROPS = new String[] {
+			"templateitem.scale.select.compact",
+			"templateitem.scale.select.compactc",
+			"templateitem.scale.select.full",
+			"templateitem.scale.select.fullc",
+			"templateitem.scale.select.stepped",
+			"templateitem.scale.select.steppedc",
+			"templateitem.scale.select.vertical"
+		};
+
 	public static String[] ITEM_CATEGORY_VALUES = new String[] {
-		EvalConstants.ITEM_CATEGORY_COURSE,
-		EvalConstants.ITEM_CATEGORY_INSTRUCTOR
-	};
+			EvalConstants.ITEM_CATEGORY_COURSE,
+			EvalConstants.ITEM_CATEGORY_INSTRUCTOR
+		};
+
+	// should match ITEM_CATEGORY_VALUES
+	public static String[] ITEM_CATEGORY_LABELS_PROPS = {
+			"modifyitem.course.category",
+			"modifyitem.instructor.category"
+		};
 
 	/**
 	 * Evaluation Settings: Page pulldown constants for reminder interval
@@ -113,7 +137,18 @@ public class EvaluationConstant {
 	 * Modify Essay: Page pulldown constants for reponse size
 	 */
 	public static final String[] RESPONSE_SIZE_VALUES = new String[] {
-		"2", "3", "4", "5" };
+			"2", 
+			"3", 
+			"4", 
+			"5"
+		};
+
+	public static final String[] RESPONSE_SIZE_LABELS_PROPS = new String[] {
+			"modifyessay.response.select.size.2",
+			"modifyessay.response.select.size.3",
+			"modifyessay.response.select.size.4",
+			"modifyessay.response.select.size.5"
+		};
 
 	/**
 	 * The default number of rows to use when displaying a textarea type input box
@@ -174,6 +209,18 @@ public class EvaluationConstant {
 			"scalecontrol.ideal.scale.option.label.low",
 			"scalecontrol.ideal.scale.option.label.high", 
 			"scalecontrol.ideal.scale.option.label.mid"
+		};
+
+	public static final String[] ITEM_CLASSIFICATION_VALUES = new String[] {
+			EvalConstants.ITEM_TYPE_SCALED,
+			EvalConstants.ITEM_TYPE_TEXT,
+			EvalConstants.ITEM_TYPE_HEADER
+		};
+	
+	public static final String[] ITEM_CLASSIFICATION_LABELS_PROPS = new String[] {
+			"item.classification.scaled", 
+			"item.classification.text",
+			"item.classification.header"
 		};
 
 }
