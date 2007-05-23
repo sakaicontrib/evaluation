@@ -159,4 +159,8 @@
 				ref="org.sakaiproject.evaluation.logic.EvalJobLogic" />
 	</bean>
 
+
+	<!-- Bring in any sakai entity providers -->
+	<import resource="entity-providers.xml" />
+
 </beans>
