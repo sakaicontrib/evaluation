@@ -112,7 +112,6 @@ tool/src/java/org/sakaiproject/evaluation/tool/EvaluationConstant.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ExpertItemsBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ItemsBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/LocalResponsesLogic.java -text
-tool/src/java/org/sakaiproject/evaluation/tool/LocalScaleLogic.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/LocalTemplateLogic.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ReportHandlerHook.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ReportsBean.java -text
@@ -122,6 +121,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/TemplateBBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/bundle/messages.properties -text
 tool/src/java/org/sakaiproject/evaluation/tool/bundle/messages_en.properties -text
 tool/src/java/org/sakaiproject/evaluation/tool/locators/AnswersBeanLocator.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/locators/EntityNameInferrerImpl.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/locators/EvaluationBeanLocator.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/locators/ItemBeanWBL.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/locators/ResponseAnswersBeanLocator.java -text
@@ -148,6 +148,8 @@ tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyBlockProducer.jav
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyEmailProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyEssayProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyHeaderProducer.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyItemProducer.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyScaleProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyScaledProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyTemplateItemsProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyTemplateProducer.java -text
@@ -158,7 +160,6 @@ tool/src/java/org/sakaiproject/evaluation/tool/producers/RemoveEvalProducer.java
 tool/src/java/org/sakaiproject/evaluation/tool/producers/RemoveItemProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/RemoveScaleProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/RemoveTemplateProducer.java -text
-tool/src/java/org/sakaiproject/evaluation/tool/producers/ScaleAddModifyProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/SummaryProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/TakeEvalProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ViewEssayResponseProducer.java -text
@@ -265,6 +266,8 @@ tool/src/webapp/content/templates/modify_block.html -text
 tool/src/webapp/content/templates/modify_email.html -text
 tool/src/webapp/content/templates/modify_essay.html -text
 tool/src/webapp/content/templates/modify_header.html -text
+tool/src/webapp/content/templates/modify_item.html -text
+tool/src/webapp/content/templates/modify_scale.html -text
 tool/src/webapp/content/templates/modify_scaled.html -text
 tool/src/webapp/content/templates/modify_template.html -text
 tool/src/webapp/content/templates/modify_template_items.html -text
@@ -276,7 +279,6 @@ tool/src/webapp/content/templates/remove_item.html -text
 tool/src/webapp/content/templates/remove_scale.html -text
 tool/src/webapp/content/templates/remove_template.html -text
 tool/src/webapp/content/templates/report_groups.html -text
-tool/src/webapp/content/templates/scale_add_modify.html -text
 tool/src/webapp/content/templates/summary.html -text
 tool/src/webapp/content/templates/take_eval.html -text
 tool/src/webapp/content/templates/template_item.html -text

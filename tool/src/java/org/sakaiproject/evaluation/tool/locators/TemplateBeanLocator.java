@@ -10,6 +10,7 @@
  * Contributors:
  * Will Humphries (whumphri@vt.edu)
  *****************************************************************************/
+
 package org.sakaiproject.evaluation.tool.locators;
 
 import java.util.HashMap;
@@ -27,8 +28,8 @@ import uk.org.ponder.beanutil.BeanLocator;
  * 
  * @author 
  */
-
 public class TemplateBeanLocator implements BeanLocator {
+
 	public static final String NEW_PREFIX = "new";
     public static String NEW_1 = NEW_PREFIX +"1";
     

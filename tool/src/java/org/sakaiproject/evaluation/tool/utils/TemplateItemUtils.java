@@ -65,7 +65,6 @@ public class TemplateItemUtils {
 	 * @return true if there is a templateItem in the list that matches the provided category
 	 */
 	public static boolean checkTemplateItemsCategoryExists(String itemTypeConstant, List itemList) {
-
 		for (int i = 0; i < itemList.size(); i++) {
 			EvalTemplateItem templateItem = (EvalTemplateItem) itemList.get(i);
 			if ( itemTypeConstant.equals( templateItem.getItemCategory() ) ) {

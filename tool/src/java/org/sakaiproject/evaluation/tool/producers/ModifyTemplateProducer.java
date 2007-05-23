@@ -118,13 +118,10 @@ public class ModifyTemplateProducer
 			 */
 			if (externalLogic.isUserAdmin(externalLogic.getCurrentUserId())) {
 				UIBranchContainer showSharingOptions = UIBranchContainer.make(form,	"showSharingOptions:"); //$NON-NLS-1$
-				String[] sharingList = {
-						"modifytemplatetitledesc.sharing.private", //$NON-NLS-1$
-						"modifytemplatetitledesc.sharing.public" //$NON-NLS-1$
-				};
 				UISelect.make(showSharingOptions, "sharing",
-						EvaluationConstant.MODIFIER_VALUES, sharingList, templateOTP
-						+ "sharing", null).setMessageKeys();
+						EvaluationConstant.SHARING_VALUES, 
+						EvaluationConstant.SHARING_LABELS_PROPS, 
+						templateOTP	+ "sharing", null).setMessageKeys();
 			}
 			else {
 				sharingkey = "modifytemplatetitledesc.sharing.private";

@@ -35,17 +35,14 @@
 		</div>
 		<div class="rightcol" style="white-space:nowrap;">
 			<span rsf:id="add-item-header" style="font-weight:bold;">Add Item:</span>
-			<div rsf:id="add-item-control:">
-				<form name="modify_template_items_form">
-					<select id="itemClassification-selection">
-						<option value="modify_scaled.html" selected="selected">Scaled/Survey</option>
-						<option value="modify_essay.html">Short Answer/Essay</option>
-						<option value="modify_header.html">Text Header</option>
-					</select>
-					<input id="add_questions" type="button" value="Add"
-						onclick="EvalSystem.operateSelectLink(this.id, 'itemClassification-selection')" />
-				</form>
-			</div>
+			<form rsf:id="add-item-form" action="modify_item.html" method="get">
+				<select rsf:id="item-classification-list">
+					<option value="modify_scaled.html" selected="selected">Scaled/Survey</option>
+					<option value="modify_essay.html">Short Answer/Essay</option>
+					<option value="modify_header.html">Text Header</option>
+				</select>
+				<input rsf:id="add-item-button" type="submit" value="Add" />
+			</form>
 		</div>
 		<div class="cleaner">&nbsp;</div>
 	</div>
@@ -94,6 +91,9 @@
 				<!-- <a href="#" name="copy-item-link">Copy</a> -->
 				<span rsf:id="item-owner">owner displayname</span>
 			</div>
+			<div rsf:id="item-expert" class="rightcol" style="margin:0em 1em;">
+				Expert
+			</div>
 			<div class="cleaner">&nbsp;</div>
 		</div>
 		<div class="divrow" style="width:99%;">
@@ -103,7 +103,7 @@
 			<div class="cleaner">&nbsp;</div>
 		</div>
 	</div>
-	<div rsf:id="item-row:" class="itemsListOddLine">
+	<div class="itemsListOddLine">
 		<div class="divrow" style="width:99%;font-size:0.9em;">
 			<div class="leftcol">
 				<span rsf:id="item-classification">Item Classification</span>

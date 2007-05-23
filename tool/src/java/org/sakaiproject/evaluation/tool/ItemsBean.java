@@ -103,6 +103,9 @@ public class ItemsBean {
 	}
 
 	// GETTERS and SETTERS
+	/**
+	 * @deprecated
+	 */
 	public List getScaleValues() {
 		// get scale values and labels from DAO
 		List list = null;
@@ -131,10 +134,16 @@ public class ItemsBean {
 		return scaleValues;
 	}
 
+	/**
+	 * @deprecated
+	 */
 	public void setScaleValues(List scaleValues) {
 		this.scaleValues = scaleValues;
 	}
 
+	/**
+	 * @deprecated
+	 */
 	public List getScaleLabels() {
 		// make sure if getScaleValue() was called first, getScaleLabels() will not be called again
 		if (scaleLabels == null)
@@ -143,6 +152,9 @@ public class ItemsBean {
 		return scaleLabels;
 	}
 
+	/**
+	 * @deprecated
+	 */
 	public void setScaleLabels(List scaleLabels) {
 		this.scaleLabels = scaleLabels;
 	}
@@ -162,6 +174,9 @@ public class ItemsBean {
 		return null;
 	}
 
+	/**
+	 * @deprecated
+	 */
 	public String saveItemAction() {
 		templateItem.getItem().setScaleDisplaySetting(templateItem.getScaleDisplaySetting());
 		templateItem.getItem().setUsesNA(templateItem.getUsesNA());
@@ -175,11 +190,17 @@ public class ItemsBean {
 		return "success";
 	}
 
+	/**
+	 * @deprecated
+	 */
 	public void newItemInit(Long templateId, String classification) {
 		templateItem.getItem().setClassification(classification);
 		this.templateId = templateId;
 	}
 
+	/**
+	 * @deprecated
+	 */
 	public void fetchTemplateItem(Long templateItemId) {
 		templateItem = itemsLogic.getTemplateItemById(templateItemId);
 	}

@@ -224,7 +224,7 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 	public List getItemsForUser(String userId, String sharingConstant, String filter, boolean includeExpert) {
 		log.debug("sharingConstant:" + sharingConstant + ", userId:" + userId + ", filter:" + filter  + ", includeExpert:" + includeExpert);
 
-		Set s = new HashSet();
+		List l = new ArrayList();
 
 		// get admin state
 		boolean isAdmin = external.isUserAdmin(userId);
@@ -278,12 +278,7 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 				privateComparisons = ArrayUtils.appendArray(privateComparisons, ByPropsFinder.EQUALS);
 			}
 
-			s.addAll( dao.findByProperties(EvalItem.class, privateProps, privateValues, privateComparisons, new String[] {"id"}) );
-		}
-
-		for (Iterator iter = s.iterator(); iter.hasNext();) {
-			EvalItem element = (EvalItem) iter.next();
-			log.debug("private Items: " + element.getId() + ":" + element.getItemText() + ":" + element.getClassification());
+			l.addAll( dao.findByProperties(EvalItem.class, privateProps, privateValues, privateComparisons, new String[] {"id"}) );
 		}
 
 		// handle public sharing items
@@ -292,15 +287,10 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 			Object[] publicValues = ArrayUtils.appendArray(values, EvalConstants.SHARING_PUBLIC);
 			int[] publicComparisons = ArrayUtils.appendArray(comparisons, ByPropsFinder.EQUALS);
 
-			s.addAll( dao.findByProperties(EvalItem.class, publicProps, publicValues, publicComparisons, new String[] {"id"}) );
+			l.addAll( dao.findByProperties(EvalItem.class, publicProps, publicValues, publicComparisons, new String[] {"id"}) );
 		}
 
-		for (Iterator iter = s.iterator(); iter.hasNext();) {
-			EvalItem element = (EvalItem) iter.next();
-			log.debug("all Items: " + element.getId() + ":" + element.getItemText() + ":" + element.getClassification());
-		}
-
-		return new ArrayList(s);
+		return EvalUtils.removeDuplicates(l); // remove duplicates from the list
 	}
 
 	/* (non-Javadoc)

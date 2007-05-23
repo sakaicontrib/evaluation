@@ -419,7 +419,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 
 			if ( beginEvaluation ) {
 				UIInternalLink.make(toolsBC, "beginEvaluationLink", //$NON-NLS-1$
-					UIMessage.make("beginevaluation.page.title"), //$NON-NLS-1$
+					UIMessage.make("starteval.page.title"), //$NON-NLS-1$
 					new TemplateViewParameters(EvaluationStartProducer.VIEW_ID, null));
 			}
 		}

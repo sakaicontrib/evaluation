@@ -95,7 +95,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 
 		//TODO - i18n UIBoundBoolean's for N/a
 
-		UIMessage.make(tofill,"control-panel-title", "controlpanel.page.title");		
+		UIMessage.make(tofill,"control-eval-title", "controlevaluations.page.title");		
 		UIMessage.make(tofill, "preview-eval-title", "previeweval.page.title");		
 
 		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), 

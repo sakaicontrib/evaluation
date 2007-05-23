@@ -15,6 +15,10 @@
 package org.sakaiproject.evaluation.model.utils;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
@@ -69,4 +73,20 @@ public class EvalUtils {
 		return false;
 	}
 
+	/**
+	 * Remove all duplicate objects from a list
+	 * 
+	 * @param list
+	 * @return the original list with the duplicate objects removed
+	 */
+	public static List removeDuplicates(List list) {
+		Set s = new HashSet();
+		for (Iterator iter = list.iterator(); iter.hasNext();) {
+			Object element = (Object) iter.next();
+			if (! s.add(element)) {
+				iter.remove();
+			}
+		}
+		return list;
+	}
 }

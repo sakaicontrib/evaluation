@@ -76,7 +76,7 @@ public class ControlScalesProducer implements ViewComponentProducer, NavigationC
 
 		UIInternalLink.make(tofill, "add-new-scale-link", 
 				UIMessage.make("scalecontrol.add.new.scale.link"), 
-				new EvalScaleParameters(ScaleAddModifyProducer.VIEW_ID, null));
+				new EvalScaleParameters(ModifyScaleProducer.VIEW_ID, null));
 
 		UIMessage.make(tofill, "scales-control-heading", "scalecontrol.page.heading");
 
@@ -118,7 +118,7 @@ public class ControlScalesProducer implements ViewComponentProducer, NavigationC
 				if (scalesLogic.canControlScale(currentUserId, scale.getId())) {
 					UIInternalLink.make(listOfScales, "modify-sidelink", 
 							UIMessage.make("scalecontrol.modify.link"), 
-							new EvalScaleParameters(ScaleAddModifyProducer.VIEW_ID, scale.getId()));
+							new EvalScaleParameters(ModifyScaleProducer.VIEW_ID, scale.getId()));
 					UIInternalLink.make(listOfScales, "remove-sidelink", 
 							UIMessage.make("scalecontrol.remove.link"), 
 							new EvalScaleParameters(RemoveScaleProducer.VIEW_ID, scale.getId()));

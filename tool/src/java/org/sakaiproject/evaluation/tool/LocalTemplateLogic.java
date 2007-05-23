@@ -21,8 +21,10 @@ import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
+import org.sakaiproject.evaluation.logic.EvalScalesLogic;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
+import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
@@ -37,9 +39,9 @@ import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
  */
 public class LocalTemplateLogic {
 
-	private EvalItemsLogic itemsLogic;
-	public void setItemsLogic(EvalItemsLogic itemsLogic) {
-		this.itemsLogic = itemsLogic;
+	private EvalExternalLogic external;
+	public void setExternal(EvalExternalLogic external) {
+		this.external = external;
 	}
 
 	private EvalTemplatesLogic templatesLogic;
@@ -47,16 +49,24 @@ public class LocalTemplateLogic {
 		this.templatesLogic = templatesLogic;
 	}
 
-	private EvalExternalLogic external;
-	public void setExternal(EvalExternalLogic external) {
-		this.external = external;
+	private EvalItemsLogic itemsLogic;
+	public void setItemsLogic(EvalItemsLogic itemsLogic) {
+		this.itemsLogic = itemsLogic;
 	}
+
+	private EvalScalesLogic scalesLogic;
+	public void setScalesLogic(EvalScalesLogic scalesLogic) {
+		this.scalesLogic = scalesLogic;
+	}
+
 
 	/*
 	 * Real methods below
 	 */
 
-	// Template methods
+
+	// TEMPLATES
+
 	public EvalTemplate fetchTemplate(Long templateId) {
 		return templatesLogic.getTemplateById(templateId);
 	}
@@ -73,7 +83,9 @@ public class LocalTemplateLogic {
 		return currTemplate;
 	}
 
-	// Template Items
+
+	// TEMPLATE ITEMS
+
 	public EvalTemplateItem fetchTemplateItem(Long itemId) {
 		return itemsLogic.getTemplateItemById(itemId);
 	}
@@ -165,12 +177,24 @@ public class LocalTemplateLogic {
 		return newTemplateItem;
 	}
 
-	// Items
+
+	// ITEMS
+
 	public EvalItem fetchItem(Long itemId) {
 		return itemsLogic.getItemById(itemId);
 	}
 
 	public void saveItem(EvalItem tosave) {
+		// TODO - this should use the defunneler -AZ (so says antranig)
+		// this is here to cleanup the fake scale in case it was not needed or load a real one
+		if (tosave.getScale() != null) {
+			if (tosave.getScale().getId() != null) {
+				// this lookup is needed so hibernate can make the connection
+				tosave.setScale(scalesLogic.getScaleById(tosave.getScale().getId()));
+			} else {
+				tosave.setScale(null);
+			}
+		}
 		itemsLogic.saveItem(tosave, external.getCurrentUserId());
 	}
 
@@ -179,8 +203,33 @@ public class LocalTemplateLogic {
 	}
 
 	public EvalItem newItem() {
-		EvalItem newItem = new EvalItem(new Date(), external.getCurrentUserId(), "", "", "", Boolean.FALSE);
+		EvalItem newItem = new EvalItem(new Date(), external.getCurrentUserId(), "", 
+				EvalConstants.SHARING_PRIVATE, "", Boolean.FALSE);
+		newItem.setCategory( EvalConstants.ITEM_CATEGORY_COURSE ); // default category
+		newItem.setScale( new EvalScale() ); // needed so that EL reference will not fail
 		return newItem;
+	}
+
+
+	// SCALES
+
+	public EvalScale fetchScale(Long scaleId) {
+		return scalesLogic.getScaleById(scaleId);
+	}
+  
+	public void saveScale(EvalScale tosave) {
+		scalesLogic.saveScale(tosave, external.getCurrentUserId());
+	}
+  
+	public void deleteScale(Long id) {
+		scalesLogic.deleteScale(id, external.getCurrentUserId());
+	}
+  
+	public EvalScale newScale() {
+		EvalScale currScale = new EvalScale(new Date(), 
+				external.getCurrentUserId(), null, "private", Boolean.FALSE);
+		currScale.setOptions(new String[]{"", ""});
+		return currScale;
 	}
 
 }

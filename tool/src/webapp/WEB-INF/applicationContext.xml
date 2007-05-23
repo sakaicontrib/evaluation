@@ -26,14 +26,18 @@
       			scaleBean, scaleBeanLocator, itemWBL" />
 	</bean>
 
+
+	<!-- tool logic beans (organizational) -->
 	<bean id="localTemplateLogic"
 		class="org.sakaiproject.evaluation.tool.LocalTemplateLogic">
-		<property name="templatesLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+		<property name="templatesLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
 		<property name="itemsLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
+		<property name="scalesLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalScalesLogic" />
 	</bean>
 
 	<bean id="localResponsesLogic"
@@ -45,13 +49,6 @@
 		</property>
 	</bean>
 
-	<bean id="localScaleLogic"
-		class="org.sakaiproject.evaluation.tool.LocalScaleLogic">
-		<property name="scalesLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalScalesLogic" />
-		<property name="external"
-			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-	</bean>
 
 	<!-- The beans listed here are session beans (they stick around) -->
 	<bean id="myBeanScope" parent="beanScopeParent">
@@ -73,8 +70,7 @@
 
 	<bean parent="actionResultInterceptorParent">
 		<property name="value">
-			<bean
-				class="org.sakaiproject.evaluation.tool.wrapper.EvalActionResultInterceptor">
+			<bean class="org.sakaiproject.evaluation.tool.wrapper.EvalActionResultInterceptor">
 				<property name="templateBeanLocator">
 					<bean parent="RSACBridgeProxy">
 						<property name="targetBeanName"

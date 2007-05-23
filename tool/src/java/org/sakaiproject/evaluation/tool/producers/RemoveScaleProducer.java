@@ -18,7 +18,7 @@ import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalScale;
-import org.sakaiproject.evaluation.tool.LocalScaleLogic;
+import org.sakaiproject.evaluation.tool.LocalTemplateLogic;
 import org.sakaiproject.evaluation.tool.viewparams.EvalScaleParameters;
 
 import uk.org.ponder.rsf.components.UICommand;
@@ -55,9 +55,9 @@ public class RemoveScaleProducer implements ViewComponentProducer, ViewParamsRep
 		this.external = external;
 	}
 
-	private LocalScaleLogic localScaleLogic;
-	public void setLocalScaleLogic(LocalScaleLogic localScaleLogic) {
-		this.localScaleLogic = localScaleLogic;
+	private LocalTemplateLogic localTemplateLogic;
+	public void setLocalTemplateLogic(LocalTemplateLogic localTemplateLogic) {
+		this.localTemplateLogic = localTemplateLogic;
 	}
 
 
@@ -80,7 +80,7 @@ public class RemoveScaleProducer implements ViewComponentProducer, ViewParamsRep
 		 * Fetching the scale from LocalScaleLogic just because 
 		 * we need the number of scale options.
 		 */
-		EvalScale scale = localScaleLogic.fetchScale(scaleId);
+		EvalScale scale = localTemplateLogic.fetchScale(scaleId);
 
 		/*
 		 * top menu links and bread crumbs here
@@ -100,11 +100,9 @@ public class RemoveScaleProducer implements ViewComponentProducer, ViewParamsRep
 
 		UIMessage.make(form, "remove-scale-confirm-post-name", "scaleremove.confirm.post.name");
 
-		UICommand.make(form, "remove-scale-cancel-button", UIMessage.make("scaleremove.cancel.button"));
-
-		UICommand deleteCommand = UICommand.make(form, "remove-scale-remove-button", UIMessage.make("scaleremove.remove.scale.button"),
-				"#{scaleBean.deleteScale}");
-
+		UIMessage.make(form, "remove-scale-cancel-button", "general.cancel.button");
+		UICommand deleteCommand = UICommand.make(form, "remove-scale-remove-button", 
+				UIMessage.make("scaleremove.remove.scale.button"), "#{scaleBean.deleteScaleAction}");
 		deleteCommand.parameters.add(new UIELBinding("#{scaleBean.scaleId}", scaleId));
 	}
 

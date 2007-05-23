@@ -14,6 +14,7 @@
 package org.sakaiproject.evaluation.tool.locators;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -76,6 +77,30 @@ public class TemplateItemWBL implements WriteableBeanLocator {
 	 */
 	public void set(String beanname, Object toset) {
 		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	/**
+	 * saves all delivered template items in this request, 
+	 * also saves the associated new items (does not save any associated existing items)
+	 */
+	public void saveAll() {
+		for (Iterator it = delivered.keySet().iterator(); it.hasNext();) {
+			String key = (String) it.next();
+			EvalTemplateItem templateItem = (EvalTemplateItem) delivered.get(key);
+			if (key.startsWith(NEW_PREFIX)) {
+				// add in extra logic needed for new template items here
+				if (templateItem.getItem().getId() == null) {
+					// new item with our new template item so set the values in the new item
+					templateItem.getItem().setScaleDisplaySetting(templateItem.getScaleDisplaySetting());
+					templateItem.getItem().setUsesNA(templateItem.getUsesNA());
+					templateItem.getItem().setSharing(templateItem.getTemplate().getSharing());
+					templateItem.getItem().setCategory(templateItem.getItemCategory());
+					// then save the item
+					localTemplateLogic.saveItem( templateItem.getItem() );
+				}
+			}
+			localTemplateLogic.saveTemplateItem(templateItem);
+		}
 	}
 
 }

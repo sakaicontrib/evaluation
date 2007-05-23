@@ -32,13 +32,13 @@ public class ScaleBean {
 		this.scaleBeanLocator = scaleBeanLocator;
 	}
 
-	public String saveScale() {
+	public String saveScaleAction() {
 		log.debug("create scale");
 		scaleBeanLocator.saveAll();
 		return "success";
 	}
 	
-	public String deleteScale() {
+	public String deleteScaleAction() {
 		log.debug("delete scale");
 		scaleBeanLocator.deleteScale(scaleId);
 		return "success";

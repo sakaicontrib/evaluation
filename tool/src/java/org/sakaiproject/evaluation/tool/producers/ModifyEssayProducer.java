@@ -107,7 +107,7 @@ public class ModifyEssayProducer implements ViewComponentProducer,
 		templateItemOTP = templateItemOTPBinding + ".";
 
 		UIMessage.make(tofill, "modify-essay-title", "modifyessay.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
-		UIMessage.make(tofill, "create-eval-title", "createeval.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "create-eval-title", "starteval.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		UIInternalLink.make(tofill,
 				"summary-toplink", UIMessage.make("summary.page.title"), //$NON-NLS-1$ //$NON-NLS-2$
@@ -150,17 +150,9 @@ public class ModifyEssayProducer implements ViewComponentProducer,
 
 		UIMessage.make(form, "response-size-header","modifyessay.response.size.header"); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		String[] reponseLabelList = {
-				"modifyessay.response.select.size.2",
-				"modifyessay.response.select.size.3",
-				"modifyessay.response.select.size.4",
-				"modifyessay.response.select.size.5"
-				
-		};
-		
 		// dropdown list for "Response size"
 		UISelect.make(form, "responseSize", 
-				EvaluationConstant.RESPONSE_SIZE_VALUES, reponseLabelList, templateItemOTP
+				EvaluationConstant.RESPONSE_SIZE_VALUES, EvaluationConstant.RESPONSE_SIZE_LABELS_PROPS, templateItemOTP
 				+ "item.displayRows", null).setMessageKeys();
 		/*
 		 * If the system setting (admin setting) for

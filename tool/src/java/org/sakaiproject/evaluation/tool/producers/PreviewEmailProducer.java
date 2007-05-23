@@ -62,7 +62,7 @@ public class PreviewEmailProducer implements ViewComponentProducer,
     UIInternalLink.make(tofill, "summary-toplink",
     		UIMessage.make("summary.page.title"), 
         new SimpleViewParameters(SummaryProducer.VIEW_ID));
-    UIMessage.make(tofill, "create-eval-title", "createeval.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
+    UIMessage.make(tofill, "create-eval-title", "starteval.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
 
     UIMessage.make(tofill, "preview-email-header", "previewemail.header"); //$NON-NLS-1$ //$NON-NLS-2$
 

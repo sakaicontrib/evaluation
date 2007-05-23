@@ -59,7 +59,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 		
 		UIMessage.make(tofill, "assign-eval-ext-title", "assigneval.page.ext.title");
-		UIMessage.make(tofill, "create-eval-title", "createeval.page.title");
+		UIMessage.make(tofill, "create-eval-title", "starteval.page.title");
 		UIMessage.make(tofill, "eval-settings-title", "evalsettings.page.title");
 		UIMessage.make(tofill, "assign-eval-title", "assigneval.page.title");
 

@@ -130,7 +130,7 @@ public class ModifyScaledProducer implements ViewComponentProducer,
 		
 
 		UIMessage.make(tofill, "modify-item-title", "templateitem.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
-		UIMessage.make(tofill, "create-eval-title", "createeval.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "create-eval-title", "starteval.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		UIInternalLink.make(tofill,"summary-toplink", UIMessage.make("summary.page.title"), //$NON-NLS-1$ //$NON-NLS-2$
 				new SimpleViewParameters(SummaryProducer.VIEW_ID));
@@ -183,17 +183,10 @@ public class ModifyScaledProducer implements ViewComponentProducer,
 		combo.optionnames = comboNames;
 
 		UIMessage.make(form, "scale-display-header", "templateitem.scale.display.header"); //$NON-NLS-1$ //$NON-NLS-2$
-		String[] scaleLabelList = {
-				"templateitem.scale.select.compact",
-				"templateitem.scale.select.compactc",
-				"templateitem.scale.select.full",
-				"templateitem.scale.select.fullc",
-				"templateitem.scale.select.stepped",
-				"templateitem.scale.select.steppedc",
-				"templateitem.scale.select.vertical" };
 		// drop down list for "Scale Display Setting"
 		UISelect.make(form, "scaleDisplaySetting",
-				EvaluationConstant.SCALE_DISPLAY_SETTING_VALUES, scaleLabelList,
+				EvaluationConstant.SCALE_DISPLAY_SETTING_VALUES, 
+				EvaluationConstant.SCALE_DISPLAY_SETTING_LABELS_PROPS,
 				templateItemOTP + "scaleDisplaySetting", null).setMessageKeys(); //$NON-NLS-1$
 
 		/*
