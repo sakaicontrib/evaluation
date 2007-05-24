@@ -51,6 +51,11 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 
 	private static Log log = LogFactory.getLog(EvalEvaluationsLogicImpl.class);
 
+	private final String EVENT_EVAL_CREATE = "evaluation.created";
+	private final String EVENT_EVAL_UPDATE = "evaluation.updated";
+	private final String EVENT_EVAL_STATE_CHANGE = "evaluation.state.change";
+	private final String EVENT_EVAL_DELETE = "evaluation.updated";
+
 	private EvaluationDao dao;
 	public void setDao(EvaluationDao dao) {
 		this.dao = dao;
@@ -238,28 +243,23 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 		dao.save(evaluation);
 		log.info("User ("+userId+") saved evaluation ("+evaluation.getId()+"), title: " + evaluation.getTitle());
 
-		// call logic to manage Quartz scheduled jobs
-		try
-		{
-			if(newEvaluation)
-				evalJobLogic.processNewEvaluation(evaluation);
-			else {
-				evalJobLogic.processEvaluationChange(evaluation);
-			}
-		}
-		catch (Exception e) {
-			log.warn("EvalJobLogic: evaluation "+evaluation.getId()+" "+ evaluation.getTitle() +" "+ e);
-		}
-
-		// How to check the state of the evaluation (match to the constants)
-		if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(evaluation.getState()) ) {
-			// this eval is in-queue (not started yet)
+		if (newEvaluation) {
+			external.registerEntityEvent(EVENT_EVAL_CREATE, evaluation);
+			// call logic to manage Quartz scheduled jobs
+			evalJobLogic.processNewEvaluation(evaluation);
+		} else {
+			external.registerEntityEvent(EVENT_EVAL_UPDATE, evaluation);
+			// call logic to manage Quartz scheduled jobs
+			evalJobLogic.processEvaluationChange(evaluation);
 		}
 
 		if (evaluation.getLocked().booleanValue()) {
 			// lock evaluation and associated template
 			log.info("Locking evaluation ("+evaluation.getId()+") and associated template ("+evaluation.getTemplate().getId()+")");
 			dao.lockEvaluation(evaluation);			
+		} else {
+			// just lock the template and associated items
+			dao.lockTemplate(evaluation.getTemplate(), Boolean.TRUE);
 		}
 	}
 
@@ -319,15 +319,15 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 			entitySets[2] = evalSet;
 			evalSet.add(evaluation);
 
-			if (evaluation.getLocked().booleanValue()) {
-				// unlock evaluation and associated template
-				log.info("Unlocking associated template ("+evaluation.getTemplate().getId()+") for eval ("+evaluation.getId()+")");
-				dao.lockTemplate(evaluation.getTemplate(), Boolean.FALSE);
-			}
+			// unlock associated template
+			log.info("Unlocking associated template ("+evaluation.getTemplate().getId()+") for eval ("+evaluation.getId()+")");
+			dao.lockTemplate(evaluation.getTemplate(), Boolean.FALSE);
 
 			// remove the evaluation and related items in one transaction
 			dao.deleteMixedSet(entitySets);
 			//dao.delete(eval);
+
+			external.registerEntityEvent(EVENT_EVAL_DELETE, evaluation);
 			log.info("User ("+userId+") removed evaluation ("+evaluationId+"), title: " + evaluation.getTitle());
 			return;
 		}
@@ -726,6 +726,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 			if (! state.equals(eval.getState()) ) {
 				eval.setState(state);
 				if ( (eval.getId() != null) && saveState) {
+					external.registerEntityEvent(EVENT_EVAL_STATE_CHANGE, eval);
 					dao.save(eval);
 				}
 			}

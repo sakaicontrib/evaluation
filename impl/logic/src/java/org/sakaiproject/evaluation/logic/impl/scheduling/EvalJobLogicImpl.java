@@ -43,8 +43,6 @@ import org.sakaiproject.time.api.TimeService;
  *
  */
 public class EvalJobLogicImpl implements EvalJobLogic {
-	
-	//TODO jleasia: track events
 
 	private static Log log = LogFactory.getLog(EvalJobLogicImpl.class);
 	
@@ -52,6 +50,13 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	private final String COMPONENT_ID = "org.sakaiproject.evaluation.logic.externals.EvalScheduledInvocation";
 
 	private final String SEPARATOR = "/";
+	private final String EVENT_EVAL_START = "evaluation.state.start";
+	private final String EVENT_EVAL_DUE = "evaluation.state.due";
+	private final String EVENT_EVAL_STOP = "evaluation.state.stop";
+	private final String EVENT_EVAL_VIEWABLE = "evaluation.state.viewable";
+	private final String EVENT_EMAIL_REMINDER = "evaluation.email.reminder";
+
+	//TODO jleasia: track events
 	
 	private EvalEmailsLogic emails;
 	public void setEmails(EvalEmailsLogic emails) {
@@ -260,7 +265,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	 * (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.externals.EvalJobLogic#processNewEvaluation(org.sakaiproject.evaluation.model.EvalEvaluation)
 	 */
-	public void processNewEvaluation(EvalEvaluation eval) throws Exception {
+	public void processNewEvaluation(EvalEvaluation eval) {
 		
 		if(eval == null)
 			throw new NullPointerException("Notification of a new evaluation failed, because the evaluation was null.");
@@ -290,7 +295,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	 * (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.externals.EvalJobLogic#processEvaluationChange(org.sakaiproject.evaluation.model.EvalEvaluation)
 	 */
-	public void processEvaluationChange(EvalEvaluation eval) throws Exception {
+	public void processEvaluationChange(EvalEvaluation eval) {
 		
 		if(log.isDebugEnabled())
 			log.debug("EvalJobLogicImpl.processEvaluationChange(" + eval.getId() + ")");
@@ -302,7 +307,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 			
 			if(log.isWarnEnabled())
 				log.warn(this + ".processEvaluationChange(Long "+  eval.getId().toString() + ") for " + eval.getTitle()  + ". Evaluation in UNKNOWN state");
-			throw new Exception("Evaluation '"+eval.getTitle()+"' in UNKNOWN state");
+			throw new RuntimeException("Evaluation '"+eval.getTitle()+"' in UNKNOWN state");
 		}
 		try {
 			if(EvalConstants.EVALUATION_STATE_INQUEUE.equals(eval.getState())) {
@@ -339,10 +344,10 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 			e.printStackTrace();
 			if(log.isWarnEnabled())
 				log.warn(this + ".processEvaluationChange("+  eval.getId() + ") for '" + eval.getTitle()  + "' " + e);
-			throw new Exception("Evaluation '" + eval.getTitle() + "' " + e);
+			throw new RuntimeException("Evaluation '" + eval.getTitle() + "' " + e);
 		}
 	}
-	
+
 	/**
 	 * Schedule a job using the ScheduledInvocationManager.</br>
 	 * "When" is specified by runDate, "what" by componentId, and "what to do"
@@ -428,17 +433,19 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 				sendCreatedEmail(evaluationId);
 			}
 			else if(EvalConstants.EVALUATION_STATE_ACTIVE.equals(state)) {
+				externalLogic.registerEntityEvent(EVENT_EVAL_START, eval);
 				sendAvailableEmail(evaluationId);
 				scheduleJob(eval.getId(), eval.getDueDate(), EvalConstants.JOB_TYPE_DUE);
 				scheduleReminders(eval.getId());
 			}
 			else if(EvalConstants.EVALUATION_STATE_DUE.equals(state)) {
-				
+				externalLogic.registerEntityEvent(EVENT_EVAL_DUE, eval);
 				if(log.isDebugEnabled())
 					log.debug("EvalJobLogicImpl.jobAction scheduleJob(" + eval.getId() + "," + eval.getStopDate() + "," + EvalConstants.JOB_TYPE_CLOSED + ")");
 				scheduleJob(eval.getId(), eval.getStopDate(), EvalConstants.JOB_TYPE_CLOSED);
 			}
 			else if(EvalConstants.EVALUATION_STATE_CLOSED.equals(state)) {
+				externalLogic.registerEntityEvent(EVENT_EVAL_STOP, eval);
 				Date instructorViewDate = eval.getInstructorsDate();
 				Date studentViewDate = eval.getStudentsDate();
 				if(instructorViewDate == null && studentViewDate == null)
@@ -452,20 +459,17 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 				}
 			}
 			else if(EvalConstants.EVALUATION_STATE_VIEWABLE.equals(state)) {
-				
+				externalLogic.registerEntityEvent(EVENT_EVAL_VIEWABLE, eval);
 				//send results viewable notification to owner if private, or all if not
 				sendViewableEmail(evaluationId, jobType, eval.getResultsPrivate());
 			}
 		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-			if(log.isErrorEnabled())
-				log.error(this + ".jobAction " + e);
-			//TODO: throw exception
+		catch(Exception e) {
+			log.error("jobAction died horribly:" + e.getMessage(), e);
+			throw new RuntimeException(e); // die horribly, as it should -AZ
 		}
 	}
-	
+
 	/**
 	 * Send email to evaluation participants that an evaluation 
 	 * is available for taking by clicking the contained URL
@@ -473,7 +477,6 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	 * @param evalId the EvalEvaluation id
 	 */
 	public void sendAvailableEmail(Long evalId) {
-		
 		//For now, we always want to include the evaluatees in the evaluations
 		boolean includeEvaluatees = true;
 		String[] sentMessages = emails.sendEvalAvailableNotifications(evalId, includeEvaluatees);
@@ -501,6 +504,9 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	 * @param evalId the EvalEvaluation id
 	 */
 	public void sendReminderEmail(Long evalId) {
+		EvalEvaluation eval = evalEvaluationsLogic.getEvaluationById(evalId);
+		externalLogic.registerEntityEvent(EVENT_EMAIL_REMINDER, eval);
+
 		String includeConstant = EvalConstants.EMAIL_INCLUDE_ALL;
 		String[] sentMessages = emails.sendEvalReminderNotifications(evalId, includeConstant);
 		if(log.isDebugEnabled())

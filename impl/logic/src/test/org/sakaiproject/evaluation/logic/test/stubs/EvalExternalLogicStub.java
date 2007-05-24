@@ -14,6 +14,7 @@
 
 package org.sakaiproject.evaluation.logic.test.stubs;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -396,8 +397,16 @@ public class EvalExternalLogicStub implements EvalExternalLogic {
 		return "http://localhost:8080/portal/";
 	}
 
-	public String getToolUrl() {
-		return getServerUrl() + "some/tool/specific/stuff/";
+	public String getEntityURL(Serializable evaluationEntity) {
+		return "http://localhost:8080/access/eval-evaluation/123/";
+	}
+
+	public String getEntityURL(Class entityClass, Long entityId) {
+		return getEntityURL(null);
+	}
+
+	public void registerEntityEvent(String eventName, Serializable evaluationEntity) {
+		// pretending it worked
 	}
 
 }
