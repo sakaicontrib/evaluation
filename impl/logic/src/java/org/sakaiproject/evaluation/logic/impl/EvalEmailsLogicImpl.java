@@ -774,8 +774,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		}
 		replacementValues.put("EvalTitle", eval.getTitle() );
 
-		// TODO - use a date which is related to the current users locale
-		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM); //, locale);
+		// use a date which is related to the current users locale
+		DateFormat df = DateFormat.getDateInstance( DateFormat.MEDIUM, externalLogic.getUserLocale(externalLogic.getCurrentUserId()) );
 
 		replacementValues.put("EvalStartDate", df.format(eval.getStartDate()) );
 		replacementValues.put("EvalDueDate", df.format(eval.getDueDate()) );
@@ -783,13 +783,13 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		replacementValues.put("EvalGroupTitle", group.title);
 
 		// TODO check these URLS once I can get the right tool url
-		replacementValues.put("URLtoAddItems", 
-				externalLogic.getToolUrl() + "/instructor_add?evaluationId=" + eval.getId());
+		String evalAndGroupVars = "?evaluationId=" + eval.getId() + "&evalGroupId=" + group.evalGroupId;
 		replacementValues.put("URLtoTakeEval", 
-				externalLogic.getToolUrl() + "/take_eval?evaluationId=" + eval.getId() +
-				"&evalGroupId=" + group.evalGroupId);
+				externalLogic.getEntityURL(eval) + evalAndGroupVars);
+		replacementValues.put("URLtoAddItems", 
+				externalLogic.getEntityURL(eval) + evalAndGroupVars + "&instructorAdd=true");
 		replacementValues.put("URLtoViewResults", 
-				externalLogic.getToolUrl() + "/view_report?evaluationId=" + eval.getId());
+				externalLogic.getEntityURL(eval) + evalAndGroupVars + "&viewReport=true");
 		replacementValues.put("URLtoSystem", externalLogic.getServerUrl());
 
 		return TextTemplateLogicUtils.processTextTemplate(messageTemplate, replacementValues);

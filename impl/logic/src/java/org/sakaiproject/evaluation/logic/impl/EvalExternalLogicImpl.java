@@ -14,6 +14,8 @@
 
 package org.sakaiproject.evaluation.logic.impl;
 
+import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -34,9 +36,13 @@ import org.sakaiproject.component.cover.ComponentManager;
 import org.sakaiproject.email.api.EmailService;
 import org.sakaiproject.entity.api.EntityManager;
 import org.sakaiproject.entity.api.Reference;
+import org.sakaiproject.entitybroker.EntityBroker;
+import org.sakaiproject.entitybroker.EntityParse;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.entity.EvaluationEntityProvider;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.providers.EvalGroupsProvider;
+import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.exception.IdUnusedException;
 import org.sakaiproject.site.api.Site;
@@ -71,6 +77,11 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	private EmailService emailService;
 	public void setEmailService(EmailService emailService) {
 		this.emailService = emailService;
+	}
+
+	private EntityBroker entityBroker;
+	public void setEntityBroker(EntityBroker entityBroker) {
+		this.entityBroker = entityBroker;
 	}
 
 	private EntityManager entityManager;
@@ -183,6 +194,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	 */
 	public Locale getUserLocale(String userId) {
 		log.debug("userId: " + userId);
+		log.warn("can only get the locale for the current user right now...");
 		// TODO - this sucks because there is no way to get the locale for anything but the
 		// current user.... terrible -AZ
 		return new ResourceLoader().getLocale();
@@ -428,7 +440,8 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	}
 
 
-	// URLs
+	// ENTITIES
+
 
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalExternalLogic#getServerUrl()
@@ -438,12 +451,69 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.EvalExternalLogic#getToolUrl()
+	 * @see org.sakaiproject.evaluation.logic.EvalExternalLogic#getEntityURL(java.io.Serializable)
 	 */
-	public String getToolUrl() {
-		//ToolConfiguration tc = new ToolConfiguration();
-		String toolId = "ToolIDhere"; //tc.getId(); // TODO
-		return getServerUrl() + "/tool/" + toolId;
+	public String getEntityURL(Serializable evaluationEntity) {
+		String ref = getEntityReference(evaluationEntity);
+		if (ref != null) {
+			return entityBroker.getEntityURL(ref);
+		} else {
+			return serverConfigurationService.getPortalUrl();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalExternalLogic#getEntityURL(java.lang.Class, java.lang.Long)
+	 */
+	public String getEntityURL(Class entityClass, Long entityId) {
+		String ref = getEntityReference(entityClass, entityId.toString());
+		if (ref != null) {
+			return entityBroker.getEntityURL(ref);
+		} else {
+			return serverConfigurationService.getPortalUrl();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalExternalLogic#registerEntityEvent(java.lang.String, java.io.Serializable)
+	 */
+	public void registerEntityEvent(String eventName, Serializable evaluationEntity) {
+		String ref = getEntityReference(evaluationEntity);
+		if (ref != null) {
+			entityBroker.fireEvent(eventName, ref);
+		}
+	}
+
+	/**
+	 * Get an entity reference to any of the evaluation objects which are treated as entities
+	 * 
+	 * @param entity
+	 * @return an entity reference string or null if none can be found
+	 */
+	private String getEntityReference(Serializable entity) {
+		String id = null;
+		try {
+			Class elementClass = entity.getClass();
+			Method getIdMethod = elementClass.getMethod("getId", new Class[] {});
+			Long realId = (Long) getIdMethod.invoke(entity, null);
+			id = realId.toString();
+			return getEntityReference(elementClass, id);
+		} catch (Exception e) {
+			log.warn("Failed to get id from entity object", e);
+			return null;
+		}
+	}
+
+	private String getEntityReference(Class entityClass, String entityId) {
+		String prefix = null;
+		// make sure this class is supported and get the prefix
+		if (entityClass == EvalEvaluation.class) {
+			prefix = EvaluationEntityProvider.ENTITY_PREFIX;
+		} else {
+			return null;
+		}
+
+		return EntityParse.getReference(prefix, entityId);
 	}
 
 	/**

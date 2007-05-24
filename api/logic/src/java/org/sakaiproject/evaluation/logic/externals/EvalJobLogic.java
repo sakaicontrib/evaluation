@@ -28,7 +28,6 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
  * when an EvalEvaluation changes state.
  * 
  * @author rwellis
- *
  */
 public interface EvalJobLogic {
 	
@@ -38,9 +37,8 @@ public interface EvalJobLogic {
 	 * rescheduling a job.
 	 * 
 	 * @param eval the EvalEvaluation
-	 * @throws Exception
 	 */
-	public void processEvaluationChange(EvalEvaluation eval) throws Exception;
+	public void processEvaluationChange(EvalEvaluation eval);
 	
 	/**
 	 * Handle job scheduling when an EvalEvaluation is created.
@@ -49,9 +47,8 @@ public interface EvalJobLogic {
 	 * start date is reached.
 	 *  
 	 * @param eval the EvalEvaluation
-	 * @throws Exception
 	 */
-	public void processNewEvaluation(EvalEvaluation eval) throws Exception;
+	public void processNewEvaluation(EvalEvaluation eval);
 	
 	/**
 	 * Handle sending email and starting jobs when a scheduled job 

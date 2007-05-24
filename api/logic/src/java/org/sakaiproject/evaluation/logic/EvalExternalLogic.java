@@ -14,8 +14,11 @@
 
 package org.sakaiproject.evaluation.logic;
 
+import java.io.Serializable;
+
 import org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups;
 import org.sakaiproject.evaluation.logic.externals.ExternalUsers;
+import org.sakaiproject.evaluation.model.EvalEvaluation;
 
 
 /**
@@ -63,7 +66,7 @@ public interface EvalExternalLogic extends ExternalUsers, ExternalEvalGroups {
 	 */
 	public void sendEmails(String from, String[] toUserIds, String subject, String message);
 
-	// URLS
+	// ENTITIES
 
 	/**
 	 * @return the URL directly to the main server portal this tool is installed in
@@ -71,8 +74,31 @@ public interface EvalExternalLogic extends ExternalUsers, ExternalEvalGroups {
 	public String getServerUrl();
 
 	/**
-	 * @return the URL directly to the tool itself (the root of the tool)
+	 * Get a full URL to a specific entity inside our system,
+	 * if this entity has no direct URL then just provide a URL to the sakai server
+	 * 
+	 * @param evaluationEntity any entity inside the evaluation tool (e.g. {@link EvalEvaluation})
+	 * @return a full URL to the entity (e.g. http://sakai.server:8080/access/eval-evaluation/123/)
 	 */
-	public String getToolUrl();
+	public String getEntityURL(Serializable evaluationEntity);
+
+	/**
+	 * Get a full URL to a specific entity inside our system using just the class type and id,
+	 * if this entity has no direct URL then just provide a URL to the sakai server
+	 * 
+	 * @param entityClass the class type of the internal entity (e.g. {@link EvalEvaluation}.class)
+	 * @param entityId the unique id of this entity (from getId()) (e.g. 123)
+	 * @return a full URL to the entity (e.g. http://sakai.server:8080/access/eval-evaluation/123/)
+	 */
+	public String getEntityURL(Class entityClass, Long entityId);
+
+	/**
+	 * Creates a Sakai entity event for any internal entity which is registered with Sakai,
+	 * does notthing if the passed in entity type is not registered
+	 * 
+	 * @param eventName any string representing an event name (e.g. evaluation.created)
+	 * @param evaluationEntity any entity inside the evaluation tool (e.g. {@link EvalEvaluation})
+	 */
+	public void registerEntityEvent(String eventName, Serializable evaluationEntity);
 
 }

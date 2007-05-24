@@ -19,6 +19,8 @@
 			ref="org.sakaiproject.authz.api.AuthzGroupService" />
 		<property name="emailService"
 			ref="org.sakaiproject.email.api.EmailService" />
+		<property name="entityBroker" 
+			ref="org.sakaiproject.entitybroker.EntityBroker" />
 		<property name="entityManager" 
 			ref="org.sakaiproject.entity.api.EntityManager" />
 		<property name="functionManager" 

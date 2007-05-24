@@ -44,5 +44,12 @@ public interface ExternalUsers {
 	public String getUserDisplayName(String userId);
 
 	
+	/**
+	 * Get the locale for a user
+	 * 
+	 * @param userId the internal user id (not username)
+	 * @return the Locale for this user based on their preferences
+	 */
 	public Locale getUserLocale(String userId);
+
 }
