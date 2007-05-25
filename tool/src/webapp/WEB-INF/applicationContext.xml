@@ -3,6 +3,7 @@
 
 <!-- Aaron Zeckoski (aaronz@vt.edu) -->
 <beans>
+
 	<!-- Configure the location of the messages files -->
 	<bean id="messageLocator"
 		class="uk.org.ponder.springutil.SpringMessageLocator">
@@ -19,11 +20,9 @@
 
 	<!-- the beans listed here are allowed access to values (security) -->
 	<bean parent="requestAddressibleParent">
-		<property name="value"
-			value="evaluationBean, reportsBean, templateBBean, itemsBean, expertItemsBean, 
-      			templateBeanLocator, templateItemWBL, answersBeanLocator, responseAnswersBeanLocator, 
-      			responseBeanLocator, evaluationBeanLocator, takeEvalBean, settingsBean, 
-      			scaleBean, scaleBeanLocator, itemWBL" />
+		<property name="value" value="evaluationBean, reportsBean, templateBBean, itemsBean, expertItemsBean, 
+      			templateBeanLocator, templateItemWBL, answersBeanLocator, responseAnswersBeanLocator, responseBeanLocator, 
+      			evaluationBeanLocator, takeEvalBean, settingsBean, scaleBean, scaleBeanLocator, itemWBL" />
 	</bean>
 
 

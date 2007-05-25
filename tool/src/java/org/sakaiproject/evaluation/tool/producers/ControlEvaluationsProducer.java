@@ -18,9 +18,9 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
-import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
@@ -73,11 +73,6 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 		this.external = external;
 	}
 	
-	private EvalAssignsLogic assignsLogic;
-	public void setAssignsLogic(EvalAssignsLogic assignsLogic) {
-		this.assignsLogic = assignsLogic;
-	}
-
 	private EvalEvaluationsLogic evaluationsLogic;
 	public void setEvaluationsLogic(EvalEvaluationsLogic evaluationsLogic) {
 		this.evaluationsLogic = evaluationsLogic;
@@ -395,15 +390,16 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 	}	
 	
 	/**
-	 * Gets the title for the first returned context for this evaluation,
-	 * should only be used when there is only one context assigned to an eval
+	 * Gets the title for the first returned evalGroupId for this evaluation,
+	 * should only be used when there is only one evalGroupId assigned to an eval
 	 * 
 	 * @param evaluationId
-	 * @return title of first context returned
+	 * @return title of first evalGroupId returned
 	 */
 	private String getTitleForFirstEvalGroup(Long evaluationId) {
-		List acs = assignsLogic.getAssignGroupsByEvalId(evaluationId);
-		EvalAssignGroup eac = (EvalAssignGroup) acs.get(0);
+		Map evalAssignGroups = evaluationsLogic.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
+		List groups = (List) evalAssignGroups.get(evaluationId);
+		EvalAssignGroup eac = (EvalAssignGroup) groups.get(0);
 		return external.getDisplayTitle( eac.getEvalGroupId() );
 	}
 
@@ -415,10 +411,10 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 	 */
 	private int getTotalEnrollmentsForEval(Long evaluationId) {
 		int totalEnrollments = 0;
-
-		List l = assignsLogic.getAssignGroupsByEvalId(evaluationId);
-		for (int i=0; i<l.size(); i++) {
-			EvalAssignGroup eac = (EvalAssignGroup) l.get(i);
+		Map evalAssignGroups = evaluationsLogic.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
+		List groups = (List) evalAssignGroups.get(evaluationId);
+		for (int i=0; i<groups.size(); i++) {
+			EvalAssignGroup eac = (EvalAssignGroup) groups.get(i);
 			String context = eac.getEvalGroupId();
 			Set userIds = external.getUserIdsForEvalGroup(context, EvalConstants.PERM_TAKE_EVALUATION);
 			totalEnrollments = totalEnrollments + userIds.size();

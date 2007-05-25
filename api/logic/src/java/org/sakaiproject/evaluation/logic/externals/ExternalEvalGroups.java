@@ -30,7 +30,7 @@ public interface ExternalEvalGroups {
 	// EvalGroups
 
 	/**
-	 * @return the current group context for the current session
+	 * @return the current group evalGroupId for the current session
 	 * (represents the current group location of the user in the system)
 	 */
 	public String getCurrentEvalGroup();
@@ -55,7 +55,7 @@ public interface ExternalEvalGroups {
 	// ENROLLMENTS
 
 	/**
-	 * Get a list of all user ids that have a specific permission in a context
+	 * Get a list of all user ids that have a specific permission in a evalGroupId
 	 * 
 	 * @param evalGroupId the internal unique ID for an evalGroup
 	 * @param permission a permission string constant
@@ -64,7 +64,7 @@ public interface ExternalEvalGroups {
 	public Set getUserIdsForEvalGroup(String evalGroupId, String permission);
 
 	/**
-	 * Get a count of all user ids that have a specific permission in a context
+	 * Get a count of all user ids that have a specific permission in a evalGroupId
 	 * 
 	 * @param evalGroupId the internal unique ID for an evalGroup
 	 * @param permission a permission string constant

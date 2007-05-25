@@ -64,7 +64,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 		// load the spring created dao class bean from the Spring Application Context
 		evaluationDao = (EvaluationDao) applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationDao");
 		if (evaluationDao == null) {
-			throw new NullPointerException("EvaluationDao could not be retrieved from spring context");
+			throw new NullPointerException("EvaluationDao could not be retrieved from spring evalGroupId");
 		}
 
 		// check the preloaded data
@@ -75,7 +75,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 
 		PreloadTestData ptd = (PreloadTestData) applicationContext.getBean("org.sakaiproject.evaluation.test.PreloadTestData");
 		if (ptd == null) {
-			throw new NullPointerException("PreloadTestData could not be retrieved from spring context");
+			throw new NullPointerException("PreloadTestData could not be retrieved from spring evalGroupId");
 		}
 
 		// get test objects
@@ -84,7 +84,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 		// load up any other needed spring beans
 		EvalSettings settings = (EvalSettings) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalSettings");
 		if (settings == null) {
-			throw new NullPointerException("EvalSettings could not be retrieved from spring context");
+			throw new NullPointerException("EvalSettings could not be retrieved from spring evalGroupId");
 		}
 
 		// setup the mock objects if needed
@@ -604,7 +604,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 		// test able to take untaken eval
 		Assert.assertTrue( evaluations.canTakeEvaluation( EvalTestDataLoad.USER_ID, 
 				etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.CONTEXT1) );
-		// test able to take eval in context not taken in yet
+		// test able to take eval in evalGroupId not taken in yet
 		Assert.assertTrue( evaluations.canTakeEvaluation( EvalTestDataLoad.USER_ID, 
 				etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.CONTEXT1) );
 		// test admin can always take
@@ -615,7 +615,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 		// already taken
 		Assert.assertFalse( evaluations.canTakeEvaluation( EvalTestDataLoad.USER_ID, 
 				etdl.evaluationActive.getId(), EvalTestDataLoad.CONTEXT1) );
-		// not assigned to this context
+		// not assigned to this evalGroupId
 		Assert.assertFalse( evaluations.canTakeEvaluation( EvalTestDataLoad.USER_ID, 
 				etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.CONTEXT2) );
 		Assert.assertFalse( evaluations.canTakeEvaluation( EvalTestDataLoad.USER_ID, 

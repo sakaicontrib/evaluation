@@ -23,8 +23,13 @@ import java.util.Locale;
  */
 public interface ExternalUsers {
 
+	public static final String ANON_USER_PREFIX = "anon_";
+
 	/**
-	 * @return the internal unique user id of the current user (not username)
+	 * Get the user id (not username) of the current user if there is one,
+	 * if not then return an anonymous user id generated with a timestamp and prefix
+	 * 
+	 * @return the internal unique user id of the current user (not username) or anon id
 	 */
 	public String getCurrentUserId();
 

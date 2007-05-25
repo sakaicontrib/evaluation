@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 
@@ -122,14 +123,26 @@ public interface EvalEvaluationsLogic {
 	// EVAL GROUPS
 
 	/**
-	 * Get a map of the EvalGroups for an array of evaluation ids
+	 * Get a map of the {@link EvalGroup}s for an array of evaluation ids, this
+	 * is how the evaluation is tied to users (users are associated with a group)
 	 * 
-	 * @param evaluationId an array of the ids of {@link EvalEvaluation} objects
+	 * @param evaluationIds an array of the ids of {@link EvalEvaluation} objects
 	 * @param includeUnApproved if true, include the evaluation contexts which have not been instructor approved yet,
 	 * you should not include these when displaying evaluations to users to take or sending emails
 	 * @return a Map of evaluationId (Long) -> List of {@link EvalGroup} objects
 	 */
 	public Map getEvaluationGroups(Long[] evaluationIds, boolean includeUnApproved);
+
+	/**
+	 * Get the list of assigned groups for an evaluation id, this
+	 * is how the evaluation is tied to users (users are associated with a group)
+	 * 
+	 * @param evaluationIds an array of the ids of {@link EvalEvaluation} objects
+	 * @param includeUnApproved if true, include the evaluation contexts which have not been instructor approved yet,
+	 * you should not include these when displaying evaluations to users to take or sending emails
+	 * @return a Map of evaluationId (Long) -> List of {@link EvalAssignGroup} objects
+	 */
+	public Map getEvaluationAssignGroups(Long[] evaluationIds, boolean includeUnApproved);
 
 	/**
 	 * Count the number of eval groups assigned for an evaluation id
@@ -182,7 +195,7 @@ public interface EvalEvaluationsLogic {
 	public boolean canRemoveEvaluation(String userId, Long evaluationId);
 
 	/**
-	 * Check if a user can take an evaluation in the supplied context,
+	 * Check if a user can take an evaluation in the supplied evalGroupId,
 	 * the check includes testing if an entry exists already and if the
 	 * user is allowed to modify their entry<br/>
 	 * This check should be used on any page which presents the user with
@@ -192,9 +205,9 @@ public interface EvalEvaluationsLogic {
 	 * 
 	 * @param userId the internal user id (not username)
 	 * @param evaluationId unique id of the evaluation
-	 * @param context the internal context (represents a site or group)
+	 * @param evalGroupId the internal evalGroupId (represents a site or group)
 	 * @return true if the user can take the evaluation, false otherwise
 	 */
-	public boolean canTakeEvaluation(String userId, Long evaluationId, String context);
+	public boolean canTakeEvaluation(String userId, Long evaluationId, String evalGroupId);
 
 }

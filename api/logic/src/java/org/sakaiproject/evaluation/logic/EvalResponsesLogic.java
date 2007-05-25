@@ -41,7 +41,7 @@ public interface EvalResponsesLogic {
 
 	/**
 	 * Get a response by its unique id<br/>
-	 * A response represents a single user response to an evaluation in a specific context<br/>
+	 * A response represents a single user response to an evaluation in a specific evalGroupId<br/>
 	 * Note: this should mostly be used for OTP and not for normal fetching which
 	 * should use the other methods in this API
 	 * 

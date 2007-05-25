@@ -734,7 +734,7 @@ public class EvalTestDataLoad {
 		emailTemplate3 = new EvalEmailTemplate(new Date(), MAINT_USER_ID, "Email Template 3"); 
 		evaluationActive.setReminderEmailTemplate(emailTemplate3);
 
-		// context assignments
+		// evalGroupId assignments
 		assign1 = new EvalAssignGroup(new Date(), MAINT_USER_ID, CONTEXT1, EvalConstants.GROUP_TYPE_SITE, 
 				Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationActive);
 		assign2 = new EvalAssignGroup(new Date(), MAINT_USER_ID, CONTEXT1, EvalConstants.GROUP_TYPE_SITE, 

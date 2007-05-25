@@ -3,6 +3,18 @@
 	<name>evaluation</name>
 	<comment></comment>
 	<projects>
+		<project>authz-api</project>
+		<project>component-api</project>
+		<project>db-impl</project>
+		<project>email-api</project>
+		<project>entity-api</project>
+		<project>entity-broker</project>
+		<project>jobscheduler</project>
+		<project>site-api</project>
+		<project>tool-api</project>
+		<project>user-api</project>
+		<project>util-api</project>
+		<project>util-util</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

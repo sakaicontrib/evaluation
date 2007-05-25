@@ -65,7 +65,7 @@ public class EvalSettingsImplTest extends AbstractTransactionalSpringContextTest
 		// load the spring created dao class bean from the Spring Application Context
 		evaluationDao = (EvaluationDao) applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationDao");
 		if (evaluationDao == null) {
-			throw new NullPointerException("EvaluationDao could not be retrieved from spring context");
+			throw new NullPointerException("EvaluationDao could not be retrieved from spring evalGroupId");
 		}
 
 		// check the preloaded data

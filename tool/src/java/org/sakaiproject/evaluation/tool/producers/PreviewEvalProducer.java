@@ -90,8 +90,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 	 * 1). Preview Template --getting data from DAO --DONE
 	 * 2). Preview Evaluation -- by passing Evalution ID,course--TO BE DONE
 	 */
-	public void fillComponents(UIContainer tofill, ViewParameters viewparams,
-			ComponentChecker checker) {
+	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
 		//TODO - i18n UIBoundBoolean's for N/a
 
@@ -151,7 +150,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 					UIOutput.make(tofill, "evalTitle", eval.getTitle());
 
 					if (previewEvalViewParams.context != null){
-						//get course title from context
+						//get course title from evalGroupId
 						UIOutput.make(tofill, "courseTitle",external.getDisplayTitle(previewEvalViewParams.context)); 
 					}else{ //get evalID, need to get assigned courses from eval ID
 						int count = evalsLogic.countEvaluationGroups(eval.getId());

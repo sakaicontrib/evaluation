@@ -18,6 +18,7 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -152,6 +153,10 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	 * @see org.sakaiproject.evaluation.logic.external.EvalExternalLogic#getCurrentUserId()
 	 */
 	public String getCurrentUserId() {
+		String userId = sessionManager.getCurrentSessionUserId();
+		if (userId == null) {
+			userId = ANON_USER_PREFIX + new Date().getTime();
+		}
 		return sessionManager.getCurrentSessionUserId();
 	}
 
@@ -163,6 +168,9 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 			return userDirectoryService.getUserEid(userId);
 		} catch(UserNotDefinedException ex) {
 			log.error("Could not get username from userId: " + userId, ex);
+		}
+		if (userId.startsWith(ANON_USER_PREFIX)) {
+			return "anonymous";
 		}
 		return "UnknownUsername";
 	}
@@ -176,6 +184,9 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 			return user.getDisplayName();
 		} catch(UserNotDefinedException ex) {
 			log.error("Could not get user from userId: " + userId, ex);
+		}
+		if (userId.startsWith(ANON_USER_PREFIX)) {
+			return "Anonymous User";
 		}
 		return "Unknown DisplayName";
 	}
@@ -205,7 +216,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	 * @see org.sakaiproject.evaluation.logic.external.EvalExternalLogic#makeContextObject(java.lang.String)
 	 */
 	public EvalGroup makeEvalGroupObject(String evalGroupId) {
-		// TODO - make this work for other context types
+		// TODO - make this work for other evalGroupId types
 		EvalGroup c = null;
 		try {
 			Site site = siteService.getSite(evalGroupId);
@@ -213,8 +224,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 					getContextType(SAKAI_SITE_TYPE) );
 		} catch (IdUnusedException e) {
 			// invalid site Id
-			log.debug("Could not get sakai site from context:" + evalGroupId, e);
-
+			log.debug("Could not get sakai site from evalGroupId:" + evalGroupId, e);
 		}
 
 		if (c == null) {
@@ -226,7 +236,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		}
 
 		if (c == null)
-			log.error("Could not get site from context:" + evalGroupId);
+			log.error("Could not get site from evalGroupId:" + evalGroupId);
 
 		return c;
 	}
@@ -350,7 +360,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		if (evalGroupsProvider != null) {
 			if (EvalConstants.PERM_BE_EVALUATED.equals(permission) ||
 					EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
-				log.debug("Using eval groups provider: context: " + evalGroupId + ", permission: " + permission);
+				log.debug("Using eval groups provider: evalGroupId: " + evalGroupId + ", permission: " + permission);
 				count += evalGroupsProvider.countUserIdsForEvalGroups(new String[] {evalGroupId}, translatePermission(permission));
 			}
 		}
@@ -371,7 +381,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		if (evalGroupsProvider != null) {
 			if (EvalConstants.PERM_BE_EVALUATED.equals(permission) ||
 					EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
-				log.debug("Using eval groups provider: context: " + evalGroupId + ", permission: " + permission);
+				log.debug("Using eval groups provider: evalGroupId: " + evalGroupId + ", permission: " + permission);
 				userIds.addAll( evalGroupsProvider.getUserIdsForEvalGroups(new String[] {evalGroupId}, translatePermission(permission)) );
 			}
 		}
@@ -528,13 +538,13 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	}
 
 	/**
-	 * Takes a Sakai context and returns a Sakai reference string (as needed by authz)
+	 * Takes a Sakai evalGroupId and returns a Sakai reference string (as needed by authz)
 	 * 
-	 * @param context a Sakai context string
+	 * @param evalGroupId a Sakai evalGroupId string
 	 * @return a Sakai reference string
 	 */
 	private String getReference(String context) {
-		// TODO - make this work for other context types
+		// TODO - make this work for other evalGroupId types
 		String reference = siteService.siteReference(context);
 		return reference;
 	}

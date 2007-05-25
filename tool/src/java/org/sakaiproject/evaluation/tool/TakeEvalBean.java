@@ -20,29 +20,26 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.locators.ResponseBeanLocator;
 
 /**
- * This request-scope bean handles template creation and modification.
+ * This request-scope bean handles taking evaluations
  * 
  * @author Will Humphries (whumphri@vt.edu)
  */
-
 public class TakeEvalBean {
 
 	private static Log log = LogFactory.getLog(TakeEvalBean.class);
 
 	public EvalEvaluation eval;
 	public String context;
-	
+
 	private ResponseBeanLocator responseBeanLocator;
 	public void setResponseBeanLocator(ResponseBeanLocator responseBeanLocator) {
 		this.responseBeanLocator = responseBeanLocator;
 	}
 
-	/**
-	 * 
-	 */
 	public String submitEvaluation() {
 		log.debug("create response");
 		responseBeanLocator.saveAll(eval, context);
 		return "success";
 	}
+
 }

@@ -19,6 +19,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -606,18 +607,18 @@ public class EvaluationBean {
 	 * 
 	 * @return View id sending the control to assign confirm page.
 	 */
-	public String evalAssigned() {		
-		
+	public String evalAssigned() {
 		eval = evalsLogic.getEvaluationById(evalId);
-		List l = assignsLogic.getAssignGroupsByEvalId(eval.getId());
-		if(l!=null && l.size() >0){
-			selectedSakaiSiteIds = new String[l.size()];
-			for(int i =0; i< l.size(); i++){
-				EvalAssignGroup eac = (EvalAssignGroup) l.get(i);
+		Map evalAssignGroups = evalsLogic.getEvaluationAssignGroups(new Long[] {evalId}, true);
+		List groups = (List) evalAssignGroups.get(evalId);
+		if (groups.size() > 0) {
+			selectedSakaiSiteIds = new String[groups.size()];
+			for (int i =0; i< groups.size(); i++) {
+				EvalAssignGroup eac = (EvalAssignGroup) groups.get(i);
 				selectedSakaiSiteIds[i] = eac.getEvalGroupId();
 			}
 		}
-	
+
 		enrollment =  new int[selectedSakaiSiteIds.length];
 		for(int i =0; i<selectedSakaiSiteIds.length; i++){
 			Set s = external.getUserIdsForEvalGroup(selectedSakaiSiteIds[i], EvalConstants.PERM_TAKE_EVALUATION);
@@ -625,7 +626,7 @@ public class EvaluationBean {
 		}
 		return EvaluationAssignConfirmProducer.VIEW_ID;
 	}
-	
+
 	/**
 	 * Method binding to the "Cancel" button on the remove_evaluation.html.
 	 * 
@@ -733,9 +734,16 @@ public class EvaluationBean {
 	 */
 	private void commonSaveTasks() {
 
+		boolean useStopDate = ((Boolean) settings.get(EvalSettings.EVAL_USE_STOP_DATE)).booleanValue();
+
 		eval.setStartDate(startDate);
 		eval.setDueDate(dueDate);
-		eval.setStopDate(stopDate);
+		if (! useStopDate) {
+			// force stop date to due date if not in use
+			eval.setStopDate(dueDate);
+		} else {
+			eval.setStopDate(stopDate);
+		}
 		eval.setViewDate(viewDate);
 
 		/*
@@ -745,27 +753,24 @@ public class EvaluationBean {
 		 */ 
 		boolean sameViewDateForAll = ((Boolean) settings.get(EvalSettings.EVAL_USE_SAME_VIEW_DATES)).booleanValue();
 		
-		//Make it null in case the administrative settings change then this should also change
+		// Make it null in case the administrative settings change then this should also change
 		eval.setStudentsDate(null);
 		eval.setInstructorsDate(null);
 		
 		if (sameViewDateForAll) {
-			
 			if (studentViewResults.booleanValue())
 				eval.setStudentsDate(viewDate);
 			
 			if (instructorViewResults.booleanValue())
 				eval.setInstructorsDate(viewDate);
-		}
-		else {
-			
+		} else {
 			if (studentViewResults.booleanValue())
 				eval.setStudentsDate(studentsDate);
 			
 			if (instructorViewResults.booleanValue())
 				eval.setInstructorsDate(instructorsDate);
 		}
-		
+
 		// Email template section
 		EvalEmailTemplate availableTemplate, reminderTemplate;
 

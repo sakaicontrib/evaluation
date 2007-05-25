@@ -254,7 +254,7 @@ public class EvalTemplatesLogicImpl implements EvalTemplatesLogic {
 		 * then system settings should be checked whether they can create templates 
 		 * or not - kahuja.
 		 * 
-		 * TODO - make this check system wide and not context specific - aaronz.
+		 * TODO - make this check system wide and not evalGroupId specific - aaronz.
 		 */
 		if ( ((Boolean)settings.get(EvalSettings.INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS)).booleanValue() && 
 				external.countEvalGroupsForUser(userId, EvalConstants.PERM_WRITE_TEMPLATE) > 0 ) {

@@ -55,7 +55,7 @@ public class EvalScalesLogicImplTest extends AbstractTransactionalSpringContextT
 		// load the spring created dao class bean from the Spring Application Context
 		evaluationDao = (EvaluationDao) applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationDao");
 		if (evaluationDao == null) {
-			throw new NullPointerException("EvaluationDao could not be retrieved from spring context");
+			throw new NullPointerException("EvaluationDao could not be retrieved from spring evalGroupId");
 		}
 
 		// check the preloaded data
@@ -66,7 +66,7 @@ public class EvalScalesLogicImplTest extends AbstractTransactionalSpringContextT
 
 		PreloadTestData ptd = (PreloadTestData) applicationContext.getBean("org.sakaiproject.evaluation.test.PreloadTestData");
 		if (ptd == null) {
-			throw new NullPointerException("PreloadTestData could not be retrieved from spring context");
+			throw new NullPointerException("PreloadTestData could not be retrieved from spring evalGroupId");
 		}
 
 		// get test objects

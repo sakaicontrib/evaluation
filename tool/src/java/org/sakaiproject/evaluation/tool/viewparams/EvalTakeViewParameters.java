@@ -22,23 +22,19 @@ import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class EvalTakeViewParameters extends SimpleViewParameters {
-	
+
 	public Long evaluationId; 
 	public Long responseId;
-	public String context;
-	
+	public String evalGroupId;
+
 	public EvalTakeViewParameters() {
 	}
 
-	public EvalTakeViewParameters(String viewID, Long evaluationId, Long responseId, String context) {
+	public EvalTakeViewParameters(String viewID, Long evaluationId, Long responseId, String evalGroupId) {
 		this.viewID = viewID;
 		this.evaluationId = evaluationId;
 		this.responseId = responseId;
-		this.context = context;
+		this.evalGroupId = evalGroupId;
 	}
 
-	public String getParseSpec() {
-		// include a comma delimited list of the public properties in this class
-		return super.getParseSpec() + ",evaluationId,responseId,context";
-	}
 }

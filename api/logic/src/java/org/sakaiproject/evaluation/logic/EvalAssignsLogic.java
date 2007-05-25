@@ -14,8 +14,6 @@
 
 package org.sakaiproject.evaluation.logic;
 
-import java.util.List;
-
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 
 
@@ -30,7 +28,7 @@ public interface EvalAssignsLogic {
 
 	/**
 	 * Save or update the group assignment, used to make a linkage from
-	 * an evaluation to an eval group (course, site, group, context, etc...),
+	 * an evaluation to an eval group (course, site, group, evalGroupId, etc...),
 	 * cannot add assignments if the evaluation is closed<br/>
 	 * <b>Note:</b> cannot change the group or the evaluation once the object is created,
 	 * you can change any other property at any time<br/>
@@ -44,7 +42,7 @@ public interface EvalAssignsLogic {
 	public void saveAssignGroup(EvalAssignGroup assignGroup, String userId);
 
 	/**
-	 * Remove the context assignment, used to make a linkage from
+	 * Remove the evalGroupId assignment, used to make a linkage from
 	 * an evaluation to an eval group (course, site, group, etc...),
 	 * represents a link from a single group to an evaluation,
 	 * can only remove assignments if the evaluation is still in queue,
@@ -57,14 +55,6 @@ public interface EvalAssignsLogic {
 	 */
 	public void deleteAssignGroup(Long assignGroupId, String userId);
 
-	/**
-	 * Get the list of assigned groups for an evaluation id, this
-	 * is how the evaluation is tied to users (users are associated with a group)
-	 * 
-	 * @param evaluationId the id of an EvalEvaluation object
-	 * @return a List of EvalAssignContext objects
-	 */
-	public List getAssignGroupsByEvalId(Long evaluationId);
 
 	// PERMISSIONS
 

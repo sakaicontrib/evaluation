@@ -66,7 +66,7 @@ public class EvalConstants {
 	 */
 	public final static String PERM_WRITE_TEMPLATE = "eval.write.template";
 	/**
-	 * Permission: User can create, update, delete evaluations for any context they have this permission in
+	 * Permission: User can create, update, delete evaluations for any evalGroupId they have this permission in
 	 */
 	public final static String PERM_ASSIGN_EVALUATION = "eval.assign.evaluation";
 	/**

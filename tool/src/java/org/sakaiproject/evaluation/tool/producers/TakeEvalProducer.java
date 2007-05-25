@@ -8,6 +8,7 @@
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
  * 
  * Contributors:
+ * Aaron Zeckoski (aaronz@vt.edu)
  * Will Humphries (whumphri@vt.edu)
  * Kapil Ahuja (kahuja@vt.edu)
  *****************************************************************************/
@@ -19,14 +20,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.EvalItemsLogic;
+import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAnswer;
+import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
@@ -44,6 +46,7 @@ import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIColourDecorator;
@@ -59,19 +62,15 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 /**
  * This page is for a user with take evaluation permission to fill and submit the evaluation
  * 
- * @author: Will Humphries (whumphri@vt.edu)
- * @author: Kapil Ahuja (kahuja@vt.edu)
+ * @author Will Humphries (whumphri@vt.edu)
+ * @author Kapil Ahuja (kahuja@vt.edu)
+ * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
 
-	public static final String VIEW_ID = "take_eval"; //$NON-NLS-1$
+	public static final String VIEW_ID = "take_eval";
 	public String getViewID() {
 		return VIEW_ID;
-	}
-
-	private EvalEvaluationsLogic evalsLogic;
-	public void setEvalsLogic(EvalEvaluationsLogic evalsLogic) {
-		this.evalsLogic = evalsLogic;
 	}
 
 	private EvalExternalLogic external;
@@ -79,24 +78,21 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 		this.external = external;
 	}
 
-	private EvalItemsLogic itemsLogic;
-	public void setItemsLogic( EvalItemsLogic itemsLogic) {
-		this.itemsLogic = itemsLogic;
+	private EvalEvaluationsLogic evalsLogic;
+	public void setEvalsLogic(EvalEvaluationsLogic evalsLogic) {
+		this.evalsLogic = evalsLogic;
 	}
 
 	ItemRenderer itemRenderer;
 	public void setItemRenderer(ItemRenderer itemRenderer) {
 		this.itemRenderer = itemRenderer;
 	}
-	
-	public ViewParameters getViewParameters() {
-		return new EvalTakeViewParameters(VIEW_ID, null, null, null);
-	}
-	
+
 	private LocalResponsesLogic localResponsesLogic;
 	public void setLocalResponsesLogic(LocalResponsesLogic localResponsesLogic) {
 		this.localResponsesLogic = localResponsesLogic;
 	}
+
 
     String responseOTPBinding = "responseBeanLocator";
     String responseOTP = responseOTPBinding + ".";
@@ -108,225 +104,284 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
     String newResponseAnswersOTPBinding = responseAnswersOTP + "new";
     String newResponseAnswersOTP = newResponseAnswersOTPBinding + ".";    
     
-    String evalOTPBinding="evaluationBeanLocator";
+    String evalOTPBinding = "evaluationBeanLocator";
     String evalOTP = evalOTPBinding+".";
+
     Long responseId;
-    Long evalId;
+    Long evaluationId;
     String evalGroupId;
 
 	int displayNumber=1;
 	int renderedItemCount=0;
-    
-	public void fillComponents(UIContainer tofill, ViewParameters viewparams,
-			ComponentChecker checker) {
-		
-		UIMessage.make(tofill, "take-eval-title", "takeeval.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"),  //$NON-NLS-1$ //$NON-NLS-2$
+
+	List allItems; // should be set to a list of all evaluation items
+
+
+	/* (non-Javadoc)
+	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
+	 */
+	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+
+		String currentUserId = external.getCurrentUserId();
+		boolean userCanAccess = false;
+
+		UIMessage.make(tofill, "page-title", "takeeval.page.title");
+
+		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), 
 				new SimpleViewParameters(SummaryProducer.VIEW_ID));			
-		
-		UIMessage.make(tofill, "eval-title-header", "takeeval.eval.title.header"); //$NON-NLS-1$ //$NON-NLS-2$
-		UIMessage.make(tofill, "course-title-header", "takeeval.course.title.header"); //$NON-NLS-1$ //$NON-NLS-2$
-		UIMessage.make(tofill, "instructions-header", "takeeval.instructions.header");	 //$NON-NLS-1$ //$NON-NLS-2$
-		
-		
+
+		// get passed in get params
 		EvalTakeViewParameters evalTakeViewParams = (EvalTakeViewParameters) viewparams;
-		EvalEvaluation eval = evalsLogic.getEvaluationById(evalTakeViewParams.evaluationId);
+		evaluationId = evalTakeViewParams.evaluationId;
+		evalGroupId = evalTakeViewParams.evalGroupId;
 		responseId = evalTakeViewParams.responseId;
-		evalId = evalTakeViewParams.evaluationId;
-		evalGroupId = evalTakeViewParams.context;
-		if(eval !=null && evalTakeViewParams.context != null){
-			UIOutput.make(tofill, "evalTitle", eval.getTitle()); //$NON-NLS-1$
-			//get course title: from sakaicontext to course title
-			//String title = logic.getDisplayTitle(evalTakeViewParams.context);
-			String title = external.getDisplayTitle(evalTakeViewParams.context); 
-			
-			UIOutput.make(tofill, "courseTitle", title); //$NON-NLS-1$
-			EvalTemplate et = eval.getTemplate();
-			if(et.getDescription() != null)
-				UIOutput.make(tofill, "description", et.getDescription()); //$NON-NLS-1$
-			else
-				UIMessage.make(tofill, "description", "takeeval.description.filler"); //$NON-NLS-1$ //$NON-NLS-2$
+
+		// get the evaluation based on the passed in VPs
+		EvalEvaluation eval = evalsLogic.getEvaluationById(evaluationId);
+		if (eval == null) {
+			throw new IllegalArgumentException("Invalid evaluationId ("+evaluationId+"), cannot load evaluation");
 		}
-		
-		
-		UIVerbatim.make(tofill, "evalInstruction", eval.getInstructions()); //$NON-NLS-1$
-		
-		
-		UIForm form = UIForm.make(tofill, "evaluationForm"); //$NON-NLS-1$
 
-		//Binding the EvalEvaluation object to the EvalEvaluation object in TakeEvaluationBean.
-		form.parameters.add( new UIELBinding("#{takeEvalBean.eval}", new ELReference(evalOTP+eval.getId()))); //$NON-NLS-1$
-		form.parameters.add( new UIELBinding("#{takeEvalBean.context}", evalTakeViewParams.context));
-		
-		EvalTemplate template = eval.getTemplate();
+		UIMessage.make(tofill, "eval-title-header", "takeeval.eval.title.header");
+		UIOutput.make(tofill, "evalTitle", eval.getTitle());
 
-		// get items(parent items, child items --need to set order
-		//List childItems = new ArrayList(template.getItems());	//List allItems = new ArrayList(template.getItems());
-		List allItems = new ArrayList(template.getTemplateItems());
-	
-		//filter out the block child items, to get a list non-child items
-		List ncItemsList = TemplateItemUtils.getNonChildItems(allItems);
-		
-		HashMap answerMap=null;
-		if(responseId!=null) {
-			answerMap = localResponsesLogic.getAnswersMapByTempItemAndAssociated(responseId);
-		}
-		
-		// these will be used if there are any "Course" items or "Instructor" items, respectively
-		UIBranchContainer courseSection = null;
-		UIBranchContainer instructorSection = null;
-
-		if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_COURSE, ncItemsList))	{	
-			courseSection = UIBranchContainer.make(form,"courseSection:"); //$NON-NLS-1$
-			UIMessage.make(courseSection, "course-questions-header", "takeeval.course.questions.header"); //$NON-NLS-1$ //$NON-NLS-2$			
-			for (int i = 0; i <ncItemsList.size(); i++) {
-				//EvalItem item1 = (EvalItem) ncItemsList.get(i);
-				EvalTemplateItem tempItem1 = (EvalTemplateItem) ncItemsList.get(i);
-				
-				String cat = tempItem1.getItemCategory();
-				UIBranchContainer radiobranch = null;
-				
-				if (cat.equals(EvalConstants.ITEM_CATEGORY_COURSE)) { //"Course"
-					radiobranch = UIBranchContainer.make(courseSection, "itemrow:first", i+""); //$NON-NLS-1$
-					if (i % 2 == 1) {
-						radiobranch.decorators = new DecoratorList(new UIColourDecorator(null,Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
+		if (evalGroupId != null) {
+			// there was an eval group passed in so make sure things are ok
+			if (evalsLogic.canTakeEvaluation(currentUserId, evaluationId, evalGroupId)) {
+				userCanAccess = true;
+			}
+		} else {
+			// select the first eval group the current user can take evaluation in,
+			// also store the total number so we can give the user a list to choose from if there are more than one
+			Map evalAssignGroups = evalsLogic.getEvaluationGroups(new Long[] {eval.getId()}, true);
+			List groups = (List) evalAssignGroups.get(eval.getId());
+			List validGroups = new ArrayList(); // stores EvalGroup objects
+			for (Iterator iter = groups.iterator(); iter.hasNext();) {
+				EvalAssignGroup assignGroup = (EvalAssignGroup) iter.next();
+				if (evalsLogic.canTakeEvaluation(currentUserId, evaluationId, assignGroup.getEvalGroupId())) {
+					if (evalGroupId == null) {
+						evalGroupId = assignGroup.getEvalGroupId();
+						userCanAccess = true;
 					}
-					renderItemPrep(radiobranch, form, tempItem1, answerMap, "null", "null");
+					validGroups.add( external.makeEvalGroupObject(evalGroupId) );
 				}
 			}
-			UIMessage.make(courseSection, "course-questions-header", "takeeval.course.questions.header"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, ncItemsList))	{	
-			Set instructors = external.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED);
-			//for each instructor, make a branch containing all instructor questions
-			for (Iterator it = instructors.iterator(); it.hasNext();) {
-				String instructor = (String) it.next();
-				instructorSection = UIBranchContainer.make(form,"instructorSection:", "inst"+displayNumber); //$NON-NLS-1$
-				//UIOutput.make(instructorSection, "instructor-questions-header",UIMessage.make("takeeval.instructor.questions.header")+" "+external.getUserDisplayName(instructor));	
-				UIMessage.make(instructorSection, "instructor-questions-header","takeeval.instructor.questions.header", new Object[] { external.getUserDisplayName(instructor) });
-				//for each item in this evaluation
-				for (int i = 0; i <ncItemsList.size(); i++) {
-					EvalTemplateItem tempItem1 = (EvalTemplateItem) ncItemsList.get(i);
-					String cat = tempItem1.getItemCategory();
-					UIBranchContainer radiobranch = null;
-					
-					//if the given item is of type instructor, render it here
-					if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR)) { //"Instructor"
-						radiobranch = UIBranchContainer.make(instructorSection,
-								"itemrow:first", i+""); //$NON-NLS-1$
-						if (i % 2 == 1) radiobranch.decorators = new DecoratorList(new UIColourDecorator(null, Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
-						renderItemPrep(radiobranch, form, tempItem1, answerMap, cat, instructor);
-					}
-				} // end of for loop				
+
+			// generate the get form to allow the user to choose a group if more than one is available
+			if (validGroups.size() > 1) {
+				String[] values = new String[validGroups.size()];
+				String[] labels = new String[validGroups.size()];
+				for (int i=0; i<validGroups.size(); i++) {
+					EvalGroup group = (EvalGroup) validGroups.get(i);
+					values[i] = group.evalGroupId;
+					labels[i] = group.title;
+				}
+
+				// show the switch group selection and form
+				UIBranchContainer showSwitchGroup = UIBranchContainer.make(tofill, "show-switch-group:");
+				UIMessage.make(showSwitchGroup, "switch-group-header", "takeeval.switch.group.header");
+				UIForm chooseGroupForm = UIForm.make(showSwitchGroup, "switch-group-form", 
+						new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, responseId, evalGroupId));
+				UISelect.make(chooseGroupForm, "switch-group-list", values, labels,	"#{evalGroupId}");
+				UIMessage.make(chooseGroupForm, "switch-group-button", "takeeval.switch.group.button");
 			}
 		}
-		UICommand.make(form, "submitEvaluation", UIMessage.make("takeeval.submit.button"), "#{takeEvalBean.submitEvaluation}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	} // end of method
 
-	private void renderItemPrep(UIBranchContainer radiobranch, UIForm form, EvalTemplateItem tempItem1, HashMap answerMap, String itemCategory, String associatedId) {
-	    //holds array of bindings for child block items
-		String[] caOTP=null;					
-	    //holds list of block child items if tempItem1 is a block parent
-	    List childList=null;
-	    //if tempItem1 is a blockParent
-		if (tempItem1.getBlockParent() != null
-				&& tempItem1.getBlockParent().booleanValue() == true) {
-			//get the child items of tempItem1
-			childList = itemsLogic.getBlockChildTemplateItemsForBlockParent(tempItem1.getId(), false);
-			caOTP = new String[childList.size()];
-			//for each child item, construct a binding
-			for (int j = 0; j < childList.size(); j++) {
-				EvalTemplateItem currChildItem = (EvalTemplateItem)childList.get(j);
-				//set up OTP paths
-			    if (responseId == null) {
-			    	caOTP[j] = newResponseAnswersOTP + "new" + (renderedItemCount) +".";
-			    }
-				else {
-					//if the user has answered this question before, point at their response
-					EvalAnswer currAnswer=(EvalAnswer)answerMap.get(currChildItem.getId()+itemCategory+associatedId);
-					
-					//there is an existing response, but there is no answer
-					if(currAnswer==null) {
-						caOTP[j] = responseAnswersOTP + responseId + "." + "new" + (renderedItemCount) +".";
+		if (userCanAccess) {
+			// fill in group title
+			UIBranchContainer groupTitle = UIBranchContainer.make(tofill, "show-group-title:");
+			UIMessage.make(groupTitle, "group-title-header", "takeeval.group.title.header");	
+			UIVerbatim.make(groupTitle, "group-title", external.getDisplayTitle(evalGroupId) );
+
+			// show instructions if not null
+			if (eval.getInstructions() != null) {
+				UIBranchContainer instructions = UIBranchContainer.make(tofill, "show-eval-instructions:");
+				UIMessage.make(instructions, "eval-instructions-header", "takeeval.instructions.header");	
+				UIVerbatim.make(instructions, "eval-instructions", eval.getInstructions());
+			}
+
+			UIForm form = UIForm.make(tofill, "evaluationForm");
+
+			//Binding the EvalEvaluation object to the EvalEvaluation object in TakeEvaluationBean.
+			form.parameters.add( new UIELBinding("#{takeEvalBean.eval}", new ELReference(evalOTP+eval.getId())));
+			form.parameters.add( new UIELBinding("#{takeEvalBean.context}", evalTakeViewParams.evalGroupId));
+
+			// get all items for this evaluation main template
+			allItems = new ArrayList(eval.getTemplate().getTemplateItems());
+
+			//filter out the block child items, to get a list non-child items
+			List ncItemsList = TemplateItemUtils.getNonChildItems(allItems);
+
+			// load up the previous responses for this user
+			Map answerMap = new HashMap();
+			if (responseId != null) {
+				answerMap = localResponsesLogic.getAnswersMapByTempItemAndAssociated(responseId);
+			}
+
+			if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_COURSE, ncItemsList)) {
+				// for all course items, go through render process
+				UIBranchContainer courseSection = UIBranchContainer.make(form, "courseSection:");
+				UIMessage.make(courseSection, "course-questions-header", "takeeval.group.questions.header");
+				// for each non-child item in this evaluation
+				for (int i = 0; i <ncItemsList.size(); i++) {
+					EvalTemplateItem templateItem = (EvalTemplateItem) ncItemsList.get(i);
+					String cat = templateItem.getItemCategory();
+					UIBranchContainer radiobranch = null;
+
+					// if the given item is of type course, render it here
+					if (cat.equals(EvalConstants.ITEM_CATEGORY_COURSE)) {
+						radiobranch = UIBranchContainer.make(courseSection, "itemrow:first", i+"");
+						if (i % 2 == 1) {
+							radiobranch.decorators = new DecoratorList(
+								new UIColourDecorator(null,Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
+						}
+						renderItemPrep(radiobranch, form, templateItem, answerMap, "null", "null");
 					}
-					else {
+				}
+				UIMessage.make(courseSection, "course-questions-header", "takeeval.group.questions.header");
+			}
+
+			if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, ncItemsList)) {	
+				// for each instructor, make a branch containing all instructor questions
+				Set instructors = external.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED);
+				for (Iterator it = instructors.iterator(); it.hasNext();) {
+					String instructor = (String) it.next();
+					UIBranchContainer instructorSection = UIBranchContainer.make(form, "instructorSection:", "inst"+displayNumber);
+					UIMessage.make(instructorSection, "instructor-questions-header", 
+							"takeeval.instructor.questions.header", new Object[] { external.getUserDisplayName(instructor) });
+					// for each non-child item in this evaluation
+					for (int i = 0; i <ncItemsList.size(); i++) {
+						EvalTemplateItem templateItem = (EvalTemplateItem) ncItemsList.get(i);
+						String category = templateItem.getItemCategory();
+						UIBranchContainer radiobranch = null;
+
+						// if the given item is of type instructor, render it here
+						if ( EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(category) ) {
+							radiobranch = UIBranchContainer.make(instructorSection,	"itemrow:first", i+"");
+							if (i % 2 == 1) {
+								radiobranch.decorators = new DecoratorList(
+									new UIColourDecorator(null, Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
+							}
+							renderItemPrep(radiobranch, form, templateItem, answerMap, category, instructor);
+						}
+					} // end of for loop				
+				}
+			}
+
+			UICommand.make(form, "submitEvaluation", UIMessage.make("takeeval.submit.button"), "#{takeEvalBean.submitEvaluation}");
+		} else {
+			// user cannot access eval so give them a sad message
+			UIMessage.make(tofill, "eval-cannot-take-message", "takeeval.user.cannot.take");
+		}
+	}
+
+	/**
+	 * Prep for rendering an item I assume (no comments by original authors) -AZ
+	 * 
+	 * @param radiobranch
+	 * @param form
+	 * @param templateItem
+	 * @param answerMap
+	 * @param itemCategory
+	 * @param associatedId
+	 */
+	private void renderItemPrep(UIBranchContainer radiobranch, UIForm form, EvalTemplateItem templateItem, Map answerMap, String itemCategory, String associatedId) {
+	    // holds array of bindings for child block items
+		String[] caOTP = null;
+		if (templateItem.getBlockParent() != null && templateItem.getBlockParent().booleanValue() == true) {
+			// block item being rendered
+
+			// get the child items of tempItem1
+			List childList = TemplateItemUtils.getChildItems(allItems, templateItem.getId());
+			caOTP = new String[childList.size()];
+			// for each child item, construct a binding
+			for (int j = 0; j < childList.size(); j++) {
+				EvalTemplateItem currChildItem = (EvalTemplateItem) childList.get(j);
+				// set up OTP paths
+				if (responseId == null) {
+					caOTP[j] = newResponseAnswersOTP + "new" + (renderedItemCount) + ".";
+				} else {
+					// if the user has answered this question before, point at their response
+					EvalAnswer currAnswer = (EvalAnswer) answerMap.get(currChildItem.getId() + itemCategory	+ associatedId);
+
+					// there is an existing response, but there is no answer
+					if (currAnswer == null) {
+						caOTP[j] = responseAnswersOTP + responseId + "." + "new" + (renderedItemCount) + ".";
+					} else {
 						caOTP[j] = responseAnswersOTP + responseId + "." + currAnswer.getId() + ".";
 					}
 				}
 
-				//bind the current EvalTemplateItem's EvalItem to the current EvalAnswer's EvalItem
-				form.parameters.add( new UIELBinding
-						(caOTP[j] + "templateItem",new ELReference("templateItemWBL." + currChildItem.getId())) );	
-				if(itemCategory.equals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR) | itemCategory.equals(EvalConstants.ITEM_CATEGORY_ENVIRONMENT)){
-					//bind the current instructor id to the current EvalAnswer.associated
-					form.parameters.add( new UIELBinding(caOTP[j] + "associatedId", associatedId) );						
-				}	
-				//set up binding for UISelect
-				caOTP[j]+="numeric";  
+				// bind the current EvalTemplateItem's EvalItem to the current EvalAnswer's EvalItem
+				form.parameters.add(new UIELBinding(caOTP[j] + "templateItem", 
+						new ELReference("templateItemWBL." + currChildItem.getId())));
+				if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(itemCategory)
+						|| EvalConstants.ITEM_CATEGORY_ENVIRONMENT.equals(itemCategory)) {
+					// bind the current instructor id to the current EvalAnswer.associated
+					form.parameters.add(new UIELBinding(caOTP[j] + "associatedId", associatedId));
+				}
+				// set up binding for UISelect
+				caOTP[j] += "numeric";
 				renderedItemCount++;
 			}
-		}
-		//single item being rendered
-		else if(tempItem1.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_SCALED) | 
-				tempItem1.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)){
-			//set up OTP paths for scaled/text type items
-		    String currAnswerOTP;
-		    if (responseId == null) {
-		    	currAnswerOTP = newResponseAnswersOTP + "new" + renderedItemCount +".";
-		    }
-			else {
-				//if the user has answered this question before, point at their response
-				EvalAnswer currAnswer=(EvalAnswer)answerMap.get(tempItem1.getId()+"null"+"null");
-				
-				if(currAnswer==null) {
-					currAnswerOTP = responseAnswersOTP + responseId + "." + "new" + (renderedItemCount) +".";
-				}
-				else {
+		} else if ( EvalConstants.ITEM_TYPE_SCALED.equals(templateItem.getItem().getClassification())
+				|| EvalConstants.ITEM_TYPE_TEXT.equals(templateItem.getItem().getClassification()) ) {
+			// single item being rendered
+
+			// set up OTP paths for scaled/text type items
+			String currAnswerOTP;
+			if (responseId == null) {
+				currAnswerOTP = newResponseAnswersOTP + "new" + renderedItemCount + ".";
+			} else {
+				// if the user has answered this question before, point at their response
+				EvalAnswer currAnswer = (EvalAnswer) answerMap.get(templateItem.getId() + "null" + "null");
+
+				if (currAnswer == null) {
+					currAnswerOTP = responseAnswersOTP + responseId + "." + "new" + (renderedItemCount) + ".";
+				} else {
 					currAnswerOTP = responseAnswersOTP + responseId + "." + currAnswer.getId() + ".";
 				}
 			}
-			//bind the current EvalTemplateItem's EvalItem to the current EvalAnswer's EvalItem
-			form.parameters.add( new UIELBinding
-					(currAnswerOTP + "templateItem",new ELReference("templateItemWBL." + tempItem1.getId())) );	
-			if(itemCategory.equals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR) | itemCategory.equals(EvalConstants.ITEM_CATEGORY_ENVIRONMENT)){			
-				//bind the current instructor id to the current EvalAnswer.associated
-				form.parameters.add( new UIELBinding(currAnswerOTP + "associatedId", associatedId) );
+			// bind the current EvalTemplateItem's EvalItem to the current EvalAnswer's EvalItem
+			form.parameters.add( new UIELBinding(currAnswerOTP + "templateItem", 
+					new ELReference("templateItemWBL." + templateItem.getId())) );
+			if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(itemCategory)
+					|| EvalConstants.ITEM_CATEGORY_ENVIRONMENT.equals(itemCategory)) {
+				// bind the current instructor id to the current EvalAnswer.associated
+				form.parameters.add(new UIELBinding(currAnswerOTP + "associatedId", associatedId));
 			}
-			//update curranswerOTP for binding the UI input element (UIInput, UISelect, etc.)
-			if(tempItem1.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)){
-		    	caOTP = new String[] {currAnswerOTP+"numeric"};
-		    }
-			if(tempItem1.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)) {
-		    	caOTP = new String[] {currAnswerOTP+"text"};
-		    }	
+			// update curranswerOTP for binding the UI input element (UIInput, UISelect, etc.)
+			if ( EvalConstants.ITEM_TYPE_SCALED.equals(templateItem.getItem().getClassification()) ) {
+				caOTP = new String[] { currAnswerOTP + "numeric" };
+			} else if ( EvalConstants.ITEM_TYPE_TEXT.equals(templateItem.getItem().getClassification()) ) {
+				caOTP = new String[] { currAnswerOTP + "text" };
+			}
 		}
-		//***Render the item.***
-		itemRenderer.renderItem(radiobranch, "rendered-item:", caOTP, tempItem1, displayNumber, false);
 
-		//***Increment counters***
-		//if we displayed a block, renderedItem has been incremented, increment displayNumber by the number of blockChildren
-		if(tempItem1.getBlockParent() != null
-				&& tempItem1.getBlockParent().booleanValue() == true){
-			displayNumber += childList.size();
-		}
-		//if we displayed 1 item, increment by 1
-		else if(tempItem1.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_TEXT) | 
-				tempItem1.getItem().getClassification().equals(EvalConstants.ITEM_TYPE_SCALED)){
-			displayNumber++;
-			renderedItemCount++;
-		}
-		
+		// render the item
+		itemRenderer.renderItem(radiobranch, "rendered-item:", caOTP, templateItem, displayNumber, false);
+
+		// increment the item counters, if we displayed 1 item, increment by 1,
+		// if we displayed a block, renderedItem has been incremented, increment displayNumber by the number of blockChildren,
+		// this happens to coincide with the number of current answer OTP strings exactly -AZ
+		if (caOTP != null) displayNumber += caOTP.length;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
 	 */
 	public List reportNavigationCases() {
 		List i = new ArrayList();
-
 		i.add(new NavigationCase("success", new SimpleViewParameters(SummaryProducer.VIEW_ID)));
-
 		return i;
 	}
+
+	/* (non-Javadoc)
+	 * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
+	 */
+	public ViewParameters getViewParameters() {
+		return new EvalTakeViewParameters();
+	}
+
 }

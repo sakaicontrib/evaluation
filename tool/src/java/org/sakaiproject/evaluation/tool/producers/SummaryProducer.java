@@ -23,7 +23,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
@@ -75,11 +74,6 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		this.external = external;
 	}
 
-	private EvalAssignsLogic assignsLogic;
-	public void setAssignsLogic(EvalAssignsLogic assignsLogic) {
-		this.assignsLogic = assignsLogic;
-	}
-	
 	private EvalEvaluationsLogic evaluationsLogic;
 	public void setEvaluationsLogic(EvalEvaluationsLogic evaluationsLogic) {
 		this.evaluationsLogic = evaluationsLogic;
@@ -189,13 +183,13 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 				List contexts = (List) evalContexts.get(eval.getId());
 				for (int j=0; j<contexts.size(); j++) {
 					EvalGroup ctxt = (EvalGroup) contexts.get(j);
-					//check that the user can take evaluations in this context
+					//check that the user can take evaluations in this evalGroupId
 					if(external.isUserAllowedInEvalGroup(external.getCurrentUserId(), EvalConstants.PERM_TAKE_EVALUATION, ctxt.evalGroupId)){
 						String context = ctxt.evalGroupId;
 						String title = ctxt.title;
 						String status = "unknown.caps"; //$NON-NLS-1$
 
-						// find the object in the list matching the context and evalId,
+						// find the object in the list matching the evalGroupId and evalId,
 						// leave as null if not found -AZ
 						EvalResponse response = null;
 						for (int k=0; k<evalResponses.size(); k++) {
@@ -208,7 +202,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 						}
 
 						if (context.equals(currentContext)) {
-							// TODO - do something when the context matches
+							// TODO - do something when the evalGroupId matches
 						}
 
 						UIBranchContainer evalcourserow = UIBranchContainer.make(evalrow, "evaluationsCourseList:", context ); //$NON-NLS-1$
@@ -448,9 +442,10 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 	private int getTotalEnrollmentsForEval(Long evaluationId) {
 		int totalEnrollments = 0;
 
-		List l = assignsLogic.getAssignGroupsByEvalId(evaluationId);
-		for (int i=0; i<l.size(); i++) {
-			EvalAssignGroup eac = (EvalAssignGroup) l.get(i);
+		Map evalAssignGroups = evaluationsLogic.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
+		List groups = (List) evalAssignGroups.get(evaluationId);
+		for (int i=0; i<groups.size(); i++) {
+			EvalAssignGroup eac = (EvalAssignGroup) groups.get(i);
 			String context = eac.getEvalGroupId();
 			Set userIds = external.getUserIdsForEvalGroup(context, EvalConstants.PERM_TAKE_EVALUATION);
 			totalEnrollments = totalEnrollments + userIds.size();
