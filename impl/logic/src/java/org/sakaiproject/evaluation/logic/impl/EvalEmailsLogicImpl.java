@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,7 +26,6 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
-import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
@@ -54,11 +52,6 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 	private EvaluationDao dao;
 	public void setDao(EvaluationDao dao) {
 		this.dao = dao;
-	}
-	
-	private EvalAssignsLogic assignsLogic;
-	public void setAssignsLogic(EvalAssignsLogic assignsLogic) {
-		this.assignsLogic = assignsLogic;
 	}
 
 	private EvalExternalLogic externalLogic;
@@ -327,12 +320,13 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
 		// get the associated contexts for this evaluation
 		Map evalGroups = evaluationLogic.getEvaluationGroups(new Long[] {evaluationId}, true);
+
 		// only one possible map key so we can assume evaluationId
 		List groups = (List) evalGroups.get(evaluationId);
 		log.debug("Found " + groups.size() + " contexts for new evaluation: " + evaluationId);
 
 		List sentMessages = new ArrayList();
-		// loop through contexts and send emails to correct users in each context
+		// loop through contexts and send emails to correct users in each evalGroupId
 		for (int i=0; i<groups.size(); i++) {
 			EvalGroup group = (EvalGroup) groups.get(i);
 			Set userIdsSet = externalLogic.getUserIdsForEvalGroup(group.evalGroupId, EvalConstants.PERM_BE_EVALUATED);
@@ -348,7 +342,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			log.debug("Found " + toUserIds.length + " users (" + toUserIds + 
 					") to send " + EvalConstants.EMAIL_TEMPLATE_CREATED + 
 					" notification to for new evaluation (" + evaluationId + 
-					") and context (" + group.evalGroupId + ")");
+					") and evalGroupId (" + group.evalGroupId + ")");
 			
 			emailTemplate.setMessage(message);
 			
@@ -361,7 +355,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			// store sent messages to return
 			sentMessages.add(email);
 
-			// send the actual emails for this context
+			// send the actual emails for this evalGroupId
 			externalLogic.sendEmails(from, 
 					toUserIds, 
 					"New evaluation created: " + eval.getTitle(), 
@@ -434,46 +428,37 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			}
 		}
 
-		// get the associated eval groups for this evaluation
-		Map evalGroupIds = evaluationLogic.getEvaluationGroups(new Long[] {evaluationId}, false);
-		// only one possible map key so we can assume evaluationId
-		List groups = (List) evalGroupIds.get(evaluationId);
-		log.debug("Found " + groups.size() + " groups for available evaluation: " + evaluationId);
-		
 		//get the associated assign groups for this evaluation
-		List assignGroups = (List)assignsLogic.getAssignGroupsByEvalId(evaluationId);
+		Map evalAssignGroups = evaluationLogic.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
+		List assignGroups = (List) evalAssignGroups.get(evaluationId);
+
 		List sentMessages = new ArrayList();
-		// loop through contexts and send emails to correct users in each context
-		for (int i=0; i<groups.size(); i++) {
-			EvalGroup group = (EvalGroup) groups.get(i);
-			if(eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_REQUIRED)) {
+		// loop through groups and send emails to correct users group
+		for (int i=0; i<assignGroups.size(); i++) {
+			EvalAssignGroup assignGroup = (EvalAssignGroup) assignGroups.get(i);
+			EvalGroup group = externalLogic.makeEvalGroupObject( assignGroup.getEvalGroupId() );
+			if (eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_REQUIRED)) {
 				//notify students
 				userIdsSet = externalLogic.getUserIdsForEvalGroup(group.evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
 				studentNotification = true;
 			}
 			else {
 				//instructor may opt-in or opt-out
-				for(Iterator j = assignGroups.iterator(); j.hasNext();) {
-					EvalAssignGroup assignGroup = (EvalAssignGroup)j.next();
-					if(assignGroup.getEvalGroupId().equals(group.evalGroupId)) {
-						if(assignGroup.getInstructorApproval().booleanValue()) {
-							//instructor has opted-in, notify students
-							userIdsSet = externalLogic.getUserIdsForEvalGroup(group.evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
-							studentNotification = true;
-							break;
-						}
-						else {
-							if(eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_OPT_IN) && includeEvaluatees) {
-								// instructor has not opted-in, notify instructors
-								userIdsSet = externalLogic.getUserIdsForEvalGroup(group.evalGroupId, EvalConstants.PERM_BE_EVALUATED);
-								studentNotification = false;
-								break;
-							}
-						}
+				if (assignGroup.getInstructorApproval().booleanValue()) {
+					//instructor has opted-in, notify students
+					userIdsSet = externalLogic.getUserIdsForEvalGroup(group.evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
+					studentNotification = true;
+					break;
+				} else {
+					if (eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_OPT_IN) && includeEvaluatees) {
+						// instructor has not opted-in, notify instructors
+						userIdsSet = externalLogic.getUserIdsForEvalGroup(group.evalGroupId, EvalConstants.PERM_BE_EVALUATED);
+						studentNotification = false;
+						break;
 					}
 				}
 			}
-			
+
 			// skip ahead if there is no one to send to
 			if (userIdsSet.size() == 0) continue;
 
@@ -487,7 +472,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			// replace the text of the template with real values
 			Map replacementValues = new HashMap();
 			replacementValues.put("HelpdeskEmail", from);
-			
+
 			//choose from 2 templates
 			if(studentNotification)
 				message = makeEmailMessage(emailTemplate.getMessage(), 
@@ -499,11 +484,10 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			// store sent messages to return
 			sentMessages.add(message);
 
-			// send the actual emails for this context
-			externalLogic.sendEmails(from, 
-					toUserIds, 
-					"New evaluation created: " + eval.getTitle(), 
-					message);
+			// send the actual emails for this evalGroupId
+			// TODO - internationalize these messages
+			externalLogic.sendEmails(from, toUserIds, 
+					"New evaluation created: " + eval.getTitle(), message);
 			log.info("Sent evaluation available message to " + toUserIds.length + " users");
 		} //groups
 
@@ -557,7 +541,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		// store sent messages to return
 		sentMessages.add(message);
 
-		// send the actual emails for this context
+		// send the actual emails for this evalGroupId
 		externalLogic.sendEmails(from, 
 				toUserIds, 
 				"New evaluation created: " + eval.getTitle(), 
@@ -596,39 +580,19 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		List sentMessages = new ArrayList();
 
 		// get the associated eval groups for this evaluation
+		// NOTE: this only returns the groups that should get emails, there is no need to do an additional check
+		// to see if the instructor has opted in in this case -AZ
 		Map evalGroupIds = evaluationLogic.getEvaluationGroups(new Long[] {evaluationId}, false);
 
 		// only one possible map key so we can assume evaluationId
 		List groups = (List) evalGroupIds.get(evaluationId);
 		log.debug("Found " + groups.size() + " groups for available evaluation: " + evaluationId);
 		
-		//get the associated assign groups for this evaluation
-		List assignGroups = (List)assignsLogic.getAssignGroupsByEvalId(evaluationId);
-		
 		Set userIdsSet = new HashSet();
-		
-		// loop through contexts and send emails to correct users in each context
-		boolean skip = false;
+
+		// loop through groups and send emails to correct users in each
 		for (int i=0; i<groups.size(); i++) {
 			EvalGroup group = (EvalGroup) groups.get(i);
-			
-			//has instructor opted in
-			skip = false;
-			if(!eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_REQUIRED)) {
-				for(Iterator j = assignGroups.iterator(); j.hasNext();) {
-					EvalAssignGroup assignGroup = (EvalAssignGroup)j.next();
-					if(assignGroup.getEvalGroupId().equals(group.evalGroupId)) {
-						if(assignGroup.getInstructorApproval().booleanValue()) 
-							break;
-						else {
-							skip = true;
-							break;
-						}
-					}
-				}
-			}
-			//skip ahead if this group is not using evaluation
-			if(skip) continue;
 			
 			userIdsSet.clear();
 			if(EvalConstants.EMAIL_INCLUDE_NONTAKERS.equals(includeConstant)) {
@@ -658,7 +622,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			// store sent messages to return
 			sentMessages.add(message);
 
-			// send the actual emails for this context
+			// send the actual emails for this evalGroupId
 			externalLogic.sendEmails(from, 
 					toUserIds, 
 					"New evaluation created: " + eval.getTitle(), 
@@ -709,7 +673,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		log.debug("Found " + groups.size() + " groups for available evaluation: " + evaluationId);
 		Set userIdsSet = new HashSet();
 		
-		// loop through contexts and send emails to correct users in each context
+		// loop through contexts and send emails to correct users in each evalGroupId
 		for (int i=0; i<groups.size(); i++) {
 			EvalGroup group = (EvalGroup) groups.get(i);
 			userIdsSet.clear();
@@ -744,7 +708,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			// store sent messages to return
 			sentMessages.add(message);
 
-			// send the actual emails for this context
+			// send the actual emails for this evalGroupId
 			externalLogic.sendEmails(from, 
 					toUserIds, 
 					"New evaluation created: " + eval.getTitle(), 

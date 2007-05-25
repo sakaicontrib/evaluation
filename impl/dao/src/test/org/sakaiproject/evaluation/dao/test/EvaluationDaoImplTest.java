@@ -60,7 +60,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 		// load the spring created dao class bean from the Spring Application Context
 		evaluationDao = (EvaluationDao) applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationDao");
 		if (evaluationDao == null) {
-			throw new NullPointerException("DAO could not be retrieved from spring context");
+			throw new NullPointerException("DAO could not be retrieved from spring evalGroupId");
 		}
 
 		// check the preloaded data
@@ -71,7 +71,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 
 		PreloadTestData ptd = (PreloadTestData) applicationContext.getBean("org.sakaiproject.evaluation.test.PreloadTestData");
 		if (ptd == null) {
-			throw new NullPointerException("PreloadTestData could not be retrieved from spring context");
+			throw new NullPointerException("PreloadTestData could not be retrieved from spring evalGroupId");
 		}
 
 		// get test objects
@@ -260,7 +260,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 		Set s = null;
 		List ids = null;
 
-		// test getting evaluations by context
+		// test getting evaluations by evalGroupId
 		s = evaluationDao.getEvaluationsByEvalGroups(
 				new String[] {EvalTestDataLoad.CONTEXT1}, false, true);
 		Assert.assertNotNull(s);
@@ -282,7 +282,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 		Assert.assertTrue(ids.contains( etdl.evaluationViewable.getId() ));
 
 		s = evaluationDao.getEvaluationsByEvalGroups(
-				new String[] {"invalid context"}, false, true);
+				new String[] {"invalid evalGroupId"}, false, true);
 		Assert.assertNotNull(s);
 		Assert.assertEquals(0, s.size());
 
@@ -300,7 +300,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 		Assert.assertNotNull(s);
 		Assert.assertEquals(0, s.size());
 
-		// test getting from an invalid context
+		// test getting from an invalid evalGroupId
 		s = evaluationDao.getEvaluationsByEvalGroups(
 				new String[] {EvalTestDataLoad.INVALID_CONTEXT}, true, true);
 		Assert.assertNotNull(s);

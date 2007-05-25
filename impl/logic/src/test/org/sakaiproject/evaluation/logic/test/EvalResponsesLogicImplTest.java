@@ -64,7 +64,7 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 		// load the spring created dao class bean from the Spring Application Context
 		evaluationDao = (EvaluationDao) applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationDao");
 		if (evaluationDao == null) {
-			throw new NullPointerException("EvaluationDao could not be retrieved from spring context");
+			throw new NullPointerException("EvaluationDao could not be retrieved from spring evalGroupId");
 		}
 
 		// check the preloaded data
@@ -75,7 +75,7 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 
 		PreloadTestData ptd = (PreloadTestData) applicationContext.getBean("org.sakaiproject.evaluation.test.PreloadTestData");
 		if (ptd == null) {
-			throw new NullPointerException("PreloadTestData could not be retrieved from spring context");
+			throw new NullPointerException("PreloadTestData could not be retrieved from spring evalGroupId");
 		}
 
 		// get test objects
@@ -253,7 +253,7 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 		Assert.assertEquals(1, responses.countResponses( etdl.evaluationActive.getId(), null) );
 		Assert.assertEquals(0, responses.countResponses( etdl.evaluationActiveUntaken.getId(), null) );
 
-		// test counts limited by context
+		// test counts limited by evalGroupId
 		Assert.assertEquals(1, responses.countResponses( etdl.evaluationClosed.getId(), EvalTestDataLoad.CONTEXT1) );
 		Assert.assertEquals(0, responses.countResponses( etdl.evaluationViewable.getId(), EvalTestDataLoad.CONTEXT1) );
 		Assert.assertEquals(1, responses.countResponses( etdl.evaluationActive.getId(), EvalTestDataLoad.CONTEXT1) );
@@ -471,7 +471,7 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 			Assert.assertNotNull(e);
 		}
 
-		// test saving a response for an invalid context fails (context not assigned to this eval)
+		// test saving a response for an invalid evalGroupId fails (evalGroupId not assigned to this eval)
 		try {
 			responses.saveResponse( new EvalResponse( new Date(), 
 					EvalTestDataLoad.USER_ID, EvalTestDataLoad.CONTEXT3, 

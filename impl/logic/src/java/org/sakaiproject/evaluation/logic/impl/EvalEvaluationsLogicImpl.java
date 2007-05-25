@@ -481,10 +481,10 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.EvalEvaluationsLogic#getEvaluationContexts(java.lang.Long[], boolean)
+	 * @see org.sakaiproject.evaluation.logic.EvalEvaluationsLogic#getEvaluationAssignGroups(java.lang.Long[], boolean)
 	 */
-	public Map getEvaluationGroups(Long[] evaluationIds, boolean includeUnApproved) {
-		log.debug("evalIds: " + evaluationIds);
+	public Map getEvaluationAssignGroups(Long[] evaluationIds, boolean includeUnApproved) {
+		log.debug("evalIds: " + evaluationIds + ", includeUnApproved=" + includeUnApproved);
 		Map evals = new TreeMap();
 
 		// create the inner lists
@@ -507,12 +507,32 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 		}
 		for (int i=0; i<l.size(); i++) {
 			EvalAssignGroup eac = (EvalAssignGroup) l.get(i);
-			String evalGroupId = eac.getEvalGroupId();
 
 			// put stuff in inner list
 			Long evalId = eac.getEvaluation().getId();
 			List innerList = (List) evals.get(evalId);
-			innerList.add( external.makeEvalGroupObject(evalGroupId) );
+			innerList.add( eac );
+		}
+		return evals;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalEvaluationsLogic#getEvaluationContexts(java.lang.Long[], boolean)
+	 */
+	public Map getEvaluationGroups(Long[] evaluationIds, boolean includeUnApproved) {
+		log.debug("evalIds: " + evaluationIds + ", includeUnApproved=" + includeUnApproved);
+		Map evals = new TreeMap();
+		// replace each assign group with an EvalGroup
+		Map evalAGs = getEvaluationAssignGroups(evaluationIds, includeUnApproved);
+		for (Iterator iter = evalAGs.keySet().iterator(); iter.hasNext();) {
+			Long evalId = (Long) iter.next();
+			List innerList = (List) evalAGs.get(evalId);
+			List newList = new ArrayList();
+			for (int i=0; i<innerList.size(); i++) {
+				EvalAssignGroup eac = (EvalAssignGroup) innerList.get(i);
+				newList.add( external.makeEvalGroupObject( eac.getEvalGroupId() ) );
+			}
+			evals.put(evalId, newList);
 		}
 		return evals;
 	}
@@ -806,4 +826,5 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 			} // end of for
 		} // end of if
 	} // end of method
+
 }

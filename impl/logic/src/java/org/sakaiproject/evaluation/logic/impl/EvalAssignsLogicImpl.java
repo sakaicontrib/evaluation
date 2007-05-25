@@ -64,7 +64,7 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 	 * @see org.sakaiproject.evaluation.logic.EvalAssignsLogic#saveAssignContext(org.sakaiproject.evaluation.model.EvalAssignContext, java.lang.String)
 	 */
 	public void saveAssignGroup(EvalAssignGroup assignContext, String userId) {
-		log.debug("userId: " + userId + ", context: " + assignContext.getEvalGroupId());
+		log.debug("userId: " + userId + ", evalGroupId: " + assignContext.getEvalGroupId());
 
 		// set the date modified
 		assignContext.setLastModified( new Date() );
@@ -80,13 +80,13 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 			if (checkCreateAC(userId, eval)) {
 				// check for duplicate AC first
 				if ( checkRemoveDuplicateAC(assignContext) ) {
-					throw new IllegalStateException("Duplicate mapping error, there is already an AC that defines a link from context: " + 
+					throw new IllegalStateException("Duplicate mapping error, there is already an AC that defines a link from evalGroupId: " + 
 							assignContext.getEvalGroupId() + " to eval: " + eval.getId());
 				}
 
 				dao.save(assignContext);
 				log.info("User ("+userId+") created a new AC ("+assignContext.getId()+"), " +
-						"linked context ("+assignContext.getEvalGroupId()+") with eval ("+eval.getId()+")");
+						"linked evalGroupId ("+assignContext.getEvalGroupId()+") with eval ("+eval.getId()+")");
 			}
 		} else {
 			// updating an existing AC
@@ -100,10 +100,10 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 				throw new SecurityException("User ("+userId+") attempted to update existing AC ("+existingAC.getId()+") without permissions");
 			}
 
-			// cannot change the evaluation or context so fail if they have been changed
+			// cannot change the evaluation or evalGroupId so fail if they have been changed
 			if (! existingAC.getEvalGroupId().equals(assignContext.getEvalGroupId())) {
-				throw new IllegalArgumentException("Cannot update context ("+assignContext.getEvalGroupId()+
-						") for an existing AC, context ("+existingAC.getEvalGroupId()+")");
+				throw new IllegalArgumentException("Cannot update evalGroupId ("+assignContext.getEvalGroupId()+
+						") for an existing AC, evalGroupId ("+existingAC.getEvalGroupId()+")");
 			} else if (! existingAC.getEvaluation().getId().equals(eval.getId())) {
 				throw new IllegalArgumentException("Cannot update eval ("+eval.getId()+
 						") for an existing AC, eval ("+existingAC.getEvaluation().getId()+")");
@@ -155,7 +155,7 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 		// get AC
 		EvalAssignGroup assignContext = (EvalAssignGroup) dao.findById(EvalAssignGroup.class, assignContextId);
 		if (assignContext == null) {
-			throw new IllegalArgumentException("Cannot find assign context with this id: " + assignContextId);
+			throw new IllegalArgumentException("Cannot find assign evalGroupId with this id: " + assignContextId);
 		}
 
 		if ( checkRemoveAC(userId, assignContext) ) {
@@ -170,6 +170,7 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalAssignsLogic#getAssignContextsByEvalId(java.lang.Long)
+	 * @deprecated see method in evaluation logic
 	 */
 	public List getAssignGroupsByEvalId(Long evaluationId) {
 		log.debug("evaluationId: " + evaluationId);
@@ -217,7 +218,7 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 		// get AC
 		EvalAssignGroup assignContext = (EvalAssignGroup) dao.findById(EvalAssignGroup.class, assignContextId);
 		if (assignContext == null) {
-			throw new IllegalArgumentException("Cannot find assign context with this id: " + assignContextId);
+			throw new IllegalArgumentException("Cannot find assign evalGroupId with this id: " + assignContextId);
 		}
 
 		try {
@@ -268,10 +269,10 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 					externalLogic.isUserAdmin(userId)) {
 				return true;
 			} else {
-				throw new SecurityException("User ("+userId+") cannot create assign context in evaluation ("+eval.getId()+"), do not have permission");
+				throw new SecurityException("User ("+userId+") cannot create assign evalGroupId in evaluation ("+eval.getId()+"), do not have permission");
 			}
 		} else {
-			throw new IllegalStateException("User ("+userId+") cannot create assign context in evaluation ("+eval.getId()+"), invalid eval state");
+			throw new IllegalStateException("User ("+userId+") cannot create assign evalGroupId in evaluation ("+eval.getId()+"), invalid eval state");
 		}
 	}
 
@@ -293,10 +294,10 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 			if ( checkControlAC(userId, assignContext) ) {
 				return true;
 			} else {
-				throw new SecurityException("User ("+userId+") cannot remove assign context ("+assignContext.getId()+"), do not have permission");
+				throw new SecurityException("User ("+userId+") cannot remove assign evalGroupId ("+assignContext.getId()+"), do not have permission");
 			}
 		} else {
-			throw new IllegalStateException("User ("+userId+") cannot remove this assign context ("+assignContext.getId()+"), invalid eval state");
+			throw new IllegalStateException("User ("+userId+") cannot remove this assign evalGroupId ("+assignContext.getId()+"), invalid eval state");
 		}
 	}
 

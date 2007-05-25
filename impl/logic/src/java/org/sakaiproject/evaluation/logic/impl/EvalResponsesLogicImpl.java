@@ -152,7 +152,7 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
 			return dao.countByProperties(EvalResponse.class, new String[] { "evaluation.id" },
 					new Object[] { evaluationId });
 		} else {
-			// returns count of responses in this context only if set
+			// returns count of responses in this evalGroupId only if set
 			return dao.countByProperties(EvalResponse.class, new String[] { "evaluation.id", "evalGroupId" },
 					new Object[] { evaluationId, evalGroupId });
 		}
@@ -201,7 +201,7 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
 	 *      java.lang.String)
 	 */
 	public void saveResponse(EvalResponse response, String userId) {
-		log.debug("userId: " + userId + ", response: " + response.getId() + ", context: " + response.getEvalGroupId());
+		log.debug("userId: " + userId + ", response: " + response.getId() + ", evalGroupId: " + response.getEvalGroupId());
 
 		// set the date modified
 		response.setLastModified(new Date());
@@ -220,7 +220,7 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
 			String context = response.getEvalGroupId();
 			if (!evaluations.canTakeEvaluation(userId, evaluationId, context)) {
 				throw new IllegalStateException("User (" + userId + ") cannot take this evaluation (" + evaluationId
-						+ ") in this context (" + context + ") right now");
+						+ ") in this evalGroupId (" + context + ") right now");
 			}
 
 			// check to make sure answers are valid for this evaluation
@@ -247,14 +247,14 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
 			}
 
 			int answerCount = response.getAnswers() == null ? 0 : response.getAnswers().size();
-			log.info("User (" + userId + ") saved response (" + response.getId() + "), context ("
+			log.info("User (" + userId + ") saved response (" + response.getId() + "), evalGroupId ("
 					+ response.getEvalGroupId() + ") and " + answerCount + " answers");
 			return;
 		}
 
 		// should not get here so die if we do
 		throw new RuntimeException("User (" + userId + ") could NOT save response (" + response.getId()
-				+ "), context: " + response.getEvalGroupId());
+				+ "), evalGroupId: " + response.getEvalGroupId());
 	}
 
 	// PERMISSIONS
@@ -292,7 +292,7 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
 	 * @return true if they do, exception otherwise
 	 */
 	protected boolean checkUserModifyReponse(String userId, EvalResponse response) {
-		log.debug("context: " + response.getEvalGroupId() + ", userId: " + userId);
+		log.debug("evalGroupId: " + response.getEvalGroupId() + ", userId: " + userId);
 
 		String state = EvalUtils.getEvaluationState(response.getEvaluation());
 		if (EvalConstants.EVALUATION_STATE_ACTIVE.equals(state) || EvalConstants.EVALUATION_STATE_ACTIVE.equals(state)) {

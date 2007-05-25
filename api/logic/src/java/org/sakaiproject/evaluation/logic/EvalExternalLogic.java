@@ -41,7 +41,7 @@ public interface EvalExternalLogic extends ExternalUsers, ExternalEvalGroups {
 	public boolean isUserAdmin(String userId);
 
 	/**
-	 * Check if a user has a specified permission within a context, primarily
+	 * Check if a user has a specified permission within a evalGroupId, primarily
 	 * a convenience method and passthrough
 	 * 
 	 * @param userId the internal user id (not username)

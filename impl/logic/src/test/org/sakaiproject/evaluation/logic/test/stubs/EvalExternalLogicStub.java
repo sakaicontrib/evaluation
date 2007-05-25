@@ -300,7 +300,7 @@ public class EvalExternalLogicStub implements EvalExternalLogic {
 	}
 
 	/**
-	 * Always assume the current context is CONTEXT1
+	 * Always assume the current evalGroupId is CONTEXT1
 	 */
 	public String getCurrentEvalGroup() {
 		return EvalTestDataLoad.CONTEXT1;

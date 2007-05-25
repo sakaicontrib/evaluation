@@ -31,8 +31,8 @@ public class TestPlacement implements Placement {
 	private String toolId;
 	
 	/**
-	 * Construct a test Placement object with a context (siteId) set
-	 * @param context a String representing a site context (siteId)
+	 * Construct a test Placement object with a evalGroupId (siteId) set
+	 * @param evalGroupId a String representing a site evalGroupId (siteId)
 	 */
 	public TestPlacement(String context) {
 		this.context = context;

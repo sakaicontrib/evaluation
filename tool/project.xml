@@ -167,7 +167,7 @@
 		<dependency>
 			<groupId>rsfutil</groupId>
 			<artifactId>RSFComponents-evolvers</artifactId>
-			<version>${rsfutil.version}</version>
+			<version>${rsfcomponents.version}</version>
 			<type>jar</type>
 			<properties>
 				<war.bundle>true</war.bundle>
@@ -187,7 +187,7 @@
 		<dependency>
 			<groupId>sakairsf</groupId>
 			<artifactId>SakaiRSFComponents-templates</artifactId>
-			<version>${rsfutil.version}-sakai_${sakairsf.sakai.version}</version>
+			<version>${rsfcomponents.version}-sakai_${sakairsf.sakai.version}</version>
 			<type>war</type>
 			<properties>
 				<explode>true</explode>
@@ -197,7 +197,7 @@
 		<dependency>
 			<groupId>sakairsf</groupId>
 			<artifactId>SakaiRSFComponents-evolvers</artifactId>
-			<version>${rsfutil.version}-sakai_${sakairsf.sakai.version}</version>
+			<version>${rsfcomponents.version}-sakai_${sakairsf.sakai.version}</version>
 			<type>jar</type>
 			<properties>
 				<war.bundle>true</war.bundle>

@@ -122,7 +122,7 @@ public interface EvalEmailsLogic {
 	/**
 	 * Send reminder notifications to all users who are taking an evaluation,
 	 * these include a direct link to the evaluation and information about the
-	 * context being evaluated and the dates of the evaluation, 
+	 * evalGroupId being evaluated and the dates of the evaluation, 
 	 * uses the reminder template and the users to include can be controlled
 	 * 
 	 * @param evaluationId the id of an EvalEvaluation object

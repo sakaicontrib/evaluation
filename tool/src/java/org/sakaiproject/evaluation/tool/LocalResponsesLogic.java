@@ -88,7 +88,7 @@ public class LocalResponsesLogic {
 			if (response.getEvalGroupId().equals(context)) return response;
 		}
 		throw new IllegalArgumentException("Could not locate response for eval id "
-				+ evalId + " userID " + userId +" in context " + context); 
+				+ evalId + " userID " + userId +" in evalGroupId " + context); 
 
 	}
 
