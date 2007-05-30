@@ -122,16 +122,15 @@ public class ModifyTemplateProducer
 						EvaluationConstant.SHARING_VALUES, 
 						EvaluationConstant.SHARING_LABELS_PROPS, 
 						templateOTP	+ "sharing", null).setMessageKeys();
-			}
-			else {
-				sharingkey = "modifytemplatetitledesc.sharing.private";
+			} else {
+				sharingkey = "sharing.private";
 				form.parameters.add(new UIELBinding(templateOTP + "sharing", EvalConstants.SHARING_PRIVATE)); //$NON-NLS-1$
 			}
 		} else {
 			if ((EvalConstants.SHARING_PRIVATE).equals(sharingValue))
-				sharingkey = "modifytemplatetitledesc.sharing.private"; //$NON-NLS-1$
+				sharingkey = "sharing.private";
 			else if ((EvalConstants.SHARING_PUBLIC).equals(sharingValue))
-				sharingkey = "modifytemplatetitledesc.sharing.public"; //$NON-NLS-1$
+				sharingkey = "sharing.public";
 
 			// Doing the binding of this sharing value so that it can be persisted
 			form.parameters.add(new UIELBinding(templateOTP + "sharing", sharingValue)); //$NON-NLS-1$
