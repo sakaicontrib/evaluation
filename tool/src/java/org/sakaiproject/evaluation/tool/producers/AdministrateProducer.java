@@ -228,17 +228,15 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
 		UIMessage.make(form, "general-max-questions-block-note", "administrate.general.max.questions.block.note");		 //$NON-NLS-2$
 		
 		// Select for template sharing and visibility settings
-		String[] sharingValues = 
-        {
+		String[] sharingValues = new String[] {
             EvalConstants.SHARING_OWNER,
             EvalConstants.SHARING_PRIVATE,
             EvalConstants.SHARING_PUBLIC
         };
-        String[] sharingLabels = 
-        {
+        String[] sharingLabels = new String[] {
 			"administrate.sharing.owner",
-			"modifytemplatetitledesc.sharing.private",
-			"modifytemplatetitledesc.sharing.public"
+			"sharing.private",
+			"sharing.public"
         };
         makeSelect(form, "general-template-sharing",  
         		sharingValues, 
