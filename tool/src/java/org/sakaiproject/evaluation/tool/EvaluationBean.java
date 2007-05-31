@@ -41,7 +41,6 @@ import org.sakaiproject.evaluation.tool.producers.EvaluationAssignConfirmProduce
 import org.sakaiproject.evaluation.tool.producers.EvaluationAssignProducer;
 import org.sakaiproject.evaluation.tool.producers.EvaluationSettingsProducer;
 import org.sakaiproject.evaluation.tool.producers.EvaluationStartProducer;
-import org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer;
 import org.sakaiproject.evaluation.tool.producers.SummaryProducer;
 import org.sakaiproject.evaluation.tool.utils.EvaluationDateUtil;
 import org.sakaiproject.util.FormattedText;
@@ -562,6 +561,7 @@ public class EvaluationBean {
 	 */
 	public String editEvalSettingAction(){	
 		eval = evalsLogic.getEvaluationById(eval.getId());
+		evalsLogic.getEvaluationState(eval.getId()); // refresh the state
 
 		startDate = eval.getStartDate();
 		dueDate = eval.getDueDate();
@@ -637,17 +637,6 @@ public class EvaluationBean {
 	public String removeEvalAction(){
 		evalsLogic.deleteEvaluation(evalId, external.getCurrentUserId());
 		return ControlEvaluationsProducer.VIEW_ID;
-	}
-	
-	/**
-	 * Method binding to Summary page :evalAdminTitleLink 
-	 * for closed evaluation.
-	 * 
-	 * @return View id sending the control to preview eval page.
-	 */	
-	//TODO: TO BE REMOVED (old comment not sure why? - kahuja 8th Feb 2007)
-	public String previewEvalAction(){
-		return PreviewEvalProducer.VIEW_ID;
 	}
 
 	
@@ -764,7 +753,7 @@ public class EvaluationBean {
 	 * start date (without time) is same as today's date (without time).  
 	 */	
 	private void checkEvalStartDate() {
-		
+
 		/*
 		 * Set startDate as today's date time as when we parse the string to a date, 
 		 * the time filed by default.
@@ -785,4 +774,5 @@ public class EvaluationBean {
 			eval.setStartDate(calendar.getTime());		
 		}	
 	}
+
 }

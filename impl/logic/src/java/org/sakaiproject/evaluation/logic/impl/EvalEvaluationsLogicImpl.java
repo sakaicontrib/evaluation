@@ -750,7 +750,8 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 				evalGroupIds[i] = c.evalGroupId;
 			}
 
-			Set s = dao.getEvaluationsByEvalGroups( evalGroupIds, true, false, true );
+			// this sucks for efficiency -AZ
+			Set s = dao.getEvaluationsByEvalGroups( evalGroupIds, true, false, true ); // only get active for users
 			for (Iterator iter = s.iterator(); iter.hasNext();) {
 				EvalEvaluation eval = (EvalEvaluation) iter.next();
 				if ( evalCategory.equals(eval.getEvalCategory()) ) {

@@ -107,7 +107,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 
 
 		UIInternalLink.make(tofill, "preview_eval_link", 
-				new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID, null, templateId, null, ModifyTemplateItemsProducer.VIEW_ID));
+				new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID, null, templateId));
 		UIMessage.make(tofill, "preview-eval-desc",	"modifytemplate.preview.eval.desc");
 		UILink.make(tofill, "preview-template-direct-link", UIMessage.make("general.direct.link"), 
 				external.getEntityURL(template) );

@@ -132,7 +132,7 @@ public class EvaluationStartProducer implements ViewComponentProducer, Navigatio
 				//	UIOutput.make(radiobranch,"radioOwner", logic.getUserDisplayName( owners[i]));
 					UIOutput.make(radiobranch,"radioOwner", external.getUserDisplayName( owners[i]));
 					UIInternalLink.make(radiobranch, "viewPreview_link", UIMessage.make("starteval.view.preview.link"), 
-							new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID,null, new Long(values[i]),null, EvaluationStartProducer.VIEW_ID));
+							new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID, null, new Long(values[i]) ) );
 			    }
 			}
 		} else {

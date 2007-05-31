@@ -114,7 +114,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 
 		Long evaluationId = previewEvalViewParams.evaluationId;
 		Long templateId = previewEvalViewParams.templateId;
-		String evalGroupId = previewEvalViewParams.context;
+		String evalGroupId = previewEvalViewParams.evalGroupId;
 		EvalEvaluation eval = null;
 		EvalTemplate template = null;
 

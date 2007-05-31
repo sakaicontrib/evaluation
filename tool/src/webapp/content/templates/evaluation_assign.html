@@ -2,7 +2,7 @@
      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title rsf:id="assign-eval-ext-title">Assign Evaluation to courses</title>
+	<title rsf:id="page-title">Assign Evaluation to groups</title>
      <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
     <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
     <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
@@ -12,77 +12,59 @@
 <body>
 <div class="portletBody">
 
-	<div class="navIntraTool">
-		<a rsf:id="administrate-toplink" href="administrate.html">Administrate</a>
-		<a rsf:id="summary-toplink" href="summary.html">Summary</a>
-	</div>
+<div class="navIntraTool">
+	<a rsf:id="summary-toplink" href="summary.html">Summary</a>
+</div>
 
-	<div>
+<div>
 	<ul class="breadCrumb">
 		<li class="breadCrumb"><a rsf:id="summary-toplink" href="summary.html">Summary</a></li>
-		<li class="breadCrumb" rsf:id="create-eval-title">Create Evaluation</li>
-		<li class="breadCrumb" rsf:id="assign-eval-title">Assign Evaluation</li>					
+		<li class="breadCrumb" rsf:id="create-eval-title">Add Evaluation</li>
+		<li class="breadCrumb" rsf:id="page-title">Assign Evaluation</li>					
 	</ul>
-	</div>
-	<form name="eval_assign_form" rsf:id="evalAssignForm" method="post">
-		<table border="0" cellspacing="0" cellpadding="0" width="90%">
-			<tr>
-				<td align = "left">
-					<span rsf:id="assign-eval-instructions-pre">You are allowed to assign this evaluation (</span><label name="evaluation_title" rsf:id="evaluationTitle">The title of the evaluation goes here</label><span rsf:id="assign-eval-instructions-post">) to the courses listed below.</span> 
+</div>
+
+<div rsf:id="assign-eval-instructions" style="margin:0.5em 0em;">You are allowed to assign this evaluation (eval title) to the groups listed below.</div> 
+
+<form rsf:id="eval-assign-form" method="post">
+	<span rsf:id="siteCheckboxes"/>
+	<table border="1" cellspacing="0" cellpadding="3" rules="none" width="98%">
+		<thead>
+			<tr style="background-color:lightblue;">
+				<td width="90%" style="padding-left:1em;">
+					<b><span rsf:id="name-header">Title</span></b>
 				</td>
-			</tr>
-		</table>
-		<br/>
-		<span rsf:id="siteCheckboxes"/>
-		<table border = "1" cellspacing = "0" cellpadding = "0" rules="none" width="90%">
-			<tr>
-				<td width="5%">
-					&nbsp;
-				</td>
-				<td width="85%">
-					<b><span rsf:id="name-header">Name</span></b>
-				</td>
-				<td width="10%">
+				<td width="10%" align="center">
 					<b><span rsf:id="select-header">Select</span></b>
 				</td>
 			</tr>
-			<tr>
-				<td width="5%">
-					&nbsp;
-				</td>
-				<td width="85%">
-					&nbsp;
-				</td>
-				<td width="10%">
-					&nbsp;
-				</td>
-			</tr>			
+		</thead>
+		<tbody>
 			<tr rsf:id="sites:"> 
-				<td width="5%">
-					&nbsp;
+				<td style="padding-left:1em;">
+					<label rsf:id="siteTitle" for="site-id">group title</label>
 				</td>
-				<td width="85%">
-					<label rsf:id="siteTitle"/>
-				</td>
-				<td width="10%">
-					<input type="checkbox" rsf:id="siteId"/>
+				<td align="center">
+					<input rsf:id="siteId" type="checkbox" id="site-id" />
 				</td>
 			</tr>
-		</table>
-		<br/>
-		<table border="0" cellspacing="0" cellpadding="0" width="90%">	
-			<tr>
-				<td width="50%" align="left">
-					<input type="submit" name="cancel" value="Cancel" rsf:id="cancel-button"/> 
-					&nbsp;
-					<input type="submit" name="edit_settings" value="Edit Settings" rsf:id="editSettings"/> 
-				</td>
-				<td align="right" width="50%">
-					<input type="submit" name="save_assigned_courses" value="Save Assigned Courses" rsf:id="confirmAssignCourses"/> 
-				</td>
-			</tr>
-		</table>	
-	</form>
+		</tbody>
+	</table>
+
+	<div class="divrow" style="width:98%;">
+		<div class="leftcol" style="padding:0.3em;">
+			<input type="submit" name="cancel" value="Cancel" rsf:id="cancel-button"/> 
+		</div>
+		<div class="leftcol"style="padding:0.3em;">
+			<input type="submit" name="edit_settings" value="Edit Settings" rsf:id="editSettings"/> 
+		</div>
+		<div class="rightcol"style="padding:0.3em;">
+			<input type="submit" name="save_assigned_courses" value="Save Assigned Courses" rsf:id="confirmAssignCourses"/> 
+		</div>
+		<div class="cleaner">&nbsp;</div>
+	</div>
+
+</form>
 	
 </div>	
 </body>
