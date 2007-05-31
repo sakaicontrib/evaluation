@@ -23,10 +23,10 @@ import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
-import org.sakaiproject.evaluation.model.utils.EvalUtils;
 
 
 /**
@@ -147,25 +147,25 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.EvalAssignsLogic#deleteAssignContext(java.lang.Long, java.lang.String)
+	 * @see org.sakaiproject.evaluation.logic.EvalAssignsLogic#deleteAssignGroup(java.lang.Long, java.lang.String)
 	 */
-	public void deleteAssignGroup(Long assignContextId, String userId) {
-		log.debug("userId: " + userId + ", assignContextId: " + assignContextId);
+	public void deleteAssignGroup(Long assignGroupId, String userId) {
+		log.debug("userId: " + userId + ", assignGroupId: " + assignGroupId);
 
 		// get AC
-		EvalAssignGroup assignContext = (EvalAssignGroup) dao.findById(EvalAssignGroup.class, assignContextId);
-		if (assignContext == null) {
-			throw new IllegalArgumentException("Cannot find assign evalGroupId with this id: " + assignContextId);
+		EvalAssignGroup assignGroup = (EvalAssignGroup) dao.findById(EvalAssignGroup.class, assignGroupId);
+		if (assignGroup == null) {
+			throw new IllegalArgumentException("Cannot find assign evalGroupId with this id: " + assignGroupId);
 		}
 
-		if ( checkRemoveAC(userId, assignContext) ) {
-			dao.delete(assignContext);
-			log.info("User ("+userId+") deleted existing AC ("+assignContext.getId()+")");
+		if ( checkRemoveAC(userId, assignGroup) ) {
+			dao.delete(assignGroup);
+			log.info("User ("+userId+") deleted existing AC ("+assignGroup.getId()+")");
 			return;
 		}
 
 		// should not get here so die if we do
-		throw new RuntimeException("User ("+userId+") could NOT delete AC ("+assignContext.getId()+")");
+		throw new RuntimeException("User ("+userId+") could NOT delete AC ("+assignGroup.getId()+")");
 	}
 
 	/* (non-Javadoc)
@@ -184,6 +184,29 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 		return dao.findByProperties(EvalAssignGroup.class, 
 				new String[] {"evaluation.id"}, 
 				new Object[] {evaluationId});
+	}
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalAssignsLogic#getAssignGroupById(java.lang.Long)
+	 */
+	public EvalAssignGroup getAssignGroupById(Long assignGroupId) {
+		log.debug("assignGroupId: " + assignGroupId);
+		return (EvalAssignGroup) dao.findById(EvalAssignGroup.class, assignGroupId);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalAssignsLogic#getAssignGroupId(java.lang.Long, java.lang.String)
+	 */
+	public Long getAssignGroupId(Long evaluationId, String evalGroupId) {
+		log.debug("evaluationId: " + evaluationId + ", evalGroupId: " + evalGroupId);
+		List l = dao.findByProperties(EvalAssignGroup.class, 
+				new String[] {"evaluation.id", "evalGroupId"}, 
+				new Object[] {evaluationId, evalGroupId} );
+		if (l.size() == 1) {
+			EvalAssignGroup assignGroup = (EvalAssignGroup) l.get(0);
+			return assignGroup.getId();
+		}
+		return null;
 	}
 
 
@@ -323,4 +346,5 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 //		log.info("AZ3: " + l.size());
 		return false;
 	}
+
 }

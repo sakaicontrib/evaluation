@@ -23,10 +23,10 @@ import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
+import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
-import org.sakaiproject.evaluation.model.utils.EvalUtils;
 import org.sakaiproject.genericdao.api.finders.ByPropsFinder;
 
 
@@ -165,12 +165,13 @@ public class EvalTemplatesLogicImpl implements EvalTemplatesLogic {
 					template.getTemplateItems().toArray( new EvalTemplateItem[] {} );
 				dao.removeTemplateItems(templateItems);
 			}
+
 			dao.delete(template);
 			return;
 		}
 
 		// should not get here so die if we do
-		throw new RuntimeException("User ("+userId+") could NOT delete template ("+template.getId()+")");
+		throw new RuntimeException("User ("+userId+") could NOT delete template ("+templateId+")");
 	}
 
 	/* (non-Javadoc)
@@ -220,26 +221,6 @@ public class EvalTemplatesLogicImpl implements EvalTemplatesLogic {
 	// PERMISSIONS
 
 	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.EvalTemplatesLogic#canControlTemplate(java.lang.String, java.lang.Long)
-	 */
-	public boolean canControlTemplate(String userId, Long templateId) {
-		log.debug("templateId: " + templateId + ", userId: " + userId);
-		// get the template by id
-		EvalTemplate template = (EvalTemplate) dao.findById(EvalTemplate.class, templateId);
-		if (template == null) {
-			throw new IllegalArgumentException("Cannot find template with id: " + templateId);
-		}
-
-		// check perms and locked
-		try {
-			return checkUserControlTemplate(userId, template);
-		} catch (RuntimeException e) {
-			log.info(e.getMessage());
-		}
-		return false;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalTemplatesLogic#canCreateTemplate(java.lang.String)
 	 */
 	public boolean canCreateTemplate(String userId) {
@@ -259,6 +240,52 @@ public class EvalTemplatesLogicImpl implements EvalTemplatesLogic {
 		if ( ((Boolean)settings.get(EvalSettings.INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS)).booleanValue() && 
 				external.countEvalGroupsForUser(userId, EvalConstants.PERM_WRITE_TEMPLATE) > 0 ) {
 			return true;
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalTemplatesLogic#canModifyTemplate(java.lang.String, java.lang.Long)
+	 */
+	public boolean canModifyTemplate(String userId, Long templateId) {
+		log.debug("templateId: " + templateId + ", userId: " + userId);
+		// get the template by id
+		EvalTemplate template = (EvalTemplate) dao.findById(EvalTemplate.class, templateId);
+		if (template == null) {
+			throw new IllegalArgumentException("Cannot find template with id: " + templateId);
+		}
+
+		// check perms and locked
+		try {
+			return checkUserControlTemplate(userId, template);
+		} catch (RuntimeException e) {
+			log.info(e.getMessage());
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalTemplatesLogic#canRemoveTemplate(java.lang.String, java.lang.Long)
+	 */
+	public boolean canRemoveTemplate(String userId, Long templateId) {
+		log.debug("templateId: " + templateId + ", userId: " + userId);
+		// get the template by id
+		EvalTemplate template = (EvalTemplate) dao.findById(EvalTemplate.class, templateId);
+		if (template == null) {
+			throw new IllegalArgumentException("Cannot find template with id: " + templateId);
+		}
+
+		// cannot remove templates that are in use
+		if (dao.isUsedTemplate(templateId)) {
+			log.debug("Cannot remove template ("+templateId+") which is used in at least one evaluation");
+			return false;
+		}
+
+		// check perms and locked
+		try {
+			return checkUserControlTemplate(userId, template);
+		} catch (RuntimeException e) {
+			log.info(e.getMessage());
 		}
 		return false;
 	}

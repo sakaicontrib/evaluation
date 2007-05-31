@@ -200,14 +200,42 @@ public interface EvalEvaluationsLogic {
 	 * user is allowed to modify their entry<br/>
 	 * This check should be used on any page which presents the user with
 	 * an evaluation to take (fill out)<br/>
+	 * This will also do a simpler check to see if a user can take an evaluation
+	 * without knowing the group (simply leave evalGroupId null), this check will
+	 * only tell you if the user is in at least one valid group for this evaluation
+	 * <br/> 
 	 * Use {@link #getEvaluationsForUser(String, boolean, boolean)} if you are trying
 	 * to determine which "take evaluation" links to show a user
 	 * 
 	 * @param userId the internal user id (not username)
 	 * @param evaluationId unique id of the evaluation
-	 * @param evalGroupId the internal evalGroupId (represents a site or group)
+	 * @param evalGroupId the internal evalGroupId (represents a site or group), 
+	 * can be null if you want to do a simpler check for the user taking this evaluation (less efficient)
 	 * @return true if the user can take the evaluation, false otherwise
 	 */
 	public boolean canTakeEvaluation(String userId, Long evaluationId, String evalGroupId);
+
+
+	// EVAL CATEGORIES
+
+	/**
+	 * Get all current evalaution cateogries in the system,
+	 * evaluation categories allow the evaluation owner to categorize their evaluations
+	 * 
+	 * @param userId the internal user id (not username), may be null, if not null then only
+	 * get the categories for evaluations owned by this user (i.e. categories they created)
+	 * @return an array of categories, sorted in alphabetic order
+	 */
+	public String[] getEvalCategories(String userId);
+
+	/**
+	 * Get all evaluations which are tagged with a specific category
+	 * 
+	 * @param evalCategory a string representing an evaluation category
+	 * @param userId the internal user id (not username), may be null, if not null then only
+	 * get the evaluations in this category which are accessible to this user
+	 * @return a list of {@link EvalEvaluation} objects
+	 */
+	public List getEvaluationsByCategory(String evalCategory, String userId);
 
 }

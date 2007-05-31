@@ -32,6 +32,7 @@ import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.utils.ArrayUtils;
+import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
@@ -40,7 +41,6 @@ import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
-import org.sakaiproject.evaluation.model.utils.EvalUtils;
 import org.sakaiproject.genericdao.hibernate.HibernateCompleteGenericDao;
 import org.springframework.dao.DataAccessException;
 
@@ -197,9 +197,9 @@ public class EvaluationDaoImpl
 	}
 
 	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#getEvaluationsByContexts(java.lang.String[], boolean, boolean)
+	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#getEvaluationsByEvalGroups(java.lang.String[], boolean, boolean, boolean)
 	 */
-	public Set getEvaluationsByEvalGroups(String[] evalGroupIds, boolean activeOnly, boolean includeUnApproved) {
+	public Set getEvaluationsByEvalGroups(String[] evalGroupIds, boolean activeOnly, boolean includeUnApproved, boolean includeAnonymous) {
 		Set evals = new TreeSet(new EvaluationDateComparator());
 		if (evalGroupIds.length > 0) {
 			DetachedCriteria dc = DetachedCriteria.forClass(EvalAssignGroup.class)
@@ -224,6 +224,16 @@ public class EvaluationDaoImpl
 					}
 				}
 			}
+		}
+		if (includeAnonymous) {
+			// bring in the anonymous evaluations (ignore group associations)
+			DetachedCriteria dc = DetachedCriteria.forClass(EvalEvaluation.class)
+				.add( Expression.eq("authControl", EvalConstants.EVALUATION_AUTHCONTROL_NONE ) );
+			if (activeOnly) {
+				dc.add( Expression.eq("state", EvalConstants.EVALUATION_STATE_ACTIVE) );
+			}
+			List anonymousEvals = getHibernateTemplate().findByCriteria(dc);
+			evals.addAll( anonymousEvals );
 		}
 		return evals;
 	}
@@ -375,13 +385,44 @@ public class EvaluationDaoImpl
 //		return new Integer(max.intValue() + 1);
 //	}
 
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#getResponseIds(java.lang.Long, java.lang.String[])
+	 *
+	 * SQL - $ indicates the variable must be inserted into the string
+	 * select id from eval_response where evaluation_fk=$evalId
+	 */
+	public List getResponseIds(Long evalId, String[] evalGroupIds) {
+		String groupsHQL = "";
+		if (evalGroupIds != null && evalGroupIds.length > 0) {
+			groupsHQL = " and response.evalGroupId in " + arrayToCommaString(evalGroupIds);
+		}
+
+		String hqlQuery = "SELECT response.id from EvalResponse as response where response.evaluation.id='" + evalId.toString() + "'" + 
+			groupsHQL + " order by response.id";
+		return getHibernateTemplate().find( hqlQuery );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#getEvalCategories(java.lang.String)
+	 */
+	public List getEvalCategories(String userId) {
+		String hql = "select distinct eval.evalCategory from EvalEvaluation eval where eval.evalCategory is not null ";
+		if (userId != null) {
+			hql += " and eval.owner = '"+userId+"' ";
+		}
+		hql += " order by eval.evalCategory";
+		return getHibernateTemplate().find(hql);
+	}
+
+
 	// LOCKING METHODS
 
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#lockScale(org.sakaiproject.evaluation.model.EvalScale, java.lang.Boolean)
 	 */
 	public boolean lockScale(EvalScale scale, Boolean lockState) {
-		log.info("scale:" + scale.getId());
+		log.debug("scale:" + scale.getId());
 		if (scale.getId() == null) {
 			throw new IllegalStateException("Cannot change lock state on an unsaved scale object");
 		}
@@ -426,7 +467,7 @@ public class EvaluationDaoImpl
 	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#lockItem(org.sakaiproject.evaluation.model.EvalItem, java.lang.Boolean)
 	 */
 	public boolean lockItem(EvalItem item, Boolean lockState) {
-		log.info("item:" + item.getId() + ", lockState:" + lockState);
+		log.debug("item:" + item.getId() + ", lockState:" + lockState);
 		if (item.getId() == null) {
 			throw new IllegalStateException("Cannot change lock state on an unsaved item object");
 		}
@@ -477,7 +518,7 @@ public class EvaluationDaoImpl
 	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#lockTemplate(org.sakaiproject.evaluation.model.EvalTemplate, java.lang.Boolean)
 	 */
 	public boolean lockTemplate(EvalTemplate template, Boolean lockState) {
-		log.info("template:" + template.getId() + ", lockState:" + lockState);
+		log.debug("template:" + template.getId() + ", lockState:" + lockState);
 		if (template.getId() == null) {
 			throw new IllegalStateException("Cannot change lock state on an unsaved template object");
 		}
@@ -538,7 +579,7 @@ public class EvaluationDaoImpl
 	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#lockEvaluation(org.sakaiproject.evaluation.model.EvalEvaluation)
 	 */
 	public boolean lockEvaluation(EvalEvaluation evaluation) {
-		log.info("evaluation:" + evaluation.getId());
+		log.debug("evaluation:" + evaluation.getId());
 		if (evaluation.getId() == null) {
 			throw new IllegalStateException("Cannot change lock state on an unsaved evaluation object");
 		}
@@ -565,22 +606,48 @@ public class EvaluationDaoImpl
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#getResponseIds(java.lang.Long, java.lang.String[])
-	 *
-	 * SQL - $ indicates the variable must be inserted into the string
-	 * select id from eval_response where evaluation_fk=$evalId
-	 */
-	public List getResponseIds(Long evalId, String[] evalGroupIds) {
-		String groupsHQL = "";
-		if (evalGroupIds != null && evalGroupIds.length > 0) {
-			groupsHQL = " and response.evalGroupId in " + arrayToCommaString(evalGroupIds);
-		}
 
-		String hqlQuery = "SELECT response.id from EvalResponse as response where response.evaluation.id='" + evalId.toString() + "'" + 
-			groupsHQL + " order by response.id";
-		return getHibernateTemplate().find( hqlQuery );
+	// IN_USE checks
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#isUsedScale(java.lang.Long)
+	 */
+	public boolean isUsedScale(Long scaleId) {
+		log.debug("scaleId: " + scaleId);
+		String hqlQuery = "from EvalItem as item where item.scale.id = '" + scaleId + "'";
+		if ( count(hqlQuery) > 0 ) {
+			// this is used by something
+			return true;
+		}
+		return false;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#isUsedItem(java.lang.Long)
+	 */
+	public boolean isUsedItem(Long itemId) {
+		log.debug("itemId: " + itemId);
+		String hqlQuery = "from EvalTemplateItem as ti where ti.item.id = '" + itemId + "'";
+		if ( count(hqlQuery) > 0 ) {
+			// this is used by something
+			return true;
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.dao.EvaluationDao#isUsedTemplate(java.lang.Long)
+	 */
+	public boolean isUsedTemplate(Long templateId) {
+		log.debug("templateId: " + templateId);
+		String hqlQuery = "from EvalEvaluation as eval where eval.template.id = '" + templateId + "'";
+		if ( count(hqlQuery) > 0 ) {
+			// this is used by something
+			return true;
+		}
+		return false;
+	}
+
 
 	/**
 	 * produce a comma demlimited string like "item1','item2','item3" from a string array
@@ -601,8 +668,6 @@ public class EvaluationDaoImpl
 	}
 
 	/**
-	 * 
-	 *
 	 * @author Aaron Zeckoski (aaronz@vt.edu)
 	 */
 	private static class EvaluationDateComparator implements Comparator {

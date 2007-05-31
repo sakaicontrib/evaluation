@@ -409,16 +409,16 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 		// test valid template ids
 		l = evaluations.getEvaluationsByTemplateId( etdl.templatePublic.getId() );
 		Assert.assertNotNull(l);
-		Assert.assertEquals(3, l.size());
+		Assert.assertEquals(2, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.evaluationNew.getId() ));
-		Assert.assertTrue(ids.contains( etdl.evaluationActive.getId() ));
 		Assert.assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
 
 		l = evaluations.getEvaluationsByTemplateId( etdl.templateUser.getId() );
 		Assert.assertNotNull(l);
-		Assert.assertEquals(1, l.size());
+		Assert.assertEquals(2, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
+		Assert.assertTrue(ids.contains( etdl.evaluationActive.getId() ));
 		Assert.assertTrue(ids.contains( etdl.evaluationViewable.getId() ));
 
 		// test no evaluations for a template
@@ -441,10 +441,10 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 	public void testCountEvaluationsByTemplateId() {
 		// test valid template ids
 		int count = evaluations.countEvaluationsByTemplateId( etdl.templatePublic.getId() );
-		Assert.assertEquals(3, count);
+		Assert.assertEquals(2, count);
 
 		count = evaluations.countEvaluationsByTemplateId( etdl.templateUser.getId() );
-		Assert.assertEquals(1, count);
+		Assert.assertEquals(2, count);
 
 		// test no evaluations for a template
 		count = evaluations.countEvaluationsByTemplateId( etdl.templateUnused.getId() );
@@ -717,6 +717,82 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 		contexts = (List) m.get( EvalTestDataLoad.INVALID_LONG_ID );
 		Assert.assertNotNull(contexts);
 		Assert.assertEquals(0, contexts.size());
+	}
+
+
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl#getEvalCategories(java.lang.String)}.
+	 */
+	public void testGetEvalCategories() {
+		String[] cats = null;
+
+		// get all categories in the system
+		cats = evaluations.getEvalCategories(null);
+		Assert.assertNotNull(cats);
+		Assert.assertEquals(2, cats.length);
+		Assert.assertEquals(EvalTestDataLoad.EVAL_CATEGORY_1, cats[0]);
+		Assert.assertEquals(EvalTestDataLoad.EVAL_CATEGORY_2, cats[1]);
+
+		// get all categories for a user
+		cats = evaluations.getEvalCategories(EvalTestDataLoad.ADMIN_USER_ID);
+		Assert.assertNotNull(cats);
+		Assert.assertEquals(2, cats.length);
+		Assert.assertEquals(EvalTestDataLoad.EVAL_CATEGORY_1, cats[0]);
+		Assert.assertEquals(EvalTestDataLoad.EVAL_CATEGORY_2, cats[1]);
+
+		cats = evaluations.getEvalCategories(EvalTestDataLoad.MAINT_USER_ID);
+		Assert.assertNotNull(cats);
+		Assert.assertEquals(1, cats.length);
+		Assert.assertEquals(EvalTestDataLoad.EVAL_CATEGORY_1, cats[0]);
+
+		// get no categories for user with none
+		cats = evaluations.getEvalCategories(EvalTestDataLoad.USER_ID);
+		Assert.assertNotNull(cats);
+		Assert.assertEquals(0, cats.length);
+
+	}
+
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl#getEvaluationsByCategory(java.lang.String, java.lang.String)}.
+	 */
+	public void testGetEvaluationsByCategory() {
+		List evals = null;
+		List ids = null;
+
+		// get all evaluations for a category
+		evals = evaluations.getEvaluationsByCategory(EvalTestDataLoad.EVAL_CATEGORY_1, null);
+		Assert.assertNotNull(evals);
+		Assert.assertEquals(2, evals.size());
+		ids = EvalTestDataLoad.makeIdList(evals);
+		Assert.assertTrue(ids.contains( etdl.evaluationNewAdmin.getId() ));
+		Assert.assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
+
+		evals = evaluations.getEvaluationsByCategory(EvalTestDataLoad.EVAL_CATEGORY_2, null);
+		Assert.assertNotNull(evals);
+		Assert.assertEquals(1, evals.size());
+		ids = EvalTestDataLoad.makeIdList(evals);
+		Assert.assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
+
+		// get evaluations for a category and user
+		evals = evaluations.getEvaluationsByCategory(EvalTestDataLoad.EVAL_CATEGORY_1, EvalTestDataLoad.USER_ID);
+		Assert.assertNotNull(evals);
+		Assert.assertEquals(1, evals.size());
+		ids = EvalTestDataLoad.makeIdList(evals);
+		Assert.assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
+
+		evals = evaluations.getEvaluationsByCategory(EvalTestDataLoad.EVAL_CATEGORY_2, EvalTestDataLoad.USER_ID);
+		Assert.assertNotNull(evals);
+		Assert.assertEquals(0, evals.size());
+
+		// get evaluations for invalid or non-existent category
+		evals = evaluations.getEvaluationsByCategory(EvalTestDataLoad.INVALID_CONSTANT_STRING, null);
+		Assert.assertNotNull(evals);
+		Assert.assertEquals(0, evals.size());
+
+		// get evaluations for invalid or non-existent user
+		evals = evaluations.getEvaluationsByCategory(EvalTestDataLoad.EVAL_CATEGORY_1, null);
+		Assert.assertNotNull(evals);
+
 	}
 
 }

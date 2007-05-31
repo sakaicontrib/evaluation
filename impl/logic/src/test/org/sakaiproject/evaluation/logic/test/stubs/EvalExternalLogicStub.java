@@ -401,12 +401,13 @@ public class EvalExternalLogicStub implements EvalExternalLogic {
 		return "http://localhost:8080/access/eval-evaluation/123/";
 	}
 
-	public String getEntityURL(Class entityClass, Long entityId) {
+	public String getEntityURL(String entityPrefix, String entityId) {
 		return getEntityURL(null);
 	}
 
 	public void registerEntityEvent(String eventName, Serializable evaluationEntity) {
 		// pretending it worked
 	}
+
 
 }

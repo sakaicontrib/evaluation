@@ -67,6 +67,8 @@ public class EvalEvaluation implements java.io.Serializable {
 
 	private String authControl;
 
+	private String evalCategory;
+
 	// Constructors
 
 	/** default constructor */
@@ -93,7 +95,7 @@ public class EvalEvaluation implements java.io.Serializable {
 			Date studentsDate, Date instructorsDate, String state, String instructorOpt, Integer reminderDays, String reminderFromEmail, String termId,
 			EvalEmailTemplate availableEmailTemplate, EvalEmailTemplate reminderEmailTemplate, EvalTemplate template, EvalTemplate addedTemplate,
 			Set responses, Boolean resultsPrivate, Boolean blankResponsesAllowed, Boolean modifyResponsesAllowed, Boolean unregisteredAllowed, Boolean locked,
-			String authControl) {
+			String authControl, String evalCategory) {
 		this.lastModified = lastModified;
 		this.owner = owner;
 		this.title = title;
@@ -120,6 +122,7 @@ public class EvalEvaluation implements java.io.Serializable {
 		this.unregisteredAllowed = unregisteredAllowed;
 		this.locked = locked;
 		this.authControl = authControl;
+		this.evalCategory = evalCategory;
 	}
 
 	// Property accessors
@@ -337,6 +340,14 @@ public class EvalEvaluation implements java.io.Serializable {
 
 	public void setAuthControl(String authControl) {
 		this.authControl = authControl;
+	}
+
+	public String getEvalCategory() {
+		return evalCategory;
+	}
+
+	public void setEvalCategory(String evalCategory) {
+		this.evalCategory = evalCategory;
 	}
 
 }

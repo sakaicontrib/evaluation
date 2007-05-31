@@ -80,15 +80,6 @@ public interface EvalTemplatesLogic {
 	// PERMISSIONS
 
 	/**
-	 * Check if a user can control (create, modify, or delete) a template
-	 * 
-	 * @param userId the internal user id (not username)
-	 * @param templateId the id of an EvalTemplate object
-	 * @return true if the user can control the template, false otherwise
-	 */
-	public boolean canControlTemplate(String userId, Long templateId);
-
-	/**
 	 * Check if a user can create templates (should check system wide)
 	 * 
 	 * @param userId the internal user id (not username)
@@ -96,7 +87,28 @@ public interface EvalTemplatesLogic {
 	 */
 	public boolean canCreateTemplate(String userId);
 
-	// checks
+	/**
+	 * Check if a user can modify a template,
+	 * locked templates cannot be modified
+	 * 
+	 * @param userId the internal user id (not username)
+	 * @param templateId the id of an {@link EvalTemplate} object
+	 * @return true if the user can control the template, false otherwise
+	 */
+	public boolean canModifyTemplate(String userId, Long templateId);
+
+	/**
+	 * Check if a user can delete a template,
+	 * locked templates or those used in an evaluation cannot be removed
+	 * 
+	 * @param userId the internal user id (not username)
+	 * @param templateId the id of an {@link EvalTemplate} object
+	 * @return true if the user can remove the template, false otherwise
+	 */
+	public boolean canRemoveTemplate(String userId, Long templateId);
+
+
+	// CHECKS
 
 	/**
 	 * Check if a title can be used for a new template,

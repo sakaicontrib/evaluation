@@ -34,12 +34,12 @@ import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
 import org.sakaiproject.evaluation.logic.impl.interceptors.EvaluationModificationRegistry;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
-import org.sakaiproject.evaluation.model.utils.EvalUtils;
 
 /**
  * Implementation for EvalEvaluationsLogic
@@ -253,14 +253,13 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 			evalJobLogic.processEvaluationChange(evaluation);
 		}
 
+		// effectively we are locking the evaluation when a user replies to it, otherwise the chain can be changed
 		if (evaluation.getLocked().booleanValue()) {
 			// lock evaluation and associated template
 			log.info("Locking evaluation ("+evaluation.getId()+") and associated template ("+evaluation.getTemplate().getId()+")");
 			dao.lockEvaluation(evaluation);			
-		} else {
-			// just lock the template and associated items
-			dao.lockTemplate(evaluation.getTemplate(), Boolean.TRUE);
 		}
+
 	}
 
 	/* (non-Javadoc)
@@ -441,7 +440,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 		}
 
 		// get the evaluations
-		Set s = dao.getEvaluationsByEvalGroups( evalGroupIds, activeOnly, false );
+		Set s = dao.getEvaluationsByEvalGroups( evalGroupIds, activeOnly, false, false );
 
 		if (untakenOnly) {
 			// filter out the evaluations this user already took
@@ -632,54 +631,134 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 			return false;
 		}
 
-		// check that the evalGroupId is valid for this evaluation
-		List acs = dao.findByProperties(EvalAssignGroup.class, 
-				new String[] {"evaluation.id", "evalGroupId"}, 
-				new Object[] {evaluationId, evalGroupId});
-		if (acs.size() <= 0) {
-			log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") in this evalGroupId (" + evalGroupId + "), not assigned");
+		if (evalGroupId == null) {
+			// if no group id suppplied then simply check to see if the user is in any of the groups assigned
+			log.info("No evalGroupId supplied, doing abbreviated check for evalId=" + evaluationId + ", userId=" + userId);
+			if ( external.isUserAdmin(userId) ) {
+				// admin trumps being in a group
+				return true;
+			}
+
+			// hopefully this is faster than checking if the user has the right permission in every group -AZ
+			List userEvalGroups = external.getEvalGroupsForUser(userId, EvalConstants.PERM_TAKE_EVALUATION);
+			String[] evalGroupIds = new String[userEvalGroups.size()];
+			for (int i=0; i<userEvalGroups.size(); i++) {
+				EvalGroup group = (EvalGroup) userEvalGroups.get(i);
+				evalGroupIds[i] = group.evalGroupId;
+			}
+
+			List ags = dao.findByProperties(EvalAssignGroup.class, 
+					new String[] {"evaluation.id", "instructorApproval", "evalGroupId"}, 
+					new Object[] {evaluationId, Boolean.TRUE, evalGroupIds});
+			if (ags.size() > 0) {
+				// ok if at least one group is approved and in the set of groups this user can take evals in for this eval id
+				return true;
+			}
 			return false;
 		} else {
-			// make sure instructor approval is true
-			EvalAssignGroup eac = (EvalAssignGroup) acs.get(0);
-			if (! eac.getInstructorApproval().booleanValue() ) {
-				log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") in this evalGroupId (" + evalGroupId + "), instructor has not approved");
+			// check that the evalGroupId is valid for this evaluation
+			List ags = dao.findByProperties(EvalAssignGroup.class, 
+					new String[] {"evaluation.id", "evalGroupId"}, 
+					new Object[] {evaluationId, evalGroupId});
+			if (ags.size() <= 0) {
+				log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") in this evalGroupId (" + evalGroupId + "), not assigned");
+				return false;
+			} else {
+				// make sure instructor approval is true
+				EvalAssignGroup eac = (EvalAssignGroup) ags.get(0);
+				if (! eac.getInstructorApproval().booleanValue() ) {
+					log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") in this evalGroupId (" + evalGroupId + "), instructor has not approved");
+					return false;
+				}
+			}
+
+			// check the user permissions
+			if ( ! external.isUserAdmin(userId) && 
+					! external.isUserAllowedInEvalGroup(userId, EvalConstants.PERM_TAKE_EVALUATION, evalGroupId) ) {
+				log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") without permission");
 				return false;
 			}
-		}
 
-		// check the user permissions
-		if ( ! external.isUserAdmin(userId) && 
-				! external.isUserAllowedInEvalGroup(userId, EvalConstants.PERM_TAKE_EVALUATION, evalGroupId) ) {
-			log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") without permission");
-			return false;
-		}
-
-		// check if the user already took this evaluation
-		int evalResponsesForUser = dao.countByProperties(EvalResponse.class, 
-				new String[] {"owner", "evaluation.id", "evalGroupId"}, 
-				new Object[] {userId, evaluationId, evalGroupId});
-		if (evalResponsesForUser > 0) {
-			// check if persistent object is the one that already exists
-			List l = dao.findByProperties(EvalResponse.class, 
+			// check if the user already took this evaluation
+			int evalResponsesForUser = dao.countByProperties(EvalResponse.class, 
 					new String[] {"owner", "evaluation.id", "evalGroupId"}, 
 					new Object[] {userId, evaluationId, evalGroupId});
-			EvalResponse response = (EvalResponse) l.get(0);
-			if (response.getId() == null && l.size() == 1) {
-				// all is ok, the "existing" response is a hibernate persistent object
-				// WARNING: this is a bit of a hack though
-			} else {
-				// user already has a response saved for this evaluation and evalGroupId
-				if (eval.getModifyResponsesAllowed() == null || 
-						eval.getModifyResponsesAllowed().booleanValue() == false) {
-					// user cannot modify existing responses
-					log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") again, already taken");
-					return false;
+			if (evalResponsesForUser > 0) {
+				// check if persistent object is the one that already exists
+				List l = dao.findByProperties(EvalResponse.class, 
+						new String[] {"owner", "evaluation.id", "evalGroupId"}, 
+						new Object[] {userId, evaluationId, evalGroupId});
+				EvalResponse response = (EvalResponse) l.get(0);
+				if (response.getId() == null && l.size() == 1) {
+					// all is ok, the "existing" response is a hibernate persistent object
+					// WARNING: this is a bit of a hack though
+				} else {
+					// user already has a response saved for this evaluation and evalGroupId
+					if (eval.getModifyResponsesAllowed() == null || 
+							eval.getModifyResponsesAllowed().booleanValue() == false) {
+						// user cannot modify existing responses
+						log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") again, already taken");
+						return false;
+					}
 				}
 			}
 		}
 
 		return true;
+	}
+
+
+	// CATEGORIES
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalEvaluationsLogic#getEvalCategories(java.lang.String)
+	 */
+	public String[] getEvalCategories(String userId) {
+		log.debug("userId: " + userId );
+
+		// return all current categories or only return categories created by this user if not null
+		List l = dao.getEvalCategories(userId);
+		return (String[]) l.toArray(new String[] {});
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalEvaluationsLogic#getEvaluationsByCategory(java.lang.String, java.lang.String)
+	 */
+	public List getEvaluationsByCategory(String evalCategory, String userId) {
+		log.debug("evalCategory: " + evalCategory + ", userId: " + userId );
+
+		if (evalCategory == null || evalCategory.equals("")) {
+			throw new IllegalArgumentException("evalCategory cannot be blank or null");
+		}
+
+		List evals = new ArrayList();
+		if (userId == null) {
+			// get all evals for a category
+			evals = dao.findByProperties(EvalEvaluation.class,
+					new String[] {"evalCategory"}, 
+					new Object[] {evalCategory}, 
+					new int[] {EvaluationDao.EQUALS},
+					new String[] {"startDate"});
+		} else {
+			// get all evals for a specific user for a category
+			List takeGroups = external.getEvalGroupsForUser(userId, EvalConstants.PERM_TAKE_EVALUATION);
+
+			String[] evalGroupIds = new String[takeGroups.size()];
+			for (int i=0; i<takeGroups.size(); i++) {
+				EvalGroup c = (EvalGroup) takeGroups.get(i);
+				evalGroupIds[i] = c.evalGroupId;
+			}
+
+			Set s = dao.getEvaluationsByEvalGroups( evalGroupIds, true, false, true );
+			for (Iterator iter = s.iterator(); iter.hasNext();) {
+				EvalEvaluation eval = (EvalEvaluation) iter.next();
+				if ( evalCategory.equals(eval.getEvalCategory()) ) {
+					evals.add(eval);
+				}
+			}
+		}
+		return evals;
 	}
 
 

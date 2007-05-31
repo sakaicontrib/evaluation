@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.tool.viewparams;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 
 public class PreviewEvalParameters extends SimpleViewParameters {
+
 	public Long evaluationId;
 	public Long templateId; 
 	public String context;

@@ -64,7 +64,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 
 	private final int maxGroupsToDisplay = 5;
 
-	public static final String VIEW_ID = "summary"; //$NON-NLS-1$
+	public static final String VIEW_ID = "summary";
 	public String getViewID() {
 		return VIEW_ID;
 	}
@@ -103,8 +103,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
 	 */
-	public void fillComponents(UIContainer tofill, ViewParameters viewparams,
-			ComponentChecker checker) {
+	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
 		// local variables used in the render logic
 		String currentUserId = external.getCurrentUserId();
@@ -116,29 +115,29 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
 
 		// page title
-		UIMessage.make(tofill, "page-title", "summary.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "page-title", "summary.page.title");
 		
 		/*
 		 * top links here
 		 */
 		if (userAdmin) {
-			UIInternalLink.make(tofill, "administrate-toplink", //$NON-NLS-1$
-					UIMessage.make("administrate.page.title"),  //$NON-NLS-1$
+			UIInternalLink.make(tofill, "administrate-toplink",
+					UIMessage.make("administrate.page.title"), 
 				new SimpleViewParameters(AdministrateProducer.VIEW_ID));
 		}
 
 		if (createTemplate) {
-			UIInternalLink.make(tofill, "control-templates-link", //$NON-NLS-1$
-					UIMessage.make("controltemplates.page.title"),  //$NON-NLS-1$
+			UIInternalLink.make(tofill, "control-templates-link",
+					UIMessage.make("controltemplates.page.title"), 
 				new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
-			UIInternalLink.make(tofill, "control-items-link", //$NON-NLS-1$
-					UIMessage.make("controlitems.page.title"),  //$NON-NLS-1$
+			UIInternalLink.make(tofill, "control-items-link",
+					UIMessage.make("controlitems.page.title"), 
 				new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
 		}
 
 		if (beginEvaluation) {
-			UIInternalLink.make(tofill, "control-evaluations-link", //$NON-NLS-1$
-					UIMessage.make("controlevaluations.page.title"),  //$NON-NLS-1$
+			UIInternalLink.make(tofill, "control-evaluations-link",
+					UIMessage.make("controlevaluations.page.title"), 
 				new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
 		}
 
@@ -147,9 +146,9 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		 */
 		boolean userHasNotifications = false;
 		if (userHasNotifications) {
-			UIBranchContainer notificationsBC = UIBranchContainer.make(tofill, "notificationsBox:"); //$NON-NLS-1$
-			UIMessage.make(notificationsBC, "notifications-title","summary.notifications.title"); //$NON-NLS-1$ //$NON-NLS-2$
-			UIMessage.make(notificationsBC, "notifications-higher-level", "summary.eval.assigned.from.above"); //$NON-NLS-1$ //$NON-NLS-2$
+			UIBranchContainer notificationsBC = UIBranchContainer.make(tofill, "notificationsBox:");
+			UIMessage.make(notificationsBC, "notifications-title","summary.notifications.title");
+			UIMessage.make(notificationsBC, "notifications-higher-level", "summary.eval.assigned.from.above");
 			// add other stuff
 		}
 
@@ -158,9 +157,9 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		 */
 		List evalsToTake = evaluationsLogic.getEvaluationsForUser(currentUserId, true, false);
 		if (evalsToTake.size() > 0) {
-			UIBranchContainer evalBC = UIBranchContainer.make(tofill, "evaluationsBox:"); //$NON-NLS-1$
+			UIBranchContainer evalBC = UIBranchContainer.make(tofill, "evaluationsBox:");
 
-			UIMessage.make(evalBC, "evaluations-title", "summary.evaluations.title"); //$NON-NLS-1$ //$NON-NLS-2$
+			UIMessage.make(evalBC, "evaluations-title", "summary.evaluations.title");
 			// build an array of evaluation ids
 			Long[] evalIds = new Long[evalsToTake.size()];
 			for (int i=0; i<evalsToTake.size(); i++) {
@@ -174,11 +173,11 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			for (Iterator itEvals = evalsToTake.iterator(); itEvals.hasNext();) {
 				EvalEvaluation eval = (EvalEvaluation) itEvals.next();
 
-				UIBranchContainer evalrow = UIBranchContainer.make(evalBC, "evaluationsList:", eval.getId().toString() ); //$NON-NLS-1$
+				UIBranchContainer evalrow = UIBranchContainer.make(evalBC, "evaluationsList:", eval.getId().toString() );
 
-				UIOutput.make(evalrow, "evaluationTitle", eval.getTitle() ); //$NON-NLS-1$
-				UIOutput.make(evalrow, "evaluationStartDate", df.format(eval.getStartDate()) ); //$NON-NLS-1$
-				UIOutput.make(evalrow, "evaluationDueDate", df.format(eval.getDueDate()) ); //$NON-NLS-1$
+				UIOutput.make(evalrow, "evaluationTitle", eval.getTitle() );
+				UIOutput.make(evalrow, "evaluationStartDate", df.format(eval.getStartDate()) );
+				UIOutput.make(evalrow, "evaluationDueDate", df.format(eval.getDueDate()) );
 
 				List contexts = (List) evalContexts.get(eval.getId());
 				for (int j=0; j<contexts.size(); j++) {
@@ -187,7 +186,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 					if(external.isUserAllowedInEvalGroup(external.getCurrentUserId(), EvalConstants.PERM_TAKE_EVALUATION, ctxt.evalGroupId)){
 						String context = ctxt.evalGroupId;
 						String title = ctxt.title;
-						String status = "unknown.caps"; //$NON-NLS-1$
+						String status = "unknown.caps";
 
 						// find the object in the list matching the evalGroupId and evalId,
 						// leave as null if not found -AZ
@@ -205,31 +204,31 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 							// TODO - do something when the evalGroupId matches
 						}
 
-						UIBranchContainer evalcourserow = UIBranchContainer.make(evalrow, "evaluationsCourseList:", context ); //$NON-NLS-1$
+						UIBranchContainer evalcourserow = UIBranchContainer.make(evalrow, "evaluationsCourseList:", context );
 
 						// set status
 						if (response != null && response.getEndTime() != null) {
 							if (eval.getModifyResponsesAllowed().booleanValue()) {
 								// take eval link when pending
-								UIInternalLink.make(evalcourserow, "evaluationCourseLink", title,  //$NON-NLS-1$
+								UIInternalLink.make(evalcourserow, "evaluationCourseLink", title, 
 										new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID,
 												eval.getId(), response.getId(), context) );
-								status = "summary.status.pending"; //$NON-NLS-1$							
+								status = "summary.status.pending";							
 							} else {
 								// preview only when completed
-								UIInternalLink.make(evalcourserow, "evaluationCourseLink", title,  //$NON-NLS-1$
+								UIInternalLink.make(evalcourserow, "evaluationCourseLink", title, 
 										new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID,
 												eval.getId(),eval.getTemplate().getId(),context, SummaryProducer.VIEW_ID) );
-								status = "summary.status.completed"; //$NON-NLS-1$
+								status = "summary.status.completed";
 							}
 						} else {
 							// take eval link when pending
-							UIInternalLink.make(evalcourserow, "evaluationCourseLink", title,  //$NON-NLS-1$
+							UIInternalLink.make(evalcourserow, "evaluationCourseLink", title, 
 									new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID,
 											eval.getId(), null, context) );
-							status = "summary.status.pending"; //$NON-NLS-1$
+							status = "summary.status.pending";
 						}
-						UIMessage.make(evalcourserow, "evaluationCourseStatus", status );					 //$NON-NLS-1$
+						UIMessage.make(evalcourserow, "evaluationCourseStatus", status );					
 					}
 				}
 			}
@@ -279,52 +278,51 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		}
 		
 		if (! newEvals.isEmpty()) {
-			UIBranchContainer evalAdminBC = UIBranchContainer.make(tofill, "evalAdminBox:"); //$NON-NLS-1$
-			UIInternalLink.make(evalAdminBC, "evaladmin-title",  //$NON-NLS-1$
-					UIMessage.make("summary.evaluations.admin"),  //$NON-NLS-1$
+			UIBranchContainer evalAdminBC = UIBranchContainer.make(tofill, "evalAdminBox:");
+			UIInternalLink.make(evalAdminBC, "evaladmin-title", 
+					UIMessage.make("summary.evaluations.admin"), 
 					new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID) );
-			UIForm evalAdminForm = UIForm.make(evalAdminBC , "evalAdminForm"); //$NON-NLS-1$
+			UIForm evalAdminForm = UIForm.make(evalAdminBC , "evalAdminForm");
 			
-			UIMessage.make(evalAdminForm, "evaladmin-header-title","summary.header.title"); //$NON-NLS-1$ //$NON-NLS-2$
-			UIMessage.make(evalAdminForm, "evaladmin-header-status", "summary.header.status"); //$NON-NLS-1$ //$NON-NLS-2$
-			UIMessage.make(evalAdminForm, "evaladmin-header-date", "summary.header.date"); //$NON-NLS-1$ //$NON-NLS-2$
+			UIMessage.make(evalAdminForm, "evaladmin-header-title","summary.header.title");
+			UIMessage.make(evalAdminForm, "evaladmin-header-status", "summary.header.status");
+			UIMessage.make(evalAdminForm, "evaladmin-header-date", "summary.header.date");
 
 			for (Iterator iter = newEvals.iterator(); iter.hasNext();) {
 				EvalEvaluation eval = (EvalEvaluation) iter.next();
 
 				UIBranchContainer evalrow = UIBranchContainer.make(evalAdminForm, 
-						"evalAdminList:", eval.getId().toString() ); //$NON-NLS-1$
+						"evalAdminList:", eval.getId().toString() );
 				
 				Date date;
 				
 				String evalStatus=evaluationsLogic.getEvaluationState(eval.getId());
-				if (evalStatus==EvalConstants.EVALUATION_STATE_INQUEUE){
+				if (evalStatus == EvalConstants.EVALUATION_STATE_INQUEUE){
 					date=eval.getStartDate();
-					UIMessage.make(evalrow, "evalAdminStatus", "summary.status."+evalStatus); //$NON-NLS-1$
+					UIMessage.make(evalrow, "evalAdminStatus", "summary.status."+evalStatus);
 				}
-				else if (evalStatus==EvalConstants.EVALUATION_STATE_ACTIVE){
+				else if (evalStatus == EvalConstants.EVALUATION_STATE_ACTIVE){
 					date=eval.getStopDate();
-					UIMessage.make(evalrow, "evalAdminStatus", "summary.status."+evalStatus); //$NON-NLS-1$
+					UIMessage.make(evalrow, "evalAdminStatus", "summary.status."+evalStatus);
 				}
-				else if (evalStatus==EvalConstants.EVALUATION_STATE_DUE){
+				else if (evalStatus == EvalConstants.EVALUATION_STATE_DUE){
 					date=eval.getDueDate();
-					UIMessage.make(evalrow, "evalAdminStatus", "summary.status."+evalStatus); //$NON-NLS-1$
+					UIMessage.make(evalrow, "evalAdminStatus", "summary.status."+evalStatus);
 				}
-				else if (evalStatus==EvalConstants.EVALUATION_STATE_CLOSED){
+				else if (evalStatus == EvalConstants.EVALUATION_STATE_CLOSED){
 					date=eval.getViewDate();
-					UIMessage.make(evalrow, "evalAdminStatus", "summary.status."+evalStatus); //$NON-NLS-1$
+					UIMessage.make(evalrow, "evalAdminStatus", "summary.status."+evalStatus);
 				}
-				else if (evalStatus==EvalConstants.EVALUATION_STATE_VIEWABLE){
+				else if (evalStatus == EvalConstants.EVALUATION_STATE_VIEWABLE) {
 					date=eval.getViewDate();
 					int ctResponses = responsesLogic.countResponses(eval.getId(), null);
 					int ctEnrollments = getTotalEnrollmentsForEval(eval.getId());
 					Integer respReqToViewResults = (Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS);
-					if( (respReqToViewResults.intValue()<=ctResponses) | (ctResponses>=ctEnrollments) ){
-					UIInternalLink.make(evalrow, "viewReportLink", UIMessage.make("viewreport.page.title"),  //$NON-NLS-1$ //$NON-NLS-2$
-							new TemplateViewParameters(ChooseReportGroupsProducer.VIEW_ID, eval.getId() ));	
-					}
-					else{
-					UIMessage.make(evalrow, "evalAdminStatus", "summary.status."+evalStatus); //$NON-NLS-1$
+					if ( (respReqToViewResults.intValue()<=ctResponses) || (ctResponses>=ctEnrollments) ) {
+						UIInternalLink.make(evalrow, "viewReportLink", UIMessage.make("viewreport.page.title"), 
+								new TemplateViewParameters(ChooseReportGroupsProducer.VIEW_ID, eval.getId() ));	
+					} else {
+						UIMessage.make(evalrow, "evalAdminStatus", "summary.status."+evalStatus);
 					}
 				}
 				else date=eval.getStartDate();
@@ -338,17 +336,17 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 				 * 3) if a evaluation is closed, title link go to previewEval page with populated data
 				 */
 				if (evalStatus==EvalConstants.EVALUATION_STATE_CLOSED || evalStatus==EvalConstants.EVALUATION_STATE_VIEWABLE){
-					UIInternalLink.make(evalrow, "evalAdminTitleLink_preview", eval.getTitle(),  //$NON-NLS-1$
+					UIInternalLink.make(evalrow, "evalAdminTitleLink_preview", eval.getTitle(), 
 							new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID,
 									eval.getId(),eval.getTemplate().getId(),null, SummaryProducer.VIEW_ID) );
 				} else {
-					UICommand evalEditUIC = UICommand.make(evalrow, "evalAdminTitleLink_edit", eval.getTitle(), //$NON-NLS-1$
-						"#{evaluationBean.editEvalSettingAction}"); //$NON-NLS-1$
-					evalEditUIC.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", eval.getId())); //$NON-NLS-1$
+					UICommand evalEditUIC = UICommand.make(evalrow, "evalAdminTitleLink_edit", eval.getTitle(),
+						"#{evaluationBean.editEvalSettingAction}");
+					evalEditUIC.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", eval.getId()));
 				}
 				
-				UIMessage.make(evalrow, "evalAdminDateLabel", "summary.label."+evalStatus); //$NON-NLS-1$
-				UIOutput.make(evalrow, "evalAdminDate", df.format(date) ); //$NON-NLS-1$
+				UIMessage.make(evalrow, "evalAdminDateLabel", "summary.label."+evalStatus);
+				UIOutput.make(evalrow, "evalAdminDate", df.format(date) );
 			}
 		}
 
@@ -358,12 +356,12 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		 */
 		// TODO - only render this when not inside a worksite -AZ
 //		if (currentContext == null) {
-			String NO_ITEMS = "no.list.items"; //$NON-NLS-1$
+			String NO_ITEMS = "no.list.items";
 
-			UIBranchContainer contextsBC = UIBranchContainer.make(tofill, "siteListingBox:"); //$NON-NLS-1$
-			UIMessage.make(contextsBC, "sitelisting-title", "summary.sitelisting.title"); //$NON-NLS-1$ //$NON-NLS-2$
+			UIBranchContainer contextsBC = UIBranchContainer.make(tofill, "siteListingBox:");
+			UIMessage.make(contextsBC, "sitelisting-title", "summary.sitelisting.title");
 
-			UIMessage.make(contextsBC, "sitelisting-evaluated-text", "summary.sitelisting.evaluated"); //$NON-NLS-1$ //$NON-NLS-2$
+			UIMessage.make(contextsBC, "sitelisting-evaluated-text", "summary.sitelisting.evaluated");
 			List evaluatedContexts = external.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_BE_EVALUATED);
 			if (evaluatedContexts.size() > 0) {
 				for (int i=0; i<evaluatedContexts.size(); i++) {
@@ -372,15 +370,15 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 								new Object[] { new Integer(evaluatedContexts.size() - maxGroupsToDisplay) });
 						break;
 					}
-					UIBranchContainer evaluatedBC = UIBranchContainer.make(contextsBC, "evaluatedList:", i+""); //$NON-NLS-1$
+					UIBranchContainer evaluatedBC = UIBranchContainer.make(contextsBC, "evaluatedList:", i+"");
 					EvalGroup c = (EvalGroup) evaluatedContexts.get(i);
-					UIOutput.make(evaluatedBC, "evaluatedListTitle", c.title); //$NON-NLS-1$
+					UIOutput.make(evaluatedBC, "evaluatedListTitle", c.title);
 				}
 			} else {
-				UIMessage.make(contextsBC, "evaluatedListNone", NO_ITEMS ); //$NON-NLS-1$
+				UIMessage.make(contextsBC, "evaluatedListNone", NO_ITEMS );
 			}
 
-			UIMessage.make(contextsBC, "sitelisting-evaluate-text", "summary.sitelisting.evaluate"); //$NON-NLS-1$ //$NON-NLS-2$
+			UIMessage.make(contextsBC, "sitelisting-evaluate-text", "summary.sitelisting.evaluate");
 			List evaluateContexts = external.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_TAKE_EVALUATION);
 			if (evaluateContexts.size() > 0) {
 				for (int i=0; i<evaluateContexts.size(); i++) {
@@ -389,12 +387,12 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 								new Object[] { new Integer(evaluateContexts.size() - maxGroupsToDisplay) });
 						break;
 					}
-					UIBranchContainer evaluateBC = UIBranchContainer.make(contextsBC, "evaluateList:", i+""); //$NON-NLS-1$
+					UIBranchContainer evaluateBC = UIBranchContainer.make(contextsBC, "evaluateList:", i+"");
 					EvalGroup c = (EvalGroup) evaluateContexts.get(i);
-					UIOutput.make(evaluateBC, "evaluateListTitle", c.title); //$NON-NLS-1$
+					UIOutput.make(evaluateBC, "evaluateListTitle", c.title);
 				}
 			} else {
-				UIMessage.make(contextsBC, "evaluateListNone", NO_ITEMS ); //$NON-NLS-1$
+				UIMessage.make(contextsBC, "evaluateListNone", NO_ITEMS );
 			}
 //		}
 
@@ -402,18 +400,18 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		 * For the Evaluation tools box
 		 */
 		if (createTemplate || beginEvaluation) {
-			UIBranchContainer toolsBC = UIBranchContainer.make(tofill, "toolsBox:"); //$NON-NLS-1$
-			UIMessage.make(toolsBC, "tools-title", "summary.tools.title"); //$NON-NLS-1$ //$NON-NLS-2$
+			UIBranchContainer toolsBC = UIBranchContainer.make(tofill, "toolsBox:");
+			UIMessage.make(toolsBC, "tools-title", "summary.tools.title");
 
 			if ( createTemplate ) {
-				UIInternalLink.make(toolsBC, "createTemplateLink", //$NON-NLS-1$
-					UIMessage.make("createtemplate.page.title"), //$NON-NLS-1$
+				UIInternalLink.make(toolsBC, "createTemplateLink",
+					UIMessage.make("createtemplate.page.title"),
 					new TemplateViewParameters(ModifyTemplateProducer.VIEW_ID, null));
 			}
 
 			if ( beginEvaluation ) {
-				UIInternalLink.make(toolsBC, "beginEvaluationLink", //$NON-NLS-1$
-					UIMessage.make("starteval.page.title"), //$NON-NLS-1$
+				UIInternalLink.make(toolsBC, "beginEvaluationLink",
+					UIMessage.make("starteval.page.title"),
 					new TemplateViewParameters(EvaluationStartProducer.VIEW_ID, null));
 			}
 		}

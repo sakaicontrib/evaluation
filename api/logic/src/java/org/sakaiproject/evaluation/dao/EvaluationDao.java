@@ -76,9 +76,11 @@ public interface EvaluationDao extends CompleteGenericDao {
 	 * @param activeOnly if true, only include active evaluations, if false, include all evaluations
 	 * @param includeUnApproved if true, include the evaluations for contexts which have not been instructor approved yet,
 	 * you should not include these when displaying evaluations to users to take or sending emails
+	 * @param includeAnonymous if true then include evaluations which can be taken anonymously (since these are accessible
+	 * to any user), if false, only include evals with require keys or authentication
 	 * @return a Set of EvalEvaluation objects which are active
 	 */
-	public Set getEvaluationsByEvalGroups(String[] evalGroupIds, boolean activeOnly, boolean includeUnApproved);
+	public Set getEvaluationsByEvalGroups(String[] evalGroupIds, boolean activeOnly, boolean includeUnApproved, boolean includeAnonymous);
 
 	/**
 	 * Returns all answers to the given item associated with 
@@ -138,6 +140,15 @@ public interface EvaluationDao extends CompleteGenericDao {
 	 */
 	public List getTemplateItemsByTemplate(Long templateId, String[] nodeIds, String[] instructorIds, String[] groupIds);
 
+	/**
+	 * Get a list of evaluation categories
+	 * 
+	 * @param userId the internal user id (not username), if null then return all categories
+	 * @return a list of {@link String}
+	 */
+	public List getEvalCategories(String userId);
+
+
 	// LOCKING METHODS
 
 	/**
@@ -181,5 +192,32 @@ public interface EvaluationDao extends CompleteGenericDao {
 	 * @return true if success, false otherwise
 	 */
 	public boolean lockEvaluation(EvalEvaluation evaluation);
+
+
+	// IN-USE METHODS
+
+	/**
+	 * Check if this scale is used by any items
+	 * 
+	 * @param scaleId the unique id for an {@link EvalScale} object
+	 * @return true if used, false otherwise
+	 */
+	public boolean isUsedScale(Long scaleId);
+
+	/**
+	 * Check if this item is used by any templates
+	 * 
+	 * @param itemId the unique id for an {@link EvalItem} object
+	 * @return true if used, false otherwise
+	 */
+	public boolean isUsedItem(Long itemId);
+
+	/**
+	 * Check if this template is used by any evaluations
+	 * 
+	 * @param templateId the unique id for an {@link EvalTemplate} object
+	 * @return true if used, false otherwise
+	 */
+	public boolean isUsedTemplate(Long templateId);
 
 }

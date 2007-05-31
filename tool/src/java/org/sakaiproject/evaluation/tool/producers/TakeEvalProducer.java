@@ -16,18 +16,20 @@
 package org.sakaiproject.evaluation.tool.producers;
 
 import java.awt.Color;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.model.EvalAnswer;
-import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
@@ -93,6 +95,11 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 		this.localResponsesLogic = localResponsesLogic;
 	}
 
+	private Locale locale;
+	public void setLocale(Locale locale) {
+		this.locale = locale;
+	}
+
 
     String responseOTPBinding = "responseBeanLocator";
     String responseOTP = responseOTPBinding + ".";
@@ -122,8 +129,12 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 	 */
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
-		String currentUserId = external.getCurrentUserId();
+		boolean canAccess = false;
 		boolean userCanAccess = false;
+
+		String currentUserId = external.getCurrentUserId();
+		// use a date which is related to the current users locale
+		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
 
 		UIMessage.make(tofill, "page-title", "takeeval.page.title");
 
@@ -145,45 +156,64 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 		UIMessage.make(tofill, "eval-title-header", "takeeval.eval.title.header");
 		UIOutput.make(tofill, "evalTitle", eval.getTitle());
 
-		if (evalGroupId != null) {
-			// there was an eval group passed in so make sure things are ok
-			if (evalsLogic.canTakeEvaluation(currentUserId, evaluationId, evalGroupId)) {
-				userCanAccess = true;
-			}
+		// check the states of the evaluation first to give the user a tip of this eval is not takeable,
+		// also avoids wasting time checking permissions when the evaluations certainly is closed
+		if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(EvalUtils.getEvaluationState(eval))) {
+			UIMessage.make(tofill, "eval-cannot-take-message", "takeeval.eval.not.open", 
+					new String[] {df.format(eval.getStartDate()), df.format(eval.getDueDate())} );
+		} else if (EvalConstants.EVALUATION_STATE_CLOSED.equals(EvalUtils.getEvaluationState(eval)) ||
+				EvalConstants.EVALUATION_STATE_VIEWABLE.equals(EvalUtils.getEvaluationState(eval))) {
+			UIMessage.make(tofill, "eval-cannot-take-message", "takeeval.eval.closed",
+					new String[] {df.format(eval.getDueDate())} );
 		} else {
-			// select the first eval group the current user can take evaluation in,
-			// also store the total number so we can give the user a list to choose from if there are more than one
-			Map evalAssignGroups = evalsLogic.getEvaluationGroups(new Long[] {eval.getId()}, true);
-			List groups = (List) evalAssignGroups.get(eval.getId());
-			List validGroups = new ArrayList(); // stores EvalGroup objects
-			for (Iterator iter = groups.iterator(); iter.hasNext();) {
-				EvalAssignGroup assignGroup = (EvalAssignGroup) iter.next();
-				if (evalsLogic.canTakeEvaluation(currentUserId, evaluationId, assignGroup.getEvalGroupId())) {
-					if (evalGroupId == null) {
-						evalGroupId = assignGroup.getEvalGroupId();
-						userCanAccess = true;
+			// eval state is possible to take eval
+			canAccess = true;
+		}
+
+		if (canAccess) {
+			// eval is accessible so check user can take it
+			if (evalGroupId != null) {
+				// there was an eval group passed in so make sure things are ok
+				if (evalsLogic.canTakeEvaluation(currentUserId, evaluationId, evalGroupId)) {
+					userCanAccess = true;
+				}
+			} else {
+				// select the first eval group the current user can take evaluation in,
+				// also store the total number so we can give the user a list to choose from if there are more than one
+				Map m = evalsLogic.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
+				EvalGroup[] evalGroups = EvalUtils.getGroupsInCommon(
+						external.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_TAKE_EVALUATION), 
+						(List) m.get(evaluationId) );
+				List validGroups = new ArrayList(); // stores EvalGroup objects
+				for (int i = 0; i < evalGroups.length; i++) {
+					EvalGroup group = evalGroups[i];
+					if (evalsLogic.canTakeEvaluation(currentUserId, evaluationId, group.evalGroupId)) {
+						if (evalGroupId == null) {
+							evalGroupId = group.evalGroupId;
+							userCanAccess = true;
+						}
+						validGroups.add( external.makeEvalGroupObject(group.evalGroupId) );
 					}
-					validGroups.add( external.makeEvalGroupObject(evalGroupId) );
 				}
-			}
-
-			// generate the get form to allow the user to choose a group if more than one is available
-			if (validGroups.size() > 1) {
-				String[] values = new String[validGroups.size()];
-				String[] labels = new String[validGroups.size()];
-				for (int i=0; i<validGroups.size(); i++) {
-					EvalGroup group = (EvalGroup) validGroups.get(i);
-					values[i] = group.evalGroupId;
-					labels[i] = group.title;
+	
+				// generate the get form to allow the user to choose a group if more than one is available
+				if (validGroups.size() > 1) {
+					String[] values = new String[validGroups.size()];
+					String[] labels = new String[validGroups.size()];
+					for (int i=0; i<validGroups.size(); i++) {
+						EvalGroup group = (EvalGroup) validGroups.get(i);
+						values[i] = group.evalGroupId;
+						labels[i] = group.title;
+					}
+	
+					// show the switch group selection and form
+					UIBranchContainer showSwitchGroup = UIBranchContainer.make(tofill, "show-switch-group:");
+					UIMessage.make(showSwitchGroup, "switch-group-header", "takeeval.switch.group.header");
+					UIForm chooseGroupForm = UIForm.make(showSwitchGroup, "switch-group-form", 
+							new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, responseId, evalGroupId));
+					UISelect.make(chooseGroupForm, "switch-group-list", values, labels,	"#{evalGroupId}");
+					UIMessage.make(chooseGroupForm, "switch-group-button", "takeeval.switch.group.button");
 				}
-
-				// show the switch group selection and form
-				UIBranchContainer showSwitchGroup = UIBranchContainer.make(tofill, "show-switch-group:");
-				UIMessage.make(showSwitchGroup, "switch-group-header", "takeeval.switch.group.header");
-				UIForm chooseGroupForm = UIForm.make(showSwitchGroup, "switch-group-form", 
-						new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, responseId, evalGroupId));
-				UISelect.make(chooseGroupForm, "switch-group-list", values, labels,	"#{evalGroupId}");
-				UIMessage.make(chooseGroupForm, "switch-group-button", "takeeval.switch.group.button");
 			}
 		}
 
@@ -191,7 +221,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 			// fill in group title
 			UIBranchContainer groupTitle = UIBranchContainer.make(tofill, "show-group-title:");
 			UIMessage.make(groupTitle, "group-title-header", "takeeval.group.title.header");	
-			UIVerbatim.make(groupTitle, "group-title", external.getDisplayTitle(evalGroupId) );
+			UIOutput.make(groupTitle, "group-title", external.getDisplayTitle(evalGroupId) );
 
 			// show instructions if not null
 			if (eval.getInstructions() != null) {
@@ -200,7 +230,8 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 				UIVerbatim.make(instructions, "eval-instructions", eval.getInstructions());
 			}
 
-			UIForm form = UIForm.make(tofill, "evaluationForm");
+			UIBranchContainer formBranch = UIBranchContainer.make(tofill, "form-branch:");
+			UIForm form = UIForm.make(formBranch, "evaluationForm");
 
 			//Binding the EvalEvaluation object to the EvalEvaluation object in TakeEvaluationBean.
 			form.parameters.add( new UIELBinding("#{takeEvalBean.eval}", new ELReference(evalOTP+eval.getId())));

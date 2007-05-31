@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.logic;
 
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
+import org.sakaiproject.evaluation.model.EvalEvaluation;
 
 
 /**
@@ -55,6 +56,25 @@ public interface EvalAssignsLogic {
 	 */
 	public void deleteAssignGroup(Long assignGroupId, String userId);
 
+	/**
+	 * Get an assign group by its unique id,
+	 * should mostly be used to determine if an assign group id is valid and 
+	 * to get the evaluation related to it
+	 * 
+	 * @param assignGroupId unique id for an {@link EvalAssignGroup} entity
+	 * @return an assign group entity or null if not found
+	 */
+	public EvalAssignGroup getAssignGroupById(Long assignGroupId);
+
+	/**
+	 * Get the unique id of an {@link EvalAssignGroup} based on the unique id
+	 * of an {@link EvalEvaluation} and an eval group id
+	 * 
+	 * @param evaluationId unique id of an {@link EvalEvaluation}
+	 * @param evalGroupId the internal unique ID for an evalGroup
+	 * @return a unique id for an {@link EvalAssignGroup}
+	 */
+	public Long getAssignGroupId(Long evaluationId, String evalGroupId);
 
 	// PERMISSIONS
 

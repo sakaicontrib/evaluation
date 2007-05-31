@@ -38,6 +38,7 @@ import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
+import uk.org.ponder.rsf.components.UILink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
@@ -124,11 +125,11 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 		}
 
 		if (createTemplate) {
-			UIInternalLink.make(tofill, "control-templates-link", //$NON-NLS-1$
-					UIMessage.make("controltemplates.page.title"),  //$NON-NLS-1$
+			UIInternalLink.make(tofill, "control-templates-link",
+					UIMessage.make("controltemplates.page.title"), 
 				new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
-			UIInternalLink.make(tofill, "control-items-link", //$NON-NLS-1$
-					UIMessage.make("controlitems.page.title"),  //$NON-NLS-1$
+			UIInternalLink.make(tofill, "control-items-link",
+					UIMessage.make("controlitems.page.title"), 
 				new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
 		}
 
@@ -181,9 +182,11 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 
 				UIBranchContainer evaluationRow = UIBranchContainer.make(evalForm, "inqueue-eval-row:", evaluation.getId().toString());
 
-				UIInternalLink.make(evaluationRow, "inqueue-eval-link", 
-						evaluation.getTitle(), 
-						new PreviewEvalParameters( PreviewEvalProducer.VIEW_ID, evaluation.getId(), evaluation.getTemplate().getId(), null, ControlEvaluationsProducer.VIEW_ID));
+				UIInternalLink.make(evaluationRow, "inqueue-eval-link", evaluation.getTitle(), 
+						new PreviewEvalParameters( PreviewEvalProducer.VIEW_ID, evaluation.getId(), 
+								evaluation.getTemplate().getId(), null, ControlEvaluationsProducer.VIEW_ID));
+				UILink.make(evaluationRow, "eval-direct-link", UIMessage.make("controlevaluations.eval.direct.link"), 
+						external.getEntityURL(evaluation));
 
 				// vary the display depending on the number of groups assigned
 				int groupsCount = evaluationsLogic.countEvaluationGroups(evaluation.getId());
@@ -243,9 +246,11 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 
 				UIBranchContainer evaluationRow = UIBranchContainer.make(evalForm, "active-eval-row:", evaluation.getId().toString());
 
-				UIInternalLink.make(evaluationRow, "active-eval-link", 
-						evaluation.getTitle(), 
-						new PreviewEvalParameters( PreviewEvalProducer.VIEW_ID, evaluation.getId(), evaluation.getTemplate().getId(), null, ControlEvaluationsProducer.VIEW_ID));
+				UIInternalLink.make(evaluationRow, "active-eval-link", evaluation.getTitle(), 
+						new PreviewEvalParameters( PreviewEvalProducer.VIEW_ID, evaluation.getId(), 
+								evaluation.getTemplate().getId(), null, ControlEvaluationsProducer.VIEW_ID));
+				UILink.make(evaluationRow, "eval-direct-link", UIMessage.make("controlevaluations.eval.direct.link"), 
+						external.getEntityURL(evaluation));
 
 				// vary the display depending on the number of groups assigned
 				int groupsCount = evaluationsLogic.countEvaluationGroups(evaluation.getId());

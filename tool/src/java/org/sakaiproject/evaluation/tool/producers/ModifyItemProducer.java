@@ -147,7 +147,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 		if (itemId != null) {
 			UIInternalLink.make(tofill, "item-preview-link", UIMessage.make("controlitems.preview.link"), 
 					new ItemViewParameters(PreviewItemProducer.VIEW_ID, itemId, (Long)null) );
-			if ( itemsLogic.canControlItem(currentUserId, itemId) ) {
+			if ( itemsLogic.canRemoveItem(currentUserId, itemId) ) {
 	        	// item removable
 				UIInternalLink.make(tofill, "item-remove-link", UIMessage.make("controlitems.remove.link"), 
 						new ItemViewParameters(RemoveItemProducer.VIEW_ID, itemId, (Long)null));

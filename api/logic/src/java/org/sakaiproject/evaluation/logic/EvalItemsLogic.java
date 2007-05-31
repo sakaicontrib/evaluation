@@ -182,21 +182,30 @@ public interface EvalItemsLogic {
 	 */
 	public List getBlockChildTemplateItemsForBlockParent(Long parentId, boolean includeParent);
 
-	// EXPERT ITEMS
-
-	// TODO - stuff here! -AZ
 
 	// PERMISSIONS
 
 	/**
-	 * Check if a user can control (update or delete) a specific item,
+	 * Check if a user can modify a specific item,
 	 * locked items cannot be modified in any way
 	 * 
 	 * @param userId the internal user id (not username)
 	 * @param itemId the id of an {@link EvalItem} object
-	 * @return true if user can control this item, false otherwise
+	 * @return true if user can modify this item, false otherwise
 	 */
-	public boolean canControlItem(String userId, Long itemId);
+	public boolean canModifyItem(String userId, Long itemId);
+
+	/**
+	 * Check if a user can remove a specific item,
+	 * locked items cannot be removed,
+	 * items used in a template (with an associated templateItem) cannot be removed
+	 * 
+	 * @param userId the internal user id (not username)
+	 * @param itemId the id of an {@link EvalItem} object
+	 * @return true if user can remove this item, false otherwise
+	 */
+	public boolean canRemoveItem(String userId, Long itemId);
+
 
 	/**
 	 * Check if a user can control (update or delete) a specific templateItem,

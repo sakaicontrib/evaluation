@@ -68,22 +68,23 @@ public class EvaluationConstant {
 
 	//For template_modify and preview_item.html
 	public static String[] STEPPED_IMAGE_URLS = new String[] {
-		"$evalGroupId/content/images/corner.gif",
-		"$evalGroupId/content/images/down-line.gif",
-		"$evalGroupId/content/images/down-arrow.gif" };
+		"$context/content/images/corner.gif",
+		"$context/content/images/down-line.gif",
+		"$context/content/images/down-arrow.gif" };
 
 	//For preview_item.html
 	public static String[] COLORED_IMAGE_URLS = new String[] {
-		"$evalGroupId/content/images/ideal-none.jpg",
-		"$evalGroupId/content/images/ideal-low.jpg",
-		"$evalGroupId/content/images/ideal-mid.jpg",
-		"$evalGroupId/content/images/ideal-high.jpg",
-		"$evalGroupId/content/images/ideal-outside.jpg"};
+		"$context/content/images/ideal-none.jpg",
+		"$context/content/images/ideal-low.jpg",
+		"$context/content/images/ideal-mid.jpg",
+		"$context/content/images/ideal-high.jpg",
+		"$context/content/images/ideal-outside.jpg"};
 
 	public static String BLUE_COLOR = "#6699ff";
 	public static String GREEN_COLOR = "#00d600";
 	public static String RED_COLOR = "#ff0000";
-	public static String LIGHT_GRAY_COLOR = "#CCCCFF";
+	public static String LIGHT_BLUE_COLOR = "#CCCCFF";
+	public static String LIGHT_GRAY_COLOR = "#E1E1E1";
 
 	// For pulldowns which show the scale display settings
 	public static String[] SCALE_DISPLAY_SETTING_VALUES = new String[]{

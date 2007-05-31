@@ -78,13 +78,24 @@ public interface EvalScalesLogic {
 	// PERMISSIONS
 
 	/**
-	 * Check if a user can control (update or delete) a specific scale,
+	 * Check if a user can modify a specific scale,
 	 * locked scales cannot be modified in any way
 	 * 
 	 * @param userId the internal user id (not username)
 	 * @param scaleId the id of an EvalScale object
-	 * @return true if user can control this scale, false otherwise
+	 * @return true if user can modify this scale, false otherwise
 	 */
-	public boolean canControlScale(String userId, Long scaleId);
+	public boolean canModifyScale(String userId, Long scaleId);
+
+	/**
+	 * Check if a user can remove a specific scale,
+	 * locked scales cannot be removed,
+	 * scales that are used in an item cannot be removed
+	 * 
+	 * @param userId the internal user id (not username)
+	 * @param scaleId the id of an EvalScale object
+	 * @return true if user can remove this scale, false otherwise
+	 */
+	public boolean canRemoveScale(String userId, Long scaleId);
 
 }

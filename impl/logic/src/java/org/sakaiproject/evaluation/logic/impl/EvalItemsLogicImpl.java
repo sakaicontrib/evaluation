@@ -29,12 +29,12 @@ import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.utils.ArrayUtils;
+import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
-import org.sakaiproject.evaluation.model.utils.EvalUtils;
 import org.sakaiproject.genericdao.api.finders.ByPropsFinder;
 
 
@@ -207,7 +207,7 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 
 			if (item.getLocked().booleanValue() && scale != null) {
 				// unlock associated scales
-				log.info("Unlocking associated scale ("+scale.getTitle()+") for removed item ("+item.getId()+")");
+				log.info("Unlocking associated scale ("+scale.getTitle()+") for removed item ("+itemId+")");
 				dao.lockScale( scale, Boolean.FALSE );
 			}
 
@@ -569,10 +569,9 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 		return l;
 	}
 
-
 	public List getTemplateItemsForEvaluation(Long evalId, String userId, String hierarchyLevel) {
 		// TODO Auto-generated method stub
-		return null;
+		throw new IllegalStateException("Not implemented yet");
 	}
 
 
@@ -607,8 +606,11 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.EvalItemsLogic#canControlItem(java.lang.String, java.lang.Long)
+	/**
+	 * @param userId
+	 * @param itemId
+	 * @return
+	 * @deprecated
 	 */
 	public boolean canControlItem(String userId, Long itemId) {
 		log.debug("itemId:" + itemId + ", userId:" + userId);
@@ -626,6 +628,53 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 		}
 		return false;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalItemsLogic#canModifyItem(java.lang.String, java.lang.Long)
+	 */
+	public boolean canModifyItem(String userId, Long itemId) {
+		log.debug("itemId:" + itemId + ", userId:" + userId);
+		// get the item by id
+		EvalItem item = (EvalItem) dao.findById(EvalItem.class, itemId);
+		if (item == null) {
+			throw new IllegalArgumentException("Cannot find item with id: " + itemId);
+		}
+
+		// check perms and locked
+		try {
+			return checkUserControlItem(userId, item);
+		} catch (RuntimeException e) {
+			log.info(e.getMessage());
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalItemsLogic#canRemoveItem(java.lang.String, java.lang.Long)
+	 */
+	public boolean canRemoveItem(String userId, Long itemId) {
+		log.debug("itemId:" + itemId + ", userId:" + userId);
+		// get the item by id
+		EvalItem item = (EvalItem) dao.findById(EvalItem.class, itemId);
+		if (item == null) {
+			throw new IllegalArgumentException("Cannot find item with id: " + itemId);
+		}
+
+		// cannot remove items that are in use
+		if (dao.isUsedItem(itemId)) {
+			log.debug("Cannot remove item ("+itemId+") which is used in at least one template");
+			return false;
+		}
+
+		// check perms and locked
+		try {
+			return checkUserControlItem(userId, item);
+		} catch (RuntimeException e) {
+			log.info(e.getMessage());
+		}
+		return false;
+	}
+
 
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalItemsLogic#canControlTemplateItem(java.lang.String, java.lang.Long)
@@ -650,6 +699,11 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 
 	// PRIVATE METHODS
 
+	/**
+	 * @param userId
+	 * @param item
+	 * @return
+	 */
 	protected boolean checkUserControlItem(String userId, EvalItem item) {
 		log.debug("item: " + item.getId() + ", userId: " + userId);
 		// check locked first
@@ -668,6 +722,11 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 		}
 	}
 
+	/**
+	 * @param userId
+	 * @param templateItem
+	 * @return
+	 */
 	protected boolean checkUserControlTemplateItem(String userId, EvalTemplateItem templateItem) {
 		log.debug("templateItem: " + templateItem.getId() + ", userId: " + userId);
 		// check locked first (expensive check)
@@ -687,6 +746,9 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 		}
 	}
 
+	/**
+	 * @author Aaron Zeckoski (aaronz@vt.edu)
+	 */
 	protected static class TemplateItemDisplayOrderComparator implements Comparator {
 		public int compare(Object ti0, Object ti1) {
 			// expects to get Evaluation objects

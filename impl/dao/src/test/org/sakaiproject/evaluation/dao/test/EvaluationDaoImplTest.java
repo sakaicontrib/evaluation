@@ -108,7 +108,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 				EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.INSTRUCTOR_OPT_IN, 
 				new Integer(1), null, null, null, null, etdl.templatePublicUnused, null, null,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, EvalTestDataLoad.UNLOCKED,
-				EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ);
+				EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null);
 		evaluationDao.save( evalUnLocked );
 
 	}
@@ -262,7 +262,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 
 		// test getting evaluations by evalGroupId
 		s = evaluationDao.getEvaluationsByEvalGroups(
-				new String[] {EvalTestDataLoad.CONTEXT1}, false, true);
+				new String[] {EvalTestDataLoad.CONTEXT1}, false, true, false);
 		Assert.assertNotNull(s);
 		Assert.assertEquals(4, s.size());
 		ids = EvalTestDataLoad.makeIdList(s);
@@ -272,7 +272,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 		Assert.assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
 
 		s = evaluationDao.getEvaluationsByEvalGroups(
-				new String[] {EvalTestDataLoad.CONTEXT2}, false, true);
+				new String[] {EvalTestDataLoad.CONTEXT2}, false, true, false);
 		Assert.assertNotNull(s);
 		Assert.assertEquals(3, s.size());
 		ids = EvalTestDataLoad.makeIdList(s);
@@ -282,13 +282,13 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 		Assert.assertTrue(ids.contains( etdl.evaluationViewable.getId() ));
 
 		s = evaluationDao.getEvaluationsByEvalGroups(
-				new String[] {"invalid evalGroupId"}, false, true);
+				new String[] {"invalid evalGroupId"}, false, true, false);
 		Assert.assertNotNull(s);
 		Assert.assertEquals(0, s.size());
 
 		// test that the get active part works
 		s = evaluationDao.getEvaluationsByEvalGroups(
-				new String[] {EvalTestDataLoad.CONTEXT1}, true, true);
+				new String[] {EvalTestDataLoad.CONTEXT1}, true, true, false);
 		Assert.assertNotNull(s);
 		Assert.assertEquals(2, s.size());
 		ids = EvalTestDataLoad.makeIdList(s);
@@ -296,19 +296,27 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 		Assert.assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
 
 		s = evaluationDao.getEvaluationsByEvalGroups(
-				new String[] {EvalTestDataLoad.CONTEXT2}, true, true);
+				new String[] {EvalTestDataLoad.CONTEXT2}, true, true, false);
 		Assert.assertNotNull(s);
 		Assert.assertEquals(0, s.size());
 
 		// test getting from an invalid evalGroupId
 		s = evaluationDao.getEvaluationsByEvalGroups(
-				new String[] {EvalTestDataLoad.INVALID_CONTEXT}, true, true);
+				new String[] {EvalTestDataLoad.INVALID_CONTEXT}, true, true, false);
 		Assert.assertNotNull(s);
 		Assert.assertEquals(0, s.size());		
 
+		// test getting all anonymous evals
+		s = evaluationDao.getEvaluationsByEvalGroups(
+				new String[] {}, false, false, true);
+		Assert.assertNotNull(s);
+		Assert.assertEquals(1, s.size());		
+		ids = EvalTestDataLoad.makeIdList(s);
+		Assert.assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
+
 		// test invalid
 		try {
-			s = evaluationDao.getEvaluationsByEvalGroups(null, false, true);
+			s = evaluationDao.getEvaluationsByEvalGroups(null, false, true, false);
 			Assert.fail("Should have thrown an exception");
 		} catch (RuntimeException e) {
 			Assert.assertNotNull(e);
@@ -529,6 +537,26 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 
 	}
 
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#getEvalCategories(String)}
+	 */
+	public void testGetEvalCategories() {
+		List l = null;
+
+		// test the basic return of categories
+		l = evaluationDao.getEvalCategories(null);
+		Assert.assertNotNull(l);
+		Assert.assertEquals(2, l.size());
+		Assert.assertTrue( l.contains(EvalTestDataLoad.EVAL_CATEGORY_1) );
+		Assert.assertTrue( l.contains(EvalTestDataLoad.EVAL_CATEGORY_2) );
+
+		// test the return of cats for a user
+		l = evaluationDao.getEvalCategories(EvalTestDataLoad.MAINT_USER_ID);
+		Assert.assertNotNull(l);
+		Assert.assertEquals(1, l.size());
+		Assert.assertTrue( l.contains(EvalTestDataLoad.EVAL_CATEGORY_1) );
+		
+	}
 
 	// LOCKING tests
 
@@ -662,14 +690,14 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 		Assert.assertFalse( etdl.templateAdminNoItems.getLocked().booleanValue() );
 
 		// check that locked template that is locked by an evaluation cannot be unlocked
-		Assert.assertTrue( etdl.templatePublic.getLocked().booleanValue() );
-		Assert.assertFalse( evaluationDao.lockTemplate( etdl.templatePublic, Boolean.FALSE ) );
-		Assert.assertTrue( etdl.templatePublic.getLocked().booleanValue() );
+		Assert.assertTrue( etdl.templateUser.getLocked().booleanValue() );
+		Assert.assertFalse( evaluationDao.lockTemplate( etdl.templateUser, Boolean.FALSE ) );
+		Assert.assertTrue( etdl.templateUser.getLocked().booleanValue() );
 
 		// check that locked template that is locked by an evaluation can be locked without exception
-		Assert.assertTrue( etdl.templatePublic.getLocked().booleanValue() );
-		Assert.assertFalse( evaluationDao.lockTemplate( etdl.templatePublic, Boolean.TRUE ) );
-		Assert.assertTrue( etdl.templatePublic.getLocked().booleanValue() );
+		Assert.assertTrue( etdl.templateUser.getLocked().booleanValue() );
+		Assert.assertFalse( evaluationDao.lockTemplate( etdl.templateUser, Boolean.TRUE ) );
+		Assert.assertTrue( etdl.templateUser.getLocked().booleanValue() );
 
 		// check that unlocked template gets locked (items)
 		Assert.assertFalse( etdl.item6.getLocked().booleanValue() );
@@ -741,13 +769,55 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 					EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.INSTRUCTOR_OPT_IN, 
 					new Integer(1), null, null, null, null, etdl.templatePublic, null, null,
 					Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, EvalTestDataLoad.UNLOCKED,
-					EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ)
+					EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null)
 				);
 			Assert.fail("Should have thrown an exception");
 		} catch (IllegalStateException e) {
 			Assert.assertNotNull(e);
 		}
 
+	}
+
+
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#isUsedScale(java.lang.Long)}.
+	 */
+	public void testIsUsedScale() {
+		Assert.assertTrue( evaluationDao.isUsedScale( etdl.scale1.getId() ) );
+		Assert.assertTrue( evaluationDao.isUsedScale( etdl.scale2.getId() ) );
+		Assert.assertFalse( evaluationDao.isUsedScale( etdl.scale3.getId() ) );
+		Assert.assertFalse( evaluationDao.isUsedScale( etdl.scale4.getId() ) );
+	}
+
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#isUsedItem(java.lang.Long)}.
+	 */
+	public void testIsUsedItem() {
+		Assert.assertTrue( evaluationDao.isUsedItem( etdl.item1.getId() ) );
+		Assert.assertTrue( evaluationDao.isUsedItem( etdl.item2.getId() ) );
+		Assert.assertTrue( evaluationDao.isUsedItem( etdl.item3.getId() ) );
+		Assert.assertFalse( evaluationDao.isUsedItem( etdl.item4.getId() ) );
+		Assert.assertTrue( evaluationDao.isUsedItem( etdl.item5.getId() ) );
+		Assert.assertTrue( evaluationDao.isUsedItem( etdl.item6.getId() ) );
+		Assert.assertFalse( evaluationDao.isUsedItem( etdl.item7.getId() ) );
+		Assert.assertFalse( evaluationDao.isUsedItem( etdl.item8.getId() ) );
+		Assert.assertTrue( evaluationDao.isUsedItem( etdl.item9.getId() ) );
+		Assert.assertTrue( evaluationDao.isUsedItem( etdl.item10.getId() ) );
+	}
+
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#isUsedTemplate(java.lang.Long)}.
+	 */
+	public void testIsUsedTemplate() {
+		Assert.assertTrue( evaluationDao.isUsedTemplate( etdl.templateAdmin.getId() ) );
+		Assert.assertFalse( evaluationDao.isUsedTemplate( etdl.templateAdminBlock.getId() ) );
+		Assert.assertFalse( evaluationDao.isUsedTemplate( etdl.templateAdminComplex.getId() ) );
+		Assert.assertFalse( evaluationDao.isUsedTemplate( etdl.templateAdminNoItems.getId() ) );
+		Assert.assertTrue( evaluationDao.isUsedTemplate( etdl.templatePublic.getId() ) );
+		Assert.assertTrue( evaluationDao.isUsedTemplate( etdl.templatePublicUnused.getId() ) ); // used in this file
+		Assert.assertFalse( evaluationDao.isUsedTemplate( etdl.templateUnused.getId() ) );
+		Assert.assertTrue( evaluationDao.isUsedTemplate( etdl.templateUser.getId() ) );
+		Assert.assertFalse( evaluationDao.isUsedTemplate( etdl.templateUserUnused.getId() ) );
 	}
 
 

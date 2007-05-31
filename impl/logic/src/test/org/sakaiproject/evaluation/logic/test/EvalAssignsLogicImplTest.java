@@ -342,6 +342,55 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 	}
 
 	/**
+	 * Test method for {@link EvalAssignsLogicImpl#getAssignGroupById(Long)}
+	 */
+	public void testGetAssignGroupById() {
+		EvalAssignGroup assignGroup = null;
+
+		// test getting valid items by id
+		assignGroup = assigns.getAssignGroupById( etdl.assign1.getId() );
+		Assert.assertNotNull(assignGroup);
+		Assert.assertEquals(etdl.assign1.getId(), assignGroup.getId());
+
+		assignGroup = assigns.getAssignGroupById( etdl.assign2.getId() );
+		Assert.assertNotNull(assignGroup);
+		Assert.assertEquals(etdl.assign2.getId(), assignGroup.getId());
+
+		// test get eval by invalid id returns null
+		assignGroup = assigns.getAssignGroupById( EvalTestDataLoad.INVALID_LONG_ID );
+		Assert.assertNull(assignGroup);
+	}
+
+	/**
+	 * Test method for {@link EvalAssignsLogicImpl#getAssignGroupId(Long, String)}
+	 */
+	public void testGetAssignGroupId() {
+		Long assignGroupId = null;
+
+		// test getting valid items by id
+		assignGroupId = assigns.getAssignGroupId( etdl.evaluationActive.getId(), EvalTestDataLoad.CONTEXT1 );
+		Assert.assertNotNull(assignGroupId);
+		Assert.assertEquals(etdl.assign1.getId(), assignGroupId);
+
+		assignGroupId = assigns.getAssignGroupId( etdl.evaluationClosed.getId(), EvalTestDataLoad.CONTEXT2 );
+		Assert.assertNotNull(assignGroupId);
+		Assert.assertEquals(etdl.assign4.getId(), assignGroupId);
+
+		// test invalid evaluation/group mixture returns null
+		assignGroupId = assigns.getAssignGroupId( etdl.evaluationActive.getId(), EvalTestDataLoad.CONTEXT2 );
+		Assert.assertNull("Found an id?: " + assignGroupId, assignGroupId);
+
+		assignGroupId = assigns.getAssignGroupId( etdl.evaluationViewable.getId(), EvalTestDataLoad.CONTEXT1 );
+		Assert.assertNull(assignGroupId);
+
+		// test get by invalid id returns null
+		assignGroupId = assigns.getAssignGroupId( EvalTestDataLoad.INVALID_LONG_ID, EvalTestDataLoad.INVALID_CONSTANT_STRING );
+		Assert.assertNull(assignGroupId);
+	}
+
+
+
+	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalAssignsLogicImpl#getAssignGroupsByEvalId(java.lang.Long)}.
 	 */
 //	public void testGetAssignContextsByEvalId() {

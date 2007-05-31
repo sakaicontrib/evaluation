@@ -11,6 +11,7 @@
  * Rui Feng (fengr@vt.edu)
  * Kapil Ahuja (kahuja@vt.edu)
  *****************************************************************************/
+
 package org.sakaiproject.evaluation.tool.viewparams;
 
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
@@ -21,6 +22,7 @@ import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
  * EvalTemplate object within the evaluation system.
  */
 public class TemplateViewParameters extends SimpleViewParameters {
+
 	public Long templateId;
 
 	public TemplateViewParameters() {

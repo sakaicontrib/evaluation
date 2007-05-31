@@ -47,8 +47,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * 
  * @author: Kapil Ahuja (kahuja@vt.edu)
  */
-public class ModifyTemplateProducer 
-	implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
+public class ModifyTemplateProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
 
 	public static final String VIEW_ID = "modify_template";
 	public String getViewID() {
@@ -72,34 +71,39 @@ public class ModifyTemplateProducer
 	 * 2-1) no template been save in DAO 2-2) existing template in DAO
 	 * 
 	 */
-	public void fillComponents(UIContainer tofill, ViewParameters viewparams,
-			ComponentChecker checker) {
+	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+
 		TemplateViewParameters evalViewParams = (TemplateViewParameters) viewparams;
+
+		UIMessage.make(tofill, "template-title-desc-title", "modifytemplatetitledesc.page.title");
+
+		UIInternalLink.make(tofill,	"summary-toplink", UIMessage.make("summary.page.title"),
+				new SimpleViewParameters(SummaryProducer.VIEW_ID));
+
+		UIInternalLink.make(tofill, "control-templates-link",
+				UIMessage.make("controltemplates.page.title"), 
+			new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
 
 		// setup the OTP binding strings
 		String templateOTPBinding = null;
 		if (evalViewParams.templateId != null) {
-			templateOTPBinding = "templateBeanLocator." + evalViewParams.templateId; //$NON-NLS-1$
+			templateOTPBinding = "templateBeanLocator." + evalViewParams.templateId;
 		} else {
-			templateOTPBinding = "templateBeanLocator." + TemplateBeanLocator.NEW_1; //$NON-NLS-1$
+			templateOTPBinding = "templateBeanLocator." + TemplateBeanLocator.NEW_1;
 		}
-		String templateOTP = templateOTPBinding + "."; //$NON-NLS-1$
+		String templateOTP = templateOTPBinding + ".";
 
-		UIMessage.make(tofill, "template-title-desc-title", "modifytemplatetitledesc.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		UIInternalLink.make(tofill,	"summary-toplink", UIMessage.make("summary.page.title"), //$NON-NLS-1$ //$NON-NLS-2$
-				new SimpleViewParameters(SummaryProducer.VIEW_ID));
-
-		UIForm form = UIForm.make(tofill, "basic-form"); //$NON-NLS-1$
-		UIMessage.make(form, "title-header", "modifytemplatetitledesc.title.header"); //$NON-NLS-1$ //$NON-NLS-2$
-		UIMessage.make(form, "description-header", "modifytemplatetitledesc.description.header"); //$NON-NLS-1$ //$NON-NLS-2$
-		UIMessage.make(form, "description-note", "modifytemplatetitledesc.description.note"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIForm form = UIForm.make(tofill, "basic-form");
+		UIMessage.make(form, "title-header", "modifytemplatetitledesc.title.header");
+		UIMessage.make(form, "description-header", "modifytemplatetitledesc.description.header");
+		UIMessage.make(form, "description-note", "modifytemplatetitledesc.description.note");
 
 		UICommand.make(form, "addContinue", UIMessage.make("modifytemplatetitledesc.save.button"),
 				"#{templateBBean.updateTemplateTitleDesc}");
 
 		UIInput.make(form, "title", templateOTP + "title");
-		UIInput.make(form, "description", templateOTP + "description"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIInput.make(form, "description", templateOTP + "description");
 
 		/*
 		 * (Non-javadoc) If "EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY" is set
@@ -117,14 +121,14 @@ public class ModifyTemplateProducer
 			 * (non-admin) we just show the private label
 			 */
 			if (externalLogic.isUserAdmin(externalLogic.getCurrentUserId())) {
-				UIBranchContainer showSharingOptions = UIBranchContainer.make(form,	"showSharingOptions:"); //$NON-NLS-1$
+				UIBranchContainer showSharingOptions = UIBranchContainer.make(form,	"showSharingOptions:");
 				UISelect.make(showSharingOptions, "sharing",
 						EvaluationConstant.SHARING_VALUES, 
 						EvaluationConstant.SHARING_LABELS_PROPS, 
 						templateOTP	+ "sharing", null).setMessageKeys();
 			} else {
 				sharingkey = "sharing.private";
-				form.parameters.add(new UIELBinding(templateOTP + "sharing", EvalConstants.SHARING_PRIVATE)); //$NON-NLS-1$
+				form.parameters.add(new UIELBinding(templateOTP + "sharing", EvalConstants.SHARING_PRIVATE));
 			}
 		} else {
 			if ((EvalConstants.SHARING_PRIVATE).equals(sharingValue))
@@ -133,12 +137,12 @@ public class ModifyTemplateProducer
 				sharingkey = "sharing.public";
 
 			// Doing the binding of this sharing value so that it can be persisted
-			form.parameters.add(new UIELBinding(templateOTP + "sharing", sharingValue)); //$NON-NLS-1$
+			form.parameters.add(new UIELBinding(templateOTP + "sharing", sharingValue));
 		}
 
 		if (sharingkey != null) {
 			// Displaying the sharing label
-			UIMessage.make(form, "sharingValueToDisplay", sharingkey); //$NON-NLS-1$
+			UIMessage.make(form, "sharingValueToDisplay", sharingkey);
 		}
 
 		UIMessage.make(form, "cancel-button", "general.cancel.button");

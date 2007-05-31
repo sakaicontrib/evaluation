@@ -40,10 +40,14 @@ import org.sakaiproject.entity.api.Reference;
 import org.sakaiproject.entitybroker.EntityBroker;
 import org.sakaiproject.entitybroker.EntityParse;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.entity.AssignGroupEntityProvider;
 import org.sakaiproject.evaluation.logic.entity.EvaluationEntityProvider;
+import org.sakaiproject.evaluation.logic.entity.TemplateEntityProvider;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.providers.EvalGroupsProvider;
+import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.exception.IdUnusedException;
 import org.sakaiproject.site.api.Site;
@@ -246,7 +250,14 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	 * @see org.sakaiproject.evaluation.logic.external.EvalExternalLogic#getCurrentContext()
 	 */
 	public String getCurrentEvalGroup() {
-		return toolManager.getCurrentPlacement().getContext();
+		String context;
+		try {
+			context = toolManager.getCurrentPlacement().getContext();
+		} catch (Exception e) {
+			log.warn("Could not get the current context (we are probably outside the portal), returning a fake one");
+			context = OUTSIDE_PORTAL_CONTEXT;
+		}
+		return context;
 	}
 
 	/* (non-Javadoc)
@@ -473,10 +484,10 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.EvalExternalLogic#getEntityURL(java.lang.Class, java.lang.Long)
+	 * @see org.sakaiproject.evaluation.logic.EvalExternalLogic#getEntityURL(java.lang.String, java.lang.String)
 	 */
-	public String getEntityURL(Class entityClass, Long entityId) {
-		String ref = getEntityReference(entityClass, entityId.toString());
+	public String getEntityURL(String entityPrefix, String entityId) {
+		String ref = EntityParse.getReference(entityPrefix, entityId);
 		if (ref != null) {
 			return entityBroker.getEntityURL(ref);
 		} else {
@@ -519,6 +530,10 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		// make sure this class is supported and get the prefix
 		if (entityClass == EvalEvaluation.class) {
 			prefix = EvaluationEntityProvider.ENTITY_PREFIX;
+		} else if (entityClass == EvalAssignGroup.class) {
+				prefix = AssignGroupEntityProvider.ENTITY_PREFIX;
+		} else if (entityClass == EvalTemplate.class) {
+			prefix = TemplateEntityProvider.ENTITY_PREFIX;
 		} else {
 			return null;
 		}

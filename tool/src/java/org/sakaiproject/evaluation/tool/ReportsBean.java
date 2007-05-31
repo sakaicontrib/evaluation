@@ -25,28 +25,21 @@ import org.apache.commons.logging.LogFactory;
  * 
  * @author Will Humphries (whumphri@vt.edu)
  */
-
 public class ReportsBean {
-	
-	/*
-	 * VARIABLE DECLARATIONS
-	 */
-	private static Log log = LogFactory.getLog(ItemsBean.class);
-	
+
+	private static Log log = LogFactory.getLog(ReportsBean.class);
+
 	public Map groupIds = new HashMap();
-	
 	public Long evalId;
-	
-	public ReportsBean() {
-	
-	}
-	
+
+	public ReportsBean() {	}
+
 	public void init() {
 		log.debug("INIT");
 	}
-	
-	public String chooseGroupsAction() {
 
+	public String chooseGroupsAction() {
 		return "success";
 	}
+
 }

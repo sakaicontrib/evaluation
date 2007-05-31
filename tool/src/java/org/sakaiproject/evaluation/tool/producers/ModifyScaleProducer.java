@@ -113,7 +113,7 @@ public class ModifyScaleProducer implements ViewComponentProducer, ViewParamsRep
 
 		// use the logic layer method to determine if scales can be controlled
 		if (scaleId != null && 
-				scalesLogic.canControlScale(currentUserId, scaleId)) {
+				scalesLogic.canRemoveScale(currentUserId, scaleId)) {
 			UIInternalLink.make(form, "scale-remove-link", 
 					UIMessage.make("scaleaddmodify.remove.scale.link"), 
 				new EvalScaleParameters(RemoveScaleProducer.VIEW_ID, scaleId) );
