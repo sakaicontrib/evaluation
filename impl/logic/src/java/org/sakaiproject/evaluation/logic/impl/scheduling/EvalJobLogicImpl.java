@@ -392,15 +392,17 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 		long due = eval.getDueDate().getTime();
 		long available = due - start;
 		long interval = 1000 * 60 * 60 * 24 * eval.getReminderDays().intValue();
-		long numberOfReminders = available/interval;
-		long runAt = eval.getStartDate().getTime();
-		for(int i = 0; i < numberOfReminders; i++) {
-			if(runAt + interval < due) {
-				runAt = runAt + interval;
-				scheduledInvocationManager.createDelayedInvocation(timeService.newTime(runAt), COMPONENT_ID, opaqueContext);
-				if(log.isDebugEnabled())
-					log.debug("EvalJobLogicImpl.scheduleReminders(" + evaluationId + ") - scheduledInvocationManager.createDelayedInvocation( " + 
-							timeService.newTime(runAt) + "," + 	COMPONENT_ID + "," + opaqueContext);
+		if(interval != 0) {
+			long numberOfReminders = available/interval;
+			long runAt = eval.getStartDate().getTime();
+			for(int i = 0; i < numberOfReminders; i++) {
+				if(runAt + interval < due) {
+					runAt = runAt + interval;
+					scheduledInvocationManager.createDelayedInvocation(timeService.newTime(runAt), COMPONENT_ID, opaqueContext);
+					if(log.isDebugEnabled())
+						log.debug("EvalJobLogicImpl.scheduleReminders(" + evaluationId + ") - scheduledInvocationManager.createDelayedInvocation( " + 
+								timeService.newTime(runAt) + "," + 	COMPONENT_ID + "," + opaqueContext);
+				}
 			}
 		}
 	}
