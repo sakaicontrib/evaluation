@@ -26,6 +26,7 @@ import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
+import org.sakaiproject.evaluation.logic.entity.EvalCategoryEntityProvider;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
@@ -41,6 +42,8 @@ import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UILink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.decorators.DecoratorList;
+import uk.org.ponder.rsf.components.decorators.UITooltipDecorator;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
@@ -69,9 +72,9 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 		this.locale = locale;
 	}
 
-	private EvalExternalLogic external;
-	public void setExternal(EvalExternalLogic external) {
-		this.external = external;
+	private EvalExternalLogic externalLogic;
+	public void setExternalLogic(EvalExternalLogic externalLogic) {
+		this.externalLogic = externalLogic;
 	}
 	
 	private EvalEvaluationsLogic evaluationsLogic;
@@ -101,8 +104,8 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
 		// local variables used in the render logic
-		String currentUserId = external.getCurrentUserId();
-		boolean userAdmin = external.isUserAdmin(currentUserId);
+		String currentUserId = externalLogic.getCurrentUserId();
+		boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
 		boolean createTemplate = templatesLogic.canCreateTemplate(currentUserId);
 		boolean beginEvaluation = evaluationsLogic.canBeginEvaluation(currentUserId);
 		// use a date which is related to the current users locale
@@ -143,7 +146,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 		List activeEvals = new ArrayList();
 		List closedEvals = new ArrayList();
 
-		List evals = evaluationsLogic.getVisibleEvaluationsForUser(external.getCurrentUserId(), true, false);
+		List evals = evaluationsLogic.getVisibleEvaluationsForUser(externalLogic.getCurrentUserId(), true, false);
 		for (int j = 0; j < evals.size(); j++) {
 			// get queued, active, closed evaluations by date
 			// check the state of the eval to determine display data
@@ -183,10 +186,15 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 				UIBranchContainer evaluationRow = UIBranchContainer.make(evalForm, "inqueue-eval-row:", evaluation.getId().toString());
 
 				UIInternalLink.make(evaluationRow, "inqueue-eval-link", evaluation.getTitle(), 
-						new PreviewEvalParameters( PreviewEvalProducer.VIEW_ID, evaluation.getId(), 
-								evaluation.getTemplate().getId(), null, ControlEvaluationsProducer.VIEW_ID));
+						new PreviewEvalParameters( PreviewEvalProducer.VIEW_ID, evaluation.getId(),	evaluation.getTemplate().getId() ) );
 				UILink.make(evaluationRow, "eval-direct-link", UIMessage.make("controlevaluations.eval.direct.link"), 
-						external.getEntityURL(evaluation));
+						externalLogic.getEntityURL(evaluation));
+				if (evaluation.getEvalCategory() != null) {
+					UILink catLink = UILink.make(evaluationRow, "eval-category-direct-link", shortenText(evaluation.getEvalCategory(), 20), 
+						externalLogic.getEntityURL(EvalCategoryEntityProvider.ENTITY_PREFIX, evaluation.getEvalCategory()) );
+					catLink.decorators = new DecoratorList( 
+							new UITooltipDecorator( UIMessage.make("general.category.link.tip", new Object[]{evaluation.getEvalCategory()}) ) );
+				}
 
 				// vary the display depending on the number of groups assigned
 				int groupsCount = evaluationsLogic.countEvaluationGroups(evaluation.getId());
@@ -213,7 +221,9 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 						"#{evaluationBean.editEvalSettingAction}");
 				evalEdit.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", evaluation.getId()));
 
-				if ( evaluationsLogic.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
+				// do the locked check first since it is more efficient
+				if ( ! evaluation.getLocked().booleanValue() &&
+						evaluationsLogic.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
 					// evaluation removable
 					UIInternalLink.make(evaluationRow, "inqueue-eval-delete-link", 
 							UIMessage.make("controlevaluations.eval.delete.link"), 
@@ -247,10 +257,15 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 				UIBranchContainer evaluationRow = UIBranchContainer.make(evalForm, "active-eval-row:", evaluation.getId().toString());
 
 				UIInternalLink.make(evaluationRow, "active-eval-link", evaluation.getTitle(), 
-						new PreviewEvalParameters( PreviewEvalProducer.VIEW_ID, evaluation.getId(), 
-								evaluation.getTemplate().getId(), null, ControlEvaluationsProducer.VIEW_ID));
+						new PreviewEvalParameters( PreviewEvalProducer.VIEW_ID, evaluation.getId(),	evaluation.getTemplate().getId() ) );
 				UILink.make(evaluationRow, "eval-direct-link", UIMessage.make("controlevaluations.eval.direct.link"), 
-						external.getEntityURL(evaluation));
+						externalLogic.getEntityURL(evaluation));
+				if (evaluation.getEvalCategory() != null) {
+					UILink catLink = UILink.make(evaluationRow, "eval-category-direct-link", shortenText(evaluation.getEvalCategory(), 20), 
+						externalLogic.getEntityURL(EvalCategoryEntityProvider.ENTITY_PREFIX, evaluation.getEvalCategory()) );
+					catLink.decorators = new DecoratorList( 
+							new UITooltipDecorator( UIMessage.make("general.category.link.tip", new Object[]{evaluation.getEvalCategory()}) ) );
+				}
 
 				// vary the display depending on the number of groups assigned
 				int groupsCount = evaluationsLogic.countEvaluationGroups(evaluation.getId());
@@ -282,7 +297,8 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 						"#{evaluationBean.editEvalSettingAction}");
 				evalEdit.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", evaluation.getId()));
 
-				if ( evaluationsLogic.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
+				if ( ! evaluation.getLocked().booleanValue() &&
+						evaluationsLogic.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
 					// evaluation removable
 					UIInternalLink.make(evaluationRow, "active-eval-delete-link", 
 							UIMessage.make("controlevaluations.eval.delete.link"), 
@@ -313,9 +329,13 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 
 				UIBranchContainer evaluationRow = UIBranchContainer.make(evalForm, "closed-eval-row:", evaluation.getId().toString());
 
-				UIInternalLink.make(evaluationRow, "closed-eval-link", 
-						evaluation.getTitle(), 
-						new PreviewEvalParameters( PreviewEvalProducer.VIEW_ID, evaluation.getId(), evaluation.getTemplate().getId(), null, ControlEvaluationsProducer.VIEW_ID));
+				UIInternalLink.make(evaluationRow, "closed-eval-link", evaluation.getTitle(), 
+						new PreviewEvalParameters( PreviewEvalProducer.VIEW_ID, evaluation.getId(), evaluation.getTemplate().getId() ) );
+				if (evaluation.getEvalCategory() != null) {
+					UIOutput category = UIOutput.make(evaluationRow, "eval-category", shortenText(evaluation.getEvalCategory(), 20) );
+					category.decorators = new DecoratorList( 
+							new UITooltipDecorator( evaluation.getEvalCategory() ) );
+				}
 
 				// vary the display depending on the number of groups assigned
 				int groupsCount = evaluationsLogic.countEvaluationGroups(evaluation.getId());
@@ -364,7 +384,8 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 							new String[] { df.format(evaluation.getViewDate()) });
 				}
 
-				if ( evaluationsLogic.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
+				if ( ! evaluation.getLocked().booleanValue() &&
+						evaluationsLogic.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
 					// evaluation removable
 					UIInternalLink.make(evaluationRow, "closed-eval-delete-link", 
 							UIMessage.make("controlevaluations.eval.delete.link"), 
@@ -405,7 +426,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 		Map evalAssignGroups = evaluationsLogic.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
 		List groups = (List) evalAssignGroups.get(evaluationId);
 		EvalAssignGroup eac = (EvalAssignGroup) groups.get(0);
-		return external.getDisplayTitle( eac.getEvalGroupId() );
+		return externalLogic.getDisplayTitle( eac.getEvalGroupId() );
 	}
 
 	/**
@@ -421,9 +442,23 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 		for (int i=0; i<groups.size(); i++) {
 			EvalAssignGroup eac = (EvalAssignGroup) groups.get(i);
 			String context = eac.getEvalGroupId();
-			Set userIds = external.getUserIdsForEvalGroup(context, EvalConstants.PERM_TAKE_EVALUATION);
+			Set userIds = externalLogic.getUserIdsForEvalGroup(context, EvalConstants.PERM_TAKE_EVALUATION);
 			totalEnrollments = totalEnrollments + userIds.size();
 		}
 		return totalEnrollments;
 	}
+
+	/**
+	 * Shorten a string to be no longer than the length supplied (uses ...)
+	 * @param text
+	 * @param length
+	 * @return shorted text with ... or original string
+	 */
+	private String shortenText(String text, int length) {
+		if (text.length() > length) {
+			text = text.substring(0, length-3) + "...";
+		}
+		return text;
+	}
+
 }

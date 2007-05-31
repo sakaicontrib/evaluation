@@ -158,7 +158,7 @@ public class ControlItemsProducer implements ViewComponentProducer {
 				UIOutput.make(itemBranch, "item-text", item.getItemText());
 
 				// local locked check is more efficient so do that first
-				if ( !item.getLocked().booleanValue() || 
+				if ( !item.getLocked().booleanValue() && 
 						itemsLogic.canModifyItem(currentUserId, item.getId()) ) {
 					UIInternalLink.make(itemBranch, "item-modify-link", UIMessage.make("controlitems.modify.link"), 
 							new ItemViewParameters(ModifyItemProducer.VIEW_ID, item.getId(), null));
@@ -167,7 +167,7 @@ public class ControlItemsProducer implements ViewComponentProducer {
 				}
 
 				// local locked check is more efficient so do that first
-				if ( !item.getLocked().booleanValue() || 
+				if ( !item.getLocked().booleanValue() && 
 						itemsLogic.canRemoveItem(currentUserId, item.getId()) ) {
 					UIInternalLink.make(itemBranch, "item-remove-link", UIMessage.make("controlitems.remove.link"), 
 							new ItemViewParameters(RemoveItemProducer.VIEW_ID, item.getId(), null));

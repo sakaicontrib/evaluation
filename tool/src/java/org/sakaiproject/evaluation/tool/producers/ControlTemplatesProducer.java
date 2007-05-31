@@ -141,7 +141,7 @@ public class ControlTemplatesProducer implements ViewComponentProducer {
 				UIBranchContainer templateRow = UIBranchContainer.make(templateListing, "template-row:", template.getId().toString());
 
 				// local locked check is more efficient so do that first
-				if ( ! template.getLocked().booleanValue() ||
+				if ( ! template.getLocked().booleanValue() &&
 						templatesLogic.canModifyTemplate(currentUserId, template.getId()) ) {
                 	// template controllable
 					UIInternalLink.make(templateRow, "template-modify-link", template.getTitle(), 
@@ -152,7 +152,7 @@ public class ControlTemplatesProducer implements ViewComponentProducer {
 				}
 
 				// local locked check is more efficient so do that first
-				if ( ! template.getLocked().booleanValue() ||
+				if ( ! template.getLocked().booleanValue() &&
 						templatesLogic.canRemoveTemplate(currentUserId, template.getId()) ) {
 					UIInternalLink.make(templateRow, "delete-template-link", 
 							new TemplateViewParameters( RemoveTemplateProducer.VIEW_ID, template.getId() ));

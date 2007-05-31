@@ -20,9 +20,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
-import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
-import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.viewparams.EvalCategoryViewParameters;
@@ -54,11 +52,6 @@ public class ShowEvalCategoryProducer implements ViewComponentProducer, ViewPara
 		return VIEW_ID;
 	}
 
-	private EvalExternalLogic external;
-	public void setExternal(EvalExternalLogic external) {
-		this.external = external;
-	}
-
 	private EvalEvaluationsLogic evaluationsLogic;
 	public void setEvaluationsLogic(EvalEvaluationsLogic evaluationsLogic) {
 		this.evaluationsLogic = evaluationsLogic;
@@ -74,9 +67,6 @@ public class ShowEvalCategoryProducer implements ViewComponentProducer, ViewPara
 	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
 	 */
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
-
-		// local variables used in the render logic
-		String currentUserId = external.getCurrentUserId();
 
 		// use a date which is related to the current users locale
 		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
@@ -95,7 +85,7 @@ public class ShowEvalCategoryProducer implements ViewComponentProducer, ViewPara
 		UIMessage.make(tofill, "eval-category-instructions", "showevalcategory.evaluation.instructions");
 
 		// show the list of evaluations
-		List evals = evaluationsLogic.getEvaluationsByCategory(evalCategory, currentUserId);
+		List evals = evaluationsLogic.getEvaluationsByCategory(evalCategory, null);
 		if (evals.size() > 0) {
 			// get an array of evaluation ids
 			Long[] evalIds = new Long[evals.size()];
@@ -111,7 +101,7 @@ public class ShowEvalCategoryProducer implements ViewComponentProducer, ViewPara
 			for (int i=0; i<evals.size(); i++) {
 				EvalEvaluation eval = (EvalEvaluation) evals.get(i);
 				Long evaluationId = eval.getId();
-				String evalStatus = EvalUtils.getEvaluationState(eval);
+				String evalStatus = evaluationsLogic.getEvaluationState(evaluationId); // make sure state is up to date
 				UIBranchContainer evalsBranch = UIBranchContainer.make(tofill, "evaluations-list:", evaluationId.toString() );
 				UIMessage.make(evalsBranch, "evaluation-header", "showevalcategory.evaluation.header");
 				UIOutput.make(evalsBranch, "evaluation-title", eval.getTitle() );

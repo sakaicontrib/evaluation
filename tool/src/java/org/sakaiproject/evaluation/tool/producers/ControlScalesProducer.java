@@ -37,6 +37,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  * Handles scale addition, removal, and modification.
  * 
  * @author Kapil Ahuja (kahuja@vt.edu)
+ * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class ControlScalesProducer implements ViewComponentProducer, NavigationCaseReporter {
 
@@ -111,14 +112,14 @@ public class ControlScalesProducer implements ViewComponentProducer, NavigationC
 			 * Note that although canControlScale does a locked check,
 			 * it is more efficient to avoid a cycle by checking the local data first (i.e. getLocked() call)
 			 */
-			if (! scale.getLocked().booleanValue() ||
+			if (! scale.getLocked().booleanValue() &&
 					scalesLogic.canModifyScale(currentUserId, scale.getId()) ) {
 				UIInternalLink.make(listOfScales, "modify-sidelink", 
 						UIMessage.make("scalecontrol.modify.link"), 
 						new EvalScaleParameters(ModifyScaleProducer.VIEW_ID, scale.getId()));
 			}
 
-			if (! scale.getLocked().booleanValue() ||
+			if (! scale.getLocked().booleanValue() &&
 					scalesLogic.canRemoveScale(currentUserId, scale.getId()) ) {
 				UIInternalLink.make(listOfScales, "remove-sidelink", 
 						UIMessage.make("scalecontrol.remove.link"), 

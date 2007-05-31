@@ -60,7 +60,8 @@
 				<tr rsf:id="inqueue-eval-row:"> 
 					<td>&nbsp;
 						<a rsf:id="inqueue-eval-link" href="preview_eval.html">Evaluation Title 1</a>
-						(<a rsf:id="eval-direct-link" href="take_eval.html">link</a>)
+						<span rsf:id="eval-direct-link" style="font-size:0.9em;">(<a rsf:id="payload-component" href="take_eval.html" title="direct url to the evaluation">link</a>)</span>
+						<span rsf:id="eval-category-direct-link" style="font-size:0.8em;">[<a rsf:id="payload-component" href="show_eval_category.html" title="direct url to the category">category</a>]</span>
 					</td>
 					<td align="center">
 						<input rsf:id="inqueue-eval-assigned-link" type="submit" value="Course 1010" class="makeLink" />
@@ -112,7 +113,8 @@
 				<tr rsf:id="active-eval-row:"> 
 					<td>&nbsp;
 						<a rsf:id="active-eval-link" href="preview_eval.html">Evaluation Title 1</a>
-						(<a rsf:id="eval-direct-link" href="take_eval.html">link</a>)
+						<span rsf:id="eval-direct-link" style="font-size:0.9em;">(<a rsf:id="payload-component" href="take_eval.html" title="direct url to the evaluation">link</a>)</span>
+						<span rsf:id="eval-category-direct-link" style="font-size:0.8em;">[<a rsf:id="payload-component" href="show_eval_category.html" title="direct url to the category">category</a>]</span>
 					</td>
 					<td align="center">
 						<input rsf:id="active-eval-assigned-link" type="submit" value="Course 1010" class="makeLink" />
@@ -164,6 +166,7 @@
 				<tr rsf:id="closed-eval-row:"> 
 					<td>&nbsp;
 						<a rsf:id="closed-eval-link" href="preview_eval.html">Evaluation Title 1</a>
+						<span rsf:id="eval-category" style="font-size:0.8em;">[<span rsf:id="payload-component">category</span>]</span>
 					</td>
 					<td align="center">
 						<input rsf:id="closed-eval-assigned-link" type="submit" value="Course 1010" class="makeLink" />

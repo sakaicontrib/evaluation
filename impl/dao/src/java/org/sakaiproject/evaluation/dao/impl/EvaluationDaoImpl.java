@@ -204,24 +204,23 @@ public class EvaluationDaoImpl
 		if (evalGroupIds.length > 0) {
 			DetachedCriteria dc = DetachedCriteria.forClass(EvalAssignGroup.class)
 				.add( Property.forName("evalGroupId").in(evalGroupIds));
+			if (! includeUnApproved) {
+				dc.add( Expression.eq("instructorApproval", Boolean.TRUE) );
+			}
 
 			List assignedCourses = getHibernateTemplate().findByCriteria(dc);
 			for (int i=0;i<assignedCourses.size();i++) {
-				// Note: This is inefficient, it is still retrieving ALL of the evaluations
+				// Note: This is still inefficient
 				EvalAssignGroup ac = (EvalAssignGroup) assignedCourses.get(i);
-				if (includeUnApproved ||
-						ac.getInstructorApproval().booleanValue()) {
-					// only include approved evals or all if requested
-					EvalEvaluation eval = ac.getEvaluation();
-					if (activeOnly) {
-						// only return the active evaluations
-						if ( EvalConstants.EVALUATION_STATE_ACTIVE.equals( EvalUtils.getEvaluationState(eval) ) ) {
-							evals.add(ac.getEvaluation());
-						}
-					} else {
-						// return all evaluations
+				EvalEvaluation eval = ac.getEvaluation();
+				if (activeOnly) {
+					// only return the active evaluations
+					if ( EvalConstants.EVALUATION_STATE_ACTIVE.equals( EvalUtils.getEvaluationState(eval) ) ) {
 						evals.add(ac.getEvaluation());
 					}
+				} else {
+					// return all evaluations
+					evals.add(ac.getEvaluation());
 				}
 			}
 		}

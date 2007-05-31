@@ -14,16 +14,19 @@
 
 package org.sakaiproject.evaluation.tool.producers;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.entity.AssignGroupEntityProvider;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationBean;
 
@@ -47,6 +50,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  * 
  * @author Kapil Ahuja (kahuja@vt.edu)
  * @author Rui Feng (fengr@vt.edu)
+ * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class EvaluationAssignConfirmProducer implements ViewComponentProducer, NavigationCaseReporter {
 
@@ -55,9 +59,9 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, N
 		return VIEW_ID;
 	}
 
-	private EvalExternalLogic external;
-	public void setExternal(EvalExternalLogic external) {
-		this.external = external;
+	private EvalExternalLogic externalLogic;
+	public void setExternalLogic(EvalExternalLogic externalLogic) {
+		this.externalLogic = externalLogic;
 	}
 
 	private EvalAssignsLogic assignsLogic;
@@ -70,40 +74,51 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, N
 		this.evaluationBean = evaluationBean;
 	}
 
+	private Locale locale;
+	public void setLocale(Locale locale) {
+		this.locale = locale;
+	}
+
 
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
 	 */
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
-		Long evaluationId = evaluationBean.eval.getId();
+		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
 
-		UIMessage.make(tofill, "confirm-assignment-title", "evaluationassignconfirm.page.title");
+		UIMessage.make(tofill, "page-title", "evaluationassignconfirm.page.title");
 
 		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"),
 				new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
 		UIMessage.make(tofill, "create-evaluation-title", "starteval.page.title");
 		UIMessage.make(tofill, "assign-evaluation-title", "assigneval.page.title");
-		UIMessage.make(tofill, "confirm-assignment-title", "evaluationassignconfirm.page.title");
 
-		UIOutput.make(tofill, "evaluationTitle", null, "#{evaluationBean.eval.title}");
-		//Get selected id's and all id + title map.
+		UIMessage.make(tofill, "eval-assign-info", "evaluationassignconfirm.eval.assign.info", new Object[] {evaluationBean.eval.getTitle()});
+		// getting the data this way is crap
+		Date startDate = evaluationBean.eval.getStartDate();
+		if (startDate == null) { startDate = evaluationBean.startDate; }
+		if (startDate == null) { startDate = new Date(); } // default to avoid crashing, hate this -AZ
+		UIMessage.make(tofill, "eval-assign-instructions", "evaluationassignconfirm.eval.assign.instructions",
+				new Object[] {df.format(startDate)});
+
+		Long evaluationId = evaluationBean.eval.getId();
+
+		UIMessage.make(tofill, "courses-selected-header", "evaluationassignconfirm.courses.selected.header");
+
+		UIMessage.make(tofill, "title-header", "evaluationassignconfirm.title.header");
+		UIMessage.make(tofill, "enrollment-header", "evaluationassignconfirm.enrollment.header");
+
 		String[] selectedIds = evaluationBean.selectedSakaiSiteIds;
 		int[] enrollment = evaluationBean.enrollment;
 
 		Map allIdTitleMap = new HashMap();
-		List evaluatedContexts = external.getEvalGroupsForUser(external.getCurrentUserId(), EvalConstants.PERM_BE_EVALUATED);
-		for (int i = 0; i < evaluatedContexts.size(); i++) {
-			EvalGroup c = (EvalGroup) evaluatedContexts.get(i);
+		List evalGroups = externalLogic.getEvalGroupsForUser(externalLogic.getCurrentUserId(), EvalConstants.PERM_BE_EVALUATED);
+		for (int i = 0; i < evalGroups.size(); i++) {
+			EvalGroup c = (EvalGroup) evalGroups.get(i);
 			allIdTitleMap.put(c.evalGroupId, c.title);
 		}
-
-		UIMessage.make(tofill, "eval-assign-desc-prename", "evaluationassignconfirm.eval.assign.desc.prename");
-		UIMessage.make(tofill, "eval-assign-desc-postname", "evaluationassignconfirm.eval.assign.desc.postname");
-		UIMessage.make(tofill, "courses-selected-header", "evaluationassignconfirm.courses.selected.header");
-		UIMessage.make(tofill, "title-header", "evaluationassignconfirm.title.header");
-		UIMessage.make(tofill, "enrollment-header", "evaluationassignconfirm.enrollment.header");
 
 		for (int i = 0; i < selectedIds.length; ++i) {
 			String evalGroupId = selectedIds[i];
@@ -114,7 +129,7 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, N
 				Long assignGroupId = assignsLogic.getAssignGroupId(evaluationId, evalGroupId);
 				if (assignGroupId != null) {
 					UILink.make(siteRow, "direct-eval-group-link", UIMessage.make("evaluationassignconfirm.direct.link"), 
-						external.getEntityURL(AssignGroupEntityProvider.ENTITY_PREFIX, assignGroupId.toString()));
+							externalLogic.getEntityURL(AssignGroupEntityProvider.ENTITY_PREFIX, assignGroupId.toString()));
 				}
 			}
 			UIOutput.make(siteRow, "enrollment", enrollment[i] + "");
@@ -125,14 +140,11 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, N
 			//first time evaluation creation
 			showButtonsForm(tofill);
 		} else {
-			//check if evaluation	is queued;Closed,started evaluation can not be changed
-			Date today = new Date();
-			Date startDate = evaluationBean.eval.getStartDate();
-			if (today.before(startDate)) {
+			// check if evaluation is queued; Closed, started evaluation can not have assign groups changed
+			if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(EvalUtils.getEvaluationState( evaluationBean.eval ) ) ) {
 				showButtonsForm(tofill);
 			}
 		}
-
 	}
 
 	/**
@@ -157,4 +169,5 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, N
 		i.add(new NavigationCase(EvaluationAssignProducer.VIEW_ID, new SimpleViewParameters(EvaluationAssignProducer.VIEW_ID)));
 		return i;
 	}
+
 }

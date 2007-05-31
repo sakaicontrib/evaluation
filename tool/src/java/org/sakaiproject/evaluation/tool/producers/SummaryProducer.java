@@ -218,7 +218,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 								// preview only when completed
 								UIInternalLink.make(evalcourserow, "evaluationCourseLink", title, 
 										new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID,
-												eval.getId(),eval.getTemplate().getId(),context, SummaryProducer.VIEW_ID) );
+												eval.getId(), eval.getTemplate().getId(), context) );
 								status = "summary.status.completed";
 							}
 						} else {
@@ -338,7 +338,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 				if (evalStatus==EvalConstants.EVALUATION_STATE_CLOSED || evalStatus==EvalConstants.EVALUATION_STATE_VIEWABLE){
 					UIInternalLink.make(evalrow, "evalAdminTitleLink_preview", eval.getTitle(), 
 							new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID,
-									eval.getId(),eval.getTemplate().getId(),null, SummaryProducer.VIEW_ID) );
+									eval.getId(), eval.getTemplate().getId()) );
 				} else {
 					UICommand evalEditUIC = UICommand.make(evalrow, "evalAdminTitleLink_edit", eval.getTitle(),
 						"#{evaluationBean.editEvalSettingAction}");
