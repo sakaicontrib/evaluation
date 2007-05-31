@@ -116,7 +116,7 @@
             <column name="AUTH_CONTROL" length="255" />
         </property>
         <!-- Allows for categorization of evaluations -->
-        <property name="evalCategory" type="java.lang.String">
+        <property name="evalCategory" type="java.lang.String" index="eval_eval_category">
             <column name="EVAL_CATEGORY" length="255" />
         </property>
     </class>
