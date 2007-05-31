@@ -86,11 +86,11 @@ public interface EvalExternalLogic extends ExternalUsers, ExternalEvalGroups {
 	 * Get a full URL to a specific entity inside our system using just the class type and id,
 	 * if this entity has no direct URL then just provide a URL to the sakai server
 	 * 
-	 * @param entityClass the class type of the internal entity (e.g. {@link EvalEvaluation}.class)
-	 * @param entityId the unique id of this entity (from getId()) (e.g. 123)
+	 * @param entityPrefix an ENTITY_PREFIX constant from an entity provider
+	 * @param entityId the unique id of this entity (from getId() or similar) (e.g. 123)
 	 * @return a full URL to the entity (e.g. http://sakai.server:8080/access/eval-evaluation/123/)
 	 */
-	public String getEntityURL(Class entityClass, Long entityId);
+	public String getEntityURL(String entityPrefix, String entityId);
 
 	/**
 	 * Creates a Sakai entity event for any internal entity which is registered with Sakai,

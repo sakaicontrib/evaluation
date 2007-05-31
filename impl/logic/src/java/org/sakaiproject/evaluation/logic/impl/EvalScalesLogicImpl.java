@@ -23,9 +23,9 @@ import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalScalesLogic;
+import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
-import org.sakaiproject.evaluation.model.utils.EvalUtils;
 import org.sakaiproject.genericdao.api.finders.ByPropsFinder;
 
 
@@ -216,15 +216,43 @@ public class EvalScalesLogicImpl implements EvalScalesLogic {
 
 	// PERMISSIONS
 
+
 	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.EvalScalesLogic#canControlScale(java.lang.String, java.lang.Long)
+	 * @see org.sakaiproject.evaluation.logic.EvalScalesLogic#canModifyScale(java.lang.String, java.lang.Long)
 	 */
-	public boolean canControlScale(String userId, Long scaleId) {
+	public boolean canModifyScale(String userId, Long scaleId) {
 		log.debug("userId: " + userId + ", scaleId: " + scaleId );
 		// get the scale by id
 		EvalScale scale = (EvalScale) dao.findById(EvalScale.class, scaleId);
 		if (scale == null) {
 			throw new IllegalArgumentException("Cannot find scale with id: " + scaleId);
+		}
+
+		// check perms and locked
+		try {
+			return checkUserControlScale(userId, scale);
+		} catch (RuntimeException e) {
+			log.info(e.getMessage());
+		}
+		return false;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalScalesLogic#canRemoveScale(java.lang.String, java.lang.Long)
+	 */
+	public boolean canRemoveScale(String userId, Long scaleId) {
+		log.debug("userId: " + userId + ", scaleId: " + scaleId );
+		// get the scale by id
+		EvalScale scale = (EvalScale) dao.findById(EvalScale.class, scaleId);
+		if (scale == null) {
+			throw new IllegalArgumentException("Cannot find scale with id: " + scaleId);
+		}
+
+		// cannot remove scales that are in use
+		if (dao.isUsedScale(scaleId)) {
+			log.debug("Cannot remove scale ("+scaleId+") which is used in at least one item");
+			return false;
 		}
 
 		// check perms and locked

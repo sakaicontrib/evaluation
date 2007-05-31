@@ -115,5 +115,9 @@
         <property name="authControl" type="java.lang.String">
             <column name="AUTH_CONTROL" length="255" />
         </property>
+        <!-- Allows for categorization of evaluations -->
+        <property name="evalCategory" type="java.lang.String">
+            <column name="EVAL_CATEGORY" length="255" />
+        </property>
     </class>
 </hibernate-mapping>

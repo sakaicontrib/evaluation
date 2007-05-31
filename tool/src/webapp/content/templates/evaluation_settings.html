@@ -215,11 +215,27 @@ YAHOO.widget.Logger.enableBrowserConsole();
 		</fieldset>
 
 		<fieldset style="margin-bottom:0.5em;">
-			<legend rsf:id="eval-reminder-settings-header" style="font-weight:bold;">Evaluation Reminders:</legend>
+			<legend rsf:id="eval-extra-settings-header" style="font-weight:bold;">Evaluation Extras:</legend>
+			<div style="margin-left: 1em;">
+				<div style="margin-bottom:0.2em;">
+					<span rsf:id="eval-category-header">Category:</span>&nbsp;
+					<input rsf:id="eval-category" type="text" maxlength="200" size="60"/>
+				</div>
+				<div style="margin-bottom:0.4em;">
+					<span rsf:id="eval-category-instructions" style="font-style:italic;">
+						The eval category is used to group related evaluations and for the category view
+					</span>
+					<span rsf:id="eval-category-direct-link">(<a rsf:id="payload-component" href="show_eval_category.html">link</a>)</span>
+				</div>
+			</div>
+		</fieldset>
+
+		<fieldset style="margin-bottom:0.5em;">
+			<legend rsf:id="eval-reminder-settings-header" style="font-weight:bold;">Evaluation Category:</legend>
 			<div style="margin-left: 1em;">
 				<div style="margin-bottom:0.4em;">
 					<a href="preview_email.html" name="emailAvailable_link" rsf:id="emailAvailable_link" target="_blank">Evaluation Available</a>
-					<i><span rsf:id="eval-available-mail-desc"> email is sent out to all students assigned to an evaluation the morning of the day the evaluation goes live. Preview and modify the email template by clicking the link.</span></i>
+					<span rsf:id="eval-available-mail-desc" style="font-style:italic;"> email is sent out to all students assigned to an evaluation the morning of the day the evaluation goes live. Preview and modify the email template by clicking the link.</span>
 				</div>
 				<div style="margin-bottom:0.4em;">
 					<span rsf:id="reminder-noresponders-header">Email reminder to non-respondent students:</span>&nbsp;
@@ -231,7 +247,7 @@ YAHOO.widget.Logger.enableBrowserConsole();
 				</div>
 				<div style="margin-bottom:0.4em;">
 					<a href="preview_email.html" name="emailReminder_link" rsf:id="emailReminder_link" target="_blank">Evaluation Reminder</a>
-					<i><span rsf:id="eval-reminder-mail-desc"> email is sent out to all students who have not yet completed the evaluation at the interval specified above. Preview and modify the email template by clicking the link.</span></i>
+					<span rsf:id="eval-reminder-mail-desc" style="font-style:italic;"> email is sent out to all students who have not yet completed the evaluation at the interval specified above. Preview and modify the email template by clicking the link.</span>
 				</div>
 				<div style="margin-bottom:0.4em;">
 					<span rsf:id="eval-from-email-note" style="font-style:italic;">All emails will be sent from helpdesk@institution.edu unless overridden below.</span><br/>

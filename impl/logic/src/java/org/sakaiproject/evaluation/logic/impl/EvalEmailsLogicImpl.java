@@ -26,6 +26,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
+import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
@@ -33,11 +34,11 @@ import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.impl.utils.TextTemplateLogicUtils;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
-import org.sakaiproject.evaluation.model.utils.EvalUtils;
 
 
 /**
@@ -62,6 +63,11 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 	private EvalSettings settings;
 	public void setSettings(EvalSettings settings) {
 		this.settings = settings;
+	}
+
+	private EvalAssignsLogic assignsLogic;
+	public void setAssignsLogic(EvalAssignsLogic assignsLogic) {
+		this.assignsLogic = assignsLogic;
 	}
 
 	private EvalEvaluationsLogic evaluationLogic;
@@ -746,14 +752,27 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		replacementValues.put("EvalResultsDate", df.format(eval.getViewDate()) );
 		replacementValues.put("EvalGroupTitle", group.title);
 
-		// TODO check these URLS once I can get the right tool url
-		String evalAndGroupVars = "?evaluationId=" + eval.getId() + "&evalGroupId=" + group.evalGroupId;
-		replacementValues.put("URLtoTakeEval", 
-				externalLogic.getEntityURL(eval) + evalAndGroupVars);
-		replacementValues.put("URLtoAddItems", 
-				externalLogic.getEntityURL(eval) + evalAndGroupVars + "&instructorAdd=true");
-		replacementValues.put("URLtoViewResults", 
-				externalLogic.getEntityURL(eval) + evalAndGroupVars + "&viewReport=true");
+		// generate URLs to the evaluation
+		String evalEntityURL = null;
+		if (group != null && group.evalGroupId != null) {
+			// get the URL directly to the evaluation with group context included
+			EvalAssignGroup assignGroup = assignsLogic.getAssignGroupById( new Long(group.evalGroupId) );
+			if (assignGroup != null) {
+				evalEntityURL = externalLogic.getEntityURL(assignGroup);
+			}
+		}
+
+		if (evalEntityURL == null) {
+			// just get the URL to the evaluation without group context
+			evalEntityURL = externalLogic.getEntityURL(eval);
+		}
+
+		// TODO check these URLS once I can get the right tool url - rwellis
+		
+		// all URLs are identical because the user permissions determine access uniquely
+		replacementValues.put("URLtoTakeEval", evalEntityURL);
+		replacementValues.put("URLtoAddItems", evalEntityURL);
+		replacementValues.put("URLtoViewResults", evalEntityURL);
 		replacementValues.put("URLtoSystem", externalLogic.getServerUrl());
 
 		return TextTemplateLogicUtils.processTextTemplate(messageTemplate, replacementValues);

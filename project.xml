@@ -6,8 +6,8 @@
     <groupId>sakai-evaluation</groupId>
     <currentVersion>${sakai.version}</currentVersion>
     <organization>
-        <name>Virginia Tech</name>
-        <url>http://www.vt.edu/</url>
+		<name>CARET (Cambridge)</name>
+		<url>http://www.caret.cam.ac.uk</url>
     </organization>
     <inceptionYear>2006</inceptionYear>
 

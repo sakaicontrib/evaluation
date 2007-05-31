@@ -111,7 +111,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		// to the templates the way we think it is
 		List ids = null;
 
-		Assert.assertEquals(42, evaluationDao.countAll(EvalItem.class) );
+		Assert.assertEquals(43, evaluationDao.countAll(EvalItem.class) );
 
 		// check the full count of preloaded items
 		Assert.assertEquals(16, evaluationDao.countAll(EvalTemplateItem.class) );
@@ -433,7 +433,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		// test getting all items for the admin user
 		l = items.getItemsForUser(EvalTestDataLoad.ADMIN_USER_ID, null, null, true);
 		Assert.assertNotNull( l );
-		Assert.assertEquals(9 + preloadedCount, l.size());
+		Assert.assertEquals(10 + preloadedCount, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item1.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item2.getId() ));
@@ -444,12 +444,13 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertTrue(ids.contains( etdl.item7.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item8.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item10.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item11.getId() ));
 
 		// same as getting all items
 		l = items.getItemsForUser(EvalTestDataLoad.ADMIN_USER_ID, 
 				EvalConstants.SHARING_OWNER, null, true);
 		Assert.assertNotNull( l );
-		Assert.assertEquals(9 + preloadedCount, l.size());
+		Assert.assertEquals(10 + preloadedCount, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item1.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item2.getId() ));
@@ -460,11 +461,12 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertTrue(ids.contains( etdl.item7.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item8.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item10.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item11.getId() ));
 
 		// test getting all items for the maint user
 		l = items.getItemsForUser(EvalTestDataLoad.MAINT_USER_ID, null, null, true);
 		Assert.assertNotNull( l );
-		Assert.assertEquals(8 + preloadedCount, l.size());
+		Assert.assertEquals(9 + preloadedCount, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item1.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item2.getId() ));
@@ -474,17 +476,19 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertTrue(ids.contains( etdl.item6.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item8.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item10.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item11.getId() ));
 
 		// test getting all items for the maint user without expert items
 		l = items.getItemsForUser(EvalTestDataLoad.MAINT_USER_ID, null, null, false);
 		Assert.assertNotNull( l );
-		Assert.assertEquals(5, l.size());
+		Assert.assertEquals(6, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item3.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item4.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item5.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item8.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item10.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item11.getId() ));
 
 		// test getting all items for the normal user
 		l = items.getItemsForUser(EvalTestDataLoad.USER_ID, null, null, true);
@@ -498,50 +502,54 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		l = items.getItemsForUser(EvalTestDataLoad.ADMIN_USER_ID,
 				EvalConstants.SHARING_PRIVATE, null, true);
 		Assert.assertNotNull( l );
+		Assert.assertEquals(8, l.size());
+		ids = EvalTestDataLoad.makeIdList(l);
+		Assert.assertTrue(ids.contains( etdl.item3.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item4.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item5.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item6.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item7.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item8.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item10.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item11.getId() ));
+
+		// test getting private all private items with filter
+		l = items.getItemsForUser(EvalTestDataLoad.ADMIN_USER_ID,
+				EvalConstants.SHARING_PRIVATE, "do you think", true);
+		Assert.assertNotNull( l );
+		Assert.assertEquals(3, l.size());
+		ids = EvalTestDataLoad.makeIdList(l);
+		Assert.assertTrue(ids.contains( etdl.item3.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item4.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item11.getId() ));
+
+		// test getting private all private items, expert excluded
+		l = items.getItemsForUser(EvalTestDataLoad.ADMIN_USER_ID,
+				EvalConstants.SHARING_PRIVATE, null, false);
+		Assert.assertNotNull( l );
+		Assert.assertEquals(7, l.size());
+		ids = EvalTestDataLoad.makeIdList(l);
+		Assert.assertTrue(ids.contains( etdl.item3.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item4.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item5.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item7.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item8.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item10.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item11.getId() ));
+
+		// test getting private items for the maint user
+		l = items.getItemsForUser(EvalTestDataLoad.MAINT_USER_ID, 
+				EvalConstants.SHARING_PRIVATE, null, true);
+		Assert.assertNotNull( l );
 		Assert.assertEquals(7, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item3.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item4.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item5.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item6.getId() ));
-		Assert.assertTrue(ids.contains( etdl.item7.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item8.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item10.getId() ));
-
-		// test getting private all private items with filter
-		l = items.getItemsForUser(EvalTestDataLoad.ADMIN_USER_ID,
-				EvalConstants.SHARING_PRIVATE, "do you think", true);
-		Assert.assertNotNull( l );
-		Assert.assertEquals(2, l.size());
-		ids = EvalTestDataLoad.makeIdList(l);
-		Assert.assertTrue(ids.contains( etdl.item3.getId() ));
-		Assert.assertTrue(ids.contains( etdl.item4.getId() ));
-
-		// test getting private all private items, expert excluded
-		l = items.getItemsForUser(EvalTestDataLoad.ADMIN_USER_ID,
-				EvalConstants.SHARING_PRIVATE, null, false);
-		Assert.assertNotNull( l );
-		Assert.assertEquals(6, l.size());
-		ids = EvalTestDataLoad.makeIdList(l);
-		Assert.assertTrue(ids.contains( etdl.item3.getId() ));
-		Assert.assertTrue(ids.contains( etdl.item4.getId() ));
-		Assert.assertTrue(ids.contains( etdl.item5.getId() ));
-		Assert.assertTrue(ids.contains( etdl.item7.getId() ));
-		Assert.assertTrue(ids.contains( etdl.item8.getId() ));
-		Assert.assertTrue(ids.contains( etdl.item10.getId() ));
-
-		// test getting private items for the maint user
-		l = items.getItemsForUser(EvalTestDataLoad.MAINT_USER_ID, 
-				EvalConstants.SHARING_PRIVATE, null, true);
-		Assert.assertNotNull( l );
-		Assert.assertEquals(6, l.size());
-		ids = EvalTestDataLoad.makeIdList(l);
-		Assert.assertTrue(ids.contains( etdl.item3.getId() ));
-		Assert.assertTrue(ids.contains( etdl.item4.getId() ));
-		Assert.assertTrue(ids.contains( etdl.item5.getId() ));
-		Assert.assertTrue(ids.contains( etdl.item6.getId() ));
-		Assert.assertTrue(ids.contains( etdl.item8.getId() ));
-		Assert.assertTrue(ids.contains( etdl.item10.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item11.getId() ));
 
 		// test getting private items for the user
 		l = items.getItemsForUser(EvalTestDataLoad.USER_ID, 
@@ -1166,34 +1174,76 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl#canControlItem(java.lang.String, java.lang.Long)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl#canModifyItem(String, Long)}.
 	 */
-	public void testCanControlItem() {
+	public void testCanModifyItem() {
 		// test can control owned items
-		Assert.assertTrue( items.canControlItem( EvalTestDataLoad.ADMIN_USER_ID, 
+		Assert.assertTrue( items.canModifyItem( EvalTestDataLoad.ADMIN_USER_ID, 
 				etdl.item7.getId() ) );
-		Assert.assertTrue( items.canControlItem( EvalTestDataLoad.MAINT_USER_ID, 
+		Assert.assertTrue( items.canModifyItem( EvalTestDataLoad.MAINT_USER_ID, 
 				etdl.item4.getId() ) );
 
 		// test admin user can override perms
-		Assert.assertTrue( items.canControlItem( EvalTestDataLoad.ADMIN_USER_ID, 
+		Assert.assertTrue( items.canModifyItem( EvalTestDataLoad.ADMIN_USER_ID, 
 				etdl.item4.getId() ) );
 
 		// test cannot control unowned items
-		Assert.assertFalse( items.canControlItem( EvalTestDataLoad.MAINT_USER_ID, 
+		Assert.assertFalse( items.canModifyItem( EvalTestDataLoad.MAINT_USER_ID, 
 				etdl.item7.getId() ) );
-		Assert.assertFalse( items.canControlItem( EvalTestDataLoad.USER_ID, 
+		Assert.assertFalse( items.canModifyItem( EvalTestDataLoad.USER_ID, 
 				etdl.item4.getId() ) );
 
 		// test cannot control locked items
-		Assert.assertFalse( items.canControlItem( EvalTestDataLoad.ADMIN_USER_ID, 
+		Assert.assertFalse( items.canModifyItem( EvalTestDataLoad.ADMIN_USER_ID, 
 				etdl.item1.getId() ) );
-		Assert.assertFalse( items.canControlItem( EvalTestDataLoad.MAINT_USER_ID, 
+		Assert.assertFalse( items.canModifyItem( EvalTestDataLoad.MAINT_USER_ID, 
 				etdl.item2.getId() ) );
 
 		// test invalid item id causes failure
 		try {
-			items.canControlItem( EvalTestDataLoad.MAINT_USER_ID, 
+			items.canModifyItem( EvalTestDataLoad.MAINT_USER_ID, 
+					EvalTestDataLoad.INVALID_LONG_ID );
+			Assert.fail("Should have thrown exception");
+		} catch (RuntimeException e) {
+			Assert.assertNotNull(e);
+		}
+	}
+
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl#canRemoveItem(String, Long)}.
+	 */
+	public void testCanRemoveItem() {
+		// test can remove owned items
+		Assert.assertTrue( items.canRemoveItem( EvalTestDataLoad.ADMIN_USER_ID, 
+				etdl.item7.getId() ) );
+		Assert.assertTrue( items.canRemoveItem( EvalTestDataLoad.MAINT_USER_ID, 
+				etdl.item4.getId() ) );
+
+		// test admin user can override perms
+		Assert.assertTrue( items.canRemoveItem( EvalTestDataLoad.ADMIN_USER_ID, 
+				etdl.item4.getId() ) );
+
+		// test cannot remove unowned items
+		Assert.assertFalse( items.canRemoveItem( EvalTestDataLoad.MAINT_USER_ID, 
+				etdl.item7.getId() ) );
+		Assert.assertFalse( items.canRemoveItem( EvalTestDataLoad.USER_ID, 
+				etdl.item4.getId() ) );
+
+		// test cannot remove unlocked items that are in use in templates
+		Assert.assertFalse( items.canRemoveItem( EvalTestDataLoad.MAINT_USER_ID, 
+				etdl.item6.getId() ) );
+		Assert.assertFalse( items.canRemoveItem( EvalTestDataLoad.ADMIN_USER_ID, 
+				etdl.item9.getId() ) );
+
+		// test cannot remove locked items
+		Assert.assertFalse( items.canRemoveItem( EvalTestDataLoad.ADMIN_USER_ID, 
+				etdl.item1.getId() ) );
+		Assert.assertFalse( items.canRemoveItem( EvalTestDataLoad.MAINT_USER_ID, 
+				etdl.item2.getId() ) );
+
+		// test invalid item id causes failure
+		try {
+			items.canRemoveItem( EvalTestDataLoad.MAINT_USER_ID, 
 					EvalTestDataLoad.INVALID_LONG_ID );
 			Assert.fail("Should have thrown exception");
 		} catch (RuntimeException e) {

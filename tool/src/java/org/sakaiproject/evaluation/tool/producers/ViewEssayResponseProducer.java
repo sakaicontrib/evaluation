@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
+import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
 import org.sakaiproject.evaluation.model.EvalAnswer;
@@ -61,10 +62,16 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 		return VIEW_ID;
 	}
 
+	private EvalExternalLogic externalLogic;
+	public void setExternalLogic(EvalExternalLogic externalLogic) {
+		this.externalLogic = externalLogic;
+	}
+
 	private EvalItemsLogic itemsLogic;
 	public void setItemsLogic( EvalItemsLogic itemsLogic) {
 		this.itemsLogic = itemsLogic;
 	}
+
 	private EvalEvaluationsLogic evalsLogic;
 	public void setEvalsLogic(EvalEvaluationsLogic evalsLogic) {
 		this.evalsLogic = evalsLogic;
@@ -81,112 +88,123 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 
 
 
+	/* (non-Javadoc)
+	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
+	 */
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
-		UIMessage.make(tofill, "view-essay-title", "viewessay.page.title");								//$NON-NLS-1$ //$NON-NLS-2$
-		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"),			//$NON-NLS-1$ //$NON-NLS-2$
+		String currentUserId = externalLogic.getCurrentUserId();
+
+		UIMessage.make(tofill, "view-essay-title", "viewessay.page.title");								
+		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"),			
 				new SimpleViewParameters(SummaryProducer.VIEW_ID)); 
 
 		EssayResponseParams essayResponseParams = (EssayResponseParams) viewparams;
-		UIInternalLink.make(tofill, "report-groups-title", UIMessage.make("reportgroups.page.title"), 	//$NON-NLS-1$ //$NON-NLS-2$ 
+		UIInternalLink.make(tofill, "report-groups-title", UIMessage.make("reportgroups.page.title"), 	 
 				new TemplateViewParameters(ChooseReportGroupsProducer.VIEW_ID, 
 						essayResponseParams.evalId)); 
 		
-		UIInternalLink.make(tofill, "viewReportLink", UIMessage.make("viewreport.page.title"), 			//$NON-NLS-1$ //$NON-NLS-2$
+		UIInternalLink.make(tofill, "viewReportLink", UIMessage.make("viewreport.page.title"), 			
 				new ReportParameters(ViewReportProducer.VIEW_ID, 
 						essayResponseParams.evalId, essayResponseParams.groupIds));	
-		
-		/*
-		 * Note: The groups id's would always be passed
-		 * whether it is for single item or all the items.
-		 */ 
-		
-		//output single set of essay responses
-		if(essayResponseParams.itemId != null){
-			//we are actually passing EvalTemplateItem ID
-			EvalTemplateItem myTempItem = itemsLogic.getTemplateItemById(essayResponseParams.itemId);
-			EvalItem myItem = myTempItem.getItem();
 
-			String cat = myTempItem.getItemCategory();
+		// Note: The groups id's should always be passed whether it is for single item or all the items
 
-			UIBranchContainer radiobranch = null;
-			UIBranchContainer courseSection = null;
-			UIBranchContainer instructorSection = null;
-			if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_COURSE)) {//"Course"
-				courseSection = UIBranchContainer.make(tofill, "courseSection:");	
-				UIMessage.make(courseSection, "course-questions-header", "takeeval.course.questions.header"); //$NON-NLS-1$ //$NON-NLS-2$			
-				radiobranch = UIBranchContainer.make(courseSection, "itemrow:first", "0");
-				this.doFillComponent(myItem, essayResponseParams.evalId, 0, essayResponseParams.groupIds, 
-						radiobranch, courseSection);
-			} else if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR)) {//"Instructor"
-				instructorSection = UIBranchContainer.make(tofill,"instructorSection:");		
-				UIMessage.make(instructorSection, "instructor-questions-header","takeeval.instructor.questions.header");			 //$NON-NLS-1$ //$NON-NLS-2$		
-				radiobranch = UIBranchContainer.make(instructorSection, "itemrow:first", "0");
-				this.doFillComponent(myItem, essayResponseParams.evalId, 0, essayResponseParams.groupIds, 
-						radiobranch, instructorSection);
+		if (essayResponseParams.evalId != null) {
+			EvalEvaluation evaluation = evalsLogic.getEvaluationById(essayResponseParams.evalId);
+
+			// do a permission check
+			if (currentUserId.equals(evaluation.getOwner()) ||
+					externalLogic.isUserAdmin(currentUserId)) { // TODO - this check is crap, we need a real one -AZ
+				throw new SecurityException("Invalid user attempting to access reports page: " + currentUserId);
 			}
 
-		}
-
-		//prepare sets of responses for each essay question
-		else if (essayResponseParams.evalId != null) {
-			EvalEvaluation evaluation = evalsLogic.getEvaluationById(essayResponseParams.evalId);
 			// get template from DAO 
 			EvalTemplate template = evaluation.getTemplate();
 
-			// get items(parent items, child items --need to set order
+			//output single set of essay responses
+			if (essayResponseParams.itemId != null) {
+				//we are actually passing EvalTemplateItem ID
+				EvalTemplateItem myTempItem = itemsLogic.getTemplateItemById(essayResponseParams.itemId);
+				EvalItem myItem = myTempItem.getItem();
 
-			List allItems = new ArrayList(template.getTemplateItems());
+				String cat = myTempItem.getItemCategory();
 
-			if (! allItems.isEmpty()) {
-				List ncItemsList = TemplateItemUtils.getNonChildItems(allItems); //already sorted by displayOrder
-
-				// check if there is any "Course" items or "Instructor" items;
+				UIBranchContainer radiobranch = null;
 				UIBranchContainer courseSection = null;
 				UIBranchContainer instructorSection = null;
-
-				if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_COURSE, ncItemsList))	{	
-					courseSection = UIBranchContainer.make(tofill, "courseSection:"); //$NON-NLS-1$
+				if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_COURSE)) {//"Course"
+					courseSection = UIBranchContainer.make(tofill, "courseSection:");	
+					UIMessage.make(courseSection, "course-questions-header", "takeeval.course.questions.header"); 			
+					radiobranch = UIBranchContainer.make(courseSection, "itemrow:first", "0");
+					this.doFillComponent(myItem, essayResponseParams.evalId, 0, essayResponseParams.groupIds, 
+							radiobranch, courseSection);
+				} else if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR)) {//"Instructor"
+					instructorSection = UIBranchContainer.make(tofill,"instructorSection:");		
+					UIMessage.make(instructorSection, "instructor-questions-header","takeeval.instructor.questions.header");			 		
+					radiobranch = UIBranchContainer.make(instructorSection, "itemrow:first", "0");
+					this.doFillComponent(myItem, essayResponseParams.evalId, 0, essayResponseParams.groupIds, 
+							radiobranch, instructorSection);
 				}
+			} else {
+				// get all items since one is not specified
+				List allItems = new ArrayList(template.getTemplateItems());
 
-				if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, ncItemsList))	{	
-					instructorSection = UIBranchContainer.make(tofill, "instructorSection:"); //$NON-NLS-1$
-				}
+				if (! allItems.isEmpty()) {
+					List ncItemsList = TemplateItemUtils.getNonChildItems(allItems); //already sorted by displayOrder
 
-				for (int i = 0; i < ncItemsList.size(); i++) {
-					EvalTemplateItem tempItem1 = (EvalTemplateItem) ncItemsList.get(i);
-					EvalItem item1 = tempItem1.getItem();
-					String cat = tempItem1.getItemCategory();
+					// check if there are any "Course" items or "Instructor" items;
+					UIBranchContainer courseSection = null;
+					UIBranchContainer instructorSection = null;
 
-					UIBranchContainer radiobranch = null;
-					if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_COURSE) 
-							&& item1.getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)){
-						//"Course","Short Answer/Essay"
-						radiobranch = UIBranchContainer.make(courseSection,	"itemrow:first", i+"");
-						if (i % 2 == 1)
-							radiobranch.decorators = new DecoratorList(
-									new UIColourDecorator(null, Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
-
-						this.doFillComponent(item1, evaluation.getId(), i, essayResponseParams.groupIds, 
-								radiobranch, courseSection);
-					} else if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR) &&
-							item1.getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)) {
-						//"Instructor","Short Answer/Essay"
-						radiobranch = UIBranchContainer.make(instructorSection,	"itemrow:first", i+"");
-						if (i % 2 == 1)
-							radiobranch.decorators = new DecoratorList(
-									new UIColourDecorator(null,	Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
-						this.doFillComponent(item1, evaluation.getId(), i, essayResponseParams.groupIds, 
-								radiobranch, instructorSection);
+					if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_COURSE, ncItemsList))	{	
+						courseSection = UIBranchContainer.make(tofill, "courseSection:"); //$NON-NLS-1$
 					}
-				} // end of for loop
 
+					if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, ncItemsList))	{	
+						instructorSection = UIBranchContainer.make(tofill, "instructorSection:"); //$NON-NLS-1$
+					}
+
+					for (int i = 0; i < ncItemsList.size(); i++) {
+						EvalTemplateItem tempItem1 = (EvalTemplateItem) ncItemsList.get(i);
+						EvalItem item1 = tempItem1.getItem();
+						String cat = tempItem1.getItemCategory();
+
+						UIBranchContainer radiobranch = null;
+						if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_COURSE) 
+								&& item1.getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)){
+							//"Course","Short Answer/Essay"
+							radiobranch = UIBranchContainer.make(courseSection,	"itemrow:first", i+"");
+							if (i % 2 == 1)
+								radiobranch.decorators = new DecoratorList(
+										new UIColourDecorator(null, Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
+
+							this.doFillComponent(item1, evaluation.getId(), i, essayResponseParams.groupIds, 
+									radiobranch, courseSection);
+						} else if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR) &&
+								item1.getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)) {
+							//"Instructor","Short Answer/Essay"
+							radiobranch = UIBranchContainer.make(instructorSection,	"itemrow:first", i+"");
+							if (i % 2 == 1)
+								radiobranch.decorators = new DecoratorList(
+										new UIColourDecorator(null,	Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
+							this.doFillComponent(item1, evaluation.getId(), i, essayResponseParams.groupIds, 
+									radiobranch, instructorSection);
+						}
+					} // end of for loop
+				}
 			}
-
 		}
-
 	}
 
+	/**
+	 * @param myItem
+	 * @param evalId
+	 * @param i
+	 * @param groupIds
+	 * @param radiobranch
+	 * @param tofill
+	 */
 	private void doFillComponent(EvalItem myItem, Long evalId, int i, String[] groupIds, 
 			UIBranchContainer radiobranch, UIContainer tofill) {
 
@@ -208,6 +226,9 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
+	 */
 	public List reportNavigationCases() {
 		List i = new ArrayList();
 		return i;

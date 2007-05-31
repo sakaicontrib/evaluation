@@ -27,40 +27,40 @@ public class ScaledUtils {
 		EvalConstants.SCALE_IDEAL_MID, 
 		EvalConstants.SCALE_IDEAL_HIGH, 
 		EvalConstants.SCALE_IDEAL_OUTSIDE};
-	
+
 	public static String[] startColours = {
 		EvaluationConstant.BLUE_COLOR, 
 		EvaluationConstant.GREEN_COLOR,
 		EvaluationConstant.RED_COLOR,
 		EvaluationConstant.RED_COLOR,
 		EvaluationConstant.GREEN_COLOR};
-	
+
 	public static String[] endColours = {
 		EvaluationConstant.BLUE_COLOR, 
 		EvaluationConstant.RED_COLOR,
 		EvaluationConstant.RED_COLOR,
 		EvaluationConstant.GREEN_COLOR,
 		EvaluationConstant.GREEN_COLOR};
-	
+
 	public static int idealToIndex(String ideal) {
 		for (int i = 0; i < idealKeys.length; ++ i) {
 			if (StringUtil.equals(ideal, idealKeys[i])) return i;
 		}
 		return -1;
 	}
-	
+
 	public static int idealIndex(EvalScale scale) {
 		return idealToIndex(scale.getIdeal());
 	}
-	
+
 	public static String getIdealImageURL(EvalScale scale) {
-    return EvaluationConstant.COLORED_IMAGE_URLS[idealIndex(scale)];
+		return EvaluationConstant.COLORED_IMAGE_URLS[idealIndex(scale)];
 	}
 
 	public static Color getStartColor(EvalScale scale) {
 		return Color.decode(startColours[idealIndex(scale)]);
 	}
-	
+
 	public static Color getEndColor(EvalScale scale) {
 		return Color.decode(endColours[idealIndex(scale)]);
 	}

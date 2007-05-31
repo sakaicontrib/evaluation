@@ -27,6 +27,7 @@ import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIInternalLink;
+import uk.org.ponder.rsf.components.UILink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.view.ComponentChecker;
@@ -139,17 +140,29 @@ public class ControlTemplatesProducer implements ViewComponentProducer {
 
 				UIBranchContainer templateRow = UIBranchContainer.make(templateListing, "template-row:", template.getId().toString());
 
-				if ( templatesLogic.canControlTemplate(currentUserId, template.getId()) ) {
+				// local locked check is more efficient so do that first
+				if ( ! template.getLocked().booleanValue() ||
+						templatesLogic.canModifyTemplate(currentUserId, template.getId()) ) {
                 	// template controllable
 					UIInternalLink.make(templateRow, "template-modify-link", template.getTitle(), 
 							new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, template.getId()));
-					UIInternalLink.make(templateRow, "delete-template-link", 
-							new TemplateViewParameters( RemoveTemplateProducer.VIEW_ID, template.getId() ));
 				} else {
                 	// template not controllable
 					UIOutput.make(templateRow, "template-title", template.getTitle());
+				}
+
+				// local locked check is more efficient so do that first
+				if ( ! template.getLocked().booleanValue() ||
+						templatesLogic.canRemoveTemplate(currentUserId, template.getId()) ) {
+					UIInternalLink.make(templateRow, "delete-template-link", 
+							new TemplateViewParameters( RemoveTemplateProducer.VIEW_ID, template.getId() ));
+				} else {
 					UIMessage.make(templateRow, "template-used", "controltemplates.template.inuse");
 				}
+
+				// direct link to the template preview
+				UILink.make(tofill, "preview-template-direct-link", UIMessage.make("general.direct.link"), 
+						external.getEntityURL(template) );
 
 				UIOutput.make(templateRow, "template-owner", external.getUserDisplayName( template.getOwner() ));
 				UIOutput.make(templateRow, "template-last-update", df.format( template.getLastModified() ));

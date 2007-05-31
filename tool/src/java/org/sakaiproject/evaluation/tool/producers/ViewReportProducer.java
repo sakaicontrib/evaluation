@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
+import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
 import org.sakaiproject.evaluation.model.EvalAnswer;
@@ -64,11 +65,15 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 		return VIEW_ID;
 	}
 
+	private EvalExternalLogic externalLogic;
+	public void setExternalLogic(EvalExternalLogic externalLogic) {
+		this.externalLogic = externalLogic;
+	}
+
 	private EvalEvaluationsLogic evalsLogic;
 	public void setEvalsLogic(EvalEvaluationsLogic evalsLogic) {
 		this.evalsLogic = evalsLogic;
 	}
-	
 	
 	private EvalResponsesLogic responsesLogic;	
 	public void setResponsesLogic(EvalResponsesLogic responsesLogic) {
@@ -84,28 +89,36 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 	public void setReportsBean(ReportsBean reportsBean) {
 		this.reportsBean = reportsBean;
 	}
-	
-	public ViewParameters getViewParameters() {
-		return new ReportParameters(VIEW_ID, null, null);
-	}	
 
-	//String evalGroupId;
 	int displayNumber=1;
-	
 	String[] groupIds;
 
+
+	/* (non-Javadoc)
+	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
+	 */
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
-		UIMessage.make(tofill, "view-report-title","viewreport.page.title"); //$NON-NLS-2$
+		String currentUserId = externalLogic.getCurrentUserId();
+
+		UIMessage.make(tofill, "view-report-title","viewreport.page.title");
 
 		ReportParameters reportParams = (ReportParameters) viewparams;
-		if (reportParams.templateId != null) {
-			
+		if (reportParams.evaluationId != null) {
+
 			// bread crumbs
-			UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID)); //$NON-NLS-2$
-			UIInternalLink.make(tofill, "report-groups-title", UIMessage.make("reportgroups.page.title"), new TemplateViewParameters(ChooseReportGroupsProducer.VIEW_ID, reportParams.templateId)); //$NON-NLS-2$
+			UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), 
+					new SimpleViewParameters(SummaryProducer.VIEW_ID));
+			UIInternalLink.make(tofill, "report-groups-title", UIMessage.make("reportgroups.page.title"), 
+					new TemplateViewParameters(ChooseReportGroupsProducer.VIEW_ID, reportParams.evaluationId));
 			
-			EvalEvaluation evaluation = evalsLogic.getEvaluationById(reportParams.templateId);
+			EvalEvaluation evaluation = evalsLogic.getEvaluationById(reportParams.evaluationId);
+
+			// do a permission check
+			if (currentUserId.equals(evaluation.getOwner()) ||
+					externalLogic.isUserAdmin(currentUserId)) { // TODO - this check is crap, we need a real one -AZ
+				throw new SecurityException("Invalid user attempting to access reports page: " + currentUserId);
+			}
 
 			// get template from DAO 
 			EvalTemplate template = evaluation.getTemplate();
@@ -121,7 +134,8 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 				 * Else it means coming via bread crumbs from essay 
 				 * response page.
 				 */
-				if (reportParams.groupIds == null) {
+				if (reportParams.groupIds == null ||
+						reportParams.groupIds.length == 0) {
 					groupIds = new String[reportsBean.groupIds.size()];
 					int c=0;
 				    for (Iterator it = reportsBean.groupIds.keySet().iterator(); it.hasNext();) {
@@ -134,8 +148,10 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 					groupIds = reportParams.groupIds;
 				}
 				
-				UIInternalLink.make(tofill, "fullEssayResponse", UIMessage.make("viewreport.view.essays"), new EssayResponseParams(ViewEssayResponseProducer.VIEW_ID, reportParams.templateId, groupIds)); //$NON-NLS-2$
-				UIInternalLink.make(tofill, "csvResultsReport", UIMessage.make("viewreport.view.csv"), new CSVReportViewParams("csvResultsReport", template.getId(), reportParams.templateId, groupIds)); //$NON-NLS-2$ //$NON-NLS-3$
+				UIInternalLink.make(tofill, "fullEssayResponse", UIMessage.make("viewreport.view.essays"), 
+						new EssayResponseParams(ViewEssayResponseProducer.VIEW_ID, reportParams.evaluationId, groupIds));
+				UIInternalLink.make(tofill, "csvResultsReport", UIMessage.make("viewreport.view.csv"), 
+						new CSVReportViewParams("csvResultsReport", template.getId(), reportParams.evaluationId, groupIds)); //$NON-NLS-3$
 
 			    //filter out the block child items, to get a list non-child items
 				List ncItemsList = TemplateItemUtils.getNonChildItems(allItems);
@@ -148,7 +164,7 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 				
 				if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_COURSE, ncItemsList))	{	
 					courseSection = UIBranchContainer.make(tofill,"courseSection:");
-					UIMessage.make(courseSection, "report-course-questions", "viewreport.itemlist.coursequestions"); //$NON-NLS-2$		
+					UIMessage.make(courseSection, "report-course-questions", "viewreport.itemlist.coursequestions");		
 					for (int i = 0; i <ncItemsList.size(); i++) {
 						//EvalItem item1 = (EvalItem) ncItemsList.get(i);
 						EvalTemplateItem tempItem1 = (EvalTemplateItem) ncItemsList.get(i);
@@ -175,7 +191,7 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 					//for (Iterator it = instructors.iterator(); it.hasNext();) {
 						//String instructor = (String) it.next();
 						instructorSection = UIBranchContainer.make(tofill,"instructorSection:");
-						UIMessage.make(instructorSection, "report-instructor-questions", "viewreport.itemlist.instructorquestions"); //$NON-NLS-2$
+						UIMessage.make(instructorSection, "report-instructor-questions", "viewreport.itemlist.instructorquestions");
 						//for each item in this evaluation
 						for (int i = 0; i <ncItemsList.size(); i++) {
 							EvalTemplateItem tempItem1 = (EvalTemplateItem) ncItemsList.get(i);
@@ -326,7 +342,17 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 			displayNumber--;
 		}
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
+	 */
+	public ViewParameters getViewParameters() {
+		return new ReportParameters();
+	}
+
+	/* (non-Javadoc)
+	 * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
+	 */
 	public List reportNavigationCases() {
 		List i = new ArrayList();
 		return i;

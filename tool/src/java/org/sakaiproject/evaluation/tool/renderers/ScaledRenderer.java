@@ -14,8 +14,6 @@
 
 package org.sakaiproject.evaluation.tool.renderers;
 
-import java.awt.Color;
-
 import org.sakaiproject.evaluation.logic.utils.ArrayUtils;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -160,10 +158,6 @@ public class ScaledRenderer implements ItemRenderer {
 
 			// display next row
 			UIBranchContainer radiobranchFullRow = UIBranchContainer.make(container, "nextrow:", displayNumber+""); //$NON-NLS-1$
-			// Setting the row background color for even numbered rows.
-			if (displayNumber % 2 == 1)
-				radiobranchFullRow.decorators = new DecoratorList(
-						new UIColourDecorator(null, Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
 
 			String containerId;
 			if ( EvalConstants.ITEM_SCALE_DISPLAY_FULL.equals(scaleDisplaySetting) ) {

@@ -34,8 +34,6 @@
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="templatesLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
-		<property name="itemsLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
 		<property name="evalsLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
 		<property name="assignsLogic"
@@ -205,6 +203,14 @@
 		<property name="locale" ref="requestLocale" />
 	</bean>
 
+	<bean class="org.sakaiproject.evaluation.tool.producers.ShowEvalCategoryProducer">
+		<property name="external"
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+		<property name="evaluationsLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+		<property name="locale" ref="requestLocale" />
+	</bean>
+
 	<bean class="org.sakaiproject.evaluation.tool.producers.ControlTemplatesProducer">
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
@@ -223,12 +229,10 @@
 	</bean>
 
 	<bean class="org.sakaiproject.evaluation.tool.producers.RemoveTemplateProducer">
+		<property name="externalLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="templatesLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
-		<property name="evalsLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
-		<property name="settings"
-			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 	</bean>
 
 	<bean class="org.sakaiproject.evaluation.tool.producers.ControlItemsProducer">
@@ -294,6 +298,7 @@
 			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />		
 		<property name="itemRenderer"
 			ref="org.sakaiproject.evaluation.tool.renderers.ItemRenderer" />
+		<property name="messageLocator" ref="messageLocator" />
 	</bean>
 
 	<bean class="org.sakaiproject.evaluation.tool.producers.RemoveItemProducer">
@@ -362,6 +367,8 @@
 	<bean class="org.sakaiproject.evaluation.tool.producers.EvaluationAssignConfirmProducer">
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+		<property name="assignsLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalAssignsLogic" />
 		<property name="evaluationBean" ref="evaluationBean" />
 	</bean>
 
@@ -372,8 +379,9 @@
 	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyEmailProducer">
 	</bean>
 
-	<bean
-		class="org.sakaiproject.evaluation.tool.producers.ViewReportProducer">
+	<bean class="org.sakaiproject.evaluation.tool.producers.ViewReportProducer">
+		<property name="externalLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="itemsLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
 		<property name="evalsLogic"
@@ -385,6 +393,8 @@
 	</bean>
 
 	<bean class="org.sakaiproject.evaluation.tool.producers.ChooseReportGroupsProducer">
+		<property name="externalLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="evalsLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
 		<property name="reportsBean"
@@ -392,6 +402,8 @@
 	</bean>
 
 	<bean class="org.sakaiproject.evaluation.tool.producers.ViewEssayResponseProducer">
+		<property name="externalLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="evalsLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
 		<property name="itemsLogic"
@@ -409,7 +421,8 @@
 		<property name="itemRenderer" 
 			ref="org.sakaiproject.evaluation.tool.renderers.ItemRenderer" />
 		<property name="localResponsesLogic" 
-			ref="localResponsesLogic" />		
+			ref="localResponsesLogic" />
+		<property name="locale" ref="requestLocale" />
 	</bean>
 
 	<bean class="org.sakaiproject.evaluation.tool.producers.RemoveEvalProducer">

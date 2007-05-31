@@ -14,7 +14,6 @@
 
 package org.sakaiproject.evaluation.tool;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -28,15 +27,14 @@ import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
-import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.producers.ControlEvaluationsProducer;
 import org.sakaiproject.evaluation.tool.producers.EvaluationAssignConfirmProducer;
@@ -46,7 +44,6 @@ import org.sakaiproject.evaluation.tool.producers.EvaluationStartProducer;
 import org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer;
 import org.sakaiproject.evaluation.tool.producers.SummaryProducer;
 import org.sakaiproject.evaluation.tool.utils.EvaluationDateUtil;
-import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 import org.sakaiproject.util.FormattedText;
 
 /**
@@ -105,13 +102,7 @@ public class EvaluationBean {
 	public void setTemplatesLogic( EvalTemplatesLogic templatesLogic) {
 		this.templatesLogic = templatesLogic;
 	}
-	
-	//Spring injection
-	private EvalItemsLogic itemsLogic;
-	public void setItemsLogic( EvalItemsLogic itemsLogic) {
-		this.itemsLogic = itemsLogic;
-	}
-	
+
 	//Spring injection
 	private EvalEvaluationsLogic evalsLogic;
 	public void setEvalsLogic(EvalEvaluationsLogic evalsLogic) {
@@ -244,11 +235,9 @@ public class EvaluationBean {
 	}
 
 	/**
-	 * Method binding to the "Save Settings" button on the 
-	 * evaluation_setting.html.
+	 * Method binding to the "Save Settings" button on the evaluation_setting.html.
 	 * 
-	 * @return View id that sends the control to control panel 
-	 * 			or summary.
+	 * @return View id that sends the control to control panel or summary.
 	 */
 	public String saveSettingsAction() {	
 		/*
@@ -262,47 +251,50 @@ public class EvaluationBean {
 		Date today = new Date();
 		if (today.before(eval.getStartDate())) {
 			//Do nothing as start date is properly set in the evaluation bean.
-		}
-		else {
+		} else {
 			startDate = eval.getStartDate(); 
 		}
-		
+
 		//Perform common tasks
 		commonSaveTasks();
-		
+
 		//Need to fetch the object again as Hibernate session has expired
 		EvalEvaluation evalInDB = evalsLogic.getEvaluationById(eval.getId());
-		
-		//Now copying the data from eval to evalInDB
-		evalInDB.setLastModified(eval.getLastModified());
-		
-		evalInDB.setStartDate(eval.getStartDate());
-		evalInDB.setStopDate(eval.getStopDate());
-		evalInDB.setDueDate(eval.getDueDate());
-		evalInDB.setViewDate(eval.getViewDate());
+		String evalState = EvalUtils.getEvaluationState(evalInDB);
 
-		evalInDB.setResultsPrivate(eval.getResultsPrivate());
+		// Now copying the data from eval to evalInDB (all fields we care to change must be added to this)
+		if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(evalState)) {
+			evalInDB.setStartDate(eval.getStartDate());
+			evalInDB.setInstructorOpt(eval.getInstructorOpt());
+			evalInDB.setAvailableEmailTemplate(eval.getAvailableEmailTemplate());
+			evalInDB.setReminderFromEmail(eval.getReminderFromEmail());
+			evalInDB.setBlankResponsesAllowed(eval.getBlankResponsesAllowed());
+			evalInDB.setModifyResponsesAllowed(eval.getModifyResponsesAllowed());
+			evalInDB.setUnregisteredAllowed(eval.getUnregisteredAllowed());
+			evalInDB.setAuthControl(eval.getAuthControl());
+		}
+		if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(evalState) ||
+				EvalConstants.EVALUATION_STATE_ACTIVE.equals(evalState) ) {
+			evalInDB.setStopDate(eval.getStopDate());
+			evalInDB.setDueDate(eval.getDueDate());
+			evalInDB.setReminderEmailTemplate(eval.getReminderEmailTemplate());
+			evalInDB.setReminderDays(eval.getReminderDays());
+		}
+
+		// can be changed anytime
+		evalInDB.setViewDate(eval.getViewDate());
 		evalInDB.setStudentsDate(eval.getStudentsDate());
 		evalInDB.setInstructorsDate(eval.getInstructorsDate());
-		
-		evalInDB.setBlankResponsesAllowed(eval.getBlankResponsesAllowed());
-		evalInDB.setModifyResponsesAllowed(eval.getModifyResponsesAllowed());
-		evalInDB.setUnregisteredAllowed(eval.getUnregisteredAllowed());
-
-		evalInDB.setInstructorOpt(eval.getInstructorOpt());
-
-		evalInDB.setAvailableEmailTemplate(eval.getAvailableEmailTemplate());
-		evalInDB.setReminderFromEmail(eval.getReminderFromEmail());
-		evalInDB.setReminderEmailTemplate(eval.getReminderEmailTemplate());
-		evalInDB.setReminderDays(eval.getReminderDays());
+		evalInDB.setResultsPrivate(eval.getResultsPrivate());
+		evalInDB.setEvalCategory(eval.getEvalCategory());
 
 		evalsLogic.saveEvaluation(evalInDB, external.getCurrentUserId());
-		
-		//now reset the eval item here
+
+		// now reset the eval item here
 		clearEvaluation();
 	    return ControlEvaluationsProducer.VIEW_ID;
 	}
-	
+
 	/**
 	 * Method binding to the "Cancel" button on the 
 	 * evaluation_setting.html when editing an existing
@@ -657,73 +649,19 @@ public class EvaluationBean {
 	public String previewEvalAction(){
 		return PreviewEvalProducer.VIEW_ID;
 	}
+
 	
-	/**
-	 * Method binding to the "Cancel" button 
-	 * on the remove_template.html
-	 * 
-	 * @return View id sending the control to control panel page.
-	 */	
-	public String cancelRemoveTemplateAction(){
-		return ControlEvaluationsProducer.VIEW_ID;
-	}
-	
-	/**
-	 * Method binding to the "Remove Template" button 
-	 * on the remove_template.html.
-	 * 
-	 * @return View id sending the control to control panel page.
-	 */	
 	//TODO: This is not the place for anything related to templates - kahuja (8th Feb 2007)
 	//		Thus this method should be done using template bean locator.
-	// Is this actually being used??? -AZ
-	public String removeTemplateAction(){
-
+	/**
+	 * Ultra simplified version of the remove template code
+	 * @return
+	 */
+	public String removeTemplateAction() {
 		String currentUserId = external.getCurrentUserId();
-	
-		Long id = new Long("-1");
-		EvalTemplate template1 = null;
-		
-		try {
-			id = Long.valueOf(tmplId);
-		}
-		catch (NumberFormatException fe) {	
-			log.fatal(fe);
-		}
-		
-		if (id.intValue() == -1) 
-			log.error("Error inside removeEvalAction()");
-		else
-			template1 = templatesLogic.getTemplateById(id);
-		
-		if (template1 != null) {
-			
-			List allItems = new ArrayList(template1.getTemplateItems());			
-
-			//filter out the block child items, to get a list non-child items
-			List ncItemsList = TemplateItemUtils.getNonChildItems(allItems);
-			for (int i = 0; i < ncItemsList.size(); i++) {
-				
-				EvalTemplateItem templateItem = (EvalTemplateItem) ncItemsList.get(i);
-				
-				//need to check if it is a Block parent, delete child items first
-				if ( TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT) ) {
-					
-					Long parentID = templateItem.getId();				
-					List childItems = TemplateItemUtils.getChildItems(allItems, parentID);
-					if (childItems != null && childItems.size() >0 ) {
-						for (int k = 0; k < childItems.size(); k++) {
-							EvalTemplateItem tItem = (EvalTemplateItem) childItems.get(k);
-							itemsLogic.deleteTemplateItem(tItem.getId(), currentUserId);
-						}
-					}
-				}//end of check: block child
-			
-				itemsLogic.deleteTemplateItem(templateItem.getId(), currentUserId);
-			}
-			templatesLogic.deleteTemplate(template1.getId(), currentUserId);
-		}
-		return ControlEvaluationsProducer.VIEW_ID;
+		Long templateId = new Long(tmplId);
+		templatesLogic.deleteTemplate(templateId, currentUserId);
+		return "success";
 	}
 	
 	/**

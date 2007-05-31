@@ -157,17 +157,24 @@ public class ControlItemsProducer implements ViewComponentProducer {
 				}
 				UIOutput.make(itemBranch, "item-text", item.getItemText());
 
-				if ( itemsLogic.canControlItem(currentUserId, item.getId()) ) {
-                	// item controllable
-					UIInternalLink.make(itemBranch, "item-remove-link", UIMessage.make("controlitems.remove.link"), 
-							new ItemViewParameters(RemoveItemProducer.VIEW_ID, item.getId(), null));
+				// local locked check is more efficient so do that first
+				if ( !item.getLocked().booleanValue() || 
+						itemsLogic.canModifyItem(currentUserId, item.getId()) ) {
 					UIInternalLink.make(itemBranch, "item-modify-link", UIMessage.make("controlitems.modify.link"), 
 							new ItemViewParameters(ModifyItemProducer.VIEW_ID, item.getId(), null));
 				} else {
-                	// item not controllable
-					UIMessage.make(itemBranch, "item-remove-dummy", "controlitems.remove.link");
 					UIMessage.make(itemBranch, "item-modify-dummy", "controlitems.modify.link");
 				}
+
+				// local locked check is more efficient so do that first
+				if ( !item.getLocked().booleanValue() || 
+						itemsLogic.canRemoveItem(currentUserId, item.getId()) ) {
+					UIInternalLink.make(itemBranch, "item-remove-link", UIMessage.make("controlitems.remove.link"), 
+							new ItemViewParameters(RemoveItemProducer.VIEW_ID, item.getId(), null));
+				} else {
+					UIMessage.make(itemBranch, "item-remove-dummy", "controlitems.remove.link");
+				}
+
 			}
 		} else {
 			UIMessage.make(tofill, "no-items", "controlitems.items.none");

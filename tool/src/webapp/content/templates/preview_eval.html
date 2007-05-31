@@ -2,7 +2,7 @@
      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title rsf:id="preview-eval-title">Preview Evaluation</title>
+	<title rsf:id="page-title">Previewing</title>
     <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
     <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
     <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
@@ -12,54 +12,56 @@
 <body>
 <div class="portletBody">
 
-	<div class="navIntraTool">
-		<a rsf:id="administrate-toplink" href="administrate.html">Administrate</a>
-		<a rsf:id="summary-toplink" href="summary.html">Summary</a>
-	</div>
+<div class="navIntraTool">
+	<a rsf:id="summary-toplink" href="summary.html">Summary</a>
+</div>
 
-	<div>
-	<ul class="breadCrumb">
-		<li class="breadCrumb"><a rsf:id="summary-toplink" href="summary.html">Summary</a></li>
-		<li class="breadCrumb" rsf:id="control-eval-title">Control Evaluations</li>
-		<li class="breadCrumb" rsf:id="preview-eval-title">Preview Evaluation</li>					
-	</ul>
+<div>
+<ul class="breadCrumb">
+	<li class="breadCrumb"><a rsf:id="summary-toplink" href="summary.html">Summary</a></li>
+	<li class="breadCrumb" rsf:id="control-eval-title">Control Evaluations</li>
+	<li class="breadCrumb" rsf:id="preview-title">Previewing Evaluation</li>					
+</ul>
+</div>
+
+<div style="width:99%;text-align:center;">
+	<div rsf:id="preview-title" style="border:1px solid #FF0000;background-color:#FFCCCC;width:60%;font-size:1.3em;text-align:center;padding:0.3em;margin:0.5em;">Previewing Evaluation</div>
+</div>
+
+<div style="width:99%;">
+	<div class="divrow" style="background-color:#CCCCFF;">
+		<div class="leftcol">
+			<span rsf:id="eval-title-header" style="font-weight:bold;">Evaluation:</span>
+			<span rsf:id="evalTitle">Evaluation title here</span>
+		</div>
+		<div rsf:id="show-group-title:" class="rightcol">
+			<span rsf:id="group-title-header" style="font-weight:bold;">Group:</span>
+			<span rsf:id="group-title">Group title here</span>
+		</div>
+		<div class="cleaner">&nbsp;</div>
 	</div>
-	<table border="0" cellspacing="0" cellpadding="0" width="100%">
-		<tr>
-			<td align="left" width="70%"><b><span rsf:id="evaluation-title-header">Evaluation:</span></b><span rsf:id="evalTitle">Evaluation title here</span></td>
-			<td align="right" width="30%"><b><span rsf:id="course-title-header">Course:</span></b><span rsf:id="courseTitle">Course title here</span></td>
-		</tr>
-		<tr rsf:id="showDescription:" style="background-color:#CCCCFF;">
-			<td align="left" colspan="2">&nbsp;<i><span rsf:id="description">Evaluation description here</span></i></td>
-		</tr>
-		<tr>
-			<td colspan="2">&nbsp;</td>
-		</tr>
-		<tr>
-			<td align="left" colspan="2"><b><span rsf:id="instructions-title-header">Instructions:</span></b>
-				<span rsf:id="instruction">
-				Evaluation instructions would go here if any have been specified. This block may be up to 4000 chars.
-				</span>
-			</td>
-		</tr>
-		<tr>
-			<td colspan="2">&nbsp;</td>
-		</tr>
- 	</table>
+	<div rsf:id="show-eval-instructions:" class="divrow">
+		<div class="leftcol">
+			<span rsf:id="eval-instructions-header" style="font-weight:bold;">Instructions:</span>
+			<span rsf:id="eval-instructions">Evaluation instructions would go here if any have been specified. This block may be up to 4000 chars.</span>
+		</div>
+		<div class="cleaner">&nbsp;</div>
+	</div>
+</div>
 
 
 <div rsf:id="courseSection:">	
  <table border="0" cellspacing="0" cellpadding="0" width="99%">
   <tr>
     <!-- this td contains the section connector -->
-	<td nowrap="yes" style="width:6px;height:24px;background-color:#660000;"></td>
+	<td nowrap="nowrap" style="width:6px;height:24px;background-color:#660000;"></td>
     <!-- this td contains the data block -->
-	<td nowrap="yes" style="width:10px;height:24px;background-color:#660000;"></td>
-	<td nowrap="yes" align="left" style="width:5%;height:24px;font-weight:bold;border:3px solid #660000;">
+	<td nowrap="nowrap" style="width:10px;height:24px;background-color:#660000;"></td>
+	<td nowrap="nowrap" align="left" style="width:5%;height:24px;font-weight:bold;border:3px solid #660000;">
 	  <span rsf:id="course-questions-header"> Course Questions: </span>
 	</td>
 
-	<td nowrap="yes" style="width:95%;height:24px;background-color:#660000;"></td>
+	<td nowrap="nowrap" style="width:95%;height:24px;background-color:#660000;"></td>
   </tr>
 
   <tr>
@@ -88,7 +90,7 @@
     <!-- this td contains the section connector -->
     <td style="width:6px;height:4px;background-color:#660000;"></td>
     <!-- this td contains the data block -->
-   	<td colspan="3" nowrap="yes" align="left" valign="top" style="height:4px;background-color:#660000;"></td>
+   	<td colspan="3" nowrap="nowrap" align="left" valign="top" style="height:4px;background-color:#660000;"></td>
   </tr>
   <tr height="8"><td colspan="10"></td></tr><!-- spacer row -->
   </table>      		
@@ -101,14 +103,14 @@
 
     <tr>
       <!-- this td contains the section connector -->
-  	<td nowrap="yes" style="width:6px;height:24px;background-color:#000099;"></td>
+  	<td nowrap="nowrap" style="width:6px;height:24px;background-color:#000099;"></td>
       <!-- this td contains the data block -->
-  	<td nowrap="yes" style="width:10px;height:24px;background-color:#000099;"></td>
-  	<td nowrap="yes" align="left" style="width:5%;height:24px;font-weight:bold;border:3px solid #000099;">
+  	<td nowrap="nowrap" style="width:10px;height:24px;background-color:#000099;"></td>
+  	<td nowrap="nowrap" align="left" style="width:5%;height:24px;font-weight:bold;border:3px solid #000099;">
   	  <span rsf:id="instructor-questions-header"> Instructor Questions: </span>
   	</td>
 
-  	<td nowrap="yes" style="width:95%;height:24px;background-color:#000099;"></td>
+  	<td nowrap="nowrap" style="width:95%;height:24px;background-color:#000099;"></td>
     </tr>
     <tr>
       <!-- this td contains the section connector -->
@@ -139,7 +141,7 @@
 	      <!-- this td contains the section connector -->
 	      <td style="width:6px;height:4px;background-color:#000099;"></td>
 	      <!-- this td contains the data block -->
-	      <td colspan="3" nowrap="yes" align="left" valign="top" style="height:4px;background-color:#000099;"></td>
+	      <td colspan="3" nowrap="nowrap" align="left" valign="top" style="height:4px;background-color:#000099;"></td>
 	   </tr>
 
 	   <tr height="8"><td colspan="10"></td></tr><!-- spacer row -->

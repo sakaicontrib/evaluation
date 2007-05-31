@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.entity.EvalCategoryEntityProvider;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationBean;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
@@ -35,6 +36,7 @@ import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
+import uk.org.ponder.rsf.components.UILink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
@@ -395,6 +397,19 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		UIMessage.make(form, "eval-from-email-note", "evalsettings.email.sent.from", new String[] {defaultEmail});
 		UIMessage.make(form, "eval-from-email-header", "evalsettings.from.email.header");
 		UIInput.make(form, "reminderFromEmail", "#{evaluationBean.eval.reminderFromEmail}");
+
+
+		// EVALUATION EXTRAS SECTION
+		UIMessage.make(form, "eval-extra-settings-header", "evalsettings.extra.settings.header");
+
+		// eval category
+		UIMessage.make(form, "eval-category-header", "evalsettings.extra.category.header");
+		UIInput.make(form, "eval-category", "#{evaluationBean.eval.evalCategory}");
+		UIMessage.make(form, "eval-category-instructions", "evalsettings.extra.category.instructions");
+		if (evaluationBean.eval.getEvalCategory() != null) {
+			UILink.make(tofill, "eval-category-direct-link", UIMessage.make("general.direct.link"), 
+				externalLogic.getEntityURL(EvalCategoryEntityProvider.ENTITY_PREFIX, evaluationBean.eval.getEvalCategory()) );
+		}
 
 
 		// EVAL SETTINGS SAVING CONTROLS

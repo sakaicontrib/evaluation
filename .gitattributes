@@ -16,7 +16,10 @@ api/logic/src/java/org/sakaiproject/evaluation/logic/EvalResponsesLogic.java -te
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalScalesLogic.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalSettings.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalTemplatesLogic.java -text
+api/logic/src/java/org/sakaiproject/evaluation/logic/entity/AssignGroupEntityProvider.java -text
+api/logic/src/java/org/sakaiproject/evaluation/logic/entity/EvalCategoryEntityProvider.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/entity/EvaluationEntityProvider.java -text
+api/logic/src/java/org/sakaiproject/evaluation/logic/entity/TemplateEntityProvider.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/EvalJobLogic.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/EvalScheduledInvocation.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/ExternalEvalGroups.java -text
@@ -26,6 +29,7 @@ api/logic/src/java/org/sakaiproject/evaluation/logic/model/HierarchyNode.java -t
 api/logic/src/java/org/sakaiproject/evaluation/logic/providers/EvalGroupsProvider.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/providers/EvalHierarchyProvider.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/utils/ArrayUtils.java -text
+api/logic/src/java/org/sakaiproject/evaluation/logic/utils/EvalUtils.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/utils/SettingsLogicUtils.java -text
 api/model/project.xml -text
 api/model/src/java/org/sakaiproject/evaluation/model/EvalAnswer.java -text
@@ -40,7 +44,6 @@ api/model/src/java/org/sakaiproject/evaluation/model/EvalScale.java -text
 api/model/src/java/org/sakaiproject/evaluation/model/EvalTemplate.java -text
 api/model/src/java/org/sakaiproject/evaluation/model/EvalTemplateItem.java -text
 api/model/src/java/org/sakaiproject/evaluation/model/constant/EvalConstants.java -text
-api/model/src/java/org/sakaiproject/evaluation/model/utils/EvalUtils.java -text
 api/model/src/java/readme.txt -text
 impl/dao/project.xml -text
 impl/dao/src/java/org/sakaiproject/evaluation/dao/impl/EvaluationDaoImpl.java -text
@@ -72,7 +75,10 @@ impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalResponsesLogicImp
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalScalesLogicImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalSettingsImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalTemplatesLogicImpl.java -text
+impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/entity/AssignGroupEntityProviderImpl.java -text
+impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/entity/EvalCategoryEntityProviderImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/entity/EvaluationEntityProviderImpl.java -text
+impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/entity/TemplateEntityProviderImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvalAssignContextInterceptor.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvaluationInterceptor.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvaluationModificationRegistry.java -text
@@ -163,6 +169,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/producers/RemoveEvalProducer.java
 tool/src/java/org/sakaiproject/evaluation/tool/producers/RemoveItemProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/RemoveScaleProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/RemoveTemplateProducer.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/producers/ShowEvalCategoryProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/SummaryProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/TakeEvalProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ViewEssayResponseProducer.java -text
@@ -184,6 +191,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/viewparams/CSVReportViewParams.ja
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ChooseItemViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/EmailViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/EssayResponseParams.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/viewparams/EvalCategoryViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/EvalScaleParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/EvalTakeViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ExpertItemViewParameters.java -text
@@ -282,6 +290,7 @@ tool/src/webapp/content/templates/remove_item.html -text
 tool/src/webapp/content/templates/remove_scale.html -text
 tool/src/webapp/content/templates/remove_template.html -text
 tool/src/webapp/content/templates/report_groups.html -text
+tool/src/webapp/content/templates/show_eval_category.html -text
 tool/src/webapp/content/templates/summary.html -text
 tool/src/webapp/content/templates/take_eval.html -text
 tool/src/webapp/content/templates/template_item.html -text

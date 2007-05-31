@@ -430,34 +430,77 @@ public class EvalTemplatesLogicImplTest extends AbstractTransactionalSpringConte
 
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalTemplatesLogicImpl#canControlTemplate(java.lang.String, java.lang.Long)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalTemplatesLogicImpl#canModifyTemplate(String, Long)}.
 	 */
-	public void testCanControlTemplate() {
+	public void testCanModifyTemplate() {
 		// test can control owned templates
-		Assert.assertTrue( templates.canControlTemplate( EvalTestDataLoad.ADMIN_USER_ID, 
+		Assert.assertTrue( templates.canModifyTemplate( EvalTestDataLoad.ADMIN_USER_ID, 
 				etdl.templatePublicUnused.getId() ) );
-		Assert.assertTrue( templates.canControlTemplate( EvalTestDataLoad.MAINT_USER_ID, 
+		Assert.assertTrue( templates.canModifyTemplate( EvalTestDataLoad.MAINT_USER_ID, 
 				etdl.templateUnused.getId() ) );
 
 		// test admin user can override perms
-		Assert.assertTrue( templates.canControlTemplate( EvalTestDataLoad.ADMIN_USER_ID, 
+		Assert.assertTrue( templates.canModifyTemplate( EvalTestDataLoad.ADMIN_USER_ID, 
 				etdl.templateUnused.getId() ) );
 
 		// test cannot control unowned templates
-		Assert.assertFalse( templates.canControlTemplate( EvalTestDataLoad.MAINT_USER_ID, 
+		Assert.assertFalse( templates.canModifyTemplate( EvalTestDataLoad.MAINT_USER_ID, 
 				etdl.templatePublicUnused.getId() ) );
-		Assert.assertFalse( templates.canControlTemplate( EvalTestDataLoad.USER_ID, 
+		Assert.assertFalse( templates.canModifyTemplate( EvalTestDataLoad.USER_ID, 
 				etdl.templateUnused.getId() ) );
 
 		// test cannot control locked templates
-		Assert.assertFalse( templates.canControlTemplate( EvalTestDataLoad.MAINT_USER_ID, 
+		Assert.assertFalse( templates.canModifyTemplate( EvalTestDataLoad.MAINT_USER_ID, 
 				etdl.templatePublic.getId() ) );
-		Assert.assertFalse( templates.canControlTemplate( EvalTestDataLoad.ADMIN_USER_ID, 
+		Assert.assertFalse( templates.canModifyTemplate( EvalTestDataLoad.ADMIN_USER_ID, 
 				etdl.templateAdmin.getId() ) );
 
 		// test invalid template id causes failure
 		try {
-			templates.canControlTemplate( EvalTestDataLoad.MAINT_USER_ID, 
+			templates.canModifyTemplate( EvalTestDataLoad.MAINT_USER_ID, 
+					EvalTestDataLoad.INVALID_LONG_ID );
+			Assert.fail("Should have thrown exception");
+		} catch (RuntimeException e) {
+			Assert.assertNotNull(e);
+		}
+
+	}
+
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalTemplatesLogicImpl#canRemoveTemplate(String, Long)}.
+	 */
+	public void testCanRemoveTemplate() {
+		// test can remove owned templates
+		Assert.assertTrue( templates.canRemoveTemplate( EvalTestDataLoad.ADMIN_USER_ID, 
+				etdl.templatePublicUnused.getId() ) );
+		Assert.assertTrue( templates.canRemoveTemplate( EvalTestDataLoad.MAINT_USER_ID, 
+				etdl.templateUnused.getId() ) );
+
+		// test admin user can override perms
+		Assert.assertTrue( templates.canRemoveTemplate( EvalTestDataLoad.ADMIN_USER_ID, 
+				etdl.templateUnused.getId() ) );
+
+		// test cannot remove unowned templates
+		Assert.assertFalse( templates.canRemoveTemplate( EvalTestDataLoad.MAINT_USER_ID, 
+				etdl.templatePublicUnused.getId() ) );
+		Assert.assertFalse( templates.canRemoveTemplate( EvalTestDataLoad.USER_ID, 
+				etdl.templateUnused.getId() ) );
+
+		// test cannot remove templates that are in use
+		Assert.assertFalse( templates.canRemoveTemplate( EvalTestDataLoad.MAINT_USER_ID, 
+				etdl.templatePublicUnused.getId() ) );
+		Assert.assertFalse( templates.canRemoveTemplate( EvalTestDataLoad.USER_ID, 
+				etdl.templateUnused.getId() ) );
+
+		// test cannot remove locked templates
+		Assert.assertFalse( templates.canRemoveTemplate( EvalTestDataLoad.MAINT_USER_ID, 
+				etdl.templatePublic.getId() ) );
+		Assert.assertFalse( templates.canRemoveTemplate( EvalTestDataLoad.ADMIN_USER_ID, 
+				etdl.templateAdmin.getId() ) );
+
+		// test invalid template id causes failure
+		try {
+			templates.canRemoveTemplate( EvalTestDataLoad.MAINT_USER_ID, 
 					EvalTestDataLoad.INVALID_LONG_ID );
 			Assert.fail("Should have thrown exception");
 		} catch (RuntimeException e) {

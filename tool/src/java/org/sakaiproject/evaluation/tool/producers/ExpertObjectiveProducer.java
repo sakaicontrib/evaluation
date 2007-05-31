@@ -145,7 +145,8 @@ public class ExpertObjectiveProducer implements ViewComponentProducer, Navigatio
 		if (expertItems.size() > 0) {
 			UIBranchContainer.make(tofill, "items-header:");
 
-			UIForm form = UIForm.make(tofill, "insert-items-form");
+			UIBranchContainer formBranch = UIBranchContainer.make(tofill, "form-branch:");
+			UIForm form = UIForm.make(formBranch, "insert-items-form");
 
 			UIMessage.make(form, "items", "expert.items");
 			UIMessage.make(form, "items-instructions", "expert.items.instructions");

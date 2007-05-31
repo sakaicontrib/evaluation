@@ -54,9 +54,5 @@ public class EssayResponseParams extends SimpleViewParameters {
 		this.itemId = itemId;
 		this.groupIds = groupIds;
 	}
-	
-	public String getParseSpec() {
-		// include a comma delimited list of the public properties in this class
-		return super.getParseSpec() + ",evalId,itemId,groupIds";
-	}
+
 }

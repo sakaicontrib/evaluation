@@ -41,6 +41,7 @@ import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
+import uk.org.ponder.rsf.components.UILink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
@@ -95,14 +96,21 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 		Long templateId = evalViewParams.templateId;
 		EvalTemplate template = localTemplateLogic.fetchTemplate(templateId);
 
-		UIMessage.make(tofill, "modify-template-title", "modifytemplate.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "modify-template-title", "modifytemplate.page.title");
 
-		UIInternalLink.make(tofill,	"summary-toplink", UIMessage.make("summary.page.title"), //$NON-NLS-1$ //$NON-NLS-2$
+		UIInternalLink.make(tofill,	"summary-toplink", UIMessage.make("summary.page.title"),
 				new SimpleViewParameters(SummaryProducer.VIEW_ID));
+
+		UIInternalLink.make(tofill, "control-templates-link",
+				UIMessage.make("controltemplates.page.title"), 
+			new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
+
+
 		UIInternalLink.make(tofill, "preview_eval_link", 
 				new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID, null, templateId, null, ModifyTemplateItemsProducer.VIEW_ID));
-
-		UIMessage.make(tofill, "preview-eval-desc",	"modifytemplate.preview.eval.desc"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "preview-eval-desc",	"modifytemplate.preview.eval.desc");
+		UILink.make(tofill, "preview-template-direct-link", UIMessage.make("general.direct.link"), 
+				external.getEntityURL(template) );
 
 		UIMessage.make(tofill, "add-item-note", "modifytemplate.add.item.note");
 		String[] labels = new String[] {
@@ -136,7 +144,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 		UIMessage.make(tofill, "level-header", "modifytemplate.level.header", 
 				new String[] {currentLevel, new Integer(templateItemsList.size()).toString(), });			
 
-		UIMessage.make(tofill, "template-title-header", "modifytemplate.template.title.header"); //$NON-NLS-1$ //$NON-NLS-2$
+		UIMessage.make(tofill, "template-title-header", "modifytemplate.template.title.header");
 		UIOutput.make(tofill, "title", template.getTitle());
 
 		UIInternalLink.make(tofill, "modify_title_desc_link", UIMessage.make("modifytemplate.modify.title.desc.link"),
@@ -144,7 +152,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 
 		if (template.getDescription() != null && !template.getDescription().trim().equals("")) {
 			UIBranchContainer descbranch = UIBranchContainer.make(tofill, "description-switch:");
-			UIMessage.make(descbranch, "description-header", "modifytemplate.description.header"); //$NON-NLS-1$ //$NON-NLS-2$
+			UIMessage.make(descbranch, "description-header", "modifytemplate.description.header");
 			UIOutput.make(descbranch, "description", template.getDescription());
 		}
 

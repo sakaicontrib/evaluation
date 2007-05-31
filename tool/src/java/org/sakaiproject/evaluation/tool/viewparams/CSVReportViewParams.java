@@ -33,7 +33,7 @@ public class CSVReportViewParams extends SimpleViewParameters {
 	public CSVReportViewParams(String viewID, Long templateId, Long evalId, String[] groupIds) {
 		this.viewID = viewID;
 		this.templateId = templateId;
-		this.evalId=evalId;
+		this.evalId = evalId;
 		this.groupIds = groupIds;
 	}
 

@@ -1,5 +1,5 @@
 /******************************************************************************
- * EvaluationStartProducer.java - created by kahuja@vt.edu on Oct 05, 2006
+ * EvaluationAssignConfirmProducer.java - created by kahuja@vt.edu on Oct 05, 2006
  * 
  * Copyright (c) 2007 Virginia Polytechnic Institute and State University
  * Licensed under the Educational Community License version 1.0
@@ -11,6 +11,7 @@
  * Rui Feng (fengr@vt.edu)
  * Kapil Ahuja (kahuja@vt.edu)
  *****************************************************************************/
+
 package org.sakaiproject.evaluation.tool.producers;
 
 import java.util.ArrayList;
@@ -19,7 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.entity.AssignGroupEntityProvider;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationBean;
@@ -29,6 +32,7 @@ import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
+import uk.org.ponder.rsf.components.UILink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
@@ -41,8 +45,8 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
 /**
  * Confirmation of assign an evaluation to courses
  * 
- * @author:Kapil Ahuja (kahuja@vt.edu)
- * @author: Rui Feng (fengr@vt.edu)
+ * @author Kapil Ahuja (kahuja@vt.edu)
+ * @author Rui Feng (fengr@vt.edu)
  */
 public class EvaluationAssignConfirmProducer implements ViewComponentProducer, NavigationCaseReporter {
 
@@ -56,6 +60,11 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, N
 		this.external = external;
 	}
 
+	private EvalAssignsLogic assignsLogic;
+	public void setAssignsLogic(EvalAssignsLogic assignsLogic) {
+		this.assignsLogic = assignsLogic;
+	}
+
 	private EvaluationBean evaluationBean;
 	public void setEvaluationBean(EvaluationBean evaluationBean) {
 		this.evaluationBean = evaluationBean;
@@ -66,6 +75,8 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, N
 	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
 	 */
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+
+		Long evaluationId = evaluationBean.eval.getId();
 
 		UIMessage.make(tofill, "confirm-assignment-title", "evaluationassignconfirm.page.title");
 
@@ -81,14 +92,13 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, N
 		String[] selectedIds = evaluationBean.selectedSakaiSiteIds;
 		int[] enrollment = evaluationBean.enrollment;
 
+		Map allIdTitleMap = new HashMap();
 		List evaluatedContexts = external.getEvalGroupsForUser(external.getCurrentUserId(), EvalConstants.PERM_BE_EVALUATED);
-		Map allIdTitleMap = new HashMap(); //Map allIdTitleMap = evaluationBean.getSites();
 		for (int i = 0; i < evaluatedContexts.size(); i++) {
 			EvalGroup c = (EvalGroup) evaluatedContexts.get(i);
-			//ids[i] = c.context;
-			//labels[i] = c.title;
 			allIdTitleMap.put(c.evalGroupId, c.title);
 		}
+
 		UIMessage.make(tofill, "eval-assign-desc-prename", "evaluationassignconfirm.eval.assign.desc.prename");
 		UIMessage.make(tofill, "eval-assign-desc-postname", "evaluationassignconfirm.eval.assign.desc.postname");
 		UIMessage.make(tofill, "courses-selected-header", "evaluationassignconfirm.courses.selected.header");
@@ -96,13 +106,22 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, N
 		UIMessage.make(tofill, "enrollment-header", "evaluationassignconfirm.enrollment.header");
 
 		for (int i = 0; i < selectedIds.length; ++i) {
-			UIBranchContainer siteRow = UIBranchContainer.make(tofill, "sites:", selectedIds[i]);
-			UIOutput.make(siteRow, "siteTitle", (String) allIdTitleMap.get(selectedIds[i]));
+			String evalGroupId = selectedIds[i];
+			UIBranchContainer siteRow = UIBranchContainer.make(tofill, "sites:", evalGroupId);
+			UIOutput.make(siteRow, "siteTitle", (String) allIdTitleMap.get(evalGroupId));
+			if (evaluationId != null) {
+				// only add in this link if the evaluation exists
+				Long assignGroupId = assignsLogic.getAssignGroupId(evaluationId, evalGroupId);
+				if (assignGroupId != null) {
+					UILink.make(siteRow, "direct-eval-group-link", UIMessage.make("evaluationassignconfirm.direct.link"), 
+						external.getEntityURL(AssignGroupEntityProvider.ENTITY_PREFIX, assignGroupId.toString()));
+				}
+			}
 			UIOutput.make(siteRow, "enrollment", enrollment[i] + "");
 		}
 
 		// show submit buttons for first time evaluation creation && Queued Evaluation case
-		if (evaluationBean.eval.getId() == null) {
+		if (evaluationId == null) {
 			//first time evaluation creation
 			showButtonsForm(tofill);
 		} else {
@@ -116,6 +135,9 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, N
 
 	}
 
+	/**
+	 * @param tofill
+	 */
 	private void showButtonsForm(UIContainer tofill) {
 		UIBranchContainer showButtons = UIBranchContainer.make(tofill, "showButtons:");
 		UIForm evalAssignForm = UIForm.make(showButtons, "evalAssignForm");

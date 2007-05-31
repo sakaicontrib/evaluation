@@ -109,6 +109,9 @@ public class EvalTestDataLoad {
 	public final static Map EMPTY_MAP = new HashMap();
 	public final static String[] EMPTY_STRING_ARRAY = new String[0];
 
+	public final static String EVAL_CATEGORY_1 = "category one";
+	public final static String EVAL_CATEGORY_2 = "category two";
+
 	// SCALES
 	/**
 	 * Scale used in all scaled test items, LOCKED, ADMIN_USER_ID owner, public
@@ -119,7 +122,7 @@ public class EvalTestDataLoad {
 	 */
 	public EvalScale scale2;
 	/**
-	 * Scale not used in any items, UNLOCKED, ADMIN_USER_ID owner, private
+	 * Scale not used in any items, UNLOCKED, MAINT_USER_ID owner, private
 	 */
 	public EvalScale scale3;
 	/**
@@ -172,6 +175,10 @@ public class EvalTestDataLoad {
 	 * Item that is used in {@link #templateAdminComplex}, MAINT_USER_ID owns, private (used in various template items)
 	 */
 	public EvalItem item10;
+	/**
+	 * Item that is not used in any template, scaled, unlocked, MAINT_USER_ID owns, private
+	 */
+	public EvalItem item11;
 
 	// TEMPLATE ITEMS
 	public EvalTemplateItem templateItem1User;
@@ -245,11 +252,11 @@ public class EvalTestDataLoad {
 
 	// EVALUATIONS
 	/**
-	 * Evaluation not started yet (starts tomorrow), MAINT_USER_ID owns, templatePublic, NO responses, No ACs
+	 * Evaluation not started yet (starts tomorrow), MAINT_USER_ID owns, templatePublic, NO responses, No ACs, EVAL_CATEGORY_1
 	 */
 	public EvalEvaluation evaluationNew;
 	/**
-	 * Evaluation not started yet (starts tomorrow), ADMIN_USER_ID owns, templateAdmin, NO responses, 2 ACs
+	 * Evaluation not started yet (starts tomorrow), ADMIN_USER_ID owns, templateAdmin, NO responses, 2 ACs, EVAL_CATEGORY_1
 	 */
 	public EvalEvaluation evaluationNewAdmin;
 	/**
@@ -265,7 +272,7 @@ public class EvalTestDataLoad {
 	 */
 //	public EvalEvaluation evaluationDueUntaken;
 	/**
-	 * Evaluation Complete (ended yesterday, viewable tomorrow), ADMIN_USER_ID owns, templateAdmin, 2 responses, 2 ACs, recently closed
+	 * Evaluation Complete (ended yesterday, viewable tomorrow), ADMIN_USER_ID owns, templateAdmin, 2 responses, 2 ACs, recently closed, EVAL_CATEGORY_2
 	 */
 	public EvalEvaluation evaluationClosed;
 	/**
@@ -417,7 +424,7 @@ public class EvalTestDataLoad {
 				EvalConstants.SCALE_IDEAL_HIGH, options2, UNLOCKED);
 
 		String[] options3 = {"Male", "Female", "Unknown"};
-		scale3 = new EvalScale(new Date(), ADMIN_USER_ID, "Scale 3", 
+		scale3 = new EvalScale(new Date(), MAINT_USER_ID, "Scale 3", 
 				EvalConstants.SHARING_PRIVATE, NOT_EXPERT, 
 				"description", 
 				EvalConstants.SCALE_IDEAL_NONE, options3, UNLOCKED);
@@ -425,7 +432,7 @@ public class EvalTestDataLoad {
 		scale4 = new EvalScale(new Date(), ADMIN_USER_ID, "Scale 4", 
 				EvalConstants.SHARING_PRIVATE, EXPERT, 
 				"description", 
-				EvalConstants.SCALE_IDEAL_NONE, options3, LOCKED);
+				EvalConstants.SCALE_IDEAL_NONE, options3, UNLOCKED);
 
 		item1 = new EvalItem(new Date(), ADMIN_USER_ID, ITEM_TEXT, 
 				EvalConstants.SHARING_PUBLIC, EvalConstants.ITEM_TYPE_SCALED, EXPERT);
@@ -480,6 +487,12 @@ public class EvalTestDataLoad {
 		item10.setDisplayRows( new Integer(4) );
 		item10.setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
 		item10.setLocked(UNLOCKED);
+		item11 = new EvalItem(new Date(), MAINT_USER_ID, ITEM_TEXT, 
+				EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_SCALED, NOT_EXPERT);
+		item11.setScale(scale2);
+		item11.setScaleDisplaySetting( EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL );
+		item11.setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
+		item11.setLocked(UNLOCKED);
 
 		//templateShared = new EvalTemplate(new Date(), ADMIN_USER_ID, "Template shared", EvalConstants.SHARING_SHARED, UNLOCKED, NOT_EXPERT);
 		//templateVisible = new EvalTemplate(new Date(), ADMIN_USER_ID, "Template visible", EvalConstants.SHARING_VISIBLE, UNLOCKED, NOT_EXPERT);
@@ -683,28 +696,28 @@ public class EvalTestDataLoad {
 				EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.INSTRUCTOR_OPT_IN, 
 				new Integer(1), null, null, null, null, templatePublic, null, null,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, UNLOCKED,
-				EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ);
+				EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null);
 		// Evaluation not started yet (starts tomorrow), ADMIN
 		evaluationNewAdmin = new EvalEvaluation(new Date(), ADMIN_USER_ID, "Eval admin", null, 
 				tomorrow, threeDaysFuture, threeDaysFuture, fourDaysFuture,  null, null,
 				EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.INSTRUCTOR_OPT_IN, 
 				new Integer(1), null, null, null, null, templateAdmin, null, null,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, UNLOCKED,
-				EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ);
+				EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, EVAL_CATEGORY_1);
 		// Evaluation Active (ends today), viewable tomorrow
 		evaluationActive = new EvalEvaluation(new Date(), MAINT_USER_ID, "Eval active", null, 
 				yesterday, today, today, tomorrow, null, null,
 				EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.INSTRUCTOR_OPT_IN, 
-				new Integer(1), null, null, null, null, templatePublic, null, null,
+				new Integer(1), null, null, null, null, templateUser, null, null,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, LOCKED,
-				EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ);
+				EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null);
 		// Evaluation Active (ends tomorrow), viewable 3 days
 		evaluationActiveUntaken = new EvalEvaluation(new Date(), MAINT_USER_ID, "Eval active not taken", null, 
 				yesterday, tomorrow, tomorrow, threeDaysFuture, null, null,
 				EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.INSTRUCTOR_OPT_IN, 
 				new Integer(1), null, null, null, null, templatePublic, null, null,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, UNLOCKED,
-				EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ);
+				EvalConstants.EVALUATION_AUTHCONTROL_NONE, EVAL_CATEGORY_1);
 		// evaluation in the DUE state
 //		evaluationDueUntaken = new EvalEvaluation(new Date(), MAINT_USER_ID, "Eval due not taken", null, 
 //				threeDaysAgo, yesterday, tomorrow, threeDaysFuture, null, null,
@@ -717,14 +730,14 @@ public class EvalTestDataLoad {
 				EvalConstants.EVALUATION_STATE_CLOSED, EvalConstants.INSTRUCTOR_OPT_IN, 
 				new Integer(2), null, null, null, null, templateAdmin, templateAdminComplex, null,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, LOCKED,
-				EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ);
+				EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, EVAL_CATEGORY_2);
 		// evaluation complete (3 days ago) and viewable (yesterday)
 		evaluationViewable = new EvalEvaluation(new Date(), ADMIN_USER_ID, "Eval viewable", null, 
 				twentyDaysAgo, twentyDaysAgo, twentyDaysAgo, fifteenDaysAgo, null, null,
 				EvalConstants.EVALUATION_STATE_VIEWABLE, EvalConstants.INSTRUCTOR_OPT_IN, 
 				new Integer(2), null, null, null, null, templateUser, null, null,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, LOCKED,
-				EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ);
+				EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null);
 
 		// email templates
 		emailTemplate1 = new EvalEmailTemplate(new Date(), ADMIN_USER_ID, "Email Template 1");
@@ -859,6 +872,7 @@ public class EvalTestDataLoad {
 		dao.save(item8);
 		dao.save(item9);
 		dao.save(item10);
+		dao.save(item11);
 
 		dao.save(templateItem1User);
 		dao.save(templateItem1P);

@@ -108,21 +108,21 @@ public class ControlScalesProducer implements ViewComponentProducer, NavigationC
 			UIOutput.make(listOfScales, "scale-title", scale.getTitle());
 
 			/*
-			 * If scale is locked do nothing. Else checking that whether 
-			 * this user can control the scale for modification / delete.
-			 * 
 			 * Note that although canControlScale does a locked check,
 			 * it is more efficient to avoid a cycle by checking the local data first (i.e. getLocked() call)
 			 */
-			if (! scale.getLocked().booleanValue()) {
-				if (scalesLogic.canControlScale(currentUserId, scale.getId())) {
-					UIInternalLink.make(listOfScales, "modify-sidelink", 
-							UIMessage.make("scalecontrol.modify.link"), 
-							new EvalScaleParameters(ModifyScaleProducer.VIEW_ID, scale.getId()));
-					UIInternalLink.make(listOfScales, "remove-sidelink", 
-							UIMessage.make("scalecontrol.remove.link"), 
-							new EvalScaleParameters(RemoveScaleProducer.VIEW_ID, scale.getId()));
-				}
+			if (! scale.getLocked().booleanValue() ||
+					scalesLogic.canModifyScale(currentUserId, scale.getId()) ) {
+				UIInternalLink.make(listOfScales, "modify-sidelink", 
+						UIMessage.make("scalecontrol.modify.link"), 
+						new EvalScaleParameters(ModifyScaleProducer.VIEW_ID, scale.getId()));
+			}
+
+			if (! scale.getLocked().booleanValue() ||
+					scalesLogic.canRemoveScale(currentUserId, scale.getId()) ) {
+				UIInternalLink.make(listOfScales, "remove-sidelink", 
+						UIMessage.make("scalecontrol.remove.link"), 
+						new EvalScaleParameters(RemoveScaleProducer.VIEW_ID, scale.getId()));
 			}
 
 			// Display the scale options vertically

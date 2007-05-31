@@ -27,6 +27,8 @@ import org.sakaiproject.evaluation.logic.model.EvalGroup;
  */
 public interface ExternalEvalGroups {
 
+	public static final String OUTSIDE_PORTAL_CONTEXT = "outside_portal_context";
+
 	// EvalGroups
 
 	/**

@@ -14,30 +14,35 @@
 
 package org.sakaiproject.evaluation.tool.viewparams;
 
-/**
- * View params which pass chosen groups to the view reports page
- * when coming via bread crumbs from essay responses page. 
- * For going staightforward from choose report groups to view reports 
- * page, the report bean takes care of it. 
- * 
- * @author Will Humphries (whumphri@vt.edu)
- * @author Kapil Ahuja (kahuja@vt.edu)
- */
-public class ReportParameters extends TemplateViewParameters {
+import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 
+/**
+ * Pass the chosen groups to the view reports page when coming via bread crumbs from essay responses page. 
+ * For going staightforward from choose report groups to view reports page, the report bean takes care of it. 
+ * 
+ * @author Aaron Zeckoski (aaronz@vt.edu)
+ */
+public class ReportParameters extends SimpleViewParameters {
+
+	// Removed extends TemplateViewParameters
+	// this should never have extended the TemplateViewParameters since it is checked on by an interceptor,
+	// furthermore, this used templateId when it was actually passing an evaluaiton id which is just wrong,
+	// removed former authors for doing this so incorrectly -AZ
+
+	public Long evaluationId;
 	public String[] groupIds;
 
 	public ReportParameters() {}
 
-	public ReportParameters(String viewId, Long templateId){
-		super.viewID = viewID;
-		super.templateId=templateId;
+	public ReportParameters(String viewID, Long evaluationId){
+		this.viewID = viewID;
+		this.evaluationId = evaluationId;
 	}
-	
-	public ReportParameters(String viewID, Long templateId, String[] groupIds) {
-		super.viewID = viewID;
-		super.templateId = templateId;
+
+	public ReportParameters(String viewID, Long evaluationId, String[] groupIds) {
+		this.viewID = viewID;
+		this.evaluationId = evaluationId;
 		this.groupIds = groupIds;
 	}
-	
+
 }

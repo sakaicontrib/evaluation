@@ -12,14 +12,17 @@
  * 
  *****************************************************************************/
 
-package org.sakaiproject.evaluation.model.utils;
+package org.sakaiproject.evaluation.logic.utils;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
@@ -88,5 +91,29 @@ public class EvalUtils {
 			}
 		}
 		return list;
+	}
+
+	/**
+	 * Takes 2 lists of group types, {@link EvalGroup} and {@link EvalAssignGroup}, and
+	 * merges the groups in common and then returns an array of the common groups,
+	 * comparison is on the evalGroupId
+	 * 
+	 * @param evalGroups a list of {@link EvalGroup}
+	 * @param assignGroups a list of {@link EvalAssignGroup}
+	 * @return an array of the groups that in common between the 2 lists
+	 */
+	public static EvalGroup[] getGroupsInCommon(List evalGroups, List assignGroups) {
+		List groups = new ArrayList();
+		for (int i=0; i<evalGroups.size(); i++) {
+			EvalGroup group = (EvalGroup) evalGroups.get(i);
+			for (int j=0; j<assignGroups.size(); j++) {
+				EvalAssignGroup assignGroup = (EvalAssignGroup) assignGroups.get(j);
+				if (group.evalGroupId.equals(assignGroup.getEvalGroupId())) {
+					groups.add(group);
+					break;
+				}
+			}
+		}
+		return (EvalGroup[]) groups.toArray(new EvalGroup[] {});
 	}
 }

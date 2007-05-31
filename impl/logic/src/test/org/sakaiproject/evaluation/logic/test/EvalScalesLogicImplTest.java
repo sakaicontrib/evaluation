@@ -137,6 +137,8 @@ public class EvalScalesLogicImplTest extends AbstractTransactionalSpringContextT
 				etdl.scale2.getId());
 		EvalScale testScale3 = (EvalScale) evaluationDao.findById(EvalScale.class, 
 				etdl.scale3.getId());
+		EvalScale testScale4 = (EvalScale) evaluationDao.findById(EvalScale.class, 
+				etdl.scale4.getId());
 
 		// test editing unlocked scale
 		testScale2.setSharing(EvalConstants.SHARING_SHARED);
@@ -154,7 +156,7 @@ public class EvalScalesLogicImplTest extends AbstractTransactionalSpringContextT
 		// test that editing unowned scale causes permission failure
 		try {
 			testScale3.setIdeal(EvalConstants.SCALE_IDEAL_MID);
-			scales.saveScale(testScale3, EvalTestDataLoad.MAINT_USER_ID);
+			scales.saveScale(testScale4, EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");
 		} catch (SecurityException e) {
 			Assert.assertNotNull(e);
@@ -223,27 +225,19 @@ public class EvalScalesLogicImplTest extends AbstractTransactionalSpringContextT
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalScalesLogicImpl#deleteScale(java.lang.Long, java.lang.String)}.
 	 */
 	public void testDeleteScale() {
-		// test removing new scale works
-		scales.deleteScale(etdl.scale2.getId(), EvalTestDataLoad.MAINT_USER_ID);
-
 		// test removing unowned scale fails
 		try {
-			scales.deleteScale(etdl.scale3.getId(), EvalTestDataLoad.MAINT_USER_ID);
+			scales.deleteScale(etdl.scale4.getId(), EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");
 		} catch (RuntimeException e) {
 			Assert.assertNotNull(e);
 		}
 
-		// test removing scale3 works
-		scales.deleteScale(etdl.scale3.getId(), EvalTestDataLoad.ADMIN_USER_ID);
+		// test removing owned scale works
+		scales.deleteScale(etdl.scale3.getId(), EvalTestDataLoad.MAINT_USER_ID);
 
-		// test removing expert scale fails
-		try {
-			scales.deleteScale(etdl.scale4.getId(), EvalTestDataLoad.ADMIN_USER_ID);
-			Assert.fail("Should have thrown exception");
-		} catch (RuntimeException e) {
-			Assert.assertNotNull(e);
-		}
+		// test removing expert scale allowed
+		scales.deleteScale(etdl.scale4.getId(), EvalTestDataLoad.ADMIN_USER_ID);
 
 		// test removing locked scale fails
 		try {
@@ -284,11 +278,12 @@ public class EvalScalesLogicImplTest extends AbstractTransactionalSpringContextT
 		// get all visible scales (include maint owned and public)
 		l = scales.getScalesForUser(EvalTestDataLoad.MAINT_USER_ID, null);
 		Assert.assertNotNull(l);
-		Assert.assertEquals(2 + preloadedCount, l.size());
+		Assert.assertEquals(3 + preloadedCount, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.scale1.getId() ));
 		Assert.assertTrue(ids.contains( etdl.scale2.getId() ));
-		Assert.assertTrue(! ids.contains( etdl.scale3.getId() ));
+		Assert.assertTrue(ids.contains( etdl.scale3.getId() ));
+		Assert.assertTrue(! ids.contains( etdl.scale4.getId() ));
 
 		// get all visible scales (should only see public)
 		l = scales.getScalesForUser(EvalTestDataLoad.USER_ID, null);
@@ -321,9 +316,10 @@ public class EvalScalesLogicImplTest extends AbstractTransactionalSpringContextT
 		// get all private scales (maint should see own only)
 		l = scales.getScalesForUser(EvalTestDataLoad.MAINT_USER_ID, EvalConstants.SHARING_PRIVATE);
 		Assert.assertNotNull(l);
-		Assert.assertEquals(1, l.size());
+		Assert.assertEquals(2, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.scale2.getId() ));
+		Assert.assertTrue(ids.contains( etdl.scale3.getId() ));
 
 		// get all private scales (normal user should see none)
 		l = scales.getScalesForUser(EvalTestDataLoad.USER_ID, EvalConstants.SHARING_PRIVATE);
@@ -350,32 +346,75 @@ public class EvalScalesLogicImplTest extends AbstractTransactionalSpringContextT
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalScalesLogicImpl#canControlScale(java.lang.String, java.lang.Long)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalScalesLogicImpl#canModifyScale(String, Long)}
 	 */
-	public void testCanControlScale() {
-		// test can control owned scale
-		Assert.assertTrue( scales.canControlScale(
-				EvalTestDataLoad.ADMIN_USER_ID,	etdl.scale3.getId()) );
-		Assert.assertTrue( scales.canControlScale(
+	public void testCanModifyScale() {
+		// test can modify owned scale
+		Assert.assertTrue( scales.canModifyScale(
+				EvalTestDataLoad.MAINT_USER_ID,	etdl.scale3.getId()) );
+		Assert.assertTrue( scales.canModifyScale(
+				EvalTestDataLoad.ADMIN_USER_ID,	etdl.scale4.getId()) );
+
+		// test can modify used scale
+		Assert.assertTrue( scales.canModifyScale(
 				EvalTestDataLoad.MAINT_USER_ID,	etdl.scale2.getId()) );
 
 		// test admin user can override perms
-		Assert.assertTrue( scales.canControlScale(
-				EvalTestDataLoad.ADMIN_USER_ID,	etdl.scale2.getId()) );
+		Assert.assertTrue( scales.canModifyScale(
+				EvalTestDataLoad.ADMIN_USER_ID,	etdl.scale3.getId()) );
 
 		// test cannot control unowned scale
-		Assert.assertFalse( scales.canControlScale(
-				EvalTestDataLoad.MAINT_USER_ID,	etdl.scale3.getId()) );
-		Assert.assertFalse( scales.canControlScale(
+		Assert.assertFalse( scales.canModifyScale(
+				EvalTestDataLoad.MAINT_USER_ID,	etdl.scale4.getId()) );
+		Assert.assertFalse( scales.canModifyScale(
 				EvalTestDataLoad.USER_ID, etdl.scale3.getId()) );
 
-		// test cannot control locked scale
-		Assert.assertFalse( scales.canControlScale(
+		// test cannot modify locked scale
+		Assert.assertFalse( scales.canModifyScale(
 				EvalTestDataLoad.ADMIN_USER_ID,	etdl.scale1.getId()) );
 
 		// test invalid scale id causes failure
 		try {
-			scales.canControlScale(EvalTestDataLoad.ADMIN_USER_ID,	
+			scales.canModifyScale(EvalTestDataLoad.ADMIN_USER_ID,	
+					EvalTestDataLoad.INVALID_LONG_ID);
+			Assert.fail("Should have thrown exception");
+		} catch (RuntimeException e) {
+			Assert.assertNotNull(e);
+		}
+
+	}
+
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalScalesLogicImpl#canRemoveScale(String, Long)}
+	 */
+	public void testCanRemoveScale() {
+		// test can remove owned scale
+		Assert.assertTrue( scales.canRemoveScale(
+				EvalTestDataLoad.ADMIN_USER_ID,	etdl.scale4.getId()) );
+		Assert.assertTrue( scales.canRemoveScale(
+				EvalTestDataLoad.MAINT_USER_ID,	etdl.scale3.getId()) );
+
+		// test cannot remove unowned scale
+		Assert.assertFalse( scales.canRemoveScale(
+				EvalTestDataLoad.MAINT_USER_ID,	etdl.scale4.getId()) );
+		Assert.assertFalse( scales.canRemoveScale(
+				EvalTestDataLoad.USER_ID, etdl.scale3.getId()) );
+
+		// test cannot remove unlocked used scale
+		Assert.assertFalse( scales.canRemoveScale(
+				EvalTestDataLoad.MAINT_USER_ID,	etdl.scale2.getId()) );
+
+		// test admin cannot remove unlocked used scale
+		Assert.assertFalse( scales.canRemoveScale(
+				EvalTestDataLoad.ADMIN_USER_ID,	etdl.scale2.getId()) );
+
+		// test cannot remove locked scale
+		Assert.assertFalse( scales.canRemoveScale(
+				EvalTestDataLoad.ADMIN_USER_ID,	etdl.scale1.getId()) );
+
+		// test invalid scale id causes failure
+		try {
+			scales.canRemoveScale(EvalTestDataLoad.ADMIN_USER_ID,	
 					EvalTestDataLoad.INVALID_LONG_ID);
 			Assert.fail("Should have thrown exception");
 		} catch (RuntimeException e) {

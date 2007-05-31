@@ -15,6 +15,7 @@
 <div class="navIntraTool">
 	<a rsf:id="administrate-toplink" href="administrate.html">Administrate</a>
 	<a rsf:id="summary-toplink" href="summary.html">Summary</a>
+	<a rsf:id="control-templates-link" href="control_templates.html">My Templates</a>
 </div>
 
 <div>
@@ -25,73 +26,28 @@
 	</ul>
 </div>
 
+<div rsf:id="cannot-remove-message" style="font-weight:bold;"></div>
+
 <div rsf:id="removeDiv:">
-	<form name="removeTemplate_form" rsf:id="removeTemplateForm" method="post">
+	<div style="margin:1em;">
+		<span rsf:id="remove-template-confirm-text" style="font-weight:bold;">Are you sure you want to remove template NAME? The removal is permanant.</span>
+	</div>
+	<div style="margin:1em;">
+		<span rsf:id="remove-template-note" style="font-style:italic;">All data related to the template will be removed permanantly.</span>
+	</div>
+
 	<table width="80%" border="0" cellpadding="8" cellspacing="0">
 		<tr>
-			<td align="left">
-				<b><span rsf:id="remove-template-confirm-pre-name">Are you sure you want to remove template </span><label style="font-weight:bold;" rsf:id="templateTitle">#</label><span rsf:id="remove-template-confirm-post-name">? The removal is permanant.</span></b>&nbsp;
-			</td>
-		</tr>
-
-		<tr>
-			<td>
-				<b><span rsf:id="remove-template-note">All data related to the template will be removed permanantly.</span></b>
-			</td>
-		</tr>
-	</table>
-
-	<br/>
-	<table width="80%" border="0" cellpadding="0" cellspacing="0">
-		<tr>
-			<td align="left"  width="50%">
-				<input type="submit" value="Cancel" rsf:id="cancelRemoveTemplateAction"/>
+			<td align="left" width="50%">
+				<input rsf:id="cancel-command-link" type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" />
 			</td>
 			<td align="right"  width="50%">
-				<input type="submit" value="Remove Template" rsf:id="removeTemplateAction"/>
+				<form rsf:id="remove-template-form" method="post">
+					<input rsf:id="remove-template-button" type="submit" value="Remove Template" />
+				</form>
 			</td>
 		</tr>
 	</table>
-
-	</form>
-
-</div>
-
-<!--CAN NOT REMOVE this template because of related evaluation  -->
-<div rsf:id="noRemoveDiv:">
-<form name="noRvTemplate_form">
-<table width="80%" border="0" cellpadding="8" cellspacing="0">
-	<tr>
-		<td align="left">
-			<b><span rsf:id="warning-header">Warning</span></b><span rsf:id="noremove-note-start">: This template </span><label style="font-weight:bold;" rsf:id="NoTemplateTitle">#</label><span rsf:id="noremove-note-middle"> cannot be removed because the following evaluations were created from it and have already begun. Please contact a super admin (</span><a href="mailto:admin@email.com" rsf:id="noremove-note-email">admin@email.com</a><span rsf:id="noremove-note-end">) if you would like to remove this template and all associated evaluations.</span>
-		</td>
-	</tr>
-
-	<tr>
-		<td colspan="2">
-			<table border = "1" cellspacing = "0" cellpadding="0" width = "99%">
-				<tr>
-					<th width="45%" align="left" rsf:id="eval-title-header">Evaluation&nbsp;Title</th>
-					<th width="25%" align="center" rsf:id="assigned-header">Assigned</th>
-					<th width="15%" align="center" rsf:id="start-date-header">Start&nbsp;Date</th>
-					<th width="15%" align="center" rsf:id="due-date-header">Due&nbsp;Date</th>
-				</tr>
-				<tr rsf:id="evalList:">
-					<td rsf:id="evalTitle">Evaluation Title 1</td>
-					<td align="center" rsf:id="evalAssigned">Course 1010</td>
-					<td rsf:id="evalStartDate" align="center" nowrap="nowrap">EvalStartDate</td>
-					<td rsf:id="evalDueDate" align="center" nowrap="nowrap">EvalDueDate</td>
-				</tr>
-			</table>
-		</td>
-	</tr>
-	<tr>
-		<td align="left" colspan="2">
-			<input type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" rsf:id="cancel-button" />
-		</td>
-	</tr>
-</table>
-</form>
 </div>
 
 </div>
