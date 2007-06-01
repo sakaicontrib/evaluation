@@ -285,7 +285,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 			 * so we schedule email for ten minutes from now, also giving instructor ten minutes 
 			 * to delete the evaluation and its notification
 			 */
-			long runAt = new Date().getTime() + (1000 * 60 * 60 * 10);
+			long runAt = new Date().getTime() + (1000 * 60 * 10);
 			scheduleJob(eval.getId(), new Date(runAt), EvalConstants.JOB_TYPE_CREATED);
 		}
 		scheduleJob(eval.getId(), eval.getStartDate(), EvalConstants.JOB_TYPE_ACTIVE);
