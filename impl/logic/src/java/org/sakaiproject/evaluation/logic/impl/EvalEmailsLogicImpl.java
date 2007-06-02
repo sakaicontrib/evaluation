@@ -145,15 +145,10 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 	public EvalEmailTemplate getDefaultEmailTemplate(String emailTemplateTypeConstant) {
 		log.debug("emailTemplateTypeConstant: " + emailTemplateTypeConstant);
 		
-		/* TODO: preload EMAIL_AVAILABLE_OPT_IN_TEXT
-		 * EMAIL_TEMPLATE_DEFAULT_AVAILABLE_OPT_IN defaultType
-		 * EMAIL_TEMPLATE_AVAILABLE_OPT_IN search string
-		 */
-
 		// check and get type
 		String templateType;
 		if (EvalConstants.EMAIL_TEMPLATE_CREATED.equals(emailTemplateTypeConstant)) {
-			templateType = EvalConstants.EMAIL_TEMPLATE_DEFAULT_CREATED;	
+			templateType = EvalConstants.EMAIL_TEMPLATE_DEFAULT_CREATED;
 		} else if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailTemplateTypeConstant)) {
 			templateType = EvalConstants.EMAIL_TEMPLATE_DEFAULT_AVAILABLE;
 		} else if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE_OPT_IN.equals(emailTemplateTypeConstant)) {
@@ -315,13 +310,13 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			throw new IllegalArgumentException("Cannot find evaluation with this id: " + evaluationId);
 		}
 		
-		// get the email template
-		EvalEmailTemplate emailTemplate = getDefaultEmailTemplate( EvalConstants.EMAIL_TEMPLATE_CREATED );
+		// get the email template with substitutable text placeholder
+		EvalEmailTemplate emailTemplate = getDefaultEmailTemplate( EvalConstants.EMAIL_TEMPLATE_CREATED);
 		if (emailTemplate == null) {
 			throw new IllegalStateException("Cannot find email template: " + EvalConstants.EMAIL_TEMPLATE_CREATED);
 		}
 		
-		// modify the email template message
+		// modify the email template substitutable text message
 		String message = modifyCreatedEmailMessage(eval, emailTemplate);
 
 		// get the associated contexts for this evaluation
@@ -373,20 +368,27 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 	}
 
 	/**
-	 * If appropriate, substitute placeholder in EvalConstants.EMAIL_CREATED_DEFAULT_TEXT
-	 * with a message about opting in or out, adding items
+	 * Add a message about opting in or out, or adding items
+	 * between message header and footer as appropriate
 	 * @param eval the EvalEvaluation
-	 * @param emailTemplate the default EvalEmailTemplate
+	 * @param emailTemplate the default EvalEmailTemplat
 	 * @return the modified EvalEmailTempate message
 	 */
 	private String modifyCreatedEmailMessage(EvalEvaluation eval, EvalEmailTemplate emailTemplate) {
-		StringBuffer sb = new StringBuffer("");
+		
+		int opt = (EvalConstants.EMAIL_CREATED_OPT_IN_TEXT.length() > EvalConstants.EMAIL_CREATED_OPT_OUT_TEXT.length()) ?
+				EvalConstants.EMAIL_CREATED_OPT_IN_TEXT.length() : EvalConstants.EMAIL_CREATED_OPT_OUT_TEXT.length();
+		int max = emailTemplate.getMessage().length() + opt +
+			EvalConstants.EMAIL_CREATED_ADD_ITEMS_TEXT.length() + EvalConstants.EMAIL_CREATED_DEFAULT_TEXT_FOOTER.length();
+		StringBuffer sb = new StringBuffer();
+		sb.ensureCapacity(max);
 		int addItems = ((Integer)settings.get(EvalSettings.ADMIN_ADD_ITEMS_NUMBER)).intValue();
+		sb.append(emailTemplate.getMessage());
 		if(!eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_REQUIRED) || (addItems > 0))
 		{
 			if(eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_OPT_IN)) {
 				//if eval is opt-in notify instructors that they may opt in
-				sb.append(EvalConstants.EMAIL_AVAILABLE_OPT_IN_TEXT);
+				sb.append(EvalConstants.EMAIL_CREATED_OPT_IN_TEXT);
 			}
 			else if (eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_OPT_OUT)) {
 				//if eval is opt-out notify instructors that they may opt out
@@ -397,9 +399,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 				sb.append(EvalConstants.EMAIL_CREATED_ADD_ITEMS_TEXT);
 			}
 		}
-		String replacement = sb.toString();
-		String message = emailTemplate.getMessage().replaceFirst(EvalConstants.EMAIL_CREATED_SUBSTITUTABLE_TEXT, replacement);
-		return message;
+		sb.append(EvalConstants.EMAIL_CREATED_DEFAULT_TEXT_FOOTER);
+		return new String(sb.toString());
 	}
 
 	/* (non-Javadoc)

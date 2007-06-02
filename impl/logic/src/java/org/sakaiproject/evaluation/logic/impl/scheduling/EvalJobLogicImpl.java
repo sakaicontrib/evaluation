@@ -54,6 +54,8 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	private final String EVENT_EVAL_DUE = "evaluation.state.due";
 	private final String EVENT_EVAL_STOP = "evaluation.state.stop";
 	private final String EVENT_EVAL_VIEWABLE = "evaluation.state.viewable";
+	private final String EVENT_EVAL_VIEWABLE_INSTRUCTORS  = "evaluation.state.viewable.instructors";
+	private final String EVENT_EVAL_VIEWABLE_STUDENTS = "evaluation.state.viewable.students";
 	private final String EVENT_EMAIL_REMINDER = "evaluation.email.reminder";
 
 	//TODO jleasia: track events
@@ -108,8 +110,8 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 		
 		/* We don't reschedule reminders, because the active date won't change 
 		 * once an evaluation becomes active, and therefore reminder dates also 
-		 * remain fixed. We do add or remove reminders if the due date is moved
-		 * forward or backward.
+		 * remain fixed. We might remove a reminder if the due date is moved
+		 * forward or reminders are disabled by setting reminder days to 0
 		 */
 		if(EvalConstants.JOB_TYPE_REMINDER.equals(jobType)) return;
 		
@@ -118,12 +120,12 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 		String opaqueContext = id + SEPARATOR + jobType;
 		DelayedInvocation[] invocations = scheduledInvocationManager.findDelayedInvocations(COMPONENT_ID, opaqueContext);
 		
-		//if there are none, return
-		if(invocations.length == 0) {
+		//if there are no invocations, return
+		if(invocations == null || invocations.length == 0) {
 			return;
 		}
 		else if(invocations.length == 1) {
-			//we expect at most one delayed invocation matching componentId and opaqueContxt
+			//we expect at most one delayed invocation matching componentId and opaqueContext
 			
 			//if the dates differ
 			if(invocations[0].date.compareTo(correctDate) != 0) {
@@ -138,9 +140,9 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 				if(log.isDebugEnabled())
 					log.debug("EvalJobLogicImpl.checkInvocationDate and schedule a new invocation " + correctDate + "," + COMPONENT_ID + "," + opaqueContext + ")");
 				
-				//the due date was changed, so reminders might need to be added or removed
+				//the due date was changed, so reminder might need to be removed
 				if(EvalConstants.JOB_TYPE_DUE.equals(jobType)) {
-					fixReminders(eval.getId());
+					fixReminder(eval.getId());
 				}
 			}
 		}
@@ -150,59 +152,22 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	}
 	
 	/**
-	 * Add or remove reminders if the due date is moved forward or back while in the active state
+	 * Remove reminder if the due date now comes before the reminder or reminder days was changed to 0
 	 * 
 	 * @param evalId the EvalEvaluation id
 	 */
-	private void fixReminders(Long evaluationId) {
-		//TODO refactor with scheduleReminders
+	private void fixReminder(Long evaluationId) {
 		EvalEvaluation eval = evalEvaluationsLogic.getEvaluationById(evaluationId);
 		String opaqueContext = evaluationId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_REMINDER;
-		DelayedInvocation lastReminder = null;
-		long start = 0;
-		
-		//if the due date is sooner, any reminders after the due date should be removed
 		DelayedInvocation[] invocations = scheduledInvocationManager.findDelayedInvocations(COMPONENT_ID, opaqueContext);
-		lastReminder = invocations[0];
-		for(int i = 0; i < invocations.length; i++) {
-			
-			//remove reminders after the due date
-			DelayedInvocation invocation = invocations[i];
-			Date runAt = invocation.date;
-			if(runAt.after(eval.getDueDate())) {
-				scheduledInvocationManager.deleteDelayedInvocation(invocation.uuid);
+		if(invocations != null && invocations.length == 1) {
+			DelayedInvocation reminder = invocations[0];
+			Date reminderAt = reminder.date;
+			if(eval.getReminderDays().intValue() == 0 || reminderAt.after(eval.getDueDate())) {
+				//remove reminder
+				scheduledInvocationManager.deleteDelayedInvocation(reminder.uuid);
 				if(log.isDebugEnabled())
-					log.debug("EvalJobLogicImpl.fixReminders remove reminder after the due date " + invocation.uuid + "," + invocation.contextId + "," + invocation.date);
-			}
-			else {
-				if(invocation.date.after(lastReminder.date)) {
-					lastReminder = invocation;
-				}
-			}
-		}
-		
-		//if the due date is later, it might be necessary to schedule more reminders
-		if(lastReminder != null) {
-			//start at the last reminder
-			start = lastReminder.date.getTime();
-		}
-		else {
-			//start at the current time
-			start = timeService.newTime().getTime();
-		}
-		long due = eval.getDueDate().getTime();	
-		long available = due - start;
-		long interval = 1000 * 60 * 60 * 24 * eval.getReminderDays().intValue();
-		long numberOfReminders = available/interval;
-		long runAt = start;
-		
-		//schedule more reminders
-		for(int i = 0; i < numberOfReminders; i++) {
-			if(runAt + interval < due) {
-				runAt = runAt + interval;
-				scheduledInvocationManager.createDelayedInvocation(timeService.newTime(runAt), COMPONENT_ID, opaqueContext);
-				if(log.isDebugEnabled())
-					log.debug("EvalJobLogicImpl.fixReminders schedule more reminders " + timeService.newTime(runAt) + "," + COMPONENT_ID + "," + opaqueContext + ")");
+					log.debug("EvalJobLogicImpl.fixReminders remove reminder after the due date " + reminder.uuid + "," + reminder.contextId + "," + reminder.date);
 			}
 		}
 	}
@@ -312,30 +277,30 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 		try {
 			if(EvalConstants.EVALUATION_STATE_INQUEUE.equals(eval.getState())) {
 
-				//make sure active job invocation date matches EvalEvaluation start date
+				//make sure scheduleActive job invocation date matches EvalEvaluation start date
 				checkInvocationDate(eval, EvalConstants.JOB_TYPE_ACTIVE, eval.getStartDate());
 			}
 			else if(EvalConstants.EVALUATION_STATE_ACTIVE.equals(eval.getState())) {
 
-				/* make sure due job invocation start date matches EvalEaluation due date
-				 * and moving the due date is reflected in reminders
+				/* make sure scheduleDue job invocation start date matches EvalEaluation due date
+				 * and moving the due date is reflected in reminder
 				 */
 				checkInvocationDate(eval, EvalConstants.JOB_TYPE_DUE, eval.getDueDate());
 			}
 			else if (EvalConstants.EVALUATION_STATE_DUE.equals(eval.getState())) {
 
-				//make sure closed job invocation start date matches EvalEvaluation stop date
+				//make sure scheduleClosed job invocation start date matches EvalEvaluation stop date
 				checkInvocationDate(eval, EvalConstants.JOB_TYPE_CLOSED, eval.getStopDate());
 			}
 			else if (EvalConstants.EVALUATION_STATE_CLOSED.equals(eval.getState())) {
 
-				//make sure view job invocation start date matches EvalEvaluation view date 
+				//make sure scheduleView job invocation start date matches EvalEvaluation view date 
 				checkInvocationDate(eval, EvalConstants.JOB_TYPE_VIEWABLE, eval.getViewDate());
 				
-				//make sure view by instructors job invocation start date matches EvalEvaluation instructor's date
+				//make sure scheduleView By Instructors job invocation start date matches EvalEvaluation instructor's date
 				checkInvocationDate(eval, EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS, eval.getInstructorsDate());
 				
-				//make sure view by students job invocation start date matches EvalEvaluation student's date
+				//make sure scheduleView By Students job invocation start date matches EvalEvaluation student's date
 				checkInvocationDate(eval, EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS, eval.getStudentsDate());
 			}
 		}
@@ -377,33 +342,26 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	
 	/**
 	 * Schedule reminders to be run under the ScheduledInvocationManager.</br>
-	 * The ScheduledInvocationManager has no concept of repeating an invocation, so a number
-	 * of reminders are pre-scheduled.
+	 * If there is time to send a reminder before the due date, schedule it.
 	 * 
 	 * @param evaluationId the EvalEvaluation id
 	 */
-	private void scheduleReminders(Long evaluationId) {
+	private void scheduleReminder(Long evaluationId) {
 		
 		EvalEvaluation eval = evalEvaluationsLogic.getEvaluationById(evaluationId);
 		String opaqueContext = evaluationId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_REMINDER;
 		
 		//schedule reminders at selected intervals while the evaluation is available
-		long start = eval.getStartDate().getTime();
+		long start = new Date().getTime();
 		long due = eval.getDueDate().getTime();
 		long available = due - start;
 		long interval = 1000 * 60 * 60 * 24 * eval.getReminderDays().intValue();
-		if(interval != 0) {
-			long numberOfReminders = available/interval;
-			long runAt = eval.getStartDate().getTime();
-			for(int i = 0; i < numberOfReminders; i++) {
-				if(runAt + interval < due) {
-					runAt = runAt + interval;
-					scheduledInvocationManager.createDelayedInvocation(timeService.newTime(runAt), COMPONENT_ID, opaqueContext);
-					if(log.isDebugEnabled())
-						log.debug("EvalJobLogicImpl.scheduleReminders(" + evaluationId + ") - scheduledInvocationManager.createDelayedInvocation( " + 
-								timeService.newTime(runAt) + "," + 	COMPONENT_ID + "," + opaqueContext);
-				}
-			}
+		if(interval != 0 && available > interval) {
+			start = start + interval;
+			scheduledInvocationManager.createDelayedInvocation(timeService.newTime(start), COMPONENT_ID, opaqueContext);
+			if(log.isDebugEnabled())
+				log.debug("EvalJobLogicImpl.scheduleReminders(" + evaluationId + ") - scheduledInvocationManager.createDelayedInvocation( " + 
+						timeService.newTime(start) + "," + 	COMPONENT_ID + "," + opaqueContext);
 		}
 	}
 
@@ -428,40 +386,61 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 			if(log.isDebugEnabled())
 				log.debug("evaluation state " + state + " saved");
 			
-			//TODO:simplify scheduleJob(JOB_TYPE_REMINDER) with Reminder job determining if another Reminder is needed
-			
-			//send email and/or schedule jobs
-			if(EvalConstants.EVALUATION_STATE_INQUEUE.equals(state)) {
+			//dispatch to send email and/or schedule jobs based on jobType
+			if(EvalConstants.JOB_TYPE_CREATED.equals(jobType)) {
+				//if opt-in, opt-out, or questions addable, notify instructors
 				sendCreatedEmail(evaluationId);
 			}
-			else if(EvalConstants.EVALUATION_STATE_ACTIVE.equals(state)) {
+			else if(EvalConstants.JOB_TYPE_ACTIVE.equals(jobType)) {
 				externalLogic.registerEntityEvent(EVENT_EVAL_START, eval);
 				sendAvailableEmail(evaluationId);
 				scheduleJob(eval.getId(), eval.getDueDate(), EvalConstants.JOB_TYPE_DUE);
-				scheduleReminders(eval.getId());
+				if(eval.getReminderDays().intValue() != 0)
+					scheduleReminder(eval.getId());
 			}
-			else if(EvalConstants.EVALUATION_STATE_DUE.equals(state)) {
+			else if(EvalConstants.JOB_TYPE_REMINDER.equals(jobType)) {
+				if(eval.getReminderDays().intValue() != 0) {
+					if(eval.getDueDate().after(new Date())) {
+						sendReminderEmail(evaluationId);
+						scheduleReminder(evaluationId);
+					}
+				}
+			}
+			else if(EvalConstants.JOB_TYPE_DUE.equals(jobType)) {
 				externalLogic.registerEntityEvent(EVENT_EVAL_DUE, eval);
 				if(log.isDebugEnabled())
 					log.debug("EvalJobLogicImpl.jobAction scheduleJob(" + eval.getId() + "," + eval.getStopDate() + "," + EvalConstants.JOB_TYPE_CLOSED + ")");
 				scheduleJob(eval.getId(), eval.getStopDate(), EvalConstants.JOB_TYPE_CLOSED);
 			}
-			else if(EvalConstants.EVALUATION_STATE_CLOSED.equals(state)) {
+			else if(EvalConstants.JOB_TYPE_CLOSED.equals(jobType)) {
 				externalLogic.registerEntityEvent(EVENT_EVAL_STOP, eval);
-				Date instructorViewDate = eval.getInstructorsDate();
-				Date studentViewDate = eval.getStudentsDate();
-				if(instructorViewDate == null && studentViewDate == null)
-					//use same view date for all users
-					scheduleJob(eval.getId(), eval.getViewDate(), EvalConstants.JOB_TYPE_VIEWABLE);
-				else {
-					//use separate view dates
-					scheduleJob(eval.getId(), instructorViewDate, EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS);
-					if(studentViewDate != null)
+				//schedule results viewable by owner - admin notification
+				scheduleJob(eval.getId(), eval.getViewDate(), EvalConstants.JOB_TYPE_VIEWABLE);
+				if(!eval.getResultsPrivate()) {
+					if(eval.getInstructorsDate() != null) {
+						Date instructorViewDate = eval.getInstructorsDate();
+						//schedule results viewable by instructors notification
+						scheduleJob(eval.getId(), instructorViewDate, EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS);
+					}
+					if(eval.getStudentsDate() != null) {
+						Date studentViewDate = eval.getStudentsDate();
+						//schedule results viewable by students notification
 						scheduleJob(eval.getId(), studentViewDate, EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS);
+					}
 				}
 			}
-			else if(EvalConstants.EVALUATION_STATE_VIEWABLE.equals(state)) {
+			else if(EvalConstants.JOB_TYPE_VIEWABLE.equals(jobType))  {
 				externalLogic.registerEntityEvent(EVENT_EVAL_VIEWABLE, eval);
+				//send results viewable notification to owner if private, or all if not
+				sendViewableEmail(evaluationId, jobType, eval.getResultsPrivate());
+			}
+			else if(EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS.equals(jobType))  {
+				externalLogic.registerEntityEvent(EVENT_EVAL_VIEWABLE_INSTRUCTORS, eval);
+				//send results viewable notification to owner if private, or all if not
+				sendViewableEmail(evaluationId, jobType, eval.getResultsPrivate());
+			}
+			else if(EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS.equals(jobType))  {
+				externalLogic.registerEntityEvent(EVENT_EVAL_VIEWABLE_STUDENTS, eval);
 				//send results viewable notification to owner if private, or all if not
 				sendViewableEmail(evaluationId, jobType, eval.getResultsPrivate());
 			}
@@ -488,7 +467,6 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 
 	/**
 	 *  Send email that an evaluation has been created</br>
-	 *  not implemented
 	 *  
 	 * @param evalId the EvalEvaluation id
 	 */
