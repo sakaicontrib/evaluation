@@ -38,7 +38,7 @@ import org.sakaiproject.email.api.EmailService;
 import org.sakaiproject.entity.api.EntityManager;
 import org.sakaiproject.entity.api.Reference;
 import org.sakaiproject.entitybroker.EntityBroker;
-import org.sakaiproject.entitybroker.EntityParse;
+import org.sakaiproject.entitybroker.EntityID;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.entity.AssignGroupEntityProvider;
 import org.sakaiproject.evaluation.logic.entity.EvaluationEntityProvider;
@@ -487,7 +487,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	 * @see org.sakaiproject.evaluation.logic.EvalExternalLogic#getEntityURL(java.lang.String, java.lang.String)
 	 */
 	public String getEntityURL(String entityPrefix, String entityId) {
-		String ref = EntityParse.getReference(entityPrefix, entityId);
+		String ref = new EntityID(entityPrefix, entityId).toString();
 		if (ref != null) {
 			return entityBroker.getEntityURL(ref);
 		} else {
@@ -538,7 +538,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 			return null;
 		}
 
-		return EntityParse.getReference(prefix, entityId);
+		return new EntityID(prefix, entityId).toString();
 	}
 
 	/**

@@ -115,8 +115,8 @@ public class ViewReportProducer implements ViewComponentProducer, NavigationCase
 			EvalEvaluation evaluation = evalsLogic.getEvaluationById(reportParams.evaluationId);
 
 			// do a permission check
-			if (currentUserId.equals(evaluation.getOwner()) ||
-					externalLogic.isUserAdmin(currentUserId)) { // TODO - this check is crap, we need a real one -AZ
+			if (! currentUserId.equals(evaluation.getOwner()) &&
+					! externalLogic.isUserAdmin(currentUserId)) { // TODO - this check is no good, we need a real one -AZ
 				throw new SecurityException("Invalid user attempting to access reports page: " + currentUserId);
 			}
 
