@@ -51,10 +51,10 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 
 	private static Log log = LogFactory.getLog(EvalEvaluationsLogicImpl.class);
 
-	private final String EVENT_EVAL_CREATE = "evaluation.created";
-	private final String EVENT_EVAL_UPDATE = "evaluation.updated";
-	private final String EVENT_EVAL_STATE_CHANGE = "evaluation.state.change";
-	private final String EVENT_EVAL_DELETE = "evaluation.updated";
+	private final String EVENT_EVAL_CREATE = "eval.evaluation.created";
+	private final String EVENT_EVAL_UPDATE = "eval.evaluation.updated";
+	private final String EVENT_EVAL_STATE_CHANGE = "eval.evaluation.state.change";
+	private final String EVENT_EVAL_DELETE = "eval.evaluation.deleted";
 
 	private EvaluationDao dao;
 	public void setDao(EvaluationDao dao) {
@@ -322,11 +322,13 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 			log.info("Unlocking associated template ("+evaluation.getTemplate().getId()+") for eval ("+evaluation.getId()+")");
 			dao.lockTemplate(evaluation.getTemplate(), Boolean.FALSE);
 
-			// remove the evaluation and related items in one transaction
+			// fire the evaluation deleted event
+			external.registerEntityEvent(EVENT_EVAL_DELETE, evaluation);
+
+			// remove the evaluation and related data in one transaction
 			dao.deleteMixedSet(entitySets);
 			//dao.delete(eval);
 
-			external.registerEntityEvent(EVENT_EVAL_DELETE, evaluation);
 			log.info("User ("+userId+") removed evaluation ("+evaluationId+"), title: " + evaluation.getTitle());
 			return;
 		}

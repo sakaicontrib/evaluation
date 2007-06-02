@@ -39,6 +39,10 @@ public class EvalTemplatesLogicImpl implements EvalTemplatesLogic {
 
 	private static Log log = LogFactory.getLog(EvalTemplatesLogicImpl.class);
 
+	private final String EVENT_TEMPLATE_CREATE = "eval.template.added";
+	private final String EVENT_TEMPLATE_UPDATE = "eval.template.updated";
+	private final String EVENT_TEMPLATE_DELETE = "eval.template.removed";
+
 	private EvaluationDao dao;
 	public void setDao(EvaluationDao dao) {
 		this.dao = dao;
@@ -77,6 +81,8 @@ public class EvalTemplatesLogicImpl implements EvalTemplatesLogic {
 	public void saveTemplate(EvalTemplate template, String userId) {
 		log.debug("template: " + template.getTitle() + ", userId: " + userId);
 
+		boolean newTemplate = false;
+
 		// set the date modified
 		template.setLastModified( new Date() );
 
@@ -95,6 +101,7 @@ public class EvalTemplatesLogicImpl implements EvalTemplatesLogic {
 
 		if (template.getId() == null) {
 			// new template
+			newTemplate = true;
 			if (! canCreateTemplate(userId)) {
 				throw new SecurityException("User ("+userId+") cannot create templates, invalid permissions");
 			}
@@ -122,6 +129,12 @@ public class EvalTemplatesLogicImpl implements EvalTemplatesLogic {
 		if (checkUserControlTemplate(userId, template)) {
 			dao.save(template);
 			log.info("User ("+userId+") saved template ("+template.getId()+"), title: " + template.getTitle());
+
+			if (newTemplate) {
+				external.registerEntityEvent(EVENT_TEMPLATE_CREATE, template);
+			} else {
+				external.registerEntityEvent(EVENT_TEMPLATE_UPDATE, template);
+			}
 
 			if (template.getLocked().booleanValue() == true) {
 				// lock template and associated items
@@ -165,6 +178,9 @@ public class EvalTemplatesLogicImpl implements EvalTemplatesLogic {
 					template.getTemplateItems().toArray( new EvalTemplateItem[] {} );
 				dao.removeTemplateItems(templateItems);
 			}
+
+			// fire the template deleted event
+			external.registerEntityEvent(EVENT_TEMPLATE_DELETE, template);
 
 			dao.delete(template);
 			return;

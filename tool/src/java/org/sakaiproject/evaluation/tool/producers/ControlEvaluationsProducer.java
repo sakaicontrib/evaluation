@@ -27,6 +27,7 @@ import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.logic.entity.EvalCategoryEntityProvider;
+import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
@@ -354,11 +355,16 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 				}
 
 				// calculate the response rate
-				int ctResponses = responsesLogic.countResponses(evaluation.getId(), null);
-				int ctEnrollments = getTotalEnrollmentsForEval(evaluation.getId());
-				double per = (1.0 * ctResponses )/ctEnrollments;
-				long percentage = Math.round(per*100);				
-				UIOutput.make(evaluationRow, "closed-eval-response-rate", ctResponses + "/"+ ctEnrollments +" - "+percentage +"%");
+				int countResponses = responsesLogic.countResponses(evaluation.getId(), null);
+				int countEnrollments = getTotalEnrollmentsForEval(evaluation.getId());
+				long percentage = 0;
+				if (countEnrollments > 0) {
+					percentage = Math.round( (1.0 * countResponses )/countEnrollments )*100;
+					UIOutput.make(evaluationRow, "closed-eval-response-rate", countResponses + "/"+ countEnrollments +" - "+percentage +"%");
+				} else {
+					// don't bother showing percentage or "out of" when there are no enrollments
+					UIOutput.make(evaluationRow, "closed-eval-response-rate", countResponses + "");
+				}
 
 				UIOutput.make(evaluationRow, "closed-eval-duedate", df.format(evaluation.getDueDate()));
 
@@ -368,9 +374,11 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 						"#{evaluationBean.editEvalSettingAction}");
 				evalEdit.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", evaluation.getId()));
 
-				if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(evaluationsLogic.getEvaluationState(evaluation.getId())) ) {
+				if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(EvalUtils.getEvaluationState(evaluation)) ) {
 					int respReqToViewResults = ((Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS)).intValue();
-					if (respReqToViewResults <= ctResponses || ctResponses >= ctEnrollments) {
+					// make sure there is at least one response before showing the link
+					if ( (respReqToViewResults <= countResponses || countResponses >= countEnrollments) &&
+							countResponses > 0 ) {
 						UIInternalLink.make(evaluationRow, "closed-eval-report-link", 
 								UIMessage.make("controlevaluations.eval.report.link"),
 								new TemplateViewParameters(ChooseReportGroupsProducer.VIEW_ID, evaluation.getId() ));	
