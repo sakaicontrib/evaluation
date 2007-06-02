@@ -34,7 +34,10 @@ public interface EvalJobLogic {
 	/**
 	 * Handle job scheduling changes when a date changed 
 	 * by editing and saving an Evaluation necessitates
-	 * rescheduling a job.
+	 * rescheduling a job.</br>
+	 * Check the invocation dates of pending jobs for
+	 * current EvalEvaluation state and change job
+	 * start date to match EvalEvaluation date.
 	 * 
 	 * @param eval the EvalEvaluation
 	 */
@@ -52,7 +55,7 @@ public interface EvalJobLogic {
 	
 	/**
 	 * Handle sending email and starting jobs when a scheduled job 
-	 * calls this method.
+	 * calls this method. Dispatch to action(s) based on jobType.</br>
 	 * 
 	 * @param evaluationId the id of the EvalEvaluation
 	 * @param jobType the job type from EvalConstants

@@ -291,7 +291,9 @@ public class EvalConstants {
 		"All information submitted to the Evaluation System is confidential. Instructors cannot identify which submissions belong to which students. Students are required to login to the system for the sole purpose of providing students access to the appropriate evaluations for their associated courses. Instructors can only view general statistics as allowed by the university. Please send privacy concerns to $HelpdeskEmail. \n" +
 		"\n" +
 		"An evaluation ($EvalTitle) has been created for: $EvalGroupTitle.\n" +
-		"\n" + "SUBSTITUTABLE TEXT" +
+		"\n";
+	
+	public static final String EMAIL_CREATED_DEFAULT_TEXT_FOOTER =
 		"\n" +
 		"The evaluation will run from $EvalStartDate to $EvalDueDate and the results of the evaluation will be viewable on $EvalResultsDate.\n" +
 		"\n" +		
@@ -299,13 +301,6 @@ public class EvalConstants {
 		"------------------------------------------------------------\n" +
 		"Should you encounter any technical difficulty in working with the evaluation, please send an email to $HelpdeskEmail clearly indicating the problem you encountered. For any other concerns please contact your department.\n";
 	
-	/**
-	 * EmailTemplate message setting:
-	 * This is text that must be replaced in EMAIL_CREATED_DEFAULT_TEXT<br/>
-	 * It may be replaced by text containing nothing, EMAIL_CREATED_OPT_IN_TEXT or 
-	 * EMAIL_CREATED_OPT_OUT_TEXT, and/or EMAIL_CREATED_ADD_ITEMS_TEXT.
-	 */
-	public static final String EMAIL_CREATED_SUBSTITUTABLE_TEXT = "SUBSTITUTABLE TEXT";
 	
 	/**
 	 * EmailTemplate message setting:
