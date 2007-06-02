@@ -247,7 +247,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 
 			UIMessage.make(evalForm, "eval-title-header", "controlevaluations.eval.title.header");
 			UIMessage.make(evalForm, "eval-assigned-header", "controlevaluations.eval.assigned.header");
-			UIMessage.make(evalForm, "eval-users-header", "controlevaluations.eval.users.header");
+			UIMessage.make(evalForm, "eval-responses-header", "controlevaluations.eval.responses.header");
 			UIMessage.make(evalForm, "eval-startdate-header", "controlevaluations.eval.startdate.header");
 			UIMessage.make(evalForm, "eval-duedate-header", "controlevaluations.eval.duedate.header");
 			UIMessage.make(evalForm, "eval-settings-header", "controlevaluations.eval.settings.header");
@@ -285,9 +285,13 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 				}
 
 				// calculate the response rate
-				int ctResponses = responsesLogic.countResponses(evaluation.getId(), null);
-				int ctEnrollments = getTotalEnrollmentsForEval(evaluation.getId());
-				UIOutput.make(evaluationRow, "active-eval-response-rate", ctResponses + "/" + ctEnrollments );
+				int countResponses = responsesLogic.countResponses(evaluation.getId(), null);
+				int countEnrollments = getTotalEnrollmentsForEval(evaluation.getId());
+				if (countEnrollments > 0) {
+					UIOutput.make(evaluationRow, "active-eval-response-rate", countResponses + "/" + countEnrollments );
+				} else {
+					UIOutput.make(evaluationRow, "active-eval-response-rate", countResponses + "" );					
+				}
 
 				UIOutput.make(evaluationRow, "active-eval-startdate", df.format(evaluation.getStartDate()));
 				UIOutput.make(evaluationRow, "active-eval-duedate", df.format(evaluation.getDueDate()));

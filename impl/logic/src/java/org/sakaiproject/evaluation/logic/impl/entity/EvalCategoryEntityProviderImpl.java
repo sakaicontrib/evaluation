@@ -43,14 +43,11 @@ public class EvalCategoryEntityProviderImpl implements EvalCategoryEntityProvide
 	 * @see org.sakaiproject.entitybroker.entityprovider.CoreEntityProvider#entityExists(java.lang.String)
 	 */
 	public boolean entityExists(String id) {
-		Long evalId;
-		try {
-			evalId = new Long(id);
-			if (evaluationsLogic.getEvaluationById(evalId) != null) {
+		String[] categories = evaluationsLogic.getEvalCategories(null);
+		for (int i = 0; i < categories.length; i++) {
+			if (categories[i].equals(id)) {
 				return true;
 			}
-		} catch (NumberFormatException e) {
-			// invalid number so roll through to the false
 		}
 		return false;
 	}
