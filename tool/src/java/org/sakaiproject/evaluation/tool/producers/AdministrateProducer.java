@@ -58,9 +58,9 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
 	}
 
 	// Spring injection 
-	private EvalExternalLogic external;
-	public void setExternal(EvalExternalLogic external) {
-		this.external = external;
+	private EvalExternalLogic externalLogic;
+	public void setExternalLogic(EvalExternalLogic externalLogic) {
+		this.externalLogic = externalLogic;
 	}
 
 	// Used to prepare the path for WritableBeanLocator
@@ -71,8 +71,8 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
 	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
 	 */
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
-		String currentUserId = external.getCurrentUserId();
-		boolean userAdmin = external.isUserAdmin(currentUserId);
+		String currentUserId = externalLogic.getCurrentUserId();
+		boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
 
 		if (! userAdmin) {
 			// Security check and denial

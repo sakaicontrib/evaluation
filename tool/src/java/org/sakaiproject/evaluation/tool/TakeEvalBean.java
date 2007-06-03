@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.tool;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.locators.ResponseBeanLocator;
 
@@ -32,11 +33,16 @@ public class TakeEvalBean {
 	private static Log log = LogFactory.getLog(TakeEvalBean.class);
 
 	public EvalEvaluation eval;
-	public String context;
+	public String evalGroupId;
 
 	private ResponseBeanLocator responseBeanLocator;
 	public void setResponseBeanLocator(ResponseBeanLocator responseBeanLocator) {
 		this.responseBeanLocator = responseBeanLocator;
+	}
+
+	private EvalExternalLogic externalLogic;
+	public void setExternalLogic(EvalExternalLogic externalLogic) {
+		this.externalLogic = externalLogic;
 	}
 
 	private TargettedMessageList messages;
@@ -46,9 +52,9 @@ public class TakeEvalBean {
 
 	public String submitEvaluation() {
 		log.debug("create response");
-		responseBeanLocator.saveAll(eval, context);
+		responseBeanLocator.saveAll(eval, evalGroupId);
 		messages.addMessage( new TargettedMessage("evaluations.take.message",
-                new Object[] { eval.getTitle() }, 
+                new Object[] { eval.getTitle(), externalLogic.getDisplayTitle(evalGroupId) }, 
                 TargettedMessage.SEVERITY_INFO));
 		return "success";
 	}

@@ -63,6 +63,8 @@
 	<bean id="takeEvalBean"
 		class="org.sakaiproject.evaluation.tool.TakeEvalBean">
 		<property name="responseBeanLocator" ref="responseBeanLocator" />
+		<property name="externalLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="messages" ref="targettedMessageList"/>
 	</bean>
 
@@ -175,7 +177,7 @@
 
 	<!-- producers here -->
 	<bean class="org.sakaiproject.evaluation.tool.producers.SummaryProducer">
-		<property name="external"
+		<property name="externalLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="evaluationsLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
@@ -189,7 +191,7 @@
 	</bean>
 
 	<bean class="org.sakaiproject.evaluation.tool.producers.AdministrateProducer">
-		<property name="external"
+		<property name="externalLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 	</bean>
 

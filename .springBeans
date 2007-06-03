@@ -5,11 +5,13 @@
 	</configExtensions>
 	<configs>
 		<config>impl/pack/src/webapp/WEB-INF/spring-hibernate.xml</config>
+		<config>tool/src/webapp/WEB-INF/requestContext.xml</config>
 		<config>impl/pack/src/webapp/WEB-INF/entity-providers.xml</config>
 		<config>impl/pack/src/webapp/WEB-INF/logic-support.xml</config>
 		<config>impl/pack/src/webapp/WEB-INF/components.xml</config>
-		<config>impl/pack/src/webapp/WEB-INF/hibernate-hbms.xml</config>
+		<config>tool/src/webapp/WEB-INF/applicationContext.xml</config>
 		<config>impl/dao/src/test/hibernate-test.xml</config>
+		<config>impl/pack/src/webapp/WEB-INF/hibernate-hbms.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
@@ -22,6 +24,8 @@
 				<config>impl/pack/src/webapp/WEB-INF/spring-hibernate.xml</config>
 				<config>impl/pack/src/webapp/WEB-INF/logic-support.xml</config>
 				<config>impl/pack/src/webapp/WEB-INF/entity-providers.xml</config>
+				<config>tool/src/webapp/WEB-INF/applicationContext.xml</config>
+				<config>tool/src/webapp/WEB-INF/requestContext.xml</config>
 			</configs>
 		</configSet>
 		<configSet>
@@ -48,6 +52,9 @@
 				<config>impl/pack/src/webapp/WEB-INF/logic-support.xml</config>
 				<config>impl/pack/src/webapp/WEB-INF/spring-hibernate.xml</config>
 				<config>impl/pack/src/webapp/WEB-INF/entity-providers.xml</config>
+				<config>tool/src/webapp/WEB-INF/applicationContext.xml</config>
+				<config>tool/src/webapp/WEB-INF/requestContext.xml</config>
+				<config>/entity-broker/pack/src/webapp/WEB-INF/components.xml</config>
 			</configs>
 		</configSet>
 	</configSets>

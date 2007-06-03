@@ -239,7 +239,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 
 			//Binding the EvalEvaluation object to the EvalEvaluation object in TakeEvaluationBean.
 			form.parameters.add( new UIELBinding("#{takeEvalBean.eval}", new ELReference(evalOTP+eval.getId())));
-			form.parameters.add( new UIELBinding("#{takeEvalBean.context}", evalTakeViewParams.evalGroupId));
+			form.parameters.add( new UIELBinding("#{takeEvalBean.evalGroupId}", evalTakeViewParams.evalGroupId));
 
 			// get all items for this evaluation main template
 			allItems = new ArrayList(eval.getTemplate().getTemplateItems());
