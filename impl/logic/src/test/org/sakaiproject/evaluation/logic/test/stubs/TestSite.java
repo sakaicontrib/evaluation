@@ -458,16 +458,14 @@ public class TestSite implements Site {
 	 * @see org.sakaiproject.entity.api.Entity#getReference()
 	 */
 	public String getReference() {
-		// TODO Auto-generated method stub
-		return null;
+		return id;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.entity.api.Entity#getReference(java.lang.String)
 	 */
 	public String getReference(String rootProperty) {
-		// TODO Auto-generated method stub
-		return null;
+		return id;
 	}
 
 	/* (non-Javadoc)

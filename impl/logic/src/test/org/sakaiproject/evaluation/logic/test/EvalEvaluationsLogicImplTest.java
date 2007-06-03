@@ -603,38 +603,38 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 	public void testCanTakeEvaluation() {
 		// test able to take untaken eval
 		Assert.assertTrue( evaluations.canTakeEvaluation( EvalTestDataLoad.USER_ID, 
-				etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.CONTEXT1) );
+				etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.SITE1_REF) );
 		// test able to take eval in evalGroupId not taken in yet
 		Assert.assertTrue( evaluations.canTakeEvaluation( EvalTestDataLoad.USER_ID, 
-				etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.CONTEXT1) );
+				etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.SITE1_REF) );
 		// test admin can always take
 		Assert.assertTrue( evaluations.canTakeEvaluation( EvalTestDataLoad.ADMIN_USER_ID, 
-				etdl.evaluationActive.getId(), EvalTestDataLoad.CONTEXT1) );
+				etdl.evaluationActive.getId(), EvalTestDataLoad.SITE1_REF) );
 
 		// test not able to take
 		// already taken
 		Assert.assertFalse( evaluations.canTakeEvaluation( EvalTestDataLoad.USER_ID, 
-				etdl.evaluationActive.getId(), EvalTestDataLoad.CONTEXT1) );
+				etdl.evaluationActive.getId(), EvalTestDataLoad.SITE1_REF) );
 		// not assigned to this evalGroupId
 		Assert.assertFalse( evaluations.canTakeEvaluation( EvalTestDataLoad.USER_ID, 
-				etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.CONTEXT2) );
+				etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.SITE2_REF) );
 		Assert.assertFalse( evaluations.canTakeEvaluation( EvalTestDataLoad.USER_ID, 
-				etdl.evaluationActive.getId(), EvalTestDataLoad.CONTEXT2) );
+				etdl.evaluationActive.getId(), EvalTestDataLoad.SITE2_REF) );
 		// cannot take evaluation (no perm)
 		Assert.assertFalse( evaluations.canTakeEvaluation( EvalTestDataLoad.MAINT_USER_ID, 
-				etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.CONTEXT1) );
+				etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.SITE1_REF) );
 		Assert.assertFalse( evaluations.canTakeEvaluation( EvalTestDataLoad.MAINT_USER_ID, 
-				etdl.evaluationActive.getId(), EvalTestDataLoad.CONTEXT1) );
+				etdl.evaluationActive.getId(), EvalTestDataLoad.SITE1_REF) );
 
 		// test invalid information
 		Assert.assertFalse( evaluations.canTakeEvaluation( EvalTestDataLoad.INVALID_USER_ID, 
-				etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.CONTEXT1) );
+				etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.SITE1_REF) );
 		Assert.assertFalse( evaluations.canTakeEvaluation( EvalTestDataLoad.USER_ID, 
 				etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.INVALID_CONTEXT) );
 
 		try {
 			evaluations.canTakeEvaluation( EvalTestDataLoad.USER_ID, 
-					EvalTestDataLoad.INVALID_LONG_ID, EvalTestDataLoad.CONTEXT1);
+					EvalTestDataLoad.INVALID_LONG_ID, EvalTestDataLoad.SITE1_REF);
 			Assert.fail("Should have thrown exception");
 		} catch (RuntimeException e) {
 			Assert.assertNotNull(e);
@@ -700,7 +700,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 		Assert.assertNotNull(contexts);
 		Assert.assertEquals(1, contexts.size());
 		Assert.assertTrue( contexts.get(0) instanceof EvalGroup );
-		Assert.assertEquals( EvalTestDataLoad.CONTEXT1, ((EvalGroup) contexts.get(0)).evalGroupId );
+		Assert.assertEquals( EvalTestDataLoad.SITE1_REF, ((EvalGroup) contexts.get(0)).evalGroupId );
 
 		// test no assigned contexts
 		m = evaluations.getEvaluationGroups( 

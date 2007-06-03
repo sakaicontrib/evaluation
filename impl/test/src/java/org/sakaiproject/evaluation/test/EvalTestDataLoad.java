@@ -72,16 +72,13 @@ public class EvalTestDataLoad {
 	public final static Set AUTHZGROUPSET1 = new HashSet();
 	public final static Set AUTHZGROUPSET2 = new HashSet();
 
-	public final static String SITE_ID = "site-1111111";
-	public final static String SITE_REF = "siteref-1111111";
-	public final static String SITE2_ID = "site-22222222";
-	public final static String SITE2_REF = "siteref-22222222";
-
-	public final static String CONTEXT1 = "testContext1";
-	public final static String CONTEXT1_TITLE = "C1 title";
-	public final static String CONTEXT2 = "testContext2";
-	public final static String CONTEXT2_TITLE = "C2 title";
-	public final static String CONTEXT3 = "testContext3";
+	public final static String SITE1_CONTEXT = "siteC1";
+	public final static String SITE1_REF = "/sites/ref-111111";
+	public final static String SITE1_TITLE = "Site1 title";
+	public final static String SITE2_CONTEXT = "siteC2";
+	public final static String SITE2_REF = "/sites/ref-222222";
+	public final static String SITE2_TITLE = "Site2 title";
+	public final static String SITE3_REF = "/sites/ref-333333";
 
 	public final static String ITEM_TEXT = "What do you think about this course?";
 	public final static String ITEM_SCALE_CLASSIFICATION = EvalConstants.ITEM_TYPE_SCALED;
@@ -594,11 +591,11 @@ public class EvalTestDataLoad {
 				new Integer(2), null, Boolean.FALSE, null, null);
 		templateItem10AC2 = new EvalTemplateItem( new Date(), MAINT_USER_ID, 
 				templateAdminComplex, item10, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
-				EvalConstants.HIERARCHY_LEVEL_GROUP, CONTEXT1,
+				EvalConstants.HIERARCHY_LEVEL_GROUP, SITE1_REF,
 				new Integer(2), null, Boolean.FALSE, null, null);
 		templateItem10AC3 = new EvalTemplateItem( new Date(), MAINT_USER_ID, 
 				templateAdminComplex, item10, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
-				EvalConstants.HIERARCHY_LEVEL_GROUP, CONTEXT2,
+				EvalConstants.HIERARCHY_LEVEL_GROUP, SITE2_REF,
 				new Integer(2), null, Boolean.FALSE, null, null);
 
 		// associate the templates with the link
@@ -748,33 +745,33 @@ public class EvalTestDataLoad {
 		evaluationActive.setReminderEmailTemplate(emailTemplate3);
 
 		// evalGroupId assignments
-		assign1 = new EvalAssignGroup(new Date(), MAINT_USER_ID, CONTEXT1, EvalConstants.GROUP_TYPE_SITE, 
+		assign1 = new EvalAssignGroup(new Date(), MAINT_USER_ID, SITE1_REF, EvalConstants.GROUP_TYPE_SITE, 
 				Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationActive);
-		assign2 = new EvalAssignGroup(new Date(), MAINT_USER_ID, CONTEXT1, EvalConstants.GROUP_TYPE_SITE, 
+		assign2 = new EvalAssignGroup(new Date(), MAINT_USER_ID, SITE1_REF, EvalConstants.GROUP_TYPE_SITE, 
 				Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationActiveUntaken);
-		assign3 = new EvalAssignGroup(new Date(), ADMIN_USER_ID, CONTEXT1, EvalConstants.GROUP_TYPE_SITE, 
+		assign3 = new EvalAssignGroup(new Date(), ADMIN_USER_ID, SITE1_REF, EvalConstants.GROUP_TYPE_SITE, 
 				Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationClosed);
-		assign4 = new EvalAssignGroup(new Date(), MAINT_USER_ID, CONTEXT2, EvalConstants.GROUP_TYPE_SITE, 
+		assign4 = new EvalAssignGroup(new Date(), MAINT_USER_ID, SITE2_REF, EvalConstants.GROUP_TYPE_SITE, 
 				Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationClosed);
-		assign5 = new EvalAssignGroup(new Date(), ADMIN_USER_ID, CONTEXT2, EvalConstants.GROUP_TYPE_SITE, 
+		assign5 = new EvalAssignGroup(new Date(), ADMIN_USER_ID, SITE2_REF, EvalConstants.GROUP_TYPE_SITE, 
 				Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationViewable);
-		assign6 = new EvalAssignGroup(new Date(), MAINT_USER_ID, CONTEXT1, EvalConstants.GROUP_TYPE_SITE, 
+		assign6 = new EvalAssignGroup(new Date(), MAINT_USER_ID, SITE1_REF, EvalConstants.GROUP_TYPE_SITE, 
 				Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationNewAdmin);
-		assign7 = new EvalAssignGroup(new Date(), ADMIN_USER_ID, CONTEXT2, EvalConstants.GROUP_TYPE_SITE, 
+		assign7 = new EvalAssignGroup(new Date(), ADMIN_USER_ID, SITE2_REF, EvalConstants.GROUP_TYPE_SITE, 
 				Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationNewAdmin);
 
 		// now init response data for the evaluations
-		response1 = new EvalResponse(new Date(), USER_ID, CONTEXT1, 
+		response1 = new EvalResponse(new Date(), USER_ID, SITE1_REF, 
 				new Date(), today, null, evaluationActive);
-		response2 = new EvalResponse(new Date(), USER_ID, CONTEXT1, 
+		response2 = new EvalResponse(new Date(), USER_ID, SITE1_REF, 
 				new Date(), today, null, evaluationClosed);
-		response3 = new EvalResponse(new Date(), STUDENT_USER_ID, CONTEXT2, 
+		response3 = new EvalResponse(new Date(), STUDENT_USER_ID, SITE2_REF, 
 				new Date(), today, null, evaluationClosed);
-		response4 = new EvalResponse(new Date(), USER_ID, CONTEXT2, 
+		response4 = new EvalResponse(new Date(), USER_ID, SITE2_REF, 
 				new Date(), today, null, evaluationViewable);
-		response5 = new EvalResponse(new Date(), STUDENT_USER_ID, CONTEXT2, 
+		response5 = new EvalResponse(new Date(), STUDENT_USER_ID, SITE2_REF, 
 				new Date(), today, null, evaluationViewable);
-		response6 = new EvalResponse(new Date(), USER_ID, CONTEXT2, 
+		response6 = new EvalResponse(new Date(), USER_ID, SITE2_REF, 
 				new Date(), today, null, evaluationClosed);
 
 		answer1_1 = new EvalAnswer(new Date(), templateItem1P, item1, response1, null, ANSWER_SCALED_ONE, null, null);

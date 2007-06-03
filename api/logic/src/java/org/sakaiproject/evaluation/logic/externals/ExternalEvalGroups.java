@@ -27,7 +27,7 @@ import org.sakaiproject.evaluation.logic.model.EvalGroup;
  */
 public interface ExternalEvalGroups {
 
-	public static final String OUTSIDE_PORTAL_CONTEXT = "outside_portal_context";
+	public static final String NO_LOCATION = "noLocationFound";
 
 	// EvalGroups
 
@@ -49,7 +49,7 @@ public interface ExternalEvalGroups {
 	 * Get the title associated with an evalGroup
 	 * 
 	 * @param evalGroupId the internal unique ID for an evalGroup
-	 * @return the displayable title or warning text if it cannot be found
+	 * @return the displayable title or default text "--------" if it cannot be found
 	 */
 	public String getDisplayTitle(String evalGroupId);
 
