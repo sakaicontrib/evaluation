@@ -69,9 +69,9 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		return VIEW_ID;
 	}
 
-	private EvalExternalLogic external;
-	public void setExternal(EvalExternalLogic external) {
-		this.external = external;
+	private EvalExternalLogic externalLogic;
+	public void setExternalLogic(EvalExternalLogic externalLogic) {
+		this.externalLogic = externalLogic;
 	}
 
 	private EvalEvaluationsLogic evaluationsLogic;
@@ -106,9 +106,9 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
 		// local variables used in the render logic
-		String currentUserId = external.getCurrentUserId();
-		String currentContext = external.getCurrentEvalGroup();
-		boolean userAdmin = external.isUserAdmin(currentUserId);
+		String currentUserId = externalLogic.getCurrentUserId();
+		String currentContext = externalLogic.getCurrentEvalGroup();
+		boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
 		boolean createTemplate = templatesLogic.canCreateTemplate(currentUserId);
 		boolean beginEvaluation = evaluationsLogic.canBeginEvaluation(currentUserId);
 		// use a date which is related to the current users locale
@@ -183,7 +183,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 				for (int j=0; j<contexts.size(); j++) {
 					EvalGroup group = (EvalGroup) contexts.get(j);
 					//check that the user can take evaluations in this evalGroupId
-					if(external.isUserAllowedInEvalGroup(external.getCurrentUserId(), EvalConstants.PERM_TAKE_EVALUATION, group.evalGroupId)){
+					if(externalLogic.isUserAllowedInEvalGroup(externalLogic.getCurrentUserId(), EvalConstants.PERM_TAKE_EVALUATION, group.evalGroupId)){
 						String groupId = group.evalGroupId;
 						String title = group.title;
 						String status = "unknown.caps";
@@ -362,7 +362,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			UIMessage.make(contextsBC, "sitelisting-title", "summary.sitelisting.title");
 
 			UIMessage.make(contextsBC, "sitelisting-evaluated-text", "summary.sitelisting.evaluated");
-			List evaluatedContexts = external.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_BE_EVALUATED);
+			List evaluatedContexts = externalLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_BE_EVALUATED);
 			if (evaluatedContexts.size() > 0) {
 				for (int i=0; i<evaluatedContexts.size(); i++) {
 					if (i > maxGroupsToDisplay) {
@@ -379,7 +379,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			}
 
 			UIMessage.make(contextsBC, "sitelisting-evaluate-text", "summary.sitelisting.evaluate");
-			List evaluateContexts = external.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_TAKE_EVALUATION);
+			List evaluateContexts = externalLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_TAKE_EVALUATION);
 			if (evaluateContexts.size() > 0) {
 				for (int i=0; i<evaluateContexts.size(); i++) {
 					if (i > maxGroupsToDisplay) {
@@ -445,7 +445,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		for (int i=0; i<groups.size(); i++) {
 			EvalAssignGroup eac = (EvalAssignGroup) groups.get(i);
 			String context = eac.getEvalGroupId();
-			Set userIds = external.getUserIdsForEvalGroup(context, EvalConstants.PERM_TAKE_EVALUATION);
+			Set userIds = externalLogic.getUserIdsForEvalGroup(context, EvalConstants.PERM_TAKE_EVALUATION);
 			totalEnrollments = totalEnrollments + userIds.size();
 		}
 		return totalEnrollments;
