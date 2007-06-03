@@ -416,7 +416,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 				externalLogic.registerEntityEvent(EVENT_EVAL_STOP, eval);
 				//schedule results viewable by owner - admin notification
 				scheduleJob(eval.getId(), eval.getViewDate(), EvalConstants.JOB_TYPE_VIEWABLE);
-				if(!eval.getResultsPrivate()) {
+				if(! eval.getResultsPrivate().booleanValue()) {
 					if(eval.getInstructorsDate() != null) {
 						Date instructorViewDate = eval.getInstructorsDate();
 						//schedule results viewable by instructors notification
