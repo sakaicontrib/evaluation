@@ -757,7 +757,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		String evalEntityURL = null;
 		if (group != null && group.evalGroupId != null) {
 			// get the URL directly to the evaluation with group context included
-			EvalAssignGroup assignGroup = assignsLogic.getAssignGroupById( new Long(group.evalGroupId) );
+			EvalAssignGroup assignGroup = assignsLogic.getAssignGroupById( assignsLogic.getAssignGroupId(eval.getId(), group.evalGroupId) );
 			if (assignGroup != null) {
 				evalEntityURL = externalLogic.getEntityURL(assignGroup);
 			}
