@@ -426,6 +426,9 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 		evaluationsLogic.canTakeEvaluation(EvalTestDataLoad.USER_ID, 
 				etdl.evaluationActive.getId(), EvalTestDataLoad.SITE1_REF);
 		evaluationsLogicControl.setReturnValue( false );
+		evaluationsLogic.canTakeEvaluation(EvalTestDataLoad.ADMIN_USER_ID, 
+				etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.SITE1_REF);
+		evaluationsLogicControl.setReturnValue( true );
 
 		// activate the mock objects
 		evaluationsLogicControl.replay();
@@ -437,6 +440,12 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 				EvalTestDataLoad.SITE1_REF, new Date(), etdl.evaluationActiveUntaken);
 		responses.saveResponse( responseNone, EvalTestDataLoad.STUDENT_USER_ID);
 		Assert.assertNotNull(responseNone.getId());
+
+		// test saving a response when admin user is ok
+		responses.saveResponse( new EvalResponse( new Date(), 
+				EvalTestDataLoad.ADMIN_USER_ID, EvalTestDataLoad.SITE1_REF, 
+				new Date(), etdl.evaluationActiveUntaken), 
+				EvalTestDataLoad.ADMIN_USER_ID);
 
 		// test saving a response for a closed evaluation fails
 		try {
@@ -457,17 +466,6 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 					EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");
 		} catch (IllegalStateException e) {
-			Assert.assertNotNull(e);
-		}
-
-		// test saving a response when admin user fails (admin cannot store responses)
-		try {
-			responses.saveResponse( new EvalResponse( new Date(), 
-					EvalTestDataLoad.ADMIN_USER_ID, EvalTestDataLoad.SITE1_REF, 
-					new Date(), etdl.evaluationActiveUntaken), 
-					EvalTestDataLoad.ADMIN_USER_ID);
-			Assert.fail("Should have thrown exception");
-		} catch (IllegalArgumentException e) {
 			Assert.assertNotNull(e);
 		}
 

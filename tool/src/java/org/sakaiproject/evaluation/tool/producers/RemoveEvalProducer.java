@@ -28,6 +28,7 @@ import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
+import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
@@ -61,15 +62,16 @@ public class RemoveEvalProducer implements ViewComponentProducer,ViewParamsRepor
 		this.locale=locale;
 	}
 	
-	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {	
-		/*
-		 * TODO: 
-		 * 
-		 * 1) check if current user is the owner or higher level admin,
-		 * 2)double check if the evaluation is queued for future??? if this page is 
-				accessed from page other than ControlPanel
-		 */
-		UIMessage.make(tofill, "remove-eval-title", "removeeval.page.title");	
+	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+
+		UIMessage.make(tofill, "page-title", "removeeval.page.title");	
+
+		UIInternalLink.make(tofill,	"summary-toplink", UIMessage.make("summary.page.title"),
+				new SimpleViewParameters(SummaryProducer.VIEW_ID));
+
+		UIInternalLink.make(tofill, "control-evaluations-link",
+				UIMessage.make("controlevaluations.page.title"), 
+			new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
 
 		
 		TemplateViewParameters evalViewParams = (TemplateViewParameters) viewparams;

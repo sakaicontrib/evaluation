@@ -11,50 +11,59 @@
 
 <body>
 <div class="portletBody">
-	<div class="navIntraTool">
-		<a rsf:id="summary-toplink" href="summary.html">Summary</a>
-	</div>
 
-	<div>
+<div class="navIntraTool">
+	<a rsf:id="summary-toplink" href="summary.html">Summary</a>
+</div>
+
+<div>
 	<ul class="breadCrumb">
 		<li class="breadCrumb"><a rsf:id="summary-toplink" href="summary.html">Summary</a></li>
 		<li class="breadCrumb" rsf:id="report-groups-title">Choose Report Groups</li>
 	</ul>
-	</div>
-	<br/>
+</div>
+
+<div rsf:id="message-for:*" class="alertMessage">
+	<ul style="margin:0px;">
+		<li>Message for user here</li>
+	</ul>
+</div>
+
+<br/>
 	
-	<form name="report_groups_form" rsf:id="report-groups-form" method="post" > 
+<form name="report_groups_form" rsf:id="report-groups-form" method="post" > 
+	<table border="0" cellspacing="0" cellpadding="0" width="90%">
+		<tr>
+			<td>
+				<span rsf:id="report-group-main-message">
+					Choose the groups you would like to view results for. Results will be displayed in aggregate.
+				</span>
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+		</tr>
+	</table>
+	<div rsf:id="groupRow:">
 		<table border="0" cellspacing="0" cellpadding="0" width="90%">
 			<tr>
-				<td>
-					<span rsf:id="report-group-main-message">
-						Choose the groups you would like to view results for. Results will be displayed in aggregate.
-					</span>
-				</td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
+				<td align = "left"><input type="checkbox" name="group_check" rsf:id="groupCheck"/>&nbsp;<span rsf:id="groupName">group</span></td>
 			</tr>
 		</table>
-		<div rsf:id="groupRow:">
-			<table border="0" cellspacing="0" cellpadding="0" width="90%">
-				<tr>
-					<td align = "left"><input type="checkbox" name="group_check" rsf:id="groupCheck"/>&nbsp;<span rsf:id="groupName">group</span></td>
-				</tr>
-			</table>
-		</div>
-		<table border="0" cellspacing="0" cellpadding="0" width="90%">	
-			<tr><td>&nbsp;</td></tr>
-			<tr>
-				<td width="30%" align="left">
-					<input name="cancel_report" type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" rsf:id="cancel-button"/>
-				</td>
-				<td align="right" width="90%">
-					<input name="view_report" rsf:id="viewReport" type="submit" value="View Report"/>  
-				</td>
-			</tr>
-		</table>
-	</form>
+	</div>
+	<table border="0" cellspacing="0" cellpadding="0" width="90%">	
+		<tr><td>&nbsp;</td></tr>
+		<tr>
+			<td width="30%" align="left">
+				<input name="cancel_report" type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" rsf:id="cancel-button"/>
+			</td>
+			<td align="right" width="90%">
+				<input name="view_report" rsf:id="viewReport" type="submit" value="View Report"/>  
+			</td>
+		</tr>
+	</table>
+</form>
+
 </div>
 </body>
 </html>
