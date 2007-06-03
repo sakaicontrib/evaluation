@@ -55,14 +55,15 @@
 		<property name="exclusive" value="true" />
 	</bean>
 
-	  <bean parent="copyPreservingParent">
-    <property name="value" value="reportsBean"/>
-  </bean>
+	<bean parent="copyPreservingParent">
+		<property name="value" value="reportsBean" />
+	</bean>
 
-  <bean parent="writeGuardParent">
-    <property name="guardedPath" value="templateItemWBL.*.displayOrder"/>
-    <property name="guardMethod" value="templateBBean.saveReorder"/>
-  </bean>
+	<bean parent="writeGuardParent">
+		<property name="guardedPath"
+			value="templateItemWBL.*.displayOrder" />
+		<property name="guardMethod" value="templateBBean.saveReorder" />
+	</bean>
 
 	<!-- define any XML producer files -->
 	<bean id="siteMap" parent="siteMapDef" />
@@ -147,19 +148,10 @@
 		<property name="expected" value="true" />
 	</bean>
 
-	<!-- view param inferrer beans to handle entity urls -->
-	<bean class="org.sakaiproject.evaluation.tool.inferrers.EvaluationVPInferrer"
-			init-method="init">
-		<property name="externalLogic" 
-			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-		<property name="assignsLogic" 
-			ref="org.sakaiproject.evaluation.logic.EvalAssignsLogic" />
-		<property name="evaluationsLogic" 
-			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+	<!-- Override the default style of user messages -->
+	<bean id="messageTemplateContributor" parent="templateContributorParent">
+		<property name="baseDirectory" value="component-templates/" />
+		<property name="templateNames" value="Messages" />
 	</bean>
-
-	<bean class="org.sakaiproject.evaluation.tool.inferrers.TemplateVPInferrer" />
-
-	<bean class="org.sakaiproject.evaluation.tool.inferrers.EvalCategoryVPInferrer" />
 
 </beans>
