@@ -652,7 +652,7 @@ public class EvaluationDaoImpl
 	 * produce a comma demlimited string like "item1','item2','item3" from a string array
 	 * 
 	 * @param array any array of String
-	 * @return string like "item1','item2','item3"
+	 * @return string like "('item1','item2','item3')"
 	 */
 	private String arrayToCommaString(String[] array) {
 		String cds = "('";
