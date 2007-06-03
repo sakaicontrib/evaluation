@@ -60,6 +60,16 @@
 			</properties>
         </dependency>
 
+		<!-- sakai dependencies -->
+		<dependency>
+			<groupId>sakaiproject</groupId>
+			<artifactId>sakai-util</artifactId>
+			<version>${sakai.version}</version>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>
+
         <!-- generic DAO -->
         <dependency>
 			<groupId>generic-dao</groupId>
