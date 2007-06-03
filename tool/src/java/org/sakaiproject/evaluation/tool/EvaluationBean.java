@@ -473,28 +473,33 @@ public class EvaluationBean {
 		eval.setOwner(external.getCurrentUserId());
 
 		//Perform common tasks
-		commonSaveTasks();		
-		
-		//save the evaluation
-		evalsLogic.saveEvaluation(eval, external.getCurrentUserId());
-		
-		//now save the selected contexts
-		for (int count = 0; count < this.selectedSakaiSiteIds.length; count++) {
-			Boolean instApproval = Boolean.TRUE;
-			//If instructors must optIn, set approval to false. otherwise it is always true.
-			if(eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_OPT_IN))instApproval=Boolean.FALSE;
-			// check the selected eval groups
-			EvalGroup group = external.makeEvalGroupObject( selectedSakaiSiteIds[count] );
-			// create the assign group
-			EvalAssignGroup assignCourse = new EvalAssignGroup(new Date(), 
-					external.getCurrentUserId(), group.evalGroupId, group.type,
-					instApproval, Boolean.TRUE, Boolean.FALSE, eval);
-			assignsLogic.saveAssignGroup(assignCourse, external.getCurrentUserId());
-		}
+		commonSaveTasks();
 
-		//now reset the eval item here
-		clearEvaluation();
-	    return ControlEvaluationsProducer.VIEW_ID;
+		if (selectedSakaiSiteIds.length > 0) {
+			//save the evaluation
+			evalsLogic.saveEvaluation(eval, external.getCurrentUserId());
+
+			// NOTE - this allows the evaluation to be saved with zero assign groups if this fails
+			//now save the selected assign groups
+			for (int count = 0; count < selectedSakaiSiteIds.length; count++) {
+				Boolean instApproval = Boolean.TRUE;
+				//If instructors must optIn, set approval to false. otherwise it is always true.
+				if(eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_OPT_IN))instApproval=Boolean.FALSE;
+				// check the selected eval groups
+				EvalGroup group = external.makeEvalGroupObject( selectedSakaiSiteIds[count] );
+				// create the assign group
+				EvalAssignGroup assignCourse = new EvalAssignGroup(new Date(), 
+						external.getCurrentUserId(), group.evalGroupId, group.type,
+						instApproval, Boolean.TRUE, Boolean.FALSE, eval);
+				assignsLogic.saveAssignGroup(assignCourse, external.getCurrentUserId());
+			}
+
+			//now reset the eval item here
+			clearEvaluation();
+			return ControlEvaluationsProducer.VIEW_ID;
+		} else {
+			throw new IllegalStateException("Cannot save evaluation with zero assign groups");
+		}
 	}
 	
 	/**

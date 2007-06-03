@@ -84,7 +84,7 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 		emails = (EvalEmailsLogic) emailsControl.getMock();
 		
 		//this mock object is simply keeping us from getting a null when emails is accessed 
-		emails.sendEvalAvailableGroupNotification(EvalTestDataLoad.INVALID_LONG_ID, EvalTestDataLoad.CONTEXT2); // expect this to be called
+		emails.sendEvalAvailableGroupNotification(EvalTestDataLoad.INVALID_LONG_ID, EvalTestDataLoad.SITE2_REF); // expect this to be called
 		emailsControl.setDefaultMatcher(MockControl.ALWAYS_MATCHER);
 		emailsControl.setReturnValue(EvalTestDataLoad.EMPTY_STRING_ARRAY, MockControl.ZERO_OR_MORE);
 		emailsControl.replay();
@@ -116,7 +116,7 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 
 		// test adding evalGroupId to inqueue eval
 		EvalAssignGroup eacNew = new EvalAssignGroup(new Date(), 
-				EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.CONTEXT1, 
+				EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE1_REF, 
 				EvalConstants.GROUP_TYPE_SITE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
 				etdl.evaluationNew);
 		assigns.saveAssignGroup(eacNew, EvalTestDataLoad.MAINT_USER_ID);
@@ -130,7 +130,7 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 
 		// test adding evalGroupId to active eval
 		EvalAssignGroup eacActive = new EvalAssignGroup(new Date(), 
-				EvalConstants.GROUP_TYPE_SITE, EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.CONTEXT2, 
+				EvalConstants.GROUP_TYPE_SITE, EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE2_REF, 
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
 				etdl.evaluationActive);
 		assigns.saveAssignGroup(eacActive, EvalTestDataLoad.MAINT_USER_ID);
@@ -164,7 +164,7 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 		// test cannot add duplicate evalGroupId to in-queue eval
 		try {
 			assigns.saveAssignGroup( new EvalAssignGroup(new Date(), 
-					EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.CONTEXT1, 
+					EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE1_REF, 
 					EvalConstants.GROUP_TYPE_SITE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
 					etdl.evaluationNew),
 					EvalTestDataLoad.MAINT_USER_ID);
@@ -176,7 +176,7 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 		// test cannot add duplicate evalGroupId to active eval
 		try {
 			assigns.saveAssignGroup( new EvalAssignGroup(new Date(), 
-					EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.CONTEXT1, 
+					EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE1_REF, 
 					EvalConstants.GROUP_TYPE_SITE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
 					etdl.evaluationActive),
 					EvalTestDataLoad.MAINT_USER_ID);
@@ -188,7 +188,7 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 		// test user without perm cannot add evalGroupId to eval
 		try {
 			assigns.saveAssignGroup( new EvalAssignGroup(new Date(), 
-					EvalTestDataLoad.USER_ID, EvalTestDataLoad.CONTEXT1, 
+					EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE1_REF, 
 					EvalConstants.GROUP_TYPE_SITE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
 					etdl.evaluationNew), 
 					EvalTestDataLoad.USER_ID);
@@ -200,7 +200,7 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 		// test cannot add evalGroupId to closed eval
 		try {
 			assigns.saveAssignGroup( new EvalAssignGroup(new Date(), 
-					EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.CONTEXT1, 
+					EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE1_REF, 
 					EvalConstants.GROUP_TYPE_SITE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
 					etdl.evaluationViewable), 
 					EvalTestDataLoad.MAINT_USER_ID);
@@ -263,11 +263,11 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 	public void testDeleteAssignContext() {
 		// save some ACs to test removing
 		EvalAssignGroup eac1 = new EvalAssignGroup(new Date(), 
-				EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.CONTEXT1, 
+				EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE1_REF, 
 				EvalConstants.GROUP_TYPE_SITE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
 				etdl.evaluationNew);
 		EvalAssignGroup eac2 = new EvalAssignGroup(new Date(), 
-				EvalTestDataLoad.ADMIN_USER_ID, EvalTestDataLoad.CONTEXT2, 
+				EvalTestDataLoad.ADMIN_USER_ID, EvalTestDataLoad.SITE2_REF, 
 				EvalConstants.GROUP_TYPE_SITE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
 				etdl.evaluationNew);
 		evaluationDao.save(eac1);
@@ -368,19 +368,19 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 		Long assignGroupId = null;
 
 		// test getting valid items by id
-		assignGroupId = assigns.getAssignGroupId( etdl.evaluationActive.getId(), EvalTestDataLoad.CONTEXT1 );
+		assignGroupId = assigns.getAssignGroupId( etdl.evaluationActive.getId(), EvalTestDataLoad.SITE1_REF );
 		Assert.assertNotNull(assignGroupId);
 		Assert.assertEquals(etdl.assign1.getId(), assignGroupId);
 
-		assignGroupId = assigns.getAssignGroupId( etdl.evaluationClosed.getId(), EvalTestDataLoad.CONTEXT2 );
+		assignGroupId = assigns.getAssignGroupId( etdl.evaluationClosed.getId(), EvalTestDataLoad.SITE2_REF );
 		Assert.assertNotNull(assignGroupId);
 		Assert.assertEquals(etdl.assign4.getId(), assignGroupId);
 
 		// test invalid evaluation/group mixture returns null
-		assignGroupId = assigns.getAssignGroupId( etdl.evaluationActive.getId(), EvalTestDataLoad.CONTEXT2 );
+		assignGroupId = assigns.getAssignGroupId( etdl.evaluationActive.getId(), EvalTestDataLoad.SITE2_REF );
 		Assert.assertNull("Found an id?: " + assignGroupId, assignGroupId);
 
-		assignGroupId = assigns.getAssignGroupId( etdl.evaluationViewable.getId(), EvalTestDataLoad.CONTEXT1 );
+		assignGroupId = assigns.getAssignGroupId( etdl.evaluationViewable.getId(), EvalTestDataLoad.SITE1_REF );
 		Assert.assertNull(assignGroupId);
 
 		// test get by invalid id returns null

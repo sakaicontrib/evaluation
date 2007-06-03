@@ -192,7 +192,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		if (userId.startsWith(ANON_USER_PREFIX)) {
 			return "Anonymous User";
 		}
-		return "Unknown DisplayName";
+		return "----------";
 	}
 
 
@@ -220,14 +220,14 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	 * @see org.sakaiproject.evaluation.logic.external.EvalExternalLogic#makeContextObject(java.lang.String)
 	 */
 	public EvalGroup makeEvalGroupObject(String evalGroupId) {
-		// TODO - make this work for other evalGroupId types
 		EvalGroup c = null;
 		try {
-			Site site = siteService.getSite(evalGroupId);
+			// try to get the site object based on the entity reference (which is the evalGroupId)
+			Site site = (Site) entityBroker.fetchEntity(evalGroupId);
 			c = new EvalGroup( evalGroupId, site.getTitle(), 
 					getContextType(SAKAI_SITE_TYPE) );
-		} catch (IdUnusedException e) {
-			// invalid site Id
+		} catch (Exception e) {
+			// invalid site reference
 			log.debug("Could not get sakai site from evalGroupId:" + evalGroupId, e);
 		}
 
@@ -235,7 +235,9 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 			// use external provider
 			if (evalGroupsProvider != null) {
 				c = evalGroupsProvider.getGroupByGroupId(evalGroupId);
-				c.type = EvalConstants.GROUP_TYPE_PROVIDED;
+				if (c != null) {
+					c.type = EvalConstants.GROUP_TYPE_PROVIDED;
+				}
 			}
 		}
 
@@ -250,33 +252,25 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	 * @see org.sakaiproject.evaluation.logic.external.EvalExternalLogic#getCurrentContext()
 	 */
 	public String getCurrentEvalGroup() {
-		String context;
 		try {
-			context = toolManager.getCurrentPlacement().getContext();
-		} catch (Exception e) {
-			log.warn("Could not get the current context (we are probably outside the portal), returning a fake one");
-			context = OUTSIDE_PORTAL_CONTEXT;
+			Site s = (Site) siteService.getSite( toolManager.getCurrentPlacement().getContext() );
+			return s.getReference(); // get the entity reference to the site
+		} catch (IdUnusedException e) {
+			log.warn("Could not get the current location (we are probably outside the portal), returning the fake one");
+			return NO_LOCATION;
 		}
-		return context;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.external.EvalExternalLogic#getDisplayTitle(java.lang.String)
 	 */
 	public String getDisplayTitle(String evalGroupId) {
-		// TODO - make this handle non-Sites also
-		try {
-			Site site = siteService.getSite(evalGroupId);
-			return site.getTitle();
-		} catch (IdUnusedException e) {
-			if (evalGroupsProvider != null) {
-				EvalGroup c = evalGroupsProvider.getGroupByGroupId(evalGroupId);
-				return c.title;
-			}
+		EvalGroup group = makeEvalGroupObject(evalGroupId);
+		if (group != null && group.title != null) {
+			return group.title;
 		}
-
-		log.warn("Cannot get the info about evalGroupId:" + evalGroupId);
-		return "Unknown DisplayTitle";
+		log.warn("Cannot get the title for evalGroupId: " + evalGroupId);
+		return "--------";
 	}
 
 
@@ -286,7 +280,6 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	public int countEvalGroupsForUser(String userId, String permission) {
 		log.debug("userId: " + userId + ", permission: " + permission);
 
-		// TODO - make this handle non-Sites also
 		int count = 0;
 		Set authzGroupIds = authzGroupService.getAuthzGroupsIsAllowed(userId, permission, null);
 		Iterator it = authzGroupIds.iterator();
@@ -319,8 +312,6 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	public List getEvalGroupsForUser(String userId, String permission) {
 		log.debug("userId: " + userId + ", permission: " + permission);
 
-		// TODO - make this handle non-Sites also
-		log.info("Sites for user:" + userId + ", permission: " + permission);
 		List l = new ArrayList();
 		Set authzGroupIds = authzGroupService.getAuthzGroupsIsAllowed(userId, permission, null);
 		Iterator it = authzGroupIds.iterator();
@@ -333,7 +324,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 					String siteId = r.getId();
 					try {
 						Site site = siteService.getSite(siteId);
-						l.add( new EvalGroup(site.getId(), site.getTitle(), 
+						l.add( new EvalGroup(r.getReference(), site.getTitle(), 
 								getContextType(r.getType())) );
 					} catch (IdUnusedException e) {
 						// invalid site Id returned
@@ -383,7 +374,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	 * @see org.sakaiproject.evaluation.logic.external.EvalExternalLogic#getUserIdsForContext(java.lang.String, java.lang.String)
 	 */
 	public Set getUserIdsForEvalGroup(String evalGroupId, String permission) {
-		String reference = getReference(evalGroupId);
+		String reference = evalGroupId;
 		List azGroups = new ArrayList();
 		azGroups.add(reference);
 		Set userIds = authzGroupService.getUsersIsAllowed(permission, azGroups);
@@ -405,7 +396,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	 * @see org.sakaiproject.evaluation.logic.external.EvalExternalLogic#isUserAllowedInContext(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public boolean isUserAllowedInEvalGroup(String userId, String permission, String evalGroupId) {
-		String reference = getReference(evalGroupId);
+		String reference = evalGroupId;
 		if ( securityService.unlock(userId, permission, reference) ) {
 			return true;
 		}
@@ -550,18 +541,6 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		functionManager.registerFunction(EvalConstants.PERM_ASSIGN_EVALUATION);
 		functionManager.registerFunction(EvalConstants.PERM_BE_EVALUATED);
 		functionManager.registerFunction(EvalConstants.PERM_TAKE_EVALUATION);
-	}
-
-	/**
-	 * Takes a Sakai evalGroupId and returns a Sakai reference string (as needed by authz)
-	 * 
-	 * @param evalGroupId a Sakai evalGroupId string
-	 * @return a Sakai reference string
-	 */
-	private String getReference(String context) {
-		// TODO - make this work for other evalGroupId types
-		String reference = siteService.siteReference(context);
-		return reference;
 	}
 
 	/**

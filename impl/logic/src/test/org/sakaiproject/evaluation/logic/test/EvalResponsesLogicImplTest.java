@@ -254,15 +254,15 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 		Assert.assertEquals(0, responses.countResponses( etdl.evaluationActiveUntaken.getId(), null) );
 
 		// test counts limited by evalGroupId
-		Assert.assertEquals(1, responses.countResponses( etdl.evaluationClosed.getId(), EvalTestDataLoad.CONTEXT1) );
-		Assert.assertEquals(0, responses.countResponses( etdl.evaluationViewable.getId(), EvalTestDataLoad.CONTEXT1) );
-		Assert.assertEquals(1, responses.countResponses( etdl.evaluationActive.getId(), EvalTestDataLoad.CONTEXT1) );
-		Assert.assertEquals(0, responses.countResponses( etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.CONTEXT1) );
+		Assert.assertEquals(1, responses.countResponses( etdl.evaluationClosed.getId(), EvalTestDataLoad.SITE1_REF) );
+		Assert.assertEquals(0, responses.countResponses( etdl.evaluationViewable.getId(), EvalTestDataLoad.SITE1_REF) );
+		Assert.assertEquals(1, responses.countResponses( etdl.evaluationActive.getId(), EvalTestDataLoad.SITE1_REF) );
+		Assert.assertEquals(0, responses.countResponses( etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.SITE1_REF) );
 
-		Assert.assertEquals(2, responses.countResponses( etdl.evaluationClosed.getId(), EvalTestDataLoad.CONTEXT2) );
-		Assert.assertEquals(2, responses.countResponses( etdl.evaluationViewable.getId(), EvalTestDataLoad.CONTEXT2) );
-		Assert.assertEquals(0, responses.countResponses( etdl.evaluationActive.getId(), EvalTestDataLoad.CONTEXT2) );
-		Assert.assertEquals(0, responses.countResponses( etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.CONTEXT2) );
+		Assert.assertEquals(2, responses.countResponses( etdl.evaluationClosed.getId(), EvalTestDataLoad.SITE2_REF) );
+		Assert.assertEquals(2, responses.countResponses( etdl.evaluationViewable.getId(), EvalTestDataLoad.SITE2_REF) );
+		Assert.assertEquals(0, responses.countResponses( etdl.evaluationActive.getId(), EvalTestDataLoad.SITE2_REF) );
+		Assert.assertEquals(0, responses.countResponses( etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.SITE2_REF) );
 
 		// check that invalid IDs cause failure
 		try {
@@ -358,7 +358,7 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 
 		// retrieve all response Ids for an evaluation using all groups
 		l = responses.getEvalResponseIds(etdl.evaluationClosed.getId(), 
-				new String[] {EvalTestDataLoad.CONTEXT1, EvalTestDataLoad.CONTEXT2});
+				new String[] {EvalTestDataLoad.SITE1_REF, EvalTestDataLoad.SITE2_REF});
 		Assert.assertNotNull(l);
 		Assert.assertEquals(3, l.size());
 		Assert.assertTrue(l.contains( etdl.response2.getId() ));
@@ -366,25 +366,25 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 		Assert.assertTrue(l.contains( etdl.response6.getId() ));
 
 		// retrieve all response Ids for an evaluation in one group only
-		l = responses.getEvalResponseIds(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.CONTEXT1});
+		l = responses.getEvalResponseIds(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE1_REF});
 		Assert.assertNotNull(l);
 		Assert.assertEquals(1, l.size());
 		Assert.assertTrue(l.contains( etdl.response2.getId() ));
 
 		// retrieve all response Ids for an evaluation in one group only
-		l = responses.getEvalResponseIds(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.CONTEXT2});
+		l = responses.getEvalResponseIds(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE2_REF});
 		Assert.assertNotNull(l);
 		Assert.assertEquals(2, l.size());
 		Assert.assertTrue(l.contains( etdl.response3.getId() ));
 		Assert.assertTrue(l.contains( etdl.response6.getId() ));
 
-		l = responses.getEvalResponseIds(etdl.evaluationActive.getId(), new String[] {EvalTestDataLoad.CONTEXT1});
+		l = responses.getEvalResponseIds(etdl.evaluationActive.getId(), new String[] {EvalTestDataLoad.SITE1_REF});
 		Assert.assertNotNull(l);
 		Assert.assertEquals(1, l.size());
 		Assert.assertTrue(l.contains( etdl.response1.getId() ));
 
 		// try to get responses for an eval group that is not associated with this eval
-		l = responses.getEvalResponseIds(etdl.evaluationActive.getId(), new String[] {EvalTestDataLoad.CONTEXT2});
+		l = responses.getEvalResponseIds(etdl.evaluationActive.getId(), new String[] {EvalTestDataLoad.SITE2_REF});
 		Assert.assertNotNull(l);
 		Assert.assertEquals(0, l.size());
 
@@ -409,22 +409,22 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 	public void testSaveResponse() {
 		// setup mock object return values
 		evaluationsLogic.canTakeEvaluation(EvalTestDataLoad.STUDENT_USER_ID, 
-				etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.CONTEXT1);
+				etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.SITE1_REF);
 		evaluationsLogicControl.setReturnValue( true );
 		evaluationsLogicControl.setReturnValue( true );
 		evaluationsLogicControl.setReturnValue( true );
 		evaluationsLogicControl.setReturnValue( false );
 		evaluationsLogic.canTakeEvaluation(EvalTestDataLoad.MAINT_USER_ID, 
-				etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.CONTEXT1);
+				etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.SITE1_REF);
 		evaluationsLogicControl.setReturnValue( false );
 		evaluationsLogic.canTakeEvaluation(EvalTestDataLoad.USER_ID, 
-				etdl.evaluationActive.getId(), EvalTestDataLoad.CONTEXT3);
+				etdl.evaluationActive.getId(), EvalTestDataLoad.SITE3_REF);
 		evaluationsLogicControl.setReturnValue( false );
 		evaluationsLogic.canTakeEvaluation(EvalTestDataLoad.USER_ID, 
-				etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.CONTEXT1);
+				etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.SITE1_REF);
 		evaluationsLogicControl.setReturnValue( true );
 		evaluationsLogic.canTakeEvaluation(EvalTestDataLoad.USER_ID, 
-				etdl.evaluationActive.getId(), EvalTestDataLoad.CONTEXT1);
+				etdl.evaluationActive.getId(), EvalTestDataLoad.SITE1_REF);
 		evaluationsLogicControl.setReturnValue( false );
 
 		// activate the mock objects
@@ -434,14 +434,14 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 
 		// test saving a response with no answers is ok
 		EvalResponse responseNone = new EvalResponse( new Date(), EvalTestDataLoad.STUDENT_USER_ID, 
-				EvalTestDataLoad.CONTEXT1, new Date(), etdl.evaluationActiveUntaken);
+				EvalTestDataLoad.SITE1_REF, new Date(), etdl.evaluationActiveUntaken);
 		responses.saveResponse( responseNone, EvalTestDataLoad.STUDENT_USER_ID);
 		Assert.assertNotNull(responseNone.getId());
 
 		// test saving a response for a closed evaluation fails
 		try {
 			responses.saveResponse( new EvalResponse( new Date(), 
-					EvalTestDataLoad.USER_ID, EvalTestDataLoad.CONTEXT1, 
+					EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE1_REF, 
 					new Date(), evaluationClosedTwo), 
 					EvalTestDataLoad.USER_ID);
 			Assert.fail("Should have thrown exception");
@@ -452,7 +452,7 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 		// test saving a response when user has no permission fails
 		try {
 			responses.saveResponse( new EvalResponse( new Date(), 
-					EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.CONTEXT1, 
+					EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE1_REF, 
 					new Date(), etdl.evaluationActiveUntaken), 
 					EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");
@@ -463,7 +463,7 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 		// test saving a response when admin user fails (admin cannot store responses)
 		try {
 			responses.saveResponse( new EvalResponse( new Date(), 
-					EvalTestDataLoad.ADMIN_USER_ID, EvalTestDataLoad.CONTEXT1, 
+					EvalTestDataLoad.ADMIN_USER_ID, EvalTestDataLoad.SITE1_REF, 
 					new Date(), etdl.evaluationActiveUntaken), 
 					EvalTestDataLoad.ADMIN_USER_ID);
 			Assert.fail("Should have thrown exception");
@@ -474,7 +474,7 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 		// test saving a response for an invalid evalGroupId fails (evalGroupId not assigned to this eval)
 		try {
 			responses.saveResponse( new EvalResponse( new Date(), 
-					EvalTestDataLoad.USER_ID, EvalTestDataLoad.CONTEXT3, 
+					EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE3_REF, 
 					new Date(), etdl.evaluationActive), 
 					EvalTestDataLoad.USER_ID);
 			Assert.fail("Should have thrown exception");
@@ -499,7 +499,7 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 
 		// test saving a response with valid answers is ok (make sure answers saved also)
 		EvalResponse responseAns = new EvalResponse( new Date(), EvalTestDataLoad.USER_ID, 
-				EvalTestDataLoad.CONTEXT1, new Date(), etdl.evaluationActiveUntaken);
+				EvalTestDataLoad.SITE1_REF, new Date(), etdl.evaluationActiveUntaken);
 		responseAns.setAnswers( new HashSet() );
 		EvalAnswer answer1_1 = new EvalAnswer( new Date(), etdl.templateItem1P, etdl.item1, responseAns, "text", null, null, null);
 		responseAns.getAnswers().add( answer1_1 );
@@ -542,7 +542,7 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 		// test saving a response when one exists fails
 		try {
 			EvalResponse response3 = new EvalResponse( new Date(), EvalTestDataLoad.STUDENT_USER_ID, 
-					EvalTestDataLoad.CONTEXT1, new Date(), etdl.evaluationActiveUntaken);
+					EvalTestDataLoad.SITE1_REF, new Date(), etdl.evaluationActiveUntaken);
 			responses.saveResponse( response3, EvalTestDataLoad.STUDENT_USER_ID);
 			Assert.fail("Should have thrown exception");
 		} catch (IllegalStateException e) {
@@ -552,7 +552,7 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 		// test saving a response when one exists fails (check 2 cases)
 		try {
 			responses.saveResponse( new EvalResponse( new Date(), 
-					EvalTestDataLoad.USER_ID, EvalTestDataLoad.CONTEXT1, 
+					EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE1_REF, 
 					new Date(), etdl.evaluationActive), 
 					EvalTestDataLoad.USER_ID);
 			Assert.fail("Should have thrown exception");

@@ -108,18 +108,18 @@ public class EvalExternalLogicStub implements EvalExternalLogic {
 	public List getEvalGroupsForUser(String userId, String permission) {
 		List l = new ArrayList();
 		if ( EvalTestDataLoad.ADMIN_USER_ID.equals(userId) ) {
-			l.add( makeEvalGroupObject(EvalTestDataLoad.CONTEXT1) );
-			l.add( makeEvalGroupObject(EvalTestDataLoad.CONTEXT2) );
+			l.add( makeEvalGroupObject(EvalTestDataLoad.SITE1_REF) );
+			l.add( makeEvalGroupObject(EvalTestDataLoad.SITE2_REF) );
 		} else if ( EvalTestDataLoad.MAINT_USER_ID.equals(userId) ) {
 			if ( EvalConstants.PERM_ASSIGN_EVALUATION.equals(permission) ) {
-				l.add( makeEvalGroupObject(EvalTestDataLoad.CONTEXT1) );
+				l.add( makeEvalGroupObject(EvalTestDataLoad.SITE1_REF) );
 			} else if ( EvalConstants.PERM_BE_EVALUATED.equals(permission) ) {
-				l.add( makeEvalGroupObject(EvalTestDataLoad.CONTEXT1) );
-				l.add( makeEvalGroupObject(EvalTestDataLoad.CONTEXT2) );
+				l.add( makeEvalGroupObject(EvalTestDataLoad.SITE1_REF) );
+				l.add( makeEvalGroupObject(EvalTestDataLoad.SITE2_REF) );
 			} else if ( EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
 				// nothing
 			} else if ( EvalConstants.PERM_WRITE_TEMPLATE.equals(permission) ) {
-				l.add( makeEvalGroupObject(EvalTestDataLoad.CONTEXT1) );
+				l.add( makeEvalGroupObject(EvalTestDataLoad.SITE1_REF) );
 			} else {
 				// nothing
 			}
@@ -129,8 +129,8 @@ public class EvalExternalLogicStub implements EvalExternalLogic {
 			} else if ( EvalConstants.PERM_BE_EVALUATED.equals(permission) ) {
 				// nothing
 			} else if ( EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
-				l.add( makeEvalGroupObject(EvalTestDataLoad.CONTEXT1) );
-				l.add( makeEvalGroupObject(EvalTestDataLoad.CONTEXT2) );
+				l.add( makeEvalGroupObject(EvalTestDataLoad.SITE1_REF) );
+				l.add( makeEvalGroupObject(EvalTestDataLoad.SITE2_REF) );
 			} else if ( EvalConstants.PERM_WRITE_TEMPLATE.equals(permission) ) {
 				// nothing
 			} else {
@@ -142,7 +142,7 @@ public class EvalExternalLogicStub implements EvalExternalLogic {
 			} else if ( EvalConstants.PERM_BE_EVALUATED.equals(permission) ) {
 				// nothing
 			} else if ( EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
-				l.add( makeEvalGroupObject(EvalTestDataLoad.CONTEXT2) );
+				l.add( makeEvalGroupObject(EvalTestDataLoad.SITE2_REF) );
 			} else if ( EvalConstants.PERM_WRITE_TEMPLATE.equals(permission) ) {
 				// nothing
 			} else {
@@ -165,7 +165,7 @@ public class EvalExternalLogicStub implements EvalExternalLogic {
 	public Set getUserIdsForEvalGroup(String context, String permission) {
 		Set s = new HashSet();
 		// Maybe should add the admin user here? -AZ
-		if ( EvalTestDataLoad.CONTEXT1.equals(context) ) {
+		if ( EvalTestDataLoad.SITE1_REF.equals(context) ) {
 			if ( EvalConstants.PERM_ASSIGN_EVALUATION.equals(permission) ) {
 				s.add(EvalTestDataLoad.MAINT_USER_ID);
 			} else if ( EvalConstants.PERM_BE_EVALUATED.equals(permission) ) {
@@ -177,7 +177,7 @@ public class EvalExternalLogicStub implements EvalExternalLogic {
 			} else {
 				// nothing
 			}
-		} else if ( EvalTestDataLoad.CONTEXT2.equals(context) ) {
+		} else if ( EvalTestDataLoad.SITE2_REF.equals(context) ) {
 			if ( EvalConstants.PERM_ASSIGN_EVALUATION.equals(permission) ) {
 				// nothing
 			} else if ( EvalConstants.PERM_BE_EVALUATED.equals(permission) ) {
@@ -217,79 +217,79 @@ public class EvalExternalLogicStub implements EvalExternalLogic {
 			return true;
 		} else if ( EvalTestDataLoad.MAINT_USER_ID.equals(userId) ) {
 			if ( EvalConstants.PERM_ASSIGN_EVALUATION.equals(permission) ) {
-				if ( EvalTestDataLoad.CONTEXT1.equals(context) ) {
+				if ( EvalTestDataLoad.SITE1_REF.equals(context) ) {
 					return true;
-				} else if ( EvalTestDataLoad.CONTEXT2.equals(context) ) {
+				} else if ( EvalTestDataLoad.SITE2_REF.equals(context) ) {
 					return false;					
 				}
 			} else if ( EvalConstants.PERM_BE_EVALUATED.equals(permission) ) {
-				if ( EvalTestDataLoad.CONTEXT1.equals(context) ) {
+				if ( EvalTestDataLoad.SITE1_REF.equals(context) ) {
 					return true;
-				} else if ( EvalTestDataLoad.CONTEXT2.equals(context) ) {
+				} else if ( EvalTestDataLoad.SITE2_REF.equals(context) ) {
 					return true;					
 				}
 			} else if ( EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
-				if ( EvalTestDataLoad.CONTEXT1.equals(context) ) {
+				if ( EvalTestDataLoad.SITE1_REF.equals(context) ) {
 					return false;
-				} else if ( EvalTestDataLoad.CONTEXT2.equals(context) ) {
+				} else if ( EvalTestDataLoad.SITE2_REF.equals(context) ) {
 					return false;					
 				}
 			} else if ( EvalConstants.PERM_WRITE_TEMPLATE.equals(permission) ) {
-				if ( EvalTestDataLoad.CONTEXT1.equals(context) ) {
+				if ( EvalTestDataLoad.SITE1_REF.equals(context) ) {
 					return true;
-				} else if ( EvalTestDataLoad.CONTEXT2.equals(context) ) {
+				} else if ( EvalTestDataLoad.SITE2_REF.equals(context) ) {
 					return false;					
 				}
 			}
 		} else if ( EvalTestDataLoad.USER_ID.equals(userId) ) {
 			if ( EvalConstants.PERM_ASSIGN_EVALUATION.equals(permission) ) {
-				if ( EvalTestDataLoad.CONTEXT1.equals(context) ) {
+				if ( EvalTestDataLoad.SITE1_REF.equals(context) ) {
 					return false;
-				} else if ( EvalTestDataLoad.CONTEXT2.equals(context) ) {
+				} else if ( EvalTestDataLoad.SITE2_REF.equals(context) ) {
 					return false;					
 				}
 			} else if ( EvalConstants.PERM_BE_EVALUATED.equals(permission) ) {
-				if ( EvalTestDataLoad.CONTEXT1.equals(context) ) {
+				if ( EvalTestDataLoad.SITE1_REF.equals(context) ) {
 					return false;
-				} else if ( EvalTestDataLoad.CONTEXT2.equals(context) ) {
+				} else if ( EvalTestDataLoad.SITE2_REF.equals(context) ) {
 					return false;					
 				}
 			} else if ( EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
-				if ( EvalTestDataLoad.CONTEXT1.equals(context) ) {
+				if ( EvalTestDataLoad.SITE1_REF.equals(context) ) {
 					return true;
-				} else if ( EvalTestDataLoad.CONTEXT2.equals(context) ) {
+				} else if ( EvalTestDataLoad.SITE2_REF.equals(context) ) {
 					return true;					
 				}
 			} else if ( EvalConstants.PERM_WRITE_TEMPLATE.equals(permission) ) {
-				if ( EvalTestDataLoad.CONTEXT1.equals(context) ) {
+				if ( EvalTestDataLoad.SITE1_REF.equals(context) ) {
 					return false;
-				} else if ( EvalTestDataLoad.CONTEXT2.equals(context) ) {
+				} else if ( EvalTestDataLoad.SITE2_REF.equals(context) ) {
 					return false;					
 				}
 			}
 		} else if ( EvalTestDataLoad.STUDENT_USER_ID.equals(userId) ) {
 			if ( EvalConstants.PERM_ASSIGN_EVALUATION.equals(permission) ) {
-				if ( EvalTestDataLoad.CONTEXT1.equals(context) ) {
+				if ( EvalTestDataLoad.SITE1_REF.equals(context) ) {
 					return false;
-				} else if ( EvalTestDataLoad.CONTEXT2.equals(context) ) {
+				} else if ( EvalTestDataLoad.SITE2_REF.equals(context) ) {
 					return false;					
 				}
 			} else if ( EvalConstants.PERM_BE_EVALUATED.equals(permission) ) {
-				if ( EvalTestDataLoad.CONTEXT1.equals(context) ) {
+				if ( EvalTestDataLoad.SITE1_REF.equals(context) ) {
 					return false;
-				} else if ( EvalTestDataLoad.CONTEXT2.equals(context) ) {
+				} else if ( EvalTestDataLoad.SITE2_REF.equals(context) ) {
 					return false;					
 				}
 			} else if ( EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
-				if ( EvalTestDataLoad.CONTEXT1.equals(context) ) {
+				if ( EvalTestDataLoad.SITE1_REF.equals(context) ) {
 					return false;
-				} else if ( EvalTestDataLoad.CONTEXT2.equals(context) ) {
+				} else if ( EvalTestDataLoad.SITE2_REF.equals(context) ) {
 					return true;					
 				}
 			} else if ( EvalConstants.PERM_WRITE_TEMPLATE.equals(permission) ) {
-				if ( EvalTestDataLoad.CONTEXT1.equals(context) ) {
+				if ( EvalTestDataLoad.SITE1_REF.equals(context) ) {
 					return false;
-				} else if ( EvalTestDataLoad.CONTEXT2.equals(context) ) {
+				} else if ( EvalTestDataLoad.SITE2_REF.equals(context) ) {
 					return false;					
 				}
 			}
@@ -303,7 +303,7 @@ public class EvalExternalLogicStub implements EvalExternalLogic {
 	 * Always assume the current evalGroupId is CONTEXT1
 	 */
 	public String getCurrentEvalGroup() {
-		return EvalTestDataLoad.CONTEXT1;
+		return EvalTestDataLoad.SITE1_REF;
 	}
 
 	/**
@@ -316,13 +316,13 @@ public class EvalExternalLogicStub implements EvalExternalLogic {
 	/**
 	 * Return titles from the data load class
 	 */
-	public String getDisplayTitle(String context) {
-		if ( EvalTestDataLoad.CONTEXT1.equals(context) ) {
-			return EvalTestDataLoad.CONTEXT1_TITLE;
-		} else if ( EvalTestDataLoad.CONTEXT2.equals(context) ) {
-			return EvalTestDataLoad.CONTEXT2_TITLE;			
+	public String getDisplayTitle(String evalGroupId) {
+		if ( EvalTestDataLoad.SITE1_REF.equals(evalGroupId) ) {
+			return EvalTestDataLoad.SITE1_TITLE;
+		} else if ( EvalTestDataLoad.SITE2_REF.equals(evalGroupId) ) {
+			return EvalTestDataLoad.SITE2_TITLE;			
 		}
-		return "Unknown title";
+		return "--------";
 	}
 
 	/**
@@ -336,7 +336,7 @@ public class EvalExternalLogicStub implements EvalExternalLogic {
 		} else if ( EvalTestDataLoad.USER_ID.equals(userId) ) {
 			return EvalTestDataLoad.USER_DISPLAY;			
 		}
-		return "Unknown name";
+		return "----------";
 	}
 
 	/**
@@ -374,11 +374,11 @@ public class EvalExternalLogicStub implements EvalExternalLogic {
 	 */
 	public EvalGroup makeEvalGroupObject(String context) {
 		EvalGroup c = new EvalGroup(context, null, EvalConstants.GROUP_TYPE_UNKNOWN);
-		if ( EvalTestDataLoad.CONTEXT1.equals(context) ) {
-			c.title = EvalTestDataLoad.CONTEXT1_TITLE;
+		if ( EvalTestDataLoad.SITE1_REF.equals(context) ) {
+			c.title = EvalTestDataLoad.SITE1_TITLE;
 			c.type = EvalConstants.GROUP_TYPE_SITE;
-		} else if ( EvalTestDataLoad.CONTEXT2.equals(context) ) {
-			c.title = EvalTestDataLoad.CONTEXT2_TITLE;			
+		} else if ( EvalTestDataLoad.SITE2_REF.equals(context) ) {
+			c.title = EvalTestDataLoad.SITE2_TITLE;			
 			c.type = EvalConstants.GROUP_TYPE_GROUP;
 		}
 		return c;

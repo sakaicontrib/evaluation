@@ -90,7 +90,6 @@ impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalAssignsLogicImplT
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalEmailsLogicImplTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalEvaluationsLogicImplTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalExpertItemsLogicImplTest.java -text
-impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalExternalLogicImplTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalExternalLogicStubTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalItemsLogicImplTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalResponsesLogicImplTest.java -text
@@ -207,6 +206,7 @@ tool/src/webapp/WEB-INF/classes/log4j.properties -text
 tool/src/webapp/WEB-INF/requestContext.xml -text
 tool/src/webapp/WEB-INF/sitemap.xml -text
 tool/src/webapp/WEB-INF/web.xml -text
+tool/src/webapp/component-templates/Messages.html -text
 tool/src/webapp/component-templates/render_add_item_control.html -text
 tool/src/webapp/component-templates/render_block_item.html -text
 tool/src/webapp/component-templates/render_header_item.html -text

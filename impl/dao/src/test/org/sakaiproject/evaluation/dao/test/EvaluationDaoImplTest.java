@@ -262,7 +262,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 
 		// test getting evaluations by evalGroupId
 		s = evaluationDao.getEvaluationsByEvalGroups(
-				new String[] {EvalTestDataLoad.CONTEXT1}, false, true, false);
+				new String[] {EvalTestDataLoad.SITE1_REF}, false, true, false);
 		Assert.assertNotNull(s);
 		Assert.assertEquals(4, s.size());
 		ids = EvalTestDataLoad.makeIdList(s);
@@ -272,7 +272,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 		Assert.assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
 
 		s = evaluationDao.getEvaluationsByEvalGroups(
-				new String[] {EvalTestDataLoad.CONTEXT2}, false, true, false);
+				new String[] {EvalTestDataLoad.SITE2_REF}, false, true, false);
 		Assert.assertNotNull(s);
 		Assert.assertEquals(3, s.size());
 		ids = EvalTestDataLoad.makeIdList(s);
@@ -288,7 +288,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 
 		// test that the get active part works
 		s = evaluationDao.getEvaluationsByEvalGroups(
-				new String[] {EvalTestDataLoad.CONTEXT1}, true, true, false);
+				new String[] {EvalTestDataLoad.SITE1_REF}, true, true, false);
 		Assert.assertNotNull(s);
 		Assert.assertEquals(2, s.size());
 		ids = EvalTestDataLoad.makeIdList(s);
@@ -296,7 +296,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 		Assert.assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
 
 		s = evaluationDao.getEvaluationsByEvalGroups(
-				new String[] {EvalTestDataLoad.CONTEXT2}, true, true, false);
+				new String[] {EvalTestDataLoad.SITE2_REF}, true, true, false);
 		Assert.assertNotNull(s);
 		Assert.assertEquals(0, s.size());
 
@@ -346,13 +346,13 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 		Assert.assertTrue(ids.contains( etdl.answer3_2.getId() ));
 
 		// test restricting to groups
-		l = evaluationDao.getAnswers(etdl.item2.getId(), etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.CONTEXT1});
+		l = evaluationDao.getAnswers(etdl.item2.getId(), etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE1_REF});
 		Assert.assertNotNull(l);
 		Assert.assertEquals(1, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.answer2_2.getId() ));
 
-		l = evaluationDao.getAnswers(etdl.item2.getId(), etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.CONTEXT2});
+		l = evaluationDao.getAnswers(etdl.item2.getId(), etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE2_REF});
 		Assert.assertNotNull(l);
 		Assert.assertEquals(1, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
@@ -509,7 +509,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 		// test getting course items
 		l = evaluationDao.getTemplateItemsByTemplate(etdl.templateAdminComplex.getId(), 
 				null, null, 
-				new String[] { EvalTestDataLoad.CONTEXT1, EvalTestDataLoad.CONTEXT2 });
+				new String[] { EvalTestDataLoad.SITE1_REF, EvalTestDataLoad.SITE2_REF });
 		Assert.assertNotNull(l);
 		Assert.assertEquals(2, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
@@ -519,7 +519,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 		// test getting both together
 		l = evaluationDao.getTemplateItemsByTemplate(etdl.templateAdminComplex.getId(), 
 				null, new String[] { EvalTestDataLoad.MAINT_USER_ID }, 
-				new String[] { EvalTestDataLoad.CONTEXT1, EvalTestDataLoad.CONTEXT2 });
+				new String[] { EvalTestDataLoad.SITE1_REF, EvalTestDataLoad.SITE2_REF });
 		Assert.assertNotNull(l);
 		Assert.assertEquals(3, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
