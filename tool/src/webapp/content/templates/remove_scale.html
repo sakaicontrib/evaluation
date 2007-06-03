@@ -10,44 +10,50 @@
 </head>
 
 <body>
-	<div class="portletBody">
-		<div class="navIntraTool">
-			<a rsf:id="administrate-toplink" href="administrate.html">Administrate</a>
-			<a rsf:id="summary-toplink" href="summary.html">Summary</a>
-		</div>
+<div class="portletBody">
 
-		<div>
-			<ul class="breadCrumb">
-				<li class="breadCrumb"><a rsf:id="summary-toplink" href="summary.html">Summary</a></li>
-				<li class="breadCrumb"><a rsf:id="administrate-toplink" href="administrate.html">Administrate</a></li>
-				<li class="breadCrumb" rsf:id="page-title">Remove Scale</li>
-			</ul>
-		</div>
+<div class="navIntraTool">
+	<a rsf:id="administrate-toplink" href="administrate.html">Administrate</a>
+	<a rsf:id="summary-toplink" href="summary.html">Summary</a>
+</div>
 
-		<form rsf:id="remove-scale-form" method="post">
-			<table width="80%" border="0" cellpadding="8" cellspacing="0">
-				<tr>
-					<td align="left">
-						<b><span rsf:id="remove-scale-confirm-pre-name">Are you sure you want to remove scale </span>
-						<label style="font-weight:bold;" rsf:id="scale-title-displayed">#</label>
-						<span rsf:id="remove-scale-confirm-post-name">? The removal is permanant.</span></b>&nbsp;
-					</td>
-				</tr>
-			</table>
-			<br/>
-			<table width="80%" border="0" cellpadding="0" cellspacing="0">
-				<tr>
-					<td align="left"  width="50%">
-						<input type="button" value="Cancel" rsf:id="remove-scale-cancel-button" onclick="javascript:history.go(-1);return false;"/>
-					</td>
-					<td align="right"  width="50%">
-						<input type="submit" value="Remove Scale" rsf:id="remove-scale-remove-button"/>
-					</td>
-				</tr>
-			</table>
-		</form>
-	</div>
+<div>
+	<ul class="breadCrumb">
+		<li class="breadCrumb"><a rsf:id="summary-toplink" href="summary.html">Summary</a></li>
+		<li class="breadCrumb"><a rsf:id="administrate-toplink" href="administrate.html">Administrate</a></li>
+		<li class="breadCrumb" rsf:id="page-title">Remove Scale</li>
+	</ul>
+</div>
+
+<div rsf:id="message-for:*" class="alertMessage">
+	<ul style="margin:0px;">
+		<li>Message for user here</li>
+	</ul>
+</div>
+
+<form rsf:id="remove-scale-form" method="post">
+	<table width="80%" border="0" cellpadding="8" cellspacing="0">
+		<tr>
+			<td align="left">
+				<b><span rsf:id="remove-scale-confirm-pre-name">Are you sure you want to remove scale </span>
+				<label style="font-weight:bold;" rsf:id="scale-title-displayed">#</label>
+				<span rsf:id="remove-scale-confirm-post-name">? The removal is permanant.</span></b>&nbsp;
+			</td>
+		</tr>
+	</table>
+	<br/>
+	<table width="80%" border="0" cellpadding="0" cellspacing="0">
+		<tr>
+			<td align="left"  width="50%">
+				<input type="button" value="Cancel" rsf:id="remove-scale-cancel-button" onclick="javascript:history.go(-1);return false;"/>
+			</td>
+			<td align="right"  width="50%">
+				<input type="submit" value="Remove Scale" rsf:id="remove-scale-remove-button"/>
+			</td>
+		</tr>
+	</table>
+</form>
+
+</div>
 </body>
 </html>
-
-

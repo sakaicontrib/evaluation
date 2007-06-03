@@ -31,25 +31,31 @@
 <body>
 <div class="portletBody">
 
-	<div class="navIntraTool">
-		<a rsf:id="administrate-toplink" href="administrate.html">Administrate</a>
-		<a rsf:id="summary-toplink" href="summary.html">Summary</a>
-	</div>
+<div class="navIntraTool">
+	<a rsf:id="administrate-toplink" href="administrate.html">Administrate</a>
+	<a rsf:id="summary-toplink" href="summary.html">Summary</a>
+</div>
 
-	<div>
+<div>
 	<ul class="breadCrumb">
 		<li class="breadCrumb"><a rsf:id="summary-toplink" href="summary.html">Summary</a></li>
 		<li class="breadCrumb" rsf:id="create-eval-title">Create Evaluation</li>
 		<li class="breadCrumb" rsf:id="modify-block-title">Modify Block</li>
 	</ul>
-	</div>
+</div>
 
-	<br/>
+<div rsf:id="message-for:*" class="alertMessage">
+	<ul style="margin:0px;">
+		<li>Message for user here</li>
+	</ul>
+</div>
+
+<br/>
 	
 <div rsf:id="errorPage:">
-	<span name="errorMsg" rsf:id="errorMsg" style="font-weight:bold;color:red;">####</span>
-<br/><br/>
-<input type="button" value="Back" onclick="javascript:history.go(-1);return false;" rsf:id="back-button" />	
+	<span rsf:id="errorMsg" style="font-weight:bold;color:red;">####</span>
+	<br/><br/>
+	<input type="button" value="Back" onclick="javascript:history.go(-1);return false;" rsf:id="back-button" />	
 </div>
 
 <div rsf:id="blockPage:">

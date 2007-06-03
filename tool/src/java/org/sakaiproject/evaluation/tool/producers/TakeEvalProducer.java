@@ -37,6 +37,7 @@ import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.LocalResponsesLogic;
 import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
 import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
+import org.sakaiproject.evaluation.tool.viewparams.EvalCategoryViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.EvalTakeViewParameters;
 
 import uk.org.ponder.rsf.components.ELReference;
@@ -52,6 +53,8 @@ import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIColourDecorator;
+import uk.org.ponder.rsf.flow.ARIResult;
+import uk.org.ponder.rsf.flow.ActionResultInterceptor;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
@@ -68,7 +71,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * @author Kapil Ahuja (kahuja@vt.edu)
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
+public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter, ActionResultInterceptor {
 
 	public static final String VIEW_ID = "take_eval";
 	public String getViewID() {
@@ -211,7 +214,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 					UIBranchContainer showSwitchGroup = UIBranchContainer.make(tofill, "show-switch-group:");
 					UIMessage.make(showSwitchGroup, "switch-group-header", "takeeval.switch.group.header");
 					UIForm chooseGroupForm = UIForm.make(showSwitchGroup, "switch-group-form", 
-							new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, responseId, evalGroupId));
+							new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, evalGroupId, responseId));
 					UISelect.make(chooseGroupForm, "switch-group-list", values, labels,	"#{evalGroupId}");
 					UIMessage.make(chooseGroupForm, "switch-group-button", "takeeval.switch.group.button");
 				}
@@ -399,6 +402,14 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 		if (caOTP != null) displayNumber += caOTP.length;
 	}
 
+
+	/* (non-Javadoc)
+	 * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
+	 */
+	public ViewParameters getViewParameters() {
+		return new EvalTakeViewParameters();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
@@ -409,11 +420,11 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 		return i;
 	}
 
-	/* (non-Javadoc)
-	 * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
-	 */
-	public ViewParameters getViewParameters() {
-		return new EvalTakeViewParameters();
+	public void interceptActionResult(ARIResult result, ViewParameters incoming, Object actionReturn) {
+		EvalTakeViewParameters etvp = (EvalTakeViewParameters) incoming;
+		if (etvp.evalCategory != null) {
+			result.resultingView = new EvalCategoryViewParameters(ShowEvalCategoryProducer.VIEW_ID, etvp.evalCategory);
+		}
 	}
 
 }

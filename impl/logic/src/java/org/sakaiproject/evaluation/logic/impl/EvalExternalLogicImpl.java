@@ -52,6 +52,7 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.exception.IdUnusedException;
 import org.sakaiproject.site.api.Site;
 import org.sakaiproject.site.api.SiteService;
+import org.sakaiproject.tool.api.Session;
 import org.sakaiproject.tool.api.SessionManager;
 import org.sakaiproject.tool.api.ToolManager;
 import org.sakaiproject.user.api.User;
@@ -73,6 +74,8 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 
 	private static final String SAKAI_SITE_TYPE = SiteService.APPLICATION_ID;
 	private static final String SAKAI_GROUP_TYPE = SiteService.GROUP_SUBTYPE;
+
+	private static final String ANON_USER_ATTRIBUTE = "AnonUserAttribute";
 
 	private AuthzGroupService authzGroupService;
 	public void setAuthzGroupService(AuthzGroupService authzGroupService) {
@@ -159,9 +162,16 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	public String getCurrentUserId() {
 		String userId = sessionManager.getCurrentSessionUserId();
 		if (userId == null) {
-			userId = ANON_USER_PREFIX + new Date().getTime();
+			// if no user found then fake like there is one for this session,
+			// we do not want to actually create a user though
+			Session session = sessionManager.getCurrentSession();
+			userId = (String) session.getAttribute(ANON_USER_ATTRIBUTE);
+			if (userId == null) {
+				userId = ANON_USER_PREFIX + new Date().getTime();
+				session.setAttribute(ANON_USER_ATTRIBUTE, userId);
+			}
 		}
-		return sessionManager.getCurrentSessionUserId();
+		return userId;
 	}
 
 	/* (non-Javadoc)
@@ -176,7 +186,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		if (userId.startsWith(ANON_USER_PREFIX)) {
 			return "anonymous";
 		}
-		return "UnknownUsername";
+		return "------";
 	}
 
 	/* (non-Javadoc)
@@ -215,9 +225,8 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		return new ResourceLoader().getLocale();
 	}
 
-
 	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.external.EvalExternalLogic#makeContextObject(java.lang.String)
+	 * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#makeEvalGroupObject(java.lang.String)
 	 */
 	public EvalGroup makeEvalGroupObject(String evalGroupId) {
 		EvalGroup c = null;
@@ -247,15 +256,14 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		return c;
 	}
 
-
 	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.external.EvalExternalLogic#getCurrentContext()
+	 * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#getCurrentEvalGroup()
 	 */
 	public String getCurrentEvalGroup() {
 		try {
 			Site s = (Site) siteService.getSite( toolManager.getCurrentPlacement().getContext() );
 			return s.getReference(); // get the entity reference to the site
-		} catch (IdUnusedException e) {
+		} catch (Exception e) {
 			log.warn("Could not get the current location (we are probably outside the portal), returning the fake one");
 			return NO_LOCATION;
 		}
@@ -273,9 +281,8 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		return "--------";
 	}
 
-
 	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.external.EvalExternalLogic#countContextsForUser(java.lang.String, java.lang.String)
+	 * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#countEvalGroupsForUser(java.lang.String, java.lang.String)
 	 */
 	public int countEvalGroupsForUser(String userId, String permission) {
 		log.debug("userId: " + userId + ", permission: " + permission);
@@ -307,7 +314,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.external.EvalExternalLogic#getContextsForUser(java.lang.String, java.lang.String)
+	 * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#getEvalGroupsForUser(java.lang.String, java.lang.String)
 	 */
 	public List getEvalGroupsForUser(String userId, String permission) {
 		log.debug("userId: " + userId + ", permission: " + permission);
@@ -353,7 +360,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.externals.ExternalContexts#countUserIdsForContext(java.lang.String, java.lang.String)
+	 * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#countUserIdsForEvalGroup(java.lang.String, java.lang.String)
 	 */
 	public int countUserIdsForEvalGroup(String evalGroupId, String permission) {
 		int count = getUserIdsForEvalGroup(evalGroupId, permission).size();
@@ -371,7 +378,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.external.EvalExternalLogic#getUserIdsForContext(java.lang.String, java.lang.String)
+	 * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#getUserIdsForEvalGroup(java.lang.String, java.lang.String)
 	 */
 	public Set getUserIdsForEvalGroup(String evalGroupId, String permission) {
 		String reference = evalGroupId;
@@ -393,7 +400,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 
 
 	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.external.EvalExternalLogic#isUserAllowedInContext(java.lang.String, java.lang.String, java.lang.String)
+	 * @see org.sakaiproject.evaluation.logic.EvalExternalLogic#isUserAllowedInEvalGroup(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public boolean isUserAllowedInEvalGroup(String userId, String permission, String evalGroupId) {
 		String reference = evalGroupId;

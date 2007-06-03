@@ -19,6 +19,9 @@ import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.locators.ResponseBeanLocator;
 
+import uk.org.ponder.messageutil.TargettedMessage;
+import uk.org.ponder.messageutil.TargettedMessageList;
+
 /**
  * This request-scope bean handles taking evaluations
  * 
@@ -36,9 +39,17 @@ public class TakeEvalBean {
 		this.responseBeanLocator = responseBeanLocator;
 	}
 
+	private TargettedMessageList messages;
+	public void setMessages(TargettedMessageList messages) {
+		this.messages = messages;
+	}
+
 	public String submitEvaluation() {
 		log.debug("create response");
 		responseBeanLocator.saveAll(eval, context);
+		messages.addMessage( new TargettedMessage("evaluations.take.message",
+                new Object[] { eval.getTitle() }, 
+                TargettedMessage.SEVERITY_INFO));
 		return "success";
 	}
 

@@ -350,7 +350,7 @@ public class EvalExternalLogicStub implements EvalExternalLogic {
 		} else if ( EvalTestDataLoad.USER_ID.equals(userId) ) {
 			return EvalTestDataLoad.USER_NAME;			
 		}
-		return "Unknown username";
+		return "------";
 	}
 
 	/**

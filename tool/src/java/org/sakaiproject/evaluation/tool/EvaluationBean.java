@@ -14,10 +14,12 @@
 
 package org.sakaiproject.evaluation.tool;
 
+import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -45,6 +47,9 @@ import org.sakaiproject.evaluation.tool.producers.SummaryProducer;
 import org.sakaiproject.evaluation.tool.utils.EvaluationDateUtil;
 import org.sakaiproject.util.FormattedText;
 
+import uk.org.ponder.messageutil.TargettedMessage;
+import uk.org.ponder.messageutil.TargettedMessageList;
+
 /**
  * This is the backing bean of the evaluation process.
  * 
@@ -55,6 +60,57 @@ import org.sakaiproject.util.FormattedText;
 public class EvaluationBean {
 
 	private static Log log = LogFactory.getLog(EvaluationBean.class);
+
+	//Spring injection
+	private EvalExternalLogic external;
+	public void setExternal(EvalExternalLogic external) {
+		this.external = external;
+	}
+	
+	//Spring injection
+	private EvalTemplatesLogic templatesLogic;
+	public void setTemplatesLogic( EvalTemplatesLogic templatesLogic) {
+		this.templatesLogic = templatesLogic;
+	}
+
+	//Spring injection
+	private EvalEvaluationsLogic evalsLogic;
+	public void setEvalsLogic(EvalEvaluationsLogic evalsLogic) {
+		this.evalsLogic = evalsLogic;
+	}
+	
+	//Spring injection
+	private EvalAssignsLogic assignsLogic;
+	public void setAssignsLogic(EvalAssignsLogic assignsLogic) {
+		this.assignsLogic = assignsLogic;
+	}
+	
+	private EvalEmailsLogic emailsLogic;	
+	public void setEmailsLogic(EvalEmailsLogic emailsLogic) {
+		this.emailsLogic = emailsLogic;
+	}
+	
+	private EvalSettings settings;
+	public void setSettings(EvalSettings settings) {
+		this.settings = settings;
+	}
+
+	private EvaluationDateUtil dateUtil;	
+	public void setDateUtil (EvaluationDateUtil dateUtil) {
+		this.dateUtil = dateUtil;
+	}
+
+	private TargettedMessageList messages;
+	public void setMessages(TargettedMessageList messages) {
+		this.messages = messages;
+	}
+
+	private Locale locale;
+	public void setLocale(Locale locale){
+		this.locale=locale;
+	}
+
+
 
 	/*
 	 * VARIABLE DECLARATIONS 
@@ -90,48 +146,14 @@ public class EvaluationBean {
 	public Long evalId; 	//used to ELBinding to the evaluation ID to be removed on Control Panel
 	public String tmplId; 	//used to ELBinding To the template ID to be removed on Control Panel 
 
-	//Spring injection
-	private EvalExternalLogic external;
-	public void setExternal(EvalExternalLogic external) {
-		this.external = external;
-	}
-	
-	//Spring injection
-	private EvalTemplatesLogic templatesLogic;
-	public void setTemplatesLogic( EvalTemplatesLogic templatesLogic) {
-		this.templatesLogic = templatesLogic;
+	DateFormat df = DateFormat.getDateInstance(DateFormat.LONG);
+
+
+	public void init() {
+		df = DateFormat.getDateInstance(DateFormat.LONG, locale);
 	}
 
-	//Spring injection
-	private EvalEvaluationsLogic evalsLogic;
-	public void setEvalsLogic(EvalEvaluationsLogic evalsLogic) {
-		this.evalsLogic = evalsLogic;
-	}
-	
-	//Spring injection
-	private EvalAssignsLogic assignsLogic;
-	public void setAssignsLogic(EvalAssignsLogic assignsLogic) {
-		this.assignsLogic = assignsLogic;
-	}
-	
-	//Spring injection
-	private EvalEmailsLogic emailsLogic;	
-	public void setEmailsLogic(EvalEmailsLogic emailsLogic) {
-		this.emailsLogic = emailsLogic;
-	}
-	
-	//Spring injection
-	private EvalSettings settings;
-	public void setSettings(EvalSettings settings) {
-		this.settings = settings;
-	}
 
-	//Spring injection
-	private EvaluationDateUtil dateUtil;	
-	public void setDateUtil (EvaluationDateUtil dateUtil) {
-		this.dateUtil = dateUtil;
-	}
-	
 	/*
 	 * MAJOR METHOD DEFINITIONS
 	 */
@@ -288,6 +310,10 @@ public class EvaluationBean {
 		evalInDB.setEvalCategory(eval.getEvalCategory());
 
 		evalsLogic.saveEvaluation(evalInDB, external.getCurrentUserId());
+
+		messages.addMessage( new TargettedMessage("evalsettings.updated.message",
+                new Object[] { eval.getTitle() }, 
+                TargettedMessage.SEVERITY_INFO));
 
 		// now reset the eval item here
 		clearEvaluation();
@@ -493,6 +519,10 @@ public class EvaluationBean {
 						instApproval, Boolean.TRUE, Boolean.FALSE, eval);
 				assignsLogic.saveAssignGroup(assignCourse, external.getCurrentUserId());
 			}
+
+			messages.addMessage( new TargettedMessage("evaluations.add.message",
+	                new Object[] { eval.getTitle(), df.format(eval.getStartDate()) }, 
+	                TargettedMessage.SEVERITY_INFO));
 
 			//now reset the eval item here
 			clearEvaluation();

@@ -181,11 +181,11 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 
 				List contexts = (List) evalContexts.get(eval.getId());
 				for (int j=0; j<contexts.size(); j++) {
-					EvalGroup ctxt = (EvalGroup) contexts.get(j);
+					EvalGroup group = (EvalGroup) contexts.get(j);
 					//check that the user can take evaluations in this evalGroupId
-					if(external.isUserAllowedInEvalGroup(external.getCurrentUserId(), EvalConstants.PERM_TAKE_EVALUATION, ctxt.evalGroupId)){
-						String context = ctxt.evalGroupId;
-						String title = ctxt.title;
+					if(external.isUserAllowedInEvalGroup(external.getCurrentUserId(), EvalConstants.PERM_TAKE_EVALUATION, group.evalGroupId)){
+						String groupId = group.evalGroupId;
+						String title = group.title;
 						String status = "unknown.caps";
 
 						// find the object in the list matching the evalGroupId and evalId,
@@ -193,18 +193,18 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 						EvalResponse response = null;
 						for (int k=0; k<evalResponses.size(); k++) {
 							EvalResponse er = (EvalResponse) evalResponses.get(k);
-							if (context.equals(er.getEvalGroupId()) &&
+							if (groupId.equals(er.getEvalGroupId()) &&
 									eval.getId().equals(er.getEvaluation().getId())) {
 								response = er;
 								break;
 							}
 						}
 
-						if (context.equals(currentContext)) {
+						if (groupId.equals(currentContext)) {
 							// TODO - do something when the evalGroupId matches
 						}
 
-						UIBranchContainer evalcourserow = UIBranchContainer.make(evalrow, "evaluationsCourseList:", context );
+						UIBranchContainer evalcourserow = UIBranchContainer.make(evalrow, "evaluationsCourseList:", groupId );
 
 						// set status
 						if (response != null && response.getEndTime() != null) {
@@ -212,20 +212,20 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 								// take eval link when pending
 								UIInternalLink.make(evalcourserow, "evaluationCourseLink", title, 
 										new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID,
-												eval.getId(), response.getId(), context) );
-								status = "summary.status.pending";							
+												eval.getId(), groupId, response.getId()) );
+								status = "summary.status.pending";
 							} else {
 								// preview only when completed
 								UIInternalLink.make(evalcourserow, "evaluationCourseLink", title, 
 										new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID,
-												eval.getId(), eval.getTemplate().getId(), context) );
+												eval.getId(), eval.getTemplate().getId(), groupId) );
 								status = "summary.status.completed";
 							}
 						} else {
 							// take eval link when pending
 							UIInternalLink.make(evalcourserow, "evaluationCourseLink", title, 
 									new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID,
-											eval.getId(), null, context) );
+											eval.getId(), groupId) );
 							status = "summary.status.pending";
 						}
 						UIMessage.make(evalcourserow, "evaluationCourseStatus", status );					

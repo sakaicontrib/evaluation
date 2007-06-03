@@ -296,11 +296,12 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
 
 		String state = EvalUtils.getEvaluationState(response.getEvaluation());
 		if (EvalConstants.EVALUATION_STATE_ACTIVE.equals(state) || EvalConstants.EVALUATION_STATE_ACTIVE.equals(state)) {
-			// check admin (admins can never save responses)
-			if (external.isUserAdmin(userId)) {
-				throw new IllegalArgumentException("Admin user (" + userId + ") cannot create response ("
-						+ response.getId() + "), admins can never save responses");
-			}
+			// admin CAN save responses -AZ
+//			// check admin (admins can never save responses)
+//			if (external.isUserAdmin(userId)) {
+//				throw new IllegalArgumentException("Admin user (" + userId + ") cannot create response ("
+//						+ response.getId() + "), admins can never save responses");
+//			}
 
 			// check ownership
 			if (response.getOwner().equals(userId)) {

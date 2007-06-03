@@ -120,7 +120,7 @@ public class ShowEvalCategoryProducer implements ViewComponentProducer, ViewPara
 						}
 						if (evalStatus.equals(EvalConstants.EVALUATION_STATE_ACTIVE)) {
 							UIInternalLink.make(groupsBranch, "eval-group-link", group.title, 
-								new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, null, evalGroupId));
+								new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, evalGroupId, evalCategory));
 						} else {
 							// just show title
 							UIOutput.make(groupsBranch, "eval-group-title", group.title );
@@ -130,7 +130,7 @@ public class ShowEvalCategoryProducer implements ViewComponentProducer, ViewPara
 					// create a link to the evaluation directly if no groups
 					if (evalStatus.equals(EvalConstants.EVALUATION_STATE_ACTIVE)) {
 						UIInternalLink.make(evalsBranch, "evaluation-take-link", UIMessage.make("showevalcategory.evaluation.take.eval.link"), 
-							new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, null, null) );
+							new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, null, evalCategory) );
 					}
 				}
 			}

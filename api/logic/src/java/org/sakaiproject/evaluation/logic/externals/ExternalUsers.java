@@ -35,7 +35,7 @@ public interface ExternalUsers {
 
 	/**
 	 * @param userId the internal user id (not username)
-	 * @return the username or warning text if it cannot be found
+	 * @return the username or default text "------" if it cannot be found
 	 */
 	public String getUserUsername(String userId);
 
@@ -44,7 +44,7 @@ public interface ExternalUsers {
 	 * <b>Warning</b>: This method is expensive so be careful when calling it
 	 * 
 	 * @param userId the internal user id (not username)
-	 * @return the user display name or default text "----------" if it cannot be found
+	 * @return the user display name or default text "--------" if it cannot be found
 	 */
 	public String getUserDisplayName(String userId);
 
