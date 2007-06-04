@@ -16,6 +16,8 @@ package org.sakaiproject.evaluation.logic.impl;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -167,7 +169,8 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 			Session session = sessionManager.getCurrentSession();
 			userId = (String) session.getAttribute(ANON_USER_ATTRIBUTE);
 			if (userId == null) {
-				userId = ANON_USER_PREFIX + new Date().getTime();
+				String sessionUserId = session.getId() + new Date().getTime();
+				userId = "Anon_User_" + makeMD5(sessionUserId, 40);
 				session.setAttribute(ANON_USER_ATTRIBUTE, userId);
 			}
 		}
@@ -175,16 +178,39 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#isUserAnonymous(java.lang.String)
+	 */
+	public boolean isUserAnonymous(String userId) {
+		String currentUserId = sessionManager.getCurrentSessionUserId();
+		if (userId.equals(currentUserId)) {
+			return false;
+		}
+		Session session = sessionManager.getCurrentSession();
+		String sessionUserId = (String) session.getAttribute(ANON_USER_ATTRIBUTE);
+		if (userId.equals(sessionUserId)) {
+			return true;
+		}
+		// used up both cheap tests, now try the costly one
+		try {
+			// try to lookup this user, exception if we cannot find them
+			userDirectoryService.getUserEid(userId);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.external.EvalExternalLogic#getUserUsername(java.lang.String)
 	 */
 	public String getUserUsername(String userId) {
+		if (isUserAnonymous(userId)) {
+			return "anonymous";
+		}
 		try {
 			return userDirectoryService.getUserEid(userId);
 		} catch(UserNotDefinedException ex) {
 			log.error("Could not get username from userId: " + userId, ex);
-		}
-		if (userId.startsWith(ANON_USER_PREFIX)) {
-			return "anonymous";
 		}
 		return "------";
 	}
@@ -193,14 +219,14 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	 * @see org.sakaiproject.evaluation.logic.external.EvalExternalLogic#getUserDisplayName(java.lang.String)
 	 */
 	public String getUserDisplayName(String userId) {
+		if (isUserAnonymous(userId)) {
+			return "Anonymous User";
+		}
 		try {
 			User user = userDirectoryService.getUser(userId);
 			return user.getDisplayName();
 		} catch(UserNotDefinedException ex) {
 			log.error("Could not get user from userId: " + userId, ex);
-		}
-		if (userId.startsWith(ANON_USER_PREFIX)) {
-			return "Anonymous User";
 		}
 		return "----------";
 	}
@@ -578,6 +604,43 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 			return EvalGroupsProvider.PERM_BE_EVALUATED;
 		}
 		return "UNKNOWN";
+	}
+
+	/**
+	 * @param text string to make MD5 hash from
+	 * @param maxLength
+	 * @return an MD5 hash no longer than maxLength
+	 */
+	private String makeMD5(String text, int maxLength) {
+
+		MessageDigest md;
+		try {
+			md = MessageDigest.getInstance("MD5");
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException("Stupid java sucks for MD5", e);
+		}
+		md.update(text.getBytes());
+
+		// convert the binary md5 hash into hex
+		String md5 = "";
+		byte[] b_arr = md.digest();
+
+		for (int i = 0; i < b_arr.length; i++) {
+			// convert the high nibble
+			byte b = b_arr[i];
+			b >>>= 4;
+			b &= 0x0f; // this clears the top half of the byte
+			md5 += Integer.toHexString(b);
+
+			// convert the low nibble
+			b = b_arr[i];
+			b &= 0x0F;
+			md5 += Integer.toHexString(b);
+		}
+		if (maxLength > 0 && md5.length() > maxLength) {
+			md5 = md5.substring(0, maxLength);
+		}
+		return md5;
 	}
 
 }
