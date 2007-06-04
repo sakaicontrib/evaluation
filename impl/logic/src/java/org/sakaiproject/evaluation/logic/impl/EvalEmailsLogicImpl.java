@@ -302,7 +302,6 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		log.debug("evaluationId: " + evaluationId + ", includeOwner: " + includeOwner);
 		
 		String from = (String) settings.get( EvalSettings.FROM_EMAIL_ADDRESS );
-		String email = null;
 
 		// get evaluation
 		EvalEvaluation eval = (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);
@@ -310,13 +309,13 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			throw new IllegalArgumentException("Cannot find evaluation with this id: " + evaluationId);
 		}
 		
-		// get the email template with substitutable text placeholder
+		// get the email template header
 		EvalEmailTemplate emailTemplate = getDefaultEmailTemplate( EvalConstants.EMAIL_TEMPLATE_CREATED);
 		if (emailTemplate == null) {
 			throw new IllegalStateException("Cannot find email template: " + EvalConstants.EMAIL_TEMPLATE_CREATED);
 		}
 		
-		// modify the email template substitutable text message
+		// append opt-in, opt-out, and/or add questions messages followed by footer
 		String message = modifyCreatedEmailMessage(eval, emailTemplate);
 
 		// get the associated contexts for this evaluation
@@ -345,16 +344,17 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 					" notification to for new evaluation (" + evaluationId + 
 					") and evalGroupId (" + group.evalGroupId + ")");
 			
+			//set template to modified template
 			emailTemplate.setMessage(message);
 			
 			// replace the text of the template with real values
 			Map replacementValues = new HashMap();
 			replacementValues.put("HelpdeskEmail", from);
-			email = makeEmailMessage(emailTemplate.getMessage(), 
+			message = makeEmailMessage(emailTemplate.getMessage(), 
 					eval, group, replacementValues);
 					
 			// store sent messages to return
-			sentMessages.add(email);
+			sentMessages.add(message);
 
 			// send the actual emails for this evalGroupId
 			externalLogic.sendEmails(from, 
@@ -773,6 +773,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		// all URLs are identical because the user permissions determine access uniquely
 		replacementValues.put("URLtoTakeEval", evalEntityURL);
 		replacementValues.put("URLtoAddItems", evalEntityURL);
+		replacementValues.put("URLtoOptIn", evalEntityURL);
+		replacementValues.put("URLtoOptOut", evalEntityURL);
 		replacementValues.put("URLtoViewResults", evalEntityURL);
 		replacementValues.put("URLtoSystem", externalLogic.getServerUrl());
 
