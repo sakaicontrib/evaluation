@@ -30,6 +30,7 @@ import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.model.EvalAnswer;
+import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
@@ -103,7 +104,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 		this.locale = locale;
 	}
 
-
+	// TODO - clean up this mess of otp binding strings
     String responseOTPBinding = "responseBeanLocator";
     String responseOTP = responseOTPBinding + ".";
     String newResponseOTPBinding = responseOTP + "new";
@@ -185,21 +186,36 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 				// select the first eval group the current user can take evaluation in,
 				// also store the total number so we can give the user a list to choose from if there are more than one
 				Map m = evalsLogic.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
-				EvalGroup[] evalGroups = EvalUtils.getGroupsInCommon(
-						external.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_TAKE_EVALUATION), 
-						(List) m.get(evaluationId) );
 				List validGroups = new ArrayList(); // stores EvalGroup objects
-				for (int i = 0; i < evalGroups.length; i++) {
-					EvalGroup group = evalGroups[i];
-					if (evalsLogic.canTakeEvaluation(currentUserId, evaluationId, group.evalGroupId)) {
-						if (evalGroupId == null) {
-							evalGroupId = group.evalGroupId;
-							userCanAccess = true;
+				if (! external.isUserAdmin(currentUserId)) {
+					EvalGroup[] evalGroups = EvalUtils.getGroupsInCommon(
+							external.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_TAKE_EVALUATION), 
+							(List) m.get(evaluationId) );
+					for (int i = 0; i < evalGroups.length; i++) {
+						EvalGroup group = evalGroups[i];
+						if (evalsLogic.canTakeEvaluation(currentUserId, evaluationId, group.evalGroupId)) {
+							if (evalGroupId == null) {
+								// set the evalGroupId to the first valid group if unset
+								evalGroupId = group.evalGroupId;
+								userCanAccess = true;
+							}
+							validGroups.add( external.makeEvalGroupObject(group.evalGroupId) );
 						}
-						validGroups.add( external.makeEvalGroupObject(group.evalGroupId) );
+					}
+				} else {
+					// special case, the super admin can access any eval for testing -AZ
+					userCanAccess = true;
+					List assignGroups = (List) m.get(evaluationId);
+					for (int i = 0; i < assignGroups.size(); i++) {
+						EvalAssignGroup assignGroup = (EvalAssignGroup) assignGroups.get(i);
+						if (evalGroupId == null) {
+							// set the evalGroupId to the first valid group if unset
+							evalGroupId = assignGroup.getEvalGroupId();
+						}
+						validGroups.add( external.makeEvalGroupObject( assignGroup.getEvalGroupId() ));
 					}
 				}
-	
+
 				// generate the get form to allow the user to choose a group if more than one is available
 				if (validGroups.size() > 1) {
 					String[] values = new String[validGroups.size()];
@@ -209,7 +225,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 						values[i] = group.evalGroupId;
 						labels[i] = group.title;
 					}
-	
+
 					// show the switch group selection and form
 					UIBranchContainer showSwitchGroup = UIBranchContainer.make(tofill, "show-switch-group:");
 					UIMessage.make(showSwitchGroup, "switch-group-header", "takeeval.switch.group.header");
@@ -237,9 +253,9 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 			UIBranchContainer formBranch = UIBranchContainer.make(tofill, "form-branch:");
 			UIForm form = UIForm.make(formBranch, "evaluationForm");
 
-			//Binding the EvalEvaluation object to the EvalEvaluation object in TakeEvaluationBean.
-			form.parameters.add( new UIELBinding("#{takeEvalBean.eval}", new ELReference(evalOTP+eval.getId())));
-			form.parameters.add( new UIELBinding("#{takeEvalBean.evalGroupId}", evalTakeViewParams.evalGroupId));
+			// bind the evaluation and evalGroup to the ones in the take eval bean
+			form.parameters.add( new UIELBinding("#{takeEvalBean.eval}", new ELReference(evalOTP + eval.getId())) );
+			form.parameters.add( new UIELBinding("#{takeEvalBean.evalGroupId}", evalGroupId) );
 
 			// get all items for this evaluation main template
 			allItems = new ArrayList(eval.getTemplate().getTemplateItems());

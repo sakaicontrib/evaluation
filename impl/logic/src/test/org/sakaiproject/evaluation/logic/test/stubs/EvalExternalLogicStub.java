@@ -313,6 +313,18 @@ public class EvalExternalLogicStub implements EvalExternalLogic {
 		return EvalTestDataLoad.USER_ID;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#isUserAnonymous(java.lang.String)
+	 */
+	public boolean isUserAnonymous(String userId) {
+		if (userId.equals(EvalTestDataLoad.USER_ID) ||
+				userId.equals(EvalTestDataLoad.MAINT_USER_ID) ||
+				userId.equals(EvalTestDataLoad.ADMIN_USER_ID)) {
+			return false;
+		}
+		return true;
+	}
+
 	/**
 	 * Return titles from the data load class
 	 */
@@ -408,6 +420,5 @@ public class EvalExternalLogicStub implements EvalExternalLogic {
 	public void registerEntityEvent(String eventName, Serializable evaluationEntity) {
 		// pretending it worked
 	}
-
 
 }
