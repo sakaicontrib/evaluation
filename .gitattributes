@@ -128,6 +128,9 @@ tool/src/java/org/sakaiproject/evaluation/tool/TakeEvalBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/TemplateBBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/bundle/messages.properties -text
 tool/src/java/org/sakaiproject/evaluation/tool/bundle/messages_en.properties -text
+tool/src/java/org/sakaiproject/evaluation/tool/inferrers/EvalCategoryVPInferrer.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/inferrers/EvaluationVPInferrer.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/inferrers/TemplateVPInferrer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/locators/AnswersBeanLocator.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/locators/EntityNameInferrerImpl.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/locators/EvaluationBeanLocator.java -text
