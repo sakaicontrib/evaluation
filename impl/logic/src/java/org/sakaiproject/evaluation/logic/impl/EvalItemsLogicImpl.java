@@ -468,9 +468,6 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 		}
 
 		if (checkUserControlTemplateItem(userId, templateItem)) {
-			// lock related item and associated scales
-			log.info("Locking item ("+item.getId()+") and associated scale");
-			dao.lockItem(item, Boolean.TRUE);
 
 			if (templateItem.getId() == null) {
 				// if this is a new templateItem then associate it with 
@@ -505,6 +502,11 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 
 				dao.save(templateItem);
 			}
+
+			// Should not be locking this here -AZ
+//			// lock related item and associated scales
+//			log.info("Locking item ("+item.getId()+") and associated scale");
+//			dao.lockItem(item, Boolean.TRUE);
 
 			log.info("User ("+userId+") saved templateItem ("+templateItem.getId()+"), " +
 					"linked item (" + item.getId() +") and template ("+ template.getId()+")");
