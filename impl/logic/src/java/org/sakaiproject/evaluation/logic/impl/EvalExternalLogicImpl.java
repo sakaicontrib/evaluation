@@ -276,8 +276,12 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 			}
 		}
 
-		if (c == null)
-			log.error("Could not get site from evalGroupId:" + evalGroupId);
+		if (c == null) {
+			log.error("Could not get group from evalGroupId:" + evalGroupId);
+			// create a fake group placeholder as an error notice
+			c = new EvalGroup( evalGroupId, "** INVALID: "+evalGroupId+" **", 
+					EvalConstants.GROUP_TYPE_INVALID );
+		}
 
 		return c;
 	}

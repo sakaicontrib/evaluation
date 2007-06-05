@@ -113,6 +113,10 @@ public class ShowEvalCategoryProducer implements ViewComponentProducer, ViewPara
 				if (evalGroups.size() > 0) {
 					for (int j=0; j<evalGroups.size(); j++) {
 						EvalGroup group = (EvalGroup) evalGroups.get(j);
+						if (EvalConstants.GROUP_TYPE_INVALID.equals(group.type)) {
+							continue; // skip processing for invalid groups on this screen
+						}
+
 						String evalGroupId = group.evalGroupId;
 						UIBranchContainer groupsBranch = UIBranchContainer.make(evalsBranch, "eval-group-list:", evalGroupId);
 						if (j % 2 == 0) {

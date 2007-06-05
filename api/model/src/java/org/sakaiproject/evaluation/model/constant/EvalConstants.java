@@ -83,6 +83,10 @@ public class EvalConstants {
 	 */
 	public final static String GROUP_TYPE_UNKNOWN = "Unknown";
 	/**
+	 * EvalGroup class: Invalid group (this group could not be found in the system)
+	 */
+	public final static String GROUP_TYPE_INVALID = "Invalid";
+	/**
 	 * EvalGroup class: Site type (represents a course or project site)
 	 */
 	public final static String GROUP_TYPE_SITE = "Site";
