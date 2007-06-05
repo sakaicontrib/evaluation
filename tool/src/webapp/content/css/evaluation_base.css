@@ -1,8 +1,11 @@
-/** 
+	/** 
  * Aaron Zeckoski (aaronz@vt.edu) 
  */
 
-.testStyles {
+
+ 
+ 
+ .testStyles {
 	color:red;
 }
 
@@ -16,7 +19,7 @@ form {
 }
 
 .instructions {
-	font-size: 0.9em;
+	font-size: 0.9em;Visibility
 	font-style: italic;
 }
 
@@ -61,7 +64,7 @@ DIV.rightcol {
  */
 DIV#itemTable {
 	width: 98%;
-	margin: 10px 6px;
+	margin: 5px 6px;
 }
 
 OL.itemList {
@@ -72,48 +75,50 @@ OL.itemList {
 }
 
 LI.itemRow {
+	border: 1px solid #aaa;
 	width: 100%;
 	padding: 0;
-	margin: 0.2em;
+	margin: .4em 0 ;
 	cursor: move;
 }
 
 DIV.itemLine {
 	clear: left;
-	border: 2px solid #AAAAAA;
+	border-bottom: 1px solid #aaa;
+	background:#eee;
+	padding:.3em;
+	vertical-align:middle
 }
 
 DIV.itemLine2 {
 	clear: left;
+	vertical-align:middle;
+	margin:3px;
+	padding: .4em 0
 }
 
 DIV.itemLine3 {
 	clear: left;
-	border: 2px dashed #AAAAAA;
-	margin-left: 2em;
+	margin: 0 0 .3em 4.5em;
+	line-height:150%;
 }
 
 LABEL.itemCheckbox {
 	float: left;
-	background-color:#AACCFF;
 	cursor: auto;
 	margin: 0;
 }
 
 SPAN.itemType {
 	float: left;
-	text-align: left;
-	padding: 0 0.2em;
+	padding: .4em 0 0  0;
 }
 
 SPAN.itemRight {
 	font-size: 0.9em;
 	float: right;
-	text-align: center;
-	padding: 0 0.4em;
-	border-left: 1px solid black;
+	padding: 0 .4em;
 	white-space: nowrap;
-	vertical-align: middle;
 }
 
 SPAN.itemLink {
@@ -137,12 +142,22 @@ LABEL.itemNum {
 	margin: 0;
 }
 
-SPAN.itemText {
+span.itemText {
 	float: left;
 	text-align: left;
 	width: 65%;
+	border: 1px solid #fff;
 }
-
+span.itemText div {
+	padding: 0;
+	
+}
+/*
+lines created with the rteditor are rendered as <p> - so flatten out.
+ */
+span.itemText div p{
+	margin-top: 0;
+}
 SPAN.scaleDesc {
 	width: 25%;
 	float: right;
@@ -151,8 +166,8 @@ SPAN.scaleDesc {
 }
 
 DIV.childItem {
-	font-size: 0.9em;
-	padding: 0 0.2em;
+	font-size: 0.95em;
+	
 }
 
 .orderChanged {
@@ -277,21 +292,26 @@ UL.summaryEvaluateList {
 
 
 /* breadcrumb navigation styles */
-UL.breadCrumb {
-	font-size: .8em;
-	height: 14px; /* This is the height we want on our breadcrumb */
-	padding: 3px 8px; 
-	background: #CCC; /* This is our background color */
-	margin: 4px;
+.breadCrumb {
+	font-size: .9em;
+	padding: .5em 0; 
+	background: #ffe; /* This is our background color */
+	margin: 1em 0;
 }
 
-LI.breadCrumb {
+.breadCrumb li{
 	display: inline; 
 	margin-right: 4px; 
 	padding: 0px;
 }
 
-LI.breadCrumbCurrent {
+.breadCrumb li{
+	display: inline; 
+	margin-right: 4px; 
+	padding: 0px;
+}
+
+.breadCrumbCurrent {
 	font-weight: bold;
 	display: inline; 
 	margin-right: 4px; 
@@ -408,5 +428,65 @@ td.checktable2 {
 }
 
 .itemsListOddLine {
-	background-color: #E1E1E1;
+	background-color: #eee;
+}
+
+.visibleFS{
+	border: 1px solid #ccc;
+	padding:1em .5em;
+}
+.visibleFS legend{
+	padding:.2em;
+	color: orange;
+	margin-left:1em;
+	}
+
+label.block{
+	padding: 0 0 .3em 0;	
+}
+
+.itemAction .itemMD{
+	padding: .2em .3em 1px 0;
+	white-space: nowrap;
+}
+
+
+.messageStepGraphic
+{
+	height:100%;
+	overflow: hidden;
+}
+.messageStepGraphic div{
+	width:100px;
+	float:left;
+
+}
+.messageStepGraphic div span{
+	margin-top:2em;
+	font-size:90%;
+	text-align: center;
+	color:#aaa;
+	display:block;
+}
+.first-cur-step span, .med-cur-step span, .last-cur-step span{
+	color: blue !important;
+	font-weight:bold;
+}
+.messageStepGraphic .first-noncur-step{
+	background:#fff url(../images/first-noncur-step.gif) top left no-repeat;
+}
+.messageStepGraphic .first-cur-step{
+	background:#fff url(../images/first-cur-step.gif) top left no-repeat;
+}
+.messageStepGraphic .med-noncur-step{
+	background:#fff url(../images/med-noncur-step.gif) top left no-repeat;
+}
+.messageStepGraphic .med-cur-step{
+	background:#fff url(../images/med-cur-step.gif) top left no-repeat;
+}
+.messageStepGraphic .last-noncur-step{
+	background:#fff url(../images/last-noncur-step.gif) top left no-repeat;
+}
+.messageStepGraphic .last-cur-step{
+	background:#fff url(../images/last-cur-step.gif) top left no-repeat;
 }
