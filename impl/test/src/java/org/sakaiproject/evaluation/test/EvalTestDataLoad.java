@@ -952,7 +952,7 @@ public class EvalTestDataLoad {
 			try {
 				Class elementClass = element.getClass();
 				Method getIdMethod = elementClass.getMethod("getId", new Class[] {});
-				id = (Long) getIdMethod.invoke(element, null);
+				id = (Long) getIdMethod.invoke(element, (Object[])null);
 				l.add(id);
 			} catch (NoSuchMethodException e) {
 				throw new RuntimeException("Failed to make id list from collection",e);
