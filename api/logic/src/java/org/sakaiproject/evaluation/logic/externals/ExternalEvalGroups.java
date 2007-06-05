@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 /**
  * This interface provides methods to get EvalGroups (user collections) information
@@ -38,10 +39,11 @@ public interface ExternalEvalGroups {
 	public String getCurrentEvalGroup();
 
 	/**
-	 * Construct an {@link EvalGroup} object based on the unique string id
+	 * Construct an {@link EvalGroup} object based on the unique string id,
+	 * group will have a special type {@link EvalConstants#GROUP_TYPE_INVALID} if data cannot be found
 	 * 
 	 * @param evalGroupId the internal unique ID for an evalGroup
-	 * @return an {@link EvalGroup} object or null if not found
+	 * @return an {@link EvalGroup} object (special return if not found)
 	 */
 	public EvalGroup makeEvalGroupObject(String evalGroupId);
 

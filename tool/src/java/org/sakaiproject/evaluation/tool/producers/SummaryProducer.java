@@ -107,7 +107,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 
 		// local variables used in the render logic
 		String currentUserId = externalLogic.getCurrentUserId();
-		String currentContext = externalLogic.getCurrentEvalGroup();
+		String currentGroup = externalLogic.getCurrentEvalGroup();
 		boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
 		boolean createTemplate = templatesLogic.canCreateTemplate(currentUserId);
 		boolean beginEvaluation = evaluationsLogic.canBeginEvaluation(currentUserId);
@@ -167,7 +167,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			}
 
 			// now fetch all the information we care about for these evaluations at once (for speed)
-			Map evalContexts = evaluationsLogic.getEvaluationGroups(evalIds, false);
+			Map evalGroups = evaluationsLogic.getEvaluationGroups(evalIds, false);
 			List evalResponses = responsesLogic.getEvaluationResponses(currentUserId, evalIds);
 
 			for (Iterator itEvals = evalsToTake.iterator(); itEvals.hasNext();) {
@@ -179,11 +179,15 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 				UIOutput.make(evalrow, "evaluationStartDate", df.format(eval.getStartDate()) );
 				UIOutput.make(evalrow, "evaluationDueDate", df.format(eval.getDueDate()) );
 
-				List contexts = (List) evalContexts.get(eval.getId());
-				for (int j=0; j<contexts.size(); j++) {
-					EvalGroup group = (EvalGroup) contexts.get(j);
+				List groups = (List) evalGroups.get(eval.getId());
+				for (int j=0; j<groups.size(); j++) {
+					EvalGroup group = (EvalGroup) groups.get(j);
+					if (EvalConstants.GROUP_TYPE_INVALID.equals(group.type)) {
+						continue; // skip processing for invalid groups
+					}
+
 					//check that the user can take evaluations in this evalGroupId
-					if(externalLogic.isUserAllowedInEvalGroup(externalLogic.getCurrentUserId(), EvalConstants.PERM_TAKE_EVALUATION, group.evalGroupId)){
+					if (externalLogic.isUserAllowedInEvalGroup(currentUserId, EvalConstants.PERM_TAKE_EVALUATION, group.evalGroupId)) {
 						String groupId = group.evalGroupId;
 						String title = group.title;
 						String status = "unknown.caps";
@@ -200,7 +204,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 							}
 						}
 
-						if (groupId.equals(currentContext)) {
+						if (groupId.equals(currentGroup)) {
 							// TODO - do something when the evalGroupId matches
 						}
 
