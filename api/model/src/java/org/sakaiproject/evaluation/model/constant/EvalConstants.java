@@ -440,7 +440,7 @@ public class EvalConstants {
 		"You may access the evaluation at: \n" +
 		"$URLtoTakeEval \n" +
 		"If the above link is not working then please follow the Alternate Instructions at the bottom of the message. \n" +
-		"Enter the site using your username and password. Please submit your evaluation by $Due Date. \n" +
+		"Enter the site using your username and password. Please submit your evaluation by $EvalDueDate. \n" +
 		"\n" +
 		"Thank you for your participation.\n" +
 		"------------------------------------------------------------\n" +
