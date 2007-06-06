@@ -185,35 +185,46 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 			} else {
 				// select the first eval group the current user can take evaluation in,
 				// also store the total number so we can give the user a list to choose from if there are more than one
-				Map m = evalsLogic.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
+				Map m = evalsLogic.getEvaluationAssignGroups(new Long[] {evaluationId}, false);
 				List validGroups = new ArrayList(); // stores EvalGroup objects
-				if (! external.isUserAdmin(currentUserId)) {
-					EvalGroup[] evalGroups = EvalUtils.getGroupsInCommon(
-							external.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_TAKE_EVALUATION), 
-							(List) m.get(evaluationId) );
-					for (int i = 0; i < evalGroups.length; i++) {
-						EvalGroup group = evalGroups[i];
-						if (evalsLogic.canTakeEvaluation(currentUserId, evaluationId, group.evalGroupId)) {
-							if (evalGroupId == null) {
-								// set the evalGroupId to the first valid group if unset
-								evalGroupId = group.evalGroupId;
-								userCanAccess = true;
-							}
-							validGroups.add( external.makeEvalGroupObject(group.evalGroupId) );
-						}
-					}
+				if ( external.isUserAdmin(currentUserId) ) {
+                    // special case, the super admin can always access
+                    userCanAccess = true;
+                    List assignGroups = (List) m.get(evaluationId);
+                    for (int i = 0; i < assignGroups.size(); i++) {
+                        EvalAssignGroup assignGroup = (EvalAssignGroup) assignGroups.get(i);
+                        if (evalGroupId == null) {
+                            // set the evalGroupId to the first valid group if unset
+                            evalGroupId = assignGroup.getEvalGroupId();
+                        }
+                        validGroups.add( external.makeEvalGroupObject( assignGroup.getEvalGroupId() ));
+                    }
 				} else {
-					// special case, the super admin can access any eval for testing -AZ
-					userCanAccess = true;
-					List assignGroups = (List) m.get(evaluationId);
-					for (int i = 0; i < assignGroups.size(); i++) {
-						EvalAssignGroup assignGroup = (EvalAssignGroup) assignGroups.get(i);
-						if (evalGroupId == null) {
-							// set the evalGroupId to the first valid group if unset
-							evalGroupId = assignGroup.getEvalGroupId();
-						}
-						validGroups.add( external.makeEvalGroupObject( assignGroup.getEvalGroupId() ));
-					}
+                    EvalGroup[] evalGroups;
+                    if ( EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(eval.getAuthControl()) ) {
+                        // anonymous eval allows any group to be evaluated
+                        List assignGroups = (List) m.get(evaluationId);
+                        evalGroups = new EvalGroup[assignGroups.size()];
+                        for (int i = 0; i < assignGroups.size(); i++) {
+                            EvalAssignGroup assignGroup = (EvalAssignGroup) assignGroups.get(i);
+                            evalGroups[i] = external.makeEvalGroupObject( assignGroup.getEvalGroupId() );
+                        }
+                    } else {
+                        evalGroups = EvalUtils.getGroupsInCommon(
+                            external.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_TAKE_EVALUATION), 
+                            (List) m.get(evaluationId) );
+                    }
+                    for (int i = 0; i < evalGroups.length; i++) {
+                        EvalGroup group = evalGroups[i];
+                        if (evalsLogic.canTakeEvaluation(currentUserId, evaluationId, group.evalGroupId)) {
+                            if (evalGroupId == null) {
+                                // set the evalGroupId to the first valid group if unset
+                                evalGroupId = group.evalGroupId;
+                                userCanAccess = true;
+                            }
+                            validGroups.add( external.makeEvalGroupObject(group.evalGroupId) );
+                        }
+                    }
 				}
 
 				// generate the get form to allow the user to choose a group if more than one is available

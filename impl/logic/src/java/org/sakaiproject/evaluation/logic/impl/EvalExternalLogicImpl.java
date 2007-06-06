@@ -433,6 +433,13 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 	 * @see org.sakaiproject.evaluation.logic.EvalExternalLogic#isUserAllowedInEvalGroup(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public boolean isUserAllowedInEvalGroup(String userId, String permission, String evalGroupId) {
+        if (evalGroupId == null) {
+            if (securityService.isSuperUser(userId)) {
+                return true;
+            }
+            return false;
+        }
+  
 		String reference = evalGroupId;
 		if ( securityService.unlock(userId, permission, reference) ) {
 			return true;
