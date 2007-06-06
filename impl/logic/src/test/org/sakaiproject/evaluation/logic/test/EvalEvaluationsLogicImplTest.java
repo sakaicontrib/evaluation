@@ -610,27 +610,29 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 		// test admin can always take
 		Assert.assertTrue( evaluations.canTakeEvaluation( EvalTestDataLoad.ADMIN_USER_ID, 
 				etdl.evaluationActive.getId(), EvalTestDataLoad.SITE1_REF) );
+        // anonymous can always be taken
+        Assert.assertTrue( evaluations.canTakeEvaluation( EvalTestDataLoad.MAINT_USER_ID, 
+                etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.SITE1_REF) );
 
 		// test not able to take
+        // not assigned to this group
+        Assert.assertFalse( evaluations.canTakeEvaluation( EvalTestDataLoad.USER_ID, 
+                etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.SITE2_REF) );
 		// already taken
 		Assert.assertFalse( evaluations.canTakeEvaluation( EvalTestDataLoad.USER_ID, 
 				etdl.evaluationActive.getId(), EvalTestDataLoad.SITE1_REF) );
 		// not assigned to this evalGroupId
 		Assert.assertFalse( evaluations.canTakeEvaluation( EvalTestDataLoad.USER_ID, 
-				etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.SITE2_REF) );
-		Assert.assertFalse( evaluations.canTakeEvaluation( EvalTestDataLoad.USER_ID, 
 				etdl.evaluationActive.getId(), EvalTestDataLoad.SITE2_REF) );
 		// cannot take evaluation (no perm)
-		Assert.assertFalse( evaluations.canTakeEvaluation( EvalTestDataLoad.MAINT_USER_ID, 
-				etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.SITE1_REF) );
 		Assert.assertFalse( evaluations.canTakeEvaluation( EvalTestDataLoad.MAINT_USER_ID, 
 				etdl.evaluationActive.getId(), EvalTestDataLoad.SITE1_REF) );
 
 		// test invalid information
+        Assert.assertFalse( evaluations.canTakeEvaluation( EvalTestDataLoad.USER_ID, 
+                etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.INVALID_CONTEXT) );
 		Assert.assertFalse( evaluations.canTakeEvaluation( EvalTestDataLoad.INVALID_USER_ID, 
-				etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.SITE1_REF) );
-		Assert.assertFalse( evaluations.canTakeEvaluation( EvalTestDataLoad.USER_ID, 
-				etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.INVALID_CONTEXT) );
+				etdl.evaluationActive.getId(), EvalTestDataLoad.SITE1_REF) );
 
 		try {
 			evaluations.canTakeEvaluation( EvalTestDataLoad.USER_ID, 
