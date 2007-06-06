@@ -1,47 +1,38 @@
 <!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
-<head>
-	<meta http-equiv="Pragma" content="no-cache" />
-	<meta http-equiv="Expires" content="-1" />
-	<title rsf:id="page-title">Take Evaluation</title>
-    <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
-    <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
-    <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
-    <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
-</head>
-
-<body rsf:id="scr=sakai-body">
-<div class="portletBody">
-
-<div class="navIntraTool">
-	<a rsf:id="summary-toplink" href="summary.html">Summary</a>
-</div>
-
-<div>
-	<ul class="breadCrumb">
-		<li class="breadCrumb"><a rsf:id="summary-toplink" href="summary.html">Summary</a></li>
-		<li class="breadCrumb" rsf:id="page-title">Take Evaluation</li>				
-	</ul>
-</div>
-
-<div rsf:id="message-for:*" class="alertMessage">
-	<ul style="margin:0px;">
-		<li>Message for user here</li>
-	</ul>
-</div>
-
-<div style="width:99%;">
-	<div class="divrow" style="background-color:#CCCCFF;">
-		<div class="leftcol">
-			<span rsf:id="eval-title-header" style="font-weight:bold;">Evaluation:</span>
-			<span rsf:id="evalTitle">Evaluation title here</span>
-		</div>
-		<div rsf:id="show-group-title:" class="rightcol">
-			<span rsf:id="group-title-header" style="font-weight:bold;">Group:</span>
-			<span rsf:id="group-title">Group title here</span>
-		</div>
-		<div rsf:id="show-switch-group:" class="rightcol" style="margin:0em 1em;">
+	<head>
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Expires" content="-1" />
+		<title rsf:id="take-eval-title">Take Evaluation</title>
+		<link href="../css/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+		<link href="../css/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+	</head>
+	
+	<body rsf:id="scr=sakai-body">
+		<div class="portletBody">
+			<div class="navIntraTool">
+				<a rsf:id="administrate-toplink" href="administrate.html">Administrate</a>
+				<a rsf:id="summary-toplink" href="summary.html">Summary</a>
+			</div>
+			<ul class="breadCrumb">
+				<li><a rsf:id="summary-toplink" href="summary.html">Summary</a></li>
+				<li> > </li>
+				<li rsf:id="page-title">Take Evaluation</li>
+			</ul>
+			<div rsf:id="message-for:*" class="alertMessage">
+				<ul style="margin:0px;">
+					<li>Message for user here</li>
+				</ul>
+			</div>
+			<h4><span rsf:id="eval-title-header">Evaluation:</span><span class="highlight" rsf:id="evalTitle">Evaluation title here</span></h4>
+			<div rsf:id="show-group-title:" class="rightcol">
+				<span rsf:id="group-title-header" style="font-weight:bold;">Group:</span>
+				<span rsf:id="group-title">Group title here</span>
+			</div>
+			<div rsf:id="show-switch-group:" class="rightcol" style="margin:0em 1em;">
 			<span rsf:id="switch-group-header" style="font-weight:bold;">Switch group:</span>
 			<form rsf:id="switch-group-form" action="take_eval.html" method="get">
 				<select rsf:id="switch-group-list">
@@ -51,138 +42,87 @@
 				</select>
 				<input rsf:id="switch-group-button" type="submit" value="Switch" />
 			</form>
+			</div>
+			<div class="cleaner">&nbsp;</div>
+			<div rsf:id="show-eval-instructions:" class="divrow">
+				<h4><span rsf:id="eval-instructions-header">Instructions:</span></h4>
+				<div class="textPanel" rsf:id="eval-instructions">
+					Evaluation instructions would go here if any have been specified. This block may be up to 4000 chars.
+				</div>
+			</div>
+			<div class="cleaner">&nbsp;</div>
+			<div rsf:id="eval-cannot-take-message" class="alert"></div>
+			<div rsf:id="form-branch:">
+			<form name="eval_form" rsf:id="evaluationForm" method="post">
+				<div rsf:id="courseSection:">
+					<h3 rsf:id="course-questions-header"> Course Questions: </h3>
+					<table border="0" cellspacing="0" cellpadding="0" width="99%">
+						<tr>
+							<!-- this td contains the section connector -->
+							<td style="width:6px;height:100%;"></td>
+							<!-- this td contains the data block -->
+							<td colspan="3" align="left" valign="top">
+								<!-- Begin the table content --> 	   	
+								<table border = "0" cellspacing = "0" cellpadding = "5" rules="none" width = "100%">
+									<!-- show section header -->
+									<tr style="height:28px;" rsf:id="itemrow:first">
+										<td colspan="2" width="100%">
+											<!-- DIV tag for item renderer -->
+											<div rsf:id="rendered-item:"></div>
+										</td>		
+									</tr>
+								</table> 	
+								<!-- end of table content -->
+							</td>
+							<!-- this td contains the back section connector -->
+							<td style="width:2px;height:100%"></td>
+							</tr>
+							<!-- this tr contains the section footer -->
+							<tr>
+								<!-- this td contains the section connector -->
+								<td style="width:6px;height:4px;"></td>
+								<!-- this td contains the data block -->
+								<td colspan="3" nowrap="yes" align="left" valign="top" style="height:4px;"></td>
+							</tr>
+						</table>      		
+					</div>
+					<!-- this BEGINS the INSTRUCTOR(S) section -->
+					<div rsf:id="instructorSection:">
+					<h3 rsf:id="instructor-questions-header"> Instructor Questions: </h3>
+					<table border="0" cellspacing="0" cellpadding="0" width="99%">
+						<tr>
+							<!-- this td contains the section connector -->
+							<td style="width:6px;height:100%;"></td>
+							  <!-- this td contains the data block -->
+							<td colspan="3" align="left" valign="top" style="margin:3px;">
+								<!-- Begin the table content --> 	   	
+								<table border="0" cellspacing="0" cellpadding="5" rules="none" width="100%">
+									<!-- show section header -->
+									<tr style="height:28px;" rsf:id="itemrow:first">
+										<td colspan="2" width="100%">
+											<!-- DIV tag for item renderer -->
+											<div rsf:id="previewed-item:"></div>
+										</td>		
+									</tr>
+								</table> 	
+								<!-- end of table content -->
+							</td>
+							<!-- this td contains the back section connector -->
+							<td style="width:2px;height:100%;"></td>
+						</tr>
+						<tr>
+							<!-- this td contains the section connector -->
+							<td style="width:6px;height:4px;"></td>
+							<!-- this td contains the data block -->
+							<td colspan="3" nowrap="yes" align="left" valign="top" style="height:4px;"></td>
+						</tr>
+					</table>
+				</div>
+				<div class="act">
+					<input rsf:id="submitEvaluation" type="submit" value="Submit Evaluation" accesskey="s" class="active" />
+				</div>
+			</form>
+			</div>
 		</div>
-		<div class="cleaner">&nbsp;</div>
-	</div>
-	<div rsf:id="show-eval-instructions:" class="divrow">
-		<div class="leftcol">
-			<span rsf:id="eval-instructions-header" style="font-weight:bold;">Instructions:</span>
-			<span rsf:id="eval-instructions">Evaluation instructions would go here if any have been specified. This block may be up to 4000 chars.</span>
-		</div>
-		<div class="cleaner">&nbsp;</div>
-	</div>
-</div>
-
-<div rsf:id="eval-cannot-take-message" class="alert"></div>
-
-<div rsf:id="form-branch:">
-<form name="eval_form" rsf:id="evaluationForm" method="post">
-<div rsf:id="courseSection:">	
- <table border="0" cellspacing="0" cellpadding="0" width="99%">
-  <tr>
-    <!-- this td contains the section connector -->
-	<td nowrap="nowrap" style="width:6px;height:24px;background-color:#660000;"></td>
-    <!-- this td contains the data block -->
-	<td nowrap="nowrap" style="width:10px;height:24px;background-color:#660000;"></td>
-	<td nowrap="nowrap" align="left" style="width:5%;height:24px;font-weight:bold;border:3px solid #660000;">
-	  <span rsf:id="course-questions-header"> Course Questions: </span>
-	</td>
-
-	<td nowrap="nowrap" style="width:95%;height:24px;background-color:#660000;"></td>
-  </tr>
-
-   <tr>
-      <!-- this td contains the section connector -->
-   	<td style="width:6px;height:100%;background-color:#660000;"></td>
-      <!-- this td contains the data block -->
-   	<td colspan="3" align="left" valign="top" style="margin:3px;">
- 
- 	  
-<!-- Begin the table content --> 	   	
- 	<table border = "1" cellspacing = "0" cellpadding = "5" rules="none" width = "100%">
- 		<!-- show section header -->
- 	
-		<tr style="height:28px;" rsf:id="itemrow:first">
-		<td colspan="2" width="100%">
-		
-			<!-- DIV tag for item renderer -->
-			<div rsf:id="rendered-item:"></div>
-   			</td>		
-		</tr>
-	</table> 	
-	
-	<!-- end of table content -->
-	
-	 </td>
-	      <!-- this td contains the back section connector -->
-	 <td style="width:2px;height:100%;background-color:#999999;"></td>
-  </tr>
-
-<!-- this tr contains the section footer -->
-  <tr>
-    <!-- this td contains the section connector -->
-
-    <td style="width:6px;height:4px;background-color:#660000;"></td>
-    <!-- this td contains the data block -->
-   	<td colspan="3" nowrap="nowrap" align="left" valign="top" style="height:4px;background-color:#660000;"></td>
-  </tr>
-  <tr style="height:8px"><td colspan="10"></td></tr><!-- spacer row -->
-  </table>      		
-</div>
-
-
-<!-- this BEGINS the INSTRUCTOR(S) section -->
- <div rsf:id="instructorSection:">
-  <table border="0" cellspacing="0" cellpadding="0" width="99%">
-
-    <tr>
-      <!-- this td contains the section connector -->
-  	<td nowrap="nowrap" style="width:6px;height:24px;background-color:#000099;"></td>
-      <!-- this td contains the data block -->
-  	<td nowrap="nowrap" style="width:10px;height:24px;background-color:#000099;"></td>
-  	<td nowrap="nowrap" align="left" style="width:5%;height:24px;font-weight:bold;border:3px solid #000099;">
-  	  <span rsf:id="instructor-questions-header"> Instructor Questions: </span>
-  	</td>
-
-  	<td nowrap="nowrap" style="width:95%;height:24px;background-color:#000099;"></td>
-    </tr>
-    <tr>
-      <!-- this td contains the section connector -->
-   	<td style="width:6px;height:100%;background-color:#000099;"></td>
-      <!-- this td contains the data block -->
-   	<td colspan="3" align="left" valign="top" style="margin:3px;">
-   	 
-   	  
-   	  <!-- Begin the table content --> 	   	
- 	<table border="1" cellspacing="0" cellpadding="5" rules="none" width="100%">
- 		<!-- show section header -->
- 	
-		<tr style="height:28px;" rsf:id="itemrow:first">
-			<td colspan="2" width="100%">
-				<!-- DIV tag for item renderer -->
-				<div rsf:id="previewed-item:"></div>
-   			</td>		
-		</tr>
-	</table> 	
-
-	<!-- end of table content -->
-
-	</td>
-	<!-- this td contains the back section connector -->
-	<td style="width:2px;height:100%;background-color:#999999;"></td>
-	</tr>
-	  <tr>
-	      <!-- this td contains the section connector -->
-	      <td style="width:6px;height:4px;background-color:#000099;"></td>
-	      <!-- this td contains the data block -->
-	      <td colspan="3" nowrap="nowrap" align="left" valign="top" style="height:4px;background-color:#000099;"></td>
-	   </tr>
-
-	   <tr style="height:8px"><td colspan="10"></td></tr><!-- spacer row -->
-	</table>
-</div>
-
-<div align="center">
-	<input rsf:id="submitEvaluation" type="submit" value="Submit Evaluation"/>
-</div>
-</form>
-</div>
-
-</div>
-</body>
+	</body>
 </html>
-
-
-
-
-
