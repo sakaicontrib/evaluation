@@ -36,6 +36,7 @@ import org.sakaiproject.evaluation.tool.producers.ViewReportProducer;
 import org.sakaiproject.evaluation.tool.viewparams.EvalTakeViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.PreviewEvalParameters;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
+import org.sakaiproject.evaluation.tool.wrapper.ModelAccessWrapperInvoker;
 
 import uk.ac.cam.caret.sakai.rsf.entitybroker.EntityViewParamsInferrer;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
@@ -64,6 +65,12 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
 		this.evaluationsLogic = evaluationsLogic;
 	}
 
+	private ModelAccessWrapperInvoker wrapperInvoker;
+	public void setWrapperInvoker(ModelAccessWrapperInvoker wrapperInvoker) {
+		this.wrapperInvoker = wrapperInvoker;
+	}
+
+
 	public void init() {
 		log.info("VP init");
 	}
@@ -82,6 +89,21 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
 	 * @see uk.ac.cam.caret.sakai.rsf.entitybroker.EntityViewParamsInferrer#inferDefaultViewParameters(java.lang.String)
 	 */
 	public ViewParameters inferDefaultViewParameters(String reference) {
+		final String ref = reference;
+		final ViewParameters[] togo = new ViewParameters[1];
+		wrapperInvoker.invokeRunnable( new Runnable() {
+			public void run() {
+				togo [0] = inferDefaultViewParametersImpl(ref);
+			}
+		});
+		return togo[0];
+	}
+
+	/**
+	 * @param reference
+	 * @return
+	 */
+	private ViewParameters inferDefaultViewParametersImpl(String reference) {
 		EntityID ep = new EntityID(reference);
 		EvalEvaluation evaluation = null;
 		Long evaluationId = null;
@@ -91,13 +113,13 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
 			// we only know the evaluation
 			evaluationId = new Long(ep.id);
 			evaluation = evaluationsLogic.getEvaluationById(evaluationId);
-			
 		} else if (AssignGroupEntityProvider.ENTITY_PREFIX.equals(ep.prefix)) {
 			// we know the evaluation and the group
 			Long AssignGroupId = new Long(ep.id);
 			EvalAssignGroup assignGroup = assignsLogic.getAssignGroupById(AssignGroupId);
-			evaluation = assignGroup.getEvaluation();
 			evalGroupId = assignGroup.getEvalGroupId();
+			evaluation = assignGroup.getEvaluation();
+			evaluationId = evaluation.getId();
 		}
 
 		if ( EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(evaluation.getAuthControl()) ) {
@@ -155,7 +177,5 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
 			}
 
 		}
-
 	}
-
 }
