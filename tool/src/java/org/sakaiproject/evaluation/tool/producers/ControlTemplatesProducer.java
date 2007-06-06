@@ -161,7 +161,7 @@ public class ControlTemplatesProducer implements ViewComponentProducer {
 				}
 
 				// direct link to the template preview
-				UILink.make(tofill, "preview-template-direct-link", UIMessage.make("general.direct.link"), 
+				UILink.make(templateRow, "preview-template-direct-link", UIMessage.make("general.direct.link"), 
 						external.getEntityURL(template) );
 
 				UIOutput.make(templateRow, "template-owner", external.getUserDisplayName( template.getOwner() ));

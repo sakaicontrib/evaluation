@@ -18,20 +18,13 @@
 	<a rsf:id="summary-toplink" href="summary.html">Summary</a>
 </div>
 
-<div>
-	<ul class="breadCrumb">
-		<li class="breadCrumb"><a rsf:id="summary-toplink" href="summary.html">Summary</a></li>
-		<li class="breadCrumb" rsf:id="page-title">Take Evaluation</li>				
-	</ul>
-</div>
-
 <div rsf:id="message-for:*" class="alertMessage">
 	<ul style="margin:0px;">
 		<li>Message for user here</li>
 	</ul>
 </div>
 
-<div style="width:99%;">
+<div style="width:99%;margin:0.6em 0em">
 	<div class="divrow" style="background-color:#CCCCFF;">
 		<div class="leftcol">
 			<span rsf:id="eval-title-header" style="font-weight:bold;">Evaluation:</span>
@@ -75,7 +68,7 @@
     <!-- this td contains the data block -->
 	<td nowrap="nowrap" style="width:10px;height:24px;background-color:#660000;"></td>
 	<td nowrap="nowrap" align="left" style="width:5%;height:24px;font-weight:bold;border:3px solid #660000;">
-	  <span rsf:id="course-questions-header"> Course Questions: </span>
+	  <span rsf:id="course-questions-header"> Group Items: </span>
 	</td>
 
 	<td nowrap="nowrap" style="width:95%;height:24px;background-color:#660000;"></td>
@@ -93,12 +86,11 @@
  		<!-- show section header -->
  	
 		<tr style="height:28px;" rsf:id="itemrow:first">
-		<td colspan="2" width="100%">
-		
-			<!-- DIV tag for item renderer -->
-			<div rsf:id="rendered-item:"></div>
-   			</td>		
-		</tr>
+            <td colspan="2" width="100%">
+               <!-- DIV tag for item renderer -->
+               <div rsf:id="rendered-item:">Items get rendered here</div>
+            </td>
+         </tr>
 	</table> 	
 	
 	<!-- end of table content -->
@@ -122,45 +114,38 @@
 
 
 <!-- this BEGINS the INSTRUCTOR(S) section -->
- <div rsf:id="instructorSection:">
+<div rsf:id="instructorSection:">
   <table border="0" cellspacing="0" cellpadding="0" width="99%">
-
     <tr>
-      <!-- this td contains the section connector -->
-  	<td nowrap="nowrap" style="width:6px;height:24px;background-color:#000099;"></td>
-      <!-- this td contains the data block -->
-  	<td nowrap="nowrap" style="width:10px;height:24px;background-color:#000099;"></td>
-  	<td nowrap="nowrap" align="left" style="width:5%;height:24px;font-weight:bold;border:3px solid #000099;">
-  	  <span rsf:id="instructor-questions-header"> Instructor Questions: </span>
-  	</td>
-
-  	<td nowrap="nowrap" style="width:95%;height:24px;background-color:#000099;"></td>
+	     <!-- this td contains the section connector -->
+	     <td nowrap="nowrap" style="width:6px;height:24px;background-color:#000099;"></td>
+         <!-- this td contains the data block -->
+	     <td nowrap="nowrap" style="width:10px;height:24px;background-color:#000099;"></td>
+	     <td nowrap="nowrap" align="left" style="width:5%;height:24px;font-weight:bold;border:3px solid #000099;">
+	        <span rsf:id="instructor-questions-header"> Evaluatee Items: </span>
+	     </td>
+	     <td nowrap="nowrap" style="width:95%;height:24px;background-color:#000099;"></td>
     </tr>
     <tr>
       <!-- this td contains the section connector -->
-   	<td style="width:6px;height:100%;background-color:#000099;"></td>
-      <!-- this td contains the data block -->
-   	<td colspan="3" align="left" valign="top" style="margin:3px;">
-   	 
-   	  
-   	  <!-- Begin the table content --> 	   	
- 	<table border="1" cellspacing="0" cellpadding="5" rules="none" width="100%">
- 		<!-- show section header -->
- 	
-		<tr style="height:28px;" rsf:id="itemrow:first">
-			<td colspan="2" width="100%">
-				<!-- DIV tag for item renderer -->
-				<div rsf:id="previewed-item:"></div>
-   			</td>		
-		</tr>
-	</table> 	
-
-	<!-- end of table content -->
-
-	</td>
-	<!-- this td contains the back section connector -->
-	<td style="width:2px;height:100%;background-color:#999999;"></td>
-	</tr>
+      	<td style="width:6px;height:100%;background-color:#000099;"></td>
+         <!-- this td contains the data block -->
+      	<td colspan="3" align="left" valign="top" style="margin:3px;">   	 
+         <!-- Begin the table content --> 	   	
+         <table border="1" cellspacing="0" cellpadding="5" rules="none" width="100%">
+            <!-- show section header -->
+            <tr style="height:28px;" rsf:id="itemrow:first">
+            <td colspan="2" width="100%">
+               <!-- DIV tag for item renderer -->
+               <div rsf:id="rendered-item:">Render item here</div>
+            </td>
+            </tr>
+         </table> 	
+      	<!-- end of table content -->
+      	</td>
+      	<!-- this td contains the back section connector -->
+      	<td style="width:2px;height:100%;background-color:#999999;"></td>
+   	</tr>
 	  <tr>
 	      <!-- this td contains the section connector -->
 	      <td style="width:6px;height:4px;background-color:#000099;"></td>
@@ -175,14 +160,10 @@
 <div align="center">
 	<input rsf:id="submitEvaluation" type="submit" value="Submit Evaluation"/>
 </div>
+
 </form>
 </div>
 
 </div>
 </body>
 </html>
-
-
-
-
-
