@@ -80,9 +80,11 @@ public class EvaluationConstant {
 		"$context/content/images/ideal-high.jpg",
 		"$context/content/images/ideal-outside.jpg"};
 
-	public static String BLUE_COLOR = "#6699ff";
-	public static String GREEN_COLOR = "#00d600";
-	public static String RED_COLOR = "#ff0000";
+    // should match the images
+	public static String BLUE_COLOR = "#d7ebf6";
+	public static String GREEN_COLOR = "#8be8a2";
+	public static String RED_COLOR = "#ff8ba0";
+
 	public static String LIGHT_BLUE_COLOR = "#CCCCFF";
 	public static String LIGHT_GRAY_COLOR = "#E1E1E1";
 
