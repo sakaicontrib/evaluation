@@ -164,6 +164,8 @@
 			ref="org.sakaiproject.evaluation.logic.EvalAssignsLogic" />
 		<property name="evaluationsLogic" 
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+		<property name="wrapperInvoker" 
+			ref="org.sakaiproject.evaluation.ModelAccessWrapperInvoker" />
 	</bean>
 
 	<bean class="org.sakaiproject.evaluation.tool.inferrers.TemplateVPInferrer" />
