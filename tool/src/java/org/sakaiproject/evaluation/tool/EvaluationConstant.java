@@ -199,7 +199,8 @@ public class EvaluationConstant {
 			EvalConstants.SCALE_IDEAL_NONE, 
 			EvalConstants.SCALE_IDEAL_LOW, 
 			EvalConstants.SCALE_IDEAL_HIGH,
-			EvalConstants.SCALE_IDEAL_MID
+			EvalConstants.SCALE_IDEAL_MID,
+            EvalConstants.SCALE_IDEAL_OUTSIDE
 		};
 
 	/**
@@ -209,7 +210,8 @@ public class EvaluationConstant {
 			"scalecontrol.ideal.scale.option.label.none", 
 			"scalecontrol.ideal.scale.option.label.low",
 			"scalecontrol.ideal.scale.option.label.high", 
-			"scalecontrol.ideal.scale.option.label.mid"
+			"scalecontrol.ideal.scale.option.label.mid",
+            "scalecontrol.ideal.scale.option.label.outside" 
 		};
 
 	public static final String[] ITEM_CLASSIFICATION_VALUES = new String[] {
