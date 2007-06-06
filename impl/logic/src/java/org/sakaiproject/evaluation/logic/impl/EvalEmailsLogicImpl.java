@@ -361,11 +361,16 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			sentMessages.add(message);
 
 			// send the actual emails for this evalGroupId
-			externalLogic.sendEmails(from, 
-					toUserIds, 
-					"New evaluation created: " + eval.getTitle(), 
-					message);
-			log.info("Sent evaluation created message to " + toUserIds.length + " users");
+			try {
+				externalLogic.sendEmails(from, 
+						toUserIds, 
+						"New evaluation created: " + eval.getTitle(), 
+						message);
+				log.info("Sent evaluation created message to " + toUserIds.length + " users");
+			}
+			catch(Exception e) {
+				log.error(this + ".sendEvalCreatedNotifications(" + evaluationId + "," + includeOwner + ") externalLogic.sendEmails " + e);
+			}
 		}
 
 		return (String[]) sentMessages.toArray( new String[] {} );
@@ -497,9 +502,14 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
 			// send the actual emails for this evalGroupId
 			// TODO - internationalize these messages
-			externalLogic.sendEmails(from, toUserIds, 
-					"New evaluation created: " + eval.getTitle(), message);
-			log.info("Sent evaluation available message to " + toUserIds.length + " users");
+			try {
+				externalLogic.sendEmails(from, toUserIds, 
+						"New evaluation created: " + eval.getTitle(), message);
+				log.info("Sent evaluation available message to " + toUserIds.length + " users");
+			}
+			catch(Exception e) {
+				log.error(this + ".sendEvalAvailableNotifications(" + evaluationId + "," + includeEvaluatees + ") externalLogic.sendEmails " + e);
+			}
 		} //groups
 
 		return (String[]) sentMessages.toArray( new String[] {} );
@@ -552,13 +562,18 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
 				// store sent messages to return
 				sentMessages.add(message);
-
-				// send the actual emails for this evalGroupId
-				externalLogic.sendEmails(from, 
-						toUserIds, 
-						"New evaluation created: " + eval.getTitle(), 
-						message);
-				log.info("Sent evaluation available message to " + toUserIds.length + " users");
+				
+				try {
+					// send the actual emails for this evalGroupId
+					externalLogic.sendEmails(from, 
+							toUserIds, 
+							"New evaluation created: " + eval.getTitle(), 
+							message);
+					log.info("Sent evaluation available message to " + toUserIds.length + " users");
+				}
+				catch(Exception e) {
+					log.error(this + ".sendEvalAvailableGroupNotification(" + evaluationId + "," + evalGroupId + ") externalLogic.sendEmails " + e);
+				}
 			}
 		}
 
@@ -637,13 +652,18 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 				
 				// store sent messages to return
 				sentMessages.add(message);
-
+				
 				// send the actual emails for this evalGroupId
-				externalLogic.sendEmails(from, 
-						toUserIds, 
-						"New evaluation created: " + eval.getTitle(), 
-						message);
-				log.info("Sent evaluation available message to " + toUserIds.length + " users");
+				try {
+					externalLogic.sendEmails(from, 
+							toUserIds, 
+							"New evaluation created: " + eval.getTitle(), 
+							message);
+					log.info("Sent evaluation available message to " + toUserIds.length + " users");
+				}
+				catch(Exception e) {
+					log.error(this + ".sendEvalReminderNotifications(" + evaluationId + "," + includeConstant + ") externalLogic.sendEmails " + e);
+				}
 			}
 		}
 
@@ -729,13 +749,18 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
 				// store sent messages to return
 				sentMessages.add(message);
-
+				
 				// send the actual emails for this evalGroupId
-				externalLogic.sendEmails(from, 
-						toUserIds, 
-						"New evaluation created: " + eval.getTitle(), 
-						message);
-				log.info("Sent evaluation available message to " + toUserIds.length + " users");
+				try {
+					externalLogic.sendEmails(from, 
+							toUserIds, 
+							"New evaluation created: " + eval.getTitle(), 
+							message);
+					log.info("Sent evaluation available message to " + toUserIds.length + " users");
+				}
+				catch(Exception e) {
+					log.error(this + ".sendEvalResultsNotifications(" + evaluationId + "," + includeEvaluatees + "," + includeAdmins + ") externalLogic.sendEmails " + e);
+				}
 			}
 		}
 		return (String[]) sentMessages.toArray( new String[] {} );

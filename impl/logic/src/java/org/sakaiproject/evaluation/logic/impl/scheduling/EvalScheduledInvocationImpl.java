@@ -54,27 +54,33 @@ public class EvalScheduledInvocationImpl implements EvalScheduledInvocation {
 	 */
 	public void execute(String opaqueContext) {
 		
-		if(opaqueContext == null || opaqueContext.equals("")) {
-			log.warn(this + " opaqueContext is null or empty");
-			return;
+		try {
+		
+			if(opaqueContext == null || opaqueContext.equals("")) {
+				log.warn(this + " opaqueContext is null or empty");
+				return;
+			}
+			
+			if(log.isDebugEnabled())
+				log.debug("EvalScheduledInvocationImpl.execute(" + opaqueContext + ")");
+			
+			/*
+			 *	opaqueContext provides evaluation id and job type.
+			 */
+			String[] parts = opaqueContext.split("/");
+			if(parts.length != 2) {
+				log.warn(this + " opaqueContext parts != 2 " + opaqueContext);
+			}
+			String id = parts[0];
+			Long evalId = Long.valueOf(id);
+			String jobType = parts[1];
+			
+			//call method to fix state, send email and/or schedule a job
+			evalJobLogic.jobAction(evalId, jobType);
 		}
-		
-		if(log.isDebugEnabled())
-			log.debug("EvalScheduledInvocationImpl.execute(" + opaqueContext + ")");
-		
-		/*
-		 *	opaqueContext provides evaluation id and job type.
-		 */
-		String[] parts = opaqueContext.split("/");
-		if(parts.length != 2) {
-			log.warn(this + " opaqueContext parts != 2 " + opaqueContext);
+		catch(Exception e) {
+			log.error(this + ".execute(" + opaqueContext + ") " + e);
 		}
-		String id = parts[0];
-		Long evalId = Long.valueOf(id);
-		String jobType = parts[1];
-		
-		//call method to fix state, send email and/or schedule a job
-		evalJobLogic.jobAction(evalId, jobType);
 	}
 }
 

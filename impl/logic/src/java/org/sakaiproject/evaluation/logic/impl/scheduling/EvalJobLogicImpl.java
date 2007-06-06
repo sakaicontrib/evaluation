@@ -333,11 +333,16 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 		}
 		if(log.isDebugEnabled())
 			log.debug("EvalJobLogicImpl.scheduleJob(" + evaluationId + "," + runDate + "," + jobType + ")");
-		String opaqueContext = evaluationId.toString() + SEPARATOR + jobType;
-		scheduledInvocationManager.createDelayedInvocation(timeService.newTime(runDate.getTime()), COMPONENT_ID, opaqueContext);
-		if(log.isDebugEnabled())
-			log.debug("EvalJobLogicImpl.scheduleJob scheduledInvocationManager.createDelayedInvocation(" + 
-					timeService.newTime(runDate.getTime()) + "," + COMPONENT_ID + "," +  opaqueContext + ")");
+		try {
+			String opaqueContext = evaluationId.toString() + SEPARATOR + jobType;
+			scheduledInvocationManager.createDelayedInvocation(timeService.newTime(runDate.getTime()), COMPONENT_ID, opaqueContext);
+			if(log.isDebugEnabled())
+				log.debug("EvalJobLogicImpl.scheduleJob scheduledInvocationManager.createDelayedInvocation(" + 
+						timeService.newTime(runDate.getTime()) + "," + COMPONENT_ID + "," +  opaqueContext + ")");
+		}
+		catch(Exception e) {
+			log.error(this + ".scheduleJob(" + evaluationId + "," + runDate.toString() + "," + jobType + ") " + e);
+		}
 	}
 	
 	/**
@@ -348,20 +353,25 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	 */
 	private void scheduleReminder(Long evaluationId) {
 		
-		EvalEvaluation eval = evalEvaluationsLogic.getEvaluationById(evaluationId);
-		String opaqueContext = evaluationId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_REMINDER;
-		
-		//schedule reminders at selected intervals while the evaluation is available
-		long start = new Date().getTime();
-		long due = eval.getDueDate().getTime();
-		long available = due - start;
-		long interval = 1000 * 60 * 60 * 24 * eval.getReminderDays().intValue();
-		if(interval != 0 && available > interval) {
-			start = start + interval;
-			scheduledInvocationManager.createDelayedInvocation(timeService.newTime(start), COMPONENT_ID, opaqueContext);
-			if(log.isDebugEnabled())
-				log.debug("EvalJobLogicImpl.scheduleReminders(" + evaluationId + ") - scheduledInvocationManager.createDelayedInvocation( " + 
-						timeService.newTime(start) + "," + 	COMPONENT_ID + "," + opaqueContext);
+		try {
+			EvalEvaluation eval = evalEvaluationsLogic.getEvaluationById(evaluationId);
+			String opaqueContext = evaluationId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_REMINDER;
+			
+			//schedule reminders at selected intervals while the evaluation is available
+			long start = new Date().getTime();
+			long due = eval.getDueDate().getTime();
+			long available = due - start;
+			long interval = 1000 * 60 * 60 * 24 * eval.getReminderDays().intValue();
+			if(interval != 0 && available > interval) {
+				start = start + interval;
+				scheduledInvocationManager.createDelayedInvocation(timeService.newTime(start), COMPONENT_ID, opaqueContext);
+				if(log.isDebugEnabled())
+					log.debug("EvalJobLogicImpl.scheduleReminders(" + evaluationId + ") - scheduledInvocationManager.createDelayedInvocation( " + 
+							timeService.newTime(start) + "," + 	COMPONENT_ID + "," + opaqueContext);
+			}
+		}
+		catch(Exception e) {
+			log.error(this + ".scheduleReminder(" + evaluationId + ") " + e);
 		}
 	}
 
@@ -460,9 +470,14 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	public void sendAvailableEmail(Long evalId) {
 		//For now, we always want to include the evaluatees in the evaluations
 		boolean includeEvaluatees = true;
-		String[] sentMessages = emails.sendEvalAvailableNotifications(evalId, includeEvaluatees);
-		if(log.isDebugEnabled())
-			log.debug("EvalJobLogicImpl.sendAvailableEmail(" + evalId + ")" + " sentMessages: " + sentMessages.toString());
+		try {
+			String[] sentMessages = emails.sendEvalAvailableNotifications(evalId, includeEvaluatees);
+			if(log.isDebugEnabled())
+				log.debug("EvalJobLogicImpl.sendAvailableEmail(" + evalId + ")" + " sentMessages: " + sentMessages.toString());
+		}
+		catch(Exception e) {
+			log.error(this + ".sendAvailableEmail(" + evalId + ")" + e);
+		}
 	}
 
 	/**
@@ -472,9 +487,14 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	 */
 	public void sendCreatedEmail(Long evalId) {
 		boolean includeOwner = true;
-		String[] sentMessages = emails.sendEvalCreatedNotifications(evalId, includeOwner);
-		if(log.isDebugEnabled())
-			log.debug("EvalJobLogicImpl.sendCreatedEmail(" + evalId + ")" + " sentMessages: " + sentMessages.toString());
+		try {
+			String[] sentMessages = emails.sendEvalCreatedNotifications(evalId, includeOwner);
+			if(log.isDebugEnabled())
+				log.debug("EvalJobLogicImpl.sendCreatedEmail(" + evalId + ")" + " sentMessages: " + sentMessages.toString());
+		}
+		catch(Exception e) {
+			log.error(this + ".sendCreatedEmail(" + evalId + ")" + e);
+		}
 	}
 
 	/**
@@ -484,13 +504,17 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	 * @param evalId the EvalEvaluation id
 	 */
 	public void sendReminderEmail(Long evalId) {
-		EvalEvaluation eval = evalEvaluationsLogic.getEvaluationById(evalId);
-		externalLogic.registerEntityEvent(EVENT_EMAIL_REMINDER, eval);
-
-		String includeConstant = EvalConstants.EMAIL_INCLUDE_ALL;
-		String[] sentMessages = emails.sendEvalReminderNotifications(evalId, includeConstant);
-		if(log.isDebugEnabled())
-			log.debug("EvalJobLogicImpl.sendReminderEmail(" + evalId + ")" + " sentMessages: " + sentMessages.toString());
+		try {
+			EvalEvaluation eval = evalEvaluationsLogic.getEvaluationById(evalId);
+			externalLogic.registerEntityEvent(EVENT_EMAIL_REMINDER, eval);
+			String includeConstant = EvalConstants.EMAIL_INCLUDE_ALL;
+			String[] sentMessages = emails.sendEvalReminderNotifications(evalId, includeConstant);
+			if(log.isDebugEnabled())
+				log.debug("EvalJobLogicImpl.sendReminderEmail(" + evalId + ")" + " sentMessages: " + sentMessages.toString());
+		}
+		catch(Exception e) {
+			log.error(this + ".sendReminderEmail(" + evalId + ")" + e);
+		}
 	}
 
 	/**
@@ -506,39 +530,45 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 		boolean includeEvaluatees = true;
 		boolean includeAdmins = true;
 		
-		//if results are private, only send notification to owner
-		if(resultsPrivate.booleanValue()) {
-			includeEvaluatees = false;
-			includeAdmins = false;
-			String[] sentMessages = emails.sendEvalResultsNotifications(evalId, includeEvaluatees, includeAdmins);
-			if(log.isDebugEnabled())
-				log.debug("EvalJobLogicImpl.sendViewableEmail(" + evalId + "," + jobType + ", resultsPrivate " + resultsPrivate + ")" + " sentMessages: " + sentMessages.toString());
-		}
-		else {
-			if(EvalConstants.JOB_TYPE_VIEWABLE.equals(jobType)) {
-				String[] sentMessages = emails.sendEvalResultsNotifications(evalId, includeEvaluatees, includeAdmins);
-				if(log.isDebugEnabled())
-					log.debug("EvalJobLogicImpl.sendViewableEmail(" + evalId + "," + jobType + ", resultsPrivate " + resultsPrivate + ")" + " sentMessages: " + sentMessages.toString());
-				
-			}
-			else if(EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS.equals(jobType)) {
+		try {
+		
+			//if results are private, only send notification to owner
+			if(resultsPrivate.booleanValue()) {
 				includeEvaluatees = false;
-				String[] sentMessages = emails.sendEvalResultsNotifications(evalId, includeEvaluatees, includeAdmins);
-				if(log.isDebugEnabled())
-					log.debug("EvalJobLogicImpl.sendViewableEmail(" + evalId + "," + jobType + ", resultsPrivate " + resultsPrivate + ")" + " sentMessages: " + sentMessages.toString());
-				
-			}
-			else if(EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS.equals(jobType)) {
 				includeAdmins = false;
 				String[] sentMessages = emails.sendEvalResultsNotifications(evalId, includeEvaluatees, includeAdmins);
 				if(log.isDebugEnabled())
 					log.debug("EvalJobLogicImpl.sendViewableEmail(" + evalId + "," + jobType + ", resultsPrivate " + resultsPrivate + ")" + " sentMessages: " + sentMessages.toString());
-				
 			}
 			else {
-				if(log.isWarnEnabled())
-					log.warn(this + ".sendViewableEmail: for evalId " + evalId + " unrecognized job type " + jobType);
+				if(EvalConstants.JOB_TYPE_VIEWABLE.equals(jobType)) {
+					String[] sentMessages = emails.sendEvalResultsNotifications(evalId, includeEvaluatees, includeAdmins);
+					if(log.isDebugEnabled())
+						log.debug("EvalJobLogicImpl.sendViewableEmail(" + evalId + "," + jobType + ", resultsPrivate " + resultsPrivate + ")" + " sentMessages: " + sentMessages.toString());
+					
+				}
+				else if(EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS.equals(jobType)) {
+					includeEvaluatees = false;
+					String[] sentMessages = emails.sendEvalResultsNotifications(evalId, includeEvaluatees, includeAdmins);
+					if(log.isDebugEnabled())
+						log.debug("EvalJobLogicImpl.sendViewableEmail(" + evalId + "," + jobType + ", resultsPrivate " + resultsPrivate + ")" + " sentMessages: " + sentMessages.toString());
+					
+				}
+				else if(EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS.equals(jobType)) {
+					includeAdmins = false;
+					String[] sentMessages = emails.sendEvalResultsNotifications(evalId, includeEvaluatees, includeAdmins);
+					if(log.isDebugEnabled())
+						log.debug("EvalJobLogicImpl.sendViewableEmail(" + evalId + "," + jobType + ", resultsPrivate " + resultsPrivate + ")" + " sentMessages: " + sentMessages.toString());
+					
+				}
+				else {
+					if(log.isWarnEnabled())
+						log.warn(this + ".sendViewableEmail: for evalId " + evalId + " unrecognized job type " + jobType);
+				}
 			}
+		}
+		catch(Exception e) {
+			log.error(this + ".sendViewableEmail(" + evalId + "," +  jobType + "," + includeAdmins + ")" + e);
 		}
 	}
 }
