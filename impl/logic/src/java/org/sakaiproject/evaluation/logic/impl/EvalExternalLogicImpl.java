@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Set;
 
@@ -474,6 +475,15 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 		// handle the list of TO addresses
 		List userIds = Arrays.asList( toUserIds );
 		List l = userDirectoryService.getUsers( userIds );
+		
+		//email address validity is checked at entry but value can be null
+		for (ListIterator iterator = l.listIterator(); iterator.hasNext();) {
+			User u = (User)iterator.next();
+			if(u.getEmail().equals("")) {
+				iterator.remove();
+				log.warn("Could not get an email address for " + u.getDisplayName());
+			}
+		}
 
 		if (l == null || l.size() <= 0) {
 			throw new IllegalArgumentException("Could not get users from any provided userIds");
