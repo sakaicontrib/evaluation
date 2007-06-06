@@ -224,6 +224,7 @@ tool/src/webapp/content/images/ideal-high.jpg -text
 tool/src/webapp/content/images/ideal-low.jpg -text
 tool/src/webapp/content/images/ideal-mid.jpg -text
 tool/src/webapp/content/images/ideal-none.jpg -text
+tool/src/webapp/content/images/ideal-outside.jpg -text
 tool/src/webapp/content/js/blockUtils.js -text
 tool/src/webapp/content/js/evalEditSettings.js -text
 tool/src/webapp/content/js/evalUtils.js -text
