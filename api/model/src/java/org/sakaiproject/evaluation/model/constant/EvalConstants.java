@@ -466,7 +466,7 @@ public class EvalConstants {
 		"The results of an evaluation ($EvalTitle) for: $EvalGroupTitle are available now.\n" +
 		"\n" +
 		"You may access the evaluation results at: \n" +
-		"$URLtoViewResultsl \n" +
+		"$URLtoViewResults \n" +
 		"If the above link is not working then please follow the Alternate Instructions at the bottom of the message. \n" +
 		"Enter the site using your username and password. \n" +
 		"\n" +
