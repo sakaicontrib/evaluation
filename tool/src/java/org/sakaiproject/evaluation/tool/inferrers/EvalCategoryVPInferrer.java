@@ -14,7 +14,7 @@
 
 package org.sakaiproject.evaluation.tool.inferrers;
 
-import org.sakaiproject.entitybroker.EntityReference;
+import org.sakaiproject.entitybroker.IdEntityReference;
 import org.sakaiproject.evaluation.logic.entity.EvalCategoryEntityProvider;
 import org.sakaiproject.evaluation.tool.producers.ShowEvalCategoryProducer;
 import org.sakaiproject.evaluation.tool.viewparams.EvalCategoryViewParameters;
@@ -40,7 +40,7 @@ public class EvalCategoryVPInferrer implements EntityViewParamsInferrer {
 	 * @see uk.ac.cam.caret.sakai.rsf.entitybroker.EntityViewParamsInferrer#inferDefaultViewParameters(java.lang.String)
 	 */
 	public ViewParameters inferDefaultViewParameters(String reference) {
-		EntityReference ep = new EntityReference(reference);
+		IdEntityReference ep = new IdEntityReference(reference);
 		String category = ep.id;
 		// TODO - should this possibly authenticate first?
 		return new EvalCategoryViewParameters(ShowEvalCategoryProducer.VIEW_ID, category);
