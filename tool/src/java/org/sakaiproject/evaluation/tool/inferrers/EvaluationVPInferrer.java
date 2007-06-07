@@ -19,7 +19,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.sakaiproject.entitybroker.EntityID;
+import org.sakaiproject.entitybroker.EntityReference;
 import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
@@ -105,7 +105,7 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
      * @return
      */
     private ViewParameters inferDefaultViewParametersImpl(String reference) {
-        EntityID ep = new EntityID(reference);
+        EntityReference ep = new EntityReference(reference);
         EvalEvaluation evaluation = null;
         Long evaluationId = null;
         String evalGroupId = null;

@@ -14,7 +14,7 @@
 
 package org.sakaiproject.evaluation.tool.inferrers;
 
-import org.sakaiproject.entitybroker.EntityID;
+import org.sakaiproject.entitybroker.EntityReference;
 import org.sakaiproject.evaluation.logic.entity.TemplateEntityProvider;
 import org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer;
 import org.sakaiproject.evaluation.tool.viewparams.PreviewEvalParameters;
@@ -40,7 +40,7 @@ public class TemplateVPInferrer implements EntityViewParamsInferrer {
 	 * @see uk.ac.cam.caret.sakai.rsf.entitybroker.EntityViewParamsInferrer#inferDefaultViewParameters(java.lang.String)
 	 */
 	public ViewParameters inferDefaultViewParameters(String reference) {
-		EntityID ep = new EntityID(reference);
+		EntityReference ep = new EntityReference(reference);
 		Long templateId = new Long(ep.id);
 		// MAYBE add in restriction for access to template preview later? -AZ
 //		EvalTemplate template = templatesLogic.getTemplateById(templateId); 
