@@ -205,7 +205,6 @@ tool/src/java/org/sakaiproject/evaluation/tool/viewparams/TemplateViewParameters
 tool/src/java/org/sakaiproject/evaluation/tool/wrapper/EvalActionResultInterceptor.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/wrapper/ModelAccessWrapperInvoker.java -text
 tool/src/webapp/WEB-INF/applicationContext.xml -text
-tool/src/webapp/WEB-INF/classes/log4j.properties -text
 tool/src/webapp/WEB-INF/requestContext.xml -text
 tool/src/webapp/WEB-INF/sitemap.xml -text
 tool/src/webapp/WEB-INF/web.xml -text
