@@ -50,7 +50,7 @@ public class ItemBeanWBL implements WriteableBeanLocator {
 			if (name.startsWith(NEW_PREFIX)) {
 				togo = localTemplateLogic.newItem();
 			} else {
-				togo = localTemplateLogic.fetchItem(Long.valueOf(name));
+				togo = localTemplateLogic.fetchItem(new Long(name));
 			}
 			delivered.put(name, togo);
 		}

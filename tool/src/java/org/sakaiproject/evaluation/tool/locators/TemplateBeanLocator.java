@@ -41,16 +41,16 @@ public class TemplateBeanLocator implements BeanLocator {
 	
 	private Map delivered = new HashMap();
 	
-	public Object locateBean(String path) {
-		Object togo=delivered.get(path);
+	public Object locateBean(String name) {
+		Object togo=delivered.get(name);
 		if (togo == null){
-			if(path.startsWith(NEW_PREFIX)){
+			if(name.startsWith(NEW_PREFIX)){
 				togo = localTemplateLogic.newTemplate();
 			}
             else { 
-				togo = localTemplateLogic.fetchTemplate(new Long(Long.parseLong(path.trim())));
+				togo = localTemplateLogic.fetchTemplate(new Long(name));
 			}
-			delivered.put(path, togo);
+			delivered.put(name, togo);
 		}
 		return togo;
 	}
