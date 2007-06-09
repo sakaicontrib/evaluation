@@ -44,16 +44,16 @@ public class TemplateItemWBL implements WriteableBeanLocator {
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.beanutil.BeanLocator#locateBean(java.lang.String)
 	 */
-	public Object locateBean(String path) {
-		Object togo = delivered.get(path);
+	public Object locateBean(String name) {
+		Object togo = delivered.get(name);
 		if (togo == null) {
-			if (path.startsWith(NEW_PREFIX)) {
+			if (name.startsWith(NEW_PREFIX)) {
 				togo = localTemplateLogic.newTemplateItem();
 			}
 			else {
-				togo = localTemplateLogic.fetchTemplateItem(Long.valueOf(path));
+				togo = localTemplateLogic.fetchTemplateItem(new Long(name));
 			}
-			delivered.put(path, togo);
+			delivered.put(name, togo);
 		}
 		return togo;
 	}
