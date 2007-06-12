@@ -4,14 +4,9 @@
 		<configExtension>xml</configExtension>
 	</configExtensions>
 	<configs>
-		<config>impl/pack/src/webapp/WEB-INF/spring-hibernate.xml</config>
-		<config>tool/src/webapp/WEB-INF/requestContext.xml</config>
 		<config>impl/pack/src/webapp/WEB-INF/entity-providers.xml</config>
 		<config>impl/pack/src/webapp/WEB-INF/logic-support.xml</config>
-		<config>impl/pack/src/webapp/WEB-INF/components.xml</config>
-		<config>tool/src/webapp/WEB-INF/applicationContext.xml</config>
 		<config>impl/dao/src/test/hibernate-test.xml</config>
-		<config>impl/pack/src/webapp/WEB-INF/hibernate-hbms.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
@@ -19,13 +14,8 @@
 			<allowBeanDefinitionOverriding>false</allowBeanDefinitionOverriding>
 			<incomplete>true</incomplete>
 			<configs>
-				<config>impl/pack/src/webapp/WEB-INF/components.xml</config>
-				<config>impl/pack/src/webapp/WEB-INF/hibernate-hbms.xml</config>
-				<config>impl/pack/src/webapp/WEB-INF/spring-hibernate.xml</config>
 				<config>impl/pack/src/webapp/WEB-INF/logic-support.xml</config>
 				<config>impl/pack/src/webapp/WEB-INF/entity-providers.xml</config>
-				<config>tool/src/webapp/WEB-INF/applicationContext.xml</config>
-				<config>tool/src/webapp/WEB-INF/requestContext.xml</config>
 			</configs>
 		</configSet>
 		<configSet>
