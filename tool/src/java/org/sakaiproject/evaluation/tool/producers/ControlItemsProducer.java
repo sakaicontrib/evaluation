@@ -32,6 +32,7 @@ import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
+import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.view.ComponentChecker;
@@ -155,7 +156,8 @@ public class ControlItemsProducer implements ViewComponentProducer {
 					// label expert items
 					UIMessage.make(itemBranch, "item-expert", "controlitems.expert.label");
 				}
-				UIOutput.make(itemBranch, "item-text", item.getItemText());
+
+                UIVerbatim.make(itemBranch, "item-text", item.getItemText());
 
 				// local locked check is more efficient so do that first
 				if ( !item.getLocked().booleanValue() && 
