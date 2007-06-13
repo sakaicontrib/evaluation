@@ -81,9 +81,7 @@ public class RemoveEvalProducer implements ViewComponentProducer,ViewParamsRepor
 			//EvalEvaluation eval = logic.getEvaluationById(evalViewParams.templateId);
 			if(eval != null){
 				UIForm form = UIForm.make(tofill, "removeEvalForm");
-				UIMessage.make(form, "remove-eval-confirm-pre-name", "removeeval.confirm.pre.name");
-				UIOutput.make(form, "evalTitle", eval.getTitle());
-				UIMessage.make(form, "remove-eval-confirm-post-name", "removeeval.confirm.post.name");	
+				UIMessage.make(form, "remove-eval-confirm-name", "removeeval.confirm.name", new Object[] {eval.getTitle()});
 				UIMessage.make(form, "remove-eval-note", "removeeval.note");
 				
 				UIMessage.make(form, "eval-title-header","removeeval.title.header");
