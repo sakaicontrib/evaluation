@@ -23,11 +23,9 @@ import org.sakaiproject.evaluation.tool.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.tool.viewparams.ItemViewParameters;
 
 import uk.org.ponder.rsf.components.UIContainer;
-import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
-import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
@@ -63,8 +61,9 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 
 		UIMessage.make(tofill, "preview-item-title", "previewitem.page.title");
 
-		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), 
-				new SimpleViewParameters(SummaryProducer.VIEW_ID));
+        UIMessage.make(tofill, "summary-title", "summary.page.title");
+//		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), 
+//				new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
 		UIMessage.make(tofill, "modify-template-title", "modifytemplate.page.title");
 

@@ -201,11 +201,25 @@ public class TemplateItemUtils {
 
 		EvalTemplateItem templateItem = new EvalTemplateItem(item.getLastModified(), item.getOwner(), null, item,
 				new Integer(1), item.getCategory(), EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP);
-		templateItem.setUsesNA(Boolean.TRUE);
-		if ( EvalConstants.ITEM_TYPE_SCALED.equals(item.getClassification()) ) {
-			templateItem.setScaleDisplaySetting(EvalConstants.ITEM_SCALE_DISPLAY_FULL_COLORED);
+
+        if (item.getUsesNA() == null) {
+            templateItem.setUsesNA(Boolean.TRUE);
+        } else {
+            templateItem.setUsesNA(item.getUsesNA());
+        }
+
+        if ( EvalConstants.ITEM_TYPE_SCALED.equals(item.getClassification()) ) {
+            if (item.getScaleDisplaySetting() == null) {
+                templateItem.setScaleDisplaySetting(EvalConstants.ITEM_SCALE_DISPLAY_FULL_COLORED);
+            } else {
+                templateItem.setScaleDisplaySetting(item.getScaleDisplaySetting());
+            }
 		} else if ( EvalConstants.ITEM_TYPE_TEXT.equals(item.getClassification()) ) {
-			templateItem.setDisplayRows(new Integer(3));
+            if (item.getDisplayRows() == null) {
+                templateItem.setDisplayRows(new Integer(3));
+            } else {
+                templateItem.setDisplayRows(item.getDisplayRows());
+            }
 		}
 		return templateItem;
 	}
