@@ -26,7 +26,7 @@ public class ReportParameters extends SimpleViewParameters {
 
 	// Removed extends TemplateViewParameters
 	// this should never have extended the TemplateViewParameters since it is checked on by an interceptor,
-	// furthermore, this used templateId when it was actually passing an evaluaiton id which is just wrong,
+	// furthermore, this used templateId when it was actually passing an evaluation id which is just wrong,
 	// removed former authors for doing this so incorrectly -AZ
 
 	public Long evaluationId;
