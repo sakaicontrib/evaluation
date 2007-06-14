@@ -32,7 +32,7 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer;
 import org.sakaiproject.evaluation.tool.producers.TakeEvalProducer;
-import org.sakaiproject.evaluation.tool.producers.ViewReportProducer;
+import org.sakaiproject.evaluation.tool.producers.ReportsViewingProducer;
 import org.sakaiproject.evaluation.tool.viewparams.EvalTakeViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.PreviewEvalParameters;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
@@ -134,7 +134,7 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
                 // go to the reports view
                 if (currentUserId.equals(evaluation.getOwner()) ||
                         externalLogic.isUserAdmin(currentUserId)) { // TODO - make this a better check -AZ
-                    return new ReportParameters(ViewReportProducer.VIEW_ID, evaluationId, new String[] {evalGroupId});
+                    return new ReportParameters(ReportsViewingProducer.VIEW_ID, evaluationId, new String[] {evalGroupId});
                 } else {
                     // require auth
                     throw new SecurityException("User must be authenticated to access this page");

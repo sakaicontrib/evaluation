@@ -55,7 +55,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * @author:Will Humphries (whumphri@vt.edu)
  */
 
-public class ViewEssayResponseProducer implements ViewComponentProducer, NavigationCaseReporter, ViewParamsReporter {
+public class ReportsViewEssaysProducer implements ViewComponentProducer, NavigationCaseReporter, ViewParamsReporter {
 
 	public static final String VIEW_ID = "view_essay_response";
 	public String getViewID() {
@@ -101,11 +101,11 @@ public class ViewEssayResponseProducer implements ViewComponentProducer, Navigat
 
 		EssayResponseParams essayResponseParams = (EssayResponseParams) viewparams;
 		UIInternalLink.make(tofill, "report-groups-title", UIMessage.make("reportgroups.page.title"), 	 
-				new TemplateViewParameters(ChooseReportGroupsProducer.VIEW_ID, 
+				new TemplateViewParameters(ReportChooseGroupsProducer.VIEW_ID, 
 						essayResponseParams.evalId)); 
 		
 		UIInternalLink.make(tofill, "viewReportLink", UIMessage.make("viewreport.page.title"), 			
-				new ReportParameters(ViewReportProducer.VIEW_ID, 
+				new ReportParameters(ReportsViewingProducer.VIEW_ID, 
 						essayResponseParams.evalId, essayResponseParams.groupIds));	
 
 		// Note: The groups id's should always be passed whether it is for single item or all the items

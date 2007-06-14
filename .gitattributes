@@ -142,7 +142,6 @@ tool/src/java/org/sakaiproject/evaluation/tool/locators/SettingsWBL.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/locators/TemplateBeanLocator.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/locators/TemplateItemWBL.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateProducer.java -text
-tool/src/java/org/sakaiproject/evaluation/tool/producers/ChooseReportGroupsProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlEvaluationsProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlItemsProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlScalesProducer.java -text
@@ -171,11 +170,12 @@ tool/src/java/org/sakaiproject/evaluation/tool/producers/RemoveEvalProducer.java
 tool/src/java/org/sakaiproject/evaluation/tool/producers/RemoveItemProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/RemoveScaleProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/RemoveTemplateProducer.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/producers/ReportChooseGroupsProducer.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/producers/ReportsViewEssaysProducer.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/producers/ReportsViewingProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ShowEvalCategoryProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/SummaryProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/TakeEvalProducer.java -text
-tool/src/java/org/sakaiproject/evaluation/tool/producers/ViewEssayResponseProducer.java -text
-tool/src/java/org/sakaiproject/evaluation/tool/producers/ViewReportProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/AddItemControlRenderer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/BlockRenderer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/HeaderRenderer.java -text

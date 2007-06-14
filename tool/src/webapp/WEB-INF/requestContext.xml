@@ -385,7 +385,7 @@
 	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyEmailProducer">
 	</bean>
 
-	<bean class="org.sakaiproject.evaluation.tool.producers.ViewReportProducer">
+	<bean class="org.sakaiproject.evaluation.tool.producers.ReportsViewingProducer">
 		<property name="externalLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="itemsLogic"
@@ -398,7 +398,7 @@
 			ref="reportsBean" />			
 	</bean>
 
-	<bean class="org.sakaiproject.evaluation.tool.producers.ChooseReportGroupsProducer">
+	<bean class="org.sakaiproject.evaluation.tool.producers.ReportChooseGroupsProducer">
 		<property name="externalLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="evalsLogic"
@@ -407,7 +407,7 @@
 			ref="reportsBean" />				
 	</bean>
 
-	<bean class="org.sakaiproject.evaluation.tool.producers.ViewEssayResponseProducer">
+	<bean class="org.sakaiproject.evaluation.tool.producers.ReportsViewEssaysProducer">
 		<property name="externalLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="evalsLogic"
