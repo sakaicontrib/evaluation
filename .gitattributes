@@ -294,10 +294,10 @@ tool/src/webapp/content/templates/remove_item.html -text
 tool/src/webapp/content/templates/remove_scale.html -text
 tool/src/webapp/content/templates/remove_template.html -text
 tool/src/webapp/content/templates/report_groups.html -text
+tool/src/webapp/content/templates/report_view.html -text
 tool/src/webapp/content/templates/show_eval_category.html -text
 tool/src/webapp/content/templates/summary.html -text
 tool/src/webapp/content/templates/take_eval.html -text
 tool/src/webapp/content/templates/template_item.html -text
 tool/src/webapp/content/templates/view_essay_response.html -text
-tool/src/webapp/content/templates/view_report.html -text
 tool/src/webapp/tools/sakai.evaluation.tool.xml -text

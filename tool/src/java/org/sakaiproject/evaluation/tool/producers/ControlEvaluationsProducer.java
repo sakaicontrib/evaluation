@@ -32,6 +32,7 @@ import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.viewparams.PreviewEvalParameters;
+import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -385,7 +386,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 							countResponses > 0 ) {
 						UIInternalLink.make(evaluationRow, "closed-eval-report-link", 
 								UIMessage.make("controlevaluations.eval.report.link"),
-								new TemplateViewParameters(ReportChooseGroupsProducer.VIEW_ID, evaluation.getId() ));	
+								new ReportParameters(ReportChooseGroupsProducer.VIEW_ID, evaluation.getId() ));	
 					} else {
 						UIMessage.make(evaluationRow, "closed-eval-message", 
 								"controlevaluations.eval.report.awaiting.responses");

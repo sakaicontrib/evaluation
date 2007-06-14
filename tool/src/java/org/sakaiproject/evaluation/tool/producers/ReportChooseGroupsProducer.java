@@ -10,6 +10,8 @@ import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.ReportsBean;
+import org.sakaiproject.evaluation.tool.viewparams.ExpertItemViewParameters;
+import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
 import uk.org.ponder.rsf.components.UIBoundBoolean;
@@ -69,8 +71,8 @@ public class ReportChooseGroupsProducer implements ViewComponentProducer, Naviga
         UIInternalLink.make(tofill, "summary-toplink", 
                 UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
-        TemplateViewParameters evalViewParams = (TemplateViewParameters) viewparams;
-        Long evaluationId = evalViewParams.templateId; // TODO - this is not a templateId, stop writing crap! -AZ
+        ReportParameters reportViewParams = (ReportParameters) viewparams;
+        Long evaluationId = reportViewParams.evaluationId;
         if (evaluationId != null) {
             // get the evaluation from the id
             EvalEvaluation evaluation = evalsLogic.getEvaluationById(evaluationId);
@@ -81,21 +83,25 @@ public class ReportChooseGroupsProducer implements ViewComponentProducer, Naviga
                 throw new SecurityException("Invalid user attempting to access reports page: " + currentUserId);
             }
 
-            UIForm form = UIForm.make(tofill, "report-groups-form");
-            UIMessage.make(form, "report-group-main-message", "reportgroups.main.message");		
-            Long[] evalIds = { evaluationId };
-            Map evalGroups = evalsLogic.getEvaluationGroups(evalIds, false);
-            List groups = (List) evalGroups.get(evaluationId);
-            form.parameters.add(new UIELBinding("#{reportsBean.evalId}", evaluationId));
+            // create a copy of the VP and then set it to the right view (to avoid corrupting the original)
+            ReportParameters rvp = (ReportParameters) reportViewParams.copyBase();
 
-            // fxn call to backing bean to set groups in backing bean, and make a list there
-            // reportGroupsBean.setPossiblegroups(groups);
+            // set the target for the get form
+            rvp.viewID = ReportsViewingProducer.VIEW_ID;
+
+            // use a get form which already has the evaluation id in it
+            UIForm form = UIForm.make(tofill, "report-groups-form", rvp);
+            UIMessage.make(form, "report-group-main-message", "reportgroups.main.message");		
+            //form.parameters.add(new UIELBinding("#{reportsBean.evalId}", evaluationId));
+
+            Map evalGroups = evalsLogic.getEvaluationGroups(new Long[] {evaluationId}, false);
+            List groups = (List) evalGroups.get(evaluationId);
             for (int i = 0; i < groups.size(); i++) {
                 UIBranchContainer groupBranch = UIBranchContainer.make(form, "groupRow:", i+"");
                 EvalGroup currGroup = (EvalGroup) groups.get(i);
                 // checkbox - groupCheck
                 UIBoundBoolean.make(groupBranch, "groupCheck",
-                        "#{reportsBean.groupIds." + currGroup.evalGroupId + "}", Boolean.FALSE);
+                        "#{groupIds." + currGroup.evalGroupId + "}", Boolean.FALSE);
                 // uioutput - groupname
                 UIOutput.make(groupBranch, "groupName", currGroup.title);
             }
@@ -121,7 +127,7 @@ public class ReportChooseGroupsProducer implements ViewComponentProducer, Naviga
      * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
      */
     public ViewParameters getViewParameters() {
-        return new TemplateViewParameters();
+        return new ReportParameters();
     }
 
 }

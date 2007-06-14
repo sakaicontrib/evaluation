@@ -35,6 +35,7 @@ import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.viewparams.EvalTakeViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.PreviewEvalParameters;
+import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -324,7 +325,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 					Integer respReqToViewResults = (Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS);
 					if ( (respReqToViewResults.intValue()<=ctResponses) || (ctResponses>=ctEnrollments) ) {
 						UIInternalLink.make(evalrow, "viewReportLink", UIMessage.make("viewreport.page.title"), 
-								new TemplateViewParameters(ReportChooseGroupsProducer.VIEW_ID, eval.getId() ));	
+								new ReportParameters(ReportChooseGroupsProducer.VIEW_ID, eval.getId() ));
 					} else {
 						UIMessage.make(evalrow, "evalAdminStatus", "summary.status."+evalStatus);
 					}
