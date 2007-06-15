@@ -30,6 +30,7 @@ import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.utils.ArrayUtils;
 import org.sakaiproject.evaluation.logic.utils.EvalUtils;
+import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
@@ -572,8 +573,12 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 	}
 
 	public List getTemplateItemsForEvaluation(Long evalId, String userId, String hierarchyLevel) {
-		// TODO Auto-generated method stub
-		throw new IllegalStateException("Not implemented yet");
+        EvalEvaluation evaluation = (EvalEvaluation) dao.findById(EvalEvaluation.class, evalId);
+        if (evaluation == null) {
+            throw new IllegalStateException("Cannot find evaluation with this id: " + evalId);
+        }
+
+        throw new IllegalStateException("Not implemented yet");
 	}
 
 
