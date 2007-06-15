@@ -346,8 +346,7 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
 				// force the item to be set correctly
 				answer.setItem(answer.getTemplateItem().getItem());
 
-				// check that the associated id is filled in for associated
-				// items
+				// check that the associated id is filled in for associated items
 				if (EvalConstants.ITEM_CATEGORY_COURSE.equals(answer.getTemplateItem().getItemCategory())) {
 					if (answer.getAssociatedId() != null) {
 						log.warn("Course answers should have the associated id field blank, for templateItem: "

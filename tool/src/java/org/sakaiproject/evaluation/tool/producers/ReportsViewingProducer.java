@@ -130,6 +130,8 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
             // get template from DAO 
             EvalTemplate template = evaluation.getTemplate();
 
+            // TODO - this should respect the user
+            //List allTemplateItems = itemsLogic.getTemplateItemsForEvaluation(evaluationId, null, null);
             List allTemplateItems = new ArrayList(template.getTemplateItems());
             if (!allTemplateItems.isEmpty()) {
                 if (reportViewParams.groupIds == null || reportViewParams.groupIds.length == 0) {
@@ -163,18 +165,15 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
                     courseSection = UIBranchContainer.make(tofill, "courseSection:");
                     UIMessage.make(courseSection, "report-course-questions", "viewreport.itemlist.coursequestions");
                     for (int i = 0; i < answerableItemsList.size(); i++) {
-                        EvalTemplateItem tempItem1 = (EvalTemplateItem) answerableItemsList.get(i);
+                        EvalTemplateItem templateItem = (EvalTemplateItem) answerableItemsList.get(i);
 
-                        String cat = tempItem1.getItemCategory();
-                        UIBranchContainer radiobranch = null;
-
-                        if (cat.equals(EvalConstants.ITEM_CATEGORY_COURSE)) {
-                            radiobranch = UIBranchContainer.make(courseSection, "itemrow:first", i + "");
+                        if (EvalConstants.ITEM_CATEGORY_COURSE.equals(templateItem.getItemCategory())) {
+                            UIBranchContainer branch = UIBranchContainer.make(courseSection, "itemrow:first", i + "");
                             if (i % 2 == 1)
-                                radiobranch.decorators = new DecoratorList(new UIColourDecorator(null, Color
-                                        .decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
+                                branch.decorators = new DecoratorList(new UIColourDecorator(null, 
+                                        Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
 
-                            renderTemplateItemResults(tempItem1, evaluation.getId(), displayNumber, radiobranch, courseSection);
+                            renderTemplateItemResults(templateItem, evaluation.getId(), displayNumber, branch);
                             displayNumber++;
                         }
                     }
@@ -185,17 +184,15 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
                     instructorSection = UIBranchContainer.make(tofill, "instructorSection:");
                     UIMessage.make(instructorSection, "report-instructor-questions", "viewreport.itemlist.instructorquestions");
                     for (int i = 0; i < answerableItemsList.size(); i++) {
-                        EvalTemplateItem tempItem1 = (EvalTemplateItem) answerableItemsList.get(i);
-                        String cat = tempItem1.getItemCategory();
-                        UIBranchContainer radiobranch = null;
+                        EvalTemplateItem templateItem = (EvalTemplateItem) answerableItemsList.get(i);
 
-                        if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR)) {
-                            radiobranch = UIBranchContainer.make(instructorSection, "itemrow:first", i + "");
+                        if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(templateItem.getItemCategory())) {
+                            UIBranchContainer branch = UIBranchContainer.make(instructorSection, "itemrow:first", i + "");
                             if (i % 2 == 1)
-                                radiobranch.decorators = new DecoratorList(new UIColourDecorator(null, Color
-                                        .decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
+                                branch.decorators = new DecoratorList(new UIColourDecorator(null, 
+                                        Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
 
-                            renderTemplateItemResults(tempItem1, evaluation.getId(), i, radiobranch, instructorSection);
+                            renderTemplateItemResults(templateItem, evaluation.getId(), i, branch);
                             displayNumber++;
                         }
                     } // end of for loop				
@@ -209,34 +206,39 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
 
     }
 
-    private void renderTemplateItemResults(EvalTemplateItem myTempItem, Long evalId, int i, UIBranchContainer radiobranch, UIContainer tofill) {
+    /**
+     * @param templateItem
+     * @param evalId
+     * @param displayNum
+     * @param branch
+     */
+    private void renderTemplateItemResults(EvalTemplateItem templateItem, Long evalId, int displayNum, UIBranchContainer branch) {
 
-        EvalItem myItem = myTempItem.getItem();
+        EvalItem item = templateItem.getItem();
 
-        if (TemplateItemUtils.getTemplateItemType(myTempItem).equals(EvalConstants.ITEM_TYPE_SCALED)) {
+        if (TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_SCALED)) {
             //normal scaled type
-            EvalScale scale = myItem.getScale();
+            EvalScale scale = item.getScale();
             String[] scaleOptions = scale.getOptions();
             int optionCount = scaleOptions.length;
-            //	String scaleValues[] = new String[optionCount];
             String scaleLabels[] = new String[optionCount];
 
-            Boolean useNA = myTempItem.getUsesNA();
+            Boolean useNA = templateItem.getUsesNA();
 
-            UIBranchContainer scaledSurvey = UIBranchContainer.make(radiobranch, "scaledSurvey:");
+            UIBranchContainer scaled = UIBranchContainer.make(branch, "scaledSurvey:");
 
-            UIOutput.make(scaledSurvey, "itemNum", (new Integer(i)).toString());
-            UIOutput.make(scaledSurvey, "itemText", myItem.getItemText());
+            UIOutput.make(scaled, "itemNum", displayNum+"");
+            UIOutput.make(scaled, "itemText", item.getItemText());
 
             if (useNA.booleanValue() == true) {
-                UIBranchContainer radiobranch3 = UIBranchContainer.make(scaledSurvey, "showNA:");
+                UIBranchContainer radiobranch3 = UIBranchContainer.make(scaled, "showNA:");
                 UIBoundBoolean.make(radiobranch3, "itemNA", useNA);
             }
 
-            List itemAnswers = responsesLogic.getEvalAnswers(myItem.getId(), evalId, groupIds);
+            List itemAnswers = responsesLogic.getEvalAnswers(item.getId(), evalId, groupIds);
 
             for (int x = 0; x < scaleLabels.length; x++) {
-                UIBranchContainer answerbranch = UIBranchContainer.make(scaledSurvey, "answers:", x + "");
+                UIBranchContainer answerbranch = UIBranchContainer.make(scaled, "answers:", x + "");
                 UIOutput.make(answerbranch, "responseText", scaleOptions[x]);
                 int answers = 0;
                 //count the number of answers that match this one
@@ -249,15 +251,15 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
                 UIOutput.make(answerbranch, "responseTotal", answers + "", x + "");
             }
 
-        } else if (myItem.getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)) { //"Short Answer/Essay"
-            UIBranchContainer essay = UIBranchContainer.make(radiobranch, "essayType:");
-            UIOutput.make(essay, "itemNum", i + "");
-            UIOutput.make(essay, "itemText", myItem.getItemText());
+        } else if (item.getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)) { //"Short Answer/Essay"
+            UIBranchContainer essay = UIBranchContainer.make(branch, "essayType:");
+            UIOutput.make(essay, "itemNum", displayNum + "");
+            UIOutput.make(essay, "itemText", item.getItemText());
 
             UIInternalLink.make(essay, "essayResponse", 
-                    new EssayResponseParams(ReportsViewEssaysProducer.VIEW_ID, evalId, myTempItem.getId(), groupIds));
+                    new EssayResponseParams(ReportsViewEssaysProducer.VIEW_ID, evalId, templateItem.getId(), groupIds));
         } else {
-            log.warn("Skipped invalid item type: TI: " + myTempItem.getId() + ", Item: " + myItem.getId() + ", type: " + myItem.getClassification());
+            log.warn("Skipped invalid item type: TI: " + templateItem.getId() + ", Item: " + item.getId() + ", type: " + item.getClassification());
         }
     }
 
