@@ -7,10 +7,6 @@
  * A copy of the Educational Community License has been included in this 
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
  * 
- * Contributors:
- * Aaron Zeckoski (aaronz@vt.edu)
- * Will Humphries (whumphri@vt.edu)
- * Kapil Ahuja (kahuja@vt.edu)
  *****************************************************************************/
 
 package org.sakaiproject.evaluation.tool.producers;
@@ -68,12 +64,12 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 /**
  * This page is for a user with take evaluation permission to fill and submit the evaluation
  * 
- * @author Will Humphries (whumphri@vt.edu)
- * @author Kapil Ahuja (kahuja@vt.edu)
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter, ActionResultInterceptor {
 
+    // removed original authors for writing code that does not even work -AZ
+    
 	public static final String VIEW_ID = "take_eval";
 	public String getViewID() {
 		return VIEW_ID;
@@ -427,6 +423,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 		// if we displayed a block, renderedItem has been incremented, increment displayNumber by the number of blockChildren,
 		// this happens to coincide with the number of current answer OTP strings exactly -AZ
 		if (caOTP != null) displayNumber += caOTP.length;
+        renderedItemCount++;
 	}
 
 
