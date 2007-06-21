@@ -362,10 +362,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
 			// send the actual emails for this evalGroupId
 			try {
-				externalLogic.sendEmails(from, 
-						toUserIds, 
-						"New evaluation created: " + eval.getTitle(), 
-						message);
+				externalLogic.sendEmails(from, toUserIds, "New evaluation created: " + eval.getTitle(),	message);
 				log.info("Sent evaluation created message to " + toUserIds.length + " users");
 			}
 			catch(Exception e) {
