@@ -132,12 +132,18 @@ public class TemplateBBean {
 			if (i < ordered.size()) {
 				EvalTemplateItem next = (EvalTemplateItem) ordered.get(i);
 				int nextnum = next.getDisplayOrder().intValue();
+				// only make a write or adjustment if we would be about to commit two
+				// items with the same index. 
 				if (itnum == nextnum) {
+					// if the user requested this item XOR it is in the right place,
+					// emit this one second. That is, if the user wants it here and there
+					// is no conflict, write it here.
 					if (delivered.containsValue(item) ^ (itnum == i)) {
 						emit(next, i++);
 						emit(item, i++);
 						continue;
-					} else {
+					} 
+					else {
 						emit(item, i++);
 						emit(next, i++);
 						continue;
