@@ -1,15 +1,15 @@
 /******************************************************************************
  * SummaryProducer.java - created by aaronz@vt.edu on Nov 10, 2006
- * 
+ *
  * Copyright (c) 2007 Virginia Polytechnic Institute and State University
  * Licensed under the Educational Community License version 1.0
- * 
- * A copy of the Educational Community License has been included in this 
+ *
+ * A copy of the Educational Community License has been included in this
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
- * 
+ *
  * Contributors:
  * Aaron Zeckoski (aaronz@vt.edu) - primary
- * 
+ *
  *****************************************************************************/
 
 package org.sakaiproject.evaluation.tool.producers;
@@ -58,7 +58,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  * The summary producer rewrite
  * This creates a summary page for any user of the evaluation system and is the
  * starting page for anyone entering the system
- * 
+ *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class SummaryProducer implements ViewComponentProducer, DefaultView, NavigationCaseReporter  {
@@ -84,7 +84,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 	public void setResponsesLogic(EvalResponsesLogic responsesLogic) {
 		this.responsesLogic = responsesLogic;
 	}
-	
+
 	private EvalTemplatesLogic templatesLogic;
 	public void setTemplatesLogic(EvalTemplatesLogic templatesLogic) {
 		this.templatesLogic = templatesLogic;
@@ -94,7 +94,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 	public void setSettings(EvalSettings settings) {
 		this.settings = settings;
 	}
-	
+
 	private Locale locale;
 	public void setLocale(Locale locale) {
 		this.locale = locale;
@@ -117,28 +117,29 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 
 		// page title
 		UIMessage.make(tofill, "page-title", "summary.page.title");
-		
+		UIMessage.make(tofill, "page-instruction", "summary.page.instruction");
+
 		/*
 		 * top links here
 		 */
 		if (userAdmin) {
 			UIInternalLink.make(tofill, "administrate-toplink",
-					UIMessage.make("administrate.page.title"), 
+					UIMessage.make("administrate.page.title"),
 				new SimpleViewParameters(AdministrateProducer.VIEW_ID));
 		}
 
 		if (createTemplate) {
 			UIInternalLink.make(tofill, "control-templates-link",
-					UIMessage.make("controltemplates.page.title"), 
+					UIMessage.make("controltemplates.page.title"),
 				new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
 			UIInternalLink.make(tofill, "control-items-link",
-					UIMessage.make("controlitems.page.title"), 
+					UIMessage.make("controlitems.page.title"),
 				new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
 		}
 
 		if (beginEvaluation) {
 			UIInternalLink.make(tofill, "control-evaluations-link",
-					UIMessage.make("controlevaluations.page.title"), 
+					UIMessage.make("controlevaluations.page.title"),
 				new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
 		}
 
@@ -215,25 +216,25 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 						if (response != null && response.getEndTime() != null) {
 							if (eval.getModifyResponsesAllowed().booleanValue()) {
 								// take eval link when pending
-								UIInternalLink.make(evalcourserow, "evaluationCourseLink", title, 
+								UIInternalLink.make(evalcourserow, "evaluationCourseLink", title,
 										new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID,
 												eval.getId(), groupId, response.getId()) );
 								status = "summary.status.pending";
 							} else {
 								// preview only when completed
-								UIInternalLink.make(evalcourserow, "evaluationCourseLink", title, 
+								UIInternalLink.make(evalcourserow, "evaluationCourseLink", title,
 										new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID,
 												eval.getId(), eval.getTemplate().getId(), groupId) );
 								status = "summary.status.completed";
 							}
 						} else {
 							// take eval link when pending
-							UIInternalLink.make(evalcourserow, "evaluationCourseLink", title, 
+							UIInternalLink.make(evalcourserow, "evaluationCourseLink", title,
 									new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID,
 											eval.getId(), groupId) );
 							status = "summary.status.pending";
 						}
-						UIMessage.make(evalcourserow, "evaluationCourseStatus", status );					
+						UIMessage.make(evalcourserow, "evaluationCourseStatus", status );
 					}
 				}
 			}
@@ -245,16 +246,16 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 
 		/*
 		 * In the list of parameters:
-		 * first true => get recent only, and 
+		 * first true => get recent only, and
 		 * second true => get not-owned evals.
 		 */
 		List evals = evaluationsLogic.getVisibleEvaluationsForUser(currentUserId, true, true);
-		
+
 		/*
 		 * If the person is an admin, then just point new evals to
-		 * existing object.  
-		 * If the person is not an admin then only show owned evals + 
-		 * not-owned evals that are available for viewing results.  
+		 * existing object.
+		 * If the person is not an admin then only show owned evals +
+		 * not-owned evals that are available for viewing results.
 		 */
 		List newEvals;
 		if (userAdmin) {
@@ -263,32 +264,32 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			newEvals = new ArrayList();
 			int numEvals = evals.size();
 			Date currentDate = new Date();
-			
+
 			for (int count = 0; count < numEvals; count++) {
 				EvalEvaluation evaluation = (EvalEvaluation) evals.get(count);
 
 				// Add the owned evals
 				if (currentUserId.equals(evaluation.getOwner())) {
-					newEvals.add(evaluation); 
+					newEvals.add(evaluation);
 				} else {
-					// From the not-owned evals show those 
+					// From the not-owned evals show those
 					// that are available for viewing results.
 					if (currentDate.before(evaluation.getViewDate())) {
 						// Do nothing
 					} else {
-						newEvals.add(evaluation); 
+						newEvals.add(evaluation);
 					}
 				}
 			}
 		}
-		
+
 		if (! newEvals.isEmpty()) {
 			UIBranchContainer evalAdminBC = UIBranchContainer.make(tofill, "evalAdminBox:");
-			UIInternalLink.make(evalAdminBC, "evaladmin-title", 
-					UIMessage.make("summary.evaluations.admin"), 
+			UIInternalLink.make(evalAdminBC, "evaladmin-title",
+					UIMessage.make("summary.evaluations.admin"),
 					new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID) );
 			UIForm evalAdminForm = UIForm.make(evalAdminBC , "evalAdminForm");
-			
+
 			UIMessage.make(evalAdminForm, "evaladmin-header-title","summary.header.title");
 			UIMessage.make(evalAdminForm, "evaladmin-header-status", "summary.header.status");
 			UIMessage.make(evalAdminForm, "evaladmin-header-date", "summary.header.date");
@@ -296,11 +297,11 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			for (Iterator iter = newEvals.iterator(); iter.hasNext();) {
 				EvalEvaluation eval = (EvalEvaluation) iter.next();
 
-				UIBranchContainer evalrow = UIBranchContainer.make(evalAdminForm, 
+				UIBranchContainer evalrow = UIBranchContainer.make(evalAdminForm,
 						"evalAdminList:", eval.getId().toString() );
-				
+
 				Date date;
-				
+
 				String evalStatus=evaluationsLogic.getEvaluationState(eval.getId());
 				if (evalStatus == EvalConstants.EVALUATION_STATE_INQUEUE){
 					date=eval.getStartDate();
@@ -324,7 +325,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 					int ctEnrollments = getTotalEnrollmentsForEval(eval.getId());
 					Integer respReqToViewResults = (Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS);
 					if ( (respReqToViewResults.intValue()<=ctResponses) || (ctResponses>=ctEnrollments) ) {
-						UIInternalLink.make(evalrow, "viewReportLink", UIMessage.make("viewreport.page.title"), 
+						UIInternalLink.make(evalrow, "viewReportLink", UIMessage.make("viewreport.page.title"),
 								new ReportParameters(ReportChooseGroupsProducer.VIEW_ID, eval.getId() ));
 					} else {
 						UIMessage.make(evalrow, "evalAdminStatus", "summary.status."+evalStatus);
@@ -332,16 +333,16 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 				}
 				else date=eval.getStartDate();
 
-				
+
 				/**
-				 * 
+				 *
 				 * 1) if a evaluation is queued, title link go to EditSettings page with populated data
 				 * 2) if a evaluation is active, title link go to EditSettings page with populated data
 				 * but start date should be disabled
 				 * 3) if a evaluation is closed, title link go to previewEval page with populated data
 				 */
 				if (evalStatus==EvalConstants.EVALUATION_STATE_CLOSED || evalStatus==EvalConstants.EVALUATION_STATE_VIEWABLE){
-					UIInternalLink.make(evalrow, "evalAdminTitleLink_preview", eval.getTitle(), 
+					UIInternalLink.make(evalrow, "evalAdminTitleLink_preview", eval.getTitle(),
 							new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID,
 									eval.getId(), eval.getTemplate().getId()) );
 				} else {
@@ -349,7 +350,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 						"#{evaluationBean.editEvalSettingAction}");
 					evalEditUIC.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", eval.getId()));
 				}
-				
+
 				UIMessage.make(evalrow, "evalAdminDateLabel", "summary.label."+evalStatus);
 				UIOutput.make(evalrow, "evalAdminDate", df.format(date) );
 			}
@@ -371,7 +372,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			if (evaluatedContexts.size() > 0) {
 				for (int i=0; i<evaluatedContexts.size(); i++) {
 					if (i > maxGroupsToDisplay) {
-						UIMessage.make(contextsBC, "evaluatedListNone", "summary.sitelisting.maxshown", 
+						UIMessage.make(contextsBC, "evaluatedListNone", "summary.sitelisting.maxshown",
 								new Object[] { new Integer(evaluatedContexts.size() - maxGroupsToDisplay) });
 						break;
 					}
@@ -388,7 +389,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			if (evaluateContexts.size() > 0) {
 				for (int i=0; i<evaluateContexts.size(); i++) {
 					if (i > maxGroupsToDisplay) {
-						UIMessage.make(contextsBC, "evaluateListNone", "summary.sitelisting.maxshown", 
+						UIMessage.make(contextsBC, "evaluateListNone", "summary.sitelisting.maxshown",
 								new Object[] { new Integer(evaluateContexts.size() - maxGroupsToDisplay) });
 						break;
 					}
@@ -438,7 +439,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 
 	/**
 	 * Gets the total count of enrollments for an evaluation
-	 * 
+	 *
 	 * @param evaluationId
 	 * @return total number of users with take eval perms in this evaluation
 	 */
@@ -455,5 +456,5 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		}
 		return totalEnrollments;
 	}
-	
+
 }
