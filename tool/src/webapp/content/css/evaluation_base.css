@@ -255,14 +255,14 @@ table.sample td {
 	text-align:left;
 }
 
-DIV.summaryBox {
+/*DIV.summaryBox {
 	width: 97%;
 	height: 100%;
 	border: 2px #999 solid;
 	padding: 3px;
 	margin-bottom: 8px;
 }
-
+*/
 .summaryHeader {
 	font-size: 1.1em;
 	font-weight: bold;
@@ -490,3 +490,26 @@ label.block{
 .messageStepGraphic .last-cur-step{
 	background:#fff url(../images/last-cur-step.gif) top left no-repeat;
 }
+.summaryBox{
+	border:1px solid #aaa;margin:1em 0;padding:.5em
+	
+}
+.summaryCol1{
+	width:49.5%;height:100%;overflow:hidden;float:left
+}
+.summaryCol2{
+	width:49.5%;height:100%;overflow:hidden;float:right
+}
+
+.summaryBox h4{
+	background:#ddd !important;
+	margin:-.5em -.5em 0 -.5em;
+	padding:.5em;
+	border-bottom:1px solid #aaa
+}
+	
+.summaryBox table th{
+	background:#eee;
+	border:none
+}
+
