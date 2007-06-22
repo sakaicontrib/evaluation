@@ -7,7 +7,7 @@
     <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
     <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
     <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
-	<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+	<link href="/sakai-evaluation-tool/content/css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
 </head>
 
 <body rsf:id="scr=sakai-body">
@@ -32,14 +32,13 @@
             </ul>
          </div>
                                                                                                                      
-         <h3 rsf:id="page-title">Dashboard</h3>
-
-
+         <h3 rsf:id="page-title">Evaluations dashboard</h3>
+         <p class="instruction" rsf:id="page-instruction">Quick links to evaluation items</p>
          <div style="clear:both:height:100%;width:95%;overflow:hidden;padding:0">
 			<div class="summaryCol1">
-				<div rsf:id="evaluationsBox:" class="summaryBox">
-					<h4 rsf:id="evaluations-title">Current evaluations I need to take</h4>
-					<div rsf:id="evaluationsList:">
+			<div rsf:id="evaluationsBox:" class="summaryBox">
+				<h4 rsf:id="evaluations-title">Current evaluations I need to take</h4>
+					<div rsf:id="evaluationsList:" class="innerPanel">
 					<!-- // gsilver: reformatted table to 4 cols, added placeholder rsf:id for things-->
 
 						<table cellspacing="0" cellpadding="0" width="99%" border="0" class="listHier  lines nolines">
@@ -74,16 +73,15 @@
 						</table>
 					</div>
 				</div>
-								<div rsf:id="siteListingBox:" class="summaryBox">
+				
+				<div rsf:id="siteListingBox:" class="summaryBox">
 					<h4 rsf:id="sitelisting-title">Site/Group Listing</h4>
-					<div>
+					<div class="innerPanel">
 						<h5 rsf:id="sitelisting-evaluated-text">Sites you can be evaluated in:</h5>
 						<ol class="summaryEvaluateList">
 							<li rsf:id="evaluatedList:"><span rsf:id="evaluatedListTitle">Site/Group Title</span></li>
 						</ol>
 						<p rsf:id="evaluatedListNone" class="instruction indnt2">No items to list</p>
-					</div>
-					<div>
 						<h5 rsf:id="sitelisting-evaluate-text">Sites you can evaluate:</h5>
 						<ol class="summaryEvaluateList">
 							<li rsf:id="evaluateList:"><span rsf:id="evaluateListTitle">Site/Group Title</span></li>
@@ -96,72 +94,75 @@
 			<div class="summaryCol2">
 				<div rsf:id="notificationsBox:"  class="summaryBox">
 					<h4 rsf:id="notifications-title">Notifications</h4>
-					<p rsf:id="notifications-higher-level" class="instruction">An evaluation has been assigned from a higher level:</p>
-					<!-- // gsilver: reformatted table to 4 cols, added placeholder rsf:id for things
-						 - if notifications have a "type" and expect an "action" both of these should be reclected in the UI - that is,
-						 	a user would need to know what the link does without clicking on it...
-						 -->
-					<table cellspacing="0" cellpadding="0" width="99%" border="0" class="listHier lines nolines">
-						<tr>
-							<th  rsf:id="notification-title-title">
-								Title
-							</th>
-							<th rsf:id="notification-from-title">
-								From
-							</th>
-							<th rsf:id="notification-date-title">
-								Date
-							</th>
-							<th rsf:id="notification-addeditems-title">
-								Added items
-							</th>
-						</tr>
-						<tr>
-							<td><a href="evaluation_settings.html">Evaluation: Eval Title 1</a></td>
-							<td>From: College of Science</td>
-							<td>Add/Modify before: 09/15/2005</td>
-							<td>0</td>
-						</tr>
-					</table>
-				</div>
-
-			<div rsf:id="evalAdminBox:"  class="summaryBox">
-					<h4><a rsf:id="evaladmin-title" href="control_panel.html">Evaluations I am creating or administering</a></h4>
-					<form rsf:id="evalAdminForm" action="evaluation_settings.html">
-						<table cellspacing="0" cellpadding="0" width="99%" class="listHier  lines nolines" border="0">
-							<thead>
-								<tr>
-									<th>Title</th>
-									<th></th>
-									<th>Status</th>
-									<th>Date</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr rsf:id="evalAdminList:">
-									<!--// gsilver: this needs to be a plain text title -->
-									<td rsf:id="evalAdminTitle">
-										Preview: Evaluation Title 1
-									</td>
-									<td class="itemAction">
-									
-									<a rsf:id="evalAdminTitleLink" href="evaluation_settings.html">Edit</a> |
-									<a rsf:id="evalAdminTitleLink_preview" href="preview_eval.html">Preview</a>
-									<!--// gsilver: this needs to be a plain link, not a submit disguised as a link...
-									<input rsf:id="evalAdminTitleLink_edit" value="Edit" type="submit" class="makeLink"/> -->
-
-									</td>
-									<td>
-										<span rsf:id="evalAdminStatus">Starts</span> <a href="view_report.html" rsf:id="viewReportLink"></a>
-									</td>
-									<td>
-										<span rsf:id="evalAdminDateLabel">Starts</span>:
-										<span rsf:id="evalAdminDate">09/20/2005</span>
-									</td>
-								</tr>
-							</tbody>
+					<div class="innerPanel">
+						<p rsf:id="notifications-higher-level" class="instruction">An evaluation has been assigned from a higher level:</p>
+						<!-- // gsilver: reformatted table to 4 cols, added placeholder rsf:id for things
+							 - if notifications have a "type" and expect an "action" both of these should be reclected in the UI - that is,
+								a user would need to know what the link does without clicking on it...
+							 -->
+						<table cellspacing="0" cellpadding="0" width="99%" border="0" class="listHier lines nolines">
+							<tr>
+								<th  rsf:id="notification-title-title">
+									Title
+								</th>
+								<th rsf:id="notification-from-title">
+									From
+								</th>
+								<th rsf:id="notification-date-title">
+									Date
+								</th>
+								<th rsf:id="notification-addeditems-title">
+									Added items
+								</th>
+							</tr>
+							<tr>
+								<td><a href="evaluation_settings.html">Evaluation: Eval Title 1</a></td>
+								<td>From: College of Science</td>
+								<td>Add/Modify before: 09/15/2005</td>
+								<td>0</td>
+							</tr>
 						</table>
-					</form>
+					</div>	
+				</div>
+			<div rsf:id="evalAdminBox:"  class="summaryBox">
+				<h4><a rsf:id="evaladmin-title" href="control_panel.html">Evaluations I am creating or administering</a></h4>
+				<div class="innerPanel">
+					<form rsf:id="evalAdminForm" action="evaluation_settings.html">
+							<table cellspacing="0" cellpadding="0" width="99%" class="listHier  lines nolines" border="0">
+								<thead>
+									<tr>
+										<th>Title</th>
+										<th></th>
+										<th>Status</th>
+										<th>Date</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr rsf:id="evalAdminList:">
+										<!--// gsilver: this needs to be a plain text title -->
+										<td rsf:id="evalAdminTitle">
+											Preview: Evaluation Title 1
+										</td>
+										<td class="itemAction">
+										
+										<a rsf:id="evalAdminTitleLink" href="evaluation_settings.html">Edit</a> |
+										<a rsf:id="evalAdminTitleLink_preview" href="preview_eval.html">Preview</a>
+										<!--// gsilver: this needs to be a plain link, not a submit disguised as a link...
+										<input rsf:id="evalAdminTitleLink_edit" value="Edit" type="submit" class="makeLink"/> -->
+	
+										</td>
+										<td>
+											<span rsf:id="evalAdminStatus">Starts</span> <a href="view_report.html" rsf:id="viewReportLink"></a>
+										</td>
+										<td>
+											<span rsf:id="evalAdminDateLabel">Starts</span>:
+											<span rsf:id="evalAdminDate">09/20/2005</span>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</form>
+					</div>	
 				</div>
 			</div>	
 		</div>
