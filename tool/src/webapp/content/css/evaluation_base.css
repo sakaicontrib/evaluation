@@ -19,7 +19,7 @@ form {
 }
 
 .instructions {
-	font-size: 0.9em;Visibility
+	font-size: 0.9em;
 	font-style: italic;
 }
 
@@ -491,21 +491,22 @@ label.block{
 	background:#fff url(../images/last-cur-step.gif) top left no-repeat;
 }
 .summaryBox{
-	border:1px solid #aaa;margin:1em 0;padding:.5em
-	
+	border:1px solid #aaa;margin:0 0 1em 0;
+}
+.summaryBox .innerPanel{
+	padding:.5em;
 }
 .summaryCol1{
-	width:49.5%;height:100%;overflow:hidden;float:left
+	width:49.5%;height:100%;overflow:hidden;float:left;margin-top:1em
 }
 .summaryCol2{
-	width:49.5%;height:100%;overflow:hidden;float:right
+	width:49.5%;height:100%;overflow:hidden;float:right;margin-top:1em
 }
-
-.summaryBox h4{
+.summaryCol1 h4, .summaryCol2 h4{
 	background:#ddd !important;
-	margin:-.5em -.5em 0 -.5em;
+	margin-top:0;
 	padding:.5em;
-	border-bottom:1px solid #aaa
+	border-bottom:1px solid #aaa;
 }
 	
 .summaryBox table th{
@@ -513,3 +514,67 @@ label.block{
 	border:none
 }
 
+.scaleOuterList{
+	width:60%;
+	padding:0;
+	margin:1em 0 ;
+	list-style: decimal;
+	
+}
+
+.scaleInnerList{
+	list-style: lower-alpha;
+	background:#fff;
+	padding:0 2em;
+	margin:0 0 1em 0;
+}
+.scaleInnerList li{
+	padding-left:1em;
+	list-style-position: inside;
+}
+
+.scaleOuterListLi{
+	list-style:none;	
+}
+.scaleTitleLine{
+	height:1.5em;overflow:hide;background:#eee;padding:.1em .1em .1em .3em;	
+}
+
+.scaleTitleLineNum{
+	font-weight:bold; color:#333;float:left;
+} 
+
+.scaleTitle{
+	font-weight:bold; color:#333;width:60%;float:left;padding-left:1em	
+}
+
+.scaleTitleLine .itemAction{
+	 text-align:right;float:right
+}
+
+
+.idealScalePoint{
+	clear:both;padding:0;text-align:right
+	}
+
+/* add the following back in after work on the js */	
+/*.addItem{
+	border:1px solid gray;
+	background:#fff url(../images/add.gif) center left no-repeat;
+	padding:0 0 0 2em
+}	
+
+.removeItem{
+	background:#eee url(../images/delete.gif) center left no-repeat;
+	padding-left:1em;
+}
+
+.removeItem{
+	background:#eee url(../images/delete.gif) center left no-repeat;
+	padding-left:1em;
+}
+.removeItemDisabled{
+	background:#eee url(../images/delete-inact.gif) center left no-repeat;
+	padding-left:1em;
+}
+*/
