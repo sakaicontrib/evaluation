@@ -80,6 +80,7 @@ public class ControlScalesProducer implements ViewComponentProducer, NavigationC
 				new EvalScaleParameters(ModifyScaleProducer.VIEW_ID, null));
 
 		UIMessage.make(tofill, "scales-control-heading", "scalecontrol.page.heading");
+		UIMessage.make(tofill, "scales-control-instruction", "scalecontrol.page.instruction");
 
 		//Get all the scales that are owned by a user
 		List scaleList = scalesLogic.getScalesForUser(currentUserId, null);
