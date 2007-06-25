@@ -308,9 +308,10 @@ public class EvalConstants {
 	
 	/**
 	 * EmailTemplate message setting:
-	 * This is the substitute text for when an evaluation is created to which an instructor may add items<br/>
+	 * This is included text for when an evaluation is created to which an instructor may add items<br/>
 	 * Replaceable strings:<br/>
-	 * $URLtoOptIn - the direct URL for evaluators to opt in to use this evaluation
+	 * $EvalStartDate - the start date of this evaluation
+	 * $URLtoAddItems - the direct URL for evaluatees to add items to evals assigned from above
 	 * 
 	 */
 	public static final String EMAIL_CREATED_ADD_ITEMS_TEXT = "You may add items to this evaluation until $EvalStartDate using the following link:\n" +
@@ -318,7 +319,7 @@ public class EvalConstants {
 	
 	/**
 	 * EmailTemplate message setting:
-	 * This is the substitute text for when an evaluation is created to which an instructor may opt in<br/>
+	 * This is the included text for when an evaluation is created to which an instructor may opt in<br/>
 	 * Replaceable strings:<br/>
 	 * $URLtoOptIn - the direct URL for evaluators to opt in to use this evaluation
 	 * 
@@ -329,7 +330,7 @@ public class EvalConstants {
 	
 	/**
 	 * EmailTemplate message setting:
-	 * This is the substitute text for when an evaluation is created to which an instructor may opt out<br/>
+	 * This is the included text for when an evaluation is created to which an instructor may opt out<br/>
 	 * Replaceable strings:<br/>
 	 * $URLtoOptOut - the direct URL for evaluators to opt in to use this evaluation
 	 */
@@ -349,7 +350,7 @@ public class EvalConstants {
 	/**
 	 * EmailTemplate message setting:
 	 * This is the default template for when the evaluation is available for users to take
-	 * * Replaceable strings:<br/>
+	 * Replaceable strings:<br/>
 	 * $EvalTitle - the title of this evaluation
 	 * $EvalDueDate - the due date of this evaluation
 	 * $EvalResultsDate - the view results date of this evaluation
