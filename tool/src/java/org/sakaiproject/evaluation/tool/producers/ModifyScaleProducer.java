@@ -129,6 +129,7 @@ public class ModifyScaleProducer implements ViewComponentProducer, ViewParamsRep
 				"modify-scale-points:", path + "options");
 		boundedDynamicListInputEvolver.evolve(modifypoints);
 
+		UIMessage.make(form, "scale-note-start", "scaleaddmodify.adddropscale.note.start");
 		UIMessage.make(form, "ideal-note-start", "scaleaddmodify.scale.ideal.note.start");
 		UIMessage.make(form, "ideal-note-main-text", "scaleaddmodify.scale.ideal.note.main.text");
 
