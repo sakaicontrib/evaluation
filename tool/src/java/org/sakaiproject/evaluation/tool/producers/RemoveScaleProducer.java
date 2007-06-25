@@ -92,15 +92,13 @@ public class RemoveScaleProducer implements ViewComponentProducer, ViewParamsRep
 		// Page title
 		UIMessage.make(tofill, "page-title", "scaleremove.page.title");
 
-		UIForm form = UIForm.make(tofill, "remove-scale-form");
+        UIMessage.make(tofill, "scaleremove.confirm.text", "scaleremove.confirm.text", 
+                new Object[] {scale.getTitle()});
 
-		UIMessage.make(form, "remove-scale-confirm-pre-name", "scaleremove.confirm.pre.name");
 
-		UIOutput.make(form, "scale-title-displayed", scale.getTitle());
+		UIMessage.make(tofill, "remove-scale-cancel-button", "general.cancel.button");
 
-		UIMessage.make(form, "remove-scale-confirm-post-name", "scaleremove.confirm.post.name");
-
-		UIMessage.make(form, "remove-scale-cancel-button", "general.cancel.button");
+        UIForm form = UIForm.make(tofill, "remove-scale-form");
 		UICommand deleteCommand = UICommand.make(form, "remove-scale-remove-button", 
 				UIMessage.make("scaleremove.remove.scale.button"), "#{scaleBean.deleteScaleAction}");
 		deleteCommand.parameters.add(new UIELBinding("#{scaleBean.scaleId}", scaleId));
