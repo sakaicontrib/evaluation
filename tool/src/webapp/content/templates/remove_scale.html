@@ -34,17 +34,19 @@
 	</ul>
 </div>
 
-<form rsf:id="remove-scale-form" method="post">
-	<div class="alertMessage">
-		<span rsf:id="remove-scale-confirm-pre-name">Are you sure you want to remove scale </span>
-		<em class="highlight"  rsf:id="scale-title-displayed">#</em>
-		<span rsf:id="remove-scale-confirm-post-name">? The removal is permanant.</span>
-	</div>			
-	<p class="act">
-		<input type="submit" value="Remove Scale" rsf:id="remove-scale-remove-button" class="active" accesskey="s" />
-		<input type="button" value="Cancel" rsf:id="remove-scale-cancel-button" onclick="javascript:history.go(-1);return false;" accesskey="x" />
-	</p>			
-</form>
+<b rsf:id="scaleremove.confirm.text">Are you sure you want to remove scale (title)? The removal is permanant.</b>
+<br/>
+<div class="divrow" style="width:95%;">
+   <div class="leftcol">
+      <input type="button" value="Cancel" rsf:id="remove-scale-cancel-button" onclick="javascript:history.go(-1);return false;"/>
+   </div>
+   <div class="rightcol" style="white-space:nowrap;">
+      <form rsf:id="remove-scale-form" method="post">
+         <input type="submit" value="Remove Scale" rsf:id="remove-scale-remove-button"/>
+      </form>
+   </div>
+   <div class="cleaner">&nbsp;</div>
+</div>
 
 </div>
 </body>
