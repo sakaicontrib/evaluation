@@ -301,20 +301,21 @@ UL.summaryEvaluateList {
 
 .breadCrumb li{
 	display: inline; 
-	margin-right: 4px; 
-	padding: 0px;
+	background: #ffe url(../images/breadSep.gif) center right no-repeat;
+	padding:0 1.2em 0  .5em;
+	margin:0;
 }
-
-.breadCrumb li{
+.breadCrumb li:first-child{
+	padding-left:3px
+}
+.breadCrumb li.lastCrumb{
 	display: inline; 
-	margin-right: 4px; 
-	padding: 0px;
+	background-image: none;
 }
 
 .breadCrumbCurrent {
 	font-weight: bold;
 	display: inline; 
-	margin-right: 4px; 
 	padding: 0px;
 }
 
@@ -557,7 +558,7 @@ label.block{
 	clear:both;padding:0;text-align:right
 	}
 
-/* add the following back in after work on the js */	
+/* add the following bnack in after work on the js */	
 /*.addItem{
 	border:1px solid gray;
 	background:#fff url(../images/add.gif) center left no-repeat;

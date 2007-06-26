@@ -12,10 +12,6 @@
 <body>
 <div class="portletBody">
 
-<!--gsilver: css need
-	1) a new class for top/bottom input pairs
-	2) a new fieldset - here is a good place to implement them
--->
 <div class="navIntraTool">
 	<a rsf:id="summary-link" href="summary.html">Summary</a>
 	<a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a>
@@ -24,11 +20,10 @@
 	<a rsf:id="control-scales-toplink" href="scale_control.html">Control Scales</a>
 </div>
 
+<!--//gsilver: all in the same line, avoid wspace -->
 <div>
 	<ul class="breadCrumb">
-		<li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
-		<li> &gt; </li>	
-		<li rsf:id="administrate-title">Administrate</li>
+		<li><a rsf:id="summary-link" href="summary.html">Summary</a></li><li class="lastCrumb"rsf:id="administrate-title">Administrate</li>
 	</ul>
 </div>
 
