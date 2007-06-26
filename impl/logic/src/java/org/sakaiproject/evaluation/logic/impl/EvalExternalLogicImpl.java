@@ -508,7 +508,8 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         }
 
         if (l == null || l.size() <= 0) {
-            throw new IllegalArgumentException("Could not get users from any provided userIds");
+        	log.warn("Could not get users from any provided userIds");
+        	return;
         }
 
         InternetAddress[] toAddresses = new InternetAddress[ l.size() ];
