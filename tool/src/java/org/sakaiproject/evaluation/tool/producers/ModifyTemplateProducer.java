@@ -98,6 +98,7 @@ public class ModifyTemplateProducer implements ViewComponentProducer, ViewParams
 		UIMessage.make(form, "title-header", "modifytemplatetitledesc.title.header");
 		UIMessage.make(form, "description-header", "modifytemplatetitledesc.description.header");
 		UIMessage.make(form, "description-note", "modifytemplatetitledesc.description.note");
+		UIMessage.make(form, "sharing-note", "modifytemplatetitledesc.sharing.note");
 
 		UICommand.make(form, "addContinue", UIMessage.make("modifytemplatetitledesc.save.button"),
 				"#{templateBBean.updateTemplateTitleDesc}");
