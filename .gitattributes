@@ -216,8 +216,12 @@ tool/src/webapp/component-templates/render_header_item.html -text
 tool/src/webapp/component-templates/render_scaled_item.html -text
 tool/src/webapp/component-templates/render_text_item.html -text
 tool/src/webapp/content/css/evaluation_base.css -text
+tool/src/webapp/content/images/add.gif -text svneol=unset#image/gif
+tool/src/webapp/content/images/breadSep.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/calendar.gif -text
 tool/src/webapp/content/images/corner.gif -text
+tool/src/webapp/content/images/delete-inact.gif -text svneol=unset#image/gif
+tool/src/webapp/content/images/delete.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/down-arrow.gif -text
 tool/src/webapp/content/images/down-line.gif -text
 tool/src/webapp/content/images/ideal-high.jpg -text
