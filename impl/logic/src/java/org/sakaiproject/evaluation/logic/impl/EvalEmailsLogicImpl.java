@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -362,7 +363,10 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
 			// send the actual emails for this evalGroupId
 			try {
-				externalLogic.sendEmails(from, toUserIds, "New evaluation created: " + eval.getTitle(),	message);
+				externalLogic.sendEmails(from, 
+						toUserIds,
+						"New Evaluation " + eval.getTitle() + " created",
+						message);
 				log.info("Sent evaluation created message to " + toUserIds.length + " users");
 			}
 			catch(Exception e) {
@@ -500,8 +504,10 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			// send the actual emails for this evalGroupId
 			// TODO - internationalize these messages
 			try {
-				externalLogic.sendEmails(from, toUserIds, 
-						"New evaluation created: " + eval.getTitle(), message);
+				externalLogic.sendEmails(from, 
+						toUserIds, 
+						"Your Evaluation " + eval.getTitle() + " is available to be taken",
+						message);
 				log.info("Sent evaluation available message to " + toUserIds.length + " users");
 			}
 			catch(Exception e) {
@@ -564,7 +570,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 					// send the actual emails for this evalGroupId
 					externalLogic.sendEmails(from, 
 							toUserIds, 
-							"New evaluation created: " + eval.getTitle(), 
+							"Your Evaluation " + eval.getTitle() + " is available to be taken",
 							message);
 					log.info("Sent evaluation available message to " + toUserIds.length + " users");
 				}
@@ -654,7 +660,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 				try {
 					externalLogic.sendEmails(from, 
 							toUserIds, 
-							"New evaluation created: " + eval.getTitle(), 
+							"Reminder: You still haven't completed your Evaluation " + eval.getTitle(),
 							message);
 					log.info("Sent evaluation available message to " + toUserIds.length + " users");
 				}
@@ -669,11 +675,12 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendEvalResultsNotifications(java.lang.Long, boolean, boolean)
+	 * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendEvalResultsNotifications(java.lang.String, java.lang.Long, boolean, boolean)
 	 */
-	public String[] sendEvalResultsNotifications(Long evaluationId, boolean includeEvaluatees, boolean includeAdmins) {
+	public String[] sendEvalResultsNotifications(String jobType, Long evaluationId, boolean includeEvaluatees, boolean includeAdmins) {
 		log.debug("evaluationId: " + evaluationId + ", includeEvaluatees: " + includeEvaluatees + ", includeAdmins: " + includeAdmins);
 		String from = (String) settings.get( EvalSettings.FROM_EMAIL_ADDRESS );
+		EvalAssignGroup evalAssignGroup = null;
 		
 		/*TODO deprecated?
 		if(EvalConstants.EMAIL_INCLUDE_ALL.equals(includeConstant)) {
@@ -684,7 +691,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			log.error("includeEvaluatees Not implemented");
 		}
 		*/
-
+		
 		// get evaluation
 		EvalEvaluation eval = (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);
 		if (eval == null) {
@@ -702,10 +709,16 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
 		// get the associated eval groups for this evaluation
 		Map evalGroupIds = evaluationLogic.getEvaluationGroups(new Long[] {evaluationId}, false);
+		
+		//get the associated eval assign groups for this evaluation
+		Map evalAssignGroups = evaluationLogic.getEvaluationAssignGroups(new Long[] {evaluationId}, false);
 
 		// only one possible map key so we can assume evaluationId
 		List groups = (List) evalGroupIds.get(evaluationId);
 		log.debug("Found " + groups.size() + " groups for available evaluation: " + evaluationId);
+		List assignGroups = (List) evalAssignGroups.get(evaluationId);
+		log.debug("Found " + assignGroups.size() + " assign groups for available evaluation: " + evaluationId);
+		
 		Set userIdsSet = new HashSet();
 		
 		// loop through contexts and send emails to correct users in each evalGroupId
@@ -714,27 +727,51 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			if (EvalConstants.GROUP_TYPE_INVALID.equals(group.type)) {
 				continue; // skip processing for invalid groups
 			}
+			
+			//get EvalAssignGroup to check studentViewResults, instructorViewResults
+			for(Iterator j = assignGroups.iterator(); j.hasNext();) {
+				EvalAssignGroup assignGroup = (EvalAssignGroup)j.next();
+				if(group.evalGroupId.equals(assignGroup.getEvalGroupId())) {
+					evalAssignGroup = assignGroup;
+				}
+			}
 
 			userIdsSet.clear();
-			if (includeEvaluatees) {
-				userIdsSet.addAll(externalLogic.getUserIdsForEvalGroup(group.evalGroupId,
-						EvalConstants.PERM_TAKE_EVALUATION));
-			}
-			if (includeAdmins) {
-				userIdsSet.addAll(externalLogic.getUserIdsForEvalGroup(group.evalGroupId,
-						EvalConstants.PERM_BE_EVALUATED));
-			}
-
-			// if results are private just send to owner
-			if (eval.getResultsPrivate().booleanValue()) {
+			
+			/*
+			 * Notification of results may occur on separate dates for owner,
+			 * instructors, and students. Job type is used to distinguish the
+			 * intended recipient group.
+			 */
+			
+			//always send results email to eval.getOwner()
+			if(jobType.equals(EvalConstants.JOB_TYPE_VIEWABLE)) {
 				userIdsSet.add(eval.getOwner());
 			}
-
+			
+			//if results are not private
+			if (!eval.getResultsPrivate().booleanValue()) {
+				
+				//at present, includeAdmins is always true
+				if (includeAdmins && evalAssignGroup.getInstructorsViewResults().booleanValue()
+						&& jobType.equals(EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS)) {
+					userIdsSet.addAll(externalLogic.getUserIdsForEvalGroup(group.evalGroupId,
+							EvalConstants.PERM_BE_EVALUATED));
+				}
+				
+				//at present, includeEvaluatees is always true
+				if (includeEvaluatees && evalAssignGroup.getStudentsViewResults().booleanValue()
+						&& jobType.equals(EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS)) {
+					userIdsSet.addAll(externalLogic.getUserIdsForEvalGroup(group.evalGroupId,
+							EvalConstants.PERM_TAKE_EVALUATION));
+				}
+			}
+			
 			if (userIdsSet.size() > 0) {
 				// turn the set into an array
 				String[] toUserIds = (String[]) userIdsSet.toArray(new String[] {});
 				log.debug("Found " + toUserIds.length + " users (" + toUserIds + 
-						") to send " + EvalConstants.EMAIL_TEMPLATE_REMINDER + 
+						") to send " + EvalConstants.EMAIL_TEMPLATE_RESULTS + 
 						" notification to for available evaluation (" + evaluationId + 
 						") and group (" + group.evalGroupId + ")");
 
@@ -751,7 +788,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 				try {
 					externalLogic.sendEmails(from, 
 							toUserIds, 
-							"New evaluation created: " + eval.getTitle(), 
+							"The Evaluation " + eval.getTitle() + " is complete and results are now available",
 							message);
 					log.info("Sent evaluation available message to " + toUserIds.length + " users");
 				}

@@ -526,7 +526,11 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	 * @param the job type fom EvalConstants
 	 */
 	public void sendViewableEmail(Long evalId, String jobType, Boolean resultsPrivate) {
-		
+		/*
+		 * TODO when booleans below are set dynamically, replace the use of job type to distinguish
+		 * recipients with the setting of these parameters before calling emails.sendEvalResultsNotifications().
+		 * Then one job type JOB_TYPE_VIEWABLE can be scheduled as needed.
+		 */
 		boolean includeEvaluatees = true;
 		boolean includeAdmins = true;
 		
@@ -536,35 +540,14 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 			if(resultsPrivate.booleanValue()) {
 				includeEvaluatees = false;
 				includeAdmins = false;
-				String[] sentMessages = emails.sendEvalResultsNotifications(evalId, includeEvaluatees, includeAdmins);
+				String[] sentMessages = emails.sendEvalResultsNotifications(jobType, evalId, includeEvaluatees, includeAdmins);
 				if(log.isDebugEnabled())
-					log.debug("EvalJobLogicImpl.sendViewableEmail(" + evalId + "," + jobType + ", resultsPrivate " + resultsPrivate + ")" + " sentMessages: " + sentMessages.toString());
+					log.debug("EvalJobLogicImpl.sendViewableEmail(" + evalId + "," + jobType + ", resultsPrivate " + resultsPrivate + ")");
 			}
 			else {
-				if(EvalConstants.JOB_TYPE_VIEWABLE.equals(jobType)) {
-					String[] sentMessages = emails.sendEvalResultsNotifications(evalId, includeEvaluatees, includeAdmins);
-					if(log.isDebugEnabled())
-						log.debug("EvalJobLogicImpl.sendViewableEmail(" + evalId + "," + jobType + ", resultsPrivate " + resultsPrivate + ")" + " sentMessages: " + sentMessages.toString());
-					
-				}
-				else if(EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS.equals(jobType)) {
-					includeEvaluatees = false;
-					String[] sentMessages = emails.sendEvalResultsNotifications(evalId, includeEvaluatees, includeAdmins);
-					if(log.isDebugEnabled())
-						log.debug("EvalJobLogicImpl.sendViewableEmail(" + evalId + "," + jobType + ", resultsPrivate " + resultsPrivate + ")" + " sentMessages: " + sentMessages.toString());
-					
-				}
-				else if(EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS.equals(jobType)) {
-					includeAdmins = false;
-					String[] sentMessages = emails.sendEvalResultsNotifications(evalId, includeEvaluatees, includeAdmins);
-					if(log.isDebugEnabled())
-						log.debug("EvalJobLogicImpl.sendViewableEmail(" + evalId + "," + jobType + ", resultsPrivate " + resultsPrivate + ")" + " sentMessages: " + sentMessages.toString());
-					
-				}
-				else {
-					if(log.isWarnEnabled())
-						log.warn(this + ".sendViewableEmail: for evalId " + evalId + " unrecognized job type " + jobType);
-				}
+				String[] sentMessages = emails.sendEvalResultsNotifications(jobType, evalId, includeEvaluatees, includeAdmins);
+				if(log.isDebugEnabled())
+					log.debug("EvalJobLogicImpl.sendViewableEmail(" + evalId + "," + jobType + ", resultsPrivate " + resultsPrivate + ")");
 			}
 		}
 		catch(Exception e) {
