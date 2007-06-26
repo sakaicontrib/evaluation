@@ -534,69 +534,69 @@ public class EvalTestDataLoad {
 		templateItem1User = new EvalTemplateItem( new Date(), USER_ID, 
 				templateUser, item1, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
 				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
-				null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, null, null);
+				null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, null, null, null);
 		templateItem1P = new EvalTemplateItem( new Date(), MAINT_USER_ID, 
 				templatePublic, item1, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
 				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
-				null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, null, null);
+				null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, null, null, null);
 		templateItem2A = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
 				templateAdmin, item2, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
 				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
-				null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, null, null);
+				null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, null, null, null);
 		templateItem3A = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
 				templateAdmin, item3, new Integer(2), EvalConstants.ITEM_CATEGORY_COURSE,
 				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
-				null, EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL, Boolean.FALSE, null, null);
+				null, EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL, Boolean.FALSE, null, null, null);
 		templateItem3U = new EvalTemplateItem( new Date(), MAINT_USER_ID, 
 				templateUnused, item3, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
 				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
-				null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, null, null);
+				null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, null, null, null);
 		templateItem3PU = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
 				templatePublicUnused, item3, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
 				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
-				null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, null, null);
+				null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, null, null, null);
 		templateItem5A = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
 				templateAdmin, item5, new Integer(3), EvalConstants.ITEM_CATEGORY_INSTRUCTOR,
 				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
-				new Integer(3), null, Boolean.FALSE, null, null);
+				new Integer(3), null, Boolean.FALSE, null, null, null);
 		templateItem5User = new EvalTemplateItem( new Date(), USER_ID, 
 				templateUser, item5, new Integer(2), EvalConstants.ITEM_CATEGORY_INSTRUCTOR,
 				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
-				new Integer(2), null, Boolean.FALSE, null, null);
+				new Integer(2), null, Boolean.FALSE, null, null, null);
 		templateItem5U = new EvalTemplateItem( new Date(), MAINT_USER_ID, 
 				templateUnused, item5, new Integer(2), EvalConstants.ITEM_CATEGORY_INSTRUCTOR,
 				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
-				new Integer(3), null, Boolean.FALSE, null, null);
+				new Integer(3), null, Boolean.FALSE, null, null, null);
 		templateItem6UU = new EvalTemplateItem( new Date(), USER_ID, 
 				templateUserUnused, item6, new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE,
 				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
-				new Integer(4), null, Boolean.FALSE, null, null);
+				new Integer(4), null, Boolean.FALSE, null, null, null);
 		// items block
 		templateItem9B = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
 				templateAdminBlock, item9, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
 				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
-				null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, Boolean.TRUE, null);
+				null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, Boolean.TRUE, null, null);
 		templateItem2B = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
 				templateAdminBlock, item2, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
 				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
-				null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, Boolean.FALSE, templateItem9B.getId() );
+				null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, Boolean.FALSE, templateItem9B.getId(), null );
 		templateItem3B = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
 				templateAdminBlock, item3, new Integer(2), EvalConstants.ITEM_CATEGORY_COURSE,
 				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
-				null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, Boolean.FALSE, templateItem9B.getId() );
+				null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, Boolean.FALSE, templateItem9B.getId(), null );
 		// added items
 		templateItem10AC1 = new EvalTemplateItem( new Date(), MAINT_USER_ID, 
 				templateAdminComplex, item10, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
 				EvalConstants.HIERARCHY_LEVEL_INSTRUCTOR, MAINT_USER_ID,
-				new Integer(2), null, Boolean.FALSE, null, null);
+				new Integer(2), null, Boolean.FALSE, null, null, null);
 		templateItem10AC2 = new EvalTemplateItem( new Date(), MAINT_USER_ID, 
 				templateAdminComplex, item10, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
 				EvalConstants.HIERARCHY_LEVEL_GROUP, SITE1_REF,
-				new Integer(2), null, Boolean.FALSE, null, null);
+				new Integer(2), null, Boolean.FALSE, null, null, null);
 		templateItem10AC3 = new EvalTemplateItem( new Date(), MAINT_USER_ID, 
 				templateAdminComplex, item10, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
 				EvalConstants.HIERARCHY_LEVEL_GROUP, SITE2_REF,
-				new Integer(2), null, Boolean.FALSE, null, null);
+				new Integer(2), null, Boolean.FALSE, null, null, null);
 
 		// associate the templates with the link
 		templateAdmin.setTemplateItems( new HashSet() );

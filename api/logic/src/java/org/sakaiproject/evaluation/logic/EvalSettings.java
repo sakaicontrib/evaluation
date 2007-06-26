@@ -141,6 +141,11 @@ public interface EvalSettings {
 	 */
 	public static final String EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE = "EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE:java.lang.Integer";
 
+    /**
+     * CONSTANT: Can the item results sharing be set for template items - {@see java.lang.Boolean}, default False
+     */
+    public static final String ITEM_USE_RESULTS_SHARING = "ITEM_USE_RESULTS_SHARING:java.lang.Boolean";
+
 	/**
 	 * Allows for getting the value of a system setting based on the constant,
 	 * do not forget to cast the returned Object based on the constant comment<br/>

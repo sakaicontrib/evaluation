@@ -727,7 +727,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 				EvalTestDataLoad.ADMIN_USER_ID, noItems, etdl.item5, 
 				null, EvalConstants.ITEM_CATEGORY_COURSE, 
 				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
-				new Integer(3), null, Boolean.FALSE, null, null);
+				new Integer(3), null, Boolean.FALSE, null, null, null);
 		items.saveTemplateItem( eiTest1, 
 				EvalTestDataLoad.ADMIN_USER_ID);
 		Assert.assertNotNull( eiTest1.getItem() );
@@ -751,7 +751,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 				EvalTestDataLoad.ADMIN_USER_ID, noItems, etdl.item7, 
 				new Integer(2), EvalConstants.ITEM_CATEGORY_COURSE, 
 				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
-				new Integer(3), null, Boolean.FALSE, null, null),
+				new Integer(3), null, Boolean.FALSE, null, null, null),
 			EvalTestDataLoad.ADMIN_USER_ID);
 
 		// test saving valid templateItem with locked item
@@ -759,7 +759,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 				EvalTestDataLoad.MAINT_USER_ID, etdl.templateUnused, etdl.item2, 
 				new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
 				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
-				null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null),
+				null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null, null),
 			EvalTestDataLoad.MAINT_USER_ID);
 
 		// test saving valid templateItem with empty required fields (inherit from item)
@@ -767,7 +767,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 				EvalTestDataLoad.ADMIN_USER_ID, noItems, etdl.item4, 
 				new Integer(99), null, 
 				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
-				null, null, null, null, null);
+				null, null, null, null, null, null);
 		items.saveTemplateItem( eiTest2, 
 				EvalTestDataLoad.ADMIN_USER_ID);
 		// make sure the values are filled in for us
@@ -789,7 +789,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 					EvalTestDataLoad.MAINT_USER_ID, etdl.templateUnused, null, 
 					new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
 					EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
-					null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null),
+					null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null, null),
 				EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");
 		} catch (IllegalArgumentException e) {
@@ -802,7 +802,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 					EvalTestDataLoad.MAINT_USER_ID, null, etdl.item3, 
 					new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
 					EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
-					null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null),
+					null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null, null),
 				EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");
 		} catch (IllegalArgumentException e) {
@@ -815,7 +815,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 					EvalTestDataLoad.MAINT_USER_ID, etdl.templateUnused, etdl.item4, 
 					new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
 					EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
-					new Integer(2), EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null),
+					new Integer(2), EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null, null),
 				EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");
 		} catch (IllegalArgumentException e) {
@@ -828,7 +828,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 					EvalTestDataLoad.MAINT_USER_ID, etdl.templateUnused, etdl.item6, 
 					new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
 					EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
-					new Integer(4), EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null),
+					new Integer(4), EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null, null),
 				EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");
 		} catch (IllegalArgumentException e) {
@@ -855,7 +855,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 					EvalTestDataLoad.MAINT_USER_ID, etdl.templateUnused, etdl.item8, 
 					new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
 					EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
-					new Integer(1), EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null),
+					new Integer(1), EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null, null),
 				EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");
 		} catch (IllegalArgumentException e) {

@@ -63,5 +63,9 @@
         <property name="blockId" type="java.lang.Long">
             <column name="BLOCK_ID" index="eval_templateitem_blockid" />
         </property>
+        <!-- defines the sharing of results related to this item -->
+        <property name="resultsSharing" type="java.lang.String">
+            <column name="RESULTS_SHARING" length="255" />
+        </property>
     </class>
 </hibernate-mapping>
