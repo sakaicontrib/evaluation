@@ -49,14 +49,14 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	//the component scheduled by the ScheduledInvocationManager
 	private final String COMPONENT_ID = "org.sakaiproject.evaluation.logic.externals.EvalScheduledInvocation";
 
-	private final String SEPARATOR = "/";
-	private final String EVENT_EVAL_START = "evaluation.state.start";
-	private final String EVENT_EVAL_DUE = "evaluation.state.due";
-	private final String EVENT_EVAL_STOP = "evaluation.state.stop";
-	private final String EVENT_EVAL_VIEWABLE = "evaluation.state.viewable";
-	private final String EVENT_EVAL_VIEWABLE_INSTRUCTORS  = "evaluation.state.viewable.instructors";
-	private final String EVENT_EVAL_VIEWABLE_STUDENTS = "evaluation.state.viewable.students";
-	private final String EVENT_EMAIL_REMINDER = "evaluation.email.reminder";
+	private final String SEPARATOR = "/";           // max-32:12345678901234567890123456789012
+	private final String EVENT_EVAL_START                  = "evaluation.state.start";
+	private final String EVENT_EVAL_DUE                    = "evaluation.state.due";
+	private final String EVENT_EVAL_STOP                   = "evaluation.state.stop";
+	private final String EVENT_EVAL_VIEWABLE               = "evaluation.state.viewable";
+	private final String EVENT_EVAL_VIEWABLE_INSTRUCTORS   = "evaluation.state.viewable.inst";
+	private final String EVENT_EVAL_VIEWABLE_STUDENTS      = "evaluation.state.viewable.stud";
+	private final String EVENT_EMAIL_REMINDER =            "evaluation.email.reminder";
 
 	//TODO jleasia: track events
 	
