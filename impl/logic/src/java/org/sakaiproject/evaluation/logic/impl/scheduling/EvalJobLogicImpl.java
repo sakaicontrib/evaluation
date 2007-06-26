@@ -56,7 +56,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	private final String EVENT_EVAL_VIEWABLE               = "evaluation.state.viewable";
 	private final String EVENT_EVAL_VIEWABLE_INSTRUCTORS   = "evaluation.state.viewable.inst";
 	private final String EVENT_EVAL_VIEWABLE_STUDENTS      = "evaluation.state.viewable.stud";
-	private final String EVENT_EMAIL_REMINDER =            "evaluation.email.reminder";
+	private final String EVENT_EMAIL_REMINDER              = "evaluation.email.reminder";
 
 	//TODO jleasia: track events
 	
