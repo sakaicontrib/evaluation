@@ -451,6 +451,9 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 				templateItem.setItemCategory(item.getCategory());
 			}
 		}
+        if (templateItem.getResultsSharing() == null) {
+            templateItem.setResultsSharing(EvalConstants.ITEM_RESULTS_SHARING_PUBLIC);
+        }
 		Boolean naAllowed = (Boolean)settings.get(EvalSettings.NOT_AVAILABLE_ALLOWED);
 		if (naAllowed.booleanValue()) {
 			// can set NA

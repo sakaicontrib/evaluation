@@ -38,10 +38,13 @@ public class EvalTemplateItem implements java.io.Serializable {
 	private Boolean blockParent;
 
 	private Long blockId;
+    
+    private String resultsSharing;
 
 	// Constructors
 
-	/** default constructor */
+
+    /** default constructor */
 	public EvalTemplateItem() {
 	}
 
@@ -60,7 +63,8 @@ public class EvalTemplateItem implements java.io.Serializable {
 
 	/** full constructor */
 	public EvalTemplateItem(Date lastModified, String owner, EvalTemplate template, EvalItem item, Integer displayOrder, String itemCategory,
-			String hierarchyLevel, String hierarchyNodeId, Integer displayRows, String scaleDisplaySetting, Boolean usesNA, Boolean blockParent, Long blockId) {
+			String hierarchyLevel, String hierarchyNodeId, Integer displayRows, String scaleDisplaySetting, Boolean usesNA, 
+            Boolean blockParent, Long blockId, String resultsSharing) {
 		this.lastModified = lastModified;
 		this.owner = owner;
 		this.template = template;
@@ -74,6 +78,7 @@ public class EvalTemplateItem implements java.io.Serializable {
 		this.usesNA = usesNA;
 		this.blockParent = blockParent;
 		this.blockId = blockId;
+        this.resultsSharing = resultsSharing;
 	}
 
 	// Property accessors
@@ -188,5 +193,13 @@ public class EvalTemplateItem implements java.io.Serializable {
 	public void setBlockId(Long blockId) {
 		this.blockId = blockId;
 	}
+
+    public String getResultsSharing() {
+        return resultsSharing;
+    }
+
+    public void setResultsSharing(String resultsSharing) {
+        this.resultsSharing = resultsSharing;
+    }
 
 }

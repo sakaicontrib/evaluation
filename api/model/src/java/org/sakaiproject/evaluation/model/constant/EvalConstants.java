@@ -582,6 +582,15 @@ public class EvalConstants {
 	 * Category => Objective => Item
 	 */
 	public static final String ITEM_GROUP_TYPE_OBJECTIVE = "ItemGroupObjective";
+    
+    /**
+     * Results for this item will be public
+     */
+    public static final String ITEM_RESULTS_SHARING_PUBLIC = "public";
+    /**
+     * Results for this item will be private (only visible to owner)
+     */
+    public static final String ITEM_RESULTS_SHARING_PRIVATE = "private";
 	
 	/**
 	 * ScheduledInvocationManager: ScheduledInvocationCommand jobType

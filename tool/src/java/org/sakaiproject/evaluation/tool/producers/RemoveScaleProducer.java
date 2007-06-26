@@ -92,8 +92,8 @@ public class RemoveScaleProducer implements ViewComponentProducer, ViewParamsRep
 		// Page title
 		UIMessage.make(tofill, "page-title", "scaleremove.page.title");
 
-        UIMessage.make(tofill, "scaleremove.confirm.text", "scaleremove.confirm.text", 
-                new Object[] {scale.getTitle()});
+        UIMessage.make(tofill, "scaleremove.confirm.text", 
+                "scaleremove.confirm.text", new Object[] {scale.getTitle()});
 
 
 		UIMessage.make(tofill, "remove-scale-cancel-button", "general.cancel.button");
