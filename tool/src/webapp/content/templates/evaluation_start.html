@@ -9,7 +9,7 @@
     <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
 	<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />    
 	
-	<script language="JavaScript">
+	<script type="text/javascript">
 		function validateForm(){  
 	        if(document.start_eval_form.title.value == "")
 	        	return false;
@@ -28,8 +28,7 @@
 
 <div>
 	<ul class="breadCrumb">
-		<li class="breadCrumb"><a rsf:id="summary-toplink" href="summary.html">Summary</a></li>
-		<li class="breadCrumb" rsf:id="start-eval-title">Start Evaluation</li>
+		<li ><a rsf:id="summary-toplink" href="summary.html">Summary</a></li><li class="lastCrumb" rsf:id="start-eval-title">Start Evaluation</li>
 	</ul>
 </div>
 
@@ -39,77 +38,46 @@
 	</ul>
 </div>
 	
-	<h2 rsf:id="start-eval-header">Start a new evaluation</h2>
+	<h3 rsf:id="start-eval-header">Start a new evaluation</h3>
 	<form name="start_eval_form" rsf:id="basic-form" method="post" onsubmit="javascript:return validateForm();">
-		<table border="0" cellspacing="0" cellpadding="0" width="70%">
-			<tr>
-				<td>
-					<span rsf:id="title-header">Title:</span>&nbsp;&nbsp;
-           <input name="title" rsf:id="title" type="text" value="" maxlength="255" style="width:340px;"/>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<span rsf:id="instructions-header">Instructions</span> -  <i><span rsf:id="instructions-desc">these will appear at the top of the evaluation</span></i>
-				</td>
-			</tr>
-			<tr>
-				<td>
-          <div rsf:id="instructions:">
-		     <textarea name="instructions-dummy" rsf:id="instructions-dummy" rows="4" cols="60"></textarea>
-          </div>
-				</td>
-			</tr>
-    </table>			
+		<p class="shorttext">
+			<label rsf:id="title-header" for="title">Title</label>
+			<input name="title" rsf:id="title"   id="title"  type="text" value="" size="50" maxlength="255" />
+		</p>
+		<div class="longtext evalEditorSmall">
+			<label rsf:id="instructions-header">Instructions</label>
+			<div rsf:id="instructions:">
+		    	 <textarea name="instructions-dummy" rsf:id="instructions-dummy" rows="4" cols="60"></textarea>
+			 </div>
+			 <p class="instruction textPanelFooter"><span rsf:id="instructions-desc">these will appear at the top of the evaluation</span></p>
+		 </div> 
+		
 			<!-- This block (choose template) is not visible if the user came 
 				 from a screen where they had already chosen the template. -->
-		  <table rsf:id="chooseTemplate:" border = "0" cellspacing = "0" cellpadding = "0" width = "70%" >
-				<tr>
-					<td>&nbsp;</td>
-				</tr>
-				<tr>
-					<td>
-						<b><span rsf:id="choose-template-header">Choose Template:</span></b>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<i><span rsf:id="choose-template-desc">Select the template to use for this evaluation. Templates define the questions used.</span></i>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<table border = "1" cellspacing = "0" cellpadding = "0" width = "100%">
-							<tr>
-								<th width="50%" align="left">&nbsp;<span rsf:id="template-title-header">Template Title</span></th>
-								<th width="20%" align="left">&nbsp;<span rsf:id="template-owner-header">Owner</span></th>
-								<th width="30%" align="center">&nbsp;</th>
-							</tr>
-							<tr rsf:id="templateOptions:"> 
-								<td><span rsf:id="templateRadio"/>
-									&nbsp;<input type="radio" rsf:id="radioValue"/>
-									<label rsf:id="radioLabel">Template Title 1</label>
-								</td>
-								<td>&nbsp;<label rsf:id="radioOwner">OwnerUsername</label></td>						
-								<td>&nbsp;<a href="#" name="viewPreview_link" rsf:id="viewPreview_link" target="_blank">View preview</a></td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-			</table>
-
-		<br/>
-		<table border = "0" cellspacing = "0" cellpadding = "0" width = "70%">
-			<tr>
-				<td align="left">
-					<!--  <input rsf:id="cancel-button" type="submit" value="Cancel"/> -->
-					<input name="cancel" type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" rsf:id="cancel-button"/>
-				</td>
-				<td align="right">
-					<input rsf:id="continueToSettings" type="submit" value="Continue to Settings" />
-				</td>
-			</tr>
-		</table>
+		  <div rsf:id="chooseTemplate:">
+		  	<h4 rsf:id="choose-template-header">Choose Template:</h4>
+			<p class="instruction"  rsf:id="choose-template-desc">Select the template to use for this evaluation. Templates define the questions used.</p>
+				<table border = "0" cellspacing = "0" cellpadding = "0"  class="listHier lines nolines" style="width:60%">
+					<tr>
+						<th id="titleCol"><span rsf:id="template-title-header">Template Title</span></th>
+						<th id="ownerCol"><span rsf:id="template-owner-header">Owner</span></th>
+						<th id="actionCol" align="center">&nbsp;</th>
+					</tr>
+					<tr rsf:id="templateOptions:"> 
+						<td headers="titleCol"><span rsf:id="templateRadio"/>
+							&nbsp;<input type="radio" rsf:id="radioValue" id="radioValue"/>
+							<label rsf:id="radioLabel" for="radioValue">Template Title 1</label>
+						</td>
+						<td headers="ownerCol">&nbsp;<span rsf:id="radioOwner">OwnerUsername</span></td>						
+						<td headers="actionCol" class="itemAction">&nbsp;<a href="#" name="viewPreview_link" rsf:id="viewPreview_link" target="_blank">View preview</a></td>
+					</tr>
+				</table>
+			</div>
+			<p class="act">
+				<!--  <input rsf:id="cancel-button" type="submit" value="Cancel"/> -->
+				<input rsf:id="continueToSettings" type="submit" value="Continue to Settings" class="active"  accesskey="s" />
+				<input name="cancel" type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" rsf:id="cancel-button" accesskey="x" />				
+			</p>	
 	</form>
 	
 </div>	
