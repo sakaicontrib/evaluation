@@ -1,88 +1,62 @@
 <!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
-<head>
-	<title rsf:id="modify-email-title">Modify Email Template</title>
-    <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
-    <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
-    <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
-    <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
-    <script>
-    	
-		function validateForm(){  
-			if(document.emailTamplate_form.emailTemplate.value == "")
-			{
-					alert("Please enter the email template");
-	       			return false;
-	       	}
-			else return true;
-  	  }    	
-    </script>
- 
-</head>
-
-<body>
-<div class="portletBody">
-
-<div class="navIntraTool">
-	<a rsf:id="administrate-toplink" href="administrate.html">Administrate</a>
-	<a rsf:id="summary-toplink" href="summary.html">Summary</a>
-</div>
-
-<div>
-<ul class="breadCrumb">
-	<li class="breadCrumb"><a rsf:id="summary-toplink" href="summary.html">Summary</a></li>
-	<li class="breadCrumb" rsf:id="create-eval-title">Create Evaluation</li>
-	<li class="breadCrumb" rsf:id="modify-email-title">Modify Email Template</li>
-</ul>
-</div>  
-
-<div rsf:id="message-for:*" class="alertMessage">
-	<ul style="margin:0px;">
-		<li>Message for user here</li>
-	</ul>
-</div>
-
-<h2 rsf:id="modify-template-header">Modify reminder email template for Evaluation Title</h2>
+	<head>
+		<title rsf:id="modify-email-title">Modify Email Template</title>
+		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+		<script type="text/javascript">
+			
+			function validateForm(){  
+				if(document.emailTamplate_form.emailTemplate.value == "")
+				{
+						alert("Please enter the email template");
+						return false;
+				}
+				else return true;
+		  }    	
+		</script>
+	 
+	</head>
 	
-  <form name="emailTemplate_form" rsf:id="emailTemplateForm" method="post" onsubmit="javascript:return validateForm();"> 
-	<table border = "0" cellspacing = "0" cellpadding = "0" width = "70%">
-	<tr>
-		<td width="100%">
-		<i><span rsf:id="modify-text-instructions">Modify the suggested text or enter new text for the reminder email. Please note when sending the email the bracketed values will be substituted with actual values. You may use these values in your reminder email.</span>
-		</i>
-		</td>
-	</tr>	
-	
-	<tr>
-		<td width="100%">
-		[First Name:] [Last Name:] [Course Title:] [Eval ID:] [Course PK:] [Due Date:] [Evaluation Title:]
-		</td>
-	</tr>
-	</table>
-	
-
-	<br/>
-	<table border = "0" cellspacing = "5" cellpadding = "0" width = "73%">
-	<tr>
-	 	<td colspan="2">
-	 		<textarea rows="11" cols="105" name="emailTemplate" rsf:id="emailTemplate">	
-	 		</textarea>
-	 	</td>
-	</tr>
-	
-	<tr>
-		<td align="left">
-			<input type="button" value="Close Window" onclick = "self.close()" rsf:id="close-button"/>
-		</td>
-		<td align="right">
-			<input name="saveEmailTemplate" rsf:id="saveEmailTemplate" type="submit" value="Save Changes"/>  
-		</td>
-	</tr>
-	</table>	
-		
-	</form>
-
-</div>	
-</body>
+	<body>
+		<div class="portletBody">
+			
+			<div class="navIntraTool">
+				<a rsf:id="administrate-toplink" href="administrate.html">Administrate</a>
+				<a rsf:id="summary-toplink" href="summary.html">Summary</a>
+			</div>
+			
+			<div>
+			<ul class="breadCrumb">
+				<li ><a rsf:id="summary-toplink" href="summary.html">Summary</a></li><li  rsf:id="create-eval-title">Create Evaluation</li><li class="lastCrumb" rsf:id="modify-email-title">Modify Email Template</li>
+			</ul>
+			</div>  
+			
+			<div rsf:id="message-for:*" class="alertMessage">
+				<ul style="margin:0px;">
+					<li>Message for user here</li>
+				</ul>
+			</div>
+			<!--// gsilver: this needs the evaluation title parametrized  -->
+			<h3 rsf:id="modify-template-header">Modify reminder email template for Evaluation Title</h3>
+				
+			<form name="emailTemplate_form" rsf:id="emailTemplateForm" method="post" onsubmit="javascript:return validateForm();">
+				<div style="width:60%">
+					<p class="instruction" rsf:id="modify-text-instructions">Modify the suggested text or enter new text for the reminder email. Please note when sending the email the bracketed values will be substituted with actual values. You may use these values in your reminder email.</p>
+					<div class="highlightPanel" style="background:#eee">
+						<span rsf:id="modify-text-field-names">[First Name:] [Last Name:] [Course Title:] [Course ID:] [Eval ID:] [Course PK:] [Due Date:] [Evaluation Title:]</span>
+					</div>	
+					<textarea rows="11" cols="104" name="emailTemplate" rsf:id="emailTemplate">	
+					</textarea>
+				</div>	
+				<p class="act">		
+					<input name="saveEmailTemplate" rsf:id="saveEmailTemplate" type="submit" value="Save Changes" accesskey="s" class="active" />
+					<input type="button" value="Close Window" onclick = "self.close()" rsf:id="close-button" accesskey="x" />
+				</p>	
+			</form>
+		</div>	
+	</body>
 </html>

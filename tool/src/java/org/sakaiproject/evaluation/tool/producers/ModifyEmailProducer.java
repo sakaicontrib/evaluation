@@ -58,7 +58,8 @@ public class ModifyEmailProducer implements ViewComponentProducer, NavigationCas
 		UIForm form = UIForm.make(tofill, "emailTemplateForm"); //$NON-NLS-1$
 		
 		UIMessage.make(form, "modify-text-instructions", "modifyemail.modify.text.instructions"); //$NON-NLS-1$ //$NON-NLS-2$
-		
+		UIMessage.make(form, "modify-text-field-names", "modifyemail.modify.text.field.names"); //$NON-NLS-1$ //$NON-NLS-2$
+
 		EmailViewParameters emailViewParams = (EmailViewParameters) viewparams;
 		
 		UIMessage.make(form, "close-button", "general.close.window.button");
