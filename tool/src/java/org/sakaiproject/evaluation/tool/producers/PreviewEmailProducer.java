@@ -71,7 +71,7 @@ public class PreviewEmailProducer implements ViewComponentProducer,
     UIForm form = UIForm.make(tofill, "previewEmailForm"); //$NON-NLS-1$
 
     UIMessage.make(form,"preview-email-desc", "previewemail.desc"); //$NON-NLS-1$ //$NON-NLS-2$
-
+    UIMessage.make(form,"preview-email-field-names", "previewemail.field.names"); //$NON-NLS-1$ //$NON-NLS-2$
     UIMessage.make(form, "close-button", "general.close.window.button");
     String emailText = "";
     String actionBinding = null;
