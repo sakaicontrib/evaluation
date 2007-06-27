@@ -51,6 +51,14 @@ public interface EvalEmailsLogic {
 	 */
 	public EvalEmailTemplate getDefaultEmailTemplate(String emailTemplateTypeConstant);
 
+    /**
+     * Get an email template for an eval by type, will always return an email template
+     * 
+     * @param emailTemplateTypeConstant a constant, use the EMAIL_TEMPLATE constants from 
+     * {@link org.sakaiproject.evaluation.model.constant.EvalConstants} to indicate the type
+     * @return the email template of the supplied type for this eval
+     */
+    public EvalEmailTemplate getEmailTemplate(Long evaluationId, String emailTemplateTypeConstant);
 
 	// PERMISSIONS
 
