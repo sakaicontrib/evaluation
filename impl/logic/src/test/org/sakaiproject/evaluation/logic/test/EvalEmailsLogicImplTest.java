@@ -207,6 +207,32 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 	}
 
 
+    public void testGetEmailTemplate() {
+        EvalEmailTemplate emailTemplate = null;
+
+        // test getting the templates
+        emailTemplate = emailTemplates.getEmailTemplate(etdl.evaluationActive.getId(), 
+                EvalConstants.EMAIL_TEMPLATE_AVAILABLE );
+        Assert.assertNotNull(emailTemplate);
+        Assert.assertEquals( EvalConstants.EMAIL_AVAILABLE_DEFAULT_TEXT,
+                emailTemplate.getMessage() );
+
+        emailTemplate = emailTemplates.getEmailTemplate(etdl.evaluationActive.getId(), 
+                EvalConstants.EMAIL_TEMPLATE_REMINDER );
+        Assert.assertNotNull(emailTemplate);
+        Assert.assertEquals( "Email Template 3", emailTemplate.getMessage() );
+
+        // test invalid constant causes failure
+        try {
+            emailTemplate = emailTemplates.getEmailTemplate( EvalTestDataLoad.INVALID_LONG_ID, EvalTestDataLoad.INVALID_CONSTANT_STRING );
+            Assert.fail("Should have thrown exception");
+        } catch (RuntimeException e) {
+            Assert.assertNotNull(e);
+        }
+
+    }
+
+
 	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#canControlEmailTemplate(java.lang.String, java.lang.Long, int)}.
 	 */
