@@ -187,6 +187,9 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 
 				UIBranchContainer evaluationRow = UIBranchContainer.make(evalForm, "inqueue-eval-row:", evaluation.getId().toString());
 
+				UIMessage.make(evalForm, "eval-preview-title", "controlevaluations.eval.preview.title");
+				UIMessage.make(evalForm, "eval-link-title", "controlevaluations.eval.link.title");
+
 				UIInternalLink.make(evaluationRow, "inqueue-eval-link", evaluation.getTitle(), 
 						new PreviewEvalParameters( PreviewEvalProducer.VIEW_ID, evaluation.getId(),	evaluation.getTemplate().getId() ) );
 				UILink.make(evaluationRow, "eval-direct-link", UIMessage.make("controlevaluations.eval.direct.link"), 
@@ -257,6 +260,9 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 				EvalEvaluation evaluation = (EvalEvaluation) activeEvals.get(i);
 
 				UIBranchContainer evaluationRow = UIBranchContainer.make(evalForm, "active-eval-row:", evaluation.getId().toString());
+
+				UIMessage.make(evalForm, "eval-preview-title", "controlevaluations.eval.preview.title");
+				UIMessage.make(evalForm, "eval-link-title", "controlevaluations.eval.link.title");
 
 				UIInternalLink.make(evaluationRow, "active-eval-link", evaluation.getTitle(), 
 						new PreviewEvalParameters( PreviewEvalProducer.VIEW_ID, evaluation.getId(),	evaluation.getTemplate().getId() ) );
@@ -334,6 +340,9 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 				EvalEvaluation evaluation = (EvalEvaluation) closedEvals.get(i);
 
 				UIBranchContainer evaluationRow = UIBranchContainer.make(evalForm, "closed-eval-row:", evaluation.getId().toString());
+
+				UIMessage.make(evalForm, "eval-preview-title", "controlevaluations.eval.preview.title");
+				UIMessage.make(evalForm, "eval-link-title", "controlevaluations.eval.link.title");
 
 				UIInternalLink.make(evaluationRow, "closed-eval-link", evaluation.getTitle(), 
 						new PreviewEvalParameters( PreviewEvalProducer.VIEW_ID, evaluation.getId(), evaluation.getTemplate().getId() ) );
