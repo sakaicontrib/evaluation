@@ -431,7 +431,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		}
 
 		// get the student email template
-		EvalEmailTemplate emailTemplate = getDefaultEmailTemplate( EvalConstants.EMAIL_TEMPLATE_AVAILABLE );
+		EvalEmailTemplate emailTemplate = eval.getAvailableEmailTemplate();
 		if (emailTemplate == null) {
 			throw new IllegalStateException("Cannot find email template: " + EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
 		}
@@ -546,8 +546,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
 		// only process valid groups
 		if (! EvalConstants.GROUP_TYPE_INVALID.equals(group.type)) {
-			// get email template
-			EvalEmailTemplate emailTemplate = getDefaultEmailTemplate( EvalConstants.EMAIL_TEMPLATE_AVAILABLE );
+			
+			// get the student email template
+			EvalEmailTemplate emailTemplate = eval.getAvailableEmailTemplate();
 			if (emailTemplate == null) {
 				throw new IllegalStateException("Cannot find email template: " + EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
 			}
@@ -604,7 +605,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		}
 		
 		// get the email template
-		EvalEmailTemplate emailTemplate = getDefaultEmailTemplate( EvalConstants.EMAIL_TEMPLATE_REMINDER );
+		EvalEmailTemplate emailTemplate = eval.getReminderEmailTemplate();
 
 		if (emailTemplate == null) {
 			throw new IllegalStateException("Cannot find email template: " + EvalConstants.EMAIL_TEMPLATE_REMINDER);
