@@ -465,13 +465,11 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 					//instructor has opted-in, notify students
 					userIdsSet = externalLogic.getUserIdsForEvalGroup(group.evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
 					studentNotification = true;
-					break;
 				} else {
 					if (eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_OPT_IN) && includeEvaluatees) {
 						// instructor has not opted-in, notify instructors
 						userIdsSet = externalLogic.getUserIdsForEvalGroup(group.evalGroupId, EvalConstants.PERM_BE_EVALUATED);
 						studentNotification = false;
-						break;
 					}
 				}
 			}
