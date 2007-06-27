@@ -184,13 +184,22 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         }
 
         // check the type constant
-        EvalEmailTemplate emailTemplate;
+        Long emailTemplateId = null;
         if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailTemplateTypeConstant)) {
-            emailTemplate = eval.getAvailableEmailTemplate();
+            if (eval.getAvailableEmailTemplate() != null) {
+                emailTemplateId = eval.getAvailableEmailTemplate().getId();
+            }
         } else if (EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailTemplateTypeConstant)) {
-            emailTemplate = eval.getReminderEmailTemplate();
+            if (eval.getReminderEmailTemplate() != null) {
+                emailTemplateId = eval.getReminderEmailTemplate().getId();
+            }
         } else {
             throw new IllegalArgumentException("Invalid emailTemplateTypeConstant: " + emailTemplateTypeConstant);          
+        }
+
+        EvalEmailTemplate emailTemplate = null;
+        if (emailTemplateId != null) {
+            emailTemplate = (EvalEmailTemplate) dao.findById(EvalEmailTemplate.class, emailTemplateId);
         }
 
         if (emailTemplate == null || emailTemplate.getMessage() == null) {
@@ -245,9 +254,11 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
         }
 
         // make sure this template is associated with this evaluation
-        if ( emailTemplate.equals( eval.getAvailableEmailTemplate() ) ) {
+        if ( eval.getAvailableEmailTemplate() != null &&
+                emailTemplate.getId().equals( eval.getAvailableEmailTemplate().getId() ) ) {
             log.debug("template matches available template from eval ("+eval.getId()+")");
-        } else if ( emailTemplate.equals( eval.getReminderEmailTemplate() ) ) {
+        } else if ( eval.getReminderEmailTemplate() != null &&
+                emailTemplate.getId().equals( eval.getReminderEmailTemplate().getId() ) ) {
             log.debug("template matches reminder template from eval ("+eval.getId()+")");
         } else {
             throw new IllegalArgumentException("email template ("+
