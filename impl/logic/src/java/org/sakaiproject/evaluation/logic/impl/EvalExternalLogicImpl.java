@@ -513,18 +513,17 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         }
 
         InternetAddress[] toAddresses = new InternetAddress[ l.size() ];
-        InternetAddress[] replyTo = new InternetAddress[ l.size() ];
+        InternetAddress[] replyTo = new InternetAddress[1];
         for (int i = 0; i < l.size(); i++) {
             User u = (User) l.get(i);
             try {
                 InternetAddress toAddress = new InternetAddress( u.getEmail() );
                 toAddresses[i] = toAddress;
-                replyTo[i] = fromAddress;
             } catch (AddressException e) {
                 throw new IllegalArgumentException("Invalid to address: " + toUserIds[i]);
             }
         }
-
+        replyTo[0] = fromAddress;
         emailService.sendMail(fromAddress, toAddresses, subject, message, null, replyTo, null);
     }
 
