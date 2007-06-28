@@ -691,7 +691,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                             toUserIds, 
                             "Reminder: You still haven't completed your Evaluation " + eval.getTitle(),
                             message);
-                    log.info("Sent evaluation available message to " + toUserIds.length + " users");
+                    log.info("Sent evaluation reminder message to " + toUserIds.length + " users");
                 }
                 catch(Exception e) {
                     log.error(this + ".sendEvalReminderNotifications(" + evaluationId + "," + includeConstant + ") externalLogic.sendEmails " + e);
@@ -819,7 +819,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                             toUserIds, 
                             "The Evaluation " + eval.getTitle() + " is complete and results are now available",
                             message);
-                    log.info("Sent evaluation available message to " + toUserIds.length + " users");
+                    log.info("Sent evaluation results message to " + toUserIds.length + " users");
                 }
                 catch(Exception e) {
                     log.error(this + ".sendEvalResultsNotifications(" + evaluationId + "," + includeEvaluatees + "," + includeAdmins + ") externalLogic.sendEmails " + e);
