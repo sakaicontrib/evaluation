@@ -75,6 +75,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
 		UIMessage.make(tofill, "create-eval-title", "starteval.page.title");
 		UIMessage.make(tofill, "eval-settings-title", "evalsettings.page.title");
 
+		UIMessage.make(tofill, "assign-eval-edit-page-title", "assigneval.assign.page.title", new Object[] {evaluationBean.eval.getTitle()});
 		UIMessage.make(tofill, "assign-eval-instructions", "assigneval.assign.instructions", new Object[] {evaluationBean.eval.getTitle()});
 
 		UIForm form = UIForm.make(tofill, "eval-assign-form");
