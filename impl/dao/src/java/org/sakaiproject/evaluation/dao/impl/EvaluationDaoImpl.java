@@ -34,7 +34,6 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
-import org.sakaiproject.evaluation.logic.utils.ArrayUtils;
 import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -247,15 +246,18 @@ implements EvaluationDao {
         Map<String, Object> params = new HashMap<String, Object>();
         String groupsHQL = "";
         if (evalGroupIds != null && evalGroupIds.length > 0) {
-            groupsHQL = " and response.evalGroupId in (:evalGroupIds) ";
+            groupsHQL = " and ansswerresp.evalGroupId in (:evalGroupIds) ";
             params.put("evalGroupIds", evalGroupIds);
         }
         params.put("itemId", itemId);
         params.put("evalId", evalId);
-        // TODO - this should probably be a join -AZ
-        String hql = "from EvalAnswer as answer where answer.item.id = :itemId and answer.response.id in " +
-        "(select response.id from EvalResponse as response where response.evaluation.id = :evalId " + 
-        groupsHQL + " order by response.id)";
+        String hql = "select answer from EvalAnswer as answer join answer.response as ansswerresp " +
+                "where ansswerresp.evaluation.id = :evalId " + groupsHQL +
+                "and answer.item.id = :itemId order by ansswerresp.id";
+        // replaced with a join
+//        String hql = "from EvalAnswer as answer where answer.item.id = :itemId and answer.response.id in " +
+//            "(select response.id from EvalResponse as response where response.evaluation.id = :evalId " + 
+//        groupsHQL + " order by response.id)";
         return executeHqlQuery(hql, params, 0, 0);
     }
 
@@ -639,6 +641,7 @@ implements EvaluationDao {
             query.setMaxResults(limit);
         }
         setParameters(query, params);
+        log.warn("HQL query:" + query.getQueryString());
         return query.list();
     }
 
