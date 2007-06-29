@@ -94,7 +94,7 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, N
 
 		UIMessage.make(tofill, "create-evaluation-title", "starteval.page.title");
 		UIMessage.make(tofill, "assign-evaluation-title", "assigneval.page.title");
-
+		UIMessage.make(tofill, "assign-evaluation-title-confirmation", "assigneval.page.confirmation.title");
 		UIMessage.make(tofill, "eval-assign-info", "evaluationassignconfirm.eval.assign.info", new Object[] {evaluationBean.eval.getTitle()});
 		// getting the data this way is crap
 		Date startDate = evaluationBean.eval.getStartDate();
