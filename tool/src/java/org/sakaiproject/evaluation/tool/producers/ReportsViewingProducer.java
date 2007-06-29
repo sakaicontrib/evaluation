@@ -216,7 +216,8 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
 
         EvalItem item = templateItem.getItem();
 
-        if (TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_SCALED)) {
+        String templateItemType = item.getClassification();
+        if (templateItemType.equals(EvalConstants.ITEM_TYPE_SCALED)) {
             //normal scaled type
             EvalScale scale = item.getScale();
             String[] scaleOptions = scale.getOptions();
@@ -251,7 +252,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
                 UIOutput.make(answerbranch, "responseTotal", answers + "", x + "");
             }
 
-        } else if (item.getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)) { //"Short Answer/Essay"
+        } else if (templateItemType.equals(EvalConstants.ITEM_TYPE_TEXT)) { //"Short Answer/Essay"
             UIBranchContainer essay = UIBranchContainer.make(branch, "essayType:");
             UIOutput.make(essay, "itemNum", displayNum + "");
             UIOutput.make(essay, "itemText", item.getItemText());
@@ -259,7 +260,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
             UIInternalLink.make(essay, "essayResponse", 
                     new EssayResponseParams(ReportsViewEssaysProducer.VIEW_ID, evalId, templateItem.getId(), groupIds));
         } else {
-            log.warn("Skipped invalid item type: TI: " + templateItem.getId() + ", Item: " + item.getId() + ", type: " + item.getClassification());
+            log.warn("Skipped invalid item type ("+templateItemType+"): TI: " + templateItem.getId() + ", Item: " + item.getId() );
         }
     }
 
