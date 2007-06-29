@@ -132,32 +132,26 @@
 								<thead>
 									<tr>
 										<th>Title</th>
-										<th></th>
 										<th>Status</th>
 										<th>Date</th>
 									</tr>
 								</thead>
 								<tbody>
 									<tr rsf:id="evalAdminList:">
-										<!--// gsilver: this needs to be a plain text title -->
-										<td rsf:id="evalAdminTitle">
-											Preview: Evaluation Title 1
-										</td>
-										<td class="itemAction">
-										
-										<a rsf:id="evalAdminTitleLink" href="evaluation_settings.html">Edit</a> |
-										<a rsf:id="evalAdminTitleLink_preview" href="preview_eval.html">Preview</a>
-										<!--// gsilver: this needs to be a plain link, not a submit disguised as a link...
-										<input rsf:id="evalAdminTitleLink_edit" value="Edit" type="submit" class="makeLink"/> -->
-	
-										</td>
-										<td>
-											<span rsf:id="evalAdminStatus">Starts</span> <a href="view_report.html" rsf:id="viewReportLink"></a>
-										</td>
-										<td>
-											<span rsf:id="evalAdminDateLabel">Starts</span>:
-											<span rsf:id="evalAdminDate">09/20/2005</span>
-										</td>
+								<tr rsf:id="evalAdminList:">
+									<td align="left" width="50%">
+									<!--  <a rsf:id="evalAdminTitleLink" href="evaluation_settings.html">Evaluation Title 1</a> -->
+									<input rsf:id="evalAdminTitleLink_edit" value="Title" type="submit" class="makeLink"/>
+									<a rsf:id="evalAdminTitleLink_preview" href="preview_eval.html">Evaluation Title 1</a>
+									</td>
+									<td align="left" width="25%" nowrap="nowrap">
+										<span rsf:id="evalAdminStatus">Starts</span> <a href="view_report.html" rsf:id="viewReportLink"></a>
+									</td>
+									<td width="25%" nowrap="nowrap">
+										<span rsf:id="evalAdminDateLabel">Starts</span>: 
+										<span rsf:id="evalAdminDate">09/20/2005</span>
+									</td>
+								</tr>
 									</tr>
 								</tbody>
 							</table>
