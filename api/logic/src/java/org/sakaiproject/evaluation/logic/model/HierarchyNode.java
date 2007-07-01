@@ -15,8 +15,8 @@
 package org.sakaiproject.evaluation.logic.model;
 
 /**
- * This pea represents a node in a hierarchy (in academics a department or college would probably
- * be represented by a node)
+ * This pea represents a node in a hierarchy 
+ * (in academics a department or college would probably be represented by a node)
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
@@ -27,10 +27,10 @@ public class HierarchyNode {
 	 */
 	public String id;
 	/**
-	 * The title of this hierarchy node (may be null)<br/>
+	 * The name of this hierarchy node (may be null)<br/>
 	 * e.g. Department of Computer Science
 	 */
-	public String title;
+	public String name;
 	/**
 	 * The type of this hierarchy node (may be null)<br/>
 	 * e.g. Department<br/>
@@ -57,14 +57,14 @@ public class HierarchyNode {
 	 * Full constructor
 	 * 
 	 * @param id unique id for this hierarchy node
-	 * @param title title of this hierarchy node
+	 * @param name title of this hierarchy node
 	 * @param type the classification for this hierarchy node (dept, etc.)
 	 * @param level the level of this node (number of nodes in path from this to the root node)
 	 * @param leaf true if this node has no children
 	 */
-	public HierarchyNode(String id, String title, String type, int level, boolean leaf) {
+	public HierarchyNode(String id, String name, String type, int level, boolean leaf) {
 		this.id = id;
-		this.title = title;
+		this.name = name;
 		this.type = type;
 		this.level = level;
 		this.leaf = leaf;
