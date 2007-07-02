@@ -20,8 +20,8 @@
 				</form>
 			</div>
 			<div style="float:right">
-				<a rsf:id="administrate-link" href="administrate.html">Administrate</a>
 				<a rsf:id="summary-link" href="summary.html">Summary</a>
+				<a rsf:id="administrate-link" href="administrate.html">Administrate</a>
 				<a rsf:id="control-templates-link" href="control_templates.html">My Templates</a>
 				<a rsf:id="control-items-link" href="control_items.html">My Items</a>
 			</div>
@@ -29,7 +29,7 @@
 				
 		<ul class="breadCrumb">
 			<li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
-			<li class="lastCrumb" rsf:id="page-title">My Evaluations</li>
+			<li rsf:id="page-title"  class="lastCrumb">My Evaluations</li>
 		</ul> 
 
 		<div rsf:id="message-for:*" class="alertMessage">
@@ -52,17 +52,16 @@
 				<table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
 					<thead>
 						<tr>
-							<th id="titleinqueue"  rsf:id="eval-title-header" width="50%">Evaluation Title</th>
-							<th id="settingsinqueue" rsf:id="eval-settings-header" width="20%">Settings</th>
-							<th id="assignedinqueue" rsf:id="eval-assigned-header" width="15%">Assigned</th>
-							<th id= "startinqueue" rsf:id="eval-startdate-header" width="10%">Start Date</th>
-							<th id="dueinqueue" rsf:id="eval-duedate-header" width="15%">Due Date</th>
+							<th rsf:id="eval-title-header" id="titleinqueue"  width="50%">Evaluation Title</th>
+							<th rsf:id="eval-settings-header" id="settingsinqueue"  width="20%">Settings</th>
+							<th rsf:id="eval-assigned-header" id="assignedinqueue" width="15%">Assigned</th>
+							<th rsf:id="eval-startdate-header" id= "startinqueue" width="10%">Start Date</th>
+							<th rsf:id="eval-duedate-header" id="dueinqueue" width="15%">Due Date</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr rsf:id="inqueue-eval-row:"> 
 							<td headers="titleinqueue">
-								<!--// gsilver: needs more context... put following in bundle, also change the anchor text for the quick link and cat link-->
 								 <span rsf:id="eval-preview-title"> Preview:</span>
 								<a rsf:id="inqueue-eval-link" href="preview_eval.html">Evaluation Title 1</a>
 								<span rsf:id="eval-link-title">Quick link:</span>
@@ -70,12 +69,10 @@
 								<span rsf:id="eval-category-direct-link">[<a rsf:id="payload-component" href="show_eval_category.html" title="direct url to the category">category</a>]</span>
 							</td>
 							<td headers="settingsinqueue" class="itemAction">
-								<!--//gsilver: this next line  needs to be made into an actual <a> -->
 								<input rsf:id="inqueue-eval-edit-link" type="submit" class="makeLink" value="Edit" /> | 
 								<a rsf:id="inqueue-eval-delete-link" href="remove_evaluation.html">Delete</a>
 							</td>
 							<td headers="assignedinqueue">
-								<!--//gsilver: this next line  needs to be made into an actual "a" -->
 								<input rsf:id="inqueue-eval-assigned-link" type="submit" value="Course 1010" class="makeLink" />
 								<span rsf:id="inqueue-eval-assigned"></span>
 							</td>
@@ -85,32 +82,31 @@
 					</tbody>
 				</table>
 			</form>
-		</div>
-		<p class="instruction highlightPanel" rsf:id="no-inqueue-evals">No evaluations in-queue</p>
+		</div>                               
+		<p rsf:id="no-inqueue-evals"  class="instruction highlightPanel">No evaluations in-queue</p>
 		
 		<h3 rsf:id="evals-active-header" style="font-weight:bold;">Active Evaluations</h3>
-		<p class="instruction"  rsf:id="evals-active-description">Your Evaluations currently active for users to take</p>
+		<p rsf:id="evals-active-description"  class="instruction">Your Evaluations currently active for users to take</p>
 
 		<div rsf:id="active-eval-listing:">
 			<form rsf:id="active-eval-form" method="post">
 				<table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
 					<thead>
 						<tr>
-							<th id="titleact" rsf:id="eval-title-header" width="50%" >Evaluation Title</th>
-							<th id="settingsact" rsf:id="eval-settings-header" width="20%">Settings</th>
-							<th id="assignedact" rsf:id="eval-assigned-header" width="15%">Assigned</th>
+							<th rsf:id="eval-title-header"  id="titleact" width="50%" >Evaluation Title</th>
+							<th rsf:id="eval-settings-header"  id="settingsact" width="20%">Settings</th>
+							<th rsf:id="eval-assigned-header" id="assignedact" width="15%">Assigned</th>
 							<!--//gsilver: collapsing into title column 
 							<th rsf:id="eval-responses-header" width="10%">Responses</th>
 							-->
-							<th id="startact" rsf:id="eval-startdate-header" width="10%">Start Date</th>
-							<th id="dueact" rsf:id="eval-duedate-header" width="15%">Due Date</th>
+							<th rsf:id="eval-startdate-header" id="startact" width="10%">Start Date</th>
+							<th rsf:id="eval-duedate-header" id="dueact" width="15%">Due Date</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr rsf:id="active-eval-row:"> 
 							<td headers="titleact">
 								<div style="float:left">
-								<!--// gsilver: needs more context... put following in bundle, also change the anchor text for the quick link and cat link-->
 									 <span rsf:id="eval-preview-title"> Preview:</span>
 									 <a rsf:id="active-eval-link" href="preview_eval.html">Evaluation Title 1</a>
 									<span rsf:id="eval-link-title">Quick link:</span>
@@ -120,37 +116,34 @@
 								<div style="float: right;padding-right:2em"><span rsf:id="eval-responses-header">Responses: </span> - <span rsf:id="active-eval-response-rate">10/100</span></div>
 							</td>
 							<td headers="settingsact" class="itemAction">
-								<!--//gsilver: this next line  needs to be made into an actual <a> -->
 								<input rsf:id="active-eval-edit-link" type="submit" class="makeLink" value="Edit" /> | 		
 								<a rsf:id="active-eval-delete-link" href="remove_evaluation.html">Delete</a>
 							</td>		
 							<td headers="assignedact">
-								<!--//gsilver: this next line  needs to be made into an actual <a>-->
-								
 								<input rsf:id="active-eval-assigned-link" type="submit" value="Course 1010" class="makeLink" />
 								<span rsf:id="active-eval-assigned"></span>
 							</td>
-							<td headers="startact" rsf:id="active-eval-startdate" nowrap="nowrap">15/03/2007</td>					
-							<td headers="dueact" rsf:id="active-eval-duedate" align="center" nowrap="nowrap" >20/03/2007</td>	
+							<td rsf:id="active-eval-startdate" headers="startact"  nowrap="nowrap">15/03/2007</td>					
+							<td rsf:id="active-eval-duedate" headers="dueact"  nowrap="nowrap" >20/03/2007</td>	
 						</tr>
 					</tbody>
 				</table>
 			</form>
 		</div>
-		<p class="instruction highlightPanel" rsf:id="no-active-evals">No active evaluations</p>
+		<p rsf:id="no-active-evals" class="instruction highlightPanel" >No active evaluations</p>
 
 		<h3  rsf:id="evals-closed-header">Closed Evaluations</h3>
-		<p class="instruction" rsf:id="evals-closed-description">Your Evaluations which have been completed</p>
+		<p rsf:id="evals-closed-description"  class="instruction">Your Evaluations which have been completed</p>
 		<div rsf:id="closed-eval-listing:">
 			<form rsf:id="closed-eval-form" method="post">
 				<table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
 					<thead>
 						<tr>
-							<th id="titleclosed" rsf:id="eval-title-header" width="50%">Evaluation Title</th>
-							<th id="settingsclosed"  rsf:id="eval-report-header" width="20%">Report</th>
-							<th id="assignedclosed" rsf:id="eval-assigned-header" width="15%">Assigned</th>
-							<th id="resprateclosed"  rsf:id="eval-response-rate-header" width="10%">Response Rate</th>
-							<th id="dueclosed"  rsf:id="eval-duedate-header" width="15%">Due Date</th>
+							<th rsf:id="eval-title-header"  id="titleclosed" width="50%">Evaluation Title</th>
+							<th rsf:id="eval-report-header"  id="settingsclosed" width="20%">Report</th>
+							<th rsf:id="eval-assigned-header" id="assignedclosed" width="15%">Assigned</th>
+							<th rsf:id="eval-response-rate-header" id="resprateclosed"   width="10%">Response Rate</th>
+							<th rsf:id="eval-duedate-header" id="dueclosed" width="15%">Due Date</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -170,14 +163,14 @@
 								<input rsf:id="closed-eval-assigned-link" type="submit" value="Course 1010" class="makeLink" />
 								<span rsf:id="closed-eval-assigned"></span>
 							</td>
-							<td  headers="resprateclosed" rsf:id="closed-eval-response-rate" align="center" nowrap="nowrap">40/50 - 80%</td>						
-							<td  headers="dueclosed"  rsf:id="closed-eval-duedate" align="center" nowrap="nowrap">20/03/2007</td>	
+							<td rsf:id="closed-eval-response-rate"  headers="resprateclosed"  nowrap="nowrap">40/50 - 80%</td>						
+							<td rsf:id="closed-eval-duedate" headers="dueclosed"  nowrap="nowrap">20/03/2007</td>	
 						</tr>
 					</tbody>
 				</table>
 			</form>
 		</div>
-		<p class="instruction highlightPanel" rsf:id="no-closed-evals">No closed evaluations</p>
+		<p rsf:id="no-closed-evals"  class="instruction highlightPanel">No closed evaluations</p>
 		
 		</div>
 		</body>
