@@ -534,7 +534,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             try {
                 externalLogic.sendEmails(from, 
                         toUserIds, 
-                        "Your Evaluation " + eval.getTitle() + " is available to be taken",
+                        "The Evaluation [" + eval.getTitle() + "] for [" + group.title + "] is available to be taken.",
                         message);
                 log.info("Sent evaluation available message to " + toUserIds.length + " users");
             }
@@ -599,7 +599,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                     // send the actual emails for this evalGroupId
                     externalLogic.sendEmails(from, 
                             toUserIds, 
-                            "Your Evaluation " + eval.getTitle() + " is available to be taken",
+                            "The Evaluation [" + eval.getTitle() + "] for [" + group.title + "] is available to be taken.",
                             message);
                     log.info("Sent evaluation available message to " + toUserIds.length + " users");
                 }
@@ -689,7 +689,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                 try {
                     externalLogic.sendEmails(from, 
                             toUserIds, 
-                            "Reminder: You still haven't completed your Evaluation " + eval.getTitle(),
+                            "You still haven't completed your Evaluation [" + eval.getTitle() + "] for [" + group.title + "].",
                             message);
                     log.info("Sent evaluation reminder message to " + toUserIds.length + " users");
                 }
