@@ -14,13 +14,17 @@
 	<body>
 		<div class="portletBody">
 		
-			<div class="navIntraTool">
-				<a rsf:id="create-template-link" href="template_title_desc.html">Add Template</a>
-				<a rsf:id="create-evaluation-link" href="evaluation_start.html">Start Evaluation</a>
-				<a rsf:id="administrate-link" href="administrate.html">Administrate</a>
-				<a rsf:id="summary-link" href="summary.html">Summary</a>
-				<a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a>
-				<a rsf:id="control-items-link" href="control_items.html">My Items</a>
+			<div class="navIntraTool" style="clear:both;height:1.5em">
+				<div style="float:left">
+					<a rsf:id="create-template-link" href="template_title_desc.html">Add Template</a>
+					<a rsf:id="create-evaluation-link" href="evaluation_start.html">Start Evaluation</a>
+				</div>	
+				<div style="float:right">
+					<a rsf:id="summary-link" href="summary.html">Summary</a>
+					<a rsf:id="administrate-link" href="administrate.html">Administrate</a>
+					<a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a>
+					<a rsf:id="control-items-link" href="control_items.html">My Items</a>
+				</div>
 			</div>
 			
 			<div>
@@ -63,8 +67,8 @@
 								<span rsf:id="preview-template-direct-link"><a rsf:id="payload-component" href="preview_eval.html">link</a></span>
 							</td>
 							<!-- <td align="center"><a href="#" name="copy-template-link">Copy</a></td> -->
-							<td headers="owner" rsf:id="template-owner">owner displayname</td>					
-							<td headers="update" rsf:id="template-last-update">11/11/2006</td>	
+							<td rsf:id="template-owner" headers="owner" >owner displayname</td>					
+							<td rsf:id="template-last-update"  headers="update">11/11/2006</td>	
 							<td class="itemAction" headers="action">
 								<a rsf:id="delete-template-link" href="remove_template.html">Delete</a>
 								<span rsf:id="template-used"></span>
@@ -73,7 +77,7 @@
 					</tbody>
 				</table>
 			</div>
-			<p class="instruction"  rsf:id="no-templates">No templates available</p>
+			<p  rsf:id="no-templates" class="instruction">No templates available</p>
 		
 		</div>
 	</body>
