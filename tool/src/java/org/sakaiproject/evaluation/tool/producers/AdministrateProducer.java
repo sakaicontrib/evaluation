@@ -261,6 +261,10 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
 		UIMessage.make(form, "general-same-view-date-note", "administrate.general.same.view.date.note");	 //$NON-NLS-2$
 		makeBoolean(form, "general-require-comments-block",  EvalSettings.REQUIRE_COMMENTS_BLOCK); 
 		UIMessage.make(form, "general-require-comments-block-note", "administrate.general.require.comments.block.note");	 //$NON-NLS-2$
+		
+		makeBoolean(form, "general-item-results-sharing-block",  EvalSettings.ITEM_USE_RESULTS_SHARING); 
+		UIMessage.make(form, "general-item-results-sharing-block-note", "administrate.general.item.sharing.block.note");	 //$NON-NLS-2$
+
 
 		//Number of days old can an eval be and still be recently closed
 		makeSelect(form, "general-eval-closed-still-recent",
