@@ -144,7 +144,7 @@ public class ModifyScaledProducer implements ViewComponentProducer,
 			EvalTemplateItem ti = itemsLogic.getTemplateItemById(templateItemId);
 			UIOutput.make(form, "itemNo",ti.getDisplayOrder().toString()); //$NON-NLS-1$ //$NON-NLS-2$
 			
-		}else{
+		} else {
 			List l = itemsLogic.getTemplateItemsForTemplate(templateId, external.getCurrentUserId(), null);
 			List templateItemsList = TemplateItemUtils.getNonChildItems(l);			
 			Integer no = new Integer(templateItemsList.size()+1);
@@ -236,6 +236,40 @@ public class ModifyScaledProducer implements ViewComponentProducer,
 					EvaluationConstant.ITEM_CATEGORY_VALUES[isDefaultCourse
 							.booleanValue() ? 0 : 1])); //$NON-NLS-1$
 		}
+		
+		/*
+		 * (non-javadoc) If the system setting (admin setting) for
+		 * "EvalSettings.ITEM_USE_RESULTS_SHARING" is set as true then all
+		 * items default to "Public". If it is set to false, then all items can be selected as Public or Private.
+		 *  If it is set to null then user is given the option to  choose between "Public" and "Private".
+		 */
+		Boolean isDefaultResultSharing = (Boolean) settings.get(EvalSettings.ITEM_USE_RESULTS_SHARING);
+		if (isDefaultResultSharing != null) {
+			if (isDefaultResultSharing.booleanValue() == true) {
+//				 Means show both options (public & private)
+				UIBranchContainer showItemResultSharing = UIBranchContainer.make(form, "showItemResultSharing:"); //$NON-NLS-1$
+				UIMessage.make(showItemResultSharing, "item-results-sharing-header", "modifyitem.results.sharing.header"); //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(showItemResultSharing, "item-results-sharing-PU", "item.results.sharing.public"); //$NON-NLS-1$ //$NON-NLS-2$
+				UIMessage.make(showItemResultSharing, "item-results-sharing-PR", "item.results.sharing.private"); //$NON-NLS-1$ //$NON-NLS-2$
+				//	Radio Buttons for "Result Sharing"
+				String[] resultSharingList = { "item.results.sharing.public", "item.results.sharing.private" };
+				UISelect radios = UISelect.make(showItemResultSharing, "item_results_sharing", EvaluationConstant.ITEM_RESULTS_SHARING_VALUES,
+						resultSharingList, templateItemOTP + "resultsSharing", null);
+
+				String selectID = radios.getFullID();
+				UISelectChoice.make(showItemResultSharing, "item_results_sharing_PU", selectID, 0); //$NON-NLS-1$
+				UISelectChoice.make(showItemResultSharing, "item_results_sharing_PR", selectID, 1); //$NON-NLS-1$
+			} else {
+//				false, so all questions are private by default				
+				form.parameters.add(new UIELBinding(templateItemOTP + "resultsSharing",
+					EvaluationConstant.ITEM_RESULTS_SHARING_VALUES[isDefaultResultSharing.booleanValue() ? 0 : 1]));
+			}
+		} else {
+//			null so all questions are private by default			
+			form.parameters.add(new UIELBinding(templateItemOTP + "resultsSharing",
+					EvaluationConstant.ITEM_RESULTS_SHARING_VALUES[isDefaultResultSharing.booleanValue() ? 0 : 1]));
+		}
+
 
 		UIMessage.make(form, "cancel-button","general.cancel.button");
 

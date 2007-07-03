@@ -214,6 +214,14 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 					UIOutput.make(itemBranch, "scale-display", scaleDisplaySettingLabel);
 				}
 
+				String resultsSharingMessage = "unknown.caps";
+				if ( EvalConstants.ITEM_RESULTS_SHARING_PUBLIC.equals(templateItem.getResultsSharing()) ) {
+					resultsSharingMessage = "item.results.sharing.public";
+				} else if ( EvalConstants.ITEM_RESULTS_SHARING_PRIVATE.equals(templateItem.getResultsSharing()) ) {
+					resultsSharingMessage = "item.results.sharing.private";
+				}
+				UIMessage.make(itemBranch, "item-results-sharing", resultsSharingMessage);
+				
 				String categoryMessage = "unknown.caps";
 				if ( EvalConstants.ITEM_CATEGORY_COURSE.equals(templateItem.getItemCategory()) ) {
 					categoryMessage = "modifyitem.course.category.header";
