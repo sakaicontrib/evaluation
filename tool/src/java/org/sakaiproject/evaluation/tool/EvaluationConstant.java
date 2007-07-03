@@ -227,6 +227,19 @@ public class EvaluationConstant {
 			"item.classification.text",
 			"item.classification.header"
 		};
+	/**
+	 * values for item results sharing.
+	 */
+	public static String[] ITEM_RESULTS_SHARING_VALUES = new String[] {
+		EvalConstants.ITEM_RESULTS_SHARING_PUBLIC,
+		EvalConstants.ITEM_RESULTS_SHARING_PRIVATE
+	};
+
+	// should match ITEM_RESULTS_SHARING_VALUES
+	public static String[] ITEM_RESULTS_SHARING_LABELS_PROPS = {
+		"item.results.sharing.public",
+		"item.results.sharing.private"
+	};
 
 }
 
