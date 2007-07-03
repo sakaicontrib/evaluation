@@ -161,7 +161,9 @@ public class PreloadDataImpl {
 
 			// initial expert scales
 			agreeDisagree = saveScale("Agree disagree scale", EvalConstants.SCALE_IDEAL_HIGH,
-					new String[] { "Strongly Disagree", "Disagree", "Uncertain", "Agree", "Strongly agree" });
+					new String[] { "Strongly disagree", "Disagree", "Uncertain", "Agree", "Strongly agree" });
+            saveScale("Disagree agree scale", EvalConstants.SCALE_IDEAL_HIGH,
+                    new String[] { "Strongly agree", "Agree", "Uncertain", "Disagree", "Strongly disagree" });
 			saveScale("Frequency scale", EvalConstants.SCALE_IDEAL_NONE,
 					new String[] { "Hardly ever", "Occasionally", "Sometimes", "Frequently", "Always" });
 			saveScale("Relative rating scale", EvalConstants.SCALE_IDEAL_HIGH, 
