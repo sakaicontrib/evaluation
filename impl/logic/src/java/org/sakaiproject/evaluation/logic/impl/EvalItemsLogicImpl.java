@@ -58,10 +58,10 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 		this.external = external;
 	}
 
-	private EvalSettings settings;
-	public void setSettings(EvalSettings settings) {
-		this.settings = settings;
-	}
+    private EvalSettings evalSettings;
+    public void setEvalSettings(EvalSettings evalSettings) {
+        this.evalSettings = evalSettings;
+    }
 
 
 	// INIT method
@@ -153,7 +153,7 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 			item.setLocked( Boolean.FALSE );
 		}
 		// check the NOT_AVAILABLE_ALLOWED system setting
-		Boolean naAllowed = (Boolean)settings.get(EvalSettings.NOT_AVAILABLE_ALLOWED);
+		Boolean naAllowed = (Boolean)evalSettings.get(EvalSettings.NOT_AVAILABLE_ALLOWED);
 		if (naAllowed.booleanValue()) {
 			// can set NA
 			if (item.getUsesNA() == null) {
@@ -454,7 +454,7 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
         if (templateItem.getResultsSharing() == null) {
             templateItem.setResultsSharing(EvalConstants.ITEM_RESULTS_SHARING_PUBLIC);
         }
-		Boolean naAllowed = (Boolean)settings.get(EvalSettings.NOT_AVAILABLE_ALLOWED);
+		Boolean naAllowed = (Boolean)evalSettings.get(EvalSettings.NOT_AVAILABLE_ALLOWED);
 		if (naAllowed.booleanValue()) {
 			// can set NA
 			if (templateItem.getUsesNA() == null) {
@@ -581,7 +581,15 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
             throw new IllegalStateException("Cannot find evaluation with this id: " + evalId);
         }
 
-        throw new IllegalStateException("Not implemented yet");
+        // TODO - this needs to support the 2nd and 3rd arguments -AZ
+
+        List templateItems = dao.getTemplateItemsByTemplate(evaluation.getTemplate().getId(), null, null, null);
+        if (evaluation.getAddedTemplate() != null && 
+                evaluation.getAddedTemplate().getId() != null) {
+            templateItems.add( dao.getTemplateItemsByTemplate(evaluation.getAddedTemplate().getId(), null, null, null) );
+        }
+
+        return templateItems;
 	}
 
 

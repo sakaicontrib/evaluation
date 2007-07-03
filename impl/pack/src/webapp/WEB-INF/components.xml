@@ -93,19 +93,18 @@
 			ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
 		<property name="externalLogic" 
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-		<property name="settings" 
+		<property name="evalSettings" 
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 	</bean>
 
-	<bean id="org.sakaiproject.evaluation.logic.EvalResponsesLogic"
-			class="org.sakaiproject.evaluation.logic.impl.EvalResponsesLogicImpl"
-			init-method="init">
-		<property name="dao" 
-			ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
-		<property name="externalLogic" 
-			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-		<property name="evaluations" 
-			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+	<bean id="org.sakaiproject.evaluation.logic.EvalResponsesLogic" 
+         class="org.sakaiproject.evaluation.logic.impl.EvalResponsesLogicImpl" 
+         init-method="init">
+	   <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+	   <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+	   <property name="evaluationsLogic" ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+	   <property name="itemsLogic" ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
+	   <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 	</bean>
 
 	<bean id="org.sakaiproject.evaluation.logic.EvalScalesLogic"

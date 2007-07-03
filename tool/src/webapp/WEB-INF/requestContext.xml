@@ -43,8 +43,6 @@
 			ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
 		<property name="settings"
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-		<property name="dateUtil"
-			ref="org.sakaiproject.evaluation.tool.utils.EvaluationDateUtil" />
 		<property name="messages" ref="targettedMessageList"/>
 		<property name="locale" ref="requestLocale" />
 	</bean>
@@ -55,63 +53,51 @@
 	
 
 	<!-- request scope backing beans here -->
-	<bean id="scaleBean"
-		class="org.sakaiproject.evaluation.tool.ScaleBean">
-		<property name="scaleBeanLocator" ref="scaleBeanLocator" />
+	<bean id="scaleBean" 
+         class="org.sakaiproject.evaluation.tool.ScaleBean">
+	   <property name="scaleBeanLocator" ref="scaleBeanLocator" />
 	</bean>
 
-	<bean id="takeEvalBean"
-		class="org.sakaiproject.evaluation.tool.TakeEvalBean">
-		<property name="responseBeanLocator" ref="responseBeanLocator" />
-		<property name="externalLogic" 
-			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-		<property name="messages" ref="targettedMessageList"/>
+	<bean id="takeEvalBean" 
+	     class="org.sakaiproject.evaluation.tool.TakeEvalBean">
+	   <property name="responseBeanLocator" ref="responseBeanLocator" />
+	   <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+	   <property name="messages" ref="targettedMessageList" />
 	</bean>
 
-	<bean id="templateBBean"
-		class="org.sakaiproject.evaluation.tool.TemplateBBean">
-		<property name="localTemplateLogic" ref="localTemplateLogic" />
-		<property name="itemBeanWBL" ref="itemWBL" />
-		<property name="templateItemWBL" ref="templateItemWBL" />
-		<property name="templateBeanLocator" ref="templateBeanLocator" />
-		<property name="itemsLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
+	<bean id="templateBBean" 
+	     class="org.sakaiproject.evaluation.tool.TemplateBBean">
+	   <property name="localTemplateLogic" ref="localTemplateLogic" />
+	   <property name="itemBeanWBL" ref="itemWBL" />
+	   <property name="templateItemWBL" ref="templateItemWBL" />
+	   <property name="templateBeanLocator" ref="templateBeanLocator" />
+	   <property name="itemsLogic" ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
 	</bean>
 
-	<bean id="itemsBean"
-		class="org.sakaiproject.evaluation.tool.ItemsBean"
-		init-method="init">
-		<property name="external"
-			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-		<property name="itemsLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
-		<property name="scalesLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalScalesLogic" />
-		<property name="templatesLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
+	<bean id="itemsBean" 
+	     class="org.sakaiproject.evaluation.tool.ItemsBean" 
+         init-method="init">
+	   <property name="external" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+	   <property name="itemsLogic" ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
+	   <property name="scalesLogic" ref="org.sakaiproject.evaluation.logic.EvalScalesLogic" />
+	   <property name="templatesLogic" ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
 	</bean>
 
-	<bean id="expertItemsBean"
-		class="org.sakaiproject.evaluation.tool.ExpertItemsBean"
-		init-method="init">
-		<property name="external"
-			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-		<property name="itemsLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
-		<property name="templatesLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
+	<bean id="expertItemsBean" 
+         class="org.sakaiproject.evaluation.tool.ExpertItemsBean" 
+         init-method="init">
+	   <property name="external" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+	   <property name="itemsLogic" ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
+	   <property name="templatesLogic" ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
 	</bean>
 
-	<bean id="reportHandlerHook"
-		class="org.sakaiproject.evaluation.tool.ReportHandlerHook">
-		<property name="viewparams" ref="viewParameters" />
-		<property name="response" ref="httpServletResponse" />
-		<property name="itemsLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
-		<property name="evalsLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
-		<property name="responsesLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
+	<bean id="reportHandlerHook" 
+         class="org.sakaiproject.evaluation.tool.ReportHandlerHook">
+	   <property name="viewparams" ref="viewParameters" />
+	   <property name="response" ref="httpServletResponse" />
+	   <property name="itemsLogic" ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
+	   <property name="evalsLogic" ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+	   <property name="responsesLogic" ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
 	</bean>
 
 	<!-- bean locators here -->
@@ -428,6 +414,8 @@
 			ref="org.sakaiproject.evaluation.tool.renderers.ItemRenderer" />
 		<property name="localResponsesLogic" 
 			ref="localResponsesLogic" />
+         <property name="evalSettings"
+            ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 		<property name="locale" ref="requestLocale" />
 	</bean>
 
@@ -443,11 +431,6 @@
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 	</bean>
-
-	<bean class="org.sakaiproject.evaluation.tool.utils.EvaluationDateUtil">
-		<property name="evalSettings"
-			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-	</bean>	
 
 	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyScaleProducer">
 		<property name="external"

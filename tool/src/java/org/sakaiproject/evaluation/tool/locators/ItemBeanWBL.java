@@ -39,13 +39,13 @@ public class ItemBeanWBL implements WriteableBeanLocator {
 	}
 
 	// keep track of all items that have been delivered during this request
-	private Map delivered = new HashMap();
+	private Map<String, EvalItem> delivered = new HashMap<String, EvalItem>();
 
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.beanutil.BeanLocator#locateBean(java.lang.String)
 	 */
 	public Object locateBean(String name) {
-		Object togo = delivered.get(name);
+        EvalItem togo = delivered.get(name);
 		if (togo == null) {
 			if (name.startsWith(NEW_PREFIX)) {
 				togo = localTemplateLogic.newItem();

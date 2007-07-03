@@ -12,7 +12,7 @@
  * 
  *****************************************************************************/
 
-package org.sakaiproject.evaluation.tool.utils;
+package org.sakaiproject.evaluation.logic.utils;
 
 import java.util.Comparator;
 

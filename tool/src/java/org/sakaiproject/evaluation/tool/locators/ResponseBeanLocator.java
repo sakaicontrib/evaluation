@@ -10,6 +10,7 @@
  * Contributors:
  * Will Humphries (whumphri@vt.edu)
  *****************************************************************************/
+
 package org.sakaiproject.evaluation.tool.locators;
 
 import java.util.Date;
@@ -30,48 +31,48 @@ import uk.org.ponder.beanutil.BeanLocator;
  */
 
 public class ResponseBeanLocator implements BeanLocator {
-  public static final String NEW_PREFIX = "new";
+    public static final String NEW_PREFIX = "new";
 
-  private LocalResponsesLogic localResponsesLogic;
-
-  private Map delivered = new HashMap();
-
-  public void setLocalResponsesLogic(LocalResponsesLogic localResponsesLogic) {
-    this.localResponsesLogic = localResponsesLogic;
-  }
-
-  public Object locateBean(String path) {
-    Object togo = delivered.get(path);
-    System.out.println("Attempted to fetch responseId:"+path+" from map");
-    System.out.println("togo:"+togo);
-    if (togo == null) {
-      if (path.startsWith(NEW_PREFIX)) {
-        togo = localResponsesLogic.newResponse();
-      }
-      else {
-        togo = localResponsesLogic.getResponseById(path);
-        System.out.println("togo:"+togo);
-      }
-      delivered.put(path, togo);
+    private LocalResponsesLogic localResponsesLogic;
+    public void setLocalResponsesLogic(LocalResponsesLogic localResponsesLogic) {
+        this.localResponsesLogic = localResponsesLogic;
     }
-    return togo;
-  }
 
-  /** Package-protected access to "dead" list of delivered beans */
-  Map getDeliveredBeans() {
-    return delivered;
-  }
+    private Map<String, EvalResponse> delivered = new HashMap<String, EvalResponse>();
 
-  public void saveAll(EvalEvaluation eval, String context) {
-    for (Iterator it = delivered.keySet().iterator(); it.hasNext();) {
-      String key = (String) it.next();
-      EvalResponse response = (EvalResponse) delivered.get(key);
-      if(response.getId()==null){
-    	  response.setEvaluation(eval);
-    	  response.setEvalGroupId(context);
-      }
-      response.setEndTime(new Date());
-      localResponsesLogic.saveResponse(response); 
+
+    public Object locateBean(String path) {
+        EvalResponse togo = delivered.get(path);
+        if (togo == null) {
+            if (path.startsWith(NEW_PREFIX)) {
+                togo = localResponsesLogic.newResponse();
+            }
+            else {
+                togo = localResponsesLogic.getResponseById(path);
+                System.out.println("togo:"+togo);
+            }
+            delivered.put(path, togo);
+        }
+        return togo;
     }
-  }
+
+    /** Package-protected access to "dead" list of delivered beans */
+    Map getDeliveredBeans() {
+        return delivered;
+    }
+
+    public void saveAll(EvalEvaluation eval, String evalGroupId) {
+        for (Iterator it = delivered.keySet().iterator(); it.hasNext();) {
+            String key = (String) it.next();
+            EvalResponse response = (EvalResponse) delivered.get(key);
+            if (response.getId() == null) {
+                // response is new
+                response.setEvaluation(eval);
+                response.setEvalGroupId(evalGroupId);
+            }
+            response.setEndTime(new Date());
+            localResponsesLogic.saveResponse(response);
+        }
+    }
+
 }

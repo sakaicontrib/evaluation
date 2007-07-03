@@ -29,8 +29,11 @@ api/logic/src/java/org/sakaiproject/evaluation/logic/model/HierarchyNode.java -t
 api/logic/src/java/org/sakaiproject/evaluation/logic/providers/EvalGroupsProvider.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/providers/EvalHierarchyProvider.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/utils/ArrayUtils.java -text
+api/logic/src/java/org/sakaiproject/evaluation/logic/utils/ComparatorsUtils.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/utils/EvalUtils.java -text
+api/logic/src/java/org/sakaiproject/evaluation/logic/utils/EvaluationDateUtil.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/utils/SettingsLogicUtils.java -text
+api/logic/src/java/org/sakaiproject/evaluation/logic/utils/TemplateItemUtils.java -text
 api/model/project.xml -text
 api/model/src/java/org/sakaiproject/evaluation/model/EvalAnswer.java -text
 api/model/src/java/org/sakaiproject/evaluation/model/EvalAssignGroup.java -text
@@ -183,11 +186,8 @@ tool/src/java/org/sakaiproject/evaluation/tool/renderers/ItemRenderer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/ItemRendererImpl.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/ScaledRenderer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/TextRenderer.java -text
-tool/src/java/org/sakaiproject/evaluation/tool/utils/ComparatorsUtils.java -text
-tool/src/java/org/sakaiproject/evaluation/tool/utils/EvaluationDateUtil.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/utils/RSFUtils.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/utils/ScaledUtils.java -text
-tool/src/java/org/sakaiproject/evaluation/tool/utils/TemplateItemUtils.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/BlockIdsParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/CSVReportViewParams.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ChooseItemViewParameters.java -text
