@@ -11,7 +11,7 @@
  * Kapil Ahuja (kahuja@vt.edu)
  *****************************************************************************/
 
-package org.sakaiproject.evaluation.tool.utils;
+package org.sakaiproject.evaluation.logic.utils;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -32,23 +32,16 @@ public class EvaluationDateUtil {
 
 	private static Log log = LogFactory.getLog(EvaluationDateUtil.class);
 
-	// Spring injection 
-	private EvalSettings evalSettings;
-	public void setEvalSettings(EvalSettings evalSettings) {
-		this.evalSettings = evalSettings;
-	}
-
 	/**
 	 * Ensures that there is minimum number of hours difference between
 	 * the start date of the evaluation and due date of the evaluation.
 	 * This minimum value is picked from system setting.
 	 * 
 	 * @param eval {@link EvalEvaluation} object that contains both start and due date.
-	 */	
-	public void updateDueDate(EvalEvaluation eval) {
-
-		// Getting the system setting that tells what should be the minimum time difference between start date and due date.
-		int minHours = ((Integer)evalSettings.get(EvalSettings.EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE)).intValue();
+	 * @param minHoursLong the minimum number of hours between the startdate and the duedate,
+     * usually would come from a system setting {@link EvalSettings#EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE}
+	 */
+	public static void updateDueDate(EvalEvaluation eval, int minHoursLong) {
 
 		/*
 		 * Find the difference between view date and due date so that after 
@@ -68,12 +61,12 @@ public class EvaluationDateUtil {
 		 * Note: Arguments to getHoursDifference() method should have due date as 
 		 *       first date and start date as second date.
 		 */
-		if (getHoursDifference(eval.getDueDate(), eval.getStartDate()) < minHours) {
+		if (getHoursDifference(eval.getDueDate(), eval.getStartDate()) < minHoursLong) {
 
 			// Update due date
 			Calendar calendarDue = new GregorianCalendar();
 			calendarDue.setTime(eval.getStartDate());
-			calendarDue.add(Calendar.HOUR_OF_DAY, minHours);
+			calendarDue.add(Calendar.HOUR_OF_DAY, minHoursLong);
 			log.info("Fixing eval (" + eval.getId() + ") due date from " + eval.getDueDate() + " to " + calendarDue.getTime());
 			eval.setDueDate(calendarDue.getTime());
 
@@ -138,7 +131,7 @@ public class EvaluationDateUtil {
 	 * @param date2
 	 * @return number of hours (can be negative, will round)
 	 */
-	public int getHoursDifference(Date date1, Date date2) {
+	public static int getHoursDifference(Date date1, Date date2) {
 		long millisecondsDifference = date1.getTime() - date2.getTime();
 		return (int) millisecondsDifference / (60*60*1000);
 	}

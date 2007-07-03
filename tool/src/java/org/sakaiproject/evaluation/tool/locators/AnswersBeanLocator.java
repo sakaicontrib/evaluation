@@ -33,21 +33,20 @@ import uk.org.ponder.beanutil.BeanLocator;
 public class AnswersBeanLocator implements BeanLocator {
 	public static final String NEW_PREFIX = "new";
 
-	private Map delivered = new HashMap();
+	private Map<String, EvalAnswer> delivered = new HashMap<String, EvalAnswer>();
 
 	private EvalResponse parent;
 
 	private LocalResponsesLogic localResponsesLogic;
 
-	public AnswersBeanLocator(EvalResponse parent,
-			LocalResponsesLogic localResponsesLogic) {
+	public AnswersBeanLocator(EvalResponse parent, LocalResponsesLogic localResponsesLogic) {
 		this.parent = parent;
 		this.localResponsesLogic = localResponsesLogic;
 		loadMap(parent.getAnswers());
 	}
 
 	public Object locateBean(String path) {
-		Object togo = delivered.get(path);
+        EvalAnswer togo = delivered.get(path);
 		// no answer has been created for this item-response pairing, so we'll make
 		// one. we don't use the new prefix, because the producer has no way of knowing
 		// if an answer has been created for the given item, even if a response exists.

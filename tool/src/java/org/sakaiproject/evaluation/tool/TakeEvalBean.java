@@ -51,8 +51,15 @@ public class TakeEvalBean {
 	}
 
 	public String submitEvaluation() {
-		log.debug("create response");
-		responseBeanLocator.saveAll(eval, evalGroupId);
+		log.debug("submit evaluation");
+		try {
+            responseBeanLocator.saveAll(eval, evalGroupId);
+        } catch (IllegalStateException e) {
+            // TODO - find a better way to do this, using this as the way to tell that the submission was incomplete, this is not really ideal -AZ
+            messages.addMessage( new TargettedMessage("takeeval.user.must.answer.all.warning", new Object[] {},
+                    TargettedMessage.SEVERITY_ERROR));
+            return "failure";
+        }
 		messages.addMessage( new TargettedMessage("evaluations.take.message",
                 new Object[] { eval.getTitle(), externalLogic.getDisplayTitle(evalGroupId) }, 
                 TargettedMessage.SEVERITY_INFO));

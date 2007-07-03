@@ -23,6 +23,8 @@ import junit.framework.Assert;
 import org.easymock.MockControl;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
+import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl;
 import org.sakaiproject.evaluation.logic.impl.EvalResponsesLogicImpl;
 import org.sakaiproject.evaluation.logic.test.stubs.EvalExternalLogicStub;
 import org.sakaiproject.evaluation.model.EvalAnswer;
@@ -52,11 +54,12 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 	private EvalEvaluationsLogic evaluationsLogic;
 	private MockControl evaluationsLogicControl;
 
+
 	protected String[] getConfigLocations() {
 		// point to the needed spring config files, must be on the classpath
 		// (add component/src/webapp/WEB-INF to the build path in Eclipse),
 		// they also need to be referenced in the project.xml file
-		return new String[] {"hibernate-test.xml", "spring-hibernate.xml"};
+		return new String[] {"hibernate-test.xml", "spring-hibernate.xml", "logic-support.xml"};
 	}
 
 	// run this before each test starts
@@ -82,17 +85,29 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 		etdl = ptd.getEtdl();
 
 		// load up any other needed spring beans
-
+        EvalSettings settings = (EvalSettings) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalSettings");
+        if (settings == null) {
+            throw new NullPointerException("EvalSettings could not be retrieved from spring evalGroupId");
+        }
+        
 		// setup the mock objects if needed
 		evaluationsLogicControl = MockControl.createControl(EvalEvaluationsLogic.class);
 		evaluationsLogic = (EvalEvaluationsLogic) evaluationsLogicControl.getMock();
 
+        // create a logic impl to use
+        EvalItemsLogicImpl itemsLogicImpl = new EvalItemsLogicImpl();
+        itemsLogicImpl.setDao(evaluationDao);
+        itemsLogicImpl.setExternalLogic( new EvalExternalLogicStub() );
+        itemsLogicImpl.setEvalSettings(settings);
+        
+        
 		// create and setup the object to be tested
 		responses = new EvalResponsesLogicImpl();
 		responses.setDao(evaluationDao);
 		responses.setExternalLogic( new EvalExternalLogicStub() );
-		responses.setEvaluations(evaluationsLogic); // set the mock object
-
+		responses.setEvaluationsLogic(evaluationsLogic); // set the mock object
+        responses.setEvalSettings(settings);
+        responses.setItemsLogic( itemsLogicImpl ); // put created object in
 	}
 
 	// run this before each test starts and as part of the transaction

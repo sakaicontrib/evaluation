@@ -12,7 +12,7 @@
  * 
  *****************************************************************************/
 
-package org.sakaiproject.evaluation.tool.utils;
+package org.sakaiproject.evaluation.logic.utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -82,8 +82,8 @@ public class TemplateItemUtils {
 	 * @param templateItemsList a List of {@link EvalTemplateItem} objects from a template
 	 * @return a List of {@link EvalTemplateItem} objects
 	 */
-	public static List orderTemplateItems(List templateItemsList) {
-		List orderedItemsList = new ArrayList();
+	public static List<EvalTemplateItem> orderTemplateItems(List<EvalTemplateItem> templateItemsList) {
+		List<EvalTemplateItem> orderedItemsList = new ArrayList<EvalTemplateItem>();
 
 		List nonChildrenItems = getNonChildItems(templateItemsList);
 		for (int i=0; i<nonChildrenItems.size(); i++) {
@@ -108,28 +108,51 @@ public class TemplateItemUtils {
 	 * does not include block parents or header items or any item that
 	 * cannot be answered
 	 * 
-	 * @param tempItemsList a List of {@link EvalTemplateItem} objects from a template
+	 * @param templateItemsList a List of {@link EvalTemplateItem} objects from a template
 	 * @return a List of {@link EvalTemplateItem} objects
 	 */
-	public static List getAnswerableTemplateItems(List templateItemsList) {		
-		List answerableItemsList = new ArrayList();
+	public static List<EvalTemplateItem> getAnswerableTemplateItems(List<EvalTemplateItem> templateItemsList) {		
+		List<EvalTemplateItem> answerableItemsList = new ArrayList<EvalTemplateItem>();
 
 		List orderedItems = orderTemplateItems(templateItemsList);
 
 		for (int i=0; i<orderedItems.size(); i++) {
 			EvalTemplateItem templateItem = (EvalTemplateItem) orderedItems.get(i);
 			String type = getTemplateItemType(templateItem);
-			if (EvalConstants.ITEM_TYPE_HEADER.equals(type)) {
-				continue;
-			}
-			if (EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(type)) {
-				continue;
-			}
+            if (EvalConstants.ITEM_TYPE_HEADER.equals(type) ||
+                    EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(type)) {
+                continue;
+            }
 			answerableItemsList.add(templateItem);
 		}
 
 		return answerableItemsList;
 	}
+
+    /**
+     * Get the list of all templateItems which are required (must be answered),
+     * this will include any scaled items or items which are part of a block (but not a block parent)
+     * @param templateItemsList a List of {@link EvalTemplateItem} objects from a template
+     * @return a List of {@link EvalTemplateItem} objects
+     */
+    public static List<EvalTemplateItem> getRequiredTemplateItems(List<EvalTemplateItem> templateItemsList) {       
+        List<EvalTemplateItem> requiredItemsList = new ArrayList<EvalTemplateItem>();
+
+        List orderedItems = orderTemplateItems(templateItemsList);
+
+        for (int i=0; i<orderedItems.size(); i++) {
+            EvalTemplateItem templateItem = (EvalTemplateItem) orderedItems.get(i);
+            String type = getTemplateItemType(templateItem);
+            if (EvalConstants.ITEM_TYPE_HEADER.equals(type) ||
+                    EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(type) ||
+                    EvalConstants.ITEM_TYPE_TEXT.equals(type)) {
+                continue;
+            }
+            requiredItemsList.add(templateItem);
+        }
+
+        return requiredItemsList;
+    }
 
 	// BLOCKS
 
@@ -140,8 +163,9 @@ public class TemplateItemUtils {
 	 * @param tempItemsList a List of {@link EvalTemplateItem} objects in a template
 	 * @return a List of {@link EvalTemplateItem} objects without any block child objects
 	 */
-	public static List getNonChildItems(List templateItemsList) {
-		List nonChildItemsList = new ArrayList();
+	@SuppressWarnings("unchecked")
+    public static List<EvalTemplateItem> getNonChildItems(List<EvalTemplateItem> templateItemsList) {
+		List<EvalTemplateItem> nonChildItemsList = new ArrayList<EvalTemplateItem>();
 
 		for (int i=0; i<templateItemsList.size(); i++) {
 			EvalTemplateItem templateItem = (EvalTemplateItem) templateItemsList.get(i);
@@ -166,8 +190,9 @@ public class TemplateItemUtils {
 	 * @param blockParentId a unique identifier for an {@link EvalTemplateItem} which is a block parent
 	 * @return a List of {@link EvalTemplateItem} objects or empty if none found
 	 */
-	public static List getChildItems(List templateItemsList, Long blockParentId) {
-		List childItemsList = new ArrayList();
+	@SuppressWarnings("unchecked")
+    public static List<EvalTemplateItem> getChildItems(List<EvalTemplateItem> templateItemsList, Long blockParentId) {
+		List<EvalTemplateItem> childItemsList = new ArrayList<EvalTemplateItem>();
 
 		for (int i=0; i<templateItemsList.size(); i++) {
 			EvalTemplateItem templateItem = (EvalTemplateItem) templateItemsList.get(i);

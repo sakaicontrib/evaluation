@@ -89,7 +89,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		items = new EvalItemsLogicImpl();
 		items.setDao(evaluationDao);
 		items.setExternalLogic( new EvalExternalLogicStub() );
-		items.setSettings(settings);
+		items.setEvalSettings(settings);
 
 	}
 

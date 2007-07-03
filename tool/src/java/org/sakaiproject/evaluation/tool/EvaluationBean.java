@@ -33,6 +33,7 @@ import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.utils.EvalUtils;
+import org.sakaiproject.evaluation.logic.utils.EvaluationDateUtil;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -44,7 +45,6 @@ import org.sakaiproject.evaluation.tool.producers.EvaluationAssignProducer;
 import org.sakaiproject.evaluation.tool.producers.EvaluationSettingsProducer;
 import org.sakaiproject.evaluation.tool.producers.EvaluationStartProducer;
 import org.sakaiproject.evaluation.tool.producers.SummaryProducer;
-import org.sakaiproject.evaluation.tool.utils.EvaluationDateUtil;
 import org.sakaiproject.util.FormattedText;
 
 import uk.org.ponder.messageutil.TargettedMessage;
@@ -93,11 +93,6 @@ public class EvaluationBean {
 	private EvalSettings settings;
 	public void setSettings(EvalSettings settings) {
 		this.settings = settings;
-	}
-
-	private EvaluationDateUtil dateUtil;	
-	public void setDateUtil (EvaluationDateUtil dateUtil) {
-		this.dateUtil = dateUtil;
 	}
 
 	private TargettedMessageList messages;
@@ -774,7 +769,9 @@ public class EvaluationBean {
 		}
 
 		// Ensure minimum time difference between start and due date.
-		dateUtil.updateDueDate(eval);
+        // Getting the system setting that tells what should be the minimum time difference between start date and due date.
+        int minHoursLong = ((Integer)settings.get(EvalSettings.EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE)).intValue();
+        EvaluationDateUtil.updateDueDate(eval, minHoursLong);
 
 		// set stop date to the due date if not set
 		if (eval.getStopDate() == null) {
