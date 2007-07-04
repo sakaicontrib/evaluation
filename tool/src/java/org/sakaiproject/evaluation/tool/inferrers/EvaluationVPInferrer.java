@@ -89,6 +89,7 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
      * @see uk.ac.cam.caret.sakai.rsf.entitybroker.EntityViewParamsInferrer#inferDefaultViewParameters(java.lang.String)
      */
     public ViewParameters inferDefaultViewParameters(String reference) {
+    	log.warn("Note: Routing user to view based on reference: " + reference);
         final String ref = reference;
         final ViewParameters[] togo = new ViewParameters[1];
         // this is needed to provide transactional protection
