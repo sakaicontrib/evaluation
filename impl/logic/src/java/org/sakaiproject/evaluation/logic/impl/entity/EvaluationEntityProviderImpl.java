@@ -14,6 +14,8 @@
 
 package org.sakaiproject.evaluation.logic.impl.entity;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.entitybroker.entityprovider.CoreEntityProvider;
 import org.sakaiproject.entitybroker.entityprovider.capabilities.AutoRegisterEntityProvider;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
@@ -26,6 +28,8 @@ import org.sakaiproject.evaluation.logic.entity.EvaluationEntityProvider;
  */
 public class EvaluationEntityProviderImpl implements EvaluationEntityProvider, CoreEntityProvider, AutoRegisterEntityProvider {
 
+	private static Log log = LogFactory.getLog(EvaluationEntityProviderImpl.class);
+	
 	private EvalEvaluationsLogic evaluationsLogic;
 	public void setEvaluationsLogic(EvalEvaluationsLogic evaluationsLogic) {
 		this.evaluationsLogic = evaluationsLogic;
@@ -43,6 +47,7 @@ public class EvaluationEntityProviderImpl implements EvaluationEntityProvider, C
 	 * @see org.sakaiproject.entitybroker.entityprovider.CoreEntityProvider#entityExists(java.lang.String)
 	 */
 	public boolean entityExists(String id) {
+		log.warn("NOTE: checking if evaluation exists: " + id);
 		Long evalId;
 		try {
 			evalId = new Long(id);
@@ -52,6 +57,7 @@ public class EvaluationEntityProviderImpl implements EvaluationEntityProvider, C
 		} catch (NumberFormatException e) {
 			// invalid number so roll through to the false
 		}
+		log.warn("NOTE: evaluation does not exist: " + id);
 		return false;
 	}
 
