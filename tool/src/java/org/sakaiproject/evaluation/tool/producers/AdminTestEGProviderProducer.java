@@ -72,7 +72,13 @@ public class AdminTestEGProviderProducer implements ViewComponentProducer, ViewP
      */
     public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
+        String warningMessage = "";
         String currentUserId = external.getCurrentUserId();
+        boolean userAdmin = external.isUserAdmin(currentUserId);
+        if (! userAdmin) {
+            // Security check and denial
+            throw new SecurityException("Non-admin users may not access this page");
+        }
 
         // get provider
         EvalGroupsProvider evalGroupsProvider;
@@ -88,30 +94,36 @@ public class AdminTestEGProviderProducer implements ViewComponentProducer, ViewP
         AdminTestEGViewParameters testViewParameters = (AdminTestEGViewParameters) viewparams;
         String username = testViewParameters.username;
         String evalGroupId = testViewParameters.evalGroupId;
-        if (evalGroupId == null) {
-            UIOutput.make(tofill, "warning-message", "No evalGroupId set");
+        if (evalGroupId == null || evalGroupId.equals("")) {
+            warningMessage += " No evalGroupId set";
+            UIOutput.make(tofill, "warning-message", warningMessage);
         } else {
             String title = external.getDisplayTitle(evalGroupId);
             if ("--------".equals(title)) {
-                UIOutput.make(tofill, "warning-message", "Invalid evalGroupId ("+evalGroupId+"): cannot find title, reset to null");
+                warningMessage += " Invalid evalGroupId ("+evalGroupId+"): cannot find title, reset to null";
+                UIOutput.make(tofill, "warning-message", warningMessage);
+                evalGroupId = null;
             }
-            evalGroupId = null;
         }
         String userId = currentUserId;
-        if (username == null) {
+        if (username == null || username.equals("")) {
             username = external.getUserUsername(userId);
-            UIOutput.make(tofill, "warning-message", "No username set: using current user username");
+            warningMessage += " No username set: using current user";
+            UIOutput.make(tofill, "warning-message", warningMessage);
         } else {
             userId = external.getUserId(username);
             if (userId == null) {
-                UIOutput.make(tofill, "warning-message", "Invalid username ("+username+"): cannot find id, setting to current user id");
+                warningMessage += " Invalid username ("+username+"): cannot find id, setting to current user id";
+                UIOutput.make(tofill, "warning-message", warningMessage);
                 userId = currentUserId;
             }
         }
 
         UIMessage.make(tofill, "page-title", "admintesteg.page.title");
-        UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID));
-        UIInternalLink.make(tofill, "administrate-toplink", UIMessage.make("administrate.page.title"), new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+        UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), 
+                new SimpleViewParameters(SummaryProducer.VIEW_ID));
+        UIInternalLink.make(tofill, "administrate-toplink", UIMessage.make("administrate.page.title"), 
+                new SimpleViewParameters(AdministrateProducer.VIEW_ID));
 
         UIMessage.make(tofill, "current_test_header", "admintesteg.current.test.header");
         UIMessage.make(tofill, "current_test_user_header", "admintesteg.current.test.user.header");
@@ -119,7 +131,12 @@ public class AdminTestEGProviderProducer implements ViewComponentProducer, ViewP
         UIMessage.make(tofill, "current_test_group_header", "admintesteg.current.test.group.header");
         UIOutput.make(tofill, "current_test_group", evalGroupId);
 
-        UIForm searchForm = UIForm.make(tofill, "current_test_form", testViewParameters);
+        // create a copy of the VP (to avoid corrupting the original)
+        AdminTestEGViewParameters ategvp = (AdminTestEGViewParameters) testViewParameters.copyBase();
+        ategvp.username = username;
+        ategvp.evalGroupId = evalGroupId;
+
+        UIForm searchForm = UIForm.make(tofill, "current_test_form", ategvp);
         UIInput.make(searchForm, "current_test_user_input", "#{username}");
         UIInput.make(searchForm, "current_test_group_input", "#{evalGroupId}");
         UIMessage.make(searchForm, "current_test_form_command", "admintesteg.test.command" );
@@ -268,6 +285,11 @@ public class AdminTestEGProviderProducer implements ViewComponentProducer, ViewP
     }
 
 
+    /**
+     * Turn a collection into something that can be viewed easily onscreen
+     * @param c any Collection
+     * @return a String representing that collection
+     */
     private String collectionToString(Collection c) {
         StringBuilder sb = new StringBuilder();
         sb.append("(#:" + c.size() + ")");
