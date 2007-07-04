@@ -82,10 +82,10 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
 		/*
 		 * top links here
 		 */
-		UIMessage.make(tofill, "administrate-title", "administrate.page.title"); //$NON-NLS-2$
+		UIMessage.make(tofill, "administrate-title", "administrate.page.title");
 		UIInternalLink.make(tofill, "summary-link", 
 				UIMessage.make("summary.page.title"), 
-			new SimpleViewParameters(SummaryProducer.VIEW_ID)); //$NON-NLS-2$
+			new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
 		UIInternalLink.make(tofill, "control-templates-link",
 				UIMessage.make("controltemplates.page.title"), 
@@ -95,18 +95,21 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
 				UIMessage.make("controlevaluations.page.title"), 
 			new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
 
-		UIInternalLink.make(tofill, "control-scales-toplink",UIMessage.make("administrate.top.control.scales"),  //$NON-NLS-2$
+		UIInternalLink.make(tofill, "control-scales-toplink",UIMessage.make("administrate.top.control.scales"),
 				new SimpleViewParameters(ControlScalesProducer.VIEW_ID));			
-	
+
+        UIInternalLink.make(tofill, "test-evalgroupprovider-toplink",UIMessage.make("admintesteg.page.title"),
+                new SimpleViewParameters(AdminTestEGProviderProducer.VIEW_ID));           
+
 		//System Settings
 		UIForm form = UIForm.make(tofill, "basic-form");		
-		UIMessage.make(form, "system-settings-header", "administrate.system.settings.header"); //$NON-NLS-2$
-		UIMessage.make(form, "system-settings-instructions","administrate.system.settings.instructions"); //$NON-NLS-2$
+		UIMessage.make(form, "system-settings-header", "administrate.system.settings.header");
+		UIMessage.make(form, "system-settings-instructions","administrate.system.settings.instructions");
 
 		//Instructor Settings
-		UIMessage.make(form, "instructor-settings-header", "administrate.instructor.settings.header"); //$NON-NLS-2$
+		UIMessage.make(form, "instructor-settings-header", "administrate.instructor.settings.header");
         makeBoolean(form, "instructors-eval-create", EvalSettings.INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS); 
-        UIMessage.make(form, "instructors-eval-create-note", "administrate.instructors.eval.create.note"); //$NON-NLS-2$
+        UIMessage.make(form, "instructors-eval-create-note", "administrate.instructors.eval.create.note");
 		
         //Select for whether instructors can view results or not
         String[] administrateConfigurableLabels = 
@@ -126,10 +129,10 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
         		administrateConfigurableValues, 
         		administrateConfigurableLabels, 
         		EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS, true);
-        UIMessage.make(form, "instructors-view-results-note", "administrate.instructors.view.results.note"); //$NON-NLS-2$
+        UIMessage.make(form, "instructors-view-results-note", "administrate.instructors.view.results.note");
 		
 		makeBoolean(form, "instructors-email-students", EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS); 
-		UIMessage.make(form, "instructors-email-students-note", "administrate.instructors.email.students.note"); //$NON-NLS-2$
+		UIMessage.make(form, "instructors-email-students-note", "administrate.instructors.email.students.note");
 		
 		/*
 		 * (non-Javadoc)
@@ -158,74 +161,74 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
         		hierarchyOptionValues, 
         		hierarchyOptionLabels, 
         		EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE, true);
-        UIMessage.make(form, "instructors-hierarchy-note", "administrate.instructors.hierarchy.note"); //$NON-NLS-2$
+        UIMessage.make(form, "instructors-hierarchy-note", "administrate.instructors.hierarchy.note");
 		
 		//Select for number of questions intructors can add
         makeSelect(form, "instructors-num-questions", 
         		EvaluationConstant.PULLDOWN_INTEGER_VALUES, 
         		EvaluationConstant.PULLDOWN_INTEGER_VALUES, 
         		EvalSettings.INSTRUCTOR_ADD_ITEMS_NUMBER, false);
-        UIMessage.make(form, "instructors-num-questions-note", "administrate.instructors.num.questions.note"); //$NON-NLS-2$
+        UIMessage.make(form, "instructors-num-questions-note", "administrate.instructors.num.questions.note");
 		
 		// Student Settings
-        UIMessage.make(form, "student-settings-header", "administrate.student.settings.header"); //$NON-NLS-2$
+        UIMessage.make(form, "student-settings-header", "administrate.student.settings.header");
 
 		//Select for whether students can leave questions unanswered or not
 		makeSelect(form, "students-unanswered",	//$NON-NLS-1$ 
 				administrateConfigurableValues, 
         		administrateConfigurableLabels, 
 				EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED, true); 
-		UIMessage.make(form, "students-unanswered-note", "administrate.students.unanswered.note"); //$NON-NLS-2$
+		UIMessage.make(form, "students-unanswered-note", "administrate.students.unanswered.note");
 		
 		//Select for whether student can modify responses upto due date
 		makeSelect(form, "students-modify-responses", 
 				administrateConfigurableValues, 
         		administrateConfigurableLabels, 
 				EvalSettings.STUDENT_MODIFY_RESPONSES, true); 
-		UIMessage.make(form, "students-modify-responses-note", "administrate.students.modify.responses.note"); //$NON-NLS-2$
+		UIMessage.make(form, "students-modify-responses-note", "administrate.students.modify.responses.note");
 		
 		//Select for whether students can view results
 		makeSelect(form, "students-view-results",
 				administrateConfigurableValues, 
         		administrateConfigurableLabels, 
 				EvalSettings.STUDENT_VIEW_RESULTS, true);
-		UIMessage.make(form, "students-view-results-note","administrate.students.view.results.note"); //$NON-NLS-2$
+		UIMessage.make(form, "students-view-results-note","administrate.students.view.results.note");
 		
 		// Administrator Settings
-		UIMessage.make(form, "administrator-settings-header","administrate.admin.settings.header");		 //$NON-NLS-2$
+		UIMessage.make(form, "administrator-settings-header","administrate.admin.settings.header");		
 
 		//Select for number of questions admins can add
 		makeSelect(form, "admin-hierarchy-num-questions",
 				EvaluationConstant.PULLDOWN_INTEGER_VALUES,
 				EvaluationConstant.PULLDOWN_INTEGER_VALUES,
 				EvalSettings.ADMIN_ADD_ITEMS_NUMBER, false); 
-		UIMessage.make(form, "admin-hierarchy-num-questions-note", "administrate.admin.hierarchy.num.questions.note"); //$NON-NLS-2$
+		UIMessage.make(form, "admin-hierarchy-num-questions-note", "administrate.admin.hierarchy.num.questions.note");
 
 		makeBoolean(form, "admin-view-instructor-added-results", EvalSettings.ADMIN_VIEW_INSTRUCTOR_ADDED_RESULTS); 
-		UIMessage.make(form, "admin-view-instructor-added-results-note", "administrate.admin.view.instructor.added.results.note");		 //$NON-NLS-2$
+		UIMessage.make(form, "admin-view-instructor-added-results-note", "administrate.admin.view.instructor.added.results.note");		
 		makeBoolean(form, "admin-view-below-results", EvalSettings.ADMIN_VIEW_BELOW_RESULTS); 
-		UIMessage.make(form, "admin-view-below-results-note","administrate.admin.view.below.results.note");		 //$NON-NLS-2$
+		UIMessage.make(form, "admin-view-below-results-note","administrate.admin.view.below.results.note");		
 		
-		UIMessage.make(form, "general-settings-header","administrate.general.settings.header");		 //$NON-NLS-2$
+		UIMessage.make(form, "general-settings-header","administrate.general.settings.header");		
 		makeInput(form, "general-helpdesk-email", EvalSettings.FROM_EMAIL_ADDRESS);
-		UIMessage.make(form, "general-helpdesk-email-note", "administrate.general.helpdesk.email.note"); //$NON-NLS-2$
+		UIMessage.make(form, "general-helpdesk-email-note", "administrate.general.helpdesk.email.note");
 		
 		// Select for number of responses before results could be viewed
 		makeSelect(form, "general-responses-before-view",  
 				EvaluationConstant.PULLDOWN_INTEGER_VALUES,
 				EvaluationConstant.PULLDOWN_INTEGER_VALUES,
 				EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS, false);
-		UIMessage.make(form, "general-responses-before-view-note", "administrate.general.responses.before.view.note");		 //$NON-NLS-2$
+		UIMessage.make(form, "general-responses-before-view-note", "administrate.general.responses.before.view.note");		
 		
 		makeBoolean(form, "general-na-allowed", EvalSettings.NOT_AVAILABLE_ALLOWED); 
-		UIMessage.make(form, "general-na-allowed-note", "administrate.general.na.allowed.note");	 //$NON-NLS-2$
+		UIMessage.make(form, "general-na-allowed-note", "administrate.general.na.allowed.note");	
 		
 		// Select for maximum number of questions in a block
 		makeSelect(form, "general-max-questions-block",	//$NON-NLS-1$
 				EvaluationConstant.PULLDOWN_INTEGER_VALUES,
 				EvaluationConstant.PULLDOWN_INTEGER_VALUES,
 				EvalSettings.ITEMS_ALLOWED_IN_QUESTION_BLOCK, false);
-		UIMessage.make(form, "general-max-questions-block-note", "administrate.general.max.questions.block.note");		 //$NON-NLS-2$
+		UIMessage.make(form, "general-max-questions-block-note", "administrate.general.max.questions.block.note");		
 		
 		// Select for template sharing and visibility settings
 		String[] sharingValues = new String[] {
@@ -242,28 +245,28 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
         		sharingValues, 
         		sharingLabels, 
         		EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY, true);
-        UIMessage.make(form, "general-template-sharing-note","administrate.general.template.sharing.note");		 //$NON-NLS-2$
+        UIMessage.make(form, "general-template-sharing-note","administrate.general.template.sharing.note");		
 		
 		//Select for whether question category would be course or instructor
 		makeSelect(form, "general-default-question", 
 				administrateConfigurableValues, 
         		administrateConfigurableLabels, 
 				EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY, true);
-		UIMessage.make(form, "general-default-question-category", "administrate.general.default.question.category.note");	 //$NON-NLS-2$
+		UIMessage.make(form, "general-default-question-category", "administrate.general.default.question.category.note");	
 		
 		makeBoolean(form, "general-use-stop-date", EvalSettings.EVAL_USE_STOP_DATE); 
-		UIMessage.make(form, "general-use-stop-date-note","administrate.general.use.stop.date.note");		 //$NON-NLS-2$
+		UIMessage.make(form, "general-use-stop-date-note","administrate.general.use.stop.date.note");		
 		makeBoolean(form, "general-expert-templates", EvalSettings.USE_EXPERT_TEMPLATES); 
-		UIMessage.make(form, "general-expert-templates-note","administrate.general.expert.templates.note");	 //$NON-NLS-2$
+		UIMessage.make(form, "general-expert-templates-note","administrate.general.expert.templates.note");	
 		makeBoolean(form, "general-expert-questions", EvalSettings.USE_EXPERT_ITEMS); 
-		UIMessage.make(form, "general-expert-questions-note", "administrate.general.expert.questions.note");		 //$NON-NLS-2$
+		UIMessage.make(form, "general-expert-questions-note", "administrate.general.expert.questions.note");		
 		makeBoolean(form, "general-same-view-date",  EvalSettings.EVAL_USE_SAME_VIEW_DATES); 
-		UIMessage.make(form, "general-same-view-date-note", "administrate.general.same.view.date.note");	 //$NON-NLS-2$
+		UIMessage.make(form, "general-same-view-date-note", "administrate.general.same.view.date.note");	
 		makeBoolean(form, "general-require-comments-block",  EvalSettings.REQUIRE_COMMENTS_BLOCK); 
-		UIMessage.make(form, "general-require-comments-block-note", "administrate.general.require.comments.block.note");	 //$NON-NLS-2$
+		UIMessage.make(form, "general-require-comments-block-note", "administrate.general.require.comments.block.note");	
 		
 		makeBoolean(form, "general-item-results-sharing-block",  EvalSettings.ITEM_USE_RESULTS_SHARING); 
-		UIMessage.make(form, "general-item-results-sharing-block-note", "administrate.general.item.sharing.block.note");	 //$NON-NLS-2$
+		UIMessage.make(form, "general-item-results-sharing-block-note", "administrate.general.item.sharing.block.note");	
 
 
 		//Number of days old can an eval be and still be recently closed
@@ -271,18 +274,18 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
 				EvaluationConstant.PULLDOWN_INTEGER_VALUES,
 				EvaluationConstant.PULLDOWN_INTEGER_VALUES,
 				EvalSettings.EVAL_RECENTLY_CLOSED_DAYS, false); 
-		UIMessage.make(form, "general-eval-closed-still-recent-note","administrate.general.eval.closed.still.recent.note"); //$NON-NLS-2$
+		UIMessage.make(form, "general-eval-closed-still-recent-note","administrate.general.eval.closed.still.recent.note");
 		
 		//Minimum time difference (in hours) between the start date and due date
 		makeSelect(form, "general-mim-time-diff-between-dates",
 				EvaluationConstant.MINIMUM_TIME_DIFFERENCE,
 				EvaluationConstant.MINIMUM_TIME_DIFFERENCE,
 				EvalSettings.EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE, false); 
-		UIMessage.make(form, "general-mim-time-diff-between-dates-note", "administrate.general.eval.mim.time.diff.between.dates"); //$NON-NLS-2$
+		UIMessage.make(form, "general-mim-time-diff-between-dates-note", "administrate.general.eval.mim.time.diff.between.dates");
 		
 		// Save settings button
         // NB no action now required
-		UICommand.make(form, "saveSettings",UIMessage.make("administrate.save.settings.button"), null); //$NON-NLS-2$	
+		UICommand.make(form, "saveSettings",UIMessage.make("administrate.save.settings.button"), null);	
 	}
 
 	/* 

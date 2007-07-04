@@ -365,6 +365,18 @@ public class EvalExternalLogicStub implements EvalExternalLogic {
 		return "------";
 	}
 
+
+    public String getUserId(String username) {
+        if ( EvalTestDataLoad.ADMIN_USER_NAME.equals(username) ) {
+            return EvalTestDataLoad.ADMIN_USER_ID;
+        } else if ( EvalTestDataLoad.MAINT_USER_NAME.equals(username) ) {
+            return EvalTestDataLoad.MAINT_USER_ID;            
+        } else if ( EvalTestDataLoad.USER_NAME.equals(username) ) {
+            return EvalTestDataLoad.USER_ID;          
+        }
+        return null;
+    }
+
 	/**
 	 * only true for ADMIN_USER_ID
 	 */

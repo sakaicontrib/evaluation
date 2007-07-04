@@ -43,6 +43,12 @@ public interface ExternalUsers {
 	 * @return the username or default text "------" if it cannot be found
 	 */
 	public String getUserUsername(String userId);
+    
+    /**
+     * @param username the login name for the user
+     * @return the internal user id (not username) or null if not found
+     */
+    public String getUserId(String username);
 
 	/**
 	 * Gets the displayable name for a user id<br/>

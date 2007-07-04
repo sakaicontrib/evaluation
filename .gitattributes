@@ -144,6 +144,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/locators/ScaleBeanLocator.java -t
 tool/src/java/org/sakaiproject/evaluation/tool/locators/SettingsWBL.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/locators/TemplateBeanLocator.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/locators/TemplateItemWBL.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/producers/AdminTestEGProviderProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlEvaluationsProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlItemsProducer.java -text
@@ -188,6 +189,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/renderers/ScaledRenderer.java -te
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/TextRenderer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/utils/RSFUtils.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/utils/ScaledUtils.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/viewparams/AdminTestEGViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/BlockIdsParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/CSVReportViewParams.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ChooseItemViewParameters.java -text
@@ -268,6 +270,7 @@ tool/src/webapp/content/js/jquery/interface/iutil.js -text
 tool/src/webapp/content/js/jquery/jquery.js -text
 tool/src/webapp/content/js/reorderUtils.js -text
 tool/src/webapp/content/js/scaleUtils.js -text
+tool/src/webapp/content/templates/admin_test_evalgroup_provider.html -text
 tool/src/webapp/content/templates/administrate.html -text
 tool/src/webapp/content/templates/choose_existing_items.html -text
 tool/src/webapp/content/templates/choose_expert_category.html -text

@@ -61,6 +61,9 @@ import org.sakaiproject.user.api.User;
 import org.sakaiproject.user.api.UserDirectoryService;
 import org.sakaiproject.user.api.UserNotDefinedException;
 import org.sakaiproject.util.ResourceLoader;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 
 /**
@@ -70,7 +73,7 @@ import org.sakaiproject.util.ResourceLoader;
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class EvalExternalLogicImpl implements EvalExternalLogic {
+public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationContextAware {
 
     private static Log log = LogFactory.getLog(EvalExternalLogicImpl.class);
 
@@ -134,6 +137,12 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         this.userDirectoryService = userDirectoryService;
     }
 
+    private ApplicationContext applicationContext;
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
+
     // PROVIDERS
 
     private EvalGroupsProvider evalGroupsProvider;
@@ -148,11 +157,14 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         // register Sakai permissions for this tool
         registerPermissions();
 
-        // setup providers
+        // setup provider
         if (evalGroupsProvider == null) {
-            evalGroupsProvider = (EvalGroupsProvider) ComponentManager.get(EvalGroupsProvider.class.getName());
-            if (evalGroupsProvider != null) {
+            String providerBeanName = EvalGroupsProvider.class.getName();
+            if (applicationContext.containsBean(providerBeanName)) {
+                evalGroupsProvider = (EvalGroupsProvider) applicationContext.getBean(providerBeanName);
                 log.info("EvalGroupsProvider found...");
+            } else {
+                log.debug("No EvalGroupsProvider found...");
             }
         }
     }
@@ -213,6 +225,20 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
             log.error("Could not get username from userId: " + userId, ex);
         }
         return "------";
+    }
+
+
+
+    /* (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#getUserId(java.lang.String)
+     */
+    public String getUserId(String username) {
+        try {
+            return userDirectoryService.getUserId(username);
+        } catch(UserNotDefinedException ex) {
+            log.error("Could not get userId from username: " + username);
+        }
+        return null;
     }
 
     /* (non-Javadoc)
@@ -507,8 +533,8 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         }
 
         if (l == null || l.size() <= 0) {
-        	log.warn("Could not get users from any provided userIds");
-        	return;
+            log.warn("Could not get users from any provided userIds");
+            return;
         }
 
         InternetAddress[] toAddresses = new InternetAddress[ l.size() ];
@@ -684,5 +710,6 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         }
         return md5;
     }
+
 
 }

@@ -56,5 +56,10 @@ public class EvalGroup {
 		this.title = title;
 		this.type = type;
 	}
+    
+    @Override
+    public String toString() {
+        return this.evalGroupId + ":" + this.title;
+    }
 
 }

@@ -1,0 +1,280 @@
+/******************************************************************************
+ * TestEGProviderProducer.java - created by aaronz on 12 Mar 2007
+ * 
+ * Copyright (c) 2007 Centre for Academic Research in Educational Technologies
+ * Licensed under the Educational Community License version 1.0
+ * 
+ * A copy of the Educational Community License has been included in this 
+ * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
+ * 
+ * Contributors:
+ * Aaron Zeckoski (aaronz@vt.edu) - primary
+ * 
+ *****************************************************************************/
+
+package org.sakaiproject.evaluation.tool.producers;
+
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import org.sakaiproject.evaluation.logic.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.logic.providers.EvalGroupsProvider;
+import org.sakaiproject.evaluation.tool.viewparams.AdminTestEGViewParameters;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+
+import uk.org.ponder.rsf.components.UIBranchContainer;
+import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIForm;
+import uk.org.ponder.rsf.components.UIInput;
+import uk.org.ponder.rsf.components.UIInternalLink;
+import uk.org.ponder.rsf.components.UIMessage;
+import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.view.ComponentChecker;
+import uk.org.ponder.rsf.view.ViewComponentProducer;
+import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
+
+/**
+ * Handles the choose existing items view
+ * 
+ * @author Aaron Zeckoski (aaronz@vt.edu)
+ */
+public class AdminTestEGProviderProducer implements ViewComponentProducer, ViewParamsReporter, ApplicationContextAware {
+
+    /**
+     * Used for navigation within the system, this must match with the template name
+     */
+    public static final String VIEW_ID = "admin_test_evalgroup_provider";
+    public String getViewID() {
+        return VIEW_ID;
+    }
+
+    private EvalExternalLogic external;
+    public void setExternal(EvalExternalLogic external) {
+        this.external = external;
+    }
+
+    // pulling the spring app context, bad bad -AZ
+    private ApplicationContext applicationContext;
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
+
+    /* (non-Javadoc)
+     * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
+     */
+    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+
+        String currentUserId = external.getCurrentUserId();
+
+        // get provider
+        EvalGroupsProvider evalGroupsProvider;
+        String providerBeanName = EvalGroupsProvider.class.getName();
+        if (applicationContext.containsBean(providerBeanName)) {
+            evalGroupsProvider = (EvalGroupsProvider) applicationContext.getBean(providerBeanName);
+        } else {
+            // no provider, die horribly
+            UIOutput.make(tofill, "warning-message", "No EvalGroupsProvider found... cannot test...");
+            return;
+        }
+
+        AdminTestEGViewParameters testViewParameters = (AdminTestEGViewParameters) viewparams;
+        String username = testViewParameters.username;
+        String evalGroupId = testViewParameters.evalGroupId;
+        if (evalGroupId == null) {
+            UIOutput.make(tofill, "warning-message", "No evalGroupId set");
+        } else {
+            String title = external.getDisplayTitle(evalGroupId);
+            if ("--------".equals(title)) {
+                UIOutput.make(tofill, "warning-message", "Invalid evalGroupId ("+evalGroupId+"): cannot find title, reset to null");
+            }
+            evalGroupId = null;
+        }
+        String userId = currentUserId;
+        if (username == null) {
+            username = external.getUserUsername(userId);
+            UIOutput.make(tofill, "warning-message", "No username set: using current user username");
+        } else {
+            userId = external.getUserId(username);
+            if (userId == null) {
+                UIOutput.make(tofill, "warning-message", "Invalid username ("+username+"): cannot find id, setting to current user id");
+                userId = currentUserId;
+            }
+        }
+
+        UIMessage.make(tofill, "page-title", "admintesteg.page.title");
+        UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID));
+        UIInternalLink.make(tofill, "administrate-toplink", UIMessage.make("administrate.page.title"), new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+
+        UIMessage.make(tofill, "current_test_header", "admintesteg.current.test.header");
+        UIMessage.make(tofill, "current_test_user_header", "admintesteg.current.test.user.header");
+        UIOutput.make(tofill, "current_test_user", username);
+        UIMessage.make(tofill, "current_test_group_header", "admintesteg.current.test.group.header");
+        UIOutput.make(tofill, "current_test_group", evalGroupId);
+
+        UIForm searchForm = UIForm.make(tofill, "current_test_form", testViewParameters);
+        UIInput.make(searchForm, "current_test_user_input", "#{username}");
+        UIInput.make(searchForm, "current_test_group_input", "#{evalGroupId}");
+        UIMessage.make(searchForm, "current_test_form_command", "admintesteg.test.command" );
+
+        UIMessage.make(tofill, "major_test_header", "admintesteg.major.test.header");
+        UIMessage.make(tofill, "test_method_header", "admintesteg.test.method.header");
+        UIMessage.make(tofill, "test_result_header", "admintesteg.test.result.header");
+        UIMessage.make(tofill, "test_runtime_header", "admintesteg.test.runtime.header");
+
+        long startTime = 0;
+        long total = 0;
+        Set s = null;
+        List l = null;
+
+        // now run the tests
+        UIBranchContainer tests1 = UIBranchContainer.make(tofill, "tests_list:", "getUserIdsForEvalGroups.PERM_BE_EVALUATED");
+        UIOutput.make(tests1, "test_method", tests1.localID);
+        if (evalGroupId == null) {
+            UIMessage.make(tests1, "test_result", "admintesteg.test.result.skipped.nogroup");
+            UIMessage.make(tests1, "test_runtime", "admintesteg.test.runtime.message", new Object[] {0+""});
+        } else {
+            startTime = new Date().getTime();
+            s = evalGroupsProvider.getUserIdsForEvalGroups(new String[] {evalGroupId}, EvalGroupsProvider.PERM_BE_EVALUATED);
+            UIOutput.make(tests1, "test_result", collectionToString(s));
+            total = new Date().getTime() - startTime;
+            UIMessage.make(tests1, "test_runtime", "admintesteg.test.runtime.message", new Object[] {new Long(total)});
+        }
+
+        UIBranchContainer tests1b = UIBranchContainer.make(tofill, "tests_list:", "getUserIdsForEvalGroups.PERM_TAKE_EVALUATION");
+        UIOutput.make(tests1b, "test_method", tests1b.localID);
+        if (evalGroupId == null) {
+            UIMessage.make(tests1b, "test_result", "admintesteg.test.result.skipped.nogroup");
+            UIMessage.make(tests1b, "test_runtime", "admintesteg.test.runtime.message", new Object[] {0+""});
+        } else {
+            startTime = new Date().getTime();
+            s = evalGroupsProvider.getUserIdsForEvalGroups(new String[] {evalGroupId}, EvalGroupsProvider.PERM_TAKE_EVALUATION);
+            UIOutput.make(tests1b, "test_result", collectionToString(s));
+            total = new Date().getTime() - startTime;
+            UIMessage.make(tests1b, "test_runtime", "admintesteg.test.runtime.message", new Object[] {new Long(total)});
+        }
+
+        UIBranchContainer tests2 = UIBranchContainer.make(tofill, "tests_list:", "countUserIdsForEvalGroups.PERM_BE_EVALUATED");
+        UIOutput.make(tests2, "test_method", tests2.localID);
+        if (evalGroupId == null) {
+            UIMessage.make(tests2, "test_result", "admintesteg.test.result.skipped.nogroup");
+            UIMessage.make(tests2, "test_runtime", "admintesteg.test.runtime.message", new Object[] {0+""});
+        } else {
+            startTime = new Date().getTime();
+            int count = evalGroupsProvider.countUserIdsForEvalGroups(new String[] {evalGroupId}, EvalGroupsProvider.PERM_BE_EVALUATED);
+            UIOutput.make(tests2, "test_result", count+"");
+            total = new Date().getTime() - startTime;
+            UIMessage.make(tests2, "test_runtime", "admintesteg.test.runtime.message", new Object[] {new Long(total)});
+        }
+
+        UIBranchContainer tests2b = UIBranchContainer.make(tofill, "tests_list:", "countUserIdsForEvalGroups.PERM_TAKE_EVALUATION");
+        UIOutput.make(tests2b, "test_method", tests2b.localID);
+        if (evalGroupId == null) {
+            UIMessage.make(tests2b, "test_result", "admintesteg.test.result.skipped.nogroup");
+            UIMessage.make(tests2b, "test_runtime", "admintesteg.test.runtime.message", new Object[] {0+""});
+        } else {
+            startTime = new Date().getTime();
+            int count = evalGroupsProvider.countUserIdsForEvalGroups(new String[] {evalGroupId}, EvalGroupsProvider.PERM_TAKE_EVALUATION);
+            UIOutput.make(tests2b, "test_result", count+"");
+            total = new Date().getTime() - startTime;
+            UIMessage.make(tests2b, "test_runtime", "admintesteg.test.runtime.message", new Object[] {new Long(total)});
+        }
+
+        UIBranchContainer tests3 = UIBranchContainer.make(tofill, "tests_list:", "getEvalGroupsForUser.PERM_BE_EVALUATED");
+        UIOutput.make(tests3, "test_method", tests3.localID);
+        startTime = new Date().getTime();
+        l = evalGroupsProvider.getEvalGroupsForUser(userId, EvalGroupsProvider.PERM_BE_EVALUATED);
+        UIOutput.make(tests3, "test_result", collectionToString(l));
+        total = new Date().getTime() - startTime;
+        UIMessage.make(tests3, "test_runtime", "admintesteg.test.runtime.message", new Object[] {new Long(total)});
+
+        UIBranchContainer tests3b = UIBranchContainer.make(tofill, "tests_list:", "getEvalGroupsForUser.PERM_TAKE_EVALUATION");
+        UIOutput.make(tests3b, "test_method", tests3b.localID);
+        startTime = new Date().getTime();
+        l = evalGroupsProvider.getEvalGroupsForUser(userId, EvalGroupsProvider.PERM_TAKE_EVALUATION);
+        UIOutput.make(tests3b, "test_result", collectionToString(l));
+        total = new Date().getTime() - startTime;
+        UIMessage.make(tests3b, "test_runtime", "admintesteg.test.runtime.message", new Object[] {new Long(total)});
+
+        UIBranchContainer tests4 = UIBranchContainer.make(tofill, "tests_list:", "countEvalGroupsForUser.PERM_BE_EVALUATED");
+        UIOutput.make(tests4, "test_method", tests4.localID);
+        startTime = new Date().getTime();
+        int count4 = evalGroupsProvider.countEvalGroupsForUser(userId, EvalGroupsProvider.PERM_BE_EVALUATED);
+        UIOutput.make(tests4, "test_result", count4+"");
+        total = new Date().getTime() - startTime;
+        UIMessage.make(tests4, "test_runtime", "admintesteg.test.runtime.message", new Object[] {new Long(total)});
+
+        UIBranchContainer tests4b = UIBranchContainer.make(tofill, "tests_list:", "countEvalGroupsForUser.PERM_TAKE_EVALUATION");
+        UIOutput.make(tests4b, "test_method", tests4b.localID);
+        startTime = new Date().getTime();
+        int count4b = evalGroupsProvider.countEvalGroupsForUser(userId, EvalGroupsProvider.PERM_TAKE_EVALUATION);
+        UIOutput.make(tests4b, "test_result", count4b+"");
+        total = new Date().getTime() - startTime;
+        UIMessage.make(tests4b, "test_runtime", "admintesteg.test.runtime.message", new Object[] {new Long(total)});
+
+        UIBranchContainer tests5 = UIBranchContainer.make(tofill, "tests_list:", "getGroupByGroupId");
+        UIOutput.make(tests5, "test_method", tests5.localID);
+        if (evalGroupId == null) {
+            UIMessage.make(tests5, "test_result", "admintesteg.test.result.skipped.nogroup");
+            UIMessage.make(tests5, "test_runtime", "admintesteg.test.runtime.message", new Object[] {0+""});
+        } else {
+            startTime = new Date().getTime();
+            EvalGroup result5 = evalGroupsProvider.getGroupByGroupId(evalGroupId);
+            UIOutput.make(tests5, "test_result", result5.toString());
+            total = new Date().getTime() - startTime;
+            UIMessage.make(tests5, "test_runtime", "admintesteg.test.runtime.message", new Object[] {new Long(total)});
+        }
+
+        UIBranchContainer tests6 = UIBranchContainer.make(tofill, "tests_list:", "isUserAllowedInGroup.PERM_BE_EVALUATED");
+        UIOutput.make(tests6, "test_method", tests6.localID);
+        if (evalGroupId == null) {
+            UIMessage.make(tests6, "test_result", "admintesteg.test.result.skipped.nogroup");
+            UIMessage.make(tests6, "test_runtime", "admintesteg.test.runtime.message", new Object[] {0+""});
+        } else {
+            startTime = new Date().getTime();
+            boolean result = evalGroupsProvider.isUserAllowedInGroup(userId, EvalGroupsProvider.PERM_BE_EVALUATED, evalGroupId);
+            UIOutput.make(tests6, "test_result", result+"");
+            total = new Date().getTime() - startTime;
+            UIMessage.make(tests6, "test_runtime", "admintesteg.test.runtime.message", new Object[] {new Long(total)});
+        }
+
+        UIBranchContainer tests6b = UIBranchContainer.make(tofill, "tests_list:", "isUserAllowedInGroup.PERM_TAKE_EVALUATION");
+        UIOutput.make(tests6b, "test_method", tests6b.localID);
+        if (evalGroupId == null) {
+            UIMessage.make(tests6b, "test_result", "admintesteg.test.result.skipped.nogroup");
+            UIMessage.make(tests6b, "test_runtime", "admintesteg.test.runtime.message", new Object[] {0+""});
+        } else {
+            startTime = new Date().getTime();
+            boolean result = evalGroupsProvider.isUserAllowedInGroup(userId, EvalGroupsProvider.PERM_TAKE_EVALUATION, evalGroupId);
+            UIOutput.make(tests6b, "test_result", result+"");
+            total = new Date().getTime() - startTime;
+            UIMessage.make(tests6b, "test_runtime", "admintesteg.test.runtime.message", new Object[] {new Long(total)});
+        }
+
+    }
+
+    /* (non-Javadoc)
+     * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
+     */
+    public ViewParameters getViewParameters() {
+        return new AdminTestEGViewParameters();
+    }
+
+
+    private String collectionToString(Collection c) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("(#:" + c.size() + ")");
+        for (Iterator iter = c.iterator(); iter.hasNext();) {
+            sb.append( ", " + iter.next().toString() );
+        }
+        return sb.toString();
+    }
+
+}
