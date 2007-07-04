@@ -14,6 +14,8 @@
 
 package org.sakaiproject.evaluation.logic.impl.entity;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.entitybroker.entityprovider.CoreEntityProvider;
 import org.sakaiproject.entitybroker.entityprovider.capabilities.AutoRegisterEntityProvider;
 import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
@@ -26,6 +28,8 @@ import org.sakaiproject.evaluation.logic.entity.AssignGroupEntityProvider;
  */
 public class AssignGroupEntityProviderImpl implements AssignGroupEntityProvider, CoreEntityProvider, AutoRegisterEntityProvider {
 
+	private static Log log = LogFactory.getLog(AssignGroupEntityProviderImpl.class);
+	
 	private EvalAssignsLogic assignsLogic;
 	public void setAssignsLogic(EvalAssignsLogic assignsLogic) {
 		this.assignsLogic = assignsLogic;
@@ -43,6 +47,7 @@ public class AssignGroupEntityProviderImpl implements AssignGroupEntityProvider,
 	 * @see org.sakaiproject.entitybroker.entityprovider.CoreEntityProvider#entityExists(java.lang.String)
 	 */
 	public boolean entityExists(String id) {
+		log.warn("NOTE: checking if assign group exists: " + id);
 		Long assignGroupId;
 		try {
 			assignGroupId = new Long(id);
@@ -52,6 +57,7 @@ public class AssignGroupEntityProviderImpl implements AssignGroupEntityProvider,
 		} catch (NumberFormatException e) {
 			// invalid number so roll through to the false
 		}
+		log.warn("NOTE: assign group does not exist: " + id);
 		return false;
 	}
 
