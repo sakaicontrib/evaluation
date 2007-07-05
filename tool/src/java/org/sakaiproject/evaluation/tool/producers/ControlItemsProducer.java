@@ -118,7 +118,11 @@ public class ControlItemsProducer implements ViewComponentProducer {
 
 		UIMessage.make(tofill, "items-header", "controlitems.items.header");
 		UIMessage.make(tofill, "items-description", "controlitems.items.description");
-
+		UIMessage.make(tofill, "items-metadata-title", "controlitems.items.metadata.title");
+		UIMessage.make(tofill, "items-action-title", "controlitems.items.action.title");
+		UIMessage.make(tofill, "items-owner-title", "controlitems.items.owner.title");
+		UIMessage.make(tofill, "items-expert-title", "controlitems.items.expert.title");		
+		
 		// use get form to submit the type of item to create
 		UIMessage.make(tofill, "add-item-header", "controlitems.items.add");
 		UIForm addItemForm = UIForm.make(tofill, "add-item-form", 
