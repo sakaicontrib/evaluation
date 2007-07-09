@@ -108,11 +108,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 		if(log.isDebugEnabled())
 			log.debug("EvalJobLogicImpl.checkInvocationDate(" + eval.getId() + "," + jobType + "," + correctDate);
 		
-		/* We don't reschedule reminders, because the active date won't change 
-		 * once an evaluation becomes active, and therefore reminder dates also 
-		 * remain fixed. We might remove a reminder if the due date is moved
-		 * forward or reminders are disabled by setting reminder days to 0
-		 */
+		//reminders are treated in processEvaluationChange() EvalConstants.EVALUATION_STATE_ACTIVE
 		if(EvalConstants.JOB_TYPE_REMINDER.equals(jobType)) return;
 		
 		//get the delayed invocation, a pea with .Date Date
@@ -173,7 +169,23 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	}
 	
 	/**
-	 * Remove all ScheduledInvocationCammand jobs for an EvalEvaluation
+	 * Remove the EvalScheduledInvocation for an EvalEvaluation reminder
+	 * 
+	 * @param evalId the EvalEvaluation id
+	 */
+	public void removeScheduledReminder(Long evalId) {
+		
+		if(evalId == null) return;
+		String userId = externalLogic.getCurrentUserId();
+		if(evalEvaluationsLogic.canRemoveEvaluation(userId, evalId)) {
+			DelayedInvocation[] invocations = null;
+			String opaqueContext = evalId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_REMINDER;
+			deleteInvocation(opaqueContext);
+		}
+	}
+	
+	/**
+	 * Remove all EvalScheduledInvocations for an EvalEvaluation
 	 * 
 	 * @param evalId the EvalEvaluation id
 	 */
@@ -185,42 +197,41 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 		
 			//TODO be selective based on the state of the EvalEvaluation when deleted
 			String opaqueContext = null;
-			DelayedInvocation[] invocations = null;
-			
-			opaqueContext = evalId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_ACTIVE;
-			invocations = scheduledInvocationManager.findDelayedInvocations(COMPONENT_ID, opaqueContext);
-			for(int i = 0; i < invocations.length; i++) {
-				scheduledInvocationManager.deleteDelayedInvocation(invocations[i].uuid);
+			String prefix = evalId.toString() + SEPARATOR;
+			opaqueContext =  prefix + EvalConstants.JOB_TYPE_CREATED;
+			deleteInvocation(opaqueContext);
+			opaqueContext =  prefix + EvalConstants.JOB_TYPE_ACTIVE;
+			deleteInvocation(opaqueContext);
+			opaqueContext =  prefix+ EvalConstants.JOB_TYPE_DUE;
+			deleteInvocation(opaqueContext);
+			opaqueContext =  prefix+ EvalConstants.JOB_TYPE_CLOSED;
+			deleteInvocation(opaqueContext);
+			opaqueContext =  prefix+ EvalConstants.JOB_TYPE_REMINDER;
+			deleteInvocation(opaqueContext);
+			opaqueContext =  prefix + EvalConstants.JOB_TYPE_VIEWABLE;
+			deleteInvocation(opaqueContext);
+			opaqueContext =  prefix+ EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS;
+			deleteInvocation(opaqueContext);
+			opaqueContext =  prefix+ EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS;
+			deleteInvocation(opaqueContext);
+		}
+	}
+
+	/**
+	 * Delete the EvalScheduledInvocation identified by EvalEvaluation id and jobType, if found
+	 * 
+	 * @param opaqueContext the EvalEvaluation id/jobType
+	 */
+	private void deleteInvocation(String opaqueContext) {
+		if(opaqueContext == null || opaqueContext == "") return;
+		DelayedInvocation[] invocations;
+		invocations = scheduledInvocationManager.findDelayedInvocations(COMPONENT_ID, opaqueContext);
+		if(invocations != null ) {
+			if(invocations.length == 1) {
+				scheduledInvocationManager.deleteDelayedInvocation(invocations[0].uuid);
 			}
-			opaqueContext = evalId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_DUE;
-			invocations = scheduledInvocationManager.findDelayedInvocations(COMPONENT_ID, opaqueContext);
-			for(int i = 0; i < invocations.length; i++) {
-				scheduledInvocationManager.deleteDelayedInvocation(invocations[i].uuid);
-			}
-			opaqueContext = evalId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_CLOSED;
-			invocations = scheduledInvocationManager.findDelayedInvocations(COMPONENT_ID, opaqueContext);
-			for(int i = 0; i < invocations.length; i++) {
-				scheduledInvocationManager.deleteDelayedInvocation(invocations[i].uuid);
-			}
-			opaqueContext = evalId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_REMINDER;
-			invocations = scheduledInvocationManager.findDelayedInvocations(COMPONENT_ID, opaqueContext);
-			for(int i = 0; i < invocations.length; i++) {
-				scheduledInvocationManager.deleteDelayedInvocation(invocations[i].uuid);
-			}
-			opaqueContext = evalId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_VIEWABLE;
-			invocations = scheduledInvocationManager.findDelayedInvocations(COMPONENT_ID, opaqueContext);
-			for(int i = 0; i < invocations.length; i++) {
-				scheduledInvocationManager.deleteDelayedInvocation(invocations[i].uuid);
-			}
-			opaqueContext = evalId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS;
-			invocations = scheduledInvocationManager.findDelayedInvocations(COMPONENT_ID, opaqueContext);
-			for(int i = 0; i < invocations.length; i++) {
-				scheduledInvocationManager.deleteDelayedInvocation(invocations[i].uuid);
-			}
-			opaqueContext = evalId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS;
-			invocations = scheduledInvocationManager.findDelayedInvocations(COMPONENT_ID, opaqueContext);
-			for(int i = 0; i < invocations.length; i++) {
-				scheduledInvocationManager.deleteDelayedInvocation(invocations[i].uuid);
+			else if(invocations.length > 1){
+				log.warn(this + ".deleteInvocation(" + opaqueContext  + ") multiple invocations were found.");
 			}
 		}
 	}
@@ -281,6 +292,12 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 				checkInvocationDate(eval, EvalConstants.JOB_TYPE_ACTIVE, eval.getStartDate());
 			}
 			else if(EvalConstants.EVALUATION_STATE_ACTIVE.equals(eval.getState())) {
+				
+				//make sure a change in Reminder interval is handled
+				removeScheduledReminder(eval.getId());
+				if(eval.getReminderDays().intValue() != 0) {
+					scheduleReminder(eval.getId());
+				}
 
 				/* make sure scheduleDue job invocation start date matches EvalEaluation due date
 				 * and moving the due date is reflected in reminder
@@ -409,7 +426,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 					scheduleReminder(eval.getId());
 			}
 			else if(EvalConstants.JOB_TYPE_REMINDER.equals(jobType)) {
-				if(eval.getReminderDays().intValue() != 0) {
+				if(eval.getState().equals(EvalConstants.EVALUATION_STATE_ACTIVE) && eval.getReminderDays().intValue() != 0) {
 					if(eval.getDueDate().after(new Date())) {
 						sendReminderEmail(evaluationId);
 						scheduleReminder(evaluationId);
@@ -499,18 +516,21 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 
 	/**
 	 * Send a reminder that an evaluation is available 
-	 * for taking to those who have not responded
+	 * to those who have not responded
 	 * 
 	 * @param evalId the EvalEvaluation id
 	 */
 	public void sendReminderEmail(Long evalId) {
 		try {
 			EvalEvaluation eval = evalEvaluationsLogic.getEvaluationById(evalId);
-			externalLogic.registerEntityEvent(EVENT_EMAIL_REMINDER, eval);
-			String includeConstant = EvalConstants.EMAIL_INCLUDE_ALL;
-			String[] sentMessages = emails.sendEvalReminderNotifications(evalId, includeConstant);
-			if(log.isDebugEnabled())
-				log.debug("EvalJobLogicImpl.sendReminderEmail(" + evalId + ")" + " sentMessages: " + sentMessages.toString());
+			if(eval.getState().equals(EvalConstants.EVALUATION_STATE_ACTIVE) &&
+					eval.getReminderDays().intValue() != 0) {
+				externalLogic.registerEntityEvent(EVENT_EMAIL_REMINDER, eval);
+				String includeConstant = EvalConstants.EMAIL_INCLUDE_ALL;
+				String[] sentMessages = emails.sendEvalReminderNotifications(evalId, includeConstant);
+				if(log.isDebugEnabled())
+					log.debug("EvalJobLogicImpl.sendReminderEmail(" + evalId + ")" + " sentMessages: " + sentMessages.toString());
+			}
 		}
 		catch(Exception e) {
 			log.error(this + ".sendReminderEmail(" + evalId + ")" + e);
