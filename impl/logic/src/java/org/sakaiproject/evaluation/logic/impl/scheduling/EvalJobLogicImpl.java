@@ -358,7 +358,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 			String opaqueContext = evaluationId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_REMINDER;
 			
 			//schedule reminders at selected intervals while the evaluation is available
-			long start = new Date().getTime();
+			long start = eval.getStartDate().getTime();
 			long due = eval.getDueDate().getTime();
 			long available = due - start;
 			long interval = 1000 * 60 * 60 * 24 * eval.getReminderDays().intValue();
