@@ -1,172 +1,106 @@
 <!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
-<head>
-	<title rsf:id="modify-block-title">Edit Block</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
-    <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
-    <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
-    <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
-    <script>
-   	var flag = "";
-    	
-		function validateForm(){  
-			
-			if (flag=="cancel" || flag =="add" || flag == "remove")	{
-				document.block_form.target = "_self";		
-				return true;
-			}
-			else if (flag=="save") {
-        document.block_form.target = "_self";
-        }
-      //This is for preview 
-      else
-        document.block_form.target = "_blank";  
-      return true;
-    }
-    </script>
- 
-</head>
+	<head>
+		<title rsf:id="modify-block-title">Edit Block</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all" />
+		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all" />
+		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js" />
+		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+		<script>
+     			var flag = "";
+     			
+     			function validateForm(){  
+     			
+     			if (flag=="cancel" || flag =="add" || flag == "remove")	{
+     			document.block_form.target = "_self";		
+     			return true;
+     			}
+     			else if (flag=="save") {
+     			document.block_form.target = "_self";
+     			}
+     			//This is for preview 
+     			else
+     			document.block_form.target = "_blank";  
+     			return true;
+     			}
+     		</script>
+	</head>
+	<body>
+		<div class="portletBody">
+			<div class="navIntraTool">
+				<a rsf:id="administrate-toplink" href="administrate.html">Administrate</a>
+				<a rsf:id="summary-toplink" href="summary.html">Summary</a>
+			</div>
+				<ul class="breadCrumb">
+					<li>
+						<a rsf:id="summary-toplink" href="summary.html">Summary</a>
+					</li>
+					<li rsf:id="create-eval-title">Create Evaluation</li>
+					<li rsf:id="modify-block-title" class="lastCrumb">Edit Block</li>
+				</ul>
+			<div rsf:id="message-for:*" class="alertMessage">
+				<ul style="margin:0px;">
+					<li>Message for user here</li>
+				</ul>
+			</div>
+			<br />
+			<div rsf:id="errorPage:">
+				<span rsf:id="errorMsg" style="font-weight:bold;color:red;">####</span>
+				<br />
+				<br />
+				<input type="button" value="Back" onclick="javascript:history.go(-1);return false;" rsf:id="back-button" />
+			</div>
+			<div rsf:id="blockPage:" class="evalEditorSmall">
+				<form name="block_form" rsf:id="blockForm" method="post" onsubmit="javascript:return validateForm();">
+					<h3 rsf:id="modifyblock-page-title">Creating block</h3>
+					<h4 rsf:id="modifyblock-items-list-title">Blocking items:</h4>
+					<ol>
+						<li rsf:id="queRow:">
+							<span rsf:id="queText"> Child item text here </span>
+						</li>
+					</ol>
 
-<body>
-<div class="portletBody">
-
-<div class="navIntraTool">
-	<a rsf:id="administrate-toplink" href="administrate.html">Administrate</a>
-	<a rsf:id="summary-toplink" href="summary.html">Summary</a>
-</div>
-
-<div>
-	<ul class="breadCrumb">
-		<li class="breadCrumb"><a rsf:id="summary-toplink" href="summary.html">Summary</a></li>
-		<li class="breadCrumb" rsf:id="create-eval-title">Create Evaluation</li>
-		<li class="breadCrumb" rsf:id="modify-block-title">Edit Block</li>
-	</ul>
-</div>
-
-<div rsf:id="message-for:*" class="alertMessage">
-	<ul style="margin:0px;">
-		<li>Message for user here</li>
-	</ul>
-</div>
-
-<br/>
-	
-<div rsf:id="errorPage:">
-	<span rsf:id="errorMsg" style="font-weight:bold;color:red;">####</span>
-	<br/><br/>
-	<input type="button" value="Back" onclick="javascript:history.go(-1);return false;" rsf:id="back-button" />	
-</div>
-
-<div rsf:id="blockPage:">
-  <form  name="block_form" rsf:id="blockForm" method="post" onsubmit="javascript:return validateForm();"> 
-		<table id="blockTable" name="blockTable" width="70%" border="0" cellspacing="0" cellpadding="5">
-		 <tr>
-		 <td colspan="2" width="100%">
-			<table class="sample" cellspacing="0" cellpadding="0" width="100%">
-				<tr>
-					<td width = "20%" align = "left" style="font-weight:bold;">
-						<span rsf:id="item-header">Item</span> <span name="itemNo" rsf:id="itemNo">1</span> :
-					</td>
-					<td width = "35%" align = "left" >
-						<label name="itemClassification" rsf:id="itemClassification" style="font-weight:bold;">####</label>
-					</td>
-					<td width = "25%" align = "center" >
-						<i><span rsf:id="added-by">added by</span> <label name="userInfo" rsf:id="userInfo">#####</label></i>
-					</td>
-					<td width = "20%" align = "center">
-						<div rsf:id="showRemoveLink:">
-							<a href="#" name="remove_link" rsf:id="remove_link">Remove</a>
-						</div>
-					 </td>
-				</tr>
-			</table>	
-		 </td>
-		 </tr>
-		 
-		 <tr>
-		 	<td colspan="2" align="left">
-		 		<b><span rsf:id="item-header-text-header">Item Header Text :</span></b>
-		 	</td>
-		 </tr>
-		 
-		 <tr>
-			 <td colspan="2" width="100%">
-			     <div rsf:id="item_text:">
-			       <textarea name="item_text-dummy" rsf:id="item_text-dummy" cols="80" rows="5"></textarea>
-			     </div>
-			 </td>
-		 </tr>
-		 
-		
-		 <tr>
-		  <td colspan="2">
-				<b><span rsf:id="scale-type-header">Scale Type:</span></b>&nbsp;
-				<span name="scaleLabel" rsf:id="scaleLabel">Title of scale (scale points)</span>
-			</td>
-		 </tr>
-
-		<tr rsf:id="showNA:">
-			<td colspan="2">
-				<b><span rsf:id="add-na-header">Add N/A (not available):</span></b>&nbsp;
-				<input type="checkbox" name="item_NA" rsf:id="item_NA" value="" />
-			</td>
-		</tr>		
-
-
-		<tr>
-			<td colspan="2">
-				<b><span rsf:id="ideal-coloring-header">Use Ideal Coloring:</span></b>&nbsp;
-				<input type="checkbox" name="idealColor" rsf:id="idealColor" value="" />
-			</td>
-		</tr>
-
-		<tr rsf:id="showItemCategory:">
-			<td colspan="2">
-				<b><span rsf:id="item-category-header">Item Category :</span></b>&nbsp;
-				<span rsf:id="item_category"/>
-		        <label for="item_category_C" rsf:id="course-category-header">Course</label>
-		        <input type="radio" name="item_category_C" rsf:id="item_category_C"/>
-		        <label for="item_category_I" rsf:id="instructor-category-header">Instructor</label>
-		       	<input type="radio" name="item_category_I" rsf:id="item_category_I" />
-			</td>
-		</tr>
-
-		<tr>
-			<td colspan="2" align="left">
-				<b><span rsf:id="items-header">Items:</span></b>
-			</td>
-		</tr>
-
-		<tr>
-			<td colspan="2" style="border:2px solid black;">
-				<div rsf:id="queRow:">
-					<span rsf:id="childOrder" style="font-weight:bold;">1</span>.&nbsp;
-					<span rsf:id="queText">
-						Child item text here
-					</span>
-				</div>
-			</td>
-		</tr>
-
-		
-		<tr>
-		<td width="20%" align="left"> 
-		<input type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" rsf:id="cancel-button" />
-		</td>
-		<td align="right" width="80%">
-		<input name="previewBlockAction" rsf:id="previewBlockAction" type="submit" value="Preview item" onclick="javascript:flag='preview';"/> 
-			&nbsp;
-	 	<input name="saveBlockAction" rsf:id="saveBlockAction" type="submit" value="Save item" onclick="javascript:flag='save';"/>  
-		</td>
-		</tr>
-		
-	</table>	
-			
-	</form>
-	</div>
-	
-</div>	
-</body>
+					<span rsf:id="item-header">Blocking items:</span>
+					<span name="itemNo" rsf:id="itemNo">1</span>:
+					<span name="itemClassification" rsf:id="itemClassification">####</span>
+					(<span rsf:id="added-by">added by</span>
+					<span name="userInfo" rsf:id="userInfo">#####</span>)
+					<p>
+						<span rsf:id="scale-type-header">Scale Type:</span>
+						<span name="scaleLabel" rsf:id="scaleLabel" class="highlight">Title of scale (scale points)</span>
+					</p>
+					<div rsf:id="showRemoveLink:">
+						<a href="#" name="remove_link" rsf:id="remove_link">Remove</a>
+					</div>
+					<h4 rsf:id="item-header-text-header">Item Header Text :</h4>
+					<div rsf:id="item_text:">
+						<textarea name="item_text-dummy" rsf:id="item_text-dummy" cols="80" rows="5" />
+					</div>
+					<p rsf:id="showNA:" class="checkbox">
+						<input type="checkbox" name="item_NA" rsf:id="item_NA" value="" />
+						<span rsf:id="add-na-header">Add N/A (not available):</span>
+					</p>
+					<p class="checkbox">
+						<input type="checkbox" name="idealColor" rsf:id="idealColor" value="" />
+						<span rsf:id="ideal-coloring-header">Use Ideal Coloring:</span>
+					</p>
+					<div rsf:id="showItemCategory:">
+						<h4 rsf:id="item-category-header">Item Category :</h4>
+						<span rsf:id="item_category" />
+						<input type="radio" name="item_category_C" rsf:id="item_category_C" />
+						<label for="item_category_C" rsf:id="course-category-header">Course</label>
+						<input type="radio" name="item_category_I" rsf:id="item_category_I" />
+						<label for="item_category_I" rsf:id="instructor-category-header">Instructor</label>
+					</div>
+					<p class="act">
+						<input name="saveBlockAction" rsf:id="saveBlockAction" type="submit" value="Save item" onclick="javascript:flag='save';"  class="active" accesskey="s" />
+						<input name="previewBlockAction" rsf:id="previewBlockAction" type="submit" value="Preview item" onclick="javascript:flag='preview';" accesskey="v"/>
+						<input type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" rsf:id="cancel-button"  accesskey="x"/>
+					</p>
+				</form>
+			</div>
+		</div>
+	</body>
 </html>
