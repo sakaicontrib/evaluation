@@ -64,7 +64,7 @@ public class TemplateItemUtils {
 	 * @param itemList a list of {@link EvalTemplateItem} objects
 	 * @return true if there is a templateItem in the list that matches the provided category
 	 */
-	public static boolean checkTemplateItemsCategoryExists(String itemTypeConstant, List itemList) {
+	public static boolean checkTemplateItemsCategoryExists(String itemTypeConstant, List<EvalTemplateItem> itemList) {
 		for (int i = 0; i < itemList.size(); i++) {
 			EvalTemplateItem templateItem = (EvalTemplateItem) itemList.get(i);
 			if ( itemTypeConstant.equals( templateItem.getItemCategory() ) ) {
@@ -85,13 +85,13 @@ public class TemplateItemUtils {
 	public static List<EvalTemplateItem> orderTemplateItems(List<EvalTemplateItem> templateItemsList) {
 		List<EvalTemplateItem> orderedItemsList = new ArrayList<EvalTemplateItem>();
 
-		List nonChildrenItems = getNonChildItems(templateItemsList);
+		List<EvalTemplateItem> nonChildrenItems = getNonChildItems(templateItemsList);
 		for (int i=0; i<nonChildrenItems.size(); i++) {
 			EvalTemplateItem templateItem = (EvalTemplateItem) nonChildrenItems.get(i);
 			String type = getTemplateItemType(templateItem);
 			orderedItemsList.add(templateItem);
 			if (EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(type)) {
-				List childrenItems = getChildItems(templateItemsList, templateItem.getId());
+				List<EvalTemplateItem> childrenItems = getChildItems(templateItemsList, templateItem.getId());
 				for (int j=0; j<childrenItems.size(); j++) {
 					EvalTemplateItem childItem = (EvalTemplateItem) childrenItems.get(i);
 					orderedItemsList.add(childItem);
@@ -114,7 +114,7 @@ public class TemplateItemUtils {
 	public static List<EvalTemplateItem> getAnswerableTemplateItems(List<EvalTemplateItem> templateItemsList) {		
 		List<EvalTemplateItem> answerableItemsList = new ArrayList<EvalTemplateItem>();
 
-		List orderedItems = orderTemplateItems(templateItemsList);
+		List<EvalTemplateItem> orderedItems = orderTemplateItems(templateItemsList);
 
 		for (int i=0; i<orderedItems.size(); i++) {
 			EvalTemplateItem templateItem = (EvalTemplateItem) orderedItems.get(i);
@@ -138,7 +138,7 @@ public class TemplateItemUtils {
     public static List<EvalTemplateItem> getRequiredTemplateItems(List<EvalTemplateItem> templateItemsList) {       
         List<EvalTemplateItem> requiredItemsList = new ArrayList<EvalTemplateItem>();
 
-        List orderedItems = orderTemplateItems(templateItemsList);
+        List<EvalTemplateItem> orderedItems = orderTemplateItems(templateItemsList);
 
         for (int i=0; i<orderedItems.size(); i++) {
             EvalTemplateItem templateItem = (EvalTemplateItem) orderedItems.get(i);

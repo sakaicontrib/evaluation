@@ -39,13 +39,13 @@ public class TemplateItemWBL implements WriteableBeanLocator {
 	}
 
 	// keep track of all template items that have been delivered during this request
-	private Map delivered = new HashMap();
+	private Map<String, EvalTemplateItem> delivered = new HashMap<String, EvalTemplateItem>();
 
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.beanutil.BeanLocator#locateBean(java.lang.String)
 	 */
 	public Object locateBean(String name) {
-		Object togo = delivered.get(name);
+	   EvalTemplateItem togo = delivered.get(name);
 		if (togo == null) {
 			if (name.startsWith(NEW_PREFIX)) {
 				togo = localTemplateLogic.newTemplateItem();
@@ -58,7 +58,7 @@ public class TemplateItemWBL implements WriteableBeanLocator {
 		return togo;
 	}
 
-	 public Map getDeliveredBeans() {
+	 public Map<String, EvalTemplateItem> getDeliveredBeans() {
 		 return delivered;
 	 }
 
@@ -84,8 +84,8 @@ public class TemplateItemWBL implements WriteableBeanLocator {
 	 * also saves the associated new items (does not save any associated existing items)
 	 */
 	public void saveAll() {
-		for (Iterator it = delivered.keySet().iterator(); it.hasNext();) {
-			String key = (String) it.next();
+		for (Iterator<String> it = delivered.keySet().iterator(); it.hasNext();) {
+			String key = it.next();
 			EvalTemplateItem templateItem = (EvalTemplateItem) delivered.get(key);
 			if (key.startsWith(NEW_PREFIX)) {
 				// add in extra logic needed for new template items here

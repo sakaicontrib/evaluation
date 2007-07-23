@@ -82,7 +82,7 @@ public interface EvalItemsLogic {
 	 * @param includeExpert if true, then include expert Items, if false, leave out expert items
 	 * @return a list of {@link EvalItem} objects
 	 */
-	public List getItemsForUser(String userId, String sharingConstant, String filter, boolean includeExpert);
+	public List<EvalItem> getItemsForUser(String userId, String sharingConstant, String filter, boolean includeExpert);
 
 	/**
 	 * Get a list of items in a template that are visible to a user, 
@@ -98,7 +98,7 @@ public interface EvalItemsLogic {
 	 * it will return all items in the template
 	 * @return a list of {@link EvalItem} objects
 	 */
-	public List getItemsForTemplate(Long templateId, String userId);
+	public List<EvalItem> getItemsForTemplate(Long templateId, String userId);
 
 	// TEMPLATE ITEMS
 
@@ -157,7 +157,7 @@ public interface EvalItemsLogic {
 	 * at the given hierarchy level else return items all all hierarchy levels
 	 * @return a list of {@link EvalTemplateItem} objects, ordered by displayOrder
 	 */
-	public List getTemplateItemsForTemplate(Long templateId, String userId, String hierarchyLevel);
+	public List<EvalTemplateItem> getTemplateItemsForTemplate(Long templateId, String userId, String hierarchyLevel);
 
 	/**
 	 * @param evalId the unique id of an {@link EvalEvaluation} object
@@ -167,7 +167,7 @@ public interface EvalItemsLogic {
 	 * at the given hierarchy level else return items all all hierarchy levels
 	 * @return a list of {@link EvalTemplateItem} objects, ordered by displayOrder
 	 */
-	public List getTemplateItemsForEvaluation(Long evalId, String userId, String hierarchyLevel);
+	public List<EvalTemplateItem> getTemplateItemsForEvaluation(Long evalId, String userId, String hierarchyLevel);
 
 	// BLOCKS
 
@@ -180,7 +180,7 @@ public interface EvalItemsLogic {
 	 * @param includeParent if false then only return child items, if true then return the entire block (parent and child items)
 	 * @return a List of {@link EvalTemplateItem} objects
 	 */
-	public List getBlockChildTemplateItemsForBlockParent(Long parentId, boolean includeParent);
+	public List<EvalTemplateItem> getBlockChildTemplateItemsForBlockParent(Long parentId, boolean includeParent);
 
 
 	// PERMISSIONS
