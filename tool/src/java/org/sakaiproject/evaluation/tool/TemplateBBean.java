@@ -123,9 +123,9 @@ public class TemplateBBean {
 	// bug in DAO wrapper implementation.
 	public void saveReorder() { 
 		log.info("save items reordering");
-		Map delivered = templateItemWBL.getDeliveredBeans();
-		List l = itemsLogic.getTemplateItemsForTemplate(templateId, null, null);
-		List ordered = TemplateItemUtils.getNonChildItems(l);
+		Map<String, EvalTemplateItem> delivered = templateItemWBL.getDeliveredBeans();
+		List<EvalTemplateItem> l = itemsLogic.getTemplateItemsForTemplate(templateId, null, null);
+		List<EvalTemplateItem> ordered = TemplateItemUtils.getNonChildItems(l);
 		for (int i = 1; i <= ordered.size();) {
 			EvalTemplateItem item = (EvalTemplateItem) ordered.get(i - 1);
 			int itnum = item.getDisplayOrder().intValue();
@@ -165,12 +165,12 @@ public class TemplateBBean {
 		String[] strIds = childTemplateItemIds.split(",");
 		EvalTemplateItem parent = null;
 
-		Map delivered = templateItemWBL.getDeliveredBeans();
+		Map<String, EvalTemplateItem> delivered = templateItemWBL.getDeliveredBeans();
 		if (strIds.length > 1) {// creating new Block case
 			EvalTemplateItem first = itemsLogic.getTemplateItemById(Long.valueOf(strIds[0]));
 
 			EvalTemplate template = first.getTemplate();
-			List allTemplateItems = itemsLogic.getTemplateItemsForTemplate(template.getId(), null, null);
+			List<EvalTemplateItem> allTemplateItems = itemsLogic.getTemplateItemsForTemplate(template.getId(), null, null);
 
 			if (TemplateItemUtils.getTemplateItemType(first).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)) {
 				// create new block from multiple existing block
@@ -191,7 +191,7 @@ public class TemplateBBean {
 					EvalTemplateItem eti = itemsLogic.getTemplateItemById(Long.valueOf(strIds[i]));
 
 					if (TemplateItemUtils.getTemplateItemType(eti).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)) {
-						List myChilds = TemplateItemUtils.getChildItems(allTemplateItems, eti.getId());
+						List<EvalTemplateItem> myChilds = TemplateItemUtils.getChildItems(allTemplateItems, eti.getId());
 						for (int j = 0; j < myChilds.size(); j++) {
 							EvalTemplateItem child = (EvalTemplateItem) myChilds.get(j);
 							child.setBlockId(parentId);
@@ -250,7 +250,7 @@ public class TemplateBBean {
 
 			// shifting all the others's order
 			allTemplateItems = itemsLogic.getTemplateItemsForTemplate(template.getId(), null, null);
-			List noChildList = TemplateItemUtils.getNonChildItems(allTemplateItems);
+			List<EvalTemplateItem> noChildList = TemplateItemUtils.getNonChildItems(allTemplateItems);
 			for (int i = 0; i < noChildList.size(); i++) {
 				EvalTemplateItem eti = (EvalTemplateItem) noChildList.get(i);
 				// get parent's PO
