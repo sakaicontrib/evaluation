@@ -63,8 +63,10 @@ DIV.rightcol {
  * Styles for the drag and drop
  */
 DIV#itemTable {
-	width: 98%;
-	margin: 5px 6px;
+	border:1px solid #FFDD77;
+	margin:.5em 0;
+	padding: 0 .5em;
+	background:#FFFFEE
 }
 
 OL.itemList {
@@ -78,40 +80,47 @@ LI.itemRow {
 	border: 1px solid #aaa;
 	width: 100%;
 	padding: 0;
-	margin: .4em 0 ;
+	margin: .6em 0 ;
 	cursor: move;
+		background:#fff
 }
-
 DIV.itemLine {
 	clear: left;
 	border-bottom: 1px solid #aaa;
 	background:#eee;
-	padding:.3em;
+	padding:.2em;
 	vertical-align:middle
 }
 
 DIV.itemLine2 {
 	clear: left;
 	vertical-align:middle;
-	margin:3px;
-	padding: .4em 0
+	padding:.2em
 }
 
-DIV.itemLine3 {
-	clear: left;
-	margin: 0 0 .3em 4.5em;
+.itemLine3 {
+	clear: both;
+	margin: .5em .5em .5em 4.5em;
+	list-style-position: outside;
+	line-height:150%;
+	padding:0;
 	line-height:150%;
 }
-
-LABEL.itemCheckbox {
+.itemCheckbox {
 	float: left;
-	cursor: auto;
+	cursor: default;
 	margin: 0;
-}
+	padding: 1px 1.5em 1px 3px;
 
+	
+}
+.itemCheckbox input{
+	margin:0
+	
+}
 SPAN.itemType {
 	float: left;
-	padding: .4em 0 0  0;
+	padding: 0;
 }
 
 SPAN.itemRight {
@@ -142,11 +151,15 @@ LABEL.itemNum {
 	margin: 0;
 }
 
-span.itemText {
+h4.itemText {
+	display:inline;
+	padding:0;
+	margin:0;
 	float: left;
 	text-align: left;
-	width: 65%;
 	border: 1px solid #fff;
+	font-weight: bold;
+	color:#333
 }
 span.itemText div {
 	padding: 0;
@@ -159,19 +172,21 @@ span.itemText div p{
 	margin-top: 0;
 }
 SPAN.scaleDesc {
-	width: 25%;
 	float: right;
 	text-align: right;
-	padding: 0 0.2em;
+	padding: .2em .2em 0 0;
+	white-space: nowrap;
 }
 
-DIV.childItem {
+.childItem {
 	font-size: 0.95em;
-	
+	margin:0;
+	padding:0;
 }
 
 .orderChanged {
-	background-color: #FFAA99;
+	background-color: #ffc;
+	border:1px solid #fd7
 }
 
 
@@ -607,4 +622,67 @@ label.block{
 }
 .navIntraTool input.makeLink:hover{
 	color: #33f;
+}
+.lighthighlight{
+	color:#000;
+	padding-left:.5em
+	}
+.itemOperations{
+	border:1px solid #ffa;
+	background:#ffe;
+	padding:.3em
+}
+.itemOperationsEnabled{
+	border:1px solid #fd7;
+	background:#ffc;
+	padding:.3em
+
+}
+
+.sortablehover{
+
+}
+.sorthelper{
+
+}
+
+.sortableactive{
+
+}
+
+.selectable{
+	float: left;
+	cursor: default;
+	margin: 0;
+	bac
+	padding:0;
+	padding: 1px 1.5em 1px 3px;
+	background:#eee url(../images/asterisk_orange.gif) 1.7em no-repeat;
+}
+.selectable input{
+	margin:0;
+}	
+.notselectable{
+	float: left;
+	cursor: default;
+	margin: 0;
+	padding:0;
+	padding: 1px 1.5em 1px 3px;
+}
+
+.notselectable input{
+	margin:0
+	}
+.notselectable *{
+	filter:progid:DXImageTransform.Microsoft.Alpha(Opacity=50), progid:DXImageTransform.Microsoft.BasicImage(grayscale=1) !important;
+	-moz-opacity:.50 !important;
+}	
+
+.checkPlaceholder
+{
+	float: left;
+	cursor: default;
+	margin: 0;
+	padding-right:2.5em;
+	visibility:hidden
 }
