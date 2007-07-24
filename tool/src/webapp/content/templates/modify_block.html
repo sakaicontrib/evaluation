@@ -45,7 +45,6 @@
 					<li>Message for user here</li>
 				</ul>
 			</div>
-			<br />
 			<div rsf:id="errorPage:">
 				<span rsf:id="errorMsg" style="font-weight:bold;color:red;">####</span>
 				<br />
@@ -55,7 +54,17 @@
 			<div rsf:id="blockPage:" class="evalEditorSmall">
 				<form name="block_form" rsf:id="blockForm" method="post" onsubmit="javascript:return validateForm();">
 					<h3 rsf:id="modifyblock-page-title">Creating block</h3>
-					<h4 rsf:id="modifyblock-items-list-title">Blocking items:</h4>
+					<div class="navPanel highlightPanel">
+						<div class="viewNav">
+							<h4 rsf:id="modifyblock-items-list-title" style="margin:0">Blocking items:</h4>
+						</div>
+						<div class="listNav">
+							<span rsf:id="showRemoveLink:">
+								<a href="#" name="remove_link" rsf:id="remove_link">Remove</a>
+							</span>
+						</div>
+					</div>
+
 					<ol>
 						<li rsf:id="queRow:">
 							<span rsf:id="queText"> Child item text here </span>
@@ -71,9 +80,7 @@
 						<span rsf:id="scale-type-header">Scale Type:</span>
 						<span name="scaleLabel" rsf:id="scaleLabel" class="highlight">Title of scale (scale points)</span>
 					</p>
-					<div rsf:id="showRemoveLink:">
-						<a href="#" name="remove_link" rsf:id="remove_link">Remove</a>
-					</div>
+			
 					<h4 rsf:id="item-header-text-header">Item Header Text :</h4>
 					<div rsf:id="item_text:">
 						<textarea name="item_text-dummy" rsf:id="item_text-dummy" cols="80" rows="5" />
