@@ -106,11 +106,13 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 			new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
 
 
-		UIInternalLink.make(tofill, "preview_eval_link", 
-				new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID, null, templateId));
+		UIInternalLink.make(tofill, "preview_eval_link", UIMessage.make("modifytemplate.preview.eval.link"),
+				new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID, null, templateId)).decorators = 
+					new DecoratorList(new UITooltipDecorator(UIMessage.make("modifytemplate.preview.eval.link.title")));
 		UIMessage.make(tofill, "preview-eval-desc",	"modifytemplate.preview.eval.desc");
 		UILink.make(tofill, "preview-template-direct-link", UIMessage.make("general.direct.link"), 
-				external.getEntityURL(template) );
+				external.getEntityURL(template) ).decorators = 
+					new DecoratorList(new UITooltipDecorator(UIMessage.make("general.direct.link.title")));
 
 		UIMessage.make(tofill, "add-item-note", "modifytemplate.add.item.note");
 		String[] labels = new String[] {
@@ -135,8 +137,10 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 		if (templateItemsList.isEmpty()) {
 			UIMessage.make(tofill, "begin-eval-dummylink", "modifytemplate.begin.eval.link");
 		} else {
-			UIInternalLink.make(tofill, "begin_eval_link", new TemplateViewParameters(
-					EvaluationStartProducer.VIEW_ID, templateId));
+			UIInternalLink.make(tofill, "begin_eval_link", UIMessage.make("modifytemplate.begin.eval.link"), 
+					new TemplateViewParameters(
+					EvaluationStartProducer.VIEW_ID, templateId)).decorators = 
+						new DecoratorList(new UITooltipDecorator(UIMessage.make("modifytemplate.begin.eval.link.title")));
 		}
 
 		// TODO - this should be the actual level and not some made up string
@@ -148,7 +152,8 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 		UIOutput.make(tofill, "title", template.getTitle());
 
 		UIInternalLink.make(tofill, "modify_title_desc_link", UIMessage.make("modifytemplate.modify.title.desc.link"),
-				new TemplateViewParameters(ModifyTemplateProducer.VIEW_ID, templateId));
+				new TemplateViewParameters(ModifyTemplateProducer.VIEW_ID, templateId)).decorators = 
+					new DecoratorList(new UITooltipDecorator(UIMessage.make("modifytemplate.modify.title.desc.link.title")));
 
 		if (template.getDescription() != null && !template.getDescription().trim().equals("")) {
 			UIBranchContainer descbranch = UIBranchContainer.make(tofill, "description-switch:");
@@ -206,7 +211,9 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 					// tooltip
 					blockCB.decorators.add( new UITooltipDecorator( UIMessage.make("modifytemplate.item.checkbox.title") ) );
 				}
-
+				else {
+					UIMessage.make(itemBranch, "check-placeholder", "modifytemplate.check.placeholder");
+				}	
 				UIOutput.make(itemBranch, "item-classification", templateItem.getItem().getClassification());
 
 				if (templateItem.getScaleDisplaySetting() != null) {
@@ -231,8 +238,11 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 					categoryMessage = "modifyitem.environment.category.header";
 				}
 				UIMessage.make(itemBranch, "item-category", categoryMessage);
+				UIMessage.make(tofill, "item-category-title", "modifytemplate.item.category.title");
 				UIOutput.make(itemBranch, "item-owner-name", external.getUserDisplayName(templateItem.getOwner()));
-
+				UIMessage.make(tofill, "item-owner-title", "modifytemplate.item.owner.title");
+				UIMessage.make(tofill, "item-resultssharing-title", "modifytemplate.item.resultssharing.title");
+				
 				UIInternalLink.make(itemBranch, "preview-row-item", UIMessage.make("modifytemplate.preview.link"), 
 						new ItemViewParameters(PreviewItemProducer.VIEW_ID, null, templateItem.getId()) );
 
@@ -260,11 +270,13 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 				UIVerbatim.make(itemBranch, "item-text", templateItem.getItem().getItemText());
 
 				if ( templateItem.getItem().getScale() != null ) {
+					UIMessage.make(itemBranch, "item-scale-type-title", "modifytemplate.item.scale.type.title");
 					UIOutput.make(itemBranch, "scale-type", templateItem.getItem().getScale().getTitle());
 				}
 
 				if ((templateItem.getUsesNA() != null) && (templateItem.getUsesNA().booleanValue()) ) {
-					UIMessage.make(itemBranch, "item-na", "viewitem.na.desc");
+					UIMessage.make(itemBranch, "item-na-title", "modifytemplate.item.na.title");
+					UIMessage.make(itemBranch, "item-na-value", "modifytemplate.item.na.value");
 				}
 
 				// block child items

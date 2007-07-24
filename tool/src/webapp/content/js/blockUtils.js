@@ -5,6 +5,7 @@ function countCheckBox(){
 	sourceForm = document.modify_form_rows;
 	destinationForm = document.create_block_form;
 	submitButton = document.getElementById("createBlockBtn");
+	submitButtonBlock = document.getElementById("blockInputs");
 	
 	var count = 0; //enforce at least 2 check box are checked	
 	var scaleId = "";
@@ -27,8 +28,14 @@ function countCheckBox(){
 							 	var otherScaleId= other.id.substring(other.id.indexOf('-')+1,other.id.lastIndexOf('-'));
 							 	//alert("other scaleId ="+otherScaleId);
 							 	if(otherScaleId != scaleId)
+								{
 							 		other.disabled = true;
-							 	else other.disabled = false;	
+									other.parentNode.className='notselectable';  
+								}	
+							 	else{
+									other.disabled = false;	
+									other.parentNode.className='selectable'; //UI hint of which checkboxes are selectable
+								}
 							 }
 						 }
 								 
@@ -41,16 +48,22 @@ function countCheckBox(){
 	//alert("scaleId= "+scaleId);
 	if(count < 1){ //no check box is checked, enable all the checkbox
 		for (var c=0; c < sourceForm.elements.length; c++){
-			if (sourceForm.elements[c].type=="checkbox")
-				sourceForm.elements[c].disabled = false;		
+			if (sourceForm.elements[c].type=="checkbox"){
+					sourceForm.elements[c].disabled = false;
+					sourceForm.elements[c].parentNode.className='itemCheckbox'; //UI hint of which checkboxes are selectable
+			}		
+				
 		}
 		submitButton.disabled = true;
+		blockInputs.className="itemOperations";
 	}else if(count < 2){ 
 		//alert("select less than 2 items,disable submit button");
 		submitButton.disabled = true;
+		submitButtonBlock.className="itemOperations";
 	}else{ 
 		//alert("select 2 or more items,enable submit button");
 		submitButton.disabled = false;
+		submitButtonBlock.className="itemOperationsEnabled";
 	}
 	
 }//end of function
