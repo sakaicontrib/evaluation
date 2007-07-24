@@ -210,6 +210,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 					checkBranch.decorators = new DecoratorList( uild );
 					// tooltip
 					blockCB.decorators.add( new UITooltipDecorator( UIMessage.make("modifytemplate.item.checkbox.title") ) );
+					UIMessage.make(itemBranch, "check-input-label", "modifytemplate.check.label.title");
 				}
 				else {
 					UIMessage.make(itemBranch, "check-placeholder", "modifytemplate.check.placeholder");
