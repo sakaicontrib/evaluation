@@ -11,11 +11,13 @@ $(document).ready(
 		function enableOrderButtons() {
 			document.getElementById("revertOrderButton").disabled = false;
 			document.getElementById("saveReorderButton").disabled = false;
+			document.getElementById("orderInputs").className ="itemOperationsEnabled";
 		}
 	
 		function disableOrderButtons() {
 			document.getElementById("revertOrderButton").disabled = true;
 			document.getElementById("saveReorderButton").disabled = true;
+			document.getElementById("orderInputs").className ="itemOperations";
 		}
 
         var sortableIds;
@@ -28,6 +30,7 @@ $(document).ready(
 				//$(itemNum).removeClass("orderChanged");  
 				var itemSelect = $it(domList[i].id + "item-select-selection");
 				$(itemSelect).removeClass("orderChanged");
+	
 			}
 		}
 		buildSortableIds();
