@@ -36,17 +36,15 @@
 						<p rsf:id="items-description" class="instruction">Questions or statements which the evaluator responds to.</p>
 					</div>
 					<div class="listNav">
-						<div class="shorttext">
-							<label rsf:id="add-item-header" for="item-classification-list-selection">Add Item</label>
-							<form rsf:id="add-item-form" action="modify_item.html" method="get" class="inlineForm">
-								<select rsf:id="item-classification-list" id="item-classification-list" >
-									<option value="modify_scaled.html" selected="selected">Scaled/Survey</option>
-									<option value="modify_essay.html">Short Answer/Essay</option>
-									<option value="modify_header.html">Text Header</option>
-								</select>
-								<input rsf:id="add-item-button" type="submit" value="Add" />
-							</form>
-						</div>
+						<label rsf:id="add-item-header" for="item-classification-list-selection">Add Item</label>
+						<form rsf:id="add-item-form" action="modify_item.html" method="get" class="inlineForm">
+							<select rsf:id="item-classification-list" id="item-classification-list" >
+								<option value="modify_scaled.html" selected="selected">Scaled/Survey</option>
+								<option value="modify_essay.html">Short Answer/Essay</option>
+								<option value="modify_header.html">Text Header</option>
+							</select>
+							<input rsf:id="add-item-button" type="submit" value="Add" />
+						</form>
 					</div>
 			</div>
 			
@@ -97,7 +95,7 @@
 							</span>
 							<div rsf:id="item-text" class="textPanel indnt2">Item Text (the text entered for the item itself will appear here, it is possibly quite long</div>
 						</td>
-						<td class="itemAction" headers="itemAction">
+						<td class="itemAction" headers="itemAction" style="white-space:nowrap">
 							<a rsf:id="item-remove-link" href="remove_item.html">Delete</a>
 							<span rsf:id="item-remove-dummy"></span> | 
 							<a rsf:id="item-modify-link" href="modify_scaled.html">Edit</a>
@@ -122,7 +120,7 @@
 							</span>
 							<div rsf:id="item-text" class="textPanel  indnt2">Item Text (the text entered for the item itself will appear here, it is possibly quite long</div>
 						</td>
-						<td class="itemAction">
+						<td class="itemAction"  style="white-space:nowrap">
 							<a rsf:id="item-remove-link" href="remove_item.html">Delete</a>
 							<span rsf:id="item-remove-dummy"></span>
 							<a rsf:id="item-modify-link" href="modify_scaled.html">Edit</a>
