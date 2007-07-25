@@ -115,7 +115,8 @@ public class ExpertObjectiveProducer implements ViewComponentProducer, Navigatio
 
 			UIMessage.make(tofill, "objective", "expert.objective");
 			UIMessage.make(tofill, "objective-instructions", "expert.objective.instructions");
-
+			UIMessage.make(tofill, "objective-list-summary", "expert.objective.summary");
+			
 			UIMessage.make(tofill, "description", "expert.description");
 
 			for (int i = 0; i < expertObjectives.size(); i++) {
@@ -150,7 +151,7 @@ public class ExpertObjectiveProducer implements ViewComponentProducer, Navigatio
 
 			UIMessage.make(form, "items", "expert.items");
 			UIMessage.make(form, "items-instructions", "expert.items.instructions");
-
+			UIMessage.make(form, "item-item-list-summary", "expert.items.summary");
 			// loop through all expert items
 			for (int i = 0; i < expertItems.size(); i++) {
 				EvalItem expertItem = (EvalItem) expertItems.get(i);
