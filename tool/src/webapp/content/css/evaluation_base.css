@@ -479,9 +479,13 @@ label.block{
 	width:100px;
 	float:left;
 }
-.messageStepGraphic a:hover{
+.messageStepGraphic a{
+	text-decoration: none !important;
+	font-size: 1em;
+}
 
-text-decoration: none;
+.messageStepGraphic a:hover{
+	text-decoration: none !important;
 }
 .messageStepGraphic div span{
 	margin-top:2em;
@@ -491,8 +495,7 @@ text-decoration: none;
 	display:block;
 }
 .first-cur-step span, .med-cur-step span, .last-cur-step span{
-	color: blue !important;
-	font-weight:bold;
+	color: #666 !important;
 }
 .messageStepGraphic .first-noncur-step{
 	background:#fff url(../images/first-noncur-step.gif) top left no-repeat;
@@ -690,3 +693,5 @@ text-decoration: none;
 	padding-right:2.5em;
 	visibility:hidden
 }
+
+	
