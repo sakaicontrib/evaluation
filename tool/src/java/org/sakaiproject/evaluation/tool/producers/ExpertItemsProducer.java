@@ -107,7 +107,7 @@ public class ExpertItemsProducer implements ViewComponentProducer, NavigationCas
 		UIOutput.make(tofill, "objective-current", objective.getTitle() );
 		UIMessage.make(tofill, "items", "expert.items");
 		UIMessage.make(tofill, "items-instructions", "expert.items.instructions");
-
+		UIMessage.make(tofill, "expert-items-summary", "expert.items.summary");
 		UIMessage.make(tofill, "description", "expert.description");
 
 		UIForm form = UIForm.make(tofill, "insert-items-form");
