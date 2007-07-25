@@ -473,11 +473,15 @@ label.block{
 {
 	height:100%;
 	overflow: hidden;
+	margin:1em 0
 }
 .messageStepGraphic div{
 	width:100px;
 	float:left;
+}
+.messageStepGraphic a:hover{
 
+text-decoration: none;
 }
 .messageStepGraphic div span{
 	margin-top:2em;
