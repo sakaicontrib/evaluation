@@ -93,6 +93,8 @@ public class ExistingItemsProducer implements ViewComponentProducer, NavigationC
 		UIInternalLink.make(tofill, "modify-template-link", UIMessage.make("modifytemplate.page.title"), //$NON-NLS-2$
 				new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, templateId) );
 
+		UIMessage.make(tofill, "items-choose-items", "items.choose.items"); //$NON-NLS-2$
+		
 		if (searchString.length() > 0) {
 			UIBranchContainer searchBranch = UIBranchContainer.make(tofill, "search-text");
 			UIMessage.make(searchBranch, "search-current", "existing.items");
@@ -103,9 +105,11 @@ public class ExistingItemsProducer implements ViewComponentProducer, NavigationC
 		UIMessage.make(searchForm, "search-command", "items.search.command" );
 		UIInput.make(searchForm, "search-box", "#{searchString}");
 
-
+		UIMessage.make(tofill, "item-select-col-title", "items.select.col.title"); //$NON-NLS-2$
+		UIMessage.make(tofill, "item-item-col-title", "items.item.col.title"); //$NON-NLS-2$
+		UIMessage.make(tofill, "item-list-summary", "item.list.summary"); //$NON-NLS-2$
 		UIForm form = UIForm.make(tofill, "insert-items-form");
-
+		
 		// loop through all existing items
 		List existingItems = itemsLogic.getItemsForUser(currentUserId, null, null, false);
 		for (int i = 0; i < existingItems.size(); i++) {
