@@ -90,7 +90,8 @@ public class ExpertCategoryProducer implements ViewComponentProducer, ViewParams
 
 		UIMessage.make(tofill, "category", "expert.category");
 		UIMessage.make(tofill, "category-instructions", "expert.category.instructions");
-
+		UIMessage.make(tofill, "category-list-summary", "expert.category.list.summary");
+		
 		UIMessage.make(tofill, "description", "expert.description");
 
 		// set the VP to the correct target for objectives

@@ -227,11 +227,17 @@ tool/src/webapp/content/images/delete-inact.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/delete.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/down-arrow.gif -text
 tool/src/webapp/content/images/down-line.gif -text
+tool/src/webapp/content/images/first-cur-step.gif -text svneol=unset#image/gif
+tool/src/webapp/content/images/first-noncur-step.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/ideal-high.jpg -text
 tool/src/webapp/content/images/ideal-low.jpg -text
 tool/src/webapp/content/images/ideal-mid.jpg -text
 tool/src/webapp/content/images/ideal-none.jpg -text
 tool/src/webapp/content/images/ideal-outside.jpg -text
+tool/src/webapp/content/images/last-cur-step.gif -text svneol=unset#image/gif
+tool/src/webapp/content/images/last-noncur-step.gif -text svneol=unset#image/gif
+tool/src/webapp/content/images/med-cur-step.gif -text svneol=unset#image/gif
+tool/src/webapp/content/images/med-noncur-step.gif -text svneol=unset#image/gif
 tool/src/webapp/content/js/blockUtils.js -text
 tool/src/webapp/content/js/evalEditSettings.js -text
 tool/src/webapp/content/js/evalUtils.js -text
