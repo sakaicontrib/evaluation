@@ -93,7 +93,7 @@ public class TemplateItemUtils {
 			if (EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(type)) {
 				List<EvalTemplateItem> childrenItems = getChildItems(templateItemsList, templateItem.getId());
 				for (int j=0; j<childrenItems.size(); j++) {
-					EvalTemplateItem childItem = (EvalTemplateItem) childrenItems.get(i);
+					EvalTemplateItem childItem = (EvalTemplateItem) childrenItems.get(j);
 					orderedItemsList.add(childItem);
 				}
 			}
