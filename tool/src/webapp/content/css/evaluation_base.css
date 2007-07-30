@@ -694,4 +694,27 @@ label.block{
 	visibility:hidden
 }
 
+.itemListNew{
+	width:95%;
+	border-color: #09c;
+	border-style: solid;
+	border-width:2px;
+	padding:1em
+}
+.itemListNew legend {
+	padding:.3em .7em;
+	color: orange;
+	font-size: 110%;
+	border:2px solid #09c;
+	margin-left:1em;
+}
+.itemListNew ol{
+	padding: 0
+}	
+.itemListNew li{
+	list-style: none;
+	padding:.3em;
+	margin:.3em;
+	border:1px solid orange
 	
+}

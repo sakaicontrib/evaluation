@@ -119,7 +119,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 		EvalTemplate template = null;
 
 		UIMessage.make(tofill,"control-eval-title", "controlevaluations.page.title");
-		UIMessage.make(tofill, "page-title", "previeweval.page.title");
+		UIMessage.make(tofill, "page-title", "previeweval.evaluation.title");
 		if (evaluationId == null) {
 			// previewing a template
 			UIMessage.make(tofill, "preview-title", "previeweval.template.title");
@@ -133,6 +133,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 		} else {
 			// previewing an evaluation
 			UIMessage.make(tofill, "preview-title", "previeweval.evaluation.title");
+			UIMessage.make(tofill, "preview-title-prefix", "previeweval.evaluation.title.prefix");
 			// load the real evaluation and template
 			eval = evalsLogic.getEvaluationById(evaluationId);
 			template = eval.getTemplate();
