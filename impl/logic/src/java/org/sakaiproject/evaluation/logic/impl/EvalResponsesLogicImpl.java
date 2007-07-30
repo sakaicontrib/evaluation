@@ -418,7 +418,7 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
                 }
 
                 // make sure answer is associated with a valid templateItem for this evaluation
-                if (!templateItemIds.contains(answer.getTemplateItem().getId())) {
+                if (! templateItemIds.contains(answer.getTemplateItem().getId())) {
                     throw new IllegalArgumentException("This answer templateItem (" + answer.getTemplateItem().getId()
                             + ") is not part of this evaluation (" + response.getEvaluation().getTitle() + ")");
                 }
