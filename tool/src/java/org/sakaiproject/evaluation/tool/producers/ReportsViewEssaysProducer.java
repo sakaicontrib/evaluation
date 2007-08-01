@@ -41,6 +41,7 @@ import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIColourDecorator;
+import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
@@ -135,7 +136,7 @@ public class ReportsViewEssaysProducer implements ViewComponentProducer, Navigat
 				UIBranchContainer instructorSection = null;
 				if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_COURSE)) {//"Course"
 					courseSection = UIBranchContainer.make(tofill, "courseSection:");	
-					UIMessage.make(courseSection, "course-questions-header", "takeeval.course.questions.header"); 			
+					UIMessage.make(courseSection, "course-questions-header", "takeeval.group.questions.header"); 			
 					radiobranch = UIBranchContainer.make(courseSection, "itemrow:first", "0");
 					this.doFillComponent(myItem, essayResponseParams.evalId, 0, essayResponseParams.groupIds, 
 							radiobranch, courseSection);
@@ -219,6 +220,9 @@ public class ReportsViewEssaysProducer implements ViewComponentProducer, Navigat
 			//count the number of answers that match this one
 			for (int y=0; y < itemAnswers.size(); y++){
 				UIBranchContainer answerbranch = UIBranchContainer.make(essay, "answers:", y+"");
+                if (y % 2 == 1)
+                	answerbranch.decorators = new DecoratorList( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
+
 				EvalAnswer curr=(EvalAnswer)itemAnswers.get(y);
 				UIOutput.make(answerbranch, "answerNum", new Integer(y+1).toString());
 				UIOutput.make(answerbranch, "itemAnswer", curr.getText());					
