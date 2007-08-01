@@ -171,7 +171,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
                         if (EvalConstants.ITEM_CATEGORY_COURSE.equals(templateItem.getItemCategory())) {
                             UIBranchContainer branch = UIBranchContainer.make(courseSection, "itemrow:first", i + "");
                             if (i % 2 == 1)
-                            	branch.decorators = new DecoratorList( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
+                            branch.decorators = new DecoratorList( new UIStyleDecorator("") ); // must match the existing CSS class
                             renderTemplateItemResults(templateItem, evaluation.getId(), displayNumber, branch);
                             displayNumber++;
                         }
@@ -188,7 +188,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
                         if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(templateItem.getItemCategory())) {
                             UIBranchContainer branch = UIBranchContainer.make(instructorSection, "itemrow:first", i + "");
                             if (i % 2 == 1)
-                            	branch.decorators = new DecoratorList( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
+                            	branch.decorators = new DecoratorList( new UIStyleDecorator("") ); // must match the existing CSS class
                             renderTemplateItemResults(templateItem, evaluation.getId(), i, branch);
                             displayNumber++;
                         }
