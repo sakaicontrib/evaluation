@@ -1,292 +1,232 @@
 <!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
-<head>
-   <title rsf:id="view-report-title">View Report</title>
-   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-   <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
-   <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
-   <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
-   <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
-</head>
-
-<body>
-<div class="portletBody">
-
-<div class="navIntraTool">
-	<a rsf:id="summary-toplink" href="summary.html">Summary</a>
-</div>
-
-<div>
-	<ul class="breadCrumb">
-		<li class="breadCrumb"><a rsf:id="summary-toplink" href="summary.html">Summary</a></li>
-		<li class="breadCrumb"><a rsf:id="report-groups-title" href="report_groups.html">Choose Report Groups</a></li>
-		<li class="breadCrumb" rsf:id="view-report-title">View Report</li>
-	</ul>
-</div>
-
-<div rsf:id="message-for:*" class="alertMessage">
-	<ul style="margin:0px;">
-		<li>Message for user here</li>
-	</ul>
-</div>
-
-<table border="0" cellspacing="0" cellpadding="0" width="90%">
-	<tr>
-		<td align = "left"><a href="#" rsf:id="csvResultsReport">Export csv</a></td>
-		<td></td>
-		<td align = "right"><a href="#" rsf:id="fullEssayResponse">View Essay Responses</a></td>
-	</tr>
-</table>
-
-<div rsf:id="courseSection:">	
- <table border="0" cellspacing="0" cellpadding="0" width="99%">
-  <tr>
-    <!-- this td contains the section connector -->
-	<td nowrap="yes" style="width:6px;height:24px;background-color:#660000;"></td>
-    <!-- this td contains the data block -->
-	<td nowrap="yes" style="width:10px;height:24px;background-color:#660000;"></td>
-	<td nowrap="yes" align="left" style="width:5%;height:24px;font-weight:bold;border:3px solid #660000;">
-	  &nbsp;
-	  <span rsf:id="report-course-questions">Course Questions:</span>&nbsp;
-	</td>
-
-	<td nowrap="yes" style="width:95%;height:24px;background-color:#660000;"></td>
-  </tr>
-
-   <tr>
-      <!-- this td contains the section connector -->
-   	<td style="width:6px;height:100%;background-color:#660000;"></td>
-      <!-- this td contains the data block -->
-   	<td colspan="3" align="left" valign="top" style="margin:3px;">
- 
- 	  
-<!-- Begin the table content --> 	   	
- 	<table border = "1" cellspacing = "0" cellpadding = "5" rules="none" width = "100%">
- 		<!-- show section header -->
- 	
-		<tr style="height:28px;" rsf:id="itemrow:first">
-		<td colspan="2" width="100%">
-			<!-- DIV tag for Scaled display  -->
-			<div rsf:id="scaledSurvey:">
-			<table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "100%">
-				<tr>
-					<td width="3%" valign="top">
-						<label style="font-weight:bold;" rsf:id="itemNum">#</label><b>.</b>&nbsp;
-					</td>
-
-					<td width="70%" valign="top">
-						<label rsf:id="itemText"/>
-					</td>
-				</tr>
-				<div rsf:id="answers:">
-				<tr><td></td><td><label rsf:id="responseText">text</label></td><td><label style="font-weight:bold;" rsf:id="responseTotal">#</label> Responses</td></tr>
-				</div>
-			</table>
-			</div>
-			<div rsf:id="block:">
-			<table border="0" cellspacing="0" cellpadding="0" rules="none" width="100%">
-				<tr>
-					<td width="3%" valign="top">
-					  <label style="font-weight:bold;" rsf:id="itemNum">#</label><b>.</b>&nbsp;
-					</td>
-					<td width="40%"><label rsf:id="itemText"/></td>
-					<div rsf:id="responseTexts:">
-					  <td><label rsf:id="responseText">text</label></td>
-					</div>
-				</tr>
-				<tr rsf:id="queRow:">
-					<td width="3%" valign="top">
-						&nbsp;&nbsp;&nbsp;<label style="font-weight:bold;" rsf:id="queNo">#</label><b>.</b>&nbsp;
-					</td>
-					<td width="40%" valign="top"><label rsf:id="queText"/></td>		
-					<div rsf:id="answers:">
-					  <td><label rsf:id="responseTotal">#</label></td>
-					</div>
-				</tr>
-			</table>
-			</div>
-			<!-- DIV tag for header type -->
-			<div rsf:id="headerType:">
-			<table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "100%">
-				<tr>
-					<td width="3%" valign="top">
-						<label style="font-weight:bold;" rsf:id="itemNum">#</label><b>.</b>&nbsp;
-					</td>
-					<td width="87%" valign="top">
-						<label rsf:id="itemText"/>
-					</td>
-					<td>
-					&nbsp;	
-					</td>
-				</tr>
-
-			</table>
-			</div>
-			<!-- DIV tag for Essay type -->
-			<div rsf:id="essayType:">
-			<table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "100%">
-					<tr>
-						<td width="3%" valign="top">
-							<label style="font-weight:bold;" rsf:id="itemNum">#</label><b>.</b>&nbsp;
-						</td>
-						<td width="87%" valign="top">
-							<label rsf:id="itemText"/>
-						</td>
-								
-						<td width="10%" nowrap="Y" valign="top" align="right">
-							<div rsf:id="showNA:">N/A</div>
-				 		</td>
-					</tr>
-					
-					<tr><td>&nbsp;</td><td colspan="2">
-						<a href="#" rsf:id="essayResponse">View Responses</a>
-					</td></tr>
-				</table>
-			</div>
-		</td>
-		</tr>
-	</table>
-	 </td>
-	      <!-- this td contains the back section connector -->
-	 <td style="width:2px;height:100%;background-color:#999999;"></td>
-  </tr>
-
-<!-- this tr contains the section footer -->
-  <tr>
-    <!-- this td contains the section connector -->
-
-    <td style="width:6px;height:4px;background-color:#660000;"></td>
-    <!-- this td contains the data block -->
-   	<td colspan="3" nowrap="yes" align="left" valign="top" style="height:4px;background-color:#660000;"></td>
-  </tr>
-  <tr height="8"><td colspan="10"></td></tr><!-- spacer row -->
-  </table>      		
-</div>
-
-<!-- this BEGINS the INSTRUCTOR(S) section -->
- <div rsf:id="instructorSection:">
-  <table border="0" cellspacing="0" cellpadding="0" width="99%">
-
-    <tr>
-      <!-- this td contains the section connector -->
-  	<td nowrap="yes" style="width:6px;height:24px;background-color:#000099;"></td>
-      <!-- this td contains the data block -->
-  	<td nowrap="yes" style="width:10px;height:24px;background-color:#000099;"></td>
-  	<td nowrap="yes" align="left" style="width:5%;height:24px;font-weight:bold;border:3px solid #000099;">
-  	  &nbsp;
-  	  <span rsf:id="report-instructor-questions">Instructor Questions:</span>
-  	  &nbsp;
-  	</td>
-
-  	<td nowrap="yes" style="width:95%;height:24px;background-color:#000099;"></td>
-    </tr>
-    <tr>
-      <!-- this td contains the section connector -->
-   	<td style="width:6px;height:100%;background-color:#000099;"></td>
-      <!-- this td contains the data block -->
-   	<td colspan="3" align="left" valign="top" style="margin:3px;">
-   	 
-   	  
-	<!-- Begin the table content --> 	   	
-	 	<table border = "1" cellspacing = "0" cellpadding = "5" rules="none" width = "100%">
-	 		<!-- show section header -->
-	 	
-			<tr style="height:28px;" rsf:id="itemrow:first">
-			<td colspan="2" width="100%">
-				<!-- DIV tag for Scaled display  -->
-				<div rsf:id="scaledSurvey:">
-				<table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "100%">
-					<tr>
-						<td width="3%" valign="top">
-							<label style="font-weight:bold;" rsf:id="itemNum">#</label><b>.</b>&nbsp;
-						</td>
+	<head>
+	   <title rsf:id="view-report-title">View Report</title>
+	   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	   <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+	   <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+	   <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+	   <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+	</head>
 	
-						<td width="70%" valign="top">
-							<label rsf:id="itemText"/>
-						</td>
-					</tr>
-					<div rsf:id="answers:">
-					<tr><td></td><td><label rsf:id="responseText">text</label></td><td><label style="font-weight:bold;" rsf:id="responseTotal">#</label> Responses</td></tr>
-					</div>
-				</table>
-				</div>
-				<div rsf:id="block:">
-				<table border="0" cellspacing="0" cellpadding="0" rules="none" width="100%">
-					<tr>
-						<td width="3%" valign="top">
-						  <label style="font-weight:bold;" rsf:id="itemNum">#</label><b>.</b>&nbsp;
-						</td>
-						<td width="40%"><label rsf:id="itemText"/></td>
-						<div rsf:id="responseTexts:">
-						  <td><label rsf:id="responseText">text</label></td>
-						</div>
-					</tr>
-					<tr rsf:id="queRow:">
-						<td width="3%" valign="top">
-							&nbsp;&nbsp;&nbsp;<label style="font-weight:bold;" rsf:id="queNo">#</label><b>.</b>&nbsp;
-						</td>
-						<td width="40%" valign="top"><label rsf:id="queText"/></td>		
-						<div rsf:id="answers:">
-						  <td><label rsf:id="responseTotal">#</label></td>
-						</div>
-					</tr>
-				</table>
-				</div>
-				<!-- DIV tag for header type -->
-				<div rsf:id="headerType:">
-				<table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "100%">
-					<tr>
-						<td width="3%" valign="top">
-							<label style="font-weight:bold;" rsf:id="itemNum">#</label><b>.</b>&nbsp;
-						</td>
-						<td width="87%" valign="top">
-							<label rsf:id="itemText"/>
-						</td>
-						<td>
-						&nbsp;	
-						</td>
-					</tr>
-	
-				</table>
-				</div>
-				<!-- DIV tag for Essay type -->
-				<div rsf:id="essayType:">
-				<table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "100%">
-						<tr>
-							<td width="3%" valign="top">
-								<label style="font-weight:bold;" rsf:id="itemNum">#</label><b>.</b>&nbsp;
-							</td>
-							<td width="87%" valign="top">
-								<label rsf:id="itemText"/>
-							</td>
-						</tr>
+	<body>
+		<div class="portletBody">
+		
+			<div class="navIntraTool">
+				<a rsf:id="summary-toplink" href="summary.html">Summary</a>
+				<a href="#" rsf:id="csvResultsReport">Export csv</a>
+				<a href="#" rsf:id="fullEssayResponse">View Essay Responses</a>
+			</div>
+			
+			<ul class="breadCrumb">
+				<li><a rsf:id="summary-toplink" href="summary.html">Summary</a></li>
+				<li><a rsf:id="report-groups-title" href="report_groups.html">Choose Report Groups</a></li>
+				<li rsf:id="view-report-title"  class="lastCrumb">View Report</li>
+			</ul>
+			
+			<div rsf:id="message-for:*" class="alertMessage">
+				<ul style="margin:0px;">
+					<li>Message for user here</li>
+				</ul>
+			</div>
+			<!-- //gsilver: it would be helpful to render the name of the context here, that is, what groups are being reported on -->
+			<!-- this BEGINS the COURSE/GROUP(S) section -->
+			<div rsf:id="courseSection:" >	
 						
-						<tr><td>&nbsp;</td><td colspan="2">
-						<a href="#" rsf:id="essayResponse">View Responses</a>
-						</td></tr>
-					</table>
+			  <h3 rsf:id="report-course-questions">Course Questions:</h3>
+			  <div class="itemListNew">
+				  <ol>
+					<li rsf:id="itemrow:first" style="padding:0">
+						<!-- DIV tag for Scaled display  -->
+						<div rsf:id="scaledSurvey:">
+							<table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "100%" class="listHier lines nolines" style="margin:0">
+								<tr class="highLightRow">
+									<td width="3%" valign="top">
+										<span  rsf:id="itemNum">#</span>.
+									</td>
+				
+									<td width="70%" valign="top">
+										<h4><span rsf:id="itemText"/></h4>
+									</td>
+									<td></td>
+								</tr>
+								<tr  rsf:id="answers:">
+									<td></td>
+									<td>
+										<h5><span rsf:id="responseText">text</span></h5>
+									</td>
+									<td>
+										<span  rsf:id="responseTotal">#</span> Responses
+									</td>
+								</tr>
+							</table>
+						</div>
+						<!-- //gsilver: are blocks being disaggregated, used at all in reports? -->
+						<div rsf:id="block:">
+							<table border="0" cellspacing="0" cellpadding="0" rules="none" width="100%" style="margin:0">
+								<tr>
+									<td width="3%" valign="top">
+									  <span rsf:id="itemNum">#</span>.
+									</td>
+									<td width="40%">
+										<h4><span rsf:id="itemText"/></h4>
+									</td>
+									<!-- //gsilver:need to fix this - produces invalid markup - irrelevant if blocks are disaggregated for display -->
+									<div rsf:id="responseTexts:">
+									  <td><span rsf:id="responseText">text</span></td>
+									</div>
+								</tr>
+								<tr rsf:id="queRow:">
+									<td width="3%" valign="top">
+										&nbsp;&nbsp;&nbsp;<label style="font-weight:bold;" rsf:id="queNo">#</label><b>.</b>&nbsp;
+									</td>
+									<td width="40%" valign="top"><label rsf:id="queText"/></td>
+									<!-- //gsilver:need to fix this - produces invalid markup -->
+									<div rsf:id="answers:">
+									  <td><label rsf:id="responseTotal">#</label></td>
+									</div>
+								</tr>
+							</table>
+						</div>
+						<!-- DIV tag for header type -->
+						<!-- //gsilver: are headers used at all in reports? -->							
+						<div rsf:id="headerType:">
+							<table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "100%" class="listHier" style="margin:0">
+								<tr>
+									<td width="3%" valign="top">
+										<span rsf:id="itemNum">#</span>.
+									</td>
+									<td width="70%" valign="top">
+										<h4><span rsf:id="itemText"/></h4>
+									</td>
+									<td>
+									&nbsp;	
+									</td>
+								</tr>
+							</table>
+						</div>
+						<!-- DIV tag for Essay type -->
+						<div rsf:id="essayType:">
+							<table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "100%" class="listHier" style="margin:0">
+								<tr>
+									<td width="3%" valign="top">
+										<span rsf:id="itemNum">#</span>.
+									</td>
+									<td width="70%" valign="top">
+										<h4><span rsf:id="itemText"/></h4>
+									</td>
+									<td>
+										<div rsf:id="showNA:">N/A</div>
+										<a href="#" rsf:id="essayResponse">View Responses</a>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</li>
+				</ol>
 				</div>
-			</td>
-			</tr>
-		</table>
-	 </td>
-	      <!-- this td contains the back section connector -->
-	 <td style="width:2px;height:100%;background-color:#999999;"></td>
-  </tr>
+			</div>                                                                                 
 
-<!-- this tr contains the section footer -->
-  <tr>
-    <!-- this td contains the section connector -->
-
-    <td style="width:6px;height:4px;background-color:#660000;"></td>
-    <!-- this td contains the data block -->
-   	<td colspan="3" nowrap="yes" align="left" valign="top" style="height:4px;background-color:#660000;"></td>
-  </tr>
-  <tr height="8"><td colspan="10"></td></tr><!-- spacer row -->
-  </table>      		
-</div>
-
-</div>
-</body>
+			<!-- this BEGINS the INSTRUCTOR(S) section -->
+																										
+			<div rsf:id="instructorSection:">
+			  <h3 rsf:id="report-instructor-questions">Instructor Questions:</h3>
+				<div class="itemListNew">
+				  <!-- Begin the list content --> 	   	
+					<ol>
+						<li rsf:id="itemrow:first"  style="padding:0">
+							<!-- DIV tag for Scaled display  -->
+							<div rsf:id="scaledSurvey:">
+								<table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "100%" class="listHier lines nolines" style="margin:0">
+									<tr class="highLightRow">
+										<td width="3%" valign="top">
+											<span  rsf:id="itemNum">#</span>.
+										</td>
+					
+										<td width="70%" valign="top">
+											<h4><span rsf:id="itemText"/></h4>
+										</td>
+										<td></td>
+									</tr>
+									<tr  rsf:id="answers:">
+										<td></td>
+										<td>
+											<h5 style="color:pink"><span rsf:id="responseText">text</span></h5>
+										</td>
+										<td>
+											<span  rsf:id="responseTotal">#</span> Responses
+										</td>
+									</tr>
+								</table>
+							</div>
+							<!-- DIV tag for BLOCK type -->
+							<!-- //gsilver: are blocks being disaggregated, used at all in reports? -->
+							<div rsf:id="block:">
+								<table border="0" cellspacing="0" cellpadding="0" rules="none" width="100%" style="margin:0">
+									<tr>
+										<td width="3%" valign="top">
+										  <span rsf:id="itemNum">#</span>.
+										</td>
+										<td width="40%">
+											<h4><span rsf:id="itemText"/></h4>
+										</td>
+										<!-- //gsilver:need to fix this - produces invalid markup - irrelevant if blocks are disaggregated for display -->
+										<div rsf:id="responseTexts:">
+										  <td><span rsf:id="responseText">text</span></td>
+										</div>
+									</tr>
+									<tr rsf:id="queRow:">
+										<td width="3%" valign="top">
+											&nbsp;&nbsp;&nbsp;<label style="font-weight:bold;" rsf:id="queNo">#</label><b>.</b>&nbsp;
+										</td>
+										<td width="40%" valign="top"><label rsf:id="queText"/></td>
+										<!-- //gsilver:need to fix this - produces invalid markup - irrelevant if blocks are disaggregated for display -->
+										<div rsf:id="answers:">
+										  <td><label rsf:id="responseTotal">#</label></td>
+										</div>
+									</tr>
+								</table>						
+							</div>
+							<!-- DIV tag for header type -->
+							<!-- //gsilver: are headers used at all in reports? -->					
+							<div rsf:id="headerType:">
+								<table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "100%" class="listHier" style="margin:0">
+									<tr>
+										<td width="3%" valign="top">
+											<span rsf:id="itemNum">#</span>.
+										</td>
+										<td width="70%" valign="top">
+											<h4><span rsf:id="itemText"/></h4>
+										</td>
+										<td>
+										&nbsp;	
+										</td>
+									</tr>
+								</table>
+							</div>
+							<!-- DIV tag for Essay type -->
+							<div rsf:id="essayType:">
+								<table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "100%" class="listHier" style="margin:0">
+									<tr>
+										<td width="3%" valign="top">
+											<span rsf:id="itemNum">#</span>.
+										</td>
+										<td width="87%" valign="top">
+											<h4><span rsf:id="itemText"/></h4>
+										</td>
+										<td>
+											<div rsf:id="showNA:">N/A</div>
+											<a href="#" rsf:id="essayResponse">View Responses</a>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</li>
+					</ol>
+				</div>
+			</div>	
+		
+		</div>
+	</body>
 </html>

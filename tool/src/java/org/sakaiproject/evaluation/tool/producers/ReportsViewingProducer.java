@@ -49,6 +49,7 @@ import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIColourDecorator;
+import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
@@ -170,9 +171,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
                         if (EvalConstants.ITEM_CATEGORY_COURSE.equals(templateItem.getItemCategory())) {
                             UIBranchContainer branch = UIBranchContainer.make(courseSection, "itemrow:first", i + "");
                             if (i % 2 == 1)
-                                branch.decorators = new DecoratorList(new UIColourDecorator(null, 
-                                        Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
-
+                            	branch.decorators = new DecoratorList( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
                             renderTemplateItemResults(templateItem, evaluation.getId(), displayNumber, branch);
                             displayNumber++;
                         }
@@ -189,9 +188,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
                         if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(templateItem.getItemCategory())) {
                             UIBranchContainer branch = UIBranchContainer.make(instructorSection, "itemrow:first", i + "");
                             if (i % 2 == 1)
-                                branch.decorators = new DecoratorList(new UIColourDecorator(null, 
-                                        Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
-
+                            	branch.decorators = new DecoratorList( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
                             renderTemplateItemResults(templateItem, evaluation.getId(), i, branch);
                             displayNumber++;
                         }
