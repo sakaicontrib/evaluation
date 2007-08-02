@@ -176,9 +176,10 @@ public class ReportsViewEssaysProducer implements ViewComponentProducer, Navigat
 								&& item1.getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)){
 							//"Course","Short Answer/Essay"
 							radiobranch = UIBranchContainer.make(courseSection,	"itemrow:first", i+"");
-							if (i % 2 == 1)
-								radiobranch.decorators = new DecoratorList(
-										new UIColourDecorator(null, Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
+							// need the alt row highlights between essays, not groups of essays
+							// if (i % 2 == 1)
+							//	radiobranch.decorators = new DecoratorList(
+							//			new UIColourDecorator(null, Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
 
 							this.doFillComponent(item1, evaluation.getId(), i, essayResponseParams.groupIds, 
 									radiobranch, courseSection);
@@ -186,9 +187,10 @@ public class ReportsViewEssaysProducer implements ViewComponentProducer, Navigat
 								item1.getClassification().equals(EvalConstants.ITEM_TYPE_TEXT)) {
 							//"Instructor","Short Answer/Essay"
 							radiobranch = UIBranchContainer.make(instructorSection,	"itemrow:first", i+"");
-							if (i % 2 == 1)
-								radiobranch.decorators = new DecoratorList(
-										new UIColourDecorator(null,	Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
+							// need the alt row highlights between essays, not groups of essays
+							// if (i % 2 == 1)
+							//	radiobranch.decorators = new DecoratorList(
+							//			new UIColourDecorator(null,	Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
 							this.doFillComponent(item1, evaluation.getId(), i, essayResponseParams.groupIds, 
 									radiobranch, instructorSection);
 						}
