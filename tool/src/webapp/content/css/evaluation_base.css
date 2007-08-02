@@ -2,6 +2,18 @@
  * Aaron Zeckoski (aaronz@vt.edu) 
  */
 
+ @media print  {
+   body {
+	font-size: 9pt !important;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+
+.itemListNew li, .itemListNew li li{
+	border:1px solid #aaa !important
+	
+}
+}
 
  
  
