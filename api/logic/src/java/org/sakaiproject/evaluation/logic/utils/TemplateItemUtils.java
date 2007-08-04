@@ -99,6 +99,16 @@ public class TemplateItemUtils {
 			}
 		}
 
+		// need to have a special case here which will keep this method 
+		// from losing child items when the parent is not included
+		if (orderedItemsList.size() < templateItemsList.size()) {
+		   for (EvalTemplateItem templateItem : templateItemsList) {
+            if (! orderedItemsList.contains(templateItem)) {
+               orderedItemsList.add(templateItem);
+            }
+         }
+		}
+
 		return orderedItemsList;
 	}
 
