@@ -331,10 +331,10 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 			UIForm evalForm = UIForm.make(evalListing, "closed-eval-form");
 
 			UIMessage.make(evalForm, "eval-title-header", "controlevaluations.eval.title.header");
+         UIMessage.make(evalForm, "eval-report-header", "controlevaluations.eval.report.header");
 			UIMessage.make(evalForm, "eval-assigned-header", "controlevaluations.eval.assigned.header");
 			UIMessage.make(evalForm, "eval-response-rate-header", "controlevaluations.eval.responserate.header");
-			UIMessage.make(evalForm, "eval-startdate-header", "controlevaluations.eval.startdate.header");
-			UIMessage.make(evalForm, "eval-report-header", "controlevaluations.eval.report.header");
+			UIMessage.make(evalForm, "eval-duedate-header", "controlevaluations.eval.startdate.header");
 
 			for (int i = 0; i < closedEvals.size(); i++) {
 				EvalEvaluation evaluation = (EvalEvaluation) closedEvals.get(i);
@@ -370,15 +370,16 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 
 				// calculate the response rate
 				int countResponses = responsesLogic.countResponses(evaluation.getId(), null);
-				int countEnrollments = getTotalEnrollmentsForEval(evaluation.getId());
-				long percentage = 0;
-				if (countEnrollments > 0) {
-					percentage = Math.round( (1.0 * countResponses )/countEnrollments )*100;
-					UIOutput.make(evaluationRow, "closed-eval-response-rate", countResponses + "/"+ countEnrollments +" - "+percentage +"%");
-				} else {
-					// don't bother showing percentage or "out of" when there are no enrollments
-					UIOutput.make(evaluationRow, "closed-eval-response-rate", countResponses + "");
-				}
+            int countEnrollments = getTotalEnrollmentsForEval(evaluation.getId());
+            long percentage = 0;
+            if (countEnrollments > 0) {
+               percentage = Math.round(  (((float)countResponses) / (float)countEnrollments) * 100.0 );
+               UIOutput.make(evaluationRow, "closed-eval-response-rate", countResponses + "/"
+                     + countEnrollments + " - " + percentage + "%");
+            } else {
+               // don't bother showing percentage or "out of" when there are no enrollments
+               UIOutput.make(evaluationRow, "closed-eval-response-rate", countResponses + "");
+            }
 
 				UIOutput.make(evaluationRow, "closed-eval-duedate", df.format(evaluation.getDueDate()));
 
