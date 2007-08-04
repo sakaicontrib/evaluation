@@ -17,6 +17,7 @@ package org.sakaiproject.evaluation.dao;
 import java.util.List;
 import java.util.Set;
 
+import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
@@ -54,7 +55,7 @@ public interface EvaluationDao extends CompleteGenericDao {
 	 * templates with at least one item
 	 * @return a List of EvalTemplate objects, ordered by sharing and title alphabetic
 	 */
-	public List getVisibleTemplates(String userId, String[] sharingConstants, boolean includeEmpty);
+	public List<EvalTemplate> getVisibleTemplates(String userId, String[] sharingConstants, boolean includeEmpty);
 
 	/**
 	 * Count the templates that are visible to a user
@@ -80,7 +81,7 @@ public interface EvaluationDao extends CompleteGenericDao {
 	 * to any user), if false, only include evals with require keys or authentication
 	 * @return a Set of EvalEvaluation objects which are active
 	 */
-	public Set getEvaluationsByEvalGroups(String[] evalGroupIds, boolean activeOnly, boolean includeUnApproved, boolean includeAnonymous);
+	public Set<EvalEvaluation> getEvaluationsByEvalGroups(String[] evalGroupIds, boolean activeOnly, boolean includeUnApproved, boolean includeAnonymous);
 
 	/**
 	 * Returns all answers to the given item associated with 
@@ -92,7 +93,7 @@ public interface EvaluationDao extends CompleteGenericDao {
 	 * if null then just return all answers for this evaluation
 	 * @return a list of EvalAnswer objects or empty list if none found
 	 */
-	public List getAnswers(Long itemId, Long evalId, String[] evalGroupIds);
+	public List<EvalAnswer> getAnswers(Long itemId, Long evalId, String[] evalGroupIds);
 
 	/**
 	 * Returns list of response ids for a given evaluation
@@ -101,9 +102,9 @@ public interface EvaluationDao extends CompleteGenericDao {
 	 * @param evalId the id of the evaluation you want response ids for
 	 * @param evalGroupIds an array of eval group IDs to return response ids for,
 	 * if null or empty then just return all response ids for this evaluation
-	 * @return a list of response ids
+	 * @return a list of response ids (Long)
 	 */
-	public List getResponseIds(Long evalId, String[] evalGroupIds);
+	public List<Long> getResponseIds(Long evalId, String[] evalGroupIds);
 
 	/**
 	 * Removes a group of templateItems and updates all related items 
@@ -124,7 +125,7 @@ public interface EvaluationDao extends CompleteGenericDao {
 	 * @param includeExpert if true then include expert groups only, else include non-expert groups only
 	 * @return a List of {@link EvalItemGroup} objects, ordered by title alphabetically
 	 */
-	public List getItemGroups(Long parentItemGroupId, String userId, boolean includeEmpty, boolean includeExpert);
+	public List<EvalItemGroup> getItemGroups(Long parentItemGroupId, String userId, boolean includeEmpty, boolean includeExpert);
 
 	/**
 	 * Get all the templateItems for this template limited by the various hierarchy
@@ -138,7 +139,7 @@ public interface EvaluationDao extends CompleteGenericDao {
 	 * @param groupIds may be null, includes unique ids for groups
 	 * @return a list of {@link EvalTemplateItem} objects, ordered by displayOrder
 	 */
-	public List getTemplateItemsByTemplate(Long templateId, String[] nodeIds, String[] instructorIds, String[] groupIds);
+	public List<EvalTemplateItem> getTemplateItemsByTemplate(Long templateId, String[] nodeIds, String[] instructorIds, String[] groupIds);
 
 	/**
 	 * Get a list of evaluation categories
@@ -146,7 +147,7 @@ public interface EvaluationDao extends CompleteGenericDao {
 	 * @param userId the internal user id (not username), if null then return all categories
 	 * @return a list of {@link String}
 	 */
-	public List getEvalCategories(String userId);
+	public List<String> getEvalCategories(String userId);
 
 
 	// LOCKING METHODS
