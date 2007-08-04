@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
+import org.sakaiproject.evaluation.tool.EvaluationBean;
 import org.sakaiproject.evaluation.tool.viewparams.EmailViewParameters;
 
 import uk.org.ponder.rsf.components.UICommand;
@@ -37,56 +38,70 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * Page for Modify Email template
  * 
  * @author: Rui Feng (fengr@vt.edu)
+ * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 
-public class ModifyEmailProducer implements ViewComponentProducer, NavigationCaseReporter, ViewParamsReporter { 
-	
-	public static final String VIEW_ID = "modify_email"; //$NON-NLS-1$
+public class ModifyEmailProducer implements ViewComponentProducer, NavigationCaseReporter, ViewParamsReporter {
 
-	public String getViewID() {
-		return VIEW_ID;
-	}
-	
-	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+   public static final String VIEW_ID = "modify_email";
+   public String getViewID() {
+      return VIEW_ID;
+   }
 
-		UIMessage.make(tofill, "modify-email-title", "modifyemail.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
-		UIMessage.make(tofill, "create-eval-title", "starteval.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
-		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID));		 //$NON-NLS-1$ //$NON-NLS-2$
-		
-		
-		UIMessage.make(tofill, "modify-template-header", "modifyemail.modify.template.header"); //$NON-NLS-1$ //$NON-NLS-2$
-		UIForm form = UIForm.make(tofill, "emailTemplateForm"); //$NON-NLS-1$
-		
-		UIMessage.make(form, "modify-text-instructions", "modifyemail.modify.text.instructions"); //$NON-NLS-1$ //$NON-NLS-2$
-		UIMessage.make(form, "modify-text-field-names", "modifyemail.modify.text.field.names"); //$NON-NLS-1$ //$NON-NLS-2$
+   private EvaluationBean evaluationBean;
+   public void setEvaluationBean(EvaluationBean evaluationBean) {
+      this.evaluationBean = evaluationBean;
+   }
 
-		EmailViewParameters emailViewParams = (EmailViewParameters) viewparams;
-		
-		UIMessage.make(form, "close-button", "general.close.window.button");
-		
-		if( emailViewParams.emailType.equals(EvalConstants.EMAIL_TEMPLATE_AVAILABLE)){ //$NON-NLS-1$
-			UIInput.make(form,"emailTemplate","#{evaluationBean.emailAvailableTxt}", null); //$NON-NLS-1$ //$NON-NLS-2$
-			UICommand.make(form, "saveEmailTemplate",UIMessage.make("modifyemail.save.changes.link"), "#{evaluationBean.saveAvailableEmailTemplate}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
-		
-		if( emailViewParams.emailType.equals(EvalConstants.EMAIL_TEMPLATE_REMINDER)){ //$NON-NLS-1$
-			UIInput.make(form,"emailTemplate","#{evaluationBean.emailReminderTxt}", null); //$NON-NLS-1$ //$NON-NLS-2$
-			UICommand.make(form, "saveEmailTemplate", UIMessage.make("modifyemail.save.changes.link"), "#{evaluationBean.saveReminderEmailTemplate}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
+   public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
-	}
+      EmailViewParameters emailViewParams = (EmailViewParameters) viewparams;
+      String emailTemplateType = emailViewParams.emailType;
 
-	public List reportNavigationCases() {
-		List i = new ArrayList();
-		i.add(new NavigationCase(EvalConstants.EMAIL_TEMPLATE_AVAILABLE, 
-            new EmailViewParameters(PreviewEmailProducer.VIEW_ID, null, EvalConstants.EMAIL_TEMPLATE_AVAILABLE))); //$NON-NLS-1$ //$NON-NLS-2$
-		i.add(new NavigationCase(EvalConstants.EMAIL_TEMPLATE_REMINDER, 
-            new EmailViewParameters(PreviewEmailProducer.VIEW_ID, null, EvalConstants.EMAIL_TEMPLATE_REMINDER))); //$NON-NLS-1$ //$NON-NLS-2$
-		return i;
-	}
+      UIMessage.make(tofill, "modify-email-title", "modifyemail.page.title");
+      UIMessage.make(tofill, "create-eval-title", "starteval.page.title");
+      UIInternalLink.make(tofill, "summary-toplink", 
+            UIMessage.make("summary.page.title"),
+               new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
-	public ViewParameters getViewParameters() {
-		return new EmailViewParameters();
-	}		
+      UIMessage.make(tofill, "modify-template-header", 
+            "modifyemail.modify.template.header", 
+               new Object[] {emailTemplateType, evaluationBean.eval.getTitle()});
+
+      UIMessage.make(tofill, "modify-text-instructions", "modifyemail.modify.text.instructions");
+      UIMessage.make(tofill, "modify-text-field-names", "email.templates.field.names");
+
+      UIForm form = UIForm.make(tofill, "emailTemplateForm");
+
+      UIMessage.make(form, "close-button", "general.close.window.button");
+
+      if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailTemplateType)) {
+         UIInput.make(form, "emailTemplate", "#{evaluationBean.emailAvailableTxt}", null);
+         UICommand.make(form, "saveEmailTemplate", 
+               UIMessage.make("modifyemail.save.changes.link"), 
+                  "#{evaluationBean.saveAvailableEmailTemplate}");
+      } else if (EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailTemplateType)) {
+         UIInput.make(form, "emailTemplate", "#{evaluationBean.emailReminderTxt}", null);
+         UICommand.make(form, "saveEmailTemplate", 
+               UIMessage.make("modifyemail.save.changes.link"), 
+                  "#{evaluationBean.saveReminderEmailTemplate}");
+      } else {
+         throw new IllegalArgumentException("Unknown email template type: " + emailTemplateType);
+      }
+
+   }
+
+   public List reportNavigationCases() {
+      List i = new ArrayList();
+      i.add(new NavigationCase(EvalConstants.EMAIL_TEMPLATE_AVAILABLE, new EmailViewParameters(
+            PreviewEmailProducer.VIEW_ID, null, EvalConstants.EMAIL_TEMPLATE_AVAILABLE)));
+      i.add(new NavigationCase(EvalConstants.EMAIL_TEMPLATE_REMINDER, new EmailViewParameters(
+            PreviewEmailProducer.VIEW_ID, null, EvalConstants.EMAIL_TEMPLATE_REMINDER)));
+      return i;
+   }
+
+   public ViewParameters getViewParameters() {
+      return new EmailViewParameters();
+   }
 
 }

@@ -43,9 +43,9 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 public class PreviewEmailProducer implements ViewComponentProducer,
     NavigationCaseReporter, ViewParamsReporter {
 
-  private final static String BREAK = "<br/>"; //$NON-NLS-1$
+  private final static String BREAK = "<br/>";
   private EvaluationBean evaluationBean;
-  public static final String VIEW_ID = "preview_email"; //$NON-NLS-1$
+  public static final String VIEW_ID = "preview_email";
 
   public void setEvaluationBean(EvaluationBean evaluationBean) {
     this.evaluationBean = evaluationBean;
@@ -58,20 +58,20 @@ public class PreviewEmailProducer implements ViewComponentProducer,
   public void fillComponents(UIContainer tofill, ViewParameters viewparams,
       ComponentChecker checker) {
 
-	UIMessage.make(tofill, "preview-email-title", "previewemail.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
+	UIMessage.make(tofill, "preview-email-title", "previewemail.page.title"); 
     UIInternalLink.make(tofill, "summary-toplink",
     		UIMessage.make("summary.page.title"), 
         new SimpleViewParameters(SummaryProducer.VIEW_ID));
-    UIMessage.make(tofill, "create-eval-title", "starteval.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
+    UIMessage.make(tofill, "create-eval-title", "starteval.page.title"); 
 
-    UIMessage.make(tofill, "preview-email-header", "previewemail.header"); //$NON-NLS-1$ //$NON-NLS-2$
+    UIMessage.make(tofill, "preview-email-header", "previewemail.header"); 
 
     EmailViewParameters emailViewParams = (EmailViewParameters) viewparams;
 
-    UIForm form = UIForm.make(tofill, "previewEmailForm"); //$NON-NLS-1$
+    UIForm form = UIForm.make(tofill, "previewEmailForm");
 
-    UIMessage.make(form,"preview-email-desc", "previewemail.desc"); //$NON-NLS-1$ //$NON-NLS-2$
-    UIMessage.make(form,"preview-email-field-names", "previewemail.field.names"); //$NON-NLS-1$ //$NON-NLS-2$
+    UIMessage.make(form,"preview-email-desc", "previewemail.desc"); 
+    UIMessage.make(form,"preview-email-field-names", "email.templates.field.names"); 
     UIMessage.make(form, "close-button", "general.close.window.button");
     String emailText = "";
     String actionBinding = null;
@@ -83,12 +83,12 @@ public class PreviewEmailProducer implements ViewComponentProducer,
 
     }
     if (emailViewParams.emailType.equals(EvalConstants.EMAIL_TEMPLATE_REMINDER)) {
-      actionBinding = "#{evaluationBean.modifyReminderEmailTemplate}"; //$NON-NLS-1$ 
+      actionBinding = "#{evaluationBean.modifyReminderEmailTemplate}"; 
       emailText = evaluationBean.emailReminderTxt;
     }
-    emailText = emailText.replaceAll("\n", BREAK); //$NON-NLS-1$
+    emailText = emailText.replaceAll("\n", BREAK);
     UICommand.make(form, "modifyEmailTemplate", UIMessage.make("previewemail.modify.button"), actionBinding);
-    UIVerbatim.make(form, "previewEmailText", emailText); //$NON-NLS-1$
+    UIVerbatim.make(form, "previewEmailText", emailText);
   }
 
   public List reportNavigationCases() {
@@ -96,10 +96,10 @@ public class PreviewEmailProducer implements ViewComponentProducer,
 
     i.add(new NavigationCase(EvalConstants.EMAIL_TEMPLATE_AVAILABLE, new EmailViewParameters(
         ModifyEmailProducer.VIEW_ID, null,
-        EvalConstants.EMAIL_TEMPLATE_AVAILABLE))); //$NON-NLS-1$ //$NON-NLS-2$
+        EvalConstants.EMAIL_TEMPLATE_AVAILABLE))); 
     i.add(new NavigationCase(EvalConstants.EMAIL_TEMPLATE_REMINDER, new EmailViewParameters(
         ModifyEmailProducer.VIEW_ID, null,
-        EvalConstants.EMAIL_TEMPLATE_REMINDER))); //$NON-NLS-1$ //$NON-NLS-2$
+        EvalConstants.EMAIL_TEMPLATE_REMINDER))); 
     return i;
   }
 
