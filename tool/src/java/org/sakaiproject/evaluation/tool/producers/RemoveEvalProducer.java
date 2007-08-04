@@ -43,6 +43,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * This page confirms that the user wants to remove an evaluation
  * 
  * @author: Rui Feng (fengr@vt.edu)
+ * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 
 public class RemoveEvalProducer implements ViewComponentProducer,ViewParamsReporter, NavigationCaseReporter {
@@ -66,56 +67,59 @@ public class RemoveEvalProducer implements ViewComponentProducer,ViewParamsRepor
 
 		UIMessage.make(tofill, "page-title", "removeeval.page.title");	
 
-		UIInternalLink.make(tofill,	"summary-toplink", UIMessage.make("summary.page.title"),
-				new SimpleViewParameters(SummaryProducer.VIEW_ID));
+		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"),
+            new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
-		UIInternalLink.make(tofill, "control-evaluations-link",
-				UIMessage.make("controlevaluations.page.title"), 
-			new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
+      UIInternalLink.make(tofill, "control-evaluations-link",
+            UIMessage.make("controlevaluations.page.title"), new SimpleViewParameters(
+                  ControlEvaluationsProducer.VIEW_ID));
 
 		
 		TemplateViewParameters evalViewParams = (TemplateViewParameters) viewparams;
 		
-		if(evalViewParams.templateId !=null){
-			EvalEvaluation eval = evalsLogic.getEvaluationById(evalViewParams.templateId);
-			//EvalEvaluation eval = logic.getEvaluationById(evalViewParams.templateId);
-			if(eval != null){
-				UIForm form = UIForm.make(tofill, "removeEvalForm");
-				UIMessage.make(form, "remove-eval-confirm-name", "removeeval.confirm.name", new Object[] {eval.getTitle()});
-				UIMessage.make(form, "remove-eval-note", "removeeval.note");
-				
-				UIMessage.make(form, "eval-title-header","removeeval.title.header");
-				UIMessage.make(form, "assigned-header", "removeeval.assigned.header");
-				UIMessage.make(form, "start-date-header", "removeeval.start.date.header");
-				UIMessage.make(form, "due-date-header", "removeeval.due.date.header");
-				
-				int count = evalsLogic.countEvaluationGroups(eval.getId());
-				if (count > 1) {
-					UIOutput.make(form, "evalAssigned", count + " courses");
-				} else if (count == 1) {
-					Long[] evalIds = {eval.getId()};
-					Map evalContexts = evalsLogic.getEvaluationGroups(evalIds, true);
-					List contexts = (List) evalContexts.get(eval.getId());
-					EvalGroup ctxt = (EvalGroup) contexts.get(0);
-					String title = ctxt.title;
-					UIOutput.make(form, "evalAssigned", title);
-				} else {
-					UIMessage.make(form, "evalAssigned", "removeeval.assigned.none");
-				}
-				
-				DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
-				
-				UIOutput.make(form, "evalStartDate", df.format(eval.getStartDate()));
-				UIOutput.make(form, "evalDueDate", df.format(eval.getDueDate()));
-				
-				UICommand.make(form, "cancelRemoveEvalAction", UIMessage.make("general.cancel.button"), 
-						"#{evaluationBean.cancelRemoveEvalAction}");
-				
-				UICommand removeCmd = UICommand.make(form, "removeEvalAction", UIMessage.make("removeeval.remove.button"), 
-									"#{evaluationBean.removeEvalAction}"); 
-				removeCmd.parameters.add(new UIELBinding("#{evaluationBean.evalId}",eval.getId().toString()));				
-			
-			}
+		if (evalViewParams.templateId != null) {
+         EvalEvaluation eval = evalsLogic.getEvaluationById(evalViewParams.templateId);
+         if (eval != null) {
+            UIForm form = UIForm.make(tofill, "removeEvalForm");
+            UIMessage.make(form, "remove-eval-confirm-name", 
+                  "removeeval.confirm.name", new Object[] { eval.getTitle() });
+            UIMessage.make(form, "remove-eval-note", "removeeval.note");
+
+            UIMessage.make(form, "eval-title-header", "removeeval.title.header");
+            UIOutput.make(form, "evalTitle", eval.getTitle());
+            UIMessage.make(form, "assigned-header", "removeeval.assigned.header");
+            UIMessage.make(form, "start-date-header", "removeeval.start.date.header");
+            UIMessage.make(form, "due-date-header", "removeeval.due.date.header");
+
+            int count = evalsLogic.countEvaluationGroups(eval.getId());
+            if (count > 1) {
+               UIOutput.make(form, "evalAssigned", count + " courses");
+            } else if (count == 1) {
+               Long[] evalIds = { eval.getId() };
+               Map evalContexts = evalsLogic.getEvaluationGroups(evalIds, true);
+               List contexts = (List) evalContexts.get(eval.getId());
+               EvalGroup ctxt = (EvalGroup) contexts.get(0);
+               String title = ctxt.title;
+               UIOutput.make(form, "evalAssigned", title);
+            } else {
+               UIMessage.make(form, "evalAssigned", "removeeval.assigned.none");
+            }
+
+            DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+
+            UIOutput.make(form, "evalStartDate", df.format(eval.getStartDate()));
+            UIOutput.make(form, "evalDueDate", df.format(eval.getDueDate()));
+
+            UICommand.make(form, "cancelRemoveEvalAction", UIMessage.make("general.cancel.button"),
+                  "#{evaluationBean.cancelRemoveEvalAction}");
+
+            UICommand removeCmd = UICommand.make(form, "removeEvalAction", UIMessage
+                  .make("removeeval.remove.button"), "#{evaluationBean.removeEvalAction}");
+            removeCmd.parameters.add(new UIELBinding("#{evaluationBean.evalId}", eval.getId().toString()));
+
+         } else {
+            throw new RuntimeException("Cannot remove evaluation, no eval id found in passed in params, illegal access to page");
+         }
 		}
 	}
 
