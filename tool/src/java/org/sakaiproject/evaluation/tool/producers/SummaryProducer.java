@@ -214,20 +214,21 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 
 						// set status
 						if (response != null && response.getEndTime() != null) {
+						   // there is a response for this eval/group
 							if (eval.getModifyResponsesAllowed().booleanValue()) {
+							   // can modify responses so show the link still
 								// take eval link when pending
 								UIInternalLink.make(evalcourserow, "evaluationCourseLink", title,
 										new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID,
 												eval.getId(), groupId, response.getId()) );
-								status = "summary.status.pending";
+								status = "summary.status.completed";
 							} else {
-								// preview only when completed
-								UIInternalLink.make(evalcourserow, "evaluationCourseLink", title,
-										new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID,
-												eval.getId(), eval.getTemplate().getId(), groupId) );
+							   // show title only when completed
+							   UIOutput.make(evalcourserow, "evaluationCourseTitle", title);
 								status = "summary.status.completed";
 							}
 						} else {
+						   // no response yet for this eval/group
 							// take eval link when pending
 							UIInternalLink.make(evalcourserow, "evaluationCourseLink", title,
 									new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID,
@@ -235,6 +236,9 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 							status = "summary.status.pending";
 						}
 						UIMessage.make(evalcourserow, "evaluationCourseStatus", status );
+						// moved down here as requested by UI design
+		            UIOutput.make(evalcourserow, "evaluationStartDate", df.format(eval.getStartDate()) );
+		            UIOutput.make(evalcourserow, "evaluationDueDate", df.format(eval.getDueDate()) );
 					}
 				}
 			}
@@ -302,36 +306,34 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 
 				Date date;
 
-				String evalStatus=evaluationsLogic.getEvaluationState(eval.getId());
-				if (evalStatus == EvalConstants.EVALUATION_STATE_INQUEUE){
-					date=eval.getStartDate();
-					UIMessage.make(evalrow, "evalAdminStatus", "summary.status."+evalStatus);
-				}
-				else if (evalStatus == EvalConstants.EVALUATION_STATE_ACTIVE){
-					date=eval.getStopDate();
-					UIMessage.make(evalrow, "evalAdminStatus", "summary.status."+evalStatus);
-				}
-				else if (evalStatus == EvalConstants.EVALUATION_STATE_DUE){
-					date=eval.getDueDate();
-					UIMessage.make(evalrow, "evalAdminStatus", "summary.status."+evalStatus);
-				}
-				else if (evalStatus == EvalConstants.EVALUATION_STATE_CLOSED){
-					date=eval.getViewDate();
-					UIMessage.make(evalrow, "evalAdminStatus", "summary.status."+evalStatus);
-				}
-				else if (evalStatus == EvalConstants.EVALUATION_STATE_VIEWABLE) {
-					date=eval.getViewDate();
-					int ctResponses = responsesLogic.countResponses(eval.getId(), null);
-					int ctEnrollments = getTotalEnrollmentsForEval(eval.getId());
-					Integer respReqToViewResults = (Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS);
-					if ( (respReqToViewResults.intValue()<=ctResponses) || (ctResponses>=ctEnrollments) ) {
-						UIInternalLink.make(evalrow, "viewReportLink", UIMessage.make("viewreport.page.title"),
-								new ReportParameters(ReportChooseGroupsProducer.VIEW_ID, eval.getId() ));
-					} else {
-						UIMessage.make(evalrow, "evalAdminStatus", "summary.status."+evalStatus);
-					}
-				}
-				else date=eval.getStartDate();
+				String evalStatus = evaluationsLogic.getEvaluationState(eval.getId());
+            if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(evalStatus)) {
+               date = eval.getStartDate();
+               UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalStatus);
+            } else if (EvalConstants.EVALUATION_STATE_ACTIVE.equals(evalStatus)) {
+               date = eval.getStopDate();
+               UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalStatus);
+            } else if (EvalConstants.EVALUATION_STATE_DUE.equals(evalStatus)) {
+               date = eval.getDueDate();
+               UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalStatus);
+            } else if (EvalConstants.EVALUATION_STATE_CLOSED.equals(evalStatus)) {
+               date = eval.getViewDate();
+               UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalStatus);
+            } else if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(evalStatus)) {
+               date = eval.getViewDate();
+               int ctResponses = responsesLogic.countResponses(eval.getId(), null);
+               int ctEnrollments = getTotalEnrollmentsForEval(eval.getId());
+               Integer respReqToViewResults = (Integer) settings
+                     .get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS);
+               if ((respReqToViewResults.intValue() <= ctResponses) || (ctResponses >= ctEnrollments)) {
+                  UIInternalLink.make(evalrow, "viewReportLink", UIMessage.make("viewreport.page.title"),
+                        new ReportParameters(ReportChooseGroupsProducer.VIEW_ID, eval.getId()));
+               } else {
+                  UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalStatus);
+               }
+            } else {
+               date = eval.getStartDate();
+            }
 
 
 				/**
@@ -341,19 +343,20 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 				 * but start date should be disabled
 				 * 3) if a evaluation is closed, title link go to previewEval page with populated data
 				 */
-				if (evalStatus==EvalConstants.EVALUATION_STATE_CLOSED || evalStatus==EvalConstants.EVALUATION_STATE_VIEWABLE){
-					UIInternalLink.make(evalrow, "evalAdminTitleLink_preview", eval.getTitle(),
-							new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID,
-									eval.getId(), eval.getTemplate().getId()) );
-				} else {
-					UICommand evalEditUIC = UICommand.make(evalrow, "evalAdminTitleLink_edit", eval.getTitle(),
-						"#{evaluationBean.editEvalSettingAction}");
-					evalEditUIC.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", eval.getId()));
-				}
+				if (EvalConstants.EVALUATION_STATE_CLOSED.equals(evalStatus)
+                  || EvalConstants.EVALUATION_STATE_VIEWABLE.equals(evalStatus)) {
+               UIInternalLink.make(evalrow, "evalAdminTitleLink_preview", eval.getTitle(),
+                     new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID, eval.getId(), 
+                           eval.getTemplate().getId()));
+            } else {
+               UICommand evalEditUIC = UICommand.make(evalrow, "evalAdminTitleLink_edit", 
+                     eval.getTitle(), "#{evaluationBean.editEvalSettingAction}");
+               evalEditUIC.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", eval.getId()));
+            }
 
-				UIMessage.make(evalrow, "evalAdminDateLabel", "summary.label."+evalStatus);
-				UIOutput.make(evalrow, "evalAdminDate", df.format(date) );
-			}
+            UIMessage.make(evalrow, "evalAdminDateLabel", "summary.label." + evalStatus);
+            UIOutput.make(evalrow, "evalAdminDate", df.format(date));
+         }
 		}
 
 
