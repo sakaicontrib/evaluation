@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalResponse;
 
 
@@ -37,7 +38,7 @@ public interface EvalResponsesLogic {
 	 * @param evaluationId the EvalEvaluation id
 	 * @return a List of user ids
 	 */
-	public Set getNonResponders(Long evaluationId, EvalGroup group);
+	public Set<String> getNonResponders(Long evaluationId, EvalGroup group);
 
 	/**
 	 * Get a response by its unique id<br/>
@@ -62,7 +63,7 @@ public interface EvalResponsesLogic {
 	 * @param evaluationIds an array of the ids of EvalEvaluation objects
 	 * @return a List of EvalResponse objects
 	 */
-	public List getEvaluationResponses(String userId, Long[] evaluationIds);
+	public List<EvalResponse> getEvaluationResponses(String userId, Long[] evaluationIds);
 
 	/**
 	 * Count the number of responses for an evaluation,
@@ -87,7 +88,7 @@ public interface EvalResponsesLogic {
 	 * if null, include count for all eval groups for this evaluation
 	 * @return a list of EvalAnswer objects
 	 */
-	public List getEvalAnswers(Long itemId, Long evaluationId, String[] evalGroupIds);
+	public List<EvalAnswer> getEvalAnswers(Long itemId, Long evaluationId, String[] evalGroupIds);
 
 	/**
 	 * Get the response ids associated with an evaluation and particular eval groups
@@ -97,7 +98,7 @@ public interface EvalResponsesLogic {
 	 * if null or empty array, include count for all eval groups for this evaluation
 	 * @return a list of response ids, in order by response id
 	 */
-	public List getEvalResponseIds(Long evaluationId, String[] evalGroupIds);
+	public List<Long> getEvalResponseIds(Long evaluationId, String[] evalGroupIds);
 
 	/**
 	 * Saves a single response from a single user with all associated Answers,

@@ -170,16 +170,16 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 
 			// now fetch all the information we care about for these evaluations at once (for speed)
 			Map evalGroups = evaluationsLogic.getEvaluationGroups(evalIds, false);
-			List evalResponses = responsesLogic.getEvaluationResponses(currentUserId, evalIds);
+			List<EvalResponse> evalResponses = responsesLogic.getEvaluationResponses(currentUserId, evalIds);
 
 			for (Iterator itEvals = evalsToTake.iterator(); itEvals.hasNext();) {
 				EvalEvaluation eval = (EvalEvaluation) itEvals.next();
 
 				UIBranchContainer evalrow = UIBranchContainer.make(evalBC, "evaluationsList:", eval.getId().toString() );
 
-				UIOutput.make(evalrow, "evaluationTitle", eval.getTitle() );
-				UIOutput.make(evalrow, "evaluationStartDate", df.format(eval.getStartDate()) );
-				UIOutput.make(evalrow, "evaluationDueDate", df.format(eval.getDueDate()) );
+				UIOutput.make(evalrow, "evaluationTitleTitle", eval.getTitle() );
+				UIMessage.make(evalrow, "evaluationStartsTitle", "summary.evaluations.starts.title" );
+            UIMessage.make(evalrow, "evaluationEndsTitle", "summary.evaluations.ends.title" );
 
 				List groups = (List) evalGroups.get(eval.getId());
 				for (int j=0; j<groups.size(); j++) {
