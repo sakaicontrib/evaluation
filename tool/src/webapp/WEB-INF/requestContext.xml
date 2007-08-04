@@ -369,6 +369,7 @@
 	</bean>
 
 	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyEmailProducer">
+		<property name="evaluationBean" ref="evaluationBean" />
 	</bean>
 
 	<bean class="org.sakaiproject.evaluation.tool.producers.ReportsViewingProducer">
