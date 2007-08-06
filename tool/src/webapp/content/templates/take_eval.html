@@ -24,44 +24,42 @@
 					<li>Message for user here</li>
 				</ul>
 			</div>
-			
-			<h3>
-				<span rsf:id="eval-title-header" class="highlight">Evaluation:</span>
-				<span rsf:id="evalTitle">Evaluation title here</span>
-			</h3>
-	
-			<div class="navPanel">
+
+			<div class="textPanel"> 			
+				<h3 style="display:inline">
+					<span rsf:id="eval-title-header" class="highlight">Evaluation:</span>
+					<span rsf:id="evalTitle">Evaluation title here</span>
+				</h3>
+				<span rsf:id="show-group-title:">
+					(<span rsf:id="group-title-header">Group:</span>
+					<span rsf:id="group-title">Group title here</span>)
+				</span>
+			</div>
+
+			<!--//gsilver: is this "Switch group" functional? because this is where the whitespace is coming from - in order to -->
+			<div rsf:id="show-switch-group:" class="navPanel">
 				<div class="viewNav">
-					<p class="instruction">
-						<span rsf:id="show-group-title:">
-							<span rsf:id="group-title-header">Group:</span>
-							<span rsf:id="group-title">Group title here</span>
-						</span>
-					</p>
-				</div>
-				<div class="listNav">
-					<div rsf:id="show-switch-group:">
-						<label  rsf:id="switch-group-header" for="switch-group-list-selection"> Switch group:</label>
-						<form rsf:id="switch-group-form" action="take_eval.html" method="get" class="inlineForm">
-							<select rsf:id="switch-group-list">
-								<option selected="selected">Group 1</option>
-								<option>Group 2</option>
-								<option>Group 3</option>
-							</select>
-							<input rsf:id="switch-group-button" type="submit" value="Switch" />
-						</form>
-					</div>
+					<label  rsf:id="switch-group-header" for="switch-group-list-selection"> Switch group:</label>
+					<form rsf:id="switch-group-form" action="take_eval.html" method="get" class="inlineForm">
+						<select rsf:id="switch-group-list">
+							<option selected="selected">Group 1</option>
+							<option>Group 2</option>
+							<option>Group 3</option>
+						</select>
+						<input rsf:id="switch-group-button" type="submit" value="Switch" />
+					</form>
 				</div>	
-			</div>	
-			
-			<div rsf:id="show-eval-instructions:" class="instruction">
-				<h5 rsf:id="eval-instructions-header" style="font-weight:bold;">Instructions:</h5>
-				<p rsf:id="eval-instructions">Evaluation instructions would go here if any have been specified. This block may be up to 4000 chars.</p>
 			</div>
 	
+			<div rsf:id="show-eval-instructions:" class="instruction">
+				<h5 rsf:id="eval-instructions-header" style="display:inline;padding-right:1em">Instructions:</h5>
+				<span rsf:id="eval-instructions">Evaluation instructions would go here if any have been specified. This block may be up to 4000 chars.</span>
+			</div>
+			
+	
 		   <div rsf:id="show-eval-note:" class="instruction">
-			   <h5 rsf:id="eval-note-header">Note:</h5>
-			   <p rsf:id="eval-note-text" style="font-style:italic;">Additional instructional note to the user here</p>
+			   <h5 rsf:id="eval-note-header"  style="display:inline;padding-right:1em">Note:</h5>
+			   <span rsf:id="eval-note-text">Additional instructional note to the user here</span>
 		   </div>
 			
 			<div rsf:id="eval-cannot-take-message" class="alertMessage"></div>
