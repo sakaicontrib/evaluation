@@ -41,6 +41,7 @@ import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIColourDecorator;
+import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
@@ -239,8 +240,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 		//increment by 1 if not block, else increment by num of block children
 
 		if (colorCounter % 2 == 1) {
-			itemsBranch.decorators = new DecoratorList( new UIColourDecorator(null,
-					Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)) );
+			itemsBranch.decorators = new DecoratorList( new UIStyleDecorator("itemsListOddLine") );// must match the existing CSS class 
 		}
 	}
 
