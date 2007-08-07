@@ -51,6 +51,7 @@ import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIColourDecorator;
+import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionResultInterceptor;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
@@ -304,8 +305,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                     if (cat.equals(EvalConstants.ITEM_CATEGORY_COURSE)) {
                         radiobranch = UIBranchContainer.make(courseSection, "itemrow:first", i+"");
                         if (i % 2 == 1) {
-                            radiobranch.decorators = new DecoratorList(
-                                    new UIColourDecorator(null,Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
+                        	radiobranch.decorators = new DecoratorList( new UIStyleDecorator("itemsListOddLine") );// must match the existing CSS class
                         }
                         renderItemPrep(radiobranch, form, templateItem, answerMap, "null", "null");
                     }
@@ -331,8 +331,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                         if ( EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(category) ) {
                             radiobranch = UIBranchContainer.make(instructorSection,	"itemrow:first", i+"");
                             if (i % 2 == 1) {
-                                radiobranch.decorators = new DecoratorList(
-                                        new UIColourDecorator(null, Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
+                            	radiobranch.decorators = new DecoratorList( new UIStyleDecorator("itemsListOddLine") );// must match the existing CSS class
                             }
                             renderItemPrep(radiobranch, form, templateItem, answerMap, category, instructor);
                         }
