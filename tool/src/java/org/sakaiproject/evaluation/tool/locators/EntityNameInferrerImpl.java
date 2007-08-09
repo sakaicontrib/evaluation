@@ -58,7 +58,7 @@ public class EntityNameInferrerImpl implements EntityNameInferrer {
 				return ENTITY_LOCATORS[i];
 			}
 		}
-		throw new IllegalArgumentException("No bean locator is defined for this class: " + entityclazz.getName());
+		return null;
 	}
 
 }
