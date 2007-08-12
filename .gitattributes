@@ -95,6 +95,7 @@ impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalEvaluationsLogicI
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalExpertItemsLogicImplTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalExternalLogicStubTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalItemsLogicImplTest.java -text
+impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalJobLogicImplTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalResponsesLogicImplTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalScalesLogicImplTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalSettingsImplTest.java -text

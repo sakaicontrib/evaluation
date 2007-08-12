@@ -22,6 +22,7 @@ import junit.framework.Assert;
 import org.easymock.MockControl;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
 import org.sakaiproject.evaluation.logic.impl.EvalAssignsLogicImpl;
 import org.sakaiproject.evaluation.logic.test.stubs.EvalExternalLogicStub;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
@@ -47,6 +48,9 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 	
 	private EvalEmailsLogic emails;
 	private MockControl emailsControl;
+	
+	private EvalJobLogic evalJobLogic;
+	private MockControl evalJobLogicControl;
 
 	protected String[] getConfigLocations() {
 		// point to the needed spring config files, must be on the classpath
@@ -88,12 +92,22 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 		emailsControl.setDefaultMatcher(MockControl.ALWAYS_MATCHER);
 		emailsControl.setReturnValue(EvalTestDataLoad.EMPTY_STRING_ARRAY, MockControl.ZERO_OR_MORE);
 		emailsControl.replay();
+		
+		// setup the mock objects if needed
+		evalJobLogicControl = MockControl.createControl(EvalJobLogic.class);
+		evalJobLogic = (EvalJobLogic) evalJobLogicControl.getMock();
+		
+		// this mock object is simply keeping us from getting a null when evalJobLogic is accessed 
+		evalJobLogic.isJobTypeScheduled(EvalTestDataLoad.INVALID_LONG_ID, EvalConstants.JOB_TYPE_REMINDER); // expect this to be called
+		evalJobLogicControl.setDefaultReturnValue(true); //skipping the scheduling of a reminder
+		evalJobLogicControl.replay();
 
 		//create and setup the object to be tested
 		assigns = new EvalAssignsLogicImpl();
 		assigns.setDao(evaluationDao);
 		assigns.setExternalLogic( new EvalExternalLogicStub() );
 		assigns.setEmails(emails); // set to the mock object
+		assigns.setEvalJobLogic(evalJobLogic); // set to the mock object
 	}
 
 	// run this before each test starts and as part of the transaction

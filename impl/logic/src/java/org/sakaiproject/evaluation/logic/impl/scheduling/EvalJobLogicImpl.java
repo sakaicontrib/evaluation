@@ -232,6 +232,8 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 			}
 			else if(invocations.length > 1){
 				log.warn(this + ".deleteInvocation(" + opaqueContext  + ") multiple invocations were found.");
+				//duplicate opaqueContext records would need to be deleted from db using sql
+				throw new RuntimeException(opaqueContext  + " multiple invocations were found; duplicates need to be removed.");
 			}
 		}
 	}
@@ -364,34 +366,141 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	
 	/**
 	 * Schedule reminders to be run under the ScheduledInvocationManager.</br>
-	 * If there is time to send a reminder before the due date, schedule it.
-	 * 
+	 * If under these conditions there is time to send a reminder before the due date, schedule one.
+	 *  <ul>
+	 *  	<li>Schedule a reminder, if necessary (i.e., one is not already scheduled for another group, 
+	 *  resulting in notification of all groups), when there is a late notification after opt-in at the start date 
+	 *  in EvalAssignsLogicImpl.saveAssignGroup() - a special case,</li>
+	 *  	<li>Schedule a reminder when EvalJobLogicImpl.jobAction runs JOB_TYPE_ACTIVE - the 1st reminder, 
+	 *  scheduled for start date + reminder interval,</li>
+	 *   	<li>Schedule a reminder when EvalJobLogicImpl.jobAcion runs JOB_TYPE_REMINDER - the next reminder, 
+	 *   scheduled when a reminder job has run and there is time remaining before the due date to schedule another reminder,</li>
+	 *   	<li>Schedule a reminder when EvalJobLogicImpl.processEvaluationChange is called while EVAL_STATE_ACTIVE - i.e., 
+	 *  when someone edited the settings of an active evaluation, possibly making the due date earlier or later and 
+	 *  affecting an already scheduled reminder or one that now needs to be scheduled.</li>
+	 *  </ul>
 	 * @param evaluationId the EvalEvaluation id
 	 */
-	private void scheduleReminder(Long evaluationId) {
-		
+	 public void scheduleReminder(Long evaluationId) {
+		 //we're depending on reminders going out on time
+		if(evaluationId == null) {
+			log.error(this + ".scheduleReminder(): null evaluationId");
+			throw new RuntimeException("Exception scheduling reminder: null evaluationId");
+		}
 		try {
 			EvalEvaluation eval = evalEvaluationsLogic.getEvaluationById(evaluationId);
+			if(eval == null) {
+				log.error(this + ".scheduleReminder(): null EvalEvaluation eval");
+				throw new RuntimeException("Exception scheduling reminder for evaluation '" + evaluationId +"': evaluation was not found");
+			}
 			String opaqueContext = evaluationId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_REMINDER;
-			
-			//schedule reminders at selected intervals while the evaluation is available
-			long start = eval.getStartDate().getTime();
-			long due = eval.getDueDate().getTime();
-			long available = due - start;
-			long interval = 1000 * 60 * 60 * 24 * eval.getReminderDays().intValue();
-			if(interval != 0 && available > interval) {
-				start = start + interval;
-				scheduledInvocationManager.createDelayedInvocation(timeService.newTime(start), COMPONENT_ID, opaqueContext);
+			long scheduleAt = getReminderTime(eval);
+			if(scheduleAt != 0 && eval.getState().equals(EvalConstants.EVALUATION_STATE_ACTIVE)) {
+				scheduledInvocationManager.createDelayedInvocation(timeService.newTime(scheduleAt), COMPONENT_ID, opaqueContext);
 				if(log.isDebugEnabled())
 					log.debug("EvalJobLogicImpl.scheduleReminders(" + evaluationId + ") - scheduledInvocationManager.createDelayedInvocation( " + 
-							timeService.newTime(start) + "," + 	COMPONENT_ID + "," + opaqueContext);
+							timeService.newTime(scheduleAt) + "," + 	COMPONENT_ID + "," + opaqueContext);
 			}
 		}
 		catch(Exception e) {
-			log.error(this + ".scheduleReminder(" + evaluationId + ") " + e);
+			log.error(this + ".scheduleReminder(evaluationId '" + evaluationId + "'): " + e);
+			throw new RuntimeException("Exception scheduling reminder for evaluation '" + evaluationId +"' " + e);
 		}
 	}
-
+	
+	/**
+	 * Get the time to use in scheduling a reminder, which is the first reminder interval after the start date that is in the future
+	 * 
+	 * @param eval the EvalEvaluation
+	 * @return the value to use in setting date of reminder or 0 if no reminder should be scheduled
+	 */
+	private long getReminderTime(EvalEvaluation eval){
+		long reminderTime = 0;
+		if(eval != null) {
+			long startTime = eval.getStartDate().getTime();
+			long dueTime = eval.getDueDate().getTime();
+			long interval = 1000 * 60 * 60 * 24 * eval.getReminderDays().intValue();
+			long now = new Date().getTime();
+			long available = dueTime - now;
+			//we'll say the future starts in 15 minutes
+			if(interval != 0 && available > interval) {
+				reminderTime = startTime + interval;
+				while(reminderTime < now + (1000 * 60 * 15)) {
+					reminderTime = reminderTime + interval;
+				}
+			}
+		}
+		return reminderTime;
+	}
+	
+	/**
+	 * Check if a job of a given type for a given evaluation is scheduled. 
+	 * At most one job of a given type is scheduled per evaluation.
+	 * 
+	 * @param evaluationId  the EvalEvaluation id
+	 * @param jobType
+	 * @return
+	 */
+	public boolean isJobTypeScheduled(Long evaluationId, String jobType) {
+		if(evaluationId == null || jobType == null) {
+			log.warn(this + ".isJobTypeScheduled called with null parameter(s).");
+			return false;
+		}
+		if(!isValidJobType(jobType)) {
+			log.warn(this + ".isJobTypeScheduled called with invalid jobType '" + jobType + "'.");
+			return false;
+		}
+		//make sure there is an evaluation
+		EvalEvaluation eval = null;
+		try
+		{
+			eval = evalEvaluationsLogic.getEvaluationById(evaluationId);
+		}
+		catch(Exception e) {
+			log.warn(this + ".isJobTypeScheduled evaluation id '" + evaluationId + "' " + e);
+			return false;
+		}
+		if(eval == null) {
+			log.warn(this + ".isJobTypeScheduled no evaluation having id '" + evaluationId + "' was found.");
+			return false;
+		}
+		boolean isScheduled = false;
+		DelayedInvocation[] invocations;
+		String opaqueContext = evaluationId.toString() + SEPARATOR + jobType;
+		invocations = scheduledInvocationManager.findDelayedInvocations(COMPONENT_ID, opaqueContext);
+		if(invocations != null ) {
+			if(invocations.length == 1) {
+				isScheduled = true;
+			}
+			else if(invocations.length > 1){
+				log.warn(this + ".isJobTypeScheduled(" + opaqueContext  + ") multiple invocations were found.");
+				isScheduled = true;
+			}  
+		}
+		return isScheduled;
+	}
+	
+	/**
+	 * Check whether the job type is valid
+	 * 
+	 * @param jobType
+	 * @return true if contained in EvalConstants, false otherwise
+	 */
+	public boolean isValidJobType(String jobType) {
+		boolean isValid = false;
+		if(jobType == null) return isValid;
+		if(jobType.equals(EvalConstants.JOB_TYPE_ACTIVE) ||
+				jobType.equals(EvalConstants.JOB_TYPE_CLOSED) ||
+				jobType.equals(EvalConstants.JOB_TYPE_CREATED) ||
+				jobType.equals(EvalConstants.JOB_TYPE_DUE) ||
+				jobType.equals(EvalConstants.JOB_TYPE_REMINDER) ||
+				jobType.equals(EvalConstants.JOB_TYPE_VIEWABLE) ||
+				jobType.equals(EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS) ||
+				jobType.equals(EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS))
+			isValid = true;
+		return isValid;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.externals.EvalJobLogic#jobAction(java.lang.Long)
@@ -526,7 +635,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 			if(eval.getState().equals(EvalConstants.EVALUATION_STATE_ACTIVE) &&
 					eval.getReminderDays().intValue() != 0) {
 				externalLogic.registerEntityEvent(EVENT_EMAIL_REMINDER, eval);
-				String includeConstant = EvalConstants.EMAIL_INCLUDE_ALL;
+				String includeConstant = EvalConstants.EMAIL_INCLUDE_NONTAKERS;
 				String[] sentMessages = emails.sendEvalReminderNotifications(evalId, includeConstant);
 				if(log.isDebugEnabled())
 					log.debug("EvalJobLogicImpl.sendReminderEmail(" + evalId + ")" + " sentMessages: " + sentMessages.toString());
