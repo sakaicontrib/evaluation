@@ -24,6 +24,7 @@ import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.utils.EvalUtils;
+import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
@@ -51,6 +52,11 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 	private EvalExternalLogic externalLogic;
 	public void setExternalLogic(EvalExternalLogic externalLogic) {
 		this.externalLogic = externalLogic;
+	}
+	
+	private EvalJobLogic evalJobLogic;
+	public void setEvalJobLogic(EvalJobLogic evalJobLogic) {
+		this.evalJobLogic = evalJobLogic;
 	}
 
 	// INIT method
@@ -118,11 +124,17 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 				}
 			}
 			
-			// if a late instructor opt-in, notify students in this group that an evaluation is available
+			/* if a late instructor opt-in, notify students in this group that an evaluation is available,
+			 * and schedule a reminder if there isn't a reminder going to all groups already scheduled
+			 */
 			if(EvalConstants.INSTRUCTOR_OPT_IN.equals(eval.getInstructorOpt()) && 
 					assignContext.getInstructorApproval().booleanValue() && 
 					assignContext.getEvaluation().getStartDate().before(new Date())) {
 				emails.sendEvalAvailableGroupNotification(assignContext.getEvaluation().getId(), assignContext.getEvalGroupId());
+				if(!evalJobLogic.isJobTypeScheduled(assignContext.getEvaluation().getId(), EvalConstants.JOB_TYPE_REMINDER)) {
+					//we need to also schedule a reminder
+					evalJobLogic.scheduleReminder(assignContext.getEvaluation().getId());
+				}
 			}
 			
 			if (assignContext.getInstructorsViewResults() == null) {

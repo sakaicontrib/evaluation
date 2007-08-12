@@ -32,6 +32,16 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 public interface EvalJobLogic {
 	
 	/**
+	 * Check if a job of a given type for a given evaluation is scheduled. 
+	 * At most, one job of a given type is scheduled per evaluation.
+	 * 
+	 * @param evaluationId
+	 * @param jobType
+	 * @return true if a job of this type is scheduled for this evaluation, false otherwise
+	 */
+	public boolean isJobTypeScheduled(Long evaluationId, String jobType);
+	
+	/**
 	 * Handle job scheduling changes when a date changed 
 	 * by editing and saving an Evaluation necessitates
 	 * rescheduling a job.</br>
@@ -68,4 +78,13 @@ public interface EvalJobLogic {
 	 * @param evalId the EvalEvaluation identifier
 	 */
 	public void removeScheduledInvocations(Long evalId);
+	
+
+	/**
+	 * Schedule reminders to be run under the ScheduledInvocationManager, at the
+	 * first reminder interval after the start date that is in the future
+	 * 
+	 * @param evaluationId the EvalEvaluation id
+	 */
+	public void scheduleReminder(Long evaluationId);
 }
