@@ -26,6 +26,7 @@ form {
 	display: inline;
 }
 
+
 .oddrow {
 	background-color: #E1E1E1;
 }
@@ -324,6 +325,10 @@ UL.summaryEvaluateList {
 	padding: .5em 0; 
 	background: #ffe; /* This is our background color */
 	margin: 1em 0;
+}
+
+.navIntraTool 	 .breadCrumb {
+	margin:0;float:left
 }
 
 .breadCrumb li{
@@ -728,5 +733,105 @@ label.block{
 	padding:.3em;
 	margin:.3em;
 	border:1px solid #eee
+}
+
+.itemListNew li:hover .itemScalePanel{
+	border:1px solid #aaa
+}
+.itemListNew li:hover .itemScalePanel{
+	border:1px solid #aaa;
+	background:#fff;
+}
+
+.itemListNew .itemListEval li:hover{
+	background: #ffc
+}
+.itemListNew .itemListEval h4{
+	display:inline;
+	color:#333;
+}
+.itemListNew .itemListEval li:hover h4{
+	color:#000
+}
+.itemListEval label{
+	color:#333;
+		}
+.itemListEval label:hover{
+	color:#000
+}
+.itemScalePanel{
+	height:31px;
+	border:1px solid #E1E1E1
+}
+.itemScalePanel:hover{
+	border:1px solid #aaa
+}
+.itemScalePanel td{
+	padding:.3em .5em;
+}
+
+.itemScalePanel .compactDisplayStart{
+	background:#FF8BA0
+}
+.itemScalePanel .compactDisplayEnd{
+	background:#8BE8A2
+}
+
+
+.itemScalePanel td.idealScale{
+	padding:0 !important;
+	vertical-align: top;
+}
+
+.itemScalePanel td.idealScale div{
+	margin:0
+}
+
+
+.itemScalePanel td.idealScale label{
+/*	border:1px solid transparent;*/
+	padding:5px 2px .2em 2px;
+	margin: 0 2px
+}
+
+.itemScalePanel td.idealScale label:hover{
+	border:1px solid #aaa;	
+	background:#fff;
+	margin: 0 1px
+}
+.idealScaleBack{
+	width:100%;
+	display:block;
+	position:absolute;
+	z-index:5
+	}
+.idealScaleBack img{
+	width:100%;
+	height:29px;
+	overflow:hidden;
+}
+
+.fullVertical{
+	margin:.5em 2em
+}
+.fullVertical ol li{
+	margin:0;
+	border:none 
+}
 	
+.fullDisplayHorizontal{
+	height:100%;
+	overflow:hidden;
+	padding:.3em;
+	margin:.5em 0 .2em .5em;
+	white-space: nowrap;
+	text-align: center;
+	clear:both;
+}
+.fullDisplayHorizontal span{
+	padding:.3em .75em;
+}
+
+.fullVertical .na label{
+	padding-left:.2em
 }

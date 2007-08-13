@@ -33,6 +33,7 @@ import uk.org.ponder.rsf.components.UISelectLabel;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIColourDecorator;
+import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
 
 /**
@@ -94,10 +95,12 @@ public class ScaledRenderer implements ItemRenderer {
 			UIOutput.make(compactEndContainer, "compactDisplayEnd", compactDisplayEnd);
 
 			if (colored) {
-				compactStartContainer.decorators = 
-					new DecoratorList(new UIColourDecorator(null, ScaledUtils.getStartColor(scale)));
-				compactEndContainer.decorators = 
-					new DecoratorList(new UIColourDecorator(null, ScaledUtils.getEndColor(scale)));
+				compactStartContainer.decorators =
+					new DecoratorList( new UIStyleDecorator("compactDisplayStart") );// must match the existing CSS class
+					//new DecoratorList(new UIColourDecorator(null, ScaledUtils.getStartColor(scale)));
+				compactEndContainer.decorators =
+					new DecoratorList( new UIStyleDecorator("compactDisplayEnd") );// must match the existing CSS class
+					//new DecoratorList(new UIColourDecorator(null, ScaledUtils.getEndColor(scale)));
 			}
 
 			// For the radio buttons
@@ -137,6 +140,8 @@ public class ScaledRenderer implements ItemRenderer {
 
 			if (usesNA) {
 				UIBranchContainer radiobranch3 = UIBranchContainer.make(container, "showNA:"); //$NON-NLS-1$
+
+				radiobranch3.decorators = new DecoratorList( new UIStyleDecorator("na") );// must match the existing CSS class
 				UISelectChoice choice = UISelectChoice.make(radiobranch3, "na-input", selectID, scaleLength - 1); //$NON-NLS-1$
 				UILabelTargetDecorator.targetLabel(
 						UIMessage.make(radiobranch3, "na-desc", "viewitem.na.desc"), choice);
@@ -202,6 +207,7 @@ public class ScaledRenderer implements ItemRenderer {
 
 			if (usesNA) {
 				UIBranchContainer radiobranch3 = UIBranchContainer.make(container, "showNA:"); //$NON-NLS-1$
+				radiobranch3.decorators = new DecoratorList( new UIStyleDecorator("na") );// must match the existing CSS class				
 				UISelectChoice choice = UISelectChoice.make(radiobranch3, "na-input", selectID, scaleLength - 1); //$NON-NLS-1$
 				UILabelTargetDecorator.targetLabel(
 						UIMessage.make(radiobranch3, "na-desc", "viewitem.na.desc"),
@@ -284,6 +290,7 @@ public class ScaledRenderer implements ItemRenderer {
 
 			if (usesNA) {
 				UISelectChoice choice = UISelectChoice.make(container, "na-input", selectID, scaleLength - 1); //$NON-NLS-1$
+				
 				UILabelTargetDecorator.targetLabel(
 						UIMessage.make(container, "na-desc", "viewitem.na.desc"),
 						choice);
