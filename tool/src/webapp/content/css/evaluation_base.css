@@ -82,20 +82,20 @@ DIV#itemTable {
 	background:#FFFFEE
 }
 
-OL.itemList {
+DIV.itemList {
 	list-style-type: none;
 	marker-offset: 0;
 	margin: 0;
 	padding: 0;
 }
 
-LI.itemRow {
+DIV.itemRow {
 	border: 1px solid #aaa;
 	width: 100%;
 	padding: 0;
 	margin: .6em 0 ;
 	cursor: move;
-		background:#fff
+	background:#fff
 }
 DIV.itemLine {
 	clear: left;
@@ -247,6 +247,11 @@ table.sample td {
   padding:2px;
   text-align:center;
   font-style:italic;
+}
+
+SPAN.itemLabel {
+	text-align: left;
+	font-weight: bold;
 }
 
 /*Revist the following to see if they are needed or not. We are not using div's anymore */

@@ -8,6 +8,13 @@
 		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all" />
 		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js" />
 		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+		<script type="text/javascript" language="JavaScript" src="../js/jquery/jquery.js"></script>
+		<script type="text/javascript" language="JavaScript" src="../js/jquery/form.js"></script>
+		<script type="text/javascript" language="JavaScript" src="../js/jquery/interface/iutil.js"></script>
+		<script type="text/javascript" language="JavaScript" src="../js/jquery/interface/idrag.js"></script>
+		<script type="text/javascript" language="JavaScript" src="../js/jquery/interface/idrop.js"></script>
+		<script type="text/javascript" language="JavaScript" src="../js/jquery/interface/isortables.js"></script>
+		<script type="text/javascript" language="JavaScript" src="../js/blockReorderUtils.js"></script>
 		<script>
      			var flag = "";
      			
@@ -65,11 +72,20 @@
 						</div>
 					</div>
 
-					<ol>
-						<li rsf:id="queRow:">
-							<span rsf:id="queText"> Child item text here </span>
-						</li>
-					</ol>
+					<div id="itemTable" class="itemTable">
+						<div rsf:id="itemRow:" id="itemRow::1:" class="itemRow">
+							<input type="hidden" rsf:id="hidden-item-id" name="hidden-item-id" value="0" id="itemRow::1:hidden-item-id" />
+							<span rsf:id="item-num" id="itemRow::1:item-num" class="itemLabel">1</span>.&nbsp;
+							<span rsf:id="item-text" class="itemText">Child item text here</span>
+							
+							<span class="itemRight">
+								<a rsf:id="modify-row-item" href="modify_scaled.html">Modify</a>
+								&nbsp;
+								<a rsf:id="remove-row-item" href="remove_question.html">Remove</a>
+							</span>
+							
+						</div>
+					</div>
 
 					<span rsf:id="item-header">Blocking items:</span>
 					<span name="itemNo" rsf:id="itemNo">1</span>:
@@ -82,9 +98,22 @@
 					</p>
 			
 					<h4 rsf:id="item-header-text-header">Item Header Text :</h4>
-					<div rsf:id="item_text:">
-						<textarea name="item_text-dummy" rsf:id="item_text-dummy" cols="80" rows="5" />
+					
+					<div>
+						<span rsf:id="block-text-select" />
+						<div rsf:id="block-text-choice:" class="blockText">
+							<input type="radio" name="block-text-radio" rsf:id="block-text-radio" id="block-text-choice::0:block-text-radio" />
+							<label for="block-text-radio" rsf:id="block-text">Block item text</label>
+						</div>
 					</div>
+					
+					<div id="item-text-div">
+						<div rsf:id="item_text:">
+							<textarea name="item_text-dummy" rsf:id="item_text-dummy" cols="80" rows="5" />
+						</div>
+					</div>
+					<br />
+					
 					<p rsf:id="showNA:" class="checkbox">
 						<input type="checkbox" name="item_NA" rsf:id="item_NA" value="" />
 						<span rsf:id="add-na-header">Add N/A (not available):</span>
@@ -102,7 +131,8 @@
 						<label for="item_category_I" rsf:id="instructor-category-header">Instructor</label>
 					</div>
 					<p class="act">
-						<input name="saveBlockAction" rsf:id="saveBlockAction" type="submit" value="Save item" onclick="javascript:flag='save';"  class="active" accesskey="s" />
+						<input type="hidden" rsf:id="ordered-child-ids" id="ordered-child-ids" />
+						<input name="saveBlockAction" rsf:id="saveBlockAction" id="saveBlockAction" type="submit" value="Save item" class="active" accesskey="s" />
 						<input name="previewBlockAction" rsf:id="previewBlockAction" type="submit" value="Preview item" onclick="javascript:flag='preview';" accesskey="v"/>
 						<input type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" rsf:id="cancel-button"  accesskey="x"/>
 					</p>

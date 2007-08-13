@@ -239,6 +239,7 @@ tool/src/webapp/content/images/last-cur-step.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/last-noncur-step.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/med-cur-step.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/med-noncur-step.gif -text svneol=unset#image/gif
+tool/src/webapp/content/js/blockReorderUtils.js -text
 tool/src/webapp/content/js/blockUtils.js -text
 tool/src/webapp/content/js/evalEditSettings.js -text
 tool/src/webapp/content/js/evalUtils.js -text

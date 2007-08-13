@@ -23,6 +23,7 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
+import org.sakaiproject.evaluation.tool.locators.TemplateItemWBL;
 import org.sakaiproject.evaluation.tool.viewparams.BlockIdsParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateItemViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
@@ -94,37 +95,48 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 		//boolean validScaleIds = true;
 		
 		boolean validChildsNo = true; //this is to enforce settings of maximun Number of child text in a block
-		//the first items's original displayOrder
-		Integer firstDO = null;
-
-		String templateItemIds = evParameters.templateItemIds;
+		
+		EvalTemplateItem firstTemplateItem = null;
+		
+		// the first items's original displayOrder
+		Integer originalDisplayOrder = null;
+		
 		boolean createFromBlock = false;
 
 		// analyze the string of templateItemIds
-		String[] strIds = evParameters.templateItemIds.split(",");
-		EvalTemplateItem templateItems[] = new EvalTemplateItem[strIds.length];
-		for (int i = 0; i < strIds.length; i++) {
-			//System.out.println("checked id[" + i + "]=" + strIds[i]);
-			templateItems[i] = itemsLogic.getTemplateItemById(Long.valueOf(strIds[i]));
+		String[] templateItemIds = evParameters.templateItemIds.split(",");
+		List<EvalTemplateItem> templateItemList = new ArrayList<EvalTemplateItem>(templateItemIds.length);
+		List<EvalTemplateItem> blockItemList = new ArrayList<EvalTemplateItem>();
+		
+		for (int i = 0; i < templateItemIds.length; i++) {
+			
+			EvalTemplateItem item = itemsLogic.getTemplateItemById(Long.valueOf(templateItemIds[i]));
+			templateItemList.add(item);
+			
+			if (TemplateItemUtils.getTemplateItemType(templateItemList.get(i)).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT))
+				blockItemList.add(item);
+			
 		}
-
-		firstDO = templateItems[0].getDisplayOrder();
+		
+		firstTemplateItem = templateItemList.get(0);
+		originalDisplayOrder = firstTemplateItem.getDisplayOrder();
 
 		// check if it is to modify an existing block or creating a new one
-		if (strIds.length == 1 && templateItems[0] != null)
+		if ((templateItemIds.length == 1) && (templateItemList.get(0) != null))
 			modify = true;
-
+		
 		// check if each templateItem has the same scale, otherwise show warning text
 		// enforce system settings of maximum number of child items for new Block creation
-		if (!modify){
+		if (!modify) {
 			int maxChildsNo = ((Integer) settings.get(EvalSettings.ITEMS_ALLOWED_IN_QUESTION_BLOCK)).intValue();
 			//get actual total number of no-parent item(block childs + normal scaled type)
 			int actualChildsNo = 0;
-			for (int i = 0; i < templateItems.length; i++) {
-				if (TemplateItemUtils.getTemplateItemType(templateItems[i])
+			for (int i = 0; i < templateItemIds.length; i ++) {
+				EvalTemplateItem item = templateItemList.get(i);
+				if (TemplateItemUtils.getTemplateItemType(item)
 						.equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)) {
 					//get number of childs
-					List l = itemsLogic.getBlockChildTemplateItemsForBlockParent(templateItems[i].getId(), false);
+					List l = itemsLogic.getBlockChildTemplateItemsForBlockParent(item.getId(), false);
 					actualChildsNo = actualChildsNo + l.size();
 				} else {
 					actualChildsNo++;
@@ -134,7 +146,8 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 			if (actualChildsNo > maxChildsNo)
 				validChildsNo = false;
 		}
-
+		
+		/* -----------------------------
 		//if (!modify && validScaleIds && validChildsNo) {// creating new block with the same scalecase
 		if (!modify && validChildsNo) {// creating new block with the same scale case
 			boolean shift = false;
@@ -161,6 +174,7 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 				}// end of for loop
 			}
 		}
+		--------------------------------- */
 
 		UIMessage.make(tofill, "modify-block-title", "modifyblock.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
 		UIMessage.make(tofill, "create-eval-title", "starteval.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -183,23 +197,23 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 			UIMessage.make(form, "modifyblock-items-list-title", "modifyblock.items.list.title"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			UIMessage.make(form, "item-header", "modifyblock.item.header");
-			UIOutput.make(form, "itemNo", firstDO.toString());
+			UIOutput.make(form, "itemNo", originalDisplayOrder.toString());
 
 			UIMessage.make(form, "itemClassification", "modifytemplate.itemtype.block");
 			UIMessage.make(form, "added-by", "modifyitem.added.by");
-			UIOutput.make(form, "userInfo", external.getUserDisplayName(templateItems[0].getOwner()));
+			UIOutput.make(form, "userInfo", external.getUserDisplayName(firstTemplateItem.getOwner()));
 			//  remove link
 
 			if (modify) {
 				UIBranchContainer showLink = UIBranchContainer.make(form, "showRemoveLink:");
 				UIInternalLink.make(showLink, "remove_link", UIMessage.make("modifytemplate.remove.link"),
-						new TemplateItemViewParameters(RemoveItemProducer.VIEW_ID, templateId, templateItems[0].getId()));
+						new TemplateItemViewParameters(RemoveItemProducer.VIEW_ID, templateId, firstTemplateItem.getId()));
 			}
 
 			UIMessage.make(form, "item-header-text-header", "modifyblock.item.header.text.header");
-
+			
 			UIMessage.make(form, "scale-type-header", "modifyblock.scale.type.header");
-			UIOutput.make(form, "scaleLabel", templateItems[0].getItem().getScale().getTitle());
+			UIOutput.make(form, "scaleLabel", firstTemplateItem.getItem().getScale().getTitle());
 			UIMessage.make(form, "ideal-coloring-header", "modifyblock.ideal.coloring.header"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			/*
@@ -211,7 +225,25 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 			 */
 			Boolean isDefaultCourse = (Boolean) settings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
 
-			String itemPath = null;
+			String itemPath = null, blockId = null;
+			
+			if (modify) { // modify existing block
+				blockId = firstTemplateItem.getId().toString();
+			} else { // create new block
+				blockId = TemplateItemWBL.NEW_1;
+			}
+			
+			itemPath = "templateItemWBL." + blockId;
+			
+			// this sets the ideal color setting
+			if ((firstTemplateItem.getScaleDisplaySetting() != null) 
+					&& (firstTemplateItem.getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED))) {
+				UIBoundBoolean.make(form, "idealColor", "#{templateBBean.idealColor}", Boolean.TRUE);
+			} else {
+				UIBoundBoolean.make(form, "idealColor", "#{templateBBean.idealColor}", null);
+			}
+			
+			/* ---------------------------
 			if (modify) {// modify existing block
 
 				itemPath = "templateItemWBL." + templateItems[0].getId();
@@ -240,11 +272,38 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 					UIBoundBoolean.make(form, "idealColor", "#{templateBBean.idealColor}", null);
 				}
 			}
+			----------------------- */
 
 			categorySettings(isDefaultCourse, itemPath, form);
-
-			String itemPathD = itemPath + ".";
-			UIInput itemtext = UIInput.make(form, "item_text:", itemPathD + "item.itemText", null);
+			
+			int blockItemListSize = blockItemList.size();
+			
+			if ((!modify) && (blockItemListSize > 0)) {
+				
+				String[] blockIds = new String[blockItemListSize + 1];
+				String[] blockTextChoices = new String[blockItemListSize + 1];
+				
+				for (int i = 0; i < blockItemListSize; i ++) {
+					EvalTemplateItem blockItem = blockItemList.get(i);
+					blockIds[i] = blockItem.getId().toString();
+					blockTextChoices[i] = blockItem.getItem().getItemText();
+				}
+				
+				blockIds[blockItemListSize] = TemplateItemWBL.NEW_1;
+				blockTextChoices[blockItemListSize] = "Enter new block text";
+				
+				UISelect blockTextSelect = UISelect.make(form, "block-text-select", blockIds, blockTextChoices, "templateBBean.blockTextChoice", null);
+				String selectIds = blockTextSelect.getFullID();
+				
+				for (int i = 0; i < blockIds.length; i ++) {
+					UIBranchContainer blockTextChoice = UIBranchContainer.make(form, "block-text-choice:", Integer.toString(i));
+					UISelectChoice.make(blockTextChoice, "block-text-radio", selectIds, i);
+					UIOutput.make(blockTextChoice, "block-text", blockTextChoices[i]);
+				}
+				
+			}
+			
+			UIInput itemtext = UIInput.make(form, "item_text:", itemPath + ".item.itemText", null);
 			richTextEvolver.evolveTextInput(itemtext);
 
 			/*
@@ -255,12 +314,13 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 			if (((Boolean) settings.get(EvalSettings.NOT_AVAILABLE_ALLOWED)).booleanValue()) {
 				UIBranchContainer showNA = UIBranchContainer.make(form, "showNA:");
 				UIMessage.make(showNA, "add-na-header", "modifyitem.add.na.header"); //$NON-NLS-1$ //$NON-NLS-2$
-				UIBoundBoolean.make(form, "item_NA", itemPathD + "usesNA", null);
+				UIBoundBoolean.make(form, "item_NA", itemPath + ".usesNA", null);
 			}
 
 			// render the items below
 			UIMessage.make(form, "items-header", "modifyitem.item.header");
-
+			
+			/* ------------------
 			if (modify) {// for modify existing block item
 				// get Block child item
 				EvalTemplate template = templateItems[0].getTemplate();
@@ -299,19 +359,62 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 					}
 				}
 			}
-
+			------------------------- */
+			
+			List allTemplateItems = itemsLogic.getTemplateItemsForTemplate(templateId, null, null);
+			int orderNo = 0;
+			
+			for (int i = 0; i < templateItemIds.length; i ++) {
+				
+				EvalTemplateItem item = templateItemList.get(i);
+				
+				if (TemplateItemUtils.getTemplateItemType(item).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)) { // item is a block parent 
+					
+					List children = TemplateItemUtils.getChildItems(allTemplateItems, item.getId());
+					
+					// iterate through block children for the current block parent and emit each child item
+					for (int j = 0; j < children.size(); j ++) {
+						EvalTemplateItem child = (EvalTemplateItem) children.get(j);
+						emitItem(form, child, orderNo + 1);
+						orderNo ++;
+					}
+					
+				} else { // item is a normal scale type
+					emitItem(form, item, orderNo + 1);
+					orderNo ++;
+				}
+				
+			}
+			
+			UIInput.make(form, "ordered-child-ids", "#{templateBBean.orderedChildIds}");
+			
 			UIMessage.make(form, "cancel-button", "general.cancel.button");
 			UICommand saveCmd = UICommand.make(form, "saveBlockAction", UIMessage.make("modifyitem.save.button"),
 					"#{templateBBean.saveBlockItemAction}");
-			saveCmd.parameters.add(new UIELBinding("#{templateBBean.childTemplateItemIds}", templateItemIds));
-			saveCmd.parameters.add(new UIELBinding("#{templateBBean.originalDisplayOrder}", firstDO));
+			saveCmd.parameters.add(new UIELBinding("#{templateBBean.blockId}", blockId));
+			saveCmd.parameters.add(new UIELBinding("#{templateBBean.templateItemIds}", evParameters.templateItemIds));
+			saveCmd.parameters.add(new UIELBinding("#{templateBBean.originalDisplayOrder}", originalDisplayOrder));
+			
 		}
+		
 	}
 
-	private void emitItem(UIContainer tofill, EvalTemplateItem item, int index) {
-		UIBranchContainer radiobranch = UIBranchContainer.make(tofill, "queRow:", item.getId().toString()); //$NON-NLS-1$
-		UIOutput.make(radiobranch, "childOrder", Integer.toString(index));
-		UIVerbatim.make(radiobranch, "queText", item.getItem().getItemText());
+	private void emitItem(UIContainer tofill, EvalTemplateItem templateItem, int index) {
+		UIBranchContainer radiobranch = UIBranchContainer.make(tofill, "itemRow:", templateItem.getId().toString()); //$NON-NLS-1$
+		UIOutput.make(radiobranch, "hidden-item-id", templateItem.getId().toString());
+		UIOutput.make(radiobranch, "item-num", Integer.toString(index));
+		UIVerbatim.make(radiobranch, "item-text", templateItem.getItem().getItemText());
+		
+		/*
+		String targetView = EvaluationConstant.classificationToView(templateItem.getItem().getClassification());
+		ViewParameters target = new TemplateItemViewParameters(targetView, templateItem.getTemplate().getId(), templateItem.getId());
+		UIInternalLink.make(tofill, "modify-row-item", UIMessage.make("modifytemplate.modify.link"), target);
+		
+		UIInternalLink.make(tofill,	"remove-row-item", 
+				UIMessage.make("modifytemplate.remove.link"),
+				new ItemViewParameters(RemoveItemProducer.VIEW_ID, null, templateItem.getId(), templateItem.getTemplate().getId())
+		);
+		*/
 	}
 
 	private void categorySettings(Boolean isDefaultCourse, String itemPath, UIForm form) {

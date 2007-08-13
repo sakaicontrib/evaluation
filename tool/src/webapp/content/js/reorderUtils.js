@@ -23,7 +23,7 @@ $(document).ready(
         var sortableIds;
         function buildSortableIds() {
         	sortableIds = new Array();
-			var domList = $("ol.itemList > li").get();
+			var domList = $("div.itemList > div").get();
 			for (var i = 0; i < domList.length; i++) {
 				sortableIds.push(domList[i].id);
 				//var itemNum = $it(domList[i].id + "item-num");
@@ -62,6 +62,7 @@ $(document).ready(
 
 		// put original order into the revertOrder trigger
 		$it("revertOrderButton").onclick = function() {
+			disableOrderButtons();
 			for(var i = sortableIds.length - 1; i > 0; --i) {
 				var thisitem = $it(sortableIds[i]);
 				var previtem = $it(sortableIds[i - 1]);
@@ -72,7 +73,7 @@ $(document).ready(
 			setIndex(sortableIds[0], 0);
 		};
 
-		$("ol.itemList").Sortable(
+		$("div.itemList").Sortable(
 			{
 				accept: 		"itemRow",
 				activeclass: 	"sortableactive",
@@ -80,7 +81,7 @@ $(document).ready(
 				hoverclass: 	"sortablehover",
 				helperclass: 	"sorthelper",
 				onchange:		function(data) {
-					var list = $("ol.itemList > li").get();
+					var list = $("div.itemList > div").get();
 					for (i in list) {
 						if (list[i].id) {
 							itemId = list[i].id;
