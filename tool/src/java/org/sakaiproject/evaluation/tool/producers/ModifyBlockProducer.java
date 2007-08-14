@@ -195,7 +195,8 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 			
 			UIMessage.make(form, "modifyblock-page-title", "modifyblock.page.title");
 			UIMessage.make(form, "modifyblock-items-list-title", "modifyblock.items.list.title"); //$NON-NLS-1$ //$NON-NLS-2$
-
+			UIMessage.make(form, "modifyblock-items-list-instructions", "modifyblock.page.instructions");
+			
 			UIMessage.make(form, "item-header", "modifyblock.item.header");
 			UIOutput.make(form, "itemNo", originalDisplayOrder.toString());
 
