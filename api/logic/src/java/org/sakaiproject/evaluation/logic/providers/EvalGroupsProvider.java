@@ -59,7 +59,9 @@ public interface EvalGroupsProvider {
 
 	/**
 	 * Get a list of all user ids that can take an evaluation or be evaluated in
-	 * eval group(s) or course(s) identified by a unique identifier (groupId)
+	 * eval group(s) or course(s) identified by a unique identifier (groupId)<br/>
+    * <b>Note</b>: this should be user ids (internal Sakai ids) and NOT the user eid 
+    * (external user id from your provider source) 
 	 * 
 	 * @param groupIds eval groups identified by unique strings
 	 * @param permission a permission string PERM constant (from this API),
@@ -69,9 +71,11 @@ public interface EvalGroupsProvider {
 	public Set getUserIdsForEvalGroups(String[] groupIds, String permission);
 
 	/**
+    * <b>Note</b>: This is simply here for the sake of efficiency<br/>
 	 * Get a list of all user ids that can take an evaluation or be evaluated in
-	 * eval group(s) or course(s) identified by a unique identifier (groupId),
-	 * <b>Note</b>: This is simply here for the sake of efficiency
+	 * eval group(s) or course(s) identified by a unique identifier (groupId)<br/>
+    * <b>Note</b>: this should be user ids (internal Sakai ids) and NOT the user eid 
+    * (external user id from your provider source)
 	 * 
 	 * @param groupIds eval groups identified by unique strings
 	 * @param permission a permission string PERM constant (from this API),
@@ -92,9 +96,9 @@ public interface EvalGroupsProvider {
 	public List getEvalGroupsForUser(String userId, String permission);
 
 	/**
+    * <b>Note</b>: This is simply here for the sake of efficiency<br/>
 	 * Get a count of all eval groups that a user can take an evaluation or be evaluated in,
-	 * eval groups are identified by a unique identifier (groupId),
-	 * <b>Note</b>: This is simply here for the sake of efficiency
+	 * eval groups are identified by a unique identifier (groupId)
 	 * 
 	 * @param userId the internal user id (not username)
 	 * @param permission a permission string PERM constant (from this API),
