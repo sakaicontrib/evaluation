@@ -63,7 +63,7 @@ public class PreviewEmailProducer implements ViewComponentProducer,
     		UIMessage.make("summary.page.title"), 
         new SimpleViewParameters(SummaryProducer.VIEW_ID));
     UIMessage.make(tofill, "create-eval-title", "starteval.page.title"); 
-
+	UIMessage.make(tofill, "summary-toplink-inact", "summary.page.title");
     UIMessage.make(tofill, "preview-email-header", "previewemail.header"); 
 
     EmailViewParameters emailViewParams = (EmailViewParameters) viewparams;

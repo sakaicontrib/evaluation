@@ -131,7 +131,9 @@ public class ModifyScaledProducer implements ViewComponentProducer,
 
 		UIMessage.make(tofill, "modify-item-title", "templateitem.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
 		UIMessage.make(tofill, "create-eval-title", "starteval.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
-
+		UIInternalLink.make(tofill, "control-templates-link",
+				UIMessage.make("controltemplates.page.title"), 
+			new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
 		UIInternalLink.make(tofill,"summary-toplink", UIMessage.make("summary.page.title"), //$NON-NLS-1$ //$NON-NLS-2$
 				new SimpleViewParameters(SummaryProducer.VIEW_ID));
 

@@ -381,7 +381,9 @@ input:hover.makeLink {
 	color: #33f;
 	cursor: hand;
 }
-
+input.makeLinkSmall{
+	font-size:.8em	
+}
 
 /* render link as a button */
 a:link.makeButton, a:visited.makeButton
@@ -570,13 +572,14 @@ label.block{
 }
 
 .scaleInnerList{
-	list-style: lower-alpha;
+	list-style: none;
 	background:#fff;
 	padding:0 2em;
 	margin:0 0 1em 0;
 }
 .scaleInnerList li{
 	padding-left:1em;
+	border:1px solid red;
 	list-style-position: inside;
 }
 
@@ -721,7 +724,8 @@ label.block{
 	border-color: #eee;
 	border-style: solid;
 	border-width:2px;
-	padding:.5em
+	padding:.5em;
+	list-style: none;
 }
 .itemListNew legend {
 	padding:.3em .7em;
@@ -734,7 +738,6 @@ label.block{
 	margin:0;
 }	
 .itemListNew li{
-	list-style: none;
 	padding:.3em;
 	margin:.3em;
 	border:1px solid #eee
@@ -747,9 +750,14 @@ label.block{
 	border:1px solid #aaa;
 	background:#fff;
 }
+.itemListEval li{
+	list-style: none;
+	padding: .5em;
+	margin:.2em;
+}	
 
 .itemListNew .itemListEval li:hover{
-	background: #ffc
+/*	background: #ffc*/
 }
 .itemListNew .itemListEval h4{
 	display:inline;
@@ -847,4 +855,16 @@ color: #555;
 	font-family: Arial,Helvetica,sans-serif;
 	margin: 1em 0 ;
 	background-color: transparent !important;
+}
+.addItem{
+	padding-left:2em;
+	background:transparent url(../images/add.png) center left no-repeat
+}
+.goToList{
+	padding-left:2em;
+	background:transparent url(../images/application_view_list.png) center left no-repeat
+}
+.exportAction{
+	padding-left:2em;
+	background:transparent url(../images/table_go.png) center left no-repeat
 }
