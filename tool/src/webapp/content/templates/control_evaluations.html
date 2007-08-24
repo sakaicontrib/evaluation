@@ -61,10 +61,8 @@
 					<tbody>
 						<tr rsf:id="inqueue-eval-row:"> 
 							<td headers="titleinqueue">
-								 <span rsf:id="eval-preview-title"> Preview:</span>
 								<a rsf:id="inqueue-eval-link" href="preview_eval.html">Evaluation Title 1</a>
-								<span rsf:id="eval-link-title">Quick link:</span>
-								<span rsf:id="eval-direct-link">(<a rsf:id="payload-component" href="take_eval.html" title="direct url to the evaluation">link</a>)</span>
+								<span rsf:id="eval-direct-link"  class="itemAction">(<a rsf:id="payload-component" href="take_eval.html" title="direct url to the evaluation">link</a>)</span>
 								<span rsf:id="eval-category-direct-link">[<a rsf:id="payload-component" href="show_eval_category.html" title="direct url to the category">category</a>]</span>
 							</td>
 							<td headers="settingsinqueue" class="itemAction">
@@ -106,17 +104,15 @@
 						<tr rsf:id="active-eval-row:"> 
 							<td headers="titleact">
 								<div style="float:left">
-									 <span rsf:id="eval-preview-title"> Preview:</span>
 									 <a rsf:id="active-eval-link" href="preview_eval.html">Evaluation Title 1</a>
-									<span rsf:id="eval-link-title">Quick link:</span>
-									<span rsf:id="eval-direct-link">(<a rsf:id="payload-component" href="take_eval.html" title="direct url to the evaluation">link</a>)</span>
+
+									<span rsf:id="eval-direct-link" class="itemAction">(<a rsf:id="payload-component" href="take_eval.html" title="direct url to the evaluation">link</a>)</span>
 									<span rsf:id="eval-category-direct-link">[<a rsf:id="payload-component" href="show_eval_category.html" title="direct url to the category">category</a>]</span>
 								</div>
 								<div style="float: right;padding-right:2em"><span rsf:id="eval-responses-header">Responses: </span> - <span rsf:id="active-eval-response-rate">10/100</span></div>
 							</td>
 							<td headers="settingsact" class="itemAction">
-								<input rsf:id="active-eval-edit-link" type="submit" class="makeLink" value="Edit" />
-								<span rsf:id="active-eval-delete-link">| <a rsf:id="payload-component" href="remove_evaluation.html">Delete</a></span>
+								<input rsf:id="active-eval-edit-link" type="submit" class="makeLink" value="Edit" /><span rsf:id="active-eval-delete-link">| <a rsf:id="payload-component" href="remove_evaluation.html">Delete</a></span>
 							</td>		
 							<td headers="assignedact">
 								<input rsf:id="active-eval-assigned-link" type="submit" value="Course 1010" class="makeLink" />
@@ -148,7 +144,6 @@
 					<tbody>
 						<tr rsf:id="closed-eval-row:"> 
 							<td headers="titleclosed">
-								 <span rsf:id="eval-preview-title"> Preview:</span>
 								<a rsf:id="closed-eval-link" href="preview_eval.html">Evaluation Title 1</a>
 								<span rsf:id="eval-link-category-title">Category:</span>
 								<span rsf:id="eval-category">[<span rsf:id="payload-component">category</span>]</span>
