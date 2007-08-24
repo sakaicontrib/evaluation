@@ -238,6 +238,7 @@ tool/src/webapp/content/images/first-noncur-step.gif -text svneol=unset#image/gi
 tool/src/webapp/content/images/ideal-high.jpg -text
 tool/src/webapp/content/images/ideal-low.jpg -text
 tool/src/webapp/content/images/ideal-mid.jpg -text
+tool/src/webapp/content/images/ideal-none.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/ideal-none.jpg -text
 tool/src/webapp/content/images/ideal-outside.jpg -text
 tool/src/webapp/content/images/last-cur-step.gif -text svneol=unset#image/gif
