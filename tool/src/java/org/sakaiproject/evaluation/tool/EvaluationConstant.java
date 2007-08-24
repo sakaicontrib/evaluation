@@ -74,7 +74,7 @@ public class EvaluationConstant {
 
 	//For preview_item.html
 	public static String[] COLORED_IMAGE_URLS = new String[] {
-		"$context/content/images/ideal-none.jpg",
+		"$context/content/images/ideal-none.gif",
 		"$context/content/images/ideal-low.jpg",
 		"$context/content/images/ideal-mid.jpg",
 		"$context/content/images/ideal-high.jpg",
