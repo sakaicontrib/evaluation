@@ -60,6 +60,7 @@ public class ModifyEmailProducer implements ViewComponentProducer, NavigationCas
 
       UIMessage.make(tofill, "modify-email-title", "modifyemail.page.title");
       UIMessage.make(tofill, "create-eval-title", "starteval.page.title");
+  		UIMessage.make(tofill, "summary-toplink-inact", "summary.page.title"); 
       UIInternalLink.make(tofill, "summary-toplink", 
             UIMessage.make("summary.page.title"),
                new SimpleViewParameters(SummaryProducer.VIEW_ID));

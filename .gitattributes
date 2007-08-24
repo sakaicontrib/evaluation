@@ -223,6 +223,8 @@ tool/src/webapp/component-templates/render_scaled_item.html -text
 tool/src/webapp/component-templates/render_text_item.html -text
 tool/src/webapp/content/css/evaluation_base.css -text
 tool/src/webapp/content/images/add.gif -text svneol=unset#image/gif
+tool/src/webapp/content/images/add.png -text svneol=unset#image/png
+tool/src/webapp/content/images/application_view_list.png -text svneol=unset#image/png
 tool/src/webapp/content/images/asterisk_orange.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/breadSep.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/calendar.gif -text
@@ -242,6 +244,7 @@ tool/src/webapp/content/images/last-cur-step.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/last-noncur-step.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/med-cur-step.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/med-noncur-step.gif -text svneol=unset#image/gif
+tool/src/webapp/content/images/table_go.png -text svneol=unset#image/png
 tool/src/webapp/content/js/blockReorderUtils.js -text
 tool/src/webapp/content/js/blockUtils.js -text
 tool/src/webapp/content/js/evalEditSettings.js -text

@@ -13,25 +13,19 @@
 	
 	<body>
 		<div class="portletBody">
-		
+				
 			<div class="navIntraTool" style="clear:both;height:1.5em">
-				<div style="float:left">
-					<a rsf:id="create-template-link" href="template_title_desc.html">Add Template</a>
-					<a rsf:id="create-evaluation-link" href="evaluation_start.html">Start Evaluation</a>
-				</div>	
-				<div style="float:right">
-					<a rsf:id="summary-link" href="summary.html">Summary</a>
-					<a rsf:id="administrate-link" href="administrate.html">Administrate</a>
-					<a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a>
-					<a rsf:id="control-items-link" href="control_items.html">My Items</a>
-				</div>
+				<a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a>
+				<span class="inactive" rsf:id="page-title"></span>&nbsp;
+				<a rsf:id="control-items-link" href="control_items.html">My Items</a>
+				<a rsf:id="administrate-link" href="administrate.html">Administrate</a>
 			</div>
 			
-			<div>
-				<ul class="breadCrumb">
-					<li ><a rsf:id="summary-link" href="summary.html">Summary</a></li><li class="lastCrumb" rsf:id="page-title">My Templates</li>
-				</ul>
-			</div>
+			<ul class="breadCrumb"  style="clear:both;height:1.5em">
+				<li  style="float:left"><a rsf:id="summary-link" href="summary.html">Summary</a></li><li class="lastCrumb"  style="float:left" rsf:id="page-title">My Templates</li>
+				<li style="float:right" class="lastCrumb"><a rsf:id="create-template-link" href="template_title_desc.html" class="addItem">Add Template</a></li>
+				<li style="float:right" class="lastCrumb"><a rsf:id="create-evaluation-link" href="evaluation_start.html"  class="addItem">Start Evaluation</a></li>
+			</ul>
 			
 			<div rsf:id="message-for:*" class="alertMessage">
 				<ul style="margin:0px;">

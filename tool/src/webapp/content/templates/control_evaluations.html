@@ -14,22 +14,21 @@
 		<div class="portletBody">
 		
 		<div class="navIntraTool" style="clear:both;height:1.5em">
-			<div style="float:left">
-				<form rsf:id="begin-evaluation-form" method="post" class="inlineForm">
-					<input rsf:id="begin-evaluation-link" value="Start Evaluation" type="submit" class="makeLink" />
-				</form>
-			</div>
-			<div style="float:right">
-				<a rsf:id="summary-link" href="summary.html">Summary</a>
-				<a rsf:id="administrate-link" href="administrate.html">Administrate</a>
+				<span class="inactive" rsf:id="page-title"> </span>&nbsp;
 				<a rsf:id="control-templates-link" href="control_templates.html">My Templates</a>
 				<a rsf:id="control-items-link" href="control_items.html">My Items</a>
-			</div>
+				<a rsf:id="administrate-link" href="administrate.html">Administrate</a>
 		</div>
 				
-		<ul class="breadCrumb">
-			<li><a rsf:id="summary-link" href="summary.html">Summary</a></li>
-			<li rsf:id="page-title"  class="lastCrumb">My Evaluations</li>
+		<ul class="breadCrumb"  style="clear:both;height:1.5em">
+			<li style="float:left"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+			<li style="float:left" rsf:id="page-title"  class="lastCrumb">My Evaluations</li>
+			<li style="float:right" class=" lastCrumb addItem">
+				<form rsf:id="begin-evaluation-form" method="post" class="inlineForm addItem" >
+					<input rsf:id="begin-evaluation-link" value="Start Evaluation" type="submit" class="makeLink makeLinkSmall" />    
+				</form>
+			</li>	
+
 		</ul> 
 
 		<div rsf:id="message-for:*" class="alertMessage">
