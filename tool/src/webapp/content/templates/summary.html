@@ -12,21 +12,19 @@
 
 <body rsf:id="scr=sakai-body">
 	<div class="portletBody">
-		<div class="navIntraTool" style="clear:both;height:1.5em">
-			<div rsf:id="toolsBox:" style="float:left">
-				<a href="evaluation_start.html" rsf:id="beginEvaluationLink">New Evaluation</a>
-				<a href="template_title_desc.html" rsf:id="createTemplateLink">New Template</a>
-			</div>
-			<div style="float:right">
-				<a rsf:id="administrate-toplink" href="administrate.html">Administrate</a>
-				<a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a>
-				<a rsf:id="control-templates-link" href="control_templates.html">My Templates</a>
-				<a rsf:id="control-items-link" href="control_items.html">My Items</a>
-			</div>
-
+		<div class="navIntraTool">
+			<a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a>
+			<a rsf:id="control-templates-link" href="control_templates.html">My Templates</a>
+			<a rsf:id="control-items-link" href="control_items.html">My Items</a>
+			<a rsf:id="administrate-toplink" href="administrate.html">Administrate</a>
 		</div>
 
-         <div rsf:id="message-for:*" class="alertMessage">
+		<ul class="breadCrumb"  rsf:id="toolsBox:"   style="clear:both;height:1.5em">
+			<li class="lastCrumb" style="float:right"><a href="evaluation_start.html" rsf:id="beginEvaluationLink" class="addItem">New Evaluation</a></li>
+			<li class="lastCrumb" style="float:right"><a href="template_title_desc.html" rsf:id="createTemplateLink" class="addItem">New Template</a></li>
+		</ul>
+
+		<div rsf:id="message-for:*" class="alertMessage">
             <ul style="margin:0px;">
                <li>Message for user here</li>
             </ul>
