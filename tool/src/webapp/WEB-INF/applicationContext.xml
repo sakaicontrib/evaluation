@@ -66,7 +66,7 @@
 	</bean>
 
 	<!-- define any XML producer files -->
-	<bean id="siteMap" parent="siteMapDef" />
+	<bean id="siteMap" parent="siteMapParent" />
 
 	<bean parent="actionResultInterceptorParent">
 		<property name="value">
