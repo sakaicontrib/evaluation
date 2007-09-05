@@ -4,8 +4,11 @@
 
 package org.sakaiproject.evaluation.logic.externals;
 
+import java.util.Set;
+
 import org.sakaiproject.evaluation.logic.model.HierarchyNode;
 import org.sakaiproject.evaluation.logic.providers.EvalHierarchyProvider;
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 
 /**
@@ -14,7 +17,7 @@ import org.sakaiproject.evaluation.logic.providers.EvalHierarchyProvider;
  *
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
-public interface ExternalHierarchy extends EvalHierarchyProvider {
+public interface ExternalHierarchyLogic extends EvalHierarchyProvider {
 
    /**
     * Add a new node to a hierarchy
@@ -43,5 +46,26 @@ public interface ExternalHierarchy extends EvalHierarchyProvider {
     * @return the object representing the updated node
     */
    public HierarchyNode updateNodeData(String nodeId, String title, String description);
+
+
+   /**
+    * Set permissions for a user for a node
+    * 
+    * @param userId the internal user id (not username)
+    * @param nodeId a unique id for a hierarchy node
+    * @param hierarchyPermConstant a HIERARCHY_PERM constant from {@link EvalConstants},
+    * if this is set to null then remove all permissions for this user from this node
+    */
+   public void assignUserNodePerm(String userId, String nodeId, String hierarchyPermConstant);
+
+   /**
+    * Set this set to be the set of eval group ids associated with this node,
+    * can also be used to clear the associated ids
+    * 
+    * @param nodeId a unique id for a hierarchy node
+    * @param evalGroupIds the unique IDs of eval groups to associate, if this is an
+    * empty set then this will clear the associations so there are no groups associated
+    */
+   public void setEvalGroupsForNode(String nodeId, Set<String> evalGroupIds);
 
 }

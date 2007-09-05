@@ -61,6 +61,44 @@ public class EvalConstants {
 	 */
 	public final static String HIERARCHY_LEVEL_GROUP = "group";
 
+
+   /**
+    * Hierarchy Permission:
+    * User may view all data at the associated hierarchy node
+    * but none of the data below this node,
+    * user has no power to change any data, data includes: 
+    * evaluations, eval results, templates, items, scales
+    */
+   public static final String HIERARCHY_PERM_VIEW_NODE_DATA = "HierarchyViewNodeData";
+   /**
+    * Hierarchy Permission:
+    * User may view all data at the associated hierarchy node and below,
+    * user has no power to change any data, data includes: 
+    * evaluations, eval results, templates, items, scales
+    */
+   public static final String HIERARCHY_PERM_VIEW_TREE_DATA = "HierarchyViewTreeData";
+   /**
+    * Hierarchy Permission:
+    * User may control all templates data at the associated hierarchy node only
+    * (not including any data associated with a node below this one),
+    * this includes templates, items, and scales
+    */ 
+   public static final String HIERARCHY_PERM_CONTROL_NODE_DATA = "HierarchyControlNodeData";
+   /**
+    * Hierarchy Permission:
+    * User may control all templates data at the associated hierarchy node and below,
+    * this includes templates, items, and scales
+    */ 
+   public static final String HIERARCHY_PERM_CONTROL_TREE_DATA = "HierarchyControlTreeData";
+   /**
+    * Hierarchy Permission:
+    * User may assign an evaluation to the associated hierarchy node and any 
+    * nodes or eval groups below it, user may also control any existing evalaution
+    * at this current hierarchy node (but not below it)
+    */
+   public static final String HIERARCHY_PERM_ASSIGN_EVALUATION = "HierarchyAssignEval";
+
+
 	/**
 	 * Permission: User can create, update, delete evaluation templates
 	 */
@@ -548,27 +586,6 @@ public class EvalConstants {
 	 */
 	public static final String EVALUATION_AUTHCONTROL_NONE = "NONE";
 
-
-	/**
-	 * Hierarchy Permission:
-	 * User may view all data at the associated hierarchy node and below,
-	 * user has no power to change any data, data includes: 
-	 * evaluations, eval results, templates, items, scales
-	 */
-	public static final String HIERARCHY_PERM_VIEW_DATA = "HierarchyViewData";
-	/**
-	 * Hierarchy Permission:
-	 * User may assign an evaluation to the associated hierarchy node and any 
-	 * nodes or eval groups below it, user may also control any existing evalaution
-	 * at this current hierarchy node (but not below it)
-	 */
-	public static final String HIERARCHY_PERM_ASSIGN_EVALUATION = "HierarchyAssignEval";
-	/**
-	 * Hierarchy Permission:
-	 * User may control all templates data at the associated hierarchy node and below,
-	 * this includes templates, items, and scales
-	 */ 
-	public static final String HIERARCHY_PERM_CONTROL_TEMPLATES = "HierarchyControlTemplates";
 
 	/**
 	 * ItemGroup Type: Category (root group type)<br/>
