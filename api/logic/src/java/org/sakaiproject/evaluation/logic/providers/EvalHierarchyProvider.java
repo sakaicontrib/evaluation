@@ -39,10 +39,12 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
  * </bean>
  * </xmp>
  * <br/>
- * The 3 permissions this provider has to deal with are:<br/>
+ * The permissions this provider has to deal with are:<br/>
  * {@link EvalConstants#HIERARCHY_PERM_ASSIGN_EVALUATION} - user can assign evals
- * {@link EvalConstants#HIERARCHY_PERM_CONTROL_TEMPLATES} - user can edit and control templates
- * {@link EvalConstants#HIERARCHY_PERM_VIEW_DATA} - user can view results and templates
+ * {@link EvalConstants#HIERARCHY_PERM_CONTROL_NODE_DATA} - user can edit and control data at one node
+ * {@link EvalConstants#HIERARCHY_PERM_CONTROL_TREE_DATA} - user can edit and control data below this node
+ * {@link EvalConstants#HIERARCHY_PERM_VIEW_NODE_DATA} - user can view results and data at one node
+ * {@link EvalConstants#HIERARCHY_PERM_VIEW_TREE_DATA} - user can view results and data below this node
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
@@ -124,7 +126,7 @@ public interface EvalHierarchyProvider {
    public List<HierarchyNode> getNodesAboveEvalGroup(String evalGroupId);
 
    /**
-    * Get the set of eval groups beneath a specific hierarachy node, note that this should only
+    * Get the set of eval groups beneath a specific hierarchy node, note that this should only
     * include the eval groups directly beneath this node and not any groups that are under
     * child nodes of this node
     * 
