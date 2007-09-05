@@ -48,85 +48,89 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
  */
 public interface EvalHierarchyProvider {
 
-	/**
-	 * Get the hierarchy root node
-	 * 
-	 * @return the {@link HierarchyNode} representing the root of the hierarchy
-	 */
-	public HierarchyNode getRootLevelNode();
+   /**
+    * Get the hierarchy root node
+    * 
+    * @return the {@link HierarchyNode} representing the root of the hierarchy
+    */
+   public HierarchyNode getRootLevelNode();
 
-	/**
-	 * Get the parent node for a specific node, 
-	 * returns null if this is the root node
-	 * 
-	 * @param nodeId a unique id for a hierarchy node
-	 * @return a {@link HierarchyNode} object representing the parent node
-	 */
-	public HierarchyNode getParentNode(String nodeId);
+   /**
+    * Get the node object for a specific node id
+    * 
+    * @param nodeId a unique id for a hierarchy node
+    * @return a {@link HierarchyNode} object or null if none found
+    */
+   public HierarchyNode getNodeById(String nodeId);
 
-	/**
-	 * Get all children nodes for this node in the hierarchy, 
-	 * will return no nodes if this is not a parent node
-	 * 
-	 * @param nodeId a unique id for a hierarchy node
-	 * @return a Set of {@link HierarchyNode} objects representing all children nodes for the specified parent,
-	 * empty set if no children found
-	 */
-	public Set getChildNodes(String nodeId);
-
-	/**
-	 * Get all the userIds for users which have a specific permission in a set of
-	 * hierarchy nodes, this can be used to check one node or many nodes as needed<br/>
-	 * The actual permissions this should handle are shown at the top of this class
-	 * 
-	 * @param nodeIds an array of unique ids for hierarchy nodes
-	 * @param hierarchyPermConstant a HIERARCHY_PERM constant from {@link EvalConstants}
-	 * @return an array of userIds
-	 */
-	public String[] getUserIdsForNodesPerm(String[] nodeIds, String hierarchyPermConstant);
-
-	/**
-	 * Get the hierarchy nodes which a user has a specific permission in,
-	 * this is used to find a set of nodes which a user should be able to see and to build,
-	 * the list of hierarchy for selecting eval groups to assign evaluations to
-	 * <br/>The actual permissions this should handle are shown at the top of this class
-	 * 
-	 * @param userId the internal user id (not username)
-	 * @param hierarchyPermConstant a HIERARCHY_PERM constant from {@link EvalConstants}
-	 * @return a Set of {@link HierarchyNode} objects
-	 */
-	public Set getNodesForUserPerm(String userId, String hierarchyPermConstant);
-
-	/**
-	 * Determine if a user has a specific hierarchy permission at a specific hierarchy node
-	 * <br/>The actual permissions this should handle are shown at the top of this class
-	 * 
-	 * @param userId the internal user id (not username)
-	 * @param nodeId a unique id for a hierarchy node
-	 * @param hierarchyPermConstant a HIERARCHY_PERM constant from {@link EvalConstants}
-	 * @return true if the user has this permission, false otherwise
-	 */
-	public boolean checkUserNodePerm(String userId, String nodeId, String hierarchyPermConstant);
+   /**
+    * Get all children nodes for this node in the hierarchy, 
+    * will return no nodes if this is not a parent node
+    * 
+    * @param nodeId a unique id for a hierarchy node
+    * @param directOnly if true then only include the nodes 
+    * which are directly connected to this node, 
+    * else return every node that is a child of this node
+    * @return a Set of {@link HierarchyNode} objects representing 
+    * all children nodes for the specified parent,
+    * empty set if no children found
+    */
+   public Set<HierarchyNode> getChildNodes(String nodeId, boolean directOnly);
 
 
-	/**
-	 * Gets the list of nodes in the path from an eval group to the root node,
-	 * should be in order with the first node being the root node and the last node being
-	 * the parent node for the given eval group
-	 *  
-	 * @param evalGroupId the unique ID of an eval group
-	 * @return a List of {@link HierarchyNode} objects (ordered from root to evalgroup)
-	 */
-	public List getNodesAboveEvalGroup(String evalGroupId);
+   /**
+    * Get all the userIds for users which have a specific permission in a set of
+    * hierarchy nodes, this can be used to check one node or many nodes as needed,
+    * <br/>The actual permissions this should handle are shown at the top of this class
+    * 
+    * @param nodeIds an array of unique ids for hierarchy nodes
+    * @param hierarchyPermConstant a HIERARCHY_PERM constant from {@link EvalConstants}
+    * @return a set of userIds (not username/eid)
+    */
+   public Set<String> getUserIdsForNodesPerm(String[] nodeIds, String hierarchyPermConstant);
 
-	/**
-	 * Get the set of eval groups beneath a specific hierarachy node, note that this should only
-	 * include the eval groups directly beneath this node and not any groups that are under
-	 * child nodes of this node
-	 * 
-	 * @param nodeId a unique id for a hierarchy node
-	 * @return a Set of {@link EvalGroup} objects representing the eval groups beneath this hierarchy node
-	 */
-	public Set getEvalGroupsForNode(String nodeId);
+   /**
+    * Get the hierarchy nodes which a user has a specific permission in,
+    * this is used to find a set of nodes which a user should be able to see and to build
+    * the list of hierarchy nodes for selecting eval groups to assign evaluations to,
+    * <br/>The actual permissions this should handle are shown at the top of this class
+    * 
+    * @param userId the internal user id (not username)
+    * @param hierarchyPermConstant a HIERARCHY_PERM constant from {@link EvalConstants}
+    * @return a Set of {@link HierarchyNode} objects
+    */
+   public Set<HierarchyNode> getNodesForUserPerm(String userId, String hierarchyPermConstant);
+
+   /**
+    * Determine if a user has a specific hierarchy permission at a specific hierarchy node,
+    * <br/>The actual permissions this should handle are shown at the top of this class
+    * 
+    * @param userId the internal user id (not username)
+    * @param nodeId a unique id for a hierarchy node
+    * @param hierarchyPermConstant a HIERARCHY_PERM constant from {@link EvalConstants}
+    * @return true if the user has this permission, false otherwise
+    */
+   public boolean checkUserNodePerm(String userId, String nodeId, String hierarchyPermConstant);
+
+
+   /**
+    * Gets the list of nodes in the path from an eval group to the root node,
+    * should be in order with the first node being the root node and the last node being
+    * the parent node for the given eval group
+    *  
+    * @param evalGroupId the unique ID of an eval group
+    * @return a List of {@link HierarchyNode} objects (ordered from root to evalgroup)
+    */
+   public List<HierarchyNode> getNodesAboveEvalGroup(String evalGroupId);
+
+   /**
+    * Get the set of eval groups beneath a specific hierarachy node, note that this should only
+    * include the eval groups directly beneath this node and not any groups that are under
+    * child nodes of this node
+    * 
+    * @param nodeId a unique id for a hierarchy node
+    * @return a Set of {@link EvalGroup} objects representing the eval groups beneath this hierarchy node
+    */
+   public Set<EvalGroup> getEvalGroupsForNode(String nodeId);
 
 }

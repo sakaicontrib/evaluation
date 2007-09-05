@@ -23,6 +23,7 @@ api/logic/src/java/org/sakaiproject/evaluation/logic/entity/TemplateEntityProvid
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/EvalJobLogic.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/EvalScheduledInvocation.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/ExternalEvalGroups.java -text
+api/logic/src/java/org/sakaiproject/evaluation/logic/externals/ExternalHierarchy.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/ExternalUsers.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/model/EvalGroup.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/model/HierarchyNode.java -text
