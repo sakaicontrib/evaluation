@@ -73,7 +73,7 @@ public class ExpertItemsBean {
 
 		String currentUserId = external.getCurrentUserId();
 		String level = EvalConstants.HIERARCHY_LEVEL_TOP;
-		String nodeId = EvalConstants.HIERARCHY_NODE_ID_TOP;
+		String nodeId = EvalConstants.HIERARCHY_NODE_ID_NONE;
 
 		EvalTemplate template = templatesLogic.getTemplateById(templateId);
 		if (EvalConstants.TEMPLATE_TYPE_ADDED.equals( template.getType() )) {

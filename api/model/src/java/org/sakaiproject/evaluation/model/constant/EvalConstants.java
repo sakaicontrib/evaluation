@@ -33,17 +33,17 @@ public class EvalConstants {
 	 */
 	public final static String TEMPLATE_TYPE_ADDED = "added";
 
+   /**
+    * Hierarchy node: this is a special case id which indicates that
+    * this is not assigned to a node in the hierarchy
+    */
+   public final static String HIERARCHY_NODE_ID_NONE = "000topid";
 	/**
 	 * Hierarchy level: this is a special case level which indicates that
 	 * these things are at the top level of the hierarchy (nothing is above),
-	 * use the constant as the node id {@link #HIERARCHY_NODE_ID_TOP}
+	 * use the constant as the node id {@link #HIERARCHY_NODE_ID_NONE}
 	 */
 	public final static String HIERARCHY_LEVEL_TOP = "toplevel";
-	/**
-	 * Hierarchy node: this is a special case id which represents the top
-	 * level of the hierarchy
-	 */
-	public final static String HIERARCHY_NODE_ID_TOP = "000topid";
 	/**
 	 * Hierarchy level: this is the non-special case level that all items 
 	 * not at the special levels for instructor added items should
