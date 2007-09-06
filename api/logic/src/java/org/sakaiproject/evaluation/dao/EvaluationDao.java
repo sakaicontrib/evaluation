@@ -168,7 +168,7 @@ public interface EvaluationDao extends CompleteGenericDao {
     * Note: this will always only return a single node so if an evalgroup is assigned to multiple
     * nodes then only the first one will be returned
     * @param evalGroupId a unique id for an eval group
-    * @return a unique id for the containing node
+    * @return a unique id for the containing node or null if none found
     */
    public String getNodeIdForEvalGroup(String evalGroupId);
 

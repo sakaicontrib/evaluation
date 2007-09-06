@@ -439,9 +439,12 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
 
    public String getNodeIdForEvalGroup(String evalGroupId) {
       String hql = "select egn.nodeId from EvalGroupNodes egn where " +
-            "? in egn.evalGroups order by egn.nodeId";
-      String[] params = new String[] {"evalGroupId"};
+            "? in elements(egn.evalGroups) order by egn.nodeId";
+      String[] params = new String[] {evalGroupId};
       List l = getHibernateTemplate().find(hql, params);
+      if (l.isEmpty()) {
+         return null;
+      }
       return (String) l.get(0);
    }
 
