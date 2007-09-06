@@ -15,9 +15,9 @@
 package org.sakaiproject.evaluation.logic.providers;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
@@ -126,13 +126,21 @@ public interface EvalHierarchyProvider {
    public List<EvalHierarchyNode> getNodesAboveEvalGroup(String evalGroupId);
 
    /**
-    * Get the set of eval groups beneath a specific hierarchy node, note that this should only
+    * Get the set of eval group ids beneath a specific hierarchy node, note that this should only
     * include the eval groups directly beneath this node and not any groups that are under
-    * child nodes of this node
+    * child nodes of this node<br/>
+    * Note: this will not fail if the nodeId is invalid, it will just return no results
     * 
     * @param nodeId a unique id for a hierarchy node
-    * @return a Set of {@link EvalGroup} objects representing the eval groups beneath this hierarchy node
+    * @return a Set of eval group ids representing the eval groups beneath this hierarchy node
     */
-   public Set<EvalGroup> getEvalGroupsForNode(String nodeId);
+   public Set<String> getEvalGroupsForNode(String nodeId);
+
+   /**
+    * Get the count of the number of eval groups assigned to each node in a group of nodes
+    * @param nodeIds an array of unique ids for hierarchy nodes
+    * @return a map of nodeId -> number of eval groups
+    */
+   public Map<String, Integer> countEvalGroupsForNodes(String[] nodeIds);
 
 }

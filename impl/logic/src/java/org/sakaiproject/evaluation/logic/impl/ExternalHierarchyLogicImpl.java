@@ -4,35 +4,47 @@
 
 package org.sakaiproject.evaluation.logic.impl;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
-import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
+import org.sakaiproject.evaluation.model.EvalGroupNodes;
 import org.sakaiproject.hierarchy.HierarchyService;
 import org.sakaiproject.hierarchy.model.HierarchyNode;
 
-
 /**
  * 
- *
+ * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
 public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
+
+   private EvaluationDao dao;
+   public void setDao(EvaluationDao dao) {
+      this.dao = dao;
+   }
 
    private HierarchyService hierarchyService;
    public void setHierarchyService(HierarchyService hierarchyService) {
       this.hierarchyService = hierarchyService;
    }
 
-//   private PermTokenGeneratorService permTokenGeneratorService;
-//   public void setPermTokenGeneratorService(PermTokenGeneratorService permTokenGeneratorService) {
-//      this.permTokenGeneratorService = permTokenGeneratorService;
-//   }
+   // private PermTokenGeneratorService permTokenGeneratorService;
+   // public void setPermTokenGeneratorService(PermTokenGeneratorService permTokenGeneratorService)
+   // {
+   // this.permTokenGeneratorService = permTokenGeneratorService;
+   // }
 
-   public static final String HIERARCHY_ID = "evaluationHierarchyId";  
+   public static final String HIERARCHY_ID = "evaluationHierarchyId";
 
    /**
     * Place any code that should run when this class is initialized by spring here
@@ -44,8 +56,8 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
       }
    }
 
-
-   /* (non-Javadoc)
+   /*
+    * (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.providers.EvalHierarchyProvider#getRootLevelNode()
     */
    public EvalHierarchyNode getRootLevelNode() {
@@ -53,7 +65,8 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
       return makeEvalNode(node);
    }
 
-   /* (non-Javadoc)
+   /*
+    * (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.providers.EvalHierarchyProvider#getNodeById(java.lang.String)
     */
    public EvalHierarchyNode getNodeById(String nodeId) {
@@ -70,7 +83,8 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
       return makeEvalNode(node);
    }
 
-   /* (non-Javadoc)
+   /*
+    * (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic#removeNode(java.lang.String)
     */
    public EvalHierarchyNode removeNode(String nodeId) {
@@ -78,16 +92,20 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
       return makeEvalNode(node);
    }
 
-   /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic#updateNodeData(java.lang.String, java.lang.String, java.lang.String)
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic#updateNodeData(java.lang.String,
+    *      java.lang.String, java.lang.String)
     */
    public EvalHierarchyNode updateNodeData(String nodeId, String title, String description) {
       HierarchyNode node = hierarchyService.saveNodeMetaData(nodeId, title, description, null);
       return makeEvalNode(node);
    }
 
-   /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.providers.EvalHierarchyProvider#getChildNodes(java.lang.String, boolean)
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.providers.EvalHierarchyProvider#getChildNodes(java.lang.String,
+    *      boolean)
     */
    public Set<EvalHierarchyNode> getChildNodes(String nodeId, boolean directOnly) {
       Set<HierarchyNode> nodes = hierarchyService.getChildNodes(nodeId, directOnly);
@@ -99,69 +117,88 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
    }
 
 
-   /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic#setEvalGroupsForNode(java.lang.String, java.util.Set)
-    */
    public void setEvalGroupsForNode(String nodeId, Set<String> evalGroupIds) {
-      // TODO Auto-generated method stub
-
+      if (hierarchyService.getNodeById(nodeId) == null) {
+         throw new IllegalArgumentException("Invalid node id, this node does not exist: " + nodeId);
+      }
+      EvalGroupNodes egn = (EvalGroupNodes) dao.findById(EvalGroupNodes.class, nodeId);
+      if (egn == null) {
+         egn = new EvalGroupNodes(new Date(), nodeId);
+      }
+      String[] evalGroups = evalGroupIds.toArray(new String[] {});
+      egn.setEvalGroups(evalGroups);
+      dao.save(egn);
    }
 
-   /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.providers.EvalHierarchyProvider#getEvalGroupsForNode(java.lang.String)
-    */
-   public Set<EvalGroup> getEvalGroupsForNode(String nodeId) {
-      // TODO Auto-generated method stub
-      return null;
+   public Set<String> getEvalGroupsForNode(String nodeId) {
+      EvalGroupNodes egn = (EvalGroupNodes) dao.findById(EvalGroupNodes.class, nodeId);
+      Set<String> s = new HashSet<String>();
+      if (egn != null) {
+         String[] evalGroups = egn.getEvalGroups();
+         for (int i = 0; i < evalGroups.length; i++) {
+            s.add(evalGroups[i]);
+         }
+      }
+      return s;
    }
 
-   /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.providers.EvalHierarchyProvider#getNodesAboveEvalGroup(java.lang.String)
-    */
+   public Map<String, Integer> countEvalGroupsForNodes(String[] nodeIds) {
+      Map<String, Integer> m = new HashMap<String, Integer>();
+      for (int i = 0; i < nodeIds.length; i++) {
+         m.put(nodeIds[i], 0);
+      }
+
+      List l = dao.findByProperties(EvalGroupNodes.class, 
+            new String[] {"nodeId"}, 
+            new Object[] {nodeIds});
+      for (Iterator iter = l.iterator(); iter.hasNext();) {
+         EvalGroupNodes egn = (EvalGroupNodes) iter.next();
+         m.put(egn.getNodeId(), egn.getEvalGroups().length);
+      }
+      return m;
+   }
+
    public List<EvalHierarchyNode> getNodesAboveEvalGroup(String evalGroupId) {
-      // TODO Auto-generated method stub
-      return null;
+      String nodeId = dao.getNodeIdForEvalGroup(evalGroupId);
+      List<EvalHierarchyNode> l = new ArrayList<EvalHierarchyNode>();
+      if (nodeId != null) {
+         HierarchyNode currentNode = hierarchyService.getNodeById(nodeId);
+         Set<HierarchyNode> parents = hierarchyService.getParentNodes(nodeId, false);
+         for (HierarchyNode node : parents) {
+            l.add( makeEvalNode(node) );
+         }
+         l.add( makeEvalNode(currentNode) );
+      }
+      return l;
    }
 
 
-   /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic#assignUserNodePerm(java.lang.String, java.lang.String, java.lang.String)
-    */
+
    public void assignUserNodePerm(String userId, String nodeId, String hierarchyPermConstant) {
       // TODO Auto-generated method stub
-
+      throw new RuntimeException("Not implemented yet");
    }
 
-   /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.providers.EvalHierarchyProvider#checkUserNodePerm(java.lang.String, java.lang.String, java.lang.String)
-    */
    public boolean checkUserNodePerm(String userId, String nodeId, String hierarchyPermConstant) {
       // TODO Auto-generated method stub
-      return false;
+      throw new RuntimeException("Not implemented yet");
    }
 
-   /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.providers.EvalHierarchyProvider#getNodesForUserPerm(java.lang.String, java.lang.String)
-    */
    public Set<EvalHierarchyNode> getNodesForUserPerm(String userId, String hierarchyPermConstant) {
       // TODO Auto-generated method stub
-      return null;
+      throw new RuntimeException("Not implemented yet");
    }
 
-   /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.providers.EvalHierarchyProvider#getUserIdsForNodesPerm(java.lang.String[], java.lang.String)
-    */
    public Set<String> getUserIdsForNodesPerm(String[] nodeIds, String hierarchyPermConstant) {
       // TODO Auto-generated method stub
-      return null;
+      throw new RuntimeException("Not implemented yet");
    }
-
-   
-   
 
    /**
     * Create an eval node from a basic hierarchy node
-    * @param node a {@link HierarchyNode}
+    * 
+    * @param node
+    *           a {@link HierarchyNode}
     * @return an {@link EvalHierarchyNode} based on the basic node
     */
    private EvalHierarchyNode makeEvalNode(HierarchyNode node) {
@@ -175,4 +212,5 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
       eNode.parentNodeIds = node.parentNodeIds;
       return eNode;
    }
+
 }

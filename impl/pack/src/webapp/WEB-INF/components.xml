@@ -4,170 +4,122 @@
 <!-- Aaron Zeckoski (aaronz@vt.edu) -->
 <beans>
 
-	<!-- Bring in the HBM related beans beans -->
-	<import resource="hibernate-hbms.xml" />
+   <!-- Bring in the HBM related beans beans -->
+   <import resource="hibernate-hbms.xml" />
 
-	<!-- Bring in the hibernate related beans -->
-	<import resource="spring-hibernate.xml" />
-
-
-	<!-- Handles data access to external (to the app) services -->
-	<bean id="org.sakaiproject.evaluation.logic.EvalExternalLogic"
-			class="org.sakaiproject.evaluation.logic.impl.EvalExternalLogicImpl"
-			init-method="init">
-		<property name="authzGroupService" 
-			ref="org.sakaiproject.authz.api.AuthzGroupService" />
-		<property name="emailService"
-			ref="org.sakaiproject.email.api.EmailService" />
-		<property name="entityBroker" 
-			ref="org.sakaiproject.entitybroker.EntityBroker" />
-		<property name="entityManager" 
-			ref="org.sakaiproject.entity.api.EntityManager" />
-		<property name="functionManager" 
-			ref="org.sakaiproject.authz.api.FunctionManager" />
-		<property name="securityService" 
-			ref="org.sakaiproject.authz.api.SecurityService" />
-		<property name="serverConfigurationService" 
-			ref="org.sakaiproject.component.api.ServerConfigurationService" />
-		<property name="sessionManager" 
-			ref="org.sakaiproject.tool.api.SessionManager" />
-		<property name="siteService"
-			ref="org.sakaiproject.site.api.SiteService" />
-		<property name="toolManager"
-			ref="org.sakaiproject.tool.api.ToolManager" />
-		<property name="userDirectoryService"
-			ref="org.sakaiproject.user.api.UserDirectoryService" />
-
-	</bean>
-
-	<!-- Bring in any logic support beans -->
-	<import resource="logic-support.xml" />
-
-	<!-- create the various other logic beans -->
-	<bean id="org.sakaiproject.evaluation.logic.EvalEmailsLogic"
-			class="org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl"
-			init-method="init">
-		<property name="dao" 
-			ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
-		<property name="externalLogic" 
-			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-		<property name="settings" 
-			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-		<property name="assignsLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalAssignsLogic" />
-		<property name="evaluationLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
-		<property name="evalResponsesLogic" 
-			ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
-	</bean>
-	
-	<bean id="org.sakaiproject.evaluation.logic.EvalAssignsLogic"
-			class="org.sakaiproject.evaluation.logic.impl.EvalAssignsLogicImpl"
-			init-method="init">
-		<property name="dao" 
-			ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
-		<property name="emails" 
-			ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
-		<property name="externalLogic"
-				ref= "org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-		<property name="evalJobLogic"
-				ref= "org.sakaiproject.evaluation.logic.EvalJobLogic" />
-	</bean>
-	
-	<bean id="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic"
-			class="org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl"
-			init-method="init">
-		<property name="dao" 
-			ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
-		<property name="evalJobLogic" 
-			ref="org.sakaiproject.evaluation.logic.EvalJobLogic" />
-		<property name="externalLogic" 
-			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-		<property name="settings" 
-			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-
-	</bean>
-
-	<bean id="org.sakaiproject.evaluation.logic.EvalItemsLogic"
-			class="org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl"
-			init-method="init">
-		<property name="dao" 
-			ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
-		<property name="externalLogic" 
-			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-		<property name="evalSettings" 
-			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-	</bean>
-
-	<bean id="org.sakaiproject.evaluation.logic.EvalResponsesLogic" 
-         class="org.sakaiproject.evaluation.logic.impl.EvalResponsesLogicImpl" 
-         init-method="init">
-	   <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
-	   <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-	   <property name="evaluationsLogic" ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
-	   <property name="itemsLogic" ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
-	   <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-	</bean>
-
-	<bean id="org.sakaiproject.evaluation.logic.EvalScalesLogic"
-			class="org.sakaiproject.evaluation.logic.impl.EvalScalesLogicImpl"
-			init-method="init">
-		<property name="dao" 
-			ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
-		<property name="externalLogic" 
-			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-	</bean>
-
-	<bean id="org.sakaiproject.evaluation.logic.EvalTemplatesLogic"
-			class="org.sakaiproject.evaluation.logic.impl.EvalTemplatesLogicImpl"
-			init-method="init">
-		<property name="dao" 
-			ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
-		<property name="externalLogic" 
-			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-		<property name="settings" 
-			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-	</bean>
-
-	<bean id="org.sakaiproject.evaluation.logic.EvalExpertItemsLogic"
-			class="org.sakaiproject.evaluation.logic.impl.EvalExpertItemsLogicImpl"
-			init-method="init">
-		<property name="dao" 
-			ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
-		<property name="externalLogic" 
-			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-	</bean>
-	
-	<bean id="org.sakaiproject.evaluation.logic.EvalJobLogic"
-		class="org.sakaiproject.evaluation.logic.impl.scheduling.EvalJobLogicImpl"
-		init-method="init">
-		<property name="emails"
-			ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
-		<property name="evalEvaluationsLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
-		<property name="externalLogic" 
-			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-		<property name="scheduledInvocationManager"
-			ref="org.sakaiproject.api.app.scheduler.ScheduledInvocationManager" />
-		<property name="settings" 
-			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-		<property name="timeService"
-			ref="org.sakaiproject.time.api.TimeService" />
-	</bean>
-	
-	<bean id="org.sakaiproject.evaluation.logic.externals.EvalScheduledInvocation" 
-			class="org.sakaiproject.evaluation.logic.impl.scheduling.EvalScheduledInvocationImpl" 
-			init-method="init">
-			<property name="evalJobLogic"
-				ref="org.sakaiproject.evaluation.logic.EvalJobLogic" />
-	</bean>
+   <!-- Bring in the hibernate related beans -->
+   <import resource="spring-hibernate.xml" />
 
 
-	<!-- Bring in any sakai entity providers -->
-	<import resource="entity-providers.xml" />
-	
-	<!-- Dummy Hierarchy Provider -->
-	<bean id="org.sakaiproject.evaluation.logic.providers.EvalHierarchyProvider" init-method="init" 
-		class="org.sakaiproject.evaluation.logic.impl.providers.DummyEvalHierarchyProviderImpl"/>
+   <!-- Handles data access to external (to the app) services -->
+   <bean id="org.sakaiproject.evaluation.logic.EvalExternalLogic"
+      class="org.sakaiproject.evaluation.logic.impl.EvalExternalLogicImpl" init-method="init">
+      <property name="authzGroupService" ref="org.sakaiproject.authz.api.AuthzGroupService" />
+      <property name="emailService" ref="org.sakaiproject.email.api.EmailService" />
+      <property name="entityBroker" ref="org.sakaiproject.entitybroker.EntityBroker" />
+      <property name="entityManager" ref="org.sakaiproject.entity.api.EntityManager" />
+      <property name="functionManager" ref="org.sakaiproject.authz.api.FunctionManager" />
+      <property name="securityService" ref="org.sakaiproject.authz.api.SecurityService" />
+      <property name="serverConfigurationService"
+         ref="org.sakaiproject.component.api.ServerConfigurationService" />
+      <property name="sessionManager" ref="org.sakaiproject.tool.api.SessionManager" />
+      <property name="siteService" ref="org.sakaiproject.site.api.SiteService" />
+      <property name="toolManager" ref="org.sakaiproject.tool.api.ToolManager" />
+      <property name="userDirectoryService" ref="org.sakaiproject.user.api.UserDirectoryService" />
+
+   </bean>
+
+   <!-- Bring in any logic support beans -->
+   <import resource="logic-support.xml" />
+
+   <!-- create the various other logic beans -->
+   <bean id="org.sakaiproject.evaluation.logic.EvalAssignsLogic"
+      class="org.sakaiproject.evaluation.logic.impl.EvalAssignsLogicImpl" init-method="init">
+      <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+      <property name="emails" ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
+      <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+      <property name="evalJobLogic" ref="org.sakaiproject.evaluation.logic.EvalJobLogic" />
+   </bean>
+
+   <bean id="org.sakaiproject.evaluation.logic.EvalEmailsLogic"
+      class="org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl" init-method="init">
+      <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+      <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+      <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+      <property name="assignsLogic" ref="org.sakaiproject.evaluation.logic.EvalAssignsLogic" />
+      <property name="evaluationLogic" ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+      <property name="evalResponsesLogic" ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
+   </bean>
+
+   <bean id="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic"
+      class="org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl" init-method="init">
+      <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+      <property name="evalJobLogic" ref="org.sakaiproject.evaluation.logic.EvalJobLogic" />
+      <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+      <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+   </bean>
+
+   <bean id="org.sakaiproject.evaluation.logic.EvalExpertItemsLogic"
+      class="org.sakaiproject.evaluation.logic.impl.EvalExpertItemsLogicImpl" init-method="init">
+      <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+      <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+   </bean>
+
+   <bean id="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic"
+      class="org.sakaiproject.evaluation.logic.impl.ExternalHierarchyLogicImpl"
+      init-method="init">
+      <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+      <property name="hierarchyService" ref="org.sakaiproject.hierarchy.HierarchyService" />
+   </bean>
+
+   <bean id="org.sakaiproject.evaluation.logic.EvalItemsLogic"
+      class="org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl" init-method="init">
+      <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+      <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+      <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+   </bean>
+
+   <bean id="org.sakaiproject.evaluation.logic.EvalJobLogic"
+      class="org.sakaiproject.evaluation.logic.impl.scheduling.EvalJobLogicImpl" init-method="init">
+      <property name="emails" ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
+      <property name="evalEvaluationsLogic" ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+      <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+      <property name="scheduledInvocationManager"
+         ref="org.sakaiproject.api.app.scheduler.ScheduledInvocationManager" />
+      <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+      <property name="timeService" ref="org.sakaiproject.time.api.TimeService" />
+   </bean>
+
+   <bean id="org.sakaiproject.evaluation.logic.EvalResponsesLogic"
+      class="org.sakaiproject.evaluation.logic.impl.EvalResponsesLogicImpl" init-method="init">
+      <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+      <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+      <property name="evaluationsLogic" ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+      <property name="itemsLogic" ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
+      <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+   </bean>
+
+   <bean id="org.sakaiproject.evaluation.logic.EvalScalesLogic"
+      class="org.sakaiproject.evaluation.logic.impl.EvalScalesLogicImpl" init-method="init">
+      <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+      <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+   </bean>
+
+   <bean id="org.sakaiproject.evaluation.logic.externals.EvalScheduledInvocation"
+      class="org.sakaiproject.evaluation.logic.impl.scheduling.EvalScheduledInvocationImpl"
+      init-method="init">
+      <property name="evalJobLogic" ref="org.sakaiproject.evaluation.logic.EvalJobLogic" />
+   </bean>
+
+   <bean id="org.sakaiproject.evaluation.logic.EvalTemplatesLogic"
+      class="org.sakaiproject.evaluation.logic.impl.EvalTemplatesLogicImpl" init-method="init">
+      <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+      <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+      <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+   </bean>
+
+
+   <!-- Bring in any sakai entity providers -->
+   <import resource="entity-providers.xml" />
 
 </beans>
