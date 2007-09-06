@@ -35,7 +35,6 @@ api/logic/src/java/org/sakaiproject/evaluation/logic/utils/EvalUtils.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/utils/EvaluationDateUtil.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/utils/SettingsLogicUtils.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/utils/TemplateItemUtils.java -text
-api/logic/src/java/org/sakaiproject/hierarchy/model/HierarchyNode.java -text
 api/model/project.xml -text
 api/model/src/java/org/sakaiproject/evaluation/model/EvalAnswer.java -text
 api/model/src/java/org/sakaiproject/evaluation/model/EvalAssignGroup.java -text

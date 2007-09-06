@@ -468,7 +468,7 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 			templateItem.setHierarchyLevel(EvalConstants.HIERARCHY_LEVEL_TOP);
 		}
 		if (templateItem.getHierarchyNodeId() == null) {
-			templateItem.setHierarchyNodeId(EvalConstants.HIERARCHY_NODE_ID_TOP);
+			templateItem.setHierarchyNodeId(EvalConstants.HIERARCHY_NODE_ID_NONE);
 		}
 
 		if (checkUserControlTemplateItem(userId, templateItem)) {

@@ -726,7 +726,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		EvalTemplateItem eiTest1 = new EvalTemplateItem( null, 
 				EvalTestDataLoad.ADMIN_USER_ID, noItems, etdl.item5, 
 				null, EvalConstants.ITEM_CATEGORY_COURSE, 
-				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
+				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
 				new Integer(3), null, Boolean.FALSE, null, null, null);
 		items.saveTemplateItem( eiTest1, 
 				EvalTestDataLoad.ADMIN_USER_ID);
@@ -750,7 +750,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		items.saveTemplateItem( new EvalTemplateItem( new Date(), 
 				EvalTestDataLoad.ADMIN_USER_ID, noItems, etdl.item7, 
 				new Integer(2), EvalConstants.ITEM_CATEGORY_COURSE, 
-				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
+				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
 				new Integer(3), null, Boolean.FALSE, null, null, null),
 			EvalTestDataLoad.ADMIN_USER_ID);
 
@@ -758,7 +758,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		items.saveTemplateItem( new EvalTemplateItem( new Date(), 
 				EvalTestDataLoad.MAINT_USER_ID, etdl.templateUnused, etdl.item2, 
 				new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
-				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
+				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
 				null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null, null),
 			EvalTestDataLoad.MAINT_USER_ID);
 
@@ -766,7 +766,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		EvalTemplateItem eiTest2 = new EvalTemplateItem( null, 
 				EvalTestDataLoad.ADMIN_USER_ID, noItems, etdl.item4, 
 				new Integer(99), null, 
-				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
+				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
 				null, null, null, null, null, null);
 		items.saveTemplateItem( eiTest2, 
 				EvalTestDataLoad.ADMIN_USER_ID);
@@ -788,7 +788,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 			items.saveTemplateItem( new EvalTemplateItem( new Date(), 
 					EvalTestDataLoad.MAINT_USER_ID, etdl.templateUnused, null, 
 					new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
-					EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
+					EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
 					null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null, null),
 				EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");
@@ -801,7 +801,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 			items.saveTemplateItem( new EvalTemplateItem( new Date(), 
 					EvalTestDataLoad.MAINT_USER_ID, null, etdl.item3, 
 					new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
-					EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
+					EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
 					null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null, null),
 				EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");
@@ -814,7 +814,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 			items.saveTemplateItem( new EvalTemplateItem( new Date(), 
 					EvalTestDataLoad.MAINT_USER_ID, etdl.templateUnused, etdl.item4, 
 					new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
-					EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
+					EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
 					new Integer(2), EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null, null),
 				EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");
@@ -827,7 +827,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 			items.saveTemplateItem( new EvalTemplateItem( new Date(), 
 					EvalTestDataLoad.MAINT_USER_ID, etdl.templateUnused, etdl.item6, 
 					new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
-					EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
+					EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
 					new Integer(4), EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null, null),
 				EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");
@@ -854,7 +854,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 			items.saveTemplateItem( new EvalTemplateItem( new Date(), 
 					EvalTestDataLoad.MAINT_USER_ID, etdl.templateUnused, etdl.item8, 
 					new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
-					EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
+					EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
 					new Integer(1), EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null, null),
 				EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");

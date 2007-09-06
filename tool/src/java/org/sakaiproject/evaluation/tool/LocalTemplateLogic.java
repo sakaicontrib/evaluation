@@ -164,7 +164,7 @@ public class LocalTemplateLogic {
 
 	public EvalTemplateItem newTemplateItem() {
 		String level = EvalConstants.HIERARCHY_LEVEL_TOP;
-		String nodeId = EvalConstants.HIERARCHY_NODE_ID_TOP;
+		String nodeId = EvalConstants.HIERARCHY_NODE_ID_NONE;
 
 		// TODO - this should respect the current level the user is at
 

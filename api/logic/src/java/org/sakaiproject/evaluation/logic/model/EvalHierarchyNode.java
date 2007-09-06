@@ -20,10 +20,6 @@ public class EvalHierarchyNode {
     */
    public String id;
    /**
-    * The assigned unique id for the hierarchy this node is in
-    */
-   public String hierarchyId;
-   /**
     * the title of this node
     */
    public String title;
@@ -31,11 +27,6 @@ public class EvalHierarchyNode {
     * the description for this node 
     */
    public String description;
-   /**
-    * the permissions token for the associated node, 
-    * can be looked up in the permissions token key generator service
-    */
-   public String permToken;
    /**
     * a set of all direct parents for this node,
     * the ids of parent nodes that touch this node directly
@@ -62,6 +53,15 @@ public class EvalHierarchyNode {
     */
    public EvalHierarchyNode() {}
 
+   /**
+    * Convenience constructor for testing
+    */
+   public EvalHierarchyNode(String id, String title, String description) {
+      this.id = id;
+      this.title = title;
+      this.description = description;
+   }
+
 
    /*
     * overrides for various internal methods
@@ -75,8 +75,7 @@ public class EvalHierarchyNode {
          EvalHierarchyNode castObj = (EvalHierarchyNode) obj;
          if (null == this.id || null == castObj.id) return false;
          else return (
-               this.id.equals(castObj.id) &&
-               this.hierarchyId.equals(castObj.hierarchyId)
+               this.id.equals(castObj.id)
          );
       }
    }
@@ -84,13 +83,13 @@ public class EvalHierarchyNode {
    @Override
    public int hashCode() {
       if (null == this.id) return super.hashCode();
-      String hashStr = this.getClass().getName() + ":" + this.id.hashCode() + ":" + this.hierarchyId.hashCode();
+      String hashStr = this.getClass().getName() + ":" + this.id.hashCode();
       return hashStr.hashCode();
    }
 
    @Override
    public String toString() {
-      return "id:" + this.id + ";hierachyId:" + this.hierarchyId + ";parents:" + this.parentNodeIds.size() + ";children:" + this.childNodeIds.size();
+      return "id:" + this.id + ";title:" + this.title + ";parents:" + this.parentNodeIds.size() + ";children:" + this.childNodeIds.size();
    }
 
 }
