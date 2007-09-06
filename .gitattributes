@@ -87,6 +87,8 @@ impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/entity/TemplateEntity
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvalAssignContextInterceptor.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvaluationInterceptor.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvaluationModificationRegistry.java -text
+impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/providers/DummyEvalHierarchyProviderImpl.java svn_keywords=Date+Revision+Author+HeadURL+Id
+impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/providers/DummyNodeImpl.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalJobLogicImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalScheduledInvocationImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/utils/TextTemplateLogicUtils.java -text
@@ -152,6 +154,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/locators/TemplateItemWBL.java -te
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdminTestEGProviderProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlEvaluationsProducer.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlHierarchyProducer.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlItemsProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlScalesProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlTemplatesProducer.java -text
@@ -167,6 +170,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyBlockProducer.jav
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyEmailProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyEssayProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyHeaderProducer.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyHierarchyNodeProducer.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyItemProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyScaleProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyScaledProducer.java -text
@@ -294,6 +298,7 @@ tool/src/webapp/content/templates/choose_expert_category.html -text
 tool/src/webapp/content/templates/choose_expert_items.html -text
 tool/src/webapp/content/templates/choose_expert_objective.html -text
 tool/src/webapp/content/templates/control_evaluations.html -text
+tool/src/webapp/content/templates/control_hierarchy.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/templates/control_items.html -text
 tool/src/webapp/content/templates/control_scales.html -text
 tool/src/webapp/content/templates/control_templates.html -text
@@ -305,6 +310,7 @@ tool/src/webapp/content/templates/modify_block.html -text
 tool/src/webapp/content/templates/modify_email.html -text
 tool/src/webapp/content/templates/modify_essay.html -text
 tool/src/webapp/content/templates/modify_header.html -text
+tool/src/webapp/content/templates/modify_hierarchy_node.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/templates/modify_item.html -text
 tool/src/webapp/content/templates/modify_scale.html -text
 tool/src/webapp/content/templates/modify_scaled.html -text

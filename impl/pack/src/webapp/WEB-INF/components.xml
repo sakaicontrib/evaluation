@@ -165,5 +165,9 @@
 
 	<!-- Bring in any sakai entity providers -->
 	<import resource="entity-providers.xml" />
+	
+	<!-- Dummy Hierarchy Provider -->
+	<bean id="org.sakaiproject.evaluation.logic.providers.EvalHierarchyProvider" init-method="init" 
+		class="org.sakaiproject.evaluation.logic.impl.providers.DummyEvalHierarchyProviderImpl"/>
 
 </beans>
