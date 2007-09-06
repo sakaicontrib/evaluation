@@ -6,7 +6,7 @@ package org.sakaiproject.evaluation.logic.externals;
 
 import java.util.Set;
 
-import org.sakaiproject.evaluation.logic.model.HierarchyNode;
+import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.logic.providers.EvalHierarchyProvider;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
@@ -25,7 +25,7 @@ public interface ExternalHierarchyLogic extends EvalHierarchyProvider {
     * @param parentNodeId the unique id for the parent of this node, can be null if this is the root or a top level node
     * @return the object representing the newly added node
     */
-   public HierarchyNode addNode(String parentNodeId);
+   public EvalHierarchyNode addNode(String parentNodeId);
 
    /**
     * Remove a node from the hierarchy if it is possible,
@@ -34,8 +34,9 @@ public interface ExternalHierarchyLogic extends EvalHierarchyProvider {
     * exception occurs if these rules are violated
     * 
     * @param nodeId a unique id for a hierarchy node
+    * @return the object representing the parent of the removed node
     */
-   public void removeNode(String nodeId);
+   public EvalHierarchyNode removeNode(String nodeId);
 
    /**
     * Save meta data on a node, this has to be done separately from creating a node
@@ -45,7 +46,7 @@ public interface ExternalHierarchyLogic extends EvalHierarchyProvider {
     * @param description a description for this node
     * @return the object representing the updated node
     */
-   public HierarchyNode updateNodeData(String nodeId, String title, String description);
+   public EvalHierarchyNode updateNodeData(String nodeId, String title, String description);
 
 
    /**

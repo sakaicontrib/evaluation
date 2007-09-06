@@ -13,7 +13,7 @@ import java.util.Set;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class HierarchyNode {
+public class EvalHierarchyNode {
 
    /**
     * The unique id for this hierarchy node
@@ -60,7 +60,7 @@ public class HierarchyNode {
    /**
     * Empty constructor
     */
-   public HierarchyNode() {}
+   public EvalHierarchyNode() {}
 
 
    /*
@@ -70,9 +70,9 @@ public class HierarchyNode {
    @Override
    public boolean equals(Object obj) {
       if (null == obj) return false;
-      if (!(obj instanceof HierarchyNode)) return false;
+      if (!(obj instanceof EvalHierarchyNode)) return false;
       else {
-         HierarchyNode castObj = (HierarchyNode) obj;
+         EvalHierarchyNode castObj = (EvalHierarchyNode) obj;
          if (null == this.id || null == castObj.id) return false;
          else return (
                this.id.equals(castObj.id) &&

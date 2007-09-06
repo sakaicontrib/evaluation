@@ -26,7 +26,7 @@ api/logic/src/java/org/sakaiproject/evaluation/logic/externals/ExternalEvalGroup
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/ExternalHierarchyLogic.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/ExternalUsers.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/model/EvalGroup.java -text
-api/logic/src/java/org/sakaiproject/evaluation/logic/model/HierarchyNode.java -text
+api/logic/src/java/org/sakaiproject/evaluation/logic/model/EvalHierarchyNode.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/providers/EvalGroupsProvider.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/providers/EvalHierarchyProvider.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/utils/ArrayUtils.java -text
@@ -81,6 +81,7 @@ impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalResponsesLogicImp
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalScalesLogicImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalSettingsImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalTemplatesLogicImpl.java -text
+impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/ExternalHierarchyLogicImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/entity/AssignGroupEntityProviderImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/entity/EvalCategoryEntityProviderImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/entity/EvaluationEntityProviderImpl.java -text

@@ -49,5 +49,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/util-util"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/jobscheduler"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/entity-broker"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/hierarchy"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
