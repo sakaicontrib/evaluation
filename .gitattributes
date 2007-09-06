@@ -89,8 +89,6 @@ impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/entity/TemplateEntity
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvalAssignContextInterceptor.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvaluationInterceptor.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvaluationModificationRegistry.java -text
-impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/providers/DummyEvalHierarchyProviderImpl.java svn_keywords=Date+Revision+Author+HeadURL+Id
-impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/providers/DummyNodeImpl.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalJobLogicImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalScheduledInvocationImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/utils/TextTemplateLogicUtils.java -text
