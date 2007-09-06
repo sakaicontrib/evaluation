@@ -17,6 +17,7 @@
 				<value>org.sakaiproject.evaluation.model.EvalConfig</value>
 				<value>org.sakaiproject.evaluation.model.EvalEmailTemplate</value>
 				<value>org.sakaiproject.evaluation.model.EvalEvaluation</value>
+                <value>org.sakaiproject.evaluation.model.EvalGroupNodes</value>
 				<value>org.sakaiproject.evaluation.model.EvalItem</value>
 				<value>org.sakaiproject.evaluation.model.EvalItemGroup</value>
 				<value>org.sakaiproject.evaluation.model.EvalResponse</value>

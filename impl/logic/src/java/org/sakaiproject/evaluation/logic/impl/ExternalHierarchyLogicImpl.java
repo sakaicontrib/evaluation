@@ -122,12 +122,19 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
          throw new IllegalArgumentException("Invalid node id, this node does not exist: " + nodeId);
       }
       EvalGroupNodes egn = (EvalGroupNodes) dao.findById(EvalGroupNodes.class, nodeId);
-      if (egn == null) {
-         egn = new EvalGroupNodes(new Date(), nodeId);
+      if (evalGroupIds == null || evalGroupIds.isEmpty()) {
+         if (egn != null) {
+            // clean up the object if we are removing all the attached eval groups
+            dao.delete(egn);
+         }
+      } else {
+         if (egn == null) {
+            egn = new EvalGroupNodes(new Date(), nodeId);
+         }
+         String[] evalGroups = evalGroupIds.toArray(new String[] {});
+         egn.setEvalGroups(evalGroups);
+         dao.save(egn);         
       }
-      String[] evalGroups = evalGroupIds.toArray(new String[] {});
-      egn.setEvalGroups(evalGroups);
-      dao.save(egn);
    }
 
    public Set<String> getEvalGroupsForNode(String nodeId) {
