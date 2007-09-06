@@ -436,6 +436,7 @@
 	<!-- Views for Controlling and Administering the Hierarchy -->
 	<bean class="org.sakaiproject.evaluation.tool.producers.ControlHierarchyProducer">
 		<property name="external" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic"/>
+		<property name="evalHierarchyProvider" ref="org.sakaiproject.evaluation.logic.providers.EvalHierarchyProvider" />
 	</bean>
 	
 	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeProducer" />
