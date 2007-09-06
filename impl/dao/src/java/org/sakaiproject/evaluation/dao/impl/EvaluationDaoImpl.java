@@ -255,6 +255,8 @@ implements EvaluationDao {
       String hql = "select answer from EvalAnswer as answer join answer.response as ansswerresp " +
       "where ansswerresp.evaluation.id = :evalId " + groupsHQL +
       "and answer.item.id = :itemId order by ansswerresp.id";
+      // TODO optimize this once we are using a newer version of hibernate that supports "with"
+
       // replaced with a join
 //    String hql = "from EvalAnswer as answer where answer.item.id = :itemId and answer.response.id in " +
 //    "(select response.id from EvalResponse as response where response.evaluation.id = :evalId " + 
@@ -360,6 +362,47 @@ implements EvaluationDao {
 //    }
 
       List<?> things = executeHqlQuery(hql, params, 0, 0);
+      List<EvalTemplateItem> results = new ArrayList<EvalTemplateItem>();
+      for (Object object : things) {
+         results.add( (EvalTemplateItem) object );
+      }
+      return results;
+   }
+
+
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.dao.EvaluationDao#getTemplateItemsByEvaluation(java.lang.Long, java.lang.String[], java.lang.String[], java.lang.String[])
+    */
+   public List<EvalTemplateItem> getTemplateItemsByEvaluation(Long evalId, String[] nodeIds, String[] instructorIds, String[] groupIds) {
+      Map<String, Object> params = new HashMap<String, Object>();
+      params.put("evalId", evalId);
+      params.put("hierarchyLevel1", EvalConstants.HIERARCHY_LEVEL_TOP);
+      StringBuilder hql = new StringBuilder(); 
+      hql.append("from EvalTemplateItem ti inner join eval where eval.id = :evalId " +
+            "and (ti.template.id = eval.template.id or ti.template.id = eval.addedTemplate.id) " +
+            "and (ti.hierarchyLevel = :hierarchyLevel1 ");
+
+      if (nodeIds != null && nodeIds.length > 0) {
+         hql.append(" or (ti.hierarchyLevel = :hierarchyLevel2 and ti.hierarchyNodeId in (:nodeIds) ) ");
+         params.put("hierarchyLevel2", EvalConstants.HIERARCHY_LEVEL_TOP);
+         params.put("nodeIds", nodeIds);
+      }
+
+      if (instructorIds != null && instructorIds.length > 0) {
+         hql.append(" or (ti.hierarchyLevel = :hierarchyLevelInst and ti.hierarchyNodeId in (:instructorIds) ) ");
+         params.put("hierarchyLevelInst", EvalConstants.HIERARCHY_LEVEL_INSTRUCTOR);
+         params.put("instructorIds", instructorIds);
+      }
+
+      if (groupIds != null && groupIds.length > 0) {
+         hql.append(" or (ti.hierarchyLevel = :hierarchyLevelGroup and ti.hierarchyNodeId in (:groupIds) ) ");
+         params.put("hierarchyLevelGroup", EvalConstants.HIERARCHY_LEVEL_GROUP);
+         params.put("groupIds", groupIds);
+      }
+
+      hql.append(") order by ti.displayOrder");
+
+      List<?> things = executeHqlQuery(hql.toString(), params, 0, 0);
       List<EvalTemplateItem> results = new ArrayList<EvalTemplateItem>();
       for (Object object : things) {
          results.add( (EvalTemplateItem) object );
