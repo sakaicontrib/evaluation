@@ -41,6 +41,7 @@ api/model/src/java/org/sakaiproject/evaluation/model/EvalAssignGroup.java -text
 api/model/src/java/org/sakaiproject/evaluation/model/EvalConfig.java -text
 api/model/src/java/org/sakaiproject/evaluation/model/EvalEmailTemplate.java -text
 api/model/src/java/org/sakaiproject/evaluation/model/EvalEvaluation.java -text
+api/model/src/java/org/sakaiproject/evaluation/model/EvalGroupNodes.java -text
 api/model/src/java/org/sakaiproject/evaluation/model/EvalItem.java -text
 api/model/src/java/org/sakaiproject/evaluation/model/EvalItemGroup.java -text
 api/model/src/java/org/sakaiproject/evaluation/model/EvalResponse.java -text
@@ -63,6 +64,7 @@ impl/hbm/src/java/org/sakaiproject/evaluation/hbm/EvalAssignGroup.hbm.xml -text
 impl/hbm/src/java/org/sakaiproject/evaluation/hbm/EvalConfig.hbm.xml -text
 impl/hbm/src/java/org/sakaiproject/evaluation/hbm/EvalEmailTemplate.hbm.xml -text
 impl/hbm/src/java/org/sakaiproject/evaluation/hbm/EvalEvaluation.hbm.xml -text
+impl/hbm/src/java/org/sakaiproject/evaluation/hbm/EvalGroupNodes.hbm.xml -text
 impl/hbm/src/java/org/sakaiproject/evaluation/hbm/EvalItem.hbm.xml -text
 impl/hbm/src/java/org/sakaiproject/evaluation/hbm/EvalItemGroup.hbm.xml -text
 impl/hbm/src/java/org/sakaiproject/evaluation/hbm/EvalResponse.hbm.xml -text
