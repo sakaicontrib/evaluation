@@ -2,14 +2,13 @@
  * HierarchyNode.java - created by aaronz@vt.edu
  *****************************************************************************/
 
-package org.sakaiproject.evaluation.logic.model;
+package org.sakaiproject.hierarchy.model;
 
 import java.util.Set;
 
 /**
  * This pea represents a node in a hierarchy 
- * (in academics a department or college would probably be represented by a node),
- * this is basically a copy of the node from hierarchy
+ * (in academics a department or college would probably be represented by a node)
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
