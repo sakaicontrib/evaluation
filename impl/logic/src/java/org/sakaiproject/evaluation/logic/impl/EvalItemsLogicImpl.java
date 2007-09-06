@@ -78,6 +78,21 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 		log.debug("itemId:" + itemId);
 		return (EvalItem) dao.findById(EvalItem.class, itemId);
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalItemsLogic#getItemByEid(java.lang.String)
+	 */
+	public EvalItem getItemByEid(String eid) {
+		EvalItem evalItem = null;
+		if(eid != null) {
+			log.debug("eid: " + eid);
+			List evalItems = (List)dao.findByProperties(EvalItem.class, new String[] {"eid"}, new Object[] {eid});
+			if(evalItems != null && evalItems.size() == 1)
+				evalItem = (EvalItem)evalItems.get(0);
+		}
+		return evalItem;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalItemsLogic#saveItem(org.sakaiproject.evaluation.model.EvalItem, java.lang.String)
@@ -315,6 +330,21 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 	public EvalTemplateItem getTemplateItemById(Long templateItemId) {
 		log.debug("templateItemId:" + templateItemId);
 		return (EvalTemplateItem) dao.findById(EvalTemplateItem.class, templateItemId);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalItemsLogic#getTemplateItemByEid(java.lang.String)
+	 */
+	public EvalTemplateItem getTemplateItemByEid(String eid) {
+		log.debug("templateItemEid:" + eid);
+		EvalTemplateItem evalTemplateItem = null;
+		if(eid != null) {
+			List evalTemplateItems = (List)dao.findByProperties(EvalTemplateItem.class, new String[] {"eid"}, new Object[] {eid});
+			if(evalTemplateItems != null && evalTemplateItems.size() == 1)
+				evalTemplateItem = (EvalTemplateItem)evalTemplateItems.get(0);
+		}
+		return evalTemplateItem;
 	}
 
 	/* (non-Javadoc)

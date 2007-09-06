@@ -97,6 +97,7 @@ public class EvalTestDataLoad {
 	public final static String EMAIL_MESSAGE = "This is a big long email message";
 	
 	public final static Long INVALID_LONG_ID = Long.valueOf(99999999);
+	public final static String INVALID_STRING_EID = "XXXXXXX_XXXXXXXX";
 	public final static String INVALID_CONTEXT = "XXXXXXXXXX";
 	public final static String INVALID_CONSTANT_STRING = "XXXXXXX_XXXXXXXX";
 	public final static int INVALID_CONSTANT_INT = -10;
@@ -126,6 +127,12 @@ public class EvalTestDataLoad {
 	 * Scale not used in any items, UNLOCKED, ADMIN_USER_ID owner, private, EXPERT
 	 */
 	public EvalScale scale4;
+	/**
+	 * Scale used with imported items, UNLOCKED, ADMIN_USER_ID owner, public
+	 */
+	public EvalScale scaleEid;
+
+
 
 	// ITEMS
 	/**
@@ -176,6 +183,21 @@ public class EvalTestDataLoad {
 	 * Item that is not used in any template, scaled, unlocked, MAINT_USER_ID owns, private
 	 */
 	public EvalItem item11;
+	
+	/**
+	 * Item that is used in template with eid not null, scaled, unlocked, ADMIN_USER_ID owns, public
+	 */
+	public EvalItem item1Eid;
+
+	/**
+	 * Item that is used in template with eid not null, scaled, unlocked, ADMIN_USER_ID owns, public
+	 */
+	public EvalItem item2Eid;
+
+	/**
+	 * Item that is used in template with eid not null, scaled, unlocked, ADMIN_USER_ID owns, public
+	 */
+	public EvalItem item3Eid;
 
 	// TEMPLATE ITEMS
 	public EvalTemplateItem templateItem1User;
@@ -194,6 +216,9 @@ public class EvalTestDataLoad {
 	public EvalTemplateItem templateItem10AC1;
 	public EvalTemplateItem templateItem10AC2;
 	public EvalTemplateItem templateItem10AC3;
+	public EvalTemplateItem templateItem1Eid;
+	public EvalTemplateItem templateItem2Eid;
+	public EvalTemplateItem templateItem3Eid;
 
 
 	// TEMPLATES
@@ -246,6 +271,12 @@ public class EvalTestDataLoad {
 	 * 2 group items {@link #templateItem10AC2} and {@link #templateItem10AC3}
 	 */
 	public EvalTemplate templateAdminComplex;
+	
+	/**
+	 * Template used by admin, public, ADMIN_USER_ID owns, unlocked
+	 * <br/>Uses {@link #item1Eid} and {@link #item2Eid} and {@link #item3Eid}
+	 */
+	public EvalTemplate templateEid;
 
 	// EVALUATIONS
 	/**
@@ -430,6 +461,13 @@ public class EvalTestDataLoad {
 				EvalConstants.SHARING_PRIVATE, EXPERT, 
 				"description", 
 				EvalConstants.SCALE_IDEAL_NONE, options3, UNLOCKED);
+		
+		String[] optionsEid = {"Strongly Agree", "Agree", "Neutral", "Disagree", "Strongly Disagree"};
+		scaleEid = new EvalScale(new Date(), ADMIN_USER_ID, "Scale Eid",
+				EvalConstants.SHARING_PUBLIC, NOT_EXPERT,
+				"description",
+				EvalConstants.SCALE_IDEAL_LOW, optionsEid, UNLOCKED);
+		scaleEid.setEid("test-scale-1");
 
 		item1 = new EvalItem(new Date(), ADMIN_USER_ID, ITEM_TEXT, 
 				EvalConstants.SHARING_PUBLIC, EvalConstants.ITEM_TYPE_SCALED, EXPERT);
@@ -490,6 +528,30 @@ public class EvalTestDataLoad {
 		item11.setScaleDisplaySetting( EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL );
 		item11.setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
 		item11.setLocked(UNLOCKED);
+		
+		item1Eid = new EvalItem(new Date(), ADMIN_USER_ID, ITEM_TEXT, 
+				EvalConstants.SHARING_PUBLIC, EvalConstants.ITEM_TYPE_SCALED, NOT_EXPERT);
+		item1Eid.setScale(scaleEid);
+		item1Eid.setScaleDisplaySetting( EvalConstants.ITEM_SCALE_DISPLAY_STEPPED );
+		item1Eid.setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
+		item1Eid.setLocked(UNLOCKED);
+		item1Eid.setEid("test-item-1");
+
+		item2Eid = new EvalItem(new Date(), ADMIN_USER_ID, ITEM_TEXT, 
+				EvalConstants.SHARING_PUBLIC, EvalConstants.ITEM_TYPE_SCALED, NOT_EXPERT);
+		item2Eid.setScale(scaleEid);
+		item2Eid.setScaleDisplaySetting( EvalConstants.ITEM_SCALE_DISPLAY_STEPPED );
+		item2Eid.setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
+		item2Eid.setLocked(UNLOCKED);
+		item2Eid.setEid("test-item-2");
+
+		item3Eid = new EvalItem(new Date(), ADMIN_USER_ID, ITEM_TEXT, 
+				EvalConstants.SHARING_PUBLIC, EvalConstants.ITEM_TYPE_SCALED, NOT_EXPERT);
+		item3Eid.setScale(scaleEid);
+		item3Eid.setScaleDisplaySetting( EvalConstants.ITEM_SCALE_DISPLAY_STEPPED );
+		item3Eid.setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
+		item3Eid.setLocked(UNLOCKED);
+		item3Eid.setEid("test-item-3");
 
 		//templateShared = new EvalTemplate(new Date(), ADMIN_USER_ID, "Template shared", EvalConstants.SHARING_SHARED, UNLOCKED, NOT_EXPERT);
 		//templateVisible = new EvalTemplate(new Date(), ADMIN_USER_ID, "Template visible", EvalConstants.SHARING_VISIBLE, UNLOCKED, NOT_EXPERT);
@@ -529,6 +591,12 @@ public class EvalTestDataLoad {
 				EvalConstants.TEMPLATE_TYPE_ADDED, "Template admin added", 
 				"description", EvalConstants.SHARING_PRIVATE, NOT_EXPERT, 
 				"expert desc", null, UNLOCKED);
+		
+		templateEid = new EvalTemplate(new Date(), ADMIN_USER_ID, 
+				EvalConstants.TEMPLATE_TYPE_STANDARD, "Template Eid", 
+				"description", EvalConstants.SHARING_PUBLIC, NOT_EXPERT,
+				"expert desc", null, UNLOCKED);
+		templateEid.setEid("test-template-1");
 
 		// assign items to templates
 		templateItem1User = new EvalTemplateItem( new Date(), USER_ID, 
@@ -597,6 +665,24 @@ public class EvalTestDataLoad {
 				templateAdminComplex, item10, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
 				EvalConstants.HIERARCHY_LEVEL_GROUP, SITE2_REF,
 				new Integer(2), null, Boolean.FALSE, null, null, null);
+		
+		templateItem1Eid = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
+				templateEid, item1Eid, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
+				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
+				null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, null, null, null);
+		templateItem1Eid.setEid("test-templateitem-1");
+
+		templateItem2Eid = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
+				templateEid, item2Eid, new Integer(2), EvalConstants.ITEM_CATEGORY_COURSE,
+				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
+				null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, null, null, null);
+		templateItem2Eid.setEid("test-templateitem-2");
+
+		templateItem3Eid = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
+				templateEid, item3Eid, new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE,
+				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
+				null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, null, null, null);
+		templateItem3Eid.setEid("test-templateitem-3");
 
 		// associate the templates with the link
 		templateAdmin.setTemplateItems( new HashSet() );
@@ -630,6 +716,12 @@ public class EvalTestDataLoad {
 		templateAdminComplex.getTemplateItems().add( templateItem10AC1 );
 		templateAdminComplex.getTemplateItems().add( templateItem10AC2 );
 		templateAdminComplex.getTemplateItems().add( templateItem10AC3 );
+		
+		
+		templateEid.setTemplateItems( new HashSet() );
+		templateEid.getTemplateItems().add( templateItem1Eid );
+		templateEid.getTemplateItems().add( templateItem2Eid );
+		templateEid.getTemplateItems().add( templateItem3Eid);
 
 		// associate the items with the link
 		item1.setTemplateItems( new HashSet() );
@@ -663,6 +755,16 @@ public class EvalTestDataLoad {
 		item10.getTemplateItems().add( templateItem10AC1 );
 		item10.getTemplateItems().add( templateItem10AC2 );
 		item10.getTemplateItems().add( templateItem10AC3 );
+		
+		
+		item1Eid.setTemplateItems( new HashSet() );
+		item1Eid.getTemplateItems().add( templateItem1Eid );
+
+		item2Eid.setTemplateItems( new HashSet() );
+		item2Eid.getTemplateItems().add( templateItem2Eid );
+
+		item3Eid.setTemplateItems( new HashSet() );
+		item3Eid.getTemplateItems().add( templateItem3Eid);
 
 		// init the evaluation times
 		Calendar calendar = GregorianCalendar.getInstance();
@@ -846,6 +948,8 @@ public class EvalTestDataLoad {
 		dao.save(scale2);
 		dao.save(scale3);
 		dao.save(scale4);
+		
+		dao.save(scaleEid);
 
 		//dao.save(templateShared);
 		//dao.save(templateVisible);
@@ -858,6 +962,8 @@ public class EvalTestDataLoad {
 		dao.save(templateUserUnused);
 		dao.save(templateAdminBlock);
 		dao.save(templateAdminComplex);
+		
+		dao.save(templateEid);
 
 		dao.save(item1);
 		dao.save(item2);
@@ -870,6 +976,10 @@ public class EvalTestDataLoad {
 		dao.save(item9);
 		dao.save(item10);
 		dao.save(item11);
+		
+		dao.save(item1Eid);
+		dao.save(item2Eid);
+		dao.save(item3Eid);
 
 		dao.save(templateItem1User);
 		dao.save(templateItem1P);
@@ -882,6 +992,11 @@ public class EvalTestDataLoad {
 		dao.save(templateItem5User);
 		dao.save(templateItem6UU);
 		dao.save(templateItem9B);
+		
+		dao.save(templateItem1Eid);
+		dao.save(templateItem2Eid);
+		dao.save(templateItem3Eid);
+		
 		// set block id
 		templateItem2B.setBlockId( templateItem9B.getId() );
 		dao.save(templateItem2B);

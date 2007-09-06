@@ -41,6 +41,17 @@ public interface EvalItemsLogic {
 	 * @return an {@link EvalItem} object or null if not found
 	 */
 	public EvalItem getItemById(Long itemId);
+	
+	/**
+	 * Get an item by its external id<br/>
+	 * An item represents a reusable question item in the system<br/>
+	 * Note: An item eid is null except when the item was imported
+	 * from an external system.
+	 * 
+	 * @param eid the id of an EvalItem object in an external system
+	 * @return an {@link EvalItem} object or null if not found
+	 */
+	public EvalItem getItemByEid(String eid);
 
 	/**
 	 * Save or update the item only if it is not locked, 
@@ -112,6 +123,16 @@ public interface EvalItemsLogic {
 	 * @return an {@link EvalTemplateItem} object or null if not found
 	 */
 	public EvalTemplateItem getTemplateItemById(Long templateItemId);
+	
+	/**
+	 * Get a template item by its external id<br/>
+	 * Note: A template item eid is null except when the template item was imported
+	 * from an external system.
+	 * 
+	 * @param eid the id of an EvalTemplateItem object in an external system
+	 * @return an {@link EvalTemplateItem} object or null if not found
+	 */
+	public EvalTemplateItem getTemplateItemByEid(String eid);
 
 	/**
 	 * Save a templateItem to create a link between an item and a template or

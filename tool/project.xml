@@ -62,6 +62,12 @@
 			<artifactId>sakai-authz-api</artifactId>
 			<version>${sakai.version}</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>sakaiproject</groupId>
+			<artifactId>sakai-content-api</artifactId>
+			<version>${sakai.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>sakaiproject</groupId>
@@ -116,6 +122,13 @@
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
+		</dependency>
+		
+		<!-- Quartz dependencies -->
+		<dependency>
+			<groupId>quartz</groupId>
+			<artifactId>quartz</artifactId>
+			<version>1.5.2</version>
 		</dependency>
 
 		<!-- generic DAO -->

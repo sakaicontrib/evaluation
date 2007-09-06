@@ -20,6 +20,9 @@ api/logic/src/java/org/sakaiproject/evaluation/logic/entity/AssignGroupEntityPro
 api/logic/src/java/org/sakaiproject/evaluation/logic/entity/EvalCategoryEntityProvider.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/entity/EvaluationEntityProvider.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/entity/TemplateEntityProvider.java -text
+api/logic/src/java/org/sakaiproject/evaluation/logic/externals/EvalImport.java -text
+api/logic/src/java/org/sakaiproject/evaluation/logic/externals/EvalImportJob.java -text
+api/logic/src/java/org/sakaiproject/evaluation/logic/externals/EvalImportLogic.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/EvalJobLogic.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/EvalScheduledInvocation.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/ExternalEvalGroups.java -text
@@ -90,6 +93,9 @@ impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/entity/TemplateEntity
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvalAssignContextInterceptor.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvaluationInterceptor.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvaluationModificationRegistry.java -text
+impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalImportImpl.java -text
+impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalImportJobImpl.java -text
+impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalImportLogicImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalJobLogicImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalScheduledInvocationImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/utils/TextTemplateLogicUtils.java -text
@@ -129,6 +135,7 @@ tool/project.xml -text
 tool/src/java/org/sakaiproject/evaluation/tool/EvaluationBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/EvaluationConstant.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ExpertItemsBean.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/ImportBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ItemsBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/LocalResponsesLogic.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/LocalTemplateLogic.java -text
@@ -137,7 +144,6 @@ tool/src/java/org/sakaiproject/evaluation/tool/ReportsBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ScaleBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/TakeEvalBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/TemplateBBean.java -text
-tool/src/java/org/sakaiproject/evaluation/tool/bundle/messages.properties -text
 tool/src/java/org/sakaiproject/evaluation/tool/bundle/messages_en.properties -text
 tool/src/java/org/sakaiproject/evaluation/tool/inferrers/EvalCategoryVPInferrer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/inferrers/EvaluationVPInferrer.java -text
@@ -156,6 +162,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/producers/AdminTestEGProviderProd
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlEvaluationsProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlHierarchyProducer.java svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlImportProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlItemsProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlScalesProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlTemplatesProducer.java -text
@@ -167,6 +174,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/producers/ExistingItemsProducer.j
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ExpertCategoryProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ExpertItemsProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ExpertObjectiveProducer.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/producers/ImportErrorProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyBlockProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyEmailProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyEssayProducer.java -text
@@ -218,7 +226,6 @@ tool/src/java/org/sakaiproject/evaluation/tool/wrapper/EvalActionResultIntercept
 tool/src/java/org/sakaiproject/evaluation/tool/wrapper/ModelAccessWrapperInvoker.java -text
 tool/src/webapp/WEB-INF/applicationContext.xml -text
 tool/src/webapp/WEB-INF/classes/log4j.properties -text
-tool/src/webapp/WEB-INF/requestContext.xml -text
 tool/src/webapp/WEB-INF/sitemap.xml -text
 tool/src/webapp/WEB-INF/web.xml -text
 tool/src/webapp/component-templates/Messages.html -text
@@ -300,6 +307,7 @@ tool/src/webapp/content/templates/choose_expert_items.html -text
 tool/src/webapp/content/templates/choose_expert_objective.html -text
 tool/src/webapp/content/templates/control_evaluations.html -text
 tool/src/webapp/content/templates/control_hierarchy.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/webapp/content/templates/control_import.html -text
 tool/src/webapp/content/templates/control_items.html -text
 tool/src/webapp/content/templates/control_scales.html -text
 tool/src/webapp/content/templates/control_templates.html -text
@@ -307,6 +315,7 @@ tool/src/webapp/content/templates/evaluation_assign.html -text
 tool/src/webapp/content/templates/evaluation_assign_confirm.html -text
 tool/src/webapp/content/templates/evaluation_settings.html -text
 tool/src/webapp/content/templates/evaluation_start.html -text
+tool/src/webapp/content/templates/import_error.html -text
 tool/src/webapp/content/templates/modify_block.html -text
 tool/src/webapp/content/templates/modify_email.html -text
 tool/src/webapp/content/templates/modify_essay.html -text

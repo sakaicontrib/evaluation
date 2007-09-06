@@ -34,6 +34,16 @@ public interface EvalTemplatesLogic {
 	 * @return the template object or null if not found
 	 */
 	public EvalTemplate getTemplateById(Long templateId);
+	
+	/**
+	 * Get the template associated with this external id<br/>
+	 * Note: A template eid is null except when the template
+	 * was imported from an external system.
+	 * 
+	 * @param eid the id of a template in an external system
+	 * @return the template object or null if not found
+	 */
+	public EvalTemplate getTemplateByEid(String eid);
 
 	/**
 	 * Save or update the template only if it is not locked<br/>
