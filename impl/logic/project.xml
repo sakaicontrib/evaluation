@@ -45,19 +45,12 @@
             <artifactId>sakai-evaluation-test</artifactId>
             <version>${sakai.version}</version>
         </dependency>
-        
-        <dependency>
-            <groupId>sakaiproject</groupId>
-            <artifactId>sakai-scheduler-api</artifactId>
-            <version>${sakai.version}</version>
-        </dependency>
-        
 
         <!-- generic DAO -->
         <dependency>
                 <groupId>generic-dao</groupId>
                 <artifactId>generic-dao</artifactId>
-                <version>0.9</version>
+                <version>0.91</version>
         </dependency>
 
         <!-- Spring and Hibernate dependencies. -->
@@ -138,6 +131,18 @@
 			<artifactId>sakai-entitybroker-api</artifactId>
 			<version>${sakai.version}</version>
 		</dependency>
+
+        <dependency>
+            <groupId>sakaiproject</groupId>
+            <artifactId>sakai-hierarchy-api</artifactId>
+            <version>${sakai.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>sakaiproject</groupId>
+            <artifactId>sakai-scheduler-api</artifactId>
+            <version>${sakai.version}</version>
+        </dependency>
 
 		<dependency>
 			<groupId>sakaiproject</groupId>

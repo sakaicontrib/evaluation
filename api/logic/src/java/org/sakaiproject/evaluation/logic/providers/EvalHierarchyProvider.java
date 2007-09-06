@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
-import org.sakaiproject.evaluation.logic.model.HierarchyNode;
+import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 /**
@@ -53,17 +53,17 @@ public interface EvalHierarchyProvider {
    /**
     * Get the hierarchy root node
     * 
-    * @return the {@link HierarchyNode} representing the root of the hierarchy
+    * @return the {@link EvalHierarchyNode} representing the root of the hierarchy
     */
-   public HierarchyNode getRootLevelNode();
+   public EvalHierarchyNode getRootLevelNode();
 
    /**
     * Get the node object for a specific node id
     * 
     * @param nodeId a unique id for a hierarchy node
-    * @return a {@link HierarchyNode} object or null if none found
+    * @return a {@link EvalHierarchyNode} object or null if none found
     */
-   public HierarchyNode getNodeById(String nodeId);
+   public EvalHierarchyNode getNodeById(String nodeId);
 
    /**
     * Get all children nodes for this node in the hierarchy, 
@@ -73,11 +73,11 @@ public interface EvalHierarchyProvider {
     * @param directOnly if true then only include the nodes 
     * which are directly connected to this node, 
     * else return every node that is a child of this node
-    * @return a Set of {@link HierarchyNode} objects representing 
+    * @return a Set of {@link EvalHierarchyNode} objects representing 
     * all children nodes for the specified parent,
     * empty set if no children found
     */
-   public Set<HierarchyNode> getChildNodes(String nodeId, boolean directOnly);
+   public Set<EvalHierarchyNode> getChildNodes(String nodeId, boolean directOnly);
 
 
    /**
@@ -99,9 +99,9 @@ public interface EvalHierarchyProvider {
     * 
     * @param userId the internal user id (not username)
     * @param hierarchyPermConstant a HIERARCHY_PERM constant from {@link EvalConstants}
-    * @return a Set of {@link HierarchyNode} objects
+    * @return a Set of {@link EvalHierarchyNode} objects
     */
-   public Set<HierarchyNode> getNodesForUserPerm(String userId, String hierarchyPermConstant);
+   public Set<EvalHierarchyNode> getNodesForUserPerm(String userId, String hierarchyPermConstant);
 
    /**
     * Determine if a user has a specific hierarchy permission at a specific hierarchy node,
@@ -121,9 +121,9 @@ public interface EvalHierarchyProvider {
     * the parent node for the given eval group
     *  
     * @param evalGroupId the unique ID of an eval group
-    * @return a List of {@link HierarchyNode} objects (ordered from root to evalgroup)
+    * @return a List of {@link EvalHierarchyNode} objects (ordered from root to evalgroup)
     */
-   public List<HierarchyNode> getNodesAboveEvalGroup(String evalGroupId);
+   public List<EvalHierarchyNode> getNodesAboveEvalGroup(String evalGroupId);
 
    /**
     * Get the set of eval groups beneath a specific hierarchy node, note that this should only
