@@ -131,22 +131,24 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
         l = evaluationDao.getVisibleTemplates(EvalTestDataLoad.USER_ID, 
                 new String[] {EvalConstants.SHARING_PUBLIC}, true);
         Assert.assertNotNull(l);
-        Assert.assertEquals(4, l.size());
+        Assert.assertEquals(5, l.size());
         ids = EvalTestDataLoad.makeIdList(l);
         Assert.assertTrue(ids.contains( etdl.templatePublic.getId() ));
         Assert.assertTrue(ids.contains( etdl.templatePublicUnused.getId() ));
         Assert.assertTrue(ids.contains( etdl.templateUser.getId() ));
         Assert.assertTrue(ids.contains( etdl.templateUserUnused.getId() ));
+        Assert.assertTrue(ids.contains( etdl.templateEid.getId() ));
 
         // all templates visible to maint user
         l = evaluationDao.getVisibleTemplates(EvalTestDataLoad.MAINT_USER_ID,
                 new String[] {EvalConstants.SHARING_PUBLIC}, true);
         Assert.assertNotNull(l);
-        Assert.assertEquals(3, l.size());
+        Assert.assertEquals(4, l.size());
         ids = EvalTestDataLoad.makeIdList(l);
         Assert.assertTrue(ids.contains( etdl.templatePublic.getId() ));
         Assert.assertTrue(ids.contains( etdl.templatePublicUnused.getId() ));
         Assert.assertTrue(ids.contains( etdl.templateUnused.getId() ));
+        Assert.assertTrue(ids.contains( etdl.templateEid.getId() ));
 
         // all templates owned by USER
         l = evaluationDao.getVisibleTemplates(EvalTestDataLoad.USER_ID,
@@ -186,22 +188,23 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
         l = evaluationDao.getVisibleTemplates("", 
                 new String[] {EvalConstants.SHARING_PUBLIC}, true);
         Assert.assertNotNull(l);
-        Assert.assertEquals(2, l.size());
+        Assert.assertEquals(3, l.size());
         ids = EvalTestDataLoad.makeIdList(l);
         Assert.assertTrue(ids.contains( etdl.templatePublic.getId() ));
         Assert.assertTrue(ids.contains( etdl.templatePublicUnused.getId() ));
+        Assert.assertTrue(ids.contains( etdl.templateEid.getId() ));
 
         // all templates (admin would use this)
         l = evaluationDao.getVisibleTemplates(null, 
                 new String[] {EvalConstants.SHARING_PUBLIC, EvalConstants.SHARING_SHARED, EvalConstants.SHARING_VISIBLE}, true);
         Assert.assertNotNull(l);
-        Assert.assertEquals(8, l.size());
+        Assert.assertEquals(9, l.size());
 
         // all non-empty templates (admin would use this)
         l = evaluationDao.getVisibleTemplates(null, 
                 new String[] {EvalConstants.SHARING_PUBLIC, EvalConstants.SHARING_SHARED, EvalConstants.SHARING_VISIBLE}, false);
         Assert.assertNotNull(l);
-        Assert.assertEquals(7, l.size());
+        Assert.assertEquals(8, l.size());
 
         // no templates (no one should do this, it throws an exception)
         l = evaluationDao.getVisibleTemplates("", new String[] {}, true);
@@ -216,12 +219,12 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
         // all templates visible to user
         int count = evaluationDao.countVisibleTemplates(EvalTestDataLoad.USER_ID, 
                 new String[] {EvalConstants.SHARING_PUBLIC}, true);
-        Assert.assertEquals(4, count);
+        Assert.assertEquals(5, count);
 
         // all templates visible to maint user
         count = evaluationDao.countVisibleTemplates(EvalTestDataLoad.MAINT_USER_ID, 
                 new String[] {EvalConstants.SHARING_PUBLIC}, true);
-        Assert.assertEquals(3, count);
+        Assert.assertEquals(4, count);
 
         // all templates owned by USER
         count = evaluationDao.countVisibleTemplates(EvalTestDataLoad.USER_ID, 
@@ -240,17 +243,17 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 
         // all public templates
         count = evaluationDao.countVisibleTemplates("", new String[] {EvalConstants.SHARING_PUBLIC}, true);
-        Assert.assertEquals(2, count);
+        Assert.assertEquals(3, count);
 
         // all templates (admin would use this)
         count = evaluationDao.countVisibleTemplates(null, 
                 new String[] {EvalConstants.SHARING_PUBLIC, EvalConstants.SHARING_SHARED, EvalConstants.SHARING_VISIBLE}, true);
-        Assert.assertEquals(8, count);
+        Assert.assertEquals(9, count);
 
         // all non-empty templates (admin would use this)
         count = evaluationDao.countVisibleTemplates(null, 
                 new String[] {EvalConstants.SHARING_PUBLIC, EvalConstants.SHARING_SHARED, EvalConstants.SHARING_VISIBLE}, false);
-        Assert.assertEquals(7, count);
+        Assert.assertEquals(8, count);
     }
 
     /**

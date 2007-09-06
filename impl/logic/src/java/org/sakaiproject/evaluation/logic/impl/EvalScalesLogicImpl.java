@@ -63,6 +63,21 @@ public class EvalScalesLogicImpl implements EvalScalesLogic {
 		// get the scale by passing in id
 		return (EvalScale) dao.findById(EvalScale.class, scaleId);
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalScalesLogic#getScaleByEid(java.lang.String)
+	 */
+	public EvalScale getScaleByEid(String eid) {
+		log.debug("scale eid: " + eid );
+		EvalScale evalScale = null;
+		if(eid != null) {
+			List evalScales = (List)dao.findByProperties(EvalScale.class, new String[] {"eid"}, new Object[] {eid});
+			if(evalScales != null && evalScales.size() == 1)
+				evalScale = (EvalScale)evalScales.get(0);
+		}
+		return evalScale;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalScalesLogic#saveScale(org.sakaiproject.evaluation.model.EvalScale, java.lang.String)

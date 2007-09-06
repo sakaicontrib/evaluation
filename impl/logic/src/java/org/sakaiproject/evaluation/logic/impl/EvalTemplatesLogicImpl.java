@@ -14,6 +14,7 @@
 
 package org.sakaiproject.evaluation.logic.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -73,6 +74,21 @@ public class EvalTemplatesLogicImpl implements EvalTemplatesLogic {
 		log.debug("templateId: " + templateId);
 		// get the template by id
 		return (EvalTemplate) dao.findById(EvalTemplate.class, templateId);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalTemplatesLogic#getTemplateByEid(java.lang.String)
+	 */
+	public EvalTemplate getTemplateByEid(String eid) {
+		List evalTemplates = new ArrayList();
+		EvalTemplate evalTemplate = null;
+		if(eid != null) {
+			evalTemplates = (List)dao.findByProperties(EvalTemplate.class, new String[] {"eid"}, new Object[] {eid});
+			if(!evalTemplates.isEmpty())
+				evalTemplate = (EvalTemplate)evalTemplates.get(0);
+		}
+		return evalTemplate;
 	}
 
 	/* (non-Javadoc)

@@ -111,10 +111,10 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		// to the templates the way we think it is
 		List ids = null;
 
-		Assert.assertEquals(43, evaluationDao.countAll(EvalItem.class) );
+		Assert.assertEquals(46, evaluationDao.countAll(EvalItem.class) );
 
 		// check the full count of preloaded items
-		Assert.assertEquals(16, evaluationDao.countAll(EvalTemplateItem.class) );
+		Assert.assertEquals(19, evaluationDao.countAll(EvalTemplateItem.class) );
 
 		EvalTemplate template = (EvalTemplate) 
 			evaluationDao.findById(EvalTemplate.class, etdl.templateAdmin.getId());
@@ -171,6 +171,34 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 
 		// test get eval by invalid id returns null
 		item = items.getItemById( EvalTestDataLoad.INVALID_LONG_ID );
+		Assert.assertNull(item);
+	}
+	
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl#getItemByEid(java.lang.String)}.
+	 */
+	public void testGetItemByEid() {
+		EvalItem item = null;
+
+		// test getting valid items having eid set
+		item = items.getItemByEid( etdl.item1Eid.getEid() );
+		Assert.assertNotNull(item);
+		Assert.assertEquals(etdl.item1Eid.getEid(), item.getEid());
+		
+		item = items.getItemByEid( etdl.item2Eid.getEid() );
+		Assert.assertNotNull(item);
+		Assert.assertEquals(etdl.item2Eid.getEid(), item.getEid());
+		
+		item = items.getItemByEid( etdl.item3Eid.getEid() );
+		Assert.assertNotNull(item);
+		Assert.assertEquals(etdl.item3Eid.getEid(), item.getEid());
+
+		//test getting valid item not having eid set returns null
+		item = items.getItemByEid( etdl.item5.getEid() );
+		Assert.assertNull(item);
+
+		// test getting item by invalid id returns null
+		item = items.getItemByEid( EvalTestDataLoad.INVALID_STRING_EID );
 		Assert.assertNull(item);
 	}
 
@@ -433,7 +461,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		// test getting all items for the admin user
 		l = items.getItemsForUser(EvalTestDataLoad.ADMIN_USER_ID, null, null, true);
 		Assert.assertNotNull( l );
-		Assert.assertEquals(10 + preloadedCount, l.size());
+		Assert.assertEquals(13 + preloadedCount, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item1.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item2.getId() ));
@@ -445,12 +473,16 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertTrue(ids.contains( etdl.item8.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item10.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item11.getId() ));
+		
+		Assert.assertTrue(ids.contains( etdl.item1Eid.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item2Eid.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item3Eid.getId() ));
 
 		// same as getting all items
 		l = items.getItemsForUser(EvalTestDataLoad.ADMIN_USER_ID, 
 				EvalConstants.SHARING_OWNER, null, true);
 		Assert.assertNotNull( l );
-		Assert.assertEquals(10 + preloadedCount, l.size());
+		Assert.assertEquals(13 + preloadedCount, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item1.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item2.getId() ));
@@ -462,11 +494,15 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertTrue(ids.contains( etdl.item8.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item10.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item11.getId() ));
+		
+		Assert.assertTrue(ids.contains( etdl.item1Eid.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item2Eid.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item3Eid.getId() ));
 
 		// test getting all items for the maint user
 		l = items.getItemsForUser(EvalTestDataLoad.MAINT_USER_ID, null, null, true);
 		Assert.assertNotNull( l );
-		Assert.assertEquals(9 + preloadedCount, l.size());
+		Assert.assertEquals(12 + preloadedCount, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item1.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item2.getId() ));
@@ -477,11 +513,15 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertTrue(ids.contains( etdl.item8.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item10.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item11.getId() ));
+		
+		Assert.assertTrue(ids.contains( etdl.item1Eid.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item2Eid.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item3Eid.getId() ));
 
 		// test getting all items for the maint user without expert items
 		l = items.getItemsForUser(EvalTestDataLoad.MAINT_USER_ID, null, null, false);
 		Assert.assertNotNull( l );
-		Assert.assertEquals(6, l.size());
+		Assert.assertEquals(9, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item3.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item4.getId() ));
@@ -489,14 +529,22 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertTrue(ids.contains( etdl.item8.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item10.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item11.getId() ));
+		
+		Assert.assertTrue(ids.contains( etdl.item1Eid.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item2Eid.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item3Eid.getId() ));
 
 		// test getting all items for the normal user
 		l = items.getItemsForUser(EvalTestDataLoad.USER_ID, null, null, true);
 		Assert.assertNotNull( l );
-		Assert.assertEquals(2 + preloadedCount, l.size());
+		Assert.assertEquals(5 + preloadedCount, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item1.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item2.getId() ));
+		
+		Assert.assertTrue(ids.contains( etdl.item1Eid.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item2Eid.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item3Eid.getId() ));
 
 		// test getting private items for the admin user (all private items)
 		l = items.getItemsForUser(EvalTestDataLoad.ADMIN_USER_ID,
@@ -561,36 +609,53 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		l = items.getItemsForUser(EvalTestDataLoad.ADMIN_USER_ID, 
 				EvalConstants.SHARING_PUBLIC, null, true);
 		Assert.assertNotNull( l );
-		Assert.assertEquals(2 + preloadedCount, l.size());
+		Assert.assertEquals(5 + preloadedCount, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item1.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item2.getId() ));
+		
+		Assert.assertTrue(ids.contains( etdl.item1Eid.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item2Eid.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item3Eid.getId() ));
 
 		// test getting public items for the maint user
 		l = items.getItemsForUser(EvalTestDataLoad.MAINT_USER_ID, 
 				EvalConstants.SHARING_PUBLIC, null, true);
 		Assert.assertNotNull( l );
-		Assert.assertEquals(2 + preloadedCount, l.size());
+		Assert.assertEquals(5 + preloadedCount, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item1.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item2.getId() ));
-
+		
+		Assert.assertTrue(ids.contains( etdl.item1Eid.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item2Eid.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item3Eid.getId() ));
+		
+		
 		// test getting public items for the user
 		l = items.getItemsForUser(EvalTestDataLoad.USER_ID, 
 				EvalConstants.SHARING_PUBLIC, null, true);
 		Assert.assertNotNull( l );
-		Assert.assertEquals(2 + preloadedCount, l.size());
+		Assert.assertEquals(5 + preloadedCount, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item1.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item2.getId() ));
+		
+		Assert.assertTrue(ids.contains( etdl.item1Eid.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item2Eid.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item3Eid.getId() ));
 
 		// test getting items for invalid user returns public only
 		l = items.getItemsForUser( EvalTestDataLoad.INVALID_USER_ID, null, null, true);
 		Assert.assertNotNull( l );
-		Assert.assertEquals(2 + preloadedCount, l.size());
+		Assert.assertEquals(5 + preloadedCount, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.item1.getId() ));
 		Assert.assertTrue(ids.contains( etdl.item2.getId() ));
+		
+		Assert.assertTrue(ids.contains( etdl.item1Eid.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item2Eid.getId() ));
+		Assert.assertTrue(ids.contains( etdl.item3Eid.getId() ));
 
 		// test invalid sharing constant causes failure
 		try {
@@ -712,6 +777,34 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 
 		// test get eval by invalid id returns null
 		templateItem = items.getTemplateItemById( EvalTestDataLoad.INVALID_LONG_ID );
+		Assert.assertNull(templateItem);
+	}
+	
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl#getTemplateItemById(java.lang.Long)}.
+	 */
+	public void testGetTemplateItemByEid() {
+		EvalTemplateItem templateItem = null;
+
+		// test getting valid templateItems by eid
+		templateItem = items.getTemplateItemByEid( etdl.templateItem1Eid.getEid() );
+		Assert.assertNotNull(templateItem);
+		Assert.assertEquals(etdl.templateItem1Eid.getEid(), templateItem.getEid());
+
+		templateItem = items.getTemplateItemByEid( etdl.templateItem2Eid.getEid() );
+		Assert.assertNotNull(templateItem);
+		Assert.assertEquals(etdl.templateItem2Eid.getEid(), templateItem.getEid());
+		
+		templateItem = items.getTemplateItemByEid( etdl.templateItem3Eid.getEid() );
+		Assert.assertNotNull(templateItem);
+		Assert.assertEquals(etdl.templateItem3Eid.getEid(), templateItem.getEid());
+		
+		//test getting valid template item not having eid set returns null
+		templateItem = items.getTemplateItemByEid( etdl.templateItem1User.getEid() );
+		Assert.assertNull(templateItem);
+
+		//test getting template item using invalid eid returns null
+		templateItem = items.getTemplateItemByEid( EvalTestDataLoad.INVALID_STRING_EID );
 		Assert.assertNull(templateItem);
 	}
 

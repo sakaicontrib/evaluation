@@ -24,6 +24,7 @@ import org.sakaiproject.evaluation.logic.impl.EvalScalesLogicImpl;
 import org.sakaiproject.evaluation.logic.test.stubs.EvalExternalLogicStub;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalScale;
+import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.PreloadTestData;
@@ -115,7 +116,27 @@ public class EvalScalesLogicImplTest extends AbstractTransactionalSpringContextT
 		scale = scales.getScaleById( EvalTestDataLoad.INVALID_LONG_ID );
 		Assert.assertNull(scale);
 	}
+	
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalScalesLogicImpl#getScaleByEid(java.lang.String)}.
+	 */
+	public void testGetScaleByEid() {
+		EvalScale scale = null;
 
+		//test getting scale having eid set
+		scale = scales.getScaleByEid( etdl.scaleEid.getEid() );
+		Assert.assertNotNull(scale);
+		Assert.assertEquals(etdl.scaleEid.getEid(), scale.getEid());
+
+		//test getting scale not having eid set returns null
+		scale = scales.getScaleByEid( etdl.scale2.getEid() );
+		Assert.assertNull(scale);
+
+		// test getting scale by invalid eid returns null
+		scale = scales.getScaleByEid( EvalTestDataLoad.INVALID_STRING_EID );
+		Assert.assertNull(scale);
+	}
+	
 	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalScalesLogicImpl#saveScale(org.sakaiproject.evaluation.model.EvalScale, java.lang.String)}.
 	 */
@@ -269,35 +290,41 @@ public class EvalScalesLogicImplTest extends AbstractTransactionalSpringContextT
 		// get all visible scales (admin should see all)
 		l = scales.getScalesForUser(EvalTestDataLoad.ADMIN_USER_ID, null);
 		Assert.assertNotNull(l);
-		Assert.assertEquals(4 + preloadedCount, l.size()); // include 15 preloaded
+		Assert.assertEquals(5 + preloadedCount, l.size()); // include 15 preloaded
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.scale1.getId() ));
 		Assert.assertTrue(ids.contains( etdl.scale2.getId() ));
 		Assert.assertTrue(ids.contains( etdl.scale3.getId() ));
+		
+		Assert.assertTrue(ids.contains( etdl.scaleEid.getId() ));
 
 		// get all visible scales (include maint owned and public)
 		l = scales.getScalesForUser(EvalTestDataLoad.MAINT_USER_ID, null);
 		Assert.assertNotNull(l);
-		Assert.assertEquals(3 + preloadedCount, l.size());
+		Assert.assertEquals(4 + preloadedCount, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.scale1.getId() ));
 		Assert.assertTrue(ids.contains( etdl.scale2.getId() ));
 		Assert.assertTrue(ids.contains( etdl.scale3.getId() ));
 		Assert.assertTrue(! ids.contains( etdl.scale4.getId() ));
+		
+		Assert.assertTrue(ids.contains( etdl.scaleEid.getId() ));
 
 		// get all visible scales (should only see public)
 		l = scales.getScalesForUser(EvalTestDataLoad.USER_ID, null);
 		Assert.assertNotNull(l);
-		Assert.assertEquals(1 + preloadedCount, l.size());
+		Assert.assertEquals(2 + preloadedCount, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.scale1.getId() ));
 		Assert.assertTrue(! ids.contains( etdl.scale2.getId() ));
 		Assert.assertTrue(! ids.contains( etdl.scale3.getId() ));
+		
+		Assert.assertTrue(ids.contains( etdl.scaleEid.getId() ));
 
 		// attempt to get SHARING_OWNER scales (returns same as null)
 		l = scales.getScalesForUser(EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.SHARING_OWNER);
 		Assert.assertNotNull(l);
-		Assert.assertEquals(4 + preloadedCount, l.size());
+		Assert.assertEquals(5 + preloadedCount, l.size());
 
 		// get all private scales (admin should see all private)
 		l = scales.getScalesForUser(EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.SHARING_PRIVATE);
@@ -329,11 +356,13 @@ public class EvalScalesLogicImplTest extends AbstractTransactionalSpringContextT
 		// get all public scales (normal user should see all)
 		l = scales.getScalesForUser(EvalTestDataLoad.USER_ID, EvalConstants.SHARING_PUBLIC);
 		Assert.assertNotNull(l);
-		Assert.assertEquals(1 + preloadedCount, l.size());
+		Assert.assertEquals(2 + preloadedCount, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.scale1.getId() ));
 		Assert.assertTrue(! ids.contains( etdl.scale2.getId() ));
 		Assert.assertTrue(! ids.contains( etdl.scale3.getId() ));
+		
+		Assert.assertTrue(ids.contains( etdl.scaleEid.getId() ));
 
 		// test getting invalid constant causes failure
 		try {

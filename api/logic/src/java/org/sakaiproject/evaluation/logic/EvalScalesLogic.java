@@ -37,6 +37,16 @@ public interface EvalScalesLogic {
 	 * @return the item or null if not found
 	 */
 	public EvalScale getScaleById(Long scaleId);
+	
+	/**
+	 * Get a scale by its external id<br/>
+	 * Note: A scale eid is null except when the scale was imported
+	 * from an external system.
+	 * 
+	 * @param eid the id of an EvalScale object in an external system
+	 * @return an {@link EvalScale} object or null if not found
+	 */
+	public EvalScale getScaleByEid(String eid);
 
 	/**
 	 * Create or update a scale (update only if it is not locked),

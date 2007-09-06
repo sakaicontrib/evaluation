@@ -118,6 +118,37 @@
       <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
    </bean>
 
+	<bean id="org.sakaiproject.evaluation.logic.externals.EvalImport"
+		class="org.sakaiproject.evaluation.logic.impl.scheduling.EvalImportImpl"
+		init-method="init"> 
+	</bean>
+	
+	<bean id="org.sakaiproject.evaluation.logic.externals.EvalImportJob"
+		class="org.sakaiproject.evaluation.logic.impl.scheduling.EvalImportJobImpl"
+		init-method="init"> 
+	</bean>
+
+	<bean id="org.sakaiproject.evaluation.logic.externals.EvalImportLogic"
+		class="org.sakaiproject.evaluation.logic.impl.scheduling.EvalImportLogicImpl"
+		init-method="init"> 
+		<property name="evalImport"
+			ref="org.sakaiproject.evaluation.logic.externals.EvalImport" />
+		<property name="evalImportJob"
+				ref="org.sakaiproject.evaluation.logic.externals.EvalImportJob" />
+		<property name="idManager"
+				ref="org.sakaiproject.id.api.IdManager" />
+		<property name="serverConfigurationService" 
+			ref="org.sakaiproject.component.api.ServerConfigurationService" />
+		<property name="sessionManager"
+			ref="org.sakaiproject.tool.api.SessionManager" />
+	</bean>
+	
+	<bean id="org.sakaiproject.evaluation.logic.externals.EvalScheduledInvocation" 
+			class="org.sakaiproject.evaluation.logic.impl.scheduling.EvalScheduledInvocationImpl" 
+			init-method="init">
+			<property name="evalJobLogic"
+				ref="org.sakaiproject.evaluation.logic.EvalJobLogic" />
+	</bean>
 
    <!-- Bring in any sakai entity providers -->
    <import resource="entity-providers.xml" />
