@@ -1,0 +1,88 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title rsf:id="page-title">Control Hierarchy</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+        <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+        <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+        <link href="/sakai-evaluation-tool/content/css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+    </head>
+<body>
+<div class="portletBody">
+    <!-- 
+        <div class="navIntraTool">
+            <a rsf:id="control-panel-toplink" href="control_panel.html">Control Panel</a>
+        </div>
+    -->
+    <ul class="breadCrumb" style="clear: both; height: 1.5em">
+        <li style="float: left"><a rsf:id="summary-toplink" href="summary.html">Summary</a></li>
+        <li style="float: left"><a rsf:id="administrate-toplink" href="administrate.html">Administrate</a></li>
+        <li rsf:id="page-title" class="lastCrumb" style="float: left">Hierarchy</li>
+    </ul>
+
+    <h1>Hierarchy Control</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Hierarchy Level</th>
+                <th>Add Item:</th>
+                <th></th>
+                <th>Items at this level:</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr rsf:id="hierarchy-level-row:">
+                <td rsf:id="node-name" style="text-indent:0em"> - Institution Level</td>
+                <td><a rsf:id="add-child-link" href="">Add</a></td>
+                <td><a rsf:id="modify-node-link" href="">Modify</a></td>
+                <td>
+                    <span rsf:id="number-children">3</span>
+                    <form rsf:id="remove-node-form">
+                        <input type="submit" rsf:id="remove-node-button" value="Remove"/>
+                    </form>
+                </td>
+            </tr>
+            <tr rsf:id="hierarchy-level-row:">
+                <td style="text-indent:1em"> + School of Business</td>
+                <td><a href="">Add</a></td>
+                <td><a href="">Modify</a></td>
+                <td>6</td>
+            </tr>
+            <tr rsf:id="hierarchy-level-row:">
+                <td style="text-indent:1em"> - School of Science</td>
+                <td><a href="">Add</a></td>
+                <td><a href="">Modify</a></td>
+                <td>3</td>
+            </tr>
+            <tr rsf:id="hierarchy-level-row:">
+                <td style="text-indent:2em"> - Department of Match</td>
+                <td><a href="">Add</a></td>
+                <td><a href="">Modify</a></td>
+                <td><input type="button" value="Remove" /></td>
+            </tr>
+            <tr rsf:id="hierarchy-level-row:">
+                <td style="text-indent:2em"> - Department of Biology</td>
+                <td><a href="">Add</a></td>
+                <td><a href="">Modify</a></td>
+                <td>7</td>
+            </tr>
+            <tr rsf:id="hierarchy-level-row:">
+                <td style="text-indent:2em"> - Department of Chemistry</td>
+                <td><a href="">Add</a></td>
+                <td><a href="">Modify</a></td>
+                <td><input type="button" value="Remove" /></td>
+            </tr>
+            <tr rsf:id="hierarchy-level-row:">
+                <td style="text-indent:1em"> - Department of Science</td>
+                <td><a href="">Add</a></td>
+                <td><a href="">Modify</a></td>
+                <td><input type="button" value="Remove" /></td>
+            </tr>
+        </tbody>
+    </table>
+    <a href="" rsf:id="done-link">Done</a>
+</div>
+</body>
+</html>

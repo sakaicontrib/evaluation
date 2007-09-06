@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!-- Aaron Zeckoski (aaronz@vt.edu) -->
+<beans>
+
+	<!-- Configure the location of the messages files -->
+	<bean id="messageLocator"
+		class="uk.org.ponder.springutil.SpringMessageLocator">
+		<property name="messageSource">
+			<bean
+				class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+				<property name="basename"
+					value="classpath:org/sakaiproject/evaluation/tool/bundle/messages" />
+				<property name="cacheSeconds" value="10" />
+			</bean>
+		</property>
+		<property name="localeGetter" ref="requestLocaleProxy" />
+	</bean>
+
+	<!-- the beans listed here are allowed access to values (security) -->
+	<bean parent="requestAddressibleParent">
+		<property name="value" value="evaluationBean, reportsBean, templateBBean, itemsBean, expertItemsBean, 
+      			templateBeanLocator, templateItemWBL, answersBeanLocator, responseAnswersBeanLocator, responseBeanLocator, 
+      			evaluationBeanLocator, takeEvalBean, settingsBean, scaleBean, scaleBeanLocator, itemWBL" />
+	</bean>
+
+
+	<!-- tool logic beans (organizational) -->
+	<bean id="localTemplateLogic"
+		class="org.sakaiproject.evaluation.tool.LocalTemplateLogic">
+		<property name="external"
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+		<property name="templatesLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
+		<property name="itemsLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
+		<property name="scalesLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalScalesLogic" />
+	</bean>
+
+	<bean id="localResponsesLogic"
+		class="org.sakaiproject.evaluation.tool.LocalResponsesLogic">
+		<property name="external"
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+		<property name="responsesLogic"
+			ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic">
+		</property>
+	</bean>
+
+
+	<!-- The beans listed here are session beans (they stick around) -->
+	<bean id="myBeanScope" parent="beanScopeParent">
+		<property name="copyPreservingBeans" value="evaluationBean" />
+		<property name="exclusive" value="true" />
+	</bean>
+
+	<bean parent="copyPreservingParent">
+		<property name="value" value="reportsBean" />
+	</bean>
+
+	<bean parent="writeGuardParent">
+		<property name="guardedPath"
+			value="templateItemWBL.*.displayOrder" />
+		<property name="guardMethod" value="templateBBean.saveReorder" />
+	</bean>
+
+	<!-- define any XML producer files -->
+	<bean id="siteMap" parent="siteMapParent" />
+
+	<bean parent="actionResultInterceptorParent">
+		<property name="value">
+			<bean class="org.sakaiproject.evaluation.tool.wrapper.EvalActionResultInterceptor">
+				<property name="templateBeanLocator">
+					<bean parent="RSACBridgeProxy">
+						<property name="targetBeanName"
+							value="templateBeanLocator" />
+					</bean>
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean parent="handlerHookParent">
+		<property name="value">
+			<bean parent="RSACBridgeProxy">
+				<property name="targetBeanName"
+					value="reportHandlerHook" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- special wrapper beans which work with genericdao to allow hibernate lazy inits -->
+	<bean id="org.sakaiproject.evaluation.ModelAccessWrapperInvoker"
+		class="org.sakaiproject.evaluation.tool.wrapper.ModelAccessWrapperInvoker">
+		<property name="evaluationDao"
+			ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+	</bean>
+
+	<bean class="uk.org.ponder.rsac.BeanFetchBracketer">
+		<property name="targetBeanName">
+			<idref bean="rootHandlerBean" />
+		</property>
+		<property name="wrappingBean"
+			ref="org.sakaiproject.evaluation.ModelAccessWrapperInvoker" />
+	</bean>
+
+	<!-- the renderers list must line up with the code in the ItemRendererImpl -->
+	<bean id="org.sakaiproject.evaluation.tool.renderers.ItemRenderer"
+		class="org.sakaiproject.evaluation.tool.renderers.ItemRendererImpl"
+		init-method="init">
+		<property name="renderTypes">
+			<list>
+				<bean class="org.sakaiproject.evaluation.tool.renderers.HeaderRenderer">
+				</bean>
+				<bean class="org.sakaiproject.evaluation.tool.renderers.TextRenderer">
+				</bean>
+				<bean class="org.sakaiproject.evaluation.tool.renderers.ScaledRenderer">
+				</bean>
+				<bean class="org.sakaiproject.evaluation.tool.renderers.BlockRenderer">
+					<property name="itemsLogic"
+						ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="org.sakaiproject.evaluation.tool.renderers.AddItemControlRenderer"
+		class="org.sakaiproject.evaluation.tool.renderers.AddItemControlRenderer">
+		<property name="viewStateHandler" ref="viewStateHandler" />
+	</bean>
+
+	<!-- Override this definition from RSF-evolvers, to reflect the fact we are
+		serving the RSF components templates from our own webapp (as provided using
+		the "partial WAR" build strategy -->
+	<bean id="componentsTemplateResourceBase"
+		class="java.lang.String">
+		<constructor-arg value="/" />
+	</bean>
+
+	<!-- this needs to contain all item renderer and other evolver html templates,
+		baseDirectory should end with / and not begin with one -->
+	<bean id="evaluationComponentTemplateContributor"
+		parent="templateContributorParent">
+		<property name="baseDirectory" value="component-templates/" />
+		<property name="templateNames"
+			value="render_header_item, render_text_item, render_scaled_item, render_block_item, render_add_item_control" />
+		<property name="expected" value="true" />
+	</bean>
+
+	<!-- Override the default style of user messages -->
+	<bean id="messageTemplateContributor" parent="templateContributorParent">
+		<property name="baseDirectory" value="component-templates/" />
+		<property name="templateNames" value="Messages" />
+	</bean>
+
+
+	<!-- view param inferrer beans to handle entity urls -->
+	<bean class="org.sakaiproject.evaluation.tool.inferrers.EvaluationVPInferrer"
+			init-method="init">
+		<property name="externalLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+		<property name="assignsLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalAssignsLogic" />
+		<property name="evaluationsLogic" 
+			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+		<property name="wrapperInvoker" 
+			ref="org.sakaiproject.evaluation.ModelAccessWrapperInvoker" />
+	</bean>
+
+	<bean class="org.sakaiproject.evaluation.tool.inferrers.TemplateVPInferrer" />
+
+	<bean class="org.sakaiproject.evaluation.tool.inferrers.EvalCategoryVPInferrer" />
+
+</beans>
