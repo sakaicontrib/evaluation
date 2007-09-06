@@ -668,19 +668,19 @@ public class EvalTestDataLoad {
 		
 		templateItem1Eid = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
 				templateEid, item1Eid, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
-				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
+				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
 				null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, null, null, null);
 		templateItem1Eid.setEid("test-templateitem-1");
 
 		templateItem2Eid = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
 				templateEid, item2Eid, new Integer(2), EvalConstants.ITEM_CATEGORY_COURSE,
-				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
+				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
 				null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, null, null, null);
 		templateItem2Eid.setEid("test-templateitem-2");
 
 		templateItem3Eid = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
 				templateEid, item3Eid, new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE,
-				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_TOP,
+				EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
 				null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, null, null, null);
 		templateItem3Eid.setEid("test-templateitem-3");
 
