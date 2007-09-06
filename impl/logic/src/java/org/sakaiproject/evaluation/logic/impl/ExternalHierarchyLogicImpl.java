@@ -83,7 +83,6 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
     */
    public EvalHierarchyNode updateNodeData(String nodeId, String title, String description) {
       HierarchyNode node = hierarchyService.saveNodeMetaData(nodeId, title, description, null);
-      // TODO WARNING: this will wipe out the stored permissions
       return makeEvalNode(node);
    }
 
