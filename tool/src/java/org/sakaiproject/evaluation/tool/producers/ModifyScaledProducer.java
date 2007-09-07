@@ -269,7 +269,7 @@ public class ModifyScaledProducer implements ViewComponentProducer,
 		} else {
 //			null so all questions are private by default			
 			form.parameters.add(new UIELBinding(templateItemOTP + "resultsSharing",
-					EvaluationConstant.ITEM_RESULTS_SHARING_VALUES[isDefaultResultSharing.booleanValue() ? 0 : 1]));
+					EvaluationConstant.ITEM_RESULTS_SHARING_VALUES[0]));
 		}
 
 
