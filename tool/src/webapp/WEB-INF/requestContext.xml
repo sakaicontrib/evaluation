@@ -175,6 +175,17 @@
 		<property name="hierarchyLogic" ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
 		<property name="loc" ref="hierNodeLocator" />
 	</bean>
+	
+	<bean id="hierNodeGroupsLocator" class="org.sakaiproject.evaluation.tool.locators.HierarchyNodeGroupsLocator">
+		<property name="external" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic"/>
+		<property name="hierarchyLogic" ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+	</bean>
+	
+	<bean id="hierNodeGroupsLocatorInvoker" class="org.sakaiproject.evaluation.tool.locators.HierarchyNodeGroupsLocatorInvoker">
+		<property name="external" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic"/>
+		<property name="hierarchyLogic" ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+		<property name="hierloc" ref="hierNodeGroupsLocator" />
+	</bean>
 
 	<!-- evolver definitions here -->
 
@@ -469,7 +480,10 @@
 		<property name="hierarchyLogic" ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
 	</bean>
 	
-	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeGroupsProducer" />
+	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeGroupsProducer" >
+		<property name="external" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic"/>
+		<property name="hierarchyLogic" ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+	</bean>
 	
 	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyScaleProducer">
 		<property name="external"
