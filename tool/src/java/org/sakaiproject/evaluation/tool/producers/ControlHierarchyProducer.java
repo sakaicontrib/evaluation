@@ -14,6 +14,7 @@ import org.sakaiproject.evaluation.tool.viewparams.ModifyHierarchyNodeParameters
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIDeletionBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
@@ -76,7 +77,7 @@ public class ControlHierarchyProducer implements ViewComponentProducer {
       UIBranchContainer tableRow = UIBranchContainer.make(tofill, "hierarchy-level-row:");
       UIOutput name = UIOutput.make(tableRow, "node-name", title);
       Map attr = new HashMap();
-      attr.put("style", "text-indent:" + level + "em");
+      attr.put("style", "text-indent:" + (level*2) + "em");
       name.decorate(new UIFreeAttributeDecorator(attr));
       UIInternalLink.make(tableRow, "add-child-link", new ModifyHierarchyNodeParameters(ModifyHierarchyNodeProducer.VIEW_ID, node.id, true));
       UIInternalLink.make(tableRow, "modify-node-link", new ModifyHierarchyNodeParameters(ModifyHierarchyNodeProducer.VIEW_ID, node.id, false));
@@ -89,7 +90,8 @@ public class ControlHierarchyProducer implements ViewComponentProducer {
          UIOutput.make(tableRow, "number-children", node.directChildNodeIds.size() + "");
       } else {
          UIForm removeForm = UIForm.make(tableRow, "remove-node-form");
-         UICommand.make(removeForm, "remove-node-button", "");
+         UICommand removeButton = UICommand.make(removeForm, "remove-node-button", UIMessage.make("controlhierarchy.remove"));
+         removeButton.parameters.add(new UIDeletionBinding("hierNodeLocator."+node.id));
       }
 
       for (String childId : node.directChildNodeIds) {

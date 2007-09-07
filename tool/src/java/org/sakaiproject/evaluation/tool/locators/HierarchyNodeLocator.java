@@ -6,7 +6,7 @@ import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import java.util.Iterator;
-import uk.org.ponder.beanutil.BeanLocator;
+import uk.org.ponder.beanutil.WriteableBeanLocator;
 
 /*
  * Bean Locator for nodes we are operating upon from
@@ -25,9 +25,8 @@ import uk.org.ponder.beanutil.BeanLocator;
  * 
  *   HierarchyNodeLocator.NEW-34.title
  */
-public class HierarchyNodeLocator implements BeanLocator {
+public class HierarchyNodeLocator implements WriteableBeanLocator {
     public static final String NEW_PREFIX = "new-";
-    //public static String NEW_1 = NEW_PREFIX +"1";
     
     private EvalExternalLogic external;
     public void setExternal(EvalExternalLogic external) {
@@ -47,10 +46,8 @@ public class HierarchyNodeLocator implements BeanLocator {
         Object togo = delivered.get(name);
         if (togo == null) {
             if (name.startsWith(NEW_PREFIX)) {
-                //TODO Not sure how to EL that Set<String> yet... SWG
-                String[] parts = name.split("-");
                 EvalHierarchyNode node = new EvalHierarchyNode();
-                togo = node; //hierarchyLogic.addNode(parts[1]);
+                togo = node;
             }
             else {
                 togo = hierarchyLogic.getNodeById(name);
@@ -82,5 +79,20 @@ public class HierarchyNodeLocator implements BeanLocator {
             // Security check and denial
             throw new SecurityException("Non-admin users may not access this locator");
         }
+    }
+
+    public boolean remove(String id) {
+        checkSecurity();
+        hierarchyLogic.removeNode(id);
+        return true;
+    }
+
+    /* Not going to use this for now.
+     * 
+     */
+    public void set(String arg0, Object arg1) {
+        checkSecurity();
+        // TODO Auto-generated method stub
+        
     }
 }
