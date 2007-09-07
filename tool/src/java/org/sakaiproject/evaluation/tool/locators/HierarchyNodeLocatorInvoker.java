@@ -1,28 +1,15 @@
 package org.sakaiproject.evaluation.tool.locators;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Iterator;
+
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
-import java.util.Iterator;
-import uk.org.ponder.beanutil.BeanLocator;
 
 /*
- * Bean Locator for nodes we are operating upon from
- * ExternalHierarchyLogicImpl
- * 
- * This Locator will look up Nodes by their node id.
- * 
- * example:
- *   HierarchyNodeLocator.12345.title
- *   
- *   Should fetch the title for node with id 12345
+ * Quick hack to get around RSF Bug.
  */
-public class HierarchyNodeLocator implements BeanLocator {
-    public static final String NEW_PREFIX = "new";
-    public static String NEW_1 = NEW_PREFIX +"1";
-    
+public class HierarchyNodeLocatorInvoker {
     private EvalExternalLogic external;
     public void setExternal(EvalExternalLogic external) {
        this.external = external;
@@ -32,31 +19,17 @@ public class HierarchyNodeLocator implements BeanLocator {
     public void setHierarchyLogic(ExternalHierarchyLogic hierarchyLogic) {
        this.hierarchyLogic = hierarchyLogic;
     }
-    
-    public Map delivered = new HashMap();
-    
-    public Object locateBean(String name) {
-        checkSecurity();
-        
-        Object togo = delivered.get(name);
-        if (togo == null) {
-            if (name.startsWith(NEW_PREFIX)) {
-                //TODO Not sure how to EL that Set<String> yet... SWG
-            }
-            else {
-                togo = hierarchyLogic.getNodeById(name);
-            }
-            delivered.put(name, togo);
-        } 
-        return togo;
+    private HierarchyNodeLocator loc;
+    public void setLoc(HierarchyNodeLocator loc) {
+        this.loc = loc;
     }
     
     public void saveAll() {
         checkSecurity();
         
-        for (Iterator it = delivered.keySet().iterator(); it.hasNext();) {
+        for (Iterator it = loc.delivered.keySet().iterator(); it.hasNext();) {
             String key = (String) it.next();
-            EvalHierarchyNode node = (EvalHierarchyNode) delivered.get(key);
+            EvalHierarchyNode node = (EvalHierarchyNode) loc.delivered.get(key);
             hierarchyLogic.updateNodeData(node.id, node.title, node.description);
         }
     }
@@ -73,4 +46,5 @@ public class HierarchyNodeLocator implements BeanLocator {
             throw new SecurityException("Non-admin users may not access this locator");
         }
     }
+    
 }
