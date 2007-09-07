@@ -11,7 +11,31 @@
     </head>
 <body>
 <div class="portletBody">
-<h1>Assign groups for a hierarchy node</h1>
+    <h1 rsf:id="assign-groups-title">Assign groups for a hierarchy node</h1>
+    <form rsf:id="assign-groups-form">
+        <table>
+            <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>Title</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr rsf:id="group-row:">
+                    <td>
+                        <input rsf:id="group-checkbox" type="checkbox" />
+                    </td>
+                    <td>
+                        <label rsf:id="group-title">Group Title</label>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <p class="act"> 
+            <input type="submit" value="Save Assigned Groups" rsf:id="save-groups-button" class="active" accesskey="s" />
+            <a href="" rsf:id="cancel-link">Cancel</a> 
+        </p>    
+    </form>
 </div>
 </body>
 </html>

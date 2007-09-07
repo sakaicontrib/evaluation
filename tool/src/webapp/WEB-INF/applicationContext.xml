@@ -22,7 +22,8 @@
 	<bean parent="requestAddressibleParent">
 		<property name="value" value="evaluationBean, reportsBean, templateBBean, importBean, itemsBean, expertItemsBean, 
       			templateBeanLocator, templateItemWBL, answersBeanLocator, responseAnswersBeanLocator, responseBeanLocator, 
-      			evaluationBeanLocator, takeEvalBean, settingsBean, scaleBean, scaleBeanLocator, itemWBL, hierNodeLocator, hierNodeLocatorInvoker" />
+      			evaluationBeanLocator, takeEvalBean, settingsBean, scaleBean, scaleBeanLocator, itemWBL, hierNodeLocator, 
+      			hierNodeLocatorInvoker, hierNodeGroupsLocator, hierNodeGroupsLocatorInvoker" />
 	</bean>
 
 
