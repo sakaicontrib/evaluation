@@ -462,6 +462,8 @@
 		<property name="hierarchyLogic" ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
 	</bean>
 	
+	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeGroupsProducer" />
+	
 	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyScaleProducer">
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />

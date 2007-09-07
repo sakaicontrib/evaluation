@@ -181,6 +181,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyBlockProducer.jav
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyEmailProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyEssayProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyHeaderProducer.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyHierarchyNodeGroupsProducer.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyHierarchyNodeProducer.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyItemProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyScaleProducer.java -text
@@ -219,6 +220,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/viewparams/EvalCategoryViewParame
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/EvalScaleParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/EvalTakeViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ExpertItemViewParameters.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/viewparams/HierarchyNodeParameters.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ItemViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ModifyHierarchyNodeParameters.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/PreviewEvalParameters.java -text
@@ -325,6 +327,7 @@ tool/src/webapp/content/templates/modify_email.html -text
 tool/src/webapp/content/templates/modify_essay.html -text
 tool/src/webapp/content/templates/modify_header.html -text
 tool/src/webapp/content/templates/modify_hierarchy_node.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/webapp/content/templates/modify_hierarchy_node_groups.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/templates/modify_item.html -text
 tool/src/webapp/content/templates/modify_scale.html -text
 tool/src/webapp/content/templates/modify_scaled.html -text
