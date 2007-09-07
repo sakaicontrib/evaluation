@@ -73,6 +73,13 @@
 	   <property name="templateBeanLocator" ref="templateBeanLocator" />
 	   <property name="itemsLogic" ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
 	</bean>
+	
+	<bean id="importBean"
+		class="org.sakaiproject.evaluation.tool.ImportBean">
+		<property name="contentHostingService" ref="org.sakaiproject.content.api.ContentHostingService" />
+		<property name="sessionManager" ref="org.sakaiproject.tool.api.SessionManager" />
+		<property name="evalImportLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalImportLogic" />
+	</bean>
 
 	<bean id="itemsBean" 
 	     class="org.sakaiproject.evaluation.tool.ItemsBean" 
@@ -425,6 +432,13 @@
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
 		<property name="locale" ref="requestLocale" />
 	</bean>
+
+	<bean class="org.sakaiproject.evaluation.tool.producers.ControlImportProducer">
+      <property name="externalLogic"
+         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+      <property name="sessionManager"
+         ref="org.sakaiproject.tool.api.SessionManager" />
+   </bean>
 
 	<bean class="org.sakaiproject.evaluation.tool.producers.ControlScalesProducer">
 		<property name="scalesLogic"

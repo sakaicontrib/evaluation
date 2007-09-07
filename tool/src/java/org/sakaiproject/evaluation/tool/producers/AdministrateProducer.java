@@ -96,7 +96,10 @@ public class AdministrateProducer implements ViewComponentProducer, NavigationCa
 			new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
 
 		UIInternalLink.make(tofill, "control-scales-toplink",UIMessage.make("administrate.top.control.scales"),
-				new SimpleViewParameters(ControlScalesProducer.VIEW_ID));			
+				new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+
+		UIInternalLink.make(tofill, "control-import-toplink",UIMessage.make("administrate.top.import.data"),
+				new SimpleViewParameters(ControlImportProducer.VIEW_ID));	
 		
 		UIInternalLink.make(tofill, "control-hierarchy-toplink", UIMessage.make("administrate.top.control.hierarchy"),
 			new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID));
