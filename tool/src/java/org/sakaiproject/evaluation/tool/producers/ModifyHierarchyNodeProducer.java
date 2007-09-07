@@ -56,7 +56,7 @@ public class ModifyHierarchyNodeProducer implements ViewComponentProducer, ViewP
         UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID));
         UIInternalLink.make(tofill, "administrate-toplink", UIMessage.make("administrate.page.title"), new SimpleViewParameters(AdministrateProducer.VIEW_ID));
         UIInternalLink.make(tofill, "hierarchy-toplink", UIMessage.make("controlhierarchy.breadcrumb.title"), new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID));
-        UIMessage.make(tofill, "page-title", "modifyhierarchynode.breadcrumb.title");
+        UIMessage.make(tofill, "page-title", "hierarchynode.breadcrumb.title");
         
         //EvalHierarchyNode toEdit 
         ModifyHierarchyNodeParameters params = (ModifyHierarchyNodeParameters) viewparams;
