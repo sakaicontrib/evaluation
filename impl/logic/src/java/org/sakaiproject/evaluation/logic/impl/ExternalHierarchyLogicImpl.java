@@ -125,7 +125,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
       if (hierarchyService.getNodeById(nodeId) == null) {
          throw new IllegalArgumentException("Invalid node id, this node does not exist: " + nodeId);
       }
-      EvalGroupNodes egn = (EvalGroupNodes) dao.findById(EvalGroupNodes.class, nodeId);
+      EvalGroupNodes egn = getEvalGroupNodeByNodeId(nodeId);
       if (evalGroupIds == null || evalGroupIds.isEmpty()) {
          if (egn != null) {
             // clean up the object if we are removing all the attached eval groups
@@ -145,12 +145,9 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
       if (nodeId == null || nodeId.equals("")) {
          throw new IllegalArgumentException("nodeId cannot be null or blank");
       }
-      List l = dao.findByProperties(EvalGroupNodes.class, 
-            new String[] {"nodeId"}, new Object[] {nodeId},
-            new int[] {ByPropsFinder.EQUALS}, new String[] {"id"});
+      EvalGroupNodes egn = getEvalGroupNodeByNodeId(nodeId);
       Set<String> s = new HashSet<String>();
-      if (!l.isEmpty()) {
-         EvalGroupNodes egn = (EvalGroupNodes) l.get(0);
+      if (egn != null) {
          String[] evalGroups = egn.getEvalGroups();
          for (int i = 0; i < evalGroups.length; i++) {
             s.add(evalGroups[i]);
@@ -228,6 +225,22 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
       eNode.directParentNodeIds = node.directParentNodeIds;
       eNode.parentNodeIds = node.parentNodeIds;
       return eNode;
+   }
+
+   /**
+    * Get an eval group node by a nodeid
+    * @param nodeId
+    * @return the {@link EvalGroupNodes} or null if none found
+    */
+   private EvalGroupNodes getEvalGroupNodeByNodeId(String nodeId) {
+      List l = dao.findByProperties(EvalGroupNodes.class, 
+            new String[] {"nodeId"}, new Object[] {nodeId},
+            new int[] {ByPropsFinder.EQUALS}, new String[] {"id"});
+      EvalGroupNodes egn = null;
+      if (!l.isEmpty()) {
+         egn = (EvalGroupNodes) l.get(0);
+      }
+      return egn;
    }
 
 }
