@@ -1,6 +1,9 @@
 package org.sakaiproject.evaluation.tool.producers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
@@ -57,6 +60,13 @@ public class ModifyHierarchyNodeGroupsProducer implements ViewComponentProducer,
         EvalHierarchyNode evalNode = hierarchyLogic.getNodeById(params.nodeId);
         
         List<EvalGroup> evalGroups = external.getEvalGroupsForUser("admin", EvalConstants.PERM_BE_EVALUATED);
+        Collections.sort(evalGroups, new Comparator() {
+            public int compare(Object o1, Object o2) {
+                EvalGroup e1 = (EvalGroup) o1; 
+                EvalGroup e2 = (EvalGroup) o2;
+                return e1.title.compareTo(e2.title);
+            }
+        });
         
         /*
          * Page titles and instructions, top menu links and bread crumbs here
