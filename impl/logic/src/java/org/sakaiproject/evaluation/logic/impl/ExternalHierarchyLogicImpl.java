@@ -18,6 +18,7 @@ import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.model.EvalGroupNodes;
+import org.sakaiproject.genericdao.api.finders.ByPropsFinder;
 import org.sakaiproject.hierarchy.HierarchyService;
 import org.sakaiproject.hierarchy.model.HierarchyNode;
 
@@ -45,6 +46,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
    // }
 
    public static final String HIERARCHY_ID = "evaluationHierarchyId";
+   public static final String HIERARCHY_ROOT_TITLE = "Root";
 
    /**
     * Place any code that should run when this class is initialized by spring here
@@ -52,7 +54,8 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
    public void init() {
       // create the hierarchy if it is not there already
       if (hierarchyService.getRootNode(HIERARCHY_ID) == null) {
-         hierarchyService.createHierarchy(HIERARCHY_ID);
+         HierarchyNode root = hierarchyService.createHierarchy(HIERARCHY_ID);
+         hierarchyService.saveNodeMetaData(root.id, HIERARCHY_ROOT_TITLE, null, null);
       }
    }
 
@@ -139,9 +142,15 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
    }
 
    public Set<String> getEvalGroupsForNode(String nodeId) {
-      EvalGroupNodes egn = (EvalGroupNodes) dao.findById(EvalGroupNodes.class, nodeId);
+      if (nodeId == null || nodeId.equals("")) {
+         throw new IllegalArgumentException("nodeId cannot be null or blank");
+      }
+      List l = dao.findByProperties(EvalGroupNodes.class, 
+            new String[] {"nodeId"}, new Object[] {nodeId},
+            new int[] {ByPropsFinder.EQUALS}, new String[] {"id"});
       Set<String> s = new HashSet<String>();
-      if (egn != null) {
+      if (!l.isEmpty()) {
+         EvalGroupNodes egn = (EvalGroupNodes) l.get(0);
          String[] evalGroups = egn.getEvalGroups();
          for (int i = 0; i < evalGroups.length; i++) {
             s.add(evalGroups[i]);
