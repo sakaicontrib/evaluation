@@ -1,11 +1,14 @@
 
 package org.sakaiproject.evaluation.tool.producers;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
+import org.sakaiproject.evaluation.tool.viewparams.ModifyHierarchyNodeParameters;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
@@ -14,6 +17,7 @@ import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.decorators.UIFreeAttributeDecorator;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
@@ -55,7 +59,7 @@ public class ControlHierarchyProducer implements ViewComponentProducer {
       UIMessage.make(tofill, "page-title", "controlhierarchy.breadcrumb.title");
 
       EvalHierarchyNode root = hierarchyLogic.getRootLevelNode();
-      renderHierarchyNode(tofill, root);
+      renderHierarchyNode(tofill, root, 0);
       /*
        * Done Link at bottom of page.
        */
@@ -64,29 +68,29 @@ public class ControlHierarchyProducer implements ViewComponentProducer {
 
    }
 
-   public void renderHierarchyNode(UIContainer tofill, EvalHierarchyNode node) {
+   public void renderHierarchyNode(UIContainer tofill, EvalHierarchyNode node, int level) {
       System.out.println("Node: " + node);
 
       UIBranchContainer tableRow = UIBranchContainer.make(tofill, "hierarchy-level-row:");
       UIOutput name = UIOutput.make(tableRow, "node-name", node.title);
-      // TODO - put this back in somehow? -AZ
-//      Map attr = new HashMap();
-//      attr.put("style", "text-indent:" + node.level + "em");
-//      name.decorate(new UIFreeAttributeDecorator(attr));
-      UIInternalLink.make(tableRow, "add-child-link", new SimpleViewParameters(VIEW_ID));
-      UIInternalLink.make(tableRow, "modify-node-link", new SimpleViewParameters(VIEW_ID));
+      Map attr = new HashMap();
+      attr.put("style", "text-indent:" + level + "em");
+      name.decorate(new UIFreeAttributeDecorator(attr));
+      UIInternalLink.make(tableRow, "add-child-link", new ModifyHierarchyNodeParameters(ModifyHierarchyNodeProducer.VIEW_ID, node.id, true));
+      UIInternalLink.make(tableRow, "modify-node-link", new ModifyHierarchyNodeParameters(ModifyHierarchyNodeProducer.VIEW_ID, node.id, false));
 
-      Set<EvalHierarchyNode> children = hierarchyLogic.getChildNodes(node.id, true);
+      //node.directChildNodeIds
+      //Set<EvalHierarchyNode> children = hierarchyLogic.getChildNodes(node.id, true);
 
-      if (children.size() > 0) {
-         UIOutput.make(tableRow, "number-children", children.size() + "");
+      if (node.directChildNodeIds.size() > 0) {
+         UIOutput.make(tableRow, "number-children", node.directChildNodeIds.size() + "");
       } else {
          UIForm removeForm = UIForm.make(tableRow, "remove-node-form");
          UICommand.make(removeForm, "remove-node-button", "");
       }
 
-      for (EvalHierarchyNode child : children) {
-         renderHierarchyNode(tofill, child);
+      for (String childId : node.directChildNodeIds) {
+         renderHierarchyNode(tofill, hierarchyLogic.getNodeById(childId), level+1);
       }
    }
 }
