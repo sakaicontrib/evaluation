@@ -8,6 +8,7 @@ import java.util.Set;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
+import org.sakaiproject.evaluation.tool.viewparams.HierarchyNodeParameters;
 import org.sakaiproject.evaluation.tool.viewparams.ModifyHierarchyNodeParameters;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -78,7 +79,8 @@ public class ControlHierarchyProducer implements ViewComponentProducer {
       name.decorate(new UIFreeAttributeDecorator(attr));
       UIInternalLink.make(tableRow, "add-child-link", new ModifyHierarchyNodeParameters(ModifyHierarchyNodeProducer.VIEW_ID, node.id, true));
       UIInternalLink.make(tableRow, "modify-node-link", new ModifyHierarchyNodeParameters(ModifyHierarchyNodeProducer.VIEW_ID, node.id, false));
-
+      UIInternalLink.make(tableRow, "assign-groups-link", new HierarchyNodeParameters(ModifyHierarchyNodeGroupsProducer.VIEW_ID, node.id));
+      
       //node.directChildNodeIds
       //Set<EvalHierarchyNode> children = hierarchyLogic.getChildNodes(node.id, true);
 
