@@ -18,8 +18,8 @@ public class HierarchyNodeGroupsLocatorInvoker {
        this.hierarchyLogic = hierarchyLogic;
     }
     
-    private HierarchyNodeLocator hierloc;
-    public void setHierloc(HierarchyNodeLocator hierloc) {
+    private HierarchyNodeGroupsLocator hierloc;
+    public void setHierloc(HierarchyNodeGroupsLocator hierloc) {
         this.hierloc = hierloc;
     }
     

@@ -83,7 +83,7 @@ public class ControlHierarchyProducer implements ViewComponentProducer {
       name.decorate(new UIFreeAttributeDecorator(attr));
       UIInternalLink.make(tableRow, "add-child-link", new ModifyHierarchyNodeParameters(ModifyHierarchyNodeProducer.VIEW_ID, node.id, true));
       UIInternalLink.make(tableRow, "modify-node-link", new ModifyHierarchyNodeParameters(ModifyHierarchyNodeProducer.VIEW_ID, node.id, false));
-      UIInternalLink.make(tableRow, "assign-groups-link", new HierarchyNodeParameters(ModifyHierarchyNodeGroupsProducer.VIEW_ID, node.id));
+      
       
       //node.directChildNodeIds
       //Set<EvalHierarchyNode> children = hierarchyLogic.getChildNodes(node.id, true);
@@ -94,6 +94,7 @@ public class ControlHierarchyProducer implements ViewComponentProducer {
          UIForm removeForm = UIForm.make(tableRow, "remove-node-form");
          UICommand removeButton = UICommand.make(removeForm, "remove-node-button", UIMessage.make("controlhierarchy.remove"));
          removeButton.parameters.add(new UIDeletionBinding("hierNodeLocator."+node.id));
+         UIInternalLink.make(tableRow, "assign-groups-link", new HierarchyNodeParameters(ModifyHierarchyNodeGroupsProducer.VIEW_ID, node.id));
       }
 
       for (String childId : node.directChildNodeIds) {
