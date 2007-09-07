@@ -30,7 +30,14 @@ public class HierarchyNodeLocatorInvoker {
         for (Iterator it = loc.delivered.keySet().iterator(); it.hasNext();) {
             String key = (String) it.next();
             EvalHierarchyNode node = (EvalHierarchyNode) loc.delivered.get(key);
-            hierarchyLogic.updateNodeData(node.id, node.title, node.description);
+            if (key.startsWith(HierarchyNodeLocator.NEW_PREFIX)) {
+                String[] parts = key.split("-");
+                EvalHierarchyNode newNode = hierarchyLogic.addNode(parts[1]);
+                hierarchyLogic.updateNodeData(newNode.id, node.title, node.description);
+            }
+            else {
+                hierarchyLogic.updateNodeData(node.id, node.title, node.description);
+            }
         }
     }
     

@@ -49,7 +49,8 @@ public class HierarchyNodeLocator implements BeanLocator {
             if (name.startsWith(NEW_PREFIX)) {
                 //TODO Not sure how to EL that Set<String> yet... SWG
                 String[] parts = name.split("-");
-                togo = hierarchyLogic.addNode(parts[1]);
+                EvalHierarchyNode node = new EvalHierarchyNode();
+                togo = node; //hierarchyLogic.addNode(parts[1]);
             }
             else {
                 togo = hierarchyLogic.getNodeById(name);
