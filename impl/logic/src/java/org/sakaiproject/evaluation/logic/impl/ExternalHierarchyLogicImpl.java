@@ -89,6 +89,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
     */
    public EvalHierarchyNode removeNode(String nodeId) {
       HierarchyNode node = hierarchyService.removeNode(nodeId);
+      setEvalGroupsForNode(nodeId, new HashSet<String>());
       return makeEvalNode(node);
    }
 
