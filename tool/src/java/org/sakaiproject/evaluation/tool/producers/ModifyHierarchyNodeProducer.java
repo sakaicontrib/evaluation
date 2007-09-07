@@ -1,5 +1,8 @@
 package org.sakaiproject.evaluation.tool.producers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
@@ -12,13 +15,15 @@ import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
+import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
+import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
-public class ModifyHierarchyNodeProducer implements ViewComponentProducer, ViewParamsReporter {
+public class ModifyHierarchyNodeProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
     public static final String VIEW_ID = "modify_hierarchy_node";
 
     public String getViewID() {
@@ -67,14 +72,20 @@ public class ModifyHierarchyNodeProducer implements ViewComponentProducer, ViewP
          * The Submission Form
          */
         UIForm form = UIForm.make(tofill, "modify-node-form");
-        UIInput.make(form, "node-title", "");
-        UIInput.make(form, "node-abbr", "");
-        UICommand.make(form, "save-node-button", "");
+        UIInput.make(form, "node-title", "hierNodeLocator."+node.id+".title");
+        UIInput.make(form, "node-abbr", "hierNodeLocator."+node.id+".description");
+        UICommand.make(form, "save-node-button", "hierNodeLocatorInvoker.saveAll");
         UIInternalLink.make(form, "cancel-link", UIMessage.make("modifyhierarchynode.cancel"), new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID));
     }
 
     public ViewParameters getViewParameters() {
         return new ModifyHierarchyNodeParameters();
+    }
+
+    public List reportNavigationCases() {
+        List cases = new ArrayList();
+        cases.add(new NavigationCase(null, new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID)));
+        return cases;
     }
 
 }
