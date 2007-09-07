@@ -18,10 +18,16 @@ import uk.org.ponder.beanutil.BeanLocator;
  *   HierarchyNodeLocator.12345.title
  *   
  *   Should fetch the title for node with id 12345
+ *   
+ * If you are adding a new node, use the NEW_PREFIX followed
+ * by the id of the Parent Node. For instance to add a child
+ * to the node with id '34' use:
+ * 
+ *   HierarchyNodeLocator.NEW-34.title
  */
 public class HierarchyNodeLocator implements BeanLocator {
-    public static final String NEW_PREFIX = "new";
-    public static String NEW_1 = NEW_PREFIX +"1";
+    public static final String NEW_PREFIX = "new-";
+    //public static String NEW_1 = NEW_PREFIX +"1";
     
     private EvalExternalLogic external;
     public void setExternal(EvalExternalLogic external) {
@@ -42,6 +48,8 @@ public class HierarchyNodeLocator implements BeanLocator {
         if (togo == null) {
             if (name.startsWith(NEW_PREFIX)) {
                 //TODO Not sure how to EL that Set<String> yet... SWG
+                String[] parts = name.split("-");
+                togo = hierarchyLogic.addNode(parts[1]);
             }
             else {
                 togo = hierarchyLogic.getNodeById(name);
@@ -51,6 +59,7 @@ public class HierarchyNodeLocator implements BeanLocator {
         return togo;
     }
     
+    /*
     public void saveAll() {
         checkSecurity();
         
@@ -59,7 +68,7 @@ public class HierarchyNodeLocator implements BeanLocator {
             EvalHierarchyNode node = (EvalHierarchyNode) delivered.get(key);
             hierarchyLogic.updateNodeData(node.id, node.title, node.description);
         }
-    }
+    } */
     
     /*
      * Currently only administrators can use this functionality.

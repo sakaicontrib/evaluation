@@ -72,8 +72,9 @@ public class ControlHierarchyProducer implements ViewComponentProducer {
    public void renderHierarchyNode(UIContainer tofill, EvalHierarchyNode node, int level) {
       System.out.println("Node: " + node);
 
+      String title = node.title != null ? node.title : "Null Title?";
       UIBranchContainer tableRow = UIBranchContainer.make(tofill, "hierarchy-level-row:");
-      UIOutput name = UIOutput.make(tableRow, "node-name", node.title);
+      UIOutput name = UIOutput.make(tableRow, "node-name", title);
       Map attr = new HashMap();
       attr.put("style", "text-indent:" + level + "em");
       name.decorate(new UIFreeAttributeDecorator(attr));
