@@ -164,6 +164,10 @@
 		class="org.sakaiproject.evaluation.tool.locators.ResponseAnswersBeanLocator">
 	</bean>
 
+	<bean id="hierNodeLocator" class="org.sakaiproject.evaluation.tool.locators.HierarchyNodeLocator">
+		<property name="external" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic"/>
+		<property name="hierarchyLogic" ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+	</bean>
 
 	<!-- evolver definitions here -->
 
