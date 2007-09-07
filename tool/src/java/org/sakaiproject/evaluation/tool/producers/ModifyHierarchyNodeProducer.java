@@ -2,9 +2,14 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
+import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.logic.providers.EvalHierarchyProvider;
 import org.sakaiproject.evaluation.tool.viewparams.ModifyHierarchyNodeParameters;
+
+import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIForm;
+import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.view.ComponentChecker;
@@ -48,6 +53,24 @@ public class ModifyHierarchyNodeProducer implements ViewComponentProducer, ViewP
         UIMessage.make(tofill, "page-title", "modifyhierarchynode.breadcrumb.title");
         
         //EvalHierarchyNode toEdit 
+        ModifyHierarchyNodeParameters params = (ModifyHierarchyNodeParameters) viewparams;
+        boolean addingChild = params.addingChild;
+        EvalHierarchyNode node = hierarchyLogic.getNodeById(params.nodeId);
+        if (addingChild) {
+            UIMessage.make(tofill, "modify-location-message", "modifyhierarchynode.add.location", new String[] {node.title});
+        }
+        else {
+            UIMessage.make(tofill, "modify-location-message", "modifyhierarchynode.modify.location", new String[] {node.title});
+        }
+        
+        /*
+         * The Submission Form
+         */
+        UIForm form = UIForm.make(tofill, "modify-node-form");
+        UIInput.make(form, "node-title", "");
+        UIInput.make(form, "node-abbr", "");
+        UICommand.make(form, "save-node-button", "");
+        UIInternalLink.make(form, "cancel-link", UIMessage.make("modifyhierarchynode.cancel"), new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID));
     }
 
     public ViewParameters getViewParameters() {
