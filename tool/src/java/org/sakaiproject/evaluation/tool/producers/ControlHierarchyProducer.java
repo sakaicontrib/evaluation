@@ -59,6 +59,8 @@ public class ControlHierarchyProducer implements ViewComponentProducer {
       UIInternalLink.make(tofill, "administrate-toplink", UIMessage.make("administrate.page.title"),
             new SimpleViewParameters(AdministrateProducer.VIEW_ID));
       UIMessage.make(tofill, "page-title", "controlhierarchy.breadcrumb.title");
+      
+      UIMessage.make(tofill, "body-title", "controlhierarchy.page.title");
 
       EvalHierarchyNode root = hierarchyLogic.getRootLevelNode();
       renderHierarchyNode(tofill, root, 0);

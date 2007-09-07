@@ -6,6 +6,7 @@ import java.util.List;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.viewparams.HierarchyNodeParameters;
 
@@ -15,6 +16,7 @@ import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
+import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
@@ -52,9 +54,19 @@ public class ModifyHierarchyNodeGroupsProducer implements ViewComponentProducer,
         
         HierarchyNodeParameters params = (HierarchyNodeParameters) viewparams;
         String nodeId = params.nodeId;
+        EvalHierarchyNode evalNode = hierarchyLogic.getNodeById(params.nodeId);
         
         List<EvalGroup> evalGroups = external.getEvalGroupsForUser("admin", EvalConstants.PERM_BE_EVALUATED);
         
+        /*
+         * Page titles and instructions, top menu links and bread crumbs here
+         */
+        UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID));
+        UIInternalLink.make(tofill, "administrate-toplink", UIMessage.make("administrate.page.title"), new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+        UIInternalLink.make(tofill, "hierarchy-toplink", UIMessage.make("controlhierarchy.breadcrumb.title"), new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID));
+        UIMessage.make(tofill, "page-title", "modifyhierarchynode.breadcrumb.title");
+        
+        UIMessage.make(tofill, "assign-groups-title","hierarchynode.assigngroups.body.title", new String[] {evalNode.title});
         
         UIForm form = UIForm.make(tofill, "assign-groups-form");
         for (EvalGroup group: evalGroups) {
