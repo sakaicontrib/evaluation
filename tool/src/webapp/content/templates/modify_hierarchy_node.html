@@ -20,11 +20,11 @@
     <h3 rsf:id="modify-location-message">Add/Modify Hierarchy Item under School Science</h3>
     <form rsf:id="modify-node-form">
         <p class="shorttext">
-            <label>Title:</label>
-            <input rsf:id="node-title" type="text" />
+            <label>Title</label>
+            <input id="node-title" rsf:id="node-title" type="text"/>
         </p>
         <p class="shorttext">
-            <label>Abbreviation:</label>
+            <label>Abbreviation</label>
             <input rsf:id="node-abbr" type="text" />
         </p>
         <div class="act">
@@ -33,5 +33,6 @@
         </div>
     </form>
 </div>
+<script>document.getElementById('node-title').focus();</script>
 </body>
 </html>
