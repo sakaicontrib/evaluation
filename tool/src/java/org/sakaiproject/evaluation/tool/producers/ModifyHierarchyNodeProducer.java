@@ -7,6 +7,7 @@ import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.logic.providers.EvalHierarchyProvider;
+import org.sakaiproject.evaluation.tool.locators.HierarchyNodeLocator;
 import org.sakaiproject.evaluation.tool.viewparams.ModifyHierarchyNodeParameters;
 
 import uk.org.ponder.rsf.components.UICommand;
@@ -61,10 +62,14 @@ public class ModifyHierarchyNodeProducer implements ViewComponentProducer, ViewP
         ModifyHierarchyNodeParameters params = (ModifyHierarchyNodeParameters) viewparams;
         boolean addingChild = params.addingChild;
         EvalHierarchyNode node = hierarchyLogic.getNodeById(params.nodeId);
+        
+        String ELName = "";
         if (addingChild) {
+            ELName = HierarchyNodeLocator.NEW_PREFIX + node.id;
             UIMessage.make(tofill, "modify-location-message", "modifyhierarchynode.add.location", new String[] {node.title});
         }
         else {
+            ELName = node.id;
             UIMessage.make(tofill, "modify-location-message", "modifyhierarchynode.modify.location", new String[] {node.title});
         }
         
@@ -72,8 +77,8 @@ public class ModifyHierarchyNodeProducer implements ViewComponentProducer, ViewP
          * The Submission Form
          */
         UIForm form = UIForm.make(tofill, "modify-node-form");
-        UIInput.make(form, "node-title", "hierNodeLocator."+node.id+".title");
-        UIInput.make(form, "node-abbr", "hierNodeLocator."+node.id+".description");
+        UIInput.make(form, "node-title", "hierNodeLocator."+ELName+".title");
+        UIInput.make(form, "node-abbr", "hierNodeLocator."+ELName+".description");
         UICommand.make(form, "save-node-button", "hierNodeLocatorInvoker.saveAll");
         UIInternalLink.make(form, "cancel-link", UIMessage.make("modifyhierarchynode.cancel"), new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID));
     }
