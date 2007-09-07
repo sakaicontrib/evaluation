@@ -152,6 +152,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/inferrers/TemplateVPInferrer.java
 tool/src/java/org/sakaiproject/evaluation/tool/locators/AnswersBeanLocator.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/locators/EntityNameInferrerImpl.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/locators/EvaluationBeanLocator.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/locators/HierarchyNodeLocator.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/locators/ItemBeanWBL.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/locators/ResponseAnswersBeanLocator.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/locators/ResponseBeanLocator.java -text
