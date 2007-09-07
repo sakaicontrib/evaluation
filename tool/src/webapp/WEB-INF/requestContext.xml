@@ -450,10 +450,13 @@
 	<!-- Views for Controlling and Administering the Hierarchy -->
 	<bean class="org.sakaiproject.evaluation.tool.producers.ControlHierarchyProducer">
 		<property name="external" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic"/>
-		<property name="evalHierarchyProvider" ref="org.sakaiproject.evaluation.logic.providers.EvalHierarchyProvider" />
+		<property name="hierarchyLogic" ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
 	</bean>
 	
-	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeProducer" />
+	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeProducer" >
+		<property name="external" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic"/>
+		<property name="hierarchyLogic" ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+	</bean>
 	
 	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyScaleProducer">
 		<property name="external"
