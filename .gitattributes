@@ -111,6 +111,7 @@ impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalResponsesLogicImp
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalScalesLogicImplTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalSettingsImplTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalTemplatesLogicImplTest.java -text
+impl/logic/src/test/org/sakaiproject/evaluation/logic/test/ExternalHierarchyLogicImplTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/stubs/EvalExternalLogicStub.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/stubs/TestPlacement.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/stubs/TestReference.java -text
