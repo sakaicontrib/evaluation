@@ -82,10 +82,10 @@ public class EvalUtils {
 	 * @param list
 	 * @return the original list with the duplicate objects removed
 	 */
-	public static List removeDuplicates(List list) {
-		Set s = new HashSet();
-		for (Iterator iter = list.iterator(); iter.hasNext();) {
-			Object element = (Object) iter.next();
+	public static <T extends Object> List<T> removeDuplicates(List<T> list) {
+		Set<T> s = new HashSet<T>();
+		for (Iterator<T> iter = list.iterator(); iter.hasNext();) {
+			T element = (T) iter.next();
 			if (! s.add(element)) {
 				iter.remove();
 			}
@@ -103,7 +103,7 @@ public class EvalUtils {
 	 * @return an array of the groups that in common between the 2 lists
 	 */
 	public static EvalGroup[] getGroupsInCommon(List evalGroups, List assignGroups) {
-		List groups = new ArrayList();
+		List<EvalGroup> groups = new ArrayList<EvalGroup>();
 		for (int i=0; i<evalGroups.size(); i++) {
 			EvalGroup group = (EvalGroup) evalGroups.get(i);
 			for (int j=0; j<assignGroups.size(); j++) {

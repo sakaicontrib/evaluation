@@ -11,7 +11,6 @@
 
 package org.sakaiproject.evaluation.tool.producers;
 
-import java.awt.Color;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +22,7 @@ import java.util.Set;
 
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.utils.EvalUtils;
@@ -32,7 +32,6 @@ import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
-import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.LocalResponsesLogic;
 import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.EvalCategoryViewParameters;
@@ -50,7 +49,6 @@ import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
-import uk.org.ponder.rsf.components.decorators.UIColourDecorator;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionResultInterceptor;
@@ -86,6 +84,11 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
     public void setEvalsLogic(EvalEvaluationsLogic evalsLogic) {
         this.evalsLogic = evalsLogic;
     }
+
+    private EvalItemsLogic itemsLogic;
+    public void setItemsLogic(EvalItemsLogic itemsLogic) {
+       this.itemsLogic = itemsLogic;
+    }    
 
     ItemRenderer itemRenderer;
     public void setItemRenderer(ItemRenderer itemRenderer) {
@@ -280,7 +283,8 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
             form.parameters.add( new UIELBinding("#{takeEvalBean.evalGroupId}", evalGroupId) );
 
             // get all items for this evaluation main template
-            allItems = new ArrayList(eval.getTemplate().getTemplateItems());
+//            allItems = new ArrayList(eval.getTemplate().getTemplateItems());
+            allItems = itemsLogic.getTemplateItemsForEvaluation(evaluationId, currentUserId, null);
 
             //filter out the block child items, to get a list non-child items
             List ncItemsList = TemplateItemUtils.getNonChildItems(allItems);
@@ -463,5 +467,6 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
             result.resultingView = new EvalCategoryViewParameters(ShowEvalCategoryProducer.VIEW_ID, etvp.evalCategory);
         }
     }
+
 
 }
