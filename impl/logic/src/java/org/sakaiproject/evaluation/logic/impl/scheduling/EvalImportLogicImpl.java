@@ -88,12 +88,11 @@ public class EvalImportLogicImpl implements EvalImportLogic {
 	public EvalImportLogicImpl() {
 		
 	}
-	
-	/*
-	 * (non-Javadoc)
+
+	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.externals.EvalImportLogic#load(java.lang.String)
 	 */
-	public List load(String id) {
+	public List<String> load(String id) {
 		List<String> messages = new ArrayList<String>();
 		currentUserId = sessionManager.getCurrentSessionUserId();
 		try

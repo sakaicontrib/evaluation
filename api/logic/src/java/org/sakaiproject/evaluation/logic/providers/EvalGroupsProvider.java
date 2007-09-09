@@ -68,7 +68,7 @@ public interface EvalGroupsProvider {
 	 * <b>Note</b>: only take evaluation and be evaluated are supported
 	 * @return a Set of Strings which represent the user Ids of all users in the course with that permission
 	 */
-	public Set getUserIdsForEvalGroups(String[] groupIds, String permission);
+	public Set<String> getUserIdsForEvalGroups(String[] groupIds, String permission);
 
 	/**
     * <b>Note</b>: This is simply here for the sake of efficiency<br/>
@@ -93,7 +93,7 @@ public interface EvalGroupsProvider {
 	 * <b>Note</b>: only take evaluation and be evaluated are supported
 	 * @return a List of {@link EvalGroup} objects representing eval groups
 	 */
-	public List getEvalGroupsForUser(String userId, String permission);
+	public List<EvalGroup> getEvalGroupsForUser(String userId, String permission);
 
 	/**
     * <b>Note</b>: This is simply here for the sake of efficiency<br/>

@@ -84,7 +84,7 @@ public interface EvalTemplatesLogic {
 	 * only return templates that have items
 	 * @return a list of EvalTemplate objects
 	 */
-	public List getTemplatesForUser(String userId, String sharingConstant, boolean includeEmpty);
+	public List<EvalTemplate> getTemplatesForUser(String userId, String sharingConstant, boolean includeEmpty);
 
 
 	// PERMISSIONS

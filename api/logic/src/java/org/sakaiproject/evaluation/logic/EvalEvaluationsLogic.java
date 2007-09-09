@@ -83,7 +83,7 @@ public interface EvalEvaluationsLogic {
 	 * @param templateId the id of an {@link EvalTemplate} object
 	 * @return a List of {@link EvalEvaluation} objects (empty if none exist)
 	 */
-	public List getEvaluationsByTemplateId(Long templateId);
+	public List<EvalEvaluation> getEvaluationsByTemplateId(Long templateId);
 
 	/**
 	 * Count the number of evaluations for a template id
@@ -105,7 +105,7 @@ public interface EvalEvaluationsLogic {
 	 * evaluations which are both owned and not-owned, else only return the owned evaluations.
 	 * @return a List of {@link EvalEvaluation} objects
 	 */
-	public List getVisibleEvaluationsForUser(String userId, boolean recentOnly, boolean showNotOwned);
+	public List<EvalEvaluation> getVisibleEvaluationsForUser(String userId, boolean recentOnly, boolean showNotOwned);
 
 	/**
 	 * Get all evaluations that can be taken by this user,
@@ -117,7 +117,7 @@ public interface EvalEvaluationsLogic {
 	 * if false, include all evaluations
 	 * @return a List of {@link EvalEvaluation} objects (sorted by DueDate)
 	 */
-	public List getEvaluationsForUser(String userId, boolean activeOnly, boolean untakenOnly);
+	public List<EvalEvaluation> getEvaluationsForUser(String userId, boolean activeOnly, boolean untakenOnly);
 
 
 	// EVAL GROUPS
@@ -131,7 +131,7 @@ public interface EvalEvaluationsLogic {
 	 * you should not include these when displaying evaluations to users to take or sending emails
 	 * @return a Map of evaluationId (Long) -> List of {@link EvalGroup} objects
 	 */
-	public Map getEvaluationGroups(Long[] evaluationIds, boolean includeUnApproved);
+	public Map<Long, List<EvalGroup>> getEvaluationGroups(Long[] evaluationIds, boolean includeUnApproved);
 
 	/**
 	 * Get the list of assigned groups for an evaluation id, this
@@ -142,7 +142,7 @@ public interface EvalEvaluationsLogic {
 	 * you should not include these when displaying evaluations to users to take or sending emails
 	 * @return a Map of evaluationId (Long) -> List of {@link EvalAssignGroup} objects
 	 */
-	public Map getEvaluationAssignGroups(Long[] evaluationIds, boolean includeUnApproved);
+	public Map<Long, List<EvalAssignGroup>> getEvaluationAssignGroups(Long[] evaluationIds, boolean includeUnApproved);
 
 	/**
 	 * Count the number of eval groups assigned for an evaluation id
@@ -236,6 +236,6 @@ public interface EvalEvaluationsLogic {
 	 * get the evaluations in this category which are accessible to this user
 	 * @return a list of {@link EvalEvaluation} objects
 	 */
-	public List getEvaluationsByCategory(String evalCategory, String userId);
+	public List<EvalEvaluation> getEvaluationsByCategory(String evalCategory, String userId);
 
 }

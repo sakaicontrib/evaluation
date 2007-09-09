@@ -38,7 +38,7 @@ public interface EvalExpertItemsLogic {
 	 * @param includeExpert if true then include expert groups only, else include non-expert groups only
 	 * @return a List of {@link EvalItemGroup} objects, ordered by title alphabetically
 	 */
-	public List getItemGroups(Long parentItemGroupId, String userId, boolean includeEmpty, boolean includeExpert);
+	public List<EvalItemGroup> getItemGroups(Long parentItemGroupId, String userId, boolean includeEmpty, boolean includeExpert);
 
 	/**
 	 * Get all items contained within an item group (this does NOT retrieve items contained within subgroups of the given group)
@@ -47,7 +47,7 @@ public interface EvalExpertItemsLogic {
 	 * @param includeExpert if true then include expert groups only, else include non-expert groups only
 	 * @return a List of {@link EvalItem} objects, ordered by title alphabetically
 	 */
-	public List getItemsInItemGroup(Long itemGroupId, boolean includeExpert);
+	public List<EvalItem> getItemsInItemGroup(Long itemGroupId, boolean includeExpert);
 
 
 	/**
