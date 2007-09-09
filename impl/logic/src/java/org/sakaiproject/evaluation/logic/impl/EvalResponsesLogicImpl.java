@@ -1,15 +1,5 @@
 /******************************************************************************
  * EvalResponsesLogicImpl.java - created by aaronz@vt.edu
- * 
- * Copyright (c) 2007 Virginia Polytechnic Institute and State University
- * Licensed under the Educational Community License version 1.0
- * 
- * A copy of the Educational Community License has been included in this 
- * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
- * 
- * Contributors:
- * Aaron Zeckoski (aaronz@vt.edu) - primary
- * 
  *****************************************************************************/
 
 package org.sakaiproject.evaluation.logic.impl;

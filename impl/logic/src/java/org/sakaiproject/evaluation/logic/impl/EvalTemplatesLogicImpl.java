@@ -1,15 +1,5 @@
 /******************************************************************************
  * EvalTemplatesLogicImpl.java - created by aaronz@vt.edu on Dec 31, 2006
- * 
- * Copyright (c) 2007 Virginia Polytechnic Institute and State University
- * Licensed under the Educational Community License version 1.0
- * 
- * A copy of the Educational Community License has been included in this 
- * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
- * 
- * Contributors:
- * Aaron Zeckoski (aaronz@vt.edu) - primary
- * 
  *****************************************************************************/
 
 package org.sakaiproject.evaluation.logic.impl;
@@ -209,7 +199,7 @@ public class EvalTemplatesLogicImpl implements EvalTemplatesLogic {
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalTemplatesLogic#getTemplatesForUser(java.lang.String, java.lang.String, boolean)
 	 */
-	public List getTemplatesForUser(String userId, String sharingConstant, boolean includeEmpty) {
+	public List<EvalTemplate> getTemplatesForUser(String userId, String sharingConstant, boolean includeEmpty) {
 		log.debug("sharingConstant: " + sharingConstant + ", userId: " + userId);
 
 		/*

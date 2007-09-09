@@ -226,6 +226,7 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.EvalItemsLogic#getItemsForUser(java.lang.String, java.lang.String, java.lang.String, boolean)
     */
+   @SuppressWarnings("unchecked")
    public List<EvalItem> getItemsForUser(String userId, String sharingConstant, String filter, boolean includeExpert) {
       log.debug("sharingConstant:" + sharingConstant + ", userId:" + userId + ", filter:" + filter  + ", includeExpert:" + includeExpert);
 
@@ -339,6 +340,7 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.EvalItemsLogic#saveTemplateItem(org.sakaiproject.evaluation.model.EvalTemplateItem, java.lang.String)
     */
+   @SuppressWarnings("unchecked")
    public void saveTemplateItem(EvalTemplateItem templateItem, String userId) {
       log.debug("templateItem:" + templateItem.getId() + ", userId:" + userId);
 
@@ -569,6 +571,7 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.EvalItemsLogic#getTemplateItemsForTemplate(java.lang.Long, java.lang.String, java.lang.String)
     */
+   @SuppressWarnings("unchecked")
    public List<EvalTemplateItem> getTemplateItemsForTemplate(Long templateId, String userId, String hierarchyLevel) {
       log.debug("templateId:" + templateId + ", userId:" + userId + ", hierarchyLevel:" + hierarchyLevel);
 
@@ -587,7 +590,7 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
       String[] props = new String[] { "template.id" };
       Object[] values = new Object[] { templateId };
       int[] comparisons = new int[] { ByPropsFinder.EQUALS };
-      List l = dao.findByProperties(EvalTemplateItem.class, 
+      List<EvalTemplateItem> l = dao.findByProperties(EvalTemplateItem.class, 
             props, values, comparisons,
             new String[] { "displayOrder" } );
 
@@ -617,6 +620,7 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.EvalItemsLogic#getBlockChildTemplateItemsForBlockParent(java.lang.Long, boolean)
     */
+   @SuppressWarnings("unchecked")
    public List<EvalTemplateItem> getBlockChildTemplateItemsForBlockParent(Long parentId, boolean includeParent) {
 
       // get the templateItem by id to verify parent exists
