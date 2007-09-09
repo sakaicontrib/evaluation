@@ -1,3 +1,4 @@
+
 package org.sakaiproject.evaluation.model;
 
 // Generated Mar 20, 2007 10:08:13 AM by Hibernate Tools 3.2.0.beta6a
@@ -9,123 +10,131 @@ import java.util.Date;
  */
 public class EvalAnswer implements java.io.Serializable {
 
-	// Fields    
+   // Fields
 
-	private Long id;
+   private Long id;
 
-	private Date lastModified;
+   private Date lastModified;
 
-	private EvalTemplateItem templateItem;
+   private EvalTemplateItem templateItem;
 
-	private EvalItem item;
+   private EvalItem item;
 
-	private EvalResponse response;
+   private EvalResponse response;
 
-	private String text;
+   private String text;
 
-	private Integer numeric;
+   private Integer numeric;
 
-	private String associatedId;
+   private String associatedId;
 
-	private String associatedType;
+   private String associatedType;
 
-	// Constructors
+   // Constructors
 
-	/** default constructor */
-	public EvalAnswer() {
-	}
+   /** default constructor */
+   public EvalAnswer() {
+   }
 
-	/** minimal constructor */
-	public EvalAnswer(Date lastModified, EvalTemplateItem templateItem, EvalResponse response) {
-		this.lastModified = lastModified;
-		this.templateItem = templateItem;
-		this.response = response;
-	}
+   /**
+    * minimal constructor
+    * 
+    * @param lastModified
+    * @param templateItem
+    * @param response
+    */
+   public EvalAnswer(Date lastModified, EvalTemplateItem templateItem,
+         EvalResponse response) {
+      this.lastModified = lastModified;
+      this.templateItem = templateItem;
+      this.response = response;
+   }
 
-	/** full constructor */
-	public EvalAnswer(Date lastModified, EvalTemplateItem templateItem, EvalItem item, EvalResponse response, String text, Integer numeric,
-			String associatedId, String associatedType) {
-		this.lastModified = lastModified;
-		this.templateItem = templateItem;
-		this.item = item;
-		this.response = response;
-		this.text = text;
-		this.numeric = numeric;
-		this.associatedId = associatedId;
-		this.associatedType = associatedType;
-	}
+   /** full constructor */
+   public EvalAnswer(Date lastModified, EvalTemplateItem templateItem,
+         EvalItem item, EvalResponse response, String text, Integer numeric,
+         String associatedId, String associatedType) {
+      this.lastModified = lastModified;
+      this.templateItem = templateItem;
+      this.item = item;
+      this.response = response;
+      this.text = text;
+      this.numeric = numeric;
+      this.associatedId = associatedId;
+      this.associatedType = associatedType;
+   }
 
-	// Property accessors
-	public Long getId() {
-		return this.id;
-	}
+   // Property accessors
+   public Long getId() {
+      return this.id;
+   }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+   public void setId(Long id) {
+      this.id = id;
+   }
 
-	public Date getLastModified() {
-		return this.lastModified;
-	}
+   public Date getLastModified() {
+      return this.lastModified;
+   }
 
-	public void setLastModified(Date lastModified) {
-		this.lastModified = lastModified;
-	}
+   public void setLastModified(Date lastModified) {
+      this.lastModified = lastModified;
+   }
 
-	public EvalTemplateItem getTemplateItem() {
-		return this.templateItem;
-	}
+   public EvalTemplateItem getTemplateItem() {
+      return this.templateItem;
+   }
 
-	public void setTemplateItem(EvalTemplateItem templateItem) {
-		this.templateItem = templateItem;
-	}
+   public void setTemplateItem(EvalTemplateItem templateItem) {
+      this.templateItem = templateItem;
+   }
 
-	public EvalItem getItem() {
-		return this.item;
-	}
+   public EvalItem getItem() {
+      return this.item;
+   }
 
-	public void setItem(EvalItem item) {
-		this.item = item;
-	}
+   public void setItem(EvalItem item) {
+      this.item = item;
+   }
 
-	public EvalResponse getResponse() {
-		return this.response;
-	}
+   public EvalResponse getResponse() {
+      return this.response;
+   }
 
-	public void setResponse(EvalResponse response) {
-		this.response = response;
-	}
+   public void setResponse(EvalResponse response) {
+      this.response = response;
+   }
 
-	public String getText() {
-		return this.text;
-	}
+   public String getText() {
+      return this.text;
+   }
 
-	public void setText(String text) {
-		this.text = text;
-	}
+   public void setText(String text) {
+      this.text = text;
+   }
 
-	public Integer getNumeric() {
-		return this.numeric;
-	}
+   public Integer getNumeric() {
+      return this.numeric;
+   }
 
-	public void setNumeric(Integer numeric) {
-		this.numeric = numeric;
-	}
+   public void setNumeric(Integer numeric) {
+      this.numeric = numeric;
+   }
 
-	public String getAssociatedId() {
-		return this.associatedId;
-	}
+   public String getAssociatedId() {
+      return this.associatedId;
+   }
 
-	public void setAssociatedId(String associatedId) {
-		this.associatedId = associatedId;
-	}
+   public void setAssociatedId(String associatedId) {
+      this.associatedId = associatedId;
+   }
 
-	public String getAssociatedType() {
-		return this.associatedType;
-	}
+   public String getAssociatedType() {
+      return this.associatedType;
+   }
 
-	public void setAssociatedType(String associatedType) {
-		this.associatedType = associatedType;
-	}
+   public void setAssociatedType(String associatedType) {
+      this.associatedType = associatedType;
+   }
 
 }

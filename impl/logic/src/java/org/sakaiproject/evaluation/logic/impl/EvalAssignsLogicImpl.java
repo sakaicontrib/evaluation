@@ -171,24 +171,6 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
    }
 
    /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.EvalAssignsLogic#getAssignContextsByEvalId(java.lang.Long)
-    * @deprecated see method in evaluation logic
-    */
-   public List getAssignGroupsByEvalId(Long evaluationId) {
-      log.debug("evaluationId: " + evaluationId);
-
-      // get evaluation to check id
-      EvalEvaluation eval = (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);
-      if (eval == null) {
-         throw new IllegalArgumentException("Cannot find evaluation with this id: " + evaluationId);
-      }
-
-      return dao.findByProperties(EvalAssignGroup.class, 
-            new String[] {"evaluation.id"}, 
-            new Object[] {evaluationId});
-   }
-
-   /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.EvalAssignsLogic#getAssignGroupById(java.lang.Long)
     */
    public EvalAssignGroup getAssignGroupById(Long assignGroupId) {
@@ -199,9 +181,10 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.EvalAssignsLogic#getAssignGroupId(java.lang.Long, java.lang.String)
     */
+   @SuppressWarnings("unchecked")
    public Long getAssignGroupId(Long evaluationId, String evalGroupId) {
       log.debug("evaluationId: " + evaluationId + ", evalGroupId: " + evalGroupId);
-      List l = dao.findByProperties(EvalAssignGroup.class, 
+      List<EvalAssignGroup> l = dao.findByProperties(EvalAssignGroup.class, 
             new String[] {"evaluation.id", "evalGroupId"}, 
             new Object[] {evaluationId, evalGroupId} );
       if (l.size() == 1) {
@@ -331,11 +314,12 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
     * @param ac
     * @return true if duplicate found
     */
+   @SuppressWarnings("unchecked")
    private boolean checkRemoveDuplicateAC(EvalAssignGroup ac) {
       log.debug("assignContext: " + ac.getId());
 
 //    log.info("AZ1: current AC("+ac.getId()+"): ctxt:" + ac.getContext() + ", eval:" + ac.getEvaluation().getId());
-      List l = dao.findByProperties(EvalAssignGroup.class, 
+      List<EvalAssignGroup> l = dao.findByProperties(EvalAssignGroup.class, 
             new String[] {"evalGroupId", "evaluation.id"}, 
             new Object[] {ac.getEvalGroupId(), ac.getEvaluation().getId()});
       if ( (ac.getId() == null && l.size() >= 1) || 

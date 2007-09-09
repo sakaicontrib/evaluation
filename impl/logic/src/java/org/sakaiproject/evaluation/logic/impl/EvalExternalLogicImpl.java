@@ -338,14 +338,15 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#countEvalGroupsForUser(java.lang.String, java.lang.String)
     */
+   @SuppressWarnings("unchecked")
    public int countEvalGroupsForUser(String userId, String permission) {
       log.debug("userId: " + userId + ", permission: " + permission);
 
       int count = 0;
-      Set authzGroupIds = authzGroupService.getAuthzGroupsIsAllowed(userId, permission, null);
-      Iterator it = authzGroupIds.iterator();
+      Set<String> authzGroupIds = authzGroupService.getAuthzGroupsIsAllowed(userId, permission, null);
+      Iterator<String> it = authzGroupIds.iterator();
       while (it.hasNext()) {
-         String authzGroupId = (String) it.next();
+         String authzGroupId = it.next();
          Reference r = entityManager.newReference(authzGroupId);
          if(r.isKnownType()) {
             // check if this is a Sakai Site
@@ -370,14 +371,15 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#getEvalGroupsForUser(java.lang.String, java.lang.String)
     */
+   @SuppressWarnings("unchecked")
    public List<EvalGroup> getEvalGroupsForUser(String userId, String permission) {
       log.debug("userId: " + userId + ", permission: " + permission);
 
       List<EvalGroup> l = new ArrayList<EvalGroup>();
-      Set authzGroupIds = authzGroupService.getAuthzGroupsIsAllowed(userId, permission, null);
-      Iterator it = authzGroupIds.iterator();
+      Set<String> authzGroupIds = authzGroupService.getAuthzGroupsIsAllowed(userId, permission, null);
+      Iterator<String> it = authzGroupIds.iterator();
       while (it.hasNext()) {
-         String authzGroupId = (String) it.next();
+         String authzGroupId = it.next();
          Reference r = entityManager.newReference(authzGroupId);
          if(r.isKnownType()) {
             // check if this is a Sakai Site
@@ -605,7 +607,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
    private String getEntityReference(Serializable entity) {
       String id = null;
       try {
-         Class elementClass = entity.getClass();
+         Class<? extends Serializable> elementClass = entity.getClass();
          Method getIdMethod = elementClass.getMethod("getId", new Class[] {});
          Long realId = (Long) getIdMethod.invoke(entity, (Object[]) null);
          id = realId.toString();
@@ -616,7 +618,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
       }
    }
 
-   private String getEntityReference(Class entityClass, String entityId) {
+   private String getEntityReference(Class<? extends Serializable> entityClass, String entityId) {
       String prefix = null;
       // make sure this class is supported and get the prefix
       if (entityClass == EvalEvaluation.class) {

@@ -46,7 +46,7 @@ public class TextTemplateLogicUtils {
 	 * course_title => Math 1001 Differential Equations<br/>
 	 * @return the processed template
 	 */
-	public static String processTextTemplate(String textTemplate, Map replacementValues) {
+	public static String processTextTemplate(String textTemplate, Map<String, String> replacementValues) {
 		if (replacementValues == null) {
 			return textTemplate;
 		}
