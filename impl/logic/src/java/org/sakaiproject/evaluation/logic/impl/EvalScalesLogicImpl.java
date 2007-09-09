@@ -1,15 +1,5 @@
 /******************************************************************************
  * EvalScalesLogicImpl.java - created by aaronz@vt.edu on Dec 29, 2006
- * 
- * Copyright (c) 2007 Virginia Polytechnic Institute and State University
- * Licensed under the Educational Community License version 1.0
- * 
- * A copy of the Educational Community License has been included in this 
- * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
- * 
- * Contributors:
- * Aaron Zeckoski (aaronz@vt.edu) - primary
- * 
  *****************************************************************************/
 
 package org.sakaiproject.evaluation.logic.impl;
@@ -167,10 +157,11 @@ public class EvalScalesLogicImpl implements EvalScalesLogic {
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalScalesLogic#getScalesForUser(java.lang.String, java.lang.String)
 	 */
-	public List getScalesForUser(String userId, String sharingConstant) {
+	@SuppressWarnings("unchecked")
+   public List<EvalScale> getScalesForUser(String userId, String sharingConstant) {
 		log.debug("userId: " + userId + ", sharingConstant: " + sharingConstant );
 
-		List l = new ArrayList();
+		List<EvalScale> l = new ArrayList<EvalScale>();
 
 		// get admin state
 		boolean isAdmin = external.isUserAdmin(userId);
