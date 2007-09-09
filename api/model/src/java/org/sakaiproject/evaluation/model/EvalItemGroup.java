@@ -1,3 +1,4 @@
+
 package org.sakaiproject.evaluation.model;
 
 // Generated Mar 20, 2007 10:08:13 AM by Hibernate Tools 3.2.0.beta6a
@@ -11,122 +12,122 @@ import java.util.Set;
  */
 public class EvalItemGroup implements java.io.Serializable {
 
-	// Fields    
+   // Fields
 
-	private Long id;
+   private Long id;
 
-	private Date lastModified;
+   private Date lastModified;
 
-	private String owner;
+   private String owner;
 
-	private String type;
+   private String type;
 
-	private String title;
+   private String title;
 
-	private String description;
+   private String description;
 
-	private Boolean expert;
+   private Boolean expert;
 
-	private EvalItemGroup parent;
+   private EvalItemGroup parent;
 
-	private Set groupItems = new HashSet(0);
+   private Set<EvalItem> groupItems = new HashSet<EvalItem>(0);
 
-	// Constructors
+   // Constructors
 
-	/** default constructor */
-	public EvalItemGroup() {
-	}
+   /** default constructor */
+   public EvalItemGroup() {
+   }
 
-	/** minimal constructor */
-	public EvalItemGroup(String owner, String type, String title) {
-		this.owner = owner;
-		this.type = type;
-		this.title = title;
-	}
+   /** minimal constructor */
+   public EvalItemGroup(String owner, String type, String title) {
+      this.owner = owner;
+      this.type = type;
+      this.title = title;
+   }
 
-	/** full constructor */
-	public EvalItemGroup(Date lastModified, String owner, String type, String title, String description, Boolean expert, EvalItemGroup parent, Set groupItems) {
-		this.lastModified = lastModified;
-		this.owner = owner;
-		this.type = type;
-		this.title = title;
-		this.description = description;
-		this.expert = expert;
-		this.parent = parent;
-		this.groupItems = groupItems;
-	}
+   /** full constructor */
+   public EvalItemGroup(Date lastModified, String owner, String type, String title, String description,
+         Boolean expert, EvalItemGroup parent, Set<EvalItem> groupItems) {
+      this.lastModified = lastModified;
+      this.owner = owner;
+      this.type = type;
+      this.title = title;
+      this.description = description;
+      this.expert = expert;
+      this.parent = parent;
+      this.groupItems = groupItems;
+   }
 
-	// Property accessors
-	public Long getId() {
-		return this.id;
-	}
+   public String getDescription() {
+      return description;
+   }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+   public void setDescription(String description) {
+      this.description = description;
+   }
 
-	public Date getLastModified() {
-		return this.lastModified;
-	}
+   public Boolean getExpert() {
+      return expert;
+   }
 
-	public void setLastModified(Date lastModified) {
-		this.lastModified = lastModified;
-	}
+   public void setExpert(Boolean expert) {
+      this.expert = expert;
+   }
 
-	public String getOwner() {
-		return this.owner;
-	}
+   public Set<EvalItem> getGroupItems() {
+      return groupItems;
+   }
 
-	public void setOwner(String owner) {
-		this.owner = owner;
-	}
+   public void setGroupItems(Set<EvalItem> groupItems) {
+      this.groupItems = groupItems;
+   }
 
-	public String getType() {
-		return this.type;
-	}
+   public Long getId() {
+      return id;
+   }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+   public void setId(Long id) {
+      this.id = id;
+   }
 
-	public String getTitle() {
-		return this.title;
-	}
+   public Date getLastModified() {
+      return lastModified;
+   }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+   public void setLastModified(Date lastModified) {
+      this.lastModified = lastModified;
+   }
 
-	public String getDescription() {
-		return this.description;
-	}
+   public String getOwner() {
+      return owner;
+   }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+   public void setOwner(String owner) {
+      this.owner = owner;
+   }
 
-	public Boolean getExpert() {
-		return this.expert;
-	}
+   public EvalItemGroup getParent() {
+      return parent;
+   }
 
-	public void setExpert(Boolean expert) {
-		this.expert = expert;
-	}
+   public void setParent(EvalItemGroup parent) {
+      this.parent = parent;
+   }
 
-	public EvalItemGroup getParent() {
-		return this.parent;
-	}
+   public String getTitle() {
+      return title;
+   }
 
-	public void setParent(EvalItemGroup parent) {
-		this.parent = parent;
-	}
+   public void setTitle(String title) {
+      this.title = title;
+   }
 
-	public Set getGroupItems() {
-		return this.groupItems;
-	}
+   public String getType() {
+      return type;
+   }
 
-	public void setGroupItems(Set groupItems) {
-		this.groupItems = groupItems;
-	}
+   public void setType(String type) {
+      this.type = type;
+   }
 
 }

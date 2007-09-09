@@ -1,3 +1,4 @@
+
 package org.sakaiproject.evaluation.model;
 
 // Generated Mar 20, 2007 10:08:13 AM by Hibernate Tools 3.2.0.beta6a
@@ -11,158 +12,159 @@ import java.util.Set;
  */
 public class EvalTemplate implements java.io.Serializable {
 
-	// Fields    
+   // Fields
 
-	private Long id;
-	
-	private String eid;
+   private Long id;
 
-	private Date lastModified;
+   private String eid;
 
-	private String owner;
+   private Date lastModified;
 
-	private String type;
+   private String owner;
 
-	private String title;
+   private String type;
 
-	private String description;
+   private String title;
 
-	private String sharing;
+   private String description;
 
-	private Boolean expert;
+   private String sharing;
 
-	private String expertDescription;
+   private Boolean expert;
 
-	private Set templateItems = new HashSet(0);
+   private String expertDescription;
 
-	private Boolean locked;
+   private Set<EvalTemplateItem> templateItems = new HashSet<EvalTemplateItem>(0);
 
-	// Constructors
+   private Boolean locked;
 
-	/** default constructor */
-	public EvalTemplate() {
-	}
+   // Constructors
 
-	/** minimal constructor */
-	public EvalTemplate(Date lastModified, String owner, String type, String title, String sharing, Boolean expert) {
-		this.lastModified = lastModified;
-		this.owner = owner;
-		this.type = type;
-		this.title = title;
-		this.sharing = sharing;
-		this.expert = expert;
-	}
+   /** default constructor */
+   public EvalTemplate() {
+   }
 
-	/** full constructor */
-	public EvalTemplate(Date lastModified, String owner, String type, String title, String description, String sharing, Boolean expert,
-			String expertDescription, Set templateItems, Boolean locked) {
-		this.lastModified = lastModified;
-		this.owner = owner;
-		this.type = type;
-		this.title = title;
-		this.description = description;
-		this.sharing = sharing;
-		this.expert = expert;
-		this.expertDescription = expertDescription;
-		this.templateItems = templateItems;
-		this.locked = locked;
-	}
+   /** minimal constructor */
+   public EvalTemplate(Date lastModified, String owner, String type, String title, String sharing,
+         Boolean expert) {
+      this.lastModified = lastModified;
+      this.owner = owner;
+      this.type = type;
+      this.title = title;
+      this.sharing = sharing;
+      this.expert = expert;
+   }
 
-	// Property accessors
-	public Long getId() {
-		return this.id;
-	}
+   /** full constructor */
+   public EvalTemplate(Date lastModified, String owner, String type, String title, String description,
+         String sharing, Boolean expert, String expertDescription, Set<EvalTemplateItem> templateItems,
+         Boolean locked) {
+      this.lastModified = lastModified;
+      this.owner = owner;
+      this.type = type;
+      this.title = title;
+      this.description = description;
+      this.sharing = sharing;
+      this.expert = expert;
+      this.expertDescription = expertDescription;
+      this.templateItems = templateItems;
+      this.locked = locked;
+   }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
-	public String getEid() {
-		return this.eid;
-	}
+   public String getDescription() {
+      return description;
+   }
 
-	public void setEid(String eid) {
-		this.eid = eid;
-	}
+   public void setDescription(String description) {
+      this.description = description;
+   }
 
-	public Date getLastModified() {
-		return this.lastModified;
-	}
+   public String getEid() {
+      return eid;
+   }
 
-	public void setLastModified(Date lastModified) {
-		this.lastModified = lastModified;
-	}
+   public void setEid(String eid) {
+      this.eid = eid;
+   }
 
-	public String getOwner() {
-		return this.owner;
-	}
+   public Boolean getExpert() {
+      return expert;
+   }
 
-	public void setOwner(String owner) {
-		this.owner = owner;
-	}
+   public void setExpert(Boolean expert) {
+      this.expert = expert;
+   }
 
-	public String getType() {
-		return this.type;
-	}
+   public String getExpertDescription() {
+      return expertDescription;
+   }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+   public void setExpertDescription(String expertDescription) {
+      this.expertDescription = expertDescription;
+   }
 
-	public String getTitle() {
-		return this.title;
-	}
+   public Long getId() {
+      return id;
+   }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+   public void setId(Long id) {
+      this.id = id;
+   }
 
-	public String getDescription() {
-		return this.description;
-	}
+   public Date getLastModified() {
+      return lastModified;
+   }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+   public void setLastModified(Date lastModified) {
+      this.lastModified = lastModified;
+   }
 
-	public String getSharing() {
-		return this.sharing;
-	}
+   public Boolean getLocked() {
+      return locked;
+   }
 
-	public void setSharing(String sharing) {
-		this.sharing = sharing;
-	}
+   public void setLocked(Boolean locked) {
+      this.locked = locked;
+   }
 
-	public Boolean getExpert() {
-		return this.expert;
-	}
+   public String getOwner() {
+      return owner;
+   }
 
-	public void setExpert(Boolean expert) {
-		this.expert = expert;
-	}
+   public void setOwner(String owner) {
+      this.owner = owner;
+   }
 
-	public String getExpertDescription() {
-		return this.expertDescription;
-	}
+   public String getSharing() {
+      return sharing;
+   }
 
-	public void setExpertDescription(String expertDescription) {
-		this.expertDescription = expertDescription;
-	}
+   public void setSharing(String sharing) {
+      this.sharing = sharing;
+   }
 
-	public Set getTemplateItems() {
-		return this.templateItems;
-	}
+   public Set<EvalTemplateItem> getTemplateItems() {
+      return templateItems;
+   }
 
-	public void setTemplateItems(Set templateItems) {
-		this.templateItems = templateItems;
-	}
+   public void setTemplateItems(Set<EvalTemplateItem> templateItems) {
+      this.templateItems = templateItems;
+   }
 
-	public Boolean getLocked() {
-		return this.locked;
-	}
+   public String getTitle() {
+      return title;
+   }
 
-	public void setLocked(Boolean locked) {
-		this.locked = locked;
-	}
+   public void setTitle(String title) {
+      this.title = title;
+   }
+
+   public String getType() {
+      return type;
+   }
+
+   public void setType(String type) {
+      this.type = type;
+   }
 
 }

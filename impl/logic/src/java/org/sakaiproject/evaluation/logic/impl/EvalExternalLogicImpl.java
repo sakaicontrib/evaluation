@@ -35,7 +35,6 @@ import org.sakaiproject.authz.api.AuthzGroupService;
 import org.sakaiproject.authz.api.FunctionManager;
 import org.sakaiproject.authz.api.SecurityService;
 import org.sakaiproject.component.api.ServerConfigurationService;
-import org.sakaiproject.component.cover.ComponentManager;
 import org.sakaiproject.email.api.EmailService;
 import org.sakaiproject.entity.api.EntityManager;
 import org.sakaiproject.entity.api.Reference;
@@ -61,7 +60,6 @@ import org.sakaiproject.user.api.User;
 import org.sakaiproject.user.api.UserDirectoryService;
 import org.sakaiproject.user.api.UserNotDefinedException;
 import org.sakaiproject.util.ResourceLoader;
-import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
@@ -372,10 +370,10 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#getEvalGroupsForUser(java.lang.String, java.lang.String)
      */
-    public List getEvalGroupsForUser(String userId, String permission) {
+    public List<EvalGroup> getEvalGroupsForUser(String userId, String permission) {
         log.debug("userId: " + userId + ", permission: " + permission);
 
-        List l = new ArrayList();
+        List<EvalGroup> l = new ArrayList<EvalGroup>();
         Set authzGroupIds = authzGroupService.getAuthzGroupsIsAllowed(userId, permission, null);
         Iterator it = authzGroupIds.iterator();
         while (it.hasNext()) {
@@ -436,11 +434,11 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#getUserIdsForEvalGroup(java.lang.String, java.lang.String)
      */
-    public Set getUserIdsForEvalGroup(String evalGroupId, String permission) {
+    public Set<String> getUserIdsForEvalGroup(String evalGroupId, String permission) {
         String reference = evalGroupId;
         List azGroups = new ArrayList();
         azGroups.add(reference);
-        Set userIds = authzGroupService.getUsersIsAllowed(permission, azGroups);
+        Set<String> userIds = authzGroupService.getUsersIsAllowed(permission, azGroups);
 
         // also check provider
         if (evalGroupsProvider != null) {

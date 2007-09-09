@@ -162,6 +162,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       return count;
    }
 
+   @SuppressWarnings("unchecked")
    public List<EvalTemplate> getVisibleTemplates(String userId, String[] sharingConstants,
          boolean includeEmpty) {
 
@@ -191,6 +192,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       return l;
    }
 
+   @SuppressWarnings("unchecked")
    public Set<EvalEvaluation> getEvaluationsByEvalGroups(String[] evalGroupIds, boolean activeOnly,
          boolean includeUnApproved, boolean includeAnonymous) {
       Set<EvalEvaluation> evals = new TreeSet<EvalEvaluation>(new EvaluationDateComparator());

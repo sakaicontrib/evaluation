@@ -6,6 +6,7 @@ package org.sakaiproject.evaluation.logic.utils;
 
 import java.util.Comparator;
 
+import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 
 /**
@@ -30,6 +31,15 @@ public class ComparatorsUtils {
    public static class TemplateItemComparatorById implements Comparator<EvalTemplateItem>  {
       public int compare(EvalTemplateItem eti0, EvalTemplateItem eti1) {
          return eti0.getId().compareTo( eti1.getId() );
+      }
+   }
+
+   /**
+    * static class to sort EvalItem objects by Id
+    */
+   public static class ItemComparatorById implements Comparator<EvalItem> {
+      public int compare(EvalItem item0, EvalItem item1) {
+         return item0.getId().compareTo( item1.getId() );
       }
    }
 
