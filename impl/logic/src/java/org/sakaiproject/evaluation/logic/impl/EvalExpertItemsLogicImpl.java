@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalExpertItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.utils.ComparatorsUtils;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
@@ -60,7 +61,7 @@ public class EvalExpertItemsLogicImpl implements EvalExpertItemsLogic {
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalExpertItemsLogic#getItemGroups(java.lang.Long, java.lang.String, boolean)
 	 */
-	public List getItemGroups(Long parentItemGroupId, String userId, boolean includeEmpty, boolean includeExpert) {
+	public List<EvalItemGroup> getItemGroups(Long parentItemGroupId, String userId, boolean includeEmpty, boolean includeExpert) {
 		log.debug("parentItemGroupId:" + parentItemGroupId + ", userId:" + userId + ", includeEmpty:" + includeEmpty + ", includeExpert:" + includeExpert);
 
 		// check this parent is real
@@ -77,7 +78,7 @@ public class EvalExpertItemsLogicImpl implements EvalExpertItemsLogic {
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalExpertItemsLogic#getItemsInItemGroup(java.lang.Long, boolean)
 	 */
-	public List getItemsInItemGroup(Long itemGroupId, boolean expertOnly) {
+	public List<EvalItem> getItemsInItemGroup(Long itemGroupId, boolean expertOnly) {
 		log.debug("parentItemGroupId:" + itemGroupId + ", expertOnly:" + expertOnly);
 
 		// get the item group by id
@@ -86,10 +87,10 @@ public class EvalExpertItemsLogicImpl implements EvalExpertItemsLogic {
 			throw new IllegalArgumentException("Cannot find parent itemGroup with id: " + itemGroupId);
 		}
 
-		List items = new ArrayList();
+      List<EvalItem> items = new ArrayList<EvalItem>();
 		if ( itemGroup.getGroupItems() != null ) {
-			items = new ArrayList( itemGroup.getGroupItems() );
-			Collections.sort(items, new ItemComparatorById() );
+			items = new ArrayList<EvalItem>( itemGroup.getGroupItems() );
+			Collections.sort(items, new ComparatorsUtils.ItemComparatorById() );
 		}
 
 		if (expertOnly) {
@@ -246,17 +247,6 @@ public class EvalExpertItemsLogicImpl implements EvalExpertItemsLogic {
 			// expects to get EvalItemGroup object, compare by title
 			return ( (EvalItemGroup) ig0).getTitle().
 				compareTo( ( (EvalItemGroup) ig1).getTitle() );
-		}
-	}
-
-	/**
-	 * static class to sort EvalItem objects by Id
-	 */
-	public static class ItemComparatorById implements Comparator {
-		public int compare(Object item0, Object item1) {
-			// expects to get EvalItem objects, compare by Id
-			return ( (EvalItem) item0).getId().
-				compareTo( ( (EvalItem) item1).getId() );
 		}
 	}
 

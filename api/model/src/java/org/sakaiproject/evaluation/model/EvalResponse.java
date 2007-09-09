@@ -1,3 +1,4 @@
+
 package org.sakaiproject.evaluation.model;
 
 // Generated Mar 20, 2007 10:08:13 AM by Hibernate Tools 3.2.0.beta6a
@@ -11,113 +12,114 @@ import java.util.Set;
  */
 public class EvalResponse implements java.io.Serializable {
 
-	// Fields    
+   // Fields
 
-	private Long id;
+   private Long id;
 
-	private Date lastModified;
+   private Date lastModified;
 
-	private String owner;
+   private String owner;
 
-	private String evalGroupId;
+   private String evalGroupId;
 
-	private Date startTime;
+   private Date startTime;
 
-	private Date endTime;
+   private Date endTime;
 
-	private Set answers = new HashSet(0);
+   private Set<EvalAnswer> answers = new HashSet<EvalAnswer>(0);
 
-	private EvalEvaluation evaluation;
+   private EvalEvaluation evaluation;
 
-	// Constructors
+   // Constructors
 
-	/** default constructor */
-	public EvalResponse() {
-	}
+   /** default constructor */
+   public EvalResponse() {
+   }
 
-	/** minimal constructor */
-	public EvalResponse(Date lastModified, String owner, String evalGroupId, Date startTime, EvalEvaluation evaluation) {
-		this.lastModified = lastModified;
-		this.owner = owner;
-		this.evalGroupId = evalGroupId;
-		this.startTime = startTime;
-		this.evaluation = evaluation;
-	}
+   /** minimal constructor */
+   public EvalResponse(Date lastModified, String owner, String evalGroupId, Date startTime,
+         EvalEvaluation evaluation) {
+      this.lastModified = lastModified;
+      this.owner = owner;
+      this.evalGroupId = evalGroupId;
+      this.startTime = startTime;
+      this.evaluation = evaluation;
+   }
 
-	/** full constructor */
-	public EvalResponse(Date lastModified, String owner, String evalGroupId, Date startTime, Date endTime, Set answers, EvalEvaluation evaluation) {
-		this.lastModified = lastModified;
-		this.owner = owner;
-		this.evalGroupId = evalGroupId;
-		this.startTime = startTime;
-		this.endTime = endTime;
-		this.answers = answers;
-		this.evaluation = evaluation;
-	}
+   /** full constructor */
+   public EvalResponse(Date lastModified, String owner, String evalGroupId, Date startTime, Date endTime,
+         Set<EvalAnswer> answers, EvalEvaluation evaluation) {
+      this.lastModified = lastModified;
+      this.owner = owner;
+      this.evalGroupId = evalGroupId;
+      this.startTime = startTime;
+      this.endTime = endTime;
+      this.answers = answers;
+      this.evaluation = evaluation;
+   }
 
-	// Property accessors
-	public Long getId() {
-		return this.id;
-	}
+   public Set<EvalAnswer> getAnswers() {
+      return answers;
+   }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+   public void setAnswers(Set<EvalAnswer> answers) {
+      this.answers = answers;
+   }
 
-	public Date getLastModified() {
-		return this.lastModified;
-	}
+   public Date getEndTime() {
+      return endTime;
+   }
 
-	public void setLastModified(Date lastModified) {
-		this.lastModified = lastModified;
-	}
+   public void setEndTime(Date endTime) {
+      this.endTime = endTime;
+   }
 
-	public String getOwner() {
-		return this.owner;
-	}
+   public String getEvalGroupId() {
+      return evalGroupId;
+   }
 
-	public void setOwner(String owner) {
-		this.owner = owner;
-	}
+   public void setEvalGroupId(String evalGroupId) {
+      this.evalGroupId = evalGroupId;
+   }
 
-	public String getEvalGroupId() {
-		return this.evalGroupId;
-	}
+   public EvalEvaluation getEvaluation() {
+      return evaluation;
+   }
 
-	public void setEvalGroupId(String evalGroupId) {
-		this.evalGroupId = evalGroupId;
-	}
+   public void setEvaluation(EvalEvaluation evaluation) {
+      this.evaluation = evaluation;
+   }
 
-	public Date getStartTime() {
-		return this.startTime;
-	}
+   public Long getId() {
+      return id;
+   }
 
-	public void setStartTime(Date startTime) {
-		this.startTime = startTime;
-	}
+   public void setId(Long id) {
+      this.id = id;
+   }
 
-	public Date getEndTime() {
-		return this.endTime;
-	}
+   public Date getLastModified() {
+      return lastModified;
+   }
 
-	public void setEndTime(Date endTime) {
-		this.endTime = endTime;
-	}
+   public void setLastModified(Date lastModified) {
+      this.lastModified = lastModified;
+   }
 
-	public Set getAnswers() {
-		return this.answers;
-	}
+   public String getOwner() {
+      return owner;
+   }
 
-	public void setAnswers(Set answers) {
-		this.answers = answers;
-	}
+   public void setOwner(String owner) {
+      this.owner = owner;
+   }
 
-	public EvalEvaluation getEvaluation() {
-		return this.evaluation;
-	}
+   public Date getStartTime() {
+      return startTime;
+   }
 
-	public void setEvaluation(EvalEvaluation evaluation) {
-		this.evaluation = evaluation;
-	}
+   public void setStartTime(Date startTime) {
+      this.startTime = startTime;
+   }
 
 }

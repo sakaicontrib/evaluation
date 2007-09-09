@@ -1,3 +1,4 @@
+
 package org.sakaiproject.evaluation.model;
 
 // Generated Mar 20, 2007 10:08:13 AM by Hibernate Tools 3.2.0.beta6a
@@ -11,214 +12,215 @@ import java.util.Set;
  */
 public class EvalItem implements java.io.Serializable {
 
-	// Fields    
+   // Fields
 
-	private Long id;
-	
-	private String eid;
+   private Long id;
 
-	private Date lastModified;
+   private String eid;
 
-	private String owner;
+   private Date lastModified;
 
-	private String itemText;
+   private String owner;
 
-	private String description;
+   private String itemText;
 
-	private String sharing;
+   private String description;
 
-	private String classification;
+   private String sharing;
 
-	private Boolean expert;
+   private String classification;
 
-	private String expertDescription;
+   private Boolean expert;
 
-	private EvalScale scale;
+   private String expertDescription;
 
-	private Set templateItems = new HashSet(0);
+   private EvalScale scale;
 
-	private Boolean usesNA;
+   private Set<EvalTemplateItem> templateItems = new HashSet<EvalTemplateItem>(0);
 
-	private Integer displayRows;
+   private Boolean usesNA;
 
-	private String scaleDisplaySetting;
+   private Integer displayRows;
 
-	private String category;
+   private String scaleDisplaySetting;
 
-	private Boolean locked;
+   private String category;
 
-	// Constructors
+   private Boolean locked;
 
-	/** default constructor */
-	public EvalItem() {
-	}
+   // Constructors
 
-	/** minimal constructor */
-	public EvalItem(Date lastModified, String owner, String itemText, String sharing, String classification, Boolean expert) {
-		this.lastModified = lastModified;
-		this.owner = owner;
-		this.itemText = itemText;
-		this.sharing = sharing;
-		this.classification = classification;
-		this.expert = expert;
-	}
+   /** default constructor */
+   public EvalItem() {
+   }
 
-	/** full constructor */
-	public EvalItem(Date lastModified, String owner, String itemText, String description, String sharing, String classification, Boolean expert,
-			String expertDescription, EvalScale scale, Set templateItems, Boolean usesNA, Integer displayRows, String scaleDisplaySetting, String category,
-			Boolean locked) {
-		this.lastModified = lastModified;
-		this.owner = owner;
-		this.itemText = itemText;
-		this.description = description;
-		this.sharing = sharing;
-		this.classification = classification;
-		this.expert = expert;
-		this.expertDescription = expertDescription;
-		this.scale = scale;
-		this.templateItems = templateItems;
-		this.usesNA = usesNA;
-		this.displayRows = displayRows;
-		this.scaleDisplaySetting = scaleDisplaySetting;
-		this.category = category;
-		this.locked = locked;
-	}
+   /** minimal constructor */
+   public EvalItem(Date lastModified, String owner, String itemText, String sharing, String classification,
+         Boolean expert) {
+      this.lastModified = lastModified;
+      this.owner = owner;
+      this.itemText = itemText;
+      this.sharing = sharing;
+      this.classification = classification;
+      this.expert = expert;
+   }
 
-	// Property accessors
-	public Long getId() {
-		return this.id;
-	}
+   /** full constructor */
+   public EvalItem(Date lastModified, String owner, String itemText, String description, String sharing,
+         String classification, Boolean expert, String expertDescription, EvalScale scale,
+         Set<EvalTemplateItem> templateItems, Boolean usesNA, Integer displayRows,
+         String scaleDisplaySetting, String category, Boolean locked) {
+      this.lastModified = lastModified;
+      this.owner = owner;
+      this.itemText = itemText;
+      this.description = description;
+      this.sharing = sharing;
+      this.classification = classification;
+      this.expert = expert;
+      this.expertDescription = expertDescription;
+      this.scale = scale;
+      this.templateItems = templateItems;
+      this.usesNA = usesNA;
+      this.displayRows = displayRows;
+      this.scaleDisplaySetting = scaleDisplaySetting;
+      this.category = category;
+      this.locked = locked;
+   }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
-	public String getEid() {
-		return this.eid;
-	}
+   public String getCategory() {
+      return category;
+   }
 
-	public void setEid(String eid) {
-		this.eid = eid;
-	}
+   public void setCategory(String category) {
+      this.category = category;
+   }
 
-	public Date getLastModified() {
-		return this.lastModified;
-	}
+   public String getClassification() {
+      return classification;
+   }
 
-	public void setLastModified(Date lastModified) {
-		this.lastModified = lastModified;
-	}
+   public void setClassification(String classification) {
+      this.classification = classification;
+   }
 
-	public String getOwner() {
-		return this.owner;
-	}
+   public String getDescription() {
+      return description;
+   }
 
-	public void setOwner(String owner) {
-		this.owner = owner;
-	}
+   public void setDescription(String description) {
+      this.description = description;
+   }
 
-	public String getItemText() {
-		return this.itemText;
-	}
+   public Integer getDisplayRows() {
+      return displayRows;
+   }
 
-	public void setItemText(String itemText) {
-		this.itemText = itemText;
-	}
+   public void setDisplayRows(Integer displayRows) {
+      this.displayRows = displayRows;
+   }
 
-	public String getDescription() {
-		return this.description;
-	}
+   public String getEid() {
+      return eid;
+   }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+   public void setEid(String eid) {
+      this.eid = eid;
+   }
 
-	public String getSharing() {
-		return this.sharing;
-	}
+   public Boolean getExpert() {
+      return expert;
+   }
 
-	public void setSharing(String sharing) {
-		this.sharing = sharing;
-	}
+   public void setExpert(Boolean expert) {
+      this.expert = expert;
+   }
 
-	public String getClassification() {
-		return this.classification;
-	}
+   public String getExpertDescription() {
+      return expertDescription;
+   }
 
-	public void setClassification(String classification) {
-		this.classification = classification;
-	}
+   public void setExpertDescription(String expertDescription) {
+      this.expertDescription = expertDescription;
+   }
 
-	public Boolean getExpert() {
-		return this.expert;
-	}
+   public Long getId() {
+      return id;
+   }
 
-	public void setExpert(Boolean expert) {
-		this.expert = expert;
-	}
+   public void setId(Long id) {
+      this.id = id;
+   }
 
-	public String getExpertDescription() {
-		return this.expertDescription;
-	}
+   public String getItemText() {
+      return itemText;
+   }
 
-	public void setExpertDescription(String expertDescription) {
-		this.expertDescription = expertDescription;
-	}
+   public void setItemText(String itemText) {
+      this.itemText = itemText;
+   }
 
-	public EvalScale getScale() {
-		return this.scale;
-	}
+   public Date getLastModified() {
+      return lastModified;
+   }
 
-	public void setScale(EvalScale scale) {
-		this.scale = scale;
-	}
+   public void setLastModified(Date lastModified) {
+      this.lastModified = lastModified;
+   }
 
-	public Set getTemplateItems() {
-		return this.templateItems;
-	}
+   public Boolean getLocked() {
+      return locked;
+   }
 
-	public void setTemplateItems(Set templateItems) {
-		this.templateItems = templateItems;
-	}
+   public void setLocked(Boolean locked) {
+      this.locked = locked;
+   }
 
-	public Boolean getUsesNA() {
-		return this.usesNA;
-	}
+   public String getOwner() {
+      return owner;
+   }
 
-	public void setUsesNA(Boolean usesNA) {
-		this.usesNA = usesNA;
-	}
+   public void setOwner(String owner) {
+      this.owner = owner;
+   }
 
-	public Integer getDisplayRows() {
-		return this.displayRows;
-	}
+   public EvalScale getScale() {
+      return scale;
+   }
 
-	public void setDisplayRows(Integer displayRows) {
-		this.displayRows = displayRows;
-	}
+   public void setScale(EvalScale scale) {
+      this.scale = scale;
+   }
 
-	public String getScaleDisplaySetting() {
-		return this.scaleDisplaySetting;
-	}
+   public String getScaleDisplaySetting() {
+      return scaleDisplaySetting;
+   }
 
-	public void setScaleDisplaySetting(String scaleDisplaySetting) {
-		this.scaleDisplaySetting = scaleDisplaySetting;
-	}
+   public void setScaleDisplaySetting(String scaleDisplaySetting) {
+      this.scaleDisplaySetting = scaleDisplaySetting;
+   }
 
-	public String getCategory() {
-		return this.category;
-	}
+   public String getSharing() {
+      return sharing;
+   }
 
-	public void setCategory(String category) {
-		this.category = category;
-	}
+   public void setSharing(String sharing) {
+      this.sharing = sharing;
+   }
 
-	public Boolean getLocked() {
-		return this.locked;
-	}
+   public Set<EvalTemplateItem> getTemplateItems() {
+      return templateItems;
+   }
 
-	public void setLocked(Boolean locked) {
-		this.locked = locked;
-	}
+   public void setTemplateItems(Set<EvalTemplateItem> templateItems) {
+      this.templateItems = templateItems;
+   }
+
+   public Boolean getUsesNA() {
+      return usesNA;
+   }
+
+   public void setUsesNA(Boolean usesNA) {
+      this.usesNA = usesNA;
+   }
 
 }
