@@ -426,8 +426,9 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
    /* (non-Javadoc)
     * @see edu.vt.sakai.evaluation.logic.EvalEvaluationsLogic#getEvaluationsForUser(java.lang.String, boolean, boolean)
     */
+   @SuppressWarnings("unchecked")
    public List<EvalEvaluation> getEvaluationsForUser(String userId, boolean activeOnly, boolean untakenOnly) {
-      List takeGroups = external.getEvalGroupsForUser(userId, EvalConstants.PERM_TAKE_EVALUATION);
+      List<EvalGroup> takeGroups = external.getEvalGroupsForUser(userId, EvalConstants.PERM_TAKE_EVALUATION);
 
       String[] evalGroupIds = new String[takeGroups.size()];
       for (int i=0; i<takeGroups.size(); i++) {
@@ -444,13 +445,13 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
          // create an array of the evaluation ids
          Long[] evalIds = new Long[s.size()];
          int j = 0;
-         for (Iterator it = s.iterator(); it.hasNext(); j++) {
-            EvalEvaluation eval = (EvalEvaluation) it.next();
+         for (Iterator<EvalEvaluation> it = s.iterator(); it.hasNext(); j++) {
+            EvalEvaluation eval = it.next();
             evalIds[j] = (Long) eval.getId();
          }
 
          // now get the responses for all the returned evals
-         List l = dao.findByProperties(EvalResponse.class, 
+         List<EvalResponse> l = dao.findByProperties(EvalResponse.class, 
                new String[] {"owner", "evaluation.id"}, 
                new Object[] {userId, evalIds});
 
@@ -520,7 +521,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
       Map<Long, List<EvalGroup>> evals = new TreeMap<Long, List<EvalGroup>>();
       // replace each assign group with an EvalGroup
       Map<Long, List<EvalAssignGroup>> evalAGs = getEvaluationAssignGroups(evaluationIds, includeUnApproved);
-      for (Iterator iter = evalAGs.keySet().iterator(); iter.hasNext();) {
+      for (Iterator<Long> iter = evalAGs.keySet().iterator(); iter.hasNext();) {
          Long evalId = (Long) iter.next();
          List<EvalAssignGroup> innerList = evalAGs.get(evalId);
          List<EvalGroup> newList = new ArrayList<EvalGroup>();
@@ -611,6 +612,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
    /* (non-Javadoc)
     * @see edu.vt.sakai.evaluation.logic.EvalEvaluationsLogic#canTakeEvaluation(java.lang.String, java.lang.Long, java.lang.String)
     */
+   @SuppressWarnings("unchecked")
    public boolean canTakeEvaluation(String userId, Long evaluationId, String evalGroupId) {
       log.debug("evalId: " + evaluationId + ", userId: " + userId + ", evalGroupId: " + evalGroupId);
 
@@ -630,7 +632,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 
       if (evalGroupId != null) {
          // check that the evalGroupId is valid for this evaluation
-         List ags = dao.findByProperties(EvalAssignGroup.class, 
+         List<EvalAssignGroup> ags = dao.findByProperties(EvalAssignGroup.class, 
                new String[] {"evaluation.id", "evalGroupId"}, 
                new Object[] {evaluationId, evalGroupId});
          if (ags.size() <= 0) {
@@ -673,7 +675,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
          if (evalGroupId == null) {
             // if no groupId is supplied then simply check to see if the user is in any of the groups assigned,
             // hopefully this is faster than checking if the user has the right permission in every group -AZ
-            List userEvalGroups = external.getEvalGroupsForUser(userId, EvalConstants.PERM_TAKE_EVALUATION);
+            List<EvalGroup> userEvalGroups = external.getEvalGroupsForUser(userId, EvalConstants.PERM_TAKE_EVALUATION);
             if (userEvalGroups.size() > 0) {
                // only try to do this check if there is at least one userEvalGroup
                String[] evalGroupIds = new String[userEvalGroups.size()];

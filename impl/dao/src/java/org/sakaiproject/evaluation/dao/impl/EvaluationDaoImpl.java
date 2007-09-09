@@ -439,11 +439,12 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       return getHibernateTemplate().find(hql, params);
    }
 
+   @SuppressWarnings("unchecked")
    public String getNodeIdForEvalGroup(String evalGroupId) {
       String hql = "select egn.nodeId from EvalGroupNodes egn where " +
             "? in elements(egn.evalGroups) order by egn.nodeId";
       String[] params = new String[] {evalGroupId};
-      List l = getHibernateTemplate().find(hql, params);
+      List<String> l = getHibernateTemplate().find(hql, params);
       if (l.isEmpty()) {
          return null;
       }
@@ -711,6 +712,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
     *           the maximum number of entries to return, 0 returns as many entries as possible
     * @return a list of whatever you requested in the HQL
     */
+   @SuppressWarnings("unchecked")
    private List executeHqlQuery(String hql, Map<String, Object> params, int start, int limit) {
       Query query = getSession().createQuery(hql);
       query.setFirstResult(start);

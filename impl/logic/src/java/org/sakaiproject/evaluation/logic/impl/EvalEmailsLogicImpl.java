@@ -79,6 +79,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#saveEmailTemplate(org.sakaiproject.evaluation.model.EvalEmailTemplate, java.lang.String)
     */
+   @SuppressWarnings("unchecked")
    public void saveEmailTemplate(EvalEmailTemplate emailTemplate, String userId) {
       log.debug("userId: " + userId + ", emailTemplate: " + emailTemplate.getId());
 
@@ -105,7 +106,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
          // check if there are evaluations this is used in and if the user can modify this based on them
          // check available templates
-         List l = dao.findByProperties(EvalEvaluation.class, new String[] { "availableEmailTemplate.id" },
+         List<EvalEvaluation> l = dao.findByProperties(EvalEvaluation.class, new String[] { "availableEmailTemplate.id" },
                new Object[] { emailTemplate.getId() });
          for (int i = 0; i < l.size(); i++) {
             EvalEvaluation eval = (EvalEvaluation) l.get(i);
@@ -130,6 +131,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#getDefaultEmailTemplate(int)
     */
+   @SuppressWarnings("unchecked")
    public EvalEmailTemplate getDefaultEmailTemplate(String emailTemplateTypeConstant) {
       log.debug("emailTemplateTypeConstant: " + emailTemplateTypeConstant);
 
@@ -150,7 +152,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       }
 
       // fetch template by type
-      List l = dao.findByProperties(EvalEmailTemplate.class, new String[] { "defaultType" },
+      List<EvalEmailTemplate> l = dao.findByProperties(EvalEmailTemplate.class, new String[] { "defaultType" },
             new Object[] { templateType });
       if (l.isEmpty()) {
          throw new IllegalStateException("Could not find any default template for type constant: "
@@ -343,10 +345,10 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       String message = modifyCreatedEmailMessage(eval, emailTemplate);
 
       // get the associated groups for this evaluation
-      Map evalGroups = evaluationLogic.getEvaluationGroups(new Long[] { evaluationId }, true);
+      Map<Long, List<EvalGroup>> evalGroups = evaluationLogic.getEvaluationGroups(new Long[] { evaluationId }, true);
 
       // only one possible map key so we can assume evaluationId
-      List groups = (List) evalGroups.get(evaluationId);
+      List<EvalGroup> groups = evalGroups.get(evaluationId);
       log.debug("Found " + groups.size() + " groups for new evaluation: " + evaluationId);
 
       List<String> sentMessages = new ArrayList<String>();
@@ -635,10 +637,10 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       // get the associated eval groups for this evaluation
       // NOTE: this only returns the groups that should get emails, there is no need to do an additional check
       // to see if the instructor has opted in in this case -AZ
-      Map evalGroupIds = evaluationLogic.getEvaluationGroups(new Long[] { evaluationId }, false);
+      Map<Long, List<EvalGroup>> evalGroupIds = evaluationLogic.getEvaluationGroups(new Long[] { evaluationId }, false);
 
       // only one possible map key so we can assume evaluationId
-      List groups = (List) evalGroupIds.get(evaluationId);
+      List<EvalGroup> groups = evalGroupIds.get(evaluationId);
       log.debug("Found " + groups.size() + " groups for available evaluation: " + evaluationId);
 
       Set<String> userIdsSet = new HashSet<String>();
@@ -727,15 +729,15 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       List<String> sentMessages = new ArrayList<String>();
 
       // get the associated eval groups for this evaluation
-      Map evalGroupIds = evaluationLogic.getEvaluationGroups(new Long[] { evaluationId }, false);
+      Map<Long, List<EvalGroup>> evalGroupIds = evaluationLogic.getEvaluationGroups(new Long[] { evaluationId }, false);
 
       //get the associated eval assign groups for this evaluation
-      Map evalAssignGroups = evaluationLogic.getEvaluationAssignGroups(new Long[] { evaluationId }, false);
+      Map<Long, List<EvalAssignGroup>> evalAssignGroups = evaluationLogic.getEvaluationAssignGroups(new Long[] { evaluationId }, false);
 
       // only one possible map key so we can assume evaluationId
-      List groups = (List) evalGroupIds.get(evaluationId);
+      List<EvalGroup> groups = evalGroupIds.get(evaluationId);
       log.debug("Found " + groups.size() + " groups for available evaluation: " + evaluationId);
-      List assignGroups = (List) evalAssignGroups.get(evaluationId);
+      List<EvalAssignGroup> assignGroups = evalAssignGroups.get(evaluationId);
       log.debug("Found " + assignGroups.size() + " assign groups for available evaluation: " + evaluationId);
 
       Set<String> userIdsSet = new HashSet<String>();
@@ -748,8 +750,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
          }
 
          //get EvalAssignGroup to check studentViewResults, instructorViewResults
-         for (Iterator j = assignGroups.iterator(); j.hasNext();) {
-            EvalAssignGroup assignGroup = (EvalAssignGroup) j.next();
+         for (Iterator<EvalAssignGroup> j = assignGroups.iterator(); j.hasNext();) {
+            EvalAssignGroup assignGroup = j.next();
             if (group.evalGroupId.equals(assignGroup.getEvalGroupId())) {
                evalAssignGroup = assignGroup;
             }

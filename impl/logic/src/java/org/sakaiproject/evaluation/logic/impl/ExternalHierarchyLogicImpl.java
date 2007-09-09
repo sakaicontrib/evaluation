@@ -156,16 +156,17 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
       return s;
    }
 
+   @SuppressWarnings("unchecked")
    public Map<String, Integer> countEvalGroupsForNodes(String[] nodeIds) {
       Map<String, Integer> m = new HashMap<String, Integer>();
       for (int i = 0; i < nodeIds.length; i++) {
          m.put(nodeIds[i], 0);
       }
 
-      List l = dao.findByProperties(EvalGroupNodes.class, 
+      List<EvalGroupNodes> l = dao.findByProperties(EvalGroupNodes.class, 
             new String[] {"nodeId"}, 
             new Object[] {nodeIds});
-      for (Iterator iter = l.iterator(); iter.hasNext();) {
+      for (Iterator<EvalGroupNodes> iter = l.iterator(); iter.hasNext();) {
          EvalGroupNodes egn = (EvalGroupNodes) iter.next();
          m.put(egn.getNodeId(), egn.getEvalGroups().length);
       }
@@ -232,8 +233,9 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
     * @param nodeId
     * @return the {@link EvalGroupNodes} or null if none found
     */
+   @SuppressWarnings("unchecked")
    private EvalGroupNodes getEvalGroupNodeByNodeId(String nodeId) {
-      List l = dao.findByProperties(EvalGroupNodes.class, 
+      List<EvalGroupNodes> l = dao.findByProperties(EvalGroupNodes.class, 
             new String[] {"nodeId"}, new Object[] {nodeId},
             new int[] {ByPropsFinder.EQUALS}, new String[] {"id"});
       EvalGroupNodes egn = null;

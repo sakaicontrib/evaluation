@@ -21,7 +21,7 @@ package org.sakaiproject.evaluation.logic;
  * <p>
  * INSTRUCTOR is a user with the be.evaluated permission set<br/>
  * STUDENT is a user with the take.evaluation permission set<br/>
- * ADMIN is a user with the adminstrate permission set (or Sakai super admin)<br/>
+ * ADMIN is a user with the administrate permission set (or Sakai super admin)<br/>
  * </p>
  * The public static final variables should be used when doing gets or sets of values (use the ones marked CONSTANT).<br/>
  * Example:<br/>

@@ -49,10 +49,11 @@ public class EvalImportJobImpl implements EvalImportJob{
 		(org.sakaiproject.evaluation.logic.externals.EvalImport) ComponentManager.get(org.sakaiproject.evaluation.logic.externals.EvalImport.class);
 	private org.sakaiproject.tool.api.SessionManager sessionManager = 
 		(org.sakaiproject.tool.api.SessionManager) ComponentManager.get(org.sakaiproject.tool.api.SessionManager.class);
+	 // TODO Use actual injection here -AZ
 	
-	List results = new ArrayList();
-	String currentUserId = null;
-	String jobName = null;
+	List results = new ArrayList(); // TODO NOT threadsafe, fix this -AZ
+	String currentUserId = null; // TODO NOT threadsafe, fix this -AZ
+	String jobName = null; // TODO NOT threadsafe, fix this -AZ
 	 
 	public void init() {
 		

@@ -67,7 +67,7 @@ public class EvaluationModificationRegistry {
     * @return true if can be modified now, false otherwise
     */
    public static boolean isPermittedModification(String state, String property) {
-      Set permitteds = (Set) permittedChanges.get(state);
+      Set<String> permitteds = permittedChanges.get(state);
       if (permitteds == null) return true;
       else return permitteds.contains(property); 
    }

@@ -16,7 +16,6 @@ package org.sakaiproject.evaluation.logic.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -95,7 +94,7 @@ public class EvalExpertItemsLogicImpl implements EvalExpertItemsLogic {
 
 		if (expertOnly) {
 			// get rid of the non-expert items
-			for (Iterator iter = items.iterator(); iter.hasNext();) {
+			for (Iterator<EvalItem> iter = items.iterator(); iter.hasNext();) {
 				EvalItem item = (EvalItem) iter.next();
 				if (! item.getExpert().booleanValue()) {
 					iter.remove();
@@ -179,7 +178,7 @@ public class EvalExpertItemsLogicImpl implements EvalExpertItemsLogic {
 
 			if (! removeNonEmptyGroup) {
 				// not empty cannot be removed
-				List l = dao.getItemGroups(itemGroup.getId(), userId, true, true);
+			   List<EvalItemGroup> l = dao.getItemGroups(itemGroup.getId(), userId, true, true);
 				if (l.size() > 0) {
 					throw new IllegalStateException("Cannot remove non-empty item group: " + itemGroupId);
 				}
@@ -238,17 +237,6 @@ public class EvalExpertItemsLogicImpl implements EvalExpertItemsLogic {
 		return false;
 	}
 
-
-	/**
-	 * static class to sort EvalTemplateItem objects by DisplayOrder
-	 */
-	public static class ItemGroupComparatorByTitle implements Comparator {
-		public int compare(Object ig0, Object ig1) {
-			// expects to get EvalItemGroup object, compare by title
-			return ( (EvalItemGroup) ig0).getTitle().
-				compareTo( ( (EvalItemGroup) ig1).getTitle() );
-		}
-	}
 
 	/**
 	 * Check if an item group type is valid

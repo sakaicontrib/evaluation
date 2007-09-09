@@ -85,7 +85,7 @@ public class EvalSettingsImpl implements EvalSettings {
         }
 
         // make sure the type is the one set
-        Class typeClass;
+        Class<?> typeClass;
         try {
             typeClass = Class.forName(type);
         } catch (ClassNotFoundException e) {
@@ -118,8 +118,9 @@ public class EvalSettingsImpl implements EvalSettings {
      * @param name the name value of the Config item
      * @return a Config object or null if none found
      */
-    private EvalConfig getConfigByName(String name) {
-        List l = evaluationDao.findByProperties(EvalConfig.class, 
+    @SuppressWarnings("unchecked")
+   private EvalConfig getConfigByName(String name) {
+        List<EvalConfig> l = evaluationDao.findByProperties(EvalConfig.class, 
                 new String[] {"name"}, new Object[] {name});
         if (l.size() > 0) {
             return (EvalConfig) l.get(0);

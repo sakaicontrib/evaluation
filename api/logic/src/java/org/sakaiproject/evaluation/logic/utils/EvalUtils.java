@@ -102,7 +102,7 @@ public class EvalUtils {
 	 * @param assignGroups a list of {@link EvalAssignGroup}
 	 * @return an array of the groups that in common between the 2 lists
 	 */
-	public static EvalGroup[] getGroupsInCommon(List evalGroups, List assignGroups) {
+	public static EvalGroup[] getGroupsInCommon(List<EvalGroup> evalGroups, List<EvalAssignGroup> assignGroups) {
 		List<EvalGroup> groups = new ArrayList<EvalGroup>();
 		for (int i=0; i<evalGroups.size(); i++) {
 			EvalGroup group = (EvalGroup) evalGroups.get(i);

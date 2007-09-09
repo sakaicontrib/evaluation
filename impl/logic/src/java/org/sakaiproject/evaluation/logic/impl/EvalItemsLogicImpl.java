@@ -72,13 +72,15 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
     * (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.EvalItemsLogic#getItemByEid(java.lang.String)
     */
+   @SuppressWarnings("unchecked")
    public EvalItem getItemByEid(String eid) {
       EvalItem evalItem = null;
-      if(eid != null) {
+      if (eid != null) {
          log.debug("eid: " + eid);
-         List evalItems = (List)dao.findByProperties(EvalItem.class, new String[] {"eid"}, new Object[] {eid});
-         if(evalItems != null && evalItems.size() == 1)
-            evalItem = (EvalItem)evalItems.get(0);
+         List<EvalItem> evalItems = dao.findByProperties(EvalItem.class,
+               new String[] { "eid" }, new Object[] { eid });
+         if (evalItems != null && evalItems.size() == 1)
+            evalItem = evalItems.get(0);
       }
       return evalItem;
    }
@@ -306,8 +308,8 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
       log.debug("templateId:" + templateId + ", userId:" + userId);
 
       List<EvalItem> l = new ArrayList<EvalItem>();
-      for (Iterator iter = getTemplateItemsForTemplate(templateId, userId, null).iterator(); iter.hasNext();) {
-         EvalTemplateItem eti = (EvalTemplateItem) iter.next();
+      for (Iterator<EvalTemplateItem> iter = getTemplateItemsForTemplate(templateId, userId, null).iterator(); iter.hasNext();) {
+         EvalTemplateItem eti = iter.next();
          l.add(eti.getItem());
       }
       return l;
@@ -326,13 +328,16 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
     * (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.EvalItemsLogic#getTemplateItemByEid(java.lang.String)
     */
+   @SuppressWarnings("unchecked")
    public EvalTemplateItem getTemplateItemByEid(String eid) {
       log.debug("templateItemEid:" + eid);
       EvalTemplateItem evalTemplateItem = null;
-      if(eid != null) {
-         List evalTemplateItems = (List)dao.findByProperties(EvalTemplateItem.class, new String[] {"eid"}, new Object[] {eid});
-         if(evalTemplateItems != null && evalTemplateItems.size() == 1)
-            evalTemplateItem = (EvalTemplateItem)evalTemplateItems.get(0);
+      if (eid != null) {
+         List<EvalTemplateItem> evalTemplateItems = dao.findByProperties(
+               EvalTemplateItem.class, new String[] { "eid" },
+               new Object[] { eid });
+         if (evalTemplateItems != null && evalTemplateItems.size() == 1)
+            evalTemplateItem = evalTemplateItems.get(0);
       }
       return evalTemplateItem;
    }
