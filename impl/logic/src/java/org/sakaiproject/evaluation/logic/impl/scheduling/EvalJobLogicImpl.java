@@ -178,7 +178,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 		if(evalId == null) return;
 		String userId = externalLogic.getCurrentUserId();
 		if(evalEvaluationsLogic.canRemoveEvaluation(userId, evalId)) {
-			DelayedInvocation[] invocations = null;
+//			DelayedInvocation[] invocations = null;
 			String opaqueContext = evalId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_REMINDER;
 			deleteInvocation(opaqueContext);
 		}
@@ -664,17 +664,16 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 		boolean includeAdmins = true;
 		
 		try {
-		
 			//if results are private, only send notification to owner
 			if(resultsPrivate.booleanValue()) {
 				includeEvaluatees = false;
 				includeAdmins = false;
-				String[] sentMessages = emails.sendEvalResultsNotifications(jobType, evalId, includeEvaluatees, includeAdmins);
+				emails.sendEvalResultsNotifications(jobType, evalId, includeEvaluatees, includeAdmins);
 				if(log.isDebugEnabled())
 					log.debug("EvalJobLogicImpl.sendViewableEmail(" + evalId + "," + jobType + ", resultsPrivate " + resultsPrivate + ")");
 			}
 			else {
-				String[] sentMessages = emails.sendEvalResultsNotifications(jobType, evalId, includeEvaluatees, includeAdmins);
+				emails.sendEvalResultsNotifications(jobType, evalId, includeEvaluatees, includeAdmins);
 				if(log.isDebugEnabled())
 					log.debug("EvalJobLogicImpl.sendViewableEmail(" + evalId + "," + jobType + ", resultsPrivate " + resultsPrivate + ")");
 			}

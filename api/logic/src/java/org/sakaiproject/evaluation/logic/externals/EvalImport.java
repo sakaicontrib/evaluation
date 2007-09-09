@@ -38,6 +38,6 @@ public interface EvalImport {
 	 * @param currentUserId the identifier of the current user
 	 * @return a List of String messages for the current user
 	 */
-	public List process(String id, String currentUserId);
+	public List<String> process(String id, String currentUserId);
 
 }

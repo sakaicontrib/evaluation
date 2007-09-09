@@ -56,7 +56,8 @@ import org.sakaiproject.tool.api.Session;
 public class EvalImportImpl implements EvalImport {
 	
 	private static final Log log = LogFactory.getLog(EvalImportImpl.class);
-	
+
+   // TODO - these should use spring for injection rather than using the component manager, make this change asap -AZ
 	private org.sakaiproject.content.api.ContentHostingService contentHostingService = 
 		(org.sakaiproject.content.api.ContentHostingService) ComponentManager.get(org.sakaiproject.content.api.ContentHostingService.class);
 	private org.sakaiproject.tool.api.SessionManager sessionManager = 
@@ -78,7 +79,7 @@ public class EvalImportImpl implements EvalImport {
 	private int numPersisted = 0;
 	
 	//error messages during processing to surface to UI
-	private List messages = new ArrayList();
+	private List<String> messages = new ArrayList<String>();
 	
 	public void init() {
 		

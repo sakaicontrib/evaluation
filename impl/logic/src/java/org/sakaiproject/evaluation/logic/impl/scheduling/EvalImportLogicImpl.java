@@ -94,7 +94,7 @@ public class EvalImportLogicImpl implements EvalImportLogic {
 	 * @see org.sakaiproject.evaluation.logic.externals.EvalImportLogic#load(java.lang.String)
 	 */
 	public List load(String id) {
-		List messages = new ArrayList();
+		List<String> messages = new ArrayList<String>();
 		currentUserId = sessionManager.getCurrentSessionUserId();
 		try
 		{
