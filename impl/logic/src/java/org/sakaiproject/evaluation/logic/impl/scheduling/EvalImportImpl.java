@@ -37,8 +37,11 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.xpath.XPath;
-import org.sakaiproject.component.cover.ComponentManager;
+import org.sakaiproject.content.api.ContentHostingService;
 import org.sakaiproject.content.api.ContentResource;
+import org.sakaiproject.evaluation.logic.EvalItemsLogic;
+import org.sakaiproject.evaluation.logic.EvalScalesLogic;
+import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalImport;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
@@ -46,6 +49,7 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.tool.api.Session;
+import org.sakaiproject.tool.api.SessionManager;
 
 /**
  * Process an XML ContentResource and save or update the evaluation data
@@ -56,28 +60,33 @@ import org.sakaiproject.tool.api.Session;
 public class EvalImportImpl implements EvalImport {
 	
 	private static final Log log = LogFactory.getLog(EvalImportImpl.class);
-
-   // TODO - these should use spring for injection rather than using the component manager, make this change asap -AZ
-	private org.sakaiproject.content.api.ContentHostingService contentHostingService = 
-		(org.sakaiproject.content.api.ContentHostingService) ComponentManager.get(org.sakaiproject.content.api.ContentHostingService.class);
-	private org.sakaiproject.tool.api.SessionManager sessionManager = 
-		(org.sakaiproject.tool.api.SessionManager) ComponentManager.get(org.sakaiproject.tool.api.SessionManager.class);
-	private org.sakaiproject.evaluation.logic.EvalItemsLogic evalItemsLogic = 
-		(org.sakaiproject.evaluation.logic.EvalItemsLogic) ComponentManager.get(org.sakaiproject.evaluation.logic.EvalItemsLogic.class);
-	private org.sakaiproject.evaluation.logic.EvalScalesLogic evalScalesLogic =
-		(org.sakaiproject.evaluation.logic.EvalScalesLogic) ComponentManager.get(org.sakaiproject.evaluation.logic.EvalScalesLogic.class);
-	private org.sakaiproject.evaluation.logic.EvalTemplatesLogic evalTemplatesLogic = 
-		(org.sakaiproject.evaluation.logic.EvalTemplatesLogic) ComponentManager.get(org.sakaiproject.evaluation.logic.EvalTemplatesLogic.class);
-//	private org.sakaiproject.evaluation.logic.EvalExternalLogic evalExternalLogic = (org.sakaiproject.evaluation.logic.EvalExternalLogic)ComponentManager.get(org.sakaiproject.evaluation.logic.EvalExternalLogic.class);
-
-   // TODO commented out unused code -AZ
-//   private final String EVENT_TEMPLATE_CREATE = "eval.template.added";
-//	private final String EVENT_TEMPLATE_UPDATE = "eval.template.updated";
-
-   private Calendar cal = Calendar.getInstance(); // TODO NOT threadsafe, fix this -AZ
-	private SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss"); // TODO NOT threadsafe, fix this -AZ
-	private String currentUserId = null; // TODO NOT threadsafe, fix this -AZ
-	private int numPersisted = 0; // TODO NOT threadsafe, fix this -AZ
+	
+	//Spring injection
+	private ContentHostingService contentHostingService;
+	public void setContentHostingService(ContentHostingService contentHostingService) {
+		this.contentHostingService = contentHostingService;
+	}
+	private EvalItemsLogic evalItemsLogic;
+	public void setEvalItemsLogic(EvalItemsLogic evalItemsLogic) {
+		this.evalItemsLogic = evalItemsLogic;
+	}
+	private EvalScalesLogic evalScalesLogic;
+	public void setEvalScalesLogic(EvalScalesLogic evalScalesLogic) {
+		this.evalScalesLogic = evalScalesLogic;
+	}
+	private EvalTemplatesLogic evalTemplatesLogic;
+	public void setEvalTemplatesLogic(EvalTemplatesLogic evalTemplatesLogic) {
+		this.evalTemplatesLogic = evalTemplatesLogic;
+	}
+	private SessionManager sessionManager;
+	public void setSessionManager(SessionManager sessionManager) {
+		this.sessionManager = sessionManager;
+	}
+		
+    private Calendar cal;
+	private SimpleDateFormat formatter;
+	private String currentUserId;
+	private int numPersisted;
 	
 	//error messages during processing to surface to UI
 	private List<String> messages = new ArrayList<String>();
@@ -86,7 +95,10 @@ public class EvalImportImpl implements EvalImport {
 		
 	}
 	public EvalImportImpl() {
-		
+		currentUserId = null;
+		numPersisted = 0;
+		formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
+		cal = Calendar.getInstance();
 	}
 	
 	/**
@@ -195,8 +207,7 @@ public class EvalImportImpl implements EvalImport {
 							expert = Boolean.FALSE;
 						
 						//set options
-// TODO Do NOT use hashtable like this -AZ						Hashtable order = new Hashtable();
-                  HashMap<Integer, String> order = new HashMap<Integer, String>();
+						HashMap<Integer, String> order = new HashMap<Integer, String>();
 						Element evalScaleOptions = element.getChild("EVAL_SCALE_OPTIONS");
 						List options = evalScaleOptions.getChildren("EVAL_SCALE_OPTION");
 						if(options != null && !options.isEmpty()) {
@@ -519,51 +530,6 @@ public class EvalImportImpl implements EvalImport {
 	}
 	
 	/**
-	 * Set EvalTemplateItem properties from XML Element data
-	 * 
-	 * @param element the Element
-	 * @param templateItem the TemplateItem
-	 */
-/*	private void setTemplateItemProperties(Element element, EvalTemplateItem templateItem) {
-		EvalItem item = templateItem.getItem();
-		templateItem.setUsesNA(item.getUsesNA());
-		templateItem.setScaleDisplaySetting(item.getScaleDisplaySetting());
-		templateItem.setDisplayRows(item.getDisplayRows());
-		templateItem.setOwner(element.getChildText("OWNER"));
-		templateItem.setResultsSharing(element.getChildText("RESULTS_SHARING"));
-		String blockId = element.getChildText("BLOCK_ID");
-		if(blockId != null && !blockId.trim().equals("")){
-			try {
-				templateItem.setBlockId(new Long(Long.parseLong(blockId)));
-			}
-			catch(NumberFormatException e) {
-				log.warn("There was a problem with BLOCK_ID involving EvalTemplateItem with eid '" + templateItem.getEid() + "'. " + e);
-				messages.add("There was a problem with BLOCK_ID involving EvalTemplateItem with eid '" + templateItem.getEid() + "'. " + e);
-				//TODO add to audit trail
-			}
-		}
-		String blockParent = element.getChildText("BLOCK_PARENT");
-		if(blockParent != null && !blockParent.trim().equals("")){
-			if(blockParent.trim().equals("1"))
-				templateItem.setBlockParent(new Boolean(Boolean.TRUE));
-			else
-				templateItem.setBlockParent(new Boolean(Boolean.FALSE));
-		}
-		String displayOrder = element.getChildText("DISPLAY_ORDER");
-		if(displayOrder != null && !displayOrder.trim().equals("")){
-			try {
-				templateItem.setDisplayOrder(new Integer(Integer.parseInt(element.getChildText("DISPLAY_ORDER"))));
-			}
-			catch(NumberFormatException e) {
-				log.warn("There was a problem with DISPLAY_ORDER involving EvalTemplateItem with eid '" + templateItem.getEid() + "'. " + e);
-				messages.add("There was a problem with DISPLAY_ORDER involving EvalTemplateItem with eid '" + templateItem.getEid() + "'. " + e);
-				//TODO add to audit trail
-			}
-		}
-		templateItem.setItemCategory(element.getChildText("ITEM_CATEGORY"));
-	}*/
-	
-	/**
 	 * Set EvalScale properties from XML Element data
 	 * 
 	 * @param element the Element
@@ -584,9 +550,8 @@ public class EvalImportImpl implements EvalImport {
 		else
 			scale.setLocked(new Boolean(Boolean.FALSE));
 		//set options
-//  TODO Do NOT use hashtable like this -AZ                 Hashtable order = new Hashtable();
-      HashMap<Integer, String> order = new HashMap<Integer, String>();
-      Element evalScaleOptions = element.getChild("EVAL_SCALE_OPTIONS");
+		HashMap<Integer, String> order = new HashMap<Integer, String>();
+		Element evalScaleOptions = element.getChild("EVAL_SCALE_OPTIONS");
 		List options = evalScaleOptions.getChildren("EVAL_SCALE_OPTION");
 		if(options != null && !options.isEmpty()) {
 			String [] choices = new String[options.size()];
