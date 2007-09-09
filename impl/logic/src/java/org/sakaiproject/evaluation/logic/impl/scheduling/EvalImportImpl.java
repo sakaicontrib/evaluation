@@ -353,7 +353,7 @@ public class EvalImportImpl implements EvalImport {
 						String classification = element.getChildText("CLASSIFICATION");
 						String expertDescription = element.getChildText("EXPERT_DESCRIPTION");
 						String category = element.getChildText("CATEGORY");
-						Set templateItems = new HashSet(0);
+						Set<EvalTemplateItem> templateItems = new HashSet<EvalTemplateItem>(0);
 
 						//new item
 						item = new EvalItem(new Date(), currentUserId, itemText, description, sharing, classification, expert,
@@ -447,7 +447,7 @@ public class EvalImportImpl implements EvalImport {
 						String description = element.getChildText("DESCR");
 						String sharing = element.getChildText("SHARING");
 						String expertDescription = element.getChildText("EXPERTDESCR");
-						Set templateItems = new HashSet(0);
+						Set<EvalTemplateItem> templateItems = new HashSet<EvalTemplateItem>(0);
 						
 						//new template
 						template = new EvalTemplate(new Date(), owner, type, title, description,  sharing, expert,
