@@ -47,5 +47,5 @@ public interface EvalImportLogic {
 	 * @param id of the Reference that identifies the ContentResource
 	 * @return a List of String messages for the user
 	 */
-	public List load(String id);
+	public List<String> load(String id);
 }

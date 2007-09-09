@@ -82,7 +82,7 @@ public interface EvalScalesLogic {
 	 * scales owned by this user for example)
 	 * @return a List of EvalScale objects (in alpha order with private scales, then public, then others)
 	 */
-	public List getScalesForUser(String userId, String sharingConstant);
+	public List<EvalScale> getScalesForUser(String userId, String sharingConstant);
 
 
 	// PERMISSIONS

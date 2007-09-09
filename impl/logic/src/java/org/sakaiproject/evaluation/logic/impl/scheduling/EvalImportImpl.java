@@ -24,8 +24,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -68,15 +68,16 @@ public class EvalImportImpl implements EvalImport {
 		(org.sakaiproject.evaluation.logic.EvalScalesLogic) ComponentManager.get(org.sakaiproject.evaluation.logic.EvalScalesLogic.class);
 	private org.sakaiproject.evaluation.logic.EvalTemplatesLogic evalTemplatesLogic = 
 		(org.sakaiproject.evaluation.logic.EvalTemplatesLogic) ComponentManager.get(org.sakaiproject.evaluation.logic.EvalTemplatesLogic.class);
-	private org.sakaiproject.evaluation.logic.EvalExternalLogic evalExternalLogic = 
-		(org.sakaiproject.evaluation.logic.EvalExternalLogic)ComponentManager.get(org.sakaiproject.evaluation.logic.EvalExternalLogic.class);
-	
-	private final String EVENT_TEMPLATE_CREATE = "eval.template.added";
-	private final String EVENT_TEMPLATE_UPDATE = "eval.template.updated";
-	private Calendar cal = Calendar.getInstance();
-	private SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
-	private String currentUserId = null;
-	private int numPersisted = 0;
+//	private org.sakaiproject.evaluation.logic.EvalExternalLogic evalExternalLogic = (org.sakaiproject.evaluation.logic.EvalExternalLogic)ComponentManager.get(org.sakaiproject.evaluation.logic.EvalExternalLogic.class);
+
+   // TODO commented out unused code -AZ
+//   private final String EVENT_TEMPLATE_CREATE = "eval.template.added";
+//	private final String EVENT_TEMPLATE_UPDATE = "eval.template.updated";
+
+   private Calendar cal = Calendar.getInstance(); // TODO NOT threadsafe, fix this -AZ
+	private SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss"); // TODO NOT threadsafe, fix this -AZ
+	private String currentUserId = null; // TODO NOT threadsafe, fix this -AZ
+	private int numPersisted = 0; // TODO NOT threadsafe, fix this -AZ
 	
 	//error messages during processing to surface to UI
 	private List<String> messages = new ArrayList<String>();
@@ -94,7 +95,7 @@ public class EvalImportImpl implements EvalImport {
 	 * @param id The Reference id of the ContentResource
 	 * @return String error message(s)
 	 */
-	public List process(String id, String userId) {
+	public List<String> process(String id, String userId) {
 		if(id == null || userId == null) {
 			messages.add("There was a problem: parameter id and/or userId was null.");
 			//TODO add to audit trail
@@ -194,7 +195,8 @@ public class EvalImportImpl implements EvalImport {
 							expert = Boolean.FALSE;
 						
 						//set options
-						Hashtable order = new Hashtable();
+// TODO Do NOT use hashtable like this -AZ						Hashtable order = new Hashtable();
+                  HashMap<Integer, String> order = new HashMap<Integer, String>();
 						Element evalScaleOptions = element.getChild("EVAL_SCALE_OPTIONS");
 						List options = evalScaleOptions.getChildren("EVAL_SCALE_OPTION");
 						if(options != null && !options.isEmpty()) {
@@ -522,7 +524,7 @@ public class EvalImportImpl implements EvalImport {
 	 * @param element the Element
 	 * @param templateItem the TemplateItem
 	 */
-	private void setTemplateItemProperties(Element element, EvalTemplateItem templateItem) {
+/*	private void setTemplateItemProperties(Element element, EvalTemplateItem templateItem) {
 		EvalItem item = templateItem.getItem();
 		templateItem.setUsesNA(item.getUsesNA());
 		templateItem.setScaleDisplaySetting(item.getScaleDisplaySetting());
@@ -559,7 +561,7 @@ public class EvalImportImpl implements EvalImport {
 			}
 		}
 		templateItem.setItemCategory(element.getChildText("ITEM_CATEGORY"));
-	}
+	}*/
 	
 	/**
 	 * Set EvalScale properties from XML Element data
@@ -582,8 +584,9 @@ public class EvalImportImpl implements EvalImport {
 		else
 			scale.setLocked(new Boolean(Boolean.FALSE));
 		//set options
-		Hashtable order = new Hashtable();
-		Element evalScaleOptions = element.getChild("EVAL_SCALE_OPTIONS");
+//  TODO Do NOT use hashtable like this -AZ                 Hashtable order = new Hashtable();
+      HashMap<Integer, String> order = new HashMap<Integer, String>();
+      Element evalScaleOptions = element.getChild("EVAL_SCALE_OPTIONS");
 		List options = evalScaleOptions.getChildren("EVAL_SCALE_OPTION");
 		if(options != null && !options.isEmpty()) {
 			String [] choices = new String[options.size()];
