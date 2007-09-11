@@ -24,6 +24,14 @@ import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
+/*
+ * This producer renders the form page for adding or modifying the properties
+ * for an Evaluation Hierarchy Node. At this point these are limited to Title
+ * and Abbreviation.
+ * 
+ * This producer handles both cases, new nodes and existing nodes, making use
+ * of the EL syntax in HierarchyNodeLocator. 
+ */
 public class ModifyHierarchyNodeProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
     public static final String VIEW_ID = "modify_hierarchy_node";
 
@@ -77,9 +85,14 @@ public class ModifyHierarchyNodeProducer implements ViewComponentProducer, ViewP
          * The Submission Form
          */
         UIForm form = UIForm.make(tofill, "modify-node-form");
+        
         UIInput.make(form, "node-title", "hierNodeLocator."+ELName+".title");
+        UIMessage.make(form, "title-label", "modifyhierarchynode.title.label");
+        
         UIInput.make(form, "node-abbr", "hierNodeLocator."+ELName+".description");
-        UICommand.make(form, "save-node-button", "hierNodeLocatorInvoker.saveAll");
+        UIMessage.make(form, "abbreviation-label", "modifyhierarchynode.abbreviation.label");
+        
+        UICommand.make(form, "save-node-button", UIMessage.make("modifyhierarchynode.save"), "hierNodeLocatorInvoker.saveAll");
         UIInternalLink.make(form, "cancel-link", UIMessage.make("modifyhierarchynode.cancel"), new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID));
     }
 
