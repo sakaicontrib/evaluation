@@ -21,6 +21,7 @@ import org.sakaiproject.evaluation.model.EvalGroupNodes;
 import org.sakaiproject.genericdao.api.finders.ByPropsFinder;
 import org.sakaiproject.hierarchy.HierarchyService;
 import org.sakaiproject.hierarchy.model.HierarchyNode;
+import org.sakaiproject.hierarchy.utils.HierarchyUtils;
 
 /**
  * 
@@ -179,10 +180,12 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
       if (nodeId != null) {
          HierarchyNode currentNode = hierarchyService.getNodeById(nodeId);
          Set<HierarchyNode> parents = hierarchyService.getParentNodes(nodeId, false);
-         for (HierarchyNode node : parents) {
+         parents.add(currentNode);
+         List<HierarchyNode> sorted = HierarchyUtils.getSortedNodes(parents);
+         // now convert the nodes to eval nodes
+         for (HierarchyNode node : sorted) {
             l.add( makeEvalNode(node) );
          }
-         l.add( makeEvalNode(currentNode) );
       }
       return l;
    }
