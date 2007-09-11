@@ -58,8 +58,8 @@ public class ModifyHierarchyNodeGroupsProducer implements ViewComponentProducer,
         HierarchyNodeParameters params = (HierarchyNodeParameters) viewparams;
         String nodeId = params.nodeId;
         EvalHierarchyNode evalNode = hierarchyLogic.getNodeById(params.nodeId);
-        
         List<EvalGroup> evalGroups = external.getEvalGroupsForUser("admin", EvalConstants.PERM_BE_EVALUATED);
+        
         Collections.sort(evalGroups, new Comparator() {
             public int compare(Object o1, Object o2) {
                 EvalGroup e1 = (EvalGroup) o1; 
@@ -74,9 +74,12 @@ public class ModifyHierarchyNodeGroupsProducer implements ViewComponentProducer,
         UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID));
         UIInternalLink.make(tofill, "administrate-toplink", UIMessage.make("administrate.page.title"), new SimpleViewParameters(AdministrateProducer.VIEW_ID));
         UIInternalLink.make(tofill, "hierarchy-toplink", UIMessage.make("controlhierarchy.breadcrumb.title"), new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID));
-        UIMessage.make(tofill, "page-title", "modifyhierarchynode.breadcrumb.title");
+        UIMessage.make(tofill, "page-title", "hierarchynode.groups.breadcrumb.title");
         
-        UIMessage.make(tofill, "assign-groups-title","hierarchynode.assigngroups.body.title", new String[] {evalNode.title});
+        UIMessage.make(tofill, "assign-groups-title","hierarchynode.groups.body.title", new String[] {evalNode.title});
+        
+        UIMessage.make(tofill, "select-header", "hierarchynode.groups.table.select");
+        UIMessage.make(tofill, "title-header", "hierarchynode.groups.table.title");
         
         UIForm form = UIForm.make(tofill, "assign-groups-form");
         for (EvalGroup group: evalGroups) {
@@ -85,8 +88,10 @@ public class ModifyHierarchyNodeGroupsProducer implements ViewComponentProducer,
             UIOutput.make(tablerow, "group-title", group.title);
         }
         
-        UICommand.make(form, "save-groups-button", "hierNodeGroupsLocatorInvoker.saveAll");
-        UIInternalLink.make(form, "cancel-link", new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID));
+        UICommand.make(form, "save-groups-button", UIMessage.make("hierarchynode.groups.save"),
+                "hierNodeGroupsLocatorInvoker.saveAll");
+        UIInternalLink.make(form, "cancel-link", UIMessage.make("hierarchynode.groups.cancel"),
+                new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID));
     }
 
     public ViewParameters getViewParameters() {
@@ -98,7 +103,5 @@ public class ModifyHierarchyNodeGroupsProducer implements ViewComponentProducer,
         cases.add(new NavigationCase(null, new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID)));
         return cases;
     }
-
-    //List evalGroups = externalLogic.getEvalGroupsForUser(externalLogic.getCurrentUserId(), EvalConstants.PERM_BE_EVALUATED);
 
 }
