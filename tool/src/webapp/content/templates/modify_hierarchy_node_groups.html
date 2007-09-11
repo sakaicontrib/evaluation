@@ -8,6 +8,7 @@
         <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
         <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
         <link href="/sakai-evaluation-tool/content/css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+        <script type="text/javascript" language="JavaScript" src="/sakai-evaluation-tool/content/js/jquery/jquery.js"></script>
     </head>
 <body>
 <div class="portletBody">
@@ -18,18 +19,27 @@
         <li style="float: left" rsf:id="page-title" class="lastCrumb" >Add / Modify</li>
     </ul>
     <h3 rsf:id="assign-groups-title">Assign groups for a hierarchy node</h3>
+    <!-- 
+    <p>
+      <span>Filter</span>
+      <input type="text" value="" id="filterinput" />
+    </p>
+    -->
     <form rsf:id="assign-groups-form">
         <table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
             <thead>
                 <tr>
-                    <th>Select</th>
-                    <th>Title</th>
+                    <th>
+                        <input id="selectAllNone" type="checkbox" />
+                        <span rsf:id="select-header">Select</span>
+                    </th>
+                    <th rsf:id="title-header">Title</th>
                 </tr>
             </thead>
             <tbody>
                 <tr rsf:id="group-row:">
                     <td>
-                        <input rsf:id="group-checkbox" type="checkbox" />
+                        <input class=" groupcheckbox "rsf:id="group-checkbox" type="checkbox" />
                     </td>
                     <td>
                         <label rsf:id="group-title">Group Title</label>
@@ -43,5 +53,14 @@
         </p>    
     </form>
 </div>
+<script>
+  var selectAllBox = jQuery('#selectAllNone');
+  selectAllBox.change( function() {
+  var onoff = selectAllBox.get(0).checked;
+  jQuery('.groupcheckbox').each(function(i) {
+    this.checked = onoff;
+  });
+});
+</script>
 </body>
 </html>
