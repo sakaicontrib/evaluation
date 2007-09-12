@@ -12,21 +12,21 @@ public class EvalAssignHierarchy implements java.io.Serializable {
 
    // Fields
 
-   private Long id;
+   protected Long id;
 
-   private Date lastModified;
+   protected Date lastModified;
 
-   private String owner;
+   protected String owner;
 
-   private String nodeId;
+   protected String nodeId;
 
-   private Boolean instructorApproval;
+   protected Boolean instructorApproval;
 
-   private Boolean instructorsViewResults;
+   protected Boolean instructorsViewResults;
 
-   private Boolean studentsViewResults;
+   protected Boolean studentsViewResults;
 
-   private EvalEvaluation evaluation;
+   protected EvalEvaluation evaluation;
 
    // Constructors
 
