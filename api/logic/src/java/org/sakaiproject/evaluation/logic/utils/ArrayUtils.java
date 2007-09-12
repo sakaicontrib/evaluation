@@ -105,4 +105,21 @@ public class ArrayUtils {
 		return newArray;
 	}
 
+	/**
+	 * Take an array of anything and turn it into a string
+	 * 
+	 * @param array any array
+	 * @return a string representing that array
+	 */
+	public static String arrayToString(Object[] array) {
+	   StringBuilder result = new StringBuilder();
+	   for (int i = 0; i < array.length; i++) {
+         if (i > 0) {
+            result.append(",");
+         }
+         result.append(array[i].toString());
+      }
+	   return result.toString();
+	}
+
 }

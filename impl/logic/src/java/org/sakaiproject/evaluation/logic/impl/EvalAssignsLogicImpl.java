@@ -4,8 +4,11 @@
 
 package org.sakaiproject.evaluation.logic.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -13,9 +16,11 @@ import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
+import org.sakaiproject.evaluation.logic.utils.ArrayUtils;
+import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
+import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
@@ -73,9 +78,9 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 
       if (assignContext.getId() == null) {
          // creating new AC
-         if (checkCreateAC(userId, eval)) {
+         if (checkCreateAssignGroup(userId, eval)) {
             // check for duplicate AC first
-            if ( checkRemoveDuplicateAC(assignContext) ) {
+            if ( checkRemoveDuplicateAssignGroup(assignContext) ) {
                throw new IllegalStateException("Duplicate mapping error, there is already an AC that defines a link from evalGroupId: " + 
                      assignContext.getEvalGroupId() + " to eval: " + eval.getId());
             }
@@ -92,7 +97,7 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
          //log.info("AZQ: current AC("+existingAC.getId()+"): ctxt:" + existingAC.getContext() + ", eval:" + existingAC.getEvaluation().getId());
 
          // check the user control permissions
-         if (! checkControlAC(userId, assignContext) ) {
+         if (! checkControlAssignGroup(userId, assignContext) ) {
             throw new SecurityException("User ("+userId+") attempted to update existing AC ("+existingAC.getId()+") without permissions");
          }
 
@@ -160,7 +165,7 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
          throw new IllegalArgumentException("Cannot find assign evalGroupId with this id: " + assignGroupId);
       }
 
-      if ( checkRemoveAC(userId, assignGroup) ) {
+      if ( checkRemoveAssignGroup(userId, assignGroup) ) {
          dao.delete(assignGroup);
          log.info("User ("+userId+") deleted existing AC ("+assignGroup.getId()+")");
          return;
@@ -194,6 +199,182 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
       return null;
    }
 
+   @SuppressWarnings("unchecked")
+   public List<EvalAssignGroup> getEvaluationAssignGroups(Long evaluationId) {
+      // get all the evalGroupIds for the given eval ids in one storage call
+      List<EvalAssignGroup> l = new ArrayList<EvalAssignGroup>();
+         l = dao.findByProperties(EvalAssignGroup.class,
+               new String[] {"evaluation.id"}, 
+               new Object[] {evaluationId} );
+      return l;
+   }
+
+   // HIERARCHY
+
+
+   public List<EvalAssignHierarchy> addEvalAssignments(Long evaluationId, String[] nodeIds, String[] evalGroupIds) {
+
+      // get the evaluation
+      EvalEvaluation eval = (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);
+      if (eval == null) {
+         throw new IllegalArgumentException("Invalid eval id, cannot find evaluation with this id: " + evaluationId);
+      }
+
+      // check if this evaluation can be modified
+      String userId = externalLogic.getCurrentUserId();
+      if (checkCreateAssignGroup(userId, eval)) {
+
+         // first we have to get all the assigned hierarchy nodes for this eval
+         Set<String> nodeIdsSet = new HashSet<String>();
+         Set<String> currentNodeIds = new HashSet<String>();
+
+         List<EvalAssignHierarchy> current = getAssignHierarchyByEval(evaluationId);
+         for (EvalAssignHierarchy evalAssignHierarchy : current) {
+            currentNodeIds.add(evalAssignHierarchy.getNodeId());
+         }
+
+         for (int i = 0; i < nodeIds.length; i++) {
+            nodeIdsSet.add(nodeIds[i]);
+         }
+
+         // then remove the duplicates so we end up with the filtered list to only new ones
+         nodeIdsSet.removeAll(currentNodeIds);
+         nodeIds = nodeIdsSet.toArray(nodeIds);
+
+         // now we need to create all the persistent hierarchy assignment objects
+         Set<EvalAssignHierarchy> nodeAssignments = new HashSet<EvalAssignHierarchy>();
+         for (String nodeId : nodeIdsSet) {
+            EvalAssignHierarchy eah = new EvalAssignHierarchy(new Date(), userId, nodeId, false, true, false, eval);
+            // fill in defaults and the values from the evaluation
+            setDefaults(eval, eah);
+            nodeAssignments.add(eah);
+         }
+
+
+         // next we have to get all the assigned eval groups for this eval
+         Set<String> evalGroupIdsSet = new HashSet<String>();
+         Set<String> currentEvalGroupIds = new HashSet<String>();
+
+         List<EvalAssignGroup> currentGroups = getEvaluationAssignGroups(evaluationId);
+         for (EvalAssignGroup evalAssignGroup : currentGroups) {
+            currentEvalGroupIds.add(evalAssignGroup.getEvalGroupId());
+         }
+
+         for (int i = 0; i < evalGroupIds.length; i++) {
+            evalGroupIdsSet.add(evalGroupIds[i]);
+         }
+
+         // then remove the duplicates so we end up with the filtered list to only new ones
+         evalGroupIdsSet.removeAll(currentEvalGroupIds);
+         evalGroupIds = evalGroupIdsSet.toArray(evalGroupIds);
+
+         // now we need to create all the persistent group assignment objects
+         Set<EvalAssignGroup> groupAssignments = new HashSet<EvalAssignGroup>();
+         for (String evalGroupId : evalGroupIdsSet) {
+            String type = EvalConstants.GROUP_TYPE_PROVIDED;
+            if (evalGroupId.startsWith("/site")) {
+               type = EvalConstants.GROUP_TYPE_SITE;
+            }
+            EvalAssignGroup eag = new EvalAssignGroup(new Date(), userId, evalGroupId, type, false, true, false, eval);
+            // fill in defaults and the values from the evaluation
+            setDefaults(eval, eag);
+            groupAssignments.add(eag);
+         }
+
+
+         // save everything at once
+         dao.saveMixedSet(new Set[] {nodeAssignments, groupAssignments});
+         log.info("User (" + userId + ") added nodes (" + ArrayUtils.arrayToString(nodeIds)
+               + ") and groups (" + ArrayUtils.arrayToString(evalGroupIds) + ") to evaluation ("
+               + evaluationId + ")");
+         return new ArrayList<EvalAssignHierarchy>(nodeAssignments);
+      }
+
+      // should not get here so die if we do
+      throw new RuntimeException("User (" + userId
+            + ") could NOT create hierarchy assignments for nodes ("
+            + ArrayUtils.arrayToString(nodeIds) + ") in evaluation (" + evaluationId + ")");
+   }
+
+   /**
+    * @param eval
+    * @param eah
+    */
+   private void setDefaults(EvalEvaluation eval, EvalAssignHierarchy eah) {
+      if ( EvalConstants.INSTRUCTOR_OPT_IN.equals(eval.getInstructorOpt()) ) {
+         eah.setInstructorApproval( Boolean.FALSE );
+      } else {
+         eah.setInstructorApproval( Boolean.TRUE );
+      }
+      if (eval.getInstructorsDate() != null) {
+         eah.setInstructorsViewResults( Boolean.TRUE );
+      } else {
+         eah.setInstructorsViewResults( Boolean.FALSE );
+      }
+      if (eval.getStudentsDate() != null) {
+         eah.setStudentsViewResults( Boolean.TRUE );
+      } else {
+         eah.setStudentsViewResults( Boolean.FALSE );
+      }
+   }
+
+
+   @SuppressWarnings("unchecked")
+   public void deleteAssignHierarchyNodesById(Long[] assignHierarchyIds) {
+      String userId = externalLogic.getCurrentUserId();
+      // get the list of hierarchy assignments
+      List<EvalAssignHierarchy> l = dao.findByProperties(EvalAssignHierarchy.class,
+            new String[] { "id" }, new Object[] { assignHierarchyIds });
+      if (l.size() > 0) {
+         Set<String> nodeIds = new HashSet<String>();         
+         Long evaluationId = l.get(0).getEvaluation().getId();
+
+         Set<EvalAssignHierarchy> eahs = new HashSet<EvalAssignHierarchy>();
+         for (EvalAssignHierarchy evalAssignHierarchy : l) {
+            if (checkRemoveAssignGroup(userId, evalAssignHierarchy)) {
+               nodeIds.add(evalAssignHierarchy.getNodeId());
+               eahs.add(evalAssignHierarchy);
+            }
+         }
+
+         // now get the list of assign groups with a nodeId that matches any of these and remove those also
+         List<EvalAssignGroup> eags = dao.findByProperties(EvalAssignGroup.class,
+               new String[] { "evaluation.id", "nodeId" }, 
+               new Object[] { evaluationId, nodeIds });
+         Set<EvalAssignGroup> groups = new HashSet<EvalAssignGroup>();
+         StringBuilder groupListing = new StringBuilder();
+         if (eags.size() > 0) {
+            for (EvalAssignGroup evalAssignGroup : groups) {
+               if (checkRemoveAssignGroup(userId, evalAssignGroup)) {
+                  groups.add(evalAssignGroup);
+                  groupListing.append(evalAssignGroup.getEvalGroupId() + ":");
+               }
+            }
+         }
+
+         dao.deleteMixedSet(new Set[] {eahs, groups});
+         log.info("User (" + userId + ") deleted existing hierarchy assignments ("
+               + ArrayUtils.arrayToString(assignHierarchyIds) + ") and groups ("+groupListing.toString()+")");
+         return;
+
+      }
+      // should not get here so die if we do
+      throw new RuntimeException("User (" + userId + ") could NOT delete hierarchy assignments ("
+            + ArrayUtils.arrayToString(assignHierarchyIds) + ")");
+   }
+
+   @SuppressWarnings("unchecked")
+   public List<EvalAssignHierarchy> getAssignHierarchyByEval(Long evaluationId) {
+      List<EvalAssignHierarchy> l = dao.findByProperties(EvalAssignGroup.class,
+            new String[] { "evaluation.id" }, 
+            new Object[] { evaluationId });
+      return l;
+   }
+
+   public EvalAssignHierarchy getAssignHierarchyById(Long assignHierarchyId) {
+      return (EvalAssignHierarchy) dao.findById(EvalAssignHierarchy.class, assignHierarchyId);
+   }
+
 
    // PERMISSIONS
 
@@ -210,7 +391,7 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
       }
 
       try {
-         return checkCreateAC(userId, eval);
+         return checkCreateAssignGroup(userId, eval);
       } catch (RuntimeException e) {
          log.info(e.getMessage());
       }
@@ -218,19 +399,19 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
    }
 
    /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.EvalAssignsLogic#canDeleteAssignContext(java.lang.String, java.lang.Long)
+    * @see org.sakaiproject.evaluation.logic.EvalAssignsLogic#canDeleteAssignGroup(java.lang.String, java.lang.Long)
     */
-   public boolean canDeleteAssignGroup(String userId, Long assignContextId) {
-      log.debug("userId: " + userId + ", assignContextId: " + assignContextId);
+   public boolean canDeleteAssignGroup(String userId, Long assignGroupId) {
+      log.debug("userId: " + userId + ", assignGroupId: " + assignGroupId);
 
       // get AC
-      EvalAssignGroup assignContext = (EvalAssignGroup) dao.findById(EvalAssignGroup.class, assignContextId);
-      if (assignContext == null) {
-         throw new IllegalArgumentException("Cannot find assign evalGroupId with this id: " + assignContextId);
+      EvalAssignGroup assignGroup = (EvalAssignGroup) dao.findById(EvalAssignGroup.class, assignGroupId);
+      if (assignGroup == null) {
+         throw new IllegalArgumentException("Cannot find assign evalGroupId with this id: " + assignGroupId);
       }
 
       try {
-         return checkRemoveAC(userId, assignContext);
+         return checkRemoveAssignGroup(userId, assignGroup);
       } catch (RuntimeException e) {
          log.info(e.getMessage());
       }
@@ -242,14 +423,14 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
    /**
     * Check if user can control this AC
     * @param userId
-    * @param assignContext
+    * @param assignGroup
     * @return true if can, false otherwise
     */
-   private boolean checkControlAC(String userId, EvalAssignGroup assignContext) {
-      log.debug("userId: " + userId + ", assignContext: " + assignContext.getId());
+   private boolean checkControlAssignGroup(String userId, EvalAssignHierarchy assignGroup) {
+      log.debug("userId: " + userId + ", assignGroup: " + assignGroup.getId());
 
       // check user permissions (just owner and super at this point)
-      if ( userId.equals(assignContext.getOwner()) ||
+      if ( userId.equals(assignGroup.getOwner()) ||
             externalLogic.isUserAdmin(userId) ) {
          return true;
       } else {
@@ -263,7 +444,7 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
     * @param eval
     * @return true if they can, throw exceptions otherwise
     */
-   private boolean checkCreateAC(String userId, EvalEvaluation eval) {
+   private boolean checkCreateAssignGroup(String userId, EvalEvaluation eval) {
       log.debug("userId: " + userId + ", eval: " + eval.getId());
 
       // check state to see if assign contexts can be added
@@ -287,25 +468,25 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
    /**
     * Check if user can remove an AC
     * @param userId
-    * @param assignContext
+    * @param assignGroup
     * @return true if they can, throw exceptions otherwise
     */
-   private boolean checkRemoveAC(String userId, EvalAssignGroup assignContext) {
-      log.debug("userId: " + userId + ", assignContextId: " + assignContext.getId());
+   private boolean checkRemoveAssignGroup(String userId, EvalAssignHierarchy assignGroup) {
+      log.debug("userId: " + userId + ", assignGroupId: " + assignGroup.getId());
 
       // get evaluation from AC
-      EvalEvaluation eval = assignContext.getEvaluation();
+      EvalEvaluation eval = assignGroup.getEvaluation();
       String state = EvalUtils.getEvaluationState(eval);
       if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(state)) {
 
          // check user permissions (just owner and super at this point)
-         if ( checkControlAC(userId, assignContext) ) {
+         if ( checkControlAssignGroup(userId, assignGroup) ) {
             return true;
          } else {
-            throw new SecurityException("User ("+userId+") cannot remove assign evalGroupId ("+assignContext.getId()+"), do not have permission");
+            throw new SecurityException("User ("+userId+") cannot remove assign evalGroupId ("+assignGroup.getId()+"), do not have permission");
          }
       } else {
-         throw new IllegalStateException("User ("+userId+") cannot remove this assign evalGroupId ("+assignContext.getId()+"), invalid eval state");
+         throw new IllegalStateException("User ("+userId+") cannot remove this assign evalGroupId ("+assignGroup.getId()+"), invalid eval state");
       }
    }
 
@@ -315,10 +496,9 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
     * @return true if duplicate found
     */
    @SuppressWarnings("unchecked")
-   private boolean checkRemoveDuplicateAC(EvalAssignGroup ac) {
+   private boolean checkRemoveDuplicateAssignGroup(EvalAssignGroup ac) {
       log.debug("assignContext: " + ac.getId());
 
-//    log.info("AZ1: current AC("+ac.getId()+"): ctxt:" + ac.getContext() + ", eval:" + ac.getEvaluation().getId());
       List<EvalAssignGroup> l = dao.findByProperties(EvalAssignGroup.class, 
             new String[] {"evalGroupId", "evaluation.id"}, 
             new Object[] {ac.getEvalGroupId(), ac.getEvaluation().getId()});
@@ -326,11 +506,10 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
             (ac.getId() != null && l.size() >= 2) ) {
          // there is an existing AC which does the same mapping
 //       EvalAssignContext eac = (EvalAssignContext) l.get(0);
-//       log.info("AZ2: fetched AC("+eac.getId()+"): ctxt:" + eac.getContext() + ", eval:" + eac.getEvaluation().getId());
          return true;
       }
-//    log.info("AZ3: " + l.size());
       return false;
    }
+
 
 }
