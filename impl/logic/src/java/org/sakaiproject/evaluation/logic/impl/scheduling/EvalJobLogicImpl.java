@@ -40,7 +40,7 @@ import org.sakaiproject.time.api.TimeService;
  * rescheduling a job to keep jobs and EvalEvaluation dates in sync.
  * 
  * @author rwellis
- *
+ * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
 public class EvalJobLogicImpl implements EvalJobLogic {
 
@@ -58,28 +58,31 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	private final String EVENT_EVAL_VIEWABLE_STUDENTS      = "evaluation.state.viewable.stud";
 	private final String EVENT_EMAIL_REMINDER              = "evaluation.email.reminder";
 
-	//TODO jleasia: track events
-	
 	private EvalEmailsLogic emails;
 	public void setEmails(EvalEmailsLogic emails) {
 		this.emails = emails;
 	}
+	
 	private EvalEvaluationsLogic evalEvaluationsLogic;
 	public void setEvalEvaluationsLogic(EvalEvaluationsLogic evalEvaluationsLogic) {
 		this.evalEvaluationsLogic = evalEvaluationsLogic;
 	}
+	
 	private EvalExternalLogic externalLogic;
 	public void setExternalLogic(EvalExternalLogic externalLogic) {
 		this.externalLogic = externalLogic;
 	}
+	
 	private ScheduledInvocationManager scheduledInvocationManager;
 	public void setScheduledInvocationManager(ScheduledInvocationManager scheduledInvocationManager) {
 		this.scheduledInvocationManager = scheduledInvocationManager;
 	}
+	
 	private EvalSettings settings;
 	public void setSettings(EvalSettings settings) {
 		this.settings = settings;
 	}
+	
 	private TimeService timeService;
 	public void setTimeService(TimeService timeService) {
 		this.timeService = timeService;
@@ -683,3 +686,4 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 		}
 	}
 }
+

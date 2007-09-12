@@ -14,6 +14,7 @@
 			<list>
 				<value>org.sakaiproject.evaluation.model.EvalAnswer</value>
 				<value>org.sakaiproject.evaluation.model.EvalAssignGroup</value>
+				<value>org.sakaiproject.evaluation.model.EvalAssignHierarchy</value>
 				<value>org.sakaiproject.evaluation.model.EvalConfig</value>
 				<value>org.sakaiproject.evaluation.model.EvalEmailTemplate</value>
 				<value>org.sakaiproject.evaluation.model.EvalEvaluation</value>

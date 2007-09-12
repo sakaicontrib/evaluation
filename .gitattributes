@@ -41,6 +41,7 @@ api/logic/src/java/org/sakaiproject/evaluation/logic/utils/TemplateItemUtils.jav
 api/model/project.xml -text
 api/model/src/java/org/sakaiproject/evaluation/model/EvalAnswer.java -text
 api/model/src/java/org/sakaiproject/evaluation/model/EvalAssignGroup.java -text
+api/model/src/java/org/sakaiproject/evaluation/model/EvalAssignHierarchy.java -text
 api/model/src/java/org/sakaiproject/evaluation/model/EvalConfig.java -text
 api/model/src/java/org/sakaiproject/evaluation/model/EvalEmailTemplate.java -text
 api/model/src/java/org/sakaiproject/evaluation/model/EvalEvaluation.java -text
@@ -64,6 +65,7 @@ impl/dao/src/test/org/sakaiproject/evaluation/dao/test/EvaluationDaoImplTest.jav
 impl/hbm/project.xml -text
 impl/hbm/src/java/org/sakaiproject/evaluation/hbm/EvalAnswer.hbm.xml -text
 impl/hbm/src/java/org/sakaiproject/evaluation/hbm/EvalAssignGroup.hbm.xml -text
+impl/hbm/src/java/org/sakaiproject/evaluation/hbm/EvalAssignHierarchy.hbm.xml -text
 impl/hbm/src/java/org/sakaiproject/evaluation/hbm/EvalConfig.hbm.xml -text
 impl/hbm/src/java/org/sakaiproject/evaluation/hbm/EvalEmailTemplate.hbm.xml -text
 impl/hbm/src/java/org/sakaiproject/evaluation/hbm/EvalEvaluation.hbm.xml -text
