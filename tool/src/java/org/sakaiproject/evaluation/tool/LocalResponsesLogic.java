@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -63,18 +64,19 @@ public class LocalResponsesLogic {
 	 * the associated field of the answer (instructor id, environment key, etc.)
 	 * 
 	 * @param response the response we want to get the answers for
-	 * @return a hashmap of answers, where an answer's key = <templateItemId>+<answer.associated>
+	 * @return a hashmap of answers, where an answer's key = templateItemId + answer.associated
 	 */	
-	public HashMap getAnswersMapByTempItemAndAssociated(Long responseId) {
-		EvalResponse response=responsesLogic.getResponseById(responseId);
-		HashMap map = new HashMap();
-		Set answers=response.getAnswers();
-	    for (Iterator it = answers.iterator(); it.hasNext();) {
-	        EvalAnswer answer = (EvalAnswer) it.next();
-	        map.put(answer.getTemplateItem().getId().toString()+answer.getAssociatedType()+answer.getAssociatedId(), answer);
-	      }
-		return map;
-	}
+	public Map<String, EvalAnswer> getAnswersMapByTempItemAndAssociated(Long responseId) {
+      EvalResponse response = responsesLogic.getResponseById(responseId);
+      Map<String, EvalAnswer> map = new HashMap<String, EvalAnswer>();
+      Set<EvalAnswer> answers = response.getAnswers();
+      for (Iterator<EvalAnswer> it = answers.iterator(); it.hasNext();) {
+         EvalAnswer answer = (EvalAnswer) it.next();
+         map.put(answer.getTemplateItem().getId().toString() + answer.getAssociatedType()
+               + answer.getAssociatedId(), answer);
+      }
+      return map;
+   }
 	
 	public EvalResponse fetchResponseById(String evalIdstring) {
 		Long evalId = Long.valueOf(evalIdstring);
