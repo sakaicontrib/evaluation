@@ -1,3 +1,4 @@
+
 package org.sakaiproject.evaluation.model;
 
 // Generated Mar 20, 2007 10:08:13 AM by Hibernate Tools 3.2.0.beta6a
@@ -9,116 +10,167 @@ import java.util.Date;
  */
 public class EvalAssignGroup implements java.io.Serializable {
 
-	// Fields    
+   // Fields
 
-	private Long id;
+   private Long id;
 
-	private Date lastModified;
+   private Date lastModified;
 
-	private String owner;
+   private String owner;
 
-	private String evalGroupId;
+   private String evalGroupId;
 
-	private String evalGroupType;
+   private String evalGroupType;
 
-	private Boolean instructorApproval;
+   private Boolean instructorApproval;
 
-	private Boolean instructorsViewResults;
+   private Boolean instructorsViewResults;
 
-	private Boolean studentsViewResults;
+   private Boolean studentsViewResults;
 
-	private EvalEvaluation evaluation;
+   private EvalEvaluation evaluation;
 
-	// Constructors
+   private String nodeId;
 
-	/** default constructor */
-	public EvalAssignGroup() {
-	}
+   // Constructors
 
-	/** full constructor */
-	public EvalAssignGroup(Date lastModified, String owner, String evalGroupId, String evalGroupType, Boolean instructorApproval,
-			Boolean instructorsViewResults, Boolean studentsViewResults, EvalEvaluation evaluation) {
-		this.lastModified = lastModified;
-		this.owner = owner;
-		this.evalGroupId = evalGroupId;
-		this.evalGroupType = evalGroupType;
-		this.instructorApproval = instructorApproval;
-		this.instructorsViewResults = instructorsViewResults;
-		this.studentsViewResults = studentsViewResults;
-		this.evaluation = evaluation;
-	}
+   /** default constructor */
+   public EvalAssignGroup() {
+   }
 
-	// Property accessors
-	public Long getId() {
-		return this.id;
-	}
+   /**
+    * REQUIRED constructor
+    * 
+    * @param lastModified
+    * @param owner
+    * @param evalGroupId
+    * @param evalGroupType
+    * @param instructorApproval
+    * @param instructorsViewResults
+    * @param studentsViewResults
+    * @param evaluation
+    */
+   public EvalAssignGroup(Date lastModified, String owner, String evalGroupId,
+         String evalGroupType, Boolean instructorApproval,
+         Boolean instructorsViewResults, Boolean studentsViewResults,
+         EvalEvaluation evaluation) {
+      this.lastModified = lastModified;
+      this.owner = owner;
+      this.evalGroupId = evalGroupId;
+      this.evalGroupType = evalGroupType;
+      this.instructorApproval = instructorApproval;
+      this.instructorsViewResults = instructorsViewResults;
+      this.studentsViewResults = studentsViewResults;
+      this.evaluation = evaluation;
+   }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+   /**
+    * full constructor
+    * 
+    * @param lastModified
+    * @param owner
+    * @param evalGroupId
+    * @param evalGroupType
+    * @param instructorApproval
+    * @param instructorsViewResults
+    * @param studentsViewResults
+    * @param evaluation
+    * @param nodeId
+    */
+   public EvalAssignGroup(Date lastModified, String owner, String evalGroupId,
+         String evalGroupType, Boolean instructorApproval,
+         Boolean instructorsViewResults, Boolean studentsViewResults,
+         EvalEvaluation evaluation, String nodeId) {
+      super();
+      this.lastModified = lastModified;
+      this.owner = owner;
+      this.evalGroupId = evalGroupId;
+      this.evalGroupType = evalGroupType;
+      this.instructorApproval = instructorApproval;
+      this.instructorsViewResults = instructorsViewResults;
+      this.studentsViewResults = studentsViewResults;
+      this.evaluation = evaluation;
+      this.nodeId = nodeId;
+   }
 
-	public Date getLastModified() {
-		return this.lastModified;
-	}
+   public Long getId() {
+      return id;
+   }
 
-	public void setLastModified(Date lastModified) {
-		this.lastModified = lastModified;
-	}
+   public void setId(Long id) {
+      this.id = id;
+   }
 
-	public String getOwner() {
-		return this.owner;
-	}
+   public Date getLastModified() {
+      return lastModified;
+   }
 
-	public void setOwner(String owner) {
-		this.owner = owner;
-	}
+   public void setLastModified(Date lastModified) {
+      this.lastModified = lastModified;
+   }
 
-	public String getEvalGroupId() {
-		return this.evalGroupId;
-	}
+   public String getOwner() {
+      return owner;
+   }
 
-	public void setEvalGroupId(String evalGroupId) {
-		this.evalGroupId = evalGroupId;
-	}
+   public void setOwner(String owner) {
+      this.owner = owner;
+   }
 
-	public String getEvalGroupType() {
-		return this.evalGroupType;
-	}
+   public String getEvalGroupId() {
+      return evalGroupId;
+   }
 
-	public void setEvalGroupType(String evalGroupType) {
-		this.evalGroupType = evalGroupType;
-	}
+   public void setEvalGroupId(String evalGroupId) {
+      this.evalGroupId = evalGroupId;
+   }
 
-	public Boolean getInstructorApproval() {
-		return this.instructorApproval;
-	}
+   public String getEvalGroupType() {
+      return evalGroupType;
+   }
 
-	public void setInstructorApproval(Boolean instructorApproval) {
-		this.instructorApproval = instructorApproval;
-	}
+   public void setEvalGroupType(String evalGroupType) {
+      this.evalGroupType = evalGroupType;
+   }
 
-	public Boolean getInstructorsViewResults() {
-		return this.instructorsViewResults;
-	}
+   public Boolean getInstructorApproval() {
+      return instructorApproval;
+   }
 
-	public void setInstructorsViewResults(Boolean instructorsViewResults) {
-		this.instructorsViewResults = instructorsViewResults;
-	}
+   public void setInstructorApproval(Boolean instructorApproval) {
+      this.instructorApproval = instructorApproval;
+   }
 
-	public Boolean getStudentsViewResults() {
-		return this.studentsViewResults;
-	}
+   public Boolean getInstructorsViewResults() {
+      return instructorsViewResults;
+   }
 
-	public void setStudentsViewResults(Boolean studentsViewResults) {
-		this.studentsViewResults = studentsViewResults;
-	}
+   public void setInstructorsViewResults(Boolean instructorsViewResults) {
+      this.instructorsViewResults = instructorsViewResults;
+   }
 
-	public EvalEvaluation getEvaluation() {
-		return this.evaluation;
-	}
+   public Boolean getStudentsViewResults() {
+      return studentsViewResults;
+   }
 
-	public void setEvaluation(EvalEvaluation evaluation) {
-		this.evaluation = evaluation;
-	}
+   public void setStudentsViewResults(Boolean studentsViewResults) {
+      this.studentsViewResults = studentsViewResults;
+   }
+
+   public EvalEvaluation getEvaluation() {
+      return evaluation;
+   }
+
+   public void setEvaluation(EvalEvaluation evaluation) {
+      this.evaluation = evaluation;
+   }
+
+   public String getNodeId() {
+      return nodeId;
+   }
+
+   public void setNodeId(String nodeId) {
+      this.nodeId = nodeId;
+   }
 
 }
