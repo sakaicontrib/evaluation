@@ -146,6 +146,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
       if (nodeId == null || nodeId.equals("")) {
          throw new IllegalArgumentException("nodeId cannot be null or blank");
       }
+      
       EvalGroupNodes egn = getEvalGroupNodeByNodeId(nodeId);
       Set<String> s = new HashSet<String>();
       if (egn != null) {
@@ -155,6 +156,25 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
          }
       }
       return s;
+   }
+
+
+   public Map<String, Set<String>> getEvalGroupsForNodes(String[] nodeIds) {
+      if (nodeIds == null || nodeIds.length == 0) {
+         throw new IllegalArgumentException("nodeIds cannot be null or empty");
+      }
+
+      Map<String, Set<String>> m = new HashMap<String, Set<String>>();
+      List<EvalGroupNodes> l = getEvalGroupNodesByNodeId(nodeIds);
+      for (EvalGroupNodes egn : l) {
+         Set<String> s = new HashSet<String>();
+         String[] evalGroups = egn.getEvalGroups();
+         for (int i = 0; i < evalGroups.length; i++) {
+            s.add(evalGroups[i]);
+         }
+         m.put(egn.getNodeId(), s);
+      }
+      return m;
    }
 
    @SuppressWarnings("unchecked")
@@ -238,14 +258,27 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
     */
    @SuppressWarnings("unchecked")
    private EvalGroupNodes getEvalGroupNodeByNodeId(String nodeId) {
-      List<EvalGroupNodes> l = dao.findByProperties(EvalGroupNodes.class, 
-            new String[] {"nodeId"}, new Object[] {nodeId},
-            new int[] {ByPropsFinder.EQUALS}, new String[] {"id"});
+      List<EvalGroupNodes> l = getEvalGroupNodesByNodeId(new String[] {nodeId});
       EvalGroupNodes egn = null;
       if (!l.isEmpty()) {
          egn = (EvalGroupNodes) l.get(0);
       }
       return egn;
+   }
+   
+   /**
+    * Get a set of eval group nodes by a set of nodeIds
+    * @param nodeIds
+    * @return a list of egn or empty list if none found
+    */
+   @SuppressWarnings("unchecked")
+   private List<EvalGroupNodes> getEvalGroupNodesByNodeId(String[] nodeIds) {
+      List<EvalGroupNodes> l = dao.findByProperties(EvalGroupNodes.class, 
+            new String[] {"nodeId"}, 
+            new Object[] {nodeIds},
+            new int[] {ByPropsFinder.EQUALS}, 
+            new String[] {"id"});
+      return l;
    }
 
 }
