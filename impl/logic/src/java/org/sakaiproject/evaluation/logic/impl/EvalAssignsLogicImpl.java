@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -17,12 +18,14 @@ import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
+import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.utils.ArrayUtils;
 import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
+import org.sakaiproject.genericdao.api.finders.ByPropsFinder;
 
 
 /**
@@ -47,6 +50,11 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
    private EvalExternalLogic externalLogic;
    public void setExternalLogic(EvalExternalLogic externalLogic) {
       this.externalLogic = externalLogic;
+   }
+
+   private ExternalHierarchyLogic hierarchyLogic;
+   public void setHierarchyLogic(ExternalHierarchyLogic hierarchyLogic) {
+      this.hierarchyLogic = hierarchyLogic;
    }
 
    private EvalJobLogic evalJobLogic;
@@ -199,13 +207,18 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
       return null;
    }
 
+   /**
+    * Retrieve the complete set of eval assign groups for this evaluation
+    * @param evaluationId
+    * @return
+    */
    @SuppressWarnings("unchecked")
-   public List<EvalAssignGroup> getEvaluationAssignGroups(Long evaluationId) {
+   private List<EvalAssignGroup> getEvaluationAssignGroups(Long evaluationId) {
       // get all the evalGroupIds for the given eval ids in one storage call
       List<EvalAssignGroup> l = new ArrayList<EvalAssignGroup>();
-         l = dao.findByProperties(EvalAssignGroup.class,
-               new String[] {"evaluation.id"}, 
-               new Object[] {evaluationId} );
+      l = dao.findByProperties(EvalAssignGroup.class,
+            new String[] {"evaluation.id"}, 
+            new Object[] {evaluationId} );
       return l;
    }
 
@@ -250,11 +263,11 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
             nodeAssignments.add(eah);
          }
 
-
          // next we have to get all the assigned eval groups for this eval
          Set<String> evalGroupIdsSet = new HashSet<String>();
          Set<String> currentEvalGroupIds = new HashSet<String>();
 
+         // get the current list of assigned eval groups
          List<EvalAssignGroup> currentGroups = getEvaluationAssignGroups(evaluationId);
          for (EvalAssignGroup evalAssignGroup : currentGroups) {
             currentEvalGroupIds.add(evalAssignGroup.getEvalGroupId());
@@ -263,24 +276,33 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
          for (int i = 0; i < evalGroupIds.length; i++) {
             evalGroupIdsSet.add(evalGroupIds[i]);
          }
+         
+         // next we need to expand all the assigned hierarchy nodes into a massive set of eval assign groups
+         Set<String> allNodeIds = new HashSet<String>();
+         allNodeIds.addAll(nodeIdsSet);
+         allNodeIds.addAll(currentNodeIds);
+         Map<String, Set<String>> allEvalGroupIds = hierarchyLogic.getEvalGroupsForNodes( allNodeIds.toArray(nodeIds) );
 
-         // then remove the duplicates so we end up with the filtered list to only new ones
+         // now eliminate the evalgroupids from the evalGroupIds array which happen to be contained in the nodes,
+         // this leaves us with only the group ids which are not contained in the nodes which are already assigned
+         for (Set<String> egIds : allEvalGroupIds.values()) {
+            evalGroupIdsSet.removeAll(egIds);
+         }
+
+         // then remove the eval groups ids which are already assigned to this eval so we only have new ones
          evalGroupIdsSet.removeAll(currentEvalGroupIds);
          evalGroupIds = evalGroupIdsSet.toArray(evalGroupIds);
 
-         // now we need to create all the persistent group assignment objects
+         // now we need to create all the persistent group assignment objects for the new groups
          Set<EvalAssignGroup> groupAssignments = new HashSet<EvalAssignGroup>();
-         for (String evalGroupId : evalGroupIdsSet) {
-            String type = EvalConstants.GROUP_TYPE_PROVIDED;
-            if (evalGroupId.startsWith("/site")) {
-               type = EvalConstants.GROUP_TYPE_SITE;
-            }
-            EvalAssignGroup eag = new EvalAssignGroup(new Date(), userId, evalGroupId, type, false, true, false, eval);
-            // fill in defaults and the values from the evaluation
-            setDefaults(eval, eag);
-            groupAssignments.add(eag);
-         }
+         groupAssignments.addAll( makeAssignGroups(eval, userId, evalGroupIdsSet, null) );
 
+         // finally we add in the groups for all the new expanded assign groups
+         for (String nodeId : nodeIdsSet) {
+            if (allEvalGroupIds.containsKey(nodeId)) {
+               groupAssignments.addAll( makeAssignGroups(eval, userId, allEvalGroupIds.get(nodeId), nodeId) );               
+            }
+         }
 
          // save everything at once
          dao.saveMixedSet(new Set[] {nodeAssignments, groupAssignments});
@@ -294,6 +316,29 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
       throw new RuntimeException("User (" + userId
             + ") could NOT create hierarchy assignments for nodes ("
             + ArrayUtils.arrayToString(nodeIds) + ") in evaluation (" + evaluationId + ")");
+   }
+
+   /**
+    * Create EvalAssignGroup objects from a set of evalGroupIds for an eval and user
+    * @param eval
+    * @param userId
+    * @param evalGroupIdsSet
+    * @param nodeId (optional), null if there is no nodeId association, otherwise set to the associated nodeId
+    * @return the set with the new assignments
+    */
+   private Set<EvalAssignGroup> makeAssignGroups(EvalEvaluation eval, String userId, Set<String> evalGroupIdsSet, String nodeId) {
+      Set<EvalAssignGroup> groupAssignments = new HashSet<EvalAssignGroup>();
+      for (String evalGroupId : evalGroupIdsSet) {
+         String type = EvalConstants.GROUP_TYPE_PROVIDED;
+         if (evalGroupId.startsWith("/site")) {
+            type = EvalConstants.GROUP_TYPE_SITE;
+         }
+         EvalAssignGroup eag = new EvalAssignGroup(new Date(), userId, evalGroupId, type, false, true, false, eval, nodeId);
+         // fill in defaults and the values from the evaluation
+         setDefaults(eval, eag);
+         groupAssignments.add(eag);
+      }
+      return groupAssignments;
    }
 
    /**
@@ -365,7 +410,7 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 
    @SuppressWarnings("unchecked")
    public List<EvalAssignHierarchy> getAssignHierarchyByEval(Long evaluationId) {
-      List<EvalAssignHierarchy> l = dao.findByProperties(EvalAssignGroup.class,
+      List<EvalAssignHierarchy> l = dao.findByProperties(EvalAssignHierarchy.class,
             new String[] { "evaluation.id" }, 
             new Object[] { evaluationId });
       return l;
@@ -374,6 +419,18 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
    public EvalAssignHierarchy getAssignHierarchyById(Long assignHierarchyId) {
       return (EvalAssignHierarchy) dao.findById(EvalAssignHierarchy.class, assignHierarchyId);
    }
+
+   @SuppressWarnings("unchecked")
+   public List<EvalAssignGroup> getAssignGroupsByEval(Long evaluationId) {
+      List<EvalAssignGroup> l = dao.findByProperties(EvalAssignGroup.class,
+            new String[] { "evaluation.id", "nodeId" }, 
+            new Object[] { evaluationId, null },
+            new int[] {ByPropsFinder.EQUALS, ByPropsFinder.NULL},
+            new String[] {"id"});
+      return l;
+   }
+
+
 
 
    // PERMISSIONS
@@ -510,6 +567,5 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
       }
       return false;
    }
-
 
 }

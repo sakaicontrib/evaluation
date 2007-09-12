@@ -129,12 +129,24 @@ public interface EvalHierarchyProvider {
     * Get the set of eval group ids beneath a specific hierarchy node, note that this should only
     * include the eval groups directly beneath this node and not any groups that are under
     * child nodes of this node<br/>
-    * Note: this will not fail if the nodeId is invalid, it will just return no results
+    * Note: this will not fail if the nodeId is invalid, it will just return no results<br/>
+    * Convenience method for {@link #getEvalGroupsForNodes(String[])}
     * 
     * @param nodeId a unique id for a hierarchy node
     * @return a Set of eval group ids representing the eval groups beneath this hierarchy node
     */
    public Set<String> getEvalGroupsForNode(String nodeId);
+
+   /**
+    * Get the set of eval group ids beneath a set of hierarchy nodes, note that this should only
+    * include the eval groups directly beneath these nodes and not any groups that are under
+    * child nodes of this node<br/>
+    * Note: this will not fail if the nodeId is invalid, it will just return no results
+    * 
+    * @param nodeIds a set of unique ids for hierarchy nodes
+    * @return a Map of nodeId -> a set of eval group ids representing the eval groups beneath that node
+    */
+   public Map<String, Set<String>> getEvalGroupsForNodes(String[] nodeIds);
 
    /**
     * Get the count of the number of eval groups assigned to each node in a group of nodes

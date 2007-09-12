@@ -114,6 +114,16 @@ public interface EvalAssignsLogic {
     */
    public List<EvalAssignHierarchy> getAssignHierarchyByEval(Long evaluationId);
 
+   /**
+    * Get all the directly assigned eval groups by the evaluation they are associated with,
+    * does not include groups which are associated with nodes, this should be used for
+    * managing the list of groups only, fetching the groups for an evaluation is handled by methods
+    * in the evaluations logic
+    * @param evaluationId unique id of an {@link EvalEvaluation}
+    * @return a list of all the hierarchy groups directly assigned for an evaluation, empty if none found
+    */
+   public List<EvalAssignGroup> getAssignGroupsByEval(Long evaluationId);
+
 
    // PERMISSIONS
 
