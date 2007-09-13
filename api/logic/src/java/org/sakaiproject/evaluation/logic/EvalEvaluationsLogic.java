@@ -34,7 +34,7 @@ public interface EvalEvaluationsLogic {
 	/**
 	 * Save or update an evaluation to persistent storage,
 	 * checks that dates are appropriate and validates settings,
-	 * use {@link #getEvaluationState(Long)} to check the state
+	 * use {@link #updateEvaluationState(Long)} to check the state
 	 * if you want to avoid possible exceptions<br/>
 	 * Evaluations can be saved with the email templates as null and will use the
 	 * default templates in this circumstance<br/>
@@ -181,7 +181,7 @@ public interface EvalEvaluationsLogic {
 	 * @return an EVALUATION_STATE constant from 
 	 * {@link org.sakaiproject.evaluation.model.constant.EvalConstants}
 	 */
-	public String getEvaluationState(Long evaluationId);
+	public String updateEvaluationState(Long evaluationId);
 
 	/**
 	 * Test if an evaluation can be removed at this time by this user, 

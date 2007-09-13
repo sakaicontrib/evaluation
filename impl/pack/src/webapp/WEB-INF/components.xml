@@ -10,10 +10,10 @@
    <!-- Bring in the hibernate related beans -->
    <import resource="spring-hibernate.xml" />
 
-
    <!-- Handles data access to external (to the app) services -->
    <bean id="org.sakaiproject.evaluation.logic.EvalExternalLogic"
-      class="org.sakaiproject.evaluation.logic.impl.EvalExternalLogicImpl" init-method="init">
+      class="org.sakaiproject.evaluation.logic.impl.EvalExternalLogicImpl"
+      init-method="init">
       <property name="authzGroupService" ref="org.sakaiproject.authz.api.AuthzGroupService" />
       <property name="emailService" ref="org.sakaiproject.email.api.EmailService" />
       <property name="entityBroker" ref="org.sakaiproject.entitybroker.EntityBroker" />
@@ -26,7 +26,6 @@
       <property name="siteService" ref="org.sakaiproject.site.api.SiteService" />
       <property name="toolManager" ref="org.sakaiproject.tool.api.ToolManager" />
       <property name="userDirectoryService" ref="org.sakaiproject.user.api.UserDirectoryService" />
-
    </bean>
 
    <!-- Bring in any logic support beans -->

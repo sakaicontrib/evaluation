@@ -603,22 +603,7 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
    }
 
    public List<EvalTemplateItem> getTemplateItemsForEvaluation(Long evalId, String userId, String hierarchyLevel) {
-      EvalEvaluation evaluation = (EvalEvaluation) dao.findById(EvalEvaluation.class, evalId);
-      if (evaluation == null) {
-         throw new IllegalStateException("Cannot find evaluation with this id: " + evalId);
-      }
-
-      // TODO - use the dao method that supports the hierarchy
-
-      // TODO - this needs to support the 2nd and 3rd arguments -AZ
-
-      List<EvalTemplateItem> templateItems = dao.getTemplateItemsByTemplate(evaluation.getTemplate().getId(), null, null, null);
-      if (evaluation.getAddedTemplate() != null && 
-            evaluation.getAddedTemplate().getId() != null) {
-         templateItems.addAll( dao.getTemplateItemsByTemplate(evaluation.getAddedTemplate().getId(), null, null, null) );
-      }
-
-      return templateItems;
+      return dao.getTemplateItemsByEvaluation(evalId, null, null, null);
    }
 
 

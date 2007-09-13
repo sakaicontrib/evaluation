@@ -21,6 +21,7 @@ import java.util.Set;
 import junit.framework.Assert;
 
 import org.sakaiproject.evaluation.dao.EvaluationDao;
+import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
@@ -124,8 +125,8 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
     * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#getVisibleTemplates(java.lang.String, boolean, boolean, boolean)}.
     */
    public void testGetVisibleTemplates() {
-      List l = null;
-      List ids = null;
+      List<EvalTemplate> l = null;
+      List<Long> ids = null;
 
       // all templates visible to user
       l = evaluationDao.getVisibleTemplates(EvalTestDataLoad.USER_ID, 
@@ -260,8 +261,8 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
     * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#getActiveEvaluationsByContexts(java.lang.String[])}.
     */
    public void testGetActiveEvaluationsByContexts() {
-      Set s = null;
-      List ids = null;
+      Set<EvalEvaluation> s = null;
+      List<Long> ids = null;
 
       // test getting evaluations by evalGroupId
       s = evaluationDao.getEvaluationsByEvalGroups(
@@ -330,9 +331,9 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
     * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#getAnswers(java.lang.Long, java.lang.Long)}.
     */
    public void testGetAnswers() {
-      Set s = null;
-      List l = null;
-      List ids = null;
+      Set<EvalAnswer> s = null;
+      List<EvalAnswer> l = null;
+      List<Long> ids = null;
 
       s = etdl.response2.getAnswers();
       Assert.assertNotNull(s);
@@ -477,8 +478,8 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
     * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#getTemplateItemsByTemplate(java.lang.Long, java.lang.String[], java.lang.String[], java.lang.String[])}.
     */
    public void testGetTemplateItemsByTemplate() {
-      List l = null;
-      List ids = null;
+      List<EvalTemplateItem> l = null;
+      List<Long> ids = null;
 
       // test the basic return of items in the template
       l = evaluationDao.getTemplateItemsByTemplate(etdl.templateAdmin.getId(), 
@@ -541,7 +542,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
    }
 
    public void testGetResponseIds() {
-      List l = null;
+      List<Long> l = null;
 
       l = evaluationDao.getResponseIds(etdl.evaluationClosed.getId(), null);
       Assert.assertNotNull(l);
@@ -573,7 +574,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
     * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#getEvalCategories(String)}
     */
    public void testGetEvalCategories() {
-      List l = null;
+      List<String> l = null;
 
       // test the basic return of categories
       l = evaluationDao.getEvalCategories(null);
