@@ -4,6 +4,7 @@
 
 package org.sakaiproject.evaluation.logic.externals;
 
+import java.util.Collection;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
@@ -51,7 +52,6 @@ public interface ExternalHierarchyLogic extends EvalHierarchyProvider {
     */
    public EvalHierarchyNode updateNodeData(String nodeId, String title, String description);
 
-
    /**
     * Set permissions for a user for a node
     * 
@@ -71,5 +71,13 @@ public interface ExternalHierarchyLogic extends EvalHierarchyProvider {
     * empty set then this will clear the associations so there are no groups associated
     */
    public void setEvalGroupsForNode(String nodeId, Set<String> evalGroupIds);
+
+   /**
+    * Get all the children node ids which exist under the set of supplied nodes
+    * @param nodes a set of eval hierarchy nodes
+    * @param includeSuppliedNodeIds include the nodes ids of the supplied collection of nodes 
+    * @return a set of all unique child nodes
+    */
+   public Set<String> getAllChildrenNodes(Collection<EvalHierarchyNode> nodes, boolean includeSuppliedNodeIds);
 
 }
