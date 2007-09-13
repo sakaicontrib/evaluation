@@ -28,6 +28,7 @@ import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 /**
  * This request-scope bean handles item creation and modification.
@@ -39,170 +40,183 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
  */
 public class ItemsBean {
 
-	/*
-	 * VARIABLE DECLARATIONS
-	 */
-	private static Log log = LogFactory.getLog(ItemsBean.class);
+    /*
+     * VARIABLE DECLARATIONS
+     */
+    private static Log log = LogFactory.getLog(ItemsBean.class);
 
-	/**
-	 * Point to the value of dropdown list (Scale/Survey,Question
-	 * Block,TextHeader,etc) on template_modify.html and also point to the top
-	 * label field on tempalte_item.html
-	 */
+    /**
+     * Point to the value of dropdown list (Scale/Survey,Question
+     * Block,TextHeader,etc) on template_modify.html and also point to the top
+     * label field on tempalte_item.html
+     */
 
-	public EvalTemplateItem templateItem;
+    public EvalTemplateItem templateItem;
 
-	// The following fields below belong to template_item.html
-	public Long scaleId;
-	private List scaleValues; // "Scale Type" drop down list
-	private List scaleLabels; // "Scale Type" drop down list
+    // The following fields below belong to template_item.html
+    public Long scaleId;
+    private List scaleValues; // "Scale Type" drop down list
+    private List scaleLabels; // "Scale Type" drop down list
 
-	// The following fields below belong to modify_block.html
-	public Boolean idealColor;
-	public List queList;
-	public String currQueNo;
-	public String currRowNo;
-	public String classification;
-	public Long templateId;
-
-
-	private EvalItemsLogic itemsLogic;
-	public void setItemsLogic(EvalItemsLogic itemsLogic) {
-		this.itemsLogic = itemsLogic;
-	}
-
-	private EvalTemplatesLogic templatesLogic;
-	public void setTemplatesLogic(EvalTemplatesLogic templatesLogic) {
-		this.templatesLogic = templatesLogic;
-	}
-
-	private EvalExternalLogic external;
-	public void setExternal(EvalExternalLogic external) {
-		this.external = external;
-	}
-
-	private EvalScalesLogic scalesLogic;
-	public void setScalesLogic(EvalScalesLogic scalesLogic) {
-		this.scalesLogic = scalesLogic;
-	}
+    // The following fields below belong to modify_block.html
+    public Boolean idealColor;
+    public List queList;
+    public String currQueNo;
+    public String currRowNo;
+    public String classification;
+    public Long templateId;
 
 
+    private EvalItemsLogic itemsLogic;
+    public void setItemsLogic(EvalItemsLogic itemsLogic) {
+        this.itemsLogic = itemsLogic;
+    }
 
-	public ItemsBean() {
-		templateItem = new EvalTemplateItem();
-		templateItem.setItem(new EvalItem());
-		templateItem.setTemplate(new EvalTemplate());
-	}
+    private EvalTemplatesLogic templatesLogic;
+    public void setTemplatesLogic(EvalTemplatesLogic templatesLogic) {
+        this.templatesLogic = templatesLogic;
+    }
 
+    private EvalExternalLogic external;
+    public void setExternal(EvalExternalLogic external) {
+        this.external = external;
+    }
 
-	/*
-	 * INITIALIZATION
-	 */
-	public void init() {
-		log.debug("INIT");
-	}
-
-	// GETTERS and SETTERS
-	/**
-	 * @deprecated
-	 */
-	public List getScaleValues() {
-		// get scale values and labels from DAO
-		List list = null;
-		String scaleOptionsStr = "";
-		this.scaleValues = new ArrayList();
-		this.scaleLabels = new ArrayList();
-
-		list = scalesLogic.getScalesForUser(external.getCurrentUserId(), null);// logic.getScales(Boolean.FALSE);
-		for (int count = 0; count < list.size(); count++) {
-			scaleOptionsStr = "";
-			String[] scaleOptionsArr = ((EvalScale) list.get(count)).getOptions();
-			for (int innerCount = 0; innerCount < scaleOptionsArr.length; innerCount++) {
-
-				if (scaleOptionsStr == "")
-					scaleOptionsStr = scaleOptionsArr[innerCount];
-				else
-					scaleOptionsStr = scaleOptionsStr + ", " + scaleOptionsArr[innerCount];
-
-			} // end of inner for
-
-			EvalScale sl = (EvalScale) list.get(count);
-			this.scaleValues.add((sl.getId()).toString());
-			this.scaleLabels.add(scaleOptionsArr.length + " pt - " + sl.getTitle() + " (" + scaleOptionsStr + ")");
-
-		} // end of outer loop
-		return scaleValues;
-	}
-
-	/**
-	 * @deprecated
-	 */
-	public void setScaleValues(List scaleValues) {
-		this.scaleValues = scaleValues;
-	}
-
-	/**
-	 * @deprecated
-	 */
-	public List getScaleLabels() {
-		// make sure if getScaleValue() was called first, getScaleLabels() will not be called again
-		if (scaleLabels == null)
-			getScaleValues();
-
-		return scaleLabels;
-	}
-
-	/**
-	 * @deprecated
-	 */
-	public void setScaleLabels(List scaleLabels) {
-		this.scaleLabels = scaleLabels;
-	}
+    private EvalScalesLogic scalesLogic;
+    public void setScalesLogic(EvalScalesLogic scalesLogic) {
+        this.scalesLogic = scalesLogic;
+    }
 
 
-	// ACTION METHODS
 
-	public String cancelItemAction() {
-		return "cancel";
-	}
+    public ItemsBean() {
+        templateItem = new EvalTemplateItem();
+        templateItem.setItem(new EvalItem());
+        templateItem.setTemplate(new EvalTemplate());
+    }
 
-	public String previewItemAction() {
-		return null;
-	}
 
-	public String cancelRemoveAction() {
-		return null;
-	}
+    /*
+     * INITIALIZATION
+     */
+    public void init() {
+        log.debug("INIT");
+    }
 
-	/**
-	 * @deprecated
-	 */
-	public String saveItemAction() {
-		templateItem.getItem().setScaleDisplaySetting(templateItem.getScaleDisplaySetting());
-		templateItem.getItem().setUsesNA(templateItem.getUsesNA());
-		templateItem.setTemplate(templatesLogic.getTemplateById(templateId));
-		templateItem.getItem().setSharing(templateItem.getTemplate().getSharing());
-		templateItem.getItem().setCategory(templateItem.getItemCategory());
-		if (scaleId != null)
-			templateItem.getItem().setScale(scalesLogic.getScaleById(scaleId));
-		itemsLogic.saveItem(templateItem.getItem(), external.getCurrentUserId());
-		itemsLogic.saveTemplateItem(templateItem, external.getCurrentUserId());
-		return "success";
-	}
+    // GETTERS and SETTERS
+    /**
+     * @deprecated
+     */
+    public List getScaleValues() {
+        // get scale values and labels from DAO
+        List list = null;
+        String scaleOptionsStr = "";
+        this.scaleValues = new ArrayList();
+        this.scaleLabels = new ArrayList();
 
-	/**
-	 * @deprecated
-	 */
-	public void newItemInit(Long templateId, String classification) {
-		templateItem.getItem().setClassification(classification);
-		this.templateId = templateId;
-	}
+        list = scalesLogic.getScalesForUser(external.getCurrentUserId(), null);// logic.getScales(Boolean.FALSE);
+        for (int count = 0; count < list.size(); count++) {
+            scaleOptionsStr = "";
+            String[] scaleOptionsArr = ((EvalScale) list.get(count)).getOptions();
+            for (int innerCount = 0; innerCount < scaleOptionsArr.length; innerCount++) {
 
-	/**
-	 * @deprecated
-	 */
-	public void fetchTemplateItem(Long templateItemId) {
-		templateItem = itemsLogic.getTemplateItemById(templateItemId);
-	}
+                if (scaleOptionsStr == "")
+                    scaleOptionsStr = scaleOptionsArr[innerCount];
+                else
+                    scaleOptionsStr = scaleOptionsStr + ", " + scaleOptionsArr[innerCount];
+
+            } // end of inner for
+
+            EvalScale sl = (EvalScale) list.get(count);
+            this.scaleValues.add((sl.getId()).toString());
+            this.scaleLabels.add(scaleOptionsArr.length + " pt - " + sl.getTitle() + " (" + scaleOptionsStr + ")");
+
+        } // end of outer loop
+        return scaleValues;
+    }
+
+    /**
+     * @deprecated
+     */
+    public void setScaleValues(List scaleValues) {
+        this.scaleValues = scaleValues;
+    }
+
+    /**
+     * @deprecated
+     */
+    public List getScaleLabels() {
+        // make sure if getScaleValue() was called first, getScaleLabels() will not be called again
+        if (scaleLabels == null)
+            getScaleValues();
+
+        return scaleLabels;
+    }
+
+    /**
+     * @deprecated
+     */
+    public void setScaleLabels(List scaleLabels) {
+        this.scaleLabels = scaleLabels;
+    }
+
+
+    // ACTION METHODS
+
+    public String cancelItemAction() {
+        return "cancel";
+    }
+
+    public String previewItemAction() {
+        return null;
+    }
+
+    public String cancelRemoveAction() {
+        return null;
+    }
+
+    /**
+     * @deprecated
+     */
+    public String saveItemAction() {
+        templateItem.getItem().setScaleDisplaySetting(templateItem.getScaleDisplaySetting());
+        templateItem.getItem().setUsesNA(templateItem.getUsesNA());
+        templateItem.setTemplate(templatesLogic.getTemplateById(templateId));
+        templateItem.getItem().setSharing(templateItem.getTemplate().getSharing());
+        templateItem.getItem().setCategory(templateItem.getItemCategory());
+        if (scaleId != null)
+            templateItem.getItem().setScale(scalesLogic.getScaleById(scaleId));
+        /* This is a temporary hack that is only good while we are only using TOP LEVEL and NODE LEVEL.
+         * Basically, we're putting everything in one combo box and this is a good way to check to see if
+         * it's the top node.  Otherwise the user selected a node id so it must be at the NODE LEVEL since
+         * we don't support the other levels yet.
+         */
+        if (templateItem.getHierarchyNodeId() != null && !templateItem.getHierarchyNodeId().equals("")
+                && !templateItem.getHierarchyNodeId().equals(EvalConstants.HIERARCHY_NODE_ID_NONE)) {
+            templateItem.setHierarchyLevel(EvalConstants.HIERARCHY_LEVEL_NODE);
+        }
+        else if (templateItem.getHierarchyNodeId() != null && !templateItem.getHierarchyNodeId().equals("")
+                && templateItem.getHierarchyNodeId().equals(EvalConstants.HIERARCHY_NODE_ID_NONE)) {
+            templateItem.setHierarchyLevel(EvalConstants.HIERARCHY_LEVEL_TOP);
+        }
+        itemsLogic.saveItem(templateItem.getItem(), external.getCurrentUserId());
+        itemsLogic.saveTemplateItem(templateItem, external.getCurrentUserId());
+        return "success";
+    }
+
+    /**
+     * @deprecated
+     */
+    public void newItemInit(Long templateId, String classification) {
+        templateItem.getItem().setClassification(classification);
+        this.templateId = templateId;
+    }
+
+    /**
+     * @deprecated
+     */
+    public void fetchTemplateItem(Long templateItemId) {
+        templateItem = itemsLogic.getTemplateItemById(templateItemId);
+    }
 
 }

@@ -286,6 +286,8 @@
 			ref="org.sakaiproject.evaluation.tool.renderers.AddItemControlRenderer" />
 		<property name="evalSettings"
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+		<property name="externalHierarchyLogic" 
+			ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
 	</bean>
 
 	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyScaledProducer">
@@ -299,6 +301,12 @@
 		<property name="settings"
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 		<property name="richTextEvolver" ref="richTextEvolver" />
+		<property name="hierarchyRenderUtil" ref="HierarchyRenderUtil" />
+	</bean>
+	
+	<bean id="HierarchyRenderUtil" class="org.sakaiproject.evaluation.tool.utils.HierarchyRenderUtil">
+		<property name="externalHierarchyLogic" 
+			ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
 	</bean>
 
 	<bean class="org.sakaiproject.evaluation.tool.producers.PreviewItemProducer">
@@ -339,6 +347,7 @@
 		<property name="settings"
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 		<property name="richTextEvolver" ref="richTextEvolver" />
+		<property name="hierarchyRenderUtil" ref="HierarchyRenderUtil" />
 	</bean>
 
 	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyHeaderProducer">
@@ -351,6 +360,7 @@
 		<property name="settings"
 			ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 		<property name="richTextEvolver" ref="richTextEvolver" />
+		<property name="hierarchyRenderUtil" ref="HierarchyRenderUtil" />
 	</bean>
 
 	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyBlockProducer">

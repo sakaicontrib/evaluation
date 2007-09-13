@@ -20,6 +20,8 @@ import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
+import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -90,6 +92,10 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
         this.evalSettings = settings;
     }
 
+    private ExternalHierarchyLogic hierarchyLogic;
+    public void setExternalHierarchyLogic(ExternalHierarchyLogic logic) {
+        this.hierarchyLogic = logic;
+    }
 
     /*
      * 1) access this page through "Continue and Add Questions" button on Template
@@ -241,12 +247,13 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
                  */
                 Boolean showHierarchy = (Boolean) evalSettings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
                 if (showHierarchy.booleanValue() == true) {
-                    UIMessage.make(tofill, "item-hierarchy-level-title", "modifytemplate.item.hierarchy.level.title");
-                    UIOutput.make(tofill, "item-hierarchy-level", templateItem.getHierarchyLevel());
+                    UIMessage.make(itemBranch, "item-hierarchy-level-title", "modifytemplate.item.hierarchy.level.title");
+                    UIOutput.make(itemBranch, "item-hierarchy-level", templateItem.getHierarchyLevel());
                     /* Don't show the Node Id if it's a top level item */
                     if (!templateItem.getHierarchyLevel().equals(EvalConstants.HIERARCHY_LEVEL_TOP)) {
-                        UIMessage.make(tofill, "item-hierarchy-nodeid-title", "modifytemplate.item.hierarchy.nodeid.title");
-                        UIOutput.make(tofill, "item-hierarchy-nodeid", templateItem.getHierarchyNodeId());
+                        UIMessage.make(itemBranch, "item-hierarchy-nodeid-title", "modifytemplate.item.hierarchy.nodeid.title");
+                        EvalHierarchyNode curnode = hierarchyLogic.getNodeById(templateItem.getHierarchyNodeId());
+                        UIOutput.make(itemBranch, "item-hierarchy-nodeid", curnode.title);
                     }
                 }
 
