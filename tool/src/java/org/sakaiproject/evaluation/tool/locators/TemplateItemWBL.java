@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.LocalTemplateLogic;
 
 import uk.org.ponder.beanutil.WriteableBeanLocator;
@@ -99,6 +100,19 @@ public class TemplateItemWBL implements WriteableBeanLocator {
 					localTemplateLogic.saveItem( templateItem.getItem() );
 				}
 			}
+			/* This is a temporary hack that is only good while we are only using TOP LEVEL and NODE LEVEL.
+			 * Basically, we're putting everything in one combo box and this is a good way to check to see if
+			 * it's the top node.  Otherwise the user selected a node id so it must be at the NODE LEVEL since
+			 * we don't support the other levels yet.
+			 */
+			if (templateItem.getHierarchyNodeId() != null && !templateItem.getHierarchyNodeId().equals("")
+		                && !templateItem.getHierarchyNodeId().equals(EvalConstants.HIERARCHY_NODE_ID_NONE)) {
+		            templateItem.setHierarchyLevel(EvalConstants.HIERARCHY_LEVEL_NODE);
+		        }
+		        else if (templateItem.getHierarchyNodeId() != null && !templateItem.getHierarchyNodeId().equals("")
+		                && templateItem.getHierarchyNodeId().equals(EvalConstants.HIERARCHY_NODE_ID_NONE)) {
+		            templateItem.setHierarchyLevel(EvalConstants.HIERARCHY_LEVEL_TOP);
+		        }
 			localTemplateLogic.saveTemplateItem(templateItem);
 		}
 	}
