@@ -5,6 +5,7 @@ import java.util.Map;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
+import org.sakaiproject.evaluation.tool.utils.HierarchyRenderUtil;
 import org.sakaiproject.evaluation.tool.viewparams.HierarchyNodeParameters;
 import org.sakaiproject.evaluation.tool.viewparams.ModifyHierarchyNodeParameters;
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -41,6 +42,11 @@ public class ControlHierarchyProducer implements ViewComponentProducer {
    public void setHierarchyLogic(ExternalHierarchyLogic hierarchyLogic) {
       this.hierarchyLogic = hierarchyLogic;
    }
+   
+   private HierarchyRenderUtil hierUtil;
+   public void setHierarchyRenderUtil(HierarchyRenderUtil util) {
+       hierUtil = util;
+   }
 
    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
       String currentUserId = external.getCurrentUserId();
@@ -57,8 +63,9 @@ public class ControlHierarchyProducer implements ViewComponentProducer {
 
       translateTableHeaders(tofill);
 
-      EvalHierarchyNode root = hierarchyLogic.getRootLevelNode();
-      renderHierarchyNode(tofill, root, 0);
+      //EvalHierarchyNode root = hierarchyLogic.getRootLevelNode();
+      //renderHierarchyNode(tofill, root, 0);
+      hierUtil.renderModifyHierarchyTree(tofill, "heirarchy-tree:");
 
       UIInternalLink.make(tofill, "done-link", UIMessage.make("controlhierarchy.done"),
             new SimpleViewParameters(AdministrateProducer.VIEW_ID));
@@ -92,47 +99,4 @@ public class ControlHierarchyProducer implements ViewComponentProducer {
        UIMessage.make(tofill, "assign-groups-header", "controlhierarchy.table.assigngroups.header");
    }
 
-   /*
-    * Render this particular HierarchyNode indented at the level.
-    * 
-    * Leaf nodes get a Remove button and the ability to have groups assigned
-    * to them.
-    * 
-    * @param tofill
-    * @param node
-    * @param level
-    */
-   public void renderHierarchyNode(UIContainer tofill, EvalHierarchyNode node, int level) {
-      System.out.println("Node: " + node);
-
-      String title = node.title != null ? node.title : "Null Title?";
-      UIBranchContainer tableRow = UIBranchContainer.make(tofill, "hierarchy-level-row:");
-      UIOutput name = UIOutput.make(tableRow, "node-name", title);
-      Map attr = new HashMap();
-      attr.put("style", "text-indent:" + (level*2) + "em");
-      name.decorate(new UIFreeAttributeDecorator(attr));
-      UIInternalLink.make(tableRow, "add-child-link", UIMessage.make("controlhierarchy.add"),
-              new ModifyHierarchyNodeParameters(ModifyHierarchyNodeProducer.VIEW_ID, node.id, true));
-      UIInternalLink.make(tableRow, "modify-node-link", UIMessage.make("controlhierarchy.modify"),
-              new ModifyHierarchyNodeParameters(ModifyHierarchyNodeProducer.VIEW_ID, node.id, false));
-
-      /*
-       * If the node has children, render the number of children, but no remove button
-       * or assign groups link.
-       */
-      if (node.directChildNodeIds.size() > 0) {
-         UIOutput.make(tableRow, "number-children", node.directChildNodeIds.size() + "");
-      } 
-      else {
-         UIForm removeForm = UIForm.make(tableRow, "remove-node-form");
-         UICommand removeButton = UICommand.make(removeForm, "remove-node-button", UIMessage.make("controlhierarchy.remove"));
-         removeButton.parameters.add(new UIDeletionBinding("hierNodeLocator."+node.id));
-         UIInternalLink.make(tableRow, "assign-groups-link", UIMessage.make("controlhierarchy.assigngroups"), 
-                 new HierarchyNodeParameters(ModifyHierarchyNodeGroupsProducer.VIEW_ID, node.id));
-      }
-
-      for (String childId : node.directChildNodeIds) {
-         renderHierarchyNode(tofill, hierarchyLogic.getNodeById(childId), level+1);
-      }
-   }
 }
