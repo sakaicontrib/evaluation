@@ -19,6 +19,8 @@ import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.model.EvalGroupNodes;
+import org.sakaiproject.evaluation.model.EvalTemplateItem;
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.genericdao.api.finders.ByPropsFinder;
 import org.sakaiproject.hierarchy.HierarchyService;
 import org.sakaiproject.hierarchy.model.HierarchyNode;
@@ -92,9 +94,25 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
     * (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic#removeNode(java.lang.String)
     */
+   @SuppressWarnings("unchecked")
    public EvalHierarchyNode removeNode(String nodeId) {
+      // fail to remove nodes when there are associated evalGroups
+      Map<String, Integer> egCount = countEvalGroupsForNodes( new String[] {nodeId} );
+      if (egCount.get(nodeId) > 0) {
+         throw new IllegalArgumentException("Cannot remove this node because there are associated eval groups, " +
+         		"you must remove the associated evalgroups from this node before you can remove the node");
+      }
       HierarchyNode node = hierarchyService.removeNode(nodeId);
-      setEvalGroupsForNode(nodeId, new HashSet<String>());
+      // cleanup related data
+      List<EvalTemplateItem> l = dao.findByProperties(EvalTemplateItem.class, 
+            new String[] {"nodeId"}, 
+            new Object[] {nodeId});
+      for (EvalTemplateItem templateItem : l) {
+         templateItem.setHierarchyLevel(EvalConstants.HIERARCHY_LEVEL_TOP);
+         templateItem.setHierarchyNodeId(EvalConstants.HIERARCHY_NODE_ID_NONE);
+      }
+      dao.saveSet( new HashSet<EvalTemplateItem>(l) );
+      // return the parent node
       return makeEvalNode(node);
    }
 

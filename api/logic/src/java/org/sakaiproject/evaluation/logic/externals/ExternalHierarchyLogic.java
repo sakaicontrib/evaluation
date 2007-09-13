@@ -29,13 +29,13 @@ public interface ExternalHierarchyLogic extends EvalHierarchyProvider {
    public EvalHierarchyNode addNode(String parentNodeId);
 
    /**
-    * Remove a node from the hierarchy if it is possible and cleanup
-    * the related meta data (such as attached eval groups),
+    * Remove a node from the hierarchy if it is possible,
     * nodes can only be removed if they have no children associations,
     * root nodes can never be removed,
+    * nodes which have evalgroups assigned to them cannot be removed,
     * exception occurs if these rules are violated
-    * <br/>NOTE: this will NOT remove associated template items and other system data
-    * so removal should be used sparingly
+    * <br/>NOTE: this will remove associated template items from their association
+    * with the node and place them back in the default level
     * 
     * @param nodeId a unique id for a hierarchy node
     * @return the object representing the parent of the removed node
