@@ -306,7 +306,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 
 				Date date;
 
-				String evalStatus = evaluationsLogic.getEvaluationState(eval.getId());
+				String evalStatus = evaluationsLogic.updateEvaluationState(eval.getId());
             if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(evalStatus)) {
                date = eval.getStartDate();
                UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalStatus);

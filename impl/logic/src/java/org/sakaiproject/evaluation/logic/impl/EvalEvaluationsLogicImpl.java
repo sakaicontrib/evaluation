@@ -580,7 +580,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
    /* (non-Javadoc)
     * @see edu.vt.sakai.evaluation.logic.EvalEvaluationsLogic#getEvaluationState(java.lang.Long)
     */
-   public String getEvaluationState(Long evaluationId) {
+   public String updateEvaluationState(Long evaluationId) {
       log.debug("evalId: " + evaluationId);
       // get evaluation
       EvalEvaluation eval = (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);

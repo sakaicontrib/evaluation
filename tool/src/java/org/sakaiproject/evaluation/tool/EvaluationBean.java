@@ -591,7 +591,7 @@ public class EvaluationBean {
 	 */
 	public String editEvalSettingAction(){	
 		eval = evalsLogic.getEvaluationById(eval.getId());
-		evalsLogic.getEvaluationState(eval.getId()); // refresh the state
+		evalsLogic.updateEvaluationState(eval.getId()); // refresh the state
 
 		startDate = eval.getStartDate();
 		dueDate = eval.getDueDate();

@@ -357,17 +357,19 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       EvalEvaluation evaluation = (EvalEvaluation) findById(EvalEvaluation.class, evalId);
       List<EvalTemplateItem> results = new ArrayList<EvalTemplateItem>();
       if (evaluation == null) {
-         throw new IllegalArgumentException("Invalid evaluation id, cannot find evaluation with this id: "
-               + evalId);
+         throw new IllegalArgumentException("Invalid evaluation id, cannot find evaluation with this id: " + evalId);
       } else {
          Map<String, Object> params = new HashMap<String, Object>();
          params.put("template1", evaluation.getTemplate().getId());
-         params.put("template2", evaluation.getAddedTemplate().getId());
          params.put("hierarchyLevel1", EvalConstants.HIERARCHY_LEVEL_TOP);
          StringBuilder hql = new StringBuilder();
-         hql
-         .append("from EvalTemplateItem ti where (ti.template.id = :template1 or ti.template.id = :template2) "
-               + "and (ti.hierarchyLevel = :hierarchyLevel1 ");
+         hql.append("from EvalTemplateItem ti where (ti.template.id = :template1");
+         // added template could be null so make sure we check for it
+         if (evaluation.getAddedTemplate() != null) {
+            params.put("template2", evaluation.getAddedTemplate().getId());
+            hql.append("or ti.template.id = :template2");
+         }
+         hql.append(") and (ti.hierarchyLevel = :hierarchyLevel1 ");
 
          if (nodeIds != null && nodeIds.length > 0) {
             hql.append(" or (ti.hierarchyLevel = :hierarchyLevel2 and ti.hierarchyNodeId in (:nodeIds) ) ");
@@ -376,15 +378,13 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
          }
 
          if (instructorIds != null && instructorIds.length > 0) {
-            hql
-            .append(" or (ti.hierarchyLevel = :hierarchyLevelInst and ti.hierarchyNodeId in (:instructorIds) ) ");
+            hql.append(" or (ti.hierarchyLevel = :hierarchyLevelInst and ti.hierarchyNodeId in (:instructorIds) ) ");
             params.put("hierarchyLevelInst", EvalConstants.HIERARCHY_LEVEL_INSTRUCTOR);
             params.put("instructorIds", instructorIds);
          }
 
          if (groupIds != null && groupIds.length > 0) {
-            hql
-            .append(" or (ti.hierarchyLevel = :hierarchyLevelGroup and ti.hierarchyNodeId in (:groupIds) ) ");
+            hql.append(" or (ti.hierarchyLevel = :hierarchyLevelGroup and ti.hierarchyNodeId in (:groupIds) ) ");
             params.put("hierarchyLevelGroup", EvalConstants.HIERARCHY_LEVEL_GROUP);
             params.put("groupIds", groupIds);
          }

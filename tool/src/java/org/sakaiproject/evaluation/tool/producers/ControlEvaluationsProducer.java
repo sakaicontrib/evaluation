@@ -153,7 +153,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 			// get queued, active, closed evaluations by date
 			// check the state of the eval to determine display data
 			EvalEvaluation eval = (EvalEvaluation) evals.get(j);
-			String evalStatus = evaluationsLogic.getEvaluationState(eval.getId());
+			String evalStatus = evaluationsLogic.updateEvaluationState(eval.getId());
 
 			if ( EvalConstants.EVALUATION_STATE_INQUEUE.equals(evalStatus) ) {
 				inqueueEvals.add(eval);

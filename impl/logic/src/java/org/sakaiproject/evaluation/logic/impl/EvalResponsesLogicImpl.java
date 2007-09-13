@@ -94,23 +94,13 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
       return userIds;
    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.sakaiproject.evaluation.logic.EvalResponsesLogic#getResponseById(java.lang.Long)
-    */
+
    public EvalResponse getResponseById(Long responseId) {
       log.debug("responseId: " + responseId);
       // get the response by passing in id
       return (EvalResponse) dao.findById(EvalResponse.class, responseId);
    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.sakaiproject.evaluation.logic.EvalResponsesLogic#getEvaluationResponses(java.lang.String,
-    *      java.lang.Long[])
-    */
    @SuppressWarnings("unchecked")
    public List<EvalResponse> getEvaluationResponses(String userId, Long[] evaluationIds) {
       log.debug("userId: " + userId + ", evaluationIds: " + evaluationIds);
@@ -137,12 +127,6 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
       }
    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.sakaiproject.evaluation.logic.EvalResponsesLogic#countResponses(java.lang.Long,
-    *      java.lang.String)
-    */
    public int countResponses(Long evaluationId, String evalGroupId) {
       log.debug("evaluationId: " + evaluationId + ", evalGroupId: " + evalGroupId);
 
@@ -162,12 +146,6 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
       }
    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.sakaiproject.evaluation.logic.EvalResponsesLogic#getEvalAnswers(java.lang.Long,
-    *      java.lang.Long)
-    */
    public List<EvalAnswer> getEvalAnswers(Long itemId, Long evaluationId, String[] evalGroupIds) {
       log.debug("itemId: " + itemId + ", evaluationId: " + evaluationId);
 
@@ -182,12 +160,6 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
       return dao.getAnswers(itemId, evaluationId, evalGroupIds);
    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.sakaiproject.evaluation.logic.EvalResponsesLogic#getEvalResponseIds(java.lang.Long,
-    *      java.lang.String[])
-    */
    public List<Long> getEvalResponseIds(Long evaluationId, String[] evalGroupIds) {
       log.debug("evaluationId: " + evaluationId);
 
@@ -198,12 +170,6 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
       return dao.getResponseIds(evaluationId, evalGroupIds);
    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.sakaiproject.evaluation.logic.EvalResponsesLogic#saveResponse(org.sakaiproject.evaluation.model.EvalResponse,
-    *      java.lang.String)
-    */
    @SuppressWarnings("unchecked")
    public void saveResponse(EvalResponse response, String userId) {
       log.debug("userId: " + userId + ", response: " + response.getId() + ", evalGroupId: " + response.getEvalGroupId());
@@ -219,7 +185,7 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
       // fill in any default values and nulls here
 
       // check perms and evaluation state
-      if (checkUserModifyReponse(userId, response)) {
+      if (checkUserModifyResponse(userId, response)) {
          // make sure the user can take this evalaution
          Long evaluationId = response.getEvaluation().getId();
          String context = response.getEvalGroupId();
@@ -277,12 +243,6 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
 
    // PERMISSIONS
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.sakaiproject.evaluation.logic.EvalResponsesLogic#canModifyResponse(java.lang.String,
-    *      java.lang.Long)
-    */
    public boolean canModifyResponse(String userId, Long responseId) {
       log.debug("userId: " + userId + ", responseId: " + responseId);
       // get the response by id
@@ -293,7 +253,7 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
 
       // valid state, check perms and locked
       try {
-         return checkUserModifyReponse(userId, response);
+         return checkUserModifyResponse(userId, response);
       } catch (RuntimeException e) {
          log.info(e.getMessage());
       }
@@ -309,7 +269,7 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
     * @param response
     * @return true if they do, exception otherwise
     */
-   protected boolean checkUserModifyReponse(String userId, EvalResponse response) {
+   protected boolean checkUserModifyResponse(String userId, EvalResponse response) {
       log.debug("evalGroupId: " + response.getEvalGroupId() + ", userId: " + userId);
 
       String state = EvalUtils.getEvaluationState(response.getEvaluation());
@@ -343,14 +303,17 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
 
       // get a list of the valid templateItems for this evaluation
 //    disabled for now because of hibernate loading exceptions -AZ
-//    Long evalId = response.getEvaluation().getId();
+//    EvalEvaluation eval = response.getEvaluation();
+//    Long evalId = eval.getId();
 //    List<EvalTemplateItem> allTemplateItems = itemsLogic.getTemplateItemsForEvaluation(evalId, null, null);
+
       // TODO - this should use a method elsewhere -AZ
       EvalEvaluation eval = response.getEvaluation();
       Long templateId = eval.getTemplate().getId();
       List<EvalTemplateItem> allTemplateItems = 
-         dao.findByProperties(EvalTemplateItem.class, new String[] { "template.id" },
-            new Object[] { templateId });
+         dao.findByProperties(EvalTemplateItem.class, 
+               new String[] { "template.id" },
+               new Object[] { templateId });
 
       List<EvalTemplateItem> templateItems = TemplateItemUtils.getAnswerableTemplateItems(allTemplateItems);
 

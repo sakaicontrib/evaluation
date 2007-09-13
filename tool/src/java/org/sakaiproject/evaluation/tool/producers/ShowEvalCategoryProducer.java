@@ -101,7 +101,7 @@ public class ShowEvalCategoryProducer implements ViewComponentProducer, ViewPara
 			for (int i=0; i<evals.size(); i++) {
 				EvalEvaluation eval = (EvalEvaluation) evals.get(i);
 				Long evaluationId = eval.getId();
-				String evalStatus = evaluationsLogic.getEvaluationState(evaluationId); // make sure state is up to date
+				String evalStatus = evaluationsLogic.updateEvaluationState(evaluationId); // make sure state is up to date
 				UIBranchContainer evalsBranch = UIBranchContainer.make(tofill, "evaluations-list:", evaluationId.toString() );
 				UIMessage.make(evalsBranch, "evaluation-header", "showevalcategory.evaluation.header");
 				UIOutput.make(evalsBranch, "evaluation-title", eval.getTitle() );

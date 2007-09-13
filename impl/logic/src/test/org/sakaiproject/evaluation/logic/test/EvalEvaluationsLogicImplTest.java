@@ -664,16 +664,16 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl#getEvaluationState(org.sakaiproject.evaluation.model.EvalEvaluation)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl#updateEvaluationState(org.sakaiproject.evaluation.model.EvalEvaluation)}.
 	 */
 	public void testGetEvaluationState() {
-		Assert.assertEquals( evaluations.getEvaluationState( etdl.evaluationNew.getId() ), EvalConstants.EVALUATION_STATE_INQUEUE );
-		Assert.assertEquals( evaluations.getEvaluationState( etdl.evaluationActive.getId() ), EvalConstants.EVALUATION_STATE_ACTIVE );
-		Assert.assertEquals( evaluations.getEvaluationState( etdl.evaluationClosed.getId() ), EvalConstants.EVALUATION_STATE_CLOSED );
-		Assert.assertEquals( evaluations.getEvaluationState( etdl.evaluationViewable.getId() ), EvalConstants.EVALUATION_STATE_VIEWABLE );
+		Assert.assertEquals( evaluations.updateEvaluationState( etdl.evaluationNew.getId() ), EvalConstants.EVALUATION_STATE_INQUEUE );
+		Assert.assertEquals( evaluations.updateEvaluationState( etdl.evaluationActive.getId() ), EvalConstants.EVALUATION_STATE_ACTIVE );
+		Assert.assertEquals( evaluations.updateEvaluationState( etdl.evaluationClosed.getId() ), EvalConstants.EVALUATION_STATE_CLOSED );
+		Assert.assertEquals( evaluations.updateEvaluationState( etdl.evaluationViewable.getId() ), EvalConstants.EVALUATION_STATE_VIEWABLE );
 
 		try {
-			evaluations.getEvaluationState( EvalTestDataLoad.INVALID_LONG_ID );
+			evaluations.updateEvaluationState( EvalTestDataLoad.INVALID_LONG_ID );
 			Assert.fail("Should have thrown exception");
 		} catch (RuntimeException e) {
 			Assert.assertNotNull(e);

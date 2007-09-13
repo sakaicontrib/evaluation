@@ -169,7 +169,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 
       // check the states of the evaluation first to give the user a tip that this eval is not takeable,
       // also avoids wasting time checking permissions when the evaluation certainly is closed
-      String evalStatus = evalsLogic.getEvaluationState(evaluationId); // make sure state is up to date
+      String evalStatus = evalsLogic.updateEvaluationState(evaluationId); // make sure state is up to date
       if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(evalStatus)) {
          UIMessage.make(tofill, "eval-cannot-take-message", "takeeval.eval.not.open", 
                new String[] {df.format(eval.getStartDate()), df.format(eval.getDueDate())} );
@@ -282,15 +282,19 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
          form.parameters.add( new UIELBinding("#{takeEvalBean.eval}", new ELReference(evalOTP + eval.getId())) );
          form.parameters.add( new UIELBinding("#{takeEvalBean.evalGroupId}", evalGroupId) );
 
+         // now we begin the complex task of rendering the evaluation items
+
+         // get the instructors for this evaluation
+         Set<String> instructors = external.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED);
+
          // get all items for this evaluation main template
 //       allItems = new ArrayList(eval.getTemplate().getTemplateItems());
          allItems = itemsLogic.getTemplateItemsForEvaluation(evaluationId, currentUserId, null);
 
-         //filter out the block child items, to get a list non-child items
+         // filter out the block child items, to get a list non-child items
          List<EvalTemplateItem> ncItemsList = TemplateItemUtils.getNonChildItems(allItems);
 
          // load up the previous responses for this user
-
          if (responseId != null) {
             answerMap = localResponsesLogic.getAnswersMapByTempItemAndAssociated(responseId);
          }
@@ -306,7 +310,6 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 
          if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, ncItemsList)) {	
             // for each instructor, make a branch containing all instructor questions
-            Set<String> instructors = external.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED);
             for (String instructor : instructors) {
                UIBranchContainer instructorSection = UIBranchContainer.make(form, "instructorSection:", "inst"+displayNumber);
                UIMessage.make(instructorSection, "instructor-questions-header", 

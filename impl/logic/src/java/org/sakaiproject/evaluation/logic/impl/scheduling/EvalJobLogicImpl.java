@@ -521,7 +521,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 			EvalEvaluation eval = evalEvaluationsLogic.getEvaluationById(evaluationId);
 			
 			//fix EvalEvaluation state
-			String state = evalEvaluationsLogic.getEvaluationState(evaluationId);
+			String state = evalEvaluationsLogic.updateEvaluationState(evaluationId);
 			if(log.isDebugEnabled())
 				log.debug("evaluation state " + state + " saved");
 			

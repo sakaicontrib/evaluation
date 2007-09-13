@@ -62,8 +62,8 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 /**
  * This is the main page for handling various operations to template, items,
  * 
- * @author: Aaron Zeckoski (aaronz@vt.edu)
- * @author: Antranig Basman (antranig@caret.cam.ac.uk)
+ * @author Aaron Zeckoski (aaronz@vt.edu)
+ * @author Antranig Basman (antranig@caret.cam.ac.uk)
  */
 public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewParamsReporter {
 
@@ -144,8 +144,8 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
         addItemControlRenderer.renderControl(tofill, "add-item-control:", viewIDs, labels, 
                 UIMessage.make("modifytemplate.add.item.button"), templateId);
 
-        List itemList = localTemplateLogic.fetchTemplateItems(templateId);
-        List templateItemsList = TemplateItemUtils.getNonChildItems(itemList);
+        List<EvalTemplateItem> itemList = localTemplateLogic.fetchTemplateItems(templateId);
+        List<EvalTemplateItem> templateItemsList = TemplateItemUtils.getNonChildItems(itemList);
         if (templateItemsList.isEmpty()) {
             UIMessage.make(tofill, "begin-eval-dummylink", "modifytemplate.begin.eval.link");
         } else {
@@ -246,7 +246,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
                  * Only Display these if they are enabled in the preferences.
                  */
                 Boolean showHierarchy = (Boolean) evalSettings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
-                if (showHierarchy.booleanValue() == true) {
+                if ( showHierarchy != null && showHierarchy.booleanValue() ) {
                     UIMessage.make(itemBranch, "item-hierarchy-level-title", "modifytemplate.item.hierarchy.level.title");
                     UIOutput.make(itemBranch, "item-hierarchy-level", templateItem.getHierarchyLevel());
                     /* Don't show the Node Id if it's a top level item */

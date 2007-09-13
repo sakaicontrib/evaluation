@@ -1071,13 +1071,13 @@ public class EvalTestDataLoad {
     * @param c a collection of persistent objects
     * @return a list of IDs (Long)
     */
-   public static List makeIdList(Collection c) {
-      List l = new ArrayList();
-      for (Iterator iter = c.iterator(); iter.hasNext();) {
+   public static List<Long> makeIdList(Collection<?> c) {
+      List<Long> l = new ArrayList<Long>();
+      for (Iterator<?> iter = c.iterator(); iter.hasNext();) {
          Serializable element = (Serializable) iter.next();
          Long id = null;
          try {
-            Class elementClass = element.getClass();
+            Class<?> elementClass = element.getClass();
             Method getIdMethod = elementClass.getMethod("getId", new Class[] {});
             id = (Long) getIdMethod.invoke(element, (Object[])null);
             l.add(id);
