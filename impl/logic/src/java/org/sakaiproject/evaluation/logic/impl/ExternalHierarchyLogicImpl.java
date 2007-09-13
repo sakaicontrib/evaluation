@@ -5,6 +5,7 @@
 package org.sakaiproject.evaluation.logic.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -119,6 +120,30 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
          eNodes.add(makeEvalNode(node));
       }
       return null;
+   }
+
+
+   public Set<String> getAllChildrenNodes(Collection<EvalHierarchyNode> nodes, boolean includeSuppliedNodeIds) {
+      Set<String> s = new HashSet<String>();
+      for (EvalHierarchyNode node : nodes) {
+         if (includeSuppliedNodeIds) {
+            s.add(node.id);
+         }
+         s.addAll(node.childNodeIds);
+      }
+      return s;
+   }
+
+   public Set<EvalHierarchyNode> getNodesByIds(String[] nodeIds) {
+      if (nodeIds == null) {
+         throw new IllegalArgumentException("nodeIds cannot br null");
+      }
+      Set<EvalHierarchyNode> s = new HashSet<EvalHierarchyNode>();
+      Map<String, HierarchyNode> nodes = hierarchyService.getNodesByIds(nodeIds);
+      for (HierarchyNode node : nodes.values()) {
+         s.add( makeEvalNode(node) );
+      }
+      return s;
    }
 
 

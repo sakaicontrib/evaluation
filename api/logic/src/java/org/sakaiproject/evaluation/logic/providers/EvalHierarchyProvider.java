@@ -66,6 +66,15 @@ public interface EvalHierarchyProvider {
    public EvalHierarchyNode getNodeById(String nodeId);
 
    /**
+    * Get a set of nodes based on an array of nodeIds,
+    * allows efficient lookup of nodes
+    * 
+    * @param nodeIds unique ids for hierarchy nodes
+    * @return a set of {@link EvalHierarchyNode} objects based on the given ids
+    */
+   public Set<EvalHierarchyNode> getNodesByIds(String[] nodeIds);
+
+   /**
     * Get all children nodes for this node in the hierarchy, 
     * will return no nodes if this is not a parent node
     * 
