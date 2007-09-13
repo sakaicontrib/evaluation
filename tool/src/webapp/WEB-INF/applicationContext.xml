@@ -145,7 +145,7 @@
 		parent="templateContributorParent">
 		<property name="baseDirectory" value="component-templates/" />
 		<property name="templateNames"
-			value="render_header_item, render_text_item, render_scaled_item, render_block_item, render_add_item_control" />
+			value="render_header_item, render_text_item, render_scaled_item, render_block_item, render_add_item_control, hierarchy_controls" />
 		<property name="expected" value="true" />
 	</bean>
 

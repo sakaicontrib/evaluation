@@ -242,6 +242,7 @@ tool/src/webapp/WEB-INF/requestContext.xml -text
 tool/src/webapp/WEB-INF/sitemap.xml -text
 tool/src/webapp/WEB-INF/web.xml -text
 tool/src/webapp/component-templates/Messages.html -text
+tool/src/webapp/component-templates/hierarchy_controls.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/component-templates/render_add_item_control.html -text
 tool/src/webapp/component-templates/render_block_item.html -text
 tool/src/webapp/component-templates/render_header_item.html -text
