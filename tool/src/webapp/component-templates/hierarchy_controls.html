@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Add Item Control Renderer:</title>
+	<!-- this JS needed to make the pulldown work correctly -->
+	<script rsf:id="scr=contribute-script" type="text/javascript" language="JavaScript" src="../content/js/evalUtils.js"></script>
+</head>
+<body>
+
+<div rsf:id="hierarchy_table_treeview:">
+    <table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
+        <thead>
+            <tr>
+                <th rsf:id="hierarchy-header">Hierarchy Level</th>
+                <th rsf:id="add-item-header">Add Item:</th>
+                <th rsf:id="modify-item-header"></th>
+                <th rsf:id="items-level-header">Items at this level:</th>
+                <th rsf:id="assign-groups-header"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr rsf:id="hierarchy-level-row:">
+                <td rsf:id="node-name" style="text-indent:0em"> - Institution Level</td>
+                <td><a rsf:id="add-child-link" href="">Add</a></td>
+                <td><a rsf:id="modify-node-link" href="">Modify</a></td>
+                <td>
+                    <span rsf:id="number-children">3</span>
+                    <form rsf:id="remove-node-form">
+                        <input type="submit" rsf:id="remove-node-button" value="Remove"/>
+                    </form>
+                </td>
+                <td>
+                    <a rsf:id="assign-groups-link" href="">Assign Groups</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
