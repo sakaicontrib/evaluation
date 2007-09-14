@@ -105,7 +105,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
       HierarchyNode node = hierarchyService.removeNode(nodeId);
       // cleanup related data
       List<EvalTemplateItem> l = dao.findByProperties(EvalTemplateItem.class, 
-            new String[] {"nodeId"}, 
+            new String[] {"hierarchyNodeId"}, 
             new Object[] {nodeId});
       for (EvalTemplateItem templateItem : l) {
          templateItem.setHierarchyLevel(EvalConstants.HIERARCHY_LEVEL_TOP);
