@@ -352,24 +352,17 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
    }
 
 
-   public List<EvalTemplateItem> getTemplateItemsByEvaluation(Long evalId, String[] nodeIds,
-         String[] instructorIds, String[] groupIds) {
-      EvalEvaluation evaluation = (EvalEvaluation) findById(EvalEvaluation.class, evalId);
+   public List<EvalTemplateItem> getTemplateItemsByEvaluation(Long evalId, String[] nodeIds, String[] instructorIds, String[] groupIds) {
+      List<Long> templateIds = getTemplateIdsForEvaluation(evalId);
       List<EvalTemplateItem> results = new ArrayList<EvalTemplateItem>();
-      if (evaluation == null) {
-         throw new IllegalArgumentException("Invalid evaluation id, cannot find evaluation with this id: " + evalId);
+      if (templateIds.isEmpty()) {
+         throw new IllegalArgumentException("Invalid evaluation id, cannot find templates for an evalaution with this id: " + evalId);
       } else {
          Map<String, Object> params = new HashMap<String, Object>();
-         params.put("template1", evaluation.getTemplate().getId());
+         params.put("templateIds", templateIds.toArray(new Long[] {}));
          params.put("hierarchyLevel1", EvalConstants.HIERARCHY_LEVEL_TOP);
          StringBuilder hql = new StringBuilder();
-         hql.append("from EvalTemplateItem ti where (ti.template.id = :template1");
-         // added template could be null so make sure we check for it
-         if (evaluation.getAddedTemplate() != null) {
-            params.put("template2", evaluation.getAddedTemplate().getId());
-            hql.append("or ti.template.id = :template2");
-         }
-         hql.append(") and (ti.hierarchyLevel = :hierarchyLevel1 ");
+         hql.append("from EvalTemplateItem ti where ti.template.id in (:templateIds) and (ti.hierarchyLevel = :hierarchyLevel1 ");
 
          if (nodeIds != null && nodeIds.length > 0) {
             hql.append(" or (ti.hierarchyLevel = :hierarchyLevel2 and ti.hierarchyNodeId in (:nodeIds) ) ");
@@ -451,6 +444,21 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       return (String) l.get(0);
    }
 
+   @SuppressWarnings("unchecked")
+   public List<Long> getTemplateIdsForEvaluation(Long evaluationId) {
+      String hql = "select eval.template.id, eval.addedTemplate.id from EvalEvaluation eval where eval.id = ?";
+      Object[] params = new Object[] {evaluationId};
+      List<Long> l = new ArrayList<Long>();
+      List<Object[]> results = getHibernateTemplate().find(hql, params);
+      if (!results.isEmpty() && results.get(0) != null) {
+         Object[] stuff = results.get(0);
+         if (stuff[0] != null)
+            l.add( (Long) stuff[0]);
+         if (stuff[1] != null)
+            l.add( (Long) stuff[1]);
+      }
+      return l;
+   }
 
 
    // LOCKING METHODS

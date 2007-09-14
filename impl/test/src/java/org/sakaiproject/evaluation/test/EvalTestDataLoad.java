@@ -289,7 +289,7 @@ public class EvalTestDataLoad {
     */
    public EvalEvaluation evaluationNewAdmin;
    /**
-    * Evaluation Active (ends today), viewable tomorrow, MAINT_USER_ID owns, templatePublic, 1 response, 1 AC
+    * Evaluation Active (ends today), viewable tomorrow, MAINT_USER_ID owns, templateUser, 1 response, 1 AC
     */
    public EvalEvaluation evaluationActive;
    /**
@@ -301,7 +301,7 @@ public class EvalTestDataLoad {
     */
 // public EvalEvaluation evaluationDueUntaken;
    /**
-    * Evaluation Complete (ended yesterday, viewable tomorrow), ADMIN_USER_ID owns, templateAdmin, 2 responses, 2 ACs, recently closed, EVAL_CATEGORY_2
+    * Evaluation Complete (ended yesterday, viewable tomorrow), ADMIN_USER_ID owns, templateAdmin/templateAdminComplex, 2 responses, 2 ACs, recently closed, EVAL_CATEGORY_2
     */
    public EvalEvaluation evaluationClosed;
    /**

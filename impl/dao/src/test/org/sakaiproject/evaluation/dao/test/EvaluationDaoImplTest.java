@@ -613,6 +613,44 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       assertNull(nodeId);
    }
 
+   public void testGetTemplateItemsByEvaluation() {
+      List<EvalTemplateItem> templateItems = null;
+      
+      templateItems = evaluationDao.getTemplateItemsByEvaluation(etdl.evaluationActive.getId(), null, null, null);
+      assertNotNull(templateItems);
+      assertEquals(2, templateItems.size());
+
+      templateItems = evaluationDao.getTemplateItemsByEvaluation(etdl.evaluationClosed.getId(), null, null, null);
+      assertNotNull(templateItems);
+      assertEquals(3, templateItems.size());
+
+      try {
+         templateItems = evaluationDao.getTemplateItemsByEvaluation(EvalTestDataLoad.INVALID_LONG_ID, null, null, null);
+         Assert.fail("Should have thrown an exception");
+      } catch (IllegalArgumentException e) {
+         Assert.assertNotNull(e);
+      }
+   }
+
+   public void testGetTemplateIdsForEvaluation() {
+      List<Long> templateIds = null;
+
+      templateIds = evaluationDao.getTemplateIdsForEvaluation(etdl.evaluationActive.getId());
+      assertNotNull(templateIds);
+      assertEquals(1, templateIds.size());
+      assertTrue( templateIds.contains( etdl.templateUser.getId() ) );
+
+      templateIds = evaluationDao.getTemplateIdsForEvaluation(etdl.evaluationClosed.getId());
+      assertNotNull(templateIds);
+      assertEquals(2, templateIds.size());
+      assertTrue( templateIds.contains( etdl.templateAdmin.getId() ) );
+      assertTrue( templateIds.contains( etdl.templateAdminComplex.getId() ) );
+
+      templateIds = evaluationDao.getTemplateIdsForEvaluation(EvalTestDataLoad.INVALID_LONG_ID);
+      assertNotNull(templateIds);
+      assertEquals(0, templateIds.size());
+   }
+
 
 
    // LOCKING tests
