@@ -302,18 +302,18 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
    protected boolean checkAnswersValidForEval(EvalResponse response) {
 
       // get a list of the valid templateItems for this evaluation
-//    disabled for now because of hibernate loading exceptions -AZ
-//    EvalEvaluation eval = response.getEvaluation();
-//    Long evalId = eval.getId();
-//    List<EvalTemplateItem> allTemplateItems = itemsLogic.getTemplateItemsForEvaluation(evalId, null, null);
+      // disabled for now because of hibernate loading exceptions -AZ
+    EvalEvaluation eval = response.getEvaluation();
+    Long evalId = eval.getId();
+    List<EvalTemplateItem> allTemplateItems = itemsLogic.getTemplateItemsForEvaluation(evalId, null, null);
 
       // TODO - this should use a method elsewhere -AZ
-      EvalEvaluation eval = response.getEvaluation();
-      Long templateId = eval.getTemplate().getId();
-      List<EvalTemplateItem> allTemplateItems = 
-         dao.findByProperties(EvalTemplateItem.class, 
-               new String[] { "template.id" },
-               new Object[] { templateId });
+//      EvalEvaluation eval = response.getEvaluation();
+//      Long templateId = eval.getTemplate().getId();
+//      List<EvalTemplateItem> allTemplateItems = 
+//         dao.findByProperties(EvalTemplateItem.class, 
+//               new String[] { "template.id" },
+//               new Object[] { templateId });
 
       List<EvalTemplateItem> templateItems = TemplateItemUtils.getAnswerableTemplateItems(allTemplateItems);
 
