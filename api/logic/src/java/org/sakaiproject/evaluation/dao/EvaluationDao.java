@@ -172,6 +172,14 @@ public interface EvaluationDao extends CompleteGenericDao {
     */
    public String getNodeIdForEvalGroup(String evalGroupId);
 
+   /**
+    * Get all the templates ids associated with an evaluation
+    * 
+    * @param evaluationId a unique id for an evaluation
+    * @return a list of template ids for {@link EvalTemplate} objects
+    */
+   public List<Long> getTemplateIdsForEvaluation(Long evaluationId);
+
 
 	// LOCKING METHODS
 
