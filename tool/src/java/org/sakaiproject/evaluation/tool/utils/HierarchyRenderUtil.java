@@ -22,7 +22,9 @@ import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIJointContainer;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.UIOutputMany;
 import uk.org.ponder.rsf.components.UISelect;
+import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.decorators.UIFreeAttributeDecorator;
 
 /* Should be replaced by either an Evolver or a Real Producer of some
@@ -37,10 +39,55 @@ public class HierarchyRenderUtil {
         this.hierarchyLogic = logic;
     }
     
+    /*
+     * This renders a view of the hierarchy that allows modification and addition of
+     * nodes.  Operations include adding, modifying, removing, and assigning groups
+     * to nodes.  Currently used in the ControlHierarchyProducer view.
+     * 
+     * @param parent
+     * @param clientID
+     */
     public void renderModifyHierarchyTree(UIContainer parent, String clientID) {
         UIJointContainer joint = new UIJointContainer(parent, clientID, "hierarchy_table_treeview:");
+        
+        translateTableHeaders(joint);
+        
         EvalHierarchyNode root = hierarchyLogic.getRootLevelNode();
         renderHierarchyNode(joint, root, 0);
+    }
+    
+    public void renderSelectHierarchyNodesTree(UIContainer parent, String clientID, String elbinding) {
+        UIJointContainer joint = new UIJointContainer(parent, clientID, "hierarchy_table_treeview:");
+
+        UIMessage.make(joint, "node-select-header", "controlhierarchy.table.selectnode.header");
+        UIMessage.make(joint, "hierarchy-header", "controlhierarchy.table.heirarchy.header");
+        
+        EvalHierarchyNode root = hierarchyLogic.getRootLevelNode();
+        
+        UISelect siteCheckboxes = UISelect.makeMultiple(joint, "selectColumnCheckboxes", new String[] {}, elbinding, null);
+        String selectID = siteCheckboxes.getFullID();
+        List<String> checkboxValues = new ArrayList<String>();
+        
+        renderSelectHierarchyNode(joint, root, 0, selectID, checkboxValues);
+        
+        String[] ids = checkboxValues.toArray(new String[]{});
+        siteCheckboxes.optionlist = siteCheckboxes.optionnames = UIOutputMany.make(ids);
+    }
+    
+    private void renderSelectHierarchyNode(UIContainer tofill, EvalHierarchyNode node, int level, String selectID, List<String> checkboxValues) {
+        String title = node.title != null ? node.title : "Null Title?";
+        UIBranchContainer tableRow = UIBranchContainer.make(tofill, "hierarchy-level-row:");
+        UIOutput.make(tableRow, "node-select-cell");
+        UISelectChoice checkbox = UISelectChoice.make(tableRow, "select-checkbox", selectID, checkboxValues.size());
+        checkboxValues.add(node.id);
+        UIOutput name = UIOutput.make(tableRow, "node-name", title);
+        Map attr = new HashMap();
+        attr.put("style", "text-indent:" + (level*2) + "em");
+        name.decorate(new UIFreeAttributeDecorator(attr));
+        
+        for (String childId : node.directChildNodeIds) {
+            renderSelectHierarchyNode(tofill, hierarchyLogic.getNodeById(childId), level+1, selectID, checkboxValues);
+        }
     }
     
     /*
@@ -54,7 +101,6 @@ public class HierarchyRenderUtil {
      * @param level
      */
     private void renderHierarchyNode(UIContainer tofill, EvalHierarchyNode node, int level) {
-       System.out.println("Node: " + node);
 
        String title = node.title != null ? node.title : "Null Title?";
        UIBranchContainer tableRow = UIBranchContainer.make(tofill, "hierarchy-level-row:");
@@ -62,8 +108,10 @@ public class HierarchyRenderUtil {
        Map attr = new HashMap();
        attr.put("style", "text-indent:" + (level*2) + "em");
        name.decorate(new UIFreeAttributeDecorator(attr));
+       UIOutput.make(tableRow, "add-child-cell");
        UIInternalLink.make(tableRow, "add-child-link", UIMessage.make("controlhierarchy.add"),
                new ModifyHierarchyNodeParameters(ModifyHierarchyNodeProducer.VIEW_ID, node.id, true));
+       UIOutput.make(tableRow, "modify-node-cell");
        UIInternalLink.make(tableRow, "modify-node-link", UIMessage.make("controlhierarchy.modify"),
                new ModifyHierarchyNodeParameters(ModifyHierarchyNodeProducer.VIEW_ID, node.id, false));
 
@@ -72,12 +120,15 @@ public class HierarchyRenderUtil {
         * or assign groups link.
         */
        if (node.directChildNodeIds.size() > 0) {
+          UIOutput.make(tableRow, "child-info-cell");
           UIOutput.make(tableRow, "number-children", node.directChildNodeIds.size() + "");
        } 
        else {
+          UIOutput.make(tableRow, "remove-node-cell");
           UIForm removeForm = UIForm.make(tableRow, "remove-node-form");
           UICommand removeButton = UICommand.make(removeForm, "remove-node-button", UIMessage.make("controlhierarchy.remove"));
           removeButton.parameters.add(new UIDeletionBinding("hierNodeLocator."+node.id));
+          UIOutput.make(tableRow, "assign-groups-cell");
           UIInternalLink.make(tableRow, "assign-groups-link", UIMessage.make("controlhierarchy.assigngroups"), 
                   new HierarchyNodeParameters(ModifyHierarchyNodeGroupsProducer.VIEW_ID, node.id));
        }
@@ -122,5 +173,19 @@ public class HierarchyRenderUtil {
                 }
             }
         }
+    }
+    
+    /*
+     * Translate the table headers and any other decorations on or around the
+     * table.
+     * 
+     * @param tofill
+     */
+    public void translateTableHeaders(UIContainer tofill) {
+        UIMessage.make(tofill, "hierarchy-header", "controlhierarchy.table.heirarchy.header");
+        UIMessage.make(tofill, "add-item-header", "controlhierarchy.table.additem.header");
+        UIMessage.make(tofill, "modify-item-header", "controlhierarchy.table.modifyitem.header");
+        UIMessage.make(tofill, "items-level-header", "controlhierarchy.table.itemslevel.header");
+        UIMessage.make(tofill, "assign-groups-header", "controlhierarchy.table.assigngroups.header");
     }
 }

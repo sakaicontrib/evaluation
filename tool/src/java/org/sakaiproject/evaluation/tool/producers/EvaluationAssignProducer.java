@@ -15,9 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationBean;
+import org.sakaiproject.evaluation.tool.utils.HierarchyRenderUtil;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
@@ -47,95 +49,113 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  */
 public class EvaluationAssignProducer implements ViewComponentProducer, NavigationCaseReporter {
 
-	public static final String VIEW_ID = "evaluation_assign";
-	public String getViewID() {
-		return VIEW_ID;
-	}
+    public static final String VIEW_ID = "evaluation_assign";
+    public String getViewID() {
+        return VIEW_ID;
+    }
 
-	private EvalExternalLogic externalLogic;
-	public void setExternalLogic(EvalExternalLogic externalLogic) {
-		this.externalLogic = externalLogic;
-	}
+    private EvalExternalLogic externalLogic;
+    public void setExternalLogic(EvalExternalLogic externalLogic) {
+        this.externalLogic = externalLogic;
+    }
 
-	private EvaluationBean evaluationBean;
-	public void setEvaluationBean(EvaluationBean evaluationBean) {
-		this.evaluationBean = evaluationBean;
-	}
+    private EvaluationBean evaluationBean;
+    public void setEvaluationBean(EvaluationBean evaluationBean) {
+        this.evaluationBean = evaluationBean;
+    }
+    
+    private EvalSettings settings;
+    public void setSettings(EvalSettings settings) {
+        this.settings = settings;
+    }
+    
+    private HierarchyRenderUtil hierUtil;
+    public void setHierarchyRenderUtil(HierarchyRenderUtil util) {
+        hierUtil = util;
+    }
 
 
-	/* (non-Javadoc)
-	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
-	 */
-	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+    /* (non-Javadoc)
+     * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
+     */
+    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
-		UIMessage.make(tofill, "page-title", "assigneval.page.title");
-	 	 
-		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"),
-				new SimpleViewParameters(SummaryProducer.VIEW_ID));	
-		
-		UIMessage.make(tofill, "create-eval-title", "starteval.page.title");
-		UIMessage.make(tofill, "eval-settings-title", "evalsettings.page.title");
+        UIMessage.make(tofill, "page-title", "assigneval.page.title");
 
-		UIMessage.make(tofill, "assign-eval-edit-page-title", "assigneval.assign.page.title", new Object[] {evaluationBean.eval.getTitle()});
-		UIMessage.make(tofill, "assign-eval-instructions", "assigneval.assign.instructions", new Object[] {evaluationBean.eval.getTitle()});
+        UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"),
+                new SimpleViewParameters(SummaryProducer.VIEW_ID));	
 
-		UIForm form = UIForm.make(tofill, "eval-assign-form");
+        UIMessage.make(tofill, "create-eval-title", "starteval.page.title");
+        UIMessage.make(tofill, "eval-settings-title", "evalsettings.page.title");
 
-		UIMessage.make(form, "name-header", "assigneval.name.header");
-		UIMessage.make(form, "select-header", "assigneval.select.header");		
+        UIMessage.make(tofill, "assign-eval-edit-page-title", "assigneval.assign.page.title", new Object[] {evaluationBean.eval.getTitle()});
+        UIMessage.make(tofill, "assign-eval-instructions", "assigneval.assign.instructions", new Object[] {evaluationBean.eval.getTitle()});
 
-		List evalGroups = externalLogic.getEvalGroupsForUser(externalLogic.getCurrentUserId(), EvalConstants.PERM_BE_EVALUATED);
-		if (evalGroups.size() > 0) {
-			String[] ids = new String[evalGroups.size()];
-			String[] labels = new String[evalGroups.size()];
-			for (int i=0; i < evalGroups.size(); i++) {
-				EvalGroup c = (EvalGroup) evalGroups.get(i);
-				ids[i] = c.evalGroupId;
-				labels[i] = c.title;
-			}
+        UIForm form = UIForm.make(tofill, "eval-assign-form");
 
-			UISelect siteCheckboxes = UISelect.makeMultiple(form, "siteCheckboxes", ids, "#{evaluationBean.selectedSakaiSiteIds}", null);
-			String selectID = siteCheckboxes.getFullID();
+        UIMessage.make(form, "name-header", "assigneval.name.header");
+        UIMessage.make(form, "select-header", "assigneval.select.header");		
 
-			for (int i=0; i < ids.length; i++){
-				UIBranchContainer checkboxRow = UIBranchContainer.make(form, "sites:", i+"");
-				if (i % 2 == 0) {
-					checkboxRow.decorators = new DecoratorList( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
-				}
-				UISelectChoice checkbox = UISelectChoice.make(checkboxRow, "siteId", selectID, i);
-				UIOutput title = UIOutput.make(checkboxRow, "siteTitle", (String) labels[i]);
-				UILabelTargetDecorator.targetLabel(title, checkbox); // make title a label for checkbox
-			}
-		}
+        List evalGroups = externalLogic.getEvalGroupsForUser(externalLogic.getCurrentUserId(), EvalConstants.PERM_BE_EVALUATED);
+        if (evalGroups.size() > 0) {
+            String[] ids = new String[evalGroups.size()];
+            String[] labels = new String[evalGroups.size()];
+            for (int i=0; i < evalGroups.size(); i++) {
+                EvalGroup c = (EvalGroup) evalGroups.get(i);
+                ids[i] = c.evalGroupId;
+                labels[i] = c.title;
+            }
 
-		/*
-		 * TODO: If more than one course is selected and you come back to this page from confirm page,
-		 * then without changing the selection you again go to confirm page, you get a null pointer
-		 * that is created by RSF as:
-		 * 
-		 * 	"Error flattening value[Ljava.lang.String;@944d4a into class [Ljava.lang.String;
-		 * 	...
-		 *  java.lang.NullPointerException
-		 * 		at uk.org.ponder.arrayutil.ArrayUtil.lexicalCompare(ArrayUtil.java:205)
-		 *  	at uk.org.ponder.rsf.uitype.StringArrayUIType.valueUnchanged(StringArrayUIType.java:23)
-		 *  ..."
-		 */
+            UISelect siteCheckboxes = UISelect.makeMultiple(form, "siteCheckboxes", ids, "#{evaluationBean.selectedSakaiSiteIds}", null);
+            String selectID = siteCheckboxes.getFullID();
 
-		UICommand.make(form, "cancel-button", UIMessage.make("general.cancel.button"), "#{evaluationBean.cancelAssignAction}");
-		UICommand.make(form, "editSettings", UIMessage.make("assigneval.edit.settings.button"), "#{evaluationBean.backToSettingsAction}");
-		UICommand.make(form, "confirmAssignCourses", UIMessage.make("assigneval.save.assigned.button"), "#{evaluationBean.confirmAssignCoursesAction}");
-	}
+            for (int i=0; i < ids.length; i++){
+                UIBranchContainer checkboxRow = UIBranchContainer.make(form, "sites:", i+"");
+                if (i % 2 == 0) {
+                    checkboxRow.decorators = new DecoratorList( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
+                }
+                UISelectChoice checkbox = UISelectChoice.make(checkboxRow, "siteId", selectID, i);
+                UIOutput title = UIOutput.make(checkboxRow, "siteTitle", (String) labels[i]);
+                UILabelTargetDecorator.targetLabel(title, checkbox); // make title a label for checkbox
+            }
+        }
 
-	/* (non-Javadoc)
-	 * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
-	 */
-	public List reportNavigationCases() {
-		List i = new ArrayList();
-		i.add(new NavigationCase(SummaryProducer.VIEW_ID, new SimpleViewParameters(SummaryProducer.VIEW_ID)));
-		i.add(new NavigationCase(EvaluationSettingsProducer.VIEW_ID, new SimpleViewParameters(EvaluationSettingsProducer.VIEW_ID)));
-		i.add(new NavigationCase(EvaluationAssignConfirmProducer.VIEW_ID, new SimpleViewParameters(EvaluationAssignConfirmProducer.VIEW_ID)));
-		return i;
-	}
+        /* Display the table for selecting hierarchy nodes */
+        Boolean showHierarchy = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
+        if (showHierarchy.booleanValue() == true) {
+            UIMessage.make(form, "assign-hierarchy-title", "assigneval.page.hier.title");
+            hierUtil.renderSelectHierarchyNodesTree(form, "hierarchy-tree-select:", "evaluationBean.selectedEvalHierarchyNodeIds");
+        }
+        
+        
+        /*
+         * TODO: If more than one course is selected and you come back to this page from confirm page,
+         * then without changing the selection you again go to confirm page, you get a null pointer
+         * that is created by RSF as:
+         * 
+         * 	"Error flattening value[Ljava.lang.String;@944d4a into class [Ljava.lang.String;
+         * 	...
+         *  java.lang.NullPointerException
+         * 		at uk.org.ponder.arrayutil.ArrayUtil.lexicalCompare(ArrayUtil.java:205)
+         *  	at uk.org.ponder.rsf.uitype.StringArrayUIType.valueUnchanged(StringArrayUIType.java:23)
+         *  ..."
+         */
+
+        UICommand.make(form, "cancel-button", UIMessage.make("general.cancel.button"), "#{evaluationBean.cancelAssignAction}");
+        UICommand.make(form, "editSettings", UIMessage.make("assigneval.edit.settings.button"), "#{evaluationBean.backToSettingsAction}");
+        UICommand.make(form, "confirmAssignCourses", UIMessage.make("assigneval.save.assigned.button"), "#{evaluationBean.confirmAssignCoursesAction}");
+    }
+
+    /* (non-Javadoc)
+     * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
+     */
+    public List reportNavigationCases() {
+        List i = new ArrayList();
+        i.add(new NavigationCase(SummaryProducer.VIEW_ID, new SimpleViewParameters(SummaryProducer.VIEW_ID)));
+        i.add(new NavigationCase(EvaluationSettingsProducer.VIEW_ID, new SimpleViewParameters(EvaluationSettingsProducer.VIEW_ID)));
+        i.add(new NavigationCase(EvaluationAssignConfirmProducer.VIEW_ID, new SimpleViewParameters(EvaluationAssignConfirmProducer.VIEW_ID)));
+        return i;
+    }
 
 }
 

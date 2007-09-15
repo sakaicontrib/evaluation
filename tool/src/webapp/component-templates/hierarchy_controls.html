@@ -10,7 +10,7 @@
 <body>
 
 <div rsf:id="hierarchy_table_treeview:">
-    <h3>This is from the MFT MFT MFT!</h3>
+	<div rsf:id="selectColumnCheckboxes"/>
     <table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
         <thead>
             <tr>
@@ -24,17 +24,21 @@
         </thead>
         <tbody>
             <tr rsf:id="hierarchy-level-row:">
-                <td rsf:id="node-select-cell"><input type="checkbox" /></td>
+                <td rsf:id="node-select-cell">
+                    <input rsf:id="select-checkbox" type="checkbox" />
+                </td>
                 <td rsf:id="node-name" style="text-indent:0em"> - Institution Level</td>
-                <td><a rsf:id="add-child-link" href="">Add</a></td>
-                <td><a rsf:id="modify-node-link" href="">Modify</a></td>
-                <td>
+                <td rsf:id="add-child-cell"><a rsf:id="add-child-link" href="">Add</a></td>
+                <td rsf:id="modify-node-cell"><a rsf:id="modify-node-link" href="">Modify</a></td>
+                <td rsf:id="child-info-cell">
                     <span rsf:id="number-children">3</span>
+                </td>
+                <td rsf:id="remove-node-cell">
                     <form rsf:id="remove-node-form">
                         <input type="submit" rsf:id="remove-node-button" value="Remove"/>
                     </form>
                 </td>
-                <td>
+                <td rsf:id="assign-groups-cell">
                     <a rsf:id="assign-groups-link" href="">Assign Groups</a>
                 </td>
             </tr>

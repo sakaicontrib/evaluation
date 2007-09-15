@@ -112,6 +112,7 @@ public class EvaluationBean {
 	 */
 	public EvalEvaluation eval = new EvalEvaluation();
 	public String[] selectedSakaiSiteIds;
+	public String[] selectedEvalHierarchyNodeIds;
 	public Long templateId = new Long(1L);
 	public Date startDate;
 	public Date dueDate;
