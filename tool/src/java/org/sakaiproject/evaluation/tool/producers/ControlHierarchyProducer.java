@@ -1,22 +1,11 @@
 package org.sakaiproject.evaluation.tool.producers;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
-import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.tool.utils.HierarchyRenderUtil;
-import org.sakaiproject.evaluation.tool.viewparams.HierarchyNodeParameters;
-import org.sakaiproject.evaluation.tool.viewparams.ModifyHierarchyNodeParameters;
-import uk.org.ponder.rsf.components.UIBranchContainer;
-import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
-import uk.org.ponder.rsf.components.UIDeletionBinding;
-import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
-import uk.org.ponder.rsf.components.UIOutput;
-import uk.org.ponder.rsf.components.decorators.UIFreeAttributeDecorator;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
@@ -61,10 +50,6 @@ public class ControlHierarchyProducer implements ViewComponentProducer {
 
       renderBreadcrumbs(tofill);
 
-      translateTableHeaders(tofill);
-
-      //EvalHierarchyNode root = hierarchyLogic.getRootLevelNode();
-      //renderHierarchyNode(tofill, root, 0);
       hierUtil.renderModifyHierarchyTree(tofill, "heirarchy-tree:");
 
       UIInternalLink.make(tofill, "done-link", UIMessage.make("controlhierarchy.done"),
@@ -85,18 +70,6 @@ public class ControlHierarchyProducer implements ViewComponentProducer {
        UIMessage.make(tofill, "page-title", "controlhierarchy.breadcrumb.title");
    }
    
-   /*
-    * Translate the table headers and any other decorations on or around the
-    * table.
-    * 
-    * @param tofill
-    */
-   public void translateTableHeaders(UIContainer tofill) {
-       UIMessage.make(tofill, "hierarchy-header", "controlhierarchy.table.heirarchy.header");
-       UIMessage.make(tofill, "add-item-header", "controlhierarchy.table.additem.header");
-       UIMessage.make(tofill, "modify-item-header", "controlhierarchy.table.modifyitem.header");
-       UIMessage.make(tofill, "items-level-header", "controlhierarchy.table.itemslevel.header");
-       UIMessage.make(tofill, "assign-groups-header", "controlhierarchy.table.assigngroups.header");
-   }
+   
 
 }
