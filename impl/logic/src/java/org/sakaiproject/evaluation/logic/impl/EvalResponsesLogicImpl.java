@@ -304,7 +304,8 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
       // get a list of the valid templateItems for this evaluation
       EvalEvaluation eval = response.getEvaluation();
       Long evalId = eval.getId();
-      List<EvalTemplateItem> allTemplateItems = itemsLogic.getTemplateItemsForEvaluation(evalId, null, null, null);
+      // TODO - make this more efficient by limiting the nodes, instructors, and groups
+      List<EvalTemplateItem> allTemplateItems = itemsLogic.getTemplateItemsForEvaluation(evalId, new String[] {}, new String[] {}, new String[] {});
 
       // OLD - this should use a method elsewhere -AZ
 //      EvalEvaluation eval = response.getEvaluation();
