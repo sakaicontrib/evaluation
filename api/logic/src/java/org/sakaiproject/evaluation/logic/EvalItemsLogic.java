@@ -153,32 +153,30 @@ public interface EvalItemsLogic {
 	public void deleteTemplateItem(Long templateItemId, String userId);
 
 	/**
-	 * Get all the templateItems for this template that are visible to a user, 
-	 * use this when you need the templateItems restricted to visibility to a 
-	 * specific user (probably for editing template items in a template), 
-	 * can limit items to a certain hierarchy level<br/> 
-	 * Note: you could also get the items by getting the templateItems from the 
-	 * template itself but this is more risky since you so not know what the
-	 * user should see
+    * Get all the templateItems for a template based on a set of restrictions, this is primarily for
+    * cases where you will be rendering a preview of an template<br/>
+    * NOTE: You should use this in place of lazy loading the template items from the template
 	 * 
 	 * @param templateId the unique id of an {@link EvalTemplate} object
-	 * @param userId the internal user id (not username), if this is null then
-	 * it will return all items in the template
-	 * @param hierarchyLevel may be null, if this is set then only return the items
-	 * at the given hierarchy level else return items all all hierarchy levels
-	 * @return a list of {@link EvalTemplateItem} objects, ordered by displayOrder
+    * @param nodeIds may be null, includes hierarchy nodeIds
+    * @param instructorIds may be null, includes userIds of instructors
+    * @param groupIds may be null, includes unique ids for groups
+    * @return a list of {@link EvalTemplateItem} objects, ordered by displayOrder and template
 	 */
-	public List<EvalTemplateItem> getTemplateItemsForTemplate(Long templateId, String userId, String hierarchyLevel);
+	public List<EvalTemplateItem> getTemplateItemsForTemplate(Long templateId, String[] nodeIds, String[] instructorIds, String[] groupIds);
 
 	/**
-	 * @param evalId the unique id of an {@link EvalEvaluation} object
-	 * @param userId the internal user id (not username), if this is null then
-	 * it will return all items in the template
-	 * @param hierarchyLevel may be null, if this is set then only return the items
-	 * at the given hierarchy level else return items all all hierarchy levels
-	 * @return a list of {@link EvalTemplateItem} objects, ordered by displayOrder
+	 * Get all the templateItems for an evaluation based on a set of restrictions, this is primarily for
+	 * cases where you will be rendering an evaluation for a user or possibly a preview of an evaluation<br/>
+	 * NOTE: Use this instead of attempting to lazy load a ton of items from the templates
+	 * 
+    * @param evalId the unique id of an {@link EvalEvaluation} object
+    * @param nodeIds may be null, includes hierarchy nodeIds
+    * @param instructorIds may be null, includes userIds of instructors
+    * @param groupIds may be null, includes unique ids for groups
+	 * @return a list of {@link EvalTemplateItem} objects, ordered by displayOrder and template
 	 */
-	public List<EvalTemplateItem> getTemplateItemsForEvaluation(Long evalId, String userId, String hierarchyLevel);
+	public List<EvalTemplateItem> getTemplateItemsForEvaluation(Long evalId, String[] nodeIds, String[] instructorIds, String[] groupIds);
 
 	// BLOCKS
 

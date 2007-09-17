@@ -54,7 +54,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 /**
  * Page for Create, modify,preview, delete a Header type Item
  * 
- * @author: Rui Feng (fengr@vt.edu)
+ * @author Rui Feng (fengr@vt.edu)
  */
 
 public class ModifyHeaderProducer implements ViewComponentProducer,
@@ -130,8 +130,8 @@ ViewParamsReporter, NavigationCaseReporter, DynamicNavigationCaseReporter {
             UIOutput.make(form, "itemNo",ti.getDisplayOrder().toString()); //$NON-NLS-1$ //$NON-NLS-2$
 
         }else{
-            List l = itemsLogic.getTemplateItemsForTemplate(templateId, external.getCurrentUserId(), null);
-            List templateItemsList = TemplateItemUtils.getNonChildItems(l);			
+            List<EvalTemplateItem> l = itemsLogic.getTemplateItemsForTemplate(templateId, null, null, null);
+            List<EvalTemplateItem> templateItemsList = TemplateItemUtils.getNonChildItems(l);			
             Integer no = new Integer(templateItemsList.size()+1);
             UIOutput.make(form, "itemNo",no.toString());
         }

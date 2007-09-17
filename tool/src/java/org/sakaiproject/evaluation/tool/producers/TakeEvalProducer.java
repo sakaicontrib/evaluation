@@ -289,7 +289,8 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 
          // get all items for this evaluation main template
 //       allItems = new ArrayList(eval.getTemplate().getTemplateItems());
-         allItems = itemsLogic.getTemplateItemsForEvaluation(evaluationId, currentUserId, null);
+         // TODO - STEVE - add in the nodeIds array to this (in place of null) -AZ
+         allItems = itemsLogic.getTemplateItemsForEvaluation(evaluationId, null, instructors.toArray(new String[] {}), new String[] {evalGroupId});
 
          // filter out the block child items, to get a list non-child items
          List<EvalTemplateItem> ncItemsList = TemplateItemUtils.getNonChildItems(allItems);
