@@ -273,8 +273,16 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
             currentEvalGroupIds.add(evalAssignGroup.getEvalGroupId());
          }
 
+         /*
+          * According to the API Documentation, evalGroupIds can be null if there
+          * are none to assign.
+          */
+         if (evalGroupIds == null) {
+             evalGroupIds = new String[] {};
+         }
+         
          for (int i = 0; i < evalGroupIds.length; i++) {
-            evalGroupIdsSet.add(evalGroupIds[i]);
+             evalGroupIdsSet.add(evalGroupIds[i]);
          }
          
          // next we need to expand all the assigned hierarchy nodes into a massive set of eval assign groups
