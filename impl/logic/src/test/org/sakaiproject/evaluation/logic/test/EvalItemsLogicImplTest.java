@@ -453,8 +453,8 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl#getItemsForUser(java.lang.String, java.lang.String)}.
 	 */
 	public void testGetItemsForUser() {
-		List l = null;
-		List ids = null;
+		List<EvalItem> l = null;
+		List<Long> ids = null;
 		// NOTE: 32 preloaded public expert items to take into account currently
 		int preloadedCount = 32;
 
@@ -672,8 +672,8 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl#getItemsForTemplate(java.lang.Long)}.
 	 */
 	public void testGetItemsForTemplate() {
-		List l = null;
-		List ids = null;
+		List<EvalItem> l = null;
+		List<Long> ids = null;
 
 		// test getting all items by valid templates
 		l = items.getItemsForTemplate( etdl.templateAdmin.getId(), null );
@@ -744,12 +744,9 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		// TODO - add in tests that take the hierarchy into account
 
 		// test getting items from invalid template fails
-		try {
-			items.getItemsForTemplate( EvalTestDataLoad.INVALID_LONG_ID, null );
-			Assert.fail("Should have thrown exception");
-		} catch (IllegalArgumentException e) {
-			Assert.assertNotNull(e);
-		}
+      l = items.getItemsForTemplate( EvalTestDataLoad.INVALID_LONG_ID, null );
+      Assert.assertNotNull( l );
+      Assert.assertEquals(0, l.size());
 
 		// TODO - MAKE this work later on
 //		// test getting items for invalid user returns nothing
@@ -1124,11 +1121,11 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl#getTemplateItemsForTemplate(java.lang.Long)}.
 	 */
 	public void testGetTemplateItemsForTemplate() {
-		List l = null;
-		List ids = null;
+		List<EvalTemplateItem> l = null;
+		List<Long> ids = null;
 
 		// test getting all items by valid templates
-		l = items.getTemplateItemsForTemplate( etdl.templateAdmin.getId(), null, null );
+		l = items.getTemplateItemsForTemplate( etdl.templateAdmin.getId(), null, null, null );
 		Assert.assertNotNull( l );
 		Assert.assertEquals(3, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
@@ -1142,21 +1139,20 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertEquals( 3, ((EvalTemplateItem)l.get(2)).getDisplayOrder().intValue() );
 
 		// test getting all items by valid templates
-		l = items.getTemplateItemsForTemplate( etdl.templatePublic.getId(), null, null );
+		l = items.getTemplateItemsForTemplate( etdl.templatePublic.getId(), null, null, null );
 		Assert.assertNotNull( l );
 		Assert.assertEquals(1, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.templateItem1P.getId() ));
 
 		// test getting items from template with no items
-		l = items.getTemplateItemsForTemplate( etdl.templateAdminNoItems.getId(), null, null );
+		l = items.getTemplateItemsForTemplate( etdl.templateAdminNoItems.getId(), null, null, null );
 		Assert.assertNotNull( l );
 		Assert.assertEquals(0, l.size());
 
 		// test getting items for specific user returns correct items
 		// admin should get all items
-		l = items.getTemplateItemsForTemplate( etdl.templateAdmin.getId(), 
-				EvalTestDataLoad.ADMIN_USER_ID, null );
+		l = items.getTemplateItemsForTemplate( etdl.templateAdmin.getId(), null, null, null );
 		Assert.assertNotNull( l );
 		Assert.assertEquals(3, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
@@ -1164,8 +1160,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertTrue(ids.contains( etdl.templateItem3A.getId() ));
 		Assert.assertTrue(ids.contains( etdl.templateItem5A.getId() ));
 
-		l = items.getTemplateItemsForTemplate( etdl.templateUnused.getId(), 
-				EvalTestDataLoad.ADMIN_USER_ID, null );
+		l = items.getTemplateItemsForTemplate( etdl.templateUnused.getId(), null, null, null );
 		Assert.assertNotNull( l );
 		Assert.assertEquals(2, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
@@ -1177,16 +1172,14 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertEquals( 2, ((EvalTemplateItem)l.get(1)).getDisplayOrder().intValue() );
 
 		// owner should see all items
-		l = items.getTemplateItemsForTemplate( etdl.templateUnused.getId(), 
-				EvalTestDataLoad.MAINT_USER_ID, null );
+		l = items.getTemplateItemsForTemplate( etdl.templateUnused.getId(), null, null, null );
 		Assert.assertNotNull( l );
 		Assert.assertEquals(2, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.templateItem3U.getId() ));
 		Assert.assertTrue(ids.contains( etdl.templateItem5U.getId() ));
 
-		l = items.getTemplateItemsForTemplate( etdl.templateUser.getId(), 
-				EvalTestDataLoad.USER_ID, null );
+		l = items.getTemplateItemsForTemplate( etdl.templateUser.getId(), null, null, null );
 		Assert.assertNotNull( l );
 		Assert.assertEquals(2, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
@@ -1194,8 +1187,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertTrue(ids.contains( etdl.templateItem5User.getId() ));
 
 		// TODO - takers should see items at their level (one level) if they have access
-		l = items.getTemplateItemsForTemplate( etdl.templateUser.getId(), 
-				EvalTestDataLoad.STUDENT_USER_ID, null );
+		l = items.getTemplateItemsForTemplate( etdl.templateUser.getId(), null, null, null );
 		Assert.assertNotNull( l );
 		Assert.assertEquals(2, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
@@ -1204,13 +1196,11 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 
 		// TODO - add in tests that take the hierarchy into account
 
-		// test getting items from invalid template fails
-		try {
-			items.getTemplateItemsForTemplate( EvalTestDataLoad.INVALID_LONG_ID, null, null );
-			Assert.fail("Should have thrown exception");
-		} catch (IllegalArgumentException e) {
-			Assert.assertNotNull(e);
-		}
+		// test getting items from invalid template returns nothing
+      l = items.getTemplateItemsForTemplate( EvalTestDataLoad.INVALID_LONG_ID, null, null, null );
+      Assert.assertNotNull( l );
+      Assert.assertEquals(0, l.size());
+
 	}
 
 
@@ -1218,8 +1208,8 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl#getBlockChildTemplateItemsForBlockParent(Long, boolean)}.
 	 */
 	public void testGetBlockChildTemplateItemsForBlockParent() {
-		List l = null;
-		List ids = null;
+		List<EvalTemplateItem> l = null;
+		List<Long> ids = null;
 
 		// test getting child block items
 		l = items.getBlockChildTemplateItemsForBlockParent( etdl.templateItem9B.getId(), false );

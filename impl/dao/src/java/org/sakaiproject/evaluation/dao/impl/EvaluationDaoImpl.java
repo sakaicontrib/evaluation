@@ -314,52 +314,30 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
 
    public List<EvalTemplateItem> getTemplateItemsByTemplate(Long templateId, String[] nodeIds,
          String[] instructorIds, String[] groupIds) {
-      Map<String, Object> params = new HashMap<String, Object>();
-      params.put("templateId", templateId);
-      params.put("hierarchyLevel1", EvalConstants.HIERARCHY_LEVEL_TOP);
-      String hql = "from EvalTemplateItem ti where ti.template.id = :templateId and (ti.hierarchyLevel = :hierarchyLevel1 ";
-
-      if (nodeIds != null && nodeIds.length > 0) {
-         hql += " or (ti.hierarchyLevel = :hierarchyLevel2 and ti.hierarchyNodeId in (:nodeIds) ) ";
-         params.put("hierarchyLevel2", EvalConstants.HIERARCHY_LEVEL_TOP);
-         params.put("nodeIds", nodeIds);
-      }
-
-      if (instructorIds != null && instructorIds.length > 0) {
-         hql += " or (ti.hierarchyLevel = :hierarchyLevelInst and ti.hierarchyNodeId in (:instructorIds) ) ";
-         params.put("hierarchyLevelInst", EvalConstants.HIERARCHY_LEVEL_INSTRUCTOR);
-         params.put("instructorIds", instructorIds);
-      }
-
-      if (groupIds != null && groupIds.length > 0) {
-         hql += " or (ti.hierarchyLevel = :hierarchyLevelGroup and ti.hierarchyNodeId in (:groupIds) ) ";
-         params.put("hierarchyLevelGroup", EvalConstants.HIERARCHY_LEVEL_GROUP);
-         params.put("groupIds", groupIds);
-      }
-
-      hql += ") order by ti.displayOrder";
-      // System.out.println("HQL: " + hql);
-      // for (int i = 0; i < params.length; i++) {
-      // System.out.println(i + "=" + params[i]);
-      // }
-
-      List<?> things = executeHqlQuery(hql, params, 0, 0);
-      List<EvalTemplateItem> results = new ArrayList<EvalTemplateItem>();
-      for (Object object : things) {
-         results.add((EvalTemplateItem) object);
-      }
-      return results;
+      return getTemplateItemsByTemplates(new Long[] {templateId}, nodeIds, instructorIds, groupIds);
    }
 
 
    public List<EvalTemplateItem> getTemplateItemsByEvaluation(Long evalId, String[] nodeIds, String[] instructorIds, String[] groupIds) {
       List<Long> templateIds = getTemplateIdsForEvaluation(evalId);
+      return getTemplateItemsByTemplates(templateIds.toArray(new Long[] {}), nodeIds, instructorIds, groupIds);
+   }
+
+   /**
+    * Fetch all the template items based on templates and various params
+    * @param templateIds
+    * @param nodeIds
+    * @param instructorIds
+    * @param groupIds
+    * @return a list of template items ordered by display order and template
+    */
+   private List<EvalTemplateItem> getTemplateItemsByTemplates(Long[] templateIds, String[] nodeIds, String[] instructorIds, String[] groupIds) {
       List<EvalTemplateItem> results = new ArrayList<EvalTemplateItem>();
-      if (templateIds.isEmpty()) {
-         throw new IllegalArgumentException("Invalid evaluation id, cannot find templates for an evalaution with this id: " + evalId);
+      if (templateIds == null || templateIds.length == 0) {
+         throw new IllegalArgumentException("Invalid templateIds, cannot be null or empty");
       } else {
          Map<String, Object> params = new HashMap<String, Object>();
-         params.put("templateIds", templateIds.toArray(new Long[] {}));
+         params.put("templateIds", templateIds);
          params.put("hierarchyLevel1", EvalConstants.HIERARCHY_LEVEL_TOP);
          StringBuilder hql = new StringBuilder();
          hql.append("from EvalTemplateItem ti where ti.template.id in (:templateIds) and (ti.hierarchyLevel = :hierarchyLevel1 ");
@@ -382,7 +360,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
             params.put("groupIds", groupIds);
          }
 
-         hql.append(") order by ti.displayOrder");
+         hql.append(") order by ti.displayOrder, ti.template.id");
 
          List<?> things = executeHqlQuery(hql.toString(), params, 0, 0);
          for (Object object : things) {

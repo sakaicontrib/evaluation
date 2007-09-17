@@ -21,8 +21,6 @@ import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
-import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
-import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -59,7 +57,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 /**
  * Page for Create, modify,preview, delete a Scaled/Suvey type Item
  * 
- * @author: Rui Feng (fengr@vt.edu)
+ * @author Rui Feng (fengr@vt.edu)
  */
 
 public class ModifyScaledProducer implements ViewComponentProducer,
@@ -155,8 +153,8 @@ ViewParamsReporter, DynamicNavigationCaseReporter {
             UIOutput.make(form, "itemNo",ti.getDisplayOrder().toString()); //$NON-NLS-1$ //$NON-NLS-2$
 
         } else {
-            List l = itemsLogic.getTemplateItemsForTemplate(templateId, external.getCurrentUserId(), null);
-            List templateItemsList = TemplateItemUtils.getNonChildItems(l);			
+            List<EvalTemplateItem> l = itemsLogic.getTemplateItemsForTemplate(templateId, null, null, null);
+            List<EvalTemplateItem> templateItemsList = TemplateItemUtils.getNonChildItems(l);			
             Integer no = new Integer(templateItemsList.size()+1);
             UIOutput.make(form, "itemNo",no.toString());
         }

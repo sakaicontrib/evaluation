@@ -90,13 +90,11 @@ public class LocalTemplateLogic {
 		return itemsLogic.getTemplateItemById(itemId);
 	}
 
-	public List fetchTemplateItems(Long templateId) {
+	public List<EvalTemplateItem> fetchTemplateItems(Long templateId) {
 		if (templateId == null) {
-			return new ArrayList();
-		}
-		else {
-			return itemsLogic.getTemplateItemsForTemplate(templateId, 
-					external.getCurrentUserId(), null);
+			return new ArrayList<EvalTemplateItem>();
+		} else {
+			return itemsLogic.getTemplateItemsForTemplate(templateId, null, null, null);
 		}
 	}
 
@@ -119,9 +117,9 @@ public class LocalTemplateLogic {
 
 		EvalTemplateItem templateItem = itemsLogic.getTemplateItemById(templateItemId);
 		// get a list of all template items in this template
-		List allTemplateItems = itemsLogic.getTemplateItemsForTemplate(templateItem.getTemplate().getId(), null, null);
+		List<EvalTemplateItem> allTemplateItems = itemsLogic.getTemplateItemsForTemplate(templateItem.getTemplate().getId(), null, null, null);
 		// get the list of items without child items included
-		List noChildList = TemplateItemUtils.getNonChildItems(allTemplateItems);
+		List<EvalTemplateItem> noChildList = TemplateItemUtils.getNonChildItems(allTemplateItems);
 
 		// now remove the item and correct the display order
 		int orderAdjust = 0;
@@ -129,7 +127,7 @@ public class LocalTemplateLogic {
 		if (TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)) {
 			// remove the parent item and free up the child items into individual items if the block parent is removed
 			removedItemDisplayOrder = templateItem.getDisplayOrder().intValue();
-			List childList = TemplateItemUtils.getChildItems(allTemplateItems, templateItem.getId());
+			List<EvalTemplateItem> childList = TemplateItemUtils.getChildItems(allTemplateItems, templateItem.getId());
 			orderAdjust = childList.size();
 
 			// delete parent template item and item

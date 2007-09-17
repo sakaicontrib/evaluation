@@ -302,12 +302,11 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
    protected boolean checkAnswersValidForEval(EvalResponse response) {
 
       // get a list of the valid templateItems for this evaluation
-      // disabled for now because of hibernate loading exceptions -AZ
-    EvalEvaluation eval = response.getEvaluation();
-    Long evalId = eval.getId();
-    List<EvalTemplateItem> allTemplateItems = itemsLogic.getTemplateItemsForEvaluation(evalId, null, null);
+      EvalEvaluation eval = response.getEvaluation();
+      Long evalId = eval.getId();
+      List<EvalTemplateItem> allTemplateItems = itemsLogic.getTemplateItemsForEvaluation(evalId, null, null, null);
 
-      // TODO - this should use a method elsewhere -AZ
+      // OLD - this should use a method elsewhere -AZ
 //      EvalEvaluation eval = response.getEvaluation();
 //      Long templateId = eval.getTemplate().getId();
 //      List<EvalTemplateItem> allTemplateItems = 

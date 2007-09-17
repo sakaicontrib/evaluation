@@ -368,7 +368,7 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 			}
 			------------------------- */
 
-            List allTemplateItems = itemsLogic.getTemplateItemsForTemplate(templateId, null, null);
+            List<EvalTemplateItem> allTemplateItems = itemsLogic.getTemplateItemsForTemplate(templateId, null, null, null);
             int orderNo = 0;
 
             for (int i = 0; i < templateItemIds.length; i ++) {
@@ -377,7 +377,7 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 
                 if (TemplateItemUtils.getTemplateItemType(item).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)) { // item is a block parent 
 
-                    List children = TemplateItemUtils.getChildItems(allTemplateItems, item.getId());
+                    List<EvalTemplateItem> children = TemplateItemUtils.getChildItems(allTemplateItems, item.getId());
 
                     // iterate through block children for the current block parent and emit each child item
                     for (int j = 0; j < children.size(); j ++) {

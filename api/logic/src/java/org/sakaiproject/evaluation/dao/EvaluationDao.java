@@ -151,7 +151,7 @@ public interface EvaluationDao extends CompleteGenericDao {
     * @param nodeIds may be null, includes hierarchy nodeIds
     * @param instructorIds may be null, includes userIds of instructors
     * @param groupIds may be null, includes unique ids for groups
-    * @return a list of {@link EvalTemplateItem} objects, ordered by displayOrder
+    * @return a list of {@link EvalTemplateItem} objects, ordered by displayOrder and template
     */
    public List<EvalTemplateItem> getTemplateItemsByEvaluation(Long evalId, String[] nodeIds, String[] instructorIds, String[] groupIds);
 

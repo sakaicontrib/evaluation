@@ -19,7 +19,6 @@ import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.utils.ArrayUtils;
 import org.sakaiproject.evaluation.logic.utils.EvalUtils;
-import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
@@ -306,11 +305,13 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
     */
    public List<EvalItem> getItemsForTemplate(Long templateId, String userId) {
       log.debug("templateId:" + templateId + ", userId:" + userId);
+      
+      // TODO make this limit the items based on the user
 
       List<EvalItem> l = new ArrayList<EvalItem>();
-      for (Iterator<EvalTemplateItem> iter = getTemplateItemsForTemplate(templateId, userId, null).iterator(); iter.hasNext();) {
-         EvalTemplateItem eti = iter.next();
-         l.add(eti.getItem());
+      List<EvalTemplateItem> etis = getTemplateItemsForTemplate(templateId, null, null, null);
+      for (EvalTemplateItem evalTemplateItem : etis) {
+         l.add(evalTemplateItem.getItem());
       }
       return l;
    }
@@ -573,37 +574,22 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
       throw new RuntimeException("User ("+userId+") could NOT delete template-item linkage ("+templateItem.getId()+")");
    }
 
-   /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.EvalItemsLogic#getTemplateItemsForTemplate(java.lang.Long, java.lang.String, java.lang.String)
-    */
-   @SuppressWarnings("unchecked")
-   public List<EvalTemplateItem> getTemplateItemsForTemplate(Long templateId, String userId, String hierarchyLevel) {
-      log.debug("templateId:" + templateId + ", userId:" + userId + ", hierarchyLevel:" + hierarchyLevel);
-
-      // check if the template is a valid one
-      EvalTemplate template = (EvalTemplate) dao.findById(EvalTemplate.class, templateId);
-      if (template == null) {
-         throw new IllegalArgumentException("Cannot find template with id: " + templateId);
+   public List<EvalTemplateItem> getTemplateItemsForTemplate(Long templateId, String[] nodeIds,
+         String[] instructorIds, String[] groupIds) {
+      log.debug("templateId:" + templateId);
+      if (templateId == null) {
+         throw new IllegalArgumentException("template id cannot be null");
       }
-
-      // TODO - make this use the new dao method -AZ
-      //String[] nodeIds = null;
-      //dao.getTemplateItemsByTemplate(templateId, nodeIds, instructorIds, groupIds);
-
-      // TODO - check if this user can see this item (must be either taking a related eval or must somehow control the template)
-
-      String[] props = new String[] { "template.id" };
-      Object[] values = new Object[] { templateId };
-      int[] comparisons = new int[] { ByPropsFinder.EQUALS };
-      List<EvalTemplateItem> l = dao.findByProperties(EvalTemplateItem.class, 
-            props, values, comparisons,
-            new String[] { "displayOrder" } );
-
-      return l;
+      return dao.getTemplateItemsByTemplate(templateId, nodeIds, instructorIds, groupIds);
    }
 
-   public List<EvalTemplateItem> getTemplateItemsForEvaluation(Long evalId, String userId, String hierarchyLevel) {
-      return dao.getTemplateItemsByEvaluation(evalId, null, null, null);
+   public List<EvalTemplateItem> getTemplateItemsForEvaluation(Long evalId, String[] nodeIds,
+         String[] instructorIds, String[] groupIds) {
+      log.debug("evalId:" + evalId);
+      if (evalId == null) {
+         throw new IllegalArgumentException("evaluation id cannot be null");
+      }
+      return dao.getTemplateItemsByEvaluation(evalId, nodeIds, instructorIds, groupIds);
    }
 
 

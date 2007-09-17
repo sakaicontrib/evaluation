@@ -127,7 +127,7 @@ public class TemplateBBean {
 	public void saveReorder() { 
 		log.info("save items reordering");
 		Map<String, EvalTemplateItem> delivered = templateItemWBL.getDeliveredBeans();
-		List<EvalTemplateItem> l = itemsLogic.getTemplateItemsForTemplate(templateId, null, null);
+		List<EvalTemplateItem> l = itemsLogic.getTemplateItemsForTemplate(templateId, null, null, null);
 		List<EvalTemplateItem> ordered = TemplateItemUtils.getNonChildItems(l);
 		for (int i = 1; i <= ordered.size();) {
 			EvalTemplateItem item = (EvalTemplateItem) ordered.get(i - 1);
@@ -165,7 +165,7 @@ public class TemplateBBean {
 	public String saveBlockItemAction() {
 		log.debug("Save Block items");
 		
-		Map delivered = templateItemWBL.getDeliveredBeans();
+		Map<String, EvalTemplateItem> delivered = templateItemWBL.getDeliveredBeans();
 		
 		// Note: Arrays.asList() produces lists that do not support add() or remove(), however set() is supported
 		// We may want to change this to ArrayList. (i.e. new ArrayList(Arrays.asList(...)))
@@ -210,7 +210,7 @@ public class TemplateBBean {
 			// set parent's display order to the original display order of the first selected template item
 			parent.setDisplayOrder(originalDisplayOrder);
 			
-			allTemplateItems = itemsLogic.getTemplateItemsForTemplate(parent.getTemplate().getId(), null, null);
+			allTemplateItems = itemsLogic.getTemplateItemsForTemplate(parent.getTemplate().getId(), null, null, null);
 			Long parentId = parent.getId();
 			List<EvalTemplateItem> blockChildren = null;
 			
@@ -251,7 +251,7 @@ public class TemplateBBean {
 			} // end for
 			
 			// shifting the order of the other items in the template
-			allTemplateItems = itemsLogic.getTemplateItemsForTemplate(parent.getTemplate().getId(), null, null);
+			allTemplateItems = itemsLogic.getTemplateItemsForTemplate(parent.getTemplate().getId(), null, null, null);
 			List<EvalTemplateItem> nonChildList = TemplateItemUtils.getNonChildItems(allTemplateItems);
 			
 			if ((originalDisplayOrder.intValue() < nonChildList.size()) && (nonChildList.get(originalDisplayOrder.intValue()).getId() == parentId)) {
