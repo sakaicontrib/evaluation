@@ -342,22 +342,37 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
          StringBuilder hql = new StringBuilder();
          hql.append("from EvalTemplateItem ti where ti.template.id in (:templateIds) and (ti.hierarchyLevel = :hierarchyLevel1 ");
 
-         if (nodeIds != null && nodeIds.length > 0) {
-            hql.append(" or (ti.hierarchyLevel = :hierarchyLevel2 and ti.hierarchyNodeId in (:nodeIds) ) ");
-            params.put("hierarchyLevel2", EvalConstants.HIERARCHY_LEVEL_TOP);
-            params.put("nodeIds", nodeIds);
+         if (nodeIds != null) {
+            if (nodeIds.length == 0) {
+               hql.append(" or (ti.hierarchyLevel = :hierarchyLevelNodes) ");
+               params.put("hierarchyLevelNodes", EvalConstants.HIERARCHY_LEVEL_NODE);
+            } else {
+               hql.append(" or (ti.hierarchyLevel = :hierarchyLevelNodes and ti.hierarchyNodeId in (:nodeIds) ) ");
+               params.put("hierarchyLevelNodes", EvalConstants.HIERARCHY_LEVEL_NODE);
+               params.put("nodeIds", nodeIds);
+            }
          }
 
-         if (instructorIds != null && instructorIds.length > 0) {
-            hql.append(" or (ti.hierarchyLevel = :hierarchyLevelInst and ti.hierarchyNodeId in (:instructorIds) ) ");
-            params.put("hierarchyLevelInst", EvalConstants.HIERARCHY_LEVEL_INSTRUCTOR);
-            params.put("instructorIds", instructorIds);
+         if (instructorIds != null) {
+            if (instructorIds.length == 0) {
+               hql.append(" or (ti.hierarchyLevel = :hierarchyLevelInst) ");
+               params.put("hierarchyLevelInst", EvalConstants.HIERARCHY_LEVEL_INSTRUCTOR);
+            } else {
+               hql.append(" or (ti.hierarchyLevel = :hierarchyLevelInst and ti.hierarchyNodeId in (:instructorIds) ) ");
+               params.put("hierarchyLevelInst", EvalConstants.HIERARCHY_LEVEL_INSTRUCTOR);
+               params.put("instructorIds", instructorIds);
+            }
          }
 
-         if (groupIds != null && groupIds.length > 0) {
-            hql.append(" or (ti.hierarchyLevel = :hierarchyLevelGroup and ti.hierarchyNodeId in (:groupIds) ) ");
-            params.put("hierarchyLevelGroup", EvalConstants.HIERARCHY_LEVEL_GROUP);
-            params.put("groupIds", groupIds);
+         if (groupIds != null) {
+            if (groupIds.length == 0) {
+               hql.append(" or (ti.hierarchyLevel = :hierarchyLevelGroup) ");
+               params.put("hierarchyLevelGroup", EvalConstants.HIERARCHY_LEVEL_GROUP);
+            } else {
+               hql.append(" or (ti.hierarchyLevel = :hierarchyLevelGroup and ti.hierarchyNodeId in (:groupIds) ) ");
+               params.put("hierarchyLevelGroup", EvalConstants.HIERARCHY_LEVEL_GROUP);
+               params.put("groupIds", groupIds);
+            }
          }
 
          hql.append(") order by ti.displayOrder, ti.template.id");
