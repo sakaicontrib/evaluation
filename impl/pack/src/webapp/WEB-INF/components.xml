@@ -38,6 +38,7 @@
       <property name="emails" ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
       <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
       <property name="evalJobLogic" ref="org.sakaiproject.evaluation.logic.EvalJobLogic" />
+      <property name="hierarchyLogic" ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
    </bean>
 
    <bean id="org.sakaiproject.evaluation.logic.EvalEmailsLogic"
