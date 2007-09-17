@@ -721,7 +721,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
          query.setMaxResults(limit);
       }
       setParameters(query, params);
-      log.warn("HQL query:" + query.getQueryString());
+      log.debug("HQL query:" + query.getQueryString());
       return query.list();
    }
 
