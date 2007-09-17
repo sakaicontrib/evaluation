@@ -23,7 +23,9 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.model.EvalAnswer;
@@ -107,6 +109,11 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
    private Locale locale;
    public void setLocale(Locale locale) {
       this.locale = locale;
+   }
+   
+   private ExternalHierarchyLogic hierarchyLogic;
+   public void setExternalHierarchyLogic(ExternalHierarchyLogic logic) {
+       this.hierarchyLogic = logic;
    }
 
 
@@ -192,7 +199,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
          } else {
             // select the first eval group the current user can take evaluation in,
             // also store the total number so we can give the user a list to choose from if there are more than one
-            Map<Long, List<EvalAssignGroup>> m = evalsLogic.getEvaluationAssignGroups(new Long[] {evaluationId}, false);
+            Map<Long, List<EvalAssignGroup>> m = evalsLogic.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
             List<EvalGroup> validGroups = new ArrayList<EvalGroup>(); // stores EvalGroup objects
             if ( external.isUserAdmin(currentUserId) ) {
                // special case, the super admin can always access
@@ -287,10 +294,16 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
          // get the instructors for this evaluation
          Set<String> instructors = external.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED);
 
+         // Get the NodeIDs for this Group
+         List<EvalHierarchyNode> evalHierNodes = hierarchyLogic.getNodesAboveEvalGroup(evalGroupId);
+         String[] evalHierNodeIDs = new String[evalHierNodes.size()];
+         for (int nodecnt = 0; nodecnt < evalHierNodes.size(); nodecnt++) {
+             evalHierNodeIDs[nodecnt] = evalHierNodes.get(nodecnt).id;
+         }
+
          // get all items for this evaluation main template
 //       allItems = new ArrayList(eval.getTemplate().getTemplateItems());
-         // TODO - STEVE - add in the nodeIds array to this (in place of null) -AZ
-         allItems = itemsLogic.getTemplateItemsForEvaluation(evaluationId, null, instructors.toArray(new String[] {}), new String[] {evalGroupId});
+         allItems = itemsLogic.getTemplateItemsForEvaluation(evaluationId, evalHierNodeIDs, instructors.toArray(new String[] {}), new String[] {evalGroupId});
 
          // filter out the block child items, to get a list non-child items
          List<EvalTemplateItem> ncItemsList = TemplateItemUtils.getNonChildItems(allItems);
@@ -306,7 +319,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
             UIMessage.make(courseSection, "course-questions-header", "takeeval.group.questions.header");
             // for each non-child item in this evaluation
             UIMessage.make(courseSection, "course-questions-header", "takeeval.group.questions.header");
-            handleCategoryRender(TemplateItemUtils.getCategoryTemplateItems(EvalConstants.ITEM_CATEGORY_COURSE, ncItemsList), form, courseSection);
+            handleCategoryRender(TemplateItemUtils.getCategoryTemplateItems(EvalConstants.ITEM_CATEGORY_COURSE, ncItemsList), form, courseSection, evalHierNodes);
          }
 
          if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, ncItemsList)) {	
@@ -316,7 +329,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                UIMessage.make(instructorSection, "instructor-questions-header", 
                      "takeeval.instructor.questions.header", new Object[] { external.getUserDisplayName(instructor) });
                // for each non-child item in this evaluation
-               handleCategoryRender(TemplateItemUtils.getCategoryTemplateItems(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, ncItemsList), form, instructorSection);
+               handleCategoryRender(TemplateItemUtils.getCategoryTemplateItems(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, ncItemsList), form, instructorSection, evalHierNodes);
             }
          }
 
@@ -333,15 +346,58 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
     * @param form the form the controls for this set of items are attached to
     * @param section the parent branch container that holds all the UI elements in this section
     */
-   private void handleCategoryRender(List<EvalTemplateItem> itemsList, UIForm form, UIBranchContainer section) {
-      for (int i = 0; i <itemsList.size(); i++) {
-         EvalTemplateItem templateItem = itemsList.get(i);
-         UIBranchContainer radiobranch = UIBranchContainer.make(section, "itemrow:first", i+"");
-         if (i % 2 == 1) {
-            radiobranch.decorators = new DecoratorList( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
+   private void handleCategoryRender(List<EvalTemplateItem> itemsList, UIForm form, UIBranchContainer section, List<EvalHierarchyNode> evalHierNodes) {
+       /* We need to render things by section. For now we'll just loop through each evalHierNode to start, and 
+        * see if there are items of it. If there are we'll go ahead and render them with a group header.  We 
+        * have to take care of the special toplevel hierarchy type first.
+        * 
+        * I don't suppose this is terribly efficient, just looping through the nodes and items over and over again.
+        * However, I don't any survey is going to have enough questions for it to ever matter.
+        */
+       List<EvalTemplateItem> togo = new ArrayList<EvalTemplateItem>();
+       for (EvalTemplateItem item: itemsList) {
+           if (item.getHierarchyLevel().equals(EvalConstants.HIERARCHY_LEVEL_TOP)) {
+               togo.add(item);
+           }
+       }
+       
+       if (togo.size() > 0) {
+           handleCategoryHierarchyNodeRender(togo, form, section, null);
+       }
+
+       for (EvalHierarchyNode evalNode: evalHierNodes) {
+           togo = new ArrayList<EvalTemplateItem>();
+           for (EvalTemplateItem item: itemsList) {
+               if (item.getHierarchyLevel().equals(EvalConstants.HIERARCHY_LEVEL_NODE) && item.getHierarchyNodeId().equals(evalNode.id)) {
+                   togo.add(item);
+               }
+           }
+           if (togo.size() > 0) {
+               handleCategoryHierarchyNodeRender(togo, form, section, evalNode.title);
+           }
+       }
+   }
+   
+   /*
+    * This method is most likely to be invoked from handleCategoryRender. Basically it handles the grouping by node for each category.
+    * So say in the Group/Courses category, you may have questions for "General", "Biology Department", and "Botany 101". You would call
+    * this method once for each node group, passing in the items for that node, and the title (ie. "Biology Department") that you want rendered.
+    * If you pass in a null or empty sectiontitle, it will assume that it is for the general top level node level.
+    */
+   private void handleCategoryHierarchyNodeRender(List<EvalTemplateItem> itemsInNode, UIForm form, UIContainer tofill, String sectiontitle) {
+       if (sectiontitle != null && !sectiontitle.equals("")) {
+           UIBranchContainer labelrow = UIBranchContainer.make(tofill, "itemrow:hier-node-section");
+           UIOutput topLevelLabel = UIOutput.make(labelrow, "hier-node-title", sectiontitle);
+       }
+
+       for (int i = 0; i <itemsInNode.size(); i++) {
+           EvalTemplateItem templateItem = itemsInNode.get(i);
+           UIBranchContainer radiobranch = UIBranchContainer.make(tofill, "itemrow:first", i+"");
+           if (i % 2 == 1) {
+              radiobranch.decorators = new DecoratorList( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
+           }
+           renderItemPrep(radiobranch, form, templateItem, "null", "null");
          }
-         renderItemPrep(radiobranch, form, templateItem, "null", "null");
-      }
    }
 
    /**
