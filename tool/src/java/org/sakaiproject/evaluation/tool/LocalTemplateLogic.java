@@ -94,7 +94,7 @@ public class LocalTemplateLogic {
 		if (templateId == null) {
 			return new ArrayList<EvalTemplateItem>();
 		} else {
-			return itemsLogic.getTemplateItemsForTemplate(templateId, null, null, null);
+			return itemsLogic.getTemplateItemsForTemplate(templateId, new String[] {}, null, null);
 		}
 	}
 

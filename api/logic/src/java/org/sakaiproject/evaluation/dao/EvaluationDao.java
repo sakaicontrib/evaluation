@@ -134,9 +134,14 @@ public interface EvaluationDao extends CompleteGenericDao {
 	 * ids of the parts of the nodes
 	 * 
 	 * @param templateId the unique id of an EvalTemplate object
-	 * @param nodeIds may be null, includes hierarchy nodeIds
-	 * @param instructorIds may be null, includes userIds of instructors
-	 * @param groupIds may be null, includes unique ids for groups
+    * @param nodeIds the unique ids of a set of hierarchy nodes for which we 
+    * want all associated template items, null excludes all TIs associated with nodes,
+    * an empty array will include all TIs associated with nodes
+    * @param instructorIds a set of internal userIds of instructors for instructor added items,
+    * null will exclude all instructor added items, empty array will include all
+    * @param groupIds the unique eval group ids associated with a set of TIs in this template
+    * (typically items which are associated with a specific eval group),
+    * null excludes all associated TIs, empty array includes all 
 	 * @return a list of {@link EvalTemplateItem} objects, ordered by displayOrder
 	 */
 	public List<EvalTemplateItem> getTemplateItemsByTemplate(Long templateId, String[] nodeIds, String[] instructorIds, String[] groupIds);
@@ -148,9 +153,14 @@ public interface EvaluationDao extends CompleteGenericDao {
     * ids of the parts of the nodes, should be ordered in the list by the proper display order
     * 
     * @param evalId the unique id of an {@link EvalEvaluation} object
-    * @param nodeIds may be null, includes hierarchy nodeIds
-    * @param instructorIds may be null, includes userIds of instructors
-    * @param groupIds may be null, includes unique ids for groups
+    * @param nodeIds the unique ids of a set of hierarchy nodes for which we 
+    * want all associated template items, null excludes all TIs associated with nodes,
+    * an empty array will include all TIs associated with nodes
+    * @param instructorIds a set of internal userIds of instructors for instructor added items,
+    * null will exclude all instructor added items, empty array will include all
+    * @param groupIds the unique eval group ids associated with a set of TIs in this template
+    * (typically items which are associated with a specific eval group),
+    * null excludes all associated TIs, empty array includes all 
     * @return a list of {@link EvalTemplateItem} objects, ordered by displayOrder and template
     */
    public List<EvalTemplateItem> getTemplateItemsByEvaluation(Long evalId, String[] nodeIds, String[] instructorIds, String[] groupIds);

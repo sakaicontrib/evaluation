@@ -153,14 +153,19 @@ public interface EvalItemsLogic {
 	public void deleteTemplateItem(Long templateItemId, String userId);
 
 	/**
-    * Get all the templateItems for a template based on a set of restrictions, this is primarily for
+    * Get all the templateItems (TIs) for a template based on a set of restrictions, this is primarily for
     * cases where you will be rendering a preview of an template<br/>
     * NOTE: You should use this in place of lazy loading the template items from the template
 	 * 
 	 * @param templateId the unique id of an {@link EvalTemplate} object
-    * @param nodeIds may be null, includes hierarchy nodeIds
-    * @param instructorIds may be null, includes userIds of instructors
-    * @param groupIds may be null, includes unique ids for groups
+    * @param nodeIds the unique ids of a set of hierarchy nodes for which we 
+    * want all associated template items, null excludes all TIs associated with nodes,
+    * an empty array will include all TIs associated with nodes
+    * @param instructorIds a set of internal userIds of instructors for instructor added items,
+    * null will exclude all instructor added items, empty array will include all
+    * @param groupIds the unique eval group ids associated with a set of TIs in this template
+    * (typically items which are associated with a specific eval group),
+    * null excludes all associated TIs, empty array includes all 
     * @return a list of {@link EvalTemplateItem} objects, ordered by displayOrder and template
 	 */
 	public List<EvalTemplateItem> getTemplateItemsForTemplate(Long templateId, String[] nodeIds, String[] instructorIds, String[] groupIds);
@@ -171,9 +176,14 @@ public interface EvalItemsLogic {
 	 * NOTE: Use this instead of attempting to lazy load a ton of items from the templates
 	 * 
     * @param evalId the unique id of an {@link EvalEvaluation} object
-    * @param nodeIds may be null, includes hierarchy nodeIds
-    * @param instructorIds may be null, includes userIds of instructors
-    * @param groupIds may be null, includes unique ids for groups
+    * @param nodeIds the unique ids of a set of hierarchy nodes for which we 
+    * want all associated template items, null excludes all TIs associated with nodes,
+    * an empty array will include all TIs associated with nodes
+    * @param instructorIds a set of internal userIds of instructors for instructor added items,
+    * null will exclude all instructor added items, empty array will include all
+    * @param groupIds the unique eval group ids associated with a set of TIs in this template
+    * (typically items which are associated with a specific eval group),
+    * null excludes all associated TIs, empty array includes all 
 	 * @return a list of {@link EvalTemplateItem} objects, ordered by displayOrder and template
 	 */
 	public List<EvalTemplateItem> getTemplateItemsForEvaluation(Long evalId, String[] nodeIds, String[] instructorIds, String[] groupIds);
