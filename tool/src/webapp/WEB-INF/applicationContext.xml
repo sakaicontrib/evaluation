@@ -25,6 +25,10 @@
       			evaluationBeanLocator, takeEvalBean, settingsBean, scaleBean, scaleBeanLocator, itemWBL, hierNodeLocator, 
       			hierNodeLocatorInvoker, hierNodeGroupsLocator, hierNodeGroupsLocatorInvoker" />
 	</bean>
+	
+	<bean id="ignoreFossilizedValues" class="uk.org.ponder.springutil.BooleanFactory">
+		<property name="value" value="true" />
+	</bean>
 
 
 	<!-- tool logic beans (organizational) -->
