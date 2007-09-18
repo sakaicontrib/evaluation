@@ -520,7 +520,8 @@ public class EvaluationBean {
       //Perform common tasks
       commonSaveTasks();
 
-      if (selectedEvalGroupIds.length > 0 || nodes.size() > 0) {
+      if ( (selectedEvalGroupIds != null && selectedEvalGroupIds.length > 0) 
+            || ! nodes.isEmpty() ) {
          //save the evaluation
          evalsLogic.saveEvaluation(eval, external.getCurrentUserId());
 
