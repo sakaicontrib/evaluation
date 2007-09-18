@@ -6,7 +6,6 @@ import java.util.List;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
-import org.sakaiproject.evaluation.logic.providers.EvalHierarchyProvider;
 import org.sakaiproject.evaluation.tool.locators.HierarchyNodeLocator;
 import org.sakaiproject.evaluation.tool.viewparams.ModifyHierarchyNodeParameters;
 
@@ -33,77 +32,78 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * of the EL syntax in HierarchyNodeLocator. 
  */
 public class ModifyHierarchyNodeProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
-    public static final String VIEW_ID = "modify_hierarchy_node";
+   public static final String VIEW_ID = "modify_hierarchy_node";
 
-    public String getViewID() {
-        return VIEW_ID;
-    }
-    
-    private EvalExternalLogic external;
-    public void setExternal(EvalExternalLogic external) {
-       this.external = external;
-    }
+   public String getViewID() {
+      return VIEW_ID;
+   }
 
-    private ExternalHierarchyLogic hierarchyLogic;
-    public void setHierarchyLogic(ExternalHierarchyLogic hierarchyLogic) {
-       this.hierarchyLogic = hierarchyLogic;
-    }
+   private EvalExternalLogic external;
+   public void setExternal(EvalExternalLogic external) {
+      this.external = external;
+   }
 
-    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
-        String currentUserId = external.getCurrentUserId();
-        boolean userAdmin = external.isUserAdmin(currentUserId);
+   private ExternalHierarchyLogic hierarchyLogic;
+   public void setHierarchyLogic(ExternalHierarchyLogic hierarchyLogic) {
+      this.hierarchyLogic = hierarchyLogic;
+   }
 
-        if (!userAdmin) {
-            // Security check and denial
-            throw new SecurityException("Non-admin users may not access this page");
-        }
-        
-        /*
-         * top menu links and bread crumbs here
-         */
-        UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID));
-        UIInternalLink.make(tofill, "administrate-toplink", UIMessage.make("administrate.page.title"), new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-        UIInternalLink.make(tofill, "hierarchy-toplink", UIMessage.make("controlhierarchy.breadcrumb.title"), new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID));
-        UIMessage.make(tofill, "page-title", "hierarchynode.breadcrumb.title");
-        
-        //EvalHierarchyNode toEdit 
-        ModifyHierarchyNodeParameters params = (ModifyHierarchyNodeParameters) viewparams;
-        boolean addingChild = params.addingChild;
-        EvalHierarchyNode node = hierarchyLogic.getNodeById(params.nodeId);
-        
-        String ELName = "";
-        if (addingChild) {
-            ELName = HierarchyNodeLocator.NEW_PREFIX + node.id;
-            UIMessage.make(tofill, "modify-location-message", "modifyhierarchynode.add.location", new String[] {node.title});
-        }
-        else {
-            ELName = node.id;
-            UIMessage.make(tofill, "modify-location-message", "modifyhierarchynode.modify.location", new String[] {node.title});
-        }
-        
-        /*
-         * The Submission Form
-         */
-        UIForm form = UIForm.make(tofill, "modify-node-form");
-        
-        UIInput.make(form, "node-title", "hierNodeLocator."+ELName+".title");
-        UIMessage.make(form, "title-label", "modifyhierarchynode.title.label");
-        
-        UIInput.make(form, "node-abbr", "hierNodeLocator."+ELName+".description");
-        UIMessage.make(form, "abbreviation-label", "modifyhierarchynode.abbreviation.label");
-        
-        UICommand.make(form, "save-node-button", UIMessage.make("modifyhierarchynode.save"), "hierNodeLocatorInvoker.saveAll");
-        UIInternalLink.make(form, "cancel-link", UIMessage.make("modifyhierarchynode.cancel"), new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID));
-    }
+   public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+      String currentUserId = external.getCurrentUserId();
+      boolean userAdmin = external.isUserAdmin(currentUserId);
 
-    public ViewParameters getViewParameters() {
-        return new ModifyHierarchyNodeParameters();
-    }
+      if (!userAdmin) {
+         // Security check and denial
+         throw new SecurityException("Non-admin users may not access this page");
+      }
 
-    public List reportNavigationCases() {
-        List cases = new ArrayList();
-        cases.add(new NavigationCase(null, new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID)));
-        return cases;
-    }
+      /*
+       * top menu links and bread crumbs here
+       */
+      UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID));
+      UIInternalLink.make(tofill, "administrate-toplink", UIMessage.make("administrate.page.title"), new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+      UIInternalLink.make(tofill, "hierarchy-toplink", UIMessage.make("controlhierarchy.breadcrumb.title"), new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID));
+      UIMessage.make(tofill, "page-title", "modifyhierarchynode.breadcrumb.title");
+
+      //EvalHierarchyNode toEdit 
+      ModifyHierarchyNodeParameters params = (ModifyHierarchyNodeParameters) viewparams;
+      boolean addingChild = params.addingChild;
+      EvalHierarchyNode node = hierarchyLogic.getNodeById(params.nodeId);
+
+      String ELName = "";
+      if (addingChild) {
+         ELName = HierarchyNodeLocator.NEW_PREFIX + node.id;
+         UIMessage.make(tofill, "modify-location-message", "modifyhierarchynode.add.location", new String[] {node.title});
+      }
+      else {
+         ELName = node.id;
+         UIMessage.make(tofill, "modify-location-message", "modifyhierarchynode.modify.location", new String[] {node.title});
+      }
+
+      /*
+       * The Submission Form
+       */
+      UIForm form = UIForm.make(tofill, "modify-node-form");
+
+      UIInput.make(form, "node-title", "hierNodeLocator."+ELName+".title");
+      UIMessage.make(form, "title-label", "modifyhierarchynode.title.label");
+
+      UIInput.make(form, "node-abbr", "hierNodeLocator."+ELName+".description");
+      UIMessage.make(form, "abbreviation-label", "modifyhierarchynode.abbreviation.label");
+
+      UICommand.make(form, "save-node-button", UIMessage.make("modifyhierarchynode.save"), "hierNodeLocatorInvoker.saveAll");
+      UIInternalLink.make(form, "cancel-link", UIMessage.make("modifyhierarchynode.cancel"), new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID));
+   }
+
+   public ViewParameters getViewParameters() {
+      return new ModifyHierarchyNodeParameters();
+   }
+
+   @SuppressWarnings("unchecked")
+   public List reportNavigationCases() {
+      List cases = new ArrayList();
+      cases.add(new NavigationCase(null, new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID)));
+      return cases;
+   }
 
 }
