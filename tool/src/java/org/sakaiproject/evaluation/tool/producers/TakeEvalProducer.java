@@ -387,7 +387,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
    private void handleCategoryHierarchyNodeRender(List<EvalTemplateItem> itemsInNode, UIForm form, UIContainer tofill, String sectiontitle) {
        if (sectiontitle != null && !sectiontitle.equals("")) {
            UIBranchContainer labelrow = UIBranchContainer.make(tofill, "itemrow:hier-node-section");
-           UIOutput topLevelLabel = UIOutput.make(labelrow, "hier-node-title", sectiontitle);
+           UIOutput.make(labelrow, "hier-node-title", sectiontitle);
        }
 
        for (int i = 0; i <itemsInNode.size(); i++) {

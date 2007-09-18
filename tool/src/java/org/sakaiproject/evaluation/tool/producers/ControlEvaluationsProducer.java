@@ -144,11 +144,11 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 		}
 
 		// get all the visible evaluations for the current user
-		List inqueueEvals = new ArrayList();
-		List activeEvals = new ArrayList();
-		List closedEvals = new ArrayList();
+		List<EvalEvaluation> inqueueEvals = new ArrayList<EvalEvaluation>();
+		List<EvalEvaluation> activeEvals = new ArrayList<EvalEvaluation>();
+		List<EvalEvaluation> closedEvals = new ArrayList<EvalEvaluation>();
 
-		List evals = evaluationsLogic.getVisibleEvaluationsForUser(externalLogic.getCurrentUserId(), false, false);
+		List<EvalEvaluation> evals = evaluationsLogic.getVisibleEvaluationsForUser(externalLogic.getCurrentUserId(), false, false);
 		for (int j = 0; j < evals.size(); j++) {
 			// get queued, active, closed evaluations by date
 			// check the state of the eval to determine display data
@@ -425,7 +425,8 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
 	 */
-	public List reportNavigationCases() {
+	@SuppressWarnings("unchecked")
+   public List reportNavigationCases() {
 		List i = new ArrayList();
 		
 		i.add(new NavigationCase(EvaluationSettingsProducer.VIEW_ID, new SimpleViewParameters(
@@ -446,8 +447,8 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 	 * @return title of first evalGroupId returned
 	 */
 	private String getTitleForFirstEvalGroup(Long evaluationId) {
-		Map evalAssignGroups = evaluationsLogic.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
-		List groups = (List) evalAssignGroups.get(evaluationId);
+	   Map<Long, List<EvalAssignGroup>> evalAssignGroups = evaluationsLogic.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
+		List<EvalAssignGroup> groups = evalAssignGroups.get(evaluationId);
 		EvalAssignGroup eac = (EvalAssignGroup) groups.get(0);
 		return externalLogic.getDisplayTitle( eac.getEvalGroupId() );
 	}
@@ -460,12 +461,12 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 	 */
 	private int getTotalEnrollmentsForEval(Long evaluationId) {
 		int totalEnrollments = 0;
-		Map evalAssignGroups = evaluationsLogic.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
-		List groups = (List) evalAssignGroups.get(evaluationId);
+		Map<Long, List<EvalAssignGroup>> evalAssignGroups = evaluationsLogic.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
+		List<EvalAssignGroup> groups = evalAssignGroups.get(evaluationId);
 		for (int i=0; i<groups.size(); i++) {
 			EvalAssignGroup eac = (EvalAssignGroup) groups.get(i);
 			String context = eac.getEvalGroupId();
-			Set userIds = externalLogic.getUserIdsForEvalGroup(context, EvalConstants.PERM_TAKE_EVALUATION);
+			Set<String> userIds = externalLogic.getUserIdsForEvalGroup(context, EvalConstants.PERM_TAKE_EVALUATION);
 			totalEnrollments = totalEnrollments + userIds.size();
 		}
 		return totalEnrollments;

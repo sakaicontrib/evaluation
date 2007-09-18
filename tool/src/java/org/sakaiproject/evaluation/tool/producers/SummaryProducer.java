@@ -157,7 +157,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		/*
 		 * for the evaluations taking box
 		 */
-		List evalsToTake = evaluationsLogic.getEvaluationsForUser(currentUserId, true, false);
+		List<EvalEvaluation> evalsToTake = evaluationsLogic.getEvaluationsForUser(currentUserId, true, false);
 		if (evalsToTake.size() > 0) {
 			UIBranchContainer evalBC = UIBranchContainer.make(tofill, "evaluationsBox:");
 
@@ -169,10 +169,10 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			}
 
 			// now fetch all the information we care about for these evaluations at once (for speed)
-			Map evalGroups = evaluationsLogic.getEvaluationGroups(evalIds, false);
+			Map<Long, List<EvalGroup>> evalGroups = evaluationsLogic.getEvaluationGroups(evalIds, false);
 			List<EvalResponse> evalResponses = responsesLogic.getEvaluationResponses(currentUserId, evalIds);
 
-			for (Iterator itEvals = evalsToTake.iterator(); itEvals.hasNext();) {
+			for (Iterator<EvalEvaluation> itEvals = evalsToTake.iterator(); itEvals.hasNext();) {
 				EvalEvaluation eval = (EvalEvaluation) itEvals.next();
 
 				UIBranchContainer evalrow = UIBranchContainer.make(evalBC, "evaluationsList:", eval.getId().toString() );
@@ -181,7 +181,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 				UIMessage.make(evalrow, "evaluationStartsTitle", "summary.evaluations.starts.title" );
             UIMessage.make(evalrow, "evaluationEndsTitle", "summary.evaluations.ends.title" );
 
-				List groups = (List) evalGroups.get(eval.getId());
+            List<EvalGroup> groups = evalGroups.get(eval.getId());
 				for (int j=0; j<groups.size(); j++) {
 					EvalGroup group = (EvalGroup) groups.get(j);
 					if (EvalConstants.GROUP_TYPE_INVALID.equals(group.type)) {
@@ -253,7 +253,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		 * first true => get recent only, and
 		 * second true => get not-owned evals.
 		 */
-		List evals = evaluationsLogic.getVisibleEvaluationsForUser(currentUserId, true, true);
+		List<EvalEvaluation> evals = evaluationsLogic.getVisibleEvaluationsForUser(currentUserId, true, true);
 
 		/*
 		 * If the person is an admin, then just point new evals to
@@ -261,11 +261,11 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		 * If the person is not an admin then only show owned evals +
 		 * not-owned evals that are available for viewing results.
 		 */
-		List newEvals;
+		List<EvalEvaluation> newEvals;
 		if (userAdmin) {
 			newEvals =  evals;
 		} else {
-			newEvals = new ArrayList();
+			newEvals = new ArrayList<EvalEvaluation>();
 			int numEvals = evals.size();
 			Date currentDate = new Date();
 
@@ -298,7 +298,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			UIMessage.make(evalAdminForm, "evaladmin-header-status", "summary.header.status");
 			UIMessage.make(evalAdminForm, "evaladmin-header-date", "summary.header.date");
 
-			for (Iterator iter = newEvals.iterator(); iter.hasNext();) {
+			for (Iterator<EvalEvaluation> iter = newEvals.iterator(); iter.hasNext();) {
 				EvalEvaluation eval = (EvalEvaluation) iter.next();
 
 				UIBranchContainer evalrow = UIBranchContainer.make(evalAdminForm,
@@ -371,7 +371,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			UIMessage.make(contextsBC, "sitelisting-title", "summary.sitelisting.title");
 
 			UIMessage.make(contextsBC, "sitelisting-evaluated-text", "summary.sitelisting.evaluated");
-			List evaluatedContexts = externalLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_BE_EVALUATED);
+			List<EvalGroup> evaluatedContexts = externalLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_BE_EVALUATED);
 			if (evaluatedContexts.size() > 0) {
 				for (int i=0; i<evaluatedContexts.size(); i++) {
 					if (i > maxGroupsToDisplay) {
@@ -388,7 +388,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			}
 
 			UIMessage.make(contextsBC, "sitelisting-evaluate-text", "summary.sitelisting.evaluate");
-			List evaluateContexts = externalLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_TAKE_EVALUATION);
+			List<EvalGroup> evaluateContexts = externalLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_TAKE_EVALUATION);
 			if (evaluateContexts.size() > 0) {
 				for (int i=0; i<evaluateContexts.size(); i++) {
 					if (i > maxGroupsToDisplay) {
@@ -431,7 +431,8 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
 	 */
-	public List reportNavigationCases() {
+	@SuppressWarnings("unchecked")
+   public List reportNavigationCases() {
 		List i = new ArrayList();
 		i.add(new NavigationCase(EvaluationSettingsProducer.VIEW_ID, new SimpleViewParameters(
 				EvaluationSettingsProducer.VIEW_ID)));
@@ -449,12 +450,12 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 	private int getTotalEnrollmentsForEval(Long evaluationId) {
 		int totalEnrollments = 0;
 
-		Map evalAssignGroups = evaluationsLogic.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
-		List groups = (List) evalAssignGroups.get(evaluationId);
+		Map<Long, List<EvalAssignGroup>> evalAssignGroups = evaluationsLogic.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
+		List<EvalAssignGroup> groups = evalAssignGroups.get(evaluationId);
 		for (int i=0; i<groups.size(); i++) {
 			EvalAssignGroup eac = (EvalAssignGroup) groups.get(i);
 			String context = eac.getEvalGroupId();
-			Set userIds = externalLogic.getUserIdsForEvalGroup(context, EvalConstants.PERM_TAKE_EVALUATION);
+			Set<String> userIds = externalLogic.getUserIdsForEvalGroup(context, EvalConstants.PERM_TAKE_EVALUATION);
 			totalEnrollments = totalEnrollments + userIds.size();
 		}
 		return totalEnrollments;
