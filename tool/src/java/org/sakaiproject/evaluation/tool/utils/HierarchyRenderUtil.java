@@ -186,15 +186,13 @@ public class HierarchyRenderUtil {
 
    /**
     * Populates the values and labels that need to be bound to the drop down combo box.
-    * The first time in pass an empty array for both.  When we see that it's empty we will
-    * add the toplevel and all the children under the root, because the root node doesn't really
-    * need to be in there. (This may change if the UI Designer says otherwise.
     * 
     * It should end up looking like the following:
     * + Top Level
-    * + School of Something
-    *   - Department Blah
-    * + School of Another Thing  
+    * + Hierarchy Root
+    *   + School of Something
+    *     - Department Blah
+    *   + School of Another Thing  
     * 
     * etc.
     * 
@@ -208,10 +206,11 @@ public class HierarchyRenderUtil {
          values.add(EvalConstants.HIERARCHY_NODE_ID_NONE);
          labels.add("Top Level");
          EvalHierarchyNode root = hierarchyLogic.getRootLevelNode();
-         for (String childId: root.directChildNodeIds) {
-            EvalHierarchyNode rootChild = hierarchyLogic.getNodeById(childId);
-            populateHierSelectLists(values, labels, 0, rootChild);
-         }
+         populateHierSelectLists(values, labels, 0, root);
+         //for (String childId: root.directChildNodeIds) {
+         //   EvalHierarchyNode rootChild = hierarchyLogic.getNodeById(childId);
+         //   populateHierSelectLists(values, labels, 0, rootChild);
+        // }
       }
       else {
          values.add(node.id);
