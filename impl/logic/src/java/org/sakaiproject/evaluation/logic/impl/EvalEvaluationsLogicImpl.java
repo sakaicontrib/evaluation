@@ -206,7 +206,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
          evaluation.setAuthControl( EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ );
       }
 
-      if (evaluation.getEvalCategory().equals("")) {
+      if (evaluation.getEvalCategory() != null && evaluation.getEvalCategory().length() <= 0) {
          evaluation.setEvalCategory(null);
       }
 
