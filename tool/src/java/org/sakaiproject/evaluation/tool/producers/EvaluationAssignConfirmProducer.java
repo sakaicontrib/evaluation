@@ -122,7 +122,7 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, N
         UIMessage.make(tofill, "title-header", "evaluationassignconfirm.title.header");
         UIMessage.make(tofill, "enrollment-header", "evaluationassignconfirm.enrollment.header");
 
-        String[] selectedIds = evaluationBean.selectedSakaiSiteIds;
+        String[] selectedIds = evaluationBean.selectedEvalGroupIds;
         int[] enrollment = evaluationBean.enrollment;
 
         Map allIdTitleMap = new HashMap();

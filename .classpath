@@ -14,11 +14,11 @@
 	<classpathentry kind="var" path="MAVEN_REPO/org.hibernate/jars/hibernate-3.1.3.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/servletapi/jars/servletapi-2.4.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/antlr/jars/antlr-2.7.6.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/ponderutilcore/jars/ponderutilcore-1.2.2RC1.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/j-servletutil/jars/j-servletutil-1.2.2RC1.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/rsfutil/jars/rsfutil-0.7.2RC1.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/sakairsf/jars/sakairsf-0.7.2RC1-sakai_2.2.x.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/generic-dao/jars/generic-dao-0.9.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/ponderutilcore/jars/ponderutilcore-1.2.2RC3.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/j-servletutil/jars/j-servletutil-1.2.2RC3.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/rsfutil/jars/rsfutil-0.7.2RC3.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/sakairsf/jars/sakairsf-0.7.2RC3-sakai_2.2.x.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/generic-dao/jars/generic-dao-0.91.jar"/>
 	<classpathentry kind="src" path="impl/dao/src/test"/>
 	<classpathentry kind="src" path="impl/logic/src/test"/>
 	<classpathentry kind="var" path="MAVEN_REPO/junit/jars/junit-3.8.1.jar"/>
