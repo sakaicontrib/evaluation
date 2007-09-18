@@ -1,8 +1,8 @@
 package org.sakaiproject.evaluation.tool.producers;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.tool.utils.HierarchyRenderUtil;
+
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
@@ -27,14 +27,9 @@ public class ControlHierarchyProducer implements ViewComponentProducer {
       this.external = external;
    }
 
-   private ExternalHierarchyLogic hierarchyLogic;
-   public void setHierarchyLogic(ExternalHierarchyLogic hierarchyLogic) {
-      this.hierarchyLogic = hierarchyLogic;
-   }
-   
    private HierarchyRenderUtil hierUtil;
    public void setHierarchyRenderUtil(HierarchyRenderUtil util) {
-       hierUtil = util;
+      hierUtil = util;
    }
 
    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
@@ -56,20 +51,20 @@ public class ControlHierarchyProducer implements ViewComponentProducer {
             new SimpleViewParameters(AdministrateProducer.VIEW_ID));
 
    }
-   
+
    /*
     * top menu links and bread crumbs here
     * 
     * @param tofill
     */
    public void renderBreadcrumbs(UIContainer tofill) {
-       UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"),
-               new SimpleViewParameters(SummaryProducer.VIEW_ID));
-       UIInternalLink.make(tofill, "administrate-toplink", UIMessage.make("administrate.page.title"),
-               new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-       UIMessage.make(tofill, "page-title", "controlhierarchy.breadcrumb.title");
+      UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"),
+            new SimpleViewParameters(SummaryProducer.VIEW_ID));
+      UIInternalLink.make(tofill, "administrate-toplink", UIMessage.make("administrate.page.title"),
+            new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+      UIMessage.make(tofill, "page-title", "controlhierarchy.breadcrumb.title");
    }
-   
-   
+
+
 
 }
