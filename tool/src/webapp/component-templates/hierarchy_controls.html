@@ -14,6 +14,7 @@
     <table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
         <thead>
             <tr>
+                <th rsf:id="node-metadata-header" style="display: none"></th>
                 <th rsf:id="node-select-header">Select</th>
                 <th rsf:id="hierarchy-header">Hierarchy Level</th>
                 <th rsf:id="add-item-header">Add Item:</th>
@@ -24,6 +25,10 @@
         </thead>
         <tbody>
             <tr rsf:id="hierarchy-level-row:">
+                <td rsf:id="node-metadata-cell" style="display: none">
+                    <input id="node-id-input" rsf:id="node-id-input" type="hidden" value="TheNodeID" />
+                    <input id="parent-id-input" rsf:id="parent-id-input" type="hidden" value="TheParentID" />
+                </td>
                 <td rsf:id="node-select-cell">
                     <input rsf:id="select-checkbox" type="checkbox" />
                 </td>
