@@ -127,7 +127,7 @@ public class ControlTemplatesProducer implements ViewComponentProducer {
 				new TemplateViewParameters(ModifyTemplateProducer.VIEW_ID, null));
 
 		// get templates for the current user
-		List templates = templatesLogic.getTemplatesForUser(currentUserId, null, true);
+		List<EvalTemplate> templates = templatesLogic.getTemplatesForUser(currentUserId, null, true);
 		if (templates.size() > 0) {
 			UIBranchContainer templateListing = UIBranchContainer.make(tofill, "template-listing:");
 
