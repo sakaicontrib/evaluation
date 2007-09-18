@@ -478,15 +478,18 @@ public class EvaluationBean {
          messages.addMessage( new TargettedMessage("assigneval.invalid.selection",
                new Object[] {}, TargettedMessage.SEVERITY_ERROR));
          return "fail";
-      } else {
-         // get enrollments on by one
+      }
+
+      // add in the enrollment counts for the following page (seems odd to do this here -AZ)
+      if (selectedEvalGroupIds != null && selectedEvalGroupIds.length > 0) {
+         // get enrollments one by one
          enrollment = new int[selectedEvalGroupIds.length];
          for (int i = 0; i<selectedEvalGroupIds.length; i++){
             Set<String> s = external.getUserIdsForEvalGroup(selectedEvalGroupIds[i], EvalConstants.PERM_TAKE_EVALUATION);
             enrollment[i] = s.size();           
          }
-         return EvaluationAssignConfirmProducer.VIEW_ID;
       }
+      return EvaluationAssignConfirmProducer.VIEW_ID;
    }
 
    /**
