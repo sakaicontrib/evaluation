@@ -348,30 +348,6 @@ public class EvaluationBean {
       return EvaluationSettingsProducer.VIEW_ID;
    }
 
-   /**
-    * Method binding to the "Save Assigned Courses" button 
-    * on the evaluation_assign.html.
-    * 
-    * @return View id which either sends the control to assign page 
-    * 			(if no courses are selected) or to assign confirm page
-    * 			if atleast one course is selected.
-    */
-   public String confirmAssignCoursesAction() {	
-
-      //At least 1 site check box need to be checked.
-      if (selectedEvalGroupIds == null || selectedEvalGroupIds.length == 0) {
-         return EvaluationAssignProducer.VIEW_ID;
-      }
-      else {
-         //get enrollemnt on by one 
-         enrollment = new int[selectedEvalGroupIds.length];
-         for (int i = 0; i<selectedEvalGroupIds.length; i++){
-            Set<String> s = external.getUserIdsForEvalGroup(selectedEvalGroupIds[i], EvalConstants.PERM_TAKE_EVALUATION);
-            enrollment[i] = s.size();				
-         }
-         return EvaluationAssignConfirmProducer.VIEW_ID;
-      }
-   }
 
    /**
     * Method binding to the "Save Changes" button on the modify_email.html for 
@@ -472,6 +448,45 @@ public class EvaluationBean {
     */
    public String modifyReminderEmailTemplate(){
       return EvalConstants.EMAIL_TEMPLATE_REMINDER;
+   }
+
+   
+
+   /**
+    * Method binding to the "Save Assigned Courses" button 
+    * on the evaluation_assign.html.
+    * 
+    * @return View id which goes to assign confirm page
+    *          if atleast one course is selected.
+    */
+   public String confirmAssignCoursesAction() { 
+
+      // make sure that the submitted nodes are valid
+      Set<EvalHierarchyNode> nodes = null;
+      if (selectedEvalHierarchyNodeIds.length > 0) {
+         nodes = hierarchyLogic.getNodesByIds(selectedEvalHierarchyNodeIds);
+         if (nodes.size() != selectedEvalHierarchyNodeIds.length) {
+            throw new IllegalArgumentException("Invalid set of hierarchy node ids submitted which includes node Ids which are not in the hierarchy");
+         }
+      } else {
+         nodes = new HashSet<EvalHierarchyNode>();
+      }
+
+      // At least 1 node or group checkbox must be checked
+      if ( (selectedEvalGroupIds == null || selectedEvalGroupIds.length == 0) &&
+            nodes.isEmpty() ) {
+         messages.addMessage( new TargettedMessage("assigneval.invalid.selection",
+               new Object[] {}, TargettedMessage.SEVERITY_ERROR));
+         return "fail";
+      } else {
+         // get enrollments on by one
+         enrollment = new int[selectedEvalGroupIds.length];
+         for (int i = 0; i<selectedEvalGroupIds.length; i++){
+            Set<String> s = external.getUserIdsForEvalGroup(selectedEvalGroupIds[i], EvalConstants.PERM_TAKE_EVALUATION);
+            enrollment[i] = s.size();           
+         }
+         return EvaluationAssignConfirmProducer.VIEW_ID;
+      }
    }
 
    /**
