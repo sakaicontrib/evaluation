@@ -26,6 +26,7 @@ import org.sakaiproject.evaluation.logic.impl.interceptors.EvaluationModificatio
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
+import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
@@ -270,17 +271,24 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
          //remove all scheduled job invocations
          evalJobLogic.removeScheduledInvocations(evaluationId);
 
-         Set[] entitySets = new HashSet[3];
-         // remove associated AssignContexts
+         Set[] entitySets = new HashSet[4];
+         // remove associated AssignGroups
          List<EvalAssignGroup> acs = dao.findByProperties(EvalAssignGroup.class, 
                new String[] {"evaluation.id"}, 
                new Object[] {evaluationId});
-         Set<EvalAssignGroup> assignSet = new HashSet<EvalAssignGroup>(acs);
-         entitySets[0] = assignSet;
+         Set<EvalAssignGroup> assignGroupSet = new HashSet<EvalAssignGroup>(acs);
+         entitySets[0] = assignGroupSet;
+
+         // remove associated assigned hierarchy nodes
+         List<EvalAssignHierarchy> ahs = dao.findByProperties(EvalAssignHierarchy.class, 
+               new String[] {"evaluation.id"}, 
+               new Object[] {evaluationId});
+         Set<EvalAssignHierarchy> assignHierSet = new HashSet<EvalAssignHierarchy>(ahs);
+         entitySets[1] = assignHierSet;
 
          // remove associated unused email templates
          Set<EvalEmailTemplate> emailSet = new HashSet<EvalEmailTemplate>();
-         entitySets[1] = emailSet;
+         entitySets[2] = emailSet;
          if (evaluation.getAvailableEmailTemplate() != null) {
             if (evaluation.getAvailableEmailTemplate().getDefaultType() == null) {
                // only remove non-default templates
@@ -307,19 +315,19 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 
          // add eval to a set to be removed
          Set evalSet = new HashSet();
-         entitySets[2] = evalSet;
+         entitySets[3] = evalSet;
          evalSet.add(evaluation);
 
          // unlock associated template
          log.info("Unlocking associated template ("+evaluation.getTemplate().getId()+") for eval ("+evaluation.getId()+")");
          dao.lockTemplate(evaluation.getTemplate(), Boolean.FALSE);
 
-         // fire the evaluation deleted event
-         external.registerEntityEvent(EVENT_EVAL_DELETE, evaluation);
-
          // remove the evaluation and related data in one transaction
          dao.deleteMixedSet(entitySets);
          //dao.delete(eval);
+
+         // fire the evaluation deleted event
+         external.registerEntityEvent(EVENT_EVAL_DELETE, evaluation);
 
          log.info("User ("+userId+") removed evaluation ("+evaluationId+"), title: " + evaluation.getTitle());
          return;
