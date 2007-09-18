@@ -117,7 +117,6 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
    }
 
 
-   // TODO - clean up this mess of otp binding strings
    String responseOTPBinding = "responseBeanLocator";
    String responseOTP = responseOTPBinding + ".";
    String newResponseOTPBinding = responseOTP + "new";
@@ -294,16 +293,15 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
          // get the instructors for this evaluation
          Set<String> instructors = external.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED);
 
-         // Get the NodeIDs for this Group
+         // Get the Hierarchy NodeIDs for the current Group
          List<EvalHierarchyNode> evalHierNodes = hierarchyLogic.getNodesAboveEvalGroup(evalGroupId);
          String[] evalHierNodeIDs = new String[evalHierNodes.size()];
          for (int nodecnt = 0; nodecnt < evalHierNodes.size(); nodecnt++) {
              evalHierNodeIDs[nodecnt] = evalHierNodes.get(nodecnt).id;
          }
 
-         // get all items for this evaluation main template
-//       allItems = new ArrayList(eval.getTemplate().getTemplateItems());
-         allItems = itemsLogic.getTemplateItemsForEvaluation(evaluationId, evalHierNodeIDs, instructors.toArray(new String[] {}), new String[] {evalGroupId});
+         // get all items for this evaluation
+         allItems = itemsLogic.getTemplateItemsForEvaluation(evaluationId, evalHierNodeIDs, instructors.toArray(new String[instructors.size()]), new String[] {evalGroupId});
 
          // filter out the block child items, to get a list non-child items
          List<EvalTemplateItem> ncItemsList = TemplateItemUtils.getNonChildItems(allItems);
