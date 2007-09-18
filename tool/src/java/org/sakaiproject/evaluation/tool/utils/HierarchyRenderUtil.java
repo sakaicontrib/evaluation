@@ -13,11 +13,13 @@ import org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeProducer;
 import org.sakaiproject.evaluation.tool.viewparams.HierarchyNodeParameters;
 import org.sakaiproject.evaluation.tool.viewparams.ModifyHierarchyNodeParameters;
 
+import java.util.Iterator;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIDeletionBinding;
 import uk.org.ponder.rsf.components.UIForm;
+import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIJointContainer;
 import uk.org.ponder.rsf.components.UIMessage;
@@ -51,6 +53,11 @@ public class HierarchyRenderUtil {
         UIJointContainer joint = new UIJointContainer(parent, clientID, "hierarchy_table_treeview:");
         
         translateTableHeaders(joint);
+        
+        /*
+         * Hidden header for column with metadata information.
+         */
+        UIOutput.make(parent, "node-metadata-header");
         
         EvalHierarchyNode root = hierarchyLogic.getRootLevelNode();
         renderHierarchyNode(joint, root, 0);
@@ -108,6 +115,20 @@ public class HierarchyRenderUtil {
        Map attr = new HashMap();
        attr.put("style", "text-indent:" + (level*2) + "em");
        name.decorate(new UIFreeAttributeDecorator(attr));
+       
+       /* Node Metadata */
+       UIOutput.make(tableRow, "node-metadata-cell");
+       UIInput.make(tableRow, "node-id-input", null, node.id);
+       if (node.parentNodeIds.size() > 0) {
+           // TODO In the future there might be multiple parents...
+           for (Iterator<String> itr = node.parentNodeIds.iterator(); itr.hasNext();) {
+               UIInput.make(tableRow, "parent-id-input", null, itr.next());
+           }
+       }
+       else {
+           UIInput.make(tableRow, "parant-id-input", null, "NO_PARENT");
+       }
+       
        UIOutput.make(tableRow, "add-child-cell");
        UIInternalLink.make(tableRow, "add-child-link", UIMessage.make("controlhierarchy.add"),
                new ModifyHierarchyNodeParameters(ModifyHierarchyNodeProducer.VIEW_ID, node.id, true));
@@ -148,29 +169,39 @@ public class HierarchyRenderUtil {
                 elBinding, null);
     }
     
+    /*
+     * Populates the values and labels that need to be bound to the drop down combo box.
+     * The first time in pass an empty array for both.  When we see that it's empty we will
+     * add the toplevel and all the children under the root, because the root node doesn't really
+     * need to be in there. (This may change if the UI Designer says otherwise.
+     * 
+     * It should end up looking like the following:
+     * + Top Level
+     * + School of Something
+     *   - Department Blah
+     * + School of Another Thing  
+     * 
+     * etc.
+     */
     private void populateHierSelectLists(List<String> values, List<String> labels, int level, EvalHierarchyNode node) {
         if (values.size() == 0) {
             values.add(EvalConstants.HIERARCHY_NODE_ID_NONE);
             labels.add("Top Level");
-            populateHierSelectLists(values, labels, 0, null);
+            EvalHierarchyNode root = hierarchyLogic.getRootLevelNode();
+            for (String childId: root.directChildNodeIds) {
+                EvalHierarchyNode rootChild = hierarchyLogic.getNodeById(childId);
+                populateHierSelectLists(values, labels, 0, rootChild);
+            }
         }
         else {
-            if (level == 0 && node == null) {
-                EvalHierarchyNode root = hierarchyLogic.getRootLevelNode();
-                for (String childId: root.childNodeIds) {
-                    populateHierSelectLists(values, labels, 0, hierarchyLogic.getNodeById(childId));
-                }
+            values.add(node.id);
+            String label = node.title;
+            for (int i = 0; i < level; i++) {
+                label = "." + label;
             }
-            else {
-                values.add(node.id);
-                String label = node.title;
-                for (int i = 0; i < level; i++) {
-                    label = "." + label;
-                }
-                labels.add(label);
-                for (String childId: node.childNodeIds) {
-                    populateHierSelectLists(values, labels, level+2, hierarchyLogic.getNodeById(childId));
-                }
+            labels.add(label);
+            for (String childId: node.directChildNodeIds) {
+                populateHierSelectLists(values, labels, level+2, hierarchyLogic.getNodeById(childId));
             }
         }
     }
