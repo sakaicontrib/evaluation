@@ -3,6 +3,7 @@ package org.sakaiproject.evaluation.tool.utils;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
@@ -199,6 +200,7 @@ public class HierarchyRenderUtil {
       UIInternalLink.make(tableRow, "modify-node-link", UIMessage.make("controlhierarchy.modify"),
             new ModifyHierarchyNodeParameters(ModifyHierarchyNodeProducer.VIEW_ID, node.id, false));
 
+      
       /*
        * If the node has children, render the number of children, but no remove button
        * or assign groups link.
@@ -215,6 +217,10 @@ public class HierarchyRenderUtil {
          UIOutput.make(tableRow, "assign-groups-cell");
          UIInternalLink.make(tableRow, "assign-groups-link", UIMessage.make("controlhierarchy.assigngroups"), 
                new HierarchyNodeParameters(ModifyHierarchyNodeGroupsProducer.VIEW_ID, node.id));
+         
+         Map<String, Integer> numGroupsMap = hierarchyLogic.countEvalGroupsForNodes(new String[] {node.id});
+         UIOutput.make(tableRow, "assigned-group-count-cell");
+         UIOutput.make(tableRow, "assign-group-count", numGroupsMap.get(node.id).toString());
       }
 
       for (String childId : node.directChildNodeIds) {
@@ -286,6 +292,7 @@ public class HierarchyRenderUtil {
       UIMessage.make(tofill, "modify-item-header", "controlhierarchy.table.modifyitem.header");
       UIMessage.make(tofill, "items-level-header", "controlhierarchy.table.itemslevel.header");
       UIMessage.make(tofill, "assign-groups-header", "controlhierarchy.table.assigngroups.header");
+      UIMessage.make(tofill, "assigned-group-count-header", "controlhierarchy.table.groupcount.header");
    }
 
 }
