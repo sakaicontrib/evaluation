@@ -203,19 +203,21 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
 
 
    public Map<String, Set<String>> getEvalGroupsForNodes(String[] nodeIds) {
-      if (nodeIds == null || nodeIds.length == 0) {
-         throw new IllegalArgumentException("nodeIds cannot be null or empty");
+      if (nodeIds == null) {
+         throw new IllegalArgumentException("nodeIds cannot be null");
       }
 
       Map<String, Set<String>> m = new HashMap<String, Set<String>>();
-      List<EvalGroupNodes> l = getEvalGroupNodesByNodeId(nodeIds);
-      for (EvalGroupNodes egn : l) {
-         Set<String> s = new HashSet<String>();
-         String[] evalGroups = egn.getEvalGroups();
-         for (int i = 0; i < evalGroups.length; i++) {
-            s.add(evalGroups[i]);
+      if (nodeIds.length > 0) {
+         List<EvalGroupNodes> l = getEvalGroupNodesByNodeId(nodeIds);
+         for (EvalGroupNodes egn : l) {
+            Set<String> s = new HashSet<String>();
+            String[] evalGroups = egn.getEvalGroups();
+            for (int i = 0; i < evalGroups.length; i++) {
+               s.add(evalGroups[i]);
+            }
+            m.put(egn.getNodeId(), s);
          }
-         m.put(egn.getNodeId(), s);
       }
       return m;
    }

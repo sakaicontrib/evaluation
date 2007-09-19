@@ -168,14 +168,16 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
        
        EvalHierarchyNode rootNode = hierarchyLogic.getRootLevelNode();
        String[] rootNodeChildren = rootNode.childNodeIds.toArray(new String[] {});
-       Map<String,Set<String>> assignedGroups = hierarchyLogic.getEvalGroupsForNodes(rootNodeChildren);
-       
-       for (String key: assignedGroups.keySet()) {
-           hierAssignedGroupIDs.addAll(assignedGroups.get(key));
+       if (rootNodeChildren.length > 0) {
+          Map<String,Set<String>> assignedGroups = hierarchyLogic.getEvalGroupsForNodes(rootNodeChildren);
+          
+          for (String key: assignedGroups.keySet()) {
+              hierAssignedGroupIDs.addAll(assignedGroups.get(key));
+          }
+          
+          // 3. Remove all EvalGroup IDs that have been assigned to 
+          evalGroupIDs.removeAll(hierAssignedGroupIDs);
        }
-       
-       // 3. Remove all EvalGroup IDs that have been assigned to 
-       evalGroupIDs.removeAll(hierAssignedGroupIDs);
        
        return evalGroupIDs;
    }
