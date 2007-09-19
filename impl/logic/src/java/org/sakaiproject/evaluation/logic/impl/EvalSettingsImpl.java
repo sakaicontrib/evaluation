@@ -35,17 +35,20 @@ public class EvalSettingsImpl implements EvalSettings {
     */
    public void init() {
       log.debug("init");
-      // check the existing boolean settings for null values and fix them if they are null
-      checkBooleanSetting(DISPLAY_HIERARCHY_OPTIONS);
-      checkBooleanSetting(DISPLAY_HIERARCHY_HEADERS);
-      checkBooleanSetting(ITEM_USE_RESULTS_SHARING);
-      checkBooleanSetting(USE_EXPERT_ITEMS);
-      checkBooleanSetting(USE_EXPERT_TEMPLATES);
-      checkBooleanSetting(REQUIRE_COMMENTS_BLOCK);
-      checkBooleanSetting(NOT_AVAILABLE_ALLOWED);
-      checkBooleanSetting(ADMIN_VIEW_BELOW_RESULTS);
-      checkBooleanSetting(INSTRUCTOR_ALLOWED_EMAIL_STUDENTS);
-      checkBooleanSetting(INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS);
+      
+      if (evaluationDao.countAll(EvalConfig.class) > 0) {
+         // check the existing boolean settings for null values and fix them if they are null
+         checkBooleanSetting(DISPLAY_HIERARCHY_OPTIONS);
+         checkBooleanSetting(DISPLAY_HIERARCHY_HEADERS);
+         checkBooleanSetting(ITEM_USE_RESULTS_SHARING);
+         checkBooleanSetting(USE_EXPERT_ITEMS);
+         checkBooleanSetting(USE_EXPERT_TEMPLATES);
+         checkBooleanSetting(REQUIRE_COMMENTS_BLOCK);
+         checkBooleanSetting(NOT_AVAILABLE_ALLOWED);
+         checkBooleanSetting(ADMIN_VIEW_BELOW_RESULTS);
+         checkBooleanSetting(INSTRUCTOR_ALLOWED_EMAIL_STUDENTS);
+         checkBooleanSetting(INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS);
+      }
    }
 
    /**

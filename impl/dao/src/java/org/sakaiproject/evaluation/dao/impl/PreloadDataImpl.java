@@ -91,6 +91,10 @@ public class PreloadDataImpl {
             saveConfig(EvalSettings.ADMIN_VIEW_BELOW_RESULTS, false);
             saveConfig(EvalSettings.ADMIN_VIEW_INSTRUCTOR_ADDED_RESULTS, false);
 
+            // default hierarchy settings
+            saveConfig(EvalSettings.DISPLAY_HIERARCHY_OPTIONS, false);
+            saveConfig(EvalSettings.DISPLAY_HIERARCHY_HEADERS, false);
+
             // Default general settings
             saveConfig(EvalSettings.FROM_EMAIL_ADDRESS, "helpdesk@institution.edu");
             saveConfig(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS, 5);
@@ -102,7 +106,6 @@ public class PreloadDataImpl {
             saveConfig(EvalSettings.REQUIRE_COMMENTS_BLOCK, true);
             saveConfig(EvalSettings.EVAL_RECENTLY_CLOSED_DAYS, 10);
             saveConfig(EvalSettings.ITEM_USE_RESULTS_SHARING, false);
-            saveConfig(EvalSettings.DISPLAY_HIERARCHY_OPTIONS, false);
 
             // default is configurable (unset)
             //saveConfig(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY, false);
