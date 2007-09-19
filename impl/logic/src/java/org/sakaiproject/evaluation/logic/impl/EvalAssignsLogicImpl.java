@@ -317,7 +317,9 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
          log.info("User (" + userId + ") added nodes (" + ArrayUtils.arrayToString(nodeIds)
                + ") and groups (" + ArrayUtils.arrayToString(evalGroupIds) + ") to evaluation ("
                + evaluationId + ")");
-         return new ArrayList<EvalAssignHierarchy>(nodeAssignments);
+         List<EvalAssignHierarchy> results = new ArrayList<EvalAssignHierarchy>(nodeAssignments);
+         results.addAll(groupAssignments);
+         return results;
       }
 
       // should not get here so die if we do

@@ -150,7 +150,8 @@ public interface EvalHierarchyProvider {
     * Get the set of eval group ids beneath a set of hierarchy nodes, note that this should only
     * include the eval groups directly beneath these nodes and not any groups that are under
     * child nodes of this node<br/>
-    * Note: this will not fail if the nodeId is invalid, it will just return no results
+    * Note: this will not fail if the nodeId is invalid, it will just return no results,
+    * an empty array of nodeids will return an empty map
     * 
     * @param nodeIds a set of unique ids for hierarchy nodes
     * @return a Map of nodeId -> a set of eval group ids representing the eval groups beneath that node

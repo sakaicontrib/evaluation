@@ -558,7 +558,9 @@ public class EvaluationBean {
 
          // save all the assignments (hierarchy and group)
          List<EvalAssignHierarchy> assignedHierList = 
-            assignsLogic.addEvalAssignments(eval.getId(), allNodeIds.toArray(new String[allNodeIds.size()]), selectedEvalGroupIds);
+            assignsLogic.addEvalAssignments(eval.getId(), 
+                  allNodeIds.toArray(new String[allNodeIds.size()]), 
+                  selectedEvalGroupIds);
          // failsafe check
          if (assignedHierList.isEmpty()) {
             evalsLogic.deleteEvaluation(eval.getId(), external.getCurrentUserId());
