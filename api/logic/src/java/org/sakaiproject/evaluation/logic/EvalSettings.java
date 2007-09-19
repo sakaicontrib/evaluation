@@ -40,6 +40,7 @@ public interface EvalSettings {
    public static final String INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS = "INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS:java.lang.Boolean";
    /**
     * CONSTANT: Is the instructor allowed to view the results of evaluations - {@link Boolean}, default True
+    * <b>Note:</b> If this is FALSE/NULL then the evaluation settings overrride, otherwise this overrides the evaluation setting
     */
    public static final String INSTRUCTOR_ALLOWED_VIEW_RESULTS = "INSTRUCTOR_ALLOWED_VIEW_RESULTS:java.lang.Boolean";
    /**
@@ -57,14 +58,17 @@ public interface EvalSettings {
 
    /**
     * CONSTANT: Student is allowed to leave questions unanswered (this only affects multiple choice items) - {@link Boolean}, default True
+    * <b>Note:</b> If this is FALSE/NULL then the evaluation settings overrride, otherwise this overrides the evaluation setting
     */
    public static final String STUDENT_ALLOWED_LEAVE_UNANSWERED = "STUDENT_ALLOWED_LEAVE_UNANSWERED:java.lang.Boolean";
    /**
     * CONSTANT: Student is allowed to modify their responses after they have submitted the evaluation but before the due date - {@link Boolean}, default False
+    * <b>Note:</b> If this is FALSE/NULL then the evaluation settings overrride, otherwise this overrides the evaluation setting
     */
    public static final String STUDENT_MODIFY_RESPONSES = "STUDENT_MODIFY_RESPONSES:java.lang.Boolean";
    /**
     * CONSTANT: Student is allowed to view the results of the evaluation - {@link Boolean}, default False
+    * <b>Note:</b> If this is FALSE/NULL then the evaluation settings overrride, otherwise this overrides the evaluation setting
     */
    public static final String STUDENT_VIEW_RESULTS = "STUDENT_VIEW_RESULTS:java.lang.Boolean";
 
