@@ -125,7 +125,7 @@ public class EvalSettingsImpl implements EvalSettings {
         if (l.size() > 0) {
             return (EvalConfig) l.get(0);
         }
-        log.warn("No admin setting for this constant:" + name);
+        log.debug("No admin setting for this constant:" + name);
         return null;
     }
 
