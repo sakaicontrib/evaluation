@@ -210,6 +210,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/producers/TakeEvalProducer.java -
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/AddItemControlRenderer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/BlockRenderer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/HeaderRenderer.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/renderers/HierarchyRowRenderer.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/ItemRenderer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/ItemRendererImpl.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/ScaledRenderer.java -text
