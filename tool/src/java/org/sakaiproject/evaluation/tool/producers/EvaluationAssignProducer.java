@@ -7,16 +7,19 @@ package org.sakaiproject.evaluation.tool.producers;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups;
+import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationBean;
 import org.sakaiproject.evaluation.tool.utils.HierarchyRenderUtil;
 
+import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
@@ -69,6 +72,11 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
    public void setHierarchyRenderUtil(HierarchyRenderUtil util) {
       hierUtil = util;
    }
+   
+   private ExternalHierarchyLogic hierarchyLogic;
+   public void setExternalHierarchyLogic(ExternalHierarchyLogic logic) {
+      this.hierarchyLogic = logic;
+   }
 
 
    /* (non-Javadoc)
@@ -102,8 +110,8 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
             labels[i] = c.title;
          }
 
-         UISelect siteCheckboxes = UISelect.makeMultiple(form, "siteCheckboxes", ids, "#{evaluationBean.selectedEvalGroupIds}", null);
-         String selectID = siteCheckboxes.getFullID();
+         //UISelect siteCheckboxes = UISelect.makeMultiple(form, "siteCheckboxes", ids, "#{evaluationBean.selectedEvalGroupIds}", null);
+         //String selectID = siteCheckboxes.getFullID();
 
          Set<String> evalGroupIDs = new HashSet<String>();
          /* Display the table for selecting hierarchy nodes */
@@ -113,19 +121,20 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
             hierUtil.renderSelectHierarchyNodesTree(form, "hierarchy-tree-select:", "", "" );
          }
          
-         for (int i=0; i < ids.length; i++){
+         String[] nonAssignedEvalGroupIDs = getEvalGroupIDsNotAssignedInHierarchy().toArray(new String[] {});
+         //for (int i=0; i < ids.length; i++){
+         for (int i = 0; i < nonAssignedEvalGroupIDs.length; i++) {
             UIBranchContainer checkboxRow = UIBranchContainer.make(form, "sites:", i+"");
             if (i % 2 == 0) {
                checkboxRow.decorators = new DecoratorList( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
             }
-            UISelectChoice checkbox = UISelectChoice.make(checkboxRow, "siteId", selectID, i);
-            UIOutput title = UIOutput.make(checkboxRow, "siteTitle", (String) labels[i]);
+            //UISelectChoice checkbox = UISelectChoice.make(checkboxRow, "siteId", selectID, i);
+            UIBoundBoolean checkbox = UIBoundBoolean.make(checkboxRow, "siteId", "evaluationBean.selectedEvalGroupIDsMap."+nonAssignedEvalGroupIDs[i]);
+            //TODO  we shouldn't need to keep fetching this from the service API
+            UIOutput title = UIOutput.make(checkboxRow, "siteTitle", externalLogic.getDisplayTitle(nonAssignedEvalGroupIDs[i]));
             UILabelTargetDecorator.targetLabel(title, checkbox); // make title a label for checkbox
          }
       }
-
-      
-
 
       /*
        * TODO: If more than one course is selected and you come back to this page from confirm page,
@@ -143,6 +152,32 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
       UICommand.make(form, "cancel-button", UIMessage.make("general.cancel.button"), "#{evaluationBean.cancelAssignAction}");
       UICommand.make(form, "editSettings", UIMessage.make("assigneval.edit.settings.button"), "#{evaluationBean.backToSettingsAction}");
       UICommand.make(form, "confirmAssignCourses", UIMessage.make("assigneval.save.assigned.button"), "#{evaluationBean.confirmAssignCoursesAction}");
+   }
+   
+   public Set<String> getEvalGroupIDsNotAssignedInHierarchy() {
+       
+       // 1. All the Evaluation Group IDs
+       Set<String> evalGroupIDs = new HashSet<String>();
+       List<EvalGroup> evalGroups = externalLogic.getEvalGroupsForUser(externalLogic.getCurrentUserId(), EvalConstants.PERM_BE_EVALUATED);
+       for (EvalGroup evalGroup: evalGroups) {
+           evalGroupIDs.add(evalGroup.evalGroupId);
+       }
+       
+       // 2. All the Evaluation Group IDs that are assigned to Hierarchy Nodes
+       Set<String> hierAssignedGroupIDs = new HashSet<String>();
+       
+       EvalHierarchyNode rootNode = hierarchyLogic.getRootLevelNode();
+       String[] rootNodeChildren = rootNode.childNodeIds.toArray(new String[] {});
+       Map<String,Set<String>> assignedGroups = hierarchyLogic.getEvalGroupsForNodes(rootNodeChildren);
+       
+       for (String key: assignedGroups.keySet()) {
+           hierAssignedGroupIDs.addAll(assignedGroups.get(key));
+       }
+       
+       // 3. Remove all EvalGroup IDs that have been assigned to 
+       evalGroupIDs.removeAll(hierAssignedGroupIDs);
+       
+       return evalGroupIDs;
    }
 
    /* (non-Javadoc)

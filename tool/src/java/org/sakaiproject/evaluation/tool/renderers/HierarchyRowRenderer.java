@@ -43,7 +43,7 @@ public class HierarchyRowRenderer {
             UIBoundBoolean.make(tableRow, "select-checkbox", "evaluationBean.selectedEvalGroupIDsMap."+evalGroup.evalGroupId);
         }
         else {
-            title = "What is this thing?";
+            title = "";
         }
         UIOutput name = UIOutput.make(tableRow, "node-name", title);
         name.decorate(new UIFreeAttributeDecorator( MapUtil.make("style", "text-indent:" + (level*2) + "em") ));
