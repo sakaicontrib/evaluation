@@ -5,9 +5,11 @@
 package org.sakaiproject.evaluation.tool;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -116,6 +118,10 @@ public class EvaluationBean {
    public Date instructorsDate;
    public int[] enrollment;
 
+   // These are for the Assign screen, which is now bound by UIBoundBooleans
+   public Map<String, Boolean> selectedEvalGroupIDsMap = new HashMap<String,Boolean>();
+   public Map<String, Boolean> selectedEvalHierarchyNodeIDsMap = new HashMap<String, Boolean>();
+   
    /*
     * These 2 values are bound here because they are not in Evaluation POJO 
     * and we need to store them when coming back to settings page from assign page.
@@ -461,6 +467,26 @@ public class EvaluationBean {
     */
    public String confirmAssignCoursesAction() { 
 
+       //TODO We have to populate the String Arrays with the Maps.
+       // This is because of the need to use UIBoundBooleans
+       List<String> groupIdCopy = new ArrayList<String>();
+       List<String> hierNodeIdCopy = new ArrayList<String>();
+       
+       for (String groupID: selectedEvalGroupIDsMap.keySet()) {
+           if (selectedEvalGroupIDsMap.get(groupID).booleanValue() == true) {
+               groupIdCopy.add(groupID);
+           }
+       }
+
+       for (String hierNodeID: selectedEvalHierarchyNodeIDsMap.keySet()) {
+           if (selectedEvalHierarchyNodeIDsMap.get(hierNodeID).booleanValue() == true) {
+               hierNodeIdCopy.add(hierNodeID);
+           }
+       }
+       
+       selectedEvalGroupIds = groupIdCopy.toArray(new String[]{});
+       selectedEvalHierarchyNodeIds = hierNodeIdCopy.toArray(new String[] {});
+
       // make sure that the submitted nodes are valid
       Set<EvalHierarchyNode> nodes = null;
       if (selectedEvalHierarchyNodeIds.length > 0) {
@@ -484,7 +510,7 @@ public class EvaluationBean {
       if (selectedEvalGroupIds != null && selectedEvalGroupIds.length > 0) {
          // get enrollments one by one
          enrollment = new int[selectedEvalGroupIds.length];
-         for (int i = 0; i<selectedEvalGroupIds.length; i++){
+         for (int i = 0; i<selectedEvalGroupIds.length; i++) {
             Set<String> s = external.getUserIdsForEvalGroup(selectedEvalGroupIds[i], EvalConstants.PERM_TAKE_EVALUATION);
             enrollment[i] = s.size();           
          }

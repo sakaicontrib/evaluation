@@ -5,10 +5,13 @@
 package org.sakaiproject.evaluation.tool.producers;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationBean;
@@ -99,9 +102,17 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
             labels[i] = c.title;
          }
 
-         UISelect siteCheckboxes = UISelect.makeMultiple(form, "siteCheckboxes", ids, "#{evaluationBean.selectedSakaiSiteIds}", null);
+         UISelect siteCheckboxes = UISelect.makeMultiple(form, "siteCheckboxes", ids, "#{evaluationBean.selectedEvalGroupIds}", null);
          String selectID = siteCheckboxes.getFullID();
 
+         Set<String> evalGroupIDs = new HashSet<String>();
+         /* Display the table for selecting hierarchy nodes */
+         Boolean showHierarchy = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
+         if (showHierarchy.booleanValue() == true) {
+            UIMessage.make(form, "assign-hierarchy-title", "assigneval.page.hier.title");
+            hierUtil.renderSelectHierarchyNodesTree(form, "hierarchy-tree-select:", "", "" );
+         }
+         
          for (int i=0; i < ids.length; i++){
             UIBranchContainer checkboxRow = UIBranchContainer.make(form, "sites:", i+"");
             if (i % 2 == 0) {
@@ -113,12 +124,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
          }
       }
 
-      /* Display the table for selecting hierarchy nodes */
-      Boolean showHierarchy = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
-      if (showHierarchy.booleanValue() == true) {
-         UIMessage.make(form, "assign-hierarchy-title", "assigneval.page.hier.title");
-         hierUtil.renderSelectHierarchyNodesTree(form, "hierarchy-tree-select:", "evaluationBean.selectedEvalHierarchyNodeIds");
-      }
+      
 
 
       /*
@@ -151,5 +157,5 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
       return i;
    }
 
-}
 
+}

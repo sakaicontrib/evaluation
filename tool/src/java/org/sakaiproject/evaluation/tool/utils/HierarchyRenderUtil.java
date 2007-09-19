@@ -3,16 +3,22 @@ package org.sakaiproject.evaluation.tool.utils;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
+import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
+import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
+import org.sakaiproject.evaluation.logic.providers.EvalGroupsProvider;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeGroupsProducer;
 import org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeProducer;
+import org.sakaiproject.evaluation.tool.renderers.HierarchyRowRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.HierarchyNodeParameters;
 import org.sakaiproject.evaluation.tool.viewparams.ModifyHierarchyNodeParameters;
 
 import uk.org.ponder.arrayutil.MapUtil;
+import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
@@ -42,6 +48,24 @@ public class HierarchyRenderUtil {
    public void setExternalHierarchyLogic(ExternalHierarchyLogic logic) {
       this.hierarchyLogic = logic;
    }
+   
+   private EvalExternalLogic externalLogic;
+   public void setExternalLogic(EvalExternalLogic externalLogic) {
+      this.externalLogic = externalLogic;
+   }
+   
+   private EvalGroupsProvider groupProvider;
+   public void setEvalGroupsProvider(EvalGroupsProvider provider) {
+       groupProvider = provider;
+   }
+   
+   /* 
+    * This is currently for the select checkboxes in the new eval wizard.
+    */
+   private HierarchyRowRenderer hierarchyRowRenderer;
+   public void setHierarchyRowRenderer(HierarchyRowRenderer renderer) {
+       hierarchyRowRenderer = renderer;
+   }
 
    /**
     * This renders a view of the hierarchy that allows modification and addition of
@@ -70,7 +94,7 @@ public class HierarchyRenderUtil {
     * @param clientID
     * @param elbinding
     */
-   public void renderSelectHierarchyNodesTree(UIContainer parent, String clientID, String elbinding) {
+   public void renderSelectHierarchyNodesTree(UIContainer parent, String clientID, String elbinding, String groupElBinding) {
       UIJointContainer joint = new UIJointContainer(parent, clientID, "hierarchy_table_treeview:");
 
       UIMessage.make(joint, "node-select-header", "controlhierarchy.table.selectnode.header");
@@ -78,14 +102,14 @@ public class HierarchyRenderUtil {
 
       EvalHierarchyNode root = hierarchyLogic.getRootLevelNode();
 
-      UISelect siteCheckboxes = UISelect.makeMultiple(joint, "selectColumnCheckboxes", new String[] {}, elbinding, null);
-      String selectID = siteCheckboxes.getFullID();
-      List<String> checkboxValues = new ArrayList<String>();
+      //UISelect siteCheckboxes = UISelect.makeMultiple(joint, "selectColumnCheckboxes", new String[] {}, elbinding, null);
+      //String selectID = siteCheckboxes.getFullID();
+      //List<String> checkboxValues = new ArrayList<String>();
 
-      renderSelectHierarchyNode(joint, root, 0, selectID, checkboxValues);
+      renderSelectHierarchyNode(joint, root, 0);
 
-      String[] ids = checkboxValues.toArray(new String[]{});
-      siteCheckboxes.optionlist = siteCheckboxes.optionnames = UIOutputMany.make(ids);
+      //String[] ids = checkboxValues.toArray(new String[]{});
+      //siteCheckboxes.optionlist = siteCheckboxes.optionnames = UIOutputMany.make(ids);
    }
 
    /**
@@ -95,7 +119,21 @@ public class HierarchyRenderUtil {
     * @param selectID
     * @param checkboxValues
     */
-   private void renderSelectHierarchyNode(UIContainer tofill, EvalHierarchyNode node, int level, String selectID, List<String> checkboxValues) {
+   private void renderSelectHierarchyNode(UIContainer tofill, EvalHierarchyNode node, int level ) {
+      hierarchyRowRenderer.renderRow(tofill, "hierarchy-level-row:", level, node);
+      
+      Set<String> groupIDs = hierarchyLogic.getEvalGroupsForNode(node.id);
+      for (String groupID: groupIDs) {
+          EvalGroup evalGroupObj = externalLogic.makeEvalGroupObject(groupID);
+          hierarchyRowRenderer.renderRow(tofill, "hierarchy-level-row:", level+1, evalGroupObj);
+      }
+      
+      for (String childNodeID: node.directChildNodeIds) {
+          EvalHierarchyNode childHierNode = hierarchyLogic.getNodeById(childNodeID);
+          renderSelectHierarchyNode(tofill, childHierNode, level+1);
+      }
+      
+      /* 
       String title = node.title != null ? node.title : "Null Title?";
       UIBranchContainer tableRow = UIBranchContainer.make(tofill, "hierarchy-level-row:");
       UIOutput.make(tableRow, "node-select-cell");
@@ -104,9 +142,24 @@ public class HierarchyRenderUtil {
       UIOutput name = UIOutput.make(tableRow, "node-name", title);
       name.decorate(new UIFreeAttributeDecorator( MapUtil.make("style", "text-indent:" + (level*2) + "em") ));
 
-      for (String childId : node.directChildNodeIds) {
-         renderSelectHierarchyNode(tofill, hierarchyLogic.getNodeById(childId), level+1, selectID, checkboxValues);
+      Set<String> groupIDs = hierarchyLogic.getEvalGroupsForNode(node.id);
+      for (String groupID: groupIDs) {
+          renderSelectHierarchyGroup(tofill, groupID, level+1, evalGroupIDs, groupClientID);
       }
+
+      for (String childId : node.directChildNodeIds) {
+         renderSelectHierarchyNode(tofill, hierarchyLogic.getNodeById(childId), level+1, selectID, checkboxValues, evalGroupIDs, groupElBinding, groupClientID);
+      } */
+   }
+   
+   private void renderSelectHierarchyGroup(UIContainer tofill, String groupID, int level, Set<String> evalGroupIDs, String clientID) {
+       UIBranchContainer tableRow = UIBranchContainer.make(tofill, "hierarchy-level-row:");
+       UIOutput.make(tableRow, "node-select-cell");
+       //UISelectChoice.make(tableRow, "select-checkbox", clientID, evalGroupIDs.size());
+       UIBoundBoolean.make(tableRow, "select-checkbox");
+       evalGroupIDs.add(groupID);
+       UIOutput name = UIOutput.make(tableRow, "node-name", externalLogic.getDisplayTitle(groupID));
+       name.decorate(new UIFreeAttributeDecorator( MapUtil.make("style", "text-indent:" + (level*2) + "em") ));
    }
 
    /**
@@ -207,10 +260,6 @@ public class HierarchyRenderUtil {
          labels.add("Top Level");
          EvalHierarchyNode root = hierarchyLogic.getRootLevelNode();
          populateHierSelectLists(values, labels, 0, root);
-         //for (String childId: root.directChildNodeIds) {
-         //   EvalHierarchyNode rootChild = hierarchyLogic.getNodeById(childId);
-         //   populateHierSelectLists(values, labels, 0, rootChild);
-        // }
       }
       else {
          values.add(node.id);

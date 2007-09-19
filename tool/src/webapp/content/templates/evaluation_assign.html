@@ -31,9 +31,14 @@
 			</div>
 			<h3 rsf:id="assign-eval-edit-page-title">Evaluation Assignment Confirmation</h3>
 
-			<p class="instruction"  rsf:id="assign-eval-instructions">You are allowed to assign this evaluation (eval title) to the groups listed below.</p> 
-			
+						
 			<form rsf:id="eval-assign-form" method="post">
+				<h4 rsf:id="assign-hierarchy-title">Assign to Hierarchy Nodes</h4>
+				<div rsf:id="hierarchy-tree-select:">(Tree goes here)
+				</div>
+			
+				<p class="instruction"  rsf:id="assign-eval-instructions">You are allowed to assign this evaluation (eval title) to the groups listed below.</p> 
+				
 				<div rsf:id="siteCheckboxes"/>
 				<table border="0" cellspacing="0" cellpadding="3" style="width:90%" class="listHier lines nolines" >
 					<thead>
@@ -58,9 +63,7 @@
 					</tbody>
 				</table>
 				
-				<h4 rsf:id="assign-hierarchy-title">Assign to Hierarchy Nodes</h4>
-				<div rsf:id="hierarchy-tree-select:">(Tree goes here)
-				</div>
+				
 
 				<p class="act">	
 					<input type="submit" name="save_assigned_courses" value="Save Assigned Courses" rsf:id="confirmAssignCourses" class="active" accesskey="s" />

@@ -309,7 +309,15 @@
 	<bean id="HierarchyRenderUtil" class="org.sakaiproject.evaluation.tool.utils.HierarchyRenderUtil">
 		<property name="externalHierarchyLogic" 
 			ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+		<property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+        <property name="hierarchyRowRenderer" ref="HierarchySelectNodeRowRenderer" />
 	</bean>
+  
+    <bean id="HierarchySelectNodeRowRenderer" class="org.sakaiproject.evaluation.tool.renderers.HierarchyRowRenderer">
+        <property name="externalHierarchyLogic" 
+            ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+        <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+    </bean>
 
 	<bean class="org.sakaiproject.evaluation.tool.producers.PreviewItemProducer">
 		<property name="itemsLogic"
