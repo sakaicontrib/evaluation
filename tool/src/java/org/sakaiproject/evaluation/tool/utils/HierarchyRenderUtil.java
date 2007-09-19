@@ -222,6 +222,19 @@ public class HierarchyRenderUtil {
          UIOutput.make(tableRow, "assigned-group-count-cell");
          UIOutput.make(tableRow, "assign-group-count", numGroupsMap.get(node.id).toString());
       }
+      
+      /*
+       * If there are any assigned groups, render them as their own rows.
+       */
+      Set<String> assignedGroupIDs = hierarchyLogic.getEvalGroupsForNode(node.id);
+      for (String assignedGroupID: assignedGroupIDs) {
+          EvalGroup assignedGroup = externalLogic.makeEvalGroupObject(assignedGroupID);
+          UIBranchContainer groupRow = UIBranchContainer.make(tofill, "hierarchy-level-row:");
+          UIOutput.make(groupRow, "node-metadata-cell");
+          UIOutput groupName = UIOutput.make(groupRow, "node-name", assignedGroup.title);
+          groupName.decorate(new UIFreeAttributeDecorator( MapUtil.make("style", "text-indent:" + (level*4) + "em") ));
+          
+      }
 
       for (String childId : node.directChildNodeIds) {
          renderHierarchyNode(tofill, hierarchyLogic.getNodeById(childId), level+1);
