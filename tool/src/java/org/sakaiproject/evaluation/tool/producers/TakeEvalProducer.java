@@ -383,9 +383,15 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
     * If you pass in a null or empty sectiontitle, it will assume that it is for the general top level node level.
     */
    private void handleCategoryHierarchyNodeRender(List<EvalTemplateItem> itemsInNode, UIForm form, UIContainer tofill, String sectiontitle) {
-       if (sectiontitle != null && !sectiontitle.equals("")) {
-           UIBranchContainer labelrow = UIBranchContainer.make(tofill, "itemrow:hier-node-section");
-           UIOutput.make(labelrow, "hier-node-title", sectiontitle);
+       /*
+        * Showing the section title is configurable via the admin screen.
+        */
+       Boolean showHierSectionTitle = (Boolean) evalSettings.get(EvalSettings.DISPLAY_HIERARCHY_HEADERS);
+       if (showHierSectionTitle != null && showHierSectionTitle.booleanValue() == true) {
+           if (sectiontitle != null && !sectiontitle.equals("")) {
+               UIBranchContainer labelrow = UIBranchContainer.make(tofill, "itemrow:hier-node-section");
+               UIOutput.make(labelrow, "hier-node-title", sectiontitle);
+           }
        }
 
        for (int i = 0; i <itemsInNode.size(); i++) {
