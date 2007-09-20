@@ -64,7 +64,7 @@ public class TextRenderer implements ItemRenderer {
 
 		UIInput textarea = UIInput.make(container, "essayBox", bindings[0], initValue); //$NON-NLS-1$ //$NON-NLS-2$
 
-		Map attrmap = new HashMap();
+		Map<String, String> attrmap = new HashMap<String, String>();
 		attrmap.put("rows", templateItem.getDisplayRows().toString()); //$NON-NLS-1$
 		if (disabled) {
 			attrmap.put("disabled", "true"); //$NON-NLS-1$ //$NON-NLS-2$		

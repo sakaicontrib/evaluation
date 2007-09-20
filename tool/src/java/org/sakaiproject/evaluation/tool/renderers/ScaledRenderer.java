@@ -32,9 +32,8 @@ import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.UISelectLabel;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
-import uk.org.ponder.rsf.components.decorators.UIColourDecorator;
-import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
+import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 
 /**
  * This handles the rendering of scaled type items
