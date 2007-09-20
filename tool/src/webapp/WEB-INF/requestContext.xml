@@ -210,6 +210,7 @@
 	<bean class="org.sakaiproject.evaluation.tool.producers.AdministrateProducer">
 		<property name="externalLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+		<property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 	</bean>
 
 	<bean class="org.sakaiproject.evaluation.tool.producers.ControlEvaluationsProducer">
