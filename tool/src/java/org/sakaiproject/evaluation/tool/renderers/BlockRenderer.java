@@ -14,9 +14,7 @@
 
 package org.sakaiproject.evaluation.tool.renderers;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.utils.ArrayUtils;
@@ -26,6 +24,7 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 
+import uk.org.ponder.arrayutil.MapUtil;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIJointContainer;
@@ -71,7 +70,7 @@ public class BlockRenderer implements ItemRenderer {
 		}
 
 		// check that the child count matches the bindings count
-		List childList = itemsLogic.getBlockChildTemplateItemsForBlockParent(templateItem.getId(), false);
+		List<EvalTemplateItem> childList = itemsLogic.getBlockChildTemplateItemsForBlockParent(templateItem.getId(), false);
 		if ( !disabled && (childList.size() != bindings.length) ) {
 			throw new IllegalArgumentException("The bindings array ("+bindings.length+") must match the size of the block child count ("+childList.size()+")");
 		}
@@ -149,10 +148,8 @@ public class BlockRenderer implements ItemRenderer {
 				// put in the block header text (only once)
 				if (j == 0) {
 					UIVerbatim headerText = UIVerbatim.make(rowBranch, "itemText", templateItem.getItem().getItemText()); //$NON-NLS-1$
-					Map map = new HashMap();
-					map.put("rowspan", (optionCount + 1) + "");
 					headerText.decorators =
-						new DecoratorList(new UIFreeAttributeDecorator(map));
+						new DecoratorList(new UIFreeAttributeDecorator( MapUtil.make("rowspan", (optionCount + 1) + "") ));
 				}
 
 				// Actual label

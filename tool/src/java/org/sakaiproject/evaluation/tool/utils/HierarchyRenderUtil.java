@@ -1,8 +1,6 @@
 package org.sakaiproject.evaluation.tool.utils;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -11,7 +9,6 @@ import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.logic.providers.EvalGroupsProvider;
-import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeGroupsProducer;
 import org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeProducer;
 import org.sakaiproject.evaluation.tool.renderers.HierarchyRowRenderer;
@@ -30,9 +27,6 @@ import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIJointContainer;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
-import uk.org.ponder.rsf.components.UIOutputMany;
-import uk.org.ponder.rsf.components.UISelect;
-import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.decorators.UIFreeAttributeDecorator;
 
 /** 
@@ -238,58 +232,6 @@ public class HierarchyRenderUtil {
 
       for (String childId : node.directChildNodeIds) {
          renderHierarchyNode(tofill, hierarchyLogic.getNodeById(childId), level+1);
-      }
-   }
-
-   /**
-    * @param form
-    * @param selectID
-    * @param elBinding
-    */
-   public void makeHierSelect(UIForm form, String selectID, String elBinding) {
-      List<String> hierSelectValues = new ArrayList<String>();
-      List<String> hierSelectLabels = new ArrayList<String>();
-      populateHierSelectLists(hierSelectValues, hierSelectLabels, 0, null);
-      UISelect.make(form, selectID,
-            hierSelectValues.toArray(new String[]{}), 
-            hierSelectLabels.toArray(new String[]{}),
-            elBinding, null);
-   }
-
-   /**
-    * Populates the values and labels that need to be bound to the drop down combo box.
-    * 
-    * It should end up looking like the following:
-    * + Top Level
-    * + Hierarchy Root
-    *   + School of Something
-    *     - Department Blah
-    *   + School of Another Thing  
-    * 
-    * etc.
-    * 
-    * @param values
-    * @param labels
-    * @param level
-    * @param node
-    */
-   private void populateHierSelectLists(List<String> values, List<String> labels, int level, EvalHierarchyNode node) {
-      if (values.size() == 0) {
-         values.add(EvalConstants.HIERARCHY_NODE_ID_NONE);
-         labels.add("Top Level");
-         EvalHierarchyNode root = hierarchyLogic.getRootLevelNode();
-         populateHierSelectLists(values, labels, 0, root);
-      }
-      else {
-         values.add(node.id);
-         String label = node.title;
-         for (int i = 0; i < level; i++) {
-            label = "." + label;
-         }
-         labels.add(label);
-         for (String childId: node.directChildNodeIds) {
-            populateHierSelectLists(values, labels, level+2, hierarchyLogic.getNodeById(childId));
-         }
       }
    }
 

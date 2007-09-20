@@ -33,10 +33,10 @@ import uk.org.ponder.rsf.components.UIJointContainer;
  */
 public class ItemRendererImpl implements ItemRenderer {
 
-	private Map renderImpls = new HashMap();
-	public void setRenderTypes(List types) {
-		for (Iterator iter = types.iterator(); iter.hasNext();) {
-			ItemRenderer ir = (ItemRenderer) iter.next();
+	private Map<String, ItemRenderer> renderImpls = new HashMap<String, ItemRenderer>();
+	public void setRenderTypes(List<ItemRenderer> types) {
+		for (Iterator<ItemRenderer> iter = types.iterator(); iter.hasNext();) {
+			ItemRenderer ir = iter.next();
 			renderImpls.put(ir.getRenderType(), ir);
 		}
 	}

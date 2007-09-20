@@ -24,6 +24,7 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
+import org.sakaiproject.evaluation.tool.renderers.HierarchyNodeSelectorRenderer;
 import org.sakaiproject.evaluation.tool.utils.HierarchyRenderUtil;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateItemViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
@@ -90,10 +91,12 @@ ViewParamsReporter, NavigationCaseReporter, DynamicNavigationCaseReporter {
         this.richTextEvolver = richTextEvolver;
     }
 
-    private HierarchyRenderUtil hierUtil;
-    public void setHierarchyRenderUtil(HierarchyRenderUtil util) {
-        hierUtil = util;
+    private HierarchyNodeSelectorRenderer hierarchyNodeSelectorRenderer;
+    public void setHierarchyNodeSelectorRenderer(
+          HierarchyNodeSelectorRenderer hierarchyNodeSelectorRenderer) {
+       this.hierarchyNodeSelectorRenderer = hierarchyNodeSelectorRenderer;
     }
+
 
     public void fillComponents(UIContainer tofill, ViewParameters viewparams,
             ComponentChecker checker) {
@@ -240,12 +243,10 @@ ViewParamsReporter, NavigationCaseReporter, DynamicNavigationCaseReporter {
                     EvaluationConstant.ITEM_RESULTS_SHARING_VALUES[isDefaultResultSharing.booleanValue() ? 0 : 1]));
         }
 
-        /* Dropdown option for selecting Hierarchy Node */
+        // hierarchy node selector control
         Boolean showHierarchyOptions = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
-        if (showHierarchyOptions.booleanValue() == true) {
-            UIBranchContainer hierarchyOptions = UIBranchContainer.make(form, "showItemHierarchyNodeSelection:");
-            UIMessage.make(form, "item-hierarchy-assign-header", "modifyitem.hierarchy.assign.header");
-            hierUtil.makeHierSelect(form, "hierarchyNodeSelect", templateItemOTP + "hierarchyNodeId");
+        if (showHierarchyOptions) {
+           hierarchyNodeSelectorRenderer.renderHierarchyNodeSelector(form, "hierarchyNodeSelector", templateItemOTP + "hierarchyNodeId", null);
         }
 
         UIMessage.make(form, "cancel-button", "general.cancel.button");

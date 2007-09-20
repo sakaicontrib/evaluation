@@ -79,14 +79,17 @@
 					<label for="showItemCategory:::item_category_I" rsf:id="instructor-category-header">Instructor</label>	
 				</div>	
 				
-				<div rsf:id="showItemHierarchyNodeSelection:">
-					<h4><span rsf:id="item-hierarchy-assign-header">Hierarchy Assignment :</span></h4>
-					<select style="font-family: monospace" rsf:id="hierarchyNodeSelect" id="hierarchyNodeSelect">
-						<option value="TOP_LEVEL">Top Level</option>
-						<option value="BIOL_DEPT">+ Biology Dept</option>
-						<option value="BIOL_101">  - Bio 101</option>
-					</select>
-				</div>
+                <!-- DIV tag for node selector renderer -->
+                <div rsf:id="hierarchyNodeSelector:">
+                  <div>
+                     <h4><span>Hierarchy Assignment :</span></h4>
+                     <select style="font-family: monospace">
+                        <option value="TOP_LEVEL">Top Level</option>
+                        <option value="BIOL_DEPT">+ Biology Dept</option>
+                        <option value="BIOL_101">  - Bio 101</option>
+                     </select>
+                  </div>
+                </div>
 				
 				<p class="act">
 					<input name="saveHeaderAction" rsf:id="saveHeaderAction" type="submit" value="Save item" onclick="javascript:flag='save';" class="active" accesskey="s"/>
