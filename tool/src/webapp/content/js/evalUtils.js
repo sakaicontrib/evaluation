@@ -25,7 +25,7 @@ var EvalSystem = function() {
       var buttonid = namebase + "hiddenBtn";
       var button = $it(buttonid);
       for (var i = 0; i < count; ++ i) {
-        var selectid = namebase + "item-row::"+i+":item-select-selection";
+        var selectid = namebase + "item-row:"+i+":item-select-selection";
         var selection = $it(selectid);
         selection.onchange = function() {
         	button.click();

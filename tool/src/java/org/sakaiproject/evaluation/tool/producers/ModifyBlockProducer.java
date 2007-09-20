@@ -188,8 +188,7 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 
       } else {
          // render block page
-         UIBranchContainer showBlock = UIBranchContainer.make(tofill, "blockPage:");
-         UIForm form = UIForm.make(showBlock, "blockForm"); //$NON-NLS-1$
+         UIForm form = UIForm.make(tofill, "blockForm"); //$NON-NLS-1$
 
          UIMessage.make(form, "modifyblock-page-title", "modifyblock.page.title");
          UIMessage.make(form, "modifyblock-items-list-title", "modifyblock.items.list.title"); //$NON-NLS-1$ //$NON-NLS-2$

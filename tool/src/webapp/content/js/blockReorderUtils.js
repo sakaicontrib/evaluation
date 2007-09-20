@@ -5,7 +5,7 @@
 $(document).ready(
 	function () {
 		
-		var baseId = "blockPage::";
+		var baseId = ""; // "blockPage::";
 		
 		function $it(id) {
         	return document.getElementById(id);
