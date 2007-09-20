@@ -245,7 +245,7 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
          // hierarchy node selector control
          Boolean showHierarchyOptions = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
          if (showHierarchyOptions) {
-            hierarchyNodeSelectorRenderer.renderHierarchyNodeSelector(form, "hierarchyNodeSelector", itemPath + ".hierarchyNodeId", null);
+            hierarchyNodeSelectorRenderer.renderHierarchyNodeSelector(form, "hierarchyNodeSelector:", itemPath + ".hierarchyNodeId", null);
          }
 
          /* ---------------------------
