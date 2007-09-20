@@ -280,7 +280,7 @@ ViewParamsReporter, DynamicNavigationCaseReporter {
 
         /* Dropdown option for selecting Hierarchy Node */
         Boolean showHierarchyOptions = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
-        if (showHierarchyOptions.booleanValue() == true) {
+        if (showHierarchyOptions != null && showHierarchyOptions.booleanValue() == true) {
             UIBranchContainer.make(form, "showItemHierarchyNodeSelection:");
             UIMessage.make(form, "item-hierarchy-assign-header", "modifyitem.hierarchy.assign.header");
             hierUtil.makeHierSelect(form, "hierarchyNodeSelect", templateItemOTP + "hierarchyNodeId");
