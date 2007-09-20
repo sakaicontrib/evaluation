@@ -50,7 +50,7 @@
         <dependency>
                 <groupId>generic-dao</groupId>
                 <artifactId>generic-dao</artifactId>
-                <version>0.91</version>
+                <version>0.9.1</version>
         </dependency>
 
         <!-- Spring and Hibernate dependencies. -->
