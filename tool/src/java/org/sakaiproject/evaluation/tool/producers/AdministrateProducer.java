@@ -58,6 +58,11 @@ public class AdministrateProducer implements ViewComponentProducer {
    public void setExternalLogic(EvalExternalLogic externalLogic) {
       this.externalLogic = externalLogic;
    }
+   
+   private EvalSettings evalSettings;
+   public void setEvalSettings(EvalSettings evalSettings) {
+      this.evalSettings = evalSettings;
+   }
 
    // Used to prepare the path for WritableBeanLocator
    private String ADMIN_WBL = "settingsBean";
@@ -97,8 +102,14 @@ public class AdministrateProducer implements ViewComponentProducer {
       UIInternalLink.make(tofill, "control-import-toplink",UIMessage.make("administrate.top.import.data"),
             new SimpleViewParameters(ControlImportProducer.VIEW_ID));	
 
-      UIInternalLink.make(tofill, "control-hierarchy-toplink", UIMessage.make("administrate.top.control.hierarchy"),
-            new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID));
+      /*
+       * Only Show Control Hierarchy if the Hierarchy Display Options are on.
+       */
+      Boolean useHierarchyFeatures = (Boolean) evalSettings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
+      if (useHierarchyFeatures != null && useHierarchyFeatures == true) {
+          UIInternalLink.make(tofill, "control-hierarchy-toplink", UIMessage.make("administrate.top.control.hierarchy"),
+                new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID));
+      }
 
       UIInternalLink.make(tofill, "test-evalgroupprovider-toplink",UIMessage.make("admintesteg.page.title"),
             new SimpleViewParameters(AdminTestEGProviderProducer.VIEW_ID));           
