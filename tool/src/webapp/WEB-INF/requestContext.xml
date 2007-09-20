@@ -194,12 +194,6 @@
       <property name="loc" ref="hierNodeLocator" />
    </bean>
 
-	<bean class="org.sakaiproject.evaluation.tool.producers.AdministrateProducer">
-		<property name="externalLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-		<property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-	</bean>
-
    <bean id="hierNodeGroupsLocator"
       class="org.sakaiproject.evaluation.tool.locators.HierarchyNodeGroupsLocator">
       <property name="external"
@@ -217,10 +211,36 @@
       <property name="hierloc" ref="hierNodeGroupsLocator" />
    </bean>
 
+
    <!-- evolver definitions here -->
+
+   <bean id="HierarchyRenderUtil"
+      class="org.sakaiproject.evaluation.tool.utils.HierarchyRenderUtil">
+      <property name="externalHierarchyLogic"
+         ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+      <property name="externalLogic"
+         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+      <property name="hierarchyRowRenderer"
+         ref="HierarchySelectNodeRowRenderer" />
+   </bean>
+
+   <bean id="HierarchySelectNodeRowRenderer"
+      class="org.sakaiproject.evaluation.tool.renderers.HierarchyRowRenderer">
+      <property name="externalHierarchyLogic"
+         ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+      <property name="externalLogic"
+         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+   </bean>
+
 
 
    <!-- producers here -->
+   <bean class="org.sakaiproject.evaluation.tool.producers.AdministrateProducer">
+      <property name="externalLogic"
+         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+      <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+   </bean>
+
    <bean
       class="org.sakaiproject.evaluation.tool.producers.SummaryProducer">
       <property name="externalLogic"
@@ -381,47 +401,6 @@
    </bean>
 
    <bean
-      class="org.sakaiproject.evaluation.tool.producers.ModifyBlockProducer">
-      <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-      <property name="itemsLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
-      <property name="settings"
-         ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-      <property name="richTextEvolver" ref="richTextEvolver" />
-      <property name="hierarchyNodeSelectorRenderer"
-         ref="org.sakaiproject.evaluation.tool.renderers.HierarchyNodeSelectorRenderer" />
-   </bean>
-
-	<bean class="org.sakaiproject.evaluation.tool.producers.EvaluationAssignProducer">
-		<property name="externalLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-		<property name="evaluationBean" ref="evaluationBean" />
-		<property name="settings"
-			ref="org.sakaiproject.evaluation.logic.EvalSettings" />	
-		<property name="hierarchyRenderUtil" ref="HierarchyRenderUtil" />
-		<property name="externalHierarchyLogic" ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
-	</bean>
-
-   <bean id="HierarchyRenderUtil"
-      class="org.sakaiproject.evaluation.tool.utils.HierarchyRenderUtil">
-      <property name="externalHierarchyLogic"
-         ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
-      <property name="externalLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-      <property name="hierarchyRowRenderer"
-         ref="HierarchySelectNodeRowRenderer" />
-   </bean>
-
-   <bean id="HierarchySelectNodeRowRenderer"
-      class="org.sakaiproject.evaluation.tool.renderers.HierarchyRowRenderer">
-      <property name="externalHierarchyLogic"
-         ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
-      <property name="externalLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-   </bean>
-
-   <bean
       class="org.sakaiproject.evaluation.tool.producers.PreviewItemProducer">
       <property name="itemsLogic"
          ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
@@ -471,14 +450,14 @@
       <property name="dateEvolver" ref="fieldDateInputEvolver" />
    </bean>
 
-   <bean
-      class="org.sakaiproject.evaluation.tool.producers.EvaluationAssignProducer">
+   <bean class="org.sakaiproject.evaluation.tool.producers.EvaluationAssignProducer">
       <property name="externalLogic"
          ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
       <property name="evaluationBean" ref="evaluationBean" />
       <property name="settings"
-         ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+         ref="org.sakaiproject.evaluation.logic.EvalSettings" />  
       <property name="hierarchyRenderUtil" ref="HierarchyRenderUtil" />
+      <property name="externalHierarchyLogic" ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
    </bean>
 
    <bean
