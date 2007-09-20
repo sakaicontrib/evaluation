@@ -191,7 +191,7 @@ public class ModifyHeaderProducer implements ViewComponentProducer, ViewParamsRe
         // hierarchy node selector control
         Boolean showHierarchyOptions = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
         if (showHierarchyOptions) {
-           hierarchyNodeSelectorRenderer.renderHierarchyNodeSelector(form, "hierarchyNodeSelector", templateItemOTP + "hierarchyNodeId", null);
+           hierarchyNodeSelectorRenderer.renderHierarchyNodeSelector(form, "hierarchyNodeSelector:", templateItemOTP + "hierarchyNodeId", null);
         }
 
         UIMessage.make(form, "cancel-button","general.cancel.button");
@@ -215,7 +215,8 @@ public class ModifyHeaderProducer implements ViewComponentProducer, ViewParamsRe
          */
     }
 
-    public List reportNavigationCases() {
+    @SuppressWarnings("unchecked")
+   public List reportNavigationCases() {
         List i = new ArrayList();
 
         i.add(new NavigationCase(PreviewItemProducer.VIEW_ID,

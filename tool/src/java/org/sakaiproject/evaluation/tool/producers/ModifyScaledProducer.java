@@ -271,7 +271,7 @@ public class ModifyScaledProducer implements ViewComponentProducer, ViewParamsRe
       // hierarchy node selector control
       Boolean showHierarchyOptions = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
       if (showHierarchyOptions) {
-         hierarchyNodeSelectorRenderer.renderHierarchyNodeSelector(form, "hierarchyNodeSelector", templateItemOTP + "hierarchyNodeId", null);
+         hierarchyNodeSelectorRenderer.renderHierarchyNodeSelector(form, "hierarchyNodeSelector:", templateItemOTP + "hierarchyNodeId", null);
       }
 
       UIMessage.make(form, "cancel-button","general.cancel.button");
