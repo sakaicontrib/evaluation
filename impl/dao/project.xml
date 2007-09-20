@@ -54,9 +54,9 @@
 
         <!-- generic DAO -->
         <dependency>
-                <groupId>generic-dao</groupId>
-                <artifactId>generic-dao</artifactId>
-                <version>0.9.1</version>
+           <groupId>generic-dao</groupId>
+           <artifactId>generic-dao</artifactId>
+           <version>0.9.1</version>
         </dependency>
 
         <!-- Spring and Hibernate dependencies. -->
