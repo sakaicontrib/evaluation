@@ -249,6 +249,14 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
             } else {
                 UIBoundBoolean.make(form, "idealColor", "#{templateBBean.idealColor}", null);
             }
+            
+            /* Dropdown option for selecting Hierarchy Node */
+            Boolean showHierarchyOptions = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
+            if (showHierarchyOptions != null && showHierarchyOptions.booleanValue() == true) {
+                UIBranchContainer.make(form, "showItemHierarchyNodeSelection:");
+                UIMessage.make(form, "item-hierarchy-assign-header", "modifyitem.hierarchy.assign.header");
+                hierUtil.makeHierSelect(form, "hierarchyNodeSelect", itemPath + ".hierarchyNodeId");
+            }
 
             /* ---------------------------
 			if (modify) {// modify existing block

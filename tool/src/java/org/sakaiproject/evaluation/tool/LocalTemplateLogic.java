@@ -99,6 +99,19 @@ public class LocalTemplateLogic {
 	}
 
 	public void saveTemplateItem(EvalTemplateItem tosave) {
+	    /* This is a temporary hack that is only good while we are only using TOP LEVEL and NODE LEVEL.
+	         * Basically, we're putting everything in one combo box and this is a good way to check to see if
+	         * it's the top node.  Otherwise the user selected a node id so it must be at the NODE LEVEL since
+	         * we don't support the other levels yet.
+	         */
+	        if (tosave.getHierarchyNodeId() != null && !tosave.getHierarchyNodeId().equals("")
+	                && !tosave.getHierarchyNodeId().equals(EvalConstants.HIERARCHY_NODE_ID_NONE)) {
+	            tosave.setHierarchyLevel(EvalConstants.HIERARCHY_LEVEL_NODE);
+	        }
+	        else if (tosave.getHierarchyNodeId() != null && !tosave.getHierarchyNodeId().equals("")
+	                && tosave.getHierarchyNodeId().equals(EvalConstants.HIERARCHY_NODE_ID_NONE)) {
+	            tosave.setHierarchyLevel(EvalConstants.HIERARCHY_LEVEL_TOP);
+	        }
 		itemsLogic.saveTemplateItem(tosave, external.getCurrentUserId());
 	}
 
