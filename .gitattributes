@@ -95,6 +95,7 @@ impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/entity/TemplateEntity
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvalAssignContextInterceptor.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvaluationInterceptor.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvaluationModificationRegistry.java -text
+impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/providers/EvalGroupsProviderUnivOfMichImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalImportImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalImportJobImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalImportLogicImpl.java -text

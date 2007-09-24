@@ -9,6 +9,16 @@
 
    <!-- Bring in the hibernate related beans -->
    <import resource="spring-hibernate.xml" />
+   
+   <!-- umich EvalGroupsProvider -->
+   <bean id="org.sakaiproject.evaluation.logic.providers.EvalGroupsProvider"
+  		class="org.sakaiproject.evaluation.logic.impl.providers.EvalGroupsProviderUnivOfMichImpl"
+   		init-method="init">
+   		<property name="courseManagementService" ref="org.sakaiproject.coursemanagement.api.CourseManagementService" />
+   		<property name="groupProvider" ref="org.sakaiproject.authz.api.GroupProvider" />
+   		<property name="securityService" ref="org.sakaiproject.authz.api.SecurityService" />
+   		<property name="userDirectoryService" ref="org.sakaiproject.user.api.UserDirectoryService" />
+	</bean>
 
    <!-- Handles data access to external (to the app) services -->
    <bean id="org.sakaiproject.evaluation.logic.EvalExternalLogic"
