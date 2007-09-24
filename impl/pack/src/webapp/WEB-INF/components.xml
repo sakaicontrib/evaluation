@@ -18,7 +18,6 @@
       <property name="emailService" ref="org.sakaiproject.email.api.EmailService" />
       <property name="entityBroker" ref="org.sakaiproject.entitybroker.EntityBroker" />
       <property name="entityManager" ref="org.sakaiproject.entity.api.EntityManager" />
-      <property name="evalGroupsProvider" ref="org.sakaiproject.evaluation.logic.providers.EvalGroupsProvider" />
       <property name="functionManager" ref="org.sakaiproject.authz.api.FunctionManager" />
       <property name="securityService" ref="org.sakaiproject.authz.api.SecurityService" />
       <property name="serverConfigurationService"
