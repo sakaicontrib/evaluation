@@ -116,7 +116,26 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 	 * Note that if a method is overloaded you should include the arguments in the
 	 * test name like so: testMethodClassInt (for method(Class, int);
 	 */
+	
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl#getEvaluationByEid(java.lang.String)}.
+	 */
+	public void testGetEvaluationByEid() {
+		EvalEvaluation evaluation = null;
 
+		// test getting evaluation having eid set
+		evaluation = evaluations.getEvaluationByEid( etdl.evaluationProvided.getEid() );
+		Assert.assertNotNull(evaluation);
+		Assert.assertEquals(etdl.evaluationProvided.getEid(), evaluation.getEid());
+
+		//test getting evaluation having eid not set  returns null
+		evaluation = evaluations.getEvaluationByEid( etdl.evaluationActive.getEid() );
+		Assert.assertNull(evaluation);
+
+		// test getting evaluation by invalid eid returns null
+		evaluation = evaluations.getEvaluationByEid( EvalTestDataLoad.INVALID_STRING_EID );
+		Assert.assertNull(evaluation);
+	}
 
 	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl#getEvaluationById(java.lang.Long)}.
@@ -370,7 +389,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 		int countACs = evaluationDao.countByProperties(EvalAssignGroup.class, 
 				new String[] { "evaluation.id" }, 
 				new Object[] { etdl.evaluationNewAdmin.getId() });
-		Assert.assertEquals(2, countACs);
+		Assert.assertEquals(3, countACs);
 		evaluations.deleteEvaluation(etdl.evaluationNewAdmin.getId(), EvalTestDataLoad.ADMIN_USER_ID);
 		eval = evaluations.getEvaluationById(etdl.evaluationNewAdmin.getId());
 		Assert.assertNull(eval);
@@ -416,10 +435,11 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 
 		l = evaluations.getEvaluationsByTemplateId( etdl.templateUser.getId() );
 		Assert.assertNotNull(l);
-		Assert.assertEquals(2, l.size());
+		Assert.assertEquals(3, l.size());
 		ids = EvalTestDataLoad.makeIdList(l);
 		Assert.assertTrue(ids.contains( etdl.evaluationActive.getId() ));
 		Assert.assertTrue(ids.contains( etdl.evaluationViewable.getId() ));
+		Assert.assertTrue(ids.contains( etdl.evaluationProvided.getId() ));
 
 		// test no evaluations for a template
 		l = evaluations.getEvaluationsByTemplateId( etdl.templateUnused.getId() );
@@ -444,7 +464,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 		Assert.assertEquals(2, count);
 
 		count = evaluations.countEvaluationsByTemplateId( etdl.templateUser.getId() );
-		Assert.assertEquals(2, count);
+		Assert.assertEquals(3, count);
 
 		// test no evaluations for a template
 		count = evaluations.countEvaluationsByTemplateId( etdl.templateUnused.getId() );
@@ -562,21 +582,22 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 
 		evals = evaluations.getVisibleEvaluationsForUser(EvalTestDataLoad.MAINT_USER_ID, false, false);
 		Assert.assertNotNull(evals);
-		Assert.assertEquals(3, evals.size());
+		Assert.assertEquals(4, evals.size());
 		ids = EvalTestDataLoad.makeIdList(evals);
 		Assert.assertTrue(ids.contains( etdl.evaluationNew.getId() ));
 		Assert.assertTrue(ids.contains( etdl.evaluationActive.getId() ));
 		Assert.assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
+		Assert.assertTrue(ids.contains( etdl.evaluationProvided.getId() ));
 
 		// test getting visible evals for the admin user (should be all)
 		evals = evaluations.getVisibleEvaluationsForUser(EvalTestDataLoad.ADMIN_USER_ID, false, false);
 		Assert.assertNotNull(evals);
-		Assert.assertEquals(6, evals.size());
+		Assert.assertEquals(7, evals.size());
 
 		// test getting recent closed evals for the admin user
 		evals = evaluations.getVisibleEvaluationsForUser(EvalTestDataLoad.ADMIN_USER_ID, true, false);
 		Assert.assertNotNull(evals);
-		Assert.assertEquals(5, evals.size());
+		Assert.assertEquals(6, evals.size());
 		ids = EvalTestDataLoad.makeIdList(evals);
 		Assert.assertTrue(! ids.contains( etdl.evaluationViewable.getId() ));
 

@@ -182,6 +182,21 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
       // should not get here so die if we do
       throw new RuntimeException("User ("+userId+") could NOT delete AC ("+assignGroup.getId()+")");
    }
+   
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.EvalAssignsLogic#getEvalgroupByEid(java.lang.String)
+	 */
+	public EvalAssignGroup getAssignGroupByEid(String eid) {
+		List evalAssignGroups = new ArrayList();
+		EvalAssignGroup group = null;
+		if(eid != null) {
+			evalAssignGroups = (List)dao.findByProperties(EvalAssignGroup.class, new String[] {"eid"}, new Object[] {eid});
+			if(!evalAssignGroups.isEmpty())
+				group = (EvalAssignGroup)evalAssignGroups.get(0);
+		}
+		return group;
+	}
 
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.EvalAssignsLogic#getAssignGroupById(java.lang.Long)

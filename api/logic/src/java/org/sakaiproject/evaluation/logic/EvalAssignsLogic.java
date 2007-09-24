@@ -58,6 +58,16 @@ public interface EvalAssignsLogic {
     * @param userId the internal user id (not username)
     */
    public void deleteAssignGroup(Long assignGroupId, String userId);
+   
+	/**
+	 * Get the assign group associated with this external id<br/>
+	 * Note: An assign group eid is null except when the assignGroup
+	 * was imported from an external system.
+	 * 
+	 * @param eid the id of an assign group in an external system
+	 * @return the assign group object or null if not found
+	 */
+	public EvalAssignGroup getAssignGroupByEid(String eid);
 
    /**
     * Get an assign group by its unique id,
