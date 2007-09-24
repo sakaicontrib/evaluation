@@ -52,5 +52,8 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/hierarchy"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/content-api"/>
 	<classpathentry kind="var" path="MAVEN_REPO/jdom/jars/jdom-1.0.jar"/>
+	<classpathentry kind="src" path="/cm-api"/>
+    <classpathentry kind="src" path="/site-manage-api"/>
+	<classpathentry kind="src" path="/entitybroker"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

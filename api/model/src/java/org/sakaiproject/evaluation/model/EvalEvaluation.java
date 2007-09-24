@@ -15,6 +15,8 @@ public class EvalEvaluation implements java.io.Serializable {
    // Fields    
 
    private Long id;
+   
+   private String eid;
 
    private Date lastModified;
 
@@ -175,6 +177,14 @@ public class EvalEvaluation implements java.io.Serializable {
    public void setEvalCategory(String evalCategory) {
       this.evalCategory = evalCategory;
    }
+   
+	public String getEid() {
+		return this.eid;
+	}
+
+	public void setEid(String eid) {
+		this.eid = eid;
+	}
 
    public Long getId() {
       return id;

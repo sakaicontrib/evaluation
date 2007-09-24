@@ -340,6 +340,21 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
       // should not get here so die if we do
       throw new RuntimeException("User ("+userId+") could NOT delete evaluation ("+evaluationId+")");
    }
+   
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.EvalEvaluationsLogic#getEvaluationByEid(java.lang.String)
+    */
+   public EvalEvaluation getEvaluationByEid(String eid) {
+	List evalEvaluations = new ArrayList();
+	EvalEvaluation evalEvaluation = null;
+	if(eid != null) {
+		evalEvaluations = (List)dao.findByProperties(EvalEvaluation.class, new String[] {"eid"}, new Object[] {eid});
+		if(!evalEvaluations.isEmpty())
+			evalEvaluation = (EvalEvaluation)evalEvaluations.get(0);
+	}
+	return evalEvaluation;
+   }
 
    /* (non-Javadoc)
     * @see edu.vt.sakai.evaluation.logic.EvalEvaluationsLogic#getEvaluationById(java.lang.Long)

@@ -31,11 +31,14 @@ import java.util.List;
  * <li>EvalItem</li>
  * <li>EvalTemplate</li>
  * <li>EvalTemplateItem</li>
+ * <li>EvalEvaluation</li>
+ * <li>EvalAssignGroup</li>
  * </ul>
  * By default, processing occurs in the current interactive session. The
  * session is periodically set active to avoid timing out during a long-running
  * import. Property eval.qrtzImport=true in sakai.properties causes processing
- * in a Quartz job rather than the current interactive session.
+ * in a Quartz job rather than the current interactive session but this is
+ * currently not working - see EVALSYS-273.
  * 
  * @author rwellis
  */

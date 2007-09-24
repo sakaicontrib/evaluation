@@ -354,6 +354,26 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 		}
 
 	}
+	
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalAssignsLogicImpl#getAssignGroupByEid(java.lang.String)}.
+	 */
+	public void testGetAssignGroupByEid() {
+		EvalAssignGroup assignGroupProvided = null;
+
+		// test getting assignGroup having eid set
+		assignGroupProvided = assigns.getAssignGroupByEid( etdl.assignGroupProvided.getEid() );
+		Assert.assertNotNull(assignGroupProvided);
+		Assert.assertEquals(etdl.assignGroupProvided.getEid(), assignGroupProvided.getEid());
+
+		//test getting assignGroup having eid not set  returns null
+		assignGroupProvided = assigns.getAssignGroupByEid( etdl.assign7.getEid() );
+		Assert.assertNull(assignGroupProvided);
+
+		// test getting assignGroup by invalid eid returns null
+		assignGroupProvided = assigns.getAssignGroupByEid( EvalTestDataLoad.INVALID_STRING_EID );
+		Assert.assertNull(assignGroupProvided);
+	}
 
 	/**
 	 * Test method for {@link EvalAssignsLogicImpl#getAssignGroupById(Long)}

@@ -1,3 +1,4 @@
+
 /******************************************************************************
  * EvalEvaluationLogic.java - created by aaronz@vt.edu on Dec 24, 2006
  * 
@@ -68,6 +69,16 @@ public interface EvalEvaluationsLogic {
 	 * @param userId the internal user id (not username)
 	 */
 	public void deleteEvaluation(Long evaluationId, String userId);
+	
+	/**
+	 * Get the evaluation associated with this external id<br/>
+	 * Note: An evaluation eid is null except when the evaluation
+	 * was imported from an external system.
+	 * 
+	 * @param eid the id of an evaluation in an external system
+	 * @return the evaluation object or null if not found
+	 */
+	public EvalEvaluation getEvaluationByEid(String eid);
 
 	/**
 	 * Get an evaluation based on its unique id

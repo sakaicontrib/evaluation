@@ -308,6 +308,12 @@ public class EvalTestDataLoad {
     * Evaluation complete (20 days ago) and viewable (15 days ago), ADMIN_USER_ID owns, templateUser, 2 responses, 1 AC, not recently closed
     */
    public EvalEvaluation evaluationViewable;
+   
+   /**
+    * Evaluation provided by an EvalGroupsProvider implementation (evaluationActive + eid set)
+    */
+   public EvalEvaluation evaluationProvided;
+
 
    // EMAIL TEMPLATES
 
@@ -353,6 +359,11 @@ public class EvalTestDataLoad {
     * Context Assignment: ADMIN_USER_ID, CONTEXT2, {@link #evaluationNewAdmin}
     */
    public EvalAssignGroup assign7;
+   /**
+    * Context Assignment: ADMIN_USER_ID, CONTEXT2, {@link #evaluationNewAdmin} + eid
+    */
+   public EvalAssignGroup assignGroupProvided;
+
 
    // RESPONSES
    /**
@@ -819,6 +830,15 @@ public class EvalTestDataLoad {
             new Integer(1), null, null, null, null, templateUser, null, null,
             Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, LOCKED,
             EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null);
+      //Evaluation Provided (has eid set, not null)
+      evaluationProvided = new EvalEvaluation(new Date(), MAINT_USER_ID, "Eval active", null, 
+              yesterday, today, today, tomorrow, null, null,
+              EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.INSTRUCTOR_OPT_IN, 
+              new Integer(1), null, null, null, null, templateUser, null, null,
+              Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, LOCKED,
+              EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null);
+      evaluationProvided.setEid("test-eid");
+
       // Evaluation Active (ends tomorrow), viewable 3 days
       evaluationActiveUntaken = new EvalEvaluation(new Date(), MAINT_USER_ID, "Eval active not taken", null, 
             yesterday, tomorrow, tomorrow, threeDaysFuture, null, null,
@@ -870,6 +890,9 @@ public class EvalTestDataLoad {
             Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationNewAdmin);
       assign7 = new EvalAssignGroup(new Date(), ADMIN_USER_ID, SITE2_REF, EvalConstants.GROUP_TYPE_SITE, 
             Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationNewAdmin);
+      assignGroupProvided = new EvalAssignGroup(new Date(), ADMIN_USER_ID, SITE2_REF, EvalConstants.GROUP_TYPE_SITE, 
+              Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationNewAdmin);
+      assignGroupProvided.setEid("test-eid");
 
       // now init response data for the evaluations
       response1 = new EvalResponse(new Date(), USER_ID, SITE1_REF, 
@@ -1027,6 +1050,7 @@ public class EvalTestDataLoad {
 //    dao.save(evaluationDueUntaken);
       dao.save(evaluationClosed);
       dao.save(evaluationViewable);
+      dao.save(evaluationProvided);
 
       dao.save(assign1);
       dao.save(assign2);
@@ -1035,6 +1059,7 @@ public class EvalTestDataLoad {
       dao.save(assign5);
       dao.save(assign6);
       dao.save(assign7);
+      dao.save(assignGroupProvided);
 
       dao.save(response1);
       dao.save(response2);

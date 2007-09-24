@@ -11,6 +11,8 @@ import java.util.Date;
 public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Serializable {
 
    // Fields
+	
+   private String eid;
 
    private String evalGroupId;
 
@@ -74,6 +76,14 @@ public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Seri
       this.evaluation = evaluation;
       this.nodeId = nodeId;
    }
+   
+	public String getEid() {
+		return this.eid;
+	}
+
+	public void setEid(String eid) {
+		this.eid = eid;
+	}
 
    public String getEvalGroupId() {
       return evalGroupId;
