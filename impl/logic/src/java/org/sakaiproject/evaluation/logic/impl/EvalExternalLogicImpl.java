@@ -288,6 +288,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
       } catch (Exception e) {
          // invalid site reference
          log.debug("Could not get sakai site from evalGroupId:" + evalGroupId, e);
+         c = null;
       }
 
       if (c == null) {
