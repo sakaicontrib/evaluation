@@ -96,9 +96,8 @@ public class ExistingItemsProducer implements ViewComponentProducer, NavigationC
 		UIMessage.make(tofill, "items-choose-items", "items.choose.items"); //$NON-NLS-2$
 		
 		if (searchString.length() > 0) {
-			UIBranchContainer searchBranch = UIBranchContainer.make(tofill, "search-text");
-			UIMessage.make(searchBranch, "search-current", "existing.items");
-			UIOutput.make(searchBranch, "search-current-value", searchString);
+			UIMessage.make(tofill, "search-current", "existing.items");
+			UIOutput.make(tofill, "search-current-value", searchString);
 		}
 
 		UIForm searchForm = UIForm.make(tofill, "search-form", itemViewParameters);
