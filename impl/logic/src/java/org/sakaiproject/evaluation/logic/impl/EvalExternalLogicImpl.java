@@ -445,10 +445,12 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
    @SuppressWarnings("unchecked")
    public Set<String> getUserIdsForEvalGroup(String evalGroupId, String permission) {
       String reference = evalGroupId;
-      List<String> azGroups = new ArrayList<String>();
-      azGroups.add(reference);
-      Set<String> userIds = authzGroupService.getUsersIsAllowed(permission, azGroups);
-
+	  List<String> azGroups = new ArrayList<String>();
+	  //TODO handling groups requires further work
+	  if(!reference.contains("group"))
+		  azGroups.add(reference);
+	  Set<String> userIds = authzGroupService.getUsersIsAllowed(permission, azGroups);
+     
       // also check provider
       if (evalGroupsProvider != null) {
          if (EvalConstants.PERM_BE_EVALUATED.equals(permission) ||
