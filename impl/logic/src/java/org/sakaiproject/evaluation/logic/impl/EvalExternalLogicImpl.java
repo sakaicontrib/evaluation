@@ -350,6 +350,9 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
          Reference r = entityManager.newReference(authzGroupId);
          if(r.isKnownType()) {
             // check if this is a Sakai Site
+             //TODO handling of groups in sites needs further work
+             if(r.getId().contains("group"))
+          	   continue;
             if(r.getType().equals(SiteService.APPLICATION_ID)) {
                count++;
             }
@@ -385,6 +388,9 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
             // check if this is a Sakai Site
             if(r.getType().equals(SiteService.APPLICATION_ID)) {
                String siteId = r.getId();
+               //TODO handling of groups in sites needs further work
+               if(siteId.contains("group"))
+            	   continue;
                try {
                   Site site = siteService.getSite(siteId);
                   l.add( new EvalGroup(r.getReference(), site.getTitle(), 
