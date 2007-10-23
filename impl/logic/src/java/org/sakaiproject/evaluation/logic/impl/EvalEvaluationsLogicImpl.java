@@ -343,6 +343,23 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
    
    /*
     * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.EvalEvaluationsLogic#getEvaluations(java.lang.String)
+    */
+   public List<EvalEvaluation> getEvaluations(String userId) {
+   	// TODO Auto-generated method stub
+   	return null;
+   }
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.EvalEvaluationsLogic#getEvaluations(java.util.Map, java.lang.String)
+    */
+   public List<EvalEvaluation> getEvaluations(Map<String, Object> params, String userId) {
+   	// TODO Auto-generated method stub
+   	return null;
+   }
+   
+   /*
+    * (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.EvalEvaluationsLogic#getEvaluationByEid(java.lang.String)
     */
    public EvalEvaluation getEvaluationByEid(String eid) {
@@ -954,5 +971,11 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
          } // end of for
       } // end of if
    } // end of method
+
+
+	public List<EvalEvaluation> getEvaluationsByGroupId(String groupId) {
+		List<EvalEvaluation> l = dao.getEvaluationsByGroupId(groupId);
+		return l;
+	}
 
 }

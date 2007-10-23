@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.logic;
 
 import java.util.List;
+import java.util.Map;
 
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;

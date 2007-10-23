@@ -74,6 +74,34 @@
       <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
       <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
    </bean>
+   
+   <bean id="org.sakaiproject.evaluation.logic.externals.EvalExport" 
+   		class="org.sakaiproject.evaluation.logic.impl.scheduling.EvalExportImpl"  init-method="init">
+   		<property name="contentHostingService" ref="org.sakaiproject.content.api.ContentHostingService" />
+   		<property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+   		<property name="emails" ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
+   		<property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+   		<property name="evalExportLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExportLogic" />
+   		<property name="evalEvaluationsLogic" ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+   		<property name="evalResponsesLogic" ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
+   		<property name="serverConfigurationService" ref="org.sakaiproject.component.api.ServerConfigurationService" />
+   		<property name="sessionManager" ref="org.sakaiproject.tool.api.SessionManager" />
+   		<property name="siteService" ref="org.sakaiproject.site.api.SiteService" />
+      	<property name="toolManager" ref="org.sakaiproject.tool.api.ToolManager" />
+   		<property name="threadLocalManager"><ref bean="org.sakaiproject.thread_local.api.ThreadLocalManager"/></property>
+   		<property name="userDirectoryService" ref="org.sakaiproject.user.api.UserDirectoryService" />
+   </bean>
+
+   <bean id="org.sakaiproject.evaluation.logic.externals.EvalExportLogic"
+   		class="org.sakaiproject.evaluation.logic.impl.scheduling.EvalExportLogicImpl" 
+   		init-method="init">
+   		<property name="evalEvaluationsLogic" ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+		<property name="evalExport" ref="org.sakaiproject.evaluation.logic.externals.EvalExport" />
+		<property name="evalJobLogic" ref="org.sakaiproject.evaluation.logic.EvalJobLogic" />
+		<property name="idManager" ref="org.sakaiproject.id.api.IdManager" />
+		<property name="serverConfigurationService" ref="org.sakaiproject.component.api.ServerConfigurationService" />
+   		<property name="sessionManager" ref="org.sakaiproject.tool.api.SessionManager" />
+   </bean>
 
    <bean id="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic"
       class="org.sakaiproject.evaluation.logic.impl.ExternalHierarchyLogicImpl"
@@ -81,7 +109,7 @@
       <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
       <property name="hierarchyService" ref="org.sakaiproject.hierarchy.HierarchyService" />
    </bean>
-
+   
    <bean id="org.sakaiproject.evaluation.logic.EvalItemsLogic"
       class="org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl" init-method="init">
       <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
@@ -93,6 +121,7 @@
       class="org.sakaiproject.evaluation.logic.impl.scheduling.EvalJobLogicImpl" init-method="init">
       <property name="emails" ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
       <property name="evalEvaluationsLogic" ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+      <property name="evalExportLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExportLogic" />
       <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
       <property name="scheduledInvocationManager"
          ref="org.sakaiproject.api.app.scheduler.ScheduledInvocationManager" />
@@ -145,6 +174,8 @@
 	<bean id="org.sakaiproject.evaluation.logic.externals.EvalImportJob"
 		class="org.sakaiproject.evaluation.logic.impl.scheduling.EvalImportJobImpl"
 		init-method="init"> 
+		<property name="evalImport" ref="org.sakaiproject.evaluation.logic.externals.EvalImport" />
+		<property name="sessionManager" ref="org.sakaiproject.tool.api.SessionManager" />
 	</bean>
 
 	<bean id="org.sakaiproject.evaluation.logic.externals.EvalImportLogic"

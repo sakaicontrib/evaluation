@@ -136,5 +136,4 @@ public class EvalAnswer implements java.io.Serializable {
    public void setAssociatedType(String associatedType) {
       this.associatedType = associatedType;
    }
-
 }

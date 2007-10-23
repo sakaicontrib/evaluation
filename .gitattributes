@@ -20,6 +20,9 @@ api/logic/src/java/org/sakaiproject/evaluation/logic/entity/AssignGroupEntityPro
 api/logic/src/java/org/sakaiproject/evaluation/logic/entity/EvalCategoryEntityProvider.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/entity/EvaluationEntityProvider.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/entity/TemplateEntityProvider.java -text
+api/logic/src/java/org/sakaiproject/evaluation/logic/externals/EvalExport.java -text
+api/logic/src/java/org/sakaiproject/evaluation/logic/externals/EvalExportJob.java -text
+api/logic/src/java/org/sakaiproject/evaluation/logic/externals/EvalExportLogic.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/EvalImport.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/EvalImportJob.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/EvalImportLogic.java -text
@@ -96,6 +99,9 @@ impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvalAssi
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvaluationInterceptor.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvaluationModificationRegistry.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/providers/EvalGroupsProviderUnivOfMichImpl.java -text
+impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalExportImpl.java -text
+impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalExportJobImpl.java -text
+impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalExportLogicImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalImportImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalImportJobImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalImportLogicImpl.java -text
@@ -139,6 +145,7 @@ tool/project.xml -text
 tool/src/java/org/sakaiproject/evaluation/tool/EvaluationBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/EvaluationConstant.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ExpertItemsBean.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/ExportBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ImportBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ItemsBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/LocalResponsesLogic.java -text
@@ -169,7 +176,9 @@ tool/src/java/org/sakaiproject/evaluation/tool/locators/TemplateBeanLocator.java
 tool/src/java/org/sakaiproject/evaluation/tool/locators/TemplateItemWBL.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdminTestEGProviderProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateProducer.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/producers/ConfirmExportResponsesProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlEvaluationsProducer.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlExportResponsesProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlHierarchyProducer.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlImportProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlItemsProducer.java -text
@@ -324,6 +333,7 @@ tool/src/webapp/content/templates/choose_expert_category.html -text
 tool/src/webapp/content/templates/choose_expert_items.html -text
 tool/src/webapp/content/templates/choose_expert_objective.html -text
 tool/src/webapp/content/templates/control_evaluations.html -text
+tool/src/webapp/content/templates/control_export_responses.html -text
 tool/src/webapp/content/templates/control_hierarchy.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/templates/control_import.html -text
 tool/src/webapp/content/templates/control_items.html -text

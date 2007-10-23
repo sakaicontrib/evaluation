@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title rsf:id="control-export-responses-title">Export Responses to Evaluations</title> 
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+    <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+    <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+	<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />   
+</head>
+	<body>
+		<h3 rsf:id="page-title">Email or Export Responses to ContentRespource</h3>
+		<div class="portletBody">
+			<div rsf:id="message-for:*" class="alertMessage">
+			   <ul style="margin:0px;">
+			      <li>Message for user here</li>
+			   </ul>
+			</div>
+			<form  rsf:id="control-export-form" method="post">
+				<p class="act">
+					<input class="active" rsf:id="email-content-resource" type="submit" value="Email" accesskey="e" />
+					<input class="active" rsf:id="write-content-resource" type="submit" value="Export" accesskey="w" />
+					<input class="active" rsf:id="clear-lock" type="submit" value="Clear Lock" accesskey="c" />
+					<input  type="button" value="Cancel" onclick="javascript:history.go(-1);" accesskey="x" />  
+				</p>
+			</form>
+		</div>
+	</body>
+</html>

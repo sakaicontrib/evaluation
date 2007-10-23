@@ -21,6 +21,8 @@
 
 package org.sakaiproject.evaluation.logic.externals;
 
+import java.util.Map;
+
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 
 /**
@@ -87,4 +89,12 @@ public interface EvalJobLogic {
 	 * @param evaluationId the EvalEvaluation id
 	 */
 	public void scheduleReminder(Long evaluationId);
+	
+	/**
+	 * Schedule sending email to the instructor with responses to the evaluation.
+	 * 
+	 * @param idMap a map of evaluation id and instructor eid. TODO Use external logic to handle case
+	 * where instructor is not in the Sakai user id map table.
+	 */
+	public void scheduleResponsesEmail(Map idMap);
 }

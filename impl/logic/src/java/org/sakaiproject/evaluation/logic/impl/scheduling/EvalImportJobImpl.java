@@ -30,8 +30,10 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import org.sakaiproject.component.cover.ComponentManager;
+import org.sakaiproject.evaluation.logic.externals.EvalImport;
 import org.sakaiproject.evaluation.logic.externals.EvalImportJob;
 import org.sakaiproject.tool.api.Session;
+import org.sakaiproject.tool.api.SessionManager;
 import org.sakaiproject.user.api.UserDirectoryService;
 
 /**
@@ -44,17 +46,21 @@ public class EvalImportJobImpl implements EvalImportJob{
 	
 	private static final Log log = LogFactory.getLog(EvalImportJobImpl.class);
 	
-	//on demand injection of services
-	private org.sakaiproject.evaluation.logic.externals.EvalImport evalImport = 
-		(org.sakaiproject.evaluation.logic.externals.EvalImport) ComponentManager.get(org.sakaiproject.evaluation.logic.externals.EvalImport.class);
-	private org.sakaiproject.tool.api.SessionManager sessionManager = 
-		(org.sakaiproject.tool.api.SessionManager) ComponentManager.get(org.sakaiproject.tool.api.SessionManager.class);
-	 // TODO Use actual injection here -AZ
 	
-	List results = new ArrayList(); // TODO NOT threadsafe, fix this -AZ
-	String currentUserId = null; // TODO NOT threadsafe, fix this -AZ
-	String jobName = null; // TODO NOT threadsafe, fix this -AZ
-	 
+	//Spring injection
+	private EvalImport evalImport;
+	public void setEvalImport(EvalImport evalImport) {
+		this.evalImport = evalImport;
+	}
+	private SessionManager sessionManager;
+	public void setSessionManager(SessionManager sessionManager) {
+		this.sessionManager = sessionManager;
+	}
+	
+	List results;
+	String currentUserId;
+	String jobName;
+	
 	public void init() {
 		
 	}
@@ -65,6 +71,9 @@ public class EvalImportJobImpl implements EvalImportJob{
 	 */
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		//TODO lock while executing?
+		results = new ArrayList();
+		currentUserId = null;
+		jobName = null;
 		String id = null;
 		try
 		{

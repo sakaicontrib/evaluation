@@ -145,7 +145,7 @@ public interface EvalEmailsLogic {
 	 * the results page for this evaluation, owner of the evaluation is always included
 	 * in the notification
 	 * 
-	 *  @param jobType JOB_TYPE_VIEWABLE, JOB_TYPE_VIEWABLE_INSTRUCTORS or JOB_TYPE_VIEWABLE_STUDENTS
+	 * @param jobType JOB_TYPE_VIEWABLE, JOB_TYPE_VIEWABLE_INSTRUCTORS or JOB_TYPE_VIEWABLE_STUDENTS
 	 * @param evaluationId the id of an EvalEvaluation object
 	 * @param includeEvaluatees if true, include notifications to all evaluated users
 	 * @param includeAdmins if true, include notifications to all admins above the contexts and
@@ -153,5 +153,15 @@ public interface EvalEmailsLogic {
 	 * @return an array of the messages that were sent
 	 */
 	public String[] sendEvalResultsNotifications(String jobType, Long evaluationId, boolean includeEvaluatees, boolean includeAdmins);
+	
+	/**
+	 * Email responses as body to recipient
+	 * 
+	 * @param subject
+	 * @param body
+	 * @param recipient
+	 * @return an array of the messages that were sent
+	 */
+	public String[] sendEvalResponses(String subject, String body, String recipient);
 
 }

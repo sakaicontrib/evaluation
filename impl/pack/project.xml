@@ -59,6 +59,32 @@
 				<war.bundle>true</war.bundle>
 			</properties>
         </dependency>
+        
+        <!--  FOP for proccessing XML -->
+		<dependency>
+			<groupId>fop</groupId>
+			<artifactId>fop</artifactId>
+			<version>0.20.5</version>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>
+		<dependency>
+			<groupId>avalon-framework</groupId>
+			<artifactId>avalon-framework</artifactId>
+			<version>20020627</version>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>
+		<dependency>
+			<groupId>batik</groupId>
+			<artifactId>batik</artifactId>
+			<version>1.5-fop-0.20-5</version>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>
 
 		<!-- sakai dependencies -->
 		<dependency>

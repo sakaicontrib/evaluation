@@ -41,6 +41,12 @@ import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
+/**
+ * This presents the Sakai FilePickerHelper so users 
+ * may pick an XML ContentResource with evaluation data to import
+ *
+ * @author rwellis
+ */
 public class ControlImportProducer implements 
 	ViewComponentProducer, 
 	ViewParamsReporter, 
@@ -55,7 +61,7 @@ public class ControlImportProducer implements
 	/**
 	 * This is used for navigation within the system.
 	 */
-	public static final String VIEW_ID = "control_import";
+	public static final String VIEW_ID = "control-import";
 
 	public String getViewID() {
 		return VIEW_ID;

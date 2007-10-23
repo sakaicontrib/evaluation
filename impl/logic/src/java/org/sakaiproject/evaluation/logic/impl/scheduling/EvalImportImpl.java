@@ -135,6 +135,8 @@ public class EvalImportImpl implements EvalImport {
 	public EvalImportImpl() {
 		currentUserId = null;
 		numPersisted = 0;
+		//e.g. 10/05/2007 13:59:00 (i.e., Oct 5 2007 1:59 PM)
+		//formatter = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 		formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
 		cal = Calendar.getInstance();
 	}
@@ -318,7 +320,7 @@ public class EvalImportImpl implements EvalImport {
 					externalLogic.registerEntityEvent(event, item);
 					itemsSaved++;
 					
-					//ping session to keep it alive
+					//ping interactive session to keep it alive Note: connection timeout is another issue
 					numPersisted++;
 					if(numPersisted % 100 == 0) {
 						Session session = sessionManager.getCurrentSession();

@@ -71,6 +71,24 @@ public interface EvalEvaluationsLogic {
 	public void deleteEvaluation(Long evaluationId, String userId);
 	
 	/**
+	 * Get a list of {@link EvalEvaluation} objects with selected property values
+	 * Note: to be implemented
+	 * 
+	 * @param params EvalEvaluation property name and value
+	 * @param userId the internal user id (not username)
+	 * @return a List of {@link EvalEvaluation} objects (empty if none exist)
+	 */
+	public List<EvalEvaluation> getEvaluations(Map<String, Object> params, String userId);
+	
+	/**
+	 * Get all {@link EvalEvaluation} objects
+	 * 
+	 * @param userId the internal user id (not username)
+	 * @return a List of {@link EvalEvaluation} objects (empty if none exist)
+	 */
+	public List<EvalEvaluation> getEvaluations(String userId);
+	
+	/**
 	 * Get the evaluation associated with this external id<br/>
 	 * Note: An evaluation eid is null except when the evaluation
 	 * was imported from an external system.
@@ -79,6 +97,14 @@ public interface EvalEvaluationsLogic {
 	 * @return the evaluation object or null if not found
 	 */
 	public EvalEvaluation getEvaluationByEid(String eid);
+	
+	/**
+	 * Get all {@link EvalEvaluation} objects for a group
+	 * 
+	 * @param groupId the group Id
+	 * @return a List of {@link EvalEvaluation} objects (empty if none exist)
+	 */
+	public List<EvalEvaluation> getEvaluationsByGroupId(String groupId);
 
 	/**
 	 * Get an evaluation based on its unique id

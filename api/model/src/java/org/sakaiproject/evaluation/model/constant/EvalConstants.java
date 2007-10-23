@@ -519,6 +519,28 @@ public class EvalConstants {
 		"3) Click on 'Evaluation System' in the left navigation menu under My Workspace. \n" +
 		"4) Click on '$EvalTitle' link under '$EvalGroupTitle'. \n";
 
+	
+	/**
+	 * TODO This need to be removed. Include in the handling of local changes to default email templates.
+	 */
+	public final static String UMICH_EMAIL_COVER_LETTER = 
+		"\nHere are the ratings and comments made by students who responded to a request for mid-semester feedback " +
+		"on your class.  A summary of the ratings data, including response frequencies and item medians, is available in Teaching Support.\n\n" +
+		"You can access Teaching Support via the following link:\n\n" +
+		"http://wolverineaccess.umich.edu/index.jsp\n\n" +
+		"Follow the 'University Business' link to 'Teaching Support'.  " +
+		"Online help is available for your teaching evaluation summary reports by clicking the '? Help' link in Teaching Support.  " +
+		"If you need further assistance, you can contact the MAIS Help Desk by e-mail at maishelpdesk@umich.edu or by telephone at 734 936-7000.  " +
+		"Teaching Support is available at the following times:\n\n" +
+		"Monday-Friday, 7am-4am\n" +
+		"Saturday, 7am-10:30pm\n" +
+		"Sunday, 7:30am-Monday, 2am\n\n" +
+		"No one but you will receive a copy of the raw data from the evaluation, and you alone will have access to the summary of the rating data.\n" +
+		"For help in interpreting your mid-semester feedback, you may wish to visit the Office of Evaluations and Examinations (E&E) website:\n\n" +
+		"www.umich.edu/~eande/tq/engin\n\n" +
+		"You may also wish to discuss your mid-semester feedback with a colleague or an instructional consultant at E&E or the Center for Research on Teaching and Learning (CRLT).\n\n" +
+		"We hope that you find this mid-semester feedback useful in your teaching.\n\n";
+
 	/**
 	 * Notification: Include all users who have not taken the evaluation yet
 	 */
@@ -659,4 +681,10 @@ public class EvalConstants {
 	 * 
 	 */
 	public static final String JOB_TYPE_REMINDER = "scheduledReminder";
+	
+	/**
+	 * ScheduledInvocationManager: ScheduledInvocationCommand jobType
+	 * 
+	 */
+	public static final String JOB_TYPE_RESPONSES_EMAIL = "scheduledResponsesEmail";
 }

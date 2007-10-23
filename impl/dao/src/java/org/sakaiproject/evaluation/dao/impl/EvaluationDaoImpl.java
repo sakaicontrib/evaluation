@@ -40,6 +40,7 @@ import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
+import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -191,6 +192,23 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       }
       return l;
    }
+   
+   public List<EvalEvaluation> getEvaluations(Map<String, Object> params) {
+	   String evalHQL = "";
+	   //build hql to match params sent
+	   if(params != null && !params.isEmpty()) {
+	     for (String name : params.keySet()) {
+	         Object param = params.get(name);
+	         if(param.getClass().getName().equals("java.lang.String")) {
+	        	 
+	         }
+	         else if(param.getClass().getName().equals("java.util.Date")) {
+	        	 
+	         }
+	      }
+	   }
+	   return null;
+   }
 
    @SuppressWarnings("unchecked")
    public Set<EvalEvaluation> getEvaluationsByEvalGroups(String[] evalGroupIds, boolean activeOnly,
@@ -230,6 +248,12 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
          evals.addAll(anonymousEvals);
       }
       return evals;
+   }
+   
+   //dao.getEvalAssignGroups(userId, params);
+   public List<EvalAssignGroup> getEvalAssignGroups(String userId, Map<String,Object> param) {
+	   List evalAssignGroups = new ArrayList();
+	   return evalAssignGroups;
    }
 
    public List<EvalAnswer> getAnswers(Long itemId, Long evalId, String[] evalGroupIds) {
@@ -412,6 +436,28 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       }
       return responseIds;
    }
+   
+	public List<EvalResponse> getResponses(EvalEvaluation eval, String groupId) {
+		Map<String, Object> params = new HashMap<String, Object>();
+	    params.put("eval", eval);
+	    params.put("groupId", groupId);
+	    String hql = "select response from EvalResponse as response ";
+	    if(eval != null || groupId != null) {
+	    	hql += " where ";
+	    	if (eval != null && groupId != null)
+	    		hql += " response.evaluation = :evalId and response.evalGroupId = :groupId ";
+	    	else if(eval != null)
+	    		hql += " response.evaluation = :evalId ";
+	    	else if(groupId != null)
+	    		hql += " response.evalGroupId = :groupId ";
+	     }
+	    List<EvalResponse> l = new ArrayList<EvalResponse>();
+	    List<?> things = executeHqlQuery(hql, params, 0, 0);
+	    for (Object object : things) {
+	    	l.add((EvalResponse) object);
+	    }
+	    return l;
+	}
 
    @SuppressWarnings("unchecked")
    public List<String> getEvalCategories(String userId) {
@@ -750,4 +796,32 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       }
    }
 
+	public List<EvalEvaluation> getEvaluations() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public List<EvalAssignGroup> getEvalAssignGroups() {
+		String hqlQuery = "select group from EvalAssignGroup as group";
+		List<EvalAssignGroup> l = new ArrayList<EvalAssignGroup>();
+		try {
+			l = getHibernateTemplate().find(hqlQuery);
+		} catch (DataAccessException e) {
+         // this may appear to be a swallowed error, but it is actually intended behavior
+         log.error("Invalid argument combination (most likely you tried to request no items) caused failure");
+      }
+      return l;
+	}
+
+	public List<EvalEvaluation> getEvaluationsByGroupId(String groupId) {
+		String hqlQuery = "select group.evaluation from EvalAssignGroup as group where group.evalGroupId = '" + groupId + "'";
+		List<EvalEvaluation> l = new ArrayList<EvalEvaluation>();
+		try {
+			l = getHibernateTemplate().find(hqlQuery);
+		} catch (DataAccessException e) {
+         // this may appear to be a swallowed error, but it is actually intended behavior
+         log.error("Invalid argument combination (most likely you tried to request no items) caused failure");
+      }
+      return l;
+	}
 }

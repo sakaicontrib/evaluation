@@ -872,5 +872,21 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
       return TextTemplateLogicUtils.processTextTemplate(messageTemplate, replacementValues);
    }
+   
+   public String[] sendEvalResponses(String subject, String body, String recipient) {
+	   String message = null;
+       try {
+    	   String from = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
+           String[] toUserIds = new String[] {recipient};
+           StringBuffer buf = new StringBuffer(EvalConstants.UMICH_EMAIL_COVER_LETTER);
+           buf.append(body);
+           message = buf.toString();
+          externalLogic.sendEmails(from, toUserIds, subject, body);
+          log.info("Sent evaluation responses message to " + toUserIds.length + " user(s)");
+       } catch (Exception e) {
+          log.error(this + ".sendEvalResponses(): " + recipient + ": " + subject + ": " + body + ": " + e);
+       }
+	   return new String[]{message};
+   }
 
 }

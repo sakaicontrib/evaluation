@@ -77,7 +77,13 @@
       <property name="itemsLogic"
          ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
    </bean>
-
+   
+   <bean id="exportBean"
+		class="org.sakaiproject.evaluation.tool.ExportBean">
+      	<property name="evalExportLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExportLogic" />
+      	<property name="contentHostingService" ref="org.sakaiproject.content.api.ContentHostingService" />
+	</bean>
+	
    <bean id="importBean"
       class="org.sakaiproject.evaluation.tool.ImportBean">
       <property name="contentHostingService"
@@ -551,7 +557,12 @@
       <property name="sessionManager"
          ref="org.sakaiproject.tool.api.SessionManager" />
    </bean>
-
+   
+    <bean
+      class="org.sakaiproject.evaluation.tool.producers.ControlExportResponsesProducer">
+      <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+   </bean>
+  
    <bean
       class="org.sakaiproject.evaluation.tool.producers.ControlScalesProducer">
       <property name="scalesLogic"

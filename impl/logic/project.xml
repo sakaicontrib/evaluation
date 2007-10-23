@@ -213,7 +213,23 @@
 			<artifactId>velocity</artifactId>
 			<version>1.4</version>
 		</dependency>
-
+		
+		<!--  FOP -->
+		<dependency>
+			<groupId>fop</groupId>
+			<artifactId>fop</artifactId>
+			<version>0.20.5</version>
+		</dependency>
+		<dependency>
+			<groupId>avalon-framework</groupId>
+			<artifactId>avalon-framework</artifactId>
+			<version>20020627</version>
+		</dependency>
+		<dependency>
+			<groupId>batik</groupId>
+			<artifactId>batik</artifactId>
+			<version>1.5-fop-0.20-5</version>
+		</dependency>
 
 		<!-- testing dependencies -->
 	  	<dependency>
@@ -287,6 +303,14 @@
 
 	<build>
 		<sourceDirectory>src/java</sourceDirectory>
+			<resources>
+				<resource>
+				<directory>${basedir}/src/config</directory>
+					<includes>
+						<include>**/*.xslt</include>
+					</includes>
+				</resource>
+			</resources>
 
 		<!-- unit testing -->
 		<unitTestSourceDirectory>src/test</unitTestSourceDirectory> 

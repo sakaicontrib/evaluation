@@ -15,12 +15,15 @@
 package org.sakaiproject.evaluation.dao;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.model.EvalAnswer;
+import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
+import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -84,6 +87,37 @@ public interface EvaluationDao extends CompleteGenericDao {
 	public Set<EvalEvaluation> getEvaluationsByEvalGroups(String[] evalGroupIds, boolean activeOnly, boolean includeUnApproved, boolean includeAnonymous);
 
 	/**
+	 * Returns all evaluation objects
+	 * 
+	 * @param params
+	 * @return
+	 */
+	public List<EvalEvaluation> getEvaluations();
+	
+	/**
+	 * Returns evaluation objects for a group
+	 * 
+	 * @param groupId the group id of an EvalAssignGroup
+	 * @return a list of evaluations
+	 */
+	public List<EvalEvaluation> getEvaluationsByGroupId(String groupId);
+	
+	/**
+	 * Returns all evaluation objects associated with the params properties and values
+	 * 
+	 * @param params
+	 * @return
+	 */
+	public List<EvalEvaluation> getEvaluations(Map<String, Object> params);
+	
+	/**
+	 * Returns all eval assign group objects
+	 * 
+	 * @return a list of EvalAssignGroup objects or empty list if none found
+	 */
+	public List<EvalAssignGroup> getEvalAssignGroups();
+
+	/**
 	 * Returns all answers to the given item associated with 
 	 * responses which are associated with the given evaluation
 	 *
@@ -101,10 +135,13 @@ public interface EvaluationDao extends CompleteGenericDao {
 	 *
 	 * @param evalId the id of the evaluation you want response ids for
 	 * @param evalGroupIds an array of eval group IDs to return response ids for,
-	 * if null or empty then just return all response ids for this evaluation
+	 * if null or empty then just return all response ids for this evaluatio
 	 * @return a list of response ids (Long)
 	 */
 	public List<Long> getResponseIds(Long evalId, String[] evalGroupIds);
+	
+	//TODO migrate umich to above method thru logic api
+	public List<EvalResponse> getResponses(EvalEvaluation eval, String groupId);
 
 	/**
 	 * Removes a group of templateItems and updates all related items 
