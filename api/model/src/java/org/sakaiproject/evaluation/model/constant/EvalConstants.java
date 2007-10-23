@@ -529,7 +529,7 @@ public class EvalConstants {
 		"You can access Teaching Support via the following link:\n\n" +
 		"http://wolverineaccess.umich.edu/index.jsp\n\n" +
 		"Follow the 'University Business' link to 'Teaching Support'.  " +
-		"Online help is available for your teaching evaluation summary reports by clicking the '? Help' link in Teaching Support.  " +
+		"If you cannot access your report, click the link labeled '? Help' in Teaching Support.  " +
 		"If you need further assistance, you can contact the MAIS Help Desk by e-mail at maishelpdesk@umich.edu or by telephone at 734 936-7000.  " +
 		"Teaching Support is available at the following times:\n\n" +
 		"Monday-Friday, 7am-4am\n" +
