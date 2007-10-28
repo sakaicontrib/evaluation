@@ -525,7 +525,13 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
                user = userDirectoryService.getUserByEid( toUserIds[i] );
             } catch (UserNotDefinedException e1) {
                // die here since we were unable to find this user at all
-               throw new IllegalArgumentException("Invalid user: Cannot find user object by id or eid:" + toUserIds[i], e );
+            	//rwellis - this was causing a batch of 100 emails to roll back when 1 id was not found, dlhaines objected to this behavior
+            	//rwellis - also it depends on the user being in the SAKAI_USER_ID_MAP, which shouldn't be assumed for those in an external eval group
+            	//TODO ValidEmailAddress interface as callout so email doesn't have to worry about getting a bad address, can be locally implemented & tested
+               //throw new IllegalArgumentException("Invalid user: Cannot find user object by id or eid:" + toUserIds[i], e );
+            	if(log.isWarnEnabled())
+            		log.warn("EvalExternalLogic#sendEmails(): '" + toUserIds[i] + "' was not found by id or eid. " + e1);
+            	continue;
             }
          }
          l.add(user);

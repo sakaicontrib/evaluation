@@ -36,7 +36,6 @@ import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.time.api.TimeService;
-import org.sakaiproject.tool.api.Session;
 
 /**
  * Handle job scheduling related to EvalEvaluation state transitions.</br>
@@ -751,6 +750,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 		int numScheduled = 0;
 		Map.Entry entry = null;
 		long runAt = new Date().getTime() + (1000 * 60 * 20);
+		//long runAt = new Date().getTime() + (1000 * 60 * 2);
 		try {
 			for(Iterator<Map.Entry> i = idMap.entrySet().iterator(); i.hasNext();){
 				try {
@@ -759,7 +759,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 					
 					//convert eid to id
 					evalId = ((EvalEvaluation)evalEvaluationsLogic.getEvaluationByEid((String)entry.getKey())).getId();
-					//late opt-out of two courses of pilot by Peter Washabaugh
+					//late opt-out of two courses of pilot by Peter Washabaugh CoE pilot Fall 07
 					if(evalId.intValue() == 10244 || evalId.intValue() == 10245
 							|| evalId.intValue() == 10262 || evalId.intValue() == 10263)
 						continue;
@@ -768,6 +768,9 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 					if(numScheduled % 100 == 0) {
 						//stagger batches of 100 emails by 20 minutes
 						runAt = runAt + (1000 * 60 * 20);
+						//runAt = runAt + (1000 * 60 * 2);
+						if(log.isInfoEnabled())
+							log.info("Email jobs written to SCHEDULER_DELAYED_INVOCATION table: " + (new Integer(numScheduled)).toString());
 					}
 				}
 				catch(Exception e) {
@@ -781,6 +784,8 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 			if(log.isErrorEnabled())
 				log.error("scheduleResponsesEmail(): " + e);
 		}
+		if(log.isInfoEnabled())
+			log.info("Final count of Email jobs written to SCHEDULER_DELAYED_INVOCATION table: " + (new Integer(numScheduled)).toString());
 	}
 }
 

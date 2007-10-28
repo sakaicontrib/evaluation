@@ -249,6 +249,8 @@ public class EvalExportImpl implements EvalExport {
 				if(numPersisted % 100 == 0) {
 					Session session = sessionManager.getCurrentSession();
 					session.setActive();
+					if(log.isInfoEnabled())
+						log.info("Groups written to XML: " + (new Integer(numPersisted)).toString());
 				}
 				
 				//get a group
@@ -370,6 +372,9 @@ public class EvalExportImpl implements EvalExport {
 			buf.append(CLOSE_EVAL_GROUPS_NODE);
 			//close root
 			buf.append(CLOSE_EVAL_DATA);
+			
+			if(log.isInfoEnabled())
+				log.info("Final count of Groups written to XML: " + (new Integer(numPersisted)).toString());
 	}
 	
 	/**

@@ -39,7 +39,6 @@ import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalResponse;
-import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.id.api.IdManager;
@@ -94,7 +93,6 @@ public class EvalExportLogicImpl implements EvalExportLogic {
 		List<String> messages = new ArrayList();
 		if(!locked) {
 			locked = true;
-			//messages = evalExport.emailResponses();
 			evalJobLogic.scheduleResponsesEmail(instructorMap);
 		}
 		return messages;
@@ -113,18 +111,37 @@ public class EvalExportLogicImpl implements EvalExportLogic {
 		return messages;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.externals.EvalExportLogic#getLock()
+	 */
 	public boolean getLock() {
 		return locked;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.externals.EvalExportLogic#isLocked()
+	 */
 	public boolean isLocked() {
 		return locked;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.externals.EvalExportLogic#setLock(boolean)
+	 */
 	public void setLock(boolean lock) {
+		String value = (new Boolean(lock)).toString();
+		if(log.isInfoEnabled())
+			log.info("EvalExportLogic#setLock(" + value + ")");
 		this.locked = lock;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sakaiproject.evaluation.logic.externals.EvalExportLogic#getInstructorByEvaluationEid(java.lang.String)
+	 */
 	public String getInstructorByEvaluationEid(String evalEid) {
 		String instructorEid = null;
 		try {
@@ -208,6 +225,9 @@ public class EvalExportLogicImpl implements EvalExportLogic {
 
 		//get all responses to this evaluation
 		Set<EvalResponse> responses = evaluation.getResponses();
+		if(responses.isEmpty())
+			if(log.isInfoEnabled())
+				log.info("There are no responses to evaluation '" + evaluation.getTitle() + "' id " + evaluation.getId().toString());
 		numResponses = new Integer(responses.size());
 		currentResponse = 0;
 		
@@ -445,9 +465,9 @@ public class EvalExportLogicImpl implements EvalExportLogic {
 		instructorMap.put("141","MELAGNEW");
 		instructorMap.put("142","SPLAZA");
 		instructorMap.put("143","DISHUMAN");
-		instructorMap.put("144","");
+		instructorMap.put("144","MORNICK");
 		instructorMap.put("145","ZHUXINEN");
-		instructorMap.put("146","");
+		instructorMap.put("146","MORNICK");
 		instructorMap.put("147","DANIAL");
 		instructorMap.put("148","DANIAL");
 		instructorMap.put("149","JAGREGOR");
@@ -1154,22 +1174,6 @@ public class EvalExportLogicImpl implements EvalExportLogic {
 		instructorMap.put("877","LYNNW");
 		instructorMap.put("878","MHASKINS");
 		instructorMap.put("879","PAFORD");
-		instructorMap.put("880","ROOTSR");
-		instructorMap.put("881","FWARD");
-		instructorMap.put("882","JACKFISH");
-		instructorMap.put("883","PJN");
-		instructorMap.put("884","ESHILD");
-		instructorMap.put("885","FWARD");
-		instructorMap.put("886","WALZAH");
-		instructorMap.put("887","MLIND");
-		instructorMap.put("888","MLIND");
-		instructorMap.put("889","MLIND");
-		instructorMap.put("890","FWARD");
-		instructorMap.put("891","PJN");
-		instructorMap.put("892","FWARD");
-		instructorMap.put("893","RCJ");
-		instructorMap.put("894","LOLSEN");
-		instructorMap.put("895","LOLSEN");
 	}
 	
 	/*
