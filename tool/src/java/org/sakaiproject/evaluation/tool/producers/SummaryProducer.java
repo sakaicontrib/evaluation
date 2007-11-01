@@ -178,6 +178,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 				UIBranchContainer evalrow = UIBranchContainer.make(evalBC, "evaluationsList:", eval.getId().toString() );
 
 				UIOutput.make(evalrow, "evaluationTitleTitle", eval.getTitle() );
+				UIMessage.make(evalrow, "evaluationCourseEvalTitle", "summary.evaluations.courseeval.title" );
 				UIMessage.make(evalrow, "evaluationStartsTitle", "summary.evaluations.starts.title" );
             UIMessage.make(evalrow, "evaluationEndsTitle", "summary.evaluations.ends.title" );
 
