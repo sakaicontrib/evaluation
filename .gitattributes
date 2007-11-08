@@ -54,7 +54,6 @@ api/model/src/java/org/sakaiproject/evaluation/model/EvalTemplate.java -text
 api/model/src/java/org/sakaiproject/evaluation/model/EvalTemplateItem.java -text
 api/model/src/java/org/sakaiproject/evaluation/model/constant/EvalConstants.java -text
 api/model/src/java/readme.txt -text
-api/pom.xml -text
 impl/dao/project.xml -text
 impl/dao/src/java/org/sakaiproject/evaluation/dao/impl/EvaluationDaoImpl.java -text
 impl/dao/src/java/org/sakaiproject/evaluation/dao/impl/PreloadDataImpl.java -text
@@ -125,10 +124,10 @@ impl/pack/src/webapp/WEB-INF/entity-providers.xml -text
 impl/pack/src/webapp/WEB-INF/hibernate-hbms.xml -text
 impl/pack/src/webapp/WEB-INF/logic-support.xml -text
 impl/pack/src/webapp/WEB-INF/spring-hibernate.xml -text
-impl/pom.xml -text
 impl/test/project.xml -text
 impl/test/src/java/org/sakaiproject/evaluation/test/EvalTestDataLoad.java -text
 impl/test/src/java/org/sakaiproject/evaluation/test/PreloadTestData.java -text
+/pom.xml.old -text
 /project.properties -text
 /project.xml -text
 tool/maven.xml -text
