@@ -25,7 +25,7 @@ import org.w3c.dom.Element;
  * reason... sure would be nice if I could though -AZ
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class TestUser implements User {
+public class MockUser implements User {
 	private String userId;
 	private String userEid = "fakeEid";
 	private String displayName = "Fake DisplayName";
@@ -35,7 +35,7 @@ public class TestUser implements User {
 	 * Construct an empty test user with an id set
 	 * @param userId a id string
 	 */
-	public TestUser(String userId) {
+	public MockUser(String userId) {
 		this.userId = userId;
 	}
 
@@ -44,7 +44,7 @@ public class TestUser implements User {
 	 * @param userId a id string
 	 * @param userEid a username string
 	 */
-	public TestUser(String userId, String userEid) {
+	public MockUser(String userId, String userEid) {
 		this.userId = userId;
 		this.userEid = userEid;
 	}
@@ -55,13 +55,13 @@ public class TestUser implements User {
 	 * @param userEid a username string
 	 * @param displayName a user display name
 	 */
-	public TestUser(String userId, String userEid, String displayName) {
+	public MockUser(String userId, String userEid, String displayName) {
 		this.userId = userId;
 		this.userEid = userEid;
 		this.displayName = displayName;
 	}
 
-	public TestUser(String userId, String userEid, String displayName, String email) {
+	public MockUser(String userId, String userEid, String displayName, String email) {
 		this.userId = userId;
 		this.userEid = userEid;
 		this.displayName = displayName;
@@ -171,9 +171,9 @@ public class TestUser implements User {
 
 	public boolean equals(Object obj) {
 		if (null == obj) return false;
-		if (!(obj instanceof TestUser)) return false;
+		if (!(obj instanceof MockUser)) return false;
 		else {
-			TestUser test = (TestUser) obj;
+			MockUser test = (MockUser) obj;
 			if (null == this.getId() || null == test.getId()) return false;
 			else return (this.getId().equals(test.getId()));
 		}
