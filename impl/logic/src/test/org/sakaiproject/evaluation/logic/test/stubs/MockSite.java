@@ -39,13 +39,13 @@ import org.w3c.dom.Element;
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class TestSite implements Site {
+public class MockSite implements Site {
 
 	private static final long serialVersionUID = 4761288804996964705L;
 	private String id;
 	private String title = "Title";
 
-	public TestSite(String id, String title) {
+	public MockSite(String id, String title) {
 		this.id = id;
 		this.title = title;
 	}

@@ -22,7 +22,7 @@ import org.sakaiproject.tool.api.Tool;
  * reason... sure would be nice if I could though -AZ
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class TestPlacement implements Placement {
+public class MockPlacement implements Placement {
 
 	private String id = "PLACE12345";
 	private String context; // a.k.a. siteId
@@ -34,7 +34,7 @@ public class TestPlacement implements Placement {
 	 * Construct a test Placement object with a evalGroupId (siteId) set
 	 * @param evalGroupId a String representing a site evalGroupId (siteId)
 	 */
-	public TestPlacement(String context) {
+	public MockPlacement(String context) {
 		this.context = context;
 	}
 
@@ -84,9 +84,9 @@ public class TestPlacement implements Placement {
 
 	public boolean equals(Object obj) {
 		if (null == obj) return false;
-		if (!(obj instanceof TestPlacement)) return false;
+		if (!(obj instanceof MockPlacement)) return false;
 		else {
-			TestPlacement test = (TestPlacement) obj;
+			MockPlacement test = (MockPlacement) obj;
 			if (null == this.getId() || null == test.getId()) return false;
 			else return (this.getId().equals(test.getId()));
 		}

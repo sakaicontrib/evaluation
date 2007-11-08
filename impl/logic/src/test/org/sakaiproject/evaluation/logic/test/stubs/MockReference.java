@@ -27,19 +27,19 @@ import org.sakaiproject.entity.api.ResourceProperties;
  * reason... sure would be nice if I could though -AZ
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class TestReference implements Reference {
+public class MockReference implements Reference {
 
 	private String id = "REF12345";
 	private String type;
 	private String context;
 	private String reference;
 
-	public TestReference(String id, String type) {
+	public MockReference(String id, String type) {
 		this.id = id;
 		this.type = type;
 	}
 
-	public TestReference(String id, String type, String context, String reference) {
+	public MockReference(String id, String type, String context, String reference) {
 		this.id = id;
 		this.type = type;
 		this.context = context;
