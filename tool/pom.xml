@@ -36,7 +36,7 @@
 		</dependency>
 		<!-- Servlet dependency -->
 		<dependency>
-			<groupId>javax.servletapi</groupId>
+			<groupId>servletapi</groupId>
 			<artifactId>servletapi</artifactId>
 			<version>${sakai.servletapi.version}</version>
 			<type>jar</type>
