@@ -9,7 +9,7 @@
 		<version>M2</version>
 		<relativePath>../master/pom.xml</relativePath>
 	</parent>
-	<name>Sakai</name>
+	
 	 <description>
       Online Course and Instructor Ratings
 
@@ -34,17 +34,17 @@
    <url>http://bugs.sakaiproject.org/confluence/display/EVALSYS/Home</url>
 	<groupId>org.sakaiproject</groupId>
 	<artifactId>evaluation-base</artifactId>
+	<name>Sakai Evaluation Project</name>
 	<version>${sakai.version}</version>
 	<packaging>pom</packaging>
 	<modules>
-
 		<module>api/logic</module>
 		<module>api/model</module>
 		<module>impl/test</module>
-			<module>impl/dao</module>
-			<module>impl/hbm</module>
-			<module>impl/logic</module>
-			<module>impl/pack</module>
-			<module>tool</module>
+		<module>impl/dao</module>
+		<module>impl/hbm</module>
+		<module>impl/logic</module>
+		<module>impl/pack</module>
+		<module>tool</module>
 	</modules>
 </project>
