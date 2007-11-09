@@ -3,12 +3,12 @@
 	xmlns="http://maven.apache.org/POM/4.0.0"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<artifactId>evaluation-base</artifactId>
-		<groupId>org.sakaiproject</groupId>
-		<version>M2</version>
-		<relativePath>../../pom.xml</relativePath>
-	</parent>
+  <parent>
+    <artifactId>evaluation-base</artifactId>
+    <groupId>org.sakaiproject</groupId>
+    <version>${sakai.version}</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
 	<name>Evaluation Tool</name>
 	<groupId>org.sakaiproject</groupId>
 	<artifactId>sakai-evaluation-tool</artifactId>
