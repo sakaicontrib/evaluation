@@ -39,6 +39,10 @@
       		<groupId>org.sakaiproject</groupId>
       		<artifactId>sakai-evaluation-logic-api</artifactId>
       	</exclusion>
+   	      	<exclusion>
+      		<groupId>org.sakaiproject</groupId>
+      		<artifactId>sakai-evaluation-hbm</artifactId>
+      	</exclusion>
       	<exclusion>
       		<groupId>org.sakaiproject</groupId>
       		<artifactId>sakai-evaluation-test</artifactId>
@@ -81,6 +85,10 @@
       	<exclusion>
       		<groupId>org.sakaiproject</groupId>
       		<artifactId>sakai-evaluation-test</artifactId>
+      	</exclusion>
+      	<exclusion>
+      		<groupId>org.sakaiproject</groupId>
+      		<artifactId>sakai-evaluation-hbm</artifactId>
       	</exclusion>
       	<exclusion>
       		<groupId>org.sakaiproject</groupId>
