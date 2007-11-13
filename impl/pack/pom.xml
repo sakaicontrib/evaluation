@@ -30,13 +30,79 @@
       <groupId>org.sakaiproject</groupId>
       <artifactId>sakai-evaluation-logic-impl</artifactId>
       <version>${sakai.version}</version>
-<!--properties:  war.bundle: true -->
+      <exclusions>
+      	<exclusion>
+      		<groupId>org.sakaiproject</groupId>
+      		<artifactId>sakai-evaluation-model-api</artifactId>
+      	</exclusion>
+      	<exclusion>
+      		<groupId>org.sakaiproject</groupId>
+      		<artifactId>sakai-evaluation-logic-api</artifactId>
+      	</exclusion>
+      	<exclusion>
+      		<groupId>org.sakaiproject</groupId>
+      		<artifactId>sakai-evaluation-test</artifactId>
+      	</exclusion>
+      	<exclusion>
+      		<groupId>org.sakaiproject</groupId>
+      		<artifactId>generic-dao</artifactId>
+      	</exclusion>
+      	<exclusion>
+      		<groupId>org.springframework</groupId>
+      		<artifactId>spring-mock</artifactId>
+      	</exclusion>
+      	<exclusion>
+      		<groupId>ehcache</groupId>
+      		<artifactId>ehcache</artifactId>
+      	</exclusion>
+      	<exclusion>
+      		<groupId>easymock</groupId>
+      		<artifactId>easymock</artifactId>
+      	</exclusion>
+      	<exclusion>
+      		<groupId>commons-codec</groupId>
+      		<artifactId>commons-codec</artifactId>
+      	</exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.sakaiproject</groupId>
       <artifactId>sakai-evaluation-dao-impl</artifactId>
       <version>${sakai.version}</version>
-<!--properties:  war.bundle: true -->
+      <exclusions>
+      	<exclusion>
+      		<groupId>org.sakaiproject</groupId>
+      		<artifactId>sakai-evaluation-model-api</artifactId>
+      	</exclusion>
+      	<exclusion>
+      		<groupId>org.sakaiproject</groupId>
+      		<artifactId>sakai-evaluation-logic-api</artifactId>
+      	</exclusion>
+      	<exclusion>
+      		<groupId>org.sakaiproject</groupId>
+      		<artifactId>sakai-evaluation-test</artifactId>
+      	</exclusion>
+      	<exclusion>
+      		<groupId>org.sakaiproject</groupId>
+      		<artifactId>generic-dao</artifactId>
+      	</exclusion>
+      	<exclusion>
+      		<groupId>org.springframework</groupId>
+      		<artifactId>spring-mock</artifactId>
+      	</exclusion>
+      	<exclusion>
+      	      <groupId>ehcache</groupId>
+      	      <artifactId>ehcache</artifactId>
+      	</exclusion>
+      	<exclusion>
+      		<groupId>easymock</groupId>
+      		<artifactId>easymock</artifactId>
+      	</exclusion>
+      	<exclusion>
+      		<groupId>commons-codec</groupId>
+      		<artifactId>commons-codec</artifactId>
+      	</exclusion>
+      </exclusions>
     </dependency>
 <!-- velocity for processing text templates -->
     <dependency>
@@ -51,13 +117,6 @@
       <artifactId>sakai-util</artifactId>
       <version>${sakai.version}</version>
 <!--properties:  war.bundle: true -->
-    </dependency>
-<!-- generic DAO -->
-    <dependency>
-      <groupId>org.sakaiproject</groupId>
-      <artifactId>generic-dao</artifactId>
-      <version>${sakai.generic-dao.version}</version>
-<!--properties:  deploy.target: shared -->
     </dependency>
   </dependencies>
   <build>

@@ -27,11 +27,13 @@
       <groupId>org.sakaiproject</groupId>
       <artifactId>sakai-evaluation-model-api</artifactId>
       <version>${sakai.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.sakaiproject</groupId>
       <artifactId>sakai-evaluation-logic-api</artifactId>
       <version>${sakai.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.sakaiproject</groupId>
@@ -48,17 +50,20 @@
       <groupId>org.sakaiproject</groupId>
       <artifactId>generic-dao</artifactId>
       <version>${sakai.generic-dao.version}</version>
+      <scope>provided</scope>
     </dependency>
 <!-- Spring and Hibernate dependencies. -->
     <dependency>
       <groupId>${sakai.spring.groupId}</groupId>
       <artifactId>${sakai.spring.artifactId}</artifactId>
       <version>${sakai.spring.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>${sakai.hibernate.groupId}</groupId>
       <artifactId>${sakai.hibernate.artifactId}</artifactId>
       <version>${sakai.hibernate.version}</version>
+      <scope>provided</scope>
     </dependency>
 <!-- Required for hibernate 3 HQL queries -->
     <dependency>
