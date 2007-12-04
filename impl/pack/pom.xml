@@ -120,13 +120,6 @@
       	</exclusion>
       </exclusions>
     </dependency>
-<!-- velocity for processing text templates -->
-    <dependency>
-      <groupId>velocity</groupId>
-      <artifactId>velocity</artifactId>
-      <version>1.4</version>
-<!--properties:  war.bundle: true -->
-    </dependency>
 <!-- sakai dependencies -->
     <dependency>
       <groupId>org.sakaiproject</groupId>
