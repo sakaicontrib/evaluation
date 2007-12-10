@@ -1,144 +1,67 @@
 <?xml version="1.0"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://maven.apache.org/POM/4.0.0"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<artifactId>evaluation-base</artifactId>
-		<groupId>org.sakaiproject</groupId>
-		<version>${sakai.version}</version>
-		<relativePath>../../pom.xml</relativePath>
-	</parent>
-	<name>sakai-evaluation-pack</name>
-	<groupId>org.sakaiproject</groupId>
-	<artifactId>sakai-evaluation-pack</artifactId>
-	<organization>
-		<name>Sakai Project</name>
-		<url>http://www.sakaiproject.org/</url>
-	</organization>
-	<inceptionYear>2006</inceptionYear>
-	<!-- you must deploy your pack to components -->
-	<packaging>sakai-component</packaging>
-	<properties>
-		<deploy.target>components</deploy.target>
-	</properties>
-	<!-- the components pack should include your dao and logic impl 
-		in the war bundle and the components.xml file 
-		(which is basically a spring-config file with a special name -->
-	<dependencies>
-		<!-- our plugin so we can run maven from this directory for testing -->
-		<!-- Internal dependencies -->
-		<dependency>
-			<groupId>org.sakaiproject</groupId>
-			<artifactId>sakai-evaluation-logic-impl</artifactId>
-			<version>${sakai.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.sakaiproject</groupId>
-					<artifactId>sakai-evaluation-model-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.sakaiproject</groupId>
-					<artifactId>sakai-evaluation-logic-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.sakaiproject</groupId>
-					<artifactId>sakai-evaluation-hbm</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.sakaiproject</groupId>
-					<artifactId>sakai-evaluation-test</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.sakaiproject</groupId>
-					<artifactId>generic-dao</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-mock</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>ehcache</groupId>
-					<artifactId>ehcache</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>easymock</groupId>
-					<artifactId>easymock</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>commons-codec</groupId>
-					<artifactId>commons-codec</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>velocity</groupId>
-					<artifactId>velocity-dep</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>oro</groupId>
-					<artifactId>oro</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.sakaiproject</groupId>
-			<artifactId>sakai-evaluation-dao-impl</artifactId>
-			<version>${sakai.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.sakaiproject</groupId>
-					<artifactId>sakai-evaluation-model-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.sakaiproject</groupId>
-					<artifactId>sakai-evaluation-logic-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.sakaiproject</groupId>
-					<artifactId>sakai-evaluation-test</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.sakaiproject</groupId>
-					<artifactId>sakai-evaluation-hbm</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.sakaiproject</groupId>
-					<artifactId>generic-dao</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-mock</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>ehcache</groupId>
-					<artifactId>ehcache</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>easymock</groupId>
-					<artifactId>easymock</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>commons-codec</groupId>
-					<artifactId>commons-codec</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<!-- sakai dependencies -->
-		<dependency>
-			<groupId>org.sakaiproject</groupId>
-			<artifactId>sakai-util</artifactId>
-			<version>${sakai.version}</version>
-			<!--properties:  war.bundle: true -->
-		</dependency>
-	</dependencies>
-	<build>
-		<resources>
-			<resource>
-				<directory>src/java</directory>
-				<includes>
-					<include>**/*.xml</include>
-				</includes>
-			</resource>
-		</resources>
-		<sourceDirectory>src/java</sourceDirectory>
-	</build>
+   xmlns="http://maven.apache.org/POM/4.0.0"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+   <parent>
+      <artifactId>evaluation-base</artifactId>
+      <groupId>org.sakaiproject</groupId>
+      <version>${sakai.version}</version>
+      <relativePath>../../pom.xml</relativePath>
+   </parent>
+   <name>sakai-evaluation-pack</name>
+   <groupId>org.sakaiproject</groupId>
+   <artifactId>sakai-evaluation-pack</artifactId>
+   <organization>
+      <name>Sakai Project</name>
+      <url>http://www.sakaiproject.org/</url>
+   </organization>
+   <inceptionYear>2006</inceptionYear>
+   <!-- you must deploy your pack to components -->
+   <packaging>sakai-component</packaging>
+   <properties>
+      <deploy.target>components</deploy.target>
+   </properties>
+
+   <!-- the components pack should include your dao and logic impl 
+      in the war bundle and the components.xml file 
+      (which is basically a spring-config file with a special name -->
+   <dependencies>
+      <!-- Internal dependencies -->
+      <dependency>
+         <groupId>org.sakaiproject</groupId>
+         <artifactId>sakai-evaluation-logic-impl</artifactId>
+         <version>${sakai.version}</version>
+         <scope>runtime</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>org.sakaiproject</groupId>
+         <artifactId>sakai-evaluation-dao-impl</artifactId>
+         <version>${sakai.version}</version>
+         <scope>runtime</scope>
+      </dependency>
+
+      <!-- sakai dependencies -->
+      <dependency>
+         <groupId>org.sakaiproject</groupId>
+         <artifactId>sakai-util</artifactId>
+         <version>${sakai.version}</version>
+         <scope>runtime</scope>
+      </dependency>
+
+   </dependencies>
+
+   <build>
+      <resources>
+         <resource>
+            <directory>src/java</directory>
+            <includes>
+               <include>**/*.xml</include>
+            </includes>
+         </resource>
+      </resources>
+      <sourceDirectory>src/java</sourceDirectory>
+   </build>
+
 </project>

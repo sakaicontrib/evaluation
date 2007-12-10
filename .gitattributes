@@ -128,7 +128,6 @@ impl/pack/src/webapp/WEB-INF/spring-hibernate.xml -text
 impl/test/project.xml -text
 impl/test/src/java/org/sakaiproject/evaluation/test/EvalTestDataLoad.java -text
 impl/test/src/java/org/sakaiproject/evaluation/test/PreloadTestData.java -text
-/pom.xml.old -text
 /project.properties -text
 /project.xml -text
 tool/maven.xml -text
