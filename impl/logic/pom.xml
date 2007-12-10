@@ -1,270 +1,327 @@
 <?xml version="1.0"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <artifactId>evaluation-base</artifactId>
-    <groupId>org.sakaiproject</groupId>
-    <version>${sakai.version}</version>
-    <relativePath>../../pom.xml</relativePath>
-  </parent>
-  <name>sakai-evaluation-logic-impl</name>
-  <groupId>org.sakaiproject</groupId>
-  <artifactId>sakai-evaluation-logic-impl</artifactId>
-  <organization>
-    <name>Sakai Project</name>
-    <url>http://www.sakaiproject.org/</url>
-  </organization>
-  <inceptionYear>2006</inceptionYear>
-<!-- the logic should be deployed as a jar and included in the pack, not to shared -->
-  <packaging>jar</packaging>
-  <properties>
-    <deploy.target></deploy.target>
-  </properties>
-  <dependencies>
-<!-- Sakai dependencies -->
-<!-- Evaluation dependencies -->
-    <dependency>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns="http://maven.apache.org/POM/4.0.0"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+   <parent>
+      <artifactId>evaluation-base</artifactId>
       <groupId>org.sakaiproject</groupId>
-      <artifactId>sakai-evaluation-model-api</artifactId>
       <version>${sakai.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.sakaiproject</groupId>
-      <artifactId>sakai-evaluation-logic-api</artifactId>
-      <version>${sakai.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.sakaiproject</groupId>
-      <artifactId>sakai-evaluation-test</artifactId>
-      <version>${sakai.version}</version>
-      <scope>provided</scope>
-    </dependency>
-<!-- generic DAO -->
-    <dependency>
-      <groupId>org.sakaiproject</groupId>
-      <artifactId>generic-dao</artifactId>
-      <version>${sakai.generic-dao.version}</version>
-      <scope>provided</scope>
-    </dependency>
-<!-- Spring and Hibernate dependencies. -->
-    <dependency>
-      <groupId>${sakai.spring.groupId}</groupId>
-      <artifactId>${sakai.spring.artifactId}</artifactId>
-      <version>${sakai.spring.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>${sakai.hibernate.groupId}</groupId>
-      <artifactId>${sakai.hibernate.artifactId}</artifactId>
-      <version>${sakai.hibernate.version}</version>
-      <scope>provided</scope>
-    </dependency>
-<!-- Required for hibernate 3 HQL queries -->
-    <dependency>
-      <groupId>antlr</groupId>
-      <artifactId>antlr</artifactId>
-      <version>2.7.6</version>
-    </dependency>
-<!-- email dependencies -->
-    <dependency>
-      <groupId>javax.mail</groupId>
-      <artifactId>mail</artifactId>
-      <version>1.3.1</version>
-    </dependency>
-<!-- JDOM dependencies -->
-    <dependency>
-      <groupId>jdom</groupId>
-      <artifactId>jdom</artifactId>
-      <version>1.0</version>
-    </dependency>
-<!-- Quartz dependencies -->
-    <dependency>
-      <groupId>quartz</groupId>
-      <artifactId>quartz</artifactId>
-      <version>1.5.2</version>
-    </dependency>
-<!-- velocity for processing text templates -->
-    <dependency>
-      <groupId>velocity</groupId>
-      <artifactId>velocity</artifactId>
-      <version>1.5</version>
-    </dependency>
-<!-- Various Sakai dependencies -->
-    <dependency>
-      <groupId>org.sakaiproject</groupId>
-      <artifactId>sakai-authz-api</artifactId>
-      <version>${sakai.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.sakaiproject</groupId>
-      <artifactId>sakai-component-api</artifactId>
-      <version>${sakai.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.sakaiproject</groupId>
-      <artifactId>sakai-component</artifactId>
-      <version>${sakai.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.sakaiproject</groupId>
-      <artifactId>sakai-content-api</artifactId>
-      <version>${sakai.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.sakaiproject</groupId>
-      <artifactId>sakai-email-api</artifactId>
-      <version>${sakai.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.sakaiproject</groupId>
-      <artifactId>sakai-entity-api</artifactId>
-      <version>${sakai.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.sakaiproject.hierarchy</groupId>
-      <artifactId>hierarchy-api</artifactId>
-      <version>1.0.0-RC1</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.sakaiproject</groupId>
-      <artifactId>sakai-scheduler-api</artifactId>
-      <version>${sakai.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-    	<groupId>org.sakaiproject.entitybroker</groupId>
-    	<artifactId>entitybroker-api</artifactId>
-    	<version>1.2.0</version>
-    	<scope>provided</scope>
-	</dependency>
-    <dependency>
-      <groupId>org.sakaiproject</groupId>
-      <artifactId>sakai-site-api</artifactId>
-      <version>${sakai.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.sakaiproject</groupId>
-      <artifactId>sakai-tool-api</artifactId>
-      <version>${sakai.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.sakaiproject</groupId>
-      <artifactId>sakai-user-api</artifactId>
-      <version>${sakai.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.sakaiproject</groupId>
-      <artifactId>sakai-util-api</artifactId>
-      <version>${sakai.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.sakaiproject</groupId>
-      <artifactId>sakai-util</artifactId>
-      <version>${sakai.version}</version>
-      <scope>provided</scope>
-    </dependency>
-<!-- Apache commons dependencies -->
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-      <version>1.0.4</version>
-    </dependency>
-    <dependency>
-      <groupId>velocity</groupId>
-      <artifactId>velocity</artifactId>
-      <version>1.5</version>
-    </dependency>
-<!-- testing dependencies -->
-    <dependency>
-      <groupId>${sakai.spring.groupId}</groupId>
-      <artifactId>${sakai.spring.mock.artifactId}</artifactId>
-      <version>${sakai.spring.mock.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>hsqldb</groupId>
-      <artifactId>hsqldb</artifactId>
-      <version>1.8.0.5</version>
-    </dependency>
-    <dependency>
-      <groupId>dom4j</groupId>
-      <artifactId>dom4j</artifactId>
-      <version>1.6.1</version>
-    </dependency>
-    <dependency>
-      <groupId>jta</groupId>
-      <artifactId>jta</artifactId>
-      <version>h2.1.8</version>
-    </dependency>
-    <dependency>
-      <groupId>cglib</groupId>
-      <artifactId>cglib-nodep</artifactId>
-      <version>2.1_3</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-codec</groupId>
-      <artifactId>commons-codec</artifactId>
-      <version>1.3</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-collections</groupId>
-      <artifactId>commons-collections</artifactId>
-      <version>3.1</version>
-    </dependency>
-    <dependency>
-      <groupId>ehcache</groupId>
-      <artifactId>ehcache</artifactId>
-      <version>1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>easymock</groupId>
-      <artifactId>easymock</artifactId>
-      <version>1.2_Java1.3</version>
-    </dependency>
-<!-- there are needed if we are testing the logic class using a working DAO -->
-    <dependency>
-      <groupId>org.sakaiproject</groupId>
-      <artifactId>sakai-evaluation-hbm</artifactId>
-      <version>${sakai.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.sakaiproject</groupId>
-      <artifactId>sakai-evaluation-dao-impl</artifactId>
-      <version>${sakai.version}</version>
-    </dependency>
-  </dependencies>
-  <build>
-    <resources/>
-    <sourceDirectory>src/java</sourceDirectory>
-<!-- unit testing -->
-    <testSourceDirectory>src/test</testSourceDirectory>
-    <testResources>
-      <testResource>
-        <directory>${basedir}/../pack/src/webapp/WEB-INF</directory>
-        <includes>
-          <include>spring-hibernate.xml</include>
-          <include>logic-support.xml</include>
-        </includes>
-      </testResource>
-      <testResource>
-        <directory>${basedir}/../dao/src/test</directory>
-        <includes>
-          <include>hibernate-test.xml</include>
-          <include>hibernate.properties</include>
-        </includes>
-      </testResource>
-<!--includes:  include: **/*Test.java -->
-    </testResources>
-  </build>
+      <relativePath>../../pom.xml</relativePath>
+   </parent>
+   <name>sakai-evaluation-logic-impl</name>
+   <groupId>org.sakaiproject</groupId>
+   <artifactId>sakai-evaluation-logic-impl</artifactId>
+   <organization>
+      <name>Sakai Project</name>
+      <url>http://www.sakaiproject.org/</url>
+   </organization>
+   <inceptionYear>2006</inceptionYear>
+   <!-- the logic should be deployed as a jar and included in the pack, not to shared -->
+   <packaging>jar</packaging>
+   <properties>
+      <deploy.target></deploy.target>
+   </properties>
+
+   <dependencies>
+
+      <!-- Evaluation dependencies -->
+      <dependency>
+         <groupId>org.sakaiproject</groupId>
+         <artifactId>sakai-evaluation-model-api</artifactId>
+         <version>${sakai.version}</version>
+         <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>org.sakaiproject</groupId>
+         <artifactId>sakai-evaluation-logic-api</artifactId>
+         <version>${sakai.version}</version>
+         <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>org.sakaiproject</groupId>
+         <artifactId>sakai-evaluation-test</artifactId>
+         <version>${sakai.version}</version>
+         <scope>test</scope>
+      </dependency>
+
+      <!-- generic DAO -->
+      <dependency>
+         <groupId>org.sakaiproject</groupId>
+         <artifactId>generic-dao</artifactId>
+         <version>${sakai.generic-dao.version}</version>
+         <scope>provided</scope>
+      </dependency>
+
+      <!-- Spring and Hibernate dependencies. -->
+      <dependency>
+         <groupId>${sakai.spring.groupId}</groupId>
+         <artifactId>${sakai.spring.artifactId}</artifactId>
+         <version>${sakai.spring.version}</version>
+         <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>${sakai.hibernate.groupId}</groupId>
+         <artifactId>${sakai.hibernate.artifactId}</artifactId>
+         <version>${sakai.hibernate.version}</version>
+         <scope>provided</scope>
+      </dependency>
+
+      <!-- Required for hibernate 3 HQL queries -->
+      <dependency>
+         <groupId>antlr</groupId>
+         <artifactId>antlr</artifactId>
+         <version>2.7.6</version>
+      </dependency>
+
+      <!-- email dependencies -->
+      <dependency>
+         <groupId>javax.mail</groupId>
+         <artifactId>mail</artifactId>
+         <version>1.3.1</version>
+      </dependency>
+
+      <!-- JDOM dependencies -->
+      <dependency>
+         <groupId>jdom</groupId>
+         <artifactId>jdom</artifactId>
+         <version>1.0</version>
+      </dependency>
+
+      <!-- Quartz dependencies -->
+      <dependency>
+         <groupId>quartz</groupId>
+         <artifactId>quartz</artifactId>
+         <version>1.5.2</version>
+      </dependency>
+
+      <!-- velocity for processing text templates -->
+      <dependency>
+         <groupId>velocity</groupId>
+         <artifactId>velocity</artifactId>
+         <version>1.5</version>
+      </dependency>
+
+      <!-- Various Sakai dependencies -->
+      <dependency>
+         <groupId>org.sakaiproject</groupId>
+         <artifactId>sakai-authz-api</artifactId>
+         <version>${sakai.version}</version>
+         <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>org.sakaiproject</groupId>
+         <artifactId>sakai-component-api</artifactId>
+         <version>${sakai.version}</version>
+         <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>org.sakaiproject</groupId>
+         <artifactId>sakai-component</artifactId>
+         <version>${sakai.version}</version>
+         <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>org.sakaiproject</groupId>
+         <artifactId>sakai-content-api</artifactId>
+         <version>${sakai.version}</version>
+         <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>org.sakaiproject</groupId>
+         <artifactId>sakai-email-api</artifactId>
+         <version>${sakai.version}</version>
+         <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>org.sakaiproject</groupId>
+         <artifactId>sakai-entity-api</artifactId>
+         <version>${sakai.version}</version>
+         <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>org.sakaiproject.hierarchy</groupId>
+         <artifactId>hierarchy-api</artifactId>
+         <version>1.0.0-RC1</version>
+         <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>org.sakaiproject</groupId>
+         <artifactId>sakai-scheduler-api</artifactId>
+         <version>${sakai.version}</version>
+         <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>org.sakaiproject.entitybroker</groupId>
+         <artifactId>entitybroker-api</artifactId>
+         <version>1.2.0</version>
+         <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>org.sakaiproject</groupId>
+         <artifactId>sakai-site-api</artifactId>
+         <version>${sakai.version}</version>
+         <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>org.sakaiproject</groupId>
+         <artifactId>sakai-tool-api</artifactId>
+         <version>${sakai.version}</version>
+         <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>org.sakaiproject</groupId>
+         <artifactId>sakai-user-api</artifactId>
+         <version>${sakai.version}</version>
+         <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>org.sakaiproject</groupId>
+         <artifactId>sakai-util-api</artifactId>
+         <version>${sakai.version}</version>
+         <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>org.sakaiproject</groupId>
+         <artifactId>sakai-util</artifactId>
+         <version>${sakai.version}</version>
+         <scope>provided</scope>
+      </dependency>
+
+      <!-- Apache commons dependencies -->
+      <dependency>
+         <groupId>commons-logging</groupId>
+         <artifactId>commons-logging</artifactId>
+         <version>1.1</version>
+         <scope>provided</scope>
+      </dependency>
+
+      <!-- testing dependencies -->
+      <dependency>
+         <groupId>${sakai.spring.groupId}</groupId>
+         <artifactId>${sakai.spring.mock.artifactId}</artifactId>
+         <version>${sakai.spring.mock.version}</version>
+         <scope>test</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>hsqldb</groupId>
+         <artifactId>hsqldb</artifactId>
+         <version>1.8.0.5</version>
+         <scope>test</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>dom4j</groupId>
+         <artifactId>dom4j</artifactId>
+         <version>1.6.1</version>
+         <scope>test</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>jta</groupId>
+         <artifactId>jta</artifactId>
+         <version>h2.1.8</version>
+         <scope>test</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>cglib</groupId>
+         <artifactId>cglib-nodep</artifactId>
+         <version>2.1_3</version>
+         <scope>test</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>commons-codec</groupId>
+         <artifactId>commons-codec</artifactId>
+         <version>1.3</version>
+         <scope>test</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>commons-collections</groupId>
+         <artifactId>commons-collections</artifactId>
+         <version>3.2</version>
+         <scope>test</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>net.sf.ehcache</groupId>
+         <artifactId>ehcache</artifactId>
+         <version>1.3.0</version>
+         <scope>test</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>easymock</groupId>
+         <artifactId>easymock</artifactId>
+         <version>1.2_Java1.3</version>
+         <scope>test</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>commons-lang</groupId>
+         <artifactId>commons-lang</artifactId>
+         <version>2.1</version>
+         <scope>test</scope>
+      </dependency>
+
+      <!-- these are needed if we are testing the logic class using a working DAO -->
+      <dependency>
+         <groupId>org.sakaiproject</groupId>
+         <artifactId>sakai-evaluation-hbm</artifactId>
+         <version>${sakai.version}</version>
+         <scope>test</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>org.sakaiproject</groupId>
+         <artifactId>sakai-evaluation-dao-impl</artifactId>
+         <version>${sakai.version}</version>
+         <scope>test</scope>
+      </dependency>
+
+   </dependencies>
+
+   <build>
+      <resources />
+      <sourceDirectory>src/java</sourceDirectory>
+      <!-- unit testing -->
+      <testSourceDirectory>src/test</testSourceDirectory>
+      <testResources>
+         <testResource>
+            <directory>${basedir}/../pack/src/webapp/WEB-INF</directory>
+            <includes>
+               <include>spring-hibernate.xml</include>
+               <include>logic-support.xml</include>
+            </includes>
+         </testResource>
+         <testResource>
+            <directory>${basedir}/../dao/src/test</directory>
+            <includes>
+               <include>hibernate-test.xml</include>
+               <include>hibernate.properties</include>
+            </includes>
+         </testResource>
+         <!--includes:  include: **/*Test.java -->
+      </testResources>
+   </build>
+
 </project>
