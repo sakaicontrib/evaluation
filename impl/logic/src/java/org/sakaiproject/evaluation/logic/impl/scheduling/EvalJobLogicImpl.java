@@ -33,6 +33,9 @@ import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.time.api.TimeService;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 /**
  * Handle job scheduling related to EvalEvaluation state transitions.</br>
@@ -42,7 +45,7 @@ import org.sakaiproject.time.api.TimeService;
  * @author rwellis
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
-public class EvalJobLogicImpl implements EvalJobLogic {
+public class EvalJobLogicImpl implements EvalJobLogic, ApplicationContextAware {
 
 	private static Log log = LogFactory.getLog(EvalJobLogicImpl.class);
 	
@@ -61,6 +64,20 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	private EvalEmailsLogic emails;
 	public void setEmails(EvalEmailsLogic emails) {
 		this.emails = emails;
+	}
+	
+	// SWG EVALSYS-335
+	private void initEmailLogic() {
+		if (emails == null) {
+			this.emails = (EvalEmailsLogic) appContext.getBean("org.sakaiproject.evaluation.logic.EvalEmailsLogic");
+		}
+	}
+	
+	// SWG EVALSYS-335
+	private void initEvaluationsLogic() {
+		if (evalEvaluationsLogic == null) {
+			this.evalEvaluationsLogic = (EvalEvaluationsLogic) appContext.getBean("org.sakaiproject.evaluation.logic.EvalEvaluationsLogic");
+		}
 	}
 	
 	private EvalEvaluationsLogic evalEvaluationsLogic;
@@ -156,6 +173,9 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	 * @param evalId the EvalEvaluation id
 	 */
 	private void fixReminder(Long evaluationId) {
+		// SWG EVALSYS-335
+		initEvaluationsLogic();
+		
 		EvalEvaluation eval = evalEvaluationsLogic.getEvaluationById(evaluationId);
 		String opaqueContext = evaluationId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_REMINDER;
 		DelayedInvocation[] invocations = scheduledInvocationManager.findDelayedInvocations(COMPONENT_ID, opaqueContext);
@@ -177,6 +197,8 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	 * @param evalId the EvalEvaluation id
 	 */
 	public void removeScheduledReminder(Long evalId) {
+		// SWG EVALSYS-335
+		initEvaluationsLogic();
 		
 		if(evalId == null) return;
 		String userId = externalLogic.getCurrentUserId();
@@ -193,6 +215,8 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	 * @param evalId the EvalEvaluation id
 	 */
 	public void removeScheduledInvocations(Long evalId) {
+		// SWG EVALSYS-335
+		initEvaluationsLogic();
 		
 		if(evalId == null) return;
 		String userId = externalLogic.getCurrentUserId();
@@ -385,6 +409,9 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	 * @param evaluationId the EvalEvaluation id
 	 */
 	 public void scheduleReminder(Long evaluationId) {
+		// SWG EVALSYS-335
+		initEvaluationsLogic();
+		 
 		 //we're depending on reminders going out on time
 		if(evaluationId == null) {
 			log.error(this + ".scheduleReminder(): null evaluationId");
@@ -445,6 +472,9 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	 * @return
 	 */
 	public boolean isJobTypeScheduled(Long evaluationId, String jobType) {
+		// SWG EVALSYS-335
+		initEvaluationsLogic();
+		
 		if(evaluationId == null || jobType == null) {
 			log.warn(this + ".isJobTypeScheduled called with null parameter(s).");
 			return false;
@@ -509,6 +539,8 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	 * @see org.sakaiproject.evaluation.logic.externals.EvalJobLogic#jobAction(java.lang.Long)
 	 */
 	public void jobAction(Long evaluationId, String jobType) {
+		// SWG EVALSYS-335
+		initEvaluationsLogic();
 		
 		/* Note: If interactive response time is too slow waiting for
 		 * mail to be sent, sending mail could be done as another type
@@ -597,6 +629,9 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	 * @param evalId the EvalEvaluation id
 	 */
 	public void sendAvailableEmail(Long evalId) {
+		// SWG EVALSYS-335
+		initEmailLogic();
+		
 		//For now, we always want to include the evaluatees in the evaluations
 		boolean includeEvaluatees = true;
 		try {
@@ -615,6 +650,9 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	 * @param evalId the EvalEvaluation id
 	 */
 	public void sendCreatedEmail(Long evalId) {
+		// SWG EVALSYS-335
+		initEmailLogic();
+		
 		boolean includeOwner = true;
 		try {
 			String[] sentMessages = emails.sendEvalCreatedNotifications(evalId, includeOwner);
@@ -633,6 +671,11 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	 * @param evalId the EvalEvaluation id
 	 */
 	public void sendReminderEmail(Long evalId) {
+		// SWG EVALSYS-335
+		initEmailLogic();
+		// SWG EVALSYS-335
+		initEvaluationsLogic();
+		
 		try {
 			EvalEvaluation eval = evalEvaluationsLogic.getEvaluationById(evalId);
 			if(eval.getState().equals(EvalConstants.EVALUATION_STATE_ACTIVE) &&
@@ -658,6 +701,9 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	 * @param the job type fom EvalConstants
 	 */
 	public void sendViewableEmail(Long evalId, String jobType, Boolean resultsPrivate) {
+		// SWG EVALSYS-335
+		initEmailLogic();
+		
 		/*
 		 * TODO when booleans below are set dynamically, replace the use of job type to distinguish
 		 * recipients with the setting of these parameters before calling emails.sendEvalResultsNotifications().
@@ -684,6 +730,11 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 		catch(Exception e) {
 			log.error(this + ".sendViewableEmail(" + evalId + "," +  jobType + "," + includeAdmins + ")" + e);
 		}
+	}
+
+	private ApplicationContext appContext;
+	public void setApplicationContext(ApplicationContext ctx) throws BeansException {
+		this.appContext = ctx;
 	}
 }
 

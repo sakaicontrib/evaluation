@@ -31,8 +31,10 @@
 
    <bean id="org.sakaiproject.evaluation.logic.EvalJobLogic"
       class="org.sakaiproject.evaluation.logic.impl.scheduling.EvalJobLogicImpl" init-method="init">
-      <property name="emails" ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
-      <property name="evalEvaluationsLogic" ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+      <!-- SWG EVALSYS-335 -->
+      <!-- <property name="emails" ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" /> -->
+      <!-- SWG EVALSYS-335 -->
+      <!-- <property name="evalEvaluationsLogic" ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" /> -->
       <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
       <property name="scheduledInvocationManager"
          ref="org.sakaiproject.api.app.scheduler.ScheduledInvocationManager" />

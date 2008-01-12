@@ -30,13 +30,16 @@ import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 /**
  * EvalEmailsLogic implementation
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class EvalEmailsLogicImpl implements EvalEmailsLogic {
+public class EvalEmailsLogicImpl implements EvalEmailsLogic, ApplicationContextAware {
 
    private static Log log = LogFactory.getLog(EvalEmailsLogicImpl.class);
 
@@ -56,6 +59,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       this.settings = settings;
    }
 
+   // SWG EVALSYS-335
    private EvalAssignsLogic assignsLogic;
    public void setAssignsLogic(EvalAssignsLogic assignsLogic) {
       this.assignsLogic = assignsLogic;
@@ -829,6 +833,11 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
     */
    private String makeEmailMessage(String messageTemplate, EvalEvaluation eval, EvalGroup group,
          Map<String, String> replacementValues) {
+      // SWG EVALSYS-335
+      if (assignsLogic == null) {
+          assignsLogic = (EvalAssignsLogic) appContext.getBean("org.sakaiproject.evaluation.logic.EvalAssignsLogic");
+      }
+       
       // replace the text of the template with real values
       if (replacementValues == null) {
          replacementValues = new HashMap<String, String>();
@@ -871,6 +880,11 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       replacementValues.put("URLtoSystem", externalLogic.getServerUrl());
 
       return TextTemplateLogicUtils.processTextTemplate(messageTemplate, replacementValues);
+   }
+
+   private ApplicationContext appContext;
+   public void setApplicationContext(ApplicationContext ctx) throws BeansException {
+      this.appContext = ctx;
    }
 
 }

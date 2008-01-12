@@ -34,7 +34,8 @@
       <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
       <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
       <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-      <property name="assignsLogic" ref="org.sakaiproject.evaluation.logic.EvalAssignsLogic" />
+      <!-- SWG EVALSYS-335 -->
+      <!-- <property name="assignsLogic" ref="org.sakaiproject.evaluation.logic.EvalAssignsLogic" /> -->
       <property name="evaluationLogic" ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
       <property name="evalResponsesLogic" ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
    </bean>
