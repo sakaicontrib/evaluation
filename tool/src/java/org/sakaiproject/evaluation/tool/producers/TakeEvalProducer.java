@@ -274,8 +274,16 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
             UIVerbatim.make(instructions, "eval-instructions", eval.getInstructions());
          }
 
-         if ( ((Boolean)evalSettings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED)).booleanValue() == false ) {
-            // all items must be completed so show warning
+         // get the setting and make sure it cannot be null (fix for http://www.caret.cam.ac.uk/jira/browse/CTL-531)
+         Boolean studentAllowedLeaveUnanswered = ((Boolean)evalSettings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED));
+         if (studentAllowedLeaveUnanswered == null) {
+            studentAllowedLeaveUnanswered = eval.getBlankResponsesAllowed();
+            if (studentAllowedLeaveUnanswered == null) {
+               studentAllowedLeaveUnanswered = false;
+            }
+         }
+         // show a warning to the user if all items must be filled in
+         if ( studentAllowedLeaveUnanswered == false ) {
             UIBranchContainer note = UIBranchContainer.make(tofill, "show-eval-note:");
             UIMessage.make(note, "eval-note-header", "general.note");   
             UIMessage.make(note, "eval-note-text", "takeeval.user.must.answer.all");   
