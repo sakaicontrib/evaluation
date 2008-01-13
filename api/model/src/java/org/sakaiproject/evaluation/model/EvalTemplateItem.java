@@ -41,7 +41,7 @@ public class EvalTemplateItem implements java.io.Serializable {
 
 	private Long blockId;
     
-    private String resultsSharing;
+   private String resultsSharing;
 
 	// Constructors
 

@@ -24,36 +24,42 @@ package org.sakaiproject.evaluation.tool.viewparams;
  */
 public class ItemViewParameters extends TemplateViewParameters {
 
-	public Long itemId;
-	public Long templateItemId;
-	public String itemClassification;
+   public Long itemId;
+   public Long templateItemId;
+   public String itemClassification;
 
-	public ItemViewParameters() { }
+   public ItemViewParameters() { }
 
-	public ItemViewParameters(String viewID, Long itemId, Long templateItemId) {
-		this.viewID = viewID;
-		this.itemId = itemId;
-		this.templateItemId = templateItemId;
-	}
+   public ItemViewParameters(String viewID, Long itemId, Long templateItemId) {
+      this.viewID = viewID;
+      this.itemId = itemId;
+      this.templateItemId = templateItemId;
+   }
 
-	public ItemViewParameters(String viewID, String itemClassification) {
-		this.viewID = viewID;
-		this.itemClassification = itemClassification;
-	}
+   public ItemViewParameters(String viewID, String itemClassification) {
+      this.viewID = viewID;
+      this.itemClassification = itemClassification;
+   }
 
-	public ItemViewParameters(String viewID, Long itemId, Long templateItemId, Long templateId) {
-		this.viewID = viewID;
-		this.itemId = itemId;
-		this.templateItemId = templateItemId;
-		this.templateId = templateId;
-	}
+   public ItemViewParameters(String viewID, String itemClassification, Long templateId) {
+      this.viewID = viewID;
+      this.itemClassification = itemClassification;
+      this.templateId = templateId;
+   }
 
-	public ItemViewParameters(String viewID, Long itemId, Long templateItemId, String itemClassification, Long templateId) {
-		this.viewID = viewID;
-		this.itemId = itemId;
-		this.templateItemId = templateItemId;
-		this.itemClassification = itemClassification;
-		this.templateId = templateId;
-	}
-	
+   public ItemViewParameters(String viewID, Long itemId, Long templateItemId, Long templateId) {
+      this.viewID = viewID;
+      this.itemId = itemId;
+      this.templateItemId = templateItemId;
+      this.templateId = templateId;
+   }
+
+   public ItemViewParameters(String viewID, Long itemId, Long templateItemId, String itemClassification, Long templateId) {
+      this.viewID = viewID;
+      this.itemId = itemId;
+      this.templateItemId = templateItemId;
+      this.itemClassification = itemClassification;
+      this.templateId = templateId;
+   }
+
 }

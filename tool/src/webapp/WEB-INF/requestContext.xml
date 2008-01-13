@@ -10,7 +10,10 @@
       the Sakai FCKEditor-based rich text control -->
    <bean id="richTextEvolver"
       class="org.springframework.beans.factory.config.BeanReferenceFactoryBean">
+<!--  disabling the rich text editor since it seems to be failing in firefox -AZ 
       <property name="targetBeanName" value="sakaiFCKTextEvolver" />
+-->
+      <property name="targetBeanName" value="plainTextInputEvolver" />
    </bean>
 
    <!-- allows us to identify entities used in OTP on the EL path -->
@@ -328,6 +331,8 @@
       <property name="settings"
          ref="org.sakaiproject.evaluation.logic.EvalSettings" />
       <property name="richTextEvolver" ref="richTextEvolver" />
+      <property name="hierarchyNodeSelectorRenderer"
+         ref="org.sakaiproject.evaluation.tool.renderers.HierarchyNodeSelectorRenderer" />
    </bean>
 
    <bean
