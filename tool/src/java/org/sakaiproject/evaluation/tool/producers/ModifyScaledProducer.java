@@ -230,9 +230,9 @@ public class ModifyScaledProducer implements ViewComponentProducer, ViewParamsRe
       } else {
          // Course category if default, instructor otherwise
          // Do not show on the page, just bind it explicitly.
-         form.parameters.add(new UIELBinding(templateItemOTP + "itemCategory",
-               EvaluationConstant.ITEM_CATEGORY_VALUES[isDefaultCourse
-                                                       .booleanValue() ? 0 : 1])); //$NON-NLS-1$
+         form.parameters.add(
+               new UIELBinding(templateItemOTP + "itemCategory",
+                     EvaluationConstant.ITEM_CATEGORY_VALUES[isDefaultCourse.booleanValue() ? 0 : 1])); //$NON-NLS-1$
       }
 
       /*

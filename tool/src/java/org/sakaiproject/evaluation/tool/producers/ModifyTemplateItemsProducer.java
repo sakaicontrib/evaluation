@@ -126,6 +126,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
                 external.getEntityURL(template) ).decorators = 
                     new DecoratorList(new UITooltipDecorator(UIMessage.make("general.direct.link.title")));
 
+        // get form to submit the type of item to create to the correct view
         UIMessage.make(tofill, "add-item-note", "modifytemplate.add.item.note");
         String[] labels = new String[] {
                 "modifytemplate.itemtype.scaled", 
@@ -134,14 +135,14 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
                 "modifytemplate.itemtype.existing",
                 "modifytemplate.itemtype.expert"
         };
-        String[] viewIDs = { 
-                ModifyScaledProducer.VIEW_ID,
-                ModifyEssayProducer.VIEW_ID, 
-                ModifyHeaderProducer.VIEW_ID,
-                ExistingItemsProducer.VIEW_ID,
-                ExpertCategoryProducer.VIEW_ID
+        ViewParameters[] VPs = { 
+                new ItemViewParameters(ModifyItemProducer.VIEW_ID, EvalConstants.ITEM_TYPE_SCALED, templateId),
+                new ItemViewParameters(ModifyItemProducer.VIEW_ID, EvalConstants.ITEM_TYPE_TEXT, templateId),
+                new ItemViewParameters(ModifyItemProducer.VIEW_ID, EvalConstants.ITEM_TYPE_HEADER, templateId),
+                new TemplateItemViewParameters(ExistingItemsProducer.VIEW_ID, templateId, null),
+                new TemplateItemViewParameters(ExpertCategoryProducer.VIEW_ID, templateId, null)
         };
-        addItemControlRenderer.renderControl(tofill, "add-item-control:", viewIDs, labels, 
+        addItemControlRenderer.renderControl(tofill, "add-item-control:", VPs, labels, 
                 UIMessage.make("modifytemplate.add.item.button"), templateId);
 
         List<EvalTemplateItem> itemList = localTemplateLogic.fetchTemplateItems(templateId);
@@ -272,7 +273,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
                 UIMessage.make(tofill, "item-resultssharing-title", "modifytemplate.item.resultssharing.title");
 
                 UIInternalLink.make(itemBranch, "preview-row-item", UIMessage.make("modifytemplate.preview.link"), 
-                        new ItemViewParameters(PreviewItemProducer.VIEW_ID, null, templateItem.getId()) );
+                        new ItemViewParameters(PreviewItemProducer.VIEW_ID, (Long) null, templateItem.getId()) );
 
                 if ((templateItem.getBlockParent() != null) && (templateItem.getBlockParent().booleanValue() == true)) {
                     // if it is a block item

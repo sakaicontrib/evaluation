@@ -39,208 +39,252 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
  */
 public class LocalTemplateLogic {
 
-	private EvalExternalLogic external;
-	public void setExternal(EvalExternalLogic external) {
-		this.external = external;
-	}
+   private EvalExternalLogic external;
+   public void setExternal(EvalExternalLogic external) {
+      this.external = external;
+   }
 
-	private EvalTemplatesLogic templatesLogic;
-	public void setTemplatesLogic(EvalTemplatesLogic templatesLogic) {
-		this.templatesLogic = templatesLogic;
-	}
+   private EvalTemplatesLogic templatesLogic;
+   public void setTemplatesLogic(EvalTemplatesLogic templatesLogic) {
+      this.templatesLogic = templatesLogic;
+   }
 
-	private EvalItemsLogic itemsLogic;
-	public void setItemsLogic(EvalItemsLogic itemsLogic) {
-		this.itemsLogic = itemsLogic;
-	}
+   private EvalItemsLogic itemsLogic;
+   public void setItemsLogic(EvalItemsLogic itemsLogic) {
+      this.itemsLogic = itemsLogic;
+   }
 
-	private EvalScalesLogic scalesLogic;
-	public void setScalesLogic(EvalScalesLogic scalesLogic) {
-		this.scalesLogic = scalesLogic;
-	}
-
-
-	/*
-	 * Real methods below
-	 */
+   private EvalScalesLogic scalesLogic;
+   public void setScalesLogic(EvalScalesLogic scalesLogic) {
+      this.scalesLogic = scalesLogic;
+   }
 
 
-	// TEMPLATES
-
-	public EvalTemplate fetchTemplate(Long templateId) {
-		return templatesLogic.getTemplateById(templateId);
-	}
-
-	public void saveTemplate(EvalTemplate tosave) {
-		templatesLogic.saveTemplate(tosave, external.getCurrentUserId());
-	}
-
-	public EvalTemplate newTemplate() {
-		EvalTemplate currTemplate = new EvalTemplate(new Date(), 
-				external.getCurrentUserId(), EvalConstants.TEMPLATE_TYPE_STANDARD, 
-				null, "private", Boolean.FALSE);
-		currTemplate.setDescription(""); // Note- somehow gives DataIntegrityViolation if null
-		return currTemplate;
-	}
+   /*
+    * Real methods below
+    */
 
 
-	// TEMPLATE ITEMS
+   // TEMPLATES
 
-	public EvalTemplateItem fetchTemplateItem(Long itemId) {
-		return itemsLogic.getTemplateItemById(itemId);
-	}
+   public EvalTemplate fetchTemplate(Long templateId) {
+      return templatesLogic.getTemplateById(templateId);
+   }
 
-	public List<EvalTemplateItem> fetchTemplateItems(Long templateId) {
-		if (templateId == null) {
-			return new ArrayList<EvalTemplateItem>();
-		} else {
-			return itemsLogic.getTemplateItemsForTemplate(templateId, new String[] {}, null, null);
-		}
-	}
+   public void saveTemplate(EvalTemplate tosave) {
+      templatesLogic.saveTemplate(tosave, external.getCurrentUserId());
+   }
 
-	public void saveTemplateItem(EvalTemplateItem tosave) {
-	    /* This is a temporary hack that is only good while we are only using TOP LEVEL and NODE LEVEL.
-	         * Basically, we're putting everything in one combo box and this is a good way to check to see if
-	         * it's the top node.  Otherwise the user selected a node id so it must be at the NODE LEVEL since
-	         * we don't support the other levels yet.
-	         */
-	        if (tosave.getHierarchyNodeId() != null && !tosave.getHierarchyNodeId().equals("")
-	                && !tosave.getHierarchyNodeId().equals(EvalConstants.HIERARCHY_NODE_ID_NONE)) {
-	            tosave.setHierarchyLevel(EvalConstants.HIERARCHY_LEVEL_NODE);
-	        }
-	        else if (tosave.getHierarchyNodeId() != null && !tosave.getHierarchyNodeId().equals("")
-	                && tosave.getHierarchyNodeId().equals(EvalConstants.HIERARCHY_NODE_ID_NONE)) {
-	            tosave.setHierarchyLevel(EvalConstants.HIERARCHY_LEVEL_TOP);
-	        }
-		itemsLogic.saveTemplateItem(tosave, external.getCurrentUserId());
-	}
-
-	/**
-	 * Handles the removal of a templateItem, includes security check and 
-	 * takes care of reordering or other items in the template<br/>
-	 * Blocks: splits up the block and removes the parent item if a block parent is selected for removal
-	 * 
-	 * @param templateItemId a unique id of an {@link EvalTemplateItem}
-	 */
-	public void deleteTemplateItem(Long templateItemId) {
-		String currentUserId = external.getCurrentUserId();
-		if (! itemsLogic.canControlTemplateItem(currentUserId, templateItemId)) {
-			throw new SecurityException("User ("+currentUserId+") cannot control this template item ("+templateItemId+")");
-		}
-
-		EvalTemplateItem templateItem = itemsLogic.getTemplateItemById(templateItemId);
-		// get a list of all template items in this template
-		List<EvalTemplateItem> allTemplateItems = itemsLogic.getTemplateItemsForTemplate(templateItem.getTemplate().getId(), null, null, null);
-		// get the list of items without child items included
-		List<EvalTemplateItem> noChildList = TemplateItemUtils.getNonChildItems(allTemplateItems);
-
-		// now remove the item and correct the display order
-		int orderAdjust = 0;
-		int removedItemDisplayOrder = 0;
-		if (TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)) {
-			// remove the parent item and free up the child items into individual items if the block parent is removed
-			removedItemDisplayOrder = templateItem.getDisplayOrder().intValue();
-			List<EvalTemplateItem> childList = TemplateItemUtils.getChildItems(allTemplateItems, templateItem.getId());
-			orderAdjust = childList.size();
-
-			// delete parent template item and item
-			Long itemId = templateItem.getItem().getId();
-			itemsLogic.deleteTemplateItem(templateItem.getId(), currentUserId);
-			itemsLogic.deleteItem(itemId, currentUserId);
-
-			// modify block children template items
-			for (int i = 0; i < childList.size(); i++) {
-				EvalTemplateItem child = (EvalTemplateItem) childList.get(i);
-				child.setBlockParent(null);
-				child.setBlockId(null);
-				child.setDisplayOrder(new Integer(removedItemDisplayOrder + i));
-				itemsLogic.saveTemplateItem(child, currentUserId);
-			}
-
-		} else { // non-block cases
-			removedItemDisplayOrder = templateItem.getDisplayOrder().intValue();
-			itemsLogic.deleteTemplateItem(templateItem.getId(), currentUserId);
-		}
-
-		// shift display-order of items below removed item
-		for (int i = removedItemDisplayOrder; i < noChildList.size(); i++) {
-			EvalTemplateItem ti = (EvalTemplateItem) noChildList.get(i);
-			int order = ti.getDisplayOrder().intValue();
-			if (order > removedItemDisplayOrder) {
-				ti.setDisplayOrder(new Integer(order + orderAdjust - 1));
-				itemsLogic.saveTemplateItem(ti, currentUserId);
-			}
-		}
-	}
-
-	public EvalTemplateItem newTemplateItem() {
-		String level = EvalConstants.HIERARCHY_LEVEL_TOP;
-		String nodeId = EvalConstants.HIERARCHY_NODE_ID_NONE;
-
-		// TODO - this should respect the current level the user is at
-
-		EvalItem newItem = new EvalItem(new Date(), external.getCurrentUserId(), "", "",
-				"", new Boolean(false));
-		EvalTemplateItem newTemplateItem = new EvalTemplateItem( new Date(), 
-				external.getCurrentUserId(), null, newItem, null, 
-				EvaluationConstant.ITEM_CATEGORY_VALUES[0], level, nodeId);
-		newTemplateItem.setUsesNA(new Boolean(false));
-		return newTemplateItem;
-	}
+   public EvalTemplate newTemplate() {
+      EvalTemplate currTemplate = new EvalTemplate(new Date(), 
+            external.getCurrentUserId(), EvalConstants.TEMPLATE_TYPE_STANDARD, 
+            null, "private", Boolean.FALSE);
+      currTemplate.setDescription(""); // Note- somehow gives DataIntegrityViolation if null
+      return currTemplate;
+   }
 
 
-	// ITEMS
+   // TEMPLATE ITEMS
 
-	public EvalItem fetchItem(Long itemId) {
-		return itemsLogic.getItemById(itemId);
-	}
+   public EvalTemplateItem fetchTemplateItem(Long itemId) {
+      return itemsLogic.getTemplateItemById(itemId);
+   }
 
-	public void saveItem(EvalItem tosave) {
-		// TODO - this should use the defunneler -AZ (so says antranig)
-		// this is here to cleanup the fake scale in case it was not needed or load a real one
-		if (tosave.getScale() != null) {
-			if (tosave.getScale().getId() != null) {
-				// this lookup is needed so hibernate can make the connection
-				tosave.setScale(scalesLogic.getScaleById(tosave.getScale().getId()));
-			} else {
-				tosave.setScale(null);
-			}
-		}
-		itemsLogic.saveItem(tosave, external.getCurrentUserId());
-	}
+   public List<EvalTemplateItem> fetchTemplateItems(Long templateId) {
+      if (templateId == null) {
+         return new ArrayList<EvalTemplateItem>();
+      } else {
+         return itemsLogic.getTemplateItemsForTemplate(templateId, new String[] {}, null, null);
+      }
+   }
 
-	public void deleteItem(Long id) {
-		itemsLogic.deleteItem(id, external.getCurrentUserId());
-	}
+   public EvalTemplateItem newTemplateItem() {
+      String level = EvalConstants.HIERARCHY_LEVEL_TOP;
+      String nodeId = EvalConstants.HIERARCHY_NODE_ID_NONE;
 
-	public EvalItem newItem() {
-		EvalItem newItem = new EvalItem(new Date(), external.getCurrentUserId(), "", 
-				EvalConstants.SHARING_PRIVATE, "", Boolean.FALSE);
-		newItem.setCategory( EvalConstants.ITEM_CATEGORY_COURSE ); // default category
-		newItem.setScale( new EvalScale() ); // needed so that EL reference will not fail
-		return newItem;
-	}
+      // TODO - this should respect the current level the user is at
+
+      // TODO currently creating a fake template (newTemplate()) so the bind does not fail, this should supposedly use a defunneler
+      EvalTemplateItem newTemplateItem = new EvalTemplateItem( new Date(), 
+            external.getCurrentUserId(), newTemplate(), newItem(), null, 
+            EvaluationConstant.ITEM_CATEGORY_VALUES[0], level, nodeId);
+      newTemplateItem.setUsesNA(new Boolean(false));
+      return newTemplateItem;
+   }
+
+   public void saveTemplateItem(EvalTemplateItem tosave) {
+      /* This is a temporary hack that is only good while we are only using TOP LEVEL and NODE LEVEL.
+       * Basically, we're putting everything in one combo box and this is a good way to check to see if
+       * it's the top node.  Otherwise the user selected a node id so it must be at the NODE LEVEL since
+       * we don't support the other levels yet.
+       */
+      if (tosave.getHierarchyNodeId() != null && !tosave.getHierarchyNodeId().equals("")
+            && !tosave.getHierarchyNodeId().equals(EvalConstants.HIERARCHY_NODE_ID_NONE)) {
+         tosave.setHierarchyLevel(EvalConstants.HIERARCHY_LEVEL_NODE);
+      }
+      else if (tosave.getHierarchyNodeId() != null && !tosave.getHierarchyNodeId().equals("")
+            && tosave.getHierarchyNodeId().equals(EvalConstants.HIERARCHY_NODE_ID_NONE)) {
+         tosave.setHierarchyLevel(EvalConstants.HIERARCHY_LEVEL_TOP);
+      }
+
+      // TODO fix up the connections before saving, should be supposedly done with a defunneler
+      connectTemplateToTI(tosave);
+      // save the item if it needs to be saved
+      if (tosave.getItem() != null) {
+         saveItem(tosave.getItem());
+      } else {
+         // failure to associate an item with this templateItem
+         throw new IllegalStateException("No item is associated with this templateItem (the item is null) so it cannot be saved");
+      }
+      itemsLogic.saveTemplateItem(tosave, external.getCurrentUserId());
+   }
 
 
-	// SCALES
+   /**
+    * Handles the removal of a templateItem, includes security check and 
+    * takes care of reordering or other items in the template<br/>
+    * Blocks: splits up the block and removes the parent item if a block parent is selected for removal
+    * 
+    * @param templateItemId a unique id of an {@link EvalTemplateItem}
+    */
+   public void deleteTemplateItem(Long templateItemId) {
+      String currentUserId = external.getCurrentUserId();
+      if (! itemsLogic.canControlTemplateItem(currentUserId, templateItemId)) {
+         throw new SecurityException("User ("+currentUserId+") cannot control this template item ("+templateItemId+")");
+      }
 
-	public EvalScale fetchScale(Long scaleId) {
-		return scalesLogic.getScaleById(scaleId);
-	}
-  
-	public void saveScale(EvalScale tosave) {
-		scalesLogic.saveScale(tosave, external.getCurrentUserId());
-	}
-  
-	public void deleteScale(Long id) {
-		scalesLogic.deleteScale(id, external.getCurrentUserId());
-	}
-  
-	public EvalScale newScale() {
-		EvalScale currScale = new EvalScale(new Date(), 
-				external.getCurrentUserId(), null, "private", Boolean.FALSE);
-		currScale.setOptions(new String[]{"", ""});
-		return currScale;
-	}
+      EvalTemplateItem templateItem = itemsLogic.getTemplateItemById(templateItemId);
+      // get a list of all template items in this template
+      List<EvalTemplateItem> allTemplateItems = itemsLogic.getTemplateItemsForTemplate(templateItem.getTemplate().getId(), null, null, null);
+      // get the list of items without child items included
+      List<EvalTemplateItem> noChildList = TemplateItemUtils.getNonChildItems(allTemplateItems);
+
+      // now remove the item and correct the display order
+      int orderAdjust = 0;
+      int removedItemDisplayOrder = 0;
+      if (TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)) {
+         // remove the parent item and free up the child items into individual items if the block parent is removed
+         removedItemDisplayOrder = templateItem.getDisplayOrder().intValue();
+         List<EvalTemplateItem> childList = TemplateItemUtils.getChildItems(allTemplateItems, templateItem.getId());
+         orderAdjust = childList.size();
+
+         // delete parent template item and item
+         Long itemId = templateItem.getItem().getId();
+         itemsLogic.deleteTemplateItem(templateItem.getId(), currentUserId);
+         itemsLogic.deleteItem(itemId, currentUserId);
+
+         // modify block children template items
+         for (int i = 0; i < childList.size(); i++) {
+            EvalTemplateItem child = (EvalTemplateItem) childList.get(i);
+            child.setBlockParent(null);
+            child.setBlockId(null);
+            child.setDisplayOrder(new Integer(removedItemDisplayOrder + i));
+            itemsLogic.saveTemplateItem(child, currentUserId);
+         }
+
+      } else { // non-block cases
+         removedItemDisplayOrder = templateItem.getDisplayOrder().intValue();
+         itemsLogic.deleteTemplateItem(templateItem.getId(), currentUserId);
+      }
+
+      // shift display-order of items below removed item
+      for (int i = removedItemDisplayOrder; i < noChildList.size(); i++) {
+         EvalTemplateItem ti = (EvalTemplateItem) noChildList.get(i);
+         int order = ti.getDisplayOrder().intValue();
+         if (order > removedItemDisplayOrder) {
+            ti.setDisplayOrder(new Integer(order + orderAdjust - 1));
+            itemsLogic.saveTemplateItem(ti, currentUserId);
+         }
+      }
+   }
+
+
+   // ITEMS
+
+   public EvalItem fetchItem(Long itemId) {
+      return itemsLogic.getItemById(itemId);
+   }
+
+   public void saveItem(EvalItem tosave) {
+      connectScaleToItem(tosave);
+      itemsLogic.saveItem(tosave, external.getCurrentUserId());
+   }
+
+   public void deleteItem(Long id) {
+      itemsLogic.deleteItem(id, external.getCurrentUserId());
+   }
+
+   public EvalItem newItem() {
+      EvalItem newItem = new EvalItem(new Date(), external.getCurrentUserId(), "", 
+            EvalConstants.SHARING_PRIVATE, "", Boolean.FALSE);
+      newItem.setCategory( EvalConstants.ITEM_CATEGORY_COURSE ); // default category
+      // TODO currently needed so that EL reference will not fail, supposedly this should use a defunneler
+      newItem.setScale( new EvalScale() );
+      return newItem;
+   }
+
+
+   // SCALES
+
+   public EvalScale fetchScale(Long scaleId) {
+      return scalesLogic.getScaleById(scaleId);
+   }
+
+   public void saveScale(EvalScale tosave) {
+      scalesLogic.saveScale(tosave, external.getCurrentUserId());
+   }
+
+   public void deleteScale(Long id) {
+      scalesLogic.deleteScale(id, external.getCurrentUserId());
+   }
+
+   public EvalScale newScale() {
+      EvalScale currScale = new EvalScale(new Date(), 
+            external.getCurrentUserId(), null, "private", Boolean.FALSE);
+      currScale.setOptions(new String[]{"", ""});
+      return currScale;
+   }
+
+
+   // UTILITY METHODS
+
+   /**
+    * TODO - this should use the defunneler -AZ (so says antranig)
+    * This is here to fix up a scale which is not actually correctly connected via the foreign key,
+    * it is not ideal but it works, it will also null out the scale if there is no id
+    * @param tosave
+    */
+   private void connectScaleToItem(EvalItem tosave) {
+      // this is here to cleanup the fake scale in case it was not needed or load a real one
+      if (tosave.getScale() != null) {
+         if (tosave.getScale().getId() != null) {
+            // this lookup is needed so hibernate can make the connection
+            tosave.setScale(scalesLogic.getScaleById(tosave.getScale().getId()));
+         } else {
+            tosave.setScale(null);
+         }
+      }
+   }
+
+
+   /**
+    * TODO - this should use the defunneler -AZ (so says antranig)
+    * This is here to fix up a templateItem which is not actually correctly connected via the foreign key,
+    * it is not ideal but it works
+    * @param tosave
+    */
+   private void connectTemplateToTI(EvalTemplateItem tosave) {
+      if (tosave.getTemplate() != null) {
+         Long templateId = tosave.getTemplate().getId();
+         if (templateId != null) {
+            // this lookup is needed so hibernate can make the connection
+            tosave.setTemplate(templatesLogic.getTemplateById(templateId));
+         } else {
+            // the template was not set correctly so we have to die
+            throw new NullPointerException("id is not set for the template for this templateItem (" + tosave +
+            		"), all templateItems must be associated with an existing template");
+         }
+      }
+   }
 
 }
