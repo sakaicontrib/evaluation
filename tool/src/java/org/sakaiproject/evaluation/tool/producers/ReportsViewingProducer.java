@@ -47,6 +47,7 @@ import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIColourDecorator;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
@@ -226,7 +227,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
             UIBranchContainer scaled = UIBranchContainer.make(branch, "scaledSurvey:");
 
             UIOutput.make(scaled, "itemNum", displayNum+"");
-            UIOutput.make(scaled, "itemText", item.getItemText());
+            UIVerbatim.make(scaled, "itemText", item.getItemText());
 
             if (useNA.booleanValue() == true) {
                 UIBranchContainer radiobranch3 = UIBranchContainer.make(scaled, "showNA:");
@@ -252,7 +253,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
         } else if (templateItemType.equals(EvalConstants.ITEM_TYPE_TEXT)) { //"Short Answer/Essay"
             UIBranchContainer essay = UIBranchContainer.make(branch, "essayType:");
             UIOutput.make(essay, "itemNum", displayNum + "");
-            UIOutput.make(essay, "itemText", item.getItemText());
+            UIVerbatim.make(essay, "itemText", item.getItemText());
 
             UIInternalLink.make(essay, "essayResponse", 
                     new EssayResponseParams(ReportsViewEssaysProducer.VIEW_ID, evalId, templateItem.getId(), groupIds));
