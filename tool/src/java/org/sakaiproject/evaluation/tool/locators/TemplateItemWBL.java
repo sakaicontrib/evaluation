@@ -106,13 +106,12 @@ public class TemplateItemWBL implements WriteableBeanLocator {
 			 * we don't support the other levels yet.
 			 */
 			if (templateItem.getHierarchyNodeId() != null && !templateItem.getHierarchyNodeId().equals("")
-		                && !templateItem.getHierarchyNodeId().equals(EvalConstants.HIERARCHY_NODE_ID_NONE)) {
-		            templateItem.setHierarchyLevel(EvalConstants.HIERARCHY_LEVEL_NODE);
-		        }
-		        else if (templateItem.getHierarchyNodeId() != null && !templateItem.getHierarchyNodeId().equals("")
-		                && templateItem.getHierarchyNodeId().equals(EvalConstants.HIERARCHY_NODE_ID_NONE)) {
-		            templateItem.setHierarchyLevel(EvalConstants.HIERARCHY_LEVEL_TOP);
-		        }
+			      && !templateItem.getHierarchyNodeId().equals(EvalConstants.HIERARCHY_NODE_ID_NONE)) {
+			   templateItem.setHierarchyLevel(EvalConstants.HIERARCHY_LEVEL_NODE);
+			} else if (templateItem.getHierarchyNodeId() != null && !templateItem.getHierarchyNodeId().equals("")
+			      && templateItem.getHierarchyNodeId().equals(EvalConstants.HIERARCHY_NODE_ID_NONE)) {
+			   templateItem.setHierarchyLevel(EvalConstants.HIERARCHY_LEVEL_TOP);
+			}
 			localTemplateLogic.saveTemplateItem(templateItem);
 		}
 	}
