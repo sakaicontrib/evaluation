@@ -75,8 +75,8 @@ public class ItemBeanWBL implements WriteableBeanLocator {
 	}
 
 	public void saveAll() {
-		for (Iterator it = delivered.keySet().iterator(); it.hasNext();) {
-			String key = (String) it.next();
+		for (Iterator<String> it = delivered.keySet().iterator(); it.hasNext();) {
+			String key = it.next();
 			EvalItem item = (EvalItem) delivered.get(key);
 			if (key.startsWith(NEW_PREFIX)) {
 				// add in extra logic needed for new items here

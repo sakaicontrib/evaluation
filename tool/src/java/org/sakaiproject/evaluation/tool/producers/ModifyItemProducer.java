@@ -122,6 +122,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 
 		String itemOTP = null; // bind to the item via OTP
       String templateItemOTP = null; // bind to the template item via OTP
+      String commonDisplayOTP = null; // this will bind to either the item or the template item depending on which should save the common display information
 		String itemOwnerName = null; // this is the name of the owner of the item
 
 		// now we validate the incoming view params
@@ -134,31 +135,23 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 	      if ( itemClassification == null || itemClassification.equals("") ) {
 	         throw new NullPointerException("itemClassification cannot be null or empty string for new items, must pass in a valid item type");
 	      }
-         itemOTP = "itemWBL." + ItemBeanWBL.NEW_1;
+         itemOTP = "itemWBL." + ItemBeanWBL.NEW_1 + ".";
+         commonDisplayOTP = itemOTP;
          itemOwnerName = external.getUserDisplayName(currentUserId);
          // check if we are operating in a template
          if (templateId != null) {
             // new template item in the current template
-            templateItemOTP = "templateItemWBL." + TemplateItemWBL.NEW_1;
+            templateItemOTP = "templateItemWBL." + TemplateItemWBL.NEW_1 + ".";
             itemOTP = templateItemOTP + "item.";
+            commonDisplayOTP = templateItemOTP;
             // bind the template item to the current template
             form.parameters = new ParameterList( 
-                  new UIELBinding(templateItemOTP + ".template.id", templateId) );
+                  new UIELBinding(templateItemOTP + "template.id", templateId) );
          }
          // add binding for the item classification
          form.parameters = new ParameterList( 
-               new UIELBinding(itemOTP + ".classification", itemClassification) );
-		} else if (itemId == null) {
-		   // templateItemId is not null so we are modifying an existing templateItem
-		   EvalTemplateItem templateItem = itemsLogic.getTemplateItemById(templateItemId);
-		   if (templateItem == null) {
-		      throw new IllegalArgumentException("Invalid template item id passed in by VP: " + templateItemId);
-		   }
-         itemOwnerName = external.getUserDisplayName(templateItem.getItem().getOwner());
-		   itemClassification = templateItem.getItem().getClassification();
-         templateItemOTP = "templateItemWBL." + templateItemId;
-         itemOTP = templateItemOTP + "item.";		   
-		} else {
+               new UIELBinding(itemOTP + "classification", itemClassification) );
+		} else if (templateItemId == null) {
 		   // itemId is not null so we are modifying an existing item
          EvalItem item = itemsLogic.getItemById(itemId);
          if (item == null) {
@@ -166,38 +159,67 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
          }
          itemOwnerName = external.getUserDisplayName(item.getOwner());
          itemClassification = item.getClassification();
-         itemOTP = "itemWBL." + itemId;
+         itemOTP = "itemWBL." + itemId + ".";
+         commonDisplayOTP = itemOTP;
+		} else {
+		   // templateItemId is not null so we are modifying an existing template item
+         EvalTemplateItem templateItem = itemsLogic.getTemplateItemById(templateItemId);
+         if (templateItem == null) {
+            throw new IllegalArgumentException("Invalid template item id passed in by VP: " + templateItemId);
+         }
+         itemOwnerName = external.getUserDisplayName(templateItem.getItem().getOwner());
+         itemClassification = templateItem.getItem().getClassification();
+         templateItemOTP = "templateItemWBL." + templateItemId + ".";
+         itemOTP = templateItemOTP + "item.";
+         commonDisplayOTP = templateItemOTP;
 		}
 
 		// now we begin with the rendering logic
       UIMessage.make(tofill, "page-title", "modifyitem.page.title");
 
-      UIInternalLink.make(tofill, "summary-toplink", 
-            UIMessage.make("summary.page.title"), 
-         new SimpleViewParameters(SummaryProducer.VIEW_ID));
-      UIInternalLink.make(tofill, "control-items-link",
-            UIMessage.make("controlitems.page.title"), 
-         new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
-
+      // display the breadcrumb bar
+      if (templateId == null) {
+         // creating item only
+         UIInternalLink.make(tofill, "summary-toplink", 
+               UIMessage.make("summary.page.title"), 
+            new SimpleViewParameters(SummaryProducer.VIEW_ID));
+         UIInternalLink.make(tofill, "control-items-link",
+               UIMessage.make("controlitems.page.title"), 
+            new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+      } else {
+         // creating template item
+         UIInternalLink.make(tofill, "summary-toplink", 
+               UIMessage.make("summary.page.title"), 
+            new SimpleViewParameters(SummaryProducer.VIEW_ID));
+         UIInternalLink.make(tofill, "control-items-link",
+               UIMessage.make("controltemplates.page.title"), 
+            new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
+         UIInternalLink.make(tofill, "modify-template-items",
+               UIMessage.make("modifytemplate.page.title"), 
+            new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, templateId));
+      }
 		UIMessage.make(tofill, "item-header", "modifyitem.item.header");
-		UIOutput.make(tofill, "item-classification", itemClassification, itemOTP + ".classification");
+
+		// display item information
+		UIOutput.make(tofill, "item-classification", itemClassification, itemOTP + "classification");
 		UIMessage.make(tofill, "added-by-item-owner", "modifyitem.item.added.by.owner", new Object[] {itemOwnerName});
 
-		// show links if this item exists
-		if (itemId != null) {
+		// show links if this item/templateItem exists
+		if (templateItemId != null || itemId != null) {
 			UIInternalLink.make(tofill, "item-preview-link", UIMessage.make("controlitems.preview.link"), 
-					new ItemViewParameters(PreviewItemProducer.VIEW_ID, itemId, (Long)null) );
-			if ( itemsLogic.canRemoveItem(currentUserId, itemId) ) {
-	        	// item removable
+					new ItemViewParameters(PreviewItemProducer.VIEW_ID, itemId, templateItemId) );
+			if ( (itemId != null && itemsLogic.canRemoveItem(currentUserId, itemId)) || 
+			      templateItemId != null && itemsLogic.canControlTemplateItem(currentUserId, templateItemId) ) {
+	        	// item or templateItem is removable
 				UIInternalLink.make(tofill, "item-remove-link", UIMessage.make("controlitems.remove.link"), 
-						new ItemViewParameters(RemoveItemProducer.VIEW_ID, itemId, (Long)null));
+						new ItemViewParameters(RemoveItemProducer.VIEW_ID, itemId, templateItemId));
 			}
 		}
 
 		UIMessage.make(form, "item-text-header", "modifyitem.item.text.header");
 		UIMessage.make(form, "item-text-instruction", "modifyitem.item.text.instruction");
 
-		UIInput itemText = UIInput.make(form, "item-text:", itemOTP + ".itemText");
+		UIInput itemText = UIInput.make(form, "item-text:", itemOTP + "itemText");
 		richTextEvolver.evolveTextInput( itemText );
 
 		if (EvalConstants.ITEM_TYPE_SCALED.equals(itemClassification)) {
@@ -207,7 +229,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 			UISelect.make(showItemScale, "item-scale-list", 
 					ScaledUtils.getScaleValues(scales), 
 					ScaledUtils.getScaleLabels(scales), 
-					itemOTP + ".scale.id");
+					itemOTP + "scale.id");
 			//scale.selection.darreshaper = new ELReference("#{id-defunnel}");
 
 			UIBranchContainer showScaleDisplay = UIBranchContainer.make(form, "show-scale-display:");
@@ -215,63 +237,62 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 			UISelect.make(showScaleDisplay, "scale-display-list", 
 					EvaluationConstant.SCALE_DISPLAY_SETTING_VALUES, 
 					EvaluationConstant.SCALE_DISPLAY_SETTING_LABELS_PROPS, 
-					itemOTP + ".scaleDisplaySetting").setMessageKeys();
+					commonDisplayOTP + "scaleDisplaySetting").setMessageKeys();
 		}
 
 		if (userAdmin) {
 			// only show the item sharing options if the user is an admin
-			UIBranchContainer showItemSharing = UIBranchContainer.make(tofill, "show-item-sharing:");
+			UIBranchContainer showItemSharing = UIBranchContainer.make(form, "show-item-sharing:");
 			UIMessage.make(showItemSharing, "item-sharing-header", "modifyitem.item.sharing.header");
 			UISelect.make(showItemSharing, "item-sharing-list", 
 					EvaluationConstant.SHARING_VALUES, 
 					EvaluationConstant.SHARING_LABELS_PROPS, 
-					itemOTP + ".sharing").setMessageKeys();
+					itemOTP + "sharing").setMessageKeys();
 		} else {
 			// not admin so set the sharing to private by default for now
-			form.parameters.add( new UIELBinding(itemOTP + ".sharing", EvalConstants.SHARING_PRIVATE) );
+			form.parameters.add( new UIELBinding(itemOTP + "sharing", EvalConstants.SHARING_PRIVATE) );
 		}
 
 		if (userAdmin) {
 			// only show the expert items if the user is an admin
-			UIBranchContainer showItemExpert = UIBranchContainer.make(tofill, "show-item-expert:");
+			UIBranchContainer showItemExpert = UIBranchContainer.make(form, "show-item-expert:");
 			UIMessage.make(showItemExpert, "item-expert-header", "modifyitem.item.expert.header");
 			UIMessage.make(showItemExpert, "item-expert-instruction", "modifyitem.item.expert.instruction");
-			UIBoundBoolean.make(showItemExpert, "item-expert", itemOTP + ".expert", null);
+			UIBoundBoolean.make(showItemExpert, "item-expert", itemOTP + "expert", null);
 
 			UIMessage.make(showItemExpert, "expert-desc-header", "modifyitem.item.expert.desc.header");
 			UIMessage.make(showItemExpert, "expert-desc-instruction", "modifyitem.item.expert.desc.instruction");
-			UIInput expertDesc = UIInput.make(showItemExpert, "expert-desc:", itemOTP + ".expertDescription");
+			UIInput expertDesc = UIInput.make(showItemExpert, "expert-desc:", itemOTP + "expertDescription");
 			richTextEvolver.evolveTextInput( expertDesc );			
 		}
 
-		UIMessage.make(form, "item-display-hint-header", "modifyitem.display.hint.header");
-		UIMessage.make(form, "item-display-hint-instruction", "modifyitem.display.hint.instruction");
+		UIMessage.make(tofill, "item-display-hint-header", "modifyitem.display.hint.header");
+		UIMessage.make(tofill, "item-display-hint-instruction", "modifyitem.display.hint.instruction");
 
 		if (EvalConstants.ITEM_TYPE_TEXT.equals(itemClassification)) {
-			UIBranchContainer showResponseSize = UIBranchContainer.make(tofill, "show-response-size:");
+			UIBranchContainer showResponseSize = UIBranchContainer.make(form, "show-response-size:");
 			UIMessage.make(showResponseSize, "item-response-size-header", "modifyitem.item.response.size.header");
 			UISelect.make(showResponseSize, "item-response-size-list", 
 					EvaluationConstant.RESPONSE_SIZE_VALUES, 
 					EvaluationConstant.RESPONSE_SIZE_LABELS_PROPS,
-					itemOTP + ".displayRows").setMessageKeys();
+					commonDisplayOTP + "displayRows").setMessageKeys();
 		}
 
 		if (((Boolean)settings.get(EvalSettings.NOT_AVAILABLE_ALLOWED)).booleanValue() == true) {
 			UIBranchContainer showNA = UIBranchContainer.make(form, "showNA:");
 			UIMessage.make(showNA,"item-na-header", "modifyitem.item.na.header");
-			UIBoundBoolean.make(showNA, "item-na", itemOTP + ".usesNA", null);
+			UIBoundBoolean.make(showNA, "item-na", commonDisplayOTP + "usesNA", null);
 		}
 
 		Boolean isDefaultCourse = (Boolean) settings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
 		if (isDefaultCourse == null) {
 			// Means show both options (course and instructor)
-
 			UIBranchContainer showItemCategory = UIBranchContainer.make(form, "showItemCategory:");
 			UIMessage.make(showItemCategory, "item-category-header", "modifyitem.item.category.header");
 			UISelect radios = UISelect.make(showItemCategory, "item-category-list", 
 					EvaluationConstant.ITEM_CATEGORY_VALUES, 
 					EvaluationConstant.ITEM_CATEGORY_LABELS_PROPS,
-					itemOTP + ".category").setMessageKeys();
+					itemOTP + "category").setMessageKeys();
 			for (int i = 0; i < EvaluationConstant.ITEM_CATEGORY_VALUES.length; i++) {
 				UIBranchContainer radioBranch = UIBranchContainer.make(showItemCategory, "item-category-branch:", i+"");
 				UISelectLabel.make(radioBranch, "item-category-label", radios.getFullID(), i);
@@ -281,13 +302,12 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
          // Course category if default, instructor otherwise
          // Do not show on the page, just bind it explicitly.
          form.parameters.add(
-               new UIELBinding(itemOTP + ".category",
+               new UIELBinding(itemOTP + "category",
                      EvaluationConstant.ITEM_CATEGORY_VALUES[isDefaultCourse.booleanValue() ? 0 : 1]));
 		}
 
 		if (templateItemOTP != null) {
 		   // ONLY DO THESE if we are working with a TemplateItem
-
          /*
           * If the system setting (admin setting) for "EvalSettings.ITEM_USE_RESULTS_SHARING" is set as true then all
           * items default to "Public". If it is set to false, then all items can be selected as Public or Private.
