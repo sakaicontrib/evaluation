@@ -112,6 +112,10 @@ public class LocalTemplateLogic {
       return newTemplateItem;
    }
 
+   /**
+    * Saves the templateItem (does not save the associated item)
+    * @param tosave
+    */
    public void saveTemplateItem(EvalTemplateItem tosave) {
       /* This is a temporary hack that is only good while we are only using TOP LEVEL and NODE LEVEL.
        * Basically, we're putting everything in one combo box and this is a good way to check to see if
@@ -128,11 +132,7 @@ public class LocalTemplateLogic {
       }
 
       // TODO fix up the connections before saving, should be supposedly done with a defunneler
-      connectTemplateToTI(tosave);
-      // save the item if it needs to be saved
-      if (tosave.getItem() != null) {
-         saveItem(tosave.getItem());
-      } else {
+      if (tosave.getItem() == null) {
          // failure to associate an item with this templateItem
          throw new IllegalStateException("No item is associated with this templateItem (the item is null) so it cannot be saved");
       }
@@ -257,11 +257,13 @@ public class LocalTemplateLogic {
    private void connectScaleToItem(EvalItem tosave) {
       // this is here to cleanup the fake scale in case it was not needed or load a real one
       if (tosave.getScale() != null) {
-         if (tosave.getScale().getId() != null) {
-            // this lookup is needed so hibernate can make the connection
-            tosave.setScale(scalesLogic.getScaleById(tosave.getScale().getId()));
-         } else {
+         // only make the connection for fake scales
+         if (tosave.getScale().getId() == null) {
+            // the scale is not being used so destroy the fake one
             tosave.setScale(null);
+         } else if (tosave.getScale().getOwner() == null) {
+            // the scale is being used and we need to turn the fake one into a real one so hibernate can make the connection
+            tosave.setScale(scalesLogic.getScaleById(tosave.getScale().getId()));
          }
       }
    }
@@ -273,18 +275,18 @@ public class LocalTemplateLogic {
     * it is not ideal but it works
     * @param tosave
     */
-   private void connectTemplateToTI(EvalTemplateItem tosave) {
-      if (tosave.getTemplate() != null) {
-         Long templateId = tosave.getTemplate().getId();
-         if (templateId != null) {
-            // this lookup is needed so hibernate can make the connection
-            tosave.setTemplate(templatesLogic.getTemplateById(templateId));
-         } else {
-            // the template was not set correctly so we have to die
-            throw new NullPointerException("id is not set for the template for this templateItem (" + tosave +
-            		"), all templateItems must be associated with an existing template");
-         }
-      }
-   }
+//   private void connectTemplateToTI(EvalTemplateItem tosave) {
+//      if (tosave.getTemplate() != null) {
+//         Long templateId = tosave.getTemplate().getId();
+//         if (templateId != null) {
+//            // this lookup is needed so hibernate can make the connection
+//            tosave.setTemplate(templatesLogic.getTemplateById(templateId));
+//         } else {
+//            // the template was not set correctly so we have to die
+//            throw new NullPointerException("id is not set for the template for this templateItem (" + tosave +
+//            		"), all templateItems must be associated with an existing template");
+//         }
+//      }
+//   }
 
 }

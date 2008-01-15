@@ -32,6 +32,7 @@ import org.sakaiproject.evaluation.tool.utils.ScaledUtils;
 import org.sakaiproject.evaluation.tool.viewparams.ItemViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
+import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.ParameterList;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -120,11 +121,16 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 		Long templateItemId = ivp.templateItemId; // if null then we are working with an item only, else we are working with a template item so we will get the item from this
       String itemClassification = ivp.itemClassification; // must be set if creating a new item
 
+      String templateOTP = "templateBeanLocator."; // bind to the template via OTP
 		String itemOTP = null; // bind to the item via OTP
       String templateItemOTP = null; // bind to the template item via OTP
       String commonDisplayOTP = null; // this will bind to either the item or the template item depending on which should save the common display information
 		String itemOwnerName = null; // this is the name of the owner of the item
 
+		String scaleDisplaySetting = null; // the scale display setting for the item/TI
+		String displayRows = null; // the number of rows to display for the text area
+		Boolean usesNA = null; // whether or not the item uses the N/A option
+		
 		// now we validate the incoming view params
 		if (templateId == null && templateItemId != null) {
 		   throw new IllegalArgumentException("templateId cannot be null when modifying template items, must pass in a valid template id");
@@ -145,11 +151,11 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
             itemOTP = templateItemOTP + "item.";
             commonDisplayOTP = templateItemOTP;
             // bind the template item to the current template
-            form.parameters = new ParameterList( 
-                  new UIELBinding(templateItemOTP + "template.id", templateId) );
+            form.parameters.add(
+                  new UIELBinding(templateItemOTP + "template", ELReference.make(templateOTP + templateId)) );
          }
          // add binding for the item classification
-         form.parameters = new ParameterList( 
+         form.parameters.add(
                new UIELBinding(itemOTP + "classification", itemClassification) );
 		} else if (templateItemId == null) {
 		   // itemId is not null so we are modifying an existing item
@@ -157,6 +163,11 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
          if (item == null) {
             throw new IllegalArgumentException("Invalid item id passed in by VP: " + itemId);
          }
+         // set the common settings from the item
+         scaleDisplaySetting = item.getScaleDisplaySetting();
+         displayRows = item.getDisplayRows() != null ? item.getDisplayRows().toString() : null;
+         usesNA = item.getUsesNA();
+
          itemOwnerName = external.getUserDisplayName(item.getOwner());
          itemClassification = item.getClassification();
          itemOTP = "itemWBL." + itemId + ".";
@@ -167,6 +178,11 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
          if (templateItem == null) {
             throw new IllegalArgumentException("Invalid template item id passed in by VP: " + templateItemId);
          }
+         // set the common settings from the TI
+         scaleDisplaySetting = templateItem.getScaleDisplaySetting();
+         displayRows = templateItem.getDisplayRows().toString();
+         usesNA = templateItem.getUsesNA();
+
          itemOwnerName = external.getUserDisplayName(templateItem.getItem().getOwner());
          itemClassification = templateItem.getItem().getClassification();
          templateItemOTP = "templateItemWBL." + templateItemId + ".";
@@ -237,7 +253,8 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 			UISelect.make(showScaleDisplay, "scale-display-list", 
 					EvaluationConstant.SCALE_DISPLAY_SETTING_VALUES, 
 					EvaluationConstant.SCALE_DISPLAY_SETTING_LABELS_PROPS, 
-					commonDisplayOTP + "scaleDisplaySetting").setMessageKeys();
+					commonDisplayOTP + "scaleDisplaySetting",
+					scaleDisplaySetting).setMessageKeys();
 		}
 
 		if (userAdmin) {
@@ -275,13 +292,15 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 			UISelect.make(showResponseSize, "item-response-size-list", 
 					EvaluationConstant.RESPONSE_SIZE_VALUES, 
 					EvaluationConstant.RESPONSE_SIZE_LABELS_PROPS,
-					commonDisplayOTP + "displayRows").setMessageKeys();
+					commonDisplayOTP + "displayRows",
+					displayRows ).setMessageKeys();
 		}
 
-		if (((Boolean)settings.get(EvalSettings.NOT_AVAILABLE_ALLOWED)).booleanValue() == true) {
+      Boolean naAllowed = (Boolean) settings.get(EvalSettings.NOT_AVAILABLE_ALLOWED);
+		if (naAllowed != null && naAllowed) {
 			UIBranchContainer showNA = UIBranchContainer.make(form, "showNA:");
 			UIMessage.make(showNA,"item-na-header", "modifyitem.item.na.header");
-			UIBoundBoolean.make(showNA, "item-na", commonDisplayOTP + "usesNA", null);
+			UIBoundBoolean.make(showNA, "item-na", commonDisplayOTP + "usesNA", usesNA);
 		}
 
 		Boolean isDefaultCourse = (Boolean) settings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
@@ -306,8 +325,8 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
                      EvaluationConstant.ITEM_CATEGORY_VALUES[isDefaultCourse.booleanValue() ? 0 : 1]));
 		}
 
-		if (templateItemOTP != null) {
-		   // ONLY DO THESE if we are working with a TemplateItem
+		if (templateId != null) {
+		   // ONLY DO THESE if we are working with a template and TemplateItem
          /*
           * If the system setting (admin setting) for "EvalSettings.ITEM_USE_RESULTS_SHARING" is set as true then all
           * items default to "Public". If it is set to false, then all items can be selected as Public or Private.
@@ -315,7 +334,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
           */
          Boolean isDefaultResultSharing = (Boolean) settings.get(EvalSettings.ITEM_USE_RESULTS_SHARING);
          if (isDefaultResultSharing != null) {
-            if (isDefaultResultSharing.booleanValue() == true) {
+            if (isDefaultResultSharing) {
                // Means show both options (public & private)
                UIBranchContainer showItemResultSharing = UIBranchContainer.make(form, "showItemResultSharing:");
                UIMessage.make(showItemResultSharing, "item-results-sharing-header", "modifyitem.results.sharing.header");
@@ -332,7 +351,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
             } else {
                // false, so all questions are private by default           
                form.parameters.add(new UIELBinding(templateItemOTP + "resultsSharing",
-                     EvaluationConstant.ITEM_RESULTS_SHARING_VALUES[isDefaultResultSharing.booleanValue() ? 0 : 1]));
+                     EvaluationConstant.ITEM_RESULTS_SHARING_VALUES[isDefaultResultSharing ? 0 : 1]));
             }
          } else {
             // null so all questions are private by default       
@@ -342,14 +361,21 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 
          // hierarchy node selector control
          Boolean showHierarchyOptions = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
-         if (showHierarchyOptions) {
+         if (showHierarchyOptions != null && showHierarchyOptions) {
             hierarchyNodeSelectorRenderer.renderHierarchyNodeSelector(form, "hierarchyNodeSelector:", templateItemOTP + "hierarchyNodeId", null);
          }
       }
 		
 		UIMessage.make(form, "cancel-button", "general.cancel.button");
-		UICommand.make(form, "save-item-action", 
-				UIMessage.make("modifyitem.save.button"), "#{templateBBean.saveItemAction}");
+		if (templateId == null) {
+		   // only saving an item
+   		UICommand.make(form, "save-item-action", 
+   				UIMessage.make("modifyitem.save.button"), "#{templateBBean.saveItemAction}");
+		} else {
+		   // saving template item and item
+         UICommand.make(form, "save-item-action", 
+               UIMessage.make("modifyitem.save.button"), "#{templateBBean.saveBothAction}");		   
+		}
 	}
 
    /* (non-Javadoc)
