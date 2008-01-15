@@ -17,10 +17,14 @@ package org.sakaiproject.evaluation.tool.viewparams;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 
 /**
+ * This is meant to serve as a base for ViewParameters of different download
+ * types that may require their own custom parameters. Ex. CSV, Excel, PDF etc.
+ * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  * @author Kapil Ahuja (kahuja@vt.edu)
+ * @author Steven Githens
  */
-public class CSVReportViewParams extends SimpleViewParameters {
+public class DownloadReportViewParams extends SimpleViewParameters {
 
 	public Long templateId; 
 	public Long evalId;
@@ -28,9 +32,9 @@ public class CSVReportViewParams extends SimpleViewParameters {
 	// See the comment in EssayResponseParams.java
 	public String[] groupIds;
 
-	public CSVReportViewParams() {}
+	public DownloadReportViewParams() {}
 
-	public CSVReportViewParams(String viewID, Long templateId, Long evalId, String[] groupIds) {
+	public DownloadReportViewParams(String viewID, Long templateId, Long evalId, String[] groupIds) {
 		this.viewID = viewID;
 		this.templateId = templateId;
 		this.evalId = evalId;

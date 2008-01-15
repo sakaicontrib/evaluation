@@ -38,6 +38,8 @@ import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.ReportsBean;
 import org.sakaiproject.evaluation.tool.viewparams.CSVReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.EssayResponseParams;
+import org.sakaiproject.evaluation.tool.viewparams.ExcelReportViewParams;
+import org.sakaiproject.evaluation.tool.viewparams.PDFReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
@@ -154,7 +156,11 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
                 UIInternalLink.make(tofill, "fullEssayResponse", UIMessage.make("viewreport.view.essays"), new EssayResponseParams(
                         ReportsViewEssaysProducer.VIEW_ID, reportViewParams.evaluationId, groupIds));
                 UIInternalLink.make(tofill, "csvResultsReport", UIMessage.make("viewreport.view.csv"), new CSVReportViewParams(
-                        "csvResultsReport", template.getId(), reportViewParams.evaluationId, groupIds)); //$NON-NLS-3$
+                        "csvResultsReport", template.getId(), reportViewParams.evaluationId, groupIds));
+                UIInternalLink.make(tofill, "xlsResultsReport", UIMessage.make("viewreport.view.xls"), new ExcelReportViewParams(
+                        "xlsResultsReport", template.getId(), reportViewParams.evaluationId, groupIds));
+                UIInternalLink.make(tofill, "pdfResultsReport", UIMessage.make("viewreport.view.pdf"), new PDFReportViewParams(
+                        "pdfResultsReport", template.getId(), reportViewParams.evaluationId, groupIds));
 
                 // filter out items that cannot be answered (header, etc.)
                 List answerableItemsList = TemplateItemUtils.getAnswerableTemplateItems(allTemplateItems);
