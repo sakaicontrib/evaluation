@@ -323,10 +323,9 @@ public class TemplateBBean {
 		return "success";
 	}
 
-	public String saveItemAndTIAction() {
-	   log.debug("create template item");
-      itemBeanWBL.saveAll();
-	   templateItemWBL.saveAll();
+	public String saveBothAction() {
+	   log.info("save template item and item");
+	   templateItemWBL.saveBoth();
 	   return "success";
 	}
 

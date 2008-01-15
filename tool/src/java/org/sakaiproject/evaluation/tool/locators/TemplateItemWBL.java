@@ -26,8 +26,8 @@ import uk.org.ponder.beanutil.WriteableBeanLocator;
 /**
  * This is the OTP bean used to locate {@link EvalTemplateItem}s
  * 
+ * @author Aaron Zeckoski (aaronz@vt.edu)
  * @author Will Humphries
- * @author Aaron Zeckoski (aaronz@vt.edu) - made this writeable
  */
 public class TemplateItemWBL implements WriteableBeanLocator {
 
@@ -50,8 +50,7 @@ public class TemplateItemWBL implements WriteableBeanLocator {
 		if (togo == null) {
 			if (name.startsWith(NEW_PREFIX)) {
 				togo = localTemplateLogic.newTemplateItem();
-			}
-			else {
+			} else {
 				togo = localTemplateLogic.fetchTemplateItem(new Long(name));
 			}
 			delivered.put(name, togo);
@@ -91,29 +90,53 @@ public class TemplateItemWBL implements WriteableBeanLocator {
 			if (key.startsWith(NEW_PREFIX)) {
 				// add in extra logic needed for new template items here
 				if (templateItem.getItem().getId() == null) {
-					// new item with our new template item so set the values in the new item
-					templateItem.getItem().setScaleDisplaySetting(templateItem.getScaleDisplaySetting());
-					templateItem.getItem().setUsesNA(templateItem.getUsesNA());
-					templateItem.getItem().setSharing(templateItem.getTemplate().getSharing());
-					templateItem.getItem().setCategory(templateItem.getItemCategory());
-					// then save the item
-					localTemplateLogic.saveItem( templateItem.getItem() );
+					prepNewItem(templateItem);
+		         // save the item
+		         localTemplateLogic.saveItem( templateItem.getItem() );
 				}
 			}
-			/* This is a temporary hack that is only good while we are only using TOP LEVEL and NODE LEVEL.
-			 * Basically, we're putting everything in one combo box and this is a good way to check to see if
-			 * it's the top node.  Otherwise the user selected a node id so it must be at the NODE LEVEL since
-			 * we don't support the other levels yet.
-			 */
-			if (templateItem.getHierarchyNodeId() != null && !templateItem.getHierarchyNodeId().equals("")
-			      && !templateItem.getHierarchyNodeId().equals(EvalConstants.HIERARCHY_NODE_ID_NONE)) {
-			   templateItem.setHierarchyLevel(EvalConstants.HIERARCHY_LEVEL_NODE);
-			} else if (templateItem.getHierarchyNodeId() != null && !templateItem.getHierarchyNodeId().equals("")
-			      && templateItem.getHierarchyNodeId().equals(EvalConstants.HIERARCHY_NODE_ID_NONE)) {
-			   templateItem.setHierarchyLevel(EvalConstants.HIERARCHY_LEVEL_TOP);
-			}
-			localTemplateLogic.saveTemplateItem(templateItem);
+	      localTemplateLogic.saveTemplateItem(templateItem);
 		}
 	}
+
+	/**
+    * saves all delivered template items and the associated items (new or existing)
+    */
+   public void saveBoth() {
+      for (Iterator<String> it = delivered.keySet().iterator(); it.hasNext();) {
+         String key = it.next();
+         EvalTemplateItem templateItem = (EvalTemplateItem) delivered.get(key);
+         if (key.startsWith(NEW_PREFIX)) {
+            // add in extra logic needed for new template items here
+            // prep the item and template item to be saved if the item is new
+            if (templateItem.getItem().getId() == null) {
+               prepNewItem(templateItem);
+            }
+         }
+         // save the item
+         localTemplateLogic.saveItem( templateItem.getItem() );
+         // then save the templateItem
+         localTemplateLogic.saveTemplateItem(templateItem);
+      }
+   }
+
+   /**
+    * prepare the new item to be saved
+    * @param templateItem
+    */
+   private void prepNewItem(EvalTemplateItem templateItem) {
+      // new item with our new template item so set the values in the new item
+      templateItem.getItem().setScaleDisplaySetting(templateItem.getScaleDisplaySetting());
+      templateItem.getItem().setUsesNA(templateItem.getUsesNA());
+      templateItem.getItem().setDisplayRows(templateItem.getDisplayRows());
+      if (templateItem.getTemplate() != null) {
+         templateItem.getItem().setCategory(templateItem.getItemCategory());
+         templateItem.getItem().setSharing(templateItem.getTemplate().getSharing());
+      } else {
+         // defaults if template is not connected yet
+         templateItem.getItem().setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
+         templateItem.getItem().setSharing(EvalConstants.SHARING_PRIVATE);
+      }
+   }
 
 }
