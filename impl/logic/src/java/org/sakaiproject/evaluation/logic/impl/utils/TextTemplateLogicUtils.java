@@ -15,74 +15,115 @@
 package org.sakaiproject.evaluation.logic.impl.utils;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Map;
 
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.exception.MethodInvocationException;
-import org.apache.velocity.exception.ParseErrorException;
-import org.apache.velocity.exception.ResourceNotFoundException;
+import freemarker.template.Configuration;
+import freemarker.template.DefaultObjectWrapper;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 
 /**
  * This is a weird location but it will have to do for now,
- * this handles processing of velocity templates
+ * this handles processing of text templates
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class TextTemplateLogicUtils {
 
-	/**
-	 * Handles the replacement of the variable strings within textual templates and
-	 * also allows the setting of variables for the control of logical branching within
-	 * the text template as well<br/>
-	 * Uses and expects velocity (http://velocity.apache.org/) style templates<br/>
-	 * 
-	 * @param textTemplate a velocity style text template
-	 * @param replacementValues a set of replacement values which are in the map like so:<br/>
-	 * key => value (String => Object)<br/>
-	 * username => aaronz<br/>
-	 * course_title => Math 1001 Differential Equations<br/>
-	 * @return the processed template
-	 */
-	public static String processTextTemplate(String textTemplate, Map<String, String> replacementValues) {
-		if (replacementValues == null) {
-			return textTemplate;
-		}
+   /**
+    * Handles the replacement of the variable strings within textual templates and
+    * also allows the setting of variables for the control of logical branching within
+    * the text template as well<br/>
+    * Uses and expects freemarker (http://freemarker.org/) style templates 
+    * (that is using ${name} as the marker for a replacement)<br/>
+    * NOTE: These should be compatible with Velocity (http://velocity.apache.org/) templates
+    * 
+    * @param textTemplate a freemarker/velocity style text template,
+    * cannot be null or empty string
+    * @param replacementValues a set of replacement values which are in the map like so:<br/>
+    * key => value (String => Object)<br/>
+    * username => aaronz<br/>
+    * course_title => Math 1001 Differential Equations<br/>
+    * @return the processed template
+    */
+   public static String processTextTemplate(String textTemplate, Map<String, String> replacementValues) {
+      if (replacementValues == null || replacementValues.size() == 0) {
+         return textTemplate;
+      }
 
-		// setup velocity
-		VelocityEngine ve = null;
-		try {
-			// trying out creating a new instance of velocity -AZ
-			ve = new VelocityEngine();
-			ve.init();
-		} catch (Exception e) {
-			throw new RuntimeException("Could not initialize velocity", e);
-		}
+      if (textTemplate == null || textTemplate.equals("")) {
+         throw new IllegalArgumentException("The textTemplate cannot be null or empty string, " +
+         		"please pass in at least something in the template or do not call this method");
+      }
 
-		// load in the passed in replacement values
-		VelocityContext context = new VelocityContext(replacementValues);
+      // setup freemarker
+      Configuration cfg = new Configuration();
 
-		Writer output = new StringWriter();
-		boolean result = false;
-		try {
-			result = ve.evaluate(context, output, "textProcess", textTemplate);
-		} catch (ParseErrorException e) {
-			throw new RuntimeException("Velocity parsing error: ", e);
-		} catch (MethodInvocationException e) {
-			throw new RuntimeException("Velocity method invocation error: ", e);
-		} catch (ResourceNotFoundException e) {
-			throw new RuntimeException("Velocity resource not found error: ", e);
-		} catch (IOException e) {
-			throw new RuntimeException("Velocity IO error: ", e);
-		}
+      // Specify how templates will see the data-model
+      cfg.setObjectWrapper(new DefaultObjectWrapper()); 
 
-		if ( result ) {
-			return output.toString();
-		} else {
-			throw new RuntimeException("Failed to process velocity text template");
-		}
-	}
+      // get the template
+      Template template;
+      try {
+         template = new Template("sakai-eval", new StringReader(textTemplate), cfg);
+      } catch (IOException e) {
+         throw new RuntimeException("Failure while creating freemarker template", e);
+      }
+
+      Writer output = new StringWriter();
+      try {
+         template.process(replacementValues, output);
+      } catch (TemplateException e) {
+         throw new RuntimeException("Failure while processing freemarker template", e);
+      } catch (IOException e) {
+         throw new RuntimeException("Failure while sending freemarker output to stream", e);
+      }
+
+      return output.toString();
+   }
+
+/************ commenting out the velocity version for now
+   public static String processTextTemplate(String textTemplate, Map<String, String> replacementValues) {
+      if (replacementValues == null) {
+         return textTemplate;
+      }
+
+      // setup velocity
+      VelocityEngine ve = null;
+      try {
+         // trying out creating a new instance of velocity -AZ
+         ve = new VelocityEngine();
+         ve.init();
+      } catch (Exception e) {
+         throw new RuntimeException("Could not initialize velocity", e);
+      }
+
+      // load in the passed in replacement values
+      VelocityContext context = new VelocityContext(replacementValues);
+
+      Writer output = new StringWriter();
+      boolean result = false;
+      try {
+         result = ve.evaluate(context, output, "textProcess", textTemplate);
+      } catch (ParseErrorException e) {
+         throw new RuntimeException("Velocity parsing error: ", e);
+      } catch (MethodInvocationException e) {
+         throw new RuntimeException("Velocity method invocation error: ", e);
+      } catch (ResourceNotFoundException e) {
+         throw new RuntimeException("Velocity resource not found error: ", e);
+      } catch (IOException e) {
+         throw new RuntimeException("Velocity IO error: ", e);
+      }
+
+      if ( result ) {
+         return output.toString();
+      } else {
+         throw new RuntimeException("Failed to process velocity text template");
+      }
+   }
+*********/
 
 }
