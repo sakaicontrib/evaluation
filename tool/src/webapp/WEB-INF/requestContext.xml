@@ -122,6 +122,8 @@
          ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
       <property name="responsesLogic"
          ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
+      <property name="externalLogic"
+         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
    </bean>
 
    <!-- bean locators here -->

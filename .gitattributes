@@ -219,6 +219,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/utils/RSFUtils.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/utils/ScaledUtils.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/AdminTestEGViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/BlockIdsParameters.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/viewparams/CSVReportViewParams.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ChooseItemViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/DownloadReportViewParams.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/EmailViewParameters.java -text

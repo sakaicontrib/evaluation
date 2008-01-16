@@ -20,6 +20,8 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -35,11 +37,13 @@ import com.lowagie.text.Paragraph;
 import com.lowagie.text.pdf.PdfWriter;
 
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
+import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
 import org.sakaiproject.evaluation.logic.utils.ComparatorsUtils;
 import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.model.EvalAnswer;
+import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplate;
@@ -50,6 +54,7 @@ import org.sakaiproject.evaluation.tool.viewparams.DownloadReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.ExcelReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.PDFReportViewParams;
 
+import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.processor.HandlerHook;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.util.UniversalRuntimeException;
@@ -89,6 +94,11 @@ public class ReportHandlerHook implements HandlerHook {
     public void setEvalsLogic(EvalEvaluationsLogic evalsLogic) {
         this.evalsLogic = evalsLogic;
     }
+    
+    private EvalExternalLogic externalLogic;
+    public void setExternalLogic(EvalExternalLogic externalLogic) {
+        this.externalLogic = externalLogic;
+    }
 
     private EvalResponsesLogic responsesLogic;
     public void setResponsesLogic(EvalResponsesLogic responsesLogic) {
@@ -112,8 +122,10 @@ public class ReportHandlerHook implements HandlerHook {
         EvalEvaluation evaluation = evalsLogic.getEvaluationById(drvp.evalId);
         EvalTemplate template = evaluation.getTemplate();
 
-        List topRow = new ArrayList(); //holds top row (item text)
-        List responseRows = new ArrayList();//holds response rows
+        List<String> topRow = new ArrayList<String>(); //holds top row (item text)
+        List<EvalItem> allEvalItems = new ArrayList<EvalItem>(); //holds all expanded eval items (blocks are expanded here)
+        List<EvalTemplateItem> allEvalTemplateItems = new ArrayList<EvalTemplateItem>(); 
+        List<List<String>> responseRows = new ArrayList<List<String>>();//holds response rows
 
         /*
          * Getting list of response ids serves 2 purposes:
@@ -147,6 +159,7 @@ public class ReportHandlerHook implements HandlerHook {
             for (int i = 0; i < ncItemsList.size(); i++) {
                 //fetch the item
                 EvalTemplateItem tempItem1 = (EvalTemplateItem) ncItemsList.get(i);
+                allEvalTemplateItems.add(tempItem1);
                 EvalItem item1 = tempItem1.getItem();
 
                 //if the item is normal scaled or text (essay)
@@ -156,6 +169,7 @@ public class ReportHandlerHook implements HandlerHook {
                     //add the item description to the top row
                     // TODO: This is now rich text, needs flattening/rendering
                     topRow.add(item1.getItemText());
+                    allEvalItems.add(item1);
 
                     //get all answers to this item within this evaluation
                     List itemAnswers = responsesLogic.getEvalAnswers(item1.getId(), drvp.evalId, drvp.groupIds);
@@ -166,6 +180,7 @@ public class ReportHandlerHook implements HandlerHook {
                 else if (TemplateItemUtils.getTemplateItemType(tempItem1).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)) {
                     //add the block description to the top row
                     topRow.add(item1.getItemText());
+                    allEvalItems.add(item1);
                     for (int j = 0; j < numOfResponses; j++) {
                         List currRow = (List) responseRows.get(j);
                         //add blank response to block parent row
@@ -176,9 +191,11 @@ public class ReportHandlerHook implements HandlerHook {
                     List childList = itemsLogic.getBlockChildTemplateItemsForBlockParent(tempItem1.getId(), false);
                     for (int j = 0; j < childList.size(); j++) {
                         EvalTemplateItem tempItemChild = (EvalTemplateItem) childList.get(j);
+                        allEvalTemplateItems.add(tempItemChild);
                         EvalItem child = tempItemChild.getItem();
                         //add child's text to top row
                         topRow.add(child.getItemText());
+                        allEvalItems.add(child);
                         //get all answers to the child item within this eval
                         List itemAnswers = responsesLogic.getEvalAnswers(child.getId(), drvp.evalId, drvp.groupIds);
                         updateResponseList(numOfResponses, responseIds, responseRows, itemAnswers, tempItemChild, child);
@@ -202,13 +219,12 @@ public class ReportHandlerHook implements HandlerHook {
             respondWithCSV(topRow, responseRows, numOfResponses);
         }
         else if (drvp instanceof ExcelReportViewParams) {
-            respondWithExcel(topRow, responseRows, numOfResponses);
+            respondWithExcel(evaluation, template, allEvalItems, 
+                    allEvalTemplateItems, topRow, responseRows, numOfResponses);
         }
         else if (drvp instanceof PDFReportViewParams) {
             respondWithPDF(topRow, responseRows, numOfResponses);
         }
-        // TODO PDF Params
-        
         return true;
     }
     
@@ -230,9 +246,35 @@ public class ReportHandlerHook implements HandlerHook {
         
     }
     
-    private void respondWithExcel(List topRow, List responseRows, int numOfResponses) {
+    private void respondWithExcel(EvalEvaluation evaluation, EvalTemplate template,
+            List<EvalItem> allEvalItems, List<EvalTemplateItem> allEvalTemplateItems,
+            List<String> topRow, List<List<String>> responseRows, int numOfResponses) {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("First Sheet");
+        
+        // Evaluation Title
+        HSSFRow row1 = sheet.createRow(0);
+        HSSFCell cellA1 = row1.createCell((short)0);
+        cellA1.setCellValue(evaluation.getTitle());
+        
+        HSSFRow row2 = sheet.createRow(1);
+        HSSFCell cellA2 = row2.createCell((short)0);
+        
+        // Response Rate calculation... this is sort of duplicated code from ControlEvaluationsProducer
+        // might be good to put it in one of the logic or utility classes.
+        int countResponses = responsesLogic.countResponses(evaluation.getId(), null);
+        int countEnrollments = getTotalEnrollmentsForEval(evaluation.getId());
+        long percentage = 0;
+        if (countEnrollments > 0) {
+           percentage = Math.round(  (((float)countResponses) / (float)countEnrollments) * 100.0 );
+           cellA2.setCellValue(percentage + "% response rate (" + countResponses + "/" + countEnrollments + ")");
+           //UIOutput.make(evaluationRow, "closed-eval-response-rate", countResponses + "/"
+           //      + countEnrollments + " - " + percentage + "%");
+        } else {
+           // don't bother showing percentage or "out of" when there are no enrollments
+           //UIOutput.make(evaluationRow, "closed-eval-response-rate", countResponses + "");
+           cellA2.setCellValue(countResponses + " responses");
+        }
         
         // Header Row
         HSSFRow headerRow = sheet.createRow((short)4);
@@ -378,4 +420,24 @@ public class ReportHandlerHook implements HandlerHook {
 
     }
 
+    /**
+     * More duplicated code from ControlEvaluationsProducer
+     * 
+     * Gets the total count of enrollments for an evaluation
+     * 
+     * @param evaluationId
+     * @return total number of users with take eval perms in this evaluation
+     */
+    private int getTotalEnrollmentsForEval(Long evaluationId) {
+        int totalEnrollments = 0;
+        Map<Long, List<EvalAssignGroup>> evalAssignGroups = evalsLogic.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
+        List<EvalAssignGroup> groups = evalAssignGroups.get(evaluationId);
+        for (int i=0; i<groups.size(); i++) {
+            EvalAssignGroup eac = (EvalAssignGroup) groups.get(i);
+            String context = eac.getEvalGroupId();
+            Set<String> userIds = externalLogic.getUserIdsForEvalGroup(context, EvalConstants.PERM_TAKE_EVALUATION);
+            totalEnrollments = totalEnrollments + userIds.size();
+        }
+        return totalEnrollments;
+    }
 }
