@@ -113,6 +113,7 @@ impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalScalesLogicImplTe
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalSettingsImplTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalTemplatesLogicImplTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/ExternalHierarchyLogicImplTest.java -text
+impl/logic/src/test/org/sakaiproject/evaluation/logic/test/TestTextTemplateLogicUtils.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/stubs/EvalExternalLogicStub.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/stubs/MockPlacement.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/stubs/MockReference.java -text
