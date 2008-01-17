@@ -87,7 +87,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       // preload additional data if desired
       String[] optionsA = {"Male", "Female", "Unknown"};
       scaleLocked = new EvalScale(new Date(), EvalTestDataLoad.ADMIN_USER_ID, "Scale Alpha", 
-            EvalConstants.SHARING_PRIVATE, EvalTestDataLoad.NOT_EXPERT, 
+            EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PRIVATE, EvalTestDataLoad.NOT_EXPERT, 
             "description", EvalConstants.SCALE_IDEAL_NONE, optionsA, EvalTestDataLoad.LOCKED);
       evaluationDao.save( scaleLocked );
 
@@ -680,7 +680,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
          evaluationDao.lockScale( 
                new EvalScale(new Date(), 
                      EvalTestDataLoad.ADMIN_USER_ID, "new scale", 
-                     EvalConstants.SHARING_PRIVATE, Boolean.FALSE),
+                     EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PRIVATE, Boolean.FALSE),
                      Boolean.FALSE
          );
          Assert.fail("Should have thrown an exception");

@@ -222,7 +222,8 @@ public class PreloadDataImpl {
      * @return a persisted {@link EvalScale}
      */
     private EvalScale saveScale(String title, String ideal, String[] options) {
-        EvalScale scale = new EvalScale(new Date(), ADMIN_OWNER, title, EvalConstants.SHARING_PUBLIC, Boolean.TRUE,
+        EvalScale scale = new EvalScale(new Date(), ADMIN_OWNER, title, EvalConstants.SCALE_MODE_SCALE, 
+              EvalConstants.SHARING_PUBLIC, Boolean.TRUE,
                 "", ideal, options, Boolean.FALSE);
         evaluationDao.save(scale);
         return scale;

@@ -158,6 +158,17 @@ public class EvalConstants {
 	 */
 	public static final String SCALE_IDEAL_OUTSIDE = "outside";
 
+   /**
+    * Scale mode: SCALE - this scale is a reusable scale which is used in SCALED items,
+    * this is the default and will appear in scale dropdowns
+    */
+   public static final String SCALE_MODE_SCALE = "scale";
+   /**
+    * Scale mode: ADHOC - this scale is an adhoc set of text data that are used for a MultipleChoice or MultipleAnswer item,
+    * this will not appear in any lists and is not shareable
+    */
+   public static final String SCALE_MODE_ADHOC = "adhoc";
+
 	/**
 	 * Item type (itemClassification) setting:
 	 * This is a scaled (likert) type item<br/>
@@ -166,6 +177,20 @@ public class EvalConstants {
 	 * a chunk of items which all use the same scale
 	 */
 	public static final String ITEM_TYPE_SCALED = "Scaled";
+   /**
+    * Item type (itemClassification) setting:
+    * This is a multiple choice type item<br/>
+    * it uses an adhoc scale (though it can use any scale),
+    * only one answer may be selected
+    */
+   public static final String ITEM_TYPE_MULTIPLECHOICE = "MultipleChoice";
+   /**
+    * Item type (itemClassification) setting:
+    * This is a multiple answer type item<br/>
+    * it uses an adhoc scale (though it can use any scale),
+    * zero to many answers may be selected
+    */
+   public static final String ITEM_TYPE_MULTIPLEANSWER = "MultipleAnswer";
 	/**
 	 * Item type (itemClassification) setting:
 	 * This is a textual/essay type item
