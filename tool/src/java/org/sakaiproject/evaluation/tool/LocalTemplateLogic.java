@@ -206,7 +206,7 @@ public class LocalTemplateLogic {
    }
 
    public void saveItem(EvalItem tosave) {
-      connectScaleToItem(tosave);
+      //connectScaleToItem(tosave);
       itemsLogic.saveItem(tosave, external.getCurrentUserId());
    }
 
@@ -219,7 +219,7 @@ public class LocalTemplateLogic {
             EvalConstants.SHARING_PRIVATE, "", Boolean.FALSE);
       newItem.setCategory( EvalConstants.ITEM_CATEGORY_COURSE ); // default category
       // TODO currently needed so that EL reference will not fail, supposedly this should use a defunneler
-      newItem.setScale( new EvalScale() );
+      //newItem.setScale( new EvalScale() );
       return newItem;
    }
 

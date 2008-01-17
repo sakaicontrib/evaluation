@@ -16,20 +16,6 @@
       <property name="targetBeanName" value="plainTextInputEvolver" />
    </bean>
 
-   <!-- allows us to identify entities used in OTP on the EL path -->
-   <!--	<bean id="id-defunnel"-->
-   <!--		class="uk.org.ponder.rsf.state.entity.IDDefunnellingReshaper">-->
-   <!--		<property name="beanModelAlterer" ref="DARApplier" />-->
-   <!--		<property name="mappingContext" ref="ELMappingContext" />-->
-   <!--		<property name="requestBeanLocator" ref="RSACSafeBeanLocator" />-->
-   <!--		<property name="entityNameInferrer" ref="evalEntityNameInferrer" />-->
-   <!--	</bean>-->
-   <!---->
-   <!--	<bean id="evalEntityNameInferrer"-->
-   <!--		class="org.sakaiproject.evaluation.tool.locators.EntityNameInferrerImpl">-->
-   <!--	</bean>-->
-
-
    <!-- session scope backing beans here -->
    <bean id="evaluationBean"
       class="org.sakaiproject.evaluation.tool.EvaluationBean"

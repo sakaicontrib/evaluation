@@ -107,7 +107,7 @@ public class ModifyTemplateProducer implements ViewComponentProducer, ViewParams
 		UIInput.make(form, "description", templateOTP + "description");
 
 		/*
-		 * (Non-javadoc) If "EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY" is set
+		 * If "EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY" is set
 		 * EvalConstants.SHARING_OWNER, then it means that owner can decide what
 		 * sharing settings to chose. In other words, it means that show the
 		 * sharing/visibility dropdown. Else just show the label for what has been
@@ -116,6 +116,9 @@ public class ModifyTemplateProducer implements ViewComponentProducer, ViewParams
 		 */
 		String sharingkey = null;
 		String sharingValue = (String) settings.get(EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY);
+		if (sharingValue == null) {
+         throw new IllegalStateException("SHARING setting cannot be determined because of invalid system settings (sharingValue is null and should not be)");
+		}
 		if ( EvalConstants.SHARING_OWNER.equals(sharingValue) ) {
 			/*
 			 * Dropdown values are visible only for admins. For instructors
@@ -132,10 +135,11 @@ public class ModifyTemplateProducer implements ViewComponentProducer, ViewParams
 				form.parameters.add(new UIELBinding(templateOTP + "sharing", EvalConstants.SHARING_PRIVATE));
 			}
 		} else {
-			if ((EvalConstants.SHARING_PRIVATE).equals(sharingValue))
+			if ((EvalConstants.SHARING_PRIVATE).equals(sharingValue)) {
 				sharingkey = "sharing.private";
-			else if ((EvalConstants.SHARING_PUBLIC).equals(sharingValue))
+			} else if ((EvalConstants.SHARING_PUBLIC).equals(sharingValue)) {
 				sharingkey = "sharing.public";
+			}
 
 			// Doing the binding of this sharing value so that it can be persisted
 			form.parameters.add(new UIELBinding(templateOTP + "sharing", sharingValue));
