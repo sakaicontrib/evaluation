@@ -242,11 +242,13 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 			UIBranchContainer showItemScale = UIBranchContainer.make(form, "show-item-scale:");
 			UIMessage.make(showItemScale, "item-scale-header", "modifyitem.item.scale.header");
 			List<EvalScale> scales = scalesLogic.getScalesForUser(currentUserId, null);
-			UISelect.make(showItemScale, "item-scale-list", 
+			UISelect scaleList = UISelect.make(showItemScale, "item-scale-list", 
 					ScaledUtils.getScaleValues(scales), 
 					ScaledUtils.getScaleLabels(scales), 
-					itemOTP + "scale.id");
-			//scale.selection.darreshaper = new ELReference("#{id-defunnel}");
+					itemOTP + "scale.id", 
+					scales.get(0).getId().toString() );
+         scaleList.selection.mustapply = true; // this is required to ensure that the value gets passed even if it is not changed
+			scaleList.selection.darreshaper = new ELReference("#{id-defunnel}");
 
 			UIBranchContainer showScaleDisplay = UIBranchContainer.make(form, "show-scale-display:");
 			UIMessage.make(showScaleDisplay, "scale-display-header", "modifyitem.scale.display.header");

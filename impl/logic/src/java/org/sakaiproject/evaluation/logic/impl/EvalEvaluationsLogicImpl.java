@@ -404,6 +404,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
          // only get recently closed evals 
          // check system setting to get "recent" value
          Integer recentlyClosedDays = (Integer) settings.get(EvalSettings.EVAL_RECENTLY_CLOSED_DAYS);
+         if (recentlyClosedDays == null) { recentlyClosedDays = 10; }
          Calendar calendar = GregorianCalendar.getInstance();
          calendar.add(Calendar.DATE, -1 * recentlyClosedDays.intValue());
          Date recent = calendar.getTime();

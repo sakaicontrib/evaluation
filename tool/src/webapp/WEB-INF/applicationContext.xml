@@ -20,17 +20,25 @@
 
 	<!-- the beans listed here are allowed access to values (security) -->
 	<bean parent="requestAddressibleParent">
-		<property name="value" value="evaluationBean, reportsBean, templateBBean, importBean, itemsBean, expertItemsBean, 
-      			templateBeanLocator, templateItemWBL, answersBeanLocator, responseAnswersBeanLocator, responseBeanLocator, 
-      			evaluationBeanLocator, takeEvalBean, settingsBean, scaleBean, scaleBeanLocator, itemWBL, hierNodeLocator, 
-      			hierNodeLocatorInvoker, hierNodeGroupsLocator, hierNodeGroupsLocatorInvoker" />
+		<property name="value" value="id-defunnel, 
+		      evaluationBean, reportsBean, templateBBean, importBean, itemsBean, expertItemsBean, 
+		      templateBeanLocator, templateItemWBL, answersBeanLocator, responseAnswersBeanLocator, responseBeanLocator, 
+		      evaluationBeanLocator, takeEvalBean, settingsBean, scaleBean, scaleBeanLocator, itemWBL, 
+		      hierNodeLocator, hierNodeLocatorInvoker, hierNodeGroupsLocator, hierNodeGroupsLocatorInvoker" />
 	</bean>
-	
-	<!-- 
+
+    <!-- allows us to identify entities used in OTP on the EL path,
+        this maps the OTPized entities to unique OTP root names (e.g. templateBeanLocator, itemWBL) -->
+    <bean parent="entityNameInferrerParent">
+        <property name="value">
+            <bean class="org.sakaiproject.evaluation.tool.locators.EntityNameInferrerImpl" />
+        </property>
+    </bean>
+
+    <!-- This has to be true to get around an RSF bug (RSF-40) until it is fixed in 0.7.3 -->
 	<bean id="ignoreFossilizedValues" class="uk.org.ponder.springutil.BooleanFactory">
 		<property name="value" value="true" />
 	</bean>
--->
 
 	<!-- tool logic beans (organizational) -->
 	<bean id="localTemplateLogic"
