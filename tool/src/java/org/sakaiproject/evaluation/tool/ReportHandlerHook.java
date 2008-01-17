@@ -40,8 +40,10 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
+import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.utils.ComparatorsUtils;
 import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
+import org.sakaiproject.evaluation.logic.providers.EvalGroupsProvider;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -103,6 +105,11 @@ public class ReportHandlerHook implements HandlerHook {
     private EvalResponsesLogic responsesLogic;
     public void setResponsesLogic(EvalResponsesLogic responsesLogic) {
         this.responsesLogic = responsesLogic;
+    }
+
+    private EvalGroupsProvider evalGroupsProvider;
+    public void setEvalGroupsProvider(EvalGroupsProvider logic) {
+        this.evalGroupsProvider = logic;
     }
 
     /* (non-Javadoc)
@@ -220,7 +227,7 @@ public class ReportHandlerHook implements HandlerHook {
         }
         else if (drvp instanceof ExcelReportViewParams) {
             respondWithExcel(evaluation, template, allEvalItems, 
-                    allEvalTemplateItems, topRow, responseRows, numOfResponses);
+                allEvalTemplateItems, topRow, responseRows, numOfResponses, drvp.groupIds);
         }
         else if (drvp instanceof PDFReportViewParams) {
             respondWithPDF(topRow, responseRows, numOfResponses);
@@ -248,7 +255,8 @@ public class ReportHandlerHook implements HandlerHook {
     
     private void respondWithExcel(EvalEvaluation evaluation, EvalTemplate template,
             List<EvalItem> allEvalItems, List<EvalTemplateItem> allEvalTemplateItems,
-            List<String> topRow, List<List<String>> responseRows, int numOfResponses) {
+            List<String> topRow, List<List<String>> responseRows, int numOfResponses,
+            String[] groupIDs) {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("First Sheet");
         
@@ -274,6 +282,32 @@ public class ReportHandlerHook implements HandlerHook {
            // don't bother showing percentage or "out of" when there are no enrollments
            //UIOutput.make(evaluationRow, "closed-eval-response-rate", countResponses + "");
            cellA2.setCellValue(countResponses + " responses");
+        }
+        
+        // Participants listing
+        List<String> groupTitles = new ArrayList<String>();
+        
+        //TODO Ask Az the right way to get the Group Titles since I don't see
+        // any instantiated beans for EvalGroupProvider
+        //for (String groupID: groupIDs) {
+        //    EvalGroup group = evalGroupsProvider.getGroupByGroupId(groupID);
+        //    if (group != null)
+        //        groupTitles.add(group.title);
+        //}
+        
+        //if (groupTitles.size() > 0) {
+        if (groupIDs.length > 0) {
+            HSSFRow row3 = sheet.createRow(2);
+            HSSFCell cellA3 = row3.createCell((short)0);
+
+            String groupsCellContents = "Participants: ";
+            for (int groupCounter = 0; groupCounter < groupIDs.length; groupCounter++) {//groupTitles.size(); groupCounter++) {
+                groupsCellContents +=  groupIDs[groupCounter]; //groupTitles.get(groupCounter);
+                if (groupCounter+1 < groupIDs.length) {//groupTitles.size()) {
+                    groupsCellContents += ", ";
+                }
+            }
+            cellA3.setCellValue(groupsCellContents);
         }
         
         // Header Row
