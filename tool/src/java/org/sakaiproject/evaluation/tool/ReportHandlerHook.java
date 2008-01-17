@@ -310,8 +310,24 @@ public class ReportHandlerHook implements HandlerHook {
             cellA3.setCellValue(groupsCellContents);
         }
         
+        // Questions types (just above header row)
+        HSSFRow questionTypeRow = sheet.createRow((short)4);
+        for (int i = 0; i < allEvalTemplateItems.size(); i++) {
+            EvalTemplateItem tempItem = allEvalTemplateItems.get(i);
+            HSSFCell cell = questionTypeRow.createCell((short)(i+1));
+            if (TemplateItemUtils.getTemplateItemType(tempItem).equals(EvalConstants.ITEM_TYPE_SCALED)) {
+                cell.setCellValue("Rating scale");
+            }
+            else if (TemplateItemUtils.getTemplateItemType(tempItem).equals(EvalConstants.ITEM_TYPE_TEXT)) {
+                cell.setCellValue("Free text / essay question");
+            }
+            else {
+                cell.setCellValue("");
+            }
+        }
+        
         // Header Row
-        HSSFRow headerRow = sheet.createRow((short)4);
+        HSSFRow headerRow = sheet.createRow((short)5);
         for (int i = 0; i < topRow.size(); i++) {
             // Adding one because we want the first column to be a numbered list.
             HSSFCell cell = headerRow.createCell((short)(i+1));
@@ -320,7 +336,7 @@ public class ReportHandlerHook implements HandlerHook {
         
         // Fill in the rest
         for (int i = 0; i < responseRows.size(); i++) {
-            HSSFRow row = sheet.createRow((short)(i+5)); 
+            HSSFRow row = sheet.createRow((short)(i+6)); 
             HSSFCell indexCell = row.createCell((short)0);
             indexCell.setCellValue(i+1);
             List<String> responses = (List<String>) responseRows.get(i);
