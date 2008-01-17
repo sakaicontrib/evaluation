@@ -101,6 +101,11 @@
             <version>2.3.10</version>
         </dependency>
 
+        <dependency>
+            <groupId>velocity</groupId>
+            <artifactId>velocity-dep</artifactId>
+            <version>1.5-beta2</version>
+        </dependency>
 
 		<!-- Various Sakai dependencies -->
 		<dependency>

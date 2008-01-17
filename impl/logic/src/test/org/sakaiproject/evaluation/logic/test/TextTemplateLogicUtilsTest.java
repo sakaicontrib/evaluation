@@ -7,11 +7,9 @@ package org.sakaiproject.evaluation.logic.test;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.sakaiproject.evaluation.logic.impl.utils.TextTemplateLogicUtils;
-
-import freemarker.core.InvalidReferenceException;
-
 import junit.framework.TestCase;
+
+import org.sakaiproject.evaluation.logic.impl.utils.TextTemplateLogicUtils;
 
 
 /**
@@ -19,7 +17,7 @@ import junit.framework.TestCase;
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
-public class TestTextTemplateLogicUtils extends TestCase {
+public class TextTemplateLogicUtilsTest extends TestCase {
 
    private String plainTemplate = "This template has nothing in it that can be replaced and therefore should come out identical \n" +
       "to the one that was input. If it does not come out the same then this is sadly quite broken";
@@ -35,10 +33,7 @@ public class TestTextTemplateLogicUtils extends TestCase {
          "Welcome ${name}, Your email address is very special. It is ${email}. We like it so much we would like to hire the " +
          "company you are working for (${company}) to do something for us.\n Sincerly, ${author}";
 
-   /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.utils.TextTemplateLogicUtils#processTextTemplate(java.lang.String, java.util.Map)}.
-    */
-   public void testProcessTextTemplate() {
+   public void runTestingProcessTextTemplate() {
       Map<String, String> replacementValues = null;
       String result = null;
 
@@ -76,7 +71,7 @@ public class TestTextTemplateLogicUtils extends TestCase {
       try {
          result = TextTemplateLogicUtils.processTextTemplate(null, replacementValues);
          fail("Should not have gotten here");
-      } catch (IllegalArgumentException e) {
+      } catch (RuntimeException e) {
          assertNotNull(e.getMessage());
       }
 
@@ -88,6 +83,20 @@ public class TestTextTemplateLogicUtils extends TestCase {
          assertNotNull(e.getMessage());
       }
 
+   }
+
+   public void testFreemarkerTextTemplate() {
+      TextTemplateLogicUtils.useFreemarker = true;
+      TextTemplateLogicUtils.useVelocity = false;
+
+      runTestingProcessTextTemplate();
+   }
+
+   public void testVelocityTextTemplate() {
+      TextTemplateLogicUtils.useFreemarker = false;
+      TextTemplateLogicUtils.useVelocity = true;
+
+      runTestingProcessTextTemplate();
    }
 
 }
