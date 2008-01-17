@@ -98,13 +98,17 @@
          <version>1.5.2</version>
       </dependency>
 
-      <!-- velocity for processing text templates -->
+      <!-- velocity for processing text templates 
       <dependency>
          <groupId>velocity</groupId>
          <artifactId>velocity</artifactId>
          <version>1.5</version>
-      </dependency>
-
+      </dependency> -->
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>2.3.11</version>
+        </dependency>
       <!-- Various Sakai dependencies -->
       <dependency>
          <groupId>org.sakaiproject</groupId>
