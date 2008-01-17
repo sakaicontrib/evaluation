@@ -34,7 +34,10 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Paragraph;
+import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.Element;
+import com.lowagie.text.Image;
 
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
@@ -55,6 +58,7 @@ import org.sakaiproject.evaluation.tool.viewparams.CSVReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.DownloadReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.ExcelReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.PDFReportViewParams;
+import java.net.URL;
 
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.processor.HandlerHook;
@@ -230,17 +234,53 @@ public class ReportHandlerHook implements HandlerHook {
                 allEvalTemplateItems, topRow, responseRows, numOfResponses, drvp.groupIds);
         }
         else if (drvp instanceof PDFReportViewParams) {
-            respondWithPDF(topRow, responseRows, numOfResponses);
+            respondWithPDF(evaluation, template, allEvalItems, 
+                    allEvalTemplateItems, topRow, responseRows, numOfResponses, drvp.groupIds);
         }
         return true;
     }
     
-    private void respondWithPDF(List topRow, List responseRows, int numOfResponses) {
+    private void respondWithPDF(EvalEvaluation evaluation, EvalTemplate template,
+            List<EvalItem> allEvalItems, List<EvalTemplateItem> allEvalTemplateItems,
+            List<String> topRow, List<List<String>> responseRows, int numOfResponses,
+            String[] groupIDs) {
         Document document = new Document();
         try {
             PdfWriter.getInstance(document, response.getOutputStream());
             document.open();
-            document.add(new Paragraph("My Awesome Eval Responses"));
+            
+            // make a standard place in the eval webapp to put your custom image
+            Image gif = Image.getInstance(new URL("http://localhost:8080/library/skin/default/images/logo_inst.gif"));
+            document.add(gif);
+            
+            // Title of Survey
+            Paragraph title = new Paragraph("Title of Survey");
+            title.setAlignment(Element.ALIGN_CENTER);
+            document.add(title);
+            
+            // Account Name
+            Paragraph accountName = new Paragraph("Account Name");
+            accountName.setAlignment(Element.ALIGN_CENTER);
+            document.add(accountName);
+            
+            // Table with info on,
+            // Carried out:  12th July 07 - 18th July 07
+            // Response rate:  76% ( 80 / 126 )
+            // Invitees: IB PMS 07/08
+            PdfPTable table = new PdfPTable(2);
+            table.addCell("Carried out:");
+            table.addCell("12th July 07 - 18th July 07");
+            table.addCell("Response Rate:");
+            table.addCell("76% ( 80 / 126 )");
+            table.addCell("Invitees:");
+            table.addCell("IB PMS 07/08");
+            document.add(table);
+            
+            for (int i = 0; i < topRow.size(); i++) {
+                Paragraph question = new Paragraph(i + ". " + topRow.get(i));
+                document.add(question);
+            }
+            
             document.close();
         } catch (DocumentException e) {
             // TODO Auto-generated catch block
