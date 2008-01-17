@@ -240,7 +240,8 @@ public class LocalTemplateLogic {
 
    public EvalScale newScale() {
       EvalScale currScale = new EvalScale(new Date(), 
-            external.getCurrentUserId(), null, "private", Boolean.FALSE);
+            external.getCurrentUserId(), null, 
+            EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PRIVATE, Boolean.FALSE);
       currScale.setOptions(new String[]{"", ""});
       return currScale;
    }

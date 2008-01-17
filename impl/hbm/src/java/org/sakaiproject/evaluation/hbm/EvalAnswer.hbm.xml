@@ -29,6 +29,12 @@
         <property name="numeric" type="java.lang.Integer" index="eval_answer_num">
             <column name="NUM_ANSWER" />
         </property>
+        <!-- stores a set of answers for multiple answer type items -->
+        <array name="multipleAnswers" table="EVAL_MULTIPLE_ANSWERS" cascade="all">
+            <key column="ID" not-null="true" />
+            <list-index column="ANSWER_INDEX" />
+            <element type="string" column="ANSWER" not-null="true" />
+        </array>
         <!-- if this answer is associated with an instructor or 
         	environment or other then place the unique id here -->
         <property name="associatedId" type="java.lang.String">

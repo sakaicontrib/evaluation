@@ -24,7 +24,6 @@ import org.sakaiproject.evaluation.logic.impl.EvalScalesLogicImpl;
 import org.sakaiproject.evaluation.logic.test.stubs.EvalExternalLogicStub;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalScale;
-import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.PreloadTestData;
@@ -147,7 +146,7 @@ public class EvalScalesLogicImplTest extends AbstractTransactionalSpringContextT
 		// test saving a new valid scale
 		scales.saveScale( new EvalScale( new Date(), 
 				EvalTestDataLoad.MAINT_USER_ID, test_title, 
-				EvalConstants.SHARING_PRIVATE, Boolean.FALSE, 
+				EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PRIVATE, Boolean.FALSE, 
 				"description", EvalConstants.SCALE_IDEAL_LOW,
 				options1, EvalTestDataLoad.UNLOCKED), EvalTestDataLoad.MAINT_USER_ID);
 
@@ -220,7 +219,7 @@ public class EvalScalesLogicImplTest extends AbstractTransactionalSpringContextT
 		try {
 			scales.saveScale( new EvalScale( new Date(), 
 					EvalTestDataLoad.MAINT_USER_ID, "options are null", 
-					EvalConstants.SHARING_PRIVATE, Boolean.FALSE, 
+					EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PRIVATE, Boolean.FALSE, 
 					"description", EvalConstants.SCALE_IDEAL_LOW,
 					null, EvalTestDataLoad.UNLOCKED), EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");
@@ -232,7 +231,7 @@ public class EvalScalesLogicImplTest extends AbstractTransactionalSpringContextT
 		try {
 			scales.saveScale( new EvalScale( new Date(), 
 					EvalTestDataLoad.MAINT_USER_ID, test_title, 
-					EvalConstants.SHARING_PRIVATE, Boolean.FALSE, 
+					EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PRIVATE, Boolean.FALSE, 
 					"description", EvalConstants.SCALE_IDEAL_LOW,
 					options1, EvalTestDataLoad.UNLOCKED), EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");

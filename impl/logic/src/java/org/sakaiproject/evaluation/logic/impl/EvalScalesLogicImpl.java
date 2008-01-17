@@ -51,7 +51,14 @@ public class EvalScalesLogicImpl implements EvalScalesLogic {
 	public EvalScale getScaleById(Long scaleId) {
 		log.debug("scaleId: " + scaleId );
 		// get the scale by passing in id
-		return (EvalScale) dao.findById(EvalScale.class, scaleId);
+		EvalScale scale = (EvalScale) dao.findById(EvalScale.class, scaleId);
+      // check for non-null type
+      if (scale != null && scale.getMode() == null) {
+         // set this to the default then
+         scale.setMode(EvalConstants.SCALE_MODE_SCALE);
+         saveScale(scale, scale.getOwner());
+      }
+      return scale;
 	}
 	
 	/*
@@ -79,6 +86,12 @@ public class EvalScalesLogicImpl implements EvalScalesLogic {
 
 		// set the date modified
 		scale.setLastModified( new Date() );
+
+		// check for non-null type
+		if (scale.getMode() == null) {
+		   // set this to the default then
+		   scale.setMode(EvalConstants.SCALE_MODE_SCALE);
+		}
 
 		// check for null or length 0 or 1 options
 		if (scale.getOptions() == null ||
@@ -194,13 +207,13 @@ public class EvalScalesLogicImpl implements EvalScalesLogic {
 			Object[] values;
 			int[] comps;
 			if (isAdmin) {
-				props = new String[] { "sharing" };
-				values = new Object[] { EvalConstants.SHARING_PRIVATE };
-				comps = new int[] {ByPropsFinder.EQUALS};
+				props = new String[] { "mode", "sharing" };
+				values = new Object[] { EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PRIVATE };
+				comps = new int[] { ByPropsFinder.EQUALS , ByPropsFinder.EQUALS };
 			} else {
-				props = new String[] { "sharing", "owner" };
-				values = new Object[] { EvalConstants.SHARING_PRIVATE, userId };				
-				comps = new int[] {ByPropsFinder.EQUALS, ByPropsFinder.EQUALS};
+				props = new String[] { "mode", "sharing", "owner" };
+				values = new Object[] { EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PRIVATE, userId };				
+				comps = new int[] { ByPropsFinder.EQUALS, ByPropsFinder.EQUALS, ByPropsFinder.EQUALS };
 			}
 			l.addAll( dao.findByProperties(EvalScale.class, 
 					props, 
@@ -212,9 +225,9 @@ public class EvalScalesLogicImpl implements EvalScalesLogic {
 		// handle public sharing items
 		if (getPublic) {
 			l.addAll( dao.findByProperties(EvalScale.class, 
-					new String[] { "sharing" }, 
-					new Object[] { EvalConstants.SHARING_PUBLIC },
-					new int[] {ByPropsFinder.EQUALS},
+					new String[] { "mode", "sharing" }, 
+					new Object[] { EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PUBLIC },
+					new int[] { ByPropsFinder.EQUALS, ByPropsFinder.EQUALS },
 					new String[] {"title"}) );
 		}
 
