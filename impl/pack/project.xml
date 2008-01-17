@@ -60,6 +60,15 @@
 			</properties>
         </dependency>
 
+        <dependency>
+            <groupId>velocity</groupId>
+            <artifactId>velocity-dep</artifactId>
+            <version>1.5-beta2</version>
+            <properties>
+                <war.bundle>true</war.bundle>
+            </properties>
+        </dependency>
+
 		<!-- sakai dependencies -->
 		<dependency>
 			<groupId>sakaiproject</groupId>
