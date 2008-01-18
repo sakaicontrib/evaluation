@@ -765,7 +765,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 			replacementValues.put("MyWorkspaceDashboard", url);
 			replacementValues.put("HelpdeskEmail", from);
 			// TODO get earliest due date for student's evaluations
-			replacementValues.put("EarliestDueDate", "February 13, 2008");
+			replacementValues.put("EarliestDueDate", "February 12, 2008");
 			message = makeEmailMessage(messageTemplate.getMessage(),
 					replacementValues);
 			subject = makeEmailMessage(subjectTemplate.getMessage(),
