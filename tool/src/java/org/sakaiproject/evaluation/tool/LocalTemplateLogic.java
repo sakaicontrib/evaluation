@@ -131,7 +131,6 @@ public class LocalTemplateLogic {
          tosave.setHierarchyLevel(EvalConstants.HIERARCHY_LEVEL_TOP);
       }
 
-      // TODO fix up the connections before saving, should be supposedly done with a defunneler
       if (tosave.getItem() == null) {
          // failure to associate an item with this templateItem
          throw new IllegalStateException("No item is associated with this templateItem (the item is null) so it cannot be saved");
@@ -206,7 +205,6 @@ public class LocalTemplateLogic {
    }
 
    public void saveItem(EvalItem tosave) {
-      //connectScaleToItem(tosave);
       itemsLogic.saveItem(tosave, external.getCurrentUserId());
    }
 
@@ -218,8 +216,6 @@ public class LocalTemplateLogic {
       EvalItem newItem = new EvalItem(new Date(), external.getCurrentUserId(), "", 
             EvalConstants.SHARING_PRIVATE, "", Boolean.FALSE);
       newItem.setCategory( EvalConstants.ITEM_CATEGORY_COURSE ); // default category
-      // TODO currently needed so that EL reference will not fail, supposedly this should use a defunneler
-      //newItem.setScale( new EvalScale() );
       return newItem;
    }
 
@@ -227,11 +223,20 @@ public class LocalTemplateLogic {
    // SCALES
 
    public EvalScale fetchScale(Long scaleId) {
-      return scalesLogic.getScaleById(scaleId);
+      EvalScale scale = scalesLogic.getScaleById(scaleId);
+      // TODO - hopefully this if block is only needed temporarily until RSF 0.7.3
+      if (scale.getIdeal() == null) {
+         scale.setIdeal(EvaluationConstant.NULL);
+      }
+      return scale;
    }
 
-   public void saveScale(EvalScale tosave) {
-      scalesLogic.saveScale(tosave, external.getCurrentUserId());
+   public void saveScale(EvalScale scale) {
+      // TODO - hopefully this if block is only needed temporarily until RSF 0.7.3
+      if (scale.getIdeal().equals(EvaluationConstant.NULL)) {
+         scale.setIdeal(null);
+      }
+      scalesLogic.saveScale(scale, external.getCurrentUserId());
    }
 
    public void deleteScale(Long id) {
@@ -243,6 +248,7 @@ public class LocalTemplateLogic {
             external.getCurrentUserId(), null, 
             EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PRIVATE, Boolean.FALSE);
       currScale.setOptions(new String[]{"", ""});
+      currScale.setIdeal(EvaluationConstant.NULL); // TODO - temp until RSF 0.7.3
       return currScale;
    }
 
@@ -255,19 +261,19 @@ public class LocalTemplateLogic {
     * it is not ideal but it works, it will also null out the scale if there is no id
     * @param tosave
     */
-   private void connectScaleToItem(EvalItem tosave) {
-      // this is here to cleanup the fake scale in case it was not needed or load a real one
-      if (tosave.getScale() != null) {
-         // only make the connection for fake scales
-         if (tosave.getScale().getId() == null) {
-            // the scale is not being used so destroy the fake one
-            tosave.setScale(null);
-         } else if (tosave.getScale().getOwner() == null) {
-            // the scale is being used and we need to turn the fake one into a real one so hibernate can make the connection
-            tosave.setScale(scalesLogic.getScaleById(tosave.getScale().getId()));
-         }
-      }
-   }
+//   private void connectScaleToItem(EvalItem tosave) {
+//      // this is here to cleanup the fake scale in case it was not needed or load a real one
+//      if (tosave.getScale() != null) {
+//         // only make the connection for fake scales
+//         if (tosave.getScale().getId() == null) {
+//            // the scale is not being used so destroy the fake one
+//            tosave.setScale(null);
+//         } else if (tosave.getScale().getOwner() == null) {
+//            // the scale is being used and we need to turn the fake one into a real one so hibernate can make the connection
+//            tosave.setScale(scalesLogic.getScaleById(tosave.getScale().getId()));
+//         }
+//      }
+//   }
 
 
    /**
