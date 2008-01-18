@@ -180,7 +180,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
          }
          // set the common settings from the TI
          scaleDisplaySetting = templateItem.getScaleDisplaySetting();
-         displayRows = templateItem.getDisplayRows().toString();
+         displayRows = templateItem.getDisplayRows() != null ? templateItem.getDisplayRows().toString() : null;
          usesNA = templateItem.getUsesNA();
 
          itemOwnerName = external.getUserDisplayName(templateItem.getItem().getOwner());
@@ -258,8 +258,8 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 					scaleDisplaySetting).setMessageKeys();
 		}
 
-		if (userAdmin) {
-			// only show the item sharing options if the user is an admin
+		if (userAdmin && templateId == null) {
+			// only show the item sharing options if the user is an admin AND we are modifying the item only
 			UIBranchContainer showItemSharing = UIBranchContainer.make(form, "show-item-sharing:");
 			UIMessage.make(showItemSharing, "item-sharing-header", "modifyitem.item.sharing.header");
 			UISelect.make(showItemSharing, "item-sharing-list", 
@@ -271,8 +271,8 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 			form.parameters.add( new UIELBinding(itemOTP + "sharing", EvalConstants.SHARING_PRIVATE) );
 		}
 
-		if (userAdmin) {
-			// only show the expert items if the user is an admin
+		if (userAdmin && templateId == null) {
+			// only show the expert items if the user is an admin AND we are modifying the item only
 			UIBranchContainer showItemExpert = UIBranchContainer.make(form, "show-item-expert:");
 			UIMessage.make(showItemExpert, "item-expert-header", "modifyitem.item.expert.header");
 			UIMessage.make(showItemExpert, "item-expert-instruction", "modifyitem.item.expert.instruction");
@@ -284,8 +284,15 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 			richTextEvolver.evolveTextInput( expertDesc );			
 		}
 
-		UIMessage.make(tofill, "item-display-hint-header", "modifyitem.display.hint.header");
-		UIMessage.make(tofill, "item-display-hint-instruction", "modifyitem.display.hint.instruction");
+      if (templateId == null) {
+         // call these hints if we are modifying item only
+   		UIMessage.make(tofill, "item-display-hint-header", "modifyitem.display.hint.header");
+   		UIMessage.make(tofill, "item-display-hint-instruction", "modifyitem.display.hint.instruction");
+      } else {
+         // these are required if we are modifying template items
+         UIMessage.make(tofill, "item-display-hint-header", "modifyitem.display.header");
+         UIMessage.make(tofill, "item-display-hint-instruction", "modifyitem.display.instruction");         
+      }
 
 		if (EvalConstants.ITEM_TYPE_TEXT.equals(itemClassification)) {
 			UIBranchContainer showResponseSize = UIBranchContainer.make(form, "show-response-size:");
