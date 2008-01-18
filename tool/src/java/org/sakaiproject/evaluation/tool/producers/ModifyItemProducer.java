@@ -33,7 +33,6 @@ import org.sakaiproject.evaluation.tool.viewparams.ItemViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
 import uk.org.ponder.rsf.components.ELReference;
-import uk.org.ponder.rsf.components.ParameterList;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
@@ -60,6 +59,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * View for handling the creation and modification of items and template items,
  * this is replacing all the separate views which used to exist and resulted in a lot of
  * code duplication
+ * (the create block view remains separate)
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
@@ -245,8 +245,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 			UISelect scaleList = UISelect.make(showItemScale, "item-scale-list", 
 					ScaledUtils.getScaleValues(scales), 
 					ScaledUtils.getScaleLabels(scales), 
-					itemOTP + "scale.id", 
-					scales.get(0).getId().toString() );
+					itemOTP + "scale.id");
          scaleList.selection.mustapply = true; // this is required to ensure that the value gets passed even if it is not changed
 			scaleList.selection.darreshaper = new ELReference("#{id-defunnel}");
 
@@ -298,11 +297,13 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 					displayRows ).setMessageKeys();
 		}
 
-      Boolean naAllowed = (Boolean) settings.get(EvalSettings.NOT_AVAILABLE_ALLOWED);
-		if (naAllowed != null && naAllowed) {
-			UIBranchContainer showNA = UIBranchContainer.make(form, "showNA:");
-			UIMessage.make(showNA,"item-na-header", "modifyitem.item.na.header");
-			UIBoundBoolean.make(showNA, "item-na", commonDisplayOTP + "usesNA", usesNA);
+		if (! EvalConstants.ITEM_TYPE_HEADER.equals(itemClassification)) {
+         Boolean naAllowed = (Boolean) settings.get(EvalSettings.NOT_AVAILABLE_ALLOWED);
+   		if (naAllowed != null && naAllowed) {
+   			UIBranchContainer showNA = UIBranchContainer.make(form, "showNA:");
+   			UIMessage.make(showNA,"item-na-header", "modifyitem.item.na.header");
+   			UIBoundBoolean.make(showNA, "item-na", commonDisplayOTP + "usesNA", usesNA);
+   		}
 		}
 
 		Boolean isDefaultCourse = (Boolean) settings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
