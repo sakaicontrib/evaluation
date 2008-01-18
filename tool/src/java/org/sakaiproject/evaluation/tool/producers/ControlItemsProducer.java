@@ -122,7 +122,7 @@ public class ControlItemsProducer implements ViewComponentProducer {
 		UIMessage.make(tofill, "items-action-title", "controlitems.items.action.title");
 		UIMessage.make(tofill, "items-owner-title", "controlitems.items.owner.title");
 		UIMessage.make(tofill, "items-expert-title", "controlitems.items.expert.title");		
-		
+
 		// use get form to submit the type of item to create
 		UIMessage.make(tofill, "add-item-header", "controlitems.items.add");
 		UIForm addItemForm = UIForm.make(tofill, "add-item-form", 
@@ -132,7 +132,7 @@ public class ControlItemsProducer implements ViewComponentProducer {
 				EvaluationConstant.ITEM_CLASSIFICATION_LABELS_PROPS, 
 				"#{itemClassification}").setMessageKeys();
 		UIMessage.make(addItemForm, "add-item-button", "controlitems.items.add.button");
-		
+
 		// get items for the current user
 		List userItems = itemsLogic.getItemsForUser(currentUserId, null, null, userAdmin);
 		if (userItems.size() > 0) {

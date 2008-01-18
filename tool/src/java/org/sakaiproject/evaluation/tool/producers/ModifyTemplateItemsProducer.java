@@ -16,9 +16,7 @@
 
 package org.sakaiproject.evaluation.tool.producers;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
@@ -28,12 +26,11 @@ import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
-import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.LocalTemplateLogic;
 import org.sakaiproject.evaluation.tool.renderers.AddItemControlRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.BlockIdsParameters;
-import org.sakaiproject.evaluation.tool.viewparams.PreviewEvalParameters;
 import org.sakaiproject.evaluation.tool.viewparams.ItemViewParameters;
+import org.sakaiproject.evaluation.tool.viewparams.PreviewEvalParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateItemViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
@@ -133,17 +130,21 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
         UIMessage.make(tofill, "add-item-note", "modifytemplate.add.item.note");
         ViewParameters[] templateItemVPs = { 
               new ItemViewParameters(ModifyItemProducer.VIEW_ID, EvalConstants.ITEM_TYPE_SCALED, templateId),
+              new ItemViewParameters(ModifyItemProducer.VIEW_ID, EvalConstants.ITEM_TYPE_MULTIPLECHOICE, templateId),
+              new ItemViewParameters(ModifyItemProducer.VIEW_ID, EvalConstants.ITEM_TYPE_MULTIPLEANSWER, templateId),
               new ItemViewParameters(ModifyItemProducer.VIEW_ID, EvalConstants.ITEM_TYPE_TEXT, templateId),
               new ItemViewParameters(ModifyItemProducer.VIEW_ID, EvalConstants.ITEM_TYPE_HEADER, templateId),
               new TemplateItemViewParameters(ExistingItemsProducer.VIEW_ID, templateId, null),
               new TemplateItemViewParameters(ExpertCategoryProducer.VIEW_ID, templateId, null)
         };
         String[] templateItemLabels = new String[] {
-              "modifytemplate.itemtype.scaled", 
-              "modifytemplate.itemtype.text",
-              "modifytemplate.itemtype.header", 
-              "modifytemplate.itemtype.existing",
-              "modifytemplate.itemtype.expert"
+              "item.classification.scaled", 
+              "item.classification.multichoice",
+              "item.classification.multianswer",
+              "item.classification.text",
+              "item.classification.header", 
+              "item.classification.existing",
+              "item.classification.expert"
         };
         addItemControlRenderer.renderControl(tofill, "add-item-control:", 
               templateItemVPs, templateItemLabels, 
