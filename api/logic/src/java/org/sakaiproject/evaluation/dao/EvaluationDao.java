@@ -226,6 +226,16 @@ public interface EvaluationDao extends CompleteGenericDao {
     * @return a list of template ids for {@link EvalTemplate} objects
     */
    public List<Long> getTemplateIdsForEvaluation(Long evaluationId);
+   
+	/**
+	 * Get the evaluation ids for evaluations for which available email has or has not been sent
+	 * 
+	 * @param availableEmailSent if Boolean.TRUE return count of evaluations for which available email has been sent,
+	 * if Boolean.FALSE return count of evaluations for which available email has not been sent, and if null return
+	 * a count of all active evaluations
+	 * @return the evaluations meeting the criterion
+	 */
+	public Long[] getActiveEvaluationIdsByAvailableEmailSent(Boolean availableEmailSent);
 
 
 	// LOCKING METHODS

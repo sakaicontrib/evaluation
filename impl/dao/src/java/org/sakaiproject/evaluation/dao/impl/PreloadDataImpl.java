@@ -90,7 +90,16 @@ public class PreloadDataImpl {
             saveConfig(EvalSettings.ADMIN_ADD_ITEMS_NUMBER, 5);
             saveConfig(EvalSettings.ADMIN_VIEW_BELOW_RESULTS, false);
             saveConfig(EvalSettings.ADMIN_VIEW_INSTRUCTOR_ADDED_RESULTS, false);
-
+            
+            //Default Notification settings
+            saveConfig(EvalSettings.CONSOLIDATE_NOTIFICATION, false);
+            saveConfig(EvalSettings.CONSOLIDATED_REMINDER_INTERVAL, 0);
+            saveConfig(EvalSettings.DAYS_UNTIL_REMINDER, 0);
+            saveConfig(EvalSettings.EMAIL_WAIT_INTERVAL, 600);
+            saveConfig(EvalSettings.EMAIL_BATCH_SIZE, 100);
+            saveConfig(EvalSettings.EMAIL_DELIVERY_OPTION, EvalConstants.EMAIL_DELIVERY_OPTION_NONE);
+            saveConfig(EvalSettings.LOG_EMAIL_RECIPIENTS, true);
+            
             // default hierarchy settings
             saveConfig(EvalSettings.DISPLAY_HIERARCHY_OPTIONS, false);
             saveConfig(EvalSettings.DISPLAY_HIERARCHY_HEADERS, false);
@@ -147,6 +156,12 @@ public class PreloadDataImpl {
                     EvalConstants.EMAIL_REMINDER_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_DEFAULT_REMINDER));
             evaluationDao.save(new EvalEmailTemplate(new Date(), ADMIN_OWNER,
                     EvalConstants.EMAIL_RESULTS_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_DEFAULT_RESULTS));
+            evaluationDao.save(new EvalEmailTemplate(new Date(), ADMIN_OWNER,
+                    EvalConstants.EMAIL_CONSOLIDATED_AVAILABLE_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_DEFAULT_CONSOLIDATED_AVAILABLE));
+            evaluationDao.save(new EvalEmailTemplate(new Date(), ADMIN_OWNER,
+                    EvalConstants.EMAIL_CONSOLIDATED_REMINDER_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_DEFAULT_CONSOLIDATED_REMINDER));
+            evaluationDao.save(new EvalEmailTemplate(new Date(), ADMIN_OWNER,
+                    EvalConstants.EMAIL_CONSOLIDATED_SUBJECT_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_DEFAULT_CONSOLIDATED_SUBJECT));
 
             log.info("Preloaded " + evaluationDao.countAll(EvalEmailTemplate.class) + " evaluation EmailTemplates");
         }

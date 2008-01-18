@@ -6,6 +6,7 @@ package org.sakaiproject.evaluation.logic.impl;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -70,12 +71,17 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
    public void setEvalResponsesLogic(EvalResponsesLogic evalResponsesLogic) {
       this.evalResponsesLogic = evalResponsesLogic;
    }
-
+   
+   String batchSize;
+   String deliveryOption;
+   String logRecipients;
+   String waitInterval;
+   
    // INIT method
    public void init() {
-      log.debug("Init");
+	   log.debug("Init");
    }
-
+   
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#saveEmailTemplate(org.sakaiproject.evaluation.model.EvalEmailTemplate, java.lang.String)
     */
@@ -147,6 +153,12 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
          templateType = EvalConstants.EMAIL_TEMPLATE_DEFAULT_REMINDER;
       } else if (EvalConstants.EMAIL_TEMPLATE_RESULTS.equals(emailTemplateTypeConstant)) {
          templateType = EvalConstants.EMAIL_TEMPLATE_DEFAULT_RESULTS;
+      } else if (EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE.equals(emailTemplateTypeConstant)) {
+          templateType = EvalConstants.EMAIL_TEMPLATE_DEFAULT_CONSOLIDATED_AVAILABLE;
+      } else if (EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER.equals(emailTemplateTypeConstant)) {
+          templateType = EvalConstants.EMAIL_TEMPLATE_DEFAULT_CONSOLIDATED_REMINDER;
+      } else if (EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_SUBJECT.equals(emailTemplateTypeConstant)) {
+          templateType = EvalConstants.EMAIL_TEMPLATE_DEFAULT_CONSOLIDATED_SUBJECT;
       } else {
          throw new IllegalArgumentException("Invalid emailTemplateTypeConstant: " + emailTemplateTypeConstant);
       }
@@ -603,6 +615,251 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
       return (String[]) sentMessages.toArray(new String[] {});
    }
+   
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendEvalConsolidatedAvailableNotification()
+    */
+   public void sendEvalConsolidatedAvailable() {
+		EvalGroup group = null;
+		Set<String> uniqueIds = new HashSet<String>();
+		List<EvalGroup> groupList = null;
+		Map<Long, List<EvalGroup>> map = null;
+		Long[] evaluationIds = new Long[] {};
+		evaluationIds = evaluationLogic
+				.getActiveEvaluationIdsByAvailableEmailSent(Boolean.FALSE);
+		// get unique student recipients
+		if (evaluationIds != null && evaluationIds.length > 0) {
+			// get groups associated with evaluations
+			map = evaluationLogic.getEvaluationGroups(evaluationIds, false);
+			if (!map.isEmpty()) {
+				for (int i = 0; i < evaluationIds.length; i++) {
+					groupList = (List<EvalGroup>) map.get(evaluationIds[i]);
+					for (int j = 0; j < groupList.size(); j++) {
+						group = (EvalGroup) groupList.get(j);
+						//this should be user ids (internal Sakai ids) and NOT the user eid 
+						Set ids = externalLogic.getUserIdsForEvalGroup(
+								group.evalGroupId,
+								EvalConstants.PERM_TAKE_EVALUATION);
+						// collect unique ids
+						uniqueIds.addAll(ids);
+					}
+				}
+			}
+			sendEvalConsolidatedNotification(uniqueIds, EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
+			saveAvailableEmailSentStatus(evaluationIds);
+		}
+	}
+   
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendEvalConsolidatedReminderNotification()
+    */
+   public void sendEvalConsolidatedReminder() {
+	   
+	   //delivery option
+	   //	none
+	   //	log
+	   //	send
+	   //batch size
+	   //wait
+	   //logging of recipients
+	   
+	   
+	    EvalGroup group = null;
+		Set<String> uniqueIds = new HashSet<String>();
+		List<EvalGroup> groupList = null;
+		Map<Long, List<EvalGroup>> map = null;
+		Set<String> nonResponders = null;
+		Long[] evaluationIds = new Long[] {};
+		evaluationIds = evaluationLogic
+				.getActiveEvaluationIdsByAvailableEmailSent(new Boolean(true));
+		// get email addresses
+		if (evaluationIds != null && evaluationIds.length > 0) {
+			// get groups associated with evaluations
+			map = evaluationLogic.getEvaluationGroups(evaluationIds, false);
+			if (!map.isEmpty()) {
+				for (int i = 0; i < evaluationIds.length; i++) {
+					groupList = (List<EvalGroup>) map.get(evaluationIds[i]);
+					for (int j = 0; j < groupList.size(); j++) {
+						group = (EvalGroup) groupList.get(j);
+						// get non-responders
+						nonResponders = evalResponsesLogic.getNonResponders(
+								evaluationIds[i], group);
+						// collect unique ids
+						uniqueIds.addAll(nonResponders);
+					}
+				}
+			}
+			sendEvalConsolidatedNotification(uniqueIds,
+					EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);
+		}
+   }
+   
+	public void saveAvailableEmailSentStatus(Long[] evalIds) {
+		for (int i = 0; i < evalIds.length; i++) {
+			Long evaluationId = evalIds[i];
+			EvalEvaluation eval = evaluationLogic
+					.getEvaluationById(evaluationId);
+			eval.setAvailableEmailSent(Boolean.TRUE);
+			// use dao because evaluation is locked
+			dao.save(eval);
+		}
+	}
+   
+	/**
+	 * Send a student having multiple evaluations a single email
+	 * //uniqueIds - this should be user ids (internal Sakai ids) and NOT the user eid 
+	 * @param toAddress the eid of the student for email TO: line
+	 * @param url the Url to the Evaluation Dashboard on My Workspace
+	 * @return the message that was sent
+	 */
+   private String sendEvalConsolidatedNotification(Set<String> uniqueIds, String notificationType) {
+		if (uniqueIds == null || uniqueIds.isEmpty() || notificationType == null) {
+				return null;
+		} else {
+				// it's clunky to use warn level to log with metrics
+				if (log.isWarnEnabled())log.warn("Metric: There are " + uniqueIds.size() 
+					+ " unique ids in the consolidated email queue.");
+		}
+
+		// TODO we need a default text editor for local customization of text
+		EvalEmailTemplate subjectTemplate = getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_SUBJECT);
+		if (subjectTemplate == null) {
+			throw new IllegalStateException(
+					"Cannot find default subject template '"
+							+ EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_SUBJECT + "'.");
+		}
+		
+		// TODO send different available and reminder
+		EvalEmailTemplate messageTemplate = null;
+		messageTemplate = getDefaultConsolidatedTemplate(notificationType,
+				messageTemplate);
+
+		//email settings
+		String from = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
+		Map<String, String> map = externalLogic.getNotificationSettings();
+		String deliveryOption = map
+				.get(EvalConstants.EMAIL_DELIVERY_OPTION_PROPERTY);
+		Boolean logToAddresses = new Boolean((String) map
+				.get(EvalConstants.EMAIL_LOG_RECIPIENTS_PROPERTY));
+		Integer batch = Integer.parseInt((String) map
+				.get(EvalConstants.EMAIL_BATCH_SIZE_PROPERTY));
+		Integer wait = Integer.parseInt((String) map
+				.get(EvalConstants.EMAIL_WAIT_INTERVAL_PROPERTY));
+		Integer modulo = Integer.parseInt(EvalConstants.METRICS_MODULO);
+		
+		String[] toUserIds;
+		String url = null, message = null, subject = null, to = null;
+		// replace the text of the template with real values
+		Map<String, String> replacementValues = new HashMap<String, String>();
+		if (deliveryOption.equals(EvalConstants.EMAIL_DELIVERY_OPTION_NONE)
+				&& !logToAddresses.booleanValue()) {
+			if (log.isWarnEnabled()) log.warn("EMAIL_DELIVERY_OPTION_NONE and no logging of email recipients");
+			return null;
+		}
+		List<String> recipients = new ArrayList<String>();
+		int numProcessed = 0;
+		for (String s : uniqueIds) {
+			url = externalLogic.getMyWorkspaceUrl(s);
+			replacementValues.put("MyWorkspaceDashboard", url);
+			replacementValues.put("HelpdeskEmail", from);
+			// TODO get earliest due date for student's evaluations
+			replacementValues.put("EarliestDueDate", "February 13, 2008");
+			message = makeEmailMessage(messageTemplate.getMessage(),
+					replacementValues);
+			subject = makeEmailMessage(subjectTemplate.getMessage(),
+					replacementValues);
+			// toUserIds may be eid or id, we're using id
+			try {
+				toUserIds = new String[] { s };
+				externalLogic.sendEmails(from, toUserIds, subject, message);
+				if (logToAddresses.booleanValue()) {
+					to = externalLogic.getUserEmail(s);
+					recipients.add(to);
+				}
+			} catch (Exception e) {
+				log.error("sendEvalConsolidatedNotification() User id '" + s + "',URL '" + url + "' " + e);
+			}
+			replacementValues.clear();
+			numProcessed++;
+			if ((numProcessed % modulo.intValue()) == 0) {
+				if (log.isWarnEnabled())
+					log.warn("Metric: " + numProcessed
+							+ " unique ids processed.");
+			}
+			if ((numProcessed % batch.intValue()) == 0) {
+				if (log.isWarnEnabled())
+					log.warn("Metric: wait " + wait + " seconds.");
+				try {
+					Thread.sleep(wait * 1000);
+				} catch (Exception e) {
+					if (log.isErrorEnabled())
+						log.error("Thread sleep interrupted.");
+				}
+			}
+		}
+		// number processed from queue
+		if (log.isWarnEnabled())
+			log.warn("Metric: " + numProcessed
+					+ " unique ids processed in total.");
+		// log email recipients
+		if (logToAddresses.booleanValue()) {
+			Collections.sort(recipients);
+			StringBuffer sb = new StringBuffer();
+			String line = null;
+			int size = recipients.size();
+			int cnt = 0;
+			for(int i = 0; i < size; i++) {
+				if(cnt > 0)
+					sb.append(",");
+				sb.append((String)recipients.get(i));
+				cnt++;
+				//TODO number of addresses per line below should be configurable
+				if((i+1) % 10 == 0) {
+					line = sb.toString();
+					if (log.isWarnEnabled())
+						log.warn("Metric: email sent to " + line);
+					//write a line and empty the buffer
+					sb.setLength(0);
+					cnt = 0;
+				}
+			}
+			//if anything hasn't been written out do it now
+			if(sb.length() > 0) {
+				line = sb.toString();
+				if (log.isWarnEnabled())
+					log.warn("Metric: email sent to " + line);
+			}
+		}
+		return message;
+   }
+
+	private EvalEmailTemplate getDefaultConsolidatedTemplate(
+			String notificationType, EvalEmailTemplate messageTemplate) {
+		if (notificationType
+				.equals(EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE)) {
+			messageTemplate = getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);
+			if (messageTemplate == null) {
+				throw new IllegalStateException(
+						"Cannot find default email template '"
+								+ EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE
+								+ "'.");
+			}
+		} else if (notificationType
+				.equals(EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER)) {
+			messageTemplate = getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
+			if (messageTemplate == null) {
+				throw new IllegalStateException(
+						"Cannot find default email template '"
+								+ EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER
+								+ "'.");
+			}
+		} else {
+			throw new IllegalArgumentException("Invalid notification type.");
+		}
+		return messageTemplate;
+	}
 
    /*
     * (non-Javadoc)
@@ -860,8 +1117,6 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
          evalEntityURL = externalLogic.getEntityURL(eval);
       }
 
-      // TODO check these URLS once I can get the right tool url - rwellis
-
       // all URLs are identical because the user permissions determine access uniquely
       replacementValues.put("URLtoTakeEval", evalEntityURL);
       replacementValues.put("URLtoAddItems", evalEntityURL);
@@ -873,20 +1128,15 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       return TextTemplateLogicUtils.processTextTemplate(messageTemplate, replacementValues);
    }
    
-   public String[] sendEvalResponses(String subject, String body, String recipient) {
-	   String message = null;
-       try {
-    	   String from = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
-           String[] toUserIds = new String[] {recipient};
-           StringBuffer buf = new StringBuffer(EvalConstants.UMICH_EMAIL_COVER_LETTER);
-           buf.append(body);
-           message = buf.toString();
-          externalLogic.sendEmails(from, toUserIds, subject, body);
-          log.info("Sent evaluation responses message to " + toUserIds.length + " user(s)");
-       } catch (Exception e) {
-          log.error(this + ".sendEvalResponses(): " + recipient + ": " + subject + ": " + body + ": " + e);
-       }
-	   return new String[]{message};
+   /**
+    * Builds the consolidated email message from a template and a bunch of variables
+    * (passed in and otherwise)
+    * @param messageTemplate
+    * @param replacementValues a map of String -> String representing $keys in the template to replace with text values
+    * @return
+    */
+   private String makeEmailMessage(String messageTemplate, Map<String, String> replacementValues) {
+	   replacementValues.put("URLtoSystem", externalLogic.getServerUrl());
+	   return TextTemplateLogicUtils.processTextTemplate(messageTemplate, replacementValues);
    }
-
 }

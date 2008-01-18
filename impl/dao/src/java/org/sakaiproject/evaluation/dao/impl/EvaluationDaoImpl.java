@@ -824,4 +824,23 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       }
       return l;
 	}
+	
+	public Long[] getActiveEvaluationIdsByAvailableEmailSent(
+			Boolean availableEmailSent) {
+		String hqlQuery = "select eval.id from EvalEvaluation eval where eval.state = '" + EvalConstants.EVALUATION_STATE_ACTIVE + "' ";
+		if(availableEmailSent != null) {
+			if(availableEmailSent.booleanValue())
+				hqlQuery = hqlQuery + "and eval.availableEmailSent = 1";
+			else
+				hqlQuery = hqlQuery + "and eval.availableEmailSent = 0";
+		}
+		List<EvalEvaluation> l = new ArrayList<EvalEvaluation>();
+		try {
+			l = getHibernateTemplate().find(hqlQuery);
+		} catch (DataAccessException e) {
+         // this may appear to be a swallowed error, but it is actually intended behavior
+         log.error("Invalid argument combination (most likely you tried to request no items) caused failure");
+      }
+      return l.toArray(new Long[] {});
+	}
 }

@@ -1,0 +1,4 @@
+<beans>
+	<bean name="importJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+	</bean>
+</beans>

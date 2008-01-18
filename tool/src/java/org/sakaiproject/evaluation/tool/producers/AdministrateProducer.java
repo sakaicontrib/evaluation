@@ -101,9 +101,6 @@ public class AdministrateProducer implements ViewComponentProducer {
 
       UIInternalLink.make(tofill, "control-import-toplink",UIMessage.make("administrate.top.import.data"),
             new SimpleViewParameters(ControlImportProducer.VIEW_ID));
-      
-      UIInternalLink.make(tofill, "control-export-toplink",UIMessage.make("administrate.top.export.data"),
-              new SimpleViewParameters(ControlExportResponsesProducer.VIEW_ID));
 
       /*
        * Only Show Control Hierarchy if the Hierarchy Display Options are on.
@@ -179,7 +176,7 @@ public class AdministrateProducer implements ViewComponentProducer {
             EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE, true);
       UIMessage.make(form, "instructors-hierarchy-note", "administrate.instructors.hierarchy.note");
 
-      //Select for number of questions intructors can add
+      //Select for number of questions instructors can add
       makeSelect(form, "instructors-num-questions", 
             EvaluationConstant.PULLDOWN_INTEGER_VALUES, 
             EvaluationConstant.PULLDOWN_INTEGER_VALUES, 
@@ -196,7 +193,7 @@ public class AdministrateProducer implements ViewComponentProducer {
             EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED, true); 
       UIMessage.make(form, "students-unanswered-note", "administrate.students.unanswered.note");
 
-      //Select for whether student can modify responses upto due date
+      //Select for whether student can modify responses up to due date
       makeSelect(form, "students-modify-responses", 
             administrateConfigurableValues, 
             administrateConfigurableLabels, 
@@ -231,8 +228,31 @@ public class AdministrateProducer implements ViewComponentProducer {
 
       makeBoolean(form, "hierarchy-display-node-headers", EvalSettings.DISPLAY_HIERARCHY_HEADERS);
       UIMessage.make(form, "hierarchy-display-node-headers-note", "administrate.hierarchy-display-node-headers-note");
-
-
+      
+      //NOTIFICATION settings
+      String[] deliveryValues = new String[] {
+    		  EvalConstants.EMAIL_DELIVERY_OPTION_NONE,
+    		  EvalConstants.EMAIL_DELIVERY_OPTION_LOG,
+    		  EvalConstants.EMAIL_DELIVERY_OPTION_SEND
+      };
+      String[] deliveryLabels = new String[] {
+            "administrate.notification.label.none",
+            "administrate.notification.label.log",
+            "administrate.notification.label.send"
+      };
+      makeSelect(form, "delivery-option", 
+              deliveryValues, 
+              deliveryLabels, 
+              EvalSettings.EMAIL_DELIVERY_OPTION, true);
+      makeBoolean(form, "log-recipients", EvalSettings.LOG_EMAIL_RECIPIENTS); 
+      makeBoolean(form, "notification-per-student", EvalSettings.CONSOLIDATE_NOTIFICATION); 
+      makeSelect(form, "notification-per-student-reminder-days", 
+              EvaluationConstant.PULLDOWN_INTEGER_VALUES, 
+              EvaluationConstant.PULLDOWN_INTEGER_VALUES, 
+              EvalSettings.CONSOLIDATED_REMINDER_INTERVAL, false);
+      makeInput(form, "batch-size", EvalSettings.EMAIL_BATCH_SIZE);
+      makeInput(form, "wait-interval", EvalSettings.EMAIL_WAIT_INTERVAL);
+      
       // GENERAL settings
       UIMessage.make(form, "general-settings-header","administrate.general.settings.header");		
       makeInput(form, "general-helpdesk-email", EvalSettings.FROM_EMAIL_ADDRESS);
@@ -309,7 +329,7 @@ public class AdministrateProducer implements ViewComponentProducer {
 
       // Save settings button
       // NB no action now required
-      UICommand.make(form, "saveSettings",UIMessage.make("administrate.save.settings.button"), null);	
+      UICommand.make(form, "saveSettings",UIMessage.make("administrate.save.settings.button"), null);
    }
 
    /*

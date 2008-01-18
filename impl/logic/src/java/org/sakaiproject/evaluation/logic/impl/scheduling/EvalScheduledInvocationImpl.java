@@ -22,7 +22,7 @@ package org.sakaiproject.evaluation.logic.impl.scheduling;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalJobAction;
 import org.sakaiproject.evaluation.logic.externals.EvalScheduledInvocation;
 
 /**
@@ -36,9 +36,9 @@ public class EvalScheduledInvocationImpl implements EvalScheduledInvocation {
 	
 	private static Log log = LogFactory.getLog(EvalScheduledInvocationImpl.class);
 	
-	private EvalJobLogic evalJobLogic;
-	public void setEvalJobLogic(EvalJobLogic evalJobLogic) {
-		this.evalJobLogic = evalJobLogic;
+	private EvalJobAction evalJobAction;
+	public void setEvalJobAction(EvalJobAction evalJobAction) {
+		this.evalJobAction = evalJobAction;
 	}
 	
 	public EvalScheduledInvocationImpl() {
@@ -75,8 +75,12 @@ public class EvalScheduledInvocationImpl implements EvalScheduledInvocation {
 			Long evalId = Long.valueOf(id);
 			String jobType = parts[1];
 			
+			//TODO 2 formats for opaqueContext based on 2 or 3 parts
+			
+			//TODO special case of a JOB_TYPE_LATE_OPT_IN late opt in job type  emails.sendEvalAvailableGroupNotification(evaluationId, 
+			
 			//call method to fix state, send email and/or schedule a job
-			evalJobLogic.jobAction(evalId, jobType);
+			evalJobAction.execute(evalId, jobType);
 		}
 		catch(Exception e) {
 			log.error(this + ".execute(" + opaqueContext + ") " + e);

@@ -21,7 +21,7 @@
 
 package org.sakaiproject.evaluation.logic.externals;
 
-import java.util.Map;
+import java.util.Date;
 
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 
@@ -66,22 +66,12 @@ public interface EvalJobLogic {
 	public void processNewEvaluation(EvalEvaluation eval);
 	
 	/**
-	 * Handle sending email and starting jobs when a scheduled job 
-	 * calls this method. Dispatch to action(s) based on jobType.</br>
-	 * 
-	 * @param evaluationId the id of the EvalEvaluation
-	 * @param jobType the job type from EvalConstants
-	 */
-	public void jobAction(Long evaluationId, String jobType);
-	
-	/**
 	 * Remove all outstanding scheduled job invocations for this EvalEvaluation.
 	 * 
 	 * @param evalId the EvalEvaluation identifier
 	 */
 	public void removeScheduledInvocations(Long evalId);
 	
-
 	/**
 	 * Schedule reminders to be run under the ScheduledInvocationManager, at the
 	 * first reminder interval after the start date that is in the future
@@ -91,10 +81,28 @@ public interface EvalJobLogic {
 	public void scheduleReminder(Long evaluationId);
 	
 	/**
-	 * Schedule sending email to the instructor with responses to the evaluation.
+	 * Remove all outstanding scheduled job invocations for this EvalEvaluation.
 	 * 
-	 * @param idMap a map of evaluation id and instructor eid. TODO Use external logic to handle case
-	 * where instructor is not in the Sakai user id map table.
+	 * @param evalId the EvalEvaluation identifier
 	 */
-	public void scheduleResponsesEmail(Map idMap);
+	public void removeScheduledInvocations(EvalEvaluation eval);
+
+	/**
+	 * Schedule a ScheduledInvocation job
+	 * 
+	 * @param evaluationId the identifier of the EvalEvaluation
+	 * @param runDate the time and date to run the job
+	 * @param jobType the type of action to take
+	 */
+	public void scheduleJob(Long evaluationId, Date runDate, String jobType);
+	
+	/**
+	 * If an instructor assigns a group to an evaluation after the start date,
+	 * schedule a late available notification.
+	 * 
+	 * @param evaluationId the identifier of the EvalEvaluation
+	 * @param evalGroupId the identifier of the EvalGroup
+	 */
+	public void scheduleLateOptInNotification(Long evaluationId, String evalGroupId);
+	
 }

@@ -27,6 +27,11 @@ import org.sakaiproject.tool.api.SessionManager;
 
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
+/**
+ * Deprecated after U-M Pilot I, replaced by Oracle DBLINK in Pilot II
+ * @author rwellis
+ *
+ */
 public class EvalExportJobImpl extends QuartzJobBean{
 	
 	/*

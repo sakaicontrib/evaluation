@@ -159,7 +159,45 @@ public interface EvalSettings {
     * CONSTANT: Display hierarchical nodes names as headers in the take/preview eval views - {@link Boolean}, default False
     */
    public static final String DISPLAY_HIERARCHY_HEADERS = "DISPLAY_HIERARCHY_HEADERS:java.lang.Boolean";
-
+   
+   /**
+    * CONSTANT: One email per student for available and reminder notification - {@link Boolean}, default False
+    */
+   public static final String CONSOLIDATE_NOTIFICATION = "CONSOLIDATE_NOTIFICATION:java.lang.Boolean";
+   
+   /**
+    * CONSTANT: The destination of email notifications. Valid values are EvalConstants.EMAIL_DELIVERY_OPTION_NONE (no email),
+    * EvalConstants.EMAIL_DELIVERY_OPTION_SEND (send email to addressees), and EvalConstants.EMAIL_DELIVERY_OPTION_LOG 
+    * (log email rather than sending it). Only one value may be specified. The default value is EMAIL_DELIVERY_OPTION_NONE, 
+    * to make it less likely that email will be sent accidentally when developing or testing. - {@link String}, default EMAIL_DELIVERY_OPTION_NONE
+    */
+   public static final String EMAIL_DELIVERY_OPTION = "EMAIL_DELIVERY_OPTION:java.lang.String";
+   
+   /**
+    * CONSTANT: Should we log the addresses of those receiving email in catalina.out. - {@link Boolean}, default True
+    */
+   public static final String  LOG_EMAIL_RECIPIENTS = "LOG_EMAIL_RECIPIENTS:java.lang.Boolean";
+   
+   /**
+    * CONSTANT: Number of seconds to wait after sending a batch of emails before starting to send the next batch.
+    *  - {@link Integer}, default 600
+    */
+   public static final String EMAIL_WAIT_INTERVAL = "EMAIL_WAIT_INTERVAL:java.lang.Integer";
+   
+   /**
+    * CONSTANT: The number of emails to send before pausing for EMAIL_WAIT_INTERVAL - {@link Integer}, default 100
+    */
+   public static final String  EMAIL_BATCH_SIZE = "EMAIL_BATCH_SIZE:java.lang.Integer";
+   
+   /**
+    * CONSTANT: The number of days between reminders when using one notification per student - {@link Integer}, default 2
+    */
+   public static final String  CONSOLIDATED_REMINDER_INTERVAL = "CONSOLIDATED_REMINDER_INTERVAL:java.lang.Integer";
+   
+   /**
+    * CONSTANT: The number of days before the next reminder is scheduled to be sent when using one notification per student - {@link Integer}, default 100
+    */
+   public static final String  DAYS_UNTIL_REMINDER = "DAYS_UNTIL_REMINDER:java.lang.Integer";
 
    /**
     * Allows for getting the value of a system setting based on the constant,

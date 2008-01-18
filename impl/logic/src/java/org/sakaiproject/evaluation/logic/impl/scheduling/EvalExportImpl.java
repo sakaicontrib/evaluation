@@ -1,4 +1,3 @@
-
 /**********************************************************************************
  * $URL$
  * $Id$
@@ -59,6 +58,11 @@ import org.sakaiproject.tool.api.ToolManager;
 import org.sakaiproject.user.api.UserDirectoryService;
 
 
+/**
+ * Deprecated after U-M Pilot I, replaced by Oracle DBLINK in Pilot II
+ * @author rwellis
+ *
+ */
 public class EvalExportImpl implements EvalExport {
 	
 	/*TODO access ContentServices through external logic

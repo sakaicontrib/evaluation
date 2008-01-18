@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.logic;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups;
 import org.sakaiproject.evaluation.logic.externals.ExternalUsers;
@@ -53,6 +54,14 @@ public interface EvalExternalLogic extends ExternalUsers, ExternalEvalGroups {
 
 
 	// EMAIL
+	
+	/**
+	 *Get the email address for the user identified by this Sakai id
+	 *
+	 * @param the user's Sakai id
+	 * @return the User's email address
+	 */
+	public String getUserEmail(String userId);
 
 	/**
 	 * Send emails to a set of users (can send to a single user
@@ -65,6 +74,22 @@ public interface EvalExternalLogic extends ExternalUsers, ExternalEvalGroups {
 	 * @param message the message to send
 	 */
 	public void sendEmails(String from, String[] toUserIds, String subject, String message);
+	
+	/**
+	 * Get the URL to a user's My Workspace Evaluation Dashboard
+	 * @param id The user's Sakai id
+	 * @return the URL
+	 */
+	public String getMyWorkspaceUrl(String id);
+	
+	/**
+	 * Get a map of email notification setting where key is a
+	 * EvalConstants _PROPERTY and value is the current EvalSettings
+	 * value unless overriden in sakai.properties.
+	 * 
+	 * @return property, value map
+	 */
+	public Map<String, String> getNotificationSettings();
 
 	// ENTITIES
 

@@ -98,6 +98,10 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 		evalJobLogic = (EvalJobLogic) evalJobLogicControl.getMock();
 		
 		// this mock object is simply keeping us from getting a null when evalJobLogic is accessed 
+		evalJobLogic.scheduleLateOptInNotification(EvalTestDataLoad.INVALID_LONG_ID, EvalTestDataLoad.SITE1_CONTEXT);
+		evalJobLogicControl.setDefaultVoidCallable();
+		
+		// this mock object is simply keeping us from getting a null when evalJobLogic is accessed 
 		evalJobLogic.isJobTypeScheduled(EvalTestDataLoad.INVALID_LONG_ID, EvalConstants.JOB_TYPE_REMINDER); // expect this to be called
 		evalJobLogicControl.setDefaultReturnValue(true); //skipping the scheduling of a reminder
 		evalJobLogicControl.replay();
@@ -106,7 +110,6 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 		assigns = new EvalAssignsLogicImpl();
 		assigns.setDao(evaluationDao);
 		assigns.setExternalLogic( new EvalExternalLogicStub() );
-		assigns.setEmails(emails); // set to the mock object
 		assigns.setEvalJobLogic(evalJobLogic); // set to the mock object
 	}
 

@@ -91,12 +91,16 @@ public class SettingsWBL implements WriteableBeanLocator {
 			}
 		}
 		evalSettings.set(beanname, toset);
+		//single email settings kept in sync
+		if(beanname.equals(EvalSettings.CONSOLIDATED_REMINDER_INTERVAL)) {
+			evalSettings.set(EvalSettings.DAYS_UNTIL_REMINDER, toset);
+		}
 	}
 
 	/**
-	 * Gets the data from EvalSettings (database) and returns to producer. 
+	 * Gets the data from EvalSettings (database) and returns to producer.
 	 * 
-	 * @param path -  Name of the property whose value has to be fetched 
+	 * @param path -  Name of the property whose value has to be fetched
 	 * 				  from database
 	 * @return Value of the property obtained from database
 	 */

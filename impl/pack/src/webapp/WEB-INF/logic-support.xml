@@ -11,6 +11,16 @@
 		<property name="evaluationDao" 
 			ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
 	</bean>
+	
+	<!-- handles transferring select sakai.properties -->
+	<bean id="org.sakaiproject.evaluation.logic.EvalNotificationSettings"
+			class="org.sakaiproject.evaluation.logic.impl.EvalNotificationSettingsImpl"
+			init-method="init">
+		<property name="deliveryOption"><value></value></property>
+		<property name="batchSize"><value></value></property>
+		<property name="waitInterval"><value></value></property>
+		<property name="logRecipients"><value></value></property>
+	</bean>
 
    <!-- a general transaction interceptor for the logic beans -->
    <bean id="org.sakaiproject.evaluation.interceptor.LogicTransactionProxy"

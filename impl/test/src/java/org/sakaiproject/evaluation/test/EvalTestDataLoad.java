@@ -830,6 +830,7 @@ public class EvalTestDataLoad {
             new Integer(1), null, null, null, null, templateUser, null, null,
             Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, LOCKED,
             EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null);
+      		evaluationActive.setAvailableEmailSent(Boolean.FALSE);
       //Evaluation Provided (has eid set, not null)
       evaluationProvided = new EvalEvaluation(new Date(), MAINT_USER_ID, "Eval active", null, 
               yesterday, today, today, tomorrow, null, null,
@@ -838,6 +839,7 @@ public class EvalTestDataLoad {
               Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, LOCKED,
               EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null);
       evaluationProvided.setEid("test-eid");
+      		evaluationProvided.setAvailableEmailSent(Boolean.TRUE);
 
       // Evaluation Active (ends tomorrow), viewable 3 days
       evaluationActiveUntaken = new EvalEvaluation(new Date(), MAINT_USER_ID, "Eval active not taken", null, 
@@ -846,6 +848,7 @@ public class EvalTestDataLoad {
             new Integer(1), null, null, null, null, templatePublic, null, null,
             Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, UNLOCKED,
             EvalConstants.EVALUATION_AUTHCONTROL_NONE, EVAL_CATEGORY_1);
+      		evaluationActiveUntaken.setAvailableEmailSent(Boolean.TRUE);
       // evaluation in the DUE state
 //    evaluationDueUntaken = new EvalEvaluation(new Date(), MAINT_USER_ID, "Eval due not taken", null, 
 //    threeDaysAgo, yesterday, tomorrow, threeDaysFuture, null, null,

@@ -19,8 +19,6 @@
 package org.sakaiproject.evaluation.logic.impl.scheduling;
 
 import java.util.Date;
-import java.util.Iterator;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,7 +28,6 @@ import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.externals.EvalExportLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
 import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -53,14 +50,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	private final String COMPONENT_ID = "org.sakaiproject.evaluation.logic.externals.EvalScheduledInvocation";
 
 	private final String SEPARATOR = "/";           // max-32:12345678901234567890123456789012
-	private final String EVENT_EVAL_START                  = "evaluation.state.start";
-	private final String EVENT_EVAL_DUE                    = "evaluation.state.due";
-	private final String EVENT_EVAL_STOP                   = "evaluation.state.stop";
-	private final String EVENT_EVAL_VIEWABLE               = "evaluation.state.viewable";
-	private final String EVENT_EVAL_VIEWABLE_INSTRUCTORS   = "evaluation.state.viewable.inst";
-	private final String EVENT_EVAL_VIEWABLE_STUDENTS      = "evaluation.state.viewable.stud";
 	private final String EVENT_EMAIL_REMINDER              = "evaluation.email.reminder";
-	private final String EVENT_EMAIL_RESPONSES             = "evaluation.email.responses";
 
 	private EvalEmailsLogic emails;
 	public void setEmails(EvalEmailsLogic emails) {
@@ -70,11 +60,6 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	private EvalEvaluationsLogic evalEvaluationsLogic;
 	public void setEvalEvaluationsLogic(EvalEvaluationsLogic evalEvaluationsLogic) {
 		this.evalEvaluationsLogic = evalEvaluationsLogic;
-	}
-	
-	private EvalExportLogic evalExportLogic;
-	public void setEvalExportLogic(EvalExportLogic evalExportLogic) {
-		this.evalExportLogic = evalExportLogic;
 	}
 	
 	private EvalExternalLogic externalLogic;
@@ -190,7 +175,6 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 		if(evalId == null) return;
 		String userId = externalLogic.getCurrentUserId();
 		if(evalEvaluationsLogic.canRemoveEvaluation(userId, evalId)) {
-//			DelayedInvocation[] invocations = null;
 			String opaqueContext = evalId.toString() + SEPARATOR + EvalConstants.JOB_TYPE_REMINDER;
 			deleteInvocation(opaqueContext);
 		}
@@ -355,7 +339,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 	 *@param runDate the Date when the command should be invoked
 	 *@param jobType the type of job, from EvalConstants
 	 */
-	private void scheduleJob(Long evaluationId, Date runDate, String jobType) {
+	public void scheduleJob(Long evaluationId, Date runDate, String jobType) {
 		if(evaluationId == null || runDate == null || jobType == null) {
 			if(log.isErrorEnabled())
 				log.error(this + ".scheduleJob null parameter");
@@ -513,108 +497,6 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 		return isValid;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.externals.EvalJobLogic#jobAction(java.lang.Long)
-	 */
-	public void jobAction(Long evaluationId, String jobType) {
-		
-		/* Note: If interactive response time is too slow waiting for
-		 * mail to be sent, sending mail could be done as another type
-		 * of job run by the scheduler in a separate thread.
-		 */
-		if(log.isDebugEnabled())
-			log.debug("EvalJobLogicImpl.jobAction(" + evaluationId + "," + jobType + ")");
-		try
-		{
-			EvalEvaluation eval = evalEvaluationsLogic.getEvaluationById(evaluationId);
-			
-			//fix EvalEvaluation state
-			String state = evalEvaluationsLogic.updateEvaluationState(evaluationId);
-			if(log.isDebugEnabled())
-				log.debug("evaluation state " + state + " saved");
-			
-			//dispatch to send email and/or schedule jobs based on jobType
-			if(EvalConstants.JOB_TYPE_CREATED.equals(jobType)) {
-				//if opt-in, opt-out, or questions addable, notify instructors
-				sendCreatedEmail(evaluationId);
-			}
-			else if(EvalConstants.JOB_TYPE_ACTIVE.equals(jobType)) {
-				externalLogic.registerEntityEvent(EVENT_EVAL_START, eval);
-				sendAvailableEmail(evaluationId);
-				scheduleJob(eval.getId(), eval.getDueDate(), EvalConstants.JOB_TYPE_DUE);
-				if(eval.getReminderDays().intValue() != 0)
-					scheduleReminder(eval.getId());
-			}
-			else if(EvalConstants.JOB_TYPE_REMINDER.equals(jobType)) {
-				if(eval.getState().equals(EvalConstants.EVALUATION_STATE_ACTIVE) && eval.getReminderDays().intValue() != 0) {
-					if(eval.getDueDate().after(new Date())) {
-						sendReminderEmail(evaluationId);
-						scheduleReminder(evaluationId);
-					}
-				}
-			}
-			else if(EvalConstants.JOB_TYPE_DUE.equals(jobType)) {
-				externalLogic.registerEntityEvent(EVENT_EVAL_DUE, eval);
-				if(log.isDebugEnabled())
-					log.debug("EvalJobLogicImpl.jobAction scheduleJob(" + eval.getId() + "," + eval.getStopDate() + "," + EvalConstants.JOB_TYPE_CLOSED + ")");
-				scheduleJob(eval.getId(), eval.getStopDate(), EvalConstants.JOB_TYPE_CLOSED);
-			}
-			else if(EvalConstants.JOB_TYPE_CLOSED.equals(jobType)) {
-				externalLogic.registerEntityEvent(EVENT_EVAL_STOP, eval);
-				//schedule results viewable by owner - admin notification
-				scheduleJob(eval.getId(), eval.getViewDate(), EvalConstants.JOB_TYPE_VIEWABLE);
-				if(! eval.getResultsPrivate().booleanValue()) {
-					if(eval.getInstructorsDate() != null) {
-						Date instructorViewDate = eval.getInstructorsDate();
-						//schedule results viewable by instructors notification
-						scheduleJob(eval.getId(), instructorViewDate, EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS);
-					}
-					if(eval.getStudentsDate() != null) {
-						Date studentViewDate = eval.getStudentsDate();
-						//schedule results viewable by students notification
-						scheduleJob(eval.getId(), studentViewDate, EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS);
-					}
-				}
-			}
-			else if(EvalConstants.JOB_TYPE_VIEWABLE.equals(jobType))  {
-				externalLogic.registerEntityEvent(EVENT_EVAL_VIEWABLE, eval);
-				//send results viewable notification to owner if private, or all if not
-				sendViewableEmail(evaluationId, jobType, eval.getResultsPrivate());
-			}
-			else if(EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS.equals(jobType))  {
-				externalLogic.registerEntityEvent(EVENT_EVAL_VIEWABLE_INSTRUCTORS, eval);
-				//send results viewable notification to owner if private, or all if not
-				sendViewableEmail(evaluationId, jobType, eval.getResultsPrivate());
-			}
-			else if(EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS.equals(jobType))  {
-				externalLogic.registerEntityEvent(EVENT_EVAL_VIEWABLE_STUDENTS, eval);
-				//send results viewable notification to owner if private, or all if not
-				sendViewableEmail(evaluationId, jobType, eval.getResultsPrivate());
-			}
-			else if(EvalConstants.JOB_TYPE_RESPONSES_EMAIL.equals(jobType)) {
-				
-				String evalEid = eval.getEid();
-				String recipient = evalExportLogic.getInstructorByEvaluationEid(evalEid).toLowerCase();
-				String subject = "Teaching Evaluation Responses - " + eval.getTitle();
-				String body = null;
-				//cover letter
-				StringBuffer buf = new StringBuffer(EvalConstants.UMICH_EMAIL_COVER_LETTER);
-				//responses for inclusion in email body
-				buf.append(evalExportLogic.getFormattedResponsesByEvaluationId(evaluationId));
-				body = buf.toString();
-				emails.sendEvalResponses(subject, body, recipient);
-				externalLogic.registerEntityEvent(EVENT_EMAIL_RESPONSES, eval);
-				if(log.isInfoEnabled())
-					log.info("jobAction() " + EvalConstants.JOB_TYPE_RESPONSES_EMAIL + " " + eval.getTitle() + " " + recipient);
-			}
-		}
-		catch(Exception e) {
-			log.error("jobAction died horribly:" + e.getMessage(), e);
-			throw new RuntimeException(e); // die horribly, as it should -AZ
-		}
-	}
-	
 
 	/**
 	 * Send email to evaluation participants that an evaluation 
@@ -711,81 +593,14 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 			log.error(this + ".sendViewableEmail(" + evalId + "," +  jobType + "," + includeAdmins + ")" + e);
 		}
 	}
-	
-	/**
-	 *  Send email containing the responses to an evaluation</br>
-	 *  
-	 * @param evalId the EvalEvaluation id
-	 */
-	public void sendResponsesEmail(String subject, String body, String recipient) {
-		boolean includeOwner = true;
-		try {
-			String[] sentMessages = emails.sendEvalResponses(subject, body, recipient);
-			if(log.isDebugEnabled())
-				log.debug("EvalJobLogicImpl.sendResponsesEmail(): " + recipient + ": " + body);
-		}
-		catch(Exception e) {
-			log.error(this + ".sendResponsesEmail(): " + recipient + ": " + body + ": " + e);
-		}
+
+	public void removeScheduledInvocations(EvalEvaluation eval) {
+		// TODO Auto-generated method stub
+		
 	}
 
-	/* idMap a map of String evaluation eid and instructor eid
-	 * (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.logic.externals.EvalJobLogic#scheduleInstructorResponsesEmail(java.util.Map)
-	 */
-	public void scheduleResponsesEmail(Map idMap) {
-		/* TODO UI for selecting results needs ability to exclude specific courses
-		 * late opt-out of two courses of pilot by Peter Washabaugh, need UI to exclude specific sections
-		if((groupId.equals("2007,2,A,ENGR,100,700") || groupId.equals("2007,2,A,ENGR,100,900"))) 
-				continue;
-				ID		EID		GROUP_ID				EVALUATION_FK
-				11073 	563 	2007,2,A,ENGR,100,700 	10244
-				11074	564		2007,2,A,ENGR,100,700	10245
-				11091	581		2007,2,A,ENGR,100,900	10262
-				11092	582		2007,2,A,ENGR,100,900	10263
-		 */
-		Long evalEid = null;
-		Long evalId = null;
-		String instructor = null;
-		int numScheduled = 0;
-		Map.Entry entry = null;
-		long runAt = new Date().getTime() + (1000 * 60 * 20);
-		//long runAt = new Date().getTime() + (1000 * 60 * 2);
-		try {
-			for(Iterator<Map.Entry> i = idMap.entrySet().iterator(); i.hasNext();){
-				try {
-					entry = i.next();
-					instructor = (String)entry.getValue();
-					
-					//convert eid to id
-					evalId = ((EvalEvaluation)evalEvaluationsLogic.getEvaluationByEid((String)entry.getKey())).getId();
-					//late opt-out of two courses of pilot by Peter Washabaugh CoE pilot Fall 07
-					if(evalId.intValue() == 10244 || evalId.intValue() == 10245
-							|| evalId.intValue() == 10262 || evalId.intValue() == 10263)
-						continue;
-					scheduleJob(evalId, new Date(runAt), EvalConstants.JOB_TYPE_RESPONSES_EMAIL);
-					numScheduled++;
-					if(numScheduled % 100 == 0) {
-						//stagger batches of 100 emails by 20 minutes
-						runAt = runAt + (1000 * 60 * 20);
-						//runAt = runAt + (1000 * 60 * 2);
-						if(log.isInfoEnabled())
-							log.info("Email jobs written to SCHEDULER_DELAYED_INVOCATION table: " + (new Integer(numScheduled)).toString());
-					}
-				}
-				catch(Exception e) {
-					if(log.isWarnEnabled())
-						log.warn("scheduleResponsesEmail(): skipping '" + entry.getKey() + " " + entry.getValue());
-					continue;
-				}
-			}
-		}
-		catch(Exception e) {
-			if(log.isErrorEnabled())
-				log.error("scheduleResponsesEmail(): " + e);
-		}
-		if(log.isInfoEnabled())
-			log.info("Final count of Email jobs written to SCHEDULER_DELAYED_INVOCATION table: " + (new Integer(numScheduled)).toString());
+	public void scheduleLateOptInNotification(Long evaluationId, String evalGroupId) {
+		emails.sendEvalAvailableGroupNotification(evaluationId, evalGroupId);
 	}
 }
 

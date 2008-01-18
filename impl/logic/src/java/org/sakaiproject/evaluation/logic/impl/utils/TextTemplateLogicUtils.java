@@ -55,8 +55,9 @@ public class TextTemplateLogicUtils {
 		VelocityEngine ve = null;
 		try {
 			// trying out creating a new instance of velocity -AZ
-			ve = new VelocityEngine();
+			ve = new VelocityEngine(); //getting Could not initialize velocity with Velocity 1.5
 			ve.init();
+			
 		} catch (Exception e) {
 			throw new RuntimeException("Could not initialize velocity", e);
 		}

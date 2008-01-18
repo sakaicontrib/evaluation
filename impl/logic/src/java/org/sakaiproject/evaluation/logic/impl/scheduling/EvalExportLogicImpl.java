@@ -44,6 +44,11 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.id.api.IdManager;
 import org.sakaiproject.tool.api.SessionManager;
 
+/**
+ * Deprecated after U-M Pilot I, replaced by Oracle DBLINK data transfer
+ * @author rwellis
+ *
+ */
 public class EvalExportLogicImpl implements EvalExportLogic {
 	
 	private static final Log log = LogFactory.getLog(EvalExportLogicImpl.class);
@@ -93,7 +98,7 @@ public class EvalExportLogicImpl implements EvalExportLogic {
 		List<String> messages = new ArrayList();
 		if(!locked) {
 			locked = true;
-			evalJobLogic.scheduleResponsesEmail(instructorMap);
+			//evalJobLogic.scheduleResponsesEmail(instructorMap);
 		}
 		return messages;
 	}

@@ -116,6 +116,9 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 
       // set the date modified
       evaluation.setLastModified( new Date() );
+      
+      //initialize availableEmailSent
+      evaluation.setAvailableEmailSent(new Boolean(Boolean.FALSE));
 
       // test date ordering first
       if (evaluation.getStartDate().compareTo(evaluation.getDueDate()) >= 0 ) {
@@ -977,5 +980,17 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 		List<EvalEvaluation> l = dao.getEvaluationsByGroupId(groupId);
 		return l;
 	}
+	
+	public int countActiveEvaluations() {
+		int count = 0;
+		if(getActiveEvaluationIdsByAvailableEmailSent(null) != null) {
+			count = getActiveEvaluationIdsByAvailableEmailSent(null).length;
+		}
+		return count;
+	}
 
+	public Long[] getActiveEvaluationIdsByAvailableEmailSent(
+			Boolean availableEmailSent) {
+		return dao.getActiveEvaluationIdsByAvailableEmailSent(availableEmailSent);
+	}
 }

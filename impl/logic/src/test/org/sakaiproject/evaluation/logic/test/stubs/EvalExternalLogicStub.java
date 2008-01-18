@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
@@ -431,6 +432,20 @@ public class EvalExternalLogicStub implements EvalExternalLogic {
 
 	public void registerEntityEvent(String eventName, Serializable evaluationEntity) {
 		// pretending it worked
+	}
+
+	public String getMyWorkspaceUrl(String id) {
+		return "https://testctools.ds.itd.umich.edu/portal/site/~rwellis/page/866dd4e6-0323-43a1-807c-9522bb3167b7";
+	}
+
+	public Map<String, String> getNotificationSettings() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getUserEmail(String userId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

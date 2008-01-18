@@ -21,6 +21,7 @@ import junit.framework.Assert;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl;
+import org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl;
 import org.sakaiproject.evaluation.logic.test.stubs.EvalExternalLogicStub;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -39,6 +40,7 @@ import org.springframework.test.AbstractTransactionalSpringContextTests;
 public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextTests {
 
 	protected EvalEmailsLogicImpl emailTemplates;
+	protected EvalEvaluationsLogicImpl evaluations;
 
 	private EvaluationDao evaluationDao;
 	private EvalTestDataLoad etdl;
@@ -98,8 +100,6 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 	 * Note that if a method is overloaded you should include the arguments in the
 	 * test name like so: testMethodClassInt (for method(Class, int);
 	 */
-
-
 
 	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#saveEmailTemplate(org.sakaiproject.evaluation.model.EvalEmailTemplate, java.lang.String)}.
@@ -181,11 +181,35 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 
 		// test getting the templates
 		emailTemplate = emailTemplates.getDefaultEmailTemplate( 
+				EvalConstants.EMAIL_TEMPLATE_CREATED );
+		Assert.assertNotNull(emailTemplate);
+		Assert.assertEquals( EvalConstants.EMAIL_TEMPLATE_DEFAULT_CREATED, 
+				emailTemplate.getDefaultType() );
+		Assert.assertEquals( EvalConstants.EMAIL_CREATED_DEFAULT_TEXT,
+				emailTemplate.getMessage() );
+		
+		emailTemplate = emailTemplates.getDefaultEmailTemplate( 
 				EvalConstants.EMAIL_TEMPLATE_AVAILABLE );
 		Assert.assertNotNull(emailTemplate);
 		Assert.assertEquals( EvalConstants.EMAIL_TEMPLATE_DEFAULT_AVAILABLE, 
 				emailTemplate.getDefaultType() );
 		Assert.assertEquals( EvalConstants.EMAIL_AVAILABLE_DEFAULT_TEXT,
+				emailTemplate.getMessage() );
+		
+		emailTemplate = emailTemplates.getDefaultEmailTemplate( 
+				EvalConstants.EMAIL_TEMPLATE_AVAILABLE_OPT_IN );
+		Assert.assertNotNull(emailTemplate);
+		Assert.assertEquals( EvalConstants.EMAIL_TEMPLATE_DEFAULT_AVAILABLE_OPT_IN, 
+				emailTemplate.getDefaultType() );
+		Assert.assertEquals( EvalConstants.EMAIL_AVAILABLE_OPT_IN_TEXT,
+				emailTemplate.getMessage() );
+		
+		emailTemplate = emailTemplates.getDefaultEmailTemplate( 
+				EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE );
+		Assert.assertNotNull(emailTemplate);
+		Assert.assertEquals( EvalConstants.EMAIL_TEMPLATE_DEFAULT_CONSOLIDATED_AVAILABLE, 
+				emailTemplate.getDefaultType() );
+		Assert.assertEquals( EvalConstants.EMAIL_CONSOLIDATED_AVAILABLE_DEFAULT_TEXT,
 				emailTemplate.getMessage() );
 
 		emailTemplate = emailTemplates.getDefaultEmailTemplate( 
@@ -195,7 +219,36 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 				emailTemplate.getDefaultType() );
 		Assert.assertEquals( EvalConstants.EMAIL_REMINDER_DEFAULT_TEXT,
 				emailTemplate.getMessage() );
-
+		
+		emailTemplate = emailTemplates.getDefaultEmailTemplate( 
+				EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER );
+		Assert.assertNotNull(emailTemplate);
+		Assert.assertEquals( EvalConstants.EMAIL_TEMPLATE_DEFAULT_CONSOLIDATED_REMINDER, 
+				emailTemplate.getDefaultType() );
+		Assert.assertEquals( EvalConstants.EMAIL_CONSOLIDATED_REMINDER_DEFAULT_TEXT,
+				emailTemplate.getMessage() );
+		
+		emailTemplate = emailTemplates.getDefaultEmailTemplate( 
+				EvalConstants.EMAIL_TEMPLATE_RESULTS );
+		Assert.assertNotNull(emailTemplate);
+		Assert.assertEquals( EvalConstants.EMAIL_TEMPLATE_DEFAULT_RESULTS, 
+				emailTemplate.getDefaultType() );
+		Assert.assertEquals( EvalConstants.EMAIL_RESULTS_DEFAULT_TEXT,
+				emailTemplate.getMessage() );
+		
+		emailTemplate = emailTemplates.getDefaultEmailTemplate( 
+				EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_SUBJECT );
+		Assert.assertNotNull(emailTemplate);
+		Assert.assertEquals( EvalConstants.EMAIL_TEMPLATE_DEFAULT_CONSOLIDATED_SUBJECT, 
+				emailTemplate.getDefaultType() );
+		Assert.assertEquals( EvalConstants.EMAIL_CONSOLIDATED_SUBJECT_DEFAULT_TEXT,
+				emailTemplate.getMessage() );
+		
+		Assert.assertNotNull(EvalConstants.EMAIL_CREATED_DEFAULT_TEXT_FOOTER);
+		Assert.assertNotNull(EvalConstants.EMAIL_CREATED_ADD_ITEMS_TEXT);
+		Assert.assertNotNull(EvalConstants.EMAIL_CREATED_OPT_IN_TEXT);
+		Assert.assertNotNull(EvalConstants.EMAIL_CREATED_OPT_OUT_TEXT);
+		
 		// test invalid constant causes failure
 		try {
 			emailTemplate = emailTemplates.getDefaultEmailTemplate( EvalTestDataLoad.INVALID_CONSTANT_STRING );
@@ -370,8 +423,6 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 		}
 
 	}
-
-
 
 	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#sendEvalAvailableNotifications(java.lang.Long, boolean)}.

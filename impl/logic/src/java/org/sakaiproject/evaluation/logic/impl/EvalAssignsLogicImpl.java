@@ -42,11 +42,6 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
       this.dao = dao;
    }
 
-   private EvalEmailsLogic emails;
-   public void setEmails(EvalEmailsLogic emails) {
-      this.emails = emails;
-   }
-
    private EvalExternalLogic externalLogic;
    public void setExternalLogic(EvalExternalLogic externalLogic) {
       this.externalLogic = externalLogic;
@@ -126,14 +121,14 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
                assignContext.setInstructorApproval( Boolean.TRUE );
             }
          }
-
+         
          /* if a late instructor opt-in, notify students in this group that an evaluation is available,
           * and schedule a reminder if there isn't a reminder going to all groups already scheduled
           */
          if(EvalConstants.INSTRUCTOR_OPT_IN.equals(eval.getInstructorOpt()) && 
                assignContext.getInstructorApproval().booleanValue() && 
                assignContext.getEvaluation().getStartDate().before(new Date())) {
-            emails.sendEvalAvailableGroupNotification(assignContext.getEvaluation().getId(), assignContext.getEvalGroupId());
+        	 evalJobLogic.scheduleLateOptInNotification(assignContext.getEvaluation().getId(), assignContext.getEvalGroupId());
             if(!evalJobLogic.isJobTypeScheduled(assignContext.getEvaluation().getId(), EvalConstants.JOB_TYPE_REMINDER)) {
                //we need to also schedule a reminder
                evalJobLogic.scheduleReminder(assignContext.getEvaluation().getId());

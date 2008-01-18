@@ -12,6 +12,7 @@ api/logic/src/java/org/sakaiproject/evaluation/logic/EvalEvaluationsLogic.java -
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalExpertItemsLogic.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalExternalLogic.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalItemsLogic.java -text
+api/logic/src/java/org/sakaiproject/evaluation/logic/EvalNotificationSettings.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalResponsesLogic.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalScalesLogic.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalSettings.java -text
@@ -26,6 +27,7 @@ api/logic/src/java/org/sakaiproject/evaluation/logic/externals/EvalExportLogic.j
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/EvalImport.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/EvalImportJob.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/EvalImportLogic.java -text
+api/logic/src/java/org/sakaiproject/evaluation/logic/externals/EvalJobAction.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/EvalJobLogic.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/EvalScheduledInvocation.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/ExternalEvalGroups.java -text
@@ -86,6 +88,7 @@ impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalEvaluationsLogicI
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalExpertItemsLogicImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalExternalLogicImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalItemsLogicImpl.java -text
+impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalNotificationSettingsImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalResponsesLogicImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalScalesLogicImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalSettingsImpl.java -text
@@ -99,12 +102,14 @@ impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvalAssi
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvaluationInterceptor.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvaluationModificationRegistry.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/providers/EvalGroupsProviderUnivOfMichImpl.java -text
+impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalConsolidatedNotificationJob.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalExportImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalExportJobImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalExportLogicImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalImportImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalImportJobImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalImportLogicImpl.java -text
+impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalJobActionImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalJobLogicImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalScheduledInvocationImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/utils/TextTemplateLogicUtils.java -text
@@ -132,6 +137,7 @@ impl/pack/src/webapp/WEB-INF/entity-providers.xml -text
 impl/pack/src/webapp/WEB-INF/hibernate-hbms.xml -text
 impl/pack/src/webapp/WEB-INF/logic-support.xml -text
 impl/pack/src/webapp/WEB-INF/spring-hibernate.xml -text
+impl/pack/src/webapp/WEB-INF/spring-quartz.xml -text
 impl/pom.xml -text
 impl/test/project.xml -text
 impl/test/src/java/org/sakaiproject/evaluation/test/EvalTestDataLoad.java -text

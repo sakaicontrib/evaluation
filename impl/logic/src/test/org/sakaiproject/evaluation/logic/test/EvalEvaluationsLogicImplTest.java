@@ -14,6 +14,8 @@
 
 package org.sakaiproject.evaluation.logic.test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -775,6 +777,48 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 
 	}
 
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl#getActiveEvaluationIdsByAvailableEmailSent(java.lang.Boolean)}.
+	 */
+	public void testGetActiveEvaluationIdsByAvailableEmailSent() {
+		
+		Long[] ids = null;
+		List<Long> list;
+		
+		//get all active evaluations
+		ids = evaluations.getActiveEvaluationIdsByAvailableEmailSent(null);
+		list = Arrays.asList(ids);
+		Assert.assertNotNull(ids);
+		Assert.assertEquals(3, ids.length);
+		Assert.assertTrue(list.contains( etdl.evaluationActive.getId() ));
+		Assert.assertTrue(list.contains( etdl.evaluationActiveUntaken.getId() ));
+		Assert.assertTrue(list.contains( etdl.evaluationProvided.getId() ));
+		
+		//get active evaluations for which available email has not been sent
+		ids = evaluations.getActiveEvaluationIdsByAvailableEmailSent(Boolean.FALSE);
+		list = Arrays.asList(ids);
+		Assert.assertNotNull(ids);
+		Assert.assertEquals(1, ids.length);
+		Assert.assertTrue(list.contains( etdl.evaluationActive.getId() ));
+		
+		//get active evaluations for which available email has been sent
+		ids = evaluations.getActiveEvaluationIdsByAvailableEmailSent(Boolean.TRUE);
+		list = Arrays.asList(ids);
+		Assert.assertNotNull(ids);
+		Assert.assertEquals(2, ids.length);
+		Assert.assertTrue(list.contains( etdl.evaluationActiveUntaken.getId() ));
+		Assert.assertTrue(list.contains( etdl.evaluationProvided.getId() ));
+	}
+	
+	/**
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl#countActiveEvaluations()}.
+	 */
+	public void testCountActiveEvaluations() {
+		int count = 0;
+		count = evaluations.countActiveEvaluations();
+		Assert.assertEquals(3, count);
+	}
+	
 	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl#getEvaluationsByCategory(java.lang.String, java.lang.String)}.
 	 */

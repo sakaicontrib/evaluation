@@ -102,6 +102,21 @@ public interface EvalEmailsLogic {
 	 * @return an array of the messages that were sent
 	 */
 	public String[] sendEvalCreatedNotifications(Long evaluationId, boolean includeOwner);
+	
+	/**
+	 * Send notifications to evaluatees (and owner if desired) that a new evaluation
+	 * has been created, includes link to My Workspace Evaluation Dashboard, which
+	 * shows active evaluations.
+	 * 
+	 */
+	public void sendEvalConsolidatedAvailable();
+	
+	/**
+	 * Send notifications to evaluatees (and owner if desired) that there is an
+	 * active evaluation to which a response has not be submitted, includes link to
+	 * My Workspace Evaluation Dashboard, which shows active evaluations.
+	 */
+	public void sendEvalConsolidatedReminder();
 
 	/**
 	 * Send notifications to evaluators that there is an evaluation ready for them to take
@@ -154,14 +169,5 @@ public interface EvalEmailsLogic {
 	 */
 	public String[] sendEvalResultsNotifications(String jobType, Long evaluationId, boolean includeEvaluatees, boolean includeAdmins);
 	
-	/**
-	 * Email responses as body to recipient
-	 * 
-	 * @param subject
-	 * @param body
-	 * @param recipient
-	 * @return an array of the messages that were sent
-	 */
-	public String[] sendEvalResponses(String subject, String body, String recipient);
-
+	public void saveAvailableEmailSentStatus(Long[] evalIds);
 }

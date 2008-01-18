@@ -8,7 +8,7 @@
     <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
     <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
 	<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
-</head>maven sakai
+</head>
 <body>
 <div class="portletBody">
 
@@ -17,7 +17,6 @@
 	<a rsf:id="control-templates-link" href="control_templates.html">My Templates</a>
 	<a rsf:id="control-items-link" href="control_items.html">My Items</a>
 	<a rsf:id="control-import-toplink" href="control_import.html">Import Data</a>
-	<a rsf:id="control-export-toplink" href="control_export_responses.html">Export Responses</a>
 	<span rsf:id="administrate-title" class="inactive">Administrate</span>&nbsp;
 </div>
 
@@ -55,7 +54,6 @@
 		Settings in the evaluation can still be controlled on a per evaluation basis unless
 		overridden here.
 	</p>
-
 	<fieldset class="visibleFS"><legend><span rsf:id="instructor-settings-header">Instructor Settings:</span></legend>
 		<p class=	"checkbox indnt1">
 			<input type="checkbox" rsf:id="instructors-eval-create" id="instructors-eval-create-id"/>
@@ -70,7 +68,7 @@
 			<select type="checkbox" rsf:id="instructors-view-results" id="instructors-view-results-id"></select>
 		</p>
 		<p class=	"longtext indnt1">
-			<label class="block" for="instructors-hierarchy-selection" rsf:id="instructors-hierarchy-note">Instructors must use evaluations from above in the hierachy</label>
+			<label class="block" for="instructors-hierarchy-selection" rsf:id="instructors-hierarchy-note">Instructors must use evaluations from above in the hierarchy</label>
 			<select type="checkbox" rsf:id="instructors-hierarchy" id="instructors-hierarchy-id">
 			</select>
 		</p>
@@ -115,16 +113,48 @@
 		</p>
 	</fieldset>
 
-   <fieldset  class="visibleFS"><legend><span rsf:id="msg=administrate.hierarchy.settings.header">Hierarchy Settings:</span></legend>
-      <p class=   "checkbox indnt1">
-         <input type="checkbox" rsf:id="general-display-hierarchy-options" id="general-display-hierarchy-options-id" />
-         <label rsf:id="general-display-hierarchy-options-note" for="general-display-hierarchy-options">Display Hierarchy Options</label>
-      </p>
-      <p class=   "checkbox indnt1">
-         <input type="checkbox" rsf:id="hierarchy-display-node-headers" id="hierarchy-display-node-headers-id" />
-         <label rsf:id="hierarchy-display-node-headers-note" for="hierarchy-display-node-headers-id">Display node headers in the take eval/preview eval screens</label>
-      </p>
+   <fieldset  class="visibleFS"><legend><span rsf:id="msg=administrate.notification.settings.header">Notification Settings:</span></legend>
+   		<p class=	"longtext indnt1">
+      	 	<label rsf:id="msg=administrate.notification.settings.delivery.option" for="delivery-option-selection" class="block">Email delivery options</label>
+      	 	<select rsf:id="delivery-option" id="delivery-option-id"></select>
+		</p>
+		<p class="longtext indnt1" rsf:id="msg=administrate.notification.settings.instructions">
+			Notification is by default per student per evaluation.  To change to notification per student, check this option.
+			<br /><br />
+		</p>
+		<p class=   "checkbox indnt1">
+         	<input type="checkbox" rsf:id="notification-per-student" id="notification-per-student-id" />
+         	<label rsf:id="msg=administrate.notification.settings.per.student.note" for="notification-per-student-id">One email per student</label>
+         </p>
+         <p class=	"longtext indnt1">
+      	 	<label rsf:id="msg=administrate.notification.settings.per.student.reminder.days.note" for="notification-per-student-reminder-days-id" class="block">Number of days between reminders</label>
+      	 	<select rsf:id="notification-per-student-reminder-days" id="notification-per-student-reminder-days-id"></select>
+      	 </p>
+		<p class=	"longtext indnt1">
+			<label class="block" rsf:id="msg=administrate.notification.settings.batch.size" for="batch-size-id">Number of emails to send as a batch</label>
+			<input type="text" rsf:id="batch-size" id="batch-size-id" />
+		</p>
+		<p class=	"longtext indnt1">
+			<label class="block" rsf:id="msg=administrate.notification.settings.wait.interval" for="wait-interval-id">Seconds to wait between sending batches of email</label>
+			<input type="text" rsf:id="wait-interval" id="wait-interval-id" />
+		</p>
+		<p class=   "checkbox indnt1">
+			<input type="checkbox" rsf:id="log-recipients" id="log-recipients-id" />
+			<label rsf:id="msg=administrate.notification.settings.log.recipients" for="log-recipients-id">Log email recipients in the server log</label>
+		</p>
    </fieldset>
+   
+   <fieldset  class="visibleFS"><legend><span rsf:id="msg=administrate.hierarchy.settings.header">Hierarchy Settings:</span></legend>
+   		<p class=	"checkbox indnt1">
+			<input type="checkbox" rsf:id="general-item-results-sharing-block" id="general-item-results-sharing-block-id"/>
+			<label rsf:id="general-item-results-sharing-block-note" for="general-item-results-sharing-block">Allow results of evaluations to be shared</label>
+		</p>
+		<p class=	"longtext indnt1">
+			<label class="block" rsf:id="general-eval-closed-still-recent-note" for="general-eval-closed-still-recent-selection">Number of days old can an eval be and still be recently closed</label>
+			<select rsf:id="general-eval-closed-still-recent" id="general-eval-closed-still-recent-id">
+		</select>
+		</p>
+	</fieldset>
 
 	<fieldset  class="visibleFS"><legend><span rsf:id="general-settings-header" style="padding:3px">General Settings:</span></legend>
 		<p class=	"longtext indnt1">

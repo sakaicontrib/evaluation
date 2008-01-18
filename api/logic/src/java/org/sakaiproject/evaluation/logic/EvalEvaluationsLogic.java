@@ -129,6 +129,13 @@ public interface EvalEvaluationsLogic {
 	 * @return the count of {@link EvalEvaluation} objects
 	 */
 	public int countEvaluationsByTemplateId(Long templateId);
+	
+	/**
+	 * Count the number of evaluations with state equal to EvalConstants.EVALUATION_STATE_ACTIVE
+	 * 
+	 * @return the count of {@link EvalEvaluation} objects
+	 */
+	public int countActiveEvaluations();
 
 	/**
 	 * Get the evaluations that are currently visible to a user, this should be used
@@ -155,6 +162,16 @@ public interface EvalEvaluationsLogic {
 	 * @return a List of {@link EvalEvaluation} objects (sorted by DueDate)
 	 */
 	public List<EvalEvaluation> getEvaluationsForUser(String userId, boolean activeOnly, boolean untakenOnly);
+	
+	/**
+	 * Get the evaluation ids for evaluations for which available email has or has not been sent
+	 * 
+	 * @param availableEmailSent if Boolean.TRUE return count of evaluations for which available email has been sent,
+	 * if Boolean.FALSE return count of evaluations for which available email has not been sent, and if null return
+	 * a count of all active evaluations
+	 * @return the evaluations meeting the criterion
+	 */
+	public Long[] getActiveEvaluationIdsByAvailableEmailSent(Boolean availableEmailSent);
 
 
 	// EVAL GROUPS

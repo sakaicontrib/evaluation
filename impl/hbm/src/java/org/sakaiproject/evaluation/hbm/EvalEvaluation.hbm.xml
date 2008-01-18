@@ -55,6 +55,10 @@
         <property name="state" type="java.lang.String">
             <column name="STATE" not-null="true" length="255" />
         </property>
+        <!-- Is this evaulation at a state prior to having been announced as available? -->
+        <property name="availableEmailSent" type="java.lang.Boolean">
+            <column name="AVAILABLE_EMAIL_SENT" />
+        </property>
         <!-- what options do instructors have for using this evaluation (opt in, opt out, reqd, etc.) -->
         <property name="instructorOpt" type="java.lang.String">
             <column name="INSTRUCTOR_OPT" length="255" />

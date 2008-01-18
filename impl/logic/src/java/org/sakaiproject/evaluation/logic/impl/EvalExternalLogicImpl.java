@@ -19,11 +19,14 @@ import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import javax.mail.internet.AddressException;
@@ -41,6 +44,8 @@ import org.sakaiproject.entity.api.Reference;
 import org.sakaiproject.entitybroker.EntityBroker;
 import org.sakaiproject.entitybroker.IdEntityReference;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.EvalNotificationSettings;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.entity.AssignGroupEntityProvider;
 import org.sakaiproject.evaluation.logic.entity.EvaluationEntityProvider;
 import org.sakaiproject.evaluation.logic.entity.TemplateEntityProvider;
@@ -52,7 +57,9 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.exception.IdUnusedException;
 import org.sakaiproject.site.api.Site;
+import org.sakaiproject.site.api.SitePage;
 import org.sakaiproject.site.api.SiteService;
+import org.sakaiproject.site.api.ToolConfiguration;
 import org.sakaiproject.tool.api.Session;
 import org.sakaiproject.tool.api.SessionManager;
 import org.sakaiproject.tool.api.ToolManager;
@@ -139,8 +146,17 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
    public void setApplicationContext(ApplicationContext applicationContext) {
       this.applicationContext = applicationContext;
    }
-
-
+   
+   private EvalSettings evalSettings;
+   public void setEvalSettings(EvalSettings evalSettings) {
+	   this.evalSettings = evalSettings;
+   }
+   
+   private EvalNotificationSettings evalNotificationSettings;
+   public void setEvalNotificationSettings(EvalNotificationSettings evalNotificationSettings) {
+	   this.evalNotificationSettings = evalNotificationSettings;
+   }
+   
    // PROVIDERS
 
    private EvalGroupsProvider evalGroupsProvider;
@@ -253,6 +269,18 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
          log.error("Could not get user from userId: " + userId, ex);
       }
       return "----------";
+   }
+   
+   /* (non-Javadoc)
+    * 
+    */
+   public String getUserEmail(String userId) {
+      try {
+         return userDirectoryService.getUser(userId).getEmail();
+      } catch(UserNotDefinedException ex) {
+         log.error("Could not get User from user id: " + userId);
+      }
+      return null;
    }
 
 
@@ -500,71 +528,212 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
    public void sendEmails(String from, String[] toUserIds, String subject, String message) {
 
       InternetAddress fromAddress;
-      try {
-         fromAddress = new InternetAddress(from);
-      } catch (AddressException e) {
-         throw new IllegalArgumentException("Invalid from address: " + from);
-      }
+		try {
+			fromAddress = new InternetAddress(from);
+		} catch (AddressException e) {
+			throw new IllegalArgumentException("Invalid from address: " + from);
+		}
+		//control email behavior
+		Map<String, String> map = getNotificationSettings();
+		String deliveryOption = map
+				.get(EvalConstants.EMAIL_DELIVERY_OPTION_PROPERTY);
+		Boolean logToAddresses = new Boolean((String) map.
+				get(EvalConstants.EMAIL_LOG_RECIPIENTS_PROPERTY));
+		Boolean consolidated = (Boolean) evalSettings.get( EvalSettings.CONSOLIDATE_NOTIFICATION );
+		List<String> recipients = new ArrayList<String>();
 
-      // handle the list of TO addresses
-      // TODO - cannot use this because of the way the UDS works (it will not let us call this unless
-      // the user already exists in Sakai -AZ
-//    // get the list of users efficiently
-//    List userIds = Arrays.asList( toUserIds );
-//    List l = userDirectoryService.getUsers( userIds );
+		// handle the list of TO addresses
+		// TODO - cannot use this because of the way the UDS works (it will not
+		// let us call this unless
+		// the user already exists in Sakai -AZ
+		// // get the list of users efficiently
+		// List userIds = Arrays.asList( toUserIds );
+		// List l = userDirectoryService.getUsers( userIds );
 
-      // handling this in a much less efficient way for now (see above comment) -AZ
-      List<User> l = new ArrayList<User>(); // fill this with users
-      for (int i = 0; i < toUserIds.length; i++) {
-         User user;
-         try {
-            user = userDirectoryService.getUser( toUserIds[i] );
-         } catch (UserNotDefinedException e) {
-            log.debug("Cannot find user object by id:" + toUserIds[i] );
-            try {
-               user = userDirectoryService.getUserByEid( toUserIds[i] );
-            } catch (UserNotDefinedException e1) {
-               // die here since we were unable to find this user at all
-            	//rwellis - this was causing a batch of 100 emails to roll back when 1 id was not found, dlhaines objected to this behavior
-            	//rwellis - also it depends on the user being in the SAKAI_USER_ID_MAP, which shouldn't be assumed for those in an external eval group
-            	//TODO ValidEmailAddress interface as callout so email doesn't have to worry about getting a bad address, can be locally implemented & tested
-               //throw new IllegalArgumentException("Invalid user: Cannot find user object by id or eid:" + toUserIds[i], e );
-            	if(log.isWarnEnabled())
-            		log.warn("EvalExternalLogic#sendEmails(): '" + toUserIds[i] + "' was not found by id or eid. " + e1);
-            	continue;
-            }
-         }
-         l.add(user);
-      }
-      // end of much less efficient way of doing things -AZ
+		// handling this in a much less efficient way for now (see above
+		// comment) -AZ
+		List<User> l = new ArrayList<User>(); // fill this with users
+		for (int i = 0; i < toUserIds.length; i++) {
+			User user;
+			try {
+				user = userDirectoryService.getUser(toUserIds[i]);
+			} catch (UserNotDefinedException e) {
+				log.debug("Cannot find user object by id:" + toUserIds[i]);
+				try {
+					user = userDirectoryService.getUserByEid(toUserIds[i]);
+				} catch (UserNotDefinedException e1) {
+					// die here since we were unable to find this user at all
+					//TODO resolve this before checking into trunk
+					// rwellis - this was causing a batch of 100 emails to roll
+					// back when 1 id was not found, dlhaines objected to this
+					// behavior
+					// rwellis - also it depends on the user being in the
+					// SAKAI_USER_ID_MAP, which shouldn't be assumed for those
+					// in an external eval group
+					// TODO ValidEmailAddress interface as callout so email
+					// doesn't have to worry about getting a bad address, can be
+					// locally implemented & tested
+					// throw new IllegalArgumentException("Invalid user: Cannot
+					// find user object by id or eid:" + toUserIds[i], e );
+					if (log.isWarnEnabled())
+						log.warn("EvalExternalLogic#sendEmails(): '"
+								+ toUserIds[i]
+								+ "' was not found by id or eid. " + e1);
+					continue;
+				}
+			}
+			l.add(user);
+		}
+		// end of much less efficient way of doing things -AZ
 
-      // email address validity is checked at entry but value can be null
-      for (ListIterator<User> iterator = l.listIterator(); iterator.hasNext();) {
-         User u = iterator.next();
-         if (u.getEmail().equals("")) {
-            iterator.remove();
-            log.warn("Could not get an email address for " + u.getDisplayName());
-         }
-      }
+		// email address validity is checked at entry but value can be null
+		for (ListIterator<User> iterator = l.listIterator(); iterator.hasNext();) {
+			User u = iterator.next();
+			if (u.getEmail().equals("")) {
+				iterator.remove();
+				log.warn("Could not get an email address for "
+						+ u.getDisplayName());
+			}
+		}
 
-      if (l == null || l.size() <= 0) {
-         log.warn("Could not get users from any provided userIds");
-         return;
-      }
+		if (l == null || l.size() <= 0) {
+			log.warn("Could not get users from any provided userIds");
+			return;
+		}
 
-      InternetAddress[] toAddresses = new InternetAddress[l.size()];
-      InternetAddress[] replyTo = new InternetAddress[1];
-      for (int i = 0; i < l.size(); i++) {
-         User u = (User) l.get(i);
-         try {
-            InternetAddress toAddress = new InternetAddress(u.getEmail());
-            toAddresses[i] = toAddress;
-         } catch (AddressException e) {
-            throw new IllegalArgumentException("Invalid to address: " + toUserIds[i]);
-         }
-      }
-      replyTo[0] = fromAddress;
-      emailService.sendMail(fromAddress, toAddresses, subject, message, null, replyTo, null);
+		InternetAddress[] toAddresses = new InternetAddress[l.size()];
+		InternetAddress[] replyTo = new InternetAddress[1];
+		for (int i = 0; i < l.size(); i++) {
+			User u = (User) l.get(i);
+			if(!consolidated.booleanValue() && logToAddresses.booleanValue()) {
+				String to = u.getEmail();
+				recipients.add(to);
+			}
+			try {
+				InternetAddress toAddress = new InternetAddress(u.getEmail());
+				toAddresses[i] = toAddress;
+			} catch (AddressException e) {
+				throw new IllegalArgumentException("Invalid to address: "
+						+ toUserIds[i]);
+			}
+		}
+		replyTo[0] = fromAddress;
+		
+		//dispatch based on email delivery setting
+		if(deliveryOption.equals(EvalConstants.EMAIL_DELIVERY_OPTION_SEND)) {
+			emailService.sendMail(fromAddress, toAddresses, subject, message, null,
+				replyTo, null);
+		}
+		else if (deliveryOption.equals(EvalConstants.EMAIL_DELIVERY_OPTION_LOG)) {
+			logEmails(fromAddress, toAddresses, subject, message,replyTo);
+		}
+		else if(deliveryOption.equals(EvalConstants.EMAIL_DELIVERY_OPTION_NONE)) {
+			log.warn("Email delivery option is '" + EvalConstants.EMAIL_DELIVERY_OPTION_NONE + "'.");
+		}
+		else {
+			log.error("Email delivery option is unrecognized: '" + deliveryOption + "'.");
+		}
+		if(!consolidated.booleanValue() && logToAddresses.booleanValue()) {
+			Collections.sort(recipients);
+			if (log.isWarnEnabled())
+				log.warn("Metric: email sent to " + recipients.toString());
+		}
+		/* TODO
+		 * Can't throttle scheduled invocation email easily but can stagger
+		 * start times 
+		 */
+   }
+   
+   public void logEmails(InternetAddress from, InternetAddress[] toUserIds, String subject, String message, InternetAddress[] replyTo) {
+	   if(log.isWarnEnabled()) {
+		   StringBuffer sbTo = new StringBuffer();
+		   for(int i = 0; i < toUserIds.length; i++) {
+			   if(sbTo.length() != 0)
+				   sbTo.append(",");
+			   sbTo = sbTo.append(toUserIds[i].getAddress());
+		   }
+		   String to = sbTo.toString();
+		   StringBuffer sbReplyTo = new StringBuffer();
+		   for(int i = 0; i < replyTo.length; i++) {
+			   if(sbReplyTo.length() != 0)
+				   sbReplyTo.append(",");
+			   sbReplyTo = sbReplyTo.append(replyTo[i].getAddress());
+		   }
+		   String reply = sbReplyTo.toString();
+		   log.warn("Email \nFrom: " + from.getAddress() + " \nReplyTo: " + reply + 
+				   " \nTo: " + "" + to + " \nSubject: " + subject + " \nMessage: " + message);
+	   }
+   }
+   
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.EvalExternalLogic#getMyWorkspaceUrl(java.lang.String)
+    */
+   public String getMyWorkspaceUrl(String userId) {
+		String url = null;
+		String toolPage = null;
+		// userId - this is Sakai id NOT eid
+		if(userId == null || userId.length() == 0) {
+		   log.error("getMyWorkspaceUrl(String userId) userId is null or empty.");
+	   }
+	   else {
+		   try {
+			   String myWorkspaceId = siteService.getUserSiteId(userId);
+			   Site myWorkspace = siteService.getSite(myWorkspaceId);
+			   List<SitePage> pages = myWorkspace.getPages();
+			   for (Iterator<SitePage> i = pages.iterator(); i.hasNext();) {
+				   SitePage page = i.next();
+				   List<ToolConfiguration> tools = page.getTools();
+				   for (Iterator<ToolConfiguration> j = tools.iterator(); j.hasNext();) {
+					   ToolConfiguration tc = j.next();
+					   if (tc.getToolId().equals("sakai.rsf.evaluation")) {
+						   toolPage = page.getId();
+					   }
+				   }
+			   }
+			   // e.g., https://testctools.ds.itd.umich.edu/portal/site/~rwellis/page/866dd4e6-0323-43a1-807c-9522bb3167b7
+			   url = getServerUrl() + "/site/" + myWorkspaceId + "/page/" + toolPage;
+		   } catch (Exception e) {
+			   log.error("getMyWorkspaceUrl(String userId) " + e);
+		   }
+	   }
+	return url;
+	}
+	
+   /*
+    * (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.EvalExternalLogic#getNotificationSettings()
+    */
+   public Map<String, String> getNotificationSettings() {
+	   Map<String, String> map = new HashMap<String, String>();
+	   if(evalNotificationSettings.getDeliveryOption() != null &&
+		   (evalNotificationSettings.getDeliveryOption().equals(EvalConstants.EMAIL_DELIVERY_OPTION_NONE)
+				   || evalNotificationSettings.getDeliveryOption().equals(EvalConstants.EMAIL_DELIVERY_OPTION_LOG)
+						   || evalNotificationSettings.getDeliveryOption().equals(EvalConstants.EMAIL_DELIVERY_OPTION_SEND))) {
+		   		map.put(EvalConstants.EMAIL_DELIVERY_OPTION_PROPERTY, evalNotificationSettings.getDeliveryOption());
+	   }
+	   else
+		   map.put(EvalConstants.EMAIL_DELIVERY_OPTION_PROPERTY, evalSettings.EMAIL_DELIVERY_OPTION);
+	   if(evalNotificationSettings.getBatchSize() != null &&
+		   evalNotificationSettings.getBatchSize().matches("[0123456789]+")) {
+			   map.put(EvalConstants.EMAIL_BATCH_SIZE_PROPERTY, evalNotificationSettings.getBatchSize());
+	   }
+	   else
+		   map.put(EvalConstants.EMAIL_BATCH_SIZE_PROPERTY, evalSettings.EMAIL_BATCH_SIZE);
+	   if(evalNotificationSettings.getLogRecipients() != null &&
+		   (evalNotificationSettings.getLogRecipients().equalsIgnoreCase("true") 
+				   || evalNotificationSettings.getLogRecipients().equalsIgnoreCase("false"))) {
+			   	map.put(EvalConstants.EMAIL_LOG_RECIPIENTS_PROPERTY,evalNotificationSettings.getLogRecipients());
+	   }
+	   else
+		   map.put(EvalConstants.EMAIL_LOG_RECIPIENTS_PROPERTY, evalSettings.LOG_EMAIL_RECIPIENTS);
+	   if(evalNotificationSettings.getWaitInterval() != null &&
+		   evalNotificationSettings.getWaitInterval().matches("[0123456789]+")) {
+			   map.put(EvalConstants.EMAIL_WAIT_INTERVAL_PROPERTY, evalNotificationSettings.getWaitInterval());
+	   }
+	   else
+		   map.put(EvalConstants.EMAIL_WAIT_INTERVAL_PROPERTY, evalSettings.EMAIL_WAIT_INTERVAL);
+	   return map;
    }
 
 
@@ -725,6 +894,4 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
       }
       return md5;
    }
-
-
 }

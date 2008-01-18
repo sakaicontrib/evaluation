@@ -518,28 +518,67 @@ public class EvalConstants {
 		"2) Enter your username and password and click on 'Login' button. \n" +
 		"3) Click on 'Evaluation System' in the left navigation menu under My Workspace. \n" +
 		"4) Click on '$EvalTitle' link under '$EvalGroupTitle'. \n";
-
 	
-	/**
-	 * TODO This need to be removed. Include in the handling of local changes to default email templates.
-	 */
-	public final static String UMICH_EMAIL_COVER_LETTER = 
-		"\nHere are the ratings and comments made by students who responded to a request for mid-semester feedback " +
-		"on your class.  A summary of the ratings data, including response frequencies and item medians, is available in Teaching Support.\n\n" +
-		"You can access Teaching Support via the following link:\n\n" +
-		"http://wolverineaccess.umich.edu/index.jsp\n\n" +
-		"Follow the 'University Business' link to 'Teaching Support'.  " +
-		"If you cannot access your report, click the link labeled '? Help' in Teaching Support.  " +
-		"If you need further assistance, you can contact the MAIS Help Desk by e-mail at maishelpdesk@umich.edu or by telephone at 734 936-7000.  " +
-		"Teaching Support is available at the following times:\n\n" +
-		"Monday-Friday, 7am-4am\n" +
-		"Saturday, 7am-10:30pm\n" +
-		"Sunday, 7:30am-Monday, 2am\n\n" +
-		"No one but you will receive a copy of the raw data from the evaluation, and you alone will have access to the summary of the rating data.\n" +
-		"For help in interpreting your mid-semester feedback, you may wish to visit the Office of Evaluations and Examinations (E&E) website:\n\n" +
-		"www.umich.edu/~eande/tq/engin\n\n" +
-		"You may also wish to discuss your mid-semester feedback with a colleague or an instructional consultant at E&E or the Center for Research on Teaching and Learning (CRLT).\n\n" +
-		"We hope that you find this mid-semester feedback useful in your teaching.\n\n";
+	public static final String EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE = "ConsolidatedAvailable";
+	
+	public static final String EMAIL_TEMPLATE_DEFAULT_CONSOLIDATED_AVAILABLE = "defaultConsolidatedAvailable";
+	
+	public static final String EMAIL_CONSOLIDATED_AVAILABLE_DEFAULT_TEXT = 
+		"A course evaluation for one or more of your classes is requested by $EarliestDueDate. You " +
+		"are asked to fill out course evaluations in the My Workspace area of CTools, which is " +
+		"available from this link:\n\n" +
+		"$MyWorkspaceDashboard\n\n" + 
+		"You will need to provide a U-M uniqname and password to access the course " + 
+		"evaluation site.  This identification is required to ensure that only authorized students " +
+		"submit evaluations and that each student submits only one evaluation per class.  Note, however, " +
+		"that teachers and administrators will not have access to any identifying information you " +
+		"submit, and they will not be able to associate specific ratings or comments with " +
+		"specific students.\n\n" +
+		"Thank you in advance for submitting your course evaluations and helping the " +
+		"University maintain and improve the quality of its teaching.\n\n" +
+		"If the above link is not working then please follow the Alternate Instructions at the bottom of the message.\n\n" +
+		"------------------------------------------------------------\n" +
+		"Should you encounter any technical difficulty in viewing the evaluation results, please send an email to $HelpdeskEmail " +
+		"clearly indicating the problem you encountered. For any other concerns please contact your department.\n\n" +
+		"Alternate Instructions: \n" +
+		"1) Go to $URLtoSystem \n" +
+		"2) Enter your username and password and click on 'Login' button. \n" +
+		"3) Click on 'Evaluation System' in the left navigation menu under My Workspace. \n" +
+		"4) Click on a link under 'Current evaluations to take'. \n";
+		
+	public static final String EMAIL_TEMPLATE_CONSOLIDATED_REMINDER = "ConsolidatedReminder";
+	
+	public static final String EMAIL_TEMPLATE_DEFAULT_CONSOLIDATED_REMINDER = "defaultConsolidatedReminder";
+	
+	public static final String EMAIL_CONSOLIDATED_REMINDER_DEFAULT_TEXT = 
+		"A course evaluation for one or more of your classes is requested by $EarliestDueDate. You " +
+		"are asked to fill out course evaluations in the My Workspace area of CTools, which is " +
+		"available from this link:\n\n" +
+		"	$MyWorkspaceDashboard\n\n" + 
+		"You will need to provide a U-M uniqname and password to access the course " + 
+		"evaluation site.  This identification is required to ensure that only authorized students " +
+		"submit evaluations and that each student submits only one evaluation per class.  Note, however, " +
+		"that teachers and administrators will not have access to any identifying information you " +
+		"submit, and they will not be able to associate specific ratings or comments with " +
+		"specific students.\n\n" +
+		"Thank you in advance for submitting your course evaluations and helping the " +
+		"University maintain and improve the quality of its teaching.\n\n" +
+		"If the above link is not working then please follow the Alternate Instructions at the bottom of the message.\n\n" +
+		"------------------------------------------------------------\n" +
+		"Should you encounter any technical difficulty in viewing the evaluation results, please send an email to $HelpdeskEmail " +
+		"clearly indicating the problem you encountered. For any other concerns please contact your department.\n\n" +
+		"Alternate Instructions: \n" +
+		"1) Go to $URLtoSystem \n" +
+		"2) Enter your username and password and click on 'Login' button. \n" +
+		"3) Click on 'Evaluation System' in the left navigation menu under My Workspace. \n" +
+		"4) Click on a link under 'Current evaluations to take'. \n";
+		
+	public static final String EMAIL_TEMPLATE_CONSOLIDATED_SUBJECT = "ConsolidatedSubject";
+	
+	public static final String EMAIL_TEMPLATE_DEFAULT_CONSOLIDATED_SUBJECT = "defaultConsolidatedSubject";
+		
+	public static final String EMAIL_CONSOLIDATED_SUBJECT_DEFAULT_TEXT = 
+		"Course evaluation feedback requested by $EarliestDueDate \n";
 
 	/**
 	 * Notification: Include all users who have not taken the evaluation yet
@@ -553,6 +592,41 @@ public class EvalConstants {
 	 * Notification: Include all users for the evaluation
 	 */
 	public final static String EMAIL_INCLUDE_ALL = "all";
+	
+	/**
+	 * Notification: Do not send email.
+	 */
+	public static final String EMAIL_DELIVERY_OPTION_NONE = "none";
+	
+	/**
+	 * Notification: Send email.
+	 */
+	public static final String EMAIL_DELIVERY_OPTION_SEND = "send";
+	
+	/**
+	 * Notification: Log email to catalina.out.
+	 */
+	public static final String EMAIL_DELIVERY_OPTION_LOG = "log";
+	
+	/**
+	 * Notification: Property of EvalNotificationSettings.
+	 */
+	public static final String EMAIL_DELIVERY_OPTION_PROPERTY = "deliveryOption";
+	
+	/**
+	 * Notification: Property of EvalNotificationSettings.
+	 */
+	public static final String EMAIL_LOG_RECIPIENTS_PROPERTY = "logRecipients";
+	
+	/**
+	 * Notification: Property of EvalNotificationSettings.
+	 */
+	public static final String EMAIL_WAIT_INTERVAL_PROPERTY = "waitInterval";
+	
+	/**
+	 * Notification: Property of EvalNotificationSettings.
+	 */
+	public static final String EMAIL_BATCH_SIZE_PROPERTY = "batchSize";
 
 
 	/**
@@ -683,8 +757,8 @@ public class EvalConstants {
 	public static final String JOB_TYPE_REMINDER = "scheduledReminder";
 	
 	/**
-	 * ScheduledInvocationManager: ScheduledInvocationCommand jobType
-	 * 
+	 * Modulo used when logging progress processing a batch
 	 */
-	public static final String JOB_TYPE_RESPONSES_EMAIL = "scheduledResponsesEmail";
+	public static final String METRICS_MODULO = "500";
+	
 }

@@ -39,7 +39,10 @@ import org.sakaiproject.evaluation.logic.externals.EvalImportJob;
 import org.sakaiproject.evaluation.logic.externals.EvalImportLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalImport;
 import org.sakaiproject.id.api.IdManager;
+import org.sakaiproject.thread_local.cover.ThreadLocalManager;
+import org.sakaiproject.tool.api.Session;
 import org.sakaiproject.tool.api.SessionManager;
+import org.sakaiproject.user.api.UserDirectoryService;
 
 /**
  * Handle the importing of external data into the Evaluation System.
@@ -55,31 +58,40 @@ public class EvalImportLogicImpl implements EvalImportLogic {
 	
 	private static final Log log = LogFactory.getLog(EvalImportLogicImpl.class);
 	
-	//Spring injection
 	private EvalImport evalImport;
 	public void setEvalImport(EvalImport evalImport) {
 		this.evalImport = evalImport;
 	}
+	
 	private EvalImportJob evalImportJob;
 	public void setEvalImportJob(EvalImportJob evalImportJob) {
 		this.evalImportJob = evalImportJob;
 	}
+	
 	private IdManager idManager;
 	public void setIdManager(IdManager idManager) {
 		this.idManager = idManager;
 	}
+	
 	private ServerConfigurationService serverConfigurationService;
 	public void setServerConfigurationService(ServerConfigurationService serverConfigurationService) {
 		this.serverConfigurationService = serverConfigurationService;
 	}
+	
 	private SessionManager sessionManager;
 	public void setSessionManager(SessionManager sessionManager) {
 		this.sessionManager = sessionManager;
 	}
 	
+	private UserDirectoryService userDirectoryService;
+	public void setUserDirectoryService(UserDirectoryService userDirectoryService) {
+		this.userDirectoryService = userDirectoryService;
+	}
+	
 	String currentUserId = null;
 	String jobName = null;
 	String qrtzImport;
+	String threadImport;
 	
 	public void init() {
 		
@@ -97,11 +109,20 @@ public class EvalImportLogicImpl implements EvalImportLogic {
 		currentUserId = sessionManager.getCurrentSessionUserId();
 		try
 		{
+			threadImport = serverConfigurationService.getString("eval.threadImport", "false");
 			qrtzImport = serverConfigurationService.getString("eval.qrtzImport", "false");
-			if(qrtzImport.equalsIgnoreCase("true"))
+			if(qrtzImport.equalsIgnoreCase("true")) {
 				processInQuartz(id);
-			else 
+			}
+			else if(threadImport.equalsIgnoreCase("true")) {
+				
+				//process in a new thread
+				processInThread(id, currentUserId);
+			}
+			else {
+				//process in interactive thread
 				messages = evalImport.process(id, currentUserId);
+			}
 		}
 		catch(Exception e)
 		{
@@ -112,6 +133,68 @@ public class EvalImportLogicImpl implements EvalImportLogic {
 		}
 		return messages;
 	}
+	
+	protected boolean processInThread(String id, String currentUserId) {
+		boolean retVal = false;
+		try {
+			Import i = new Import(id, currentUserId);
+			Thread t = new Thread(i);
+			t.start();
+			retVal = true;
+		}
+		catch (Exception e) {
+			throw new RuntimeException("error importing XML data");
+		}
+		return retVal;
+	}
+	
+	/** Class that starts a session to import XML data. */
+	protected class Import implements Runnable
+	{
+		public void init(){}
+		public void start(){}
+		
+		private String m_id = null;
+		private String m_currentUserId = null;
+		
+		//constructor
+		Import(String id, String currentUserId)
+		{
+			m_id = id;
+			m_currentUserId = currentUserId;
+		}
+
+		public void run()
+		{
+		    try
+			{
+				// set the current user to admin
+				Session s = sessionManager.getCurrentSession();
+				if (s != null)
+				{
+					s.setUserId(userDirectoryService.ADMIN_ID);
+				}
+				else
+				{
+					log.error("Import: Session s is null, cannot set user id to ADMIN_ID user");
+				}
+
+				if(m_id != null)
+				{
+					evalImport.process(m_id, m_currentUserId);
+				}
+			}
+		    catch(Exception e) {
+		
+		    }
+		    finally
+			{
+				//clear any current bindings
+				ThreadLocalManager.clear();
+			}
+		}
+		
+	}//Snapshot
 	
 	/**
 	 * Start a Quartz job to process the XML ContentResource data
