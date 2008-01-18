@@ -16,7 +16,9 @@
 
 package org.sakaiproject.evaluation.tool.producers;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
@@ -102,12 +104,13 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
      * page 2) access this page through links on Control Panel or other 3) access
      * this page through "Save" button on Template page
      */
-    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+   public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
         TemplateViewParameters evalViewParams = (TemplateViewParameters) viewparams;
         Long templateId = evalViewParams.templateId;
         EvalTemplate template = localTemplateLogic.fetchTemplate(templateId);
 
+        // begin page rendering
         UIMessage.make(tofill, "modify-template-title", "modifytemplate.page.title");
 
         UIInternalLink.make(tofill,	"summary-toplink", UIMessage.make("summary.page.title"),
@@ -128,22 +131,23 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 
         // get form to submit the type of item to create to the correct view
         UIMessage.make(tofill, "add-item-note", "modifytemplate.add.item.note");
-        String[] labels = new String[] {
-                "modifytemplate.itemtype.scaled", 
-                "modifytemplate.itemtype.text",
-                "modifytemplate.itemtype.header", 
-                "modifytemplate.itemtype.existing",
-                "modifytemplate.itemtype.expert"
+        ViewParameters[] templateItemVPs = { 
+              new ItemViewParameters(ModifyItemProducer.VIEW_ID, EvalConstants.ITEM_TYPE_SCALED, templateId),
+              new ItemViewParameters(ModifyItemProducer.VIEW_ID, EvalConstants.ITEM_TYPE_TEXT, templateId),
+              new ItemViewParameters(ModifyItemProducer.VIEW_ID, EvalConstants.ITEM_TYPE_HEADER, templateId),
+              new TemplateItemViewParameters(ExistingItemsProducer.VIEW_ID, templateId, null),
+              new TemplateItemViewParameters(ExpertCategoryProducer.VIEW_ID, templateId, null)
         };
-        ViewParameters[] VPs = { 
-                new ItemViewParameters(ModifyItemProducer.VIEW_ID, EvalConstants.ITEM_TYPE_SCALED, templateId),
-                new ItemViewParameters(ModifyItemProducer.VIEW_ID, EvalConstants.ITEM_TYPE_TEXT, templateId),
-                new ItemViewParameters(ModifyItemProducer.VIEW_ID, EvalConstants.ITEM_TYPE_HEADER, templateId),
-                new TemplateItemViewParameters(ExistingItemsProducer.VIEW_ID, templateId, null),
-                new TemplateItemViewParameters(ExpertCategoryProducer.VIEW_ID, templateId, null)
+        String[] templateItemLabels = new String[] {
+              "modifytemplate.itemtype.scaled", 
+              "modifytemplate.itemtype.text",
+              "modifytemplate.itemtype.header", 
+              "modifytemplate.itemtype.existing",
+              "modifytemplate.itemtype.expert"
         };
-        addItemControlRenderer.renderControl(tofill, "add-item-control:", VPs, labels, 
-                UIMessage.make("modifytemplate.add.item.button"), templateId);
+        addItemControlRenderer.renderControl(tofill, "add-item-control:", 
+              templateItemVPs, templateItemLabels, 
+              UIMessage.make("modifytemplate.add.item.button"), templateId);
 
         List<EvalTemplateItem> itemList = localTemplateLogic.fetchTemplateItems(templateId);
         List<EvalTemplateItem> templateItemsList = TemplateItemUtils.getNonChildItems(itemList);
@@ -260,11 +264,11 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 
                 String categoryMessage = "unknown.caps";
                 if ( EvalConstants.ITEM_CATEGORY_COURSE.equals(templateItem.getItemCategory()) ) {
-                    categoryMessage = "modifyitem.course.category.header";
+                    categoryMessage = "modifyitem.course.category";
                 } else if ( EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(templateItem.getItemCategory()) ) {
-                    categoryMessage = "modifyitem.instructor.category.header";
+                    categoryMessage = "modifyitem.instructor.category";
                 } else if ( EvalConstants.ITEM_CATEGORY_ENVIRONMENT.equals(templateItem.getItemCategory()) ) {
-                    categoryMessage = "modifyitem.environment.category.header";
+                    categoryMessage = "modifyitem.environment.category";
                 }
                 UIMessage.make(itemBranch, "item-category", categoryMessage);
                 UIMessage.make(tofill, "item-category-title", "modifytemplate.item.category.title");
@@ -281,14 +285,14 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
                     UIInternalLink.make(itemBranch, "modify-row-item", UIMessage.make("modifytemplate.modify.link"), target);
                 } else {
                     // it is a non-block item
-                    String targetView = EvaluationConstant.classificationToView(templateItem.getItem().getClassification());
-                    ViewParameters target = new TemplateItemViewParameters(targetView, templateItem.getTemplate().getId(), templateItem.getId());
+                    ViewParameters target = new ItemViewParameters(ModifyItemProducer.VIEW_ID, 
+                          templateItem.getItem().getClassification(), templateId, templateItem.getId());
                     UIInternalLink.make(itemBranch, "modify-row-item", UIMessage.make("modifytemplate.modify.link"), target);
                 }
 
                 UIInternalLink.make(itemBranch,	"remove-row-item", 
                         UIMessage.make("modifytemplate.remove.link"),
-                        new ItemViewParameters(RemoveItemProducer.VIEW_ID, null, templateItem.getId(), templateId) );
+                        new ItemViewParameters(RemoveItemProducer.VIEW_ID, (Long)null, templateItem.getId(), templateId) );
 
 
                 // second line
