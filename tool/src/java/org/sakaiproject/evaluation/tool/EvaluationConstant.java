@@ -16,6 +16,13 @@
 package org.sakaiproject.evaluation.tool;
 
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
+import org.sakaiproject.evaluation.tool.producers.ExistingItemsProducer;
+import org.sakaiproject.evaluation.tool.producers.ExpertCategoryProducer;
+import org.sakaiproject.evaluation.tool.producers.ModifyItemProducer;
+import org.sakaiproject.evaluation.tool.viewparams.ItemViewParameters;
+import org.sakaiproject.evaluation.tool.viewparams.TemplateItemViewParameters;
+
+import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /**
  * This class holds the tool constants only, application data constants come from
@@ -207,15 +214,20 @@ public class EvaluationConstant {
 
    public static final String[] ITEM_CLASSIFICATION_VALUES = new String[] {
       EvalConstants.ITEM_TYPE_SCALED,
+      EvalConstants.ITEM_TYPE_MULTIPLECHOICE,
+      EvalConstants.ITEM_TYPE_MULTIPLEANSWER,
       EvalConstants.ITEM_TYPE_TEXT,
       EvalConstants.ITEM_TYPE_HEADER
    };
 
    public static final String[] ITEM_CLASSIFICATION_LABELS_PROPS = new String[] {
       "item.classification.scaled", 
+      "item.classification.multichoice",
+      "item.classification.multianswer",
       "item.classification.text",
       "item.classification.header"
    };
+
    /**
     * values for item results sharing.
     */

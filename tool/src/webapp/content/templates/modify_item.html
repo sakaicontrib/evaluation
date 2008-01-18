@@ -7,8 +7,8 @@
 		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
 		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
 		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+        <script type="text/javascript" language="JavaScript" src="../js/scaleUtils.js"></script>
 		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
-
 	</head>
 	
 	<body>
@@ -75,6 +75,39 @@
 					<option value="10">3 pt - Speed scale (Too slow, Okay, Too fast)</option>
 				</select>
 			</div>
+
+            <div rsf:id="show-item-choices:" class="longtext">
+				<h4 rsf:id="msg=modifyitem.item.choices.header">Choices:</h4>
+				<div class="labelindnt">
+				    <div rsf:id="modify-scale-points:">
+				    <!-- start div for evolver widget - contents below are dummy -->
+				        <span id="myOldSpan">
+				            <span rsf:id="scaleOptions:" id="1">
+				                <input rsf:id="scale-option-label" type="text"/>
+				                &nbsp;
+				                <input rsf:id="scale-remove-option" type="button" value="Remove" onclick="javascript:removeOldElement(this)" />
+				                <br/>
+				            </span>
+				        </span>
+				
+				        <span id="myOldSpan">
+				            <span rsf:id="scaleOptions:" id="2">
+				                <input rsf:id="scale-option-label" type="text"/>
+				                &nbsp;
+				                <input rsf:id="scale-remove-option" type="button" value="Remove" onclick="javascript:removeOldElement(this)" class="removeItem"/>
+				                <br/>
+				            </span>
+				        </span>
+				
+				        <input rsf:id="scale-options-path" type="hidden" name="scale-options-path"/>
+				        <input rsf:id="scale-options-num" type="hidden" name="scale-options-num"/>
+				        <span id="myNewSpan"> </span>
+				
+				        <input rsf:id="scale-add-point" type="button" value="Add Scale Point" onclick="javascript:addScaleOption();" class="addItem" />  
+				    <!-- End div for evolver widget - contents above are dummy -->
+				    </div>
+				</div>
+            </div>
 
 			<div rsf:id="show-item-sharing:" class="longtext">
 				<label  rsf:id="item-sharing-header"class="block" for="show-item-sharing:::item-sharing-list-selection">Sharing:</label>

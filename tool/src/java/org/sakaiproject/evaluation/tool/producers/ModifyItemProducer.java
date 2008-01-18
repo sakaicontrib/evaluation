@@ -26,6 +26,7 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.locators.ItemBeanWBL;
+import org.sakaiproject.evaluation.tool.locators.ScaleBeanLocator;
 import org.sakaiproject.evaluation.tool.locators.TemplateItemWBL;
 import org.sakaiproject.evaluation.tool.renderers.HierarchyNodeSelectorRenderer;
 import org.sakaiproject.evaluation.tool.utils.ScaledUtils;
@@ -40,12 +41,14 @@ import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
+import uk.org.ponder.rsf.components.UIInputMany;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.UISelectLabel;
+import uk.org.ponder.rsf.evolvers.BoundedDynamicListInputEvolver;
 import uk.org.ponder.rsf.evolvers.TextInputEvolver;
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionResultInterceptor;
@@ -95,6 +98,11 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 		this.richTextEvolver = richTextEvolver;
 	}
 
+   private BoundedDynamicListInputEvolver boundedDynamicListInputEvolver;
+   public void setBoundedDynamicListInputEvolver(BoundedDynamicListInputEvolver boundedDynamicListInputEvolver) {
+      this.boundedDynamicListInputEvolver = boundedDynamicListInputEvolver;
+   }
+
    private HierarchyNodeSelectorRenderer hierarchyNodeSelectorRenderer;
    public void setHierarchyNodeSelectorRenderer(
          HierarchyNodeSelectorRenderer hierarchyNodeSelectorRenderer) {
@@ -130,6 +138,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 		String scaleDisplaySetting = null; // the scale display setting for the item/TI
 		String displayRows = null; // the number of rows to display for the text area
 		Boolean usesNA = null; // whether or not the item uses the N/A option
+		Long scaleId = null; // this holds the current scale id if there is one
 		
 		// now we validate the incoming view params
 		if (templateId == null && templateItemId != null) {
@@ -167,6 +176,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
          scaleDisplaySetting = item.getScaleDisplaySetting();
          displayRows = item.getDisplayRows() != null ? item.getDisplayRows().toString() : null;
          usesNA = item.getUsesNA();
+         scaleId = item.getScale() != null ? item.getScale().getId() : null;
 
          itemOwnerName = external.getUserDisplayName(item.getOwner());
          itemClassification = item.getClassification();
@@ -182,6 +192,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
          scaleDisplaySetting = templateItem.getScaleDisplaySetting();
          displayRows = templateItem.getDisplayRows() != null ? templateItem.getDisplayRows().toString() : null;
          usesNA = templateItem.getUsesNA();
+         scaleId = templateItem.getItem().getScale() != null ? templateItem.getItem().getScale().getId() : null;
 
          itemOwnerName = external.getUserDisplayName(templateItem.getItem().getOwner());
          itemClassification = templateItem.getItem().getClassification();
@@ -239,13 +250,16 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 		richTextEvolver.evolveTextInput( itemText );
 
 		if (EvalConstants.ITEM_TYPE_SCALED.equals(itemClassification)) {
+		   // SCALED items need to choose a scale
 			UIBranchContainer showItemScale = UIBranchContainer.make(form, "show-item-scale:");
 			UIMessage.make(showItemScale, "item-scale-header", "modifyitem.item.scale.header");
 			List<EvalScale> scales = scalesLogic.getScalesForUser(currentUserId, null);
+			String[] scaleValues = ScaledUtils.getScaleValues(scales);
 			UISelect scaleList = UISelect.make(showItemScale, "item-scale-list", 
-					ScaledUtils.getScaleValues(scales), 
+			      scaleValues, 
 					ScaledUtils.getScaleLabels(scales), 
-					itemOTP + "scale.id");
+					itemOTP + "scale.id",
+					scaleId != null ? scaleId.toString() : scaleValues[0]);
          scaleList.selection.mustapply = true; // this is required to ensure that the value gets passed even if it is not changed
 			scaleList.selection.darreshaper = new ELReference("#{id-defunnel}");
 
@@ -256,6 +270,20 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 					EvaluationConstant.SCALE_DISPLAY_SETTING_LABELS_PROPS, 
 					commonDisplayOTP + "scaleDisplaySetting",
 					scaleDisplaySetting).setMessageKeys();
+		} else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(itemClassification) ||
+		      EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemClassification) ) {
+		   // MC/MA items need to create choices
+		   String scaleOTP = itemOTP + "scale." + ScaleBeanLocator.NEW_1 + ".";
+         UIBranchContainer showItemChoices = UIBranchContainer.make(form, "show-item-choices:");
+         boundedDynamicListInputEvolver.setLabels(
+               UIMessage.make("scaleaddmodify.remove.scale.option.button"), 
+               UIMessage.make("scaleaddmodify.add.scale.option.button"));
+         boundedDynamicListInputEvolver.setMinimumLength(2);
+         boundedDynamicListInputEvolver.setMaximumLength(20);
+
+         UIInputMany modifypoints = UIInputMany.make(showItemChoices, 
+               "modify-scale-points:", scaleOTP + "options");
+         boundedDynamicListInputEvolver.evolve(modifypoints);
 		}
 
 		if (userAdmin && templateId == null) {
