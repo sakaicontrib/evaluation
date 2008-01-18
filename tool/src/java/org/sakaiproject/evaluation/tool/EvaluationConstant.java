@@ -15,9 +15,6 @@
 
 package org.sakaiproject.evaluation.tool;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 /**
@@ -52,7 +49,8 @@ public class EvaluationConstant {
    public static String[] STEPPED_IMAGE_URLS = new String[] {
       "$context/content/images/corner.gif",
       "$context/content/images/down-line.gif",
-   "$context/content/images/down-arrow.gif" };
+      "$context/content/images/down-arrow.gif" 
+   };
 
    //For preview_item.html
    public static String[] COLORED_IMAGE_URLS = new String[] {
@@ -60,7 +58,8 @@ public class EvaluationConstant {
       "$context/content/images/ideal-low.jpg",
       "$context/content/images/ideal-mid.jpg",
       "$context/content/images/ideal-high.jpg",
-   "$context/content/images/ideal-outside.jpg"};
+      "$context/content/images/ideal-outside.jpg"
+   };
 
    // should match the images
    public static String BLUE_COLOR = "#d7ebf6";
@@ -177,11 +176,18 @@ public class EvaluationConstant {
     */
    public static final String NA_VALUE = "-1";
 
+
+   // TODO - this is needed to pretend to be null until RSF is fixed up in 0.7.3 (related change below)
+   /**
+    * This fills in for the real null since real null cannot be passed around
+    */
+   public static final String NULL = "*NULL*";
+
    /**
     * Ideal scale values radio buttons (scale add/modify)
     */
    public static final String[] scaleIdealValues = { 
-      EvalConstants.SCALE_IDEAL_NONE, 
+      NULL, // EvalConstants.SCALE_IDEAL_NONE, TODO - undo this when RSF 0.7.3
       EvalConstants.SCALE_IDEAL_LOW, 
       EvalConstants.SCALE_IDEAL_HIGH,
       EvalConstants.SCALE_IDEAL_MID,
