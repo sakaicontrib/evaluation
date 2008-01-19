@@ -29,9 +29,8 @@
 				unique="true" />
 		</property>
 		<!-- type indicates the usage of this scale (scale, adhoc, etc.) -->
-		<property name="mode" type="java.lang.String"
-			index="eval_scale_mode">
-			<column name="MODE" not-null="true" length="255" />
+		<property name="mode" type="java.lang.String" index="eval_scale_mode">
+			<column name="SCALE_MODE" not-null="true" length="255" />
 		</property>
 		<!-- sharing setting for this item (private, public, etc...) -->
 		<property name="sharing" type="java.lang.String"
@@ -54,7 +53,7 @@
 		<!-- this holds the scale options for this scale, this must not be null (enforced in code) -->
 		<array name="options" table="EVAL_SCALE_OPTIONS"
 			cascade="all">
-<!-- all-delete-orphan -->
+                <!-- all-delete-orphan -->
 			<key column="ID" not-null="true" />
 			<list-index column="SCALE_OPTION_INDEX" />
 			<element type="string" column="SCALE_OPTION"
