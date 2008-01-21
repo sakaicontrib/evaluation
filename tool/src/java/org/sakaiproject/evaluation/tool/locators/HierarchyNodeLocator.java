@@ -1,11 +1,26 @@
+/**
+ * HierarchyNodeLocator.java - evaluation - Oct 29, 2007 11:35:56 AM - sgithens
+ * $URL$
+ * $Id$
+ **************************************************************************
+ * Copyright (c) 2007 Centre for Academic Research in Educational Technologies
+ * Licensed under the Educational Community License version 1.0
+ * 
+ * A copy of the Educational Community License has been included in this 
+ * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ */
+
 package org.sakaiproject.evaluation.tool.locators;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
-import java.util.Iterator;
+
 import uk.org.ponder.beanutil.WriteableBeanLocator;
 
 /*
@@ -26,7 +41,8 @@ import uk.org.ponder.beanutil.WriteableBeanLocator;
  *   HierarchyNodeLocator.NEW-34.title
  */
 public class HierarchyNodeLocator implements WriteableBeanLocator {
-    public static final String NEW_PREFIX = "new-";
+   public static final String NEW_PREFIX = "new";
+   public static String NEW_1 = NEW_PREFIX +"1";
     
     private EvalExternalLogic external;
     public void setExternal(EvalExternalLogic external) {

@@ -1,16 +1,16 @@
-/******************************************************************************
- * SettingsWBL.java - created by antranig@caret.cam.ac.uk
- * 
- * Copyright (c) 2007 Virginia Polytechnic Institute and State University
+/**
+ * SettingsWBL.java - evaluation - 2008 Oct 21, 2007 11:35:56 AM - antranig
+ * $URL: https://source.sakaiproject.org/contrib $
+ * $Id: Locator.java 11234 2008 Jan 21, 2008 11:35:56 AM azeckoski $
+ **************************************************************************
+ * Copyright (c) 2007 Centre for Academic Research in Educational Technologies
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
- * 
- * Contributors:
- * Antranig Basman (antranig@caret.cam.ac.uk)
- * Kapil Ahuja (kahuja@vt.edu)
- *****************************************************************************/
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ */
 
 package org.sakaiproject.evaluation.tool.locators;
 
@@ -30,6 +30,8 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * @author Kapil Ahuja (kahuja@caret.cam.ac.uk)
  */
 public class SettingsWBL implements WriteableBeanLocator {
+   public static final String NEW_PREFIX = "new";
+   public static String NEW_1 = NEW_PREFIX +"1";
 	
 	// Spring injection 
 	private EvalSettings evalSettings;
@@ -86,7 +88,7 @@ public class SettingsWBL implements WriteableBeanLocator {
 			 *  This is primarily to catch Integers and Strings. 
 			 */
 			if (toset instanceof String) {
-				Class proptype = getPropertyType(beanname);
+				Class<?> proptype = getPropertyType(beanname);
 				toset = leafParser.parse(proptype, (String) toset);
 			}
 		}
@@ -124,11 +126,10 @@ public class SettingsWBL implements WriteableBeanLocator {
 		return toget;
 	}
 	
-	/*
-	 * (non-javadoc)
-	 * Uses java.lang.Class to find the class for a given property. 
+	/**
+	 * Uses {@link Class} to find the class for a given property. 
 	 */
-	private static Class getPropertyType(String propname) {
+	private static Class<?> getPropertyType(String propname) {
 		String typename = SettingsLogicUtils.getType(propname);
 		try {
 			return Class.forName(typename);
@@ -138,8 +139,7 @@ public class SettingsWBL implements WriteableBeanLocator {
 		}
 	}
 	
-	/*
-	 * (non-javadoc)
+	/**
 	 * Removing duplication of code in "get" and "set" methods 
 	 * by moving "if" block in this method. 
 	 */
