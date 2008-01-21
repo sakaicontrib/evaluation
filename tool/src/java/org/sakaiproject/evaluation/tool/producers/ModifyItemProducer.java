@@ -266,13 +266,9 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
          scaleList.selection.mustapply = true; // this is required to ensure that the value gets passed even if it is not changed
 			scaleList.selection.darreshaper = new ELReference("#{id-defunnel}");
 
-			UIBranchContainer showScaleDisplay = UIBranchContainer.make(form, "show-scale-display:");
-			UIMessage.make(showScaleDisplay, "scale-display-header", "modifyitem.scale.display.header");
-			UISelect.make(showScaleDisplay, "scale-display-list", 
-					EvaluationConstant.SCALE_DISPLAY_SETTING_VALUES, 
-					EvaluationConstant.SCALE_DISPLAY_SETTING_LABELS_PROPS, 
-					commonDisplayOTP + "scaleDisplaySetting",
-					scaleDisplaySetting).setMessageKeys();
+			renderScaleDisplaySelect(form, commonDisplayOTP, scaleDisplaySetting, 
+			      EvaluationConstant.SCALE_DISPLAY_SETTING_VALUES, 
+			      EvaluationConstant.SCALE_DISPLAY_SETTING_LABELS_PROPS);
 		} else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(itemClassification) ||
 		      EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemClassification) ) {
 		   // MC/MA items need to create choices
@@ -288,6 +284,10 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
                "modify-scale-points:", scaleOTP + "options",
                EvaluationConstant.defaultInitialScaleValues);
          boundedDynamicListInputEvolver.evolve(modifypoints);
+
+         renderScaleDisplaySelect(form, commonDisplayOTP, scaleDisplaySetting, 
+               EvaluationConstant.CHOICES_DISPLAY_SETTING_VALUES, 
+               EvaluationConstant.CHOICES_DISPLAY_SETTING_LABELS_PROPS);
 		}
 
 		if (userAdmin && templateId == null) {
@@ -419,6 +419,23 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
                UIMessage.make("modifyitem.save.button"), "#{templateBBean.saveBothAction}");		   
 		}
 	}
+
+
+	/**
+    * @param form
+    * @param commonDisplayOTP
+    * @param scaleDisplaySetting
+    * @param values
+    * @param lables
+    */
+   private void renderScaleDisplaySelect(UIForm form, String commonDisplayOTP,
+         String scaleDisplaySetting, String[] values, String[] lables) {
+      UIBranchContainer showScaleDisplay = UIBranchContainer.make(form, "show-scale-display:");
+      UIMessage.make(showScaleDisplay, "scale-display-header", "modifyitem.scale.display.header");
+      UISelect.make(showScaleDisplay, "scale-display-list", 
+      		values, lables, commonDisplayOTP + "scaleDisplaySetting",
+      		scaleDisplaySetting).setMessageKeys();
+   }
 
    /* (non-Javadoc)
     * @see uk.org.ponder.rsf.flow.ActionResultInterceptor#interceptActionResult(uk.org.ponder.rsf.flow.ARIResult, uk.org.ponder.rsf.viewstate.ViewParameters, java.lang.Object)

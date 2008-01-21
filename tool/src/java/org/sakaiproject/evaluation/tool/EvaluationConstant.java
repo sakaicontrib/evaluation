@@ -91,6 +91,20 @@ public class EvaluationConstant {
       "templateitem.scale.select.vertical"
    };
 
+
+   // For pulldowns which show the multiple choices display settings
+   public static String[] CHOICES_DISPLAY_SETTING_VALUES = new String[]{
+      EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL,
+      EvalConstants.ITEM_SCALE_DISPLAY_FULL
+   };
+
+   // should match the order of the array above, should include the properties strings only (no real labels)
+   public static String[] CHOICES_DISPLAY_SETTING_LABELS_PROPS = new String[] {
+      "templateitem.scale.select.vertical",
+      "templateitem.scale.select.full"
+   };
+
+
    public static String[] ITEM_CATEGORY_VALUES = new String[] {
       EvalConstants.ITEM_CATEGORY_COURSE,
       EvalConstants.ITEM_CATEGORY_INSTRUCTOR
