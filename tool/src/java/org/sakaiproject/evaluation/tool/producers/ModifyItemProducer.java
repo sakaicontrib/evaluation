@@ -254,6 +254,9 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 			UIBranchContainer showItemScale = UIBranchContainer.make(form, "show-item-scale:");
 			UIMessage.make(showItemScale, "item-scale-header", "modifyitem.item.scale.header");
 			List<EvalScale> scales = scalesLogic.getScalesForUser(currentUserId, null);
+			if (scales.isEmpty()) {
+			   throw new IllegalStateException("There are no scales available in the system for creating scaled items, please create at least one scale");
+			}
 			String[] scaleValues = ScaledUtils.getScaleValues(scales);
 			UISelect scaleList = UISelect.make(showItemScale, "item-scale-list", 
 			      scaleValues, 
