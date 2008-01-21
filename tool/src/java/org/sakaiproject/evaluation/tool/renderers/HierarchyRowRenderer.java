@@ -1,9 +1,8 @@
 package org.sakaiproject.evaluation.tool.renderers;
 
-import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
+
 import uk.org.ponder.arrayutil.MapUtil;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -15,17 +14,7 @@ import uk.org.ponder.rsf.components.decorators.UIFreeAttributeDecorator;
  * Render a specific row in the Hierarchy.
  */
 public class HierarchyRowRenderer {
-    
-    private ExternalHierarchyLogic hierarchyLogic;
-    public void setExternalHierarchyLogic(ExternalHierarchyLogic logic) {
-       this.hierarchyLogic = logic;
-    }
-    
-    private EvalExternalLogic externalLogic;
-    public void setExternalLogic(EvalExternalLogic externalLogic) {
-       this.externalLogic = externalLogic;
-    }
-    
+
     public void renderRow(UIContainer parent, String clientID, int level, Object toRender) {
         UIBranchContainer tableRow = UIBranchContainer.make(parent, "hierarchy-level-row:");
         

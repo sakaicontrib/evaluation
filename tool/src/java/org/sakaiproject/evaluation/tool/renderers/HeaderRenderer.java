@@ -1,16 +1,16 @@
-/******************************************************************************
- * HeaderRenderer.java - created by aaronz@vt.edu
- * 
- * Copyright (c) 2007 Virginia Polytechnic Institute and State University
+/**
+ * HeaderRenderer.java - evaluation - Oct 29, 2007 2:59:12 PM - azeckoski
+ * $URL: https://source.sakaiproject.org/contrib $
+ * $Id: MultipleChoice.java 1000 Jan 21, 2008 2:59:12 PM azeckoski $
+ **************************************************************************
+ * Copyright (c) 2008 Centre for Academic Research in Educational Technologies
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
- * 
- * Contributors:
- * Aaron Zeckoski (aaronz@vt.edu) - primary
- * 
- *****************************************************************************/
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ */
 
 package org.sakaiproject.evaluation.tool.renderers;
 

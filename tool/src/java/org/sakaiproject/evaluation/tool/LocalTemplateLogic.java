@@ -247,7 +247,7 @@ public class LocalTemplateLogic {
       EvalScale currScale = new EvalScale(new Date(), 
             external.getCurrentUserId(), null, 
             EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PRIVATE, Boolean.FALSE);
-      currScale.setOptions(new String[]{"", ""});
+      currScale.setOptions(EvaluationConstant.defaultInitialScaleValues);
       currScale.setIdeal(EvaluationConstant.NULL); // TODO - temp until RSF 0.7.3
       return currScale;
    }

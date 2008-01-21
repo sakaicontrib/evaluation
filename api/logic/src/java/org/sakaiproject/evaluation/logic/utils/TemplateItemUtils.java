@@ -43,6 +43,10 @@ public class TemplateItemUtils {
          return EvalConstants.ITEM_TYPE_TEXT;
       } else if (EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(templateItem.getItem().getClassification())) {
          return EvalConstants.ITEM_TYPE_BLOCK_PARENT;
+      } else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(templateItem.getItem().getClassification())) {
+         return EvalConstants.ITEM_TYPE_MULTIPLECHOICE;
+      } else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(templateItem.getItem().getClassification())) {
+         return EvalConstants.ITEM_TYPE_MULTIPLEANSWER;
       } else if (EvalConstants.ITEM_TYPE_SCALED.equals(templateItem.getItem().getClassification())) {
          // scaled has a special case where it might be a block so check for this and handle it correctly
          if (templateItem.getBlockParent() != null) {
@@ -272,6 +276,13 @@ public class TemplateItemUtils {
          } else {
             templateItem.setScaleDisplaySetting(item.getScaleDisplaySetting());
          }
+      } else if ( EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(item.getClassification()) ||
+            EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(item.getClassification()) ) {
+         if (item.getScaleDisplaySetting() == null) {
+            templateItem.setScaleDisplaySetting(EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL);
+         } else {
+            templateItem.setScaleDisplaySetting(item.getScaleDisplaySetting());
+         }         
       } else if ( EvalConstants.ITEM_TYPE_TEXT.equals(item.getClassification()) ) {
          if (item.getDisplayRows() == null) {
             templateItem.setDisplayRows(new Integer(3));
