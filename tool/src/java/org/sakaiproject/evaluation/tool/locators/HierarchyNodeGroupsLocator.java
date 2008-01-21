@@ -50,16 +50,16 @@ public class HierarchyNodeGroupsLocator implements BeanLocator {
        this.hierarchyLogic = hierarchyLogic;
     }
     
-    public Map delivered = new HashMap(); 
+    public Map<String, Map<String, Boolean>> delivered = new HashMap<String, Map<String, Boolean>>(); 
     
     public Object locateBean(String name) {
         checkSecurity();
         
-        Object togo = delivered.get(name);
+        Map<String, Boolean> togo = delivered.get(name);
         if (togo == null) {
             List<EvalGroup> evalGroups = external.getEvalGroupsForUser("admin", EvalConstants.PERM_BE_EVALUATED);
             Set<String> assignedGroupIds = hierarchyLogic.getEvalGroupsForNode(name);
-            Map assignedGroups = new HashMap();
+            Map<String, Boolean> assignedGroups = new HashMap<String, Boolean>();
             for (EvalGroup group: evalGroups) {
                 if (assignedGroupIds.contains(group.evalGroupId)) {
                     assignedGroups.put(group.evalGroupId, new Boolean(true));
