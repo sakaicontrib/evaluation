@@ -16,13 +16,6 @@
 package org.sakaiproject.evaluation.tool;
 
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
-import org.sakaiproject.evaluation.tool.producers.ExistingItemsProducer;
-import org.sakaiproject.evaluation.tool.producers.ExpertCategoryProducer;
-import org.sakaiproject.evaluation.tool.producers.ModifyItemProducer;
-import org.sakaiproject.evaluation.tool.viewparams.ItemViewParameters;
-import org.sakaiproject.evaluation.tool.viewparams.TemplateItemViewParameters;
-
-import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /**
  * This class holds the tool constants only, application data constants come from
@@ -211,6 +204,11 @@ public class EvaluationConstant {
       "scalecontrol.ideal.scale.option.label.mid",
       "scalecontrol.ideal.scale.option.label.outside" 
    };
+
+   /**
+    * The initial values for the options of a scale which is being created
+    */
+   public static final String[] defaultInitialScaleValues = new String[] {"",""};
 
    public static final String[] ITEM_CLASSIFICATION_VALUES = new String[] {
       EvalConstants.ITEM_TYPE_SCALED,

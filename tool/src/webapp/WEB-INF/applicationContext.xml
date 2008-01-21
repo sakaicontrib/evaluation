@@ -125,12 +125,9 @@
 		init-method="init">
 		<property name="renderTypes">
 			<list>
-				<bean class="org.sakaiproject.evaluation.tool.renderers.HeaderRenderer">
-				</bean>
-				<bean class="org.sakaiproject.evaluation.tool.renderers.TextRenderer">
-				</bean>
-				<bean class="org.sakaiproject.evaluation.tool.renderers.ScaledRenderer">
-				</bean>
+				<bean class="org.sakaiproject.evaluation.tool.renderers.HeaderRenderer" />
+				<bean class="org.sakaiproject.evaluation.tool.renderers.TextRenderer" />
+				<bean class="org.sakaiproject.evaluation.tool.renderers.ScaledRenderer" />
 				<bean class="org.sakaiproject.evaluation.tool.renderers.BlockRenderer">
 					<property name="itemsLogic"
 						ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
@@ -164,8 +161,9 @@
 		parent="templateContributorParent">
 		<property name="baseDirectory" value="component-templates/" />
 		<property name="templateNames"
-			value="render_header_item, render_text_item, render_scaled_item, render_block_item, render_add_item_control, 
-               hierarchy_controls, render_hierarchy_node_selector" />
+			value="render_header_item, render_text_item, render_scaled_item, render_block_item, 
+			     render_multiplechoice_item, render_multipleanswer_item,
+			     render_add_item_control, hierarchy_controls, render_hierarchy_node_selector" />
 		<property name="expected" value="true" />
 	</bean>
 
