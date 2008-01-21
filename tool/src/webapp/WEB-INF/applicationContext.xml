@@ -128,6 +128,8 @@
 				<bean class="org.sakaiproject.evaluation.tool.renderers.HeaderRenderer" />
 				<bean class="org.sakaiproject.evaluation.tool.renderers.TextRenderer" />
 				<bean class="org.sakaiproject.evaluation.tool.renderers.ScaledRenderer" />
+                <bean class="org.sakaiproject.evaluation.tool.renderers.MultipleChoiceRenderer" />
+                <bean class="org.sakaiproject.evaluation.tool.renderers.MultipleAnswerRenderer" />
 				<bean class="org.sakaiproject.evaluation.tool.renderers.BlockRenderer">
 					<property name="itemsLogic"
 						ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />

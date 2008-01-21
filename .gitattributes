@@ -210,6 +210,8 @@ tool/src/java/org/sakaiproject/evaluation/tool/renderers/HierarchyNodeSelectorRe
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/HierarchyRowRenderer.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/ItemRenderer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/ItemRendererImpl.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/renderers/MultipleAnswerRenderer.java svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/renderers/MultipleChoiceRenderer.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/ScaledRenderer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/TextRenderer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/utils/HierarchyRenderUtil.java svn_keywords=Date+Revision+Author+HeadURL+Id
@@ -245,6 +247,8 @@ tool/src/webapp/component-templates/render_add_item_control.html -text
 tool/src/webapp/component-templates/render_block_item.html -text
 tool/src/webapp/component-templates/render_header_item.html -text
 tool/src/webapp/component-templates/render_hierarchy_node_selector.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/webapp/component-templates/render_multipleanswer_item.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/webapp/component-templates/render_multiplechoice_item.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/component-templates/render_scaled_item.html -text
 tool/src/webapp/component-templates/render_text_item.html -text
 tool/src/webapp/content/css/evaluation_base.css -text
