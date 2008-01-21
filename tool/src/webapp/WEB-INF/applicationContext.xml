@@ -185,4 +185,28 @@
 
 	<bean class="org.sakaiproject.evaluation.tool.inferrers.EvalCategoryVPInferrer" />
 
+	<!-- Reporting Utilities -->
+	<bean id="CSVReportExporter" class="org.sakaiproject.evaluation.tool.reporting.CSVReportExporter">
+		<property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+		<property name="response" ref="httpServletResponseProxy" />
+	</bean>
+	
+	<bean id="XLSReportExporter" class="org.sakaiproject.evaluation.tool.reporting.XLSReportExporter">
+		<property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+		<property name="evalsLogic" ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+		<property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+		<property name="response" ref="httpServletResponseProxy" />
+		<property name="responsesLogic" ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
+		<!-- <property name="externalEvalGroups" ref="" /> -->
+	</bean>
+	
+	<bean id="PDFReportExporter" class="org.sakaiproject.evaluation.tool.reporting.PDFReportExporter">
+		<property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+		<property name="response" ref="httpServletResponseProxy" />
+		<property name="contentHostingService" ref="org.sakaiproject.content.api.ContentHostingService" />
+		<property name="userDirectoryService" ref="org.sakaiproject.user.api.UserDirectoryService" />
+		<property name="responsesLogic" ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
+		<property name="evalsLogic" ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+		<property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+	</bean>
 </beans>

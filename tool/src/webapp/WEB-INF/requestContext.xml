@@ -112,19 +112,18 @@
          ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
    </bean>
 
-   <bean id="reportHandlerHook"
-      class="org.sakaiproject.evaluation.tool.ReportHandlerHook">
+   <bean id="reportHandlerHook" class="org.sakaiproject.evaluation.tool.ReportHandlerHook">
       <property name="viewparams" ref="viewParameters" />
-      <property name="response" ref="httpServletResponse" />
       <property name="itemsLogic"
          ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
       <property name="evalsLogic"
          ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
       <property name="responsesLogic"
          ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
-      <property name="externalLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-   <!--    <property name="evalGroupsProvider"
+      <property name="csvReportExporter" ref="CSVReportExporter" />
+      <property name="xlsReportExporter" ref="XLSReportExporter" />
+      <property name="pdfReportExporter" ref="PDFReportExporter" />
+         <!--    <property name="evalGroupsProvider"
          ref="" />  -->
    </bean>
 
@@ -499,6 +498,7 @@
       <property name="responsesLogic"
          ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
       <property name="reportsBean" ref="reportsBean" />
+      <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
    </bean>
 
    <bean
@@ -640,6 +640,10 @@
       class="org.sakaiproject.evaluation.tool.producers.AdminTestEGProviderProducer">
       <property name="external"
          ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+   </bean>
+   
+   <bean class="org.sakaiproject.evaluation.tool.producers.AdministrateReportingProducer">
+     <property name="external" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
    </bean>
 
 </beans>

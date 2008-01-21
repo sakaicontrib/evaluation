@@ -62,7 +62,7 @@ public class ControlHierarchyProducer implements ViewComponentProducer {
             new SimpleViewParameters(SummaryProducer.VIEW_ID));
       UIInternalLink.make(tofill, "administrate-toplink", UIMessage.make("administrate.page.title"),
             new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-      UIMessage.make(tofill, "page-title", "controlhierarchy.breadcrumb.title");
+      UIMessage.make(tofill, "page-title", "controlreporting.breadcrumb.title");
    }
 
 

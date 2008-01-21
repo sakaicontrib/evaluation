@@ -24,6 +24,7 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.model.EvalAnswer;
@@ -101,6 +102,11 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
         this.reportsBean = reportsBean;
     }
 
+    private EvalSettings evalSettings;
+    public void setEvalSettings(EvalSettings evalSettings) {
+        this.evalSettings = evalSettings;
+    }
+
     int displayNumber = 1;
 
     String[] groupIds;
@@ -155,13 +161,24 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
 
                 UIInternalLink.make(tofill, "fullEssayResponse", UIMessage.make("viewreport.view.essays"), new EssayResponseParams(
                         ReportsViewEssaysProducer.VIEW_ID, reportViewParams.evaluationId, groupIds));
-                UIInternalLink.make(tofill, "csvResultsReport", UIMessage.make("viewreport.view.csv"), new CSVReportViewParams(
+                
+                Boolean allowCSVExport = (Boolean) evalSettings.get(EvalSettings.ENABLE_CSV_REPORT_EXPORT);
+                if (allowCSVExport != null && allowCSVExport == true) {
+                    UIInternalLink.make(tofill, "csvResultsReport", UIMessage.make("viewreport.view.csv"), new CSVReportViewParams(
                         "csvResultsReport", template.getId(), reportViewParams.evaluationId, groupIds));
-                UIInternalLink.make(tofill, "xlsResultsReport", UIMessage.make("viewreport.view.xls"), new ExcelReportViewParams(
+                }
+                
+                Boolean allowXLSExport = (Boolean) evalSettings.get(EvalSettings.ENABLE_XLS_REPORT_EXPORT);
+                if (allowXLSExport != null && allowXLSExport == true) {
+                    UIInternalLink.make(tofill, "xlsResultsReport", UIMessage.make("viewreport.view.xls"), new ExcelReportViewParams(
                         "xlsResultsReport", template.getId(), reportViewParams.evaluationId, groupIds));
-                UIInternalLink.make(tofill, "pdfResultsReport", UIMessage.make("viewreport.view.pdf"), new PDFReportViewParams(
+                }
+                
+                Boolean allowPDFExport = (Boolean) evalSettings.get(EvalSettings.ENABLE_PDF_REPORT_EXPORT);
+                if (allowPDFExport != null && allowPDFExport == true) {
+                    UIInternalLink.make(tofill, "pdfResultsReport", UIMessage.make("viewreport.view.pdf"), new PDFReportViewParams(
                         "pdfResultsReport", template.getId(), reportViewParams.evaluationId, groupIds));
-
+                }
                 // filter out items that cannot be answered (header, etc.)
                 List answerableItemsList = TemplateItemUtils.getAnswerableTemplateItems(allTemplateItems);
 

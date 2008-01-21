@@ -28,18 +28,20 @@
 			<groupId>org.sakaiproject</groupId>
 			<artifactId>sakai-evaluation-model-api</artifactId>
 			<version>${sakai.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.sakaiproject</groupId>
 			<artifactId>sakai-evaluation-logic-api</artifactId>
 			<version>${sakai.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<!-- Servlet dependency -->
 		<dependency>
 			<groupId>servletapi</groupId>
 			<artifactId>servletapi</artifactId>
 			<version>${sakai.servletapi.version}</version>
-			<type>jar</type>
+			<scope>provided</scope>
 		</dependency>
 		<!-- Sakai dependencies -->
 		<dependency>
@@ -67,6 +69,7 @@
 			<groupId>org.sakaiproject.entitybroker</groupId>
 			<artifactId>entitybroker-api</artifactId>
 			<version>1.2.0</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.sakaiproject</groupId>
@@ -107,6 +110,7 @@
 			<groupId>org.sakaiproject</groupId>
 			<artifactId>generic-dao</artifactId>
 			<version>${sakai.generic-dao.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<!-- Hibernate dependency -->
 		<dependency>
