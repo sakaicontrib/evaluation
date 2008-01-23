@@ -228,6 +228,7 @@ public class EvalConstants {
 	 */
 	public static final String ITEM_TYPE_BLOCK_CHILD = "BlockChild";
 
+
 	/**
 	 * Item category (itemCategory) setting:
 	 * This item is in the course category and will be listed like 
@@ -238,16 +239,19 @@ public class EvalConstants {
 	 * Item category (itemCategory) setting:
 	 * This item is in the instructor category and will be repeated
 	 * for each user who can be evaluated in the evaluation group when the 
-	 * evaluation is rendered for the takers
+	 * evaluation is rendered for the takers, the user id of the instructor
+	 * should be bound to associated answers
 	 */
 	public static final String ITEM_CATEGORY_INSTRUCTOR = "Instructor";
 	/**
 	 * Item category (itemCategory) setting:
 	 * This item is in the environment category and will be repeated
 	 * for each environemnt setup for the evaluation group when the 
-	 * evaluation is rendered for the takers
+	 * evaluation is rendered for the takers, a unique id for that
+	 * environment should be bound to associated answers
 	 */
 	public static final String ITEM_CATEGORY_ENVIRONMENT = "Environment";
+
 
 	/**
 	 * Item scale display (scaleDisplaySetting) setting:

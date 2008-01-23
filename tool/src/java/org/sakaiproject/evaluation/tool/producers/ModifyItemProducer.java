@@ -26,7 +26,6 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.locators.ItemBeanWBL;
-import org.sakaiproject.evaluation.tool.locators.ScaleBeanLocator;
 import org.sakaiproject.evaluation.tool.locators.TemplateItemWBL;
 import org.sakaiproject.evaluation.tool.renderers.HierarchyNodeSelectorRenderer;
 import org.sakaiproject.evaluation.tool.utils.ScaledUtils;

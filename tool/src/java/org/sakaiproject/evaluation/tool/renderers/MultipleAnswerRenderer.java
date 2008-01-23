@@ -50,8 +50,13 @@ public class MultipleAnswerRenderer implements ItemRenderer {
 		if (displayNumber <= 0) displayNumber = 0;
       Boolean initValue = null;
       if (bindings[0] == null) initValue = Boolean.FALSE;
+
+      String naBinding = null;
+      if (bindings.length > 1) {
+         naBinding = bindings[1];
+      }
       Boolean naInit = null;
-      if (bindings[1] == null) naInit = Boolean.FALSE;
+      if (naBinding == null) naInit = Boolean.FALSE;
 
 		EvalScale scale = templateItem.getItem().getScale();
 		String[] scaleOptions = scale.getOptions();
@@ -96,7 +101,7 @@ public class MultipleAnswerRenderer implements ItemRenderer {
 			if (usesNA) {
 				UIBranchContainer branchNA = UIBranchContainer.make(container, "showNA:");
 				branchNA.decorators = new DecoratorList( new UIStyleDecorator("na") );// must match the existing CSS class
-            UIBoundBoolean checkbox = UIBoundBoolean.make(branchNA, "itemNA", bindings[1], naInit);
+            UIBoundBoolean checkbox = UIBoundBoolean.make(branchNA, "itemNA", naBinding, naInit);
             UILabelTargetDecorator.targetLabel(UIMessage.make(branchNA, "na-desc", "viewitem.na.desc"), checkbox);
 			}
 
