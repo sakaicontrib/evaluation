@@ -94,13 +94,15 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
       item.setLastModified( new Date() );
 
       // check on ITEM_TYPE and invalid combinations of item values depending on the type
-      if ( EvalConstants.ITEM_TYPE_SCALED.equals(item.getClassification()) ) {
+      if ( EvalConstants.ITEM_TYPE_SCALED.equals(item.getClassification()) ||
+            EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(item.getClassification()) ||
+            EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(item.getClassification()) ) {
          if (item.getScale() == null) {
-            throw new IllegalArgumentException("Item scale must be specified for scaled type items");
+            throw new IllegalArgumentException("Item scale must be specified for scaled/multiple type items");
          } else if (item.getScaleDisplaySetting() == null) {
-            throw new IllegalArgumentException("Item scale display setting must be specified for scaled type items");
+            throw new IllegalArgumentException("Item scale display setting must be specified for scaled/multiple type items");
          } else if (item.getDisplayRows() != null) {
-            throw new IllegalArgumentException("Item displayRows cannot be included for scaled type items");
+            throw new IllegalArgumentException("Item displayRows cannot be included for scaled/multiple type items");
          }
       } else if ( EvalConstants.ITEM_TYPE_TEXT.equals(item.getClassification()) ) {
          if (item.getDisplayRows() == null) {
@@ -208,13 +210,20 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 
       if (checkUserControlItem(userId, item)) {
          EvalScale scale = item.getScale();
+         String itemClassification = item.getClassification();
          dao.delete(item);
          log.info("User ("+userId+") removed item ("+item.getId()+"), title: " + item.getItemText());
 
+         // unlock associated scales if there were any
          if (item.getLocked().booleanValue() && scale != null) {
-            // unlock associated scales
             log.info("Unlocking associated scale ("+scale.getTitle()+") for removed item ("+itemId+")");
             dao.lockScale( scale, Boolean.FALSE );
+         }
+
+         // now we remove the scale if this is MC or MA
+         if ( EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemClassification) ||
+               EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(itemClassification) ) {
+            dao.delete(scale);
          }
 
          return;

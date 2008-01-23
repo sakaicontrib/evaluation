@@ -114,28 +114,28 @@ public class LocalTemplateLogic {
 
    /**
     * Saves the templateItem (does not save the associated item)
-    * @param tosave
+    * @param templateItem
     */
-   public void saveTemplateItem(EvalTemplateItem tosave) {
+   public void saveTemplateItem(EvalTemplateItem templateItem) {
       /* This is a temporary hack that is only good while we are only using TOP LEVEL and NODE LEVEL.
        * Basically, we're putting everything in one combo box and this is a good way to check to see if
        * it's the top node.  Otherwise the user selected a node id so it must be at the NODE LEVEL since
        * we don't support the other levels yet.
        */
-      if (tosave.getHierarchyNodeId() != null && !tosave.getHierarchyNodeId().equals("")
-            && !tosave.getHierarchyNodeId().equals(EvalConstants.HIERARCHY_NODE_ID_NONE)) {
-         tosave.setHierarchyLevel(EvalConstants.HIERARCHY_LEVEL_NODE);
+      if (templateItem.getHierarchyNodeId() != null && !templateItem.getHierarchyNodeId().equals("")
+            && !templateItem.getHierarchyNodeId().equals(EvalConstants.HIERARCHY_NODE_ID_NONE)) {
+         templateItem.setHierarchyLevel(EvalConstants.HIERARCHY_LEVEL_NODE);
       }
-      else if (tosave.getHierarchyNodeId() != null && !tosave.getHierarchyNodeId().equals("")
-            && tosave.getHierarchyNodeId().equals(EvalConstants.HIERARCHY_NODE_ID_NONE)) {
-         tosave.setHierarchyLevel(EvalConstants.HIERARCHY_LEVEL_TOP);
+      else if (templateItem.getHierarchyNodeId() != null && !templateItem.getHierarchyNodeId().equals("")
+            && templateItem.getHierarchyNodeId().equals(EvalConstants.HIERARCHY_NODE_ID_NONE)) {
+         templateItem.setHierarchyLevel(EvalConstants.HIERARCHY_LEVEL_TOP);
       }
 
-      if (tosave.getItem() == null) {
+      if (templateItem.getItem() == null) {
          // failure to associate an item with this templateItem
          throw new IllegalStateException("No item is associated with this templateItem (the item is null) so it cannot be saved");
       }
-      itemsLogic.saveTemplateItem(tosave, external.getCurrentUserId());
+      itemsLogic.saveTemplateItem(templateItem, external.getCurrentUserId());
    }
 
 
@@ -204,8 +204,9 @@ public class LocalTemplateLogic {
       return itemsLogic.getItemById(itemId);
    }
 
-   public void saveItem(EvalItem tosave) {
-      itemsLogic.saveItem(tosave, external.getCurrentUserId());
+   public void saveItem(EvalItem item) {
+      connectScaleToItem(item);
+      itemsLogic.saveItem(item, external.getCurrentUserId());
    }
 
    public void deleteItem(Long id) {
@@ -216,6 +217,7 @@ public class LocalTemplateLogic {
       EvalItem newItem = new EvalItem(new Date(), external.getCurrentUserId(), "", 
             EvalConstants.SHARING_PRIVATE, "", Boolean.FALSE);
       newItem.setCategory( EvalConstants.ITEM_CATEGORY_COURSE ); // default category
+      newItem.setScale(newScale()); // create a holder for a new scale which will get overwritten or cleared out if not used
       return newItem;
    }
 
@@ -233,7 +235,8 @@ public class LocalTemplateLogic {
 
    public void saveScale(EvalScale scale) {
       // TODO - hopefully this if block is only needed temporarily until RSF 0.7.3
-      if (scale.getIdeal().equals(EvaluationConstant.NULL)) {
+      if (scale.getIdeal() != null &&
+            scale.getIdeal().equals(EvaluationConstant.NULL)) {
          scale.setIdeal(null);
       }
       scalesLogic.saveScale(scale, external.getCurrentUserId());
@@ -256,24 +259,57 @@ public class LocalTemplateLogic {
    // UTILITY METHODS
 
    /**
-    * TODO - this should use the defunneler -AZ (so says antranig)
-    * This is here to fix up a scale which is not actually correctly connected via the foreign key,
-    * it is not ideal but it works, it will also null out the scale if there is no id
-    * @param tosave
+    * This will connect an item to a scale and save the scale if it is new (not persistent yet),
+    * the default values for the new adhoc scale will be set,
+    * this will also clear out the scale if it is not used for this type of item
+    * @param item an item to be saved, can be persistent or new
     */
-//   private void connectScaleToItem(EvalItem tosave) {
-//      // this is here to cleanup the fake scale in case it was not needed or load a real one
-//      if (tosave.getScale() != null) {
-//         // only make the connection for fake scales
-//         if (tosave.getScale().getId() == null) {
-//            // the scale is not being used so destroy the fake one
-//            tosave.setScale(null);
-//         } else if (tosave.getScale().getOwner() == null) {
-//            // the scale is being used and we need to turn the fake one into a real one so hibernate can make the connection
-//            tosave.setScale(scalesLogic.getScaleById(tosave.getScale().getId()));
-//         }
-//      }
-//   }
+   private void connectScaleToItem(EvalItem item) {
+      // this is here to cleanup the fake scale in case it was not needed or load a real one
+      if (item.getScale() != null) {
+         // only process scales for the types that use them
+         if ( EvalConstants.ITEM_TYPE_SCALED.equals(item.getClassification()) ||
+               EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(item.getClassification()) || 
+               EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(item.getClassification()) ) {
+            // for multiple type items we need to save the scale
+            if ( EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(item.getClassification()) || 
+               EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(item.getClassification()) ) {
+               // only make the connection for new (non-persistent) scales
+               EvalScale scale = item.getScale();
+               if (scale.getId() == null) {
+                  // this is a new scale which must be saved so it can be saved with the item
+
+                  // set up default values for new scales
+                  if (scale.getMode() == null) {
+                     scale.setMode(EvalConstants.SCALE_MODE_ADHOC);
+                  }
+                  if (scale.getOwner() == null) {
+                     if (item.getOwner() != null) {
+                        scale.setOwner(item.getOwner());
+                     } else {
+                        scale.setOwner(external.getCurrentUserId());
+                     }
+                  }
+                  if (scale.getTitle() == null) {
+                     scale.setTitle(EvaluationConstant.defaultAdhocScaleTitle);
+                  }
+               }
+               // new and existing scales need to be saved
+               saveScale(scale);
+            } else {
+               // scaled item so don't save the scale
+               if (item.getScale().getId() != null && 
+                     item.getScale().getOwner() == null) {
+                  // this is an existing scale and we need to turn the fake one into a real one so hibernate can make the connection
+                  item.setScale(scalesLogic.getScaleById(item.getScale().getId()));
+               }
+            }
+         } else {
+            // null out the scale as it is not used for this type of item
+            item.setScale(null);            
+         }
+      }
+   }
 
 
    /**

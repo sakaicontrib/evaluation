@@ -87,19 +87,23 @@ public class EvalScalesLogicImpl implements EvalScalesLogic {
 		// set the date modified
 		scale.setLastModified( new Date() );
 
-		// check for non-null type
-		if (scale.getMode() == null) {
-		   // set this to the default then
-		   scale.setMode(EvalConstants.SCALE_MODE_SCALE);
-		}
-
 		// check for null or length 0 or 1 options
 		if (scale.getOptions() == null ||
 				scale.getOptions().length <= 1) {
 			throw new IllegalArgumentException("Scale options cannot be null and must have at least 2 items");
 		}
 
-		// check the sharing constants
+		// check for non-null values which can be inferred
+      if (scale.getMode() == null) {
+         // set this to the default then
+         scale.setMode(EvalConstants.SCALE_MODE_SCALE);
+      }
+
+      if (scale.getSharing() == null) {
+         scale.setSharing(EvalConstants.SHARING_PRIVATE);
+      }
+
+      // check the sharing constants
 		if (! EvalUtils.checkSharingConstant(scale.getSharing()) ||
 				EvalConstants.SHARING_OWNER.equals(scale.getSharing()) ) {
 			throw new IllegalArgumentException("Invalid sharing constant ("+scale.getSharing()+") set for scale ("+scale.getTitle()+")");

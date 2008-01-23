@@ -19,12 +19,10 @@ import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
-import org.sakaiproject.evaluation.tool.utils.ScaledUtils;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIJointContainer;
-import uk.org.ponder.rsf.components.UILink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
@@ -118,7 +116,7 @@ public class MultipleChoiceRenderer implements ItemRenderer {
 			}
 
 			if (usesNA) {
-				UIBranchContainer radiobranch3 = UIBranchContainer.make(container, "showNA:");
+				UIBranchContainer radiobranch3 = UIBranchContainer.make(displayContainer, "showNA:");
 				radiobranch3.decorators = new DecoratorList( new UIStyleDecorator("na") );// must match the existing CSS class				
 				UISelectChoice choice = UISelectChoice.make(radiobranch3, "na-input", selectID, scaleLength - 1);
 				UILabelTargetDecorator.targetLabel(
