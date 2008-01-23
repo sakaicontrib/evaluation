@@ -345,15 +345,16 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
     * (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.EvalEvaluationsLogic#getEvaluationByEid(java.lang.String)
     */
+   @SuppressWarnings("unchecked")
    public EvalEvaluation getEvaluationByEid(String eid) {
-	List evalEvaluations = new ArrayList();
-	EvalEvaluation evalEvaluation = null;
-	if(eid != null) {
-		evalEvaluations = (List)dao.findByProperties(EvalEvaluation.class, new String[] {"eid"}, new Object[] {eid});
-		if(!evalEvaluations.isEmpty())
-			evalEvaluation = (EvalEvaluation)evalEvaluations.get(0);
-	}
-	return evalEvaluation;
+      List<EvalEvaluation> evalEvaluations = new ArrayList<EvalEvaluation>();
+      EvalEvaluation evalEvaluation = null;
+      if(eid != null) {
+         evalEvaluations = dao.findByProperties(EvalEvaluation.class, new String[] {"eid"}, new Object[] {eid});
+         if(!evalEvaluations.isEmpty())
+            evalEvaluation = (EvalEvaluation)evalEvaluations.get(0);
+      }
+      return evalEvaluation;
    }
 
    /* (non-Javadoc)
