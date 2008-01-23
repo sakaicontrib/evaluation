@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
@@ -116,4 +117,17 @@ public class EvalUtils {
 		}
 		return (EvalGroup[]) groups.toArray(new EvalGroup[] {});
 	}
+
+	/**
+	 * Creates a unique title for an adhoc scale
+	 * @return 
+	 */
+	public static String makeUniqueIdentifier(int maxLength) {
+      String newTitle = UUID.randomUUID().toString();
+      if (newTitle.length() > maxLength) {
+         newTitle = newTitle.substring(0, maxLength);
+      }
+      return newTitle;
+	}
+
 }
