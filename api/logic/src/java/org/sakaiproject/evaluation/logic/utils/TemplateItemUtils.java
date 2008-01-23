@@ -101,6 +101,7 @@ public class TemplateItemUtils {
       return catItemsList;
    }
 
+
    /**
     * Reorder a list of templateItems to be in the correct displayOrder,
     * this does not change the displayOrder values, it simply places everything in the
@@ -141,6 +142,24 @@ public class TemplateItemUtils {
 
 
    /**
+    * Check if templateItem is answerable (can be answered by a user taking an evaluation) or not
+    * <b>NOTE</b> use {@link #getAnswerableTemplateItems(List)} to do a large set
+    * @param templateItem a templateItem persistent object
+    * @return true if the item is answerable, false otherwise
+    */
+   public static boolean isAnswerable(EvalTemplateItem templateItem) {
+      boolean result = false;
+      String type = getTemplateItemType(templateItem);
+      if (EvalConstants.ITEM_TYPE_HEADER.equals(type) ||
+            EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(type)) {
+         result = false;
+      } else {
+         result = true;
+      }
+      return result;
+   }
+
+   /**
     * Return a list of answerable items only in the correct order,
     * does not include block parents or header items or any item that
     * cannot be answered
@@ -155,15 +174,34 @@ public class TemplateItemUtils {
 
       for (int i=0; i<orderedItems.size(); i++) {
          EvalTemplateItem templateItem = (EvalTemplateItem) orderedItems.get(i);
-         String type = getTemplateItemType(templateItem);
-         if (EvalConstants.ITEM_TYPE_HEADER.equals(type) ||
-               EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(type)) {
+         if (! isAnswerable(templateItem)) {
             continue;
          }
          answerableItemsList.add(templateItem);
       }
 
       return answerableItemsList;
+   }
+
+
+   /**
+    * Check if templateItem is required (must be answered by a user taking an evaluation) or not
+    * <b>NOTE</b> use {@link #getRequiredTemplateItems(List)} to do a large set
+    * @param templateItem a templateItem persistent object
+    * @return true if the item is required, false otherwise
+    */
+   public static boolean isRequired(EvalTemplateItem templateItem) {
+      // all answerable items that are not textual are required
+      boolean result = false;
+      if (isAnswerable(templateItem)) {
+         String type = getTemplateItemType(templateItem);
+         if ( EvalConstants.ITEM_TYPE_TEXT.equals(type) ) {
+            result = false;
+         } else {
+            result = true;
+         }
+      }
+      return result;
    }
 
    /**
@@ -179,10 +217,7 @@ public class TemplateItemUtils {
 
       for (int i=0; i<orderedItems.size(); i++) {
          EvalTemplateItem templateItem = (EvalTemplateItem) orderedItems.get(i);
-         String type = getTemplateItemType(templateItem);
-         if (EvalConstants.ITEM_TYPE_HEADER.equals(type) ||
-               EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(type) ||
-               EvalConstants.ITEM_TYPE_TEXT.equals(type)) {
+         if (! isRequired(templateItem)) {
             continue;
          }
          requiredItemsList.add(templateItem);
@@ -192,6 +227,24 @@ public class TemplateItemUtils {
    }
 
    // BLOCKS
+
+   /**
+    * Check if templateItem is a block parent
+    * <b>NOTE</b> use {@link #getChildItems(List, Long)} to get the child items for this block from a larger set
+    * @param templateItem a templateItem persistent object
+    * @return true if the item is a block parent, false otherwise
+    */
+   public static boolean isBlockParent(EvalTemplateItem templateItem) {
+      // there is something odd here in that there appears to be two ways to identify a block parent
+      boolean result = false;
+      if ( templateItem.getBlockParent() != null && 
+            templateItem.getBlockParent()) {
+         result = true;
+      } else if (EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals( getTemplateItemType(templateItem) )) {
+         result = true;
+      }
+      return result;
+   }
 
    /**
     * filter out the Block child items, and only return non-child items, return then
@@ -440,4 +493,5 @@ public class TemplateItemUtils {
          throw new IllegalArgumentException("Invalid item classification specified ("+item.getClassification()+"), you must use the ITEM_TYPE constants to indicate classification (and cannot use BLOCK)");
       }
    }
+
 }      

@@ -31,6 +31,7 @@ import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIFreeAttributeDecorator;
 import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
+import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 
 /**
  * This handles the rendering of text type items
@@ -55,13 +56,22 @@ public class TextRenderer implements ItemRenderer {
 		String initValue = null;
 		if (bindings[0] == null) initValue = "";
 
+      String naBinding = null;
+      if (bindings.length > 1) {
+         naBinding = bindings[1];
+      }
+      Boolean naInit = null;
+      if (naBinding == null) naInit = Boolean.FALSE;
+
 		UIOutput.make(container, "itemNum", displayNumber+"" );
 		UIVerbatim.make(container, "itemText", templateItem.getItem().getItemText());
-		if ( templateItem.getUsesNA().booleanValue() ) {
-			UIBranchContainer branchNA = UIBranchContainer.make(container, "showNA:");
-         UIBoundBoolean checkbox = UIBoundBoolean.make(branchNA, "itemNA");
+
+      if ( templateItem.getUsesNA().booleanValue() ) {
+         UIBranchContainer branchNA = UIBranchContainer.make(container, "showNA:");
+         branchNA.decorators = new DecoratorList( new UIStyleDecorator("na") );// must match the existing CSS class
+         UIBoundBoolean checkbox = UIBoundBoolean.make(branchNA, "itemNA", naBinding, naInit);
          UILabelTargetDecorator.targetLabel(UIMessage.make(branchNA, "na-desc", "viewitem.na.desc"), checkbox);
-		}
+      }
 
 		UIInput textarea = UIInput.make(container, "essayBox", bindings[0], initValue); //$NON-NLS-2$
 
