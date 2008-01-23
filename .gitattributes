@@ -68,6 +68,7 @@ impl/dao/src/test/hibernate.cfg.xml -text
 impl/dao/src/test/hibernate.properties -text
 impl/dao/src/test/org/sakaiproject/evaluation/dao/test/EvaluationDaoImplTest.java -text
 impl/hbm/project.xml -text
+impl/hbm/src/evaluation-ddl.sql -text
 impl/hbm/src/java/org/sakaiproject/evaluation/hbm/EvalAnswer.hbm.xml -text
 impl/hbm/src/java/org/sakaiproject/evaluation/hbm/EvalAssignGroup.hbm.xml -text
 impl/hbm/src/java/org/sakaiproject/evaluation/hbm/EvalAssignHierarchy.hbm.xml -text
