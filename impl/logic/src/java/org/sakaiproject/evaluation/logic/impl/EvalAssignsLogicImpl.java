@@ -187,16 +187,17 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
 	 * (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalAssignsLogic#getEvalgroupByEid(java.lang.String)
 	 */
-	public EvalAssignGroup getAssignGroupByEid(String eid) {
-		List evalAssignGroups = new ArrayList();
-		EvalAssignGroup group = null;
-		if(eid != null) {
-			evalAssignGroups = (List)dao.findByProperties(EvalAssignGroup.class, new String[] {"eid"}, new Object[] {eid});
-			if(!evalAssignGroups.isEmpty())
-				group = (EvalAssignGroup)evalAssignGroups.get(0);
-		}
-		return group;
-	}
+   @SuppressWarnings("unchecked")
+   public EvalAssignGroup getAssignGroupByEid(String eid) {
+      List<EvalAssignGroup> evalAssignGroups = new ArrayList<EvalAssignGroup>();
+      EvalAssignGroup group = null;
+      if (eid != null) {
+         evalAssignGroups = dao.findByProperties(EvalAssignGroup.class, new String[] { "eid" }, new Object[] { eid });
+         if (!evalAssignGroups.isEmpty())
+            group = evalAssignGroups.get(0);
+      }
+      return group;
+   }
 
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.EvalAssignsLogic#getAssignGroupById(java.lang.Long)

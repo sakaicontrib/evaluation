@@ -293,4 +293,151 @@ public class TemplateItemUtils {
       return templateItem;
    }
 
-}
+   /**
+    * Validates an item based on its classification
+    * @param item an item which is ready to be saved
+    * @throws IllegalArgumentException if any parts of the item are set incorrectly
+    */
+   public static void validateItemByClassification(EvalItem item) {
+      // check on ITEM_TYPE and invalid combinations of item values depending on the type
+      if ( EvalConstants.ITEM_TYPE_SCALED.equals(item.getClassification()) ||
+            EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(item.getClassification()) ||
+            EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(item.getClassification()) ) {
+         if (item.getScale() == null) {
+            throw new IllegalArgumentException("Item scale must be specified for scaled/multiple type items");
+         } else if (item.getScaleDisplaySetting() == null) {
+            throw new IllegalArgumentException("Item scale display setting must be specified for scaled/multiple type items");
+         } else if (item.getDisplayRows() != null) {
+            throw new IllegalArgumentException("Item displayRows cannot be included for scaled/multiple type items");
+         }
+      } else if ( EvalConstants.ITEM_TYPE_TEXT.equals(item.getClassification()) ) {
+         if (item.getDisplayRows() == null) {
+            throw new IllegalArgumentException("Item display rows must be specified for text type items");
+         } else if (item.getScale() != null) {
+            throw new IllegalArgumentException("Item scale cannot be included for text type items");
+         } else if (item.getScaleDisplaySetting() != null) {
+            throw new IllegalArgumentException("Item scale display setting cannot be included for text type items");
+         }
+      } else if ( EvalConstants.ITEM_TYPE_HEADER.equals(item.getClassification()) ) {
+         if (item.getScale() != null) {
+            throw new IllegalArgumentException("Item scale cannot be included for header type items");
+         } else if (item.getScaleDisplaySetting() != null) {
+            throw new IllegalArgumentException("Item scale display setting cannot be included for header type items");
+         } else if (item.getDisplayRows() != null) {
+            throw new IllegalArgumentException("Item displayRows cannot be included for header type items");
+         }
+      } else if ( EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(item.getClassification()) ) {
+         if (item.getScale() == null) {
+            throw new IllegalArgumentException("Item scale must be specified for block parent type items");
+         } else if (item.getScaleDisplaySetting() == null) {
+            throw new IllegalArgumentException("Item scale display setting must be specified for block parent type items");
+         } else if (item.getDisplayRows() != null) {
+            throw new IllegalArgumentException("Item displayRows cannot be included for block parent type items");
+         }
+      } else {
+         throw new IllegalArgumentException("Invalid item classification specified ("+item.getClassification()+"), you must use the ITEM_TYPE constants to indicate classification (and cannot use BLOCK_CHILD)");
+      }
+   }
+
+   /**
+    * Validate TemplateItem that is about to be saved
+    * @param templateItem a template item with a valid item inside it
+    * @throws IllegalArgumentException if any fields are set to invalid values
+    */
+   public static void validateTemplateItemByClassification(EvalTemplateItem templateItem) {
+      EvalItem item = templateItem.getItem();
+      if (item == null) {
+         throw new IllegalArgumentException("item cannot be null for a templateItem that is about to be saved");
+      }
+      // check on ITEM_TYPE and invalid combinations of item values depending on the type
+      // inherit settings from item if not set correctly here
+      if ( EvalConstants.ITEM_TYPE_SCALED.equals(item.getClassification()) ) {
+         // check if this scaled item is a block item
+         if (templateItem.getBlockParent() == null) {
+            // not block item (block parent must be specified)
+            // general scaled items checks
+            validateItemByClassification(item);
+            if (templateItem.getScaleDisplaySetting() == null) {
+               templateItem.setScaleDisplaySetting(item.getScaleDisplaySetting());
+            }
+            if (templateItem.getDisplayRows() != null) {
+               throw new IllegalArgumentException("Item displayRows must be null for scaled type items");
+            }
+            if (templateItem.getBlockId() != null) {
+               throw new IllegalArgumentException("Item blockid must be null for scaled type items");
+            }
+         } else {
+            // this is related to a block
+            if ( templateItem.getBlockParent() != null ) {
+               // this is a child block item
+               if (templateItem.getBlockId() == null) {
+                  throw new IllegalArgumentException("Item blockid must be specified for child block items");
+               }
+               if (templateItem.getDisplayRows() != null) {
+                  throw new IllegalArgumentException("Item displayRows must be null for block type items");
+               }
+            }
+         }
+      } else if ( EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(item.getClassification()) ) {
+         // this is a block parent item (created just to hold the block parent text)
+         if (templateItem.getBlockParent() == null || !templateItem.getBlockParent().booleanValue() ) {
+            throw new IllegalArgumentException("Template Item block parent must be TRUE for parent block item");
+         }
+         if (templateItem.getScaleDisplaySetting() == null) {
+            throw new IllegalArgumentException("Template Item scale display setting must be included for parent block item");
+         }
+         if (templateItem.getBlockId() != null) {
+            throw new IllegalArgumentException("Item blockid must be null for parent block item");
+         }
+         if (templateItem.getDisplayRows() != null) {
+            throw new IllegalArgumentException("Item displayRows must be null for block type items");
+         }
+      } else if ( EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(item.getClassification()) ||
+            EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(item.getClassification()) ) {
+         // this is a multiple type item
+         validateItemByClassification(item);
+         if (templateItem.getScaleDisplaySetting() == null) {
+            templateItem.setScaleDisplaySetting(item.getScaleDisplaySetting());
+         }
+         if (templateItem.getDisplayRows() != null) {
+            throw new IllegalArgumentException("Item displayRows must be null for multiple type items");
+         }
+         if (templateItem.getBlockId() != null) {
+            throw new IllegalArgumentException("Item blockid cannot be included for multiple type items");
+         }
+         if (templateItem.getBlockParent() != null) {
+            throw new IllegalArgumentException("Item blockParent must be null for multiple type items");
+         }
+      } else if ( EvalConstants.ITEM_TYPE_TEXT.equals(item.getClassification()) ) {
+         validateItemByClassification(item);
+         if (templateItem.getDisplayRows() == null) {
+            templateItem.setDisplayRows(item.getDisplayRows());
+         }
+         if (templateItem.getScaleDisplaySetting() != null) {
+            throw new IllegalArgumentException("ScaleDisplaySetting cannot be included for text type items");
+         }
+         if (templateItem.getBlockId() != null) {
+            throw new IllegalArgumentException("Item blockid cannot be included for text type items");
+         }
+         if (templateItem.getBlockParent() != null) {
+            throw new IllegalArgumentException("Item blockParent must be null for text type items");
+         }
+      } else if ( EvalConstants.ITEM_TYPE_HEADER.equals(item.getClassification()) ) {
+         validateItemByClassification(item);
+         if (templateItem.getDisplayRows() != null) {
+            throw new IllegalArgumentException("Item displayRows cannot be included for header type items");
+         }
+         if (templateItem.getScaleDisplaySetting() != null) {
+            throw new IllegalArgumentException("ScaleDisplaySetting cannot be included for header type items");
+         }
+         if (templateItem.getBlockId() != null) {
+            throw new IllegalArgumentException("Item blockid cannot be included for header type items");
+         }
+         if (templateItem.getBlockParent() != null) {
+            throw new IllegalArgumentException("Item blockParent must be null for header type items");
+         }
+      } else {
+         throw new IllegalArgumentException("Invalid item classification specified ("+item.getClassification()+"), you must use the ITEM_TYPE constants to indicate classification (and cannot use BLOCK)");
+      }
+   }
+}      
