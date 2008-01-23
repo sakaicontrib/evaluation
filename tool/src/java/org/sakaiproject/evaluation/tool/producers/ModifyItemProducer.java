@@ -272,7 +272,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 		} else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(itemClassification) ||
 		      EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemClassification) ) {
 		   // MC/MA items need to create choices
-		   String scaleOTP = itemOTP + "scale." + (scaleId != null ? scaleId.toString() : ScaleBeanLocator.NEW_1) + ".";
+		   String scaleOTP = itemOTP + "scale."; // + (scaleId != null ? scaleId.toString() : ScaleBeanLocator.NEW_1) + ".";
          UIBranchContainer showItemChoices = UIBranchContainer.make(form, "show-item-choices:");
          boundedDynamicListInputEvolver.setLabels(
                UIMessage.make("scaleaddmodify.remove.scale.option.button"), 
@@ -282,7 +282,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 
          UIInputMany modifypoints = UIInputMany.make(showItemChoices, 
                "modify-scale-points:", scaleOTP + "options",
-               EvaluationConstant.defaultInitialScaleValues);
+               (scaleId == null ? EvaluationConstant.defaultInitialScaleValues : null) );
          boundedDynamicListInputEvolver.evolve(modifypoints);
 
          renderScaleDisplaySelect(form, commonDisplayOTP, scaleDisplaySetting, 

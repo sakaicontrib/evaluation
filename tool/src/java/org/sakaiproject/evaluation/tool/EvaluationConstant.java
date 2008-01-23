@@ -224,6 +224,12 @@ public class EvaluationConstant {
     */
    public static final String[] defaultInitialScaleValues = new String[] {"",""};
 
+   /**
+    * This is the default title to use for adhoc scales (which do not use the title)
+    */
+   public static final String defaultAdhocScaleTitle = "Adhoc Scale";
+
+
    public static final String[] ITEM_CLASSIFICATION_VALUES = new String[] {
       EvalConstants.ITEM_TYPE_SCALED,
       EvalConstants.ITEM_TYPE_MULTIPLECHOICE,

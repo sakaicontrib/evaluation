@@ -138,8 +138,7 @@ public class ScaledRenderer implements ItemRenderer {
 			}
 
 			if (usesNA) {
-				UIBranchContainer radiobranch3 = UIBranchContainer.make(container, "showNA:"); //$NON-NLS-1$
-
+				UIBranchContainer radiobranch3 = UIBranchContainer.make(compact, "showNA:"); //$NON-NLS-1$
 				radiobranch3.decorators = new DecoratorList( new UIStyleDecorator("na") );// must match the existing CSS class
 				UISelectChoice choice = UISelectChoice.make(radiobranch3, "na-input", selectID, scaleLength - 1); //$NON-NLS-1$
 				UILabelTargetDecorator.targetLabel(
@@ -205,7 +204,7 @@ public class ScaledRenderer implements ItemRenderer {
 			}
 
 			if (usesNA) {
-				UIBranchContainer radiobranch3 = UIBranchContainer.make(container, "showNA:"); //$NON-NLS-1$
+				UIBranchContainer radiobranch3 = UIBranchContainer.make(displayContainer, "showNA:"); //$NON-NLS-1$
 				radiobranch3.decorators = new DecoratorList( new UIStyleDecorator("na") );// must match the existing CSS class				
 				UISelectChoice choice = UISelectChoice.make(radiobranch3, "na-input", selectID, scaleLength - 1); //$NON-NLS-1$
 				UILabelTargetDecorator.targetLabel(
@@ -288,8 +287,7 @@ public class ScaledRenderer implements ItemRenderer {
 			}
 
 			if (usesNA) {
-				UISelectChoice choice = UISelectChoice.make(container, "na-input", selectID, scaleLength - 1); //$NON-NLS-1$
-				
+				UISelectChoice choice = UISelectChoice.make(stepped, "na-input", selectID, scaleLength - 1); //$NON-NLS-1$
 				UILabelTargetDecorator.targetLabel(
 						UIMessage.make(container, "na-desc", "viewitem.na.desc"),
 						choice);
