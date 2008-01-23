@@ -291,7 +291,7 @@ public class LocalTemplateLogic {
                      }
                   }
                   if (scale.getTitle() == null) {
-                     scale.setTitle(EvaluationConstant.defaultAdhocScaleTitle);
+                     scale.setTitle(EvalConstants.SCALE_ADHOC_DEFAULT_TITLE);
                   }
                }
                // new and existing scales need to be saved

@@ -7,6 +7,7 @@ package org.sakaiproject.evaluation.logic.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -132,6 +133,11 @@ public class EvalScalesLogicImpl implements EvalScalesLogic {
 		// fill in any default values and nulls here
 		if (scale.getLocked() == null) {
 			scale.setLocked( Boolean.FALSE );
+		}
+
+		// replace adhoc default title with a unique title
+		if (EvalConstants.SCALE_ADHOC_DEFAULT_TITLE.equals(scale.getTitle())) {
+		   scale.setTitle("adhoc-" + EvalUtils.makeUniqueIdentifier(100));
 		}
 
 		// check perms and save

@@ -169,6 +169,14 @@ public class EvalConstants {
     */
    public static final String SCALE_MODE_ADHOC = "adhoc";
 
+
+   /**
+    * This is the default title to use for adhoc scales (which do not use the title for identification),
+    * this will be replaced when the scale is saved by a unique one
+    */
+   public static final String SCALE_ADHOC_DEFAULT_TITLE = "*AdhocScale*";
+
+
 	/**
 	 * Item type (itemClassification) setting:
 	 * This is a scaled (likert) type item<br/>
