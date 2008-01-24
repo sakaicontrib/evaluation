@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sitemap>
-	<view key="csvResultsReport"
-		type="org.sakaiproject.evaluation.tool.viewparams.CSVReportViewParams" />
+    <view key="csvResultsReport"
+        type="org.sakaiproject.evaluation.tool.viewparams.CSVReportViewParams" />
+    <view key="xlsResultsReport"
+        type="org.sakaiproject.evaluation.tool.viewparams.ExcelReportViewParams" />
+    <view key="pdfResultsReport"
+        type="org.sakaiproject.evaluation.tool.viewparams.PDFReportViewParams" />
 </sitemap>

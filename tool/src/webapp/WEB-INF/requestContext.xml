@@ -104,13 +104,15 @@
    <bean id="reportHandlerHook"
       class="org.sakaiproject.evaluation.tool.ReportHandlerHook">
       <property name="viewparams" ref="viewParameters" />
-      <property name="response" ref="httpServletResponse" />
       <property name="itemsLogic"
          ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
       <property name="evalsLogic"
          ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
       <property name="responsesLogic"
          ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
+<property name="csvReportExporter" ref="CSVReportExporter" />
+      <property name="xlsReportExporter" ref="XLSReportExporter" />
+      <property name="pdfReportExporter" ref="PDFReportExporter" />
    </bean>
 
    <!-- bean locators here -->
@@ -437,6 +439,7 @@
       <property name="responsesLogic"
          ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
       <property name="reportsBean" ref="reportsBean" />
+<property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
    </bean>
 
    <bean
@@ -579,5 +582,10 @@
       <property name="external"
          ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
    </bean>
+
+<bean class="org.sakaiproject.evaluation.tool.producers.AdministrateReportingProducer">
+     <property name="external" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+   </bean>
+
 
 </beans>

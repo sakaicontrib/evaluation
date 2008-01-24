@@ -24,6 +24,7 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.model.EvalAnswer;
@@ -38,6 +39,8 @@ import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.ReportsBean;
 import org.sakaiproject.evaluation.tool.viewparams.CSVReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.EssayResponseParams;
+import org.sakaiproject.evaluation.tool.viewparams.ExcelReportViewParams;
+import org.sakaiproject.evaluation.tool.viewparams.PDFReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
@@ -47,6 +50,7 @@ import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIColourDecorator;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
@@ -96,6 +100,11 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
     public ReportsBean reportsBean;
     public void setReportsBean(ReportsBean reportsBean) {
         this.reportsBean = reportsBean;
+    }
+
+    private EvalSettings evalSettings;
+    public void setEvalSettings(EvalSettings evalSettings) {
+        this.evalSettings = evalSettings;
     }
 
     int displayNumber = 1;
@@ -152,9 +161,24 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
 
                 UIInternalLink.make(tofill, "fullEssayResponse", UIMessage.make("viewreport.view.essays"), new EssayResponseParams(
                         ReportsViewEssaysProducer.VIEW_ID, reportViewParams.evaluationId, groupIds));
-                UIInternalLink.make(tofill, "csvResultsReport", UIMessage.make("viewreport.view.csv"), new CSVReportViewParams(
-                        "csvResultsReport", template.getId(), reportViewParams.evaluationId, groupIds)); //$NON-NLS-3$
-
+                
+                Boolean allowCSVExport = (Boolean) evalSettings.get(EvalSettings.ENABLE_CSV_REPORT_EXPORT);
+                if (allowCSVExport != null && allowCSVExport == true) {
+                    UIInternalLink.make(tofill, "csvResultsReport", UIMessage.make("viewreport.view.csv"), new CSVReportViewParams(
+                        "csvResultsReport", template.getId(), reportViewParams.evaluationId, groupIds));
+                }
+                
+                Boolean allowXLSExport = (Boolean) evalSettings.get(EvalSettings.ENABLE_XLS_REPORT_EXPORT);
+                if (allowXLSExport != null && allowXLSExport == true) {
+                    UIInternalLink.make(tofill, "xlsResultsReport", UIMessage.make("viewreport.view.xls"), new ExcelReportViewParams(
+                        "xlsResultsReport", template.getId(), reportViewParams.evaluationId, groupIds));
+                }
+                
+                Boolean allowPDFExport = (Boolean) evalSettings.get(EvalSettings.ENABLE_PDF_REPORT_EXPORT);
+                if (allowPDFExport != null && allowPDFExport == true) {
+                    UIInternalLink.make(tofill, "pdfResultsReport", UIMessage.make("viewreport.view.pdf"), new PDFReportViewParams(
+                        "pdfResultsReport", template.getId(), reportViewParams.evaluationId, groupIds));
+                }
                 // filter out items that cannot be answered (header, etc.)
                 List answerableItemsList = TemplateItemUtils.getAnswerableTemplateItems(allTemplateItems);
 
@@ -226,7 +250,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
             UIBranchContainer scaled = UIBranchContainer.make(branch, "scaledSurvey:");
 
             UIOutput.make(scaled, "itemNum", displayNum+"");
-            UIOutput.make(scaled, "itemText", item.getItemText());
+            UIVerbatim.make(scaled, "itemText", item.getItemText());
 
             if (useNA.booleanValue() == true) {
                 UIBranchContainer radiobranch3 = UIBranchContainer.make(scaled, "showNA:");
@@ -252,7 +276,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
         } else if (templateItemType.equals(EvalConstants.ITEM_TYPE_TEXT)) { //"Short Answer/Essay"
             UIBranchContainer essay = UIBranchContainer.make(branch, "essayType:");
             UIOutput.make(essay, "itemNum", displayNum + "");
-            UIOutput.make(essay, "itemText", item.getItemText());
+            UIVerbatim.make(essay, "itemText", item.getItemText());
 
             UIInternalLink.make(essay, "essayResponse", 
                     new EssayResponseParams(ReportsViewEssaysProducer.VIEW_ID, evalId, templateItem.getId(), groupIds));

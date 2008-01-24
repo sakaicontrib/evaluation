@@ -167,6 +167,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/locators/TemplateBeanLocator.java
 tool/src/java/org/sakaiproject/evaluation/tool/locators/TemplateItemWBL.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdminTestEGProviderProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateProducer.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateReportingProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlEvaluationsProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlHierarchyProducer.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlImportProducer.java -text
@@ -214,6 +215,9 @@ tool/src/java/org/sakaiproject/evaluation/tool/renderers/MultipleAnswerRenderer.
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/MultipleChoiceRenderer.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/ScaledRenderer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/TextRenderer.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/reporting/CSVReportExporter.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/reporting/PDFReportExporter.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/reporting/XLSReportExporter.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/utils/HierarchyRenderUtil.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/utils/RSFUtils.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/utils/ScaledUtils.java -text
@@ -221,15 +225,18 @@ tool/src/java/org/sakaiproject/evaluation/tool/viewparams/AdminTestEGViewParamet
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/BlockIdsParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/CSVReportViewParams.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ChooseItemViewParameters.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/viewparams/DownloadReportViewParams.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/EmailViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/EssayResponseParams.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/EvalCategoryViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/EvalScaleParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/EvalTakeViewParameters.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ExcelReportViewParams.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ExpertItemViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/HierarchyNodeParameters.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ItemViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ModifyHierarchyNodeParameters.java svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/viewparams/PDFReportViewParams.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/PreviewEvalParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ReportParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/TemplateItemViewParameters.java -text
@@ -318,6 +325,7 @@ tool/src/webapp/content/js/reorderUtils.js -text
 tool/src/webapp/content/js/scaleUtils.js -text
 tool/src/webapp/content/templates/admin_test_evalgroup_provider.html -text
 tool/src/webapp/content/templates/administrate.html -text
+tool/src/webapp/content/templates/administrate_reporting.html -text
 tool/src/webapp/content/templates/choose_existing_items.html -text
 tool/src/webapp/content/templates/choose_expert_category.html -text
 tool/src/webapp/content/templates/choose_expert_items.html -text
