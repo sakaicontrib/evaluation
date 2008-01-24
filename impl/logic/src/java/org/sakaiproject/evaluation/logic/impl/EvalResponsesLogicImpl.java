@@ -18,7 +18,6 @@ import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.model.EvalAnswer;
@@ -71,34 +70,39 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
    }
 
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.sakaiproject.evaluation.logic.EvalResponsesLogic#getNonResponders(java.lang.Long)
-    */
-   public Set<String> getNonResponders(Long evaluationId, EvalGroup group) {
-
-      Long[] evaluationIds = { evaluationId };
-      Set<String> userIds = new HashSet<String>();
-
-      // get everyone permitted to take the evaluation
-      Set<String> ids = external.getUserIdsForEvalGroup(group.evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
-      for (Iterator<String> i = ids.iterator(); i.hasNext();) {
-         String userId = i.next();
-
-         // if this user hasn't submitted a response, add the user's id
-         if (getEvaluationResponses(userId, evaluationIds).isEmpty()) {
-            userIds.add(userId);
-         }
-      }
-      return userIds;
-   }
-
-
    public EvalResponse getResponseById(Long responseId) {
       log.debug("responseId: " + responseId);
       // get the response by passing in id
       return (EvalResponse) dao.findById(EvalResponse.class, responseId);
+   }
+
+
+   @SuppressWarnings("unchecked")
+   public EvalResponse getEvaluationResponseForUserAndGroup(Long evaluationId, String userId, String evalGroupId) {
+      EvalEvaluation evaluation = (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);
+      if (evaluation == null) {
+         throw new IllegalArgumentException("Invalid evaluation, cannot find evaluation: " + evaluationId);
+      }
+
+      EvalResponse response = null;
+      List<EvalResponse> responses = dao.findByProperties(EvalResponse.class, 
+            new String[] { "owner", "evaluation.id", "evalGroupId" }, 
+            new Object[] { userId, evaluationId, evalGroupId }
+         );
+      if (responses.isEmpty()) {
+         // create a new response and save it
+         response = new EvalResponse(new Date(), userId, evalGroupId, new Date(), evaluation);
+         saveResponse(response, userId);
+      } else {
+         if (responses.size() == 1) {
+            response = responses.get(0);
+         } else {
+            throw new IllegalStateException("Invalid responses state, this user ("+userId+") has more than 1 response " +
+            		"for evaluation ("+evaluationId+") and evalGroupId ("+evalGroupId+")");
+         }
+      }
+
+      return response;
    }
 
    @SuppressWarnings("unchecked")
@@ -187,10 +191,10 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
       if (checkUserModifyResponse(userId, response)) {
          // make sure the user can take this evalaution
          Long evaluationId = response.getEvaluation().getId();
-         String context = response.getEvalGroupId();
-         if (!evaluationsLogic.canTakeEvaluation(userId, evaluationId, context)) {
+         String evalGroupId = response.getEvalGroupId();
+         if (!evaluationsLogic.canTakeEvaluation(userId, evaluationId, evalGroupId)) {
             throw new IllegalStateException("User (" + userId + ") cannot take this evaluation (" + evaluationId
-                  + ") in this evalGroupId (" + context + ") right now");
+                  + ") in this evalGroupId (" + evalGroupId + ") right now");
          }
 
          // check to make sure answers are valid for this evaluation
@@ -409,6 +413,24 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
       }
 
       return true;
+   }
+
+
+   public Set<String> getNonResponders(Long evaluationId, String evalGroupId) {
+      Long[] evaluationIds = { evaluationId };
+      Set<String> userIds = new HashSet<String>();
+
+      // get everyone permitted to take the evaluation
+      Set<String> ids = external.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
+      for (Iterator<String> i = ids.iterator(); i.hasNext();) {
+         String userId = i.next();
+
+         // if this user hasn't submitted a response, add the user's id
+         if (getEvaluationResponses(userId, evaluationIds).isEmpty()) {
+            userIds.add(userId);
+         }
+      }
+      return userIds;
    }
 
 }

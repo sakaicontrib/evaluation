@@ -654,9 +654,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
          userIdsSet.clear();
          if (EvalConstants.EMAIL_INCLUDE_NONTAKERS.equals(includeConstant)) {
-            userIdsSet.addAll(evalResponsesLogic.getNonResponders(evaluationId, group));
+            userIdsSet.addAll(evalResponsesLogic.getNonResponders(evaluationId, group.evalGroupId));
          } else if (EvalConstants.EMAIL_INCLUDE_ALL.equals(includeConstant)) {
-            userIdsSet.addAll(evalResponsesLogic.getNonResponders(evaluationId, group));
+            userIdsSet.addAll(evalResponsesLogic.getNonResponders(evaluationId, group.evalGroupId));
             userIdsSet.addAll(externalLogic.getUserIdsForEvalGroup(group.evalGroupId,
                   EvalConstants.PERM_BE_EVALUATED));
          }
