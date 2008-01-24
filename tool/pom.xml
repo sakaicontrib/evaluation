@@ -28,18 +28,20 @@
 			<groupId>org.sakaiproject</groupId>
 			<artifactId>sakai-evaluation-model-api</artifactId>
 			<version>${sakai.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.sakaiproject</groupId>
 			<artifactId>sakai-evaluation-logic-api</artifactId>
 			<version>${sakai.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<!-- Servlet dependency -->
 		<dependency>
 			<groupId>servletapi</groupId>
 			<artifactId>servletapi</artifactId>
 			<version>${sakai.servletapi.version}</version>
-			<type>jar</type>
+			<scope>provided</scope>
 		</dependency>
 		<!-- Sakai dependencies -->
 		<dependency>
@@ -67,6 +69,7 @@
 			<groupId>org.sakaiproject.entitybroker</groupId>
 			<artifactId>entitybroker-api</artifactId>
 			<version>1.2.0</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.sakaiproject</groupId>
@@ -107,6 +110,7 @@
 			<groupId>org.sakaiproject</groupId>
 			<artifactId>generic-dao</artifactId>
 			<version>${sakai.generic-dao.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<!-- Hibernate dependency -->
 		<dependency>
@@ -144,6 +148,32 @@
 			<artifactId>opencsv</artifactId>
 			<version>1.7</version>
 			<type>jar</type>
+			<!--properties:  war.bundle: true -->
+		</dependency>
+		<!-- needed for generating Excel Files for export -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.0.1-FINAL</version>
+			<type>jar</type>
+			<!--properties:  war.bundle: true -->
+		</dependency>
+		<!-- Needed for generating PDF Files for export -->
+		<dependency>
+			<groupId>com.lowagie</groupId>
+			<artifactId>itext</artifactId>
+			<version>2.0.7</version>
+			<type>jar</type>
+			<exclusions>
+				<exclusion>
+					<groupId>bouncycastle</groupId>
+					<artifactId>bcprov-jdk14</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>bouncycastle</groupId>
+					<artifactId>bcmail-jdk14</artifactId>
+				</exclusion>
+			</exclusions>
 			<!--properties:  war.bundle: true -->
 		</dependency>
 	</dependencies>

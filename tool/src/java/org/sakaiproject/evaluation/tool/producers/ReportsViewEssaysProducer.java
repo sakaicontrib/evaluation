@@ -33,6 +33,7 @@ import org.sakaiproject.evaluation.tool.EvaluationConstant;
 import org.sakaiproject.evaluation.tool.viewparams.EssayResponseParams;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
+import org.sakaiproject.util.FormattedText;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
@@ -215,7 +216,7 @@ public class ReportsViewEssaysProducer implements ViewComponentProducer, Navigat
 			//"Short Answer/Essay"
 			UIBranchContainer essay = UIBranchContainer.make(radiobranch, "essayType:");
 			UIOutput.make(essay, "itemNum", (i+1)+"");
-			UIOutput.make(essay, "itemText", myItem.getItemText());
+			UIOutput.make(essay, "itemText", FormattedText.convertFormattedTextToPlaintext(myItem.getItemText()));
 
 			List itemAnswers= responsesLogic.getEvalAnswers(myItem.getId(), evalId, groupIds);
 
