@@ -1,17 +1,16 @@
-/******************************************************************************
- * ItemsBean.java - created by whumphri@vt.edu on Jan 16, 2007
- * 
- * Copyright (c) 2007 Virginia Polytechnic Institute and State University
+/**
+ * ItemsBean.java - evaluation - Jan 16, 2007 11:35:56 AM - whumphri
+ * $URL: https://source.sakaiproject.org/contrib $
+ * $Id: Locator.java 11234 Jan 21, 2008 11:35:56 AM azeckoski $
+ **************************************************************************
+ * Copyright (c) 2007 Centre for Academic Research in Educational Technologies
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
- * 
- * Contributors:
- * Will Humphries (whumphri@vt.edu)
- * Rui Feng (fengr@vt.edu)
- * Kapil Ahuja (kahuja@vt.edu)
- *****************************************************************************/
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ */
 
 package org.sakaiproject.evaluation.tool;
 

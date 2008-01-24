@@ -16,15 +16,19 @@ package org.sakaiproject.evaluation.logic.utils;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 
@@ -129,5 +133,24 @@ public class EvalUtils {
       }
       return newTitle;
 	}
+
+	/**
+    * Get a map of answers for the given response, where the key to
+    * access a given response is the unique pairing of templateItemId and
+    * the associated field of the answer (instructor id, environment key, etc.)
+    * 
+    * @param response the response we want to get the answers for
+    * @return a hashmap of answers, where an answer's key = templateItemId + answer.associated
+    */   
+   public static Map<String, EvalAnswer> getAnswersMapByTempItemAndAssociated(EvalResponse response) {
+      Map<String, EvalAnswer> map = new HashMap<String, EvalAnswer>();
+      Set<EvalAnswer> answers = response.getAnswers();
+      for (Iterator<EvalAnswer> it = answers.iterator(); it.hasNext();) {
+         EvalAnswer answer = (EvalAnswer) it.next();
+         map.put(answer.getTemplateItem().getId().toString() + answer.getAssociatedType()
+               + answer.getAssociatedId(), answer);
+      }
+      return map;
+   }
 
 }

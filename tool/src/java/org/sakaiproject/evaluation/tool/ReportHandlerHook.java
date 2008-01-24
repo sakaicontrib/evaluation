@@ -1,55 +1,33 @@
-/******************************************************************************
- * ReportHandlerHook.java - created by aaronz@vt.edu
- *
- * Copyright (c) 2007 Virginia Polytechnic Institute and State University
+/**
+ * ReportHandlerHook.java - evaluation - 23 Jan 2007 11:35:56 AM - azeckoski
+ * $URL: https://source.sakaiproject.org/contrib $
+ * $Id: Locator.java 11234 Jan 21, 2008 11:35:56 AM azeckoski $
+ **************************************************************************
+ * Copyright (c) 2007 Centre for Academic Research in Educational Technologies
  * Licensed under the Educational Community License version 1.0
- *
- * A copy of the Educational Community License has been included in this
+ * 
+ * A copy of the Educational Community License has been included in this 
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
  *
- * Contributors:
- * Aaron Zeckoski (aaronz@vt.edu) - primary
- *
- *****************************************************************************/
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ */
 
 package org.sakaiproject.evaluation.tool;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
-import com.lowagie.text.Element;
-import com.lowagie.text.Image;
-
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.utils.ComparatorsUtils;
 import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
-import org.sakaiproject.evaluation.logic.providers.EvalGroupsProvider;
 import org.sakaiproject.evaluation.model.EvalAnswer;
-import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplate;
@@ -62,15 +40,10 @@ import org.sakaiproject.evaluation.tool.viewparams.CSVReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.DownloadReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.ExcelReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.PDFReportViewParams;
-import org.sakaiproject.util.FormattedText;
 
-import java.net.URL;
-
-import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.processor.HandlerHook;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.util.UniversalRuntimeException;
-import au.com.bytecode.opencsv.CSVWriter;
 
 /**
  * Handles the generation of a CSV file for exporting results

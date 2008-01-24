@@ -1,17 +1,16 @@
-/******************************************************************************
- * LocalTemplateLogic.java - created by antranig on 23 Jan 2007
- * 
+/**
+ * LocalTemplateLogic.java - evaluation - 23 Jan 2007 11:35:56 AM - antranig
+ * $URL: https://source.sakaiproject.org/contrib $
+ * $Id: Locator.java 11234 Jan 21, 2008 11:35:56 AM azeckoski $
+ **************************************************************************
  * Copyright (c) 2007 Centre for Academic Research in Educational Technologies
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
- * 
- * Contributors:
- * Antranig Basman (antranig@caret.cam.ac.uk)
- * Aaron Zeckoski (aaronz@vt.edu)
- * 
- *****************************************************************************/
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ */
 
 package org.sakaiproject.evaluation.tool;
 
