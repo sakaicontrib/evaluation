@@ -115,7 +115,8 @@
       <property name="pdfReportExporter" ref="PDFReportExporter" />
    </bean>
 
-   <!-- bean locators here -->
+
+   <!-- LOCATORS - OTP bean locators here -->
    <bean id="settingsBean"
       class="org.sakaiproject.evaluation.tool.locators.SettingsWBL">
       <property name="evalSettings"
@@ -174,7 +175,6 @@
          ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
    </bean>
 
-
    <!-- Quick hack SWG -->
    <bean id="hierNodeLocatorInvoker"
       class="org.sakaiproject.evaluation.tool.locators.HierarchyNodeLocatorInvoker">
@@ -193,6 +193,7 @@
          ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
    </bean>
 
+   <!-- Quick hack SWG -->
    <bean id="hierNodeGroupsLocatorInvoker"
       class="org.sakaiproject.evaluation.tool.locators.HierarchyNodeGroupsLocatorInvoker">
       <property name="external"
@@ -219,13 +220,59 @@
       class="org.sakaiproject.evaluation.tool.renderers.HierarchyRowRenderer" />
 
 
-   <!-- producers here -->
+   <!-- producers below here -->
+
+   <!-- ADMINISTRATE producers -->
    <bean class="org.sakaiproject.evaluation.tool.producers.AdministrateProducer">
       <property name="externalLogic"
          ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
       <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
    </bean>
 
+   <bean class="org.sakaiproject.evaluation.tool.producers.AdministrateReportingProducer">
+     <property name="external" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+   </bean>
+
+   <bean
+      class="org.sakaiproject.evaluation.tool.producers.AdminTestEGProviderProducer">
+      <property name="external" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+   </bean>
+
+   <bean
+      class="org.sakaiproject.evaluation.tool.producers.ControlImportProducer">
+      <property name="externalLogic"
+         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+      <property name="sessionManager"
+         ref="org.sakaiproject.tool.api.SessionManager" />
+   </bean>
+
+
+   <!-- HIERARCHY - Views for Controlling and Administering the Hierarchy -->
+   <bean
+      class="org.sakaiproject.evaluation.tool.producers.ControlHierarchyProducer">
+      <property name="external"
+         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+      <property name="hierarchyRenderUtil" ref="HierarchyRenderUtil" />
+   </bean>
+
+   <bean
+      class="org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeProducer">
+      <property name="external"
+         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+      <property name="hierarchyLogic"
+         ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+   </bean>
+
+   <bean
+      class="org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeGroupsProducer">
+      <property name="external"
+         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+      <property name="hierarchyLogic"
+         ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+   </bean>
+
+
+   <!-- SUMMARY producers -->
    <bean
       class="org.sakaiproject.evaluation.tool.producers.SummaryProducer">
       <property name="externalLogic"
@@ -241,28 +288,8 @@
       <property name="locale" ref="requestLocale" />
    </bean>
 
-   <bean
-      class="org.sakaiproject.evaluation.tool.producers.ControlEvaluationsProducer">
-      <property name="externalLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-      <property name="evaluationsLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
-      <property name="templatesLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
-      <property name="responsesLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
-      <property name="settings"
-         ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-      <property name="locale" ref="requestLocale" />
-   </bean>
 
-   <bean
-      class="org.sakaiproject.evaluation.tool.producers.ShowEvalCategoryProducer">
-      <property name="evaluationsLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
-      <property name="locale" ref="requestLocale" />
-   </bean>
-
+   <!-- TEMPLATES -->
    <bean
       class="org.sakaiproject.evaluation.tool.producers.ControlTemplatesProducer">
       <property name="external"
@@ -290,6 +317,43 @@
          ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
    </bean>
 
+
+   <!-- TEMPLATE ITEMS -->
+   <bean
+      class="org.sakaiproject.evaluation.tool.producers.ModifyTemplateItemsProducer">
+      <property name="localTemplateLogic" ref="localTemplateLogic" />
+      <property name="external"
+         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+      <property name="addItemControlRenderer"
+         ref="org.sakaiproject.evaluation.tool.renderers.AddItemControlRenderer" />
+      <property name="evalSettings"
+         ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+      <property name="externalHierarchyLogic"
+         ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+   </bean>
+
+    <bean class="org.sakaiproject.evaluation.tool.producers.ModifyBlockProducer">
+        <property name="external"
+            ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+        <property name="itemsLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
+        <property name="settings"
+            ref="org.sakaiproject.evaluation.logic.EvalSettings" /> 
+        <property name="richTextEvolver" ref="richTextEvolver" />
+        <property name="hierarchyNodeSelectorRenderer"
+           ref="org.sakaiproject.evaluation.tool.renderers.HierarchyNodeSelectorRenderer" />
+    </bean>
+
+   <bean
+      class="org.sakaiproject.evaluation.tool.producers.ExistingItemsProducer">
+      <property name="external"
+         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+      <property name="itemsLogic"
+         ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
+   </bean>
+
+
+   <!-- ITEMS -->
    <bean
       class="org.sakaiproject.evaluation.tool.producers.ControlItemsProducer">
       <property name="external"
@@ -320,36 +384,87 @@
    </bean>
 
    <bean
-      class="org.sakaiproject.evaluation.tool.producers.ModifyTemplateItemsProducer">
-      <property name="localTemplateLogic" ref="localTemplateLogic" />
-      <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-      <property name="addItemControlRenderer"
-         ref="org.sakaiproject.evaluation.tool.renderers.AddItemControlRenderer" />
-      <property name="evalSettings"
-         ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-      <property name="externalHierarchyLogic"
-         ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
-   </bean>
-
-	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyBlockProducer">
-		<property name="external"
-			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-		<property name="itemsLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
-		<property name="settings"
-			ref="org.sakaiproject.evaluation.logic.EvalSettings" />	
-		<property name="richTextEvolver" ref="richTextEvolver" />
-      <property name="hierarchyNodeSelectorRenderer"
-         ref="org.sakaiproject.evaluation.tool.renderers.HierarchyNodeSelectorRenderer" />
-	</bean>
-
-   <bean
       class="org.sakaiproject.evaluation.tool.producers.PreviewItemProducer">
       <property name="itemsLogic"
          ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
       <property name="itemRenderer"
          ref="org.sakaiproject.evaluation.tool.renderers.ItemRenderer" />
+   </bean>
+
+   <bean
+      class="org.sakaiproject.evaluation.tool.producers.RemoveItemProducer">
+      <property name="itemsLogic"
+         ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
+      <property name="itemRenderer"
+         ref="org.sakaiproject.evaluation.tool.renderers.ItemRenderer" />
+   </bean>
+
+
+   <!-- EXPERT items views -->
+   <bean
+      class="org.sakaiproject.evaluation.tool.producers.ExpertCategoryProducer">
+      <property name="external"
+         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+      <property name="expertItemsLogic"
+         ref="org.sakaiproject.evaluation.logic.EvalExpertItemsLogic" />
+   </bean>
+
+   <bean
+      class="org.sakaiproject.evaluation.tool.producers.ExpertObjectiveProducer">
+      <property name="external"
+         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+      <property name="expertItemsLogic"
+         ref="org.sakaiproject.evaluation.logic.EvalExpertItemsLogic" />
+   </bean>
+
+   <bean
+      class="org.sakaiproject.evaluation.tool.producers.ExpertItemsProducer">
+      <property name="expertItemsLogic"
+         ref="org.sakaiproject.evaluation.logic.EvalExpertItemsLogic" />
+   </bean>
+
+
+   <!-- SCALES -->
+   <bean
+      class="org.sakaiproject.evaluation.tool.producers.ControlScalesProducer">
+      <property name="scalesLogic"
+         ref="org.sakaiproject.evaluation.logic.EvalScalesLogic" />
+      <property name="external"
+         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+   </bean>
+
+   <bean
+      class="org.sakaiproject.evaluation.tool.producers.ModifyScaleProducer">
+      <property name="external"
+         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+      <property name="scalesLogic"
+         ref="org.sakaiproject.evaluation.logic.EvalScalesLogic" />
+      <property name="boundedDynamicListInputEvolver"
+         ref="standardDynamicListInputEvolver" />
+   </bean>
+
+   <bean
+      class="org.sakaiproject.evaluation.tool.producers.RemoveScaleProducer">
+      <property name="external"
+         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+      <property name="localTemplateLogic" ref="localTemplateLogic" />
+   </bean>
+
+
+   <!-- EVALUATIONS -->
+   <bean
+      class="org.sakaiproject.evaluation.tool.producers.ControlEvaluationsProducer">
+      <property name="externalLogic"
+         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+      <property name="evaluationsLogic"
+         ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+      <property name="templatesLogic"
+         ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
+      <property name="responsesLogic"
+         ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
+      <property name="settings"
+         ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+      <property name="locale" ref="requestLocale" />
    </bean>
 
    <bean
@@ -365,14 +480,6 @@
       <property name="itemRenderer"
          ref="org.sakaiproject.evaluation.tool.renderers.ItemRenderer" />
       <property name="messageLocator" ref="messageLocator" />
-   </bean>
-
-   <bean
-      class="org.sakaiproject.evaluation.tool.producers.RemoveItemProducer">
-      <property name="itemsLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
-      <property name="itemRenderer"
-         ref="org.sakaiproject.evaluation.tool.renderers.ItemRenderer" />
    </bean>
 
    <bean
@@ -419,6 +526,15 @@
    </bean>
 
    <bean
+      class="org.sakaiproject.evaluation.tool.producers.RemoveEvalProducer">
+      <property name="evalsLogic"
+         ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+      <property name="locale" ref="requestLocale" />
+   </bean>
+
+
+   <!-- EMAIL TEMPLATES -->
+   <bean
       class="org.sakaiproject.evaluation.tool.producers.PreviewEmailProducer">
       <property name="evaluationBean" ref="evaluationBean" />
    </bean>
@@ -428,6 +544,35 @@
       <property name="evaluationBean" ref="evaluationBean" />
    </bean>
 
+
+   <!-- TAKE EVALUATION -->
+   <bean
+      class="org.sakaiproject.evaluation.tool.producers.TakeEvalProducer">
+      <property name="external"
+         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+      <property name="evalsLogic"
+         ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+      <property name="itemRenderer"
+         ref="org.sakaiproject.evaluation.tool.renderers.ItemRenderer" />
+      <property name="localResponsesLogic" ref="localResponsesLogic" />
+      <property name="evalSettings"
+         ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+      <property name="locale" ref="requestLocale" />
+      <property name="itemsLogic"
+         ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
+      <property name="externalHierarchyLogic"
+         ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+   </bean>
+
+   <bean
+      class="org.sakaiproject.evaluation.tool.producers.ShowEvalCategoryProducer">
+      <property name="evaluationsLogic"
+         ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+      <property name="locale" ref="requestLocale" />
+   </bean>
+
+
+   <!-- REPORTING -->
    <bean
       class="org.sakaiproject.evaluation.tool.producers.ReportsViewingProducer">
       <property name="externalLogic"
@@ -439,7 +584,7 @@
       <property name="responsesLogic"
          ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
       <property name="reportsBean" ref="reportsBean" />
-<property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+      <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
    </bean>
 
    <bean
@@ -462,130 +607,5 @@
       <property name="responsesLogic"
          ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
    </bean>
-
-
-   <bean
-      class="org.sakaiproject.evaluation.tool.producers.TakeEvalProducer">
-      <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-      <property name="evalsLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
-      <property name="itemRenderer"
-         ref="org.sakaiproject.evaluation.tool.renderers.ItemRenderer" />
-      <property name="localResponsesLogic" ref="localResponsesLogic" />
-      <property name="evalSettings"
-         ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-      <property name="locale" ref="requestLocale" />
-      <property name="itemsLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
-      <property name="externalHierarchyLogic"
-         ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
-   </bean>
-
-   <bean
-      class="org.sakaiproject.evaluation.tool.producers.RemoveEvalProducer">
-      <property name="evalsLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
-      <property name="locale" ref="requestLocale" />
-   </bean>
-
-   <bean
-      class="org.sakaiproject.evaluation.tool.producers.ControlImportProducer">
-      <property name="externalLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-      <property name="sessionManager"
-         ref="org.sakaiproject.tool.api.SessionManager" />
-   </bean>
-
-   <bean
-      class="org.sakaiproject.evaluation.tool.producers.ControlScalesProducer">
-      <property name="scalesLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalScalesLogic" />
-      <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-   </bean>
-
-   <!-- Views for Controlling and Administering the Hierarchy -->
-   <bean
-      class="org.sakaiproject.evaluation.tool.producers.ControlHierarchyProducer">
-      <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-      <property name="hierarchyRenderUtil" ref="HierarchyRenderUtil" />
-   </bean>
-
-   <bean
-      class="org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeProducer">
-      <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-      <property name="hierarchyLogic"
-         ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
-   </bean>
-
-   <bean
-      class="org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeGroupsProducer">
-      <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-      <property name="hierarchyLogic"
-         ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
-   </bean>
-
-   <bean
-      class="org.sakaiproject.evaluation.tool.producers.ModifyScaleProducer">
-      <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-      <property name="scalesLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalScalesLogic" />
-      <property name="boundedDynamicListInputEvolver"
-         ref="standardDynamicListInputEvolver" />
-   </bean>
-
-   <bean
-      class="org.sakaiproject.evaluation.tool.producers.RemoveScaleProducer">
-      <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-      <property name="localTemplateLogic" ref="localTemplateLogic" />
-   </bean>
-
-   <!-- EXPERT items views -->
-   <bean
-      class="org.sakaiproject.evaluation.tool.producers.ExpertCategoryProducer">
-      <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-      <property name="expertItemsLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalExpertItemsLogic" />
-   </bean>
-
-   <bean
-      class="org.sakaiproject.evaluation.tool.producers.ExpertObjectiveProducer">
-      <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-      <property name="expertItemsLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalExpertItemsLogic" />
-   </bean>
-
-   <bean
-      class="org.sakaiproject.evaluation.tool.producers.ExpertItemsProducer">
-      <property name="expertItemsLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalExpertItemsLogic" />
-   </bean>
-
-   <bean
-      class="org.sakaiproject.evaluation.tool.producers.ExistingItemsProducer">
-      <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-      <property name="itemsLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
-   </bean>
-
-   <bean
-      class="org.sakaiproject.evaluation.tool.producers.AdminTestEGProviderProducer">
-      <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-   </bean>
-
-<bean class="org.sakaiproject.evaluation.tool.producers.AdministrateReportingProducer">
-     <property name="external" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-   </bean>
-
 
 </beans>
