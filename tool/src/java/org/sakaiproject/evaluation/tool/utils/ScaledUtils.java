@@ -1,6 +1,17 @@
-/*
- * Created on 19 Feb 2007
+/**
+ * ScaledUtils.java - evaluation - Feb 19, 2007 11:35:56 AM - antranig
+ * $URL: https://source.sakaiproject.org/contrib $
+ * $Id: Locator.java 11234 Jan 21, 2008 11:35:56 AM azeckoski $
+ **************************************************************************
+ * Copyright (c) 2007 Centre for Academic Research in Educational Technologies
+ * Licensed under the Educational Community License version 1.0
+ * 
+ * A copy of the Educational Community License has been included in this 
+ * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
  */
+
 package org.sakaiproject.evaluation.tool.utils;
 
 import java.awt.Color;
@@ -17,8 +28,8 @@ import uk.org.ponder.stringutil.StringUtil;
  * Utilities for manipulating scales.
  * 
  * @author Antranig Basman (amb26@ponder.org.uk)
+ * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
-
 public class ScaledUtils {
 
 	public static String[] idealKeys = {
@@ -71,10 +82,10 @@ public class ScaledUtils {
 	 * @param scales a list of {@link EvalScale}
 	 * @return an array of labels for the passed in scales
 	 */
-	public static String[] getScaleLabels(List scales) {
-		List scaleLabels = new ArrayList();
+	public static String[] getScaleLabels(List<EvalScale> scales) {
+		List<String> scaleLabels = new ArrayList<String>();
 		for (int i = 0; i < scales.size(); i++) {
-			EvalScale scale = (EvalScale) scales.get(i);
+			EvalScale scale = scales.get(i);
 			String scaleOptionsStr = "";
 			String[] scaleOptionsArr = scale.getOptions();
 			for (int j = 0; j < scaleOptionsArr.length; j++) {
@@ -95,10 +106,10 @@ public class ScaledUtils {
 	 * @param scales a list of {@link EvalScale}
 	 * @return an array of values for the passed in scales
 	 */
-	public static String[] getScaleValues(List scales) {
-		List scaleValues = new ArrayList();
+	public static String[] getScaleValues(List<EvalScale> scales) {
+		List<String> scaleValues = new ArrayList<String>();
 		for (int i = 0; i < scales.size(); i++) {
-			EvalScale scale = (EvalScale) scales.get(i);
+			EvalScale scale = scales.get(i);
 			scaleValues.add(scale.getId().toString());
 		}
 		return (String[]) scaleValues.toArray(new String[] {});
