@@ -24,6 +24,9 @@ import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIJointContainer;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.UISelect;
+import uk.org.ponder.rsf.components.UISelectChoice;
+import uk.org.ponder.rsf.components.UISelectLabel;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
@@ -36,20 +39,21 @@ import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
  */
 public class MultipleAnswerRenderer implements ItemRenderer {
 
-	/**
-	 * This identifies the template component associated with this renderer
-	 */
-	public static final String COMPONENT_ID = "render-multipleanswer-item:";
+   /**
+    * This identifies the template component associated with this renderer
+    */
+   public static final String COMPONENT_ID = "render-multipleanswer-item:";
 
-	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#renderItem(uk.org.ponder.rsf.components.UIContainer, java.lang.String, org.sakaiproject.evaluation.model.EvalTemplateItem, int, boolean)
-	 */
-	public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled) {
-		UIJointContainer container = new UIJointContainer(parent, ID, COMPONENT_ID);
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#renderItem(uk.org.ponder.rsf.components.UIContainer, java.lang.String, org.sakaiproject.evaluation.model.EvalTemplateItem, int, boolean)
+    */
+   public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled) {
+      UIJointContainer container = new UIJointContainer(parent, ID, COMPONENT_ID);
 
-		if (displayNumber <= 0) displayNumber = 0;
-      Boolean initValue = null;
-      if (bindings[0] == null) initValue = Boolean.FALSE;
+      if (displayNumber <= 0) displayNumber = 0;
+      // this if is here because giving an RSF input control a null binding AND a null initial value causes a failure
+      String initValue = null;
+      if (bindings[0] == null) initValue = "";
 
       String naBinding = null;
       if (bindings.length > 1) {
@@ -58,64 +62,79 @@ public class MultipleAnswerRenderer implements ItemRenderer {
       Boolean naInit = null;
       if (naBinding == null) naInit = Boolean.FALSE;
 
-		EvalScale scale = templateItem.getItem().getScale();
-		String[] scaleOptions = scale.getOptions();
-		int optionCount = scaleOptions.length;
+      EvalScale scale = templateItem.getItem().getScale();
+      String[] scaleOptions = scale.getOptions();
+      int optionCount = scaleOptions.length;
+      String scaleValues[] = new String[optionCount];
+      String scaleLabels[] = new String[optionCount];
 
-		String scaleDisplaySetting = templateItem.getScaleDisplaySetting();
-		boolean usesNA = templateItem.getUsesNA().booleanValue();
+      String scaleDisplaySetting = templateItem.getScaleDisplaySetting();
+      boolean usesNA = templateItem.getUsesNA().booleanValue();
 
-		if (EvalConstants.ITEM_SCALE_DISPLAY_FULL.equals(scaleDisplaySetting) || 
-			EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL.equals(scaleDisplaySetting)) {
+      if (EvalConstants.ITEM_SCALE_DISPLAY_FULL.equals(scaleDisplaySetting) || 
+            EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL.equals(scaleDisplaySetting)) {
 
-			UIBranchContainer fullFirst = UIBranchContainer.make(container, "fullType:");
+         UIBranchContainer fullFirst = UIBranchContainer.make(container, "fullType:");
 
-			UIOutput.make(fullFirst, "itemNum", displayNumber+"" );
-			UIVerbatim.make(fullFirst, "itemText", templateItem.getItem().getItemText());
-
-			// display next row
-			UIBranchContainer fullRow = UIBranchContainer.make(container, "nextrow:", displayNumber+"");
-
-			String containerId;
-			if ( EvalConstants.ITEM_SCALE_DISPLAY_FULL.equals(scaleDisplaySetting) ) {
-				containerId = "fullDisplay:";
-			} else if ( EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL.equals(scaleDisplaySetting) ) {
-				containerId = "verticalDisplay:";
-			} else {
-				throw new RuntimeException("Invalid scaleDisplaySetting (this should not be possible): " + scaleDisplaySetting);
-			}
-
-			UIBranchContainer displayContainer = UIBranchContainer.make(fullRow, containerId);
-
-         for (int j = 0; j < optionCount; ++j) {
-            UIBranchContainer scaleOption = UIBranchContainer.make(displayContainer, "scaleOptions:", j+"");
-            // e.g. binding: answer.5.multipleAnswers.1
-            UIBoundBoolean checkbox = UIBoundBoolean.make(scaleOption, "multipleAnswerValue", bindings[0] + "." + j, initValue);
-            UILabelTargetDecorator.targetLabel(UIOutput.make(scaleOption, "multipleAnswerLabel", scaleOptions[j]), checkbox);
-            if (disabled) {
-               checkbox.willinput = false;
-               checkbox.fossilize = false;
-            }
+         for (int count = 0; count < optionCount; count++) {
+            scaleValues[count] = new Integer(count).toString();
+            scaleLabels[count] = scaleOptions[count]; 
          }
 
-			if (usesNA) {
-				UIBranchContainer branchNA = UIBranchContainer.make(container, "showNA:");
-				branchNA.decorators = new DecoratorList( new UIStyleDecorator("na") );// must match the existing CSS class
+         UIOutput.make(fullFirst, "itemNum", displayNumber+"" );
+         UIVerbatim.make(fullFirst, "itemText", templateItem.getItem().getItemText());
+
+         // display next row
+         UIBranchContainer fullRow = UIBranchContainer.make(container, "nextrow:", displayNumber+"");
+
+         String containerId;
+         if ( EvalConstants.ITEM_SCALE_DISPLAY_FULL.equals(scaleDisplaySetting) ) {
+            containerId = "fullDisplay:";
+         } else if ( EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL.equals(scaleDisplaySetting) ) {
+            containerId = "verticalDisplay:";
+         } else {
+            throw new RuntimeException("Invalid scaleDisplaySetting (this should not be possible): " + scaleDisplaySetting);
+         }
+
+         UIBranchContainer displayContainer = UIBranchContainer.make(fullRow, containerId);
+
+         UISelect radios = UISelect.make(displayContainer, "dummyRadio", scaleValues, scaleLabels, bindings[0], initValue);
+         String selectID = radios.getFullID();
+
+         if (disabled) {
+            radios.selection.willinput = false;
+            radios.selection.fossilize = false;
+         }
+
+         for (int j = 0; j < scaleValues.length; ++j) {
+            UIBranchContainer radiobranchNested = 
+               UIBranchContainer.make(displayContainer, "scaleOptions:", j+"");
+            UISelectChoice choice = UISelectChoice.make(radiobranchNested, "choiceValue", selectID, j);
+            UILabelTargetDecorator.targetLabel(
+                  UISelectLabel.make(radiobranchNested, "choiceLabel", selectID, j),
+                  choice);
+         }
+
+         if (usesNA) {
+            UIBranchContainer branchNA = UIBranchContainer.make(container, "showNA:");
+            branchNA.decorators = new DecoratorList( new UIStyleDecorator("na") );// must match the existing CSS class
             UIBoundBoolean checkbox = UIBoundBoolean.make(branchNA, "itemNA", naBinding, naInit);
-            UILabelTargetDecorator.targetLabel(UIMessage.make(branchNA, "na-desc", "viewitem.na.desc"), checkbox);
-			}
+            UILabelTargetDecorator.targetLabel(
+                  UIMessage.make(branchNA, "na-desc", "viewitem.na.desc"), 
+                  checkbox);
+         }
 
-		} else {
-		   throw new IllegalStateException("Unknown scaleDisplaySetting ("+scaleDisplaySetting+") for " + getRenderType());
-		}
-		return container;
-	}
+      } else {
+         throw new IllegalStateException("Unknown scaleDisplaySetting ("+scaleDisplaySetting+") for " + getRenderType());
+      }
+      return container;
+   }
 
-	/* (non-Javadoc)
-	 * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#getRenderType()
-	 */
-	public String getRenderType() {
-		return EvalConstants.ITEM_TYPE_MULTIPLEANSWER;
-	}
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.tool.renderers.ItemRenderer#getRenderType()
+    */
+   public String getRenderType() {
+      return EvalConstants.ITEM_TYPE_MULTIPLEANSWER;
+   }
 
 }

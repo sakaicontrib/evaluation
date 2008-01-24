@@ -87,7 +87,7 @@ public class EvalUtils {
 	 * @param list
 	 * @return the original list with the duplicate objects removed
 	 */
-	public static <T extends Object> List<T> removeDuplicates(List<T> list) {
+	public static <T> List<T> removeDuplicates(List<T> list) {
 		Set<T> s = new HashSet<T>();
 		for (Iterator<T> iter = list.iterator(); iter.hasNext();) {
 			T element = (T) iter.next();
