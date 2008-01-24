@@ -1,38 +1,15 @@
 package org.sakaiproject.evaluation.tool.reporting;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
 import java.io.IOException;
-import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashMap;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.CategoryLabelPosition;
-import org.jfree.chart.axis.CategoryLabelPositions;
-import org.jfree.chart.axis.ExtendedCategoryAxis;
-import org.jfree.chart.axis.ValueAxis;
-import org.jfree.chart.labels.ItemLabelAnchor;
-import org.jfree.chart.labels.ItemLabelPosition;
-import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
-import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.renderer.category.BarRenderer;
-import org.jfree.chart.title.TextTitle;
-import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.text.TextBlockAnchor;
-import org.jfree.ui.HorizontalAlignment;
-import org.jfree.ui.RectangleAnchor;
-import org.jfree.ui.TextAnchor;
 import org.sakaiproject.content.api.ContentHostingService;
 import org.sakaiproject.content.api.ContentResource;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
@@ -46,7 +23,6 @@ import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
-import org.sakaiproject.user.api.UserDirectoryService;
 import org.sakaiproject.util.FormattedText;
 
 import com.lowagie.text.Document;
@@ -54,10 +30,7 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Image;
 import com.lowagie.text.Paragraph;
-import com.lowagie.text.pdf.DefaultFontMapper;
-import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.PdfWriter;
 
 public class PDFReportExporter {
@@ -69,9 +42,6 @@ public class PDFReportExporter {
     private HttpServletResponse response;
     private EvalExternalLogic externalLogic;
     private ContentHostingService contentHostingService;
-    // TODO I think we are supposed to use ExternalUsers but I don't see any 
-    // bean declaration of it yet.
-    private UserDirectoryService userDirectoryService;
 
     public void respondWithPDF(EvalEvaluation evaluation, EvalTemplate template,
             List<EvalItem> allEvalItems, List<EvalTemplateItem> allEvalTemplateItems,
@@ -79,7 +49,7 @@ public class PDFReportExporter {
             String[] groupIDs) {
         Document document = new Document();
         try {
-            PdfWriter writer = PdfWriter.getInstance(document, response.getOutputStream());
+            //PdfWriter writer = PdfWriter.getInstance(document, response.getOutputStream());
             document.open();
             
             // make a standard place in the eval webapp to put your custom image
@@ -105,7 +75,7 @@ public class PDFReportExporter {
             document.add(title);
             
             // Account Name
-            Paragraph accountName = new Paragraph(userDirectoryService.getCurrentUser().getDisplayName());
+            Paragraph accountName = new Paragraph(externalLogic.getUserDisplayName(externalLogic.getCurrentUserId()));
             accountName.setAlignment(Element.ALIGN_CENTER);
             document.add(accountName);
             
@@ -246,11 +216,7 @@ public class PDFReportExporter {
             
             document.close();
         } catch (DocumentException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+           throw new RuntimeException("Failure in export", e);
         }
         
         
@@ -306,10 +272,6 @@ public class PDFReportExporter {
 
     public void setContentHostingService(ContentHostingService contentHostingService) {
         this.contentHostingService = contentHostingService;
-    }
-
-    public void setUserDirectoryService(UserDirectoryService userDirectoryService) {
-        this.userDirectoryService = userDirectoryService;
     }
 
     public void setResponsesLogic(EvalResponsesLogic responsesLogic) {

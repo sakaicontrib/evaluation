@@ -1,7 +1,6 @@
 package org.sakaiproject.evaluation.tool.reporting;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,8 +16,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
-import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups;
 import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -32,11 +29,9 @@ import uk.org.ponder.util.UniversalRuntimeException;
 
 public class XLSReportExporter {
 
-    private EvalSettings evalSettings;
     private EvalResponsesLogic responsesLogic;
     private EvalEvaluationsLogic evalsLogic;
     private EvalExternalLogic externalLogic;
-    private ExternalEvalGroups externalEvalGroups;
     private HttpServletResponse response;
 
     
@@ -98,7 +93,7 @@ public class XLSReportExporter {
         }
         
         // Participants listing
-        List<String> groupTitles = new ArrayList<String>();
+        //List<String> groupTitles = new ArrayList<String>();
         
         //TODO Ask Az the right way to get the Group Titles since I don't see
         // any instantiated beans for EvalGroupProvider
@@ -195,10 +190,6 @@ public class XLSReportExporter {
         }
         return totalEnrollments;
     }
-    
-    public void setEvalSettings(EvalSettings evalSettings) {
-        this.evalSettings = evalSettings;
-    }
 
     public void setResponsesLogic(EvalResponsesLogic responsesLogic) {
         this.responsesLogic = responsesLogic;
@@ -216,7 +207,4 @@ public class XLSReportExporter {
         this.response = response;
     }
 
-    public void setExternalEvalGroups(ExternalEvalGroups externalEvalGroups) {
-        this.externalEvalGroups = externalEvalGroups;
-    }
 }
