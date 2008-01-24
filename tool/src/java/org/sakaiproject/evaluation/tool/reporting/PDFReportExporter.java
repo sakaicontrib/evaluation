@@ -25,6 +25,8 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.util.FormattedText;
 
+import uk.org.ponder.util.UniversalRuntimeException;
+
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
@@ -216,7 +218,7 @@ public class PDFReportExporter {
             
             document.close();
         } catch (DocumentException e) {
-           throw new RuntimeException("Failure in export", e);
+            throw UniversalRuntimeException.accumulate(e, "Error creating PDF Export");
         }
         
         

@@ -52,7 +52,7 @@ public class CSVReportExporter {
         try {
             writer.close();
         } catch (IOException e1) {
-            e1.printStackTrace();
+            throw UniversalRuntimeException.accumulate(e1, "Could not close the CSVWriter");
         }
 
         // dump the output to the response stream
