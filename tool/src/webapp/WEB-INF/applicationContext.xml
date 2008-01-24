@@ -20,17 +20,25 @@
 
 	<!-- the beans listed here are allowed access to values (security) -->
 	<bean parent="requestAddressibleParent">
-		<property name="value" value="evaluationBean, reportsBean, templateBBean, importBean, itemsBean, expertItemsBean, 
-      			templateBeanLocator, templateItemWBL, answersBeanLocator, responseAnswersBeanLocator, responseBeanLocator, 
-      			evaluationBeanLocator, takeEvalBean, settingsBean, scaleBean, scaleBeanLocator, itemWBL, hierNodeLocator, 
-      			hierNodeLocatorInvoker, hierNodeGroupsLocator, hierNodeGroupsLocatorInvoker" />
+		<property name="value" value="id-defunnel, 
+		      evaluationBean, reportsBean, templateBBean, importBean, itemsBean, expertItemsBean, 
+		      templateBeanLocator, templateItemWBL, answersBeanLocator, responseAnswersBeanLocator, responseBeanLocator, 
+		      evaluationBeanLocator, takeEvalBean, settingsBean, scaleBean, scaleBeanLocator, itemWBL, 
+		      hierNodeLocator, hierNodeLocatorInvoker, hierNodeGroupsLocator, hierNodeGroupsLocatorInvoker" />
 	</bean>
-	
-	<!-- 
+
+    <!-- allows us to identify entities used in OTP on the EL path,
+        this maps the OTPized entities to unique OTP root names (e.g. templateBeanLocator, itemWBL) -->
+    <bean parent="entityNameInferrerParent">
+        <property name="value">
+            <bean class="org.sakaiproject.evaluation.tool.locators.EntityNameInferrerImpl" />
+        </property>
+    </bean>
+
+    <!-- This has to be true to get around an RSF bug (RSF-40) until it is fixed in 0.7.3 -->
 	<bean id="ignoreFossilizedValues" class="uk.org.ponder.springutil.BooleanFactory">
 		<property name="value" value="true" />
 	</bean>
--->
 
 	<!-- tool logic beans (organizational) -->
 	<bean id="localTemplateLogic"
@@ -117,12 +125,11 @@
 		init-method="init">
 		<property name="renderTypes">
 			<list>
-				<bean class="org.sakaiproject.evaluation.tool.renderers.HeaderRenderer">
-				</bean>
-				<bean class="org.sakaiproject.evaluation.tool.renderers.TextRenderer">
-				</bean>
-				<bean class="org.sakaiproject.evaluation.tool.renderers.ScaledRenderer">
-				</bean>
+				<bean class="org.sakaiproject.evaluation.tool.renderers.HeaderRenderer" />
+				<bean class="org.sakaiproject.evaluation.tool.renderers.TextRenderer" />
+				<bean class="org.sakaiproject.evaluation.tool.renderers.ScaledRenderer" />
+                <bean class="org.sakaiproject.evaluation.tool.renderers.MultipleChoiceRenderer" />
+                <bean class="org.sakaiproject.evaluation.tool.renderers.MultipleAnswerRenderer" />
 				<bean class="org.sakaiproject.evaluation.tool.renderers.BlockRenderer">
 					<property name="itemsLogic"
 						ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
@@ -156,8 +163,9 @@
 		parent="templateContributorParent">
 		<property name="baseDirectory" value="component-templates/" />
 		<property name="templateNames"
-			value="render_header_item, render_text_item, render_scaled_item, render_block_item, render_add_item_control, 
-               hierarchy_controls, render_hierarchy_node_selector" />
+			value="render_header_item, render_text_item, render_scaled_item, render_block_item, 
+			     render_multiplechoice_item, render_multipleanswer_item,
+			     render_add_item_control, hierarchy_controls, render_hierarchy_node_selector" />
 		<property name="expected" value="true" />
 	</bean>
 

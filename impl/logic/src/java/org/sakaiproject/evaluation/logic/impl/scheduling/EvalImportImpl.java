@@ -944,7 +944,7 @@ public class EvalImportImpl implements EvalImport {
 			String ideal = element.getChildText("IDEAL");
 			
 			//new scale
-			EvalScale scale = new EvalScale(new Date(), owner, title, sharing, expert, expertDescription, ideal, choices,locked);	
+			EvalScale scale = new EvalScale(new Date(), owner, title, EvalConstants.SCALE_MODE_SCALE, sharing, expert, expertDescription, ideal, choices,locked);	
 			scale.setEid(eid);
 			return scale;
 		}

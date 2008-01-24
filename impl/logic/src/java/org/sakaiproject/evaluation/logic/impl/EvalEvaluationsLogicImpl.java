@@ -345,15 +345,16 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
     * (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.EvalEvaluationsLogic#getEvaluationByEid(java.lang.String)
     */
+   @SuppressWarnings("unchecked")
    public EvalEvaluation getEvaluationByEid(String eid) {
-	List evalEvaluations = new ArrayList();
-	EvalEvaluation evalEvaluation = null;
-	if(eid != null) {
-		evalEvaluations = (List)dao.findByProperties(EvalEvaluation.class, new String[] {"eid"}, new Object[] {eid});
-		if(!evalEvaluations.isEmpty())
-			evalEvaluation = (EvalEvaluation)evalEvaluations.get(0);
-	}
-	return evalEvaluation;
+      List<EvalEvaluation> evalEvaluations = new ArrayList<EvalEvaluation>();
+      EvalEvaluation evalEvaluation = null;
+      if(eid != null) {
+         evalEvaluations = dao.findByProperties(EvalEvaluation.class, new String[] {"eid"}, new Object[] {eid});
+         if(!evalEvaluations.isEmpty())
+            evalEvaluation = (EvalEvaluation)evalEvaluations.get(0);
+      }
+      return evalEvaluation;
    }
 
    /* (non-Javadoc)
@@ -404,6 +405,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
          // only get recently closed evals 
          // check system setting to get "recent" value
          Integer recentlyClosedDays = (Integer) settings.get(EvalSettings.EVAL_RECENTLY_CLOSED_DAYS);
+         if (recentlyClosedDays == null) { recentlyClosedDays = 10; }
          Calendar calendar = GregorianCalendar.getInstance();
          calendar.add(Calendar.DATE, -1 * recentlyClosedDays.intValue());
          Date recent = calendar.getTime();

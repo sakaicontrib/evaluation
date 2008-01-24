@@ -19,6 +19,7 @@ import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.utils.ArrayUtils;
 import org.sakaiproject.evaluation.logic.utils.EvalUtils;
+import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
@@ -93,42 +94,8 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
       // set the date modified
       item.setLastModified( new Date() );
 
-      // check on ITEM_TYPE and invalid combinations of item values depending on the type
-      if ( EvalConstants.ITEM_TYPE_SCALED.equals(item.getClassification()) ) {
-         if (item.getScale() == null) {
-            throw new IllegalArgumentException("Item scale must be specified for scaled type items");
-         } else if (item.getScaleDisplaySetting() == null) {
-            throw new IllegalArgumentException("Item scale display setting must be specified for scaled type items");
-         } else if (item.getDisplayRows() != null) {
-            throw new IllegalArgumentException("Item displayRows cannot be included for scaled type items");
-         }
-      } else if ( EvalConstants.ITEM_TYPE_TEXT.equals(item.getClassification()) ) {
-         if (item.getDisplayRows() == null) {
-            throw new IllegalArgumentException("Item display rows must be specified for text type items");
-         } else if (item.getScale() != null) {
-            throw new IllegalArgumentException("Item scale cannot be included for text type items");
-         } else if (item.getScaleDisplaySetting() != null) {
-            throw new IllegalArgumentException("Item scale display setting cannot be included for text type items");
-         }
-      } else if ( EvalConstants.ITEM_TYPE_HEADER.equals(item.getClassification()) ) {
-         if (item.getScale() != null) {
-            throw new IllegalArgumentException("Item scale cannot be included for header type items");
-         } else if (item.getScaleDisplaySetting() != null) {
-            throw new IllegalArgumentException("Item scale display setting cannot be included for header type items");
-         } else if (item.getDisplayRows() != null) {
-            throw new IllegalArgumentException("Item displayRows cannot be included for header type items");
-         }
-      } else if ( EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(item.getClassification()) ) {
-         if (item.getScale() == null) {
-            throw new IllegalArgumentException("Item scale must be specified for block parent type items");
-         } else if (item.getScaleDisplaySetting() == null) {
-            throw new IllegalArgumentException("Item scale display setting must be specified for block parent type items");
-         } else if (item.getDisplayRows() != null) {
-            throw new IllegalArgumentException("Item displayRows cannot be included for block parent type items");
-         }
-      } else {
-         throw new IllegalArgumentException("Invalid item classification specified ("+item.getClassification()+"), you must use the ITEM_TYPE constants to indicate classification (and cannot use BLOCK_CHILD)");
-      }
+      // validates the item based on the classification
+      TemplateItemUtils.validateItemByClassification(item);
 
       // check the sharing constants
       if (! EvalUtils.checkSharingConstant(item.getSharing()) ||
@@ -208,13 +175,20 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
 
       if (checkUserControlItem(userId, item)) {
          EvalScale scale = item.getScale();
+         String itemClassification = item.getClassification();
          dao.delete(item);
          log.info("User ("+userId+") removed item ("+item.getId()+"), title: " + item.getItemText());
 
+         // unlock associated scales if there were any
          if (item.getLocked().booleanValue() && scale != null) {
-            // unlock associated scales
             log.info("Unlocking associated scale ("+scale.getTitle()+") for removed item ("+itemId+")");
             dao.lockScale( scale, Boolean.FALSE );
+         }
+
+         // now we remove the scale if this is MC or MA
+         if ( EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemClassification) ||
+               EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(itemClassification) ) {
+            dao.delete(scale);
          }
 
          return;
@@ -361,74 +335,8 @@ public class EvalItemsLogicImpl implements EvalItemsLogic {
          throw new IllegalArgumentException("Item ("+item.getItemText()+") must already be saved");
       }
 
-      // check on ITEM_TYPE and invalid combinations of item values depending on the type
-      // inherit settings from item if not set correctly here
-      if ( EvalConstants.ITEM_TYPE_SCALED.equals(item.getClassification()) ) {
-         // check if this scaled item is a block item
-         if (templateItem.getBlockParent() == null) {
-            // not block item (block parent must be specified)
-            // general scaled items checks
-            if (templateItem.getScaleDisplaySetting() == null) {
-               if (item.getScaleDisplaySetting() == null) {
-                  throw new IllegalArgumentException("Item scale display setting must be specified for scaled type items");
-               } else {
-                  templateItem.setScaleDisplaySetting(item.getScaleDisplaySetting());
-               }
-            } else if (templateItem.getBlockId() != null) {
-               throw new IllegalArgumentException("Item blockid must be null for scaled type items");
-            } else if (templateItem.getDisplayRows() != null) {
-               throw new IllegalArgumentException("Item displayRows must be null for scaled type items");
-            }
-         } else {
-            // this is related to a block
-            if ( templateItem.getBlockParent() != null ) {
-               // this is a child block item
-               if (templateItem.getBlockId() == null) {
-                  throw new IllegalArgumentException("Item blockid must be specified for child block items");
-               } else if (templateItem.getDisplayRows() != null) {
-                  throw new IllegalArgumentException("Item displayRows must be null for block type items");
-               }
-            }
-
-         }
-      } else if ( EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(item.getClassification()) ) {
-         // this is a block parent item (created just to hold the block parent text)
-         if (templateItem.getBlockParent() == null || !templateItem.getBlockParent().booleanValue() ) {
-            throw new IllegalArgumentException("Template Item block parent must be TRUE for parent block item");
-         } else if (templateItem.getScaleDisplaySetting() == null) {
-            throw new IllegalArgumentException("Template Item scale display setting must be included for parent block item");
-         } else if (templateItem.getBlockId() != null) {
-            throw new IllegalArgumentException("Item blockid must be null for parent block item");
-         } else if (templateItem.getDisplayRows() != null) {
-            throw new IllegalArgumentException("Item displayRows must be null for block type items");
-         }
-      } else if ( EvalConstants.ITEM_TYPE_TEXT.equals(item.getClassification()) ) {
-         if (templateItem.getDisplayRows() == null) {
-            if (item.getDisplayRows() == null) {
-               throw new IllegalArgumentException("Item display rows must be specified for text type items");
-            } else {
-               templateItem.setDisplayRows(item.getDisplayRows());
-            }
-         } else if (templateItem.getBlockId() != null) {
-            throw new IllegalArgumentException("Item blockid cannot be included for text type items");
-         } else if (templateItem.getScaleDisplaySetting() != null) {
-            throw new IllegalArgumentException("Item scale display setting cannot be included for text type items");
-         } else if (templateItem.getBlockParent() != null) {
-            throw new IllegalArgumentException("Item blockParent must be null for text type items");
-         }
-      } else if ( EvalConstants.ITEM_TYPE_HEADER.equals(item.getClassification()) ) {
-         if (templateItem.getBlockId() != null) {
-            throw new IllegalArgumentException("Item blockid cannot be included for header type items");
-         } else if (templateItem.getScaleDisplaySetting() != null) {
-            throw new IllegalArgumentException("Item scale display setting cannot be included for header type items");
-         } else if (templateItem.getDisplayRows() != null) {
-            throw new IllegalArgumentException("Item displayRows cannot be included for header type items");
-         } else if (templateItem.getBlockParent() != null) {
-            throw new IllegalArgumentException("Item blockParent must be null for header type items");
-         }
-      } else {
-         throw new IllegalArgumentException("Invalid item classification specified ("+item.getClassification()+"), you must use the ITEM_TYPE constants to indicate classification (and cannot use BLOCK)");
-      }
+      // validate the fields of this template item based on the classification of the contained item
+      TemplateItemUtils.validateTemplateItemByClassification(templateItem);
 
       // get template and check it
       EvalTemplate template = templateItem.getTemplate();

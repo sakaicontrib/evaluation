@@ -1,16 +1,16 @@
-/******************************************************************************
- * TextRenderer.java - created by aaronz@vt.edu
- * 
- * Copyright (c) 2007 Virginia Polytechnic Institute and State University
+/**
+ * TextRenderer.java - evaluation - Oct 29, 2007 2:59:12 PM - azeckoski
+ * $URL: https://source.sakaiproject.org/contrib $
+ * $Id: MultipleChoice.java 1000 Jan 21, 2008 2:59:12 PM azeckoski $
+ **************************************************************************
+ * Copyright (c) 2008 Centre for Academic Research in Educational Technologies
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
- * 
- * Contributors:
- * Aaron Zeckoski (aaronz@vt.edu) - primary
- * 
- *****************************************************************************/
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ */
 
 package org.sakaiproject.evaluation.tool.renderers;
 
@@ -30,6 +30,8 @@ import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIFreeAttributeDecorator;
+import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
+import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 
 /**
  * This handles the rendering of text type items
@@ -54,20 +56,29 @@ public class TextRenderer implements ItemRenderer {
 		String initValue = null;
 		if (bindings[0] == null) initValue = "";
 
-		UIOutput.make(container, "itemNum", displayNumber+"" ); //$NON-NLS-1$
-		UIVerbatim.make(container, "itemText", templateItem.getItem().getItemText()); //$NON-NLS-1$
-		if ( templateItem.getUsesNA().booleanValue() ) {
-			UIBranchContainer NAbranch = UIBranchContainer.make(container, "showNA:"); //$NON-NLS-1$
-			UIBoundBoolean.make(NAbranch, "itemNA"); //$NON-NLS-1$
-			UIMessage.make(NAbranch, "na-desc", "viewitem.na.desc"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
+      String naBinding = null;
+      if (bindings.length > 1) {
+         naBinding = bindings[1];
+      }
+      Boolean naInit = null;
+      if (naBinding == null) naInit = Boolean.FALSE;
 
-		UIInput textarea = UIInput.make(container, "essayBox", bindings[0], initValue); //$NON-NLS-1$ //$NON-NLS-2$
+		UIOutput.make(container, "itemNum", displayNumber+"" );
+		UIVerbatim.make(container, "itemText", templateItem.getItem().getItemText());
+
+      if ( templateItem.getUsesNA().booleanValue() ) {
+         UIBranchContainer branchNA = UIBranchContainer.make(container, "showNA:");
+         branchNA.decorators = new DecoratorList( new UIStyleDecorator("na") );// must match the existing CSS class
+         UIBoundBoolean checkbox = UIBoundBoolean.make(branchNA, "itemNA", naBinding, naInit);
+         UILabelTargetDecorator.targetLabel(UIMessage.make(branchNA, "na-desc", "viewitem.na.desc"), checkbox);
+      }
+
+		UIInput textarea = UIInput.make(container, "essayBox", bindings[0], initValue); //$NON-NLS-2$
 
 		Map<String, String> attrmap = new HashMap<String, String>();
-		attrmap.put("rows", templateItem.getDisplayRows().toString()); //$NON-NLS-1$
+		attrmap.put("rows", templateItem.getDisplayRows().toString());
 		if (disabled) {
-			attrmap.put("disabled", "true"); //$NON-NLS-1$ //$NON-NLS-2$		
+			attrmap.put("disabled", "true"); //$NON-NLS-2$		
 		}
 		textarea.decorators = new DecoratorList( new UIFreeAttributeDecorator(attrmap) );
 

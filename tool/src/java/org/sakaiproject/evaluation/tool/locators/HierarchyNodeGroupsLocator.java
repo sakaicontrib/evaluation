@@ -1,3 +1,17 @@
+/**
+ * HierarchyNodeGroupsLocator.java - evaluation - Oct 29, 2007 11:35:56 AM - sgithens
+ * $URL$
+ * $Id$
+ **************************************************************************
+ * Copyright (c) 2007 Centre for Academic Research in Educational Technologies
+ * Licensed under the Educational Community License version 1.0
+ * 
+ * A copy of the Educational Community License has been included in this 
+ * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ */
+
 package org.sakaiproject.evaluation.tool.locators;
 
 import java.util.HashMap;
@@ -23,6 +37,8 @@ import uk.org.ponder.beanutil.BeanLocator;
  *  Will return a boolean depending on whether that group is selected.
  */
 public class HierarchyNodeGroupsLocator implements BeanLocator {
+   public static final String NEW_PREFIX = "new";
+   public static String NEW_1 = NEW_PREFIX +"1";
 
     private EvalExternalLogic external;
     public void setExternal(EvalExternalLogic external) {
@@ -34,16 +50,16 @@ public class HierarchyNodeGroupsLocator implements BeanLocator {
        this.hierarchyLogic = hierarchyLogic;
     }
     
-    public Map delivered = new HashMap(); 
+    public Map<String, Map<String, Boolean>> delivered = new HashMap<String, Map<String, Boolean>>(); 
     
     public Object locateBean(String name) {
         checkSecurity();
         
-        Object togo = delivered.get(name);
+        Map<String, Boolean> togo = delivered.get(name);
         if (togo == null) {
             List<EvalGroup> evalGroups = external.getEvalGroupsForUser("admin", EvalConstants.PERM_BE_EVALUATED);
             Set<String> assignedGroupIds = hierarchyLogic.getEvalGroupsForNode(name);
-            Map assignedGroups = new HashMap();
+            Map<String, Boolean> assignedGroups = new HashMap<String, Boolean>();
             for (EvalGroup group: evalGroups) {
                 if (assignedGroupIds.contains(group.evalGroupId)) {
                     assignedGroups.put(group.evalGroupId, new Boolean(true));

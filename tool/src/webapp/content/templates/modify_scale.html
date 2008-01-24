@@ -2,7 +2,7 @@
      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title rsf:id="page-title">Add/Edit Scale</title>
+	<title rsf:id="msg=scaleaddmodify.page.title">Add/Edit Scale</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<link href="/library/skin/tool_base.css" type="text/css" rel="stylesheet" media="all" />
 	<link href="/library/skin/default/tool.css" type="text/css" rel="stylesheet" media="all" />
@@ -19,7 +19,7 @@
 
 <div>
 	<ul class="breadCrumb">
-		<li><a rsf:id="summary-toplink" href="summary.html">Summary</a></li><li><a rsf:id="administrate-toplink" href="administrate.html">Administrate</a></li><li rsf:id="page-title" class="lastCrumb">Add/Edit Scale</li>
+		<li><a rsf:id="summary-toplink" href="summary.html">Summary</a></li><li><a rsf:id="administrate-toplink" href="administrate.html">Administrate</a></li><li rsf:id="msg=scaleaddmodify.page.title" class="lastCrumb">Add/Edit Scale</li>
 	</ul>
 </div>
 
@@ -33,12 +33,12 @@
 
 <form  rsf:id="basic-form" method="post">
 	<p class="shorttext">
-		<label rsf:id="scale-title-note" for="scale-title">Title</label>
+		<label rsf:id="msg=scaleaddmodify.scale.title.note" for="scale-title">Title</label>
 		<input rsf:id="scale-title" type="text" value="" maxlength="100" size="30" id="scale-title-id"/>
 		&nbsp;
 		<a rsf:id="scale-remove-link" href="remove_scale.html">Remove Scale</a>
 	</p>
-	<h4 rsf:id="scale-note-start" >Ideal</h4>
+	<h4 rsf:id="msg=scaleaddmodify.adddropscale.note.start">Scale</h4>
 	<div class="labelindnt">
 		<div rsf:id="modify-scale-points:">
 		<!-- start div for evolver widget - contents below are dummy -->
@@ -70,32 +70,19 @@
 	</div>
 
 	
-		<h4 rsf:id="ideal-note-start">Ideal</h4>
-		<p class="instruction" rsf:id="ideal-note-main-text" >
-			Indicate the position of the "best" answer in this scale (used for graphs and coloring)
-		</p>	
-		
+	<h4 rsf:id="msg=scaleaddmodify.scale.ideal.note.start">Ideal</h4>
+	<p class="instruction" rsf:id="msg=scaleaddmodify.scale.ideal.note.main.text" >
+		Indicate the position of the "best" answer in this scale (used for graphs and coloring)
+	</p>	
 
-		<div class="checkbox indnt1">
-			<span rsf:id="scaleIdealRadio"/>
-			<div rsf:id="scaleIdealOptions:">
-				<input type="radio" rsf:id="scale-ideal-value" id="scale-ideal-value-id"/>
-				<label rsf:id="scale-ideal-label" for="scale-ideal-value">Ideal label</label>
-			</div>
-		</div>	
-		<div class="checkbox indnt1">	
-			<div rsf:id="scaleIdealOptions:">
-				<input type="radio" rsf:id="scale-ideal-value" id="scale-ideal-value-id"/>
-				<label rsf:id="scale-ideal-label"  for="scale-ideal-value">Ideal label</label>
-			</div>
-		</div>	
-		<div class="checkbox indnt1">	
-			<div rsf:id="scaleIdealOptions:">
-				<input type="radio" rsf:id="scale-ideal-value" id="scale-ideal-value-id"/>
-				<label rsf:id="scale-ideal-label"  for="scale-ideal-value">Ideal label</label>
-			</div>
-			<div class="cleaner">&nbsp;</div>
+	<div class="checkbox indnt1">
+		<span rsf:id="scaleIdealRadio"/>
+		<div rsf:id="scaleIdealOptions:">
+			<input type="radio" rsf:id="scale-ideal-value" id="scale-ideal-value-id"/>
+			<label rsf:id="scale-ideal-label" for="scale-ideal-value">Ideal label</label>
 		</div>
+	</div>	
+
 	<div class="longtext indnt1">	
 		<div rsf:id="sharing-branch:">
 			<label class="block" rsf:id="scale-sharing" for="sharing-branch:::scale-sharing-selection">Sharing</label>
@@ -104,7 +91,8 @@
 				<option>Sharing option 2</option>
 			</select>
 		</div>
-	</div>	
+	</div>
+
 	<p class="act">
 		<input rsf:id="scale-add-modify-save-button" type="submit" value="Save Scale" class="active" accesskey="s"  />  
 		<input rsf:id="scale-add-modify-cancel-button" type="button" value="Cancel" onclick="javascript:history.go(-1);" accesskey="x"/>

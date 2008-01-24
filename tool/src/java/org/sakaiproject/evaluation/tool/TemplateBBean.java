@@ -318,9 +318,15 @@ public class TemplateBBean {
 
 	// ITEMS
 	public String saveItemAction() {
-		log.debug("create item");
+		log.info("create item");
 		itemBeanWBL.saveAll();
 		return "success";
+	}
+
+	public String saveBothAction() {
+	   log.info("save template item and item");
+	   templateItemWBL.saveBoth();
+	   return "success";
 	}
 
 }

@@ -158,6 +158,25 @@ public class EvalConstants {
 	 */
 	public static final String SCALE_IDEAL_OUTSIDE = "outside";
 
+   /**
+    * Scale mode: SCALE - this scale is a reusable scale which is used in SCALED items,
+    * this is the default and will appear in scale dropdowns
+    */
+   public static final String SCALE_MODE_SCALE = "scale";
+   /**
+    * Scale mode: ADHOC - this scale is an adhoc set of text data that are used for a MultipleChoice or MultipleAnswer item,
+    * this will not appear in any lists and is not shareable
+    */
+   public static final String SCALE_MODE_ADHOC = "adhoc";
+
+
+   /**
+    * This is the default title to use for adhoc scales (which do not use the title for identification),
+    * this will be replaced when the scale is saved by a unique one
+    */
+   public static final String SCALE_ADHOC_DEFAULT_TITLE = "*AdhocScale*";
+
+
 	/**
 	 * Item type (itemClassification) setting:
 	 * This is a scaled (likert) type item<br/>
@@ -166,6 +185,20 @@ public class EvalConstants {
 	 * a chunk of items which all use the same scale
 	 */
 	public static final String ITEM_TYPE_SCALED = "Scaled";
+   /**
+    * Item type (itemClassification) setting:
+    * This is a multiple choice type item<br/>
+    * it uses an adhoc scale (though it can use any scale),
+    * only one answer may be selected
+    */
+   public static final String ITEM_TYPE_MULTIPLECHOICE = "MultipleChoice";
+   /**
+    * Item type (itemClassification) setting:
+    * This is a multiple answer type item<br/>
+    * it uses an adhoc scale (though it can use any scale),
+    * zero to many answers may be selected
+    */
+   public static final String ITEM_TYPE_MULTIPLEANSWER = "MultipleAnswer";
 	/**
 	 * Item type (itemClassification) setting:
 	 * This is a textual/essay type item
@@ -195,6 +228,7 @@ public class EvalConstants {
 	 */
 	public static final String ITEM_TYPE_BLOCK_CHILD = "BlockChild";
 
+
 	/**
 	 * Item category (itemCategory) setting:
 	 * This item is in the course category and will be listed like 
@@ -205,16 +239,19 @@ public class EvalConstants {
 	 * Item category (itemCategory) setting:
 	 * This item is in the instructor category and will be repeated
 	 * for each user who can be evaluated in the evaluation group when the 
-	 * evaluation is rendered for the takers
+	 * evaluation is rendered for the takers, the user id of the instructor
+	 * should be bound to associated answers
 	 */
 	public static final String ITEM_CATEGORY_INSTRUCTOR = "Instructor";
 	/**
 	 * Item category (itemCategory) setting:
 	 * This item is in the environment category and will be repeated
 	 * for each environemnt setup for the evaluation group when the 
-	 * evaluation is rendered for the takers
+	 * evaluation is rendered for the takers, a unique id for that
+	 * environment should be bound to associated answers
 	 */
 	public static final String ITEM_CATEGORY_ENVIRONMENT = "Environment";
+
 
 	/**
 	 * Item scale display (scaleDisplaySetting) setting:

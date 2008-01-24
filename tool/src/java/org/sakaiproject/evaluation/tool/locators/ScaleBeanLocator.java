@@ -1,15 +1,16 @@
-/******************************************************************************
- * ScaleBeanLocator.java - created by kahuja@vt.edu on Mar 04, 2007
- * 
- * Copyright (c) 2007 Virginia Polytechnic Institute and State University
+/**
+ * ScaleBeanLocator.java - evaluation - Mar 04, 2007 11:35:56 AM - kahuja@vt.edu
+ * $URL: https://source.sakaiproject.org/contrib $
+ * $Id: Locator.java 11234 Oct 29, 2007 11:35:56 AM azeckoski $
+ **************************************************************************
+ * Copyright (c) 2007 Centre for Academic Research in Educational Technologies
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
- * 
- * Contributors:
- * Kapil Ahuja (kahuja@vt.edu)
- *****************************************************************************/
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ */
 
 package org.sakaiproject.evaluation.tool.locators;
 
@@ -20,7 +21,8 @@ import java.util.Map;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.tool.LocalTemplateLogic;
 
-import uk.org.ponder.beanutil.BeanLocator;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import uk.org.ponder.beanutil.WriteableBeanLocator;
 
 /**
  * This is the OTP bean used to locate scales.
@@ -28,20 +30,19 @@ import uk.org.ponder.beanutil.BeanLocator;
  * @author Kapil Ahuja (kahuja@vt.edu)
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class ScaleBeanLocator implements BeanLocator {
-
-	public static final String NEW_PREFIX = "new ";
-	public static String NEW_1 = NEW_PREFIX + "1";
+public class ScaleBeanLocator implements WriteableBeanLocator {
+   public static final String NEW_PREFIX = "new";
+   public static String NEW_1 = NEW_PREFIX +"1";
 
 	private LocalTemplateLogic localTemplateLogic;
 	public void setLocalTemplateLogic(LocalTemplateLogic localTemplateLogic) {
 		this.localTemplateLogic = localTemplateLogic;
 	}
 
-	private Map delivered = new HashMap();
+	private Map<String, EvalScale> delivered = new HashMap<String, EvalScale>();
 
 	public Object locateBean(String name) {
-		Object togo = delivered.get(name);
+	   EvalScale togo = delivered.get(name);
 		if (togo == null) {
 			if (name.startsWith(NEW_PREFIX)) {
 				togo = localTemplateLogic.newScale();
@@ -54,9 +55,9 @@ public class ScaleBeanLocator implements BeanLocator {
 	}
 
 	public void saveAll() {
-		for (Iterator it = delivered.keySet().iterator(); it.hasNext();) {
-			String key = (String) it.next();
-			EvalScale scale = (EvalScale) delivered.get(key);
+		for (Iterator<String> it = delivered.keySet().iterator(); it.hasNext();) {
+			String key = it.next();
+			EvalScale scale = delivered.get(key);
 			if (key.startsWith(NEW_PREFIX)) {
 				// could do stuff here
 			}
@@ -67,5 +68,16 @@ public class ScaleBeanLocator implements BeanLocator {
 	public void deleteScale(Long scaleId) {
 		localTemplateLogic.deleteScale(scaleId);
 	}
+
+   public boolean remove(String beanname) {
+      Long scaleId = Long.valueOf(beanname);
+      deleteScale(scaleId);
+      delivered.remove(beanname);
+      return true;
+   }
+
+   public void set(String beanname, Object toset) {
+      throw new NotImplementedException();
+   }
 
 }

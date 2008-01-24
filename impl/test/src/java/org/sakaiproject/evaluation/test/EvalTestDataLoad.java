@@ -70,8 +70,8 @@ public class EvalTestDataLoad {
    public final static String AUTHZGROUP1B_ID = "authzg-bbbbbbbb";
    public final static String AUTHZGROUP2A_ID = "authzg-cccccccc";
 
-   public final static Set AUTHZGROUPSET1 = new HashSet();
-   public final static Set AUTHZGROUPSET2 = new HashSet();
+   public final static Set<String> AUTHZGROUPSET1 = new HashSet<String>();
+   public final static Set<String> AUTHZGROUPSET2 = new HashSet<String>();
 
    public final static String SITE1_CONTEXT = "siteC1";
    public final static String SITE1_REF = "/sites/ref-111111";
@@ -461,30 +461,30 @@ public class EvalTestDataLoad {
    public void initialize() {
       String[] options1 = {"Bad", "Average", "Good"};
       scale1 = new EvalScale(new Date(), ADMIN_USER_ID, "Scale 1", 
-            EvalConstants.SHARING_PUBLIC, NOT_EXPERT, 
+            EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PUBLIC, NOT_EXPERT, 
             "description", 
             EvalConstants.SCALE_IDEAL_HIGH, options1, LOCKED);
 
       String[] options2 = {"Poor", "Average", "Good", "Excellent"};
       scale2 = new EvalScale(new Date(), MAINT_USER_ID, "Scale 2", 
-            EvalConstants.SHARING_PRIVATE, NOT_EXPERT, 
+            EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PRIVATE, NOT_EXPERT, 
             "description", 
             EvalConstants.SCALE_IDEAL_HIGH, options2, UNLOCKED);
 
       String[] options3 = {"Male", "Female", "Unknown"};
       scale3 = new EvalScale(new Date(), MAINT_USER_ID, "Scale 3", 
-            EvalConstants.SHARING_PRIVATE, NOT_EXPERT, 
+            EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PRIVATE, NOT_EXPERT, 
             "description", 
             EvalConstants.SCALE_IDEAL_NONE, options3, UNLOCKED);
 
       scale4 = new EvalScale(new Date(), ADMIN_USER_ID, "Scale 4", 
-            EvalConstants.SHARING_PRIVATE, EXPERT, 
+            EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PRIVATE, EXPERT, 
             "description", 
             EvalConstants.SCALE_IDEAL_NONE, options3, UNLOCKED);
 
       String[] optionsEid = {"Strongly Agree", "Agree", "Neutral", "Disagree", "Strongly Disagree"};
       scaleEid = new EvalScale(new Date(), ADMIN_USER_ID, "Scale Eid",
-            EvalConstants.SHARING_PUBLIC, NOT_EXPERT,
+            EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PUBLIC, NOT_EXPERT,
             "description",
             EvalConstants.SCALE_IDEAL_LOW, optionsEid, UNLOCKED);
       scaleEid.setEid("test-scale-1");

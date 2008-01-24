@@ -46,8 +46,8 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 /**
  * Handles scale addition, removal, and modification.
  * 
- * @author Kapil Ahuja (kahuja@vt.edu)
  * @author Aaron Zeckoski (aaronz@vt.edu)
+ * @author Kapil Ahuja (kahuja@vt.edu)
  */
 public class ModifyScaleProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
 
@@ -86,12 +86,12 @@ public class ModifyScaleProducer implements ViewComponentProducer, ViewParamsRep
 		EvalScaleParameters evalScaleParams = (EvalScaleParameters) viewparams;
 		Long scaleId = evalScaleParams.scaleId;
 
-		String path;
+		String scaleOTP = "scaleBeanLocator.";
 		if (scaleId == null) {
 			// new scale
-			path = "scaleBeanLocator." + ScaleBeanLocator.NEW_PREFIX + "1.";
+			scaleOTP += ScaleBeanLocator.NEW_1 + ".";
 		} else {
-			path = "scaleBeanLocator." + scaleId + ".";
+			scaleOTP += scaleId + ".";
 		}
 
 		/*
@@ -101,15 +101,9 @@ public class ModifyScaleProducer implements ViewComponentProducer, ViewParamsRep
 		UIInternalLink.make(tofill, "administrate-toplink", UIMessage.make("administrate.page.title"), new SimpleViewParameters(AdministrateProducer.VIEW_ID));
 		UIInternalLink.make(tofill, "scale-control-toplink", UIMessage.make("scalecontrol.page.title"), new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
 
-		// Page title
-		UIMessage.make(tofill, "page-title", "scaleaddmodify.page.title");
-
 		UIForm form = UIForm.make(tofill, "basic-form");
 
-		// Title 
-		UIMessage.make(form, "scale-title-note", "scaleaddmodify.scale.title.note");
-
-		UIInput.make(form, "scale-title", path + "title");
+		UIInput.make(form, "scale-title", scaleOTP + "title");
 
 		// use the logic layer method to determine if scales can be controlled
 		if (scaleId != null && 
@@ -126,17 +120,14 @@ public class ModifyScaleProducer implements ViewComponentProducer, ViewParamsRep
 		boundedDynamicListInputEvolver.setMaximumLength(20);
 
 		UIInputMany modifypoints = UIInputMany.make(form, 
-				"modify-scale-points:", path + "options");
+				"modify-scale-points:", scaleOTP + "options");
 		boundedDynamicListInputEvolver.evolve(modifypoints);
-
-		UIMessage.make(form, "scale-note-start", "scaleaddmodify.adddropscale.note.start");
-		UIMessage.make(form, "ideal-note-start", "scaleaddmodify.scale.ideal.note.start");
-		UIMessage.make(form, "ideal-note-main-text", "scaleaddmodify.scale.ideal.note.main.text");
 
 		UISelect radios = UISelect.make(form, "scaleIdealRadio", 
 				EvaluationConstant.scaleIdealValues, 
 				EvaluationConstant.scaleIdealLabels, 
-				path + "ideal").setMessageKeys();
+				scaleOTP + "ideal").setMessageKeys();
+		radios.selection.mustapply = true; // this is required to ensure that the value gets passed even if it is not changed
 
 		String selectID = radios.getFullID();
 		for (int i = 0; i < EvaluationConstant.scaleIdealValues.length; ++i) {
@@ -148,11 +139,10 @@ public class ModifyScaleProducer implements ViewComponentProducer, ViewParamsRep
 
 		if (userAdmin) {
 			UIBranchContainer sharingBranch = UIBranchContainer.make(form, "sharing-branch:");
-			UIMessage.make(sharingBranch, "scale-sharing-note", "scaleaddmodify.sharing.note");
 			UISelect.make(sharingBranch, "scale-sharing", 
 					EvaluationConstant.SHARING_VALUES, 
 					EvaluationConstant.SHARING_LABELS_PROPS, 
-					path + "sharing").setMessageKeys();
+					scaleOTP + "sharing").setMessageKeys();
 		}
 
 		// command buttons

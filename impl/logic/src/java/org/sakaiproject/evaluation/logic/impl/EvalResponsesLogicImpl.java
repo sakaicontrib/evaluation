@@ -135,8 +135,7 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
       }
 
       if (evalGroupId == null) {
-         // returns count of all responses in all eval groups if evalGroupId
-         // is null
+         // returns count of all responses in all eval groups if evalGroupId is null
          return dao.countByProperties(EvalResponse.class, new String[] { "evaluation.id" },
                new Object[] { evaluationId });
       } else {
@@ -327,7 +326,8 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
       Set<Long> answeredTemplateItemIds = new HashSet<Long>();
       for (Iterator<EvalAnswer> iter = response.getAnswers().iterator(); iter.hasNext();) {
          EvalAnswer answer = (EvalAnswer) iter.next();
-         if (answer.getNumeric() == null && answer.getText() == null) {
+         if (answer.getNumeric() == null && answer.getText() == null && 
+               (answer.getMultipleAnswers() == null || answer.getMultipleAnswers().length == 0) ) {
             throw new IllegalArgumentException("Cannot save blank answers: answer for templateItem: "
                   + answer.getTemplateItem().getId());
          }
@@ -376,6 +376,11 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
                throw new IllegalArgumentException("This answer templateItem (" + answer.getTemplateItem().getId()
                      + ") is not part of this evaluation (" + response.getEvaluation().getTitle() + ")");
             }
+         }
+
+         // put numeric answers into the multiple answer set
+         if (answer.getNumeric() != null) {
+            answer.setMultipleAnswers(new String[] {answer.getNumeric().toString()});
          }
 
          // TODO - check if numerical answers are valid?

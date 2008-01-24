@@ -7,8 +7,8 @@
 		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
 		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
 		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+        <script type="text/javascript" language="JavaScript" src="../js/scaleUtils.js"></script>
 		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
-
 	</head>
 	
 	<body>
@@ -19,7 +19,7 @@
 				<a rsf:id="control-items-link" href="control_items.html">My Items</a> -->
 			</div>
 			<ul class="breadCrumb">
-				<li><a rsf:id="summary-toplink" href="summary.html">Summary</a></li><li><a rsf:id="control-items-link" href="control_items.html">My Items</a></li><li class="lastCrumb" rsf:id="page-title">Modify Item</li>					
+				<li><a rsf:id="summary-toplink" href="summary.html">Summary</a></li><li><a rsf:id="control-items-link" href="control_items.html">My Items</a></li><li rsf:id="modify-template-items"><a rsf:id="payload-component" href="modify_template_items.html">Modify Template</a></li><li class="lastCrumb" rsf:id="page-title">Modify Item</li>
 			</ul>
 			
 			<div rsf:id="message-for:*" class="alertMessage">
@@ -44,15 +44,16 @@
 
 			<form rsf:id="item-form" method="post">
 
-			<p>		
+			<p>
 				<span rsf:id="item-text-header">Item Text:</span>
 				<span rsf:id="item-text-instruction" class="instruction">(this is the question or statement that the evaluator will respond to)</span>
 			</p>
-			<div  class="evalEditorSmall">
+			<div class="evalEditorSmall">
 				<div rsf:id="item-text:">
 					<textarea name="item-text-dummy" cols="80" rows="5"></textarea>
 				</div>
-			</div>	
+			</div>
+
 			<div rsf:id="show-item-scale:" class="longtext">
 				<label rsf:id="item-scale-header"class="block" for="show-item-scale:::item-scale-list-selection">Scale:</label>
 				<select rsf:id="item-scale-list" id="item-scale-list">
@@ -74,15 +75,48 @@
 					<option value="10">3 pt - Speed scale (Too slow, Okay, Too fast)</option>
 				</select>
 			</div>
-		
+
+            <div rsf:id="show-item-choices:" class="longtext">
+				<h4 rsf:id="msg=modifyitem.item.choices.header">Choices:</h4>
+				<div class="labelindnt">
+				    <div rsf:id="modify-scale-points:">
+				    <!-- start div for evolver widget - contents below are dummy -->
+				        <span id="myOldSpan">
+				            <span rsf:id="scaleOptions:" id="1">
+				                <input rsf:id="scale-option-label" type="text"/>
+				                &nbsp;
+				                <input rsf:id="scale-remove-option" type="button" value="Remove" onclick="javascript:removeOldElement(this)" />
+				                <br/>
+				            </span>
+				        </span>
+				
+				        <span id="myOldSpan">
+				            <span rsf:id="scaleOptions:" id="2">
+				                <input rsf:id="scale-option-label" type="text"/>
+				                &nbsp;
+				                <input rsf:id="scale-remove-option" type="button" value="Remove" onclick="javascript:removeOldElement(this)" class="removeItem"/>
+				                <br/>
+				            </span>
+				        </span>
+				
+				        <input rsf:id="scale-options-path" type="hidden" name="scale-options-path"/>
+				        <input rsf:id="scale-options-num" type="hidden" name="scale-options-num"/>
+				        <span id="myNewSpan"> </span>
+				
+				        <input rsf:id="scale-add-point" type="button" value="Add Scale Point" onclick="javascript:addScaleOption();" class="addItem" />  
+				    <!-- End div for evolver widget - contents above are dummy -->
+				    </div>
+				</div>
+            </div>
+
 			<div rsf:id="show-item-sharing:" class="longtext">
-				<label  rsf:id="item-sharing-header"class="block" for="show-item-sharing:::item-sharing-list-selection">Sharing:</label>
+				<label  rsf:id="item-sharing-header" class="block" for="show-item-sharing:::item-sharing-list-selection">Sharing:</label>
 				<select rsf:id="item-sharing-list" id="item-sharing-list">
 					<option value="private" selected="selected">Private - Item is private (visible to you only)</option>
 					<option value="public">Public - Item is modifiable by any admin</option>
 				</select>
 			</div>
-		
+
 			<div rsf:id="show-item-expert:">
 			 	<div class="checkbox"> 
 					<input rsf:id="item-expert" type="checkbox" id="item-expert" />
@@ -98,15 +132,37 @@
 						<textarea name="expert-desc-dummy" cols="80" rows="5"></textarea>
 					</div>
 				</div>	
-			</div>	
+			</div>
+
+            <div rsf:id="showItemResultSharing:">
+                <h4><span rsf:id="item-results-sharing-header">Result Sharing :</span></h4>
+                <span rsf:id="item_results_sharing"/>
+                <input type="radio" name="item_results_sharing_PU" rsf:id="item_results_sharing_PU" id="item_results_sharing_PU"/>
+                <label for="showItemResultSharing:::item_results_sharing_PU" rsf:id="item-results-sharing-PU">Public</label>
+                <input type="radio" name="item_results_sharing_PR" rsf:id="item_results_sharing_PR" id="item_results_sharing_PR" />
+                <label for="showItemResultSharing:::item_results_sharing_PR" rsf:id="item-results-sharing-PR">Private</label>
+            </div>
+
+            <!-- DIV tag for node selector renderer -->
+            <div rsf:id="hierarchyNodeSelector:">
+              <div>
+                 <h4><span>Hierarchy Assignment :</span></h4>
+                 <select style="font-family: monospace">
+                    <option value="TOP_LEVEL">Top Level</option>
+                    <option value="BIOL_DEPT">+ Biology Dept</option>
+                    <option value="BIOL_101">  - Bio 101</option>
+                 </select>
+              </div>
+            </div>
+
 			<fieldset class="visibleFS evalEditorSmall">
 				<legend rsf:id="item-display-hint-header">Display Setting Hints</legend>
 				<div rsf:id="item-display-hint-instruction" class="instruction">these optional settings allow the item author to provide hints as to how this item should be displayed</div>
 					<p rsf:id="show-scale-display:" class="longtext">
-						<label  for="show-scale-display:::scale-display-list-selection" class="block">
+						<label for="show-scale-display:::scale-display-list-selection" class="block">
 							<span rsf:id="scale-display-header">Scale Display Setting:</span>
 						</label>
-						<select rsf:id="scale-display-list"  id="scale-display-list">
+						<select rsf:id="scale-display-list" id="scale-display-list">
 							<option value="Compact">Compact</option>
 							<option value="CompactColored">Compact Colored</option>
 							<option value="Full">Full</option>
@@ -116,7 +172,7 @@
 							<option value="Vertical">Vertical</option>
 						</select>
 					</p>
-		
+
 					<p rsf:id="show-response-size:" class="longtext">
 						<label class="block">
 							<span rsf:id="item-response-size-header" >Response size:</span>
@@ -128,12 +184,12 @@
 							<option value="5">5 lines</option>
 						</select>
 					</p>
-		
+
 					<p rsf:id="showNA:" class="checkbox">
 						<input rsf:id="item-na" type="checkbox" id="item-na" />
 						<label rsf:id="item-na-header" for="showNA:::item-na">N/A (not applicable):</label>
 					</p>
-				
+
 					<div rsf:id="showItemCategory:">
 						<h5>
 							<span rsf:id="item-category-header">Category:</span>
@@ -150,17 +206,16 @@
 							</span>
 						</p>	
 					</div>
-						<div class="cleaner">&nbsp;</div>
-				</fieldset>
-			
-			
-				<div class="act">
-					<input rsf:id="save-item-action" type="submit" value="Save item" class="active"  accesskey="s" />
-					<input rsf:id="cancel-button" type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" accesskey="x" />					
-				</div>
+
+				<div class="cleaner">&nbsp;</div>
+			</fieldset>
+
+			<div class="act">
+				<input rsf:id="save-item-action" type="submit" value="Save item" class="active"  accesskey="s" />
+				<input rsf:id="cancel-button" type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" accesskey="x" />					
+			</div>
 
 			</form>
-		
 		</div>
 	</body>
 </html>

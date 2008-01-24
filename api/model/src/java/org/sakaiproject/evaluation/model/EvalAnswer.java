@@ -25,6 +25,8 @@ public class EvalAnswer implements java.io.Serializable {
    private String text;
 
    private Integer numeric;
+   
+   private String[] multipleAnswers;
 
    private String associatedId;
 
@@ -48,6 +50,22 @@ public class EvalAnswer implements java.io.Serializable {
       this.lastModified = lastModified;
       this.templateItem = templateItem;
       this.response = response;
+   }
+
+   public EvalAnswer(Date lastModified, EvalTemplateItem templateItem,
+         EvalResponse response, String text) {
+      this.lastModified = lastModified;
+      this.templateItem = templateItem;
+      this.response = response;
+      this.text = text;
+   }
+
+   public EvalAnswer(Date lastModified, EvalTemplateItem templateItem,
+         EvalResponse response, Integer numeric) {
+      this.lastModified = lastModified;
+      this.templateItem = templateItem;
+      this.response = response;
+      this.numeric = numeric;
    }
 
    /** full constructor */
@@ -135,6 +153,16 @@ public class EvalAnswer implements java.io.Serializable {
 
    public void setAssociatedType(String associatedType) {
       this.associatedType = associatedType;
+   }
+
+   
+   public String[] getMultipleAnswers() {
+      return multipleAnswers;
+   }
+
+   
+   public void setMultipleAnswers(String[] multipleAnswers) {
+      this.multipleAnswers = multipleAnswers;
    }
 
 }

@@ -51,7 +51,14 @@ public class EvalScalesLogicImpl implements EvalScalesLogic {
 	public EvalScale getScaleById(Long scaleId) {
 		log.debug("scaleId: " + scaleId );
 		// get the scale by passing in id
-		return (EvalScale) dao.findById(EvalScale.class, scaleId);
+		EvalScale scale = (EvalScale) dao.findById(EvalScale.class, scaleId);
+      // check for non-null type
+      if (scale != null && scale.getMode() == null) {
+         // set this to the default then
+         scale.setMode(EvalConstants.SCALE_MODE_SCALE);
+         saveScale(scale, scale.getOwner());
+      }
+      return scale;
 	}
 	
 	/*
@@ -86,7 +93,17 @@ public class EvalScalesLogicImpl implements EvalScalesLogic {
 			throw new IllegalArgumentException("Scale options cannot be null and must have at least 2 items");
 		}
 
-		// check the sharing constants
+		// check for non-null values which can be inferred
+      if (scale.getMode() == null) {
+         // set this to the default then
+         scale.setMode(EvalConstants.SCALE_MODE_SCALE);
+      }
+
+      if (scale.getSharing() == null) {
+         scale.setSharing(EvalConstants.SHARING_PRIVATE);
+      }
+
+      // check the sharing constants
 		if (! EvalUtils.checkSharingConstant(scale.getSharing()) ||
 				EvalConstants.SHARING_OWNER.equals(scale.getSharing()) ) {
 			throw new IllegalArgumentException("Invalid sharing constant ("+scale.getSharing()+") set for scale ("+scale.getTitle()+")");
@@ -115,6 +132,11 @@ public class EvalScalesLogicImpl implements EvalScalesLogic {
 		// fill in any default values and nulls here
 		if (scale.getLocked() == null) {
 			scale.setLocked( Boolean.FALSE );
+		}
+
+		// replace adhoc default title with a unique title
+		if (EvalConstants.SCALE_ADHOC_DEFAULT_TITLE.equals(scale.getTitle())) {
+		   scale.setTitle("adhoc-" + EvalUtils.makeUniqueIdentifier(100));
 		}
 
 		// check perms and save
@@ -194,13 +216,13 @@ public class EvalScalesLogicImpl implements EvalScalesLogic {
 			Object[] values;
 			int[] comps;
 			if (isAdmin) {
-				props = new String[] { "sharing" };
-				values = new Object[] { EvalConstants.SHARING_PRIVATE };
-				comps = new int[] {ByPropsFinder.EQUALS};
+				props = new String[] { "mode", "sharing" };
+				values = new Object[] { EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PRIVATE };
+				comps = new int[] { ByPropsFinder.EQUALS , ByPropsFinder.EQUALS };
 			} else {
-				props = new String[] { "sharing", "owner" };
-				values = new Object[] { EvalConstants.SHARING_PRIVATE, userId };				
-				comps = new int[] {ByPropsFinder.EQUALS, ByPropsFinder.EQUALS};
+				props = new String[] { "mode", "sharing", "owner" };
+				values = new Object[] { EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PRIVATE, userId };				
+				comps = new int[] { ByPropsFinder.EQUALS, ByPropsFinder.EQUALS, ByPropsFinder.EQUALS };
 			}
 			l.addAll( dao.findByProperties(EvalScale.class, 
 					props, 
@@ -212,9 +234,9 @@ public class EvalScalesLogicImpl implements EvalScalesLogic {
 		// handle public sharing items
 		if (getPublic) {
 			l.addAll( dao.findByProperties(EvalScale.class, 
-					new String[] { "sharing" }, 
-					new Object[] { EvalConstants.SHARING_PUBLIC },
-					new int[] {ByPropsFinder.EQUALS},
+					new String[] { "mode", "sharing" }, 
+					new Object[] { EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PUBLIC },
+					new int[] { ByPropsFinder.EQUALS, ByPropsFinder.EQUALS },
 					new String[] {"title"}) );
 		}
 

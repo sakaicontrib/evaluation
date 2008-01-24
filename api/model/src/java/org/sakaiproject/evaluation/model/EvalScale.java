@@ -33,6 +33,8 @@ public class EvalScale implements java.io.Serializable {
 
 	private Boolean locked;
 
+	private String mode;
+
 	// Constructors
 
 	/** default constructor */
@@ -40,20 +42,23 @@ public class EvalScale implements java.io.Serializable {
 	}
 
 	/** minimal constructor */
-	public EvalScale(Date lastModified, String owner, String title, String sharing, Boolean expert) {
+	public EvalScale(Date lastModified, String owner, String title, String mode, String sharing, Boolean expert) {
 		this.lastModified = lastModified;
 		this.owner = owner;
 		this.title = title;
+      this.mode = mode;
 		this.sharing = sharing;
 		this.expert = expert;
 	}
 
 	/** full constructor */
-	public EvalScale(Date lastModified, String owner, String title, String sharing, Boolean expert, String expertDescription, String ideal, String[] options,
+	public EvalScale(Date lastModified, String owner, String title, String mode, String sharing, Boolean expert, 
+	      String expertDescription, String ideal, String[] options,
 			Boolean locked) {
 		this.lastModified = lastModified;
 		this.owner = owner;
 		this.title = title;
+		this.mode = mode;
 		this.sharing = sharing;
 		this.expert = expert;
 		this.expertDescription = expertDescription;
@@ -151,4 +156,13 @@ public class EvalScale implements java.io.Serializable {
 		this.locked = locked;
 	}
 
+   
+   public String getMode() {
+      return mode;
+   }
+
+   
+   public void setMode(String mode) {
+      this.mode = mode;
+   }
 }

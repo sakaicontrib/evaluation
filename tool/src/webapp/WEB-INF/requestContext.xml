@@ -10,22 +10,11 @@
       the Sakai FCKEditor-based rich text control -->
    <bean id="richTextEvolver"
       class="org.springframework.beans.factory.config.BeanReferenceFactoryBean">
+<!--  disabling the rich text editor since it seems to be failing in firefox -AZ 
       <property name="targetBeanName" value="sakaiFCKTextEvolver" />
+-->
+      <property name="targetBeanName" value="plainTextInputEvolver" />
    </bean>
-
-   <!-- allows us to identify entities used in OTP on the EL path -->
-   <!--	<bean id="id-defunnel"-->
-   <!--		class="uk.org.ponder.rsf.state.entity.IDDefunnellingReshaper">-->
-   <!--		<property name="beanModelAlterer" ref="DARApplier" />-->
-   <!--		<property name="mappingContext" ref="ELMappingContext" />-->
-   <!--		<property name="requestBeanLocator" ref="RSACSafeBeanLocator" />-->
-   <!--		<property name="entityNameInferrer" ref="evalEntityNameInferrer" />-->
-   <!--	</bean>-->
-   <!---->
-   <!--	<bean id="evalEntityNameInferrer"-->
-   <!--		class="org.sakaiproject.evaluation.tool.locators.EntityNameInferrerImpl">-->
-   <!--	</bean>-->
-
 
    <!-- session scope backing beans here -->
    <bean id="evaluationBean"
@@ -112,7 +101,8 @@
          ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
    </bean>
 
-   <bean id="reportHandlerHook" class="org.sakaiproject.evaluation.tool.ReportHandlerHook">
+   <bean id="reportHandlerHook"
+      class="org.sakaiproject.evaluation.tool.ReportHandlerHook">
       <property name="viewparams" ref="viewParameters" />
       <property name="itemsLogic"
          ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
@@ -120,11 +110,9 @@
          ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
       <property name="responsesLogic"
          ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
-      <property name="csvReportExporter" ref="CSVReportExporter" />
+<property name="csvReportExporter" ref="CSVReportExporter" />
       <property name="xlsReportExporter" ref="XLSReportExporter" />
       <property name="pdfReportExporter" ref="PDFReportExporter" />
-         <!--    <property name="evalGroupsProvider"
-         ref="" />  -->
    </bean>
 
    <!-- bean locators here -->
@@ -228,13 +216,7 @@
    </bean>
 
    <bean id="HierarchySelectNodeRowRenderer"
-      class="org.sakaiproject.evaluation.tool.renderers.HierarchyRowRenderer">
-      <property name="externalHierarchyLogic"
-         ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
-      <property name="externalLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-   </bean>
-
+      class="org.sakaiproject.evaluation.tool.renderers.HierarchyRowRenderer" />
 
 
    <!-- producers here -->
@@ -331,6 +313,10 @@
       <property name="settings"
          ref="org.sakaiproject.evaluation.logic.EvalSettings" />
       <property name="richTextEvolver" ref="richTextEvolver" />
+      <property name="boundedDynamicListInputEvolver"
+         ref="standardDynamicListInputEvolver" />
+      <property name="hierarchyNodeSelectorRenderer"
+         ref="org.sakaiproject.evaluation.tool.renderers.HierarchyNodeSelectorRenderer" />
    </bean>
 
    <bean
@@ -346,21 +332,6 @@
          ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
    </bean>
 
-   <bean class="org.sakaiproject.evaluation.tool.producers.ModifyScaledProducer">
-      <property name="itemsBean" ref="itemsBean" />
-      <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-      <property name="templatesLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
-      <property name="itemsLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
-      <property name="settings"
-         ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-      <property name="richTextEvolver" ref="richTextEvolver" />
-      <property name="hierarchyNodeSelectorRenderer"
-         ref="org.sakaiproject.evaluation.tool.renderers.HierarchyNodeSelectorRenderer" />
-   </bean>
-
 	<bean class="org.sakaiproject.evaluation.tool.producers.ModifyBlockProducer">
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
@@ -372,36 +343,6 @@
       <property name="hierarchyNodeSelectorRenderer"
          ref="org.sakaiproject.evaluation.tool.renderers.HierarchyNodeSelectorRenderer" />
 	</bean>
-
-   <bean
-      class="org.sakaiproject.evaluation.tool.producers.ModifyEssayProducer">
-      <property name="templatesLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
-      <property name="itemsLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
-      <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-      <property name="settings"
-         ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-      <property name="richTextEvolver" ref="richTextEvolver" />
-      <property name="hierarchyNodeSelectorRenderer"
-         ref="org.sakaiproject.evaluation.tool.renderers.HierarchyNodeSelectorRenderer" />
-   </bean>
-
-   <bean
-      class="org.sakaiproject.evaluation.tool.producers.ModifyHeaderProducer">
-      <property name="templatesLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
-      <property name="itemsLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
-      <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-      <property name="settings"
-         ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-      <property name="richTextEvolver" ref="richTextEvolver" />
-      <property name="hierarchyNodeSelectorRenderer"
-         ref="org.sakaiproject.evaluation.tool.renderers.HierarchyNodeSelectorRenderer" />
-   </bean>
 
    <bean
       class="org.sakaiproject.evaluation.tool.producers.PreviewItemProducer">
@@ -498,7 +439,7 @@
       <property name="responsesLogic"
          ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
       <property name="reportsBean" ref="reportsBean" />
-      <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+<property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
    </bean>
 
    <bean
@@ -641,9 +582,10 @@
       <property name="external"
          ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
    </bean>
-   
-   <bean class="org.sakaiproject.evaluation.tool.producers.AdministrateReportingProducer">
+
+<bean class="org.sakaiproject.evaluation.tool.producers.AdministrateReportingProducer">
      <property name="external" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
    </bean>
+
 
 </beans>

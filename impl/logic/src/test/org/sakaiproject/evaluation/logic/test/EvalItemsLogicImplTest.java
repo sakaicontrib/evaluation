@@ -450,6 +450,35 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 	}
 
 	/**
+	 * This tests the ability to remove the item and scale at the same time
+	 */
+	public void testDeleteItemAndScale() {
+	   // create a test MC item
+      String[] options1 = {"one", "two", "three"};
+      EvalScale scale1 = new EvalScale(new Date(), EvalTestDataLoad.ADMIN_USER_ID, "Scale MC", 
+            EvalConstants.SCALE_MODE_ADHOC, EvalConstants.SHARING_PRIVATE, false, 
+            "description", null, options1, false);
+      evaluationDao.save(scale1);
+
+	   EvalItem item1 = new EvalItem(new Date(), EvalTestDataLoad.ADMIN_USER_ID, "mutli choice", EvalConstants.SHARING_PRIVATE, 
+	         EvalConstants.ITEM_TYPE_MULTIPLECHOICE, false);
+	   item1.setScale(scale1);
+	   item1.setScaleDisplaySetting(EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL);
+	   items.saveItem(item1, EvalTestDataLoad.ADMIN_USER_ID);
+
+	   // check that the item and scale are saved
+	   assertNotNull( evaluationDao.findById(EvalScale.class, scale1.getId()) );
+      assertNotNull( evaluationDao.findById(EvalItem.class, item1.getId()) );
+
+      items.deleteItem(item1.getId(), EvalTestDataLoad.ADMIN_USER_ID);
+
+      // not check that they are both gone
+      assertNull( evaluationDao.findById(EvalItem.class, item1.getId()) );
+      assertNull( evaluationDao.findById(EvalScale.class, scale1.getId()) );
+
+	}
+
+	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl#getItemsForUser(java.lang.String, java.lang.String)}.
 	 */
 	public void testGetItemsForUser() {

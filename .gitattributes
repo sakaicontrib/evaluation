@@ -113,6 +113,7 @@ impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalScalesLogicImplTe
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalSettingsImplTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalTemplatesLogicImplTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/ExternalHierarchyLogicImplTest.java -text
+impl/logic/src/test/org/sakaiproject/evaluation/logic/test/TextTemplateLogicUtilsTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/stubs/EvalExternalLogicStub.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/stubs/MockPlacement.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/stubs/MockReference.java -text
@@ -184,13 +185,10 @@ tool/src/java/org/sakaiproject/evaluation/tool/producers/ExpertObjectiveProducer
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ImportErrorProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyBlockProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyEmailProducer.java -text
-tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyEssayProducer.java -text
-tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyHeaderProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyHierarchyNodeGroupsProducer.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyHierarchyNodeProducer.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyItemProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyScaleProducer.java -text
-tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyScaledProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyTemplateItemsProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyTemplateProducer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/PreviewEmailProducer.java -text
@@ -213,6 +211,8 @@ tool/src/java/org/sakaiproject/evaluation/tool/renderers/HierarchyNodeSelectorRe
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/HierarchyRowRenderer.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/ItemRenderer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/ItemRendererImpl.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/renderers/MultipleAnswerRenderer.java svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/renderers/MultipleChoiceRenderer.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/ScaledRenderer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/TextRenderer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/reporting/CSVReportExporter.java -text
@@ -234,7 +234,6 @@ tool/src/java/org/sakaiproject/evaluation/tool/viewparams/EvalTakeViewParameters
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ExcelReportViewParams.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ExpertItemViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/HierarchyNodeParameters.java svn_keywords=Date+Revision+Author+HeadURL+Id
-tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ItemViewParameters.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ModifyHierarchyNodeParameters.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/PDFReportViewParams.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/PreviewEvalParameters.java -text
@@ -254,6 +253,8 @@ tool/src/webapp/component-templates/render_add_item_control.html -text
 tool/src/webapp/component-templates/render_block_item.html -text
 tool/src/webapp/component-templates/render_header_item.html -text
 tool/src/webapp/component-templates/render_hierarchy_node_selector.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/webapp/component-templates/render_multipleanswer_item.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/webapp/component-templates/render_multiplechoice_item.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/component-templates/render_scaled_item.html -text
 tool/src/webapp/component-templates/render_text_item.html -text
 tool/src/webapp/content/css/evaluation_base.css -text
@@ -341,13 +342,10 @@ tool/src/webapp/content/templates/evaluation_start.html -text
 tool/src/webapp/content/templates/import_error.html -text
 tool/src/webapp/content/templates/modify_block.html -text
 tool/src/webapp/content/templates/modify_email.html -text
-tool/src/webapp/content/templates/modify_essay.html -text
-tool/src/webapp/content/templates/modify_header.html -text
 tool/src/webapp/content/templates/modify_hierarchy_node.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/templates/modify_hierarchy_node_groups.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/templates/modify_item.html -text
 tool/src/webapp/content/templates/modify_scale.html -text
-tool/src/webapp/content/templates/modify_scaled.html -text
 tool/src/webapp/content/templates/modify_template.html -text
 tool/src/webapp/content/templates/modify_template_items.html -text
 tool/src/webapp/content/templates/preview_email.html -text
