@@ -309,29 +309,15 @@ public class ReportHandlerHook implements HandlerHook {
 
     }
 
-
-
-
-
     public void setCsvReportExporter(CSVReportExporter csvReportExporter) {
         this.csvReportExporter = csvReportExporter;
     }
-
-
-
-
 
     public void setXlsReportExporter(XLSReportExporter xlsReportExporter) {
         this.xlsReportExporter = xlsReportExporter;
     }
 
-
-
-
-
     public void setPdfReportExporter(PDFReportExporter pdfReportExporter) {
         this.pdfReportExporter = pdfReportExporter;
     }
-
-    
 }
