@@ -110,6 +110,8 @@ public class ReportHandlerHook implements HandlerHook {
         this.responsesLogic = responsesLogic;
     }
     
+    private EvalExternalLogic externalLogic;
+    
     private CSVReportExporter csvReportExporter;
     
     private XLSReportExporter xlsReportExporter;
@@ -132,6 +134,14 @@ public class ReportHandlerHook implements HandlerHook {
         // get evaluation and template from DAO
         EvalEvaluation evaluation = evalsLogic.getEvaluationById(drvp.evalId);
         EvalTemplate template = evaluation.getTemplate();
+        
+        //SWG Copying the lame permission check for now, to make sure there is at least something here.
+        String currentUserId = externalLogic.getCurrentUserId();
+        // do a permission check
+        if (!currentUserId.equals(evaluation.getOwner()) && 
+                !externalLogic.isUserAdmin(currentUserId)) { // TODO - this check is no good, we need a real one -AZ
+            throw new SecurityException("Invalid user attempting to access report downloads: " + currentUserId);
+        }
 
         List<String> topRow = new ArrayList<String>(); //holds top row (item text)
         List<EvalItem> allEvalItems = new ArrayList<EvalItem>(); //holds all expanded eval items (blocks are expanded here)
@@ -320,4 +330,8 @@ public class ReportHandlerHook implements HandlerHook {
     public void setPdfReportExporter(PDFReportExporter pdfReportExporter) {
         this.pdfReportExporter = pdfReportExporter;
     }
+
+	public void setExternalLogic(EvalExternalLogic externalLogic) {
+		this.externalLogic = externalLogic;
+	}
 }
