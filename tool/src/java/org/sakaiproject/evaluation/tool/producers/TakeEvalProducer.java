@@ -305,8 +305,11 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
          // filter out the block child items, to get a list non-child items
          List<EvalTemplateItem> nonChildItemsList = TemplateItemUtils.getNonChildItems(allItems);
 
-         // load up the previous responses for this user
-         if (responseId != null) {
+         // create the initial response if there is not one
+         if (responseId == null) {
+            responseId = localResponsesLogic.createResponse(evaluationId, currentUserId, evalGroupId);
+         } else {
+            // load up the previous responses for this user (no need to attempt to load if the response is new, there will be no answers yet)
             answerMap = localResponsesLogic.getAnswersMapByTempItemAndAssociated(responseId);
          }
 
@@ -412,14 +415,12 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
    /**
     * Prep for rendering an item I assume (no comments by original authors) -AZ
     * 
-    * @param radiobranch
+    * @param branch
     * @param form
     * @param templateItem
-    * @param answerMap
-    * @param itemCategory
     * @param associatedId
     */
-   private void renderItemPrep(UIBranchContainer radiobranch, UIForm form, EvalTemplateItem templateItem, String associatedId) {
+   private void renderItemPrep(UIBranchContainer branch, UIForm form, EvalTemplateItem templateItem, String associatedId) {
       // holds array of bindings for items
       String[] currentAnswerOTP = null;
       if (! TemplateItemUtils.isAnswerable(templateItem)) {
@@ -447,7 +448,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
       }
 
       // render the item
-      itemRenderer.renderItem(radiobranch, "rendered-item:", currentAnswerOTP, templateItem, displayNumber, false);
+      itemRenderer.renderItem(branch, "rendered-item:", currentAnswerOTP, templateItem, displayNumber, false);
 
       // increment the item counters, if we displayed 1 item, increment by 1,
       // if we displayed a block, renderedItem has been incremented, increment displayNumber by the number of blockChildren,
@@ -469,7 +470,9 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
       String responseAnswersOTP = "responseAnswersBeanLocator.";
       String currAnswerOTP;
       if (responseId == null) {
-         currAnswerOTP = responseAnswersOTP + ResponseAnswersBeanLocator.NEW_1 + "." + ResponseAnswersBeanLocator.NEW_PREFIX + renderedItemCount + ".";
+         // it should not be the case that we have no response
+         throw new IllegalStateException("There is no response, something has failed to load correctly for takeeval");
+         //currAnswerOTP = responseAnswersOTP + ResponseAnswersBeanLocator.NEW_1 + "." + ResponseAnswersBeanLocator.NEW_PREFIX + renderedItemCount + ".";
       } else {
          // if the user has answered this question before, point at their response
          EvalAnswer currAnswer = (EvalAnswer) answerMap.get(templateItem.getId() + "null" + "null");
@@ -510,8 +513,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
       return new EvalTakeViewParameters();
    }
 
-   /*
-    * (non-Javadoc)
+   /* (non-Javadoc)
     * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
     */
    @SuppressWarnings("unchecked")

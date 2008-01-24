@@ -332,62 +332,62 @@ public class EvalTestDataLoad {
 
    // ASSIGNMENTS
    /**
-    * Context Assignment: MAINT_USER_ID, CONTEXT1, {@link #evaluationActive}
+    * Context Assignment: MAINT_USER_ID, SITE1_REF, {@link #evaluationActive}
     */
    public EvalAssignGroup assign1;
    /**
-    * Context Assignment: MAINT_USER_ID, CONTEXT1, {@link #evaluationActiveUntaken}
+    * Context Assignment: MAINT_USER_ID, SITE1_REF, {@link #evaluationActiveUntaken}
     */
    public EvalAssignGroup assign2;
    /**
-    * Context Assignment: ADMIN_USER_ID, CONTEXT1, {@link #evaluationClosed}
+    * Context Assignment: ADMIN_USER_ID, SITE1_REF, {@link #evaluationClosed}
     */
    public EvalAssignGroup assign3;
    /**
-    * Context Assignment: MAINT_USER_ID, CONTEXT2, {@link #evaluationClosed}
+    * Context Assignment: MAINT_USER_ID, SITE2_REF, {@link #evaluationClosed}
     */
    public EvalAssignGroup assign4;
    /**
-    * Context Assignment: ADMIN_USER_ID, CONTEXT2, {@link #evaluationViewable}
+    * Context Assignment: ADMIN_USER_ID, SITE2_REF, {@link #evaluationViewable}
     */
    public EvalAssignGroup assign5;
    /**
-    * Context Assignment: MAINT_USER_ID, CONTEXT1, {@link #evaluationNewAdmin}
+    * Context Assignment: MAINT_USER_ID, SITE1_REF, {@link #evaluationNewAdmin}
     */
    public EvalAssignGroup assign6;
    /**
-    * Context Assignment: ADMIN_USER_ID, CONTEXT2, {@link #evaluationNewAdmin}
+    * Context Assignment: ADMIN_USER_ID, SITE2_REF, {@link #evaluationNewAdmin}
     */
    public EvalAssignGroup assign7;
    /**
-    * Context Assignment: ADMIN_USER_ID, CONTEXT2, {@link #evaluationNewAdmin} + eid
+    * Context Assignment: ADMIN_USER_ID, SITE2_REF, {@link #evaluationNewAdmin} + eid
     */
    public EvalAssignGroup assignGroupProvided;
 
 
    // RESPONSES
    /**
-    * USER_ID, CONTEXT1, evaluationActive
+    * USER_ID, SITE1_REF, evaluationActive
     */
    public EvalResponse response1;
    /**
-    * USER_ID, CONTEXT1, evaluationClosed
+    * USER_ID, SITE1_REF, evaluationClosed
     */
    public EvalResponse response2;
    /**
-    * STUDENT_USER_ID, CONTEXT2, evaluationClosed
+    * STUDENT_USER_ID, SITE2_REF, evaluationClosed
     */
    public EvalResponse response3;
    /**
-    * USER_ID, CONTEXT2, evaluationViewable
+    * USER_ID, SITE2_REF, evaluationViewable
     */
    public EvalResponse response4;
    /**
-    * STUDENT_USER_ID, CONTEXT2, evaluationViewable
+    * STUDENT_USER_ID, SITE2_REF, evaluationViewable
     */
    public EvalResponse response5;
    /**
-    * USER_ID, CONTEXT2, evaluationClosed
+    * USER_ID, SITE2_REF, evaluationClosed
     */
    public EvalResponse response6;
 

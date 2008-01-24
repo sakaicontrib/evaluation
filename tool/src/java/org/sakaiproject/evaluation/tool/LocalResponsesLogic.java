@@ -50,14 +50,24 @@ public class LocalResponsesLogic {
 		this.responsesLogic = responsesLogic;
 	}
 
+
+   /**
+	 * Create an empty new Response for the current user
+	 * @return
+	 */
 	public EvalResponse newResponse() {
 		log.debug("Creating a new response");
 		EvalResponse togo = new EvalResponse(new Date(), external
 				.getCurrentUserId(), new String(), new Date(), null);
-		togo.setEndTime(new Date());
+		togo.setEndTime(new Date()); // TODO - I don't think this will work
 		return togo;
 	}
 
+	/**
+	 * Create a new Answer associated with this response (not associated with a template Item though)
+	 * @param response
+	 * @return
+	 */
 	public EvalAnswer newAnswer(EvalResponse response) {
 		log.debug("new answer, Response: " + response.getId());
 		EvalAnswer answer = new EvalAnswer(new Date(), null, response);
@@ -82,31 +92,18 @@ public class LocalResponsesLogic {
       }
       return map;
    }
-	
+
 	/**
-	 * Get the response for the current user in the current group for the provided evaluation id
-	 * @param evalIdstring
+	 * Create a new response for this 
+	 * @param evaluationId
+	 * @param userId
+	 * @param evalGroupId
 	 * @return
 	 */
-//	public EvalResponse fetchResponseById(String evalIdstring) {
-//	   EvalResponse response = null;
-//		Long evalId = Long.valueOf(evalIdstring);
-//
-//		String userId = external.getCurrentUserId();
-//      String evalGroupId = external.getCurrentEvalGroup();
-//
-//      List<EvalResponse> responses = responsesLogic.getEvaluationResponses(userId, new Long[] {evalId});
-//		for (EvalResponse evalResponse : responses) {
-//		   if (evalResponse.getEvalGroupId().equals(evalGroupId)) {
-//		      response = evalResponse;
-//		   }
-//      }
-//		if (response == null) {
-//		   throw new IllegalArgumentException("Could not locate response for evalId: "
-//		         + evalId + ", current userId: " + userId +" in current evalGroupId: " + evalGroupId);
-//		}
-//		return response;
-//	}
+	public Long createResponse(Long evaluationId, String userId, String evalGroupId) {
+	   EvalResponse response = responsesLogic.getEvaluationResponseForUserAndGroup(evaluationId, userId, evalGroupId);
+      return response.getId();
+	}
 
 	/**
 	 * This function takes a string containing a response id, and returns

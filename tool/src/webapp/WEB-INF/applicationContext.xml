@@ -58,8 +58,7 @@
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="responsesLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic">
-		</property>
+			ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
 	</bean>
 
 

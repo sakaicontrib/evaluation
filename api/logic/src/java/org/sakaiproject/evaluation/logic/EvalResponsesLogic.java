@@ -17,8 +17,8 @@ package org.sakaiproject.evaluation.logic;
 import java.util.List;
 import java.util.Set;
 
-import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAnswer;
+import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 
 
@@ -31,16 +31,6 @@ import org.sakaiproject.evaluation.model.EvalResponse;
 public interface EvalResponsesLogic {
 	
 	/**
-	 * Get a set of user ids of users who are in an EvalGroup assigned to
-	 * this EvalEvaluation and permitted to take the evaluation but have 
-	 * not yet responsed.
-	 * 
-	 * @param evaluationId the EvalEvaluation id
-	 * @return a List of user ids
-	 */
-	public Set<String> getNonResponders(Long evaluationId, EvalGroup group);
-
-	/**
 	 * Get a response by its unique id<br/>
 	 * A response represents a single user response to an evaluation in a specific evalGroupId<br/>
 	 * Note: this should mostly be used for OTP and not for normal fetching which
@@ -50,6 +40,17 @@ public interface EvalResponsesLogic {
 	 * @return an {@link EvalResponse} object or null if not found
 	 */
 	public EvalResponse getResponseById(Long responseId);
+
+   /**
+    * Get the response for the supplied evaluation and group for the supplied user<br/>
+    * If there is no response yet then one is created, if the response exists then it is 
+    * returned, this guarantees to either return a response or die if the inputs are invalid
+    * @param evaluationId the unique id for an {@link EvalEvaluation}
+    * @param userId the internal user id (not username)
+    * @param evalGroupId the internal evalGroupId (represents a site or group)
+    * @return an {@link EvalResponse} object
+    */
+   public EvalResponse getEvaluationResponseForUserAndGroup(Long evaluationId, String userId, String evalGroupId);
 
 	/**
 	 * Get the responses for the supplied evaluations for this user<br/>
@@ -76,6 +77,21 @@ public interface EvalResponsesLogic {
 	 * @return the count of associated responses
 	 */
 	public int countResponses(Long evaluationId, String evalGroupId);
+
+	
+   /**
+    * Get a set of user ids of users who are in an EvalGroup assigned to
+    * this EvalEvaluation and permitted to take the evaluation but have 
+    * not yet responded.
+    * TODO - Move this to another logic package to avoid circular logic chain -AZ
+    * TODO - add unit tests -AZ
+    * 
+    * @param evaluationId the unique id for an {@link EvalEvaluation}
+    * @param evalGroupId the internal evalGroupId (represents a site or group)
+    * @return a set of internal user ids
+    */
+   public Set<String> getNonResponders(Long evaluationId, String evalGroupId);
+
 
 	/**
 	 * Get the answers associated with this item and with a response to this evaluation,
