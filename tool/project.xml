@@ -261,6 +261,7 @@
 				<war.bundle>true</war.bundle>
 			</properties>
 		</dependency>
+
 		<!-- needed for generating Excel for export -->
 		<dependency>
 			<groupId>poi</groupId>
@@ -271,6 +272,7 @@
 				<war.bundle>true</war.bundle>
 			</properties>
 		</dependency>
+
 		<!-- needed for generating PDF for export -->
 		<dependency>
 			<groupId>com.lowagie</groupId>

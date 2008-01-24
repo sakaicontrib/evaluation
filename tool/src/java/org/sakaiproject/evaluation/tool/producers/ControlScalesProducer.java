@@ -13,7 +13,6 @@
 
 package org.sakaiproject.evaluation.tool.producers;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
@@ -27,7 +26,6 @@ import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
-import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
@@ -39,7 +37,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  * @author Kapil Ahuja (kahuja@vt.edu)
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class ControlScalesProducer implements ViewComponentProducer, NavigationCaseReporter {
+public class ControlScalesProducer implements ViewComponentProducer {
 
 	public static final String VIEW_ID = "control_scales";
 	public String getViewID() {
@@ -83,9 +81,9 @@ public class ControlScalesProducer implements ViewComponentProducer, NavigationC
 		UIMessage.make(tofill, "scales-control-instruction", "scalecontrol.page.instruction");
 
 		//Get all the scales that are owned by a user
-		List scaleList = scalesLogic.getScalesForUser(currentUserId, null);
+		List<EvalScale> scaleList = scalesLogic.getScalesForUser(currentUserId, null);
 		for (int i = 0; i < scaleList.size(); ++i) {
-			EvalScale scale = (EvalScale) scaleList.get(i);
+			EvalScale scale = scaleList.get(i);
 
 // NOTE - thise code was here to vet the new scales code, it passed this test -AZ
 //			if (i == 0) {
@@ -156,9 +154,4 @@ public class ControlScalesProducer implements ViewComponentProducer, NavigationC
 		}
 	}
 
-	public List reportNavigationCases() {
-		List i = new ArrayList();
-		//TODO
-		return i;
-	}
 }
