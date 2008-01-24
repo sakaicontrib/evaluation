@@ -31,6 +31,7 @@ drop table EVAL_TEMPLATE
 	cascade constraints;
 drop table EVAL_TEMPLATEITEM 
 	cascade constraints;
+purge recyclebin;
 -- EVAL_ANSWER
 create table EVAL_ANSWER (
 	ID number(19,0) not null, 
