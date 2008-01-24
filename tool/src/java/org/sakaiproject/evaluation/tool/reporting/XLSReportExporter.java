@@ -45,9 +45,6 @@ public class XLSReportExporter {
         // Title Style
         HSSFFont font = wb.createFont();
         font.setFontHeightInPoints((short)12);
-        //font.setFontName("Courier New");
-        //font.setItalic(true);
-        //font.setStrikeout(true);
         font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
         HSSFCellStyle mainTitleStyle = wb.createCellStyle();
         mainTitleStyle.setFont(font);
@@ -91,17 +88,6 @@ public class XLSReportExporter {
            //UIOutput.make(evaluationRow, "closed-eval-response-rate", countResponses + "");
            cellA2.setCellValue(countResponses + " responses");
         }
-        
-        // Participants listing
-        //List<String> groupTitles = new ArrayList<String>();
-        
-        //TODO Ask Az the right way to get the Group Titles since I don't see
-        // any instantiated beans for EvalGroupProvider
-        //for (String groupID: groupIDs) {
-        //    EvalGroup group = evalGroupsProvider.getGroupByGroupId(groupID);
-        //    if (group != null)
-        //        groupTitles.add(group.title);
-        //}
         
         //if (groupTitles.size() > 0) {
         if (groupIDs.length > 0) {
