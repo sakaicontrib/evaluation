@@ -160,6 +160,30 @@ public interface EvalSettings {
     */
    public static final String DISPLAY_HIERARCHY_HEADERS = "DISPLAY_HIERARCHY_HEADERS:java.lang.Boolean";
 
+   /**
+    * CONSTANT: Allow CSV Export for Reporting
+    */
+   public static final String ENABLE_CSV_REPORT_EXPORT = "ENABLE_CSV_REPORT_EXPORT:java.lang.Boolean";
+   
+   /**
+    * CONSTANT: Allow XLS Export for Reporting
+    */
+   public static final String ENABLE_XLS_REPORT_EXPORT = "ENABLE_XLS_REPORT_EXPORT:java.lang.Boolean";
+   
+   /**
+    * CONSTANT: Allow PDF Export for Reporting
+    */
+   public static final String ENABLE_PDF_REPORT_EXPORT = "ENABLE_PDF_REPORT_EXPORT:java.lang.Boolean";
+   
+   /**
+    * CONSTANT: Use an Image banner on PDF Report Exports
+    */
+   public static final String ENABLE_PDF_REPORT_BANNER = "ENABLE_PDF_REPORT_BANNER:java.lang.Boolean";
+   
+   /**
+    * CONSTANT: Location of image in Sakai Resources to use for PDF Report Banner
+    */
+   public static final String PDF_BANNER_IMAGE_LOCATION = "PDF_BANNER_IMAGE_LOCATION:java.lang.String";
 
    /**
     * Allows for getting the value of a system setting based on the constant,
