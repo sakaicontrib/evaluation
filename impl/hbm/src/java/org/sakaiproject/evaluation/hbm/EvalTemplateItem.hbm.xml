@@ -26,7 +26,7 @@
         	<column name="template_id" not-null="true" />
         </many-to-one>
         <!-- linkage to the item -->
-        <many-to-one name="item" class="org.sakaiproject.evaluation.model.EvalItem" fetch="join">
+        <many-to-one name="item" class="org.sakaiproject.evaluation.model.EvalItem" fetch="join" lazy="false">
         	<column name="item_id" not-null="true" />
         </many-to-one>
         <!-- stores the display order of items in the linked template -->

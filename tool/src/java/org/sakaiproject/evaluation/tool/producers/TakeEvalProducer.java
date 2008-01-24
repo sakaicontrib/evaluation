@@ -469,7 +469,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
       String responseAnswersOTP = "responseAnswersBeanLocator.";
       String currAnswerOTP;
       if (responseId == null) {
-         currAnswerOTP = responseAnswersOTP + ResponseAnswersBeanLocator.NEW_PREFIX + renderedItemCount + ".";
+         currAnswerOTP = responseAnswersOTP + ResponseAnswersBeanLocator.NEW_1 + "." + ResponseAnswersBeanLocator.NEW_PREFIX + renderedItemCount + ".";
       } else {
          // if the user has answered this question before, point at their response
          EvalAnswer currAnswer = (EvalAnswer) answerMap.get(templateItem.getId() + "null" + "null");
