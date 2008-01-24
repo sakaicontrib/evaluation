@@ -1,16 +1,16 @@
-/******************************************************************************
- * LocalResponsesLogic.java - created on Jan 16, 2007
- * 
- * Copyright (c) 2007 Virginia Polytechnic Institute and State University
+/**
+ * LocalResponsesLogic.java - evaluation - Jan 16, 2007 11:35:56 AM - whumphri
+ * $URL: https://source.sakaiproject.org/contrib $
+ * $Id: Locator.java 11234 Jan 21, 2008 11:35:56 AM azeckoski $
+ **************************************************************************
+ * Copyright (c) 2007 Centre for Academic Research in Educational Technologies
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
- * 
- * Contributors:
- * Will Humphries (whumphri@vt.edu)
- * Aaron Zeckoski (aaronz@vt.edu)
- *****************************************************************************/
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ */
 
 package org.sakaiproject.evaluation.tool;
 
@@ -18,7 +18,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,10 +25,17 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
+import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalResponse;
 
 
+/**
+ * Handles extra logic related to saving and dealing with responses
+ * 
+ * @author Will Humphries (whumphri@vt.edu)
+ * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
+ */
 public class LocalResponsesLogic {
 
 	private static Log log = LogFactory.getLog(LocalResponsesLogic.class);
@@ -68,31 +74,39 @@ public class LocalResponsesLogic {
 	 */	
 	public Map<String, EvalAnswer> getAnswersMapByTempItemAndAssociated(Long responseId) {
       EvalResponse response = responsesLogic.getResponseById(responseId);
-      Map<String, EvalAnswer> map = new HashMap<String, EvalAnswer>();
-      Set<EvalAnswer> answers = response.getAnswers();
-      for (Iterator<EvalAnswer> it = answers.iterator(); it.hasNext();) {
-         EvalAnswer answer = (EvalAnswer) it.next();
-         map.put(answer.getTemplateItem().getId().toString() + answer.getAssociatedType()
-               + answer.getAssociatedId(), answer);
+      Map<String, EvalAnswer> map;
+      if (response.getAnswers() == null) {
+         map = new HashMap<String, EvalAnswer>();
+      } else {
+         map = EvalUtils.getAnswersMapByTempItemAndAssociated(response);
       }
       return map;
    }
 	
-	public EvalResponse fetchResponseById(String evalIdstring) {
-		Long evalId = Long.valueOf(evalIdstring);
-		log.debug("Evaluation: " + evalId );
-
-		String userId = external.getCurrentUserId();
-		List responses = responsesLogic.getEvaluationResponses(userId, new Long[] {evalId});
-		String context = external.getCurrentEvalGroup();
-		for (int i = 0; i < responses.size(); ++ i) {
-			EvalResponse response = (EvalResponse) responses.get(i);
-			if (response.getEvalGroupId().equals(context)) return response;
-		}
-		throw new IllegalArgumentException("Could not locate response for eval id "
-				+ evalId + " userID " + userId +" in evalGroupId " + context); 
-
-	}
+	/**
+	 * Get the response for the current user in the current group for the provided evaluation id
+	 * @param evalIdstring
+	 * @return
+	 */
+//	public EvalResponse fetchResponseById(String evalIdstring) {
+//	   EvalResponse response = null;
+//		Long evalId = Long.valueOf(evalIdstring);
+//
+//		String userId = external.getCurrentUserId();
+//      String evalGroupId = external.getCurrentEvalGroup();
+//
+//      List<EvalResponse> responses = responsesLogic.getEvaluationResponses(userId, new Long[] {evalId});
+//		for (EvalResponse evalResponse : responses) {
+//		   if (evalResponse.getEvalGroupId().equals(evalGroupId)) {
+//		      response = evalResponse;
+//		   }
+//      }
+//		if (response == null) {
+//		   throw new IllegalArgumentException("Could not locate response for evalId: "
+//		         + evalId + ", current userId: " + userId +" in current evalGroupId: " + evalGroupId);
+//		}
+//		return response;
+//	}
 
 	/**
 	 * This function takes a string containing a response id, and returns
@@ -108,13 +122,17 @@ public class LocalResponsesLogic {
 		return response;	       
 	}
 
+	/**
+	 * Saves the current response, handles some fixup to the fields before saving
+	 * @param response
+	 */
 	public void saveResponse(EvalResponse response) {
         log.debug("Response: " + response.getId());
         // strip out responses with no value set for numeric or text
-        Set answers = response.getAnswers();
+        Set<EvalAnswer> answers = response.getAnswers();
         Set<EvalAnswer> newAnswers = new HashSet<EvalAnswer>();
-        for (Iterator it = answers.iterator(); it.hasNext();) {
-            EvalAnswer answer = (EvalAnswer) it.next();
+        for (Iterator<EvalAnswer> it = answers.iterator(); it.hasNext();) {
+            EvalAnswer answer = it.next();
             if (answer.getNumeric() != null || answer.getText() != null) {
                 /**
                  * If the numeric and text fields are left null, batch update will fail when several answers of different types are modified

@@ -120,20 +120,6 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
       this.hierarchyLogic = logic;
    }
 
-
-   String responseOTPBinding = "responseBeanLocator";
-   String responseOTP = responseOTPBinding + ".";
-   String newResponseOTPBinding = responseOTP + "new";
-   String newResponseOTP = newResponseOTPBinding + ".";
-
-   String responseAnswersOTPBinding = "responseAnswersBeanLocator";
-   String responseAnswersOTP = responseAnswersOTPBinding + ".";
-   String newResponseAnswersOTPBinding = responseAnswersOTP + "new";
-   String newResponseAnswersOTP = newResponseAnswersOTPBinding + ".";    
-
-   String evalOTPBinding = "evaluationBeanLocator";
-   String evalOTP = evalOTPBinding+".";
-
    Long responseId;
    Long evaluationId;
    String evalGroupId;
@@ -150,8 +136,8 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
     */
    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
-      boolean canAccess = false;
-      boolean userCanAccess = false;
+      boolean canAccess = false; // can a user access this evaluation
+      boolean userCanAccess = false; // can THIS user take this evaluation
 
       String currentUserId = external.getCurrentUserId();
       // use a date which is related to the current users locale
@@ -297,6 +283,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
          UIForm form = UIForm.make(formBranch, "evaluationForm");
 
          // bind the evaluation and evalGroup to the ones in the take eval bean
+         String evalOTP = "evaluationBeanLocator.";
          form.parameters.add( new UIELBinding("#{takeEvalBean.eval}", new ELReference(evalOTP + eval.getId())) );
          form.parameters.add( new UIELBinding("#{takeEvalBean.evalGroupId}", evalGroupId) );
 
@@ -479,9 +466,10 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
     */
    private String[] setupCurrentAnswerBindings(UIForm form, EvalTemplateItem templateItem, String associatedId) {
       // set up OTP paths for answerable items
+      String responseAnswersOTP = "responseAnswersBeanLocator.";
       String currAnswerOTP;
       if (responseId == null) {
-         currAnswerOTP = newResponseAnswersOTP + ResponseAnswersBeanLocator.NEW_PREFIX + renderedItemCount + ".";
+         currAnswerOTP = responseAnswersOTP + ResponseAnswersBeanLocator.NEW_PREFIX + renderedItemCount + ".";
       } else {
          // if the user has answered this question before, point at their response
          EvalAnswer currAnswer = (EvalAnswer) answerMap.get(templateItem.getId() + "null" + "null");
