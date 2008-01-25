@@ -3,7 +3,7 @@
  * $URL: https://source.sakaiproject.org/contrib $
  * EvalResponsesLogicImplTest.java - evaluation - Dec 25, 2006 10:07:31 AM - azeckoski
  **************************************************************************
- * Copyright (c) 2008 Centre for Academic Research in Educational Technologies
+ * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 
@@ -155,7 +155,7 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalResponsesLogicImpl#getEvaluationResponses(java.lang.String, java.lang.Long[])}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalResponsesLogicImpl#getEvaluationResponses(java.lang.String, java.lang.Long[], boolean)}.
     */
    public void testGetEvaluationResponses() {
       List<EvalResponse> l = null;
@@ -163,14 +163,14 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 
       // retrieve one response for a normal user in one eval
       l = responses.getEvaluationResponses(EvalTestDataLoad.USER_ID, 
-            new Long[] { etdl.evaluationActive.getId() } );
+            new Long[] { etdl.evaluationActive.getId() }, true );
       Assert.assertNotNull(l);
       Assert.assertEquals(1, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
       Assert.assertTrue(ids.contains( etdl.response1.getId() ));
 
       l = responses.getEvaluationResponses(EvalTestDataLoad.STUDENT_USER_ID, 
-            new Long[] { etdl.evaluationClosed.getId() } );
+            new Long[] { etdl.evaluationClosed.getId() }, true );
       Assert.assertNotNull(l);
       Assert.assertEquals(1, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
@@ -178,7 +178,7 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 
       // retrieve all responses for a normal user in one eval
       l = responses.getEvaluationResponses(EvalTestDataLoad.USER_ID, 
-            new Long[] { etdl.evaluationClosed.getId() } );
+            new Long[] { etdl.evaluationClosed.getId() }, true );
       Assert.assertNotNull(l);
       Assert.assertEquals(2, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
@@ -187,7 +187,7 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 
       // retrieve all responses for a normal user in mutliple evals
       l = responses.getEvaluationResponses(EvalTestDataLoad.USER_ID, 
-            new Long[] { etdl.evaluationActive.getId(), etdl.evaluationClosed.getId(), etdl.evaluationViewable.getId() } );
+            new Long[] { etdl.evaluationActive.getId(), etdl.evaluationClosed.getId(), etdl.evaluationViewable.getId() }, true );
       Assert.assertNotNull(l);
       Assert.assertEquals(4, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
@@ -199,18 +199,18 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 
       // attempt to retrieve results for user that has no responses
       l = responses.getEvaluationResponses(EvalTestDataLoad.STUDENT_USER_ID, 
-            new Long[] { etdl.evaluationActive.getId() } );
+            new Long[] { etdl.evaluationActive.getId() }, true );
       Assert.assertNotNull(l);
       Assert.assertEquals(0, l.size());
 
       l = responses.getEvaluationResponses(EvalTestDataLoad.MAINT_USER_ID, 
-            new Long[] { etdl.evaluationActive.getId(), etdl.evaluationClosed.getId(), etdl.evaluationViewable.getId() } );
+            new Long[] { etdl.evaluationActive.getId(), etdl.evaluationClosed.getId(), etdl.evaluationViewable.getId() }, true );
       Assert.assertNotNull(l);
       Assert.assertEquals(0, l.size());
 
       // test that admin can fetch all results for evaluations
       l = responses.getEvaluationResponses(EvalTestDataLoad.ADMIN_USER_ID, 
-            new Long[] { etdl.evaluationActive.getId(), etdl.evaluationClosed.getId(), etdl.evaluationViewable.getId() } );
+            new Long[] { etdl.evaluationActive.getId(), etdl.evaluationClosed.getId(), etdl.evaluationViewable.getId() }, true );
       Assert.assertNotNull(l);
       Assert.assertEquals(6, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
@@ -222,7 +222,7 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
       Assert.assertTrue(ids.contains( etdl.response6.getId() ));
 
       l = responses.getEvaluationResponses(EvalTestDataLoad.ADMIN_USER_ID, 
-            new Long[] { etdl.evaluationViewable.getId() } );
+            new Long[] { etdl.evaluationViewable.getId() }, true );
       Assert.assertNotNull(l);
       Assert.assertEquals(2, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
@@ -232,7 +232,7 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
       // check that empty array causes failure
       try {
          l = responses.getEvaluationResponses(EvalTestDataLoad.ADMIN_USER_ID, 
-               new Long[] {} );
+               new Long[] {}, true );
          Assert.fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
          Assert.assertNotNull(e);
@@ -241,7 +241,7 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
       // check that invalid IDs cause failure
       try {
          l = responses.getEvaluationResponses(EvalTestDataLoad.ADMIN_USER_ID, 
-               new Long[] { EvalTestDataLoad.INVALID_LONG_ID } );
+               new Long[] { EvalTestDataLoad.INVALID_LONG_ID }, true );
          Assert.fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
          Assert.assertNotNull(e);
@@ -249,7 +249,7 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 
       try {
          l = responses.getEvaluationResponses(EvalTestDataLoad.ADMIN_USER_ID, 
-               new Long[] { etdl.evaluationViewable.getId(), EvalTestDataLoad.INVALID_LONG_ID } );
+               new Long[] { etdl.evaluationViewable.getId(), EvalTestDataLoad.INVALID_LONG_ID }, true );
          Assert.fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
          Assert.assertNotNull(e);
@@ -264,25 +264,28 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
    public void testCountResponses() {
 
       // test counts for all responses in various evaluations
-      Assert.assertEquals(3, responses.countResponses( etdl.evaluationClosed.getId(), null) );
-      Assert.assertEquals(2, responses.countResponses( etdl.evaluationViewable.getId(), null) );
-      Assert.assertEquals(1, responses.countResponses( etdl.evaluationActive.getId(), null) );
-      Assert.assertEquals(0, responses.countResponses( etdl.evaluationActiveUntaken.getId(), null) );
+      Assert.assertEquals(3, responses.countResponses( etdl.evaluationClosed.getId(), null, null) );
+      Assert.assertEquals(2, responses.countResponses( etdl.evaluationViewable.getId(), null, null) );
+      Assert.assertEquals(1, responses.countResponses( etdl.evaluationActive.getId(), null, null) );
+      Assert.assertEquals(0, responses.countResponses( etdl.evaluationActiveUntaken.getId(), null, null) );
 
       // test counts limited by evalGroupId
-      Assert.assertEquals(1, responses.countResponses( etdl.evaluationClosed.getId(), EvalTestDataLoad.SITE1_REF) );
-      Assert.assertEquals(0, responses.countResponses( etdl.evaluationViewable.getId(), EvalTestDataLoad.SITE1_REF) );
-      Assert.assertEquals(1, responses.countResponses( etdl.evaluationActive.getId(), EvalTestDataLoad.SITE1_REF) );
-      Assert.assertEquals(0, responses.countResponses( etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.SITE1_REF) );
+      Assert.assertEquals(1, responses.countResponses( etdl.evaluationClosed.getId(), EvalTestDataLoad.SITE1_REF, null) );
+      Assert.assertEquals(0, responses.countResponses( etdl.evaluationViewable.getId(), EvalTestDataLoad.SITE1_REF, null) );
+      Assert.assertEquals(1, responses.countResponses( etdl.evaluationActive.getId(), EvalTestDataLoad.SITE1_REF, null) );
+      Assert.assertEquals(0, responses.countResponses( etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.SITE1_REF, null) );
 
-      Assert.assertEquals(2, responses.countResponses( etdl.evaluationClosed.getId(), EvalTestDataLoad.SITE2_REF) );
-      Assert.assertEquals(2, responses.countResponses( etdl.evaluationViewable.getId(), EvalTestDataLoad.SITE2_REF) );
-      Assert.assertEquals(0, responses.countResponses( etdl.evaluationActive.getId(), EvalTestDataLoad.SITE2_REF) );
-      Assert.assertEquals(0, responses.countResponses( etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.SITE2_REF) );
+      Assert.assertEquals(2, responses.countResponses( etdl.evaluationClosed.getId(), EvalTestDataLoad.SITE2_REF, null) );
+      Assert.assertEquals(2, responses.countResponses( etdl.evaluationViewable.getId(), EvalTestDataLoad.SITE2_REF, null) );
+      Assert.assertEquals(0, responses.countResponses( etdl.evaluationActive.getId(), EvalTestDataLoad.SITE2_REF, null) );
+      Assert.assertEquals(0, responses.countResponses( etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.SITE2_REF, null) );
+
+      // test counts limited by completed or incomplete
+      // TODO
 
       // check that invalid IDs cause failure
       try {
-         responses.countResponses( EvalTestDataLoad.INVALID_LONG_ID, null );
+         responses.countResponses( EvalTestDataLoad.INVALID_LONG_ID, null, null );
          Assert.fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
          Assert.assertNotNull(e);

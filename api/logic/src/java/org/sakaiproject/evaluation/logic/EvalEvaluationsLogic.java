@@ -3,7 +3,7 @@
  * $URL: https://source.sakaiproject.org/contrib $
  * EvalEvaluationsLogic.java - evaluation - Dec 24, 2006 12:07:31 AM - azeckoski
  **************************************************************************
- * Copyright (c) 2008 Centre for Academic Research in Educational Technologies
+ * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 

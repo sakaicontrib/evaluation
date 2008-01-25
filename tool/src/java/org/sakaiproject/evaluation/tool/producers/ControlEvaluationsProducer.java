@@ -292,7 +292,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 				}
 
 				// calculate the response rate
-				int countResponses = responsesLogic.countResponses(evaluation.getId(), null);
+				int countResponses = responsesLogic.countResponses(evaluation.getId(), null, true);
 				int countEnrollments = getTotalEnrollmentsForEval(evaluation.getId());
 				if (countEnrollments > 0) {
 					UIOutput.make(evaluationRow, "active-eval-response-rate", countResponses + "/" + countEnrollments );
@@ -369,7 +369,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 				}
 
 				// calculate the response rate
-				int countResponses = responsesLogic.countResponses(evaluation.getId(), null);
+				int countResponses = responsesLogic.countResponses(evaluation.getId(), null, true);
             int countEnrollments = getTotalEnrollmentsForEval(evaluation.getId());
             long percentage = 0;
             if (countEnrollments > 0) {

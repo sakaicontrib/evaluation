@@ -170,7 +170,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 
 			// now fetch all the information we care about for these evaluations at once (for speed)
 			Map<Long, List<EvalGroup>> evalGroups = evaluationsLogic.getEvaluationGroups(evalIds, false);
-			List<EvalResponse> evalResponses = responsesLogic.getEvaluationResponses(currentUserId, evalIds);
+			List<EvalResponse> evalResponses = responsesLogic.getEvaluationResponses(currentUserId, evalIds, true);
 
 			for (Iterator<EvalEvaluation> itEvals = evalsToTake.iterator(); itEvals.hasNext();) {
 				EvalEvaluation eval = (EvalEvaluation) itEvals.next();
@@ -322,7 +322,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
                UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalStatus);
             } else if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(evalStatus)) {
                date = eval.getViewDate();
-               int ctResponses = responsesLogic.countResponses(eval.getId(), null);
+               int ctResponses = responsesLogic.countResponses(eval.getId(), null, true);
                int ctEnrollments = getTotalEnrollmentsForEval(eval.getId());
                Integer respReqToViewResults = (Integer) settings
                      .get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS);

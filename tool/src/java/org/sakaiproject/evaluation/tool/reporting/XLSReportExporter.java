@@ -75,7 +75,7 @@ public class XLSReportExporter {
         
         // Response Rate calculation... this is sort of duplicated code from ControlEvaluationsProducer
         // might be good to put it in one of the logic or utility classes.
-        int countResponses = responsesLogic.countResponses(evaluation.getId(), null);
+        int countResponses = responsesLogic.countResponses(evaluation.getId(), null, true);
         int countEnrollments = getTotalEnrollmentsForEval(evaluation.getId());
         long percentage = 0;
         if (countEnrollments > 0) {
