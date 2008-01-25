@@ -3,7 +3,7 @@
  * $URL: https://source.sakaiproject.org/contrib $
  * EvalResponsesLogic.java - evaluation - Dec 24, 2006 12:07:31 AM - azeckoski
  **************************************************************************
- * Copyright (c) 2008 Centre for Academic Research in Educational Technologies
+ * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 
@@ -23,7 +23,9 @@ import org.sakaiproject.evaluation.model.EvalResponse;
 
 
 /**
- * Handles all logic associated with responses and answers
+ * Handles all logic associated with responses and answers,
+ * Responses can be complete or incomplete depending on if the user is taking the evaluation currently (incomplete response)
+ * or has finished taking the evaluation (complete)
  * (Note for developers - do not modify this without permission from the project lead)
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
@@ -58,13 +60,15 @@ public interface EvalResponsesLogic {
 	 * is assigned to multiple contexts that this user is part of, do not assume
 	 * the order is always the same<br/>
 	 * <b>Note:</b> If you just need the count then use the much faster
-	 * {@link #countResponses(Long)}
+	 * {@link #countResponses(Long, String, Boolean)}
 	 * 
 	 * @param userId the internal user id (not username)
 	 * @param evaluationIds an array of the ids of EvalEvaluation objects
+	 * @param completed if true only return the completed responses, if false only return the incomplete responses,
+	 * if null then return all responses
 	 * @return a List of EvalResponse objects
 	 */
-	public List<EvalResponse> getEvaluationResponses(String userId, Long[] evaluationIds);
+	public List<EvalResponse> getEvaluationResponses(String userId, Long[] evaluationIds, Boolean completed);
 
 	/**
 	 * Count the number of responses for an evaluation,
@@ -74,11 +78,13 @@ public interface EvalResponsesLogic {
 	 * @param evaluationId the id of an EvalEvaluation object
 	 * @param evalGroupId the internal evalGroupId (represents a site or group),
 	 * if null, include count for all eval groups
+    * @param completed if true only return the completed responses, if false only return the incomplete responses,
+    * if null then return all responses
 	 * @return the count of associated responses
 	 */
-	public int countResponses(Long evaluationId, String evalGroupId);
+	public int countResponses(Long evaluationId, String evalGroupId, Boolean completed);
 
-	
+
    /**
     * Get a set of user ids of users who are in an EvalGroup assigned to
     * this EvalEvaluation and permitted to take the evaluation but have 
@@ -96,7 +102,7 @@ public interface EvalResponsesLogic {
 	/**
 	 * Get the answers associated with this item and with a response to this evaluation,
 	 * (i.e. item answers submitted as part of a response to the given evaluation) within
-	 * the given evalGroupsIds
+	 * the given evalGroupsIds, only gets answers from completed responses
 	 * 
 	 * @param itemId the id of an EvalItem object
 	 * @param evaluationId the id of an EvalEvaluation object

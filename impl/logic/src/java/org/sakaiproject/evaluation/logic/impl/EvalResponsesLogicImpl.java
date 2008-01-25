@@ -3,7 +3,7 @@
  * $URL: https://source.sakaiproject.org/contrib $
  * EvalResponsesLogicImpl.java - evaluation - Dec 25, 2006 10:07:31 AM - azeckoski
  **************************************************************************
- * Copyright (c) 2008 Centre for Academic Research in Educational Technologies
+ * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 
@@ -14,6 +14,7 @@
 
 package org.sakaiproject.evaluation.logic.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,6 +29,7 @@ import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.utils.ArrayUtils;
 import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.model.EvalAnswer;
@@ -116,7 +118,7 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
    }
 
    @SuppressWarnings("unchecked")
-   public List<EvalResponse> getEvaluationResponses(String userId, Long[] evaluationIds) {
+   public List<EvalResponse> getEvaluationResponses(String userId, Long[] evaluationIds, Boolean completed) {
       log.debug("userId: " + userId + ", evaluationIds: " + evaluationIds);
 
       if (evaluationIds.length <= 0) {
@@ -129,19 +131,30 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
          throw new IllegalArgumentException("One or more invalid evaluation ids in evaluationIds: " + evaluationIds);
       }
 
+      List<String> props = new ArrayList<String>();
+      List<Object> values = new ArrayList<Object>();
+      List<Number> comparisons = new ArrayList<Number>();
+
       if (external.isUserAdmin(userId)) {
          // if user is admin then return all matching responses for this evaluation
-         return dao.findByProperties(EvalResponse.class, new String[] { "evaluation.id" },
-               new Object[] { evaluationIds }, new int[] { ByPropsFinder.EQUALS }, new String[] { "id" });
+         props.add("evaluation.id");
+         values.add(evaluationIds);
+         comparisons.add(ByPropsFinder.EQUALS);
       } else {
          // not admin, only return the responses for this user
-         return dao.findByProperties(EvalResponse.class, new String[] { "owner", "evaluation.id" }, new Object[] {
-            userId, evaluationIds }, new int[] { ByPropsFinder.EQUALS, ByPropsFinder.EQUALS },
-            new String[] { "id" });
+         props.add("owner");
+         values.add(userId);
+         comparisons.add(ByPropsFinder.EQUALS);
       }
+
+      return dao.findByProperties(EvalResponse.class, 
+            props.toArray(new String[props.size()]), 
+            values.toArray(new Object[values.size()]), 
+            ArrayUtils.listToIntArray(comparisons), 
+            new String[] { "id" });
    }
 
-   public int countResponses(Long evaluationId, String evalGroupId) {
+   public int countResponses(Long evaluationId, String evalGroupId, Boolean completed) {
       log.debug("evaluationId: " + evaluationId + ", evalGroupId: " + evalGroupId);
 
       if (dao.countByProperties(EvalEvaluation.class, new String[] { "id" }, new Object[] { evaluationId }) <= 0) {
@@ -437,7 +450,7 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
          String userId = i.next();
 
          // if this user hasn't submitted a response, add the user's id
-         if (getEvaluationResponses(userId, evaluationIds).isEmpty()) {
+         if (getEvaluationResponses(userId, evaluationIds, true).isEmpty()) {
             userIds.add(userId);
          }
       }

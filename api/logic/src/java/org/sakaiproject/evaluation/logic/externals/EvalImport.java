@@ -3,7 +3,7 @@
  * $URL: https://source.sakaiproject.org/contrib $
  * EvalImport.java - evaluation - May 28, 2007 12:07:31 AM - rwellis
  **************************************************************************
- * Copyright (c) 2008 Centre for Academic Research in Educational Technologies
+ * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 

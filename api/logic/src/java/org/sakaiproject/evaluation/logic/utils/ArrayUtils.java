@@ -3,7 +3,7 @@
  * $URL: https://source.sakaiproject.org/contrib $
  * ArrayUtils.java - evaluation - Mar 12, 2007 12:07:31 AM - azeckoski
  **************************************************************************
- * Copyright (c) 2008 Centre for Academic Research in Educational Technologies
+ * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 
@@ -13,6 +13,8 @@
  */
 
 package org.sakaiproject.evaluation.logic.utils;
+
+import java.util.List;
 
 /**
  * Utils for working with arrays (these are basically convenience methods)
@@ -120,6 +122,19 @@ public class ArrayUtils {
          result.append(array[i].toString());
       }
 	   return result.toString();
+	}
+
+	/**
+	 * Take a list of number objects and return an int[] array
+	 * @param list any list of {@link Number}
+	 * @return an array of int
+	 */
+	public static int[] listToIntArray(List<Number> list) {
+      int[] newArray = new int[list.size()];
+      for (int i = 0; i < list.size(); i++) {
+         newArray[i] = list.get(i).intValue();
+      }
+      return newArray;
 	}
 
 }

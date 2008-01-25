@@ -1,7 +1,7 @@
 /******************************************************************************
  * ExistingItemsProducer.java - created by aaronz on 12 Mar 2007
  * 
- * Copyright (c) 2007 Centre for Academic Research in Educational Technologies
+ * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 
