@@ -26,7 +26,7 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl;
 import org.sakaiproject.evaluation.logic.impl.EvalResponsesLogicImpl;
-import org.sakaiproject.evaluation.logic.test.stubs.EvalExternalLogicStub;
+import org.sakaiproject.evaluation.logic.test.mocks.EvalExternalLogicStub;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
@@ -162,8 +162,8 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 
       // check creating a new response
       // TODO - CANNOT get this test to pass for some reason -AZ
-//      response = responses.getEvaluationResponseForUserAndGroup(etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE1_REF);
-//      assertNotNull(response);
+      response = responses.getEvaluationResponseForUserAndGroup(etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE1_REF);
+      assertNotNull(response);
 
    }
 

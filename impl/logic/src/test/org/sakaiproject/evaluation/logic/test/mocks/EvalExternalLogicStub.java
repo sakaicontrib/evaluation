@@ -12,7 +12,7 @@
  * 
  *****************************************************************************/
 
-package org.sakaiproject.evaluation.logic.test.stubs;
+package org.sakaiproject.evaluation.logic.test.mocks;
 
 import java.io.Serializable;
 import java.util.ArrayList;
