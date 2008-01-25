@@ -135,17 +135,20 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
       List<Object> values = new ArrayList<Object>();
       List<Number> comparisons = new ArrayList<Number>();
 
-      if (external.isUserAdmin(userId)) {
-         // if user is admin then return all matching responses for this evaluation
-         props.add("evaluation.id");
-         values.add(evaluationIds);
-         comparisons.add(ByPropsFinder.EQUALS);
-      } else {
+      // basic search params
+      props.add("evaluation.id");
+      values.add(evaluationIds);
+      comparisons.add(ByPropsFinder.EQUALS);
+
+      // if user is admin then return all matching responses for this evaluation
+      if (! external.isUserAdmin(userId)) {
          // not admin, only return the responses for this user
          props.add("owner");
          values.add(userId);
          comparisons.add(ByPropsFinder.EQUALS);
       }
+
+      handleCompleted(completed, props, values, comparisons);
 
       return dao.findByProperties(EvalResponse.class, 
             props.toArray(new String[props.size()]), 
@@ -161,16 +164,54 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
          throw new IllegalArgumentException("Could not find evaluation with id: " + evaluationId);
       }
 
-      if (evalGroupId == null) {
-         // returns count of all responses in all eval groups if evalGroupId is null
-         return dao.countByProperties(EvalResponse.class, new String[] { "evaluation.id" },
-               new Object[] { evaluationId });
-      } else {
-         // returns count of responses in this evalGroupId only if set
-         return dao.countByProperties(EvalResponse.class, new String[] { "evaluation.id", "evalGroupId" },
-               new Object[] { evaluationId, evalGroupId });
+      List<String> props = new ArrayList<String>();
+      List<Object> values = new ArrayList<Object>();
+      List<Number> comparisons = new ArrayList<Number>();
+
+      // basic search params
+      props.add("evaluation.id");
+      values.add(evaluationId);
+      comparisons.add(ByPropsFinder.EQUALS);
+
+      /* returns count of all responses in all eval groups if evalGroupId is null
+       * and returns count of responses in this evalGroupId only if set
+       */
+      if (evalGroupId != null) {
+         props.add("evalGroupId");
+         values.add(evalGroupId);
+         comparisons.add(ByPropsFinder.EQUALS);
+      }
+
+      handleCompleted(completed, props, values, comparisons);
+
+      return dao.countByProperties(EvalResponse.class, 
+            props.toArray(new String[props.size()]), 
+            values.toArray(new Object[values.size()]), 
+            ArrayUtils.listToIntArray(comparisons)
+            );
+
+   }
+
+   /**
+    * Reduce code duplication be breaking out this common code
+    * @param completed
+    * @param props
+    * @param values
+    * @param comparisons
+    */
+   private void handleCompleted(Boolean completed, List<String> props, List<Object> values, List<Number> comparisons) {
+      if (completed != null) {
+         // if endTime is null then the response is incomplete, if not null then it is complete
+         props.add("endTime");
+         values.add(""); // just need a placeholder
+         if (completed) {
+            comparisons.add(ByPropsFinder.NOT_NULL);
+         } else {
+            comparisons.add(ByPropsFinder.NULL);            
+         }
       }
    }
+
 
    public List<EvalAnswer> getEvalAnswers(Long itemId, Long evaluationId, String[] evalGroupIds) {
       log.debug("itemId: " + itemId + ", evaluationId: " + evaluationId);
@@ -186,14 +227,14 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
       return dao.getAnswers(itemId, evaluationId, evalGroupIds);
    }
 
-   public List<Long> getEvalResponseIds(Long evaluationId, String[] evalGroupIds) {
+   public List<Long> getEvalResponseIds(Long evaluationId, String[] evalGroupIds, Boolean completed) {
       log.debug("evaluationId: " + evaluationId);
 
       if (dao.countByProperties(EvalEvaluation.class, new String[] { "id" }, new Object[] { evaluationId }) <= 0) {
          throw new IllegalArgumentException("Could not find evaluation with id: " + evaluationId);
       }
 
-      return dao.getResponseIds(evaluationId, evalGroupIds);
+      return dao.getResponseIds(evaluationId, evalGroupIds, completed);
    }
 
    @SuppressWarnings("unchecked")

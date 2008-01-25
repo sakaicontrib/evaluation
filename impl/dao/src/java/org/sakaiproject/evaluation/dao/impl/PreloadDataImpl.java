@@ -1,22 +1,21 @@
-/******************************************************************************
- * PreloadDataImpl.java - created by aaronz@vt.edu
- * 
- * Copyright (c) 2007 Virginia Polytechnic Institute and State University
+/**
+ * $Id: PreloadDataImpl.java 1000 Aug 21, 2006 12:07:31 AM azeckoski $
+ * $URL: https://source.sakaiproject.org/contrib $
+ * PreloadDataImpl.java - evaluation - Aug 21, 2006 12:07:31 AM - azeckoski
+ **************************************************************************
+ * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
- * 
- * Contributors:
- * Aaron Zeckoski (aaronz@vt.edu) - primary
- * Antranig Basman (antranig@caret.cam.ac.uk)
- *****************************************************************************/
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ */
 
 package org.sakaiproject.evaluation.dao.impl;
 
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
