@@ -21,13 +21,13 @@ import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
-import org.sakaiproject.evaluation.logic.test.mocks.EvalExternalLogicStub;
+import org.sakaiproject.evaluation.logic.test.mocks.MockEvalExternalLogic;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 
 
 /**
- * Test class for EvalExternalLogicStub<br/>
+ * Test class for MockEvalExternalLogic<br/>
  * This is actually critical because this makes sure that the stub class passes all the
  * same tests that the real class has to pass
  *
@@ -35,19 +35,19 @@ import org.sakaiproject.evaluation.test.EvalTestDataLoad;
  */
 public class EvalExternalLogicStubTest extends TestCase {
 
-	protected EvalExternalLogicStub external;
+	protected MockEvalExternalLogic external;
 
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
 		// create and setup the object to be tested
-		external = new EvalExternalLogicStub();
+		external = new MockEvalExternalLogic();
 	}
 
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicStub#getCurrentUserId()}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.MockEvalExternalLogic#getCurrentUserId()}.
 	 */
 	public void testGetCurrentUserId() {
 
@@ -58,7 +58,7 @@ public class EvalExternalLogicStubTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicStub#getUserUsername(java.lang.String)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.MockEvalExternalLogic#getUserUsername(java.lang.String)}.
 	 */
 	public void testGetUserUsername() {
 
@@ -77,7 +77,7 @@ public class EvalExternalLogicStubTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicStub#getUserDisplayName(java.lang.String)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.MockEvalExternalLogic#getUserDisplayName(java.lang.String)}.
 	 */
 	public void testGetUserDisplayName() {
 
@@ -96,7 +96,7 @@ public class EvalExternalLogicStubTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicStub#isUserAdmin(java.lang.String)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.MockEvalExternalLogic#isUserAdmin(java.lang.String)}.
 	 */
 	public void testIsUserAdmin() {
 
@@ -107,7 +107,7 @@ public class EvalExternalLogicStubTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicStub#getCurrentEvalGroup()}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.MockEvalExternalLogic#getCurrentEvalGroup()}.
 	 */
 	public void testGetCurrentEvalGroup() {
 
@@ -118,7 +118,7 @@ public class EvalExternalLogicStubTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicStub#getDisplayTitle(java.lang.String)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.MockEvalExternalLogic#getDisplayTitle(java.lang.String)}.
 	 */
 	public void testGetDisplayTitle() {
 
@@ -133,7 +133,7 @@ public class EvalExternalLogicStubTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicStub#countEvalGroupsForUser(java.lang.String, java.lang.String)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.MockEvalExternalLogic#countEvalGroupsForUser(java.lang.String, java.lang.String)}.
 	 */
 	public void testCountEvalGroupsForUser() {
 
@@ -143,7 +143,7 @@ public class EvalExternalLogicStubTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicStub#getEvalGroupsForUser(java.lang.String, java.lang.String)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.MockEvalExternalLogic#getEvalGroupsForUser(java.lang.String, java.lang.String)}.
 	 */
 	public void testGetEvalGroupsForUser() {
 
@@ -154,7 +154,7 @@ public class EvalExternalLogicStubTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicStub#getUserIdsForEvalGroup(java.lang.String, java.lang.String)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.MockEvalExternalLogic#getUserIdsForEvalGroup(java.lang.String, java.lang.String)}.
 	 */
 	public void testGetUserIdsForEvalGroup() {
 
@@ -167,7 +167,7 @@ public class EvalExternalLogicStubTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicStub#countUserIdsForEvalGroup(java.lang.String, java.lang.String)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.MockEvalExternalLogic#countUserIdsForEvalGroup(java.lang.String, java.lang.String)}.
 	 */
 	public void testCountUserIdsForEvalGroup() {
 
@@ -177,7 +177,7 @@ public class EvalExternalLogicStubTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicStub#makeEvalGroupObject(java.lang.String)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.MockEvalExternalLogic#makeEvalGroupObject(java.lang.String)}.
 	 */
 	public void testMakeEvalGroupObject() {
 
@@ -188,7 +188,7 @@ public class EvalExternalLogicStubTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExternalLogicStub#isUserAllowedInEvalGroup(java.lang.String, java.lang.String, java.lang.String)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.MockEvalExternalLogic#isUserAllowedInEvalGroup(java.lang.String, java.lang.String, java.lang.String)}.
 	 */
 	public void testIsUserAllowedInEvalGroup() {
 

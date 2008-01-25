@@ -24,7 +24,7 @@ import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
 import org.sakaiproject.evaluation.logic.impl.EvalAssignsLogicImpl;
-import org.sakaiproject.evaluation.logic.test.mocks.EvalExternalLogicStub;
+import org.sakaiproject.evaluation.logic.test.mocks.MockEvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalScale;
@@ -105,7 +105,7 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 		//create and setup the object to be tested
 		assigns = new EvalAssignsLogicImpl();
 		assigns.setDao(evaluationDao);
-		assigns.setExternalLogic( new EvalExternalLogicStub() );
+		assigns.setExternalLogic( new MockEvalExternalLogic() );
 		assigns.setEmails(emails); // set to the mock object
 		assigns.setEvalJobLogic(evalJobLogic); // set to the mock object
 	}
