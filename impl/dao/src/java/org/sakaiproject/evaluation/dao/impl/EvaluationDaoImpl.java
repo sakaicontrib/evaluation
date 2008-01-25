@@ -1,16 +1,16 @@
-/******************************************************************************
- * EvaluationDaoImpl.java - created by aaronz@vt.edu on Aug 21, 2006
- * 
- * Copyright (c) 2007 Virginia Polytechnic Institute and State University
+/**
+ * $Id: EvaluationDaoImpl.java 1000 Aug 21, 2006 12:07:31 AM azeckoski $
+ * $URL: https://source.sakaiproject.org/contrib $
+ * EvaluationDaoImpl.java - evaluation - Aug 21, 2006 12:07:31 AM - azeckoski
+ **************************************************************************
+ * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
- * 
- * Contributors:
- * Aaron Zeckoski (aaronz@vt.edu) - primary
- * 
- *****************************************************************************/
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ */
 
 package org.sakaiproject.evaluation.dao.impl;
 
@@ -242,7 +242,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       params.put("itemId", itemId);
       params.put("evalId", evalId);
       String hql = "select answer from EvalAnswer as answer join answer.response as ansswerresp "
-         + "where ansswerresp.evaluation.id = :evalId " + groupsHQL
+         + "where ansswerresp.evaluation.id = :evalId and ansswerresp.endTime is not null " + groupsHQL
          + "and answer.item.id = :itemId order by ansswerresp.id";
       // TODO optimize this once we are using a newer version of hibernate that supports "with"
 
@@ -395,16 +395,25 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
    // }
 
 
-   public List<Long> getResponseIds(Long evalId, String[] evalGroupIds) {
+   public List<Long> getResponseIds(Long evalId, String[] evalGroupIds, Boolean completed) {
       Map<String, Object> params = new HashMap<String, Object>();
       String groupsHQL = "";
       if (evalGroupIds != null && evalGroupIds.length > 0) {
          groupsHQL = " and response.evalGroupId in (:evalGroupIds) ";
          params.put("evalGroupIds", evalGroupIds);
       }
+      String completedHQL = "";
+      if (completed != null) {
+         // if endTime is null then the response is incomplete, if not null then it is complete
+         if (completed) {
+            completedHQL = " and response.endTime is not null ";
+         } else {
+            completedHQL = " and response.endTime is null ";
+         }
+      }
       params.put("evalId", evalId);
       String hql = "SELECT response.id from EvalResponse as response where response.evaluation.id = :evalId "
-         + groupsHQL + " order by response.id";
+         + groupsHQL + completedHQL + " order by response.id";
       List<?> rIDs = executeHqlQuery(hql, params, 0, 0);
       List<Long> responseIds = new ArrayList<Long>();
       for (Object object : rIDs) {

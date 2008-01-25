@@ -1,7 +1,7 @@
 /**
- * ReportHandlerHook.java - evaluation - 23 Jan 2007 11:35:56 AM - azeckoski
- * $URL: https://source.sakaiproject.org/contrib $
  * $Id: Locator.java 11234 Jan 21, 2008 11:35:56 AM azeckoski $
+ * $URL: https://source.sakaiproject.org/contrib $
+ * ReportHandlerHook.java - evaluation - 23 Jan 2007 11:35:56 AM - azeckoski
  **************************************************************************
  * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0
@@ -48,11 +48,10 @@ import uk.org.ponder.util.UniversalRuntimeException;
 /**
  * Handles the generation of a CSV file for exporting results
  * 
+ * @author Aaron Zeckoski (aaronz@vt.edu)
  * @author Rui Feng (fengr@vt.edu)
  * @author Will Humphries (whumphri@vt.edu)
- * @author Aaron Zeckoski (aaronz@vt.edu)
  * @author Steven Githens
- *
  */
 public class ReportHandlerHook implements HandlerHook {
 
@@ -133,7 +132,7 @@ public class ReportHandlerHook implements HandlerHook {
          * does not take array of groups ids.
          *   
          */
-        List responseIds = responsesLogic.getEvalResponseIds(drvp.evalId, drvp.groupIds);
+        List responseIds = responsesLogic.getEvalResponseIds(drvp.evalId, drvp.groupIds, true);
         int numOfResponses = responseIds.size();
 
         //add a row for each response

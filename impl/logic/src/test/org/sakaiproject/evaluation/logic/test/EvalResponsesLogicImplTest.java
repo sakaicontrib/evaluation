@@ -196,6 +196,17 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
       Assert.assertTrue(ids.contains( etdl.response4.getId() ));
       Assert.assertTrue(ids.contains( etdl.response6.getId() ));
 
+      // attempt to retrieve all responses
+      l = responses.getEvaluationResponses(EvalTestDataLoad.USER_ID, 
+            new Long[] { etdl.evaluationActive.getId(), etdl.evaluationClosed.getId(), etdl.evaluationViewable.getId() }, null );
+      Assert.assertNotNull(l);
+      Assert.assertEquals(4, l.size());
+
+      // attempt to retrieve all incomplete responses (there are none)
+      l = responses.getEvaluationResponses(EvalTestDataLoad.USER_ID, 
+            new Long[] { etdl.evaluationActive.getId(), etdl.evaluationClosed.getId(), etdl.evaluationViewable.getId() }, false );
+      Assert.assertNotNull(l);
+      Assert.assertEquals(0, l.size());
 
       // attempt to retrieve results for user that has no responses
       l = responses.getEvaluationResponses(EvalTestDataLoad.STUDENT_USER_ID, 
@@ -280,8 +291,17 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
       Assert.assertEquals(0, responses.countResponses( etdl.evaluationActive.getId(), EvalTestDataLoad.SITE2_REF, null) );
       Assert.assertEquals(0, responses.countResponses( etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.SITE2_REF, null) );
 
-      // test counts limited by completed or incomplete
-      // TODO
+      // test counts limited by completed
+      Assert.assertEquals(3, responses.countResponses( etdl.evaluationClosed.getId(), null, true) );
+      Assert.assertEquals(2, responses.countResponses( etdl.evaluationViewable.getId(), null, true) );
+      Assert.assertEquals(1, responses.countResponses( etdl.evaluationActive.getId(), null, true) );
+      Assert.assertEquals(0, responses.countResponses( etdl.evaluationActiveUntaken.getId(), null, true) );
+
+      // test counts limited by incomplete
+      Assert.assertEquals(0, responses.countResponses( etdl.evaluationClosed.getId(), null, false) );
+      Assert.assertEquals(0, responses.countResponses( etdl.evaluationViewable.getId(), null, false) );
+      Assert.assertEquals(0, responses.countResponses( etdl.evaluationActive.getId(), null, false) );
+      Assert.assertEquals(0, responses.countResponses( etdl.evaluationActiveUntaken.getId(), null, false) );
 
       // check that invalid IDs cause failure
       try {
@@ -361,14 +381,14 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
       List<Long> l = null;
 
       // retrieve all response Ids for an evaluation
-      l = responses.getEvalResponseIds(etdl.evaluationClosed.getId(), null);
+      l = responses.getEvalResponseIds(etdl.evaluationClosed.getId(), null, true);
       Assert.assertNotNull(l);
       Assert.assertEquals(3, l.size());
       Assert.assertTrue(l.contains( etdl.response2.getId() ));
       Assert.assertTrue(l.contains( etdl.response3.getId() ));
       Assert.assertTrue(l.contains( etdl.response6.getId() ));
 
-      l = responses.getEvalResponseIds(etdl.evaluationClosed.getId(), new String[] {});
+      l = responses.getEvalResponseIds(etdl.evaluationClosed.getId(), new String[] {}, true);
       Assert.assertNotNull(l);
       Assert.assertEquals(3, l.size());
       Assert.assertTrue(l.contains( etdl.response2.getId() ));
@@ -377,44 +397,56 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 
       // retrieve all response Ids for an evaluation using all groups
       l = responses.getEvalResponseIds(etdl.evaluationClosed.getId(), 
-            new String[] {EvalTestDataLoad.SITE1_REF, EvalTestDataLoad.SITE2_REF});
+            new String[] {EvalTestDataLoad.SITE1_REF, EvalTestDataLoad.SITE2_REF}, true);
       Assert.assertNotNull(l);
       Assert.assertEquals(3, l.size());
       Assert.assertTrue(l.contains( etdl.response2.getId() ));
       Assert.assertTrue(l.contains( etdl.response3.getId() ));
       Assert.assertTrue(l.contains( etdl.response6.getId() ));
 
+      // test retrieval of all responses for an evaluation
+      l = responses.getEvalResponseIds(etdl.evaluationClosed.getId(), 
+            new String[] {EvalTestDataLoad.SITE1_REF, EvalTestDataLoad.SITE2_REF}, null);
+      Assert.assertNotNull(l);
+      Assert.assertEquals(3, l.size());
+
+      // test retrieval of incomplete responses for an evaluation
+      l = responses.getEvalResponseIds(etdl.evaluationClosed.getId(), 
+            new String[] {EvalTestDataLoad.SITE1_REF, EvalTestDataLoad.SITE2_REF}, false);
+      Assert.assertNotNull(l);
+      Assert.assertEquals(0, l.size());
+
       // retrieve all response Ids for an evaluation in one group only
-      l = responses.getEvalResponseIds(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE1_REF});
+      l = responses.getEvalResponseIds(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE1_REF}, true);
       Assert.assertNotNull(l);
       Assert.assertEquals(1, l.size());
       Assert.assertTrue(l.contains( etdl.response2.getId() ));
 
       // retrieve all response Ids for an evaluation in one group only
-      l = responses.getEvalResponseIds(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE2_REF});
+      l = responses.getEvalResponseIds(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE2_REF}, true);
       Assert.assertNotNull(l);
       Assert.assertEquals(2, l.size());
       Assert.assertTrue(l.contains( etdl.response3.getId() ));
       Assert.assertTrue(l.contains( etdl.response6.getId() ));
 
-      l = responses.getEvalResponseIds(etdl.evaluationActive.getId(), new String[] {EvalTestDataLoad.SITE1_REF});
+      l = responses.getEvalResponseIds(etdl.evaluationActive.getId(), new String[] {EvalTestDataLoad.SITE1_REF}, true);
       Assert.assertNotNull(l);
       Assert.assertEquals(1, l.size());
       Assert.assertTrue(l.contains( etdl.response1.getId() ));
 
       // try to get responses for an eval group that is not associated with this eval
-      l = responses.getEvalResponseIds(etdl.evaluationActive.getId(), new String[] {EvalTestDataLoad.SITE2_REF});
+      l = responses.getEvalResponseIds(etdl.evaluationActive.getId(), new String[] {EvalTestDataLoad.SITE2_REF}, true);
       Assert.assertNotNull(l);
       Assert.assertEquals(0, l.size());
 
       // try to get responses for an eval with no responses
-      l = responses.getEvalResponseIds(etdl.evaluationActiveUntaken.getId(), null);
+      l = responses.getEvalResponseIds(etdl.evaluationActiveUntaken.getId(), null, true);
       Assert.assertNotNull(l);
       Assert.assertEquals(0, l.size());
 
       // check that invalid eval ids cause failure
       try {
-         l = responses.getEvalResponseIds( EvalTestDataLoad.INVALID_LONG_ID, null );
+         l = responses.getEvalResponseIds( EvalTestDataLoad.INVALID_LONG_ID, null, true);
          Assert.fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
          Assert.assertNotNull(e);

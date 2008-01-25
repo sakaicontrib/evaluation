@@ -544,27 +544,27 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
    public void testGetResponseIds() {
       List<Long> l = null;
 
-      l = evaluationDao.getResponseIds(etdl.evaluationClosed.getId(), null);
+      l = evaluationDao.getResponseIds(etdl.evaluationClosed.getId(), null, null);
       Assert.assertNotNull(l);
       Assert.assertEquals(3, l.size());
       Assert.assertTrue( l.contains(etdl.response2.getId()) );
       Assert.assertTrue( l.contains(etdl.response3.getId()) );
       Assert.assertTrue( l.contains(etdl.response6.getId()) );
 
-      l = evaluationDao.getResponseIds(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE1_REF, EvalTestDataLoad.SITE2_REF});
+      l = evaluationDao.getResponseIds(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE1_REF, EvalTestDataLoad.SITE2_REF}, null);
       Assert.assertNotNull(l);
       Assert.assertEquals(3, l.size());
       Assert.assertTrue( l.contains(etdl.response2.getId()) );
       Assert.assertTrue( l.contains(etdl.response3.getId()) );
       Assert.assertTrue( l.contains(etdl.response6.getId()) );
 
-      l = evaluationDao.getResponseIds(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE1_REF});
+      l = evaluationDao.getResponseIds(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE1_REF}, null);
       Assert.assertNotNull(l);
       Assert.assertEquals(1, l.size());
       Assert.assertTrue( l.contains(etdl.response2.getId()) );
 
       // test invalid evalid
-      l = evaluationDao.getResponseIds(EvalTestDataLoad.INVALID_LONG_ID, null);
+      l = evaluationDao.getResponseIds(EvalTestDataLoad.INVALID_LONG_ID, null, null);
       Assert.assertNotNull(l);
       Assert.assertEquals(0, l.size());
 
