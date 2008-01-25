@@ -1,16 +1,16 @@
-/******************************************************************************
- * EvalResponsesLogicImplTest.java - created by aaronz@vt.edu
- * 
- * Copyright (c) 2007 Virginia Polytechnic Institute and State University
+/**
+ * EvalResponsesLogicImplTest.java - evaluation - Dec 25, 2006 10:07:31 AM - azeckoski
+ * $URL: https://source.sakaiproject.org/contrib $
+ * $Id: MockEvalJobLogic.java 1000 Jan 25, 2008 10:07:31 AM azeckoski $
+ **************************************************************************
+ * Copyright (c) 2008 Centre for Academic Research in Educational Technologies
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
- * 
- * Contributors:
- * Aaron Zeckoski (aaronz@vt.edu) - primary
- * 
- *****************************************************************************/
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ */
 
 package org.sakaiproject.evaluation.logic.test;
 
@@ -20,13 +20,13 @@ import java.util.List;
 
 import junit.framework.Assert;
 
-import org.easymock.MockControl;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
-import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl;
 import org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl;
 import org.sakaiproject.evaluation.logic.impl.EvalResponsesLogicImpl;
 import org.sakaiproject.evaluation.logic.test.mocks.MockEvalExternalLogic;
+import org.sakaiproject.evaluation.logic.test.mocks.MockEvalJobLogic;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
@@ -50,9 +50,6 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
    private EvalTestDataLoad etdl;
 
    private EvalEvaluation evaluationClosedTwo;
-
-   private EvalEvaluationsLogic evaluationsLogic;
-   private MockControl evaluationsLogicControl;
 
 
    protected String[] getConfigLocations() {
@@ -91,21 +88,27 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
       }
 
       // setup the mock objects if needed
-      evaluationsLogicControl = MockControl.createControl(EvalEvaluationsLogic.class);
-      evaluationsLogic = (EvalEvaluationsLogic) evaluationsLogicControl.getMock();
+//      evaluationsLogicControl = MockControl.createControl(EvalEvaluationsLogic.class);
+//      evaluationsLogic = (EvalEvaluationsLogic) evaluationsLogicControl.getMock();
 
-      // create a logic impl to use
+      // create the other needed logic impls
       EvalItemsLogicImpl itemsLogicImpl = new EvalItemsLogicImpl();
       itemsLogicImpl.setDao(evaluationDao);
       itemsLogicImpl.setExternalLogic( new MockEvalExternalLogic() );
       itemsLogicImpl.setEvalSettings(settings);
+      
+      EvalEvaluationsLogicImpl evaluationsLogicImpl = new EvalEvaluationsLogicImpl();
+      evaluationsLogicImpl.setDao(evaluationDao);
+      evaluationsLogicImpl.setEvalJobLogic( new MockEvalJobLogic() );
+      evaluationsLogicImpl.setExternalLogic( new MockEvalExternalLogic() );
+      evaluationsLogicImpl.setSettings(settings);
 
 
       // create and setup the object to be tested
       responses = new EvalResponsesLogicImpl();
       responses.setDao(evaluationDao);
       responses.setExternalLogic( new MockEvalExternalLogic() );
-      responses.setEvaluationsLogic(evaluationsLogic); // set the mock object
+      responses.setEvaluationsLogic( evaluationsLogicImpl ); // put created object in
       responses.setEvalSettings(settings);
       responses.setItemsLogic( itemsLogicImpl ); // put created object in
    }
@@ -150,22 +153,6 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
       Assert.assertNull(response);
    }
 
-
-
-   public void testGetEvaluationResponseForUserAndGroup() {
-      EvalResponse response = null;
-
-      // check retrieving an existing responses
-      response = responses.getEvaluationResponseForUserAndGroup(etdl.evaluationClosed.getId(), EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE1_REF);
-      assertNotNull(response);
-      assertEquals(etdl.response2.getId(), response.getId());
-
-      // check creating a new response
-      // TODO - CANNOT get this test to pass for some reason -AZ
-      response = responses.getEvaluationResponseForUserAndGroup(etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE1_REF);
-      assertNotNull(response);
-
-   }
 
    /**
     * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalResponsesLogicImpl#getEvaluationResponses(java.lang.String, java.lang.Long[])}.
@@ -436,33 +423,6 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
     * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalResponsesLogicImpl#saveResponse(org.sakaiproject.evaluation.model.EvalResponse, String)}.
     */
    public void testSaveResponse() {
-      // setup mock object return values
-      evaluationsLogic.canTakeEvaluation(EvalTestDataLoad.STUDENT_USER_ID, 
-            etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.SITE1_REF);
-      evaluationsLogicControl.setReturnValue( true );
-      evaluationsLogicControl.setReturnValue( true );
-      evaluationsLogicControl.setReturnValue( true );
-      evaluationsLogicControl.setReturnValue( false );
-      evaluationsLogic.canTakeEvaluation(EvalTestDataLoad.MAINT_USER_ID, 
-            etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.SITE1_REF);
-      evaluationsLogicControl.setReturnValue( false );
-      evaluationsLogic.canTakeEvaluation(EvalTestDataLoad.USER_ID, 
-            etdl.evaluationActive.getId(), EvalTestDataLoad.SITE3_REF);
-      evaluationsLogicControl.setReturnValue( false );
-      evaluationsLogic.canTakeEvaluation(EvalTestDataLoad.USER_ID, 
-            etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.SITE1_REF);
-      evaluationsLogicControl.setReturnValue( true );
-      evaluationsLogic.canTakeEvaluation(EvalTestDataLoad.USER_ID, 
-            etdl.evaluationActive.getId(), EvalTestDataLoad.SITE1_REF);
-      evaluationsLogicControl.setReturnValue( false );
-      evaluationsLogic.canTakeEvaluation(EvalTestDataLoad.ADMIN_USER_ID, 
-            etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.SITE1_REF);
-      evaluationsLogicControl.setReturnValue( true );
-
-      // activate the mock objects
-      evaluationsLogicControl.replay();
-
-      // mock objects needed here
 
       // test saving a response with no answers is ok
       EvalResponse responseNone = new EvalResponse( new Date(), EvalTestDataLoad.STUDENT_USER_ID, 
@@ -490,7 +450,7 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
       // test saving a response when user has no permission fails
       try {
          responses.saveResponse( new EvalResponse( new Date(), 
-               EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE1_REF, 
+               EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE2_REF, 
                new Date(), etdl.evaluationActiveUntaken), 
                EvalTestDataLoad.MAINT_USER_ID);
          Assert.fail("Should have thrown exception");
@@ -568,16 +528,6 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 
       // test saving a response when one exists fails
       try {
-         EvalResponse response3 = new EvalResponse( new Date(), EvalTestDataLoad.STUDENT_USER_ID, 
-               EvalTestDataLoad.SITE1_REF, new Date(), etdl.evaluationActiveUntaken);
-         responses.saveResponse( response3, EvalTestDataLoad.STUDENT_USER_ID);
-         Assert.fail("Should have thrown exception");
-      } catch (IllegalStateException e) {
-         Assert.assertNotNull(e);
-      }
-
-      // test saving a response when one exists fails (check 2 cases)
-      try {
          responses.saveResponse( new EvalResponse( new Date(), 
                EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE1_REF, 
                new Date(), etdl.evaluationActive), 
@@ -587,8 +537,15 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
          Assert.assertNotNull(e);
       }
 
-      // verify the mock objects were used
-      evaluationsLogicControl.verify();
+      try {
+         responses.saveResponse( new EvalResponse( new Date(), 
+               EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE2_REF, 
+               new Date(), etdl.evaluationActive), 
+               EvalTestDataLoad.MAINT_USER_ID);
+         Assert.fail("Should have thrown exception");
+      } catch (IllegalStateException e) {
+         Assert.assertNotNull(e);
+      }
 
    }
 
@@ -623,6 +580,36 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
                EvalTestDataLoad.INVALID_LONG_ID );
          Assert.fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
+         Assert.assertNotNull(e);
+      }
+
+   }
+
+   public void testGetEvaluationResponseForUserAndGroup() {
+      EvalResponse response = null;
+
+      // check retrieving an existing responses
+      response = responses.getEvaluationResponseForUserAndGroup(etdl.evaluationClosed.getId(), EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE1_REF);
+      assertNotNull(response);
+      assertEquals(etdl.response2.getId(), response.getId());
+
+      // check creating a new response
+      response = responses.getEvaluationResponseForUserAndGroup(etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE1_REF);
+      assertNotNull(response);
+
+      // test cannot create response for closed evaluation
+      try {
+         response = responses.getEvaluationResponseForUserAndGroup(etdl.evaluationClosed.getId(), EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE1_REF);
+         Assert.fail("Should have thrown exception");
+      } catch (IllegalStateException e) {
+         Assert.assertNotNull(e);
+      }
+
+      // test invalid permissions to create response fails
+      try {
+         response = responses.getEvaluationResponseForUserAndGroup(etdl.evaluationActive.getId(), EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE1_REF);
+         Assert.fail("Should have thrown exception");
+      } catch (IllegalStateException e) {
          Assert.assertNotNull(e);
       }
 

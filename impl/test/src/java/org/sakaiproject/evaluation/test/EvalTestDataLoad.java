@@ -1,16 +1,16 @@
-/******************************************************************************
- * EvalTestDataLoad.java - created by aaronz@vt.edu
- * 
- * Copyright (c) 2007 Virginia Polytechnic Institute and State University
+/**
+ * EvalTestDataLoad.java - evaluation - Dec 25, 2006 10:07:31 AM - azeckoski
+ * $URL: https://source.sakaiproject.org/contrib $
+ * $Id: MockEvalJobLogic.java 1000 Jan 25, 2008 10:07:31 AM azeckoski $
+ **************************************************************************
+ * Copyright (c) 2008 Centre for Academic Research in Educational Technologies
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
- * 
- * Contributors:
- * Aaron Zeckoski (aaronz@vt.edu) - primary
- * 
- *****************************************************************************/
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ */
 
 package org.sakaiproject.evaluation.test;
 
@@ -293,7 +293,8 @@ public class EvalTestDataLoad {
     */
    public EvalEvaluation evaluationActive;
    /**
-    * Evaluation Active (ends tomorrow), viewable 3 days, MAINT_USER_ID owns, templatePublic, NO responses, 1 AC
+    * Evaluation Active (ends tomorrow), viewable 3 days, MAINT_USER_ID owns, templatePublic, NO responses, 1 AC,
+    * NO AUTH CONTROL (thus group and permissions checks will go through automatically)
     */
    public EvalEvaluation evaluationActiveUntaken;
    /**
@@ -705,85 +706,85 @@ public class EvalTestDataLoad {
       templateItem3Eid.setEid("test-templateitem-3");
 
       // associate the templates with the link
-      templateAdmin.setTemplateItems( new HashSet() );
+      templateAdmin.setTemplateItems( new HashSet<EvalTemplateItem>() );
       templateAdmin.getTemplateItems().add( templateItem2A );
       templateAdmin.getTemplateItems().add( templateItem3A );
       templateAdmin.getTemplateItems().add( templateItem5A );
 
-      templatePublicUnused.setTemplateItems( new HashSet() );
+      templatePublicUnused.setTemplateItems( new HashSet<EvalTemplateItem>() );
       templatePublicUnused.getTemplateItems().add( templateItem3PU );
 
-      templatePublic.setTemplateItems( new HashSet() );
+      templatePublic.setTemplateItems( new HashSet<EvalTemplateItem>() );
       templatePublic.getTemplateItems().add( templateItem1P );
 
-      templateUnused.setTemplateItems( new HashSet() );
+      templateUnused.setTemplateItems( new HashSet<EvalTemplateItem>() );
       templateUnused.getTemplateItems().add( templateItem3U );
       templateUnused.getTemplateItems().add( templateItem5U );
 
-      templateUser.setTemplateItems( new HashSet() );
+      templateUser.setTemplateItems( new HashSet<EvalTemplateItem>() );
       templateUser.getTemplateItems().add( templateItem1User );
       templateUser.getTemplateItems().add( templateItem5User );
 
-      templateUserUnused.setTemplateItems( new HashSet() );
+      templateUserUnused.setTemplateItems( new HashSet<EvalTemplateItem>() );
       templateUserUnused.getTemplateItems().add( templateItem6UU );
 
-      templateAdminBlock.setTemplateItems( new HashSet() );
+      templateAdminBlock.setTemplateItems( new HashSet<EvalTemplateItem>() );
       templateAdminBlock.getTemplateItems().add( templateItem9B );
       templateAdminBlock.getTemplateItems().add( templateItem2B );
       templateAdminBlock.getTemplateItems().add( templateItem3B );
 
-      templateAdminComplex.setTemplateItems( new HashSet() );
+      templateAdminComplex.setTemplateItems( new HashSet<EvalTemplateItem>() );
       templateAdminComplex.getTemplateItems().add( templateItem10AC1 );
       templateAdminComplex.getTemplateItems().add( templateItem10AC2 );
       templateAdminComplex.getTemplateItems().add( templateItem10AC3 );
 
 
-      templateEid.setTemplateItems( new HashSet() );
+      templateEid.setTemplateItems( new HashSet<EvalTemplateItem>() );
       templateEid.getTemplateItems().add( templateItem1Eid );
       templateEid.getTemplateItems().add( templateItem2Eid );
       templateEid.getTemplateItems().add( templateItem3Eid);
 
       // associate the items with the link
-      item1.setTemplateItems( new HashSet() );
+      item1.setTemplateItems( new HashSet<EvalTemplateItem>() );
       item1.getTemplateItems().add( templateItem1P );
       item1.getTemplateItems().add( templateItem1User );
 
-      item2.setTemplateItems( new HashSet() );
+      item2.setTemplateItems( new HashSet<EvalTemplateItem>() );
       item2.getTemplateItems().add( templateItem2A );
       item2.getTemplateItems().add( templateItem2B );
 
-      item3.setTemplateItems( new HashSet() );
+      item3.setTemplateItems( new HashSet<EvalTemplateItem>() );
       item3.getTemplateItems().add( templateItem3A );
       item3.getTemplateItems().add( templateItem3PU );
       item3.getTemplateItems().add( templateItem3U );
       item3.getTemplateItems().add( templateItem3B );
 
-      item4.setTemplateItems( new HashSet() );
+      item4.setTemplateItems( new HashSet<EvalTemplateItem>() );
 
-      item5.setTemplateItems( new HashSet() );
+      item5.setTemplateItems( new HashSet<EvalTemplateItem>() );
       item5.getTemplateItems().add( templateItem5A );
       item5.getTemplateItems().add( templateItem5U );
       item5.getTemplateItems().add( templateItem5User );
 
-      item6.setTemplateItems( new HashSet() );
+      item6.setTemplateItems( new HashSet<EvalTemplateItem>() );
       item6.getTemplateItems().add( templateItem6UU );
 
-      item9.setTemplateItems( new HashSet() );
+      item9.setTemplateItems( new HashSet<EvalTemplateItem>() );
       item9.getTemplateItems().add( templateItem9B );
 
-      item10.setTemplateItems( new HashSet() );
+      item10.setTemplateItems( new HashSet<EvalTemplateItem>() );
       item10.getTemplateItems().add( templateItem10AC1 );
       item10.getTemplateItems().add( templateItem10AC2 );
       item10.getTemplateItems().add( templateItem10AC3 );
 
 
-      item1Eid.setTemplateItems( new HashSet() );
+      item1Eid.setTemplateItems( new HashSet<EvalTemplateItem>() );
       item1Eid.getTemplateItems().add( templateItem1Eid );
 
-      item2Eid.setTemplateItems( new HashSet() );
+      item2Eid.setTemplateItems( new HashSet<EvalTemplateItem>() );
       item2Eid.getTemplateItems().add( templateItem2Eid );
 
-      item3Eid.setTemplateItems( new HashSet() );
+      item3Eid.setTemplateItems( new HashSet<EvalTemplateItem>() );
       item3Eid.getTemplateItems().add( templateItem3Eid);
 
       // init the evaluation times
@@ -923,35 +924,35 @@ public class EvalTestDataLoad {
       // left the text answer blank
 
       // associate the answers
-      Set answers = new HashSet();
+      Set<EvalAnswer> answers = new HashSet<EvalAnswer>();
       answers.add(answer1_1);
       response1.setAnswers(answers);
 
-      answers = new HashSet();
+      answers = new HashSet<EvalAnswer>();
       answers.add(answer2_2);
       answers.add(answer2_5);
       response2.setAnswers(answers);
 
-      answers = new HashSet();
+      answers = new HashSet<EvalAnswer>();
       answers.add(answer3_2);
       response3.setAnswers(answers);
 
-      answers = new HashSet();
+      answers = new HashSet<EvalAnswer>();
       answers.add(answer4_1);
       answers.add(answer4_5);
       response4.setAnswers(answers);
 
-      answers = new HashSet();
+      answers = new HashSet<EvalAnswer>();
       answers.add(answer5_1);
       response5.setAnswers(answers);
 
-      answers = new HashSet();
+      answers = new HashSet<EvalAnswer>();
       response6.setAnswers(answers); // left all answers blank
 
       // catgories and objectives
       categoryA = new EvalItemGroup(new Date(), EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
             "A", "description", Boolean.TRUE, null, null);
-      Set itemsB = new HashSet();
+      Set<EvalItem> itemsB = new HashSet<EvalItem>();
       itemsB.add( item1 );
       categoryB = new EvalItemGroup(new Date(), EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
             "B", "description", Boolean.TRUE, null, itemsB);
@@ -960,7 +961,7 @@ public class EvalTestDataLoad {
       categoryD = new EvalItemGroup(new Date(), EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
             "D", "description", Boolean.FALSE, null, null);
 
-      Set itemsA1 = new HashSet();
+      Set<EvalItem> itemsA1 = new HashSet<EvalItem>();
       itemsA1.add( item2 );
       itemsA1.add( item6 );
       objectiveA1 = new EvalItemGroup(new Date(), EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.ITEM_GROUP_TYPE_OBJECTIVE,

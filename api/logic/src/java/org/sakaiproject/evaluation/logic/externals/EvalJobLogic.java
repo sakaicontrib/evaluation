@@ -22,6 +22,7 @@
 package org.sakaiproject.evaluation.logic.externals;
 
 import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 /**
  * Handle the scheduling of jobs and taking action
@@ -35,8 +36,8 @@ public interface EvalJobLogic {
 	 * Check if a job of a given type for a given evaluation is scheduled. 
 	 * At most, one job of a given type is scheduled per evaluation.
 	 * 
-	 * @param evaluationId
-	 * @param jobType
+    * @param evaluationId the unique id for an {@link EvalEvaluation}
+    * @param jobType the job type from {@link EvalConstants}
 	 * @return true if a job of this type is scheduled for this evaluation, false otherwise
 	 */
 	public boolean isJobTypeScheduled(Long evaluationId, String jobType);
@@ -49,7 +50,7 @@ public interface EvalJobLogic {
 	 * current EvalEvaluation state and change job
 	 * start date to match EvalEvaluation date.
 	 * 
-	 * @param eval the EvalEvaluation
+	 * @param eval an {@link EvalEvaluation} persisted object
 	 */
 	public void processEvaluationChange(EvalEvaluation eval);
 	
@@ -59,7 +60,7 @@ public interface EvalJobLogic {
 	 * schedule a job to make the EvalEvaluation active when the 
 	 * start date is reached.
 	 *  
-	 * @param eval the EvalEvaluation
+    * @param eval an {@link EvalEvaluation} persisted object
 	 */
 	public void processNewEvaluation(EvalEvaluation eval);
 	
@@ -67,24 +68,24 @@ public interface EvalJobLogic {
 	 * Handle sending email and starting jobs when a scheduled job 
 	 * calls this method. Dispatch to action(s) based on jobType.</br>
 	 * 
-	 * @param evaluationId the id of the EvalEvaluation
-	 * @param jobType the job type from EvalConstants
+    * @param evaluationId the unique id for an {@link EvalEvaluation}
+	 * @param jobType the job type from {@link EvalConstants}
 	 */
 	public void jobAction(Long evaluationId, String jobType);
 	
 	/**
 	 * Remove all outstanding scheduled job invocations for this EvalEvaluation.
 	 * 
-	 * @param evalId the EvalEvaluation identifier
+	 * @param evaluationId the unique id for an {@link EvalEvaluation}
 	 */
-	public void removeScheduledInvocations(Long evalId);
+	public void removeScheduledInvocations(Long evaluationId);
 	
 
 	/**
 	 * Schedule reminders to be run under the ScheduledInvocationManager, at the
 	 * first reminder interval after the start date that is in the future
 	 * 
-	 * @param evaluationId the EvalEvaluation id
+    * @param evaluationId the unique id for an {@link EvalEvaluation}
 	 */
 	public void scheduleReminder(Long evaluationId);
 }
