@@ -115,6 +115,7 @@ impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalTemplatesLogicImp
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/ExternalHierarchyLogicImplTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/TextTemplateLogicUtilsTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/mocks/MockEvalExternalLogic.java -text
+impl/logic/src/test/org/sakaiproject/evaluation/logic/test/mocks/MockEvalJobLogic.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/mocks/MockPlacement.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/mocks/MockReference.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/mocks/MockSite.java -text
