@@ -21,7 +21,7 @@ import junit.framework.Assert;
 
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.impl.EvalScalesLogicImpl;
-import org.sakaiproject.evaluation.logic.test.stubs.EvalExternalLogicStub;
+import org.sakaiproject.evaluation.logic.test.mocks.EvalExternalLogicStub;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;

@@ -643,7 +643,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
     */
    @SuppressWarnings("unchecked")
    public boolean canTakeEvaluation(String userId, Long evaluationId, String evalGroupId) {
-      log.debug("evalId: " + evaluationId + ", userId: " + userId + ", evalGroupId: " + evalGroupId);
+      log.error("evalId: " + evaluationId + ", userId: " + userId + ", evalGroupId: " + evalGroupId);
 
       // grab the evaluation itself first
       EvalEvaluation eval = (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);

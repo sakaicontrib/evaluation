@@ -24,7 +24,7 @@ import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
 import org.sakaiproject.evaluation.logic.impl.EvalAssignsLogicImpl;
-import org.sakaiproject.evaluation.logic.test.stubs.EvalExternalLogicStub;
+import org.sakaiproject.evaluation.logic.test.mocks.EvalExternalLogicStub;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalScale;
