@@ -21,7 +21,7 @@ import junit.framework.Assert;
 
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.impl.EvalScalesLogicImpl;
-import org.sakaiproject.evaluation.logic.test.mocks.EvalExternalLogicStub;
+import org.sakaiproject.evaluation.logic.test.mocks.MockEvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
@@ -79,7 +79,7 @@ public class EvalScalesLogicImplTest extends AbstractTransactionalSpringContextT
 		// create and setup the object to be tested
 		scales = new EvalScalesLogicImpl();
 		scales.setDao(evaluationDao);
-		scales.setExternalLogic( new EvalExternalLogicStub() );
+		scales.setExternalLogic( new MockEvalExternalLogic() );
 
 	}
 

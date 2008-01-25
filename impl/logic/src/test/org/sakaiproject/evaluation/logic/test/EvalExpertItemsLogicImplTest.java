@@ -21,7 +21,7 @@ import junit.framework.Assert;
 
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.impl.EvalExpertItemsLogicImpl;
-import org.sakaiproject.evaluation.logic.test.mocks.EvalExternalLogicStub;
+import org.sakaiproject.evaluation.logic.test.mocks.MockEvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.model.EvalScale;
@@ -78,7 +78,7 @@ public class EvalExpertItemsLogicImplTest extends AbstractTransactionalSpringCon
 		// create and setup the object to be tested
 		expertItems = new EvalExpertItemsLogicImpl();
 		expertItems.setDao(evaluationDao);
-		expertItems.setExternalLogic( new EvalExternalLogicStub() );
+		expertItems.setExternalLogic( new MockEvalExternalLogic() );
 
 	}
 

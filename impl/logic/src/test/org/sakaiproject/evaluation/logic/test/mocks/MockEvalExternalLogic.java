@@ -1,5 +1,5 @@
 /******************************************************************************
- * EvalExternalLogicStub.java - created by aaronz@vt.edu on Dec 25, 2006
+ * MockEvalExternalLogic.java - created by aaronz@vt.edu on Dec 25, 2006
  * 
  * Copyright (c) 2007 Virginia Polytechnic Institute and State University
  * Licensed under the Educational Community License version 1.0
@@ -42,7 +42,7 @@ import org.sakaiproject.evaluation.test.EvalTestDataLoad;
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class EvalExternalLogicStub implements EvalExternalLogic {
+public class MockEvalExternalLogic implements EvalExternalLogic {
 
 	/**
 	 * Note: Admin has all perms in all sites

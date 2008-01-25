@@ -26,7 +26,7 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl;
 import org.sakaiproject.evaluation.logic.impl.EvalResponsesLogicImpl;
-import org.sakaiproject.evaluation.logic.test.mocks.EvalExternalLogicStub;
+import org.sakaiproject.evaluation.logic.test.mocks.MockEvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
@@ -97,14 +97,14 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
       // create a logic impl to use
       EvalItemsLogicImpl itemsLogicImpl = new EvalItemsLogicImpl();
       itemsLogicImpl.setDao(evaluationDao);
-      itemsLogicImpl.setExternalLogic( new EvalExternalLogicStub() );
+      itemsLogicImpl.setExternalLogic( new MockEvalExternalLogic() );
       itemsLogicImpl.setEvalSettings(settings);
 
 
       // create and setup the object to be tested
       responses = new EvalResponsesLogicImpl();
       responses.setDao(evaluationDao);
-      responses.setExternalLogic( new EvalExternalLogicStub() );
+      responses.setExternalLogic( new MockEvalExternalLogic() );
       responses.setEvaluationsLogic(evaluationsLogic); // set the mock object
       responses.setEvalSettings(settings);
       responses.setItemsLogic( itemsLogicImpl ); // put created object in

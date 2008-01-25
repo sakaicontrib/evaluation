@@ -22,7 +22,7 @@ import junit.framework.Assert;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.impl.EvalTemplatesLogicImpl;
-import org.sakaiproject.evaluation.logic.test.mocks.EvalExternalLogicStub;
+import org.sakaiproject.evaluation.logic.test.mocks.MockEvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
@@ -84,7 +84,7 @@ public class EvalTemplatesLogicImplTest extends AbstractTransactionalSpringConte
 		// create and setup the object to be tested
 		templates = new EvalTemplatesLogicImpl();
 		templates.setDao(evaluationDao);
-		templates.setExternalLogic( new EvalExternalLogicStub() );
+		templates.setExternalLogic( new MockEvalExternalLogic() );
 		templates.setSettings(settings);
 
 	}

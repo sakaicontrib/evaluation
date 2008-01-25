@@ -21,7 +21,7 @@ import junit.framework.Assert;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl;
-import org.sakaiproject.evaluation.logic.test.mocks.EvalExternalLogicStub;
+import org.sakaiproject.evaluation.logic.test.mocks.MockEvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalScale;
@@ -83,7 +83,7 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 		// create and setup the object to be tested
 		emailTemplates = new EvalEmailsLogicImpl();
 		emailTemplates.setDao(evaluationDao);
-		emailTemplates.setExternalLogic( new EvalExternalLogicStub() );
+		emailTemplates.setExternalLogic( new MockEvalExternalLogic() );
 
 	}
 
