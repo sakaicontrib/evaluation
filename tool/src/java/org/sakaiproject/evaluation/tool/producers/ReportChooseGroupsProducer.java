@@ -23,6 +23,7 @@ import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
@@ -100,10 +101,11 @@ public class ReportChooseGroupsProducer implements ViewComponentProducer, Naviga
                 UIBranchContainer groupBranch = UIBranchContainer.make(form, "groupRow:", i+"");
                 EvalGroup currGroup = (EvalGroup) groups.get(i);
                 // checkbox - groupCheck
-                UIBoundBoolean.make(groupBranch, "groupCheck",
+                UIBoundBoolean groupCheckBox = UIBoundBoolean.make(groupBranch, "groupCheck",
                         "#{groupIds." + currGroup.evalGroupId + "}", Boolean.FALSE);
                 // uioutput - groupname
-                UIOutput.make(groupBranch, "groupName", currGroup.title);
+                UIOutput groupCheckLabel = UIOutput.make(groupBranch, "groupName", currGroup.title);
+                UILabelTargetDecorator.targetLabel(groupCheckLabel, groupCheckBox);
             }
 
             // uicommand submit
