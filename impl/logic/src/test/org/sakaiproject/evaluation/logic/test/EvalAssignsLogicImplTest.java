@@ -1,16 +1,16 @@
-/******************************************************************************
- * EvalAssignsLogicImplTest.java - created by aaronz@vt.edu on Dec 28, 2006
- * 
- * Copyright (c) 2007 Virginia Polytechnic Institute and State University
+/**
+ * $Id: EvalAssignsLogicImplTest.java 1000 Dec 28, 2006 10:07:31 AM azeckoski $
+ * $URL: https://source.sakaiproject.org/contrib $
+ * EvalAssignsLogicImplTest.java - evaluation - Dec 28, 2006 10:07:31 AM - azeckoski
+ **************************************************************************
+ * Copyright (c) 2008 Centre for Academic Research in Educational Technologies
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
- * 
- * Contributors:
- * Aaron Zeckoski (aaronz@vt.edu) - primary
- * 
- *****************************************************************************/
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ */
 
 package org.sakaiproject.evaluation.logic.test;
 
@@ -126,7 +126,8 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalAssignsLogicImpl#saveAssignGroup(org.sakaiproject.evaluation.model.EvalAssignGroup, java.lang.String)}.
 	 */
-	public void testSaveAssignContext() {
+	@SuppressWarnings("unchecked")
+   public void testSaveAssignContext() {
 
 		// test adding evalGroupId to inqueue eval
 		EvalAssignGroup eacNew = new EvalAssignGroup(new Date(), 
@@ -136,7 +137,7 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 		assigns.saveAssignGroup(eacNew, EvalTestDataLoad.MAINT_USER_ID);
 
 		// check save worked
-		List l = evaluationDao.findByProperties(EvalAssignGroup.class, 
+		List<EvalAssignGroup> l = evaluationDao.findByProperties(EvalAssignGroup.class, 
 				new String[] {"evaluation.id"}, new Object[] {etdl.evaluationNew.getId()});
 		Assert.assertNotNull(l);
 		Assert.assertEquals(1, l.size());
@@ -274,7 +275,8 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalAssignsLogicImpl#deleteAssignGroup(java.lang.Long, java.lang.String)}.
 	 */
-	public void testDeleteAssignContext() {
+	@SuppressWarnings("unchecked")
+   public void testDeleteAssignContext() {
 		// save some ACs to test removing
 		EvalAssignGroup eac1 = new EvalAssignGroup(new Date(), 
 				EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE1_REF, 
@@ -288,7 +290,7 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 		evaluationDao.save(eac2);
 
 		// check save worked
-		List l = evaluationDao.findByProperties(EvalAssignGroup.class, 
+		List<EvalAssignGroup> l = evaluationDao.findByProperties(EvalAssignGroup.class, 
 				new String[] {"evaluation.id"}, new Object[] {etdl.evaluationNew.getId()});
 		Assert.assertNotNull(l);
 		Assert.assertEquals(2, l.size());

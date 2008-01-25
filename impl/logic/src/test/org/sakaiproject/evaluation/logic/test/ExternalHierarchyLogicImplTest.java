@@ -1,5 +1,15 @@
 /**
- * ExternalHierarchyLogicImplTest.java - evaluation - 2007 Sep 7, 2007 11:06:38 AM - AZ
+ * $Id: ExternalHierarchyLogicImplTest.java 1000 Dec 25, 2006 10:07:31 AM azeckoski $
+ * $URL: https://source.sakaiproject.org/contrib $
+ * ExternalHierarchyLogicImplTest.java - evaluation - Sep 7, 2007 11:06:38 AM - azeckoski
+ **************************************************************************
+ * Copyright (c) 2008 Centre for Academic Research in Educational Technologies
+ * Licensed under the Educational Community License version 1.0
+ * 
+ * A copy of the Educational Community License has been included in this 
+ * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
  */
 
 package org.sakaiproject.evaluation.logic.test;
@@ -11,7 +21,6 @@ import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.impl.ExternalHierarchyLogicImpl;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalScale;
-import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.PreloadTestData;
 import org.springframework.test.AbstractTransactionalSpringContextTests;
 
@@ -28,7 +37,7 @@ public class ExternalHierarchyLogicImplTest extends AbstractTransactionalSpringC
    protected ExternalHierarchyLogicImpl hierarchyLogicImpl;
 
    private EvaluationDao evaluationDao;
-   private EvalTestDataLoad etdl;
+//   private EvalTestDataLoad etdl;
 
    protected String[] getConfigLocations() {
       // point to the needed spring config files, must be on the classpath
@@ -57,7 +66,7 @@ public class ExternalHierarchyLogicImplTest extends AbstractTransactionalSpringC
       }
 
       // get test objects
-      etdl = ptd.getEtdl();
+//      etdl = ptd.getEtdl();
 
       // load up any other needed spring beans
       EvalSettings settings = (EvalSettings) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalSettings");

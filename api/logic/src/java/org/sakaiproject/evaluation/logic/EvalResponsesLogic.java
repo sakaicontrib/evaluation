@@ -1,16 +1,16 @@
-/******************************************************************************
- * EvalResponseLogic.java - created by aaronz@vt.edu on Dec 24, 2006
- * 
- * Copyright (c) 2007 Virginia Polytechnic Institute and State University
+/**
+ * $Id: EvalResponsesLogic.java 1000 Dec 24, 2006 12:07:31 AM azeckoski $
+ * $URL: https://source.sakaiproject.org/contrib $
+ * EvalResponsesLogic.java - evaluation - Dec 24, 2006 12:07:31 AM - azeckoski
+ **************************************************************************
+ * Copyright (c) 2008 Centre for Academic Research in Educational Technologies
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
- * 
- * Contributors:
- * Aaron Zeckoski (aaronz@vt.edu) - primary
- * 
- *****************************************************************************/
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ */
 
 package org.sakaiproject.evaluation.logic;
 

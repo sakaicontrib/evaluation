@@ -1,16 +1,16 @@
-/******************************************************************************
- * EvalTemplatesLogicImplTest.java - created by aaronz@vt.edu on Dec 31, 2006
- * 
- * Copyright (c) 2007 Virginia Polytechnic Institute and State University
+/**
+ * $Id: EvalTemplatesLogicImplTest.java 1000 Dec 25, 2006 10:07:31 AM azeckoski $
+ * $URL: https://source.sakaiproject.org/contrib $
+ * EvalTemplatesLogicImplTest.java - evaluation - Dec 31, 2006 10:07:31 AM - azeckoski
+ **************************************************************************
+ * Copyright (c) 2008 Centre for Academic Research in Educational Technologies
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
- * 
- * Contributors:
- * Aaron Zeckoski (aaronz@vt.edu) - primary
- * 
- *****************************************************************************/
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ */
 
 package org.sakaiproject.evaluation.logic.test;
 
@@ -334,8 +334,8 @@ public class EvalTemplatesLogicImplTest extends AbstractTransactionalSpringConte
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalTemplatesLogicImpl#getTemplatesForUser(String, String)}.
 	 */
 	public void testGetTemplatesForUser() {
-		List l = null;
-		List ids = null;
+		List<EvalTemplate> l = null;
+		List<Long> ids = null;
 		// NOTE: No preloaded public templates to take into account right now
 		
 		// test getting all templates for admin user (should include all templates)
