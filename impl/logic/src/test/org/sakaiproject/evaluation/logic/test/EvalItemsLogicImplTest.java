@@ -1,16 +1,16 @@
-/******************************************************************************
- * EvalItemsLogicImplTest.java - created by aaronz@vt.edu
- * 
- * Copyright (c) 2007 Virginia Polytechnic Institute and State University
+/**
+ * $Id: EvalItemsLogicImplTest.java 1000 Dec 26, 2006 10:07:31 AM azeckoski $
+ * $URL: https://source.sakaiproject.org/contrib $
+ * EvalItemsLogicImplTest.java - evaluation - Dec 26, 2006 10:07:31 AM - azeckoski
+ **************************************************************************
+ * Copyright (c) 2008 Centre for Academic Research in Educational Technologies
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
- * 
- * Contributors:
- * Aaron Zeckoski (aaronz@vt.edu) - primary
- * 
- *****************************************************************************/
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ */
 
 package org.sakaiproject.evaluation.logic.test;
 
@@ -109,7 +109,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 	public void testPreloadedData() {
 		// this test is just making sure that hibernate is actually linking the items
 		// to the templates the way we think it is
-		List ids = null;
+		List<Long> ids = null;
 
 		Assert.assertEquals(46, evaluationDao.countAll(EvalItem.class) );
 
@@ -124,7 +124,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 //		Assert.assertNotNull( items );
 //		Assert.assertEquals(3, items.size());
 
-		Set tItems = template.getTemplateItems();
+		Set<EvalTemplateItem> tItems = template.getTemplateItems();
 		Assert.assertNotNull( tItems );
 		Assert.assertEquals(3, tItems.size());
 		ids = EvalTestDataLoad.makeIdList(tItems);
@@ -132,9 +132,9 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 		Assert.assertTrue(ids.contains( etdl.templateItem3A.getId() ));
 		Assert.assertTrue(ids.contains( etdl.templateItem5A.getId() ));
 		// get the items from the templateItems
-		List l = new ArrayList();
-		for (Iterator iter = tItems.iterator(); iter.hasNext();) {
-			EvalTemplateItem eti = (EvalTemplateItem) iter.next();
+		List<Long> l = new ArrayList<Long>();
+		for (Iterator<EvalTemplateItem> iter = tItems.iterator(); iter.hasNext();) {
+			EvalTemplateItem eti = iter.next();
 			Assert.assertTrue( eti.getItem() instanceof EvalItem );
 			Assert.assertEquals(eti.getTemplate().getId(), template.getId());
 			l.add(eti.getItem().getId());
@@ -145,7 +145,7 @@ public class EvalItemsLogicImplTest extends AbstractTransactionalSpringContextTe
 
 		// test getting another set of items
 		EvalItem item = (EvalItem) evaluationDao.findById(EvalItem.class, etdl.item1.getId());
-		Set itItems = item.getTemplateItems();
+		Set<EvalTemplateItem> itItems = item.getTemplateItems();
 		Assert.assertNotNull( itItems );
 		Assert.assertEquals(2, itItems.size());
 		ids = EvalTestDataLoad.makeIdList(itItems);

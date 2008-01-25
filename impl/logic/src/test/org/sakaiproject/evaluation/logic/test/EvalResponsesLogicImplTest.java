@@ -1,7 +1,7 @@
 /**
- * EvalResponsesLogicImplTest.java - evaluation - Dec 25, 2006 10:07:31 AM - azeckoski
+ * $Id: EvalResponsesLogicImplTest.java 1000 Dec 26, 2006 10:07:31 AM azeckoski $
  * $URL: https://source.sakaiproject.org/contrib $
- * $Id: MockEvalJobLogic.java 1000 Jan 25, 2008 10:07:31 AM azeckoski $
+ * EvalResponsesLogicImplTest.java - evaluation - Dec 25, 2006 10:07:31 AM - azeckoski
  **************************************************************************
  * Copyright (c) 2008 Centre for Academic Research in Educational Technologies
  * Licensed under the Educational Community License version 1.0

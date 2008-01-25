@@ -1,16 +1,16 @@
-/******************************************************************************
- * EvalExternalLogicStubTest.java - created by aaronz@vt.edu on Dec 26, 2006
- * 
- * Copyright (c) 2007 Virginia Polytechnic Institute and State University
+/**
+ * $Id: EvalExternalLogicStubTest.java 1000 Dec 26, 2006 10:07:31 AM azeckoski $
+ * $URL: https://source.sakaiproject.org/contrib $
+ * EvalExternalLogicStubTest.java - evaluation - Dec 26, 2006 10:07:31 AM - azeckoski
+ **************************************************************************
+ * Copyright (c) 2008 Centre for Academic Research in Educational Technologies
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
- * 
- * Contributors:
- * Aaron Zeckoski (aaronz@vt.edu) - primary
- * 
- *****************************************************************************/
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ */
 
 package org.sakaiproject.evaluation.logic.test;
 
@@ -147,7 +147,7 @@ public class EvalExternalLogicStubTest extends TestCase {
 	 */
 	public void testGetEvalGroupsForUser() {
 
-		List l = external.getEvalGroupsForUser(EvalTestDataLoad.USER_ID, EvalConstants.PERM_TAKE_EVALUATION);
+		List<EvalGroup> l = external.getEvalGroupsForUser(EvalTestDataLoad.USER_ID, EvalConstants.PERM_TAKE_EVALUATION);
 		Assert.assertNotNull(l);
 		Assert.assertEquals(2, l.size());
 
@@ -158,7 +158,7 @@ public class EvalExternalLogicStubTest extends TestCase {
 	 */
 	public void testGetUserIdsForEvalGroup() {
 
-		Set s = external.getUserIdsForEvalGroup(EvalTestDataLoad.SITE1_REF, EvalConstants.PERM_WRITE_TEMPLATE);
+		Set<String> s = external.getUserIdsForEvalGroup(EvalTestDataLoad.SITE1_REF, EvalConstants.PERM_WRITE_TEMPLATE);
 		Assert.assertNotNull(s);
 		Assert.assertEquals(1, s.size());
 		Assert.assertTrue(s.contains(EvalTestDataLoad.MAINT_USER_ID));

@@ -1,16 +1,16 @@
-/******************************************************************************
- * EvalEvaluationsLogicImplTest.java - created by aaronz@vt.edu on Dec 26, 2006
- * 
- * Copyright (c) 2007 Virginia Polytechnic Institute and State University
+/**
+ * $Id: EvalEvaluationsLogicImplTest.java 1000 Dec 26, 2006 10:07:31 AM azeckoski $
+ * $URL: https://source.sakaiproject.org/contrib $
+ * EvalEvaluationsLogicImplTest.java - evaluation - Dec 26, 2006 10:07:31 AM - azeckoski
+ **************************************************************************
+ * Copyright (c) 2008 Centre for Academic Research in Educational Technologies
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
- * 
- * Contributors:
- * Aaron Zeckoski (aaronz@vt.edu) - primary
- * 
- *****************************************************************************/
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ */
 
 package org.sakaiproject.evaluation.logic.test;
 
@@ -422,8 +422,8 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl#getEvaluationsByTemplateId(java.lang.Long)}.
 	 */
 	public void testGetEvaluationsByTemplateId() {
-		List l = null;
-		List ids = null;
+		List<EvalEvaluation> l = null;
+		List<Long> ids = null;
 
 		// test valid template ids
 		l = evaluations.getEvaluationsByTemplateId( etdl.templatePublic.getId() );
@@ -508,8 +508,8 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl#getEvaluationsForUser(String, boolean, boolean)}.
 	 */
 	public void testGetEvaluationsForUser() {
-		List evals = null;
-		List ids = null;
+		List<EvalEvaluation> evals = null;
+      List<Long> ids = null;
 
 		// get all evaluations for user
 		evals = evaluations.getEvaluationsForUser(EvalTestDataLoad.USER_ID, false, false);
@@ -577,8 +577,8 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 	 */
 	public void testGetVisibleEvaluationsForUser() {
 		// test getting visible evals for the maint user
-		List evals = null;
-		List ids = null;
+      List<EvalEvaluation> evals = null;
+      List<Long> ids = null;
 
 		evals = evaluations.getVisibleEvaluationsForUser(EvalTestDataLoad.MAINT_USER_ID, false, false);
 		Assert.assertNotNull(evals);
@@ -707,39 +707,39 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl#getEvaluationContexts(java.lang.Long[])}.
 	 */
 	public void testGetEvaluationContexts() {
-		Map m = evaluations.getEvaluationGroups( 
+	   Map<Long, List<EvalGroup>> m = evaluations.getEvaluationGroups( 
 				new Long[] { etdl.evaluationClosed.getId() }, true );
 		Assert.assertNotNull(m);
-		List contexts = (List) m.get( etdl.evaluationClosed.getId() );
-		Assert.assertNotNull(contexts);
-		Assert.assertEquals(2, contexts.size());
-		Assert.assertTrue( contexts.get(0) instanceof EvalGroup );
-		Assert.assertTrue( contexts.get(1) instanceof EvalGroup );
+		List<EvalGroup> evalGroups = m.get( etdl.evaluationClosed.getId() );
+		Assert.assertNotNull(evalGroups);
+		Assert.assertEquals(2, evalGroups.size());
+		Assert.assertTrue( evalGroups.get(0) instanceof EvalGroup );
+		Assert.assertTrue( evalGroups.get(1) instanceof EvalGroup );
 
 		m = evaluations.getEvaluationGroups( 
 				new Long[] { etdl.evaluationActive.getId() }, true );
 		Assert.assertNotNull(m);
-		contexts = (List) m.get( etdl.evaluationActive.getId() );
-		Assert.assertNotNull(contexts);
-		Assert.assertEquals(1, contexts.size());
-		Assert.assertTrue( contexts.get(0) instanceof EvalGroup );
-		Assert.assertEquals( EvalTestDataLoad.SITE1_REF, ((EvalGroup) contexts.get(0)).evalGroupId );
+		evalGroups = m.get( etdl.evaluationActive.getId() );
+		Assert.assertNotNull(evalGroups);
+		Assert.assertEquals(1, evalGroups.size());
+		Assert.assertTrue( evalGroups.get(0) instanceof EvalGroup );
+		Assert.assertEquals( EvalTestDataLoad.SITE1_REF, ((EvalGroup) evalGroups.get(0)).evalGroupId );
 
 		// test no assigned contexts
 		m = evaluations.getEvaluationGroups( 
 				new Long[] { etdl.evaluationNew.getId() }, true );
 		Assert.assertNotNull(m);
-		contexts = (List) m.get( etdl.evaluationNew.getId() );
-		Assert.assertNotNull(contexts);
-		Assert.assertEquals(0, contexts.size());
+		evalGroups = m.get( etdl.evaluationNew.getId() );
+		Assert.assertNotNull(evalGroups);
+		Assert.assertEquals(0, evalGroups.size());
 
 		// test invalid
 		m = evaluations.getEvaluationGroups( 
 				new Long[] { EvalTestDataLoad.INVALID_LONG_ID }, true );
 		Assert.assertNotNull(m);
-		contexts = (List) m.get( EvalTestDataLoad.INVALID_LONG_ID );
-		Assert.assertNotNull(contexts);
-		Assert.assertEquals(0, contexts.size());
+		evalGroups = m.get( EvalTestDataLoad.INVALID_LONG_ID );
+		Assert.assertNotNull(evalGroups);
+		Assert.assertEquals(0, evalGroups.size());
 	}
 
 
@@ -779,8 +779,8 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl#getEvaluationsByCategory(java.lang.String, java.lang.String)}.
 	 */
 	public void testGetEvaluationsByCategory() {
-		List evals = null;
-		List ids = null;
+      List<EvalEvaluation> evals = null;
+      List<Long> ids = null;
 
 		// get all evaluations for a category
 		evals = evaluations.getEvaluationsByCategory(EvalTestDataLoad.EVAL_CATEGORY_1, null);

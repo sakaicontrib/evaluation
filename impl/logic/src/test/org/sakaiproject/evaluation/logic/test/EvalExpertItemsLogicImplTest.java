@@ -1,16 +1,16 @@
-/******************************************************************************
- * EvalExpertItemsLogicImplTest.java - created by aaronz on 6 Mar 2007
- * 
- * Copyright (c) 2007 Centre for Academic Research in Educational Technologies
+/**
+ * $Id: EvalExpertItemsLogicImplTest.java 1000 Dec 26, 2006 10:07:31 AM azeckoski $
+ * $URL: https://source.sakaiproject.org/contrib $
+ * EvalExpertItemsLogicImplTest.java - evaluation - Mar 6, 2007 10:07:31 AM - azeckoski
+ **************************************************************************
+ * Copyright (c) 2008 Centre for Academic Research in Educational Technologies
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
- * 
- * Contributors:
- * Aaron Zeckoski (aaronz@vt.edu) - primary
- * 
- *****************************************************************************/
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ */
 
 package org.sakaiproject.evaluation.logic.test;
 
@@ -23,6 +23,7 @@ import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.impl.EvalExpertItemsLogicImpl;
 import org.sakaiproject.evaluation.logic.test.mocks.MockEvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
@@ -103,8 +104,8 @@ public class EvalExpertItemsLogicImplTest extends AbstractTransactionalSpringCon
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExpertItemsLogicImpl#getItemGroups(java.lang.Long, java.lang.String, boolean)}.
 	 */
 	public void testGetItemGroups() {
-		List ids = null;
-		List eItems = null;
+		List<Long> ids = null;
+		List<EvalItemGroup> eItems = null;
 
 		// NOTE: preloaded groups to take into account
 
@@ -175,8 +176,8 @@ public class EvalExpertItemsLogicImplTest extends AbstractTransactionalSpringCon
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalExpertItemsLogicImpl#getItemsInItemGroup(java.lang.Long, boolean)}.
 	 */
 	public void testGetItemsInItemGroup() {
-		List ids = null;
-		List eItems = null;
+      List<Long> ids = null;
+      List<EvalItem> eItems = null;
 
 		// check items from a low level group
 		eItems = expertItems.getItemsInItemGroup(etdl.objectiveA1.getId(), true);

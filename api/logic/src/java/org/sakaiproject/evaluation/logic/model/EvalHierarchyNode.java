@@ -1,6 +1,16 @@
-/******************************************************************************
- * HierarchyNode.java - created by aaronz@vt.edu
- *****************************************************************************/
+/**
+ * $Id: EvalHierarchyNode.java 1000 Dec 25, 2006 12:07:31 AM azeckoski $
+ * $URL: https://source.sakaiproject.org/contrib $
+ * EvalHierarchyNode.java - evaluation - Aug 20, 2007 12:07:31 AM - azeckoski
+ **************************************************************************
+ * Copyright (c) 2008 Centre for Academic Research in Educational Technologies
+ * Licensed under the Educational Community License version 1.0
+ * 
+ * A copy of the Educational Community License has been included in this 
+ * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ */
 
 package org.sakaiproject.evaluation.logic.model;
 
