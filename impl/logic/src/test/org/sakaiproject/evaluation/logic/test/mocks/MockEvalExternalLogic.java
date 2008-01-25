@@ -1,16 +1,16 @@
-/******************************************************************************
- * MockEvalExternalLogic.java - created by aaronz@vt.edu on Dec 25, 2006
- * 
- * Copyright (c) 2007 Virginia Polytechnic Institute and State University
+/**
+ * MockEvalExternalLogic.java - evaluation - Dec 25, 2006 10:07:31 AM - azeckoski
+ * $URL: https://source.sakaiproject.org/contrib $
+ * $Id: MockEvalJobLogic.java 1000 Jan 25, 2008 10:07:31 AM azeckoski $
+ **************************************************************************
+ * Copyright (c) 2008 Centre for Academic Research in Educational Technologies
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
- * 
- * Contributors:
- * Aaron Zeckoski (aaronz@vt.edu) - primary
- * 
- *****************************************************************************/
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ */
 
 package org.sakaiproject.evaluation.logic.test.mocks;
 
@@ -28,7 +28,7 @@ import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 
 
 /**
- * This is a stub class for testing purposes, it will allow us to test all the classes
+ * This is a mock class for testing purposes, it will allow us to test all the classes
  * that depend on it since it has way to many external dependencies to make it worth
  * it to mock them all up<br/>
  * <br/>
@@ -105,8 +105,8 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
 	 * 2) CONTEXT2/SITE2_ID -
 	 * USER_ID and STUDENT_USER_ID can take eval, MAINT_USER_ID can be evaluated but can not admin (cannot take)<br/>
 	 */
-	public List getEvalGroupsForUser(String userId, String permission) {
-		List l = new ArrayList();
+	public List<EvalGroup> getEvalGroupsForUser(String userId, String permission) {
+		List<EvalGroup> l = new ArrayList<EvalGroup>();
 		if ( EvalTestDataLoad.ADMIN_USER_ID.equals(userId) ) {
 			l.add( makeEvalGroupObject(EvalTestDataLoad.SITE1_REF) );
 			l.add( makeEvalGroupObject(EvalTestDataLoad.SITE2_REF) );
@@ -162,8 +162,8 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
 	 * 2) CONTEXT2/SITE2_ID -
 	 * USER_ID and STUDENT_USER_ID can take eval, MAINT_USER_ID can be evaluated but can not admin (cannot take)<br/>
 	 */
-	public Set getUserIdsForEvalGroup(String context, String permission) {
-		Set s = new HashSet();
+	public Set<String> getUserIdsForEvalGroup(String context, String permission) {
+		Set<String> s = new HashSet<String>();
 		// Maybe should add the admin user here? -AZ
 		if ( EvalTestDataLoad.SITE1_REF.equals(context) ) {
 			if ( EvalConstants.PERM_ASSIGN_EVALUATION.equals(permission) ) {
