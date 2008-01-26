@@ -46,6 +46,7 @@ import org.sakaiproject.evaluation.logic.entity.EvaluationEntityProvider;
 import org.sakaiproject.evaluation.logic.entity.TemplateEntityProvider;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.providers.EvalGroupsProvider;
+import org.sakaiproject.evaluation.logic.utils.ArrayUtils;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
@@ -79,6 +80,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
    private static final String SAKAI_GROUP_TYPE = SiteService.GROUP_SUBTYPE;
 
    private static final String ANON_USER_ATTRIBUTE = "AnonUserAttribute";
+   private static final String ANON_USER_PREFIX = "Anon_User_";
 
    private AuthzGroupService authzGroupService;
    public void setAuthzGroupService(AuthzGroupService authzGroupService) {
@@ -180,7 +182,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
          userId = (String) session.getAttribute(ANON_USER_ATTRIBUTE);
          if (userId == null) {
             String sessionUserId = session.getId() + new Date().getTime();
-            userId = "Anon_User_" + makeMD5(sessionUserId, 40);
+            userId = ANON_USER_PREFIX + makeMD5(sessionUserId, 40);
             session.setAttribute(ANON_USER_ATTRIBUTE, userId);
          }
       }
@@ -490,13 +492,15 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.EvalExternalLogic#sendEmails(java.lang.String, java.lang.String[], java.lang.String, java.lang.String)
     */
-   public void sendEmails(String from, String[] toUserIds, String subject, String message) {
+   public String[] sendEmailsToUsers(String from, String[] toUserIds, String subject, String message, boolean deferExceptions) {
+      String exceptionTracker = null;
 
       InternetAddress fromAddress;
       try {
          fromAddress = new InternetAddress(from);
       } catch (AddressException e) {
-         throw new IllegalArgumentException("Invalid from address: " + from);
+         // cannot recover from this failure
+         throw new IllegalArgumentException("Invalid from address: " + from, e);
       }
 
       // handle the list of TO addresses
@@ -517,8 +521,14 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
             try {
                user = userDirectoryService.getUserByEid( toUserIds[i] );
             } catch (UserNotDefinedException e1) {
-               // die here since we were unable to find this user at all
-               throw new IllegalArgumentException("Invalid user: Cannot find user object by id or eid:" + toUserIds[i], e );
+               if (deferExceptions) {
+                  exceptionTracker += e.getMessage() + " :: ";
+                  log.error("Deferring exception: Failed to find user: " + toUserIds[i], e);
+                  continue;
+               } else {
+                  // die here since we were unable to find this user at all
+                  throw new IllegalArgumentException("Invalid user: Cannot find user object by id or eid:" + toUserIds[i], e );
+               } 
             }
          }
          l.add(user);
@@ -526,35 +536,106 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
       // end of much less efficient way of doing things -AZ
 
       // email address validity is checked at entry but value can be null
+      List<String> toEmails = new ArrayList<String>();
       for (ListIterator<User> iterator = l.listIterator(); iterator.hasNext();) {
          User u = iterator.next();
-         if (u.getEmail().equals("")) {
+         if ( u.getEmail() == null || "".equals(u.getEmail()) ) {
             iterator.remove();
-            log.warn("Could not get an email address for " + u.getDisplayName());
+            log.warn("sendEmails: Could not get an email address for " + u.getDisplayName() + " ("+u.getId()+")");
+         } else {
+            toEmails.add(u.getEmail());
          }
       }
 
       if (l == null || l.size() <= 0) {
-         log.warn("Could not get users from any provided userIds");
-         return;
+         log.warn("No users with email addresses found in the provided userIds ("+ArrayUtils.arrayToString(toUserIds)+"), cannot send email so exiting");
+         return new String[] {};
       }
 
-      InternetAddress[] toAddresses = new InternetAddress[l.size()];
+      return sendEmails(fromAddress, toEmails, subject, message, deferExceptions, exceptionTracker);
+   }
+
+   public String[] sendEmailsToAddresses(String from, String[] to, String subject, String message, boolean deferExceptions) {
+      String exceptionTracker = null;
+
+      InternetAddress fromAddress;
+      try {
+         fromAddress = new InternetAddress(from);
+      } catch (AddressException e) {
+         // cannot recover from this failure
+         throw new IllegalArgumentException("Invalid from address: " + from, e);
+      }
+
+      List<String> toEmails = new ArrayList<String>();
+      for (int i = 0; i < to.length; i++) {
+         String email = to[i];
+         if (email == null || email.equals("")) {
+            if (deferExceptions) {
+               exceptionTracker += "blank or null to address in list ("+i+") :: ";
+               log.error("blank or null to address in list ("+i+"): " + ArrayUtils.arrayToString(to));
+               continue;
+            } else {
+               // die here since we were unable to find this user at all
+               throw new IllegalArgumentException("blank or null to address ("+i+"): " + ArrayUtils.arrayToString(to) + ", cannot send emails");
+            }
+         }
+         toEmails.add(email);
+      }
+
+      return sendEmails(fromAddress, toEmails, subject, message, deferExceptions, exceptionTracker);
+   }
+
+   /**
+    * Handle the actual sending of the email
+    * @param fromAddress
+    * @param toEmails
+    * @param subject
+    * @param message
+    * @param deferExceptions
+    * @param exceptionTracker
+    * @return
+    */
+   private String[] sendEmails(InternetAddress fromAddress, List<String> toEmails, String subject,
+         String message, boolean deferExceptions, String exceptionTracker) {
       InternetAddress[] replyTo = new InternetAddress[1];
-      for (int i = 0; i < l.size(); i++) {
-         User u = (User) l.get(i);
+      List<InternetAddress> listAddresses = new ArrayList<InternetAddress>();
+      for (int i = 0; i < toEmails.size(); i++) {
+         String email = toEmails.get(i);
          try {
-            InternetAddress toAddress = new InternetAddress(u.getEmail());
-            toAddresses[i] = toAddress;
+            InternetAddress toAddress = new InternetAddress(email);
+            listAddresses.add(toAddress);
          } catch (AddressException e) {
-            throw new IllegalArgumentException("Invalid to address: " + toUserIds[i]);
+            if (deferExceptions) {
+               exceptionTracker += e.getMessage() + " :: ";
+               log.error("Invalid to address: " + email + ", skipping...", e);
+               continue;
+            } else {
+               // die here since we were unable to find this user at all
+               throw new IllegalArgumentException("Invalid to address: " + email + ", cannot send emails", e);
+            } 
          }
       }
       replyTo[0] = fromAddress;
+      InternetAddress[] toAddresses = listAddresses.toArray(new InternetAddress[listAddresses.size()]);
       emailService.sendMail(fromAddress, toAddresses, subject, message, null, replyTo, null);
+
+      if (deferExceptions && exceptionTracker != null) {
+         // exceptions occurred so we have to die here
+         throw new IllegalArgumentException("The following exceptions were deferred (full trace above in the log): " + 
+               "Sent emails to " + toAddresses.length + " addresses before failure ocurred: Failure summary: " +
+               exceptionTracker);
+      }
+
+      // now we send back the list of people who the email was sent to
+      String[] addresses = new String[toAddresses.length];
+      for (int i = 0; i < toAddresses.length; i++) {
+         addresses[i] = toAddresses[i].getAddress();
+      }
+      return addresses;
    }
 
-
+   
+   
    // ENTITIES
 
 
@@ -712,6 +793,5 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
       }
       return md5;
    }
-
 
 }

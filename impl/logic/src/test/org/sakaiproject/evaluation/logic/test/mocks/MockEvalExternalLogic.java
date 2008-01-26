@@ -411,11 +411,20 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
 	/**
 	 * check if the options entered were nulls
 	 */
-	public void sendEmails(String from, String[] to, String subject, String message) {
+	public String[] sendEmailsToUsers(String from, String[] to, String subject, String message, boolean deferExceptions) {
 		if (from == null || to == null || subject == null || message == null) {
 			throw new NullPointerException("All params are required (none can be null)");
 		}
+      return to;
 	}
+
+   public String[] sendEmailsToAddresses(String from, String[] to, String subject, String message,
+         boolean deferExceptions) {
+      if (from == null || to == null || subject == null || message == null) {
+         throw new NullPointerException("All params are required (none can be null)");
+      }
+      return to;
+   }
 
 	public String getServerUrl() {
 		return "http://localhost:8080/portal/";
