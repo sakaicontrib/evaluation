@@ -397,9 +397,10 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
          // send the actual emails for this evalGroupId
          try {
-            externalLogic.sendEmails(from, toUserIds, "New Evaluation " + eval.getTitle() + " created",
-                  message);
-            log.info("Sent evaluation created message to " + toUserIds.length + " users");
+            // TODO - should be using i18n messages here
+            String[] emailAddresses = externalLogic.sendEmailsToUsers(from, toUserIds, 
+                  "New Evaluation " + eval.getTitle() + " created", message, true);
+            log.info("Sent evaluation created message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
          } catch (Exception e) {
             log.error(this + ".sendEvalCreatedNotifications(" + evaluationId + "," + includeOwner
                   + ") externalLogic.sendEmails " + e);
@@ -533,11 +534,11 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
          sentMessages.add(message);
 
          // send the actual emails for this evalGroupId
-         // TODO - internationalize these messages
          try {
-            externalLogic.sendEmails(from, toUserIds, "The Evaluation " + eval.getTitle() + " for "
-                  + group.title + " is available to be taken.", message);
-            log.info("Sent evaluation available message to " + toUserIds.length + " users");
+            // TODO - should be using i18n messages here
+            String[] emailAddresses = externalLogic.sendEmailsToUsers(from, toUserIds, "The Evaluation " + eval.getTitle() + " for "
+                  + group.title + " is available to be taken.", message, true);
+            log.info("Sent evaluation available message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
          } catch (Exception e) {
             log.error(this + ".sendEvalAvailableNotifications(" + evaluationId + "," + includeEvaluatees
                   + ") externalLogic.sendEmails " + e);
@@ -601,9 +602,10 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
             try {
                // send the actual emails for this evalGroupId
-               externalLogic.sendEmails(from, toUserIds, "The Evaluation " + eval.getTitle() + " for "
-                     + group.title + " is available to be taken.", message);
-               log.info("Sent evaluation available message to " + toUserIds.length + " users");
+               // TODO - should be using i18n messages here
+               String[] emailAddresses = externalLogic.sendEmailsToUsers(from, toUserIds, 
+                     "The Evaluation " + eval.getTitle() + " for " + group.title + " is available to be taken.", message, true);
+               log.info("Sent evaluation available group message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
             } catch (Exception e) {
                log.error(this + ".sendEvalAvailableGroupNotification(" + evaluationId + "," + evalGroupId
                      + ") externalLogic.sendEmails " + e);
@@ -688,9 +690,10 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
             // send the actual emails for this evalGroupId
             try {
-               externalLogic.sendEmails(from, toUserIds, "You still haven't completed your Evaluation "
-                     + eval.getTitle() + " for " + group.title + ".", message);
-               log.info("Sent evaluation reminder message to " + toUserIds.length + " users");
+               // TODO - should be using i18n messages here
+               String[] emailAddresses = externalLogic.sendEmailsToUsers(from, toUserIds, "You still haven't completed your Evaluation "
+                     + eval.getTitle() + " for " + group.title + ".", message, true);
+               log.info("Sent evaluation reminder message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
             } catch (Exception e) {
                log.error(this + ".sendEvalReminderNotifications(" + evaluationId + "," + includeConstant
                      + ") externalLogic.sendEmails " + e);
@@ -815,9 +818,10 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
             // send the actual emails for this evalGroupId
             try {
-               externalLogic.sendEmails(from, toUserIds, "The Evaluation " + eval.getTitle()
-                     + " is complete and results are now available", message);
-               log.info("Sent evaluation results message to " + toUserIds.length + " users");
+               // TODO - should be using i18n messages here
+               String[] emailAddresses = externalLogic.sendEmailsToUsers(from, toUserIds, "The Evaluation " + eval.getTitle()
+                     + " is complete and results are now available", message, true);
+               log.info("Sent evaluation results message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
             } catch (Exception e) {
                log.error(this + ".sendEvalResultsNotifications(" + evaluationId + "," + includeEvaluatees
                      + "," + includeAdmins + ") externalLogic.sendEmails " + e);
