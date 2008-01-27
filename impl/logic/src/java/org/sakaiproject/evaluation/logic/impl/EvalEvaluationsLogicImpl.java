@@ -740,9 +740,11 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
             }
 
             // check if the user already took this evaluation
+            // EVALSYS-360 - made this check look for completed responses only
             int evalResponsesForUser = dao.countByProperties(EvalResponse.class, 
-                  new String[] {"owner", "evaluation.id", "evalGroupId"}, 
-                  new Object[] {userId, evaluationId, evalGroupId});
+                  new String[] {"owner", "evaluation.id", "evalGroupId", "endTime"}, 
+                  new Object[] {userId, evaluationId, evalGroupId, ""},
+                  new int[] {EvaluationDao.EQUALS, EvaluationDao.EQUALS, EvaluationDao.EQUALS, EvaluationDao.NOT_NULL} );
             if (evalResponsesForUser > 0) {
                // check if persistent object is the one that already exists
                List l = dao.findByProperties(EvalResponse.class, 
