@@ -741,27 +741,36 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 
             // check if the user already took this evaluation
             // EVALSYS-360 - made this check look for completed responses only
+            String[] props = new String[] {"owner", "evaluation.id", "evalGroupId", "endTime"}; 
+            Object[] values = new Object[] {userId, evaluationId, evalGroupId, ""};
+            int[] comparisons = new int[] {EvaluationDao.EQUALS, EvaluationDao.EQUALS, EvaluationDao.EQUALS, EvaluationDao.NOT_NULL};
             int evalResponsesForUser = dao.countByProperties(EvalResponse.class, 
-                  new String[] {"owner", "evaluation.id", "evalGroupId", "endTime"}, 
-                  new Object[] {userId, evaluationId, evalGroupId, ""},
-                  new int[] {EvaluationDao.EQUALS, EvaluationDao.EQUALS, EvaluationDao.EQUALS, EvaluationDao.NOT_NULL} );
+                  props, values, comparisons);
             if (evalResponsesForUser > 0) {
-               // check if persistent object is the one that already exists
                List l = dao.findByProperties(EvalResponse.class, 
-                     new String[] {"owner", "evaluation.id", "evalGroupId"}, 
-                     new Object[] {userId, evaluationId, evalGroupId});
+                     props, values, comparisons);
                EvalResponse response = (EvalResponse) l.get(0);
-               if (response.getId() == null && l.size() == 1) {
-                  // all is ok, the "existing" response is a hibernate persistent object
-                  // WARNING: this is a bit of a hack though
-               } else {
-                  // user already has a response saved for this evaluation and evalGroupId
-                  if (eval.getModifyResponsesAllowed() == null || 
-                        eval.getModifyResponsesAllowed().booleanValue() == false) {
-                     // user cannot modify existing responses
-                     log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") again, already taken");
-                     return false;
+               if (l.size() == 1) {
+                  // check if persistent object is the one that already exists
+                  if (response.getId() == null) {
+                     // all is ok, the "existing" response is a hibernate persistent object
+                     // WARNING: this is a bit of a hack though and hopefully not actually needed now
+                  } else {
+                     // user already has a response saved for this evaluation and evalGroupId
+                     if (eval.getModifyResponsesAllowed() == null || 
+                           eval.getModifyResponsesAllowed().booleanValue() == false) {
+                        // user cannot modify existing responses
+                        log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") again, " +
+                        		"completed response exists ("+response.getId()+") from " + response.getEndTime() +
+                        		" and this evaluation does not allow multiple attempts");
+                        return false;
+                     }
                   }
+               } else {
+                  throw new IllegalStateException("More than one ("+l.size()+") responses exists for " +
+                  		"user="+userId+", eval="+evaluationId+" and " +
+                  				"groupId="+evalGroupId+", " +
+                  						"only one response per user is permitted in the system");
                }
             }
             return true;

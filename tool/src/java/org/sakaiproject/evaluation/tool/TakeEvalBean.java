@@ -31,40 +31,40 @@ import uk.org.ponder.messageutil.TargettedMessageList;
  */
 public class TakeEvalBean {
 
-	private static Log log = LogFactory.getLog(TakeEvalBean.class);
+   private static Log log = LogFactory.getLog(TakeEvalBean.class);
 
-	public EvalEvaluation eval;
-	public String evalGroupId;
+   public EvalEvaluation eval;
+   public String evalGroupId;
 
-	private ResponseBeanLocator responseBeanLocator;
-	public void setResponseBeanLocator(ResponseBeanLocator responseBeanLocator) {
-		this.responseBeanLocator = responseBeanLocator;
-	}
+   private ResponseBeanLocator responseBeanLocator;
+   public void setResponseBeanLocator(ResponseBeanLocator responseBeanLocator) {
+      this.responseBeanLocator = responseBeanLocator;
+   }
 
-	private EvalExternalLogic externalLogic;
-	public void setExternalLogic(EvalExternalLogic externalLogic) {
-		this.externalLogic = externalLogic;
-	}
+   private EvalExternalLogic externalLogic;
+   public void setExternalLogic(EvalExternalLogic externalLogic) {
+      this.externalLogic = externalLogic;
+   }
 
-	private TargettedMessageList messages;
-	public void setMessages(TargettedMessageList messages) {
-		this.messages = messages;
-	}
+   private TargettedMessageList messages;
+   public void setMessages(TargettedMessageList messages) {
+      this.messages = messages;
+   }
 
-	public String submitEvaluation() {
-		log.debug("submit evaluation");
-		try {
-            responseBeanLocator.saveAll(eval, evalGroupId);
-        } catch (IllegalStateException e) {
-            // TODO - find a better way to do this, using this as the way to tell that the submission was incomplete, this is not really ideal -AZ
-            messages.addMessage( new TargettedMessage("takeeval.user.must.answer.all.warning", new Object[] {},
-                    TargettedMessage.SEVERITY_ERROR));
-            return "failure";
-        }
-		messages.addMessage( new TargettedMessage("evaluations.take.message",
-                new Object[] { eval.getTitle(), externalLogic.getDisplayTitle(evalGroupId) }, 
-                TargettedMessage.SEVERITY_INFO));
-		return "success";
-	}
+   public String submitEvaluation() {
+      log.debug("submit evaluation");
+      try {
+         responseBeanLocator.saveAll(eval, evalGroupId);
+      } catch (IllegalStateException e) {
+         // TODO - find a better way to do this, using this as the way to tell that the submission was incomplete, this is not really ideal -AZ
+         messages.addMessage( new TargettedMessage("takeeval.user.must.answer.all.warning", new Object[] {},
+               TargettedMessage.SEVERITY_ERROR));
+         return "failure";
+      }
+      messages.addMessage( new TargettedMessage("evaluations.take.message",
+            new Object[] { eval.getTitle(), externalLogic.getDisplayTitle(evalGroupId) }, 
+            TargettedMessage.SEVERITY_INFO));
+      return "success";
+   }
 
 }

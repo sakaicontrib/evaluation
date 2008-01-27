@@ -290,17 +290,20 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
 
          dao.saveMixedSet(new Set[] {responseSet, answersSet});
 
+         String completeMessage = ", response is incomplete";
          if (response.getEndTime() != null) {
             // the response is complete (submission of an evaluation) and not just creating the empty response
             // so lock evaluation
             log.info("Locking evaluation (" + response.getEvaluation().getId() + ") and associated entities");
             EvalEvaluation evaluation = (EvalEvaluation) dao.findById(EvalEvaluation.class, response.getEvaluation().getId());
             dao.lockEvaluation(evaluation);
+            completeMessage = ", response is complete";
          }
 
          int answerCount = response.getAnswers() == null ? 0 : response.getAnswers().size();
-         log.info("User (" + userId + ") saved response (" + response.getId() + "), evalGroupId ("
-               + response.getEvalGroupId() + ") and " + answerCount + " answers");
+         log.info("User (" + userId + ") saved response (" + response.getId() + ") to" +
+         		"evaluation ("+evaluationId+") for groupId (" + response.getEvalGroupId() + ") " +
+         		" with " + answerCount + " answers" + completeMessage);
          return;
       }
 

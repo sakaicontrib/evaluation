@@ -70,8 +70,10 @@ public class ResponseBeanLocator implements BeanLocator {
             // response is new
             response.setEvaluation(eval);
             response.setEvalGroupId(evalGroupId);
+         } else {
+            // response exists so this is a submission, set the endTime
+            response.setEndTime(new Date());
          }
-         response.setEndTime(new Date());
          localResponsesLogic.saveResponse(response);
       }
    }
