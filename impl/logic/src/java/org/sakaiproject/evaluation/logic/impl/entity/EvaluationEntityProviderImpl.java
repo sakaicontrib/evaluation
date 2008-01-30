@@ -18,7 +18,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.entitybroker.entityprovider.CoreEntityProvider;
 import org.sakaiproject.entitybroker.entityprovider.capabilities.AutoRegisterEntityProvider;
-import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.entity.EvaluationEntityProvider;
 
 /**
@@ -30,28 +30,22 @@ public class EvaluationEntityProviderImpl implements EvaluationEntityProvider, C
 
 	private static Log log = LogFactory.getLog(EvaluationEntityProviderImpl.class);
 	
-	private EvalEvaluationsLogic evaluationsLogic;
-	public void setEvaluationsLogic(EvalEvaluationsLogic evaluationsLogic) {
-		this.evaluationsLogic = evaluationsLogic;
-	}
+	private EvalEvaluationService evaluationService;
+   public void setEvaluationService(EvalEvaluationService evaluationService) {
+      this.evaluationService = evaluationService;
+   }
 
 
-	/* (non-Javadoc)
-	 * @see org.sakaiproject.entitybroker.entityprovider.EntityProvider#getEntityPrefix()
-	 */
 	public String getEntityPrefix() {
 		return ENTITY_PREFIX;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.sakaiproject.entitybroker.entityprovider.CoreEntityProvider#entityExists(java.lang.String)
-	 */
 	public boolean entityExists(String id) {
 		log.warn("NOTE: checking if evaluation exists: " + id);
-		Long evalId;
+		Long evaluationId;
 		try {
-			evalId = new Long(id);
-			if (evaluationsLogic.getEvaluationById(evalId) != null) {
+		   evaluationId = new Long(id);
+			if (evaluationService.checkEvaluationExists(evaluationId)) {
 				return true;
 			}
 		} catch (NumberFormatException e) {
