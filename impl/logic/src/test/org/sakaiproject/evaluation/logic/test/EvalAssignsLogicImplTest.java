@@ -32,7 +32,6 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.PreloadTestData;
 import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
-import org.sakaiproject.evaluation.test.mocks.MockEvalJobLogic;
 import org.springframework.test.AbstractTransactionalSpringContextTests;
 
 
@@ -108,7 +107,6 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 		assigns.setEvaluationService(evaluationService);
 		assigns.setSecurityChecks(securityChecks);
 		assigns.setEmails(emails); // set to the mock object
-		assigns.setEvalJobLogic( new MockEvalJobLogic() ); // set to the mock object
 	}
 
 	// run this before each test starts and as part of the transaction

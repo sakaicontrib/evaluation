@@ -43,7 +43,6 @@
       <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
       <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
       <property name="hierarchyLogic" ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
-      <property name="evalJobLogic" ref="org.sakaiproject.evaluation.logic.EvalJobLogic" />
       <property name="emails" ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
    </bean>
 

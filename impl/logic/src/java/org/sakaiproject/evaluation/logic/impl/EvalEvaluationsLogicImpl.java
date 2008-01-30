@@ -262,11 +262,11 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
       if (newEvaluation) {
          external.registerEntityEvent(EVENT_EVAL_CREATE, evaluation);
          // call logic to manage Quartz scheduled jobs
-         evalJobLogic.processNewEvaluation(evaluation);
+         evalJobLogic.processEvaluationStateChange(evaluation.getId(), EvalJobLogic.ACTION_CREATE);
       } else {
          external.registerEntityEvent(EVENT_EVAL_UPDATE, evaluation);
          // call logic to manage Quartz scheduled jobs
-         evalJobLogic.processEvaluationChange(evaluation);
+         evalJobLogic.processEvaluationStateChange(evaluation.getId(), EvalJobLogic.ACTION_UPDATE);
       }
 
       // effectively we are locking the evaluation when a user replies to it, otherwise the chain can be changed
@@ -292,9 +292,6 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
       }
 
       if ( securityChecks.canUserRemoveEval(userId, evaluation) ) {
-
-         //remove all scheduled job invocations
-         evalJobLogic.removeScheduledInvocations(evaluationId);
 
          Set[] entitySets = new HashSet[4];
          // remove associated AssignGroups
@@ -353,6 +350,9 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
          // remove the evaluation and related data in one transaction
          dao.deleteMixedSet(entitySets);
          //dao.delete(eval);
+
+         // remove any remaining scheduled jobs
+         evalJobLogic.processEvaluationStateChange(evaluationId, EvalJobLogic.ACTION_DELETE);
 
          log.info("User ("+userId+") removed evaluation ("+evaluationId+"), title: " + evaluation.getTitle());
          return;

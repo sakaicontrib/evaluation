@@ -82,59 +82,19 @@ public class EvalJobLogicImplTest extends AbstractTransactionalSpringContextTest
 	 */
 	public void testIsValidJobType() {
 		//each valid type returns true
-		Assert.assertTrue( jobLogic.isValidJobType(EvalConstants.JOB_TYPE_ACTIVE));
-		Assert.assertTrue( jobLogic.isValidJobType(EvalConstants.JOB_TYPE_CLOSED));
-		Assert.assertTrue( jobLogic.isValidJobType(EvalConstants.JOB_TYPE_CREATED));
-		Assert.assertTrue( jobLogic.isValidJobType(EvalConstants.JOB_TYPE_DUE));
-		Assert.assertTrue( jobLogic.isValidJobType(EvalConstants.JOB_TYPE_REMINDER));
-		Assert.assertTrue( jobLogic.isValidJobType(EvalConstants.JOB_TYPE_VIEWABLE));
-		Assert.assertTrue( jobLogic.isValidJobType(EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS));
-		Assert.assertTrue( jobLogic.isValidJobType(EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS));
+		Assert.assertTrue( EvalJobLogicImpl.isValidJobType(EvalConstants.JOB_TYPE_ACTIVE));
+		Assert.assertTrue( EvalJobLogicImpl.isValidJobType(EvalConstants.JOB_TYPE_CLOSED));
+		Assert.assertTrue( EvalJobLogicImpl.isValidJobType(EvalConstants.JOB_TYPE_CREATED));
+		Assert.assertTrue( EvalJobLogicImpl.isValidJobType(EvalConstants.JOB_TYPE_DUE));
+		Assert.assertTrue( EvalJobLogicImpl.isValidJobType(EvalConstants.JOB_TYPE_REMINDER));
+		Assert.assertTrue( EvalJobLogicImpl.isValidJobType(EvalConstants.JOB_TYPE_VIEWABLE));
+		Assert.assertTrue( EvalJobLogicImpl.isValidJobType(EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS));
+		Assert.assertTrue( EvalJobLogicImpl.isValidJobType(EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS));
 		//invalid or "" type returns false
-		Assert.assertFalse( jobLogic.isValidJobType(EvalTestDataLoad.INVALID_CONSTANT_STRING));
-		Assert.assertFalse( jobLogic.isValidJobType(new String("")));
+		Assert.assertFalse( EvalJobLogicImpl.isValidJobType(EvalTestDataLoad.INVALID_CONSTANT_STRING));
+		Assert.assertFalse( EvalJobLogicImpl.isValidJobType(new String("")));
 		//null type retuns false
-		Assert.assertFalse( jobLogic.isValidJobType(null));
+		Assert.assertFalse( EvalJobLogicImpl.isValidJobType(null));
 	}
-	
-	/**
-	 *  Test method for {@link EvalJobLogicImpl#isJobTypeScheduled(Long, String)}
-	 *
-	 */
-	public void testIsJobTypeScheduled() {
-		//invalid id, valid job type returns false
-		Assert.assertFalse( jobLogic.isJobTypeScheduled(EvalTestDataLoad.INVALID_LONG_ID,EvalConstants.JOB_TYPE_ACTIVE));
-		//invalid id, invalid job type returns false
-		Assert.assertFalse( jobLogic.isJobTypeScheduled(EvalTestDataLoad.INVALID_LONG_ID,EvalTestDataLoad.INVALID_CONSTANT_STRING));
-		//null id, valid job type returns false
-		Assert.assertFalse( jobLogic.isJobTypeScheduled(null,EvalConstants.JOB_TYPE_ACTIVE));
-		
-		//TODO:
-		//valid id, invalid job type returns false
-		//valid id, empty String job type returns false
-		//null id, null job type returns false
-		//valid id, null job type returns false
-		//no scheduled job returns false
-		//1 sheduled job returns true
-		//multiple scheduled jobs returns true
-	}
-	
-	/**
-	 *  Test method for {@link EvalJobLogicImpl#getReminderTime(EvalEvaluation)}
-	 */
-	// FIXME - this text is doing nothing at all -AZ
-	public void testGetReminderTime() {
-		//first reminder interval after start date in the futute (i.e., 15 minutes from now)
-		//return 0 if no reminder should be scheduled
-		//return long value of timeService.newTime(reminderTime)
-		long reminderTime;
-		
-		//starts tomorrow, MAIN_USER_ID owns, templatePublic, no responses, no assigned groups, EVAL_CATEGORY1
-		EvalEvaluation testEval = etdl.evaluationNew;
-		
-		//TODO:
-		//valid reminder days 2-7
-		//reduce due date
-		//extend due date
-	}
+
 }
