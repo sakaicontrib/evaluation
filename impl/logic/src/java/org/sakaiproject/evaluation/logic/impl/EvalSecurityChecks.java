@@ -52,6 +52,7 @@ public class EvalSecurityChecks {
       this.external = external;
    }
 
+
    /**
     * Check if a user can control (update/edit/write) an evaluation,
     * does not throw exception, does not check locked

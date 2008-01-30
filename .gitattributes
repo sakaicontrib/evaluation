@@ -7,6 +7,7 @@
 api/logic/project.xml -text
 api/logic/src/java/org/sakaiproject/evaluation/dao/EvaluationDao.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalAssignsLogic.java -text
+api/logic/src/java/org/sakaiproject/evaluation/logic/EvalAuthoringService.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalEmailsLogic.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalEvaluationService.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalEvaluationsLogic.java -text
@@ -78,6 +79,7 @@ impl/hbm/src/java/org/sakaiproject/evaluation/hbm/EvalTemplate.hbm.xml -text
 impl/hbm/src/java/org/sakaiproject/evaluation/hbm/EvalTemplateItem.hbm.xml -text
 impl/logic/project.xml -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalAssignsLogicImpl.java -text
+impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalAuthoringServiceImpl.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalEmailsLogicImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalEvaluationServiceImpl.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalEvaluationsLogicImpl.java -text
@@ -105,6 +107,7 @@ impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalSchedu
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/utils/TextTemplateLogicUtils.java -text
 impl/logic/src/test/log4j.properties -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalAssignsLogicImplTest.java -text
+impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalAuthoringServiceImplTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalEmailsLogicImplTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalEvaluationServiceImplTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalEvaluationsLogicImplTest.java -text
