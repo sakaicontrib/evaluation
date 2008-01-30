@@ -67,8 +67,9 @@ import org.springframework.context.ApplicationContextAware;
 
 /**
  * This class handles the Sakai based implementation of the external logic inteface<br/>
- * This is sorta the provider for the evaluation system though it should be broken up
- * if it is going to be used like that
+ * This is sort of the provider for the evaluation system though it should be broken up
+ * if it is going to be used like that,
+ * This is a BOTTOM level service and should depend on no other eval services (only those in Sakai)
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */

@@ -32,6 +32,7 @@ import java.util.Set;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
+import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalGroupNodes;
@@ -333,37 +334,42 @@ public class EvalTestDataLoad {
 
    // ASSIGNMENTS
    /**
-    * Context Assignment: MAINT_USER_ID, SITE1_REF, {@link #evaluationActive}
+    * Group Assignment: MAINT_USER_ID, SITE1_REF, {@link #evaluationActive}
     */
    public EvalAssignGroup assign1;
    /**
-    * Context Assignment: MAINT_USER_ID, SITE1_REF, {@link #evaluationActiveUntaken}
+    * Group Assignment: MAINT_USER_ID, SITE1_REF, {@link #evaluationActiveUntaken}
     */
    public EvalAssignGroup assign2;
    /**
-    * Context Assignment: ADMIN_USER_ID, SITE1_REF, {@link #evaluationClosed}
+    * Group Assignment: ADMIN_USER_ID, SITE1_REF, {@link #evaluationClosed}
     */
    public EvalAssignGroup assign3;
    /**
-    * Context Assignment: MAINT_USER_ID, SITE2_REF, {@link #evaluationClosed}
+    * Group Assignment: MAINT_USER_ID, SITE2_REF, {@link #evaluationClosed}
     */
    public EvalAssignGroup assign4;
    /**
-    * Context Assignment: ADMIN_USER_ID, SITE2_REF, {@link #evaluationViewable}
+    * Group Assignment: ADMIN_USER_ID, SITE2_REF, {@link #evaluationViewable}
     */
    public EvalAssignGroup assign5;
    /**
-    * Context Assignment: MAINT_USER_ID, SITE1_REF, {@link #evaluationNewAdmin}
+    * Group Assignment: MAINT_USER_ID, SITE1_REF, {@link #evaluationNewAdmin}
     */
    public EvalAssignGroup assign6;
    /**
-    * Context Assignment: ADMIN_USER_ID, SITE2_REF, {@link #evaluationNewAdmin}
+    * Group Assignment: ADMIN_USER_ID, SITE2_REF, {@link #evaluationNewAdmin}
     */
    public EvalAssignGroup assign7;
    /**
-    * Context Assignment: ADMIN_USER_ID, SITE2_REF, {@link #evaluationNewAdmin} + eid
+    * Group Assignment: ADMIN_USER_ID, SITE2_REF, {@link #evaluationNewAdmin} + eid
     */
    public EvalAssignGroup assignGroupProvided;
+
+   /**
+    * Hierarchy Assignment: MAINT_USER_ID, SITE1_REF, {@link #evaluationActive}
+    */
+   public EvalAssignHierarchy assignHier1;
 
 
    // RESPONSES
@@ -895,6 +901,8 @@ public class EvalTestDataLoad {
               Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationNewAdmin);
       assignGroupProvided.setEid("test-eid");
 
+      assignHier1 = new EvalAssignHierarchy(new Date(), MAINT_USER_ID, "1", Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationActive);
+
       // now init response data for the evaluations
       response1 = new EvalResponse(new Date(), USER_ID, SITE1_REF, 
             new Date(), today, null, evaluationActive);
@@ -1061,6 +1069,8 @@ public class EvalTestDataLoad {
       dao.save(assign6);
       dao.save(assign7);
       dao.save(assignGroupProvided);
+
+      dao.save(assignHier1);
 
       dao.save(response1);
       dao.save(response2);

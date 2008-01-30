@@ -98,16 +98,20 @@ public interface EvaluationDao extends CompleteGenericDao {
 
 	/**
 	 * Returns list of response ids for a given evaluation
-	 * and for specific groups.
+	 * and for specific groups and for specific users if desired,
+	 * can limit to only completed responses
 	 *
-	 * @param evalId the id of the evaluation you want response ids for
+	 * @param evalId the id of the evaluation you want the response ids for
 	 * @param evalGroupIds an array of eval group IDs to return response ids for,
-	 * if null or empty then just return all response ids for this evaluation
-    * @param completed if true only return the completed responses, if false only return the incomplete responses,
+	 * if null or empty then return responses ids for all evalGroups associated with this eval
+	 * @param userIds an array of internal userIds to return responses for,
+	 * if null or empty then return responses ids for all users
+	 * @param completed if true only return the completed responses, 
+	 * if false only return the incomplete responses,
     * if null then return all responses
 	 * @return a list of response ids (Long)
 	 */
-	public List<Long> getResponseIds(Long evalId, String[] evalGroupIds, Boolean completed);
+	public List<Long> getResponseIds(Long evalId, String[] evalGroupIds, String[] userIds, Boolean completed);
 
 	/**
 	 * Removes a group of templateItems and updates all related items 

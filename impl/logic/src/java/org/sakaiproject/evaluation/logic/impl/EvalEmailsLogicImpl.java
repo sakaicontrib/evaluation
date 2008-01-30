@@ -27,11 +27,9 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
-import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
-import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.impl.utils.TextTemplateLogicUtils;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
@@ -66,20 +64,11 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       this.settings = settings;
    }
 
-   private EvalAssignsLogic assignsLogic;
-   public void setAssignsLogic(EvalAssignsLogic assignsLogic) {
-      this.assignsLogic = assignsLogic;
+   private EvalEvaluationService evaluationService;
+   public void setEvaluationService(EvalEvaluationService evaluationService) {
+      this.evaluationService = evaluationService;
    }
 
-   private EvalEvaluationsLogic evaluationLogic;
-   public void setEvaluationLogic(EvalEvaluationsLogic evaluationLogic) {
-      this.evaluationLogic = evaluationLogic;
-   }
-
-   private EvalResponsesLogic evalResponsesLogic;
-   public void setEvalResponsesLogic(EvalResponsesLogic evalResponsesLogic) {
-      this.evalResponsesLogic = evalResponsesLogic;
-   }
 
    // INIT method
    public void init() {
@@ -176,10 +165,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
     */
    public EvalEmailTemplate getEmailTemplate(Long evaluationId, String emailTemplateTypeConstant) {
       // get evaluation
-      EvalEvaluation eval = (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);
-      if (eval == null) {
-         throw new IllegalArgumentException("Cannot find evaluation with this id: " + evaluationId);
-      }
+      EvalEvaluation eval = getEvaluationOrFail(evaluationId);
 
       // check the type constant
       Long emailTemplateId = null;
@@ -216,10 +202,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             + emailTemplateTypeConstant);
 
       // get evaluation
-      EvalEvaluation eval = (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);
-      if (eval == null) {
-         throw new IllegalArgumentException("Cannot find evaluation with this id: " + evaluationId);
-      }
+      EvalEvaluation eval = getEvaluationOrFail(evaluationId);
 
       // get the email template
       EvalEmailTemplate emailTemplate = getEmailTemplate(evaluationId, emailTemplateTypeConstant);
@@ -241,17 +224,10 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             + emailTemplateId);
 
       // get evaluation
-      EvalEvaluation eval = (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);
-      if (eval == null) {
-         throw new IllegalArgumentException("Cannot find evaluation with this id: " + evaluationId);
-      }
+      EvalEvaluation eval = getEvaluationOrFail(evaluationId);
 
       // get the email template
-      EvalEmailTemplate emailTemplate = (EvalEmailTemplate) dao.findById(EvalEmailTemplate.class,
-            emailTemplateId);
-      if (emailTemplate == null) {
-         throw new IllegalArgumentException("Cannot find email template with this id: " + emailTemplateId);
-      }
+      EvalEmailTemplate emailTemplate = getEmailTemplateOrFail(emailTemplateId);
 
       // make sure this template is associated with this evaluation
       if (eval.getAvailableEmailTemplate() != null
@@ -274,61 +250,6 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       return false;
    }
 
-   // INTERNAL METHODS
-
-   /**
-    * Check if user can control an email template
-    * @param userId
-    * @param emailTemplate
-    * @return true if they can
-    */
-   protected boolean canUserControlEmailTemplate(String userId, EvalEmailTemplate emailTemplate) {
-      if (externalLogic.isUserAdmin(userId)) {
-         return true;
-      } else if (emailTemplate.getOwner().equals(userId)) {
-         return true;
-      }
-      return false;
-   }
-
-   /**
-    * Check if user can control evaluation and template combo
-    * @param userId
-    * @param eval
-    * @param emailTemplate
-    * @return true if they can, throw exceptions otherwise
-    */
-   protected boolean checkEvalTemplateControl(String userId, EvalEvaluation eval,
-         EvalEmailTemplate emailTemplate) {
-      log.debug("userId: " + userId + ", evaluationId: " + eval.getId());
-
-      if (EvalUtils.getEvaluationState(eval) == EvalConstants.EVALUATION_STATE_INQUEUE) {
-         if (emailTemplate == null) {
-            // currently using the default templates so check eval perms
-
-            // check eval user permissions (just owner and super at this point)
-            // TODO - find a way to centralize this check
-            if (userId.equals(eval.getOwner()) || externalLogic.isUserAdmin(userId)) {
-               return true;
-            } else {
-               throw new SecurityException("User (" + userId
-                     + ") cannot control email template in evaluation (" + eval.getId()
-                     + "), do not have permission");
-            }
-         } else {
-            // check email template perms
-            if (canUserControlEmailTemplate(userId, emailTemplate)) {
-               return true;
-            } else {
-               throw new SecurityException("User (" + userId + ") cannot control email template ("
-                     + emailTemplate.getId() + ") without permissions");
-            }
-         }
-      } else {
-         throw new IllegalStateException("Cannot modify email template in running evaluation ("
-               + eval.getId() + ")");
-      }
-   }
 
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendEvalCreatedNotifications(java.lang.Long, boolean)
@@ -339,10 +260,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       String from = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
 
       // get evaluation
-      EvalEvaluation eval = (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);
-      if (eval == null) {
-         throw new IllegalArgumentException("Cannot find evaluation with this id: " + evaluationId);
-      }
+      EvalEvaluation eval = getEvaluationOrFail(evaluationId);
 
       // get the email template header
       EvalEmailTemplate emailTemplate = getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_CREATED);
@@ -355,7 +273,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       String message = modifyCreatedEmailMessage(eval, emailTemplate);
 
       // get the associated groups for this evaluation
-      Map<Long, List<EvalGroup>> evalGroups = evaluationLogic.getEvaluationGroups(new Long[] { evaluationId }, true);
+      Map<Long, List<EvalGroup>> evalGroups = evaluationService.getEvaluationGroups(new Long[] { evaluationId }, true);
 
       // only one possible map key so we can assume evaluationId
       List<EvalGroup> groups = evalGroups.get(evaluationId);
@@ -481,7 +399,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       }
 
       //get the associated assign groups for this evaluation
-      Map<Long, List<EvalAssignGroup>> evalAssignGroups = evaluationLogic.getEvaluationAssignGroups(
+      Map<Long, List<EvalAssignGroup>> evalAssignGroups = evaluationService.getEvaluationAssignGroups(
             new Long[] { evaluationId }, true);
       List<EvalAssignGroup> assignGroups = evalAssignGroups.get(evaluationId);
 
@@ -564,10 +482,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       }
 
       // get evaluation
-      EvalEvaluation eval = evaluationLogic.getEvaluationById(evaluationId);
-      if (eval == null) {
-         throw new IllegalArgumentException("Cannot find evaluation with this id: " + evaluationId);
-      }
+      EvalEvaluation eval = getEvaluationOrFail(evaluationId);
 
       List<String> sentMessages = new ArrayList<String>();
 
@@ -631,10 +546,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       String from = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
 
       // get evaluation
-      EvalEvaluation eval = (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);
-      if (eval == null) {
-         throw new IllegalArgumentException("Cannot find evaluation with this id: " + evaluationId);
-      }
+      EvalEvaluation eval = getEvaluationOrFail(evaluationId);
 
       // get the email template
       EvalEmailTemplate emailTemplate = getEmailTemplate(evaluationId, EvalConstants.EMAIL_TEMPLATE_REMINDER);
@@ -649,7 +561,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       // get the associated eval groups for this evaluation
       // NOTE: this only returns the groups that should get emails, there is no need to do an additional check
       // to see if the instructor has opted in in this case -AZ
-      Map<Long, List<EvalGroup>> evalGroupIds = evaluationLogic.getEvaluationGroups(new Long[] { evaluationId }, false);
+      Map<Long, List<EvalGroup>> evalGroupIds = evaluationService.getEvaluationGroups(new Long[] { evaluationId }, false);
 
       // only one possible map key so we can assume evaluationId
       List<EvalGroup> groups = evalGroupIds.get(evaluationId);
@@ -666,9 +578,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
          userIdsSet.clear();
          if (EvalConstants.EMAIL_INCLUDE_NONTAKERS.equals(includeConstant)) {
-            userIdsSet.addAll(evalResponsesLogic.getNonResponders(evaluationId, group.evalGroupId));
+            userIdsSet.addAll(getNonResponders(evaluationId, group.evalGroupId));
          } else if (EvalConstants.EMAIL_INCLUDE_ALL.equals(includeConstant)) {
-            userIdsSet.addAll(evalResponsesLogic.getNonResponders(evaluationId, group.evalGroupId));
+            userIdsSet.addAll(getNonResponders(evaluationId, group.evalGroupId));
             userIdsSet.addAll(externalLogic.getUserIdsForEvalGroup(group.evalGroupId,
                   EvalConstants.PERM_BE_EVALUATED));
          }
@@ -726,10 +638,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
        */
 
       // get evaluation
-      EvalEvaluation eval = (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);
-      if (eval == null) {
-         throw new IllegalArgumentException("Cannot find evaluation with this id: " + evaluationId);
-      }
+      EvalEvaluation eval = getEvaluationOrFail(evaluationId);
 
       // get the email template
       EvalEmailTemplate emailTemplate = getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_RESULTS);
@@ -742,10 +651,10 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       List<String> sentMessages = new ArrayList<String>();
 
       // get the associated eval groups for this evaluation
-      Map<Long, List<EvalGroup>> evalGroupIds = evaluationLogic.getEvaluationGroups(new Long[] { evaluationId }, false);
+      Map<Long, List<EvalGroup>> evalGroupIds = evaluationService.getEvaluationGroups(new Long[] { evaluationId }, false);
 
       //get the associated eval assign groups for this evaluation
-      Map<Long, List<EvalAssignGroup>> evalAssignGroups = evaluationLogic.getEvaluationAssignGroups(new Long[] { evaluationId }, false);
+      Map<Long, List<EvalAssignGroup>> evalAssignGroups = evaluationService.getEvaluationAssignGroups(new Long[] { evaluationId }, false);
 
       // only one possible map key so we can assume evaluationId
       List<EvalGroup> groups = evalGroupIds.get(evaluationId);
@@ -831,6 +740,71 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       return (String[]) sentMessages.toArray(new String[] {});
    }
 
+
+   public Set<String> getUserEmailsForEvaluation(Long evaluationId, String evalGroupId, String includeConstant, boolean returnUserIds) {
+      log.debug("evaluationId: " + evaluationId + ", includeConstant: " + includeConstant);
+      if (includeConstant == null
+            || !(includeConstant == EvalConstants.EMAIL_INCLUDE_NONTAKERS || includeConstant == EvalConstants.EMAIL_INCLUDE_ALL)) {
+         log.error("includeConstant null or unknown");
+         return null;
+      }
+
+      // check evaluation
+      if (! evaluationService.checkEvaluationExists(evaluationId)) {
+         throw new IllegalArgumentException("Invalid evaluation id, cannot find evaluation with this id: " + evaluationId);
+      }
+
+      // get the associated eval groups for this evaluation
+      // NOTE: this only returns the groups that should get emails, there is no need to do an additional check
+      // to see if the instructor has opted in in this case -AZ
+      Map<Long, List<EvalGroup>> evalGroupIds = evaluationService.getEvaluationGroups(new Long[] { evaluationId }, false);
+
+      // only one possible map key so we can assume evaluationId
+      List<EvalGroup> groups = evalGroupIds.get(evaluationId);
+      log.debug("Found " + groups.size() + " groups for evaluation: " + evaluationId);
+
+      Set<String> userIdsSet = new HashSet<String>();
+
+      // loop through groups and get users
+      for (int i = 0; i < groups.size(); i++) {
+         EvalGroup group = (EvalGroup) groups.get(i);
+         if (EvalConstants.GROUP_TYPE_INVALID.equals(group.type)) {
+            continue; // skip processing for invalid groups
+         }
+
+         if (EvalConstants.EMAIL_INCLUDE_NONTAKERS.equals(includeConstant)) {
+            userIdsSet.addAll(getNonResponders(evaluationId, group.evalGroupId));
+         } else if (EvalConstants.EMAIL_INCLUDE_ALL.equals(includeConstant)) {
+            userIdsSet.addAll(getNonResponders(evaluationId, group.evalGroupId));
+            userIdsSet.addAll(externalLogic.getUserIdsForEvalGroup(group.evalGroupId,
+                  EvalConstants.PERM_BE_EVALUATED));
+         }
+      }
+
+      return userIdsSet;
+   }
+
+   public Set<String> getNonResponders(Long evaluationId, String evalGroupId) {
+      Long[] evaluationIds = { evaluationId };
+      Set<String> userIds = new HashSet<String>();
+
+      // get everyone permitted to take the evaluation
+      Set<String> ids = externalLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
+      for (Iterator<String> i = ids.iterator(); i.hasNext();) {
+         String userId = i.next();
+
+         // if this user hasn't submitted a response, add the user's id
+         // FIXME This call is BRUTALLY inefficient -AZ
+         // TODO FIX THIS!
+         if (evaluationService.getEvaluationResponses(userId, evaluationIds, null, true).isEmpty()) {
+            userIds.add(userId);
+         }
+      }
+      return userIds;
+   }
+
+
+
    /**
     * Builds the email message from a template and a bunch of variables
     * (passed in and otherwise)
@@ -862,8 +836,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       String evalEntityURL = null;
       if (group != null && group.evalGroupId != null) {
          // get the URL directly to the evaluation with group context included
-         EvalAssignGroup assignGroup = assignsLogic.getAssignGroupById(assignsLogic.getAssignGroupId(eval
-               .getId(), group.evalGroupId));
+         EvalAssignGroup assignGroup = evaluationService.getAssignGroupById(
+               evaluationService.getAssignGroupId(eval.getId(), group.evalGroupId));
          if (assignGroup != null) {
             evalEntityURL = externalLogic.getEntityURL(assignGroup);
          }
@@ -885,6 +859,90 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       replacementValues.put("URLtoSystem", externalLogic.getServerUrl());
 
       return TextTemplateLogicUtils.processTextTemplate(messageTemplate, replacementValues);
+   }
+
+   // INTERNAL METHODS
+
+   /**
+    * Check if user can control an email template
+    * @param userId
+    * @param emailTemplate
+    * @return true if they can
+    */
+   protected boolean canUserControlEmailTemplate(String userId, EvalEmailTemplate emailTemplate) {
+      if (externalLogic.isUserAdmin(userId)) {
+         return true;
+      } else if (emailTemplate.getOwner().equals(userId)) {
+         return true;
+      }
+      return false;
+   }
+
+   /**
+    * Check if user can control evaluation and template combo
+    * @param userId
+    * @param eval
+    * @param emailTemplate
+    * @return true if they can, throw exceptions otherwise
+    */
+   protected boolean checkEvalTemplateControl(String userId, EvalEvaluation eval,
+         EvalEmailTemplate emailTemplate) {
+      log.debug("userId: " + userId + ", evaluationId: " + eval.getId());
+
+      if (EvalUtils.getEvaluationState(eval) == EvalConstants.EVALUATION_STATE_INQUEUE) {
+         if (emailTemplate == null) {
+            // currently using the default templates so check eval perms
+
+            // check eval user permissions (just owner and super at this point)
+            // TODO - find a way to centralize this check
+            if (userId.equals(eval.getOwner()) || externalLogic.isUserAdmin(userId)) {
+               return true;
+            } else {
+               throw new SecurityException("User (" + userId
+                     + ") cannot control email template in evaluation (" + eval.getId()
+                     + "), do not have permission");
+            }
+         } else {
+            // check email template perms
+            if (canUserControlEmailTemplate(userId, emailTemplate)) {
+               return true;
+            } else {
+               throw new SecurityException("User (" + userId + ") cannot control email template ("
+                     + emailTemplate.getId() + ") without permissions");
+            }
+         }
+      } else {
+         throw new IllegalStateException("Cannot modify email template in running evaluation ("
+               + eval.getId() + ")");
+      }
+   }
+
+   /**
+    * @param emailTemplateId
+    * @return
+    */
+   private EvalEmailTemplate getEmailTemplateOrFail(Long emailTemplateId) {
+      EvalEmailTemplate emailTemplate = (EvalEmailTemplate) dao.findById(EvalEmailTemplate.class,
+            emailTemplateId);
+      if (emailTemplate == null) {
+         throw new IllegalArgumentException("Cannot find email template with this id: " + emailTemplateId);
+      }
+      return emailTemplate;
+   }
+
+   /**
+    * Gets the evaluation or throws exception,
+    * reduce code duplication
+    * @param evaluationId
+    * @return eval for this id
+    * @throws IllegalArgumentException if no eval exists
+    */
+   private EvalEvaluation getEvaluationOrFail(Long evaluationId) {
+      EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
+      if (eval == null) {
+         throw new IllegalArgumentException("Cannot find evaluation with id: " + evaluationId);
+      }
+      return eval;
    }
 
 }

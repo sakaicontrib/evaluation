@@ -21,12 +21,11 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.sakaiproject.evaluation.dao.EvaluationDao;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl;
 import org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl;
 import org.sakaiproject.evaluation.logic.impl.EvalResponsesLogicImpl;
-import org.sakaiproject.evaluation.logic.test.mocks.MockEvalExternalLogic;
-import org.sakaiproject.evaluation.logic.test.mocks.MockEvalJobLogic;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
@@ -34,6 +33,8 @@ import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.PreloadTestData;
+import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
+import org.sakaiproject.evaluation.test.mocks.MockEvalJobLogic;
 import org.springframework.test.AbstractTransactionalSpringContextTests;
 
 
@@ -87,28 +88,24 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
          throw new NullPointerException("EvalSettings could not be retrieved from spring evalGroupId");
       }
 
+      EvalEvaluationService evaluationService = (EvalEvaluationService) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalEvaluationService");
+      if (evaluationService == null) {
+         throw new NullPointerException("EvalEvaluationService could not be retrieved from spring context");
+      }
+
       // setup the mock objects if needed
-//      evaluationsLogicControl = MockControl.createControl(EvalEvaluationsLogic.class);
-//      evaluationsLogic = (EvalEvaluationsLogic) evaluationsLogicControl.getMock();
 
       // create the other needed logic impls
       EvalItemsLogicImpl itemsLogicImpl = new EvalItemsLogicImpl();
       itemsLogicImpl.setDao(evaluationDao);
       itemsLogicImpl.setExternalLogic( new MockEvalExternalLogic() );
       itemsLogicImpl.setEvalSettings(settings);
-      
-      EvalEvaluationsLogicImpl evaluationsLogicImpl = new EvalEvaluationsLogicImpl();
-      evaluationsLogicImpl.setDao(evaluationDao);
-      evaluationsLogicImpl.setEvalJobLogic( new MockEvalJobLogic() );
-      evaluationsLogicImpl.setExternalLogic( new MockEvalExternalLogic() );
-      evaluationsLogicImpl.setSettings(settings);
-
 
       // create and setup the object to be tested
       responses = new EvalResponsesLogicImpl();
       responses.setDao(evaluationDao);
       responses.setExternalLogic( new MockEvalExternalLogic() );
-      responses.setEvaluationsLogic( evaluationsLogicImpl ); // put created object in
+      responses.setEvaluationService(evaluationService);
       responses.setEvalSettings(settings);
       responses.setItemsLogic( itemsLogicImpl ); // put created object in
    }

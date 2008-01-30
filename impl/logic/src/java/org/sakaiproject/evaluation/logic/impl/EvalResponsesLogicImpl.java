@@ -24,7 +24,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
-import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
@@ -59,10 +59,14 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
       this.external = external;
    }
 
-   // requires access to evaluations logic to check if user can take the evaluation
-   private EvalEvaluationsLogic evaluationsLogic;
-   public void setEvaluationsLogic(EvalEvaluationsLogic evaluationsLogic) {
-      this.evaluationsLogic = evaluationsLogic;
+   private EvalEvaluationService evaluationService;
+   public void setEvaluationService(EvalEvaluationService evaluationService) {
+      this.evaluationService = evaluationService;
+   }
+
+   private EvalSettings evalSettings;
+   public void setEvalSettings(EvalSettings evalSettings) {
+      this.evalSettings = evalSettings;
    }
 
    private EvalItemsLogic itemsLogic;
@@ -70,10 +74,6 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
       this.itemsLogic = itemsLogic;
    }
 
-   private EvalSettings evalSettings;
-   public void setEvalSettings(EvalSettings evalSettings) {
-      this.evalSettings = evalSettings;
-   }
 
 
    // INIT method
@@ -234,7 +234,7 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
          throw new IllegalArgumentException("Could not find evaluation with id: " + evaluationId);
       }
 
-      return dao.getResponseIds(evaluationId, evalGroupIds, completed);
+      return dao.getResponseIds(evaluationId, evalGroupIds, null, completed);
    }
 
    @SuppressWarnings("unchecked")
@@ -256,7 +256,7 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
          // make sure the user can take this evalaution
          Long evaluationId = response.getEvaluation().getId();
          String evalGroupId = response.getEvalGroupId();
-         if (!evaluationsLogic.canTakeEvaluation(userId, evaluationId, evalGroupId)) {
+         if (! evaluationService.canTakeEvaluation(userId, evaluationId, evalGroupId)) {
             throw new IllegalStateException("User (" + userId + ") cannot take this evaluation (" + evaluationId
                   + ") in this evalGroupId (" + evalGroupId + ") right now");
          }
@@ -481,24 +481,6 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
       }
 
       return true;
-   }
-
-
-   public Set<String> getNonResponders(Long evaluationId, String evalGroupId) {
-      Long[] evaluationIds = { evaluationId };
-      Set<String> userIds = new HashSet<String>();
-
-      // get everyone permitted to take the evaluation
-      Set<String> ids = external.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
-      for (Iterator<String> i = ids.iterator(); i.hasNext();) {
-         String userId = i.next();
-
-         // if this user hasn't submitted a response, add the user's id
-         if (getEvaluationResponses(userId, evaluationIds, true).isEmpty()) {
-            userIds.add(userId);
-         }
-      }
-      return userIds;
    }
 
 }

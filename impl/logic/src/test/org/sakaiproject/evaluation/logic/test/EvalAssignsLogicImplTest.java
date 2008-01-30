@@ -22,15 +22,17 @@ import junit.framework.Assert;
 import org.easymock.MockControl;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
-import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.impl.EvalAssignsLogicImpl;
-import org.sakaiproject.evaluation.logic.test.mocks.MockEvalExternalLogic;
+import org.sakaiproject.evaluation.logic.impl.EvalSecurityChecks;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.PreloadTestData;
+import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
+import org.sakaiproject.evaluation.test.mocks.MockEvalJobLogic;
 import org.springframework.test.AbstractTransactionalSpringContextTests;
 
 
@@ -48,15 +50,12 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 	
 	private EvalEmailsLogic emails;
 	private MockControl emailsControl;
-	
-	private EvalJobLogic evalJobLogic;
-	private MockControl evalJobLogicControl;
 
 	protected String[] getConfigLocations() {
 		// point to the needed spring config files, must be on the classpath
 		// (add component/src/webapp/WEB-INF to the build path in Eclipse),
 		// they also need to be referenced in the project.xml file
-		return new String[] {"hibernate-test.xml", "spring-hibernate.xml"};
+		return new String[] {"hibernate-test.xml", "spring-hibernate.xml", "logic-support.xml"};
 	}
 
 	// run this before each test starts
@@ -82,6 +81,15 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 		etdl = ptd.getEtdl();
 
 		// load up any other needed spring beans
+      EvalSecurityChecks securityChecks = (EvalSecurityChecks) applicationContext.getBean("org.sakaiproject.evaluation.logic.impl.EvalSecurityChecks");
+      if (securityChecks == null) {
+         throw new NullPointerException("EvalSecurityChecks could not be retrieved from spring context");
+      }
+
+      EvalEvaluationService evaluationService = (EvalEvaluationService) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalEvaluationService");
+      if (evaluationService == null) {
+         throw new NullPointerException("EvalEvaluationService could not be retrieved from spring context");
+      }
 
 		// setup the mock objects if needed
 		emailsControl = MockControl.createControl(EvalEmailsLogic.class);
@@ -92,22 +100,15 @@ public class EvalAssignsLogicImplTest extends AbstractTransactionalSpringContext
 		emailsControl.setDefaultMatcher(MockControl.ALWAYS_MATCHER);
 		emailsControl.setReturnValue(EvalTestDataLoad.EMPTY_STRING_ARRAY, MockControl.ZERO_OR_MORE);
 		emailsControl.replay();
-		
-		// setup the mock objects if needed
-		evalJobLogicControl = MockControl.createControl(EvalJobLogic.class);
-		evalJobLogic = (EvalJobLogic) evalJobLogicControl.getMock();
-		
-		// this mock object is simply keeping us from getting a null when evalJobLogic is accessed 
-		evalJobLogic.isJobTypeScheduled(EvalTestDataLoad.INVALID_LONG_ID, EvalConstants.JOB_TYPE_REMINDER); // expect this to be called
-		evalJobLogicControl.setDefaultReturnValue(true); //skipping the scheduling of a reminder
-		evalJobLogicControl.replay();
 
 		//create and setup the object to be tested
 		assigns = new EvalAssignsLogicImpl();
 		assigns.setDao(evaluationDao);
 		assigns.setExternalLogic( new MockEvalExternalLogic() );
+		assigns.setEvaluationService(evaluationService);
+		assigns.setSecurityChecks(securityChecks);
 		assigns.setEmails(emails); // set to the mock object
-		assigns.setEvalJobLogic(evalJobLogic); // set to the mock object
+		assigns.setEvalJobLogic( new MockEvalJobLogic() ); // set to the mock object
 	}
 
 	// run this before each test starts and as part of the transaction

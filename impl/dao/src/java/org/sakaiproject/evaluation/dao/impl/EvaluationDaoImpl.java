@@ -49,7 +49,8 @@ import org.springframework.dao.DataAccessException;
 
 /**
  * Implementations for any methods from the EvaluationDao interface<br/> 
- * Includes locking method implementations
+ * Includes locking method implementations,
+ * This is a BOTTOM level service and should depend on no other services
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
@@ -395,12 +396,17 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
    // }
 
 
-   public List<Long> getResponseIds(Long evalId, String[] evalGroupIds, Boolean completed) {
+   public List<Long> getResponseIds(Long evalId, String[] evalGroupIds, String[] userIds, Boolean completed) {
       Map<String, Object> params = new HashMap<String, Object>();
       String groupsHQL = "";
       if (evalGroupIds != null && evalGroupIds.length > 0) {
          groupsHQL = " and response.evalGroupId in (:evalGroupIds) ";
          params.put("evalGroupIds", evalGroupIds);
+      }
+      String usersHQL = "";
+      if (userIds != null && userIds.length > 0) {
+         usersHQL = " and response.owner in (:userIds) ";
+         params.put("userIds", userIds);
       }
       String completedHQL = "";
       if (completed != null) {
@@ -413,7 +419,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       }
       params.put("evalId", evalId);
       String hql = "SELECT response.id from EvalResponse as response where response.evaluation.id = :evalId "
-         + groupsHQL + completedHQL + " order by response.id";
+         + groupsHQL + usersHQL + completedHQL + " order by response.id";
       List<?> rIDs = executeHqlQuery(hql, params, 0, 0);
       List<Long> responseIds = new ArrayList<Long>();
       for (Object object : rIDs) {

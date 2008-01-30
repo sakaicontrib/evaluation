@@ -14,7 +14,10 @@
 
 package org.sakaiproject.evaluation.logic;
 
+import java.util.Set;
+
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
+import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 /**
@@ -153,5 +156,17 @@ public interface EvalEmailsLogic {
 	 * @return an array of the messages that were sent
 	 */
 	public String[] sendEvalResultsNotifications(String jobType, Long evaluationId, boolean includeEvaluatees, boolean includeAdmins);
+
+   /**
+    * Get a set of user ids of users who are in an EvalGroup assigned to
+    * this EvalEvaluation and permitted to take the evaluation but have 
+    * not yet responded.
+    * TODO - rwellis needs to add unit tests -AZ
+    * 
+    * @param evaluationId the unique id for an {@link EvalEvaluation}
+    * @param evalGroupId the internal evalGroupId (represents a site or group)
+    * @return a set of internal user ids
+    */
+   public Set<String> getNonResponders(Long evaluationId, String evalGroupId);
 
 }

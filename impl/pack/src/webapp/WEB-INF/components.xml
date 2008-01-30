@@ -23,10 +23,10 @@
    <bean id="org.sakaiproject.evaluation.logic.EvalAssignsLogic"
       class="org.sakaiproject.evaluation.logic.impl.EvalAssignsLogicImpl" init-method="init">
       <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
-      <property name="emails" ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
       <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-      <property name="evalJobLogic" ref="org.sakaiproject.evaluation.logic.EvalJobLogic" />
       <property name="hierarchyLogic" ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+      <property name="evalJobLogic" ref="org.sakaiproject.evaluation.logic.EvalJobLogic" />
+      <property name="emails" ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
    </bean>
 
    <bean id="org.sakaiproject.evaluation.logic.EvalEmailsLogic"
@@ -34,17 +34,17 @@
       <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
       <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
       <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-      <property name="assignsLogic" ref="org.sakaiproject.evaluation.logic.EvalAssignsLogic" />
-      <property name="evaluationLogic" ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
-      <property name="evalResponsesLogic" ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
+      <property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
    </bean>
 
    <bean id="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic"
       class="org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl" init-method="init">
       <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
-      <property name="evalJobLogic" ref="org.sakaiproject.evaluation.logic.EvalJobLogic" />
       <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
       <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+      <property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+      <property name="securityChecks" ref="org.sakaiproject.evaluation.logic.impl.EvalSecurityChecks" />
+      <property name="evalJobLogic" ref="org.sakaiproject.evaluation.logic.EvalJobLogic" />
    </bean>
 
    <bean id="org.sakaiproject.evaluation.logic.EvalExpertItemsLogic"
@@ -64,7 +64,7 @@
       class="org.sakaiproject.evaluation.logic.impl.EvalResponsesLogicImpl" init-method="init">
       <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
       <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-      <property name="evaluationsLogic" ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+      <property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
       <property name="itemsLogic" ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
       <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
    </bean>
@@ -81,7 +81,8 @@
       <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
       <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
    </bean>
-	
+
+    <!-- importing -->
 	<bean id="org.sakaiproject.evaluation.logic.externals.EvalImportJob"
 		class="org.sakaiproject.evaluation.logic.impl.scheduling.EvalImportJobImpl"
 		init-method="init"> 

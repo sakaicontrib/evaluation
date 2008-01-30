@@ -30,6 +30,14 @@ public class EvalResponse implements java.io.Serializable {
 
    private EvalEvaluation evaluation;
 
+   /**
+    * This is a special variable we are using to keep track of whether this response was
+    * complete when it was loaded from the database, if it is true then it is/was complete,
+    * if it is false then it was not complete<br/>
+    * <b>WARNING:</b> Do NOT modify this value yourself, it should only be changed internally in the DAO
+    */
+   public boolean complete = false;
+
    // Constructors
 
    /** default constructor */
