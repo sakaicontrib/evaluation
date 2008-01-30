@@ -17,7 +17,6 @@ package org.sakaiproject.evaluation.test.mocks;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
-import org.sakaiproject.evaluation.model.EvalEvaluation;
 
 
 /**
@@ -31,51 +30,13 @@ public class MockEvalJobLogic implements EvalJobLogic {
 
    private static Log log = LogFactory.getLog(MockEvalJobLogic.class);
 
-   /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.externals.EvalJobLogic#isJobTypeScheduled(java.lang.Long, java.lang.String)
-    */
-   public boolean isJobTypeScheduled(Long evaluationId, String jobType) {
-      log.info("MOCK: isJobTypeScheduled(evaluationId="+evaluationId+", jobType="+jobType+")");
-      return true;
-   }
-
-   /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.externals.EvalJobLogic#jobAction(java.lang.Long, java.lang.String)
-    */
    public void jobAction(Long evaluationId, String jobType) {
       log.info("MOCK: jobAction(evaluationId="+evaluationId+", jobType="+jobType+")");
       // pretend all is ok and do nothing
    }
 
-   /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.externals.EvalJobLogic#processEvaluationChange(org.sakaiproject.evaluation.model.EvalEvaluation)
-    */
-   public void processEvaluationChange(EvalEvaluation eval) {
-      log.info("MOCK: processEvaluationChange(eval="+eval.getTitle()+")");
-      // pretend all is ok and do nothing
-   }
-
-   /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.externals.EvalJobLogic#processNewEvaluation(org.sakaiproject.evaluation.model.EvalEvaluation)
-    */
-   public void processNewEvaluation(EvalEvaluation eval) {
-      log.info("MOCK: processNewEvaluation(eval="+eval.getTitle()+")");
-      // pretend all is ok and do nothing
-   }
-
-   /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.externals.EvalJobLogic#removeScheduledInvocations(java.lang.Long)
-    */
-   public void removeScheduledInvocations(Long evaluationId) {
-      log.info("MOCK: removeScheduledInvocations(evaluationId="+evaluationId+")");
-      // pretend all is ok and do nothing
-   }
-
-   /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.externals.EvalJobLogic#scheduleReminder(java.lang.Long)
-    */
-   public void scheduleReminder(Long evaluationId) {
-      log.info("MOCK: scheduleReminder(evaluationId="+evaluationId+")");
+   public void processEvaluationStateChange(Long evaluationId, String actionState) {
+      log.info("MOCK: jobAction(evaluationId="+evaluationId+", actionState="+actionState+")");
       // pretend all is ok and do nothing
    }
 

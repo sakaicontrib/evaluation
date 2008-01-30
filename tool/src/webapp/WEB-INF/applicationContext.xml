@@ -18,6 +18,11 @@
 		<property name="localeGetter" ref="requestLocaleProxy" />
 	</bean>
 
+    <!-- turns on the error logging in the browser (when set false), REMOVE THIS WHEN IN PRODUCTION -->
+	<bean id="redirectOnLevel1Error" class="uk.org.ponder.springutil.BooleanFactory">
+	   <property name="value" value="false" />
+	</bean>
+
 	<!-- the beans listed here are allowed access to values (security) -->
 	<bean parent="requestAddressibleParent">
 		<property name="value" value="id-defunnel, 

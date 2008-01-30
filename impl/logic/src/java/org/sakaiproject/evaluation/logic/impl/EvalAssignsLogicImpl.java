@@ -28,7 +28,6 @@ import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.utils.ArrayUtils;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
@@ -71,14 +70,6 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
       this.securityChecks = securityChecks;
    }
 
-
-   // for scheduleReminder and checking if reminder already scheduled (this should happen in the same method)
-   private EvalJobLogic evalJobLogic;
-   public void setEvalJobLogic(EvalJobLogic evalJobLogic) {
-      this.evalJobLogic = evalJobLogic;
-   }
-
-   // for sendEvalAvailableGroupNotification, this should be taken care of by a central method
    private EvalEmailsLogic emails;
    public void setEmails(EvalEmailsLogic emails) {
       this.emails = emails;
@@ -150,18 +141,13 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
             }
          }
 
-         /* if a late instructor opt-in, notify students in this group that an evaluation is available,
-          * and schedule a reminder if there isn't a reminder going to all groups already scheduled
-          */
-         if(EvalConstants.INSTRUCTOR_OPT_IN.equals(eval.getInstructorOpt()) && 
-               assignGroup.getInstructorApproval().booleanValue() && 
-               assignGroup.getEvaluation().getStartDate().before(new Date())) {
-            // FIXME Everything in this if statement should be factored out into a method by itself OR removed completely
-            emails.sendEvalAvailableGroupNotification(assignGroup.getEvaluation().getId(), assignGroup.getEvalGroupId());
-            if(!evalJobLogic.isJobTypeScheduled(assignGroup.getEvaluation().getId(), EvalConstants.JOB_TYPE_REMINDER)) {
-               //we need to also schedule a reminder
-               evalJobLogic.scheduleReminder(assignGroup.getEvaluation().getId());
-            }
+         // if a late instructor opt-in, notify students in this group that an evaluation is available
+         if (EvalConstants.INSTRUCTOR_OPT_IN.equals(eval.getInstructorOpt())
+               && assignGroup.getInstructorApproval().booleanValue()
+               && assignGroup.getEvaluation().getStartDate().before(new Date())) {
+            emails.sendEvalAvailableGroupNotification(
+                  assignGroup.getEvaluation().getId(),
+                  assignGroup.getEvalGroupId());
          }
 
          if (assignGroup.getInstructorsViewResults() == null) {
