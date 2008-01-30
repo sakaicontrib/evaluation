@@ -33,6 +33,7 @@ public interface EvalJobLogic {
     * @param evaluationId the unique id for an {@link EvalEvaluation}
     * @param jobType the job type from {@link EvalConstants}
 	 * @return true if a job of this type is scheduled for this evaluation, false otherwise
+	 * @deprecated this is only used in one place, put this logic inside the method which schedules reminders -AZ
 	 */
 	public boolean isJobTypeScheduled(Long evaluationId, String jobType);
 	
@@ -68,7 +69,7 @@ public interface EvalJobLogic {
 	public void jobAction(Long evaluationId, String jobType);
 	
 	/**
-	 * Remove all outstanding scheduled job invocations for this EvalEvaluation.
+	 * Remove all outstanding scheduled job invocations for this evaluation
 	 * 
 	 * @param evaluationId the unique id for an {@link EvalEvaluation}
 	 */

@@ -23,7 +23,6 @@ import junit.framework.Assert;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl;
 import org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl;
 import org.sakaiproject.evaluation.logic.impl.EvalResponsesLogicImpl;
 import org.sakaiproject.evaluation.model.EvalAnswer;
@@ -34,7 +33,6 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.PreloadTestData;
 import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
-import org.sakaiproject.evaluation.test.mocks.MockEvalJobLogic;
 import org.springframework.test.AbstractTransactionalSpringContextTests;
 
 

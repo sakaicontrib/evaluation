@@ -452,7 +452,7 @@ public class EvalConstants {
 		"1) Go to $URLtoSystem \n" +
 		"2) Enter your username and password and click on 'Login' button. \n" +
 		"3) Click on 'Evaluation System' in the left navigation menu under My Workspace. \n" +
-		"4) Click on '$EvalTitle' link under '$EvalGroupTitle'. \n";
+		"4) Click on '$EvalGroupTitle' link under '$EvalTitle'.. \n";
 	
 	/**
 	 * EmailTemplate: defaultType: Identifies the default available opt-in template
@@ -495,7 +495,7 @@ public class EvalConstants {
 		"1) Go to $URLtoSystem \n" +
 		"2) Enter your username and password and click on 'Login' button. \n" +
 		"3) Click on 'Evaluation System' in the left navigation menu under My Workspace. \n" +
-		"4) Click on '$EvalTitle' link under '$EvalGroupTitle'. \n";
+      "4) Click on '$EvalGroupTitle' link under '$EvalTitle'.. \n";
 
 
 	/**
@@ -530,7 +530,7 @@ public class EvalConstants {
 		"1) Go to $URLtoSystem \n" +
 		"2) Enter your username and password and click on 'Login' button. \n" +
 		"3) Click on 'Evaluation System' in the left navigation menu under My Workspace. \n" +
-		"4) Click on '$EvalTitle' link under '$EvalGroupTitle'. \n";
+      "4) Click on '$EvalGroupTitle' link under '$EvalTitle'.. \n";
 	
 	public static final String EMAIL_TEMPLATE_RESULTS = "Results";
 
@@ -554,7 +554,7 @@ public class EvalConstants {
 		"1) Go to $URLtoSystem \n" +
 		"2) Enter your username and password and click on 'Login' button. \n" +
 		"3) Click on 'Evaluation System' in the left navigation menu under My Workspace. \n" +
-		"4) Click on '$EvalTitle' link under '$EvalGroupTitle'. \n";
+      "4) Click on '$EvalGroupTitle' link under '$EvalTitle'.. \n";
 
 	/**
 	 * Notification: Include all users who have not taken the evaluation yet
