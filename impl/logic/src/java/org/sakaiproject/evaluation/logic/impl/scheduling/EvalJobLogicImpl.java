@@ -33,6 +33,8 @@ import org.sakaiproject.time.api.TimeService;
  * Handle job scheduling related to EvalEvaluation state transitions.</br> Dates that have not
  * passed may be changed, which might then require rescheduling a job to keep jobs and
  * EvalEvaluation dates in sync.
+ * <b>NOTE:</b> this is a BACKUP service and should only depend on LOWER and BOTTOM services
+ * (and maybe other BACKUP services if necessary)
  * 
  * @author rwellis
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)

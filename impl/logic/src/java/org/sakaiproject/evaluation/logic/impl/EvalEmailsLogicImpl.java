@@ -40,7 +40,9 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 /**
- * EvalEmailsLogic implementation
+ * EvalEmailsLogic implementation,
+ * this is a BACKUP service and should only depend on LOWER and BOTTOM services
+ * (and maybe other BACKUP services if necessary)
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
@@ -49,7 +51,6 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
    private static Log log = LogFactory.getLog(EvalEmailsLogicImpl.class);
 
    private EvaluationDao dao;
-
    public void setDao(EvaluationDao dao) {
       this.dao = dao;
    }
