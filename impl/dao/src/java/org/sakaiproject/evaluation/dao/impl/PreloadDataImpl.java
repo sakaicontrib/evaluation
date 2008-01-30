@@ -242,7 +242,7 @@ public class PreloadDataImpl {
       int count = evaluationDao.countAll(EvalItem.class);
       if (count == 0) {
          // NOTE: If you change the number of items here
-         // you will need to update the test in EvalItemsLogicImplTest also
+         // you will need to update the test in the logic tests
 
          // create expert items
          Set<EvalItem> itemSet;

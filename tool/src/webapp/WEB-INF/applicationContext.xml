@@ -127,7 +127,7 @@
                 <bean class="org.sakaiproject.evaluation.tool.renderers.MultipleAnswerRenderer" />
 				<bean class="org.sakaiproject.evaluation.tool.renderers.BlockRenderer">
 					<property name="authoringService"
-						ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
+						ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
 				</bean>
 			</list>
 		</property>
