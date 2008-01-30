@@ -94,6 +94,22 @@
 			<type>jar</type>
 			<!--properties:  war.bundle: true -->
 		</dependency>
+		
+		<!-- For Reporting -->
+		<dependency>
+			<groupId>jfree</groupId>
+			<artifactId>jcommon</artifactId>
+			<version>1.0.12</version>
+			<type>jar</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>jfree</groupId>
+			<artifactId>jfreechart</artifactId>
+			<version>1.0.9</version>
+			<type>jar</type>
+		</dependency>
+		
 		<!-- 
 			a) The above properties tag should not be needed.
 			b) This log4j dependency should also be removed
