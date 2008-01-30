@@ -16,9 +16,8 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import java.util.List;
 
+import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.EvalItemsLogic;
-import org.sakaiproject.evaluation.logic.EvalScalesLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
@@ -77,15 +76,10 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 		this.external = external;
 	}
 
-	private EvalItemsLogic itemsLogic;
-	public void setItemsLogic(EvalItemsLogic itemsLogic) {
-		this.itemsLogic = itemsLogic;
-	}
-
-	private EvalScalesLogic scalesLogic;
-	public void setScalesLogic(EvalScalesLogic scalesLogic) {
-		this.scalesLogic = scalesLogic;
-	}
+   private EvalAuthoringService authoringService;
+   public void setAuthoringService(EvalAuthoringService authoringService) {
+      this.authoringService = authoringService;
+   }
 
 	private EvalSettings settings;
 	public void setSettings(EvalSettings settings) {
@@ -167,7 +161,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
                new UIELBinding(itemOTP + "classification", itemClassification) );
 		} else if (templateItemId == null) {
 		   // itemId is not null so we are modifying an existing item
-         EvalItem item = itemsLogic.getItemById(itemId);
+         EvalItem item = authoringService.getItemById(itemId);
          if (item == null) {
             throw new IllegalArgumentException("Invalid item id passed in by VP: " + itemId);
          }
@@ -183,7 +177,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
          commonDisplayOTP = itemOTP;
 		} else {
 		   // templateItemId is not null so we are modifying an existing template item
-         EvalTemplateItem templateItem = itemsLogic.getTemplateItemById(templateItemId);
+         EvalTemplateItem templateItem = authoringService.getTemplateItemById(templateItemId);
          if (templateItem == null) {
             throw new IllegalArgumentException("Invalid template item id passed in by VP: " + templateItemId);
          }
@@ -234,8 +228,8 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 		if (templateItemId != null || itemId != null) {
 			UIInternalLink.make(tofill, "item-preview-link", UIMessage.make("controlitems.preview.link"), 
 					new ItemViewParameters(PreviewItemProducer.VIEW_ID, itemId, templateItemId) );
-			if ( (itemId != null && itemsLogic.canRemoveItem(currentUserId, itemId)) || 
-			      templateItemId != null && itemsLogic.canControlTemplateItem(currentUserId, templateItemId) ) {
+			if ( (itemId != null && authoringService.canRemoveItem(currentUserId, itemId)) || 
+			      templateItemId != null && authoringService.canControlTemplateItem(currentUserId, templateItemId) ) {
 	        	// item or templateItem is removable
 				UIInternalLink.make(tofill, "item-remove-link", UIMessage.make("controlitems.remove.link"), 
 						new ItemViewParameters(RemoveItemProducer.VIEW_ID, itemId, templateItemId));
@@ -252,7 +246,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 		   // SCALED items need to choose a scale
 			UIBranchContainer showItemScale = UIBranchContainer.make(form, "show-item-scale:");
 			UIMessage.make(showItemScale, "item-scale-header", "modifyitem.item.scale.header");
-			List<EvalScale> scales = scalesLogic.getScalesForUser(currentUserId, null);
+			List<EvalScale> scales = authoringService.getScalesForUser(currentUserId, null);
 			if (scales.isEmpty()) {
 			   throw new IllegalStateException("There are no scales available in the system for creating scaled items, please create at least one scale");
 			}

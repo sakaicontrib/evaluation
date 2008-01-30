@@ -15,8 +15,8 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import java.util.List;
 
+import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.EvalScalesLogic;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.viewparams.EvalScaleParameters;
@@ -44,15 +44,16 @@ public class ControlScalesProducer implements ViewComponentProducer {
 		return VIEW_ID;
 	}
 
-	private EvalScalesLogic scalesLogic;
-	public void setScalesLogic(EvalScalesLogic scalesLogic) {
-		this.scalesLogic = scalesLogic;
-	}
-
 	private EvalExternalLogic external;
 	public void setExternal(EvalExternalLogic external) {
 		this.external = external;
 	}
+
+   private EvalAuthoringService authoringService;
+   public void setAuthoringService(EvalAuthoringService authoringService) {
+      this.authoringService = authoringService;
+   }
+
 
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
@@ -81,7 +82,7 @@ public class ControlScalesProducer implements ViewComponentProducer {
 		UIMessage.make(tofill, "scales-control-instruction", "scalecontrol.page.instruction");
 
 		//Get all the scales that are owned by a user
-		List<EvalScale> scaleList = scalesLogic.getScalesForUser(currentUserId, null);
+		List<EvalScale> scaleList = authoringService.getScalesForUser(currentUserId, null);
 		for (int i = 0; i < scaleList.size(); ++i) {
 			EvalScale scale = scaleList.get(i);
 
@@ -112,14 +113,14 @@ public class ControlScalesProducer implements ViewComponentProducer {
 			 * it is more efficient to avoid a cycle by checking the local data first (i.e. getLocked() call)
 			 */
 			if (! scale.getLocked().booleanValue() &&
-					scalesLogic.canModifyScale(currentUserId, scale.getId()) ) {
+			      authoringService.canModifyScale(currentUserId, scale.getId()) ) {
 				UIInternalLink.make(listOfScales, "modify-sidelink", 
 						UIMessage.make("scalecontrol.modify.link"), 
 						new EvalScaleParameters(ModifyScaleProducer.VIEW_ID, scale.getId()));
 			}
 
 			if (! scale.getLocked().booleanValue() &&
-					scalesLogic.canRemoveScale(currentUserId, scale.getId()) ) {
+			      authoringService.canRemoveScale(currentUserId, scale.getId()) ) {
 				UIInternalLink.make(listOfScales, "remove-sidelink", 
 						UIMessage.make("scalecontrol.remove.link"), 
 						new EvalScaleParameters(RemoveScaleProducer.VIEW_ID, scale.getId()));

@@ -16,7 +16,7 @@ package org.sakaiproject.evaluation.logic.impl.entity;
 
 import org.sakaiproject.entitybroker.entityprovider.CoreEntityProvider;
 import org.sakaiproject.entitybroker.entityprovider.capabilities.AutoRegisterEntityProvider;
-import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
+import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.entity.TemplateEntityProvider;
 
 /**
@@ -26,10 +26,10 @@ import org.sakaiproject.evaluation.logic.entity.TemplateEntityProvider;
  */
 public class TemplateEntityProviderImpl implements TemplateEntityProvider, CoreEntityProvider, AutoRegisterEntityProvider {
 
-	private EvalTemplatesLogic templatesLogic;
-	public void setTemplatesLogic(EvalTemplatesLogic templatesLogic) {
-		this.templatesLogic = templatesLogic;
-	}
+	private EvalAuthoringService authoringService;
+   public void setAuthoringService(EvalAuthoringService authoringService) {
+      this.authoringService = authoringService;
+   }
 
 
 	/* (non-Javadoc)
@@ -46,7 +46,7 @@ public class TemplateEntityProviderImpl implements TemplateEntityProvider, CoreE
 		Long templateId;
 		try {
 			templateId = new Long(id);
-			if (templatesLogic.getTemplateById(templateId) != null) {
+			if (authoringService.getTemplateById(templateId) != null) {
 				return true;
 			}
 		} catch (NumberFormatException e) {

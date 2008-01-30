@@ -21,9 +21,8 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.EvalItemsLogic;
-import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -46,15 +45,10 @@ public class ExpertItemsBean {
 		this.external = external;
 	}
 
-	private EvalItemsLogic itemsLogic;
-	public void setItemsLogic(EvalItemsLogic itemsLogic) {
-		this.itemsLogic = itemsLogic;
-	}
-
-	private EvalTemplatesLogic templatesLogic;
-	public void setTemplatesLogic(EvalTemplatesLogic templatesLogic) {
-		this.templatesLogic = templatesLogic;
-	}
+   private EvalAuthoringService authoringService;
+   public void setAuthoringService(EvalAuthoringService authoringService) {
+      this.authoringService = authoringService;
+   }
 
 	public void init() {
 		log.debug("init");
@@ -75,7 +69,7 @@ public class ExpertItemsBean {
 		String level = EvalConstants.HIERARCHY_LEVEL_TOP;
 		String nodeId = EvalConstants.HIERARCHY_NODE_ID_NONE;
 
-		EvalTemplate template = templatesLogic.getTemplateById(templateId);
+		EvalTemplate template = authoringService.getTemplateById(templateId);
 		if (EvalConstants.TEMPLATE_TYPE_ADDED.equals( template.getType() )) {
 			// TODO change the level and node based on current settings
 			level = EvalConstants.HIERARCHY_LEVEL_INSTRUCTOR;
@@ -84,7 +78,7 @@ public class ExpertItemsBean {
 
 		for (Iterator<String> iter = selectedIds.keySet().iterator(); iter.hasNext(); ) {
 			Long itemId = new Long(iter.next());
-			EvalItem item = itemsLogic.getItemById(itemId);
+			EvalItem item = authoringService.getItemById(itemId);
 			if (item == null) {
 				log.error("Invalid item id: " + itemId);
 				continue;
@@ -94,7 +88,7 @@ public class ExpertItemsBean {
 				EvalTemplateItem templateItem = 
 					new EvalTemplateItem(new Date(), currentUserId,	
 							template, item, null, null, level, nodeId);
-				itemsLogic.saveTemplateItem(templateItem, currentUserId);
+				authoringService.saveTemplateItem(templateItem, currentUserId);
 				log.info("Added new item (" + item.getId() + ") to template (" + template.getId() + ") via templateItem (" + templateItem.getId() + ")");
 			}
 		}

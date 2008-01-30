@@ -22,9 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
-import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.utils.ComparatorsUtils;
 import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.model.EvalAnswer;
@@ -57,19 +55,9 @@ public class ReportHandlerHook implements HandlerHook {
 
     private static Log log = LogFactory.getLog(ReportHandlerHook.class);
 
-    private EvalSettings evalSettings;
-    public void setEvalSettings(EvalSettings evalSettings) {
-        this.evalSettings = evalSettings;
-    }
-    
     private ViewParameters viewparams;
     public void setViewparams(ViewParameters viewparams) {
         this.viewparams = viewparams;
-    }
-
-    private EvalItemsLogic itemsLogic;
-    public void setItemsLogic(EvalItemsLogic itemsLogic) {
-        this.itemsLogic = itemsLogic;
     }
 
     private EvalEvaluationsLogic evalsLogic;
@@ -132,21 +120,21 @@ public class ReportHandlerHook implements HandlerHook {
          * does not take array of groups ids.
          *   
          */
-        List responseIds = responsesLogic.getEvalResponseIds(drvp.evalId, drvp.groupIds, true);
+        List<Long> responseIds = responsesLogic.getEvalResponseIds(drvp.evalId, drvp.groupIds, true);
         int numOfResponses = responseIds.size();
 
         //add a row for each response
         for (int i = 0; i < numOfResponses; i++) {
-            List currResponseRow = new ArrayList();
+           List<String> currResponseRow = new ArrayList<String>();
             responseRows.add(currResponseRow);
         }
 
         //get all items
-        List allItems = new ArrayList(template.getTemplateItems());
+        List<EvalTemplateItem> allItems = new ArrayList<EvalTemplateItem>(template.getTemplateItems());
 
         if (!allItems.isEmpty()) {
             //filter out the block child items, to get a list non-child items
-            List ncItemsList = TemplateItemUtils.getNonChildItems(allItems);
+            List<EvalTemplateItem> ncItemsList = TemplateItemUtils.getNonChildItems(allItems);
             Collections.sort(ncItemsList, new ComparatorsUtils.TemplateItemComparatorByOrder());
             //for each item
             for (int i = 0; i < ncItemsList.size(); i++) {
@@ -165,7 +153,7 @@ public class ReportHandlerHook implements HandlerHook {
                     allEvalItems.add(item1);
 
                     //get all answers to this item within this evaluation
-                    List itemAnswers = responsesLogic.getEvalAnswers(item1.getId(), drvp.evalId, drvp.groupIds);
+                    List<EvalAnswer> itemAnswers = responsesLogic.getEvalAnswers(item1.getId(), drvp.evalId, drvp.groupIds);
                     updateResponseList(numOfResponses, responseIds, responseRows, itemAnswers, tempItem1, item1);
 
                 }
@@ -175,13 +163,13 @@ public class ReportHandlerHook implements HandlerHook {
                     topRow.add(item1.getItemText());
                     allEvalItems.add(item1);
                     for (int j = 0; j < numOfResponses; j++) {
-                        List currRow = (List) responseRows.get(j);
+                        List<String> currRow = responseRows.get(j);
                         //add blank response to block parent row
                         currRow.add("");
                     }
 
                     //get child block items
-                    List childList = itemsLogic.getBlockChildTemplateItemsForBlockParent(tempItem1.getId(), false);
+                    List<EvalTemplateItem> childList = TemplateItemUtils.getChildItems(allItems, tempItem1.getId());
                     for (int j = 0; j < childList.size(); j++) {
                         EvalTemplateItem tempItemChild = (EvalTemplateItem) childList.get(j);
                         allEvalTemplateItems.add(tempItemChild);
@@ -190,7 +178,7 @@ public class ReportHandlerHook implements HandlerHook {
                         topRow.add(child.getItemText());
                         allEvalItems.add(child);
                         //get all answers to the child item within this eval
-                        List itemAnswers = responsesLogic.getEvalAnswers(child.getId(), drvp.evalId, drvp.groupIds);
+                        List<EvalAnswer> itemAnswers = responsesLogic.getEvalAnswers(child.getId(), drvp.evalId, drvp.groupIds);
                         updateResponseList(numOfResponses, responseIds, responseRows, itemAnswers, tempItemChild, child);
                     }
                 }
@@ -233,7 +221,7 @@ public class ReportHandlerHook implements HandlerHook {
      * @param tempItem1 EvalTemplateItem object for which the answers are fetched
      * @param item1 EvalItem object for which the answers are fetched
      */
-    private void updateResponseList(int numOfResponses, List responseIds, List responseRows, List itemAnswers,
+    private void updateResponseList(int numOfResponses, List<Long> responseIds, List<List<String>> responseRows, List<EvalAnswer> itemAnswers,
             EvalTemplateItem tempItem1, EvalItem item1) {
 
         /* 
@@ -248,7 +236,7 @@ public class ReportHandlerHook implements HandlerHook {
          */
         int actualIndexOfResponse = 0;
         int idealIndexOfResponse = 0;
-        List currRow = null;
+        List<String> currRow = null;
         int lengthOfAnswers = itemAnswers.size();
         for (int j = 0; j < lengthOfAnswers; j++) {
 
@@ -258,7 +246,7 @@ public class ReportHandlerHook implements HandlerHook {
             // Fill empty answers if the answer corresponding to a response is not in itemAnswers list. 
             if (actualIndexOfResponse > idealIndexOfResponse) {
                 for (int count = idealIndexOfResponse; count < actualIndexOfResponse; count++) {
-                    currRow = (List) responseRows.get(idealIndexOfResponse);
+                    currRow = responseRows.get(idealIndexOfResponse);
                     currRow.add(" ");
                 }
             }
@@ -268,7 +256,7 @@ public class ReportHandlerHook implements HandlerHook {
              * If text/essay type item just add the text 
              * else (scaled type or block child, which is also scaled) item then look up the label
              */
-            currRow = (List) responseRows.get(actualIndexOfResponse);
+            currRow = responseRows.get(actualIndexOfResponse);
             if (TemplateItemUtils.getTemplateItemType(tempItem1).equals(EvalConstants.ITEM_TYPE_TEXT)) {
                 currRow.add(currAnswer.getText());
             } else {
@@ -285,7 +273,7 @@ public class ReportHandlerHook implements HandlerHook {
 
         // If empty answers occurs at end such that all responses have not been filled.
         for (int count = idealIndexOfResponse; count < numOfResponses; count++) {
-            currRow = (List) responseRows.get(idealIndexOfResponse);
+            currRow = responseRows.get(idealIndexOfResponse);
             currRow.add(" ");
         }
 

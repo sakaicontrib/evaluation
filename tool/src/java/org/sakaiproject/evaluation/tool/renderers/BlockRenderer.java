@@ -16,7 +16,7 @@ package org.sakaiproject.evaluation.tool.renderers;
 
 import java.util.List;
 
-import org.sakaiproject.evaluation.logic.EvalItemsLogic;
+import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.utils.ArrayUtils;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
@@ -45,10 +45,10 @@ import uk.org.ponder.rsf.components.decorators.UIFreeAttributeDecorator;
  */
 public class BlockRenderer implements ItemRenderer {
 
-	private EvalItemsLogic itemsLogic;
-	public void setItemsLogic( EvalItemsLogic itemsLogic) {
-		this.itemsLogic = itemsLogic;
-	}
+   private EvalAuthoringService authoringService;
+   public void setAuthoringService(EvalAuthoringService authoringService) {
+      this.authoringService = authoringService;
+   }
 
 	/**
 	 * This identifies the template component associated with this renderer
@@ -70,7 +70,7 @@ public class BlockRenderer implements ItemRenderer {
 		}
 
 		// check that the child count matches the bindings count
-		List<EvalTemplateItem> childList = itemsLogic.getBlockChildTemplateItemsForBlockParent(templateItem.getId(), false);
+		List<EvalTemplateItem> childList = authoringService.getBlockChildTemplateItemsForBlockParent(templateItem.getId(), false);
 		if ( !disabled && (childList.size() != bindings.length) ) {
 			throw new IllegalArgumentException("The bindings array ("+bindings.length+") must match the size of the block child count ("+childList.size()+")");
 		}

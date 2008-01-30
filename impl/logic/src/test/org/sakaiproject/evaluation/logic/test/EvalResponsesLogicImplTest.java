@@ -23,8 +23,9 @@ import junit.framework.Assert;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.impl.EvalItemsLogicImpl;
+import org.sakaiproject.evaluation.logic.impl.EvalAuthoringServiceImpl;
 import org.sakaiproject.evaluation.logic.impl.EvalResponsesLogicImpl;
+import org.sakaiproject.evaluation.logic.impl.EvalSecurityChecks;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
@@ -86,6 +87,11 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
          throw new NullPointerException("EvalSettings could not be retrieved from spring evalGroupId");
       }
 
+      EvalSecurityChecks securityChecks = (EvalSecurityChecks) applicationContext.getBean("org.sakaiproject.evaluation.logic.impl.EvalSecurityChecks");
+      if (securityChecks == null) {
+         throw new NullPointerException("EvalSecurityChecks could not be retrieved from spring context");
+      }
+
       EvalEvaluationService evaluationService = (EvalEvaluationService) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalEvaluationService");
       if (evaluationService == null) {
          throw new NullPointerException("EvalEvaluationService could not be retrieved from spring context");
@@ -94,10 +100,11 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
       // setup the mock objects if needed
 
       // create the other needed logic impls
-      EvalItemsLogicImpl itemsLogicImpl = new EvalItemsLogicImpl();
-      itemsLogicImpl.setDao(evaluationDao);
-      itemsLogicImpl.setExternalLogic( new MockEvalExternalLogic() );
-      itemsLogicImpl.setEvalSettings(settings);
+      EvalAuthoringServiceImpl authoringServiceImpl = new EvalAuthoringServiceImpl();
+      authoringServiceImpl.setDao(evaluationDao);
+      authoringServiceImpl.setExternalLogic( new MockEvalExternalLogic() );
+      authoringServiceImpl.setSettings(settings);
+      authoringServiceImpl.setSecurityChecks(securityChecks);
 
       // create and setup the object to be tested
       responses = new EvalResponsesLogicImpl();
@@ -105,7 +112,7 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
       responses.setExternalLogic( new MockEvalExternalLogic() );
       responses.setEvaluationService(evaluationService);
       responses.setEvalSettings(settings);
-      responses.setItemsLogic( itemsLogicImpl ); // put created object in
+      responses.setAuthoringService( authoringServiceImpl );
    }
 
    // run this before each test starts and as part of the transaction

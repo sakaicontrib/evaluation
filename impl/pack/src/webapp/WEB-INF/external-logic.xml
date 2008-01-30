@@ -50,9 +50,8 @@
 		<property name="evalEmailsLogic" ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
 		<property name="evalEvaluationsLogic" ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
 		<property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-		<property name="evalItemsLogic" ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
-		<property name="evalScalesLogic" ref="org.sakaiproject.evaluation.logic.EvalScalesLogic" />
-		<property name="evalTemplatesLogic" ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
+        <property name="authoringService"
+            ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
         <property name="contentHostingService" ref="org.sakaiproject.content.api.ContentHostingService" />
         <property name="sessionManager" ref="org.sakaiproject.tool.api.SessionManager" />
 	</bean>

@@ -1,5 +1,5 @@
 /******************************************************************************
- * ShowEvalCategoryProducer.java - recreated by aaronz on 30 May 2007
+ * PreviewEvalProducer.java - recreated by aaronz on 30 May 2007
  * 
  * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0
@@ -18,10 +18,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.EvalItemsLogic;
-import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
@@ -67,14 +66,9 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
         this.external = external;
     }
 
-    private EvalTemplatesLogic templatesLogic;
-    public void setTemplatesLogic(EvalTemplatesLogic templatesLogic) {
-        this.templatesLogic = templatesLogic;
-    }
-
-    private EvalItemsLogic itemsLogic;
-    public void setItemsLogic( EvalItemsLogic itemsLogic) {
-        this.itemsLogic = itemsLogic;
+    private EvalAuthoringService authoringService;
+    public void setAuthoringService(EvalAuthoringService authoringService) {
+       this.authoringService = authoringService;
     }
 
     private ItemRenderer itemRenderer;
@@ -87,7 +81,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
         this.messageLocator = messageLocator;
     }
 
-
+    List<EvalTemplateItem> allItems = new ArrayList<EvalTemplateItem>();
     int displayedItems = 1; //  determines the number to display next to each item
     int colorCounter = 0; // used to determine whether to color the background of an item
 
@@ -122,7 +116,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
             // previewing a template
             UIMessage.make(tofill, "preview-title", "previeweval.template.title");
             // load up the template
-            template = templatesLogic.getTemplateById(templateId);
+            template = authoringService.getTemplateById(templateId);
             // create a fake evaluation
             eval = new EvalEvaluation(new Date(), currentUserId, messageLocator.getMessage("previeweval.evaluation.title.default"), 
                     new Date(), new Date(), new Date(), new Date(), EvalConstants.EVALUATION_STATE_INQUEUE, new Integer(1),
@@ -158,10 +152,10 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
         // TODO - rendering logic is identical to take evals page, should be put into a common util class -AZ
 
         // get items(parent items, child items --need to set order
-        List allItems = new ArrayList(template.getTemplateItems());
+        allItems = new ArrayList<EvalTemplateItem>(template.getTemplateItems()); // LAZY LOAD
         if (! allItems.isEmpty()) {
             // filter out the block child items, to get a list of ordered non-child items
-            List ncItemsList = TemplateItemUtils.getNonChildItems(allItems);
+            List<EvalTemplateItem> ncItemsList = TemplateItemUtils.getNonChildItems(allItems);
 
             // check if there are any "Course" items or "Instructor" items;
             UIBranchContainer courseSection = null;
@@ -227,7 +221,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
         // use the renderer evolver
         itemRenderer.renderItem(itemsBranch, "previewed-item:", null, templateItem, displayedItems, true);
         if(TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)){
-            List childList = itemsLogic.getBlockChildTemplateItemsForBlockParent(templateItem.getId(), false);
+            List<EvalTemplateItem> childList = TemplateItemUtils.getChildItems(allItems, templateItem.getId());
             displayedItems += childList.size();
         } else if (TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_HEADER)) { 
             // no change, do not count header

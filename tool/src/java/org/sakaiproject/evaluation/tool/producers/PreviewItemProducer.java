@@ -15,7 +15,7 @@
 
 package org.sakaiproject.evaluation.tool.producers;
 
-import org.sakaiproject.evaluation.logic.EvalItemsLogic;
+import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -43,10 +43,10 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 		return VIEW_ID;
 	}
 
-	private EvalItemsLogic itemsLogic;
-	public void setItemsLogic( EvalItemsLogic itemsLogic) {
-		this.itemsLogic = itemsLogic;
-	}
+   private EvalAuthoringService authoringService;
+   public void setAuthoringService(EvalAuthoringService authoringService) {
+      this.authoringService = authoringService;
+   }
 
 	private ItemRenderer itemRenderer;
 	public void setItemRenderer(ItemRenderer itemRenderer) {
@@ -71,9 +71,9 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
 		ItemViewParameters previewItemViewParams = (ItemViewParameters) viewparams;
 		EvalTemplateItem templateItem = null;
 		if (previewItemViewParams.templateItemId != null) {
-			templateItem = itemsLogic.getTemplateItemById(previewItemViewParams.templateItemId);
+			templateItem = authoringService.getTemplateItemById(previewItemViewParams.templateItemId);
 		} else if (previewItemViewParams.itemId != null) {
-			EvalItem item = itemsLogic.getItemById(previewItemViewParams.itemId);
+			EvalItem item = authoringService.getItemById(previewItemViewParams.itemId);
 			templateItem = TemplateItemUtils.makeTemplateItem(item);
 		} else {
 			throw new IllegalArgumentException("Must have itemId or templateItemId to do preview");

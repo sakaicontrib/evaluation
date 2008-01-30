@@ -23,9 +23,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
+import org.sakaiproject.evaluation.logic.EvalAuthoringService;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
@@ -86,15 +86,15 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
       this.external = external;
    }
 
-   private EvalEvaluationsLogic evalsLogic;
-   public void setEvalsLogic(EvalEvaluationsLogic evalsLogic) {
-      this.evalsLogic = evalsLogic;
+   private EvalAuthoringService authoringService;
+   public void setAuthoringService(EvalAuthoringService authoringService) {
+      this.authoringService = authoringService;
    }
 
-   private EvalItemsLogic itemsLogic;
-   public void setItemsLogic(EvalItemsLogic itemsLogic) {
-      this.itemsLogic = itemsLogic;
-   }    
+   private EvalEvaluationService evaluationService;
+   public void setEvaluationService(EvalEvaluationService evaluationService) {
+      this.evaluationService = evaluationService;
+   }
 
    ItemRenderer itemRenderer;
    public void setItemRenderer(ItemRenderer itemRenderer) {
@@ -156,7 +156,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
       responseId = evalTakeViewParams.responseId;
 
       // get the evaluation based on the passed in VPs
-      EvalEvaluation eval = evalsLogic.getEvaluationById(evaluationId);
+      EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
       if (eval == null) {
          throw new IllegalArgumentException("Invalid evaluationId ("+evaluationId+"), cannot load evaluation");
       }
@@ -166,7 +166,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 
       // check the states of the evaluation first to give the user a tip that this eval is not takeable,
       // also avoids wasting time checking permissions when the evaluation certainly is closed
-      String evalStatus = evalsLogic.updateEvaluationState(evaluationId); // make sure state is up to date
+      String evalStatus = evaluationService.updateEvaluationState(evaluationId); // make sure state is up to date
       if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(evalStatus)) {
          UIMessage.make(tofill, "eval-cannot-take-message", "takeeval.eval.not.open", 
                new String[] {df.format(eval.getStartDate()), df.format(eval.getDueDate())} );
@@ -183,13 +183,13 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
          // eval is accessible so check user can take it
          if (evalGroupId != null) {
             // there was an eval group passed in so make sure things are ok
-            if (evalsLogic.canTakeEvaluation(currentUserId, evaluationId, evalGroupId)) {
+            if (evaluationService.canTakeEvaluation(currentUserId, evaluationId, evalGroupId)) {
                userCanAccess = true;
             }
          } else {
             // select the first eval group the current user can take evaluation in,
             // also store the total number so we can give the user a list to choose from if there are more than one
-            Map<Long, List<EvalAssignGroup>> m = evalsLogic.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
+            Map<Long, List<EvalAssignGroup>> m = evaluationService.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
             List<EvalGroup> validGroups = new ArrayList<EvalGroup>(); // stores EvalGroup objects
             if ( external.isUserAdmin(currentUserId) ) {
                // special case, the super admin can always access
@@ -220,7 +220,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                }
                for (int i = 0; i < evalGroups.length; i++) {
                   EvalGroup group = evalGroups[i];
-                  if (evalsLogic.canTakeEvaluation(currentUserId, evaluationId, group.evalGroupId)) {
+                  if (evaluationService.canTakeEvaluation(currentUserId, evaluationId, group.evalGroupId)) {
                      if (evalGroupId == null) {
                         // set the evalGroupId to the first valid group if unset
                         evalGroupId = group.evalGroupId;
@@ -301,7 +301,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
          }
 
          // get all items for this evaluation
-         allItems = itemsLogic.getTemplateItemsForEvaluation(evaluationId, evalHierNodeIDs, instructors.toArray(new String[instructors.size()]), new String[] {evalGroupId});
+         allItems = authoringService.getTemplateItemsForEvaluation(evaluationId, evalHierNodeIDs, instructors.toArray(new String[instructors.size()]), new String[] {evalGroupId});
 
          // filter out the block child items, to get a list non-child items
          List<EvalTemplateItem> nonChildItemsList = TemplateItemUtils.getNonChildItems(allItems);

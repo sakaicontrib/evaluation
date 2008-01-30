@@ -17,7 +17,7 @@ package org.sakaiproject.evaluation.tool.producers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.sakaiproject.evaluation.logic.EvalExpertItemsLogic;
+import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.tool.viewparams.ExpertItemViewParameters;
@@ -60,10 +60,11 @@ public class ExpertItemsProducer implements ViewComponentProducer, NavigationCas
 	}
 
 	// Spring injection
-	private EvalExpertItemsLogic expertItemsLogic;
-	public void setExpertItemsLogic(EvalExpertItemsLogic expertItemsLogic) {
-		this.expertItemsLogic = expertItemsLogic;
-	}
+   private EvalAuthoringService authoringService;
+   public void setAuthoringService(EvalAuthoringService authoringService) {
+      this.authoringService = authoringService;
+   }
+
 
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
@@ -100,10 +101,10 @@ public class ExpertItemsProducer implements ViewComponentProducer, NavigationCas
 		UIMessage.make(tofill, "choose-items-3", "expert.choose.items");
 
 		UIMessage.make(tofill, "category", "expert.category");
-		EvalItemGroup category = expertItemsLogic.getItemGroupById(categoryId);
+		EvalItemGroup category = authoringService.getItemGroupById(categoryId);
 		UIOutput.make(tofill, "category-current", category.getTitle() );
 		UIMessage.make(tofill, "objective", "expert.objective");
-		EvalItemGroup objective = expertItemsLogic.getItemGroupById(objectiveId);
+		EvalItemGroup objective = authoringService.getItemGroupById(objectiveId);
 		UIOutput.make(tofill, "objective-current", objective.getTitle() );
 		UIMessage.make(tofill, "items", "expert.items");
 		UIMessage.make(tofill, "items-instructions", "expert.items.instructions");
@@ -113,7 +114,7 @@ public class ExpertItemsProducer implements ViewComponentProducer, NavigationCas
 		UIForm form = UIForm.make(tofill, "insert-items-form");
 
 		// loop through all expert items
-		List expertItems = expertItemsLogic.getItemsInItemGroup(objectiveId, true);
+		List<EvalItem> expertItems = authoringService.getItemsInItemGroup(objectiveId, true);
 		for (int i = 0; i < expertItems.size(); i++) {
 			EvalItem expertItem = (EvalItem) expertItems.get(i);
 			UIBranchContainer items = UIBranchContainer.make(form, "expert-item-list:", expertItem.getId().toString());

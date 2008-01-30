@@ -19,10 +19,8 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.EvalItemsLogic;
-import org.sakaiproject.evaluation.logic.EvalScalesLogic;
-import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
@@ -65,25 +63,14 @@ public class ItemsBean {
     public String classification;
     public Long templateId;
 
-
-    private EvalItemsLogic itemsLogic;
-    public void setItemsLogic(EvalItemsLogic itemsLogic) {
-        this.itemsLogic = itemsLogic;
-    }
-
-    private EvalTemplatesLogic templatesLogic;
-    public void setTemplatesLogic(EvalTemplatesLogic templatesLogic) {
-        this.templatesLogic = templatesLogic;
-    }
-
     private EvalExternalLogic external;
     public void setExternal(EvalExternalLogic external) {
         this.external = external;
     }
 
-    private EvalScalesLogic scalesLogic;
-    public void setScalesLogic(EvalScalesLogic scalesLogic) {
-        this.scalesLogic = scalesLogic;
+    private EvalAuthoringService authoringService;
+    public void setAuthoringService(EvalAuthoringService authoringService) {
+       this.authoringService = authoringService;
     }
 
 
@@ -113,7 +100,7 @@ public class ItemsBean {
         this.scaleValues = new ArrayList();
         this.scaleLabels = new ArrayList();
 
-        list = scalesLogic.getScalesForUser(external.getCurrentUserId(), null);// logic.getScales(Boolean.FALSE);
+        list = authoringService.getScalesForUser(external.getCurrentUserId(), null);// logic.getScales(Boolean.FALSE);
         for (int count = 0; count < list.size(); count++) {
             scaleOptionsStr = "";
             String[] scaleOptionsArr = ((EvalScale) list.get(count)).getOptions();
@@ -180,11 +167,11 @@ public class ItemsBean {
     public String saveItemAction() {
         templateItem.getItem().setScaleDisplaySetting(templateItem.getScaleDisplaySetting());
         templateItem.getItem().setUsesNA(templateItem.getUsesNA());
-        templateItem.setTemplate(templatesLogic.getTemplateById(templateId));
+        templateItem.setTemplate(authoringService.getTemplateById(templateId));
         templateItem.getItem().setSharing(templateItem.getTemplate().getSharing());
         templateItem.getItem().setCategory(templateItem.getItemCategory());
         if (scaleId != null)
-            templateItem.getItem().setScale(scalesLogic.getScaleById(scaleId));
+            templateItem.getItem().setScale(authoringService.getScaleById(scaleId));
         /* This is a temporary hack that is only good while we are only using TOP LEVEL and NODE LEVEL.
          * Basically, we're putting everything in one combo box and this is a good way to check to see if
          * it's the top node.  Otherwise the user selected a node id so it must be at the NODE LEVEL since
@@ -198,8 +185,8 @@ public class ItemsBean {
                 && templateItem.getHierarchyNodeId().equals(EvalConstants.HIERARCHY_NODE_ID_NONE)) {
             templateItem.setHierarchyLevel(EvalConstants.HIERARCHY_LEVEL_TOP);
         }
-        itemsLogic.saveItem(templateItem.getItem(), external.getCurrentUserId());
-        itemsLogic.saveTemplateItem(templateItem, external.getCurrentUserId());
+        authoringService.saveItem(templateItem.getItem(), external.getCurrentUserId());
+        authoringService.saveTemplateItem(templateItem, external.getCurrentUserId());
         return "success";
     }
 
@@ -215,7 +202,7 @@ public class ItemsBean {
      * @deprecated
      */
     public void fetchTemplateItem(Long templateItemId) {
-        templateItem = itemsLogic.getTemplateItemById(templateItemId);
+        templateItem = authoringService.getTemplateItemById(templateItemId);
     }
 
 }

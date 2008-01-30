@@ -18,10 +18,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.EvalItemsLogic;
-import org.sakaiproject.evaluation.logic.EvalScalesLogic;
-import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
@@ -43,20 +41,11 @@ public class LocalTemplateLogic {
       this.external = external;
    }
 
-   private EvalTemplatesLogic templatesLogic;
-   public void setTemplatesLogic(EvalTemplatesLogic templatesLogic) {
-      this.templatesLogic = templatesLogic;
+   private EvalAuthoringService authoringService;
+   public void setAuthoringService(EvalAuthoringService authoringService) {
+      this.authoringService = authoringService;
    }
 
-   private EvalItemsLogic itemsLogic;
-   public void setItemsLogic(EvalItemsLogic itemsLogic) {
-      this.itemsLogic = itemsLogic;
-   }
-
-   private EvalScalesLogic scalesLogic;
-   public void setScalesLogic(EvalScalesLogic scalesLogic) {
-      this.scalesLogic = scalesLogic;
-   }
 
 
    /*
@@ -67,11 +56,11 @@ public class LocalTemplateLogic {
    // TEMPLATES
 
    public EvalTemplate fetchTemplate(Long templateId) {
-      return templatesLogic.getTemplateById(templateId);
+      return authoringService.getTemplateById(templateId);
    }
 
    public void saveTemplate(EvalTemplate tosave) {
-      templatesLogic.saveTemplate(tosave, external.getCurrentUserId());
+      authoringService.saveTemplate(tosave, external.getCurrentUserId());
    }
 
    public EvalTemplate newTemplate() {
@@ -86,14 +75,14 @@ public class LocalTemplateLogic {
    // TEMPLATE ITEMS
 
    public EvalTemplateItem fetchTemplateItem(Long itemId) {
-      return itemsLogic.getTemplateItemById(itemId);
+      return authoringService.getTemplateItemById(itemId);
    }
 
    public List<EvalTemplateItem> fetchTemplateItems(Long templateId) {
       if (templateId == null) {
          return new ArrayList<EvalTemplateItem>();
       } else {
-         return itemsLogic.getTemplateItemsForTemplate(templateId, new String[] {}, null, null);
+         return authoringService.getTemplateItemsForTemplate(templateId, new String[] {}, null, null);
       }
    }
 
@@ -134,7 +123,7 @@ public class LocalTemplateLogic {
          // failure to associate an item with this templateItem
          throw new IllegalStateException("No item is associated with this templateItem (the item is null) so it cannot be saved");
       }
-      itemsLogic.saveTemplateItem(templateItem, external.getCurrentUserId());
+      authoringService.saveTemplateItem(templateItem, external.getCurrentUserId());
    }
 
 
@@ -147,13 +136,13 @@ public class LocalTemplateLogic {
     */
    public void deleteTemplateItem(Long templateItemId) {
       String currentUserId = external.getCurrentUserId();
-      if (! itemsLogic.canControlTemplateItem(currentUserId, templateItemId)) {
+      if (! authoringService.canControlTemplateItem(currentUserId, templateItemId)) {
          throw new SecurityException("User ("+currentUserId+") cannot control this template item ("+templateItemId+")");
       }
 
-      EvalTemplateItem templateItem = itemsLogic.getTemplateItemById(templateItemId);
+      EvalTemplateItem templateItem = authoringService.getTemplateItemById(templateItemId);
       // get a list of all template items in this template
-      List<EvalTemplateItem> allTemplateItems = itemsLogic.getTemplateItemsForTemplate(templateItem.getTemplate().getId(), null, null, null);
+      List<EvalTemplateItem> allTemplateItems = authoringService.getTemplateItemsForTemplate(templateItem.getTemplate().getId(), null, null, null);
       // get the list of items without child items included
       List<EvalTemplateItem> noChildList = TemplateItemUtils.getNonChildItems(allTemplateItems);
 
@@ -168,8 +157,8 @@ public class LocalTemplateLogic {
 
          // delete parent template item and item
          Long itemId = templateItem.getItem().getId();
-         itemsLogic.deleteTemplateItem(templateItem.getId(), currentUserId);
-         itemsLogic.deleteItem(itemId, currentUserId);
+         authoringService.deleteTemplateItem(templateItem.getId(), currentUserId);
+         authoringService.deleteItem(itemId, currentUserId);
 
          // modify block children template items
          for (int i = 0; i < childList.size(); i++) {
@@ -177,12 +166,12 @@ public class LocalTemplateLogic {
             child.setBlockParent(null);
             child.setBlockId(null);
             child.setDisplayOrder(new Integer(removedItemDisplayOrder + i));
-            itemsLogic.saveTemplateItem(child, currentUserId);
+            authoringService.saveTemplateItem(child, currentUserId);
          }
 
       } else { // non-block cases
          removedItemDisplayOrder = templateItem.getDisplayOrder().intValue();
-         itemsLogic.deleteTemplateItem(templateItem.getId(), currentUserId);
+         authoringService.deleteTemplateItem(templateItem.getId(), currentUserId);
       }
 
       // shift display-order of items below removed item
@@ -191,7 +180,7 @@ public class LocalTemplateLogic {
          int order = ti.getDisplayOrder().intValue();
          if (order > removedItemDisplayOrder) {
             ti.setDisplayOrder(new Integer(order + orderAdjust - 1));
-            itemsLogic.saveTemplateItem(ti, currentUserId);
+            authoringService.saveTemplateItem(ti, currentUserId);
          }
       }
    }
@@ -200,16 +189,16 @@ public class LocalTemplateLogic {
    // ITEMS
 
    public EvalItem fetchItem(Long itemId) {
-      return itemsLogic.getItemById(itemId);
+      return authoringService.getItemById(itemId);
    }
 
    public void saveItem(EvalItem item) {
       connectScaleToItem(item);
-      itemsLogic.saveItem(item, external.getCurrentUserId());
+      authoringService.saveItem(item, external.getCurrentUserId());
    }
 
    public void deleteItem(Long id) {
-      itemsLogic.deleteItem(id, external.getCurrentUserId());
+      authoringService.deleteItem(id, external.getCurrentUserId());
    }
 
    public EvalItem newItem() {
@@ -224,7 +213,7 @@ public class LocalTemplateLogic {
    // SCALES
 
    public EvalScale fetchScale(Long scaleId) {
-      EvalScale scale = scalesLogic.getScaleById(scaleId);
+      EvalScale scale = authoringService.getScaleById(scaleId);
       // TODO - hopefully this if block is only needed temporarily until RSF 0.7.3
       if (scale.getIdeal() == null) {
          scale.setIdeal(EvaluationConstant.NULL);
@@ -238,11 +227,11 @@ public class LocalTemplateLogic {
             scale.getIdeal().equals(EvaluationConstant.NULL)) {
          scale.setIdeal(null);
       }
-      scalesLogic.saveScale(scale, external.getCurrentUserId());
+      authoringService.saveScale(scale, external.getCurrentUserId());
    }
 
    public void deleteScale(Long id) {
-      scalesLogic.deleteScale(id, external.getCurrentUserId());
+      authoringService.deleteScale(id, external.getCurrentUserId());
    }
 
    public EvalScale newScale() {
@@ -300,7 +289,7 @@ public class LocalTemplateLogic {
                if (item.getScale().getId() != null && 
                      item.getScale().getOwner() == null) {
                   // this is an existing scale and we need to turn the fake one into a real one so hibernate can make the connection
-                  item.setScale(scalesLogic.getScaleById(item.getScale().getId()));
+                  item.setScale(authoringService.getScaleById(item.getScale().getId()));
                }
             }
          } else {
@@ -322,7 +311,7 @@ public class LocalTemplateLogic {
 //         Long templateId = tosave.getTemplate().getId();
 //         if (templateId != null) {
 //            // this lookup is needed so hibernate can make the connection
-//            tosave.setTemplate(templatesLogic.getTemplateById(templateId));
+//            tosave.setTemplate(authoringService.getTemplateById(templateId));
 //         } else {
 //            // the template was not set correctly so we have to die
 //            throw new NullPointerException("id is not set for the template for this templateItem (" + tosave +

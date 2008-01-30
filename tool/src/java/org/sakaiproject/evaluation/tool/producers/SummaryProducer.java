@@ -23,11 +23,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.sakaiproject.evaluation.logic.EvalAuthoringService;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -75,6 +76,16 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		this.externalLogic = externalLogic;
 	}
 
+	private EvalAuthoringService authoringService;
+   public void setAuthoringService(EvalAuthoringService authoringService) {
+      this.authoringService = authoringService;
+   }
+
+   private EvalEvaluationService evaluationService;
+   public void setEvaluationService(EvalEvaluationService evaluationService) {
+      this.evaluationService = evaluationService;
+   }
+
 	private EvalEvaluationsLogic evaluationsLogic;
 	public void setEvaluationsLogic(EvalEvaluationsLogic evaluationsLogic) {
 		this.evaluationsLogic = evaluationsLogic;
@@ -83,11 +94,6 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 	private EvalResponsesLogic responsesLogic;
 	public void setResponsesLogic(EvalResponsesLogic responsesLogic) {
 		this.responsesLogic = responsesLogic;
-	}
-
-	private EvalTemplatesLogic templatesLogic;
-	public void setTemplatesLogic(EvalTemplatesLogic templatesLogic) {
-		this.templatesLogic = templatesLogic;
 	}
 
 	private EvalSettings settings;
@@ -110,8 +116,8 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		String currentUserId = externalLogic.getCurrentUserId();
 		String currentGroup = externalLogic.getCurrentEvalGroup();
 		boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
-		boolean createTemplate = templatesLogic.canCreateTemplate(currentUserId);
-		boolean beginEvaluation = evaluationsLogic.canBeginEvaluation(currentUserId);
+		boolean createTemplate = authoringService.canCreateTemplate(currentUserId);
+		boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
 		// use a date which is related to the current users locale
 		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
 
@@ -169,7 +175,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			}
 
 			// now fetch all the information we care about for these evaluations at once (for speed)
-			Map<Long, List<EvalGroup>> evalGroups = evaluationsLogic.getEvaluationGroups(evalIds, false);
+			Map<Long, List<EvalGroup>> evalGroups = evaluationService.getEvaluationGroups(evalIds, false);
 			List<EvalResponse> evalResponses = responsesLogic.getEvaluationResponses(currentUserId, evalIds, true);
 
 			for (Iterator<EvalEvaluation> itEvals = evalsToTake.iterator(); itEvals.hasNext();) {
@@ -307,7 +313,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 
 				Date date;
 
-				String evalStatus = evaluationsLogic.updateEvaluationState(eval.getId());
+				String evalStatus = evaluationService.updateEvaluationState(eval.getId());
             if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(evalStatus)) {
                date = eval.getStartDate();
                UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalStatus);
@@ -451,7 +457,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 	private int getTotalEnrollmentsForEval(Long evaluationId) {
 		int totalEnrollments = 0;
 
-		Map<Long, List<EvalAssignGroup>> evalAssignGroups = evaluationsLogic.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
+		Map<Long, List<EvalAssignGroup>> evalAssignGroups = evaluationService.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
 		List<EvalAssignGroup> groups = evalAssignGroups.get(evaluationId);
 		for (int i=0; i<groups.size(); i++) {
 			EvalAssignGroup eac = (EvalAssignGroup) groups.get(i);
