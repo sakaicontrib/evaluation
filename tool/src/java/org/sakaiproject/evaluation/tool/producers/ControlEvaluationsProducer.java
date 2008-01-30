@@ -21,11 +21,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.logic.entity.EvalCategoryEntityProvider;
 import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
@@ -84,10 +84,10 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 		this.evaluationsLogic = evaluationsLogic;
 	}
 
-	private EvalTemplatesLogic templatesLogic;
-	public void setTemplatesLogic(EvalTemplatesLogic templatesLogic) {
-		this.templatesLogic = templatesLogic;
-	}
+   private EvalAuthoringService authoringService;
+   public void setAuthoringService(EvalAuthoringService authoringService) {
+      this.authoringService = authoringService;
+   }
 
 	private EvalResponsesLogic responsesLogic;
 	public void setResponsesLogic(EvalResponsesLogic responsesLogic) {
@@ -108,7 +108,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 		// local variables used in the render logic
 		String currentUserId = externalLogic.getCurrentUserId();
 		boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
-		boolean createTemplate = templatesLogic.canCreateTemplate(currentUserId);
+		boolean createTemplate = authoringService.canCreateTemplate(currentUserId);
 		boolean beginEvaluation = evaluationsLogic.canBeginEvaluation(currentUserId);
 		// use a date which is related to the current users locale
 		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);

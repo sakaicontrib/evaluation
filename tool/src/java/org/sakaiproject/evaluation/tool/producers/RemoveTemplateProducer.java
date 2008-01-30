@@ -16,8 +16,8 @@ package org.sakaiproject.evaluation.tool.producers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
@@ -40,7 +40,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * This page allows the user to remove templates
  * 
  * @author Aaron Zeckosi [rewrite]
- * @author: Rui Feng (fengr@vt.edu)
+ * @author Rui Feng (fengr@vt.edu)
  */
 public class RemoveTemplateProducer implements ViewComponentProducer, NavigationCaseReporter, ViewParamsReporter {
 
@@ -54,10 +54,10 @@ public class RemoveTemplateProducer implements ViewComponentProducer, Navigation
 		this.externalLogic = externalLogic;
 	}
 
-	private EvalTemplatesLogic templatesLogic;
-	public void setTemplatesLogic(EvalTemplatesLogic templatesLogic) {
-		this.templatesLogic = templatesLogic;
-	}
+   private EvalAuthoringService authoringService;
+   public void setAuthoringService(EvalAuthoringService authoringService) {
+      this.authoringService = authoringService;
+   }
 
 	
 	/* (non-Javadoc)
@@ -80,9 +80,9 @@ public class RemoveTemplateProducer implements ViewComponentProducer, Navigation
 		TemplateViewParameters evalViewParams = (TemplateViewParameters) viewparams;
 		
 		if (evalViewParams.templateId != null) {
-			EvalTemplate template = templatesLogic.getTemplateById(evalViewParams.templateId);
+			EvalTemplate template = authoringService.getTemplateById(evalViewParams.templateId);
 
-			if (templatesLogic.canRemoveTemplate(currentUserId, template.getId())) {
+			if (authoringService.canRemoveTemplate(currentUserId, template.getId())) {
 				// Can remove template
 				UIBranchContainer removeDiv = UIBranchContainer.make(tofill,"removeDiv:");
 				UIMessage.make(removeDiv, "remove-template-confirm-text", "removetemplate.confirm.text", new Object[] {template.getTitle()});

@@ -45,12 +45,8 @@
 		class="org.sakaiproject.evaluation.tool.LocalTemplateLogic">
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-		<property name="templatesLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalTemplatesLogic" />
-		<property name="itemsLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
-		<property name="scalesLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalScalesLogic" />
+		<property name="authoringService"
+			ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
 	</bean>
 
 	<bean id="localResponsesLogic"
@@ -130,7 +126,7 @@
                 <bean class="org.sakaiproject.evaluation.tool.renderers.MultipleChoiceRenderer" />
                 <bean class="org.sakaiproject.evaluation.tool.renderers.MultipleAnswerRenderer" />
 				<bean class="org.sakaiproject.evaluation.tool.renderers.BlockRenderer">
-					<property name="itemsLogic"
+					<property name="authoringService"
 						ref="org.sakaiproject.evaluation.logic.EvalItemsLogic" />
 				</bean>
 			</list>

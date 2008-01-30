@@ -41,12 +41,10 @@ import org.jdom.xpath.XPath;
 import org.sakaiproject.content.api.ContentHostingService;
 import org.sakaiproject.content.api.ContentResource;
 import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
+import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.EvalItemsLogic;
-import org.sakaiproject.evaluation.logic.EvalScalesLogic;
-import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalImport;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
@@ -68,7 +66,8 @@ import org.sakaiproject.tool.api.SessionManager;
 public class EvalImportImpl implements EvalImport {
 	
 	private static final Log log = LogFactory.getLog(EvalImportImpl.class);
-	
+
+	// FIXME - these events should be in the authoring service instead of in the import
 	private final String SEPARATOR = "/";           // max-32:12345678901234567890123456789012
 	private final String EVENT_SCALE_SAVE = "evaluation.scale.save";
 	private final String EVENT_SCALE_UPDATE = "evaluation.scale.update";
@@ -104,18 +103,10 @@ public class EvalImportImpl implements EvalImport {
 	public void setExternalLogic(EvalExternalLogic externalLogic) {
 		this.externalLogic = externalLogic;
 	}
-	private EvalItemsLogic evalItemsLogic;
-	public void setEvalItemsLogic(EvalItemsLogic evalItemsLogic) {
-		this.evalItemsLogic = evalItemsLogic;
-	}
-	private EvalScalesLogic evalScalesLogic;
-	public void setEvalScalesLogic(EvalScalesLogic evalScalesLogic) {
-		this.evalScalesLogic = evalScalesLogic;
-	}
-	private EvalTemplatesLogic evalTemplatesLogic;
-	public void setEvalTemplatesLogic(EvalTemplatesLogic evalTemplatesLogic) {
-		this.evalTemplatesLogic = evalTemplatesLogic;
-	}
+   private EvalAuthoringService authoringService;
+   public void setAuthoringService(EvalAuthoringService authoringService) {
+      this.authoringService = authoringService;
+   }
 	private SessionManager sessionManager;
 	public void setSessionManager(SessionManager sessionManager) {
 		this.sessionManager = sessionManager;
@@ -231,7 +222,7 @@ public class EvalImportImpl implements EvalImport {
 				try {
 					Element element = (Element)iter.next();
 					eid = element.getChildText("EID");
-					scale = evalScalesLogic.getScaleByEid(eid);
+					scale = authoringService.getScaleByEid(eid);
 					if(scale == null) {
 						//create new
 						scale = newScale(element);
@@ -244,7 +235,7 @@ public class EvalImportImpl implements EvalImport {
 					}
 					
 					//save or update
-					evalScalesLogic.saveScale(scale, currentUserId);
+					authoringService.saveScale(scale, currentUserId);
 					externalLogic.registerEntityEvent(event, scale);
 					scalesSaved++;
 					
@@ -301,7 +292,7 @@ public class EvalImportImpl implements EvalImport {
 				try {
 					Element element = (Element)iter.next();
 					eid = element.getChildText("EID");
-					item = evalItemsLogic.getItemByEid(eid);
+					item = authoringService.getItemByEid(eid);
 					if(item == null) {
 						//create new
 						item = newItem(element);
@@ -314,7 +305,7 @@ public class EvalImportImpl implements EvalImport {
 					}
 					
 					//save or update
-					evalItemsLogic.saveItem(item, currentUserId);
+					authoringService.saveItem(item, currentUserId);
 					externalLogic.registerEntityEvent(event, item);
 					itemsSaved++;
 					
@@ -376,7 +367,7 @@ public class EvalImportImpl implements EvalImport {
 				try {
 					Element element = (Element)iter.next();
 					eid = element.getChildText("EID");
-					template = evalTemplatesLogic.getTemplateByEid(eid);
+					template = authoringService.getTemplateByEid(eid);
 					if(template == null) {
 						//create new
 						template = newTemplate(element);
@@ -388,7 +379,7 @@ public class EvalImportImpl implements EvalImport {
 						event = EVENT_TEMPLATE_UPDATE;
 					}
 					
-					evalTemplatesLogic.saveTemplate(template, currentUserId);
+					authoringService.saveTemplate(template, currentUserId);
 					externalLogic.registerEntityEvent(event, template);
 					templatesSaved++;
 					
@@ -444,8 +435,8 @@ public class EvalImportImpl implements EvalImport {
 					Element element = (Element)iter.next();
 					eid = element.getChildText("EID");
 					String templateEid = element.getChildText("TEMPLATE_EID");
-					EvalTemplate template = evalTemplatesLogic.getTemplateByEid(templateEid);
-					EvalTemplateItem templateItem = evalItemsLogic.getTemplateItemByEid(eid);
+					EvalTemplate template = authoringService.getTemplateByEid(templateEid);
+					EvalTemplateItem templateItem = authoringService.getTemplateItemByEid(eid);
 					if(template != null && templateItem == null) {
 						//create new
 						templateItem = newTemplateItem(element);
@@ -456,7 +447,7 @@ public class EvalImportImpl implements EvalImport {
 						setTemplateItemProperties(templateItem, element);
 						event = EVENT_TEMPLATEITEM_UPDATE;
 					}
-					evalItemsLogic.saveTemplateItem(templateItem, currentUserId);
+					authoringService.saveTemplateItem(templateItem, currentUserId);
 					externalLogic.registerEntityEvent(event, templateItem);
 					templateItemsSaved++;
 					
@@ -755,9 +746,9 @@ public class EvalImportImpl implements EvalImport {
 					blockParent = new Boolean(Boolean.TRUE);
 			}
 			String itemEid = element.getChildText("ITEM_EID");
-			EvalItem item = evalItemsLogic.getItemByEid(itemEid);
+			EvalItem item = authoringService.getItemByEid(itemEid);
 			String templateEid = element.getChildText("TEMPLATE_EID");
-			EvalTemplate template = evalTemplatesLogic.getTemplateByEid(templateEid);
+			EvalTemplate template = authoringService.getTemplateByEid(templateEid);
 			
 			Integer displayRows = null;
 			EvalScale scale = null;
@@ -865,11 +856,11 @@ public class EvalImportImpl implements EvalImport {
 			evalTemplateItem.setBlockParent(blockParent);
 			
 			String itemEid = element.getChildText("ITEM_EID");
-			EvalItem item = evalItemsLogic.getItemByEid(itemEid);
+			EvalItem item = authoringService.getItemByEid(itemEid);
 			evalTemplateItem.setItem(item);
 			
 			String templateEid = element.getChildText("TEMPLATE_EID");
-			EvalTemplate template = evalTemplatesLogic.getTemplateByEid(templateEid);
+			EvalTemplate template = authoringService.getTemplateByEid(templateEid);
 			evalTemplateItem.setTemplate(template);
 		
 			String itemCategory = item.getCategory();
@@ -1043,7 +1034,7 @@ public class EvalImportImpl implements EvalImport {
 				String scaleEid = element.getChildText("SCALE_EID");
 				if(scaleEid != null && scaleEid.trim().length() != 0)
 				{
-					scale = evalScalesLogic.getScaleByEid(scaleEid);
+					scale = authoringService.getScaleByEid(scaleEid);
 					if(scale == null) {
 						log.warn("EvalScale is null for EvalItem with eid '" + eid + "' " + element.getChildText("ITEM_TEXT"));
 						messages.add("EvalScale is null for EvalItem with eid '" + eid + "' " + element.getChildText("ITEM_TEXT"));
@@ -1125,7 +1116,7 @@ public class EvalImportImpl implements EvalImport {
 				String scaleEid = element.getChildText("SCALE_EID");
 				if(scaleEid != null && scaleEid.trim().length() != 0)
 				{
-					EvalScale scale = evalScalesLogic.getScaleByEid(scaleEid);
+					EvalScale scale = authoringService.getScaleByEid(scaleEid);
 					if(scale != null) {
 						item.setScale(scale);
 					}
@@ -1252,7 +1243,7 @@ public class EvalImportImpl implements EvalImport {
 			Date instructorsDate = getDate(element.getChildText("INSTRUCTORS_DATE"));
 			EvalEmailTemplate availableEmailTemplate = evalEmailsLogic.getDefaultEmailTemplate(element.getChildText("AVAILABLE_EMAIL_TEMPLATE"));
 			EvalEmailTemplate reminderEmailTemplate = evalEmailsLogic.getDefaultEmailTemplate(element.getChildText("REMINDER_EMAIL_TEMPLATE"));
-			EvalTemplate template = evalTemplatesLogic.getTemplateByEid(element.getChildText("TEMPLATE_EID"));
+			EvalTemplate template = authoringService.getTemplateByEid(element.getChildText("TEMPLATE_EID"));
 			String instructions = element.getChildText("INSTRUCTIONS");
 			if( instructions == null || instructions.trim().equals("")){
 				instructions = null;
@@ -1348,7 +1339,7 @@ public class EvalImportImpl implements EvalImport {
 			
 			evaluation.setAvailableEmailTemplate(evalEmailsLogic.getDefaultEmailTemplate(element.getChildText("AVAILABLE_EMAIL_TEMPLATE")));
 			evaluation.setReminderEmailTemplate(evalEmailsLogic.getDefaultEmailTemplate(element.getChildText("REMINDER_EMAIL_TEMPLATE")));
-			evaluation.setTemplate(evalTemplatesLogic.getTemplateByEid(element.getChildText("TEMPLATE_EID")));
+			evaluation.setTemplate(authoringService.getTemplateByEid(element.getChildText("TEMPLATE_EID")));
 			
 			String instructions = element.getChildText("INSTRUCTIONS");
 			if( instructions == null || instructions.trim().equals("")){

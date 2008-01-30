@@ -1,5 +1,5 @@
 /**
- * $Id: MockEvalJobLogic.java 1000 Jan 25, 2008 10:07:31 AM azeckoski $
+ * $Id: EvalResponsesLogicImpl.java 1000 Jan 25, 2008 10:07:31 AM azeckoski $
  * $URL: https://source.sakaiproject.org/contrib $
  * EvalResponsesLogicImpl.java - evaluation - Dec 25, 2006 10:07:31 AM - azeckoski
  **************************************************************************
@@ -24,9 +24,9 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
+import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.EvalItemsLogic;
 import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.utils.ArrayUtils;
@@ -69,9 +69,9 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
       this.evalSettings = evalSettings;
    }
 
-   private EvalItemsLogic itemsLogic;
-   public void setItemsLogic(EvalItemsLogic itemsLogic) {
-      this.itemsLogic = itemsLogic;
+   private EvalAuthoringService authoringService;
+   public void setAuthoringService(EvalAuthoringService authoringService) {
+      this.authoringService = authoringService;
    }
 
 
@@ -376,7 +376,7 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
       EvalEvaluation eval = response.getEvaluation();
       Long evalId = eval.getId();
       // TODO - make this more efficient by limiting the nodes, instructors, and groups
-      List<EvalTemplateItem> allTemplateItems = itemsLogic.getTemplateItemsForEvaluation(evalId, new String[] {}, new String[] {}, new String[] {});
+      List<EvalTemplateItem> allTemplateItems = authoringService.getTemplateItemsForEvaluation(evalId, new String[] {}, new String[] {}, new String[] {});
 
       // OLD - this should use a method elsewhere -AZ
 //      EvalEvaluation eval = response.getEvaluation();

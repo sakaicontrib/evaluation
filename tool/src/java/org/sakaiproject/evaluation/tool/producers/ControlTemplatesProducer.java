@@ -18,9 +18,9 @@ import java.text.DateFormat;
 import java.util.List;
 import java.util.Locale;
 
-import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
+import org.sakaiproject.evaluation.logic.EvalAuthoringService;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
@@ -56,15 +56,15 @@ public class ControlTemplatesProducer implements ViewComponentProducer {
 		this.external = external;
 	}
 
-	private EvalTemplatesLogic templatesLogic;
-	public void setTemplatesLogic(EvalTemplatesLogic templatesLogic) {
-		this.templatesLogic = templatesLogic;
-	}
-	
-	private EvalEvaluationsLogic evaluationsLogic;
-	public void setEvaluationsLogic(EvalEvaluationsLogic evaluationsLogic) {
-		this.evaluationsLogic = evaluationsLogic;
-	}
+   private EvalAuthoringService authoringService;
+   public void setAuthoringService(EvalAuthoringService authoringService) {
+      this.authoringService = authoringService;
+   }
+   
+   private EvalEvaluationService evaluationService;
+   public void setEvaluationService(EvalEvaluationService evaluationService) {
+      this.evaluationService = evaluationService;
+   }
 
 	private Locale locale;
 	public void setLocale(Locale locale) {
@@ -80,8 +80,8 @@ public class ControlTemplatesProducer implements ViewComponentProducer {
 		// local variables used in the render logic
 		String currentUserId = external.getCurrentUserId();
 		boolean userAdmin = external.isUserAdmin(currentUserId);
-		boolean createTemplate = templatesLogic.canCreateTemplate(currentUserId);
-		boolean beginEvaluation = evaluationsLogic.canBeginEvaluation(currentUserId);
+		boolean createTemplate = authoringService.canCreateTemplate(currentUserId);
+		boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
 		// use a date which is related to the current users locale
 		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
 
@@ -127,7 +127,7 @@ public class ControlTemplatesProducer implements ViewComponentProducer {
 				new TemplateViewParameters(ModifyTemplateProducer.VIEW_ID, null));
 
 		// get templates for the current user
-		List<EvalTemplate> templates = templatesLogic.getTemplatesForUser(currentUserId, null, true);
+		List<EvalTemplate> templates = authoringService.getTemplatesForUser(currentUserId, null, true);
 		if (templates.size() > 0) {
 			UIBranchContainer templateListing = UIBranchContainer.make(tofill, "template-listing:");
 
@@ -142,7 +142,7 @@ public class ControlTemplatesProducer implements ViewComponentProducer {
 
 				// local locked check is more efficient so do that first
 				if ( ! template.getLocked().booleanValue() &&
-						templatesLogic.canModifyTemplate(currentUserId, template.getId()) ) {
+				      authoringService.canModifyTemplate(currentUserId, template.getId()) ) {
                 	// template controllable
 					UIInternalLink.make(templateRow, "template-modify-link", template.getTitle(), 
 							new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, template.getId()));
@@ -153,7 +153,7 @@ public class ControlTemplatesProducer implements ViewComponentProducer {
 
 				// local locked check is more efficient so do that first
 				if ( ! template.getLocked().booleanValue() &&
-						templatesLogic.canRemoveTemplate(currentUserId, template.getId()) ) {
+				      authoringService.canRemoveTemplate(currentUserId, template.getId()) ) {
 					UIInternalLink.make(templateRow, "delete-template-link", 
 							new TemplateViewParameters( RemoveTemplateProducer.VIEW_ID, template.getId() ));
 				} else {

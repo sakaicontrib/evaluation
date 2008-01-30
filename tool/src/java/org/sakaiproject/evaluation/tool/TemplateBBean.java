@@ -20,7 +20,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.sakaiproject.evaluation.logic.EvalItemsLogic;
+import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
@@ -60,10 +60,11 @@ public class TemplateBBean {
 		this.templateBeanLocator = templateBeanLocator;
 	}
 
-	private EvalItemsLogic itemsLogic;
-	public void setItemsLogic(EvalItemsLogic itemsLogic) {
-		this.itemsLogic = itemsLogic;
-	}
+   private EvalAuthoringService authoringService;
+   public void setAuthoringService(EvalAuthoringService authoringService) {
+      this.authoringService = authoringService;
+   }
+
 
 
 	public Long templateId;
@@ -127,7 +128,7 @@ public class TemplateBBean {
 	public void saveReorder() { 
 		log.info("save items reordering");
 		Map<String, EvalTemplateItem> delivered = templateItemWBL.getDeliveredBeans();
-		List<EvalTemplateItem> l = itemsLogic.getTemplateItemsForTemplate(templateId, null, null, null);
+		List<EvalTemplateItem> l = authoringService.getTemplateItemsForTemplate(templateId, null, null, null);
 		List<EvalTemplateItem> ordered = TemplateItemUtils.getNonChildItems(l);
 		for (int i = 1; i <= ordered.size();) {
 			EvalTemplateItem item = (EvalTemplateItem) ordered.get(i - 1);
@@ -182,12 +183,12 @@ public class TemplateBBean {
 			if (parent != null) {
 				
 				if ((blockTextChoice != null) && (!blockTextChoice.equals(TemplateItemWBL.NEW_1))) {
-					item = itemsLogic.getTemplateItemById(Long.valueOf(blockTextChoice));
+					item = authoringService.getTemplateItemById(Long.valueOf(blockTextChoice));
 					parent.getItem().setItemText(item.getItem().getItemText());
 				}
 				
 				else
-					item = itemsLogic.getTemplateItemById(Long.valueOf(orderedChildIdList.get(0)));
+					item = authoringService.getTemplateItemById(Long.valueOf(orderedChildIdList.get(0)));
 				
 				parent.setTemplate(item.getTemplate());
 				parent.getItem().setScale(item.getItem().getScale());
@@ -205,12 +206,12 @@ public class TemplateBBean {
 			}
 			
 			else
-				parent = itemsLogic.getTemplateItemById(Long.valueOf(blockTextChoice));
+				parent = authoringService.getTemplateItemById(Long.valueOf(blockTextChoice));
 			
 			// set parent's display order to the original display order of the first selected template item
 			parent.setDisplayOrder(originalDisplayOrder);
 			
-			allTemplateItems = itemsLogic.getTemplateItemsForTemplate(parent.getTemplate().getId(), null, null, null);
+			allTemplateItems = authoringService.getTemplateItemsForTemplate(parent.getTemplate().getId(), null, null, null);
 			Long parentId = parent.getId();
 			List<EvalTemplateItem> blockChildren = null;
 			
@@ -225,7 +226,7 @@ public class TemplateBBean {
 			// iterate through templateItemIdList and add all non-block items (including the children of block items in templateItemIdList) 
 			for (String itemId : templateItemIdList) {
 				
-				item = itemsLogic.getTemplateItemById(Long.valueOf(itemId));
+				item = authoringService.getTemplateItemById(Long.valueOf(itemId));
 				
 				if (TemplateItemUtils.getTemplateItemType(item).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)) { // block parent
 					
@@ -251,7 +252,7 @@ public class TemplateBBean {
 			} // end for
 			
 			// shifting the order of the other items in the template
-			allTemplateItems = itemsLogic.getTemplateItemsForTemplate(parent.getTemplate().getId(), null, null, null);
+			allTemplateItems = authoringService.getTemplateItemsForTemplate(parent.getTemplate().getId(), null, null, null);
 			List<EvalTemplateItem> nonChildList = TemplateItemUtils.getNonChildItems(allTemplateItems);
 			
 			if ((originalDisplayOrder.intValue() < nonChildList.size()) && (nonChildList.get(originalDisplayOrder.intValue()).getId() == parentId)) {
@@ -271,7 +272,7 @@ public class TemplateBBean {
 			}
 			
 		} else { // modify block
-			parent = itemsLogic.getTemplateItemById(Long.valueOf(blockId));
+			parent = authoringService.getTemplateItemById(Long.valueOf(blockId));
 			saveBlockChildrenOrder(parent.getId(), orderedChildIdList);
 			setIdealColorForBlockParent(parent);
 			localTemplateLogic.saveItem(parent.getItem());
@@ -283,7 +284,7 @@ public class TemplateBBean {
 	
 	private void saveBlockChildrenOrder(Long parentId, List<String> orderedChildIdList) {
 		
-		List<EvalTemplateItem> blockChildren = itemsLogic.getBlockChildTemplateItemsForBlockParent(parentId, false);
+		List<EvalTemplateItem> blockChildren = authoringService.getBlockChildTemplateItemsForBlockParent(parentId, false);
 		
 		for (EvalTemplateItem child : blockChildren) {
 			child.setDisplayOrder(new Integer(orderedChildIdList.indexOf(child.getId().toString()) + 1));

@@ -29,11 +29,11 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
+import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.EvalTemplatesLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.logic.utils.EvalUtils;
@@ -71,9 +71,9 @@ public class EvaluationBean {
       this.external = external;
    }
 
-   private EvalTemplatesLogic templatesLogic;
-   public void setTemplatesLogic( EvalTemplatesLogic templatesLogic) {
-      this.templatesLogic = templatesLogic;
+   private EvalAuthoringService authoringService;
+   public void setAuthoringService(EvalAuthoringService authoringService) {
+      this.authoringService = authoringService;
    }
 
    private EvalEvaluationsLogic evalsLogic;
@@ -231,7 +231,7 @@ public class EvaluationBean {
       eval.setReminderFromEmail(s);
 
       //find the template associated with this evaluation
-      listOfTemplates = templatesLogic.getTemplatesForUser(external.getCurrentUserId(), null, false);
+      listOfTemplates = authoringService.getTemplatesForUser(external.getCurrentUserId(), null, false);
       int count = 0;
       if (listOfTemplates != null) {
          while (count < listOfTemplates.size()) {
@@ -548,7 +548,7 @@ public class EvaluationBean {
       }
 
       // need to load the template here before we try to save it because it is stale -AZ
-      eval.setTemplate( templatesLogic.getTemplateById( eval.getTemplate().getId() ) );
+      eval.setTemplate( authoringService.getTemplateById( eval.getTemplate().getId() ) );
 
       //The main evaluation section with all the settings.
       eval.setOwner(external.getCurrentUserId());
@@ -741,7 +741,7 @@ public class EvaluationBean {
    public String removeTemplateAction() {
       String currentUserId = external.getCurrentUserId();
       Long templateId = new Long(tmplId);
-      templatesLogic.deleteTemplate(templateId, currentUserId);
+      authoringService.deleteTemplate(templateId, currentUserId);
       return "success";
    }
 
