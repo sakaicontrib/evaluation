@@ -16,17 +16,6 @@
 	</configs>
 	<configSets>
 		<configSet>
-			<name><![CDATA[TEST]]></name>
-			<allowBeanDefinitionOverriding>false</allowBeanDefinitionOverriding>
-			<incomplete>true</incomplete>
-			<configs>
-				<config>impl/dao/src/test/hibernate-test.xml</config>
-				<config>impl/pack/src/webapp/WEB-INF/logic-support.xml</config>
-				<config>impl/pack/src/webapp/WEB-INF/entity-providers.xml</config>
-				<config>impl/pack/src/webapp/WEB-INF/hibernate-hbms.xml</config>
-			</configs>
-		</configSet>
-		<configSet>
 			<name><![CDATA[RSF]]></name>
 			<allowBeanDefinitionOverriding>false</allowBeanDefinitionOverriding>
 			<incomplete>true</incomplete>
@@ -39,6 +28,16 @@
 				<config>tool/src/webapp/WEB-INF/applicationContext.xml</config>
 				<config>tool/src/webapp/WEB-INF/requestContext.xml</config>
 				<config>impl/pack/src/webapp/WEB-INF/external-logic.xml</config>
+			</configs>
+		</configSet>
+		<configSet>
+			<name><![CDATA[TEST]]></name>
+			<allowBeanDefinitionOverriding>false</allowBeanDefinitionOverriding>
+			<incomplete>true</incomplete>
+			<configs>
+				<config>impl/dao/src/test/hibernate-test.xml</config>
+				<config>impl/pack/src/webapp/WEB-INF/logic-support.xml</config>
+				<config>impl/pack/src/webapp/WEB-INF/hibernate-hbms.xml</config>
 			</configs>
 		</configSet>
 	</configSets>
