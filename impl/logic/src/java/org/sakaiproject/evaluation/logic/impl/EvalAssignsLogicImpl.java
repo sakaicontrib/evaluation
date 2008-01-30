@@ -156,7 +156,7 @@ public class EvalAssignsLogicImpl implements EvalAssignsLogic {
          if(EvalConstants.INSTRUCTOR_OPT_IN.equals(eval.getInstructorOpt()) && 
                assignGroup.getInstructorApproval().booleanValue() && 
                assignGroup.getEvaluation().getStartDate().before(new Date())) {
-            // FIXME Everything in this if statement should be factored out into a method by itself
+            // FIXME Everything in this if statement should be factored out into a method by itself OR removed completely
             emails.sendEvalAvailableGroupNotification(assignGroup.getEvaluation().getId(), assignGroup.getEvalGroupId());
             if(!evalJobLogic.isJobTypeScheduled(assignGroup.getEvaluation().getId(), EvalConstants.JOB_TYPE_REMINDER)) {
                //we need to also schedule a reminder
