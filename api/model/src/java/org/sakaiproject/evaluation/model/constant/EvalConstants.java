@@ -524,26 +524,26 @@ public class EvalConstants {
 	public static final String EMAIL_TEMPLATE_DEFAULT_CONSOLIDATED_AVAILABLE = "defaultConsolidatedAvailable";
 	
 	public static final String EMAIL_CONSOLIDATED_AVAILABLE_DEFAULT_TEXT = 
-		"A course evaluation for one or more of your classes is available through $EarliestDueDate. You " +
-		"are asked to fill out course evaluations in the My Workspace area of CTools, which is " +
+		"A Teaching Questionnaire for one or more of your classes is available through $EarliestDueDate. You " +
+		"are asked to fill out Teaching Questionnaires in the My Workspace area of CTools, which is " +
 		"available from this link:\n\n" +
-		"$MyWorkspaceDashboard\n\n" + 
-		"You will need to provide a U-M uniqname and password to access the course " + 
-		"evaluation site.  This identification is required to ensure that only authorized students " +
-		"submit evaluations and that each student submits only one evaluation per class.  Note, however, " +
+		"	$MyWorkspaceDashboard\n\n" + 
+		"You will need to provide a U-M uniqname and password to access the Teaching Questionnaires " + 
+		"site.  This identification is required to ensure that only authorized students " +
+		"submit questionnaires and that each student submits only one questionnaire per class.  Note, however, " +
 		"that teachers and administrators will not have access to any identifying information you " +
 		"submit, and they will not be able to associate specific ratings or comments with " +
 		"specific students.\n\n" +
-		"Thank you in advance for submitting your course evaluations and helping the " +
+		"Thank you in advance for submitting your Teaching Questionnaires and helping the " +
 		"University maintain and improve the quality of its teaching.\n\n" +
 		"If the above link is not working then please follow the Alternate Instructions at the bottom of the message.\n\n" +
 		"------------------------------------------------------------\n" +
-		"Should you encounter any technical difficulty in viewing the evaluation results, please send an email to $HelpdeskEmail " +
+		"Should you encounter any technical difficulty in viewing the Teaching Questionnaires, please send an email to $HelpdeskEmail " +
 		"clearly indicating the problem you encountered. For any other concerns please contact your department.\n\n" +
 		"Alternate Instructions: \n" +
 		"1) Go to $URLtoSystem \n" +
 		"2) Enter your username and password and click on 'Login' button. \n" +
-		"3) Click on 'Evaluation System' in the left navigation menu under My Workspace. \n" +
+		"3) Click on 'Teaching Questionnaires' in the left navigation menu under My Workspace. \n" +
 		"4) Click on a link under 'Current evaluations to take'. \n";
 		
 	public static final String EMAIL_TEMPLATE_CONSOLIDATED_REMINDER = "ConsolidatedReminder";
@@ -551,26 +551,26 @@ public class EvalConstants {
 	public static final String EMAIL_TEMPLATE_DEFAULT_CONSOLIDATED_REMINDER = "defaultConsolidatedReminder";
 	
 	public static final String EMAIL_CONSOLIDATED_REMINDER_DEFAULT_TEXT = 
-		"A course evaluation for one or more of your classes is available through $EarliestDueDate. You " +
-		"are asked to fill out course evaluations in the My Workspace area of CTools, which is " +
+		"A Teaching Questionnaire for one or more of your classes is available through $EarliestDueDate. You " +
+		"are asked to fill out Teaching Questionnaires in the My Workspace area of CTools, which is " +
 		"available from this link:\n\n" +
 		"	$MyWorkspaceDashboard\n\n" + 
-		"You will need to provide a U-M uniqname and password to access the course " + 
-		"evaluation site.  This identification is required to ensure that only authorized students " +
-		"submit evaluations and that each student submits only one evaluation per class.  Note, however, " +
+		"You will need to provide a U-M uniqname and password to access the Teaching Questionnaires " + 
+		"site.  This identification is required to ensure that only authorized students " +
+		"submit questionnaires  and that each student submits only one questionnaire per class.  Note, however, " +
 		"that teachers and administrators will not have access to any identifying information you " +
 		"submit, and they will not be able to associate specific ratings or comments with " +
 		"specific students.\n\n" +
-		"Thank you in advance for submitting your course evaluations and helping the " +
+		"Thank you in advance for submitting your Teaching Questionnaires and helping the " +
 		"University maintain and improve the quality of its teaching.\n\n" +
 		"If the above link is not working then please follow the Alternate Instructions at the bottom of the message.\n\n" +
 		"------------------------------------------------------------\n" +
-		"Should you encounter any technical difficulty in viewing the evaluation results, please send an email to $HelpdeskEmail " +
+		"Should you encounter any technical difficulty in viewing the Teaching Questionnaires, please send an email to $HelpdeskEmail " +
 		"clearly indicating the problem you encountered. For any other concerns please contact your department.\n\n" +
 		"Alternate Instructions: \n" +
 		"1) Go to $URLtoSystem \n" +
 		"2) Enter your username and password and click on 'Login' button. \n" +
-		"3) Click on 'Evaluation System' in the left navigation menu under My Workspace. \n" +
+		"3) Click on 'Teaching Questionnaires' in the left navigation menu under My Workspace. \n" +
 		"4) Click on a link under 'Current evaluations to take'. \n";
 		
 	public static final String EMAIL_TEMPLATE_CONSOLIDATED_SUBJECT = "ConsolidatedSubject";
@@ -578,7 +578,7 @@ public class EvalConstants {
 	public static final String EMAIL_TEMPLATE_DEFAULT_CONSOLIDATED_SUBJECT = "defaultConsolidatedSubject";
 		
 	public static final String EMAIL_CONSOLIDATED_SUBJECT_DEFAULT_TEXT = 
-		"Course evaluation available through $EarliestDueDate \n";
+		"Teaching Questionnaires available through $EarliestDueDate \n";
 
 	/**
 	 * Notification: Include all users who have not taken the evaluation yet

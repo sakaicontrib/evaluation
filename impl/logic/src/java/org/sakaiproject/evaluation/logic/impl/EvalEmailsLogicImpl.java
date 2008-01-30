@@ -621,6 +621,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
     * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendEvalConsolidatedAvailableNotification()
     */
    public void sendEvalConsolidatedAvailable() {
+	   if(log.isWarnEnabled())
+		   log.warn("sendEvalConsolidatedAvailable() called by Job Scheduler.");
 		EvalGroup group = null;
 		Set<String> uniqueIds = new HashSet<String>();
 		List<EvalGroup> groupList = null;
@@ -628,6 +630,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		Long[] evaluationIds = new Long[] {};
 		evaluationIds = evaluationLogic
 				.getActiveEvaluationIdsByAvailableEmailSent(Boolean.FALSE);
+		if(log.isWarnEnabled())
+			   log.warn("sendEvalConsolidatedAvailable() number of evaluations is " + (new Integer(evaluationIds.length)).toString());
 		// get unique student recipients
 		if (evaluationIds != null && evaluationIds.length > 0) {
 			// get groups associated with evaluations
@@ -656,16 +660,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
     * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendEvalConsolidatedReminderNotification()
     */
    public void sendEvalConsolidatedReminder() {
-	   
-	   //delivery option
-	   //	none
-	   //	log
-	   //	send
-	   //batch size
-	   //wait
-	   //logging of recipients
-	   
-	   
+	   if(log.isWarnEnabled())
+		   log.warn("sendEvalConsolidatedReminder() called by Job Scheduler.");
 	    EvalGroup group = null;
 		Set<String> uniqueIds = new HashSet<String>();
 		List<EvalGroup> groupList = null;
@@ -673,7 +669,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 		Set<String> nonResponders = null;
 		Long[] evaluationIds = new Long[] {};
 		evaluationIds = evaluationLogic
-				.getActiveEvaluationIdsByAvailableEmailSent(new Boolean(true));
+				.getActiveEvaluationIdsByAvailableEmailSent(Boolean.TRUE);
+		if(log.isWarnEnabled())
+			   log.warn("sendEvalConsolidatedReminder() number of evaluations is " + (new Integer(evaluationIds.length)).toString());
 		// get email addresses
 		if (evaluationIds != null && evaluationIds.length > 0) {
 			// get groups associated with evaluations
@@ -692,7 +690,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 				}
 			}
 			sendEvalConsolidatedNotification(uniqueIds,
-					EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE);
+					EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER);
 		}
    }
    
@@ -716,6 +714,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 	 */
    private String sendEvalConsolidatedNotification(Set<String> uniqueIds, String notificationType) {
 		if (uniqueIds == null || uniqueIds.isEmpty() || notificationType == null) {
+			if(log.isWarnEnabled())
+				log.warn("sendEvalConsolidatedNotification() uniqueIds or notificationType null or empty.");
 				return null;
 		} else {
 				// it's clunky to use warn level to log with metrics

@@ -45,16 +45,11 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
  * 		- use ServerConfigurationService through ExternalLogic
  * 		- implement logic/test/stubs/EvalExternalLogicStub getMyworkspaceUrl(String), getProperty(java.lang.String) unit tests
  * 				EvalEmailLogicImplTest public boolean overrideDefaults()
- * 		- PreLoad consolidated templates
- * 		- if changed System Settings Notification Settings: sync reminder interval and count until evaluation is locked (write a bean guard?)
  * 		- make sure there are no circular dependencies
  * 		- refactor common code in reminder logic and available logic
- * 		- safe email testing needs to apply to either mode
- * 		- throttle and logging of recipients
  *		- protect the public api's EvalEvaluationsLogic.getActiveEvaluationsByAvailableEmailSent() - an isAdmin() function
- * 		- Logging metrics of email queue processing, toAddresses
+ * 		- check for valid settings prior to calling Job
  * 		- check permission EvalExternalLogicImpl - public boolean isUserAdmin(String userId) - run under admin(?)
-		- check for valid settings prior to calling Job
  *
  * @author rwellis
  *
@@ -94,6 +89,9 @@ public class EvalConsolidatedNotificationJob implements Job{
 	 */
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {
 		try {
+			if(log.isWarnEnabled()) {
+				log.warn("EvalConsolidatedNotificationJob.execute() called by Job Scheduler.");
+			}
 			//check settings, etc.
 			if(checkSettings()) {
 				if(evalEvaluationsLogic.countActiveEvaluations() == 0) {
@@ -109,10 +107,20 @@ public class EvalConsolidatedNotificationJob implements Job{
 			//see if today is a reminder day
 			reminderInterval = ((Integer)evalSettings.get(EvalSettings.CONSOLIDATED_REMINDER_INTERVAL)).intValue();
 			daysUntilReminder = ((Integer)evalSettings.get(EvalSettings.DAYS_UNTIL_REMINDER)).intValue();
+			if(log.isWarnEnabled()) {
+				log.warn("daysUntilReminder = " + ((Integer)evalSettings.get(EvalSettings.DAYS_UNTIL_REMINDER)).toString());
+			}
 			if(daysUntilReminder == 0) {
+				if(log.isWarnEnabled()) {
+					log.warn("EvalConsolidatedNotificationJob.execute() send reminder.");
+				}
 				evalEmailsLogic.sendEvalConsolidatedReminder();
 				daysUntilReminder = reminderInterval;//TODO need to keep in sync in System Settings UI as well
 				updateConfig(EvalSettings.DAYS_UNTIL_REMINDER,daysUntilReminder);
+				if(log.isWarnEnabled()) {
+					log.warn("EvalConsolidatedNotificationJob.execute() reset DAYS_UNTIL_REMINDER to " + 
+							(new Integer(daysUntilReminder)).toString());
+				}
 			}
 			else if(daysUntilReminder < 0) {
 				//shouldn't happen
@@ -120,8 +128,15 @@ public class EvalConsolidatedNotificationJob implements Job{
 				return;
 			}
 			else {
+				if(log.isWarnEnabled()) {
+					log.warn("EvalConsolidatedNotificationJob.execute() decrement reminder days.");
+				}
 				daysUntilReminder = daysUntilReminder - 1;
 				updateConfig(EvalSettings.DAYS_UNTIL_REMINDER,daysUntilReminder);
+				if(log.isWarnEnabled()) {
+					log.warn("EvalConsolidatedNotificationJob.execute() set reminder days to " +
+							(new Integer(daysUntilReminder)).toString());
+				}
 			}
 			/* Note: available follows reminder so available's change in
 			 * EvalEvaluation.avalableEmailSent won't trigger a reminder
@@ -131,6 +146,9 @@ public class EvalConsolidatedNotificationJob implements Job{
 		catch(Exception e) {
 			log.error("Error executing consolidated email job." + e);
 			throw new JobExecutionException(e);
+		}
+		if(log.isWarnEnabled()) {
+			log.warn("EvalConsolidatedNotificationJob.execute() normal execution.");
 		}
 	}
 	
