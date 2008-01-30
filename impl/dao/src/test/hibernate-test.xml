@@ -77,4 +77,9 @@
 			ref="org.sakaiproject.evaluation.dao.PreloadData" />
 	</bean>
 
+	<!-- fake external logic bean -->
+	<bean id="org.sakaiproject.evaluation.logic.EvalExternalLogic"
+	       class="org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic">
+	</bean>
+
 </beans>

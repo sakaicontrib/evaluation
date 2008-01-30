@@ -20,13 +20,12 @@ import java.util.Map;
 
 import junit.framework.Assert;
 
-import org.easymock.MockControl;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
 import org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl;
+import org.sakaiproject.evaluation.logic.impl.EvalSecurityChecks;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
-import org.sakaiproject.evaluation.logic.test.mocks.MockEvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -34,6 +33,8 @@ import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.PreloadTestData;
+import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
+import org.sakaiproject.evaluation.test.mocks.MockEvalJobLogic;
 import org.springframework.test.AbstractTransactionalSpringContextTests;
 
 
@@ -48,9 +49,6 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 
 	private EvaluationDao evaluationDao;
 	private EvalTestDataLoad etdl;
-
-	private EvalJobLogic evalJobLogic;
-	private MockControl evalJobLogicControl;
 
 	protected String[] getConfigLocations() {
 		// point to the needed spring config files, must be on the classpath
@@ -87,21 +85,26 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 			throw new NullPointerException("EvalSettings could not be retrieved from spring evalGroupId");
 		}
 
-		// setup the mock objects if needed
-		evalJobLogicControl = MockControl.createControl(EvalJobLogic.class);
-		evalJobLogic = (EvalJobLogic) evalJobLogicControl.getMock();
+      EvalSecurityChecks securityChecks = (EvalSecurityChecks) applicationContext.getBean("org.sakaiproject.evaluation.logic.impl.EvalSecurityChecks");
+      if (securityChecks == null) {
+         throw new NullPointerException("EvalSecurityChecks could not be retrieved from spring context");
+      }
 
-		// this mock object is simply keeping us from getting a null when evalJobLogic is accessed 
-		evalJobLogic.removeScheduledInvocations(EvalTestDataLoad.INVALID_LONG_ID); // expect this to be called
-		evalJobLogicControl.setDefaultMatcher(MockControl.ALWAYS_MATCHER);
-		//evalJobLogicControl.setDefaultReturnValue(true); // NO return required here since the return is void
+      EvalEvaluationService evaluationService = (EvalEvaluationService) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalEvaluationService");
+      if (evaluationService == null) {
+         throw new NullPointerException("EvalEvaluationService could not be retrieved from spring context");
+      }
+
+		// setup the mock objects if needed
 
 		// create and setup the object to be tested
 		evaluations = new EvalEvaluationsLogicImpl();
 		evaluations.setDao(evaluationDao);
 		evaluations.setExternalLogic( new MockEvalExternalLogic() );
 		evaluations.setSettings(settings);
-		evaluations.setEvalJobLogic(evalJobLogic); // set to the mock object
+      evaluations.setSecurityChecks(securityChecks);
+      evaluations.setEvaluationService(evaluationService);
+		evaluations.setEvalJobLogic( new MockEvalJobLogic() ); // set to the mock object
 
 	}
 

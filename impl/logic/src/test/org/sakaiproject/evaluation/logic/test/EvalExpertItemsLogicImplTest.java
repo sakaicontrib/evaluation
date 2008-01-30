@@ -21,7 +21,6 @@ import junit.framework.Assert;
 
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.impl.EvalExpertItemsLogicImpl;
-import org.sakaiproject.evaluation.logic.test.mocks.MockEvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
@@ -29,6 +28,7 @@ import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.PreloadTestData;
+import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
 import org.springframework.test.AbstractTransactionalSpringContextTests;
 
 /**

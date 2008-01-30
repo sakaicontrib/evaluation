@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -307,7 +308,8 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 
          // create the initial response if there is not one
          if (responseId == null) {
-            responseId = localResponsesLogic.createResponse(evaluationId, currentUserId, evalGroupId);
+            // EVALSYS-360 because of a hibernate issue this will not work, do a binding instead -AZ
+            //responseId = localResponsesLogic.createResponse(evaluationId, currentUserId, evalGroupId);
          } else {
             // load up the previous responses for this user (no need to attempt to load if the response is new, there will be no answers yet)
             answerMap = localResponsesLogic.getAnswersMapByTempItemAndAssociated(responseId);
@@ -471,8 +473,11 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
       String currAnswerOTP;
       if (responseId == null) {
          // it should not be the case that we have no response
-         throw new IllegalStateException("There is no response, something has failed to load correctly for takeeval");
-         //currAnswerOTP = responseAnswersOTP + ResponseAnswersBeanLocator.NEW_1 + "." + ResponseAnswersBeanLocator.NEW_PREFIX + renderedItemCount + ".";
+         //throw new IllegalStateException("There is no response, something has failed to load correctly for takeeval");
+         // EVALSYS-360 - have to use this again and add a binding for start time
+         form.parameters.add( new UIELBinding("takeEvalBean.startDate", new Date()) );
+         
+         currAnswerOTP = responseAnswersOTP + ResponseAnswersBeanLocator.NEW_1 + "." + ResponseAnswersBeanLocator.NEW_PREFIX + renderedItemCount + ".";
       } else {
          // if the user has answered this question before, point at their response
          EvalAnswer currAnswer = (EvalAnswer) answerMap.get(templateItem.getId() + "null" + "null");

@@ -15,6 +15,8 @@
 package org.sakaiproject.evaluation.tool;
 
 
+import java.util.Date;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
@@ -35,6 +37,7 @@ public class TakeEvalBean {
 
    public EvalEvaluation eval;
    public String evalGroupId;
+   public Date startDate;
 
    private ResponseBeanLocator responseBeanLocator;
    public void setResponseBeanLocator(ResponseBeanLocator responseBeanLocator) {
@@ -54,7 +57,7 @@ public class TakeEvalBean {
    public String submitEvaluation() {
       log.debug("submit evaluation");
       try {
-         responseBeanLocator.saveAll(eval, evalGroupId);
+         responseBeanLocator.saveAll(eval, evalGroupId, startDate);
       } catch (IllegalStateException e) {
          // TODO - find a better way to do this, using this as the way to tell that the submission was incomplete, this is not really ideal -AZ
          messages.addMessage( new TargettedMessage("takeeval.user.must.answer.all.warning", new Object[] {},

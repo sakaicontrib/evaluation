@@ -62,7 +62,7 @@ public class ResponseBeanLocator implements BeanLocator {
       return delivered;
    }
 
-   public void saveAll(EvalEvaluation eval, String evalGroupId) {
+   public void saveAll(EvalEvaluation eval, String evalGroupId, Date startDate) {
       for (Iterator<String> it = delivered.keySet().iterator(); it.hasNext();) {
          String key = it.next();
          EvalResponse response = (EvalResponse) delivered.get(key);
@@ -70,10 +70,13 @@ public class ResponseBeanLocator implements BeanLocator {
             // response is new
             response.setEvaluation(eval);
             response.setEvalGroupId(evalGroupId);
-         } else {
-            // response exists so this is a submission, set the endTime
-            response.setEndTime(new Date());
          }
+         if (startDate != null) {
+            // we have a passed in start date so set the response start date
+            response.setStartTime(startDate);
+         }
+         // saving so set the endTime to now
+         response.setEndTime(new Date());
          localResponsesLogic.saveResponse(response);
       }
    }

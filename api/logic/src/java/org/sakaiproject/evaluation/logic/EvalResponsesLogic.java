@@ -15,7 +15,6 @@
 package org.sakaiproject.evaluation.logic;
 
 import java.util.List;
-import java.util.Set;
 
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -83,21 +82,6 @@ public interface EvalResponsesLogic {
 	 * @return the count of associated responses
 	 */
 	public int countResponses(Long evaluationId, String evalGroupId, Boolean completed);
-
-
-   /**
-    * Get a set of user ids of users who are in an EvalGroup assigned to
-    * this EvalEvaluation and permitted to take the evaluation but have 
-    * not yet responded.
-    * TODO - Move this to another logic package to avoid circular logic chain -AZ
-    * TODO - add unit tests -AZ
-    * 
-    * @param evaluationId the unique id for an {@link EvalEvaluation}
-    * @param evalGroupId the internal evalGroupId (represents a site or group)
-    * @return a set of internal user ids
-    */
-   public Set<String> getNonResponders(Long evaluationId, String evalGroupId);
-
 
 	/**
 	 * Get the answers associated with this item and with a response to this evaluation,

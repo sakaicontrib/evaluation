@@ -19,15 +19,16 @@ import java.util.Date;
 import junit.framework.Assert;
 
 import org.sakaiproject.evaluation.dao.EvaluationDao;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl;
-import org.sakaiproject.evaluation.logic.test.mocks.MockEvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.PreloadTestData;
+import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
 import org.springframework.test.AbstractTransactionalSpringContextTests;
 
 
@@ -38,7 +39,7 @@ import org.springframework.test.AbstractTransactionalSpringContextTests;
  */
 public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextTests {
 
-	protected EvalEmailsLogicImpl emailTemplates;
+	protected EvalEmailsLogicImpl emailsLogic;
 
 	private EvaluationDao evaluationDao;
 	private EvalTestDataLoad etdl;
@@ -78,12 +79,18 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 			throw new NullPointerException("EvalSettings could not be retrieved from spring evalGroupId");
 		}
 
+      EvalEvaluationService evaluationService = (EvalEvaluationService) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalEvaluationService");
+      if (evaluationService == null) {
+         throw new NullPointerException("EvalEvaluationService could not be retrieved from spring context");
+      }
+
 		// setup the mock objects if needed
 
 		// create and setup the object to be tested
-		emailTemplates = new EvalEmailsLogicImpl();
-		emailTemplates.setDao(evaluationDao);
-		emailTemplates.setExternalLogic( new MockEvalExternalLogic() );
+		emailsLogic = new EvalEmailsLogicImpl();
+		emailsLogic.setDao(evaluationDao);
+		emailsLogic.setExternalLogic( new MockEvalExternalLogic() );
+		emailsLogic.setEvaluationService(evaluationService);
 
 	}
 
@@ -106,10 +113,10 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 	 */
 	public void testSaveEmailTemplate() {
 		// test valid new saves
-		emailTemplates.saveEmailTemplate( new EvalEmailTemplate( new Date(),
+		emailsLogic.saveEmailTemplate( new EvalEmailTemplate( new Date(),
 				EvalTestDataLoad.MAINT_USER_ID, "a message"), 
 				EvalTestDataLoad.MAINT_USER_ID);
-		emailTemplates.saveEmailTemplate( new EvalEmailTemplate( new Date(),
+		emailsLogic.saveEmailTemplate( new EvalEmailTemplate( new Date(),
 				EvalTestDataLoad.ADMIN_USER_ID, "another message"), 
 				EvalTestDataLoad.ADMIN_USER_ID);
 
@@ -119,16 +126,16 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 		EvalEmailTemplate testTemplate = new EvalEmailTemplate( new Date(),
 				EvalTestDataLoad.ADMIN_USER_ID, "a message", 
 				EvalConstants.EMAIL_TEMPLATE_DEFAULT_AVAILABLE);
-		emailTemplates.saveEmailTemplate( testTemplate, EvalTestDataLoad.ADMIN_USER_ID);
+		emailsLogic.saveEmailTemplate( testTemplate, EvalTestDataLoad.ADMIN_USER_ID);
 		Assert.assertNotNull( testTemplate.getId() );
 		Assert.assertNull( testTemplate.getDefaultType() );
 
 		// test invalid update to default template
 		EvalEmailTemplate defaultTemplate = 
-			emailTemplates.getDefaultEmailTemplate( EvalConstants.EMAIL_TEMPLATE_AVAILABLE );
+			emailsLogic.getDefaultEmailTemplate( EvalConstants.EMAIL_TEMPLATE_AVAILABLE );
 		try {
 			defaultTemplate.setMessage("new message for default");
-			emailTemplates.saveEmailTemplate( defaultTemplate, 
+			emailsLogic.saveEmailTemplate( defaultTemplate, 
 					EvalTestDataLoad.ADMIN_USER_ID);
 			Assert.fail("Should have thrown exception");
 		} catch (RuntimeException e) {
@@ -137,15 +144,15 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 
 		// test valid updates
 		etdl.emailTemplate1.setMessage("new message 1");
-		emailTemplates.saveEmailTemplate( etdl.emailTemplate1, EvalTestDataLoad.ADMIN_USER_ID);
+		emailsLogic.saveEmailTemplate( etdl.emailTemplate1, EvalTestDataLoad.ADMIN_USER_ID);
 
 		etdl.emailTemplate2.setMessage("new message 2");
-		emailTemplates.saveEmailTemplate( etdl.emailTemplate2, EvalTestDataLoad.MAINT_USER_ID);
+		emailsLogic.saveEmailTemplate( etdl.emailTemplate2, EvalTestDataLoad.MAINT_USER_ID);
 
 		// test user not has permission to update
 		try {
 			etdl.emailTemplate1.setMessage("new message 1");
-			emailTemplates.saveEmailTemplate( etdl.emailTemplate1, 
+			emailsLogic.saveEmailTemplate( etdl.emailTemplate1, 
 					EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");
 		} catch (RuntimeException e) {
@@ -154,7 +161,7 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 		
 		try {
 			etdl.emailTemplate2.setMessage("new message 2");
-			emailTemplates.saveEmailTemplate( etdl.emailTemplate2, 
+			emailsLogic.saveEmailTemplate( etdl.emailTemplate2, 
 					EvalTestDataLoad.USER_ID);
 			Assert.fail("Should have thrown exception");
 		} catch (RuntimeException e) {
@@ -164,7 +171,7 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 		// test associated eval is not in queue (is active) so cannot update
 		try {
 			etdl.emailTemplate3.setMessage("new message 3");
-			emailTemplates.saveEmailTemplate( etdl.emailTemplate3, 
+			emailsLogic.saveEmailTemplate( etdl.emailTemplate3, 
 					EvalTestDataLoad.MAINT_USER_ID);
 			Assert.fail("Should have thrown exception");
 		} catch (RuntimeException e) {
@@ -180,7 +187,7 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 		EvalEmailTemplate emailTemplate = null;
 
 		// test getting the templates
-		emailTemplate = emailTemplates.getDefaultEmailTemplate( 
+		emailTemplate = emailsLogic.getDefaultEmailTemplate( 
 				EvalConstants.EMAIL_TEMPLATE_AVAILABLE );
 		Assert.assertNotNull(emailTemplate);
 		Assert.assertEquals( EvalConstants.EMAIL_TEMPLATE_DEFAULT_AVAILABLE, 
@@ -188,7 +195,7 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 		Assert.assertEquals( EvalConstants.EMAIL_AVAILABLE_DEFAULT_TEXT,
 				emailTemplate.getMessage() );
 
-		emailTemplate = emailTemplates.getDefaultEmailTemplate( 
+		emailTemplate = emailsLogic.getDefaultEmailTemplate( 
 				EvalConstants.EMAIL_TEMPLATE_REMINDER );
 		Assert.assertNotNull(emailTemplate);
 		Assert.assertEquals( EvalConstants.EMAIL_TEMPLATE_DEFAULT_REMINDER, 
@@ -198,7 +205,7 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 
 		// test invalid constant causes failure
 		try {
-			emailTemplate = emailTemplates.getDefaultEmailTemplate( EvalTestDataLoad.INVALID_CONSTANT_STRING );
+			emailTemplate = emailsLogic.getDefaultEmailTemplate( EvalTestDataLoad.INVALID_CONSTANT_STRING );
 			Assert.fail("Should have thrown exception");
 		} catch (RuntimeException e) {
 			Assert.assertNotNull(e);
@@ -211,20 +218,20 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
         EvalEmailTemplate emailTemplate = null;
 
         // test getting the templates
-        emailTemplate = emailTemplates.getEmailTemplate(etdl.evaluationActive.getId(), 
+        emailTemplate = emailsLogic.getEmailTemplate(etdl.evaluationActive.getId(), 
                 EvalConstants.EMAIL_TEMPLATE_AVAILABLE );
         Assert.assertNotNull(emailTemplate);
         Assert.assertEquals( EvalConstants.EMAIL_AVAILABLE_DEFAULT_TEXT,
                 emailTemplate.getMessage() );
 
-        emailTemplate = emailTemplates.getEmailTemplate(etdl.evaluationActive.getId(), 
+        emailTemplate = emailsLogic.getEmailTemplate(etdl.evaluationActive.getId(), 
                 EvalConstants.EMAIL_TEMPLATE_REMINDER );
         Assert.assertNotNull(emailTemplate);
         Assert.assertEquals( "Email Template 3", emailTemplate.getMessage() );
 
         // test invalid constant causes failure
         try {
-            emailTemplate = emailTemplates.getEmailTemplate( EvalTestDataLoad.INVALID_LONG_ID, EvalTestDataLoad.INVALID_CONSTANT_STRING );
+            emailTemplate = emailsLogic.getEmailTemplate( EvalTestDataLoad.INVALID_LONG_ID, EvalTestDataLoad.INVALID_CONSTANT_STRING );
             Assert.fail("Should have thrown exception");
         } catch (RuntimeException e) {
             Assert.assertNotNull(e);
@@ -238,64 +245,64 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 	 */
 	public void testCanControlEmailTemplateStringLongInt() {
 		// test valid email template control perms when none assigned
-		Assert.assertTrue( emailTemplates.canControlEmailTemplate(
+		Assert.assertTrue( emailsLogic.canControlEmailTemplate(
 				EvalTestDataLoad.ADMIN_USER_ID, etdl.evaluationNewAdmin.getId(), 
 				EvalConstants.EMAIL_TEMPLATE_AVAILABLE) );
-		Assert.assertTrue( emailTemplates.canControlEmailTemplate(
+		Assert.assertTrue( emailsLogic.canControlEmailTemplate(
 				EvalTestDataLoad.ADMIN_USER_ID, etdl.evaluationNewAdmin.getId(), 
 				EvalConstants.EMAIL_TEMPLATE_REMINDER) );
 
 		// user does not have perm for this eval
-		Assert.assertFalse( emailTemplates.canControlEmailTemplate(
+		Assert.assertFalse( emailsLogic.canControlEmailTemplate(
 				EvalTestDataLoad.MAINT_USER_ID, etdl.evaluationNewAdmin.getId(), 
 				EvalConstants.EMAIL_TEMPLATE_AVAILABLE) );
-		Assert.assertFalse( emailTemplates.canControlEmailTemplate(
+		Assert.assertFalse( emailsLogic.canControlEmailTemplate(
 				EvalTestDataLoad.USER_ID, etdl.evaluationNewAdmin.getId(), 
 				EvalConstants.EMAIL_TEMPLATE_REMINDER) );
 
 		// test when template has some assigned already
-		Assert.assertTrue( emailTemplates.canControlEmailTemplate(
+		Assert.assertTrue( emailsLogic.canControlEmailTemplate(
 				EvalTestDataLoad.MAINT_USER_ID, etdl.evaluationNew.getId(), 
 				EvalConstants.EMAIL_TEMPLATE_REMINDER) );
-		Assert.assertTrue( emailTemplates.canControlEmailTemplate(
+		Assert.assertTrue( emailsLogic.canControlEmailTemplate(
 				EvalTestDataLoad.ADMIN_USER_ID, etdl.evaluationNew.getId(), 
 				EvalConstants.EMAIL_TEMPLATE_AVAILABLE) );
 
 		// test admin overrides perms
-		Assert.assertTrue( emailTemplates.canControlEmailTemplate(
+		Assert.assertTrue( emailsLogic.canControlEmailTemplate(
 				EvalTestDataLoad.ADMIN_USER_ID, etdl.evaluationNew.getId(), 
 				EvalConstants.EMAIL_TEMPLATE_AVAILABLE) );
 
 		// test not has permission
-		Assert.assertFalse( emailTemplates.canControlEmailTemplate(
+		Assert.assertFalse( emailsLogic.canControlEmailTemplate(
 				EvalTestDataLoad.MAINT_USER_ID, etdl.evaluationNewAdmin.getId(), 
 				EvalConstants.EMAIL_TEMPLATE_AVAILABLE) );
-		Assert.assertFalse( emailTemplates.canControlEmailTemplate(
+		Assert.assertFalse( emailsLogic.canControlEmailTemplate(
 				EvalTestDataLoad.MAINT_USER_ID, etdl.evaluationNew.getId(), 
 				EvalConstants.EMAIL_TEMPLATE_AVAILABLE) );
-		Assert.assertFalse( emailTemplates.canControlEmailTemplate(
+		Assert.assertFalse( emailsLogic.canControlEmailTemplate(
 				EvalTestDataLoad.USER_ID, etdl.evaluationNew.getId(), 
 				EvalConstants.EMAIL_TEMPLATE_REMINDER) );
 
 		// test cannot when evaluation is running (active+)
-		Assert.assertFalse( emailTemplates.canControlEmailTemplate(
+		Assert.assertFalse( emailsLogic.canControlEmailTemplate(
 				EvalTestDataLoad.MAINT_USER_ID, etdl.evaluationActive.getId(), 
 				EvalConstants.EMAIL_TEMPLATE_AVAILABLE) );
-		Assert.assertFalse( emailTemplates.canControlEmailTemplate(
+		Assert.assertFalse( emailsLogic.canControlEmailTemplate(
 				EvalTestDataLoad.MAINT_USER_ID, etdl.evaluationActive.getId(), 
 				EvalConstants.EMAIL_TEMPLATE_REMINDER) );
 
 		// check admin cannot override for running evals
-		Assert.assertFalse( emailTemplates.canControlEmailTemplate(
+		Assert.assertFalse( emailsLogic.canControlEmailTemplate(
 				EvalTestDataLoad.ADMIN_USER_ID, etdl.evaluationClosed.getId(), 
 				EvalConstants.EMAIL_TEMPLATE_REMINDER) );
-		Assert.assertFalse( emailTemplates.canControlEmailTemplate(
+		Assert.assertFalse( emailsLogic.canControlEmailTemplate(
 				EvalTestDataLoad.ADMIN_USER_ID, etdl.evaluationClosed.getId(), 
 				EvalConstants.EMAIL_TEMPLATE_REMINDER) );
 
 		// check invalid evaluation id causes failure
 		try {
-			emailTemplates.canControlEmailTemplate(
+			emailsLogic.canControlEmailTemplate(
 					EvalTestDataLoad.ADMIN_USER_ID, 
 					EvalTestDataLoad.INVALID_LONG_ID, 
 					EvalConstants.EMAIL_TEMPLATE_REMINDER);
@@ -311,34 +318,34 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 	 */
 	public void testCanControlEmailTemplateStringLongLong() {
 		// test valid email template control perms when none assigned
-		Assert.assertTrue( emailTemplates.canControlEmailTemplate(
+		Assert.assertTrue( emailsLogic.canControlEmailTemplate(
 				EvalTestDataLoad.ADMIN_USER_ID, etdl.evaluationNew.getId(), 
 				etdl.emailTemplate1.getId()) );
-		Assert.assertTrue( emailTemplates.canControlEmailTemplate(
+		Assert.assertTrue( emailsLogic.canControlEmailTemplate(
 				EvalTestDataLoad.ADMIN_USER_ID, etdl.evaluationNew.getId(), 
 				etdl.emailTemplate2.getId()) );
-		Assert.assertTrue( emailTemplates.canControlEmailTemplate(
+		Assert.assertTrue( emailsLogic.canControlEmailTemplate(
 				EvalTestDataLoad.MAINT_USER_ID, etdl.evaluationNew.getId(), 
 				etdl.emailTemplate2.getId()) );
 
 		// test not has permissions
-		Assert.assertFalse( emailTemplates.canControlEmailTemplate(
+		Assert.assertFalse( emailsLogic.canControlEmailTemplate(
 				EvalTestDataLoad.MAINT_USER_ID, etdl.evaluationNew.getId(), 
 				etdl.emailTemplate1.getId()) );
 
 		// test valid but active eval not allowed
-		Assert.assertFalse( emailTemplates.canControlEmailTemplate(
+		Assert.assertFalse( emailsLogic.canControlEmailTemplate(
 				EvalTestDataLoad.MAINT_USER_ID, etdl.evaluationActive.getId(), 
 				etdl.emailTemplate3.getId()) );
 
 		// make sure admin cannot override for active eval
-		Assert.assertFalse( emailTemplates.canControlEmailTemplate(
+		Assert.assertFalse( emailsLogic.canControlEmailTemplate(
 				EvalTestDataLoad.ADMIN_USER_ID, etdl.evaluationActive.getId(), 
 				etdl.emailTemplate3.getId()) );
 
 		// check invalid evaluation id causes failure
 		try {
-			emailTemplates.canControlEmailTemplate(
+			emailsLogic.canControlEmailTemplate(
 					EvalTestDataLoad.ADMIN_USER_ID, 
 					EvalTestDataLoad.INVALID_LONG_ID, 
 					etdl.emailTemplate1.getId() );
@@ -349,7 +356,7 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 
 		// check invalid email template id causes failure
 		try {
-			emailTemplates.canControlEmailTemplate(
+			emailsLogic.canControlEmailTemplate(
 					EvalTestDataLoad.ADMIN_USER_ID, 
 					etdl.evaluationNew.getId(), 
 					EvalTestDataLoad.INVALID_LONG_ID );
@@ -360,7 +367,7 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 
 		// check non-matching evaluation and template causes failure
 		try {
-			emailTemplates.canControlEmailTemplate(
+			emailsLogic.canControlEmailTemplate(
 					EvalTestDataLoad.ADMIN_USER_ID, 
 					etdl.evaluationNew.getId(), 
 					etdl.emailTemplate3.getId() );
@@ -377,7 +384,7 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#sendEvalAvailableNotifications(java.lang.Long, boolean)}.
 	 */
 	public void testSendEvalAvailableNotifications() {
-		//emailTemplates.sendEvalAvailableNotifications(etdl.evaluationActive.getId(), false);
+		//emailsLogic.sendEvalAvailableNotifications(etdl.evaluationActive.getId(), false);
 		// TODO fail("Not yet implemented");
 	}
 
@@ -385,7 +392,7 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#sendEvalCreatedNotifications(java.lang.Long, boolean)}.
 	 */
 	public void testSendEvalCreatedNotifications() {
-		//emailTemplates.sendEvalCreatedNotifications(etdl.evaluationActive.getId(), false);
+		//emailsLogic.sendEvalCreatedNotifications(etdl.evaluationActive.getId(), false);
 		// TODO fail("Not yet implemented");
 	}
 
@@ -393,7 +400,7 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#sendEvalReminderNotifications(java.lang.Long, java.lang.String)}.
 	 */
 	public void testSendEvalReminderNotifications() {
-		//emailTemplates.sendEvalReminderNotifications(etdl.evaluationActive.getId(), EvalConstants.EMAIL_INCLUDE_NONTAKERS);
+		//emailsLogic.sendEvalReminderNotifications(etdl.evaluationActive.getId(), EvalConstants.EMAIL_INCLUDE_NONTAKERS);
 		// TODO fail("Not yet implemented");
 	}
 
@@ -401,7 +408,7 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#sendEvalResultsNotifications(java.lang.Long, boolean, boolean)}.
 	 */
 	public void testSendEvalResultsNotifications() {
-		//emailTemplates.sendEvalResultsNotifications(etdl.evaluationActive.getId(), false, false);
+		//emailsLogic.sendEvalResultsNotifications(etdl.evaluationActive.getId(), false, false);
 		// TODO fail("Not yet implemented");
 	}
 
