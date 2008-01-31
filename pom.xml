@@ -6,11 +6,10 @@
 	<parent>
 		<artifactId>master</artifactId>
 		<groupId>org.sakaiproject</groupId>
-		<version>M2</version>
+		<version>SNAPSHOT</version>
 		<relativePath>../master/pom.xml</relativePath>
 	</parent>
-	
-	 <description>
+	<description>
       Online Course and Instructor Ratings
 
        The Evaluation System is a tool that runs under Sakai version 2.2 or higher. The Evaluation System is
