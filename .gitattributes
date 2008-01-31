@@ -1,7 +1,6 @@
 * text=auto !eol
 /.classpath -text
 /.project -text
-.settings/org.hibernate.eclipse.console.prefs -text
 /.springBeans -text
 /.svnignore -text
 api/logic/project.xml -text
