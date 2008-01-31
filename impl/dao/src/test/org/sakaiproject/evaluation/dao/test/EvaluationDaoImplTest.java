@@ -285,6 +285,19 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       Assert.assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
       Assert.assertTrue(ids.contains( etdl.evaluationViewable.getId() ));
 
+      // test getting evaluations for 2 sites
+      s = evaluationDao.getEvaluationsByEvalGroups(
+            new String[] {EvalTestDataLoad.SITE1_REF, EvalTestDataLoad.SITE2_REF}, false, true, false);
+      Assert.assertNotNull(s);
+      Assert.assertEquals(5, s.size());
+      ids = EvalTestDataLoad.makeIdList(s);
+      Assert.assertTrue(ids.contains( etdl.evaluationNewAdmin.getId() ));
+      Assert.assertTrue(ids.contains( etdl.evaluationActive.getId() ));
+      Assert.assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
+      Assert.assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
+      Assert.assertTrue(ids.contains( etdl.evaluationViewable.getId() ));
+
+      // test invalid site
       s = evaluationDao.getEvaluationsByEvalGroups(
             new String[] {"invalid evalGroupId"}, false, true, false);
       Assert.assertNotNull(s);
