@@ -59,7 +59,7 @@
 		<property name="external"
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="responsesLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
+			ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
 	</bean>
 
 
@@ -201,14 +201,14 @@
 		<property name="evalsLogic" ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
 		<property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="response" ref="httpServletResponseProxy" />
-		<property name="responsesLogic" ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
+		<property name="responsesLogic" ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
 	</bean>
 
 	<bean id="PDFReportExporter" class="org.sakaiproject.evaluation.tool.reporting.PDFReportExporter">
 		<property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 		<property name="response" ref="httpServletResponseProxy" />
 		<property name="contentHostingService" ref="org.sakaiproject.content.api.ContentHostingService" />
-		<property name="responsesLogic" ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
+		<property name="responsesLogic" ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
 		<property name="evalsLogic" ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
 		<property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 	</bean>

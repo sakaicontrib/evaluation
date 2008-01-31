@@ -14,7 +14,7 @@ import org.sakaiproject.content.api.ContentHostingService;
 import org.sakaiproject.content.api.ContentResource;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
+import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
@@ -39,7 +39,7 @@ public class PDFReportExporter {
     private static Log log = LogFactory.getLog(PDFReportExporter.class);
 
     private EvalSettings evalSettings;
-    private EvalResponsesLogic responsesLogic;
+    private EvalDeliveryService responsesLogic;
     private EvalEvaluationsLogic evalsLogic;
     private HttpServletResponse response;
     private EvalExternalLogic externalLogic;
@@ -277,7 +277,7 @@ public class PDFReportExporter {
         this.contentHostingService = contentHostingService;
     }
 
-    public void setResponsesLogic(EvalResponsesLogic responsesLogic) {
+    public void setResponsesLogic(EvalDeliveryService responsesLogic) {
         this.responsesLogic = responsesLogic;
     }
 

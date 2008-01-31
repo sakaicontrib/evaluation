@@ -27,7 +27,7 @@ import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
+import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
@@ -91,8 +91,8 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		this.evaluationsLogic = evaluationsLogic;
 	}
 
-	private EvalResponsesLogic responsesLogic;
-	public void setResponsesLogic(EvalResponsesLogic responsesLogic) {
+	private EvalDeliveryService responsesLogic;
+	public void setResponsesLogic(EvalDeliveryService responsesLogic) {
 		this.responsesLogic = responsesLogic;
 	}
 

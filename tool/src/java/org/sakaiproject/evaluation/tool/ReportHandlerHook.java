@@ -22,7 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
+import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.utils.ComparatorsUtils;
 import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.model.EvalAnswer;
@@ -65,8 +65,8 @@ public class ReportHandlerHook implements HandlerHook {
         this.evalsLogic = evalsLogic;
     }
 
-    private EvalResponsesLogic responsesLogic;
-    public void setResponsesLogic(EvalResponsesLogic responsesLogic) {
+    private EvalDeliveryService responsesLogic;
+    public void setResponsesLogic(EvalDeliveryService responsesLogic) {
         this.responsesLogic = responsesLogic;
     }
     
@@ -116,7 +116,7 @@ public class ReportHandlerHook implements HandlerHook {
          * the answer for a particular question. This is so that we can 
          * add empty space instead.
          * 
-         * b) Side purpose: countResponses method in EvalResponsesLogic
+         * b) Side purpose: countResponses method in EvalDeliveryService
          * does not take array of groups ids.
          *   
          */
