@@ -1,7 +1,7 @@
 /**
- * $Id: EvalResponsesLogicImpl.java 1000 Jan 25, 2008 10:07:31 AM azeckoski $
+ * $Id: EvalDeliveryServiceImpl.java 1000 Jan 25, 2008 10:07:31 AM azeckoski $
  * $URL: https://source.sakaiproject.org/contrib $
- * EvalResponsesLogicImpl.java - evaluation - Dec 25, 2006 10:07:31 AM - azeckoski
+ * EvalDeliveryServiceImpl.java - evaluation - Dec 25, 2006 10:07:31 AM - azeckoski
  **************************************************************************
  * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0
@@ -27,7 +27,7 @@ import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
+import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.utils.ArrayUtils;
 import org.sakaiproject.evaluation.logic.utils.EvalUtils;
@@ -41,13 +41,13 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.genericdao.api.finders.ByPropsFinder;
 
 /**
- * Implementation for EvalResponsesLogic
+ * Implementation for EvalDeliveryService
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class EvalResponsesLogicImpl implements EvalResponsesLogic {
+public class EvalDeliveryServiceImpl implements EvalDeliveryService {
 
-   private static Log log = LogFactory.getLog(EvalResponsesLogicImpl.class);
+   private static Log log = LogFactory.getLog(EvalDeliveryServiceImpl.class);
 
    // Event names cannot be over 32 chars long              // max-32:12345678901234567890123456789012
    protected final String EVENT_RESPONSE_CREATED =                   "eval.response.created";

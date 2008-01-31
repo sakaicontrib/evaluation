@@ -58,8 +58,8 @@
       <property name="evalJobLogic" ref="org.sakaiproject.evaluation.logic.EvalJobLogic" />
    </bean>
 
-   <bean id="org.sakaiproject.evaluation.logic.EvalResponsesLogic"
-      class="org.sakaiproject.evaluation.logic.impl.EvalResponsesLogicImpl" init-method="init">
+   <bean id="org.sakaiproject.evaluation.logic.EvalDeliveryService"
+      class="org.sakaiproject.evaluation.logic.impl.EvalDeliveryServiceImpl" init-method="init">
       <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
       <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
       <property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />

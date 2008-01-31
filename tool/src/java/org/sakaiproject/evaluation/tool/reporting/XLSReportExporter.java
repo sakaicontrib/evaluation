@@ -15,7 +15,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
+import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -29,7 +29,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
 
 public class XLSReportExporter {
 
-    private EvalResponsesLogic responsesLogic;
+    private EvalDeliveryService responsesLogic;
     private EvalEvaluationsLogic evalsLogic;
     private EvalExternalLogic externalLogic;
     private HttpServletResponse response;
@@ -177,7 +177,7 @@ public class XLSReportExporter {
         return totalEnrollments;
     }
 
-    public void setResponsesLogic(EvalResponsesLogic responsesLogic) {
+    public void setResponsesLogic(EvalDeliveryService responsesLogic) {
         this.responsesLogic = responsesLogic;
     }
 

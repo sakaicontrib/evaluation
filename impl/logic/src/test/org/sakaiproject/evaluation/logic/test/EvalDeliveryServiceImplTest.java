@@ -1,7 +1,7 @@
 /**
- * $Id: EvalResponsesLogicImplTest.java 1000 Dec 26, 2006 10:07:31 AM azeckoski $
+ * $Id: EvalDeliveryServiceImplTest.java 1000 Dec 26, 2006 10:07:31 AM azeckoski $
  * $URL: https://source.sakaiproject.org/contrib $
- * EvalResponsesLogicImplTest.java - evaluation - Dec 25, 2006 10:07:31 AM - azeckoski
+ * EvalDeliveryServiceImplTest.java - evaluation - Dec 25, 2006 10:07:31 AM - azeckoski
  **************************************************************************
  * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0
@@ -24,7 +24,7 @@ import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.impl.EvalAuthoringServiceImpl;
-import org.sakaiproject.evaluation.logic.impl.EvalResponsesLogicImpl;
+import org.sakaiproject.evaluation.logic.impl.EvalDeliveryServiceImpl;
 import org.sakaiproject.evaluation.logic.impl.EvalSecurityChecks;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -38,13 +38,13 @@ import org.springframework.test.AbstractTransactionalSpringContextTests;
 
 
 /**
- * Test class for EvalResponsesLogicImpl
+ * Test class for EvalDeliveryServiceImpl
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringContextTests {
+public class EvalDeliveryServiceImplTest extends AbstractTransactionalSpringContextTests {
 
-   protected EvalResponsesLogicImpl responses;
+   protected EvalDeliveryServiceImpl responses;
 
    private EvaluationDao evaluationDao;
    private EvalTestDataLoad etdl;
@@ -107,7 +107,7 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
       authoringServiceImpl.setSecurityChecks(securityChecks);
 
       // create and setup the object to be tested
-      responses = new EvalResponsesLogicImpl();
+      responses = new EvalDeliveryServiceImpl();
       responses.setDao(evaluationDao);
       responses.setExternalLogic( new MockEvalExternalLogic() );
       responses.setEvaluationService(evaluationService);
@@ -157,7 +157,7 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalResponsesLogicImpl#getEvaluationResponses(java.lang.String, java.lang.Long[], boolean)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalDeliveryServiceImpl#getEvaluationResponses(java.lang.String, java.lang.Long[], boolean)}.
     */
    public void testGetEvaluationResponses() {
       List<EvalResponse> l = null;
@@ -272,7 +272,7 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
 
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalResponsesLogicImpl#countResponses(Long, String)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalDeliveryServiceImpl#countResponses(Long, String)}.
     */
    public void testCountResponses() {
 
@@ -316,7 +316,7 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalResponsesLogicImpl#getEvalAnswers(java.lang.Long, java.lang.Long)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalDeliveryServiceImpl#getEvalAnswers(java.lang.Long, java.lang.Long)}.
     */
    public void testGetEvalAnswers() {
       List<EvalAnswer> l = null;
@@ -377,7 +377,7 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalResponsesLogicImpl#getEvalResponseIds(Long, String[])}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalDeliveryServiceImpl#getEvalResponseIds(Long, String[])}.
     */
    public void testGetEvalResponseIds() {
       List<Long> l = null;
@@ -457,7 +457,7 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalResponsesLogicImpl#saveResponse(org.sakaiproject.evaluation.model.EvalResponse, String)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalDeliveryServiceImpl#saveResponse(org.sakaiproject.evaluation.model.EvalResponse, String)}.
     */
    public void testSaveResponse() {
 
@@ -587,7 +587,7 @@ public class EvalResponsesLogicImplTest extends AbstractTransactionalSpringConte
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalResponsesLogicImpl#canModifyResponse(java.lang.String, java.lang.Long)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalDeliveryServiceImpl#canModifyResponse(java.lang.String, java.lang.Long)}.
     */
    public void testCanModifyResponse() {
 

@@ -24,7 +24,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
+import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalResponse;
@@ -45,8 +45,8 @@ public class LocalResponsesLogic {
 		this.external = external;
 	}
 
-	private EvalResponsesLogic responsesLogic;
-	public void setResponsesLogic(EvalResponsesLogic responsesLogic) {
+	private EvalDeliveryService responsesLogic;
+	public void setResponsesLogic(EvalDeliveryService responsesLogic) {
 		this.responsesLogic = responsesLogic;
 	}
 

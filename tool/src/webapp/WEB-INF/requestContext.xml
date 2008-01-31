@@ -102,7 +102,7 @@
       <property name="evalsLogic"
          ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
       <property name="responsesLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
+         ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
       <property name="csvReportExporter" ref="CSVReportExporter" />
       <property name="xlsReportExporter" ref="XLSReportExporter" />
       <property name="pdfReportExporter" ref="PDFReportExporter" />
@@ -277,7 +277,7 @@
       <property name="evaluationsLogic"
          ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
       <property name="responsesLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
+         ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
       <property name="settings"
          ref="org.sakaiproject.evaluation.logic.EvalSettings" />
       <property name="locale" ref="requestLocale" />
@@ -450,7 +450,7 @@
       <property name="authoringService"
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
       <property name="responsesLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
+         ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
       <property name="settings"
          ref="org.sakaiproject.evaluation.logic.EvalSettings" />
       <property name="locale" ref="requestLocale" />
@@ -569,7 +569,7 @@
       <property name="authoringService"
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
       <property name="responsesLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
+         ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
       <property name="reportsBean" ref="reportsBean" />
       <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
    </bean>
@@ -592,7 +592,7 @@
       <property name="authoringService"
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
       <property name="responsesLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalResponsesLogic" />
+         ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
    </bean>
 
 </beans>

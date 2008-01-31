@@ -24,7 +24,7 @@ import java.util.Set;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
+import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.entity.EvalCategoryEntityProvider;
 import org.sakaiproject.evaluation.logic.utils.EvalUtils;
@@ -89,8 +89,8 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
       this.authoringService = authoringService;
    }
 
-	private EvalResponsesLogic responsesLogic;
-	public void setResponsesLogic(EvalResponsesLogic responsesLogic) {
+	private EvalDeliveryService responsesLogic;
+	public void setResponsesLogic(EvalDeliveryService responsesLogic) {
 		this.responsesLogic = responsesLogic;
 	}
 

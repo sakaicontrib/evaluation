@@ -22,7 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.EvalResponsesLogic;
+import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
@@ -89,8 +89,8 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
       this.evaluationService = evaluationService;
    }
 
-   private EvalResponsesLogic responsesLogic;
-   public void setResponsesLogic(EvalResponsesLogic responsesLogic) {
+   private EvalDeliveryService responsesLogic;
+   public void setResponsesLogic(EvalDeliveryService responsesLogic) {
       this.responsesLogic = responsesLogic;
    }
 

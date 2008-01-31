@@ -1,7 +1,7 @@
 /**
- * $Id: EvalResponsesLogic.java 1000 Dec 24, 2006 12:07:31 AM azeckoski $
+ * $Id: EvalDeliveryService.java 1000 Dec 24, 2006 12:07:31 AM azeckoski $
  * $URL: https://source.sakaiproject.org/contrib $
- * EvalResponsesLogic.java - evaluation - Dec 24, 2006 12:07:31 AM - azeckoski
+ * EvalDeliveryService.java - evaluation - Dec 24, 2006 12:07:31 AM - azeckoski
  **************************************************************************
  * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0
@@ -29,7 +29,7 @@ import org.sakaiproject.evaluation.model.EvalResponse;
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public interface EvalResponsesLogic {
+public interface EvalDeliveryService {
 	
 	/**
 	 * Get a response by its unique id<br/>
