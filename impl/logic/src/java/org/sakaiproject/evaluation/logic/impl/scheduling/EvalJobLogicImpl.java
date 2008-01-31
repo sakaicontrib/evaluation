@@ -46,15 +46,9 @@ public class EvalJobLogicImpl implements EvalJobLogic {
    // the component scheduled by the ScheduledInvocationManager
    protected final String COMPONENT_ID = "org.sakaiproject.evaluation.logic.externals.EvalScheduledInvocation";
 
-   protected final String SEPARATOR = "/"; // max-32:12345678901234567890123456789012
-   // FIXME these should be located in methods in the evaluations processing code
-   protected final String EVENT_EVAL_START = "evaluation.state.start";
-   protected final String EVENT_EVAL_DUE = "evaluation.state.due";
-   protected final String EVENT_EVAL_STOP = "evaluation.state.stop";
-   protected final String EVENT_EVAL_VIEWABLE = "evaluation.state.viewable";
-   protected final String EVENT_EVAL_VIEWABLE_INSTRUCTORS = "evaluation.state.viewable.inst";
-   protected final String EVENT_EVAL_VIEWABLE_STUDENTS = "evaluation.state.viewable.stud";
-   protected final String EVENT_EMAIL_REMINDER = "evaluation.email.reminder";
+   protected final String SEPARATOR = "/";            // max-32:12345678901234567890123456789012
+   protected final String EVENT_EVAL_VIEWABLE_INSTRUCTORS =    "eval.state.viewable.inst";
+   protected final String EVENT_EVAL_VIEWABLE_STUDENTS =       "eval.state.viewable.stud";
 
    protected EvalExternalLogic externalLogic;
    public void setExternalLogic(EvalExternalLogic externalLogic) {
@@ -161,7 +155,6 @@ public class EvalJobLogicImpl implements EvalJobLogic {
          sendCreatedEmail(evaluationId);
 
       } else if (EvalConstants.JOB_TYPE_ACTIVE.equals(jobType)) {
-         externalLogic.registerEntityEvent(EVENT_EVAL_START, eval);
          sendAvailableEmail(evaluationId);
          scheduleJob(eval.getId(), eval.getDueDate(), EvalConstants.JOB_TYPE_DUE);
          if (eval.getReminderDays().intValue() != 0)
@@ -177,14 +170,12 @@ public class EvalJobLogicImpl implements EvalJobLogic {
          }
 
       } else if (EvalConstants.JOB_TYPE_DUE.equals(jobType)) {
-         externalLogic.registerEntityEvent(EVENT_EVAL_DUE, eval);
          if (log.isDebugEnabled())
             log.debug("EvalJobLogicImpl.jobAction scheduleJob(" + eval.getId() + ","
                   + eval.getStopDate() + "," + EvalConstants.JOB_TYPE_CLOSED + ")");
          scheduleJob(eval.getId(), eval.getStopDate(), EvalConstants.JOB_TYPE_CLOSED);
 
       } else if (EvalConstants.JOB_TYPE_CLOSED.equals(jobType)) {
-         externalLogic.registerEntityEvent(EVENT_EVAL_STOP, eval);
          // schedule results viewable by owner - admin notification
          scheduleJob(eval.getId(), eval.getViewDate(), EvalConstants.JOB_TYPE_VIEWABLE);
          if (!eval.getResultsPrivate().booleanValue()) {
@@ -203,7 +194,6 @@ public class EvalJobLogicImpl implements EvalJobLogic {
          }
 
       } else if (EvalConstants.JOB_TYPE_VIEWABLE.equals(jobType)) {
-         externalLogic.registerEntityEvent(EVENT_EVAL_VIEWABLE, eval);
          // send results viewable notification to owner if protected, or all if not
          sendViewableEmail(evaluationId, jobType, eval.getResultsPrivate());
 
@@ -651,7 +641,6 @@ public class EvalJobLogicImpl implements EvalJobLogic {
          EvalEvaluation eval = evaluationService.getEvaluationById(evalId);
          if (eval.getState().equals(EvalConstants.EVALUATION_STATE_ACTIVE)
                && eval.getReminderDays().intValue() != 0) {
-            externalLogic.registerEntityEvent(EVENT_EMAIL_REMINDER, eval);
             String includeConstant = EvalConstants.EMAIL_INCLUDE_NONTAKERS;
             String[] sentMessages = emails.sendEvalReminderNotifications(evalId, includeConstant);
             if (log.isDebugEnabled())

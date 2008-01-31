@@ -61,26 +61,25 @@ import org.sakaiproject.tool.api.SessionManager;
  * Process an XML ContentResource and save or update the evaluation data contained in it
  * 
  * @author rwellis
- *
+ * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
 public class EvalImportImpl implements EvalImport {
 	
 	private static final Log log = LogFactory.getLog(EvalImportImpl.class);
 
-	// FIXME - these events should be in the authoring service instead of in the import
-	private final String SEPARATOR = "/";           // max-32:12345678901234567890123456789012
-	private final String EVENT_SCALE_SAVE = "evaluation.scale.save";
-	private final String EVENT_SCALE_UPDATE = "evaluation.scale.update";
-	private final String EVENT_ITEM_SAVE = "evaluation.item.save";
-	private final String EVENT_ITEM_UPDATE = "evaluation.item.update";
-	private final String EVENT_TEMPLATE_SAVE = "evaluation.template.save";
-	private final String EVENT_TEMPLATE_UPDATE = "evaluation.templateitem.update";
-	private final String EVENT_TEMPLATEITEM_SAVE = "evaluation.templateitem.save";
-	private final String EVENT_TEMPLATEITEM_UPDATE = "evaluation.template.update";
-	private final String EVENT_EVALUATION_SAVE = "evaluation.evaluation.save";
-	private final String EVENT_EVALUATION_UPDATE = "evaluation.evaluation.update";
-	private final String EVENT_ASSIGNGROUP_SAVE = "evaluation.assigngroup.save";
-	private final String EVENT_ASSIGNGROUP_UPDATE = "evaluation.assigngroup.update";
+	private final String SEPARATOR = "/";    // max-32:12345678901234567890123456789012
+	private final String EVENT_SCALE_SAVE =           "eval.scale.import";
+	private final String EVENT_SCALE_UPDATE =         "eval.scale.import.update";
+	private final String EVENT_ITEM_SAVE =            "eval.item.import";
+	private final String EVENT_ITEM_UPDATE =          "eval.item.import.update";
+	private final String EVENT_TEMPLATE_SAVE =        "eval.template.import";
+	private final String EVENT_TEMPLATE_UPDATE =      "eval.templateitem.import.update";
+	private final String EVENT_TEMPLATEITEM_SAVE =    "eval.templateitem.import";
+	private final String EVENT_TEMPLATEITEM_UPDATE =  "eval.template.import.update";
+	private final String EVENT_EVALUATION_SAVE =      "eval.evaluation.import";
+	private final String EVENT_EVALUATION_UPDATE =    "eval.evaluation.import.update";
+	private final String EVENT_ASSIGNGROUP_SAVE =     "eval.assigngroup.import";
+	private final String EVENT_ASSIGNGROUP_UPDATE =   "eval.assigngroup.import.update";
 	
 	//Spring injection
 	private ContentHostingService contentHostingService;

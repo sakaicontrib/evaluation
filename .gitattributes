@@ -16,7 +16,9 @@ api/logic/src/java/org/sakaiproject/evaluation/logic/EvalSettings.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/entity/AssignGroupEntityProvider.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/entity/EvalCategoryEntityProvider.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/entity/EvaluationEntityProvider.java -text
+api/logic/src/java/org/sakaiproject/evaluation/logic/entity/ItemEntityProvider.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/logic/src/java/org/sakaiproject/evaluation/logic/entity/TemplateEntityProvider.java -text
+api/logic/src/java/org/sakaiproject/evaluation/logic/entity/TemplateItemEntityProvider.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/EvalImport.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/EvalImportJob.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/EvalImportLogic.java -text
@@ -86,7 +88,9 @@ impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/ExternalHierarchyLogi
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/entity/AssignGroupEntityProviderImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/entity/EvalCategoryEntityProviderImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/entity/EvaluationEntityProviderImpl.java -text
+impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/entity/ItemEntityProviderImpl.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/entity/TemplateEntityProviderImpl.java -text
+impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/entity/TemplateItemEntityProviderImpl.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvalAssignContextInterceptor.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvaluationInterceptor.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvaluationModificationRegistry.java -text
@@ -145,6 +149,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/bundle/messages.properties -text
 tool/src/java/org/sakaiproject/evaluation/tool/bundle/messages_en.properties -text
 tool/src/java/org/sakaiproject/evaluation/tool/inferrers/EvalCategoryVPInferrer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/inferrers/EvaluationVPInferrer.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/inferrers/ItemVPInferrer.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/inferrers/TemplateVPInferrer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/locators/AnswersBeanLocator.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/locators/EntityNameInferrerImpl.java -text

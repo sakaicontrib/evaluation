@@ -50,6 +50,12 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 
    private static Log log = LogFactory.getLog(EvalEvaluationServiceImpl.class);
 
+   // Event names cannot be over 32 chars long              // max-32:12345678901234567890123456789012
+   protected final String EVENT_EVAL_STATE_START =                   "eval.evaluation.state.start";
+   protected final String EVENT_EVAL_STATE_DUE =                     "eval.evaluation.state.due";
+   protected final String EVENT_EVAL_STATE_STOP =                    "eval.evaluation.state.stop";
+   protected final String EVENT_EVAL_STATE_VIEWABLE =                "eval.evaluation.state.viewable";
+
    private EvaluationDao dao;
    public void setDao(EvaluationDao dao) {
       this.dao = dao;
@@ -153,7 +159,6 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
       return returnAndFixEvalState(eval, true);
    }
 
-   private final String EVENT_EVAL_STATE_CHANGE = "eval.evaluation.state.change";
 
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#returnAndFixEvalState(org.sakaiproject.evaluation.model.EvalEvaluation, boolean)
@@ -168,7 +173,15 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
          if (! state.equals(evaluation.getState()) ) {
             evaluation.setState(state);
             if ( (evaluation.getId() != null) && saveState) {
-               external.registerEntityEvent(EVENT_EVAL_STATE_CHANGE, evaluation);
+               if ( EvalConstants.EVALUATION_STATE_ACTIVE.equals(state) ) {
+                  external.registerEntityEvent(EVENT_EVAL_STATE_START, evaluation);
+               } else if ( EvalConstants.EVALUATION_STATE_DUE.equals(state) ) {
+                  external.registerEntityEvent(EVENT_EVAL_STATE_DUE, evaluation);
+               } else if ( EvalConstants.EVALUATION_STATE_CLOSED.equals(state) ) {
+                  external.registerEntityEvent(EVENT_EVAL_STATE_STOP, evaluation);
+               } else if ( EvalConstants.EVALUATION_STATE_VIEWABLE.equals(state) ) {
+                  external.registerEntityEvent(EVENT_EVAL_STATE_VIEWABLE, evaluation);
+               }
                dao.update(evaluation);
             }
          }

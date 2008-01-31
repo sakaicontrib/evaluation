@@ -14,6 +14,8 @@
 
 package org.sakaiproject.evaluation.logic.model;
 
+import java.io.Serializable;
+
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 
@@ -23,7 +25,7 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class EvalGroup {
+public class EvalGroup implements Serializable {
 
 	/**
 	 * The evalGroup ID string which is the unique identifier for this
