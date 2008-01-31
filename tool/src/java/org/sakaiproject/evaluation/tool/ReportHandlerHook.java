@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
+import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.utils.ComparatorsUtils;
@@ -60,8 +60,8 @@ public class ReportHandlerHook implements HandlerHook {
         this.viewparams = viewparams;
     }
 
-    private EvalEvaluationsLogic evalsLogic;
-    public void setEvalsLogic(EvalEvaluationsLogic evalsLogic) {
+    private EvalEvaluationSetupService evalsLogic;
+    public void setEvalsLogic(EvalEvaluationSetupService evalsLogic) {
         this.evalsLogic = evalsLogic;
     }
 

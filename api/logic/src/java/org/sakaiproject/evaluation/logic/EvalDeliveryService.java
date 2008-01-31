@@ -139,11 +139,11 @@ public interface EvalDeliveryService {
 	 * Does a simple permission check to see if a user can modify a response, 
 	 * also checks the evaluation state (only active or due states allow modify)<br/> 
 	 * Does NOT check if the user can take this evaluation,
-	 * use canTakeEvaluation in EvalEvaluationsLogic to check that<br/>
+	 * use canTakeEvaluation in EvalEvaluationSetupService to check that<br/>
 	 * <b>Note:</b> Responses can never be removed via the APIs<br/>
 	 * <b>Note:</b> Any checks to see if a user can
 	 * take an evaluation should be done with canTakeEvaluation() in
-	 * the EvalEvaluationsLogic API
+	 * the EvalEvaluationSetupService API
 	 * 
 	 * @param userId the internal user id (not username)
 	 * @param responseId the id of an EvalResponse object

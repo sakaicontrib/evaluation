@@ -1,7 +1,7 @@
 /**
- * $Id: EvalEvaluationsLogic.java 1000 Dec 25, 2006 12:07:31 AM azeckoski $
+ * $Id: EvalEvaluationSetupService.java 1000 Dec 25, 2006 12:07:31 AM azeckoski $
  * $URL: https://source.sakaiproject.org/contrib $
- * EvalEvaluationsLogic.java - evaluation - Dec 24, 2006 12:07:31 AM - azeckoski
+ * EvalEvaluationSetupService.java - evaluation - Dec 24, 2006 12:07:31 AM - azeckoski
  **************************************************************************
  * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0
@@ -29,7 +29,7 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public interface EvalEvaluationsLogic {
+public interface EvalEvaluationSetupService {
 
 	/**
 	 * Save or update an evaluation to persistent storage,

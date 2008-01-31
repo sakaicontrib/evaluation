@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
+import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -51,8 +51,8 @@ public class ReportChooseGroupsProducer implements ViewComponentProducer, Naviga
         this.externalLogic = externalLogic;
     }
 
-    private EvalEvaluationsLogic evalsLogic;
-    public void setEvalsLogic(EvalEvaluationsLogic evalsLogic) {
+    private EvalEvaluationSetupService evalsLogic;
+    public void setEvalsLogic(EvalEvaluationSetupService evalsLogic) {
         this.evalsLogic = evalsLogic;
     }
 

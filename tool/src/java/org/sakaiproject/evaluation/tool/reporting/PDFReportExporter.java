@@ -12,7 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.content.api.ContentHostingService;
 import org.sakaiproject.content.api.ContentResource;
-import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
+import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
@@ -40,7 +40,7 @@ public class PDFReportExporter {
 
     private EvalSettings evalSettings;
     private EvalDeliveryService responsesLogic;
-    private EvalEvaluationsLogic evalsLogic;
+    private EvalEvaluationSetupService evalsLogic;
     private HttpServletResponse response;
     private EvalExternalLogic externalLogic;
     private ContentHostingService contentHostingService;
@@ -281,7 +281,7 @@ public class PDFReportExporter {
         this.responsesLogic = responsesLogic;
     }
 
-    public void setEvalsLogic(EvalEvaluationsLogic evalsLogic) {
+    public void setEvalsLogic(EvalEvaluationSetupService evalsLogic) {
         this.evalsLogic = evalsLogic;
     }
 

@@ -1,7 +1,7 @@
 /**
- * $Id: EvalEvaluationsLogicImplTest.java 1000 Dec 26, 2006 10:07:31 AM azeckoski $
+ * $Id: EvalEvaluationSetupServiceImplTest.java 1000 Dec 26, 2006 10:07:31 AM azeckoski $
  * $URL: https://source.sakaiproject.org/contrib $
- * EvalEvaluationsLogicImplTest.java - evaluation - Dec 26, 2006 10:07:31 AM - azeckoski
+ * EvalEvaluationSetupServiceImplTest.java - evaluation - Dec 26, 2006 10:07:31 AM - azeckoski
  **************************************************************************
  * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0
@@ -23,7 +23,7 @@ import junit.framework.Assert;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl;
+import org.sakaiproject.evaluation.logic.impl.EvalEvaluationSetupServiceImpl;
 import org.sakaiproject.evaluation.logic.impl.EvalSecurityChecks;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
@@ -39,13 +39,13 @@ import org.springframework.test.AbstractTransactionalSpringContextTests;
 
 
 /**
- * Test class for EvalEvaluationsLogicImpl
+ * Test class for EvalEvaluationSetupServiceImpl
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringContextTests {
+public class EvalEvaluationSetupServiceImplTest extends AbstractTransactionalSpringContextTests {
 
-	protected EvalEvaluationsLogicImpl evaluations;
+	protected EvalEvaluationSetupServiceImpl evaluations;
 
 	private EvaluationDao evaluationDao;
 	private EvalTestDataLoad etdl;
@@ -98,7 +98,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 		// setup the mock objects if needed
 
 		// create and setup the object to be tested
-		evaluations = new EvalEvaluationsLogicImpl();
+		evaluations = new EvalEvaluationSetupServiceImpl();
 		evaluations.setDao(evaluationDao);
 		evaluations.setExternalLogic( new MockEvalExternalLogic() );
 		evaluations.setSettings(settings);
@@ -121,7 +121,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 	 */
 	
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl#getEvaluationByEid(java.lang.String)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationSetupServiceImpl#getEvaluationByEid(java.lang.String)}.
 	 */
 	public void testGetEvaluationByEid() {
 		EvalEvaluation evaluation = null;
@@ -141,7 +141,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl#getEvaluationById(java.lang.Long)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationSetupServiceImpl#getEvaluationById(java.lang.Long)}.
 	 * This method is first because other methods use the one it tests so it has to pass first
 	 */
 	public void testGetEvaluationById() {
@@ -163,7 +163,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl#saveEvaluation(org.sakaiproject.evaluation.model.EvalEvaluation)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationSetupServiceImpl#saveEvaluation(org.sakaiproject.evaluation.model.EvalEvaluation)}.
 	 */
 	public void testSaveEvaluation() {
 		EvalEvaluation eval = null;
@@ -359,7 +359,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl#deleteEvaluation(org.sakaiproject.evaluation.model.EvalEvaluation)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationSetupServiceImpl#deleteEvaluation(org.sakaiproject.evaluation.model.EvalEvaluation)}.
 	 */
 	public void testDeleteEvaluation() {
 		// remove evaluation which has not started (uses 2 email templates)
@@ -422,7 +422,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl#getEvaluationsByTemplateId(java.lang.Long)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationSetupServiceImpl#getEvaluationsByTemplateId(java.lang.Long)}.
 	 */
 	public void testGetEvaluationsByTemplateId() {
 		List<EvalEvaluation> l = null;
@@ -459,7 +459,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl#countEvaluationsByTemplateId(java.lang.Long)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationSetupServiceImpl#countEvaluationsByTemplateId(java.lang.Long)}.
 	 */
 	public void testCountEvaluationsByTemplateId() {
 		// test valid template ids
@@ -483,7 +483,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl#canRemoveEvaluation(org.sakaiproject.evaluation.model.EvalEvaluation, java.lang.String)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationSetupServiceImpl#canRemoveEvaluation(org.sakaiproject.evaluation.model.EvalEvaluation, java.lang.String)}.
 	 */
 	public void testCanRemoveEvaluation() {
 		// test can remove
@@ -508,7 +508,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl#getEvaluationsForUser(String, boolean, boolean)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationSetupServiceImpl#getEvaluationsForUser(String, boolean, boolean)}.
 	 */
 	public void testGetEvaluationsForUser() {
 		List<EvalEvaluation> evals = null;
@@ -576,7 +576,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 }
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl#getVisibleEvaluationsForUser(java.lang.String, boolean, boolean)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationSetupServiceImpl#getVisibleEvaluationsForUser(java.lang.String, boolean, boolean)}.
 	 */
 	public void testGetVisibleEvaluationsForUser() {
 		// test getting visible evals for the maint user
@@ -612,7 +612,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl#canBeginEvaluation(java.lang.String)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationSetupServiceImpl#canBeginEvaluation(java.lang.String)}.
 	 */
 	public void testCanBeginEvaluation() {
 		Assert.assertTrue( evaluations.canBeginEvaluation(EvalTestDataLoad.ADMIN_USER_ID) );
@@ -622,7 +622,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl#canTakeEvaluation(java.lang.String, java.lang.Long, java.lang.String)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationSetupServiceImpl#canTakeEvaluation(java.lang.String, java.lang.Long, java.lang.String)}.
 	 */
 	public void testCanTakeEvaluation() {
 		// test able to take untaken eval
@@ -669,7 +669,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl#countEvaluationGroups(java.lang.Long)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationSetupServiceImpl#countEvaluationGroups(java.lang.Long)}.
 	 */
 	public void testCountEvaluationContexts() {
 		int count = evaluations.countEvaluationGroups( etdl.evaluationClosed.getId() );
@@ -688,7 +688,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl#updateEvaluationState(org.sakaiproject.evaluation.model.EvalEvaluation)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationSetupServiceImpl#updateEvaluationState(org.sakaiproject.evaluation.model.EvalEvaluation)}.
 	 */
 	public void testGetEvaluationState() {
 		Assert.assertEquals( evaluations.updateEvaluationState( etdl.evaluationNew.getId() ), EvalConstants.EVALUATION_STATE_INQUEUE );
@@ -707,7 +707,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl#getEvaluationContexts(java.lang.Long[])}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationSetupServiceImpl#getEvaluationContexts(java.lang.Long[])}.
 	 */
 	public void testGetEvaluationContexts() {
 	   Map<Long, List<EvalGroup>> m = evaluations.getEvaluationGroups( 
@@ -747,7 +747,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl#getEvalCategories(java.lang.String)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationSetupServiceImpl#getEvalCategories(java.lang.String)}.
 	 */
 	public void testGetEvalCategories() {
 		String[] cats = null;
@@ -779,7 +779,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl#getEvaluationsByCategory(java.lang.String, java.lang.String)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationSetupServiceImpl#getEvaluationsByCategory(java.lang.String, java.lang.String)}.
 	 */
 	public void testGetEvaluationsByCategory() {
       List<EvalEvaluation> evals = null;

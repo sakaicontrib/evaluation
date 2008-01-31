@@ -25,7 +25,7 @@
       <property name="authoringService"
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
       <property name="evalsLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+         ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
       <property name="assignsLogic"
          ref="org.sakaiproject.evaluation.logic.EvalAssignsLogic" />
       <property name="emailsLogic"
@@ -100,7 +100,7 @@
       <property name="viewparams" ref="viewParameters" />
       <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
       <property name="evalsLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+         ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
       <property name="responsesLogic"
          ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
       <property name="csvReportExporter" ref="CSVReportExporter" />
@@ -142,7 +142,7 @@
       <property name="external"
          ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
       <property name="evalsLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+         ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
    </bean>
 
    <bean id="responseBeanLocator"
@@ -275,7 +275,7 @@
       <property name="authoringService"
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
       <property name="evaluationsLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+         ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
       <property name="responsesLogic"
          ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
       <property name="settings"
@@ -446,7 +446,7 @@
       <property name="externalLogic"
          ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
       <property name="evaluationsLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+         ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
       <property name="authoringService"
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
       <property name="responsesLogic"
@@ -461,7 +461,7 @@
       <property name="external"
          ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
       <property name="evalsLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+         ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
       <property name="authoringService"
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
       <property name="itemRenderer"
@@ -515,7 +515,7 @@
    <bean
       class="org.sakaiproject.evaluation.tool.producers.RemoveEvalProducer">
       <property name="evalsLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+         ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
       <property name="locale" ref="requestLocale" />
    </bean>
 
@@ -554,7 +554,7 @@
    <bean
       class="org.sakaiproject.evaluation.tool.producers.ShowEvalCategoryProducer">
       <property name="evaluationsLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+         ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
       <property name="locale" ref="requestLocale" />
    </bean>
 
@@ -579,7 +579,7 @@
       <property name="externalLogic"
          ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
       <property name="evalsLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+         ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
       <property name="reportsBean" ref="reportsBean" />
    </bean>
 

@@ -21,7 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.entitybroker.IdEntityReference;
 import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
-import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
+import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.entity.AssignGroupEntityProvider;
 import org.sakaiproject.evaluation.logic.entity.EvaluationEntityProvider;
@@ -60,8 +60,8 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
         this.assignsLogic = assignsLogic;
     }
 
-    private EvalEvaluationsLogic evaluationsLogic;
-    public void setEvaluationsLogic(EvalEvaluationsLogic evaluationsLogic) {
+    private EvalEvaluationSetupService evaluationsLogic;
+    public void setEvaluationsLogic(EvalEvaluationSetupService evaluationsLogic) {
         this.evaluationsLogic = evaluationsLogic;
     }
 

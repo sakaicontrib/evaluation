@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
+import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
@@ -79,8 +79,8 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 		this.externalLogic = externalLogic;
 	}
 	
-	private EvalEvaluationsLogic evaluationsLogic;
-	public void setEvaluationsLogic(EvalEvaluationsLogic evaluationsLogic) {
+	private EvalEvaluationSetupService evaluationsLogic;
+	public void setEvaluationsLogic(EvalEvaluationSetupService evaluationsLogic) {
 		this.evaluationsLogic = evaluationsLogic;
 	}
 

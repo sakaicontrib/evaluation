@@ -48,7 +48,7 @@
 		init-method="init">
 		<property name="evalAssignsLogic" ref="org.sakaiproject.evaluation.logic.EvalAssignsLogic" />
 		<property name="evalEmailsLogic" ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
-		<property name="evalEvaluationsLogic" ref="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic" />
+		<property name="evalEvaluationsLogic" ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
 		<property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
         <property name="authoringService"
             ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />

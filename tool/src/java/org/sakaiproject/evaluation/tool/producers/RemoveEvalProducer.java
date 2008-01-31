@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
+import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
@@ -53,8 +53,8 @@ public class RemoveEvalProducer implements ViewComponentProducer,ViewParamsRepor
 		return VIEW_ID;
 	}
 	
-	private EvalEvaluationsLogic evalsLogic;
-	public void setEvalsLogic(EvalEvaluationsLogic evalsLogic) {
+	private EvalEvaluationSetupService evalsLogic;
+	public void setEvalsLogic(EvalEvaluationSetupService evalsLogic) {
 		this.evalsLogic = evalsLogic;
 	}
 		
