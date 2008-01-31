@@ -16,7 +16,7 @@ package org.sakaiproject.evaluation.logic.impl.entity;
 
 import org.sakaiproject.entitybroker.entityprovider.CoreEntityProvider;
 import org.sakaiproject.entitybroker.entityprovider.capabilities.AutoRegisterEntityProvider;
-import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
+import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.entity.EvalCategoryEntityProvider;
 
 /**
@@ -26,8 +26,8 @@ import org.sakaiproject.evaluation.logic.entity.EvalCategoryEntityProvider;
  */
 public class EvalCategoryEntityProviderImpl implements EvalCategoryEntityProvider, CoreEntityProvider, AutoRegisterEntityProvider {
 
-	private EvalEvaluationsLogic evaluationsLogic;
-	public void setEvaluationsLogic(EvalEvaluationsLogic evaluationsLogic) {
+	private EvalEvaluationSetupService evaluationsLogic;
+	public void setEvaluationsLogic(EvalEvaluationSetupService evaluationsLogic) {
 		this.evaluationsLogic = evaluationsLogic;
 	}
 

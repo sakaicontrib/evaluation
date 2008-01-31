@@ -48,8 +48,8 @@
       <property name="emails" ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
    </bean>
 
-   <bean id="org.sakaiproject.evaluation.logic.EvalEvaluationsLogic"
-      class="org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl" init-method="init">
+   <bean id="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService"
+      class="org.sakaiproject.evaluation.logic.impl.EvalEvaluationSetupServiceImpl" init-method="init">
       <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
       <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
       <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />

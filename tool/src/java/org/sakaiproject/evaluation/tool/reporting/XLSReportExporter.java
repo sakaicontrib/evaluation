@@ -13,7 +13,7 @@ import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
+import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
@@ -30,7 +30,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
 public class XLSReportExporter {
 
     private EvalDeliveryService responsesLogic;
-    private EvalEvaluationsLogic evalsLogic;
+    private EvalEvaluationSetupService evalsLogic;
     private EvalExternalLogic externalLogic;
     private HttpServletResponse response;
 
@@ -181,7 +181,7 @@ public class XLSReportExporter {
         this.responsesLogic = responsesLogic;
     }
 
-    public void setEvalsLogic(EvalEvaluationsLogic evalsLogic) {
+    public void setEvalsLogic(EvalEvaluationSetupService evalsLogic) {
         this.evalsLogic = evalsLogic;
     }
 

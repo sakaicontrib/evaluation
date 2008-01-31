@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
+import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 
@@ -34,8 +34,8 @@ public class EvaluationBeanLocator implements BeanLocator {
    public static final String NEW_PREFIX = "new";
    public static String NEW_1 = NEW_PREFIX + "1";
 
-   private EvalEvaluationsLogic evalsLogic;
-   public void setEvalsLogic(EvalEvaluationsLogic evalsLogic) {
+   private EvalEvaluationSetupService evalsLogic;
+   public void setEvalsLogic(EvalEvaluationSetupService evalsLogic) {
       this.evalsLogic = evalsLogic;
    }
 

@@ -385,7 +385,7 @@ public interface EvalEvaluationService {
     * <b>Note:</b> Responses can never be removed via the APIs<br/>
     * <b>Note:</b> Any checks to see if a user can
     * take an evaluation should be done with canTakeEvaluation() in
-    * the EvalEvaluationsLogic API
+    * the EvalEvaluationSetupService API
     * 
     * @param userId the internal user id (not username)
     * @param responseId the id of an {@link EvalResponse} object

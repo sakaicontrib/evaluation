@@ -1,7 +1,7 @@
 /**
- * $Id: EvalEvaluationsLogicImpl.java 1000 Dec 25, 2006 10:07:31 AM azeckoski $
+ * $Id: EvalEvaluationSetupServiceImpl.java 1000 Dec 25, 2006 10:07:31 AM azeckoski $
  * $URL: https://source.sakaiproject.org/contrib $
- * EvalEvaluationsLogicImpl.java - evaluation - Dec 25, 2006 10:07:31 AM - azeckoski
+ * EvalEvaluationSetupServiceImpl.java - evaluation - Dec 25, 2006 10:07:31 AM - azeckoski
  **************************************************************************
  * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0
@@ -28,7 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
-import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
+import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
@@ -43,14 +43,14 @@ import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 /**
- * Implementation for EvalEvaluationsLogic
+ * Implementation for EvalEvaluationSetupService
  * (Note for developers - do not modify this without permission from the author)<br/>
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
+public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupService {
 
-   private static Log log = LogFactory.getLog(EvalEvaluationsLogicImpl.class);
+   private static Log log = LogFactory.getLog(EvalEvaluationSetupServiceImpl.class);
 
    private final String EVENT_EVAL_CREATE = "eval.evaluation.created";
    private final String EVENT_EVAL_UPDATE = "eval.evaluation.updated";
@@ -364,7 +364,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
    
    /*
     * (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.EvalEvaluationsLogic#getEvaluationByEid(java.lang.String)
+    * @see org.sakaiproject.evaluation.logic.EvalEvaluationSetupService#getEvaluationByEid(java.lang.String)
     */
    @SuppressWarnings("unchecked")
    public EvalEvaluation getEvaluationByEid(String eid) {
@@ -379,7 +379,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
    }
 
    /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.EvalEvaluationsLogic#getEvaluationsByTemplateId(java.lang.Long)
+    * @see org.sakaiproject.evaluation.logic.EvalEvaluationSetupService#getEvaluationsByTemplateId(java.lang.Long)
     */
    @SuppressWarnings("unchecked")
    public List<EvalEvaluation> getEvaluationsByTemplateId(Long templateId) {
@@ -501,7 +501,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
    }
 
    /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.EvalEvaluationsLogic#getEvaluationAssignGroups(java.lang.Long[], boolean)
+    * @see org.sakaiproject.evaluation.logic.EvalEvaluationSetupService#getEvaluationAssignGroups(java.lang.Long[], boolean)
     */
    @SuppressWarnings("unchecked")
    public Map<Long, List<EvalAssignGroup>> getEvaluationAssignGroups(Long[] evaluationIds, boolean includeUnApproved) {
@@ -509,7 +509,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
    }
 
    /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.EvalEvaluationsLogic#getEvaluationGroups(java.lang.Long[], boolean)
+    * @see org.sakaiproject.evaluation.logic.EvalEvaluationSetupService#getEvaluationGroups(java.lang.Long[], boolean)
     */
    public Map<Long, List<EvalGroup>> getEvaluationGroups(Long[] evaluationIds, boolean includeUnApproved) {
       return evaluationService.getEvaluationGroups(evaluationIds, includeUnApproved);
@@ -550,7 +550,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
    // CATEGORIES
 
    /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.EvalEvaluationsLogic#getEvalCategories(java.lang.String)
+    * @see org.sakaiproject.evaluation.logic.EvalEvaluationSetupService#getEvalCategories(java.lang.String)
     */
    public String[] getEvalCategories(String userId) {
       log.debug("userId: " + userId );
@@ -562,7 +562,7 @@ public class EvalEvaluationsLogicImpl implements EvalEvaluationsLogic {
 
 
    /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.EvalEvaluationsLogic#getEvaluationsByCategory(java.lang.String, java.lang.String)
+    * @see org.sakaiproject.evaluation.logic.EvalEvaluationSetupService#getEvaluationsByCategory(java.lang.String, java.lang.String)
     */
    @SuppressWarnings("unchecked")
    public List<EvalEvaluation> getEvaluationsByCategory(String evalCategory, String userId) {

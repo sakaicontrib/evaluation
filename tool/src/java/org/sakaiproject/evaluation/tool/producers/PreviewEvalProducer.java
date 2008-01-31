@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
+import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -56,8 +56,8 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
         return VIEW_ID;
     }
 
-    private EvalEvaluationsLogic evalsLogic;
-    public void setEvalsLogic(EvalEvaluationsLogic evalsLogic) {
+    private EvalEvaluationSetupService evalsLogic;
+    public void setEvalsLogic(EvalEvaluationSetupService evalsLogic) {
         this.evalsLogic = evalsLogic;
     }
 

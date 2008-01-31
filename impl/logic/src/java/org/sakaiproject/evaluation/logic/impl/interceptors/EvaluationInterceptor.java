@@ -17,7 +17,7 @@ package org.sakaiproject.evaluation.logic.impl.interceptors;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.sakaiproject.evaluation.logic.impl.EvalEvaluationsLogicImpl;
+import org.sakaiproject.evaluation.logic.impl.EvalEvaluationSetupServiceImpl;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 
 
@@ -31,9 +31,9 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class EvaluationInterceptor implements MethodInterceptor {
-	private EvalEvaluationsLogicImpl evalEvaluationsLogicImpl;
+	private EvalEvaluationSetupServiceImpl evalEvaluationsLogicImpl;
 
-	public EvaluationInterceptor(EvalEvaluationsLogicImpl evalEvaluationsLogicImpl) {
+	public EvaluationInterceptor(EvalEvaluationSetupServiceImpl evalEvaluationsLogicImpl) {
 		this.evalEvaluationsLogicImpl = evalEvaluationsLogicImpl;
 	}
 

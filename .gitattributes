@@ -10,7 +10,7 @@ api/logic/src/java/org/sakaiproject/evaluation/logic/EvalAuthoringService.java s
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalDeliveryService.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalEmailsLogic.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalEvaluationService.java svn_keywords=Date+Revision+Author+HeadURL+Id
-api/logic/src/java/org/sakaiproject/evaluation/logic/EvalEvaluationsLogic.java -text
+api/logic/src/java/org/sakaiproject/evaluation/logic/EvalEvaluationSetupService.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalExternalLogic.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalSettings.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/entity/AssignGroupEntityProvider.java -text
@@ -80,7 +80,7 @@ impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalAuthoringServiceI
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalDeliveryServiceImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalEmailsLogicImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalEvaluationServiceImpl.java svn_keywords=Date+Revision+Author+HeadURL+Id
-impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalEvaluationsLogicImpl.java -text
+impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalEvaluationSetupServiceImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalExternalLogicImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalSecurityChecks.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalSettingsImpl.java -text
@@ -106,7 +106,7 @@ impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalAuthoringServiceI
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalDeliveryServiceImplTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalEmailsLogicImplTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalEvaluationServiceImplTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
-impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalEvaluationsLogicImplTest.java -text
+impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalEvaluationSetupServiceImplTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalExternalLogicStubTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalJobLogicImplTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalSettingsImplTest.java -text

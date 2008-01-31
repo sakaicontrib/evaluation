@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
-import org.sakaiproject.evaluation.logic.EvalEvaluationsLogic;
+import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
@@ -76,8 +76,8 @@ public class EvaluationBean {
       this.authoringService = authoringService;
    }
 
-   private EvalEvaluationsLogic evalsLogic;
-   public void setEvalsLogic(EvalEvaluationsLogic evalsLogic) {
+   private EvalEvaluationSetupService evalsLogic;
+   public void setEvalsLogic(EvalEvaluationSetupService evalsLogic) {
       this.evalsLogic = evalsLogic;
    }
 
