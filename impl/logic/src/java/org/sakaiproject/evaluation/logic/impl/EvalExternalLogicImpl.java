@@ -52,6 +52,7 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.exception.IdUnusedException;
+import org.sakaiproject.site.api.Group;
 import org.sakaiproject.site.api.Site;
 import org.sakaiproject.site.api.SiteService;
 import org.sakaiproject.tool.api.Session;
@@ -77,7 +78,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
 
    private static Log log = LogFactory.getLog(EvalExternalLogicImpl.class);
 
-   private static final String SAKAI_SITE_TYPE = SiteService.APPLICATION_ID;
+   private static final String SAKAI_SITE_TYPE = SiteService.SITE_SUBTYPE;
    private static final String SAKAI_GROUP_TYPE = SiteService.GROUP_SUBTYPE;
 
    private static final String ANON_USER_ATTRIBUTE = "AnonUserAttribute";
@@ -285,9 +286,16 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
       EvalGroup c = null;
       try {
          // try to get the site object based on the entity reference (which is the evalGroupId)
-         Site site = (Site) entityBroker.fetchEntity(evalGroupId);
-         c = new EvalGroup( evalGroupId, site.getTitle(), 
-               getContextType(SAKAI_SITE_TYPE) );
+         Object entity = entityBroker.fetchEntity(evalGroupId);
+         if (entity instanceof Site) {
+            Site site = (Site) entityBroker.fetchEntity(evalGroupId);
+            c = new EvalGroup( evalGroupId, site.getTitle(), 
+                  getContextType(SAKAI_SITE_TYPE) );
+         } else if (entity instanceof Group) {
+            Group group = (Group) entityBroker.fetchEntity(evalGroupId);
+            c = new EvalGroup( evalGroupId, group.getTitle(), 
+                  getContextType(SAKAI_GROUP_TYPE) );
+         }
       } catch (Exception e) {
          // invalid site reference
          log.debug("Could not get sakai site from evalGroupId:" + evalGroupId, e);
@@ -318,13 +326,29 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
     * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#getCurrentEvalGroup()
     */
    public String getCurrentEvalGroup() {
+      String location = null;
       try {
-         Site s = (Site) siteService.getSite( toolManager.getCurrentPlacement().getContext() );
-         return s.getReference(); // get the entity reference to the site
+         String context = toolManager.getCurrentPlacement().getContext();
+         try {
+            Site s = siteService.getSite( context );
+            location = s.getReference(); // get the entity reference to the site
+         } catch (IdUnusedException e1) {
+           log.debug("Failed to get current site, trying to find current group"); 
+           Group group = siteService.findGroup( context );
+           if ( group != null ) {
+              location = group.getReference();
+           }
+         }
       } catch (Exception e) {
-         log.warn("Could not get the current location (we are probably outside the portal), returning the fake one");
-         return NO_LOCATION;
+         log.warn("Failure while attempting to get current location: " + e.getMessage());
+         location = null;
       }
+
+      if (location == null) {
+         log.warn("Could not get the current location (we are probably outside the portal), returning the fake one");
+         location = NO_LOCATION;
+      }
+      return location;
    }
 
    /* (non-Javadoc)
@@ -353,7 +377,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
          String authzGroupId = it.next();
          Reference r = entityManager.newReference(authzGroupId);
          if(r.isKnownType()) {
-            // check if this is a Sakai Site
+            // check if this is a Sakai Site or Group
             if(r.getType().equals(SiteService.APPLICATION_ID)) {
                count++;
             }
@@ -380,22 +404,37 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
       log.debug("userId: " + userId + ", permission: " + permission);
 
       List<EvalGroup> l = new ArrayList<EvalGroup>();
-      Set<String> authzGroupIds = authzGroupService.getAuthzGroupsIsAllowed(userId, permission, null);
+      Set<String> authzGroupIds = 
+         authzGroupService.getAuthzGroupsIsAllowed(userId, permission, null);
       Iterator<String> it = authzGroupIds.iterator();
       while (it.hasNext()) {
          String authzGroupId = it.next();
          Reference r = entityManager.newReference(authzGroupId);
-         if(r.isKnownType()) {
-            // check if this is a Sakai Site
-            if(r.getType().equals(SiteService.APPLICATION_ID)) {
-               String siteId = r.getId();
-               try {
-                  Site site = siteService.getSite(siteId);
-                  l.add( new EvalGroup(r.getReference(), site.getTitle(), 
-                        getContextType(r.getType())) );
-               } catch (IdUnusedException e) {
-                  // invalid site Id returned
-                  throw new RuntimeException("Could not get site from siteId:" + siteId);
+         if (r.isKnownType()) {
+            // check if this is a Sakai Site or Group
+            if (r.getType().equals(SiteService.APPLICATION_ID)) {
+               String type = r.getSubType();
+               if (SAKAI_SITE_TYPE.equals(type)) {
+                  // this is a Site
+                  String siteId = r.getId();
+                  try {
+                     Site site = siteService.getSite(siteId);
+                     l.add(new EvalGroup(r.getReference(), site.getTitle(), 
+                           getContextType(r.getType())));
+                  } catch (IdUnusedException e) {
+                     // invalid site Id returned
+                     throw new RuntimeException("Could not get site from siteId:" + siteId);
+                  }
+
+               } else if (SAKAI_GROUP_TYPE.equals(type)) {
+                  // this is a Group in a Site
+                  String groupId = r.getId();
+                  Group group = siteService.findGroup(groupId);
+                  if (group == null) {
+                     throw new RuntimeException("Could not get group from group id:" + groupId);
+                  }
+                  l.add(new EvalGroup(r.getReference(), group.getTitle(), 
+                        getContextType(r.getType())));
                }
             }
          }
