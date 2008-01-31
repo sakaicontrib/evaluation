@@ -112,9 +112,7 @@
 	</bean>
 
 	<bean class="uk.org.ponder.rsac.BeanFetchBracketer">
-		<property name="targetBeanName">
-			<idref bean="rootHandlerBean" />
-		</property>
+		<property name="targetBeanName" value="rootHandlerBean" />
 		<property name="wrappingBean"
 			ref="org.sakaiproject.evaluation.ModelAccessWrapperInvoker" />
 	</bean>
