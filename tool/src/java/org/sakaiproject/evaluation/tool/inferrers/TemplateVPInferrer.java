@@ -43,11 +43,11 @@ public class TemplateVPInferrer implements EntityViewParamsInferrer {
 		IdEntityReference ep = new IdEntityReference(reference);
 		Long templateId = new Long(ep.id);
 		// MAYBE add in restriction for access to template preview later? -AZ
-//		EvalTemplate template = templatesLogic.getTemplateById(templateId); 
+//		EvalTemplate template = authoringService.getTemplateById(templateId); 
 //		if (EvalConstants.SHARING_PUBLIC.equals(template.getSharing()) ||
 //				Boolean.TRUE.equals(template.getExpert())) {
 //		} else {
-//			templatesLogic.canControlTemplate(userId, templateId);
+//			authoringService.canControlTemplate(userId, templateId);
 //		}
 		return new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID, null, templateId);
 	}

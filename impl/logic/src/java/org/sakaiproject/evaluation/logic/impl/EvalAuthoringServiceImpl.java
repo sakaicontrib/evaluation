@@ -50,9 +50,23 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 
    private static Log log = LogFactory.getLog(EvalAuthoringServiceImpl.class);
 
-   private final String EVENT_TEMPLATE_CREATE = "eval.template.added";
-   private final String EVENT_TEMPLATE_UPDATE = "eval.template.updated";
-   private final String EVENT_TEMPLATE_DELETE = "eval.template.removed";
+   // Event names cannot be over 32 chars long     // max-32:12345678901234567890123456789012
+   private final String EVENT_TEMPLATE_CREATE =             "eval.template.added";
+   private final String EVENT_TEMPLATE_UPDATE =             "eval.template.updated";
+   private final String EVENT_TEMPLATE_DELETE =             "eval.template.removed";
+
+   private final String EVENT_SCALE_CREATE =                "eval.scale.added";
+   private final String EVENT_SCALE_UPDATE =                "eval.scale.updated";
+   private final String EVENT_SCALE_DELETE =                "eval.scale.removed";
+
+   private final String EVENT_ITEM_CREATE =                 "eval.item.added";
+   private final String EVENT_ITEM_UPDATE =                 "eval.item.updated";
+   private final String EVENT_ITEM_DELETE =                 "eval.item.removed";
+
+   private final String EVENT_TEMPLATEITEM_CREATE =         "eval.templateitem.added";
+   private final String EVENT_TEMPLATEITEM_UPDATE =         "eval.templateitem.updated";
+   private final String EVENT_TEMPLATEITEM_DELETE =         "eval.templateitem.removed";
+
 
    private EvaluationDao dao;
    public void setDao(EvaluationDao dao) {
@@ -152,7 +166,9 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       }
 
       // check locking not changed
+      boolean newScale = true;
       if (scale.getId() != null) {
+         newScale = false;
          // existing scale, don't allow change to locked setting
 
          // TODO - this does not work, it just gets the persistent scale from memory -AZ
@@ -176,6 +192,11 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       // check perms and save
       if (securityChecks.checkUserControlScale(userId, scale)) {
          dao.save(scale);
+         if (newScale) {
+            external.registerEntityEvent(EVENT_SCALE_CREATE, scale);
+         } else {
+            external.registerEntityEvent(EVENT_SCALE_UPDATE, scale);
+         }
          log.info("User ("+userId+") saved scale ("+scale.getId()+"), title: " + scale.getTitle());
          return;
       }
@@ -199,6 +220,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       // check perms and remove
       if (securityChecks.checkUserControlScale(userId, scale)) {
          dao.delete(scale);
+         external.registerEntityEvent(EVENT_SCALE_DELETE, scale);
          log.info("User ("+userId+") deleted scale ("+scale.getId()+"), title: " + scale.getTitle());
          return;
       }
@@ -372,7 +394,9 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
          }
       }
 
+      boolean newItem = true;
       if (item.getId() != null) {
+         newItem = false;
          // existing item, don't allow change to locked setting
          // TODO this does not work, it just returns the same object that is already loaded
          EvalItem existingItem = getItemOrFail(item.getId());
@@ -402,6 +426,11 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 
       if (securityChecks.checkUserControlItem(userId, item)) {
          dao.save(item);
+         if (newItem) {
+            external.registerEntityEvent(EVENT_ITEM_CREATE, item);
+         } else {
+            external.registerEntityEvent(EVENT_ITEM_UPDATE, item);
+         }
          log.info("User ("+userId+") saved item ("+item.getId()+"), title: " + item.getItemText());
 
          if (item.getLocked().booleanValue() == true && item.getScale() != null) {
@@ -434,6 +463,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
          EvalScale scale = item.getScale(); // LAZY LOAD
          String itemClassification = item.getClassification();
          dao.delete(item);
+         external.registerEntityEvent(EVENT_ITEM_DELETE, item);
          log.info("User ("+userId+") removed item ("+item.getId()+"), title: " + item.getItemText());
 
          // unlock associated scales if there were any
@@ -445,7 +475,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
          // now we remove the scale if this is MC or MA
          if ( EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemClassification) ||
                EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(itemClassification) ) {
-            dao.delete(scale);
+            dao.delete(scale); // NOTE: does not use the main scale removal method since these are not really scales
          }
 
          return;
@@ -682,12 +712,13 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
             entitySets[2] = templateSet;
 
             dao.saveMixedSet(entitySets);
+            external.registerEntityEvent(EVENT_TEMPLATEITEM_CREATE, templateItem);
          } else {
             // existing item so just save it
-
             // TODO - make sure the item and template do not change for existing templateItems
 
             dao.save(templateItem);
+            external.registerEntityEvent(EVENT_TEMPLATEITEM_UPDATE, templateItem);
          }
 
          // Should not be locking this here -AZ
@@ -718,6 +749,8 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
          dao.removeTemplateItems( new EvalTemplateItem[] {templateItem} );
          // attempt to unlock the related item
          dao.lockItem(item, Boolean.FALSE);
+         // fire event
+         external.registerEntityEvent(EVENT_TEMPLATEITEM_DELETE, templateItem);
          return;
       }
 
@@ -1158,10 +1191,9 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
             dao.removeTemplateItems(templateItems);
          }
 
+         dao.delete(template);
          // fire the template deleted event
          external.registerEntityEvent(EVENT_TEMPLATE_DELETE, template);
-
-         dao.delete(template);
          return;
       }
 

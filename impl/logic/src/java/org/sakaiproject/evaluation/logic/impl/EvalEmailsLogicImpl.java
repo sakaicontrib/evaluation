@@ -50,6 +50,13 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
    private static Log log = LogFactory.getLog(EvalEmailsLogicImpl.class);
 
+   // Event names cannot be over 32 chars long              // max-32:12345678901234567890123456789012
+   protected final String EVENT_EMAIL_CREATED =                      "eval.email.eval.created";
+   protected final String EVENT_EMAIL_AVAILABLE =                    "eval.email.eval.available";
+   protected final String EVENT_EMAIL_GROUP_AVAILABLE =              "eval.email.evalgroup.available";
+   protected final String EVENT_EMAIL_REMINDER =                     "eval.email.eval.reminders";
+   protected final String EVENT_EMAIL_RESULTS =                      "eval.email.eval.results";
+
    private EvaluationDao dao;
    public void setDao(EvaluationDao dao) {
       this.dao = dao;
@@ -320,6 +327,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             String[] emailAddresses = externalLogic.sendEmailsToUsers(from, toUserIds, 
                   "New Evaluation " + eval.getTitle() + " created", message, true);
             log.info("Sent evaluation created message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
+            externalLogic.registerEntityEvent(EVENT_EMAIL_CREATED, eval);
          } catch (Exception e) {
             log.error(this + ".sendEvalCreatedNotifications(" + evaluationId + "," + includeOwner
                   + ") externalLogic.sendEmails " + e);
@@ -458,6 +466,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             String[] emailAddresses = externalLogic.sendEmailsToUsers(from, toUserIds, "The Evaluation " + eval.getTitle() + " for "
                   + group.title + " is available to be taken.", message, true);
             log.info("Sent evaluation available message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
+            externalLogic.registerEntityEvent(EVENT_EMAIL_AVAILABLE, eval);
          } catch (Exception e) {
             log.error(this + ".sendEvalAvailableNotifications(" + evaluationId + "," + includeEvaluatees
                   + ") externalLogic.sendEmails " + e);
@@ -522,6 +531,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                String[] emailAddresses = externalLogic.sendEmailsToUsers(from, toUserIds, 
                      "The Evaluation " + eval.getTitle() + " for " + group.title + " is available to be taken.", message, true);
                log.info("Sent evaluation available group message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
+               externalLogic.registerEntityEvent(EVENT_EMAIL_GROUP_AVAILABLE, eval);
             } catch (Exception e) {
                log.error(this + ".sendEvalAvailableGroupNotification(" + evaluationId + "," + evalGroupId
                      + ") externalLogic.sendEmails " + e);
@@ -607,6 +617,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                String[] emailAddresses = externalLogic.sendEmailsToUsers(from, toUserIds, "You still haven't completed your Evaluation "
                      + eval.getTitle() + " for " + group.title + ".", message, true);
                log.info("Sent evaluation reminder message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
+               externalLogic.registerEntityEvent(EVENT_EMAIL_REMINDER, eval);
             } catch (Exception e) {
                log.error(this + ".sendEvalReminderNotifications(" + evaluationId + "," + includeConstant
                      + ") externalLogic.sendEmails " + e);
@@ -732,6 +743,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
                String[] emailAddresses = externalLogic.sendEmailsToUsers(from, toUserIds, "The Evaluation " + eval.getTitle()
                      + " is complete and results are now available", message, true);
                log.info("Sent evaluation results message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
+               externalLogic.registerEntityEvent(EVENT_EMAIL_RESULTS, eval);
             } catch (Exception e) {
                log.error(this + ".sendEvalResultsNotifications(" + evaluationId + "," + includeEvaluatees
                      + "," + includeAdmins + ") externalLogic.sendEmails " + e);

@@ -49,6 +49,10 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
 
    private static Log log = LogFactory.getLog(EvalResponsesLogicImpl.class);
 
+   // Event names cannot be over 32 chars long              // max-32:12345678901234567890123456789012
+   protected final String EVENT_RESPONSE_CREATED =                   "eval.response.created";
+   protected final String EVENT_RESPONSE_UPDATED =                   "eval.response.updated";
+
    private EvaluationDao dao;
    public void setDao(EvaluationDao dao) {
       this.dao = dao;
@@ -244,7 +248,9 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
       // set the date modified
       response.setLastModified(new Date());
 
+      boolean newResponse = true;
       if (response.getId() != null) {
+         newResponse = false;
          // TODO - existing response, don't allow change to any setting
          // except starttime, endtime, and answers
       }
@@ -300,6 +306,11 @@ public class EvalResponsesLogicImpl implements EvalResponsesLogic {
             completeMessage = ", response is complete";
          }
 
+         if (newResponse) {
+            external.registerEntityEvent(EVENT_RESPONSE_CREATED, response);
+         } else {
+            external.registerEntityEvent(EVENT_RESPONSE_UPDATED, response);            
+         }
          int answerCount = response.getAnswers() == null ? 0 : response.getAnswers().size();
          log.info("User (" + userId + ") saved response (" + response.getId() + ") to" +
          		"evaluation ("+evaluationId+") for groupId (" + response.getEvalGroupId() + ") " +

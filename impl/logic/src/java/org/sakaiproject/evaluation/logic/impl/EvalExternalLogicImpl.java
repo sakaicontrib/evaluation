@@ -43,13 +43,20 @@ import org.sakaiproject.entitybroker.IdEntityReference;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.entity.AssignGroupEntityProvider;
 import org.sakaiproject.evaluation.logic.entity.EvaluationEntityProvider;
+import org.sakaiproject.evaluation.logic.entity.ItemEntityProvider;
 import org.sakaiproject.evaluation.logic.entity.TemplateEntityProvider;
+import org.sakaiproject.evaluation.logic.entity.TemplateItemEntityProvider;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.providers.EvalGroupsProvider;
 import org.sakaiproject.evaluation.logic.utils.ArrayUtils;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
+import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.model.EvalItem;
+import org.sakaiproject.evaluation.model.EvalResponse;
+import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
+import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.exception.IdUnusedException;
 import org.sakaiproject.site.api.Group;
@@ -747,10 +754,22 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
          prefix = EvaluationEntityProvider.ENTITY_PREFIX;
       } else if (entityClass == EvalAssignGroup.class) {
          prefix = AssignGroupEntityProvider.ENTITY_PREFIX;
+      } else if (entityClass == EvalAssignHierarchy.class) {
+         prefix = "eval-assignhierarchy";
+      } else if (entityClass == EvalGroup.class) {
+         prefix = "eval-group";
+      } else if (entityClass == EvalScale.class) {
+         prefix = "eval-scale";
+      } else if (entityClass == EvalItem.class) {
+         prefix = ItemEntityProvider.ENTITY_PREFIX;
+      } else if (entityClass == EvalTemplateItem.class) {
+         prefix = TemplateItemEntityProvider.ENTITY_PREFIX;
       } else if (entityClass == EvalTemplate.class) {
          prefix = TemplateEntityProvider.ENTITY_PREFIX;
+      } else if (entityClass == EvalResponse.class) {
+         prefix = "eval-response";
       } else {
-         return null;
+         return "eval:" + entityClass.getName();
       }
 
       return new IdEntityReference(prefix, entityId).toString();

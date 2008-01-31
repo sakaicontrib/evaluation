@@ -43,16 +43,18 @@ public class TemplateEntityProviderImpl implements TemplateEntityProvider, CoreE
 	 * @see org.sakaiproject.entitybroker.entityprovider.CoreEntityProvider#entityExists(java.lang.String)
 	 */
 	public boolean entityExists(String id) {
+	   boolean exists = false;
 		Long templateId;
 		try {
 			templateId = new Long(id);
 			if (authoringService.getTemplateById(templateId) != null) {
-				return true;
+			   exists = true;
 			}
 		} catch (NumberFormatException e) {
 			// invalid number so roll through to the false
+		   exists = false;
 		}
-		return false;
+		return exists;
 	}
 
 }
