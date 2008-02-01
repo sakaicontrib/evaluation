@@ -525,6 +525,7 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 		Assert.assertTrue(ids.contains( etdl.evaluationViewable.getId() ));
 
 		// check sorting
+		/* TODO will need to work out with AZ - rwellis due dates of all active evaluations the same so sorting changed to title (+ id)
 		Date lastDate = null;
 		for (int i=0; i<evals.size(); i++) {
 			EvalEvaluation eval = (EvalEvaluation) evals.get(i);
@@ -535,6 +536,21 @@ public class EvalEvaluationsLogicImplTest extends AbstractTransactionalSpringCon
 					lastDate = eval.getDueDate();
 				} else {
 					Assert.fail("Order failure:" + lastDate + " less than " + eval.getDueDate());
+				}
+			}
+		}
+		*/
+		// check sorting by title
+		String lastTitle = null;
+		for (int i=0; i<evals.size(); i++) {
+			EvalEvaluation eval = (EvalEvaluation) evals.get(i);
+			if(lastTitle  == null) {
+				lastTitle = eval.getTitle() + eval.getId().toString();
+			} else {
+				if(lastTitle.compareTo(eval.getTitle() + eval.getId().toString()) <= 0) {
+					lastTitle = eval.getTitle() + eval.getId().toString();
+				} else {
+					Assert.fail("Order failure:" + lastTitle + " less than " + eval.getTitle() + eval.getId().toString());
 				}
 			}
 		}

@@ -213,7 +213,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
    @SuppressWarnings("unchecked")
    public Set<EvalEvaluation> getEvaluationsByEvalGroups(String[] evalGroupIds, boolean activeOnly,
          boolean includeUnApproved, boolean includeAnonymous) {
-      Set<EvalEvaluation> evals = new TreeSet<EvalEvaluation>(new EvaluationDateComparator());
+      Set<EvalEvaluation> evals = new TreeSet<EvalEvaluation>(new EvaluationDateComparator()); //rwellis due dates all equal so comparing titles
       if (evalGroupIds.length > 0) {
          DetachedCriteria dc = DetachedCriteria.forClass(EvalAssignGroup.class).add(
                Property.forName("evalGroupId").in(evalGroupIds));
@@ -792,7 +792,9 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
 
       public int compare(EvalEvaluation eval0, EvalEvaluation eval1) {
          // expects to get Evaluation objects
-         return (eval0).getDueDate().compareTo((eval1).getDueDate());
+         //return (eval0).getDueDate().compareTo((eval1).getDueDate()); //should at least add a unique value to due date
+    	  //TODO due date is not unique in U-M imported evaluations
+    	  return ((eval0).getTitle()+(eval0).getId().toString()).compareTo((eval1).getTitle()+(eval1).getId().toString());
       }
    }
 
