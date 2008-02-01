@@ -19,7 +19,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -464,17 +463,15 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       }
 
       // get the evaluations
-      Set<EvalEvaluation> s = dao.getEvaluationsByEvalGroups( evalGroupIds, activeOnly, false, false );
+      List<EvalEvaluation> evals = dao.getEvaluationsByEvalGroups( evalGroupIds, activeOnly, false, true );
 
       if (untakenOnly) {
          // filter out the evaluations this user already took
 
          // create an array of the evaluation ids
-         Long[] evalIds = new Long[s.size()];
-         int j = 0;
-         for (Iterator<EvalEvaluation> it = s.iterator(); it.hasNext(); j++) {
-            EvalEvaluation eval = it.next();
-            evalIds[j] = (Long) eval.getId();
+         Long[] evalIds = new Long[evals.size()];
+         for (int j = 0; j < evals.size(); j++) {
+            evalIds[j] = evals.get(j).getId();
          }
 
          // now get the responses for all the returned evals
@@ -484,13 +481,16 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
          // Iterate through and remove the evals this user already took
          for (int i = 0; i < l.size(); i++) {
-            EvalResponse er = (EvalResponse) l.get(i);
-            s.remove( er.getEvaluation() );
+            Long evalIdTaken = l.get(i).getEvaluation().getId();
+            for (int j = 0; j < evals.size(); j++) {
+               if (evalIdTaken.equals(evals.get(j).getId())) {
+                  evals.remove(j);
+               }
+            }
          }
       }
 
-      // stuff the remaining set into a list
-      return new ArrayList<EvalEvaluation>(s);
+      return evals;
    }
 
    /* (non-Javadoc)
@@ -591,11 +591,10 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          }
 
          // this sucks for efficiency -AZ
-         Set s = dao.getEvaluationsByEvalGroups( evalGroupIds, true, false, true ); // only get active for users
-         for (Iterator iter = s.iterator(); iter.hasNext();) {
-            EvalEvaluation eval = (EvalEvaluation) iter.next();
-            if ( evalCategory.equals(eval.getEvalCategory()) ) {
-               evals.add(eval);
+         List<EvalEvaluation> l = dao.getEvaluationsByEvalGroups( evalGroupIds, true, false, true ); // only get active for users
+         for (EvalEvaluation evaluation : l) {
+            if ( evalCategory.equals(evaluation.getEvalCategory()) ) {
+               evals.add(evaluation);
             }
          }
       }

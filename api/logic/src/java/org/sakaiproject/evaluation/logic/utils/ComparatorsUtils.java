@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.logic.utils;
 
 import java.util.Comparator;
 
+import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -26,6 +27,22 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
 public class ComparatorsUtils {
+
+   /**
+    * Sort evaluations by due date, then by title, then by id
+    */
+   public static class EvaluationDateTitleIdComparator implements Comparator<EvalEvaluation> {
+      public int compare(EvalEvaluation eval0, EvalEvaluation eval1) {
+         int comparison = (eval0).getDueDate().compareTo((eval1).getDueDate());
+         if (comparison == 0) {
+            comparison = (eval0).getTitle().compareTo((eval1).getTitle());
+         }
+         if (comparison == 0) {
+            comparison = (eval0).getId().compareTo((eval1).getId());
+         }         
+         return comparison;
+      }
+   }
 
    /**
     * static class to sort EvalTemplateItem objects by DisplayOrder

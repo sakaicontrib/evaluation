@@ -257,87 +257,94 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       Assert.assertEquals(8, count);
    }
 
-   /**
-    * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#getActiveEvaluationsByContexts(java.lang.String[])}.
-    */
-   public void testGetActiveEvaluationsByContexts() {
-      Set<EvalEvaluation> s = null;
+   public void testGetEvaluationsByEvalGroups() {
+      List<EvalEvaluation> l = null;
       List<Long> ids = null;
 
-      // test getting evaluations by evalGroupId
-      s = evaluationDao.getEvaluationsByEvalGroups(
-            new String[] {EvalTestDataLoad.SITE1_REF}, false, true, false);
-      Assert.assertNotNull(s);
-      Assert.assertEquals(4, s.size());
-      ids = EvalTestDataLoad.makeIdList(s);
+      // test getting evaluations for 2 sites
+      l = evaluationDao.getEvaluationsByEvalGroups(
+            new String[] {EvalTestDataLoad.SITE1_REF, EvalTestDataLoad.SITE2_REF}, false, true, false);
+      Assert.assertNotNull(l);
+      Assert.assertEquals(4, l.size());
+      ids = EvalTestDataLoad.makeIdList(l);
       Assert.assertTrue(ids.contains( etdl.evaluationNewAdmin.getId() ));
       Assert.assertTrue(ids.contains( etdl.evaluationActive.getId() ));
-      Assert.assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
+      Assert.assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
+      Assert.assertTrue(ids.contains( etdl.evaluationViewable.getId() ));
+
+      // test getting evaluations by evalGroupId
+      l = evaluationDao.getEvaluationsByEvalGroups(
+            new String[] {EvalTestDataLoad.SITE1_REF}, false, true, false);
+      Assert.assertNotNull(l);
+      Assert.assertEquals(3, l.size());
+      ids = EvalTestDataLoad.makeIdList(l);
+      Assert.assertTrue(ids.contains( etdl.evaluationNewAdmin.getId() ));
+      Assert.assertTrue(ids.contains( etdl.evaluationActive.getId() ));
       Assert.assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
 
-      s = evaluationDao.getEvaluationsByEvalGroups(
+      l = evaluationDao.getEvaluationsByEvalGroups(
             new String[] {EvalTestDataLoad.SITE2_REF}, false, true, false);
-      Assert.assertNotNull(s);
-      Assert.assertEquals(3, s.size());
-      ids = EvalTestDataLoad.makeIdList(s);
+      Assert.assertNotNull(l);
+      Assert.assertEquals(3, l.size());
+      ids = EvalTestDataLoad.makeIdList(l);
       Assert.assertTrue(! ids.contains( etdl.evaluationActive.getId() ));
       Assert.assertTrue(ids.contains( etdl.evaluationNewAdmin.getId() ));
       Assert.assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
       Assert.assertTrue(ids.contains( etdl.evaluationViewable.getId() ));
 
-      // test getting evaluations for 2 sites
-      s = evaluationDao.getEvaluationsByEvalGroups(
-            new String[] {EvalTestDataLoad.SITE1_REF, EvalTestDataLoad.SITE2_REF}, false, true, false);
-      Assert.assertNotNull(s);
-      Assert.assertEquals(5, s.size());
-      ids = EvalTestDataLoad.makeIdList(s);
+      // test getting by groupId and getting anons
+      l = evaluationDao.getEvaluationsByEvalGroups(
+            new String[] {EvalTestDataLoad.SITE1_REF}, false, true, true);
+      Assert.assertNotNull(l);
+      Assert.assertEquals(4, l.size());
+      ids = EvalTestDataLoad.makeIdList(l);
       Assert.assertTrue(ids.contains( etdl.evaluationNewAdmin.getId() ));
       Assert.assertTrue(ids.contains( etdl.evaluationActive.getId() ));
       Assert.assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
       Assert.assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
-      Assert.assertTrue(ids.contains( etdl.evaluationViewable.getId() ));
-
+      
       // test invalid site
-      s = evaluationDao.getEvaluationsByEvalGroups(
+      l = evaluationDao.getEvaluationsByEvalGroups(
             new String[] {"invalid evalGroupId"}, false, true, false);
-      Assert.assertNotNull(s);
-      Assert.assertEquals(0, s.size());
+      Assert.assertNotNull(l);
+      Assert.assertEquals(0, l.size());
 
       // test that the get active part works
-      s = evaluationDao.getEvaluationsByEvalGroups(
+      l = evaluationDao.getEvaluationsByEvalGroups(
             new String[] {EvalTestDataLoad.SITE1_REF}, true, true, false);
-      Assert.assertNotNull(s);
-      Assert.assertEquals(2, s.size());
-      ids = EvalTestDataLoad.makeIdList(s);
+      Assert.assertNotNull(l);
+      Assert.assertEquals(1, l.size());
+      ids = EvalTestDataLoad.makeIdList(l);
+      Assert.assertTrue(ids.contains( etdl.evaluationActive.getId() ));
+
+      l = evaluationDao.getEvaluationsByEvalGroups(
+            new String[] {EvalTestDataLoad.SITE2_REF}, true, true, false);
+      Assert.assertNotNull(l);
+      Assert.assertEquals(0, l.size());
+
+      // test that the get active plus anon works
+      l = evaluationDao.getEvaluationsByEvalGroups(
+            new String[] {EvalTestDataLoad.SITE1_REF}, true, true, true);
+      Assert.assertNotNull(l);
+      Assert.assertEquals(2, l.size());
+      ids = EvalTestDataLoad.makeIdList(l);
       Assert.assertTrue(ids.contains( etdl.evaluationActive.getId() ));
       Assert.assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
 
-      s = evaluationDao.getEvaluationsByEvalGroups(
-            new String[] {EvalTestDataLoad.SITE2_REF}, true, true, false);
-      Assert.assertNotNull(s);
-      Assert.assertEquals(0, s.size());
-
       // test getting from an invalid evalGroupId
-      s = evaluationDao.getEvaluationsByEvalGroups(
+      l = evaluationDao.getEvaluationsByEvalGroups(
             new String[] {EvalTestDataLoad.INVALID_CONTEXT}, true, true, false);
-      Assert.assertNotNull(s);
-      Assert.assertEquals(0, s.size());		
+      Assert.assertNotNull(l);
+      Assert.assertEquals(0, l.size());		
 
       // test getting all anonymous evals
-      s = evaluationDao.getEvaluationsByEvalGroups(
+      l = evaluationDao.getEvaluationsByEvalGroups(
             new String[] {}, false, false, true);
-      Assert.assertNotNull(s);
-      Assert.assertEquals(1, s.size());		
-      ids = EvalTestDataLoad.makeIdList(s);
+      Assert.assertNotNull(l);
+      Assert.assertEquals(1, l.size());		
+      ids = EvalTestDataLoad.makeIdList(l);
       Assert.assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
 
-      // test invalid
-      try {
-         s = evaluationDao.getEvaluationsByEvalGroups(null, false, true, false);
-         Assert.fail("Should have thrown an exception");
-      } catch (RuntimeException e) {
-         Assert.assertNotNull(e);
-      }
    }
 
    /**
