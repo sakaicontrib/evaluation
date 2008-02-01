@@ -27,7 +27,7 @@ import uk.org.ponder.messageutil.TargettedMessage;
 import uk.org.ponder.messageutil.TargettedMessageList;
 
 /**
- * This request-scope bean handles taking evaluations
+ * This request-scope bean handles taking evaluationSetupService
  * 
  * @author Will Humphries (whumphri@vt.edu)
  */
@@ -64,7 +64,7 @@ public class TakeEvalBean {
                TargettedMessage.SEVERITY_ERROR));
          return "failure";
       }
-      messages.addMessage( new TargettedMessage("evaluations.take.message",
+      messages.addMessage( new TargettedMessage("evaluationSetupService.take.message",
             new Object[] { eval.getTitle(), externalLogic.getDisplayTitle(evalGroupId) }, 
             TargettedMessage.SEVERITY_INFO));
       return "success";

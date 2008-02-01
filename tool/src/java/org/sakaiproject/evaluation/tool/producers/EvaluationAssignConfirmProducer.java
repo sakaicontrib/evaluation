@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.entity.AssignGroupEntityProvider;
@@ -67,9 +67,19 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, N
       this.externalLogic = externalLogic;
    }
 
-   private EvalAssignsLogic assignsLogic;
-   public void setAssignsLogic(EvalAssignsLogic assignsLogic) {
-      this.assignsLogic = assignsLogic;
+   private EvalSettings settings;
+   public void setSettings(EvalSettings settings) {
+      this.settings = settings;
+   }
+
+   private ExternalHierarchyLogic hierLogic;
+   public void setExternalHierarchyLogic(ExternalHierarchyLogic logic) {
+      hierLogic = logic;
+   }
+
+   private EvalEvaluationService evaluationService;
+   public void setEvaluationService(EvalEvaluationService evaluationService) {
+      this.evaluationService = evaluationService;
    }
 
    private EvaluationBean evaluationBean;
@@ -80,16 +90,6 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, N
    private Locale locale;
    public void setLocale(Locale locale) {
       this.locale = locale;
-   }
-
-   private EvalSettings settings;
-   public void setSettings(EvalSettings settings) {
-      this.settings = settings;
-   }
-
-   private ExternalHierarchyLogic hierLogic;
-   public void setExternalHierarchyLogic(ExternalHierarchyLogic logic) {
-      hierLogic = logic;
    }
 
    /* (non-Javadoc)
@@ -138,7 +138,7 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, N
             UIOutput.make(siteRow, "siteTitle", (String) allIdTitleMap.get(evalGroupId));
             if (evaluationId != null) {
                // only add in this link if the evaluation exists
-               Long assignGroupId = assignsLogic.getAssignGroupId(evaluationId, evalGroupId);
+               Long assignGroupId = evaluationService.getAssignGroupId(evaluationId, evalGroupId);
                if (assignGroupId != null) {
                   UILink.make(siteRow, "direct-eval-group-link", UIMessage.make("evaluationassignconfirm.direct.link"), 
                         externalLogic.getEntityURL(AssignGroupEntityProvider.ENTITY_PREFIX, assignGroupId.toString()));

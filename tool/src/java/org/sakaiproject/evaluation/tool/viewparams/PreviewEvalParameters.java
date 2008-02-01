@@ -17,7 +17,7 @@ package org.sakaiproject.evaluation.tool.viewparams;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 
 /**
- * Allows for passing of information needed for previewing templates or evaluations
+ * Allows for passing of information needed for previewing templates or evaluationSetupService
  * (rewrite of original)
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)

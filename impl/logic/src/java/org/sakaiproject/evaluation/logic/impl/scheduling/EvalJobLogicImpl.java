@@ -231,7 +231,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 
 
    /**
-    * Handles the processing of new evaluations
+    * Handles the processing of new evaluationSetupService
     * @param eval
     */
    protected void processNewEvaluation(EvalEvaluation eval) {
@@ -516,7 +516,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
     * <ul>
     * <li>Schedule a reminder, if necessary (i.e., one is not already scheduled for another group,
     * resulting in notification of all groups), when there is a late notification after opt-in at
-    * the start date in EvalAssignsLogicImpl.saveAssignGroup() - a special case,</li>
+    * the start date in EvalEvaluationSetupServiceImpl.saveAssignGroup() - a special case,</li>
     * <li>Schedule a reminder when EvalJobLogicImpl.jobAction runs JOB_TYPE_ACTIVE - the 1st
     * reminder, scheduled for start date + reminder interval,</li>
     * <li>Schedule a reminder when EvalJobLogicImpl.jobAcion runs JOB_TYPE_REMINDER - the next
@@ -600,7 +600,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
     *           the EvalEvaluation id
     */
    protected void sendAvailableEmail(Long evalId) {
-      // For now, we always want to include the evaluatees in the evaluations
+      // For now, we always want to include the evaluatees in the evaluationSetupService
       boolean includeEvaluatees = true;
       try {
          String[] sentMessages = emails.sendEvalAvailableNotifications(evalId, includeEvaluatees);

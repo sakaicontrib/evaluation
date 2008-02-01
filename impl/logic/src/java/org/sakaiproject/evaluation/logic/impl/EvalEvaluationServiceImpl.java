@@ -32,6 +32,7 @@ import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
+import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalResponse;
@@ -692,8 +693,135 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
    }
 
 
+   // EMAIL TEMPLATES
+
+   @SuppressWarnings("unchecked")
+   public EvalEmailTemplate getDefaultEmailTemplate(String emailTemplateTypeConstant) {
+      log.debug("emailTemplateTypeConstant: " + emailTemplateTypeConstant);
+
+      // check and get type
+      String templateType;
+      if (EvalConstants.EMAIL_TEMPLATE_CREATED.equals(emailTemplateTypeConstant)) {
+         templateType = EvalConstants.EMAIL_TEMPLATE_DEFAULT_CREATED;
+      } else if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailTemplateTypeConstant)) {
+         templateType = EvalConstants.EMAIL_TEMPLATE_DEFAULT_AVAILABLE;
+      } else if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE_OPT_IN.equals(emailTemplateTypeConstant)) {
+         templateType = EvalConstants.EMAIL_TEMPLATE_DEFAULT_AVAILABLE_OPT_IN;
+      } else if (EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailTemplateTypeConstant)) {
+         templateType = EvalConstants.EMAIL_TEMPLATE_DEFAULT_REMINDER;
+      } else if (EvalConstants.EMAIL_TEMPLATE_RESULTS.equals(emailTemplateTypeConstant)) {
+         templateType = EvalConstants.EMAIL_TEMPLATE_DEFAULT_RESULTS;
+      } else {
+         throw new IllegalArgumentException("Invalid emailTemplateTypeConstant: " + emailTemplateTypeConstant);
+      }
+
+      // fetch template by type
+      List<EvalEmailTemplate> l = dao.findByProperties(EvalEmailTemplate.class, new String[] { "defaultType" },
+            new Object[] { templateType });
+      if (l.isEmpty()) {
+         throw new IllegalStateException("Could not find any default template for type constant: "
+               + emailTemplateTypeConstant);
+      }
+      return (EvalEmailTemplate) l.get(0);
+   }
+
+   public EvalEmailTemplate getEmailTemplate(Long evaluationId, String emailTemplateTypeConstant) {
+      // get evaluation
+      EvalEvaluation eval = getEvaluationOrFail(evaluationId);
+
+      // check the type constant
+      Long emailTemplateId = null;
+      if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailTemplateTypeConstant)) {
+         if (eval.getAvailableEmailTemplate() != null) {
+            emailTemplateId = eval.getAvailableEmailTemplate().getId();
+         }
+      } else if (EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailTemplateTypeConstant)) {
+         if (eval.getReminderEmailTemplate() != null) {
+            emailTemplateId = eval.getReminderEmailTemplate().getId();
+         }
+      } else {
+         throw new IllegalArgumentException("Invalid emailTemplateTypeConstant: " + emailTemplateTypeConstant);
+      }
+
+      EvalEmailTemplate emailTemplate = null;
+      if (emailTemplateId != null) {
+         emailTemplate = (EvalEmailTemplate) dao.findById(EvalEmailTemplate.class, emailTemplateId);
+      }
+
+      if (emailTemplate == null || emailTemplate.getMessage() == null) {
+         emailTemplate = getDefaultEmailTemplate(emailTemplateTypeConstant);
+      }
+      return emailTemplate;
+   }
+
+   // PERMISSIONS
+
+   public boolean canControlEmailTemplate(String userId, Long evaluationId, String emailTemplateTypeConstant) {
+      log.debug("userId: " + userId + ", evaluationId: " + evaluationId + ", emailTemplateTypeConstant: "
+            + emailTemplateTypeConstant);
+
+      // get evaluation
+      EvalEvaluation eval = getEvaluationOrFail(evaluationId);
+
+      // get the email template
+      EvalEmailTemplate emailTemplate = getEmailTemplate(evaluationId, emailTemplateTypeConstant);
+
+      // check the permissions and state
+      try {
+         return securityChecks.checkEvalTemplateControl(userId, eval, emailTemplate);
+      } catch (RuntimeException e) {
+         log.info(e.getMessage());
+      }
+      return false;
+   }
+
+   public boolean canControlEmailTemplate(String userId, Long evaluationId, Long emailTemplateId) {
+      log.debug("userId: " + userId + ", evaluationId: " + evaluationId + ", emailTemplateId: "
+            + emailTemplateId);
+
+      // get evaluation
+      EvalEvaluation eval = getEvaluationOrFail(evaluationId);
+
+      // get the email template
+      EvalEmailTemplate emailTemplate = getEmailTemplateOrFail(emailTemplateId);
+
+      // make sure this template is associated with this evaluation
+      if (eval.getAvailableEmailTemplate() != null
+            && emailTemplate.getId().equals(eval.getAvailableEmailTemplate().getId())) {
+         log.debug("template matches available template from eval (" + eval.getId() + ")");
+      } else if (eval.getReminderEmailTemplate() != null
+            && emailTemplate.getId().equals(eval.getReminderEmailTemplate().getId())) {
+         log.debug("template matches reminder template from eval (" + eval.getId() + ")");
+      } else {
+         throw new IllegalArgumentException("email template (" + emailTemplate.getId()
+               + ") does not match any template from eval (" + eval.getId() + ")");
+      }
+
+      // check the permissions and state
+      try {
+         return securityChecks.checkEvalTemplateControl(userId, eval, emailTemplate);
+      } catch (RuntimeException e) {
+         log.info(e.getMessage());
+      }
+      return false;
+   }
+
 
    // PRIVATE METHODS
+
+
+   /**
+    * @param emailTemplateId
+    * @return
+    */
+   private EvalEmailTemplate getEmailTemplateOrFail(Long emailTemplateId) {
+      EvalEmailTemplate emailTemplate = (EvalEmailTemplate) dao.findById(EvalEmailTemplate.class,
+            emailTemplateId);
+      if (emailTemplate == null) {
+         throw new IllegalArgumentException("Cannot find email template with this id: " + emailTemplateId);
+      }
+      return emailTemplate;
+   }
 
    /**
     * Gets the evaluation or throws exception,

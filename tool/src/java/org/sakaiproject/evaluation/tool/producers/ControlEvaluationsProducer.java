@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
@@ -54,7 +55,7 @@ import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /**
- * This lists evaluations for users so they can add, modify, remove them
+ * This lists evaluationSetupService for users so they can add, modify, remove them
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
@@ -79,20 +80,25 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 		this.externalLogic = externalLogic;
 	}
 	
-	private EvalEvaluationSetupService evaluationsLogic;
-	public void setEvaluationsLogic(EvalEvaluationSetupService evaluationsLogic) {
-		this.evaluationsLogic = evaluationsLogic;
-	}
+   private EvalEvaluationService evaluationService;
+   public void setEvaluationService(EvalEvaluationService evaluationService) {
+      this.evaluationService = evaluationService;
+   }
 
    private EvalAuthoringService authoringService;
    public void setAuthoringService(EvalAuthoringService authoringService) {
       this.authoringService = authoringService;
    }
 
-	private EvalDeliveryService responsesLogic;
-	public void setResponsesLogic(EvalDeliveryService responsesLogic) {
-		this.responsesLogic = responsesLogic;
-	}
+   private EvalEvaluationSetupService evaluationSetupService;
+   public void setEvaluationSetupService(EvalEvaluationSetupService evaluationSetupService) {
+      this.evaluationSetupService = evaluationSetupService;
+   }
+
+	private EvalDeliveryService deliveryService;
+   public void setDeliveryService(EvalDeliveryService deliveryService) {
+      this.deliveryService = deliveryService;
+   }
 
 	private EvalSettings settings;
 	public void setSettings(EvalSettings settings) {
@@ -109,7 +115,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 		String currentUserId = externalLogic.getCurrentUserId();
 		boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
 		boolean createTemplate = authoringService.canCreateTemplate(currentUserId);
-		boolean beginEvaluation = evaluationsLogic.canBeginEvaluation(currentUserId);
+		boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
 		// use a date which is related to the current users locale
 		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
 
@@ -143,17 +149,17 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 					ControlEvaluationsProducer.VIEW_ID + " when they are not allowed");
 		}
 
-		// get all the visible evaluations for the current user
+		// get all the visible evaluationSetupService for the current user
 		List<EvalEvaluation> inqueueEvals = new ArrayList<EvalEvaluation>();
 		List<EvalEvaluation> activeEvals = new ArrayList<EvalEvaluation>();
 		List<EvalEvaluation> closedEvals = new ArrayList<EvalEvaluation>();
 
-		List<EvalEvaluation> evals = evaluationsLogic.getVisibleEvaluationsForUser(externalLogic.getCurrentUserId(), false, false);
+		List<EvalEvaluation> evals = evaluationSetupService.getVisibleEvaluationsForUser(externalLogic.getCurrentUserId(), false, false);
 		for (int j = 0; j < evals.size(); j++) {
-			// get queued, active, closed evaluations by date
+			// get queued, active, closed evaluationSetupService by date
 			// check the state of the eval to determine display data
 			EvalEvaluation eval = (EvalEvaluation) evals.get(j);
-			String evalStatus = evaluationsLogic.updateEvaluationState(eval.getId());
+			String evalStatus = evaluationService.updateEvaluationState(eval.getId());
 
 			if ( EvalConstants.EVALUATION_STATE_INQUEUE.equals(evalStatus) ) {
 				inqueueEvals.add(eval);
@@ -166,7 +172,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 			}
 		}
 
-		// create inqueue evaluations header and link
+		// create inqueue evaluationSetupService header and link
 		UIMessage.make(tofill, "evals-inqueue-header", "controlevaluations.inqueue.header");
 		UIMessage.make(tofill, "evals-inqueue-description", "controlevaluations.inqueue.description");
 		UIForm startEvalForm = UIForm.make(tofill, "begin-evaluation-form");
@@ -202,7 +208,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 				}
 
 				// vary the display depending on the number of groups assigned
-				int groupsCount = evaluationsLogic.countEvaluationGroups(evaluation.getId());
+				int groupsCount = evaluationService.countEvaluationGroups(evaluation.getId());
 				if (groupsCount == 1) {
 					UICommand evalAssigned = UICommand.make(evaluationRow, 
 							"inqueue-eval-assigned-link", 
@@ -228,7 +234,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 
 				// do the locked check first since it is more efficient
 				if ( ! evaluation.getLocked().booleanValue() &&
-						evaluationsLogic.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
+						evaluationService.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
 					// evaluation removable
 					UIInternalLink.make(evaluationRow, "inqueue-eval-delete-link", 
 							UIMessage.make("controlevaluations.eval.delete.link"), 
@@ -241,7 +247,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 		}
 
 
-		// create active evaluations header and link
+		// create active evaluationSetupService header and link
 		UIMessage.make(tofill, "evals-active-header", "controlevaluations.active.header");
 		UIMessage.make(tofill, "evals-active-description", "controlevaluations.active.description");
 
@@ -276,7 +282,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 				}
 
 				// vary the display depending on the number of groups assigned
-				int groupsCount = evaluationsLogic.countEvaluationGroups(evaluation.getId());
+				int groupsCount = evaluationService.countEvaluationGroups(evaluation.getId());
 				if (groupsCount == 1) {
 					UICommand evalAssigned = UICommand.make(evaluationRow, 
 							"active-eval-assigned-link", 
@@ -292,7 +298,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 				}
 
 				// calculate the response rate
-				int countResponses = responsesLogic.countResponses(evaluation.getId(), null, true);
+				int countResponses = deliveryService.countResponses(evaluation.getId(), null, true);
 				int countEnrollments = getTotalEnrollmentsForEval(evaluation.getId());
 				if (countEnrollments > 0) {
 					UIOutput.make(evaluationRow, "active-eval-response-rate", countResponses + "/" + countEnrollments );
@@ -310,7 +316,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 				evalEdit.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", evaluation.getId()));
 
 				if ( ! evaluation.getLocked().booleanValue() &&
-						evaluationsLogic.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
+						evaluationService.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
 					// evaluation removable
 					UIInternalLink.make(evaluationRow, "active-eval-delete-link", 
 							UIMessage.make("controlevaluations.eval.delete.link"), 
@@ -322,7 +328,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 			UIMessage.make(tofill, "no-active-evals", "controlevaluations.active.none");
 		}
 
-		// create closed evaluations header and link
+		// create closed evaluationSetupService header and link
 		UIMessage.make(tofill, "evals-closed-header", "controlevaluations.closed.header");
 		UIMessage.make(tofill, "evals-closed-description", "controlevaluations.closed.description");
 
@@ -353,7 +359,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 				}
 
 				// vary the display depending on the number of groups assigned
-				int groupsCount = evaluationsLogic.countEvaluationGroups(evaluation.getId());
+				int groupsCount = evaluationService.countEvaluationGroups(evaluation.getId());
 				if (groupsCount == 1) {
 					UICommand evalAssigned = UICommand.make(evaluationRow, 
 							"closed-eval-assigned-link", 
@@ -369,7 +375,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 				}
 
 				// calculate the response rate
-				int countResponses = responsesLogic.countResponses(evaluation.getId(), null, true);
+				int countResponses = deliveryService.countResponses(evaluation.getId(), null, true);
             int countEnrollments = getTotalEnrollmentsForEval(evaluation.getId());
             long percentage = 0;
             if (countEnrollments > 0) {
@@ -408,7 +414,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 				}
 
 				if ( ! evaluation.getLocked().booleanValue() &&
-						evaluationsLogic.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
+						evaluationService.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
 					// evaluation removable
 					UIInternalLink.make(evaluationRow, "closed-eval-delete-link", 
 							UIMessage.make("controlevaluations.eval.delete.link"), 
@@ -447,7 +453,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 	 * @return title of first evalGroupId returned
 	 */
 	private String getTitleForFirstEvalGroup(Long evaluationId) {
-	   Map<Long, List<EvalAssignGroup>> evalAssignGroups = evaluationsLogic.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
+	   Map<Long, List<EvalAssignGroup>> evalAssignGroups = evaluationService.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
 		List<EvalAssignGroup> groups = evalAssignGroups.get(evaluationId);
 		EvalAssignGroup eac = (EvalAssignGroup) groups.get(0);
 		return externalLogic.getDisplayTitle( eac.getEvalGroupId() );
@@ -461,7 +467,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 	 */
 	private int getTotalEnrollmentsForEval(Long evaluationId) {
 		int totalEnrollments = 0;
-		Map<Long, List<EvalAssignGroup>> evalAssignGroups = evaluationsLogic.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
+		Map<Long, List<EvalAssignGroup>> evalAssignGroups = evaluationService.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
 		List<EvalAssignGroup> groups = evalAssignGroups.get(evaluationId);
 		for (int i=0; i<groups.size(); i++) {
 			EvalAssignGroup eac = (EvalAssignGroup) groups.get(i);

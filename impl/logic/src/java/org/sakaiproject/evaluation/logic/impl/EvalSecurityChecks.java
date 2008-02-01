@@ -16,11 +16,11 @@ package org.sakaiproject.evaluation.logic.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
+import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
@@ -41,11 +41,6 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
 public class EvalSecurityChecks {
 
    private static Log log = LogFactory.getLog(EvalSecurityChecks.class);
-
-   private EvaluationDao dao;
-   public void setDao(EvaluationDao dao) {
-      this.dao = dao;
-   }
 
    private EvalExternalLogic external;
    public void setExternalLogic(EvalExternalLogic external) {
@@ -309,6 +304,61 @@ public class EvalSecurityChecks {
       return allowed;
    }
 
+   /**
+    * Checks if a user can control (update/remove) this email template,
+    * this only checks permissions, you should check the state of the evaluation as well or
+    * use {@link #checkEvalTemplateControl(String, EvalEvaluation, EvalEmailTemplate)}
+    * @param userId
+    * @param emailTemplate
+    * @return true if can control, false otherwise
+    */
+   public boolean canUserControlEmailTemplate(String userId, EvalEmailTemplate emailTemplate) {
+      boolean allowed = false;
+      if (checkUserPermission(userId, emailTemplate.getOwner())) {
+         allowed = true;
+      } else {
+         allowed = false;
+      }
+      return allowed;
+   }
+
+   /**
+    * Check if user can control evaluation and template combo
+    * @param userId
+    * @param eval
+    * @param emailTemplate
+    * @return true if they can, throw exceptions otherwise
+    */
+   public boolean checkEvalTemplateControl(String userId, EvalEvaluation eval,
+         EvalEmailTemplate emailTemplate) {
+      log.debug("userId: " + userId + ", evaluationId: " + eval.getId());
+
+      boolean allowed = false;
+      if (EvalUtils.getEvaluationState(eval) == EvalConstants.EVALUATION_STATE_INQUEUE) {
+         if (emailTemplate == null) {
+            // currently using the default templates so check eval perms
+            if (canUserControlEvaluation(userId, eval)) {
+               allowed = true;
+            } else {
+               throw new SecurityException("User (" + userId
+                     + ") cannot control email template in evaluation (" + eval.getId()
+                     + "), do not have permission");
+            }
+         } else {
+            // check email template perms
+            if (canUserControlEmailTemplate(userId, emailTemplate)) {
+               allowed = true;
+            } else {
+               throw new SecurityException("User (" + userId + ") cannot control email template ("
+                     + emailTemplate.getId() + ") without permissions");
+            }
+         }
+      } else {
+         throw new IllegalStateException("Cannot modify email template in running evaluation ("
+               + eval.getId() + ")");
+      }
+      return allowed;
+   }
 
 
 

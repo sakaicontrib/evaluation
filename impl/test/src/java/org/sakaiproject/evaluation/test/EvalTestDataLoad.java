@@ -815,7 +815,7 @@ public class EvalTestDataLoad {
       calendar.add(Calendar.DATE, -5);
       twentyDaysAgo = calendar.getTime();
 
-      // init evaluations
+      // init evaluationSetupService
       // Evaluation not started yet (starts tomorrow)
       evaluationNew = new EvalEvaluation(new Date(), MAINT_USER_ID, "Eval new", null, 
             tomorrow, threeDaysFuture, threeDaysFuture, fourDaysFuture, null, null,
@@ -903,7 +903,7 @@ public class EvalTestDataLoad {
 
       assignHier1 = new EvalAssignHierarchy(new Date(), MAINT_USER_ID, "1", Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationActive);
 
-      // now init response data for the evaluations
+      // now init response data for the evaluationSetupService
       response1 = new EvalResponse(new Date(), USER_ID, SITE1_REF, 
             new Date(), today, null, evaluationActive);
       response2 = new EvalResponse(new Date(), USER_ID, SITE1_REF, 

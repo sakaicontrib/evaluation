@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -40,8 +41,8 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
 /**
- * Shows categories of evaluations and all related groups
- * Provides easy access to a series of evaluations
+ * Shows categories of evaluationSetupService and all related groups
+ * Provides easy access to a series of evaluationSetupService
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
@@ -52,10 +53,15 @@ public class ShowEvalCategoryProducer implements ViewComponentProducer, ViewPara
 		return VIEW_ID;
 	}
 
-	private EvalEvaluationSetupService evaluationsLogic;
-	public void setEvaluationsLogic(EvalEvaluationSetupService evaluationsLogic) {
-		this.evaluationsLogic = evaluationsLogic;
-	}
+   private EvalEvaluationService evaluationService;
+   public void setEvaluationService(EvalEvaluationService evaluationService) {
+      this.evaluationService = evaluationService;
+   }
+
+   private EvalEvaluationSetupService evaluationSetupService;
+   public void setEvaluationSetupService(EvalEvaluationSetupService evaluationSetupService) {
+      this.evaluationSetupService = evaluationSetupService;
+   }
 
 	private Locale locale;
 	public void setLocale(Locale locale) {
@@ -84,8 +90,8 @@ public class ShowEvalCategoryProducer implements ViewComponentProducer, ViewPara
 		UIOutput.make(tofill, "eval-category", evalCategory);
 		UIMessage.make(tofill, "eval-category-instructions", "showevalcategory.evaluation.instructions");
 
-		// show the list of evaluations
-		List evals = evaluationsLogic.getEvaluationsByCategory(evalCategory, null);
+		// show the list of evaluationSetupService
+		List<EvalEvaluation> evals = evaluationSetupService.getEvaluationsByCategory(evalCategory, null);
 		if (evals.size() > 0) {
 			// get an array of evaluation ids
 			Long[] evalIds = new Long[evals.size()];
@@ -95,20 +101,20 @@ public class ShowEvalCategoryProducer implements ViewComponentProducer, ViewPara
 			}
 
 			// get all the associated groups in one big chunk (for speed)
-			Map m = evaluationsLogic.getEvaluationGroups(evalIds, false);
+			Map<Long, List<EvalGroup>> m = evaluationService.getEvaluationGroups(evalIds, false);
 
 			// display each evaluation in this category
 			for (int i=0; i<evals.size(); i++) {
 				EvalEvaluation eval = (EvalEvaluation) evals.get(i);
 				Long evaluationId = eval.getId();
-				String evalStatus = evaluationsLogic.updateEvaluationState(evaluationId); // make sure state is up to date
-				UIBranchContainer evalsBranch = UIBranchContainer.make(tofill, "evaluations-list:", evaluationId.toString() );
+				String evalStatus = evaluationService.updateEvaluationState(evaluationId); // make sure state is up to date
+				UIBranchContainer evalsBranch = UIBranchContainer.make(tofill, "evaluationSetupService-list:", evaluationId.toString() );
 				UIMessage.make(evalsBranch, "evaluation-header", "showevalcategory.evaluation.header");
 				UIOutput.make(evalsBranch, "evaluation-title", eval.getTitle() );
 				UIMessage.make(evalsBranch, "evaluation-dates", "showevalcategory.evaluation.dates", 
 						new Object[] { df.format(eval.getStartDate()), df.format(eval.getDueDate())	});
 
-				List evalGroups = (List) m.get(evaluationId);
+				List<EvalGroup> evalGroups = m.get(evaluationId);
 				// display the groups for this evaluation
 				if (evalGroups.size() > 0) {
 					for (int j=0; j<evalGroups.size(); j++) {

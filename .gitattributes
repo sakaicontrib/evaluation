@@ -5,7 +5,6 @@
 /.svnignore -text
 api/logic/project.xml -text
 api/logic/src/java/org/sakaiproject/evaluation/dao/EvaluationDao.java -text
-api/logic/src/java/org/sakaiproject/evaluation/logic/EvalAssignsLogic.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalAuthoringService.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalDeliveryService.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/EvalEmailsLogic.java -text
@@ -75,7 +74,6 @@ impl/hbm/src/java/org/sakaiproject/evaluation/hbm/EvalScale.hbm.xml -text
 impl/hbm/src/java/org/sakaiproject/evaluation/hbm/EvalTemplate.hbm.xml -text
 impl/hbm/src/java/org/sakaiproject/evaluation/hbm/EvalTemplateItem.hbm.xml -text
 impl/logic/project.xml -text
-impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalAssignsLogicImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalAuthoringServiceImpl.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalDeliveryServiceImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalEmailsLogicImpl.java -text
@@ -92,7 +90,6 @@ impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/entity/ItemEntityProv
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/entity/TemplateEntityProviderImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/entity/TemplateItemEntityProviderImpl.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvalAssignContextInterceptor.java -text
-impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvaluationInterceptor.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvaluationModificationRegistry.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalImportImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalImportJobImpl.java -text
@@ -101,7 +98,6 @@ impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalJobLog
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalScheduledInvocationImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/utils/TextTemplateLogicUtils.java -text
 impl/logic/src/test/log4j.properties -text
-impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalAssignsLogicImplTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalAuthoringServiceImplTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalDeliveryServiceImplTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalEmailsLogicImplTest.java -text

@@ -29,7 +29,7 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 public class ComparatorsUtils {
 
    /**
-    * Sort evaluations by due date, then by title, then by id
+    * Sort evaluationSetupService by due date, then by title, then by id
     */
    public static class EvaluationDateTitleIdComparator implements Comparator<EvalEvaluation> {
       public int compare(EvalEvaluation eval0, EvalEvaluation eval1) {

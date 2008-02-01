@@ -22,7 +22,7 @@ import org.sakaiproject.evaluation.model.EvalResponse;
 
 
 /**
- * Handles all logic associated with responses and answers,
+ * Handles all logic associated with delivery and reporting,
  * Responses can be complete or incomplete depending on if the user is taking the evaluation currently (incomplete response)
  * or has finished taking the evaluation (complete)
  * (Note for developers - do not modify this without permission from the project lead)
@@ -54,7 +54,7 @@ public interface EvalDeliveryService {
    public EvalResponse getEvaluationResponseForUserAndGroup(Long evaluationId, String userId, String evalGroupId);
 
 	/**
-	 * Get the responses for the supplied evaluations for this user<br/>
+	 * Get the responses for the supplied evaluationSetupService for this user<br/>
 	 * Note that this can return multiple responses in the case where an evaluation
 	 * is assigned to multiple contexts that this user is part of, do not assume
 	 * the order is always the same<br/>
@@ -116,7 +116,7 @@ public interface EvalDeliveryService {
 	 * answers at the same time to make sure the transaction succeeds<br/>
 	 * This will also check to see if the user is allowed to save this response
 	 * based on the current evaluation state, 
-	 * also handles locking of associated evaluations<br/>
+	 * also handles locking of associated evaluationSetupService<br/>
 	 * When a user is taking an evaluation you should first create a response
 	 * without any answers and with the end time set to null, once the user
 	 * submits the evaluation you should save the response with the answers and

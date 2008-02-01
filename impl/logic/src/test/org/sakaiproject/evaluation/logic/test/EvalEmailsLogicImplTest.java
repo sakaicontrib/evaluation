@@ -1,7 +1,7 @@
 /**
- * $Id: EvalEmailsLogicImpl.java 1000 Dec 29, 2006 10:07:31 AM azeckoski $
+ * $Id: EvalEmailsLogicImplTest.java 1000 Dec 29, 2006 10:07:31 AM azeckoski $
  * $URL: https://source.sakaiproject.org/contrib $
- * EvalEmailsLogicImpl.java - evaluation - Dec 29, 2006 10:07:31 AM - azeckoski
+ * EvalEmailsLogicImplTest.java - evaluation - Dec 29, 2006 10:07:31 AM - azeckoski
  **************************************************************************
  * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0
@@ -14,18 +14,12 @@
 
 package org.sakaiproject.evaluation.logic.test;
 
-import java.util.Date;
-
-import junit.framework.Assert;
-
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl;
-import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalScale;
-import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.PreloadTestData;
 import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
@@ -60,10 +54,10 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 		}
 
 		// check the preloaded data
-		Assert.assertTrue("Error preloading data", evaluationDao.countAll(EvalScale.class) > 0);
+		assertTrue("Error preloading data", evaluationDao.countAll(EvalScale.class) > 0);
 
 		// check the preloaded test data
-		Assert.assertTrue("Error preloading test data", evaluationDao.countAll(EvalEvaluation.class) > 0);
+		assertTrue("Error preloading test data", evaluationDao.countAll(EvalEvaluation.class) > 0);
 
 		PreloadTestData ptd = (PreloadTestData) applicationContext.getBean("org.sakaiproject.evaluation.test.PreloadTestData");
 		if (ptd == null) {
@@ -105,279 +99,6 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 	 * Note that if a method is overloaded you should include the arguments in the
 	 * test name like so: testMethodClassInt (for method(Class, int);
 	 */
-
-
-
-	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#saveEmailTemplate(org.sakaiproject.evaluation.model.EvalEmailTemplate, java.lang.String)}.
-	 */
-	public void testSaveEmailTemplate() {
-		// test valid new saves
-		emailsLogic.saveEmailTemplate( new EvalEmailTemplate( new Date(),
-				EvalTestDataLoad.MAINT_USER_ID, "a message"), 
-				EvalTestDataLoad.MAINT_USER_ID);
-		emailsLogic.saveEmailTemplate( new EvalEmailTemplate( new Date(),
-				EvalTestDataLoad.ADMIN_USER_ID, "another message"), 
-				EvalTestDataLoad.ADMIN_USER_ID);
-
-		// test saving new always nulls out the defaultType
-		// the defaultType cannot be changed when saving
-		// (default templates can only be set in the preloaded data for now)
-		EvalEmailTemplate testTemplate = new EvalEmailTemplate( new Date(),
-				EvalTestDataLoad.ADMIN_USER_ID, "a message", 
-				EvalConstants.EMAIL_TEMPLATE_DEFAULT_AVAILABLE);
-		emailsLogic.saveEmailTemplate( testTemplate, EvalTestDataLoad.ADMIN_USER_ID);
-		Assert.assertNotNull( testTemplate.getId() );
-		Assert.assertNull( testTemplate.getDefaultType() );
-
-		// test invalid update to default template
-		EvalEmailTemplate defaultTemplate = 
-			emailsLogic.getDefaultEmailTemplate( EvalConstants.EMAIL_TEMPLATE_AVAILABLE );
-		try {
-			defaultTemplate.setMessage("new message for default");
-			emailsLogic.saveEmailTemplate( defaultTemplate, 
-					EvalTestDataLoad.ADMIN_USER_ID);
-			Assert.fail("Should have thrown exception");
-		} catch (RuntimeException e) {
-			Assert.assertNotNull(e);
-		}
-
-		// test valid updates
-		etdl.emailTemplate1.setMessage("new message 1");
-		emailsLogic.saveEmailTemplate( etdl.emailTemplate1, EvalTestDataLoad.ADMIN_USER_ID);
-
-		etdl.emailTemplate2.setMessage("new message 2");
-		emailsLogic.saveEmailTemplate( etdl.emailTemplate2, EvalTestDataLoad.MAINT_USER_ID);
-
-		// test user not has permission to update
-		try {
-			etdl.emailTemplate1.setMessage("new message 1");
-			emailsLogic.saveEmailTemplate( etdl.emailTemplate1, 
-					EvalTestDataLoad.MAINT_USER_ID);
-			Assert.fail("Should have thrown exception");
-		} catch (RuntimeException e) {
-			Assert.assertNotNull(e);
-		}
-		
-		try {
-			etdl.emailTemplate2.setMessage("new message 2");
-			emailsLogic.saveEmailTemplate( etdl.emailTemplate2, 
-					EvalTestDataLoad.USER_ID);
-			Assert.fail("Should have thrown exception");
-		} catch (RuntimeException e) {
-			Assert.assertNotNull(e);
-		}
-
-		// test associated eval is not in queue (is active) so cannot update
-		try {
-			etdl.emailTemplate3.setMessage("new message 3");
-			emailsLogic.saveEmailTemplate( etdl.emailTemplate3, 
-					EvalTestDataLoad.MAINT_USER_ID);
-			Assert.fail("Should have thrown exception");
-		} catch (RuntimeException e) {
-			Assert.assertNotNull(e);
-		}
-
-	}
-
-	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#getDefaultEmailTemplate(int)}.
-	 */
-	public void testGetDefaultEmailTemplate() {
-		EvalEmailTemplate emailTemplate = null;
-
-		// test getting the templates
-		emailTemplate = emailsLogic.getDefaultEmailTemplate( 
-				EvalConstants.EMAIL_TEMPLATE_AVAILABLE );
-		Assert.assertNotNull(emailTemplate);
-		Assert.assertEquals( EvalConstants.EMAIL_TEMPLATE_DEFAULT_AVAILABLE, 
-				emailTemplate.getDefaultType() );
-		Assert.assertEquals( EvalConstants.EMAIL_AVAILABLE_DEFAULT_TEXT,
-				emailTemplate.getMessage() );
-
-		emailTemplate = emailsLogic.getDefaultEmailTemplate( 
-				EvalConstants.EMAIL_TEMPLATE_REMINDER );
-		Assert.assertNotNull(emailTemplate);
-		Assert.assertEquals( EvalConstants.EMAIL_TEMPLATE_DEFAULT_REMINDER, 
-				emailTemplate.getDefaultType() );
-		Assert.assertEquals( EvalConstants.EMAIL_REMINDER_DEFAULT_TEXT,
-				emailTemplate.getMessage() );
-
-		// test invalid constant causes failure
-		try {
-			emailTemplate = emailsLogic.getDefaultEmailTemplate( EvalTestDataLoad.INVALID_CONSTANT_STRING );
-			Assert.fail("Should have thrown exception");
-		} catch (RuntimeException e) {
-			Assert.assertNotNull(e);
-		}
-
-	}
-
-
-    public void testGetEmailTemplate() {
-        EvalEmailTemplate emailTemplate = null;
-
-        // test getting the templates
-        emailTemplate = emailsLogic.getEmailTemplate(etdl.evaluationActive.getId(), 
-                EvalConstants.EMAIL_TEMPLATE_AVAILABLE );
-        Assert.assertNotNull(emailTemplate);
-        Assert.assertEquals( EvalConstants.EMAIL_AVAILABLE_DEFAULT_TEXT,
-                emailTemplate.getMessage() );
-
-        emailTemplate = emailsLogic.getEmailTemplate(etdl.evaluationActive.getId(), 
-                EvalConstants.EMAIL_TEMPLATE_REMINDER );
-        Assert.assertNotNull(emailTemplate);
-        Assert.assertEquals( "Email Template 3", emailTemplate.getMessage() );
-
-        // test invalid constant causes failure
-        try {
-            emailTemplate = emailsLogic.getEmailTemplate( EvalTestDataLoad.INVALID_LONG_ID, EvalTestDataLoad.INVALID_CONSTANT_STRING );
-            Assert.fail("Should have thrown exception");
-        } catch (RuntimeException e) {
-            Assert.assertNotNull(e);
-        }
-
-    }
-
-
-	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#canControlEmailTemplate(java.lang.String, java.lang.Long, int)}.
-	 */
-	public void testCanControlEmailTemplateStringLongInt() {
-		// test valid email template control perms when none assigned
-		Assert.assertTrue( emailsLogic.canControlEmailTemplate(
-				EvalTestDataLoad.ADMIN_USER_ID, etdl.evaluationNewAdmin.getId(), 
-				EvalConstants.EMAIL_TEMPLATE_AVAILABLE) );
-		Assert.assertTrue( emailsLogic.canControlEmailTemplate(
-				EvalTestDataLoad.ADMIN_USER_ID, etdl.evaluationNewAdmin.getId(), 
-				EvalConstants.EMAIL_TEMPLATE_REMINDER) );
-
-		// user does not have perm for this eval
-		Assert.assertFalse( emailsLogic.canControlEmailTemplate(
-				EvalTestDataLoad.MAINT_USER_ID, etdl.evaluationNewAdmin.getId(), 
-				EvalConstants.EMAIL_TEMPLATE_AVAILABLE) );
-		Assert.assertFalse( emailsLogic.canControlEmailTemplate(
-				EvalTestDataLoad.USER_ID, etdl.evaluationNewAdmin.getId(), 
-				EvalConstants.EMAIL_TEMPLATE_REMINDER) );
-
-		// test when template has some assigned already
-		Assert.assertTrue( emailsLogic.canControlEmailTemplate(
-				EvalTestDataLoad.MAINT_USER_ID, etdl.evaluationNew.getId(), 
-				EvalConstants.EMAIL_TEMPLATE_REMINDER) );
-		Assert.assertTrue( emailsLogic.canControlEmailTemplate(
-				EvalTestDataLoad.ADMIN_USER_ID, etdl.evaluationNew.getId(), 
-				EvalConstants.EMAIL_TEMPLATE_AVAILABLE) );
-
-		// test admin overrides perms
-		Assert.assertTrue( emailsLogic.canControlEmailTemplate(
-				EvalTestDataLoad.ADMIN_USER_ID, etdl.evaluationNew.getId(), 
-				EvalConstants.EMAIL_TEMPLATE_AVAILABLE) );
-
-		// test not has permission
-		Assert.assertFalse( emailsLogic.canControlEmailTemplate(
-				EvalTestDataLoad.MAINT_USER_ID, etdl.evaluationNewAdmin.getId(), 
-				EvalConstants.EMAIL_TEMPLATE_AVAILABLE) );
-		Assert.assertFalse( emailsLogic.canControlEmailTemplate(
-				EvalTestDataLoad.MAINT_USER_ID, etdl.evaluationNew.getId(), 
-				EvalConstants.EMAIL_TEMPLATE_AVAILABLE) );
-		Assert.assertFalse( emailsLogic.canControlEmailTemplate(
-				EvalTestDataLoad.USER_ID, etdl.evaluationNew.getId(), 
-				EvalConstants.EMAIL_TEMPLATE_REMINDER) );
-
-		// test cannot when evaluation is running (active+)
-		Assert.assertFalse( emailsLogic.canControlEmailTemplate(
-				EvalTestDataLoad.MAINT_USER_ID, etdl.evaluationActive.getId(), 
-				EvalConstants.EMAIL_TEMPLATE_AVAILABLE) );
-		Assert.assertFalse( emailsLogic.canControlEmailTemplate(
-				EvalTestDataLoad.MAINT_USER_ID, etdl.evaluationActive.getId(), 
-				EvalConstants.EMAIL_TEMPLATE_REMINDER) );
-
-		// check admin cannot override for running evals
-		Assert.assertFalse( emailsLogic.canControlEmailTemplate(
-				EvalTestDataLoad.ADMIN_USER_ID, etdl.evaluationClosed.getId(), 
-				EvalConstants.EMAIL_TEMPLATE_REMINDER) );
-		Assert.assertFalse( emailsLogic.canControlEmailTemplate(
-				EvalTestDataLoad.ADMIN_USER_ID, etdl.evaluationClosed.getId(), 
-				EvalConstants.EMAIL_TEMPLATE_REMINDER) );
-
-		// check invalid evaluation id causes failure
-		try {
-			emailsLogic.canControlEmailTemplate(
-					EvalTestDataLoad.ADMIN_USER_ID, 
-					EvalTestDataLoad.INVALID_LONG_ID, 
-					EvalConstants.EMAIL_TEMPLATE_REMINDER);
-			Assert.fail("Should have thrown exception");
-		} catch (RuntimeException e) {
-			Assert.assertNotNull(e);
-		}
-
-	}
-
-	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#canControlEmailTemplate(java.lang.String, java.lang.Long, java.lang.Long)}.
-	 */
-	public void testCanControlEmailTemplateStringLongLong() {
-		// test valid email template control perms when none assigned
-		Assert.assertTrue( emailsLogic.canControlEmailTemplate(
-				EvalTestDataLoad.ADMIN_USER_ID, etdl.evaluationNew.getId(), 
-				etdl.emailTemplate1.getId()) );
-		Assert.assertTrue( emailsLogic.canControlEmailTemplate(
-				EvalTestDataLoad.ADMIN_USER_ID, etdl.evaluationNew.getId(), 
-				etdl.emailTemplate2.getId()) );
-		Assert.assertTrue( emailsLogic.canControlEmailTemplate(
-				EvalTestDataLoad.MAINT_USER_ID, etdl.evaluationNew.getId(), 
-				etdl.emailTemplate2.getId()) );
-
-		// test not has permissions
-		Assert.assertFalse( emailsLogic.canControlEmailTemplate(
-				EvalTestDataLoad.MAINT_USER_ID, etdl.evaluationNew.getId(), 
-				etdl.emailTemplate1.getId()) );
-
-		// test valid but active eval not allowed
-		Assert.assertFalse( emailsLogic.canControlEmailTemplate(
-				EvalTestDataLoad.MAINT_USER_ID, etdl.evaluationActive.getId(), 
-				etdl.emailTemplate3.getId()) );
-
-		// make sure admin cannot override for active eval
-		Assert.assertFalse( emailsLogic.canControlEmailTemplate(
-				EvalTestDataLoad.ADMIN_USER_ID, etdl.evaluationActive.getId(), 
-				etdl.emailTemplate3.getId()) );
-
-		// check invalid evaluation id causes failure
-		try {
-			emailsLogic.canControlEmailTemplate(
-					EvalTestDataLoad.ADMIN_USER_ID, 
-					EvalTestDataLoad.INVALID_LONG_ID, 
-					etdl.emailTemplate1.getId() );
-			Assert.fail("Should have thrown exception");
-		} catch (RuntimeException e) {
-			Assert.assertNotNull(e);
-		}
-
-		// check invalid email template id causes failure
-		try {
-			emailsLogic.canControlEmailTemplate(
-					EvalTestDataLoad.ADMIN_USER_ID, 
-					etdl.evaluationNew.getId(), 
-					EvalTestDataLoad.INVALID_LONG_ID );
-			Assert.fail("Should have thrown exception");
-		} catch (RuntimeException e) {
-			Assert.assertNotNull(e);
-		}
-
-		// check non-matching evaluation and template causes failure
-		try {
-			emailsLogic.canControlEmailTemplate(
-					EvalTestDataLoad.ADMIN_USER_ID, 
-					etdl.evaluationNew.getId(), 
-					etdl.emailTemplate3.getId() );
-			Assert.fail("Should have thrown exception");
-		} catch (RuntimeException e) {
-			Assert.assertNotNull(e);
-		}
-
-	}
-
 
 
 	/**
