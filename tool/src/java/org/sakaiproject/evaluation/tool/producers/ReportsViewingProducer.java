@@ -19,10 +19,9 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.sakaiproject.evaluation.logic.EvalAuthoringService;
+import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
@@ -79,19 +78,14 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
       this.externalLogic = externalLogic;
    }
 
-   private EvalAuthoringService authoringService;
-   public void setAuthoringService(EvalAuthoringService authoringService) {
-      this.authoringService = authoringService;
-   }
-
    private EvalEvaluationService evaluationService;
    public void setEvaluationService(EvalEvaluationService evaluationService) {
       this.evaluationService = evaluationService;
    }
 
-   private EvalDeliveryService responsesLogic;
-   public void setResponsesLogic(EvalDeliveryService responsesLogic) {
-      this.responsesLogic = responsesLogic;
+   private EvalDeliveryService deliveryService;
+   public void setDeliveryService(EvalDeliveryService deliveryService) {
+      this.deliveryService = deliveryService;
    }
 
    public ReportsBean reportsBean;
@@ -254,7 +248,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
             UIBoundBoolean.make(radiobranch3, "itemNA", useNA);
          }
 
-         List<EvalAnswer> itemAnswers = responsesLogic.getEvalAnswers(item.getId(), evalId, groupIds);
+         List<EvalAnswer> itemAnswers = deliveryService.getEvalAnswers(item.getId(), evalId, groupIds);
 
          for (int x = 0; x < scaleLabels.length; x++) {
             UIBranchContainer answerbranch = UIBranchContainer.make(scaled, "answers:", x + "");

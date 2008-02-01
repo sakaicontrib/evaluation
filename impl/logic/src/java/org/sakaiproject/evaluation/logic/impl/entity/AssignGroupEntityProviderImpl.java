@@ -18,7 +18,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.entitybroker.entityprovider.CoreEntityProvider;
 import org.sakaiproject.entitybroker.entityprovider.capabilities.AutoRegisterEntityProvider;
-import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.entity.AssignGroupEntityProvider;
 
 /**
@@ -30,10 +30,10 @@ public class AssignGroupEntityProviderImpl implements AssignGroupEntityProvider,
 
 	private static Log log = LogFactory.getLog(AssignGroupEntityProviderImpl.class);
 	
-	private EvalAssignsLogic assignsLogic;
-	public void setAssignsLogic(EvalAssignsLogic assignsLogic) {
-		this.assignsLogic = assignsLogic;
-	}
+   private EvalEvaluationService evaluationService;
+   public void setEvaluationService(EvalEvaluationService evaluationService) {
+      this.evaluationService = evaluationService;
+   }
 
 
 	/* (non-Javadoc)
@@ -51,7 +51,7 @@ public class AssignGroupEntityProviderImpl implements AssignGroupEntityProvider,
 		Long assignGroupId;
 		try {
 			assignGroupId = new Long(id);
-			if (assignsLogic.getAssignGroupById(assignGroupId) != null) {
+			if (evaluationService.getAssignGroupById(assignGroupId) != null) {
 				return true;
 			}
 		} catch (NumberFormatException e) {

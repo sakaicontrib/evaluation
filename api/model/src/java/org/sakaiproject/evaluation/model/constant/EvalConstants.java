@@ -24,7 +24,7 @@ public class EvalConstants {
 
 	/**
 	 * Template type: this is a normal type of template created by a user
-	 * and used to start evaluations
+	 * and used to start evaluationSetupService
 	 */
 	public final static String TEMPLATE_TYPE_STANDARD = "standard";
 	/**
@@ -67,14 +67,14 @@ public class EvalConstants {
     * User may view all data at the associated hierarchy node
     * but none of the data below this node,
     * user has no power to change any data, data includes: 
-    * evaluations, eval results, templates, items, scales
+    * evaluationSetupService, eval results, templates, items, scales
     */
    public static final String HIERARCHY_PERM_VIEW_NODE_DATA = "HierarchyViewNodeData";
    /**
     * Hierarchy Permission:
     * User may view all data at the associated hierarchy node and below,
     * user has no power to change any data, data includes: 
-    * evaluations, eval results, templates, items, scales
+    * evaluationSetupService, eval results, templates, items, scales
     */
    public static final String HIERARCHY_PERM_VIEW_TREE_DATA = "HierarchyViewTreeData";
    /**
@@ -104,7 +104,7 @@ public class EvalConstants {
 	 */
 	public final static String PERM_WRITE_TEMPLATE = "eval.write.template";
 	/**
-	 * Permission: User can create, update, delete evaluations for any evalGroupId they have this permission in
+	 * Permission: User can create, update, delete evaluationSetupService for any evalGroupId they have this permission in
 	 */
 	public final static String PERM_ASSIGN_EVALUATION = "eval.assign.evaluation";
 	/**
@@ -367,7 +367,7 @@ public class EvalConstants {
 	 * $URLtoSystem - the main URL to the system this is running in
 	 */
 	public static final String EMAIL_CREATED_DEFAULT_TEXT = 
-		"All information submitted to the Evaluation System is confidential. Instructors cannot identify which submissions belong to which students. Students are required to login to the system for the sole purpose of providing students access to the appropriate evaluations for their associated courses. Instructors can only view general statistics as allowed by the university. Please send privacy concerns to $HelpdeskEmail. \n" +
+		"All information submitted to the Evaluation System is confidential. Instructors cannot identify which submissions belong to which students. Students are required to login to the system for the sole purpose of providing students access to the appropriate evaluationSetupService for their associated courses. Instructors can only view general statistics as allowed by the university. Please send privacy concerns to $HelpdeskEmail. \n" +
 		"\n" +
 		"An evaluation ($EvalTitle) has been created for: $EvalGroupTitle.\n" +
 		"\n";
@@ -435,7 +435,7 @@ public class EvalConstants {
 	 * $URLtoSystem - the main URL to the system this is running in
 	 */
 	public static final String EMAIL_AVAILABLE_DEFAULT_TEXT = 
-		"All information submitted to the Evaluation System is confidential. Instructors cannot identify which submissions belong to which students. Students are required to login to the system for the sole purpose of providing students access to the appropriate evaluations for their associated courses. Instructors can only view general statistics as allowed by the university. Please send privacy concerns to $HelpdeskEmail. \n" +
+		"All information submitted to the Evaluation System is confidential. Instructors cannot identify which submissions belong to which students. Students are required to login to the system for the sole purpose of providing students access to the appropriate evaluationSetupService for their associated courses. Instructors can only view general statistics as allowed by the university. Please send privacy concerns to $HelpdeskEmail. \n" +
 		"\n" +
 		"An evaluation ($EvalTitle) for: $EvalGroupTitle is ready to be filled out. Please complete this evaluation by $EvalDueDate at the latest.\n" +
 		"\n" +
@@ -478,7 +478,7 @@ public class EvalConstants {
 	 * $URLtoSystem - the main URL to the system this is running in
 	 */
 	public static final String EMAIL_AVAILABLE_OPT_IN_TEXT = 
-		"All information submitted to the Evaluation System is confidential. Instructors cannot identify which submissions belong to which students. Students are required to login to the system for the sole purpose of providing students access to the appropriate evaluations for their associated courses. Instructors can only view general statistics as allowed by the university. Please send privacy concerns to $HelpdeskEmail. \n" +
+		"All information submitted to the Evaluation System is confidential. Instructors cannot identify which submissions belong to which students. Students are required to login to the system for the sole purpose of providing students access to the appropriate evaluationSetupService for their associated courses. Instructors can only view general statistics as allowed by the university. Please send privacy concerns to $HelpdeskEmail. \n" +
 		"\n" +
 		"An evaluation ($EvalTitle) for: $EvalGroupTitle is ready to be filled out. However, you have not opted to use this evaluation.\n" +
 		"\n" +
@@ -513,7 +513,7 @@ public class EvalConstants {
 	 * This is the default template for when the evaluation reminder is sent out
 	 */
 	public static final String EMAIL_REMINDER_DEFAULT_TEXT = 
-		"All information submitted to the Evaluation System is confidential. Instructors cannot identify which submissions belong to which students. Students are required to login to the system for the sole purpose of providing students access to the appropriate evaluations for their associated courses. Instructors can only view general statistics as allowed by the university. Please send privacy concerns to $HelpdeskEmail. \n" +
+		"All information submitted to the Evaluation System is confidential. Instructors cannot identify which submissions belong to which students. Students are required to login to the system for the sole purpose of providing students access to the appropriate evaluationSetupService for their associated courses. Instructors can only view general statistics as allowed by the university. Please send privacy concerns to $HelpdeskEmail. \n" +
 		"\n" +
 		"We are still awaiting the completion of an evaluation ($EvalTitle) for: $EvalGroupTitle. \n" +
 		"\n" +
@@ -537,7 +537,7 @@ public class EvalConstants {
 	public static final String EMAIL_TEMPLATE_DEFAULT_RESULTS = "defaultResults";
 
 	public static final String EMAIL_RESULTS_DEFAULT_TEXT = 
-		"All information submitted to the Evaluation System is confidential. Instructors cannot identify which submissions belong to which students. Students are required to login to the system for the sole purpose of providing students access to the appropriate evaluations for their associated courses. Instructors can only view general statistics as allowed by the university. Please send privacy concerns to $HelpdeskEmail. \n" +
+		"All information submitted to the Evaluation System is confidential. Instructors cannot identify which submissions belong to which students. Students are required to login to the system for the sole purpose of providing students access to the appropriate evaluationSetupService for their associated courses. Instructors can only view general statistics as allowed by the university. Please send privacy concerns to $HelpdeskEmail. \n" +
 		"\n" +
 		"The results of an evaluation ($EvalTitle) for: $EvalGroupTitle are available now.\n" +
 		"\n" +
@@ -575,7 +575,7 @@ public class EvalConstants {
 	 */
 	public static final String EVALUATION_STATE_UNKNOWN = "UNKNOWN";
 	/**
-	 * Evaluation state: evaluation has not started yet, should be the state of evaluations
+	 * Evaluation state: evaluation has not started yet, should be the state of evaluationSetupService
 	 * when they are first created, can make any change to the evaluation while in this state
 	 * <br/>States: InQueue -> Active -> Due -> Closed -> Viewable
 	 */
@@ -591,7 +591,7 @@ public class EvalConstants {
 	 * Evaluation state: evaluation is over but not technically, no more notifications
 	 * will be displayed and links are no longer shown, however, takers
 	 * can still complete the evaluation until the state changes to closed,
-	 * evaluations in Due status are shown as closed in the interface
+	 * evaluationSetupService in Due status are shown as closed in the interface
 	 * <br/>States: InQueue -> Active -> Due -> Closed -> Viewable
 	 */
 	public static final String EVALUATION_STATE_DUE = "Due";

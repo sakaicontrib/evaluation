@@ -221,7 +221,7 @@ public class EvalDeliveryServiceImplTest extends AbstractTransactionalSpringCont
       Assert.assertNotNull(l);
       Assert.assertEquals(0, l.size());
 
-      // test that admin can fetch all results for evaluations
+      // test that admin can fetch all results for evaluationSetupService
       l = responses.getEvaluationResponses(EvalTestDataLoad.ADMIN_USER_ID, 
             new Long[] { etdl.evaluationActive.getId(), etdl.evaluationClosed.getId(), etdl.evaluationViewable.getId() }, true );
       Assert.assertNotNull(l);
@@ -276,7 +276,7 @@ public class EvalDeliveryServiceImplTest extends AbstractTransactionalSpringCont
     */
    public void testCountResponses() {
 
-      // test counts for all responses in various evaluations
+      // test counts for all responses in various evaluationSetupService
       Assert.assertEquals(3, responses.countResponses( etdl.evaluationClosed.getId(), null, null) );
       Assert.assertEquals(2, responses.countResponses( etdl.evaluationViewable.getId(), null, null) );
       Assert.assertEquals(1, responses.countResponses( etdl.evaluationActive.getId(), null, null) );

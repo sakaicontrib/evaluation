@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
@@ -42,43 +42,43 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 /**
  * This page confirms that the user wants to remove an evaluation
  * 
- * @author: Rui Feng (fengr@vt.edu)
+ * @author Rui Feng (fengr@vt.edu)
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 
 public class RemoveEvalProducer implements ViewComponentProducer,ViewParamsReporter, NavigationCaseReporter {
 
-	public static final String VIEW_ID = "remove_evaluation";
-	public String getViewID() {
-		return VIEW_ID;
-	}
-	
-	private EvalEvaluationSetupService evalsLogic;
-	public void setEvalsLogic(EvalEvaluationSetupService evalsLogic) {
-		this.evalsLogic = evalsLogic;
-	}
-		
-	private Locale locale;
-	public void setLocale(Locale locale){
-		this.locale=locale;
-	}
-	
-	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+   public static final String VIEW_ID = "remove_evaluation";
+   public String getViewID() {
+      return VIEW_ID;
+   }
 
-		UIMessage.make(tofill, "page-title", "removeeval.page.title");	
+   private EvalEvaluationService evaluationService;
+   public void setEvaluationService(EvalEvaluationService evaluationService) {
+      this.evaluationService = evaluationService;
+   }
 
-		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"),
+   private Locale locale;
+   public void setLocale(Locale locale){
+      this.locale=locale;
+   }
+
+   public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+
+      UIMessage.make(tofill, "page-title", "removeeval.page.title");	
+
+      UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"),
             new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
-      UIInternalLink.make(tofill, "control-evaluations-link",
+      UIInternalLink.make(tofill, "control-evaluationSetupService-link",
             UIMessage.make("controlevaluations.page.title"), new SimpleViewParameters(
                   ControlEvaluationsProducer.VIEW_ID));
 
-		
-		TemplateViewParameters evalViewParams = (TemplateViewParameters) viewparams;
-		
-		if (evalViewParams.templateId != null) {
-         EvalEvaluation eval = evalsLogic.getEvaluationById(evalViewParams.templateId);
+
+      TemplateViewParameters evalViewParams = (TemplateViewParameters) viewparams;
+
+      if (evalViewParams.templateId != null) {
+         EvalEvaluation eval = evaluationService.getEvaluationById(evalViewParams.templateId);
          if (eval != null) {
             UIForm form = UIForm.make(tofill, "removeEvalForm");
             UIMessage.make(form, "remove-eval-confirm-name", 
@@ -91,12 +91,12 @@ public class RemoveEvalProducer implements ViewComponentProducer,ViewParamsRepor
             UIMessage.make(form, "start-date-header", "removeeval.start.date.header");
             UIMessage.make(form, "due-date-header", "removeeval.due.date.header");
 
-            int count = evalsLogic.countEvaluationGroups(eval.getId());
+            int count = evaluationService.countEvaluationGroups(eval.getId());
             if (count > 1) {
                UIOutput.make(form, "evalAssigned", count + " courses");
             } else if (count == 1) {
                Long[] evalIds = { eval.getId() };
-               Map evalContexts = evalsLogic.getEvaluationGroups(evalIds, true);
+               Map evalContexts = evaluationService.getEvaluationGroups(evalIds, true);
                List contexts = (List) evalContexts.get(eval.getId());
                EvalGroup ctxt = (EvalGroup) contexts.get(0);
                String title = ctxt.title;
@@ -111,7 +111,7 @@ public class RemoveEvalProducer implements ViewComponentProducer,ViewParamsRepor
             UIOutput.make(form, "evalDueDate", df.format(eval.getDueDate()));
 
             UICommand.make(form, "cancelRemoveEvalAction", UIMessage.make("general.cancel.button"),
-                  "#{evaluationBean.cancelRemoveEvalAction}");
+            "#{evaluationBean.cancelRemoveEvalAction}");
 
             UICommand removeCmd = UICommand.make(form, "removeEvalAction", UIMessage
                   .make("removeeval.remove.button"), "#{evaluationBean.removeEvalAction}");
@@ -120,24 +120,24 @@ public class RemoveEvalProducer implements ViewComponentProducer,ViewParamsRepor
          } else {
             throw new RuntimeException("Cannot remove evaluation, no eval id found in passed in params, illegal access to page");
          }
-		}
-	}
+      }
+   }
 
-	/* (non-Javadoc)
-	 * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
-	 */
-	public List reportNavigationCases() {
-		List i = new ArrayList();
-		i.add(new NavigationCase(ControlEvaluationsProducer.VIEW_ID, new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID)));
-		return i;
-	}
+   /* (non-Javadoc)
+    * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
+    */
+   public List reportNavigationCases() {
+      List i = new ArrayList();
+      i.add(new NavigationCase(ControlEvaluationsProducer.VIEW_ID, new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID)));
+      return i;
+   }
 
-	/* (non-Javadoc)
-	 * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
-	 */
-	public ViewParameters getViewParameters() {
-		return new TemplateViewParameters();
-	}
-	
-	
+   /* (non-Javadoc)
+    * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
+    */
+   public ViewParameters getViewParameters() {
+      return new TemplateViewParameters();
+   }
+
+
 }

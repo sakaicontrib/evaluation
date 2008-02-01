@@ -16,7 +16,6 @@ package org.sakaiproject.evaluation.logic.impl;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -33,7 +32,6 @@ import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.impl.utils.TextTemplateLogicUtils;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
-import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -83,181 +81,6 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       log.debug("Init");
    }
 
-   /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#saveEmailTemplate(org.sakaiproject.evaluation.model.EvalEmailTemplate, java.lang.String)
-    */
-   @SuppressWarnings("unchecked")
-   public void saveEmailTemplate(EvalEmailTemplate emailTemplate, String userId) {
-      log.debug("userId: " + userId + ", emailTemplate: " + emailTemplate.getId());
-
-      // set the date modified
-      emailTemplate.setLastModified(new Date());
-
-      // check user permissions
-      if (!canUserControlEmailTemplate(userId, emailTemplate)) {
-         throw new SecurityException("User (" + userId + ") cannot control email template ("
-               + emailTemplate.getId() + ") without permissions");
-      }
-
-      // checks to keeps someone from overwriting the default templates
-      if (emailTemplate.getId() == null) {
-         // null out the defaultType for new templates 
-         emailTemplate.setDefaultType(null);
-
-      } else {
-         // existing template
-         if (emailTemplate.getDefaultType() != null) {
-            throw new IllegalArgumentException(
-                  "Cannot modify default templates or set existing templates to be default");
-         }
-
-         // check if there are evaluations this is used in and if the user can modify this based on them
-         // check available templates
-         List<EvalEvaluation> l = dao.findByProperties(EvalEvaluation.class, new String[] { "availableEmailTemplate.id" },
-               new Object[] { emailTemplate.getId() });
-         for (int i = 0; i < l.size(); i++) {
-            EvalEvaluation eval = (EvalEvaluation) l.get(i);
-            // check eval/template permissions
-            checkEvalTemplateControl(userId, eval, emailTemplate);
-         }
-         // check reminder templates
-         l = dao.findByProperties(EvalEvaluation.class, new String[] { "reminderEmailTemplate.id" },
-               new Object[] { emailTemplate.getId() });
-         for (int i = 0; i < l.size(); i++) {
-            EvalEvaluation eval = (EvalEvaluation) l.get(i);
-            // check eval/template permissions
-            checkEvalTemplateControl(userId, eval, emailTemplate);
-         }
-      }
-
-      // save the template if allowed
-      dao.save(emailTemplate);
-      log.info("User (" + userId + ") saved email template (" + emailTemplate.getId() + ")");
-   }
-
-   /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#getDefaultEmailTemplate(int)
-    */
-   @SuppressWarnings("unchecked")
-   public EvalEmailTemplate getDefaultEmailTemplate(String emailTemplateTypeConstant) {
-      log.debug("emailTemplateTypeConstant: " + emailTemplateTypeConstant);
-
-      // check and get type
-      String templateType;
-      if (EvalConstants.EMAIL_TEMPLATE_CREATED.equals(emailTemplateTypeConstant)) {
-         templateType = EvalConstants.EMAIL_TEMPLATE_DEFAULT_CREATED;
-      } else if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailTemplateTypeConstant)) {
-         templateType = EvalConstants.EMAIL_TEMPLATE_DEFAULT_AVAILABLE;
-      } else if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE_OPT_IN.equals(emailTemplateTypeConstant)) {
-         templateType = EvalConstants.EMAIL_TEMPLATE_DEFAULT_AVAILABLE_OPT_IN;
-      } else if (EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailTemplateTypeConstant)) {
-         templateType = EvalConstants.EMAIL_TEMPLATE_DEFAULT_REMINDER;
-      } else if (EvalConstants.EMAIL_TEMPLATE_RESULTS.equals(emailTemplateTypeConstant)) {
-         templateType = EvalConstants.EMAIL_TEMPLATE_DEFAULT_RESULTS;
-      } else {
-         throw new IllegalArgumentException("Invalid emailTemplateTypeConstant: " + emailTemplateTypeConstant);
-      }
-
-      // fetch template by type
-      List<EvalEmailTemplate> l = dao.findByProperties(EvalEmailTemplate.class, new String[] { "defaultType" },
-            new Object[] { templateType });
-      if (l.isEmpty()) {
-         throw new IllegalStateException("Could not find any default template for type constant: "
-               + emailTemplateTypeConstant);
-      }
-      return (EvalEmailTemplate) l.get(0);
-   }
-
-   /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#getEmailTemplate(java.lang.Long, java.lang.String)
-    */
-   public EvalEmailTemplate getEmailTemplate(Long evaluationId, String emailTemplateTypeConstant) {
-      // get evaluation
-      EvalEvaluation eval = getEvaluationOrFail(evaluationId);
-
-      // check the type constant
-      Long emailTemplateId = null;
-      if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailTemplateTypeConstant)) {
-         if (eval.getAvailableEmailTemplate() != null) {
-            emailTemplateId = eval.getAvailableEmailTemplate().getId();
-         }
-      } else if (EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailTemplateTypeConstant)) {
-         if (eval.getReminderEmailTemplate() != null) {
-            emailTemplateId = eval.getReminderEmailTemplate().getId();
-         }
-      } else {
-         throw new IllegalArgumentException("Invalid emailTemplateTypeConstant: " + emailTemplateTypeConstant);
-      }
-
-      EvalEmailTemplate emailTemplate = null;
-      if (emailTemplateId != null) {
-         emailTemplate = (EvalEmailTemplate) dao.findById(EvalEmailTemplate.class, emailTemplateId);
-      }
-
-      if (emailTemplate == null || emailTemplate.getMessage() == null) {
-         emailTemplate = getDefaultEmailTemplate(emailTemplateTypeConstant);
-      }
-      return emailTemplate;
-   }
-
-   // PERMISSIONS
-
-   /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#canControlEmailTemplate(java.lang.String, java.lang.Long, int)
-    */
-   public boolean canControlEmailTemplate(String userId, Long evaluationId, String emailTemplateTypeConstant) {
-      log.debug("userId: " + userId + ", evaluationId: " + evaluationId + ", emailTemplateTypeConstant: "
-            + emailTemplateTypeConstant);
-
-      // get evaluation
-      EvalEvaluation eval = getEvaluationOrFail(evaluationId);
-
-      // get the email template
-      EvalEmailTemplate emailTemplate = getEmailTemplate(evaluationId, emailTemplateTypeConstant);
-
-      // check the permissions and state
-      try {
-         return checkEvalTemplateControl(userId, eval, emailTemplate);
-      } catch (RuntimeException e) {
-         log.info(e.getMessage());
-      }
-      return false;
-   }
-
-   /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#canControlEmailTemplate(java.lang.String, java.lang.Long, java.lang.Long)
-    */
-   public boolean canControlEmailTemplate(String userId, Long evaluationId, Long emailTemplateId) {
-      log.debug("userId: " + userId + ", evaluationId: " + evaluationId + ", emailTemplateId: "
-            + emailTemplateId);
-
-      // get evaluation
-      EvalEvaluation eval = getEvaluationOrFail(evaluationId);
-
-      // get the email template
-      EvalEmailTemplate emailTemplate = getEmailTemplateOrFail(emailTemplateId);
-
-      // make sure this template is associated with this evaluation
-      if (eval.getAvailableEmailTemplate() != null
-            && emailTemplate.getId().equals(eval.getAvailableEmailTemplate().getId())) {
-         log.debug("template matches available template from eval (" + eval.getId() + ")");
-      } else if (eval.getReminderEmailTemplate() != null
-            && emailTemplate.getId().equals(eval.getReminderEmailTemplate().getId())) {
-         log.debug("template matches reminder template from eval (" + eval.getId() + ")");
-      } else {
-         throw new IllegalArgumentException("email template (" + emailTemplate.getId()
-               + ") does not match any template from eval (" + eval.getId() + ")");
-      }
-
-      // check the permissions and state
-      try {
-         return checkEvalTemplateControl(userId, eval, emailTemplate);
-      } catch (RuntimeException e) {
-         log.info(e.getMessage());
-      }
-      return false;
-   }
-
 
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#sendEvalCreatedNotifications(java.lang.Long, boolean)
@@ -271,7 +94,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       EvalEvaluation eval = getEvaluationOrFail(evaluationId);
 
       // get the email template header
-      EvalEmailTemplate emailTemplate = getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_CREATED);
+      EvalEmailTemplate emailTemplate = evaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_CREATED);
       if (emailTemplate == null) {
          throw new IllegalStateException("Cannot find email template: "
                + EvalConstants.EMAIL_TEMPLATE_CREATED);
@@ -391,7 +214,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       }
 
       // get the student email template
-      EvalEmailTemplate emailTemplate = getEmailTemplate(evaluationId, EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
+      EvalEmailTemplate emailTemplate = evaluationService.getEmailTemplate(evaluationId, EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
       if (emailTemplate == null) {
          throw new IllegalStateException("Cannot find email template: "
                + EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
@@ -400,7 +223,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       // get the instructor opt-in email template
       EvalEmailTemplate emailOptInTemplate = null;
       if (eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_OPT_IN)) {
-         emailOptInTemplate = getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE_OPT_IN);
+         emailOptInTemplate = evaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE_OPT_IN);
          if (emailOptInTemplate == null) {
             throw new IllegalStateException("Cannot find email opt-in template: "
                   + EvalConstants.EMAIL_TEMPLATE_AVAILABLE_OPT_IN);
@@ -503,7 +326,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       if (!EvalConstants.GROUP_TYPE_INVALID.equals(group.type)) {
 
          // get the student email template
-         EvalEmailTemplate emailTemplate = getEmailTemplate(evaluationId,
+         EvalEmailTemplate emailTemplate = evaluationService.getEmailTemplate(evaluationId,
                EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
          if (emailTemplate == null) {
             throw new IllegalStateException("Cannot find email template: "
@@ -560,7 +383,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       EvalEvaluation eval = getEvaluationOrFail(evaluationId);
 
       // get the email template
-      EvalEmailTemplate emailTemplate = getEmailTemplate(evaluationId, EvalConstants.EMAIL_TEMPLATE_REMINDER);
+      EvalEmailTemplate emailTemplate = evaluationService.getEmailTemplate(evaluationId, EvalConstants.EMAIL_TEMPLATE_REMINDER);
 
       if (emailTemplate == null) {
          throw new IllegalStateException("Cannot find email template: "
@@ -653,7 +476,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       EvalEvaluation eval = getEvaluationOrFail(evaluationId);
 
       // get the email template
-      EvalEmailTemplate emailTemplate = getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_RESULTS);
+      EvalEmailTemplate emailTemplate = evaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_RESULTS);
 
       if (emailTemplate == null) {
          throw new IllegalStateException("Cannot find email template: "
@@ -876,72 +699,6 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
    // INTERNAL METHODS
 
-   /**
-    * Check if user can control an email template
-    * @param userId
-    * @param emailTemplate
-    * @return true if they can
-    */
-   protected boolean canUserControlEmailTemplate(String userId, EvalEmailTemplate emailTemplate) {
-      if (externalLogic.isUserAdmin(userId)) {
-         return true;
-      } else if (emailTemplate.getOwner().equals(userId)) {
-         return true;
-      }
-      return false;
-   }
-
-   /**
-    * Check if user can control evaluation and template combo
-    * @param userId
-    * @param eval
-    * @param emailTemplate
-    * @return true if they can, throw exceptions otherwise
-    */
-   protected boolean checkEvalTemplateControl(String userId, EvalEvaluation eval,
-         EvalEmailTemplate emailTemplate) {
-      log.debug("userId: " + userId + ", evaluationId: " + eval.getId());
-
-      if (EvalUtils.getEvaluationState(eval) == EvalConstants.EVALUATION_STATE_INQUEUE) {
-         if (emailTemplate == null) {
-            // currently using the default templates so check eval perms
-
-            // check eval user permissions (just owner and super at this point)
-            // TODO - find a way to centralize this check
-            if (userId.equals(eval.getOwner()) || externalLogic.isUserAdmin(userId)) {
-               return true;
-            } else {
-               throw new SecurityException("User (" + userId
-                     + ") cannot control email template in evaluation (" + eval.getId()
-                     + "), do not have permission");
-            }
-         } else {
-            // check email template perms
-            if (canUserControlEmailTemplate(userId, emailTemplate)) {
-               return true;
-            } else {
-               throw new SecurityException("User (" + userId + ") cannot control email template ("
-                     + emailTemplate.getId() + ") without permissions");
-            }
-         }
-      } else {
-         throw new IllegalStateException("Cannot modify email template in running evaluation ("
-               + eval.getId() + ")");
-      }
-   }
-
-   /**
-    * @param emailTemplateId
-    * @return
-    */
-   private EvalEmailTemplate getEmailTemplateOrFail(Long emailTemplateId) {
-      EvalEmailTemplate emailTemplate = (EvalEmailTemplate) dao.findById(EvalEmailTemplate.class,
-            emailTemplateId);
-      if (emailTemplate == null) {
-         throw new IllegalArgumentException("Cannot find email template with this id: " + emailTemplateId);
-      }
-      return emailTemplate;
-   }
 
    /**
     * Gets the evaluation or throws exception,

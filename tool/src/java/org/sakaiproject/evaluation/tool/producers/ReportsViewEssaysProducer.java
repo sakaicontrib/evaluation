@@ -73,9 +73,9 @@ public class ReportsViewEssaysProducer implements ViewComponentProducer, Navigat
       this.evaluationService = evaluationService;
    }
 
-   private EvalDeliveryService responsesLogic;
-   public void setResponsesLogic(EvalDeliveryService responsesLogic) {
-      this.responsesLogic = responsesLogic;
+   private EvalDeliveryService deliveryService;
+   public void setDeliveryService(EvalDeliveryService deliveryService) {
+      this.deliveryService = deliveryService;
    }
 
 
@@ -214,7 +214,7 @@ public class ReportsViewEssaysProducer implements ViewComponentProducer, Navigat
          UIOutput.make(essay, "itemNum", (i + 1) + "");
          UIOutput.make(essay, "itemText", FormattedText.convertFormattedTextToPlaintext(myItem.getItemText()));
 
-         List<EvalAnswer> itemAnswers = responsesLogic.getEvalAnswers(myItem.getId(), evalId, groupIds);
+         List<EvalAnswer> itemAnswers = deliveryService.getEvalAnswers(myItem.getId(), evalId, groupIds);
 
          //count the number of answers that match this one
          for (int y = 0; y < itemAnswers.size(); y++) {

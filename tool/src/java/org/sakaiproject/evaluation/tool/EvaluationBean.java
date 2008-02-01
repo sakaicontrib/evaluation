@@ -28,9 +28,8 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
@@ -76,19 +75,14 @@ public class EvaluationBean {
       this.authoringService = authoringService;
    }
 
-   private EvalEvaluationSetupService evalsLogic;
-   public void setEvalsLogic(EvalEvaluationSetupService evalsLogic) {
-      this.evalsLogic = evalsLogic;
+   private EvalEvaluationService evaluationService;
+   public void setEvaluationService(EvalEvaluationService evaluationService) {
+      this.evaluationService = evaluationService;
    }
 
-   private EvalAssignsLogic assignsLogic;
-   public void setAssignsLogic(EvalAssignsLogic assignsLogic) {
-      this.assignsLogic = assignsLogic;
-   }
-
-   private EvalEmailsLogic emailsLogic;	
-   public void setEmailsLogic(EvalEmailsLogic emailsLogic) {
-      this.emailsLogic = emailsLogic;
+   private EvalEvaluationSetupService evaluationSetupService;
+   public void setEvaluationSetupService(EvalEvaluationSetupService evaluationSetupService) {
+      this.evaluationSetupService = evaluationSetupService;
    }
 
    private EvalSettings settings;
@@ -224,9 +218,9 @@ public class EvaluationBean {
       eval.setInstructorOpt(null);
 
       //email settings
-      emailAvailableTxt = emailsLogic.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE).getMessage();// available template
+      emailAvailableTxt = evaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE).getMessage();// available template
       eval.setReminderDays(new Integer(EvaluationConstant.REMINDER_EMAIL_DAYS_VALUES[1]));
-      emailReminderTxt =  emailsLogic.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_REMINDER).getMessage();//reminder email
+      emailReminderTxt =  evaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_REMINDER).getMessage();//reminder email
       String s = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
       eval.setReminderFromEmail(s);
 
@@ -270,7 +264,7 @@ public class EvaluationBean {
       /*
        * If it is a queued evaluation then get value from startDate variable.
        * 
-       * Else (for active evaluations), start sate is disabled and so there is a 
+       * Else (for active evaluationSetupService), start sate is disabled and so there is a 
        * null value set in startDate variable. So pick value what was already there
        * in the eval object, but we need to convert the already stored date to 
        * java.util.Date format. This is because by default it is java.sql.Timestamp.
@@ -286,7 +280,7 @@ public class EvaluationBean {
       commonSaveTasks();
 
       //Need to fetch the object again as Hibernate session has expired
-      EvalEvaluation evalInDB = evalsLogic.getEvaluationById(eval.getId());
+      EvalEvaluation evalInDB = evaluationService.getEvaluationById(eval.getId());
       String evalState = EvalUtils.getEvaluationState(evalInDB);
 
       // Now copying the data from eval to evalInDB (all fields we care to change must be added to this)
@@ -315,7 +309,7 @@ public class EvaluationBean {
       evalInDB.setResultsPrivate(eval.getResultsPrivate());
       evalInDB.setEvalCategory(eval.getEvalCategory());
 
-      evalsLogic.saveEvaluation(evalInDB, external.getCurrentUserId());
+      evaluationSetupService.saveEvaluation(evalInDB, external.getCurrentUserId());
 
       messages.addMessage( new TargettedMessage("evalsettings.updated.message",
             new Object[] { eval.getTitle() }, 
@@ -393,11 +387,11 @@ public class EvaluationBean {
 
          // New evaluation
          if (tempEvalId == null) { 
-            emailAvailableTxt = emailsLogic.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE).getMessage();
+            emailAvailableTxt = evaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE).getMessage();
          }
          // Existing evaluation
          else { 
-            eval = evalsLogic.getEvaluationById(eval.getId());
+            eval = evaluationService.getEvaluationById(eval.getId());
             emailAvailableTxt = eval.getAvailableEmailTemplate().getMessage();
          }
 
@@ -429,11 +423,11 @@ public class EvaluationBean {
 
          // New evaluation
          if (tempEvalId == null) { 
-            emailReminderTxt =  emailsLogic.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_REMINDER).getMessage();//reminder email
+            emailReminderTxt =  evaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_REMINDER).getMessage();//reminder email
          }
          // Existing evaluation
          else { 
-            eval = evalsLogic.getEvaluationById(eval.getId());
+            eval = evaluationService.getEvaluationById(eval.getId());
             emailReminderTxt = eval.getReminderEmailTemplate().getMessage();
          }
 
@@ -559,7 +553,7 @@ public class EvaluationBean {
       if ( (selectedEvalGroupIds != null && selectedEvalGroupIds.length > 0) 
             || ! nodes.isEmpty() ) {
          //save the evaluation
-         evalsLogic.saveEvaluation(eval, external.getCurrentUserId());
+         evaluationSetupService.saveEvaluation(eval, external.getCurrentUserId());
 
          // NOTE - this allows the evaluation to be saved with zero assign groups if this fails
 
@@ -568,16 +562,16 @@ public class EvaluationBean {
 
          // save all the assignments (hierarchy and group)
          List<EvalAssignHierarchy> assignedHierList = 
-            assignsLogic.addEvalAssignments(eval.getId(), 
+            evaluationSetupService.addEvalAssignments(eval.getId(), 
                   allNodeIds.toArray(new String[allNodeIds.size()]), 
                   selectedEvalGroupIds);
          // failsafe check
          if (assignedHierList.isEmpty()) {
-            evalsLogic.deleteEvaluation(eval.getId(), external.getCurrentUserId());
+            evaluationSetupService.deleteEvaluation(eval.getId(), external.getCurrentUserId());
             throw new IllegalStateException("Invalid evaluation created with no assignments! Destroying evaluation: " + eval.getId());
          }
 
-         messages.addMessage( new TargettedMessage("evaluations.add.message",
+         messages.addMessage( new TargettedMessage("evaluationSetupService.add.message",
                new Object[] { eval.getTitle(), df.format(eval.getStartDate()) }, 
                TargettedMessage.SEVERITY_INFO));
 
@@ -592,7 +586,7 @@ public class EvaluationBean {
    /**
     * Method binding to "Change Assigned Courses" button on 
     * evaluation_assign_confirm page and link for courses assigned 
-    * on control panel (for queued evaluations). 
+    * on control panel (for queued evaluationSetupService). 
     * 
     * @return View id that sends the control to assign page.
     */
@@ -652,8 +646,8 @@ public class EvaluationBean {
     * @return View id sending the control to evaluation settings producer.
     */
    public String editEvalSettingAction(){	
-      eval = evalsLogic.getEvaluationById(eval.getId());
-      evalsLogic.updateEvaluationState(eval.getId()); // refresh the state
+      eval = evaluationService.getEvaluationById(eval.getId());
+      evaluationService.returnAndFixEvalState(eval, true); // refresh the state
 
       startDate = eval.getStartDate();
       dueDate = eval.getDueDate();
@@ -692,8 +686,8 @@ public class EvaluationBean {
     * @return View id sending the control to assign confirm page.
     */
    public String evalAssigned() {
-      eval = evalsLogic.getEvaluationById(evalId);
-      Map<Long, List<EvalAssignGroup>> evalAssignGroups = evalsLogic.getEvaluationAssignGroups(new Long[] {evalId}, true);
+      eval = evaluationService.getEvaluationById(evalId);
+      Map<Long, List<EvalAssignGroup>> evalAssignGroups = evaluationService.getEvaluationAssignGroups(new Long[] {evalId}, true);
       List<EvalAssignGroup> groups = evalAssignGroups.get(evalId);
       if (groups.size() > 0) {
          selectedEvalGroupIds = new String[groups.size()];
@@ -727,7 +721,7 @@ public class EvaluationBean {
     * @return View id sending the control to control panel page.
     */
    public String removeEvalAction(){
-      evalsLogic.deleteEvaluation(evalId, external.getCurrentUserId());
+      evaluationSetupService.deleteEvaluation(evalId, external.getCurrentUserId());
       return ControlEvaluationsProducer.VIEW_ID;
    }
 
@@ -794,24 +788,24 @@ public class EvaluationBean {
       EvalEmailTemplate availableTemplate, reminderTemplate;
 
       //Save email available template
-      availableTemplate = emailsLogic.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
+      availableTemplate = evaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
       if ( emailAvailableTxt.equals(availableTemplate.getMessage()) ) {
          //do nothing as the template has not been modified.
       } 
       else {
          availableTemplate = new EvalEmailTemplate(new Date(), external.getCurrentUserId(), emailAvailableTxt);
-         emailsLogic.saveEmailTemplate(availableTemplate, external.getCurrentUserId());
+         evaluationSetupService.saveEmailTemplate(availableTemplate, external.getCurrentUserId());
       }
       eval.setAvailableEmailTemplate(availableTemplate);
 
       //Save the email reminder template
-      reminderTemplate = emailsLogic.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_REMINDER);
+      reminderTemplate = evaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_REMINDER);
       if ( emailReminderTxt.equals(reminderTemplate.getMessage()) ) {
          //do nothing as the template has not been modified.
       }
       else {
          reminderTemplate = new EvalEmailTemplate(new Date(), external.getCurrentUserId(), emailReminderTxt);
-         emailsLogic.saveEmailTemplate(reminderTemplate, external.getCurrentUserId());
+         evaluationSetupService.saveEmailTemplate(reminderTemplate, external.getCurrentUserId());
       }
       eval.setReminderEmailTemplate(reminderTemplate);
 

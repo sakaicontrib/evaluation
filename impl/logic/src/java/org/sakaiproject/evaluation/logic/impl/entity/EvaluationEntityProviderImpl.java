@@ -22,7 +22,7 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.entity.EvaluationEntityProvider;
 
 /**
- * Implementation for the entity provider for evaluations
+ * Implementation for the entity provider for evaluationSetupService
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */

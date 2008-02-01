@@ -15,237 +15,178 @@
 package org.sakaiproject.evaluation.logic;
 
 import java.util.List;
-import java.util.Map;
 
-import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
+import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
+import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.model.EvalTemplate;
 
 
 /**
- * Handles all logic associated with processing Evaluations
+ * Handles all logic associated with setting up and creating evaluationSetupService,
+ * this includes all the logic for assigning groups and users to an evaluation
+ * and processing the email templates used by an evaluation<br/>
  * (Note for developers - do not modify this without permission from the project lead)
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public interface EvalEvaluationSetupService {
 
-	/**
-	 * Save or update an evaluation to persistent storage,
-	 * checks that dates are appropriate and validates settings,
-	 * use {@link #updateEvaluationState(Long)} to check the state
-	 * if you want to avoid possible exceptions<br/>
-	 * Evaluations can be saved with the email templates as null and will use the
-	 * default templates in this circumstance<br/>
-	 * <b>Note:</b> Do NOT attempt to save an evaluation with a null template
-	 * or a template that contains no items<br/>
-	 * <b>Note about dates</b>:<br/>
-	 * Start date - eval becomes active on this date, cannot change start date once it passes, 
-	 * most parts of evaluation cannot change on this date, no assigned contexts can be modified<br/>
-	 * Due date - eval is reported to be closed after this date passes (interface and email), 
-	 * cannot change due date once it passes, cannot assign new contexts once this passes<br/>
-	 * Stop date - eval is actually closed after this date passes, cannot change stop date once it passes,
-	 * no changes to evaluation after this date EXCEPT adjusting the view dates<br/>
-	 * View date - eval results visible on this date<br/>
-	 * (currently times are taken into account, so if you want to close an evaluation at the
-	 * end of a date, make sure to set the time to midnight)
-	 * 
-	 * @param evaluation evaluation object to save
-	 * @param userId the internal user id (not username)
-	 */
-	public void saveEvaluation(EvalEvaluation evaluation, String userId);
+   /**
+    * Save or update an evaluation to persistent storage,
+    * checks that dates are appropriate and validates settings,
+    * use {@link #updateEvaluationState(Long)} to check the state
+    * if you want to avoid possible exceptions<br/>
+    * Evaluations can be saved with the email templates as null and will use the
+    * default templates in this circumstance<br/>
+    * <b>Note:</b> Do NOT attempt to save an evaluation with a null template
+    * or a template that contains no items<br/>
+    * <b>Note about dates</b>:<br/>
+    * Start date - eval becomes active on this date, cannot change start date once it passes, 
+    * most parts of evaluation cannot change on this date, no assigned contexts can be modified<br/>
+    * Due date - eval is reported to be closed after this date passes (interface and email), 
+    * cannot change due date once it passes, cannot assign new contexts once this passes<br/>
+    * Stop date - eval is actually closed after this date passes, cannot change stop date once it passes,
+    * no changes to evaluation after this date EXCEPT adjusting the view dates<br/>
+    * View date - eval results visible on this date<br/>
+    * (currently times are taken into account, so if you want to close an evaluation at the
+    * end of a date, make sure to set the time to midnight)
+    * 
+    * @param evaluation evaluation object to save
+    * @param userId the internal user id (not username)
+    */
+   public void saveEvaluation(EvalEvaluation evaluation, String userId);
 
-	/**
-	 * Delete an evaluation from persistent storage,
-	 * evaluations that are active or completed cannot be deleted,
-	 * use {@link #canRemoveEvaluation(String, EvalEvaluation)} to check if
-	 * the evaluation can be removed if you want to avoid possible exceptions,
-	 * removes all associated course assignments and email templates 
-	 * (if they are not default or associated with other evaluations)
-	 * 
-	 * @param evaluationId the id of an {@link EvalEvaluation} object
-	 * @param userId the internal user id (not username)
-	 */
-	public void deleteEvaluation(Long evaluationId, String userId);
-	
-	/**
-	 * Get the evaluation associated with this external id<br/>
-	 * Note: An evaluation eid is null except when the evaluation
-	 * was imported from an external system.
-	 * 
-	 * @param eid the id of an evaluation in an external system
-	 * @return the evaluation object or null if not found
-	 */
-	public EvalEvaluation getEvaluationByEid(String eid);
+   /**
+    * Delete an evaluation from persistent storage,
+    * evaluationSetupService that are active or completed cannot be deleted,
+    * use {@link #canRemoveEvaluation(String, EvalEvaluation)} to check if
+    * the evaluation can be removed if you want to avoid possible exceptions,
+    * removes all associated course assignments and email templates 
+    * (if they are not default or associated with other evaluationSetupService)
+    * 
+    * @param evaluationId the id of an {@link EvalEvaluation} object
+    * @param userId the internal user id (not username)
+    */
+   public void deleteEvaluation(Long evaluationId, String userId);
 
-	/**
-	 * Get an evaluation based on its unique id
-	 * 
-	 * @param evaluationId the unique id of an {@link EvalEvaluation} object
-	 * @return the evaluation object or null if not found
-	 */	
-	public EvalEvaluation getEvaluationById(Long evaluationId);
+   /**
+    * Get the evaluationSetupService that are currently visible to a user, this should be used
+    * to determine evaluationSetupService that are visible from an administrative perspective,
+    * can limit to recently closed only (closed within 10 days)
+    * 
+    * @param userId the internal user id (not username)
+    * @param recentOnly if true return recently closed evaluationSetupService only 
+    * (still returns all active and in queue evaluationSetupService), if false return all closed evaluationSetupService
+    * @param showNotOwned if true for a non-admin user, then return all 
+    * evaluationSetupService which are both owned and not-owned, else only return the owned evaluationSetupService.
+    * @return a List of {@link EvalEvaluation} objects
+    */
+   public List<EvalEvaluation> getVisibleEvaluationsForUser(String userId, boolean recentOnly, boolean showNotOwned);
 
-	/**
-	 * Get a list of evaluations for a template id
-	 * 
-	 * @param templateId the id of an {@link EvalTemplate} object
-	 * @return a List of {@link EvalEvaluation} objects (empty if none exist)
-	 */
-	public List<EvalEvaluation> getEvaluationsByTemplateId(Long templateId);
-
-	/**
-	 * Count the number of evaluations for a template id
-	 * 
-	 * @param templateId the id of an {@link EvalTemplate} object
-	 * @return the count of {@link EvalEvaluation} objects
-	 */
-	public int countEvaluationsByTemplateId(Long templateId);
-
-	/**
-	 * Get the evaluations that are currently visible to a user, this should be used
-	 * to determine evaluations that are visible from an administrative perspective,
-	 * can limit to recently closed only (closed within 10 days)
-	 * 
-	 * @param userId the internal user id (not username)
-	 * @param recentOnly if true return recently closed evaluations only 
-	 * (still returns all active and in queue evaluations), if false return all closed evaluations
-	 * @param showNotOwned if true for a non-admin user, then return all 
-	 * evaluations which are both owned and not-owned, else only return the owned evaluations.
-	 * @return a List of {@link EvalEvaluation} objects
-	 */
-	public List<EvalEvaluation> getVisibleEvaluationsForUser(String userId, boolean recentOnly, boolean showNotOwned);
-
-	/**
-	 * Get all evaluations that can be taken by this user,
-	 * can include only active and only untaken if desired
-	 * 
-	 * @param userId the internal user id (not username)
-	 * @param activeOnly if true, only include active evaluations, if false, include all evaluations
-	 * @param untakenOnly if true, include only the evaluations which have NOT been taken, 
-	 * if false, include all evaluations
-	 * @return a List of {@link EvalEvaluation} objects (sorted by DueDate)
-	 */
-	public List<EvalEvaluation> getEvaluationsForUser(String userId, boolean activeOnly, boolean untakenOnly);
+   /**
+    * Get all evaluationSetupService that can be taken by this user,
+    * can include only active and only untaken if desired
+    * 
+    * @param userId the internal user id (not username)
+    * @param activeOnly if true, only include active evaluationSetupService, if false, include all evaluationSetupService
+    * @param untakenOnly if true, include only the evaluationSetupService which have NOT been taken, 
+    * if false, include all evaluationSetupService
+    * @return a List of {@link EvalEvaluation} objects (sorted by DueDate)
+    */
+   public List<EvalEvaluation> getEvaluationsForUser(String userId, boolean activeOnly, boolean untakenOnly);
 
 
-	// EVAL GROUPS
+   // EVAL GROUPS
 
-	/**
-	 * Get a map of the {@link EvalGroup}s for an array of evaluation ids, this
-	 * is how the evaluation is tied to users (users are associated with a group)
-	 * 
-	 * @param evaluationIds an array of the ids of {@link EvalEvaluation} objects
-	 * @param includeUnApproved if true, include the evaluation contexts which have not been instructor approved yet,
-	 * you should not include these when displaying evaluations to users to take or sending emails
-	 * @return a Map of evaluationId (Long) -> List of {@link EvalGroup} objects
-	 */
-	public Map<Long, List<EvalGroup>> getEvaluationGroups(Long[] evaluationIds, boolean includeUnApproved);
+   /**
+    * Save or update the group assignment, used to make a linkage from
+    * an evaluation to an eval group (course, site, group, evalGroupId, etc...),
+    * cannot add assignments if the evaluation is closed<br/>
+    * <b>Note:</b> cannot change the group or the evaluation once the object is created,
+    * you can change any other property at any time<br/>
+    * Use {@link #canCreateAssignEval(String, Long)} or 
+    * {@link #canControlAssignGroup(String, Long)} to check 
+    * if user can do this and avoid possible exceptions
+    * 
+    * @param assignGroup the object to save, represents a link from a single group to an evaluation
+    * @param userId the internal user id (not username)
+    */
+   public void saveAssignGroup(EvalAssignGroup assignGroup, String userId);
 
-	/**
-	 * Get the list of assigned groups for an evaluation id, this
-	 * is how the evaluation is tied to users (users are associated with a group)
-	 * 
-	 * @param evaluationIds an array of the ids of {@link EvalEvaluation} objects
-	 * @param includeUnApproved if true, include the evaluation contexts which have not been instructor approved yet,
-	 * you should not include these when displaying evaluations to users to take or sending emails
-	 * @return a Map of evaluationId (Long) -> List of {@link EvalAssignGroup} objects
-	 */
-	public Map<Long, List<EvalAssignGroup>> getEvaluationAssignGroups(Long[] evaluationIds, boolean includeUnApproved);
-
-	/**
-	 * Count the number of eval groups assigned for an evaluation id
-	 * (this is much faster than the related method: {@link #getEvaluationGroups(Long[], boolean)})
-	 * 
-	 * @param evaluationId the id of an {@link EvalEvaluation} object
-	 * @return the count of eval groups
-	 */
-	public int countEvaluationGroups(Long evaluationId);
+   /**
+    * Remove the evalGroupId assignment, used to make a linkage from
+    * an evaluation to an eval group (course, site, group, etc...),
+    * represents a link from a single group to an evaluation,
+    * can only remove assignments if the evaluation is still in queue,
+    * also removes the evaluation if there are no assignments remaining<br/>
+    * Use {@link #canControlAssignGroup(String, Long)} to check if user can do this
+    * and avoid possible exceptions
+    * 
+    * @param assignGroupId the id of an {@link EvalAssignGroup} object to remove
+    * @param userId the internal user id (not username)
+    */
+   public void deleteAssignGroup(Long assignGroupId, String userId);
 
 
-	// PERMISSIONS
+   // HIERARCHY LOGIC
 
-	/**
-	 * Check if this user can begin a new evaluation (administratively), 
-	 * this checks if this user can access any templates and
-	 * also checks if they have permission to begin an evaluation in any contexts<br/>
-	 * <b>Note:</b> this is an expensive check so be careful when using it,
-	 * Only includes non-empty templates
-	 * 
-	 * @param userId the internal user id (not username)
-	 * @return true if the user can begin an evaluation, false otherwise
-	 */
-	public boolean canBeginEvaluation(String userId);
+   /**
+    * Assigns hierarchy nodes and/or evalgroups to an evaluation and therefore assigns all evalgroups that are located
+    * at that hierarchy node, this will not include groups below or above this node so if you want
+    * to assign the nodes below you will need to include them in the array
+    * @param evaluationId unique id of an {@link EvalEvaluation}
+    * @param nodeIds unique IDs of a set of hierarchy nodes (null if none to assign)
+    * @param evalGroupIds the internal unique IDs for a set of evalGroups (null if none to assign)
+    * @return a list of the persisted hierarchy assignments (nodes and groups together)
+    */
+   public List<EvalAssignHierarchy> addEvalAssignments(Long evaluationId, String[] nodeIds, String[] evalGroupIds);
 
-	/**
-	 * Find the current state (in queue, active, closed, etc.) 
-	 * of the supplied evaluation, this should be used before attempting to
-	 * delete or save an evaluation as the state determines the updates that
-	 * can be performed on the evaluation, this will also update the
-	 * state of the evaluation if the stored state does not match the actual
-	 * state as determined by dates
-	 * 
-	 * @param evaluationId the id of an EvalEvaluation object
-	 * @param userId the internal user id (not username)
-	 * @return an EVALUATION_STATE constant from 
-	 * {@link org.sakaiproject.evaluation.model.constant.EvalConstants}
-	 */
-	public String updateEvaluationState(Long evaluationId);
-
-	/**
-	 * Test if an evaluation can be removed at this time by this user, 
-	 * this tests the dates of the evaluation against the removal logic
-	 * and the user permissions
-	 * 
-	 * @param userId the internal user id (not username)
-	 * @param evaluationId the id of an EvalEvaluation object
-	 * @return true if the evaluation can be removed, false otherwise
-	 */
-	public boolean canRemoveEvaluation(String userId, Long evaluationId);
-
-	/**
-	 * Check if a user can take an evaluation in the supplied evalGroupId,
-	 * the check includes testing if an entry exists already and if the
-	 * user is allowed to modify their entry<br/>
-	 * This check should be used on any page which presents the user with
-	 * an evaluation to take (fill out)<br/>
-	 * This will also do a simpler check to see if a user can take an evaluation
-	 * without knowing the group (simply leave evalGroupId null), this check will
-	 * only tell you if the user is in at least one valid group for this evaluation
-	 * <br/> 
-	 * Use {@link #getEvaluationsForUser(String, boolean, boolean)} if you are trying
-	 * to determine which "take evaluation" links to show a user
-	 * 
-	 * @param userId the internal user id (not username)
-	 * @param evaluationId unique id of the evaluation
-	 * @param evalGroupId the internal evalGroupId (represents a site or group), 
-	 * can be null if you want to do a simpler check for the user taking this evaluation (less efficient)
-	 * @return true if the user can take the evaluation, false otherwise
-	 */
-	public boolean canTakeEvaluation(String userId, Long evaluationId, String evalGroupId);
+   /**
+    * Remove all assigned hierarchy nodes with the unique ids specified,
+    * also cleanup all the assign groups that are associated underneath these hierarchy nodes
+    * @param assignHierarchyIds unique ids of {@link EvalAssignHierarchy} objects
+    */
+   public void deleteAssignHierarchyNodesById(Long[] assignHierarchyIds);
 
 
-	// EVAL CATEGORIES
+   // EVAL CATEGORIES
 
-	/**
-	 * Get all current evalaution cateogries in the system,
-	 * evaluation categories allow the evaluation owner to categorize their evaluations
-	 * 
-	 * @param userId the internal user id (not username), may be null, if not null then only
-	 * get the categories for evaluations owned by this user (i.e. categories they created)
-	 * @return an array of categories, sorted in alphabetic order
-	 */
-	public String[] getEvalCategories(String userId);
+   /**
+    * Get all current evalaution cateogries in the system,
+    * evaluation categories allow the evaluation owner to categorize their evaluationSetupService
+    * 
+    * @param userId the internal user id (not username), may be null, if not null then only
+    * get the categories for evaluationSetupService owned by this user (i.e. categories they created)
+    * @return an array of categories, sorted in alphabetic order
+    */
+   public String[] getEvalCategories(String userId);
 
-	/**
-	 * Get all evaluations which are tagged with a specific category
-	 * 
-	 * @param evalCategory a string representing an evaluation category
-	 * @param userId the internal user id (not username), may be null, if not null then only
-	 * get the evaluations in this category which are accessible to this user
-	 * @return a list of {@link EvalEvaluation} objects
-	 */
-	public List<EvalEvaluation> getEvaluationsByCategory(String evalCategory, String userId);
+   /**
+    * Get all evaluationSetupService which are tagged with a specific category
+    * 
+    * @param evalCategory a string representing an evaluation category
+    * @param userId the internal user id (not username), may be null, if not null then only
+    * get the evaluationSetupService in this category which are accessible to this user
+    * @return a list of {@link EvalEvaluation} objects
+    */
+   public List<EvalEvaluation> getEvaluationsByCategory(String evalCategory, String userId);
+
+
+   // EMAIL TEMPLATES
+
+   /**
+    * Save or update an email template, don't forget to associate it
+    * with the evaluation and save that separately<br/> 
+    * <b>Note:</b> cannot update template if used in at least one 
+    * evaluation that is not in queue<br/>
+    * Use {@link #canControlEmailTemplate(String, Long, Long)} or
+    * {@link #canControlEmailTemplate(String, Long, String)} to check
+    * if user can update this template and avoid possible exceptions
+    * 
+    * @param EmailTemplate emailTemplate object to be saved
+    * @param userId the internal user id (not username)
+    */
+   public void saveEmailTemplate(EvalEmailTemplate emailTemplate, String userId);
 
 }

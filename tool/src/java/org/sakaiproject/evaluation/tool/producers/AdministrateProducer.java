@@ -92,7 +92,7 @@ public class AdministrateProducer implements ViewComponentProducer {
             UIMessage.make("controltemplates.page.title"), 
             new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
 
-      UIInternalLink.make(tofill, "control-evaluations-link",
+      UIInternalLink.make(tofill, "control-evaluationSetupService-link",
             UIMessage.make("controlevaluations.page.title"), 
             new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
 
@@ -152,7 +152,7 @@ public class AdministrateProducer implements ViewComponentProducer {
 
       /*
        * (non-Javadoc)
-       * Select for whether instructors must use evaluations from above.
+       * Select for whether instructors must use evaluationSetupService from above.
        * 
        * Note: The values should be irrespective of i18n as they are stored in database. 
        * Here the 4th values that is "messageLocator.getMessage("administrate.configurable.label")"

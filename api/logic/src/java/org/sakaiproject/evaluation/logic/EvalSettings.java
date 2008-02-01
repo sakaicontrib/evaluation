@@ -35,11 +35,11 @@ package org.sakaiproject.evaluation.logic;
 public interface EvalSettings {
 
    /**
-    * CONSTANT: Is the instructor allowed to create evaluations - {@link Boolean}, default True
+    * CONSTANT: Is the instructor allowed to create evaluationSetupService - {@link Boolean}, default True
     */
    public static final String INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS = "INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS:java.lang.Boolean";
    /**
-    * CONSTANT: Is the instructor allowed to view the results of evaluations - {@link Boolean}, default True
+    * CONSTANT: Is the instructor allowed to view the results of evaluationSetupService - {@link Boolean}, default True
     * <b>Note:</b> If this is FALSE/NULL then the evaluation settings overrride, otherwise this overrides the evaluation setting
     */
    public static final String INSTRUCTOR_ALLOWED_VIEW_RESULTS = "INSTRUCTOR_ALLOWED_VIEW_RESULTS:java.lang.Boolean";
@@ -48,7 +48,7 @@ public interface EvalSettings {
     */
    public static final String INSTRUCTOR_ALLOWED_EMAIL_STUDENTS = "INSTRUCTOR_ALLOWED_EMAIL_STUDENTS:java.lang.Boolean";
    /**
-    * CONSTANT: Does the instructor have to use evaluations from above in the hierarchy - {@link String}, default Configurable
+    * CONSTANT: Does the instructor have to use evaluationSetupService from above in the hierarchy - {@link String}, default Configurable
     */
    public static final String INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE = "INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE:java.lang.String";
    /**
@@ -94,7 +94,7 @@ public interface EvalSettings {
     */
    public static final String RESPONSES_REQUIRED_TO_VIEW_RESULTS = "RESPONSES_REQUIRED_TO_VIEW_RESULTS:java.lang.Integer";
    /**
-    * CONSTANT: Are users allowed to use Not Available in templates and evaluations - {@link Boolean}, default True
+    * CONSTANT: Are users allowed to use Not Available in templates and evaluationSetupService - {@link Boolean}, default True
     */
    public static final String NOT_AVAILABLE_ALLOWED = "NOT_AVAILABLE_ALLOWED:java.lang.Boolean";
    /**
@@ -130,7 +130,7 @@ public interface EvalSettings {
     */
    public static final String EVAL_RECENTLY_CLOSED_DAYS = "EVAL_RECENTLY_CLOSED_DAYS:java.lang.Integer";
    /**
-    * CONSTANT: Allow users to set the stop date when creating evaluations - {@link Boolean}, default False<br/>
+    * CONSTANT: Allow users to set the stop date when creating evaluationSetupService - {@link Boolean}, default False<br/>
     * <b>Note:</b> Stop date should default to the due date when the user cannot set it
     */
    public static final String EVAL_USE_STOP_DATE = "EVAL_USE_STOP_DATE:java.lang.Boolean";

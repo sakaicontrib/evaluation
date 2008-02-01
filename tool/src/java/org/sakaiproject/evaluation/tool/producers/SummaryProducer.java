@@ -86,15 +86,15 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
       this.evaluationService = evaluationService;
    }
 
-	private EvalEvaluationSetupService evaluationsLogic;
-	public void setEvaluationsLogic(EvalEvaluationSetupService evaluationsLogic) {
-		this.evaluationsLogic = evaluationsLogic;
-	}
+	private EvalEvaluationSetupService evaluationSetupService;
+   public void setEvaluationSetupService(EvalEvaluationSetupService evaluationSetupService) {
+      this.evaluationSetupService = evaluationSetupService;
+   }
 
-	private EvalDeliveryService responsesLogic;
-	public void setResponsesLogic(EvalDeliveryService responsesLogic) {
-		this.responsesLogic = responsesLogic;
-	}
+	private EvalDeliveryService deliveryService;
+   public void setDeliveryService(EvalDeliveryService deliveryService) {
+      this.deliveryService = deliveryService;
+   }
 
 	private EvalSettings settings;
 	public void setSettings(EvalSettings settings) {
@@ -144,7 +144,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		}
 
 		if (beginEvaluation) {
-			UIInternalLink.make(tofill, "control-evaluations-link",
+			UIInternalLink.make(tofill, "control-evaluationSetupService-link",
 					UIMessage.make("controlevaluations.page.title"),
 				new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
 		}
@@ -161,22 +161,22 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		}
 
 		/*
-		 * for the evaluations taking box
+		 * for the evaluationSetupService taking box
 		 */
-		List<EvalEvaluation> evalsToTake = evaluationsLogic.getEvaluationsForUser(currentUserId, true, false);
+		List<EvalEvaluation> evalsToTake = evaluationSetupService.getEvaluationsForUser(currentUserId, true, false);
 		if (evalsToTake.size() > 0) {
 			UIBranchContainer evalBC = UIBranchContainer.make(tofill, "evaluationsBox:");
 
-			UIMessage.make(evalBC, "evaluations-title", "summary.evaluations.title");
+			UIMessage.make(evalBC, "evaluationSetupService-title", "summary.evaluations.title");
 			// build an array of evaluation ids
 			Long[] evalIds = new Long[evalsToTake.size()];
 			for (int i=0; i<evalsToTake.size(); i++) {
 				evalIds[i] = ((EvalEvaluation) evalsToTake.get(i)).getId();
 			}
 
-			// now fetch all the information we care about for these evaluations at once (for speed)
+			// now fetch all the information we care about for these evaluationSetupService at once (for speed)
 			Map<Long, List<EvalGroup>> evalGroups = evaluationService.getEvaluationGroups(evalIds, false);
-			List<EvalResponse> evalResponses = responsesLogic.getEvaluationResponses(currentUserId, evalIds, true);
+			List<EvalResponse> evalResponses = deliveryService.getEvaluationResponses(currentUserId, evalIds, true);
 
 			for (Iterator<EvalEvaluation> itEvals = evalsToTake.iterator(); itEvals.hasNext();) {
 				EvalEvaluation eval = (EvalEvaluation) itEvals.next();
@@ -195,7 +195,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 						continue; // skip processing for invalid groups
 					}
 
-					//check that the user can take evaluations in this evalGroupId
+					//check that the user can take evaluationSetupService in this evalGroupId
 					if (externalLogic.isUserAllowedInEvalGroup(currentUserId, EvalConstants.PERM_TAKE_EVALUATION, group.evalGroupId)) {
 						String groupId = group.evalGroupId;
 						String title = group.title;
@@ -252,7 +252,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		}
 
 		/**
-		 * for the evaluations admin box
+		 * for the evaluationSetupService admin box
 		 */
 
 		/*
@@ -260,7 +260,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		 * first true => get recent only, and
 		 * second true => get not-owned evals.
 		 */
-		List<EvalEvaluation> evals = evaluationsLogic.getVisibleEvaluationsForUser(currentUserId, true, true);
+		List<EvalEvaluation> evals = evaluationSetupService.getVisibleEvaluationsForUser(currentUserId, true, true);
 
 		/*
 		 * If the person is an admin, then just point new evals to
@@ -328,7 +328,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
                UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalStatus);
             } else if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(evalStatus)) {
                date = eval.getViewDate();
-               int ctResponses = responsesLogic.countResponses(eval.getId(), null, true);
+               int ctResponses = deliveryService.countResponses(eval.getId(), null, true);
                int ctEnrollments = getTotalEnrollmentsForEval(eval.getId());
                Integer respReqToViewResults = (Integer) settings
                      .get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS);

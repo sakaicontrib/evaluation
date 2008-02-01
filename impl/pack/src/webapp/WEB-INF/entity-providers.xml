@@ -13,8 +13,8 @@
 
 	<bean id="org.sakaiproject.evaluation.logic.entity.AssignGroupEntityProvider"
 			class="org.sakaiproject.evaluation.logic.impl.entity.AssignGroupEntityProviderImpl">
-		<property name="assignsLogic"
-			ref="org.sakaiproject.evaluation.logic.EvalAssignsLogic" />
+		<property name="evaluationService"
+			ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
 	</bean>
 
 	<bean id="org.sakaiproject.evaluation.logic.entity.EvalCategoryEntityProvider"

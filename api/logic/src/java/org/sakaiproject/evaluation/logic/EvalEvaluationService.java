@@ -21,6 +21,7 @@ import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
+import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalResponse;
@@ -28,7 +29,7 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 
 
 /**
- * This contains simple logic for retrieving evaluations and evaluation related objects
+ * This contains simple logic for retrieving evaluationSetupService and evaluation related objects
  * like eval/assign groups and responses, the basic permissions handling is included as well<br/>
  * The more complex logic related to writing and deleting is in the higher level services 
  * (which include some passthroughs) like authoring, setup, and delivery
@@ -66,7 +67,7 @@ public interface EvalEvaluationService {
    public EvalEvaluation getEvaluationByEid(String eid);
 
    /**
-    * Get a list of evaluations for a template id
+    * Get a list of evaluationSetupService for a template id
     * 
     * @param templateId the id of an {@link EvalTemplate} object
     * @return a List of {@link EvalEvaluation} objects (empty if none exist)
@@ -74,7 +75,7 @@ public interface EvalEvaluationService {
    public List<EvalEvaluation> getEvaluationsByTemplateId(Long templateId);
 
    /**
-    * Count the number of evaluations for a template id
+    * Count the number of evaluationSetupService for a template id
     * 
     * @param templateId the id of an {@link EvalTemplate} object
     * @return the count of {@link EvalEvaluation} objects
@@ -227,7 +228,7 @@ public interface EvalEvaluationService {
     * 
     * @param evaluationIds an array of the ids of {@link EvalEvaluation} objects
     * @param includeUnApproved if true, include the evaluation contexts which have not been instructor approved yet,
-    * you should not include these when displaying evaluations to users to take or sending emails
+    * you should not include these when displaying evaluationSetupService to users to take or sending emails
     * @return a Map of evaluationId (Long) -> List of {@link EvalGroup} objects
     */
    public Map<Long, List<EvalGroup>> getEvaluationGroups(Long[] evaluationIds, boolean includeUnApproved);
@@ -239,7 +240,7 @@ public interface EvalEvaluationService {
     * 
     * @param evaluationIds an array of the ids of {@link EvalEvaluation} objects
     * @param includeUnApproved if true, include the evaluation contexts which have not been instructor approved yet,
-    * you should not include these when displaying evaluations to users to take or sending emails
+    * you should not include these when displaying evaluationSetupService to users to take or sending emails
     * @return a Map of evaluationId (Long) -> List of {@link EvalAssignGroup} objects
     */
    public Map<Long, List<EvalAssignGroup>> getEvaluationAssignGroups(Long[] evaluationIds, boolean includeUnApproved);
@@ -302,7 +303,7 @@ public interface EvalEvaluationService {
    public EvalResponse getEvaluationResponseForUserAndGroup(Long evaluationId, String userId, String evalGroupId);
 
    /**
-    * Get the responses for the supplied evaluations for this user<br/>
+    * Get the responses for the supplied evaluationSetupService for this user<br/>
     * Note that this can return multiple responses in the case where an evaluation
     * is assigned to multiple groups that this user is a member of,
     * in the case where no user is supplied<br/>
@@ -327,7 +328,7 @@ public interface EvalEvaluationService {
    public List<EvalResponse> getEvaluationResponses(String userId, Long[] evaluationIds, String[] evalGroupIds, Boolean completed);
 
    /**
-    * Count the number of responses for evaluations,
+    * Count the number of responses for evaluationSetupService,
     * can count responses for an entire evaluation regardless of eval group
     * or just responses for a specific group and/or user<br/>
     * This is a good method for checking to see if a user has responded<br/>
@@ -393,5 +394,54 @@ public interface EvalEvaluationService {
     */
    public boolean canModifyResponse(String userId, Long responseId);
 
+
+
+   // EMAIL TEMPLATES
+   
+   /**
+    * Get a default email template by type, use the defaults as the basis for all
+    * new templates that are created by users
+    * 
+    * @param emailTemplateTypeConstant a constant, use the EMAIL_TEMPLATE constants from 
+    * {@link org.sakaiproject.evaluation.model.constant.EvalConstants} to indicate the type
+    * @return the default email template matching the supplied type
+    */
+   public EvalEmailTemplate getDefaultEmailTemplate(String emailTemplateTypeConstant);
+
+    /**
+     * Get an email template for an eval by type, will always return an email template
+     * 
+     * @param emailTemplateTypeConstant a constant, use the EMAIL_TEMPLATE constants from 
+     * {@link org.sakaiproject.evaluation.model.constant.EvalConstants} to indicate the type
+     * @return the email template of the supplied type for this eval
+     */
+    public EvalEmailTemplate getEmailTemplate(Long evaluationId, String emailTemplateTypeConstant);
+
+   // PERMISSIONS
+
+   /**
+    * Check if a user can control (create, modify, or delete) an email template for the
+    * given evaluation of the given template type, takes into account the permissions and 
+    * current state of the evaluation
+    * 
+    * @param userId the internal user id (not username)
+    * @param evaluationId the id of an EvalEvaluation object
+    * @param emailTemplateTypeConstant a constant, use the EMAIL_TEMPLATE constants from 
+    * {@link org.sakaiproject.evaluation.model.constant.EvalConstants} to indicate the type
+    * @return true if the user can control the email template at this time, false otherwise
+    */
+   public boolean canControlEmailTemplate(String userId, Long evaluationId, String emailTemplateTypeConstant);
+
+   /**
+    * Check if a user can control (modify or delete) a given 
+    * email template for the given evaluation,
+    * takes into account the ownership, permissions, and current state of the evaluation
+    * 
+    * @param userId the internal user id (not username)
+    * @param evaluationId the id of an EvalEvaluation object
+    * @param emailTemplateId the id of an EvalEmailTemplate object
+    * @return true if the user can control the email template at this time, false otherwise
+    */
+   public boolean canControlEmailTemplate(String userId, Long evaluationId, Long emailTemplateId);
 
 }

@@ -179,10 +179,8 @@
 			init-method="init">
 		<property name="externalLogic" 
 			ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-		<property name="assignsLogic" 
-			ref="org.sakaiproject.evaluation.logic.EvalAssignsLogic" />
-		<property name="evaluationsLogic" 
-			ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
+		<property name="evaluationService" 
+			ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
 		<property name="wrapperInvoker" 
 			ref="org.sakaiproject.evaluation.ModelAccessWrapperInvoker" />
 	</bean>
@@ -191,6 +189,8 @@
 
 	<bean class="org.sakaiproject.evaluation.tool.inferrers.EvalCategoryVPInferrer" />
 
+    <bean class="org.sakaiproject.evaluation.tool.inferrers.ItemVPInferrer" />
+
 	<!-- Reporting Utilities -->
 	<bean id="CSVReportExporter" class="org.sakaiproject.evaluation.tool.reporting.CSVReportExporter">
 		<property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
@@ -198,19 +198,18 @@
 	</bean>
 
 	<bean id="XLSReportExporter" class="org.sakaiproject.evaluation.tool.reporting.XLSReportExporter">
-		<property name="evalsLogic" ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
-		<property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-		<property name="response" ref="httpServletResponseProxy" />
-		<property name="responsesLogic" ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
+        <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+		<property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+		<property name="deliveryService" ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
+        <property name="response" ref="httpServletResponseProxy" />
 	</bean>
 
 	<bean id="PDFReportExporter" class="org.sakaiproject.evaluation.tool.reporting.PDFReportExporter">
+        <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+        <property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+        <property name="deliveryService" ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
 		<property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-		<property name="response" ref="httpServletResponseProxy" />
 		<property name="contentHostingService" ref="org.sakaiproject.content.api.ContentHostingService" />
-		<property name="responsesLogic" ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
-		<property name="evalsLogic" ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
-		<property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 	</bean>
 
 </beans>

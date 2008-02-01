@@ -40,9 +40,8 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.xpath.XPath;
 import org.sakaiproject.content.api.ContentHostingService;
 import org.sakaiproject.content.api.ContentResource;
-import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalImport;
@@ -86,14 +85,14 @@ public class EvalImportImpl implements EvalImport {
 	public void setContentHostingService(ContentHostingService contentHostingService) {
 		this.contentHostingService = contentHostingService;
 	}
-	private EvalAssignsLogic evalAssignsLogic;
-	public void setEvalAssignsLogic(EvalAssignsLogic evalAssignsLogic) {
-		this.evalAssignsLogic = evalAssignsLogic;
+	private EvalEvaluationSetupService evaluationSetupService;
+	public void setEvaluationSetupService(EvalEvaluationSetupService evaluationSetupService) {
+		this.evaluationSetupService = evaluationSetupService;
 	}
-	private EvalEmailsLogic evalEmailsLogic;
-	public void setEvalEmailsLogic(EvalEmailsLogic evalEmailsLogic) {
-		this.evalEmailsLogic = evalEmailsLogic;
-	}
+   private EvalEvaluationService evaluationService;
+   public void setEvaluationService(EvalEvaluationService evaluationService) {
+      this.evaluationService = evaluationService;
+   }
 	private EvalEvaluationSetupService evalEvaluationsLogic;
 	public void setEvalEvaluationsLogic(EvalEvaluationSetupService evalEvaluationsLogic) {
 		this.evalEvaluationsLogic = evalEvaluationsLogic;
@@ -501,14 +500,14 @@ public class EvalImportImpl implements EvalImport {
 			 */
 			List evals = docsPath.selectNodes(doc);
 			if(log.isInfoEnabled())
-				log.info(evals.size() + " evaluations in XML document");
+				log.info(evals.size() + " evaluationSetupService in XML document");
 			//TODO add to audit trail
 			
 			for(Iterator iter = evals.iterator(); iter.hasNext();) {
 				try {
 					Element element = (Element)iter.next();
 					eid = element.getChildText("EID");
-					evaluation = evalEvaluationsLogic.getEvaluationByEid(eid);
+					evaluation = evaluationService.getEvaluationByEid(eid);
 					if(evaluation == null) {
 						//create new
 						evaluation = newEvaluation(element);
@@ -584,7 +583,7 @@ public class EvalImportImpl implements EvalImport {
 				try {
 					Element element = (Element)iter.next();
 					eid = element.getChildText("EID");
-					evalAssignGroup = evalAssignsLogic.getAssignGroupByEid(eid);
+					evalAssignGroup = evaluationService.getAssignGroupByEid(eid);
 					
 					//TODO remove: testing
 					String evalGroupId = element.getChildText("PROVIDER_ID");
@@ -605,7 +604,7 @@ public class EvalImportImpl implements EvalImport {
 					}
 					
 					//save or update
-					evalAssignsLogic.saveAssignGroup(evalAssignGroup, currentUserId);
+					evaluationSetupService.saveAssignGroup(evalAssignGroup, currentUserId);
 					externalLogic.registerEntityEvent(event, evalAssignGroup);
 					assignGroupsSaved++;
 					
@@ -1161,7 +1160,7 @@ public class EvalImportImpl implements EvalImport {
 			String owner = element.getChildText("OWNER");
 			String groupType = element.getChildText("GROUP_TYPE");
 			String evalEid = element.getChildText("EVAL_EVALUATION_EID");
-			EvalEvaluation evaluation = evalEvaluationsLogic.getEvaluationByEid(evalEid);
+			EvalEvaluation evaluation = evaluationService.getEvaluationByEid(evalEid);
 			Boolean instructorApproval = element.getChildText("INSTRUCTOR_APPROVAL").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
 			Boolean instructorsViewResults = element.getChildText("INSTRUCTOR_VIEW_RESULTS").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
 			Boolean studentsViewResults = element.getChildText("STUDENT_VIEW_RESULTS").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
@@ -1191,7 +1190,7 @@ public class EvalImportImpl implements EvalImport {
 			Boolean instructorApproval = element.getChildText("INSTRUCTOR_APPROVAL").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
 			Boolean instructorsViewResults = element.getChildText("INSTRUCTOR_VIEW_RESULTS").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
 			Boolean studentsViewResults = element.getChildText("STUDENT_VIEW_RESULTS").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
-			EvalEvaluation evaluation = evalEvaluationsLogic.getEvaluationByEid(element.getChildText("EVALUATION_EID"));
+			EvalEvaluation evaluation = evaluationService.getEvaluationByEid(element.getChildText("EVALUATION_EID"));
 			evalAssignGroup.setEvaluation(evaluation);
 			evalAssignGroup.setEvalGroupType(new String(element.getChildText(element.getChildText("GROUP_TYPE"))));
 			evalAssignGroup.setEvalGroupId(new String(element.getChildText(element.getChildText("PROVIDER_ID"))));
@@ -1240,8 +1239,8 @@ public class EvalImportImpl implements EvalImport {
 			Date viewDate = getDate(element.getChildText("VIEW_DATE"));
 			Date studentsDate = getDate(element.getChildText("STUDENTS_DATE"));
 			Date instructorsDate = getDate(element.getChildText("INSTRUCTORS_DATE"));
-			EvalEmailTemplate availableEmailTemplate = evalEmailsLogic.getDefaultEmailTemplate(element.getChildText("AVAILABLE_EMAIL_TEMPLATE"));
-			EvalEmailTemplate reminderEmailTemplate = evalEmailsLogic.getDefaultEmailTemplate(element.getChildText("REMINDER_EMAIL_TEMPLATE"));
+			EvalEmailTemplate availableEmailTemplate = evaluationService.getDefaultEmailTemplate(element.getChildText("AVAILABLE_EMAIL_TEMPLATE"));
+			EvalEmailTemplate reminderEmailTemplate = evaluationService.getDefaultEmailTemplate(element.getChildText("REMINDER_EMAIL_TEMPLATE"));
 			EvalTemplate template = authoringService.getTemplateByEid(element.getChildText("TEMPLATE_EID"));
 			String instructions = element.getChildText("INSTRUCTIONS");
 			if( instructions == null || instructions.trim().equals("")){
@@ -1336,8 +1335,8 @@ public class EvalImportImpl implements EvalImport {
 			evaluation.setUnregisteredAllowed(unregisteredAllowed);
 			evaluation.setLocked(locked);
 			
-			evaluation.setAvailableEmailTemplate(evalEmailsLogic.getDefaultEmailTemplate(element.getChildText("AVAILABLE_EMAIL_TEMPLATE")));
-			evaluation.setReminderEmailTemplate(evalEmailsLogic.getDefaultEmailTemplate(element.getChildText("REMINDER_EMAIL_TEMPLATE")));
+			evaluation.setAvailableEmailTemplate(evaluationService.getDefaultEmailTemplate(element.getChildText("AVAILABLE_EMAIL_TEMPLATE")));
+			evaluation.setReminderEmailTemplate(evaluationService.getDefaultEmailTemplate(element.getChildText("REMINDER_EMAIL_TEMPLATE")));
 			evaluation.setTemplate(authoringService.getTemplateByEid(element.getChildText("TEMPLATE_EID")));
 			
 			String instructions = element.getChildText("INSTRUCTIONS");

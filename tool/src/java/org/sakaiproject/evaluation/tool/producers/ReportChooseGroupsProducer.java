@@ -5,12 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.ReportsBean;
-import org.sakaiproject.evaluation.tool.viewparams.ExpertItemViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
@@ -18,7 +17,6 @@ import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
-import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
@@ -51,9 +49,9 @@ public class ReportChooseGroupsProducer implements ViewComponentProducer, Naviga
         this.externalLogic = externalLogic;
     }
 
-    private EvalEvaluationSetupService evalsLogic;
-    public void setEvalsLogic(EvalEvaluationSetupService evalsLogic) {
-        this.evalsLogic = evalsLogic;
+    private EvalEvaluationService evaluationService;
+    public void setEvaluationService(EvalEvaluationService evaluationService) {
+       this.evaluationService = evaluationService;
     }
 
     public ReportsBean reportsBean;
@@ -76,7 +74,7 @@ public class ReportChooseGroupsProducer implements ViewComponentProducer, Naviga
         Long evaluationId = reportViewParams.evaluationId;
         if (evaluationId != null) {
             // get the evaluation from the id
-            EvalEvaluation evaluation = evalsLogic.getEvaluationById(evaluationId);
+            EvalEvaluation evaluation = evaluationService.getEvaluationById(evaluationId);
 
             // do a permission check
             if (! currentUserId.equals(evaluation.getOwner()) &&
@@ -95,8 +93,8 @@ public class ReportChooseGroupsProducer implements ViewComponentProducer, Naviga
             UIMessage.make(form, "report-group-main-message", "reportgroups.main.message");		
             //form.parameters.add(new UIELBinding("#{reportsBean.evalId}", evaluationId));
 
-            Map evalGroups = evalsLogic.getEvaluationGroups(new Long[] {evaluationId}, false);
-            List groups = (List) evalGroups.get(evaluationId);
+            Map<Long, List<EvalGroup>> evalGroups = evaluationService.getEvaluationGroups(new Long[] {evaluationId}, false);
+            List<EvalGroup> groups = evalGroups.get(evaluationId);
             for (int i = 0; i < groups.size(); i++) {
                 UIBranchContainer groupBranch = UIBranchContainer.make(form, "groupRow:", i+"");
                 EvalGroup currGroup = (EvalGroup) groups.get(i);

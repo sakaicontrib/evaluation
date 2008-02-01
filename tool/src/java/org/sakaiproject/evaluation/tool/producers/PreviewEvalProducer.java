@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -56,14 +56,14 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
         return VIEW_ID;
     }
 
-    private EvalEvaluationSetupService evalsLogic;
-    public void setEvalsLogic(EvalEvaluationSetupService evalsLogic) {
-        this.evalsLogic = evalsLogic;
-    }
-
     private EvalExternalLogic external;
     public void setExternal(EvalExternalLogic external) {
         this.external = external;
+    }
+
+    private EvalEvaluationService evaluationService;
+    public void setEvaluationService(EvalEvaluationService evaluationService) {
+       this.evaluationService = evaluationService;
     }
 
     private EvalAuthoringService authoringService;
@@ -127,7 +127,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
             UIMessage.make(tofill, "preview-title", "previeweval.evaluation.title");
             UIMessage.make(tofill, "preview-title-prefix", "previeweval.evaluation.title.prefix");
             // load the real evaluation and template
-            eval = evalsLogic.getEvaluationById(evaluationId);
+            eval = evaluationService.getEvaluationById(evaluationId);
             template = eval.getTemplate();
         }
 

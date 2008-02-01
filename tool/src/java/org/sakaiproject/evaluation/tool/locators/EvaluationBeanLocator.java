@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -34,15 +35,21 @@ public class EvaluationBeanLocator implements BeanLocator {
    public static final String NEW_PREFIX = "new";
    public static String NEW_1 = NEW_PREFIX + "1";
 
-   private EvalEvaluationSetupService evalsLogic;
-   public void setEvalsLogic(EvalEvaluationSetupService evalsLogic) {
-      this.evalsLogic = evalsLogic;
-   }
-
    private EvalExternalLogic external;
    public void setExternal(EvalExternalLogic external) {
       this.external = external;
    }
+
+   private EvalEvaluationService evaluationService;
+   public void setEvaluationService(EvalEvaluationService evaluationService) {
+      this.evaluationService = evaluationService;
+   }
+
+   private EvalEvaluationSetupService evaluationSetupService;
+   public void setEvaluationSetupService(EvalEvaluationSetupService evaluationSetupService) {
+      this.evaluationSetupService = evaluationSetupService;
+   }
+
 
    private Map<String, EvalEvaluation> delivered = new HashMap<String, EvalEvaluation>();
 
@@ -52,7 +59,7 @@ public class EvaluationBeanLocator implements BeanLocator {
          if (name.startsWith(NEW_PREFIX)) {
             togo = new EvalEvaluation();
          } else {
-            togo = evalsLogic.getEvaluationById(new Long(name));
+            togo = evaluationService.getEvaluationById(new Long(name));
          }
          delivered.put(name, togo);
       }
@@ -66,7 +73,7 @@ public class EvaluationBeanLocator implements BeanLocator {
          if (key.startsWith(NEW_PREFIX)) {
             // could do stuff here
          }
-         evalsLogic.saveEvaluation(Evaluation, external.getCurrentUserId());
+         evaluationSetupService.saveEvaluation(Evaluation, external.getCurrentUserId());
       }
    }
 }

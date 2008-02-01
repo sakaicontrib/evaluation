@@ -122,7 +122,7 @@ public class EvaluationConstant {
       "0", "1", "2", "3", "4", "5", "6", "7" };
 
    /**
-    * Evaluation settings: Values for instructor options for using evaluations from above
+    * Evaluation settings: Values for instructor options for using evaluationSetupService from above
     */
    public static final String[] INSTRUCTOR_OPT_VALUES = new String[] {
       EvalConstants.INSTRUCTOR_OPT_OUT, 

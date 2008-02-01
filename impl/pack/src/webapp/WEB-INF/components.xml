@@ -2,6 +2,7 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <!-- Aaron Zeckoski (aaronz@vt.edu) -->
+<!-- Beans are in the following dependency order: BOTTOM (external) -> LOWER -> BACKUP -> SERVICES -->
 <beans>
 
    <!-- Bring in the HBM related beans beans -->
@@ -20,13 +21,7 @@
    <import resource="entity-providers.xml" />
 
    <!-- create the logic beans (BACKUP level) -->
-   <bean id="org.sakaiproject.evaluation.logic.EvalEmailsLogic"
-      class="org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl" init-method="init">
-      <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
-      <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-      <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-      <property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
-   </bean>
+   <import resource="logic-backup.xml" />
 
    <!-- create the logic service beans (SERVICES level) -->
    <bean id="org.sakaiproject.evaluation.logic.EvalAuthoringService"
@@ -37,25 +32,16 @@
       <property name="securityChecks" ref="org.sakaiproject.evaluation.logic.impl.EvalSecurityChecks" />
    </bean>
 
-
-   <bean id="org.sakaiproject.evaluation.logic.EvalAssignsLogic"
-      class="org.sakaiproject.evaluation.logic.impl.EvalAssignsLogicImpl" init-method="init">
-      <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
-      <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-      <property name="hierarchyLogic" ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
-      <property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
-      <property name="securityChecks" ref="org.sakaiproject.evaluation.logic.impl.EvalSecurityChecks" />
-      <property name="emails" ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
-   </bean>
-
    <bean id="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService"
       class="org.sakaiproject.evaluation.logic.impl.EvalEvaluationSetupServiceImpl" init-method="init">
       <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
       <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+      <property name="hierarchyLogic" ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
       <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
       <property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
       <property name="securityChecks" ref="org.sakaiproject.evaluation.logic.impl.EvalSecurityChecks" />
       <property name="evalJobLogic" ref="org.sakaiproject.evaluation.logic.EvalJobLogic" />
+      <property name="emails" ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
    </bean>
 
    <bean id="org.sakaiproject.evaluation.logic.EvalDeliveryService"

@@ -261,7 +261,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       List<EvalEvaluation> l = null;
       List<Long> ids = null;
 
-      // test getting evaluations for 2 sites
+      // test getting evaluationSetupService for 2 sites
       l = evaluationDao.getEvaluationsByEvalGroups(
             new String[] {EvalTestDataLoad.SITE1_REF, EvalTestDataLoad.SITE2_REF}, false, true, false);
       Assert.assertNotNull(l);
@@ -272,7 +272,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       Assert.assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
       Assert.assertTrue(ids.contains( etdl.evaluationViewable.getId() ));
 
-      // test getting evaluations by evalGroupId
+      // test getting evaluationSetupService by evalGroupId
       l = evaluationDao.getEvaluationsByEvalGroups(
             new String[] {EvalTestDataLoad.SITE1_REF}, false, true, false);
       Assert.assertNotNull(l);

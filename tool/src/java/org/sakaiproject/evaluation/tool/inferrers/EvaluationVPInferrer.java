@@ -20,8 +20,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.entitybroker.IdEntityReference;
-import org.sakaiproject.evaluation.logic.EvalAssignsLogic;
-import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.entity.AssignGroupEntityProvider;
 import org.sakaiproject.evaluation.logic.entity.EvaluationEntityProvider;
@@ -31,8 +30,8 @@ import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer;
-import org.sakaiproject.evaluation.tool.producers.TakeEvalProducer;
 import org.sakaiproject.evaluation.tool.producers.ReportsViewingProducer;
+import org.sakaiproject.evaluation.tool.producers.TakeEvalProducer;
 import org.sakaiproject.evaluation.tool.viewparams.EvalTakeViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.PreviewEvalParameters;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
@@ -55,14 +54,9 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
         this.externalLogic = externalLogic;
     }
 
-    private EvalAssignsLogic assignsLogic;
-    public void setAssignsLogic(EvalAssignsLogic assignsLogic) {
-        this.assignsLogic = assignsLogic;
-    }
-
-    private EvalEvaluationSetupService evaluationsLogic;
-    public void setEvaluationsLogic(EvalEvaluationSetupService evaluationsLogic) {
-        this.evaluationsLogic = evaluationsLogic;
+    private EvalEvaluationService evaluationService;
+    public void setEvaluationService(EvalEvaluationService evaluationService) {
+       this.evaluationService = evaluationService;
     }
 
     private ModelAccessWrapperInvoker wrapperInvoker;
@@ -114,11 +108,11 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
         if (EvaluationEntityProvider.ENTITY_PREFIX.equals(ep.prefix)) {
             // we only know the evaluation
             evaluationId = new Long(ep.id);
-            evaluation = evaluationsLogic.getEvaluationById(evaluationId);
+            evaluation = evaluationService.getEvaluationById(evaluationId);
         } else if (AssignGroupEntityProvider.ENTITY_PREFIX.equals(ep.prefix)) {
             // we know the evaluation and the group
             Long AssignGroupId = new Long(ep.id);
-            EvalAssignGroup assignGroup = assignsLogic.getAssignGroupById(AssignGroupId);
+            EvalAssignGroup assignGroup = evaluationService.getAssignGroupById(AssignGroupId);
             evalGroupId = assignGroup.getEvalGroupId();
             evaluation = assignGroup.getEvaluation();
             evaluationId = evaluation.getId();
@@ -147,10 +141,10 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
             if (EvalConstants.EVALUATION_STATE_INQUEUE.equals( EvalUtils.getEvaluationState(evaluation) )) {
                 // go to the add instructor items view if permission
                 if (evalGroupId == null) {
-                    Map m = evaluationsLogic.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
+                   Map<Long, List<EvalAssignGroup>> m = evaluationService.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
                     EvalGroup[] evalGroups = EvalUtils.getGroupsInCommon(
                             externalLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_BE_EVALUATED), 
-                            (List) m.get(evaluationId) );
+                            m.get(evaluationId) );
                     if (evalGroups.length > 0) {
                         // if we are being evaluated in at least one group in this eval then we can add items
                         // TODO - except we do not have a view yet so go to the preview eval page 
@@ -174,7 +168,7 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
                         externalLogic.isUserAllowedInEvalGroup(currentUserId, EvalConstants.PERM_BE_EVALUATED, evalGroupId)) {
                     return new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID, evaluationId, null);
                 } else {
-                    if ( evaluationsLogic.canTakeEvaluation(currentUserId, evaluationId, evalGroupId) ) {
+                    if ( evaluationService.canTakeEvaluation(currentUserId, evaluationId, evalGroupId) ) {
                     	log.info("User ("+currentUserId+") taking authenticated evaluation: " + evaluationId + " for group: " + evalGroupId);
                         return new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, evalGroupId);
                     }

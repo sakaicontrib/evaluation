@@ -93,7 +93,7 @@ public class EvaluationDateUtil {
 
 	/**
 	 * Set the time portion to the end of the day instead (23:59), this is to avoid confusion for users
-	 * when setting the evaluations to end on a certain date and having them end in the first minute of the day instead of
+	 * when setting the evaluationSetupService to end on a certain date and having them end in the first minute of the day instead of
 	 * at the end of the day
 	 * Note: This may lead to a nasty bug if anyone ever attempts to explicitly set the time for the stop and due dates
 	 * 
