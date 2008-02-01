@@ -117,6 +117,7 @@ impl/pack/src/webapp/WEB-INF/components.xml -text
 impl/pack/src/webapp/WEB-INF/entity-providers.xml -text
 impl/pack/src/webapp/WEB-INF/external-logic.xml -text
 impl/pack/src/webapp/WEB-INF/hibernate-hbms.xml -text
+impl/pack/src/webapp/WEB-INF/logic-backup.xml -text
 impl/pack/src/webapp/WEB-INF/logic-support.xml -text
 impl/pack/src/webapp/WEB-INF/spring-hibernate.xml -text
 impl/test/project.xml -text
