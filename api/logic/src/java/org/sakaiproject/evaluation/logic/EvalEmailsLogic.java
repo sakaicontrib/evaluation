@@ -38,7 +38,7 @@ public interface EvalEmailsLogic {
     * 
     * @param evaluationId the id of an EvalEvaluation object
     * @param includeOwner if true then send an email to the owner (creator of this evaluation) also, else do not include the owner
-    * @return an array of the messages that were sent
+    * @return an array of the email addresses that were sent to
     */
    public String[] sendEvalCreatedNotifications(Long evaluationId, boolean includeOwner);
 
@@ -50,7 +50,7 @@ public interface EvalEmailsLogic {
     * @param evaluationId the id of an EvalEvaluation object
     * @param includeEvaluatees if true, if evaluatees (probably instructors)
     * have not opted into an evaluation which is opt-in include notification, otherwise this does nothing
-    * @return an array of the messages that were sent
+    * @return an array of the email addresses that were sent to
     */
    public String[] sendEvalAvailableNotifications(Long evaluationId, boolean includeEvaluatees);
 
@@ -58,11 +58,12 @@ public interface EvalEmailsLogic {
     * Send late notification to evaluators that there is an evaluation ready for them to take
     * and includes information about the evaluation (dates), also includes links to
     * take the evaluation in "one-click" (i.e. link directly to the take_eval page)
-    * Called from EvalAssignGroup if an instructor opts-in after receiving an email sent on the 
+    * Called if an instructor opts-in after receiving an email sent on the 
     * Start Date saying that an evaluation may be taken if the instructor opts-in
+    * 
     * @param evaluationId the identifier for the EvalEvaluation that may be taken
     * @param evalGroupId the identifier for the EvalGroup to be notified
-    * @return an array of the messages that were sent
+    * @return an array of the email addresses that were sent to
     */
    public String[] sendEvalAvailableGroupNotification(Long evaluationId, String evalGroupId);
 
@@ -74,7 +75,7 @@ public interface EvalEmailsLogic {
     * 
     * @param evaluationId the id of an EvalEvaluation object
     * @param includeConstant a constant to indicate what users should receive the notification, EMAIL_INCLUDE from {@link EvalConstants}
-    * @return an array of the messages that were sent
+    * @return an array of the email addresses that were sent to
     */
    public String[] sendEvalReminderNotifications(Long evaluationId, String includeConstant);
 
@@ -84,14 +85,14 @@ public interface EvalEmailsLogic {
     * the results page for this evaluation, owner of the evaluation is always included
     * in the notification
     * 
-    *  @param jobType JOB_TYPE_VIEWABLE, JOB_TYPE_VIEWABLE_INSTRUCTORS or JOB_TYPE_VIEWABLE_STUDENTS
     * @param evaluationId the id of an EvalEvaluation object
     * @param includeEvaluatees if true, include notifications to all evaluated users
     * @param includeAdmins if true, include notifications to all admins above the contexts and
     * eval groups evaluated in this evaluation, otherwise include evaluatees only
-    * @return an array of the messages that were sent
+    * @param jobType JOB_TYPE_VIEWABLE, JOB_TYPE_VIEWABLE_INSTRUCTORS or JOB_TYPE_VIEWABLE_STUDENTS
+    * @return an array of the email addresses that were sent to
     */
-   public String[] sendEvalResultsNotifications(String jobType, Long evaluationId, boolean includeEvaluatees, boolean includeAdmins);
+   public String[] sendEvalResultsNotifications(Long evaluationId, boolean includeEvaluatees, boolean includeAdmins, String jobType);
 
 
    // RESPONDER CHECKS

@@ -37,7 +37,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 /**
  * Page for Modify Email template
  * 
- * @author: Rui Feng (fengr@vt.edu)
+ * @author Rui Feng (fengr@vt.edu)
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 

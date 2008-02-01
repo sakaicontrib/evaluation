@@ -82,9 +82,9 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 
 		// create and setup the object to be tested
 		emailsLogic = new EvalEmailsLogicImpl();
-		emailsLogic.setDao(evaluationDao);
 		emailsLogic.setExternalLogic( new MockEvalExternalLogic() );
 		emailsLogic.setEvaluationService(evaluationService);
+		emailsLogic.setSettings(settings);
 
 	}
 
@@ -101,36 +101,58 @@ public class EvalEmailsLogicImplTest extends AbstractTransactionalSpringContextT
 	 */
 
 
-	/**
+   /**
+    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#sendEvalCreatedNotifications(java.lang.Long, boolean)}.
+    */
+   public void testSendEvalCreatedNotifications() {
+      String[] sentEmails = null;
+
+      // test send to just the evaluatees
+      sentEmails = emailsLogic.sendEvalCreatedNotifications(etdl.evaluationViewable.getId(), false);
+      assertNotNull(sentEmails);
+      assertEquals(1, sentEmails.length);
+
+      // test send to evaluatees and owner
+      sentEmails = emailsLogic.sendEvalCreatedNotifications(etdl.evaluationViewable.getId(), true);
+      assertNotNull(sentEmails);
+      assertEquals(2, sentEmails.length);
+
+      // test that invalid evaluation id causes failure
+      try {
+         emailsLogic.sendEvalCreatedNotifications(EvalTestDataLoad.INVALID_LONG_ID, false);
+         fail("Should have thrown exception");
+      } catch (IllegalArgumentException e) {
+         assertNotNull(e);
+         //fail("Exception: " + e.getMessage()); // see why failing
+      }
+   }
+
+   /**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#sendEvalAvailableNotifications(java.lang.Long, boolean)}.
 	 */
 	public void testSendEvalAvailableNotifications() {
-		//emailsLogic.sendEvalAvailableNotifications(etdl.evaluationActive.getId(), false);
-		// TODO fail("Not yet implemented");
+      String[] sentEmails = null;
+
+      // test send to just the evaluators
+      sentEmails = emailsLogic.sendEvalAvailableNotifications(etdl.evaluationNewAdmin.getId(), false);
+		assertNotNull(sentEmails);
+      assertEquals(2, sentEmails.length);
+
+      // test send to evaluators and evaluatees
+      sentEmails = emailsLogic.sendEvalAvailableNotifications(etdl.evaluationNewAdmin.getId(), true);
+      assertNotNull(sentEmails);
+      assertEquals(3, sentEmails.length);
+
+      // test that invalid evaluation id causes failure
+      try {
+         emailsLogic.sendEvalAvailableNotifications(EvalTestDataLoad.INVALID_LONG_ID, false);
+         fail("Should have thrown exception");
+      } catch (IllegalArgumentException e) {
+         assertNotNull(e);
+         //fail("Exception: " + e.getMessage()); // see why failing
+      }
 	}
 
-	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#sendEvalCreatedNotifications(java.lang.Long, boolean)}.
-	 */
-	public void testSendEvalCreatedNotifications() {
-		//emailsLogic.sendEvalCreatedNotifications(etdl.evaluationActive.getId(), false);
-		// TODO fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#sendEvalReminderNotifications(java.lang.Long, java.lang.String)}.
-	 */
-	public void testSendEvalReminderNotifications() {
-		//emailsLogic.sendEvalReminderNotifications(etdl.evaluationActive.getId(), EvalConstants.EMAIL_INCLUDE_NONTAKERS);
-		// TODO fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#sendEvalResultsNotifications(java.lang.Long, boolean, boolean)}.
-	 */
-	public void testSendEvalResultsNotifications() {
-		//emailsLogic.sendEvalResultsNotifications(etdl.evaluationActive.getId(), false, false);
-		// TODO fail("Not yet implemented");
-	}
+	// FIXME add remaining tests here
 
 }

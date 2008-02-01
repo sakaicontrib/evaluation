@@ -59,6 +59,7 @@ public class TextTemplateLogicUtils {
     * Uses and expects freemarker (http://freemarker.org/) style templates 
     * (that is using ${name} as the marker for a replacement)<br/>
     * NOTE: These should be compatible with Velocity (http://velocity.apache.org/) templates
+    * if you use the formal notation (formal: ${variable}, shorthand: $variable)
     * 
     * @param textTemplate a freemarker/velocity style text template,
     * cannot be null or empty string

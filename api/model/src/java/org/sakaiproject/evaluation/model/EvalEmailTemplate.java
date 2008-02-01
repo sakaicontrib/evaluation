@@ -17,6 +17,8 @@ public class EvalEmailTemplate implements java.io.Serializable {
 
 	private String owner;
 
+	private String subject;
+
 	private String message;
 
 	private String defaultType;
@@ -28,16 +30,18 @@ public class EvalEmailTemplate implements java.io.Serializable {
 	}
 
 	/** minimal constructor */
-	public EvalEmailTemplate(Date lastModified, String owner, String message) {
+	public EvalEmailTemplate(Date lastModified, String owner, String subject, String message) {
 		this.lastModified = lastModified;
 		this.owner = owner;
+      this.subject = subject;
 		this.message = message;
 	}
 
 	/** full constructor */
-	public EvalEmailTemplate(Date lastModified, String owner, String message, String defaultType) {
+	public EvalEmailTemplate(Date lastModified, String owner, String subject, String message, String defaultType) {
 		this.lastModified = lastModified;
 		this.owner = owner;
+		this.subject = subject;
 		this.message = message;
 		this.defaultType = defaultType;
 	}
@@ -82,5 +86,15 @@ public class EvalEmailTemplate implements java.io.Serializable {
 	public void setDefaultType(String defaultType) {
 		this.defaultType = defaultType;
 	}
+
+   
+   public String getSubject() {
+      return subject;
+   }
+
+   
+   public void setSubject(String subject) {
+      this.subject = subject;
+   }
 
 }
