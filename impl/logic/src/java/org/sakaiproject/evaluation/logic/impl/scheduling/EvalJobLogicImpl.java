@@ -670,25 +670,15 @@ public class EvalJobLogicImpl implements EvalJobLogic {
        */
       boolean includeEvaluatees = true;
       boolean includeAdmins = true;
-
-      try {
-         // if results are protected, only send notification to owner
-         if (resultsPrivate.booleanValue()) {
-            includeEvaluatees = false;
-            includeAdmins = false;
-            emails.sendEvalResultsNotifications(jobType, evalId, includeEvaluatees, includeAdmins);
-            if (log.isDebugEnabled())
-               log.debug("EvalJobLogicImpl.sendViewableEmail(" + evalId + "," + jobType
-                     + ", resultsPrivate " + resultsPrivate + ")");
-         } else {
-            emails.sendEvalResultsNotifications(jobType, evalId, includeEvaluatees, includeAdmins);
-            if (log.isDebugEnabled())
-               log.debug("EvalJobLogicImpl.sendViewableEmail(" + evalId + "," + jobType
-                     + ", resultsPrivate " + resultsPrivate + ")");
-         }
-      } catch (Exception e) {
-         log.error(this + ".sendViewableEmail(" + evalId + "," + jobType + "," + includeAdmins
-               + ")" + e);
+      // if results are protected, only send notification to owner
+      if (resultsPrivate) {
+         includeEvaluatees = false;
+         includeAdmins = false;
+      }
+      emails.sendEvalResultsNotifications(evalId, includeEvaluatees, includeAdmins, jobType);
+      if (log.isDebugEnabled()) {
+         log.debug("EvalJobLogicImpl.sendViewableEmail(" + evalId + "," + jobType
+               + ", resultsPrivate " + resultsPrivate + ")");
       }
    }
 

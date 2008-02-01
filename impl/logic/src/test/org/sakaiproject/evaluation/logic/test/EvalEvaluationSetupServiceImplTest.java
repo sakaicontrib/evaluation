@@ -17,9 +17,7 @@ package org.sakaiproject.evaluation.logic.test;
 import java.util.Date;
 import java.util.List;
 
-import org.sakaiproject.email.api.EmailService;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
-import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl;
@@ -98,7 +96,6 @@ public class EvalEvaluationSetupServiceImplTest extends AbstractTransactionalSpr
 
       // setup the mock objects if needed
       EvalEmailsLogicImpl emailsLogicImpl = new EvalEmailsLogicImpl();
-      emailsLogicImpl.setDao(evaluationDao);
       emailsLogicImpl.setEvaluationService(evaluationService);
       emailsLogicImpl.setExternalLogic( new MockEvalExternalLogic() );
       emailsLogicImpl.setSettings(settings);
@@ -575,17 +572,17 @@ public class EvalEvaluationSetupServiceImplTest extends AbstractTransactionalSpr
    public void testSaveEmailTemplate() {
       // test valid new saves
       evaluationSetupService.saveEmailTemplate( new EvalEmailTemplate( new Date(),
-            EvalTestDataLoad.MAINT_USER_ID, "a message"), 
+            EvalTestDataLoad.MAINT_USER_ID, "subject", "a message"), 
             EvalTestDataLoad.MAINT_USER_ID);
       evaluationSetupService.saveEmailTemplate( new EvalEmailTemplate( new Date(),
-            EvalTestDataLoad.ADMIN_USER_ID, "another message"), 
+            EvalTestDataLoad.ADMIN_USER_ID, "subject", "another message"), 
             EvalTestDataLoad.ADMIN_USER_ID);
 
       // test saving new always nulls out the defaultType
       // the defaultType cannot be changed when saving
       // (default templates can only be set in the preloaded data for now)
       EvalEmailTemplate testTemplate = new EvalEmailTemplate( new Date(),
-            EvalTestDataLoad.ADMIN_USER_ID, "a message", 
+            EvalTestDataLoad.ADMIN_USER_ID, "subject", "a message", 
             EvalConstants.EMAIL_TEMPLATE_DEFAULT_AVAILABLE);
       evaluationSetupService.saveEmailTemplate( testTemplate, EvalTestDataLoad.ADMIN_USER_ID);
       assertNotNull( testTemplate.getId() );
@@ -644,7 +641,7 @@ public class EvalEvaluationSetupServiceImplTest extends AbstractTransactionalSpr
    // GROUP ASSIGNMENTS
 
    @SuppressWarnings("unchecked")
-   public void testSaveAssignContext() {
+   public void testSaveAssignGroup() {
 
       // test adding evalGroupId to inqueue eval
       EvalAssignGroup eacNew = new EvalAssignGroup(new Date(), 
@@ -793,7 +790,7 @@ public class EvalEvaluationSetupServiceImplTest extends AbstractTransactionalSpr
     * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationSetupServiceImpl#deleteAssignGroup(java.lang.Long, java.lang.String)}.
     */
    @SuppressWarnings("unchecked")
-   public void testDeleteAssignContext() {
+   public void testDeleteAssignGroup() {
       // save some ACs to test removing
       EvalAssignGroup eac1 = new EvalAssignGroup(new Date(), 
             EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE1_REF, 

@@ -139,15 +139,15 @@ public class PreloadDataImpl {
       // check if there are any emailTemplates present
       int count = evaluationDao.countAll(EvalEmailTemplate.class);
       if (count == 0) {
-         evaluationDao.save(new EvalEmailTemplate(new Date(), ADMIN_OWNER,
+         evaluationDao.save(new EvalEmailTemplate(new Date(), ADMIN_OWNER, EvalConstants.EMAIL_CREATED_DEFAULT_SUBJECT,
                EvalConstants.EMAIL_CREATED_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_DEFAULT_CREATED));
-         evaluationDao.save(new EvalEmailTemplate(new Date(), ADMIN_OWNER,
+         evaluationDao.save(new EvalEmailTemplate(new Date(), ADMIN_OWNER, EvalConstants.EMAIL_AVAILABLE_DEFAULT_SUBJECT,
                EvalConstants.EMAIL_AVAILABLE_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_DEFAULT_AVAILABLE));
-         evaluationDao.save(new EvalEmailTemplate(new Date(), ADMIN_OWNER,
+         evaluationDao.save(new EvalEmailTemplate(new Date(), ADMIN_OWNER, EvalConstants.EMAIL_AVAILABLE_OPT_IN_SUBJECT,
                EvalConstants.EMAIL_AVAILABLE_OPT_IN_TEXT, EvalConstants.EMAIL_TEMPLATE_DEFAULT_AVAILABLE_OPT_IN));
-         evaluationDao.save(new EvalEmailTemplate(new Date(), ADMIN_OWNER,
+         evaluationDao.save(new EvalEmailTemplate(new Date(), ADMIN_OWNER, EvalConstants.EMAIL_REMINDER_DEFAULT_SUBJECT,
                EvalConstants.EMAIL_REMINDER_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_DEFAULT_REMINDER));
-         evaluationDao.save(new EvalEmailTemplate(new Date(), ADMIN_OWNER,
+         evaluationDao.save(new EvalEmailTemplate(new Date(), ADMIN_OWNER, EvalConstants.EMAIL_RESULTS_DEFAULT_SUBJECT,
                EvalConstants.EMAIL_RESULTS_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_DEFAULT_RESULTS));
 
          log.info("Preloaded " + evaluationDao.countAll(EvalEmailTemplate.class) + " evaluation EmailTemplates");
