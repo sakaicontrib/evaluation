@@ -71,17 +71,18 @@ public interface EvaluationDao extends CompleteGenericDao {
 	public int countVisibleTemplates(String userId, String[] sharingConstants, boolean includeEmpty);
 
 	/**
-	 * Returns all evaluation objects associated with the input contexts
+	 * Returns all evaluation objects associated with the input groups,
+	 * can also include anonymous evaluations
 	 * 
-	 * @param evalGroupIds an array of eval group IDs to return active evals for
+	 * @param evalGroupIds an array of eval group IDs to get associated evals for, can be empty or null to get all evals
 	 * @param activeOnly if true, only include active evaluations, if false, include all evaluations
-	 * @param includeUnApproved if true, include the evaluations for contexts which have not been instructor approved yet,
+	 * @param includeUnApproved if true, include the evaluations for groups which have not been instructor approved yet,
 	 * you should not include these when displaying evaluations to users to take or sending emails
 	 * @param includeAnonymous if true then include evaluations which can be taken anonymously (since these are accessible
-	 * to any user), if false, only include evals with require keys or authentication
-	 * @return a Set of EvalEvaluation objects which are active
+	 * to any user in any group), if false, only include evals which require keys or authentication
+	 * @return a List of EvalEvaluation objects sorted by due date, title, and id
 	 */
-	public Set<EvalEvaluation> getEvaluationsByEvalGroups(String[] evalGroupIds, boolean activeOnly, boolean includeUnApproved, boolean includeAnonymous);
+	public List<EvalEvaluation> getEvaluationsByEvalGroups(String[] evalGroupIds, boolean activeOnly, boolean includeUnApproved, boolean includeAnonymous);
 
 	/**
 	 * Returns all answers to the given item associated with 
