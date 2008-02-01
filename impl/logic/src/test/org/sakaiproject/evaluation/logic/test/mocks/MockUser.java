@@ -83,6 +83,17 @@ public class MockUser implements User {
 		return null;
 	}
 
+	/*
+	 * Needed by UCT for custom userImpl
+	 * added by David Horwitz
+	 * (non-Javadoc)
+	 * 
+	 */
+	public String getDisplayName(String context) {
+		return null;
+	}
+	
+	
 	public String getDisplayName() {
 		return this.displayName;
 	}
