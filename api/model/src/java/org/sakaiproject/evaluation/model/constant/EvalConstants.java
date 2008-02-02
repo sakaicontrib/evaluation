@@ -524,7 +524,7 @@ public class EvalConstants {
 	public static final String EMAIL_TEMPLATE_DEFAULT_CONSOLIDATED_AVAILABLE = "defaultConsolidatedAvailable";
 	
 	public static final String EMAIL_CONSOLIDATED_AVAILABLE_DEFAULT_TEXT = 
-		"A Teaching Questionnaire for one or more of your classes is available through $EarliestDueDate. You " +
+		"Midsemester course feedback on one or more of your classes is due by $EarliestDueDate. You " +
 		"are asked to fill out Teaching Questionnaires in the My Workspace area of CTools, which is " +
 		"available from this link:\n\n" +
 		"	$MyWorkspaceDashboard\n\n" + 
@@ -551,7 +551,7 @@ public class EvalConstants {
 	public static final String EMAIL_TEMPLATE_DEFAULT_CONSOLIDATED_REMINDER = "defaultConsolidatedReminder";
 	
 	public static final String EMAIL_CONSOLIDATED_REMINDER_DEFAULT_TEXT = 
-		"A Teaching Questionnaire for one or more of your classes is available through $EarliestDueDate. You " +
+		"Midsemester course feedback on one or more of your classes is due by $EarliestDueDate. You " +
 		"are asked to fill out Teaching Questionnaires in the My Workspace area of CTools, which is " +
 		"available from this link:\n\n" +
 		"	$MyWorkspaceDashboard\n\n" + 
@@ -578,7 +578,7 @@ public class EvalConstants {
 	public static final String EMAIL_TEMPLATE_DEFAULT_CONSOLIDATED_SUBJECT = "defaultConsolidatedSubject";
 		
 	public static final String EMAIL_CONSOLIDATED_SUBJECT_DEFAULT_TEXT = 
-		"Teaching Questionnaires available through $EarliestDueDate \n";
+		"Midsemester course feedback due by $EarliestDueDate \n";
 
 	/**
 	 * Notification: Include all users who have not taken the evaluation yet
