@@ -229,7 +229,9 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
       EvalItem item = templateItem.getItem();
 
       String templateItemType = item.getClassification();
-      if (templateItemType.equals(EvalConstants.ITEM_TYPE_SCALED)) {
+      if (templateItemType.equals(EvalConstants.ITEM_TYPE_SCALED) || 
+          templateItemType.equals(EvalConstants.ITEM_TYPE_MULTIPLEANSWER) ||
+          templateItemType.equals(EvalConstants.ITEM_TYPE_MULTIPLECHOICE)) {
          //normal scaled type
          EvalScale scale = item.getScale();
          String[] scaleOptions = scale.getOptions();

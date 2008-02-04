@@ -44,7 +44,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 /**
- * Handles the generation of a CSV file for exporting results
+ * Handles the generation of files for exporting results
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  * @author Rui Feng (fengr@vt.edu)
@@ -156,7 +156,9 @@ public class ReportHandlerHook implements HandlerHook {
 
             //if the item is normal scaled or text (essay)
             if (TemplateItemUtils.getTemplateItemType(tempItem1).equals(EvalConstants.ITEM_TYPE_SCALED)
-                  || TemplateItemUtils.getTemplateItemType(tempItem1).equals(EvalConstants.ITEM_TYPE_TEXT)) {
+                  || TemplateItemUtils.getTemplateItemType(tempItem1).equals(EvalConstants.ITEM_TYPE_TEXT)
+                  || TemplateItemUtils.getTemplateItemType(tempItem1).equals(EvalConstants.ITEM_TYPE_MULTIPLEANSWER)
+                  || TemplateItemUtils.getTemplateItemType(tempItem1).equals(EvalConstants.ITEM_TYPE_MULTIPLECHOICE)) {
 
                //add the item description to the top row
                // TODO: This is now rich text, needs flattening/rendering
