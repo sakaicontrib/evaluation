@@ -84,7 +84,6 @@ public class PDFReportExporter {
                } catch (Exception e) {
                   log.warn("Cannot get PDF Banner Image for Evaluation Export", e);
                }
-
             }
          }
 
@@ -125,8 +124,7 @@ public class PDFReportExporter {
             String plainQuestionText = FormattedText.convertFormattedTextToPlaintext(topRow.get(i));
             Paragraph question = new Paragraph((i+1) + ". " + plainQuestionText);
             document.add(question);
-            // FIXME always compare constants first (i.e. if CONSTANT.equals(variable) rather than the reverse), it makes the code easier to read and makes NPEs impossible
-            if (TemplateItemUtils.getTemplateItemType(allEvalTemplateItems.get(i)).equals(EvalConstants.ITEM_TYPE_TEXT)) {
+            if (EvalConstants.ITEM_TYPE_TEXT.equals(TemplateItemUtils.getTemplateItemType(allEvalTemplateItems.get(i)))) {
                for (int j = 0; j < responseRows.size(); j++) {
                   String response = responseRows.get(j).get(i) + "\n";
                   Paragraph para = new Paragraph(response);
@@ -140,8 +138,7 @@ public class PDFReportExporter {
                   }
                }
             }
-            // FIXME always compare constants first (i.e. if CONSTANT.equals(variable) rather than the reverse), it makes the code easier to read and makes NPEs impossible
-            else if (TemplateItemUtils.getTemplateItemType(allEvalTemplateItems.get(i)).equals(EvalConstants.ITEM_TYPE_SCALED)) {
+            else if (EvalConstants.ITEM_TYPE_SCALED.equals(TemplateItemUtils.getTemplateItemType(allEvalTemplateItems.get(i)))) {
                Map<String,Integer> resultMap = new HashMap<String,Integer>();
                for (int j = 0; j < responseRows.size(); j++) {
                   String response = responseRows.get(j).get(i);
@@ -158,72 +155,7 @@ public class PDFReportExporter {
                   overview += key + ", " + resultMap.get(key) + "   ";
                }
                document.add(new Paragraph(overview));
-               /*
-                    DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-
-                    for (String key: resultMap.keySet()) {
-                        dataset.addValue(resultMap.get(key), "Results", key);
-                    }
-                    JFreeChart chart = ChartFactory.createBarChart(
-                            null,                         // chart title
-                            null,                         // domain axis label
-                            null,                         // range axis label
-                            dataset,                      // data
-                            PlotOrientation.HORIZONTAL,   // orientation
-                            false,                        // include legend
-                            true,
-                            false
-                        );
-                    chart.setBackgroundPaint(Color.white);
-                    chart.getPlot().setOutlinePaint(null);
-                    TextTitle charttitle = new TextTitle("Figure 6 | Overall SEO Rating");
-                    charttitle.setHorizontalAlignment(HorizontalAlignment.LEFT);
-                    charttitle.setBackgroundPaint(Color.red);
-                    charttitle.setPaint(Color.white);
-
-                    chart.setTitle(charttitle);
-                    CategoryPlot plot = (CategoryPlot) chart.getPlot();
-
-                    ValueAxis rangeAxis = plot.getRangeAxis();
-                    rangeAxis.setRange(0.0, 4.0);
-                    rangeAxis.setVisible(false);
-
-                    ExtendedCategoryAxis domainAxis = new ExtendedCategoryAxis(null);
-                    domainAxis.setTickLabelFont(new Font("SansSerif", Font.BOLD, 12));
-                    domainAxis.setCategoryMargin(0.30);
-
-                    for (String key: resultMap.keySet()) {
-                        domainAxis.addSubLabel("Response", key);
-                    }
-                    CategoryLabelPositions p = domainAxis.getCategoryLabelPositions();
-                    CategoryLabelPosition left = new CategoryLabelPosition(
-                            RectangleAnchor.LEFT, TextBlockAnchor.CENTER_LEFT);
-                    domainAxis.setCategoryLabelPositions(CategoryLabelPositions.replaceLeftPosition(p, left));
-                    plot.setDomainAxis(domainAxis);
-
-                    BarRenderer renderer = (BarRenderer) plot.getRenderer();
-                    renderer.setSeriesPaint(0, new Color(0x9C, 0xA4, 0x4A));
-                    renderer.setDrawBarOutline(false);
-
-                    StandardCategoryItemLabelGenerator generator 
-                            = new StandardCategoryItemLabelGenerator("{2}", 
-                                    new DecimalFormat("0.00"));
-                    renderer.setBaseItemLabelGenerator(generator);
-                    renderer.setBaseItemLabelsVisible(true);
-                    renderer.setBaseItemLabelFont(new Font("SansSerif", Font.PLAIN, 18));
-                    ItemLabelPosition position = new ItemLabelPosition(
-                            ItemLabelAnchor.INSIDE3, TextAnchor.CENTER_RIGHT);
-                    renderer.setBasePositiveItemLabelPosition(position);
-                    renderer.setPositiveItemLabelPositionFallback(new ItemLabelPosition());
-
-                    PdfContentByte cb = writer.getDirectContent();
-                    PdfTemplate tp = cb.createTemplate(400, 300);
-                    Graphics2D g2 = tp.createGraphics(400, 300, new DefaultFontMapper());
-                    Rectangle2D r2D = new Rectangle2D.Double(0, 0, 400, 300);
-                    chart.draw(g2, r2D);
-                    g2.dispose();
-                    cb.addTemplate(tp, 0, 0);
-                */
+               
             }
             else { //TODO what do I do with other question types?
                // FIXME empty else block, put logging here or throw exception or remove this block (probably at least log this though), I would consider missing question types a bug

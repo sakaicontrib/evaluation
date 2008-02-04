@@ -598,5 +598,4 @@
       <property name="deliveryService"
          ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
    </bean>
-
 </beans>
