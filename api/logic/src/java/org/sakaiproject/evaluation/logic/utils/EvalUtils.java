@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.logic.utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -48,21 +49,23 @@ public class EvalUtils {
 	 */
 	public static String getEvaluationState(EvalEvaluation eval) {
 		Date today = new Date();
+		String state = EvalConstants.EVALUATION_STATE_UNKNOWN;
 		try {
 			if ( eval.getStartDate().after(today) ) {
-				return EvalConstants.EVALUATION_STATE_INQUEUE;
+			   state = EvalConstants.EVALUATION_STATE_INQUEUE;
 			} else if ( eval.getDueDate().after(today) ) {
-				return EvalConstants.EVALUATION_STATE_ACTIVE;
+			   state = EvalConstants.EVALUATION_STATE_ACTIVE;
 			} else if ( eval.getStopDate().after(today) ) {
-				return EvalConstants.EVALUATION_STATE_DUE;
+			   state = EvalConstants.EVALUATION_STATE_DUE;
 			} else if ( eval.getViewDate().after(today) ) {
-				return EvalConstants.EVALUATION_STATE_CLOSED;
+			   state = EvalConstants.EVALUATION_STATE_CLOSED;
 			} else {
-				return EvalConstants.EVALUATION_STATE_VIEWABLE;
+			   state = EvalConstants.EVALUATION_STATE_VIEWABLE;
 			}
 		} catch (NullPointerException e) {
-			return EvalConstants.EVALUATION_STATE_UNKNOWN;
+			state = EvalConstants.EVALUATION_STATE_UNKNOWN;
 		}
+		return state;
 	}
 
 	/**
@@ -105,7 +108,7 @@ public class EvalUtils {
 	 * 
 	 * @param evalGroups a list of {@link EvalGroup}
 	 * @param assignGroups a list of {@link EvalAssignGroup}
-	 * @return an array of the groups that in common between the 2 lists
+	 * @return an array of the groups that are in common between the 2 lists
 	 */
 	public static EvalGroup[] getGroupsInCommon(List<EvalGroup> evalGroups, List<EvalAssignGroup> assignGroups) {
 		List<EvalGroup> groups = new ArrayList<EvalGroup>();
@@ -151,6 +154,68 @@ public class EvalUtils {
                + answer.getAssociatedId(), answer);
       }
       return map;
+   }
+
+   public static String SEPARATOR = ":";
+
+   /**
+    * Encodes an array of integers into a string so it can be stored in a format like so:
+    * :0:1:4:7:<br/>It will sort the numbers in ascending order<br/>
+    * This allows searches to continue to work without use having to resort to another table<br/>
+    * Pairs with the {@link #decodeMultipleAnswers(String)} method
+    * 
+    * @param answerKeys an array of integers, can be null or empty
+    * @return the encoded string, will be null if the input is null
+    */
+   public static String encodeMultipleAnswers(int[] answerKeys) {
+      String encoded = null;
+      if (answerKeys != null && answerKeys.length > 0) {
+         Arrays.sort(answerKeys); // sort the keys first
+         StringBuilder sb = new StringBuilder();
+         for (int i = 0; i < answerKeys.length; i++) {
+            sb.append(SEPARATOR);
+            sb.append(answerKeys[i]);
+         }
+         sb.append(SEPARATOR);
+         encoded = sb.toString();
+      }
+      return encoded;
+   }
+
+   /**
+    * Decodes an encoded multiple answer string (e.g. :1:3:) into an array of integers<br/>
+    * Array will always be returned in sorted order<br/>
+    * Behavior is undefined if the string is not encoded correctly as this method will not
+    * attempt to validate the string beforehand
+    * 
+    * @param encodedAnswers a string encoded using {@link #encodeMultipleAnswers(int[])}
+    * @return the decoded array of integers or an empty array if the encoded string is empty
+    * @throws IllegalArgumentException if the string cannot be decoded correctly
+    */
+   public static int[] decodeMultipleAnswers(String encodedAnswers) {
+      int[] decoded = null;
+      if (encodedAnswers != null && encodedAnswers.length() > 0) {
+         if (encodedAnswers.startsWith(SEPARATOR) &&
+               encodedAnswers.endsWith(SEPARATOR)) {
+            String[] split = encodedAnswers.split(SEPARATOR);
+            if (split.length > 2) {
+               decoded = new int[split.length - 1];
+               for (int i = 1; i < (split.length); i++) {
+                  if ("".equals(split[i])) {
+                     throw new IllegalArgumentException("This encoded string ("+encodedAnswers+") is invalid, it must have integers in it, example: :0:3:4:");
+                  }
+                  decoded[i-1] = Integer.valueOf(split[i]).intValue();
+               }
+               Arrays.sort(decoded); // make sure it is sorted before returning the array
+            }
+         } else {
+            throw new IllegalArgumentException("This encoded string ("+encodedAnswers+") is invalid, must adhere to the right format, example: :0:3:4:");
+         }
+      }
+      if (decoded == null) {
+         decoded = new int[0];
+      }
+      return decoded;
    }
 
 }

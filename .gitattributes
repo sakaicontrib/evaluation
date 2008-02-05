@@ -122,6 +122,7 @@ impl/pack/src/webapp/WEB-INF/logic-support.xml -text
 impl/pack/src/webapp/WEB-INF/spring-hibernate.xml -text
 impl/test/project.xml -text
 impl/test/src/java/org/sakaiproject/evaluation/test/EvalTestDataLoad.java -text
+impl/test/src/java/org/sakaiproject/evaluation/test/EvalUtilsTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/test/src/java/org/sakaiproject/evaluation/test/PreloadTestData.java -text
 impl/test/src/java/org/sakaiproject/evaluation/test/mocks/MockEvalExternalLogic.java -text
 impl/test/src/java/org/sakaiproject/evaluation/test/mocks/MockEvalJobLogic.java svn_keywords=Date+Revision+Author+HeadURL+Id
