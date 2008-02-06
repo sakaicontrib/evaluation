@@ -408,13 +408,11 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
 		return c;
 	}
 
-	/**
-	 * check if the options entered were nulls
-	 */
 	public String[] sendEmailsToUsers(String from, String[] to, String subject, String message, boolean deferExceptions) {
 		if (from == null || to == null || subject == null || message == null) {
 			throw new NullPointerException("All params are required (none can be null)");
 		}
+      emailsSentCounter += to.length;
       return to;
 	}
 
@@ -423,6 +421,7 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
       if (from == null || to == null || subject == null || message == null) {
          throw new NullPointerException("All params are required (none can be null)");
       }
+      emailsSentCounter += to.length;
       return to;
    }
 
@@ -441,5 +440,27 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
 	public void registerEntityEvent(String eventName, Serializable evaluationEntity) {
 		// pretending it worked
 	}
+
+	
+
+	// testing methods
+
+   private int emailsSentCounter = 0;
+   /**
+    * TESTING method:
+    * Provides a way to determine the number of emails sent via this mock service since the service started up
+    * or the counter was reset, reset the counter using {@link #resetEmailsSentCounter()}
+    * @return
+    */
+   public int getNumEmailsSent() {
+      return emailsSentCounter;
+   }
+   /**
+    * TESTING method:
+    * Resets the emails sent test counter to 0
+    */
+   public void resetEmailsSentCounter() {
+      emailsSentCounter = 0;
+   }
 
 }

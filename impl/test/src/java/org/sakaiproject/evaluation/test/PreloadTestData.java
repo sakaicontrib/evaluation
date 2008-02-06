@@ -56,7 +56,7 @@ public class PreloadTestData {
 
 	/**
 	 * This is here because we need the empty DB data preload to run before this
-	 * class and by making it a dependecy we ensure that is the case,
+	 * class and by making it a dependency we ensure that is the case,
 	 * Should be injecting a PreloadDataImpl here -AZ
 	 */
 	private Object pdl;

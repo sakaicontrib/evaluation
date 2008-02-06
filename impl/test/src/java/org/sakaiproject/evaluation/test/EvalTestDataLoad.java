@@ -112,6 +112,9 @@ public class EvalTestDataLoad {
    public final static String EVAL_CATEGORY_1 = "category one";
    public final static String EVAL_CATEGORY_2 = "category two";
 
+   public final static String EVAL_FROM_EMAIL = "admin@eval.testing.com";
+
+
    // SCALES
    /**
     * Scale used in all scaled test items, LOCKED, ADMIN_USER_ID owner, public
@@ -835,7 +838,7 @@ public class EvalTestDataLoad {
       evaluationActive = new EvalEvaluation(new Date(), MAINT_USER_ID, "Eval active", null, 
             yesterday, today, today, tomorrow, null, null,
             EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.INSTRUCTOR_OPT_IN, 
-            new Integer(1), null, null, null, null, templateUser, null, null,
+            new Integer(1), EVAL_FROM_EMAIL, null, null, null, templateUser, null, null,
             Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, LOCKED,
             EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null);
       //Evaluation Provided (has eid set, not null)
@@ -851,7 +854,7 @@ public class EvalTestDataLoad {
       evaluationActiveUntaken = new EvalEvaluation(new Date(), MAINT_USER_ID, "Eval active not taken", null, 
             yesterday, tomorrow, tomorrow, threeDaysFuture, null, null,
             EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.INSTRUCTOR_OPT_IN, 
-            new Integer(1), null, null, null, null, templatePublic, null, null,
+            new Integer(1), EVAL_FROM_EMAIL, null, null, null, templatePublic, null, null,
             Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, UNLOCKED,
             EvalConstants.EVALUATION_AUTHCONTROL_NONE, EVAL_CATEGORY_1);
       // evaluation in the DUE state

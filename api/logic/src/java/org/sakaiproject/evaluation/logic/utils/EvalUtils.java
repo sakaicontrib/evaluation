@@ -40,104 +40,126 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
  */
 public class EvalUtils {
 
-	/**
-	 * Get the state of an evaluation object<br/>
-	 * <b>WARNING:</b> do NOT use this outside the logic or DAO layers
-	 * 
-	 * @param eval the evaluation object
-	 * @return the EVALUATION_STATE constant
-	 */
-	public static String getEvaluationState(EvalEvaluation eval) {
-		Date today = new Date();
-		String state = EvalConstants.EVALUATION_STATE_UNKNOWN;
-		try {
-			if ( eval.getStartDate().after(today) ) {
-			   state = EvalConstants.EVALUATION_STATE_INQUEUE;
-			} else if ( eval.getDueDate().after(today) ) {
-			   state = EvalConstants.EVALUATION_STATE_ACTIVE;
-			} else if ( eval.getStopDate().after(today) ) {
-			   state = EvalConstants.EVALUATION_STATE_DUE;
-			} else if ( eval.getViewDate().after(today) ) {
-			   state = EvalConstants.EVALUATION_STATE_CLOSED;
-			} else {
-			   state = EvalConstants.EVALUATION_STATE_VIEWABLE;
-			}
-		} catch (NullPointerException e) {
-			state = EvalConstants.EVALUATION_STATE_UNKNOWN;
-		}
-		return state;
-	}
+   /**
+    * Get the state of an evaluation object<br/>
+    * <b>WARNING:</b> do NOT use this outside the logic or DAO layers
+    * 
+    * @param eval the evaluation object
+    * @return the EVALUATION_STATE constant
+    */
+   public static String getEvaluationState(EvalEvaluation eval) {
+      Date today = new Date();
+      String state = EvalConstants.EVALUATION_STATE_UNKNOWN;
+      try {
+         if ( eval.getStartDate().after(today) ) {
+            state = EvalConstants.EVALUATION_STATE_INQUEUE;
+         } else if ( eval.getDueDate().after(today) ) {
+            state = EvalConstants.EVALUATION_STATE_ACTIVE;
+         } else if ( eval.getStopDate().after(today) ) {
+            state = EvalConstants.EVALUATION_STATE_DUE;
+         } else if ( eval.getViewDate().after(today) ) {
+            state = EvalConstants.EVALUATION_STATE_CLOSED;
+         } else {
+            state = EvalConstants.EVALUATION_STATE_VIEWABLE;
+         }
+      } catch (NullPointerException e) {
+         state = EvalConstants.EVALUATION_STATE_UNKNOWN;
+      }
+      return state;
+   }
 
-	/**
-	 * Checks if a sharing constant is valid
-	 * @param sharingConstant
-	 * @return true if this is a valid sharing constant, false otherwise
-	 */
-	public static boolean checkSharingConstant(String sharingConstant) {
-		if ( EvalConstants.SHARING_OWNER.equals(sharingConstant) ||
-				EvalConstants.SHARING_PRIVATE.equals(sharingConstant) ||
-				EvalConstants.SHARING_PUBLIC.equals(sharingConstant) ||
-				EvalConstants.SHARING_SHARED.equals(sharingConstant) ||
-				EvalConstants.SHARING_VISIBLE.equals(sharingConstant)) {
-			return true;
-		}
-		return false;
-	}
+   /**
+    * Checks if a sharing constant is valid or null
+    * 
+    * @param sharingConstant a sharing constant from EvalConstants.SHARING_*
+    * @throws IllegalArgumentException is the constant is null or does not match the set
+    */
+   public static boolean validateSharingConstant(String sharingConstant) {
+      if ( EvalConstants.SHARING_OWNER.equals(sharingConstant) ||
+            EvalConstants.SHARING_PRIVATE.equals(sharingConstant) ||
+            EvalConstants.SHARING_PUBLIC.equals(sharingConstant) ||
+            EvalConstants.SHARING_SHARED.equals(sharingConstant) ||
+            EvalConstants.SHARING_VISIBLE.equals(sharingConstant)) {
+         // all is ok
+      } else {
+         throw new IllegalArgumentException("Invalid sharing constant ("+sharingConstant+"), " +
+               "must be one of EvalConstants.SHARING_*");
+      }
+      return true;
+   }
 
-	/**
-	 * Remove all duplicate objects from a list
-	 * 
-	 * @param list
-	 * @return the original list with the duplicate objects removed
-	 */
-	public static <T> List<T> removeDuplicates(List<T> list) {
-		Set<T> s = new HashSet<T>();
-		for (Iterator<T> iter = list.iterator(); iter.hasNext();) {
-			T element = (T) iter.next();
-			if (! s.add(element)) {
-				iter.remove();
-			}
-		}
-		return list;
-	}
+   /**
+    * Checks if an email include constant is valid or null
+    * 
+    * @param includeConstant an email include constant from EvalConstants.EMAIL_INCLUDE_*
+    * @throws IllegalArgumentException is the constant is null or does not match the set
+    */
+   public static boolean validateEmailIncludeConstant(String includeConstant) {
+      if (EvalConstants.EMAIL_INCLUDE_ALL.equals(includeConstant) ||
+            EvalConstants.EMAIL_INCLUDE_NONTAKERS.equals(includeConstant) ||
+            EvalConstants.EMAIL_INCLUDE_RESPONDENTS.equals(includeConstant) ) {
+         // all is ok
+      } else {
+         throw new IllegalArgumentException("Invalid include constant ("+includeConstant+"), " +
+               "must use one of the ones from EvalConstants.EMAIL_INCLUDE_*");
+      }
+      return true;
+   }
 
-	/**
-	 * Takes 2 lists of group types, {@link EvalGroup} and {@link EvalAssignGroup}, and
-	 * merges the groups in common and then returns an array of the common groups,
-	 * comparison is on the evalGroupId
-	 * 
-	 * @param evalGroups a list of {@link EvalGroup}
-	 * @param assignGroups a list of {@link EvalAssignGroup}
-	 * @return an array of the groups that are in common between the 2 lists
-	 */
-	public static EvalGroup[] getGroupsInCommon(List<EvalGroup> evalGroups, List<EvalAssignGroup> assignGroups) {
-		List<EvalGroup> groups = new ArrayList<EvalGroup>();
-		for (int i=0; i<evalGroups.size(); i++) {
-			EvalGroup group = (EvalGroup) evalGroups.get(i);
-			for (int j=0; j<assignGroups.size(); j++) {
-				EvalAssignGroup assignGroup = (EvalAssignGroup) assignGroups.get(j);
-				if (group.evalGroupId.equals(assignGroup.getEvalGroupId())) {
-					groups.add(group);
-					break;
-				}
-			}
-		}
-		return (EvalGroup[]) groups.toArray(new EvalGroup[] {});
-	}
+   /**
+    * Remove all duplicate objects from a list
+    * 
+    * @param list
+    * @return the original list with the duplicate objects removed
+    */
+   public static <T> List<T> removeDuplicates(List<T> list) {
+      Set<T> s = new HashSet<T>();
+      for (Iterator<T> iter = list.iterator(); iter.hasNext();) {
+         T element = (T) iter.next();
+         if (! s.add(element)) {
+            iter.remove();
+         }
+      }
+      return list;
+   }
 
-	/**
-	 * Creates a unique title for an adhoc scale
-	 * @return 
-	 */
-	public static String makeUniqueIdentifier(int maxLength) {
+   /**
+    * Takes 2 lists of group types, {@link EvalGroup} and {@link EvalAssignGroup}, and
+    * merges the groups in common and then returns an array of the common groups,
+    * comparison is on the evalGroupId
+    * 
+    * @param evalGroups a list of {@link EvalGroup}
+    * @param assignGroups a list of {@link EvalAssignGroup}
+    * @return an array of the groups that are in common between the 2 lists
+    */
+   public static EvalGroup[] getGroupsInCommon(List<EvalGroup> evalGroups, List<EvalAssignGroup> assignGroups) {
+      List<EvalGroup> groups = new ArrayList<EvalGroup>();
+      for (int i=0; i<evalGroups.size(); i++) {
+         EvalGroup group = (EvalGroup) evalGroups.get(i);
+         for (int j=0; j<assignGroups.size(); j++) {
+            EvalAssignGroup assignGroup = (EvalAssignGroup) assignGroups.get(j);
+            if (group.evalGroupId.equals(assignGroup.getEvalGroupId())) {
+               groups.add(group);
+               break;
+            }
+         }
+      }
+      return (EvalGroup[]) groups.toArray(new EvalGroup[] {});
+   }
+
+   /**
+    * Creates a unique title for an adhoc scale
+    * @return 
+    */
+   public static String makeUniqueIdentifier(int maxLength) {
       String newTitle = UUID.randomUUID().toString();
       if (newTitle.length() > maxLength) {
          newTitle = newTitle.substring(0, maxLength);
       }
       return newTitle;
-	}
+   }
 
-	/**
+   /**
     * Get a map of answers for the given response, where the key to
     * access a given response is the unique pairing of templateItemId and
     * the associated field of the answer (instructor id, environment key, etc.)
