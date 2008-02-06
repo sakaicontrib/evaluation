@@ -14,65 +14,24 @@
 
 package org.sakaiproject.evaluation.logic.test;
 
-import junit.framework.Assert;
-
-import org.sakaiproject.evaluation.dao.EvaluationDao;
-import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.impl.ExternalHierarchyLogicImpl;
-import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.model.EvalScale;
-import org.sakaiproject.evaluation.test.PreloadTestData;
-import org.springframework.test.AbstractTransactionalSpringContextTests;
 
 
 /**
  * Test cases for the evaluation hierarchy service,
- * trying to decide how I can write these without remaking the entire hierarchy service,
+ * TODO trying to decide how I can write these without remaking the entire hierarchy service,
  * I can't think of a way so I think this will have to use the testrunner probably
  *
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
-public class ExternalHierarchyLogicImplTest extends AbstractTransactionalSpringContextTests {
+public class ExternalHierarchyLogicImplTest extends BaseTestEvalLogic {
 
    protected ExternalHierarchyLogicImpl hierarchyLogicImpl;
-
-   private EvaluationDao evaluationDao;
-//   private EvalTestDataLoad etdl;
-
-   protected String[] getConfigLocations() {
-      // point to the needed spring config files, must be on the classpath
-      // (add component/src/webapp/WEB-INF to the build path in Eclipse),
-      // they also need to be referenced in the project.xml file
-      return new String[] {"hibernate-test.xml", "spring-hibernate.xml", "logic-support.xml"};
-   }
-
    // run this before each test starts
    protected void onSetUpBeforeTransaction() throws Exception {
-      // load the spring created dao class bean from the Spring Application Context
-      evaluationDao = (EvaluationDao) applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationDao");
-      if (evaluationDao == null) {
-         throw new NullPointerException("EvaluationDao could not be retrieved from spring evalGroupId");
-      }
-
-      // check the preloaded data
-      Assert.assertTrue("Error preloading data", evaluationDao.countAll(EvalScale.class) > 0);
-
-      // check the preloaded test data
-      Assert.assertTrue("Error preloading test data", evaluationDao.countAll(EvalEvaluation.class) > 0);
-
-      PreloadTestData ptd = (PreloadTestData) applicationContext.getBean("org.sakaiproject.evaluation.test.PreloadTestData");
-      if (ptd == null) {
-         throw new NullPointerException("PreloadTestData could not be retrieved from spring evalGroupId");
-      }
-
-      // get test objects
-//      etdl = ptd.getEtdl();
+      super.onSetUpBeforeTransaction();
 
       // load up any other needed spring beans
-      EvalSettings settings = (EvalSettings) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalSettings");
-      if (settings == null) {
-         throw new NullPointerException("EvalSettings could not be retrieved from spring evalGroupId");
-      }
 
       // setup the mock objects if needed
 
@@ -89,11 +48,13 @@ public class ExternalHierarchyLogicImplTest extends AbstractTransactionalSpringC
       
    }
 
+
    /**
     * ADD unit tests below here, use testMethod as the name of the unit test,
     * Note that if a method is overloaded you should include the arguments in the
     * test name like so: testMethodClassInt (for method(Class, int);
     */
+
 
    /**
     * Test method for {@link org.sakaiproject.evaluation.logic.impl.ExternalHierarchyLogicImpl#init()}.

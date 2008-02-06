@@ -18,13 +18,9 @@ import java.util.Date;
 
 import junit.framework.Assert;
 
-import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.impl.EvalSettingsImpl;
 import org.sakaiproject.evaluation.model.EvalConfig;
-import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.model.EvalScale;
-import org.springframework.test.AbstractTransactionalSpringContextTests;
 
 
 /**
@@ -32,11 +28,10 @@ import org.springframework.test.AbstractTransactionalSpringContextTests;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class EvalSettingsImplTest extends AbstractTransactionalSpringContextTests {
+public class EvalSettingsImplTest extends BaseTestEvalLogic {
 
 	private EvalSettingsImpl evalSettings;
 
-	private EvaluationDao evaluationDao;
 	private EvalConfig config1;
 	private EvalConfig config3;
 
@@ -53,6 +48,7 @@ public class EvalSettingsImplTest extends AbstractTransactionalSpringContextTest
 
 	private final String INVALID_CONSTANT = "XXXXXXXXXXXX" + ":java.lang.String";
 
+	@Override
 	protected String[] getConfigLocations() {
 		// point to the needed spring config files, must be on the classpath
 		// (add component/src/webapp/WEB-INF to the build path in Eclipse),
@@ -62,17 +58,7 @@ public class EvalSettingsImplTest extends AbstractTransactionalSpringContextTest
 
 	// run this before each test starts
 	protected void onSetUpBeforeTransaction() throws Exception {
-		// load the spring created dao class bean from the Spring Application Context
-		evaluationDao = (EvaluationDao) applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationDao");
-		if (evaluationDao == null) {
-			throw new NullPointerException("EvaluationDao could not be retrieved from spring evalGroupId");
-		}
-
-		// check the preloaded data
-		Assert.assertTrue("Error preloading data", evaluationDao.countAll(EvalScale.class) > 0);
-
-		// check the preloaded test data
-		Assert.assertTrue("Error preloading test data", evaluationDao.countAll(EvalEvaluation.class) > 0);
+	   super.onSetUpBeforeTransaction();
 
 		// load up any other needed spring beans
 

@@ -500,7 +500,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
       // generate binding for the UI input element (UIInput, UISelect, etc.) to the correct part of answer
       String[] bindings = null;
       if ( EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(TemplateItemUtils.getTemplateItemType(templateItem)) ) {
-         bindings = new String[] { currAnswerOTP + "multipleAnswers", currAnswerOTP + "numeric" };
+         bindings = new String[] { currAnswerOTP + "multiAnswerCode", currAnswerOTP + "numeric" };
       } else if ( EvalConstants.ITEM_TYPE_TEXT.equals(TemplateItemUtils.getTemplateItemType(templateItem)) ) {
          bindings = new String[] { currAnswerOTP + "text", currAnswerOTP + "numeric" };
       } else {

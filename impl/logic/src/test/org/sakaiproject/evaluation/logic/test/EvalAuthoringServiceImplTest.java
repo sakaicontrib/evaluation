@@ -20,11 +20,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.impl.EvalAuthoringServiceImpl;
 import org.sakaiproject.evaluation.logic.impl.EvalSecurityChecks;
-import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.model.EvalScale;
@@ -32,9 +30,7 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
-import org.sakaiproject.evaluation.test.PreloadTestData;
 import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
-import org.springframework.test.AbstractTransactionalSpringContextTests;
 
 
 /**
@@ -42,41 +38,13 @@ import org.springframework.test.AbstractTransactionalSpringContextTests;
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
-public class EvalAuthoringServiceImplTest extends AbstractTransactionalSpringContextTests {
+public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
 
    protected EvalAuthoringServiceImpl authoringService;
 
-   private EvaluationDao evaluationDao;
-   private EvalTestDataLoad etdl;
-
-   protected String[] getConfigLocations() {
-      // point to the needed spring config files, must be on the classpath
-      // (add component/src/webapp/WEB-INF to the build path in Eclipse),
-      // they also need to be referenced in the project.xml file
-      return new String[] {"hibernate-test.xml", "spring-hibernate.xml", "logic-support.xml"};
-   }
-
    // run this before each test starts
    protected void onSetUpBeforeTransaction() throws Exception {
-      // load the spring created dao class bean from the Spring Application Context
-      evaluationDao = (EvaluationDao) applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationDao");
-      if (evaluationDao == null) {
-         throw new NullPointerException("EvaluationDao could not be retrieved from spring context");
-      }
-
-      // check the preloaded data
-      assertTrue("Error preloading data", evaluationDao.countAll(EvalScale.class) > 0);
-
-      // check the preloaded test data
-      assertTrue("Error preloading test data", evaluationDao.countAll(EvalEvaluation.class) > 0);
-
-      PreloadTestData ptd = (PreloadTestData) applicationContext.getBean("org.sakaiproject.evaluation.test.PreloadTestData");
-      if (ptd == null) {
-         throw new NullPointerException("PreloadTestData could not be retrieved from spring context");
-      }
-
-      // get test objects
-      etdl = ptd.getEtdl();
+      super.onSetUpBeforeTransaction();
 
       // load up any other needed spring beans
       EvalSettings settings = (EvalSettings) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalSettings");
@@ -97,12 +65,6 @@ public class EvalAuthoringServiceImplTest extends AbstractTransactionalSpringCon
       authoringService.setExternalLogic( new MockEvalExternalLogic() );
       authoringService.setSettings(settings);
       authoringService.setSecurityChecks(securityChecks);
-
-   }
-
-   // run this before each test starts and as part of the transaction
-   protected void onSetUpInTransaction() {
-      // preload additional data if desired
 
    }
 

@@ -20,7 +20,6 @@ import java.util.List;
 
 import junit.framework.Assert;
 
-import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.impl.EvalAuthoringServiceImpl;
@@ -29,12 +28,9 @@ import org.sakaiproject.evaluation.logic.impl.EvalSecurityChecks;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
-import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
-import org.sakaiproject.evaluation.test.PreloadTestData;
 import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
-import org.springframework.test.AbstractTransactionalSpringContextTests;
 
 
 /**
@@ -42,44 +38,15 @@ import org.springframework.test.AbstractTransactionalSpringContextTests;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class EvalDeliveryServiceImplTest extends AbstractTransactionalSpringContextTests {
+public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
 
    protected EvalDeliveryServiceImpl responses;
 
-   private EvaluationDao evaluationDao;
-   private EvalTestDataLoad etdl;
-
    private EvalEvaluation evaluationClosedTwo;
-
-
-   protected String[] getConfigLocations() {
-      // point to the needed spring config files, must be on the classpath
-      // (add component/src/webapp/WEB-INF to the build path in Eclipse),
-      // they also need to be referenced in the project.xml file
-      return new String[] {"hibernate-test.xml", "spring-hibernate.xml", "logic-support.xml"};
-   }
 
    // run this before each test starts
    protected void onSetUpBeforeTransaction() throws Exception {
-      // load the spring created dao class bean from the Spring Application Context
-      evaluationDao = (EvaluationDao) applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationDao");
-      if (evaluationDao == null) {
-         throw new NullPointerException("EvaluationDao could not be retrieved from spring evalGroupId");
-      }
-
-      // check the preloaded data
-      Assert.assertTrue("Error preloading data", evaluationDao.countAll(EvalScale.class) > 0);
-
-      // check the preloaded test data
-      Assert.assertTrue("Error preloading test data", evaluationDao.countAll(EvalEvaluation.class) > 0);
-
-      PreloadTestData ptd = (PreloadTestData) applicationContext.getBean("org.sakaiproject.evaluation.test.PreloadTestData");
-      if (ptd == null) {
-         throw new NullPointerException("PreloadTestData could not be retrieved from spring evalGroupId");
-      }
-
-      // get test objects
-      etdl = ptd.getEtdl();
+      super.onSetUpBeforeTransaction();
 
       // load up any other needed spring beans
       EvalSettings settings = (EvalSettings) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalSettings");
@@ -131,6 +98,8 @@ public class EvalDeliveryServiceImplTest extends AbstractTransactionalSpringCont
             EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null);
       evaluationDao.save(evaluationClosedTwo);
    }
+
+
 
    /**
     * ADD unit tests below here, use testMethod as the name of the unit test,

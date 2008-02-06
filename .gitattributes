@@ -98,6 +98,7 @@ impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalJobLog
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalScheduledInvocationImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/utils/TextTemplateLogicUtils.java -text
 impl/logic/src/test/log4j.properties -text
+impl/logic/src/test/org/sakaiproject/evaluation/logic/test/BaseTestEvalLogic.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalAuthoringServiceImplTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalDeliveryServiceImplTest.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalEmailsLogicImplTest.java -text
@@ -123,7 +124,6 @@ impl/pack/src/webapp/WEB-INF/logic-support.xml -text
 impl/pack/src/webapp/WEB-INF/spring-hibernate.xml -text
 impl/test/project.xml -text
 impl/test/src/java/org/sakaiproject/evaluation/test/EvalTestDataLoad.java -text
-impl/test/src/java/org/sakaiproject/evaluation/test/EvalUtilsTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/test/src/java/org/sakaiproject/evaluation/test/PreloadTestData.java -text
 impl/test/src/java/org/sakaiproject/evaluation/test/mocks/MockEvalExternalLogic.java -text
 impl/test/src/java/org/sakaiproject/evaluation/test/mocks/MockEvalJobLogic.java svn_keywords=Date+Revision+Author+HeadURL+Id

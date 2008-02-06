@@ -143,13 +143,16 @@ public class EvalUtils {
     * the associated field of the answer (instructor id, environment key, etc.)
     * 
     * @param response the response we want to get the answers for
-    * @return a hashmap of answers, where an answer's key = templateItemId + answer.associated
-    */   
+    * @return a hashmap of answers, where key = templateItemId + answer.associatedType + answer.associatedId
+    */
    public static Map<String, EvalAnswer> getAnswersMapByTempItemAndAssociated(EvalResponse response) {
       Map<String, EvalAnswer> map = new HashMap<String, EvalAnswer>();
       Set<EvalAnswer> answers = response.getAnswers();
       for (Iterator<EvalAnswer> it = answers.iterator(); it.hasNext();) {
-         EvalAnswer answer = (EvalAnswer) it.next();
+         EvalAnswer answer = it.next();
+         // decode the stored answers into the int array
+         answer.multipleAnswers = EvalUtils.decodeMultipleAnswers(answer.getMultiAnswerCode());
+         // place the answers into a map which uses the TI, assocType, and assocId as a key
          map.put(answer.getTemplateItem().getId().toString() + answer.getAssociatedType()
                + answer.getAssociatedId(), answer);
       }

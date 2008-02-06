@@ -16,59 +16,53 @@ package org.sakaiproject.evaluation.logic.test;
 
 import junit.framework.Assert;
 
-import org.sakaiproject.evaluation.dao.EvaluationDao;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
+import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl;
 import org.sakaiproject.evaluation.logic.impl.scheduling.EvalJobLogicImpl;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
-import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
-import org.sakaiproject.evaluation.test.PreloadTestData;
-import org.springframework.test.AbstractTransactionalSpringContextTests;
+import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
 
 /**
  * FIXME test the rest of the methods -AZ
  * 
  * @author Dick Ellis (rwellis@umich.edu)
  */
-public class EvalJobLogicImplTest extends AbstractTransactionalSpringContextTests {
+public class EvalJobLogicImplTest extends BaseTestEvalLogic {
 	
 	protected EvalJobLogicImpl jobLogic;
+   private EvalEvaluationService evaluationService;
 
-	private EvaluationDao evaluationDao;
-	private EvalTestDataLoad etdl;
-
-	@Override
-	protected String[] getConfigLocations() {
-		// point to the needed spring config files, must be on the classpath
-		// (add component/src/webapp/WEB-INF to the build path in Eclipse),
-		// they also need to be referenced in the project.xml file
-		return new String[] {"hibernate-test.xml", "spring-hibernate.xml"};
-	}
-	
 	// run this before each test starts
 	protected void onSetUpBeforeTransaction() throws Exception {
-		// load the spring created dao class bean from the Spring Application Context
-		evaluationDao = (EvaluationDao) applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationDao");
-		if (evaluationDao == null) {
-			throw new NullPointerException("EvaluationDao could not be retrieved from spring evalGroupId");
-		}
+      super.onSetUpBeforeTransaction();
 
-		// check the preloaded data
-		Assert.assertTrue("Error preloading data", evaluationDao.countAll(EvalScale.class) > 0);
+      // load up any other needed spring beans
+      EvalSettings settings = (EvalSettings) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalSettings");
+      if (settings == null) {
+         throw new NullPointerException("EvalSettings could not be retrieved from spring context");
+      }
 
-		// check the preloaded test data
-		Assert.assertTrue("Error preloading test data", evaluationDao.countAll(EvalEvaluation.class) > 0);
+      evaluationService = (EvalEvaluationService) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalEvaluationService");
+      if (evaluationService == null) {
+         throw new NullPointerException("EvalEvaluationService could not be retrieved from spring context");
+      }
 
-		PreloadTestData ptd = (PreloadTestData) applicationContext.getBean("org.sakaiproject.evaluation.test.PreloadTestData");
-		if (ptd == null) {
-			throw new NullPointerException("PreloadTestData could not be retrieved from spring evalGroupId");
-		}
-
-		// get test objects
-		etdl = ptd.getEtdl();
+      // setup the mock objects if needed
+      EvalEmailsLogicImpl emailsLogicImpl = new EvalEmailsLogicImpl();
+      emailsLogicImpl.setEvaluationService(evaluationService);
+      emailsLogicImpl.setExternalLogic( new MockEvalExternalLogic() );
+      emailsLogicImpl.setSettings(settings);
 		
 		//create and setup the object to be tested
 		jobLogic = new EvalJobLogicImpl();
+		jobLogic.setEmails(emailsLogicImpl);
+		jobLogic.setEvaluationService(evaluationService);
+		jobLogic.setExternalLogic( new MockEvalExternalLogic() );
+		jobLogic.setSettings(settings);
+		// FIXME set the remaining dependencies
+		
 	}
 	
 	// run this before each test starts and as part of the transaction
@@ -96,5 +90,7 @@ public class EvalJobLogicImplTest extends AbstractTransactionalSpringContextTest
 		//null type retuns false
 		Assert.assertFalse( EvalJobLogicImpl.isValidJobType(null));
 	}
+
+	// FIXME add in the remaining test cases
 
 }
