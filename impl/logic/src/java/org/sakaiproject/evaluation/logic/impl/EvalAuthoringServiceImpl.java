@@ -155,9 +155,9 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       }
 
       // check the sharing constants
-      if (! EvalUtils.checkSharingConstant(scale.getSharing()) ||
-            EvalConstants.SHARING_OWNER.equals(scale.getSharing()) ) {
-         throw new IllegalArgumentException("Invalid sharing constant ("+scale.getSharing()+") set for scale ("+scale.getTitle()+")");
+      EvalUtils.validateSharingConstant(scale.getSharing());
+      if ( EvalConstants.SHARING_OWNER.equals(scale.getSharing()) ) {
+         throw new IllegalArgumentException("Invalid sharing constant ("+scale.getSharing()+") set for scale ("+scale.getTitle()+"), cannot use SHARING_OWNER");
       } else if ( EvalConstants.SHARING_PUBLIC.equals(scale.getSharing()) ) {
          // test if non-admin trying to set public sharing
          if (! external.isUserAdmin(userId) ) {
@@ -243,11 +243,12 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 
       boolean getPublic = false;
       boolean getPrivate = false;
+
       // check the sharingConstant param
-      if (sharingConstant != null && 
-            ! EvalUtils.checkSharingConstant(sharingConstant)) {
-         throw new IllegalArgumentException("Invalid sharing constant: " + sharingConstant);
+      if (sharingConstant != null) {
+         EvalUtils.validateSharingConstant(sharingConstant);
       }
+
       if ( sharingConstant == null || 
             EvalConstants.SHARING_OWNER.equals(sharingConstant) ) {
          // return all scales visible to this user
@@ -384,9 +385,9 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       TemplateItemUtils.validateItemByClassification(item);
 
       // check the sharing constants
-      if (! EvalUtils.checkSharingConstant(item.getSharing()) ||
-            EvalConstants.SHARING_OWNER.equals(item.getSharing()) ) {
-         throw new IllegalArgumentException("Invalid sharing constant ("+item.getSharing()+") set for item ("+item.getItemText()+")");
+      EvalUtils.validateSharingConstant(item.getSharing());
+      if ( EvalConstants.SHARING_OWNER.equals(item.getSharing()) ) {
+         throw new IllegalArgumentException("Invalid sharing constant ("+item.getSharing()+") set for item ("+item.getItemText()+"), cannot use SHARING_OWNER");
       } else if ( EvalConstants.SHARING_PUBLIC.equals(item.getSharing()) ) {
          // test if non-admin trying to set public sharing
          if (! external.isUserAdmin(userId) ) {
@@ -497,11 +498,12 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 
       boolean getPublic = false;
       boolean getPrivate = false;
+
       // check the sharingConstant param
-      if (sharingConstant != null && 
-            ! EvalUtils.checkSharingConstant(sharingConstant)) {
-         throw new IllegalArgumentException("Invalid sharing constant: " + sharingConstant);
+      if (sharingConstant != null) {
+         EvalUtils.validateSharingConstant(sharingConstant);
       }
+
       if ( sharingConstant == null || 
             EvalConstants.SHARING_OWNER.equals(sharingConstant) ) {
          // return all items visible to this user
@@ -1107,9 +1109,9 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       template.setLastModified( new Date() );
 
       // check the sharing constants
-      if (! EvalUtils.checkSharingConstant(template.getSharing()) ||
-            EvalConstants.SHARING_OWNER.equals(template.getSharing()) ) {
-         throw new IllegalArgumentException("Invalid sharing constant ("+template.getSharing()+") set for template ("+template.getTitle()+")");
+      EvalUtils.validateSharingConstant(template.getSharing());
+      if ( EvalConstants.SHARING_OWNER.equals(template.getSharing()) ) {
+         throw new IllegalArgumentException("Invalid sharing constant ("+template.getSharing()+") set for template ("+template.getTitle()+"), cannot use SHARING_OWNER");
       } else if ( EvalConstants.SHARING_PUBLIC.equals(template.getSharing()) ) {
          // test if non-admin trying to set public sharing
          String system_sharing = (String) settings.get(EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY);
@@ -1216,9 +1218,8 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
        */
 
       // check sharing constant
-      if (sharingConstant != null &&
-            ! EvalUtils.checkSharingConstant(sharingConstant)) {
-         throw new IllegalArgumentException("Invalid sharing constant: " + sharingConstant);
+      if (sharingConstant != null) {
+         EvalUtils.validateSharingConstant(sharingConstant);
       }
 
       // admin always gets all of the templates of a type

@@ -66,22 +66,64 @@ public class EvalUtilsTest extends TestCase {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.utils.EvalUtils#checkSharingConstant(java.lang.String)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.utils.EvalUtils#validateSharingConstant(java.lang.String)}.
     */
    public void testCheckSharingConstant() {
       // positive
-      assertTrue( EvalUtils.checkSharingConstant(EvalConstants.SHARING_OWNER) );
-      assertTrue( EvalUtils.checkSharingConstant(EvalConstants.SHARING_PRIVATE) );
-      assertTrue( EvalUtils.checkSharingConstant(EvalConstants.SHARING_PUBLIC) );
-      assertTrue( EvalUtils.checkSharingConstant(EvalConstants.SHARING_SHARED) );
-      assertTrue( EvalUtils.checkSharingConstant(EvalConstants.SHARING_VISIBLE) );
+      assertTrue( EvalUtils.validateSharingConstant(EvalConstants.SHARING_OWNER) );
+      assertTrue( EvalUtils.validateSharingConstant(EvalConstants.SHARING_PRIVATE) );
+      assertTrue( EvalUtils.validateSharingConstant(EvalConstants.SHARING_PUBLIC) );
+      assertTrue( EvalUtils.validateSharingConstant(EvalConstants.SHARING_SHARED) );
+      assertTrue( EvalUtils.validateSharingConstant(EvalConstants.SHARING_VISIBLE) );
 
       // negative
-      assertFalse( EvalUtils.checkSharingConstant("INVALID") );
-      assertFalse( EvalUtils.checkSharingConstant("") );
-      assertFalse( EvalUtils.checkSharingConstant(null) );
-      
-      // no exceptions thrown
+
+      // exception
+      try {
+         EvalUtils.validateSharingConstant("INVALID");
+         fail("Should have thrown exception");
+      } catch (IllegalArgumentException e) {
+         assertNotNull(e);
+      }
+      try {
+         EvalUtils.validateSharingConstant("");
+         fail("Should have thrown exception");
+      } catch (IllegalArgumentException e) {
+         assertNotNull(e);
+      }
+      try {
+         EvalUtils.validateSharingConstant(null);
+         fail("Should have thrown exception");
+      } catch (IllegalArgumentException e) {
+         assertNotNull(e);
+      }
+   }
+
+   public void testCheckIncludeConstant() {
+      // positive
+      assertTrue( EvalUtils.validateEmailIncludeConstant(EvalConstants.EMAIL_INCLUDE_ALL) );
+      assertTrue( EvalUtils.validateEmailIncludeConstant(EvalConstants.EMAIL_INCLUDE_ALL) );
+      assertTrue( EvalUtils.validateEmailIncludeConstant(EvalConstants.EMAIL_INCLUDE_ALL) );
+
+      // exception
+      try {
+         EvalUtils.validateEmailIncludeConstant("INVALID");
+         fail("Should have thrown exception");
+      } catch (IllegalArgumentException e) {
+         assertNotNull(e);
+      }
+      try {
+         EvalUtils.validateEmailIncludeConstant("");
+         fail("Should have thrown exception");
+      } catch (IllegalArgumentException e) {
+         assertNotNull(e);
+      }
+      try {
+         EvalUtils.validateEmailIncludeConstant(null);
+         fail("Should have thrown exception");
+      } catch (IllegalArgumentException e) {
+         assertNotNull(e);
+      }
    }
 
    /**
