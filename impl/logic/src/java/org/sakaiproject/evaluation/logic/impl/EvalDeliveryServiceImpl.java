@@ -89,7 +89,8 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
    public EvalResponse getResponseById(Long responseId) {
       log.debug("responseId: " + responseId);
       // get the response by passing in id
-      return (EvalResponse) dao.findById(EvalResponse.class, responseId);
+      EvalResponse response = (EvalResponse) dao.findById(EvalResponse.class, responseId);
+      return response;
    }
 
 
@@ -228,7 +229,12 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
          throw new IllegalArgumentException("Could not find evaluation with id: " + evaluationId);
       }
 
-      return dao.getAnswers(itemId, evaluationId, evalGroupIds);
+      List<EvalAnswer> answers = dao.getAnswers(itemId, evaluationId, evalGroupIds);
+      for (EvalAnswer answer : answers) {
+         // decode the stored answers into the int array
+         answer.multipleAnswers = EvalUtils.decodeMultipleAnswers(answer.getMultiAnswerCode());
+      }
+      return answers;
    }
 
    public List<Long> getEvalResponseIds(Long evaluationId, String[] evalGroupIds, Boolean completed) {
@@ -410,7 +416,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
       for (Iterator<EvalAnswer> iter = response.getAnswers().iterator(); iter.hasNext();) {
          EvalAnswer answer = (EvalAnswer) iter.next();
          if (answer.getNumeric() == null && answer.getText() == null && 
-               (answer.getMultipleAnswers() == null || answer.getMultipleAnswers().length == 0) ) {
+               (answer.getMultiAnswerCode() == null || answer.getMultiAnswerCode().length() == 0) ) {
             throw new IllegalArgumentException("Cannot save blank answers: answer for templateItem: "
                   + answer.getTemplateItem().getId());
          }
@@ -459,11 +465,6 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                throw new IllegalArgumentException("This answer templateItem (" + answer.getTemplateItem().getId()
                      + ") is not part of this evaluation (" + response.getEvaluation().getTitle() + ")");
             }
-         }
-
-         // put numeric answers into the multiple answer set
-         if (answer.getNumeric() != null) {
-            answer.setMultipleAnswers(new String[] {answer.getNumeric().toString()});
          }
 
          // TODO - check if numerical answers are valid?

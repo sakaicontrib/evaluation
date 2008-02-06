@@ -18,7 +18,6 @@ import org.sakaiproject.evaluation.logic.utils.ArrayUtils;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
-import org.sakaiproject.evaluation.tool.EvaluationConstant;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
@@ -93,7 +92,7 @@ public class MultipleChoiceRenderer implements ItemRenderer {
          UIBranchContainer displayContainer = UIBranchContainer.make(radiobranchFullRow, containerId);
 
          if (usesNA) {
-            scaleValues = ArrayUtils.appendArray(scaleValues, EvaluationConstant.NA_VALUE);
+            scaleValues = ArrayUtils.appendArray(scaleValues, EvalConstants.NA_VALUE);
             scaleLabels = ArrayUtils.appendArray(scaleLabels, "");
          }
 

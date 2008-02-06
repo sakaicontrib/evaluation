@@ -17,7 +17,6 @@ package org.sakaiproject.evaluation.logic.test;
 import java.util.List;
 import java.util.Map;
 
-import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl;
 import org.sakaiproject.evaluation.logic.impl.EvalSecurityChecks;
@@ -30,9 +29,7 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
-import org.sakaiproject.evaluation.test.PreloadTestData;
 import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
-import org.springframework.test.AbstractTransactionalSpringContextTests;
 
 
 /**
@@ -40,39 +37,13 @@ import org.springframework.test.AbstractTransactionalSpringContextTests;
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
-public class EvalEvaluationServiceImplTest extends AbstractTransactionalSpringContextTests {
+public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
    protected EvalEvaluationServiceImpl evaluationService;
 
-   private EvaluationDao evaluationDao;
-   private EvalTestDataLoad etdl;
-
-   protected String[] getConfigLocations() {
-      // point to the needed spring config files, must be on the classpath
-      // (add component/src/webapp/WEB-INF to the build path in Eclipse),
-      // they also need to be referenced in the project.xml file
-      return new String[] {"hibernate-test.xml", "spring-hibernate.xml", "logic-support.xml"};
-   }
-
    // run this before each test starts
    protected void onSetUpBeforeTransaction() throws Exception {
-
-      // load the spring created dao class bean from the Spring Application Context
-      evaluationDao = (EvaluationDao) applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationDao");
-      if (evaluationDao == null) {
-         throw new NullPointerException("EvaluationDao could not be retrieved from spring context");
-      }
-
-      // check the preloaded test data
-      assertTrue("Error preloading test data", evaluationDao.countAll(EvalEvaluation.class) > 0);
-
-      PreloadTestData ptd = (PreloadTestData) applicationContext.getBean("org.sakaiproject.evaluation.test.PreloadTestData");
-      if (ptd == null) {
-         throw new NullPointerException("PreloadTestData could not be retrieved from spring context");
-      }
-
-      // get test objects
-      etdl = ptd.getEtdl();
+      super.onSetUpBeforeTransaction();
 
       // load up any other needed spring beans
       EvalSettings settings = (EvalSettings) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalSettings");
@@ -96,11 +67,12 @@ public class EvalEvaluationServiceImplTest extends AbstractTransactionalSpringCo
 
    }
 
-   // run this before each test starts and as part of the transaction
-   protected void onSetUpInTransaction() {
-      // preload additional data if desired
 
-   }
+   /**
+    * ADD unit tests below here, use testMethod as the name of the unit test,
+    * Note that if a method is overloaded you should include the arguments in the
+    * test name like so: testMethodClassInt (for method(Class, int);
+    */
 
 
    /**
@@ -1058,30 +1030,30 @@ public class EvalEvaluationServiceImplTest extends AbstractTransactionalSpringCo
    }
 
 
-    public void testGetEmailTemplate() {
-        EvalEmailTemplate emailTemplate = null;
+   public void testGetEmailTemplate() {
+      EvalEmailTemplate emailTemplate = null;
 
-        // test getting the templates
-        emailTemplate = evaluationService.getEmailTemplate(etdl.evaluationActive.getId(), 
-                EvalConstants.EMAIL_TEMPLATE_AVAILABLE );
-        assertNotNull(emailTemplate);
-        assertEquals( EvalConstants.EMAIL_AVAILABLE_DEFAULT_TEXT,
-                emailTemplate.getMessage() );
+      // test getting the templates
+      emailTemplate = evaluationService.getEmailTemplate(etdl.evaluationActive.getId(), 
+            EvalConstants.EMAIL_TEMPLATE_AVAILABLE );
+      assertNotNull(emailTemplate);
+      assertEquals( EvalConstants.EMAIL_AVAILABLE_DEFAULT_TEXT,
+            emailTemplate.getMessage() );
 
-        emailTemplate = evaluationService.getEmailTemplate(etdl.evaluationActive.getId(), 
-                EvalConstants.EMAIL_TEMPLATE_REMINDER );
-        assertNotNull(emailTemplate);
-        assertEquals( "Email Template 3", emailTemplate.getMessage() );
+      emailTemplate = evaluationService.getEmailTemplate(etdl.evaluationActive.getId(), 
+            EvalConstants.EMAIL_TEMPLATE_REMINDER );
+      assertNotNull(emailTemplate);
+      assertEquals( "Email Template 3", emailTemplate.getMessage() );
 
-        // test invalid constant causes failure
-        try {
-            emailTemplate = evaluationService.getEmailTemplate( EvalTestDataLoad.INVALID_LONG_ID, EvalTestDataLoad.INVALID_CONSTANT_STRING );
-            fail("Should have thrown exception");
-        } catch (RuntimeException e) {
-            assertNotNull(e);
-        }
+      // test invalid constant causes failure
+      try {
+         emailTemplate = evaluationService.getEmailTemplate( EvalTestDataLoad.INVALID_LONG_ID, EvalTestDataLoad.INVALID_CONSTANT_STRING );
+         fail("Should have thrown exception");
+      } catch (RuntimeException e) {
+         assertNotNull(e);
+      }
 
-    }
+   }
 
 
    /**
@@ -1221,5 +1193,5 @@ public class EvalEvaluationServiceImplTest extends AbstractTransactionalSpringCo
       }
 
    }
-   
+
 }

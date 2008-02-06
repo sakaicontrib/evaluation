@@ -184,11 +184,6 @@ public class EvaluationConstant {
    public static final String ADMIN_BOOLEAN_NO = "0";
    public static final String ADMIN_BOOLEAN_CONFIGURABLE = "-1";
 
-   /**
-    * The value stored when a student responds N/A
-    */
-   public static final String NA_VALUE = "-1";
-
 
    // TODO - this is needed to pretend to be null until RSF is fixed up in 0.7.3 (related change below)
    /**
