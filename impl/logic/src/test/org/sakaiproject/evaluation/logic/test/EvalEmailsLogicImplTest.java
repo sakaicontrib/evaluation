@@ -18,7 +18,6 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
-import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
