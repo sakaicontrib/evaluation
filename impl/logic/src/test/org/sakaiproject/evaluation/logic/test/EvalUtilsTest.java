@@ -101,9 +101,9 @@ public class EvalUtilsTest extends TestCase {
 
    public void testCheckIncludeConstant() {
       // positive
-      assertTrue( EvalUtils.validateEmailIncludeConstant(EvalConstants.EMAIL_INCLUDE_ALL) );
-      assertTrue( EvalUtils.validateEmailIncludeConstant(EvalConstants.EMAIL_INCLUDE_ALL) );
-      assertTrue( EvalUtils.validateEmailIncludeConstant(EvalConstants.EMAIL_INCLUDE_ALL) );
+      assertTrue( EvalUtils.validateEmailIncludeConstant(EvalConstants.EVAL_INCLUDE_ALL) );
+      assertTrue( EvalUtils.validateEmailIncludeConstant(EvalConstants.EVAL_INCLUDE_ALL) );
+      assertTrue( EvalUtils.validateEmailIncludeConstant(EvalConstants.EVAL_INCLUDE_ALL) );
 
       // exception
       try {

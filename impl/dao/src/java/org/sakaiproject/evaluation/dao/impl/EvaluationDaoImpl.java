@@ -204,8 +204,8 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
             params.put("approval", true);
          }
          groupsHQL = " eval.id in (select assign.evaluation.id " +
-         		"from EvalAssignGroup as assign where assign.nodeId is null " +
-         		"and assign.evalGroupId in (:evalGroupIds)" + unapprovedHQL + ") ";
+         "from EvalAssignGroup as assign where assign.nodeId is null " +
+         "and assign.evalGroupId in (:evalGroupIds)" + unapprovedHQL + ") ";
          params.put("evalGroupIds", evalGroupIds);
 
          params.put("authControl", EvalConstants.EVALUATION_AUTHCONTROL_NONE);
@@ -236,8 +236,8 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
             params.put("activeState", EvalConstants.EVALUATION_STATE_ACTIVE);
          }
          String hql = "select distinct eval from EvalEvaluation as eval " +
-         		" where 1=1 " + activeHQL + groupsHQL + 
-         		" order by eval.dueDate, eval.title, eval.id";
+         " where 1=1 " + activeHQL + groupsHQL + 
+         " order by eval.dueDate, eval.title, eval.id";
          evals = executeHqlQuery(hql, params, 0, 0);
          Collections.sort(evals, new ComparatorsUtils.EvaluationDateTitleIdComparator());
       }
@@ -432,9 +432,9 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       params.put("evalId", evalId);
       String hql = "SELECT response.id from EvalResponse as response where response.evaluation.id = :evalId "
          + groupsHQL + usersHQL + completedHQL + " order by response.id";
-      List<?> rIDs = executeHqlQuery(hql, params, 0, 0);
+      List<?> results = executeHqlQuery(hql, params, 0, 0);
       List<Long> responseIds = new ArrayList<Long>();
-      for (Object object : rIDs) {
+      for (Object object : results) {
          responseIds.add((Long) object);
       }
       return responseIds;
@@ -455,7 +455,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
    @SuppressWarnings("unchecked")
    public String getNodeIdForEvalGroup(String evalGroupId) {
       String hql = "select egn.nodeId from EvalGroupNodes egn where " +
-            "? in elements(egn.evalGroups) order by egn.nodeId";
+      "? in elements(egn.evalGroups) order by egn.nodeId";
       String[] params = new String[] {evalGroupId};
       List<String> l = getHibernateTemplate().find(hql, params);
       if (l.isEmpty()) {
@@ -479,6 +479,28 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       }
       return l;
    }
+
+
+   public Set<String> getResponseUserIds(Long evaluationId, String[] evalGroupIds) {
+      Map<String, Object> params = new HashMap<String, Object>();
+      String groupsHQL = "";
+      if (evalGroupIds != null && evalGroupIds.length > 0) {
+         groupsHQL = " and response.evalGroupId in (:evalGroupIds) ";
+         params.put("evalGroupIds", evalGroupIds);
+      }
+      params.put("evaluationId", evaluationId);
+      String hql = "SELECT response.owner from EvalResponse as response where response.evaluation.id = :evaluationId "
+         + " and response.endTime is not null " + groupsHQL + " order by response.id";
+      List<?> results = executeHqlQuery(hql, params, 0, 0);
+      // put the results into a set and convert them to strings
+      Set<String> responseUsers = new HashSet<String>();
+      for (Object object : results) {
+         responseUsers.add((String) object);
+      }
+      return responseUsers;
+   }
+
+
 
 
    // LOCKING METHODS

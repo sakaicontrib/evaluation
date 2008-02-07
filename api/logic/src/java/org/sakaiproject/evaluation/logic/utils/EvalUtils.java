@@ -95,9 +95,9 @@ public class EvalUtils {
     * @throws IllegalArgumentException is the constant is null or does not match the set
     */
    public static boolean validateEmailIncludeConstant(String includeConstant) {
-      if (EvalConstants.EMAIL_INCLUDE_ALL.equals(includeConstant) ||
-            EvalConstants.EMAIL_INCLUDE_NONTAKERS.equals(includeConstant) ||
-            EvalConstants.EMAIL_INCLUDE_RESPONDENTS.equals(includeConstant) ) {
+      if (EvalConstants.EVAL_INCLUDE_ALL.equals(includeConstant) ||
+            EvalConstants.EVAL_INCLUDE_NONTAKERS.equals(includeConstant) ||
+            EvalConstants.EVAL_INCLUDE_RESPONDENTS.equals(includeConstant) ) {
          // all is ok
       } else {
          throw new IllegalArgumentException("Invalid include constant ("+includeConstant+"), " +

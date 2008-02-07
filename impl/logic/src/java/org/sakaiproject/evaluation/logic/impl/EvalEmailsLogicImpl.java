@@ -55,6 +55,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
    protected final String EVENT_EMAIL_REMINDER =                     "eval.email.eval.reminders";
    protected final String EVENT_EMAIL_RESULTS =                      "eval.email.eval.results";
 
+
    private EvalExternalLogic externalLogic;
    public void setExternalLogic(EvalExternalLogic externalLogic) {
       this.externalLogic = externalLogic;
@@ -263,7 +264,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
     */
    public String[] sendEvalAvailableGroupNotification(Long evaluationId, String evalGroupId) {
 
-      List<String> sentMessages = new ArrayList<String>();
+      List<String> sentEmails = new ArrayList<String>();
 
       // get group
       EvalGroup group = externalLogic.makeEvalGroupObject(evalGroupId);
@@ -288,21 +289,17 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
          String message = makeEmailMessage(emailTemplate.getMessage(), eval, group, replacementValues);
          String subject = makeEmailMessage(emailTemplate.getSubject(), eval, group, replacementValues);
 
-         // store sent messages to return
-         sentMessages.add(message);
-
-         try {
-            // send the actual emails for this evalGroupId
-            String[] emailAddresses = externalLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
-            log.info("Sent evaluation available group message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
-            externalLogic.registerEntityEvent(EVENT_EMAIL_GROUP_AVAILABLE, eval);
-         } catch (Exception e) {
-            log.error(this + ".sendEvalAvailableGroupNotification(" + evaluationId + "," + evalGroupId
-                  + ") externalLogic.sendEmails " + e);
+         // send the actual emails for this evalGroupId
+         String[] emailAddresses = externalLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
+         log.info("Sent evaluation available group message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
+         // store sent emails to return
+         for (int j = 0; j < emailAddresses.length; j++) {
+            sentEmails.add(emailAddresses[j]);            
          }
+         externalLogic.registerEntityEvent(EVENT_EMAIL_GROUP_AVAILABLE, eval);
       }
 
-      return (String[]) sentMessages.toArray(new String[] {});
+      return (String[]) sentEmails.toArray(new String[] {});
    }
 
 
@@ -313,20 +310,11 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       log.debug("evaluationId: " + evaluationId + ", includeConstant: " + includeConstant);
       EvalUtils.validateEmailIncludeConstant(includeConstant);
 
-      String from = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
+      List<String> sentEmails = new ArrayList<String>();
 
-      // get evaluation
       EvalEvaluation eval = getEvaluationOrFail(evaluationId);
-
-      // get the email template
-      EvalEmailTemplate emailTemplate = evaluationService.getEmailTemplate(evaluationId, EvalConstants.EMAIL_TEMPLATE_REMINDER);
-
-      if (emailTemplate == null) {
-         throw new IllegalStateException("Cannot find email template: "
-               + EvalConstants.EMAIL_TEMPLATE_REMINDER);
-      }
-
-      List<String> sentMessages = new ArrayList<String>();
+      String from = getFromEmailOrFail(eval);
+      EvalEmailTemplate emailTemplate = getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_AVAILABLE, evaluationId);
 
       // get the associated eval groups for this evaluation
       // NOTE: this only returns the groups that should get emails, there is no need to do an additional check
@@ -337,24 +325,15 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       List<EvalGroup> groups = evalGroupIds.get(evaluationId);
       log.debug("Found " + groups.size() + " groups for available evaluation: " + evaluationId);
 
-      Set<String> userIdsSet = new HashSet<String>();
-
       // loop through groups and send emails to correct users in each
       for (int i = 0; i < groups.size(); i++) {
          EvalGroup group = (EvalGroup) groups.get(i);
          if (EvalConstants.GROUP_TYPE_INVALID.equals(group.type)) {
             continue; // skip processing for invalid groups
          }
+         String evalGroupId = group.evalGroupId;
 
-         userIdsSet.clear();
-         if (EvalConstants.EMAIL_INCLUDE_NONTAKERS.equals(includeConstant)) {
-            userIdsSet.addAll(getNonResponders(evaluationId, group.evalGroupId));
-         } else if (EvalConstants.EMAIL_INCLUDE_ALL.equals(includeConstant)) {
-            userIdsSet.addAll(getNonResponders(evaluationId, group.evalGroupId));
-            userIdsSet.addAll(externalLogic.getUserIdsForEvalGroup(group.evalGroupId,
-                  EvalConstants.PERM_BE_EVALUATED));
-         }
-
+         Set<String> userIdsSet = evaluationService.getUserIdsTakingEvalInGroup(evaluationId, evalGroupId, includeConstant);
          if (userIdsSet.size() > 0) {
             // turn the set into an array
             String[] toUserIds = (String[]) userIdsSet.toArray(new String[] {});
@@ -368,22 +347,18 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             String message = makeEmailMessage(emailTemplate.getMessage(), eval, group, replacementValues);
             String subject = makeEmailMessage(emailTemplate.getSubject(), eval, group, replacementValues);
 
-            // store sent messages to return
-            sentMessages.add(message);
-
             // send the actual emails for this evalGroupId
-            try {
-               String[] emailAddresses = externalLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
-               log.info("Sent evaluation reminder message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
-               externalLogic.registerEntityEvent(EVENT_EMAIL_REMINDER, eval);
-            } catch (Exception e) {
-               log.error(this + ".sendEvalReminderNotifications(" + evaluationId + "," + includeConstant
-                     + ") externalLogic.sendEmails " + e);
+            String[] emailAddresses = externalLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
+            log.info("Sent evaluation reminder message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
+            // store sent emails to return
+            for (int j = 0; j < emailAddresses.length; j++) {
+               sentEmails.add(emailAddresses[j]);            
             }
+            externalLogic.registerEntityEvent(EVENT_EMAIL_REMINDER, eval);
          }
       }
 
-      return (String[]) sentMessages.toArray(new String[] {});
+      return (String[]) sentEmails.toArray(new String[] {});
    }
 
 
@@ -398,7 +373,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       EvalAssignGroup evalAssignGroup = null;
 
       /*TODO deprecated?
-       if(EvalConstants.EMAIL_INCLUDE_ALL.equals(includeConstant)) {
+       if(EvalConstants.EVAL_INCLUDE_ALL.equals(includeConstant)) {
        }
        boolean includeEvaluatees = true;
        if (includeEvaluatees) {
@@ -511,82 +486,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
    }
 
 
-   /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.EvalEmailsLogic#getNonResponders(java.lang.Long, java.lang.String)
-    */
-   public Set<String> getNonResponders(Long evaluationId, String evalGroupId) {
-      Long[] evaluationIds = { evaluationId };
-      Set<String> userIds = new HashSet<String>();
-
-      // get everyone permitted to take the evaluation
-      Set<String> ids = externalLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
-      for (Iterator<String> i = ids.iterator(); i.hasNext();) {
-         String userId = i.next();
-
-         // if this user hasn't submitted a response, add the user's id
-         // FIXME This call is BRUTALLY inefficient -AZ
-         // TODO FIX THIS!
-         if (evaluationService.getEvaluationResponses(userId, evaluationIds, null, true).isEmpty()) {
-            userIds.add(userId);
-         }
-      }
-      return userIds;
-   }
-
-
-
 
    // INTERNAL METHODS
 
-   /**
-    * INTERNAL METHOD<br/>
-    * Get all the user email addresses for this evaluation and groupId,
-    * can limit to users who have responded or not-responded
-    * 
-    * @param evaluationId
-    * @param evalGroupId
-    * @param includeConstant
-    * @param returnUserIds
-    * @return a set of email addresses
-    */
-   public Set<String> getUserEmailsForEvaluation(Long evaluationId, String evalGroupId, String includeConstant, boolean returnUserIds) {
-      log.debug("evaluationId: " + evaluationId + ", includeConstant: " + includeConstant);
-      EvalUtils.validateEmailIncludeConstant(includeConstant);
-
-      // check evaluation
-      if (! evaluationService.checkEvaluationExists(evaluationId)) {
-         throw new IllegalArgumentException("Invalid evaluation id, cannot find evaluation with this id: " + evaluationId);
-      }
-
-      // get the associated eval groups for this evaluation
-      // NOTE: this only returns the groups that should get emails, there is no need to do an additional check
-      // to see if the instructor has opted in in this case -AZ
-      Map<Long, List<EvalGroup>> evalGroupIds = evaluationService.getEvaluationGroups(new Long[] { evaluationId }, false);
-
-      // only one possible map key so we can assume evaluationId
-      List<EvalGroup> groups = evalGroupIds.get(evaluationId);
-      log.debug("Found " + groups.size() + " groups for evaluation: " + evaluationId);
-
-      Set<String> userIdsSet = new HashSet<String>();
-
-      // loop through groups and get users
-      for (int i = 0; i < groups.size(); i++) {
-         EvalGroup group = (EvalGroup) groups.get(i);
-         if (EvalConstants.GROUP_TYPE_INVALID.equals(group.type)) {
-            continue; // skip processing for invalid groups
-         }
-
-         if (EvalConstants.EMAIL_INCLUDE_NONTAKERS.equals(includeConstant)) {
-            userIdsSet.addAll(getNonResponders(evaluationId, group.evalGroupId));
-         } else if (EvalConstants.EMAIL_INCLUDE_ALL.equals(includeConstant)) {
-            userIdsSet.addAll(getNonResponders(evaluationId, group.evalGroupId));
-            userIdsSet.addAll(externalLogic.getUserIdsForEvalGroup(group.evalGroupId,
-                  EvalConstants.PERM_BE_EVALUATED));
-         }
-      }
-
-      return userIdsSet;
-   }
 
    /**
     * INTERNAL METHOD<br/>

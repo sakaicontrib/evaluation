@@ -671,6 +671,33 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       assertEquals(0, templateIds.size());
    }
 
+   public void testGetResponseUserIds() {
+      Set<String> userIds = null;
+
+      // check getting responders from complete evaluation
+      userIds = evaluationDao.getResponseUserIds(etdl.evaluationClosed.getId(), null);
+      assertNotNull(userIds);
+      assertEquals(2, userIds.size());
+      assertTrue(userIds.contains(EvalTestDataLoad.USER_ID));
+      assertTrue(userIds.contains(EvalTestDataLoad.STUDENT_USER_ID));
+
+      // test getting from subset of the groups
+      userIds = evaluationDao.getResponseUserIds(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE1_REF});
+      assertNotNull(userIds);
+      assertEquals(1, userIds.size());
+      assertTrue(userIds.contains(EvalTestDataLoad.USER_ID));
+
+      // test getting none
+      userIds = evaluationDao.getResponseUserIds(etdl.evaluationActiveUntaken.getId(), null);
+      assertNotNull(userIds);
+      assertEquals(0, userIds.size());
+
+      // test using invalid group ids retrieves no results
+      userIds = evaluationDao.getResponseUserIds(etdl.evaluationClosed.getId(), new String[] {"xxxxxx", "fakeyandnotreal"});
+      assertNotNull(userIds);
+      assertEquals(0, userIds.size());
+
+   }
 
 
    // LOCKING tests

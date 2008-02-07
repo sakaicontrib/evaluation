@@ -15,9 +15,11 @@
 package org.sakaiproject.evaluation.logic.impl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.commons.logging.Log;
@@ -189,6 +191,34 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
       }
       return state;
    }
+
+   public Set<String> getUserIdsTakingEvalInGroup(Long evaluationId, String evalGroupId,
+         String includeConstant) {
+      EvalUtils.validateEmailIncludeConstant(includeConstant);
+      Set<String> userIds = null;
+      if (EvalConstants.EVAL_INCLUDE_NONTAKERS.equals(includeConstant)) {
+         // get all users who have NOT responded
+         userIds = external.getUserIdsForEvalGroup(evalGroupId,
+               EvalConstants.PERM_TAKE_EVALUATION);
+         Set<String> respondedUserIds = dao.getResponseUserIds(evaluationId,
+               new String[] { evalGroupId });
+         // subtract responded users from the total list of users who can take to get the
+         // non-responders
+         userIds.removeAll(respondedUserIds);
+      } else if (EvalConstants.EVAL_INCLUDE_RESPONDENTS.equals(includeConstant)) {
+         // get all users who have responded
+         userIds = dao.getResponseUserIds(evaluationId, new String[] { evalGroupId });
+      } else if (EvalConstants.EVAL_INCLUDE_ALL.equals(includeConstant)) {
+         // get all users permitted to take the evaluation
+         userIds = external.getUserIdsForEvalGroup(evalGroupId,
+               EvalConstants.PERM_TAKE_EVALUATION);
+      }
+      if (userIds == null) {
+         userIds = new HashSet<String>();
+      }
+      return userIds;
+   }
+
 
    // PERMISSIONS
 

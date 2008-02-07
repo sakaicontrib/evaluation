@@ -641,7 +641,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
          EvalEvaluation eval = evaluationService.getEvaluationById(evalId);
          if (eval.getState().equals(EvalConstants.EVALUATION_STATE_ACTIVE)
                && eval.getReminderDays().intValue() != 0) {
-            String includeConstant = EvalConstants.EMAIL_INCLUDE_NONTAKERS;
+            String includeConstant = EvalConstants.EVAL_INCLUDE_NONTAKERS;
             String[] sentMessages = emails.sendEvalReminderNotifications(evalId, includeConstant);
             if (log.isDebugEnabled())
                log.debug("EvalJobLogicImpl.sendReminderEmail(" + evalId + ")" + " sentMessages: "

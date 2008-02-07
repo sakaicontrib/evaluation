@@ -14,9 +14,6 @@
 
 package org.sakaiproject.evaluation.logic;
 
-import java.util.Set;
-
-import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 /**
@@ -74,7 +71,7 @@ public interface EvalEmailsLogic {
     * uses the reminder template and the users to include can be controlled
     * 
     * @param evaluationId the id of an EvalEvaluation object
-    * @param includeConstant a constant to indicate what users should receive the notification, EMAIL_INCLUDE from {@link EvalConstants}
+    * @param includeConstant a constant to indicate what users should receive the notification, EVAL_INCLUDE_* from {@link EvalConstants}
     * @return an array of the email addresses that were sent to
     */
    public String[] sendEvalReminderNotifications(Long evaluationId, String includeConstant);
@@ -93,20 +90,5 @@ public interface EvalEmailsLogic {
     * @return an array of the email addresses that were sent to
     */
    public String[] sendEvalResultsNotifications(Long evaluationId, boolean includeEvaluatees, boolean includeAdmins, String jobType);
-
-
-   // RESPONDER CHECKS
-
-   /**
-    * Get a set of user ids of users who are in an EvalGroup assigned to
-    * this EvalEvaluation and permitted to take the evaluation but have 
-    * not yet responded.
-    * TODO - rwellis needs to add unit tests -AZ
-    * 
-    * @param evaluationId the unique id for an {@link EvalEvaluation}
-    * @param evalGroupId the internal evalGroupId (represents a site or group)
-    * @return a set of internal user ids
-    */
-   public Set<String> getNonResponders(Long evaluationId, String evalGroupId);
 
 }
