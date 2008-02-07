@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.logic;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAnswer;
@@ -26,6 +27,7 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalTemplate;
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 
 /**
@@ -81,6 +83,19 @@ public interface EvalEvaluationService {
     * @return the count of {@link EvalEvaluation} objects
     */
    public int countEvaluationsByTemplateId(Long templateId);
+
+   /**
+    * Get the list of users who are taking an evaluation in a specific group
+    * or leave out the group to get all users in the evaluation
+    * 
+    * @param evaluationId the unique id of an {@link EvalEvaluation} object
+    * @param evalGroupId the internal unique ID for an evalGroup,
+    * leave this null to include takers from the entire evaluation
+    * @param includeConstant a constant to indicate what users should be retrieved, EVAL_INCLUDE_* from {@link EvalConstants}
+    * @return a set of userIds (internal IDs)
+    */
+   public Set<String> getUserIdsTakingEvalInGroup(Long evaluationId, String evalGroupId, String includeConstant);
+
 
    // EVALUATION STATES
 

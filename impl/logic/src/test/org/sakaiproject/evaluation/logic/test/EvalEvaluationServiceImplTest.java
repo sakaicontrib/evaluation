@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.logic.test;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl;
@@ -215,6 +216,67 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
       // TODO - add tests for changing state when checked
    }
+
+   public void testGetUserIdsTakingEvalInGroup() {
+      Set<String> userIds = null;
+
+      // get all users
+      userIds = evaluationService.getUserIdsTakingEvalInGroup(etdl.evaluationClosed.getId(), 
+            EvalTestDataLoad.SITE2_REF, EvalConstants.EVAL_INCLUDE_ALL);
+      assertNotNull(userIds);
+      assertEquals(2, userIds.size());
+      assertTrue(userIds.contains(EvalTestDataLoad.USER_ID));
+      assertTrue(userIds.contains(EvalTestDataLoad.STUDENT_USER_ID));
+
+      userIds = evaluationService.getUserIdsTakingEvalInGroup(etdl.evaluationClosed.getId(), 
+            EvalTestDataLoad.SITE1_REF, EvalConstants.EVAL_INCLUDE_ALL);
+      assertNotNull(userIds);
+      assertEquals(1, userIds.size());
+      assertTrue(userIds.contains(EvalTestDataLoad.USER_ID));
+
+      // get users who have taken
+      userIds = evaluationService.getUserIdsTakingEvalInGroup(etdl.evaluationClosed.getId(), 
+            EvalTestDataLoad.SITE2_REF, EvalConstants.EVAL_INCLUDE_RESPONDENTS);
+      assertNotNull(userIds);
+      assertEquals(2, userIds.size());
+      assertTrue(userIds.contains(EvalTestDataLoad.USER_ID));
+      assertTrue(userIds.contains(EvalTestDataLoad.STUDENT_USER_ID));
+
+      userIds = evaluationService.getUserIdsTakingEvalInGroup(etdl.evaluationClosed.getId(), 
+            EvalTestDataLoad.SITE1_REF, EvalConstants.EVAL_INCLUDE_RESPONDENTS);
+      assertNotNull(userIds);
+      assertEquals(1, userIds.size());
+      assertTrue(userIds.contains(EvalTestDataLoad.USER_ID));
+
+      // get non takers
+      userIds = evaluationService.getUserIdsTakingEvalInGroup(etdl.evaluationClosed.getId(), 
+            EvalTestDataLoad.SITE2_REF, EvalConstants.EVAL_INCLUDE_NONTAKERS);
+      assertNotNull(userIds);
+      assertEquals(0, userIds.size());
+
+      userIds = evaluationService.getUserIdsTakingEvalInGroup(etdl.evaluationClosed.getId(), 
+            EvalTestDataLoad.SITE1_REF, EvalConstants.EVAL_INCLUDE_NONTAKERS);
+      assertNotNull(userIds);
+      assertEquals(0, userIds.size());
+
+      userIds = evaluationService.getUserIdsTakingEvalInGroup(etdl.evaluationNewAdmin.getId(), 
+            EvalTestDataLoad.SITE2_REF, EvalConstants.EVAL_INCLUDE_NONTAKERS);
+      assertNotNull(userIds);
+      assertEquals(2, userIds.size());
+      assertTrue(userIds.contains(EvalTestDataLoad.USER_ID));
+      assertTrue(userIds.contains(EvalTestDataLoad.STUDENT_USER_ID));
+
+      // invalid constant causes failure
+      try {
+         evaluationService.getUserIdsTakingEvalInGroup(etdl.evaluationNewAdmin.getId(), 
+               EvalTestDataLoad.SITE2_REF, EvalTestDataLoad.INVALID_CONSTANT_STRING);
+         fail("Should have thrown exception");
+      } catch (IllegalArgumentException e) {
+         assertNotNull(e);
+      }
+      
+   }
+
 
    public void testCanBeginEvaluation() {
       assertTrue( evaluationService.canBeginEvaluation(EvalTestDataLoad.ADMIN_USER_ID) );
