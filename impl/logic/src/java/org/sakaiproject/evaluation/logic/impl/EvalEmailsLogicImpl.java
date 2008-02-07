@@ -275,7 +275,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
       EvalEvaluation eval = getEvaluationOrFail(evaluationId);
       String from = getFromEmailOrFail(eval);
-      EvalEmailTemplate emailTemplate = getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_AVAILABLE, evaluationId);
+      EvalEmailTemplate emailTemplate = getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_AVAILABLE_OPT_IN, evaluationId);
 
       //get student ids
       Set<String> userIdsSet = externalLogic.getUserIdsForEvalGroup(group.evalGroupId,
@@ -310,11 +310,9 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       log.debug("evaluationId: " + evaluationId + ", includeConstant: " + includeConstant);
       EvalUtils.validateEmailIncludeConstant(includeConstant);
 
-      List<String> sentEmails = new ArrayList<String>();
-
       EvalEvaluation eval = getEvaluationOrFail(evaluationId);
       String from = getFromEmailOrFail(eval);
-      EvalEmailTemplate emailTemplate = getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_AVAILABLE, evaluationId);
+      EvalEmailTemplate emailTemplate = getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_REMINDER, evaluationId);
 
       // get the associated eval groups for this evaluation
       // NOTE: this only returns the groups that should get emails, there is no need to do an additional check
@@ -325,6 +323,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       List<EvalGroup> groups = evalGroupIds.get(evaluationId);
       log.debug("Found " + groups.size() + " groups for available evaluation: " + evaluationId);
 
+      List<String> sentEmails = new ArrayList<String>();
       // loop through groups and send emails to correct users in each
       for (int i = 0; i < groups.size(); i++) {
          EvalGroup group = (EvalGroup) groups.get(i);
@@ -369,8 +368,6 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
          boolean includeAdmins, String jobType) {
       log.debug("evaluationId: " + evaluationId + ", includeEvaluatees: " + includeEvaluatees
             + ", includeAdmins: " + includeAdmins);
-      String from = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
-      EvalAssignGroup evalAssignGroup = null;
 
       /*TODO deprecated?
        if(EvalConstants.EVAL_INCLUDE_ALL.equals(includeConstant)) {
@@ -382,49 +379,37 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
        }
        */
 
-      // get evaluation
       EvalEvaluation eval = getEvaluationOrFail(evaluationId);
-
-      // get the email template
-      EvalEmailTemplate emailTemplate = evaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_RESULTS);
-
-      if (emailTemplate == null) {
-         throw new IllegalStateException("Cannot find email template: "
-               + EvalConstants.EMAIL_TEMPLATE_RESULTS);
-      }
-
-      List<String> sentMessages = new ArrayList<String>();
+      String from = getFromEmailOrFail(eval);
+      EvalEmailTemplate emailTemplate = getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_RESULTS, evaluationId);
 
       // get the associated eval groups for this evaluation
       Map<Long, List<EvalGroup>> evalGroupIds = evaluationService.getEvaluationGroups(new Long[] { evaluationId }, false);
-
-      //get the associated eval assign groups for this evaluation
-      Map<Long, List<EvalAssignGroup>> evalAssignGroups = evaluationService.getEvaluationAssignGroups(new Long[] { evaluationId }, false);
-
       // only one possible map key so we can assume evaluationId
       List<EvalGroup> groups = evalGroupIds.get(evaluationId);
-      log.debug("Found " + groups.size() + " groups for available evaluation: " + evaluationId);
+      if (log.isDebugEnabled()) log.debug("Found " + groups.size() + " groups for available evaluation: " + evaluationId);
+      Map<String, EvalGroup> groupsMap = new HashMap<String, EvalGroup>();
+      for (EvalGroup evalGroup : groups) {
+         groupsMap.put(evalGroup.evalGroupId, evalGroup);
+      }
+
+      // get the associated eval assign groups for this evaluation
+      Map<Long, List<EvalAssignGroup>> evalAssignGroups = evaluationService.getEvaluationAssignGroups(new Long[] { evaluationId }, false);
+      // only one possible map key so we can assume evaluationId
       List<EvalAssignGroup> assignGroups = evalAssignGroups.get(evaluationId);
-      log.debug("Found " + assignGroups.size() + " assign groups for available evaluation: " + evaluationId);
+      if (log.isDebugEnabled()) log.debug("Found " + assignGroups.size() + " assign groups for available evaluation: " + evaluationId);
 
-      Set<String> userIdsSet = new HashSet<String>();
-
+      List<String> sentEmails = new ArrayList<String>();
       // loop through groups and send emails to correct users in each evalGroupId
-      for (int i = 0; i < groups.size(); i++) {
-         EvalGroup group = (EvalGroup) groups.get(i);
-         if (EvalConstants.GROUP_TYPE_INVALID.equals(group.type)) {
-            continue; // skip processing for invalid groups
+      for (int i = 0; i < assignGroups.size(); i++) {
+         EvalAssignGroup evalAssignGroup = assignGroups.get(i);
+         String evalGroupId = evalAssignGroup.getEvalGroupId();
+         EvalGroup group = groupsMap.get(evalGroupId);
+         if ( group == null ||
+               EvalConstants.GROUP_TYPE_INVALID.equals(group.type) ) {
+            log.warn("Invalid group returned for groupId ("+evalGroupId+"), could not send results notifications");
+            continue;
          }
-
-         //get EvalAssignGroup to check studentViewResults, instructorViewResults
-         for (Iterator<EvalAssignGroup> j = assignGroups.iterator(); j.hasNext();) {
-            EvalAssignGroup assignGroup = j.next();
-            if (group.evalGroupId.equals(assignGroup.getEvalGroupId())) {
-               evalAssignGroup = assignGroup;
-            }
-         }
-
-         userIdsSet.clear();
 
          /*
           * Notification of results may occur on separate dates for owner,
@@ -433,24 +418,26 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
           */
 
          //always send results email to eval.getOwner()
+         Set<String> userIdsSet = new HashSet<String>();
          if (jobType.equals(EvalConstants.JOB_TYPE_VIEWABLE)) {
             userIdsSet.add(eval.getOwner());
          }
 
          //if results are not private
          if (!eval.getResultsPrivate().booleanValue()) {
-
             //at present, includeAdmins is always true
-            if (includeAdmins && evalAssignGroup.getInstructorsViewResults().booleanValue()
-                  && jobType.equals(EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS)) {
-               userIdsSet.addAll(externalLogic.getUserIdsForEvalGroup(group.evalGroupId,
+            if (includeAdmins && 
+                  evalAssignGroup.getInstructorsViewResults().booleanValue() &&
+                  jobType.equals(EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS)) {
+               userIdsSet.addAll(externalLogic.getUserIdsForEvalGroup(evalGroupId,
                      EvalConstants.PERM_BE_EVALUATED));
             }
 
             //at present, includeEvaluatees is always true
-            if (includeEvaluatees && evalAssignGroup.getStudentsViewResults().booleanValue()
-                  && jobType.equals(EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS)) {
-               userIdsSet.addAll(externalLogic.getUserIdsForEvalGroup(group.evalGroupId,
+            if (includeEvaluatees && 
+                  evalAssignGroup.getStudentsViewResults().booleanValue() &&
+                  jobType.equals(EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS)) {
+               userIdsSet.addAll(externalLogic.getUserIdsForEvalGroup(evalGroupId,
                      EvalConstants.PERM_TAKE_EVALUATION));
             }
          }
@@ -460,7 +447,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             String[] toUserIds = (String[]) userIdsSet.toArray(new String[] {});
             log.debug("Found " + toUserIds.length + " users (" + toUserIds + ") to send "
                   + EvalConstants.EMAIL_TEMPLATE_RESULTS + " notification to for available evaluation ("
-                  + evaluationId + ") and group (" + group.evalGroupId + ")");
+                  + evaluationId + ") and group (" + evalGroupId + ")");
 
             // replace the text of the template with real values
             Map<String, String> replacementValues = new HashMap<String, String>();
@@ -468,21 +455,17 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             String message = makeEmailMessage(emailTemplate.getMessage(), eval, group, replacementValues);
             String subject = makeEmailMessage(emailTemplate.getSubject(), eval, group, replacementValues);
 
-            // store sent messages to return
-            sentMessages.add(message);
-
             // send the actual emails for this evalGroupId
-            try {
-               String[] emailAddresses = externalLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
-               log.info("Sent evaluation results message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
-               externalLogic.registerEntityEvent(EVENT_EMAIL_RESULTS, eval);
-            } catch (Exception e) {
-               log.error(this + ".sendEvalResultsNotifications(" + evaluationId + "," + includeEvaluatees
-                     + "," + includeAdmins + ") externalLogic.sendEmails " + e);
+            String[] emailAddresses = externalLogic.sendEmailsToUsers(from, toUserIds, subject, message, true);
+            log.info("Sent evaluation results message to " + emailAddresses.length + " users (attempted to send to "+toUserIds.length+")");
+            // store sent emails to return
+            for (int j = 0; j < emailAddresses.length; j++) {
+               sentEmails.add(emailAddresses[j]);            
             }
+            externalLogic.registerEntityEvent(EVENT_EMAIL_RESULTS, eval);
          }
       }
-      return (String[]) sentMessages.toArray(new String[] {});
+      return (String[]) sentEmails.toArray(new String[] {});
    }
 
 
