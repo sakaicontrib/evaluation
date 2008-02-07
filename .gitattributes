@@ -18,6 +18,8 @@ api/logic/src/java/org/sakaiproject/evaluation/logic/entity/EvaluationEntityProv
 api/logic/src/java/org/sakaiproject/evaluation/logic/entity/ItemEntityProvider.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/logic/src/java/org/sakaiproject/evaluation/logic/entity/TemplateEntityProvider.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/entity/TemplateItemEntityProvider.java svn_keywords=Date+Revision+Author+HeadURL+Id
+api/logic/src/java/org/sakaiproject/evaluation/logic/exceptions/UniqueFieldException.java svn_keywords=Date+Revision+Author+HeadURL+Id
+api/logic/src/java/org/sakaiproject/evaluation/logic/exceptions/UserMessage.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/EvalImport.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/EvalImportJob.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/externals/EvalImportLogic.java -text
@@ -145,7 +147,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/ScaleBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/TakeEvalBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/TemplateBBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/bundle/messages.properties -text
-tool/src/java/org/sakaiproject/evaluation/tool/bundle/messages_en.properties -text
+tool/src/java/org/sakaiproject/evaluation/tool/bundle/messages_en_GB.properties -text
 tool/src/java/org/sakaiproject/evaluation/tool/inferrers/EvalCategoryVPInferrer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/inferrers/EvaluationVPInferrer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/inferrers/ItemVPInferrer.java svn_keywords=Date+Revision+Author+HeadURL+Id

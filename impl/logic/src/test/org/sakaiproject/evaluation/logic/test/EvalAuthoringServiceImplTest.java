@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.exceptions.UniqueFieldException;
 import org.sakaiproject.evaluation.logic.impl.EvalAuthoringServiceImpl;
 import org.sakaiproject.evaluation.logic.impl.EvalSecurityChecks;
 import org.sakaiproject.evaluation.model.EvalItem;
@@ -2176,8 +2177,10 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
                EvalTestDataLoad.NOT_EXPERT), 
                EvalTestDataLoad.MAINT_USER_ID);
          fail("Should have thrown exception");
-      } catch (IllegalArgumentException e) {
-         assertNotNull(e);
+      } catch (UniqueFieldException e) {
+         assertNotNull(e.getMessage());
+         assertNotNull(e.fieldName);
+         assertNotNull(e.fieldValue);
       }
 
    }

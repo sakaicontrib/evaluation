@@ -45,7 +45,8 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * view to start creating a template and for modifying the template settings
  * (title, description, sharing)
  * 
- * @author: Kapil Ahuja (kahuja@vt.edu)
+ * @author Kapil Ahuja (kahuja@vt.edu)
+ * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
 public class ModifyTemplateProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
 
@@ -100,9 +101,6 @@ public class ModifyTemplateProducer implements ViewComponentProducer, ViewParams
 		UIMessage.make(form, "description-note", "modifytemplatetitledesc.description.note");
 		UIMessage.make(form, "sharing-note", "modifytemplatetitledesc.sharing.note");
 
-		UICommand.make(form, "addContinue", UIMessage.make("modifytemplatetitledesc.save.button"),
-				"#{templateBBean.updateTemplateTitleDesc}");
-
 		UIInput.make(form, "title", templateOTP + "title");
 		UIInput.make(form, "description", templateOTP + "description");
 
@@ -149,6 +147,9 @@ public class ModifyTemplateProducer implements ViewComponentProducer, ViewParams
 			// Displaying the sharing label
 			UIMessage.make(form, "sharingValueToDisplay", sharingkey);
 		}
+
+      UICommand.make(form, "addContinue", UIMessage.make("modifytemplatetitledesc.save.button"),
+            "#{templateBBean.updateTemplateTitleDesc}");
 
 		UIMessage.make(form, "cancel-button", "general.cancel.button");
 	}
