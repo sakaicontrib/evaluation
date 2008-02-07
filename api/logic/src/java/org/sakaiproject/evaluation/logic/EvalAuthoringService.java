@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.logic;
 
 import java.util.List;
 
+import org.sakaiproject.evaluation.logic.exceptions.UniqueFieldException;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
@@ -65,6 +66,7 @@ public interface EvalAuthoringService {
     * 
     * @param scale a scale object to be saved
     * @param userId the internal user id (not username)
+    * @throws UniqueFieldException is this scale title is already in use and this is not an adhoc scale
     */
    public void saveScale(EvalScale scale, String userId);
 
@@ -435,6 +437,7 @@ public interface EvalAuthoringService {
     * 
     * @param template the object to be saved
     * @param userId the internal user id (not username)
+    * @throws UniqueFieldException is this template title is already in use
     */
    public void saveTemplate(EvalTemplate template, String userId);
 

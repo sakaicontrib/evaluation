@@ -45,8 +45,9 @@ public class EvalSettingsImpl implements EvalSettings {
     */
    public void init() {
       log.debug("init");
-      
-      if (evaluationDao.countAll(EvalConfig.class) > 0) {
+      int count = evaluationDao.countAll(EvalConfig.class);
+      if (count > 0) {
+         log.info("Updating boolean evaluation system settings to ensure they are not null...");
          // check the existing boolean settings for null values and fix them if they are null
          checkBooleanSetting(DISPLAY_HIERARCHY_OPTIONS);
          checkBooleanSetting(DISPLAY_HIERARCHY_HEADERS);

@@ -119,6 +119,7 @@
    <bean id="templateBeanLocator"
       class="org.sakaiproject.evaluation.tool.locators.TemplateBeanLocator">
       <property name="localTemplateLogic" ref="localTemplateLogic" />
+      <property name="messages" ref="targettedMessageList" />
    </bean>
 
    <bean id="templateItemWBL"
