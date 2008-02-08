@@ -9,6 +9,8 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
  * The Answer object holds answers for a single item and a single response
  * It has special fields for handling and storing multiple answers that are
  * not persisted but are populated by the logic layer<br/>
+ * <b>NOTE:</b> Only answers which have been filled in or set to N/A are saved in the database,
+ * if the user leaves an answer blank it is not saved<br/>
  * <b>NOTE:</b> In order to properly store the answers, we have to fill in every answer
  * field when saving them. Those fields are {@link #numeric}, {@link #text}, and {@link #multiAnswerCode}<br/>
  * You should ignore the various blanks which are inserted when retrieving answers, 

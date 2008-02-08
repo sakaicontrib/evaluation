@@ -130,10 +130,15 @@ public interface EvalSettings {
     */
    public static final String EVAL_RECENTLY_CLOSED_DAYS = "EVAL_RECENTLY_CLOSED_DAYS:java.lang.Integer";
    /**
-    * CONSTANT: Allow users to set the stop date when creating evaluationSetupService - {@link Boolean}, default False<br/>
+    * CONSTANT: Allow users to set the stop date when creating evaluations - {@link Boolean}, default False<br/>
     * <b>Note:</b> Stop date should default to the due date when the user cannot set it
     */
    public static final String EVAL_USE_STOP_DATE = "EVAL_USE_STOP_DATE:java.lang.Boolean";
+   /**
+    * CONSTANT: Allow users to set the view date when creating evaluations - {@link Boolean}, default False<br/>
+    * <b>Note:</b> View date should default to the due date + 1 minute when the user cannot set it
+    */
+   public static final String EVAL_USE_VIEW_DATE = "EVAL_USE_VIEW_DATE:java.lang.Boolean";
    /**
     * CONSTANT: Users must use same view dates for all users looking at evaluation results - {@link Boolean}, default True<br/>
     * <b>Note:</b> If this is FALSE/NULL then the custom date boxes appear and are used (otherwise only the global view date is used)

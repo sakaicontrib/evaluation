@@ -22,6 +22,7 @@ import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
+import org.sakaiproject.evaluation.logic.utils.ArrayUtils;
 import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -134,8 +135,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
             new ItemViewParameters(ModifyItemProducer.VIEW_ID, EvalConstants.ITEM_TYPE_MULTIPLEANSWER, templateId),
             new ItemViewParameters(ModifyItemProducer.VIEW_ID, EvalConstants.ITEM_TYPE_TEXT, templateId),
             new ItemViewParameters(ModifyItemProducer.VIEW_ID, EvalConstants.ITEM_TYPE_HEADER, templateId),
-            new TemplateItemViewParameters(ExistingItemsProducer.VIEW_ID, templateId, null),
-            new TemplateItemViewParameters(ExpertCategoryProducer.VIEW_ID, templateId, null)
+            new TemplateItemViewParameters(ExistingItemsProducer.VIEW_ID, templateId, null)
       };
       String[] templateItemLabels = new String[] {
             "item.classification.scaled", 
@@ -143,9 +143,15 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
             "item.classification.multianswer",
             "item.classification.text",
             "item.classification.header", 
-            "item.classification.existing",
-            "item.classification.expert"
+            "item.classification.existing"
       };
+      Boolean useExpertItems = (Boolean) evalSettings.get(EvalSettings.USE_EXPERT_ITEMS);
+      if (useExpertItems) {
+         ArrayUtils.appendArray(templateItemVPs, 
+               new TemplateItemViewParameters(ExpertCategoryProducer.VIEW_ID, templateId, null) );
+         ArrayUtils.appendArray(templateItemLabels, "item.classification.expert");
+      }
+
       addItemControlRenderer.renderControl(tofill, "add-item-control:", 
             templateItemVPs, templateItemLabels, 
             UIMessage.make("modifytemplate.add.item.button"), templateId);

@@ -52,6 +52,8 @@ public class EvalSettingsImpl implements EvalSettings {
          checkBooleanSetting(DISPLAY_HIERARCHY_OPTIONS);
          checkBooleanSetting(DISPLAY_HIERARCHY_HEADERS);
          checkBooleanSetting(ITEM_USE_RESULTS_SHARING);
+         checkBooleanSetting(EVAL_USE_STOP_DATE);
+         checkBooleanSetting(EVAL_USE_VIEW_DATE);
          checkBooleanSetting(USE_EXPERT_ITEMS);
          checkBooleanSetting(USE_EXPERT_TEMPLATES);
          checkBooleanSetting(REQUIRE_COMMENTS_BLOCK);
