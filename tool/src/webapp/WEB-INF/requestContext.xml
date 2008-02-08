@@ -460,6 +460,7 @@
       <property name="settings"
          ref="org.sakaiproject.evaluation.logic.EvalSettings" />
       <property name="locale" ref="requestLocale" />
+      <property name="evaluationCalcUtility" ref="EvaluationCalcUtility" />
    </bean>
 
    <bean

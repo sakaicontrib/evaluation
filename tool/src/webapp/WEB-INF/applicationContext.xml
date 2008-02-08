@@ -198,16 +198,21 @@
 
 	<bean id="XLSReportExporter" class="org.sakaiproject.evaluation.tool.reporting.XLSReportExporter">
         <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
-		<property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
-		<property name="deliveryService" ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
+		<property name="evaluationCalcUtility" ref="EvaluationCalcUtility" />
 	</bean>
 
 	<bean id="PDFReportExporter" class="org.sakaiproject.evaluation.tool.reporting.PDFReportExporter">
         <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
         <property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
-        <property name="deliveryService" ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
-		<property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+        <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 		<property name="contentHostingService" ref="org.sakaiproject.content.api.ContentHostingService" />
+		<property name="evaluationCalcUtility" ref="EvaluationCalcUtility" />
+	</bean>
+	
+	<bean id="EvaluationCalcUtility" class="org.sakaiproject.evaluation.tool.utils.EvaluationCalcUtility">
+		<property name="deliveryService" ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
+		<property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+		<property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 	</bean>
 
 </beans>

@@ -222,6 +222,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/reporting/LikertPercentageItemLab
 tool/src/java/org/sakaiproject/evaluation/tool/reporting/PDFReportExporter.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/reporting/ReportHandlerHook.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/reporting/XLSReportExporter.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/utils/EvaluationCalcUtility.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/utils/HierarchyRenderUtil.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/utils/RSFUtils.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/utils/ScaledUtils.java -text
