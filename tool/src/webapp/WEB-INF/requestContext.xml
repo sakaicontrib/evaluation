@@ -105,6 +105,7 @@
       <property name="csvReportExporter" ref="CSVReportExporter" />
       <property name="xlsReportExporter" ref="XLSReportExporter" />
       <property name="pdfReportExporter" ref="PDFReportExporter" />
+      <property name="response" ref="httpServletResponse" />
    </bean>
 
 

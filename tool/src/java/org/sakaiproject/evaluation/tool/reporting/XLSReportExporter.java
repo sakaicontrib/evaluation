@@ -1,6 +1,7 @@
 package org.sakaiproject.evaluation.tool.reporting;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,16 +45,10 @@ public class XLSReportExporter {
       this.deliveryService = deliveryService;
    }
 
-   private HttpServletResponse response;
-   public void setResponse(HttpServletResponse response) {
-      this.response = response;
-   }
-
-
    public void respondWithExcel(EvalEvaluation evaluation, EvalTemplate template,
          List<EvalItem> allEvalItems, List<EvalTemplateItem> allEvalTemplateItems,
          List<String> topRow, List<List<String>> responseRows, int numOfResponses,
-         String[] groupIDs) {
+         String[] groupIDs, OutputStream outputStream) {
       HSSFWorkbook wb = new HSSFWorkbook();
       HSSFSheet sheet = wb.createSheet("First Sheet");
 
@@ -160,13 +155,11 @@ public class XLSReportExporter {
          }
       }
 
-      response.setContentType("application/vnd.ms-excel");
-      response.setHeader("Content-disposition", "inline");
-      response.setHeader("filename", "report.xls");
+      
 
       // dump the output to the response stream
       try {
-         wb.write(response.getOutputStream());
+         wb.write(outputStream);
       } catch (IOException e) {
          throw UniversalRuntimeException.accumulate(e, "Could not get Writer to dump output to csv");
       }

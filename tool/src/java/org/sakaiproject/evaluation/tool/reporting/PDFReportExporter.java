@@ -1,5 +1,6 @@
 package org.sakaiproject.evaluation.tool.reporting;
 
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ import com.lowagie.text.Element;
 import com.lowagie.text.Image;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
 
 public class PDFReportExporter {
    private static Log log = LogFactory.getLog(PDFReportExporter.class);
@@ -63,10 +65,10 @@ public class PDFReportExporter {
    public void respondWithPDF(EvalEvaluation evaluation, EvalTemplate template,
          List<EvalItem> allEvalItems, List<EvalTemplateItem> allEvalTemplateItems,
          List<String> topRow, List<List<String>> responseRows, int numOfResponses,
-         String[] groupIDs) {
+         String[] groupIDs, OutputStream outputStream) {
       Document document = new Document();
       try {
-         //PdfWriter writer = PdfWriter.getInstance(document, response.getOutputStream());
+         PdfWriter writer = PdfWriter.getInstance(document, outputStream);
          document.open();
 
          // make a standard place in the eval webapp to put your custom image
@@ -119,7 +121,7 @@ public class PDFReportExporter {
          }
          table.addCell(groupsCellContents);
          document.add(table);
-
+/*
          for (int i = 0; i < topRow.size(); i++) {
             String plainQuestionText = FormattedText.convertFormattedTextToPlaintext(topRow.get(i));
             Paragraph question = new Paragraph((i+1) + ". " + plainQuestionText);
@@ -166,7 +168,7 @@ public class PDFReportExporter {
             //    
             //}
          }
-
+*/
          document.close();
       } catch (DocumentException e) {
          throw UniversalRuntimeException.accumulate(e, "Error creating PDF Export");

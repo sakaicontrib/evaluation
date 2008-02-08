@@ -14,9 +14,13 @@
 
 package org.sakaiproject.evaluation.tool.reporting;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -85,6 +89,11 @@ public class ReportHandlerHook implements HandlerHook {
    private ViewParameters viewparams;
    public void setViewparams(ViewParameters viewparams) {
       this.viewparams = viewparams;
+   }
+   
+   private HttpServletResponse response;
+   public void setResponse(HttpServletResponse response) {
+      this.response = response;
    }
 
    /* (non-Javadoc)
@@ -158,7 +167,7 @@ public class ReportHandlerHook implements HandlerHook {
                   || TemplateItemUtils.getTemplateItemType(tempItem1).equals(EvalConstants.ITEM_TYPE_MULTIPLECHOICE)) {
 
                //add the item description to the top row
-               // TODO: This is now rich text, needs flattening/rendering
+               // This is rich text, each particular output format can decide if it needs to be flattened.
                topRow.add(item1.getItemText());
                allEvalItems.add(item1);
 
@@ -206,16 +215,36 @@ public class ReportHandlerHook implements HandlerHook {
          }
       }
 
+      OutputStream resultsOutputStream = null;
+      try {
+         resultsOutputStream = response.getOutputStream(); 
+      }
+      catch (IOException ioe) {
+         throw UniversalRuntimeException.accumulate(ioe, "Unable to get response stream for Evaluation Results Export");
+      }
+      
+      // Response Headers that are the same for all Output types
+      response.setHeader("Content-disposition", "inline");
+      
       if (drvp instanceof CSVReportViewParams) {
-         csvReportExporter.respondWithCSV(topRow, responseRows, numOfResponses);
+         response.setContentType("text/x-csv");
+         response.setHeader("filename", "report.csv");
+         csvReportExporter.respondWithCSV(topRow, responseRows, numOfResponses, 
+               resultsOutputStream);
       }
       else if (drvp instanceof ExcelReportViewParams) {
+         response.setContentType("application/vnd.ms-excel");
+         response.setHeader("filename", "report.xls");
          xlsReportExporter.respondWithExcel(evaluation, template, allEvalItems, 
-               allEvalTemplateItems, topRow, responseRows, numOfResponses, drvp.groupIds);
+               allEvalTemplateItems, topRow, responseRows, numOfResponses, drvp.groupIds,
+               resultsOutputStream);
       }
       else if (drvp instanceof PDFReportViewParams) {
+         response.setContentType("application/pdf");
+         response.setHeader("filename", "report.pdf");
          pdfReportExporter.respondWithPDF(evaluation, template, allEvalItems, 
-               allEvalTemplateItems, topRow, responseRows, numOfResponses, drvp.groupIds);
+               allEvalTemplateItems, topRow, responseRows, numOfResponses, drvp.groupIds,
+               resultsOutputStream);
       }
       return true;
    }
