@@ -12,7 +12,7 @@
  * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
  */
 
-package org.sakaiproject.evaluation.tool;
+package org.sakaiproject.evaluation.tool.reporting;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,9 +31,6 @@ import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
-import org.sakaiproject.evaluation.tool.reporting.CSVReportExporter;
-import org.sakaiproject.evaluation.tool.reporting.PDFReportExporter;
-import org.sakaiproject.evaluation.tool.reporting.XLSReportExporter;
 import org.sakaiproject.evaluation.tool.viewparams.CSVReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.DownloadReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.ExcelReportViewParams;
