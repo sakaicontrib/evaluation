@@ -38,7 +38,7 @@ public class EvalAnswer implements java.io.Serializable {
     * use {@link EvalUtils#decodeMultipleAnswers(String)} to populate this array
     * using the encoded string in {@link #multiAnswerCode}
     */
-   public int[] multipleAnswers;
+   public Integer[] multipleAnswers;
 
 
    // Constructors

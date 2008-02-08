@@ -663,23 +663,23 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl#getEvaluationResponseForUserAndGroup(java.lang.Long, java.lang.String, java.lang.String)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl#getResponseForUserAndGroup(java.lang.Long, java.lang.String, java.lang.String)}.
     */
    public void testGetEvaluationResponseForUserAndGroup() {
       EvalResponse response = null;
 
       // check retrieving an existing responses
-      response = evaluationService.getEvaluationResponseForUserAndGroup(etdl.evaluationClosed.getId(), EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE1_REF);
+      response = evaluationService.getResponseForUserAndGroup(etdl.evaluationClosed.getId(), EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE1_REF);
       assertNotNull(response);
       assertEquals(etdl.response2.getId(), response.getId());
 
       // check creating a new response
-      response = evaluationService.getEvaluationResponseForUserAndGroup(etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE1_REF);
+      response = evaluationService.getResponseForUserAndGroup(etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE1_REF);
       assertNull(response);
 
       // test invalid params fails
       try {
-         evaluationService.getEvaluationResponseForUserAndGroup(EvalTestDataLoad.INVALID_LONG_ID, EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE1_REF);
+         evaluationService.getResponseForUserAndGroup(EvalTestDataLoad.INVALID_LONG_ID, EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE1_REF);
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
          assertNotNull(e);
@@ -690,14 +690,14 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       List<Long> l = null;
 
       // retrieve all response Ids for an evaluation
-      l = evaluationService.getEvalResponseIds(etdl.evaluationClosed.getId(), null, true);
+      l = evaluationService.getResponseIds(etdl.evaluationClosed.getId(), null, true);
       assertNotNull(l);
       assertEquals(3, l.size());
       assertTrue(l.contains( etdl.response2.getId() ));
       assertTrue(l.contains( etdl.response3.getId() ));
       assertTrue(l.contains( etdl.response6.getId() ));
 
-      l = evaluationService.getEvalResponseIds(etdl.evaluationClosed.getId(), new String[] {}, true);
+      l = evaluationService.getResponseIds(etdl.evaluationClosed.getId(), new String[] {}, true);
       assertNotNull(l);
       assertEquals(3, l.size());
       assertTrue(l.contains( etdl.response2.getId() ));
@@ -705,7 +705,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       assertTrue(l.contains( etdl.response6.getId() ));
 
       // retrieve all response Ids for an evaluation using all groups
-      l = evaluationService.getEvalResponseIds(etdl.evaluationClosed.getId(), 
+      l = evaluationService.getResponseIds(etdl.evaluationClosed.getId(), 
             new String[] {EvalTestDataLoad.SITE1_REF, EvalTestDataLoad.SITE2_REF}, true);
       assertNotNull(l);
       assertEquals(3, l.size());
@@ -714,48 +714,48 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       assertTrue(l.contains( etdl.response6.getId() ));
 
       // test retrieval of all responses for an evaluation
-      l = evaluationService.getEvalResponseIds(etdl.evaluationClosed.getId(), 
+      l = evaluationService.getResponseIds(etdl.evaluationClosed.getId(), 
             new String[] {EvalTestDataLoad.SITE1_REF, EvalTestDataLoad.SITE2_REF}, null);
       assertNotNull(l);
       assertEquals(3, l.size());
 
       // test retrieval of incomplete responses for an evaluation
-      l = evaluationService.getEvalResponseIds(etdl.evaluationClosed.getId(), 
+      l = evaluationService.getResponseIds(etdl.evaluationClosed.getId(), 
             new String[] {EvalTestDataLoad.SITE1_REF, EvalTestDataLoad.SITE2_REF}, false);
       assertNotNull(l);
       assertEquals(0, l.size());
 
       // retrieve all response Ids for an evaluation in one group only
-      l = evaluationService.getEvalResponseIds(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE1_REF}, true);
+      l = evaluationService.getResponseIds(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE1_REF}, true);
       assertNotNull(l);
       assertEquals(1, l.size());
       assertTrue(l.contains( etdl.response2.getId() ));
 
       // retrieve all response Ids for an evaluation in one group only
-      l = evaluationService.getEvalResponseIds(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE2_REF}, true);
+      l = evaluationService.getResponseIds(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE2_REF}, true);
       assertNotNull(l);
       assertEquals(2, l.size());
       assertTrue(l.contains( etdl.response3.getId() ));
       assertTrue(l.contains( etdl.response6.getId() ));
 
-      l = evaluationService.getEvalResponseIds(etdl.evaluationActive.getId(), new String[] {EvalTestDataLoad.SITE1_REF}, true);
+      l = evaluationService.getResponseIds(etdl.evaluationActive.getId(), new String[] {EvalTestDataLoad.SITE1_REF}, true);
       assertNotNull(l);
       assertEquals(1, l.size());
       assertTrue(l.contains( etdl.response1.getId() ));
 
       // try to get responses for an eval group that is not associated with this eval
-      l = evaluationService.getEvalResponseIds(etdl.evaluationActive.getId(), new String[] {EvalTestDataLoad.SITE2_REF}, true);
+      l = evaluationService.getResponseIds(etdl.evaluationActive.getId(), new String[] {EvalTestDataLoad.SITE2_REF}, true);
       assertNotNull(l);
       assertEquals(0, l.size());
 
       // try to get responses for an eval with no responses
-      l = evaluationService.getEvalResponseIds(etdl.evaluationActiveUntaken.getId(), null, true);
+      l = evaluationService.getResponseIds(etdl.evaluationActiveUntaken.getId(), null, true);
       assertNotNull(l);
       assertEquals(0, l.size());
 
       // check that invalid eval ids cause failure
       try {
-         l = evaluationService.getEvalResponseIds( EvalTestDataLoad.INVALID_LONG_ID, null, true);
+         l = evaluationService.getResponseIds( EvalTestDataLoad.INVALID_LONG_ID, null, true);
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
          assertNotNull(e);
@@ -764,14 +764,14 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl#getEvaluationResponses(java.lang.String, java.lang.Long[], java.lang.String, java.lang.Boolean)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl#getResponses(java.lang.String, java.lang.Long[], java.lang.String, java.lang.Boolean)}.
     */
    public void testGetEvaluationResponses() {
       List<EvalResponse> l = null;
       List<Long> ids = null;
 
       // retrieve response objects for all fields known
-      l = evaluationService.getEvaluationResponses(EvalTestDataLoad.USER_ID, 
+      l = evaluationService.getResponses(EvalTestDataLoad.USER_ID, 
             new Long[] { etdl.evaluationClosed.getId() }, new String[] {EvalTestDataLoad.SITE1_REF}, true);
       assertNotNull(l);
       assertEquals(1, l.size());
@@ -779,7 +779,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       assertTrue(ids.contains( etdl.response2.getId() ));
 
       // retrieve all responses for a user in an evaluation
-      l = evaluationService.getEvaluationResponses(EvalTestDataLoad.USER_ID, 
+      l = evaluationService.getResponses(EvalTestDataLoad.USER_ID, 
             new Long[] { etdl.evaluationClosed.getId() }, null, true);
       assertNotNull(l);
       assertEquals(2, l.size());
@@ -788,14 +788,14 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       assertTrue(ids.contains( etdl.response6.getId() ));
 
       // retrieve one response for a normal user in one eval
-      l = evaluationService.getEvaluationResponses(EvalTestDataLoad.USER_ID, 
+      l = evaluationService.getResponses(EvalTestDataLoad.USER_ID, 
             new Long[] { etdl.evaluationActive.getId() }, null, true );
       assertNotNull(l);
       assertEquals(1, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
       assertTrue(ids.contains( etdl.response1.getId() ));
 
-      l = evaluationService.getEvaluationResponses(EvalTestDataLoad.STUDENT_USER_ID, 
+      l = evaluationService.getResponses(EvalTestDataLoad.STUDENT_USER_ID, 
             new Long[] { etdl.evaluationClosed.getId() }, null, true );
       assertNotNull(l);
       assertEquals(1, l.size());
@@ -803,7 +803,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       assertTrue(ids.contains( etdl.response3.getId() ));
 
       // check that empty array is ok for eval group ids
-      l = evaluationService.getEvaluationResponses(EvalTestDataLoad.USER_ID, 
+      l = evaluationService.getResponses(EvalTestDataLoad.USER_ID, 
             new Long[] { etdl.evaluationActive.getId() }, new String[] {}, true );
       assertNotNull(l);
       assertEquals(1, l.size());
@@ -811,7 +811,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       assertTrue(ids.contains( etdl.response1.getId() ));
 
       // retrieve all responses for a normal user in one eval
-      l = evaluationService.getEvaluationResponses(EvalTestDataLoad.USER_ID, 
+      l = evaluationService.getResponses(EvalTestDataLoad.USER_ID, 
             new Long[] { etdl.evaluationClosed.getId() }, null, true );
       assertNotNull(l);
       assertEquals(2, l.size());
@@ -820,7 +820,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       assertTrue(ids.contains( etdl.response6.getId() ));
 
       // limit retrieval by eval groups ids
-      l = evaluationService.getEvaluationResponses(EvalTestDataLoad.USER_ID, 
+      l = evaluationService.getResponses(EvalTestDataLoad.USER_ID, 
             new Long[] { etdl.evaluationClosed.getId() }, new String[] {EvalTestDataLoad.SITE1_REF}, true );
       assertNotNull(l);
       assertEquals(1, l.size());
@@ -828,7 +828,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       assertTrue(ids.contains( etdl.response2.getId() ));
 
       // retrieve all responses for a normal user in mutliple evals
-      l = evaluationService.getEvaluationResponses(EvalTestDataLoad.USER_ID, 
+      l = evaluationService.getResponses(EvalTestDataLoad.USER_ID, 
             new Long[] { etdl.evaluationActive.getId(), etdl.evaluationClosed.getId(), etdl.evaluationViewable.getId() }, null, true );
       assertNotNull(l);
       assertEquals(4, l.size());
@@ -839,30 +839,30 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       assertTrue(ids.contains( etdl.response6.getId() ));
 
       // attempt to retrieve all responses
-      l = evaluationService.getEvaluationResponses(EvalTestDataLoad.USER_ID, 
+      l = evaluationService.getResponses(EvalTestDataLoad.USER_ID, 
             new Long[] { etdl.evaluationActive.getId(), etdl.evaluationClosed.getId(), etdl.evaluationViewable.getId() }, null, null );
       assertNotNull(l);
       assertEquals(4, l.size());
 
       // attempt to retrieve all incomplete responses (there are none)
-      l = evaluationService.getEvaluationResponses(EvalTestDataLoad.USER_ID, 
+      l = evaluationService.getResponses(EvalTestDataLoad.USER_ID, 
             new Long[] { etdl.evaluationActive.getId(), etdl.evaluationClosed.getId(), etdl.evaluationViewable.getId() }, null, false );
       assertNotNull(l);
       assertEquals(0, l.size());
 
       // attempt to retrieve results for user that has no responses
-      l = evaluationService.getEvaluationResponses(EvalTestDataLoad.STUDENT_USER_ID, 
+      l = evaluationService.getResponses(EvalTestDataLoad.STUDENT_USER_ID, 
             new Long[] { etdl.evaluationActive.getId() }, null, true );
       assertNotNull(l);
       assertEquals(0, l.size());
 
-      l = evaluationService.getEvaluationResponses(EvalTestDataLoad.MAINT_USER_ID, 
+      l = evaluationService.getResponses(EvalTestDataLoad.MAINT_USER_ID, 
             new Long[] { etdl.evaluationActive.getId(), etdl.evaluationClosed.getId(), etdl.evaluationViewable.getId() }, null, true );
       assertNotNull(l);
       assertEquals(0, l.size());
 
       // test that admin can fetch all results for evaluationSetupService
-      l = evaluationService.getEvaluationResponses(EvalTestDataLoad.ADMIN_USER_ID, 
+      l = evaluationService.getResponses(EvalTestDataLoad.ADMIN_USER_ID, 
             new Long[] { etdl.evaluationActive.getId(), etdl.evaluationClosed.getId(), etdl.evaluationViewable.getId() }, null, true );
       assertNotNull(l);
       assertEquals(6, l.size());
@@ -874,7 +874,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       assertTrue(ids.contains( etdl.response5.getId() ));
       assertTrue(ids.contains( etdl.response6.getId() ));
 
-      l = evaluationService.getEvaluationResponses(EvalTestDataLoad.ADMIN_USER_ID, 
+      l = evaluationService.getResponses(EvalTestDataLoad.ADMIN_USER_ID, 
             new Long[] { etdl.evaluationViewable.getId() }, null, true );
       assertNotNull(l);
       assertEquals(2, l.size());
@@ -884,7 +884,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
       // check that empty array causes failure
       try {
-         l = evaluationService.getEvaluationResponses(EvalTestDataLoad.ADMIN_USER_ID, 
+         l = evaluationService.getResponses(EvalTestDataLoad.ADMIN_USER_ID, 
                new Long[] {}, null, true );
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
@@ -893,7 +893,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
       // check that null evalids cause failure
       try {
-         l = evaluationService.getEvaluationResponses(EvalTestDataLoad.ADMIN_USER_ID, 
+         l = evaluationService.getResponses(EvalTestDataLoad.ADMIN_USER_ID, 
                null, null, true );
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
@@ -902,55 +902,55 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl#countEvaluationResponses(java.lang.String, java.lang.Long[], java.lang.String, java.lang.Boolean)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl#countResponses(java.lang.String, java.lang.Long[], java.lang.String, java.lang.Boolean)}.
     */
    public void testCountEvaluationResponses() {
       // test counts for all responses in various evaluationSetupService
-      assertEquals(3, evaluationService.countEvaluationResponses(null, new Long[] { etdl.evaluationClosed.getId() }, null, null) );
-      assertEquals(2, evaluationService.countEvaluationResponses(null, new Long[] { etdl.evaluationViewable.getId() }, null, null) );
-      assertEquals(1, evaluationService.countEvaluationResponses(null, new Long[] { etdl.evaluationActive.getId() }, null, null) );
-      assertEquals(0, evaluationService.countEvaluationResponses(null, new Long[] { etdl.evaluationActiveUntaken.getId() }, null, null) );
+      assertEquals(3, evaluationService.countResponses(null, new Long[] { etdl.evaluationClosed.getId() }, null, null) );
+      assertEquals(2, evaluationService.countResponses(null, new Long[] { etdl.evaluationViewable.getId() }, null, null) );
+      assertEquals(1, evaluationService.countResponses(null, new Long[] { etdl.evaluationActive.getId() }, null, null) );
+      assertEquals(0, evaluationService.countResponses(null, new Long[] { etdl.evaluationActiveUntaken.getId() }, null, null) );
 
       // limit by user
-      assertEquals(3, evaluationService.countEvaluationResponses(EvalTestDataLoad.ADMIN_USER_ID, new Long[] { etdl.evaluationClosed.getId() }, null, null) );
-      assertEquals(2, evaluationService.countEvaluationResponses(EvalTestDataLoad.USER_ID, new Long[] { etdl.evaluationClosed.getId() }, null, null) );
-      assertEquals(1, evaluationService.countEvaluationResponses(EvalTestDataLoad.STUDENT_USER_ID, new Long[] { etdl.evaluationClosed.getId() }, null, null) );
-      assertEquals(0, evaluationService.countEvaluationResponses(EvalTestDataLoad.MAINT_USER_ID, new Long[] { etdl.evaluationClosed.getId() }, null, null) );
+      assertEquals(3, evaluationService.countResponses(EvalTestDataLoad.ADMIN_USER_ID, new Long[] { etdl.evaluationClosed.getId() }, null, null) );
+      assertEquals(2, evaluationService.countResponses(EvalTestDataLoad.USER_ID, new Long[] { etdl.evaluationClosed.getId() }, null, null) );
+      assertEquals(1, evaluationService.countResponses(EvalTestDataLoad.STUDENT_USER_ID, new Long[] { etdl.evaluationClosed.getId() }, null, null) );
+      assertEquals(0, evaluationService.countResponses(EvalTestDataLoad.MAINT_USER_ID, new Long[] { etdl.evaluationClosed.getId() }, null, null) );
 
       // test counts limited by evalGroupId
-      assertEquals(1, evaluationService.countEvaluationResponses(null, new Long[] { etdl.evaluationClosed.getId() }, 
+      assertEquals(1, evaluationService.countResponses(null, new Long[] { etdl.evaluationClosed.getId() }, 
             new String[] { EvalTestDataLoad.SITE1_REF }, null) );
-      assertEquals(0, evaluationService.countEvaluationResponses(null, new Long[] { etdl.evaluationViewable.getId() }, 
+      assertEquals(0, evaluationService.countResponses(null, new Long[] { etdl.evaluationViewable.getId() }, 
             new String[] { EvalTestDataLoad.SITE1_REF }, null) );
-      assertEquals(1, evaluationService.countEvaluationResponses(null, new Long[] { etdl.evaluationActive.getId() }, 
+      assertEquals(1, evaluationService.countResponses(null, new Long[] { etdl.evaluationActive.getId() }, 
             new String[] { EvalTestDataLoad.SITE1_REF }, null) );
-      assertEquals(0, evaluationService.countEvaluationResponses(null, new Long[] { etdl.evaluationActiveUntaken.getId() }, 
+      assertEquals(0, evaluationService.countResponses(null, new Long[] { etdl.evaluationActiveUntaken.getId() }, 
             new String[] { EvalTestDataLoad.SITE1_REF }, null) );
 
-      assertEquals(2, evaluationService.countEvaluationResponses(null, new Long[] { etdl.evaluationClosed.getId() }, 
+      assertEquals(2, evaluationService.countResponses(null, new Long[] { etdl.evaluationClosed.getId() }, 
             new String[] { EvalTestDataLoad.SITE2_REF }, null) );
-      assertEquals(2, evaluationService.countEvaluationResponses(null, new Long[] { etdl.evaluationViewable.getId() }, 
+      assertEquals(2, evaluationService.countResponses(null, new Long[] { etdl.evaluationViewable.getId() }, 
             new String[] { EvalTestDataLoad.SITE2_REF }, null) );
-      assertEquals(0, evaluationService.countEvaluationResponses(null, new Long[] { etdl.evaluationActive.getId() }, 
+      assertEquals(0, evaluationService.countResponses(null, new Long[] { etdl.evaluationActive.getId() }, 
             new String[] { EvalTestDataLoad.SITE2_REF }, null) );
-      assertEquals(0, evaluationService.countEvaluationResponses(null, new Long[] { etdl.evaluationActiveUntaken.getId() }, 
+      assertEquals(0, evaluationService.countResponses(null, new Long[] { etdl.evaluationActiveUntaken.getId() }, 
             new String[] { EvalTestDataLoad.SITE2_REF }, null) );
 
       // test counts limited by completed
-      assertEquals(3, evaluationService.countEvaluationResponses(null, new Long[] { etdl.evaluationClosed.getId() }, null, true) );
-      assertEquals(2, evaluationService.countEvaluationResponses(null, new Long[] { etdl.evaluationViewable.getId() }, null, true) );
-      assertEquals(1, evaluationService.countEvaluationResponses(null, new Long[] { etdl.evaluationActive.getId() }, null, true) );
-      assertEquals(0, evaluationService.countEvaluationResponses(null, new Long[] { etdl.evaluationActiveUntaken.getId() }, null, true) );
+      assertEquals(3, evaluationService.countResponses(null, new Long[] { etdl.evaluationClosed.getId() }, null, true) );
+      assertEquals(2, evaluationService.countResponses(null, new Long[] { etdl.evaluationViewable.getId() }, null, true) );
+      assertEquals(1, evaluationService.countResponses(null, new Long[] { etdl.evaluationActive.getId() }, null, true) );
+      assertEquals(0, evaluationService.countResponses(null, new Long[] { etdl.evaluationActiveUntaken.getId() }, null, true) );
 
       // test counts limited by incomplete
-      assertEquals(0, evaluationService.countEvaluationResponses(null, new Long[] { etdl.evaluationClosed.getId() }, null, false) );
-      assertEquals(0, evaluationService.countEvaluationResponses(null, new Long[] { etdl.evaluationViewable.getId() }, null, false) );
-      assertEquals(0, evaluationService.countEvaluationResponses(null, new Long[] { etdl.evaluationActive.getId() }, null, false) );
-      assertEquals(0, evaluationService.countEvaluationResponses(null, new Long[] { etdl.evaluationActiveUntaken.getId() }, null, false) );
+      assertEquals(0, evaluationService.countResponses(null, new Long[] { etdl.evaluationClosed.getId() }, null, false) );
+      assertEquals(0, evaluationService.countResponses(null, new Long[] { etdl.evaluationViewable.getId() }, null, false) );
+      assertEquals(0, evaluationService.countResponses(null, new Long[] { etdl.evaluationActive.getId() }, null, false) );
+      assertEquals(0, evaluationService.countResponses(null, new Long[] { etdl.evaluationActiveUntaken.getId() }, null, false) );
 
       // check that empty array causes failure
       try {
-         evaluationService.countEvaluationResponses(null, new Long[] {}, null, true);
+         evaluationService.countResponses(null, new Long[] {}, null, true);
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
          assertNotNull(e);
@@ -958,7 +958,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
       // check that null evalids cause failure
       try {
-         evaluationService.countEvaluationResponses(null, null, null, true);
+         evaluationService.countResponses(null, null, null, true);
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
          assertNotNull(e);
@@ -966,34 +966,34 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl#getEvalAnswers(java.lang.Long, java.lang.Long, java.lang.String[])}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl#getAnswers(java.lang.Long, java.lang.Long, java.lang.String[])}.
     */
    public void testGetEvalAnswers() {
       List<EvalAnswer> l = null;
       List<Long> ids = null;
 
       // retrieve one answer for an eval
-      l = evaluationService.getEvalAnswers( etdl.item1.getId(), etdl.evaluationActive.getId(), null );
+      l = evaluationService.getAnswers( etdl.item1.getId(), etdl.evaluationActive.getId(), null );
       assertNotNull(l);
       assertEquals(1, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
       assertTrue(ids.contains( etdl.answer1_1.getId() ));
 
-      l = evaluationService.getEvalAnswers( etdl.item5.getId(), etdl.evaluationClosed.getId(), null );
+      l = evaluationService.getAnswers( etdl.item5.getId(), etdl.evaluationClosed.getId(), null );
       assertNotNull(l);
       assertEquals(1, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
       assertTrue(ids.contains( etdl.answer2_5.getId() ));
 
       // retrieve multiple answers for an eval
-      l = evaluationService.getEvalAnswers( etdl.item1.getId(), etdl.evaluationViewable.getId(), null );
+      l = evaluationService.getAnswers( etdl.item1.getId(), etdl.evaluationViewable.getId(), null );
       assertNotNull(l);
       assertEquals(2, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
       assertTrue(ids.contains( etdl.answer4_1.getId() ));
       assertTrue(ids.contains( etdl.answer5_1.getId() ));
 
-      l = evaluationService.getEvalAnswers( etdl.item2.getId(), etdl.evaluationClosed.getId(), null );
+      l = evaluationService.getAnswers( etdl.item2.getId(), etdl.evaluationClosed.getId(), null );
       assertNotNull(l);
       assertEquals(2, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
@@ -1001,7 +1001,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       assertTrue(ids.contains( etdl.answer3_2.getId() ));
 
       // retrieve no answers for an eval item
-      l = evaluationService.getEvalAnswers( etdl.item1.getId(), etdl.evaluationActiveUntaken.getId(), null );
+      l = evaluationService.getAnswers( etdl.item1.getId(), etdl.evaluationActiveUntaken.getId(), null );
       assertNotNull(l);
       assertEquals(0, l.size());
 
@@ -1011,14 +1011,14 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
       // check that invalid ids cause failure
       try {
-         l = evaluationService.getEvalAnswers( EvalTestDataLoad.INVALID_LONG_ID, etdl.evaluationActiveUntaken.getId(), null );
+         l = evaluationService.getAnswers( EvalTestDataLoad.INVALID_LONG_ID, etdl.evaluationActiveUntaken.getId(), null );
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
          assertNotNull(e);
       }
 
       try {
-         l = evaluationService.getEvalAnswers( etdl.item1.getId(), EvalTestDataLoad.INVALID_LONG_ID, null );
+         l = evaluationService.getAnswers( etdl.item1.getId(), EvalTestDataLoad.INVALID_LONG_ID, null );
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
          assertNotNull(e);

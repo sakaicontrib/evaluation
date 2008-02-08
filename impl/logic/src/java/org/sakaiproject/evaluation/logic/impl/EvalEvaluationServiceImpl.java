@@ -344,13 +344,13 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
             }
 
             // check if the user already took this evaluation (count completed responses)
-            int evalResponsesForUser = countEvaluationResponses(userId, new Long[] {evaluationId}, new String[] {evalGroupId}, true);
+            int evalResponsesForUser = countResponses(userId, new Long[] {evaluationId}, new String[] {evalGroupId}, true);
             if (evalResponsesForUser > 0) {
                // user already has a response saved for this evaluation and evalGroupId
                if (eval.getModifyResponsesAllowed() == null || 
                      eval.getModifyResponsesAllowed().booleanValue() == false) {
                   // user cannot modify existing responses
-                  EvalResponse response = getEvaluationResponseForUserAndGroup(evaluationId, userId, evalGroupId);
+                  EvalResponse response = getResponseForUserAndGroup(evaluationId, userId, evalGroupId);
                   if (response == null) response = new EvalResponse(); // avoid a null pointer exception
                   log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") again " +
                   		"in this evalGroupId (" + evalGroupId + "), " +
@@ -566,7 +566,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 
 
    @SuppressWarnings("unchecked")
-   public EvalResponse getEvaluationResponseForUserAndGroup(Long evaluationId, String userId,
+   public EvalResponse getResponseForUserAndGroup(Long evaluationId, String userId,
          String evalGroupId) {
       if (! checkEvaluationExists(evaluationId) ) {
          throw new IllegalArgumentException("Invalid evaluation id, cannot find evaluation: " + evaluationId);
@@ -589,7 +589,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
    }
 
 
-   public List<Long> getEvalResponseIds(Long evaluationId, String[] evalGroupIds, Boolean completed) {
+   public List<Long> getResponseIds(Long evaluationId, String[] evalGroupIds, Boolean completed) {
       log.debug("evaluationId: " + evaluationId);
 
       if (dao.countByProperties(EvalEvaluation.class, new String[] { "id" }, new Object[] { evaluationId }) <= 0) {
@@ -602,7 +602,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
    }
 
    @SuppressWarnings("unchecked")
-   public List<EvalResponse> getEvaluationResponses(String userId, Long[] evaluationIds,
+   public List<EvalResponse> getResponses(String userId, Long[] evaluationIds,
          String[] evalGroupIds, Boolean completed) {
 
       List<String> props = new ArrayList<String>();
@@ -620,7 +620,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
    }
 
 
-   public int countEvaluationResponses(String userId, Long[] evaluationIds, String[] evalGroupIds,
+   public int countResponses(String userId, Long[] evaluationIds, String[] evalGroupIds,
          Boolean completed) {
 
       List<String> props = new ArrayList<String>();
@@ -686,7 +686,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
       }
    }
 
-   public List<EvalAnswer> getEvalAnswers(Long itemId, Long evaluationId, String[] evalGroupIds) {
+   public List<EvalAnswer> getAnswers(Long itemId, Long evaluationId, String[] evalGroupIds) {
       log.debug("itemId: " + itemId + ", evaluationId: " + evaluationId);
 
       if (dao.countByProperties(EvalItem.class, new String[] { "id" }, new Object[] { itemId }) <= 0) {

@@ -137,7 +137,7 @@ public class ReportHandlerHook implements HandlerHook {
        * b) Side purpose: countResponses method in EvalDeliveryService
        * does not take array of groups ids
        */
-      List<Long> responseIds = evaluationService.getEvalResponseIds(drvp.evalId, drvp.groupIds, true);
+      List<Long> responseIds = evaluationService.getResponseIds(drvp.evalId, drvp.groupIds, true);
       int numOfResponses = responseIds.size();
 
       //add a row for each response
