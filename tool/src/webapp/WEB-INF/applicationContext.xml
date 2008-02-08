@@ -194,14 +194,12 @@
 	<!-- Reporting Utilities -->
 	<bean id="CSVReportExporter" class="org.sakaiproject.evaluation.tool.reporting.CSVReportExporter">
 		<property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-		<property name="response" ref="httpServletResponseProxy" />
 	</bean>
 
 	<bean id="XLSReportExporter" class="org.sakaiproject.evaluation.tool.reporting.XLSReportExporter">
         <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
 		<property name="deliveryService" ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
-        <property name="response" ref="httpServletResponseProxy" />
 	</bean>
 
 	<bean id="PDFReportExporter" class="org.sakaiproject.evaluation.tool.reporting.PDFReportExporter">

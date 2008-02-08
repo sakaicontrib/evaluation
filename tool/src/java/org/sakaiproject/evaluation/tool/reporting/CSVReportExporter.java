@@ -1,8 +1,11 @@
 package org.sakaiproject.evaluation.tool.reporting;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -14,15 +17,13 @@ import uk.org.ponder.util.UniversalRuntimeException;
 import au.com.bytecode.opencsv.CSVWriter;
 
 public class CSVReportExporter {
-    
     private static final char COMMA = ',';
-
     private EvalSettings evalSettings;
-    private HttpServletResponse response;
 
-    public void respondWithCSV(List<String> topRow, List responseRows, int numOfResponses) {
-        Writer stringWriter = new StringWriter();
-        CSVWriter writer = new CSVWriter(stringWriter, COMMA);
+    public void respondWithCSV(List<String> topRow, List responseRows, int numOfResponses,
+          OutputStream outputStream) {
+        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
+        CSVWriter writer = new CSVWriter(outputStreamWriter, COMMA);
         
       //convert the top row to an array
         String[] topRowArray = new String[topRow.size()];
@@ -45,10 +46,8 @@ public class CSVReportExporter {
             writer.writeNext(currRowArray);
         }
         
-        response.setContentType("text/x-csv");
-        response.setHeader("Content-disposition", "inline");
-        response.setHeader("filename", "report.csv");
-        String myCSV = stringWriter.toString();
+        
+        //String myCSV = stringWriter.toString();
         try {
             writer.close();
         } catch (IOException e1) {
@@ -56,19 +55,15 @@ public class CSVReportExporter {
         }
 
         // dump the output to the response stream
-        try {
-            Writer w = response.getWriter();
-            w.write(myCSV);
-        } catch (IOException e) {
-            throw UniversalRuntimeException.accumulate(e, "Could not get Writer to dump output to csv");
-        }
+        //try {
+        //    Writer w = response.getWriter();
+        //    w.write(myCSV);
+        //} catch (IOException e) {
+        //    throw UniversalRuntimeException.accumulate(e, "Could not get Writer to dump output to csv");
+        //}
     }
 
     public void setEvalSettings(EvalSettings evalSettings) {
         this.evalSettings = evalSettings;
-    }
-
-    public void setResponse(HttpServletResponse response) {
-        this.response = response;
     }
 }
