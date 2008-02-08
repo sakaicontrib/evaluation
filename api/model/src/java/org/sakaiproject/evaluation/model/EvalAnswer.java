@@ -3,10 +3,22 @@ package org.sakaiproject.evaluation.model;
 
 import java.util.Date;
 
+import org.sakaiproject.evaluation.logic.utils.EvalUtils;
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
+
 /**
  * The Answer object holds answers for a single item and a single response
  * It has special fields for handling and storing multiple answers that are
  * not persisted but are populated by the logic layer<br/>
+ * <b>NOTE:</b> In order to properly store the answers, we have to fill in every answer
+ * field when saving them. Those fields are {@link #numeric}, {@link #text}, and {@link #multiAnswerCode}<br/>
+ * You should ignore the various blanks which are inserted when retrieving answers, 
+ * the blanks are all constants and are as follows:
+ * {@link EvalConstants#NO_NUMERIC_ANSWER}, {@link EvalConstants#NO_TEXT_ANSWER}, {@link EvalConstants#NO_MULTIPLE_ANSWER}<br/>
+ * <b>NOTE:</b> There is a special way to refer to N/A answers 
+ * for all types which must be checked. If the numeric field is
+ * set to: {@link EvalConstants#NA_VALUE} then this answer was 
+ * set to Not Applicable and any other stored values should be ignored<br/>
  */
 public class EvalAnswer implements java.io.Serializable {
 
@@ -49,10 +61,6 @@ public class EvalAnswer implements java.io.Serializable {
 
    /**
     * minimal constructor
-    * 
-    * @param lastModified
-    * @param templateItem
-    * @param response
     */
    public EvalAnswer(Date lastModified, EvalTemplateItem templateItem,
          EvalResponse response) {
@@ -163,13 +171,20 @@ public class EvalAnswer implements java.io.Serializable {
    public void setAssociatedType(String associatedType) {
       this.associatedType = associatedType;
    }
-
    
+   /**
+    * Returns the encoded answers for an MA type item,
+    * use {@link EvalUtils#decodeMultipleAnswers(String)} to
+    * decode these answers into the {@link #multipleAnswers} field
+    */
    public String getMultiAnswerCode() {
       return multiAnswerCode;
    }
-
    
+   /**
+    * @param multiAnswerCode an encoded value which is created using
+    * {@link EvalUtils#encodeMultipleAnswers(Integer[])}
+    */
    public void setMultiAnswerCode(String multiAnswerCode) {
       this.multiAnswerCode = multiAnswerCode;
    }
