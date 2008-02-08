@@ -35,6 +35,7 @@ import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.LocalResponsesLogic;
@@ -179,6 +180,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
          canAccess = true;
       }
 
+      List<EvalGroup> validGroups = new ArrayList<EvalGroup>(); // stores EvalGroup objects
       if (canAccess) {
          // eval is accessible so check user can take it
          if (evalGroupId != null) {
@@ -190,7 +192,6 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
             // select the first eval group the current user can take evaluation in,
             // also store the total number so we can give the user a list to choose from if there are more than one
             Map<Long, List<EvalAssignGroup>> m = evaluationService.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
-            List<EvalGroup> validGroups = new ArrayList<EvalGroup>(); // stores EvalGroup objects
             if ( external.isUserAdmin(currentUserId) ) {
                // special case, the super admin can always access
                userCanAccess = true;
@@ -230,29 +231,45 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                   }
                }
             }
-
-            // generate the get form to allow the user to choose a group if more than one is available
-            if (validGroups.size() > 1) {
-               String[] values = new String[validGroups.size()];
-               String[] labels = new String[validGroups.size()];
-               for (int i=0; i<validGroups.size(); i++) {
-                  EvalGroup group = (EvalGroup) validGroups.get(i);
-                  values[i] = group.evalGroupId;
-                  labels[i] = group.title;
-               }
-
-               // show the switch group selection and form
-               UIBranchContainer showSwitchGroup = UIBranchContainer.make(tofill, "show-switch-group:");
-               UIMessage.make(showSwitchGroup, "switch-group-header", "takeeval.switch.group.header");
-               UIForm chooseGroupForm = UIForm.make(showSwitchGroup, "switch-group-form", 
-                     new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, evalGroupId, responseId));
-               UISelect.make(chooseGroupForm, "switch-group-list", values, labels,	"#{evalGroupId}");
-               UIMessage.make(chooseGroupForm, "switch-group-button", "takeeval.switch.group.button");
-            }
          }
       }
 
       if (userCanAccess) {
+         // load up the response if this user has one already
+         if (responseId == null) {
+            EvalResponse response = evaluationService.getResponseForUserAndGroup(evaluationId, currentUserId, evalGroupId);
+            if (response == null) {
+               // create the initial response if there is not one
+               // EVALSYS-360 because of a hibernate issue this will not work, do a binding instead -AZ
+               //responseId = localResponsesLogic.createResponse(evaluationId, currentUserId, evalGroupId);
+            } else {
+               responseId = response.getId();
+            }
+         }
+
+         if (responseId != null) {
+            // load up the previous responses for this user (no need to attempt to load if the response is new, there will be no answers yet)
+            answerMap = localResponsesLogic.getAnswersMapByTempItemAndAssociated(responseId);
+         }
+
+         // show the switch group selection and form if there are other valid groups for this user
+         if (validGroups.size() > 1) {
+            String[] values = new String[validGroups.size()];
+            String[] labels = new String[validGroups.size()];
+            for (int i=0; i<validGroups.size(); i++) {
+               EvalGroup group = (EvalGroup) validGroups.get(i);
+               values[i] = group.evalGroupId;
+               labels[i] = group.title;
+            }
+            // show the switch group selection and form
+            UIBranchContainer showSwitchGroup = UIBranchContainer.make(tofill, "show-switch-group:");
+            UIMessage.make(showSwitchGroup, "switch-group-header", "takeeval.switch.group.header");
+            UIForm chooseGroupForm = UIForm.make(showSwitchGroup, "switch-group-form", 
+                  new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, evalGroupId, responseId));
+            UISelect.make(chooseGroupForm, "switch-group-list", values, labels,  "#{evalGroupId}");
+            UIMessage.make(chooseGroupForm, "switch-group-button", "takeeval.switch.group.button");            
+         }
+
          // fill in group title
          UIBranchContainer groupTitle = UIBranchContainer.make(tofill, "show-group-title:");
          UIMessage.make(groupTitle, "group-title-header", "takeeval.group.title.header");	
@@ -306,15 +323,6 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
          // filter out the block child items, to get a list non-child items
          List<EvalTemplateItem> nonChildItemsList = TemplateItemUtils.getNonChildItems(allItems);
 
-         // create the initial response if there is not one
-         if (responseId == null) {
-            // EVALSYS-360 because of a hibernate issue this will not work, do a binding instead -AZ
-            //responseId = localResponsesLogic.createResponse(evaluationId, currentUserId, evalGroupId);
-         } else {
-            // load up the previous responses for this user (no need to attempt to load if the response is new, there will be no answers yet)
-            answerMap = localResponsesLogic.getAnswersMapByTempItemAndAssociated(responseId);
-         }
-
          if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_COURSE, nonChildItemsList)) {
             // for all course items, go through render process
             UIBranchContainer courseSection = UIBranchContainer.make(form, "courseSection:");
@@ -323,7 +331,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
             UIMessage.make(courseSection, "course-questions-header", "takeeval.group.questions.header");
             handleCategoryRender(
                   TemplateItemUtils.getCategoryTemplateItems(EvalConstants.ITEM_CATEGORY_COURSE, nonChildItemsList), 
-                     form, courseSection, evalHierNodes, null);
+                  form, courseSection, evalHierNodes, null);
          }
 
          if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, nonChildItemsList)) {	
@@ -335,7 +343,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                // for each non-child item in this evaluation
                handleCategoryRender(
                      TemplateItemUtils.getCategoryTemplateItems(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, nonChildItemsList), 
-                        form, instructorSection, evalHierNodes, instructor);
+                     form, instructorSection, evalHierNodes, instructor);
             }
          }
 
@@ -476,7 +484,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
          //throw new IllegalStateException("There is no response, something has failed to load correctly for takeeval");
          // EVALSYS-360 - have to use this again and add a binding for start time
          form.parameters.add( new UIELBinding("takeEvalBean.startDate", new Date()) );
-         
+
          currAnswerOTP = responseAnswersOTP + ResponseAnswersBeanLocator.NEW_1 + "." + ResponseAnswersBeanLocator.NEW_PREFIX + renderedItemCount + ".";
       } else {
          // if the user has answered this question before, point at their response
@@ -499,9 +507,10 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 
       // generate binding for the UI input element (UIInput, UISelect, etc.) to the correct part of answer
       String[] bindings = null;
-      if ( EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(TemplateItemUtils.getTemplateItemType(templateItem)) ) {
-         bindings = new String[] { currAnswerOTP + "multiAnswerCode", currAnswerOTP + "numeric" };
-      } else if ( EvalConstants.ITEM_TYPE_TEXT.equals(TemplateItemUtils.getTemplateItemType(templateItem)) ) {
+      String itemType = TemplateItemUtils.getTemplateItemType(templateItem);
+      if ( EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemType) ) {
+         bindings = new String[] { currAnswerOTP + "multipleAnswers", currAnswerOTP + "numeric" };
+      } else if ( EvalConstants.ITEM_TYPE_TEXT.equals(itemType) ) {
          bindings = new String[] { currAnswerOTP + "text", currAnswerOTP + "numeric" };
       } else {
          // this is the default binding (scaled and MC)

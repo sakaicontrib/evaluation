@@ -52,8 +52,8 @@ public class MultipleAnswerRenderer implements ItemRenderer {
 
       if (displayNumber <= 0) displayNumber = 0;
       // this if is here because giving an RSF input control a null binding AND a null initial value causes a failure
-      String initValue = null;
-      if (bindings[0] == null) initValue = "";
+      String[] initValue = null;
+      if (bindings[0] == null) initValue = new String[] {};
 
       String naBinding = null;
       if (bindings.length > 1) {
@@ -98,7 +98,7 @@ public class MultipleAnswerRenderer implements ItemRenderer {
 
          UIBranchContainer displayContainer = UIBranchContainer.make(fullRow, containerId);
 
-         UISelect radios = UISelect.make(displayContainer, "dummyRadio", scaleValues, scaleLabels, bindings[0], initValue);
+         UISelect radios = UISelect.makeMultiple(displayContainer, "dummyCheckbox", scaleValues, scaleLabels, bindings[0], initValue);
          String selectID = radios.getFullID();
 
          if (disabled) {

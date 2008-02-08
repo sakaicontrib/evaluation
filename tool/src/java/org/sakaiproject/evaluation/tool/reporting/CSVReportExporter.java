@@ -15,7 +15,7 @@ public class CSVReportExporter {
     private static final char COMMA = ',';
     private EvalSettings evalSettings;
 
-    public void respondWithCSV(List<String> topRow, List responseRows, int numOfResponses,
+    public void respondWithCSV(List<String> topRow, List<List<String>> responseRows, int numOfResponses,
           OutputStream outputStream) {
         OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
         CSVWriter writer = new CSVWriter(outputStreamWriter, COMMA);

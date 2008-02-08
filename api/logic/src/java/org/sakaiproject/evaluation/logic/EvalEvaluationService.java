@@ -315,7 +315,7 @@ public interface EvalEvaluationService {
     * @param evalGroupId the internal evalGroupId (represents a site or group)
     * @return an {@link EvalResponse} object or null if none exists
     */
-   public EvalResponse getEvaluationResponseForUserAndGroup(Long evaluationId, String userId, String evalGroupId);
+   public EvalResponse getResponseForUserAndGroup(Long evaluationId, String userId, String evalGroupId);
 
    /**
     * Get the responses for the supplied evaluationSetupService for this user<br/>
@@ -325,7 +325,7 @@ public interface EvalEvaluationService {
     * <b>Note:</b> If you just need the response IDs then use the faster
     * {@link #getEvaluationResponseIds(String, Long[], String, Boolean)}
     * <b>Note:</b> If you just need the count then use the much faster
-    * {@link #countEvaluationResponses(String, Long[], String, Boolean)}
+    * {@link #countResponses(String, Long[], String, Boolean)}
     * 
     * @param userId the internal user id (not username),
     * if null or admin user then return responses for all users
@@ -340,7 +340,7 @@ public interface EvalEvaluationService {
     * if null then return all responses
     * @return a List of {@link EvalResponse} objects
     */
-   public List<EvalResponse> getEvaluationResponses(String userId, Long[] evaluationIds, String[] evalGroupIds, Boolean completed);
+   public List<EvalResponse> getResponses(String userId, Long[] evaluationIds, String[] evalGroupIds, Boolean completed);
 
    /**
     * Count the number of responses for evaluationSetupService,
@@ -348,7 +348,7 @@ public interface EvalEvaluationService {
     * or just responses for a specific group and/or user<br/>
     * This is a good method for checking to see if a user has responded<br/>
     * <b>Note:</b> If you need the responses then use the slower
-    * {@link #getEvaluationResponses(String, Long[], String[], Boolean)}
+    * {@link #getResponses(String, Long[], String[], Boolean)}
     * 
     * @param userId the internal user id (not username),
     * if null or admin user then return responses for all users
@@ -360,13 +360,13 @@ public interface EvalEvaluationService {
     * NOTE: these ids are not validated
     * @return the count of associated responses
     */
-   public int countEvaluationResponses(String userId, Long[] evaluationIds, String[] evalGroupIds, Boolean completed);
+   public int countResponses(String userId, Long[] evaluationIds, String[] evalGroupIds, Boolean completed);
 
    /**
     * Get the response ids associated with an evaluation and particular eval groups,
     * you can choose to get all response ids or only the ones for complete/incomplete responses<br/>
-    * <b>WARNING:</b> You should normally use {@link #getEvaluationResponses(String, Long[], String[], Boolean)} or
-    * {@link #countEvaluationResponses(String, Long[], String[], Boolean)} instead of this
+    * <b>WARNING:</b> You should normally use {@link #getResponses(String, Long[], String[], Boolean)} or
+    * {@link #countResponses(String, Long[], String[], Boolean)} instead of this
     * 
     * @param evaluationId the id of an EvalEvaluation object
     * @param evalGroupIds the internal eval group ids (represents a site or group),
@@ -376,7 +376,7 @@ public interface EvalEvaluationService {
     * if null then return all responses
     * @return a list of response ids, in order by response id
     */
-   public List<Long> getEvalResponseIds(Long evaluationId, String[] evalGroupIds, Boolean completed);
+   public List<Long> getResponseIds(Long evaluationId, String[] evalGroupIds, Boolean completed);
 
    /**
     * Get the answers associated with this item and with a response to this evaluation,
@@ -389,7 +389,7 @@ public interface EvalEvaluationService {
     * if null, include count for all eval groups for this evaluation
     * @return a list of {@link EvalAnswer} objects
     */
-   public List<EvalAnswer> getEvalAnswers(Long itemId, Long evaluationId, String[] evalGroupIds);
+   public List<EvalAnswer> getAnswers(Long itemId, Long evaluationId, String[] evalGroupIds);
 
 
    // PERMISSIONS

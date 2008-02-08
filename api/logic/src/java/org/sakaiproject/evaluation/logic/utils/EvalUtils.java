@@ -192,7 +192,7 @@ public class EvalUtils {
     * @param answerKeys an array of integers, can be null or empty
     * @return the encoded string, will be null if the input is null
     */
-   public static String encodeMultipleAnswers(int[] answerKeys) {
+   public static String encodeMultipleAnswers(Integer[] answerKeys) {
       String encoded = null;
       if (answerKeys != null && answerKeys.length > 0) {
          Arrays.sort(answerKeys); // sort the keys first
@@ -213,18 +213,18 @@ public class EvalUtils {
     * Behavior is undefined if the string is not encoded correctly as this method will not
     * attempt to validate the string beforehand
     * 
-    * @param encodedAnswers a string encoded using {@link #encodeMultipleAnswers(int[])}
+    * @param encodedAnswers a string encoded using {@link #encodeMultipleAnswers(Integer[])}
     * @return the decoded array of integers or an empty array if the encoded string is empty
     * @throws IllegalArgumentException if the string cannot be decoded correctly
     */
-   public static int[] decodeMultipleAnswers(String encodedAnswers) {
-      int[] decoded = null;
+   public static Integer[] decodeMultipleAnswers(String encodedAnswers) {
+      Integer[] decoded = null;
       if (encodedAnswers != null && encodedAnswers.length() > 0) {
          if (encodedAnswers.startsWith(SEPARATOR) &&
                encodedAnswers.endsWith(SEPARATOR)) {
             String[] split = encodedAnswers.split(SEPARATOR);
             if (split.length > 2) {
-               decoded = new int[split.length - 1];
+               decoded = new Integer[split.length - 1];
                for (int i = 1; i < (split.length); i++) {
                   if ("".equals(split[i])) {
                      throw new IllegalArgumentException("This encoded string ("+encodedAnswers+") is invalid, it must have integers in it, example: :0:3:4:");
@@ -238,7 +238,7 @@ public class EvalUtils {
          }
       }
       if (decoded == null) {
-         decoded = new int[0];
+         decoded = new Integer[0];
       }
       return decoded;
    }

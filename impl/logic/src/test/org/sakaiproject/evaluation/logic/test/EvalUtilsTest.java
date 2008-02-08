@@ -277,23 +277,23 @@ public class EvalUtilsTest extends TestCase {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.utils.EvalUtils#encodeMultipleAnswers(int[])}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.utils.EvalUtils#encodeMultipleAnswers(Integer[])}.
     */
    public void testEncodeMultipleAnswers() {
       String encoded = null;
       String S = EvalUtils.SEPARATOR;
 
       // positive
-      encoded = EvalUtils.encodeMultipleAnswers( new int[] {0, 5, 2} );
+      encoded = EvalUtils.encodeMultipleAnswers( new Integer[] {0, 5, 2} );
       assertNotNull(encoded);
       assertEquals(S+"0"+S+"2"+S+"5"+S, encoded);
 
-      encoded = EvalUtils.encodeMultipleAnswers( new int[] {5, 4, 3, 2, 1} );
+      encoded = EvalUtils.encodeMultipleAnswers( new Integer[] {5, 4, 3, 2, 1} );
       assertNotNull(encoded);
       assertEquals(S+"1"+S+"2"+S+"3"+S+"4"+S+"5"+S, encoded);
 
       // negative
-      encoded = EvalUtils.encodeMultipleAnswers( new int[] {} );
+      encoded = EvalUtils.encodeMultipleAnswers( new Integer[] {} );
       assertNull(encoded);
 
       encoded = EvalUtils.encodeMultipleAnswers( null );
@@ -307,23 +307,23 @@ public class EvalUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.logic.utils.EvalUtils#decodeMultipleAnswers(java.lang.String)}.
     */
    public void testDecodeMultipleAnswers() {
-      int[] decoded = null;
+      Integer[] decoded = null;
       String S = EvalUtils.SEPARATOR;
 
       // positive
       decoded = EvalUtils.decodeMultipleAnswers(S+"1"+S+"4"+S+"7"+S);
       assertNotNull(decoded);
-      assertEquals(1, decoded[0]);
-      assertEquals(4, decoded[1]);
-      assertEquals(7, decoded[2]);
+      assertEquals(1, decoded[0].intValue());
+      assertEquals(4, decoded[1].intValue());
+      assertEquals(7, decoded[2].intValue());
 
       decoded = EvalUtils.decodeMultipleAnswers(S+"3"+S+"5"+S+"1"+S+"9"+S+"7"+S);
       assertNotNull(decoded);
-      assertEquals(1, decoded[0]);
-      assertEquals(3, decoded[1]);
-      assertEquals(5, decoded[2]);
-      assertEquals(7, decoded[3]);
-      assertEquals(9, decoded[4]);
+      assertEquals(1, decoded[0].intValue());
+      assertEquals(3, decoded[1].intValue());
+      assertEquals(5, decoded[2].intValue());
+      assertEquals(7, decoded[3].intValue());
+      assertEquals(9, decoded[4].intValue());
 
       // negative
       decoded = EvalUtils.decodeMultipleAnswers("");
