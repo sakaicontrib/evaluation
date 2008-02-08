@@ -3,10 +3,6 @@ package org.sakaiproject.evaluation.tool.reporting;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -14,16 +10,14 @@ import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.sakaiproject.evaluation.logic.EvalDeliveryService;
-import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
-import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
+import org.sakaiproject.evaluation.tool.utils.EvaluationCalcUtility;
 import org.sakaiproject.util.FormattedText;
 
 import uk.org.ponder.util.UniversalRuntimeException;
@@ -35,14 +29,9 @@ public class XLSReportExporter {
       this.externalLogic = externalLogic;
    }
 
-   private EvalEvaluationService evaluationService;
-   public void setEvaluationService(EvalEvaluationService evaluationService) {
-      this.evaluationService = evaluationService;
-   }
-
-   private EvalDeliveryService deliveryService;
-   public void setDeliveryService(EvalDeliveryService deliveryService) {
-      this.deliveryService = deliveryService;
+   private EvaluationCalcUtility evalCalcUtil;
+   public void setEvaluationCalcUtility(EvaluationCalcUtility util) {
+      this.evalCalcUtil = util;
    }
 
    public void respondWithExcel(EvalEvaluation evaluation, EvalTemplate template,
@@ -82,23 +71,7 @@ public class XLSReportExporter {
       HSSFRow row2 = sheet.createRow(1);
       HSSFCell cellA2 = row2.createCell((short)0);
       cellA2.setCellStyle(boldHeaderStyle);
-
-      // FIXME duplicate code
-      // Response Rate calculation... this is sort of duplicated code from ControlEvaluationsProducer
-      // might be good to put it in one of the logic or utility classes.
-      int countResponses = deliveryService.countResponses(evaluation.getId(), null, true);
-      int countEnrollments = getTotalEnrollmentsForEval(evaluation.getId());
-      long percentage = 0;
-      if (countEnrollments > 0) {
-         percentage = Math.round(  (((float)countResponses) / (float)countEnrollments) * 100.0 );
-         cellA2.setCellValue(percentage + "% response rate (" + countResponses + "/" + countEnrollments + ")");
-         //UIOutput.make(evaluationRow, "closed-eval-response-rate", countResponses + "/"
-         //      + countEnrollments + " - " + percentage + "%");
-      } else {
-         // don't bother showing percentage or "out of" when there are no enrollments
-         //UIOutput.make(evaluationRow, "closed-eval-response-rate", countResponses + "");
-         cellA2.setCellValue(countResponses + " responses");
-      }
+      cellA2.setCellValue(evalCalcUtil.getParticipantResults(evaluation));
 
       //if (groupTitles.size() > 0) {
       if (groupIDs.length > 0) {
@@ -155,8 +128,6 @@ public class XLSReportExporter {
          }
       }
 
-      
-
       // dump the output to the response stream
       try {
          wb.write(outputStream);
@@ -164,27 +135,4 @@ public class XLSReportExporter {
          throw UniversalRuntimeException.accumulate(e, "Could not get Writer to dump output to csv");
       }
    }
-
-   /**
-    * FIXME duplicated code
-    * More duplicated code from ControlEvaluationsProducer
-    * 
-    * Gets the total count of enrollments for an evaluation
-    * 
-    * @param evaluationId
-    * @return total number of users with take eval perms in this evaluation
-    */
-   private int getTotalEnrollmentsForEval(Long evaluationId) {
-      int totalEnrollments = 0;
-      Map<Long, List<EvalAssignGroup>> evalAssignGroups = evaluationService.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
-      List<EvalAssignGroup> groups = evalAssignGroups.get(evaluationId);
-      for (int i=0; i<groups.size(); i++) {
-         EvalAssignGroup eac = (EvalAssignGroup) groups.get(i);
-         String context = eac.getEvalGroupId();
-         Set<String> userIds = externalLogic.getUserIdsForEvalGroup(context, EvalConstants.PERM_TAKE_EVALUATION);
-         totalEnrollments = totalEnrollments + userIds.size();
-      }
-      return totalEnrollments;
-   }
-
 }

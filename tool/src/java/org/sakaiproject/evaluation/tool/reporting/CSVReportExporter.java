@@ -3,12 +3,7 @@ package org.sakaiproject.evaluation.tool.reporting;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.nio.charset.Charset;
 import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
 
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.util.FormattedText;
@@ -45,22 +40,12 @@ public class CSVReportExporter {
             //writer the current response to CSVWriter object
             writer.writeNext(currRowArray);
         }
-        
-        
-        //String myCSV = stringWriter.toString();
+
         try {
             writer.close();
         } catch (IOException e1) {
             throw UniversalRuntimeException.accumulate(e1, "Could not close the CSVWriter");
         }
-
-        // dump the output to the response stream
-        //try {
-        //    Writer w = response.getWriter();
-        //    w.write(myCSV);
-        //} catch (IOException e) {
-        //    throw UniversalRuntimeException.accumulate(e, "Could not get Writer to dump output to csv");
-        //}
     }
 
     public void setEvalSettings(EvalSettings evalSettings) {

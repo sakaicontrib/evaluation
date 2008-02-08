@@ -21,6 +21,7 @@ import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
+import org.sakaiproject.evaluation.tool.utils.EvaluationCalcUtility;
 import org.sakaiproject.util.FormattedText;
 
 import uk.org.ponder.util.UniversalRuntimeException;
@@ -50,10 +51,10 @@ public class PDFReportExporter {
    public void setEvaluationService(EvalEvaluationService evaluationService) {
       this.evaluationService = evaluationService;
    }
-
-   private EvalDeliveryService deliveryService;
-   public void setDeliveryService(EvalDeliveryService deliveryService) {
-      this.deliveryService = deliveryService;
+   
+   private EvaluationCalcUtility evalCalcUtil;
+   public void setEvaluationCalcUtility(EvaluationCalcUtility util) {
+      this.evalCalcUtil = util;
    }
 
    // FIXME - Do NOT use Sakai services directly, go through external logic
@@ -108,7 +109,7 @@ public class PDFReportExporter {
          String dates = evaluation.getStartDate() + " - " + evaluation.getStopDate();
          table.addCell(dates);
          table.addCell("Response Rate:");
-         table.addCell(getParticipantResults(evaluation));
+         table.addCell(evalCalcUtil.getParticipantResults(evaluation));
          table.addCell("Invitees:");
          String groupsCellContents = "";
          if (groupIDs.length > 0) {
@@ -173,51 +174,5 @@ public class PDFReportExporter {
       } catch (DocumentException e) {
          throw UniversalRuntimeException.accumulate(e, "Error creating PDF Export");
       }
-
-
    }
-
-   // FIXME Make this a utility rather than copy and paste
-   // Bad duplicated code
-   private String getParticipantResults(EvalEvaluation evaluation) {
-      // Response Rate calculation... this is sort of duplicated code from ControlEvaluationsProducer
-      // might be good to put it in one of the logic or utility classes.
-      // TODO put this duplicate code in a utility class -AZ
-      int countResponses = deliveryService.countResponses(evaluation.getId(), null, true);
-      int countEnrollments = getTotalEnrollmentsForEval(evaluation.getId());
-      long percentage = 0;
-      if (countEnrollments > 0) {
-         percentage = Math.round(  (((float)countResponses) / (float)countEnrollments) * 100.0 );
-         return percentage + "%  ( " + countResponses + " / " + countEnrollments + " )";
-         //UIOutput.make(evaluationRow, "closed-eval-response-rate", countResponses + "/"
-         //      + countEnrollments + " - " + percentage + "%");
-      } else {
-         // don't bother showing percentage or "out of" when there are no enrollments
-         //UIOutput.make(evaluationRow, "closed-eval-response-rate", countResponses + "");
-         return countResponses + "";
-      }
-   }
-
-   /**
-    * FIXME Make this a utility rather than copy and paste
-    * More duplicated code from ControlEvaluationsProducer
-    * 
-    * Gets the total count of enrollments for an evaluation
-    * 
-    * @param evaluationId
-    * @return total number of users with take eval perms in this evaluation
-    */
-   private int getTotalEnrollmentsForEval(Long evaluationId) {
-      int totalEnrollments = 0;
-      Map<Long, List<EvalAssignGroup>> evalAssignGroups = evaluationService.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
-      List<EvalAssignGroup> groups = evalAssignGroups.get(evaluationId);
-      for (int i=0; i<groups.size(); i++) {
-         EvalAssignGroup eac = (EvalAssignGroup) groups.get(i);
-         String context = eac.getEvalGroupId();
-         Set<String> userIds = externalLogic.getUserIdsForEvalGroup(context, EvalConstants.PERM_TAKE_EVALUATION);
-         totalEnrollments = totalEnrollments + userIds.size();
-      }
-      return totalEnrollments;
-   }
-
 }
