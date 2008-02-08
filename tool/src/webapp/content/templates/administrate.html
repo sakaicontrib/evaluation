@@ -147,40 +147,44 @@
 			</select>
 		</p>
 		<p class=	"longtext indnt1">
-			<label class="block" rsf:id="general-template-sharing-note" for="general-template-sharing-selection">Template sharing and visibility setting</label>
-			<select rsf:id="general-template-sharing" id="general-template-sharing-id">
+			<label class="block" rsf:id="general-template-sharing-note" for="general-template-sharing">Template sharing and visibility setting</label>
+			<select rsf:id="general-template-sharing">
 			</select>
 		</p>
 		<p class=	"longtext indnt1">
-			<label class="block"  rsf:id="general-default-question-category" for="general-default-question-selection">All questions default to course category only
+			<label class="block"  rsf:id="general-default-question-category" for="general-default-question">All questions default to course category only
 			(instructor category not allowed)</label>
-			<select type="checkbox" rsf:id="general-default-question" id="general-default-question-id">
-			</select>
+			<select rsf:id="general-default-question">
+            </select>
+		</p>
+        <p class=   "checkbox indnt1">
+            <input type="checkbox" rsf:id="general-use-stop-date" />
+            <label rsf:id="msg=administrate.general.use.stop.date.note" for="general-use-stop-date">Use stop date for evaluations</label>
+        </p>
+        <p class=   "checkbox indnt1">
+            <input type="checkbox" rsf:id="general-use-view-date" />
+            <label rsf:id="msg=administrate.general.use.view.date.note" for="general-use-view-date">Use view date for evaluations</label>
+        </p>
+		<p class=	"checkbox indnt1">
+			<input type="checkbox" rsf:id="general-expert-templates" />
+			<label rsf:id="msg=administrate.general.expert.templates.note" for="general-expert-templates">Use expert created templates</label>
 		</p>
 		<p class=	"checkbox indnt1">
-			<input type="checkbox" rsf:id="general-use-stop-date" id="general-use-stop-date-id"/>
-			<label rsf:id="general-use-stop-date-note" for="general-use-stop-date">Use stop date for evaluations</label>
+			<input type="checkbox" rsf:id="general-expert-questions" />
+			<label rsf:id="msg=administrate.general.expert.questions.note" for="general-expert-questions">Use expert created questions</label>
 		</p>
 		<p class=	"checkbox indnt1">
-			<input type="checkbox" rsf:id="general-expert-templates" id="general-expert-templates-id"/>
-			<label rsf:id="general-expert-templates-note" for="general-expert-templates">Use expert created templates</label>
-		</p>
-		<p class=	"checkbox indnt1">
-			<input type="checkbox" rsf:id="general-expert-questions" id="general-expert-questions-id"/>
-			<label rsf:id="general-expert-questions-note" for="general-expert-questions">Use expert created questions</label>
-		</p>
-		<p class=	"checkbox indnt1">
-			<input type="checkbox" rsf:id="general-same-view-date" id="general-same-view-date-id"/>
-			<label rsf:id="general-same-view-date-note" for="general-same-view-date">Use same view date for all users<br/>
+			<input type="checkbox" rsf:id="general-same-view-date" />
+			<label rsf:id="msg=administrate.general.same.view.date.note" for="general-same-view-date">Use same view date for all users<br/>
 			(or use separate dates for students, instructors, admins)</label>
 		</p>
 		<p class=	"checkbox indnt1">
-			<input type="checkbox" rsf:id="general-require-comments-block" id="general-require-comments-block-id"/>
-			<label rsf:id="general-require-comments-block-note" for="general-require-comments-block">Require a comments block to be included in every evaluation</label>
+			<input type="checkbox" rsf:id="general-require-comments-block" />
+			<label rsf:id="msg=administrate.general.require.comments.block.note" for="general-require-comments-block">Require a comments block to be included in every evaluation</label>
 		</p>
 		<p class=	"checkbox indnt1">
-			<input type="checkbox" rsf:id="general-item-results-sharing-block" id="general-item-results-sharing-block-id"/>
-			<label rsf:id="general-item-results-sharing-block-note" for="general-item-results-sharing-block">Allow results of evaluations to be shared</label>
+			<input type="checkbox" rsf:id="general-item-results-sharing-block" />
+			<label rsf:id="msg=administrate.general.item.sharing.block.note" for="general-item-results-sharing-block">Allow results of evaluations to be shared</label>
 		</p>
 		<p class=	"longtext indnt1">
 			<label class="block" rsf:id="general-eval-closed-still-recent-note" for="general-eval-closed-still-recent-selection">Number of days old can an eval be and still be recently closed</label>

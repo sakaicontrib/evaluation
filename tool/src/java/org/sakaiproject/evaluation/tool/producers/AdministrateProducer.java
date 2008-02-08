@@ -280,18 +280,15 @@ public class AdministrateProducer implements ViewComponentProducer {
       UIMessage.make(form, "general-default-question-category", "administrate.general.default.question.category.note");	
 
       makeBoolean(form, "general-use-stop-date", EvalSettings.EVAL_USE_STOP_DATE); 
-      UIMessage.make(form, "general-use-stop-date-note","administrate.general.use.stop.date.note");		
-      makeBoolean(form, "general-expert-templates", EvalSettings.USE_EXPERT_TEMPLATES); 
-      UIMessage.make(form, "general-expert-templates-note","administrate.general.expert.templates.note");	
-      makeBoolean(form, "general-expert-questions", EvalSettings.USE_EXPERT_ITEMS); 
-      UIMessage.make(form, "general-expert-questions-note", "administrate.general.expert.questions.note");		
-      makeBoolean(form, "general-same-view-date",  EvalSettings.EVAL_USE_SAME_VIEW_DATES); 
-      UIMessage.make(form, "general-same-view-date-note", "administrate.general.same.view.date.note");	
-      makeBoolean(form, "general-require-comments-block",  EvalSettings.REQUIRE_COMMENTS_BLOCK); 
-      UIMessage.make(form, "general-require-comments-block-note", "administrate.general.require.comments.block.note");	
+      makeBoolean(form, "general-use-view-date", EvalSettings.EVAL_USE_VIEW_DATE); 
 
-      makeBoolean(form, "general-item-results-sharing-block",  EvalSettings.ITEM_USE_RESULTS_SHARING); 
-      UIMessage.make(form, "general-item-results-sharing-block-note", "administrate.general.item.sharing.block.note");	
+      makeBoolean(form, "general-expert-templates", EvalSettings.USE_EXPERT_TEMPLATES);
+      makeBoolean(form, "general-expert-questions", EvalSettings.USE_EXPERT_ITEMS);	
+
+      makeBoolean(form, "general-same-view-date",  EvalSettings.EVAL_USE_SAME_VIEW_DATES);
+      makeBoolean(form, "general-require-comments-block",  EvalSettings.REQUIRE_COMMENTS_BLOCK);
+
+      makeBoolean(form, "general-item-results-sharing-block",  EvalSettings.ITEM_USE_RESULTS_SHARING);
 
       //Number of days old can an eval be and still be recently closed
       makeSelect(form, "general-eval-closed-still-recent",
