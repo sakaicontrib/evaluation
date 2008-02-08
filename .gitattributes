@@ -141,7 +141,6 @@ tool/src/java/org/sakaiproject/evaluation/tool/ImportBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ItemsBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/LocalResponsesLogic.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/LocalTemplateLogic.java -text
-tool/src/java/org/sakaiproject/evaluation/tool/ReportHandlerHook.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ReportsBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ScaleBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/TakeEvalBean.java -text
@@ -221,6 +220,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/reporting/EvalLikertChartBuilder.
 tool/src/java/org/sakaiproject/evaluation/tool/reporting/EvalPDFReportBuilder.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/reporting/LikertPercentageItemLabelGenerator.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/reporting/PDFReportExporter.java -text
+tool/src/java/org/sakaiproject/evaluation/tool/reporting/ReportHandlerHook.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/reporting/XLSReportExporter.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/utils/HierarchyRenderUtil.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/utils/RSFUtils.java -text

@@ -95,7 +95,7 @@
    </bean>
 
    <bean id="reportHandlerHook"
-      class="org.sakaiproject.evaluation.tool.ReportHandlerHook">
+      class="org.sakaiproject.evaluation.tool.reporting.ReportHandlerHook">
       <property name="viewparams" ref="viewParameters" />
       <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
       <property name="evaluationService"
