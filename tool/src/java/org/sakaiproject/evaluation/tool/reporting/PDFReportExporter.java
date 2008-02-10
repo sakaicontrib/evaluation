@@ -1,28 +1,15 @@
 package org.sakaiproject.evaluation.tool.reporting;
 
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.content.api.ContentHostingService;
 import org.sakaiproject.content.api.ContentResource;
-import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
-import org.sakaiproject.evaluation.model.EvalAssignGroup;
-import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.model.EvalItem;
-import org.sakaiproject.evaluation.model.EvalTemplate;
-import org.sakaiproject.evaluation.model.EvalTemplateItem;
-import org.sakaiproject.evaluation.model.constant.EvalConstants;
+import org.sakaiproject.evaluation.tool.utils.EvalAggregatedResponses;
 import org.sakaiproject.evaluation.tool.utils.EvaluationCalcUtility;
-import org.sakaiproject.util.FormattedText;
 
 import uk.org.ponder.util.UniversalRuntimeException;
 
@@ -63,10 +50,7 @@ public class PDFReportExporter {
       this.contentHostingService = contentHostingService;
    }
 
-   public void respondWithPDF(EvalEvaluation evaluation, EvalTemplate template,
-         List<EvalItem> allEvalItems, List<EvalTemplateItem> allEvalTemplateItems,
-         List<String> topRow, List<List<String>> responseRows, int numOfResponses,
-         String[] groupIDs, OutputStream outputStream) {
+   public void formatResponses(EvalAggregatedResponses responses, OutputStream outputStream) {
       Document document = new Document();
       try {
          PdfWriter writer = PdfWriter.getInstance(document, outputStream);
@@ -91,7 +75,7 @@ public class PDFReportExporter {
          }
 
          // Title of Survey
-         Paragraph title = new Paragraph(evaluation.getTitle());
+         Paragraph title = new Paragraph(responses.evaluation.getTitle());
          title.setAlignment(Element.ALIGN_CENTER);
          document.add(title);
 
@@ -106,16 +90,16 @@ public class PDFReportExporter {
          // Invitees: IB PMS 07/08
          PdfPTable table = new PdfPTable(2);
          table.addCell("Carried out:");
-         String dates = evaluation.getStartDate() + " - " + evaluation.getStopDate();
+         String dates = responses.evaluation.getStartDate() + " - " + responses.evaluation.getStopDate();
          table.addCell(dates);
          table.addCell("Response Rate:");
-         table.addCell(evalCalcUtil.getParticipantResults(evaluation));
+         table.addCell(evalCalcUtil.getParticipantResults(responses.evaluation));
          table.addCell("Invitees:");
          String groupsCellContents = "";
-         if (groupIDs.length > 0) {
-            for (int groupCounter = 0; groupCounter < groupIDs.length; groupCounter++) {//groupTitles.size(); groupCounter++) {
-               groupsCellContents +=  externalLogic.getDisplayTitle(groupIDs[groupCounter]); //groupTitles.get(groupCounter);
-               if (groupCounter+1 < groupIDs.length) {//groupTitles.size()) {
+         if (responses.groupIds.length > 0) {
+            for (int groupCounter = 0; groupCounter < responses.groupIds.length; groupCounter++) {//groupTitles.size(); groupCounter++) {
+               groupsCellContents +=  externalLogic.getDisplayTitle(responses.groupIds[groupCounter]); //groupTitles.get(groupCounter);
+               if (groupCounter+1 < responses.groupIds.length) {//groupTitles.size()) {
                   groupsCellContents += ", ";
                }
             }

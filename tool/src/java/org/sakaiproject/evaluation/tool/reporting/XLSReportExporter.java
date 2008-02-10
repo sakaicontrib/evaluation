@@ -12,11 +12,9 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
-import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.model.EvalItem;
-import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
+import org.sakaiproject.evaluation.tool.utils.EvalAggregatedResponses;
 import org.sakaiproject.evaluation.tool.utils.EvaluationCalcUtility;
 import org.sakaiproject.util.FormattedText;
 
@@ -34,12 +32,9 @@ public class XLSReportExporter {
       this.evalCalcUtil = util;
    }
 
-   public void respondWithExcel(EvalEvaluation evaluation, EvalTemplate template,
-         List<EvalItem> allEvalItems, List<EvalTemplateItem> allEvalTemplateItems,
-         List<String> topRow, List<List<String>> responseRows, int numOfResponses,
-         String[] groupIDs, OutputStream outputStream) {
+   public void formatResponses(EvalAggregatedResponses responses, OutputStream outputStream) {
       HSSFWorkbook wb = new HSSFWorkbook();
-      HSSFSheet sheet = wb.createSheet("First Sheet");
+      HSSFSheet sheet = wb.createSheet("Responses");
 
       // Title Style
       HSSFFont font = wb.createFont();
@@ -65,23 +60,23 @@ public class XLSReportExporter {
       // Evaluation Title
       HSSFRow row1 = sheet.createRow(0);
       HSSFCell cellA1 = row1.createCell((short)0);
-      cellA1.setCellValue(evaluation.getTitle());
+      cellA1.setCellValue(responses.evaluation.getTitle());
       cellA1.setCellStyle(mainTitleStyle);
 
       HSSFRow row2 = sheet.createRow(1);
       HSSFCell cellA2 = row2.createCell((short)0);
       cellA2.setCellStyle(boldHeaderStyle);
-      cellA2.setCellValue(evalCalcUtil.getParticipantResults(evaluation));
+      cellA2.setCellValue(evalCalcUtil.getParticipantResults(responses.evaluation));
 
       //if (groupTitles.size() > 0) {
-      if (groupIDs.length > 0) {
+      if (responses.groupIds.length > 0) {
          HSSFRow row3 = sheet.createRow(2);
          HSSFCell cellA3 = row3.createCell((short)0);
 
          String groupsCellContents = "Participants: ";
-         for (int groupCounter = 0; groupCounter < groupIDs.length; groupCounter++) {//groupTitles.size(); groupCounter++) {
-            groupsCellContents +=  externalLogic.getDisplayTitle(groupIDs[groupCounter]); //groupTitles.get(groupCounter);
-            if (groupCounter+1 < groupIDs.length) {//groupTitles.size()) {
+         for (int groupCounter = 0; groupCounter < responses.groupIds.length; groupCounter++) {//groupTitles.size(); groupCounter++) {
+            groupsCellContents +=  externalLogic.getDisplayTitle(responses.groupIds[groupCounter]); //groupTitles.get(groupCounter);
+            if (groupCounter+1 < responses.groupIds.length) {//groupTitles.size()) {
                groupsCellContents += ", ";
             }
          }
@@ -90,8 +85,8 @@ public class XLSReportExporter {
 
       // Questions types (just above header row)
       HSSFRow questionTypeRow = sheet.createRow((short)4);
-      for (int i = 0; i < allEvalTemplateItems.size(); i++) {
-         EvalTemplateItem tempItem = allEvalTemplateItems.get(i);
+      for (int i = 0; i < responses.allEvalTemplateItems.size(); i++) {
+         EvalTemplateItem tempItem = responses.allEvalTemplateItems.get(i);
          HSSFCell cell = questionTypeRow.createCell((short)(i+1));
          if (TemplateItemUtils.getTemplateItemType(tempItem).equals(EvalConstants.ITEM_TYPE_SCALED)) {
             cell.setCellValue("Rating scale");
@@ -107,24 +102,24 @@ public class XLSReportExporter {
 
       // Header Row
       HSSFRow headerRow = sheet.createRow((short)5);
-      for (int i = 0; i < topRow.size(); i++) {
+      for (int i = 0; i < responses.topRow.size(); i++) {
          // Adding one because we want the first column to be a numbered list.
          HSSFCell cell = headerRow.createCell((short)(i+1));
-         String questionString = FormattedText.convertFormattedTextToPlaintext(topRow.get(i));
+         String questionString = FormattedText.convertFormattedTextToPlaintext(responses.topRow.get(i));
          cell.setCellValue(((String)questionString));
          cell.setCellStyle(boldHeaderStyle);
       }
 
       // Fill in the rest
-      for (int i = 0; i < responseRows.size(); i++) {
+      for (int i = 0; i < responses.responseRows.size(); i++) {
          HSSFRow row = sheet.createRow((short)(i+6)); 
          HSSFCell indexCell = row.createCell((short)0);
          indexCell.setCellValue(i+1);
          indexCell.setCellStyle(boldHeaderStyle);
-         List<String> responses = (List<String>) responseRows.get(i);
-         for (int j = 0 ; j < responses.size(); j++) {
+         List<String> rowResponses = (List<String>) responses.responseRows.get(i);
+         for (int j = 0 ; j < rowResponses.size(); j++) {
             HSSFCell responseCell = row.createCell((short)(j+1));
-            responseCell.setCellValue(responses.get(j));
+            responseCell.setCellValue(rowResponses.get(j));
          }
       }
 
