@@ -100,12 +100,11 @@
       <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
       <property name="evaluationService"
          ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
-      <property name="deliveryService"
-         ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
       <property name="csvReportExporter" ref="CSVReportExporter" />
       <property name="xlsReportExporter" ref="XLSReportExporter" />
       <property name="pdfReportExporter" ref="PDFReportExporter" />
       <property name="response" ref="httpServletResponse" />
+      <property name="evalResponseAggregatorUtil" ref="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil" />
    </bean>
 
 
@@ -460,7 +459,7 @@
       <property name="settings"
          ref="org.sakaiproject.evaluation.logic.EvalSettings" />
       <property name="locale" ref="requestLocale" />
-      <property name="evaluationCalcUtility" ref="EvaluationCalcUtility" />
+      <property name="evaluationCalcUtility" ref="org.sakaiproject.evaluation.tool.utils.EvaluationCalcUtility" />
    </bean>
 
    <bean
