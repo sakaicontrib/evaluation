@@ -135,8 +135,10 @@ public class TemplateItemWBL implements WriteableBeanLocator {
          // defaults if template is not connected yet
          templateItem.getItem().setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
       }
-      // always set new items to private sharing (causes exception if non-admin attempts to add items otherwise)
-      templateItem.getItem().setSharing(EvalConstants.SHARING_PRIVATE);
+      if (templateItem.getItem().getSharing() == null) {
+         // default new items to private sharing (causes exception if non-admin attempts to add items otherwise)
+         templateItem.getItem().setSharing(EvalConstants.SHARING_PRIVATE);
+      }
    }
 
 }
