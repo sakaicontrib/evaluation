@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.logic.impl;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -40,40 +41,31 @@ public class EvalSettingsImpl implements EvalSettings {
       this.evaluationDao = evaluationDao;
    }
 
+   private HashSet<String> booleanSettings = new HashSet<String>();
+
    /**
     * spring init
     */
    public void init() {
       log.debug("init");
+
+      // convert the array into a Set to make it easier to work with
+      for (int i = 0; i < BOOLEAN_SETTINGS.length; i++) {
+         booleanSettings.add(BOOLEAN_SETTINGS[i]);
+      }      
+
+      // count the current config settings
       int count = evaluationDao.countAll(EvalConfig.class);
       if (count > 0) {
-         log.info("Updating boolean evaluation system settings to ensure they are not null...");
+         log.info("Updating boolean only evaluation system settings to ensure they are not null...");
          // check the existing boolean settings for null values and fix them if they are null
-         checkBooleanSetting(DISPLAY_HIERARCHY_OPTIONS);
-         checkBooleanSetting(DISPLAY_HIERARCHY_HEADERS);
-         checkBooleanSetting(ITEM_USE_RESULTS_SHARING);
-         checkBooleanSetting(EVAL_USE_STOP_DATE);
-         checkBooleanSetting(EVAL_USE_VIEW_DATE);
-         checkBooleanSetting(USE_EXPERT_ITEMS);
-         checkBooleanSetting(USE_EXPERT_TEMPLATES);
-         checkBooleanSetting(REQUIRE_COMMENTS_BLOCK);
-         checkBooleanSetting(NOT_AVAILABLE_ALLOWED);
-         checkBooleanSetting(ADMIN_VIEW_BELOW_RESULTS);
-         checkBooleanSetting(INSTRUCTOR_ALLOWED_EMAIL_STUDENTS);
-         checkBooleanSetting(INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS);
+         for (String setting : booleanSettings) {
+            if (get(setting) == null) {
+               set(setting, false);
+            }
+         }
       }
    }
-
-   /**
-    * Check if a boolean setting is null and set it to false if it is
-    * @param check a setting constant
-    */
-   private void checkBooleanSetting(String check) {
-      if (get(check) == null) {
-         set(check,false);
-      }
-   }
-
 
 
    /* (non-Javadoc)
@@ -84,17 +76,25 @@ public class EvalSettingsImpl implements EvalSettings {
       String name = SettingsLogicUtils.getName(settingConstant);
       String type = SettingsLogicUtils.getType(settingConstant);
 
+      Object setting = null;
       EvalConfig c = getConfigByName(name);
-      if (c == null) { return null; }
-
-      if (type.equals("java.lang.Boolean")) {
-         return new Boolean( c.getValue() );
-      } else if (type.equals("java.lang.Integer")) {
-         return new Integer( c.getValue() );
-      } else if (type.equals("java.lang.Float")) {
-         return new Float( c.getValue() );
+      if (c == null) {
+         if (booleanSettings.contains(settingConstant)) {
+            // if this boolean is null then make it false instead
+            setting = Boolean.FALSE;
+         }
+      } else {
+         if (type.equals("java.lang.Boolean")) {
+            setting = new Boolean( c.getValue() );
+         } else if (type.equals("java.lang.Integer")) {
+            setting = new Integer( c.getValue() );
+         } else if (type.equals("java.lang.Float")) {
+            setting = new Float( c.getValue() );
+         } else {
+            setting = c.getValue();
+         }
       }
-      return c.getValue();
+      return setting;
    }
 
    /* (non-Javadoc)

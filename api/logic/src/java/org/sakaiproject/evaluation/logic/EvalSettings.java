@@ -149,6 +149,10 @@ public interface EvalSettings {
     * due date of the evaluation - {@link Integer}, default 4<br/>
     */
    public static final String EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE = "EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE:java.lang.Integer";
+   /**
+    * CONSTANT: Allow users to choose a time as well as a date for various eval dates - {@link Boolean}, default False<br/>
+    */
+   public static final String EVAL_USE_DATE_TIME = "EVAL_USE_DATE_TIME:java.lang.Boolean";
 
    /**
     * CONSTANT: Can the item results sharing be set for template items - {@link Boolean}, default False
@@ -189,6 +193,29 @@ public interface EvalSettings {
     * CONSTANT: Location of image in Sakai Resources to use for PDF Report Banner
     */
    public static final String PDF_BANNER_IMAGE_LOCATION = "PDF_BANNER_IMAGE_LOCATION:java.lang.String";
+
+
+   /**
+    * This is here to identify all the boolean ONLY settings in the system,
+    * this does not include Booleans which are configurable (i.e. can be set to null, true, or false)
+    * but only includes the booleans which are always true or false
+    */
+   public static String[] BOOLEAN_SETTINGS = {
+         DISPLAY_HIERARCHY_OPTIONS,
+         DISPLAY_HIERARCHY_HEADERS,
+         ITEM_USE_RESULTS_SHARING,
+         EVAL_USE_STOP_DATE,
+         EVAL_USE_VIEW_DATE,
+         EVAL_USE_DATE_TIME,
+         USE_EXPERT_ITEMS,
+         USE_EXPERT_TEMPLATES,
+         REQUIRE_COMMENTS_BLOCK,
+         NOT_AVAILABLE_ALLOWED,
+         ADMIN_VIEW_BELOW_RESULTS,
+         INSTRUCTOR_ALLOWED_EMAIL_STUDENTS,
+         INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS
+   };
+
 
    /**
     * Allows for getting the value of a system setting based on the constant,

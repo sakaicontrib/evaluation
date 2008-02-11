@@ -99,19 +99,21 @@ public class PreloadDataImpl {
 
          // Default general settings
          saveConfig(EvalSettings.FROM_EMAIL_ADDRESS, "helpdesk@institution.edu");
-         saveConfig(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS, 5);
+         saveConfig(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS, 3);
          saveConfig(EvalSettings.NOT_AVAILABLE_ALLOWED, true);
          saveConfig(EvalSettings.ITEMS_ALLOWED_IN_QUESTION_BLOCK, 10);
          saveConfig(EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY, EvalConstants.SHARING_OWNER);
          saveConfig(EvalSettings.USE_EXPERT_TEMPLATES, true);
          saveConfig(EvalSettings.USE_EXPERT_ITEMS, true);
-         saveConfig(EvalSettings.REQUIRE_COMMENTS_BLOCK, true);
+         saveConfig(EvalSettings.REQUIRE_COMMENTS_BLOCK, false);
          saveConfig(EvalSettings.EVAL_RECENTLY_CLOSED_DAYS, 10);
          saveConfig(EvalSettings.ITEM_USE_RESULTS_SHARING, false);
 
          // default is configurable (unset)
          //saveConfig(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY, false);
+         saveConfig(EvalSettings.EVAL_USE_DATE_TIME, false);
          saveConfig(EvalSettings.EVAL_USE_STOP_DATE, false);
+         saveConfig(EvalSettings.EVAL_USE_VIEW_DATE, false);
          saveConfig(EvalSettings.EVAL_USE_SAME_VIEW_DATES, true);
          saveConfig(EvalSettings.EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE, 4);
 

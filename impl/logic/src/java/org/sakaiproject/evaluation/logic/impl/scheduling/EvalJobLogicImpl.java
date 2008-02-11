@@ -144,10 +144,10 @@ public class EvalJobLogicImpl implements EvalJobLogic {
        * could be done as another type of job run by the scheduler in a separate thread.
        */
 
+      EvalEvaluation eval = getEvaluationOrFail(evaluationId);
+
       // fix up EvalEvaluation state
       evaluationService.updateEvaluationState(evaluationId);
-
-      EvalEvaluation eval = getEvaluationOrFail(evaluationId);
 
       // dispatch to send email and/or schedule jobs based on jobType
       if (EvalConstants.JOB_TYPE_CREATED.equals(jobType)) {
@@ -242,10 +242,10 @@ public class EvalJobLogicImpl implements EvalJobLogic {
             !eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_REQUIRED)) {
          /*
           * Note: email should NOT be sent at this point, so we
-          * schedule email for ten minutes from now, giving instructor ten minutes to delete
-          * the evaluation and its notification
+          * schedule email for EvalConstants.EVALUATION_TIME_TO_WAIT_MINS minutes from now, 
+          * giving instructor time to delete the evaluation and its notification
           */
-         long runAt = new Date().getTime() + (1000 * 60 * 10);
+         long runAt = new Date().getTime() + (1000 * 60 * EvalConstants.EVALUATION_TIME_TO_WAIT_MINS);
          scheduleJob(eval.getId(), new Date(runAt), EvalConstants.JOB_TYPE_CREATED);
       }
       scheduleJob(eval.getId(), eval.getStartDate(), EvalConstants.JOB_TYPE_ACTIVE);
