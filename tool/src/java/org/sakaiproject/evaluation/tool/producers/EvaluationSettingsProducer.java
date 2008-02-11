@@ -360,7 +360,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 
 		String[] authControlLabels = { 
 				"evalsettings.auth.control.label.required", 
-				"evalsettings.auth.control.label.key",
+			//	"evalsettings.auth.control.label.key", // CTL-563
 				"evalsettings.auth.control.label.none"
 			};
 		UISelect.make(form, "auth-control-choose", EvaluationConstant.AUTHCONTROL_VALUES, 
