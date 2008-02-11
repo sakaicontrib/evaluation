@@ -656,6 +656,10 @@ public class EvalConstants {
     */
    public static final String EVALUATION_AUTHCONTROL_NONE = "NONE";
 
+   /**
+    * Evaluation time to wait: Time to wait in minutes for certain actions, used for time to start and time to view among others
+    */
+   public static final int EVALUATION_TIME_TO_WAIT_MINS = 5;
 
    /**
     * ItemGroup Type: Category (root group type)<br/>

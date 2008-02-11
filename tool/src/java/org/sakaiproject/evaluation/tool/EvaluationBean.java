@@ -186,15 +186,11 @@ public class EvaluationBean {
 
       // assign stop date to equal due date for now
       if (stopDate == null) {
-         Calendar cal = new GregorianCalendar();
-         cal.setTime(calendar.getTime());
-         cal.set(Calendar.HOUR_OF_DAY, 0);
-         cal.set(Calendar.MINUTE, 0);
-         cal.set(Calendar.SECOND, 0);
-         stopDate = cal.getTime();
+         stopDate = dueDate;
          log.info("Setting stop date to default of: " + stopDate);
       }
 
+      // assign default view date
       calendar.add(Calendar.DATE, 1);
       if (viewDate == null) {
          viewDate = calendar.getTime();
@@ -748,14 +744,51 @@ public class EvaluationBean {
    private void commonSaveTasks() {
 
       boolean useStopDate = ((Boolean) settings.get(EvalSettings.EVAL_USE_STOP_DATE)).booleanValue();
+      boolean useViewDate = ((Boolean) settings.get(EvalSettings.EVAL_USE_VIEW_DATE)).booleanValue();
+      boolean useDateTime = ((Boolean) settings.get(EvalSettings.EVAL_USE_DATE_TIME)).booleanValue();
+      // Getting the system setting that tells what should be the minimum time difference between start date and due date.
+      int minHoursDifference = ((Integer) settings.get(EvalSettings.EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE)).intValue();
+
+      /*
+       * check if start date is the same as today's date, set startDate as today's date time, 
+       * as when we parse the string to a date, the time filled by default is zero
+       */
+      checkEvalStartDate();
 
       eval.setStartDate(startDate);
       eval.setDueDate(dueDate);
+
+      // force the due date to the end of the day if we are using dates only
+      if (! useDateTime ) {
+         dueDate = EvaluationDateUtil.getEndOfDayDate( eval.getDueDate() );
+         eval.setDueDate( dueDate );
+      }
+
       if (! useStopDate) {
          // force stop date to due date if not in use
-         eval.setStopDate(dueDate);
+         stopDate = dueDate;
+      }
+      eval.setStopDate(stopDate);
+
+      // set stop date to the due date if not set
+      if (eval.getStopDate() == null) {
+         log.info("Setting the null stop date to the due date: " + eval.getDueDate());
+         eval.setStopDate(eval.getDueDate());
       } else {
-         eval.setStopDate(stopDate);
+         // force the stop date to the end of the day if we are using dates only
+         if (! useDateTime ) {
+            log.info("Forcing date to end of day for non null stop date: " + eval.getStopDate());
+            eval.setStopDate( EvaluationDateUtil.getEndOfDayDate( eval.getStopDate() ) );
+         }
+      }
+
+      // Ensure minimum time difference between start and due/stop dates - check this after the dates are set
+      dueDate = EvaluationDateUtil.updateDueStopDates(eval, minHoursDifference);
+      stopDate = eval.getStopDate(); // also update the stop date to the current one
+
+      if (! useViewDate) {
+         // force view date to due date + const mins if not in use
+         viewDate = new Date( dueDate.getTime() + (1000 * 60 * EvalConstants.EVALUATION_TIME_TO_WAIT_MINS) );
       }
       eval.setViewDate(viewDate);
 
@@ -811,31 +844,6 @@ public class EvaluationBean {
       }
       eval.setReminderEmailTemplate(reminderTemplate);
 
-      /*
-       * check if start date is the same as today's date, set startDate as today's date time, 
-       * as when we parse the string to a date, the time filed by default is zero
-       */
-      checkEvalStartDate();
-
-      // force the due date and stop date to the end of the day if set to 00:00:00
-      if ( EvaluationDateUtil.isTimeMidnight( eval.getDueDate() ) ) {
-         eval.setDueDate( EvaluationDateUtil.getEndOfDayDate( eval.getDueDate() ) );
-      }
-      if (eval.getStopDate() != null && EvaluationDateUtil.isTimeMidnight( eval.getStopDate() ) ) {
-         log.info("Forcing date to end of day for non null stop date: " + eval.getStopDate());
-         eval.setStopDate( EvaluationDateUtil.getEndOfDayDate( eval.getStopDate() ) );
-      }
-
-      // Ensure minimum time difference between start and due date.
-      // Getting the system setting that tells what should be the minimum time difference between start date and due date.
-      int minHoursLong = ((Integer)settings.get(EvalSettings.EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE)).intValue();
-      EvaluationDateUtil.updateDueDate(eval, minHoursLong);
-
-      // set stop date to the due date if not set
-      if (eval.getStopDate() == null) {
-         log.info("Setting the null stop date to the due date: " + eval.getDueDate());
-         eval.setStopDate(eval.getDueDate());
-      }
    }
 
    /**
@@ -845,8 +853,8 @@ public class EvaluationBean {
    private void checkEvalStartDate() {
 
       /*
-       * Set startDate as today's date time as when we parse the string to a date, 
-       * the time filed by default.
+       * Set startDate as today's date time as when we parse the string to a date, the time filled
+       * by default.
        */
       Calendar calendar = new GregorianCalendar();
       calendar.setTime(eval.getStartDate());
@@ -860,9 +868,9 @@ public class EvaluationBean {
       int month_today = calendar.get(Calendar.MONTH);
       int day_today = calendar.get(Calendar.DAY_OF_MONTH);
 
-      if(year_start == year_today && month_start == month_today && day_start == day_today) {
-         eval.setStartDate(calendar.getTime());		
-      }	
+      if (year_start == year_today && month_start == month_today && day_start == day_today) {
+         eval.setStartDate(calendar.getTime());
+      }
    }
 
 }

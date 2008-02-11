@@ -114,6 +114,10 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		UIMessage.make(form, "eval-start-date-header", "evalsettings.start.date.header");
 		UIMessage.make(form, "eval-start-date-desc", "evalsettings.start.date.desc");
 
+		// retrieve the global setting for use of date only or date and time picker
+		Boolean useDateTime = (Boolean) settings.get(EvalSettings.EVAL_USE_DATE_TIME);
+		if (useDateTime == null) { useDateTime = Boolean.FALSE; }
+
 		Date today = new Date();
 		UIInput startDate = UIInput.make(form, "startDate:", "#{evaluationBean.startDate}");	
 		if (evaluationBean.eval.getId() != null) {
@@ -128,15 +132,21 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		} else {
 			UIInput.make(form, "evalStatus", null, "new");
 		}
-		//dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);
-		dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_TIME_INPUT);
+		if (useDateTime) {
+	      dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_TIME_INPUT);		   
+		} else {
+	      dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);		   
+		}
 		dateevolver.evolveDateInput(startDate, evaluationBean.startDate);
 
 		UIMessage.make(form, "eval-due-date-header", "evalsettings.due.date.header");
 		UIMessage.make(form, "eval-due-date-desc", "evalsettings.due.date.desc");
 		UIInput dueDate = UIInput.make(form, "dueDate:", "#{evaluationBean.dueDate}");
-		//dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);
-		dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_TIME_INPUT);
+      if (useDateTime) {
+         dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_TIME_INPUT);         
+      } else {
+         dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);        
+      }
 		dateevolver.evolveDateInput(dueDate, evaluationBean.dueDate);
 
 		// Show the "Stop date" text box only if allowed in the System settings
@@ -145,17 +155,27 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 			UIMessage.make(showStopDate, "eval-stop-date-header", "evalsettings.stop.date.header");
 			UIMessage.make(showStopDate, "eval-stop-date-desc", "evalsettings.stop.date.desc");
 			UIInput stopDate = UIInput.make(showStopDate, "stopDate:", "#{evaluationBean.stopDate}");
-			//dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);
-			dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_TIME_INPUT);
+	      if (useDateTime) {
+	         dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_TIME_INPUT);         
+	      } else {
+	         dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);        
+	      }
 			dateevolver.evolveDateInput(stopDate, evaluationBean.stopDate);
 		}
 
-		UIMessage.make(form, "eval-view-date-header", "evalsettings.view.date.header");
-		UIMessage.make(form, "eval-view-date-desc", "evalsettings.view.date.desc");
-		UIInput viewDate = UIInput.make(form, "viewDate:", "#{evaluationBean.viewDate}");
-		//dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);
-		dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_TIME_INPUT);
-		dateevolver.evolveDateInput(viewDate, evaluationBean.viewDate);
+		// show the view date only if allowed by system settings
+      if (((Boolean) settings.get(EvalSettings.EVAL_USE_VIEW_DATE)).booleanValue()) {
+         UIBranchContainer showViewDate = UIBranchContainer.make(form, "showViewDate:");
+   		UIMessage.make(showViewDate, "eval-view-date-header", "evalsettings.view.date.header");
+   		UIMessage.make(showViewDate, "eval-view-date-desc", "evalsettings.view.date.desc");
+   		UIInput viewDate = UIInput.make(showViewDate, "viewDate:", "#{evaluationBean.viewDate}");
+         if (useDateTime) {
+            dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_TIME_INPUT);         
+         } else {
+            dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);        
+         }
+   		dateevolver.evolveDateInput(viewDate, evaluationBean.viewDate);
+      }
 
 
 		UIMessage.make(form, "eval-results-viewable-header", "evalsettings.results.viewable.header");
@@ -194,8 +214,11 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 				UIMessage.make(showResultsToStudents, "eval-results-stu-inst-date-label", "evalsettings.results.stu.inst.date.label");
 			} else {
 				UIInput studentsDate = UIInput.make(showResultsToStudents, "studentsDate:", "#{evaluationBean.studentsDate}");
-				//dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);
-				dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_TIME_INPUT);
+		      if (useDateTime) {
+		         dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_TIME_INPUT);         
+		      } else {
+		         dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);        
+		      }
 				dateevolver.evolveDateInput(studentsDate, evaluationBean.studentsDate);
 			}
 		} else {
@@ -232,8 +255,11 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 				UIMessage.make(showResultsToInst, "eval-results-stu-inst-date-label", "evalsettings.results.stu.inst.date.label");
 			} else {
 				UIInput instructorsDate = UIInput.make(showResultsToInst, "instructorsDate:", "#{evaluationBean.instructorsDate}");
-				//dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);
-				dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_TIME_INPUT);
+		      if (useDateTime) {
+		         dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_TIME_INPUT);         
+		      } else {
+		         dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);        
+		      }
 				dateevolver.evolveDateInput(instructorsDate, evaluationBean.instructorsDate);
 			}
 		} else {

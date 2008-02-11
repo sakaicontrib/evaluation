@@ -279,6 +279,8 @@ public class AdministrateProducer implements ViewComponentProducer {
             EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY, true);
       UIMessage.make(form, "general-default-question-category", "administrate.general.default.question.category.note");	
 
+      makeBoolean(form, "general-use-date-time",  EvalSettings.EVAL_USE_DATE_TIME);
+
       makeBoolean(form, "general-use-stop-date", EvalSettings.EVAL_USE_STOP_DATE); 
       makeBoolean(form, "general-use-view-date", EvalSettings.EVAL_USE_VIEW_DATE); 
 

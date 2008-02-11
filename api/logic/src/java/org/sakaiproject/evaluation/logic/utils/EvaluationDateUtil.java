@@ -40,9 +40,10 @@ public class EvaluationDateUtil {
 	 * 
 	 * @param eval {@link EvalEvaluation} object that contains both start and due date.
 	 * @param minHoursLong the minimum number of hours between the startdate and the duedate,
-     * usually would come from a system setting {@link EvalSettings#EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE}
+    * usually would come from a system setting {@link EvalSettings#EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE}
+    * @return the new Due Date
 	 */
-	public static void updateDueDate(EvalEvaluation eval, int minHoursLong) {
+	public static Date updateDueStopDates(EvalEvaluation eval, int minHoursLong) {
 
 		/*
 		 * Find the difference between view date and due date so that after 
@@ -89,6 +90,7 @@ public class EvaluationDateUtil {
 				eval.setViewDate(calendarView.getTime());
 			}
 		}
+		return eval.getDueDate();
 	}
 
 	/**
