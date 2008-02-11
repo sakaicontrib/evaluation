@@ -18,6 +18,8 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationConstant;
@@ -31,6 +33,8 @@ import uk.org.ponder.stringutil.StringUtil;
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
 public class ScaledUtils {
+
+   private static Log log = LogFactory.getLog(ScaledUtils.class);
 
 	public static String[] idealKeys = {
 		EvalConstants.SCALE_IDEAL_NONE,
@@ -53,15 +57,20 @@ public class ScaledUtils {
 		EvaluationConstant.GREEN_COLOR,
 		EvaluationConstant.GREEN_COLOR};
 
-	public static int idealToIndex(String ideal) {
-		for (int i = 0; i < idealKeys.length; ++ i) {
-			if (StringUtil.equals(ideal, idealKeys[i])) return i;
-		}
-		return -1;
-	}
-
 	public static int idealIndex(EvalScale scale) {
-		return idealToIndex(scale.getIdeal());
+      int index = -1;
+      for (int i = 0; i < idealKeys.length; ++ i) {
+         if (StringUtil.equals(scale.getIdeal(), idealKeys[i])) {
+            index = i;
+            break;
+         }
+      }
+      if (index == -1) {
+         // Fix for http://www.caret.cam.ac.uk/jira/browse/CTL-562 - added to ensure this will not cause a failure
+         log.warn("Could not find index for scale ("+scale.getId()+") for ideal setting: " + scale.getIdeal() + ", setting to default of 0 (no ideal)");
+         index = 0;
+      }
+      return index;
 	}
 
 	public static String getIdealImageURL(EvalScale scale) {
