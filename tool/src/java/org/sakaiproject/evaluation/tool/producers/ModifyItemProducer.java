@@ -281,6 +281,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
          renderScaleDisplaySelect(form, commonDisplayOTP, scaleDisplaySetting, 
                EvaluationConstant.CHOICES_DISPLAY_SETTING_VALUES, 
                EvaluationConstant.CHOICES_DISPLAY_SETTING_LABELS_PROPS);
+         form.parameters.add( new UIELBinding(scaleOTP + "mode", EvalConstants.SCALE_MODE_ADHOC) );
 		}
 
 		if (userAdmin && templateId == null) {
