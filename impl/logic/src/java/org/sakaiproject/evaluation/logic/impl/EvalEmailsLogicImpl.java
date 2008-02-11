@@ -179,12 +179,8 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       EvalEvaluation eval = getEvaluationOrFail(evaluationId);
       String from = getFromEmailOrFail(eval);
       EvalEmailTemplate emailTemplate = getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_AVAILABLE, evaluationId);
-
       // get the instructor opt-in email template
-      EvalEmailTemplate emailOptInTemplate = null;
-      if (eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_OPT_IN)) {
-         emailOptInTemplate = getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_AVAILABLE_OPT_IN, null);
-      }
+      EvalEmailTemplate emailOptInTemplate = getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_AVAILABLE_OPT_IN, null);
 
       // get the associated assign groups for this evaluation
       Map<Long, List<EvalAssignGroup>> evalAssignGroups = 
