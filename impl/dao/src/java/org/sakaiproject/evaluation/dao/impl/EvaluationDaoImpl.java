@@ -203,7 +203,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
             unapprovedHQL = " and assign.instructorApproval = :approval ";
             params.put("approval", true);
          }
-         groupsHQL = " eval.id in (select assign.evaluation.id " +
+         groupsHQL = " eval.id in (select distinct assign.evaluation.id " +
          "from EvalAssignGroup as assign where assign.nodeId is null " +
          "and assign.evalGroupId in (:evalGroupIds)" + unapprovedHQL + ") ";
          params.put("evalGroupIds", evalGroupIds);
@@ -235,7 +235,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
             activeHQL = " and eval.state = :activeState ";
             params.put("activeState", EvalConstants.EVALUATION_STATE_ACTIVE);
          }
-         String hql = "select distinct eval from EvalEvaluation as eval " +
+         String hql = "select eval from EvalEvaluation as eval " +
          " where 1=1 " + activeHQL + groupsHQL + 
          " order by eval.dueDate, eval.title, eval.id";
          evals = executeHqlQuery(hql, params, 0, 0);
