@@ -7,6 +7,7 @@ import java.util.List;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.utils.ComparatorsUtils;
+import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -15,6 +16,8 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
+import uk.org.ponder.rsf.components.UIBranchContainer;
+import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 /*
@@ -25,7 +28,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * @author Aaron Zeckoski (aaronz@vt.edu)
  * @author Rui Feng (fengr@vt.edu)
  * @author Will Humphries (whumphri@vt.edu)
- * @author Steven Githens
+ * @author Steven Githens (swgithen@mtu.edu)
  */
 public class EvalResponseAggregatorUtil {
    
@@ -207,5 +210,52 @@ public class EvalResponseAggregatorUtil {
          currRow.add(" ");
       }
 
+   }
+   
+   /*
+    * This method deals with producing an array of total number of responses for
+    * a list of answers.  It does not deal with any of the logic (such as groups,
+    * etc.) it takes to get a list of answers.
+    * 
+    * The item type should be the expected constant from EvalConstants. For 
+    * scaled and multiple choice questions, this will count the answers numeric
+    * field for each scale.  For multiple answers, it will aggregate all the responses
+    * for each answer to their scale item.
+    * 
+    * @param itemType The Item type. Should be one of EvalConstants.ITEM_TYPE_SCALED,
+    * EvalConstants.ITEM_TYPE_MULTIPLECHOICE, or EvalConstants.ITEM_TYPE_MULTIPLEANSWER
+    * @param scaleSize The size of the scale items. The returned integer array will
+    * be this big. With each index being a count of responses for that scale type.
+    * @param answers The List of EvalAnswers to work with.
+    */
+   public int[] countResponseChoices(String itemType, int scaleSize, List<EvalAnswer> itemAnswers) {
+       int[] togo = new int[scaleSize];
+       
+       if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemType)) {
+           for (EvalAnswer answer: itemAnswers) {
+               Integer[] decoded = EvalUtils.decodeMultipleAnswers(answer.getMultiAnswerCode());
+               for (Integer decodedAnswer: decoded) {
+                   togo[decodedAnswer.intValue()]++;
+               }
+           }
+       }
+       else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(itemType) || 
+               EvalConstants.ITEM_TYPE_SCALED.equals(itemType)) {
+           for (int x = 0; x < togo.length; x++) {
+               int answers = 0;
+               //count the number of answers that match this one
+               for (int y = 0; y < itemAnswers.size(); y++) {
+                  EvalAnswer curr = (EvalAnswer) itemAnswers.get(y);
+                  if (curr.getNumeric().intValue() == x) {
+                     answers++;
+                  }
+               }
+               togo[x] = answers;
+           }
+       }
+       else {
+           throw new IllegalArgumentException("The itemType needs to be ITEM_TYPE_MULTIPLEANSWER, ITEM_TYPE_MULTIPLECHOICE, or ITEM_TYPE_SCALED");
+       }
+       return togo;
    }
 }

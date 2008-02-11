@@ -34,6 +34,7 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationBean;
 import org.sakaiproject.evaluation.tool.ReportsBean;
+import org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil;
 import org.sakaiproject.evaluation.tool.viewparams.CSVReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.EssayResponseParams;
 import org.sakaiproject.evaluation.tool.viewparams.ExcelReportViewParams;
@@ -96,6 +97,11 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
    private EvalSettings evalSettings;
    public void setEvalSettings(EvalSettings evalSettings) {
       this.evalSettings = evalSettings;
+   }
+   
+   private EvalResponseAggregatorUtil responseAggregator;
+   public void setEvalResponseAggregatorUtil(EvalResponseAggregatorUtil bean) {
+       this.responseAggregator = bean;
    }
 
    int displayNumber = 1;
@@ -252,18 +258,20 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
 
          List<EvalAnswer> itemAnswers = deliveryService.getEvalAnswers(item.getId(), evalId, groupIds);
 
+         int[] responseNumbers = responseAggregator.countResponseChoices(templateItemType, scaleLabels.length, itemAnswers);
+         
          for (int x = 0; x < scaleLabels.length; x++) {
             UIBranchContainer answerbranch = UIBranchContainer.make(scaled, "answers:", x + "");
             UIOutput.make(answerbranch, "responseText", scaleOptions[x]);
-            int answers = 0;
+            //int answers = 0;
             //count the number of answers that match this one
-            for (int y = 0; y < itemAnswers.size(); y++) {
-               EvalAnswer curr = (EvalAnswer) itemAnswers.get(y);
-               if (curr.getNumeric().intValue() == x) {
-                  answers++;
-               }
-            }
-            UIOutput.make(answerbranch, "responseTotal", answers + "", x + "");
+            //for (int y = 0; y < itemAnswers.size(); y++) {
+            //   EvalAnswer curr = (EvalAnswer) itemAnswers.get(y);
+            //   if (curr.getNumeric().intValue() == x) {
+            //      answers++;
+            //   }
+            //}
+            UIOutput.make(answerbranch, "responseTotal", responseNumbers[x]+"");
          }
 
       } else if (templateItemType.equals(EvalConstants.ITEM_TYPE_TEXT)) { //"Short Answer/Essay"
