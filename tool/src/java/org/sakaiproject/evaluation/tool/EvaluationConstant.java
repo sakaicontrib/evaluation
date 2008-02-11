@@ -172,7 +172,7 @@ public class EvaluationConstant {
     */
    public static final String[] AUTHCONTROL_VALUES = new String[] {
       EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ,
-      EvalConstants.EVALUATION_AUTHCONTROL_KEY,
+      //EvalConstants.EVALUATION_AUTHCONTROL_KEY, // CTL-563
       EvalConstants.EVALUATION_AUTHCONTROL_NONE
    };
 
