@@ -144,7 +144,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		}
 
 		if (beginEvaluation) {
-			UIInternalLink.make(tofill, "control-evaluationSetupService-link",
+			UIInternalLink.make(tofill, "control-evaluations-link",
 					UIMessage.make("controlevaluations.page.title"),
 				new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
 		}
@@ -167,7 +167,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		if (evalsToTake.size() > 0) {
 			UIBranchContainer evalBC = UIBranchContainer.make(tofill, "evaluationsBox:");
 
-			UIMessage.make(evalBC, "evaluationSetupService-title", "summary.evaluations.title");
+			UIMessage.make(evalBC, "evaluations-title", "summary.evaluations.title");
 			// build an array of evaluation ids
 			Long[] evalIds = new Long[evalsToTake.size()];
 			for (int i=0; i<evalsToTake.size(); i++) {

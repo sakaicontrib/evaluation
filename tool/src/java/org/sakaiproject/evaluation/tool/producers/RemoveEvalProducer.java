@@ -70,7 +70,7 @@ public class RemoveEvalProducer implements ViewComponentProducer,ViewParamsRepor
       UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"),
             new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
-      UIInternalLink.make(tofill, "control-evaluationSetupService-link",
+      UIInternalLink.make(tofill, "control-evaluations-link",
             UIMessage.make("controlevaluations.page.title"), new SimpleViewParameters(
                   ControlEvaluationsProducer.VIEW_ID));
 

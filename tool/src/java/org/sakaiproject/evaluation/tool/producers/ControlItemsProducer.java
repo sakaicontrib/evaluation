@@ -103,7 +103,7 @@ public class ControlItemsProducer implements ViewComponentProducer {
       }
 
       if (beginEvaluation) {
-         UIInternalLink.make(tofill, "control-evaluationSetupService-link", 
+         UIInternalLink.make(tofill, "control-evaluations-link", 
                UIMessage.make("controlevaluations.page.title"), 
                new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
          UIInternalLink.make(tofill, "begin-evaluation-link", 

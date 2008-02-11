@@ -92,7 +92,7 @@ public class AdministrateProducer implements ViewComponentProducer {
             UIMessage.make("controltemplates.page.title"), 
             new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
 
-      UIInternalLink.make(tofill, "control-evaluationSetupService-link",
+      UIInternalLink.make(tofill, "control-evaluations-link",
             UIMessage.make("controlevaluations.page.title"), 
             new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
 
