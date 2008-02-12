@@ -190,11 +190,27 @@ public class EvalResponseAggregatorUtil {
           * else (scaled type or block child, which is also scaled) item then look up the label
           */
          currRow = responseRows.get(actualIndexOfResponse);
-         if (TemplateItemUtils.getTemplateItemType(tempItem1).equals(EvalConstants.ITEM_TYPE_TEXT)) {
+         if (EvalConstants.ITEM_TYPE_TEXT.equals(TemplateItemUtils.getTemplateItemType(tempItem1))) {
             currRow.add(currAnswer.getText());
-         } else {
+         } 
+         else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(TemplateItemUtils.getTemplateItemType(tempItem1))) {
+            String labels[] = item1.getScale().getOptions();
+            StringBuilder sb = new StringBuilder();
+            Integer[] decoded = EvalUtils.decodeMultipleAnswers(currAnswer.getMultiAnswerCode());
+            for (int k = 0; k < decoded.length; k++) {
+               sb.append(labels[decoded[k].intValue()]);
+               if (k+1 < decoded.length) 
+                  sb.append(",");
+            }
+            currRow.add(sb.toString());
+         }
+         else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(TemplateItemUtils.getTemplateItemType(tempItem1)) ||
+               EvalConstants.ITEM_TYPE_SCALED.equals(TemplateItemUtils.getTemplateItemType(tempItem1))) {
             String labels[] = item1.getScale().getOptions();
             currRow.add(labels[currAnswer.getNumeric().intValue()]);
+         }
+         else {
+            throw new UniversalRuntimeException("Trying to add an unsupported question type to the Spreadsheet Data Lists.");
          }
 
          /*

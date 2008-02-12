@@ -1,14 +1,25 @@
 package org.sakaiproject.evaluation.tool.reporting;
 
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.content.api.ContentHostingService;
 import org.sakaiproject.content.api.ContentResource;
+import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
+import org.sakaiproject.evaluation.model.EvalAnswer;
+import org.sakaiproject.evaluation.model.EvalItem;
+import org.sakaiproject.evaluation.model.EvalTemplate;
+import org.sakaiproject.evaluation.model.EvalTemplateItem;
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.utils.EvalAggregatedResponses;
+import org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil;
 import org.sakaiproject.evaluation.tool.utils.EvaluationCalcUtility;
 
 import uk.org.ponder.util.UniversalRuntimeException;
@@ -43,6 +54,16 @@ public class PDFReportExporter {
    public void setEvaluationCalcUtility(EvaluationCalcUtility util) {
       this.evalCalcUtil = util;
    }
+   
+   private EvalDeliveryService deliveryService;
+   public void setDeliveryService(EvalDeliveryService deliveryService) {
+      this.deliveryService = deliveryService;
+   }
+   
+   private EvalResponseAggregatorUtil responseAggregator;
+   public void setEvalResponseAggregatorUtil(EvalResponseAggregatorUtil bean) {
+      this.responseAggregator = bean;
+   }
 
    // FIXME - Do NOT use Sakai services directly, go through external logic
    private ContentHostingService contentHostingService;
@@ -51,14 +72,61 @@ public class PDFReportExporter {
    }
 
    public void formatResponses(EvalAggregatedResponses responses, OutputStream outputStream) {
-      Document document = new Document();
-      try {
-         PdfWriter writer = PdfWriter.getInstance(document, outputStream);
-         document.open();
+      EvalPDFReportBuilder evalPDFReportBuilder = new EvalPDFReportBuilder(outputStream);
+      
+      evalPDFReportBuilder.addTitlePage(responses.evaluation.getTitle(), 
+            externalLogic.getUserDisplayName(externalLogic.getCurrentUserId()), 
+            externalLogic.getUserUsername(externalLogic.getCurrentUserId()), 
+            responses.evaluation.getStartDate(),  
+            evalCalcUtil.getParticipantResults(responses.evaluation));
+      
+      evalPDFReportBuilder.addIntroduction(responses.evaluation.getTitle(), 
+            responses.evaluation.getInstructions());
+      
+      for (int i = 0; i < responses.allEvalItems.size(); i++) {
+         EvalItem item = responses.allEvalItems.get(i);
+         EvalTemplateItem templateItem = responses.allEvalTemplateItems.get(i);
+         
+         List<EvalAnswer> itemAnswers = deliveryService.getEvalAnswers(item.getId(), 
+              responses.evaluation.getId(), responses.groupIds);
+
+         if (EvalConstants.ITEM_TYPE_HEADER.equals(TemplateItemUtils.getTemplateItemType(templateItem))) {
+            
+         }
+         else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(TemplateItemUtils.getTemplateItemType(templateItem))) {
+            //evalPDFReportBuilder.addLikertResponse(templateItem.getItem().getDescription(), 
+            //      item.getScale().getOptions(), responseAggregator.countResponseChoices(EvalConstants.ITEM_TYPE_MULTIPLEANSWER, item.getScale().getOptions().length, itemAnswers), false);
+         }
+         else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(TemplateItemUtils.getTemplateItemType(templateItem))) {
+            evalPDFReportBuilder.addLikertResponse(templateItem.getItem().getItemText(), 
+                  item.getScale().getOptions(), responseAggregator.countResponseChoices(EvalConstants.ITEM_TYPE_MULTIPLECHOICE, item.getScale().getOptions().length, itemAnswers), false);
+         }
+         else if (EvalConstants.ITEM_TYPE_TEXT.equals(TemplateItemUtils.getTemplateItemType(templateItem))) {
+            List<String> essays = new ArrayList<String>();
+            for (EvalAnswer answer: itemAnswers) {
+               essays.add(answer.getText());
+            }
+            evalPDFReportBuilder.addEssayResponse(templateItem.getItem().getItemText(), essays);
+         }
+         else if (EvalConstants.ITEM_TYPE_SCALED.equals(TemplateItemUtils.getTemplateItemType(templateItem))) {
+            
+         }
+         else {
+            
+         }
+      }
+      
+      evalPDFReportBuilder.close();
+      
+      //Document document = new Document();
+     // try {
+         //PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+         //document.open();
 
          // make a standard place in the eval webapp to put your custom image
          // FIXME confusing operation for user - if this will not fail when I check the box but don't have an image then why use a checkbox at all?
          // just have the user put in a banner image which shows up or leave the box blank, also should have the user browse for the banner image
+         /*
          Boolean useBannerImage = (Boolean) evalSettings.get(EvalSettings.ENABLE_PDF_REPORT_BANNER);
          if (useBannerImage != null && useBannerImage == true) {
             String bannerImageLocation = (String) evalSettings.get(EvalSettings.PDF_BANNER_IMAGE_LOCATION);
@@ -73,21 +141,23 @@ public class PDFReportExporter {
                }
             }
          }
+         */
 
          // Title of Survey
-         Paragraph title = new Paragraph(responses.evaluation.getTitle());
-         title.setAlignment(Element.ALIGN_CENTER);
-         document.add(title);
+         //Paragraph title = new Paragraph(responses.evaluation.getTitle());
+         //title.setAlignment(Element.ALIGN_CENTER);
+         //document.add(title);
 
          // Account Name
-         Paragraph accountName = new Paragraph(externalLogic.getUserDisplayName(externalLogic.getCurrentUserId()));
-         accountName.setAlignment(Element.ALIGN_CENTER);
-         document.add(accountName);
+         //Paragraph accountName = new Paragraph(externalLogic.getUserDisplayName(externalLogic.getCurrentUserId()));
+         //accountName.setAlignment(Element.ALIGN_CENTER);
+         //document.add(accountName);
 
          // Table with info on,
          // Carried out:  12th July 07 - 18th July 07
          // Response rate:  76% ( 80 / 126 )
          // Invitees: IB PMS 07/08
+         /*
          PdfPTable table = new PdfPTable(2);
          table.addCell("Carried out:");
          String dates = responses.evaluation.getStartDate() + " - " + responses.evaluation.getStopDate();
@@ -106,6 +176,7 @@ public class PDFReportExporter {
          }
          table.addCell(groupsCellContents);
          document.add(table);
+         */
 /*
          for (int i = 0; i < topRow.size(); i++) {
             String plainQuestionText = FormattedText.convertFormattedTextToPlaintext(topRow.get(i));
@@ -154,9 +225,9 @@ public class PDFReportExporter {
             //}
          }
 */
-         document.close();
-      } catch (DocumentException e) {
-         throw UniversalRuntimeException.accumulate(e, "Error creating PDF Export");
-      }
+        // document.close();
+      //} catch (DocumentException e) {
+      //   throw UniversalRuntimeException.accumulate(e, "Error creating PDF Export");
+     // }
    }
 }
