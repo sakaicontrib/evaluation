@@ -95,7 +95,7 @@ public class LocalTemplateLogic {
       // TODO currently creating a fake template (newTemplate()) so the bind does not fail, this should supposedly use a defunneler
       EvalTemplateItem newTemplateItem = new EvalTemplateItem( new Date(), 
             external.getCurrentUserId(), newTemplate(), newItem(), null, 
-            EvaluationConstant.ITEM_CATEGORY_VALUES[0], level, nodeId);
+            EvalToolConstants.ITEM_CATEGORY_VALUES[0], level, nodeId);
       newTemplateItem.setUsesNA(new Boolean(false));
       return newTemplateItem;
    }
@@ -216,7 +216,7 @@ public class LocalTemplateLogic {
       EvalScale scale = authoringService.getScaleById(scaleId);
       // TODO - hopefully this if block is only needed temporarily until RSF 0.7.3
       if (scale.getIdeal() == null) {
-         scale.setIdeal(EvaluationConstant.NULL);
+         scale.setIdeal(EvalToolConstants.NULL);
       }
       return scale;
    }
@@ -224,7 +224,7 @@ public class LocalTemplateLogic {
    public void saveScale(EvalScale scale) {
       // TODO - hopefully this if block is only needed temporarily until RSF 0.7.3
       if (scale.getIdeal() != null &&
-            scale.getIdeal().equals(EvaluationConstant.NULL)) {
+            scale.getIdeal().equals(EvalToolConstants.NULL)) {
          scale.setIdeal(null);
       }
       authoringService.saveScale(scale, external.getCurrentUserId());
@@ -238,8 +238,8 @@ public class LocalTemplateLogic {
       EvalScale currScale = new EvalScale(new Date(), 
             external.getCurrentUserId(), null, 
             EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PRIVATE, Boolean.FALSE);
-      currScale.setOptions(EvaluationConstant.defaultInitialScaleValues);
-      currScale.setIdeal(EvaluationConstant.NULL); // TODO - temp until RSF 0.7.3
+      currScale.setOptions(EvalToolConstants.defaultInitialScaleValues);
+      currScale.setIdeal(EvalToolConstants.NULL); // TODO - temp until RSF 0.7.3
       return currScale;
    }
 

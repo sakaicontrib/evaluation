@@ -23,7 +23,7 @@ import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
-import org.sakaiproject.evaluation.tool.EvaluationConstant;
+import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.locators.ItemBeanWBL;
 import org.sakaiproject.evaluation.tool.locators.TemplateItemWBL;
 import org.sakaiproject.evaluation.tool.renderers.HierarchyNodeSelectorRenderer;
@@ -260,8 +260,8 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 			scaleList.selection.darreshaper = new ELReference("#{id-defunnel}");
 
 			renderScaleDisplaySelect(form, commonDisplayOTP, scaleDisplaySetting, 
-			      EvaluationConstant.SCALE_DISPLAY_SETTING_VALUES, 
-			      EvaluationConstant.SCALE_DISPLAY_SETTING_LABELS_PROPS);
+			      EvalToolConstants.SCALE_DISPLAY_SETTING_VALUES, 
+			      EvalToolConstants.SCALE_DISPLAY_SETTING_LABELS_PROPS);
 		} else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(itemClassification) ||
 		      EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemClassification) ) {
 		   // MC/MA items need to create choices
@@ -275,12 +275,12 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 
          UIInputMany modifypoints = UIInputMany.make(showItemChoices, 
                "modify-scale-points:", scaleOTP + "options",
-               (scaleId == null ? EvaluationConstant.defaultInitialScaleValues : null) );
+               (scaleId == null ? EvalToolConstants.defaultInitialScaleValues : null) );
          boundedDynamicListInputEvolver.evolve(modifypoints);
 
          renderScaleDisplaySelect(form, commonDisplayOTP, scaleDisplaySetting, 
-               EvaluationConstant.CHOICES_DISPLAY_SETTING_VALUES, 
-               EvaluationConstant.CHOICES_DISPLAY_SETTING_LABELS_PROPS);
+               EvalToolConstants.CHOICES_DISPLAY_SETTING_VALUES, 
+               EvalToolConstants.CHOICES_DISPLAY_SETTING_LABELS_PROPS);
          form.parameters.add( new UIELBinding(scaleOTP + "mode", EvalConstants.SCALE_MODE_ADHOC) );
 		}
 
@@ -289,8 +289,8 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 			UIBranchContainer showItemSharing = UIBranchContainer.make(form, "show-item-sharing:");
 			UIMessage.make(showItemSharing, "item-sharing-header", "modifyitem.item.sharing.header");
 			UISelect.make(showItemSharing, "item-sharing-list", 
-					EvaluationConstant.SHARING_VALUES, 
-					EvaluationConstant.SHARING_LABELS_PROPS, 
+					EvalToolConstants.SHARING_VALUES, 
+					EvalToolConstants.SHARING_LABELS_PROPS, 
 					itemOTP + "sharing").setMessageKeys();
 		} else {
 			// not admin so set the sharing to private by default for now
@@ -324,8 +324,8 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 			UIBranchContainer showResponseSize = UIBranchContainer.make(form, "show-response-size:");
 			UIMessage.make(showResponseSize, "item-response-size-header", "modifyitem.item.response.size.header");
 			UISelect.make(showResponseSize, "item-response-size-list", 
-					EvaluationConstant.RESPONSE_SIZE_VALUES, 
-					EvaluationConstant.RESPONSE_SIZE_LABELS_PROPS,
+					EvalToolConstants.RESPONSE_SIZE_VALUES, 
+					EvalToolConstants.RESPONSE_SIZE_LABELS_PROPS,
 					commonDisplayOTP + "displayRows",
 					displayRows ).setMessageKeys();
 		}
@@ -345,10 +345,10 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 			UIBranchContainer showItemCategory = UIBranchContainer.make(form, "showItemCategory:");
 			UIMessage.make(showItemCategory, "item-category-header", "modifyitem.item.category.header");
 			UISelect radios = UISelect.make(showItemCategory, "item-category-list", 
-					EvaluationConstant.ITEM_CATEGORY_VALUES, 
-					EvaluationConstant.ITEM_CATEGORY_LABELS_PROPS,
+					EvalToolConstants.ITEM_CATEGORY_VALUES, 
+					EvalToolConstants.ITEM_CATEGORY_LABELS_PROPS,
 					itemOTP + "category").setMessageKeys();
-			for (int i = 0; i < EvaluationConstant.ITEM_CATEGORY_VALUES.length; i++) {
+			for (int i = 0; i < EvalToolConstants.ITEM_CATEGORY_VALUES.length; i++) {
 				UIBranchContainer radioBranch = UIBranchContainer.make(showItemCategory, "item-category-branch:", i+"");
 				UISelectLabel.make(radioBranch, "item-category-label", radios.getFullID(), i);
 				UISelectChoice.make(radioBranch, "item-category-radio", radios.getFullID(), i);
@@ -358,7 +358,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
          // Do not show on the page, just bind it explicitly.
          form.parameters.add(
                new UIELBinding(itemOTP + "category",
-                     EvaluationConstant.ITEM_CATEGORY_VALUES[isDefaultCourse.booleanValue() ? 0 : 1]));
+                     EvalToolConstants.ITEM_CATEGORY_VALUES[isDefaultCourse.booleanValue() ? 0 : 1]));
 		}
 
 		if (templateId != null) {
@@ -378,7 +378,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
                UIMessage.make(showItemResultSharing, "item-results-sharing-PR", "item.results.sharing.private");
                // Radio Buttons for "Result Sharing"
                String[] resultSharingList = { "item.results.sharing.public", "item.results.sharing.private" };
-               UISelect radios = UISelect.make(showItemResultSharing, "item_results_sharing", EvaluationConstant.ITEM_RESULTS_SHARING_VALUES,
+               UISelect radios = UISelect.make(showItemResultSharing, "item_results_sharing", EvalToolConstants.ITEM_RESULTS_SHARING_VALUES,
                      resultSharingList, templateItemOTP + "resultsSharing", null);
    
                String selectID = radios.getFullID();
@@ -387,12 +387,12 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
             } else {
                // false, so all questions are private by default           
                form.parameters.add(new UIELBinding(templateItemOTP + "resultsSharing",
-                     EvaluationConstant.ITEM_RESULTS_SHARING_VALUES[isDefaultResultSharing ? 0 : 1]));
+                     EvalToolConstants.ITEM_RESULTS_SHARING_VALUES[isDefaultResultSharing ? 0 : 1]));
             }
          } else {
             // null so all questions are private by default       
             form.parameters.add(new UIELBinding(templateItemOTP + "resultsSharing",
-                  EvaluationConstant.ITEM_RESULTS_SHARING_VALUES[0]));
+                  EvalToolConstants.ITEM_RESULTS_SHARING_VALUES[0]));
          }
 
          // hierarchy node selector control

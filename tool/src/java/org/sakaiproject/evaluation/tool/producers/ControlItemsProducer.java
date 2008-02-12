@@ -20,7 +20,7 @@ import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
-import org.sakaiproject.evaluation.tool.EvaluationConstant;
+import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.viewparams.ItemViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
@@ -123,8 +123,8 @@ public class ControlItemsProducer implements ViewComponentProducer {
       UIForm addItemForm = UIForm.make(tofill, "add-item-form", 
             new ItemViewParameters(ModifyItemProducer.VIEW_ID, null));
       UISelect.make(addItemForm, "item-classification-list", 
-            EvaluationConstant.ITEM_CLASSIFICATION_VALUES, 
-            EvaluationConstant.ITEM_CLASSIFICATION_LABELS_PROPS, 
+            EvalToolConstants.ITEM_CLASSIFICATION_VALUES, 
+            EvalToolConstants.ITEM_CLASSIFICATION_LABELS_PROPS, 
       "#{itemClassification}").setMessageKeys();
       UIMessage.make(addItemForm, "add-item-button", "controlitems.items.add.button");
 

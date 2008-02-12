@@ -174,7 +174,7 @@ public class ReportsViewEssaysProducer implements ViewComponentProducer, Navigat
                      // if (i % 2 == 1)
                      // radiobranch.decorators = new DecoratorList(
                      // new UIColourDecorator(null,
-                     // Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
+                     // Color.decode(EvalToolConstants.LIGHT_GRAY_COLOR)));
 
                      this.doFillComponent(item1, evaluation.getId(), i, ervps.groupIds,
                            radiobranch, courseSection);
@@ -187,7 +187,7 @@ public class ReportsViewEssaysProducer implements ViewComponentProducer, Navigat
                      // if (i % 2 == 1)
                      // radiobranch.decorators = new DecoratorList(
                      // new UIColourDecorator(null,
-                     // Color.decode(EvaluationConstant.LIGHT_GRAY_COLOR)));
+                     // Color.decode(EvalToolConstants.LIGHT_GRAY_COLOR)));
                      this.doFillComponent(item1, evaluation.getId(), i, ervps.groupIds,
                            radiobranch, instructorSection);
                   }

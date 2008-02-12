@@ -18,7 +18,7 @@ import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.tool.EvaluationConstant;
+import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.locators.ScaleBeanLocator;
 import org.sakaiproject.evaluation.tool.viewparams.EvalScaleParameters;
 
@@ -125,13 +125,13 @@ public class ModifyScaleProducer implements ViewComponentProducer, ViewParamsRep
       boundedDynamicListInputEvolver.evolve(modifypoints);
 
       UISelect radios = UISelect.make(form, "scaleIdealRadio", 
-            EvaluationConstant.scaleIdealValues, 
-            EvaluationConstant.scaleIdealLabels, 
+            EvalToolConstants.scaleIdealValues, 
+            EvalToolConstants.scaleIdealLabels, 
             scaleOTP + "ideal").setMessageKeys();
       radios.selection.mustapply = true; // this is required to ensure that the value gets passed even if it is not changed
 
       String selectID = radios.getFullID();
-      for (int i = 0; i < EvaluationConstant.scaleIdealValues.length; ++i) {
+      for (int i = 0; i < EvalToolConstants.scaleIdealValues.length; ++i) {
          UIBranchContainer radiobranch = UIBranchContainer.make(form, "scaleIdealOptions:", i+"");
          UISelectLabel label = UISelectLabel.make(radiobranch, "scale-ideal-label", selectID, i);
          UISelectChoice choice = UISelectChoice.make(radiobranch, "scale-ideal-value", selectID, i);
@@ -141,8 +141,8 @@ public class ModifyScaleProducer implements ViewComponentProducer, ViewParamsRep
       if (userAdmin) {
          UIBranchContainer sharingBranch = UIBranchContainer.make(form, "sharing-branch:");
          UISelect.make(sharingBranch, "scale-sharing", 
-               EvaluationConstant.SHARING_VALUES, 
-               EvaluationConstant.SHARING_LABELS_PROPS, 
+               EvalToolConstants.SHARING_VALUES, 
+               EvalToolConstants.SHARING_LABELS_PROPS, 
                scaleOTP + "sharing").setMessageKeys();
       }
 

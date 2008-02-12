@@ -134,8 +134,8 @@ impl/test/src/java/org/sakaiproject/evaluation/test/mocks/MockEvalJobLogic.java 
 tool/maven.xml -text
 tool/project.properties -text
 tool/project.xml -text
+tool/src/java/org/sakaiproject/evaluation/tool/EvalToolConstants.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/EvaluationBean.java -text
-tool/src/java/org/sakaiproject/evaluation/tool/EvaluationConstant.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ExpertItemsBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ImportBean.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/ItemsBean.java -text

@@ -16,7 +16,7 @@ package org.sakaiproject.evaluation.tool.locators;
 
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.utils.SettingsLogicUtils;
-import org.sakaiproject.evaluation.tool.EvaluationConstant;
+import org.sakaiproject.evaluation.tool.EvalToolConstants;
 
 import uk.org.ponder.beanutil.WriteableBeanLocator;
 import uk.org.ponder.conversion.StaticLeafParser;
@@ -67,11 +67,11 @@ public class SettingsWBL implements WriteableBeanLocator {
        * deleted from the table. 
        */ 
       if ( isTernaryBoolean(beanname) ) {
-         if ( ((String)toset).equals(EvaluationConstant.ADMIN_BOOLEAN_CONFIGURABLE) ) 
+         if ( ((String)toset).equals(EvalToolConstants.ADMIN_BOOLEAN_CONFIGURABLE) ) 
             toset = null;
-         else if ( ((String)toset).equals(EvaluationConstant.ADMIN_BOOLEAN_YES) ) 
+         else if ( ((String)toset).equals(EvalToolConstants.ADMIN_BOOLEAN_YES) ) 
             toset = Boolean.TRUE;
-         else if ( ((String)toset).equals(EvaluationConstant.ADMIN_BOOLEAN_NO) ) 
+         else if ( ((String)toset).equals(EvalToolConstants.ADMIN_BOOLEAN_NO) ) 
             toset = Boolean.FALSE;
          else {
             throw new IllegalStateException("Invalid value for this ternary boolean: " + toset);
@@ -104,12 +104,12 @@ public class SettingsWBL implements WriteableBeanLocator {
        */
       if ( isTernaryBoolean(path) ) {
          if (toget == null)
-            toget = EvaluationConstant.ADMIN_BOOLEAN_CONFIGURABLE;
+            toget = EvalToolConstants.ADMIN_BOOLEAN_CONFIGURABLE;
          else if (toget instanceof Boolean) {
             if ( ((Boolean)toget).booleanValue() ) {
-               toget = EvaluationConstant.ADMIN_BOOLEAN_YES;
+               toget = EvalToolConstants.ADMIN_BOOLEAN_YES;
             } else { 
-               toget = EvaluationConstant.ADMIN_BOOLEAN_NO;
+               toget = EvalToolConstants.ADMIN_BOOLEAN_NO;
             }
          } else {
             throw new IllegalStateException("Invalid value for this ternary boolean: " + toget);

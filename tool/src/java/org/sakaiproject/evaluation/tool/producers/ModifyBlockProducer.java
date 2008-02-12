@@ -13,7 +13,7 @@ import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
-import org.sakaiproject.evaluation.tool.EvaluationConstant;
+import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.locators.TemplateItemWBL;
 import org.sakaiproject.evaluation.tool.renderers.HierarchyNodeSelectorRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.BlockIdsParameters;
@@ -398,7 +398,7 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 
       /*
        * String targetView =
-       * EvaluationConstant.classificationToView(templateItem.getItem().getClassification());
+       * EvalToolConstants.classificationToView(templateItem.getItem().getClassification());
        * ViewParameters target = new TemplateItemViewParameters(targetView,
        * templateItem.getTemplate().getId(), templateItem.getId()); UIInternalLink.make(tofill,
        * "modify-row-item", UIMessage.make("modifytemplate.modify.link"), target);
@@ -423,7 +423,7 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
          String[] courseCategoryList = { "modifyitem.course.category.header",
                "modifyitem.instructor.category.header" };
          UISelect radios = UISelect.make(showItemCategory, "item_category",
-               EvaluationConstant.ITEM_CATEGORY_VALUES, courseCategoryList, itemPath
+               EvalToolConstants.ITEM_CATEGORY_VALUES, courseCategoryList, itemPath
                      + ".itemCategory", null);
 
          String selectID = radios.getFullID();
@@ -432,7 +432,7 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
       } else {
 
          form.parameters.add(new UIELBinding(itemPath + ".itemCategory",
-               EvaluationConstant.ITEM_CATEGORY_VALUES[isDefaultCourse.booleanValue() ? 0 : 1]));
+               EvalToolConstants.ITEM_CATEGORY_VALUES[isDefaultCourse.booleanValue() ? 0 : 1]));
       }
    }
 

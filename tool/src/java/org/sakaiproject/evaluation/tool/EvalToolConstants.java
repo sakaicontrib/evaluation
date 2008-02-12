@@ -1,5 +1,5 @@
 /**
- * EvaluationConstant.java - evaluation - Aug 21, 2006 11:35:56 AM - azeckoski
+ * EvalToolConstants.java - evaluation - Aug 21, 2006 11:35:56 AM - azeckoski
  * $URL: https://source.sakaiproject.org/contrib $
  * $Id: Locator.java 11234 Jan 21, 2008 11:35:56 AM azeckoski $
  **************************************************************************
@@ -24,7 +24,7 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class EvaluationConstant {
+public class EvalToolConstants {
 
    /**
     * The values for all sharing menus
