@@ -21,7 +21,10 @@ import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,12 +38,14 @@ import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.utils.ArrayUtils;
+import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
+import org.sakaiproject.genericdao.api.finders.ByPropsFinder;
 
 /**
  * Implementation for EvalEvaluationSetupService
@@ -100,6 +105,43 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
    // INIT method
    public void init() {
       log.debug("Init");
+      // run a timer which ensures that evaluation states are kept up to date
+      //initiateUpdateStateTimer();
+   }
+
+   /**
+    * This will start up a timer which will keep the evaluations up to date, the disadvantage here is that
+    * it will run every hour and on every server and therefore could increase the load substantially,
+    * the other disadvantage is that if an evaluation goes from say active all the way to closed or viewable
+    * then this would require a lot of extra logic to handle those cases,
+    * holding off on using this for now -AZ
+    */
+   private void initiateUpdateStateTimer() {
+      TimerTask runStateUpdateTask = new TimerTask() {
+         @SuppressWarnings("unchecked")
+         @Override
+         public void run() {
+            // get all evals that are not viewable (i.e. completed done with)
+            List<EvalEvaluation> evals = dao.findByProperties(EvalEvaluation.class, 
+                  new String[] {"state"}, 
+                  new Object[] {EvalConstants.EVALUATION_STATE_VIEWABLE},
+                  new int[] {ByPropsFinder.NOT_EQUALS});
+            log.info("Checking the state of " + evals.size() + " evaluations to ensure they are all up to date...");
+            // loop through and update the state of the evals if needed
+            int count = 0;
+            for (EvalEvaluation evaluation : evals) {
+               if (! EvalUtils.getEvaluationState(evaluation).equals(evaluationService.returnAndFixEvalState(evaluation, true)) ) {
+                  // could also trigger the various evaluation email events from this as well with extra logic here
+                  count++;
+               }
+            }
+            log.info("Updated the state of "+count+" evaluations...");
+         }
+      };
+      Timer timer = new Timer(true);
+      long startDelay = 1000 * 60 * new Random(new Date().getTime()).nextInt(30) + (1000 * 60 * 5);
+      // start up a timer after 5 mins + random(30 mins) and run it every 60 mins
+      timer.schedule(runStateUpdateTask, startDelay, 1000 * 60 * 60);
    }
 
 
