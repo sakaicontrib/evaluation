@@ -121,6 +121,17 @@ public class EvaluationConstant {
    public static final String[] REMINDER_EMAIL_DAYS_VALUES = new String[] {
       "0", "1", "2", "3", "4", "5", "6", "7" };
 
+   public static final String[] REMINDER_EMAIL_DAYS_LABELS = { 
+      "evalsettings.reminder.days.0", 
+      "evalsettings.reminder.days.1", 
+      "evalsettings.reminder.days.2",
+      "evalsettings.reminder.days.3", 
+      "evalsettings.reminder.days.4", 
+      "evalsettings.reminder.days.5", 
+      "evalsettings.reminder.days.6",
+      "evalsettings.reminder.days.7" 
+   };
+
    /**
     * Evaluation settings: Values for instructor options for using evaluationSetupService from above
     */
@@ -128,6 +139,12 @@ public class EvaluationConstant {
       EvalConstants.INSTRUCTOR_OPT_OUT, 
       EvalConstants.INSTRUCTOR_OPT_IN, 
       EvalConstants.INSTRUCTOR_REQUIRED
+   };
+
+   public static final String[] INSTRUCTOR_OPT_LABELS = { 
+      "evalsettings.instructors.label.opt.out", 
+      "evalsettings.instructors.label.opt.in",
+      "evalsettings.instructors.label.required"
    };
 
 
@@ -176,6 +193,13 @@ public class EvaluationConstant {
       EvalConstants.EVALUATION_AUTHCONTROL_NONE
    };
 
+   public static final String[] AUTHCONTROL_LABELS = { 
+      "evalsettings.auth.control.label.required", 
+      //"evalsettings.auth.control.label.key", // CTL-563
+      "evalsettings.auth.control.label.none"
+   };
+
+
    /**
     * Administrative (system settings) page, 
     * values corresponding to "Yes", "No", "Configurable"  
@@ -190,6 +214,7 @@ public class EvaluationConstant {
     * This fills in for the real null since real null cannot be passed around
     */
    public static final String NULL = "*NULL*";
+
 
    /**
     * Ideal scale values radio buttons (scale add/modify)
