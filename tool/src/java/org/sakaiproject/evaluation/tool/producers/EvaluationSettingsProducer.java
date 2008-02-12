@@ -358,13 +358,8 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		UIMessage.make(form, "auth-control-instructions", "evalsettings.auth.control.instructions");
 		UIMessage.make(form, "auth-control-header", "evalsettings.auth.control.header");
 
-		String[] authControlLabels = { 
-				"evalsettings.auth.control.label.required", 
-			//	"evalsettings.auth.control.label.key", // CTL-563
-				"evalsettings.auth.control.label.none"
-			};
 		UISelect.make(form, "auth-control-choose", EvaluationConstant.AUTHCONTROL_VALUES, 
-				authControlLabels, "#{evaluationBean.eval.authControl}").setMessageKeys();
+				EvaluationConstant.AUTHCONTROL_LABELS, "#{evaluationBean.eval.authControl}").setMessageKeys();
 
 		if (externalLogic.isUserAdmin(externalLogic.getCurrentUserId())) {
 			// If the person is an admin (any kind), then we need to show these instructor opt in/out settings
@@ -374,18 +369,13 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 
 			// If "EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE" is set as configurable 
 			// i.e. NULL in the database then show the instructor opt select box. Else just show the value as label
-			String[] instructorOptLabels = { 
-					"evalsettings.instructors.label.opt.out", 
-					"evalsettings.instructors.label.opt.in",
-					"evalsettings.instructors.label.required"
-				};
 			String instUseFromAboveValue = (String) settings.get(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE);
 			if (instUseFromAboveValue == null) {
 				UISelect.make(form, "instructorOpt", EvaluationConstant.INSTRUCTOR_OPT_VALUES, 
-						instructorOptLabels, "#{evaluationBean.eval.instructorOpt}").setMessageKeys();
+						EvaluationConstant.INSTRUCTOR_OPT_LABELS, "#{evaluationBean.eval.instructorOpt}").setMessageKeys();
 			} else {
 				int index = ArrayUtil.indexOf(EvaluationConstant.INSTRUCTOR_OPT_VALUES, instUseFromAboveValue);
-				String instUseFromAboveLabel = instructorOptLabels[index];
+				String instUseFromAboveLabel = EvaluationConstant.INSTRUCTOR_OPT_LABELS[index];
 				// Displaying the label corresponding to INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE value set as system property
 				UIMessage.make(form, "instructorOptLabel", instUseFromAboveLabel);
 				// Doing the binding of this INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE value so that it can be saved in the database
@@ -404,17 +394,8 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 
 		// email reminder control
 		UIMessage.make(form, "reminder-noresponders-header", "evalsettings.reminder.noresponders.header");
-		String[] reminderEmailDaysLabels = { 
-				"evalsettings.reminder.days.0", 
-				"evalsettings.reminder.days.1", 
-				"evalsettings.reminder.days.2",
-				"evalsettings.reminder.days.3", 
-				"evalsettings.reminder.days.4", 
-				"evalsettings.reminder.days.5", 
-				"evalsettings.reminder.days.6",
-				"evalsettings.reminder.days.7" };
 		UISelect.make(form, "reminderDays", EvaluationConstant.REMINDER_EMAIL_DAYS_VALUES, 
-				reminderEmailDaysLabels, "#{evaluationBean.eval.reminderDays}").setMessageKeys();
+				EvaluationConstant.REMINDER_EMAIL_DAYS_LABELS, "#{evaluationBean.eval.reminderDays}").setMessageKeys();
 
 		// email reminder template link
 		UIInternalLink.make(form, "emailReminder_link", UIMessage.make("evalsettings.reminder.mail.link"), 
