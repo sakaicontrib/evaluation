@@ -18,7 +18,7 @@ package org.sakaiproject.evaluation.tool.producers;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
-import org.sakaiproject.evaluation.tool.EvaluationConstant;
+import org.sakaiproject.evaluation.tool.EvalToolConstants;
 
 import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.rsf.components.ELReference;
@@ -136,9 +136,9 @@ public class AdministrateProducer implements ViewComponentProducer {
       };
       String[] administrateConfigurableValues = 
       {
-            EvaluationConstant.ADMIN_BOOLEAN_YES,
-            EvaluationConstant.ADMIN_BOOLEAN_NO,
-            EvaluationConstant.ADMIN_BOOLEAN_CONFIGURABLE
+            EvalToolConstants.ADMIN_BOOLEAN_YES,
+            EvalToolConstants.ADMIN_BOOLEAN_NO,
+            EvalToolConstants.ADMIN_BOOLEAN_CONFIGURABLE
       };		
 
       makeSelect(form, "instructors-view-results", 
@@ -164,7 +164,7 @@ public class AdministrateProducer implements ViewComponentProducer {
             EvalConstants.INSTRUCTOR_OPT_IN,
             EvalConstants.INSTRUCTOR_OPT_OUT,
             EvalConstants.INSTRUCTOR_REQUIRED,
-            EvaluationConstant.ADMIN_BOOLEAN_CONFIGURABLE 
+            EvalToolConstants.ADMIN_BOOLEAN_CONFIGURABLE 
       };
       String[] hierarchyOptionLabels = 
       {
@@ -181,8 +181,8 @@ public class AdministrateProducer implements ViewComponentProducer {
 
       //Select for number of questions intructors can add
       makeSelect(form, "instructors-num-questions", 
-            EvaluationConstant.PULLDOWN_INTEGER_VALUES, 
-            EvaluationConstant.PULLDOWN_INTEGER_VALUES, 
+            EvalToolConstants.PULLDOWN_INTEGER_VALUES, 
+            EvalToolConstants.PULLDOWN_INTEGER_VALUES, 
             EvalSettings.INSTRUCTOR_ADD_ITEMS_NUMBER, false);
       UIMessage.make(form, "instructors-num-questions-note", "administrate.instructors.num.questions.note");
 
@@ -215,8 +215,8 @@ public class AdministrateProducer implements ViewComponentProducer {
 
       //Select for number of questions admins can add
       makeSelect(form, "admin-hierarchy-num-questions",
-            EvaluationConstant.PULLDOWN_INTEGER_VALUES,
-            EvaluationConstant.PULLDOWN_INTEGER_VALUES,
+            EvalToolConstants.PULLDOWN_INTEGER_VALUES,
+            EvalToolConstants.PULLDOWN_INTEGER_VALUES,
             EvalSettings.ADMIN_ADD_ITEMS_NUMBER, false); 
       UIMessage.make(form, "admin-hierarchy-num-questions-note", "administrate.admin.hierarchy.num.questions.note");
 
@@ -240,8 +240,8 @@ public class AdministrateProducer implements ViewComponentProducer {
 
       // Select for number of responses before results could be viewed
       makeSelect(form, "general-responses-before-view",  
-            EvaluationConstant.PULLDOWN_INTEGER_VALUES,
-            EvaluationConstant.PULLDOWN_INTEGER_VALUES,
+            EvalToolConstants.PULLDOWN_INTEGER_VALUES,
+            EvalToolConstants.PULLDOWN_INTEGER_VALUES,
             EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS, false);
       UIMessage.make(form, "general-responses-before-view-note", "administrate.general.responses.before.view.note");		
 
@@ -250,8 +250,8 @@ public class AdministrateProducer implements ViewComponentProducer {
 
       // Select for maximum number of questions in a block
       makeSelect(form, "general-max-questions-block",	//$NON-NLS-1$
-            EvaluationConstant.PULLDOWN_INTEGER_VALUES,
-            EvaluationConstant.PULLDOWN_INTEGER_VALUES,
+            EvalToolConstants.PULLDOWN_INTEGER_VALUES,
+            EvalToolConstants.PULLDOWN_INTEGER_VALUES,
             EvalSettings.ITEMS_ALLOWED_IN_QUESTION_BLOCK, false);
       UIMessage.make(form, "general-max-questions-block-note", "administrate.general.max.questions.block.note");		
 
@@ -294,15 +294,15 @@ public class AdministrateProducer implements ViewComponentProducer {
 
       //Number of days old can an eval be and still be recently closed
       makeSelect(form, "general-eval-closed-still-recent",
-            EvaluationConstant.PULLDOWN_INTEGER_VALUES,
-            EvaluationConstant.PULLDOWN_INTEGER_VALUES,
+            EvalToolConstants.PULLDOWN_INTEGER_VALUES,
+            EvalToolConstants.PULLDOWN_INTEGER_VALUES,
             EvalSettings.EVAL_RECENTLY_CLOSED_DAYS, false); 
       UIMessage.make(form, "general-eval-closed-still-recent-note","administrate.general.eval.closed.still.recent.note");
 
       //Minimum time difference (in hours) between the start date and due date
       makeSelect(form, "general-mim-time-diff-between-dates",
-            EvaluationConstant.MINIMUM_TIME_DIFFERENCE,
-            EvaluationConstant.MINIMUM_TIME_DIFFERENCE,
+            EvalToolConstants.MINIMUM_TIME_DIFFERENCE,
+            EvalToolConstants.MINIMUM_TIME_DIFFERENCE,
             EvalSettings.EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE, false); 
       UIMessage.make(form, "general-mim-time-diff-between-dates-note", "administrate.general.eval.mim.time.diff.between.dates");
 

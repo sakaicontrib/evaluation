@@ -22,7 +22,7 @@ import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
-import org.sakaiproject.evaluation.tool.EvaluationConstant;
+import org.sakaiproject.evaluation.tool.EvalToolConstants;
 
 import uk.org.ponder.arrayutil.MapUtil;
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -116,15 +116,15 @@ public class BlockRenderer implements ItemRenderer {
 				// Get the scale ideal value (none, low, mid, high )
 				if (ideal == null) {
 					// When no ideal is specified then just plain blue for both start and end
-					idealImage = EvaluationConstant.COLORED_IMAGE_URLS[0];
+					idealImage = EvalToolConstants.COLORED_IMAGE_URLS[0];
 				} else if (EvalConstants.SCALE_IDEAL_LOW.equals(ideal)) {
-					idealImage = EvaluationConstant.COLORED_IMAGE_URLS[1];
+					idealImage = EvalToolConstants.COLORED_IMAGE_URLS[1];
 				} else if (EvalConstants.SCALE_IDEAL_MID.equals(ideal)) {
-					idealImage = EvaluationConstant.COLORED_IMAGE_URLS[2];
+					idealImage = EvalToolConstants.COLORED_IMAGE_URLS[2];
 				} else if (EvalConstants.SCALE_IDEAL_HIGH.equals(ideal)) {
-					idealImage = EvaluationConstant.COLORED_IMAGE_URLS[3];
+					idealImage = EvalToolConstants.COLORED_IMAGE_URLS[3];
 				} else if (EvalConstants.SCALE_IDEAL_OUTSIDE.equals(ideal)) {
-					idealImage = EvaluationConstant.COLORED_IMAGE_URLS[4];
+					idealImage = EvalToolConstants.COLORED_IMAGE_URLS[4];
 				} else {
 					// use no decorators
 				}
@@ -156,17 +156,17 @@ public class BlockRenderer implements ItemRenderer {
 				UISelectLabel.make(rowBranch, "topLabel", selectIDLabel, j); //$NON-NLS-1$
 
 				// Corner Image
-				UILink.make(rowBranch, "cornerImage", EvaluationConstant.STEPPED_IMAGE_URLS[0]);
+				UILink.make(rowBranch, "cornerImage", EvalToolConstants.STEPPED_IMAGE_URLS[0]);
 
 				// This branch container is created to help in creating the middle images after the LABEL
 				for (int k = 0; k < j; ++k) {
 					UIBranchContainer afterTopLabelBranch = UIBranchContainer.make(rowBranch, "blockAfterTopLabelBranch:", k+""); //$NON-NLS-1$
-					UILink.make(afterTopLabelBranch, "middleImage", EvaluationConstant.STEPPED_IMAGE_URLS[1]); //$NON-NLS-1$	
+					UILink.make(afterTopLabelBranch, "middleImage", EvalToolConstants.STEPPED_IMAGE_URLS[1]); //$NON-NLS-1$	
 				}
 
 				// the down arrow images
 				UIBranchContainer bottomLabelBranch = UIBranchContainer.make(blockStepped, "blockBottomLabelBranch:", j+""); //$NON-NLS-1$
-				UILink.make(bottomLabelBranch, "bottomImage", EvaluationConstant.STEPPED_IMAGE_URLS[2]); //$NON-NLS-1$
+				UILink.make(bottomLabelBranch, "bottomImage", EvalToolConstants.STEPPED_IMAGE_URLS[2]); //$NON-NLS-1$
 			}
 
 			// the child items rendering loop

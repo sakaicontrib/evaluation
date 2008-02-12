@@ -22,7 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
-import org.sakaiproject.evaluation.tool.EvaluationConstant;
+import org.sakaiproject.evaluation.tool.EvalToolConstants;
 
 import uk.org.ponder.stringutil.StringUtil;
 
@@ -44,18 +44,18 @@ public class ScaledUtils {
 		EvalConstants.SCALE_IDEAL_OUTSIDE};
 
 	public static String[] startColours = {
-		EvaluationConstant.BLUE_COLOR, 
-		EvaluationConstant.GREEN_COLOR,
-		EvaluationConstant.RED_COLOR,
-		EvaluationConstant.RED_COLOR,
-		EvaluationConstant.GREEN_COLOR};
+		EvalToolConstants.BLUE_COLOR, 
+		EvalToolConstants.GREEN_COLOR,
+		EvalToolConstants.RED_COLOR,
+		EvalToolConstants.RED_COLOR,
+		EvalToolConstants.GREEN_COLOR};
 
 	public static String[] endColours = {
-		EvaluationConstant.BLUE_COLOR, 
-		EvaluationConstant.RED_COLOR,
-		EvaluationConstant.RED_COLOR,
-		EvaluationConstant.GREEN_COLOR,
-		EvaluationConstant.GREEN_COLOR};
+		EvalToolConstants.BLUE_COLOR, 
+		EvalToolConstants.RED_COLOR,
+		EvalToolConstants.RED_COLOR,
+		EvalToolConstants.GREEN_COLOR,
+		EvalToolConstants.GREEN_COLOR};
 
 	public static int idealIndex(EvalScale scale) {
       int index = -1;
@@ -74,7 +74,7 @@ public class ScaledUtils {
 	}
 
 	public static String getIdealImageURL(EvalScale scale) {
-		return EvaluationConstant.COLORED_IMAGE_URLS[idealIndex(scale)];
+		return EvalToolConstants.COLORED_IMAGE_URLS[idealIndex(scale)];
 	}
 
 	public static Color getStartColor(EvalScale scale) {

@@ -18,7 +18,7 @@ import org.sakaiproject.evaluation.logic.utils.ArrayUtils;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
-import org.sakaiproject.evaluation.tool.EvaluationConstant;
+import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.utils.ScaledUtils;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -258,17 +258,17 @@ public class ScaledRenderer implements ItemRenderer {
 				labels[limit-j-1] = UISelectLabel.make(rowBranch, "topLabel", selectID, j); //$NON-NLS-1$
 
 				// Corner Image
-				UILink.make(rowBranch, "cornerImage", EvaluationConstant.STEPPED_IMAGE_URLS[0]);
+				UILink.make(rowBranch, "cornerImage", EvalToolConstants.STEPPED_IMAGE_URLS[0]);
 
 				// create middle images after the item label
 				for (int k = 0; k < j; ++k) {
 					UIBranchContainer afterTopLabelBranch = UIBranchContainer.make(rowBranch, "afterTopLabelBranch:", k+"");
-					UILink.make(afterTopLabelBranch, "middleImage",	EvaluationConstant.STEPPED_IMAGE_URLS[1]);
+					UILink.make(afterTopLabelBranch, "middleImage",	EvalToolConstants.STEPPED_IMAGE_URLS[1]);
 				}
 
 				// create bottom (down arrow) image
 				UIBranchContainer bottomLabelBranch = UIBranchContainer.make(stepped, "bottomLabelBranch:", j+"");
-				UILink.make(bottomLabelBranch, "bottomImage", EvaluationConstant.STEPPED_IMAGE_URLS[2]);
+				UILink.make(bottomLabelBranch, "bottomImage", EvalToolConstants.STEPPED_IMAGE_URLS[2]);
 
 				if (colored) {
 					UIBranchContainer radioBranchFirst = UIBranchContainer.make(coloredBranch, "scaleOptionsFirst:", j+"");

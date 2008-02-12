@@ -20,7 +20,7 @@ import java.util.List;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
-import org.sakaiproject.evaluation.tool.EvaluationConstant;
+import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.locators.TemplateBeanLocator;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
@@ -125,8 +125,8 @@ public class ModifyTemplateProducer implements ViewComponentProducer, ViewParams
 			if (externalLogic.isUserAdmin(externalLogic.getCurrentUserId())) {
 				UIBranchContainer showSharingOptions = UIBranchContainer.make(form,	"showSharingOptions:");
 				UISelect.make(showSharingOptions, "sharing",
-						EvaluationConstant.SHARING_VALUES, 
-						EvaluationConstant.SHARING_LABELS_PROPS, 
+						EvalToolConstants.SHARING_VALUES, 
+						EvalToolConstants.SHARING_LABELS_PROPS, 
 						templateOTP	+ "sharing", null).setMessageKeys();
 			} else {
 				sharingkey = "sharing.private";

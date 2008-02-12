@@ -215,7 +215,7 @@ public class EvaluationBean {
 
       //email settings
       emailAvailableTxt = evaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE).getMessage();// available template
-      eval.setReminderDays(new Integer(EvaluationConstant.REMINDER_EMAIL_DAYS_VALUES[1]));
+      eval.setReminderDays(new Integer(EvalToolConstants.REMINDER_EMAIL_DAYS_VALUES[1]));
       emailReminderTxt =  evaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_REMINDER).getMessage();//reminder email
       String s = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
       eval.setReminderFromEmail(s);
