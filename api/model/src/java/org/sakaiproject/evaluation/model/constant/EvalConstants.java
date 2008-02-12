@@ -700,12 +700,6 @@ public class EvalConstants {
     */
    public static final String NO_MULTIPLE_ANSWER = "";
 
-
-   /**
-    * Automated processes: Delay before starting up the automated handler
-    */
-   public static final String JOB_START_DELAY = "scheduledCreated";
-
    /**
     * ScheduledInvocationManager: ScheduledInvocationCommand jobType
     */

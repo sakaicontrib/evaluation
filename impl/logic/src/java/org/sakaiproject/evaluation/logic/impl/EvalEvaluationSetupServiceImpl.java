@@ -217,7 +217,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             throw new SecurityException("User ("+userId+") attempted to update existing evaluation ("+evaluation.getId()+") without permissions");
          }
 
-         // All other checks have been moved to interceptor
+         // All other checks have been moved to the tool (bad I know)
       }
 
       // make sure we are not using a blank template here
@@ -248,7 +248,8 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          evaluation.setAuthControl( EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ );
       }
 
-      if (evaluation.getEvalCategory() != null && evaluation.getEvalCategory().length() <= 0) {
+      if (evaluation.getEvalCategory() != null && 
+            evaluation.getEvalCategory().length() <= 0) {
          evaluation.setEvalCategory(null);
       }
 
