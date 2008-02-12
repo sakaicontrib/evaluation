@@ -124,7 +124,7 @@ public class EvaluationBean {
    // These are for the Assign screen, which is now bound by UIBoundBooleans
    public Map<String, Boolean> selectedEvalGroupIDsMap = new HashMap<String,Boolean>();
    public Map<String, Boolean> selectedEvalHierarchyNodeIDsMap = new HashMap<String, Boolean>();
-   
+
    /*
     * These 2 values are bound here because they are not in Evaluation POJO 
     * and we need to store them when coming back to settings page from assign page.
@@ -455,7 +455,7 @@ public class EvaluationBean {
       return EvalConstants.EMAIL_TEMPLATE_REMINDER;
    }
 
-   
+
 
    /**
     * Method binding to the "Save Assigned Courses" button 
@@ -466,25 +466,25 @@ public class EvaluationBean {
     */
    public String confirmAssignCoursesAction() { 
 
-       //TODO We have to populate the String Arrays with the Maps.
-       // This is because of the need to use UIBoundBooleans
-       List<String> groupIdCopy = new ArrayList<String>();
-       List<String> hierNodeIdCopy = new ArrayList<String>();
-       
-       for (String groupID: selectedEvalGroupIDsMap.keySet()) {
-           if (selectedEvalGroupIDsMap.get(groupID).booleanValue() == true) {
-               groupIdCopy.add(groupID);
-           }
-       }
+      //TODO We have to populate the String Arrays with the Maps.
+      // This is because of the need to use UIBoundBooleans
+      List<String> groupIdCopy = new ArrayList<String>();
+      List<String> hierNodeIdCopy = new ArrayList<String>();
 
-       for (String hierNodeID: selectedEvalHierarchyNodeIDsMap.keySet()) {
-           if (selectedEvalHierarchyNodeIDsMap.get(hierNodeID).booleanValue() == true) {
-               hierNodeIdCopy.add(hierNodeID);
-           }
-       }
-       
-       selectedEvalGroupIds = groupIdCopy.toArray(new String[]{});
-       selectedEvalHierarchyNodeIds = hierNodeIdCopy.toArray(new String[] {});
+      for (String groupID: selectedEvalGroupIDsMap.keySet()) {
+         if (selectedEvalGroupIDsMap.get(groupID) == true) {
+            groupIdCopy.add(groupID);
+         }
+      }
+
+      for (String hierNodeID: selectedEvalHierarchyNodeIDsMap.keySet()) {
+         if (selectedEvalHierarchyNodeIDsMap.get(hierNodeID) == true) {
+            hierNodeIdCopy.add(hierNodeID);
+         }
+      }
+
+      selectedEvalGroupIds = groupIdCopy.toArray(new String[]{});
+      selectedEvalHierarchyNodeIds = hierNodeIdCopy.toArray(new String[] {});
 
       // make sure that the submitted nodes are valid
       Set<EvalHierarchyNode> nodes = null;
@@ -742,20 +742,19 @@ public class EvaluationBean {
     */
    private void commonSaveTasks() {
 
-      boolean useStopDate = ((Boolean) settings.get(EvalSettings.EVAL_USE_STOP_DATE)).booleanValue();
-      boolean useViewDate = ((Boolean) settings.get(EvalSettings.EVAL_USE_VIEW_DATE)).booleanValue();
-      boolean useDateTime = ((Boolean) settings.get(EvalSettings.EVAL_USE_DATE_TIME)).booleanValue();
+      boolean useStopDate = ((Boolean) settings.get(EvalSettings.EVAL_USE_STOP_DATE));
+      boolean useViewDate = ((Boolean) settings.get(EvalSettings.EVAL_USE_VIEW_DATE));
+      boolean useDateTime = ((Boolean) settings.get(EvalSettings.EVAL_USE_DATE_TIME));
       // Getting the system setting that tells what should be the minimum time difference between start date and due date.
       int minHoursDifference = ((Integer) settings.get(EvalSettings.EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE)).intValue();
 
       eval.setStartDate(startDate);
-      eval.setDueDate(dueDate);
 
       // force the due date to the end of the day if we are using dates only
       if (! useDateTime ) {
-         dueDate = EvalUtils.getEndOfDayDate( eval.getDueDate() );
-         eval.setDueDate( dueDate );
+         dueDate = EvalUtils.getEndOfDayDate( dueDate );
       }
+      eval.setDueDate(dueDate);
 
       if (! useStopDate) {
          // force stop date to due date if not in use
@@ -765,8 +764,9 @@ public class EvaluationBean {
 
       // set stop date to the due date if not set
       if (eval.getStopDate() == null) {
-         log.info("Setting the null stop date to the due date: " + eval.getDueDate());
-         eval.setStopDate(eval.getDueDate());
+         // this is possible since the stopDate class variable might be set to null
+         log.info("Setting the null stop date to the due date: " + dueDate);
+         eval.setStopDate(dueDate);
       } else {
          // force the stop date to the end of the day if we are using dates only
          if (! useDateTime ) {
@@ -775,9 +775,9 @@ public class EvaluationBean {
          }
       }
 
-      // Ensure minimum time difference between start and due/stop dates - check this after the dates are set
+      // Ensure minimum time difference between start and due/stop dates in eval - check this after the dates are set
       dueDate = EvalUtils.updateDueStopDates(eval, minHoursDifference);
-      stopDate = eval.getStopDate(); // also update the stop date to the current one
+      stopDate = eval.getStopDate(); // also update the global stopDate to the current one
 
       if (! useViewDate) {
          // force view date to due date + const mins if not in use
@@ -790,48 +790,42 @@ public class EvaluationBean {
        * as true then don't look for student and instructor dates, instead make them
        * same as admin view date. If not then get the student and instructor view dates.
        */ 
-      boolean sameViewDateForAll = ((Boolean) settings.get(EvalSettings.EVAL_USE_SAME_VIEW_DATES)).booleanValue();
-
-      // Make it null in case the administrative settings change then this should also change
-      eval.setStudentsDate(null);
-      eval.setInstructorsDate(null);
-
+      boolean sameViewDateForAll = ((Boolean) settings.get(EvalSettings.EVAL_USE_SAME_VIEW_DATES));
       if (sameViewDateForAll) {
-         if (studentViewResults.booleanValue())
+         if (studentViewResults) {
             eval.setStudentsDate(viewDate);
-
-         if (instructorViewResults.booleanValue())
+         }
+         if (instructorViewResults) {
             eval.setInstructorsDate(viewDate);
+         }
       } else {
-         if (studentViewResults.booleanValue())
+         if (studentViewResults) {
             eval.setStudentsDate(studentsDate);
-
-         if (instructorViewResults.booleanValue())
+         }
+         if (instructorViewResults) {
             eval.setInstructorsDate(instructorsDate);
+         }
       }
 
       // Email template section
-      EvalEmailTemplate availableTemplate, reminderTemplate;
 
-      //Save email available template
-      availableTemplate = evaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
-      if ( emailAvailableTxt.equals(availableTemplate.getMessage()) ) {
-         //do nothing as the template has not been modified.
-      } 
-      else {
-         availableTemplate = new EvalEmailTemplate(new Date(), external.getCurrentUserId(), 
+      // Save email available template
+      EvalEmailTemplate availableTemplate = evaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
+      if (emailAvailableTxt.equals(availableTemplate.getMessage())) {
+         // do nothing as the template has not been modified.
+      } else {
+         availableTemplate = new EvalEmailTemplate(new Date(), external.getCurrentUserId(),
                EvalConstants.EMAIL_AVAILABLE_DEFAULT_SUBJECT, emailAvailableTxt);
          evaluationSetupService.saveEmailTemplate(availableTemplate, external.getCurrentUserId());
       }
       eval.setAvailableEmailTemplate(availableTemplate);
 
-      //Save the email reminder template
-      reminderTemplate = evaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_REMINDER);
-      if ( emailReminderTxt.equals(reminderTemplate.getMessage()) ) {
-         //do nothing as the template has not been modified.
-      }
-      else {
-         reminderTemplate = new EvalEmailTemplate(new Date(), external.getCurrentUserId(), 
+      // Save the email reminder template
+      EvalEmailTemplate reminderTemplate = evaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_REMINDER);
+      if (emailReminderTxt.equals(reminderTemplate.getMessage())) {
+         // do nothing as the template has not been modified.
+      } else {
+         reminderTemplate = new EvalEmailTemplate(new Date(), external.getCurrentUserId(),
                EvalConstants.EMAIL_REMINDER_DEFAULT_SUBJECT, emailReminderTxt);
          evaluationSetupService.saveEmailTemplate(reminderTemplate, external.getCurrentUserId());
       }
