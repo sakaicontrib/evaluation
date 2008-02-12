@@ -175,25 +175,29 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
       // now perform checks depending on whether this is new or existing
       Calendar calendar = GregorianCalendar.getInstance();
-      calendar.add(Calendar.MINUTE, -15); // put today a bit in the past (15 minutes)
+      calendar.add(Calendar.MINUTE, -30); // put today a bit in the past (30 minutes)
       Date today = calendar.getTime();
       if (evaluation.getId() == null) { // creating new evaluation
-
          newEvaluation = true;
 
-         // test if new evaluation occurs in the past
-         if (evaluation.getStartDate().before(today)) {
-            throw new IllegalArgumentException(
-                  "start date (" + evaluation.getStartDate() +
-            ") cannot occur in the past for new evaluationSetupService");
-         } else if (evaluation.getDueDate().before(today)) {
+         if (evaluation.getDueDate().before(today)) {
             throw new IllegalArgumentException(
                   "due date (" + evaluation.getDueDate() +
-            ") cannot occur in the past for new evaluationSetupService");
+            ") cannot occur in the past for new evaluations");
          } else if (evaluation.getStopDate().before(today)) {
             throw new IllegalArgumentException(
                   "stop date (" + evaluation.getStopDate() +
-            ") cannot occur in the past for new evaluationSetupService");
+            ") cannot occur in the past for new evaluations");
+         } else if (evaluation.getViewDate().before(today)) {
+            throw new IllegalArgumentException(
+                  "view date (" + evaluation.getViewDate() +
+            ") cannot occur in the past for new evaluations");
+         }
+
+         // test if new evaluation occurs in the past
+         if (evaluation.getStartDate().before(today)) {
+            log.warn("Evaluation was set to start in the past ("+evaluation.getStartDate()+"), it has been reset to start now...");
+            evaluation.setStartDate( new Date() );
          }
 
          // make sure the state is set correctly
@@ -398,12 +402,12 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                   new int[] {EvaluationDao.GREATER});
          } else {
 
-            // Get the owned + not-owned evaluationSetupService i.e. where the 
+            // Get the owned + not-owned evaluations i.e. where the 
             // user has PERM_BE_EVALUATED permissions.
             if (showNotOwned) {
                getEvalsWhereBeEvaluated(userId, recentOnly, l, recent);
             }
-            // Get the evaluationSetupService owned by the user
+            // Get the evaluations owned by the user
             else {
                l = dao.findByProperties(EvalEvaluation.class,
                      new String[] {"owner", "stopDate"}, 
@@ -418,12 +422,12 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             l = dao.findAll(EvalEvaluation.class);
          } else {
 
-            // Get the owned + not-owned evaluationSetupService i.e. where the 
+            // Get the owned + not-owned evaluations i.e. where the 
             // user has PERM_BE_EVALUATED permissions.
             if (showNotOwned) {
                getEvalsWhereBeEvaluated(userId, recentOnly, l, null);
             }
-            // get all evaluationSetupService created (owned) by this user
+            // get all evaluations created (owned) by this user
             else {
                l = dao.findByProperties(EvalEvaluation.class,
                      new String[] {"owner"}, new Object[] {userId});
@@ -446,11 +450,11 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          evalGroupIds[i] = c.evalGroupId;
       }
 
-      // get the evaluationSetupService
+      // get the evaluations
       List<EvalEvaluation> evals = dao.getEvaluationsByEvalGroups( evalGroupIds, activeOnly, false, true );
 
       if (untakenOnly) {
-         // filter out the evaluationSetupService this user already took
+         // filter out the evaluations this user already took
 
          // create an array of the evaluation ids
          Long[] evalIds = new Long[evals.size()];
@@ -533,10 +537,10 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
     * Get both owned and not-owned evaluation for the given user.
     * 
     * @param userId the internal user id (not username).
-    * @param recentOnly if true return recently closed evaluationSetupService only
-    * (still returns all active and in queue evaluationSetupService), if false return all closed evaluationSetupService.
-    * @param evalsToReturn list of owned and not-owned evaluationSetupService. 
-    * @param recent date for comparison when looking for recently closed evaluationSetupService.
+    * @param recentOnly if true return recently closed evaluations only
+    * (still returns all active and in queue evaluations), if false return all closed evaluations.
+    * @param evalsToReturn list of owned and not-owned evaluations. 
+    * @param recent date for comparison when looking for recently closed evaluations.
     */
    @SuppressWarnings("unchecked")
    private void getEvalsWhereBeEvaluated(String userId, boolean recentOnly, List<EvalEvaluation> evalsToReturn, Date recent) {
@@ -564,8 +568,8 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             EvalEvaluation eval = assignGroup.getEvaluation();
 
             /*
-             * If only recent evaluationSetupService have to be fetched, then check for
-             * stop date else just add to the existing list of evaluationSetupService.
+             * If only recent evaluations have to be fetched, then check for
+             * stop date else just add to the existing list of evaluations.
              */ 
             if (recentOnly) {
                if ((eval.getStopDate()).after(recent)) {
@@ -871,7 +875,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             "Cannot modify default templates or set existing templates to be default");
          }
 
-         // check if there are evaluationSetupService this is used in and if the user can modify this based on them
+         // check if there are evaluations this is used in and if the user can modify this based on them
          // check available templates
          List<EvalEvaluation> l = dao.findByProperties(EvalEvaluation.class, new String[] { "availableEmailTemplate.id" },
                new Object[] { emailTemplate.getId() });
