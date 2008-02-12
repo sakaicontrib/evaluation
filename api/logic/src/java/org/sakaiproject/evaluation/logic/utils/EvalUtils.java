@@ -16,15 +16,19 @@ package org.sakaiproject.evaluation.logic.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
@@ -39,6 +43,8 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class EvalUtils {
+
+   private static Log log = LogFactory.getLog(EvalUtils.class);
 
    /**
     * Get the state of an evaluation object<br/>
@@ -83,7 +89,7 @@ public class EvalUtils {
          // all is ok
       } else {
          throw new IllegalArgumentException("Invalid sharing constant ("+sharingConstant+"), " +
-               "must be one of EvalConstants.SHARING_*");
+         "must be one of EvalConstants.SHARING_*");
       }
       return true;
    }
@@ -101,27 +107,105 @@ public class EvalUtils {
          // all is ok
       } else {
          throw new IllegalArgumentException("Invalid include constant ("+includeConstant+"), " +
-               "must use one of the ones from EvalConstants.EMAIL_INCLUDE_*");
+         "must use one of the ones from EvalConstants.EMAIL_INCLUDE_*");
       }
       return true;
    }
 
+
    /**
-    * Remove all duplicate objects from a list
+    * Ensures that there is minimum number of hours difference between
+    * the start date of the evaluation and due/stop date of the evaluation,
+    * updates the due/stop/view dates as needed, will not move dates unless they have to be moved,
+    * stop date will be set to the due date if necessary and view date will be set to the stop date + 1 second
     * 
-    * @param list
-    * @return the original list with the duplicate objects removed
+    * @param eval {@link EvalEvaluation} object that contains both start and due date.
+    * @param minHoursLong the minimum number of hours between the startdate and the duedate,
+    * usually would come from a system setting {@link EvalSettings#EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE}
+    * @return the current Due Date (updated if necessary)
     */
-   public static <T> List<T> removeDuplicates(List<T> list) {
-      Set<T> s = new HashSet<T>();
-      for (Iterator<T> iter = list.iterator(); iter.hasNext();) {
-         T element = (T) iter.next();
-         if (! s.add(element)) {
-            iter.remove();
+   public static Date updateDueStopDates(EvalEvaluation eval, int minHoursLong) {
+      /*
+       * If the difference between start date and due date is less than
+       * the minimum value set as system settings, then update the due date
+       * to reflect this minimum time difference. After that update the 
+       * stop and view date also.
+       */
+      if (getHoursDifference(eval.getStartDate(), eval.getDueDate()) < minHoursLong) {
+
+         // Update due date
+         Date newDueDate = new Date( eval.getStartDate().getTime() + (1000 * 60 * 60 * minHoursLong) );
+         log.info("Fixing eval (" + eval.getId() + ") due date from " + eval.getDueDate() + " to " + newDueDate);
+         eval.setDueDate(newDueDate);
+
+         // Update stop date if needed
+         if (eval.getStopDate().before(eval.getDueDate())) {
+            eval.setStopDate(eval.getDueDate());
+         }
+
+         // Update view date if needed
+         if (eval.getViewDate().equals(eval.getStopDate()) ||
+               eval.getViewDate().before(eval.getStopDate()) ) {
+            Date newView = new Date( eval.getStopDate().getTime() + 5000 );
+            log.info("Fixing the view date from " + eval.getViewDate() + " to " + newView);
+            eval.setViewDate(newView);
          }
       }
-      return list;
+      return eval.getDueDate();
    }
+
+   /**
+    * Set the time portion to the end of the day instead (23:59), this is to avoid confusion for users
+    * when setting the evaluationSetupService to end on a certain date and having them end in the first minute of the day instead of
+    * at the end of the day
+    * Note: This may lead to a nasty bug if anyone ever attempts to explicitly set the time for the stop and due dates
+    * 
+    * @param d a {@link java.util.Date}
+    * @return a {@link java.util.Date} which has the time portion set to the end of the day or the original Date
+    */
+   public static Date getEndOfDayDate(Date d) {
+      Calendar cal = new GregorianCalendar();
+      cal.setTime(d);
+      cal.set(Calendar.HOUR_OF_DAY, 23);
+      cal.set(Calendar.MINUTE, 59);
+      cal.set(Calendar.SECOND, 59);
+      log.info("Setting a date to the end of the day from " + d + " to " + cal.getTime());
+      return cal.getTime();
+   }
+
+   /**
+    * Check if the time portion of a date is set to midnight and return true if it is
+    * 
+    * @param d a {@link Date} object
+    * @return true if time is midnight (00:00:00), false otherwise
+    * @deprecated No longer used
+    */
+   public static boolean isTimeMidnight(Date d) {
+      Calendar cal = new GregorianCalendar();
+      cal.setTime(d);
+      if (cal.get(Calendar.HOUR_OF_DAY) == 0 && cal.get(Calendar.MINUTE) == 0 && cal.get(Calendar.SECOND) == 0) {
+         return true;
+      }
+      return false;
+   }
+
+   /**
+    * Find the number of hours between 2 dates,
+    * they should be in date order if you want a positive result,
+    * otherwise the result will be negative
+    * 
+    * @param date1 the first date
+    * @param date2 the second date
+    * @return number of hours (can be negative, will round)
+    */
+   public static int getHoursDifference(Date date1, Date date2) {
+      long millisecondsDifference = date2.getTime() - date1.getTime();
+      return (int) millisecondsDifference / (60*60*1000);
+   }
+
+
+   
+
 
    /**
     * Takes 2 lists of group types, {@link EvalGroup} and {@link EvalAssignGroup}, and
@@ -158,6 +242,7 @@ public class EvalUtils {
       }
       return newTitle;
    }
+
 
    /**
     * Get a map of answers for the given response, where the key to

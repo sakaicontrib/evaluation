@@ -14,14 +14,34 @@
 
 package org.sakaiproject.evaluation.logic.utils;
 
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
- * Utils for working with arrays (these are basically convenience methods)
+ * Utils for working with collections and arrays (these are basically convenience methods)
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class ArrayUtils {
+
+   /**
+    * Remove all duplicate objects from a list
+    * 
+    * @param list
+    * @return the original list with the duplicate objects removed
+    */
+   public static <T> List<T> removeDuplicates(List<T> list) {
+      Set<T> s = new HashSet<T>();
+      for (Iterator<T> iter = list.iterator(); iter.hasNext();) {
+         T element = (T) iter.next();
+         if (! s.add(element)) {
+            iter.remove();
+         }
+      }
+      return list;
+   }
 
 	/**
 	 * Append an item to the end of an array and return the new array
@@ -115,12 +135,16 @@ public class ArrayUtils {
 	 */
 	public static String arrayToString(Object[] array) {
 	   StringBuilder result = new StringBuilder();
-	   for (int i = 0; i < array.length; i++) {
-         if (i > 0) {
-            result.append(",");
+	   if (array != null && array.length > 0) {
+   	   for (int i = 0; i < array.length; i++) {
+            if (i > 0) {
+               result.append(",");
+            }
+            if (array[i] != null) {
+               result.append(array[i].toString());
+            }
          }
-         result.append(array[i].toString());
-      }
+	   }
 	   return result.toString();
 	}
 

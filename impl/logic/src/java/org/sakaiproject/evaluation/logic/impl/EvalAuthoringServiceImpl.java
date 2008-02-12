@@ -589,7 +589,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
          l.addAll( dao.findByProperties(EvalItem.class, publicProps, publicValues, publicComparisons, new String[] {"id"}) );
       }
 
-      return EvalUtils.removeDuplicates(l); // remove duplicates from the list
+      return ArrayUtils.removeDuplicates(l); // remove duplicates from the list
    }
 
 

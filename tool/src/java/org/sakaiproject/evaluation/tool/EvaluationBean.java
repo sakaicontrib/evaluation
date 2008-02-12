@@ -36,7 +36,6 @@ import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.logic.utils.EvalUtils;
-import org.sakaiproject.evaluation.logic.utils.EvaluationDateUtil;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
@@ -760,7 +759,7 @@ public class EvaluationBean {
 
       // force the due date to the end of the day if we are using dates only
       if (! useDateTime ) {
-         dueDate = EvaluationDateUtil.getEndOfDayDate( eval.getDueDate() );
+         dueDate = EvalUtils.getEndOfDayDate( eval.getDueDate() );
          eval.setDueDate( dueDate );
       }
 
@@ -778,12 +777,12 @@ public class EvaluationBean {
          // force the stop date to the end of the day if we are using dates only
          if (! useDateTime ) {
             log.info("Forcing date to end of day for non null stop date: " + eval.getStopDate());
-            eval.setStopDate( EvaluationDateUtil.getEndOfDayDate( eval.getStopDate() ) );
+            eval.setStopDate( EvalUtils.getEndOfDayDate( eval.getStopDate() ) );
          }
       }
 
       // Ensure minimum time difference between start and due/stop dates - check this after the dates are set
-      dueDate = EvaluationDateUtil.updateDueStopDates(eval, minHoursDifference);
+      dueDate = EvalUtils.updateDueStopDates(eval, minHoursDifference);
       stopDate = eval.getStopDate(); // also update the stop date to the current one
 
       if (! useViewDate) {

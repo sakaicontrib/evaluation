@@ -35,7 +35,6 @@ api/logic/src/java/org/sakaiproject/evaluation/logic/providers/EvalHierarchyProv
 api/logic/src/java/org/sakaiproject/evaluation/logic/utils/ArrayUtils.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/utils/ComparatorsUtils.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/utils/EvalUtils.java -text
-api/logic/src/java/org/sakaiproject/evaluation/logic/utils/EvaluationDateUtil.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/utils/SettingsLogicUtils.java -text
 api/logic/src/java/org/sakaiproject/evaluation/logic/utils/TemplateItemUtils.java -text
 api/model/project.xml -text
@@ -100,6 +99,7 @@ impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalJobLog
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalScheduledInvocationImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/utils/TextTemplateLogicUtils.java -text
 impl/logic/src/test/log4j.properties -text
+impl/logic/src/test/org/sakaiproject/evaluation/logic/test/ArrayUtilsTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/BaseTestEvalLogic.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalAuthoringServiceImplTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/EvalDeliveryServiceImplTest.java -text

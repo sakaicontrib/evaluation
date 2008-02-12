@@ -15,6 +15,9 @@
 package org.sakaiproject.evaluation.logic.test;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 
@@ -126,67 +129,124 @@ public class EvalUtilsTest extends TestCase {
       }
    }
 
+
+
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.utils.EvalUtils#removeDuplicates(java.util.List)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.utils.EvalUtils#updateDueStopDates(org.sakaiproject.evaluation.model.EvalEvaluation, int)}.
     */
-   public void testRemoveDuplicates() {
-      List<String> l = null;
+   public void testUpdateDueStopDates() {
+      Date dueDate = null;
 
-      // positive
-      List<String> testDups = new ArrayList<String>();
-      testDups.add("aaron");
-      testDups.add("zeckoski");
-      testDups.add("duplicates");
-      testDups.add("aaron");
-      testDups.add("zeckoski");
+      Date now = new Date();
+      long nowTime = new Date().getTime();
+      long hour = 1000 * 60 * 60;
+      Date nowPlus2 = new Date(nowTime + hour * 2);
+      Date nowPlus3 = new Date(nowTime + hour * 3);
 
-      l = EvalUtils.removeDuplicates(testDups);
-      assertNotNull(l);
-      assertEquals(3, l.size());
-      assertTrue(l.contains("aaron"));
-      assertTrue(l.contains("zeckoski"));
-      assertTrue(l.contains("duplicates"));
+      EvalEvaluation eval = new EvalEvaluation(new Date(), "aaronz", "title",
+            now, nowPlus2, nowPlus2, nowPlus3, 
+            EvalConstants.EVALUATION_STATE_ACTIVE, 0, null);
 
-      // even more dups
-      testDups = new ArrayList<String>();
-      testDups.add("aaron");
-      testDups.add("zeckoski");
-      testDups.add("duplicates");
-      testDups.add("aaron");
-      testDups.add("zeckoski");
-      testDups.add("duplicates");
-      testDups.add("aaron");
-      testDups.add("zeckoski");
+      // test that no change happens if the times are within the range
+      assertEquals(eval.getDueDate(), nowPlus2);
+      assertEquals(eval.getStopDate(), nowPlus2);
+      assertEquals(eval.getViewDate(), nowPlus3);
+      dueDate = EvalUtils.updateDueStopDates(eval, 1);
+      assertEquals(dueDate, nowPlus2);
+      assertEquals(eval.getDueDate(), nowPlus2);
+      assertEquals(eval.getStopDate(), nowPlus2);
+      assertEquals(eval.getViewDate(), nowPlus3);
 
-      l = EvalUtils.removeDuplicates(testDups);
-      assertNotNull(l);
-      assertEquals(3, l.size());
-      assertTrue(l.contains("aaron"));
-      assertTrue(l.contains("zeckoski"));
-      assertTrue(l.contains("duplicates"));
+      // test that no change happens if the times are at the range limit
+      assertEquals(eval.getDueDate(), nowPlus2);
+      assertEquals(eval.getStopDate(), nowPlus2);
+      assertEquals(eval.getViewDate(), nowPlus3);
+      dueDate = EvalUtils.updateDueStopDates(eval, 2);
+      assertEquals(dueDate, nowPlus2);
+      assertEquals(eval.getDueDate(), nowPlus2);
+      assertEquals(eval.getStopDate(), nowPlus2);
+      assertEquals(eval.getViewDate(), nowPlus3);
 
-      // negative
-      List<String> testNoDups = new ArrayList<String>();
-      testNoDups.add("aaron");
-      testNoDups.add("zeckoski");
-      testNoDups.add("no_duplicates");
+      // test that change happens if the times are beyond the limit
+      assertEquals(eval.getDueDate(), nowPlus2);
+      assertEquals(eval.getStopDate(), nowPlus2);
+      assertEquals(eval.getViewDate(), nowPlus3);
+      dueDate = EvalUtils.updateDueStopDates(eval, 3);
+      assertEquals(dueDate, nowPlus3);
+      assertEquals(eval.getDueDate(), nowPlus3);
+      assertEquals(eval.getStopDate(), nowPlus3);
+      assertFalse(eval.getViewDate().equals(nowPlus3));
+      assertTrue(eval.getViewDate().after(eval.getStopDate()));
 
-      l = EvalUtils.removeDuplicates(testNoDups);
-      assertNotNull(l);
-      assertEquals(3, l.size());
-      assertTrue(l.contains("aaron"));
-      assertTrue(l.contains("zeckoski"));
-      assertTrue(l.contains("no_duplicates"));
-
-      // exception
-      try {
-         l = EvalUtils.removeDuplicates(null);
-         fail("Should have thrown exception");
-      } catch (NullPointerException e) {
-         assertNotNull(e);
-      }
+      // test that change happens if the times are way beyond
+      assertEquals(eval.getDueDate(), nowPlus3);
+      assertEquals(eval.getStopDate(), nowPlus3);
+      dueDate = EvalUtils.updateDueStopDates(eval, 24);
+      assertEquals(dueDate, new Date(nowTime + hour * 24));
+      assertEquals(eval.getDueDate(), new Date(nowTime + hour * 24));
+      assertEquals(eval.getStopDate(), new Date(nowTime + hour * 24));
+      assertTrue(eval.getViewDate().after(eval.getStopDate()));
 
    }
+
+   /**
+    * Test method for {@link org.sakaiproject.evaluation.logic.utils.EvalUtils#getEndOfDayDate(java.util.Date)}.
+    */
+   public void testGetEndOfDayDate() {
+      Date endOfDay = null;
+      Date testDay = null;
+      Calendar cal = new GregorianCalendar();
+
+      // test that time moves to the end of the day
+      cal.set(2000, 10, 29, 10, 01, 10);
+      testDay = cal.getTime();
+
+      endOfDay = EvalUtils.getEndOfDayDate(testDay);
+      assertNotNull(endOfDay);
+      assertTrue(testDay.before(endOfDay));
+      cal.setTime(endOfDay);
+      assertEquals(23, cal.get(Calendar.HOUR_OF_DAY));
+      assertEquals(59, cal.get(Calendar.MINUTE));
+      assertEquals(59, cal.get(Calendar.SECOND));
+
+      cal.clear();
+
+      // test that if it is already the end of the day it is not changed
+      cal.set(2000, 10, 29, 23, 59, 59);
+      testDay = cal.getTime();
+
+      endOfDay = EvalUtils.getEndOfDayDate(testDay);
+      assertNotNull(endOfDay);
+      assertEquals(endOfDay, testDay);
+   }
+
+   /**
+    * Test method for {@link org.sakaiproject.evaluation.logic.utils.EvalUtils#getHoursDifference(java.util.Date, java.util.Date)}.
+    */
+   public void testGetHoursDifference() {
+      Date startTime = new Date();
+      Date endTime = new Date();
+      int difference = 0;
+
+      // test same dates
+      difference = EvalUtils.getHoursDifference(startTime, endTime);
+      assertEquals(0, difference);
+
+      endTime = new Date( startTime.getTime() + (1000 * 60 * 60 * 5) );
+      difference = EvalUtils.getHoursDifference(startTime, endTime);
+      assertEquals(5, difference);
+
+      difference = EvalUtils.getHoursDifference(endTime, startTime);
+      assertEquals(-5, difference);
+
+      // check that it rounds correctly
+      endTime = new Date( startTime.getTime() + (1000 * 60 * 60 * 5) + (1000 * 60 * 30) );
+      difference = EvalUtils.getHoursDifference(startTime, endTime);
+      assertEquals(5, difference);
+   }
+
+
+
 
    /**
     * Test method for {@link org.sakaiproject.evaluation.logic.utils.EvalUtils#getGroupsInCommon(java.util.List, java.util.List)}.
@@ -268,7 +328,7 @@ public class EvalUtilsTest extends TestCase {
    public void testGetAnswersMapByTempItemAndAssociated() {
       //Map<String, EvalAnswer> answersMap = null;
       //EvalTestDataLoad etdl = new EvalTestDataLoad();
-      
+
       //answersMap = EvalUtils.getAnswersMapByTempItemAndAssociated(etdl.response1);
 
       // TODO - cannot test this right now as it depends on hibernate semantics
@@ -300,7 +360,7 @@ public class EvalUtilsTest extends TestCase {
       assertNull(encoded);
 
       // does not throw any exceptions
-      
+
    }
 
    /**
