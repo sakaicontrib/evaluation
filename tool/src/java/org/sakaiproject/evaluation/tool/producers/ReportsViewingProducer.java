@@ -34,6 +34,7 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.EvaluationBean;
 import org.sakaiproject.evaluation.tool.ReportsBean;
+import org.sakaiproject.evaluation.tool.reporting.ReportingPermissions;
 import org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil;
 import org.sakaiproject.evaluation.tool.viewparams.CSVReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.EssayResponseParams;
@@ -103,6 +104,11 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
    public void setEvalResponseAggregatorUtil(EvalResponseAggregatorUtil bean) {
        this.responseAggregator = bean;
    }
+   
+   private ReportingPermissions reportingPermissions;
+   public void setReportingPermissions(ReportingPermissions perms) {
+      this.reportingPermissions = perms;
+   }
 
    int displayNumber = 1;
 
@@ -129,8 +135,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
          EvalEvaluation evaluation = evaluationService.getEvaluationById(reportViewParams.evaluationId);
 
          // do a permission check
-         if (!currentUserId.equals(evaluation.getOwner()) && 
-               !externalLogic.isUserAdmin(currentUserId)) { // TODO - this check is no good, we need a real one -AZ
+         if (!reportingPermissions.canViewEvaluationResponses(evaluation, reportViewParams.groupIds)) {
             throw new SecurityException("Invalid user attempting to access reports page: " + currentUserId);
          }
 

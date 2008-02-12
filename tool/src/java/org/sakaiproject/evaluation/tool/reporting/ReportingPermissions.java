@@ -1,5 +1,6 @@
 package org.sakaiproject.evaluation.tool.reporting;
 
+import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 
 /* 
@@ -15,7 +16,25 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
  */
 public class ReportingPermissions {
 
-   public boolean canViewEvaluationResponses(EvalEvaluation eval, String[] groupIds) {
-      return false;
+   private EvalExternalLogic externalLogic;
+   public void setExternalLogic(EvalExternalLogic externalLogic) {
+      this.externalLogic = externalLogic;
+   }
+
+   
+   /*
+    * Decide whether the current user can view the responses for an evaluation
+    * and set of groups that participated in it.
+    */
+   public boolean canViewEvaluationResponses(EvalEvaluation evaluation, String[] groupIds) {
+    //FIXME handle above cases in class comments
+      String currentUserId = externalLogic.getCurrentUserId();
+      if (!currentUserId.equals(evaluation.getOwner()) && 
+            !externalLogic.isUserAdmin(currentUserId)) { // TODO - this check is no good, we need a real one -AZ
+         return false;
+      }
+      else {
+         return true;
+      }
    }
 }
