@@ -224,4 +224,8 @@
 		<property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
 	</bean>
 
+	<bean id="org.sakaiproject.evaluation.tool.reporting.ReportingPermissions"
+		class="org.sakaiproject.evaluation.tool.reporting.ReportingPermissions">
+		<property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+	</bean>
 </beans>

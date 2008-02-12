@@ -99,6 +99,11 @@ public class ReportHandlerHook implements HandlerHook {
    public void setEvalResponseAggregatorUtil(EvalResponseAggregatorUtil bean) {
       this.responseAggregatorUtil = bean;
    }
+   
+   private ReportingPermissions reportingPermissions;
+   public void setReportingPermissions(ReportingPermissions perms) {
+      this.reportingPermissions = perms;
+   }
 
    /* (non-Javadoc)
     * @see uk.org.ponder.rsf.processor.HandlerHook#handle()
@@ -117,15 +122,12 @@ public class ReportHandlerHook implements HandlerHook {
       EvalEvaluation evaluation = evaluationService.getEvaluationById(drvp.evalId);
       EvalTemplate template = evaluation.getTemplate();
 
-      //SWG Copying the lame permission check for now, to make sure there is at least something here.
       String currentUserId = externalLogic.getCurrentUserId();
+
       // do a permission check
-      if (!currentUserId.equals(evaluation.getOwner()) && 
-            !externalLogic.isUserAdmin(currentUserId)) { // TODO - this check is no good, we need a real one -AZ
+      if (!reportingPermissions.canViewEvaluationResponses(evaluation, drvp.groupIds)) {
          throw new SecurityException("Invalid user attempting to access report downloads: " + currentUserId);
       }
-
-      
 
       OutputStream resultsOutputStream = null;
       try {
