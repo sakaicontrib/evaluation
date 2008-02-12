@@ -748,12 +748,6 @@ public class EvaluationBean {
       // Getting the system setting that tells what should be the minimum time difference between start date and due date.
       int minHoursDifference = ((Integer) settings.get(EvalSettings.EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE)).intValue();
 
-      /*
-       * check if start date is the same as today's date, set startDate as today's date time, 
-       * as when we parse the string to a date, the time filled by default is zero
-       */
-      checkEvalStartDate();
-
       eval.setStartDate(startDate);
       eval.setDueDate(dueDate);
 
@@ -843,33 +837,6 @@ public class EvaluationBean {
       }
       eval.setReminderEmailTemplate(reminderTemplate);
 
-   }
-
-   /**
-    * Private method used to add current time to the start date if
-    * start date (without time) is same as today's date (without time).  
-    */	
-   private void checkEvalStartDate() {
-
-      /*
-       * Set startDate as today's date time as when we parse the string to a date, the time filled
-       * by default.
-       */
-      Calendar calendar = new GregorianCalendar();
-      calendar.setTime(eval.getStartDate());
-      int year_start = calendar.get(Calendar.YEAR);
-      int month_start = calendar.get(Calendar.MONTH);
-      int day_start = calendar.get(Calendar.DAY_OF_MONTH);
-
-      Date today = new Date();
-      calendar.setTime(today);
-      int year_today = calendar.get(Calendar.YEAR);
-      int month_today = calendar.get(Calendar.MONTH);
-      int day_today = calendar.get(Calendar.DAY_OF_MONTH);
-
-      if (year_start == year_today && month_start == month_today && day_start == day_today) {
-         eval.setStartDate(calendar.getTime());
-      }
    }
 
 }
