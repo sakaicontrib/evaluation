@@ -213,18 +213,14 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
       // try save new evaluation with dates that are in the past
       // test start date in the past
-      try {
-         evaluationSetupService.saveEvaluation( new EvalEvaluation( new Date(), 
-               EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
-               etdl.yesterday, etdl.tomorrow, etdl.threeDaysFuture, etdl.fourDaysFuture,
-               EvalConstants.EVALUATION_STATE_INQUEUE, 
-               Integer.valueOf(1), etdl.templatePublic),
-               EvalTestDataLoad.MAINT_USER_ID );
-         fail("Should have thrown exception");
-      } catch (IllegalArgumentException e) {
-         assertNotNull(e);
-         //fail("Exception: " + e.getMessage()); // see why failing
-      }
+      EvalEvaluation testStartEval = new EvalEvaluation( new Date(), 
+            EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
+            etdl.yesterday, etdl.tomorrow, etdl.threeDaysFuture, etdl.fourDaysFuture,
+            EvalConstants.EVALUATION_STATE_INQUEUE, 
+            Integer.valueOf(1), etdl.templatePublic);
+      evaluationSetupService.saveEvaluation( testStartEval, EvalTestDataLoad.MAINT_USER_ID );
+      assertNotNull(testStartEval.getId());
+      assertTrue(testStartEval.getStartDate().compareTo(new Date()) <= 0);
 
       // test due date in the past
       try {
