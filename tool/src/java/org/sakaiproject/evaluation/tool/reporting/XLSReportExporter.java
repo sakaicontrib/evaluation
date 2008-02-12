@@ -88,11 +88,17 @@ public class XLSReportExporter {
       for (int i = 0; i < responses.allEvalTemplateItems.size(); i++) {
          EvalTemplateItem tempItem = responses.allEvalTemplateItems.get(i);
          HSSFCell cell = questionTypeRow.createCell((short)(i+1));
-         if (TemplateItemUtils.getTemplateItemType(tempItem).equals(EvalConstants.ITEM_TYPE_SCALED)) {
+         if (EvalConstants.ITEM_TYPE_SCALED.equals(TemplateItemUtils.getTemplateItemType(tempItem))) {
             cell.setCellValue("Rating scale");
          }
-         else if (TemplateItemUtils.getTemplateItemType(tempItem).equals(EvalConstants.ITEM_TYPE_TEXT)) {
+         else if (EvalConstants.ITEM_TYPE_TEXT.equals(TemplateItemUtils.getTemplateItemType(tempItem))) {
             cell.setCellValue("Free text / essay question");
+         }
+         else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(TemplateItemUtils.getTemplateItemType(tempItem))) {
+            cell.setCellValue("Multiple Answer");
+         }
+         else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(TemplateItemUtils.getTemplateItemType(tempItem))) {
+            cell.setCellValue("Multiple Choice");
          }
          else {
             cell.setCellValue("");

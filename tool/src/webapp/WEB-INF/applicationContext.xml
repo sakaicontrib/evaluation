@@ -207,6 +207,8 @@
         <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
 		<property name="contentHostingService" ref="org.sakaiproject.content.api.ContentHostingService" />
 		<property name="evaluationCalcUtility" ref="org.sakaiproject.evaluation.tool.utils.EvaluationCalcUtility" />
+		<property name="evalResponseAggregatorUtil" ref="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil" />
+		<property name="deliveryService" ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
 	</bean>
 	
 	<bean id="org.sakaiproject.evaluation.tool.utils.EvaluationCalcUtility" 

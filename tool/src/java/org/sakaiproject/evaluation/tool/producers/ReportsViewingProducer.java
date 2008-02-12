@@ -263,14 +263,6 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
          for (int x = 0; x < scaleLabels.length; x++) {
             UIBranchContainer answerbranch = UIBranchContainer.make(scaled, "answers:", x + "");
             UIOutput.make(answerbranch, "responseText", scaleOptions[x]);
-            //int answers = 0;
-            //count the number of answers that match this one
-            //for (int y = 0; y < itemAnswers.size(); y++) {
-            //   EvalAnswer curr = (EvalAnswer) itemAnswers.get(y);
-            //   if (curr.getNumeric().intValue() == x) {
-            //      answers++;
-            //   }
-            //}
             UIOutput.make(answerbranch, "responseTotal", responseNumbers[x]+"");
          }
 
