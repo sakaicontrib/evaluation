@@ -14,7 +14,7 @@
 
 package org.sakaiproject.evaluation.logic;
 
-import org.sakaiproject.evaluation.logic.ExternalHierarchyLogicImpl;
+import org.sakaiproject.evaluation.logic.external.ExternalHierarchyLogicImpl;
 
 
 /**
@@ -57,105 +57,105 @@ public class ExternalHierarchyLogicImplTest extends BaseTestEvalLogic {
 
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.ExternalHierarchyLogicImpl#init()}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.external.ExternalHierarchyLogicImpl#init()}.
     */
    public void testInit() {
 //      fail("Not yet implemented");
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.ExternalHierarchyLogicImpl#getRootLevelNode()}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.external.ExternalHierarchyLogicImpl#getRootLevelNode()}.
     */
    public void testGetRootLevelNode() {
 //      fail("Not yet implemented");
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.ExternalHierarchyLogicImpl#getNodeById(java.lang.String)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.external.ExternalHierarchyLogicImpl#getNodeById(java.lang.String)}.
     */
    public void testGetNodeById() {
 //      fail("Not yet implemented");
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.ExternalHierarchyLogicImpl#addNode(java.lang.String)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.external.ExternalHierarchyLogicImpl#addNode(java.lang.String)}.
     */
    public void testAddNode() {
 //      fail("Not yet implemented");
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.ExternalHierarchyLogicImpl#removeNode(java.lang.String)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.external.ExternalHierarchyLogicImpl#removeNode(java.lang.String)}.
     */
    public void testRemoveNode() {
 //      fail("Not yet implemented");
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.ExternalHierarchyLogicImpl#updateNodeData(java.lang.String, java.lang.String, java.lang.String)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.external.ExternalHierarchyLogicImpl#updateNodeData(java.lang.String, java.lang.String, java.lang.String)}.
     */
    public void testUpdateNodeData() {
 //      fail("Not yet implemented");
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.ExternalHierarchyLogicImpl#getChildNodes(java.lang.String, boolean)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.external.ExternalHierarchyLogicImpl#getChildNodes(java.lang.String, boolean)}.
     */
    public void testGetChildNodes() {
 //      fail("Not yet implemented");
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.ExternalHierarchyLogicImpl#setEvalGroupsForNode(java.lang.String, java.util.Set)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.external.ExternalHierarchyLogicImpl#setEvalGroupsForNode(java.lang.String, java.util.Set)}.
     */
    public void testSetEvalGroupsForNode() {
 // TODO      fail("Not yet implemented");
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.ExternalHierarchyLogicImpl#getEvalGroupsForNode(java.lang.String)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.external.ExternalHierarchyLogicImpl#getEvalGroupsForNode(java.lang.String)}.
     */
    public void testGetEvalGroupsForNode() {
 //    TODO      fail("Not yet implemented");
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.ExternalHierarchyLogicImpl#countEvalGroupsForNodes(java.lang.String[])}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.external.ExternalHierarchyLogicImpl#countEvalGroupsForNodes(java.lang.String[])}.
     */
    public void testCountEvalGroupsForNodes() {
 //    TODO      fail("Not yet implemented");
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.ExternalHierarchyLogicImpl#getNodesAboveEvalGroup(java.lang.String)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.external.ExternalHierarchyLogicImpl#getNodesAboveEvalGroup(java.lang.String)}.
     */
    public void testGetNodesAboveEvalGroup() {
 // TODO     fail("Not yet implemented");
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.ExternalHierarchyLogicImpl#assignUserNodePerm(java.lang.String, java.lang.String, java.lang.String)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.external.ExternalHierarchyLogicImpl#assignUserNodePerm(java.lang.String, java.lang.String, java.lang.String)}.
     */
    public void testAssignUserNodePerm() {
 //      fail("Not yet implemented");
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.ExternalHierarchyLogicImpl#checkUserNodePerm(java.lang.String, java.lang.String, java.lang.String)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.external.ExternalHierarchyLogicImpl#checkUserNodePerm(java.lang.String, java.lang.String, java.lang.String)}.
     */
    public void testCheckUserNodePerm() {
 //      fail("Not yet implemented");
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.ExternalHierarchyLogicImpl#getNodesForUserPerm(java.lang.String, java.lang.String)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.external.ExternalHierarchyLogicImpl#getNodesForUserPerm(java.lang.String, java.lang.String)}.
     */
    public void testGetNodesForUserPerm() {
 //      fail("Not yet implemented");
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.ExternalHierarchyLogicImpl#getUserIdsForNodesPerm(java.lang.String[], java.lang.String)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.external.ExternalHierarchyLogicImpl#getUserIdsForNodesPerm(java.lang.String[], java.lang.String)}.
     */
    public void testGetUserIdsForNodesPerm() {
 //      fail("Not yet implemented");

@@ -49,13 +49,14 @@
 		</property>
 	</bean>
 
-	<!-- create a data preloading bean that has transaction protection -->
-	<bean id="org.sakaiproject.evaluation.dao.PreloadData"
-		class="org.sakaiproject.evaluation.dao.PreloadDataImpl"
-		init-method="init">
-		<property name="evaluationDao">
-			<ref bean="org.sakaiproject.evaluation.dao.EvaluationDao" />
-		</property>
-	</bean>
+
+    <!-- create a data preloading bean -->
+    <bean id="org.sakaiproject.evaluation.logic.EvalPreloadData"
+        class="org.sakaiproject.evaluation.dao.PreloadDataImpl"
+        init-method="init">
+        <property name="evaluationDao">
+            <ref bean="org.sakaiproject.evaluation.dao.EvaluationDao" />
+        </property>
+    </bean>
 
 </beans>

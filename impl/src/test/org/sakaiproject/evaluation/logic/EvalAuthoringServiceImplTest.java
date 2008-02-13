@@ -21,9 +21,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.logic.EvalAuthoringServiceImpl;
-import org.sakaiproject.evaluation.logic.EvalSecurityChecks;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.exceptions.UniqueFieldException;
+import org.sakaiproject.evaluation.logic.external.EvalSecurityChecks;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.model.EvalScale;
