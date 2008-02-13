@@ -16,7 +16,7 @@
  *
  **********************************************************************************/
 
-package org.sakaiproject.evaluation.logic.impl.scheduling;
+package org.sakaiproject.evaluation.logic.scheduling;
 
 import java.util.ArrayList;
 import java.util.List;

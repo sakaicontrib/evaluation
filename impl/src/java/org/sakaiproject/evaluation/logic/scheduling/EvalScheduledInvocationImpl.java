@@ -18,7 +18,7 @@
  * limitations under the License.
  *
  **********************************************************************************/
-package org.sakaiproject.evaluation.logic.impl.scheduling;
+package org.sakaiproject.evaluation.logic.scheduling;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

@@ -6,25 +6,25 @@
 
 	<!-- place entity provider beans here -->
 	<bean id="org.sakaiproject.evaluation.logic.entity.EvaluationEntityProvider"
-			class="org.sakaiproject.evaluation.logic.impl.entity.EvaluationEntityProviderImpl">
+			class="org.sakaiproject.evaluation.logic.entity.EvaluationEntityProviderImpl">
 		<property name="evaluationService"
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
 	</bean>
 
 	<bean id="org.sakaiproject.evaluation.logic.entity.AssignGroupEntityProvider"
-			class="org.sakaiproject.evaluation.logic.impl.entity.AssignGroupEntityProviderImpl">
+			class="org.sakaiproject.evaluation.logic.entity.AssignGroupEntityProviderImpl">
 		<property name="evaluationService"
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
 	</bean>
 
 	<bean id="org.sakaiproject.evaluation.logic.entity.EvalCategoryEntityProvider"
-			class="org.sakaiproject.evaluation.logic.impl.entity.EvalCategoryEntityProviderImpl">
+			class="org.sakaiproject.evaluation.logic.entity.EvalCategoryEntityProviderImpl">
 		<property name="evaluationsLogic"
 			ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
 	</bean>
 
 	<bean id="org.sakaiproject.evaluation.logic.entity.TemplateEntityProvider"
-			class="org.sakaiproject.evaluation.logic.impl.entity.TemplateEntityProviderImpl">
+			class="org.sakaiproject.evaluation.logic.entity.TemplateEntityProviderImpl">
 		<property name="authoringService"
 			ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
 	</bean>

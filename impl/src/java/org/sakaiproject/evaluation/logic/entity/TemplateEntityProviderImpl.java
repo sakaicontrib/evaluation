@@ -12,7 +12,7 @@
  * 
  *****************************************************************************/
 
-package org.sakaiproject.evaluation.logic.impl.entity;
+package org.sakaiproject.evaluation.logic.entity;
 
 import org.sakaiproject.entitybroker.entityprovider.CoreEntityProvider;
 import org.sakaiproject.entitybroker.entityprovider.capabilities.AutoRegisterEntityProvider;
