@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="api/model/src/java"/>
-	<classpathentry kind="src" path="api/logic/src/java"/>
-	<classpathentry kind="src" path="api/public/src/java"/>
-	<classpathentry kind="src" path="impl/dao/src/java"/>
-	<classpathentry kind="src" path="impl/logic/src/java"/>
-	<classpathentry kind="src" path="impl/hbm/src/java"/>
-	<classpathentry kind="src" path="impl/pack/src/webapp/WEB-INF"/>
-	<classpathentry kind="src" path="impl/test/src/java"/>
 	<classpathentry kind="src" path="api/src/java"/>
+	<classpathentry kind="src" path="impl/src/java"/>
+	<classpathentry kind="src" path="tool/src/webapp"/>
+	<classpathentry kind="src" path="impl/src/test"/>
+	<classpathentry kind="src" path="pack/src/webapp/WEB-INF"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="MAVEN_REPO/commons-logging/jars/commons-logging-1.0.4.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/org.springframework/jars/spring-1.2.8.jar"/>
@@ -20,8 +16,6 @@
 	<classpathentry kind="var" path="MAVEN_REPO/rsfutil/jars/rsfutil-0.7.2.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/sakairsf/jars/sakairsf-0.7.2-sakai_2.2.x.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/generic-dao/jars/generic-dao-0.91.jar"/>
-	<classpathentry kind="src" path="impl/dao/src/test"/>
-	<classpathentry kind="src" path="impl/logic/src/test"/>
 	<classpathentry kind="var" path="MAVEN_REPO/junit/jars/junit-3.8.1.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/org.springframework/jars/spring-mock-1.2.6.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/hsqldb/jars/hsqldb-1.8.0.5.jar"/>

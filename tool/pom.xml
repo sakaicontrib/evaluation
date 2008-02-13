@@ -28,14 +28,7 @@
       <!-- Evaluation dependencies -->
       <dependency>
          <groupId>org.sakaiproject.evaluation</groupId>
-         <artifactId>sakai-evaluation-model-api</artifactId>
-         <version>1.2.0</version><!--eval.version-->
-         <scope>provided</scope>
-      </dependency>
-
-      <dependency>
-         <groupId>org.sakaiproject.evaluation</groupId>
-         <artifactId>sakai-evaluation-logic-api</artifactId>
+         <artifactId>sakai-evaluation-api</artifactId>
          <version>1.2.0</version><!--eval.version-->
          <scope>provided</scope>
       </dependency>

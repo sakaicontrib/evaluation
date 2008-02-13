@@ -289,7 +289,7 @@
             </includes>
          </testResource>
          <testResource>
-            <directory>${basedir}/../dao/src/test</directory>
+            <directory>${basedir}/src/test</directory>
             <includes>
                <include>hibernate-test.xml</include>
                <include>hibernate.properties</include>
