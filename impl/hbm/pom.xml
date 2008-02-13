@@ -4,15 +4,18 @@
    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
    <parent>
-      <artifactId>evaluation-base</artifactId>
+      <artifactId>evaluation</artifactId>
       <groupId>org.sakaiproject</groupId>
-      <version>${sakai.version}</version>
-      <relativePath>../../pom.xml</relativePath>
+      <version>${eval.version}</version>
    </parent>
    <artifactId>sakai-evaluation-hbm</artifactId>
-   <groupId>org.sakaiproject</groupId>
+   <groupId>org.sakaiproject.evaluation</groupId>
    <name>sakai-evaluation-hbm</name>
-   <version>${sakai.version}</version>
+   <version>${eval.version}</version>
+   <properties>
+      <eval.version>1.2.0</eval.version>
+      <deploy.target>shared</deploy.target>
+   </properties>
    <organization>
       <name>Sakai Project</name>
       <url>http://sakaiproject.org/</url>
@@ -21,9 +24,6 @@
    <!-- you must deploy your HBM files to shared or the global session factory
       cannot access them -->
    <packaging>jar</packaging>
-   <properties>
-      <deploy.target>shared</deploy.target>
-   </properties>
 
    <dependencies>
       <!-- HBMs have no dependencies since they are not built -->

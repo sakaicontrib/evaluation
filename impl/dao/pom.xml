@@ -4,14 +4,17 @@
    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
    <parent>
-      <artifactId>evaluation-base</artifactId>
+      <artifactId>evaluation</artifactId>
       <groupId>org.sakaiproject</groupId>
-      <version>${sakai.version}</version>
-      <relativePath>../../pom.xml</relativePath>
+      <version>${eval.version}</version>
    </parent>
    <name>sakai-evaluation-dao-impl</name>
-   <groupId>org.sakaiproject</groupId>
+   <groupId>org.sakaiproject.evaluation</groupId>
    <artifactId>sakai-evaluation-dao-impl</artifactId>
+   <version>${eval.version}</version>
+   <properties>
+      <eval.version>1.2.0</eval.version>
+   </properties>
    <organization>
       <name>Sakai Project</name>
       <url>http://www.sakaiproject.org/</url>
@@ -19,43 +22,40 @@
    <inceptionYear>2006</inceptionYear>
    <!-- the dao should be deployed as a jar and included in the pack, not to shared -->
    <packaging>jar</packaging>
-   <properties>
-      <deploy.target></deploy.target>
-   </properties>
- 
+
    <dependencies>
- 
+
       <!-- Sakai dependencies -->
- 
+
       <!-- Evaluation dependencies -->
       <dependency>
-         <groupId>org.sakaiproject</groupId>
+         <groupId>org.sakaiproject.evaluation</groupId>
          <artifactId>sakai-evaluation-model-api</artifactId>
-         <version>${sakai.version}</version>
+         <version>${eval.version}</version>
          <scope>provided</scope>
       </dependency>
- 
+
       <dependency>
-         <groupId>org.sakaiproject</groupId>
+         <groupId>org.sakaiproject.evaluation</groupId>
          <artifactId>sakai-evaluation-logic-api</artifactId>
-         <version>${sakai.version}</version>
+         <version>${eval.version}</version>
          <scope>provided</scope>
       </dependency>
- 
+
       <dependency>
-         <groupId>org.sakaiproject</groupId>
+         <groupId>org.sakaiproject.evaluation</groupId>
          <artifactId>sakai-evaluation-hbm</artifactId>
-         <version>${sakai.version}</version>
+         <version>${eval.version}</version>
          <scope>provided</scope>
       </dependency>
- 
+
       <dependency>
-         <groupId>org.sakaiproject</groupId>
+         <groupId>org.sakaiproject.evaluation</groupId>
          <artifactId>sakai-evaluation-test</artifactId>
-         <version>${sakai.version}</version>
+         <version>${eval.version}</version>
          <scope>test</scope>
       </dependency>
- 
+
       <!-- generic DAO -->
       <dependency>
          <groupId>org.sakaiproject</groupId>
@@ -63,7 +63,7 @@
          <version>${sakai.generic-dao.version}</version>
          <scope>provided</scope>
       </dependency>
- 
+
       <!-- Spring and Hibernate dependencies. -->
       <dependency>
          <groupId>${sakai.spring.groupId}</groupId>
@@ -71,14 +71,14 @@
          <version>${sakai.spring.version}</version>
          <scope>provided</scope>
       </dependency>
- 
+
       <dependency>
          <groupId>${sakai.hibernate.groupId}</groupId>
          <artifactId>${sakai.hibernate.artifactId}</artifactId>
          <version>${sakai.hibernate.version}</version>
          <scope>provided</scope>
       </dependency>
- 
+
       <!-- Required for hibernate 3 HQL queries -->
       <dependency>
          <groupId>antlr</groupId>

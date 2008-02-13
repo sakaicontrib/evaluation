@@ -441,7 +441,17 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
 		// pretending it worked
 	}
 
-	
+
+
+   @SuppressWarnings("unchecked")
+   public <T> T getConfigurationSetting(String settingName, T defaultValue) {
+      T returnValue = defaultValue;
+      if (defaultValue == null) {
+         returnValue = (T) (settingName + ":NULL");
+      }
+      return returnValue;
+   }
+
 
 	// testing methods
 
