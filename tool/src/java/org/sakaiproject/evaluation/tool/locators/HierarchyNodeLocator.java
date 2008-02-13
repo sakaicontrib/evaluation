@@ -17,7 +17,7 @@ package org.sakaiproject.evaluation.tool.locators;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.sakaiproject.evaluation.logic.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 

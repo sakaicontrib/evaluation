@@ -85,7 +85,7 @@
    </bean>
 
    <!-- fake external logic bean -->
-   <bean id="org.sakaiproject.evaluation.logic.EvalExternalLogic"
+   <bean id="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic"
       class="org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic">
    </bean>
 

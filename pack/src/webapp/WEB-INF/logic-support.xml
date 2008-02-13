@@ -11,10 +11,10 @@
    </bean>
 
    <!-- handles security checks -->
-   <bean id="org.sakaiproject.evaluation.logic.external.EvalSecurityChecks"
-      class="org.sakaiproject.evaluation.logic.external.EvalSecurityChecksImpl">
+   <bean id="org.sakaiproject.evaluation.logic.externals.EvalSecurityChecks"
+      class="org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl">
       <property name="externalLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
    </bean>
 
    <!-- handles simpler evaluation methods -->
@@ -22,9 +22,9 @@
       class="org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl">
       <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
       <property name="externalLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="securityChecks"
-         ref="org.sakaiproject.evaluation.logic.external.EvalSecurityChecks" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalSecurityChecks" />
       <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
    </bean>
 

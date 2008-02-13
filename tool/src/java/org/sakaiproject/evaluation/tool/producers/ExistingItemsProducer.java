@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.tool.viewparams.ChooseItemViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;

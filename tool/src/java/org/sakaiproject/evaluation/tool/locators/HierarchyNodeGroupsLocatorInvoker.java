@@ -14,7 +14,7 @@
 
 package org.sakaiproject.evaluation.tool.locators;
 
-import org.sakaiproject.evaluation.logic.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import java.util.Iterator;
 import java.util.Map;

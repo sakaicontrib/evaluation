@@ -12,7 +12,7 @@
  * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
  */
 
-package org.sakaiproject.evaluation.logic.external;
+package org.sakaiproject.evaluation.logic.externals;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -40,12 +40,12 @@ import org.sakaiproject.entity.api.EntityManager;
 import org.sakaiproject.entity.api.Reference;
 import org.sakaiproject.entitybroker.EntityBroker;
 import org.sakaiproject.entitybroker.IdEntityReference;
-import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.entity.AssignGroupEntityProvider;
 import org.sakaiproject.evaluation.logic.entity.EvaluationEntityProvider;
 import org.sakaiproject.evaluation.logic.entity.ItemEntityProvider;
 import org.sakaiproject.evaluation.logic.entity.TemplateEntityProvider;
 import org.sakaiproject.evaluation.logic.entity.TemplateItemEntityProvider;
+import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
@@ -180,7 +180,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
 
 
    /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.external.EvalExternalLogic#getCurrentUserId()
+    * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#getCurrentUserId()
     */
    public String getCurrentUserId() {
       String userId = sessionManager.getCurrentSessionUserId();
@@ -222,7 +222,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
    }
 
    /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.external.EvalExternalLogic#getUserUsername(java.lang.String)
+    * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#getUserUsername(java.lang.String)
     */
    public String getUserUsername(String userId) {
       if (isUserAnonymous(userId)) {
@@ -251,7 +251,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
    }
 
    /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.external.EvalExternalLogic#getUserDisplayName(java.lang.String)
+    * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#getUserDisplayName(java.lang.String)
     */
    public String getUserDisplayName(String userId) {
       if (isUserAnonymous(userId)) {
@@ -268,7 +268,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
 
 
    /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.external.EvalExternalLogic#isUserAdmin(java.lang.String)
+    * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#isUserAdmin(java.lang.String)
     */
    public boolean isUserAdmin(String userId) {
       log.debug("Checking is eval super admin for: " + userId);
@@ -359,7 +359,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
    }
 
    /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.external.EvalExternalLogic#getDisplayTitle(java.lang.String)
+    * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#getDisplayTitle(java.lang.String)
     */
    public String getDisplayTitle(String evalGroupId) {
       EvalGroup group = makeEvalGroupObject(evalGroupId);

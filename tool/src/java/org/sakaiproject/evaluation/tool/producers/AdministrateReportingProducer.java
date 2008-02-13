@@ -1,7 +1,7 @@
 package org.sakaiproject.evaluation.tool.producers;
 
-import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 
 import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.rsf.components.ELReference;

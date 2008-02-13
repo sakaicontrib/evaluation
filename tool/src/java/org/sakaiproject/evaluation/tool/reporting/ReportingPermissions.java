@@ -1,6 +1,6 @@
 package org.sakaiproject.evaluation.tool.reporting;
 
-import org.sakaiproject.evaluation.logic.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 
 /* 

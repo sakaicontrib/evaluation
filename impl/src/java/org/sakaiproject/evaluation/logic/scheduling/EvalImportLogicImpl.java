@@ -34,10 +34,10 @@ import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.impl.StdSchedulerFactory;
 
-import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.externals.EvalImport;
-import org.sakaiproject.evaluation.logic.externals.EvalImportJob;
-import org.sakaiproject.evaluation.logic.externals.EvalImportLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.imports.EvalImport;
+import org.sakaiproject.evaluation.logic.imports.EvalImportJob;
+import org.sakaiproject.evaluation.logic.imports.EvalImportLogic;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
 /**

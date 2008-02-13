@@ -30,7 +30,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import org.sakaiproject.component.cover.ComponentManager;
-import org.sakaiproject.evaluation.logic.externals.EvalImportJob;
+import org.sakaiproject.evaluation.logic.imports.EvalImportJob;
 import org.sakaiproject.tool.api.Session;
 import org.sakaiproject.user.api.UserDirectoryService;
 
@@ -45,8 +45,8 @@ public class EvalImportJobImpl implements EvalImportJob{
 	private static final Log log = LogFactory.getLog(EvalImportJobImpl.class);
 	
 	//on demand injection of services
-	private org.sakaiproject.evaluation.logic.externals.EvalImport evalImport = 
-		(org.sakaiproject.evaluation.logic.externals.EvalImport) ComponentManager.get(org.sakaiproject.evaluation.logic.externals.EvalImport.class);
+	private org.sakaiproject.evaluation.logic.imports.EvalImport evalImport = 
+		(org.sakaiproject.evaluation.logic.imports.EvalImport) ComponentManager.get(org.sakaiproject.evaluation.logic.imports.EvalImport.class);
 	private org.sakaiproject.tool.api.SessionManager sessionManager = 
 		(org.sakaiproject.tool.api.SessionManager) ComponentManager.get(org.sakaiproject.tool.api.SessionManager.class);
 	 // TODO Use actual injection here -AZ

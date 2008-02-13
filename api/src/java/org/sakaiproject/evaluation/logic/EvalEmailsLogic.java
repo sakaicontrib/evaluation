@@ -14,6 +14,7 @@
 
 package org.sakaiproject.evaluation.logic;
 
+import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 /**
