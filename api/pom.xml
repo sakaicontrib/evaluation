@@ -3,36 +3,30 @@
    xmlns="http://maven.apache.org/POM/4.0.0"
    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
-   <parent>
-      <artifactId>evaluation</artifactId>
-      <groupId>org.sakaiproject</groupId>
-      <version>1.2.0</version><!--eval.version-->
-   </parent>
-   <name>sakai-evaluation-logic-api</name>
+   <name>Sakai Evaluation API</name>
    <groupId>org.sakaiproject.evaluation</groupId>
-   <artifactId>sakai-evaluation-logic-api</artifactId>
+   <artifactId>sakai-evaluation-api</artifactId>
    <version>1.2.0</version><!--eval.version-->
-   <properties>
-      <deploy.target>shared</deploy.target>
-   </properties>
    <organization>
       <name>Sakai Project</name>
       <url>http://www.sakaiproject.org/</url>
    </organization>
    <inceptionYear>2006</inceptionYear>
 
-   <!-- you must deploy your business API to shared or it will be 
+   <parent>
+      <artifactId>evaluation</artifactId>
+      <groupId>org.sakaiproject</groupId>
+      <version>1.2.0</version><!--eval.version-->
+   </parent>
+
+   <!-- you must deploy your API to shared or it will be 
       inaccessible from your tool -->
    <packaging>jar</packaging>
+   <properties>
+      <deploy.target>shared</deploy.target>
+   </properties>
 
    <dependencies>
-      <!-- our tool internal dependencies -->
-      <dependency>
-         <groupId>org.sakaiproject.evaluation</groupId>
-         <artifactId>sakai-evaluation-model-api</artifactId>
-         <version>1.2.0</version><!--eval.version-->
-         <scope>provided</scope>
-      </dependency>
 
       <!-- Apache commons dependencies -->
       <dependency>
@@ -77,7 +71,9 @@
          <groupId>quartz</groupId>
          <artifactId>quartz</artifactId>
          <version>1.5.2</version>
+         <scope>provided</scope>
       </dependency>
+
    </dependencies>
 
    <build>
