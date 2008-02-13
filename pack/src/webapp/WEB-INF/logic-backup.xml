@@ -14,7 +14,7 @@
 
    <!-- jobs processing -->
    <bean id="org.sakaiproject.evaluation.logic.EvalJobLogic"
-      class="org.sakaiproject.evaluation.logic.impl.scheduling.EvalJobLogicImpl" init-method="init">
+      class="org.sakaiproject.evaluation.logic.scheduling.EvalJobLogicImpl" init-method="init">
       <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
       <property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
       <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
@@ -27,7 +27,7 @@
     <!-- imports -->
 <!-- REMOVED for now to fix circular dependencies, and to get rid of beans that make invalid direct use of Sakai -AZ
 	<bean id="org.sakaiproject.evaluation.logic.externals.EvalImport"
-		class="org.sakaiproject.evaluation.logic.impl.scheduling.EvalImportImpl"
+		class="org.sakaiproject.evaluation.logic.scheduling.EvalImportImpl"
 		init-method="init">
 		<property name="EvalEvaluationSetupService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
 		<property name="evalEmailsLogic" ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
@@ -40,7 +40,7 @@
 	</bean>
 
 	<bean id="org.sakaiproject.evaluation.logic.externals.EvalImportLogic"
-		class="org.sakaiproject.evaluation.logic.impl.scheduling.EvalImportLogicImpl"
+		class="org.sakaiproject.evaluation.logic.scheduling.EvalImportLogicImpl"
 		init-method="init"> 
         <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="evalImport"

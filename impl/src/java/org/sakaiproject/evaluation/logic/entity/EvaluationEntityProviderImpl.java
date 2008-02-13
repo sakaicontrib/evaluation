@@ -12,7 +12,7 @@
  * 
  *****************************************************************************/
 
-package org.sakaiproject.evaluation.logic.impl.entity;
+package org.sakaiproject.evaluation.logic.entity;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

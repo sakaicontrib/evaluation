@@ -12,7 +12,7 @@
  * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
  */
 
-package org.sakaiproject.evaluation.logic.impl.scheduling;
+package org.sakaiproject.evaluation.logic.scheduling;
 
 import java.util.Date;
 

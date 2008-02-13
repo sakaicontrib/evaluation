@@ -56,12 +56,12 @@
 
     <!-- importing -->
 	<bean id="org.sakaiproject.evaluation.logic.externals.EvalImportJob"
-		class="org.sakaiproject.evaluation.logic.impl.scheduling.EvalImportJobImpl"
+		class="org.sakaiproject.evaluation.logic.scheduling.EvalImportJobImpl"
 		init-method="init"> 
 	</bean>
 
    <bean id="org.sakaiproject.evaluation.logic.externals.EvalScheduledInvocation"
-      class="org.sakaiproject.evaluation.logic.impl.scheduling.EvalScheduledInvocationImpl"
+      class="org.sakaiproject.evaluation.logic.scheduling.EvalScheduledInvocationImpl"
       init-method="init">
       <property name="evalJobLogic" ref="org.sakaiproject.evaluation.logic.EvalJobLogic" />
    </bean>
