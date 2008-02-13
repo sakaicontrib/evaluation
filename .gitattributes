@@ -65,6 +65,8 @@ api/src/java/org/sakaiproject/evaluation/utils/ComparatorsUtils.java -text
 api/src/java/org/sakaiproject/evaluation/utils/EvalUtils.java -text
 api/src/java/org/sakaiproject/evaluation/utils/SettingsLogicUtils.java -text
 api/src/java/org/sakaiproject/evaluation/utils/TemplateItemUtils.java -text
+api/src/test/org/sakaiproject/evaluation/test/ArrayUtilsTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
+api/src/test/org/sakaiproject/evaluation/test/EvalUtilsTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/project.xml -text
 impl/src/java/org/sakaiproject/evaluation/dao/impl/EvaluationDaoImpl.java -text
 impl/src/java/org/sakaiproject/evaluation/dao/impl/PreloadDataImpl.java -text
@@ -96,7 +98,6 @@ impl/src/test/hibernate.cfg.xml -text
 impl/src/test/hibernate.properties -text
 impl/src/test/log4j.properties -text
 impl/src/test/org/sakaiproject/evaluation/dao/test/EvaluationDaoImplTest.java -text
-impl/src/test/org/sakaiproject/evaluation/logic/test/ArrayUtilsTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/test/org/sakaiproject/evaluation/logic/test/BaseTestEvalLogic.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/test/org/sakaiproject/evaluation/logic/test/EvalAuthoringServiceImplTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/test/org/sakaiproject/evaluation/logic/test/EvalDeliveryServiceImplTest.java -text
@@ -106,7 +107,6 @@ impl/src/test/org/sakaiproject/evaluation/logic/test/EvalEvaluationSetupServiceI
 impl/src/test/org/sakaiproject/evaluation/logic/test/EvalExternalLogicStubTest.java -text
 impl/src/test/org/sakaiproject/evaluation/logic/test/EvalJobLogicImplTest.java -text
 impl/src/test/org/sakaiproject/evaluation/logic/test/EvalSettingsImplTest.java -text
-impl/src/test/org/sakaiproject/evaluation/logic/test/EvalUtilsTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/test/org/sakaiproject/evaluation/logic/test/ExternalHierarchyLogicImplTest.java -text
 impl/src/test/org/sakaiproject/evaluation/logic/test/TextTemplateLogicUtilsTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/test/org/sakaiproject/evaluation/logic/test/mocks/MockPlacement.java -text
