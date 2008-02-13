@@ -209,6 +209,7 @@
 		<property name="evaluationCalcUtility" ref="org.sakaiproject.evaluation.tool.utils.EvaluationCalcUtility" />
 		<property name="evalResponseAggregatorUtil" ref="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil" />
 		<property name="deliveryService" ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
+		<property name="messageLocator" ref="messageLocator" /> 
 	</bean>
 	
 	<bean id="org.sakaiproject.evaluation.tool.utils.EvaluationCalcUtility" 

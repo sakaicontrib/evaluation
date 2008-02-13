@@ -28,7 +28,9 @@ public class LikertPercentageItemLabelGenerator extends AbstractCategoryItemLabe
         else if ( totalItems != 0) {
             
             double percentage = doubleVal / doubleTotalItems * 100;
-            return percentage + " % (" + intVal + ")";
+            //return percentage + " % (" + intVal + ")";
+            //return String.format("%.2f %s (%s)", percentage,"%", intVal+"");
+            return String.format("%.0f %s (%s)", percentage,"%", intVal+"");
         }
         else if (value != null) {
             return value.toString();
