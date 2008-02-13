@@ -6,14 +6,13 @@
    <parent>
       <artifactId>evaluation</artifactId>
       <groupId>org.sakaiproject</groupId>
-      <version>${eval.version}</version>
+      <version>1.2.0</version><!--eval.version-->
    </parent>
    <name>sakai-evaluation-logic-api</name>
    <groupId>org.sakaiproject.evaluation</groupId>
    <artifactId>sakai-evaluation-logic-api</artifactId>
-   <version>${eval.version}</version>
+   <version>1.2.0</version><!--eval.version-->
    <properties>
-      <eval.version>1.2.0</eval.version>
       <deploy.target>shared</deploy.target>
    </properties>
    <organization>
@@ -31,7 +30,7 @@
       <dependency>
          <groupId>org.sakaiproject.evaluation</groupId>
          <artifactId>sakai-evaluation-model-api</artifactId>
-         <version>${eval.version}</version>
+         <version>1.2.0</version><!--eval.version-->
          <scope>provided</scope>
       </dependency>
 
