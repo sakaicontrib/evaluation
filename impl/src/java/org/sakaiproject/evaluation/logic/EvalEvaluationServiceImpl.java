@@ -12,7 +12,7 @@
  * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
  */
 
-package org.sakaiproject.evaluation.logic.impl;
+package org.sakaiproject.evaluation.logic;
 
 import java.util.ArrayList;
 import java.util.HashSet;

@@ -14,9 +14,9 @@
 
 package org.sakaiproject.evaluation.logic.test;
 
+import org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
@@ -68,7 +68,7 @@ public class EvalEmailsLogicImplTest extends BaseTestEvalLogic {
 
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#getFromEmailOrFail(org.sakaiproject.evaluation.model.EvalEvaluation)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl#getFromEmailOrFail(org.sakaiproject.evaluation.model.EvalEvaluation)}.
     */
    public void testGetFromEmailOrFail() {
       String fromEmail = null;
@@ -94,7 +94,7 @@ public class EvalEmailsLogicImplTest extends BaseTestEvalLogic {
 
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#getEmailTemplateOrFail(java.lang.String, java.lang.Long)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl#getEmailTemplateOrFail(java.lang.String, java.lang.Long)}.
     */
    public void testGetEmailTemplateOrFail() {
       EvalEmailTemplate template = null;
@@ -138,7 +138,7 @@ public class EvalEmailsLogicImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#sendEvalCreatedNotifications(java.lang.Long, boolean)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl#sendEvalCreatedNotifications(java.lang.Long, boolean)}.
     */
    public void testSendEvalCreatedNotifications() {
       String[] sentEmails = null;
@@ -168,7 +168,7 @@ public class EvalEmailsLogicImplTest extends BaseTestEvalLogic {
    }
 
    /**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#sendEvalAvailableNotifications(java.lang.Long, boolean)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl#sendEvalAvailableNotifications(java.lang.Long, boolean)}.
 	 */
 	public void testSendEvalAvailableNotifications() {
       String[] sentEmails = null;
@@ -200,28 +200,28 @@ public class EvalEmailsLogicImplTest extends BaseTestEvalLogic {
 	// FIXME add remaining tests here
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#sendEvalAvailableGroupNotification(java.lang.Long, java.lang.String)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl#sendEvalAvailableGroupNotification(java.lang.Long, java.lang.String)}.
     */
    public void testSendEvalAvailableGroupNotification() {
       // TODO fail("Not yet implemented");
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#sendEvalReminderNotifications(java.lang.Long, java.lang.String)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl#sendEvalReminderNotifications(java.lang.Long, java.lang.String)}.
     */
    public void testSendEvalReminderNotifications() {
    // TODO fail("Not yet implemented");
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#sendEvalResultsNotifications(java.lang.Long, boolean, boolean, java.lang.String)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl#sendEvalResultsNotifications(java.lang.Long, boolean, boolean, java.lang.String)}.
     */
    public void testSendEvalResultsNotifications() {
    // TODO fail("Not yet implemented");
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#makeEmailMessage(java.lang.String, org.sakaiproject.evaluation.model.EvalEvaluation, org.sakaiproject.evaluation.logic.model.EvalGroup, java.util.Map)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl#makeEmailMessage(java.lang.String, org.sakaiproject.evaluation.model.EvalEvaluation, org.sakaiproject.evaluation.logic.model.EvalGroup, java.util.Map)}.
     */
    public void testMakeEmailMessage() {
    // TODO fail("Not yet implemented");

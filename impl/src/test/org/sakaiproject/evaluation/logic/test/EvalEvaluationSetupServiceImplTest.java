@@ -17,11 +17,11 @@ package org.sakaiproject.evaluation.logic.test;
 import java.util.Date;
 import java.util.List;
 
+import org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
+import org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl;
+import org.sakaiproject.evaluation.logic.EvalSecurityChecks;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl;
-import org.sakaiproject.evaluation.logic.impl.EvalEvaluationSetupServiceImpl;
-import org.sakaiproject.evaluation.logic.impl.EvalSecurityChecks;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -88,7 +88,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationSetupServiceImpl#saveEvaluation(org.sakaiproject.evaluation.model.EvalEvaluation)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#saveEvaluation(org.sakaiproject.evaluation.model.EvalEvaluation)}.
     */
    public void testSaveEvaluation() {
       EvalEvaluation eval = null;
@@ -280,7 +280,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationSetupServiceImpl#deleteEvaluation(org.sakaiproject.evaluation.model.EvalEvaluation)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#deleteEvaluation(org.sakaiproject.evaluation.model.EvalEvaluation)}.
     */
    public void testDeleteEvaluation() {
       // remove evaluation which has not started (uses 2 email templates)
@@ -343,7 +343,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationSetupServiceImpl#getEvaluationsForUser(String, boolean, boolean)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#getEvaluationsForUser(String, boolean, boolean)}.
     */
    public void testGetEvaluationsForUser() {
       List<EvalEvaluation> evals = null;
@@ -416,7 +416,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationSetupServiceImpl#getVisibleEvaluationsForUser(java.lang.String, boolean, boolean)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#getVisibleEvaluationsForUser(java.lang.String, boolean, boolean)}.
     */
    public void testGetVisibleEvaluationsForUser() {
       // test getting visible evals for the maint user
@@ -453,7 +453,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationSetupServiceImpl#getEvalCategories(java.lang.String)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#getEvalCategories(java.lang.String)}.
     */
    public void testGetEvalCategories() {
       String[] cats = null;
@@ -485,7 +485,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationSetupServiceImpl#getEvaluationsByCategory(java.lang.String, java.lang.String)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#getEvaluationsByCategory(java.lang.String, java.lang.String)}.
     */
    public void testGetEvaluationsByCategory() {
       List<EvalEvaluation> evals = null;
@@ -745,7 +745,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationSetupServiceImpl#deleteAssignGroup(java.lang.Long, java.lang.String)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#deleteAssignGroup(java.lang.Long, java.lang.String)}.
     */
    @SuppressWarnings("unchecked")
    public void testDeleteAssignGroup() {
