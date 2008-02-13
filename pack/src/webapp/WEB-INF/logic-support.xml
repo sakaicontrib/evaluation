@@ -56,7 +56,7 @@
       <property name="beanNames">
          <list>
             <value>org.sakaiproject.evaluation.logic.Eval*</value>
-            <value>org.sakaiproject.evaluation.logic.externals.Eval*</value>
+            <value>org.sakaiproject.evaluation.logic.import.Eval*</value>
          </list>
       </property>
    </bean>

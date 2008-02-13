@@ -1,7 +1,7 @@
 /**
  * $Id$
  * $URL$
- * EvalSecurityChecks.java - evaluation - Jan 29, 2008 11:00:56 AM - azeckoski
+ * EvalSecurityChecksImpl.java - evaluation - Jan 29, 2008 11:00:56 AM - azeckoski
  **************************************************************************
  * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0
@@ -38,9 +38,9 @@ import org.sakaiproject.evaluation.utils.EvalUtils;
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
-public class EvalSecurityChecks {
+public class EvalSecurityChecksImpl {
 
-   private static Log log = LogFactory.getLog(EvalSecurityChecks.class);
+   private static Log log = LogFactory.getLog(EvalSecurityChecksImpl.class);
 
    private EvalExternalLogic external;
    public void setExternalLogic(EvalExternalLogic external) {

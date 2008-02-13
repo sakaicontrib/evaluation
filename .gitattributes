@@ -83,7 +83,7 @@ impl/src/java/org/sakaiproject/evaluation/logic/entity/ItemEntityProviderImpl.ja
 impl/src/java/org/sakaiproject/evaluation/logic/entity/TemplateEntityProviderImpl.java -text
 impl/src/java/org/sakaiproject/evaluation/logic/entity/TemplateItemEntityProviderImpl.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/external/EvalExternalLogicImpl.java -text
-impl/src/java/org/sakaiproject/evaluation/logic/external/EvalSecurityChecks.java svn_keywords=Date+Revision+Author+HeadURL+Id
+impl/src/java/org/sakaiproject/evaluation/logic/external/EvalSecurityChecksImpl.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/external/ExternalHierarchyLogicImpl.java -text
 impl/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvalAssignContextInterceptor.java -text
 impl/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvaluationModificationRegistry.java -text
