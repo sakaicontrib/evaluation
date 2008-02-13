@@ -3,7 +3,6 @@
 /.project -text
 /.springBeans -text
 /.svnignore -text
-api/model/project.xml -text
 api/project.xml -text
 api/src/java/org/sakaiproject/evaluation/dao/EvaluationDao.java -text
 api/src/java/org/sakaiproject/evaluation/logic/EvalAuthoringService.java svn_keywords=Date+Revision+Author+HeadURL+Id
