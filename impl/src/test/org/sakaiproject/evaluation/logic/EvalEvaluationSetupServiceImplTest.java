@@ -21,7 +21,7 @@ import org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.external.EvalSecurityChecks;
+import org.sakaiproject.evaluation.logic.external.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -51,9 +51,10 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
          throw new NullPointerException("EvalSettings could not be retrieved from spring context");
       }
 
-      EvalSecurityChecks securityChecks = (EvalSecurityChecks) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalSecurityChecks");
+      EvalSecurityChecksImpl securityChecks = 
+         (EvalSecurityChecksImpl) applicationContext.getBean("org.sakaiproject.evaluation.logic.external.EvalSecurityChecks");
       if (securityChecks == null) {
-         throw new NullPointerException("EvalSecurityChecks could not be retrieved from spring context");
+         throw new NullPointerException("EvalSecurityChecksImpl could not be retrieved from spring context");
       }
 
       evaluationService = (EvalEvaluationService) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalEvaluationService");

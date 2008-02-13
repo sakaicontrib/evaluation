@@ -24,7 +24,7 @@ import org.sakaiproject.evaluation.logic.EvalAuthoringServiceImpl;
 import org.sakaiproject.evaluation.logic.EvalDeliveryServiceImpl;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.external.EvalSecurityChecks;
+import org.sakaiproject.evaluation.logic.external.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
@@ -54,9 +54,10 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
          throw new NullPointerException("EvalSettings could not be retrieved from spring evalGroupId");
       }
 
-      EvalSecurityChecks securityChecks = (EvalSecurityChecks) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalSecurityChecks");
+      EvalSecurityChecksImpl securityChecks = 
+         (EvalSecurityChecksImpl) applicationContext.getBean("org.sakaiproject.evaluation.logic.external.EvalSecurityChecks");
       if (securityChecks == null) {
-         throw new NullPointerException("EvalSecurityChecks could not be retrieved from spring context");
+         throw new NullPointerException("EvalSecurityChecksImpl could not be retrieved from spring context");
       }
 
       EvalEvaluationService evaluationService = (EvalEvaluationService) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalEvaluationService");

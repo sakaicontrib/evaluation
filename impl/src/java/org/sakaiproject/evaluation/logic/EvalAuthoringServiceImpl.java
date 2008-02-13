@@ -29,7 +29,7 @@ import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.exceptions.UniqueFieldException;
-import org.sakaiproject.evaluation.logic.external.EvalSecurityChecks;
+import org.sakaiproject.evaluation.logic.external.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.model.EvalScale;
@@ -85,8 +85,8 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       this.settings = settings;
    }
 
-   private EvalSecurityChecks securityChecks;
-   public void setSecurityChecks(EvalSecurityChecks securityChecks) {
+   private EvalSecurityChecksImpl securityChecks;
+   public void setSecurityChecks(EvalSecurityChecksImpl securityChecks) {
       this.securityChecks = securityChecks;
    }
 

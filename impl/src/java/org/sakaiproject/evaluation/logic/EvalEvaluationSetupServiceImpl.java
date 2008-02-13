@@ -34,7 +34,7 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.external.EvalSecurityChecks;
+import org.sakaiproject.evaluation.logic.external.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
@@ -82,8 +82,8 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       this.evaluationService = evaluationService;
    }
 
-   private EvalSecurityChecks securityChecks;
-   public void setSecurityChecks(EvalSecurityChecks securityChecks) {
+   private EvalSecurityChecksImpl securityChecks;
+   public void setSecurityChecks(EvalSecurityChecksImpl securityChecks) {
       this.securityChecks = securityChecks;
    }
 
