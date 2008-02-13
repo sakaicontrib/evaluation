@@ -23,7 +23,7 @@ import java.util.Set;
 import org.sakaiproject.evaluation.logic.EvalAuthoringServiceImpl;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.exceptions.UniqueFieldException;
-import org.sakaiproject.evaluation.logic.external.EvalSecurityChecksImpl;
+import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.model.EvalScale;
@@ -54,7 +54,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       }
 
       EvalSecurityChecksImpl securityChecks = 
-         (EvalSecurityChecksImpl) applicationContext.getBean("org.sakaiproject.evaluation.logic.external.EvalSecurityChecks");
+         (EvalSecurityChecksImpl) applicationContext.getBean("org.sakaiproject.evaluation.logic.externals.EvalSecurityChecks");
       if (securityChecks == null) {
          throw new NullPointerException("EvalSecurityChecksImpl could not be retrieved from spring context");
       }

@@ -16,7 +16,6 @@ package org.sakaiproject.evaluation.logic.externals;
 
 import java.util.Locale;
 
-import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 
 /**
  * This interface provides methods to get user information into the evaluation system,

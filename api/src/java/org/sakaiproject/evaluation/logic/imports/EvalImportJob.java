@@ -12,7 +12,7 @@
  * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
  */
 
-package org.sakaiproject.evaluation.logic.externals;
+package org.sakaiproject.evaluation.logic.imports;
 
 import org.quartz.Job;
 

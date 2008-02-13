@@ -12,7 +12,7 @@
  * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
  */
 
-package org.sakaiproject.evaluation.logic.external;
+package org.sakaiproject.evaluation.logic.externals;
 
 import java.util.ArrayList;
 import java.util.Collection;

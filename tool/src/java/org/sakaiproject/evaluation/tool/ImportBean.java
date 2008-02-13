@@ -21,7 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.content.api.ContentHostingService;
 import org.sakaiproject.content.api.FilePickerHelper;
 import org.sakaiproject.entity.api.Reference;
-import org.sakaiproject.evaluation.logic.externals.EvalImportLogic;
+import org.sakaiproject.evaluation.logic.imports.EvalImportLogic;
 import org.sakaiproject.exception.IdUnusedException;
 import org.sakaiproject.exception.PermissionException;
 import org.sakaiproject.exception.TypeException;

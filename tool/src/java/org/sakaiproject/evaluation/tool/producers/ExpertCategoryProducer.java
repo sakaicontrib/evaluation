@@ -17,7 +17,7 @@ package org.sakaiproject.evaluation.tool.producers;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.tool.viewparams.ExpertItemViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;

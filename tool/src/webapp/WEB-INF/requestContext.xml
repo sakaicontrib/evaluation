@@ -21,7 +21,7 @@
       class="org.sakaiproject.evaluation.tool.EvaluationBean"
       init-method="init">
       <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="evaluationService"
          ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
       <property name="authoringService"
@@ -51,7 +51,7 @@
       class="org.sakaiproject.evaluation.tool.TakeEvalBean">
       <property name="responseBeanLocator" ref="responseBeanLocator" />
       <property name="externalLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="messages" ref="targettedMessageList" />
    </bean>
 
@@ -68,7 +68,7 @@
    <bean id="importBean"
       class="org.sakaiproject.evaluation.tool.ImportBean">
       <property name="evalImportLogic"
-         ref="org.sakaiproject.evaluation.logic.externals.EvalImportLogic" />
+         ref="org.sakaiproject.evaluation.logic.imports.EvalImportLogic" />
       <!-- DO NOT USE SAKAI SERVICES DIRECTLY -->
       <property name="contentHostingService"
          ref="org.sakaiproject.content.api.ContentHostingService" />
@@ -80,7 +80,7 @@
       class="org.sakaiproject.evaluation.tool.ItemsBean"
       init-method="init">
       <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="authoringService"
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
    </bean>
@@ -89,7 +89,7 @@
       class="org.sakaiproject.evaluation.tool.ExpertItemsBean"
       init-method="init">
       <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="authoringService"
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
    </bean>
@@ -97,7 +97,7 @@
    <bean id="reportHandlerHook"
       class="org.sakaiproject.evaluation.tool.reporting.ReportHandlerHook">
       <property name="viewparams" ref="viewParameters" />
-      <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+      <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="evaluationService"
          ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
       <property name="csvReportExporter" ref="CSVReportExporter" />
@@ -141,7 +141,7 @@
    <bean id="evaluationBeanLocator"
       class="org.sakaiproject.evaluation.tool.locators.EvaluationBeanLocator">
       <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="evaluationService"
          ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
       <property name="evaluationSetupService"
@@ -166,7 +166,7 @@
    <bean id="hierNodeLocator"
       class="org.sakaiproject.evaluation.tool.locators.HierarchyNodeLocator">
       <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="hierarchyLogic"
          ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
    </bean>
@@ -175,7 +175,7 @@
    <bean id="hierNodeLocatorInvoker"
       class="org.sakaiproject.evaluation.tool.locators.HierarchyNodeLocatorInvoker">
       <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="hierarchyLogic"
          ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
       <property name="loc" ref="hierNodeLocator" />
@@ -184,7 +184,7 @@
    <bean id="hierNodeGroupsLocator"
       class="org.sakaiproject.evaluation.tool.locators.HierarchyNodeGroupsLocator">
       <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="hierarchyLogic"
          ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
    </bean>
@@ -193,7 +193,7 @@
    <bean id="hierNodeGroupsLocatorInvoker"
       class="org.sakaiproject.evaluation.tool.locators.HierarchyNodeGroupsLocatorInvoker">
       <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="hierarchyLogic"
          ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
       <property name="hierloc" ref="hierNodeGroupsLocator" />
@@ -207,7 +207,7 @@
       <property name="externalHierarchyLogic"
          ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
       <property name="externalLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="hierarchyRowRenderer"
          ref="HierarchySelectNodeRowRenderer" />
    </bean>
@@ -221,23 +221,23 @@
    <!-- ADMINISTRATE producers -->
    <bean class="org.sakaiproject.evaluation.tool.producers.AdministrateProducer">
       <property name="externalLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
    </bean>
 
    <bean class="org.sakaiproject.evaluation.tool.producers.AdministrateReportingProducer">
-     <property name="external" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+     <property name="external" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
    </bean>
 
    <bean
       class="org.sakaiproject.evaluation.tool.producers.AdminTestEGProviderProducer">
-      <property name="external" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+      <property name="external" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
    </bean>
 
    <bean
       class="org.sakaiproject.evaluation.tool.producers.ControlImportProducer">
       <property name="externalLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <!-- DO NOT USE SAKAI SERVICES DIRECTLY -->
       <property name="sessionManager"
          ref="org.sakaiproject.tool.api.SessionManager" />
@@ -248,14 +248,14 @@
    <bean
       class="org.sakaiproject.evaluation.tool.producers.ControlHierarchyProducer">
       <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="hierarchyRenderUtil" ref="HierarchyRenderUtil" />
    </bean>
 
    <bean
       class="org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeProducer">
       <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="hierarchyLogic"
          ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
    </bean>
@@ -263,7 +263,7 @@
    <bean
       class="org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeGroupsProducer">
       <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="hierarchyLogic"
          ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
    </bean>
@@ -273,7 +273,7 @@
    <bean
       class="org.sakaiproject.evaluation.tool.producers.SummaryProducer">
       <property name="externalLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="evaluationService"
          ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
       <property name="authoringService"
@@ -292,7 +292,7 @@
    <bean
       class="org.sakaiproject.evaluation.tool.producers.ControlTemplatesProducer">
       <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="evaluationService"
          ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
       <property name="authoringService"
@@ -305,13 +305,13 @@
       <property name="settings"
          ref="org.sakaiproject.evaluation.logic.EvalSettings" />
       <property name="externalLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
    </bean>
 
    <bean
       class="org.sakaiproject.evaluation.tool.producers.RemoveTemplateProducer">
       <property name="externalLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="authoringService"
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
    </bean>
@@ -322,7 +322,7 @@
       class="org.sakaiproject.evaluation.tool.producers.ModifyTemplateItemsProducer">
       <property name="localTemplateLogic" ref="localTemplateLogic" />
       <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="addItemControlRenderer"
          ref="org.sakaiproject.evaluation.tool.renderers.AddItemControlRenderer" />
       <property name="evalSettings"
@@ -332,7 +332,7 @@
    </bean>
 
    <bean class="org.sakaiproject.evaluation.tool.producers.ModifyBlockProducer">
-      <property name="external" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+      <property name="external" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="authoringService"
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
       <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
@@ -344,7 +344,7 @@
    <bean
       class="org.sakaiproject.evaluation.tool.producers.ExistingItemsProducer">
       <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="authoringService"
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
    </bean>
@@ -354,7 +354,7 @@
    <bean
       class="org.sakaiproject.evaluation.tool.producers.ControlItemsProducer">
       <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="evaluationService"
          ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
       <property name="authoringService"
@@ -364,7 +364,7 @@
    <bean
       class="org.sakaiproject.evaluation.tool.producers.ModifyItemProducer">
       <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="authoringService"
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
       <property name="settings"
@@ -397,7 +397,7 @@
    <bean
       class="org.sakaiproject.evaluation.tool.producers.ExpertCategoryProducer">
       <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="authoringService"
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
    </bean>
@@ -405,7 +405,7 @@
    <bean
       class="org.sakaiproject.evaluation.tool.producers.ExpertObjectiveProducer">
       <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="authoringService"
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
    </bean>
@@ -421,7 +421,7 @@
    <bean
       class="org.sakaiproject.evaluation.tool.producers.ControlScalesProducer">
       <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="authoringService"
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
    </bean>
@@ -429,7 +429,7 @@
    <bean
       class="org.sakaiproject.evaluation.tool.producers.ModifyScaleProducer">
       <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="authoringService"
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
       <property name="boundedDynamicListInputEvolver"
@@ -439,7 +439,7 @@
    <bean
       class="org.sakaiproject.evaluation.tool.producers.RemoveScaleProducer">
       <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="localTemplateLogic" ref="localTemplateLogic" />
    </bean>
 
@@ -448,7 +448,7 @@
    <bean
       class="org.sakaiproject.evaluation.tool.producers.ControlEvaluationsProducer">
       <property name="externalLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="evaluationService"
          ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
       <property name="evaluationSetupService"
@@ -466,7 +466,7 @@
    <bean
       class="org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer">
       <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="evaluationService"
          ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
       <property name="authoringService"
@@ -479,7 +479,7 @@
    <bean
       class="org.sakaiproject.evaluation.tool.producers.EvaluationStartProducer">
       <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="authoringService"
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
       <property name="richTextEvolver" ref="richTextEvolver" />
@@ -491,13 +491,13 @@
          ref="org.sakaiproject.evaluation.logic.EvalSettings" />
       <property name="evaluationBean" ref="evaluationBean" />
       <property name="externalLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="dateEvolver" ref="fieldDateInputEvolver" />
    </bean>
 
    <bean class="org.sakaiproject.evaluation.tool.producers.EvaluationAssignProducer">
       <property name="externalLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="evaluationBean" ref="evaluationBean" />
       <property name="settings"
          ref="org.sakaiproject.evaluation.logic.EvalSettings" />  
@@ -508,7 +508,7 @@
    <bean
       class="org.sakaiproject.evaluation.tool.producers.EvaluationAssignConfirmProducer">
       <property name="externalLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="evaluationService"
          ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
       <property name="evaluationBean" ref="evaluationBean" />
@@ -543,7 +543,7 @@
    <bean
       class="org.sakaiproject.evaluation.tool.producers.TakeEvalProducer">
       <property name="external"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="evaluationService"
          ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
       <property name="authoringService"
@@ -572,7 +572,7 @@
    <bean
       class="org.sakaiproject.evaluation.tool.producers.ReportsViewingProducer">
       <property name="externalLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="evaluationService"
          ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
       <property name="deliveryService"
@@ -586,7 +586,7 @@
    <bean
       class="org.sakaiproject.evaluation.tool.producers.ReportChooseGroupsProducer">
       <property name="externalLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="evaluationService"
          ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
       <property name="reportsBean" ref="reportsBean" />
@@ -595,7 +595,7 @@
    <bean
       class="org.sakaiproject.evaluation.tool.producers.ReportsViewEssaysProducer">
       <property name="externalLogic"
-         ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="evaluationService"
          ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
       <property name="authoringService"
