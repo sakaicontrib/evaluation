@@ -66,12 +66,6 @@ api/src/java/org/sakaiproject/evaluation/model/EvalTemplateItem.java -text
 api/src/java/org/sakaiproject/evaluation/model/constant/EvalConstants.java -text
 api/src/java/org/sakaiproject/evaluation/model/readme.txt -text
 impl/dao/project.xml -text
-impl/dao/src/java/org/sakaiproject/evaluation/dao/impl/EvaluationDaoImpl.java -text
-impl/dao/src/java/org/sakaiproject/evaluation/dao/impl/PreloadDataImpl.java -text
-impl/dao/src/test/hibernate-test.xml -text
-impl/dao/src/test/hibernate.cfg.xml -text
-impl/dao/src/test/hibernate.properties -text
-impl/dao/src/test/org/sakaiproject/evaluation/dao/test/EvaluationDaoImplTest.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalAuthoringServiceImpl.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalDeliveryServiceImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalEmailsLogicImpl.java -text
@@ -114,6 +108,12 @@ impl/logic/src/test/org/sakaiproject/evaluation/logic/test/mocks/MockReference.j
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/mocks/MockSite.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/mocks/MockUser.java -text
 impl/project.xml -text
+impl/src/java/org/sakaiproject/evaluation/dao/impl/EvaluationDaoImpl.java -text
+impl/src/java/org/sakaiproject/evaluation/dao/impl/PreloadDataImpl.java -text
+impl/src/test/hibernate-test.xml -text
+impl/src/test/hibernate.cfg.xml -text
+impl/src/test/hibernate.properties -text
+impl/src/test/org/sakaiproject/evaluation/dao/test/EvaluationDaoImplTest.java -text
 impl/src/test/org/sakaiproject/evaluation/test/EvalTestDataLoad.java -text
 impl/src/test/org/sakaiproject/evaluation/test/PreloadTestData.java -text
 impl/src/test/org/sakaiproject/evaluation/test/mocks/MockEvalExternalLogic.java -text

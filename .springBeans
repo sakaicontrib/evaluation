@@ -4,7 +4,6 @@
 		<configExtension>xml</configExtension>
 	</configExtensions>
 	<configs>
-		<config>impl/dao/src/test/hibernate-test.xml</config>
 		<config>tool/src/webapp/WEB-INF/applicationContext.xml</config>
 		<config>tool/src/webapp/WEB-INF/requestContext.xml</config>
 	</configs>
@@ -23,7 +22,6 @@
 			<allowBeanDefinitionOverriding>false</allowBeanDefinitionOverriding>
 			<incomplete>true</incomplete>
 			<configs>
-				<config>impl/dao/src/test/hibernate-test.xml</config>
 			</configs>
 		</configSet>
 	</configSets>
