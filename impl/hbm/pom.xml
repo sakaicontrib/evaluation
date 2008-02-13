@@ -6,14 +6,13 @@
    <parent>
       <artifactId>evaluation</artifactId>
       <groupId>org.sakaiproject</groupId>
-      <version>${eval.version}</version>
+      <version>1.2.0</version><!--eval.version-->
    </parent>
    <artifactId>sakai-evaluation-hbm</artifactId>
    <groupId>org.sakaiproject.evaluation</groupId>
    <name>sakai-evaluation-hbm</name>
-   <version>${eval.version}</version>
+   <version>1.2.0</version><!--eval.version-->
    <properties>
-      <eval.version>1.2.0</eval.version>
       <deploy.target>shared</deploy.target>
    </properties>
    <organization>

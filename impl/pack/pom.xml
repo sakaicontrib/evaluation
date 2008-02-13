@@ -6,14 +6,13 @@
    <parent>
       <artifactId>evaluation</artifactId>
       <groupId>org.sakaiproject</groupId>
-      <version>${eval.version}</version>
+      <version>1.2.0</version><!--eval.version-->
    </parent>
    <name>sakai-evaluation-pack</name>
    <groupId>org.sakaiproject.evaluation</groupId>
    <artifactId>sakai-evaluation-pack</artifactId>
-   <version>${eval.version}</version>
+   <version>1.2.0</version><!--eval.version-->
    <properties>
-      <eval.version>1.2.0</eval.version>
       <deploy.target>components</deploy.target>
    </properties>
    <organization>
@@ -32,14 +31,14 @@
       <dependency>
          <groupId>org.sakaiproject.evaluation</groupId>
          <artifactId>sakai-evaluation-logic-impl</artifactId>
-         <version>${eval.version}</version>
+         <version>1.2.0</version><!--eval.version-->
          <scope>runtime</scope>
       </dependency>
 
       <dependency>
          <groupId>org.sakaiproject.evaluation</groupId>
          <artifactId>sakai-evaluation-dao-impl</artifactId>
-         <version>${eval.version}</version>
+         <version>1.2.0</version><!--eval.version-->
          <scope>runtime</scope>
       </dependency>
 
