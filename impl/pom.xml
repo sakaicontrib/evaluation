@@ -8,9 +8,9 @@
       <groupId>org.sakaiproject</groupId>
       <version>1.2.0</version><!--eval.version-->
    </parent>
-   <name>sakai-evaluation-logic-impl</name>
+   <name>Sakai Evaluation Impl</name>
    <groupId>org.sakaiproject.evaluation</groupId>
-   <artifactId>sakai-evaluation-logic-impl</artifactId>
+   <artifactId>sakai-evaluation-impl</artifactId>
    <version>1.2.0</version><!--eval.version-->
    <organization>
       <name>Sakai Project</name>
@@ -25,23 +25,9 @@
       <!-- Evaluation dependencies -->
       <dependency>
          <groupId>org.sakaiproject.evaluation</groupId>
-         <artifactId>sakai-evaluation-model-api</artifactId>
+         <artifactId>sakai-evaluation-api</artifactId>
          <version>1.2.0</version><!--eval.version-->
          <scope>provided</scope>
-      </dependency>
-
-      <dependency>
-         <groupId>org.sakaiproject.evaluation</groupId>
-         <artifactId>sakai-evaluation-logic-api</artifactId>
-         <version>1.2.0</version><!--eval.version-->
-         <scope>provided</scope>
-      </dependency>
-
-      <dependency>
-         <groupId>org.sakaiproject.evaluation</groupId>
-         <artifactId>sakai-evaluation-test</artifactId>
-         <version>1.2.0</version><!--eval.version-->
-         <scope>test</scope>
       </dependency>
 
       <!-- other project dependencies -->
@@ -284,21 +270,6 @@
          <groupId>commons-lang</groupId>
          <artifactId>commons-lang</artifactId>
          <version>2.1</version>
-         <scope>test</scope>
-      </dependency>
-
-      <!-- these are needed if we are testing the logic class using a working DAO -->
-      <dependency>
-         <groupId>org.sakaiproject.evaluation</groupId>
-         <artifactId>sakai-evaluation-hbm</artifactId>
-         <version>1.2.0</version><!--eval.version-->
-         <scope>test</scope>
-      </dependency>
-
-      <dependency>
-         <groupId>org.sakaiproject.evaluation</groupId>
-         <artifactId>sakai-evaluation-dao-impl</artifactId>
-         <version>1.2.0</version><!--eval.version-->
          <scope>test</scope>
       </dependency>
 

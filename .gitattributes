@@ -72,7 +72,6 @@ impl/dao/src/test/hibernate-test.xml -text
 impl/dao/src/test/hibernate.cfg.xml -text
 impl/dao/src/test/hibernate.properties -text
 impl/dao/src/test/org/sakaiproject/evaluation/dao/test/EvaluationDaoImplTest.java -text
-impl/logic/project.xml -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalAuthoringServiceImpl.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalDeliveryServiceImpl.java -text
 impl/logic/src/java/org/sakaiproject/evaluation/logic/impl/EvalEmailsLogicImpl.java -text
@@ -114,11 +113,11 @@ impl/logic/src/test/org/sakaiproject/evaluation/logic/test/mocks/MockPlacement.j
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/mocks/MockReference.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/mocks/MockSite.java -text
 impl/logic/src/test/org/sakaiproject/evaluation/logic/test/mocks/MockUser.java -text
+impl/project.xml -text
 impl/src/test/org/sakaiproject/evaluation/test/EvalTestDataLoad.java -text
 impl/src/test/org/sakaiproject/evaluation/test/PreloadTestData.java -text
 impl/src/test/org/sakaiproject/evaluation/test/mocks/MockEvalExternalLogic.java -text
 impl/src/test/org/sakaiproject/evaluation/test/mocks/MockEvalJobLogic.java svn_keywords=Date+Revision+Author+HeadURL+Id
-impl/test/project.xml -text
 pack/project.xml -text
 pack/src/webapp/WEB-INF/components.xml -text
 pack/src/webapp/WEB-INF/entity-providers.xml -text
