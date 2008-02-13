@@ -9,19 +9,19 @@
       class="org.sakaiproject.springframework.orm.hibernate.impl.AdditionalHibernateMappingsImpl">
       <property name="mappingResources">
          <list>
-            <value>org/sakaiproject/evaluation/hbm/EvalAnswer.hbm.xml</value>
-            <value>org/sakaiproject/evaluation/hbm/EvalAssignGroup.hbm.xml</value>
-            <value>org/sakaiproject/evaluation/hbm/EvalAssignHierarchy.hbm.xml</value>
-            <value>org/sakaiproject/evaluation/hbm/EvalConfig.hbm.xml</value>
-            <value>org/sakaiproject/evaluation/hbm/EvalEmailTemplate.hbm.xml</value>
-            <value>org/sakaiproject/evaluation/hbm/EvalEvaluation.hbm.xml</value>
-            <value>org/sakaiproject/evaluation/hbm/EvalGroupNodes.hbm.xml</value>
-            <value>org/sakaiproject/evaluation/hbm/EvalItem.hbm.xml</value>
-            <value>org/sakaiproject/evaluation/hbm/EvalItemGroup.hbm.xml</value>
-            <value>org/sakaiproject/evaluation/hbm/EvalResponse.hbm.xml</value>
-            <value>org/sakaiproject/evaluation/hbm/EvalScale.hbm.xml</value>
-            <value>org/sakaiproject/evaluation/hbm/EvalTemplate.hbm.xml</value>
-            <value>org/sakaiproject/evaluation/hbm/EvalTemplateItem.hbm.xml</value>
+            <value>org/sakaiproject/evaluation/dao/hbm/EvalAnswer.hbm.xml</value>
+            <value>org/sakaiproject/evaluation/dao/hbm/EvalAssignGroup.hbm.xml</value>
+            <value>org/sakaiproject/evaluation/dao/hbm/EvalAssignHierarchy.hbm.xml</value>
+            <value>org/sakaiproject/evaluation/dao/hbm/EvalConfig.hbm.xml</value>
+            <value>org/sakaiproject/evaluation/dao/hbm/EvalEmailTemplate.hbm.xml</value>
+            <value>org/sakaiproject/evaluation/dao/hbm/EvalEvaluation.hbm.xml</value>
+            <value>org/sakaiproject/evaluation/dao/hbm/EvalGroupNodes.hbm.xml</value>
+            <value>org/sakaiproject/evaluation/dao/hbm/EvalItem.hbm.xml</value>
+            <value>org/sakaiproject/evaluation/dao/hbm/EvalItemGroup.hbm.xml</value>
+            <value>org/sakaiproject/evaluation/dao/hbm/EvalResponse.hbm.xml</value>
+            <value>org/sakaiproject/evaluation/dao/hbm/EvalScale.hbm.xml</value>
+            <value>org/sakaiproject/evaluation/dao/hbm/EvalTemplate.hbm.xml</value>
+            <value>org/sakaiproject/evaluation/dao/hbm/EvalTemplateItem.hbm.xml</value>
          </list>
       </property>
    </bean>
