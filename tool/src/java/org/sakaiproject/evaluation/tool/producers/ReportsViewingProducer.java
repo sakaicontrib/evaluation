@@ -182,7 +182,8 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
                      "pdfResultsReport", template.getId(), reportViewParams.evaluationId, groupIds));
             }
             // filter out items that cannot be answered (header, etc.)
-            List<EvalTemplateItem> answerableItemsList = TemplateItemUtils.getAnswerableTemplateItems(allTemplateItems);
+            //List<EvalTemplateItem> answerableItemsList = TemplateItemUtils.getAnswerableTemplateItems(allTemplateItems);
+            List<EvalTemplateItem> answerableItemsList = TemplateItemUtils.orderTemplateItems(allTemplateItems);
 
             UIBranchContainer courseSection = null;
             UIBranchContainer instructorSection = null;

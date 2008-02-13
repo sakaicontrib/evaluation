@@ -1,7 +1,9 @@
 package org.sakaiproject.evaluation.tool.reporting;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 import org.jfree.chart.JFreeChart;
@@ -12,6 +14,7 @@ import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.Image;
 import com.lowagie.text.Paragraph;
+import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.DefaultFontMapper;
 import com.lowagie.text.pdf.MultiColumnText;
 import com.lowagie.text.pdf.PdfContentByte;
@@ -25,7 +28,9 @@ public class EvalPDFReportBuilder {
     
     private Font questionTextFont;
     private Font paragraphFont;
+    int frontTitleSize = 26;
     private Font frontTitleFont;
+    private BaseFont frontTitleBaseFont;
     private Font frontAuthorFont;
     private Font frontInfoFont;
     private Font frontSystemNameFont;
@@ -39,11 +44,12 @@ public class EvalPDFReportBuilder {
             
             questionTextFont = new Font(Font.TIMES_ROMAN, 14, Font.BOLD);
             paragraphFont = new Font(Font.TIMES_ROMAN, 10, Font.NORMAL);
-            frontTitleFont = new Font(Font.TIMES_ROMAN, 26, Font.NORMAL);
+            frontTitleFont = new Font(Font.TIMES_ROMAN, frontTitleSize, Font.NORMAL);
+            frontTitleBaseFont = BaseFont.createFont(BaseFont.TIMES_ROMAN, BaseFont.CP1252, BaseFont.EMBEDDED);
             frontAuthorFont = new Font(Font.TIMES_ROMAN, 18, Font.NORMAL);
             frontInfoFont = new Font(Font.TIMES_ROMAN, 16, Font.NORMAL);
             frontSystemNameFont = new Font(Font.HELVETICA);
-        } catch (DocumentException e) {
+        } catch (Exception e) {
             throw UniversalRuntimeException.accumulate(e, "Unable to start PDF Report");
         }
     }
@@ -57,50 +63,74 @@ public class EvalPDFReportBuilder {
         }
     }
     
-    public void addTitlePage(String evaltitle, String username, String userEid,
-            Date startDate, String responseInformation) {
+    public void addTitlePage(String evaltitle, String username, String accountInfo,
+            Date startDate, String responseInformation, byte[] bannerImageBytes,
+            String evalSystemTitle) {
         try {
-        
-        // Title
-        Paragraph titlePara = new Paragraph(evaltitle, frontTitleFont);
-        titlePara.setAlignment(Element.ALIGN_CENTER);
-        document.add(titlePara);
-        
-        // User Name
-        Paragraph usernamePara = new Paragraph(username + "\n\n", frontAuthorFont);
-        usernamePara.setAlignment(Element.ALIGN_CENTER);
-        document.add(usernamePara);
-        
-        // Little info area? I don't know, it was on the mockup though
-        Paragraph infoPara = new Paragraph("Results of survey\n\n", frontInfoFont);
-        infoPara.setAlignment(Element.ALIGN_CENTER);
-        document.add(infoPara);
-        
-        // Account stuff
-        Paragraph accountPara = new Paragraph("Account: " + userEid + " (" + username + "'s Account )\n\n\n", frontInfoFont);
-        accountPara.setAlignment(Element.ALIGN_CENTER);
-        document.add(accountPara);
-        
-        // Started on
-        Paragraph startedPara = new Paragraph("Started: " + startDate + "\n\n\n", frontInfoFont);
-        startedPara.setAlignment(Element.ALIGN_CENTER);
-        document.add(startedPara);
-        
-        // Reply Rate
-        Paragraph replyRatePara = new Paragraph(responseInformation + "\n\n\n\n\n\n\n", frontInfoFont);
-        replyRatePara.setAlignment(Element.ALIGN_CENTER);
-        document.add(replyRatePara);
-        
-        // Logo and Tagline
-        Paragraph productInfoPara = new Paragraph("Camtool Online Evaluation System", frontSystemNameFont);
-        productInfoPara.setAlignment(Element.ALIGN_CENTER);
-        document.add(productInfoPara);
-        
-        document.newPage();
-        
-        responseArea = new MultiColumnText();
-        responseArea.addRegularColumns(document.left(), document.right(), 20f, 2);
-        } catch (DocumentException de) {
+           PdfContentByte cb = pdfWriter.getDirectContent();
+           
+           float docMiddle = (document.right()-document.left()) / 2 + document.leftMargin();
+           
+           Paragraph emptyPara = new Paragraph(" ");
+           emptyPara.setSpacingAfter(100.0f);
+           
+           // Title
+           Paragraph titlePara = new Paragraph("\n\n\n" + evaltitle, frontTitleFont);
+           titlePara.setAlignment(Element.ALIGN_CENTER);
+           document.add(titlePara);
+           
+           // User Name
+           Paragraph usernamePara = new Paragraph(username, frontAuthorFont);
+           usernamePara.setSpacingBefore(25.0f);
+           usernamePara.setAlignment(Element.ALIGN_CENTER);
+           document.add(usernamePara);
+
+           
+           // Little info area? I don't know, it was on the mockup though
+           Paragraph infoPara = new Paragraph("Results of survey", frontInfoFont);
+           infoPara.setAlignment(Element.ALIGN_CENTER);
+           infoPara.setSpacingBefore(90.0f);
+           document.add(infoPara);
+
+           // Account stuff
+           Paragraph accountPara = new Paragraph(accountInfo, frontInfoFont);
+           accountPara.setAlignment(Element.ALIGN_CENTER);
+           accountPara.setSpacingBefore(110.0f);
+           document.add(accountPara);
+
+           // Started on
+           DateFormat df = DateFormat.getDateInstance(DateFormat.LONG);
+           Paragraph startedPara = new Paragraph("Started: " + df.format(startDate), frontInfoFont);
+           startedPara.setAlignment(Element.ALIGN_CENTER);
+           startedPara.setSpacingBefore(25.0f);
+           document.add(startedPara);
+
+           // Reply Rate
+           Paragraph replyRatePara = new Paragraph("Reply rate: " + responseInformation, frontInfoFont);
+           replyRatePara.setAlignment(Element.ALIGN_CENTER);
+           replyRatePara.setSpacingBefore(25.0f);
+           document.add(replyRatePara);
+
+           // Logo and Tagline
+           cb.beginText();
+           cb.setFontAndSize(BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.EMBEDDED), 12);
+           cb.showTextAligned(PdfContentByte.ALIGN_CENTER, evalSystemTitle, 
+                 docMiddle, 
+                 document.bottom() + 20, 0);
+           cb.endText();
+
+           if (bannerImageBytes != null) {
+              Image banner = Image.getInstance(bannerImageBytes);
+              System.out.println("BANNER: W: " + banner.getWidth() + " H: " + banner.getHeight());
+              cb.addImage(banner, banner.getWidth(), 0, 0, banner.getHeight(), 
+                    docMiddle - (banner.getWidth() / 2), document.bottom() + 35);
+           }
+           
+           document.newPage();
+
+           responseArea = new MultiColumnText();
+           responseArea.addRegularColumns(document.left(), document.right(), 20f, 2);
+        } catch (Exception de) {
            throw UniversalRuntimeException.accumulate(de, "Unable to create title page");
         }
     }
@@ -154,10 +184,13 @@ public class EvalPDFReportBuilder {
         chartBuilder.setShowPercentages(showPercentages);
         JFreeChart chart = chartBuilder.makeLikertChart();
         
+        /* The height is going to be based off the number of choices */
+        int height = 15 * choices.length;
+        
         PdfContentByte cb = pdfWriter.getDirectContent();
-        PdfTemplate tp = cb.createTemplate(200, 300);
-        Graphics2D g2d = tp.createGraphics(200, 300, new DefaultFontMapper());
-        Rectangle2D r2d = new Rectangle2D.Double(0,0,200,300);
+        PdfTemplate tp = cb.createTemplate(200, height);
+        Graphics2D g2d = tp.createGraphics(200, height, new DefaultFontMapper());
+        Rectangle2D r2d = new Rectangle2D.Double(0,0,200,height);
         chart.draw(g2d, r2d);
         g2d.dispose();
         Image image = Image.getInstance(tp);
@@ -170,8 +203,10 @@ public class EvalPDFReportBuilder {
     
     private void addQuestionText(String question) {
        Paragraph para = new Paragraph(question, questionTextFont);
+       Paragraph spacer = new Paragraph(" "); // Should probably just set margins on questionTextFont
        try {
          responseArea.addElement(para);
+         responseArea.addElement(spacer);
       } catch (DocumentException e) {
          throw UniversalRuntimeException.accumulate(e, "Cannot add question header");
       }

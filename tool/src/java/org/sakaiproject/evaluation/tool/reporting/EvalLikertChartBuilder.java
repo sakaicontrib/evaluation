@@ -1,13 +1,17 @@
 package org.sakaiproject.evaluation.tool.reporting;
+import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 
@@ -48,6 +52,7 @@ public class EvalLikertChartBuilder {
         renderer.setSeriesPaint(0, new Color(244,252,212));
         renderer.setDrawBarOutline(true);
         renderer.setOutlinePaint(new Color(34,35,237));
+        renderer.setOutlineStroke(new BasicStroke(0.5f));
         renderer.setBaseItemLabelsVisible(true);
         if (showPercentages) {
             renderer.setBaseItemLabelGenerator(new LikertPercentageItemLabelGenerator(responses.length));
@@ -58,6 +63,23 @@ public class EvalLikertChartBuilder {
         // Turn off the Top Value Axis
         ValueAxis rangeAxis = plot.getRangeAxis();
         rangeAxis.setVisible(false);
+        //System.out.println("THE UPPER MARGIN IS: " + rangeAxis.getUpperMargin());
+        rangeAxis.setUpperMargin(0.35);
+        
+        CategoryAxis domainAxis = plot.getDomainAxis();
+        
+        // Set the font for the labels
+        Font labelFont = new Font("Serif", Font.PLAIN, 7);
+        
+        CategoryItemRenderer itemRenderer = plot.getRenderer();
+        itemRenderer.setBaseItemLabelFont(labelFont);
+        
+        plot.setOutlinePaint(null);
+        
+        domainAxis.setLabelFont(labelFont);
+        domainAxis.setTickLabelFont(labelFont);
+        rangeAxis.setLabelFont(labelFont);
+        rangeAxis.setTickLabelFont(labelFont);
         
         return chart;
     }
