@@ -2,9 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/3.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/3.0.0 http://maven.apache.org/maven-v3_0_0.xsd">
 	<pomVersion>3</pomVersion>
 	<extend>../../../master/project.xml</extend>
-	<name>sakai-evaluation-logic-impl</name>
+	<name>Sakai Evaluation Impl</name>
 	<groupId>sakaiproject</groupId>
-	<id>sakai-evaluation-logic-impl</id>
+	<id>sakai-evaluation-impl</id>
 	<currentVersion>${sakai.version}</currentVersion>
     <organization>
         <name>Sakai Project</name>
@@ -30,19 +30,7 @@
         <!-- Evaluation dependencies -->
         <dependency>
             <groupId>sakaiproject</groupId>
-            <artifactId>sakai-evaluation-model-api</artifactId>
-            <version>${sakai.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>sakaiproject</groupId>
-            <artifactId>sakai-evaluation-logic-api</artifactId>
-            <version>${sakai.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>sakaiproject</groupId>
-            <artifactId>sakai-evaluation-test</artifactId>
+            <artifactId>sakai-evaluation-api</artifactId>
             <version>${sakai.version}</version>
         </dependency>
 
@@ -261,19 +249,6 @@
 			<artifactId>easymock</artifactId>
 			<version>1.2_Java1.3</version>
 		</dependency>
-
-		<!-- there are needed if we are testing the logic class using a working DAO -->
-        <dependency>
-            <groupId>sakaiproject</groupId>
-            <artifactId>sakai-evaluation-hbm</artifactId>
-            <version>${sakai.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>sakaiproject</groupId>
-            <artifactId>sakai-evaluation-dao-impl</artifactId>
-            <version>${sakai.version}</version>
-        </dependency>
 
     </dependencies>
 
