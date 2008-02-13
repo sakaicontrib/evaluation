@@ -87,9 +87,9 @@ impl/src/java/org/sakaiproject/evaluation/logic/externals/EvalSecurityChecksImpl
 impl/src/java/org/sakaiproject/evaluation/logic/externals/ExternalHierarchyLogicImpl.java -text
 impl/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvalAssignContextInterceptor.java -text
 impl/src/java/org/sakaiproject/evaluation/logic/impl/interceptors/EvaluationModificationRegistry.java -text
-impl/src/java/org/sakaiproject/evaluation/logic/scheduling/EvalImportImpl.java -text
-impl/src/java/org/sakaiproject/evaluation/logic/scheduling/EvalImportJobImpl.java -text
-impl/src/java/org/sakaiproject/evaluation/logic/scheduling/EvalImportLogicImpl.java -text
+impl/src/java/org/sakaiproject/evaluation/logic/imports/EvalImportImpl.java -text
+impl/src/java/org/sakaiproject/evaluation/logic/imports/EvalImportJobImpl.java -text
+impl/src/java/org/sakaiproject/evaluation/logic/imports/EvalImportLogicImpl.java -text
 impl/src/java/org/sakaiproject/evaluation/logic/scheduling/EvalJobLogicImpl.java -text
 impl/src/java/org/sakaiproject/evaluation/logic/scheduling/EvalScheduledInvocationImpl.java -text
 impl/src/java/org/sakaiproject/evaluation/utils/TextTemplateLogicUtils.java -text

@@ -56,7 +56,7 @@
 
     <!-- importing -->
 	<bean id="org.sakaiproject.evaluation.logic.imports.EvalImportJob"
-		class="org.sakaiproject.evaluation.logic.scheduling.EvalImportJobImpl"
+		class="org.sakaiproject.evaluation.logic.imports.EvalImportJobImpl"
 		init-method="init"> 
 	</bean>
 
