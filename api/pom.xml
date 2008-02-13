@@ -77,6 +77,7 @@
    </dependencies>
 
    <build>
+      <sourceDirectory>src/java</sourceDirectory>
       <resources>
          <resource>
             <directory>src/java</directory>
@@ -85,6 +86,5 @@
             </includes>
          </resource>
       </resources>
-      <sourceDirectory>src/java</sourceDirectory>
    </build>
 </project>
