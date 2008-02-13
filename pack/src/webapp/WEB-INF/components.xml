@@ -25,27 +25,27 @@
 
    <!-- create the logic service beans (SERVICES level) -->
    <bean id="org.sakaiproject.evaluation.logic.EvalAuthoringService"
-      class="org.sakaiproject.evaluation.logic.impl.EvalAuthoringServiceImpl" init-method="init">
+      class="org.sakaiproject.evaluation.logic.EvalAuthoringServiceImpl" init-method="init">
       <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
       <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
       <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-      <property name="securityChecks" ref="org.sakaiproject.evaluation.logic.impl.EvalSecurityChecks" />
+      <property name="securityChecks" ref="org.sakaiproject.evaluation.logic.EvalSecurityChecks" />
    </bean>
 
    <bean id="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService"
-      class="org.sakaiproject.evaluation.logic.impl.EvalEvaluationSetupServiceImpl" init-method="init">
+      class="org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl" init-method="init">
       <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
       <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
       <property name="hierarchyLogic" ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
       <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
       <property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
-      <property name="securityChecks" ref="org.sakaiproject.evaluation.logic.impl.EvalSecurityChecks" />
+      <property name="securityChecks" ref="org.sakaiproject.evaluation.logic.EvalSecurityChecks" />
       <property name="evalJobLogic" ref="org.sakaiproject.evaluation.logic.EvalJobLogic" />
       <property name="emails" ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
    </bean>
 
    <bean id="org.sakaiproject.evaluation.logic.EvalDeliveryService"
-      class="org.sakaiproject.evaluation.logic.impl.EvalDeliveryServiceImpl" init-method="init">
+      class="org.sakaiproject.evaluation.logic.EvalDeliveryServiceImpl" init-method="init">
       <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
       <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
       <property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />

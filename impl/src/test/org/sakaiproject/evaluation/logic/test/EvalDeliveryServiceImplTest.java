@@ -20,11 +20,11 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.sakaiproject.evaluation.logic.EvalAuthoringServiceImpl;
+import org.sakaiproject.evaluation.logic.EvalDeliveryServiceImpl;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
+import org.sakaiproject.evaluation.logic.EvalSecurityChecks;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.impl.EvalAuthoringServiceImpl;
-import org.sakaiproject.evaluation.logic.impl.EvalDeliveryServiceImpl;
-import org.sakaiproject.evaluation.logic.impl.EvalSecurityChecks;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
@@ -126,7 +126,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
 
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalDeliveryServiceImpl#getEvaluationResponses(java.lang.String, java.lang.Long[], boolean)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalDeliveryServiceImpl#getEvaluationResponses(java.lang.String, java.lang.Long[], boolean)}.
     */
    public void testGetEvaluationResponses() {
       List<EvalResponse> l = null;
@@ -241,7 +241,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
 
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalDeliveryServiceImpl#countResponses(Long, String)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalDeliveryServiceImpl#countResponses(Long, String)}.
     */
    public void testCountResponses() {
 
@@ -285,7 +285,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalDeliveryServiceImpl#getEvalAnswers(java.lang.Long, java.lang.Long)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalDeliveryServiceImpl#getEvalAnswers(java.lang.Long, java.lang.Long)}.
     */
    public void testGetEvalAnswers() {
       List<EvalAnswer> l = null;
@@ -346,7 +346,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalDeliveryServiceImpl#getEvalResponseIds(Long, String[])}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalDeliveryServiceImpl#getEvalResponseIds(Long, String[])}.
     */
    public void testGetEvalResponseIds() {
       List<Long> l = null;
@@ -426,7 +426,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalDeliveryServiceImpl#saveResponse(org.sakaiproject.evaluation.model.EvalResponse, String)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalDeliveryServiceImpl#saveResponse(org.sakaiproject.evaluation.model.EvalResponse, String)}.
     */
    public void testSaveResponse() {
 
@@ -556,7 +556,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalDeliveryServiceImpl#canModifyResponse(java.lang.String, java.lang.Long)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalDeliveryServiceImpl#canModifyResponse(java.lang.String, java.lang.Long)}.
     */
    public void testCanModifyResponse() {
 

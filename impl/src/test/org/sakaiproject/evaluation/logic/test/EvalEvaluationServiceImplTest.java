@@ -18,9 +18,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl;
+import org.sakaiproject.evaluation.logic.EvalSecurityChecks;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl;
-import org.sakaiproject.evaluation.logic.impl.EvalSecurityChecks;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
@@ -77,7 +77,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl#getEvaluationById(java.lang.Long)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#getEvaluationById(java.lang.Long)}.
     */
    public void testGetEvaluationById() {
       EvalEvaluation eval = evaluationService.getEvaluationById(etdl.evaluationActive.getId());
@@ -98,7 +98,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl#checkEvaluationExists(java.lang.Long)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#checkEvaluationExists(java.lang.Long)}.
     */
    public void testCheckEvaluationExists() {
       // positive
@@ -118,7 +118,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl#countEvaluationsByTemplateId(java.lang.Long)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#countEvaluationsByTemplateId(java.lang.Long)}.
     */
    public void testCountEvaluationsByTemplateId() {
       // test valid template ids
@@ -142,7 +142,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl#getEvaluationByEid(java.lang.String)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#getEvaluationByEid(java.lang.String)}.
     */
    public void testGetEvaluationByEid() {
       EvalEvaluation evaluation = null;
@@ -162,7 +162,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl#getEvaluationsByTemplateId(java.lang.Long)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#getEvaluationsByTemplateId(java.lang.Long)}.
     */
    public void testGetEvaluationsByTemplateId() {
       List<EvalEvaluation> l = null;
@@ -199,7 +199,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl#updateEvaluationState(java.lang.Long)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#updateEvaluationState(java.lang.Long)}.
     */
    public void testUpdateEvaluationStateLong() {
       assertEquals( evaluationService.updateEvaluationState( etdl.evaluationNew.getId() ), EvalConstants.EVALUATION_STATE_INQUEUE );
@@ -377,7 +377,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
    // EVAL AND GROUP ASSIGNS
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl#countEvaluationGroups(java.lang.Long)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#countEvaluationGroups(java.lang.Long)}.
     */
    public void testCountEvaluationGroups() {
       int count = evaluationService.countEvaluationGroups( etdl.evaluationClosed.getId() );
@@ -396,7 +396,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl#getAssignGroupById(java.lang.Long)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#getAssignGroupById(java.lang.Long)}.
     */
    public void testGetAssignGroupById() {
       EvalAssignGroup assignGroup = null;
@@ -416,7 +416,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl#getAssignGroupByEid(java.lang.String)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#getAssignGroupByEid(java.lang.String)}.
     */
    public void testGetAssignGroupByEid() {
       EvalAssignGroup assignGroupProvided = null;
@@ -436,7 +436,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl#getAssignGroupId(java.lang.Long, java.lang.String)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#getAssignGroupId(java.lang.Long, java.lang.String)}.
     */
    public void testGetAssignGroupId() {
       Long assignGroupId = null;
@@ -464,7 +464,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl#getAssignHierarchyById(java.lang.Long)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#getAssignHierarchyById(java.lang.Long)}.
     */
    public void testGetAssignHierarchyById() {
       EvalAssignHierarchy eah = null;
@@ -485,7 +485,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl#getAssignHierarchyByEval(java.lang.Long)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#getAssignHierarchyByEval(java.lang.Long)}.
     */
    public void testGetAssignHierarchyByEval() {
       List<EvalAssignHierarchy> eahs = null;
@@ -509,7 +509,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl#getEvaluationGroups(java.lang.Long[], boolean)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#getEvaluationGroups(java.lang.Long[], boolean)}.
     */
    public void testGetEvaluationGroups() {
       Map<Long, List<EvalGroup>> m = evaluationService.getEvaluationGroups( 
@@ -549,7 +549,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl#getEvaluationAssignGroups(java.lang.Long[], boolean)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#getEvaluationAssignGroups(java.lang.Long[], boolean)}.
     */
    public void testGetEvaluationAssignGroups() {
       // this is mostly tested above
@@ -566,7 +566,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl#canCreateAssignEval(java.lang.String, java.lang.Long)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#canCreateAssignEval(java.lang.String, java.lang.Long)}.
     */
    public void testCanCreateAssignEval() {
       // test can create an AC in new
@@ -604,7 +604,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl#canDeleteAssignGroup(java.lang.String, java.lang.Long)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#canDeleteAssignGroup(java.lang.String, java.lang.Long)}.
     */
    public void testCanDeleteAssignGroup() {
       // test can remove an AC in new eval
@@ -644,7 +644,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl#getResponseById(java.lang.Long)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#getResponseById(java.lang.Long)}.
     */
    public void testGetResponseById() {
       EvalResponse response = null;
@@ -663,7 +663,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl#getResponseForUserAndGroup(java.lang.Long, java.lang.String, java.lang.String)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#getResponseForUserAndGroup(java.lang.Long, java.lang.String, java.lang.String)}.
     */
    public void testGetEvaluationResponseForUserAndGroup() {
       EvalResponse response = null;
@@ -764,7 +764,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl#getResponses(java.lang.String, java.lang.Long[], java.lang.String, java.lang.Boolean)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#getResponses(java.lang.String, java.lang.Long[], java.lang.String, java.lang.Boolean)}.
     */
    public void testGetEvaluationResponses() {
       List<EvalResponse> l = null;
@@ -902,7 +902,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl#countResponses(java.lang.String, java.lang.Long[], java.lang.String, java.lang.Boolean)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#countResponses(java.lang.String, java.lang.Long[], java.lang.String, java.lang.Boolean)}.
     */
    public void testCountEvaluationResponses() {
       // test counts for all responses in various evaluationSetupService
@@ -966,7 +966,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl#getAnswers(java.lang.Long, java.lang.Long, java.lang.String[])}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#getAnswers(java.lang.Long, java.lang.Long, java.lang.String[])}.
     */
    public void testGetEvalAnswers() {
       List<EvalAnswer> l = null;
@@ -1026,7 +1026,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl#canModifyResponse(java.lang.String, java.lang.Long)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#canModifyResponse(java.lang.String, java.lang.Long)}.
     */
    public void testCanModifyResponse() {
       // test owner can modify unlocked
@@ -1119,7 +1119,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#canControlEmailTemplate(java.lang.String, java.lang.Long, int)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl#canControlEmailTemplate(java.lang.String, java.lang.Long, int)}.
     */
    public void testCanControlEmailTemplateStringLongInt() {
       // test valid email template control perms when none assigned
@@ -1192,7 +1192,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalEmailsLogicImpl#canControlEmailTemplate(java.lang.String, java.lang.Long, java.lang.Long)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl#canControlEmailTemplate(java.lang.String, java.lang.Long, java.lang.Long)}.
     */
    public void testCanControlEmailTemplateStringLongLong() {
       // test valid email template control perms when none assigned

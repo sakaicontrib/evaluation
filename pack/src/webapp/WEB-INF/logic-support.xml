@@ -6,25 +6,25 @@
 
    <!-- handles api based retrieval of application settings -->
    <bean id="org.sakaiproject.evaluation.logic.EvalSettings"
-      class="org.sakaiproject.evaluation.logic.impl.EvalSettingsImpl" init-method="init">
+      class="org.sakaiproject.evaluation.logic.EvalSettingsImpl" init-method="init">
       <property name="evaluationDao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
    </bean>
 
    <!-- handles security checks -->
-   <bean id="org.sakaiproject.evaluation.logic.impl.EvalSecurityChecks"
-      class="org.sakaiproject.evaluation.logic.impl.EvalSecurityChecks">
+   <bean id="org.sakaiproject.evaluation.logic.EvalSecurityChecks"
+      class="org.sakaiproject.evaluation.logic.EvalSecurityChecks">
       <property name="externalLogic"
          ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
    </bean>
 
    <!-- handles simpler evaluation methods -->
    <bean id="org.sakaiproject.evaluation.logic.EvalEvaluationService"
-      class="org.sakaiproject.evaluation.logic.impl.EvalEvaluationServiceImpl">
+      class="org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl">
       <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
       <property name="externalLogic"
          ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
       <property name="securityChecks"
-         ref="org.sakaiproject.evaluation.logic.impl.EvalSecurityChecks" />
+         ref="org.sakaiproject.evaluation.logic.EvalSecurityChecks" />
       <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
    </bean>
 

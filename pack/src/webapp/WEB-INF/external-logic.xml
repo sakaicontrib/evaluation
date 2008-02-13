@@ -6,7 +6,7 @@
 
    <!-- Handles data access to external (to the app) services -->
    <bean id="org.sakaiproject.evaluation.logic.EvalExternalLogic"
-	      class="org.sakaiproject.evaluation.logic.impl.EvalExternalLogicImpl"
+	      class="org.sakaiproject.evaluation.logic.EvalExternalLogicImpl"
 	      init-method="init">
       <property name="authzGroupService" ref="org.sakaiproject.authz.api.AuthzGroupService" />
       <property name="emailService" ref="org.sakaiproject.email.api.EmailService" />
@@ -23,7 +23,7 @@
    </bean>
 
    <bean id="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic"
-	      class="org.sakaiproject.evaluation.logic.impl.ExternalHierarchyLogicImpl"
+	      class="org.sakaiproject.evaluation.logic.ExternalHierarchyLogicImpl"
 	      init-method="init">
       <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
       <property name="hierarchyService" ref="org.sakaiproject.hierarchy.HierarchyService" />

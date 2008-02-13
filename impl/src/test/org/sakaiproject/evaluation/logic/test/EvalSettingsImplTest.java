@@ -19,7 +19,7 @@ import java.util.Date;
 import junit.framework.Assert;
 
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.impl.EvalSettingsImpl;
+import org.sakaiproject.evaluation.logic.EvalSettingsImpl;
 import org.sakaiproject.evaluation.model.EvalConfig;
 
 
@@ -91,7 +91,7 @@ public class EvalSettingsImplTest extends BaseTestEvalLogic {
 
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalSettingsImpl#get(java.lang.String)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.EvalSettingsImpl#get(java.lang.String)}.
 	 */
 	public void testGet() {
 		// get a real value using a constant
@@ -145,7 +145,7 @@ public class EvalSettingsImplTest extends BaseTestEvalLogic {
 	}
 
 	/**
-	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalSettingsImpl#set(java.lang.String, java.lang.Object)}.
+	 * Test method for {@link org.sakaiproject.evaluation.logic.EvalSettingsImpl#set(java.lang.String, java.lang.Object)}.
 	 */
 	public void testSet() {
 		// set a real value using a constant
