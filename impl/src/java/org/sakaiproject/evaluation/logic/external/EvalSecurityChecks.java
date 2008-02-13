@@ -12,7 +12,7 @@
  * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
  */
 
-package org.sakaiproject.evaluation.logic;
+package org.sakaiproject.evaluation.logic.external;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

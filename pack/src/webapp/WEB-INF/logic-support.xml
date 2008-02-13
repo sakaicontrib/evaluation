@@ -11,8 +11,8 @@
    </bean>
 
    <!-- handles security checks -->
-   <bean id="org.sakaiproject.evaluation.logic.EvalSecurityChecks"
-      class="org.sakaiproject.evaluation.logic.EvalSecurityChecks">
+   <bean id="org.sakaiproject.evaluation.logic.external.EvalSecurityChecks"
+      class="org.sakaiproject.evaluation.logic.external.EvalSecurityChecksImpl">
       <property name="externalLogic"
          ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
    </bean>
@@ -24,10 +24,9 @@
       <property name="externalLogic"
          ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
       <property name="securityChecks"
-         ref="org.sakaiproject.evaluation.logic.EvalSecurityChecks" />
+         ref="org.sakaiproject.evaluation.logic.external.EvalSecurityChecks" />
       <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
    </bean>
-
 
    <!-- a general transaction interceptor for the logic beans -->
    <bean id="org.sakaiproject.evaluation.interceptor.LogicTransactionProxy"
@@ -42,7 +41,7 @@
             <prop key="check*">PROPAGATION_REQUIRED,readOnly</prop>
             <prop key="count*">PROPAGATION_REQUIRED,readOnly</prop>
             <prop key="*">PROPAGATION_REQUIRED</prop>
-            <!--        <prop key="*">PROPAGATION_REQUIRED,+java.lang.RuntimeException</prop>-->
+            <!-- <prop key="*">PROPAGATION_REQUIRED,+java.lang.RuntimeException</prop> -->
          </props>
       </property>
    </bean>
@@ -58,7 +57,6 @@
          <list>
             <value>org.sakaiproject.evaluation.logic.Eval*</value>
             <value>org.sakaiproject.evaluation.logic.externals.Eval*</value>
-            <value>org.sakaiproject.evaluation.logic.scheduling.Eval*</value>
          </list>
       </property>
    </bean>

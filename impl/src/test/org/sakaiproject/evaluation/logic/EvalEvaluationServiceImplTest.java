@@ -19,8 +19,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl;
-import org.sakaiproject.evaluation.logic.EvalSecurityChecks;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.external.EvalSecurityChecks;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;

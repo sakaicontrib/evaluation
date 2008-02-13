@@ -29,7 +29,7 @@
       <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
       <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
       <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-      <property name="securityChecks" ref="org.sakaiproject.evaluation.logic.EvalSecurityChecks" />
+      <property name="securityChecks" ref="org.sakaiproject.evaluation.logic.external.EvalSecurityChecks" />
    </bean>
 
    <bean id="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService"
@@ -39,7 +39,7 @@
       <property name="hierarchyLogic" ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
       <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
       <property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
-      <property name="securityChecks" ref="org.sakaiproject.evaluation.logic.EvalSecurityChecks" />
+      <property name="securityChecks" ref="org.sakaiproject.evaluation.logic.external.EvalSecurityChecks" />
       <property name="evalJobLogic" ref="org.sakaiproject.evaluation.logic.EvalJobLogic" />
       <property name="emails" ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
    </bean>

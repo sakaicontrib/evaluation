@@ -81,7 +81,7 @@
    <bean id="org.sakaiproject.evaluation.test.PreloadTestData"
       class="org.sakaiproject.evaluation.test.PreloadTestData" init-method="init">
       <property name="evaluationDao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
-      <property name="pdl" ref="org.sakaiproject.evaluation.dao.PreloadData" />
+      <property name="pdl" ref="org.sakaiproject.evaluation.logic.EvalPreloadData" />
    </bean>
 
    <!-- fake external logic bean -->
