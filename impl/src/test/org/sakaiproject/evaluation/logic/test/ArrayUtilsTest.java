@@ -19,7 +19,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.sakaiproject.evaluation.logic.utils.ArrayUtils;
+import org.sakaiproject.evaluation.utils.ArrayUtils;
 
 
 /**
@@ -30,7 +30,7 @@ import org.sakaiproject.evaluation.logic.utils.ArrayUtils;
 public class ArrayUtilsTest extends TestCase {
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.utils.ArrayUtils#removeDuplicates(java.util.List)}.
+    * Test method for {@link org.sakaiproject.evaluation.utils.ArrayUtils#removeDuplicates(java.util.List)}.
     */
    public void testRemoveDuplicates() {
       List<String> l = null;
@@ -92,7 +92,7 @@ public class ArrayUtilsTest extends TestCase {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.utils.ArrayUtils#appendArray(java.lang.String[], java.lang.String)}.
+    * Test method for {@link org.sakaiproject.evaluation.utils.ArrayUtils#appendArray(java.lang.String[], java.lang.String)}.
     */
    public void testAppendArrayStringArrayString() {
       String[] strings = null;
@@ -119,7 +119,7 @@ public class ArrayUtilsTest extends TestCase {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.utils.ArrayUtils#appendArray(java.lang.Object[], java.lang.Object)}.
+    * Test method for {@link org.sakaiproject.evaluation.utils.ArrayUtils#appendArray(java.lang.Object[], java.lang.Object)}.
     */
    public void testAppendArrayObjectArrayObject() {
       Object[] objects = null;
@@ -146,7 +146,7 @@ public class ArrayUtilsTest extends TestCase {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.utils.ArrayUtils#appendArray(int[], int)}.
+    * Test method for {@link org.sakaiproject.evaluation.utils.ArrayUtils#appendArray(int[], int)}.
     */
    public void testAppendArrayIntArrayInt() {
       int[] ints = null;
@@ -173,7 +173,7 @@ public class ArrayUtilsTest extends TestCase {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.utils.ArrayUtils#prependArray(java.lang.String[], java.lang.String)}.
+    * Test method for {@link org.sakaiproject.evaluation.utils.ArrayUtils#prependArray(java.lang.String[], java.lang.String)}.
     */
    public void testPrependArrayStringArrayString() {
       String[] strings = null;
@@ -200,7 +200,7 @@ public class ArrayUtilsTest extends TestCase {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.utils.ArrayUtils#prependArray(java.lang.Object[], java.lang.Object)}.
+    * Test method for {@link org.sakaiproject.evaluation.utils.ArrayUtils#prependArray(java.lang.Object[], java.lang.Object)}.
     */
    public void testPrependArrayObjectArrayObject() {
       Object[] objects = null;
@@ -227,7 +227,7 @@ public class ArrayUtilsTest extends TestCase {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.utils.ArrayUtils#prependArray(int[], int)}.
+    * Test method for {@link org.sakaiproject.evaluation.utils.ArrayUtils#prependArray(int[], int)}.
     */
    public void testPrependArrayIntArrayInt() {
       int[] ints = null;
@@ -254,7 +254,7 @@ public class ArrayUtilsTest extends TestCase {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.utils.ArrayUtils#arrayToString(java.lang.Object[])}.
+    * Test method for {@link org.sakaiproject.evaluation.utils.ArrayUtils#arrayToString(java.lang.Object[])}.
     */
    public void testArrayToString() {
       String result = null;
@@ -277,7 +277,7 @@ public class ArrayUtilsTest extends TestCase {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.utils.ArrayUtils#listToIntArray(java.util.List)}.
+    * Test method for {@link org.sakaiproject.evaluation.utils.ArrayUtils#listToIntArray(java.util.List)}.
     */
    public void testListToIntArray() {
       int[] ints = null;

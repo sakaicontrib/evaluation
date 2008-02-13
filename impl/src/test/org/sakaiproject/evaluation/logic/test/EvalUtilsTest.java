@@ -24,11 +24,11 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
-import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
+import org.sakaiproject.evaluation.utils.EvalUtils;
 
 
 /**
@@ -39,7 +39,7 @@ import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 public class EvalUtilsTest extends TestCase {
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.utils.EvalUtils#getEvaluationState(org.sakaiproject.evaluation.model.EvalEvaluation)}.
+    * Test method for {@link org.sakaiproject.evaluation.utils.EvalUtils#getEvaluationState(org.sakaiproject.evaluation.model.EvalEvaluation)}.
     */
    public void testGetEvaluationState() {
       String state = null;
@@ -69,7 +69,7 @@ public class EvalUtilsTest extends TestCase {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.utils.EvalUtils#validateSharingConstant(java.lang.String)}.
+    * Test method for {@link org.sakaiproject.evaluation.utils.EvalUtils#validateSharingConstant(java.lang.String)}.
     */
    public void testCheckSharingConstant() {
       // positive
@@ -132,7 +132,7 @@ public class EvalUtilsTest extends TestCase {
 
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.utils.EvalUtils#updateDueStopDates(org.sakaiproject.evaluation.model.EvalEvaluation, int)}.
+    * Test method for {@link org.sakaiproject.evaluation.utils.EvalUtils#updateDueStopDates(org.sakaiproject.evaluation.model.EvalEvaluation, int)}.
     */
    public void testUpdateDueStopDates() {
       Date dueDate = null;
@@ -190,7 +190,7 @@ public class EvalUtilsTest extends TestCase {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.utils.EvalUtils#getEndOfDayDate(java.util.Date)}.
+    * Test method for {@link org.sakaiproject.evaluation.utils.EvalUtils#getEndOfDayDate(java.util.Date)}.
     */
    public void testGetEndOfDayDate() {
       Date endOfDay = null;
@@ -221,7 +221,7 @@ public class EvalUtilsTest extends TestCase {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.utils.EvalUtils#getHoursDifference(java.util.Date, java.util.Date)}.
+    * Test method for {@link org.sakaiproject.evaluation.utils.EvalUtils#getHoursDifference(java.util.Date, java.util.Date)}.
     */
    public void testGetHoursDifference() {
       Date startTime = new Date();
@@ -249,7 +249,7 @@ public class EvalUtilsTest extends TestCase {
 
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.utils.EvalUtils#getGroupsInCommon(java.util.List, java.util.List)}.
+    * Test method for {@link org.sakaiproject.evaluation.utils.EvalUtils#getGroupsInCommon(java.util.List, java.util.List)}.
     */
    public void testGetGroupsInCommon() {
       EvalGroup[] groups = null;
@@ -298,7 +298,7 @@ public class EvalUtilsTest extends TestCase {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.utils.EvalUtils#makeUniqueIdentifier(int)}.
+    * Test method for {@link org.sakaiproject.evaluation.utils.EvalUtils#makeUniqueIdentifier(int)}.
     */
    public void testMakeUniqueIdentifier() {
       String id = null;
@@ -323,7 +323,7 @@ public class EvalUtilsTest extends TestCase {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.utils.EvalUtils#getAnswersMapByTempItemAndAssociated(org.sakaiproject.evaluation.model.EvalResponse)}.
+    * Test method for {@link org.sakaiproject.evaluation.utils.EvalUtils#getAnswersMapByTempItemAndAssociated(org.sakaiproject.evaluation.model.EvalResponse)}.
     */
    public void testGetAnswersMapByTempItemAndAssociated() {
       //Map<String, EvalAnswer> answersMap = null;
@@ -337,7 +337,7 @@ public class EvalUtilsTest extends TestCase {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.utils.EvalUtils#encodeMultipleAnswers(Integer[])}.
+    * Test method for {@link org.sakaiproject.evaluation.utils.EvalUtils#encodeMultipleAnswers(Integer[])}.
     */
    public void testEncodeMultipleAnswers() {
       String encoded = null;
@@ -364,7 +364,7 @@ public class EvalUtilsTest extends TestCase {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.utils.EvalUtils#decodeMultipleAnswers(java.lang.String)}.
+    * Test method for {@link org.sakaiproject.evaluation.utils.EvalUtils#decodeMultipleAnswers(java.lang.String)}.
     */
    public void testDecodeMultipleAnswers() {
       Integer[] decoded = null;

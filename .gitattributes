@@ -43,13 +43,6 @@ api/src/java/org/sakaiproject/evaluation/logic/externals/ExternalHierarchyLogic.
 api/src/java/org/sakaiproject/evaluation/logic/externals/ExternalUsers.java -text
 api/src/java/org/sakaiproject/evaluation/logic/model/EvalGroup.java -text
 api/src/java/org/sakaiproject/evaluation/logic/model/EvalHierarchyNode.java -text
-api/src/java/org/sakaiproject/evaluation/logic/providers/EvalGroupsProvider.java -text
-api/src/java/org/sakaiproject/evaluation/logic/providers/EvalHierarchyProvider.java -text
-api/src/java/org/sakaiproject/evaluation/logic/utils/ArrayUtils.java -text
-api/src/java/org/sakaiproject/evaluation/logic/utils/ComparatorsUtils.java -text
-api/src/java/org/sakaiproject/evaluation/logic/utils/EvalUtils.java -text
-api/src/java/org/sakaiproject/evaluation/logic/utils/SettingsLogicUtils.java -text
-api/src/java/org/sakaiproject/evaluation/logic/utils/TemplateItemUtils.java -text
 api/src/java/org/sakaiproject/evaluation/model/EvalAnswer.java -text
 api/src/java/org/sakaiproject/evaluation/model/EvalAssignGroup.java -text
 api/src/java/org/sakaiproject/evaluation/model/EvalAssignHierarchy.java -text
@@ -65,6 +58,13 @@ api/src/java/org/sakaiproject/evaluation/model/EvalTemplate.java -text
 api/src/java/org/sakaiproject/evaluation/model/EvalTemplateItem.java -text
 api/src/java/org/sakaiproject/evaluation/model/constant/EvalConstants.java -text
 api/src/java/org/sakaiproject/evaluation/model/readme.txt -text
+api/src/java/org/sakaiproject/evaluation/providers/EvalGroupsProvider.java -text
+api/src/java/org/sakaiproject/evaluation/providers/EvalHierarchyProvider.java -text
+api/src/java/org/sakaiproject/evaluation/utils/ArrayUtils.java -text
+api/src/java/org/sakaiproject/evaluation/utils/ComparatorsUtils.java -text
+api/src/java/org/sakaiproject/evaluation/utils/EvalUtils.java -text
+api/src/java/org/sakaiproject/evaluation/utils/SettingsLogicUtils.java -text
+api/src/java/org/sakaiproject/evaluation/utils/TemplateItemUtils.java -text
 impl/project.xml -text
 impl/src/java/org/sakaiproject/evaluation/dao/impl/EvaluationDaoImpl.java -text
 impl/src/java/org/sakaiproject/evaluation/dao/impl/PreloadDataImpl.java -text

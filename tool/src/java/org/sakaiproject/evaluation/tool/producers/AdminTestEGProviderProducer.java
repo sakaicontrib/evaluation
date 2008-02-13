@@ -22,7 +22,7 @@ import java.util.Set;
 
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
-import org.sakaiproject.evaluation.logic.providers.EvalGroupsProvider;
+import org.sakaiproject.evaluation.providers.EvalGroupsProvider;
 import org.sakaiproject.evaluation.tool.viewparams.AdminTestEGViewParameters;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;

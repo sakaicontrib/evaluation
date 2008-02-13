@@ -12,7 +12,7 @@
  * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
  */
 
-package org.sakaiproject.evaluation.logic.providers;
+package org.sakaiproject.evaluation.providers;
 
 import java.util.List;
 import java.util.Set;
@@ -29,7 +29,7 @@ import org.sakaiproject.evaluation.logic.model.EvalGroup;
  * The spring bean must have an id that matches the fully qualified classname for this interface<br/>
  * Example:
  * <xmp>
- * <bean id="org.sakaiproject.evaluation.logic.providers.EvalGroupsProvider"
+ * <bean id="org.sakaiproject.evaluation.providers.EvalGroupsProvider"
  * 		class="org.sakaiproject.yourproject.impl.EvalGroupsProviderImpl">
  * </bean>
  * </xmp>

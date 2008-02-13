@@ -14,7 +14,7 @@
 
 package org.sakaiproject.evaluation.tool.viewparams;
 
-import org.sakaiproject.evaluation.logic.providers.EvalGroupsProvider;
+import org.sakaiproject.evaluation.providers.EvalGroupsProvider;
 
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 
