@@ -2,8 +2,8 @@
 
 <project xmlns="http://maven.apache.org/POM/3.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/3.0.0 http://maven.apache.org/maven-v3_0_0.xsd">
 	<pomVersion>3</pomVersion>
-	<extend>../../../master/project.xml</extend>
-	<name>sakai-evaluation-pack</name>
+	<extend>../../master/project.xml</extend>
+	<name>Sakai Evaluation Pack</name>
 	<groupId>sakaiproject</groupId>
 	<id>sakai-evaluation-pack</id>
 	<currentVersion>${sakai.version}</currentVersion>
@@ -34,16 +34,7 @@
 		<!-- Internal dependencies -->
         <dependency>
             <groupId>sakaiproject</groupId>
-            <artifactId>sakai-evaluation-logic-impl</artifactId>
-            <version>${sakai.version}</version>
-			<properties>
-				<war.bundle>true</war.bundle>
-			</properties>
-        </dependency>
-
-        <dependency>
-            <groupId>sakaiproject</groupId>
-            <artifactId>sakai-evaluation-dao-impl</artifactId>
+            <artifactId>sakai-evaluation-impl</artifactId>
             <version>${sakai.version}</version>
 			<properties>
 				<war.bundle>true</war.bundle>
