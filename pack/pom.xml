@@ -3,18 +3,10 @@
    xmlns="http://maven.apache.org/POM/4.0.0"
    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
-   <parent>
-      <artifactId>evaluation</artifactId>
-      <groupId>org.sakaiproject</groupId>
-      <version>1.2.0</version><!--eval.version-->
-   </parent>
-   <name>sakai-evaluation-pack</name>
+   <name>Sakai Evaluation Pack</name>
    <groupId>org.sakaiproject.evaluation</groupId>
    <artifactId>sakai-evaluation-pack</artifactId>
    <version>1.2.0</version><!--eval.version-->
-   <properties>
-      <deploy.target>components</deploy.target>
-   </properties>
    <organization>
       <name>Sakai Project</name>
       <url>http://www.sakaiproject.org/</url>
@@ -22,6 +14,15 @@
    <inceptionYear>2006</inceptionYear>
    <!-- you must deploy your pack to components -->
    <packaging>sakai-component</packaging>
+   <properties>
+      <deploy.target>components</deploy.target>
+   </properties>
+
+   <parent>
+      <artifactId>evaluation</artifactId>
+      <groupId>org.sakaiproject</groupId>
+      <version>1.2.0</version><!--eval.version-->
+   </parent>
 
    <!-- the components pack should include your dao and logic impl 
       in the war bundle and the components.xml file 
@@ -30,14 +31,7 @@
       <!-- Internal dependencies -->
       <dependency>
          <groupId>org.sakaiproject.evaluation</groupId>
-         <artifactId>sakai-evaluation-logic-impl</artifactId>
-         <version>1.2.0</version><!--eval.version-->
-         <scope>runtime</scope>
-      </dependency>
-
-      <dependency>
-         <groupId>org.sakaiproject.evaluation</groupId>
-         <artifactId>sakai-evaluation-dao-impl</artifactId>
+         <artifactId>sakai-evaluation-impl</artifactId>
          <version>1.2.0</version><!--eval.version-->
          <scope>runtime</scope>
       </dependency>
