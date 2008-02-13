@@ -12,7 +12,7 @@
  * 
  *****************************************************************************/
 
-package org.sakaiproject.evaluation.dao.test;
+package org.sakaiproject.evaluation.dao;
 
 import java.util.Date;
 import java.util.List;
