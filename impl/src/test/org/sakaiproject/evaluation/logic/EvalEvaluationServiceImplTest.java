@@ -12,7 +12,7 @@
  * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
  */
 
-package org.sakaiproject.evaluation.logic.test;
+package org.sakaiproject.evaluation.logic;
 
 import java.util.List;
 import java.util.Map;

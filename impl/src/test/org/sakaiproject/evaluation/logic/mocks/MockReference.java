@@ -12,7 +12,7 @@
  * 
  *****************************************************************************/
 
-package org.sakaiproject.evaluation.logic.test.mocks;
+package org.sakaiproject.evaluation.logic.mocks;
 
 import java.util.Collection;
 
