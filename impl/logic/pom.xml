@@ -4,14 +4,17 @@
    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
    <parent>
-      <artifactId>evaluation-base</artifactId>
+      <artifactId>evaluation</artifactId>
       <groupId>org.sakaiproject</groupId>
-      <version>${sakai.version}</version>
-      <relativePath>../../pom.xml</relativePath>
+      <version>${eval.version}</version>
    </parent>
    <name>sakai-evaluation-logic-impl</name>
-   <groupId>org.sakaiproject</groupId>
+   <groupId>org.sakaiproject.evaluation</groupId>
    <artifactId>sakai-evaluation-logic-impl</artifactId>
+   <version>${eval.version}</version>
+   <properties>
+      <eval.version>1.2.0</eval.version>
+   </properties>
    <organization>
       <name>Sakai Project</name>
       <url>http://www.sakaiproject.org/</url>
@@ -19,32 +22,44 @@
    <inceptionYear>2006</inceptionYear>
    <!-- the logic should be deployed as a jar and included in the pack, not to shared -->
    <packaging>jar</packaging>
-   <properties>
-      <deploy.target></deploy.target>
-   </properties>
 
    <dependencies>
 
       <!-- Evaluation dependencies -->
       <dependency>
-         <groupId>org.sakaiproject</groupId>
+         <groupId>org.sakaiproject.evaluation</groupId>
          <artifactId>sakai-evaluation-model-api</artifactId>
-         <version>${sakai.version}</version>
+         <version>${eval.version}</version>
          <scope>provided</scope>
       </dependency>
 
       <dependency>
-         <groupId>org.sakaiproject</groupId>
+         <groupId>org.sakaiproject.evaluation</groupId>
          <artifactId>sakai-evaluation-logic-api</artifactId>
-         <version>${sakai.version}</version>
+         <version>${eval.version}</version>
          <scope>provided</scope>
       </dependency>
 
       <dependency>
-         <groupId>org.sakaiproject</groupId>
+         <groupId>org.sakaiproject.evaluation</groupId>
          <artifactId>sakai-evaluation-test</artifactId>
-         <version>${sakai.version}</version>
+         <version>${eval.version}</version>
          <scope>test</scope>
+      </dependency>
+
+      <!-- other project dependencies -->
+      <dependency>
+         <groupId>org.sakaiproject.entitybroker</groupId>
+         <artifactId>entitybroker-api</artifactId>
+         <version>1.2.0</version>
+         <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>org.sakaiproject.hierarchy</groupId>
+         <artifactId>hierarchy-api</artifactId>
+         <version>1.0.0-RC1</version>
+         <scope>provided</scope>
       </dependency>
 
       <!-- generic DAO -->
@@ -100,9 +115,9 @@
 
       <!-- processing text templates -->
       <dependency>
-          <groupId>org.freemarker</groupId>
-          <artifactId>freemarker</artifactId>
-          <version>2.3.11</version>
+         <groupId>org.freemarker</groupId>
+         <artifactId>freemarker</artifactId>
+         <version>2.3.11</version>
       </dependency>
 
       <dependency>
@@ -155,23 +170,9 @@
       </dependency>
 
       <dependency>
-         <groupId>org.sakaiproject.hierarchy</groupId>
-         <artifactId>hierarchy-api</artifactId>
-         <version>1.0.0-RC1</version>
-         <scope>provided</scope>
-      </dependency>
-
-      <dependency>
          <groupId>org.sakaiproject</groupId>
          <artifactId>sakai-scheduler-api</artifactId>
          <version>${sakai.version}</version>
-         <scope>provided</scope>
-      </dependency>
-
-      <dependency>
-         <groupId>org.sakaiproject.entitybroker</groupId>
-         <artifactId>entitybroker-api</artifactId>
-         <version>1.2.0</version>
          <scope>provided</scope>
       </dependency>
 
@@ -291,16 +292,16 @@
 
       <!-- these are needed if we are testing the logic class using a working DAO -->
       <dependency>
-         <groupId>org.sakaiproject</groupId>
+         <groupId>org.sakaiproject.evaluation</groupId>
          <artifactId>sakai-evaluation-hbm</artifactId>
-         <version>${sakai.version}</version>
+         <version>${eval.version}</version>
          <scope>test</scope>
       </dependency>
 
       <dependency>
-         <groupId>org.sakaiproject</groupId>
+         <groupId>org.sakaiproject.evaluation</groupId>
          <artifactId>sakai-evaluation-dao-impl</artifactId>
-         <version>${sakai.version}</version>
+         <version>${eval.version}</version>
          <scope>test</scope>
       </dependency>
 

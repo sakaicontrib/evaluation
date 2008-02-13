@@ -25,7 +25,7 @@
    </bean>
 
     <!-- imports -->
-<!-- REMOVED for now to fix circular dependencies -AZ
+<!-- REMOVED for now to fix circular dependencies, and to get rid of beans that make invalid direct use of Sakai -AZ
 	<bean id="org.sakaiproject.evaluation.logic.externals.EvalImport"
 		class="org.sakaiproject.evaluation.logic.impl.scheduling.EvalImportImpl"
 		init-method="init">
@@ -42,16 +42,11 @@
 	<bean id="org.sakaiproject.evaluation.logic.externals.EvalImportLogic"
 		class="org.sakaiproject.evaluation.logic.impl.scheduling.EvalImportLogicImpl"
 		init-method="init"> 
+        <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.EvalExternalLogic" />
 		<property name="evalImport"
 			ref="org.sakaiproject.evaluation.logic.externals.EvalImport" />
 		<property name="evalImportJob"
 				ref="org.sakaiproject.evaluation.logic.externals.EvalImportJob" />
-		<property name="idManager"
-				ref="org.sakaiproject.id.api.IdManager" />
-		<property name="serverConfigurationService" 
-			ref="org.sakaiproject.component.api.ServerConfigurationService" />
-		<property name="sessionManager"
-			ref="org.sakaiproject.tool.api.SessionManager" />
 	</bean>
 -->
 

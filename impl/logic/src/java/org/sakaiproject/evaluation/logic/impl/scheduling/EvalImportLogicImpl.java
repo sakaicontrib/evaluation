@@ -34,12 +34,11 @@ import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.impl.StdSchedulerFactory;
 
-import org.sakaiproject.component.api.ServerConfigurationService;
+import org.sakaiproject.evaluation.logic.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.EvalImport;
 import org.sakaiproject.evaluation.logic.externals.EvalImportJob;
 import org.sakaiproject.evaluation.logic.externals.EvalImportLogic;
-import org.sakaiproject.evaluation.logic.externals.EvalImport;
-import org.sakaiproject.id.api.IdManager;
-import org.sakaiproject.tool.api.SessionManager;
+import org.sakaiproject.evaluation.logic.utils.EvalUtils;
 
 /**
  * Handle the importing of external data into the Evaluation System.
@@ -56,57 +55,40 @@ public class EvalImportLogicImpl implements EvalImportLogic {
 	private static final Log log = LogFactory.getLog(EvalImportLogicImpl.class);
 	
 	//Spring injection
+	private EvalExternalLogic externalLogic;
+   public void setExternalLogic(EvalExternalLogic externalLogic) {
+      this.externalLogic = externalLogic;
+   }
+
 	private EvalImport evalImport;
 	public void setEvalImport(EvalImport evalImport) {
 		this.evalImport = evalImport;
 	}
+
 	private EvalImportJob evalImportJob;
 	public void setEvalImportJob(EvalImportJob evalImportJob) {
 		this.evalImportJob = evalImportJob;
 	}
-	private IdManager idManager;
-	public void setIdManager(IdManager idManager) {
-		this.idManager = idManager;
-	}
-	private ServerConfigurationService serverConfigurationService;
-	public void setServerConfigurationService(ServerConfigurationService serverConfigurationService) {
-		this.serverConfigurationService = serverConfigurationService;
-	}
-	private SessionManager sessionManager;
-	public void setSessionManager(SessionManager sessionManager) {
-		this.sessionManager = sessionManager;
-	}
-	
-	String currentUserId = null;
-	String jobName = null;
-	String qrtzImport;
-	
-	public void init() {
-		
-	}
-	
-	public EvalImportLogicImpl() {
-		
-	}
+
 
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.externals.EvalImportLogic#load(java.lang.String)
 	 */
 	public List<String> load(String id) {
 		List<String> messages = new ArrayList<String>();
-		currentUserId = sessionManager.getCurrentSessionUserId();
+		String currentUserId = externalLogic.getCurrentUserId(); //sessionManager.getCurrentSessionUserId();
 		try
 		{
-			qrtzImport = serverConfigurationService.getString("eval.qrtzImport", "false");
-			if(qrtzImport.equalsIgnoreCase("true"))
-				processInQuartz(id);
-			else 
-				messages = evalImport.process(id, currentUserId);
+		   Boolean qrtzImport = externalLogic.getConfigurationSetting(EvalExternalLogic.SETTING_EVAL_QUARTZ_IMPORT, Boolean.FALSE);
+         if (qrtzImport) {
+            processInQuartz(id);
+         } else {
+            messages = evalImport.process(id, currentUserId);
+         }
 		}
 		catch(Exception e)
 		{
-			if(log.isWarnEnabled())
-				log.warn(e);
+			if(log.isWarnEnabled())	log.warn(e);
 			messages.add("There was a problem loading the data: " + e.toString());
 			
 		}
@@ -128,10 +110,10 @@ public class EvalImportLogicImpl implements EvalImportLogic {
 				Scheduler.DEFAULT_GROUP, evalImportJob.getClass());
 		JobDataMap jobDataMap = jobDetail.getJobDataMap();
 		jobDataMap.put("ID", (String)id);
-		jobDataMap.put("CURRENT_USER", sessionManager.getCurrentSessionUserId());
+		jobDataMap.put("CURRENT_USER", externalLogic.getCurrentUserId() ); //sessionManager.getCurrentSessionUserId());
 		
 		//job name + group should be unique
-		String jobGroup = idManager.createUuid();
+		String jobGroup = EvalUtils.makeUniqueIdentifier(20); //idManager.createUuid();
 		
 		//associate a trigger with the job
 		SimpleTrigger trigger = new SimpleTrigger("EvalImportTrigger", jobGroup, new Date());
