@@ -75,7 +75,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
 
    /*
     * (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.providers.EvalHierarchyProvider#getRootLevelNode()
+    * @see org.sakaiproject.evaluation.providers.EvalHierarchyProvider#getRootLevelNode()
     */
    public EvalHierarchyNode getRootLevelNode() {
       HierarchyNode node = hierarchyService.getRootNode(HIERARCHY_ID);
@@ -84,7 +84,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
 
    /*
     * (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.providers.EvalHierarchyProvider#getNodeById(java.lang.String)
+    * @see org.sakaiproject.evaluation.providers.EvalHierarchyProvider#getNodeById(java.lang.String)
     */
    public EvalHierarchyNode getNodeById(String nodeId) {
       HierarchyNode node = hierarchyService.getNodeById(nodeId);
@@ -138,7 +138,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
 
    /*
     * (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.providers.EvalHierarchyProvider#getChildNodes(java.lang.String,
+    * @see org.sakaiproject.evaluation.providers.EvalHierarchyProvider#getChildNodes(java.lang.String,
     *      boolean)
     */
    public Set<EvalHierarchyNode> getChildNodes(String nodeId, boolean directOnly) {

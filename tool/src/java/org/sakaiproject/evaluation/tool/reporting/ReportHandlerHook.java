@@ -27,8 +27,6 @@ import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.utils.ComparatorsUtils;
-import org.sakaiproject.evaluation.logic.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
@@ -41,6 +39,8 @@ import org.sakaiproject.evaluation.tool.viewparams.CSVReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.DownloadReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.ExcelReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.PDFReportViewParams;
+import org.sakaiproject.evaluation.utils.ComparatorsUtils;
+import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
 import com.sun.org.apache.xerces.internal.impl.dv.DVFactoryException;
 

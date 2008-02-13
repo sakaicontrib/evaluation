@@ -38,7 +38,7 @@ import org.sakaiproject.evaluation.logic.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalImport;
 import org.sakaiproject.evaluation.logic.externals.EvalImportJob;
 import org.sakaiproject.evaluation.logic.externals.EvalImportLogic;
-import org.sakaiproject.evaluation.logic.utils.EvalUtils;
+import org.sakaiproject.evaluation.utils.EvalUtils;
 
 /**
  * Handle the importing of external data into the Evaluation System.

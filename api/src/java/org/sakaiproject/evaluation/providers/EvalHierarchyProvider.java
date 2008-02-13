@@ -12,7 +12,7 @@
  * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
  */
 
-package org.sakaiproject.evaluation.logic.providers;
+package org.sakaiproject.evaluation.providers;
 
 import java.util.List;
 import java.util.Map;
@@ -34,7 +34,7 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
  * The spring bean must have an id that matches the fully qualified classname for this interface<br/>
  * Example:
  * <xmp>
- * <bean id="org.sakaiproject.evaluation.logic.providers.EvalHierarchyProvider"
+ * <bean id="org.sakaiproject.evaluation.providers.EvalHierarchyProvider"
  * 		class="org.sakaiproject.yourproject.impl.EvalHierarchyProviderImpl">
  * </bean>
  * </xmp>

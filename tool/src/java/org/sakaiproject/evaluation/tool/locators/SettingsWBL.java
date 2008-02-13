@@ -15,8 +15,8 @@
 package org.sakaiproject.evaluation.tool.locators;
 
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.utils.SettingsLogicUtils;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
+import org.sakaiproject.evaluation.utils.SettingsLogicUtils;
 
 import uk.org.ponder.beanutil.WriteableBeanLocator;
 import uk.org.ponder.conversion.StaticLeafParser;
