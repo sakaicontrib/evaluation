@@ -12,7 +12,7 @@
  * 
  *****************************************************************************/
 
-package org.sakaiproject.evaluation.logic.impl.utils;
+package org.sakaiproject.evaluation.utils;
 
 import java.io.IOException;
 import java.io.StringReader;

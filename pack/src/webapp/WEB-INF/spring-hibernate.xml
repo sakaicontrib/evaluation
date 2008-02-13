@@ -6,7 +6,7 @@
 
 	<!-- create a DAO bean, use the hibernate implementation -->
 	<bean id="org.sakaiproject.evaluation.dao.impl.EvaluationDaoTarget"
-		class="org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl"
+		class="org.sakaiproject.evaluation.dao.EvaluationDaoImpl"
 		init-method="init">
 		<property name="sessionFactory" 
 			ref="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
@@ -51,7 +51,7 @@
 
 	<!-- create a data preloading bean that has transaction protection -->
 	<bean id="org.sakaiproject.evaluation.dao.PreloadData"
-		class="org.sakaiproject.evaluation.dao.impl.PreloadDataImpl"
+		class="org.sakaiproject.evaluation.dao.PreloadDataImpl"
 		init-method="init">
 		<property name="evaluationDao">
 			<ref bean="org.sakaiproject.evaluation.dao.EvaluationDao" />

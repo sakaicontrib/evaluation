@@ -122,7 +122,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#getVisibleTemplates(java.lang.String, boolean, boolean, boolean)}.
+    * Test method for {@link org.sakaiproject.evaluation.dao.EvaluationDaoImpl#getVisibleTemplates(java.lang.String, boolean, boolean, boolean)}.
     */
    public void testGetVisibleTemplates() {
       List<EvalTemplate> l = null;
@@ -214,7 +214,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#countVisibleTemplates(java.lang.String, boolean, boolean, boolean)}.
+    * Test method for {@link org.sakaiproject.evaluation.dao.EvaluationDaoImpl#countVisibleTemplates(java.lang.String, boolean, boolean, boolean)}.
     */
    public void testCountVisibleTemplates() {
       // all templates visible to user
@@ -348,7 +348,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#getAnswers(java.lang.Long, java.lang.Long)}.
+    * Test method for {@link org.sakaiproject.evaluation.dao.EvaluationDaoImpl#getAnswers(java.lang.Long, java.lang.Long)}.
     */
    public void testGetAnswers() {
       Set<EvalAnswer> s = null;
@@ -407,7 +407,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#removeTemplateItems(org.sakaiproject.evaluation.model.EvalTemplateItem[])}.
+    * Test method for {@link org.sakaiproject.evaluation.dao.EvaluationDaoImpl#removeTemplateItems(org.sakaiproject.evaluation.model.EvalTemplateItem[])}.
     */
    public void testRemoveTemplateItems() {
 
@@ -495,7 +495,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#getTemplateItemsByTemplate(java.lang.Long, java.lang.String[], java.lang.String[], java.lang.String[])}.
+    * Test method for {@link org.sakaiproject.evaluation.dao.EvaluationDaoImpl#getTemplateItemsByTemplate(java.lang.Long, java.lang.String[], java.lang.String[], java.lang.String[])}.
     */
    public void testGetTemplateItemsByTemplate() {
       List<EvalTemplateItem> l = null;
@@ -591,7 +591,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#getEvalCategories(String)}
+    * Test method for {@link org.sakaiproject.evaluation.dao.EvaluationDaoImpl#getEvalCategories(String)}
     */
    public void testGetEvalCategories() {
       List<String> l = null;
@@ -612,7 +612,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#getNodeIdForEvalGroup(java.lang.String)}.
+    * Test method for {@link org.sakaiproject.evaluation.dao.EvaluationDaoImpl#getNodeIdForEvalGroup(java.lang.String)}.
     */
    public void testGetNodeIdForEvalGroup() {
       String nodeId = null; 
@@ -703,7 +703,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
    // LOCKING tests
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#lockScale(org.sakaiproject.evaluation.model.EvalScale, java.lang.Boolean)}.
+    * Test method for {@link org.sakaiproject.evaluation.dao.EvaluationDaoImpl#lockScale(org.sakaiproject.evaluation.model.EvalScale, java.lang.Boolean)}.
     */
    public void testLockScale() {
 
@@ -738,7 +738,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#lockItem(org.sakaiproject.evaluation.model.EvalItem, java.lang.Boolean)}.
+    * Test method for {@link org.sakaiproject.evaluation.dao.EvaluationDaoImpl#lockItem(org.sakaiproject.evaluation.model.EvalItem, java.lang.Boolean)}.
     */
    public void testLockItem() {
 
@@ -812,7 +812,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#lockTemplate(org.sakaiproject.evaluation.model.EvalTemplate, java.lang.Boolean)}.
+    * Test method for {@link org.sakaiproject.evaluation.dao.EvaluationDaoImpl#lockTemplate(org.sakaiproject.evaluation.model.EvalTemplate, java.lang.Boolean)}.
     */
    public void testLockTemplate() {
 
@@ -890,7 +890,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#lockEvaluation(org.sakaiproject.evaluation.model.EvalEvaluation)}.
+    * Test method for {@link org.sakaiproject.evaluation.dao.EvaluationDaoImpl#lockEvaluation(org.sakaiproject.evaluation.model.EvalEvaluation)}.
     */
    public void testLockEvaluation() {
 
@@ -922,7 +922,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#isUsedScale(java.lang.Long)}.
+    * Test method for {@link org.sakaiproject.evaluation.dao.EvaluationDaoImpl#isUsedScale(java.lang.Long)}.
     */
    public void testIsUsedScale() {
       Assert.assertTrue( evaluationDao.isUsedScale( etdl.scale1.getId() ) );
@@ -932,7 +932,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#isUsedItem(java.lang.Long)}.
+    * Test method for {@link org.sakaiproject.evaluation.dao.EvaluationDaoImpl#isUsedItem(java.lang.Long)}.
     */
    public void testIsUsedItem() {
       Assert.assertTrue( evaluationDao.isUsedItem( etdl.item1.getId() ) );
@@ -948,7 +948,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.dao.impl.EvaluationDaoImpl#isUsedTemplate(java.lang.Long)}.
+    * Test method for {@link org.sakaiproject.evaluation.dao.EvaluationDaoImpl#isUsedTemplate(java.lang.Long)}.
     */
    public void testIsUsedTemplate() {
       Assert.assertTrue( evaluationDao.isUsedTemplate( etdl.templateAdmin.getId() ) );
