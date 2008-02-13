@@ -68,8 +68,8 @@ api/src/java/org/sakaiproject/evaluation/utils/TemplateItemUtils.java -text
 api/src/test/org/sakaiproject/evaluation/test/ArrayUtilsTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/test/org/sakaiproject/evaluation/test/EvalUtilsTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/project.xml -text
-impl/src/java/org/sakaiproject/evaluation/dao/impl/EvaluationDaoImpl.java -text
-impl/src/java/org/sakaiproject/evaluation/dao/impl/PreloadDataImpl.java -text
+impl/src/java/org/sakaiproject/evaluation/dao/EvaluationDaoImpl.java -text
+impl/src/java/org/sakaiproject/evaluation/dao/PreloadDataImpl.java -text
 impl/src/java/org/sakaiproject/evaluation/logic/impl/EvalAuthoringServiceImpl.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/impl/EvalDeliveryServiceImpl.java -text
 impl/src/java/org/sakaiproject/evaluation/logic/impl/EvalEmailsLogicImpl.java -text
@@ -92,7 +92,7 @@ impl/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalImportJobImp
 impl/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalImportLogicImpl.java -text
 impl/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalJobLogicImpl.java -text
 impl/src/java/org/sakaiproject/evaluation/logic/impl/scheduling/EvalScheduledInvocationImpl.java -text
-impl/src/java/org/sakaiproject/evaluation/logic/impl/utils/TextTemplateLogicUtils.java -text
+impl/src/java/org/sakaiproject/evaluation/utils/TextTemplateLogicUtils.java -text
 impl/src/test/hibernate-test.xml -text
 impl/src/test/hibernate.cfg.xml -text
 impl/src/test/hibernate.properties -text

@@ -19,7 +19,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.sakaiproject.evaluation.logic.impl.utils.TextTemplateLogicUtils;
+import org.sakaiproject.evaluation.utils.TextTemplateLogicUtils;
 
 
 /**

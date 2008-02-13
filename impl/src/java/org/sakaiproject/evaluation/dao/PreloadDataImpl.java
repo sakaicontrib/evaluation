@@ -12,7 +12,7 @@
  * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
  */
 
-package org.sakaiproject.evaluation.dao.impl;
+package org.sakaiproject.evaluation.dao;
 
 import java.util.Date;
 import java.util.HashSet;
