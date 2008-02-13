@@ -109,10 +109,6 @@ impl/src/test/org/sakaiproject/evaluation/logic/EvalJobLogicImplTest.java -text
 impl/src/test/org/sakaiproject/evaluation/logic/EvalSettingsImplTest.java -text
 impl/src/test/org/sakaiproject/evaluation/logic/ExternalHierarchyLogicImplTest.java -text
 impl/src/test/org/sakaiproject/evaluation/logic/TextTemplateLogicUtilsTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
-impl/src/test/org/sakaiproject/evaluation/logic/mocks/MockPlacement.java -text
-impl/src/test/org/sakaiproject/evaluation/logic/mocks/MockReference.java -text
-impl/src/test/org/sakaiproject/evaluation/logic/mocks/MockSite.java -text
-impl/src/test/org/sakaiproject/evaluation/logic/mocks/MockUser.java -text
 impl/src/test/org/sakaiproject/evaluation/test/EvalTestDataLoad.java -text
 impl/src/test/org/sakaiproject/evaluation/test/PreloadTestData.java -text
 impl/src/test/org/sakaiproject/evaluation/test/mocks/MockEvalExternalLogic.java -text

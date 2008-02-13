@@ -54,7 +54,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
          throw new NullPointerException("EvalSettings could not be retrieved from spring evalGroupId");
       }
 
-      EvalSecurityChecks securityChecks = (EvalSecurityChecks) applicationContext.getBean("org.sakaiproject.evaluation.logic.impl.EvalSecurityChecks");
+      EvalSecurityChecks securityChecks = (EvalSecurityChecks) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalSecurityChecks");
       if (securityChecks == null) {
          throw new NullPointerException("EvalSecurityChecks could not be retrieved from spring context");
       }
