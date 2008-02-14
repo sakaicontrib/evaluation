@@ -21,6 +21,7 @@
                 <value>org.sakaiproject.evaluation.model.EvalGroupNodes</value>
 				<value>org.sakaiproject.evaluation.model.EvalItem</value>
 				<value>org.sakaiproject.evaluation.model.EvalItemGroup</value>
+                <value>org.sakaiproject.evaluation.model.EvalLock</value>
 				<value>org.sakaiproject.evaluation.model.EvalResponse</value>
 				<value>org.sakaiproject.evaluation.model.EvalScale</value>
 				<value>org.sakaiproject.evaluation.model.EvalTemplate</value>
@@ -49,14 +50,11 @@
 		</property>
 	</bean>
 
-
-    <!-- create a data preloading bean -->
-    <bean id="org.sakaiproject.evaluation.logic.EvalPreloadData"
-        class="org.sakaiproject.evaluation.dao.PreloadDataImpl"
-        init-method="init">
-        <property name="evaluationDao">
-            <ref bean="org.sakaiproject.evaluation.dao.EvaluationDao" />
-        </property>
+    <!-- create a data preloading bean which will be used by the data preloader -->
+    <bean id="org.sakaiproject.evaluation.dao.PreloadData"
+        class="org.sakaiproject.evaluation.dao.PreloadDataImpl">
+        <property name="evaluationDao"
+            ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
     </bean>
 
 </beans>

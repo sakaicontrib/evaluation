@@ -37,6 +37,7 @@ import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
+import org.sakaiproject.evaluation.model.EvalLock;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -789,6 +790,88 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
             query.setParameter(name, param);
          }
       }
+   }
+
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.dao.EvaluationDao#lockAndExecuteRunnable(java.lang.String, java.lang.String, java.lang.Runnable)
+    */
+   @SuppressWarnings("unchecked")
+   public boolean lockAndExecuteRunnable(String executerId, String lockId, Runnable toExecute) {
+      if (executerId == null || 
+            "".equals(executerId)) {
+         throw new IllegalArgumentException("The executer Id must be set");
+      }
+      if (lockId == null || 
+            "".equals(lockId)) {
+         throw new IllegalArgumentException("The lock Id must be set");
+      }
+      if (toExecute == null) {
+         throw new IllegalArgumentException("The toExecute Runnable must not be null");
+      }
+
+      // basically we are opening a transaction to get the current lock and set it if it is not there
+      boolean loadingData = false;
+      try {
+         // complete the running transaction if there is one
+         if (getSession().getTransaction().isActive()) {
+            getSession().getTransaction().commit();
+         }
+
+         // check the lock
+         List<EvalLock> locks = findByProperties(EvalLock.class, 
+               new String[] {"name"},
+               new Object[] {lockId});
+         if (locks.size() > 0) {
+            // check if this is my lock, if not, then exit, if so then go ahead
+            EvalLock lock = locks.get(0);
+            if (lock.getHolder().equals(executerId)) {
+               loadingData = true;
+            } else {
+               loadingData = false;
+            }
+         } else {
+            // obtain the lock
+            getSession().beginTransaction();
+            EvalLock lock = new EvalLock(lockId, executerId);
+            getSession().save(lock);
+            getSession().getTransaction().commit();
+            loadingData = true;
+         }
+         locks.clear(); // clear the locks list
+
+         if (loadingData) {
+            // now we begin a NEW transaction to run the preloader in
+            getSession().beginTransaction();
+
+            // execute the runnable method
+            toExecute.run();
+
+            // clear the lock
+            locks = findByProperties(EvalLock.class, 
+                  new String[] {"name"},
+                  new Object[] {lockId});
+            getHibernateTemplate().deleteAll(locks);
+            // commit preload and lock removal
+            getSession().getTransaction().commit();
+         }
+      } catch (RuntimeException e) {
+         getSession().getTransaction().rollback();
+         loadingData = false;
+         // try to clear the lock just in case things died
+         try {
+            getSession().beginTransaction();
+            List<EvalLock> locks = findByProperties(EvalLock.class, 
+                  new String[] {"name"},
+                  new Object[] {lockId});
+            getHibernateTemplate().deleteAll(locks);
+            getSession().getTransaction().commit();
+         } catch (Exception ex) {
+            log.error("Could not cleanup the lock ("+lockId+") after failure: " + ex.getMessage(), ex);
+         }
+         throw new RuntimeException("Lock and execute failure for lock ("+lockId+"): " + e.getMessage(), e);
+      }
+
+      return loadingData;
    }
 
 }

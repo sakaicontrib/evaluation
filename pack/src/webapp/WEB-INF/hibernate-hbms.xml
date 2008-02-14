@@ -18,6 +18,7 @@
             <value>org/sakaiproject/evaluation/dao/hbm/EvalGroupNodes.hbm.xml</value>
             <value>org/sakaiproject/evaluation/dao/hbm/EvalItem.hbm.xml</value>
             <value>org/sakaiproject/evaluation/dao/hbm/EvalItemGroup.hbm.xml</value>
+            <value>org/sakaiproject/evaluation/dao/hbm/EvalLock.hbm.xml</value>
             <value>org/sakaiproject/evaluation/dao/hbm/EvalResponse.hbm.xml</value>
             <value>org/sakaiproject/evaluation/dao/hbm/EvalScale.hbm.xml</value>
             <value>org/sakaiproject/evaluation/dao/hbm/EvalTemplate.hbm.xml</value>
