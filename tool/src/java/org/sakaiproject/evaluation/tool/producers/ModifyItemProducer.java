@@ -14,6 +14,7 @@
 
 package org.sakaiproject.evaluation.tool.producers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
@@ -46,6 +47,7 @@ import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.UISelectLabel;
+import uk.org.ponder.rsf.components.decorators.UIDisabledDecorator;
 import uk.org.ponder.rsf.evolvers.BoundedDynamicListInputEvolver;
 import uk.org.ponder.rsf.evolvers.TextInputEvolver;
 import uk.org.ponder.rsf.flow.ARIResult;
@@ -128,6 +130,15 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
       String commonDisplayOTP = null; // this will bind to either the item or the template item depending on which should save the common display information
 		String itemOwnerName = null; // this is the name of the owner of the item
 
+		EvalScale currentScale = null; // this is the current scale
+
+		/* these keep track of whether items and scales are locked, we are not tracking TIs because 
+		 * the user should not be able to get here if the template is locked, if they did then 
+		 * they cheated so they can get an exception
+		 */
+		boolean scaleLocked = false;
+		boolean itemLocked = false;
+
 		String scaleDisplaySetting = null; // the scale display setting for the item/TI
 		String displayRows = null; // the number of rows to display for the text area
 		Boolean usesNA = null; // whether or not the item uses the N/A option
@@ -169,7 +180,13 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
          scaleDisplaySetting = item.getScaleDisplaySetting();
          displayRows = item.getDisplayRows() != null ? item.getDisplayRows().toString() : null;
          usesNA = item.getUsesNA();
-         scaleId = item.getScale() != null ? item.getScale().getId() : null;
+         // if this is locked then we should probably be failing at this point
+         itemLocked = item.getLocked() != null ? item.getLocked() : itemLocked;
+         if (item.getScale() != null) {
+            currentScale = item.getScale();
+            scaleId = currentScale.getId();
+            scaleLocked = currentScale.getLocked();
+         }
 
          itemOwnerName = external.getUserDisplayName(item.getOwner());
          itemClassification = item.getClassification();
@@ -185,7 +202,12 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
          scaleDisplaySetting = templateItem.getScaleDisplaySetting();
          displayRows = templateItem.getDisplayRows() != null ? templateItem.getDisplayRows().toString() : null;
          usesNA = templateItem.getUsesNA();
-         scaleId = templateItem.getItem().getScale() != null ? templateItem.getItem().getScale().getId() : null;
+         itemLocked = templateItem.getItem().getLocked() != null ? templateItem.getItem().getLocked() : itemLocked;
+         if (templateItem.getItem().getScale() != null) {
+            currentScale = templateItem.getItem().getScale();
+            scaleId = currentScale.getId();
+            scaleLocked = currentScale.getLocked();
+         }
 
          itemOwnerName = external.getUserDisplayName(templateItem.getItem().getOwner());
          itemClassification = templateItem.getItem().getClassification();
@@ -240,28 +262,41 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 		UIMessage.make(form, "item-text-instruction", "modifyitem.item.text.instruction");
 
 		UIInput itemText = UIInput.make(form, "item-text:", itemOTP + "itemText");
-		richTextEvolver.evolveTextInput( itemText );
+		if (itemLocked) {
+		   itemText.willinput = false;
+		   itemText.decorate(new UIDisabledDecorator());
+		} else {
+		   // evolve this into a richtext editor
+		   richTextEvolver.evolveTextInput( itemText );
+		}
 
 		if (EvalConstants.ITEM_TYPE_SCALED.equals(itemClassification)) {
-		   // SCALED items need to choose a scale
-			UIBranchContainer showItemScale = UIBranchContainer.make(form, "show-item-scale:");
-			UIMessage.make(showItemScale, "item-scale-header", "modifyitem.item.scale.header");
-			List<EvalScale> scales = authoringService.getScalesForUser(currentUserId, null);
-			if (scales.isEmpty()) {
-			   throw new IllegalStateException("There are no scales available in the system for creating scaled items, please create at least one scale");
-			}
-			String[] scaleValues = ScaledUtils.getScaleValues(scales);
-			UISelect scaleList = UISelect.make(showItemScale, "item-scale-list", 
-			      scaleValues, 
-					ScaledUtils.getScaleLabels(scales), 
-					itemOTP + "scale.id",
-					scaleId != null ? scaleId.toString() : scaleValues[0]);
-         scaleList.selection.mustapply = true; // this is required to ensure that the value gets passed even if it is not changed
-			scaleList.selection.darreshaper = new ELReference("#{id-defunnel}");
-
-			renderScaleDisplaySelect(form, commonDisplayOTP, scaleDisplaySetting, 
-			      EvalToolConstants.SCALE_DISPLAY_SETTING_VALUES, 
-			      EvalToolConstants.SCALE_DISPLAY_SETTING_LABELS_PROPS);
+         UIBranchContainer showItemScale = UIBranchContainer.make(form, "show-item-scale:");
+		   if (itemLocked) {
+   		   // SCALED items need to choose a scale
+   			List<EvalScale> scales = authoringService.getScalesForUser(currentUserId, null);
+   			if (scales.isEmpty()) {
+   			   throw new IllegalStateException("There are no scales available in the system for creating scaled items, please create at least one scale");
+   			}
+   			String[] scaleValues = ScaledUtils.getScaleValues(scales);
+   			UISelect scaleList = UISelect.make(showItemScale, "item-scale-list", 
+   			      scaleValues, 
+   					ScaledUtils.getScaleLabels(scales), 
+   					itemOTP + "scale.id",
+   					scaleId != null ? scaleId.toString() : scaleValues[0]);
+            scaleList.selection.mustapply = true; // this is required to ensure that the value gets passed even if it is not changed
+   			scaleList.selection.darreshaper = new ELReference("#{id-defunnel}");
+   
+   			renderScaleDisplaySelect(form, commonDisplayOTP, scaleDisplaySetting, 
+   			      EvalToolConstants.SCALE_DISPLAY_SETTING_VALUES, 
+   			      EvalToolConstants.SCALE_DISPLAY_SETTING_LABELS_PROPS);
+		   } else {
+		      // just display the name of the current scale without a select box
+		      List<EvalScale> scales = new ArrayList<EvalScale>();
+		      scales.add(currentScale);
+		      String[] labels = ScaledUtils.getScaleLabels(scales);
+            UIOutput.make(showItemScale, "item-scale-current", labels[0]);
+		   }
 		} else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(itemClassification) ||
 		      EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemClassification) ) {
 		   // MC/MA items need to create choices
@@ -403,14 +438,24 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
       }
 		
 		UIMessage.make(form, "cancel-button", "general.cancel.button");
+
+		String saveBinding = null;
 		if (templateId == null) {
-		   // only saving an item
-   		UICommand.make(form, "save-item-action", 
-   				UIMessage.make("modifyitem.save.button"), "#{templateBBean.saveItemAction}");
+         // only saving an item
+		   if (! itemLocked) {
+		      saveBinding = "#{templateBBean.saveItemAction}";
+		   }
 		} else {
-		   // saving template item and item
-         UICommand.make(form, "save-item-action", 
-               UIMessage.make("modifyitem.save.button"), "#{templateBBean.saveBothAction}");		   
+		   if (! itemLocked) {
+   		   // saving template item and item
+            saveBinding = "#{templateBBean.saveBothAction}";
+		   } else {
+		      // only saving template item
+            saveBinding = "#{templateBBean.saveTemplateItemAction}";
+		   }
+		}
+		if (saveBinding != null) {
+         UICommand.make(form, "save-item-action", UIMessage.make("modifyitem.save.button"), saveBinding);
 		}
 	}
 
