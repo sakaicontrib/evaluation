@@ -699,20 +699,6 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 
    }
 
-   public void testLockAndExecuteRunnable() {
-      final int[] checker = new int[] { 0 }; 
-      Runnable toExecute = new Runnable() {
-         public void run() {
-            checker[0] = checker[0] + 1;
-         }
-      };
-
-      assertEquals(0, checker[0]);
-      assertTrue( evaluationDao.lockAndExecuteRunnable("AZ1", "AZ.lock", toExecute) );
-      assertEquals(1, checker[0]);
-
-   }
-
    // LOCKING tests
 
    /**
@@ -975,6 +961,24 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       Assert.assertFalse( evaluationDao.isUsedTemplate( etdl.templateUserUnused.getId() ) );
    }
 
+
+
+   /**
+    * Something about this test means it has to run at the end or the others fail
+    */
+   public void testLockAndExecuteRunnable() {
+      final int[] checker = new int[] { 0 }; 
+      Runnable toExecute = new Runnable() {
+         public void run() {
+            checker[0] = checker[0] + 1;
+         }
+      };
+
+      assertEquals(0, checker[0]);
+      assertTrue( evaluationDao.lockAndExecuteRunnable("AZ1", "AZ.lock", toExecute) );
+      assertEquals(1, checker[0]);
+
+   }
 
    /**
     * Add anything that supports the unit tests below here
