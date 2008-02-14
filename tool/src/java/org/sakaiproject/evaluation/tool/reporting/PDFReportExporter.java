@@ -56,12 +56,6 @@ public class PDFReportExporter {
       this.messageLocator = locator;
    }
 
-   // FIXME - Do NOT use Sakai services directly, go through external logic
-   private ContentHostingService contentHostingService;
-   public void setContentHostingService(ContentHostingService contentHostingService) {
-      this.contentHostingService = contentHostingService;
-   }
-
    public void formatResponses(EvalAggregatedResponses responses, OutputStream outputStream) {
       EvalPDFReportBuilder evalPDFReportBuilder = new EvalPDFReportBuilder(outputStream);
       
@@ -70,12 +64,7 @@ public class PDFReportExporter {
       if (useBannerImage != null && useBannerImage == true) {
          String bannerImageLocation = (String) evalSettings.get(EvalSettings.PDF_BANNER_IMAGE_LOCATION);
          if (bannerImageLocation != null) {
-            try {
-               ContentResource contentResource = contentHostingService.getResource(bannerImageLocation);
-               bannerImageBytes = contentResource.getContent();
-            } catch (Exception e) {
-               log.warn("Cannot get PDF Banner Image for Evaluation Export", e);
-            }
+            bannerImageBytes = externalLogic.getFileContent(bannerImageLocation);
          }
       }
       

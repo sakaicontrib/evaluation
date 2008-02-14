@@ -473,4 +473,8 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
       emailsSentCounter = 0;
    }
 
+   public byte[] getFileContent(String abspath) {
+      return new byte[] {'H','E','L','L','O',' ','E','V','A','L','U','A','T','I','O','N' };
+   }
+
 }

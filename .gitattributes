@@ -35,6 +35,7 @@ api/src/java/org/sakaiproject/evaluation/logic/exceptions/UserMessage.java svn_k
 api/src/java/org/sakaiproject/evaluation/logic/externals/EvalExternalLogic.java -text
 api/src/java/org/sakaiproject/evaluation/logic/externals/EvalJobLogic.java -text
 api/src/java/org/sakaiproject/evaluation/logic/externals/EvalScheduledInvocation.java -text
+api/src/java/org/sakaiproject/evaluation/logic/externals/ExternalContent.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/logic/externals/ExternalEvalGroups.java -text
 api/src/java/org/sakaiproject/evaluation/logic/externals/ExternalHierarchyLogic.java -text
 api/src/java/org/sakaiproject/evaluation/logic/externals/ExternalUsers.java -text
