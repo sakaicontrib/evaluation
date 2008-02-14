@@ -30,10 +30,8 @@ public class EvalPDFReportBuilder {
     private Font paragraphFont;
     int frontTitleSize = 26;
     private Font frontTitleFont;
-    private BaseFont frontTitleBaseFont;
     private Font frontAuthorFont;
     private Font frontInfoFont;
-    private Font frontSystemNameFont;
     
     public EvalPDFReportBuilder(OutputStream outputStream) {
         document = new Document();
@@ -45,10 +43,8 @@ public class EvalPDFReportBuilder {
             questionTextFont = new Font(Font.TIMES_ROMAN, 14, Font.BOLD);
             paragraphFont = new Font(Font.TIMES_ROMAN, 10, Font.NORMAL);
             frontTitleFont = new Font(Font.TIMES_ROMAN, frontTitleSize, Font.NORMAL);
-            frontTitleBaseFont = BaseFont.createFont(BaseFont.TIMES_ROMAN, BaseFont.CP1252, BaseFont.EMBEDDED);
             frontAuthorFont = new Font(Font.TIMES_ROMAN, 18, Font.NORMAL);
             frontInfoFont = new Font(Font.TIMES_ROMAN, 16, Font.NORMAL);
-            frontSystemNameFont = new Font(Font.HELVETICA);
         } catch (Exception e) {
             throw UniversalRuntimeException.accumulate(e, "Unable to start PDF Report");
         }
@@ -64,7 +60,7 @@ public class EvalPDFReportBuilder {
     }
     
     public void addTitlePage(String evaltitle, String username, String accountInfo,
-            Date startDate, String responseInformation, byte[] bannerImageBytes,
+            String startDate, String responseInformation, byte[] bannerImageBytes,
             String evalSystemTitle) {
         try {
            PdfContentByte cb = pdfWriter.getDirectContent();
@@ -99,14 +95,13 @@ public class EvalPDFReportBuilder {
            document.add(accountPara);
 
            // Started on
-           DateFormat df = DateFormat.getDateInstance(DateFormat.LONG);
-           Paragraph startedPara = new Paragraph("Started: " + df.format(startDate), frontInfoFont);
+           Paragraph startedPara = new Paragraph(startDate, frontInfoFont);
            startedPara.setAlignment(Element.ALIGN_CENTER);
            startedPara.setSpacingBefore(25.0f);
            document.add(startedPara);
 
            // Reply Rate
-           Paragraph replyRatePara = new Paragraph("Reply rate: " + responseInformation, frontInfoFont);
+           Paragraph replyRatePara = new Paragraph(responseInformation, frontInfoFont);
            replyRatePara.setAlignment(Element.ALIGN_CENTER);
            replyRatePara.setSpacingBefore(25.0f);
            document.add(replyRatePara);
@@ -121,7 +116,6 @@ public class EvalPDFReportBuilder {
 
            if (bannerImageBytes != null) {
               Image banner = Image.getInstance(bannerImageBytes);
-              System.out.println("BANNER: W: " + banner.getWidth() + " H: " + banner.getHeight());
               cb.addImage(banner, banner.getWidth(), 0, 0, banner.getHeight(), 
                     docMiddle - (banner.getWidth() / 2), document.bottom() + 35);
            }

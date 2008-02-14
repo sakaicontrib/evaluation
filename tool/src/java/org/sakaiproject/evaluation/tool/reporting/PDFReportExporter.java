@@ -1,6 +1,7 @@
 package org.sakaiproject.evaluation.tool.reporting;
 
 import java.io.OutputStream;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,24 +15,13 @@ import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalItem;
-import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.utils.EvalAggregatedResponses;
 import org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil;
 import org.sakaiproject.evaluation.tool.utils.EvaluationCalcUtility;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
-
 import uk.org.ponder.messageutil.MessageLocator;
-import uk.org.ponder.util.UniversalRuntimeException;
-
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Element;
-import com.lowagie.text.Image;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
 
 public class PDFReportExporter {
    private static Log log = LogFactory.getLog(PDFReportExporter.class);
@@ -46,11 +36,6 @@ public class PDFReportExporter {
       this.evalSettings = evalSettings;
    }
 
-   private EvalEvaluationService evaluationService;
-   public void setEvaluationService(EvalEvaluationService evaluationService) {
-      this.evaluationService = evaluationService;
-   }
-   
    private EvaluationCalcUtility evalCalcUtil;
    public void setEvaluationCalcUtility(EvaluationCalcUtility util) {
       this.evalCalcUtil = util;
@@ -88,9 +73,6 @@ public class PDFReportExporter {
             try {
                ContentResource contentResource = contentHostingService.getResource(bannerImageLocation);
                bannerImageBytes = contentResource.getContent();
-               //Image banner = Image.getInstance(contentResource.getContent());
-               //banner.setAlignment(Element.ALIGN_CENTER);
-               //document.add(banner);
             } catch (Exception e) {
                log.warn("Cannot get PDF Banner Image for Evaluation Export", e);
             }
@@ -100,11 +82,13 @@ public class PDFReportExporter {
       String userDisplayName = externalLogic.getUserDisplayName(externalLogic.getCurrentUserId());
       String userEid = externalLogic.getUserUsername(externalLogic.getCurrentUserId());
       
+      DateFormat df = DateFormat.getDateInstance(DateFormat.LONG);
+      
       evalPDFReportBuilder.addTitlePage(responses.evaluation.getTitle(), 
             userDisplayName, 
             messageLocator.getMessage("reporting.pdf.accountinfo", new String[] {userEid, userDisplayName}), 
-            responses.evaluation.getStartDate(),  
-            evalCalcUtil.getParticipantResults(responses.evaluation),
+            messageLocator.getMessage("reporting.pdf.startdatetime",df.format(responses.evaluation.getStartDate())),
+            messageLocator.getMessage("reporting.pdf.replyrate", new String[] {evalCalcUtil.getParticipantResults(responses.evaluation)}),
             bannerImageBytes, messageLocator.getMessage("reporting.pdf.defaultsystemname"));
       
       evalPDFReportBuilder.addIntroduction(responses.evaluation.getTitle(), 
