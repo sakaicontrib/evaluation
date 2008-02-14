@@ -199,6 +199,7 @@
 	<bean id="XLSReportExporter" class="org.sakaiproject.evaluation.tool.reporting.XLSReportExporter">
         <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
 		<property name="evaluationCalcUtility" ref="org.sakaiproject.evaluation.tool.utils.EvaluationCalcUtility" />
+		<property name="messageLocator" ref="messageLocator" />
 	</bean>
 
 	<bean id="PDFReportExporter" class="org.sakaiproject.evaluation.tool.reporting.PDFReportExporter">

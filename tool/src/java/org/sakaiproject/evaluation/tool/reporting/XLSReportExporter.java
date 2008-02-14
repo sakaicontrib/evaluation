@@ -18,6 +18,7 @@ import org.sakaiproject.evaluation.tool.utils.EvaluationCalcUtility;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import org.sakaiproject.util.FormattedText;
 
+import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 public class XLSReportExporter {
@@ -30,6 +31,11 @@ public class XLSReportExporter {
    private EvaluationCalcUtility evalCalcUtil;
    public void setEvaluationCalcUtility(EvaluationCalcUtility util) {
       this.evalCalcUtil = util;
+   }
+
+   private MessageLocator messageLocator;
+   public void setMessageLocator(MessageLocator locator) {
+      this.messageLocator = locator;
    }
 
    public void formatResponses(EvalAggregatedResponses responses, OutputStream outputStream) {
@@ -73,14 +79,15 @@ public class XLSReportExporter {
          HSSFRow row3 = sheet.createRow(2);
          HSSFCell cellA3 = row3.createCell((short)0);
 
-         String groupsCellContents = "Participants: ";
-         for (int groupCounter = 0; groupCounter < responses.groupIds.length; groupCounter++) {//groupTitles.size(); groupCounter++) {
-            groupsCellContents +=  externalLogic.getDisplayTitle(responses.groupIds[groupCounter]); //groupTitles.get(groupCounter);
-            if (groupCounter+1 < responses.groupIds.length) {//groupTitles.size()) {
-               groupsCellContents += ", ";
+         String groupsString = "";
+         for (int groupCounter = 0; groupCounter < responses.groupIds.length; groupCounter++) {
+            groupsString +=  externalLogic.getDisplayTitle(responses.groupIds[groupCounter]);
+            if (groupCounter+1 < responses.groupIds.length) {
+               groupsString += ", ";
             }
          }
-         cellA3.setCellValue(groupsCellContents);
+         cellA3.setCellValue(messageLocator.getMessage("reporting.xls.participants",
+               new String[] {groupsString}));
       }
 
       // Questions types (just above header row)
@@ -89,16 +96,16 @@ public class XLSReportExporter {
          EvalTemplateItem tempItem = responses.allEvalTemplateItems.get(i);
          HSSFCell cell = questionTypeRow.createCell((short)(i+1));
          if (EvalConstants.ITEM_TYPE_SCALED.equals(TemplateItemUtils.getTemplateItemType(tempItem))) {
-            cell.setCellValue("Rating scale");
+            cell.setCellValue(messageLocator.getMessage("reporting.itemtypelabel.scale"));
          }
          else if (EvalConstants.ITEM_TYPE_TEXT.equals(TemplateItemUtils.getTemplateItemType(tempItem))) {
-            cell.setCellValue("Free text / essay question");
+            cell.setCellValue(messageLocator.getMessage("reporting.itemtypelabel.text"));
          }
          else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(TemplateItemUtils.getTemplateItemType(tempItem))) {
-            cell.setCellValue("Multiple Answer");
+            cell.setCellValue(messageLocator.getMessage("reporting.itemtypelabel.multipleanswer"));
          }
          else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(TemplateItemUtils.getTemplateItemType(tempItem))) {
-            cell.setCellValue("Multiple Choice");
+            cell.setCellValue(messageLocator.getMessage("reporting.itemtypelabel.multiplechoice"));
          }
          else {
             cell.setCellValue("");
