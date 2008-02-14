@@ -17,7 +17,7 @@ package org.sakaiproject.evaluation.logic;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
-import org.sakaiproject.evaluation.test.PreloadTestData;
+import org.sakaiproject.evaluation.test.PreloadTestDataImpl;
 import org.springframework.test.AbstractTransactionalSpringContextTests;
 
 
@@ -54,9 +54,9 @@ public abstract class BaseTestEvalLogic extends AbstractTransactionalSpringConte
       // check the preloaded test data
       assertTrue("Error preloading test data", evaluationDao.countAll(EvalEvaluation.class) > 0);
 
-      PreloadTestData ptd = (PreloadTestData) applicationContext.getBean("org.sakaiproject.evaluation.test.PreloadTestData");
+      PreloadTestDataImpl ptd = (PreloadTestDataImpl) applicationContext.getBean("org.sakaiproject.evaluation.test.PreloadTestData");
       if (ptd == null) {
-         throw new NullPointerException("PreloadTestData could not be retrieved from spring context");
+         throw new NullPointerException("PreloadTestDataImpl could not be retrieved from spring context");
       }
 
       // get test objects

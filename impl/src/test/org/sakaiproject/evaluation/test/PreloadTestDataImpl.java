@@ -1,5 +1,5 @@
 /**
- * PreloadTestData.java - evaluation - Dec 25, 2006 10:07:31 AM - azeckoski
+ * PreloadTestDataImpl.java - evaluation - Dec 25, 2006 10:07:31 AM - azeckoski
  * $URL: https://source.sakaiproject.org/contrib $
  * $Id: MockEvalJobLogic.java 1000 Jan 25, 2008 10:07:31 AM azeckoski $
  **************************************************************************
@@ -17,6 +17,7 @@ package org.sakaiproject.evaluation.test;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
+import org.sakaiproject.evaluation.dao.PreloadDataImpl;
 
 
 /**
@@ -27,57 +28,56 @@ import org.sakaiproject.evaluation.dao.EvaluationDao;
  * <pre>
 	<!-- create a test data preloading bean -->
 	<bean id="org.sakaiproject.evaluation.test.PreloadTestData"
-		class="org.sakaiproject.evaluation.test.PreloadTestData"
+		class="org.sakaiproject.evaluation.test.PreloadTestDataImpl"
 		init-method="init">
 		<property name="evaluationDao"
 			ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
-		<property name="pdl"
+		<property name="preloadData"
 			ref="org.sakaiproject.evaluation.dao.PreloadData" />
 	</bean>
  * </pre>
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class PreloadTestData {
+public class PreloadTestDataImpl {
 
-	private static Log log = LogFactory.getLog(PreloadTestData.class);
+   private static Log log = LogFactory.getLog(PreloadTestDataImpl.class);
 
-	private EvaluationDao evaluationDao;
-	public void setEvaluationDao(EvaluationDao evaluationDao) {
-		this.evaluationDao = evaluationDao;
-	}
+   private EvaluationDao evaluationDao;
+   public void setEvaluationDao(EvaluationDao evaluationDao) {
+      this.evaluationDao = evaluationDao;
+   }
 
-	private EvalTestDataLoad etdl;
-	/**
-	 * @return the test data loading class with copies of all saved objects
-	 */
-	public EvalTestDataLoad getEtdl() {
-		return etdl;
-	}
+   private PreloadDataImpl preloadData;
+   public void setPreloadData(PreloadDataImpl preloadData) {
+      this.preloadData = preloadData;
+   }
 
-	/**
-	 * This is here because we need the empty DB data preload to run before this
-	 * class and by making it a dependency we ensure that is the case,
-	 * Should be injecting a PreloadDataImpl here -AZ
-	 */
-	private Object pdl;
-	public void setPdl(Object pdl) {
-		this.pdl = pdl;
-	}
 
-	public void init() {
-		log.info("INIT");
-		if (pdl == null) {
-			throw new NullPointerException("PreloadDataImpl must be loaded before this class");
-		}
-		preloadDB();
-	}
+   private EvalTestDataLoad etdl;
+   /**
+    * @return the test data loading class with copies of all saved objects
+    */
+   public EvalTestDataLoad getEtdl() {
+      return etdl;
+   }
 
-	/**
-	 * Preload the data
-	 */
-	public void preloadDB(){
-		log.info("preloading DB...");
-		etdl = new EvalTestDataLoad();
-		etdl.saveAll(evaluationDao);
-	}
+   public void init() {
+      log.info("INIT");
+      if (preloadData == null) {
+         throw new NullPointerException("PreloadDataImpl must be loaded before this class");
+      } else {
+         // run the data preloading method
+         preloadData.run();
+      }
+      preloadDB();
+   }
+
+   /**
+    * Preload the data
+    */
+   public void preloadDB(){
+      log.info("preloading DB...");
+      etdl = new EvalTestDataLoad();
+      etdl.saveAll(evaluationDao);
+   }
 }

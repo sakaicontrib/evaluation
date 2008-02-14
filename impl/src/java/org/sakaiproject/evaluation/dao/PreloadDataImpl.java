@@ -31,37 +31,31 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.utils.SettingsLogicUtils;
 
 /**
- * This checks and preloads any data that is needed for the evaluation app
+ * This checks and preloads any data that is needed for the evaluation app,
+ * this should be executed with locks for cluster compatibility
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class PreloadDataImpl {
+public class PreloadDataImpl implements Runnable {
 
    private static Log log = LogFactory.getLog(PreloadDataImpl.class);
-
-   private static final String ADMIN_OWNER = "admin";
 
    private EvaluationDao evaluationDao;
    public void setEvaluationDao(EvaluationDao evaluationDao) {
       this.evaluationDao = evaluationDao;
    }
 
+   public void run() {
+      // run the methods that will preload the data
+      preloadEvalConfig();
+      preloadEmailTemplate();
+      preloadScales();
+      preloadExpertItems();
+   }
 
    // a few things we will need in the various other parts
+   private String ADMIN_OWNER = "admin";
    private EvalScale agreeDisagree;
-
-
-   public void init() {
-      try {
-         preloadEvalConfig();
-         preloadEmailTemplate();
-         preloadScales();
-         preloadExpertItems();
-      } catch (Exception e) {
-         // Better to log here since Sakai Spring reporting is a bit hit-or-miss
-         log.error("Error preloading data for Evaluation", e);
-      }
-   }
 
    /**
     * Preload the default system configuration settings<br/> <b>Note:</b> If

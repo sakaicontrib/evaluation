@@ -28,6 +28,7 @@
       <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
    </bean>
 
+
    <!-- a general transaction interceptor for the logic beans -->
    <bean id="org.sakaiproject.evaluation.interceptor.LogicTransactionProxy"
       class="org.springframework.transaction.interceptor.TransactionInterceptor">

@@ -54,11 +54,26 @@
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
    </bean>
 
-    <!-- importing -->
-	<bean id="org.sakaiproject.evaluation.logic.imports.EvalImportJob"
-		class="org.sakaiproject.evaluation.logic.imports.EvalImportJobImpl"
-		init-method="init"> 
-	</bean>
+
+   <!-- DATA PRELOADING -->
+   <!-- this will attempt to preload the database with data in a way that is cluster safe,
+        this is located in the main set of beans because these are never used in the tests
+        and the tests already have a test data preloader and tests do not need to be cluster safe -->
+   <bean class="org.sakaiproject.evaluation.dao.EvalDataPreloaderImpl"
+        init-method="init">
+      <property name="evaluationDao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+      <property name="externalLogic"
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+      <property name="preloadData"
+         ref="org.sakaiproject.evaluation.dao.PreloadData" />      
+   </bean>
+
+
+   <!-- IMPORTING -->
+   <bean id="org.sakaiproject.evaluation.logic.imports.EvalImportJob"
+      class="org.sakaiproject.evaluation.logic.imports.EvalImportJobImpl"
+      init-method="init">
+   </bean>
 
    <bean id="org.sakaiproject.evaluation.logic.externals.EvalScheduledInvocation"
       class="org.sakaiproject.evaluation.logic.scheduling.EvalScheduledInvocationImpl"

@@ -209,6 +209,20 @@ public interface EvaluationDao extends CompleteGenericDao {
     */
    public Set<String> getResponseUserIds(Long evaluationId, String[] evalGroupIds);
 
+   /**
+    * Allows for an easy way to run some code ONLY if a lock can be obtained by
+    * the executer, if the lock can be obtained then the Runnable is executed,
+    * if not, then nothing happens<br/>
+    * This is primarily useful for ensuring only a single server in the cluster
+    * is executing some code<br/>
+    * 
+    * @param executerId a unique id for the executer of this code (normally a serverid)
+    * @param lockId the name of the lock which we are seeking
+    * @param toExecute a {@link Runnable} which will have the run method executed if a lock can be obtained
+    * @return true if the code was executed, false otherwise
+    */
+   public boolean lockAndExecuteRunnable(String executerId, String lockId, Runnable toExecute);
+
 
 	// LOCKING METHODS
 

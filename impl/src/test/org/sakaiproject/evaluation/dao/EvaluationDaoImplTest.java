@@ -29,7 +29,7 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
-import org.sakaiproject.evaluation.test.PreloadTestData;
+import org.sakaiproject.evaluation.test.PreloadTestDataImpl;
 import org.springframework.test.AbstractTransactionalSpringContextTests;
 
 
@@ -70,9 +70,9 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       // check the preloaded test data
       Assert.assertTrue("Error preloading test data", evaluationDao.countAll(EvalEvaluation.class) > 0);
 
-      PreloadTestData ptd = (PreloadTestData) applicationContext.getBean("org.sakaiproject.evaluation.test.PreloadTestData");
+      PreloadTestDataImpl ptd = (PreloadTestDataImpl) applicationContext.getBean("org.sakaiproject.evaluation.test.PreloadTestData");
       if (ptd == null) {
-         throw new NullPointerException("PreloadTestData could not be retrieved from spring evalGroupId");
+         throw new NullPointerException("PreloadTestDataImpl could not be retrieved from spring evalGroupId");
       }
 
       // get test objects
@@ -699,6 +699,19 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 
    }
 
+   public void testLockAndExecuteRunnable() {
+      final int[] checker = new int[] { 0 }; 
+      Runnable toExecute = new Runnable() {
+         public void run() {
+            checker[0] = checker[0] + 1;
+         }
+      };
+
+      assertEquals(0, checker[0]);
+      assertTrue( evaluationDao.lockAndExecuteRunnable("AZ1", "AZ.lock", toExecute) );
+      assertEquals(1, checker[0]);
+
+   }
 
    // LOCKING tests
 
