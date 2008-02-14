@@ -205,7 +205,6 @@
 	<bean id="PDFReportExporter" class="org.sakaiproject.evaluation.tool.reporting.PDFReportExporter">
         <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
         <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-		<property name="contentHostingService" ref="org.sakaiproject.content.api.ContentHostingService" />
 		<property name="evaluationCalcUtility" ref="org.sakaiproject.evaluation.tool.utils.EvaluationCalcUtility" />
 		<property name="evalResponseAggregatorUtil" ref="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil" />
 		<property name="deliveryService" ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />

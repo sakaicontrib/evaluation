@@ -35,6 +35,8 @@ import org.sakaiproject.authz.api.AuthzGroupService;
 import org.sakaiproject.authz.api.FunctionManager;
 import org.sakaiproject.authz.api.SecurityService;
 import org.sakaiproject.component.api.ServerConfigurationService;
+import org.sakaiproject.content.api.ContentHostingService;
+import org.sakaiproject.content.api.ContentResource;
 import org.sakaiproject.email.api.EmailService;
 import org.sakaiproject.entity.api.EntityManager;
 import org.sakaiproject.entity.api.Reference;
@@ -144,6 +146,11 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
    private UserDirectoryService userDirectoryService;
    public void setUserDirectoryService(UserDirectoryService userDirectoryService) {
       this.userDirectoryService = userDirectoryService;
+   }
+
+   private ContentHostingService contentHostingService;
+   public void setContentHostingService(ContentHostingService service) {
+      this.contentHostingService = service;
    }
 
    private ApplicationContext applicationContext;
@@ -884,6 +891,19 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
          }
       }
       return returnValue;
+   }
+
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.ExternalContent#getFileContent(java.lang.String)
+    */
+   public byte[] getFileContent(String abspath) {
+      try {
+         ContentResource contentResource = contentHostingService.getResource(abspath);
+         return contentResource.getContent();
+      } catch (Exception e) {
+         log.warn("Cannot byte array for Content Hosting File", e);
+         return null;
+      }
    }
 
 }

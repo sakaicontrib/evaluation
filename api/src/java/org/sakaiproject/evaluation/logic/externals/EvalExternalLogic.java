@@ -27,47 +27,48 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public interface EvalExternalLogic extends ExternalUsers, ExternalEvalGroups {
+public interface EvalExternalLogic extends ExternalUsers, ExternalEvalGroups,
+ExternalContent {
 
-	// PERMISSIONS
+   // PERMISSIONS
 
-	/**
-	 * Check if this user has super admin access in the evaluation system
-	 * @param userId the internal user id (not username)
-	 * @return true if the user has admin access, false otherwise
-	 */
-	public boolean isUserAdmin(String userId);
+   /**
+    * Check if this user has super admin access in the evaluation system
+    * @param userId the internal user id (not username)
+    * @return true if the user has admin access, false otherwise
+    */
+   public boolean isUserAdmin(String userId);
 
-	/**
-	 * Check if a user has a specified permission within a evalGroupId, primarily
-	 * a convenience method and passthrough
-	 * 
-	 * @param userId the internal user id (not username)
-	 * @param permission a permission string constant
-	 * @param evalGroupId the internal unique eval group ID (represents a site or group)
-	 * @return true if allowed, false otherwise
-	 */
-	public boolean isUserAllowedInEvalGroup(String userId, String permission, String evalGroupId);
+   /**
+    * Check if a user has a specified permission within a evalGroupId, primarily
+    * a convenience method and passthrough
+    * 
+    * @param userId the internal user id (not username)
+    * @param permission a permission string constant
+    * @param evalGroupId the internal unique eval group ID (represents a site or group)
+    * @return true if allowed, false otherwise
+    */
+   public boolean isUserAllowedInEvalGroup(String userId, String permission, String evalGroupId);
 
 
-	// EMAIL
+   // EMAIL
 
-	/**
-	 * Send emails to a set of users (can send to a single user
-	 * by specifying an array with one item only), gets the email addresses
-	 * for the users ids
-	 * 
-	 * @param from the email address this email appears to come from
-	 * @param toUserIds the userIds this message should be sent to
-	 * @param subject the message subject
-	 * @param message the message to send
+   /**
+    * Send emails to a set of users (can send to a single user
+    * by specifying an array with one item only), gets the email addresses
+    * for the users ids
+    * 
+    * @param from the email address this email appears to come from
+    * @param toUserIds the userIds this message should be sent to
+    * @param subject the message subject
+    * @param message the message to send
     * @param deferExceptions if true, then exceptions are logged and then thrown after sending as many emails as possible,
     * if false then exceptions are thrown immediately
-	 * @return an array of email addresses that this message was sent to
-	 */
-	public String[] sendEmailsToUsers(String from, String[] toUserIds, String subject, String message, boolean deferExceptions);
+    * @return an array of email addresses that this message was sent to
+    */
+   public String[] sendEmailsToUsers(String from, String[] toUserIds, String subject, String message, boolean deferExceptions);
 
-	/**
+   /**
     * Send emails to a set of email addresses (can send to a single address
     * by specifying an array with one item only)
     * NOTE: Use {@link #sendEmailsToUsers(String, String[], String, String, boolean)} if you know who the users are
@@ -84,48 +85,48 @@ public interface EvalExternalLogic extends ExternalUsers, ExternalEvalGroups {
    public String[] sendEmailsToAddresses(String from, String[] to, String subject, String message, boolean deferExceptions);
 
 
-	// ENTITIES
+   // ENTITIES
 
-	/**
-	 * @return the URL directly to the main server portal this tool is installed in
-	 */
-	public String getServerUrl();
+   /**
+    * @return the URL directly to the main server portal this tool is installed in
+    */
+   public String getServerUrl();
 
-	/**
-	 * Get a full URL to a specific entity inside our system,
-	 * if this entity has no direct URL then just provide a URL to the sakai server
-	 * 
-	 * @param evaluationEntity any entity inside the evaluation tool (e.g. {@link EvalEvaluation})
-	 * @return a full URL to the entity (e.g. http://sakai.server:8080/access/eval-evaluation/123/)
-	 */
-	public String getEntityURL(Serializable evaluationEntity);
+   /**
+    * Get a full URL to a specific entity inside our system,
+    * if this entity has no direct URL then just provide a URL to the sakai server
+    * 
+    * @param evaluationEntity any entity inside the evaluation tool (e.g. {@link EvalEvaluation})
+    * @return a full URL to the entity (e.g. http://sakai.server:8080/access/eval-evaluation/123/)
+    */
+   public String getEntityURL(Serializable evaluationEntity);
 
-	/**
-	 * Get a full URL to a specific entity inside our system using just the class type and id,
-	 * if this entity has no direct URL then just provide a URL to the sakai server
-	 * 
-	 * @param entityPrefix an ENTITY_PREFIX constant from an entity provider
-	 * @param entityId the unique id of this entity (from getId() or similar) (e.g. 123)
-	 * @return a full URL to the entity (e.g. http://sakai.server:8080/access/eval-evaluation/123/)
-	 */
-	public String getEntityURL(String entityPrefix, String entityId);
+   /**
+    * Get a full URL to a specific entity inside our system using just the class type and id,
+    * if this entity has no direct URL then just provide a URL to the sakai server
+    * 
+    * @param entityPrefix an ENTITY_PREFIX constant from an entity provider
+    * @param entityId the unique id of this entity (from getId() or similar) (e.g. 123)
+    * @return a full URL to the entity (e.g. http://sakai.server:8080/access/eval-evaluation/123/)
+    */
+   public String getEntityURL(String entityPrefix, String entityId);
 
-	/**
-	 * Creates a Sakai entity event for any internal entity which is registered with Sakai,
-	 * does notthing if the passed in entity type is not registered
-	 * 
-	 * @param eventName any string representing an event name (e.g. evaluation.created)
-	 * @param evaluationEntity any entity inside the evaluation tool (e.g. {@link EvalEvaluation})
-	 */
-	public void registerEntityEvent(String eventName, Serializable evaluationEntity);
+   /**
+    * Creates a Sakai entity event for any internal entity which is registered with Sakai,
+    * does notthing if the passed in entity type is not registered
+    * 
+    * @param eventName any string representing an event name (e.g. evaluation.created)
+    * @param evaluationEntity any entity inside the evaluation tool (e.g. {@link EvalEvaluation})
+    */
+   public void registerEntityEvent(String eventName, Serializable evaluationEntity);
 
-	
-	// SERVER
 
-	/**
-	 * String type: gets the printable name of this server 
-	 */
-	public static String SETTING_SERVER_NAME = "server.name";
+   // SERVER
+
+   /**
+    * String type: gets the printable name of this server 
+    */
+   public static String SETTING_SERVER_NAME = "server.name";
    /**
     * String type: gets the unique id of this server (safe for clustering if used)
     */
@@ -148,14 +149,14 @@ public interface EvalExternalLogic extends ExternalUsers, ExternalEvalGroups {
     */
    public static String SETTING_EVAL_QUARTZ_IMPORT = "eval.qrtzImport";
 
-	/**
-	 * @param settingName the name of the setting to retrieve,
-	 * Can be a string name: e.g. auto.dll, etc. or one of the special SETTING_* constants in this file
-	 * 
-	 * @param defaultValue a specified default value to return if this setting cannot be found,
+   /**
+    * @param settingName the name of the setting to retrieve,
+    * Can be a string name: e.g. auto.dll, etc. or one of the special SETTING_* constants in this file
+    * 
+    * @param defaultValue a specified default value to return if this setting cannot be found,
     * <b>NOTE:</b> You can set the default value to null but you must specify the class in parens
-	 * @return the value of the configuration setting or the default value if none can be found
-	 */
-	public <T> T getConfigurationSetting(String settingName, T defaultValue);
+    * @return the value of the configuration setting or the default value if none can be found
+    */
+   public <T> T getConfigurationSetting(String settingName, T defaultValue);
 
 }
