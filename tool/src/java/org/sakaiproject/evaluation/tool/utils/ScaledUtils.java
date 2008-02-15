@@ -93,8 +93,7 @@ public class ScaledUtils {
 	 */
 	public static String[] getScaleLabels(List<EvalScale> scales) {
 		List<String> scaleLabels = new ArrayList<String>();
-		for (int i = 0; i < scales.size(); i++) {
-			EvalScale scale = scales.get(i);
+		for (EvalScale scale : scales) {
 			String scaleOptionsStr = "";
 			String[] scaleOptionsArr = scale.getOptions();
 			for (int j = 0; j < scaleOptionsArr.length; j++) {
@@ -106,7 +105,7 @@ public class ScaledUtils {
 			}
 			scaleLabels.add(scaleOptionsArr.length + " pt - " + scale.getTitle() + " (" + scaleOptionsStr + ")");
 		}
-		return (String[]) scaleLabels.toArray(new String[] {});
+		return (String[]) scaleLabels.toArray(new String[scaleLabels.size()]);
 	}
 
 	/**
