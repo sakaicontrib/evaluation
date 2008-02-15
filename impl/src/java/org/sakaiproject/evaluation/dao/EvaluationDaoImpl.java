@@ -796,7 +796,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
     * @see org.sakaiproject.evaluation.dao.EvaluationDao#lockAndExecuteRunnable(java.lang.String, java.lang.String, java.lang.Runnable)
     */
    @SuppressWarnings("unchecked")
-   public boolean lockAndExecuteRunnable(String executerId, String lockId, Runnable toExecute) {
+   public Boolean lockAndExecuteRunnable(String lockId, String executerId, Runnable toExecute) {
       if (executerId == null || 
             "".equals(executerId)) {
          throw new IllegalArgumentException("The executer Id must be set");
@@ -810,13 +810,8 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       }
 
       // basically we are opening a transaction to get the current lock and set it if it is not there
-      boolean loadingData = false;
+      Boolean loadingData = false;
       try {
-         // complete the running transaction if there is one
-         if (getSession().getTransaction().isActive()) {
-            getSession().getTransaction().commit();
-         }
-
          // check the lock
          List<EvalLock> locks = findByProperties(EvalLock.class, 
                new String[] {"name"},
@@ -831,18 +826,14 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
             }
          } else {
             // obtain the lock
-            getSession().beginTransaction();
             EvalLock lock = new EvalLock(lockId, executerId);
-            getSession().save(lock);
-            getSession().getTransaction().commit();
+            getHibernateTemplate().save(lock);
+            getHibernateTemplate().flush(); // this should commit the data immediately
             loadingData = true;
          }
          locks.clear(); // clear the locks list
 
          if (loadingData) {
-            // now we begin a NEW transaction to run the preloader in
-            getSession().beginTransaction();
-
             // execute the runnable method
             toExecute.run();
 
@@ -852,23 +843,22 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
                   new Object[] {lockId});
             getHibernateTemplate().deleteAll(locks);
             // commit preload and lock removal
-            getSession().getTransaction().commit();
+            getHibernateTemplate().flush();
          }
       } catch (RuntimeException e) {
-         getSession().getTransaction().rollback();
-         loadingData = false;
-         // try to clear the lock just in case things died
+         getHibernateTemplate().clear(); // cancel any pending operations
+         loadingData = null; // null indicates the failure
+         // try to clear the lock if things died
          try {
-            getSession().beginTransaction();
             List<EvalLock> locks = findByProperties(EvalLock.class, 
                   new String[] {"name"},
                   new Object[] {lockId});
             getHibernateTemplate().deleteAll(locks);
-            getSession().getTransaction().commit();
+            getHibernateTemplate().flush();
          } catch (Exception ex) {
             log.error("Could not cleanup the lock ("+lockId+") after failure: " + ex.getMessage(), ex);
          }
-         throw new RuntimeException("Lock and execute failure for lock ("+lockId+"): " + e.getMessage(), e);
+         log.fatal("Lock and execute failure for lock ("+lockId+"): " + e.getMessage(), e);
       }
 
       return loadingData;

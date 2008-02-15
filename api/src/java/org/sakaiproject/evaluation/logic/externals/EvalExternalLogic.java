@@ -143,7 +143,7 @@ ExternalContent {
     * Boolean type: if true then there will be data preloads and DDL creation,
     * if false then data preloads are disabled (and will cause exceptions if preload data is missing)
     */
-   public static String SETTING_AUTO_DLL = "auto.dll";
+   public static String SETTING_AUTO_DDL = "auto.ddl";
    /**
     * Boolean type: if true then quartz imports are enabled, false (default) is disabled
     */
@@ -151,7 +151,7 @@ ExternalContent {
 
    /**
     * @param settingName the name of the setting to retrieve,
-    * Can be a string name: e.g. auto.dll, etc. or one of the special SETTING_* constants in this file
+    * Can be a string name: e.g. auto.ddl, etc. or one of the special SETTING_* constants in this file
     * 
     * @param defaultValue a specified default value to return if this setting cannot be found,
     * <b>NOTE:</b> You can set the default value to null but you must specify the class in parens
