@@ -51,47 +51,38 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
       DynamicNavigationCaseReporter {
 
    public static final String VIEW_ID = "modify_block";
-
    public String getViewID() {
       return VIEW_ID;
    }
 
    private EvalExternalLogic external;
-
    public void setExternal(EvalExternalLogic external) {
       this.external = external;
    }
 
    private EvalAuthoringService authoringService;
-
    public void setAuthoringService(EvalAuthoringService authoringService) {
       this.authoringService = authoringService;
    }
 
    private EvalSettings settings;
-
    public void setSettings(EvalSettings settings) {
       this.settings = settings;
    }
 
    private TextInputEvolver richTextEvolver;
-
    public void setRichTextEvolver(TextInputEvolver richTextEvolver) {
       this.richTextEvolver = richTextEvolver;
    }
 
    private HierarchyNodeSelectorRenderer hierarchyNodeSelectorRenderer;
-
    public void setHierarchyNodeSelectorRenderer(
          HierarchyNodeSelectorRenderer hierarchyNodeSelectorRenderer) {
       this.hierarchyNodeSelectorRenderer = hierarchyNodeSelectorRenderer;
    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer,
-    *      uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
+   /* (non-Javadoc)
+    * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
     */
    public void fillComponents(UIContainer tofill, ViewParameters viewparams,
          ComponentChecker checker) {
@@ -413,12 +404,6 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
    private void categorySettings(Boolean isDefaultCourse, String itemPath, UIForm form) {
       if (isDefaultCourse == null) {
          UIBranchContainer showItemCategory = UIBranchContainer.make(form, "showItemCategory:"); //$NON-NLS-1$
-         UIMessage
-               .make(showItemCategory, "item-category-header", "modifyitem.item.category.header"); //$NON-NLS-1$ //$NON-NLS-2$
-         UIMessage.make(showItemCategory,
-               "course-category-header", "modifyitem.course.category.header"); //$NON-NLS-1$ //$NON-NLS-2$
-         UIMessage.make(showItemCategory,
-               "instructor-category-header", "modifyitem.instructor.category.header"); //$NON-NLS-1$ //$NON-NLS-2$
          // Radio Buttons for "Item Category"
          String[] courseCategoryList = { "modifyitem.course.category.header",
                "modifyitem.instructor.category.header" };
