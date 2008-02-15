@@ -272,23 +272,17 @@ public class AdministrateProducer implements ViewComponentProducer {
             EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY, true);
       UIMessage.make(form, "general-template-sharing-note","administrate.general.template.sharing.note");		
 
-      //Select for whether question category would be course or instructor
-      makeSelect(form, "general-default-question", 
-            administrateConfigurableValues, 
-            administrateConfigurableLabels, 
-            EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY, true);
-      UIMessage.make(form, "general-default-question-category", "administrate.general.default.question.category.note");	
+      makeBoolean(form, "general-default-question-category",  EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
 
       makeBoolean(form, "general-use-date-time",  EvalSettings.EVAL_USE_DATE_TIME);
-
       makeBoolean(form, "general-use-stop-date", EvalSettings.EVAL_USE_STOP_DATE); 
       makeBoolean(form, "general-use-view-date", EvalSettings.EVAL_USE_VIEW_DATE); 
+      makeBoolean(form, "general-same-view-date",  EvalSettings.EVAL_USE_SAME_VIEW_DATES);
 
       makeBoolean(form, "general-expert-templates", EvalSettings.USE_EXPERT_TEMPLATES);
       makeBoolean(form, "general-expert-questions", EvalSettings.USE_EXPERT_ITEMS);	
 
-      makeBoolean(form, "general-same-view-date",  EvalSettings.EVAL_USE_SAME_VIEW_DATES);
-      makeBoolean(form, "general-require-comments-block",  EvalSettings.REQUIRE_COMMENTS_BLOCK);
+//      makeBoolean(form, "general-require-comments-block",  EvalSettings.REQUIRE_COMMENTS_BLOCK);
 
       makeBoolean(form, "general-item-results-sharing-block",  EvalSettings.ITEM_USE_RESULTS_SHARING);
 
