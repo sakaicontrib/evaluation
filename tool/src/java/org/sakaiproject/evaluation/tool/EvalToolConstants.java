@@ -27,6 +27,11 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
 public class EvalToolConstants {
 
    /**
+    * This is the key which represents an unknown item
+    */
+   public static String UNKNOWN_KEY = "unknown.caps";
+
+   /**
     * The values for all sharing menus
     */
    public static String[] SHARING_VALUES = new String[] {

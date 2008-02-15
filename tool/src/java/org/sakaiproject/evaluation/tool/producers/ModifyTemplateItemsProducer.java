@@ -25,6 +25,7 @@ import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
+import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.LocalTemplateLogic;
 import org.sakaiproject.evaluation.tool.renderers.AddItemControlRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.BlockIdsParameters;
@@ -235,11 +236,18 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
                // tooltip
                blockCB.decorators.add( new UITooltipDecorator( UIMessage.make("modifytemplate.item.checkbox.title") ) );
                UIMessage.make(itemBranch, "check-input-label", "modifytemplate.check.label.title");
-            }
-            else {
+            } else {
                UIMessage.make(itemBranch, "check-placeholder", "modifytemplate.check.placeholder");
-            }	
-            UIOutput.make(itemBranch, "item-classification", templateItem.getItem().getClassification());
+            }
+            
+            String itemLabelKey = EvalToolConstants.UNKNOWN_KEY;
+            for (int j = 0; j < EvalToolConstants.ITEM_CLASSIFICATION_VALUES.length; j++) {
+               if (templateItem.getItem().getClassification().equals(EvalToolConstants.ITEM_CLASSIFICATION_VALUES[j])) {
+                  itemLabelKey = EvalToolConstants.ITEM_CLASSIFICATION_LABELS_PROPS[j];
+                  break;
+               }
+            }
+            UIMessage.make(itemBranch, "item-classification", itemLabelKey);
 
             if (templateItem.getScaleDisplaySetting() != null) {
                String scaleDisplaySettingLabel = " - " + templateItem.getScaleDisplaySetting();

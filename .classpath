@@ -5,6 +5,7 @@
 	<classpathentry kind="src" path="pack/src/webapp/WEB-INF"/>
 	<classpathentry kind="src" path="impl/src/java"/>
 	<classpathentry kind="src" path="impl/src/test"/>
+	<classpathentry kind="src" path="tool/src/java"/>
 	<classpathentry kind="src" path="tool/src/webapp"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="MAVEN_REPO/commons-logging/jars/commons-logging-1.0.4.jar"/>
@@ -28,7 +29,6 @@
 	<classpathentry kind="var" path="MAVEN_REPO/ehcache/jars/ehcache-1.1.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/easymock/jars/easymock-1.2_Java1.3.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/opencsv/jars/opencsv-1.7.jar"/>
-	<classpathentry kind="src" path="tool/src/java"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/authz-api"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/entity-api"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/db-impl"/>
