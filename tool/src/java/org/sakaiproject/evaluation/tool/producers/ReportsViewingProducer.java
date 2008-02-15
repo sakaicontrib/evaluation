@@ -195,7 +195,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
                for (int i = 0; i < answerableItemsList.size(); i++) {
                   EvalTemplateItem templateItem = answerableItemsList.get(i);
 
-                  if (EvalConstants.ITEM_CATEGORY_COURSE.equals(templateItem.getItemCategory())) {
+                  if (EvalConstants.ITEM_CATEGORY_COURSE.equals(templateItem.getCategory())) {
                      UIBranchContainer branch = UIBranchContainer.make(courseSection, "itemrow:first", i + "");
                      if (i % 2 == 1)
                         branch.decorators = new DecoratorList( new UIStyleDecorator("") ); // must match the existing CSS class
@@ -212,7 +212,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
                for (int i = 0; i < answerableItemsList.size(); i++) {
                   EvalTemplateItem templateItem = answerableItemsList.get(i);
 
-                  if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(templateItem.getItemCategory())) {
+                  if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(templateItem.getCategory())) {
                      UIBranchContainer branch = UIBranchContainer.make(instructorSection, "itemrow:first", i + "");
                      if (i % 2 == 1)
                         branch.decorators = new DecoratorList( new UIStyleDecorator("") ); // must match the existing CSS class

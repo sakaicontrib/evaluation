@@ -213,7 +213,7 @@ public class TemplateBBean {
             parent.getItem().setClassification(EvalConstants.ITEM_TYPE_BLOCK_PARENT);
             parent.getItem().setSharing(parent.getTemplate().getSharing());
             parent.getItem().setUsesNA(parent.getUsesNA());
-            parent.getItem().setCategory(parent.getItemCategory());
+            parent.getItem().setCategory(parent.getCategory());
             setIdealColorForBlockParent(parent);
 
             localTemplateLogic.saveItem(parent.getItem());

@@ -168,7 +168,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
                 for (int i = 0; i < ncItemsList.size(); i++) {	
                     EvalTemplateItem templateItem = (EvalTemplateItem) ncItemsList.get(i);
 
-                    String cat = templateItem.getItemCategory();
+                    String cat = templateItem.getCategory();
                     if (cat == null) {
                         throw new IllegalStateException("Template item with null category found: " + templateItem.getId() );
                     } else if (EvalConstants.ITEM_CATEGORY_COURSE.equals(cat)) {
@@ -187,7 +187,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
                 for (int i = 0; i < ncItemsList.size(); i++) {	
                     EvalTemplateItem templateItem = (EvalTemplateItem) ncItemsList.get(i);
 
-                    String cat = templateItem.getItemCategory();
+                    String cat = templateItem.getCategory();
                     if (cat == null) {
                         throw new IllegalStateException("Template item with null category found: " + templateItem.getId() );
                     } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(cat)) {

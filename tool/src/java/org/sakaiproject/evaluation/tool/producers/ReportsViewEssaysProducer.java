@@ -117,7 +117,7 @@ public class ReportsViewEssaysProducer implements ViewComponentProducer, Navigat
             EvalTemplateItem myTempItem = authoringService.getTemplateItemById(ervps.itemId);
             EvalItem myItem = myTempItem.getItem();
 
-            String cat = myTempItem.getItemCategory();
+            String cat = myTempItem.getCategory();
 
             UIBranchContainer radiobranch = null;
             UIBranchContainer courseSection = null;
@@ -163,7 +163,7 @@ public class ReportsViewEssaysProducer implements ViewComponentProducer, Navigat
                for (int i = 0; i < ncItemsList.size(); i++) {
                   EvalTemplateItem tempItem1 = (EvalTemplateItem) ncItemsList.get(i);
                   EvalItem item1 = tempItem1.getItem();
-                  String cat = tempItem1.getItemCategory();
+                  String cat = tempItem1.getCategory();
 
                   UIBranchContainer radiobranch = null;
                   if (cat != null && cat.equals(EvalConstants.ITEM_CATEGORY_COURSE)

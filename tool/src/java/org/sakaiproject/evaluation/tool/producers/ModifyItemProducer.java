@@ -276,7 +276,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 
 		if (EvalConstants.ITEM_TYPE_SCALED.equals(itemClassification)) {
          UIBranchContainer showItemScale = UIBranchContainer.make(form, "show-item-scale:");
-		   if (itemLocked) {
+		   if (! itemLocked) {
    		   // SCALED items need to choose a scale
    			List<EvalScale> scales = authoringService.getScalesForUser(currentUserId, null);
    			if (scales.isEmpty()) {

@@ -1223,11 +1223,11 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
             EvalTestDataLoad.ADMIN_USER_ID);
       // make sure the values are filled in for us
       assertNotNull( eiTest2.getLastModified() );
-      assertNotNull( eiTest2.getItemCategory() );
+      assertNotNull( eiTest2.getCategory() );
       assertNotNull( eiTest2.getScaleDisplaySetting() );
       assertNotNull( eiTest2.getUsesNA() );
       // make sure filled in values match the ones set in the item
-      assertTrue( eiTest2.getItemCategory().equals(etdl.item4.getCategory()) );
+      assertTrue( eiTest2.getCategory().equals(etdl.item4.getCategory()) );
       assertTrue( eiTest2.getScaleDisplaySetting().equals(etdl.item4.getScaleDisplaySetting()) );
       // not checking is UsesNA is equal because it is null in the item
 
@@ -1324,10 +1324,10 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
             etdl.templateItem1P.getId()); // MAINT, uneditable
 
       // test editing templateItem not in LOCKED templateItem
-      testTemplateItem1.setItemCategory( EvalConstants.ITEM_CATEGORY_INSTRUCTOR );
+      testTemplateItem1.setCategory( EvalConstants.ITEM_CATEGORY_INSTRUCTOR );
       authoringService.saveTemplateItem( testTemplateItem1, EvalTestDataLoad.ADMIN_USER_ID );
 
-      testTemplateItem2.setItemCategory( EvalConstants.ITEM_CATEGORY_INSTRUCTOR );
+      testTemplateItem2.setCategory( EvalConstants.ITEM_CATEGORY_INSTRUCTOR );
       authoringService.saveTemplateItem( testTemplateItem2, EvalTestDataLoad.MAINT_USER_ID );
 
       // TODO - CANNOT RUN THIS TEST FOR NOW BECAUSE OF HIBERNATE
@@ -1352,7 +1352,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
 
       // test editing templateItem in LOCKED template fails
       try {
-         testTemplateItem3.setItemCategory( EvalConstants.ITEM_CATEGORY_INSTRUCTOR );
+         testTemplateItem3.setCategory( EvalConstants.ITEM_CATEGORY_INSTRUCTOR );
          authoringService.saveTemplateItem( testTemplateItem3, EvalTestDataLoad.ADMIN_USER_ID );
          fail("Should have thrown exception");
       } catch (IllegalStateException e) {
@@ -1360,7 +1360,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       }
 
       try {
-         testTemplateItem4.setItemCategory( EvalConstants.ITEM_CATEGORY_INSTRUCTOR );
+         testTemplateItem4.setCategory( EvalConstants.ITEM_CATEGORY_INSTRUCTOR );
          authoringService.saveTemplateItem( testTemplateItem4, EvalTestDataLoad.MAINT_USER_ID );
          fail("Should have thrown exception");
       } catch (IllegalStateException e) {
@@ -1368,12 +1368,12 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       }
 
       // test admin can edit any templateItem
-      testTemplateItem2.setItemCategory( EvalConstants.ITEM_CATEGORY_ENVIRONMENT );
+      testTemplateItem2.setCategory( EvalConstants.ITEM_CATEGORY_ENVIRONMENT );
       authoringService.saveTemplateItem( testTemplateItem2, EvalTestDataLoad.ADMIN_USER_ID );
 
       // test that editing unowned templateItem causes permission failure
       try {
-         testTemplateItem2.setItemCategory( EvalConstants.ITEM_CATEGORY_COURSE );
+         testTemplateItem2.setCategory( EvalConstants.ITEM_CATEGORY_COURSE );
          authoringService.saveTemplateItem( testTemplateItem2, EvalTestDataLoad.USER_ID );
          fail("Should have thrown exception");
       } catch (SecurityException e) {
@@ -1382,7 +1382,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
 
       // test that editing unowned templateItem causes permission failure
       try {
-         testTemplateItem1.setItemCategory( EvalConstants.ITEM_CATEGORY_COURSE );
+         testTemplateItem1.setCategory( EvalConstants.ITEM_CATEGORY_COURSE );
          authoringService.saveTemplateItem( testTemplateItem1, EvalTestDataLoad.MAINT_USER_ID );
          fail("Should have thrown exception");
       } catch (SecurityException e) {

@@ -433,21 +433,21 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
             answer.setItem(answer.getTemplateItem().getItem());
 
             // check that the associated id is filled in for associated items
-            if (EvalConstants.ITEM_CATEGORY_COURSE.equals(answer.getTemplateItem().getItemCategory())) {
+            if (EvalConstants.ITEM_CATEGORY_COURSE.equals(answer.getTemplateItem().getCategory())) {
                if (answer.getAssociatedId() != null) {
                   log.warn("Course answers should have the associated id field blank, for templateItem: "
                         + answer.getTemplateItem().getId());
                }
                answer.setAssociatedId(null);
                answer.setAssociatedType(null);
-            } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(answer.getTemplateItem().getItemCategory())) {
+            } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(answer.getTemplateItem().getCategory())) {
                if (answer.getAssociatedId() == null) {
                   throw new IllegalArgumentException(
                         "Instructor answers must have the associated field filled in with the instructor userId, for templateItem: "
                         + answer.getTemplateItem().getId());
                }
                answer.setAssociatedType(EvalConstants.ITEM_CATEGORY_INSTRUCTOR);
-            } else if (EvalConstants.ITEM_CATEGORY_ENVIRONMENT.equals(answer.getTemplateItem().getItemCategory())) {
+            } else if (EvalConstants.ITEM_CATEGORY_ENVIRONMENT.equals(answer.getTemplateItem().getCategory())) {
                if (answer.getAssociatedId() == null) {
                   throw new IllegalArgumentException(
                         "Environment answers must have the associated field filled in with the unique environment id, for templateItem: "
@@ -456,7 +456,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                answer.setAssociatedType(EvalConstants.ITEM_CATEGORY_ENVIRONMENT);
             } else {
                throw new IllegalArgumentException("Do not know how to handle a templateItem category of ("
-                     + answer.getTemplateItem().getItemCategory() + ") for templateItem: "
+                     + answer.getTemplateItem().getCategory() + ") for templateItem: "
                      + answer.getTemplateItem().getId());
             }
 

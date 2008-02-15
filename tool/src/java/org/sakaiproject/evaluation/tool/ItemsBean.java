@@ -169,7 +169,7 @@ public class ItemsBean {
         templateItem.getItem().setUsesNA(templateItem.getUsesNA());
         templateItem.setTemplate(authoringService.getTemplateById(templateId));
         templateItem.getItem().setSharing(templateItem.getTemplate().getSharing());
-        templateItem.getItem().setCategory(templateItem.getItemCategory());
+        templateItem.getItem().setCategory(templateItem.getCategory());
         if (scaleId != null)
             templateItem.getItem().setScale(authoringService.getScaleById(scaleId));
         /* This is a temporary hack that is only good while we are only using TOP LEVEL and NODE LEVEL.

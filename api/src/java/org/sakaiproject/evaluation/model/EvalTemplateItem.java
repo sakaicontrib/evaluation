@@ -25,7 +25,7 @@ public class EvalTemplateItem implements java.io.Serializable {
 
 	private Integer displayOrder;
 
-	private String itemCategory;
+	private String category;
 
 	private String hierarchyLevel;
 
@@ -51,20 +51,20 @@ public class EvalTemplateItem implements java.io.Serializable {
 	}
 
 	/** minimal constructor */
-	public EvalTemplateItem(Date lastModified, String owner, EvalTemplate template, EvalItem item, Integer displayOrder, String itemCategory,
+	public EvalTemplateItem(Date lastModified, String owner, EvalTemplate template, EvalItem item, Integer displayOrder, String category,
 			String hierarchyLevel, String hierarchyNodeId) {
 		this.lastModified = lastModified;
 		this.owner = owner;
 		this.template = template;
 		this.item = item;
 		this.displayOrder = displayOrder;
-		this.itemCategory = itemCategory;
+		this.category = category;
 		this.hierarchyLevel = hierarchyLevel;
 		this.hierarchyNodeId = hierarchyNodeId;
 	}
 
 	/** full constructor */
-	public EvalTemplateItem(Date lastModified, String owner, EvalTemplate template, EvalItem item, Integer displayOrder, String itemCategory,
+	public EvalTemplateItem(Date lastModified, String owner, EvalTemplate template, EvalItem item, Integer displayOrder, String category,
 			String hierarchyLevel, String hierarchyNodeId, Integer displayRows, String scaleDisplaySetting, Boolean usesNA, 
             Boolean blockParent, Long blockId, String resultsSharing) {
 		this.lastModified = lastModified;
@@ -72,7 +72,7 @@ public class EvalTemplateItem implements java.io.Serializable {
 		this.template = template;
 		this.item = item;
 		this.displayOrder = displayOrder;
-		this.itemCategory = itemCategory;
+		this.category = category;
 		this.hierarchyLevel = hierarchyLevel;
 		this.hierarchyNodeId = hierarchyNodeId;
 		this.displayRows = displayRows;
@@ -140,12 +140,12 @@ public class EvalTemplateItem implements java.io.Serializable {
 		this.displayOrder = displayOrder;
 	}
 
-	public String getItemCategory() {
-		return this.itemCategory;
+	public String getCategory() {
+		return this.category;
 	}
 
-	public void setItemCategory(String itemCategory) {
-		this.itemCategory = itemCategory;
+	public void setCategory(String category) {
+		this.category = category;
 	}
 
 	public String getHierarchyLevel() {
