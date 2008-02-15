@@ -130,13 +130,13 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
       String commonDisplayOTP = null; // this will bind to either the item or the template item depending on which should save the common display information
 		String itemOwnerName = null; // this is the name of the owner of the item
 
-		EvalScale currentScale = null; // this is the current scale
+      EvalScale currentScale = null; // this is the current scale (if there is one)
 
-		/* these keep track of whether items and scales are locked, we are not tracking TIs because 
+		/* these keep track of whether items are locked, we are not tracking TIs because 
 		 * the user should not be able to get here if the template is locked, if they did then 
-		 * they cheated so they can get an exception
+		 * they cheated so they can get an exception, we don't track scales since if the item
+		 * is locked then the scale it also so neither one will be saved
 		 */
-		boolean scaleLocked = false;
 		boolean itemLocked = false;
 
 		String scaleDisplaySetting = null; // the scale display setting for the item/TI
@@ -185,7 +185,6 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
          if (item.getScale() != null) {
             currentScale = item.getScale();
             scaleId = currentScale.getId();
-            scaleLocked = currentScale.getLocked();
          }
 
          itemOwnerName = external.getUserDisplayName(item.getOwner());
@@ -206,7 +205,6 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
          if (templateItem.getItem().getScale() != null) {
             currentScale = templateItem.getItem().getScale();
             scaleId = currentScale.getId();
-            scaleLocked = currentScale.getLocked();
          }
 
          itemOwnerName = external.getUserDisplayName(templateItem.getItem().getOwner());
@@ -217,7 +215,6 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 		}
 
 		// now we begin with the rendering logic
-      UIMessage.make(tofill, "page-title", "modifyitem.page.title");
 
       // display the breadcrumb bar
       if (templateId == null) {
@@ -243,7 +240,14 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 		UIMessage.make(tofill, "item-header", "modifyitem.item.header");
 
 		// display item information
-		UIOutput.make(tofill, "item-classification", itemClassification, itemOTP + "classification");
+		String itemLabelKey = EvalToolConstants.UNKNOWN_KEY;
+		for (int i = 0; i < EvalToolConstants.ITEM_CLASSIFICATION_VALUES.length; i++) {
+         if (itemClassification.equals(EvalToolConstants.ITEM_CLASSIFICATION_VALUES[i])) {
+            itemLabelKey = EvalToolConstants.ITEM_CLASSIFICATION_LABELS_PROPS[i];
+            break;
+         }
+      }
+      UIMessage.make(tofill, "item-classification", itemLabelKey);
 		UIMessage.make(tofill, "added-by-item-owner", "modifyitem.item.added.by.owner", new Object[] {itemOwnerName});
 
 		// show links if this item/templateItem exists
@@ -382,7 +386,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 			UISelect radios = UISelect.make(showItemCategory, "item-category-list", 
 					EvalToolConstants.ITEM_CATEGORY_VALUES, 
 					EvalToolConstants.ITEM_CATEGORY_LABELS_PROPS,
-					itemOTP + "category").setMessageKeys();
+					commonDisplayOTP + "category").setMessageKeys();
 			for (int i = 0; i < EvalToolConstants.ITEM_CATEGORY_VALUES.length; i++) {
 				UIBranchContainer radioBranch = UIBranchContainer.make(showItemCategory, "item-category-branch:", i+"");
 				UISelectLabel.make(radioBranch, "item-category-label", radios.getFullID(), i);
@@ -392,7 +396,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
          // Course category if default, instructor otherwise
          // Do not show on the page, just bind it explicitly.
          form.parameters.add(
-               new UIELBinding(itemOTP + "category",
+               new UIELBinding(commonDisplayOTP + "category",
                      EvalToolConstants.ITEM_CATEGORY_VALUES[isDefaultCourse.booleanValue() ? 0 : 1]));
 		}
 
