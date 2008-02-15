@@ -151,12 +151,11 @@
 			<select rsf:id="general-template-sharing">
 			</select>
 		</p>
-		<p class=	"longtext indnt1">
-			<label class="block"  rsf:id="general-default-question-category" for="general-default-question">All questions default to course category only
-			(instructor category not allowed)</label>
-			<select rsf:id="general-default-question">
-            </select>
-		</p>
+        <p class=   "checkbox indnt1">
+            <input type="checkbox" rsf:id="general-default-question-category" />
+            <label rsf:id="msg=administrate.general.default.question.category.note" for="general-default-question-category">All questions default to course category only
+            (instructor category not allowed)</label>
+        </p>
         <p class=   "checkbox indnt1">
             <input type="checkbox" rsf:id="general-use-date-time" />
             <label rsf:id="msg=administrate.general.use.date.time.note" for="general-use-date-time">Use dates and times for evaluations (otherwise just use dates)</label>
@@ -169,6 +168,11 @@
             <input type="checkbox" rsf:id="general-use-view-date" />
             <label rsf:id="msg=administrate.general.use.view.date.note" for="general-use-view-date">Use view date for evaluations</label>
         </p>
+        <p class=   "checkbox indnt1">
+            <input type="checkbox" rsf:id="general-same-view-date" />
+            <label rsf:id="msg=administrate.general.same.view.date.note" for="general-same-view-date">Use same view date for all users<br/>
+            (or use separate dates for students, instructors, admins)</label>
+        </p>
 		<p class=	"checkbox indnt1">
 			<input type="checkbox" rsf:id="general-expert-templates" />
 			<label rsf:id="msg=administrate.general.expert.templates.note" for="general-expert-templates">Use expert created templates</label>
@@ -177,15 +181,12 @@
 			<input type="checkbox" rsf:id="general-expert-questions" />
 			<label rsf:id="msg=administrate.general.expert.questions.note" for="general-expert-questions">Use expert created questions</label>
 		</p>
-		<p class=	"checkbox indnt1">
-			<input type="checkbox" rsf:id="general-same-view-date" />
-			<label rsf:id="msg=administrate.general.same.view.date.note" for="general-same-view-date">Use same view date for all users<br/>
-			(or use separate dates for students, instructors, admins)</label>
-		</p>
+<!-- 
 		<p class=	"checkbox indnt1">
 			<input type="checkbox" rsf:id="general-require-comments-block" />
 			<label rsf:id="msg=administrate.general.require.comments.block.note" for="general-require-comments-block">Require a comments block to be included in every evaluation</label>
 		</p>
+-->
 		<p class=	"checkbox indnt1">
 			<input type="checkbox" rsf:id="general-item-results-sharing-block" />
 			<label rsf:id="msg=administrate.general.item.sharing.block.note" for="general-item-results-sharing-block">Allow results of evaluations to be shared</label>
