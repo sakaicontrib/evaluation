@@ -17,7 +17,7 @@
 	<classpathentry kind="var" path="MAVEN_REPO/j-servletutil/jars/j-servletutil-1.2.2.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/rsfutil/jars/rsfutil-0.7.2.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/sakairsf/jars/sakairsf-0.7.2-sakai_2.2.x.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/generic-dao/jars/generic-dao-0.91.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/generic-dao/jars/generic-dao-0.9.1.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/junit/jars/junit-3.8.1.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/org.springframework/jars/spring-mock-1.2.6.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/hsqldb/jars/hsqldb-1.8.0.5.jar"/>
