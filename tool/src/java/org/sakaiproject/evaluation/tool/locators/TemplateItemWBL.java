@@ -130,7 +130,7 @@ public class TemplateItemWBL implements WriteableBeanLocator {
       templateItem.getItem().setUsesNA(templateItem.getUsesNA());
       templateItem.getItem().setDisplayRows(templateItem.getDisplayRows());
       if (templateItem.getTemplate() != null) {
-         templateItem.getItem().setCategory(templateItem.getItemCategory());
+         templateItem.getItem().setCategory(templateItem.getCategory());
       } else {
          // defaults if template is not connected yet
          templateItem.getItem().setCategory(EvalConstants.ITEM_CATEGORY_COURSE);

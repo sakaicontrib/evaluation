@@ -34,7 +34,7 @@
             <column name="DISPLAY_ORDER" not-null="true" />
         </property>
         <!-- used to determine the type of item (course, instructor, etc.) -->
-        <property name="itemCategory" type="java.lang.String">
+        <property name="category" type="java.lang.String">
             <column name="ITEM_CATEGORY" length="255" not-null="true" />
         </property>
         <!-- the hierarchy level of this template item (e.g. instructor, course, college, ...),

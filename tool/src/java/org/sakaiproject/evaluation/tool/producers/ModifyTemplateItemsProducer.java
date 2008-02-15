@@ -296,11 +296,11 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
             UIVerbatim.make(itemBranch, "item-text", templateItem.getItem().getItemText());
 
             String categoryMessage = "unknown.caps";
-            if ( EvalConstants.ITEM_CATEGORY_COURSE.equals(templateItem.getItemCategory()) ) {
+            if ( EvalConstants.ITEM_CATEGORY_COURSE.equals(templateItem.getCategory()) ) {
                categoryMessage = "modifyitem.course.category";
-            } else if ( EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(templateItem.getItemCategory()) ) {
+            } else if ( EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(templateItem.getCategory()) ) {
                categoryMessage = "modifyitem.instructor.category";
-            } else if ( EvalConstants.ITEM_CATEGORY_ENVIRONMENT.equals(templateItem.getItemCategory()) ) {
+            } else if ( EvalConstants.ITEM_CATEGORY_ENVIRONMENT.equals(templateItem.getCategory()) ) {
                categoryMessage = "modifyitem.environment.category";
             }
             UIMessage.make(itemBranch, "item-category", categoryMessage);

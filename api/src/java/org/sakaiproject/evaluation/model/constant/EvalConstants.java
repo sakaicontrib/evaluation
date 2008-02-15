@@ -230,13 +230,13 @@ public class EvalConstants {
 
 
    /**
-    * Item category (itemCategory) setting:
+    * Item category (category) setting:
     * This item is in the course category and will be listed like 
     * normal when the evaluation is rendered for the takers
     */
    public static final String ITEM_CATEGORY_COURSE = "Course";
    /**
-    * Item category (itemCategory) setting:
+    * Item category (category) setting:
     * This item is in the instructor category and will be repeated
     * for each user who can be evaluated in the evaluation group when the 
     * evaluation is rendered for the takers, the user id of the instructor
@@ -244,7 +244,7 @@ public class EvalConstants {
     */
    public static final String ITEM_CATEGORY_INSTRUCTOR = "Instructor";
    /**
-    * Item category (itemCategory) setting:
+    * Item category (category) setting:
     * This item is in the environment category and will be repeated
     * for each environemnt setup for the evaluation group when the 
     * evaluation is rendered for the takers, a unique id for that

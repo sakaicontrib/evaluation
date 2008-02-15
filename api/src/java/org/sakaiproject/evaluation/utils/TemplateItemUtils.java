@@ -71,7 +71,7 @@ public class TemplateItemUtils {
    public static boolean checkTemplateItemsCategoryExists(String itemTypeConstant, List<EvalTemplateItem> itemList) {
       for (int i = 0; i < itemList.size(); i++) {
          EvalTemplateItem templateItem = (EvalTemplateItem) itemList.get(i);
-         if ( itemTypeConstant.equals( templateItem.getItemCategory() ) ) {
+         if ( itemTypeConstant.equals( templateItem.getCategory() ) ) {
             return true;
          }
       }
@@ -93,7 +93,7 @@ public class TemplateItemUtils {
 
       for (int i=0; i<orderedItems.size(); i++) {
          EvalTemplateItem templateItem = (EvalTemplateItem) orderedItems.get(i);
-         if ( itemTypeConstant.equals( templateItem.getItemCategory() ) ) {
+         if ( itemTypeConstant.equals( templateItem.getCategory() ) ) {
             catItemsList.add(templateItem);
          }
       }

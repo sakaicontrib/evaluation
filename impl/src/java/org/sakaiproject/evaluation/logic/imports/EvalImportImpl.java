@@ -862,7 +862,7 @@ public class EvalImportImpl implements EvalImport {
 			evalTemplateItem.setTemplate(template);
 		
 			String itemCategory = item.getCategory();
-			evalTemplateItem.setItemCategory(itemCategory);
+			evalTemplateItem.setCategory(itemCategory);
 			
 			Integer displayRows = null;
 			String scaleDisplaySetting = null;

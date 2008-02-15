@@ -409,14 +409,14 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
                "modifyitem.instructor.category.header" };
          UISelect radios = UISelect.make(showItemCategory, "item_category",
                EvalToolConstants.ITEM_CATEGORY_VALUES, courseCategoryList, itemPath
-                     + ".itemCategory", null);
+                     + ".category", null);
 
          String selectID = radios.getFullID();
          UISelectChoice.make(showItemCategory, "item_category_C", selectID, 0); //$NON-NLS-1$
          UISelectChoice.make(showItemCategory, "item_category_I", selectID, 1); //$NON-NLS-1$
       } else {
 
-         form.parameters.add(new UIELBinding(itemPath + ".itemCategory",
+         form.parameters.add(new UIELBinding(itemPath + ".category",
                EvalToolConstants.ITEM_CATEGORY_VALUES[isDefaultCourse.booleanValue() ? 0 : 1]));
       }
    }

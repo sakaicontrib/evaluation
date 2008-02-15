@@ -691,11 +691,11 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       }
 
       // set the default values for unspecified optional values
-      if (templateItem.getItemCategory() == null) {
+      if (templateItem.getCategory() == null) {
          if (item.getCategory() == null) {
-            templateItem.setItemCategory(EvalConstants.ITEM_CATEGORY_COURSE);
+            templateItem.setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
          } else {
-            templateItem.setItemCategory(item.getCategory());
+            templateItem.setCategory(item.getCategory());
          }
       }
       if (templateItem.getResultsSharing() == null) {
