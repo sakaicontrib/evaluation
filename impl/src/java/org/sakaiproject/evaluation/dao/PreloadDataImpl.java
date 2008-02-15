@@ -53,6 +53,29 @@ public class PreloadDataImpl implements Runnable {
       preloadExpertItems();
    }
 
+   /**
+    * This checks to see if the critical preloaded data is loaded or not,
+    * this currently includes system config, email templates, and scales
+    * 
+    * @return true if all critical data is loaded, false otherwise
+    */
+   public boolean checkCriticalDataPreloaded() {
+      boolean preloaded = true;
+      if (evaluationDao.countAll(EvalConfig.class) <= 0) {
+         preloaded = false;
+      }
+
+      if (evaluationDao.countAll(EvalEmailTemplate.class) <= 0) {
+         preloaded = false;
+      }
+
+      if (evaluationDao.countAll(EvalScale.class) <= 0) {
+         preloaded = false;
+      }
+
+      return preloaded;
+   }
+
    // a few things we will need in the various other parts
    private String ADMIN_OWNER = "admin";
    private EvalScale agreeDisagree;

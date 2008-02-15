@@ -215,13 +215,16 @@ public interface EvaluationDao extends CompleteGenericDao {
     * if not, then nothing happens<br/>
     * This is primarily useful for ensuring only a single server in the cluster
     * is executing some code<br/>
-    * 
-    * @param executerId a unique id for the executer of this code (normally a serverid)
+    * <b>NOTE:</b> This intentionally returns a null on failure rather than an exception since exceptions will
+    * cause a rollback which makes the current session effectively dead, this also makes it impossible to 
+    * control the failure so instead we return null as a marker
     * @param lockId the name of the lock which we are seeking
+    * @param executerId a unique id for the executer of this code (normally a server id)
     * @param toExecute a {@link Runnable} which will have the run method executed if a lock can be obtained
-    * @return true if the code was executed, false otherwise
+    * 
+    * @return true if the code was executed, false if someone else has the lock, null if there was a failure
     */
-   public boolean lockAndExecuteRunnable(String executerId, String lockId, Runnable toExecute);
+   public Boolean lockAndExecuteRunnable(String lockId, String executerId, Runnable toExecute);
 
 
 	// LOCKING METHODS
