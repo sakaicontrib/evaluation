@@ -379,7 +379,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 		}
 
 		Boolean isDefaultCourse = (Boolean) settings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
-		if (isDefaultCourse == null) {
+		if (isDefaultCourse == null || isDefaultCourse == false) {
 			// Means show both options (course and instructor)
 			UIBranchContainer showItemCategory = UIBranchContainer.make(form, "showItemCategory:");
 			UIMessage.make(showItemCategory, "item-category-header", "modifyitem.item.category.header");
