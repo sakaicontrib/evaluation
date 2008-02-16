@@ -23,24 +23,28 @@ package org.sakaiproject.evaluation.logic;
  * STUDENT is a user with the take.evaluation permission set<br/>
  * ADMIN is a user with the administrate permission set (or Sakai super admin)<br/>
  * </p>
- * The public static final variables should be used when doing gets or sets of values (use the ones marked CONSTANT).<br/>
+ * <b>IMPORTANT NOTE FOR DEVELOPERS:</b><br/>
+ * If you add any settings to this file which are boolean or ternary you MUST add them to the
+ * list of constants ({@link #BOOLEAN_SETTINGS} or {@link #TERNARY_BOOLEAN_SETTINGS}), you should also make sure that
+ * you add the items to the preloader so the settings are preloaded correctly
+ * <br/>
+ * Usage: The public static final variables should be used when doing gets or sets of values (use the ones marked CONSTANT).<br/>
  * Example:<br/>
  * String s = (String) evalSettings.get(EvaluationSettings.FROM_EMAIL_ADDRESS);<br/>
  * <br/>
  * <b>Note:</b> Meant to be used internally in the evaluation system app only
- * (Note for developers - do not modify this without permission from the project lead)
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public interface EvalSettings {
 
    /**
-    * CONSTANT: Is the instructor allowed to create evaluationSetupService - {@link Boolean}, default True
+    * CONSTANT: Is the instructor allowed to create evaluations - {@link Boolean}, default True
     */
    public static final String INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS = "INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS:java.lang.Boolean";
    /**
-    * CONSTANT: Is the instructor allowed to view the results of evaluationSetupService - {@link Boolean}, default True
-    * <b>Note:</b> If this is FALSE/NULL then the evaluation settings overrride, otherwise this overrides the evaluation setting
+    * CONSTANT: Is the instructor allowed to view the results of evaluations - {@link Boolean}, default True
+    * <b>Note:</b> If this is NULL then the evaluation settings overrride, otherwise this overrides the evaluation setting
     */
    public static final String INSTRUCTOR_ALLOWED_VIEW_RESULTS = "INSTRUCTOR_ALLOWED_VIEW_RESULTS:java.lang.Boolean";
    /**
@@ -48,7 +52,8 @@ public interface EvalSettings {
     */
    public static final String INSTRUCTOR_ALLOWED_EMAIL_STUDENTS = "INSTRUCTOR_ALLOWED_EMAIL_STUDENTS:java.lang.Boolean";
    /**
-    * CONSTANT: Does the instructor have to use evaluationSetupService from above in the hierarchy - {@link String}, default Configurable
+    * CONSTANT: Does the instructor have to use evaluations from above in the hierarchy - {@link String}, default Configurable
+    * <b>Note:</b> If this is NULL then the evaluation settings overrride, otherwise this overrides the evaluation setting
     */
    public static final String INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE = "INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE:java.lang.String";
    /**
@@ -58,17 +63,17 @@ public interface EvalSettings {
 
    /**
     * CONSTANT: Student is allowed to leave questions unanswered (this only affects multiple choice items) - {@link Boolean}, default True
-    * <b>Note:</b> If this is FALSE/NULL then the evaluation settings overrride, otherwise this overrides the evaluation setting
+    * <b>Note:</b> If this is NULL then the evaluation settings overrride, otherwise this overrides the evaluation setting
     */
    public static final String STUDENT_ALLOWED_LEAVE_UNANSWERED = "STUDENT_ALLOWED_LEAVE_UNANSWERED:java.lang.Boolean";
    /**
     * CONSTANT: Student is allowed to modify their responses after they have submitted the evaluation but before the due date - {@link Boolean}, default False
-    * <b>Note:</b> If this is FALSE/NULL then the evaluation settings overrride, otherwise this overrides the evaluation setting
+    * <b>Note:</b> If this is NULL then the evaluation settings overrride, otherwise this overrides the evaluation setting
     */
    public static final String STUDENT_MODIFY_RESPONSES = "STUDENT_MODIFY_RESPONSES:java.lang.Boolean";
    /**
     * CONSTANT: Student is allowed to view the results of the evaluation - {@link Boolean}, default False
-    * <b>Note:</b> If this is FALSE/NULL then the evaluation settings overrride, otherwise this overrides the evaluation setting
+    * <b>Note:</b> If this is NULL then the evaluation settings overrride, otherwise this overrides the evaluation setting
     */
    public static final String STUDENT_VIEW_RESULTS = "STUDENT_VIEW_RESULTS:java.lang.Boolean";
 
@@ -94,7 +99,7 @@ public interface EvalSettings {
     */
    public static final String RESPONSES_REQUIRED_TO_VIEW_RESULTS = "RESPONSES_REQUIRED_TO_VIEW_RESULTS:java.lang.Integer";
    /**
-    * CONSTANT: Are users allowed to use Not Available in templates and evaluationSetupService - {@link Boolean}, default True
+    * CONSTANT: Are users allowed to use Not Available in templates and evaluations - {@link Boolean}, default True
     */
    public static final String NOT_AVAILABLE_ALLOWED = "NOT_AVAILABLE_ALLOWED:java.lang.Boolean";
    /**
@@ -119,8 +124,8 @@ public interface EvalSettings {
     */
    public static final String USE_EXPERT_ITEMS = "USE_EXPERT_ITEMS:java.lang.Boolean";
    /**
-    * CONSTANT: Allow item authors to select a category for items - {@link Boolean}, default True<br/>
-    * <b>Note:</b> If this is FALSE/NULL then the category is always set to course category
+    * CONSTANT: If true then all item categories default to course, 
+    * if false then allow item authors to select a category for items - {@link Boolean}, default False<br/>
     */
    public static final String ITEM_USE_COURSE_CATEGORY_ONLY = "ITEM_USE_COURSE_CATEGORY_ONLY:java.lang.Boolean";
 
@@ -155,7 +160,8 @@ public interface EvalSettings {
    public static final String EVAL_USE_DATE_TIME = "EVAL_USE_DATE_TIME:java.lang.Boolean";
 
    /**
-    * CONSTANT: Can the item results sharing be set for template items - {@link Boolean}, default False
+    * CONSTANT: Can the item results sharing be set for template items - {@link Boolean}, default False,
+    * this is a special UMD flag that is used for their external reporting system
     */
    public static final String ITEM_USE_RESULTS_SHARING = "ITEM_USE_RESULTS_SHARING:java.lang.Boolean";
 
@@ -170,27 +176,27 @@ public interface EvalSettings {
    public static final String DISPLAY_HIERARCHY_HEADERS = "DISPLAY_HIERARCHY_HEADERS:java.lang.Boolean";
 
    /**
-    * CONSTANT: Allow CSV Export for Reporting
+    * CONSTANT: Allow CSV Export for Reporting - {@link Boolean}, default True
     */
    public static final String ENABLE_CSV_REPORT_EXPORT = "ENABLE_CSV_REPORT_EXPORT:java.lang.Boolean";
-   
+
    /**
-    * CONSTANT: Allow XLS Export for Reporting
+    * CONSTANT: Allow XLS Export for Reporting - {@link Boolean}, default True
     */
    public static final String ENABLE_XLS_REPORT_EXPORT = "ENABLE_XLS_REPORT_EXPORT:java.lang.Boolean";
-   
+
    /**
-    * CONSTANT: Allow PDF Export for Reporting
+    * CONSTANT: Allow PDF Export for Reporting - {@link Boolean}, default False
     */
    public static final String ENABLE_PDF_REPORT_EXPORT = "ENABLE_PDF_REPORT_EXPORT:java.lang.Boolean";
-   
+
    /**
-    * CONSTANT: Use an Image banner on PDF Report Exports
+    * CONSTANT: Use an Image banner on PDF Report Exports - {@link Boolean}, default False
     */
    public static final String ENABLE_PDF_REPORT_BANNER = "ENABLE_PDF_REPORT_BANNER:java.lang.Boolean";
-   
+
    /**
-    * CONSTANT: Location of image in Sakai Resources to use for PDF Report Banner
+    * CONSTANT: Location of image in Sakai Resources to use for PDF Report Banner - {@link String}, default null
     */
    public static final String PDF_BANNER_IMAGE_LOCATION = "PDF_BANNER_IMAGE_LOCATION:java.lang.String";
 
@@ -201,20 +207,39 @@ public interface EvalSettings {
     * but only includes the booleans which are always true or false
     */
    public static String[] BOOLEAN_SETTINGS = {
-         DISPLAY_HIERARCHY_OPTIONS,
-         DISPLAY_HIERARCHY_HEADERS,
-         ITEM_USE_RESULTS_SHARING,
-         ITEM_USE_COURSE_CATEGORY_ONLY,
-         EVAL_USE_STOP_DATE,
-         EVAL_USE_VIEW_DATE,
-         EVAL_USE_DATE_TIME,
-         USE_EXPERT_ITEMS,
-         USE_EXPERT_TEMPLATES,
-         REQUIRE_COMMENTS_BLOCK,
-         NOT_AVAILABLE_ALLOWED,
-         ADMIN_VIEW_BELOW_RESULTS,
-         INSTRUCTOR_ALLOWED_EMAIL_STUDENTS,
-         INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS
+      ADMIN_VIEW_BELOW_RESULTS,
+      ADMIN_VIEW_INSTRUCTOR_ADDED_RESULTS,
+      DISPLAY_HIERARCHY_HEADERS,
+      DISPLAY_HIERARCHY_OPTIONS,
+      ENABLE_CSV_REPORT_EXPORT,
+      ENABLE_PDF_REPORT_BANNER,
+      ENABLE_PDF_REPORT_EXPORT,
+      ENABLE_XLS_REPORT_EXPORT,
+      EVAL_USE_DATE_TIME,
+      EVAL_USE_SAME_VIEW_DATES,
+      EVAL_USE_STOP_DATE,
+      EVAL_USE_VIEW_DATE,
+      INSTRUCTOR_ALLOWED_EMAIL_STUDENTS,
+      INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS,
+      ITEM_USE_RESULTS_SHARING,
+      ITEM_USE_COURSE_CATEGORY_ONLY,
+      NOT_AVAILABLE_ALLOWED,
+      REQUIRE_COMMENTS_BLOCK,
+      USE_EXPERT_ITEMS,
+      USE_EXPERT_TEMPLATES
+   };
+
+   /**
+    * This is here to identify all the booleans in the system which are ternary booleans,
+    * that is to say it can store true, false, and "configurable" (null),
+    * all booleans should be indicated in either this or {@link #BOOLEAN_SETTINGS}
+    */
+   public static String[] TERNARY_BOOLEAN_SETTINGS = {
+      INSTRUCTOR_ALLOWED_VIEW_RESULTS,
+      INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE,
+      STUDENT_ALLOWED_LEAVE_UNANSWERED,
+      STUDENT_MODIFY_RESPONSES,
+      STUDENT_VIEW_RESULTS
    };
 
 

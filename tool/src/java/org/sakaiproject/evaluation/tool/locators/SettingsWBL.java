@@ -27,6 +27,7 @@ import uk.org.ponder.conversion.StaticLeafParser;
  * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * @author Kapil Ahuja (kahuja@caret.cam.ac.uk)
+ * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class SettingsWBL implements WriteableBeanLocator {
    public static final String NEW_PREFIX = "new";
@@ -130,15 +131,14 @@ public class SettingsWBL implements WriteableBeanLocator {
     * @return true is this is ternary
     */
    private boolean isTernaryBoolean(String path) {
-      if ( path.equals(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS) ||
-            path.equals(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE) ||
-            path.equals(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED) ||
-            path.equals(EvalSettings.STUDENT_MODIFY_RESPONSES) ||
-            path.equals(EvalSettings.STUDENT_VIEW_RESULTS) ||
-            path.equals(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY) ) {
-         return true;
+      boolean isTernary = false;
+      for (int i = 0; i < EvalSettings.TERNARY_BOOLEAN_SETTINGS.length; i++) {
+         if (EvalSettings.TERNARY_BOOLEAN_SETTINGS[i].equals(path)) {
+            isTernary = true;
+            break;
+         }
       }
-      return false;
+      return isTernary;
    }
 
 }
