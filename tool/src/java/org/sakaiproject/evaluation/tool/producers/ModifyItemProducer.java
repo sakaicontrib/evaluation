@@ -378,9 +378,13 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
    		}
 		}
 
-		Boolean isDefaultCourse = (Boolean) settings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
-		if (isDefaultCourse == null || isDefaultCourse == false) {
-			// Means show both options (course and instructor)
+		Boolean useCourseCategoryOnly = (Boolean) settings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
+		if (useCourseCategoryOnly) {
+         // bind explicitly to course/group category item and do not show the option
+         form.parameters.add(
+               new UIELBinding(commonDisplayOTP + "category", EvalConstants.ITEM_CATEGORY_COURSE));
+      } else {
+			// show all category choices so the user can choose, default is course category
 			UIBranchContainer showItemCategory = UIBranchContainer.make(form, "showItemCategory:");
 			UIMessage.make(showItemCategory, "item-category-header", "modifyitem.item.category.header");
 			UISelect radios = UISelect.make(showItemCategory, "item-category-list", 
@@ -392,12 +396,6 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 				UISelectLabel.make(radioBranch, "item-category-label", radios.getFullID(), i);
 				UISelectChoice.make(radioBranch, "item-category-radio", radios.getFullID(), i);
 			}
-		} else {
-         // Course category if default, instructor otherwise
-         // Do not show on the page, just bind it explicitly.
-         form.parameters.add(
-               new UIELBinding(commonDisplayOTP + "category",
-                     EvalToolConstants.ITEM_CATEGORY_VALUES[isDefaultCourse.booleanValue() ? 0 : 1]));
 		}
 
 		if (templateId != null) {
