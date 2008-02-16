@@ -328,7 +328,6 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
             UIBranchContainer courseSection = UIBranchContainer.make(form, "courseSection:");
             UIMessage.make(courseSection, "course-questions-header", "takeeval.group.questions.header");
             // for each non-child item in this evaluation
-            UIMessage.make(courseSection, "course-questions-header", "takeeval.group.questions.header");
             handleCategoryRender(
                   TemplateItemUtils.getCategoryTemplateItems(EvalConstants.ITEM_CATEGORY_COURSE, nonChildItemsList), 
                   form, courseSection, evalHierNodes, null);
@@ -338,8 +337,9 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
             // for each instructor, make a branch containing all instructor questions
             for (String instructor : instructors) {
                UIBranchContainer instructorSection = UIBranchContainer.make(form, "instructorSection:", "inst"+displayNumber);
+               String instructorName = external.getUserDisplayName(instructor);
                UIMessage.make(instructorSection, "instructor-questions-header", 
-                     "takeeval.instructor.questions.header", new Object[] { external.getUserDisplayName(instructor) });
+                     "takeeval.instructor.questions.header", new Object[] { instructorName });
                // for each non-child item in this evaluation
                handleCategoryRender(
                      TemplateItemUtils.getCategoryTemplateItems(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, nonChildItemsList), 

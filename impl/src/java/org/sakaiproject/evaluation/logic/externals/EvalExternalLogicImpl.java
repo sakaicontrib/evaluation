@@ -93,6 +93,8 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
    private static final String ANON_USER_ATTRIBUTE = "AnonUserAttribute";
    private static final String ANON_USER_PREFIX = "Anon_User_";
 
+   private static final String ADMIN_USER_ID = "admin";
+
    private AuthzGroupService authzGroupService;
    public void setAuthzGroupService(AuthzGroupService authzGroupService) {
       this.authzGroupService = authzGroupService;
@@ -222,9 +224,10 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
       try {
          // try to lookup this user, exception if we cannot find them
          userDirectoryService.getUserEid(userId);
-         return true;
-      } catch (Exception e) {
          return false;
+      } catch (Exception e) {
+         // could not find user so they are anonymous
+         return true;
       }
    }
 
@@ -499,6 +502,10 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
       List<String> azGroups = new ArrayList<String>();
       azGroups.add(reference);
       Set<String> userIds = authzGroupService.getUsersIsAllowed(permission, azGroups);
+      // need to remove the admin user or else they show up in unwanted places
+      if (userIds.contains(ADMIN_USER_ID)) {
+         userIds.remove(ADMIN_USER_ID);
+      }
 
       // also check provider
       if (evalGroupsProvider != null) {
