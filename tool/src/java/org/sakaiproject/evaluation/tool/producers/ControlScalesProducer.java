@@ -67,19 +67,36 @@ public class ControlScalesProducer implements ViewComponentProducer {
 			throw new SecurityException("Non-admin users may not access this page");
 		}
 
-		/*
-		 * top menu links and bread crumbs here
-		 */
-		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID));
-		UIInternalLink.make(tofill, "administrate-toplink", UIMessage.make("administrate.page.title"), new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-		UIMessage.make(tofill, "page-title", "scalecontrol.page.title");
+      /*
+       * top links here
+       */
+      UIInternalLink.make(tofill, "summary-link", 
+            UIMessage.make("summary.page.title"), 
+            new SimpleViewParameters(SummaryProducer.VIEW_ID));
+      UIInternalLink.make(tofill, "administrate-link", 
+            UIMessage.make("administrate.page.title"),
+            new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+      UIInternalLink.make(tofill, "control-scales-link",
+            UIMessage.make("controlscales.page.title"),
+            new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+      UIInternalLink.make(tofill, "control-templates-link",
+            UIMessage.make("controltemplates.page.title"), 
+            new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
+      UIInternalLink.make(tofill, "control-items-link",
+            UIMessage.make("controlitems.page.title"), 
+            new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+      UIInternalLink.make(tofill, "control-evaluations-link",
+            UIMessage.make("controlevaluations.page.title"),
+         new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
+
+      UIMessage.make(tofill, "page-title", "controlscales.page.title");
 
 		UIInternalLink.make(tofill, "add-new-scale-link", 
-				UIMessage.make("scalecontrol.add.new.scale.link"), 
+				UIMessage.make("controlscales.add.new.scale.link"), 
 				new EvalScaleParameters(ModifyScaleProducer.VIEW_ID, null));
 
-		UIMessage.make(tofill, "scales-control-heading", "scalecontrol.page.heading");
-		UIMessage.make(tofill, "scales-control-instruction", "scalecontrol.page.instruction");
+		UIMessage.make(tofill, "scales-control-heading", "controlscales.page.heading");
+		UIMessage.make(tofill, "scales-control-instruction", "controlscales.page.instruction");
 
 		//Get all the scales that are owned by a user
 		List<EvalScale> scaleList = authoringService.getScalesForUser(currentUserId, null);
@@ -115,14 +132,14 @@ public class ControlScalesProducer implements ViewComponentProducer {
 			if (! scale.getLocked().booleanValue() &&
 			      authoringService.canModifyScale(currentUserId, scale.getId()) ) {
 				UIInternalLink.make(listOfScales, "modify-sidelink", 
-						UIMessage.make("scalecontrol.modify.link"), 
+						UIMessage.make("controlscales.modify.link"), 
 						new EvalScaleParameters(ModifyScaleProducer.VIEW_ID, scale.getId()));
 			}
 
 			if (! scale.getLocked().booleanValue() &&
 			      authoringService.canRemoveScale(currentUserId, scale.getId()) ) {
 				UIInternalLink.make(listOfScales, "remove-sidelink", 
-						UIMessage.make("scalecontrol.remove.link"), 
+						UIMessage.make("controlscales.remove.link"), 
 						new EvalScaleParameters(RemoveScaleProducer.VIEW_ID, scale.getId()));
 			}
 
@@ -137,19 +154,19 @@ public class ControlScalesProducer implements ViewComponentProducer {
 				UIOutput.make(scaleOptions, "scale-option-label", (scale.getOptions())[j]);
 			}
 
-			UIMessage.make(listOfScales, "ideal-scale-point", "scalecontrol.ideal.scale.title");
+			UIMessage.make(listOfScales, "ideal-scale-point", "controlscales.ideal.scale.title");
 
 			// Based on the scale ideal value, pick the corresponding i18n message
 			if (scale.getIdeal() == null)
-				UIMessage.make(listOfScales, "ideal-value", "scalecontrol.ideal.scale.option.label.none");
+				UIMessage.make(listOfScales, "ideal-value", "controlscales.ideal.scale.option.label.none");
 			else if (scale.getIdeal().equals(EvalConstants.SCALE_IDEAL_MID))
-				UIMessage.make(listOfScales, "ideal-value", "scalecontrol.ideal.scale.option.label.mid");
+				UIMessage.make(listOfScales, "ideal-value", "controlscales.ideal.scale.option.label.mid");
 			else if (scale.getIdeal().equals(EvalConstants.SCALE_IDEAL_HIGH))
-				UIMessage.make(listOfScales, "ideal-value", "scalecontrol.ideal.scale.option.label.high");
+				UIMessage.make(listOfScales, "ideal-value", "controlscales.ideal.scale.option.label.high");
 			else if (scale.getIdeal().equals(EvalConstants.SCALE_IDEAL_LOW))
-				UIMessage.make(listOfScales, "ideal-value", "scalecontrol.ideal.scale.option.label.low");
+				UIMessage.make(listOfScales, "ideal-value", "controlscales.ideal.scale.option.label.low");
 			else if (scale.getIdeal().equals(EvalConstants.SCALE_IDEAL_OUTSIDE))
-				UIMessage.make(listOfScales, "ideal-value", "scalecontrol.ideal.scale.option.label.outside");
+				UIMessage.make(listOfScales, "ideal-value", "controlscales.ideal.scale.option.label.outside");
 			else
 				UIMessage.make(listOfScales, "ideal-value", "unknown.caps");
 		}

@@ -95,8 +95,6 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
         // so the original authors have been removed -AZ
 
         String currentUserId = external.getCurrentUserId();
-        UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), 
-                new SimpleViewParameters(SummaryProducer.VIEW_ID));		
 
         PreviewEvalParameters previewEvalViewParams = (PreviewEvalParameters)viewparams;
         if (previewEvalViewParams.evaluationId == null && 

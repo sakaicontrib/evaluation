@@ -32,6 +32,8 @@ import org.sakaiproject.tool.api.ToolSession;
 import uk.ac.cam.caret.sakai.rsf.helper.HelperViewParameters;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIInternalLink;
+import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
@@ -73,7 +75,36 @@ public class ControlImportProducer implements
 	}
 
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
-		
+
+      String currentUserId = externalLogic.getCurrentUserId();
+      boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
+
+      if (!userAdmin) {
+         // Security check and denial
+         throw new SecurityException("Non-admin users may not access this page");
+      }
+
+      /*
+       * top links here
+       */
+      UIInternalLink.make(tofill, "summary-link", 
+            UIMessage.make("summary.page.title"), 
+            new SimpleViewParameters(SummaryProducer.VIEW_ID));
+
+      UIInternalLink.make(tofill, "administrate-link", 
+            UIMessage.make("administrate.page.title"),
+            new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+      UIInternalLink.make(tofill, "control-scales-link",
+            UIMessage.make("controlscales.page.title"),
+            new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+
+      UIInternalLink.make(tofill, "control-templates-link",
+            UIMessage.make("controltemplates.page.title"), 
+            new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
+      UIInternalLink.make(tofill, "control-items-link",
+            UIMessage.make("controlitems.page.title"), 
+            new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+
 		//parameters for helper
 		ToolSession toolSession = sessionManager.getCurrentToolSession();
 		toolSession.setAttribute(FilePickerHelper.FILE_PICKER_TITLE_TEXT, "XML File Data Import");
@@ -83,13 +114,6 @@ public class ControlImportProducer implements
 		UIOutput.make(tofill, HelperViewParameters.HELPER_ID, HELPER);
 		//rsf:id helper-binding method binding
 		UICommand.make(tofill, HelperViewParameters.POST_HELPER_BINDING, "#{importBean.process}");
-		String currentUserId = externalLogic.getCurrentUserId();
-		boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
-		//TODO ! evalAdmin
-		if (! userAdmin) {
-			// Security check and denial
-			throw new SecurityException("Non-admin users may not access this page");
-		}
 	}
 
 	public List reportNavigationCases() {

@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.sakaiproject.evaluation.logic.EvalAuthoringService;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.entity.EvalCategoryEntityProvider;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
@@ -81,14 +83,16 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		this.externalLogic = externalLogic;
 	}
 
-	/*
-	 * You can change the date input to accept time as well by uncommenting the lines like this:
-	 * dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_TIME_INPUT);
-	 * and commenting out lines like this:
-	 * dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);
-	 * -AZ
-	 * And vice versa - RWE
-	 */
+   private EvalEvaluationService evaluationService;
+   public void setEvaluationService(EvalEvaluationService evaluationService) {
+      this.evaluationService = evaluationService;
+   }
+
+   private EvalAuthoringService authoringService;
+   public void setAuthoringService(EvalAuthoringService authoringService) {
+      this.authoringService = authoringService;
+   }
+
 	private FormatAwareDateInputEvolver dateevolver;
 	public void setDateEvolver(FormatAwareDateInputEvolver dateevolver) {
 		this.dateevolver = dateevolver;
@@ -103,9 +107,49 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		// Displaying the top link, page title, page description, and creating the
 		// HTML form
 		UIMessage.make(tofill, "eval-settings-title", "evalsettings.page.title");
-		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"),
-				new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
+		
+      // local variables used in the render logic
+      String currentUserId = externalLogic.getCurrentUserId();
+      boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
+      boolean createTemplate = authoringService.canCreateTemplate(currentUserId);
+      boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
+
+      /*
+       * top links here
+       */
+      UIInternalLink.make(tofill, "summary-link", 
+            UIMessage.make("summary.page.title"), 
+            new SimpleViewParameters(SummaryProducer.VIEW_ID));
+
+      if (userAdmin) {
+         UIInternalLink.make(tofill, "administrate-link", 
+               UIMessage.make("administrate.page.title"),
+               new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+         UIInternalLink.make(tofill, "control-scales-link",
+               UIMessage.make("controlscales.page.title"),
+               new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+      }
+
+      if (createTemplate) {
+         UIInternalLink.make(tofill, "control-templates-link",
+               UIMessage.make("controltemplates.page.title"), 
+               new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
+         UIInternalLink.make(tofill, "control-items-link",
+               UIMessage.make("controlitems.page.title"), 
+               new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+      }
+
+      if (beginEvaluation) {
+         UIInternalLink.make(tofill, "control-evaluations-link",
+               UIMessage.make("controlevaluations.page.title"),
+            new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
+      } else {
+         throw new SecurityException("User attempted to access " + 
+               VIEW_ID + " when they are not allowed");
+      }
+
+      
 		UIForm form = UIForm.make(tofill, "evalSettingsForm");
 		UIMessage.make(form, "settings-desc-header", "evalsettings.settings.desc.header");
 		UIOutput.make(form, "evaluationTitle", null, "#{evaluationBean.eval.title}");

@@ -13,7 +13,7 @@
 	<body>
 		<script type="text/javascript">
 		//<![CDATA[
-		YAHOO.widget.Logger.enableBrowserConsole();
+		//YAHOO.widget.Logger.enableBrowserConsole();
 		//var myLogReader1 = new YAHOO.widget.LogReader(null,{width: "60em", verboseOutput: false}); 
 		//myLogReader1.formatMsg = function(oLogMsg) { 
 		//  var category = oLogMsg.category; 
@@ -23,11 +23,14 @@
 		//]]>
 		</script>
 		<div class="portletBody">
-		
-			<div class="navIntraTool">
-			<!--	<a rsf:id="administrate-toplink" href="administrate.html">Administrate</a>
-				<a rsf:id="summary-toplink" href="summary.html">Summary</a>  -->
-			</div>
+
+           <div class="navIntraTool">
+               <a rsf:id="administrate-toplink" href="administrate.html">Administrate</a>
+               <a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a>
+               <a rsf:id="control-templates-link" href="control_templates.html">My Templates</a>
+               <a rsf:id="control-items-link" href="control_items.html">My Items</a>
+               <a rsf:id="control-scales-link" href="control_scales.html">My Scales</a>
+           </div>
 		
 			<ul class="breadCrumb">
 				<li><a rsf:id="summary-toplink" href="summary.html">Summary</a></li><li class="lastCrumb" rsf:id="eval-settings-title">Evaluation Settings</li>

@@ -51,10 +51,10 @@ public class ControlTemplatesProducer implements ViewComponentProducer {
 	}
 
 
-	private EvalExternalLogic external;
-	public void setExternal(EvalExternalLogic external) {
-		this.external = external;
-	}
+   private EvalExternalLogic externalLogic;
+   public void setExternalLogic(EvalExternalLogic externalLogic) {
+      this.externalLogic = externalLogic;
+   }
 
    private EvalAuthoringService authoringService;
    public void setAuthoringService(EvalAuthoringService authoringService) {
@@ -77,48 +77,56 @@ public class ControlTemplatesProducer implements ViewComponentProducer {
 	 */
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
-		// local variables used in the render logic
-		String currentUserId = external.getCurrentUserId();
-		boolean userAdmin = external.isUserAdmin(currentUserId);
-		boolean createTemplate = authoringService.canCreateTemplate(currentUserId);
-		boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
-		// use a date which is related to the current users locale
-		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+	     // use a date which is related to the current users locale
+      DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
 
-		// page title
-		UIMessage.make(tofill, "page-title", "controltemplates.page.title");
+      // page title
+      UIMessage.make(tofill, "page-title", "controltemplates.page.title");
 
-		/*
-		 * top links here
-		 */
-		UIInternalLink.make(tofill, "summary-link", 
-				UIMessage.make("summary.page.title"), 
-			new SimpleViewParameters(SummaryProducer.VIEW_ID));
+      // local variables used in the render logic
+      String currentUserId = externalLogic.getCurrentUserId();
+      boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
+      boolean createTemplate = authoringService.canCreateTemplate(currentUserId);
+      boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
 
-		if (userAdmin) {
-			UIInternalLink.make(tofill, "administrate-link", 
-					UIMessage.make("administrate.page.title"),
-				new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-		}
+      /*
+       * top links here
+       */
+      UIInternalLink.make(tofill, "summary-link", 
+            UIMessage.make("summary.page.title"), 
+            new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
-		if (createTemplate) {
-			UIInternalLink.make(tofill, "control-templates-link", 
-					UIMessage.make("controltemplates.page.title"), 
-				new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
-		} else {
-			throw new SecurityException("User attempted to access " + 
-					ControlTemplatesProducer.VIEW_ID + " when they are not allowed");
-		}
+      if (userAdmin) {
+         UIInternalLink.make(tofill, "administrate-link", 
+               UIMessage.make("administrate.page.title"),
+               new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+         UIInternalLink.make(tofill, "control-scales-link",
+               UIMessage.make("controlscales.page.title"),
+               new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+      }
 
-		if (beginEvaluation) {
-			UIInternalLink.make(tofill, "control-evaluations-link", 
-					UIMessage.make("controlevaluations.page.title"), 
-				new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
-			UIInternalLink.make(tofill, "begin-evaluation-link", 
-					UIMessage.make("starteval.page.title"), 
-				new TemplateViewParameters(EvaluationStartProducer.VIEW_ID, null));
-		}
+      if (createTemplate) {
+         UIInternalLink.make(tofill, "control-templates-link",
+               UIMessage.make("controltemplates.page.title"), 
+               new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
+         UIInternalLink.make(tofill, "control-items-link",
+               UIMessage.make("controlitems.page.title"), 
+               new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+      } else {
+         throw new SecurityException("User attempted to access " + 
+               VIEW_ID + " when they are not allowed");
+      }
 
+      if (beginEvaluation) {
+         UIInternalLink.make(tofill, "control-evaluations-link",
+               UIMessage.make("controlevaluations.page.title"),
+            new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
+         UIInternalLink.make(tofill, "begin-evaluation-link", 
+               UIMessage.make("starteval.page.title"), 
+               new TemplateViewParameters(EvaluationStartProducer.VIEW_ID, null));
+      }
+
+      
 		// create template header and link
 		UIMessage.make(tofill, "templates-header", "controltemplates.templates.header"); 
 		UIMessage.make(tofill, "templates-description","controltemplates.templates.description"); 
@@ -162,9 +170,9 @@ public class ControlTemplatesProducer implements ViewComponentProducer {
 
 				// direct link to the template preview
 				UILink.make(templateRow, "preview-template-direct-link", UIMessage.make("general.direct.link"), 
-						external.getEntityURL(template) );
+				      externalLogic.getEntityURL(template) );
 
-				UIOutput.make(templateRow, "template-owner", external.getUserDisplayName( template.getOwner() ));
+				UIOutput.make(templateRow, "template-owner", externalLogic.getUserDisplayName( template.getOwner() ));
 				UIOutput.make(templateRow, "template-last-update", df.format( template.getLastModified() ));
 
 			}

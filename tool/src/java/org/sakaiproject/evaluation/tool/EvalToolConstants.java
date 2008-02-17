@@ -236,11 +236,11 @@ public class EvalToolConstants {
     * Ideal scale values radio button labels (scale add/modify)
     */
    public static final String[] scaleIdealLabels = {
-      "scalecontrol.ideal.scale.option.label.none", 
-      "scalecontrol.ideal.scale.option.label.low",
-      "scalecontrol.ideal.scale.option.label.high", 
-      "scalecontrol.ideal.scale.option.label.mid",
-      "scalecontrol.ideal.scale.option.label.outside" 
+      "controlscales.ideal.scale.option.label.none", 
+      "controlscales.ideal.scale.option.label.low",
+      "controlscales.ideal.scale.option.label.high", 
+      "controlscales.ideal.scale.option.label.mid",
+      "controlscales.ideal.scale.option.label.outside" 
    };
 
    /**

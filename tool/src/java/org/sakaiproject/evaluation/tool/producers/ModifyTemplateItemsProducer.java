@@ -18,6 +18,8 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import java.util.List;
 
+import org.sakaiproject.evaluation.logic.EvalAuthoringService;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
@@ -78,9 +80,19 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
       this.localTemplateLogic = localTemplateLogic;
    }
 
-   private EvalExternalLogic external;
-   public void setExternal(EvalExternalLogic external) {
-      this.external = external;
+   private EvalExternalLogic externalLogic;
+   public void setExternalLogic(EvalExternalLogic externalLogic) {
+      this.externalLogic = externalLogic;
+   }
+
+   private EvalEvaluationService evaluationService;
+   public void setEvaluationService(EvalEvaluationService evaluationService) {
+      this.evaluationService = evaluationService;
+   }
+
+   private EvalAuthoringService authoringService;
+   public void setAuthoringService(EvalAuthoringService authoringService) {
+      this.authoringService = authoringService;
    }
 
    private AddItemControlRenderer addItemControlRenderer;
@@ -105,6 +117,46 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
     */
    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
+      // local variables used in the render logic
+      String currentUserId = externalLogic.getCurrentUserId();
+      boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
+      boolean createTemplate = authoringService.canCreateTemplate(currentUserId);
+      boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
+
+      /*
+       * top links here
+       */
+      UIInternalLink.make(tofill, "summary-link", 
+            UIMessage.make("summary.page.title"), 
+            new SimpleViewParameters(SummaryProducer.VIEW_ID));
+
+      if (userAdmin) {
+         UIInternalLink.make(tofill, "administrate-link", 
+               UIMessage.make("administrate.page.title"),
+               new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+         UIInternalLink.make(tofill, "control-scales-link",
+               UIMessage.make("controlscales.page.title"),
+               new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+      }
+
+      if (createTemplate) {
+         UIInternalLink.make(tofill, "control-templates-link",
+               UIMessage.make("controltemplates.page.title"), 
+               new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
+         UIInternalLink.make(tofill, "control-items-link",
+               UIMessage.make("controlitems.page.title"), 
+               new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+      } else {
+         throw new SecurityException("User attempted to access " + 
+               VIEW_ID + " when they are not allowed");
+      }
+
+      if (beginEvaluation) {
+         UIInternalLink.make(tofill, "control-evaluations-link",
+               UIMessage.make("controlevaluations.page.title"),
+            new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
+      }
+
       TemplateViewParameters evalViewParams = (TemplateViewParameters) viewparams;
       Long templateId = evalViewParams.templateId;
       EvalTemplate template = localTemplateLogic.fetchTemplate(templateId);
@@ -112,20 +164,12 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
       // begin page rendering
       UIMessage.make(tofill, "modify-template-title", "modifytemplate.page.title");
 
-      UIInternalLink.make(tofill,	"summary-toplink", UIMessage.make("summary.page.title"),
-            new SimpleViewParameters(SummaryProducer.VIEW_ID));
-
-      UIInternalLink.make(tofill, "control-templates-link",
-            UIMessage.make("controltemplates.page.title"), 
-            new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
-
-
       UIInternalLink.make(tofill, "preview_eval_link", UIMessage.make("modifytemplate.preview.eval.link"),
             new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID, null, templateId)).decorators = 
                new DecoratorList(new UITooltipDecorator(UIMessage.make("modifytemplate.preview.eval.link.title")));
       UIMessage.make(tofill, "preview-eval-desc",	"modifytemplate.preview.eval.desc");
       UILink.make(tofill, "preview-template-direct-link", UIMessage.make("general.direct.link"), 
-            external.getEntityURL(template) ).decorators = 
+            externalLogic.getEntityURL(template) ).decorators = 
                new DecoratorList(new UITooltipDecorator(UIMessage.make("general.direct.link.title")));
 
       // get form to submit the type of item to create to the correct view
@@ -306,7 +350,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
             UIMessage.make(itemBranch, "item-category", categoryMessage);
             UIMessage.make(tofill, "item-category-title", "modifytemplate.item.category.title");
 
-            UIOutput.make(itemBranch, "item-owner-name", external.getUserDisplayName(templateItem.getOwner()));
+            UIOutput.make(itemBranch, "item-owner-name", externalLogic.getUserDisplayName(templateItem.getOwner()));
             UIMessage.make(tofill, "item-owner-title", "modifytemplate.item.owner.title");
 
             Boolean useResultsSharing = (Boolean) evalSettings.get(EvalSettings.ITEM_USE_RESULTS_SHARING);

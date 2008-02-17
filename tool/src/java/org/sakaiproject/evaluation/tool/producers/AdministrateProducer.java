@@ -84,27 +84,36 @@ public class AdministrateProducer implements ViewComponentProducer {
        * top links here
        */
       UIMessage.make(tofill, "administrate-title", "administrate.page.title");
+
       UIInternalLink.make(tofill, "summary-link", 
             UIMessage.make("summary.page.title"), 
             new SimpleViewParameters(SummaryProducer.VIEW_ID));
-
-      UIInternalLink.make(tofill, "control-templates-link",
-            UIMessage.make("controltemplates.page.title"), 
-            new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
 
       UIInternalLink.make(tofill, "control-evaluations-link",
             UIMessage.make("controlevaluations.page.title"), 
             new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
 
-      UIInternalLink.make(tofill, "control-scales-toplink",UIMessage.make("administrate.top.control.scales"),
+      UIInternalLink.make(tofill, "control-templates-link",
+            UIMessage.make("controltemplates.page.title"), 
+            new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
+
+      UIInternalLink.make(tofill, "control-items-link",
+            UIMessage.make("controlitems.page.title"),
+         new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+
+      UIInternalLink.make(tofill, "control-scales-toplink",
+            UIMessage.make("administrate.top.control.scales"),
             new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
 
-      UIInternalLink.make(tofill, "control-import-toplink",UIMessage.make("administrate.top.import.data"),
+      UIInternalLink.make(tofill, "control-reporting-toplink", 
+            UIMessage.make("administrate.top.control.reporting"),
+            new SimpleViewParameters(AdministrateReportingProducer.VIEW_ID));
+
+      UIInternalLink.make(tofill, "control-import-toplink",
+            UIMessage.make("administrate.top.import.data"),
             new SimpleViewParameters(ControlImportProducer.VIEW_ID));
 
-      UIInternalLink.make(tofill, "control-reporting-toplink", UIMessage.make("administrate.top.control.reporting"),
-            new SimpleViewParameters(AdministrateReportingProducer.VIEW_ID));
-      
+
       /*
        * Only Show Control Hierarchy if the Hierarchy Display Options are on.
        */

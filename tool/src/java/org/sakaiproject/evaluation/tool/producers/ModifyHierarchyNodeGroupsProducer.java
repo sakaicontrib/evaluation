@@ -54,7 +54,29 @@ public class ModifyHierarchyNodeGroupsProducer implements ViewComponentProducer,
             // Security check and denial
             throw new SecurityException("Non-admin users may not access this locator");
         }
-        
+
+        /*
+         * top links here
+         */
+        UIInternalLink.make(tofill, "summary-link", 
+              UIMessage.make("summary.page.title"), 
+              new SimpleViewParameters(SummaryProducer.VIEW_ID));
+        UIInternalLink.make(tofill, "administrate-link", 
+              UIMessage.make("administrate.page.title"),
+              new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+        UIInternalLink.make(tofill, "control-scales-link",
+              UIMessage.make("controlscales.page.title"),
+              new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+        UIInternalLink.make(tofill, "control-templates-link",
+              UIMessage.make("controltemplates.page.title"), 
+              new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
+        UIInternalLink.make(tofill, "control-items-link",
+              UIMessage.make("controlitems.page.title"), 
+              new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+        UIInternalLink.make(tofill, "control-evaluations-link",
+              UIMessage.make("controlevaluations.page.title"),
+           new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
+
         HierarchyNodeParameters params = (HierarchyNodeParameters) viewparams;
         String nodeId = params.nodeId;
         EvalHierarchyNode evalNode = hierarchyLogic.getNodeById(params.nodeId);
@@ -67,13 +89,13 @@ public class ModifyHierarchyNodeGroupsProducer implements ViewComponentProducer,
                 return e1.title.compareTo(e2.title);
             }
         });
-        
+
         /*
          * Page titles and instructions, top menu links and bread crumbs here
          */
-        UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID));
         UIInternalLink.make(tofill, "administrate-toplink", UIMessage.make("administrate.page.title"), new SimpleViewParameters(AdministrateProducer.VIEW_ID));
         UIInternalLink.make(tofill, "hierarchy-toplink", UIMessage.make("controlhierarchy.breadcrumb.title"), new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID));
+
         UIMessage.make(tofill, "page-title", "hierarchynode.groups.breadcrumb.title");
         
         UIMessage.make(tofill, "assign-groups-title","hierarchynode.groups.body.title", new String[] {evalNode.title});
