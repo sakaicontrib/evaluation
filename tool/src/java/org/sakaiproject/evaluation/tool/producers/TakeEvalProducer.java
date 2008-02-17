@@ -147,7 +147,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 
       UIMessage.make(tofill, "page-title", "takeeval.page.title");
 
-      UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), 
+      UIInternalLink.make(tofill, "summary-link", UIMessage.make("summary.page.title"), 
             new SimpleViewParameters(SummaryProducer.VIEW_ID));			
 
       // get passed in get params

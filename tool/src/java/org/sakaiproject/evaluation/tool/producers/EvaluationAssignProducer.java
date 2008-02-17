@@ -86,7 +86,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
 
       UIMessage.make(tofill, "page-title", "assigneval.page.title");
 
-      UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"),
+      UIInternalLink.make(tofill, "summary-link", UIMessage.make("summary.page.title"),
             new SimpleViewParameters(SummaryProducer.VIEW_ID));	
 
       UIMessage.make(tofill, "create-eval-title", "starteval.page.title");
