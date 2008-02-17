@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
@@ -73,20 +74,25 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 		return VIEW_ID;
 	}
 
-	private EvalExternalLogic external;
-	public void setExternal(EvalExternalLogic external) {
-		this.external = external;
+	private EvalSettings settings;
+	public void setSettings(EvalSettings settings) {
+		this.settings = settings;
 	}
+
+   private EvalExternalLogic externalLogic;
+   public void setExternalLogic(EvalExternalLogic externalLogic) {
+      this.externalLogic = externalLogic;
+   }
+
+   private EvalEvaluationService evaluationService;
+   public void setEvaluationService(EvalEvaluationService evaluationService) {
+      this.evaluationService = evaluationService;
+   }
 
    private EvalAuthoringService authoringService;
    public void setAuthoringService(EvalAuthoringService authoringService) {
       this.authoringService = authoringService;
    }
-
-	private EvalSettings settings;
-	public void setSettings(EvalSettings settings) {
-		this.settings = settings;
-	}
 
 	private TextInputEvolver richTextEvolver;
 	public void setRichTextEvolver(TextInputEvolver richTextEvolver) {
@@ -111,8 +117,44 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
       // local variables used in the render logic
-      String currentUserId = external.getCurrentUserId();
-      boolean userAdmin = external.isUserAdmin(currentUserId);
+      String currentUserId = externalLogic.getCurrentUserId();
+      boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
+      boolean createTemplate = authoringService.canCreateTemplate(currentUserId);
+      boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
+
+      /*
+       * top links here
+       */
+      UIInternalLink.make(tofill, "summary-link", 
+            UIMessage.make("summary.page.title"), 
+            new SimpleViewParameters(SummaryProducer.VIEW_ID));
+
+      if (userAdmin) {
+         UIInternalLink.make(tofill, "administrate-link", 
+               UIMessage.make("administrate.page.title"),
+               new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+         UIInternalLink.make(tofill, "control-scales-link",
+               UIMessage.make("controlscales.page.title"),
+               new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+      }
+
+      if (createTemplate) {
+         UIInternalLink.make(tofill, "control-templates-link",
+               UIMessage.make("controltemplates.page.title"), 
+               new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
+         UIInternalLink.make(tofill, "control-items-link",
+               UIMessage.make("controlitems.page.title"), 
+               new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+      } else {
+         throw new SecurityException("User attempted to access " + 
+               VIEW_ID + " when they are not allowed");
+      }
+
+      if (beginEvaluation) {
+         UIInternalLink.make(tofill, "control-evaluations-link",
+               UIMessage.make("controlevaluations.page.title"),
+            new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
+      }
 
       // create the form to allow submission of this item
       UIForm form = UIForm.make(tofill, "item-form");
@@ -156,7 +198,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 	      }
          itemOTP = "itemWBL." + ItemBeanWBL.NEW_1 + ".";
          commonDisplayOTP = itemOTP;
-         itemOwnerName = external.getUserDisplayName(currentUserId);
+         itemOwnerName = externalLogic.getUserDisplayName(currentUserId);
          // check if we are operating in a template
          if (templateId != null) {
             // new template item in the current template
@@ -187,7 +229,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
             scaleId = currentScale.getId();
          }
 
-         itemOwnerName = external.getUserDisplayName(item.getOwner());
+         itemOwnerName = externalLogic.getUserDisplayName(item.getOwner());
          itemClassification = item.getClassification();
          itemOTP = "itemWBL." + itemId + ".";
          commonDisplayOTP = itemOTP;
@@ -207,7 +249,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
             scaleId = currentScale.getId();
          }
 
-         itemOwnerName = external.getUserDisplayName(templateItem.getItem().getOwner());
+         itemOwnerName = externalLogic.getUserDisplayName(templateItem.getItem().getOwner());
          itemClassification = templateItem.getItem().getClassification();
          templateItemOTP = "templateItemWBL." + templateItemId + ".";
          itemOTP = templateItemOTP + "item.";
@@ -307,8 +349,8 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 		   String scaleOTP = itemOTP + "scale."; // + (scaleId != null ? scaleId.toString() : ScaleBeanLocator.NEW_1) + ".";
          UIBranchContainer showItemChoices = UIBranchContainer.make(form, "show-item-choices:");
          boundedDynamicListInputEvolver.setLabels(
-               UIMessage.make("scaleaddmodify.remove.scale.option.button"), 
-               UIMessage.make("scaleaddmodify.add.scale.option.button"));
+               UIMessage.make("modifyscale.remove.scale.option.button"), 
+               UIMessage.make("modifyscale.add.scale.option.button"));
          boundedDynamicListInputEvolver.setMinimumLength(2);
          boundedDynamicListInputEvolver.setMaximumLength(20);
 

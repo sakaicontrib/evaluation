@@ -33,6 +33,10 @@ public class ControlHierarchyProducer implements ViewComponentProducer {
    }
 
    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+
+      UIMessage.make(tofill, "page-title", "controlhierarchy.breadcrumb.title");
+      UIMessage.make(tofill, "body-title", "controlhierarchy.page.title");
+
       String currentUserId = external.getCurrentUserId();
       boolean userAdmin = external.isUserAdmin(currentUserId);
 
@@ -41,9 +45,26 @@ public class ControlHierarchyProducer implements ViewComponentProducer {
          throw new SecurityException("Non-admin users may not access this page");
       }
 
-      UIMessage.make(tofill, "body-title", "controlhierarchy.page.title");
+      /*
+       * top links here
+       */
+      UIInternalLink.make(tofill, "summary-link", 
+            UIMessage.make("summary.page.title"), 
+            new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
-      renderBreadcrumbs(tofill);
+      UIInternalLink.make(tofill, "administrate-link", 
+            UIMessage.make("administrate.page.title"),
+            new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+      UIInternalLink.make(tofill, "control-scales-link",
+            UIMessage.make("controlscales.page.title"),
+            new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+
+      UIInternalLink.make(tofill, "control-templates-link",
+            UIMessage.make("controltemplates.page.title"), 
+            new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
+      UIInternalLink.make(tofill, "control-items-link",
+            UIMessage.make("controlitems.page.title"), 
+            new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
 
       hierUtil.renderModifyHierarchyTree(tofill, "heirarchy-tree:");
 
@@ -51,20 +72,5 @@ public class ControlHierarchyProducer implements ViewComponentProducer {
             new SimpleViewParameters(AdministrateProducer.VIEW_ID));
 
    }
-
-   /*
-    * top menu links and bread crumbs here
-    * 
-    * @param tofill
-    */
-   public void renderBreadcrumbs(UIContainer tofill) {
-      UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"),
-            new SimpleViewParameters(SummaryProducer.VIEW_ID));
-      UIInternalLink.make(tofill, "administrate-toplink", UIMessage.make("administrate.page.title"),
-            new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-      UIMessage.make(tofill, "page-title", "controlhierarchy.breadcrumb.title");
-   }
-
-
 
 }

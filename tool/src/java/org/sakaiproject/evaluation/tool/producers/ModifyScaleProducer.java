@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.locators.ScaleBeanLocator;
@@ -56,9 +57,14 @@ public class ModifyScaleProducer implements ViewComponentProducer, ViewParamsRep
       return VIEW_ID;
    }
 
-   private EvalExternalLogic external;
-   public void setExternal(EvalExternalLogic external) {
-      this.external = external;
+   private EvalExternalLogic externalLogic;
+   public void setExternalLogic(EvalExternalLogic externalLogic) {
+      this.externalLogic = externalLogic;
+   }
+
+   private EvalEvaluationService evaluationService;
+   public void setEvaluationService(EvalEvaluationService evaluationService) {
+      this.evaluationService = evaluationService;
    }
 
    private EvalAuthoringService authoringService;
@@ -66,23 +72,62 @@ public class ModifyScaleProducer implements ViewComponentProducer, ViewParamsRep
       this.authoringService = authoringService;
    }
 
-
    private BoundedDynamicListInputEvolver boundedDynamicListInputEvolver;
    public void setBoundedDynamicListInputEvolver(BoundedDynamicListInputEvolver boundedDynamicListInputEvolver) {
       this.boundedDynamicListInputEvolver = boundedDynamicListInputEvolver;
    }
 
+   
    /* (non-Javadoc)
     * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
     */
    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
-      String currentUserId = external.getCurrentUserId();
-      boolean userAdmin = external.isUserAdmin(currentUserId);
+
+      // local variables used in the render logic
+      String currentUserId = externalLogic.getCurrentUserId();
+      boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
+      boolean createTemplate = authoringService.canCreateTemplate(currentUserId);
+      boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
+
+      /*
+       * top links here
+       */
+      UIInternalLink.make(tofill, "summary-link", 
+            UIMessage.make("summary.page.title"), 
+            new SimpleViewParameters(SummaryProducer.VIEW_ID));
+
+      if (userAdmin) {
+         UIInternalLink.make(tofill, "administrate-link", 
+               UIMessage.make("administrate.page.title"),
+               new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+         UIInternalLink.make(tofill, "control-scales-link",
+               UIMessage.make("controlscales.page.title"),
+               new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+      }
+
+      if (createTemplate) {
+         UIInternalLink.make(tofill, "control-templates-link",
+               UIMessage.make("controltemplates.page.title"), 
+               new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
+         UIInternalLink.make(tofill, "control-items-link",
+               UIMessage.make("controlitems.page.title"), 
+               new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+      } else {
+         throw new SecurityException("User attempted to access " + 
+               VIEW_ID + " when they are not allowed");
+      }
+
+      if (beginEvaluation) {
+         UIInternalLink.make(tofill, "control-evaluations-link",
+               UIMessage.make("controlevaluations.page.title"),
+            new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
+      }
 
       if (!userAdmin) {
          // Security check and denial
          throw new SecurityException("Non-admin users may not access this page");
       }
+
 
       EvalScaleParameters evalScaleParams = (EvalScaleParameters) viewparams;
       Long scaleId = evalScaleParams.scaleId;
@@ -100,7 +145,7 @@ public class ModifyScaleProducer implements ViewComponentProducer, ViewParamsRep
        */
       UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID));
       UIInternalLink.make(tofill, "administrate-toplink", UIMessage.make("administrate.page.title"), new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-      UIInternalLink.make(tofill, "scale-control-toplink", UIMessage.make("scalecontrol.page.title"), new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+      UIInternalLink.make(tofill, "scale-control-toplink", UIMessage.make("controlscales.page.title"), new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
 
       UIForm form = UIForm.make(tofill, "basic-form");
 
@@ -110,13 +155,13 @@ public class ModifyScaleProducer implements ViewComponentProducer, ViewParamsRep
       if (scaleId != null && 
             authoringService.canRemoveScale(currentUserId, scaleId)) {
          UIInternalLink.make(form, "scale-remove-link", 
-               UIMessage.make("scaleaddmodify.remove.scale.link"), 
+               UIMessage.make("modifyscale.remove.scale.link"), 
                new EvalScaleParameters(RemoveScaleProducer.VIEW_ID, scaleId) );
       }
 
       boundedDynamicListInputEvolver.setLabels(
-            UIMessage.make("scaleaddmodify.remove.scale.option.button"), 
-            UIMessage.make("scaleaddmodify.add.scale.option.button"));
+            UIMessage.make("modifyscale.remove.scale.option.button"), 
+            UIMessage.make("modifyscale.add.scale.option.button"));
       boundedDynamicListInputEvolver.setMinimumLength(2);
       boundedDynamicListInputEvolver.setMaximumLength(20);
 
@@ -149,7 +194,7 @@ public class ModifyScaleProducer implements ViewComponentProducer, ViewParamsRep
       // command buttons
       UIMessage.make(form, "scale-add-modify-cancel-button", "general.cancel.button");
       UICommand.make(form, "scale-add-modify-save-button", 
-            UIMessage.make("scaleaddmodify.save.scale.button"), "#{scaleBean.saveScaleAction}");
+            UIMessage.make("modifyscale.save.scale.button"), "#{scaleBean.saveScaleAction}");
 
    }
 

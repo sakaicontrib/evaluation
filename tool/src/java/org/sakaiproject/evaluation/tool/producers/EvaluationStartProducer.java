@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.tool.viewparams.PreviewEvalParameters;
@@ -61,9 +62,14 @@ public class EvaluationStartProducer implements ViewComponentProducer, Navigatio
       return VIEW_ID;
    }
 
-   private EvalExternalLogic external;
-   public void setExternal(EvalExternalLogic external) {
-      this.external = external;
+   private EvalExternalLogic externalLogic;
+   public void setExternalLogic(EvalExternalLogic externalLogic) {
+      this.externalLogic = externalLogic;
+   }
+
+   private EvalEvaluationService evaluationService;
+   public void setEvaluationService(EvalEvaluationService evaluationService) {
+      this.evaluationService = evaluationService;
    }
 
    private EvalAuthoringService authoringService;
@@ -80,8 +86,45 @@ public class EvaluationStartProducer implements ViewComponentProducer, Navigatio
    public void fillComponents(UIContainer tofill, ViewParameters viewparams,
          ComponentChecker checker) {
 
-      UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"),
+      // local variables used in the render logic
+      String currentUserId = externalLogic.getCurrentUserId();
+      boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
+      boolean createTemplate = authoringService.canCreateTemplate(currentUserId);
+      boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
+
+      /*
+       * top links here
+       */
+      UIInternalLink.make(tofill, "summary-link", 
+            UIMessage.make("summary.page.title"), 
             new SimpleViewParameters(SummaryProducer.VIEW_ID));
+
+      if (userAdmin) {
+         UIInternalLink.make(tofill, "administrate-link", 
+               UIMessage.make("administrate.page.title"),
+               new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+         UIInternalLink.make(tofill, "control-scales-link",
+               UIMessage.make("controlscales.page.title"),
+               new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+      }
+
+      if (createTemplate) {
+         UIInternalLink.make(tofill, "control-templates-link",
+               UIMessage.make("controltemplates.page.title"), 
+               new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID));
+         UIInternalLink.make(tofill, "control-items-link",
+               UIMessage.make("controlitems.page.title"), 
+               new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+      }
+
+      if (beginEvaluation) {
+         UIInternalLink.make(tofill, "control-evaluations-link",
+               UIMessage.make("controlevaluations.page.title"),
+            new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
+      } else {
+         throw new SecurityException("User attempted to access " + 
+               VIEW_ID + " when they are not allowed");
+      }
 
       UIMessage.make(tofill, "start-eval-title", "starteval.page.title");
       UIMessage.make(tofill, "start-eval-header", "starteval.header");
@@ -105,7 +148,7 @@ public class EvaluationStartProducer implements ViewComponentProducer, Navigatio
       if (evalViewParams.templateId == null) {
 
          // List templateList = evaluationBean.getTemplatesToDisplay();
-         List<EvalTemplate> templateList = authoringService.getTemplatesForUser(external.getCurrentUserId(), null,
+         List<EvalTemplate> templateList = authoringService.getTemplatesForUser(externalLogic.getCurrentUserId(), null,
                false);
          if (templateList != null && templateList.size() > 0) {
             UIBranchContainer chooseTemplate = UIBranchContainer.make(form, "chooseTemplate:");
@@ -142,7 +185,7 @@ public class EvaluationStartProducer implements ViewComponentProducer, Navigatio
                UISelectLabel.make(radiobranch, "radioLabel", selectID, i);
 
                // UIOutput.make(radiobranch,"radioOwner", logic.getUserDisplayName( owners[i]));
-               UIOutput.make(radiobranch, "radioOwner", external.getUserDisplayName(owners[i]));
+               UIOutput.make(radiobranch, "radioOwner", externalLogic.getUserDisplayName(owners[i]));
                UIInternalLink.make(radiobranch, "viewPreview_link", UIMessage
                      .make("starteval.view.preview.link"), new PreviewEvalParameters(
                      PreviewEvalProducer.VIEW_ID, null, new Long(values[i])));

@@ -87,20 +87,20 @@ public class RemoveScaleProducer implements ViewComponentProducer, ViewParamsRep
 		 */
 		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID));
 		UIInternalLink.make(tofill, "administrate-toplink", UIMessage.make("administrate.page.title"), new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-		UIInternalLink.make(tofill, "scale-control-toplink", UIMessage.make("scalecontrol.page.title"), new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+		UIInternalLink.make(tofill, "scale-control-toplink", UIMessage.make("controlscales.page.title"), new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
 
 		// Page title
-		UIMessage.make(tofill, "page-title", "scaleremove.page.title");
+		UIMessage.make(tofill, "page-title", "removescale.page.title");
 
-        UIMessage.make(tofill, "scaleremove.confirm.text", 
-                "scaleremove.confirm.text", new Object[] {scale.getTitle()});
+        UIMessage.make(tofill, "removescale.confirm.text", 
+                "removescale.confirm.text", new Object[] {scale.getTitle()});
 
 
 		UIMessage.make(tofill, "remove-scale-cancel-button", "general.cancel.button");
 
         UIForm form = UIForm.make(tofill, "remove-scale-form");
 		UICommand deleteCommand = UICommand.make(form, "remove-scale-remove-button", 
-				UIMessage.make("scaleremove.remove.scale.button"), "#{scaleBean.deleteScaleAction}");
+				UIMessage.make("removescale.remove.scale.button"), "#{scaleBean.deleteScaleAction}");
 		deleteCommand.parameters.add(new UIELBinding("#{scaleBean.scaleId}", scaleId));
 	}
 

@@ -67,7 +67,7 @@ public class RemoveItemProducer implements ViewComponentProducer, ViewParamsRepo
 
       UIMessage.make(tofill, "page-title", "removeitem.page.title");
 
-      UIInternalLink.make(tofill, "summary-toplink", 
+      UIInternalLink.make(tofill, "summary-link", 
             UIMessage.make("summary.page.title"), 
             new SimpleViewParameters(SummaryProducer.VIEW_ID));
       UIInternalLink.make(tofill, "control-templates-link",

@@ -129,9 +129,12 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		 * top links here
 		 */
 		if (userAdmin) {
-			UIInternalLink.make(tofill, "administrate-toplink",
+			UIInternalLink.make(tofill, "administrate-link",
 					UIMessage.make("administrate.page.title"),
 				new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+	      UIInternalLink.make(tofill, "control-scales-link",
+	            UIMessage.make("controlscales.page.title"),
+	            new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
 		}
 
 		if (createTemplate) {

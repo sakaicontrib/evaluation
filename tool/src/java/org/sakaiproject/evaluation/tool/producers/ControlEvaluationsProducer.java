@@ -19,12 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
+import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
-import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.entity.EvalCategoryEntityProvider;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
@@ -56,7 +55,7 @@ import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /**
- * This lists evaluationSetupService for users so they can add, modify, remove them
+ * This lists evaluations for users so they can add, modify, remove them
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
@@ -117,16 +116,17 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
     */
    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
-      // local variables used in the render logic
-      String currentUserId = externalLogic.getCurrentUserId();
-      boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
-      boolean createTemplate = authoringService.canCreateTemplate(currentUserId);
-      boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
       // use a date which is related to the current users locale
       DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
 
       // page title
       UIMessage.make(tofill, "page-title", "controlevaluations.page.title");
+
+      // local variables used in the render logic
+      String currentUserId = externalLogic.getCurrentUserId();
+      boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
+      boolean createTemplate = authoringService.canCreateTemplate(currentUserId);
+      boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
 
       /*
        * top links here
@@ -139,6 +139,9 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
          UIInternalLink.make(tofill, "administrate-link", 
                UIMessage.make("administrate.page.title"),
                new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+         UIInternalLink.make(tofill, "control-scales-link",
+               UIMessage.make("controlscales.page.title"),
+               new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
       }
 
       if (createTemplate) {
@@ -150,19 +153,23 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
                new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
       }
 
-      if (!beginEvaluation) {
+      if (beginEvaluation) {
+         UIInternalLink.make(tofill, "control-evaluations-link",
+               UIMessage.make("controlevaluations.page.title"),
+            new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
+      } else {
          throw new SecurityException("User attempted to access " + 
-               ControlEvaluationsProducer.VIEW_ID + " when they are not allowed");
+               VIEW_ID + " when they are not allowed");
       }
 
-      // get all the visible evaluationSetupService for the current user
+      // get all the visible evaluations for the current user
       List<EvalEvaluation> inqueueEvals = new ArrayList<EvalEvaluation>();
       List<EvalEvaluation> activeEvals = new ArrayList<EvalEvaluation>();
       List<EvalEvaluation> closedEvals = new ArrayList<EvalEvaluation>();
 
       List<EvalEvaluation> evals = evaluationSetupService.getVisibleEvaluationsForUser(externalLogic.getCurrentUserId(), false, false);
       for (int j = 0; j < evals.size(); j++) {
-         // get queued, active, closed evaluationSetupService by date
+         // get queued, active, closed evaluations by date
          // check the state of the eval to determine display data
          EvalEvaluation eval = (EvalEvaluation) evals.get(j);
          String evalStatus = evaluationService.updateEvaluationState(eval.getId());
@@ -178,7 +185,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
          }
       }
 
-      // create inqueue evaluationSetupService header and link
+      // create inqueue evaluations header and link
       UIMessage.make(tofill, "evals-inqueue-header", "controlevaluations.inqueue.header");
       UIMessage.make(tofill, "evals-inqueue-description", "controlevaluations.inqueue.description");
       UIForm startEvalForm = UIForm.make(tofill, "begin-evaluation-form");
@@ -253,7 +260,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
       }
 
 
-      // create active evaluationSetupService header and link
+      // create active evaluations header and link
       UIMessage.make(tofill, "evals-active-header", "controlevaluations.active.header");
       UIMessage.make(tofill, "evals-active-description", "controlevaluations.active.description");
 
@@ -334,7 +341,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
          UIMessage.make(tofill, "no-active-evals", "controlevaluations.active.none");
       }
 
-      // create closed evaluationSetupService header and link
+      // create closed evaluations header and link
       UIMessage.make(tofill, "evals-closed-header", "controlevaluations.closed.header");
       UIMessage.make(tofill, "evals-closed-description", "controlevaluations.closed.description");
 

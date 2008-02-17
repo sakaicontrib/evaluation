@@ -70,7 +70,7 @@ public class RemoveTemplateProducer implements ViewComponentProducer, Navigation
 		UIMessage.make(tofill, "remove-template-title", "removetemplate.page.title");
 		UIMessage.make(tofill, "control-panel-title","modifytemplate.page.title");
 		
-		UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), 
+		UIInternalLink.make(tofill, "summary-link", UIMessage.make("summary.page.title"), 
 				new SimpleViewParameters(SummaryProducer.VIEW_ID));	
 
 		UIInternalLink.make(tofill, "control-templates-link",

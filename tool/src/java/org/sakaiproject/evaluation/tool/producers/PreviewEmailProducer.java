@@ -41,69 +41,66 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  */
 
 public class PreviewEmailProducer implements ViewComponentProducer,
-    NavigationCaseReporter, ViewParamsReporter {
+NavigationCaseReporter, ViewParamsReporter {
 
-  private final static String BREAK = "<br/>";
-  private EvaluationBean evaluationBean;
-  public static final String VIEW_ID = "preview_email";
+   private final static String BREAK = "<br/>";
+   private EvaluationBean evaluationBean;
+   public static final String VIEW_ID = "preview_email";
 
-  public void setEvaluationBean(EvaluationBean evaluationBean) {
-    this.evaluationBean = evaluationBean;
-  }
+   public void setEvaluationBean(EvaluationBean evaluationBean) {
+      this.evaluationBean = evaluationBean;
+   }
 
-  public String getViewID() {
-    return VIEW_ID;
-  }
+   public String getViewID() {
+      return VIEW_ID;
+   }
 
-  public void fillComponents(UIContainer tofill, ViewParameters viewparams,
-      ComponentChecker checker) {
+   public void fillComponents(UIContainer tofill, ViewParameters viewparams,
+         ComponentChecker checker) {
 
-	UIMessage.make(tofill, "preview-email-title", "previewemail.page.title"); 
-    UIInternalLink.make(tofill, "summary-toplink",
-    		UIMessage.make("summary.page.title"), 
-        new SimpleViewParameters(SummaryProducer.VIEW_ID));
-    UIMessage.make(tofill, "create-eval-title", "starteval.page.title"); 
-	UIMessage.make(tofill, "summary-toplink-inact", "summary.page.title");
-    UIMessage.make(tofill, "preview-email-header", "previewemail.header"); 
+      UIMessage.make(tofill, "preview-email-title", "previewemail.page.title");
+      UIMessage.make(tofill, "create-eval-title", "starteval.page.title"); 
+      UIMessage.make(tofill, "summary-toplink-inact", "summary.page.title");
+      UIMessage.make(tofill, "preview-email-header", "previewemail.header"); 
 
-    EmailViewParameters emailViewParams = (EmailViewParameters) viewparams;
+      EmailViewParameters emailViewParams = (EmailViewParameters) viewparams;
 
-    UIForm form = UIForm.make(tofill, "previewEmailForm");
+      UIForm form = UIForm.make(tofill, "previewEmailForm");
 
-    UIMessage.make(form,"preview-email-desc", "previewemail.desc"); 
-    UIMessage.make(form,"preview-email-field-names", "email.templates.field.names"); 
-    UIMessage.make(form, "close-button", "general.close.window.button");
-    String emailText = "";
-    String actionBinding = null;
+      UIMessage.make(form,"preview-email-desc", "previewemail.desc"); 
+      UIMessage.make(form,"preview-email-field-names", "email.templates.field.names"); 
+      UIMessage.make(form, "close-button", "general.close.window.button");
+      String emailText = "";
+      String actionBinding = null;
 
-    if (emailViewParams.emailType
-        .equals(EvalConstants.EMAIL_TEMPLATE_AVAILABLE)) {
-      actionBinding = "#{evaluationBean.modifyAvailableEmailTemplate}";
-      emailText = evaluationBean.emailAvailableTxt;
+      if (emailViewParams.emailType
+            .equals(EvalConstants.EMAIL_TEMPLATE_AVAILABLE)) {
+         actionBinding = "#{evaluationBean.modifyAvailableEmailTemplate}";
+         emailText = evaluationBean.emailAvailableTxt;
 
-    }
-    if (emailViewParams.emailType.equals(EvalConstants.EMAIL_TEMPLATE_REMINDER)) {
-      actionBinding = "#{evaluationBean.modifyReminderEmailTemplate}"; 
-      emailText = evaluationBean.emailReminderTxt;
-    }
-    emailText = emailText.replaceAll("\n", BREAK);
-    UICommand.make(form, "modifyEmailTemplate", UIMessage.make("previewemail.modify.button"), actionBinding);
-    UIVerbatim.make(form, "previewEmailText", emailText);
-  }
+      }
+      if (emailViewParams.emailType.equals(EvalConstants.EMAIL_TEMPLATE_REMINDER)) {
+         actionBinding = "#{evaluationBean.modifyReminderEmailTemplate}"; 
+         emailText = evaluationBean.emailReminderTxt;
+      }
+      emailText = emailText.replaceAll("\n", BREAK);
+      UICommand.make(form, "modifyEmailTemplate", UIMessage.make("previewemail.modify.button"), actionBinding);
+      UIVerbatim.make(form, "previewEmailText", emailText);
+   }
 
-  public List reportNavigationCases() {
-    List i = new ArrayList();
+   public List reportNavigationCases() {
+      List i = new ArrayList();
 
-    i.add(new NavigationCase(EvalConstants.EMAIL_TEMPLATE_AVAILABLE, new EmailViewParameters(
-        ModifyEmailProducer.VIEW_ID, null,
-        EvalConstants.EMAIL_TEMPLATE_AVAILABLE))); 
-    i.add(new NavigationCase(EvalConstants.EMAIL_TEMPLATE_REMINDER, new EmailViewParameters(
-        ModifyEmailProducer.VIEW_ID, null,
-        EvalConstants.EMAIL_TEMPLATE_REMINDER))); 
-    return i;
-  }
+      i.add(new NavigationCase(EvalConstants.EMAIL_TEMPLATE_AVAILABLE, new EmailViewParameters(
+            ModifyEmailProducer.VIEW_ID, null,
+            EvalConstants.EMAIL_TEMPLATE_AVAILABLE))); 
+      i.add(new NavigationCase(EvalConstants.EMAIL_TEMPLATE_REMINDER, new EmailViewParameters(
+            ModifyEmailProducer.VIEW_ID, null,
+            EvalConstants.EMAIL_TEMPLATE_REMINDER))); 
+      return i;
+   }
 
-  public ViewParameters getViewParameters() {
-    return new EmailViewParameters();
-  }
+   public ViewParameters getViewParameters() {
+      return new EmailViewParameters();
+   }
 }
