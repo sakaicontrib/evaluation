@@ -261,7 +261,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
       // display the breadcrumb bar
       if (templateId == null) {
          // creating item only
-         UIInternalLink.make(tofill, "summary-toplink", 
+         UIInternalLink.make(tofill, "summary-link", 
                UIMessage.make("summary.page.title"), 
             new SimpleViewParameters(SummaryProducer.VIEW_ID));
          UIInternalLink.make(tofill, "control-items-link",
@@ -269,7 +269,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
             new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
       } else {
          // creating template item
-         UIInternalLink.make(tofill, "summary-toplink", 
+         UIInternalLink.make(tofill, "summary-link", 
                UIMessage.make("summary.page.title"), 
             new SimpleViewParameters(SummaryProducer.VIEW_ID));
          UIInternalLink.make(tofill, "control-items-link",

@@ -101,7 +101,7 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, N
 
       UIMessage.make(tofill, "page-title", "evaluationassignconfirm.page.title");
 
-      UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"),
+      UIInternalLink.make(tofill, "summary-link", UIMessage.make("summary.page.title"),
             new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
       UIMessage.make(tofill, "create-evaluation-title", "starteval.page.title");

@@ -173,7 +173,7 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
       UIMessage.make(tofill, "modify-block-title", "modifyblock.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
       UIMessage.make(tofill, "create-eval-title", "starteval.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
 
-      UIInternalLink.make(tofill, "summary-toplink", UIMessage.make("summary.page.title"), //$NON-NLS-1$ //$NON-NLS-2$
+      UIInternalLink.make(tofill, "summary-link", UIMessage.make("summary.page.title"), //$NON-NLS-1$ //$NON-NLS-2$
             new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
       if (!validChildsNo) {

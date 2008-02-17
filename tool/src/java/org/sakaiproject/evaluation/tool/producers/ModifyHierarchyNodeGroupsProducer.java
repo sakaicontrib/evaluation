@@ -93,7 +93,7 @@ public class ModifyHierarchyNodeGroupsProducer implements ViewComponentProducer,
         /*
          * Page titles and instructions, top menu links and bread crumbs here
          */
-        UIInternalLink.make(tofill, "administrate-toplink", UIMessage.make("administrate.page.title"), new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+        UIInternalLink.make(tofill, "administrate-link", UIMessage.make("administrate.page.title"), new SimpleViewParameters(AdministrateProducer.VIEW_ID));
         UIInternalLink.make(tofill, "hierarchy-toplink", UIMessage.make("controlhierarchy.breadcrumb.title"), new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID));
 
         UIMessage.make(tofill, "page-title", "hierarchynode.groups.breadcrumb.title");
