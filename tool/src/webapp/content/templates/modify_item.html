@@ -160,57 +160,51 @@
               </div>
             </div>
 
-			<fieldset class="visibleFS evalEditorSmall">
+			<fieldset rsf:id="showItemDisplayHints:" class="visibleFS evalEditorSmall">
 				<legend rsf:id="item-display-hint-header">Display Setting Hints</legend>
 				<div rsf:id="item-display-hint-instruction" class="instruction">these optional settings allow the item author to provide hints as to how this item should be displayed</div>
-					<p rsf:id="show-scale-display:" class="longtext">
-						<label for="show-scale-display:::scale-display-list-selection" class="block">
-							<span rsf:id="scale-display-header">Scale Display Setting:</span>
-						</label>
-						<select rsf:id="scale-display-list" id="scale-display-list">
-							<option value="Compact">Compact</option>
-							<option value="CompactColored">Compact Colored</option>
-							<option value="Full">Full</option>
-							<option value="FullColored">Full Colored</option>
-							<option value="Stepped">Stepped</option>
-							<option value="SteppedColored">Stepped Colored</option>
-							<option value="Vertical">Vertical</option>
-						</select>
-					</p>
 
-					<p rsf:id="show-response-size:" class="longtext">
-						<label class="block">
-							<span rsf:id="item-response-size-header" >Response size:</span>
-						</label>
-						<select rsf:id="item-response-size-list">
-							<option value="2">2 lines</option>
-							<option value="3">3 lines</option>
-							<option value="4">4 lines</option>
-							<option value="5">5 lines</option>
-						</select>
-					</p>
+				<p rsf:id="show-scale-display:" class="longtext">
+					<label rsf:id="scale-display-header" class="block">Scale Display Setting:</label>
+					<select rsf:id="scale-display-list" id="scale-display-list">
+						<option value="Compact">Compact</option>
+						<option value="CompactColored">Compact Colored</option>
+						<option value="Full">Full</option>
+						<option value="FullColored">Full Colored</option>
+						<option value="Stepped">Stepped</option>
+						<option value="SteppedColored">Stepped Colored</option>
+						<option value="Vertical">Vertical</option>
+					</select>
+				</p>
 
-					<p rsf:id="showNA:" class="checkbox">
-						<input rsf:id="item-na" type="checkbox" id="item-na" />
-						<label rsf:id="item-na-header" for="showNA:::item-na">N/A (not applicable):</label>
-					</p>
+				<p rsf:id="show-response-size:" class="longtext">
+					<label rsf:id="item-response-size-header" class="block">Response size:</label>
+					<select rsf:id="item-response-size-list">
+						<option value="2">2 lines</option>
+						<option value="3">3 lines</option>
+						<option value="4">4 lines</option>
+						<option value="5">5 lines</option>
+					</select>
+				</p>
 
-					<div rsf:id="showItemCategory:">
-						<h5>
-							<span rsf:id="item-category-header">Category:</span>
-						</h5>
-						<p>
-							<span rsf:id="item-category-list" />
-							<span rsf:id="item-category-branch:" class="checkbox">
-								<input rsf:id="item-category-radio" type="radio" name="item_category" id="item_category_C" />
-								<label rsf:id="item-category-label" for="item-category-radio">Group/Course</label>									
-							</span>
-							<span rsf:id="item-category-branch:"  class="checkbox">
-								<input rsf:id="item-category-radio" type="radio" name="item_category" id="item_category_I" />
-								<label rsf:id="item-category-label" for="item-category-radio">Evaluatee/Instructor</label>
-							</span>
-						</p>	
-					</div>
+				<p rsf:id="showNA:" class="checkbox">
+					<input rsf:id="item-na" type="checkbox" id="item-na" />
+					<label rsf:id="item-na-header" for="showNA:::item-na">N/A (not applicable):</label>
+				</p>
+
+				<div rsf:id="showItemCategory:">
+					<b rsf:id="item-category-header">Category:</b>
+
+					<span rsf:id="item-category-list" />
+					<span rsf:id="item-category-branch:" class="checkbox">
+						<input rsf:id="item-category-radio" type="radio" name="item_category" id="item_category_C" />
+						<label rsf:id="item-category-label" for="item-category-radio">Group/Course</label>									
+					</span>
+					<span rsf:id="item-category-branch:"  class="checkbox">
+						<input rsf:id="item-category-radio" type="radio" name="item_category" id="item_category_I" />
+						<label rsf:id="item-category-label" for="item-category-radio">Evaluatee/Instructor</label>
+					</span>
+				</div>
 
 				<div class="cleaner">&nbsp;</div>
 			</fieldset>
