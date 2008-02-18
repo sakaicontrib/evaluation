@@ -882,3 +882,16 @@ color: #555;
 	padding-left:2em;
 	background:transparent url(../images/table_go.png) center left no-repeat
 }
+
+/*templates are rendering error messg. as div.alertMessage > ul li, so take default list styles out */ 
+.alertMessage ul{
+	padding:0;
+	margin:0;
+	list-style:none;	
+}
+
+.alertMessage ul li{
+	padding:0;
+	margin:0;
+	list-style:none;	
+}
