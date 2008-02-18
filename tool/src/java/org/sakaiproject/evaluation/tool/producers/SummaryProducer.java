@@ -128,7 +128,11 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		/*
 		 * top links here
 		 */
-		if (userAdmin) {
+      UIInternalLink.make(tofill, "summary-link", 
+            UIMessage.make("summary.page.title"), 
+            new SimpleViewParameters(SummaryProducer.VIEW_ID));
+
+      if (userAdmin) {
 			UIInternalLink.make(tofill, "administrate-link",
 					UIMessage.make("administrate.page.title"),
 				new SimpleViewParameters(AdministrateProducer.VIEW_ID));
@@ -167,10 +171,8 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		 * for the evaluationSetupService taking box
 		 */
 		List<EvalEvaluation> evalsToTake = evaluationSetupService.getEvaluationsForUser(currentUserId, true, false);
+      UIBranchContainer evalBC = UIBranchContainer.make(tofill, "evaluationsBox:");
 		if (evalsToTake.size() > 0) {
-			UIBranchContainer evalBC = UIBranchContainer.make(tofill, "evaluationsBox:");
-
-			UIMessage.make(evalBC, "evaluations-title", "summary.evaluations.title");
 			// build an array of evaluation ids
 			Long[] evalIds = new Long[evalsToTake.size()];
 			for (int i=0; i<evalsToTake.size(); i++) {
@@ -252,22 +254,16 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 					}
 				}
 			}
+		} else {
+		   UIMessage.make(tofill, "evaluationsNone", "summary.evaluations.none");
 		}
 
-		/**
-		 * for the evaluationSetupService admin box
-		 */
-
 		/*
-		 * In the list of parameters:
-		 * first true => get recent only, and
-		 * second true => get not-owned evals.
+		 * for the evaluations admin box
 		 */
 		List<EvalEvaluation> evals = evaluationSetupService.getVisibleEvaluationsForUser(currentUserId, true, true);
-
 		/*
-		 * If the person is an admin, then just point new evals to
-		 * existing object.
+		 * If the person is an admin, then just point new evals to existing object.
 		 * If the person is not an admin then only show owned evals +
 		 * not-owned evals that are available for viewing results.
 		 */
@@ -346,8 +342,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
             }
 
 
-				/**
-				 *
+				/*
 				 * 1) if a evaluation is queued, title link go to EditSettings page with populated data
 				 * 2) if a evaluation is active, title link go to EditSettings page with populated data
 				 * but start date should be disabled
@@ -373,8 +368,9 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		/*
 		 * Site/Group listing box
 		 */
-		// TODO - only render this when not inside a worksite -AZ
-//		if (currentContext == null) {
+      Boolean enableSitesBox = (Boolean) settings.get(EvalSettings.ENABLE_SUMMARY_SITES_BOX);
+		if (enableSitesBox) {
+		   // only show this if we cannot find our location OR if the option is forced to on
 			String NO_ITEMS = "no.list.items";
 
 			UIBranchContainer contextsBC = UIBranchContainer.make(tofill, "siteListingBox:");
@@ -413,7 +409,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			} else {
 				UIMessage.make(contextsBC, "evaluateListNone", NO_ITEMS );
 			}
-//		}
+		}
 
 		/*
 		 * For the Evaluation tools box

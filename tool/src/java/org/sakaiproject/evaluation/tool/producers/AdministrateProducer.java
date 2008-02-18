@@ -80,10 +80,12 @@ public class AdministrateProducer implements ViewComponentProducer {
          throw new SecurityException("Non-admin users may not access this page");
       }
 
-      /*
-       * top links here
-       */
       UIMessage.make(tofill, "administrate-title", "administrate.page.title");
+
+      // TOP LINKS
+      UIInternalLink.make(tofill, "administrate-link",
+            UIMessage.make("administrate.page.title"),
+         new SimpleViewParameters(AdministrateProducer.VIEW_ID));
 
       UIInternalLink.make(tofill, "summary-link", 
             UIMessage.make("summary.page.title"), 
@@ -101,30 +103,36 @@ public class AdministrateProducer implements ViewComponentProducer {
             UIMessage.make("controlitems.page.title"),
          new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
 
-      UIInternalLink.make(tofill, "control-scales-toplink",
+      UIInternalLink.make(tofill, "control-scales-link",
             UIMessage.make("controlscales.page.title"),
             new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
 
+
+      // BREADCRUMBS
       UIInternalLink.make(tofill, "control-reporting-toplink", 
             UIMessage.make("administrate.top.control.reporting"),
             new SimpleViewParameters(AdministrateReportingProducer.VIEW_ID));
 
-      UIInternalLink.make(tofill, "control-import-toplink",
-            UIMessage.make("administrate.top.import.data"),
-            new SimpleViewParameters(ControlImportProducer.VIEW_ID));
+      UIInternalLink.make(tofill, "test-evalgroupprovider-toplink",
+            UIMessage.make("admintesteg.page.title"),
+            new SimpleViewParameters(AdminTestEGProviderProducer.VIEW_ID));           
 
+      // only show Control Importing if enabled
+      Boolean enableImporting = (Boolean) evalSettings.get(EvalSettings.ENABLE_IMPORTING);
+      if (enableImporting) {
+         UIInternalLink.make(tofill, "control-import-toplink",
+               UIMessage.make("administrate.top.import.data"),
+               new SimpleViewParameters(ControlImportProducer.VIEW_ID));
+      }
 
-      /*
-       * Only Show Control Hierarchy if the Hierarchy Display Options are on.
-       */
+      // only show Control Hierarchy if enabled
       Boolean useHierarchyFeatures = (Boolean) evalSettings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
-      if (useHierarchyFeatures != null && useHierarchyFeatures == true) {
-          UIInternalLink.make(tofill, "control-hierarchy-toplink", UIMessage.make("administrate.top.control.hierarchy"),
+      if (useHierarchyFeatures) {
+          UIInternalLink.make(tofill, "control-hierarchy-toplink", 
+                UIMessage.make("administrate.top.control.hierarchy"),
                 new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID));
       }
 
-      UIInternalLink.make(tofill, "test-evalgroupprovider-toplink",UIMessage.make("admintesteg.page.title"),
-            new SimpleViewParameters(AdminTestEGProviderProducer.VIEW_ID));           
 
       //System Settings
       UIForm form = UIForm.make(tofill, "basic-form");		
@@ -243,26 +251,21 @@ public class AdministrateProducer implements ViewComponentProducer {
 
 
       // GENERAL settings
-      UIMessage.make(form, "general-settings-header","administrate.general.settings.header");		
       makeInput(form, "general-helpdesk-email", EvalSettings.FROM_EMAIL_ADDRESS);
-      UIMessage.make(form, "general-helpdesk-email-note", "administrate.general.helpdesk.email.note");
 
       // Select for number of responses before results could be viewed
       makeSelect(form, "general-responses-before-view",  
             EvalToolConstants.PULLDOWN_INTEGER_VALUES,
             EvalToolConstants.PULLDOWN_INTEGER_VALUES,
             EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS, false);
-      UIMessage.make(form, "general-responses-before-view-note", "administrate.general.responses.before.view.note");		
 
-      makeBoolean(form, "general-na-allowed", EvalSettings.NOT_AVAILABLE_ALLOWED); 
-      UIMessage.make(form, "general-na-allowed-note", "administrate.general.na.allowed.note");	
+      makeBoolean(form, "general-na-allowed", EvalSettings.NOT_AVAILABLE_ALLOWED);
 
       // Select for maximum number of questions in a block
       makeSelect(form, "general-max-questions-block",	//$NON-NLS-1$
             EvalToolConstants.PULLDOWN_INTEGER_VALUES,
             EvalToolConstants.PULLDOWN_INTEGER_VALUES,
             EvalSettings.ITEMS_ALLOWED_IN_QUESTION_BLOCK, false);
-      UIMessage.make(form, "general-max-questions-block-note", "administrate.general.max.questions.block.note");		
 
       // Select for template sharing and visibility settings
       String[] sharingValues = new String[] {
@@ -279,21 +282,20 @@ public class AdministrateProducer implements ViewComponentProducer {
             sharingValues, 
             sharingLabels, 
             EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY, true);
-      UIMessage.make(form, "general-template-sharing-note","administrate.general.template.sharing.note");		
-
-      makeBoolean(form, "general-default-question-category",  EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
 
       makeBoolean(form, "general-use-date-time",  EvalSettings.EVAL_USE_DATE_TIME);
       makeBoolean(form, "general-use-stop-date", EvalSettings.EVAL_USE_STOP_DATE); 
       makeBoolean(form, "general-use-view-date", EvalSettings.EVAL_USE_VIEW_DATE); 
       makeBoolean(form, "general-same-view-date",  EvalSettings.EVAL_USE_SAME_VIEW_DATES);
 
+      makeBoolean(form, "general-enable-sites-summary", EvalSettings.ENABLE_SUMMARY_SITES_BOX);
+
+      makeBoolean(form, "general-default-question-category",  EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
+
       makeBoolean(form, "general-expert-templates", EvalSettings.USE_EXPERT_TEMPLATES);
       makeBoolean(form, "general-expert-questions", EvalSettings.USE_EXPERT_ITEMS);	
 
 //      makeBoolean(form, "general-require-comments-block",  EvalSettings.REQUIRE_COMMENTS_BLOCK);
-
-      makeBoolean(form, "general-item-results-sharing-block",  EvalSettings.ITEM_USE_RESULTS_SHARING);
 
       //Number of days old can an eval be and still be recently closed
       makeSelect(form, "general-eval-closed-still-recent",
@@ -308,6 +310,10 @@ public class AdministrateProducer implements ViewComponentProducer {
             EvalToolConstants.MINIMUM_TIME_DIFFERENCE,
             EvalSettings.EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE, false); 
       UIMessage.make(form, "general-mim-time-diff-between-dates-note", "administrate.general.eval.mim.time.diff.between.dates");
+
+      // INSTITUTION SPECIFIC SETTINGS
+      makeBoolean(form, "general-item-results-sharing",  EvalSettings.ITEM_USE_RESULTS_SHARING);
+      makeBoolean(form, "general-enable-importing",  EvalSettings.ENABLE_IMPORTING);
 
       // Save settings button
       // NB no action now required
