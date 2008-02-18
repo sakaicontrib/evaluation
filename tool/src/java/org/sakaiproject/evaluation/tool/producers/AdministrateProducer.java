@@ -102,7 +102,7 @@ public class AdministrateProducer implements ViewComponentProducer {
          new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
 
       UIInternalLink.make(tofill, "control-scales-toplink",
-            UIMessage.make("administrate.top.control.scales"),
+            UIMessage.make("controlscales.page.title"),
             new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
 
       UIInternalLink.make(tofill, "control-reporting-toplink", 
