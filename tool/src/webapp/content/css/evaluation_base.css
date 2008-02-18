@@ -1,23 +1,28 @@
-	/** 
+/** 
  * Aaron Zeckoski (aaronz@vt.edu) 
+ * Gonzalo Silverio
  */
 
  @media print  {
    body {
-	font-size: 9pt !important;
-	margin: 0 !important;
-	padding: 0 !important;
-}
-
-.itemListNew li, .itemListNew li li{
-	border:1px solid #aaa !important
+		font-size: 9pt !important;
+		margin: 0 !important;
+		padding: 0 !important;
+	}
 	
-}
+	.itemListNew li, .itemListNew li li{
+		border:1px solid #aaa !important
+		
+	}
 }
 
+A.inactive {
+	text-decoration: none;
+	font-weight: bold;
+	font-style: italic;
+} 
  
- 
- .testStyles {
+.testStyles {
 	color:red;
 }
 

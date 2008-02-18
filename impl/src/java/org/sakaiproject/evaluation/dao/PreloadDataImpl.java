@@ -124,7 +124,6 @@ public class PreloadDataImpl implements Runnable {
          saveConfig(EvalSettings.USE_EXPERT_ITEMS, true);
          saveConfig(EvalSettings.REQUIRE_COMMENTS_BLOCK, false);
          saveConfig(EvalSettings.EVAL_RECENTLY_CLOSED_DAYS, 10);
-         saveConfig(EvalSettings.ITEM_USE_RESULTS_SHARING, false);
 
          saveConfig(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY, false);
          saveConfig(EvalSettings.EVAL_USE_DATE_TIME, false);
@@ -138,6 +137,11 @@ public class PreloadDataImpl implements Runnable {
          saveConfig(EvalSettings.ENABLE_PDF_REPORT_BANNER, false);
          saveConfig(EvalSettings.ENABLE_PDF_REPORT_EXPORT, false);
          saveConfig(EvalSettings.ENABLE_XLS_REPORT_EXPORT, true);
+
+         // INSTITUTIONAL SPECIFIC
+         saveConfig(EvalSettings.ITEM_USE_RESULTS_SHARING, false);
+         saveConfig(EvalSettings.ENABLE_IMPORTING, false);
+         saveConfig(EvalSettings.ENABLE_SUMMARY_SITES_BOX, false);
 
          log.info("Preloaded " + evaluationDao.countAll(EvalConfig.class) + " evaluation system EvalConfig items");
       }

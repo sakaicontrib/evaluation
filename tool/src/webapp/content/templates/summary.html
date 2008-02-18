@@ -14,6 +14,7 @@
 	<div class="portletBody">
 		<div class="navIntraTool">
             <a rsf:id="administrate-link" href="administrate.html">Administrate</a>
+            <a rsf:id="summary-link" href="summary.html" class="inactive">Summary</a>
 			<a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a>
 			<a rsf:id="control-templates-link" href="control_templates.html">My Templates</a>
 			<a rsf:id="control-items-link" href="control_items.html">My Items</a>
@@ -33,63 +34,67 @@
 
          <h3 rsf:id="page-title">Evaluations dashboard</h3>
          <p class="instruction" rsf:id="page-instruction">Quick links to evaluation items</p>
+
          <div style="clear:both:height:100%;width:95%;overflow:hidden;padding:0">
 			<div class="summaryCol1">
-			<div rsf:id="evaluationsBox:" class="summaryBox">
-				<h4 rsf:id="evaluations-title">Current evaluations I need to take</h4>
-					<div rsf:id="evaluationsList:" class="innerPanel">
-					<!-- // gsilver: reformatted table to 4 cols, added placeholder rsf:id for things-->
-					<!-- lots of repetition here, not sure this is desirable -AZ -->
+      			<div rsf:id="evaluationsBox:" class="summaryBox">
+      				<h4 rsf:id="msg=summary.evaluations.title">Current evaluations I need to take</h4>
 
-						<table cellspacing="0" cellpadding="0" width="99%" border="0" class="listHier  lines nolines">
-							<tr>
-								<th colspan="2">
-									<span rsf:id="evaluationCourseEvalTitle">Course -  evaluation</span>
-								</th>
-								<th rsf:id="evaluationStartsTitle">
-									Starts
-								</th>
-								<th rsf:id="evaluationEndsTitle">
-									Ends
-								</th>
-							</tr>
-							<tr rsf:id="evaluationsCourseList:">
-								<td>
-									<a rsf:id="evaluationCourseLink" href="take_eval.html">Course Title</a>
-									<span rsf:id="evaluationCourseTitle"></span>
-									 - <span rsf:id="evaluationTitleTitle">Eval title</span>
-								</td>
-								<td>
-									<span rsf:id="evaluationCourseStatus">Completed</span>
-								</td>
-								<td>
-									<span rsf:id="evaluationStartDate">09/20/2005</span>
-								</td>
-								<td>
-									<span rsf:id="evaluationDueDate">09/27/2005</span>
-								</td>	
-							</tr>
-						</table>
-					</div>
-				</div>
-				
-				<div rsf:id="siteListingBox:" class="summaryBox">
-					<h4 rsf:id="sitelisting-title">Site/Group Listing</h4>
-					<div class="innerPanel">
-						<h5 rsf:id="sitelisting-evaluated-text">Sites you can be evaluated in:</h5>
-						<ol class="summaryEvaluateList">
-							<li rsf:id="evaluatedList:"><span rsf:id="evaluatedListTitle">Site/Group Title</span></li>
-						</ol>
-						<p rsf:id="evaluatedListNone" class="instruction indnt2">No items to list</p>
-						<h5 rsf:id="sitelisting-evaluate-text">Sites you can evaluate:</h5>
-						<ol class="summaryEvaluateList">
-							<li rsf:id="evaluateList:"><span rsf:id="evaluateListTitle">Site/Group Title</span></li>
-						</ol>
-						<p rsf:id="evaluateListNone" class="instruction indnt2">No items to list</p>
-					</div>
-				</div>
+                    <p rsf:id="evaluationsNone" class="instruction indnt2">No evaluations to take</p>
 
+      				<div rsf:id="evaluationsList:" class="innerPanel">
+      				<!-- // gsilver: reformatted table to 4 cols, added placeholder rsf:id for things-->
+      				<!-- lots of repetition here, not sure this is desirable -AZ -->
+      
+      					<table cellspacing="0" cellpadding="0" width="99%" border="0" class="listHier  lines nolines">
+      						<tr>
+      							<th colspan="2">
+      								<span rsf:id="evaluationCourseEvalTitle">Course -  evaluation</span>
+      							</th>
+      							<th rsf:id="evaluationStartsTitle">
+      								Starts
+      							</th>
+      							<th rsf:id="evaluationEndsTitle">
+      								Ends
+      							</th>
+      						</tr>
+      						<tr rsf:id="evaluationsCourseList:">
+      							<td>
+      								<a rsf:id="evaluationCourseLink" href="take_eval.html">Course Title</a>
+      								<span rsf:id="evaluationCourseTitle"></span>
+      								 - <span rsf:id="evaluationTitleTitle">Eval title</span>
+      							</td>
+      							<td>
+      								<span rsf:id="evaluationCourseStatus">Completed</span>
+      							</td>
+      							<td>
+      								<span rsf:id="evaluationStartDate">09/20/2005</span>
+      							</td>
+      							<td>
+      								<span rsf:id="evaluationDueDate">09/27/2005</span>
+      							</td>	
+      						</tr>
+      					</table>
+      				</div>
+      			</div>
+      			
+      			<div rsf:id="siteListingBox:" class="summaryBox">
+      				<h4 rsf:id="sitelisting-title">Site/Group Listing</h4>
+      				<div class="innerPanel">
+      					<h5 rsf:id="sitelisting-evaluated-text">Sites you can be evaluated in:</h5>
+      					<ol class="summaryEvaluateList">
+      						<li rsf:id="evaluatedList:"><span rsf:id="evaluatedListTitle">Site/Group Title</span></li>
+      					</ol>
+      					<p rsf:id="evaluatedListNone" class="instruction indnt2">No items to list</p>
+      					<h5 rsf:id="sitelisting-evaluate-text">Sites you can evaluate:</h5>
+      					<ol class="summaryEvaluateList">
+      						<li rsf:id="evaluateList:"><span rsf:id="evaluateListTitle">Site/Group Title</span></li>
+      					</ol>
+      					<p rsf:id="evaluateListNone" class="instruction indnt2">No items to list</p>
+      				</div>
+      			</div>
 			</div>
+
 			<div class="summaryCol2">
 				<div rsf:id="notificationsBox:"  class="summaryBox">
 					<h4 rsf:id="notifications-title">Notifications</h4>

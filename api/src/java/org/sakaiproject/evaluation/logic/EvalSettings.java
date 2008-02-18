@@ -160,16 +160,9 @@ public interface EvalSettings {
    public static final String EVAL_USE_DATE_TIME = "EVAL_USE_DATE_TIME:java.lang.Boolean";
 
    /**
-    * CONSTANT: Can the item results sharing be set for template items - {@link Boolean}, default False,
-    * this is a special UMD flag that is used for their external reporting system
-    */
-   public static final String ITEM_USE_RESULTS_SHARING = "ITEM_USE_RESULTS_SHARING:java.lang.Boolean";
-
-   /**
     * CONSTANT: Should we display Hierarchy Options and Information in the User Interface - {@link Boolean}, default False
     */
    public static final String DISPLAY_HIERARCHY_OPTIONS = "DISPLAY_HIERARCHY_OPTIONS:java.lang.Boolean";
-
    /**
     * CONSTANT: Display hierarchical nodes names as headers in the take/preview eval views - {@link Boolean}, default False
     */
@@ -179,26 +172,38 @@ public interface EvalSettings {
     * CONSTANT: Allow CSV Export for Reporting - {@link Boolean}, default True
     */
    public static final String ENABLE_CSV_REPORT_EXPORT = "ENABLE_CSV_REPORT_EXPORT:java.lang.Boolean";
-
    /**
     * CONSTANT: Allow XLS Export for Reporting - {@link Boolean}, default True
     */
    public static final String ENABLE_XLS_REPORT_EXPORT = "ENABLE_XLS_REPORT_EXPORT:java.lang.Boolean";
-
    /**
     * CONSTANT: Allow PDF Export for Reporting - {@link Boolean}, default False
     */
    public static final String ENABLE_PDF_REPORT_EXPORT = "ENABLE_PDF_REPORT_EXPORT:java.lang.Boolean";
-
    /**
     * CONSTANT: Use an Image banner on PDF Report Exports - {@link Boolean}, default False
     */
    public static final String ENABLE_PDF_REPORT_BANNER = "ENABLE_PDF_REPORT_BANNER:java.lang.Boolean";
-
    /**
     * CONSTANT: Location of image in Sakai Resources to use for PDF Report Banner - {@link String}, default null
     */
    public static final String PDF_BANNER_IMAGE_LOCATION = "PDF_BANNER_IMAGE_LOCATION:java.lang.String";
+
+   /**
+    * CONSTANT: Show the sites box with all the sites that the user can take evals in or
+    * be evaluated in on the summary page - {@link Boolean}, default False
+    */
+   public static final String ENABLE_SUMMARY_SITES_BOX = "ENABLE_SUMMARY_SITES_BOX:java.lang.Boolean";
+
+   /**
+    * CONSTANT: Can the item results sharing be set for template items - {@link Boolean}, default False,
+    * this is a special UMD flag that is used for their external reporting system
+    */
+   public static final String ITEM_USE_RESULTS_SHARING = "ITEM_USE_RESULTS_SHARING:java.lang.Boolean";
+   /**
+    * CONSTANT: Show the import controls and the importing options for importing templates/items/scales/evals - {@link Boolean}, default False
+    */
+   public static final String ENABLE_IMPORTING = "ENABLE_IMPORTING:java.lang.Boolean";
 
 
    /**
@@ -212,8 +217,10 @@ public interface EvalSettings {
       DISPLAY_HIERARCHY_HEADERS,
       DISPLAY_HIERARCHY_OPTIONS,
       ENABLE_CSV_REPORT_EXPORT,
+      ENABLE_IMPORTING,
       ENABLE_PDF_REPORT_BANNER,
       ENABLE_PDF_REPORT_EXPORT,
+      ENABLE_SUMMARY_SITES_BOX,
       ENABLE_XLS_REPORT_EXPORT,
       EVAL_USE_DATE_TIME,
       EVAL_USE_SAME_VIEW_DATES,
