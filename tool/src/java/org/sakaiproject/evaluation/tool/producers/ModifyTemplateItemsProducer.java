@@ -36,7 +36,6 @@ import org.sakaiproject.evaluation.tool.viewparams.ItemViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.PreviewEvalParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateItemViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
-import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
 import uk.org.ponder.htmlutil.HTMLUtil;

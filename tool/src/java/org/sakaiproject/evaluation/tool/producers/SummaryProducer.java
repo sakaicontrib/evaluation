@@ -295,9 +295,14 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 
 		if (! newEvals.isEmpty()) {
 			UIBranchContainer evalAdminBC = UIBranchContainer.make(tofill, "evalAdminBox:");
-			UIInternalLink.make(evalAdminBC, "evaladmin-title",
-					UIMessage.make("summary.evaluations.admin"),
-					new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID) );
+			// Temporary fix for http://www.caret.cam.ac.uk/jira/browse/CTL-583 (need to send them to the eval control page eventually) -AZ
+			if (beginEvaluation) {
+   			UIInternalLink.make(evalAdminBC, "evaladmin-title-link",
+   					UIMessage.make("summary.evaluations.admin"),
+   					new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID) );
+			} else {
+			   UIMessage.make(evalAdminBC, "evaladmin-title", "summary.evaluations.admin");
+			}
 			UIForm evalAdminForm = UIForm.make(evalAdminBC , "evalAdminForm");
 
 			UIMessage.make(evalAdminForm, "evaladmin-header-title","summary.header.title");
