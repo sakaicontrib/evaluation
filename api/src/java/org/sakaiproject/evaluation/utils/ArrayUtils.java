@@ -14,6 +14,7 @@
 
 package org.sakaiproject.evaluation.utils;
 
+import java.lang.reflect.Array;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -64,8 +65,10 @@ public class ArrayUtils {
 	 * @param value the item to append to the end of the new array
 	 * @return a new array with value in the last spot
 	 */
-	public static Object[] appendArray(Object[] array, Object value) {
-		Object[] newArray = new Object[array.length + 1];
+	@SuppressWarnings("unchecked")
+   public static <T> T[] appendArray(T[] array, T value) {
+	   Class<?> type = array.getClass().getComponentType();
+		T[] newArray = (T[]) Array.newInstance(type, array.length + 1);
 		System.arraycopy( array, 0, newArray, 0, array.length );
 		newArray[newArray.length-1] = value;
 		return newArray;
@@ -106,11 +109,13 @@ public class ArrayUtils {
 	 * @param value the item to prepend to the front of the new array
 	 * @return a new array with value in the first spot
 	 */
-	public static Object[] prependArray(Object[] array, Object value) {
-		Object[] newArray = new Object[array.length + 1];
-		System.arraycopy( array, 0, newArray, 1, array.length );
-		newArray[0] = value;
-		return newArray;
+	@SuppressWarnings("unchecked")
+   public static <T> T[] prependArray(T[] array, T value) {
+      Class<?> type = array.getClass().getComponentType();
+      T[] newArray = (T[]) Array.newInstance(type, array.length + 1);
+      System.arraycopy( array, 0, newArray, 1, array.length );
+      newArray[0] = value;
+      return newArray;
 	}
 
 	/**
