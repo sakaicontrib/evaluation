@@ -16,6 +16,7 @@
 
 package org.sakaiproject.evaluation.tool.producers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
@@ -174,31 +175,30 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
 
       // get form to submit the type of item to create to the correct view
       UIMessage.make(tofill, "add-item-note", "modifytemplate.add.item.note");
-      ViewParameters[] templateItemVPs = { 
-            new ItemViewParameters(ModifyItemProducer.VIEW_ID, EvalConstants.ITEM_TYPE_SCALED, templateId),
-            new ItemViewParameters(ModifyItemProducer.VIEW_ID, EvalConstants.ITEM_TYPE_MULTIPLECHOICE, templateId),
-            new ItemViewParameters(ModifyItemProducer.VIEW_ID, EvalConstants.ITEM_TYPE_MULTIPLEANSWER, templateId),
-            new ItemViewParameters(ModifyItemProducer.VIEW_ID, EvalConstants.ITEM_TYPE_TEXT, templateId),
-            new ItemViewParameters(ModifyItemProducer.VIEW_ID, EvalConstants.ITEM_TYPE_HEADER, templateId),
-            new TemplateItemViewParameters(ExistingItemsProducer.VIEW_ID, templateId, null)
-      };
-      String[] templateItemLabels = new String[] {
-            "item.classification.scaled", 
-            "item.classification.multichoice",
-            "item.classification.multianswer",
-            "item.classification.text",
-            "item.classification.header", 
-            "item.classification.existing"
-      };
+
+      // create the choices for the pulldown
+      ArrayList<ViewParameters> templateItemVPList = new ArrayList<ViewParameters>();
+      ArrayList<String> templateItemLabelList = new ArrayList<String>();
+      for (int i = 0; i < EvalToolConstants.ITEM_SELECT_CLASSIFICATION_VALUES.length; i++) {
+         templateItemVPList.add( new ItemViewParameters(ModifyItemProducer.VIEW_ID, 
+               EvalToolConstants.ITEM_SELECT_CLASSIFICATION_VALUES[i], templateId) );
+         templateItemLabelList.add(EvalToolConstants.ITEM_SELECT_CLASSIFICATION_LABELS[i]);
+      }
+
+      // add in existing items selection
+      templateItemVPList.add( new TemplateItemViewParameters(ExistingItemsProducer.VIEW_ID, templateId, null) );
+      templateItemLabelList.add("item.classification.existing");
+
+      // add in expert items choice if enabled
       Boolean useExpertItems = (Boolean) evalSettings.get(EvalSettings.USE_EXPERT_ITEMS);
       if (useExpertItems) {
-         ArrayUtils.appendArray(templateItemVPs, 
-               new TemplateItemViewParameters(ExpertCategoryProducer.VIEW_ID, templateId, null) );
-         ArrayUtils.appendArray(templateItemLabels, "item.classification.expert");
+         templateItemVPList.add( new TemplateItemViewParameters(ExpertCategoryProducer.VIEW_ID, templateId, null) );
+         templateItemLabelList.add("item.classification.expert");
       }
 
       addItemControlRenderer.renderControl(tofill, "add-item-control:", 
-            templateItemVPs, templateItemLabels, 
+            templateItemVPList.toArray(new ViewParameters[templateItemVPList.size()]), 
+            templateItemLabelList.toArray(new String[templateItemLabelList.size()]), 
             UIMessage.make("modifytemplate.add.item.button"), templateId);
 
       List<EvalTemplateItem> itemList = localTemplateLogic.fetchTemplateItems(templateId);

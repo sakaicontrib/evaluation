@@ -257,6 +257,7 @@ public class LocalTemplateLogic {
       if (item.getScale() != null) {
          // only process scales for the types that use them
          if ( EvalConstants.ITEM_TYPE_SCALED.equals(item.getClassification()) ||
+               EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(item.getClassification()) || // http://www.caret.cam.ac.uk/jira/browse/CTL-557
                EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(item.getClassification()) || 
                EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(item.getClassification()) ) {
             // for multiple type items we need to save the scale
@@ -285,7 +286,7 @@ public class LocalTemplateLogic {
                // new and existing scales need to be saved
                saveScale(scale);
             } else {
-               // scaled item so don't save the scale
+               // scaled/block parent item so don't save the scale
                if (item.getScale().getId() != null && 
                      item.getScale().getOwner() == null) {
                   // this is an existing scale and we need to turn the fake one into a real one so hibernate can make the connection

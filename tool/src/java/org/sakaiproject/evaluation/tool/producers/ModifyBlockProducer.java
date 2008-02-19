@@ -46,6 +46,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * Page for Create, modify, preview, delete a Block type Item
  * 
  * @author Rui Feng (fengr@vt.edu)
+ * @author "Rick Moyer" <rmoyer@umd.edu>
  */
 public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsReporter,
       DynamicNavigationCaseReporter {

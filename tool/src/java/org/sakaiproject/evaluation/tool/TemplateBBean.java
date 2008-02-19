@@ -189,25 +189,20 @@ public class TemplateBBean {
       List<String> orderedChildIdList = Arrays.asList(orderedChildIds.split(","));
       List<String> templateItemIdList = Arrays.asList(templateItemIds.split(","));
 
-      EvalTemplateItem parent = null, item = null;
-      List<EvalTemplateItem> allTemplateItems = null;
-
       if (blockId.equals(TemplateItemWBL.NEW_1)) { // create new block
-
-         parent = (EvalTemplateItem) delivered.get(TemplateItemWBL.NEW_1);
-
+         EvalTemplateItem parent = (EvalTemplateItem) delivered.get(TemplateItemWBL.NEW_1);
          if (parent != null) {
-
-            if ((blockTextChoice != null) && (!blockTextChoice.equals(TemplateItemWBL.NEW_1))) {
-               item = authoringService.getTemplateItemById(Long.valueOf(blockTextChoice));
-               parent.getItem().setItemText(item.getItem().getItemText());
+            EvalTemplateItem templateItem = null;
+            if (blockTextChoice != null && 
+                  (! blockTextChoice.equals(TemplateItemWBL.NEW_1)) ) {
+               templateItem = authoringService.getTemplateItemById(Long.valueOf(blockTextChoice));
+               parent.getItem().setItemText(templateItem.getItem().getItemText());
+            } else {
+               templateItem = authoringService.getTemplateItemById(Long.valueOf(orderedChildIdList.get(0)));
             }
 
-            else
-               item = authoringService.getTemplateItemById(Long.valueOf(orderedChildIdList.get(0)));
-
-            parent.setTemplate(item.getTemplate());
-            parent.getItem().setScale(item.getItem().getScale());
+            parent.setTemplate(templateItem.getTemplate());
+            parent.getItem().setScale(templateItem.getItem().getScale());
 
             parent.setBlockParent(Boolean.TRUE);
             parent.getItem().setClassification(EvalConstants.ITEM_TYPE_BLOCK_PARENT);
@@ -218,16 +213,14 @@ public class TemplateBBean {
 
             localTemplateLogic.saveItem(parent.getItem());
             localTemplateLogic.saveTemplateItem(parent);
-
-         }
-
-         else
+         } else {
             parent = authoringService.getTemplateItemById(Long.valueOf(blockTextChoice));
+         }
 
          // set parent's display order to the original display order of the first selected template item
          parent.setDisplayOrder(originalDisplayOrder);
 
-         allTemplateItems = authoringService.getTemplateItemsForTemplate(parent.getTemplate().getId(), null, null, null);
+         List<EvalTemplateItem> allTemplateItems = authoringService.getTemplateItemsForTemplate(parent.getTemplate().getId(), null, null, null);
          Long parentId = parent.getId();
          List<EvalTemplateItem> blockChildren = null;
 
@@ -241,13 +234,9 @@ public class TemplateBBean {
 
          // iterate through templateItemIdList and add all non-block items (including the children of block items in templateItemIdList) 
          for (String itemId : templateItemIdList) {
-
-            item = authoringService.getTemplateItemById(Long.valueOf(itemId));
-
-            if (TemplateItemUtils.getTemplateItemType(item).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)) { // block parent
-
-               blockChildren = TemplateItemUtils.getChildItems(allTemplateItems, item.getId());
-
+            EvalTemplateItem templateItem = authoringService.getTemplateItemById(Long.valueOf(itemId));
+            if (TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)) { // block parent
+               blockChildren = TemplateItemUtils.getChildItems(allTemplateItems, templateItem.getId());
                for (EvalTemplateItem child : blockChildren) {
                   child.setBlockId(parentId);
                   child.setDisplayOrder(new Integer(orderedChildIdList.indexOf(child.getId().toString()) + 1));
@@ -255,14 +244,15 @@ public class TemplateBBean {
                }
 
                // delete remaining block parent if it is not the parent (only applicable if parent is not newly created)
-               if (parent != item)
-                  localTemplateLogic.deleteTemplateItem(item.getId());
+               if (parent != templateItem) {
+                  localTemplateLogic.deleteTemplateItem(templateItem.getId());
+               }
 
             } else { // normal scale type
-               item.setBlockParent(Boolean.FALSE);
-               item.setBlockId(parentId);
-               item.setDisplayOrder(new Integer(orderedChildIdList.indexOf(itemId) + 1));
-               localTemplateLogic.saveTemplateItem(item);
+               templateItem.setBlockParent(Boolean.FALSE);
+               templateItem.setBlockId(parentId);
+               templateItem.setDisplayOrder(new Integer(orderedChildIdList.indexOf(itemId) + 1));
+               localTemplateLogic.saveTemplateItem(templateItem);
             }
 
          } // end for
@@ -271,24 +261,22 @@ public class TemplateBBean {
          allTemplateItems = authoringService.getTemplateItemsForTemplate(parent.getTemplate().getId(), null, null, null);
          List<EvalTemplateItem> nonChildList = TemplateItemUtils.getNonChildItems(allTemplateItems);
 
-         if ((originalDisplayOrder.intValue() < nonChildList.size()) && (nonChildList.get(originalDisplayOrder.intValue()).getId() == parentId)) {
+         if ((originalDisplayOrder.intValue() < nonChildList.size()) && 
+               (nonChildList.get(originalDisplayOrder.intValue()).getId() == parentId)) {
             nonChildList.remove(originalDisplayOrder.intValue());
             nonChildList.add(originalDisplayOrder - 1, parent);
          }
 
-         for (int i = originalDisplayOrder.intValue(); i < nonChildList.size(); i ++) {
-
-            item = nonChildList.get(i);
-
-            if (item.getDisplayOrder().intValue() != (i + 1)) {
-               item.setDisplayOrder(new Integer(i + 1));
-               localTemplateLogic.saveTemplateItem(item);
+         for (int i = originalDisplayOrder.intValue(); i < nonChildList.size(); i++) {
+            EvalTemplateItem templateItem = nonChildList.get(i);
+            if (templateItem.getDisplayOrder().intValue() != (i + 1)) {
+               templateItem.setDisplayOrder(new Integer(i + 1));
+               localTemplateLogic.saveTemplateItem(templateItem);
             }
-
          }
 
       } else { // modify block
-         parent = authoringService.getTemplateItemById(Long.valueOf(blockId));
+         EvalTemplateItem parent = authoringService.getTemplateItemById(Long.valueOf(blockId));
          saveBlockChildrenOrder(parent.getId(), orderedChildIdList);
          setIdealColorForBlockParent(parent);
          localTemplateLogic.saveItem(parent.getItem());
