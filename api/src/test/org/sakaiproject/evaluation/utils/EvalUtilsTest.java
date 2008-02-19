@@ -12,7 +12,7 @@
  * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
  */
 
-package org.sakaiproject.evaluation.test;
+package org.sakaiproject.evaluation.utils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -24,6 +24,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
@@ -385,6 +386,11 @@ public class EvalUtilsTest extends TestCase {
       assertEquals(7, decoded[3].intValue());
       assertEquals(9, decoded[4].intValue());
 
+      // do a really simple one
+      decoded = EvalUtils.decodeMultipleAnswers(S+"9"+S);
+      assertNotNull(decoded);
+      assertEquals(9, decoded[0].intValue());
+
       // negative
       decoded = EvalUtils.decodeMultipleAnswers("");
       assertNotNull(decoded);
@@ -398,6 +404,63 @@ public class EvalUtilsTest extends TestCase {
       assertNotNull(decoded);
       assertEquals(0, decoded.length);
 
+   }
+
+   /**
+    * Test method for {@link org.sakaiproject.evaluation.utils.EvalUtils#encodeAnswerNA(org.sakaiproject.evaluation.model.EvalAnswer)}.
+    */
+   public void testEncodeAnswerNA() {
+      EvalAnswer applicableAnswer = new EvalAnswer(null, null, null, null, "text", new Integer(3), null, null);
+      EvalAnswer naAnswer = new EvalAnswer(null, null, null, null, "text", EvalConstants.NA_VALUE, null, null);
+      naAnswer.setMultiAnswerCode("multiCode");
+
+      applicableAnswer.NA = false;
+      naAnswer.NA = true;
+
+      assertFalse( EvalUtils.encodeAnswerNA(applicableAnswer) );
+      assertEquals(false, applicableAnswer.NA);
+      assertEquals(new Integer(3), applicableAnswer.getNumeric());
+      assertEquals("text", applicableAnswer.getText());
+
+      assertTrue( EvalUtils.encodeAnswerNA(naAnswer) );
+      assertEquals(true, naAnswer.NA);
+      assertEquals(EvalConstants.NA_VALUE, naAnswer.getNumeric());
+      assertNull(naAnswer.getText());
+      assertNull(naAnswer.getMultiAnswerCode());
+
+      try {
+         EvalUtils.encodeAnswerNA(null);
+         fail("Should have thrown exception");
+      } catch (IllegalArgumentException e) {
+         assertNotNull(e);
+      }
+   }
+
+   /**
+    * Test method for {@link org.sakaiproject.evaluation.utils.EvalUtils#decodeAnswerNA(org.sakaiproject.evaluation.model.EvalAnswer)}.
+    */
+   public void testDecodeAnswerNA() {
+      EvalAnswer applicableAnswer = new EvalAnswer(null, null, null, null, "text", new Integer(3), null, null);
+      EvalAnswer naAnswer = new EvalAnswer(null, null, null, null, "text", EvalConstants.NA_VALUE, null, null);
+      naAnswer.setMultiAnswerCode("multiCode");
+
+      assertFalse( EvalUtils.decodeAnswerNA(applicableAnswer) );
+      assertEquals(false, applicableAnswer.NA);
+      assertEquals(new Integer(3), applicableAnswer.getNumeric());
+      assertEquals("text", applicableAnswer.getText());
+
+      assertTrue( EvalUtils.decodeAnswerNA(naAnswer) );
+      assertEquals(true, naAnswer.NA);
+      assertEquals(EvalConstants.NA_VALUE, naAnswer.getNumeric());
+      assertEquals("text", naAnswer.getText());
+      assertEquals("multiCode", naAnswer.getMultiAnswerCode());
+
+      try {
+         EvalUtils.decodeAnswerNA(null);
+         fail("Should have thrown exception");
+      } catch (IllegalArgumentException e) {
+         assertNotNull(e);
+      }
    }
 
 }

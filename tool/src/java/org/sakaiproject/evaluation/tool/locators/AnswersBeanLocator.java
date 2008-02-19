@@ -15,13 +15,13 @@
 package org.sakaiproject.evaluation.tool.locators;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.tool.LocalResponsesLogic;
+import org.sakaiproject.evaluation.utils.EvalUtils;
 
 import uk.org.ponder.beanutil.BeanLocator;
 
@@ -38,14 +38,14 @@ public class AnswersBeanLocator implements BeanLocator {
 
    private Map<String, EvalAnswer> delivered = new HashMap<String, EvalAnswer>();
 
-   private EvalResponse parent;
+   private EvalResponse response;
 
    private LocalResponsesLogic localResponsesLogic;
 
-   public AnswersBeanLocator(EvalResponse parent, LocalResponsesLogic localResponsesLogic) {
-      this.parent = parent;
+   public AnswersBeanLocator(EvalResponse response, LocalResponsesLogic localResponsesLogic) {
+      this.response = response;
       this.localResponsesLogic = localResponsesLogic;
-      loadMap(parent.getAnswers());
+      loadMap(response.getAnswers());
    }
 
    public Object locateBean(String path) {
@@ -54,8 +54,10 @@ public class AnswersBeanLocator implements BeanLocator {
       // one. we don't use the new prefix, because the producer has no way of knowing
       // if an answer has been created for the given item, even if a response exists.
       if (togo == null) {
-         if(path.startsWith(NEW_PREFIX)) togo = localResponsesLogic.newAnswer(parent);
-         parent.getAnswers().add(togo);
+         if (path.startsWith(NEW_PREFIX)) {
+            togo = localResponsesLogic.newAnswer(response);
+         }
+         response.getAnswers().add(togo);
          delivered.put(path, togo);
       }
       return togo;
@@ -68,8 +70,11 @@ public class AnswersBeanLocator implements BeanLocator {
     * @param answers - Set of answers
     */
    public void loadMap(Set<EvalAnswer> answers) {
-      for (Iterator<EvalAnswer> it = answers.iterator(); it.hasNext();) {
-         EvalAnswer answer = it.next();
+      for (EvalAnswer answer : answers) {
+         // decode the various parts of this answer
+         EvalUtils.decodeAnswerNA(answer);
+         answer.multipleAnswers = EvalUtils.decodeMultipleAnswers(answer.getMultiAnswerCode());
+         // put the answer into the map
          delivered.put(answer.getId().toString(), answer);
       }
    }

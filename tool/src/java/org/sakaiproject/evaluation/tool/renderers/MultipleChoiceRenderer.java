@@ -92,7 +92,7 @@ public class MultipleChoiceRenderer implements ItemRenderer {
          UIBranchContainer displayContainer = UIBranchContainer.make(radiobranchFullRow, containerId);
 
          if (usesNA) {
-            scaleValues = ArrayUtils.appendArray(scaleValues, EvalConstants.NA_VALUE);
+            scaleValues = ArrayUtils.appendArray(scaleValues, EvalConstants.NA_VALUE.toString());
             scaleLabels = ArrayUtils.appendArray(scaleLabels, "");
          }
 
@@ -110,18 +110,14 @@ public class MultipleChoiceRenderer implements ItemRenderer {
             UIBranchContainer radiobranchNested = 
                UIBranchContainer.make(displayContainer, "scaleOptions:", j+"");
             UISelectChoice choice = UISelectChoice.make(radiobranchNested, "choiceValue", selectID, j);
-            UILabelTargetDecorator.targetLabel(
-                  UISelectLabel.make(radiobranchNested, "choiceLabel", selectID, j),
-                  choice);
+            UISelectLabel.make(radiobranchNested, "choiceLabel", selectID, j).decorate( new UILabelTargetDecorator(choice) );
          }
 
          if (usesNA) {
             UIBranchContainer radiobranch3 = UIBranchContainer.make(displayContainer, "showNA:");
             radiobranch3.decorators = new DecoratorList( new UIStyleDecorator("na") );// must match the existing CSS class				
-            UISelectChoice choice = UISelectChoice.make(radiobranch3, "na-input", selectID, scaleLength - 1);
-            UILabelTargetDecorator.targetLabel(
-                  UIMessage.make(radiobranch3, "na-desc", "viewitem.na.desc"),
-                  choice);
+            UISelectChoice choice = UISelectChoice.make(radiobranch3, "itemNA", selectID, scaleLength - 1);
+            UIMessage.make(radiobranch3, "descNA", "viewitem.na.desc").decorate( new UILabelTargetDecorator(choice) );
          }
 
       } else {

@@ -684,9 +684,9 @@ public class EvalConstants {
    public static final String ITEM_RESULTS_SHARING_PRIVATE = "private";
 
    /**
-    * The numeric string stored when a student responds N/A
+    * The numeric value stored when a student responds N/A
     */
-   public static final String NA_VALUE = "-1";
+   public static final Integer NA_VALUE = -1;
    /**
     * The number stored for no numeric answer
     */

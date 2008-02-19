@@ -110,18 +110,14 @@ public class MultipleAnswerRenderer implements ItemRenderer {
             UIBranchContainer radiobranchNested = 
                UIBranchContainer.make(displayContainer, "scaleOptions:", j+"");
             UISelectChoice choice = UISelectChoice.make(radiobranchNested, "choiceValue", selectID, j);
-            UILabelTargetDecorator.targetLabel(
-                  UISelectLabel.make(radiobranchNested, "choiceLabel", selectID, j),
-                  choice);
+            UISelectLabel.make(radiobranchNested, "choiceLabel", selectID, j).decorate( new UILabelTargetDecorator(choice) );
          }
 
          if (usesNA) {
             UIBranchContainer branchNA = UIBranchContainer.make(container, "showNA:");
-            branchNA.decorators = new DecoratorList( new UIStyleDecorator("na") );// must match the existing CSS class
+            branchNA.decorators = new DecoratorList( new UIStyleDecorator("na") ); // must match the existing CSS class
             UIBoundBoolean checkbox = UIBoundBoolean.make(branchNA, "itemNA", naBinding, naInit);
-            UILabelTargetDecorator.targetLabel(
-                  UIMessage.make(branchNA, "na-desc", "viewitem.na.desc"), 
-                  checkbox);
+            UIMessage.make(branchNA, "descNA", "viewitem.na.desc").decorate( new UILabelTargetDecorator(checkbox) );
          }
 
       } else {

@@ -259,9 +259,11 @@ public class EvalUtils {
          EvalAnswer answer = it.next();
          // decode the stored answers into the int array
          answer.multipleAnswers = EvalUtils.decodeMultipleAnswers(answer.getMultiAnswerCode());
+         // decode the NA value
+         decodeAnswerNA(answer);
          // place the answers into a map which uses the TI, assocType, and assocId as a key
-         map.put(answer.getTemplateItem().getId().toString() + answer.getAssociatedType()
-               + answer.getAssociatedId(), answer);
+         String key = answer.getTemplateItem().getId().toString() + answer.getAssociatedType() + answer.getAssociatedId();
+         map.put(key, answer);
       }
       return map;
    }
@@ -308,7 +310,7 @@ public class EvalUtils {
          if (encodedAnswers.startsWith(SEPARATOR) &&
                encodedAnswers.endsWith(SEPARATOR)) {
             String[] split = encodedAnswers.split(SEPARATOR);
-            if (split.length > 2) {
+            if (split.length > 1) {
                decoded = new Integer[split.length - 1];
                for (int i = 1; i < (split.length); i++) {
                   if ("".equals(split[i])) {
@@ -326,6 +328,51 @@ public class EvalUtils {
          decoded = new Integer[0];
       }
       return decoded;
+   }
+
+   /**
+    * Sets the persistent fields of this answer based on the NA setting in the
+    * non-persistent field {@link EvalAnswer#NA}<br/>
+    * <b>NOTE:</b> This is not always safe to run as it changes the values of
+    * the persistent object so be careful
+    * 
+    * @param answer an {@link EvalAnswer} (saved or new)
+    * @return true if this answer is NA, false otherwise
+    */
+   public static boolean encodeAnswerNA(EvalAnswer answer) {
+      if (answer == null) {
+         throw new IllegalArgumentException("answer cannot be null");
+      }
+      boolean notApplicable = answer.NA;
+      if (notApplicable) {
+         answer.setNumeric(EvalConstants.NA_VALUE);
+         answer.setText(null);
+         answer.setMultiAnswerCode(null);
+      }
+      return notApplicable;
+   }
+
+   /**
+    * Sets the non-persistent field {@link EvalAnswer#NA} of this answer 
+    * to the correct value based on the values of the persistent fields<br/>
+    * <b>NOTE:</b> This is always safe to run as it does not change the values of
+    * the persistent objects
+    * 
+    * @param answer an {@link EvalAnswer} (saved or new)
+    * @return true if this answer is NA, false otherwise
+    */
+   public static boolean decodeAnswerNA(EvalAnswer answer) {
+      if (answer == null) {
+         throw new IllegalArgumentException("answer cannot be null");
+      }
+      boolean notApplicable = false;
+      if (EvalConstants.NA_VALUE.equals(answer.getNumeric()) ) {
+         notApplicable = true;
+      } else {
+         notApplicable = false;
+      }
+      answer.NA = notApplicable;
+      return notApplicable;
    }
 
 }

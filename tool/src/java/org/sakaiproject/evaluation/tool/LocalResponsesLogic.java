@@ -135,6 +135,9 @@ public class LocalResponsesLogic {
          // we need to encode the data in the MA array so it can be stored
          answer.setMultiAnswerCode(EvalUtils.encodeMultipleAnswers(answer.multipleAnswers));
 
+         // need to encode the NA value
+         EvalUtils.encodeAnswerNA(answer);
+
          if (answer.getNumeric() == null &&
                answer.getText() == null &&
                answer.getMultiAnswerCode() == null) {
