@@ -133,9 +133,9 @@ public class ControlItemsProducer implements ViewComponentProducer {
       UIForm addItemForm = UIForm.make(tofill, "add-item-form", 
             new ItemViewParameters(ModifyItemProducer.VIEW_ID, null));
       UISelect.make(addItemForm, "item-classification-list", 
-            EvalToolConstants.ITEM_CLASSIFICATION_VALUES, 
-            EvalToolConstants.ITEM_CLASSIFICATION_LABELS_PROPS, 
-      "#{itemClassification}").setMessageKeys();
+            EvalToolConstants.ITEM_SELECT_CLASSIFICATION_VALUES, 
+            EvalToolConstants.ITEM_SELECT_CLASSIFICATION_LABELS, 
+            "#{itemClassification}").setMessageKeys();
       UIMessage.make(addItemForm, "add-item-button", "controlitems.items.add.button");
 
       // get items for the current user

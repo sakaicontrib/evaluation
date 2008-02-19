@@ -249,7 +249,33 @@ public class EvalToolConstants {
    public static final String[] defaultInitialScaleValues = new String[] {"",""};
 
 
+   /**
+    * Used for translating the types into I18n strings
+    */
    public static final String[] ITEM_CLASSIFICATION_VALUES = new String[] {
+      EvalConstants.ITEM_TYPE_BLOCK_CHILD,
+      EvalConstants.ITEM_TYPE_BLOCK_PARENT,
+      EvalConstants.ITEM_TYPE_SCALED,
+      EvalConstants.ITEM_TYPE_MULTIPLECHOICE,
+      EvalConstants.ITEM_TYPE_MULTIPLEANSWER,
+      EvalConstants.ITEM_TYPE_TEXT,
+      EvalConstants.ITEM_TYPE_HEADER,
+   };
+
+   public static final String[] ITEM_CLASSIFICATION_LABELS_PROPS = new String[] {
+      "item.classification.scaled", 
+      "item.classification.block", 
+      "item.classification.scaled", 
+      "item.classification.multichoice",
+      "item.classification.multianswer",
+      "item.classification.text",
+      "item.classification.header"
+   };
+
+   /**
+    * Values for rendering the items types for creating new items
+    */
+   public static final String[] ITEM_SELECT_CLASSIFICATION_VALUES = new String[] {
       EvalConstants.ITEM_TYPE_SCALED,
       EvalConstants.ITEM_TYPE_MULTIPLECHOICE,
       EvalConstants.ITEM_TYPE_MULTIPLEANSWER,
@@ -257,7 +283,7 @@ public class EvalToolConstants {
       EvalConstants.ITEM_TYPE_HEADER
    };
 
-   public static final String[] ITEM_CLASSIFICATION_LABELS_PROPS = new String[] {
+   public static final String[] ITEM_SELECT_CLASSIFICATION_LABELS = new String[] {
       "item.classification.scaled", 
       "item.classification.multichoice",
       "item.classification.multianswer",
