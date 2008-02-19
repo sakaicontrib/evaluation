@@ -95,8 +95,8 @@ public class PreloadDataImpl implements Runnable {
          saveConfig(EvalSettings.INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS, true);
          saveConfig(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS, true);
          saveConfig(EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS, true);
-         // leave this out to use the setting in the evaluation
-         //saveConfig(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE, EvalConstants.INSTRUCTOR_OPT_OUT);
+         // NOTE: leave this out to default to use the setting in the evaluation
+         saveConfig(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE, EvalConstants.INSTRUCTOR_OPT_OUT);
 
          saveConfig(EvalSettings.INSTRUCTOR_ADD_ITEMS_NUMBER, 5);
 

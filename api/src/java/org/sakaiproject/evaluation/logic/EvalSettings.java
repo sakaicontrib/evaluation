@@ -52,8 +52,8 @@ public interface EvalSettings {
     */
    public static final String INSTRUCTOR_ALLOWED_EMAIL_STUDENTS = "INSTRUCTOR_ALLOWED_EMAIL_STUDENTS:java.lang.Boolean";
    /**
-    * CONSTANT: Does the instructor have to use evaluations from above in the hierarchy - {@link String}, default Configurable
-    * <b>Note:</b> If this is NULL then the evaluation settings overrride, otherwise this overrides the evaluation setting
+    * CONSTANT: Does the instructor have to use evaluations from above in the hierarchy - {@link String}, default INSTRUCTOR_OPT_OUT
+    * <b>Note:</b> If this is NULL then the evaluation settings overrride (Configurable), otherwise this overrides the evaluation setting
     */
    public static final String INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE = "INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE:java.lang.String";
    /**
@@ -243,7 +243,6 @@ public interface EvalSettings {
     */
    public static String[] TERNARY_BOOLEAN_SETTINGS = {
       INSTRUCTOR_ALLOWED_VIEW_RESULTS,
-      INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE,
       STUDENT_ALLOWED_LEAVE_UNANSWERED,
       STUDENT_MODIFY_RESPONSES,
       STUDENT_VIEW_RESULTS
