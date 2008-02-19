@@ -4,6 +4,7 @@ package org.sakaiproject.evaluation.model;
 import java.util.Date;
 
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
+import org.sakaiproject.evaluation.utils.EvalUtils;
 
 /**
  * The Answer object holds answers for a single item and a single response
@@ -53,6 +54,14 @@ public class EvalAnswer implements java.io.Serializable {
     */
    public Integer[] multipleAnswers;
 
+   /**
+    * Non-persistent field which is used to obtain the response from the user for
+    * the NA checkbox (if there is one, like in the case of text or MA answers),
+    * this needs to be translated into the correct NA value before being saved,
+    * use the {@link EvalUtils#encodeAnswerNA(EvalAnswer)} and {@link EvalUtils#decodeAnswerNA(EvalAnswer)}
+    * methods to handle the encoding (after setting this) and decoding (after retrieving from DB) of this field
+    */
+   public boolean NA = false;
 
    // Constructors
 

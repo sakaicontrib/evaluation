@@ -135,7 +135,7 @@ public class BlockRenderer implements ItemRenderer {
 			String selectIDLabel = radioLabel.getFullID();
 
 			if (usesNA) {
-				scaleValues = ArrayUtils.appendArray(scaleValues, EvalConstants.NA_VALUE);
+				scaleValues = ArrayUtils.appendArray(scaleValues, EvalConstants.NA_VALUE.toString());
 				scaleLabels = ArrayUtils.appendArray(scaleLabels, "");
 				UIMessage.make(blockStepped, "na-desc", "viewitem.na.desc");
 			}

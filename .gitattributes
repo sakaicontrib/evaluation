@@ -67,8 +67,8 @@ api/src/java/org/sakaiproject/evaluation/utils/ComparatorsUtils.java -text
 api/src/java/org/sakaiproject/evaluation/utils/EvalUtils.java -text
 api/src/java/org/sakaiproject/evaluation/utils/SettingsLogicUtils.java -text
 api/src/java/org/sakaiproject/evaluation/utils/TemplateItemUtils.java -text
-api/src/test/org/sakaiproject/evaluation/test/ArrayUtilsTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
-api/src/test/org/sakaiproject/evaluation/test/EvalUtilsTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
+api/src/test/org/sakaiproject/evaluation/utils/ArrayUtilsTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
+api/src/test/org/sakaiproject/evaluation/utils/EvalUtilsTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/project.xml -text
 impl/src/java/org/sakaiproject/evaluation/dao/EvalDataPreloaderImpl.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/java/org/sakaiproject/evaluation/dao/EvaluationDaoImpl.java -text

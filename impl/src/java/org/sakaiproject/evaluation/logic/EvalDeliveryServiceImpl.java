@@ -233,6 +233,8 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
       for (EvalAnswer answer : answers) {
          // decode the stored answers into the int array
          answer.multipleAnswers = EvalUtils.decodeMultipleAnswers(answer.getMultiAnswerCode());
+         // decode NA value
+         EvalUtils.decodeAnswerNA(answer);
       }
       return answers;
    }
@@ -426,6 +428,9 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
             throw new IllegalArgumentException("NULL templateItem or templateItem.item for answer: " +
             "Answers must have the templateItem set, and that must have the item set");
          }
+
+         // decode NA value
+         EvalUtils.decodeAnswerNA(answer);
 
          // verify the base state of new answers
          if (answer.getId() == null) {

@@ -129,7 +129,14 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
    int displayNumber=1;
    int renderedItemCount=0;
 
-   List<EvalTemplateItem> allItems; // should be set to a list of all evaluation items
+   /**
+    * List of all evaluation items for the current evaluation
+    */
+   List<EvalTemplateItem> allItems;
+   /**
+    * Map of key to Answers for the current response<br/>
+    * key = templateItemId + answer.associatedType + answer.associatedId
+    */
    Map<String, EvalAnswer> answerMap = new HashMap<String, EvalAnswer>();
 
 
@@ -276,7 +283,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
          UIOutput.make(groupTitle, "group-title", external.getDisplayTitle(evalGroupId) );
 
          // show instructions if not null
-         if (eval.getInstructions() != null) {
+         if (eval.getInstructions() != null && !("".equals(eval.getInstructions())) ) {
             UIBranchContainer instructions = UIBranchContainer.make(tofill, "show-eval-instructions:");
             UIMessage.make(instructions, "eval-instructions-header", "takeeval.instructions.header");	
             UIVerbatim.make(instructions, "eval-instructions", eval.getInstructions());
@@ -333,17 +340,18 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                   form, courseSection, evalHierNodes, null);
          }
 
-         if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, nonChildItemsList)) {	
+         if (instructors.size() > 0 &&
+               TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, nonChildItemsList)) {	
             // for each instructor, make a branch containing all instructor questions
-            for (String instructor : instructors) {
+            for (String instructorUserId : instructors) {
                UIBranchContainer instructorSection = UIBranchContainer.make(form, "instructorSection:", "inst"+displayNumber);
-               String instructorName = external.getUserDisplayName(instructor);
+               String instructorName = external.getUserDisplayName(instructorUserId);
                UIMessage.make(instructorSection, "instructor-questions-header", 
                      "takeeval.instructor.questions.header", new Object[] { instructorName });
                // for each non-child item in this evaluation
                handleCategoryRender(
                      TemplateItemUtils.getCategoryTemplateItems(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, nonChildItemsList), 
-                     form, instructorSection, evalHierNodes, instructor);
+                     form, instructorSection, evalHierNodes, instructorUserId);
             }
          }
 
@@ -431,8 +439,8 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
     * @param associatedId
     */
    private void renderItemPrep(UIBranchContainer branch, UIForm form, EvalTemplateItem templateItem, String associatedId) {
-      // holds array of bindings for items
-      String[] currentAnswerOTP = null;
+      int displayIncrement = 0; // stores the increment in the display number
+      String[] currentAnswerOTP = null; // holds array of bindings for items
       if (! TemplateItemUtils.isAnswerable(templateItem)) {
          // nothing to bind for unanswerable items unless it is a block parent
          if ( TemplateItemUtils.isBlockParent(templateItem) ) {
@@ -451,19 +459,22 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                }
                renderedItemCount++;
             }
+            displayIncrement = currentAnswerOTP.length;
          }
       } else {
          // non-block and answerable items
          currentAnswerOTP = setupCurrentAnswerBindings(form, templateItem, associatedId);
+         displayIncrement++;
       }
 
       // render the item
       itemRenderer.renderItem(branch, "rendered-item:", currentAnswerOTP, templateItem, displayNumber, false);
 
-      // increment the item counters, if we displayed 1 item, increment by 1,
-      // if we displayed a block, renderedItem has been incremented, increment displayNumber by the number of blockChildren,
-      // this happens to coincide with the number of current answer OTP strings exactly -AZ
-      if (currentAnswerOTP != null) displayNumber += currentAnswerOTP.length;
+      /* increment the item counters, if we displayed 1 item, increment by 1,
+       * if we displayed a block, renderedItem has been incremented for each child, increment displayNumber by the number of blockChildren,
+       * here we are simply adding the display increment to the overall number -AZ
+       */
+      displayNumber += displayIncrement;
       renderedItemCount++;
    }
 
@@ -476,9 +487,16 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
     * @return an array of binding strings from the TI to the answer (first) and NA (second) which will bind to the input elements
     */
    private String[] setupCurrentAnswerBindings(UIForm form, EvalTemplateItem templateItem, String associatedId) {
+      // the associated type is set only if the associatedId is set
+      String associatedType = null;
+      if (associatedId != null) {
+         associatedType = templateItem.getCategory(); // type will match the template item category
+      }
+
       // set up OTP paths for answerable items
       String responseAnswersOTP = "responseAnswersBeanLocator.";
       String currAnswerOTP;
+      boolean newAnswer = false;
       if (responseId == null) {
          // it should not be the case that we have no response
          //throw new IllegalStateException("There is no response, something has failed to load correctly for takeeval");
@@ -486,32 +504,45 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
          form.parameters.add( new UIELBinding("takeEvalBean.startDate", new Date()) );
 
          currAnswerOTP = responseAnswersOTP + ResponseAnswersBeanLocator.NEW_1 + "." + ResponseAnswersBeanLocator.NEW_PREFIX + renderedItemCount + ".";
+         newAnswer = true;
       } else {
          // if the user has answered this question before, point at their response
-         EvalAnswer currAnswer = (EvalAnswer) answerMap.get(templateItem.getId() + "null" + "null");
-
+         String key = templateItem.getId() + associatedType + associatedId;
+         EvalAnswer currAnswer = (EvalAnswer) answerMap.get(key);
          if (currAnswer == null) {
+            // this is a new answer
+            newAnswer = true;
             currAnswerOTP = responseAnswersOTP + responseId + "." + ResponseAnswersBeanLocator.NEW_PREFIX + (renderedItemCount) + ".";
          } else {
+            // existing answer
+            newAnswer = false;
             currAnswerOTP = responseAnswersOTP + responseId + "." + currAnswer.getId() + ".";
          }
       }
 
-      // bind the current EvalTemplateItem's EvalItem to the current EvalAnswer's EvalItem
-      form.parameters.add( new UIELBinding(currAnswerOTP + "templateItem", 
-            new ELReference("templateItemWBL." + templateItem.getId())) );
+      if (newAnswer) {
+         // ADD in the bindings for the new answers
 
-      // bind the associated id (current instructor id or environment) and type to the current answer
-      form.parameters.add(new UIELBinding(currAnswerOTP + "associatedId", associatedId));
-      form.parameters.add(new UIELBinding(currAnswerOTP + "associatedType", templateItem.getItem().getCategory()));
+         // bind the template item to the answer
+         form.parameters.add( new UIELBinding(currAnswerOTP + "templateItem", 
+               new ELReference("templateItemWBL." + templateItem.getId())) );
+
+         // bind the item to the answer
+         form.parameters.add( new UIELBinding(currAnswerOTP + "item", 
+               new ELReference("itemWBL." + templateItem.getItem().getId())) );
+
+         // bind the associated id (current instructor id or environment) and type to the current answer
+         form.parameters.add( new UIELBinding(currAnswerOTP + "associatedId", associatedId) );
+         form.parameters.add( new UIELBinding(currAnswerOTP + "associatedType", associatedType) );
+      }
 
       // generate binding for the UI input element (UIInput, UISelect, etc.) to the correct part of answer
       String[] bindings = null;
       String itemType = TemplateItemUtils.getTemplateItemType(templateItem);
       if ( EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemType) ) {
-         bindings = new String[] { currAnswerOTP + "multipleAnswers", currAnswerOTP + "numeric" };
+         bindings = new String[] { currAnswerOTP + "multipleAnswers", currAnswerOTP + "NA" };
       } else if ( EvalConstants.ITEM_TYPE_TEXT.equals(itemType) ) {
-         bindings = new String[] { currAnswerOTP + "text", currAnswerOTP + "numeric" };
+         bindings = new String[] { currAnswerOTP + "text", currAnswerOTP + "NA" };
       } else {
          // this is the default binding (scaled and MC)
          bindings = new String[] { currAnswerOTP + "numeric" };

@@ -109,7 +109,7 @@ public class ScaledRenderer implements ItemRenderer {
 			}
 
 			if (usesNA) {
-				scaleValues = ArrayUtils.appendArray(scaleValues, EvalConstants.NA_VALUE);
+				scaleValues = ArrayUtils.appendArray(scaleValues, EvalConstants.NA_VALUE.toString());
 				scaleLabels = ArrayUtils.appendArray(scaleLabels, "");
 			}
 
@@ -180,7 +180,7 @@ public class ScaledRenderer implements ItemRenderer {
 			}
 
 			if (usesNA) {
-				scaleValues = ArrayUtils.appendArray(scaleValues, EvalConstants.NA_VALUE);
+				scaleValues = ArrayUtils.appendArray(scaleValues, EvalConstants.NA_VALUE.toString());
 				scaleLabels = ArrayUtils.appendArray(scaleLabels, "");
 			}
 
@@ -235,7 +235,7 @@ public class ScaledRenderer implements ItemRenderer {
 			}
 
 			if (usesNA) {
-				scaleValues = ArrayUtils.appendArray(scaleValues, EvalConstants.NA_VALUE);
+				scaleValues = ArrayUtils.appendArray(scaleValues, EvalConstants.NA_VALUE.toString());
 				scaleLabels = ArrayUtils.appendArray(scaleLabels, "");
 			}
 
