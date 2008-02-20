@@ -5,7 +5,7 @@ import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
-/* 
+/** 
  * This is a central place for the code to check whether or not someone can view
  * the results of an evaluation.
  * 
@@ -18,6 +18,8 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
  * 5) Do the system settings allow students to view the evaluation?
  * 5b) Is this user a student who is allowed to view results
  * 6) Is this user a hierarchical admin
+ * 
+ * @author Steven Githens
  */
 public class ReportingPermissions {
 
@@ -31,7 +33,7 @@ public class ReportingPermissions {
       this.evalSettings = evalSettings;
    }
 
-   /*
+   /**
     * Decide whether the current user can view the responses for an evaluation
     * and set of groups that participated in it.
     * 
@@ -105,14 +107,7 @@ public class ReportingPermissions {
       
       return allowedToView;
    }
-   
-   /* 4) Do the system settings allow instructors to view the evaluation?
-    * 
-    * Is this user an instructor in a group assigned to this evaluation
-    * 
-    * The instructor must have the be.evaluated permission in each of the groups
-    * we are viewing.
-    */
+
    /**
     * This completes the following checks from above:
     * 4) Do the system settings allow instructors to view the evaluation?
