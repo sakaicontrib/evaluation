@@ -227,5 +227,6 @@
 	<bean id="org.sakaiproject.evaluation.tool.reporting.ReportingPermissions"
 		class="org.sakaiproject.evaluation.tool.reporting.ReportingPermissions">
 		<property name="externalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+		<property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings"/>
 	</bean>
 </beans>
