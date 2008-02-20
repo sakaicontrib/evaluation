@@ -503,6 +503,38 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
 
 
 
+   public Set<String> getViewableEvalGroupIds(Long evaluationId, String permissionConstant, String[] evalGroupIds) {
+      if (evaluationId == null || permissionConstant == null) {
+         throw new IllegalArgumentException("evaluationId and permissionConstant both must not be null");
+      }
+      String permCheck = null;
+      if (EvalConstants.PERM_BE_EVALUATED.equals(permissionConstant)) {
+         permCheck = "instructorsViewResults";
+      } else if (EvalConstants.PERM_TAKE_EVALUATION.equals(permissionConstant)) {
+         permCheck = "studentsViewResults";
+      }
+
+      Set<String> viewableEvalGroupIds = new HashSet<String>();
+      if (permCheck != null) {
+         Map<String, Object> params = new HashMap<String, Object>();
+         String groupsHQL = "";
+         if (evalGroupIds != null && evalGroupIds.length > 0) {
+            groupsHQL = " and ag.evalGroupId in (:evalGroupIds) ";
+            params.put("evalGroupIds", evalGroupIds);
+         }
+         params.put("evaluationId", evaluationId);
+         String hql = "SELECT ag.evalGroupId from EvalAssignGroup as ag where ag.evaluation.id = :evaluationId "
+            + " and ag."+permCheck+" = true " + groupsHQL;
+         List<?> results = executeHqlQuery(hql, params, 0, 0);
+         // put the results into a set and convert them to strings
+         for (Object object : results) {
+            viewableEvalGroupIds.add((String) object);
+         }
+      }
+      return viewableEvalGroupIds;
+   }
+
+
 
    // LOCKING METHODS
 

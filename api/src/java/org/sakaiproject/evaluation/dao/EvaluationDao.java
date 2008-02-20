@@ -24,6 +24,7 @@ import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
+import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.genericdao.api.CompleteGenericDao;
 
 /**
@@ -208,6 +209,19 @@ public interface EvaluationDao extends CompleteGenericDao {
     * @return a set of internal userIds
     */
    public Set<String> getResponseUserIds(Long evaluationId, String[] evalGroupIds);
+
+   /**
+    * @param evaluationId a unique id for an {@link EvalEvaluation}
+    * @param permissionConstant a permission constant which is 
+    * {@link EvalConstants#PERM_BE_EVALUATED} for instructors/evaluatees OR
+    * {@link EvalConstants#PERM_TAKE_EVALUATION} for students/evaluators,
+    * other permissions will return no results
+    * @param evalGroupIds the unique eval group ids associated with this evaluation, 
+    * can be null or empty to get all ids for this evaluation
+    * @return a set of eval group ids which allow viewing by the specified permission
+    */
+   public Set<String> getViewableEvalGroupIds(Long evaluationId, String permissionConstant, String[] evalGroupIds);
+
 
    /**
     * Allows for an easy way to run some code ONLY if a lock can be obtained by

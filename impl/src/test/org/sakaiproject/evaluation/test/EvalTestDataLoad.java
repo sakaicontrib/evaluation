@@ -892,13 +892,13 @@ public class EvalTestDataLoad {
       assign2 = new EvalAssignGroup(new Date(), MAINT_USER_ID, SITE1_REF, EvalConstants.GROUP_TYPE_SITE, 
             Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationActiveUntaken);
       assign3 = new EvalAssignGroup(new Date(), ADMIN_USER_ID, SITE1_REF, EvalConstants.GROUP_TYPE_SITE, 
-            Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationClosed);
+            Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, evaluationClosed);
       assign4 = new EvalAssignGroup(new Date(), MAINT_USER_ID, SITE2_REF, EvalConstants.GROUP_TYPE_SITE, 
-            Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationClosed);
+            Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, evaluationClosed);
       assign5 = new EvalAssignGroup(new Date(), ADMIN_USER_ID, SITE2_REF, EvalConstants.GROUP_TYPE_SITE, 
             Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationViewable);
       assign6 = new EvalAssignGroup(new Date(), MAINT_USER_ID, SITE1_REF, EvalConstants.GROUP_TYPE_SITE, 
-            Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, evaluationNewAdmin);
+            Boolean.FALSE, Boolean.FALSE, Boolean.TRUE, evaluationNewAdmin);
       assign7 = new EvalAssignGroup(new Date(), ADMIN_USER_ID, SITE2_REF, EvalConstants.GROUP_TYPE_SITE, 
             Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationNewAdmin);
       // Dick, you cannot assign 2 groups to an eval with the same evalGroupId... I have fixed this by making up a fake id -AZ
