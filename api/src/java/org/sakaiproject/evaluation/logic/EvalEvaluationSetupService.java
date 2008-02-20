@@ -23,7 +23,7 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 
 
 /**
- * Handles all logic associated with setting up and creating evaluationSetupService,
+ * Handles all logic associated with setting up and creating evaluations,
  * this includes all the logic for assigning groups and users to an evaluation
  * and processing the email templates used by an evaluation<br/>
  * (Note for developers - do not modify this without permission from the project lead)
@@ -59,11 +59,11 @@ public interface EvalEvaluationSetupService {
 
    /**
     * Delete an evaluation from persistent storage,
-    * evaluationSetupService that are active or completed cannot be deleted,
+    * evaluations that are active or completed cannot be deleted,
     * use {@link #canRemoveEvaluation(String, EvalEvaluation)} to check if
     * the evaluation can be removed if you want to avoid possible exceptions,
     * removes all associated course assignments and email templates 
-    * (if they are not default or associated with other evaluationSetupService)
+    * (if they are not default or associated with other evaluations)
     * 
     * @param evaluationId the id of an {@link EvalEvaluation} object
     * @param userId the internal user id (not username)
@@ -71,27 +71,27 @@ public interface EvalEvaluationSetupService {
    public void deleteEvaluation(Long evaluationId, String userId);
 
    /**
-    * Get the evaluationSetupService that are currently visible to a user, this should be used
-    * to determine evaluationSetupService that are visible from an administrative perspective,
+    * Get the evaluations that are currently visible to a user, this should be used
+    * to determine evaluations that are visible from an administrative perspective,
     * can limit to recently closed only (closed within 10 days)
     * 
     * @param userId the internal user id (not username)
-    * @param recentOnly if true return recently closed evaluationSetupService only 
-    * (still returns all active and in queue evaluationSetupService), if false return all closed evaluationSetupService
+    * @param recentOnly if true return recently closed evaluations only 
+    * (still returns all active and in queue evaluations), if false return all closed evaluations
     * @param showNotOwned if true for a non-admin user, then return all 
-    * evaluationSetupService which are both owned and not-owned, else only return the owned evaluationSetupService.
+    * evaluations which are both owned and not-owned, else only return the owned evaluations.
     * @return a List of {@link EvalEvaluation} objects
     */
    public List<EvalEvaluation> getVisibleEvaluationsForUser(String userId, boolean recentOnly, boolean showNotOwned);
 
    /**
-    * Get all evaluationSetupService that can be taken by this user,
+    * Get all evaluations that can be taken by this user,
     * can include only active and only untaken if desired
     * 
     * @param userId the internal user id (not username)
-    * @param activeOnly if true, only include active evaluationSetupService, if false, include all evaluationSetupService
-    * @param untakenOnly if true, include only the evaluationSetupService which have NOT been taken, 
-    * if false, include all evaluationSetupService
+    * @param activeOnly if true, only include active evaluations, if false, include all evaluations
+    * @param untakenOnly if true, include only the evaluations which have NOT been taken, 
+    * if false, include all evaluations
     * @return a List of {@link EvalEvaluation} objects (sorted by DueDate)
     */
    public List<EvalEvaluation> getEvaluationsForUser(String userId, boolean activeOnly, boolean untakenOnly);
@@ -153,21 +153,21 @@ public interface EvalEvaluationSetupService {
    // EVAL CATEGORIES
 
    /**
-    * Get all current evalaution cateogries in the system,
-    * evaluation categories allow the evaluation owner to categorize their evaluationSetupService
+    * Get all current evalaution categories in the system,
+    * evaluation categories allow the evaluation owner to categorize their evaluations
     * 
     * @param userId the internal user id (not username), may be null, if not null then only
-    * get the categories for evaluationSetupService owned by this user (i.e. categories they created)
+    * get the categories for evaluations owned by this user (i.e. categories they created)
     * @return an array of categories, sorted in alphabetic order
     */
    public String[] getEvalCategories(String userId);
 
    /**
-    * Get all evaluationSetupService which are tagged with a specific category
+    * Get all evaluations which are tagged with a specific category
     * 
     * @param evalCategory a string representing an evaluation category
     * @param userId the internal user id (not username), may be null, if not null then only
-    * get the evaluationSetupService in this category which are accessible to this user
+    * get the evaluations in this category which are accessible to this user
     * @return a list of {@link EvalEvaluation} objects
     */
    public List<EvalEvaluation> getEvaluationsByCategory(String evalCategory, String userId);

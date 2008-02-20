@@ -842,7 +842,7 @@ public class EvalTestDataLoad {
             Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, LOCKED,
             EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null);
       //Evaluation Provided (has eid set, not null)
-      evaluationProvided = new EvalEvaluation(new Date(), MAINT_USER_ID, "Eval active", null, 
+      evaluationProvided = new EvalEvaluation(new Date(), MAINT_USER_ID, "Eval provided", null, 
               yesterday, today, today, tomorrow, null, null,
               EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.INSTRUCTOR_OPT_IN, 
               new Integer(1), null, null, null, null, templateUser, null, null,

@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.dao;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -245,6 +246,54 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       return evals;
 
    }
+
+
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.dao.EvaluationDao#getEvaluationsForOwnerAndGroups(java.lang.String, java.lang.String[], java.util.Date, int)
+    */
+   public List<EvalEvaluation> getEvaluationsForOwnerAndGroups(String userId,
+         String[] evalGroupIds, Date recentClosedDate, int startResult, int maxResults) {
+      Map<String, Object> params = new HashMap<String, Object>();
+
+      String recentHQL = "";
+      if (recentClosedDate != null) {
+         recentHQL = " and eval.stopDate >= :recentClosedDate ";
+         params.put("recentClosedDate", recentClosedDate);
+      }
+
+      String ownerHQL = "";
+      if (userId != null && userId.length() > 0) {
+         ownerHQL = " eval.owner = :ownerId ";
+         params.put("ownerId", userId);
+      }
+
+      String groupsHQL = "";
+      if (evalGroupIds != null && evalGroupIds.length > 0) {
+         groupsHQL = " eval.id in (select distinct assign.evaluation.id "
+               + "from EvalAssignGroup as assign where assign.nodeId is null "
+               + "and assign.evalGroupId in (:evalGroupIds) ) ";
+         params.put("evalGroupIds", evalGroupIds);
+      }
+
+      // merge the owner and groups HQL if needed
+      String ownerGroupHQL = "";
+      if (ownerHQL.length() > 0 && groupsHQL.length() > 0) {
+         ownerGroupHQL = " and (" + ownerHQL + " or " + groupsHQL + ") ";
+      } else if (ownerHQL.length() > 0) {
+         ownerGroupHQL = " and " + ownerHQL;
+      } else if (groupsHQL.length() > 0) {
+         ownerGroupHQL = " and " + groupsHQL;
+      }
+
+      List<EvalEvaluation> evals = null;
+      String hql = "select eval from EvalEvaluation as eval " 
+            + " where 1=1 " + recentHQL + ownerGroupHQL 
+            + " order by eval.stopDate, eval.title, eval.id";
+      evals = executeHqlQuery(hql, params, startResult, maxResults);
+      Collections.sort(evals, new ComparatorsUtils.EvaluationDateTitleIdComparator());
+      return evals;
+   }
+
 
    public List<EvalAnswer> getAnswers(Long itemId, Long evalId, String[] evalGroupIds) {
       Map<String, Object> params = new HashMap<String, Object>();

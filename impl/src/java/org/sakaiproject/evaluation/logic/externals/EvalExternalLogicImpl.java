@@ -290,7 +290,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
     */
    public Locale getUserLocale(String userId) {
       log.debug("userId: " + userId);
-      log.warn("can only get the locale for the current user right now...");
+      //log.warn("can only get the locale for the current user right now...");
       // TODO - this sucks because there is no way to get the locale for anything but the
       // current user.... terrible -AZ
       return new ResourceLoader().getLocale();

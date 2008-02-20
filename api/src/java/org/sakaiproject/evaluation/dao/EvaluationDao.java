@@ -14,6 +14,7 @@
 
 package org.sakaiproject.evaluation.dao;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -61,7 +62,7 @@ public interface EvaluationDao extends CompleteGenericDao {
 	/**
 	 * Count the templates that are visible to a user
 	 * 
-	 * @param userId - Sakai internal user id, owner of the private templates to be selected,
+	 * @param userId internal user id, owner of the private templates to be selected,
 	 * if it is null then all "Private" templates returned, if empty string then no private templates
 	 * @param sharingConstants an array of sharing constants (private, public, etc) to define 
 	 * what to include in the return
@@ -73,17 +74,27 @@ public interface EvaluationDao extends CompleteGenericDao {
 
 	/**
 	 * Returns all evaluation objects associated with the input groups,
-	 * can also include anonymous evaluationSetupService
+	 * can also include anonymous evaluations
 	 * 
 	 * @param evalGroupIds an array of eval group IDs to get associated evals for, can be empty or null to get all evals
-	 * @param activeOnly if true, only include active evaluationSetupService, if false, include all evaluationSetupService
-	 * @param includeUnApproved if true, include the evaluationSetupService for groups which have not been instructor approved yet,
-	 * you should not include these when displaying evaluationSetupService to users to take or sending emails
-	 * @param includeAnonymous if true then include evaluationSetupService which can be taken anonymously (since these are accessible
+	 * @param activeOnly if true, only include active evaluations, if false, include all evaluations
+	 * @param includeUnApproved if true, include the evaluations for groups which have not been instructor approved yet,
+	 * you should not include these when displaying evaluations to users to take or sending emails
+	 * @param includeAnonymous if true then include evaluations which can be taken anonymously (since these are accessible
 	 * to any user in any group), if false, only include evals which require keys or authentication
 	 * @return a List of EvalEvaluation objects sorted by due date, title, and id
 	 */
 	public List<EvalEvaluation> getEvaluationsByEvalGroups(String[] evalGroupIds, boolean activeOnly, boolean includeUnApproved, boolean includeAnonymous);
+
+	/**
+	 * @param userId internal user id, owner of the evaluations, if null then do not filter on the owner id
+	 * @param evalGroupIds an array of eval group IDs to get associated evals for, can be empty or null to get all evals
+	 * @param recentClosedDate only return evaluations which closed after this date
+    * @param startResult 0 to start with the first result, otherwise start with this result number
+	 * @param maxResults 0 to return all results, otherwise limit the number of evals returned to this
+	 * @return a List of EvalEvaluation objects sorted by stop date, title, and id
+	 */
+	public List<EvalEvaluation> getEvaluationsForOwnerAndGroups(String userId, String[] evalGroupIds, Date recentClosedDate, int startResult, int maxResults);
 
 	/**
 	 * Returns all answers to the given item associated with 
@@ -211,6 +222,12 @@ public interface EvaluationDao extends CompleteGenericDao {
    public Set<String> getResponseUserIds(Long evaluationId, String[] evalGroupIds);
 
    /**
+    * Get all the evalGroupIds for an evaluation which are viewable by
+    * the input permission,
+    * can limit the eval groups to check by inputing an array of evalGroupIds<br/>
+    * <b>NOTE:</b> If you input evalGroupIds then the returned set will always be
+    * a subset (the same size or smaller) of the input
+    * 
     * @param evaluationId a unique id for an {@link EvalEvaluation}
     * @param permissionConstant a permission constant which is 
     * {@link EvalConstants#PERM_BE_EVALUATED} for instructors/evaluatees OR
@@ -305,7 +322,7 @@ public interface EvaluationDao extends CompleteGenericDao {
 	public boolean isUsedItem(Long itemId);
 
 	/**
-	 * Check if this template is used by any evaluationSetupService
+	 * Check if this template is used by any evaluations
 	 * 
 	 * @param templateId the unique id for an {@link EvalTemplate} object
 	 * @return true if used, false otherwise

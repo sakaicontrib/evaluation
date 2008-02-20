@@ -345,6 +345,80 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 
    }
 
+
+   public void testGetEvaluationsForOwnerAndGroups() {
+      List<EvalEvaluation> l = null;
+      List<Long> ids = null;
+
+      // test getting all evals
+      l = evaluationDao.getEvaluationsForOwnerAndGroups(null, null, null, 0, 0);
+      assertNotNull(l);
+      assertEquals(8, l.size());
+      // check the order
+      ids = EvalTestDataLoad.makeIdList(l);
+      assertEquals(ids.get(0), etdl.evaluationViewable.getId() );
+      assertEquals(ids.get(1), etdl.evaluationClosed.getId() );
+      assertEquals(ids.get(2), etdl.evaluationActive.getId() );
+      assertEquals(ids.get(3), etdl.evaluationProvided.getId() );
+
+      // test getting all evals with limit
+      l = evaluationDao.getEvaluationsForOwnerAndGroups(null, null, null, 0, 3);
+      assertNotNull(l);
+      assertEquals(3, l.size());
+      ids = EvalTestDataLoad.makeIdList(l);
+      // check order and return values
+      assertEquals(ids.get(0), etdl.evaluationViewable.getId() );
+      assertEquals(ids.get(1), etdl.evaluationClosed.getId() );
+      assertEquals(ids.get(2), etdl.evaluationActive.getId() );
+
+      l = evaluationDao.getEvaluationsForOwnerAndGroups(null, null, null, 2, 2);
+      assertNotNull(l);
+      assertEquals(2, l.size());
+      ids = EvalTestDataLoad.makeIdList(l);
+      // check order and return values
+      assertEquals(ids.get(0), etdl.evaluationActive.getId() );
+      assertEquals(ids.get(1), etdl.evaluationProvided.getId() );
+
+      // test filtering by owner
+      l = evaluationDao.getEvaluationsForOwnerAndGroups(EvalTestDataLoad.ADMIN_USER_ID, null, null, 0, 0);
+      assertNotNull(l);
+      assertEquals(3, l.size());
+      ids = EvalTestDataLoad.makeIdList(l);
+      assertTrue(ids.contains( etdl.evaluationNewAdmin.getId() ));
+      assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
+      assertTrue(ids.contains( etdl.evaluationViewable.getId() ));
+
+      l = evaluationDao.getEvaluationsForOwnerAndGroups(EvalTestDataLoad.USER_ID, null, null, 0, 0);
+      assertNotNull(l);
+      assertEquals(0, l.size());
+      ids = EvalTestDataLoad.makeIdList(l);
+
+      // test filtering by groups
+      l = evaluationDao.getEvaluationsForOwnerAndGroups(null, 
+            new String[] {EvalTestDataLoad.SITE1_REF}, null, 0, 0);
+      assertNotNull(l);
+      assertEquals(4, l.size());
+      ids = EvalTestDataLoad.makeIdList(l);
+      assertTrue(ids.contains( etdl.evaluationActive.getId() ));
+      assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
+      assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
+      assertTrue(ids.contains( etdl.evaluationNewAdmin.getId() ));
+
+      // test filtering by owner and groups
+      l = evaluationDao.getEvaluationsForOwnerAndGroups(EvalTestDataLoad.ADMIN_USER_ID, 
+            new String[] {EvalTestDataLoad.SITE1_REF}, null, 0, 0);
+      assertNotNull(l);
+      assertEquals(5, l.size());
+      ids = EvalTestDataLoad.makeIdList(l);
+      assertTrue(ids.contains( etdl.evaluationActive.getId() ));
+      assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
+      assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
+      assertTrue(ids.contains( etdl.evaluationNewAdmin.getId() ));
+      assertTrue(ids.contains( etdl.evaluationViewable.getId() ));
+
+   }
+
+
    /**
     * Test method for {@link org.sakaiproject.evaluation.dao.EvaluationDaoImpl#getAnswers(java.lang.Long, java.lang.Long)}.
     */

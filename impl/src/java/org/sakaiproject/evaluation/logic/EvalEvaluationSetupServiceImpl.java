@@ -387,57 +387,40 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
    @SuppressWarnings("unchecked")
    public List<EvalEvaluation> getVisibleEvaluationsForUser(String userId, boolean recentOnly, boolean showNotOwned) {
-      List<EvalEvaluation> l = new ArrayList<EvalEvaluation>();
+
+      Date recentClosedDate = null;
       if (recentOnly) {
-         // only get recently closed evals 
-         // check system setting to get "recent" value
+         // only get recently closed evals, check system setting to get "recent" value
          Integer recentlyClosedDays = (Integer) settings.get(EvalSettings.EVAL_RECENTLY_CLOSED_DAYS);
          if (recentlyClosedDays == null) { recentlyClosedDays = 10; }
          Calendar calendar = GregorianCalendar.getInstance();
          calendar.add(Calendar.DATE, -1 * recentlyClosedDays.intValue());
-         Date recent = calendar.getTime();
+         recentClosedDate = calendar.getTime();
+      }
 
-         if (external.isUserAdmin(userId)) {
-            l = dao.findByProperties(EvalEvaluation.class,
-                  new String[] {"stopDate"}, 
-                  new Object[] {recent}, 
-                  new int[] {EvaluationDao.GREATER});
-         } else {
-
-            // Get the owned + not-owned evaluations i.e. where the 
-            // user has PERM_BE_EVALUATED permissions.
-            if (showNotOwned) {
-               getEvalsWhereBeEvaluated(userId, recentOnly, l, recent);
-            }
-            // Get the evaluations owned by the user
-            else {
-               l = dao.findByProperties(EvalEvaluation.class,
-                     new String[] {"owner", "stopDate"}, 
-                     new Object[] {userId, recent}, 
-                     new int[] {EvaluationDao.EQUALS, EvaluationDao.GREATER});
-            }
-         }
+      String[] evalGroupIds = null;
+      if (external.isUserAdmin(userId)) {
+         // null out the userId so we get all evaluations
+         userId = null;
       } else {
-         // don't worry about when they closed
-         if (external.isUserAdmin(userId)) {
-            // NOTE: this will probably be too slow -AZ
-            l = dao.findAll(EvalEvaluation.class);
-         } else {
-
-            // Get the owned + not-owned evaluations i.e. where the 
-            // user has PERM_BE_EVALUATED permissions.
-            if (showNotOwned) {
-               getEvalsWhereBeEvaluated(userId, recentOnly, l, null);
-            }
-            // get all evaluations created (owned) by this user
-            else {
-               l = dao.findByProperties(EvalEvaluation.class,
-                     new String[] {"owner"}, new Object[] {userId});
+         if (showNotOwned) {
+            // Get the list of EvalGroup where user has "eval.be.evaluated" permission.
+            List<EvalGroup> evaluatedGroups = external.getEvalGroupsForUser(userId, EvalConstants.PERM_BE_EVALUATED);
+            if (evaluatedGroups.size() > 0) {
+               evalGroupIds = new String[evaluatedGroups.size()];
+               for (int i = 0; i < evaluatedGroups.size(); i++) {
+                  EvalGroup c = (EvalGroup) evaluatedGroups.get(i);
+                  evalGroupIds[i] = c.evalGroupId;
+               }
             }
          }
       }
+
+      List<EvalEvaluation> l = dao.getEvaluationsForOwnerAndGroups(userId, evalGroupIds, recentClosedDate, 0, 0);
+
       return l;
    }
+
 
    /* (non-Javadoc)
     * @see edu.vt.sakai.evaluation.logic.EvalEvaluationsLogic#getEvaluationsForUser(java.lang.String, boolean, boolean)
@@ -532,60 +515,6 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       return evals;
    }
 
-
-   // INTERNAL METHODS
-
-   /**
-    * Get both owned and not-owned evaluation for the given user.
-    * 
-    * @param userId the internal user id (not username).
-    * @param recentOnly if true return recently closed evaluations only
-    * (still returns all active and in queue evaluations), if false return all closed evaluations.
-    * @param evalsToReturn list of owned and not-owned evaluations. 
-    * @param recent date for comparison when looking for recently closed evaluations.
-    */
-   @SuppressWarnings("unchecked")
-   private void getEvalsWhereBeEvaluated(String userId, boolean recentOnly, List<EvalEvaluation> evalsToReturn, Date recent) {
-
-      // Get the list of EvalGroup where user has "eval.be.evaluated" permission.
-      List<EvalGroup> evaluatedGroups = external.getEvalGroupsForUser(userId, EvalConstants.PERM_BE_EVALUATED);
-      if (evaluatedGroups.size() > 0) {
-
-         String[] evalGroupsIds = new String[evaluatedGroups.size()];
-         for (int i = 0; i < evaluatedGroups.size(); i++) {
-            EvalGroup c = (EvalGroup) evaluatedGroups.get(i);
-            evalGroupsIds [i] = c.evalGroupId;
-         }
-
-         // Using the list of EvalGroups, get the corresponding list of EvalAssignGroup.
-         List<EvalAssignGroup> assignGroupList = dao.findByProperties(EvalAssignGroup.class,
-               new String[] {"evalGroupId"}, 
-               new Object[] {evalGroupsIds}, 
-               new int[] {EvaluationDao.EQUALS});
-
-         // Iterate through list of EvalAssignGroup and get the EvalEvaluation.
-         for (int i = 0; i < assignGroupList.size(); i++) {
-
-            EvalAssignGroup assignGroup = (EvalAssignGroup) assignGroupList.get(i);
-            EvalEvaluation eval = assignGroup.getEvaluation();
-
-            /*
-             * If only recent evaluations have to be fetched, then check for
-             * stop date else just add to the existing list of evaluations.
-             */ 
-            if (recentOnly) {
-               if ((eval.getStopDate()).after(recent)) {
-                  evalsToReturn.add(eval);
-               } else {
-                  // Do nothing
-               }
-            } else {
-               evalsToReturn.add(eval);
-            }
-
-         } // end of for
-      } // end of if
-   } // end of method
 
 
    // GROUPS
