@@ -1,5 +1,8 @@
 package org.sakaiproject.evaluation.tool.reporting;
 
+import java.util.Set;
+
+import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -32,6 +35,11 @@ public class ReportingPermissions {
    public void setEvalSettings(EvalSettings evalSettings) {
       this.evalSettings = evalSettings;
    }
+   
+   private EvaluationDao evalDao;
+   public void setEvaluationDao(EvaluationDao dao) {
+      this.evalDao = dao;
+   }
 
    /**
     * Decide whether the current user can view the responses for an evaluation
@@ -47,7 +55,7 @@ public class ReportingPermissions {
       boolean canViewResponses;
       
       // TODO 1 and 2 will be replaced by ExternalLogic.checkUserPermission(String userId, String ownerId)
-      
+
       // 1) Is this user an admin?
       if (externalLogic.isUserAdmin(currentUserId)) {
          canViewResponses = true;
@@ -93,9 +101,9 @@ public class ReportingPermissions {
          (Boolean) evalSettings.get(EvalSettings.STUDENT_VIEW_RESULTS);
       boolean allowedToView = true;
       if (studentAllowedViewResults) {
+         Set<String> viewableIds = evalDao.getViewableEvalGroupIds(eval.getId(), EvalConstants.PERM_TAKE_EVALUATION, groupIds);
          for (String groupId: groupIds) {
-            if (!externalLogic.isUserAllowedInEvalGroup(currentUserId, 
-                  EvalConstants.PERM_TAKE_EVALUATION, groupId)) {
+            if (!viewableIds.contains(groupId)) {
                allowedToView = false;
                break;
             }
@@ -123,9 +131,9 @@ public class ReportingPermissions {
          (Boolean) evalSettings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
       boolean allowedToView = true;
       if (instructorAllowedViewResults) {
+         Set<String> viewableIds = evalDao.getViewableEvalGroupIds(eval.getId(), EvalConstants.PERM_BE_EVALUATED, groupIds);
          for (String groupId: groupIds) {
-            if (!externalLogic.isUserAllowedInEvalGroup(currentUserId, 
-                  EvalConstants.PERM_BE_EVALUATED, groupId)) {
+            if (!viewableIds.contains(groupId)) {
                allowedToView = false;
                break;
             }
