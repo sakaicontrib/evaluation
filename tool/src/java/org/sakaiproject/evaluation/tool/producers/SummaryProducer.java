@@ -261,7 +261,8 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		/*
 		 * for the evaluations admin box
 		 */
-		List<EvalEvaluation> evals = evaluationSetupService.getVisibleEvaluationsForUser(currentUserId, true, true);
+      Boolean instViewResults = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
+		List<EvalEvaluation> evals = evaluationSetupService.getVisibleEvaluationsForUser(currentUserId, true, instViewResults);
 		/*
 		 * If the person is an admin, then just point new evals to existing object.
 		 * If the person is not an admin then only show owned evals +
