@@ -55,7 +55,12 @@
 		<form rsf:id="insert-items-form" method="post" action="template_modify.html" style="margin:0px;">
 
 			<!--//gsilver: summary needs to be rendered by producer so that it can be i18n - adding same text to invisble caption for now -->
-			
+
+            <!-- added buttons at top -AZ (http://jira.sakaiproject.org/jira/browse/EVALSYS-385) -->			
+            <p>
+                <input rsf:id="insert-items-command" type="submit" value="Insert Items"  class="active" accesskey="s" />
+                <a rsf:id="cancel-items" href="template_modify.html" class="makeButton"  id="cancel-items" style="display:inline;float:none" accesskey="x">Cancel</a>
+            </p>
 			
 			<table  class="listHier lines nolines" summary="Column 1 has checkboxes used to select items, Column 2 has information about items" cellpadding="0" cellspacing="0">
 				<caption rsf:id="item-list-summary" class="skip">Selectable items. Column 1 has checkboxes used to select items, Column 2 has information about items</caption>
