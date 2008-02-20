@@ -598,81 +598,59 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
       EvalEvaluation eval = assignGroup.getEvaluation();
       if (eval == null || eval.getId() == null) {
-         throw new IllegalStateException("Evaluation (" + eval.getId() + ") is not set or not saved for assignContext (" + 
+         throw new IllegalStateException("Evaluation (" + eval.getId() + ") is not set or not saved for assignGroup (" + 
                assignGroup.getId() + "), evalgroupId: " + assignGroup.getEvalGroupId() );
       }
+
+      setDefaults(eval, assignGroup); // set the defaults before saving
 
       if (assignGroup.getId() == null) {
          // creating new AC
          if (securityChecks.checkCreateAssignGroup(userId, eval)) {
             // check for duplicate AC first
             if ( checkRemoveDuplicateAssignGroup(assignGroup) ) {
-               throw new IllegalStateException("Duplicate mapping error, there is already an AC that defines a link from evalGroupId: " + 
+               throw new IllegalStateException("Duplicate mapping error, there is already an assignGroup that defines a link from evalGroupId: " + 
                      assignGroup.getEvalGroupId() + " to eval: " + eval.getId());
             }
 
             dao.save(assignGroup);
-            log.info("User ("+userId+") created a new AC ("+assignGroup.getId()+"), " +
+
+            // if a late instructor opt-in, notify students in this group that an evaluation is available
+            if (EvalConstants.INSTRUCTOR_OPT_IN.equals(eval.getInstructorOpt())
+                  && assignGroup.getInstructorApproval().booleanValue()
+                  && assignGroup.getEvaluation().getStartDate().before(new Date())) {
+               emails.sendEvalAvailableGroupNotification(
+                     assignGroup.getEvaluation().getId(), assignGroup.getEvalGroupId());
+            }
+
+            log.info("User ("+userId+") created a new assignGroup ("+assignGroup.getId()+"), " +
                   "linked evalGroupId ("+assignGroup.getEvalGroupId()+") with eval ("+eval.getId()+")");
          }
       } else {
-         // updating an existing AC
+         // updating an existing AG
 
-         // fetch the existing AC out of the DB to compare it
-         EvalAssignGroup existingAC = (EvalAssignGroup) dao.findById(EvalAssignGroup.class, assignGroup.getId());
-         //log.info("AZQ: current AC("+existingAC.getId()+"): ctxt:" + existingAC.getContext() + ", eval:" + existingAC.getEvaluation().getId());
+         // fetch the existing AG out of the DB to compare it
+         EvalAssignGroup existingAG = (EvalAssignGroup) dao.findById(EvalAssignGroup.class, assignGroup.getId());
 
          // check the user control permissions
          if (! securityChecks.checkControlAssignGroup(userId, assignGroup) ) {
-            throw new SecurityException("User ("+userId+") attempted to update existing AC ("+existingAC.getId()+") without permissions");
+            throw new SecurityException("User ("+userId+") attempted to update existing assignGroup ("+existingAG.getId()+") without permissions");
          }
 
          // cannot change the evaluation or evalGroupId so fail if they have been changed
-         if (! existingAC.getEvalGroupId().equals(assignGroup.getEvalGroupId())) {
+         if (! existingAG.getEvalGroupId().equals(assignGroup.getEvalGroupId())) {
             throw new IllegalArgumentException("Cannot update evalGroupId ("+assignGroup.getEvalGroupId()+
-                  ") for an existing AC, evalGroupId ("+existingAC.getEvalGroupId()+")");
-         } else if (! existingAC.getEvaluation().getId().equals(eval.getId())) {
+                  ") for an existing AC, evalGroupId ("+existingAG.getEvalGroupId()+")");
+         } else if (! existingAG.getEvaluation().getId().equals(eval.getId())) {
             throw new IllegalArgumentException("Cannot update eval ("+eval.getId()+
-                  ") for an existing AC, eval ("+existingAC.getEvaluation().getId()+")");
-         }
-
-         // fill in defaults
-         if (assignGroup.getInstructorApproval() == null) {
-            if ( EvalConstants.INSTRUCTOR_OPT_IN.equals(eval.getInstructorOpt()) ) {
-               assignGroup.setInstructorApproval( Boolean.FALSE );
-            } else {
-               assignGroup.setInstructorApproval( Boolean.TRUE );
-            }
-         }
-
-         // if a late instructor opt-in, notify students in this group that an evaluation is available
-         if (EvalConstants.INSTRUCTOR_OPT_IN.equals(eval.getInstructorOpt())
-               && assignGroup.getInstructorApproval().booleanValue()
-               && assignGroup.getEvaluation().getStartDate().before(new Date())) {
-            emails.sendEvalAvailableGroupNotification(
-                  assignGroup.getEvaluation().getId(),
-                  assignGroup.getEvalGroupId());
-         }
-
-         if (assignGroup.getInstructorsViewResults() == null) {
-            if (eval.getInstructorsDate() != null) {
-               assignGroup.setInstructorsViewResults( Boolean.TRUE );
-            } else {
-               assignGroup.setInstructorsViewResults( Boolean.FALSE );
-            }
-         }
-         if (assignGroup.getStudentsViewResults() == null) {
-            if (eval.getStudentsDate() != null) {
-               assignGroup.setStudentsViewResults( Boolean.TRUE );
-            } else {
-               assignGroup.setStudentsViewResults( Boolean.FALSE );
-            }
+                  ") for an existing AC, eval ("+existingAG.getEvaluation().getId()+")");
          }
 
          // allow any other changes
          dao.save(assignGroup);
-         log.info("User ("+userId+") updated existing AC ("+assignGroup.getId()+") properties");
+         log.info("User ("+userId+") updated existing assignGroup ("+assignGroup.getId()+") properties");
       }
+
    }
 
    /* (non-Javadoc)
@@ -734,7 +712,8 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          // now we need to create all the persistent hierarchy assignment objects
          Set<EvalAssignHierarchy> nodeAssignments = new HashSet<EvalAssignHierarchy>();
          for (String nodeId : nodeIdsSet) {
-            EvalAssignHierarchy eah = new EvalAssignHierarchy(new Date(), userId, nodeId, false, true, false, eval);
+            // set the settings to null to allow the defaults to override correctly
+            EvalAssignHierarchy eah = new EvalAssignHierarchy(new Date(), userId, nodeId, null, null, null, eval);
             // fill in defaults and the values from the evaluation
             setDefaults(eval, eah);
             nodeAssignments.add(eah);
@@ -968,7 +947,8 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          if (evalGroupId.startsWith("/site")) {
             type = EvalConstants.GROUP_TYPE_SITE;
          }
-         EvalAssignGroup eag = new EvalAssignGroup(new Date(), userId, evalGroupId, type, false, true, false, eval, nodeId);
+         // set the booleans to null to get the correct defaults set
+         EvalAssignGroup eag = new EvalAssignGroup(new Date(), userId, evalGroupId, type, null, null, null, eval, nodeId);
          // fill in defaults and the values from the evaluation
          setDefaults(eval, eag);
          groupAssignments.add(eag);
@@ -977,24 +957,57 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
    }
 
    /**
-    * @param eval
-    * @param eah
+    * Ensures that the settings for assignments are correct based on the system settings and the evaluation settings,
+    * also ensures that none of them are null
+    * 
+    * @param eval the evaluation associated with this assginment
+    * @param eah the assignment object (persistent or non)
     */
    private void setDefaults(EvalEvaluation eval, EvalAssignHierarchy eah) {
-      if ( EvalConstants.INSTRUCTOR_OPT_IN.equals(eval.getInstructorOpt()) ) {
-         eah.setInstructorApproval( Boolean.FALSE );
-      } else {
-         eah.setInstructorApproval( Boolean.TRUE );
+      // setInstructorsViewResults
+      if (eah.getInstructorsViewResults() == null) {
+         Boolean instViewResults = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
+         if (instViewResults == null) {
+            if (eval.getInstructorsDate() != null) {
+               eah.setInstructorsViewResults( Boolean.TRUE );
+            } else {
+               eah.setInstructorsViewResults( Boolean.FALSE );
+            }
+         } else {
+            eah.setInstructorsViewResults(instViewResults);
+         }
       }
-      if (eval.getInstructorsDate() != null) {
-         eah.setInstructorsViewResults( Boolean.TRUE );
-      } else {
-         eah.setInstructorsViewResults( Boolean.FALSE );
+      // setStudentsViewResults
+      if (eah.getStudentsViewResults() == null) {
+         Boolean studViewResults = (Boolean) settings.get(EvalSettings.STUDENT_VIEW_RESULTS);
+         if (studViewResults == null) {
+            if (eval.getStudentsDate() != null) {
+               eah.setStudentsViewResults( Boolean.TRUE );
+            } else {
+               eah.setStudentsViewResults( Boolean.FALSE );
+            }
+         } else {
+            eah.setStudentsViewResults(studViewResults);
+         }
       }
-      if (eval.getStudentsDate() != null) {
-         eah.setStudentsViewResults( Boolean.TRUE );
-      } else {
-         eah.setStudentsViewResults( Boolean.FALSE );
+      // setInstructorApproval
+      if (eah.getInstructorApproval() == null) {
+         Boolean globalEvalOpt = (Boolean) settings.get(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE);
+         if (globalEvalOpt == null) {
+            if ( EvalConstants.INSTRUCTOR_OPT_IN.equals(eval.getInstructorOpt()) ) {
+               eah.setInstructorApproval( Boolean.FALSE );
+            } else {
+               // REQUIRED or OPT_OUT set to true
+               eah.setInstructorApproval( Boolean.TRUE );
+            }
+         } else {
+            if ( EvalConstants.INSTRUCTOR_OPT_IN.equals(globalEvalOpt) ) {
+               eah.setInstructorApproval( Boolean.FALSE );
+            } else {
+               // REQUIRED or OPT_OUT set to true
+               eah.setInstructorApproval( Boolean.TRUE );
+            }
+         }
       }
    }
 

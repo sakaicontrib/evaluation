@@ -18,9 +18,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.Assert;
-
-import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
@@ -700,6 +697,82 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 
    }
 
+   public void testGetViewableEvalGroupIds() {
+      Set<String> evalGroupIds = null;
+
+      // check for groups that are fully enabled
+      evalGroupIds = evaluationDao.getViewableEvalGroupIds(etdl.evaluationClosed.getId(), EvalConstants.PERM_BE_EVALUATED, null);
+      assertNotNull(evalGroupIds);
+      assertEquals(2, evalGroupIds.size());
+      assertTrue(evalGroupIds.contains(etdl.assign3.getEvalGroupId()));
+      assertTrue(evalGroupIds.contains(etdl.assign4.getEvalGroupId()));
+
+      evalGroupIds = evaluationDao.getViewableEvalGroupIds(etdl.evaluationClosed.getId(), EvalConstants.PERM_TAKE_EVALUATION, null);
+      assertNotNull(evalGroupIds);
+      assertEquals(2, evalGroupIds.size());
+      assertTrue(evalGroupIds.contains(etdl.assign3.getEvalGroupId()));
+      assertTrue(evalGroupIds.contains(etdl.assign4.getEvalGroupId()));
+
+      // check for mixture
+      evalGroupIds = evaluationDao.getViewableEvalGroupIds(etdl.evaluationNewAdmin.getId(), EvalConstants.PERM_BE_EVALUATED, null);
+      assertNotNull(evalGroupIds);
+      assertEquals(2, evalGroupIds.size());
+      assertTrue(evalGroupIds.contains(etdl.assign7.getEvalGroupId()));
+      assertTrue(evalGroupIds.contains(etdl.assignGroupProvided.getEvalGroupId()));
+
+      evalGroupIds = evaluationDao.getViewableEvalGroupIds(etdl.evaluationNewAdmin.getId(), EvalConstants.PERM_TAKE_EVALUATION, null);
+      assertNotNull(evalGroupIds);
+      assertEquals(1, evalGroupIds.size());
+      assertTrue(evalGroupIds.contains(etdl.assign6.getEvalGroupId()));
+
+      // check for unassigned to return none
+      evalGroupIds = evaluationDao.getViewableEvalGroupIds(etdl.evaluationNew.getId(), EvalConstants.PERM_BE_EVALUATED, null);
+      assertNotNull(evalGroupIds);
+      assertEquals(0, evalGroupIds.size());
+
+      evalGroupIds = evaluationDao.getViewableEvalGroupIds(etdl.evaluationNew.getId(), EvalConstants.PERM_TAKE_EVALUATION, null);
+      assertNotNull(evalGroupIds);
+      assertEquals(0, evalGroupIds.size());
+
+      // check that other perms return nothing
+      evalGroupIds = evaluationDao.getViewableEvalGroupIds(etdl.evaluationNewAdmin.getId(), EvalConstants.PERM_ASSIGN_EVALUATION, null);
+      assertNotNull(evalGroupIds);
+      assertEquals(0, evalGroupIds.size());
+
+      // check for limits on the returns
+      evalGroupIds = evaluationDao.getViewableEvalGroupIds(etdl.evaluationClosed.getId(), EvalConstants.PERM_BE_EVALUATED, 
+            new String[] {etdl.assign3.getEvalGroupId()});
+      assertNotNull(evalGroupIds);
+      assertEquals(1, evalGroupIds.size());
+      assertTrue(evalGroupIds.contains(etdl.assign3.getEvalGroupId()));
+
+      evalGroupIds = evaluationDao.getViewableEvalGroupIds(etdl.evaluationNewAdmin.getId(), EvalConstants.PERM_BE_EVALUATED, 
+            new String[] {etdl.assign7.getEvalGroupId()});
+      assertNotNull(evalGroupIds);
+      assertEquals(1, evalGroupIds.size());
+      assertTrue(evalGroupIds.contains(etdl.assign7.getEvalGroupId()));
+
+      // check for limits on the returns which limit it to none
+      evalGroupIds = evaluationDao.getViewableEvalGroupIds(etdl.evaluationClosed.getId(), EvalConstants.PERM_BE_EVALUATED, 
+            new String[] {EvalTestDataLoad.INVALID_CONSTANT_STRING});
+      assertNotNull(evalGroupIds);
+      assertEquals(0, evalGroupIds.size());
+
+      // check for null evaluation id
+      try {
+         evaluationDao.getViewableEvalGroupIds(null, EvalConstants.PERM_ASSIGN_EVALUATION, null);
+         fail("Should have thrown an exception");
+      } catch (IllegalArgumentException e) {
+         assertNotNull(e);
+      }
+
+   }
+   
+   
+   
+   
+   
+   
    // LOCKING tests
 
    /**

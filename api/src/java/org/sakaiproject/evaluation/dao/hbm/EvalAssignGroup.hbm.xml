@@ -27,15 +27,15 @@
         <property name="evalGroupType" type="java.lang.String">
             <column name="group_type" not-null="true" length="255" />
         </property>
-        <!-- This indicates if the instructor has approved the evaluation for this AC -->
+        <!-- This indicates if the instructor has approved the evaluation for this AG -->
         <property name="instructorApproval" type="java.lang.Boolean">
             <column name="INSTRUCTOR_APPROVAL" not-null="true" />
         </property>
-        <!-- can instructors view the results for this AC -->
+        <!-- can instructors view the results for this AG -->
         <property name="instructorsViewResults" type="java.lang.Boolean">
             <column name="INSTRUCTORS_VIEW_RESULTS" not-null="true" />
         </property>
-        <!-- can students view the results for this AC -->
+        <!-- can students view the results for this AG -->
         <property name="studentsViewResults" type="java.lang.Boolean">
             <column name="STUDENTS_VIEW_RESULTS" not-null="true" />
         </property>
