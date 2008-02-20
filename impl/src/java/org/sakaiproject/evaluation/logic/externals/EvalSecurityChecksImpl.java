@@ -237,7 +237,7 @@ public class EvalSecurityChecksImpl {
    /**
     * Check if user can remove an assign group which is assigned to an evaluation
     * 
-    * @param userId
+    * @param userId internal user id
     * @param assignGroup
     * @param eval
     * @return true if they can, throw exceptions otherwise
@@ -265,7 +265,7 @@ public class EvalSecurityChecksImpl {
 
    /**
     * Check if a user can modify a response to an evaluation
-    * @param userId
+    * @param userId internal user id
     * @param response
     * @param eval
     * @return true if they can, throw exceptions otherwise
@@ -308,7 +308,7 @@ public class EvalSecurityChecksImpl {
     * Checks if a user can control (update/remove) this email template,
     * this only checks permissions, you should check the state of the evaluation as well or
     * use {@link #checkEvalTemplateControl(String, EvalEvaluation, EvalEmailTemplate)}
-    * @param userId
+    * @param userId internal user id
     * @param emailTemplate
     * @return true if can control, false otherwise
     */
@@ -324,7 +324,7 @@ public class EvalSecurityChecksImpl {
 
    /**
     * Check if user can control evaluation and template combo
-    * @param userId
+    * @param userId internal user id
     * @param eval
     * @param emailTemplate
     * @return true if they can, throw exceptions otherwise
@@ -363,12 +363,15 @@ public class EvalSecurityChecksImpl {
 
 
    /**
-    * General check for admin/owner permissions
-    * @param userId
-    * @param template
-    * @return true if this user is admin or matches the owner
+    * General check for admin/owner permissions,
+    * this will check to see if the provided userId is an admin and
+    * also check if they are equal to the provided ownerId
+    * 
+    * @param userId internal user id
+    * @param ownerId an internal user id
+    * @return true if this user is admin or matches the owner user id
     */
-   protected boolean checkUserPermission(String userId, String ownerId) {
+   public boolean checkUserPermission(String userId, String ownerId) {
       boolean allowed = false;
       if ( external.isUserAdmin(userId) ) {
          allowed = true;
