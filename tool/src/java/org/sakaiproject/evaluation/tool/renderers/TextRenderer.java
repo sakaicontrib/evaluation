@@ -77,9 +77,10 @@ public class TextRenderer implements ItemRenderer {
 
 		Map<String, String> attrmap = new HashMap<String, String>();
 		attrmap.put("rows", templateItem.getDisplayRows().toString());
-		if (disabled) {
-			attrmap.put("disabled", "true"); //$NON-NLS-2$		
-		}
+		// disabling the textbox is undesireable -AZ
+//		if (disabled) {
+//			attrmap.put("disabled", "true"); //$NON-NLS-2$		
+//		}
 		textarea.decorators = new DecoratorList( new UIFreeAttributeDecorator(attrmap) );
 
 		return container;

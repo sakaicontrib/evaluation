@@ -921,7 +921,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       }
       // setInstructorApproval
       if (eah.getInstructorApproval() == null) {
-         Boolean globalEvalOpt = (Boolean) settings.get(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE);
+         String globalEvalOpt = (String) settings.get(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE);
          if (globalEvalOpt == null) {
             if ( EvalConstants.INSTRUCTOR_OPT_IN.equals(eval.getInstructorOpt()) ) {
                eah.setInstructorApproval( Boolean.FALSE );
