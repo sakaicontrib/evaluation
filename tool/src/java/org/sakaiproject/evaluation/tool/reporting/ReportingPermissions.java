@@ -83,7 +83,7 @@ public class ReportingPermissions {
          canViewResponses = false;
       }
       else {
-         canViewResponses = false;
+         canViewResponses = true;
       }
       // 6 TODO Insfrustructure isn't available for this yet.
 
@@ -97,15 +97,25 @@ public class ReportingPermissions {
          Boolean instructorAllowedViewResults = 
             (Boolean) evalSettings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
          if (instructorAllowedViewResults) {
-            groupIdsTogo.addAll(
-                  evalDao.getViewableEvalGroupIds(evaluation.getId(), EvalConstants.PERM_BE_EVALUATED, null));
+            Set<String> tempGroupIds = 
+                  evalDao.getViewableEvalGroupIds(evaluation.getId(), EvalConstants.PERM_BE_EVALUATED, null);
+            for (String tempGroupId: tempGroupIds) {
+               if (externalLogic.isUserAllowedInEvalGroup(currentUserId, EvalConstants.PERM_BE_EVALUATED, tempGroupId)) {
+                  groupIdsTogo.add(tempGroupId);
+               }
+            }
          }
-         
+
          Boolean studentAllowedViewResults = 
             (Boolean) evalSettings.get(EvalSettings.STUDENT_VIEW_RESULTS);
          if (studentAllowedViewResults) {
-            groupIdsTogo.addAll(
-                  evalDao.getViewableEvalGroupIds(evaluation.getId(), EvalConstants.PERM_TAKE_EVALUATION, null));
+            Set<String> tempGroupIds =
+                  evalDao.getViewableEvalGroupIds(evaluation.getId(), EvalConstants.PERM_TAKE_EVALUATION, null);
+            for (String tempGroupId: tempGroupIds) {
+               if (externalLogic.isUserAllowedInEvalGroup(currentUserId, EvalConstants.PERM_TAKE_EVALUATION, tempGroupId)) {
+                  groupIdsTogo.add(tempGroupId);
+               }
+            }
          }
       }
       
