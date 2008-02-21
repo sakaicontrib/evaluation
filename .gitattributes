@@ -4,6 +4,7 @@
 /.springBeans -text
 /.svnignore -text
 api/project.xml -text
+api/src/java/org/sakaiproject/evaluation/beans/EvalBeanUtils.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/dao/EvaluationDao.java -text
 api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalAnswer.hbm.xml -text
 api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalAssignGroup.hbm.xml -text
@@ -220,7 +221,6 @@ tool/src/java/org/sakaiproject/evaluation/tool/reporting/ReportingPermissions.ja
 tool/src/java/org/sakaiproject/evaluation/tool/reporting/XLSReportExporter.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/utils/EvalAggregatedResponses.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/utils/EvalResponseAggregatorUtil.java svn_keywords=Date+Revision+Author+HeadURL+Id
-tool/src/java/org/sakaiproject/evaluation/tool/utils/EvaluationCalcUtility.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/utils/HierarchyRenderUtil.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/utils/RSFUtils.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/utils/ScaledUtils.java -text

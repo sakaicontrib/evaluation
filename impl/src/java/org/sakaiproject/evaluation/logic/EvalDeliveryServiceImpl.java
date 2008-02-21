@@ -68,9 +68,9 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
       this.evaluationService = evaluationService;
    }
 
-   private EvalSettings evalSettings;
-   public void setEvalSettings(EvalSettings evalSettings) {
-      this.evalSettings = evalSettings;
+   private EvalSettings settings;
+   public void setSettings(EvalSettings evalSettings) {
+      this.settings = evalSettings;
    }
 
    private EvalAuthoringService authoringService;
@@ -282,7 +282,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
             if (response.getEndTime() != null) {
                // the response is complete (submission of an evaluation) and not just creating the empty response
                // check if answers are required to be filled in
-               Boolean unansweredAllowed = (Boolean)evalSettings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED);
+               Boolean unansweredAllowed = (Boolean)settings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED);
                if (unansweredAllowed == null) {
                   unansweredAllowed = response.getEvaluation().getBlankResponsesAllowed();
                }
@@ -479,7 +479,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
       }
 
       // check if required answers are filled in
-      Boolean unansweredAllowed = (Boolean)evalSettings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED);
+      Boolean unansweredAllowed = (Boolean)settings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED);
       if (unansweredAllowed == null) {
          unansweredAllowed = eval.getBlankResponsesAllowed();
       }

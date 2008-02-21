@@ -269,6 +269,16 @@ public interface EvalEvaluationService {
     */
    public int countEvaluationGroups(Long evaluationId);
 
+   /**
+    * Gets the total count of participants for an evaluation,<br/>
+    * <b>NOTE:</b> always returns 0 if the evaluation is anonymous
+    * <b>NOTE:</b> this is potentially very expensive, especially once the number of groups gets very high<br/>
+    *
+    * @param evaluationId the id of an {@link EvalEvaluation} object
+    * @return total number of users with take eval perms in groups assigned to this evaluation (unless anonymous, then 0)
+    */
+   public int countParticipantsForEval(Long evaluationId);
+
 
    // PERMISSIONS
 

@@ -28,6 +28,8 @@ import java.util.UUID;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.sakaiproject.evaluation.logic.EvalDeliveryService;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAnswer;
@@ -373,6 +375,28 @@ public class EvalUtils {
       }
       answer.NA = notApplicable;
       return notApplicable;
+   }
+
+   /**
+    * Get the Evaluation Response Rate as a human readable string. This is typically
+    * used for getting the response rate of an <em>active</em> or <em>closed</em> evaluation. This includes
+    * the percentage. The string will typically look something like 11% ( 3 / 98 )<br/>
+    * Get the counts from {@link EvalDeliveryService#countResponses(Long, String, Boolean)} and
+    * {@link EvalEvaluationService#countParticipantsForEval(Long)}
+    * 
+    * @param responsesCount number of responses
+    * @param enrollmentsCount number of total enrollments or 0 if unknown
+    * @return Human readable string with participant response rate.
+    */
+   public static String makeResponseRateStringFromCounts(int responsesCount, int enrollmentsCount) {
+      String returnString = null;
+      if (enrollmentsCount > 0) {
+         long percentage = Math.round( (((float)responsesCount) / (float)enrollmentsCount) * 100.0 );
+         returnString = percentage + "%  ( " + responsesCount + " / " + enrollmentsCount + " )";
+      } else {
+         return responsesCount + " / --";
+      }
+      return returnString;
    }
 
 }

@@ -10,11 +10,13 @@ import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.sakaiproject.evaluation.logic.EvalDeliveryService;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.utils.EvalAggregatedResponses;
-import org.sakaiproject.evaluation.tool.utils.EvaluationCalcUtility;
+import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import org.sakaiproject.util.FormattedText;
 
@@ -28,9 +30,14 @@ public class XLSReportExporter {
       this.externalLogic = externalLogic;
    }
 
-   private EvaluationCalcUtility evalCalcUtil;
-   public void setEvaluationCalcUtility(EvaluationCalcUtility util) {
-      this.evalCalcUtil = util;
+   private EvalEvaluationService evaluationService;
+   public void setEvaluationService(EvalEvaluationService evaluationService) {
+      this.evaluationService = evaluationService;
+   }
+
+   private EvalDeliveryService deliveryService;
+   public void setDeliveryService(EvalDeliveryService deliveryService) {
+      this.deliveryService = deliveryService;
    }
 
    private MessageLocator messageLocator;
@@ -69,10 +76,14 @@ public class XLSReportExporter {
       cellA1.setCellValue(responses.evaluation.getTitle());
       cellA1.setCellStyle(mainTitleStyle);
 
+      // calculate the response rate
+      int responsesCount = deliveryService.countResponses(responses.evaluation.getId(), null, true);
+      int enrollmentsCount = evaluationService.countParticipantsForEval(responses.evaluation.getId());
+
       HSSFRow row2 = sheet.createRow(1);
       HSSFCell cellA2 = row2.createCell((short)0);
       cellA2.setCellStyle(boldHeaderStyle);
-      cellA2.setCellValue(evalCalcUtil.getParticipantResults(responses.evaluation));
+      cellA2.setCellValue( EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount) );
 
       //if (groupTitles.size() > 0) {
       if (responses.groupIds.length > 0) {

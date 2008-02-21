@@ -10,11 +10,19 @@
       <property name="evaluationDao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
    </bean>
 
+   <!-- utils which require other low level evaluation beans -->
+   <bean id="org.sakaiproject.evaluation.beans.EvalBeanUtils"
+        class="org.sakaiproject.evaluation.beans.EvalBeanUtils">
+      <property name="externalLogic"
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+      <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+   </bean>
+
    <!-- handles security checks -->
    <bean id="org.sakaiproject.evaluation.logic.externals.EvalSecurityChecks"
       class="org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl">
-      <property name="externalLogic"
-         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+      <property name="evalBeanUtils"
+         ref="org.sakaiproject.evaluation.beans.EvalBeanUtils" />
    </bean>
 
    <!-- handles simpler evaluation methods -->
@@ -57,6 +65,7 @@
       <property name="beanNames">
          <list>
             <value>org.sakaiproject.evaluation.logic.Eval*</value>
+            <value>org.sakaiproject.evaluation.beans.Eval*</value>
             <value>org.sakaiproject.evaluation.logic.import.Eval*</value>
          </list>
       </property>

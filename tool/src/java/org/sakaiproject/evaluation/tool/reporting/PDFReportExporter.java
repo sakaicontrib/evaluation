@@ -7,8 +7,6 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.sakaiproject.content.api.ContentHostingService;
-import org.sakaiproject.content.api.ContentResource;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
@@ -19,8 +17,9 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.utils.EvalAggregatedResponses;
 import org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil;
-import org.sakaiproject.evaluation.tool.utils.EvaluationCalcUtility;
+import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
+
 import uk.org.ponder.messageutil.MessageLocator;
 
 public class PDFReportExporter {
@@ -30,15 +29,15 @@ public class PDFReportExporter {
    public void setExternalLogic(EvalExternalLogic externalLogic) {
       this.externalLogic = externalLogic;
    }
-   
+
+   private EvalEvaluationService evaluationService;
+   public void setEvaluationService(EvalEvaluationService evaluationService) {
+      this.evaluationService = evaluationService;
+   }
+
    private EvalSettings evalSettings;
    public void setEvalSettings(EvalSettings evalSettings) {
       this.evalSettings = evalSettings;
-   }
-
-   private EvaluationCalcUtility evalCalcUtil;
-   public void setEvaluationCalcUtility(EvaluationCalcUtility util) {
-      this.evalCalcUtil = util;
    }
 
    private EvalDeliveryService deliveryService;
@@ -56,9 +55,11 @@ public class PDFReportExporter {
       this.messageLocator = locator;
    }
 
+
    public void formatResponses(EvalAggregatedResponses responses, OutputStream outputStream) {
+
       EvalPDFReportBuilder evalPDFReportBuilder = new EvalPDFReportBuilder(outputStream);
-      
+
       Boolean useBannerImage = (Boolean) evalSettings.get(EvalSettings.ENABLE_PDF_REPORT_BANNER);
       byte[] bannerImageBytes = null;
       if (useBannerImage != null && useBannerImage == true) {
@@ -67,22 +68,25 @@ public class PDFReportExporter {
             bannerImageBytes = externalLogic.getFileContent(bannerImageLocation);
          }
       }
-      
+
       String userDisplayName = externalLogic.getUserDisplayName(externalLogic.getCurrentUserId());
       String userEid = externalLogic.getUserUsername(externalLogic.getCurrentUserId());
-      
+
       DateFormat df = DateFormat.getDateInstance(DateFormat.LONG);
-      
+
+      // calculate the response rate
+      int responsesCount = deliveryService.countResponses(responses.evaluation.getId(), null, true);
+      int enrollmentsCount = evaluationService.countParticipantsForEval(responses.evaluation.getId());
+
       evalPDFReportBuilder.addTitlePage(responses.evaluation.getTitle(), 
             userDisplayName, 
             messageLocator.getMessage("reporting.pdf.accountinfo", new String[] {userEid, userDisplayName}), 
             messageLocator.getMessage("reporting.pdf.startdatetime",df.format(responses.evaluation.getStartDate())),
-            messageLocator.getMessage("reporting.pdf.replyrate", new String[] {evalCalcUtil.getParticipantResults(responses.evaluation)}),
+            messageLocator.getMessage("reporting.pdf.replyrate", new String[] { EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount) }),
             bannerImageBytes, messageLocator.getMessage("reporting.pdf.defaultsystemname"));
-      
-      evalPDFReportBuilder.addIntroduction(responses.evaluation.getTitle(), 
-            responses.evaluation.getInstructions());
-      
+
+      evalPDFReportBuilder.addIntroduction(responses.evaluation.getTitle(), responses.evaluation.getInstructions());
+
       List<EvalTemplateItem> allTemplateItems = new ArrayList<EvalTemplateItem>(responses.template.getTemplateItems());
       List<EvalTemplateItem> orderedItems = TemplateItemUtils.orderTemplateItems(allTemplateItems);
 
@@ -117,7 +121,7 @@ public class PDFReportExporter {
             log.warn("Trying to add unknown type to PDF: " + TemplateItemUtils.getTemplateItemType(templateItem));
          }
       }
-      
+
       evalPDFReportBuilder.close();
    }
 }

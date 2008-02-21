@@ -37,11 +37,11 @@
       <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
       <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="hierarchyLogic" ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
-      <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
       <property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
       <property name="securityChecks" ref="org.sakaiproject.evaluation.logic.externals.EvalSecurityChecks" />
       <property name="evalJobLogic" ref="org.sakaiproject.evaluation.logic.EvalJobLogic" />
       <property name="emails" ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
+      <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
    </bean>
 
    <bean id="org.sakaiproject.evaluation.logic.EvalDeliveryService"
@@ -49,7 +49,7 @@
       <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
       <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
-      <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+      <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
       <property name="authoringService"
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
    </bean>
