@@ -226,7 +226,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
             UIOutput.make(evaluationRow, "inqueue-eval-duedate", df.format(evaluation.getDueDate()));
 
             UICommand evalEdit = UICommand.make(evaluationRow, "inqueue-eval-edit-link", 
-                  UIMessage.make("controlevaluations.eval.edit.link"), "#{evaluationBean.editEvalSettingAction}");
+                  UIMessage.make("general.command.edit"), "#{evaluationBean.editEvalSettingAction}");
             evalEdit.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", evaluation.getId()));
 
             // do the locked check first since it is more efficient
@@ -234,7 +234,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
                   evaluationService.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
                // evaluation removable
                UIInternalLink.make(evaluationRow, "inqueue-eval-delete-link", 
-                     UIMessage.make("controlevaluations.eval.delete.link"), 
+                     UIMessage.make("general.command.delete"), 
                      new TemplateViewParameters( RemoveEvalProducer.VIEW_ID, evaluation.getId() ) );
             }
 
@@ -296,7 +296,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 
             UICommand evalEdit = UICommand.make(evaluationRow, 
                   "active-eval-edit-link", 
-                  UIMessage.make("controlevaluations.eval.edit.link"),
+                  UIMessage.make("general.command.edit"),
             "#{evaluationBean.editEvalSettingAction}");
             evalEdit.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", evaluation.getId()));
 
@@ -304,7 +304,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
                   evaluationService.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
                // evaluation removable
                UIInternalLink.make(evaluationRow, "active-eval-delete-link", 
-                     UIMessage.make("controlevaluations.eval.delete.link"), 
+                     UIMessage.make("general.command.delete"), 
                      new TemplateViewParameters( RemoveEvalProducer.VIEW_ID, evaluation.getId() ) );
             }
 
@@ -360,7 +360,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
             UIOutput.make(evaluationRow, "closed-eval-duedate", df.format(evaluation.getDueDate()));
 
             UICommand evalEdit = UICommand.make(evaluationRow, "closed-eval-edit-link", 
-                  UIMessage.make("controlevaluations.eval.edit.link"), "#{evaluationBean.editEvalSettingAction}");
+                  UIMessage.make("general.command.edit"), "#{evaluationBean.editEvalSettingAction}");
             evalEdit.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", evaluation.getId()));
 
             if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(EvalUtils.getEvaluationState(evaluation)) ) {
@@ -381,7 +381,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
                   evaluationService.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
                // evaluation removable
                UIInternalLink.make(evaluationRow, "closed-eval-delete-link", 
-                     UIMessage.make("controlevaluations.eval.delete.link"), 
+                     UIMessage.make("general.command.delete"), 
                      new TemplateViewParameters( RemoveEvalProducer.VIEW_ID, evaluation.getId() ) );
             }
 

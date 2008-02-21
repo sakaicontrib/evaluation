@@ -203,7 +203,7 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
          if (modify) {
             UIBranchContainer showLink = UIBranchContainer.make(form, "showRemoveLink:");
             UIInternalLink.make(showLink, "remove_link", UIMessage
-                  .make("modifytemplate.remove.link"), new TemplateItemViewParameters(
+                  .make("general.command.delete"), new TemplateItemViewParameters(
                   RemoveItemProducer.VIEW_ID, templateId, firstTemplateItem.getId()));
          }
 
@@ -393,10 +393,10 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
        * EvalToolConstants.classificationToView(templateItem.getItem().getClassification());
        * ViewParameters target = new TemplateItemViewParameters(targetView,
        * templateItem.getTemplate().getId(), templateItem.getId()); UIInternalLink.make(tofill,
-       * "modify-row-item", UIMessage.make("modifytemplate.modify.link"), target);
+       * "modify-row-item", UIMessage.make("general.command.edit"), target);
        * 
        * UIInternalLink.make(tofill, "remove-row-item",
-       * UIMessage.make("modifytemplate.remove.link"), new
+       * UIMessage.make("general.command.delete"), new
        * ItemViewParameters(RemoveItemProducer.VIEW_ID, null, templateItem.getId(),
        * templateItem.getTemplate().getId()) );
        */
