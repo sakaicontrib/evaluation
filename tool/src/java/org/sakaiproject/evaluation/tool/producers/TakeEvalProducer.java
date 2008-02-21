@@ -300,8 +300,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
          // show a warning to the user if all items must be filled in
          if ( studentAllowedLeaveUnanswered == false ) {
             UIBranchContainer note = UIBranchContainer.make(tofill, "show-eval-note:");
-            UIMessage.make(note, "eval-note-header", "general.note");   
-            UIMessage.make(note, "eval-note-text", "takeeval.user.must.answer.all");   
+            UIMessage.make(note, "eval-note-text", "takeeval.user.must.answer.all.note");   
          }
 
          UIBranchContainer formBranch = UIBranchContainer.make(tofill, "form-branch:");
