@@ -79,7 +79,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       responses.setDao(evaluationDao);
       responses.setExternalLogic( new MockEvalExternalLogic() );
       responses.setEvaluationService(evaluationService);
-      responses.setEvalSettings(settings);
+      responses.setSettings(settings);
       responses.setAuthoringService( authoringServiceImpl );
    }
 

@@ -76,7 +76,7 @@ public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Seri
       this.evaluation = evaluation;
       this.nodeId = nodeId;
    }
-   
+
 	public String getEid() {
 		return this.eid;
 	}

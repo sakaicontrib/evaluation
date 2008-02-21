@@ -21,16 +21,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
+import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
+import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
-import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
-import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
@@ -100,6 +99,11 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 	public void setSettings(EvalSettings settings) {
 		this.settings = settings;
 	}
+
+	private EvalBeanUtils evalBeanUtils;
+   public void setEvalBeanUtils(EvalBeanUtils evalBeanUtils) {
+      this.evalBeanUtils = evalBeanUtils;
+   }
 
 	private Locale locale;
 	public void setLocale(Locale locale) {
@@ -333,11 +337,9 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
                UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalStatus);
             } else if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(evalStatus)) {
                date = eval.getViewDate();
-               int ctResponses = deliveryService.countResponses(eval.getId(), null, true);
-               int ctEnrollments = getTotalEnrollmentsForEval(eval.getId());
-               Integer respReqToViewResults = (Integer) settings
-                     .get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS);
-               if ((respReqToViewResults.intValue() <= ctResponses) || (ctResponses >= ctEnrollments)) {
+               int responsesCount = deliveryService.countResponses(eval.getId(), null, true);
+               int enrollmentsCount = evaluationService.countParticipantsForEval(eval.getId());
+               if ( evalBeanUtils.checkResultsViewableForResponseRate(responsesCount, enrollmentsCount) ) {
                   UIInternalLink.make(evalrow, "viewReportLink", UIMessage.make("viewreport.page.title"),
                         new ReportParameters(ReportChooseGroupsProducer.VIEW_ID, eval.getId()));
                } else {
@@ -451,26 +453,6 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		i.add(new NavigationCase(PreviewEvalProducer.VIEW_ID, new SimpleViewParameters(
 				PreviewEvalProducer.VIEW_ID)));
 		return i;
-	}
-
-	/**
-	 * Gets the total count of enrollments for an evaluation
-	 *
-	 * @param evaluationId
-	 * @return total number of users with take eval perms in this evaluation
-	 */
-	private int getTotalEnrollmentsForEval(Long evaluationId) {
-		int totalEnrollments = 0;
-
-		Map<Long, List<EvalAssignGroup>> evalAssignGroups = evaluationService.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
-		List<EvalAssignGroup> groups = evalAssignGroups.get(evaluationId);
-		for (int i=0; i<groups.size(); i++) {
-			EvalAssignGroup eac = (EvalAssignGroup) groups.get(i);
-			String context = eac.getEvalGroupId();
-			Set<String> userIds = externalLogic.getUserIdsForEvalGroup(context, EvalConstants.PERM_TAKE_EVALUATION);
-			totalEnrollments = totalEnrollments + userIds.size();
-		}
-		return totalEnrollments;
 	}
 
 }

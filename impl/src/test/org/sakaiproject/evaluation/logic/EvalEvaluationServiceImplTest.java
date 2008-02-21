@@ -373,6 +373,21 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       assertFalse( evaluationService.canRemoveEvaluation(
             EvalTestDataLoad.ADMIN_USER_ID, etdl.evaluationViewable.getId() ) );
    }
+   
+   public void testCountParticipantsForEval() {
+      int count = 0;
+
+      // check active returns all enrollments count
+      count = evaluationService.countParticipantsForEval(etdl.evaluationClosed.getId());
+      assertEquals(3, count);
+
+      count = evaluationService.countParticipantsForEval(etdl.evaluationActive.getId());
+      assertEquals(1, count);
+
+      // check anon returns 0
+      count = evaluationService.countParticipantsForEval(etdl.evaluationActiveUntaken.getId());
+      assertEquals(0, count);
+   }
 
 
    // EVAL AND GROUP ASSIGNS

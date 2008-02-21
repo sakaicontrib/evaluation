@@ -16,7 +16,7 @@ package org.sakaiproject.evaluation.logic.externals;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
@@ -42,11 +42,10 @@ public class EvalSecurityChecksImpl {
 
    private static Log log = LogFactory.getLog(EvalSecurityChecksImpl.class);
 
-   private EvalExternalLogic external;
-   public void setExternalLogic(EvalExternalLogic external) {
-      this.external = external;
+   private EvalBeanUtils evalBeanUtils;
+   public void setEvalBeanUtils(EvalBeanUtils evalBeanUtils) {
+      this.evalBeanUtils = evalBeanUtils;
    }
-
 
    /**
     * Check if a user can control (update/edit/write) an evaluation,
@@ -57,7 +56,7 @@ public class EvalSecurityChecksImpl {
     */
    public boolean canUserControlEvaluation(String userId, EvalEvaluation eval) {
       // does not worry about locked
-      return checkUserPermission(userId, eval.getOwner());
+      return evalBeanUtils.checkUserPermission(userId, eval.getOwner());
    }
 
    /**
@@ -104,7 +103,7 @@ public class EvalSecurityChecksImpl {
          throw new IllegalStateException("Cannot control (modify) locked template ("+template.getId()+")");
       }
 
-      if (! checkUserPermission(userId, template.getOwner()) ) {
+      if (! evalBeanUtils.checkUserPermission(userId, template.getOwner()) ) {
          throw new SecurityException("User ("+userId+") cannot control template ("+template.getId()+") without permissions");
       }
       return true;
@@ -125,7 +124,7 @@ public class EvalSecurityChecksImpl {
          throw new IllegalStateException("Cannot control locked scale ("+scale.getId()+")");
       }
 
-      if (! checkUserPermission(userId, scale.getOwner()) ) {
+      if (! evalBeanUtils.checkUserPermission(userId, scale.getOwner()) ) {
          throw new SecurityException("User ("+userId+") cannot control scale ("+scale.getId()+") without permissions");
       }
       return true;
@@ -147,7 +146,7 @@ public class EvalSecurityChecksImpl {
          throw new IllegalStateException("Cannot control (modify) locked item ("+item.getId()+")");
       }
 
-      if (! checkUserPermission(userId, item.getOwner()) ) {
+      if (! evalBeanUtils.checkUserPermission(userId, item.getOwner()) ) {
          throw new SecurityException("User ("+userId+") cannot control item ("+item.getId()+") without permissions");
       }
       return true;
@@ -170,7 +169,7 @@ public class EvalSecurityChecksImpl {
                templateItem.getId()+") in locked template ("+templateItem.getTemplate().getTitle()+")");
       }
 
-      if (! checkUserPermission(userId, templateItem.getOwner()) ) {
+      if (! evalBeanUtils.checkUserPermission(userId, templateItem.getOwner()) ) {
          throw new SecurityException("User ("+userId+") cannot control templateItem ("+templateItem.getId()+") without permissions");
       }
       return true;
@@ -186,7 +185,7 @@ public class EvalSecurityChecksImpl {
    public boolean checkUserControlItemGroup(String userId, EvalItemGroup itemGroup) {
       log.debug("itemGroup: " + itemGroup.getId() + ", userId: " + userId);
 
-      if (! checkUserPermission(userId, itemGroup.getOwner()) ) {
+      if (! evalBeanUtils.checkUserPermission(userId, itemGroup.getOwner()) ) {
          throw new SecurityException("User ("+userId+") cannot control itemGroup ("+itemGroup.getId()+") without permissions");
       }
       return true;
@@ -202,7 +201,7 @@ public class EvalSecurityChecksImpl {
    public boolean checkControlAssignGroup(String userId, EvalAssignHierarchy assignGroup) {
       log.debug("userId: " + userId + ", assignGroup: " + assignGroup.getId());
 
-      if (! checkUserPermission(userId, assignGroup.getOwner()) ) {
+      if (! evalBeanUtils.checkUserPermission(userId, assignGroup.getOwner()) ) {
          throw new SecurityException("User ("+userId+") cannot control assignGroup ("+assignGroup.getId()+") without permissions");
       }
       return true;
@@ -314,7 +313,7 @@ public class EvalSecurityChecksImpl {
     */
    public boolean canUserControlEmailTemplate(String userId, EvalEmailTemplate emailTemplate) {
       boolean allowed = false;
-      if (checkUserPermission(userId, emailTemplate.getOwner())) {
+      if (evalBeanUtils.checkUserPermission(userId, emailTemplate.getOwner())) {
          allowed = true;
       } else {
          allowed = false;
@@ -356,27 +355,6 @@ public class EvalSecurityChecksImpl {
       } else {
          throw new IllegalStateException("Cannot modify email template in running evaluation ("
                + eval.getId() + ")");
-      }
-      return allowed;
-   }
-
-
-
-   /**
-    * General check for admin/owner permissions,
-    * this will check to see if the provided userId is an admin and
-    * also check if they are equal to the provided ownerId
-    * 
-    * @param userId internal user id
-    * @param ownerId an internal user id
-    * @return true if this user is admin or matches the owner user id
-    */
-   public boolean checkUserPermission(String userId, String ownerId) {
-      boolean allowed = false;
-      if ( external.isUserAdmin(userId) ) {
-         allowed = true;
-      } else if ( ownerId.equals(userId) ) {
-         allowed = true;
       }
       return allowed;
    }

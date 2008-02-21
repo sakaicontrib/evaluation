@@ -20,17 +20,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
-import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.entity.EvalCategoryEntityProvider;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
-import org.sakaiproject.evaluation.tool.utils.EvaluationCalcUtility;
 import org.sakaiproject.evaluation.tool.viewparams.PreviewEvalParameters;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
@@ -100,14 +99,9 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
       this.deliveryService = deliveryService;
    }
 
-   private EvalSettings settings;
-   public void setSettings(EvalSettings settings) {
-      this.settings = settings;
-   }
-   
-   private EvaluationCalcUtility evalCalcUtil;
-   public void setEvaluationCalcUtility(EvaluationCalcUtility util) {
-      this.evalCalcUtil = util;
+   private EvalBeanUtils evalBeanUtils;
+   public void setEvalBeanUtils(EvalBeanUtils evalBeanUtils) {
+      this.evalBeanUtils = evalBeanUtils;
    }
 
 
@@ -186,20 +180,12 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
       }
 
       // create inqueue evaluations header and link
-      UIMessage.make(tofill, "evals-inqueue-header", "controlevaluations.inqueue.header");
-      UIMessage.make(tofill, "evals-inqueue-description", "controlevaluations.inqueue.description");
       UIForm startEvalForm = UIForm.make(tofill, "begin-evaluation-form");
       UICommand.make(startEvalForm, "begin-evaluation-link", UIMessage.make("starteval.page.title"), "#{evaluationBean.startEvaluation}");
 
       if (inqueueEvals.size() > 0) {
          UIBranchContainer evalListing = UIBranchContainer.make(tofill, "inqueue-eval-listing:");
          UIForm evalForm = UIForm.make(evalListing, "inqueue-eval-form");
-
-         UIMessage.make(evalForm, "eval-title-header", "controlevaluations.eval.title.header");
-         UIMessage.make(evalForm, "eval-assigned-header", "controlevaluations.eval.assigned.header");
-         UIMessage.make(evalForm, "eval-startdate-header", "controlevaluations.eval.startdate.header");
-         UIMessage.make(evalForm, "eval-duedate-header", "controlevaluations.eval.duedate.header");
-         UIMessage.make(evalForm, "eval-settings-header", "controlevaluations.eval.settings.header");
 
          for (int i = 0; i < inqueueEvals.size(); i++) {
             EvalEvaluation evaluation = (EvalEvaluation) inqueueEvals.get(i);
@@ -239,10 +225,8 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
             UIOutput.make(evaluationRow, "inqueue-eval-startdate", df.format(evaluation.getStartDate()));
             UIOutput.make(evaluationRow, "inqueue-eval-duedate", df.format(evaluation.getDueDate()));
 
-            UICommand evalEdit = UICommand.make(evaluationRow, 
-                  "inqueue-eval-edit-link", 
-                  UIMessage.make("controlevaluations.eval.edit.link"),
-            "#{evaluationBean.editEvalSettingAction}");
+            UICommand evalEdit = UICommand.make(evaluationRow, "inqueue-eval-edit-link", 
+                  UIMessage.make("controlevaluations.eval.edit.link"), "#{evaluationBean.editEvalSettingAction}");
             evalEdit.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", evaluation.getId()));
 
             // do the locked check first since it is more efficient
@@ -261,19 +245,9 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 
 
       // create active evaluations header and link
-      UIMessage.make(tofill, "evals-active-header", "controlevaluations.active.header");
-      UIMessage.make(tofill, "evals-active-description", "controlevaluations.active.description");
-
       if (activeEvals.size() > 0) {
          UIBranchContainer evalListing = UIBranchContainer.make(tofill, "active-eval-listing:");
          UIForm evalForm = UIForm.make(evalListing, "active-eval-form");
-
-         UIMessage.make(evalForm, "eval-title-header", "controlevaluations.eval.title.header");
-         UIMessage.make(evalForm, "eval-assigned-header", "controlevaluations.eval.assigned.header");
-         UIMessage.make(evalForm, "eval-responses-header", "controlevaluations.eval.responses.header");
-         UIMessage.make(evalForm, "eval-startdate-header", "controlevaluations.eval.startdate.header");
-         UIMessage.make(evalForm, "eval-duedate-header", "controlevaluations.eval.duedate.header");
-         UIMessage.make(evalForm, "eval-settings-header", "controlevaluations.eval.settings.header");
 
          for (int i = 0; i < activeEvals.size(); i++) {
             EvalEvaluation evaluation = (EvalEvaluation) activeEvals.get(i);
@@ -311,13 +285,11 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
             }
 
             // calculate the response rate
-            int countResponses = deliveryService.countResponses(evaluation.getId(), null, true);
-            int countEnrollments = evalCalcUtil.getTotalEnrollmentsForEval(evaluation.getId());
-            if (countEnrollments > 0) {
-               UIOutput.make(evaluationRow, "active-eval-response-rate", countResponses + "/" + countEnrollments );
-            } else {
-               UIOutput.make(evaluationRow, "active-eval-response-rate", countResponses + "" );					
-            }
+            int responsesCount = deliveryService.countResponses(evaluation.getId(), null, true);
+            int enrollmentsCount = evaluationService.countParticipantsForEval(evaluation.getId());
+            String responseString = EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount);
+            UIMessage.make(evaluationRow, "active-eval-response-rate", "controlevaluations.eval.responses.inline", 
+                  new Object[] { responseString } );
 
             UIOutput.make(evaluationRow, "active-eval-startdate", df.format(evaluation.getStartDate()));
             UIOutput.make(evaluationRow, "active-eval-duedate", df.format(evaluation.getDueDate()));
@@ -342,18 +314,9 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
       }
 
       // create closed evaluations header and link
-      UIMessage.make(tofill, "evals-closed-header", "controlevaluations.closed.header");
-      UIMessage.make(tofill, "evals-closed-description", "controlevaluations.closed.description");
-
       if (closedEvals.size() > 0) {
          UIBranchContainer evalListing = UIBranchContainer.make(tofill, "closed-eval-listing:");
          UIForm evalForm = UIForm.make(evalListing, "closed-eval-form");
-
-         UIMessage.make(evalForm, "eval-title-header", "controlevaluations.eval.title.header");
-         UIMessage.make(evalForm, "eval-report-header", "controlevaluations.eval.report.header");
-         UIMessage.make(evalForm, "eval-assigned-header", "controlevaluations.eval.assigned.header");
-         UIMessage.make(evalForm, "eval-response-rate-header", "controlevaluations.eval.responserate.header");
-         UIMessage.make(evalForm, "eval-duedate-header", "controlevaluations.eval.startdate.header");
 
          for (int i = 0; i < closedEvals.size(); i++) {
             EvalEvaluation evaluation = (EvalEvaluation) closedEvals.get(i);
@@ -388,30 +351,25 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
             }
 
             // calculate the response rate
-            int countResponses = deliveryService.countResponses(evaluation.getId(), null, true);
-            int countEnrollments = evalCalcUtil.getTotalEnrollmentsForEval(evaluation.getId());
+            int responsesCount = deliveryService.countResponses(evaluation.getId(), null, true);
+            int enrollmentsCount = evaluationService.countParticipantsForEval(evaluation.getId());
+            String responseString = EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount);
 
-            UIOutput.make(evaluationRow, "closed-eval-response-rate", evalCalcUtil.getParticipantResults(evaluation));
+            UIOutput.make(evaluationRow, "closed-eval-response-rate", responseString );
 
             UIOutput.make(evaluationRow, "closed-eval-duedate", df.format(evaluation.getDueDate()));
 
-            UICommand evalEdit = UICommand.make(evaluationRow, 
-                  "closed-eval-edit-link", 
-                  UIMessage.make("controlevaluations.eval.edit.link"),
-            "#{evaluationBean.editEvalSettingAction}");
+            UICommand evalEdit = UICommand.make(evaluationRow, "closed-eval-edit-link", 
+                  UIMessage.make("controlevaluations.eval.edit.link"), "#{evaluationBean.editEvalSettingAction}");
             evalEdit.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", evaluation.getId()));
 
             if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(EvalUtils.getEvaluationState(evaluation)) ) {
-               int respReqToViewResults = ((Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS)).intValue();
-               // make sure there is at least one response before showing the link
-               if ( (respReqToViewResults <= countResponses || countResponses >= countEnrollments) &&
-                     countResponses > 0 ) {
+               if ( evalBeanUtils.checkResultsViewableForResponseRate(responsesCount, enrollmentsCount) ) {
                   UIInternalLink.make(evaluationRow, "closed-eval-report-link", 
                         UIMessage.make("controlevaluations.eval.report.link"),
                         new ReportParameters(ReportChooseGroupsProducer.VIEW_ID, evaluation.getId() ));	
                } else {
-                  UIMessage.make(evaluationRow, "closed-eval-message", 
-                  "controlevaluations.eval.report.awaiting.responses");
+                  UIMessage.make(evaluationRow, "closed-eval-message", "controlevaluations.eval.report.awaiting.responses");
                }
             } else {
                UIMessage.make(evaluationRow, "closed-eval-message", 
