@@ -23,6 +23,7 @@ import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
+import org.sakaiproject.evaluation.tool.reporting.ReportingPermissions;
 import org.sakaiproject.evaluation.tool.viewparams.EssayResponseParams;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
@@ -78,10 +79,12 @@ public class ReportsViewEssaysProducer implements ViewComponentProducer, Navigat
       this.deliveryService = deliveryService;
    }
 
+   private ReportingPermissions reportingPermissions;
+   public void setReportingPermissions(ReportingPermissions perms) {
+      this.reportingPermissions = perms;
+   }
 
-
-   public void fillComponents(UIContainer tofill, ViewParameters viewparams,
-         ComponentChecker checker) {
+   public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
       // local variables used in the render logic
       String currentUserId = externalLogic.getCurrentUserId();
@@ -138,9 +141,7 @@ public class ReportsViewEssaysProducer implements ViewComponentProducer, Navigat
          EvalEvaluation evaluation = evaluationService.getEvaluationById(ervps.evalId);
 
          // do a permission check
-         // TODO - this check is no good, we need a real one -AZ
-         if (!currentUserId.equals(evaluation.getOwner())
-               && !externalLogic.isUserAdmin(currentUserId)) { 
+         if (reportingPermissions.canViewEvaluationResponses(evaluation, ervps.groupIds)) { 
             throw new SecurityException("Invalid user attempting to access reports page: " + currentUserId);
          }
 

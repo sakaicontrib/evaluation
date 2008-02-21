@@ -623,6 +623,7 @@
       <property name="authoringService"
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
       <property name="reportsBean" ref="reportsBean" />
+      <property name="reportingPermissions" ref="org.sakaiproject.evaluation.tool.reporting.ReportingPermissions" />
    </bean>
 
    <bean
@@ -635,6 +636,8 @@
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
       <property name="deliveryService"
          ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
+      <property name="reportingPermissions" 
+         ref="org.sakaiproject.evaluation.tool.reporting.ReportingPermissions" />
    </bean>
 
 </beans>
