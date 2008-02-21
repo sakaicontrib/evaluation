@@ -15,12 +15,6 @@
 	<body rsf:id="scr=sakai-body">
 		<div class="portletBody">
 
-			<div rsf:id="message-for:*" class="alertMessage">
-				<ul style="margin:0px;">
-					<li>Message for user here</li>
-				</ul>
-			</div>
-
 			<div class="textPanel"> 			
 				<h3 style="display:inline">
 					<span rsf:id="eval-title-header" class="highlight">Evaluation:</span>
@@ -32,7 +26,8 @@
 				</span>
 			</div>
 
-			<!--//gsilver: is this "Switch group" functional? because this is where the whitespace is coming from - in order to -->
+			<!--//gsilver: is this "Switch group" functional? because this is where the whitespace is coming from 
+                (AZ: yes, it is all that is functional, the rest inside the tags is just a placeholder) -->
 			<div rsf:id="show-switch-group:" class="navPanel">
 				<div class="viewNav">
 					<label  rsf:id="switch-group-header" for="switch-group-list-selection"> Switch group:</label>
@@ -46,15 +41,20 @@
 					</form>
 				</div>	
 			</div>
+
+            <div rsf:id="message-for:*" class="alertMessage">
+                <ul style="margin:0px;">
+                    <li>Message for user here</li>
+                </ul>
+            </div>
 	
 			<div rsf:id="show-eval-instructions:" class="instruction">
 				<h5 rsf:id="eval-instructions-header" style="display:inline;padding-right:1em">Instructions:</h5>
 				<span rsf:id="eval-instructions">Evaluation instructions would go here if any have been specified. This block may be up to 4000 chars.</span>
 			</div>
-			
 	
 		   <div rsf:id="show-eval-note:" class="instruction">
-			   <h5 rsf:id="eval-note-header"  style="display:inline;padding-right:1em">Note:</h5>
+			   <h5 rsf:id="msg=general.note"  style="display:inline;padding-right:1em">Note:</h5>
 			   <span rsf:id="eval-note-text">Additional instructional note to the user here</span>
 		   </div>
 			
