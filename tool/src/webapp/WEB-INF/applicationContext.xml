@@ -229,5 +229,6 @@
 		<property name="externalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
 		<property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings"/>
 		<property name="evaluationDao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+		<property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
 	</bean>
 </beans>

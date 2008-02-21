@@ -3,7 +3,6 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
@@ -11,6 +10,7 @@ import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.ReportsBean;
+import org.sakaiproject.evaluation.tool.reporting.ReportingPermissions;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
@@ -63,6 +63,11 @@ public class ReportChooseGroupsProducer implements ViewComponentProducer, Naviga
    public ReportsBean reportsBean;
    public void setReportsBean(ReportsBean reportsBean) {
       this.reportsBean = reportsBean;
+   }
+   
+   private ReportingPermissions reportingPermissions;
+   public void setReportingPermissions(ReportingPermissions perms) {
+      this.reportingPermissions = perms;
    }
 
    /* (non-Javadoc)
@@ -119,9 +124,14 @@ public class ReportChooseGroupsProducer implements ViewComponentProducer, Naviga
          EvalEvaluation evaluation = evaluationService.getEvaluationById(evaluationId);
 
          // do a permission check
-         if (! currentUserId.equals(evaluation.getOwner()) &&
-               ! externalLogic.isUserAdmin(currentUserId)) { // TODO - this check is no good, we need a real one -AZ
-            throw new SecurityException("Invalid user attempting to access reports page: " + currentUserId);
+         //if (! currentUserId.equals(evaluation.getOwner()) &&
+         //      ! externalLogic.isUserAdmin(currentUserId)) { // TODO - this check is no good, we need a real one -AZ
+         //   throw new SecurityException("Invalid user attempting to access reports page: " + currentUserId);
+         //}
+         String[] possibleGroupIdsToView = reportingPermissions.chooseGroupsPartialCheck(evaluation);
+         if (possibleGroupIdsToView.length == 0) {
+            UIOutput.make(tofill, "security-warning", "You cannot view responses for any of the groups.");
+            return;
          }
 
          // create a copy of the VP and then set it to the right view (to avoid corrupting the original)
@@ -135,11 +145,11 @@ public class ReportChooseGroupsProducer implements ViewComponentProducer, Naviga
          UIMessage.make(form, "report-group-main-message", "reportgroups.main.message");		
          //form.parameters.add(new UIELBinding("#{reportsBean.evalId}", evaluationId));
 
-         Map<Long, List<EvalGroup>> evalGroups = evaluationService.getEvaluationGroups(new Long[] {evaluationId}, false);
-         List<EvalGroup> groups = evalGroups.get(evaluationId);
-         for (int i = 0; i < groups.size(); i++) {
+         //Map<Long, List<EvalGroup>> evalGroups = evaluationService.getEvaluationGroups(new Long[] {evaluationId}, false);
+         //List<EvalGroup> groups = evalGroups.get(evaluationId);
+         for (int i = 0; i < possibleGroupIdsToView.length; i++) {
             UIBranchContainer groupBranch = UIBranchContainer.make(form, "groupRow:", i+"");
-            EvalGroup currGroup = (EvalGroup) groups.get(i);
+            EvalGroup currGroup = externalLogic.makeEvalGroupObject(possibleGroupIdsToView[i]);
             // checkbox - groupCheck
             UIBoundBoolean groupCheckBox = UIBoundBoolean.make(groupBranch, "groupCheck",
                   "#{groupIds." + currGroup.evalGroupId + "}", Boolean.FALSE);

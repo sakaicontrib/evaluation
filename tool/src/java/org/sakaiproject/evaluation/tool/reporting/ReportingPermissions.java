@@ -1,8 +1,9 @@
 package org.sakaiproject.evaluation.tool.reporting;
 
 import java.util.Set;
-
+import java.util.HashSet;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -40,10 +41,85 @@ public class ReportingPermissions {
    public void setEvaluationDao(EvaluationDao dao) {
       this.evalDao = dao;
    }
+   
+   private EvalEvaluationService evaluationService;
+   public void setEvaluationService(EvalEvaluationService evaluationService) {
+      this.evaluationService = evaluationService;
+   }
+   
+   /**
+    * This is a sort of partial security check based off of the full 
+    * canViewEvaluationResponses method.
+    * 
+    * This is primarily needed for the Choose Groups page in reporting. In this
+    * case, we want to genuinely check most of the permissions, except we don't
+    * actually know what Group ID's we are looking at (because we are about to 
+    * choose them).  Instead, we want to check almost all of the items in the 
+    * rules, and if they pass successfully, return the Groups that we are able
+    * to choose from for report viewing.
+    *
+    * @param evaluation
+    * @return The array of groupIds we can choose from for viewing responses in 
+    * this evaluation.  If you cannot view the responses from any groups in this
+    * evaluation, this will return an empty list.
+    */
+   public String[] chooseGroupsPartialCheck(EvalEvaluation evaluation) {
+      String currentUserId = externalLogic.getCurrentUserId();
+      Set<String> groupIdsTogo = new HashSet<String>();
+      boolean canViewResponses;
+      
+      // TODO 1 and 2 will be replaced by ExternalLogic.checkUserPermission(String userId, String ownerId)
+
+      // 1) Is this user an admin?
+      if (externalLogic.isUserAdmin(currentUserId)) {
+         canViewResponses = true;
+      }
+      // 2) Is this user the evaluation owner?
+      else if (currentUserId.equals(evaluation.getOwner())) {
+         canViewResponses = true;
+      }
+      // 3
+      else if (evaluation.getResultsPrivate()) {
+         canViewResponses = false;
+      }
+      else {
+         canViewResponses = false;
+      }
+      // 6 TODO Insfrustructure isn't available for this yet.
+
+      /*
+       * If we can view the responses, based on the preliminary checks above,
+       * we will create a Set of the groups we are allowed to view based on the
+       * possibility of us having the instructor and student oriented permission
+       * locks.
+       */
+      if (canViewResponses) {
+         Boolean instructorAllowedViewResults = 
+            (Boolean) evalSettings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
+         if (instructorAllowedViewResults) {
+            groupIdsTogo.addAll(
+                  evalDao.getViewableEvalGroupIds(evaluation.getId(), EvalConstants.PERM_BE_EVALUATED, null));
+         }
+         
+         Boolean studentAllowedViewResults = 
+            (Boolean) evalSettings.get(EvalSettings.STUDENT_VIEW_RESULTS);
+         if (studentAllowedViewResults) {
+            groupIdsTogo.addAll(
+                  evalDao.getViewableEvalGroupIds(evaluation.getId(), EvalConstants.PERM_TAKE_EVALUATION, null));
+         }
+      }
+      
+      return groupIdsTogo.toArray(new String[] {});
+   }
 
    /**
     * Decide whether the current user can view the responses for an evaluation
     * and set of groups that participated in it.
+    * 
+    * TODO FIXME I think 4 and 5 may need to be combined. It seems possible that
+    * you could have Instructor viewing permissions in one of the groups, and 
+    * Student viewing permissions in another, so the Set of Group IDs from both
+    * need to be combined to be checked.
     * 
     * @param evaluation The EvalEvaluation object we are looking at responses for.
     * @param groupIds The String array of Group IDs we want to view results for.
@@ -99,18 +175,12 @@ public class ReportingPermissions {
    private boolean canViewEvaluationResponsesAsStudent(EvalEvaluation eval, String currentUserId, String[] groupIds) {
       Boolean studentAllowedViewResults = 
          (Boolean) evalSettings.get(EvalSettings.STUDENT_VIEW_RESULTS);
-      boolean allowedToView = true;
+      boolean allowedToView = false;
       if (studentAllowedViewResults) {
          Set<String> viewableIds = evalDao.getViewableEvalGroupIds(eval.getId(), EvalConstants.PERM_TAKE_EVALUATION, groupIds);
-         for (String groupId: groupIds) {
-            if (!viewableIds.contains(groupId)) {
-               allowedToView = false;
-               break;
-            }
+         if (viewableIds.size() == groupIds.length) {
+            allowedToView = true;
          }
-      }
-      else {
-         allowedToView = false;
       }
       
       return allowedToView;
@@ -129,20 +199,14 @@ public class ReportingPermissions {
    private boolean canViewEvaluationResponsesAsInstructor(EvalEvaluation eval, String currentUserId, String[] groupIds) {
       Boolean instructorAllowedViewResults = 
          (Boolean) evalSettings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
-      boolean allowedToView = true;
+      boolean allowedToView = false;
       if (instructorAllowedViewResults) {
          Set<String> viewableIds = evalDao.getViewableEvalGroupIds(eval.getId(), EvalConstants.PERM_BE_EVALUATED, groupIds);
-         for (String groupId: groupIds) {
-            if (!viewableIds.contains(groupId)) {
-               allowedToView = false;
-               break;
-            }
+         if (viewableIds.size() == groupIds.length) {
+            allowedToView = true;
          }
       }
-      else {
-         allowedToView = false;
-      }
-      
+
       return allowedToView;
    }
 }
