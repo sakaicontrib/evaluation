@@ -132,14 +132,14 @@ public class ControlScalesProducer implements ViewComponentProducer {
 			if (! scale.getLocked().booleanValue() &&
 			      authoringService.canModifyScale(currentUserId, scale.getId()) ) {
 				UIInternalLink.make(listOfScales, "modify-sidelink", 
-						UIMessage.make("controlscales.modify.link"), 
+						UIMessage.make("general.command.edit"), 
 						new EvalScaleParameters(ModifyScaleProducer.VIEW_ID, scale.getId()));
 			}
 
 			if (! scale.getLocked().booleanValue() &&
 			      authoringService.canRemoveScale(currentUserId, scale.getId()) ) {
 				UIInternalLink.make(listOfScales, "remove-sidelink", 
-						UIMessage.make("controlscales.remove.link"), 
+						UIMessage.make("general.command.delete"), 
 						new EvalScaleParameters(RemoveScaleProducer.VIEW_ID, scale.getId()));
 			}
 

@@ -157,7 +157,7 @@ public class ControlItemsProducer implements ViewComponentProducer {
                UIOutput.make(itemBranch, "item-scale", scaleDisplaySettingLabel);
             }
 
-            UIInternalLink.make(itemBranch, "item-preview-link", UIMessage.make("controlitems.preview.link"), 
+            UIInternalLink.make(itemBranch, "item-preview-link", UIMessage.make("general.command.preview"), 
                   new ItemViewParameters(PreviewItemProducer.VIEW_ID, item.getId(), (Long)null) );
 
             UIOutput.make(itemBranch, "item-owner", externalLogic.getUserDisplayName( item.getOwner()) );
@@ -171,19 +171,19 @@ public class ControlItemsProducer implements ViewComponentProducer {
             // local locked check is more efficient so do that first
             if ( !item.getLocked().booleanValue() && 
                   authoringService.canModifyItem(currentUserId, item.getId()) ) {
-               UIInternalLink.make(itemBranch, "item-modify-link", UIMessage.make("controlitems.modify.link"), 
+               UIInternalLink.make(itemBranch, "item-modify-link", UIMessage.make("general.command.edit"), 
                      new ItemViewParameters(ModifyItemProducer.VIEW_ID, item.getId(), null));
             } else {
-               UIMessage.make(itemBranch, "item-modify-dummy", "controlitems.modify.link");
+               UIMessage.make(itemBranch, "item-modify-dummy", "general.command.edit");
             }
 
             // local locked check is more efficient so do that first
             if ( !item.getLocked().booleanValue() && 
                   authoringService.canRemoveItem(currentUserId, item.getId()) ) {
-               UIInternalLink.make(itemBranch, "item-remove-link", UIMessage.make("controlitems.remove.link"), 
+               UIInternalLink.make(itemBranch, "item-remove-link", UIMessage.make("general.command.delete"), 
                      new ItemViewParameters(RemoveItemProducer.VIEW_ID, item.getId(), null));
             } else {
-               UIMessage.make(itemBranch, "item-remove-dummy", "controlitems.remove.link");
+               UIMessage.make(itemBranch, "item-remove-dummy", "general.command.delete");
             }
 
          }

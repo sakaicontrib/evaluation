@@ -295,12 +295,12 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 
       // show links if this item/templateItem exists
       if (templateItemId != null || itemId != null) {
-         UIInternalLink.make(tofill, "item-preview-link", UIMessage.make("controlitems.preview.link"), 
+         UIInternalLink.make(tofill, "item-preview-link", UIMessage.make("general.command.preview"), 
                new ItemViewParameters(PreviewItemProducer.VIEW_ID, itemId, templateItemId) );
          if ( (itemId != null && authoringService.canRemoveItem(currentUserId, itemId)) || 
                templateItemId != null && authoringService.canControlTemplateItem(currentUserId, templateItemId) ) {
             // item or templateItem is removable
-            UIInternalLink.make(tofill, "item-remove-link", UIMessage.make("controlitems.remove.link"), 
+            UIInternalLink.make(tofill, "item-remove-link", UIMessage.make("general.command.delete"), 
                   new ItemViewParameters(RemoveItemProducer.VIEW_ID, itemId, templateItemId));
          }
       }

@@ -44,6 +44,7 @@ import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIDisabledDecorator;
+import uk.org.ponder.rsf.components.decorators.UITooltipDecorator;
 import uk.org.ponder.rsf.evolvers.FormatAwareDateInputEvolver;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
@@ -462,7 +463,8 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 		UIMessage.make(form, "eval-category-instructions", "evalsettings.extra.category.instructions");
 		if (evaluationBean.eval.getEvalCategory() != null) {
 			UILink.make(tofill, "eval-category-direct-link", UIMessage.make("general.direct.link"), 
-				externalLogic.getEntityURL(EvalCategoryEntityProvider.ENTITY_PREFIX, evaluationBean.eval.getEvalCategory()) );
+				externalLogic.getEntityURL(EvalCategoryEntityProvider.ENTITY_PREFIX, evaluationBean.eval.getEvalCategory()) )
+				.decorate( new UITooltipDecorator( UIMessage.make("general.direct.link.title") ) );
 		}
 
 

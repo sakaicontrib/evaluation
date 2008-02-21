@@ -22,6 +22,7 @@ import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalTemplate;
+import org.sakaiproject.evaluation.tool.viewparams.PreviewEvalParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -30,6 +31,7 @@ import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UILink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.decorators.UITooltipDecorator;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
@@ -152,25 +154,35 @@ public class ControlTemplatesProducer implements ViewComponentProducer {
 				if ( ! template.getLocked().booleanValue() &&
 				      authoringService.canModifyTemplate(currentUserId, template.getId()) ) {
                 	// template controllable
-					UIInternalLink.make(templateRow, "template-modify-link", template.getTitle(), 
-							new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, template.getId()));
 				} else {
                 	// template not controllable
-					UIOutput.make(templateRow, "template-title", template.getTitle());
 				}
+            UIOutput.make(templateRow, "template-title", template.getTitle());
 
-				// local locked check is more efficient so do that first
+            // local locked check is more efficient so do that first
 				if ( ! template.getLocked().booleanValue() &&
-				      authoringService.canRemoveTemplate(currentUserId, template.getId()) ) {
-					UIInternalLink.make(templateRow, "delete-template-link", 
-							new TemplateViewParameters( RemoveTemplateProducer.VIEW_ID, template.getId() ));
+				      authoringService.canModifyTemplate(currentUserId, template.getId()) ) {
+               UIInternalLink.make(templateRow, "template-modify-link", UIMessage.make("general.command.edit"), 
+                     new TemplateViewParameters( ModifyTemplateItemsProducer.VIEW_ID, template.getId() ));
 				} else {
-					UIMessage.make(templateRow, "template-used", "controltemplates.template.inuse");
+					UIMessage.make(templateRow, "template-modify-dummy", "general.command.edit")
+					      .decorate( new UITooltipDecorator( UIMessage.make("controltemplates.template.inuse.note") ) );
 				}
+            if ( ! template.getLocked().booleanValue() &&
+                  authoringService.canRemoveTemplate(currentUserId, template.getId()) ) {
+               UIInternalLink.make(templateRow, "template-delete-link", UIMessage.make("general.command.delete"),
+                     new TemplateViewParameters( RemoveTemplateProducer.VIEW_ID, template.getId() ));
+            } else {
+               UIMessage.make(templateRow, "template-delete-dummy", "general.command.delete")
+                     .decorate( new UITooltipDecorator( UIMessage.make("controltemplates.template.inuse.note") ) );
+            }
+            UIInternalLink.make(templateRow, "template-preview-link", UIMessage.make("general.command.preview"),
+                  new PreviewEvalParameters( PreviewEvalProducer.VIEW_ID, null, template.getId() ));
 
-				// direct link to the template preview
-				UILink.make(templateRow, "preview-template-direct-link", UIMessage.make("general.direct.link"), 
-				      externalLogic.getEntityURL(template) );
+				// direct link to the template
+				UILink.make(templateRow, "template-direct-link", UIMessage.make("general.direct.link"), 
+				      externalLogic.getEntityURL(template) )
+				      .decorate( new UITooltipDecorator( UIMessage.make("general.direct.link.title") ) );
 
 				UIOutput.make(templateRow, "template-owner", externalLogic.getUserDisplayName( template.getOwner() ));
 				UIOutput.make(templateRow, "template-last-update", df.format( template.getLastModified() ));

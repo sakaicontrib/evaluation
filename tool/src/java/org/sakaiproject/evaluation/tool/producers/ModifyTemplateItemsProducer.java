@@ -165,12 +165,14 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
       UIMessage.make(tofill, "modify-template-title", "modifytemplate.page.title");
 
       UIInternalLink.make(tofill, "preview_eval_link", UIMessage.make("modifytemplate.preview.eval.link"),
-            new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID, null, templateId)).decorators = 
-               new DecoratorList(new UITooltipDecorator(UIMessage.make("modifytemplate.preview.eval.link.title")));
+            new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID, null, templateId))
+            .decorate( new UITooltipDecorator( UIMessage.make("modifytemplate.preview.eval.link.title") ) );
+
       UIMessage.make(tofill, "preview-eval-desc",	"modifytemplate.preview.eval.desc");
+
       UILink.make(tofill, "preview-template-direct-link", UIMessage.make("general.direct.link"), 
-            externalLogic.getEntityURL(template) ).decorators = 
-               new DecoratorList(new UITooltipDecorator(UIMessage.make("general.direct.link.title")));
+            externalLogic.getEntityURL(template) )
+            .decorate( new UITooltipDecorator( UIMessage.make("general.direct.link.title") ) );
 
       // get form to submit the type of item to create to the correct view
       UIMessage.make(tofill, "add-item-note", "modifytemplate.add.item.note");
@@ -312,22 +314,22 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
                }
             }
 
-            UIInternalLink.make(itemBranch, "preview-row-item", UIMessage.make("modifytemplate.preview.link"), 
+            UIInternalLink.make(itemBranch, "preview-row-item", UIMessage.make("general.command.preview"), 
                   new ItemViewParameters(PreviewItemProducer.VIEW_ID, (Long) null, templateItem.getId()) );
 
             if ((templateItem.getBlockParent() != null) && (templateItem.getBlockParent().booleanValue() == true)) {
                // if it is a block item
                BlockIdsParameters target = new BlockIdsParameters(ModifyBlockProducer.VIEW_ID, templateId, templateItem.getId().toString());
-               UIInternalLink.make(itemBranch, "modify-row-item", UIMessage.make("modifytemplate.modify.link"), target);
+               UIInternalLink.make(itemBranch, "modify-row-item", UIMessage.make("general.command.edit"), target);
             } else {
                // it is a non-block item
                ViewParameters target = new ItemViewParameters(ModifyItemProducer.VIEW_ID, 
                      templateItem.getItem().getClassification(), templateId, templateItem.getId());
-               UIInternalLink.make(itemBranch, "modify-row-item", UIMessage.make("modifytemplate.modify.link"), target);
+               UIInternalLink.make(itemBranch, "modify-row-item", UIMessage.make("general.command.edit"), target);
             }
 
             UIInternalLink.make(itemBranch,	"remove-row-item", 
-                  UIMessage.make("modifytemplate.remove.link"),
+                  UIMessage.make("general.command.delete"),
                   new ItemViewParameters(RemoveItemProducer.VIEW_ID, (Long)null, templateItem.getId(), templateId) );
 
 
