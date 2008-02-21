@@ -96,7 +96,7 @@ public class PreloadDataImpl implements Runnable {
          saveConfig(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS, true);
          saveConfig(EvalSettings.INSTRUCTOR_ALLOWED_EMAIL_STUDENTS, true);
          // NOTE: leave this out to default to use the setting in the evaluation
-         saveConfig(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE, EvalConstants.INSTRUCTOR_OPT_OUT);
+         saveConfig(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE, EvalConstants.INSTRUCTOR_REQUIRED);
 
          saveConfig(EvalSettings.INSTRUCTOR_ADD_ITEMS_NUMBER, 5);
 
@@ -165,7 +165,10 @@ public class PreloadDataImpl implements Runnable {
    public void preloadEmailTemplate() {
 
       // check if there are any emailTemplates present
-      int count = evaluationDao.countAll(EvalEmailTemplate.class);
+      int count = evaluationDao.countByProperties(EvalEmailTemplate.class, 
+            new String[] {"defaultType"},
+            new Object[] {""},
+            new int[] {EvaluationDao.NOT_NULL});
       if (count == 0) {
          evaluationDao.save(new EvalEmailTemplate(new Date(), ADMIN_OWNER, EvalConstants.EMAIL_CREATED_DEFAULT_SUBJECT,
                EvalConstants.EMAIL_CREATED_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_DEFAULT_CREATED));
