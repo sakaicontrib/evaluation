@@ -141,7 +141,7 @@ public class ReportsViewEssaysProducer implements ViewComponentProducer, Navigat
          EvalEvaluation evaluation = evaluationService.getEvaluationById(ervps.evalId);
 
          // do a permission check
-         if (reportingPermissions.canViewEvaluationResponses(evaluation, ervps.groupIds)) { 
+         if (!reportingPermissions.canViewEvaluationResponses(evaluation, ervps.groupIds)) { 
             throw new SecurityException("Invalid user attempting to access reports page: " + currentUserId);
          }
 

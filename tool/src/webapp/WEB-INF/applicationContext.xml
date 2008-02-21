@@ -201,6 +201,7 @@
         <property name="deliveryService"
            ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
         <property name="messageLocator" ref="messageLocator" />
+        <property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
 	</bean>
 
 	<bean id="PDFReportExporter" class="org.sakaiproject.evaluation.tool.reporting.PDFReportExporter">
@@ -209,7 +210,8 @@
         <property name="deliveryService"
            ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
 		<property name="evalResponseAggregatorUtil" ref="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil" />
-		<property name="messageLocator" ref="messageLocator" /> 
+		<property name="messageLocator" ref="messageLocator" />
+		<property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
 	</bean>
 	
 	<bean  id="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil" 
