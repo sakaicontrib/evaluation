@@ -125,10 +125,6 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		// use a date which is related to the current users locale
 		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
 
-		// page title
-		UIMessage.make(tofill, "page-title", "summary.page.title");
-		UIMessage.make(tofill, "page-instruction", "summary.page.instruction");
-
 		/*
 		 * top links here
 		 */
@@ -158,6 +154,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 			UIInternalLink.make(tofill, "control-evaluations-link",
 					UIMessage.make("controlevaluations.page.title"),
 				new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
+			UIMessage.make(tofill, "instructor-instructions", "summary.instructor.instruction");
 		}
 
 		/*
