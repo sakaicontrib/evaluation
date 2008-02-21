@@ -26,7 +26,6 @@ import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.tool.reporting.ReportingPermissions;
 import org.sakaiproject.evaluation.tool.viewparams.EssayResponseParams;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
-import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import org.sakaiproject.util.FormattedText;
 
@@ -130,7 +129,7 @@ public class ReportsViewEssaysProducer implements ViewComponentProducer, Navigat
 
       EssayResponseParams ervps = (EssayResponseParams) viewparams;
       UIInternalLink.make(tofill, "report-groups-title", UIMessage.make("reportgroups.page.title"),
-            new TemplateViewParameters(ReportChooseGroupsProducer.VIEW_ID, ervps.evalId));
+            new ReportParameters(ReportChooseGroupsProducer.VIEW_ID, ervps.evalId));
 
       UIInternalLink.make(tofill, "viewReportLink", UIMessage.make("viewreport.page.title"),
             new ReportParameters(ReportsViewingProducer.VIEW_ID, ervps.evalId, ervps.groupIds));

@@ -41,7 +41,6 @@ import org.sakaiproject.evaluation.tool.viewparams.EssayResponseParams;
 import org.sakaiproject.evaluation.tool.viewparams.ExcelReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.PDFReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
-import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
 import uk.org.ponder.rsf.components.UIBoundBoolean;
@@ -173,7 +172,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
 
          // bread crumbs
          UIInternalLink.make(tofill, "report-groups-title", UIMessage.make("reportgroups.page.title"), 
-               new TemplateViewParameters(ReportChooseGroupsProducer.VIEW_ID, reportViewParams.evaluationId));
+               new ReportParameters(ReportChooseGroupsProducer.VIEW_ID, reportViewParams.evaluationId));
 
          EvalEvaluation evaluation = evaluationService.getEvaluationById(reportViewParams.evaluationId);
 
