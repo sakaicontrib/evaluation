@@ -7,8 +7,8 @@
 		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
 		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
 		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
-        <script rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript" src="../js/jquery/jquery.js"></script>
-        <script rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript" src="../js/evalUtils.js"></script>
+        <script type="text/javascript" language="JavaScript" src="../js/jquery/jquery.js"></script>
+        <script type="text/javascript" language="JavaScript" src="../js/evalUtils.js"></script>
 		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
 	</head>
 	<body>
@@ -178,9 +178,9 @@
 					<p class="shorttext">
 						<label  rsf:id="auth-control-header" for="auth-control-choose-selection">Authentication control setting:</label>
 						<select rsf:id="auth-control-choose" id="auth-control-choose">
-							<option>Central Authentication Required</option>
-							<option>Key (passkey required)</option>
-							<option>None (anonymous allowed)</option>
+							<option value="AUTH">Central Authentication Required</option>
+							<option value="KEY">Key (passkey required)</option>
+							<option value="NONE">None (anonymous allowed)</option>
 						</select>
 					</p>	
 					<p  rsf:id="instructor-opt-instructions"  class="instruction">
@@ -215,16 +215,16 @@
 				<fieldset class="visibleFS">
 					<legend rsf:id="msg=evalsettings.reminder.settings.header">Evaluation Notifications</legend>
 					<p class="instruction">
-						<span rsf:id="msg=evalsettings.available.mail.desc"> email is sent out to all students assigned to an evaluation the morning of the day the evaluation goes live. Preview and edit the email template by clicking the link.</span>
+						<span rsf:id="msg=evalsettings.available.mail.desc">A notification email is sent out to all students assigned to an evaluation the morning of the day the evaluation goes live. Preview and edit the email template by clicking the link.</span>
 						<a href="preview_email.html" name="emailAvailable_link" rsf:id="emailAvailable_link" target="_blank">Evaluation Available</a>						
 					</p>
                     <div id="evaluation_reminder_area"><!-- DO NOT CHANGE THIS ID, it is used by JS logic -AZ -->
       					<p class="longtext">
       						<label class="block" rsf:id="msg=evalsettings.reminder.noresponders.header" for="reminderDays-selection">Email reminder to non-respondent students:</label>
       						<select name="reminder_days" rsf:id="reminderDays" id="reminderDays">
-      							<option>None</option>
-      							<option selected="selected">Daily</option>
-      							<option>Every Other Day</option>
+      							<option value="0">None</option>
+      							<option value="1" selected="selected">Daily</option>
+      							<option value="2">Every Other Day</option>
       						</select>
       					</p>
       					<p class="instruction" style="clear:both">
@@ -256,5 +256,12 @@
 			</form>
 
 		</div>	
+
+    <!-- javascript initialization block (will be overwritten by RSF) -->
+    <script rsf:id="initJavascript" type="text/javascript" language="JavaScript">
+       // see the evalUtils.js file for more info about the method arguments
+       EvalSystem.initEvalSettings("evaluation_reminder_area", "auth-control-choose", "NONE", "reminderDays");
+    </script>
+
 	</body>
 </html>

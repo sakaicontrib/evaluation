@@ -26,8 +26,8 @@ import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.entity.EvalCategoryEntityProvider;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.constant.EvalConstants;
-import org.sakaiproject.evaluation.tool.EvaluationBean;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
+import org.sakaiproject.evaluation.tool.EvaluationBean;
 import org.sakaiproject.evaluation.tool.viewparams.EmailViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
@@ -38,6 +38,7 @@ import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
+import uk.org.ponder.rsf.components.UIInitBlock;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UILink;
@@ -407,7 +408,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
       UIMessage.make(form, "auth-control-instructions", "evalsettings.auth.control.instructions");
       UIMessage.make(form, "auth-control-header", "evalsettings.auth.control.header");
 
-      UISelect.make(form, "auth-control-choose", EvalToolConstants.AUTHCONTROL_VALUES, 
+      UISelect authControlSelect = UISelect.make(form, "auth-control-choose", EvalToolConstants.AUTHCONTROL_VALUES, 
             EvalToolConstants.AUTHCONTROL_LABELS, "#{evaluationBean.eval.authControl}").setMessageKeys();
 
       if (externalLogic.isUserAdmin(externalLogic.getCurrentUserId())) {
@@ -440,7 +441,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
             new EmailViewParameters(PreviewEmailProducer.VIEW_ID, null, EvalConstants.EMAIL_TEMPLATE_AVAILABLE));
 
       // email reminder control
-      UISelect.make(form, "reminderDays", EvalToolConstants.REMINDER_EMAIL_DAYS_VALUES, 
+      UISelect reminderDaysSelect = UISelect.make(form, "reminderDays", EvalToolConstants.REMINDER_EMAIL_DAYS_VALUES, 
             EvalToolConstants.REMINDER_EMAIL_DAYS_LABELS, "#{evaluationBean.eval.reminderDays}").setMessageKeys();
 
       // email reminder template link
@@ -484,6 +485,13 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
          UIBranchContainer subsequentTimes = UIBranchContainer.make(form, "subsequentTimes:");
          UICommand.make(subsequentTimes, "cancel-button", UIMessage.make("general.cancel.button"), "#{evaluationBean.cancelSettingsAction}");
       }
+
+      // this fills in the javascript call (areaId, selectId, selectValue, reminderId)
+      // NOTE: RSF bug causes us to have to generate the ids manually (http://www.caret.cam.ac.uk/jira/browse/RSF-65)
+      UIInitBlock.make(tofill, "initJavascript", "EvalSystem.initEvalSettings", 
+            new Object[] {"evaluation_reminder_area", authControlSelect.getFullID() + "-selection", 
+            EvalConstants.EVALUATION_AUTHCONTROL_NONE, reminderDaysSelect.getFullID() + "-selection"});
+
    }
 
 
