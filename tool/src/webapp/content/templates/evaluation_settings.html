@@ -2,7 +2,7 @@
      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title rsf:id="eval-settings-title">Evaluation Settings</title>
+		<title rsf:id="msg=evalsettings.page.title">Evaluation Settings</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
 		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
@@ -35,7 +35,7 @@
            </div>
 		
 			<ul class="breadCrumb">
-				<li><a rsf:id="summary-link" href="summary.html">Summary</a></li><li class="lastCrumb" rsf:id="eval-settings-title">Evaluation Settings</li>
+				<li><a rsf:id="summary-link" href="summary.html">Summary</a></li><li class="lastCrumb" rsf:id="msg=evalsettings.page.title">Evaluation Settings</li>
 			</ul>
 		
 			
@@ -53,14 +53,19 @@
 				</h3>
 			
 				<fieldset class="visibleFS">
-					<legend rsf:id="eval-dates-header">Evaluation Dates:</legend>
+					<legend rsf:id="msg=evalsettings.dates.header">Evaluation Dates:</legend>
+                        <div class="shorttext">
+                            <span rsf:id="current_date" class="instruction textPanelFooter">
+                                Today is Oct 29, 1975
+                            </span>
+                        </div>
 						<div class="shorttext">
-							<label rsf:id="eval-start-date-header" for="startDate:::date-field">Start Date:</label>
+							<label rsf:id="msg=evalsettings.start.date.header" for="startDate:::date-field">Start Date:</label>
 							<span  rsf:id="startDate:">
 							  <input type="text" id="start_date_dummy" name="start_date_dummy" value="MM/DD/YYYY" size="12" maxlength="10"/>
 							  <img src="../images/calendar.gif" />
 							</span>
-							<span rsf:id="eval-start-date-desc"  class="instruction textPanelFooter">
+							<span rsf:id="msg=evalsettings.start.date.desc"  class="instruction textPanelFooter">
 								Users may begin submitting evaluation responses on this date
 							</span>
 						</div>

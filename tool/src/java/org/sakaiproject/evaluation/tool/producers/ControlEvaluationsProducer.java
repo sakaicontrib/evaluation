@@ -68,7 +68,6 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
       return VIEW_ID;
    }
 
-
    private Locale locale;
    public void setLocale(Locale locale) {
       this.locale = locale;

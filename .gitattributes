@@ -322,6 +322,7 @@ tool/src/webapp/content/js/jquery/interface/isortables.js -text
 tool/src/webapp/content/js/jquery/interface/itooltip.js -text
 tool/src/webapp/content/js/jquery/interface/ittabs.js -text
 tool/src/webapp/content/js/jquery/interface/iutil.js -text
+tool/src/webapp/content/js/jquery/jquery.js svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/js/reorderUtils.js -text
 tool/src/webapp/content/templates/admin_test_evalgroup_provider.html -text
 tool/src/webapp/content/templates/administrate.html -text
