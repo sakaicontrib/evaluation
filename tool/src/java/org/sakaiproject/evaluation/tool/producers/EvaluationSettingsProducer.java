@@ -434,43 +434,41 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 
 
       // EVALUATION REMINDERS SECTION
-      UIMessage.make(form, "eval-reminder-settings-header", "evalsettings.reminder.settings.header");
 
       // email available template link
       UIInternalLink.make(form, "emailAvailable_link", UIMessage.make("evalsettings.available.mail.link"), 
             new EmailViewParameters(PreviewEmailProducer.VIEW_ID, null, EvalConstants.EMAIL_TEMPLATE_AVAILABLE));
-      UIMessage.make(form, "eval-available-mail-desc", "evalsettings.available.mail.desc");
 
       // email reminder control
-      UIMessage.make(form, "reminder-noresponders-header", "evalsettings.reminder.noresponders.header");
       UISelect.make(form, "reminderDays", EvalToolConstants.REMINDER_EMAIL_DAYS_VALUES, 
             EvalToolConstants.REMINDER_EMAIL_DAYS_LABELS, "#{evaluationBean.eval.reminderDays}").setMessageKeys();
 
       // email reminder template link
       UIInternalLink.make(form, "emailReminder_link", UIMessage.make("evalsettings.reminder.mail.link"), 
             new EmailViewParameters(PreviewEmailProducer.VIEW_ID, null, EvalConstants.EMAIL_TEMPLATE_REMINDER));
-      UIMessage.make(form, "eval-reminder-mail-desc", "evalsettings.reminder.mail.desc");
 
       // email from address control
       String defaultEmail = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
       UIMessage.make(form, "eval-from-email-note", "evalsettings.email.sent.from", new String[] {defaultEmail});
-      UIMessage.make(form, "eval-from-email-header", "evalsettings.from.email.header");
       UIInput.make(form, "reminderFromEmail", "#{evaluationBean.eval.reminderFromEmail}");
 
 
       // EVALUATION EXTRAS SECTION
-      UIMessage.make(form, "eval-extra-settings-header", "evalsettings.extra.settings.header");
+      Boolean categoriesEnabled = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_CATEGORIES);
+      if (categoriesEnabled) {
+         UIBranchContainer extrasBranch = UIBranchContainer.make(form, "showEvalExtras:");
 
-      // eval category
-      UIMessage.make(form, "eval-category-header", "evalsettings.extra.category.header");
-      UIInput.make(form, "eval-category", "#{evaluationBean.eval.evalCategory}");
-      UIMessage.make(form, "eval-category-instructions", "evalsettings.extra.category.instructions");
-      if (evaluationBean.eval.getEvalCategory() != null) {
-         UILink.make(tofill, "eval-category-direct-link", UIMessage.make("general.direct.link"), 
-               externalLogic.getEntityURL(EvalCategoryEntityProvider.ENTITY_PREFIX, evaluationBean.eval.getEvalCategory()) )
-               .decorate( new UITooltipDecorator( UIMessage.make("general.direct.link.title") ) );
+         // eval category
+         if (categoriesEnabled) {
+            UIBranchContainer categoryBranch = UIBranchContainer.make(extrasBranch, "showCategory:");
+            UIInput.make(categoryBranch, "eval-category", "#{evaluationBean.eval.evalCategory}");
+            if (evaluationBean.eval.getEvalCategory() != null) {
+               UILink.make(categoryBranch, "eval-category-direct-link", UIMessage.make("general.direct.link"), 
+                     externalLogic.getEntityURL(EvalCategoryEntityProvider.ENTITY_PREFIX, evaluationBean.eval.getEvalCategory()) )
+                     .decorate( new UITooltipDecorator( UIMessage.make("general.direct.link.title") ) );
+            }
+         }
       }
-
 
       // EVAL SETTINGS SAVING CONTROLS
       // if this evaluation is already saved, show "Save Settings" button else this is the "Continue to Assign to Courses" button

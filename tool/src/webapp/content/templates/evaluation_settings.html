@@ -33,25 +33,24 @@
                <a rsf:id="control-items-link" href="control_items.html">My Items</a>
                <a rsf:id="control-scales-link" href="control_scales.html">My Scales</a>
            </div>
-		
+
 			<ul class="breadCrumb">
 				<li><a rsf:id="summary-link" href="summary.html">Summary</a></li><li class="lastCrumb" rsf:id="msg=evalsettings.page.title">Evaluation Settings</li>
 			</ul>
-		
-			
+
 			<div rsf:id="message-for:*" class="alertMessage">
 				<ul style="margin:0px;">
 					<li>Message for user here</li>
 				</ul>
 			</div>
-			
+
 			<form name="eval_settings_form" rsf:id="evalSettingsForm" method="post" > 
 				<!--//gsilver: this needs to be turned into a single parametrized lookup (ie {0})  into the .properties file -->
 				<h3>
 					<span rsf:id="settings-desc-header">Edit Evaluation Settings for </span>
 					<span id="evaluation_title" rsf:id="evaluationTitle" class="highlight">Evaluation Title</span>
 				</h3>
-			
+
 				<fieldset class="visibleFS">
 					<legend rsf:id="msg=evalsettings.dates.header">Evaluation Dates:</legend>
                         <div class="shorttext">
@@ -100,7 +99,7 @@
 							</span>
 						</div>
 				</fieldset>
-			
+
 				<fieldset class="visibleFS">
 					<legend rsf:id="eval-results-viewable-header" >Evaluation results viewable by:</legend>
 					<table class="listHier" border="0" cellspacing="0" cellpadding="0" width="95%" style="margin:0">
@@ -151,7 +150,7 @@
 						</tr>
 					</table>
 				</fieldset>
-			
+
 				<fieldset rsf:id="showStudentCompletionDiv:"  class="visibleFS">
 					<legend rsf:id="student-completion-settings-header">Student Completion Settings:</legend>
 					<div rsf:id="showBlankQuestionAllowedToStut:"  class="checkbox">
@@ -170,7 +169,7 @@
 						<p  rsf:id="unregistered-allowed-note"   class="instruction textPanelFooter indnt2">Students may only complete evaluation if officially registered</p>
 					</div>	
 				</fieldset>
-			
+
 				<fieldset class="visibleFS">
 					<legend rsf:id="admin-settings-header">Administrative Settings</legend>
 					<p rsf:id="auth-control-instructions" class="instruction">
@@ -194,52 +193,54 @@
 							<option>Opt Out</option>
 							<option>Required</option>
 						</select>
-						<!--//gsilver: what is this? -->
+						<!--//gsilver: what is this?  This shows the system option when the select is disabled -AZ -->
 						<span rsf:id="instructorOptLabel" style="font-weight:bold;"></span>
 					</p>
 				</fieldset>
-			
-				<fieldset   class="visibleFS">
-					<legend rsf:id="eval-extra-settings-header">Evaluation Extras:</legend>
-					<p  rsf:id="eval-category-instructions" class="instruction">
-						The eval category is used to group related evaluations and for the category view
-					</p>
-					<p class="shorttext">
-						<label rsf:id="eval-category-header" for="eval-category" >Category:</label>
-						<input rsf:id="eval-category" id="eval-category"  type="text" maxlength="200" size="40"/>
-						<!--//gsilver: not sure what the following link is/should be related to (but it needs more context) --> 
-						<span rsf:id="eval-category-direct-link">(<a rsf:id="payload-component" href="show_eval_category.html">link</a>)</span>
-					</p>
+
+				<fieldset rsf:id="showEvalExtras:" class="visibleFS">
+					<legend rsf:id="msg=evalsettings.extra.settings.header">Evaluation Extras:</legend>
+                    <div rsf:id="showCategory:">
+      					<p  rsf:id="msg=evalsettings.extra.category.instructions" class="instruction">
+      						The eval category is used to group related evaluations and for the category view
+      					</p>
+      					<p class="shorttext">
+      						<label rsf:id="msg=evalsettings.extra.category.header" for="eval-category" >Category:</label>
+      						<input rsf:id="eval-category" id="eval-category"  type="text" maxlength="200" size="40"/>
+      						<span rsf:id="eval-category-direct-link">(<a rsf:id="payload-component" href="show_eval_category.html" target="_blank">link</a>)</span>
+      					</p>
+                     </div>
 				</fieldset>
-			
+
 				<fieldset class="visibleFS">
-					<legend rsf:id="eval-reminder-settings-header">Evaluation Reminders</legend>
+					<legend rsf:id="msg=evalsettings.reminder.settings.header">Evaluation Notifications</legend>
 					<p class="instruction">
-						<span rsf:id="eval-available-mail-desc"> email is sent out to all students assigned to an evaluation the morning of the day the evaluation goes live. Preview and edit the email template by clicking the link.</span>
+						<span rsf:id="msg=evalsettings.available.mail.desc"> email is sent out to all students assigned to an evaluation the morning of the day the evaluation goes live. Preview and edit the email template by clicking the link.</span>
 						<a href="preview_email.html" name="emailAvailable_link" rsf:id="emailAvailable_link" target="_blank">Evaluation Available</a>						
-					</p>	
-					<p class="longtext">
-						<label class="block" rsf:id="reminder-noresponders-header" for="reminderDays-selection">Email reminder to non-respondent students:</label>
-						<select name="reminder_days" rsf:id="reminderDays" id="reminderDays">
-							<option>None</option>
-							<option selected="selected">Daily</option>
-							<option>Every Other Day</option>
-						</select>
 					</p>
+                    <div id="evaluation_reminder_area"><!-- DO NOT CHANGE THIS ID, it is used by JS logic -AZ -->
+      					<p class="longtext">
+      						<label class="block" rsf:id="msg=evalsettings.reminder.noresponders.header" for="reminderDays-selection">Email reminder to non-respondent students:</label>
+      						<select name="reminder_days" rsf:id="reminderDays" id="reminderDays">
+      							<option>None</option>
+      							<option selected="selected">Daily</option>
+      							<option>Every Other Day</option>
+      						</select>
+      					</p>
+      					<p class="instruction" style="clear:both">
+      						<span rsf:id="msg=evalsettings.reminder.mail.desc">A reminder email is sent out to all students who have not yet completed the evaluation at the interval specified above. Preview and edit the email template by clicking the link.</span>
+      						<a href="preview_email.html" name="emailReminder_link" rsf:id="emailReminder_link" target="_blank">(View/Change this email?)</a>
+      					</p>
+                    </div>
 					<p class="instruction" style="clear:both">
-						<span rsf:id="eval-reminder-mail-desc">A reminder email is sent out to all students who have not yet completed the evaluation at the interval specified above. Preview and edit the email template by clicking the link.</span>
-						<a href="preview_email.html" name="emailReminder_link" rsf:id="emailReminder_link" target="_blank">(View/Change this email?)</a>
+    					<span rsf:id="eval-from-email-note">All emails will be sent from helpdesk@institution.edu unless overridden below.</span>
 					</p>
-					<p class="instruction" style="clear:both">
-					<span rsf:id="eval-from-email-note">All emails will be sent from helpdesk@institution.edu unless overridden below.</span>
-					</p>
-		
 					<div class="shorttext">
-						<label  rsf:id="eval-from-email-header" for="reminderFromEmail" >Email From/Reply-to Address:</label>
+						<label  rsf:id="msg=evalsettings.from.email.header" for="reminderFromEmail" >Email From/Reply-to Address:</label>
 						<input type="text" name="reminder_from_email" rsf:id="reminderFromEmail" id="reminderFromEmail"  size="25" maxlength="25"/>
 					</div>
 				</fieldset>
-			
+
 				<p class="act">
 					<input name="continue_assigning" rsf:id="continueAssigning" type="submit" value="Continue to Assign to Courses" accesskey="s" class="active"/>
 					<span rsf:id="firstTime:">                                                                                                                                    
@@ -253,7 +254,7 @@
 					<input type="hidden" name="dummyToday" rsf:id="dummyToday" value="MM/DD/YYYY"/>
 				</p>	
 			</form>
-				
+
 		</div>	
 	</body>
 </html>

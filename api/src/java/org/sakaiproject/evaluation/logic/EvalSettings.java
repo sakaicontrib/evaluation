@@ -44,7 +44,7 @@ public interface EvalSettings {
    public static final String INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS = "INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS:java.lang.Boolean";
    /**
     * CONSTANT: Is the instructor allowed to view the results of evaluations - {@link Boolean}, default True
-    * <b>Note:</b> If this is NULL then the evaluation settings overrride, otherwise this overrides the evaluation setting
+    * <b>Note:</b> If this is NULL then the evaluation settings override, otherwise this overrides the evaluation setting
     */
    public static final String INSTRUCTOR_ALLOWED_VIEW_RESULTS = "INSTRUCTOR_ALLOWED_VIEW_RESULTS:java.lang.Boolean";
    /**
@@ -53,7 +53,7 @@ public interface EvalSettings {
    public static final String INSTRUCTOR_ALLOWED_EMAIL_STUDENTS = "INSTRUCTOR_ALLOWED_EMAIL_STUDENTS:java.lang.Boolean";
    /**
     * CONSTANT: Does the instructor have to use evaluations from above in the hierarchy - {@link String}, default INSTRUCTOR_OPT_OUT
-    * <b>Note:</b> If this is NULL then the evaluation settings overrride (Configurable), otherwise this overrides the evaluation setting
+    * <b>Note:</b> If this is NULL then the evaluation settings override (Configurable), otherwise this overrides the evaluation setting
     */
    public static final String INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE = "INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE:java.lang.String";
    /**
@@ -63,17 +63,17 @@ public interface EvalSettings {
 
    /**
     * CONSTANT: Student is allowed to leave questions unanswered (this only affects multiple choice items) - {@link Boolean}, default True
-    * <b>Note:</b> If this is NULL then the evaluation settings overrride, otherwise this overrides the evaluation setting
+    * <b>Note:</b> If this is NULL then the evaluation settings override, otherwise this overrides the evaluation setting
     */
    public static final String STUDENT_ALLOWED_LEAVE_UNANSWERED = "STUDENT_ALLOWED_LEAVE_UNANSWERED:java.lang.Boolean";
    /**
     * CONSTANT: Student is allowed to modify their responses after they have submitted the evaluation but before the due date - {@link Boolean}, default False
-    * <b>Note:</b> If this is NULL then the evaluation settings overrride, otherwise this overrides the evaluation setting
+    * <b>Note:</b> If this is NULL then the evaluation settings override, otherwise this overrides the evaluation setting
     */
    public static final String STUDENT_MODIFY_RESPONSES = "STUDENT_MODIFY_RESPONSES:java.lang.Boolean";
    /**
     * CONSTANT: Student is allowed to view the results of the evaluation - {@link Boolean}, default False
-    * <b>Note:</b> If this is NULL then the evaluation settings overrride, otherwise this overrides the evaluation setting
+    * <b>Note:</b> If this is NULL then the evaluation settings override, otherwise this overrides the evaluation setting
     */
    public static final String STUDENT_VIEW_RESULTS = "STUDENT_VIEW_RESULTS:java.lang.Boolean";
 
@@ -194,6 +194,10 @@ public interface EvalSettings {
     * be evaluated in on the summary page - {@link Boolean}, default False
     */
    public static final String ENABLE_SUMMARY_SITES_BOX = "ENABLE_SUMMARY_SITES_BOX:java.lang.Boolean";
+   /**
+    * CONSTANT: Show the textbox for entering evaluation categories when setting up an eval - {@link Boolean}, default False
+    */
+   public static final String ENABLE_EVAL_CATEGORIES = "ENABLE_EVAL_CATEGORIES:java.lang.Boolean";
 
    /**
     * CONSTANT: Can the item results sharing be set for template items - {@link Boolean}, default False,
@@ -217,6 +221,7 @@ public interface EvalSettings {
       DISPLAY_HIERARCHY_HEADERS,
       DISPLAY_HIERARCHY_OPTIONS,
       ENABLE_CSV_REPORT_EXPORT,
+      ENABLE_EVAL_CATEGORIES,
       ENABLE_IMPORTING,
       ENABLE_PDF_REPORT_BANNER,
       ENABLE_PDF_REPORT_EXPORT,
