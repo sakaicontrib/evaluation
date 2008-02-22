@@ -38,13 +38,13 @@ import org.sakaiproject.evaluation.tool.viewparams.TemplateItemViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
-import uk.org.ponder.htmlutil.HTMLUtil;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
+import uk.org.ponder.rsf.components.UIInitBlock;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UILink;
@@ -399,9 +399,8 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
       }
 
       // this fills in the javascript call
-      UIVerbatim.make(tofill, "decorateSelects", HTMLUtil.emitJavascriptCall(
-            "EvalSystem.decorateReorderSelects", new String[] { "",
-                  Integer.toString(templateItemsList.size()) }));
+      UIInitBlock.make(tofill, "decorateSelects", "EvalSystem.decorateReorderSelects", 
+            new Object[] { "", Integer.toString(templateItemsList.size()) } );
 
       // the create block form
       UIForm blockForm = UIForm.make(tofill, "createBlockForm",
