@@ -58,7 +58,7 @@ public class AdministrateProducer implements ViewComponentProducer {
    public void setExternalLogic(EvalExternalLogic externalLogic) {
       this.externalLogic = externalLogic;
    }
-   
+
    private EvalSettings evalSettings;
    public void setEvalSettings(EvalSettings evalSettings) {
       this.evalSettings = evalSettings;
@@ -85,7 +85,7 @@ public class AdministrateProducer implements ViewComponentProducer {
       // TOP LINKS
       UIInternalLink.make(tofill, "administrate-link",
             UIMessage.make("administrate.page.title"),
-         new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+            new SimpleViewParameters(AdministrateProducer.VIEW_ID));
 
       UIInternalLink.make(tofill, "summary-link", 
             UIMessage.make("summary.page.title"), 
@@ -101,7 +101,7 @@ public class AdministrateProducer implements ViewComponentProducer {
 
       UIInternalLink.make(tofill, "control-items-link",
             UIMessage.make("controlitems.page.title"),
-         new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
+            new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
 
       UIInternalLink.make(tofill, "control-scales-link",
             UIMessage.make("controlscales.page.title"),
@@ -128,9 +128,9 @@ public class AdministrateProducer implements ViewComponentProducer {
       // only show Control Hierarchy if enabled
       Boolean useHierarchyFeatures = (Boolean) evalSettings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
       if (useHierarchyFeatures) {
-          UIInternalLink.make(tofill, "control-hierarchy-toplink", 
-                UIMessage.make("administrate.top.control.hierarchy"),
-                new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID));
+         UIInternalLink.make(tofill, "control-hierarchy-toplink", 
+               UIMessage.make("administrate.top.control.hierarchy"),
+               new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID));
       }
 
 
@@ -289,13 +289,14 @@ public class AdministrateProducer implements ViewComponentProducer {
       makeBoolean(form, "general-same-view-date",  EvalSettings.EVAL_USE_SAME_VIEW_DATES);
 
       makeBoolean(form, "general-enable-sites-summary", EvalSettings.ENABLE_SUMMARY_SITES_BOX);
+      makeBoolean(form, "general-use-eval-category", EvalSettings.ENABLE_EVAL_CATEGORIES);
 
       makeBoolean(form, "general-default-question-category",  EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
 
       makeBoolean(form, "general-expert-templates", EvalSettings.USE_EXPERT_TEMPLATES);
       makeBoolean(form, "general-expert-questions", EvalSettings.USE_EXPERT_ITEMS);	
 
-//      makeBoolean(form, "general-require-comments-block",  EvalSettings.REQUIRE_COMMENTS_BLOCK);
+//    makeBoolean(form, "general-require-comments-block",  EvalSettings.REQUIRE_COMMENTS_BLOCK);
 
       //Number of days old can an eval be and still be recently closed
       makeSelect(form, "general-eval-closed-still-recent",
