@@ -288,7 +288,6 @@ tool/src/webapp/content/images/med-noncur-step.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/table_go.png -text svneol=unset#image/png
 tool/src/webapp/content/js/blockReorderUtils.js -text
 tool/src/webapp/content/js/blockUtils.js -text
-tool/src/webapp/content/js/evalEditSettings.js -text
 tool/src/webapp/content/js/evalUtils.js -text
 tool/src/webapp/content/js/jquery/form.js -text
 tool/src/webapp/content/js/jquery/interface/.project -text
@@ -323,9 +322,7 @@ tool/src/webapp/content/js/jquery/interface/isortables.js -text
 tool/src/webapp/content/js/jquery/interface/itooltip.js -text
 tool/src/webapp/content/js/jquery/interface/ittabs.js -text
 tool/src/webapp/content/js/jquery/interface/iutil.js -text
-tool/src/webapp/content/js/jquery/jquery.js -text
 tool/src/webapp/content/js/reorderUtils.js -text
-tool/src/webapp/content/js/scaleUtils.js -text
 tool/src/webapp/content/templates/admin_test_evalgroup_provider.html -text
 tool/src/webapp/content/templates/administrate.html -text
 tool/src/webapp/content/templates/administrate_reporting.html -text

@@ -1,5 +1,8 @@
 /**
- * The EvalSystem set of functions, written by antranig (keeps the namespace clean and tidy) -AZ
+ * The EvalSystem set of functions (keeps the namespace clean and tidy) -AZ
+ * DEPENDS on jQuery 1.2 to operate
+ * @author Antranig Basman
+ * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 var EvalSystem = function() {
   function $it(elementID) {
@@ -7,6 +10,17 @@ var EvalSystem = function() {
   }
 
   return {
+
+    /**
+     * This will hide and disable the setReminder option area
+     * and force the setting to 0 reminders on the evaluation settings page 
+     * when the anonymous auth option is selected OR reveal the option area
+     */
+    toggleAndDisableSetReminder: function (baseid, targetid) {
+      colpos = baseid.lastIndexOf(':');
+      return baseid.substring(0, colpos + 1) + targetid;
+    },    
+ 
     getRelativeID: function (baseid, targetid) {
       colpos = baseid.lastIndexOf(':');
       return baseid.substring(0, colpos + 1) + targetid;
@@ -32,5 +46,6 @@ var EvalSystem = function() {
         };
       }
     }
+ 
   }
 }();
