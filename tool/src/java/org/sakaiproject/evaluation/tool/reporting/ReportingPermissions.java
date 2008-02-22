@@ -191,6 +191,11 @@ public class ReportingPermissions {
          if (viewableIds.size() == groupIds.length) {
             allowedToView = true;
          }
+         for (String groupId: viewableIds) {
+            if (!externalLogic.isUserAllowedInEvalGroup(currentUserId, EvalConstants.PERM_TAKE_EVALUATION, groupId)) {
+               allowedToView = false;
+            }
+         }
       }
       
       return allowedToView;
@@ -214,6 +219,11 @@ public class ReportingPermissions {
          Set<String> viewableIds = evalDao.getViewableEvalGroupIds(eval.getId(), EvalConstants.PERM_BE_EVALUATED, groupIds);
          if (viewableIds.size() == groupIds.length) {
             allowedToView = true;
+         }
+         for (String groupId: viewableIds) {
+            if (!externalLogic.isUserAllowedInEvalGroup(currentUserId, EvalConstants.PERM_BE_EVALUATED, groupId)) {
+               allowedToView = false;
+            }
          }
       }
 

@@ -22,6 +22,9 @@ import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.UISelect;
+import uk.org.ponder.rsf.components.UISelectChoice;
+import uk.org.ponder.rsf.components.UISelectLabel;
 import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
@@ -37,8 +40,9 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * 
  * @author Will Humphries
  * @author Aaron Zeckoski (aaronz@vt.edu)
+ * @author Steven Githens
  */
-public class ReportChooseGroupsProducer implements ViewComponentProducer, NavigationCaseReporter, ViewParamsReporter {
+public class ReportChooseGroupsProducer implements ViewComponentProducer, ViewParamsReporter {
 
    public static final String VIEW_ID = "report_groups";
    public String getViewID() {
@@ -124,10 +128,6 @@ public class ReportChooseGroupsProducer implements ViewComponentProducer, Naviga
          EvalEvaluation evaluation = evaluationService.getEvaluationById(evaluationId);
 
          // do a permission check
-         //if (! currentUserId.equals(evaluation.getOwner()) &&
-         //      ! externalLogic.isUserAdmin(currentUserId)) { // TODO - this check is no good, we need a real one -AZ
-         //   throw new SecurityException("Invalid user attempting to access reports page: " + currentUserId);
-         //}
          String[] possibleGroupIdsToView = reportingPermissions.chooseGroupsPartialCheck(evaluation);
          if (possibleGroupIdsToView.length == 0) {
             UIOutput.make(tofill, "security-warning", "You cannot view responses for any of the groups.");
@@ -142,37 +142,27 @@ public class ReportChooseGroupsProducer implements ViewComponentProducer, Naviga
 
          // use a get form which already has the evaluation id in it
          UIForm form = UIForm.make(tofill, "report-groups-form", rvp);
-         UIMessage.make(form, "report-group-main-message", "reportgroups.main.message");		
-         //form.parameters.add(new UIELBinding("#{reportsBean.evalId}", evaluationId));
+         UIMessage.make(form, "report-group-main-message", "reportgroups.main.message");
 
-         //Map<Long, List<EvalGroup>> evalGroups = evaluationService.getEvaluationGroups(new Long[] {evaluationId}, false);
-         //List<EvalGroup> groups = evalGroups.get(evaluationId);
+         String[] possibleGroupTitlesToView = new String[possibleGroupIdsToView.length];
+         for (int i = 0; i < possibleGroupIdsToView.length; i++) {
+            possibleGroupTitlesToView[i] = externalLogic.makeEvalGroupObject(possibleGroupIdsToView[i]).title;
+         }
+         
+         UISelect radios = UISelect.makeMultiple(form, "selectHolder", possibleGroupIdsToView, possibleGroupTitlesToView, "groupIds", null);
+         String selectID = radios.getFullID();
+         
          for (int i = 0; i < possibleGroupIdsToView.length; i++) {
             UIBranchContainer groupBranch = UIBranchContainer.make(form, "groupRow:", i+"");
-            EvalGroup currGroup = externalLogic.makeEvalGroupObject(possibleGroupIdsToView[i]);
-            // checkbox - groupCheck
-            UIBoundBoolean groupCheckBox = UIBoundBoolean.make(groupBranch, "groupCheck",
-                  "#{groupIds." + currGroup.evalGroupId + "}", Boolean.FALSE);
-            // uioutput - groupname
-            UIOutput groupCheckLabel = UIOutput.make(groupBranch, "groupName", currGroup.title);
-            UILabelTargetDecorator.targetLabel(groupCheckLabel, groupCheckBox);
+            UISelectChoice choice = UISelectChoice.make(groupBranch, "groupCheck", selectID, i);
+            UISelectLabel.make(groupBranch, "groupName", selectID, i).decorate(new UILabelTargetDecorator(choice) );
          }
 
-         // uicommand submit
-         UICommand.make(form, "viewReport", UIMessage.make("general.submit.button"), "#{reportsBean.chooseGroupsAction}");
+         UICommand.make(form, "viewReport", UIMessage.make("general.submit.button"));
       } else {
          throw new IllegalArgumentException("Evaluation id must be set");
       }
 
-   }
-
-   /* (non-Javadoc)
-    * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
-    */
-   public List reportNavigationCases() {
-      List i = new ArrayList();
-      i.add(new NavigationCase("success", new TemplateViewParameters(ReportsViewingProducer.VIEW_ID, null), ARIResult.FLOW_ONESTEP));
-      return i;
    }
 
    /* (non-Javadoc)
