@@ -603,8 +603,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
    public void testSaveAssignGroup() {
 
       // test adding evalGroupId to inqueue eval
-      EvalAssignGroup eacNew = new EvalAssignGroup(new Date(), 
-            EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE1_REF, 
+      EvalAssignGroup eacNew = new EvalAssignGroup(EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE1_REF, 
             EvalConstants.GROUP_TYPE_SITE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
             etdl.evaluationNew);
       evaluationSetupService.saveAssignGroup(eacNew, EvalTestDataLoad.MAINT_USER_ID);
@@ -617,8 +616,8 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       assertTrue(l.contains(eacNew));
 
       // test adding evalGroupId to active eval
-      EvalAssignGroup eacActive = new EvalAssignGroup(new Date(), 
-            EvalConstants.GROUP_TYPE_SITE, EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE2_REF, 
+      EvalAssignGroup eacActive = new EvalAssignGroup(EvalConstants.GROUP_TYPE_SITE, 
+            EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE2_REF, 
             Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
             etdl.evaluationActive);
       evaluationSetupService.saveAssignGroup(eacActive, EvalTestDataLoad.MAINT_USER_ID);
@@ -651,7 +650,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
       // test cannot add duplicate evalGroupId to in-queue eval
       try {
-         evaluationSetupService.saveAssignGroup( new EvalAssignGroup(new Date(), 
+         evaluationSetupService.saveAssignGroup( new EvalAssignGroup(
                EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE1_REF, 
                EvalConstants.GROUP_TYPE_SITE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
                etdl.evaluationNew),
@@ -663,7 +662,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
       // test cannot add duplicate evalGroupId to active eval
       try {
-         evaluationSetupService.saveAssignGroup( new EvalAssignGroup(new Date(), 
+         evaluationSetupService.saveAssignGroup( new EvalAssignGroup(
                EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE1_REF, 
                EvalConstants.GROUP_TYPE_SITE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
                etdl.evaluationActive),
@@ -675,7 +674,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
       // test user without perm cannot add evalGroupId to eval
       try {
-         evaluationSetupService.saveAssignGroup( new EvalAssignGroup(new Date(), 
+         evaluationSetupService.saveAssignGroup( new EvalAssignGroup(
                EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE1_REF, 
                EvalConstants.GROUP_TYPE_SITE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
                etdl.evaluationNew), 
@@ -687,7 +686,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
       // test cannot add evalGroupId to closed eval
       try {
-         evaluationSetupService.saveAssignGroup( new EvalAssignGroup(new Date(), 
+         evaluationSetupService.saveAssignGroup( new EvalAssignGroup(
                EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE1_REF, 
                EvalConstants.GROUP_TYPE_SITE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
                etdl.evaluationViewable), 
@@ -751,12 +750,10 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
    @SuppressWarnings("unchecked")
    public void testDeleteAssignGroup() {
       // save some ACs to test removing
-      EvalAssignGroup eac1 = new EvalAssignGroup(new Date(), 
-            EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE1_REF, 
+      EvalAssignGroup eac1 = new EvalAssignGroup(EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE1_REF, 
             EvalConstants.GROUP_TYPE_SITE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
             etdl.evaluationNew);
-      EvalAssignGroup eac2 = new EvalAssignGroup(new Date(), 
-            EvalTestDataLoad.ADMIN_USER_ID, EvalTestDataLoad.SITE2_REF, 
+      EvalAssignGroup eac2 = new EvalAssignGroup(EvalTestDataLoad.ADMIN_USER_ID, EvalTestDataLoad.SITE2_REF, 
             EvalConstants.GROUP_TYPE_SITE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, 
             etdl.evaluationNew);
       evaluationDao.save(eac1);
@@ -830,5 +827,32 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
    }
 
+
+   public void testSetDefaults() {
+      EvalAssignGroup eah = new EvalAssignGroup("az", "eag1", "Site", etdl.evaluationActive);
+
+      // make sure it fills in nulls
+      assertNull(eah.getInstructorApproval());
+      assertNull(eah.getInstructorsViewResults());
+      assertNull(eah.getStudentsViewResults());
+      evaluationSetupService.setDefaults(etdl.evaluationActive, eah);
+      assertNotNull(eah.getInstructorApproval());
+      assertNotNull(eah.getInstructorsViewResults());
+      assertNotNull(eah.getStudentsViewResults());
+
+      // make sure it does not wipe existing settings
+      eah = new EvalAssignGroup("az", "eag1", "Site", false, false, false, etdl.evaluationActive);
+      evaluationSetupService.setDefaults(etdl.evaluationActive, eah);
+      assertEquals(Boolean.FALSE, eah.getInstructorApproval());
+      assertEquals(Boolean.FALSE, eah.getInstructorsViewResults());
+      assertEquals(Boolean.FALSE, eah.getStudentsViewResults());
+
+      eah = new EvalAssignGroup("az", "eag1", "Site", true, true, true, etdl.evaluationActive);
+      evaluationSetupService.setDefaults(etdl.evaluationActive, eah);
+      assertEquals(Boolean.TRUE, eah.getInstructorApproval());
+      assertEquals(Boolean.TRUE, eah.getInstructorsViewResults());
+      assertEquals(Boolean.TRUE, eah.getStudentsViewResults());
+
+   }
 
 }

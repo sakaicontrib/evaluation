@@ -25,9 +25,27 @@ public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Seri
    }
 
    /**
+    * BELOW minimal constructor, need to run this through a default setter method (setDefaults)
+    * to set the Booleans before saving,
+    * setDefaults(EvalEvaluation eval, EvalAssignHierarchy eah)
+    * 
+    * @param owner
+    * @param evalGroupId
+    * @param evalGroupType
+    * @param evaluation
+    */
+   public EvalAssignGroup(String owner, String evalGroupId,
+         String evalGroupType, EvalEvaluation evaluation) {
+      if (this.lastModified == null) { lastModified = new Date(); }
+      this.owner = owner;
+      this.evalGroupId = evalGroupId;
+      this.evalGroupType = evalGroupType;
+      this.evaluation = evaluation;
+   }
+
+   /**
     * REQUIRED constructor
     * 
-    * @param lastModified
     * @param owner
     * @param evalGroupId
     * @param evalGroupType
@@ -36,10 +54,10 @@ public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Seri
     * @param studentsViewResults
     * @param evaluation
     */
-   public EvalAssignGroup(Date lastModified, String owner, String evalGroupId,
+   public EvalAssignGroup(String owner, String evalGroupId,
          String evalGroupType, Boolean instructorApproval, Boolean instructorsViewResults,
          Boolean studentsViewResults, EvalEvaluation evaluation) {
-      this.lastModified = lastModified;
+      if (this.lastModified == null) { lastModified = new Date(); }
       this.owner = owner;
       this.evalGroupId = evalGroupId;
       this.evalGroupType = evalGroupType;
@@ -52,7 +70,6 @@ public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Seri
    /**
     * full constructor
     * 
-    * @param lastModified
     * @param owner
     * @param evalGroupId
     * @param evalGroupType
@@ -62,11 +79,10 @@ public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Seri
     * @param evaluation
     * @param nodeId
     */
-   public EvalAssignGroup(Date lastModified, String owner, String evalGroupId,
+   public EvalAssignGroup(String owner, String evalGroupId,
          String evalGroupType, Boolean instructorApproval, Boolean instructorsViewResults,
          Boolean studentsViewResults, EvalEvaluation evaluation, String nodeId) {
-      super();
-      this.lastModified = lastModified;
+      if (this.lastModified == null) { lastModified = new Date(); }
       this.owner = owner;
       this.evalGroupId = evalGroupId;
       this.evalGroupType = evalGroupType;
