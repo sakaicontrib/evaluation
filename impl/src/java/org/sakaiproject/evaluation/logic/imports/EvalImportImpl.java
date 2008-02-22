@@ -1166,7 +1166,7 @@ public class EvalImportImpl implements EvalImport {
 			Boolean studentsViewResults = element.getChildText("STUDENT_VIEW_RESULTS").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
 			
 			//new EvalAssignGroup
-			EvalAssignGroup evalAssignGroup = new EvalAssignGroup(new Date(), owner, providerId, groupType,
+			EvalAssignGroup evalAssignGroup = new EvalAssignGroup(owner, providerId, groupType,
 					instructorApproval, instructorsViewResults, studentsViewResults, evaluation);
 			evalAssignGroup.setEid(eid);
 			return evalAssignGroup;

@@ -887,26 +887,26 @@ public class EvalTestDataLoad {
       evaluationActive.setReminderEmailTemplate(emailTemplate3);
 
       // evalGroupId assignments
-      assign1 = new EvalAssignGroup(new Date(), MAINT_USER_ID, SITE1_REF, EvalConstants.GROUP_TYPE_SITE, 
+      assign1 = new EvalAssignGroup( MAINT_USER_ID, SITE1_REF, EvalConstants.GROUP_TYPE_SITE, 
             Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationActive);
-      assign2 = new EvalAssignGroup(new Date(), MAINT_USER_ID, SITE1_REF, EvalConstants.GROUP_TYPE_SITE, 
+      assign2 = new EvalAssignGroup( MAINT_USER_ID, SITE1_REF, EvalConstants.GROUP_TYPE_SITE, 
             Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationActiveUntaken);
-      assign3 = new EvalAssignGroup(new Date(), ADMIN_USER_ID, SITE1_REF, EvalConstants.GROUP_TYPE_SITE, 
+      assign3 = new EvalAssignGroup( ADMIN_USER_ID, SITE1_REF, EvalConstants.GROUP_TYPE_SITE, 
             Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, evaluationClosed);
-      assign4 = new EvalAssignGroup(new Date(), MAINT_USER_ID, SITE2_REF, EvalConstants.GROUP_TYPE_SITE, 
+      assign4 = new EvalAssignGroup( MAINT_USER_ID, SITE2_REF, EvalConstants.GROUP_TYPE_SITE, 
             Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, evaluationClosed);
-      assign5 = new EvalAssignGroup(new Date(), ADMIN_USER_ID, SITE2_REF, EvalConstants.GROUP_TYPE_SITE, 
+      assign5 = new EvalAssignGroup( ADMIN_USER_ID, SITE2_REF, EvalConstants.GROUP_TYPE_SITE, 
             Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationViewable);
-      assign6 = new EvalAssignGroup(new Date(), MAINT_USER_ID, SITE1_REF, EvalConstants.GROUP_TYPE_SITE, 
+      assign6 = new EvalAssignGroup( MAINT_USER_ID, SITE1_REF, EvalConstants.GROUP_TYPE_SITE, 
             Boolean.FALSE, Boolean.FALSE, Boolean.TRUE, evaluationNewAdmin);
-      assign7 = new EvalAssignGroup(new Date(), ADMIN_USER_ID, SITE2_REF, EvalConstants.GROUP_TYPE_SITE, 
+      assign7 = new EvalAssignGroup( ADMIN_USER_ID, SITE2_REF, EvalConstants.GROUP_TYPE_SITE, 
             Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationNewAdmin);
       // Dick, you cannot assign 2 groups to an eval with the same evalGroupId... I have fixed this by making up a fake id -AZ
-      assignGroupProvided = new EvalAssignGroup(new Date(), ADMIN_USER_ID, "AZ-new-ref", EvalConstants.GROUP_TYPE_SITE, 
+      assignGroupProvided = new EvalAssignGroup( ADMIN_USER_ID, "AZ-new-ref", EvalConstants.GROUP_TYPE_SITE, 
             Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationNewAdmin);
       assignGroupProvided.setEid("test-eid");
 
-      assignHier1 = new EvalAssignHierarchy(new Date(), MAINT_USER_ID, "1", Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationActive);
+      assignHier1 = new EvalAssignHierarchy( MAINT_USER_ID, "1", Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationActive);
 
       // now init response data for the evaluationSetupService
       response1 = new EvalResponse(new Date(), USER_ID, SITE1_REF, 

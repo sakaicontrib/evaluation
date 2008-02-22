@@ -642,7 +642,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          Set<EvalAssignHierarchy> nodeAssignments = new HashSet<EvalAssignHierarchy>();
          for (String nodeId : nodeIdsSet) {
             // set the settings to null to allow the defaults to override correctly
-            EvalAssignHierarchy eah = new EvalAssignHierarchy(new Date(), userId, nodeId, null, null, null, eval);
+            EvalAssignHierarchy eah = new EvalAssignHierarchy(userId, nodeId, eval);
             // fill in defaults and the values from the evaluation
             setDefaults(eval, eah);
             nodeAssignments.add(eah);
@@ -811,7 +811,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
 
 
-   // PRIVATE METHODS
+   // INTERNAL METHODS
 
    /**
     * Retrieve the complete set of eval assign groups for this evaluation
@@ -819,7 +819,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
     * @return
     */
    @SuppressWarnings("unchecked")
-   private List<EvalAssignGroup> getEvaluationAssignGroups(Long evaluationId) {
+   protected List<EvalAssignGroup> getEvaluationAssignGroups(Long evaluationId) {
       // get all the evalGroupIds for the given eval ids in one storage call
       List<EvalAssignGroup> l = new ArrayList<EvalAssignGroup>();
       l = dao.findByProperties(EvalAssignGroup.class,
@@ -832,7 +832,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
     * @param evaluationId
     * @return
     */
-   private EvalEvaluation getEvaluationOrFail(Long evaluationId) {
+   protected EvalEvaluation getEvaluationOrFail(Long evaluationId) {
       EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
       if (eval == null) {
          throw new IllegalArgumentException("Invalid eval id, cannot find evaluation with this id: " + evaluationId);
@@ -846,7 +846,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
     * @return true if duplicate found
     */
    @SuppressWarnings("unchecked")
-   private boolean checkRemoveDuplicateAssignGroup(EvalAssignGroup ac) {
+   protected boolean checkRemoveDuplicateAssignGroup(EvalAssignGroup ac) {
       log.debug("assignContext: " + ac.getId());
 
       List<EvalAssignGroup> l = dao.findByProperties(EvalAssignGroup.class, 
@@ -869,7 +869,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
     * @param nodeId (optional), null if there is no nodeId association, otherwise set to the associated nodeId
     * @return the set with the new assignments
     */
-   private Set<EvalAssignGroup> makeAssignGroups(EvalEvaluation eval, String userId, Set<String> evalGroupIdsSet, String nodeId) {
+   protected Set<EvalAssignGroup> makeAssignGroups(EvalEvaluation eval, String userId, Set<String> evalGroupIdsSet, String nodeId) {
       Set<EvalAssignGroup> groupAssignments = new HashSet<EvalAssignGroup>();
       for (String evalGroupId : evalGroupIdsSet) {
          String type = EvalConstants.GROUP_TYPE_PROVIDED;
@@ -877,7 +877,8 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             type = EvalConstants.GROUP_TYPE_SITE;
          }
          // set the booleans to null to get the correct defaults set
-         EvalAssignGroup eag = new EvalAssignGroup(new Date(), userId, evalGroupId, type, null, null, null, eval, nodeId);
+         EvalAssignGroup eag = new EvalAssignGroup(userId, evalGroupId, type, eval);
+         eag.setNodeId(nodeId);
          // fill in defaults and the values from the evaluation
          setDefaults(eval, eag);
          groupAssignments.add(eag);
@@ -892,7 +893,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
     * @param eval the evaluation associated with this assginment
     * @param eah the assignment object (persistent or non)
     */
-   private void setDefaults(EvalEvaluation eval, EvalAssignHierarchy eah) {
+   protected void setDefaults(EvalEvaluation eval, EvalAssignHierarchy eah) {
       // setInstructorsViewResults
       if (eah.getInstructorsViewResults() == null) {
          Boolean instViewResults = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
