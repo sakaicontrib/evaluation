@@ -1,13 +1,14 @@
 package org.sakaiproject.evaluation.tool.reporting;
+
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.io.IOException;
 import java.io.OutputStream;
-import java.text.DateFormat;
-import java.util.Date;
 import java.util.List;
+
 import org.jfree.chart.JFreeChart;
+
 import uk.org.ponder.util.UniversalRuntimeException;
+
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;

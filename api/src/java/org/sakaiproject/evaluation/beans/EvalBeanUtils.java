@@ -44,27 +44,24 @@ public class EvalBeanUtils {
     * 
     * @param responsesCount the current number of responses for an evaluation
     * @param enrollmentsCount the count of enrollments (can be 0 if anonymous or unknown)
-    * @return true if viewing results is allowed, false otherwise
+    * @return number of responses needed before viewing is allowed, 0 indicates viewable now
     */
-   public boolean checkResultsViewableForResponseRate(int responsesCount, int enrollmentsCount) {
-      boolean viewingAllowed = false;
+   public int getResponsesNeededToViewForResponseRate(int responsesCount, int enrollmentsCount) {
+      int responsesNeeded = 1;
       if ( externalLogic.isUserAdmin( externalLogic.getCurrentUserId() ) ) {
-         viewingAllowed = true;
+         responsesNeeded = 0;
       } else {
          int minResponses = ((Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS)).intValue();
-         if ( responsesCount > 0 ) {
-            if (enrollmentsCount > 0) {
-               if (minResponses <= responsesCount || responsesCount >= enrollmentsCount) {
-                  viewingAllowed = true;
-               }
-            } else {
-               if (minResponses <= responsesCount) {
-                  viewingAllowed = true;
-               }
-            }
+         responsesNeeded = minResponses - responsesCount;
+         if (responsesCount >= enrollmentsCount) {
+            // special check to make sure the cases where there is a very small enrollment count is still ok
+            responsesNeeded = 0;
+         }
+         if (responsesNeeded < 0) {
+            responsesNeeded = 0;
          }
       }
-      return viewingAllowed;
+      return responsesNeeded;
    }
 
    /**
