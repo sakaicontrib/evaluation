@@ -198,6 +198,10 @@ public interface EvalSettings {
     * CONSTANT: Show the textbox for entering evaluation categories when setting up an eval - {@link Boolean}, default False
     */
    public static final String ENABLE_EVAL_CATEGORIES = "ENABLE_EVAL_CATEGORIES:java.lang.Boolean";
+   /**
+    * CONSTANT: If this is activated then evaluation responses can be removed - {@link Boolean}, default False
+    */
+   public static final String ENABLE_EVAL_RESPONSE_REMOVAL = "ENABLE_EVAL_RESPONSE_REMOVAL:java.lang.Boolean";
 
    /**
     * CONSTANT: Can the item results sharing be set for template items - {@link Boolean}, default False,
@@ -222,6 +226,7 @@ public interface EvalSettings {
       DISPLAY_HIERARCHY_OPTIONS,
       ENABLE_CSV_REPORT_EXPORT,
       ENABLE_EVAL_CATEGORIES,
+      ENABLE_EVAL_RESPONSE_REMOVAL,
       ENABLE_IMPORTING,
       ENABLE_PDF_REPORT_BANNER,
       ENABLE_PDF_REPORT_EXPORT,

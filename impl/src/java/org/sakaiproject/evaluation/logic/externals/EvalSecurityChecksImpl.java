@@ -18,6 +18,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
@@ -41,6 +42,11 @@ import org.sakaiproject.evaluation.utils.EvalUtils;
 public class EvalSecurityChecksImpl {
 
    private static Log log = LogFactory.getLog(EvalSecurityChecksImpl.class);
+
+   private EvalSettings settings;
+   public void setSettings(EvalSettings settings) {
+      this.settings = settings;
+   }
 
    private EvalBeanUtils evalBeanUtils;
    public void setEvalBeanUtils(EvalBeanUtils evalBeanUtils) {
@@ -76,7 +82,16 @@ public class EvalSecurityChecksImpl {
          // check locked first
          if (eval.getId() != null &&
                eval.getLocked().booleanValue() == true) {
-            throw new IllegalStateException("Cannot control (modify) locked evaluation ("+eval.getId()+")");
+            // if eval is closed AND admin override is on then we can remove the eval anyway
+            String evalState = EvalUtils.getEvaluationState(eval);
+            Boolean responseRemovalAllowed = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_RESPONSE_REMOVAL);
+            if ( responseRemovalAllowed && 
+                  (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(evalState) ||
+                  EvalConstants.EVALUATION_STATE_CLOSED.equals(evalState)) ) {
+               allowed = true;
+            } else {
+               throw new IllegalStateException("Cannot control (modify) locked evaluation ("+eval.getId()+")");
+            }
          }
 
          if (! canUserControlEvaluation(userId, eval) ) {

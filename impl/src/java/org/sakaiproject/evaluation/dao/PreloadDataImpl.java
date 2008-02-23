@@ -127,6 +127,7 @@ public class PreloadDataImpl implements Runnable {
 
          saveConfig(EvalSettings.ENABLE_SUMMARY_SITES_BOX, false);
          saveConfig(EvalSettings.ENABLE_EVAL_CATEGORIES, false);
+         saveConfig(EvalSettings.ENABLE_EVAL_RESPONSE_REMOVAL, false);
          saveConfig(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY, false);
          saveConfig(EvalSettings.EVAL_USE_DATE_TIME, false);
          saveConfig(EvalSettings.EVAL_USE_STOP_DATE, false);

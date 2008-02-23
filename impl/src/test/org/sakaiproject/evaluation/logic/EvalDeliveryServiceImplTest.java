@@ -88,7 +88,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       // preload additional data if desired
 
       // Evaluation Complete (ended yesterday, viewable tomorrow), recent close
-      evaluationClosedTwo = new EvalEvaluation(new Date(), 
+      evaluationClosedTwo = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, 
             EvalTestDataLoad.ADMIN_USER_ID, "Eval closed two", null, 
             etdl.threeDaysAgo, etdl.yesterday, 
             etdl.yesterday, etdl.tomorrow, null, null,

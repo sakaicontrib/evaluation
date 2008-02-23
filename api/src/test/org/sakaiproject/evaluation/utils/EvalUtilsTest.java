@@ -144,7 +144,7 @@ public class EvalUtilsTest extends TestCase {
       Date nowPlus2 = new Date(nowTime + hour * 2);
       Date nowPlus3 = new Date(nowTime + hour * 3);
 
-      EvalEvaluation eval = new EvalEvaluation(new Date(), "aaronz", "title",
+      EvalEvaluation eval = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, "aaronz", "title",
             now, nowPlus2, nowPlus2, nowPlus3, 
             EvalConstants.EVALUATION_STATE_ACTIVE, 0, null);
 

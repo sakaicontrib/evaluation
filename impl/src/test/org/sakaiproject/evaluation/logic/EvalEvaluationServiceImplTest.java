@@ -41,20 +41,21 @@ import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
 public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
    protected EvalEvaluationServiceImpl evaluationService;
+   protected EvalSettings settings;
 
    // run this before each test starts
    protected void onSetUpBeforeTransaction() throws Exception {
       super.onSetUpBeforeTransaction();
 
       // load up any other needed spring beans
-      EvalSettings settings = (EvalSettings) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalSettings");
+      settings = (EvalSettings) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalSettings");
       if (settings == null) {
          throw new NullPointerException("EvalSettings could not be retrieved from spring evalGroupId");
       }
 
       EvalSecurityChecksImpl securityChecks = 
          (EvalSecurityChecksImpl) applicationContext.getBean("org.sakaiproject.evaluation.logic.externals.EvalSecurityChecks");
-      if (settings == null) {
+      if (securityChecks == null) {
          throw new NullPointerException("EvalSecurityChecksImpl could not be retrieved from spring context");
       }
 
@@ -368,6 +369,16 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       // test cannot remove (active)
       assertFalse( evaluationService.canRemoveEvaluation(
             EvalTestDataLoad.ADMIN_USER_ID, etdl.evaluationActive.getId() ) );
+
+      // flip the switch and check that removal NOT allowed
+      settings.set(EvalSettings.ENABLE_EVAL_RESPONSE_REMOVAL, false);
+
+      // test cannot remove (closed and viewable)
+      assertFalse( evaluationService.canRemoveEvaluation(
+            EvalTestDataLoad.ADMIN_USER_ID, etdl.evaluationViewable.getId() ) );
+
+      // flip the switch and check that removal now allowed
+      settings.set(EvalSettings.ENABLE_EVAL_RESPONSE_REMOVAL, true);
 
       // test cannot remove (closed and viewable)
       assertFalse( evaluationService.canRemoveEvaluation(

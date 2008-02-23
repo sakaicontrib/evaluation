@@ -102,7 +102,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       itemUnlocked.setLocked(EvalTestDataLoad.UNLOCKED);
       evaluationDao.save( itemUnlocked );
 
-      evalUnLocked = new EvalEvaluation(new Date(), EvalTestDataLoad.MAINT_USER_ID, "Eval active not taken", null, 
+      evalUnLocked = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, EvalTestDataLoad.MAINT_USER_ID, "Eval active not taken", null, 
             etdl.yesterday, etdl.tomorrow, etdl.tomorrow, etdl.threeDaysFuture, null, null,
             EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.INSTRUCTOR_OPT_IN, 
             new Integer(1), null, null, null, null, etdl.templatePublicUnused, null, null,
@@ -1044,21 +1044,30 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       // check that unlocked evaluation gets locked
       assertFalse( etdl.templatePublicUnused.getLocked().booleanValue() );
       assertFalse( evalUnLocked.getLocked().booleanValue() );
-      assertTrue( evaluationDao.lockEvaluation( evalUnLocked ) );
+      assertTrue( evaluationDao.lockEvaluation( evalUnLocked, true ) );
       assertTrue( evalUnLocked.getLocked().booleanValue() );
 
       // verify that associated template gets locked
       assertTrue( etdl.templatePublicUnused.getLocked().booleanValue() );
 
+      // now unlock the evaluation
+      assertTrue( evalUnLocked.getLocked().booleanValue() );
+      assertTrue( evaluationDao.lockEvaluation( evalUnLocked, false ) );
+      assertFalse( evalUnLocked.getLocked().booleanValue() );
+
+      // verify that associated template gets unlocked
+      assertFalse( etdl.templatePublicUnused.getLocked().booleanValue() );
+
       // check that new evaluation cannot be locked
       try {
          evaluationDao.lockEvaluation(
-               new EvalEvaluation(new Date(), EvalTestDataLoad.MAINT_USER_ID, "Eval new", null, 
+               new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, EvalTestDataLoad.MAINT_USER_ID, "Eval new", null, 
                      etdl.tomorrow, etdl.threeDaysFuture, etdl.threeDaysFuture, etdl.fourDaysFuture, null, null,
                      EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.INSTRUCTOR_OPT_IN, 
                      new Integer(1), null, null, null, null, etdl.templatePublic, null, null,
                      Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, EvalTestDataLoad.UNLOCKED,
-                     EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null)
+                     EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null),
+               true
          );
          fail("Should have thrown an exception");
       } catch (IllegalStateException e) {

@@ -112,7 +112,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
             // load up the template
             template = authoringService.getTemplateById(templateId);
             // create a fake evaluation
-            eval = new EvalEvaluation(new Date(), currentUserId, messageLocator.getMessage("previeweval.evaluation.title.default"), 
+            eval = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, currentUserId, messageLocator.getMessage("previeweval.evaluation.title.default"), 
                     new Date(), new Date(), new Date(), new Date(), EvalConstants.EVALUATION_STATE_INQUEUE, new Integer(1),
                     template);
             eval.setInstructions(messageLocator.getMessage("previeweval.instructions.default"));

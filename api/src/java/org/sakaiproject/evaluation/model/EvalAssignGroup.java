@@ -36,7 +36,7 @@ public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Seri
     */
    public EvalAssignGroup(String owner, String evalGroupId,
          String evalGroupType, EvalEvaluation evaluation) {
-      if (this.lastModified == null) { lastModified = new Date(); }
+      if (this.lastModified == null) { this.lastModified = new Date(); }
       this.owner = owner;
       this.evalGroupId = evalGroupId;
       this.evalGroupType = evalGroupType;
@@ -57,7 +57,7 @@ public class EvalAssignGroup extends EvalAssignHierarchy implements java.io.Seri
    public EvalAssignGroup(String owner, String evalGroupId,
          String evalGroupType, Boolean instructorApproval, Boolean instructorsViewResults,
          Boolean studentsViewResults, EvalEvaluation evaluation) {
-      if (this.lastModified == null) { lastModified = new Date(); }
+      if (this.lastModified == null) { this.lastModified = new Date(); }
       this.owner = owner;
       this.evalGroupId = evalGroupId;
       this.evalGroupType = evalGroupType;

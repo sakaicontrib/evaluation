@@ -306,11 +306,12 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
 
          String completeMessage = ", response is incomplete";
          if (response.getEndTime() != null) {
-            // the response is complete (submission of an evaluation) and not just creating the empty response
-            // so lock evaluation
+            /* the response is complete (submission of an evaluation) 
+             * and not just creating the empty response so lock related evaluation
+             */
             log.info("Locking evaluation (" + response.getEvaluation().getId() + ") and associated entities");
             EvalEvaluation evaluation = (EvalEvaluation) dao.findById(EvalEvaluation.class, response.getEvaluation().getId());
-            dao.lockEvaluation(evaluation);
+            dao.lockEvaluation(evaluation, true);
             completeMessage = ", response is complete";
          }
 

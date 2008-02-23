@@ -251,6 +251,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.dao.EvaluationDao#getEvaluationsForOwnerAndGroups(java.lang.String, java.lang.String[], java.util.Date, int)
     */
+   @SuppressWarnings("unchecked")
    public List<EvalEvaluation> getEvaluationsForOwnerAndGroups(String userId,
          String[] evalGroupIds, Date recentClosedDate, int startResult, int maxResults) {
       Map<String, Object> params = new HashMap<String, Object>();
@@ -727,7 +728,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
          } else {
             // unlock template (if not locked elsewhere)
             String hqlQuery = "from EvalEvaluation as eval where eval.template.id = '" + template.getId()
-            + "' and eval.locked = true";
+                  + "' and eval.locked = true";
             if (count(hqlQuery) > 0) {
                // this is locked by something, we cannot unlock it
                log.info("Cannot unlock template (" + template.getId() + "), it is locked elsewhere");
@@ -757,30 +758,53 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
     * 
     * @see org.sakaiproject.evaluation.dao.EvaluationDao#lockEvaluation(org.sakaiproject.evaluation.model.EvalEvaluation)
     */
-   public boolean lockEvaluation(EvalEvaluation evaluation) {
-      log.debug("evaluation:" + evaluation.getId());
+   public boolean lockEvaluation(EvalEvaluation evaluation, Boolean lockState) {
+      log.debug("evaluation:" + evaluation.getId() + ", lockState:" + lockState);
       if (evaluation.getId() == null) {
          throw new IllegalStateException("Cannot change lock state on an unsaved evaluation object");
       }
 
-      if (evaluation.getLocked().booleanValue()) {
-         // already locked, no change
-         return false;
+      if (lockState.booleanValue()) {
+         // locking this evaluation
+         if (evaluation.getLocked().booleanValue()) {
+            // already locked, no change
+            return false;
+         } else {
+            // lock evaluation and associated template
+            EvalTemplate template = evaluation.getTemplate();
+            if (! template.getLocked().booleanValue()) {
+               lockTemplate(template, Boolean.TRUE);
+            }
+
+            EvalTemplate addedTemplate = evaluation.getAddedTemplate();
+            if (addedTemplate != null && !addedTemplate.getLocked().booleanValue()) {
+               lockTemplate(addedTemplate, Boolean.TRUE);
+            }
+
+            evaluation.setLocked(Boolean.TRUE);
+            getHibernateTemplate().update(evaluation);
+            return true;
+         }
       } else {
-         // lock evaluation and associated templatea
-         EvalTemplate template = evaluation.getTemplate();
-         if (!template.getLocked().booleanValue()) {
-            lockTemplate(template, Boolean.TRUE);
-         }
+         // unlocking this template
+         if (! evaluation.getLocked().booleanValue()) {
+            // already unlocked, no change
+            return false;
+         } else {
+            // unlock evaluation
+            evaluation.setLocked(Boolean.FALSE);
+            getHibernateTemplate().update(evaluation);
 
-         EvalTemplate addedTemplate = evaluation.getAddedTemplate();
-         if (addedTemplate != null && !addedTemplate.getLocked().booleanValue()) {
-            lockTemplate(addedTemplate, Boolean.TRUE);
-         }
+            // unlock associated templates if there are any
+            if (evaluation.getTemplate() != null) {
+               lockTemplate(evaluation.getTemplate(), Boolean.FALSE);
+            }
+            if (evaluation.getAddedTemplate() != null) {
+               lockTemplate(evaluation.getAddedTemplate(), Boolean.FALSE);
+            }
 
-         evaluation.setLocked(Boolean.TRUE);
-         getHibernateTemplate().update(evaluation);
-         return true;
+            return true;
+         }
       }
    }
 

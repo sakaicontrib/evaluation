@@ -1277,7 +1277,7 @@ public class EvalImportImpl implements EvalImport {
 			Boolean unregisteredAllowed = element.getChildText("UNREGISTERED_ALLOWED").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
 			
 			//new evaluation
-			EvalEvaluation evaluation = new EvalEvaluation(new Date(), owner, title, instructions, startDate, dueDate,
+			EvalEvaluation evaluation = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, owner, title, instructions, startDate, dueDate,
 				stopDate, viewDate, studentsDate, instructorsDate, state, instructorOpt, reminderDays,
 				reminderFromEmail, termId, availableEmailTemplate, reminderEmailTemplate, template, addedTemplate,
 				new HashSet(0), resultsPrivate, blankResponsesAllowed, modifyResponsesAllowed, unregisteredAllowed,

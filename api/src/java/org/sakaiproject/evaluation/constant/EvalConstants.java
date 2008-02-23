@@ -23,6 +23,88 @@ package org.sakaiproject.evaluation.constant;
 public class EvalConstants {
 
    /**
+    * Evaluation type: EVALUATION This is the standard type of evaluation for course/program assessment
+    */
+   public static final String EVALUATION_TYPE_EVALUATION = "Evaluation";
+   /**
+    * Evaluation type: SURVEY This is the survey type for use in non-critical assessment or surveying
+    */
+   public static final String EVALUATION_TYPE_SURVEY = "Survey";
+   /**
+    * Evaluation type: POLL This is the poll type for use single item polling
+    */
+   public static final String EVALUATION_TYPE_POLL = "Poll";
+   
+   
+   /**
+    * Eval Takers: Include all users who have not taken the evaluation yet
+    */
+   public final static String EVAL_INCLUDE_NONTAKERS = "nontakers";
+   /**
+    * Eval Takers: Include all users who have responded to the evaluation
+    */
+   public final static String EVAL_INCLUDE_RESPONDENTS = "respondents";
+   /**
+    * Eval Takers: Include all users for the evaluation
+    */
+   public final static String EVAL_INCLUDE_ALL = "all";
+
+
+   /**
+    * Evaluation state: Cannot determine the state, this evaluation is invalid in some way
+    */
+   public static final String EVALUATION_STATE_UNKNOWN = "UNKNOWN";
+   /**
+    * Evaluation state: evaluation has not started yet, should be the state of evaluationSetupService
+    * when they are first created, can make any change to the evaluation while in this state
+    * <br/>States: InQueue -> Active -> Due -> Closed -> Viewable
+    */
+   public static final String EVALUATION_STATE_INQUEUE = "InQueue";
+   /**
+    * Evaluation state: evaluation is currently running, users can take the evaluation,
+    * start date cannot be modified anymore, email templates cannot be modified,
+    * cannot unlink groups of takers at this point, can still add in groups
+    * <br/>States: InQueue -> Active -> Due -> Closed -> Viewable
+    */
+   public static final String EVALUATION_STATE_ACTIVE = "Active";
+   /**
+    * Evaluation state: evaluation is over but not technically, no more notifications
+    * will be displayed and links are no longer shown, however, takers
+    * can still complete the evaluation until the state changes to closed,
+    * evaluationSetupService in Due status are shown as closed in the interface
+    * <br/>States: InQueue -> Active -> Due -> Closed -> Viewable
+    */
+   public static final String EVALUATION_STATE_DUE = "Due";
+   /**
+    * Evaluation state: evaluation is over and closed,
+    * users cannot take evaluation anymore, no changes can be made to the evaluation
+    * except to adjust the results view date, cannot add or remove groups of takers
+    * <br/>States: InQueue -> Active -> Due -> Closed -> Viewable
+    */
+   public static final String EVALUATION_STATE_CLOSED = "Closed";
+   /**
+    * Evaluation state: evaluation is over and closed and results are generally viewable,
+    * no changes can be made to the evaluation at all
+    * <br/>States: InQueue -> Active -> Due -> Closed -> Viewable
+    */
+   public static final String EVALUATION_STATE_VIEWABLE = "Viewable";
+
+
+   /**
+    * Evaluation authentication control: Authentication required to access this evaluation
+    */
+   public static final String EVALUATION_AUTHCONTROL_AUTH_REQ = "AUTH";
+   /**
+    * Evaluation authentication control: Authentication key required to access this evaluation (no central auth needed)
+    */
+   public static final String EVALUATION_AUTHCONTROL_KEY = "KEY";
+   /**
+    * Evaluation authentication control: Authentication not required to access this evaluation (anonymous allowed)
+    */
+   public static final String EVALUATION_AUTHCONTROL_NONE = "NONE";
+
+
+   /**
     * Template type: this is a normal type of template created by a user
     * and used to start evaluationSetupService
     */
@@ -588,73 +670,6 @@ public class EvalConstants {
       "3) Click on 'Evaluation System' in the left navigation menu under My Workspace. \n" +
       "4) Click on '${EvalGroupTitle}' link under '${EvalTitle}'.. \n";
 
-
-   /**
-    * Eval Takers: Include all users who have not taken the evaluation yet
-    */
-   public final static String EVAL_INCLUDE_NONTAKERS = "nontakers";
-   /**
-    * Eval Takers: Include all users who have responded to the evaluation
-    */
-   public final static String EVAL_INCLUDE_RESPONDENTS = "respondents";
-   /**
-    * Eval Takers: Include all users for the evaluation
-    */
-   public final static String EVAL_INCLUDE_ALL = "all";
-
-
-   /**
-    * Evaluation state: Cannot determine the state, this evaluation is invalid in some way
-    */
-   public static final String EVALUATION_STATE_UNKNOWN = "UNKNOWN";
-   /**
-    * Evaluation state: evaluation has not started yet, should be the state of evaluationSetupService
-    * when they are first created, can make any change to the evaluation while in this state
-    * <br/>States: InQueue -> Active -> Due -> Closed -> Viewable
-    */
-   public static final String EVALUATION_STATE_INQUEUE = "InQueue";
-   /**
-    * Evaluation state: evaluation is currently running, users can take the evaluation,
-    * start date cannot be modified anymore, email templates cannot be modified,
-    * cannot unlink groups of takers at this point, can still add in groups
-    * <br/>States: InQueue -> Active -> Due -> Closed -> Viewable
-    */
-   public static final String EVALUATION_STATE_ACTIVE = "Active";
-   /**
-    * Evaluation state: evaluation is over but not technically, no more notifications
-    * will be displayed and links are no longer shown, however, takers
-    * can still complete the evaluation until the state changes to closed,
-    * evaluationSetupService in Due status are shown as closed in the interface
-    * <br/>States: InQueue -> Active -> Due -> Closed -> Viewable
-    */
-   public static final String EVALUATION_STATE_DUE = "Due";
-   /**
-    * Evaluation state: evaluation is over and closed,
-    * users cannot take evaluation anymore, no changes can be made to the evaluation
-    * except to adjust the results view date, cannot add or remove groups of takers
-    * <br/>States: InQueue -> Active -> Due -> Closed -> Viewable
-    */
-   public static final String EVALUATION_STATE_CLOSED = "Closed";
-   /**
-    * Evaluation state: evaluation is over and closed and results are generally viewable,
-    * no changes can be made to the evaluation at all
-    * <br/>States: InQueue -> Active -> Due -> Closed -> Viewable
-    */
-   public static final String EVALUATION_STATE_VIEWABLE = "Viewable";
-
-
-   /**
-    * Evaluation authentication control: Authentication required to access this evaluation
-    */
-   public static final String EVALUATION_AUTHCONTROL_AUTH_REQ = "AUTH";
-   /**
-    * Evaluation authentication control: Authentication key required to access this evaluation (no central auth needed)
-    */
-   public static final String EVALUATION_AUTHCONTROL_KEY = "KEY";
-   /**
-    * Evaluation authentication control: Authentication not required to access this evaluation (anonymous allowed)
-    */
-   public static final String EVALUATION_AUTHCONTROL_NONE = "NONE";
 
    /**
     * Evaluation time to wait: Time to wait in minutes for certain actions, used for time to start and time to view among others
