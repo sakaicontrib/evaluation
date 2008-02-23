@@ -14,8 +14,8 @@
 
 package org.sakaiproject.evaluation.logic.externals;
 
+import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 /**
  * Handle the scheduling of jobs and taking action

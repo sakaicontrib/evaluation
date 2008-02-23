@@ -14,9 +14,9 @@
 
 package org.sakaiproject.evaluation.tool.renderers;
 
+import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
-import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;

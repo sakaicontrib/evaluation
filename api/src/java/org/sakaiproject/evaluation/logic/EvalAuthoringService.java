@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.logic;
 
 import java.util.List;
 
+import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.exceptions.UniqueFieldException;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
@@ -23,7 +24,6 @@ import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
-import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 
 /**
@@ -87,7 +87,7 @@ public interface EvalAuthoringService {
     * 
     * @param userId the internal user id (not username)
     * @param sharingConstant a SHARING constant from 
-    * {@link org.sakaiproject.evaluation.model.constant.EvalConstants},
+    * {@link org.sakaiproject.evaluation.constant.EvalConstants},
     * if null, return all scales visible to the
     * user, if set to a sharing constant then return just the visible
     * scales that match that sharing setting (can be used to get all
@@ -175,7 +175,7 @@ public interface EvalAuthoringService {
     * 
     * @param userId the internal user id (not username)
     * @param sharingConstant a SHARING constant from 
-    * {@link org.sakaiproject.evaluation.model.constant.EvalConstants},
+    * {@link org.sakaiproject.evaluation.constant.EvalConstants},
     * if null, return all items visible to the
     * user, if set to a sharing constant then return just the visible
     * items that match that sharing setting (can be used to get all
@@ -460,7 +460,7 @@ public interface EvalAuthoringService {
     * 
     * @param userId the internal user id (not username)
     * @param sharingConstant a SHARING constant from 
-    * {@link org.sakaiproject.evaluation.model.constant.EvalConstants},
+    * {@link org.sakaiproject.evaluation.constant.EvalConstants},
     * if null, return all templates visible to the
     * user, if set to a sharing constant then return just the visible
     * templates that match that sharing setting (can be used to get all

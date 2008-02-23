@@ -2,12 +2,13 @@ package org.sakaiproject.evaluation.tool.reporting;
 
 import java.util.Set;
 import java.util.HashSet;
+
+import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 /** 
  * This is a central place for the code to check whether or not someone can view
