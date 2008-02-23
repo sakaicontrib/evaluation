@@ -23,6 +23,7 @@ import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
+import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -71,6 +72,14 @@ public interface EvaluationDao extends CompleteGenericDao {
 	 * @return the count of accessible EvalTemplates for this user
 	 */
 	public int countVisibleTemplates(String userId, String[] sharingConstants, boolean includeEmpty);
+
+	/**
+    * Removes a group of templateItems and updates all related items 
+    * and templates at the same time (inside one transaction)
+    * 
+    * @param templateItems the array of {@link EvalTemplateItem} to remove 
+    */
+   public void removeTemplateItems(EvalTemplateItem[] templateItems);
 
 	/**
 	 * Returns all evaluation objects associated with the input groups,
@@ -122,17 +131,21 @@ public interface EvaluationDao extends CompleteGenericDao {
 	 * @param completed if true only return the completed responses, 
 	 * if false only return the incomplete responses,
     * if null then return all responses
-	 * @return a list of response ids (Long)
+	 * @return a list of response ids (Long) for {@link EvalResponse} objects
 	 */
 	public List<Long> getResponseIds(Long evalId, String[] evalGroupIds, String[] userIds, Boolean completed);
 
-	/**
-	 * Removes a group of templateItems and updates all related items 
-	 * and templates at the same time (inside one transaction)
-	 * 
-	 * @param templateItems the array of {@link EvalTemplateItem} to remove 
-	 */
-	public void removeTemplateItems(EvalTemplateItem[] templateItems);
+   /**
+    * Removes an array of responses and all their associated answers at
+    * the same time (in a single transaction)<br/>
+    * Use {@link #getResponseIds(Long, String[], String[], Boolean)} to get the set of responseIds to remove<br/>
+    * <b>WARNING:</b> This does not check permissions for removal of responses so you should
+    * be sure to check that responses can be removed (system setting) and that they can be removed for this evaluation and user
+    * 
+    * @param responseIds the array of ids for {@link EvalResponse} objects to remove
+    * @throws Exception if there is a failure
+    */
+   public void removeResponses(Long[] responseIds);
 
 	/**
 	 * Get item groups contained within a specific group<br/>

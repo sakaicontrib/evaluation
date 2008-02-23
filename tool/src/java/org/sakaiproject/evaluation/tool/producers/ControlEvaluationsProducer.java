@@ -299,8 +299,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
             "#{evaluationBean.editEvalSettingAction}");
             evalEdit.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", evaluation.getId()));
 
-            if ( ! evaluation.getLocked().booleanValue() &&
-                  evaluationService.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
+            if ( evaluationService.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
                // evaluation removable
                UIInternalLink.make(evaluationRow, "active-eval-delete-link", 
                      UIMessage.make("general.command.delete"), 
