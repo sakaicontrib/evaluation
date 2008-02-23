@@ -379,8 +379,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
                      new String[] { df.format(evaluation.getViewDate()) });
             }
 
-            if ( ! evaluation.getLocked().booleanValue() &&
-                  evaluationService.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
+            if ( evaluationService.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
                // evaluation removable
                UIInternalLink.make(evaluationRow, "closed-eval-delete-link", 
                      UIMessage.make("general.command.delete"), 

@@ -106,7 +106,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 //    );
 
       // save a valid evaluation (all dates separate)
-      eval = new EvalEvaluation( new Date(), 
+      eval = new EvalEvaluation( EvalConstants.EVALUATION_TYPE_EVALUATION, 
             EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
             etdl.today, etdl.tomorrow, etdl.threeDaysFuture, etdl.fourDaysFuture, 
             EvalConstants.EVALUATION_STATE_INQUEUE, 
@@ -118,7 +118,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       //assertEquals(eval, checkEval);
 
       // save a valid evaluation (due and stop date identical)
-      evaluationSetupService.saveEvaluation( new EvalEvaluation( new Date(), 
+      evaluationSetupService.saveEvaluation( new EvalEvaluation( EvalConstants.EVALUATION_TYPE_EVALUATION, 
             EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
             etdl.today, etdl.tomorrow, etdl.tomorrow, etdl.threeDaysFuture, 
             EvalConstants.EVALUATION_STATE_INQUEUE, 
@@ -130,7 +130,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       // try save evaluation with dates that are unset (null)
       // test stop date must be set
       try {
-         evaluationSetupService.saveEvaluation( new EvalEvaluation( new Date(), 
+         evaluationSetupService.saveEvaluation( new EvalEvaluation( EvalConstants.EVALUATION_TYPE_EVALUATION, 
                EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
                etdl.today, etdl.tomorrow, null, etdl.fourDaysFuture,
                EvalConstants.EVALUATION_STATE_INQUEUE, 
@@ -144,7 +144,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
       // test due date must be set
       try {
-         evaluationSetupService.saveEvaluation( new EvalEvaluation( new Date(), 
+         evaluationSetupService.saveEvaluation( new EvalEvaluation( EvalConstants.EVALUATION_TYPE_EVALUATION, 
                EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
                etdl.today, null, etdl.threeDaysFuture, etdl.fourDaysFuture,
                EvalConstants.EVALUATION_STATE_INQUEUE, 
@@ -159,7 +159,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       // try save evaluation with dates that are out of order
       // test due date must be after start date
       try {
-         evaluationSetupService.saveEvaluation( new EvalEvaluation( new Date(), 
+         evaluationSetupService.saveEvaluation( new EvalEvaluation( EvalConstants.EVALUATION_TYPE_EVALUATION, 
                EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
                etdl.threeDaysFuture, etdl.tomorrow, etdl.tomorrow, etdl.fourDaysFuture, 
                EvalConstants.EVALUATION_STATE_INQUEUE, 
@@ -172,7 +172,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       }
 
       try {
-         evaluationSetupService.saveEvaluation( new EvalEvaluation( new Date(), 
+         evaluationSetupService.saveEvaluation( new EvalEvaluation( EvalConstants.EVALUATION_TYPE_EVALUATION, 
                EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
                etdl.tomorrow, etdl.tomorrow, etdl.tomorrow, etdl.fourDaysFuture, 
                EvalConstants.EVALUATION_STATE_INQUEUE, 
@@ -186,7 +186,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
       // test stop date must be same as or after due date
       try {
-         evaluationSetupService.saveEvaluation( new EvalEvaluation( new Date(), 
+         evaluationSetupService.saveEvaluation( new EvalEvaluation( EvalConstants.EVALUATION_TYPE_EVALUATION, 
                EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
                etdl.today, etdl.threeDaysFuture, etdl.tomorrow, etdl.fourDaysFuture, 
                EvalConstants.EVALUATION_STATE_INQUEUE, 
@@ -200,7 +200,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
       // test view date must be after stop date and due date
       try {
-         evaluationSetupService.saveEvaluation( new EvalEvaluation( new Date(), 
+         evaluationSetupService.saveEvaluation( new EvalEvaluation( EvalConstants.EVALUATION_TYPE_EVALUATION, 
                EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
                etdl.today, etdl.tomorrow, etdl.tomorrow, etdl.tomorrow,
                EvalConstants.EVALUATION_STATE_INQUEUE, 
@@ -214,7 +214,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
       // try save new evaluation with dates that are in the past
       // test start date in the past
-      EvalEvaluation testStartEval = new EvalEvaluation( new Date(), 
+      EvalEvaluation testStartEval = new EvalEvaluation( EvalConstants.EVALUATION_TYPE_EVALUATION, 
             EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
             etdl.yesterday, etdl.tomorrow, etdl.threeDaysFuture, etdl.fourDaysFuture,
             EvalConstants.EVALUATION_STATE_INQUEUE, 
@@ -225,7 +225,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
       // test due date in the past
       try {
-         evaluationSetupService.saveEvaluation( new EvalEvaluation( new Date(), 
+         evaluationSetupService.saveEvaluation( new EvalEvaluation( EvalConstants.EVALUATION_TYPE_EVALUATION, 
                EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
                etdl.yesterday, etdl.yesterday, etdl.tomorrow, etdl.fourDaysFuture,
                EvalConstants.EVALUATION_STATE_INQUEUE, 
@@ -239,7 +239,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
       // test create eval when do not have permission (USER_ID)
       try {
-         evaluationSetupService.saveEvaluation( new EvalEvaluation( new Date(), 
+         evaluationSetupService.saveEvaluation( new EvalEvaluation( EvalConstants.EVALUATION_TYPE_EVALUATION, 
                EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
                etdl.today, etdl.tomorrow, etdl.threeDaysFuture, etdl.fourDaysFuture,
                EvalConstants.EVALUATION_STATE_INQUEUE, 
@@ -253,7 +253,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
       // test saving an evaluation with an empty template fails
       try {
-         evaluationSetupService.saveEvaluation( new EvalEvaluation( new Date(), 
+         evaluationSetupService.saveEvaluation( new EvalEvaluation( EvalConstants.EVALUATION_TYPE_EVALUATION, 
                EvalTestDataLoad.ADMIN_USER_ID, "Eval valid title", 
                etdl.today, etdl.tomorrow, etdl.tomorrow, etdl.threeDaysFuture, 
                EvalConstants.EVALUATION_STATE_INQUEUE, 
@@ -266,7 +266,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       }
 
       try {
-         evaluationSetupService.saveEvaluation( new EvalEvaluation( new Date(), 
+         evaluationSetupService.saveEvaluation( new EvalEvaluation( EvalConstants.EVALUATION_TYPE_EVALUATION, 
                EvalTestDataLoad.ADMIN_USER_ID, "Eval valid title", 
                etdl.today, etdl.tomorrow, etdl.tomorrow, etdl.threeDaysFuture, 
                EvalConstants.EVALUATION_STATE_INQUEUE, 

@@ -290,6 +290,7 @@ public class AdministrateProducer implements ViewComponentProducer {
 
       makeBoolean(form, "general-enable-sites-summary", EvalSettings.ENABLE_SUMMARY_SITES_BOX);
       makeBoolean(form, "general-use-eval-category", EvalSettings.ENABLE_EVAL_CATEGORIES);
+      makeBoolean(form, "general-enable-response-removal", EvalSettings.ENABLE_EVAL_RESPONSE_REMOVAL);
 
       makeBoolean(form, "general-default-question-category",  EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
 

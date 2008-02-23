@@ -297,7 +297,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       if (evaluation.getLocked().booleanValue()) {
          // lock evaluation and associated template
          log.info("Locking evaluation ("+evaluation.getId()+") and associated template ("+evaluation.getTemplate().getId()+")");
-         dao.lockEvaluation(evaluation);			
+         dao.lockEvaluation(evaluation, true);
       }
 
    }
@@ -362,9 +362,11 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          entitySets[3] = evalSet;
          evalSet.add(evaluation);
 
-         // unlock associated template
-         log.info("Unlocking associated template ("+evaluation.getTemplate().getId()+") for eval ("+evaluation.getId()+")");
-         dao.lockTemplate(evaluation.getTemplate(), Boolean.FALSE);
+         // unlock the evaluation (this is clear the other locks)
+         dao.lockEvaluation(evaluation, false);
+
+         // destroy all the related responses and answers
+         // TODO
 
          // fire the evaluation deleted event
          external.registerEntityEvent(EVENT_EVAL_DELETE, evaluation);

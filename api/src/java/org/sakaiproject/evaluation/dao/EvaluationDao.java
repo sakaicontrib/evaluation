@@ -293,14 +293,14 @@ public interface EvaluationDao extends CompleteGenericDao {
 
 	/**
 	 * Lock evaluation if not already locked,
-	 * lock associated template if not locked
-	 * <b>Note:</b> Evaluations cannot be unlocked currently
-	 * (since responses cannot be removed)
+	 * lock associated template(s) if not locked OR
+	 * unlock associated template(s) if not locked by other evaluations
 	 * 
 	 * @param evaluation
+    * @param lockState if true then lock this evaluations, otherwise unlock it
 	 * @return true if success, false otherwise
 	 */
-	public boolean lockEvaluation(EvalEvaluation evaluation);
+	public boolean lockEvaluation(EvalEvaluation evaluation, Boolean lockState);
 
 
 	// IN-USE METHODS
