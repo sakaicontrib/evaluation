@@ -46,6 +46,7 @@ import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.decorators.UITooltipDecorator;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
@@ -336,11 +337,14 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
                date = eval.getViewDate();
                int responsesCount = deliveryService.countResponses(eval.getId(), null, true);
                int enrollmentsCount = evaluationService.countParticipantsForEval(eval.getId());
-               if ( evalBeanUtils.checkResultsViewableForResponseRate(responsesCount, enrollmentsCount) ) {
+               int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
+               if ( responsesNeeded == 0 ) {
                   UIInternalLink.make(evalrow, "viewReportLink", UIMessage.make("viewreport.page.title"),
                         new ReportParameters(ReportChooseGroupsProducer.VIEW_ID, eval.getId()));
                } else {
-                  UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalStatus);
+                  UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalStatus)
+                        .decorate( new UITooltipDecorator( 
+                              UIMessage.make("controlevaluations.eval.report.awaiting.responses", new Object[] { responsesNeeded }) ) );
                }
             } else {
                date = eval.getStartDate();
