@@ -12,7 +12,7 @@
  * 
  *****************************************************************************/
 
-package org.sakaiproject.evaluation.model.constant;
+package org.sakaiproject.evaluation.constant;
 
 /**
  * Stores constants for use through the Evaluation services, logic layer, and dao layer

@@ -14,7 +14,7 @@
 
 package org.sakaiproject.evaluation.tool;
 
-import org.sakaiproject.evaluation.model.constant.EvalConstants;
+import org.sakaiproject.evaluation.constant.EvalConstants;
 
 /**
  * This class holds the tool constants only, application data constants come from

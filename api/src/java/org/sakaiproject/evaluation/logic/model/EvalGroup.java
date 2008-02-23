@@ -16,7 +16,7 @@ package org.sakaiproject.evaluation.logic.model;
 
 import java.io.Serializable;
 
-import org.sakaiproject.evaluation.model.constant.EvalConstants;
+import org.sakaiproject.evaluation.constant.EvalConstants;
 
 
 /**

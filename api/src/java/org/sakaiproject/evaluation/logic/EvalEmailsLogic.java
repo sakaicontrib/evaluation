@@ -14,8 +14,8 @@
 
 package org.sakaiproject.evaluation.logic;
 
+import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
-import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 /**
  * Handles all logic associated with processing email notifications,

@@ -3,7 +3,7 @@ package org.sakaiproject.evaluation.model;
 
 import java.util.Date;
 
-import org.sakaiproject.evaluation.model.constant.EvalConstants;
+import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
 /**

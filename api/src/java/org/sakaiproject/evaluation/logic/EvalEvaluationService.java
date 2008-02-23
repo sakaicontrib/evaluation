@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
@@ -27,7 +28,6 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalTemplate;
-import org.sakaiproject.evaluation.model.constant.EvalConstants;
 
 
 /**
@@ -109,7 +109,7 @@ public interface EvalEvaluationService {
     * 
     * @param evaluationId the id of an EvalEvaluation object
     * @return an EVALUATION_STATE constant from 
-    * {@link org.sakaiproject.evaluation.model.constant.EvalConstants}
+    * {@link org.sakaiproject.evaluation.constant.EvalConstants}
     */
    public String updateEvaluationState(Long evaluationId);
 
@@ -124,7 +124,7 @@ public interface EvalEvaluationService {
     * @param evaluation a persistent {@link EvalEvaluation} object
     * @param saveState if true, save the fixed eval state, else do not save
     * @return an EVALUATION_STATE constant from 
-    * {@link org.sakaiproject.evaluation.model.constant.EvalConstants}
+    * {@link org.sakaiproject.evaluation.constant.EvalConstants}
     */
    public String returnAndFixEvalState(EvalEvaluation evaluation, boolean saveState);
 
@@ -428,7 +428,7 @@ public interface EvalEvaluationService {
     * new templates that are created by users
     * 
     * @param emailTemplateTypeConstant a constant, use the EMAIL_TEMPLATE constants from 
-    * {@link org.sakaiproject.evaluation.model.constant.EvalConstants} to indicate the type
+    * {@link org.sakaiproject.evaluation.constant.EvalConstants} to indicate the type
     * @return the default email template matching the supplied type
     */
    public EvalEmailTemplate getDefaultEmailTemplate(String emailTemplateTypeConstant);
@@ -437,7 +437,7 @@ public interface EvalEvaluationService {
      * Get an email template for an eval by type, will always return an email template
      * 
      * @param emailTemplateTypeConstant a constant, use the EMAIL_TEMPLATE constants from 
-     * {@link org.sakaiproject.evaluation.model.constant.EvalConstants} to indicate the type
+     * {@link org.sakaiproject.evaluation.constant.EvalConstants} to indicate the type
      * @return the email template of the supplied type for this eval
      */
     public EvalEmailTemplate getEmailTemplate(Long evaluationId, String emailTemplateTypeConstant);
@@ -452,7 +452,7 @@ public interface EvalEvaluationService {
     * @param userId the internal user id (not username)
     * @param evaluationId the id of an EvalEvaluation object
     * @param emailTemplateTypeConstant a constant, use the EMAIL_TEMPLATE constants from 
-    * {@link org.sakaiproject.evaluation.model.constant.EvalConstants} to indicate the type
+    * {@link org.sakaiproject.evaluation.constant.EvalConstants} to indicate the type
     * @return true if the user can control the email template at this time, false otherwise
     */
    public boolean canControlEmailTemplate(String userId, Long evaluationId, String emailTemplateTypeConstant);

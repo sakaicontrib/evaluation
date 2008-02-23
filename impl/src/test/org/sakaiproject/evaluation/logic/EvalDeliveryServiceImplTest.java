@@ -20,6 +20,7 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringServiceImpl;
 import org.sakaiproject.evaluation.logic.EvalDeliveryServiceImpl;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
@@ -28,7 +29,6 @@ import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
-import org.sakaiproject.evaluation.model.constant.EvalConstants;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
 
