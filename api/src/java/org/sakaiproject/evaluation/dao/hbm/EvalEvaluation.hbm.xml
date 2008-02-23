@@ -56,7 +56,7 @@
             <column name="INSTRUCTORS_DATE" />
         </property>
         <!-- The current (hopefully) state of this evaluation (Active, Closed, etc.), matches constants -->
-        <property name="state" type="java.lang.String">
+        <property name="state" type="java.lang.String" index="eval_eval_state">
             <column name="STATE" not-null="true" length="255" />
         </property>
         <!-- what options do instructors have for using this evaluation (opt in, opt out, reqd, etc.) -->

@@ -23,6 +23,7 @@ import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalLock;
+import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -661,6 +662,23 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       assertEquals(0, l.size());
 
    }
+
+   
+   public void testRemoveResponses() {
+      // check that response and answer are removed correctly
+      int curR = evaluationDao.countAll(EvalResponse.class);
+      int curA = evaluationDao.countAll(EvalAnswer.class);
+      evaluationDao.removeResponses(new Long[] {etdl.response1.getId()});
+      int remainR = evaluationDao.countAll(EvalResponse.class);
+      int remainA = evaluationDao.countAll(EvalResponse.class);
+      assertTrue(remainR < curR);
+      assertTrue(remainA < curA);
+      // stupid hibernate is making this test a pain -AZ
+//      assertNull( evaluationDao.findById(EvalResponse.class, etdl.response1.getId()) );
+//      assertNull( evaluationDao.findById(EvalAnswer.class, etdl.answer1_1.getId()) );
+
+   }
+
 
    /**
     * Test method for {@link org.sakaiproject.evaluation.dao.EvaluationDaoImpl#getEvalCategories(String)}

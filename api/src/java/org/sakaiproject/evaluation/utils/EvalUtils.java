@@ -59,16 +59,25 @@ public class EvalUtils {
       Date today = new Date();
       String state = EvalConstants.EVALUATION_STATE_UNKNOWN;
       try {
-         if ( eval.getStartDate().after(today) ) {
-            state = EvalConstants.EVALUATION_STATE_INQUEUE;
-         } else if ( eval.getDueDate().after(today) ) {
-            state = EvalConstants.EVALUATION_STATE_ACTIVE;
-         } else if ( eval.getStopDate().after(today) ) {
-            state = EvalConstants.EVALUATION_STATE_DUE;
-         } else if ( eval.getViewDate().after(today) ) {
-            state = EvalConstants.EVALUATION_STATE_CLOSED;
+         // handle the 2 special case states first
+         if (eval.getState() == null ||
+               EvalConstants.EVALUATION_STATE_PARTIAL.equals(eval.getState())) {
+            state = EvalConstants.EVALUATION_STATE_PARTIAL;
+         } else if (EvalConstants.EVALUATION_STATE_DELETED.equals(eval.getState())) {
+            state = EvalConstants.EVALUATION_STATE_DELETED;
          } else {
-            state = EvalConstants.EVALUATION_STATE_VIEWABLE;
+            // now determine the state based on dates
+            if ( eval.getStartDate().after(today) ) {
+               state = EvalConstants.EVALUATION_STATE_INQUEUE;
+            } else if ( eval.getDueDate().after(today) ) {
+               state = EvalConstants.EVALUATION_STATE_ACTIVE;
+            } else if ( eval.getStopDate().after(today) ) {
+               state = EvalConstants.EVALUATION_STATE_DUE;
+            } else if ( eval.getViewDate().after(today) ) {
+               state = EvalConstants.EVALUATION_STATE_CLOSED;
+            } else {
+               state = EvalConstants.EVALUATION_STATE_VIEWABLE;
+            }
          }
       } catch (NullPointerException e) {
          state = EvalConstants.EVALUATION_STATE_UNKNOWN;

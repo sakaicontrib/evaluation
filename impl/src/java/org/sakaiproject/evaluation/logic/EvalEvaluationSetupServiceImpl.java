@@ -365,8 +365,11 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          // unlock the evaluation (this is clear the other locks)
          dao.lockEvaluation(evaluation, false);
 
-         // destroy all the related responses and answers
-         // TODO
+         // destroy all the related responses and answers for now
+         List<Long> responseIds = dao.getResponseIds(evaluation.getId(), null, null, null);
+         if (responseIds.size() > 0) {
+            dao.removeResponses( responseIds.toArray(new Long[responseIds.size()]) );
+         }
 
          // fire the evaluation deleted event
          external.registerEntityEvent(EVENT_EVAL_DELETE, evaluation);

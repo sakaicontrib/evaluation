@@ -43,6 +43,7 @@ import org.sakaiproject.evaluation.model.EvalLock;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
+import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.ComparatorsUtils;
 import org.sakaiproject.genericdao.hibernate.HibernateCompleteGenericDao;
 import org.springframework.dao.DataAccessException;
@@ -491,6 +492,25 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       return responseIds;
    }
 
+
+   public void removeResponses(Long[] responseIds) {
+      if (responseIds != null && responseIds.length > 0) {
+         String rids = "(" + ArrayUtils.arrayToString(responseIds) + ")";
+         // purge out the answers first
+         String hql = "delete EvalAnswer answer where answer.response.id in " + rids;
+         log.debug("delete EvalAnswer HQL:" + hql);
+         int results = getHibernateTemplate().bulkUpdate(hql);
+         log.info("Remove " + results + " answers that were associated with the following responses: " + rids);
+
+         // purge out the responses
+         hql = "delete EvalResponse response where response.id in " + rids;
+         log.debug("delete EvalResponse HQL:" + hql);
+         results = getHibernateTemplate().bulkUpdate(hql);
+         log.info("Remove " + results + " responses with the following ids: " + rids);
+      }
+   }
+
+
    @SuppressWarnings("unchecked")
    public List<String> getEvalCategories(String userId) {
       String hql = "select distinct eval.evalCategory from EvalEvaluation eval where eval.evalCategory is not null ";
@@ -879,6 +899,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       log.debug("HQL query:" + query.getQueryString());
       return query.list();
    }
+
 
    /**
     * This is supported natively in Hibernate 3.2.x and up
