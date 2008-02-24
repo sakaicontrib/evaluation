@@ -524,6 +524,13 @@ public class EvaluationBean {
     * @return view id telling RSF where to send the control
     */
    public String doneAssignmentAction() {	
+      
+      // TODO FIXME Temporary fix for EVALSYS-424 so I can keep testing. sgithens
+      if (eval.getType() == null)
+         eval.setType(EvalConstants.EVALUATION_TYPE_EVALUATION);
+      
+      eval.setState(EvalConstants.EVALUATION_STATE_ACTIVE);
+      // END EVALSYS-424 Temp Fixes
 
       // make sure that the submitted nodes are valid
       Set<EvalHierarchyNode> nodes = null;
