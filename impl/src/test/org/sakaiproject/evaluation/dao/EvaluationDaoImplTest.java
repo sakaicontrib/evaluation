@@ -105,9 +105,9 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 
       evalUnLocked = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, EvalTestDataLoad.MAINT_USER_ID, "Eval active not taken", null, 
             etdl.yesterday, etdl.tomorrow, etdl.tomorrow, etdl.threeDaysFuture, null, null,
-            EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.INSTRUCTOR_OPT_IN, 
-            new Integer(1), null, null, null, null, etdl.templatePublicUnused, null, null,
-            Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, EvalTestDataLoad.UNLOCKED,
+            EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.SHARING_VISIBLE, 
+            EvalConstants.INSTRUCTOR_OPT_IN, new Integer(1), null, null, null, null, etdl.templatePublicUnused, null,
+            null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, EvalTestDataLoad.UNLOCKED,
             EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null);
       evaluationDao.save( evalUnLocked );
 
@@ -1081,9 +1081,9 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
          evaluationDao.lockEvaluation(
                new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, EvalTestDataLoad.MAINT_USER_ID, "Eval new", null, 
                      etdl.tomorrow, etdl.threeDaysFuture, etdl.threeDaysFuture, etdl.fourDaysFuture, null, null,
-                     EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.INSTRUCTOR_OPT_IN, 
-                     new Integer(1), null, null, null, null, etdl.templatePublic, null, null,
-                     Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, EvalTestDataLoad.UNLOCKED,
+                     EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.SHARING_VISIBLE, 
+                     EvalConstants.INSTRUCTOR_OPT_IN, new Integer(1), null, null, null, null, etdl.templatePublic, null,
+                     null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, EvalTestDataLoad.UNLOCKED,
                      EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null),
                true
          );

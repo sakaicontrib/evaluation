@@ -699,7 +699,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
          }
       }
       if (templateItem.getResultsSharing() == null) {
-         templateItem.setResultsSharing(EvalConstants.ITEM_RESULTS_SHARING_PUBLIC);
+         templateItem.setResultsSharing(EvalConstants.SHARING_PUBLIC);
       }
       Boolean naAllowed = (Boolean) settings.get(EvalSettings.NOT_AVAILABLE_ALLOWED);
       if (naAllowed.booleanValue()) {

@@ -37,23 +37,23 @@
         </property>
         <!-- date when users are told the evaluation is ending (notification only) -->
         <property name="dueDate" type="java.util.Date" index="eval_eval_duedate">
-            <column name="DUE_DATE" not-null="true" />
+            <column name="DUE_DATE" not-null="false" />
         </property>
         <!-- last date to complete the evaluation, may not submit it or begin taking it after this date, not active after this date -->
         <property name="stopDate" type="java.util.Date">
-            <column name="STOP_DATE" not-null="true" />
+            <column name="STOP_DATE" not-null="false" />
         </property>
         <!-- date at which results of this evaluation are visible in general (must be after due date) -->
         <property name="viewDate" type="java.util.Date" index="eval_eval_viewdate">
-            <column name="VIEW_DATE" not-null="true" />
+            <column name="VIEW_DATE" not-null="false" />
         </property>
         <!-- date at which results are visible to students (override viewDate) -->
         <property name="studentsDate" type="java.util.Date">
-            <column name="STUDENTS_DATE" />
+            <column name="STUDENTS_DATE" not-null="false" />
         </property>
         <!-- date at which results are visible to instructors (override viewDate) -->
         <property name="instructorsDate" type="java.util.Date">
-            <column name="INSTRUCTORS_DATE" />
+            <column name="INSTRUCTORS_DATE" not-null="false" />
         </property>
         <!-- The current (hopefully) state of this evaluation (Active, Closed, etc.), matches constants -->
         <property name="state" type="java.lang.String" index="eval_eval_state">
@@ -98,9 +98,9 @@
             </key>
             <one-to-many class="org.sakaiproject.evaluation.model.EvalResponse"/>
         </set>
-        <!-- results are only visible to the owner (default false) -->
-        <property name="resultsPrivate" type="java.lang.Boolean">
-            <column name="RESULTS_PRIVATE" />
+        <!-- set the sharing policy for this evaluation -->
+        <property name="resultsSharing" type="java.lang.String">
+            <column name="RESULTS_SHARING" length="255" not-null="true" default="'visible'" />
         </property>
         <!-- users taking the evaluation may leave responses blank if true, else all responses must be filled out to submit -->
         <property name="blankResponsesAllowed" type="java.lang.Boolean">

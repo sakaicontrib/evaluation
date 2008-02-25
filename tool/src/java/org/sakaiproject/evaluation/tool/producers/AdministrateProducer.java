@@ -149,7 +149,7 @@ public class AdministrateProducer implements ViewComponentProducer {
       {
             "administrate.true.label",
             "administrate.false.label",
-            "administrate.configurable.label"
+            "general.configurable"
       };
       String[] administrateConfigurableValues = 
       {
@@ -172,7 +172,7 @@ public class AdministrateProducer implements ViewComponentProducer {
        * Select for whether instructors must use evaluationSetupService from above.
        * 
        * Note: The values should be irrespective of i18n as they are stored in database. 
-       * Here the 4th values that is "messageLocator.getMessage("administrate.configurable.label")"
+       * Here the 4th values that is "messageLocator.getMessage("general.configurable")"
        * is actually converted to a NULL inside SettingsWBL.java so does not matter to be 
        * language specific here.
        */
@@ -188,7 +188,7 @@ public class AdministrateProducer implements ViewComponentProducer {
             "evalsettings.instructors.label.opt.in",
             "evalsettings.instructors.label.opt.out",
             "evalsettings.instructors.label.required",
-            "administrate.configurable.label"
+            "general.configurable"
       };
       makeSelect(form, "instructors-hierarchy", 
             hierarchyOptionValues, 

@@ -113,7 +113,7 @@ public class ReportingPermissions {
                      EvalConstants.PERM_TAKE_EVALUATION, null));
       }
       // 3
-      else if (evaluation.getResultsPrivate()) {
+      else if (EvalConstants.SHARING_PRIVATE.equals(evaluation.getResultsSharing())) {
          checkBasedOnRole = false;
       }
       else {
@@ -186,7 +186,7 @@ public class ReportingPermissions {
          canViewResponses = true;
       }
       // 3
-      else if (evaluation.getResultsPrivate()) {
+      else if (EvalConstants.SHARING_PRIVATE.equals(evaluation.getResultsSharing())) {
          canViewResponses = false;
       }
       // TODO FIXME 4 and 5 need to be combined, because it may not be mutually

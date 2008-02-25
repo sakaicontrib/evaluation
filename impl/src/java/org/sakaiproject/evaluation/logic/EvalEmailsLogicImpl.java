@@ -419,7 +419,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
          }
 
          //if results are not private
-         if (!eval.getResultsPrivate().booleanValue()) {
+         if (! EvalConstants.SHARING_PRIVATE.equals(eval.getResultsSharing()) ) {
             //at present, includeAdmins is always true
             if (includeAdmins && 
                   evalAssignGroup.getInstructorsViewResults().booleanValue() &&

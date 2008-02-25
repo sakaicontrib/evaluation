@@ -92,9 +92,9 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
             EvalTestDataLoad.ADMIN_USER_ID, "Eval closed two", null, 
             etdl.threeDaysAgo, etdl.yesterday, 
             etdl.yesterday, etdl.tomorrow, null, null,
-            EvalConstants.EVALUATION_STATE_CLOSED, EvalConstants.INSTRUCTOR_OPT_IN, 
-            Integer.valueOf(2), null, null, null, null, etdl.templateAdmin, null, null,
-            Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, 
+            EvalConstants.EVALUATION_STATE_CLOSED, EvalConstants.SHARING_VISIBLE, 
+            EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(2), null, null, null, null, etdl.templateAdmin, null,
+            null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, 
             EvalTestDataLoad.LOCKED,
             EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null);
       evaluationDao.save(evaluationClosedTwo);

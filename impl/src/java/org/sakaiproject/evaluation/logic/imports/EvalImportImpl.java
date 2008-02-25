@@ -1276,11 +1276,16 @@ public class EvalImportImpl implements EvalImport {
 			Boolean locked = element.getChildText("LOCKED").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
 			Boolean unregisteredAllowed = element.getChildText("UNREGISTERED_ALLOWED").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
 			
+			String resultsPrivacy = EvalConstants.SHARING_VISIBLE;
+			if (resultsPrivate) {
+			   resultsPrivacy = EvalConstants.SHARING_PRIVATE;
+			}
+
 			//new evaluation
 			EvalEvaluation evaluation = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, owner, title, instructions, startDate, dueDate,
-				stopDate, viewDate, studentsDate, instructorsDate, state, instructorOpt, reminderDays,
-				reminderFromEmail, termId, availableEmailTemplate, reminderEmailTemplate, template, addedTemplate,
-				new HashSet(0), resultsPrivate, blankResponsesAllowed, modifyResponsesAllowed, unregisteredAllowed,
+				stopDate, viewDate, studentsDate, instructorsDate, state, EvalConstants.SHARING_VISIBLE, instructorOpt,
+				reminderDays, reminderFromEmail, termId, availableEmailTemplate, reminderEmailTemplate, template,
+				addedTemplate, new HashSet(0), blankResponsesAllowed, modifyResponsesAllowed, unregisteredAllowed,
 				locked, authControl, evalCategory);
 			evaluation.setEid(eid);
 			return evaluation;
@@ -1325,11 +1330,15 @@ public class EvalImportImpl implements EvalImport {
 			evaluation.setInstructorsDate(getDate(element.getChildText("INSTRUCTORS_DATE")));
 			
 			Boolean resultsPrivate = element.getChildText("RESULTS_PRIVATE").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
+         String resultsPrivacy = EvalConstants.SHARING_VISIBLE;
+         if (resultsPrivate) {
+            resultsPrivacy = EvalConstants.SHARING_PRIVATE;
+         }
 			Boolean blankResponsesAllowed = element.getChildText("BLANK_RESPONSES_ALLOWED").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
 			Boolean modifyResponsesAllowed = element.getChildText("MODIFY_RESPONSES_ALLOWED").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
 			Boolean locked = element.getChildText("LOCKED").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
 			Boolean unregisteredAllowed = element.getChildText("UNREGISTERED_ALLOWED").trim().equals("1") ? new Boolean(Boolean.TRUE) : new Boolean(Boolean.FALSE);
-			evaluation .setResultsPrivate(resultsPrivate);
+			evaluation.setResultsSharing(resultsPrivacy);
 			evaluation.setBlankResponsesAllowed(blankResponsesAllowed);
 			evaluation.setModifyResponsesAllowed(modifyResponsesAllowed);
 			evaluation.setUnregisteredAllowed(unregisteredAllowed);

@@ -110,7 +110,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
             EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
             etdl.today, etdl.tomorrow, etdl.threeDaysFuture, etdl.fourDaysFuture, 
             EvalConstants.EVALUATION_STATE_INQUEUE, 
-            Integer.valueOf(1), etdl.templatePublic);
+            EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic);
       evaluationSetupService.saveEvaluation( eval, EvalTestDataLoad.MAINT_USER_ID );
       EvalEvaluation checkEval = evaluationService.getEvaluationById(eval.getId());
       assertNotNull(checkEval);
@@ -122,7 +122,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
             EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
             etdl.today, etdl.tomorrow, etdl.tomorrow, etdl.threeDaysFuture, 
             EvalConstants.EVALUATION_STATE_INQUEUE, 
-            Integer.valueOf(1), etdl.templatePublic), 
+            EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic), 
             EvalTestDataLoad.MAINT_USER_ID );
 
       // try to save invalid evaluationSetupService
@@ -134,7 +134,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
                etdl.today, etdl.tomorrow, null, etdl.fourDaysFuture,
                EvalConstants.EVALUATION_STATE_INQUEUE, 
-               Integer.valueOf(1), etdl.templatePublic),
+               EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic),
                EvalTestDataLoad.MAINT_USER_ID );
          fail("Should have thrown exception");
       } catch (NullPointerException e) {
@@ -148,7 +148,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
                etdl.today, null, etdl.threeDaysFuture, etdl.fourDaysFuture,
                EvalConstants.EVALUATION_STATE_INQUEUE, 
-               Integer.valueOf(1), etdl.templatePublic),
+               EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic),
                EvalTestDataLoad.MAINT_USER_ID );
          fail("Should have thrown exception");
       } catch (NullPointerException e) {
@@ -163,7 +163,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
                etdl.threeDaysFuture, etdl.tomorrow, etdl.tomorrow, etdl.fourDaysFuture, 
                EvalConstants.EVALUATION_STATE_INQUEUE, 
-               Integer.valueOf(1), etdl.templatePublic),
+               EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic),
                EvalTestDataLoad.MAINT_USER_ID );
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
@@ -176,7 +176,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
                etdl.tomorrow, etdl.tomorrow, etdl.tomorrow, etdl.fourDaysFuture, 
                EvalConstants.EVALUATION_STATE_INQUEUE, 
-               Integer.valueOf(1), etdl.templatePublic),
+               EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic),
                EvalTestDataLoad.MAINT_USER_ID );
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
@@ -190,7 +190,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
                etdl.today, etdl.threeDaysFuture, etdl.tomorrow, etdl.fourDaysFuture, 
                EvalConstants.EVALUATION_STATE_INQUEUE, 
-               Integer.valueOf(1), etdl.templatePublic),
+               EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic),
                EvalTestDataLoad.MAINT_USER_ID );
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
@@ -204,7 +204,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
                etdl.today, etdl.tomorrow, etdl.tomorrow, etdl.tomorrow,
                EvalConstants.EVALUATION_STATE_INQUEUE, 
-               Integer.valueOf(1), etdl.templatePublic),
+               EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic),
                EvalTestDataLoad.MAINT_USER_ID );
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
@@ -218,7 +218,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
             EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
             etdl.yesterday, etdl.tomorrow, etdl.threeDaysFuture, etdl.fourDaysFuture,
             EvalConstants.EVALUATION_STATE_INQUEUE, 
-            Integer.valueOf(1), etdl.templatePublic);
+            EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic);
       evaluationSetupService.saveEvaluation( testStartEval, EvalTestDataLoad.MAINT_USER_ID );
       assertNotNull(testStartEval.getId());
       assertTrue(testStartEval.getStartDate().compareTo(new Date()) <= 0);
@@ -229,7 +229,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
                etdl.yesterday, etdl.yesterday, etdl.tomorrow, etdl.fourDaysFuture,
                EvalConstants.EVALUATION_STATE_INQUEUE, 
-               Integer.valueOf(1), etdl.templatePublic),
+               EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic),
                EvalTestDataLoad.MAINT_USER_ID );
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
@@ -243,7 +243,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
                etdl.today, etdl.tomorrow, etdl.threeDaysFuture, etdl.fourDaysFuture,
                EvalConstants.EVALUATION_STATE_INQUEUE, 
-               Integer.valueOf(1), etdl.templatePublic),
+               EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic),
                EvalTestDataLoad.USER_ID );
          fail("Should have thrown exception");
       } catch (SecurityException e) {
@@ -257,7 +257,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                EvalTestDataLoad.ADMIN_USER_ID, "Eval valid title", 
                etdl.today, etdl.tomorrow, etdl.tomorrow, etdl.threeDaysFuture, 
                EvalConstants.EVALUATION_STATE_INQUEUE, 
-               Integer.valueOf(1), etdl.templateAdminNoItems), 
+               EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templateAdminNoItems), 
                EvalTestDataLoad.ADMIN_USER_ID );
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
@@ -270,7 +270,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                EvalTestDataLoad.ADMIN_USER_ID, "Eval valid title", 
                etdl.today, etdl.tomorrow, etdl.tomorrow, etdl.threeDaysFuture, 
                EvalConstants.EVALUATION_STATE_INQUEUE, 
-               Integer.valueOf(1), null), 
+               EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), null), 
                EvalTestDataLoad.ADMIN_USER_ID );
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
