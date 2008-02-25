@@ -243,12 +243,20 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                " as the added template, must be " + EvalConstants.TEMPLATE_TYPE_ADDED);			
       }
 
+      // force the student/instructor dates based on the boolean settings
+      if (! evaluation.studentViewResults) {
+         evaluation.setStudentsDate(null);
+      }
+      if (! evaluation.instructorViewResults) {
+         evaluation.setInstructorsDate(null);
+      }
+
       // fill in any default values and nulls here
       if (evaluation.getLocked() == null) {
          evaluation.setLocked( Boolean.FALSE );
       }
-      if (evaluation.getResultsPrivate() == null) {
-         evaluation.setResultsPrivate( Boolean.FALSE );
+      if (evaluation.getResultsSharing() == null) {
+         evaluation.setResultsSharing( EvalConstants.SHARING_VISIBLE );
       }
       if (evaluation.getAuthControl() == null) {
          evaluation.setAuthControl( EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ );

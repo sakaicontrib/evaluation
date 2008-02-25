@@ -200,15 +200,15 @@ public class EvaluationBean {
       instructorsDate = viewDate;
 
       // results viewable settings
-      eval.setResultsPrivate(Boolean.FALSE);
+      eval.setResultsSharing( EvalConstants.SHARING_VISIBLE );
 
       Boolean studentsView = (Boolean) settings.get(EvalSettings.STUDENT_VIEW_RESULTS);
       if (studentsView == null) { studentsView = false; }
-      instructorViewResults = studentsView;
+      studentViewResults = studentsView;
 
       Boolean instructorsView = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
       if (instructorsView == null) { instructorsView = false; }
-      studentViewResults = instructorsView;
+      instructorViewResults = instructorsView;
 
       // student completion settings
       Boolean blankAllowed = (Boolean) settings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED);
@@ -310,7 +310,7 @@ public class EvaluationBean {
       evalInDB.setViewDate(eval.getViewDate());
       evalInDB.setStudentsDate(eval.getStudentsDate());
       evalInDB.setInstructorsDate(eval.getInstructorsDate());
-      evalInDB.setResultsPrivate(eval.getResultsPrivate());
+      evalInDB.setResultsSharing(eval.getResultsSharing());
       evalInDB.setEvalCategory(eval.getEvalCategory());
 
       evaluationSetupService.saveEvaluation(evalInDB, external.getCurrentUserId());
@@ -757,6 +757,10 @@ public class EvaluationBean {
       // Getting the system setting that tells what should be the minimum time difference between start date and due date.
       int minHoursDifference = ((Integer) settings.get(EvalSettings.EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE)).intValue();
 
+      if (eval.getResultsSharing() == null) {
+         eval.setResultsSharing(EvalConstants.SHARING_VISIBLE);
+      }
+
       eval.setStartDate(startDate);
 
       // force the due date to the end of the day if we are using dates only
@@ -799,6 +803,8 @@ public class EvaluationBean {
        * as true then don't look for student and instructor dates, instead make them
        * same as admin view date. If not then get the student and instructor view dates.
        */ 
+      eval.studentViewResults = studentViewResults;
+      eval.instructorViewResults = instructorViewResults;
       boolean sameViewDateForAll = ((Boolean) settings.get(EvalSettings.EVAL_USE_SAME_VIEW_DATES));
       if (sameViewDateForAll) {
          if (studentViewResults) {

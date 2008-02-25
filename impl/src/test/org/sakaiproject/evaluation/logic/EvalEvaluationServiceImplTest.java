@@ -86,7 +86,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       assertNotNull(eval);
       assertNotNull(eval.getBlankResponsesAllowed());
       assertNotNull(eval.getModifyResponsesAllowed());
-      assertNotNull(eval.getResultsPrivate());
+      assertNotNull(eval.getResultsSharing());
       assertNotNull(eval.getUnregisteredAllowed());
       assertEquals(etdl.evaluationActive.getId(), eval.getId());
 

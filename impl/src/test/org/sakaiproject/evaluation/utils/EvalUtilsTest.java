@@ -146,7 +146,7 @@ public class EvalUtilsTest extends TestCase {
 
       EvalEvaluation eval = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, "aaronz", "title",
             now, nowPlus2, nowPlus2, nowPlus3, 
-            EvalConstants.EVALUATION_STATE_ACTIVE, 0, null);
+            EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.SHARING_VISIBLE, 0, null);
 
       // test that no change happens if the times are within the range
       assertEquals(eval.getDueDate(), nowPlus2);

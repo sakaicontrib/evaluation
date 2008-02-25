@@ -404,7 +404,8 @@ public class EvalConstants {
     */
    public static final String SHARING_PRIVATE = "private";
    /**
-    * Template/Item shared setting: Template/Item is visible to owner and any eval admins
+    * Template/Item shared setting: Template/Item is visible to owner and any eval admins,
+    * this is also the configurable option for sharing results
     */
    public static final String SHARING_VISIBLE = "visible";
    /**
@@ -704,15 +705,6 @@ public class EvalConstants {
     * Category => Objective => Item
     */
    public static final String ITEM_GROUP_TYPE_OBJECTIVE = "ItemGroupObjective";
-
-   /**
-    * Results for this item will be public
-    */
-   public static final String ITEM_RESULTS_SHARING_PUBLIC = "public";
-   /**
-    * Results for this item will be private (only visible to owner)
-    */
-   public static final String ITEM_RESULTS_SHARING_PRIVATE = "private";
 
    /**
     * The numeric value stored when a student responds N/A

@@ -479,10 +479,10 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
                // Means show both options (public & private)
                UIBranchContainer showItemResultSharing = UIBranchContainer.make(form, "showItemResultSharing:");
                UIMessage.make(showItemResultSharing, "item-results-sharing-header", "modifyitem.results.sharing.header");
-               UIMessage.make(showItemResultSharing, "item-results-sharing-PU", "item.results.sharing.public");
-               UIMessage.make(showItemResultSharing, "item-results-sharing-PR", "item.results.sharing.private");
+               UIMessage.make(showItemResultSharing, "item-results-sharing-PU", "general.public");
+               UIMessage.make(showItemResultSharing, "item-results-sharing-PR", "general.private");
                // Radio Buttons for "Result Sharing"
-               String[] resultSharingList = { "item.results.sharing.public", "item.results.sharing.private" };
+               String[] resultSharingList = { "general.public", "general.private" };
                UISelect radios = UISelect.make(showItemResultSharing, "item_results_sharing", EvalToolConstants.ITEM_RESULTS_SHARING_VALUES,
                      resultSharingList, templateItemOTP + "resultsSharing", null);
 

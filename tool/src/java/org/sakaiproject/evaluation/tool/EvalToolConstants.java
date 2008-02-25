@@ -295,14 +295,30 @@ public class EvalToolConstants {
     * values for item results sharing.
     */
    public static String[] ITEM_RESULTS_SHARING_VALUES = new String[] {
-      EvalConstants.ITEM_RESULTS_SHARING_PUBLIC,
-      EvalConstants.ITEM_RESULTS_SHARING_PRIVATE
+      EvalConstants.SHARING_PUBLIC,
+      EvalConstants.SHARING_PRIVATE
    };
 
    // should match ITEM_RESULTS_SHARING_VALUES
    public static String[] ITEM_RESULTS_SHARING_LABELS_PROPS = {
-      "item.results.sharing.public",
-      "item.results.sharing.private"
+      "general.public",
+      "general.private"
+   };
+
+   /**
+    * values for evaluation results sharing.
+    */
+   public static String[] EVAL_RESULTS_SHARING_VALUES = new String[] {
+      EvalConstants.SHARING_PRIVATE,
+      EvalConstants.SHARING_VISIBLE,
+      EvalConstants.SHARING_PUBLIC
+   };
+
+   // should match EVAL_RESULTS_SHARING_VALUES
+   public static String[] EVAL_RESULTS_SHARING_LABELS_PROPS = {
+      "general.private",
+      "general.configurable",
+      "general.public"
    };
 
 }

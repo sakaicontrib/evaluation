@@ -5,6 +5,9 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
+
 /**
  * Defines an evaluation itself (this is an instance which can be taken by evaluators)
  */
@@ -29,39 +32,58 @@ public class EvalEvaluation implements java.io.Serializable {
 
    private String instructions;
 
+   /**
+    * This is the date at which the evaluation becomes active,
+    * the users can take the evaluation after this<br/>
+    * This MUST be set, see {@link #customStartDate}
+    */
    private Date startDate;
 
    /**
-    * This is the ending date for the evaluation
-    * NOTE - how do we handle the case of no ending date?
+    * This is the ending date for the evaluation<br/>
+    * if this is null then there is no due date and the evaluation is open until
+    * manually closed<br/>
+    * Affected by the {@link #useDueDate} setting<br/>
+    * <b>NOTE:</b> a null value here means that the evaluation is open until manually closed
     */
    private Date dueDate;
 
    /**
-    * this defines the grace period for completing the evaluation after the due date
+    * this defines the grace period for completing the evaluation after the due date,
+    * if this is null then there is no grace period<br/>
+    * Affected by the {@link #useStopDate} setting<br/>
+    * <b>NOTE:</b> a null value here means that there is no grace period
     */
    private Date stopDate;
 
    /**
     * The overall view date for this evaluation,
     * Note that this trumps the students and instructors dates and they must be set to be after this one
-    * or they will have no effect,
-    * TODO - allow this to be set to be the start date (but not earlier) if we want to allow viewing results as we go? 
+    * or they will have no effect<br/>
+    * Affected by the {@link #useViewDate} setting<br/>
+    * <b>NOTE:</b> a null value here means that the results are immediately viewable after the evaluation closes<br/>
+    * TODO - how to handle view date that is before the start date?
     */
    private Date viewDate;
 
    /**
     * if this is null then students cannot view the results of this evaluation,
-    * otherwise students can view after this date
+    * otherwise students can view after this date<br/>
+    * <b>NOTE:</b> see {@link #studentViewResults}
     */
    private Date studentsDate;
 
    /**
     * if this is null instructors cannot view the results of this evaluation,
-    * otherwise results can only be viewed after this date
+    * otherwise results can only be viewed after this date<br/>
+    * <b>NOTE:</b> see {@link #instructorViewResults}
     */
    private Date instructorsDate;
 
+   /**
+    * You should use the methods which check the state of the evaluation rather than looking at this field directly<br/>
+    * see {@link EvalEvaluationService#updateEvaluationState(Long)} and {@link EvalEvaluationService#returnAndFixEvalState(EvalEvaluation, boolean)}
+    */
    private String state;
 
    private String instructorOpt;
@@ -72,6 +94,9 @@ public class EvalEvaluation implements java.io.Serializable {
     */
    private Integer reminderDays;
 
+   /**
+    * This will be the email address that notification emails should be sent from for this evaluation
+    */
    private String reminderFromEmail;
 
    private String termId;
@@ -84,7 +109,7 @@ public class EvalEvaluation implements java.io.Serializable {
 
    /**
     * if this is set then use the template here,
-    * if null then use the default {@link EvalConstants#EMAIL_TEMPLATE_AVAILABLE}
+    * if null then use the default {@link EvalConstants#EMAIL_TEMPLATE_AVAILABLE}<br/>
     */
    private EvalEmailTemplate reminderEmailTemplate;
 
@@ -94,7 +119,14 @@ public class EvalEvaluation implements java.io.Serializable {
 
    private Set<EvalResponse> responses = new HashSet<EvalResponse>(0);
 
-   private Boolean resultsPrivate;
+   /**
+    * Defines the sharing setting for the results of this evaluation,
+    * Uses the sharing constants: e.g. {@link EvalConstants#SHARING_VISIBLE}<br/>
+    * <b>NOTE:</b> private means only the owner and superadmin can see the results,
+    * public means anyone can see the results, visible is the owner plus all
+    * admins and colleagues (default)
+    */
+   private String resultsSharing;
 
    private Boolean blankResponsesAllowed;
 
@@ -108,16 +140,81 @@ public class EvalEvaluation implements java.io.Serializable {
 
    private String evalCategory;
 
+   /**
+    * Non-persistent field:<br/>
+    * Set when creating the evaluation only, this will cause the {@link #studentsDate}
+    * to be nulled out when the evaluation is saved if set to false,
+    * otherwise does nothing (assumes the field can be set but will not fail if it is not)
+    */
+   public boolean studentViewResults = false;
+   /**
+    * Non-persistent field:<br/>
+    * Set when creating the evaluation only, this will cause the {@link #instructorsDate}
+    * to be nulled out out when the evaluation is saved if set to false,
+    * otherwise does nothing (assumes the field can be set but will not fail if it is not)
+    */
+   public boolean instructorViewResults = false;
+
+   /**
+    * Non-persistent field:<br/>
+    * If this is set to false then the evaluation start date will be set to now,
+    * otherwise the currently set start date will be used<br/>
+    * <b>NOTE:</b> this should only be set when an evaluation is not yet saved,
+    * it will be ignored otherwise
+    */
+   public boolean customStartDate = false;
+   /**
+    * Non-persistent field:<br/>
+    * If this is set to false then the evaluation due date will be set null and
+    * the evaluation will be open forever,
+    * otherwise the currently set due date will be used<br/>
+    * <b>NOTE:</b> this will override any setting for {@link #useStopDate} and {@link #useViewDate}
+    */
+   public boolean useDueDate = false;
+   /**
+    * Non-persistent field:<br/>
+    * If this is set to false then the evaluation stop date will be set to whatever
+    * the due date is set to (effectively meaning there is no grace period at all),
+    * otherwise the currently set stop date will be used<br/>
+    */
+   public boolean useStopDate = false;
+   /**
+    * Non-persistent field:<br/>
+    * If this is set to false then the evaluation view date will be set to whatever
+    * the due date is set to (effectively meaning the results are immediately viewable),
+    * otherwise the currently set view date will be used<br/>
+    */
+   public boolean useViewDate = false;
+
+
    // Constructors
 
    /** default constructor */
    public EvalEvaluation() {
    }
 
-   /** minimal constructor 
+   /**
+    * minimal constructor
+    */
+   public EvalEvaluation(String type, String owner, String title, Date startDate,
+         String state, String resultsSharing, Integer reminderDays, EvalTemplate template) {
+      if (this.lastModified == null) { this.lastModified = new Date(); }
+      this.type = type;
+      this.owner = owner;
+      this.title = title;
+      this.startDate = startDate;
+      this.state = state;
+      this.resultsSharing = resultsSharing;
+      this.reminderDays = reminderDays;
+      this.template = template;
+   }
+
+   /** 
+    * general use constructor 
+    * @param resultSharing TODO
     */
    public EvalEvaluation(String type, String owner, String title, Date startDate, Date dueDate,
-         Date stopDate, Date viewDate, String state, Integer reminderDays, EvalTemplate template) {
+         Date stopDate, Date viewDate, String state, String resultsSharing, Integer reminderDays, EvalTemplate template) {
       if (this.lastModified == null) { this.lastModified = new Date(); }
       this.type = type;
       this.owner = owner;
@@ -127,17 +224,19 @@ public class EvalEvaluation implements java.io.Serializable {
       this.dueDate = dueDate;
       this.viewDate = viewDate;
       this.state = state;
+      this.resultsSharing = resultsSharing;
       this.reminderDays = reminderDays;
       this.template = template;
    }
 
    /** full constructor 
+    * @param resultsSharing TODO
     */
    public EvalEvaluation(String type, String owner, String title, String instructions, Date startDate,
          Date dueDate, Date stopDate, Date viewDate, Date studentsDate, Date instructorsDate, String state,
-         String instructorOpt, Integer reminderDays, String reminderFromEmail, String termId,
-         EvalEmailTemplate availableEmailTemplate, EvalEmailTemplate reminderEmailTemplate,
-         EvalTemplate template, EvalTemplate addedTemplate, Set<EvalResponse> responses, Boolean resultsPrivate,
+         String resultsSharing, String instructorOpt, Integer reminderDays, String reminderFromEmail,
+         String termId, EvalEmailTemplate availableEmailTemplate,
+         EvalEmailTemplate reminderEmailTemplate, EvalTemplate template, EvalTemplate addedTemplate, Set<EvalResponse> responses,
          Boolean blankResponsesAllowed, Boolean modifyResponsesAllowed, Boolean unregisteredAllowed,
          Boolean locked, String authControl, String evalCategory) {
       if (this.lastModified == null) { this.lastModified = new Date(); }
@@ -161,7 +260,7 @@ public class EvalEvaluation implements java.io.Serializable {
       this.template = template;
       this.addedTemplate = addedTemplate;
       this.responses = responses;
-      this.resultsPrivate = resultsPrivate;
+      this.resultsSharing = resultsSharing;
       this.blankResponsesAllowed = blankResponsesAllowed;
       this.modifyResponsesAllowed = modifyResponsesAllowed;
       this.unregisteredAllowed = unregisteredAllowed;
@@ -322,14 +421,6 @@ public class EvalEvaluation implements java.io.Serializable {
       this.responses = responses;
    }
 
-   public Boolean getResultsPrivate() {
-      return resultsPrivate;
-   }
-
-   public void setResultsPrivate(Boolean resultsPrivate) {
-      this.resultsPrivate = resultsPrivate;
-   }
-
    public Date getStartDate() {
       return startDate;
    }
@@ -401,15 +492,21 @@ public class EvalEvaluation implements java.io.Serializable {
    public void setViewDate(Date viewDate) {
       this.viewDate = viewDate;
    }
-
    
    public String getType() {
       return type;
    }
-
    
    public void setType(String type) {
       this.type = type;
+   }
+   
+   public String getResultsSharing() {
+      return resultsSharing;
+   }
+   
+   public void setResultsSharing(String resultsPrivacy) {
+      this.resultsSharing = resultsPrivacy;
    }
 
 }

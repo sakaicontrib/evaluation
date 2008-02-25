@@ -178,7 +178,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
       } else if (EvalConstants.JOB_TYPE_CLOSED.equals(jobType)) {
          // schedule results viewable by owner - admin notification
          scheduleJob(eval.getId(), eval.getViewDate(), EvalConstants.JOB_TYPE_VIEWABLE);
-         if (!eval.getResultsPrivate().booleanValue()) {
+         if (! EvalConstants.SHARING_PRIVATE.equals(eval.getResultsSharing()) ) {
             if (eval.getInstructorsDate() != null) {
                Date instructorViewDate = eval.getInstructorsDate();
                // schedule results viewable by instructors notification
@@ -195,17 +195,17 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 
       } else if (EvalConstants.JOB_TYPE_VIEWABLE.equals(jobType)) {
          // send results viewable notification to owner if protected, or all if not
-         sendViewableEmail(evaluationId, jobType, eval.getResultsPrivate());
+         sendViewableEmail(evaluationId, jobType, EvalConstants.SHARING_PRIVATE.equals(eval.getResultsSharing()) );
 
       } else if (EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS.equals(jobType)) {
          externalLogic.registerEntityEvent(EVENT_EVAL_VIEWABLE_INSTRUCTORS, eval);
          // send results viewable notification to owner if protected, or all if not
-         sendViewableEmail(evaluationId, jobType, eval.getResultsPrivate());
+         sendViewableEmail(evaluationId, jobType, EvalConstants.SHARING_PRIVATE.equals(eval.getResultsSharing()) );
 
       } else if (EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS.equals(jobType)) {
          externalLogic.registerEntityEvent(EVENT_EVAL_VIEWABLE_STUDENTS, eval);
          // send results viewable notification to owner if protected, or all if not
-         sendViewableEmail(evaluationId, jobType, eval.getResultsPrivate());
+         sendViewableEmail(evaluationId, jobType, EvalConstants.SHARING_PRIVATE.equals(eval.getResultsSharing()) );
       }
 
    }
