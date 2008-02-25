@@ -108,6 +108,11 @@
       <property name="reportingPermissions" ref="org.sakaiproject.evaluation.tool.reporting.ReportingPermissions" />
    </bean>
 
+	<bean id="org.sakaiproject.evaluation.tool.reporting.CurrentViewableReports" 
+		class="org.sakaiproject.evaluation.tool.reporting.CurrentViewableReports">
+		<property name="reportingPermissions" 
+			ref="org.sakaiproject.evaluation.tool.reporting.ReportingPermissions" />
+	</bean>
 
    <!-- LOCATORS - OTP bean locators here -->
    <bean id="settingsBean"

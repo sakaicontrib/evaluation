@@ -227,4 +227,17 @@
 		<property name="evaluationDao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
 		<property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
 	</bean>
+	
+	<!-- This ViewParametersInterceptor is responsible for redirecing the page
+	     if there is only group to select from. -->
+	<bean init-method="init"
+	    class="org.sakaiproject.evaluation.tool.reporting.ReportViewParamsInterceptor">
+	    <property name="viewParamsInterceptorManager" ref="viewParamsInterceptorManager" />
+	    <property name="currentViewableReports" ref="currentViewableReportsProxy" />
+	</bean>
+	
+	<bean id="currentViewableReportsProxy" parent="RSACBridgeProxy">
+    	<property name="targetBeanName" 
+    		value="org.sakaiproject.evaluation.tool.reporting.CurrentViewableReports" />
+  	</bean>
 </beans>

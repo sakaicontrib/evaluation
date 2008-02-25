@@ -48,6 +48,15 @@ public class ReportingPermissions {
       this.evaluationService = evaluationService;
    }
    
+   /*
+    * Signature variation for convenience (especially if you only have the 
+    * information from a ViewParams). See chooseGroupsPartialCheck(EvalEvaluation)
+    * for full description)
+    */
+   public String[] chooseGroupsPartialCheck(Long evalId) {
+      return chooseGroupsPartialCheck(evaluationService.getEvaluationById(evalId));
+   }
+   
    /**
     * This is a sort of partial security check based off of the full 
     * canViewEvaluationResponses method.
@@ -63,28 +72,36 @@ public class ReportingPermissions {
     * @return The array of groupIds we can choose from for viewing responses in 
     * this evaluation.  If you cannot view the responses from any groups in this
     * evaluation, this will return an empty list.
+    * If the survey is anonymous the returned array will be empty.  This means
+    * that you should not rely on this has the sole permission check, mostly 
+    * just for populating the Choose Groups page, and redirecting if the length
+    * of the returned groups is 0 or 1.
     */
    public String[] chooseGroupsPartialCheck(EvalEvaluation evaluation) {
       String currentUserId = externalLogic.getCurrentUserId();
       Set<String> groupIdsTogo = new HashSet<String>();
-      boolean canViewResponses;
+      boolean checkBasedOnRole;
       
       // TODO 1 and 2 will be replaced by ExternalLogic.checkUserPermission(String userId, String ownerId)
 
-      // 1) Is this user an admin?
-      if (externalLogic.isUserAdmin(currentUserId)) {
-         canViewResponses = true;
-      }
+      // 1) Is this user an admin or evaluation owner
       // 2) Is this user the evaluation owner?
-      else if (currentUserId.equals(evaluation.getOwner())) {
-         canViewResponses = true;
+      if (externalLogic.isUserAdmin(currentUserId) ||
+            currentUserId.equals(evaluation.getOwner())) {
+         checkBasedOnRole = false;
+         groupIdsTogo.addAll(
+               evalDao.getViewableEvalGroupIds(evaluation.getId(), 
+                     EvalConstants.PERM_BE_EVALUATED, null));
+         groupIdsTogo.addAll(
+               evalDao.getViewableEvalGroupIds(evaluation.getId(), 
+                     EvalConstants.PERM_TAKE_EVALUATION, null));
       }
       // 3
       else if (evaluation.getResultsPrivate()) {
-         canViewResponses = false;
+         checkBasedOnRole = false;
       }
       else {
-         canViewResponses = true;
+         checkBasedOnRole = true;
       }
       // 6 TODO Insfrustructure isn't available for this yet.
 
@@ -94,7 +111,7 @@ public class ReportingPermissions {
        * possibility of us having the instructor and student oriented permission
        * locks.
        */
-      if (canViewResponses) {
+      if (checkBasedOnRole) {
          Boolean instructorAllowedViewResults = 
             (Boolean) evalSettings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
          if (instructorAllowedViewResults) {
@@ -155,6 +172,10 @@ public class ReportingPermissions {
       else if (evaluation.getResultsPrivate()) {
          canViewResponses = false;
       }
+      // TODO FIXME 4 and 5 need to be combined, because it may not be mutually
+      // exclusive. For example, if you are trying to view groups A, B, C, you
+      // may be able to view A and B as an Instructor and C as a student. (But
+      // *not* C as an Instructor.
       // 4
       else if (canViewEvaluationResponsesAsInstructor(evaluation, currentUserId, groupIds)) {
          canViewResponses = true;
@@ -230,4 +251,49 @@ public class ReportingPermissions {
 
       return allowedToView;
    }
+   
+   /*
+    * In progress. sgithens
+   private boolean canViewEvaluationResponsesByRole(EvalEvaluation eval, String currentUserId, String[] groupIds) {
+      Boolean instructorAllowedViewResults = 
+         (Boolean) evalSettings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
+      Boolean studentAllowedViewResults = 
+         (Boolean) evalSettings.get(EvalSettings.STUDENT_VIEW_RESULTS);
+      
+      boolean allowedToView = false;
+      
+      Set<String> viewableAsInstructorGroupIds = 
+         evalDao.getViewableEvalGroupIds(eval.getId(), EvalConstants.PERM_BE_EVALUATED, groupIds);
+      
+      Set<String> viewableAsStudentGroupIds = 
+         evalDao.getViewableEvalGroupIds(eval.getId(), EvalConstants.PERM_TAKE_EVALUATION, groupIds);
+
+      //
+      // If both of the above are false, we don't need to do expensive permission
+      // checks.
+      //
+      if (instructorAllowedViewResults || studentAllowedViewResults) {
+         allowedToView = true;
+         for (String groupId: groupIds) {
+            boolean tempcheck = false;
+            if (instructorAllowedViewResults) {
+               if (externalLogic.isUserAllowedInEvalGroup(currentUserId, EvalConstants.PERM_BE_EVALUATED, groupId)) {
+                  tempcheck = true;
+               }
+            }
+            if (studentAllowedViewResults) {
+               if (externalLogic.isUserAllowedInEvalGroup(currentUserId, EvalConstants.PERM_TAKE_EVALUATION, groupId)) {
+                  tempcheck = true;
+               }
+            }
+            if (!tempcheck) {
+               allowedToView = false;
+               break;
+            }
+         }
+      }
+      
+      return allowedToView;
+   }
+   */
 }

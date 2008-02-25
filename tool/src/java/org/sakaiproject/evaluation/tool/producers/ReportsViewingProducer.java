@@ -171,8 +171,15 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
       if (evaluationId != null) {
 
          // bread crumbs
-         UIInternalLink.make(tofill, "report-groups-title", UIMessage.make("reportgroups.page.title"), 
+         /*
+          * We only need to show the choose groups breadcrumb if it's actually 
+          * possible for us to view more than one group.
+          */
+         String[] viewableGroups = reportingPermissions.chooseGroupsPartialCheck(evaluationId);
+         if (viewableGroups.length > 1) {
+            UIInternalLink.make(tofill, "report-groups-title", UIMessage.make("reportgroups.page.title"), 
                new ReportParameters(ReportChooseGroupsProducer.VIEW_ID, reportViewParams.evaluationId));
+         }
 
          EvalEvaluation evaluation = evaluationService.getEvaluationById(reportViewParams.evaluationId);
 
