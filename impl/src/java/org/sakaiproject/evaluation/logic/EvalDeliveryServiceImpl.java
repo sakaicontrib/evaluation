@@ -17,7 +17,6 @@ package org.sakaiproject.evaluation.logic;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -25,10 +24,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
-import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.EvalEvaluationService;
-import org.sakaiproject.evaluation.logic.EvalDeliveryService;
-import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -415,9 +410,10 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
       }
 
       // check the answers
-      Set<Long> answeredTemplateItemIds = new HashSet<Long>();
-      for (Iterator<EvalAnswer> iter = response.getAnswers().iterator(); iter.hasNext();) {
-         EvalAnswer answer = (EvalAnswer) iter.next();
+      Set<String> answeredAnswerKeys = new HashSet<String>();
+      for (EvalAnswer answer : response.getAnswers()) {
+
+         // check the answer for correctness
          if (answer.getNumeric() == null && answer.getText() == null && 
                (answer.getMultiAnswerCode() == null || answer.getMultiAnswerCode().length() == 0) ) {
             throw new IllegalArgumentException("Cannot save blank answers: answer for templateItem: "
@@ -475,26 +471,54 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
 
          // TODO - check if numerical answers are valid?
 
-         // add to the answered items set
-         answeredTemplateItemIds.add(answer.getTemplateItem().getId());
+         // add the unique answer key (TIId + assocType + assocId) for this answer to the answered keys set
+         answeredAnswerKeys.add( answer.getTemplateItem().getId().toString() + answer.getAssociatedType() + answer.getAssociatedId() );
       }
 
       // check if required answers are filled in
-      Boolean unansweredAllowed = (Boolean)settings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED);
+      Boolean unansweredAllowed = (Boolean) settings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED);
       if (unansweredAllowed == null) {
          unansweredAllowed = eval.getBlankResponsesAllowed();
       }
-      if (unansweredAllowed.booleanValue() == false) {
+      if (unansweredAllowed == null) {
+         unansweredAllowed = true; // default to skipping the check
+      }
+
+      if (! unansweredAllowed) {
          // all items must be completed so die if they are not
+         Set<String> requiredAnswerKeys = new HashSet<String>();
+
+         // get the instructors for this evaluation/group
+         Set<String> instructors = external.getUserIdsForEvalGroup(response.getEvalGroupId(), EvalConstants.PERM_BE_EVALUATED);
+         // filter out the block child items, to get a list non-child items
          List<EvalTemplateItem> requiredTemplateItems = TemplateItemUtils.getRequiredTemplateItems(templateItems);
-         int missingRequired = 0;
-         for (EvalTemplateItem templateItem : requiredTemplateItems) {
-            if (! answeredTemplateItemIds.contains(templateItem.getId())) {
-               missingRequired++;
+
+         // check the course items answers
+         if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_COURSE, requiredTemplateItems)) {
+            List<EvalTemplateItem> requiredCourseTIs = 
+               TemplateItemUtils.getCategoryTemplateItems(EvalConstants.ITEM_CATEGORY_COURSE, requiredTemplateItems);
+            for (EvalTemplateItem templateItem : requiredCourseTIs) {
+               requiredAnswerKeys.add( templateItem.getId().toString() + null + null );
             }
          }
-         if (missingRequired > 0) {
-            throw new IllegalStateException("Missing " + missingRequired + " required items for this evaluation response: " + response.getId());
+
+         // check the instructors items answers
+         if (instructors.size() > 0 &&
+               TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, requiredTemplateItems)) {  
+            // for each instructor, make a branch containing all instructor questions
+            for (String instructorUserId : instructors) {
+               List<EvalTemplateItem> requiredInstructorTIs = 
+                  TemplateItemUtils.getCategoryTemplateItems(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, requiredTemplateItems);
+               for (EvalTemplateItem templateItem : requiredInstructorTIs) {
+                  requiredAnswerKeys.add( templateItem.getId().toString() + EvalConstants.ITEM_CATEGORY_INSTRUCTOR + instructorUserId );
+               }
+            }
+         }
+
+         // remove all the answered keys from the required keys and if everything was answered then there will be nothing left in the required keys set
+         requiredAnswerKeys.removeAll(answeredAnswerKeys);
+         if (requiredAnswerKeys.size() > 0) {
+            throw new IllegalStateException("Missing " + requiredAnswerKeys.size() + " required items for this evaluation response: " + response.getId());
          }
       }
 
