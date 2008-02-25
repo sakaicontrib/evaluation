@@ -128,8 +128,16 @@ public class ReportsViewEssaysProducer implements ViewComponentProducer, Navigat
       UIMessage.make(tofill, "view-essay-title", "viewessay.page.title");
 
       EssayResponseParams ervps = (EssayResponseParams) viewparams;
-      UIInternalLink.make(tofill, "report-groups-title", UIMessage.make("reportgroups.page.title"),
+      
+      /*
+       * We only need to show the choose groups breadcrumb if it's actually 
+       * possible for us to view more than one group.
+       */
+      String[] viewableGroups = reportingPermissions.chooseGroupsPartialCheck(ervps.evalId);
+      if (viewableGroups.length > 1) {
+         UIInternalLink.make(tofill, "report-groups-title", UIMessage.make("reportgroups.page.title"),
             new ReportParameters(ReportChooseGroupsProducer.VIEW_ID, ervps.evalId));
+      }
 
       UIInternalLink.make(tofill, "viewReportLink", UIMessage.make("viewreport.page.title"),
             new ReportParameters(ReportsViewingProducer.VIEW_ID, ervps.evalId, ervps.groupIds));
