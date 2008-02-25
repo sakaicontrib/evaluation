@@ -99,6 +99,7 @@ impl/src/test/hibernate-test.xml -text
 impl/src/test/hibernate.cfg.xml -text
 impl/src/test/hibernate.properties -text
 impl/src/test/log4j.properties -text
+impl/src/test/org/sakaiproject/evaluation/beans/EvalBeanUtilsTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/test/org/sakaiproject/evaluation/dao/EvaluationDaoImplTest.java -text
 impl/src/test/org/sakaiproject/evaluation/logic/BaseTestEvalLogic.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/test/org/sakaiproject/evaluation/logic/EvalAuthoringServiceImplTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
