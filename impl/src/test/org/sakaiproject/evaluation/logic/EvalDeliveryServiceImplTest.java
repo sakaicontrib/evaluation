@@ -43,6 +43,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
    protected EvalDeliveryServiceImpl responses;
 
    private EvalEvaluation evaluationClosedTwo;
+   private EvalEvaluation evaluationActiveTwo;
 
    // run this before each test starts
    protected void onSetUpBeforeTransaction() throws Exception {
@@ -94,10 +95,20 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
             etdl.yesterday, etdl.tomorrow, null, null,
             EvalConstants.EVALUATION_STATE_CLOSED, EvalConstants.SHARING_VISIBLE, 
             EvalConstants.INSTRUCTOR_OPT_IN, Integer.valueOf(2), null, null, null, null, etdl.templateAdmin, null,
-            null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, 
-            EvalTestDataLoad.LOCKED,
+            null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, EvalTestDataLoad.LOCKED,
             EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null);
       evaluationDao.save(evaluationClosedTwo);
+
+      // Evaluation Active (ends today), viewable tomorrow
+      evaluationActiveTwo = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, 
+            EvalTestDataLoad.MAINT_USER_ID, "Eval active two", null, 
+            etdl.yesterday, etdl.today, etdl.today, etdl.tomorrow, null, null,
+            EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.SHARING_VISIBLE, 
+            EvalConstants.INSTRUCTOR_OPT_IN, new Integer(0), null, null, null, null, etdl.templateUnused, null,
+            null, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE,
+            EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null);
+      evaluationDao.save(evaluationActiveTwo);
+      
    }
 
 
@@ -512,6 +523,11 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       responseNone.getAnswers().add( answer2_1 );
       responses.saveResponse( responseNone, EvalTestDataLoad.STUDENT_USER_ID);
       Assert.assertNotNull(answer2_1.getId());
+
+      // TODO - test saving a response when answers are required
+
+      // TODO - test saving a response without all required fields
+
 
       // TODO - cannot do this test until hibernate issue resolved
 //    // test that changing anything else on the existing response fails

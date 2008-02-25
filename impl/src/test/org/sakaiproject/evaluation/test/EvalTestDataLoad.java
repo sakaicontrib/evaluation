@@ -207,6 +207,7 @@ public class EvalTestDataLoad {
    // TEMPLATE ITEMS
    public EvalTemplateItem templateItem1User;
    public EvalTemplateItem templateItem1P;
+   public EvalTemplateItem templateItem1U;
    public EvalTemplateItem templateItem2A;
    public EvalTemplateItem templateItem3A;
    public EvalTemplateItem templateItem3U;
@@ -638,6 +639,10 @@ public class EvalTestDataLoad {
             templatePublic, item1, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
             EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
             null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, null, null, null);
+      templateItem1U = new EvalTemplateItem( new Date(), MAINT_USER_ID, 
+            templateUnused, item1, new Integer(1), EvalConstants.ITEM_CATEGORY_INSTRUCTOR,
+            EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
+            null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, null, null, null);
       templateItem2A = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
             templateAdmin, item2, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
             EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
@@ -647,7 +652,7 @@ public class EvalTestDataLoad {
             EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
             null, EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL, Boolean.FALSE, null, null, null);
       templateItem3U = new EvalTemplateItem( new Date(), MAINT_USER_ID, 
-            templateUnused, item3, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
+            templateUnused, item3, new Integer(2), EvalConstants.ITEM_CATEGORY_COURSE,
             EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
             null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, null, null, null);
       templateItem3PU = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
@@ -663,7 +668,7 @@ public class EvalTestDataLoad {
             EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
             new Integer(2), null, Boolean.FALSE, null, null, null);
       templateItem5U = new EvalTemplateItem( new Date(), MAINT_USER_ID, 
-            templateUnused, item5, new Integer(2), EvalConstants.ITEM_CATEGORY_INSTRUCTOR,
+            templateUnused, item5, new Integer(3), EvalConstants.ITEM_CATEGORY_INSTRUCTOR,
             EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
             new Integer(3), null, Boolean.FALSE, null, null, null);
       templateItem6UU = new EvalTemplateItem( new Date(), USER_ID, 
@@ -1029,6 +1034,7 @@ public class EvalTestDataLoad {
 
       dao.save(templateItem1User);
       dao.save(templateItem1P);
+      dao.save(templateItem1U);
       dao.save(templateItem2A);
       dao.save(templateItem3A);
       dao.save(templateItem3PU);

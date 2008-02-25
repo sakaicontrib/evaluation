@@ -90,7 +90,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       assertEquals(46, evaluationDao.countAll(EvalItem.class) );
 
       // check the full count of preloaded items
-      assertEquals(19, evaluationDao.countAll(EvalTemplateItem.class) );
+      assertEquals(20, evaluationDao.countAll(EvalTemplateItem.class) );
 
       EvalTemplate template = (EvalTemplate) 
       evaluationDao.findById(EvalTemplate.class, etdl.templateAdmin.getId());
@@ -123,9 +123,10 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       EvalItem item = (EvalItem) evaluationDao.findById(EvalItem.class, etdl.item1.getId());
       Set<EvalTemplateItem> itItems = item.getTemplateItems();
       assertNotNull( itItems );
-      assertEquals(2, itItems.size());
+      assertEquals(3, itItems.size());
       ids = EvalTestDataLoad.makeIdList(itItems);
       assertTrue(ids.contains( etdl.templateItem1P.getId() ));
+      assertTrue(ids.contains( etdl.templateItem1U.getId() ));
       assertTrue(ids.contains( etdl.templateItem1User.getId() ));
 
    }
@@ -1071,8 +1072,9 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       l = authoringService.getItemsForTemplate( etdl.templateUnused.getId(), 
             EvalTestDataLoad.ADMIN_USER_ID );
       assertNotNull( l );
-      assertEquals(2, l.size());
+      assertEquals(3, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
+      assertTrue(ids.contains( etdl.item1.getId() ));
       assertTrue(ids.contains( etdl.item3.getId() ));
       assertTrue(ids.contains( etdl.item5.getId() ));
 
@@ -1080,8 +1082,9 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       l = authoringService.getItemsForTemplate( etdl.templateUnused.getId(), 
             EvalTestDataLoad.MAINT_USER_ID );
       assertNotNull( l );
-      assertEquals(2, l.size());
+      assertEquals(3, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
+      assertTrue(ids.contains( etdl.item1.getId() ));
       assertTrue(ids.contains( etdl.item3.getId() ));
       assertTrue(ids.contains( etdl.item5.getId() ));
 
@@ -1523,20 +1526,23 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
 
       l = authoringService.getTemplateItemsForTemplate( etdl.templateUnused.getId(), null, null, null );
       assertNotNull( l );
-      assertEquals(2, l.size());
+      assertEquals(3, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
+      assertTrue(ids.contains( etdl.templateItem1U.getId() ));
       assertTrue(ids.contains( etdl.templateItem3U.getId() ));
       assertTrue(ids.contains( etdl.templateItem5U.getId() ));
 
       // check that the return order is correct
       assertEquals( 1, ((EvalTemplateItem)l.get(0)).getDisplayOrder().intValue() );
       assertEquals( 2, ((EvalTemplateItem)l.get(1)).getDisplayOrder().intValue() );
+      assertEquals( 3, ((EvalTemplateItem)l.get(2)).getDisplayOrder().intValue() );
 
       // owner should see all items
       l = authoringService.getTemplateItemsForTemplate( etdl.templateUnused.getId(), null, null, null );
       assertNotNull( l );
-      assertEquals(2, l.size());
+      assertEquals(3, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
+      assertTrue(ids.contains( etdl.templateItem1U.getId() ));
       assertTrue(ids.contains( etdl.templateItem3U.getId() ));
       assertTrue(ids.contains( etdl.templateItem5U.getId() ));
 

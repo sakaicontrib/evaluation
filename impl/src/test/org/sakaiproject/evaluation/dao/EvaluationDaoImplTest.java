@@ -557,13 +557,13 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       assertEquals( itemsSize5-1, eti5.getItem().getTemplateItems().size() );
       assertTrue(! eti5.getItem().getTemplateItems().contains( eti5 ) );
 
-      // should be no items left in this template now
+      // should be only one items left in this template now
       assertNotNull( eti3.getTemplate().getTemplateItems() );
-      assertTrue( eti3.getTemplate().getTemplateItems().isEmpty() );
+      assertEquals(1, eti3.getTemplate().getTemplateItems().size() );
       EvalTemplate template = (EvalTemplate) evaluationDao.findById(EvalTemplate.class, eti3.getTemplate().getId());
       assertNotNull( template );
       assertNotNull( template.getTemplateItems() );
-      assertTrue( template.getTemplateItems().isEmpty() );
+      assertEquals(1, template.getTemplateItems().size() );
 
    }
 
