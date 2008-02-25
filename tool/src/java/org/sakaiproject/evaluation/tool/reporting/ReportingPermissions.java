@@ -1,8 +1,11 @@
 package org.sakaiproject.evaluation.tool.reporting;
 
+import java.util.Date;
 import java.util.Set;
 import java.util.HashSet;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
@@ -16,17 +19,27 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
  * 
  * The rules are:
  * 1) Is this user an admin
+ * 1.5) DateRule-A
  * 2) Is this user the evaluation owner
  * 3) Is evaluation.resultsPrivate true? Then no one below can view the results.
  * 4) Do the system settings allow instructors to view the evaluation?
- * 4b) Is this user an instructor in a group assigned to this evaluation
+ * 4b) DateRule-B
+ * 4c) Is this user an instructor in a group assigned to this evaluation
  * 5) Do the system settings allow students to view the evaluation?
- * 5b) Is this user a student who is allowed to view results
+ * 5b) DateRule-C
+ * 5c) Is this user a student who is allowed to view results
  * 6) Is this user a hierarchical admin
  * 
+ * There are also date rules:
+ * DateRule-A) We have to be past the eval.viewDate (this is liable to change in the future)
+ * DateRule-B) If the eval.studentsDate is null students cannot view, otherwise it
+ *             must be past the current date.
+ * DateRule-C) If the eval.instructorsDate is null instructors cannot view, 
+ *             otherwise it must be past the current date
  * @author Steven Githens
  */
 public class ReportingPermissions {
+   private static Log log = LogFactory.getLog(ReportingPermissions.class);
 
    private EvalExternalLogic externalLogic;
    public void setExternalLogic(EvalExternalLogic externalLogic) {
@@ -86,7 +99,10 @@ public class ReportingPermissions {
 
       // 1) Is this user an admin or evaluation owner
       // 2) Is this user the evaluation owner?
-      if (externalLogic.isUserAdmin(currentUserId) ||
+      if (evaluation.getViewDate().after(new Date())) {
+         checkBasedOnRole = false;
+      }
+      else if (externalLogic.isUserAdmin(currentUserId) ||
             currentUserId.equals(evaluation.getOwner())) {
          checkBasedOnRole = false;
          groupIdsTogo.addAll(
@@ -114,7 +130,8 @@ public class ReportingPermissions {
       if (checkBasedOnRole) {
          Boolean instructorAllowedViewResults = 
             (Boolean) evalSettings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
-         if (instructorAllowedViewResults) {
+         if (instructorAllowedViewResults && evaluation.getInstructorsDate() != null 
+               && evaluation.getInstructorsDate().before(new Date())) {
             Set<String> tempGroupIds = 
                   evalDao.getViewableEvalGroupIds(evaluation.getId(), EvalConstants.PERM_BE_EVALUATED, null);
             for (String tempGroupId: tempGroupIds) {
@@ -126,7 +143,8 @@ public class ReportingPermissions {
 
          Boolean studentAllowedViewResults = 
             (Boolean) evalSettings.get(EvalSettings.STUDENT_VIEW_RESULTS);
-         if (studentAllowedViewResults) {
+         if (studentAllowedViewResults && evaluation.getStudentsDate() != null
+               && evaluation.getStudentsDate().before(new Date())) {
             Set<String> tempGroupIds =
                   evalDao.getViewableEvalGroupIds(evaluation.getId(), EvalConstants.PERM_TAKE_EVALUATION, null);
             for (String tempGroupId: tempGroupIds) {
@@ -144,11 +162,6 @@ public class ReportingPermissions {
     * Decide whether the current user can view the responses for an evaluation
     * and set of groups that participated in it.
     * 
-    * TODO FIXME I think 4 and 5 may need to be combined. It seems possible that
-    * you could have Instructor viewing permissions in one of the groups, and 
-    * Student viewing permissions in another, so the Set of Group IDs from both
-    * need to be combined to be checked.
-    * 
     * @param evaluation The EvalEvaluation object we are looking at responses for.
     * @param groupIds The String array of Group IDs we want to view results for.
     * This usually look like "/site/mysite".
@@ -163,6 +176,10 @@ public class ReportingPermissions {
       // 1) Is this user an admin?
       if (externalLogic.isUserAdmin(currentUserId)) {
          canViewResponses = true;
+      }
+      // 1.5) Are we past the view date?
+      else if (evaluation.getViewDate().after(new Date())) {
+         canViewResponses = false;
       }
       // 2) Is this user the evaluation owner?
       else if (currentUserId.equals(evaluation.getOwner())) {
@@ -197,8 +214,11 @@ public class ReportingPermissions {
    /**
     * This does the following steps from above.
     * 5) Do the system settings allow students to view the evaluation?
-    * 5b) Is this user a student who is allowed to view results
+    * 5b) DateRule-C
+    * 5c) Is this user a student who is allowed to view results
     * 
+    * DateRule-C) If the eval.instructorsDate is null instructors cannot view, 
+    *             otherwise it must be past the current date
     * @param eval
     * @param currentUserId
     * @param groupIds
@@ -208,7 +228,10 @@ public class ReportingPermissions {
       Boolean studentAllowedViewResults = 
          (Boolean) evalSettings.get(EvalSettings.STUDENT_VIEW_RESULTS);
       boolean allowedToView = false;
-      if (studentAllowedViewResults) {
+      if (eval.getStudentsDate() == null || eval.getStudentsDate().after(new Date())) {
+         allowedToView = false;
+      }
+      else if (studentAllowedViewResults) {
          Set<String> viewableIds = evalDao.getViewableEvalGroupIds(eval.getId(), EvalConstants.PERM_TAKE_EVALUATION, groupIds);
          if (viewableIds.size() == groupIds.length) {
             allowedToView = true;
@@ -219,6 +242,9 @@ public class ReportingPermissions {
             }
          }
       }
+      else {
+         allowedToView = false;
+      }
       
       return allowedToView;
    }
@@ -226,8 +252,11 @@ public class ReportingPermissions {
    /**
     * This completes the following checks from above:
     * 4) Do the system settings allow instructors to view the evaluation?
-    * 4b) Is this user an instructor in a group assigned to this evaluation
+    * 4b) DateRule-B
+    * 4c) Is this user an instructor in a group assigned to this evaluation
     * 
+    * DateRule-B) If the eval.studentsDate is null students cannot view, otherwise it
+    *             must be past the current date.
     * @param eval
     * @param currentUserId
     * @param groupIds
@@ -237,7 +266,10 @@ public class ReportingPermissions {
       Boolean instructorAllowedViewResults = 
          (Boolean) evalSettings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
       boolean allowedToView = false;
-      if (instructorAllowedViewResults) {
+      if (eval.getInstructorsDate() == null || eval.getInstructorsDate().after(new Date())) {
+         allowedToView = false;
+      }
+      else if (instructorAllowedViewResults) {
          Set<String> viewableIds = evalDao.getViewableEvalGroupIds(eval.getId(), EvalConstants.PERM_BE_EVALUATED, groupIds);
          if (viewableIds.size() == groupIds.length) {
             allowedToView = true;
@@ -247,6 +279,9 @@ public class ReportingPermissions {
                allowedToView = false;
             }
          }
+      }
+      else {
+         allowedToView = false;
       }
 
       return allowedToView;
