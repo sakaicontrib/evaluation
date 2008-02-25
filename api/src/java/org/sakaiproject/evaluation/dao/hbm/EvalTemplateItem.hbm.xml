@@ -70,5 +70,8 @@
         <property name="resultsSharing" type="java.lang.String">
             <column name="RESULTS_SHARING" length="255" />
         </property>
+        <property name="copyOf" type="java.lang.Long">
+            <column name="COPY_OF" />
+        </property>
     </class>
 </hibernate-mapping>
