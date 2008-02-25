@@ -196,42 +196,50 @@ public class EvaluationBean {
          log.info("Setting view date to default of: " + viewDate);
       }
 
-      studentsDate = calendar.getTime();
-      instructorsDate = calendar.getTime();
+      studentsDate = viewDate;
+      instructorsDate = viewDate;
 
-      //results viewable settings
+      // results viewable settings
       eval.setResultsPrivate(Boolean.FALSE);
-      studentViewResults = Boolean.FALSE;
-      instructorViewResults = Boolean.TRUE;
 
-      //student completion settings
-      eval.setBlankResponsesAllowed(Boolean.TRUE);
-      eval.setModifyResponsesAllowed(Boolean.FALSE);
+      Boolean studentsView = (Boolean) settings.get(EvalSettings.STUDENT_VIEW_RESULTS);
+      if (studentsView == null) { studentsView = false; }
+      instructorViewResults = studentsView;
+
+      Boolean instructorsView = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
+      if (instructorsView == null) { instructorsView = false; }
+      studentViewResults = instructorsView;
+
+      // student completion settings
+      Boolean blankAllowed = (Boolean) settings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED);
+      if (blankAllowed == null) { blankAllowed = false; }
+      eval.setBlankResponsesAllowed(blankAllowed);
+
+      Boolean modifyAllowed = (Boolean) settings.get(EvalSettings.STUDENT_MODIFY_RESPONSES);
+      if (modifyAllowed == null) { modifyAllowed = false; }
+      eval.setModifyResponsesAllowed(modifyAllowed);
+
       eval.setUnregisteredAllowed(Boolean.FALSE);
 
-      //admin settings
-      eval.setInstructorOpt(null);
+      // admin settings
+      String instOpt = (String) settings.get(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE);
+      if (instOpt == null) { instOpt = EvalConstants.INSTRUCTOR_REQUIRED; }
+      eval.setInstructorOpt(instOpt);
 
-      //email settings
+      // email settings
       emailAvailableTxt = evaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE).getMessage();// available template
       eval.setReminderDays(new Integer(EvalToolConstants.REMINDER_EMAIL_DAYS_VALUES[1]));
       emailReminderTxt =  evaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_REMINDER).getMessage();//reminder email
       String s = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
       eval.setReminderFromEmail(s);
 
-      //find the template associated with this evaluation
-      listOfTemplates = authoringService.getTemplatesForUser(external.getCurrentUserId(), null, false);
-      int count = 0;
-      if (listOfTemplates != null) {
-         while (count < listOfTemplates.size()) {
-            EvalTemplate temp = (EvalTemplate)listOfTemplates.get(count);
-            if (temp.getId().longValue()== this.templateId.longValue()){
-               eval.setTemplate(temp);
-               break;
-            }
-            count++;
-         }
-      } 
+      // set the template
+      EvalTemplate template = (EvalTemplate) authoringService.getTemplateById(this.templateId);
+      // this is OK to be null here since it will be when the eval is first created
+      eval.setTemplate(template);
+
+      // set the type to the default
+      eval.setType(EvalConstants.EVALUATION_TYPE_EVALUATION);
 
       //returning the view id	
       return EvaluationSettingsProducer.VIEW_ID;
@@ -288,6 +296,7 @@ public class EvaluationBean {
          evalInDB.setModifyResponsesAllowed(eval.getModifyResponsesAllowed());
          evalInDB.setUnregisteredAllowed(eval.getUnregisteredAllowed());
          evalInDB.setAuthControl(eval.getAuthControl());
+         evalInDB.setType(eval.getType());
       }
       if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(evalState) ||
             EvalConstants.EVALUATION_STATE_ACTIVE.equals(evalState) ) {
@@ -524,13 +533,6 @@ public class EvaluationBean {
     * @return view id telling RSF where to send the control
     */
    public String doneAssignmentAction() {	
-      
-      // TODO FIXME Temporary fix for EVALSYS-424 so I can keep testing. sgithens
-      if (eval.getType() == null)
-         eval.setType(EvalConstants.EVALUATION_TYPE_EVALUATION);
-      
-      eval.setState(EvalConstants.EVALUATION_STATE_ACTIVE);
-      // END EVALSYS-424 Temp Fixes
 
       // make sure that the submitted nodes are valid
       Set<EvalHierarchyNode> nodes = null;

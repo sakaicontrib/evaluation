@@ -60,8 +60,7 @@ public class EvalUtils {
       String state = EvalConstants.EVALUATION_STATE_UNKNOWN;
       try {
          // handle the 2 special case states first
-         if (eval.getState() == null ||
-               EvalConstants.EVALUATION_STATE_PARTIAL.equals(eval.getState())) {
+         if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(eval.getState())) {
             state = EvalConstants.EVALUATION_STATE_PARTIAL;
          } else if (EvalConstants.EVALUATION_STATE_DELETED.equals(eval.getState())) {
             state = EvalConstants.EVALUATION_STATE_DELETED;

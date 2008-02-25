@@ -50,5 +50,8 @@
         <property name="locked" type="java.lang.Boolean">
             <column name="LOCKED" />
         </property>
+        <property name="copyOf" type="java.lang.Long">
+            <column name="COPY_OF" />
+        </property>
     </class>
 </hibernate-mapping>

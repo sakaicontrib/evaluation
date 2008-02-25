@@ -221,6 +221,11 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          // All other checks have been moved to the tool (bad I know)
       }
 
+      // make sure the evaluation type required field is set
+      if (evaluation.getType() == null) {
+         evaluation.setType(EvalConstants.EVALUATION_TYPE_EVALUATION);
+      }
+
       // make sure we are not using a blank template here
       if (evaluation.getTemplate() == null ||
             evaluation.getTemplate().getTemplateItems() == null ||

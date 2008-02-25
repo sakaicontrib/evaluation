@@ -68,8 +68,6 @@ api/src/java/org/sakaiproject/evaluation/utils/ComparatorsUtils.java -text
 api/src/java/org/sakaiproject/evaluation/utils/EvalUtils.java -text
 api/src/java/org/sakaiproject/evaluation/utils/SettingsLogicUtils.java -text
 api/src/java/org/sakaiproject/evaluation/utils/TemplateItemUtils.java -text
-api/src/test/org/sakaiproject/evaluation/utils/ArrayUtilsTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
-api/src/test/org/sakaiproject/evaluation/utils/EvalUtilsTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/project.xml -text
 impl/src/java/org/sakaiproject/evaluation/dao/EvalDataPreloaderImpl.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/java/org/sakaiproject/evaluation/dao/EvaluationDaoImpl.java -text
@@ -112,11 +110,13 @@ impl/src/test/org/sakaiproject/evaluation/logic/EvalExternalLogicStubTest.java -
 impl/src/test/org/sakaiproject/evaluation/logic/EvalJobLogicImplTest.java -text
 impl/src/test/org/sakaiproject/evaluation/logic/EvalSettingsImplTest.java -text
 impl/src/test/org/sakaiproject/evaluation/logic/ExternalHierarchyLogicImplTest.java -text
-impl/src/test/org/sakaiproject/evaluation/logic/TextTemplateLogicUtilsTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/test/org/sakaiproject/evaluation/test/EvalTestDataLoad.java -text
 impl/src/test/org/sakaiproject/evaluation/test/PreloadTestDataImpl.java -text
 impl/src/test/org/sakaiproject/evaluation/test/mocks/MockEvalExternalLogic.java -text
 impl/src/test/org/sakaiproject/evaluation/test/mocks/MockEvalJobLogic.java svn_keywords=Date+Revision+Author+HeadURL+Id
+impl/src/test/org/sakaiproject/evaluation/utils/ArrayUtilsTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
+impl/src/test/org/sakaiproject/evaluation/utils/EvalUtilsTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
+impl/src/test/org/sakaiproject/evaluation/utils/TextTemplateLogicUtilsTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
 pack/project.xml -text
 pack/src/webapp/WEB-INF/components.xml -text
 pack/src/webapp/WEB-INF/entity-providers.xml -text
