@@ -410,8 +410,8 @@ public class EvalUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.EvalUtils#encodeAnswerNA(org.sakaiproject.evaluation.model.EvalAnswer)}.
     */
    public void testEncodeAnswerNA() {
-      EvalAnswer applicableAnswer = new EvalAnswer(null, null, null, null, "text", new Integer(3), null, null);
-      EvalAnswer naAnswer = new EvalAnswer(null, null, null, null, "text", EvalConstants.NA_VALUE, null, null);
+      EvalAnswer applicableAnswer = new EvalAnswer(null, null, null, null, null, "text", new Integer(3), null);
+      EvalAnswer naAnswer = new EvalAnswer(null, null, null, null, null, "text", EvalConstants.NA_VALUE, null);
       naAnswer.setMultiAnswerCode("multiCode");
 
       applicableAnswer.NA = false;
@@ -440,8 +440,8 @@ public class EvalUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.EvalUtils#decodeAnswerNA(org.sakaiproject.evaluation.model.EvalAnswer)}.
     */
    public void testDecodeAnswerNA() {
-      EvalAnswer applicableAnswer = new EvalAnswer(null, null, null, null, "text", new Integer(3), null, null);
-      EvalAnswer naAnswer = new EvalAnswer(null, null, null, null, "text", EvalConstants.NA_VALUE, null, null);
+      EvalAnswer applicableAnswer = new EvalAnswer(null, null, null, null, null, "text", new Integer(3), null);
+      EvalAnswer naAnswer = new EvalAnswer(null, null, null, null, null, "text", EvalConstants.NA_VALUE, null);
       naAnswer.setMultiAnswerCode("multiCode");
 
       assertFalse( EvalUtils.decodeAnswerNA(applicableAnswer) );
