@@ -231,14 +231,16 @@
 	
 	<!-- This ViewParametersInterceptor is responsible for redirecing the page
 	     if there is only group to select from. -->
-	<bean init-method="init"
-	    class="org.sakaiproject.evaluation.tool.reporting.ReportViewParamsInterceptor">
-	    <property name="viewParamsInterceptorManager" ref="viewParamsInterceptorManager" />
-	    <property name="currentViewableReports" ref="currentViewableReportsProxy" />
+	<bean parent="viewParamsInterceptorParent">
+		<property name="value">
+			<bean class="org.sakaiproject.evaluation.tool.reporting.ReportViewParamsInterceptor">
+				<property name="currentViewableReports">
+					<bean id="currentViewableReportsProxy" parent="RSACBridgeProxy">
+						<property name="targetBeanName" 
+							value="org.sakaiproject.evaluation.tool.reporting.CurrentViewableReports" />
+					</bean>
+				</property>
+			</bean>
+		</property>
 	</bean>
-	
-	<bean id="currentViewableReportsProxy" parent="RSACBridgeProxy">
-    	<property name="targetBeanName" 
-    		value="org.sakaiproject.evaluation.tool.reporting.CurrentViewableReports" />
-  	</bean>
 </beans>
