@@ -162,6 +162,11 @@ public class EvalResponseAggregatorUtil {
       if (item1.getScale() != null) {
          log.info("Scales are: " + item1.getScale().getOptions());
       }
+      // Trying to figure out why my logs aren't showing up in qa.
+      System.out.println("SWG: Adding Response to List: " + tempItem1.getDisplayOrder() + ", " + item1.getItemText());
+      if (item1.getScale() != null) {
+         System.out.println("SWG: Scales are: " + item1.getScale().getOptions());
+      }
       /* 
        * Fix for EVALSYS-123 i.e. export CSV functionality 
        * fails when answer for a question left unanswered by 
@@ -215,6 +220,7 @@ public class EvalResponseAggregatorUtil {
                EvalConstants.ITEM_TYPE_SCALED.equals(TemplateItemUtils.getTemplateItemType(tempItem1))) {
             String labels[] = item1.getScale().getOptions();
             log.info("Current Answer: " + currAnswer.getNumeric());
+            System.out.println("SWG: Current Answer: " + currAnswer.getNumeric());
             currRow.add(labels[currAnswer.getNumeric().intValue()]);
          }
          else {
