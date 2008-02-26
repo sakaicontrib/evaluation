@@ -222,10 +222,11 @@
 
 	<bean id="org.sakaiproject.evaluation.tool.reporting.ReportingPermissions"
 		class="org.sakaiproject.evaluation.tool.reporting.ReportingPermissions">
+        <property name="evaluationDao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
 		<property name="externalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
 		<property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings"/>
-		<property name="evaluationDao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
 		<property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+        <property name="evalBeanUtils" ref="org.sakaiproject.evaluation.beans.EvalBeanUtils" />        
 	</bean>
 	
 	<!-- This ViewParametersInterceptor is responsible for redirecing the page
