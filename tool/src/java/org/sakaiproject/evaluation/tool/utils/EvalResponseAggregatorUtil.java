@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
@@ -15,9 +17,6 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.utils.ComparatorsUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
-
-import uk.org.ponder.rsf.components.UIBranchContainer;
-import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 /*
@@ -31,6 +30,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * @author Steven Githens (swgithen@mtu.edu)
  */
 public class EvalResponseAggregatorUtil {
+   private static Log log = LogFactory.getLog(EvalResponseAggregatorUtil.class);
    
    private EvalEvaluationService evaluationService;
    public void setEvaluationService(EvalEvaluationService evaluationService) {
@@ -157,6 +157,11 @@ public class EvalResponseAggregatorUtil {
    private void updateResponseList(int numOfResponses, List<Long> responseIds, List<List<String>> responseRows, List<EvalAnswer> itemAnswers,
          EvalTemplateItem tempItem1, EvalItem item1) {
 
+      // Temp logging for CTL-592, will remove when its fixed
+      log.info("Adding Response to List: " + tempItem1.getDisplayOrder() + ", " + item1.getItemText());
+      if (item1.getScale() != null) {
+         log.info("Scales are: " + item1.getScale().getOptions());
+      }
       /* 
        * Fix for EVALSYS-123 i.e. export CSV functionality 
        * fails when answer for a question left unanswered by 
@@ -175,6 +180,8 @@ public class EvalResponseAggregatorUtil {
 
          EvalAnswer currAnswer = (EvalAnswer) itemAnswers.get(j);
          actualIndexOfResponse = responseIds.indexOf(currAnswer.getResponse().getId());
+
+         
 
          // Fill empty answers if the answer corresponding to a response is not in itemAnswers list. 
          if (actualIndexOfResponse > idealIndexOfResponse) {
@@ -207,6 +214,7 @@ public class EvalResponseAggregatorUtil {
          else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(TemplateItemUtils.getTemplateItemType(tempItem1)) ||
                EvalConstants.ITEM_TYPE_SCALED.equals(TemplateItemUtils.getTemplateItemType(tempItem1))) {
             String labels[] = item1.getScale().getOptions();
+            log.info("Current Answer: " + currAnswer.getNumeric());
             currRow.add(labels[currAnswer.getNumeric().intValue()]);
          }
          else {
