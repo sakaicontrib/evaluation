@@ -157,16 +157,6 @@ public class EvalResponseAggregatorUtil {
    private void updateResponseList(int numOfResponses, List<Long> responseIds, List<List<String>> responseRows, List<EvalAnswer> itemAnswers,
          EvalTemplateItem tempItem1, EvalItem item1) {
 
-      // Temp logging for CTL-592, will remove when its fixed
-      log.info("Adding Response to List: " + tempItem1.getDisplayOrder() + ", " + item1.getItemText());
-      if (item1.getScale() != null) {
-         log.info("Scales are: " + item1.getScale().getOptions());
-      }
-      // Trying to figure out why my logs aren't showing up in qa.
-      System.out.println("SWG: Adding Response to List: " + tempItem1.getDisplayOrder() + ", " + item1.getItemText());
-      if (item1.getScale() != null) {
-         System.out.println("SWG: Scales are: " + item1.getScale().getOptions());
-      }
       /* 
        * Fix for EVALSYS-123 i.e. export CSV functionality 
        * fails when answer for a question left unanswered by 
@@ -219,8 +209,6 @@ public class EvalResponseAggregatorUtil {
          else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(TemplateItemUtils.getTemplateItemType(tempItem1)) ||
                EvalConstants.ITEM_TYPE_SCALED.equals(TemplateItemUtils.getTemplateItemType(tempItem1))) {
             String labels[] = item1.getScale().getOptions();
-            log.info("Current Answer: " + currAnswer.getNumeric());
-            System.out.println("SWG: Current Answer: " + currAnswer.getNumeric());
             currRow.add(labels[currAnswer.getNumeric().intValue()]);
          }
          else {
