@@ -51,7 +51,7 @@ public class EvaluationModificationRegistry {
       addItem(EvalConstants.EVALUATION_STATE_INQUEUE, "*");
       addItem(EvalConstants.EVALUATION_STATE_ACTIVE, 
       "dueDate,stopDate,viewDate,reminderDays,resultsPrivate,instructorsDate,studentsDate");
-      addItem(EvalConstants.EVALUATION_STATE_DUE,
+      addItem(EvalConstants.EVALUATION_STATE_GRACEPERIOD,
       "stopDate,viewDate,resultsPrivate,instructorsDate,studentsDate");
       addItem(EvalConstants.EVALUATION_STATE_CLOSED, 
       "viewDate,resultsPrivate,instructorsDate,studentsDate");

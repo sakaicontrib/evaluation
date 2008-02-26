@@ -49,8 +49,7 @@ public class EvalUtils {
    private static Log log = LogFactory.getLog(EvalUtils.class);
 
    /**
-    * Get the state of an evaluation object<br/>
-    * <b>WARNING:</b> do NOT use this outside the logic or DAO layers
+    * Get the state of an evaluation object
     * 
     * @param eval the evaluation object
     * @return the EVALUATION_STATE constant
@@ -68,14 +67,25 @@ public class EvalUtils {
             // now determine the state based on dates
             if ( eval.getStartDate().after(today) ) {
                state = EvalConstants.EVALUATION_STATE_INQUEUE;
-            } else if ( eval.getDueDate().after(today) ) {
+            } else if ( eval.getDueDate() == null 
+                  || eval.getDueDate().after(today) ) {
+               // we are stuck in active state until a due date is set
                state = EvalConstants.EVALUATION_STATE_ACTIVE;
-            } else if ( eval.getStopDate().after(today) ) {
-               state = EvalConstants.EVALUATION_STATE_DUE;
-            } else if ( eval.getViewDate().after(today) ) {
-               state = EvalConstants.EVALUATION_STATE_CLOSED;
+            } else if ( eval.getStopDate() != null 
+                  && eval.getStopDate().after(today) ) {
+               state = EvalConstants.EVALUATION_STATE_GRACEPERIOD;
             } else {
-               state = EvalConstants.EVALUATION_STATE_VIEWABLE;
+               // we know we are past the stop date at this point so we have to be closed or viewable
+               if ( eval.getViewDate() == null) {
+                  // if view date is not set so we go straight to viewing state
+                  state = EvalConstants.EVALUATION_STATE_VIEWABLE;
+               } else {
+                  if ( eval.getViewDate().after(today) ) {
+                     state = EvalConstants.EVALUATION_STATE_CLOSED;
+                  } else {
+                     state = EvalConstants.EVALUATION_STATE_VIEWABLE;
+                  }
+               }
             }
          }
       } catch (NullPointerException e) {

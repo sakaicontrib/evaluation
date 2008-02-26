@@ -58,20 +58,20 @@ public class EvalConstants {
     * Evaluation state: evaluation is being created but user has not completed the creation
     * process, evaluations in the partial state will be purged out of the system if they are
     * not completed to UnQueue within 24 hours
-    * <br/>States: Partial -> InQueue -> Active -> Due -> Closed -> Viewable (-> Deleted)
+    * <br/>States: Partial -> InQueue -> Active -> GracePeriod -> Closed -> Viewable (-> Deleted)
     */
    public static final String EVALUATION_STATE_PARTIAL = "Partial";
    /**
     * Evaluation state: evaluation has not started yet, should be the state of evaluations
     * when they are first created, can make any change to the evaluation while in this state
-    * <br/>States: Partial -> InQueue -> Active -> Due -> Closed -> Viewable (-> Deleted)
+    * <br/>States: Partial -> InQueue -> Active -> GracePeriod -> Closed -> Viewable (-> Deleted)
     */
    public static final String EVALUATION_STATE_INQUEUE = "InQueue";
    /**
     * Evaluation state: evaluation is currently running, users can take the evaluation,
     * start date cannot be modified anymore, email templates cannot be modified,
     * cannot unlink groups of takers at this point, can still add in groups
-    * <br/>States: Partial -> InQueue -> Active -> Due -> Closed -> Viewable (-> Deleted)
+    * <br/>States: Partial -> InQueue -> Active -> GracePeriod -> Closed -> Viewable (-> Deleted)
     */
    public static final String EVALUATION_STATE_ACTIVE = "Active";
    /**
@@ -79,20 +79,20 @@ public class EvalConstants {
     * will be displayed and links are no longer shown, however, takers
     * can still complete the evaluation until the state changes to closed,
     * evaluations in Due status are shown as closed in the interface
-    * <br/>States: Partial -> InQueue -> Active -> Due -> Closed -> Viewable (-> Deleted)
+    * <br/>States: Partial -> InQueue -> Active -> GracePeriod -> Closed -> Viewable (-> Deleted)
     */
-   public static final String EVALUATION_STATE_DUE = "Due";
+   public static final String EVALUATION_STATE_GRACEPERIOD = "Due";
    /**
     * Evaluation state: evaluation is over and closed,
     * users cannot take evaluation anymore, no changes can be made to the evaluation
     * except to adjust the results view date, cannot add or remove groups of takers
-    * <br/>States: Partial -> InQueue -> Active -> Due -> Closed -> Viewable (-> Deleted)
+    * <br/>States: Partial -> InQueue -> Active -> GracePeriod -> Closed -> Viewable (-> Deleted)
     */
    public static final String EVALUATION_STATE_CLOSED = "Closed";
    /**
     * Evaluation state: evaluation is over and closed and results are generally viewable,
     * no changes can be made to the evaluation at all
-    * <br/>States: Partial -> InQueue -> Active -> Due -> Closed -> Viewable (-> Deleted)
+    * <br/>States: Partial -> InQueue -> Active -> GracePeriod -> Closed -> Viewable (-> Deleted)
     */
    public static final String EVALUATION_STATE_VIEWABLE = "Viewable";
    /**
@@ -101,7 +101,7 @@ public class EvalConstants {
     * cannot unlock but evaluation data is maintained<br/>
     * Ideally we will figure out a way to unlock the items (perhaps by only maintaining generated
     * reports?)
-    * <br/>States: Partial -> InQueue -> Active -> Due -> Closed -> Viewable (-> Deleted)
+    * <br/>States: Partial -> InQueue -> Active -> GracePeriod -> Closed -> Viewable (-> Deleted)
     */
    public static final String EVALUATION_STATE_DELETED = "Deleted";
 

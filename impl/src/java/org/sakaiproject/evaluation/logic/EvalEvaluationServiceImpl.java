@@ -179,7 +179,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
             if ( (evaluation.getId() != null) && saveState) {
                if ( EvalConstants.EVALUATION_STATE_ACTIVE.equals(state) ) {
                   externalLogic.registerEntityEvent(EVENT_EVAL_STATE_START, evaluation);
-               } else if ( EvalConstants.EVALUATION_STATE_DUE.equals(state) ) {
+               } else if ( EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(state) ) {
                   externalLogic.registerEntityEvent(EVENT_EVAL_STATE_DUE, evaluation);
                } else if ( EvalConstants.EVALUATION_STATE_CLOSED.equals(state) ) {
                   externalLogic.registerEntityEvent(EVENT_EVAL_STATE_STOP, evaluation);
@@ -275,7 +275,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
       // check the evaluation state
       String state = EvalUtils.getEvaluationState(eval);
       if ( ! EvalConstants.EVALUATION_STATE_ACTIVE.equals(state) &&
-            ! EvalConstants.EVALUATION_STATE_DUE.equals(state) ) {
+            ! EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(state) ) {
          log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") when eval state is: " + state);
          return false;
       }
