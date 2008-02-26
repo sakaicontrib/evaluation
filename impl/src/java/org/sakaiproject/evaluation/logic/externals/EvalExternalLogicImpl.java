@@ -94,6 +94,8 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
    private static final String ANON_USER_PREFIX = "Anon_User_";
 
    private static final String ADMIN_USER_ID = "admin";
+   
+   private String UNKNOWN_TITLE = "--------"; 
 
    private AuthzGroupService authzGroupService;
    public void setAuthzGroupService(AuthzGroupService authzGroupService) {
@@ -325,6 +327,10 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
             c = evalGroupsProvider.getGroupByGroupId(evalGroupId);
             if (c != null) {
                c.type = EvalConstants.GROUP_TYPE_PROVIDED;
+               if (c.title == null
+                     || c.title.trim().length() == 0) {
+                  c.title = UNKNOWN_TITLE;
+               }
             }
          }
       }
@@ -372,12 +378,16 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
     * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#getDisplayTitle(java.lang.String)
     */
    public String getDisplayTitle(String evalGroupId) {
+      String title = null;
       EvalGroup group = makeEvalGroupObject(evalGroupId);
-      if (group != null && group.title != null) {
-         return group.title;
+      if (group != null 
+            && group.title != null) {
+         title = group.title;
       }
-      log.warn("Cannot get the title for evalGroupId: " + evalGroupId);
-      return "--------";
+      if (UNKNOWN_TITLE.equals(title)) {
+         log.warn("Cannot get the title for evalGroupId: " + evalGroupId);
+      }
+      return title;
    }
 
    /* (non-Javadoc)
