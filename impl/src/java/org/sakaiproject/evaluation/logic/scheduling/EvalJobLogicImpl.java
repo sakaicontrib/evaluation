@@ -318,7 +318,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
           */
          checkInvocationDate(eval, EvalConstants.JOB_TYPE_DUE, eval.getDueDate());
 
-      } else if (EvalConstants.EVALUATION_STATE_DUE.equals(eval.getState())) {
+      } else if (EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(eval.getState())) {
          // make sure scheduleClosed job invocation start date matches EvalEvaluation stop date
          checkInvocationDate(eval, EvalConstants.JOB_TYPE_CLOSED, eval.getStopDate());
 

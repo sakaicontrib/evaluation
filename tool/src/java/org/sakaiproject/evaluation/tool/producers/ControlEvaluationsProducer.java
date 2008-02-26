@@ -173,7 +173,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
                EvalConstants.EVALUATION_STATE_VIEWABLE.equals(evalStatus) ) {
             closedEvals.add(eval);
          } else if (EvalConstants.EVALUATION_STATE_ACTIVE.equals(evalStatus) ||
-               EvalConstants.EVALUATION_STATE_DUE.equals(evalStatus) ) {
+               EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(evalStatus) ) {
             activeEvals.add(eval);
          }
       }

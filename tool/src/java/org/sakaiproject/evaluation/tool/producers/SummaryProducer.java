@@ -328,7 +328,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
             } else if (EvalConstants.EVALUATION_STATE_ACTIVE.equals(evalStatus)) {
                date = eval.getStopDate();
                UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalStatus);
-            } else if (EvalConstants.EVALUATION_STATE_DUE.equals(evalStatus)) {
+            } else if (EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(evalStatus)) {
                date = eval.getDueDate();
                UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalStatus);
             } else if (EvalConstants.EVALUATION_STATE_CLOSED.equals(evalStatus)) {

@@ -47,6 +47,9 @@ public class EvalUtilsTest extends TestCase {
       EvalTestDataLoad etdl = new EvalTestDataLoad();
 
       // positive
+      state = EvalUtils.getEvaluationState(etdl.evaluationNew);
+      assertEquals(EvalConstants.EVALUATION_STATE_INQUEUE, state);
+
       state = EvalUtils.getEvaluationState(etdl.evaluationActive);
       assertEquals(EvalConstants.EVALUATION_STATE_ACTIVE, state);
 
@@ -56,15 +59,68 @@ public class EvalUtilsTest extends TestCase {
       state = EvalUtils.getEvaluationState(etdl.evaluationClosed);
       assertEquals(EvalConstants.EVALUATION_STATE_CLOSED, state);
 
-      state = EvalUtils.getEvaluationState(etdl.evaluationNew);
-      assertEquals(EvalConstants.EVALUATION_STATE_INQUEUE, state);
-
       state = EvalUtils.getEvaluationState(etdl.evaluationViewable);
       assertEquals(EvalConstants.EVALUATION_STATE_VIEWABLE, state);
 
       // negative
       state = EvalUtils.getEvaluationState( new EvalEvaluation() );
       assertEquals(EvalConstants.EVALUATION_STATE_UNKNOWN, state);
+
+      // test the cases where a lot of the dates are unset (testing various nulls)
+      EvalEvaluation datesEval = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, 
+            "aaronz", "testing null dates", etdl.tomorrow, null, EvalConstants.SHARING_PRIVATE, 0, null);
+
+      // only the start date is set and in the future
+      state = EvalUtils.getEvaluationState(datesEval);
+      assertEquals(EvalConstants.EVALUATION_STATE_INQUEUE, state);
+
+      // only the start date is set and way in the past
+      datesEval.setStartDate(etdl.fifteenDaysAgo);
+      state = EvalUtils.getEvaluationState(datesEval);
+      assertEquals(EvalConstants.EVALUATION_STATE_ACTIVE, state);
+
+      // only the start date (past) and due date (future) are set
+      datesEval.setDueDate(etdl.tomorrow);
+      state = EvalUtils.getEvaluationState(datesEval);
+      assertEquals(EvalConstants.EVALUATION_STATE_ACTIVE, state);
+
+      // only the start date (past) and due date (past) are set
+      datesEval.setDueDate(etdl.yesterday);
+      state = EvalUtils.getEvaluationState(datesEval);
+      assertEquals(EvalConstants.EVALUATION_STATE_VIEWABLE, state);
+
+      // only the start date (past) and due date (past) and stop date (future) are set
+      datesEval.setDueDate(etdl.fourDaysAgo);
+      datesEval.setStopDate(etdl.tomorrow);
+      state = EvalUtils.getEvaluationState(datesEval);
+      assertEquals(EvalConstants.EVALUATION_STATE_GRACEPERIOD, state);
+
+      // only the start date (past) and due date (past) and stop date (past) are set
+      datesEval.setStopDate(etdl.threeDaysAgo);
+      state = EvalUtils.getEvaluationState(datesEval);
+      assertEquals(EvalConstants.EVALUATION_STATE_VIEWABLE, state);
+
+      // all dates set (view date in future)
+      datesEval.setViewDate(etdl.tomorrow);
+      state = EvalUtils.getEvaluationState(datesEval);
+      assertEquals(EvalConstants.EVALUATION_STATE_CLOSED, state);
+
+      // all dates set (view date in past)
+      datesEval.setViewDate(etdl.yesterday);
+      state = EvalUtils.getEvaluationState(datesEval);
+      assertEquals(EvalConstants.EVALUATION_STATE_VIEWABLE, state);
+
+      // all dates EXCEPT stop date set (view date in future)
+      datesEval.setStopDate(null);
+      datesEval.setViewDate(etdl.tomorrow);
+      state = EvalUtils.getEvaluationState(datesEval);
+      assertEquals(EvalConstants.EVALUATION_STATE_CLOSED, state);
+
+      // all dates EXCEPT stop date set (view date in past)
+      datesEval.setStopDate(null);
+      datesEval.setViewDate(etdl.yesterday);
+      state = EvalUtils.getEvaluationState(datesEval);
+      assertEquals(EvalConstants.EVALUATION_STATE_VIEWABLE, state);
 
       // no exceptions thrown
    }
