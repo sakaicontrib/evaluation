@@ -6,6 +6,7 @@ import java.util.HashSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
@@ -31,7 +32,7 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
  * 6) Is this user a hierarchical admin
  * 
  * There are also date rules:
- * DateRule-A) We have to be past the eval.viewDate (this is liable to change in the future)
+ * DateRule-A) We have to be past the eval.viewDate if it is set, if null then skip forward
  * DateRule-B) If the eval.studentsDate is null students cannot view, otherwise it
  *             must be past the current date.
  * DateRule-C) If the eval.instructorsDate is null instructors cannot view, 
@@ -40,6 +41,11 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
  */
 public class ReportingPermissions {
    private static Log log = LogFactory.getLog(ReportingPermissions.class);
+
+   private EvaluationDao dao;
+   public void setEvaluationDao(EvaluationDao dao) {
+      this.dao = dao;
+   }
 
    private EvalExternalLogic externalLogic;
    public void setExternalLogic(EvalExternalLogic externalLogic) {
@@ -50,21 +56,27 @@ public class ReportingPermissions {
    public void setEvalSettings(EvalSettings evalSettings) {
       this.evalSettings = evalSettings;
    }
-   
-   private EvaluationDao evalDao;
-   public void setEvaluationDao(EvaluationDao dao) {
-      this.evalDao = dao;
-   }
-   
+
    private EvalEvaluationService evaluationService;
    public void setEvaluationService(EvalEvaluationService evaluationService) {
       this.evaluationService = evaluationService;
    }
-   
-   /*
+
+   private EvalBeanUtils evalBeanUtils;
+   public void setEvalBeanUtils(EvalBeanUtils evalBeanUtils) {
+      this.evalBeanUtils = evalBeanUtils;
+   }
+
+
+   /**
     * Signature variation for convenience (especially if you only have the 
-    * information from a ViewParams). See chooseGroupsPartialCheck(EvalEvaluation)
-    * for full description)
+    * information from a ViewParams). See {@link #chooseGroupsPartialCheck(EvalEvaluation)}
+    * for complete details on the return value
+    * 
+    * @param evalId unique ID of an {@link EvalEvaluation}
+    * @return The array of groupIds we can choose from for viewing responses in 
+    * this evaluation.  If you cannot view the responses from any groups in this
+    * evaluation, this will return an empty list.
     */
    public String[] chooseGroupsPartialCheck(Long evalId) {
       return chooseGroupsPartialCheck(evaluationService.getEvaluationById(evalId));
@@ -72,7 +84,7 @@ public class ReportingPermissions {
    
    /**
     * This is a sort of partial security check based off of the full 
-    * canViewEvaluationResponses method.
+    * {@link #canViewEvaluationResponses(EvalEvaluation, String[])} method.
     * 
     * This is primarily needed for the Choose Groups page in reporting. In this
     * case, we want to genuinely check most of the permissions, except we don't
@@ -81,77 +93,97 @@ public class ReportingPermissions {
     * rules, and if they pass successfully, return the Groups that we are able
     * to choose from for report viewing.
     *
-    * @param evaluation
+    * @param evaluation an {@link EvalEvaluation} (must have been saved)
     * @return The array of groupIds we can choose from for viewing responses in 
     * this evaluation.  If you cannot view the responses from any groups in this
-    * evaluation, this will return an empty list.
-    * If the survey is anonymous the returned array will be empty.  This means
-    * that you should not rely on this has the sole permission check, mostly 
+    * evaluation, this will return an empty list.<br/>
+    * <b>NOTE:</b> If the survey is anonymous the returned array will be empty.
+    * You should not rely on this has the sole permission check, mostly 
     * just for populating the Choose Groups page, and redirecting if the length
     * of the returned groups is 0 or 1.
     */
    public String[] chooseGroupsPartialCheck(EvalEvaluation evaluation) {
       String currentUserId = externalLogic.getCurrentUserId();
       Set<String> groupIdsTogo = new HashSet<String>();
-      boolean checkBasedOnRole;
-      
-      // TODO 1 and 2 will be replaced by ExternalLogic.checkUserPermission(String userId, String ownerId)
+
+      boolean canViewResponses = false; // is user able to view any results/responses at all
+      boolean checkBasedOnRole = false; // get the groups based on the current user role
 
       // 1) Is this user an admin or evaluation owner
       // 2) Is this user the evaluation owner?
-      if (evaluation.getViewDate().after(new Date())) {
+      if (evalBeanUtils.checkUserPermission(currentUserId, evaluation.getOwner())) {
+         canViewResponses = true;
          checkBasedOnRole = false;
       }
-      else if (externalLogic.isUserAdmin(currentUserId) ||
-            currentUserId.equals(evaluation.getOwner())) {
-         checkBasedOnRole = false;
-         groupIdsTogo.addAll(
-               evalDao.getViewableEvalGroupIds(evaluation.getId(), 
-                     EvalConstants.PERM_BE_EVALUATED, null));
-         groupIdsTogo.addAll(
-               evalDao.getViewableEvalGroupIds(evaluation.getId(), 
-                     EvalConstants.PERM_TAKE_EVALUATION, null));
+      // if view date is set and it is in the future then no groups
+      else if (evaluation.getViewDate() != null &&
+            evaluation.getViewDate().after(new Date())) {
+         canViewResponses = false;
       }
       // 3
-      else if (EvalConstants.SHARING_PRIVATE.equals(evaluation.getResultsSharing())) {
+      else if (EvalConstants.SHARING_PUBLIC.equals(evaluation.getResultsSharing())) {
+         canViewResponses = true;
          checkBasedOnRole = false;
       }
+      else if (EvalConstants.SHARING_PRIVATE.equals(evaluation.getResultsSharing())) {
+         canViewResponses = false;
+      }
       else {
+         canViewResponses = true;
          checkBasedOnRole = true;
       }
-      // 6 TODO Insfrustructure isn't available for this yet.
+      // 6 TODO Infrastructure isn't available for this yet.
 
-      /*
-       * If we can view the responses, based on the preliminary checks above,
-       * we will create a Set of the groups we are allowed to view based on the
-       * possibility of us having the instructor and student oriented permission
-       * locks.
-       */
-      if (checkBasedOnRole) {
-         Boolean instructorAllowedViewResults = 
-            (Boolean) evalSettings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
-         if (instructorAllowedViewResults && evaluation.getInstructorsDate() != null 
-               && evaluation.getInstructorsDate().before(new Date())) {
-            Set<String> tempGroupIds = 
-                  evalDao.getViewableEvalGroupIds(evaluation.getId(), EvalConstants.PERM_BE_EVALUATED, null);
-            for (String tempGroupId: tempGroupIds) {
-               if (externalLogic.isUserAllowedInEvalGroup(currentUserId, EvalConstants.PERM_BE_EVALUATED, tempGroupId)) {
-                  groupIdsTogo.add(tempGroupId);
+      if (canViewResponses) {
+         /*
+          * If we can view the responses, based on the preliminary checks above,
+          * we will create a Set of the groups we are allowed to view based on the
+          * possibility of us having the instructor and student oriented permission
+          * locks.
+          */
+         if (checkBasedOnRole) {
+            // FIXME A1 - REDUCE DUPLICATION - This code can fairly easily be combined with the code below at A2 and A3
+            Boolean instructorAllowedViewResults = 
+               (Boolean) evalSettings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
+            if (instructorAllowedViewResults == null) {
+               instructorAllowedViewResults = evaluation.getInstructorsDate() != null;
+            }
+            if (instructorAllowedViewResults 
+                  && evaluation.getInstructorsDate() != null 
+                  && evaluation.getInstructorsDate().before(new Date())) {
+               Set<String> tempGroupIds = 
+                     dao.getViewableEvalGroupIds(evaluation.getId(), EvalConstants.PERM_BE_EVALUATED, null);
+               for (String tempGroupId: tempGroupIds) {
+                  if (externalLogic.isUserAllowedInEvalGroup(currentUserId, EvalConstants.PERM_BE_EVALUATED, tempGroupId)) {
+                     groupIdsTogo.add(tempGroupId);
+                  }
                }
             }
-         }
-
-         Boolean studentAllowedViewResults = 
-            (Boolean) evalSettings.get(EvalSettings.STUDENT_VIEW_RESULTS);
-         if (studentAllowedViewResults && evaluation.getStudentsDate() != null
-               && evaluation.getStudentsDate().before(new Date())) {
-            Set<String> tempGroupIds =
-                  evalDao.getViewableEvalGroupIds(evaluation.getId(), EvalConstants.PERM_TAKE_EVALUATION, null);
-            for (String tempGroupId: tempGroupIds) {
-               if (externalLogic.isUserAllowedInEvalGroup(currentUserId, EvalConstants.PERM_TAKE_EVALUATION, tempGroupId)) {
-                  groupIdsTogo.add(tempGroupId);
+   
+            Boolean studentAllowedViewResults = 
+               (Boolean) evalSettings.get(EvalSettings.STUDENT_VIEW_RESULTS);
+            if (studentAllowedViewResults == null) {
+               studentAllowedViewResults = evaluation.getStudentsDate() != null;
+            }
+            if (studentAllowedViewResults 
+                  && evaluation.getStudentsDate() != null
+                  && evaluation.getStudentsDate().before(new Date())) {
+               Set<String> tempGroupIds =
+                     dao.getViewableEvalGroupIds(evaluation.getId(), EvalConstants.PERM_TAKE_EVALUATION, null);
+               for (String tempGroupId: tempGroupIds) {
+                  if (externalLogic.isUserAllowedInEvalGroup(currentUserId, EvalConstants.PERM_TAKE_EVALUATION, tempGroupId)) {
+                     groupIdsTogo.add(tempGroupId);
+                  }
                }
             }
+         } else {
+            // user can view all groups
+            groupIdsTogo.addAll(
+                  dao.getViewableEvalGroupIds(evaluation.getId(), 
+                        EvalConstants.PERM_BE_EVALUATED, null));
+            groupIdsTogo.addAll(
+                  dao.getViewableEvalGroupIds(evaluation.getId(), 
+                        EvalConstants.PERM_TAKE_EVALUATION, null));
          }
       }
       
@@ -170,22 +202,21 @@ public class ReportingPermissions {
    public boolean canViewEvaluationResponses(EvalEvaluation evaluation, String[] groupIds) {
       String currentUserId = externalLogic.getCurrentUserId();
       boolean canViewResponses;
-      
-      // TODO 1 and 2 will be replaced by ExternalLogic.checkUserPermission(String userId, String ownerId)
 
-      // 1) Is this user an admin?
-      if (externalLogic.isUserAdmin(currentUserId)) {
+      // 1) Is this user an admin or evaluation owner
+      // 2) Is this user the evaluation owner?
+      if (evalBeanUtils.checkUserPermission(currentUserId, evaluation.getOwner())) {
          canViewResponses = true;
       }
-      // 1.5) Are we past the view date?
-      else if (evaluation.getViewDate().after(new Date())) {
+      // if view date is set and it is in the future then no groups
+      else if (evaluation.getViewDate() != null &&
+            evaluation.getViewDate().after(new Date())) {
          canViewResponses = false;
       }
-      // 2) Is this user the evaluation owner?
-      else if (currentUserId.equals(evaluation.getOwner())) {
+      // 3
+      else if (EvalConstants.SHARING_PUBLIC.equals(evaluation.getResultsSharing())) {
          canViewResponses = true;
       }
-      // 3
       else if (EvalConstants.SHARING_PRIVATE.equals(evaluation.getResultsSharing())) {
          canViewResponses = false;
       }
@@ -225,14 +256,17 @@ public class ReportingPermissions {
     * @return
     */
    private boolean canViewEvaluationResponsesAsStudent(EvalEvaluation eval, String currentUserId, String[] groupIds) {
+      // FIXME A2 - REDUCE DUPLICATION - This code can fairly easily be combined with the code above at A1,
+      // TIP: use one central method which returns the groups accessible by the user, then compare the size to the
+      // total size of all groups for this case (if it is smaller then return false)
       Boolean studentAllowedViewResults = 
-         (Boolean) evalSettings.get(EvalSettings.STUDENT_VIEW_RESULTS);
+         (Boolean) evalSettings.get(EvalSettings.STUDENT_VIEW_RESULTS); // FIXME - this can be null, the if below will throw NPE
       boolean allowedToView = false;
       if (eval.getStudentsDate() == null || eval.getStudentsDate().after(new Date())) {
          allowedToView = false;
       }
       else if (studentAllowedViewResults) {
-         Set<String> viewableIds = evalDao.getViewableEvalGroupIds(eval.getId(), EvalConstants.PERM_TAKE_EVALUATION, groupIds);
+         Set<String> viewableIds = dao.getViewableEvalGroupIds(eval.getId(), EvalConstants.PERM_TAKE_EVALUATION, groupIds);
          if (viewableIds.size() == groupIds.length) {
             allowedToView = true;
          }
@@ -263,6 +297,7 @@ public class ReportingPermissions {
     * @return
     */
    private boolean canViewEvaluationResponsesAsInstructor(EvalEvaluation eval, String currentUserId, String[] groupIds) {
+      // FIXME A3 - REDUCE DUPLICATION - This code can fairly easily be combined with the code above at A1
       Boolean instructorAllowedViewResults = 
          (Boolean) evalSettings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
       boolean allowedToView = false;
@@ -270,7 +305,7 @@ public class ReportingPermissions {
          allowedToView = false;
       }
       else if (instructorAllowedViewResults) {
-         Set<String> viewableIds = evalDao.getViewableEvalGroupIds(eval.getId(), EvalConstants.PERM_BE_EVALUATED, groupIds);
+         Set<String> viewableIds = dao.getViewableEvalGroupIds(eval.getId(), EvalConstants.PERM_BE_EVALUATED, groupIds);
          if (viewableIds.size() == groupIds.length) {
             allowedToView = true;
          }
