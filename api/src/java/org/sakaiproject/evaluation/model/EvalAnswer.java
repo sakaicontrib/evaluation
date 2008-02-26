@@ -70,43 +70,58 @@ public class EvalAnswer implements java.io.Serializable {
    }
 
    /**
-    * minimal constructor
+    * Special constructor (not for general use)
     */
-   public EvalAnswer(Date lastModified, EvalTemplateItem templateItem,
-         EvalResponse response) {
-      this.lastModified = lastModified;
-      this.templateItem = templateItem;
+   public EvalAnswer(EvalResponse response, EvalTemplateItem templateItem, EvalItem item) {
+      if (this.lastModified == null) { this.lastModified = new Date(); }
       this.response = response;
-   }
-
-   public EvalAnswer(Date lastModified, EvalTemplateItem templateItem,
-         EvalResponse response, String text) {
-      this.lastModified = lastModified;
-      this.templateItem = templateItem;
-      this.response = response;
-      this.text = text;
-   }
-
-   public EvalAnswer(Date lastModified, EvalTemplateItem templateItem,
-         EvalResponse response, Integer numeric) {
-      this.lastModified = lastModified;
-      this.templateItem = templateItem;
-      this.response = response;
-      this.numeric = numeric;
-   }
-
-   /** full constructor */
-   public EvalAnswer(Date lastModified, EvalTemplateItem templateItem,
-         EvalItem item, EvalResponse response, String text, Integer numeric,
-         String associatedId, String associatedType) {
-      this.lastModified = lastModified;
       this.templateItem = templateItem;
       this.item = item;
+   }
+
+   /**
+    * minimal constructor - text
+    */
+   public EvalAnswer(EvalResponse response, EvalTemplateItem templateItem, EvalItem item, 
+         String associatedId, String associatedType, String text) {
+      if (this.lastModified == null) { this.lastModified = new Date(); }
       this.response = response;
-      this.text = text;
-      this.numeric = numeric;
+      this.templateItem = templateItem;
+      this.item = item;
       this.associatedId = associatedId;
       this.associatedType = associatedType;
+      this.text = text;
+   }
+
+   /**
+    * minimal constructor - numeric
+    */
+   public EvalAnswer(EvalResponse response, EvalTemplateItem templateItem, EvalItem item, 
+         String associatedId, String associatedType, Integer numeric) {
+      if (this.lastModified == null) { this.lastModified = new Date(); }
+      this.response = response;
+      this.templateItem = templateItem;
+      this.item = item;
+      this.associatedId = associatedId;
+      this.associatedType = associatedType;
+      this.numeric = numeric;
+   }
+
+   /** 
+    * full constructor 
+    */
+   public EvalAnswer(EvalResponse response, EvalTemplateItem templateItem,
+         EvalItem item, String associatedId, String associatedType, String text,
+         Integer numeric, String multiAnswerCode) {
+      if (this.lastModified == null) { this.lastModified = new Date(); }
+      this.response = response;
+      this.templateItem = templateItem;
+      this.item = item;
+      this.associatedId = associatedId;
+      this.associatedType = associatedType;
+      this.text = text;
+      this.numeric = numeric;
+      this.multiAnswerCode = multiAnswerCode;
    }
 
    // Property accessors

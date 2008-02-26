@@ -733,6 +733,7 @@ public class EvalTestDataLoad {
       templatePublic.getTemplateItems().add( templateItem1P );
 
       templateUnused.setTemplateItems( new HashSet<EvalTemplateItem>() );
+      templateUnused.getTemplateItems().add( templateItem1U );
       templateUnused.getTemplateItems().add( templateItem3U );
       templateUnused.getTemplateItems().add( templateItem5U );
 
@@ -763,6 +764,7 @@ public class EvalTestDataLoad {
       item1.setTemplateItems( new HashSet<EvalTemplateItem>() );
       item1.getTemplateItems().add( templateItem1P );
       item1.getTemplateItems().add( templateItem1User );
+      item1.getTemplateItems().add( templateItem1U );
 
       item2.setTemplateItems( new HashSet<EvalTemplateItem>() );
       item2.getTemplateItems().add( templateItem2A );
@@ -927,18 +929,18 @@ public class EvalTestDataLoad {
       response6 = new EvalResponse(new Date(), USER_ID, SITE2_REF, 
             new Date(), today, null, evaluationClosed);
 
-      answer1_1 = new EvalAnswer(new Date(), templateItem1P, item1, response1, null, ANSWER_SCALED_ONE, null, null);
+      answer1_1 = new EvalAnswer(response1, templateItem1P, item1, null, null, null, ANSWER_SCALED_ONE, null);
 
-      answer2_2 = new EvalAnswer(new Date(), templateItem2A, item2, response2, null, ANSWER_SCALED_ONE, null, null);
-      answer2_5 = new EvalAnswer(new Date(), templateItem5A, item5, response2, ANSWER_TEXT, null, MAINT_USER_ID, EvalConstants.ITEM_CATEGORY_INSTRUCTOR);
+      answer2_2 = new EvalAnswer(response2, templateItem2A, item2, null, null, null, ANSWER_SCALED_ONE, null);
+      answer2_5 = new EvalAnswer(response2, templateItem5A, item5, MAINT_USER_ID, EvalConstants.ITEM_CATEGORY_INSTRUCTOR, ANSWER_TEXT, null, null);
 
-      answer3_2 = new EvalAnswer(new Date(), templateItem3A, item2, response3, null, ANSWER_SCALED_TWO, null, null);
+      answer3_2 = new EvalAnswer(response3, templateItem3A, item2, null, null, null, ANSWER_SCALED_TWO, null);
       // left the text answer blank
 
-      answer4_1 = new EvalAnswer(new Date(), templateItem1User, item1, response4, null, ANSWER_SCALED_THREE, null, null);
-      answer4_5 = new EvalAnswer(new Date(), templateItem5User, item5, response4, ANSWER_TEXT, null, MAINT_USER_ID, EvalConstants.ITEM_CATEGORY_INSTRUCTOR);
+      answer4_1 = new EvalAnswer(response4, templateItem1User, item1, null, null, null, ANSWER_SCALED_THREE, null);
+      answer4_5 = new EvalAnswer(response4, templateItem5User, item5, MAINT_USER_ID, EvalConstants.ITEM_CATEGORY_INSTRUCTOR, ANSWER_TEXT, null, null);
 
-      answer5_1 = new EvalAnswer(new Date(), templateItem5User, item1, response5, null, ANSWER_SCALED_TWO, MAINT_USER_ID, EvalConstants.ITEM_CATEGORY_INSTRUCTOR);
+      answer5_1 = new EvalAnswer(response5, templateItem5User, item1, MAINT_USER_ID, EvalConstants.ITEM_CATEGORY_INSTRUCTOR, null, ANSWER_SCALED_TWO, null);
       // left the text answer blank
 
       // associate the answers

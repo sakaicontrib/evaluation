@@ -71,7 +71,7 @@ public class LocalResponsesLogic {
     */
    public EvalAnswer newAnswer(EvalResponse response) {
       log.debug("new answer, Response: " + response.getId());
-      EvalAnswer answer = new EvalAnswer(new Date(), null, response);
+      EvalAnswer answer = new EvalAnswer(response, null, null);
       return answer;
    }
 
