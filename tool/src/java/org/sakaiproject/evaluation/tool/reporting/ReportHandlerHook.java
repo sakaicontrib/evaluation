@@ -1,6 +1,6 @@
 /**
- * $Id: ReportHandlerHook.java 11234 Jan 21, 2008 11:35:56 AM azeckoski $
- * $URL: https://source.sakaiproject.org/contrib $
+ * $Id$
+ * $URL$
  * ReportHandlerHook.java - evaluation - 23 Jan 2007 11:35:56 AM - azeckoski
  **************************************************************************
  * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge

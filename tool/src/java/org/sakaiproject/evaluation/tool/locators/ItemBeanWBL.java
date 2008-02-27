@@ -1,7 +1,7 @@
 /******************************************************************************
  * ItemBeanWBL.java - created by aaronz on 21 May 2007
- * $URL: https://source.sakaiproject.org/contrib $
- * $Id: Locator.java 11234 2008 Jan 21, 2008 11:35:56 AM azeckoski $
+ * $URL$
+ * $Id$
  **************************************************************************
  * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0

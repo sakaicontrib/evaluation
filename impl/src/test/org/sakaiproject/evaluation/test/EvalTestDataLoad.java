@@ -1,7 +1,7 @@
 /**
  * EvalTestDataLoad.java - evaluation - Dec 25, 2006 10:07:31 AM - azeckoski
- * $URL: https://source.sakaiproject.org/contrib $
- * $Id: MockEvalJobLogic.java 1000 Jan 25, 2008 10:07:31 AM azeckoski $
+ * $URL$
+ * $Id$
  **************************************************************************
  * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0

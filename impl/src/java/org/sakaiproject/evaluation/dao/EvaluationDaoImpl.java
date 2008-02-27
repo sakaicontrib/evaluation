@@ -1,6 +1,6 @@
 /**
- * $Id: EvaluationDaoImpl.java 1000 Aug 21, 2006 12:07:31 AM azeckoski $
- * $URL: https://source.sakaiproject.org/contrib $
+ * $Id$
+ * $URL$
  * EvaluationDaoImpl.java - evaluation - Aug 21, 2006 12:07:31 AM - azeckoski
  **************************************************************************
  * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge

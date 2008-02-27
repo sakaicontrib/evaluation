@@ -1,16 +1,16 @@
-/******************************************************************************
- * EvalConstants.java - created by aaronz@vt.edu
- * 
- * Copyright (c) 2007 Virginia Polytechnic Institute and State University
+/**
+ * $Id$
+ * $URL$
+ * EvalConstants.java - evaluation - April 11, 2006 11:06:08 AM - azeckoski
+ **************************************************************************
+ * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
- * 
- * Contributors:
- * Aaron Zeckoski (aaronz@vt.edu) - primary
- * 
- *****************************************************************************/
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ */
 
 package org.sakaiproject.evaluation.constant;
 
@@ -21,6 +21,16 @@ package org.sakaiproject.evaluation.constant;
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class EvalConstants {
+
+   /**
+    * The current version of the app for updating purposes,
+    * this should always be the NEXT version of the tool if this is trunk code
+    */
+   public static String APP_VERSION = "1.2.0";
+
+   public static String SVN_REVISION = "$Revision$";
+   public static String SVN_URL = "$HeadURL$";
+   public static String SVN_LAST_UPDATE = "$Date$";
 
    /**
     * Evaluation type: EVALUATION This is the standard type of evaluation for course/program assessment
