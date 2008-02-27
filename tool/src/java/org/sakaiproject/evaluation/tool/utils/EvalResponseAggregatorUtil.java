@@ -18,6 +18,7 @@ import org.sakaiproject.evaluation.utils.ComparatorsUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import uk.org.ponder.util.UniversalRuntimeException;
+import uk.org.ponder.messageutil.MessageLocator;
 
 /*
  * This utility class is responsible for creating convenient arrays and other 
@@ -40,6 +41,11 @@ public class EvalResponseAggregatorUtil {
    private EvalDeliveryService deliveryService;
    public void setDeliveryService(EvalDeliveryService deliveryService) {
       this.deliveryService = deliveryService;
+   }
+   
+   private MessageLocator messageLocator;
+   public void setMessageLocator(MessageLocator locator) {
+      this.messageLocator = locator;
    }
 
    public EvalAggregatedResponses getAggregatedResponses(EvalEvaluation evaluation, String[] groupIds) {
@@ -175,9 +181,9 @@ public class EvalResponseAggregatorUtil {
 
          EvalAnswer currAnswer = (EvalAnswer) itemAnswers.get(j);
          actualIndexOfResponse = responseIds.indexOf(currAnswer.getResponse().getId());
-
          
-
+         EvalUtils.decodeAnswerNA(currAnswer);
+         
          // Fill empty answers if the answer corresponding to a response is not in itemAnswers list. 
          if (actualIndexOfResponse > idealIndexOfResponse) {
             for (int count = idealIndexOfResponse; count < actualIndexOfResponse; count++) {
@@ -192,7 +198,10 @@ public class EvalResponseAggregatorUtil {
           * else (scaled type or block child, which is also scaled) item then look up the label
           */
          currRow = responseRows.get(actualIndexOfResponse);
-         if (EvalConstants.ITEM_TYPE_TEXT.equals(TemplateItemUtils.getTemplateItemType(tempItem1))) {
+         if (currAnswer.NA) {
+            currRow.add(messageLocator.getMessage("reporting.notapplicable.shortlabel"));
+         }
+         else if (EvalConstants.ITEM_TYPE_TEXT.equals(TemplateItemUtils.getTemplateItemType(tempItem1))) {
             currRow.add(currAnswer.getText());
          } 
          else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(TemplateItemUtils.getTemplateItemType(tempItem1))) {
@@ -240,6 +249,10 @@ public class EvalResponseAggregatorUtil {
     * field for each scale.  For multiple answers, it will aggregate all the responses
     * for each answer to their scale item.
     * 
+    * If the item allows Not Applicable answers, this tally will be included as 
+    * the very last item of the array, allowing you to still match up the indexes
+    * with the original Scale options.
+    * 
     * @param itemType The Item type. Should be one of EvalConstants.ITEM_TYPE_SCALED,
     * EvalConstants.ITEM_TYPE_MULTIPLECHOICE, or EvalConstants.ITEM_TYPE_MULTIPLEANSWER
     * @param scaleSize The size of the scale items. The returned integer array will
@@ -247,33 +260,37 @@ public class EvalResponseAggregatorUtil {
     * @param answers The List of EvalAnswers to work with.
     */
    public int[] countResponseChoices(String itemType, int scaleSize, List<EvalAnswer> itemAnswers) {
-       int[] togo = new int[scaleSize];
+       // Make the array one size larger in case we need to add N/A tallies.
+       int[] togo = new int[scaleSize+1];
+
+       if (!EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemType) &&
+             !EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(itemType) &&
+             !EvalConstants.ITEM_TYPE_SCALED.equals(itemType)) {
+          throw new IllegalArgumentException("The itemType needs to be ITEM_TYPE_MULTIPLEANSWER, ITEM_TYPE_MULTIPLECHOICE, or ITEM_TYPE_SCALED");
+       }
        
-       if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemType)) {
-           for (EvalAnswer answer: itemAnswers) {
-               Integer[] decoded = EvalUtils.decodeMultipleAnswers(answer.getMultiAnswerCode());
-               for (Integer decodedAnswer: decoded) {
-                   togo[decodedAnswer.intValue()]++;
-               }
-           }
-       }
-       else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(itemType) || 
+       for (EvalAnswer answer: itemAnswers) {
+          EvalUtils.decodeAnswerNA(answer);
+          if (answer.NA) {
+             togo[togo.length-1]++;
+          }
+          else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemType)) {
+             Integer[] decoded = EvalUtils.decodeMultipleAnswers(answer.getMultiAnswerCode());
+             for (Integer decodedAnswer: decoded) {
+                togo[decodedAnswer.intValue()]++;
+             }
+          }
+          else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(itemType) || 
                EvalConstants.ITEM_TYPE_SCALED.equals(itemType)) {
-           for (int x = 0; x < togo.length; x++) {
-               int answers = 0;
-               //count the number of answers that match this one
-               for (int y = 0; y < itemAnswers.size(); y++) {
-                  EvalAnswer curr = (EvalAnswer) itemAnswers.get(y);
-                  if (curr.getNumeric().intValue() == x) {
-                     answers++;
-                  }
-               }
-               togo[x] = answers;
-           }
+             if (answer.getNumeric().intValue() > 0) {
+                togo[answer.getNumeric().intValue()]++;
+             }
+          }
+          else {
+             throw new RuntimeException("This shouldn't happen");
+          }
        }
-       else {
-           throw new IllegalArgumentException("The itemType needs to be ITEM_TYPE_MULTIPLEANSWER, ITEM_TYPE_MULTIPLECHOICE, or ITEM_TYPE_SCALED");
-       }
+
        return togo;
    }
 }
