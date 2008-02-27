@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.exception.ConstraintViolationException;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
@@ -1178,7 +1179,13 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       }
 
       if (securityChecks.checkUserControlTemplate(userId, template)) {
-         dao.save(template);
+         try {
+            dao.save(template);
+         } catch (ConstraintViolationException e) {
+            // FIXME this is a temporary hack for http://jira.sakaiproject.org/jira/browse/EVALSYS-407, 
+            // need to remove this try-catch and fix the checkTemplateTitleUnused method
+            throw new UniqueFieldException("This template title ("+template.getTitle()+") is already in use, title must be unique", "title", template.getTitle());
+         }
          log.info("User ("+userId+") saved template ("+template.getId()+"), title: " + template.getTitle());
 
          if (newTemplate) {
