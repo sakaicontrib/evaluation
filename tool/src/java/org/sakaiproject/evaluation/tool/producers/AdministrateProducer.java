@@ -82,6 +82,9 @@ public class AdministrateProducer implements ViewComponentProducer {
 
       UIMessage.make(tofill, "administrate-title", "administrate.page.title");
 
+      UIMessage.make(tofill, "app_version_revision", "administrate.version.revision", 
+            new Object[] {EvalConstants.APP_VERSION, EvalConstants.SVN_REVISION, EvalConstants.SVN_LAST_UPDATE});
+
       // TOP LINKS
       UIInternalLink.make(tofill, "administrate-link",
             UIMessage.make("administrate.page.title"),
