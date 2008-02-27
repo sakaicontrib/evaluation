@@ -212,6 +212,12 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
                // use passed in group ids
                groupIds = reportViewParams.groupIds;
             //}
+            String groupsDebug = "";
+            for (String debug: groupIds) {
+               groupsDebug += ", " + debug;
+            }
+            
+            log.warn("SWG ReportsViewingProducer for groups: " + groupsDebug);
 
             UIInternalLink.make(tofill, "fullEssayResponse", UIMessage.make("viewreport.view.essays"), new EssayResponseParams(
                   ReportsViewEssaysProducer.VIEW_ID, reportViewParams.evaluationId, groupIds));
@@ -233,6 +239,19 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
                UIInternalLink.make(tofill, "pdfResultsReport", UIMessage.make("viewreport.view.pdf"), new PDFReportViewParams(
                      "pdfResultsReport", template.getId(), reportViewParams.evaluationId, groupIds));
             }
+            
+            // Evaluation Info
+            UIOutput.make(tofill, "evaluationTitle", evaluation.getTitle());
+            String groupsString = "";
+            String[] groupIds = reportViewParams.groupIds == null ? new String[] {} : reportViewParams.groupIds;
+            for (int groupCounter = 0; groupCounter < reportViewParams.groupIds.length; groupCounter++) {
+               groupsString +=  externalLogic.getDisplayTitle(groupIds[groupCounter]);
+               if (groupCounter+1 < groupIds.length) {
+                  groupsString += ", ";
+               }
+            }
+            UIMessage.make(tofill, "selectedGroups", "viewreport.viewinggroups", new String[] {groupsString});
+
             // filter out items that cannot be answered (header, etc.)
             //List<EvalTemplateItem> answerableItemsList = TemplateItemUtils.getAnswerableTemplateItems(allTemplateItems);
             List<EvalTemplateItem> answerableItemsList = TemplateItemUtils.orderTemplateItems(allTemplateItems);
