@@ -260,7 +260,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       List<EvalEvaluation> l = null;
       List<Long> ids = null;
 
-      // test getting evaluationSetupService for 2 sites
+      // test getting evaluations for 2 sites
       l = evaluationDao.getEvaluationsByEvalGroups(
             new String[] {EvalTestDataLoad.SITE1_REF, EvalTestDataLoad.SITE2_REF}, false, true, false);
       assertNotNull(l);
@@ -271,7 +271,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
       assertTrue(ids.contains( etdl.evaluationViewable.getId() ));
 
-      // test getting evaluationSetupService by evalGroupId
+      // test getting evaluations by evalGroupId
       l = evaluationDao.getEvaluationsByEvalGroups(
             new String[] {EvalTestDataLoad.SITE1_REF}, false, true, false);
       assertNotNull(l);
@@ -291,7 +291,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
       assertTrue(ids.contains( etdl.evaluationViewable.getId() ));
 
-      // test getting by groupId and getting anons
+      // test getting by groupId and getting anons (should not get any deleted or partial evals)
       l = evaluationDao.getEvaluationsByEvalGroups(
             new String[] {EvalTestDataLoad.SITE1_REF}, false, true, true);
       assertNotNull(l);
@@ -301,7 +301,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       assertTrue(ids.contains( etdl.evaluationActive.getId() ));
       assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
       assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
-      
+
       // test invalid site
       l = evaluationDao.getEvaluationsByEvalGroups(
             new String[] {"invalid evalGroupId"}, false, true, false);
@@ -343,6 +343,11 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       assertEquals(1, l.size());		
       ids = EvalTestDataLoad.makeIdList(l);
       assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
+
+      // testing getting no evals
+      l = evaluationDao.getEvaluationsByEvalGroups(null, false, false, false);
+      assertNotNull(l);
+      assertEquals(0, l.size());
 
    }
 

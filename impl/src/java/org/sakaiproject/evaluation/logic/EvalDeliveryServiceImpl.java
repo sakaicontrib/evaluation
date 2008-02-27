@@ -358,7 +358,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
    protected boolean checkUserModifyResponse(String userId, EvalResponse response) {
       log.debug("evalGroupId: " + response.getEvalGroupId() + ", userId: " + userId);
 
-      String state = EvalUtils.getEvaluationState(response.getEvaluation());
+      String state = EvalUtils.getEvaluationState(response.getEvaluation(), false);
       if (EvalConstants.EVALUATION_STATE_ACTIVE.equals(state) || EvalConstants.EVALUATION_STATE_ACTIVE.equals(state)) {
          // admin CAN save responses -AZ
 //       // check admin (admins can never save responses)

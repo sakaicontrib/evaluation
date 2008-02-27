@@ -30,10 +30,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
-import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
-import org.sakaiproject.evaluation.logic.EvalEvaluationService;
-import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
-import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
@@ -46,7 +42,6 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
-import org.sakaiproject.genericdao.api.finders.ByPropsFinder;
 
 /**
  * Implementation for EvalEvaluationSetupService
@@ -117,21 +112,22 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
     * then this would require a lot of extra logic to handle those cases,
     * holding off on using this for now -AZ
     */
-   private void initiateUpdateStateTimer() {
+   protected void initiateUpdateStateTimer() {
       TimerTask runStateUpdateTask = new TimerTask() {
          @SuppressWarnings("unchecked")
          @Override
          public void run() {
-            // get all evals that are not viewable (i.e. completed done with)
+            // get all evals that are not viewable (i.e. completely done with) or deleted 
             List<EvalEvaluation> evals = dao.findByProperties(EvalEvaluation.class, 
-                  new String[] {"state"}, 
-                  new Object[] {EvalConstants.EVALUATION_STATE_VIEWABLE},
-                  new int[] {ByPropsFinder.NOT_EQUALS});
+                  new String[] {"state", "state"}, 
+                  new Object[] {EvalConstants.EVALUATION_STATE_VIEWABLE, EvalConstants.EVALUATION_STATE_DELETED},
+                  new int[] {EvaluationDao.NOT_EQUALS, EvaluationDao.NOT_EQUALS});
             log.info("Checking the state of " + evals.size() + " evaluations to ensure they are all up to date...");
             // loop through and update the state of the evals if needed
             int count = 0;
             for (EvalEvaluation evaluation : evals) {
-               if (! EvalUtils.getEvaluationState(evaluation).equals(evaluationService.returnAndFixEvalState(evaluation, true)) ) {
+               String evalState = evaluationService.returnAndFixEvalState(evaluation, true);
+               if (! EvalUtils.getEvaluationState(evaluation, false).equals(evalState) ) {
                   // could also trigger the various evaluation email events from this as well with extra logic here
                   count++;
                }
@@ -218,18 +214,12 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             evaluation.setStartDate( new Date() );
          }
 
-         // make sure the state is set correctly
-         evaluationService.returnAndFixEvalState(evaluation, false);
-
          // check user permissions (uses public method)
          if (! evaluationService.canBeginEvaluation(userId) ) {
             throw new SecurityException("User ("+userId+") attempted to create evaluation without permissions");
          }
 
       } else { // updating existing evaluation
-
-         // make sure the state is set correctly
-         evaluationService.returnAndFixEvalState(evaluation, false);
 
          if (! securityChecks.canUserControlEvaluation(userId, evaluation) ) {
             throw new SecurityException("User ("+userId+") attempted to update existing evaluation ("+evaluation.getId()+") without permissions");
@@ -242,6 +232,9 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       if (evaluation.getType() == null) {
          evaluation.setType(EvalConstants.EVALUATION_TYPE_EVALUATION);
       }
+
+      // make sure the state is set correctly (does not override special states)
+      evaluationService.returnAndFixEvalState(evaluation, false);
 
       // make sure we are not using a blank template here
       if (evaluation.getTemplate() == null ||
@@ -367,9 +360,10 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             if (evaluation.getAvailableEmailTemplate().getDefaultType() == null) {
                // only remove non-default templates
                Long emailTemplateId = evaluation.getAvailableEmailTemplate().getId();
-               if ( dao.countByProperties(EvalEvaluation.class, 
+               int evalsUsingTemplate = dao.countByProperties(EvalEvaluation.class, 
                      new String[] {"availableEmailTemplate.id"}, 
-                     new Object[] {emailTemplateId}) <= 1 ) {
+                     new Object[] {emailTemplateId}) ;
+               if ( evalsUsingTemplate <= 1 ) {
                   // template was only used in this evaluation
                   emailSet.add( evaluation.getAvailableEmailTemplate() );
                }
@@ -378,9 +372,10 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          if (evaluation.getReminderEmailTemplate() != null) {
             if (evaluation.getReminderEmailTemplate().getDefaultType() == null) {
                Long emailTemplateId = evaluation.getReminderEmailTemplate().getId();
-               if ( dao.countByProperties(EvalEvaluation.class, 
+               int evalsUsingTemplate = dao.countByProperties(EvalEvaluation.class, 
                      new String[] {"reminderEmailTemplate.id"}, 
-                     new Object[] {emailTemplateId}) <= 1 ) {
+                     new Object[] {emailTemplateId}) ;
+               if ( evalsUsingTemplate <= 1 ) {
                   // template was only used in this evaluation
                   emailSet.add( evaluation.getReminderEmailTemplate() );
                }

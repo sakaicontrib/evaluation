@@ -99,23 +99,10 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
          throw new NullPointerException("evaluationId cannot be null");
       }
       boolean exists = false;
-      int count = dao.countByProperties(EvalEvaluation.class, new String[] {"id"}, new Object[] {evaluationId});
+      int count = dao.countByProperties(EvalEvaluation.class, 
+            new String[] {"id"}, new Object[] {evaluationId});
       if (count > 0) exists = true;
       return exists;
-   }
-
-   /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#countEvaluationsByTemplateId(java.lang.Long)
-    */
-   public int countEvaluationsByTemplateId(Long templateId) {
-      log.debug("templateId: " + templateId);
-      int count = dao.countByProperties(EvalTemplate.class, new String[] {"id"}, new Object[] {templateId});
-      if (count <= 0) {
-         throw new IllegalArgumentException("Cannot find template with id: " + templateId);
-      }
-      count = dao.countByProperties(EvalEvaluation.class,
-            new String[] {"template.id"},  new Object[] {templateId});
-      return count;
    }
 
    /* (non-Javadoc)
@@ -135,17 +122,36 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
    }
 
    /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#getEvaluationsByTemplateId(java.lang.Long)
+    * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#countEvaluationsByTemplateId(java.lang.Long)
     */
-   @SuppressWarnings("unchecked")
-   public List<EvalEvaluation> getEvaluationsByTemplateId(Long templateId) {
+   public int countEvaluationsByTemplateId(Long templateId) {
       log.debug("templateId: " + templateId);
       int count = dao.countByProperties(EvalTemplate.class, new String[] {"id"}, new Object[] {templateId});
       if (count <= 0) {
          throw new IllegalArgumentException("Cannot find template with id: " + templateId);
       }
+      count = dao.countByProperties(EvalEvaluation.class,
+            new String[] {"template.id", "state", "state"}, 
+            new Object[] {templateId, EvalConstants.EVALUATION_STATE_PARTIAL, EvalConstants.EVALUATION_STATE_DELETED},
+            new int[] {EvaluationDao.EQUALS, EvaluationDao.NOT_EQUALS, EvaluationDao.NOT_EQUALS});
+      return count;
+   }
+
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#getEvaluationsByTemplateId(java.lang.Long)
+    */
+   @SuppressWarnings("unchecked")
+   public List<EvalEvaluation> getEvaluationsByTemplateId(Long templateId) {
+      log.debug("templateId: " + templateId);
+      int count = dao.countByProperties(EvalTemplate.class, 
+            new String[] {"id"}, new Object[] {templateId});
+      if (count <= 0) {
+         throw new IllegalArgumentException("Cannot find template with id: " + templateId);
+      }
       List<EvalEvaluation> evals = dao.findByProperties(EvalEvaluation.class,
-            new String[] {"template.id"},  new Object[] {templateId});
+            new String[] {"template.id", "state", "state"}, 
+            new Object[] {templateId, EvalConstants.EVALUATION_STATE_PARTIAL, EvalConstants.EVALUATION_STATE_DELETED},
+            new int[] {EvaluationDao.EQUALS, EvaluationDao.NOT_EQUALS, EvaluationDao.NOT_EQUALS});
       for (EvalEvaluation evaluation : evals) {
          fixupEvaluation(evaluation);
       }
@@ -168,29 +174,34 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
     * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#returnAndFixEvalState(org.sakaiproject.evaluation.model.EvalEvaluation, boolean)
     */
    public String returnAndFixEvalState(EvalEvaluation evaluation, boolean saveState) {
-      String state = EvalUtils.getEvaluationState(evaluation);
+      String trueState = EvalUtils.getEvaluationState(evaluation, true);
       // check state against stored state
-      if (EvalConstants.EVALUATION_STATE_UNKNOWN.equals(state)) {
+      if (EvalConstants.EVALUATION_STATE_UNKNOWN.equals(trueState)) {
          log.warn("Evaluation ("+evaluation.getTitle()+") in UNKNOWN state");
+      } else if ( EvalConstants.EVALUATION_STATE_PARTIAL.equals(evaluation.getState()) 
+            || EvalConstants.EVALUATION_STATE_DELETED.equals(evaluation.getState()) ) {
+         // never fix the state if it is currently in a special state
+         trueState = evaluation.getState();
       } else {
          // compare state and set if not equal
-         if (! state.equals(evaluation.getState()) ) {
-            evaluation.setState(state);
+         if (! trueState.equals(evaluation.getState()) ) {
+            evaluation.setState(trueState);
+            // will only save the state if this eval is already saved
             if ( (evaluation.getId() != null) && saveState) {
-               if ( EvalConstants.EVALUATION_STATE_ACTIVE.equals(state) ) {
+               if ( EvalConstants.EVALUATION_STATE_ACTIVE.equals(trueState) ) {
                   externalLogic.registerEntityEvent(EVENT_EVAL_STATE_START, evaluation);
-               } else if ( EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(state) ) {
+               } else if ( EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(trueState) ) {
                   externalLogic.registerEntityEvent(EVENT_EVAL_STATE_DUE, evaluation);
-               } else if ( EvalConstants.EVALUATION_STATE_CLOSED.equals(state) ) {
+               } else if ( EvalConstants.EVALUATION_STATE_CLOSED.equals(trueState) ) {
                   externalLogic.registerEntityEvent(EVENT_EVAL_STATE_STOP, evaluation);
-               } else if ( EvalConstants.EVALUATION_STATE_VIEWABLE.equals(state) ) {
+               } else if ( EvalConstants.EVALUATION_STATE_VIEWABLE.equals(trueState) ) {
                   externalLogic.registerEntityEvent(EVENT_EVAL_STATE_VIEWABLE, evaluation);
                }
                dao.update(evaluation);
             }
          }
       }
-      return state;
+      return trueState;
    }
 
    public Set<String> getUserIdsTakingEvalInGroup(Long evaluationId, String evalGroupId,
@@ -273,7 +284,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
       EvalEvaluation eval = getEvaluationOrFail(evaluationId);
 
       // check the evaluation state
-      String state = EvalUtils.getEvaluationState(eval);
+      String state = EvalUtils.getEvaluationState(eval, false);
       if ( ! EvalConstants.EVALUATION_STATE_ACTIVE.equals(state) &&
             ! EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(state) ) {
          log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") when eval state is: " + state);

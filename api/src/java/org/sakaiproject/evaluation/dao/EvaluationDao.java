@@ -85,7 +85,8 @@ public interface EvaluationDao extends CompleteGenericDao {
 	 * Returns all evaluation objects associated with the input groups,
 	 * can also include anonymous evaluations
 	 * 
-	 * @param evalGroupIds an array of eval group IDs to get associated evals for, can be empty or null to get all evals
+	 * @param evalGroupIds an array of eval group IDs to get associated evals for, 
+	 * can be empty or null but only anonymous evals will be returned
 	 * @param activeOnly if true, only include active evaluations, if false, include all evaluations
 	 * @param includeUnApproved if true, include the evaluations for groups which have not been instructor approved yet,
 	 * you should not include these when displaying evaluations to users to take or sending emails
