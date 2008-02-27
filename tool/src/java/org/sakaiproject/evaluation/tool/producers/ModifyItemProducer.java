@@ -349,7 +349,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
                UIMessage.make("modifyscale.remove.scale.option.button"), 
                UIMessage.make("modifyscale.add.scale.option.button"));
          boundedDynamicListInputEvolver.setMinimumLength(2);
-         boundedDynamicListInputEvolver.setMaximumLength(20);
+         boundedDynamicListInputEvolver.setMaximumLength(40);
 
          UIInputMany modifypoints = UIInputMany.make(showItemChoices, 
                "modify-scale-points:", scaleOTP + "options",
