@@ -1,7 +1,7 @@
 /**
  * TextRenderer.java - evaluation - Oct 29, 2007 2:59:12 PM - azeckoski
- * $URL: https://source.sakaiproject.org/contrib $
- * $Id: MultipleChoice.java 1000 Jan 21, 2008 2:59:12 PM azeckoski $
+ * $URL$
+ * $Id$
  **************************************************************************
  * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0

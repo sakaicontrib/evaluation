@@ -1,6 +1,6 @@
 /**
- * $Id: EvalJobLogicImplTest.java 1000 Dec 26, 2006 10:07:31 AM rwellis $
- * $URL: https://source.sakaiproject.org/contrib $
+ * $Id$
+ * $URL$
  * EvalJobLogicImplTest.java - evaluation - Oct 26, 2007 10:07:31 AM - rwellis
  **************************************************************************
  * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge

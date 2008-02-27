@@ -1,6 +1,6 @@
 /**
- * $Id: EvalHierarchyNode.java 1000 Dec 25, 2006 12:07:31 AM azeckoski $
- * $URL: https://source.sakaiproject.org/contrib $
+ * $Id$
+ * $URL$
  * EvalHierarchyNode.java - evaluation - Aug 20, 2007 12:07:31 AM - azeckoski
  **************************************************************************
  * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge

@@ -1,7 +1,7 @@
 /**
  * RSFUtils.java - evaluation - Feb 18, 2007 11:35:56 AM - antranig
- * $URL: https://source.sakaiproject.org/contrib $
- * $Id: Locator.java 11234 Jan 21, 2008 11:35:56 AM azeckoski $
+ * $URL$
+ * $Id$
  **************************************************************************
  * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0

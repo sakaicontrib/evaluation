@@ -1,6 +1,6 @@
 /**
- * $Id: ExternalHierarchyLogicImpl.java 1000 Sep 6, 2007 1:30:29 PM azeckoski $
- * $URL: https://source.sakaiproject.org/contrib $
+ * $Id$
+ * $URL$
  * ExternalHierarchyLogicImpl.java - evaluation - Sep 6, 2007 1:30:29 PM - azeckoski
  **************************************************************************
  * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge

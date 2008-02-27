@@ -1,6 +1,6 @@
 /**
- * $Id: ExternalHierarchy.java 1000 Sep 5, 2007 11:23:05 AM azeckoski $
- * $URL: https://source.sakaiproject.org/contrib $
+ * $Id$
+ * $URL$
  * ExternalHierarchy.java - evaluation - Sep 5, 2007 11:23:05 AM - azeckoski
  **************************************************************************
  * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge

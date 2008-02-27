@@ -1,7 +1,7 @@
 /**
  * ScaleBeanLocator.java - evaluation - Mar 04, 2007 11:35:56 AM - kahuja@vt.edu
- * $URL: https://source.sakaiproject.org/contrib $
- * $Id: Locator.java 11234 Oct 29, 2007 11:35:56 AM azeckoski $
+ * $URL$
+ * $Id$
  **************************************************************************
  * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0

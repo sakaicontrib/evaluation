@@ -1,6 +1,6 @@
 /**
- * $Id: EvalEvaluationSetupServiceImpl.java 1000 Dec 25, 2006 10:07:31 AM azeckoski $
- * $URL: https://source.sakaiproject.org/contrib $
+ * $Id$
+ * $URL$
  * EvalEvaluationSetupServiceImpl.java - evaluation - Dec 25, 2006 10:07:31 AM - azeckoski
  **************************************************************************
  * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
