@@ -1,5 +1,7 @@
 package org.sakaiproject.evaluation.tool.reporting;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.tool.producers.ReportChooseGroupsProducer;
 import org.sakaiproject.evaluation.tool.producers.ReportsViewingProducer;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
@@ -17,6 +19,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsInterceptor;
  * @author sgithens
  */
 public class ReportViewParamsInterceptor implements ViewParamsInterceptor {
+   private static Log log = LogFactory.getLog(ReportViewParamsInterceptor.class);
 
    private CurrentViewableReports curViewableReports;
    public void setCurrentViewableReports(CurrentViewableReports cur) {
@@ -29,7 +32,12 @@ public class ReportViewParamsInterceptor implements ViewParamsInterceptor {
       if (ReportChooseGroupsProducer.VIEW_ID.equals(incoming.viewID)) {
          ReportParameters params = (ReportParameters) incoming;
          curViewableReports.populate(params.evaluationId);
+         String groups = "";
+         for (String groupID: curViewableReports.getViewableGroupIDs())
+            groups += groupID + ", ";
+         log.warn("SWG: Available groups to ReportChooseGroupsProducer: " + groups);
          if (curViewableReports.getViewableGroupIDs().length <= 1) {
+            log.warn("SWG: Redirecting to View Reports");
             ReportParameters viewReports = (ReportParameters) params.copyBase();
             viewReports.viewID = ReportsViewingProducer.VIEW_ID;
             viewReports.groupIds = curViewableReports.getViewableGroupIDs();
