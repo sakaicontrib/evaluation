@@ -168,12 +168,12 @@
 					<table class="listHier" border="0" cellspacing="0" cellpadding="0" width="99%" style="margin:0" id="evaluation_show_results_area"><!-- DO NOT CHANGE THIS ID, it is used by JS logic -AZ -->
 						<tr rsf:id="showResultsToStudents:" id="showResultsToStudents">
 							<td width="50%" class="checkbox">
-								<input type="checkbox" name="student_view_results" rsf:id="studentViewResults" id="studentViewResults" />
-								<label for="studentViewResults" rsf:id="eval-results-viewable-students">Students in the courses this evaluation is assigned to</label>
+								<input rsf:id="studentViewResults" type="checkbox" name="student_view_results" id="studentViewResults" />
+								<label rsf:id="studentViewResults_label"for="studentViewResults">Students in the courses this evaluation is assigned to</label>
 							</td>
 							<td width="50%" class="shorttext">
-								<span rsf:id="eval-results-stu-date-label">Results viewable on "View Date"</span>
-								<span rsf:id="studentsDate:">
+								<span rsf:id="studentsViewDate_label">Results viewable on "View Date"</span>
+								<span rsf:id="studentsViewDate:">
 									<input type="text" name="dummy_date" value="MM/DD/YYYY" size="12" maxlength="10"/>
 									<img src="../images/calendar.gif" />
 								</span>
@@ -181,12 +181,12 @@
 						</tr>
 						<tr rsf:id="showResultsToInst:" id="showResultsToInst">
 							<td width="50%" class="checkbox">
-								<input type="checkbox" name="instructor_view_results" rsf:id="instructorViewResults"  id="instructorViewResults" />
-								<label  for="instructorViewResults" rsf:id="eval-results-viewable-instructors">Instructors in the courses this evaluation is assigned to</label>
+								<input rsf:id="instructorViewResults" type="checkbox" name="instructor_view_results" id="instructorViewResults" />
+								<label rsf:id="instructorViewResults_label" for="instructorViewResults">Instructors in the courses this evaluation is assigned to</label>
 							</td>
 							<td width="50%" class="shorttext">
-								<span rsf:id="eval-results-inst-date-label">Results viewable on "View Date"</span>
-								<span rsf:id="instructorsDate:" >
+								<span rsf:id="instructorsViewDate_label">Results viewable on "View Date"</span>
+								<span rsf:id="instructorsViewDate:" >
 									<input type="text" name="dummy_date" value="MM/DD/YYYY" size="12" maxlength="10"/>
 									<img src="../images/calendar.gif" />
 								</span>
@@ -201,13 +201,13 @@
 				<fieldset class="visibleFS">
 					<legend rsf:id="msg=evalsettings.student.completion.settings.header">Student Completion Settings:</legend>
 					<div rsf:id="showBlankQuestionAllowedToStut:"  class="checkbox">
-						<input type="checkbox" name="blank_responses_allowed" rsf:id="blankResponsesAllowed" id="blankResponsesAllowed" />
-						<label rsf:id="blank-responses-allowed-desc" for="blankResponsesAllowed">Blank non-text question responses allowed:</label>
+						<input rsf:id="blankResponsesAllowed" type="checkbox" name="blankResponsesAllowed" id="blankResponsesAllowed" />
+						<label rsf:id="blankResponsesAllowed_label" for="blankResponsesAllowed">Blank non-text question responses allowed:</label>
 						<p rsf:id="msg=evalsettings.blank.responses.allowed.note" class="instruction textPanelFooter indnt2">Participants are not warned when responses are left blank if unchecked</p>
 					</div>	
 					<div rsf:id="showModifyResponsesAllowedToStu:" class="checkbox">
-						<input type="checkbox" name="modify_responses_allowed" rsf:id="modifyResponsesAllowed" id="modifyResponsesAllowed" />
-						<label rsf:id="modify-responses-allowed-desc" for="modifyResponsesAllowed">Modification of responses allowed:</label>
+						<input rsf:id="modifyResponsesAllowed" type="checkbox" name="modifyResponsesAllowed" id="modifyResponsesAllowed" />
+						<label rsf:id="modifyResponsesAllowed_label" for="modifyResponsesAllowed">Modification of responses allowed:</label>
 						<p rsf:id="msg=evalsettings.modify.responses.allowed.note"  class="instruction textPanelFooter indnt2">Participants may submit responses once only if unchecked</p>
 					</div>
 				</fieldset>
