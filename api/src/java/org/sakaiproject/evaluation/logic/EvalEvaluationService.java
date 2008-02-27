@@ -118,11 +118,14 @@ public interface EvalEvaluationService {
     * will not save state for a new evaluation, this is very fast
     * and cheap to call if you are not saving state and pretty cheap
     * even if you are, it will ONLY update when there is a need<br/>
+    * <b>NOTE:</b> this will not change the state if it is currently a special
+    * state: {@link EvalConstants#EVALUATION_STATE_PARTIAL} or {@link EvalConstants#EVALUATION_STATE_DELETED}<br/>
     * <b>WARNING:</b> This is not really for general use but it needs to be
     * publicly exposed, use {@link #updateEvaluationState(Long)} instead
     * 
     * @param evaluation a persistent {@link EvalEvaluation} object
-    * @param saveState if true, save the fixed eval state, else do not save
+    * @param saveState if true, save the fixed eval state, else do not save,
+    * this will not save the state if this evaluation is new and has never been saved
     * @return an EVALUATION_STATE constant from 
     * {@link org.sakaiproject.evaluation.constant.EvalConstants}
     */

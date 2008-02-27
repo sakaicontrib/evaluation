@@ -314,11 +314,18 @@ public class EvalTestDataLoad {
     * Evaluation complete (20 days ago) and viewable (15 days ago), ADMIN_USER_ID owns, templateUser, 2 responses, 1 AC, not recently closed
     */
    public EvalEvaluation evaluationViewable;
-   
    /**
     * Evaluation provided by an EvalGroupsProvider implementation (evaluationActive + eid set)
     */
    public EvalEvaluation evaluationProvided;
+   /**
+    * Evaluation which is only partially saved and has not been completely created
+    */
+   public EvalEvaluation evaluationPartial;
+   /**
+    * Evaluation which has been deleted
+    */
+   public EvalEvaluation evaluationDeleted;
 
 
    // EMAIL TEMPLATES
@@ -366,6 +373,14 @@ public class EvalTestDataLoad {
     * Group Assignment: ADMIN_USER_ID, SITE2_REF, {@link #evaluationNewAdmin}
     */
    public EvalAssignGroup assign7;
+   /**
+    * Group Assignment: MAINT_USER_ID, SITE1_REF, {@link #evaluationPartial}
+    */
+   public EvalAssignGroup assign8;
+   /**
+    * Group Assignment: MAINT_USER_ID, SITE1_REF, {@link #evaluationDeleted}
+    */
+   public EvalAssignGroup assign9;
    /**
     * Group Assignment: ADMIN_USER_ID, SITE2_REF, {@link #evaluationNewAdmin} + eid
     */
@@ -826,7 +841,13 @@ public class EvalTestDataLoad {
       calendar.add(Calendar.DATE, -5);
       twentyDaysAgo = calendar.getTime();
 
-      // init evaluationSetupService
+      // init evaluations
+      evaluationPartial = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, MAINT_USER_ID, "Eval partial", null, 
+            tomorrow, null, null, null, null, null,
+            EvalConstants.EVALUATION_STATE_PARTIAL, EvalConstants.SHARING_PRIVATE, 
+            EvalConstants.INSTRUCTOR_REQUIRED, new Integer(0), null, null, null, null, templatePublic, null,
+            null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, UNLOCKED,
+            EvalConstants.EVALUATION_AUTHCONTROL_NONE, null);
       // Evaluation not started yet (starts tomorrow)
       evaluationNew = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, MAINT_USER_ID, "Eval new", null, 
             tomorrow, threeDaysFuture, threeDaysFuture, fourDaysFuture, null, null,
@@ -852,7 +873,7 @@ public class EvalTestDataLoad {
       evaluationProvided = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, MAINT_USER_ID, "Eval provided", null, 
               yesterday, today, today, tomorrow, null, null,
               EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.SHARING_VISIBLE, 
-              EvalConstants.INSTRUCTOR_OPT_IN, new Integer(1), null, null, null, null, templateUser, null,
+              EvalConstants.INSTRUCTOR_REQUIRED, new Integer(1), null, null, null, null, templateUser, null,
               null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, LOCKED,
               EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null);
       evaluationProvided.setEid("test-eid");
@@ -861,7 +882,7 @@ public class EvalTestDataLoad {
       evaluationActiveUntaken = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, MAINT_USER_ID, "Eval active not taken", null, 
             yesterday, tomorrow, tomorrow, threeDaysFuture, null, null,
             EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.SHARING_VISIBLE, 
-            EvalConstants.INSTRUCTOR_OPT_IN, new Integer(1), EVAL_FROM_EMAIL, null, null, null, templatePublic, null,
+            EvalConstants.INSTRUCTOR_REQUIRED, new Integer(1), EVAL_FROM_EMAIL, null, null, null, templatePublic, null,
             null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, UNLOCKED,
             EvalConstants.EVALUATION_AUTHCONTROL_NONE, EVAL_CATEGORY_1);
       // evaluation in the DUE state
@@ -884,6 +905,13 @@ public class EvalTestDataLoad {
             EvalConstants.INSTRUCTOR_OPT_IN, new Integer(2), null, null, null, null, templateUser, null,
             null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, LOCKED,
             EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null);
+
+      evaluationDeleted = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, MAINT_USER_ID, "Eval deleted", null, 
+            fifteenDaysAgo, fourDaysAgo, null, null, null, null,
+            EvalConstants.EVALUATION_STATE_DELETED, EvalConstants.SHARING_PUBLIC, 
+            EvalConstants.INSTRUCTOR_REQUIRED, new Integer(0), null, null, null, null, templateUser, null,
+            null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, UNLOCKED,
+            EvalConstants.EVALUATION_AUTHCONTROL_NONE, null);
 
       // email templates
       emailTemplate1 = new EvalEmailTemplate(new Date(), ADMIN_USER_ID, "Email Subject 1", "Email Template 1");
@@ -908,6 +936,10 @@ public class EvalTestDataLoad {
             Boolean.FALSE, Boolean.FALSE, Boolean.TRUE, evaluationNewAdmin);
       assign7 = new EvalAssignGroup( ADMIN_USER_ID, SITE2_REF, EvalConstants.GROUP_TYPE_SITE, 
             Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationNewAdmin);
+      assign8 = new EvalAssignGroup( MAINT_USER_ID, SITE1_REF, EvalConstants.GROUP_TYPE_SITE, 
+            Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationPartial);
+      assign9 = new EvalAssignGroup( MAINT_USER_ID, SITE1_REF, EvalConstants.GROUP_TYPE_SITE, 
+            Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationDeleted);
       // Dick, you cannot assign 2 groups to an eval with the same evalGroupId... I have fixed this by making up a fake id -AZ
       assignGroupProvided = new EvalAssignGroup( ADMIN_USER_ID, "AZ-new-ref", EvalConstants.GROUP_TYPE_SITE, 
             Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationNewAdmin);
@@ -1065,6 +1097,7 @@ public class EvalTestDataLoad {
       dao.save(emailTemplate2);
       dao.save(emailTemplate3);
 
+      dao.save(evaluationPartial);
       dao.save(evaluationNew);
       dao.save(evaluationNewAdmin);
       dao.save(evaluationActive);
@@ -1073,6 +1106,7 @@ public class EvalTestDataLoad {
       dao.save(evaluationClosed);
       dao.save(evaluationViewable);
       dao.save(evaluationProvided);
+      dao.save(evaluationDeleted);
 
       dao.save(assign1);
       dao.save(assign2);
@@ -1081,6 +1115,8 @@ public class EvalTestDataLoad {
       dao.save(assign5);
       dao.save(assign6);
       dao.save(assign7);
+      dao.save(assign8);
+      dao.save(assign9);
       dao.save(assignGroupProvided);
 
       dao.save(assignHier1);

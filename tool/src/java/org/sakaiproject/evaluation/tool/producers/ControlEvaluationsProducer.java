@@ -361,7 +361,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
                   UIMessage.make("general.command.edit"), "#{evaluationBean.editEvalSettingAction}");
             evalEdit.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", evaluation.getId()));
 
-            if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(EvalUtils.getEvaluationState(evaluation)) ) {
+            if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(EvalUtils.getEvaluationState(evaluation, false)) ) {
                int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
                if ( responsesNeeded == 0 ) {
                   UIInternalLink.make(evaluationRow, "closed-eval-report-link", 

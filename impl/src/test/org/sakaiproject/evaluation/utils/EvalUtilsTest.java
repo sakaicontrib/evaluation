@@ -40,7 +40,7 @@ import org.sakaiproject.evaluation.utils.EvalUtils;
 public class EvalUtilsTest extends TestCase {
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.utils.EvalUtils#getEvaluationState(org.sakaiproject.evaluation.model.EvalEvaluation)}.
+    * Test method for {@link org.sakaiproject.evaluation.utils.EvalUtils#getEvaluationState(org.sakaiproject.evaluation.model.EvalEvaluation, boolean)}.
     */
    public void testGetEvaluationState() {
       String state = null;
@@ -48,30 +48,34 @@ public class EvalUtilsTest extends TestCase {
 
       // positive
       etdl.evaluationNew.setId( new Long(1) );
-      state = EvalUtils.getEvaluationState(etdl.evaluationNew);
+      state = EvalUtils.getEvaluationState(etdl.evaluationNew, false);
+      assertEquals(EvalConstants.EVALUATION_STATE_INQUEUE, state);
+
+      // test special has no effect on a date determined state
+      state = EvalUtils.getEvaluationState(etdl.evaluationNew, true);
       assertEquals(EvalConstants.EVALUATION_STATE_INQUEUE, state);
 
       etdl.evaluationActive.setId( new Long(2) );
-      state = EvalUtils.getEvaluationState(etdl.evaluationActive);
+      state = EvalUtils.getEvaluationState(etdl.evaluationActive, false);
       assertEquals(EvalConstants.EVALUATION_STATE_ACTIVE, state);
 
       etdl.evaluationActiveUntaken.setId( new Long(3) );
-      state = EvalUtils.getEvaluationState(etdl.evaluationActiveUntaken);
+      state = EvalUtils.getEvaluationState(etdl.evaluationActiveUntaken, false);
       assertEquals(EvalConstants.EVALUATION_STATE_ACTIVE, state);
 
       etdl.evaluationClosed.setId( new Long(4) );
-      state = EvalUtils.getEvaluationState(etdl.evaluationClosed);
+      state = EvalUtils.getEvaluationState(etdl.evaluationClosed, false);
       assertEquals(EvalConstants.EVALUATION_STATE_CLOSED, state);
 
       etdl.evaluationViewable.setId( new Long(5) );
-      state = EvalUtils.getEvaluationState(etdl.evaluationViewable);
+      state = EvalUtils.getEvaluationState(etdl.evaluationViewable, false);
       assertEquals(EvalConstants.EVALUATION_STATE_VIEWABLE, state);
 
       // negative (null start date) and saved (should not even be possible)
       EvalEvaluation invalidEval = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, 
             "aaronz", "testing null dates", null, "XXXXXXXX", EvalConstants.SHARING_PRIVATE, 0, null);
       invalidEval.setId( new Long(6) );
-      state = EvalUtils.getEvaluationState( invalidEval );
+      state = EvalUtils.getEvaluationState( invalidEval, false );
       assertEquals(EvalConstants.EVALUATION_STATE_UNKNOWN, state);
 
       // test the cases where a lot of the dates are unset (testing various nulls)
@@ -79,62 +83,66 @@ public class EvalUtilsTest extends TestCase {
             "aaronz", "testing null dates", etdl.tomorrow, null, EvalConstants.SHARING_PRIVATE, 0, null);
 
       // new evals are always partial state
-      state = EvalUtils.getEvaluationState(datesEval);
+      state = EvalUtils.getEvaluationState(datesEval, false);
       assertEquals(EvalConstants.EVALUATION_STATE_PARTIAL, state);
+
+      // test ignoring the special states
+      state = EvalUtils.getEvaluationState(datesEval, true);
+      assertEquals(EvalConstants.EVALUATION_STATE_INQUEUE, state);
 
       // set the id so this eval does not look new
       datesEval.setId( new Long(99999) );
 
       // only the start date is set and in the future
-      state = EvalUtils.getEvaluationState(datesEval);
+      state = EvalUtils.getEvaluationState(datesEval, false);
       assertEquals(EvalConstants.EVALUATION_STATE_INQUEUE, state);
 
       // only the start date is set and way in the past
       datesEval.setStartDate(etdl.fifteenDaysAgo);
-      state = EvalUtils.getEvaluationState(datesEval);
+      state = EvalUtils.getEvaluationState(datesEval, false);
       assertEquals(EvalConstants.EVALUATION_STATE_ACTIVE, state);
 
       // only the start date (past) and due date (future) are set
       datesEval.setDueDate(etdl.tomorrow);
-      state = EvalUtils.getEvaluationState(datesEval);
+      state = EvalUtils.getEvaluationState(datesEval, false);
       assertEquals(EvalConstants.EVALUATION_STATE_ACTIVE, state);
 
       // only the start date (past) and due date (past) are set
       datesEval.setDueDate(etdl.yesterday);
-      state = EvalUtils.getEvaluationState(datesEval);
+      state = EvalUtils.getEvaluationState(datesEval, false);
       assertEquals(EvalConstants.EVALUATION_STATE_VIEWABLE, state);
 
       // only the start date (past) and due date (past) and stop date (future) are set
       datesEval.setDueDate(etdl.fourDaysAgo);
       datesEval.setStopDate(etdl.tomorrow);
-      state = EvalUtils.getEvaluationState(datesEval);
+      state = EvalUtils.getEvaluationState(datesEval, false);
       assertEquals(EvalConstants.EVALUATION_STATE_GRACEPERIOD, state);
 
       // only the start date (past) and due date (past) and stop date (past) are set
       datesEval.setStopDate(etdl.threeDaysAgo);
-      state = EvalUtils.getEvaluationState(datesEval);
+      state = EvalUtils.getEvaluationState(datesEval, false);
       assertEquals(EvalConstants.EVALUATION_STATE_VIEWABLE, state);
 
       // all dates set (view date in future)
       datesEval.setViewDate(etdl.tomorrow);
-      state = EvalUtils.getEvaluationState(datesEval);
+      state = EvalUtils.getEvaluationState(datesEval, false);
       assertEquals(EvalConstants.EVALUATION_STATE_CLOSED, state);
 
       // all dates set (view date in past)
       datesEval.setViewDate(etdl.yesterday);
-      state = EvalUtils.getEvaluationState(datesEval);
+      state = EvalUtils.getEvaluationState(datesEval, false);
       assertEquals(EvalConstants.EVALUATION_STATE_VIEWABLE, state);
 
       // all dates EXCEPT stop date set (view date in future)
       datesEval.setStopDate(null);
       datesEval.setViewDate(etdl.tomorrow);
-      state = EvalUtils.getEvaluationState(datesEval);
+      state = EvalUtils.getEvaluationState(datesEval, false);
       assertEquals(EvalConstants.EVALUATION_STATE_CLOSED, state);
 
       // all dates EXCEPT stop date set (view date in past)
       datesEval.setStopDate(null);
       datesEval.setViewDate(etdl.yesterday);
-      state = EvalUtils.getEvaluationState(datesEval);
+      state = EvalUtils.getEvaluationState(datesEval, false);
       assertEquals(EvalConstants.EVALUATION_STATE_VIEWABLE, state);
 
       // no exceptions thrown

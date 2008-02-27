@@ -126,8 +126,8 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
             // authenticated evaluation URLs depend on the state of the evaluation and the users permissions,
             // failsafe goes to take eval when it cannot determine where else to go
             String currentUserId = externalLogic.getCurrentUserId();
-            log.warn("Note: User ("+currentUserId+") taking authenticated evaluation: " + evaluationId + " in state ("+EvalUtils.getEvaluationState(evaluation)+") for group: " + evalGroupId);
-            if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals( EvalUtils.getEvaluationState(evaluation) )) {
+            log.warn("Note: User ("+currentUserId+") taking authenticated evaluation: " + evaluationId + " in state ("+EvalUtils.getEvaluationState(evaluation, false)+") for group: " + evalGroupId);
+            if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals( EvalUtils.getEvaluationState(evaluation, false) )) {
                 // go to the reports view
                 if (currentUserId.equals(evaluation.getOwner()) ||
                         externalLogic.isUserAdmin(currentUserId)) { // TODO - make this a better check -AZ
@@ -138,7 +138,7 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
                 }
             }
 
-            if (EvalConstants.EVALUATION_STATE_INQUEUE.equals( EvalUtils.getEvaluationState(evaluation) )) {
+            if (EvalConstants.EVALUATION_STATE_INQUEUE.equals( EvalUtils.getEvaluationState(evaluation, false) )) {
                 // go to the add instructor items view if permission
                 if (evalGroupId == null) {
                    Map<Long, List<EvalAssignGroup>> m = evaluationService.getEvaluationAssignGroups(new Long[] {evaluationId}, true);

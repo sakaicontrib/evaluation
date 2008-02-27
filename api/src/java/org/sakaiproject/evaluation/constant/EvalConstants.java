@@ -29,7 +29,6 @@ public class EvalConstants {
    public static String APP_VERSION = "1.2.0";
 
    public static String SVN_REVISION = "$Revision$";
-   public static String SVN_URL = "$HeadURL$";
    public static String SVN_LAST_UPDATE = "$Date$";
 
    /**

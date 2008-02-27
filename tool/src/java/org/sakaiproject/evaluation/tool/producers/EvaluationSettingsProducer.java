@@ -191,13 +191,13 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 
       // EVALUATION TITLE/INSTRUCTIONS
 
-      if ( EvalUtils.checkStateSameOrAfter(EvalConstants.EVALUATION_STATE_ACTIVE, evalState) ) {
+      if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_ACTIVE, evalState, true) ) {
          UIOutput.make(tofill, "evaluationTitle", evaluation.getTitle());
       } else {
          UIInput.make(form, "title", evaluationOTP + "title");
       }
 
-      if ( EvalUtils.checkStateSameOrAfter(EvalConstants.EVALUATION_STATE_CLOSED, evalState) ) {
+      if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_CLOSED, evalState, true) ) {
          UIVerbatim.make(tofill, "evaluationInstructions", evaluation.getInstructions());
       } else {
          UIInput instructionsInput = UIInput.make(form, "instructions:", evaluationOTP + "instructions");
@@ -273,7 +273,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
          dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);		   
       }
       dateevolver.evolveDateInput(startDate, evaluationBean.startDate);
-      if ( EvalUtils.checkStateSameOrAfter(EvalConstants.EVALUATION_STATE_ACTIVE, evalState) ) {
+      if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_ACTIVE, evalState, true) ) {
          RSFUtils.disableComponent(startDate);
       }
 
@@ -286,7 +286,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
          dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);        
       }
       dateevolver.evolveDateInput(dueDate, evaluationBean.dueDate);
-      if ( EvalUtils.checkStateSameOrAfter(EvalConstants.EVALUATION_STATE_GRACEPERIOD, evalState) ) {
+      if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_GRACEPERIOD, evalState, true) ) {
          RSFUtils.disableComponent(dueDate);
       }
 
@@ -301,7 +301,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
             dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);        
          }
          dateevolver.evolveDateInput(stopDate, evaluationBean.stopDate);
-         if ( EvalUtils.checkStateSameOrAfter(EvalConstants.EVALUATION_STATE_CLOSED, evalState) ) {
+         if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_CLOSED, evalState, true) ) {
             RSFUtils.disableComponent(stopDate);
          }
       }
@@ -334,7 +334,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
             dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);        
          }
          dateevolver.evolveDateInput(viewDate, evaluationBean.viewDate);
-         if ( EvalUtils.checkStateSameOrAfter(EvalConstants.EVALUATION_STATE_VIEWABLE, evalState) ) {
+         if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_VIEWABLE, evalState, true) ) {
             RSFUtils.disableComponent(viewDate);
          }
       }
@@ -367,7 +367,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
       UIBranchContainer showBlankQuestionAllowedToStut = UIBranchContainer.make(form, "showBlankQuestionAllowedToStut:");
       UIBoundBoolean stuUnansweredCheckbox = generateSettingsControlledCheckbox(showBlankQuestionAllowedToStut, 
             "blankResponsesAllowed", evaluationOTP + "blankResponsesAllowed", studentUnanswersAllowed, form);
-      if ( EvalUtils.checkStateSameOrAfter(EvalConstants.EVALUATION_STATE_ACTIVE, evalState) ) {
+      if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_ACTIVE, evalState, true) ) {
          RSFUtils.disableComponent(stuUnansweredCheckbox);
       }
 
@@ -377,7 +377,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
       UIBranchContainer showModifyResponsesAllowedToStu = UIBranchContainer.make(form, "showModifyResponsesAllowedToStu:");
       UIBoundBoolean stuModifyResponsesCheckbox = generateSettingsControlledCheckbox(showModifyResponsesAllowedToStu, 
             "modifyResponsesAllowed", evaluationOTP + "modifyResponsesAllowed", studentModifyReponses, form);
-      if ( EvalUtils.checkStateSameOrAfter(EvalConstants.EVALUATION_STATE_ACTIVE, evalState) ) {
+      if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_ACTIVE, evalState, true) ) {
          RSFUtils.disableComponent(stuModifyResponsesCheckbox);
       }
 
@@ -387,7 +387,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 
       UISelect authControlSelect = UISelect.make(form, "auth-control-choose", EvalToolConstants.AUTHCONTROL_VALUES, 
             EvalToolConstants.AUTHCONTROL_LABELS, evaluationOTP + "authControl").setMessageKeys();
-      if ( EvalUtils.checkStateSameOrAfter(EvalConstants.EVALUATION_STATE_ACTIVE, evalState) ) {
+      if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_ACTIVE, evalState, true) ) {
          RSFUtils.disableComponent(authControlSelect.selection);
       }
 
@@ -403,7 +403,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
          if (instUseFromAboveValue == null) {
             UISelect instOpt = UISelect.make(form, "instructorOpt", EvalToolConstants.INSTRUCTOR_OPT_VALUES, 
                   EvalToolConstants.INSTRUCTOR_OPT_LABELS, evaluationOTP + "instructorOpt").setMessageKeys();
-            if ( EvalUtils.checkStateSameOrAfter(EvalConstants.EVALUATION_STATE_INQUEUE, evalState) ) {
+            if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_INQUEUE, evalState, true) ) {
                RSFUtils.disableComponent(instOpt.selection);
             }
          } else {
@@ -426,7 +426,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
       // email reminder control
       UISelect reminderDaysSelect = UISelect.make(form, "reminderDays", EvalToolConstants.REMINDER_EMAIL_DAYS_VALUES, 
             EvalToolConstants.REMINDER_EMAIL_DAYS_LABELS, evaluationOTP + "reminderDays").setMessageKeys();
-      if ( EvalUtils.checkStateSameOrAfter(EvalConstants.EVALUATION_STATE_GRACEPERIOD, evalState) ) {
+      if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_GRACEPERIOD, evalState, true) ) {
          RSFUtils.disableComponent(reminderDaysSelect.selection);
       }
 

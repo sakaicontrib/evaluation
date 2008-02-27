@@ -178,7 +178,7 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, N
          showButtonsForm(tofill);
       } else {
          // check if evaluation is queued; Closed, started evaluation can not have assign groups changed
-         if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(EvalUtils.getEvaluationState( evaluationBean.eval ) ) ) {
+         if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(EvalUtils.getEvaluationState( evaluationBean.eval, false ) ) ) {
             showButtonsForm(tofill);
          }
       }

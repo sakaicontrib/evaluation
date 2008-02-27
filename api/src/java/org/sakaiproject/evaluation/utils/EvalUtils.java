@@ -54,22 +54,28 @@ public class EvalUtils {
     * States: Partial -> InQueue -> Active -> GracePeriod -> Closed -> Viewable (-> Deleted)
     * 
     * @param eval the evaluation object
+    * @param noSpecial if this is true then the special (PARTIAL, DELETED) states will not be returned,
+    * otherwise it will return the state as determined by the state settings,
+    * use this to override the check when you want to get the state according to the dates
     * @return the EVALUATION_STATE constant
     */
-   public static String getEvaluationState(EvalEvaluation eval) {
+   public static String getEvaluationState(EvalEvaluation eval, boolean noSpecial) {
       if (eval == null) {
          throw new NullPointerException("getEvaluationState: Evaluation must not be null");
       }
       Date today = new Date();
       String state = EvalConstants.EVALUATION_STATE_UNKNOWN;
       try {
-         // handle the 2 special case states first
-         if (eval.getId() == null ||
-               EvalConstants.EVALUATION_STATE_PARTIAL.equals(eval.getState())) {
-            state = EvalConstants.EVALUATION_STATE_PARTIAL;
-         } else if (EvalConstants.EVALUATION_STATE_DELETED.equals(eval.getState())) {
-            state = EvalConstants.EVALUATION_STATE_DELETED;
-         } else {
+         if (! noSpecial) {
+            // handle the 2 special case states first
+            if (eval.getId() == null ||
+                  EvalConstants.EVALUATION_STATE_PARTIAL.equals(eval.getState())) {
+               state = EvalConstants.EVALUATION_STATE_PARTIAL;
+            } else if (EvalConstants.EVALUATION_STATE_DELETED.equals(eval.getState())) {
+               state = EvalConstants.EVALUATION_STATE_DELETED;
+            }
+         }
+         if (noSpecial || EvalConstants.EVALUATION_STATE_UNKNOWN.equals(state)) {
             // now determine the state based on dates
             if ( eval.getStartDate().after(today) ) {
                state = EvalConstants.EVALUATION_STATE_INQUEUE;
@@ -106,17 +112,47 @@ public class EvalUtils {
     * 
     * @param checkState the state constant to check
     * @param currentState the state constant that represents the current state
+    * @param includeSame TODO
     * @return true if the checkState is equal to or after the currentState, 
     * false if the currentState is before the checkState
     */
-   public static boolean checkStateSameOrAfter(String checkState, String currentState) {
+   public static boolean checkStateAfter(String checkState, String currentState, boolean includeSame) {
       boolean isAfterState = false;
-      int checkNum = stateToNumber(checkState);
-      int currentNum = stateToNumber(currentState);
-      if (currentNum >= checkNum) {
-         isAfterState = true;
+      if (checkState.equals(currentState)) {
+         isAfterState = includeSame;
+      } else {
+         int checkNum = stateToNumber(checkState);
+         int currentNum = stateToNumber(currentState);
+         if (currentNum >= checkNum) {
+            isAfterState = true;
+         }
       }
       return isAfterState;
+   }
+
+   /**
+    * Allows checking the order of states<br/>
+    * States: Partial -> InQueue -> Active -> GracePeriod -> Closed -> Viewable (-> Deleted)
+    * 
+    * @param checkState the state constant to check
+    * @param currentState the state constant that represents the current state
+    * @param includeSame if true then true will be returned if the checkState = currentState,
+    * otherwise false is returned when the states are equal
+    * @return true if the checkState is before the currentState, 
+    * false if the currentState is after the checkState
+    */
+   public static boolean checkStateBefore(String checkState, String currentState, boolean includeSame) {
+      boolean isBeforeState = false;
+      if (checkState.equals(currentState)) {
+         isBeforeState = includeSame;
+      } else {
+         int checkNum = stateToNumber(checkState);
+         int currentNum = stateToNumber(currentState);
+         if (currentNum < checkNum) {
+            isBeforeState = true;
+         }
+      }
+      return isBeforeState;
    }
 
    /**

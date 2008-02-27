@@ -83,11 +83,10 @@ public class EvalSecurityChecksImpl {
          if (eval.getId() != null &&
                eval.getLocked().booleanValue() == true) {
             // if eval is closed AND admin override is on then we can remove the eval anyway
-            String evalState = EvalUtils.getEvaluationState(eval);
+            String evalState = EvalUtils.getEvaluationState(eval, false);
             Boolean responseRemovalAllowed = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_RESPONSE_REMOVAL);
             if ( responseRemovalAllowed && 
-                  (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(evalState) ||
-                  EvalConstants.EVALUATION_STATE_CLOSED.equals(evalState)) ) {
+                  EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_CLOSED, evalState, true) ) {
                allowed = true;
             } else {
                throw new IllegalStateException("Cannot control (modify) locked evaluation ("+eval.getId()+")");
@@ -234,10 +233,8 @@ public class EvalSecurityChecksImpl {
       log.debug("userId: " + userId + ", eval: " + eval.getId());
 
       // check state to see if assign groups can be added
-      String state = EvalUtils.getEvaluationState(eval);
-      if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(state) || 
-            EvalConstants.EVALUATION_STATE_ACTIVE.equals(state)) {
-
+      String state = EvalUtils.getEvaluationState(eval, false);
+      if ( EvalUtils.checkStateBefore(EvalConstants.EVALUATION_STATE_ACTIVE, state, true) ) {
          // check eval user permissions (just owner and super at this point)
          if (! canUserControlEvaluation(userId, eval)) {
             throw new SecurityException("User ("+userId+") cannot create assign evalGroupId in evaluation ("+eval.getId()+"), do not have permission");
@@ -268,7 +265,7 @@ public class EvalSecurityChecksImpl {
          		"the eval must be the one that is linked to the assigngroup");
       }
 
-      String state = EvalUtils.getEvaluationState(eval);
+      String state = EvalUtils.getEvaluationState(eval, false);
       if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(state)) {
          checkControlAssignGroup(userId, assignGroup);
       } else {
@@ -297,7 +294,7 @@ public class EvalSecurityChecksImpl {
       }
 
       boolean allowed = false;
-      String state = EvalUtils.getEvaluationState(eval);
+      String state = EvalUtils.getEvaluationState(eval, false);
       if (EvalConstants.EVALUATION_STATE_ACTIVE.equals(state) || EvalConstants.EVALUATION_STATE_ACTIVE.equals(state)) {
          // admin CAN save responses -AZ
 //       // check admin (admins can never save responses)
@@ -348,7 +345,8 @@ public class EvalSecurityChecksImpl {
       log.debug("userId: " + userId + ", evaluationId: " + eval.getId());
 
       boolean allowed = false;
-      if (EvalUtils.getEvaluationState(eval) == EvalConstants.EVALUATION_STATE_INQUEUE) {
+      String evalState = EvalUtils.getEvaluationState(eval, false);
+      if ( EvalUtils.checkStateBefore(EvalConstants.EVALUATION_STATE_INQUEUE, evalState, true) ) {
          if (emailTemplate == null) {
             // currently using the default templates so check eval perms
             if (canUserControlEvaluation(userId, eval)) {

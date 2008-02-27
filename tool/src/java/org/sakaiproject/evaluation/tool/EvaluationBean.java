@@ -138,8 +138,6 @@ public class EvaluationBean {
    public String emailAvailableTxt;
    public String emailReminderTxt; 
 
-   //Used to link the proper template object with the evaluation 
-   private List<EvalTemplate> listOfTemplates;
 
    //TODO: need to merge with public field: eval, now use other string to avoid failing of other page 
    public Long evalId; 	//used to ELBinding to the evaluation ID to be removed on Control Panel
@@ -284,7 +282,7 @@ public class EvaluationBean {
 
       //Need to fetch the object again as Hibernate session has expired
       EvalEvaluation evalInDB = evaluationService.getEvaluationById(eval.getId());
-      String evalState = EvalUtils.getEvaluationState(evalInDB);
+      String evalState = EvalUtils.getEvaluationState(evalInDB, false);
 
       // Now copying the data from eval to evalInDB (all fields we care to change must be added to this)
       if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(evalState)) {
@@ -556,7 +554,8 @@ public class EvaluationBean {
 
       if ( (selectedEvalGroupIds != null && selectedEvalGroupIds.length > 0) 
             || ! nodes.isEmpty() ) {
-         //save the evaluation
+         // save the evaluation
+         eval.setState( EvalUtils.getEvaluationState(eval, true) ); // set the state according to dates only
          evaluationSetupService.saveEvaluation(eval, external.getCurrentUserId());
 
          // NOTE - this allows the evaluation to be saved with zero assign groups if this fails
@@ -574,7 +573,7 @@ public class EvaluationBean {
             evaluationSetupService.deleteEvaluation(eval.getId(), external.getCurrentUserId());
             throw new IllegalStateException("Invalid evaluation created with no assignments! Destroying evaluation: " + eval.getId());
          }
-
+  
          messages.addMessage( new TargettedMessage("evaluationSetupService.add.message",
                new Object[] { eval.getTitle(), df.format(eval.getStartDate()) }, 
                TargettedMessage.SEVERITY_INFO));
@@ -651,7 +650,7 @@ public class EvaluationBean {
     */
    public String editEvalSettingAction(){	
       eval = evaluationService.getEvaluationById(eval.getId());
-      evaluationService.returnAndFixEvalState(eval, true); // refresh the state
+      evaluationService.returnAndFixEvalState(eval, true); // refresh and save the state
 
       startDate = eval.getStartDate();
       dueDate = eval.getDueDate();

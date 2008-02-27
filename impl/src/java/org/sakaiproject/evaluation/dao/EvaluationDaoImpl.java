@@ -237,6 +237,11 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
          if (activeOnly) {
             activeHQL = " and eval.state = :activeState ";
             params.put("activeState", EvalConstants.EVALUATION_STATE_ACTIVE);
+         } else {
+            // need to filter out the partial and deleted state evals
+            activeHQL = " and eval.state <> :partialState and eval.state <> :deletedState ";
+            params.put("partialState", EvalConstants.EVALUATION_STATE_PARTIAL);
+            params.put("deletedState", EvalConstants.EVALUATION_STATE_DELETED);
          }
          String hql = "select eval from EvalEvaluation as eval " +
          " where 1=1 " + activeHQL + groupsHQL + 
@@ -287,9 +292,14 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
          ownerGroupHQL = " and " + groupsHQL;
       }
 
+      // need to filter out the partial and deleted state evals
+      String stateHQL = " and eval.state <> :partialState and eval.state <> :deletedState ";
+      params.put("partialState", EvalConstants.EVALUATION_STATE_PARTIAL);
+      params.put("deletedState", EvalConstants.EVALUATION_STATE_DELETED);
+
       List<EvalEvaluation> evals = null;
       String hql = "select eval from EvalEvaluation as eval " 
-            + " where 1=1 " + recentHQL + ownerGroupHQL 
+            + " where 1=1 " + stateHQL + recentHQL + ownerGroupHQL 
             + " order by eval.stopDate, eval.title, eval.id";
       evals = executeHqlQuery(hql, params, startResult, maxResults);
       Collections.sort(evals, new ComparatorsUtils.EvaluationDateTitleIdComparator());
