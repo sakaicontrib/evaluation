@@ -35,7 +35,7 @@ public class ReportViewParamsInterceptor implements ViewParamsInterceptor {
          String groups = "";
          for (String groupID: curViewableReports.getViewableGroupIDs())
             groups += groupID + ", ";
-         log.warn("SWG: Available groups to ReportChooseGroupsProducer: " + groups);
+         log.warn("SWG: Available groups to ReportChooseGroupsProducer: ID: " + params.evaluationId + " Groups: " + groups);
          if (curViewableReports.getViewableGroupIDs().length <= 1) {
             log.warn("SWG: Redirecting to View Reports");
             ReportParameters viewReports = (ReportParameters) params.copyBase();
