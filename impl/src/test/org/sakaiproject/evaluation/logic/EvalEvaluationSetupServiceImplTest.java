@@ -125,28 +125,30 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
             EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic), 
             EvalTestDataLoad.MAINT_USER_ID );
 
-      // try to save invalid evaluationSetupService
 
-      // try save evaluation with dates that are unset (null)
-      // test stop date must be set
+      // test view date can be same as due date and stop date can be null
+      evaluationSetupService.saveEvaluation( new EvalEvaluation( EvalConstants.EVALUATION_TYPE_EVALUATION, 
+            EvalTestDataLoad.MAINT_USER_ID, "Eval stop date null", 
+            etdl.today, etdl.tomorrow, null, etdl.tomorrow,
+            EvalConstants.EVALUATION_STATE_INQUEUE, 
+            EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic),
+            EvalTestDataLoad.MAINT_USER_ID );
+
+      // test start date can be the only one set
+      evaluationSetupService.saveEvaluation( new EvalEvaluation( EvalConstants.EVALUATION_TYPE_EVALUATION, 
+            EvalTestDataLoad.MAINT_USER_ID, "Eval start date only", 
+            etdl.today, null, null, null,
+            EvalConstants.EVALUATION_STATE_INQUEUE, 
+            EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic),
+            EvalTestDataLoad.MAINT_USER_ID );
+
+      // try to save invalid evaluations
+
+      // try save evaluation with dates that are unset (null), start date must be set
       try {
          evaluationSetupService.saveEvaluation( new EvalEvaluation( EvalConstants.EVALUATION_TYPE_EVALUATION, 
                EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
-               etdl.today, etdl.tomorrow, null, etdl.fourDaysFuture,
-               EvalConstants.EVALUATION_STATE_INQUEUE, 
-               EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic),
-               EvalTestDataLoad.MAINT_USER_ID );
-         fail("Should have thrown exception");
-      } catch (NullPointerException e) {
-         assertNotNull(e);
-         //fail("Exception: " + e.getMessage()); // see why failing
-      }
-
-      // test due date must be set
-      try {
-         evaluationSetupService.saveEvaluation( new EvalEvaluation( EvalConstants.EVALUATION_TYPE_EVALUATION, 
-               EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
-               etdl.today, null, etdl.threeDaysFuture, etdl.fourDaysFuture,
+               null, null, null, null,
                EvalConstants.EVALUATION_STATE_INQUEUE, 
                EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic),
                EvalTestDataLoad.MAINT_USER_ID );
@@ -198,19 +200,6 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
          //fail("Exception: " + e.getMessage()); // see why failing
       }
 
-      // test view date must be after stop date and due date
-      try {
-         evaluationSetupService.saveEvaluation( new EvalEvaluation( EvalConstants.EVALUATION_TYPE_EVALUATION, 
-               EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
-               etdl.today, etdl.tomorrow, etdl.tomorrow, etdl.tomorrow,
-               EvalConstants.EVALUATION_STATE_INQUEUE, 
-               EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic),
-               EvalTestDataLoad.MAINT_USER_ID );
-         fail("Should have thrown exception");
-      } catch (IllegalArgumentException e) {
-         assertNotNull(e);
-         //fail("Exception: " + e.getMessage()); // see why failing
-      }
 
       // try save new evaluation with dates that are in the past
       // test start date in the past

@@ -156,22 +156,40 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       // set the date modified
       evaluation.setLastModified( new Date() );
 
-      // test date ordering first
-      if (evaluation.getStartDate().compareTo(evaluation.getDueDate()) >= 0 ) {
-         throw new IllegalArgumentException(
-               "due date (" + evaluation.getDueDate() +
-               ") must occur after start date (" + 
-               evaluation.getStartDate() + "), can occur on the same date but not at the same time");
-      } else if (evaluation.getDueDate().compareTo(evaluation.getStopDate()) > 0 ) {
-         throw new IllegalArgumentException(
-               "stop date (" + evaluation.getStopDate() +
-               ") must occur on or after due date (" + 
-               evaluation.getDueDate() + "), can be identical");
-      } else if (evaluation.getViewDate().compareTo(evaluation.getStopDate()) <= 0 ) {
-         throw new IllegalArgumentException(
-               "view date (" + evaluation.getViewDate() +
-               ") must occur after stop date (" + 
-               evaluation.getStopDate() + "), can occur on the same date but not at the same time");
+      // test date ordering first (for the dates that are set) - this should be externalized
+      if (evaluation.getDueDate() != null) {
+         if (evaluation.getStartDate().compareTo(evaluation.getDueDate()) >= 0) {
+            throw new IllegalArgumentException(
+                  "due date (" + evaluation.getDueDate() +
+                  ") must occur after start date (" + 
+                  evaluation.getStartDate() + "), can occur on the same date but not at the same time");
+         }
+
+         if (evaluation.getStopDate() != null) {
+            if (evaluation.getDueDate().compareTo(evaluation.getStopDate()) > 0 ) {
+               throw new IllegalArgumentException(
+                     "stop date (" + evaluation.getStopDate() +
+                     ") must occur on or after due date (" + 
+                     evaluation.getDueDate() + "), can be identical");
+            }
+            if (evaluation.getViewDate() != null) {
+               if (evaluation.getViewDate().compareTo(evaluation.getStopDate()) < 0 ) {
+                  throw new IllegalArgumentException(
+                        "view date (" + evaluation.getViewDate() +
+                        ") must occur on or after stop date (" + 
+                        evaluation.getStopDate() + "), can be identical");
+               }
+            }
+         }
+
+         if (evaluation.getViewDate() != null) {
+            if (evaluation.getViewDate().compareTo(evaluation.getDueDate()) < 0 ) {
+               throw new IllegalArgumentException(
+                     "view date (" + evaluation.getViewDate() +
+                     ") must occur on or after due date (" + 
+                     evaluation.getDueDate() + "), can be identical");
+            }
+         }
       }
 
       // now perform checks depending on whether this is new or existing
@@ -181,17 +199,16 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       if (evaluation.getId() == null) { // creating new evaluation
          newEvaluation = true;
 
-         if (evaluation.getDueDate().before(today)) {
+         if (evaluation.getDueDate() != null 
+               && evaluation.getDueDate().before(today)) {
             throw new IllegalArgumentException(
                   "due date (" + evaluation.getDueDate() +
             ") cannot occur in the past for new evaluations");
-         } else if (evaluation.getStopDate().before(today)) {
+         }
+         if (evaluation.getStopDate() != null 
+               && evaluation.getStopDate().before(today)) {
             throw new IllegalArgumentException(
                   "stop date (" + evaluation.getStopDate() +
-            ") cannot occur in the past for new evaluations");
-         } else if (evaluation.getViewDate().before(today)) {
-            throw new IllegalArgumentException(
-                  "view date (" + evaluation.getViewDate() +
             ") cannot occur in the past for new evaluations");
          }
 
@@ -244,10 +261,10 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       }
 
       // force the student/instructor dates based on the boolean settings
-      if (! evaluation.studentViewResults) {
+      if (evaluation.studentViewResults != null && ! evaluation.studentViewResults) {
          evaluation.setStudentsDate(null);
       }
-      if (! evaluation.instructorViewResults) {
+      if (evaluation.instructorViewResults != null && ! evaluation.instructorViewResults) {
          evaluation.setInstructorsDate(null);
       }
 

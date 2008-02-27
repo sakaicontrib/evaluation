@@ -144,47 +144,52 @@ public class EvalEvaluation implements java.io.Serializable {
     * Non-persistent field:<br/>
     * Set when creating the evaluation only, this will cause the {@link #studentsDate}
     * to be nulled out when the evaluation is saved if set to false,
-    * otherwise does nothing (assumes the field can be set but will not fail if it is not)
+    * otherwise does nothing (assumes the field can be set but will not fail if it is not)<br/>
+    * This is ignored if it is null<br/>
     */
-   public boolean studentViewResults = false;
+   public Boolean studentViewResults;
    /**
     * Non-persistent field:<br/>
     * Set when creating the evaluation only, this will cause the {@link #instructorsDate}
     * to be nulled out out when the evaluation is saved if set to false,
-    * otherwise does nothing (assumes the field can be set but will not fail if it is not)
+    * otherwise does nothing (assumes the field can be set but will not fail if it is not)<br/>
+    * This is ignored if it is null<br/>
     */
-   public boolean instructorViewResults = false;
+   public Boolean instructorViewResults;
 
    /**
     * Non-persistent field:<br/>
     * If this is set to false then the evaluation start date will be set to now,
     * otherwise the currently set start date will be used<br/>
-    * <b>NOTE:</b> this should only be set when an evaluation is not yet saved,
-    * it will be ignored otherwise
+    * <b>NOTE:</b> this should only be set when an evaluation is not yet saved
+    * This is ignored if it is null<br/>
     */
-   public boolean customStartDate = false;
+   public Boolean customStartDate;
    /**
     * Non-persistent field:<br/>
     * If this is set to false then the evaluation due date will be set null and
     * the evaluation will be open forever,
     * otherwise the currently set due date will be used<br/>
+    * This is ignored if it is null<br/>
     * <b>NOTE:</b> this will override any setting for {@link #useStopDate} and {@link #useViewDate}
     */
-   public boolean useDueDate = false;
+   public Boolean useDueDate;
    /**
     * Non-persistent field:<br/>
     * If this is set to false then the evaluation stop date will be set to whatever
     * the due date is set to (effectively meaning there is no grace period at all),
     * otherwise the currently set stop date will be used<br/>
+    * This is ignored if it is null<br/>
     */
-   public boolean useStopDate = false;
+   public Boolean useStopDate;
    /**
     * Non-persistent field:<br/>
     * If this is set to false then the evaluation view date will be set to whatever
     * the due date is set to (effectively meaning the results are immediately viewable),
     * otherwise the currently set view date will be used<br/>
+    * This is ignored if it is null<br/>
     */
-   public boolean useViewDate = false;
+   public Boolean useViewDate;
 
 
    // Constructors

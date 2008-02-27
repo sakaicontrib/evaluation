@@ -163,11 +163,10 @@ public class EvalBeanUtils {
       // results viewable settings
       Date studentsDate = null;
       Boolean studentsView = (Boolean) settings.get(EvalSettings.STUDENT_VIEW_RESULTS);
+      eval.studentViewResults = studentsView;
       if (studentsView == null || studentsView) {
          eval.studentViewResults = true;
          studentsDate = eval.getViewDate();
-      } else {
-         eval.studentViewResults = false;
       }
       if (eval.getStudentsDate() == null) {
          eval.setStudentsDate(studentsDate);
@@ -178,11 +177,9 @@ public class EvalBeanUtils {
 
       Date instructorsDate = null;
       Boolean instructorsView = (Boolean) settings.get(EvalSettings.STUDENT_VIEW_RESULTS);
+      eval.instructorViewResults = instructorsView;
       if (instructorsView == null || instructorsView) {
-         eval.instructorViewResults = true;
          instructorsDate = eval.getViewDate();
-      } else {
-         eval.instructorViewResults = false;
       }
       if (eval.getInstructorsDate() == null) {
          eval.setInstructorsDate(instructorsDate);
@@ -197,6 +194,13 @@ public class EvalBeanUtils {
       if (EvalConstants.SHARING_PRIVATE.equals(eval.getResultsSharing())) {
          eval.studentViewResults = false;
          eval.instructorViewResults = false;
+      } else if (EvalConstants.SHARING_PUBLIC.equals(eval.getResultsSharing())) {
+         eval.studentViewResults = true;
+         eval.instructorViewResults = true;
+         studentsDate = eval.getViewDate();
+         eval.setStudentsDate(studentsDate);
+         instructorsDate = eval.getViewDate();
+         eval.setInstructorsDate(instructorsDate);
       }
 
       // student completion settings
