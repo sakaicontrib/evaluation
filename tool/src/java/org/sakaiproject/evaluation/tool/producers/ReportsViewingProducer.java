@@ -195,20 +195,23 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
          //List allTemplateItems = itemsLogic.getTemplateItemsForEvaluation(evaluationId, null, null);
          List<EvalTemplateItem> allTemplateItems = new ArrayList<EvalTemplateItem>(template.getTemplateItems());
          if (!allTemplateItems.isEmpty()) {
-            if (reportViewParams.groupIds == null || reportViewParams.groupIds.length == 0) {
-               // TODO - this is a security hole -AZ
-               // no passed in groups so just list all of them
-               Map<Long, List<EvalGroup>> evalGroups = evaluationService.getEvaluationGroups(new Long[] { evaluationId }, false);
-               List<EvalGroup> groups = evalGroups.get(evaluationId);
-               groupIds = new String[groups.size()];
-               for (int i = 0; i < groups.size(); i++) {
-                  EvalGroup currGroup = (EvalGroup) groups.get(i);
-                  groupIds[i] = currGroup.evalGroupId;
-               }
-            } else {
+            // SWG Commenting these out for now, until there is a secure way to
+            // do it.  I guess we may need this functionality for anonymous
+            // surveys that are not assigned to any groups.
+            //if (reportViewParams.groupIds == null || reportViewParams.groupIds.length == 0) {
+            // TODO - this is a security hole -AZ
+            // no passed in groups so just list all of them
+            //   Map<Long, List<EvalGroup>> evalGroups = evaluationService.getEvaluationGroups(new Long[] { evaluationId }, false);
+            //   List<EvalGroup> groups = evalGroups.get(evaluationId);
+            //   groupIds = new String[groups.size()];
+            //   for (int i = 0; i < groups.size(); i++) {
+            //      EvalGroup currGroup = (EvalGroup) groups.get(i);
+            //      groupIds[i] = currGroup.evalGroupId;
+            //   }
+            //} else {
                // use passed in group ids
                groupIds = reportViewParams.groupIds;
-            }
+            //}
 
             UIInternalLink.make(tofill, "fullEssayResponse", UIMessage.make("viewreport.view.essays"), new EssayResponseParams(
                   ReportsViewEssaysProducer.VIEW_ID, reportViewParams.evaluationId, groupIds));
@@ -299,19 +302,18 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
          int optionCount = scaleOptions.length;
          String scaleLabels[] = new String[optionCount];
 
-         Boolean useNA = templateItem.getUsesNA();
-
          UIBranchContainer scaled = UIBranchContainer.make(branch, "scaledSurvey:");
 
          UIOutput.make(scaled, "itemNum", displayNum+"");
          UIVerbatim.make(scaled, "itemText", item.getItemText());
 
-         if (useNA.booleanValue() == true) {
-            UIBranchContainer radiobranch3 = UIBranchContainer.make(scaled, "showNA:");
-            UIBoundBoolean.make(radiobranch3, "itemNA", useNA);
+         // SWG FIXME TODO We need to handle having zero groups for anonymous surveys,
+         // but we can't just pass in an empty groupID array because that will give
+         // us *all* the groups.  Huge Security hole.
+         List<EvalAnswer> itemAnswers = new ArrayList<EvalAnswer>();
+         if (groupIds != null && groupIds.length != 0) {
+            itemAnswers = deliveryService.getEvalAnswers(item.getId(), evalId, groupIds);
          }
-
-         List<EvalAnswer> itemAnswers = deliveryService.getEvalAnswers(item.getId(), evalId, groupIds);
 
          int[] responseNumbers = responseAggregator.countResponseChoices(templateItemType, scaleLabels.length, itemAnswers);
          
@@ -319,6 +321,12 @@ public class ReportsViewingProducer implements ViewComponentProducer, Navigation
             UIBranchContainer answerbranch = UIBranchContainer.make(scaled, "answers:", x + "");
             UIOutput.make(answerbranch, "responseText", scaleOptions[x]);
             UIOutput.make(answerbranch, "responseTotal", responseNumbers[x]+"");
+         }
+         
+         if (templateItem.getUsesNA()) {
+            UIBranchContainer answerbranch = UIBranchContainer.make(scaled, "answers:");
+            UIMessage.make(answerbranch, "responseText", "reporting.notapplicable.longlabel");
+            UIOutput.make(answerbranch, "responseTotal", responseNumbers[responseNumbers.length-1]+"");
          }
 
       } else if (templateItemType.equals(EvalConstants.ITEM_TYPE_TEXT)) { //"Short Answer/Essay"

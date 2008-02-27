@@ -93,29 +93,49 @@ public class PDFReportExporter {
       for (int i = 0; i < orderedItems.size(); i++) {
          EvalTemplateItem templateItem = orderedItems.get(i);
          EvalItem item = templateItem.getItem();
-         List<EvalAnswer> itemAnswers = deliveryService.getEvalAnswers(item.getId(), responses.evaluation.getId(), responses.groupIds);
+         
+         // Security hole to pass in an empty groupID array because then we get *all* of them.
+         List<EvalAnswer> itemAnswers = new ArrayList<EvalAnswer>();
+         if (responses.groupIds != null && responses.groupIds.length > 0) {
+            itemAnswers = deliveryService.getEvalAnswers(item.getId(), responses.evaluation.getId(), responses.groupIds);
+         }
 
-         if (EvalConstants.ITEM_TYPE_HEADER.equals(TemplateItemUtils.getTemplateItemType(templateItem))) {
+         String templateItemType = TemplateItemUtils.getTemplateItemType(templateItem);
+         
+         if (EvalConstants.ITEM_TYPE_HEADER.equals(templateItemType)) {
             evalPDFReportBuilder.addSectionHeader(item.getItemText());
          }
-         else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(TemplateItemUtils.getTemplateItemType(templateItem))) {
+         else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(templateItemType) ||
+                  EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(templateItemType) ||
+                  EvalConstants.ITEM_TYPE_SCALED.equals(templateItemType)) {
+            boolean showPercentages = false;
+            if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(templateItemType)) {
+               showPercentages = true;
+            }
+            
+            int[] responseArray = responseAggregator.countResponseChoices(templateItemType, item.getScale().getOptions().length, itemAnswers);
+            
+            String[] optionLabels;
+            if (templateItem.getUsesNA()) {
+               optionLabels = new String[item.getScale().getOptions().length+1];
+               for (int m = 0; m < item.getScale().getOptions().length; m++) {
+                  optionLabels[m] = item.getScale().getOptions()[m];
+               }
+               optionLabels[optionLabels.length-1] = messageLocator.getMessage("reporting.notapplicable.longlabel");
+            }
+            else {
+               optionLabels = item.getScale().getOptions();
+            }
+
             evalPDFReportBuilder.addLikertResponse(templateItem.getItem().getItemText(), 
-                  item.getScale().getOptions(), responseAggregator.countResponseChoices(EvalConstants.ITEM_TYPE_MULTIPLEANSWER, item.getScale().getOptions().length, itemAnswers), false);
+                  optionLabels, responseArray, showPercentages);
          }
-         else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(TemplateItemUtils.getTemplateItemType(templateItem))) {
-            evalPDFReportBuilder.addLikertResponse(templateItem.getItem().getItemText(), 
-                  item.getScale().getOptions(), responseAggregator.countResponseChoices(EvalConstants.ITEM_TYPE_MULTIPLECHOICE, item.getScale().getOptions().length, itemAnswers), true);
-         }
-         else if (EvalConstants.ITEM_TYPE_TEXT.equals(TemplateItemUtils.getTemplateItemType(templateItem))) {
+         else if (EvalConstants.ITEM_TYPE_TEXT.equals(templateItemType)) {
             List<String> essays = new ArrayList<String>();
             for (EvalAnswer answer: itemAnswers) {
                essays.add(answer.getText());
             }
             evalPDFReportBuilder.addEssayResponse(templateItem.getItem().getItemText(), essays);
-         }
-         else if (EvalConstants.ITEM_TYPE_SCALED.equals(TemplateItemUtils.getTemplateItemType(templateItem))) {
-            evalPDFReportBuilder.addLikertResponse(templateItem.getItem().getItemText(), 
-                  item.getScale().getOptions(), responseAggregator.countResponseChoices(EvalConstants.ITEM_TYPE_MULTIPLECHOICE, item.getScale().getOptions().length, itemAnswers), false);
          }
          else {
             log.warn("Trying to add unknown type to PDF: " + TemplateItemUtils.getTemplateItemType(templateItem));
