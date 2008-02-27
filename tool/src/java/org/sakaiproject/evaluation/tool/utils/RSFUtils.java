@@ -14,8 +14,10 @@
 
 package org.sakaiproject.evaluation.tool.utils;
 
+import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
+import uk.org.ponder.rsf.components.decorators.UIDisabledDecorator;
 import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
 
 /**
@@ -25,12 +27,22 @@ import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
  * before they are folded into the framework.
  * 
  * @author Antranig Basman (amb26@ponder.org.uk)
- *
+ * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
-
 public class RSFUtils {
  
   public static void targetLabel(UIComponent label, UIComponent target) {
     label.decorators = new DecoratorList(new UILabelTargetDecorator(target));
   }
+
+  /**
+   * This method is used to make things appear disabled whereever needed
+   * @param component any bound RSF component
+   */
+  public static void disableComponent(UIBound component) {
+     component.decorate( new UIDisabledDecorator(true) );
+     component.fossilize = false;
+     component.willinput = false;
+  }
+
 }
