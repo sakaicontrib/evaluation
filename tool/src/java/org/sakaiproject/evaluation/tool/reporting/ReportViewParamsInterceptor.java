@@ -32,6 +32,7 @@ public class ReportViewParamsInterceptor implements ViewParamsInterceptor {
          if (curViewableReports.getViewableGroupIDs().length <= 1) {
             ReportParameters viewReports = (ReportParameters) params.copyBase();
             viewReports.viewID = ReportsViewingProducer.VIEW_ID;
+            viewReports.groupIds = curViewableReports.getViewableGroupIDs();
             togo = new RedirectViewParameters(viewReports);
          }
       }
