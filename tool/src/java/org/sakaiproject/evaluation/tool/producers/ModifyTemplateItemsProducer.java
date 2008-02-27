@@ -33,7 +33,7 @@ import org.sakaiproject.evaluation.tool.LocalTemplateLogic;
 import org.sakaiproject.evaluation.tool.renderers.AddItemControlRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.BlockIdsParameters;
 import org.sakaiproject.evaluation.tool.viewparams.ItemViewParameters;
-import org.sakaiproject.evaluation.tool.viewparams.PreviewEvalParameters;
+import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateItemViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
@@ -165,7 +165,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
       UIMessage.make(tofill, "modify-template-title", "modifytemplate.page.title");
 
       UIInternalLink.make(tofill, "preview_eval_link", UIMessage.make("modifytemplate.preview.eval.link"),
-            new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID, null, templateId))
+            new EvalViewParameters(PreviewEvalProducer.VIEW_ID, null, templateId))
             .decorate( new UITooltipDecorator( UIMessage.make("modifytemplate.preview.eval.link.title") ) );
 
       UIMessage.make(tofill, "preview-eval-desc",	"modifytemplate.preview.eval.desc");

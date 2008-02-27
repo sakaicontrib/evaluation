@@ -26,7 +26,7 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
-import org.sakaiproject.evaluation.tool.viewparams.PreviewEvalParameters;
+import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
 import uk.org.ponder.messageutil.MessageLocator;
@@ -94,7 +94,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
 
         String currentUserId = external.getCurrentUserId();
 
-        PreviewEvalParameters previewEvalViewParams = (PreviewEvalParameters)viewparams;
+        EvalViewParameters previewEvalViewParams = (EvalViewParameters)viewparams;
         if (previewEvalViewParams.evaluationId == null && 
                 previewEvalViewParams.templateId == null) {
             throw new IllegalArgumentException("Must specify template id or evaluation id, both cannot be null");
@@ -233,7 +233,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
      * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
      */
     public ViewParameters getViewParameters() {
-        return new PreviewEvalParameters();
+        return new EvalViewParameters();
     }
 
 }

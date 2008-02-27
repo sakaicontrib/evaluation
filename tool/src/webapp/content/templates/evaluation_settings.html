@@ -44,12 +44,53 @@
 				</ul>
 			</div>
 
-			<form name="eval_settings_form" rsf:id="evalSettingsForm" method="post" > 
-				<!--//gsilver: this needs to be turned into a single parametrized lookup (ie {0})  into the .properties file -->
-				<h3>
-					<span rsf:id="settings-desc-header">Edit Evaluation Settings for </span>
-					<span id="evaluation_title" rsf:id="evaluationTitle" class="highlight">Evaluation Title</span>
-				</h3>
+            <h3 rsf:id="msg=evalsettings.page.title">Evaluation Settings</h3>
+
+			<form rsf:id="evalSettingsForm" name="eval_settings_form" method="post" >
+
+                <fieldset class="visibleFS">
+                  <legend rsf:id="msg=evalsettings.title.settings">Evaluation Title:</legend>
+                  <p class="shorttext">
+                     <label rsf:id="msg=evalsettings.title.header" for="title">Title</label>
+                     <input rsf:id="title" name="title" id="title" type="text" value="" size="50" maxlength="255" />
+                     <span rsf:id="evaluationTitle" class="highlight">Eval Title</span>
+                  </p>
+                  <div class="longtext evalEditorSmall">
+                     <label rsf:id="msg=evalsettings.instructions.header" for="instructions">Instructions</label>
+                     <div rsf:id="instructions:" id="instructions">
+                       <textarea id="instructions-dummy" name="instructions-dummy" rows="4" cols="60"></textarea>
+                     </div>
+                     <span rsf:id="evaluationInstructions"></span>
+                     <p class="instruction textPanelFooter">
+                         <span rsf:id="msg=evalsettings.instructions.desc">these will appear at the top of the evaluation</span>
+                     </p>
+                  </div> 
+
+                  <!-- This block (choose template) is not visible if user has chosen a template or already assigned -->
+                  <div rsf:id="chooseTemplate:" class="longtext">
+                     <h4 rsf:id="choose-template-header">Choose Template:</h4>
+                     <p class="instruction"  rsf:id="choose-template-desc">Select the template to use for this evaluation. Templates define the questions used.</p>
+                      <table border = "0" cellspacing = "0" cellpadding = "0"  class="listHier lines nolines" style="width:60%">
+                          <tr>
+                              <th id="titleCol"><span rsf:id="template-title-header">Template Title</span></th>
+                              <th id="ownerCol"><span rsf:id="template-owner-header">Owner</span></th>
+                              <th id="actionCol" align="center">&nbsp;</th>
+                          </tr>
+                          <tr rsf:id="templateOptions:"> 
+                              <td headers="titleCol"><span rsf:id="templateRadio"/>
+                                  &nbsp;<input type="radio" rsf:id="radioValue" id="radioValue"/>
+                                  <label rsf:id="radioLabel" for="radioValue">Template Title 1</label>
+                              </td>
+                              <td headers="ownerCol">&nbsp;<span rsf:id="radioOwner">OwnerUsername</span></td>                        
+                              <td headers="actionCol" class="itemAction">&nbsp;<a href="#" name="viewPreview_link" rsf:id="viewPreview_link" target="_blank">View preview</a></td>
+                          </tr>
+                      </table>
+                  </div>
+                  <div rsf:id="showTemplate:" class="shorttext">
+                    <span rsf:id="eval_template_title">Template: template title</span> 
+                    (<a rsf:id="eval_template_preview_link" href="#" target="_blank">View preview</a>)
+                  </div>
+                </fieldset>
 
 				<fieldset class="visibleFS">
 					<legend rsf:id="msg=evalsettings.dates.header">Evaluation Dates:</legend>
@@ -58,7 +99,7 @@
                                 Today is Oct 29, 1975
                             </span>
                         </div>
-						<div class="shorttext">
+						<div rsf:id="showStartDate:" class="shorttext">
 							<label rsf:id="msg=evalsettings.start.date.header" for="startDate:::date-field">Start Date:</label>
 							<span  rsf:id="startDate:">
 							  <input type="text" id="start_date_dummy" name="start_date_dummy" value="MM/DD/YYYY" size="12" maxlength="10"/>
@@ -68,23 +109,23 @@
 								Users may begin submitting evaluation responses on this date
 							</span>
 						</div>
-						<div class="shorttext">
-							<label rsf:id="eval-due-date-header" for="dueDate:::date-field">Due Date:</label>
-								<span rsf:id="dueDate:">
-									<input type="text" name="date_dummy" value="MM/DD/YYYY" size="12" maxlength="10"/>
-									<img src="../images/calendar.gif" />
-								</span>
-								<span rsf:id="eval-due-date-desc"class="instruction textPanelFooter">
+						<div rsf:id="showDueDate:" class="shorttext">
+							<label rsf:id="msg=evalsettings.due.date.header" for="dueDate:::date-field">Due Date:</label>
+							<span rsf:id="dueDate:">
+								<input type="text" name="date_dummy" value="MM/DD/YYYY" size="12" maxlength="10"/>
+								<img src="../images/calendar.gif" />
+							</span>
+							<span rsf:id="msg=evalsettings.due.date.desc" class="instruction textPanelFooter">
 								Evaluation ends on this date, no more responses after this date
 							</span>
 						</div>
 						<div rsf:id="showStopDate:" class="shorttext">
-							<label rsf:id="eval-stop-date-header" for="stopDate:::date-field">Stop Date:</label>
-								<span style="display:inline" rsf:id="stopDate:">
-									<input type="text" name="date_dummy" value="MM/DD/YYYY" size="12" maxlength="10"/>
-									<img src="../images/calendar.gif" />
-								</span>
-								<span rsf:id="eval-stop-date-desc" class="instruction textPanelFooter">
+							<label rsf:id="msg=evalsettings.stop.date.header" for="stopDate:::date-field">Stop Date:</label>
+							<span style="display:inline" rsf:id="stopDate:">
+								<input type="text" name="date_dummy" value="MM/DD/YYYY" size="12" maxlength="10"/>
+								<img src="../images/calendar.gif" />
+							</span>
+							<span rsf:id="msg=evalsettings.stop.date.desc" class="instruction textPanelFooter">
 								Users may still submit responses up until this date (defines a grace period)
 							</span>
 						</div>
@@ -250,9 +291,6 @@
 					<span rsf:id="subsequentTimes:">
 						<input name="cancel_setting" type="submit" value="Cancel" rsf:id="cancel-button" accesskey="x"/>
 					</span>
-		
-					<input type="hidden" name="evalStatus" rsf:id="evalStatus" value="new"/>
-					<input type="hidden" name="dummyToday" rsf:id="dummyToday" value="MM/DD/YYYY"/>
 				</p>	
 			</form>
 

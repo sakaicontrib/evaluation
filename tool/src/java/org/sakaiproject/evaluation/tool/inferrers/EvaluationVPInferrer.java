@@ -32,7 +32,7 @@ import org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer;
 import org.sakaiproject.evaluation.tool.producers.ReportsViewingProducer;
 import org.sakaiproject.evaluation.tool.producers.TakeEvalProducer;
 import org.sakaiproject.evaluation.tool.viewparams.EvalTakeViewParameters;
-import org.sakaiproject.evaluation.tool.viewparams.PreviewEvalParameters;
+import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 import org.sakaiproject.evaluation.tool.wrapper.ModelAccessWrapperInvoker;
 import org.sakaiproject.evaluation.utils.EvalUtils;
@@ -148,13 +148,13 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
                     if (evalGroups.length > 0) {
                         // if we are being evaluated in at least one group in this eval then we can add items
                         // TODO - except we do not have a view yet so go to the preview eval page 
-                        return new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID, evaluationId, null);
+                        return new EvalViewParameters(PreviewEvalProducer.VIEW_ID, evaluationId, null);
                     }
                 } else {
                     if (externalLogic.isUserAllowedInEvalGroup(currentUserId, EvalConstants.PERM_BE_EVALUATED, evalGroupId)) {
                         // those being evaluated get to go to add their own questions
                         // TODO - except we do not have a view yet so go to the preview eval page 
-                        return new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID, evaluationId, null);
+                        return new EvalViewParameters(PreviewEvalProducer.VIEW_ID, evaluationId, null);
                     }
                 }
                 // else just require auth
@@ -166,7 +166,7 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
                 // check perms if not anonymous
                 if (currentUserId.equals(evaluation.getOwner()) ||
                         externalLogic.isUserAllowedInEvalGroup(currentUserId, EvalConstants.PERM_BE_EVALUATED, evalGroupId)) {
-                    return new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID, evaluationId, null);
+                    return new EvalViewParameters(PreviewEvalProducer.VIEW_ID, evaluationId, null);
                 } else {
                     if ( evaluationService.canTakeEvaluation(currentUserId, evaluationId, evalGroupId) ) {
                     	log.info("User ("+currentUserId+") taking authenticated evaluation: " + evaluationId + " for group: " + evalGroupId);

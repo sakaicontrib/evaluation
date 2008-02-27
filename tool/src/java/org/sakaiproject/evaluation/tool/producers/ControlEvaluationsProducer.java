@@ -30,7 +30,7 @@ import org.sakaiproject.evaluation.logic.entity.EvalCategoryEntityProvider;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.tool.viewparams.PreviewEvalParameters;
+import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 import org.sakaiproject.evaluation.utils.EvalUtils;
@@ -195,7 +195,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
             UIMessage.make(evalForm, "eval-link-title", "controlevaluations.eval.link.title");
 
             UIInternalLink.make(evaluationRow, "inqueue-eval-link", evaluation.getTitle(), 
-                  new PreviewEvalParameters( PreviewEvalProducer.VIEW_ID, evaluation.getId(),	evaluation.getTemplate().getId() ) );
+                  new EvalViewParameters( PreviewEvalProducer.VIEW_ID, evaluation.getId(),	evaluation.getTemplate().getId() ) );
             UILink.make(evaluationRow, "eval-direct-link", UIMessage.make("controlevaluations.eval.direct.link"), 
                   externalLogic.getEntityURL(evaluation));
             if (evaluation.getEvalCategory() != null) {
@@ -257,7 +257,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
             UIMessage.make(evalForm, "eval-link-title", "controlevaluations.eval.link.title");
 
             UIInternalLink.make(evaluationRow, "active-eval-link", evaluation.getTitle(), 
-                  new PreviewEvalParameters( PreviewEvalProducer.VIEW_ID, evaluation.getId(),	evaluation.getTemplate().getId() ) );
+                  new EvalViewParameters( PreviewEvalProducer.VIEW_ID, evaluation.getId(),	evaluation.getTemplate().getId() ) );
             UILink.make(evaluationRow, "eval-direct-link", UIMessage.make("controlevaluations.eval.direct.link"), 
                   externalLogic.getEntityURL(evaluation));
             if (evaluation.getEvalCategory() != null) {
@@ -325,7 +325,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
             UIMessage.make(evalForm, "eval-link-title", "controlevaluations.eval.link.title");
 
             UIInternalLink.make(evaluationRow, "closed-eval-link", evaluation.getTitle(), 
-                  new PreviewEvalParameters( PreviewEvalProducer.VIEW_ID, evaluation.getId(), evaluation.getTemplate().getId() ) );
+                  new EvalViewParameters( PreviewEvalProducer.VIEW_ID, evaluation.getId(), evaluation.getTemplate().getId() ) );
             if (evaluation.getEvalCategory() != null) {
                UIOutput category = UIOutput.make(evaluationRow, "eval-category", shortenText(evaluation.getEvalCategory(), 20) );
                category.decorators = new DecoratorList( 

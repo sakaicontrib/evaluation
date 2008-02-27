@@ -17,7 +17,7 @@ package org.sakaiproject.evaluation.tool.inferrers;
 import org.sakaiproject.entitybroker.IdEntityReference;
 import org.sakaiproject.evaluation.logic.entity.TemplateEntityProvider;
 import org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer;
-import org.sakaiproject.evaluation.tool.viewparams.PreviewEvalParameters;
+import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 
 import uk.ac.cam.caret.sakai.rsf.entitybroker.EntityViewParamsInferrer;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
@@ -49,7 +49,7 @@ public class TemplateVPInferrer implements EntityViewParamsInferrer {
 //		} else {
 //			authoringService.canControlTemplate(userId, templateId);
 //		}
-		return new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID, null, templateId);
+		return new EvalViewParameters(PreviewEvalProducer.VIEW_ID, null, templateId);
 	}
 
 }
