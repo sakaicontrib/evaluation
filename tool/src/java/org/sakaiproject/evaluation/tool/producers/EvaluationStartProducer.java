@@ -21,7 +21,7 @@ import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalTemplate;
-import org.sakaiproject.evaluation.tool.viewparams.PreviewEvalParameters;
+import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -187,7 +187,7 @@ public class EvaluationStartProducer implements ViewComponentProducer, Navigatio
                // UIOutput.make(radiobranch,"radioOwner", logic.getUserDisplayName( owners[i]));
                UIOutput.make(radiobranch, "radioOwner", externalLogic.getUserDisplayName(owners[i]));
                UIInternalLink.make(radiobranch, "viewPreview_link", UIMessage
-                     .make("starteval.view.preview.link"), new PreviewEvalParameters(
+                     .make("starteval.view.preview.link"), new EvalViewParameters(
                      PreviewEvalProducer.VIEW_ID, null, new Long(values[i])));
             }
          }

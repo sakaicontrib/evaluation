@@ -22,21 +22,21 @@ import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class PreviewEvalParameters extends SimpleViewParameters {
+public class EvalViewParameters extends SimpleViewParameters {
 
 	public Long evaluationId;
 	public Long templateId; 
 	public String evalGroupId;
 
-	public PreviewEvalParameters() { }
+	public EvalViewParameters() { }
 
-	public PreviewEvalParameters(String viewID, Long evaluationId, Long templateId) {
+	public EvalViewParameters(String viewID, Long evaluationId, Long templateId) {
 		this.viewID = viewID;
 		this.evaluationId = evaluationId;	
 		this.templateId = templateId;
 	}
 
-	public PreviewEvalParameters(String viewID, Long evaluationId, Long templateId, String evalGroupId) {
+	public EvalViewParameters(String viewID, Long evaluationId, Long templateId, String evalGroupId) {
 		this.viewID = viewID;
 		this.evaluationId = evaluationId;	
 		this.templateId = templateId;

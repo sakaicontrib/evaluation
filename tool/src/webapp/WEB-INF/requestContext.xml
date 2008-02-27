@@ -527,6 +527,7 @@
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
       <property name="evaluationBean" ref="evaluationBean" />
       <property name="dateEvolver" ref="fieldDateInputEvolver" />
+      <property name="richTextEvolver" ref="richTextEvolver" />
       <property name="locale" ref="requestLocale" />
    </bean>
 

@@ -49,17 +49,23 @@ public class EvalUtils {
    private static Log log = LogFactory.getLog(EvalUtils.class);
 
    /**
-    * Get the state of an evaluation object
+    * Get the state of an evaluation object<br/>
+    * StartDate > DueDate (null) >= StopDate (null) >= ViewDate (null) >= student/instructorViewDate (null)<br/>
+    * States: Partial -> InQueue -> Active -> GracePeriod -> Closed -> Viewable (-> Deleted)
     * 
     * @param eval the evaluation object
     * @return the EVALUATION_STATE constant
     */
    public static String getEvaluationState(EvalEvaluation eval) {
+      if (eval == null) {
+         throw new NullPointerException("getEvaluationState: Evaluation must not be null");
+      }
       Date today = new Date();
       String state = EvalConstants.EVALUATION_STATE_UNKNOWN;
       try {
          // handle the 2 special case states first
-         if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(eval.getState())) {
+         if (eval.getId() == null ||
+               EvalConstants.EVALUATION_STATE_PARTIAL.equals(eval.getState())) {
             state = EvalConstants.EVALUATION_STATE_PARTIAL;
          } else if (EvalConstants.EVALUATION_STATE_DELETED.equals(eval.getState())) {
             state = EvalConstants.EVALUATION_STATE_DELETED;
@@ -93,6 +99,56 @@ public class EvalUtils {
       }
       return state;
    }
+
+   /**
+    * Allows checking the order of states<br/>
+    * States: Partial -> InQueue -> Active -> GracePeriod -> Closed -> Viewable (-> Deleted)
+    * 
+    * @param checkState the state constant to check
+    * @param currentState the state constant that represents the current state
+    * @return true if the checkState is equal to or after the currentState, 
+    * false if the currentState is before the checkState
+    */
+   public static boolean checkStateSameOrAfter(String checkState, String currentState) {
+      boolean isAfterState = false;
+      int checkNum = stateToNumber(checkState);
+      int currentNum = stateToNumber(currentState);
+      if (currentNum >= checkNum) {
+         isAfterState = true;
+      }
+      return isAfterState;
+   }
+
+   /**
+    * Defines the ORDER of the states<br/>
+    * States: Partial -> InQueue -> Active -> GracePeriod -> Closed -> Viewable (-> Deleted)
+    * 
+    * @param stateConstant
+    * @return a number indicating the position
+    */
+   private static int stateToNumber(String stateConstant) {
+      // maybe should do this with a map or something
+      int value = -1;
+      if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(stateConstant)) {
+         value = 0;
+      } else if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(stateConstant)) {
+         value = 1;
+      } else if (EvalConstants.EVALUATION_STATE_ACTIVE.equals(stateConstant)) {
+         value = 2;
+      } else if (EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(stateConstant)) {
+         value = 3;
+      } else if (EvalConstants.EVALUATION_STATE_CLOSED.equals(stateConstant)) {
+         value = 4;
+      } else if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(stateConstant)) {
+         value = 5;
+      } else if (EvalConstants.EVALUATION_STATE_DELETED.equals(stateConstant)) {
+         value = 6;
+      } else if (EvalConstants.EVALUATION_STATE_UNKNOWN.equals(stateConstant)) {
+         value = -1;
+      }
+      return value;
+   }
+
 
    /**
     * Checks if a sharing constant is valid or null

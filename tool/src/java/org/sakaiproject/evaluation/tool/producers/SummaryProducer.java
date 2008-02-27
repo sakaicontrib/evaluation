@@ -34,7 +34,7 @@ import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.tool.viewparams.EvalTakeViewParameters;
-import org.sakaiproject.evaluation.tool.viewparams.PreviewEvalParameters;
+import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
@@ -361,7 +361,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 				if (EvalConstants.EVALUATION_STATE_CLOSED.equals(evalStatus)
                   || EvalConstants.EVALUATION_STATE_VIEWABLE.equals(evalStatus)) {
                UIInternalLink.make(evalrow, "evalAdminTitleLink_preview", eval.getTitle(),
-                     new PreviewEvalParameters(PreviewEvalProducer.VIEW_ID, eval.getId(), 
+                     new EvalViewParameters(PreviewEvalProducer.VIEW_ID, eval.getId(), 
                            eval.getTemplate().getId()));
             } else {
                UICommand evalEditUIC = UICommand.make(evalrow, "evalAdminTitleLink_edit", 

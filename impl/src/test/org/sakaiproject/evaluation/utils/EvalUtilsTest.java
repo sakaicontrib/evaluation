@@ -47,28 +47,43 @@ public class EvalUtilsTest extends TestCase {
       EvalTestDataLoad etdl = new EvalTestDataLoad();
 
       // positive
+      etdl.evaluationNew.setId( new Long(1) );
       state = EvalUtils.getEvaluationState(etdl.evaluationNew);
       assertEquals(EvalConstants.EVALUATION_STATE_INQUEUE, state);
 
+      etdl.evaluationActive.setId( new Long(2) );
       state = EvalUtils.getEvaluationState(etdl.evaluationActive);
       assertEquals(EvalConstants.EVALUATION_STATE_ACTIVE, state);
 
+      etdl.evaluationActiveUntaken.setId( new Long(3) );
       state = EvalUtils.getEvaluationState(etdl.evaluationActiveUntaken);
       assertEquals(EvalConstants.EVALUATION_STATE_ACTIVE, state);
 
+      etdl.evaluationClosed.setId( new Long(4) );
       state = EvalUtils.getEvaluationState(etdl.evaluationClosed);
       assertEquals(EvalConstants.EVALUATION_STATE_CLOSED, state);
 
+      etdl.evaluationViewable.setId( new Long(5) );
       state = EvalUtils.getEvaluationState(etdl.evaluationViewable);
       assertEquals(EvalConstants.EVALUATION_STATE_VIEWABLE, state);
 
-      // negative
-      state = EvalUtils.getEvaluationState( new EvalEvaluation() );
+      // negative (null start date) and saved (should not even be possible)
+      EvalEvaluation invalidEval = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, 
+            "aaronz", "testing null dates", null, "XXXXXXXX", EvalConstants.SHARING_PRIVATE, 0, null);
+      invalidEval.setId( new Long(6) );
+      state = EvalUtils.getEvaluationState( invalidEval );
       assertEquals(EvalConstants.EVALUATION_STATE_UNKNOWN, state);
 
       // test the cases where a lot of the dates are unset (testing various nulls)
       EvalEvaluation datesEval = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, 
             "aaronz", "testing null dates", etdl.tomorrow, null, EvalConstants.SHARING_PRIVATE, 0, null);
+
+      // new evals are always partial state
+      state = EvalUtils.getEvaluationState(datesEval);
+      assertEquals(EvalConstants.EVALUATION_STATE_PARTIAL, state);
+
+      // set the id so this eval does not look new
+      datesEval.setId( new Long(99999) );
 
       // only the start date is set and in the future
       state = EvalUtils.getEvaluationState(datesEval);
