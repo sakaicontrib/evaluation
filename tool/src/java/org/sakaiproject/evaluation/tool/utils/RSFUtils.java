@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.tool.utils;
 
 import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UIComponent;
+import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIDisabledDecorator;
 import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
@@ -36,13 +37,20 @@ public class RSFUtils {
   }
 
   /**
-   * This method is used to make things appear disabled whereever needed
-   * @param component any bound RSF component
+   * This method is used to make things appear disabled where ever needed,
+   * should work correctly with most components
+   * 
+   * @param component any RSF component
    */
-  public static void disableComponent(UIBound component) {
+  public static void disableComponent(UIComponent component) {
      component.decorate( new UIDisabledDecorator(true) );
-     component.fossilize = false;
-     component.willinput = false;
+     if (component instanceof UISelect) {
+        component = ((UISelect)component).selection;
+     }
+     if (component instanceof UIBound) {
+        ((UIBound)component).fossilize = false;
+        ((UIBound)component).willinput = false;
+     }
   }
 
 }

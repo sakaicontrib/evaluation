@@ -41,7 +41,6 @@ import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
-import org.sakaiproject.evaluation.utils.EvalUtils;
 
 /**
  * Implementation for EvalEvaluationSetupService
@@ -324,14 +323,16 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       } else {
          evaluation.setBlankResponsesAllowed( systemBlankResponses );
       }
-      String systemInstructorOpt = (String) settings.get( EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE );
-      if ( systemInstructorOpt == null ) {
-         if (evaluation.getInstructorOpt() == null) {
-            evaluation.setInstructorOpt( EvalConstants.INSTRUCTOR_OPT_OUT );
-         }
-      } else {
-         evaluation.setInstructorOpt( systemInstructorOpt );
-      }
+      // TODO - disabled for now
+//      String systemInstructorOpt = (String) settings.get( EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE );
+//      if ( systemInstructorOpt == null ) {
+//         if (evaluation.getInstructorOpt() == null) {
+//            evaluation.setInstructorOpt( EvalConstants.INSTRUCTOR_OPT_OUT );
+//         }
+//      } else {
+//         evaluation.setInstructorOpt( systemInstructorOpt );
+//      }
+      evaluation.setInstructorOpt(EvalConstants.INSTRUCTOR_REQUIRED);
 
       dao.save(evaluation);
       log.info("User ("+userId+") saved evaluation ("+evaluation.getId()+"), title: " + evaluation.getTitle());
@@ -981,24 +982,26 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          }
       }
       // setInstructorApproval
-      if (eah.getInstructorApproval() == null) {
-         String globalEvalOpt = (String) settings.get(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE);
-         if (globalEvalOpt == null) {
-            if ( EvalConstants.INSTRUCTOR_OPT_IN.equals(eval.getInstructorOpt()) ) {
-               eah.setInstructorApproval( Boolean.FALSE );
-            } else {
-               // REQUIRED or OPT_OUT set to true
-               eah.setInstructorApproval( Boolean.TRUE );
-            }
-         } else {
-            if ( EvalConstants.INSTRUCTOR_OPT_IN.equals(globalEvalOpt) ) {
-               eah.setInstructorApproval( Boolean.FALSE );
-            } else {
-               // REQUIRED or OPT_OUT set to true
-               eah.setInstructorApproval( Boolean.TRUE );
-            }
-         }
-      }
+      // TODO - temporary force to enabled
+      eah.setInstructorApproval( Boolean.TRUE );
+//      if (eah.getInstructorApproval() == null) {
+//         String globalEvalOpt = (String) settings.get(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE);
+//         if (globalEvalOpt == null) {
+//            if ( EvalConstants.INSTRUCTOR_OPT_IN.equals(eval.getInstructorOpt()) ) {
+//               eah.setInstructorApproval( Boolean.FALSE );
+//            } else {
+//               // REQUIRED or OPT_OUT set to true
+//               eah.setInstructorApproval( Boolean.TRUE );
+//            }
+//         } else {
+//            if ( EvalConstants.INSTRUCTOR_OPT_IN.equals(globalEvalOpt) ) {
+//               eah.setInstructorApproval( Boolean.FALSE );
+//            } else {
+//               // REQUIRED or OPT_OUT set to true
+//               eah.setInstructorApproval( Boolean.TRUE );
+//            }
+//         }
+//      }
    }
 
 
