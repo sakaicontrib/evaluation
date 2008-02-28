@@ -245,7 +245,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
             form.parameters.add(new UIELBinding(evalBeanOTP + "templateId", evalViewParams.templateId));
          }
       } else {
-         EvalTemplate template = evaluation.getTemplate();
+         EvalTemplate template = authoringService.getTemplateById(evaluation.getTemplate().getId());
          UIBranchContainer showTemplateBranch = UIBranchContainer.make(tofill, "showTemplate:");
          UIMessage.make(showTemplateBranch, "eval_template_title", "evalsettings.template.title.display",
                new Object[] { template.getTitle() });
