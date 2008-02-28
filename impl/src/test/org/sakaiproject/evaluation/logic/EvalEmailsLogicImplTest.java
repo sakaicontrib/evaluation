@@ -90,6 +90,8 @@ public class EvalEmailsLogicImplTest extends BaseTestEvalLogic {
          assertNotNull(e);
          //fail("Exception: " + e.getMessage()); // see why failing
       }
+
+      settings.set(EvalSettings.FROM_EMAIL_ADDRESS, "helpdesk@email.com");
    }
 
 

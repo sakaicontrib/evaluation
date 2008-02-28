@@ -928,6 +928,103 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       }
    }
 
+   @SuppressWarnings("unchecked")
+   public Boolean obtainLock(String lockId, String executerId, long timePeriod) {
+      if (executerId == null || 
+            "".equals(executerId)) {
+         throw new IllegalArgumentException("The executer Id must be set");
+      }
+      if (lockId == null || 
+            "".equals(lockId)) {
+         throw new IllegalArgumentException("The lock Id must be set");
+      }
+
+      // basically we are opening a transaction to get the current lock and set it if it is not there
+      Boolean obtainedLock = false;
+      try {
+         // check the lock
+         List<EvalLock> locks = findByProperties(EvalLock.class, 
+               new String[] {"name"},
+               new Object[] {lockId});
+         if (locks.size() > 0) {
+            // check if this is my lock, if not, then exit, if so then go ahead
+            EvalLock lock = locks.get(0);
+            if (lock.getHolder().equals(executerId)) {
+               obtainedLock = true;
+               // if this is my lock then update it immediately
+               lock.setLastModified(new Date());
+               getHibernateTemplate().save(lock);
+               getHibernateTemplate().flush(); // this should commit the data immediately
+            } else {
+               // not the lock owner but we can still get the lock
+               long validTime = lock.getLastModified().getTime() + timePeriod + 100;
+               if (System.currentTimeMillis() > validTime) {
+                  // the old lock is no longer valid so we are taking it
+                  obtainedLock = true;
+                  lock.setLastModified(new Date());
+                  lock.setHolder(executerId);
+                  getHibernateTemplate().save(lock);
+                  getHibernateTemplate().flush(); // this should commit the data immediately
+               } else {
+                  // someone else is holding a valid lock still
+                  obtainedLock = false;
+               }
+            }
+         } else {
+            // obtain the lock
+            EvalLock lock = new EvalLock(lockId, executerId);
+            getHibernateTemplate().save(lock);
+            getHibernateTemplate().flush(); // this should commit the data immediately
+            obtainedLock = true;
+         }
+      } catch (RuntimeException e) {
+         obtainedLock = null; // null indicates the failure
+         cleanupLockAfterFailure(lockId);
+         log.fatal("Lock obtaining failure for lock ("+lockId+"): " + e.getMessage(), e);
+      }
+
+      return obtainedLock;
+   }
+
+   @SuppressWarnings("unchecked")
+   public Boolean releaseLock(String lockId, String executerId) {
+      if (executerId == null || 
+            "".equals(executerId)) {
+         throw new IllegalArgumentException("The executer Id must be set");
+      }
+      if (lockId == null || 
+            "".equals(lockId)) {
+         throw new IllegalArgumentException("The lock Id must be set");
+      }
+
+      // basically we are opening a transaction to get the current lock and set it if it is not there
+      Boolean releasedLock = false;
+      try {
+         // check the lock
+         List<EvalLock> locks = findByProperties(EvalLock.class, 
+               new String[] {"name"},
+               new Object[] {lockId});
+         if (locks.size() > 0) {
+            // check if this is my lock, if not, then exit, if so then go ahead
+            EvalLock lock = locks.get(0);
+            if (lock.getHolder().equals(executerId)) {
+               releasedLock = true;
+               // if this is my lock then remove it immediately
+               getHibernateTemplate().delete(lock);
+               getHibernateTemplate().flush(); // this should commit the data immediately
+            } else {
+               releasedLock = false;
+            }
+         }
+      } catch (RuntimeException e) {
+         releasedLock = null; // null indicates the failure
+         cleanupLockAfterFailure(lockId);
+         log.fatal("Lock releasing failure for lock ("+lockId+"): " + e.getMessage(), e);
+      }
+
+      return releasedLock;
+   }
+
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.dao.EvaluationDao#lockAndExecuteRunnable(java.lang.String, java.lang.String, java.lang.Runnable)
     */
@@ -982,22 +1079,32 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
             getHibernateTemplate().flush();
          }
       } catch (RuntimeException e) {
-         getHibernateTemplate().clear(); // cancel any pending operations
          loadingData = null; // null indicates the failure
-         // try to clear the lock if things died
-         try {
-            List<EvalLock> locks = findByProperties(EvalLock.class, 
-                  new String[] {"name"},
-                  new Object[] {lockId});
-            getHibernateTemplate().deleteAll(locks);
-            getHibernateTemplate().flush();
-         } catch (Exception ex) {
-            log.error("Could not cleanup the lock ("+lockId+") after failure: " + ex.getMessage(), ex);
-         }
+         cleanupLockAfterFailure(lockId);
          log.fatal("Lock and execute failure for lock ("+lockId+"): " + e.getMessage(), e);
       }
 
       return loadingData;
+   }
+
+
+   /**
+    * Cleans up lock if there was a failure
+    * @param lockId
+    */
+   @SuppressWarnings("unchecked")
+   private void cleanupLockAfterFailure(String lockId) {
+      getHibernateTemplate().clear(); // cancel any pending operations
+      // try to clear the lock if things died
+      try {
+         List<EvalLock> locks = findByProperties(EvalLock.class, 
+               new String[] {"name"},
+               new Object[] {lockId});
+         getHibernateTemplate().deleteAll(locks);
+         getHibernateTemplate().flush();
+      } catch (Exception ex) {
+         log.error("Could not cleanup the lock ("+lockId+") after failure: " + ex.getMessage(), ex);
+      }
    }
 
 }

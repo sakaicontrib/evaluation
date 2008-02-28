@@ -84,14 +84,8 @@
          <artifactId>sakai-util-api</artifactId>
          <version>${sakai.version}</version>
       </dependency>
+
       <!--Apache commons dependencies -->
-      <dependency>
-         <groupId>commons-logging</groupId>
-         <artifactId>commons-logging</artifactId>
-         <version>1.0.4</version>
-         <type>jar</type>
-         <!--properties:  war.bundle: true -->
-      </dependency>
 
       <!-- For Reporting -->
       <dependency>
@@ -106,18 +100,6 @@
          <artifactId>jfreechart</artifactId>
          <version>1.0.9</version>
          <type>jar</type>
-      </dependency>
-
-      <!-- 
-         a) The above properties tag should not be needed.
-         b) This log4j dependency should also be removed
-      -->
-      <dependency>
-         <groupId>log4j</groupId>
-         <artifactId>log4j</artifactId>
-         <version>1.2.9</version>
-         <type>jar</type>
-         <!--properties:  war.bundle: true -->
       </dependency>
 
       <!-- generic DAO -->

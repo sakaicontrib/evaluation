@@ -54,24 +54,6 @@
       </dependency>
 
       <dependency>
-         <groupId>jfreechart</groupId>
-         <artifactId>jfreechart</artifactId>
-         <version>1.0.0</version>
-         <properties>
-            <war.bundle>true</war.bundle>
-         </properties>
-      </dependency>
-
-      <dependency>
-         <groupId>jfree</groupId>
-         <artifactId>jcommon</artifactId>
-         <version>1.0.9</version>
-         <properties>
-            <war.bundle>true</war.bundle>
-         </properties>
-      </dependency>
-
-      <dependency>
          <groupId>sakaiproject</groupId>
          <artifactId>sakai-authz-api</artifactId>
          <version>${sakai.version}</version>
@@ -123,7 +105,7 @@
       <dependency>
          <groupId>commons-logging</groupId>
          <artifactId>commons-logging</artifactId>
-         <version>1.0.4</version>
+         <version>1.1</version>
          <type>jar</type>
          <properties>
             <war.bundle>true</war.bundle>
@@ -137,13 +119,14 @@
       <dependency>
          <groupId>log4j</groupId>
          <artifactId>log4j</artifactId>
-         <version>1.2.9</version>
+         <version>1.2.14</version>
          <type>jar</type>
          <properties>
             <war.bundle>true</war.bundle>
          </properties>
       </dependency>
 
+      <!-- dao and hibernate needed to do the request wrapper -->
       <!-- generic DAO -->
       <dependency>
          <groupId>generic-dao</groupId>
@@ -219,6 +202,7 @@
       <dependency>
          <groupId>sakairsf</groupId>
          <artifactId>SakaiRSFComponents-templates</artifactId>
+<!--     <version>${rsfutil.version}-sakai_${sakairsf.sakai.version}</version> -->
          <version>0.7.3M1-SNAPSHOT-sakai_${sakairsf.sakai.version}</version>
          <type>war</type>
          <properties>
@@ -279,6 +263,26 @@
             <war.bundle>true</war.bundle>
          </properties>
       </dependency>
+
+      <!-- for reporting -->
+      <dependency>
+         <groupId>jfreechart</groupId>
+         <artifactId>jfreechart</artifactId>
+         <version>1.0.0</version>
+         <properties>
+            <war.bundle>true</war.bundle>
+         </properties>
+      </dependency>
+
+      <dependency>
+         <groupId>jfree</groupId>
+         <artifactId>jcommon</artifactId>
+         <version>1.0.9</version>
+         <properties>
+            <war.bundle>true</war.bundle>
+         </properties>
+      </dependency>
+
    </dependencies>
 
    <build>

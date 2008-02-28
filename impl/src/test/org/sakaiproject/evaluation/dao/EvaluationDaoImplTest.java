@@ -1142,6 +1142,76 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
    }
 
 
+   public void testObtainLock() {
+      // check I can get a lock
+      assertTrue( evaluationDao.obtainLock("AZ.my.lock", "AZ1", 100) );
+
+      // check someone else cannot get my lock
+      assertFalse( evaluationDao.obtainLock("AZ.my.lock", "AZ2", 100) );
+
+      // check I can get my own lock again
+      assertTrue( evaluationDao.obtainLock("AZ.my.lock", "AZ1", 100) );
+
+      // allow the lock to expire
+      try {
+         Thread.sleep(500);
+      } catch (InterruptedException e) {
+         // nothing here but a fail
+         fail("sleep interrupted?");
+      }
+
+      // check someone else can get my lock
+      assertTrue( evaluationDao.obtainLock("AZ.my.lock", "AZ2", 100) );
+
+      // check invalid arguments cause failure
+      try {
+         evaluationDao.obtainLock("AZ.my.lock", null, 1000);
+         fail("Should have thrown an exception");
+      } catch (IllegalArgumentException e) {
+         assertNotNull(e);
+      }
+      try {
+         evaluationDao.obtainLock(null, "AZ1", 1000);
+         fail("Should have thrown an exception");
+      } catch (IllegalArgumentException e) {
+         assertNotNull(e);
+      }
+   }
+
+   public void testReleaseLock() {
+
+      // check I can get a lock
+      assertTrue( evaluationDao.obtainLock("AZ.R.lock", "AZ1", 1000) );
+
+      // check someone else cannot get my lock
+      assertFalse( evaluationDao.obtainLock("AZ.R.lock", "AZ2", 1000) );
+
+      // check I can release my lock
+      assertTrue( evaluationDao.releaseLock("AZ.R.lock", "AZ1") );
+
+      // check someone else can get my lock now
+      assertTrue( evaluationDao.obtainLock("AZ.R.lock", "AZ2", 1000) );
+
+      // check I cannot get the lock anymore
+      assertFalse( evaluationDao.obtainLock("AZ.R.lock", "AZ1", 1000) );
+
+      // check they can release it
+      assertTrue( evaluationDao.releaseLock("AZ.R.lock", "AZ2") );
+
+      // check invalid arguments cause failure
+      try {
+         evaluationDao.releaseLock("AZ.R.lock", null);
+         fail("Should have thrown an exception");
+      } catch (IllegalArgumentException e) {
+         assertNotNull(e);
+      }
+      try {
+         evaluationDao.releaseLock(null, "AZ1");
+         fail("Should have thrown an exception");
+      } catch (IllegalArgumentException e) {
+         assertNotNull(e);
+      }
+   }
 
    /**
     * Something about this test means it has to run at the end or the others fail

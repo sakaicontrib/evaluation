@@ -37,6 +37,7 @@ import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
 import uk.org.ponder.arrayutil.ArrayUtil;
+import uk.org.ponder.mapping.DARReshaper;
 import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -126,7 +127,6 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
       this.locale = locale;
    }
 
-
    /* (non-Javadoc)
     * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
     */
@@ -150,7 +150,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
        * this should ONLY be read to, do not change any of these fields
        */
       EvalEvaluation evaluation = evaluationBean.eval;
-      String evalState = evaluationService.returnAndFixEvalState(evaluation, true);
+      String currentEvalState = evaluationService.returnAndFixEvalState(evaluation, true);
 
       /*
        * top links here
@@ -191,14 +191,14 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 
       // EVALUATION TITLE/INSTRUCTIONS
 
-      if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_ACTIVE, evalState, true) ) {
-         UIOutput.make(tofill, "evaluationTitle", evaluation.getTitle());
+      if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_ACTIVE, currentEvalState, true) ) {
+         UIOutput.make(tofill, "title_disabled", evaluation.getTitle());
       } else {
          UIInput.make(form, "title", evaluationOTP + "title");
       }
 
-      if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_CLOSED, evalState, true) ) {
-         UIVerbatim.make(tofill, "evaluationInstructions", evaluation.getInstructions());
+      if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_CLOSED, currentEvalState, true) ) {
+         UIVerbatim.make(tofill, "instructions_disabled", evaluation.getInstructions());
       } else {
          UIInput instructionsInput = UIInput.make(form, "instructions:", evaluationOTP + "instructions");
          instructionsInput.decorators = new DecoratorList(new UITextDimensionsDecorator(60, 4));
@@ -266,44 +266,20 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 
       // Start Date
       UIBranchContainer showStartDate = UIBranchContainer.make(form, "showStartDate:");
-      UIInput startDate = UIInput.make(showStartDate, "startDate:", evalBeanOTP + "startDate");	
-      if (useDateTime) {
-         dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_TIME_INPUT);		   
-      } else {
-         dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);		   
-      }
-      dateevolver.evolveDateInput(startDate, evaluationBean.startDate);
-      if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_ACTIVE, evalState, true) ) {
-         RSFUtils.disableComponent(startDate);
-      }
+      generateDateSelector(showStartDate, "startDate", evalBeanOTP + "startDate", 
+            currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, useDateTime);
 
       // Due Date
       UIBranchContainer showDueDate = UIBranchContainer.make(form, "showDueDate:");
-      UIInput dueDate = UIInput.make(showDueDate, "dueDate:", evalBeanOTP + "dueDate");
-      if (useDateTime) {
-         dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_TIME_INPUT);         
-      } else {
-         dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);        
-      }
-      dateevolver.evolveDateInput(dueDate, evaluationBean.dueDate);
-      if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_GRACEPERIOD, evalState, true) ) {
-         RSFUtils.disableComponent(dueDate);
-      }
+      generateDateSelector(showDueDate, "dueDate", evalBeanOTP + "dueDate", 
+            currentEvalState, EvalConstants.EVALUATION_STATE_GRACEPERIOD, useDateTime);
 
       // Stop Date - Show the "Stop date" text box only if allowed in the System settings
       Boolean useStopDate = (Boolean) settings.get(EvalSettings.EVAL_USE_STOP_DATE);
       if (useStopDate) {
          UIBranchContainer showStopDate = UIBranchContainer.make(form, "showStopDate:");
-         UIInput stopDate = UIInput.make(showStopDate, "stopDate:", evalBeanOTP + "stopDate");
-         if (useDateTime) {
-            dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_TIME_INPUT);         
-         } else {
-            dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);        
-         }
-         dateevolver.evolveDateInput(stopDate, evaluationBean.stopDate);
-         if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_CLOSED, evalState, true) ) {
-            RSFUtils.disableComponent(stopDate);
-         }
+         generateDateSelector(showStopDate, "stopDate", evalBeanOTP + "stopDate", 
+               currentEvalState, EvalConstants.EVALUATION_STATE_CLOSED, useDateTime);
       }
 
       // EVALUATION RESULTS VIEWING/SHARING
@@ -325,18 +301,8 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
       // show the view date only if allowed by system settings
       if (((Boolean) settings.get(EvalSettings.EVAL_USE_VIEW_DATE)).booleanValue()) {
          UIBranchContainer showViewDate = UIBranchContainer.make(form, "showViewDate:");
-         UIMessage.make(showViewDate, "eval-view-date-header", "evalsettings.view.date.header");
-         UIMessage.make(showViewDate, "eval-view-date-desc", "evalsettings.view.date.desc");
-         UIInput viewDate = UIInput.make(showViewDate, "viewDate:", evalBeanOTP + "viewDate");
-         if (useDateTime) {
-            dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_TIME_INPUT);         
-         } else {
-            dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);        
-         }
-         dateevolver.evolveDateInput(viewDate, evaluationBean.viewDate);
-         if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_VIEWABLE, evalState, true) ) {
-            RSFUtils.disableComponent(viewDate);
-         }
+         generateDateSelector(showViewDate, "viewDate", evalBeanOTP + "viewDate", 
+               currentEvalState, EvalConstants.EVALUATION_STATE_VIEWABLE, useDateTime);
       }
 
 
@@ -367,7 +333,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
       UIBranchContainer showBlankQuestionAllowedToStut = UIBranchContainer.make(form, "showBlankQuestionAllowedToStut:");
       UIBoundBoolean stuUnansweredCheckbox = generateSettingsControlledCheckbox(showBlankQuestionAllowedToStut, 
             "blankResponsesAllowed", evaluationOTP + "blankResponsesAllowed", studentUnanswersAllowed, form);
-      if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_ACTIVE, evalState, true) ) {
+      if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_ACTIVE, currentEvalState, true) ) {
          RSFUtils.disableComponent(stuUnansweredCheckbox);
       }
 
@@ -377,7 +343,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
       UIBranchContainer showModifyResponsesAllowedToStu = UIBranchContainer.make(form, "showModifyResponsesAllowedToStu:");
       UIBoundBoolean stuModifyResponsesCheckbox = generateSettingsControlledCheckbox(showModifyResponsesAllowedToStu, 
             "modifyResponsesAllowed", evaluationOTP + "modifyResponsesAllowed", studentModifyReponses, form);
-      if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_ACTIVE, evalState, true) ) {
+      if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_ACTIVE, currentEvalState, true) ) {
          RSFUtils.disableComponent(stuModifyResponsesCheckbox);
       }
 
@@ -387,7 +353,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 
       UISelect authControlSelect = UISelect.make(form, "auth-control-choose", EvalToolConstants.AUTHCONTROL_VALUES, 
             EvalToolConstants.AUTHCONTROL_LABELS, evaluationOTP + "authControl").setMessageKeys();
-      if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_ACTIVE, evalState, true) ) {
+      if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_ACTIVE, currentEvalState, true) ) {
          RSFUtils.disableComponent(authControlSelect.selection);
       }
 
@@ -403,7 +369,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
          if (instUseFromAboveValue == null) {
             UISelect instOpt = UISelect.make(form, "instructorOpt", EvalToolConstants.INSTRUCTOR_OPT_VALUES, 
                   EvalToolConstants.INSTRUCTOR_OPT_LABELS, evaluationOTP + "instructorOpt").setMessageKeys();
-            if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_INQUEUE, evalState, true) ) {
+            if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_INQUEUE, currentEvalState, true) ) {
                RSFUtils.disableComponent(instOpt.selection);
             }
          } else {
@@ -426,7 +392,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
       // email reminder control
       UISelect reminderDaysSelect = UISelect.make(form, "reminderDays", EvalToolConstants.REMINDER_EMAIL_DAYS_VALUES, 
             EvalToolConstants.REMINDER_EMAIL_DAYS_LABELS, evaluationOTP + "reminderDays").setMessageKeys();
-      if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_GRACEPERIOD, evalState, true) ) {
+      if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_GRACEPERIOD, currentEvalState, true) ) {
          RSFUtils.disableComponent(reminderDaysSelect.selection);
       }
 
@@ -513,7 +479,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
     * 
     * @param parent the parent container
     * @param rsfId the rsf id of the checkbox
-    * @param binding the EL binding for this checkbox
+    * @param binding the EL binding for this control value
     * @param systemSetting the system setting value which controls this checkbox
     * @param form the form which the control is part of
     * @return the checkbox
@@ -534,15 +500,41 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
       return checkbox;
    }
 
+
+   /**
+    * Generates the date picker control for the standard evaluation dates
+    * 
+    * @param parent the parent container
+    * @param rsfId the rsf id of the checkbox
+    * @param binding the EL binding for this control value
+    * @param currentEvalState
+    * @param worksUntilState
+    * @param useDateTime
+    */
+   private void generateDateSelector(UIBranchContainer parent, String rsfId, String binding, 
+         String currentEvalState, String worksUntilState, boolean useDateTime) {
+      if ( EvalUtils.checkStateAfter(worksUntilState, currentEvalState, true) ) {
+         UIOutput.make(parent, rsfId + "_disabled", null, binding);
+      } else {
+         UIInput datePicker = UIInput.make(parent, rsfId + ":", binding); 
+         if (useDateTime) {
+            dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_TIME_INPUT);         
+         } else {
+            dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);        
+         }
+         dateevolver.evolveDateInput(datePicker);
+      }
+   }
+
    /**
     * Reduces code duplication<br/>
     * This will render the view date picker control or a message depending on various system settings<br/>
     * <b>NOTE:</b> the rsfId should not include the ":" even though it must appear in the template with a colon<br/>
     * <b>NOTE:</b> the label for this message must use an rsf:id of (rsfId + "_label")<br/>
     * 
-    * @param showResultsToStudents
-    * @param rsfId
-    * @param binding
+    * @param parent the parent container
+    * @param rsfId the rsf id of the checkbox
+    * @param binding the EL binding for this control value
     * @param viewResultsSetting
     * @param useDateTime
     * @param sameViewDateForAll

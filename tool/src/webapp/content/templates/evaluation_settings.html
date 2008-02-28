@@ -53,14 +53,14 @@
                   <p class="shorttext">
                      <label rsf:id="msg=evalsettings.title.header" for="title">Title</label>
                      <input rsf:id="title" name="title" id="title" type="text" value="" size="50" maxlength="255" />
-                     <span rsf:id="evaluationTitle" class="highlight">Eval Title</span>
+                     <span rsf:id="title_disabled" class="highlight">Eval Title</span>
                   </p>
                   <div class="longtext evalEditorSmall">
                      <label rsf:id="msg=evalsettings.instructions.header" for="instructions">Instructions</label>
                      <div rsf:id="instructions:" id="instructions">
                        <textarea id="instructions-dummy" name="instructions-dummy" rows="4" cols="60"></textarea>
                      </div>
-                     <span rsf:id="evaluationInstructions"></span>
+                     <span rsf:id="instructions_disabled"></span>
                      <p class="instruction textPanelFooter">
                          <span rsf:id="msg=evalsettings.instructions.desc">these will appear at the top of the evaluation</span>
                      </p>
@@ -105,6 +105,7 @@
 							  <input type="text" id="start_date_dummy" name="start_date_dummy" value="MM/DD/YYYY" size="12" maxlength="10"/>
 							  <img src="../images/calendar.gif" />
 							</span>
+                            <span rsf:id="startDate_disabled" />
 							<span rsf:id="msg=evalsettings.start.date.desc"  class="instruction textPanelFooter">
 								Users may begin submitting evaluation responses on this date
 							</span>
@@ -115,6 +116,7 @@
 								<input type="text" name="date_dummy" value="MM/DD/YYYY" size="12" maxlength="10"/>
 								<img src="../images/calendar.gif" />
 							</span>
+                            <span rsf:id="dueDate_disabled" />
 							<span rsf:id="msg=evalsettings.due.date.desc" class="instruction textPanelFooter">
 								Evaluation ends on this date, no more responses after this date
 							</span>
@@ -125,6 +127,7 @@
 								<input type="text" name="date_dummy" value="MM/DD/YYYY" size="12" maxlength="10"/>
 								<img src="../images/calendar.gif" />
 							</span>
+                            <span rsf:id="stopDate_disabled" />
 							<span rsf:id="msg=evalsettings.stop.date.desc" class="instruction textPanelFooter">
 								Users may still submit responses up until this date (defines a grace period)
 							</span>
@@ -149,19 +152,18 @@
                           <label rsf:id="radioLabel" for="radioValue3">Public</label>
                       </span>
 
-                      <!--//gsilver: confused by the following message, seems to be showing even when the date widgets are not (if this is the 
-                         "setting" it is refering to -->
                       <div rsf:id="msg=evalsettings.results.viewable.admin.note" class="instruction">
                           Note that admins above in the hierarchy can view the results UNLESS results sharing is set to private
                       </div>
                     </div>
                     <div rsf:id="showViewDate:" class="shorttext" id="evaluation_show_viewdate_area">
-                         <label rsf:id="eval-view-date-header" for="viewDate:::date-field">View Date:</label>
+                         <label rsf:id="msg=evalsettings.view.date.header" for="viewDate:::date-field">View Date:</label>
                          <span rsf:id="viewDate:">
                              <input type="text" name="date_dummy" value="MM/DD/YYYY" size="12" maxlength="10"/>
                              <img src="../images/calendar.gif" />
                          </span>
-                         <span rsf:id="eval-view-date-desc" class="instruction textPanelFooter">
+                         <span rsf:id="viewDate_disabled" />
+                         <span rsf:id="msg=evalsettings.view.date.desc" class="instruction textPanelFooter">
                              Results are not viewable until this date
                          </span>
                     </div>

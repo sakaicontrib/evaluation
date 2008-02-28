@@ -29,6 +29,7 @@ api/src/java/org/sakaiproject/evaluation/logic/EvalEvaluationService.java svn_ke
 api/src/java/org/sakaiproject/evaluation/logic/EvalEvaluationSetupService.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/logic/EvalSettings.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/logic/entity/AssignGroupEntityProvider.java -text svn_keywords=Date+Revision+Author+URL+Id
+api/src/java/org/sakaiproject/evaluation/logic/entity/ConfigEntityProvider.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/logic/entity/EvalCategoryEntityProvider.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/logic/entity/EvaluationEntityProvider.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/logic/entity/ItemEntityProvider.java svn_keywords=Date+Revision+Author+URL+Id
@@ -82,6 +83,7 @@ impl/src/java/org/sakaiproject/evaluation/logic/EvalEvaluationServiceImpl.java s
 impl/src/java/org/sakaiproject/evaluation/logic/EvalEvaluationSetupServiceImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/EvalSettingsImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/entity/AssignGroupEntityProviderImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
+impl/src/java/org/sakaiproject/evaluation/logic/entity/ConfigEntityProviderImpl.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/entity/EvalCategoryEntityProviderImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/entity/EvaluationEntityProviderImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/entity/ItemEntityProviderImpl.java svn_keywords=Date+Revision+Author+URL+Id
