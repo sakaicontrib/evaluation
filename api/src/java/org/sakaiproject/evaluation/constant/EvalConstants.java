@@ -43,8 +43,8 @@ public class EvalConstants {
     * Evaluation type: POLL This is the poll type for use single item polling
     */
    public static final String EVALUATION_TYPE_POLL = "Poll";
-   
-   
+
+
    /**
     * Eval Takers: Include all users who have not taken the evaluation yet
     */
