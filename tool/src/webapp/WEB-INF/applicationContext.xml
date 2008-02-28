@@ -251,4 +251,8 @@
       <property name="guardMethod" value="UVBBean.populate"/>
    </bean>
 
+    <bean id="dateResolver"
+            class="org.sakaiproject.evaluation.tool.locators.DateResolver">
+        <property name="localeGetter" ref="requestLocaleProxy" />
+    </bean>
 </beans>

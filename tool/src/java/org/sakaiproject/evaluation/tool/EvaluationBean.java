@@ -117,20 +117,11 @@ public class EvaluationBean {
    public Date dueDate;
    public Date stopDate;
    public Date viewDate;
-   public Date studentsDate;
-   public Date instructorsDate;
    public int[] enrollment;
 
    // These are for the Assign screen, which is now bound by UIBoundBooleans
    public Map<String, Boolean> selectedEvalGroupIDsMap = new HashMap<String,Boolean>();
    public Map<String, Boolean> selectedEvalHierarchyNodeIDsMap = new HashMap<String, Boolean>();
-
-   /*
-    * These 2 values are bound here because they are not in Evaluation POJO 
-    * and we need to store them when coming back to settings page from assign page.
-    */
-   public Boolean studentViewResults;
-   public Boolean instructorViewResults;
 
    /*
     * These 2 values are used for getting the email template as well as constant.
@@ -194,19 +185,19 @@ public class EvaluationBean {
          log.info("Setting view date to default of: " + viewDate);
       }
 
-      studentsDate = viewDate;
-      instructorsDate = viewDate;
+      eval.setStudentsDate(viewDate);
+      eval.setInstructorsDate(viewDate);
 
       // results viewable settings
       eval.setResultsSharing( EvalConstants.SHARING_VISIBLE );
 
       Boolean studentsView = (Boolean) settings.get(EvalSettings.STUDENT_VIEW_RESULTS);
       if (studentsView == null) { studentsView = false; }
-      studentViewResults = studentsView;
+      eval.studentViewResults = studentsView;
 
       Boolean instructorsView = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
       if (instructorsView == null) { instructorsView = false; }
-      instructorViewResults = instructorsView;
+      eval.instructorViewResults = instructorsView;
 
       // student completion settings
       Boolean blankAllowed = (Boolean) settings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED);
@@ -310,6 +301,8 @@ public class EvaluationBean {
       evalInDB.setInstructorsDate(eval.getInstructorsDate());
       evalInDB.setResultsSharing(eval.getResultsSharing());
       evalInDB.setEvalCategory(eval.getEvalCategory());
+      evalInDB.instructorViewResults = eval.instructorViewResults;
+      evalInDB.studentViewResults = eval.studentViewResults;
 
       evaluationSetupService.saveEvaluation(evalInDB, external.getCurrentUserId());
 
@@ -603,7 +596,9 @@ public class EvaluationBean {
     * Makes a new evaluation object residing in this session bean.
     */	
    public void clearEvaluation(){
-      this.eval = new EvalEvaluation(); 
+      this.eval = new EvalEvaluation();
+      // set the state to partial
+      this.eval.setState(EvalConstants.EVALUATION_STATE_PARTIAL);
    }
 
    /**
@@ -658,23 +653,11 @@ public class EvaluationBean {
       viewDate = eval.getViewDate();
 
       /*
-       * If student date is not null then set the date and also 
+       * If student/instructor date is not null then set the date and also 
        * make the checkbox checked. Else make the checkbox unchecked. 
        */
-      studentsDate = eval.getStudentsDate();
-      studentViewResults = eval.getStudentsDate() == null? Boolean.FALSE: Boolean.TRUE;
-
-      /*
-       * If instructor date is not null then set the date and also 
-       * make the checkbox checked. Else make the checkbox unchecked. 
-       */
-      if (eval.getInstructorsDate() != null) {
-         instructorViewResults = Boolean.TRUE;
-         instructorsDate = eval.getInstructorsDate();
-      } else {
-         instructorViewResults = Boolean.FALSE;
-         instructorsDate = null;
-      }
+      eval.studentViewResults = eval.getStudentsDate() == null ? Boolean.FALSE: Boolean.TRUE;
+      eval.instructorViewResults = eval.getInstructorsDate() == null ? Boolean.FALSE: Boolean.TRUE;
 
       //email settings
       emailAvailableTxt = eval.getAvailableEmailTemplate().getMessage(); // available template
@@ -802,22 +785,13 @@ public class EvaluationBean {
        * as true then don't look for student and instructor dates, instead make them
        * same as admin view date. If not then get the student and instructor view dates.
        */ 
-      eval.studentViewResults = studentViewResults;
-      eval.instructorViewResults = instructorViewResults;
       boolean sameViewDateForAll = ((Boolean) settings.get(EvalSettings.EVAL_USE_SAME_VIEW_DATES));
       if (sameViewDateForAll) {
-         if (studentViewResults) {
+         if (eval.studentViewResults != null && eval.studentViewResults) {
             eval.setStudentsDate(viewDate);
          }
-         if (instructorViewResults) {
+         if (eval.instructorViewResults != null && eval.instructorViewResults) {
             eval.setInstructorsDate(viewDate);
-         }
-      } else {
-         if (studentViewResults) {
-            eval.setStudentsDate(studentsDate);
-         }
-         if (instructorViewResults) {
-            eval.setInstructorsDate(instructorsDate);
          }
       }
 

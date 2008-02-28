@@ -157,6 +157,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/inferrers/EvaluationVPInferrer.ja
 tool/src/java/org/sakaiproject/evaluation/tool/inferrers/ItemVPInferrer.java svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/inferrers/TemplateVPInferrer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/locators/AnswersBeanLocator.java -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/locators/DateResolver.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/locators/EntityNameInferrerImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/locators/EvaluationBeanLocator.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/locators/HierarchyNodeGroupsLocator.java svn_keywords=Date+Revision+Author+URL+Id

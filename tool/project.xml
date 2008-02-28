@@ -105,33 +105,20 @@
       <dependency>
          <groupId>commons-logging</groupId>
          <artifactId>commons-logging</artifactId>
-         <version>1.1</version>
+         <version>1.0.4</version>
          <type>jar</type>
          <properties>
             <war.bundle>true</war.bundle>
          </properties>
       </dependency>
 
-      <!-- 
-         a) The above properties tag should not be needed.
-         b) This log4j dependency should also be removed
-      -->
-      <dependency>
-         <groupId>log4j</groupId>
-         <artifactId>log4j</artifactId>
-         <version>1.2.14</version>
-         <type>jar</type>
-         <properties>
-            <war.bundle>true</war.bundle>
-         </properties>
-      </dependency>
 
       <!-- dao and hibernate needed to do the request wrapper -->
       <!-- generic DAO -->
       <dependency>
          <groupId>generic-dao</groupId>
          <artifactId>generic-dao</artifactId>
-         <version>0.9</version>
+         <version>0.9.1</version>
       </dependency>
 
       <!-- Hibernate dependency -->

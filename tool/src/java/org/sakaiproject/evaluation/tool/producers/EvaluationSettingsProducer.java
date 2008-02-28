@@ -37,7 +37,6 @@ import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
 import uk.org.ponder.arrayutil.ArrayUtil;
-import uk.org.ponder.mapping.DARReshaper;
 import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -57,6 +56,7 @@ import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.UISelectLabel;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
+import uk.org.ponder.rsf.components.decorators.UIDisabledDecorator;
 import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
 import uk.org.ponder.rsf.components.decorators.UITextDimensionsDecorator;
 import uk.org.ponder.rsf.components.decorators.UITooltipDecorator;
@@ -313,17 +313,17 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
       Boolean studentViewResults = (Boolean) settings.get(EvalSettings.STUDENT_VIEW_RESULTS);
       UIBranchContainer showResultsToStudents = UIBranchContainer.make(form, "showResultsToStudents:");
       generateSettingsControlledCheckbox(showResultsToStudents, "studentViewResults", 
-            evalBeanOTP + "studentViewResults", studentViewResults, form);
+            evaluationOTP + "studentViewResults", studentViewResults, form);
       generateViewDateControl(showResultsToStudents, "studentsViewDate", 
-            evalBeanOTP + "studentsDate", studentViewResults, useDateTime, sameViewDateForAll);
+            evaluationOTP + "studentsDate", studentViewResults, useDateTime, sameViewDateForAll);
 
       // Instructor view date
       Boolean instructorViewResults = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
       UIBranchContainer showResultsToInst = UIBranchContainer.make(form, "showResultsToInst:");
       generateSettingsControlledCheckbox(showResultsToInst, "instructorViewResults", 
-            evalBeanOTP + "instructorViewResults", instructorViewResults, form);
+            evaluationOTP + "instructorViewResults", instructorViewResults, form);
       generateViewDateControl(showResultsToInst, "instructorsViewDate", 
-            evalBeanOTP + "instructorsDate", instructorViewResults, useDateTime, sameViewDateForAll);
+            evaluationOTP + "instructorsDate", instructorViewResults, useDateTime, sameViewDateForAll);
 
 
       // RESPONDENT SETTINGS
@@ -354,7 +354,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
       UISelect authControlSelect = UISelect.make(form, "auth-control-choose", EvalToolConstants.AUTHCONTROL_VALUES, 
             EvalToolConstants.AUTHCONTROL_LABELS, evaluationOTP + "authControl").setMessageKeys();
       if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_ACTIVE, currentEvalState, true) ) {
-         RSFUtils.disableComponent(authControlSelect.selection);
+         RSFUtils.disableComponent(authControlSelect);
       }
 
       if (userAdmin) {
@@ -370,7 +370,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
             UISelect instOpt = UISelect.make(form, "instructorOpt", EvalToolConstants.INSTRUCTOR_OPT_VALUES, 
                   EvalToolConstants.INSTRUCTOR_OPT_LABELS, evaluationOTP + "instructorOpt").setMessageKeys();
             if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_INQUEUE, currentEvalState, true) ) {
-               RSFUtils.disableComponent(instOpt.selection);
+               RSFUtils.disableComponent(instOpt);
             }
          } else {
             int index = ArrayUtil.indexOf(EvalToolConstants.INSTRUCTOR_OPT_VALUES, instUseFromAboveValue);
@@ -393,7 +393,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
       UISelect reminderDaysSelect = UISelect.make(form, "reminderDays", EvalToolConstants.REMINDER_EMAIL_DAYS_VALUES, 
             EvalToolConstants.REMINDER_EMAIL_DAYS_LABELS, evaluationOTP + "reminderDays").setMessageKeys();
       if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_GRACEPERIOD, currentEvalState, true) ) {
-         RSFUtils.disableComponent(reminderDaysSelect.selection);
+         RSFUtils.disableComponent(reminderDaysSelect);
       }
 
       // email reminder template link
@@ -486,11 +486,13 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
     */
    protected UIBoundBoolean generateSettingsControlledCheckbox(UIContainer parent, String rsfId, 
          String binding, Boolean systemSetting, UIForm form) {
-      UIBoundBoolean checkbox = UIBoundBoolean.make(parent, rsfId);
+      UIBoundBoolean checkbox = null;
       if (systemSetting == null) {
-         checkbox.valuebinding = new ELReference(binding);
+         checkbox = UIBoundBoolean.make(parent, rsfId, binding);
+         //checkbox.valuebinding = new ELReference(binding);
       } else {
-         checkbox.setValue(systemSetting);
+         checkbox = UIBoundBoolean.make(parent, rsfId, systemSetting);
+         //checkbox.setValue(systemSetting);
          RSFUtils.disableComponent(checkbox); // disable the control
          // Since we have disabled the check box => RSF will not bind the value => binding it explicitly
          form.parameters.add(new UIELBinding(binding, systemSetting));
@@ -514,7 +516,12 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
    private void generateDateSelector(UIBranchContainer parent, String rsfId, String binding, 
          String currentEvalState, String worksUntilState, boolean useDateTime) {
       if ( EvalUtils.checkStateAfter(worksUntilState, currentEvalState, true) ) {
-         UIOutput.make(parent, rsfId + "_disabled", null, binding);
+         String suffix = ".date";
+         if (useDateTime) {
+            suffix = ".time";
+         }
+         UIOutput.make(parent, rsfId + "_disabled", null, binding)
+            .resolver = new ELReference("dateResolver." + suffix);
       } else {
          UIInput datePicker = UIInput.make(parent, rsfId + ":", binding); 
          if (useDateTime) {
