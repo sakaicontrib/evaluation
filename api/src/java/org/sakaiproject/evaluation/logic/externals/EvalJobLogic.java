@@ -51,6 +51,20 @@ public interface EvalJobLogic {
    public void processEvaluationStateChange(Long evaluationId, String actionState);
 
    /**
+    * Contains all valid job types
+    */
+   public String[] JOB_TYPES = {
+         EvalConstants.JOB_TYPE_CREATED,
+         EvalConstants.JOB_TYPE_ACTIVE,
+         EvalConstants.JOB_TYPE_REMINDER,
+         EvalConstants.JOB_TYPE_DUE,
+         EvalConstants.JOB_TYPE_CLOSED,
+         EvalConstants.JOB_TYPE_VIEWABLE,
+         EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS,
+         EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS
+   };
+
+   /**
     * Handle sending email and starting jobs when a scheduled job 
     * calls this method. Dispatch to action(s) based on jobType.</br>
     * 

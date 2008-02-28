@@ -96,17 +96,14 @@ public class EvalJobLogicImpl implements EvalJobLogic {
     */
    public static boolean isValidJobType(String jobType) {
       boolean isValid = false;
-      if (jobType == null)
-         return isValid;
-      if (jobType.equals(EvalConstants.JOB_TYPE_ACTIVE)
-            || jobType.equals(EvalConstants.JOB_TYPE_CLOSED)
-            || jobType.equals(EvalConstants.JOB_TYPE_CREATED)
-            || jobType.equals(EvalConstants.JOB_TYPE_DUE)
-            || jobType.equals(EvalConstants.JOB_TYPE_REMINDER)
-            || jobType.equals(EvalConstants.JOB_TYPE_VIEWABLE)
-            || jobType.equals(EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS)
-            || jobType.equals(EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS))
-         isValid = true;
+      if (jobType != null) {
+         for (int i = 0; i < JOB_TYPES.length; i++) {
+            if (jobType.equals(JOB_TYPES[i])) {
+               isValid = true;
+               break;
+            }
+         }
+      }
       return isValid;
    }
 
@@ -134,6 +131,11 @@ public class EvalJobLogicImpl implements EvalJobLogic {
    }
 
 
+   /* 
+    * FIXME - this method needs to be able to correctly recover from unexpected state changes,
+    * it currently expects that the evaluation is in the right state for the job that was called
+    * to run on it, however, it will die in all sorts of odd ways if the state is not as expected
+    */
    public void jobAction(Long evaluationId, String jobType) {
       if (evaluationId == null || jobType == null) {
          throw new NullPointerException("both evaluationId ("+evaluationId+") and jobType ("+jobType+") must be set");
@@ -144,10 +146,17 @@ public class EvalJobLogicImpl implements EvalJobLogic {
        * could be done as another type of job run by the scheduler in a separate thread.
        */
 
-      EvalEvaluation eval = getEvaluationOrFail(evaluationId);
+      EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
+      if (eval == null) {
+         // this eval was purged out so wipe out all the jobs
+         log.info("Could not find evaluation ("+evaluationId+") for jobAction ("+jobType+"), " +
+         		"purging out all jobs related to this evaluation...");
+         removeScheduledInvocations(evaluationId);
+      }
 
-      // fix up EvalEvaluation state
-      evaluationService.updateEvaluationState(evaluationId);
+      // fix up EvalEvaluation state (also persists it)
+      String evalState = evaluationService.returnAndFixEvalState(eval, true);
+      Date now = new Date();
 
       // dispatch to send email and/or schedule jobs based on jobType
       if (EvalConstants.JOB_TYPE_CREATED.equals(jobType)) {
@@ -156,14 +165,21 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 
       } else if (EvalConstants.JOB_TYPE_ACTIVE.equals(jobType)) {
          sendAvailableEmail(evaluationId);
-         scheduleJob(eval.getId(), eval.getDueDate(), EvalConstants.JOB_TYPE_DUE);
-         if (eval.getReminderDays().intValue() != 0)
+         if (eval.getDueDate() != null) {
+            // might not have a due date set
+            scheduleJob(eval.getId(), eval.getDueDate(), EvalConstants.JOB_TYPE_DUE);
+         }
+         int reminderDays = eval.getReminderDays() == null ? 0 : eval.getReminderDays();
+         if (reminderDays > 0) {
             scheduleReminder(eval.getId());
+         }
 
       } else if (EvalConstants.JOB_TYPE_REMINDER.equals(jobType)) {
-         if (eval.getState().equals(EvalConstants.EVALUATION_STATE_ACTIVE)
-               && eval.getReminderDays().intValue() != 0) {
-            if (eval.getDueDate().after(new Date())) {
+         int reminderDays = eval.getReminderDays() == null ? 0 : eval.getReminderDays();
+         if (evalState.equals(EvalConstants.EVALUATION_STATE_ACTIVE)
+               && reminderDays > 0) {
+            if (eval.getDueDate() == null 
+                  || eval.getDueDate().after(now)) {
                sendReminderEmail(evaluationId);
                scheduleReminder(evaluationId);
             }
@@ -173,24 +189,42 @@ public class EvalJobLogicImpl implements EvalJobLogic {
          if (log.isDebugEnabled())
             log.debug("EvalJobLogicImpl.jobAction scheduleJob(" + eval.getId() + ","
                   + eval.getStopDate() + "," + EvalConstants.JOB_TYPE_CLOSED + ")");
-         scheduleJob(eval.getId(), eval.getStopDate(), EvalConstants.JOB_TYPE_CLOSED);
+         if (eval.getDueDate() != null) {
+            if ( eval.getStopDate() != null &&
+                  ! eval.getStopDate().equals(eval.getDueDate())) {
+               scheduleJob(eval.getId(), eval.getStopDate(), EvalConstants.JOB_TYPE_CLOSED);
+            } else {
+               if (eval.getDueDate().before(now)) {
+                  // due date is passed so close out immediately
+                  scheduleJob(eval.getId(), now, EvalConstants.JOB_TYPE_CLOSED);
+               } else {
+                  // due date in future so schedule a job
+                  scheduleJob(eval.getId(), eval.getDueDate(), EvalConstants.JOB_TYPE_CLOSED);
+               }
+            }
+         }
 
       } else if (EvalConstants.JOB_TYPE_CLOSED.equals(jobType)) {
          // schedule results viewable by owner - admin notification
-         scheduleJob(eval.getId(), eval.getViewDate(), EvalConstants.JOB_TYPE_VIEWABLE);
-         if (! EvalConstants.SHARING_PRIVATE.equals(eval.getResultsSharing()) ) {
-            if (eval.getInstructorsDate() != null) {
-               Date instructorViewDate = eval.getInstructorsDate();
-               // schedule results viewable by instructors notification
-               scheduleJob(eval.getId(), instructorViewDate,
-                     EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS);
+         if (eval.getViewDate() != null) {
+            scheduleJob(eval.getId(), eval.getViewDate(), EvalConstants.JOB_TYPE_VIEWABLE);
+            if (! EvalConstants.SHARING_PRIVATE.equals(eval.getResultsSharing()) ) {
+               if (eval.getInstructorsDate() != null) {
+                  Date instructorViewDate = eval.getInstructorsDate();
+                  // schedule results viewable by instructors notification
+                  scheduleJob(eval.getId(), instructorViewDate,
+                        EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS);
+               }
+               if (eval.getStudentsDate() != null) {
+                  Date studentViewDate = eval.getStudentsDate();
+                  // schedule results viewable by students notification
+                  scheduleJob(eval.getId(), studentViewDate,
+                        EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS);
+               }
             }
-            if (eval.getStudentsDate() != null) {
-               Date studentViewDate = eval.getStudentsDate();
-               // schedule results viewable by students notification
-               scheduleJob(eval.getId(), studentViewDate,
-                     EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS);
-            }
+         } else {
+            // viewable now
+            scheduleJob(eval.getId(), now, EvalConstants.JOB_TYPE_VIEWABLE);
          }
 
       } else if (EvalConstants.JOB_TYPE_VIEWABLE.equals(jobType)) {
@@ -253,7 +287,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 
 
    /**
-    * Remove all scheduled jobs related to this evalaution
+    * Remove all scheduled jobs related to this evaluation
     * @param evaluationId
     */
    protected void removeScheduledInvocations(Long evaluationId) {
@@ -269,28 +303,17 @@ public class EvalJobLogicImpl implements EvalJobLogic {
       // TODO be selective based on the state of the EvalEvaluation when deleted
       String opaqueContext = null;
       String prefix = evaluationId.toString() + SEPARATOR;
-      opaqueContext = prefix + EvalConstants.JOB_TYPE_CREATED;
-      deleteInvocation(opaqueContext);
-      opaqueContext = prefix + EvalConstants.JOB_TYPE_ACTIVE;
-      deleteInvocation(opaqueContext);
-      opaqueContext = prefix + EvalConstants.JOB_TYPE_DUE;
-      deleteInvocation(opaqueContext);
-      opaqueContext = prefix + EvalConstants.JOB_TYPE_CLOSED;
-      deleteInvocation(opaqueContext);
-      opaqueContext = prefix + EvalConstants.JOB_TYPE_REMINDER;
-      deleteInvocation(opaqueContext);
-      opaqueContext = prefix + EvalConstants.JOB_TYPE_VIEWABLE;
-      deleteInvocation(opaqueContext);
-      opaqueContext = prefix + EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS;
-      deleteInvocation(opaqueContext);
-      opaqueContext = prefix + EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS;
-      deleteInvocation(opaqueContext);
+      for (int i = 0; i < JOB_TYPES.length; i++) {
+         opaqueContext = prefix + JOB_TYPES[i];
+         deleteInvocation(opaqueContext);
+      }
    }
 
 
    /**
     * Handle a change in the evaluation which may effect scheduled events
     * @param eval
+    * FIXME - this needs to be able to correctly handle the cases where due/stop/view dates are null
     */
    protected void processEvaluationChange(EvalEvaluation eval) {
       // make sure the state is up to date
@@ -345,8 +368,9 @@ public class EvalJobLogicImpl implements EvalJobLogic {
     *           the EvalEvaluation id/jobType
     */
    protected void deleteInvocation(String opaqueContext) {
-      if (opaqueContext == null || opaqueContext == "")
-         return;
+      if (opaqueContext == null || opaqueContext == "") {
+         return; // FIXME - silently exiting is not so great....
+      }
       DelayedInvocation[] invocations;
       invocations = scheduledInvocationManager.findDelayedInvocations(COMPONENT_ID, opaqueContext);
       if (invocations != null) {
@@ -490,23 +514,17 @@ public class EvalJobLogicImpl implements EvalJobLogic {
          return;
       }
       if (log.isDebugEnabled())
-         log.debug("EvalJobLogicImpl.scheduleJob(" + evaluationId + "," + runDate + "," + jobType
-               + ")");
+         log.debug("EvalJobLogicImpl.scheduleJob(" + evaluationId + "," + runDate + "," + jobType + ")");
       try {
          String opaqueContext = evaluationId.toString() + SEPARATOR + jobType;
          scheduledInvocationManager.createDelayedInvocation(timeService.newTime(runDate.getTime()),
                COMPONENT_ID, opaqueContext);
          if (log.isDebugEnabled())
-            log
-            .debug("EvalJobLogicImpl.scheduleJob scheduledInvocationManager.createDelayedInvocation("
-                  + timeService.newTime(runDate.getTime())
-                  + ","
-                  + COMPONENT_ID
-                  + ","
-                  + opaqueContext + ")");
+            log.debug("EvalJobLogicImpl.scheduleJob scheduledInvocationManager.createDelayedInvocation("
+                  + timeService.newTime(runDate.getTime()) + ","
+                  + COMPONENT_ID + "," + opaqueContext + ")");
       } catch (Exception e) {
-         log.error(this + ".scheduleJob(" + evaluationId + "," + runDate.toString() + "," + jobType
-               + ") " + e);
+         log.error(this + ".scheduleJob(" + evaluationId + "," + runDate.toString() + "," + jobType + ") " + e);
       }
    }
 

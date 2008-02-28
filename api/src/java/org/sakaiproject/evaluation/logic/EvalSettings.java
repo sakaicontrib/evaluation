@@ -258,6 +258,14 @@ public interface EvalSettings {
       STUDENT_VIEW_RESULTS
    };
 
+   /**
+    * This event name indicates will be used whenever a setting was changed
+    */
+   public static String EVENT_SET_ONE_CONFIG = "setEvalConfigOne";
+   /**
+    * This event name indicates a large scale change of many settings at once
+    */
+   public static String EVENT_SET_MANY_CONFIG = "setEvalConfigMany";
 
    /**
     * Allows for getting the value of a system setting based on the constant,

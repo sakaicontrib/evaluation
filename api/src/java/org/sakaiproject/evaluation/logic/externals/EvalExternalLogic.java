@@ -27,8 +27,9 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public interface EvalExternalLogic extends ExternalUsers, ExternalEvalGroups,
-ExternalContent {
+public interface EvalExternalLogic extends ExternalUsers, ExternalEvalGroups, ExternalContent {
+
+   public static final String ADMIN_USER_ID = "admin";
 
    // PERMISSIONS
 
@@ -113,12 +114,22 @@ ExternalContent {
 
    /**
     * Creates a Sakai entity event for any internal entity which is registered with Sakai,
-    * does notthing if the passed in entity type is not registered
+    * does nothing if the passed in entity type is not registered
     * 
     * @param eventName any string representing an event name (e.g. evaluation.created)
     * @param evaluationEntity any entity inside the evaluation tool (e.g. {@link EvalEvaluation})
     */
    public void registerEntityEvent(String eventName, Serializable evaluationEntity);
+
+   /**
+    * Creates a Sakai entity event for any internal entity which is registered with Sakai,
+    * does nothing if the passed in entity class is not registered
+    * 
+    * @param eventName any string representing an event name (e.g. evaluation.created)
+    * @param entityClass class type of the entity which this event pertains to
+    * @param entityId unique id for the entity which this event pertains to
+    */
+   public void registerEntityEvent(String eventName, Class<? extends Serializable> entityClass, String entityId);
 
 
    // SERVER

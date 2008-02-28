@@ -102,7 +102,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
    public void init() {
       log.debug("Init");
       // run a timer which ensures that evaluation states are kept up to date
-      //initiateUpdateStateTimer();
+      initiateUpdateStateTimer();
    }
 
    /**
@@ -112,33 +112,63 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
     * then this would require a lot of extra logic to handle those cases,
     * holding off on using this for now -AZ
     */
+   public static String EVAL_UPDATE_TIMER = "eval_update_timer";
    protected void initiateUpdateStateTimer() {
+      // timer repeats every 60 minutes
+      final long repeatInterval = 1000 * 60 * 60;
+      // start up a timer after 2 mins + random(10 mins) and run it every 60 mins
+      long startDelay = 1000 * 60 * new Random().nextInt(5) + (1000 * 60 * 2);
+
       TimerTask runStateUpdateTask = new TimerTask() {
          @SuppressWarnings("unchecked")
          @Override
          public void run() {
-            // get all evals that are not viewable (i.e. completely done with) or deleted 
-            List<EvalEvaluation> evals = dao.findByProperties(EvalEvaluation.class, 
-                  new String[] {"state", "state"}, 
-                  new Object[] {EvalConstants.EVALUATION_STATE_VIEWABLE, EvalConstants.EVALUATION_STATE_DELETED},
-                  new int[] {EvaluationDao.NOT_EQUALS, EvaluationDao.NOT_EQUALS});
-            log.info("Checking the state of " + evals.size() + " evaluations to ensure they are all up to date...");
-            // loop through and update the state of the evals if needed
-            int count = 0;
-            for (EvalEvaluation evaluation : evals) {
-               String evalState = evaluationService.returnAndFixEvalState(evaluation, true);
-               if (! EvalUtils.getEvaluationState(evaluation, false).equals(evalState) ) {
-                  // could also trigger the various evaluation email events from this as well with extra logic here
-                  count++;
+            String serverId = external.getConfigurationSetting(EvalExternalLogic.SETTING_SERVER_ID, "UNKNOWN_SERVER_ID");
+            Boolean lockObtained = dao.obtainLock(EVAL_UPDATE_TIMER, serverId, repeatInterval);
+            // only execute the code if we have an exclusive lock
+            if (lockObtained != null && lockObtained) {
+               // get all evals that are not viewable (i.e. completely done with) or deleted 
+               List<EvalEvaluation> evals = dao.findByProperties(EvalEvaluation.class, 
+                     new String[] {"state", "state"}, 
+                     new Object[] {EvalConstants.EVALUATION_STATE_VIEWABLE, EvalConstants.EVALUATION_STATE_DELETED},
+                     new int[] {EvaluationDao.NOT_EQUALS, EvaluationDao.NOT_EQUALS});
+               log.info("Checking the state of " + evals.size() + " evaluations to ensure they are all up to date...");
+               // set the partial purge number of days to 2
+               long partialPurgeTime = System.currentTimeMillis() - (2 * 24 * 60 * 60 * 1000);
+               // loop through and update the state of the evals if needed
+               int count = 0;
+               for (EvalEvaluation evaluation : evals) {
+                  String evalState = evaluationService.returnAndFixEvalState(evaluation, false);
+                  if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(evalState)) {
+                     // purge out partial evaluations older than the partial purge time
+                     if (evaluation.getLastModified().getTime() < partialPurgeTime) {
+                        log.info("Purging partial evaluation ("+evaluation.getId()+") from " + evaluation.getLastModified());
+                        deleteEvaluation(evaluation.getId(), EvalExternalLogic.ADMIN_USER_ID);
+                     }
+                  } else {
+                     String currentEvalState = evaluation.getState();
+                     if (! currentEvalState.equals(evalState) ) {
+                        evalState = evaluationService.returnAndFixEvalState(evaluation, true); // update the state
+                        count++;
+                        // trigger the jobs logic to look at this since the state changed
+                        evalJobLogic.processEvaluationStateChange(evaluation.getId(), EvalJobLogic.ACTION_UPDATE);
+                     }
+                  }
                }
+               log.info("Updated the state of "+count+" evaluations...");
+               // finally we will reset the system config cache
+               if (settings instanceof EvalSettingsImpl) {
+                  ((EvalSettingsImpl) settings).resetCache();
+               }               
             }
-            log.info("Updated the state of "+count+" evaluations...");
          }
       };
+
+      // now we need to obtain a lock and then run the task if we have it
       Timer timer = new Timer(true);
-      long startDelay = 1000 * 60 * new Random(new Date().getTime()).nextInt(30) + (1000 * 60 * 5);
-      // start up a timer after 5 mins + random(30 mins) and run it every 60 mins
-      timer.schedule(runStateUpdateTask, startDelay, 1000 * 60 * 60);
+      log.info("Initializing the repeating timer task for evaluation, first run in " + (startDelay/1000) + " seconds " +
+      		"and subsequent runs will happen every " + (repeatInterval/1000) + " seconds after that");
+      timer.schedule(runStateUpdateTask, startDelay, repeatInterval);
    }
 
 

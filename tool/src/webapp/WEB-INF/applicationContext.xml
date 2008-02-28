@@ -230,7 +230,7 @@
         <property name="evalBeanUtils" ref="org.sakaiproject.evaluation.beans.EvalBeanUtils" />        
 	</bean>
 	
-	<!-- This ViewParametersInterceptor is responsible for redirecing the page
+	<!-- This ViewParametersInterceptor is responsible for redirecting the page
 	     if there is only group to select from. -->
 	<bean parent="viewParamsInterceptorParent">
 		<property name="value">
@@ -244,4 +244,11 @@
 			</bean>
 		</property>
 	</bean>
+
+   <!-- temporary fix until 0.7.3 - enables write guard for all UVB paths -->
+   <bean parent="writeGuardParent">
+      <property name="guardedPath" value="UVBBean.paths"/>
+      <property name="guardMethod" value="UVBBean.populate"/>
+   </bean>
+
 </beans>

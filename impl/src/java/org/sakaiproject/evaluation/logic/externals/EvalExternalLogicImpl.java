@@ -44,6 +44,7 @@ import org.sakaiproject.entitybroker.EntityBroker;
 import org.sakaiproject.entitybroker.IdEntityReference;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.entity.AssignGroupEntityProvider;
+import org.sakaiproject.evaluation.logic.entity.ConfigEntityProvider;
 import org.sakaiproject.evaluation.logic.entity.EvaluationEntityProvider;
 import org.sakaiproject.evaluation.logic.entity.ItemEntityProvider;
 import org.sakaiproject.evaluation.logic.entity.TemplateEntityProvider;
@@ -52,6 +53,7 @@ import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
+import org.sakaiproject.evaluation.model.EvalConfig;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalResponse;
@@ -751,13 +753,20 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
       }
    }
 
+   public void registerEntityEvent(String eventName, Class<? extends Serializable> entityClass, String entityId) {
+      String ref = getEntityReference(entityClass, entityId);
+      if (ref != null) {
+         entityBroker.fireEvent(eventName, ref);
+      }
+   }
+
    /**
     * Get an entity reference to any of the evaluation objects which are treated as entities
     * 
     * @param entity
     * @return an entity reference string or null if none can be found
     */
-   private String getEntityReference(Serializable entity) {
+   protected String getEntityReference(Serializable entity) {
       String id = null;
       try {
          Class<? extends Serializable> elementClass = entity.getClass();
@@ -771,7 +780,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
       }
    }
 
-   private String getEntityReference(Class<? extends Serializable> entityClass, String entityId) {
+   protected String getEntityReference(Class<? extends Serializable> entityClass, String entityId) {
       String prefix = null;
       // make sure this class is supported and get the prefix
       if (entityClass == EvalEvaluation.class) {
@@ -792,6 +801,8 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
          prefix = TemplateEntityProvider.ENTITY_PREFIX;
       } else if (entityClass == EvalResponse.class) {
          prefix = "eval-response";
+      } else if (entityClass == EvalConfig.class) {
+         prefix = ConfigEntityProvider.ENTITY_PREFIX;
       } else {
          return "eval:" + entityClass.getName();
       }
@@ -802,7 +813,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
    /**
     * Register the various permissions
     */
-   private void registerPermissions() {
+   protected void registerPermissions() {
       // register Sakai permissions for this tool
       functionManager.registerFunction(EvalConstants.PERM_WRITE_TEMPLATE);
       functionManager.registerFunction(EvalConstants.PERM_ASSIGN_EVALUATION);
@@ -816,7 +827,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
     * @param sakaiType a type identifier used in Sakai (should be a constant from Sakai)
     * @return a CONTEXT_TYPE constant from {@link EvalConstants}
     */
-   private String getContextType(String sakaiType) {
+   protected String getContextType(String sakaiType) {
       if (sakaiType.equals(SAKAI_SITE_TYPE)) {
          return EvalConstants.GROUP_TYPE_SITE;
       } else if (sakaiType.equals(SAKAI_GROUP_TYPE)) {
@@ -831,7 +842,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
     * @param permission a PERM constant from {@link EvalConstants}
     * @return the translated constant from {@link EvalGroupsProvider}
     */
-   private String translatePermission(String permission) {
+   protected String translatePermission(String permission) {
       if (EvalConstants.PERM_TAKE_EVALUATION.equals(permission)) {
          return EvalGroupsProvider.PERM_TAKE_EVALUATION;
       } else if (EvalConstants.PERM_BE_EVALUATED.equals(permission)) {
@@ -845,7 +856,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
     * @param maxLength
     * @return an MD5 hash no longer than maxLength
     */
-   private String makeMD5(String text, int maxLength) {
+   protected String makeMD5(String text, int maxLength) {
 
       MessageDigest md;
       try {
@@ -878,6 +889,9 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
    }
 
 
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#getConfigurationSetting(java.lang.String, java.lang.Object)
+    */
    @SuppressWarnings("unchecked")
    public <T> T getConfigurationSetting(String settingName, T defaultValue) {
       T returnValue = defaultValue;

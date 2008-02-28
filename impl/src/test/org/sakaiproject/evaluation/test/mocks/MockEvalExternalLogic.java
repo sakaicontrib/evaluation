@@ -441,6 +441,10 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
 		// pretending it worked
 	}
 
+   public void registerEntityEvent(String eventName, Class<? extends Serializable> entityClass, String entityId) {
+      // pretending it worked
+   }
+
 
 
    @SuppressWarnings("unchecked")

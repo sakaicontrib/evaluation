@@ -17,11 +17,13 @@ package org.sakaiproject.evaluation.logic;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalConfig;
 import org.sakaiproject.evaluation.utils.SettingsLogicUtils;
 
@@ -35,13 +37,20 @@ public class EvalSettingsImpl implements EvalSettings {
 
    private static Log log = LogFactory.getLog(EvalSettingsImpl.class);
 
-   // spring setters
-   private EvaluationDao evaluationDao;
-   public void setEvaluationDao(EvaluationDao evaluationDao) {
-      this.evaluationDao = evaluationDao;
+   private EvaluationDao dao;
+   public void setDao(EvaluationDao dao) {
+      this.dao = dao;
    }
 
+   private EvalExternalLogic externalLogic;
+   public void setExternalLogic(EvalExternalLogic externalLogic) {
+      this.externalLogic = externalLogic;
+   }
+
+
+   private ConcurrentHashMap<String, EvalConfig> configCache = new ConcurrentHashMap<String, EvalConfig>();
    private HashSet<String> booleanSettings = new HashSet<String>();
+
 
    /**
     * spring init
@@ -55,7 +64,7 @@ public class EvalSettingsImpl implements EvalSettings {
       }      
 
       // count the current config settings
-      int count = evaluationDao.countAll(EvalConfig.class);
+      int count = dao.countAll(EvalConfig.class);
       if (count > 0) {
          log.info("Updating boolean only evaluation system settings to ensure they are not null...");
          // check the existing boolean settings for null values and fix them if they are null
@@ -65,8 +74,10 @@ public class EvalSettingsImpl implements EvalSettings {
             }
          }
       }
-   }
 
+      // initialize the cache
+      resetCache();
+   }
 
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.EvaluationSettings#get(java.lang.Object)
@@ -77,7 +88,7 @@ public class EvalSettingsImpl implements EvalSettings {
       String type = SettingsLogicUtils.getType(settingConstant);
 
       Object setting = null;
-      EvalConfig c = getConfigByName(name);
+      EvalConfig c = getConfigByName(name, true);
       if (c == null) {
          if (booleanSettings.contains(settingConstant)) {
             // if this boolean is null then make it false instead
@@ -106,13 +117,15 @@ public class EvalSettingsImpl implements EvalSettings {
       String type = SettingsLogicUtils.getType(settingConstant);
 
       // retrieve the current setting if it exists
-      EvalConfig c = getConfigByName(name);
+      EvalConfig c = getConfigByName(name, false);
 
       // unset (clear) this setting by removing the value from the database
       if (settingValue == null) {
          if (c != null) {
             try {
-               evaluationDao.delete(c); // now remove from storage
+               dao.delete(c); // now remove from storage
+               externalLogic.registerEntityEvent(EVENT_SET_ONE_CONFIG, EvalConfig.class, settingConstant); // register event
+               configCache.put(name, new Null()); // update the cache
             } catch (Exception e) {
                log.error("Could not clear system setting:" + name + ":" + type, e);
                return false;
@@ -143,7 +156,9 @@ public class EvalSettingsImpl implements EvalSettings {
       }
 
       try {
-         evaluationDao.save(c); // now save in the database
+         dao.save(c); // now save in the database
+         externalLogic.registerEntityEvent(EVENT_SET_ONE_CONFIG, EvalConfig.class, settingConstant); // register event
+         configCache.put(name, c); // update the cache
       } catch (Exception e) {
          log.error("Could not save system setting:" + name + ":" + value, e);
          return false;
@@ -153,17 +168,79 @@ public class EvalSettingsImpl implements EvalSettings {
 
    /**
     * @param name the name value of the Config item
+    * @param useCache if true then use cached values and return no persistent objects,
+    * else always get the persistent object if exists
     * @return a Config object or null if none found
     */
    @SuppressWarnings("unchecked")
-   private EvalConfig getConfigByName(String name) {
-      List<EvalConfig> l = evaluationDao.findByProperties(EvalConfig.class, 
-            new String[] {"name"}, new Object[] {name});
-      if (l.size() > 0) {
-         return (EvalConfig) l.get(0);
+   protected EvalConfig getConfigByName(String name, boolean useCache) {
+      EvalConfig config = null;
+      boolean found = false;
+      if (useCache) {
+         // get the cached version if it exists
+         if (configCache.containsKey(name)) {
+            found = true;
+            config = configCache.get(name);
+            if (config instanceof Null) {
+               config = null;
+            }
+         }
       }
-      log.debug("No admin setting for this constant:" + name);
-      return null;
+      if (! found) {
+         List<EvalConfig> l = dao.findByProperties(EvalConfig.class, 
+               new String[] {"name"}, new Object[] {name});
+         if (l.size() > 0) {
+            config = (EvalConfig) l.get(0);
+         } else {
+            log.debug("No admin setting for this constant:" + name);
+         }
+         if (useCache) {
+            if (config == null) {
+               // we want to store the fact that this is actually a null
+               configCache.put(name, new Null());
+            } else {
+               // make the object non-persistent by copying it
+               config = new EvalConfig(config.getLastModified(), name, config.getValue());
+               configCache.put(name, config); // update the cache
+            }
+         }
+      }
+      return config;
    }
+
+   /**
+    * clear out the cache and reload all config settings
+    */
+   @SuppressWarnings("unchecked")
+   public void resetCache() {
+      // clear out cache
+      configCache.clear();
+      // reload all cache items
+      List<EvalConfig> l = dao.findAll(EvalConfig.class);
+      for (EvalConfig config : l) {
+         // copy the values to avoid putting persistent objects in the cache
+         config = new EvalConfig(config.getLastModified(), config.getName(), config.getValue());
+         configCache.put(config.getName(), config);
+      }
+   }
+
+   /**
+    * clean out a single item from the cache,
+    * it will be reloaded from the DB the next time someone attempts to fetch it
+    * 
+    * @param settingConstant a setting constant from {@link EvalSettings}
+    */
+   public void clearCacheItem(String settingConstant) {
+      String name = SettingsLogicUtils.getName(settingConstant);
+      if (configCache.containsKey(name)) {
+         configCache.remove(name);
+      }
+   }
+
+   /**
+    * Marker class to indicate a null since CHM cannot store null
+    * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
+    */
+   private class Null extends EvalConfig { }
 
 }
