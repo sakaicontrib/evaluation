@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.constant.EvalEmailConstants;
 import org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
@@ -1097,7 +1098,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       assertNotNull(emailTemplate);
       assertEquals( EvalConstants.EMAIL_TEMPLATE_DEFAULT_AVAILABLE, 
             emailTemplate.getDefaultType() );
-      assertEquals( EvalConstants.EMAIL_AVAILABLE_DEFAULT_TEXT,
+      assertEquals( EvalEmailConstants.EMAIL_AVAILABLE_DEFAULT_TEXT,
             emailTemplate.getMessage() );
 
       emailTemplate = evaluationService.getDefaultEmailTemplate( 
@@ -1105,7 +1106,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       assertNotNull(emailTemplate);
       assertEquals( EvalConstants.EMAIL_TEMPLATE_DEFAULT_REMINDER, 
             emailTemplate.getDefaultType() );
-      assertEquals( EvalConstants.EMAIL_REMINDER_DEFAULT_TEXT,
+      assertEquals( EvalEmailConstants.EMAIL_REMINDER_DEFAULT_TEXT,
             emailTemplate.getMessage() );
 
       // test invalid constant causes failure
@@ -1126,7 +1127,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       emailTemplate = evaluationService.getEmailTemplate(etdl.evaluationActive.getId(), 
             EvalConstants.EMAIL_TEMPLATE_AVAILABLE );
       assertNotNull(emailTemplate);
-      assertEquals( EvalConstants.EMAIL_AVAILABLE_DEFAULT_TEXT,
+      assertEquals( EvalEmailConstants.EMAIL_AVAILABLE_DEFAULT_TEXT,
             emailTemplate.getMessage() );
 
       emailTemplate = evaluationService.getEmailTemplate(etdl.evaluationActive.getId(), 

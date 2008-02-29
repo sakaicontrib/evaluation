@@ -29,6 +29,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.constant.EvalEmailConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
@@ -803,7 +804,7 @@ public class EvaluationBean {
          // do nothing as the template has not been modified.
       } else {
          availableTemplate = new EvalEmailTemplate(new Date(), external.getCurrentUserId(),
-               EvalConstants.EMAIL_AVAILABLE_DEFAULT_SUBJECT, emailAvailableTxt);
+               EvalEmailConstants.EMAIL_AVAILABLE_DEFAULT_SUBJECT, emailAvailableTxt);
          evaluationSetupService.saveEmailTemplate(availableTemplate, external.getCurrentUserId());
       }
       eval.setAvailableEmailTemplate(availableTemplate);
@@ -814,7 +815,7 @@ public class EvaluationBean {
          // do nothing as the template has not been modified.
       } else {
          reminderTemplate = new EvalEmailTemplate(new Date(), external.getCurrentUserId(),
-               EvalConstants.EMAIL_REMINDER_DEFAULT_SUBJECT, emailReminderTxt);
+               EvalEmailConstants.EMAIL_REMINDER_DEFAULT_SUBJECT, emailReminderTxt);
          evaluationSetupService.saveEmailTemplate(reminderTemplate, external.getCurrentUserId());
       }
       eval.setReminderEmailTemplate(reminderTemplate);
