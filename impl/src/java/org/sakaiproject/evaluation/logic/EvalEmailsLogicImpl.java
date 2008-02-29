@@ -25,6 +25,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.constant.EvalEmailConstants;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
@@ -94,17 +95,17 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       if (! eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_REQUIRED) || (addItems > 0)) {
          if (eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_OPT_IN)) {
             // if eval is opt-in notify instructors that they may opt in
-            sb.append(EvalConstants.EMAIL_CREATED_OPT_IN_TEXT);
+            sb.append(EvalEmailConstants.EMAIL_CREATED_OPT_IN_TEXT);
          } else if (eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_OPT_OUT)) {
             // if eval is opt-out notify instructors that they may opt out
-            sb.append(EvalConstants.EMAIL_CREATED_OPT_OUT_TEXT);
+            sb.append(EvalEmailConstants.EMAIL_CREATED_OPT_OUT_TEXT);
          }
          if (addItems > 0) {
             // if eval allows instructors to add questions notify instructors they may add questions
-            sb.append(EvalConstants.EMAIL_CREATED_ADD_ITEMS_TEXT);
+            sb.append(EvalEmailConstants.EMAIL_CREATED_ADD_ITEMS_TEXT);
          }
       }
-      sb.append(EvalConstants.EMAIL_CREATED_DEFAULT_TEXT_FOOTER);
+      sb.append(EvalEmailConstants.EMAIL_CREATED_DEFAULT_TEXT_FOOTER);
       String message = sb.toString();
 
       // get the associated groups for this evaluation
