@@ -878,6 +878,42 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       log.info("User (" + userId + ") saved email template (" + emailTemplate.getId() + ")");
    }
 
+   @SuppressWarnings("unchecked")
+   public void removeEmailTemplate(Long emailTemplateId, String userId) {
+      EvalEmailTemplate emailTemplate = evaluationService.getEmailTemplate(emailTemplateId);
+      if (emailTemplate != null) {
+         if (emailTemplate.getDefaultType() != null) {
+            throw new IllegalArgumentException("Cannot remove email templates ("+emailTemplateId+") which are defaults: " + emailTemplate.getDefaultType());
+         }
+         securityChecks.checkEvalTemplateControl(userId, null, emailTemplate);
+         String emailTemplateType = emailTemplate.getType();
+
+         if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailTemplateType)
+               || EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailTemplateType) ) {
+            String templateTypeEval = "availableEmailTemplate";
+            if ( EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailTemplateType) ) {
+               templateTypeEval = "reminderEmailTemplate";
+            }
+            // get the evals that this template is used in
+            List<EvalEvaluation> evals = dao.findByProperties(EvalEvaluation.class, 
+                  new String[] {templateTypeEval + ".id"}, 
+                  new Object[] {emailTemplateId});
+            for (EvalEvaluation evaluation : evals) {
+               // replace with the default template (that means null it out)
+               if ( EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailTemplateType) ) {
+                  evaluation.setAvailableEmailTemplate(null);
+               } else if ( EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailTemplate.getType()) ) {
+                  evaluation.setReminderEmailTemplate(null);
+               }
+               dao.save(evaluation); // save the new template
+            }
+         }
+
+         // now go ahead and wipe out the template itself
+         dao.delete(emailTemplate);
+      }
+   }
+
 
 
    // INTERNAL METHODS

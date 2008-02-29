@@ -19,11 +19,15 @@ import java.util.List;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
+import org.sakaiproject.evaluation.tool.locators.LineBreakResolver;
 import org.sakaiproject.evaluation.tool.viewparams.EmailViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.SwitchViewParams;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
+import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIDeletionBinding;
+import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
@@ -58,6 +62,7 @@ public class ControlEmailTemplatesProducer implements ViewComponentProducer, Vie
       this.evaluationService = evaluationService;
    }
 
+   private String emailTemplateLocator = "emailTemplateWBL.";
    private String DEFAULTS = "defaults";
    private String OTHERS = "others";
    private UIDecorator classDecorator = new UIStyleDecorator("inactive");
@@ -103,7 +108,7 @@ public class ControlEmailTemplatesProducer implements ViewComponentProducer, Vie
             UIMessage.make("controlemailtemplates.page.title"),
             new SimpleViewParameters(ControlEmailTemplatesProducer.VIEW_ID));
 
-      // TODO - add in ability to control the listing of templates that appear (i.e. enable more than default templates)
+      // ability to control the listing of templates that appear (i.e. enable more than default templates)
       boolean showDefaults = false;
       if (userAdmin) {
          // default to showing the default templates
@@ -128,6 +133,9 @@ public class ControlEmailTemplatesProducer implements ViewComponentProducer, Vie
 
       // Get all the default email templates
       List<EvalEmailTemplate> templatesList = evaluationService.getEmailTemplatesForUser(currentUserId, null, showDefaults);
+      if (templatesList.size() == 0) {
+         UIMessage.make(tofill, "templatesList_none", "controlemailtemplates.no.templates");
+      }
       for (int i = 0; i < templatesList.size(); i++) {
          EvalEmailTemplate emailTemplate = templatesList.get(i);
 
@@ -136,7 +144,8 @@ public class ControlEmailTemplatesProducer implements ViewComponentProducer, Vie
          UIOutput.make(templatesBranch, "template_title", emailTemplate.getDefaultType());
          UIMessage.make(templatesBranch, "template_subject", "controlemailtemplates.subject", 
                new Object[] {emailTemplate.getSubject()});
-         UIVerbatim.make(templatesBranch, "template_text", emailTemplate.getMessage());
+         UIVerbatim.make(templatesBranch, "template_text", new LineBreakResolver().resolveBean(emailTemplate.getMessage()) );
+               
 
          boolean canControl = evaluationService.canControlEmailTemplate(currentUserId, null, emailTemplate.getId());
          if ( canControl ) {
@@ -144,18 +153,17 @@ public class ControlEmailTemplatesProducer implements ViewComponentProducer, Vie
                   UIMessage.make("general.command.edit"), 
                   new EmailViewParameters(ModifyEmailProducer.VIEW_ID, emailTemplate.getId(), emailTemplate.getType(), false) );
          } else {
-            UIMessage.make(templatesBranch, "modify_link", "general.command.edit");
+            UIMessage.make(templatesBranch, "modify_link_disabled", "general.command.edit");
          }
 
          if ( canControl && 
-               emailTemplate.getDefaultType() != null ) {
-            UIInternalLink.make(templatesBranch, "remove_link", 
-                  UIMessage.make("general.command.delete"), 
-                  new EmailViewParameters(ModifyEmailProducer.VIEW_ID, emailTemplate.getId(), emailTemplate.getType(), false) );
+               emailTemplate.getDefaultType() == null ) {
+            UIForm form = UIForm.make(templatesBranch, "removeForm");
+            UICommand command = UICommand.make(form, "removeCommand");
+            command.addParameter( new UIDeletionBinding(emailTemplateLocator + emailTemplate.getId()) );
          } else {
-            UIMessage.make(templatesBranch, "remove_link", "general.command.delete");
+            UIMessage.make(templatesBranch, "remove_link_disabled", "general.command.delete");
          }
-
       }
    }
 

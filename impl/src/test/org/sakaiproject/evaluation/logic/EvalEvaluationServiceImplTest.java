@@ -1090,7 +1090,6 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
    // EMAIL TEMPLATES
 
    public void testGetEmailTemplatesForUser() {
-      List<Long> ids = null;
       List<EvalEmailTemplate> l = null;
 
       // get all templates
@@ -1136,6 +1135,12 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
       // TODO check permissions for non-admin
 
+   }
+
+   public void testGetEmailTemplateById() {
+      EvalEmailTemplate emailTemplate = evaluationService.getEmailTemplate(etdl.emailTemplate1.getId());
+      assertNotNull(emailTemplate);
+      assertEquals(etdl.emailTemplate1.getId(), emailTemplate.getId());
    }
 
    public void testGetDefaultEmailTemplate() {

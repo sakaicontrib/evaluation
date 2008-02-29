@@ -839,6 +839,14 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
       return emailTemplate;
    }
 
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#getEmailTemplate(java.lang.Long)
+    */
+   public EvalEmailTemplate getEmailTemplate(Long emailTemplateId) {
+      EvalEmailTemplate emailTemplate = (EvalEmailTemplate) dao.findById(EvalEmailTemplate.class, emailTemplateId);
+      return emailTemplate;
+   }
+
    // PERMISSIONS
 
    public boolean canControlEmailTemplate(String userId, Long evaluationId, String emailTemplateTypeConstant) {

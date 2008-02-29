@@ -29,7 +29,8 @@
 		      evaluationBean, reportsBean, templateBBean, importBean, itemsBean, expertItemsBean, 
 		      templateBeanLocator, templateItemWBL, answersBeanLocator, responseAnswersBeanLocator, responseBeanLocator, 
 		      evaluationBeanLocator, takeEvalBean, settingsBean, scaleBean, scaleBeanLocator, itemWBL, 
-		      hierNodeLocator, hierNodeLocatorInvoker, hierNodeGroupsLocator, hierNodeGroupsLocatorInvoker" />
+		      hierNodeLocator, hierNodeLocatorInvoker, hierNodeGroupsLocator, hierNodeGroupsLocatorInvoker,
+              emailTemplateWBL" />
 	</bean>
 
     <!-- allows us to identify entities used in OTP on the EL path,

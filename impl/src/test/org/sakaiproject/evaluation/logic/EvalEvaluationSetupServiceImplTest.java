@@ -585,6 +585,37 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
    }
 
+   public void testRemoveEmailTemplate() {
+      // check user cannot remove
+      try {
+         evaluationSetupService.removeEmailTemplate(etdl.emailTemplate2.getId(), EvalTestDataLoad.USER_ID);
+         fail("Should have thrown exception");
+      } catch (RuntimeException e) {
+         assertNotNull(e);
+      }
+
+      // test user can remove
+      EvalEvaluation eval = (EvalEvaluation) evaluationDao.findById(EvalEvaluation.class, etdl.evaluationNew.getId());
+      assertNotNull(eval.getReminderEmailTemplate());
+
+      evaluationSetupService.removeEmailTemplate(etdl.emailTemplate2.getId(), EvalTestDataLoad.MAINT_USER_ID);
+
+      assertNull(eval.getReminderEmailTemplate());
+      assertNull( evaluationDao.findById(EvalEmailTemplate.class, etdl.emailTemplate2.getId()) );
+
+      // test cannot remove default templates
+      EvalEmailTemplate defaultTemplate = evaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
+      try {
+         evaluationSetupService.removeEmailTemplate(defaultTemplate.getId(), EvalTestDataLoad.ADMIN_USER_ID);
+         fail("Should have thrown exception");
+      } catch (RuntimeException e) {
+         assertNotNull(e);
+      }
+
+   }
+   
+   
+   
    // GROUP ASSIGNMENTS
 
    @SuppressWarnings("unchecked")
