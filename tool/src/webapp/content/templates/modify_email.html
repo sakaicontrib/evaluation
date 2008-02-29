@@ -2,64 +2,64 @@
      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title rsf:id="modify-email-title">Modify Email Template</title>
+		<title rsf:id="msg=modifyemail.page.title">Modify Email Template</title>
 		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
 		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
 		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
 		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
-		<script type="text/javascript">
-			
-			function validateForm(){  
-				if(document.emailTamplate_form.emailTemplate.value == "")
-				{
-						alert("Please enter the email template");
-						return false;
-				}
-				else return true;
-		  }    	
-		</script>
-	 
 	</head>
-	
+
 	<body>
 		<div class="portletBody">
            <div class="navIntraTool">
                <a rsf:id="administrate-link" href="administrate.html">Administrate</a>
                <a rsf:id="summary-link" href="summary.html">Summary</a>
-               <a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a>
-               <a rsf:id="control-templates-link" href="control_templates.html">My Templates</a>
-               <a rsf:id="control-items-link" href="control_items.html">My Items</a>
-               <a rsf:id="control-scales-link" href="control_scales.html">My Scales</a>
+               <a rsf:id="control-emailtemplates-link" href="control_email_templates.html">My Email Templates</a>
            </div>
-			
+
 			<div>
       			<ul class="breadCrumb inactive">
-      				<li ><span rsf:id="summary-toplink-inact">Summary</span></li><li  rsf:id="create-eval-title">Create Evaluation</li><li class="lastCrumb" rsf:id="modify-email-title">Modify Email Template</li>
+      				<li><span rsf:id="msg=summary.page.title">Summary</span></li><li rsf:id="control-emailtemplates-link"><a rsf:id="payload-component">My Email Templates</a></li><li class="lastCrumb" rsf:id="msg=modifyemail.page.title">Modify Email Template</li>
       			</ul>
 			</div>  
-			
+
 			<div rsf:id="message-for:*" class="alertMessage">
 				<ul style="margin:0px;">
 					<li>Message for user here</li>
 				</ul>
 			</div>
 
-			<h3 rsf:id="modify-template-header">Modify reminder email template for Evaluation Title</h3>
-				
-			<form name="emailTemplate_form" rsf:id="emailTemplateForm" method="post" onsubmit="javascript:return validateForm();">
-				<div style="width:60%">
-					<p class="instruction" rsf:id="modify-text-instructions">Modify the suggested text or enter new text for the reminder email. Please note when sending the email the bracketed values will be substituted with actual values. You may use these values in your reminder email.</p>
-					<div class="highlightPanel" style="background:#eee">
-						<span rsf:id="modify-text-field-names">[First Name:] [Last Name:] [Course Title:] [Course ID:] [Eval ID:] [Course PK:] [Due Date:] [Evaluation Title:]</span>
-					</div>	
-					<textarea rows="11" cols="104" name="emailTemplate" rsf:id="emailTemplate">	
-					</textarea>
+			<h3 rsf:id="modify-template-header">Modify reminder email template</h3>
+
+			<form rsf:id="emailTemplateForm" name="emailTemplateForm" method="post">
+				<div style="width:80%">
+					<p rsf:id="msg=modifyemail.modify.text.instructions" class="instruction">Modify the suggested text or enter new text for the reminder email. Please note when sending the email the bracketed values will be substituted with actual values. You may use these values in your reminder email.</p>
+					<div rsf:id="email_templates_fieldhints" class="highlightPanel" style="background:#eee;">
+${EvalTitle} - the title of this evaluation <br/>
+${EvalStartDate} - the start date of this evaluation <br/>
+${EvalDueDate} - the due date of this evaluation <br/>
+${EvalResultsDate} - the view results date of this evaluation <br/>
+${EvalGroupTitle} - the title to the site/course/group/evalGroup which this evaluation is assigned to for this user <br/>
+${HelpdeskEmail} - the email address for the helpdesk (or the support contact) <br/>
+${URLtoAddItems} - the direct URL for evaluatees to add items to evals assigned from above <br/>
+${URLtoTakeEval} - the direct URL for evaluators to take this evaluation <br/>
+${URLtoViewResults} - the direct URL to view results for this evaluation <br/>
+${URLtoSystem} - the main URL to the system this is running in <br/>
+${URLtoAddItems} - the direct URL to add items to an evaluation <br/>
+${URLtoOptOut} - the direct URL for evaluators to opt in to use this evaluation
+					</div>
+                    <div rsf:id="showSubject:">
+                        <label rsf:id="subject_label" for="subject">Subject:</label>
+                        <input rsf:id="subject" type="text" id="subject" size="80" maxlength="250" />
+                    </div>
+					<textarea rsf:id="message" rows="10" cols="110" name="message" id="message"></textarea>
 				</div>	
 				<p class="act">		
-					<input name="saveEmailTemplate" rsf:id="saveEmailTemplate" type="submit" value="Save Changes" accesskey="s" class="active" />
-					<input type="button" value="Close Window" onclick = "self.close()" rsf:id="close-button" accesskey="x" />
+					<input rsf:id="saveEmailTemplate" name="saveEmailTemplate" type="submit" value="Save Changes" accesskey="s" class="active" />
+					<input rsf:id="closeWindow" type="button" value="Close Window" onclick = "self.close()" accesskey="x" />
 				</p>	
 			</form>
+
 		</div>	
 	</body>
 </html>

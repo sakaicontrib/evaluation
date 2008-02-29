@@ -177,9 +177,7 @@ public interface EvalEvaluationSetupService {
 
    /**
     * Save or update an email template, don't forget to associate it
-    * with the evaluation and save that separately<br/> 
-    * <b>Note:</b> cannot update template if used in at least one 
-    * evaluation that is not in queue<br/>
+    * with the evaluation and save that separately<br/>
     * Use {@link #canControlEmailTemplate(String, Long, Long)} or
     * {@link #canControlEmailTemplate(String, Long, String)} to check
     * if user can update this template and avoid possible exceptions
@@ -188,5 +186,14 @@ public interface EvalEvaluationSetupService {
     * @param userId the internal user id (not username)
     */
    public void saveEmailTemplate(EvalEmailTemplate emailTemplate, String userId);
+
+   /**
+    * Remove an email template if the user has the permissions to remove it,
+    * will replace the usage of this template with default templates,
+    * cannot remove default templates
+    * 
+    * @param emailTemplateId a unique id for an {@link EvalEmailTemplate}
+    */
+   public void removeEmailTemplate(Long emailTemplateId, String userId);
 
 }

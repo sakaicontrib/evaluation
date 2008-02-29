@@ -159,6 +159,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/inferrers/ItemVPInferrer.java svn
 tool/src/java/org/sakaiproject/evaluation/tool/inferrers/TemplateVPInferrer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/locators/AnswersBeanLocator.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/locators/DateResolver.java svn_keywords=Date+Revision+Author+HeadURL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/locators/EmailTemplateWBL.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/locators/EntityNameInferrerImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/locators/EvaluationBeanLocator.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/locators/HierarchyNodeGroupsLocator.java svn_keywords=Date+Revision+Author+URL+Id
@@ -166,6 +167,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/locators/HierarchyNodeGroupsLocat
 tool/src/java/org/sakaiproject/evaluation/tool/locators/HierarchyNodeLocator.java svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/locators/HierarchyNodeLocatorInvoker.java svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/locators/ItemBeanWBL.java -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/locators/LineBreakResolver.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/locators/ResponseAnswersBeanLocator.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/locators/ResponseBeanLocator.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/locators/ScaleBeanLocator.java -text svn_keywords=Date+Revision+Author+URL+Id

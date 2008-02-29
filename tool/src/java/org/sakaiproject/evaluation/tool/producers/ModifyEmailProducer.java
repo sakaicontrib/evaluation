@@ -1,15 +1,16 @@
-/******************************************************************************
- * ModifyEmailProducer.java - created by fengr@vt.edu on Oct 24, 2006
- * 
- * Copyright (c) 2007 Virginia Polytechnic Institute and State University
+/**
+ * $Id$
+ * $URL$
+ * ModifyEmailProducer.java - evaluation - Feb 29, 2008 6:06:42 PM - azeckoski
+ **************************************************************************
+ * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
- * 
- * Contributors:
- * Rui Feng (fengr@vt.edu)
- *****************************************************************************/
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ */
 
 package org.sakaiproject.evaluation.tool.producers;
 
@@ -17,15 +18,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.tool.EvaluationBean;
+import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.tool.locators.EmailTemplateWBL;
 import org.sakaiproject.evaluation.tool.viewparams.EmailViewParameters;
 
+import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
+import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
@@ -35,9 +39,8 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
 /**
- * Page for Modify Email template
+ * Page for Modifying Email templates
  * 
- * @author Rui Feng (fengr@vt.edu)
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class ModifyEmailProducer implements ViewComponentProducer, NavigationCaseReporter, ViewParamsReporter {
@@ -47,62 +50,100 @@ public class ModifyEmailProducer implements ViewComponentProducer, NavigationCas
       return VIEW_ID;
    }
 
-   private EvaluationBean evaluationBean;
-   public void setEvaluationBean(EvaluationBean evaluationBean) {
-      this.evaluationBean = evaluationBean;
+   private EvalExternalLogic externalLogic;
+   public void setExternalLogic(EvalExternalLogic externalLogic) {
+      this.externalLogic = externalLogic;
    }
 
+   private String emailTemplateLocator = "emailTemplateWBL.";
+
+   /* (non-Javadoc)
+    * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
+    */
    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
+      // handle the input params for the view
       EmailViewParameters emailViewParams = (EmailViewParameters) viewparams;
+      if (emailViewParams.emailType == null) {
+         throw new IllegalArgumentException("Must have an emailType set when accessing this page");
+      }
       String emailTemplateType = emailViewParams.emailType;
 
-      UIMessage.make(tofill, "modify-email-title", "modifyemail.page.title");
-      UIMessage.make(tofill, "create-eval-title", "starteval.page.title");
-  		UIMessage.make(tofill, "summary-toplink-inact", "summary.page.title"); 
-      UIInternalLink.make(tofill, "summary-link", 
-            UIMessage.make("summary.page.title"),
+      String emailTemplateOTP = null;
+      if (emailViewParams.templateId == null) {
+         emailTemplateOTP = emailTemplateLocator + EmailTemplateWBL.NEW_1 + emailTemplateType + ".";
+      } else {
+         emailTemplateOTP = emailTemplateLocator + emailViewParams.templateId + ".";         
+      }
+
+      // local variables used in the render logic
+      String currentUserId = externalLogic.getCurrentUserId();
+      boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
+
+      if (! emailViewParams.inEval) {
+         /*
+          * top links here
+          */
+         UIInternalLink.make(tofill, "summary-link", 
+               UIMessage.make("summary.page.title"), 
                new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
-      UIMessage.make(tofill, "modify-template-header", 
-            "modifyemail.modify.template.header", 
-               new Object[] {emailTemplateType, evaluationBean.eval.getTitle()});
+         if (userAdmin) {
+            UIInternalLink.make(tofill, "administrate-link", 
+                  UIMessage.make("administrate.page.title"),
+                  new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+         }
 
-      UIMessage.make(tofill, "modify-text-instructions", "modifyemail.modify.text.instructions");
-      UIMessage.make(tofill, "modify-text-field-names", "email.templates.field.names");
+         UIInternalLink.make(tofill, "control-emailtemplates-link",
+               UIMessage.make("controlemailtemplates.page.title"),
+               new SimpleViewParameters(ControlEmailTemplatesProducer.VIEW_ID));
+      }
+
+      UIMessage.make(tofill, "modify-template-header", "modifyemail.modify.template.header", 
+               new Object[] {emailTemplateType});
+
+      UIVerbatim.make(tofill, "email_templates_fieldhints", UIMessage.make("email.templates.field.names"));
 
       UIForm form = UIForm.make(tofill, "emailTemplateForm");
 
-      UIMessage.make(form, "close-button", "general.close.window.button");
-
+      String inputBinding = null;
+      String commandBinding = null;
       if (emailViewParams.inEval) {
          if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailTemplateType)) {
-            UIInput.make(form, "emailTemplate", "#{evaluationBean.emailAvailableTxt}", null);
-            UICommand.make(form, "saveEmailTemplate", 
-                  UIMessage.make("modifyemail.save.changes.link"), 
-                     "#{evaluationBean.saveAvailableEmailTemplate}");
+            inputBinding = "evaluationBean.emailAvailableTxt";
+            commandBinding = "evaluationBean.saveAvailableEmailTemplate";
          } else if (EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailTemplateType)) {
-            UIInput.make(form, "emailTemplate", "#{evaluationBean.emailReminderTxt}", null);
-            UICommand.make(form, "saveEmailTemplate", 
-                  UIMessage.make("modifyemail.save.changes.link"), 
-                     "#{evaluationBean.saveReminderEmailTemplate}");
+            inputBinding = "evaluationBean.emailReminderTxt";
+            commandBinding = "evaluationBean.saveReminderEmailTemplate";
          } else {
             throw new IllegalArgumentException("Unknown email template type for use in evaluation: " + emailTemplateType);
          }
+         // add in the close window control
+         UIMessage.make(tofill, "closeWindow", "general.close.window.button");
       } else {
-         // TODO make this actually do something
+         // not part of an evaluation so use the WBL
+         inputBinding = emailTemplateOTP + "message";
+         commandBinding = emailTemplateLocator + "saveAll";
+         // also show the subject editor
+         UIBranchContainer subjectBranch = UIBranchContainer.make(form, "showSubject:");
+         UIInput.make(subjectBranch, "subject", emailTemplateOTP + "subject");
+         UIMessage.make(subjectBranch, "subject_label", "modifyemail.template.subject");
       }
+      UIInput.make(form, "message", inputBinding, null);
+      UICommand.make(form, "saveEmailTemplate", UIMessage.make("modifyemail.save.changes.link"), commandBinding);
 
    }
 
+   @SuppressWarnings("unchecked")
    public List reportNavigationCases() {
       List i = new ArrayList();
-      i.add( new NavigationCase("success", new SimpleViewParameters(ControlEmailTemplatesProducer.VIEW_ID)) );
       // this is kind of wacky
       i.add(new NavigationCase(EvalConstants.EMAIL_TEMPLATE_AVAILABLE, new EmailViewParameters(
             PreviewEmailProducer.VIEW_ID, null, EvalConstants.EMAIL_TEMPLATE_AVAILABLE, true)));
       i.add(new NavigationCase(EvalConstants.EMAIL_TEMPLATE_REMINDER, new EmailViewParameters(
             PreviewEmailProducer.VIEW_ID, null, EvalConstants.EMAIL_TEMPLATE_REMINDER, true)));
+      // default return case
+      i.add( new NavigationCase(new SimpleViewParameters(ControlEmailTemplatesProducer.VIEW_ID)) );
       return i;
    }
 

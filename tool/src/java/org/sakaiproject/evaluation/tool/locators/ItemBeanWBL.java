@@ -1,7 +1,7 @@
-/******************************************************************************
- * ItemBeanWBL.java - created by aaronz on 21 May 2007
- * $URL$
+/**
  * $Id$
+ * $URL$
+ * ItemBeanWBL.java - evaluation - July 25, 2007 4:08:52 PM - azeckoski
  **************************************************************************
  * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0
