@@ -227,19 +227,19 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 						UIBranchContainer evalcourserow = UIBranchContainer.make(evalrow, "evaluationsCourseList:", groupId );
 
 						// set status
-						if (response != null && response.getEndTime() != null) {
+						if (response != null && 
+						      response.getEndTime() != null) {
 						   // there is a response for this eval/group
+                     status = "summary.status.completed";
 							if (eval.getModifyResponsesAllowed().booleanValue()) {
 							   // can modify responses so show the link still
 								// take eval link when pending
 								UIInternalLink.make(evalcourserow, "evaluationCourseLink", title,
 										new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID,
 												eval.getId(), groupId, response.getId()) );
-								status = "summary.status.completed";
 							} else {
-							   // show title only when completed
-							   UIOutput.make(evalcourserow, "evaluationCourseTitle", title);
-								status = "summary.status.completed";
+							   // show title only when completed and cannot modify
+							   UIOutput.make(evalcourserow, "evaluationCourseLink_disabled", title);
 							}
 						} else {
 						   // no response yet for this eval/group
