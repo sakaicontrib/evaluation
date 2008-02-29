@@ -110,6 +110,10 @@ public class AdministrateProducer implements ViewComponentProducer {
             UIMessage.make("controlscales.page.title"),
             new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
 
+      UIInternalLink.make(tofill, "control-emailtemplates-link",
+            UIMessage.make("controlemailtemplates.page.title"),
+            new SimpleViewParameters(ControlEmailTemplatesProducer.VIEW_ID));
+
 
       // BREADCRUMBS
       UIInternalLink.make(tofill, "control-reporting-toplink", 

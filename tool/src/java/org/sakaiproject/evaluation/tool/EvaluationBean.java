@@ -803,7 +803,7 @@ public class EvaluationBean {
       if (emailAvailableTxt.equals(availableTemplate.getMessage())) {
          // do nothing as the template has not been modified.
       } else {
-         availableTemplate = new EvalEmailTemplate(new Date(), external.getCurrentUserId(),
+         availableTemplate = new EvalEmailTemplate(external.getCurrentUserId(), EvalConstants.EMAIL_TEMPLATE_AVAILABLE,
                EvalEmailConstants.EMAIL_AVAILABLE_DEFAULT_SUBJECT, emailAvailableTxt);
          evaluationSetupService.saveEmailTemplate(availableTemplate, external.getCurrentUserId());
       }
@@ -814,7 +814,7 @@ public class EvaluationBean {
       if (emailReminderTxt.equals(reminderTemplate.getMessage())) {
          // do nothing as the template has not been modified.
       } else {
-         reminderTemplate = new EvalEmailTemplate(new Date(), external.getCurrentUserId(),
+         reminderTemplate = new EvalEmailTemplate(external.getCurrentUserId(), EvalConstants.EMAIL_TEMPLATE_REMINDER,
                EvalEmailConstants.EMAIL_REMINDER_DEFAULT_SUBJECT, emailReminderTxt);
          evaluationSetupService.saveEmailTemplate(reminderTemplate, external.getCurrentUserId());
       }

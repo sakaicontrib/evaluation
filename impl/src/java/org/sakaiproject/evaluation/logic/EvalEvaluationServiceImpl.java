@@ -755,30 +755,56 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
    // EMAIL TEMPLATES
 
    @SuppressWarnings("unchecked")
+   public List<EvalEmailTemplate> getEmailTemplatesForUser(String userId, String emailTemplateTypeConstant, Boolean includeDefaultsOnly) {
+
+      List<String> props = new ArrayList<String>();
+      List<Object> values = new ArrayList<Object>();
+      List<Number> comparisons = new ArrayList<Number>();
+
+      if (emailTemplateTypeConstant != null) {
+         props.add("type");
+         values.add(emailTemplateTypeConstant);
+         comparisons.add(EvaluationDao.EQUALS);
+      }
+
+      // admin can see all
+      if (! externalLogic.isUserAdmin(userId) ) {
+         props.add("owner");
+         values.add(userId);
+         comparisons.add(ByPropsFinder.EQUALS);
+      }
+
+      if (includeDefaultsOnly != null) {
+         props.add("defaultType");
+         values.add("");
+         if (includeDefaultsOnly) {
+            comparisons.add(EvaluationDao.NOT_NULL);
+         } else {
+            comparisons.add(EvaluationDao.NULL);            
+         }
+      }
+
+      List<EvalEmailTemplate> templates = dao.findByProperties(EvalEmailTemplate.class, 
+            props.toArray(new String[props.size()]), 
+            values.toArray(new Object[values.size()]), 
+            ArrayUtils.listToIntArray(comparisons) );
+      return templates;
+   }
+
+   @SuppressWarnings("unchecked")
    public EvalEmailTemplate getDefaultEmailTemplate(String emailTemplateTypeConstant) {
       log.debug("emailTemplateTypeConstant: " + emailTemplateTypeConstant);
 
-      // check and get type
-      String templateType;
-      if (EvalConstants.EMAIL_TEMPLATE_CREATED.equals(emailTemplateTypeConstant)) {
-         templateType = EvalConstants.EMAIL_TEMPLATE_DEFAULT_CREATED;
-      } else if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailTemplateTypeConstant)) {
-         templateType = EvalConstants.EMAIL_TEMPLATE_DEFAULT_AVAILABLE;
-      } else if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE_OPT_IN.equals(emailTemplateTypeConstant)) {
-         templateType = EvalConstants.EMAIL_TEMPLATE_DEFAULT_AVAILABLE_OPT_IN;
-      } else if (EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailTemplateTypeConstant)) {
-         templateType = EvalConstants.EMAIL_TEMPLATE_DEFAULT_REMINDER;
-      } else if (EvalConstants.EMAIL_TEMPLATE_RESULTS.equals(emailTemplateTypeConstant)) {
-         templateType = EvalConstants.EMAIL_TEMPLATE_DEFAULT_RESULTS;
-      } else {
-         throw new IllegalArgumentException("Invalid emailTemplateTypeConstant: " + emailTemplateTypeConstant);
+      if (emailTemplateTypeConstant == null) {
+         throw new IllegalArgumentException("Invalid emailTemplateTypeConstant, cannot be null");
       }
 
       // fetch template by type
-      List<EvalEmailTemplate> l = dao.findByProperties(EvalEmailTemplate.class, new String[] { "defaultType" },
-            new Object[] { templateType });
+      List<EvalEmailTemplate> l = dao.findByProperties(EvalEmailTemplate.class, 
+            new String[] { "defaultType" },
+            new Object[] { emailTemplateTypeConstant });
       if (l.isEmpty()) {
-         throw new IllegalStateException("Could not find any default template for type constant: "
+         throw new IllegalArgumentException("Could not find any default template for type constant: "
                + emailTemplateTypeConstant);
       }
       return (EvalEmailTemplate) l.get(0);
@@ -835,25 +861,27 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
    }
 
    public boolean canControlEmailTemplate(String userId, Long evaluationId, Long emailTemplateId) {
-      log.debug("userId: " + userId + ", evaluationId: " + evaluationId + ", emailTemplateId: "
-            + emailTemplateId);
-
-      // get evaluation
-      EvalEvaluation eval = getEvaluationOrFail(evaluationId);
+      log.debug("userId: " + userId + ", evaluationId: " + evaluationId + ", emailTemplateId: " + emailTemplateId);
 
       // get the email template
       EvalEmailTemplate emailTemplate = getEmailTemplateOrFail(emailTemplateId);
 
-      // make sure this template is associated with this evaluation
-      if (eval.getAvailableEmailTemplate() != null
-            && emailTemplate.getId().equals(eval.getAvailableEmailTemplate().getId())) {
-         log.debug("template matches available template from eval (" + eval.getId() + ")");
-      } else if (eval.getReminderEmailTemplate() != null
-            && emailTemplate.getId().equals(eval.getReminderEmailTemplate().getId())) {
-         log.debug("template matches reminder template from eval (" + eval.getId() + ")");
-      } else {
-         throw new IllegalArgumentException("email template (" + emailTemplate.getId()
-               + ") does not match any template from eval (" + eval.getId() + ")");
+      // get evaluation
+      EvalEvaluation eval = null;
+      if (evaluationId != null) {
+         eval = getEvaluationOrFail(evaluationId);
+
+         // make sure this template is associated with this evaluation
+         if (eval.getAvailableEmailTemplate() != null
+               && emailTemplate.getId().equals(eval.getAvailableEmailTemplate().getId())) {
+            log.debug("template matches available template from eval (" + eval.getId() + ")");
+         } else if (eval.getReminderEmailTemplate() != null
+               && emailTemplate.getId().equals(eval.getReminderEmailTemplate().getId())) {
+            log.debug("template matches reminder template from eval (" + eval.getId() + ")");
+         } else {
+            throw new IllegalArgumentException("email template (" + emailTemplate.getId()
+                  + ") does not match any template from eval (" + eval.getId() + ")");
+         }
       }
 
       // check the permissions and state

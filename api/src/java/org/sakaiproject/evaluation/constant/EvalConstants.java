@@ -26,7 +26,7 @@ public class EvalConstants {
     * The current version of the app for updating purposes,
     * this should always be the NEXT version of the tool if this is trunk code
     */
-   public static String APP_VERSION = "1.2.0";
+   public static String APP_VERSION = "1.2.0"; 
 
    public static String SVN_REVISION = "$Revision$";
    public static String SVN_LAST_UPDATE = "$Date$";
@@ -447,9 +447,8 @@ public class EvalConstants {
    public static final String INSTRUCTOR_REQUIRED = "Required";
 
 
-   private static String DEFAULT = "default";
    /**
-    * EmailTemplate search setting:
+    * EmailTemplate type setting:
     * This identifies a template as the "evaluation created template",
     * used when the evaluation is first created to notify evaluatees that
     * they may add items to the evaluation and inform them as to when the
@@ -457,53 +456,29 @@ public class EvalConstants {
     */
    public static final String EMAIL_TEMPLATE_CREATED = "Created";	
    /**
-    * EmailTemplate: defaultType: Identifies the default created template
-    */
-   public final static String EMAIL_TEMPLATE_DEFAULT_CREATED = DEFAULT + EMAIL_TEMPLATE_CREATED;
-
-   /**
-    * EmailTemplate search setting:
+    * EmailTemplate type setting:
     * This identifies a template as the "evaluation available template",
     * used when the evaluation is available for users to take
     */
    public static final String EMAIL_TEMPLATE_AVAILABLE = "Available";
    /**
-    * EmailTemplate: defaultType: Identifies the default available template
-    */
-   public final static String EMAIL_TEMPLATE_DEFAULT_AVAILABLE = DEFAULT + EMAIL_TEMPLATE_AVAILABLE;
-
-   /**
-    * EmailTemplate search setting:
+    * EmailTemplate type setting:
     * This identifies a template as the "instructor must opt in for availability template",
     * used when the evaluation is available for users to take
     */
    public static final String EMAIL_TEMPLATE_AVAILABLE_OPT_IN = "OptIn";
    /**
-    * EmailTemplate: defaultType: Identifies the default available opt-in template
-    */
-   public final static String EMAIL_TEMPLATE_DEFAULT_AVAILABLE_OPT_IN = DEFAULT + EMAIL_TEMPLATE_AVAILABLE_OPT_IN;
-
-   /**
-    * EmailTemplate search setting:
+    * EmailTemplate type setting:
     * This identifies a template as the "evaluation reminder template", 
     * used when the evaluation reminder is sent to non-respondent users
     */
    public static final String EMAIL_TEMPLATE_REMINDER = "Reminder";
    /**
-    * EmailTemplate: defaultType: Identifies the default reminder template
-    */
-   public final static String EMAIL_TEMPLATE_DEFAULT_REMINDER = DEFAULT + EMAIL_TEMPLATE_REMINDER;
-
-   /**
-    * EmailTemplate search setting:
+    * EmailTemplate type setting:
     * This identifies a template as the "evaluation results template",
     * used when the evaluation results are ready to view
     */
    public static final String EMAIL_TEMPLATE_RESULTS = "Results";
-   /**
-    * EmailTemplate: defaultType: Identifies the default results template
-    */
-   public static final String EMAIL_TEMPLATE_DEFAULT_RESULTS = DEFAULT + EMAIL_TEMPLATE_RESULTS;
 
 
    /**

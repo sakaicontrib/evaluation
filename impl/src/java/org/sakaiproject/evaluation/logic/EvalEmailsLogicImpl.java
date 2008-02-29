@@ -545,10 +545,15 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       }
       if (emailTemplate == null) {
          // get the default email template
-         emailTemplate = evaluationService.getDefaultEmailTemplate(typeConstant);
+         try {
+            emailTemplate = evaluationService.getDefaultEmailTemplate(typeConstant);
+         } catch (RuntimeException e) {
+            log.error("Failed to get default email template ("+typeConstant+"): " + e.getMessage());
+            emailTemplate = null;
+         }
       }
       if (emailTemplate == null) {
-         throw new IllegalStateException("Cannot find email template default or in eval ("+evaluationId+"): " + typeConstant);
+         throw new IllegalArgumentException("Cannot find email template default or in eval ("+evaluationId+"): " + typeConstant);
       }
       return emailTemplate;
    }

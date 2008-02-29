@@ -308,7 +308,7 @@ public interface EvalEvaluationService {
    public boolean canDeleteAssignGroup(String userId, Long assignGroupId);
 
    // RESPONSES
-   
+
    /**
     * Get a response by its unique id<br/>
     * A response represents a single user response to an evaluation in a specific evalGroupId<br/>
@@ -425,7 +425,7 @@ public interface EvalEvaluationService {
 
 
    // EMAIL TEMPLATES
-   
+
    /**
     * Get a default email template by type, use the defaults as the basis for all
     * new templates that are created by users
@@ -433,17 +433,30 @@ public interface EvalEvaluationService {
     * @param emailTemplateTypeConstant a constant, use the EMAIL_TEMPLATE constants from 
     * {@link org.sakaiproject.evaluation.constant.EvalConstants} to indicate the type
     * @return the default email template matching the supplied type
+    * @throws IllegalArgumentException if the template cannot be found
     */
    public EvalEmailTemplate getDefaultEmailTemplate(String emailTemplateTypeConstant);
 
-    /**
-     * Get an email template for an eval by type, will always return an email template
-     * 
-     * @param emailTemplateTypeConstant a constant, use the EMAIL_TEMPLATE constants from 
-     * {@link org.sakaiproject.evaluation.constant.EvalConstants} to indicate the type
-     * @return the email template of the supplied type for this eval
-     */
-    public EvalEmailTemplate getEmailTemplate(Long evaluationId, String emailTemplateTypeConstant);
+   /**
+    * Get an email template for an eval by type, will always return an email template
+    * 
+    * @param emailTemplateTypeConstant a constant, use the EMAIL_TEMPLATE constants from 
+    * {@link org.sakaiproject.evaluation.constant.EvalConstants} to indicate the type
+    * @return the email template of the supplied type for this eval
+    */
+   public EvalEmailTemplate getEmailTemplate(Long evaluationId, String emailTemplateTypeConstant);
+
+   /**
+    * Get the email templates accessible to this user (with or without default templates)
+    * 
+    * @param userId the internal user id (not username)
+    * @param emailTemplateTypeConstant a constant, use the EMAIL_TEMPLATE constants from 
+    * {@link org.sakaiproject.evaluation.constant.EvalConstants} to indicate the type
+    * @param includeDefaultsOnly if true then only default templates are returned (always visible to everyone),
+    * if false then they are not included, if null then we get custom visible templates and default ones as well
+    * @return a list of email templates
+    */
+   public List<EvalEmailTemplate> getEmailTemplatesForUser(String userId, String emailTemplateTypeConstant, Boolean includeDefaultsOnly);
 
    // PERMISSIONS
 
@@ -466,7 +479,8 @@ public interface EvalEvaluationService {
     * takes into account the ownership, permissions, and current state of the evaluation
     * 
     * @param userId the internal user id (not username)
-    * @param evaluationId the id of an EvalEvaluation object
+    * @param evaluationId the id of an EvalEvaluation object,
+    * leave this null if the check is a general one and not evaluation related
     * @param emailTemplateId the id of an EvalEmailTemplate object
     * @return true if the user can control the email template at this time, false otherwise
     */
