@@ -382,7 +382,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       settings.set(EvalSettings.ENABLE_EVAL_RESPONSE_REMOVAL, true);
 
       // test cannot remove (closed and viewable)
-      assertFalse( evaluationService.canRemoveEvaluation(
+      assertTrue( evaluationService.canRemoveEvaluation(
             EvalTestDataLoad.ADMIN_USER_ID, etdl.evaluationViewable.getId() ) );
    }
    
@@ -1089,6 +1089,55 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
    // EMAIL TEMPLATES
 
+   public void testGetEmailTemplatesForUser() {
+      List<Long> ids = null;
+      List<EvalEmailTemplate> l = null;
+
+      // get all templates
+      l = evaluationService.getEmailTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, null, null);
+      assertNotNull(l);
+      assertEquals(8, l.size());
+
+      // get only default templates
+      l = evaluationService.getEmailTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, null, true);
+      assertNotNull(l);
+      assertEquals(5, l.size());
+      for (EvalEmailTemplate emailTemplate : l) {
+         assertNotNull(emailTemplate.getDefaultType());
+      }
+
+      // get only non-default templates
+      l = evaluationService.getEmailTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, null, false);
+      assertNotNull(l);
+      assertEquals(3, l.size());
+      for (EvalEmailTemplate emailTemplate : l) {
+         assertNull(emailTemplate.getDefaultType());
+      }
+
+      // get specific type of template only
+      l = evaluationService.getEmailTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.EMAIL_TEMPLATE_REMINDER, null);
+      assertNotNull(l);
+      assertEquals(3, l.size());
+      for (EvalEmailTemplate emailTemplate : l) {
+         assertEquals(EvalConstants.EMAIL_TEMPLATE_REMINDER, emailTemplate.getType());
+      }
+
+      // should only get the default
+      l = evaluationService.getEmailTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.EMAIL_TEMPLATE_REMINDER, true);
+      assertNotNull(l);
+      assertEquals(1, l.size());
+      assertNotNull(l.get(0).getDefaultType());
+      assertEquals(EvalConstants.EMAIL_TEMPLATE_REMINDER, l.get(0).getType());
+
+      // should only get the non defaults
+      l = evaluationService.getEmailTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.EMAIL_TEMPLATE_REMINDER, false);
+      assertNotNull(l);
+      assertEquals(2, l.size());
+
+      // TODO check permissions for non-admin
+
+   }
+
    public void testGetDefaultEmailTemplate() {
       EvalEmailTemplate emailTemplate = null;
 
@@ -1096,7 +1145,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       emailTemplate = evaluationService.getDefaultEmailTemplate( 
             EvalConstants.EMAIL_TEMPLATE_AVAILABLE );
       assertNotNull(emailTemplate);
-      assertEquals( EvalConstants.EMAIL_TEMPLATE_DEFAULT_AVAILABLE, 
+      assertEquals( EvalConstants.EMAIL_TEMPLATE_AVAILABLE, 
             emailTemplate.getDefaultType() );
       assertEquals( EvalEmailConstants.EMAIL_AVAILABLE_DEFAULT_TEXT,
             emailTemplate.getMessage() );
@@ -1104,7 +1153,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       emailTemplate = evaluationService.getDefaultEmailTemplate( 
             EvalConstants.EMAIL_TEMPLATE_REMINDER );
       assertNotNull(emailTemplate);
-      assertEquals( EvalConstants.EMAIL_TEMPLATE_DEFAULT_REMINDER, 
+      assertEquals( EvalConstants.EMAIL_TEMPLATE_REMINDER, 
             emailTemplate.getDefaultType() );
       assertEquals( EvalEmailConstants.EMAIL_REMINDER_DEFAULT_TEXT,
             emailTemplate.getMessage() );
@@ -1190,19 +1239,19 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
             EvalTestDataLoad.USER_ID, etdl.evaluationNew.getId(), 
             EvalConstants.EMAIL_TEMPLATE_REMINDER) );
 
-      // test cannot when evaluation is running (active+)
-      assertFalse( evaluationService.canControlEmailTemplate(
+      // test CAN when evaluation is running (active+)
+      assertTrue( evaluationService.canControlEmailTemplate(
             EvalTestDataLoad.MAINT_USER_ID, etdl.evaluationActive.getId(), 
             EvalConstants.EMAIL_TEMPLATE_AVAILABLE) );
-      assertFalse( evaluationService.canControlEmailTemplate(
+      assertTrue( evaluationService.canControlEmailTemplate(
             EvalTestDataLoad.MAINT_USER_ID, etdl.evaluationActive.getId(), 
             EvalConstants.EMAIL_TEMPLATE_REMINDER) );
 
-      // check admin cannot override for running evals
-      assertFalse( evaluationService.canControlEmailTemplate(
+      // check admin CAN override for running evals
+      assertTrue( evaluationService.canControlEmailTemplate(
             EvalTestDataLoad.ADMIN_USER_ID, etdl.evaluationClosed.getId(), 
             EvalConstants.EMAIL_TEMPLATE_REMINDER) );
-      assertFalse( evaluationService.canControlEmailTemplate(
+      assertTrue( evaluationService.canControlEmailTemplate(
             EvalTestDataLoad.ADMIN_USER_ID, etdl.evaluationClosed.getId(), 
             EvalConstants.EMAIL_TEMPLATE_REMINDER) );
 
@@ -1234,18 +1283,29 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
             EvalTestDataLoad.MAINT_USER_ID, etdl.evaluationNew.getId(), 
             etdl.emailTemplate2.getId()) );
 
+      // test with null eval id
+      assertTrue( evaluationService.canControlEmailTemplate(
+            EvalTestDataLoad.ADMIN_USER_ID, null, etdl.emailTemplate2.getId()) );
+      assertTrue( evaluationService.canControlEmailTemplate(
+            EvalTestDataLoad.MAINT_USER_ID, null, etdl.emailTemplate2.getId()) );
+
+      assertFalse( evaluationService.canControlEmailTemplate(
+            EvalTestDataLoad.MAINT_USER_ID, null, etdl.emailTemplate1.getId()) );
+      assertFalse( evaluationService.canControlEmailTemplate(
+            EvalTestDataLoad.USER_ID, null, etdl.emailTemplate2.getId()) );
+
       // test not has permissions
       assertFalse( evaluationService.canControlEmailTemplate(
             EvalTestDataLoad.MAINT_USER_ID, etdl.evaluationNew.getId(), 
             etdl.emailTemplate1.getId()) );
 
-      // test valid but active eval not allowed
-      assertFalse( evaluationService.canControlEmailTemplate(
+      // test valid and active eval allowed
+      assertTrue( evaluationService.canControlEmailTemplate(
             EvalTestDataLoad.MAINT_USER_ID, etdl.evaluationActive.getId(), 
             etdl.emailTemplate3.getId()) );
 
-      // make sure admin cannot override for active eval
-      assertFalse( evaluationService.canControlEmailTemplate(
+      // make sure admin CAN override for active eval
+      assertTrue( evaluationService.canControlEmailTemplate(
             EvalTestDataLoad.ADMIN_USER_ID, etdl.evaluationActive.getId(), 
             etdl.emailTemplate3.getId()) );
 

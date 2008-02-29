@@ -173,16 +173,16 @@ public class PreloadDataImpl implements Runnable {
             new Object[] {""},
             new int[] {EvaluationDao.NOT_NULL});
       if (count == 0) {
-         evaluationDao.save(new EvalEmailTemplate(new Date(), ADMIN_OWNER, EvalEmailConstants.EMAIL_CREATED_DEFAULT_SUBJECT,
-               EvalEmailConstants.EMAIL_CREATED_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_DEFAULT_CREATED));
-         evaluationDao.save(new EvalEmailTemplate(new Date(), ADMIN_OWNER, EvalEmailConstants.EMAIL_AVAILABLE_DEFAULT_SUBJECT,
-               EvalEmailConstants.EMAIL_AVAILABLE_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_DEFAULT_AVAILABLE));
-         evaluationDao.save(new EvalEmailTemplate(new Date(), ADMIN_OWNER, EvalEmailConstants.EMAIL_AVAILABLE_OPT_IN_SUBJECT,
-               EvalEmailConstants.EMAIL_AVAILABLE_OPT_IN_TEXT, EvalConstants.EMAIL_TEMPLATE_DEFAULT_AVAILABLE_OPT_IN));
-         evaluationDao.save(new EvalEmailTemplate(new Date(), ADMIN_OWNER, EvalEmailConstants.EMAIL_REMINDER_DEFAULT_SUBJECT,
-               EvalEmailConstants.EMAIL_REMINDER_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_DEFAULT_REMINDER));
-         evaluationDao.save(new EvalEmailTemplate(new Date(), ADMIN_OWNER, EvalEmailConstants.EMAIL_RESULTS_DEFAULT_SUBJECT,
-               EvalEmailConstants.EMAIL_RESULTS_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_DEFAULT_RESULTS));
+         evaluationDao.save(new EvalEmailTemplate(ADMIN_OWNER, EvalConstants.EMAIL_TEMPLATE_CREATED, EvalEmailConstants.EMAIL_CREATED_DEFAULT_SUBJECT,
+               EvalEmailConstants.EMAIL_CREATED_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_CREATED));
+         evaluationDao.save(new EvalEmailTemplate(ADMIN_OWNER, EvalConstants.EMAIL_TEMPLATE_AVAILABLE, EvalEmailConstants.EMAIL_AVAILABLE_DEFAULT_SUBJECT,
+               EvalEmailConstants.EMAIL_AVAILABLE_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_AVAILABLE));
+         evaluationDao.save(new EvalEmailTemplate(ADMIN_OWNER, EvalConstants.EMAIL_TEMPLATE_AVAILABLE_OPT_IN, EvalEmailConstants.EMAIL_AVAILABLE_OPT_IN_SUBJECT,
+               EvalEmailConstants.EMAIL_AVAILABLE_OPT_IN_TEXT, EvalConstants.EMAIL_TEMPLATE_AVAILABLE_OPT_IN));
+         evaluationDao.save(new EvalEmailTemplate(ADMIN_OWNER, EvalConstants.EMAIL_TEMPLATE_REMINDER, EvalEmailConstants.EMAIL_REMINDER_DEFAULT_SUBJECT,
+               EvalEmailConstants.EMAIL_REMINDER_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_REMINDER));
+         evaluationDao.save(new EvalEmailTemplate(ADMIN_OWNER, EvalConstants.EMAIL_TEMPLATE_RESULTS, EvalEmailConstants.EMAIL_RESULTS_DEFAULT_SUBJECT,
+               EvalEmailConstants.EMAIL_RESULTS_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_RESULTS));
 
          log.info("Preloaded " + evaluationDao.countAll(EvalEmailTemplate.class) + " evaluation EmailTemplates");
       }

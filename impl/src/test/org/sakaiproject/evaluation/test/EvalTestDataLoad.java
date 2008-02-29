@@ -914,11 +914,11 @@ public class EvalTestDataLoad {
             EvalConstants.EVALUATION_AUTHCONTROL_NONE, null);
 
       // email templates
-      emailTemplate1 = new EvalEmailTemplate(new Date(), ADMIN_USER_ID, "Email Subject 1", "Email Template 1");
+      emailTemplate1 = new EvalEmailTemplate(ADMIN_USER_ID, EvalConstants.EMAIL_TEMPLATE_AVAILABLE, "Email Subject 1", "Email Template 1");
       evaluationNew.setAvailableEmailTemplate(emailTemplate1);
-      emailTemplate2 = new EvalEmailTemplate(new Date(), MAINT_USER_ID, "Email Subject 2", "Email Template 2"); 
+      emailTemplate2 = new EvalEmailTemplate(MAINT_USER_ID, EvalConstants.EMAIL_TEMPLATE_REMINDER, "Email Subject 2", "Email Template 2"); 
       evaluationNew.setReminderEmailTemplate(emailTemplate2);
-      emailTemplate3 = new EvalEmailTemplate(new Date(), MAINT_USER_ID, "Email Subject 3", "Email Template 3"); 
+      emailTemplate3 = new EvalEmailTemplate(MAINT_USER_ID, EvalConstants.EMAIL_TEMPLATE_REMINDER, "Email Subject 3", "Email Template 3"); 
       evaluationActive.setReminderEmailTemplate(emailTemplate3);
 
       // evalGroupId assignments

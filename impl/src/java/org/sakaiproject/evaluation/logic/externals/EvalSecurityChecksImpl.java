@@ -48,6 +48,11 @@ public class EvalSecurityChecksImpl {
       this.settings = settings;
    }
 
+   private EvalExternalLogic externalLogic;
+   public void setExternalLogic(EvalExternalLogic externalLogic) {
+      this.externalLogic = externalLogic;
+   }
+
    private EvalBeanUtils evalBeanUtils;
    public void setEvalBeanUtils(EvalBeanUtils evalBeanUtils) {
       this.evalBeanUtils = evalBeanUtils;
@@ -335,26 +340,36 @@ public class EvalSecurityChecksImpl {
 
    /**
     * Check if user can control evaluation and template combo
+    * 
     * @param userId internal user id
-    * @param eval
-    * @param emailTemplate
+    * @param eval can be null if only checking the template
+    * @param emailTemplate if this is null or the default template then the eval permissions determine control
     * @return true if they can, throw exceptions otherwise
     */
-   public boolean checkEvalTemplateControl(String userId, EvalEvaluation eval,
-         EvalEmailTemplate emailTemplate) {
-      log.debug("userId: " + userId + ", evaluationId: " + eval.getId());
+   public boolean checkEvalTemplateControl(String userId, EvalEvaluation eval, EvalEmailTemplate emailTemplate) {
 
       boolean allowed = false;
-      String evalState = EvalUtils.getEvaluationState(eval, false);
-      if ( EvalUtils.checkStateBefore(EvalConstants.EVALUATION_STATE_INQUEUE, evalState, true) ) {
-         if (emailTemplate == null) {
-            // currently using the default templates so check eval perms
-            if (canUserControlEvaluation(userId, eval)) {
-               allowed = true;
+      // special check for admin control over default templates
+      if (emailTemplate != null  
+            && emailTemplate.getDefaultType() != null
+            && externalLogic.isUserAdmin(userId) ) {
+               allowed = true;         
+      } else {
+         if (emailTemplate == null || 
+               emailTemplate.getDefaultType() != null) {
+            // no template
+            if (eval != null) {
+               // currently using the default templates so check eval perms
+               if (canUserControlEvaluation(userId, eval)) {
+                  allowed = true;
+               } else {
+                  throw new SecurityException("User (" + userId
+                        + ") cannot control email template in evaluation (" + eval.getId()
+                        + "), do not have permission");
+               }
             } else {
-               throw new SecurityException("User (" + userId
-                     + ") cannot control email template in evaluation (" + eval.getId()
-                     + "), do not have permission");
+               // this is an odd test of null eval and template which means there is nothing to really check, assume failure
+               throw new IllegalArgumentException("Cannot test permissions with null eval and null emailTemplate, at least one must be set");
             }
          } else {
             // check email template perms
@@ -365,9 +380,6 @@ public class EvalSecurityChecksImpl {
                      + emailTemplate.getId() + ") without permissions");
             }
          }
-      } else {
-         throw new IllegalStateException("Cannot modify email template in running evaluation ("
-               + eval.getId() + ")");
       }
       return allowed;
    }

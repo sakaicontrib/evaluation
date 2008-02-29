@@ -840,28 +840,36 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          emailTemplate.setDefaultType(null);
 
       } else {
+         boolean userAdmin = external.isUserAdmin(userId);
          // existing template
-         if (emailTemplate.getDefaultType() != null) {
-            throw new IllegalArgumentException(
-            "Cannot modify default templates or set existing templates to be default");
-         }
 
-         // check if there are evaluations this is used in and if the user can modify this based on them
-         // check available templates
-         List<EvalEvaluation> l = dao.findByProperties(EvalEvaluation.class, new String[] { "availableEmailTemplate.id" },
-               new Object[] { emailTemplate.getId() });
-         for (int i = 0; i < l.size(); i++) {
-            EvalEvaluation eval = (EvalEvaluation) l.get(i);
-            // check eval/template permissions
-            securityChecks.checkEvalTemplateControl(userId, eval, emailTemplate);
-         }
-         // check reminder templates
-         l = dao.findByProperties(EvalEvaluation.class, new String[] { "reminderEmailTemplate.id" },
-               new Object[] { emailTemplate.getId() });
-         for (int i = 0; i < l.size(); i++) {
-            EvalEvaluation eval = (EvalEvaluation) l.get(i);
-            // check eval/template permissions
-            securityChecks.checkEvalTemplateControl(userId, eval, emailTemplate);
+         if (! userAdmin) {
+            if (emailTemplate.getDefaultType() != null) {
+               throw new IllegalArgumentException(
+                     "Cannot modify default templates or set existing templates to be default unless you are an admin");
+            }
+
+            // check if there are evaluations this is used in and if the user can modify this based on them
+
+            // check available templates
+            List<EvalEvaluation> l = dao.findByProperties(EvalEvaluation.class, new String[] { "availableEmailTemplate.id" },
+                  new Object[] { emailTemplate.getId() });
+            for (int i = 0; i < l.size(); i++) {
+               EvalEvaluation eval = (EvalEvaluation) l.get(i);
+               // check eval/template permissions
+               securityChecks.checkEvalTemplateControl(userId, eval, emailTemplate);
+            }
+
+            // check reminder templates
+            l = dao.findByProperties(EvalEvaluation.class, new String[] { "reminderEmailTemplate.id" },
+                  new Object[] { emailTemplate.getId() });
+            for (int i = 0; i < l.size(); i++) {
+               EvalEvaluation eval = (EvalEvaluation) l.get(i);
+               // check eval/template permissions
+               securityChecks.checkEvalTemplateControl(userId, eval, emailTemplate);
+            }
+         } else {
+            // admin can modify any templates that they like
          }
       }
 

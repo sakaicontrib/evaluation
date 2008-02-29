@@ -519,34 +519,38 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
    public void testSaveEmailTemplate() {
       // test valid new saves
-      evaluationSetupService.saveEmailTemplate( new EvalEmailTemplate( new Date(),
-            EvalTestDataLoad.MAINT_USER_ID, "subject", "a message"), 
+      evaluationSetupService.saveEmailTemplate( new EvalEmailTemplate( EvalTestDataLoad.MAINT_USER_ID,
+            EvalConstants.EMAIL_TEMPLATE_AVAILABLE, "subject", "a message"), 
             EvalTestDataLoad.MAINT_USER_ID);
-      evaluationSetupService.saveEmailTemplate( new EvalEmailTemplate( new Date(),
-            EvalTestDataLoad.ADMIN_USER_ID, "subject", "another message"), 
+      evaluationSetupService.saveEmailTemplate( new EvalEmailTemplate( EvalTestDataLoad.ADMIN_USER_ID,
+            EvalConstants.EMAIL_TEMPLATE_CREATED, "subject", "another message"), 
             EvalTestDataLoad.ADMIN_USER_ID);
 
       // test saving new always nulls out the defaultType
       // the defaultType cannot be changed when saving
       // (default templates can only be set in the preloaded data for now)
-      EvalEmailTemplate testTemplate = new EvalEmailTemplate( new Date(),
-            EvalTestDataLoad.ADMIN_USER_ID, "subject", "a message", 
-            EvalConstants.EMAIL_TEMPLATE_DEFAULT_AVAILABLE);
+      EvalEmailTemplate testTemplate = new EvalEmailTemplate( EvalTestDataLoad.ADMIN_USER_ID,
+            EvalConstants.EMAIL_TEMPLATE_AVAILABLE, "subject", "a message", 
+            EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
       evaluationSetupService.saveEmailTemplate( testTemplate, EvalTestDataLoad.ADMIN_USER_ID);
       assertNotNull( testTemplate.getId() );
       assertNull( testTemplate.getDefaultType() );
 
-      // test invalid update to default template
+      // test invalid update to default template as non-admin
       EvalEmailTemplate defaultTemplate = 
          evaluationService.getDefaultEmailTemplate( EvalConstants.EMAIL_TEMPLATE_AVAILABLE );
       try {
          defaultTemplate.setMessage("new message for default");
          evaluationSetupService.saveEmailTemplate( defaultTemplate, 
-               EvalTestDataLoad.ADMIN_USER_ID);
+               EvalTestDataLoad.MAINT_USER_ID);
          fail("Should have thrown exception");
       } catch (RuntimeException e) {
          assertNotNull(e);
       }
+
+      // ok as admin though
+      evaluationSetupService.saveEmailTemplate( defaultTemplate, 
+            EvalTestDataLoad.ADMIN_USER_ID);
 
       // test valid updates
       etdl.emailTemplate1.setMessage("new message 1");
@@ -574,15 +578,10 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
          assertNotNull(e);
       }
 
-      // test associated eval is not in queue (is active) so cannot update
-      try {
-         etdl.emailTemplate3.setMessage("new message 3");
-         evaluationSetupService.saveEmailTemplate( etdl.emailTemplate3, 
-               EvalTestDataLoad.MAINT_USER_ID);
-         fail("Should have thrown exception");
-      } catch (RuntimeException e) {
-         assertNotNull(e);
-      }
+      // test associated eval is active but we can still update (relaxed perms)
+      etdl.emailTemplate3.setMessage("new message 3");
+      evaluationSetupService.saveEmailTemplate( etdl.emailTemplate3, 
+            EvalTestDataLoad.MAINT_USER_ID);
 
    }
 

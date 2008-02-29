@@ -40,7 +40,6 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * @author Rui Feng (fengr@vt.edu)
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-
 public class ModifyEmailProducer implements ViewComponentProducer, NavigationCaseReporter, ViewParamsReporter {
 
    public static final String VIEW_ID = "modify_email";
@@ -76,28 +75,34 @@ public class ModifyEmailProducer implements ViewComponentProducer, NavigationCas
 
       UIMessage.make(form, "close-button", "general.close.window.button");
 
-      if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailTemplateType)) {
-         UIInput.make(form, "emailTemplate", "#{evaluationBean.emailAvailableTxt}", null);
-         UICommand.make(form, "saveEmailTemplate", 
-               UIMessage.make("modifyemail.save.changes.link"), 
-                  "#{evaluationBean.saveAvailableEmailTemplate}");
-      } else if (EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailTemplateType)) {
-         UIInput.make(form, "emailTemplate", "#{evaluationBean.emailReminderTxt}", null);
-         UICommand.make(form, "saveEmailTemplate", 
-               UIMessage.make("modifyemail.save.changes.link"), 
-                  "#{evaluationBean.saveReminderEmailTemplate}");
+      if (emailViewParams.inEval) {
+         if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailTemplateType)) {
+            UIInput.make(form, "emailTemplate", "#{evaluationBean.emailAvailableTxt}", null);
+            UICommand.make(form, "saveEmailTemplate", 
+                  UIMessage.make("modifyemail.save.changes.link"), 
+                     "#{evaluationBean.saveAvailableEmailTemplate}");
+         } else if (EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailTemplateType)) {
+            UIInput.make(form, "emailTemplate", "#{evaluationBean.emailReminderTxt}", null);
+            UICommand.make(form, "saveEmailTemplate", 
+                  UIMessage.make("modifyemail.save.changes.link"), 
+                     "#{evaluationBean.saveReminderEmailTemplate}");
+         } else {
+            throw new IllegalArgumentException("Unknown email template type for use in evaluation: " + emailTemplateType);
+         }
       } else {
-         throw new IllegalArgumentException("Unknown email template type: " + emailTemplateType);
+         // TODO make this actually do something
       }
 
    }
 
    public List reportNavigationCases() {
       List i = new ArrayList();
+      i.add( new NavigationCase("success", new SimpleViewParameters(ControlEmailTemplatesProducer.VIEW_ID)) );
+      // this is kind of wacky
       i.add(new NavigationCase(EvalConstants.EMAIL_TEMPLATE_AVAILABLE, new EmailViewParameters(
-            PreviewEmailProducer.VIEW_ID, null, EvalConstants.EMAIL_TEMPLATE_AVAILABLE)));
+            PreviewEmailProducer.VIEW_ID, null, EvalConstants.EMAIL_TEMPLATE_AVAILABLE, true)));
       i.add(new NavigationCase(EvalConstants.EMAIL_TEMPLATE_REMINDER, new EmailViewParameters(
-            PreviewEmailProducer.VIEW_ID, null, EvalConstants.EMAIL_TEMPLATE_REMINDER)));
+            PreviewEmailProducer.VIEW_ID, null, EvalConstants.EMAIL_TEMPLATE_REMINDER, true)));
       return i;
    }
 

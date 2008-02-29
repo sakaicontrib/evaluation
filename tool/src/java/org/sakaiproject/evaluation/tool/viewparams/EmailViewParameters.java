@@ -9,6 +9,7 @@ public class EmailViewParameters extends TemplateViewParameters {
     * or EvalConstants.EMAIL_TEMPLATE_REMINDER
     */
    public String emailType;
+   public boolean inEval = false;
 
    public EmailViewParameters() {
    }
@@ -18,4 +19,11 @@ public class EmailViewParameters extends TemplateViewParameters {
       this.templateId = templateId;
       this.emailType = emailType;
    }
+
+   public EmailViewParameters(String viewID, Long templateId, String emailType, boolean inEval) {
+      super(viewID, templateId);
+      this.emailType = emailType;
+      this.inEval = inEval;
+   }
+  
 }
