@@ -209,9 +209,13 @@ public class ReportingPermissions {
       String currentUserId = externalLogic.getCurrentUserId();
       boolean canViewResponses;
 
+      // At the moment, YOU MUST specify a set of groupIds to view an evaluation with.
+      if (groupIds == null || groupIds.length == 0) {
+         canViewResponses = false;
+      }
       // 1) Is this user an admin or evaluation owner
       // 2) Is this user the evaluation owner?
-      if (evalBeanUtils.checkUserPermission(currentUserId, evaluation.getOwner())) {
+      else if (evalBeanUtils.checkUserPermission(currentUserId, evaluation.getOwner())) {
          canViewResponses = true;
       }
       // if view date is set and it is in the future then no groups
