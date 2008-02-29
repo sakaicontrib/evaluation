@@ -1,6 +1,8 @@
 package org.sakaiproject.evaluation.tool.reporting;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -12,6 +14,7 @@ import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 
 /** 
@@ -114,33 +117,27 @@ public class ReportingPermissions {
       if (evalBeanUtils.checkUserPermission(currentUserId, evaluation.getOwner())) {
          canViewResponses = true;
          checkBasedOnRole = false;
-         log.warn("SWG: CheckGroups Case 1");
       }
       // if view date is set and it is in the future then no groups
       else if (evaluation.getViewDate() != null &&
             evaluation.getViewDate().after(new Date())) {
          canViewResponses = false;
-         log.warn("SWG: CheckGroups Case 2");
       }
       // 3
       else if (EvalConstants.SHARING_PUBLIC.equals(evaluation.getResultsSharing())) {
          canViewResponses = true;
          checkBasedOnRole = false;
-         log.warn("SWG: CheckGroups Case 3");
       }
       else if (EvalConstants.SHARING_PRIVATE.equals(evaluation.getResultsSharing())) {
          canViewResponses = false;
-         log.warn("SWG: CheckGroups Case 4");
       }
       else {
          canViewResponses = true;
          checkBasedOnRole = true;
-         log.warn("SWG: CheckGroups Case 5");
       }
       // 6 TODO Infrastructure isn't available for this yet.
 
       if (canViewResponses) {
-         log.warn("SWG: CheckGroups Case 6");
          /*
           * If we can view the responses, based on the preliminary checks above,
           * we will create a Set of the groups we are allowed to view based on the
@@ -183,19 +180,18 @@ public class ReportingPermissions {
                }
             }
          } else {
-            log.warn("SWG: CheckGroups Case 7");
             // user can view all groups
-            groupIdsTogo.addAll(
-                  dao.getViewableEvalGroupIds(evaluation.getId(), 
-                        EvalConstants.PERM_BE_EVALUATED, null));
-            log.warn("SWG: Length after added be_evaluatiod:" + groupIdsTogo.size());
-            groupIdsTogo.addAll(
-                  dao.getViewableEvalGroupIds(evaluation.getId(), 
-                        EvalConstants.PERM_TAKE_EVALUATION, null));
-            log.warn("SWG: Length after added take_evaluation:" + groupIdsTogo.size());
+
+            // TODO FIXME Should the includeUnapproved be true or false for this
+            // use case??
+            Map<Long, List<EvalAssignGroup>> evalAssignGroupMap = 
+               evaluationService.getEvaluationAssignGroups(new Long[] {evaluation.getId()}, false);
+
+            for (EvalAssignGroup evalAssignGroup: evalAssignGroupMap.get(evaluation.getId())) {
+               groupIdsTogo.add(evalAssignGroup.getEvalGroupId());
+            }
          }
       }
-      log.warn("SWG: Total length:" + groupIdsTogo.size());
       
       return groupIdsTogo.toArray(new String[] {});
    }
