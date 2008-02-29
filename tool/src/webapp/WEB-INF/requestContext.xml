@@ -10,10 +10,9 @@
       the Sakai FCKEditor-based rich text control -->
    <bean id="richTextEvolver"
       class="org.springframework.beans.factory.config.BeanReferenceFactoryBean">
-<!--  disabling the rich text editor since it seems to be failing in firefox -AZ 
+<!--  disabling the rich text editor since it seems to be failing in firefox -AZ -->
       <property name="targetBeanName" value="sakaiFCKTextEvolver" />
--->
-      <property name="targetBeanName" value="plainTextInputEvolver" />
+<!--      <property name="targetBeanName" value="plainTextInputEvolver" />-->
    </bean>
 
    <!-- session scope backing beans here -->
