@@ -22,6 +22,7 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
+import org.sakaiproject.evaluation.tool.utils.ScaledUtils;
 import org.sakaiproject.evaluation.tool.viewparams.ExpertItemViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
@@ -177,12 +178,7 @@ public class ExpertItemsProducer implements ViewComponentProducer, NavigationCas
 			UILabelTargetDecorator.targetLabel(UIOutput.make(items, "item-label"), checkbox);
 			UIVerbatim.make(items, "item-text", expertItem.getItemText()); //$NON-NLS-1$
 			if (expertItem.getScale() != null) {
-				String scaleText = expertItem.getScale().getTitle() + " (";
-				for (int j = 0; j < expertItem.getScale().getOptions().length; j++) {
-					scaleText += (j==0?"":",") + expertItem.getScale().getOptions()[j];
-				}
-				scaleText += ")";
-				UIOutput.make(items, "item-scale", scaleText); //$NON-NLS-1$
+				UIOutput.make(items, "item-scale", ScaledUtils.makeScaleText(expertItem.getScale())); //$NON-NLS-1$
 			}
 			if (expertItem.getExpertDescription() != null) {
 				UIVerbatim.make(items, "item-expert-desc", expertItem.getExpertDescription()); //$NON-NLS-1$
@@ -203,7 +199,8 @@ public class ExpertItemsProducer implements ViewComponentProducer, NavigationCas
 	 * (non-Javadoc)
 	 * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
 	 */
-	public List reportNavigationCases() {
+	@SuppressWarnings("unchecked")
+   public List reportNavigationCases() {
 		List i = new ArrayList();
 		i.add(new NavigationCase("success", new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, null) ) );
 		return i;
