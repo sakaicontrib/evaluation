@@ -42,7 +42,7 @@ import uk.org.ponder.beanutil.WriteableBeanLocator;
  */
 public class HierarchyNodeLocator implements WriteableBeanLocator {
 
-   public static final String NEW_PREFIX = "new";
+   public static final String NEW_PREFIX = "new-";
    public static String NEW_1 = NEW_PREFIX + "1";
 
    private EvalExternalLogic external;
