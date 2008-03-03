@@ -15,6 +15,8 @@
 package org.sakaiproject.evaluation.tool.locators;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -72,6 +74,26 @@ public class HierarchyNodeGroupsLocator implements BeanLocator {
             delivered.put(name, togo);
         }
         return togo;
+    }
+    
+    public void saveAll() {
+       for (Iterator i = delivered.keySet().iterator(); i.hasNext();) {
+          String key = (String) i.next();
+          Map groupbools = (Map) delivered.get(key);
+          assignGroups(key,groupbools);
+       }
+    }
+
+    private void assignGroups(String nodeid, Map groupbools) {
+       Set<String> assignedGroup = new HashSet<String>();
+       for (Iterator i = groupbools.keySet().iterator(); i.hasNext();) {
+          String groupid = (String) i.next();
+          Boolean assigned = (Boolean) groupbools.get(groupid);
+          if (assigned.booleanValue() == true) {
+             assignedGroup.add(groupid);
+          }
+       }
+       hierarchyLogic.setEvalGroupsForNode(nodeid, assignedGroup);
     }
     
     /*
