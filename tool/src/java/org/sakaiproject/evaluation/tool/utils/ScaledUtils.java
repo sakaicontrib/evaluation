@@ -94,16 +94,7 @@ public class ScaledUtils {
 	public static String[] getScaleLabels(List<EvalScale> scales) {
 		List<String> scaleLabels = new ArrayList<String>();
 		for (EvalScale scale : scales) {
-			String scaleOptionsStr = "";
-			String[] scaleOptionsArr = scale.getOptions();
-			for (int j = 0; j < scaleOptionsArr.length; j++) {
-				if (scaleOptionsStr.equals("")) {
-					scaleOptionsStr = scaleOptionsArr[j];
-				} else {
-					scaleOptionsStr = scaleOptionsStr + ", " + scaleOptionsArr[j];
-				}
-			}
-			scaleLabels.add(scaleOptionsArr.length + " pt - " + scale.getTitle() + " (" + scaleOptionsStr + ")");
+			scaleLabels.add( makeScaleText(scale) );
 		}
 		return (String[]) scaleLabels.toArray(new String[scaleLabels.size()]);
 	}
@@ -122,5 +113,32 @@ public class ScaledUtils {
 		}
 		return (String[]) scaleValues.toArray(new String[] {});
 	}
+
+   /**
+    * Turns a scale in user displayable text,
+    * works for any scale (not just for scaled mode)
+    * 
+    * @param scale any persisted scale
+    * @return a string suitable for display to the user
+    */
+   public static String makeScaleText(EvalScale scale) {
+      StringBuilder scaleText = new StringBuilder();
+      if (EvalConstants.SCALE_MODE_SCALE.equals(scale.getMode())) {
+         scaleText.append( scale.getOptions().length );
+         scaleText.append( " pt - " ); // I18n?
+         scaleText.append( scale.getTitle() );
+         scaleText.append( " (" );
+      } else {
+         scaleText.append( "Options: " ); // I18n?
+      }
+      for (int j = 0; j < scale.getOptions().length; j++) {
+         scaleText.append( (j==0 ? "" : ",") );
+         scaleText.append( scale.getOptions()[j] );
+      }
+      if (EvalConstants.SCALE_MODE_SCALE.equals(scale.getMode())) {
+         scaleText.append( ")" );
+      }
+      return scaleText.toString();
+   }
 
 }

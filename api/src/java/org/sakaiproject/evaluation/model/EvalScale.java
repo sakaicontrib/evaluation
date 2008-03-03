@@ -4,6 +4,8 @@ package org.sakaiproject.evaluation.model;
 
 import java.util.Date;
 
+import org.sakaiproject.evaluation.constant.EvalConstants;
+
 /**
  * This represents the scales/choices for items,
  * the scales can be reused for many items if desired
@@ -34,6 +36,11 @@ public class EvalScale implements java.io.Serializable {
 
    private Boolean locked;
 
+   /**
+    * Should match the constants:
+    * {@link EvalConstants#SCALE_MODE_ADHOC} for scales used in MA/MC items<br/>
+    * {@link EvalConstants#SCALE_MODE_SCALE} for reusable scales for scaled items
+    */
    private String mode;
 
    /**
@@ -164,23 +171,30 @@ public class EvalScale implements java.io.Serializable {
       this.locked = locked;
    }
 
-
-   public String getMode() {
-      return mode;
-   }
-
-
-   public void setMode(String mode) {
-      this.mode = mode;
-   }
-
-
    public Long getCopyOf() {
       return copyOf;
    }
 
+   /**
+    * Indicates that this is a copy of an item and therefore should be hidden from views and 
+    * only revealed when taking/previewing (not as part of item banks, etc.),
+    * this will be the id of the persistent object it is a copy of
+    */
    public void setCopyOf(Long copyOf) {
       this.copyOf = copyOf;
+   }
+ 
+   public String getMode() {
+      return mode;
+   }
+
+   /**
+    * Should match the constants:
+    * {@link EvalConstants#SCALE_MODE_ADHOC} for scales used in MA/MC items<br/>
+    * {@link EvalConstants#SCALE_MODE_SCALE} for reusable scales for scaled items
+    */
+   public void setMode(String mode) {
+      this.mode = mode;
    }
 
 }

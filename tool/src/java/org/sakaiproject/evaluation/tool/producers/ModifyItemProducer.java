@@ -14,7 +14,6 @@
 
 package org.sakaiproject.evaluation.tool.producers;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
@@ -335,10 +334,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
             scaleList.selection.darreshaper = new ELReference("#{id-defunnel}");
          } else {
             // just display the name of the current scale without a select box
-            List<EvalScale> scales = new ArrayList<EvalScale>();
-            scales.add(currentScale);
-            String[] labels = ScaledUtils.getScaleLabels(scales);
-            UIOutput.make(showItemScale, "item-scale-current", labels[0]);
+            UIOutput.make(showItemScale, "item-scale-current", ScaledUtils.makeScaleText(currentScale) );
          }
       } else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(itemClassification) ||
             EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemClassification) ) {
