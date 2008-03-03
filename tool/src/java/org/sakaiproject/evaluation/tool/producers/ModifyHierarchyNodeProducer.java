@@ -110,7 +110,7 @@ public class ModifyHierarchyNodeProducer implements ViewComponentProducer, ViewP
       UIInput.make(form, "node-abbr", "hierNodeLocator."+ELName+".description");
       UIMessage.make(form, "abbreviation-label", "modifyhierarchynode.abbreviation.label");
 
-      UICommand.make(form, "save-node-button", UIMessage.make("modifyhierarchynode.save"), "hierNodeLocatorInvoker.saveAll");
+      UICommand.make(form, "save-node-button", UIMessage.make("modifyhierarchynode.save"), "hierNodeLocator.saveAll");
       UIInternalLink.make(form, "cancel-link", UIMessage.make("modifyhierarchynode.cancel"), new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID));
    }
 

@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.tool.locators;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
@@ -74,16 +75,22 @@ public class HierarchyNodeLocator implements WriteableBeanLocator {
       return togo;
    }
 
-   /*
    public void saveAll() {
-       checkSecurity();
-       
-       for (Iterator it = delivered.keySet().iterator(); it.hasNext();) {
-           String key = (String) it.next();
-           EvalHierarchyNode node = (EvalHierarchyNode) delivered.get(key);
-           hierarchyLogic.updateNodeData(node.id, node.title, node.description);
-       }
-   } */
+      checkSecurity();
+      
+      for (Iterator it = delivered.keySet().iterator(); it.hasNext();) {
+          String key = (String) it.next();
+          EvalHierarchyNode node = (EvalHierarchyNode) delivered.get(key);
+          if (key.startsWith(HierarchyNodeLocator.NEW_PREFIX)) {
+              String[] parts = key.split("-");
+              EvalHierarchyNode newNode = hierarchyLogic.addNode(parts[1]);
+              hierarchyLogic.updateNodeData(newNode.id, node.title, node.description);
+          }
+          else {
+              hierarchyLogic.updateNodeData(node.id, node.title, node.description);
+          }
+      }
+  }
 
    /*
     * Currently only administrators can use this functionality.
