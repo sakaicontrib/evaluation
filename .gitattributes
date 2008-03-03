@@ -36,7 +36,6 @@ api/src/java/org/sakaiproject/evaluation/logic/entity/EvaluationEntityProvider.j
 api/src/java/org/sakaiproject/evaluation/logic/entity/ItemEntityProvider.java svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/logic/entity/TemplateEntityProvider.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/logic/entity/TemplateItemEntityProvider.java svn_keywords=Date+Revision+Author+URL+Id
-api/src/java/org/sakaiproject/evaluation/logic/exceptions/UniqueFieldException.java svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/logic/exceptions/UserMessage.java svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/logic/externals/EvalExternalLogic.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/logic/externals/EvalJobLogic.java -text svn_keywords=Date+Revision+Author+URL+Id
