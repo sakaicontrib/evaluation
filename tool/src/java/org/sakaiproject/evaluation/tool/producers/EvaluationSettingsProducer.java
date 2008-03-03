@@ -56,7 +56,6 @@ import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.UISelectLabel;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
-import uk.org.ponder.rsf.components.decorators.UIDisabledDecorator;
 import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
 import uk.org.ponder.rsf.components.decorators.UITextDimensionsDecorator;
 import uk.org.ponder.rsf.components.decorators.UITooltipDecorator;
@@ -313,7 +312,8 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
       Boolean studentViewResults = (Boolean) settings.get(EvalSettings.STUDENT_VIEW_RESULTS);
       UIBranchContainer showResultsToStudents = UIBranchContainer.make(form, "showResultsToStudents:");
       generateSettingsControlledCheckbox(showResultsToStudents, "studentViewResults", 
-            evaluationOTP + "studentViewResults", studentViewResults, form);
+            evaluationOTP + "studentViewResults", studentViewResults, form, 
+            EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_VIEWABLE, currentEvalState, true) );
       generateViewDateControl(showResultsToStudents, "studentsViewDate", 
             evaluationOTP + "studentsDate", studentViewResults, useDateTime, sameViewDateForAll);
 
@@ -321,7 +321,8 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
       Boolean instructorViewResults = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
       UIBranchContainer showResultsToInst = UIBranchContainer.make(form, "showResultsToInst:");
       generateSettingsControlledCheckbox(showResultsToInst, "instructorViewResults", 
-            evaluationOTP + "instructorViewResults", instructorViewResults, form);
+            evaluationOTP + "instructorViewResults", instructorViewResults, form, 
+            EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_VIEWABLE, currentEvalState, true) );
       generateViewDateControl(showResultsToInst, "instructorsViewDate", 
             evaluationOTP + "instructorsDate", instructorViewResults, useDateTime, sameViewDateForAll);
 
@@ -331,21 +332,17 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
       // Student Allowed Leave Unanswered
       Boolean studentUnanswersAllowed = (Boolean) settings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED);
       UIBranchContainer showBlankQuestionAllowedToStut = UIBranchContainer.make(form, "showBlankQuestionAllowedToStut:");
-      UIBoundBoolean stuUnansweredCheckbox = generateSettingsControlledCheckbox(showBlankQuestionAllowedToStut, 
-            "blankResponsesAllowed", evaluationOTP + "blankResponsesAllowed", studentUnanswersAllowed, form);
-      if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_ACTIVE, currentEvalState, true) ) {
-         RSFUtils.disableComponent(stuUnansweredCheckbox);
-      }
+      generateSettingsControlledCheckbox(showBlankQuestionAllowedToStut, 
+            "blankResponsesAllowed", evaluationOTP + "blankResponsesAllowed", studentUnanswersAllowed, form, 
+            EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_ACTIVE, currentEvalState, true) );
 
 
       // Student Modify Responses
       Boolean studentModifyReponses = (Boolean) settings.get(EvalSettings.STUDENT_MODIFY_RESPONSES);
       UIBranchContainer showModifyResponsesAllowedToStu = UIBranchContainer.make(form, "showModifyResponsesAllowedToStu:");
-      UIBoundBoolean stuModifyResponsesCheckbox = generateSettingsControlledCheckbox(showModifyResponsesAllowedToStu, 
-            "modifyResponsesAllowed", evaluationOTP + "modifyResponsesAllowed", studentModifyReponses, form);
-      if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_ACTIVE, currentEvalState, true) ) {
-         RSFUtils.disableComponent(stuModifyResponsesCheckbox);
-      }
+      generateSettingsControlledCheckbox(showModifyResponsesAllowedToStu, 
+            "modifyResponsesAllowed", evaluationOTP + "modifyResponsesAllowed", studentModifyReponses, form,
+            EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_ACTIVE, currentEvalState, true) );
 
 
 
@@ -482,24 +479,27 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
     * @param binding the EL binding for this control value
     * @param systemSetting the system setting value which controls this checkbox
     * @param form the form which the control is part of
-    * @return the checkbox
+    * @param disabled if true then disable the control, else it is enabled (for disabling based on state)
     */
-   protected UIBoundBoolean generateSettingsControlledCheckbox(UIContainer parent, String rsfId, 
-         String binding, Boolean systemSetting, UIForm form) {
-      UIBoundBoolean checkbox = null;
+   protected void generateSettingsControlledCheckbox(UIContainer parent, String rsfId, 
+         String binding, Boolean systemSetting, UIForm form, boolean disabled) {
       if (systemSetting == null) {
-         checkbox = UIBoundBoolean.make(parent, rsfId, binding);
-         //checkbox.valuebinding = new ELReference(binding);
+         UIBoundBoolean checkbox = UIBoundBoolean.make(parent, rsfId, binding);
+         UIMessage.make(parent, rsfId + "_label", "evalsettings." + rsfId + ".label")
+                 .decorate( new UILabelTargetDecorator(checkbox) );
+         if (disabled) {
+            RSFUtils.disableComponent(checkbox); // disable the control
+         }
       } else {
-         checkbox = UIBoundBoolean.make(parent, rsfId, systemSetting);
-         //checkbox.setValue(systemSetting);
-         RSFUtils.disableComponent(checkbox); // disable the control
-         // Since we have disabled the check box => RSF will not bind the value => binding it explicitly
+         // bind the value explicitly
          form.parameters.add(new UIELBinding(binding, systemSetting));
+         // now render the appropriate messages
+         if (systemSetting) {
+            UIMessage.make(parent, rsfId + "_label", "evalsettings." + rsfId + ".label");
+         } else {
+            UIMessage.make(parent, rsfId + "_label", "evalsettings." + rsfId + ".disabled");
+         }
       }
-      UIMessage.make(parent, rsfId + "_label", "evalsettings." + rsfId + ".label")
-            .decorate( new UILabelTargetDecorator(checkbox) );
-      return checkbox;
    }
 
 
