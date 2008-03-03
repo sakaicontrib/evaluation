@@ -111,7 +111,7 @@ public class ModifyHierarchyNodeGroupsProducer implements ViewComponentProducer,
         }
         
         UICommand.make(form, "save-groups-button", UIMessage.make("hierarchynode.groups.save"),
-                "hierNodeGroupsLocatorInvoker.saveAll");
+                "hierNodeGroupsLocator.saveAll");
         UIInternalLink.make(form, "cancel-link", UIMessage.make("hierarchynode.groups.cancel"),
                 new SimpleViewParameters(ControlHierarchyProducer.VIEW_ID));
     }

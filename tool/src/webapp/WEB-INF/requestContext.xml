@@ -192,19 +192,6 @@
          ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
    </bean>
 
-   <!-- Quick hack SWG -->
-   
-   <bean id="hierNodeGroupsLocatorInvoker"
-      class="org.sakaiproject.evaluation.tool.locators.HierarchyNodeGroupsLocatorInvoker">
-      <property name="external"
-         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
-      <property name="hierarchyLogic"
-         ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
-      <property name="hierloc" ref="hierNodeGroupsLocator" />
-   </bean>
-   
-
-
    <!-- evolver definitions here -->
 
    <bean id="HierarchyRenderUtil"
