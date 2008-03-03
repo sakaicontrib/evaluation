@@ -50,11 +50,13 @@
 		</property>
 	</bean>
 
-    <!-- create a data preloading bean which will be used by the data preloader -->
-    <bean id="org.sakaiproject.evaluation.dao.PreloadData"
-        class="org.sakaiproject.evaluation.dao.PreloadDataImpl">
-        <property name="evaluationDao"
-            ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
-    </bean>
+
+   <!-- create a data preloading bean which will be used by the data preloader -->
+   <bean id="org.sakaiproject.evaluation.dao.PreloadData"
+      class="org.sakaiproject.evaluation.dao.PreloadDataImpl">
+      <property name="evaluationDao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+      <property name="externalLogic"
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+   </bean>
 
 </beans>
