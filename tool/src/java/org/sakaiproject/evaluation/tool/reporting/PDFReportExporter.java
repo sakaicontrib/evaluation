@@ -19,6 +19,7 @@ import org.sakaiproject.evaluation.tool.utils.EvalAggregatedResponses;
 import org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
+import org.sakaiproject.util.FormattedText;
 
 import uk.org.ponder.messageutil.MessageLocator;
 
@@ -85,7 +86,8 @@ public class PDFReportExporter {
             messageLocator.getMessage("reporting.pdf.replyrate", new String[] { EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount) }),
             bannerImageBytes, messageLocator.getMessage("reporting.pdf.defaultsystemname"));
 
-      evalPDFReportBuilder.addIntroduction(responses.evaluation.getTitle(), responses.evaluation.getInstructions());
+      String plainInstructions = FormattedText.convertFormattedTextToPlaintext(responses.evaluation.getInstructions());
+      evalPDFReportBuilder.addIntroduction(responses.evaluation.getTitle(), plainInstructions);
 
       List<EvalTemplateItem> allTemplateItems = new ArrayList<EvalTemplateItem>(responses.template.getTemplateItems());
       List<EvalTemplateItem> orderedItems = TemplateItemUtils.orderTemplateItems(allTemplateItems);
@@ -93,6 +95,7 @@ public class PDFReportExporter {
       for (int i = 0; i < orderedItems.size(); i++) {
          EvalTemplateItem templateItem = orderedItems.get(i);
          EvalItem item = templateItem.getItem();
+         String questionText = FormattedText.convertFormattedTextToPlaintext(item.getItemText());
          
          // Security hole to pass in an empty groupID array because then we get *all* of them.
          List<EvalAnswer> itemAnswers = new ArrayList<EvalAnswer>();
@@ -103,7 +106,7 @@ public class PDFReportExporter {
          String templateItemType = TemplateItemUtils.getTemplateItemType(templateItem);
          
          if (EvalConstants.ITEM_TYPE_HEADER.equals(templateItemType)) {
-            evalPDFReportBuilder.addSectionHeader(item.getItemText());
+            evalPDFReportBuilder.addSectionHeader(questionText);
          }
          else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(templateItemType) ||
                   EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(templateItemType) ||
@@ -127,7 +130,7 @@ public class PDFReportExporter {
                optionLabels = item.getScale().getOptions();
             }
 
-            evalPDFReportBuilder.addLikertResponse(templateItem.getItem().getItemText(), 
+            evalPDFReportBuilder.addLikertResponse(questionText, 
                   optionLabels, responseArray, showPercentages);
          }
          else if (EvalConstants.ITEM_TYPE_TEXT.equals(templateItemType)) {
@@ -135,7 +138,7 @@ public class PDFReportExporter {
             for (EvalAnswer answer: itemAnswers) {
                essays.add(answer.getText());
             }
-            evalPDFReportBuilder.addEssayResponse(templateItem.getItem().getItemText(), essays);
+            evalPDFReportBuilder.addEssayResponse(questionText, essays);
          }
          else {
             log.warn("Trying to add unknown type to PDF: " + TemplateItemUtils.getTemplateItemType(templateItem));
