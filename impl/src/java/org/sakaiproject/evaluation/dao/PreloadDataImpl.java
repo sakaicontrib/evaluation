@@ -24,6 +24,7 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.constant.EvalEmailConstants;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalConfig;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalItem;
@@ -44,6 +45,11 @@ public class PreloadDataImpl implements Runnable {
    private EvaluationDao evaluationDao;
    public void setEvaluationDao(EvaluationDao evaluationDao) {
       this.evaluationDao = evaluationDao;
+   }
+
+   private EvalExternalLogic externalLogic;
+   public void setExternalLogic(EvalExternalLogic externalLogic) {
+      this.externalLogic = externalLogic;
    }
 
    public void run() {
@@ -116,7 +122,8 @@ public class PreloadDataImpl implements Runnable {
          saveConfig(EvalSettings.DISPLAY_HIERARCHY_HEADERS, false);
 
          // Default general settings
-         saveConfig(EvalSettings.FROM_EMAIL_ADDRESS, "helpdesk@institution.edu");
+         String helpdeskEmail = externalLogic.getConfigurationSetting("support.email", "helpdesk@institution.edu");
+         saveConfig(EvalSettings.FROM_EMAIL_ADDRESS, helpdeskEmail);
          saveConfig(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS, 3);
          saveConfig(EvalSettings.NOT_AVAILABLE_ALLOWED, true);
          saveConfig(EvalSettings.ITEMS_ALLOWED_IN_QUESTION_BLOCK, 10);
