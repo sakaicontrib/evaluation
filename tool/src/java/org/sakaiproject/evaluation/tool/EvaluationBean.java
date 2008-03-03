@@ -801,7 +801,8 @@ public class EvaluationBean {
       // Save email available template
       EvalEmailTemplate availableTemplate = evaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
       if (emailAvailableTxt.equals(availableTemplate.getMessage())) {
-         // do nothing as the template has not been modified.
+         // null it out as the template has not been modified
+         availableTemplate = null;
       } else {
          availableTemplate = new EvalEmailTemplate(external.getCurrentUserId(), EvalConstants.EMAIL_TEMPLATE_AVAILABLE,
                EvalEmailConstants.EMAIL_AVAILABLE_DEFAULT_SUBJECT, emailAvailableTxt);
@@ -812,7 +813,8 @@ public class EvaluationBean {
       // Save the email reminder template
       EvalEmailTemplate reminderTemplate = evaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_REMINDER);
       if (emailReminderTxt.equals(reminderTemplate.getMessage())) {
-         // do nothing as the template has not been modified.
+         // null it out as the template has not been modified
+         reminderTemplate = null;
       } else {
          reminderTemplate = new EvalEmailTemplate(external.getCurrentUserId(), EvalConstants.EMAIL_TEMPLATE_REMINDER,
                EvalEmailConstants.EMAIL_REMINDER_DEFAULT_SUBJECT, emailReminderTxt);
