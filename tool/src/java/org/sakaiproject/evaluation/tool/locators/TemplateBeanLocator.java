@@ -18,13 +18,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.sakaiproject.evaluation.logic.exceptions.UniqueFieldException;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.tool.LocalTemplateLogic;
 
 import uk.org.ponder.beanutil.BeanLocator;
-import uk.org.ponder.messageutil.TargettedMessage;
-import uk.org.ponder.messageutil.TargettedMessageList;
 
 /**
  * This is the OTP bean used to locate evaluation templates.
@@ -40,11 +37,6 @@ public class TemplateBeanLocator implements BeanLocator {
    private LocalTemplateLogic localTemplateLogic;
    public void setLocalTemplateLogic(LocalTemplateLogic localTemplateLogic) {
       this.localTemplateLogic = localTemplateLogic;
-   }
-
-   private TargettedMessageList messages;
-   public void setMessages(TargettedMessageList messages) {
-      this.messages = messages;
    }
 
    private Map<String, EvalTemplate> delivered = new HashMap<String, EvalTemplate>();
@@ -69,13 +61,7 @@ public class TemplateBeanLocator implements BeanLocator {
          if (key.startsWith(NEW_PREFIX)) {
             // could do stuff here
          }
-         try {
-            localTemplateLogic.saveTemplate(template);
-         } catch (UniqueFieldException e) {
-            messages.addMessage( new TargettedMessage("modifytemplatetitledesc.template.title.used.exception", 
-                  new Object[] {template.getTitle()},
-                  TargettedMessage.SEVERITY_ERROR));
-         }
+         localTemplateLogic.saveTemplate(template);
       }
    }
 }

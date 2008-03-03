@@ -23,10 +23,9 @@
 			index="eval_scale_owner">
 			<column name="OWNER" not-null="true" length="255" />
 		</property>
-		<!-- this is the display title for the user, must be unique -->
+		<!-- this is the display title for the user -->
 		<property name="title" type="java.lang.String">
-			<column name="TITLE" not-null="true" length="255"
-				unique="true" />
+			<column name="TITLE" not-null="true" length="255" />
 		</property>
 		<!-- type indicates the usage of this scale (scale, adhoc, etc.) -->
 		<property name="mode" type="java.lang.String" index="eval_scale_mode">

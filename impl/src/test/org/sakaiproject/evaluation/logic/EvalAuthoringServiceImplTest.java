@@ -21,9 +21,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalAuthoringServiceImpl;
-import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.exceptions.UniqueFieldException;
 import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
@@ -262,17 +259,12 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
          assertNotNull(e);
       }
 
-      // test fails to save scale with duplicate title
-      try {
-         authoringService.saveScale( new EvalScale( new Date(), 
-               EvalTestDataLoad.MAINT_USER_ID, test_title, 
-               EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PRIVATE, Boolean.FALSE, 
-               "description", EvalConstants.SCALE_IDEAL_LOW,
-               options1, EvalTestDataLoad.UNLOCKED), EvalTestDataLoad.MAINT_USER_ID);
-         fail("Should have thrown exception");
-      } catch (RuntimeException e) {
-         assertNotNull(e);
-      }
+      // test CAN save scale with duplicate title
+      authoringService.saveScale( new EvalScale( new Date(), 
+            EvalTestDataLoad.MAINT_USER_ID, test_title, 
+            EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PRIVATE, Boolean.FALSE, 
+            "description", EvalConstants.SCALE_IDEAL_LOW,
+            options1, EvalTestDataLoad.UNLOCKED), EvalTestDataLoad.MAINT_USER_ID);
 
    }
 
@@ -2175,20 +2167,13 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
 
       // TODO - test saving template saves all associated items at same time
 
-      // test cannot save 2 templates with same title
-      try {
-         authoringService.saveTemplate( new EvalTemplate( new Date(), 
-               EvalTestDataLoad.MAINT_USER_ID, 
-               EvalConstants.TEMPLATE_TYPE_STANDARD, test_title, 
-               EvalConstants.SHARING_PRIVATE, 
-               EvalTestDataLoad.NOT_EXPERT), 
-               EvalTestDataLoad.MAINT_USER_ID);
-         fail("Should have thrown exception");
-      } catch (UniqueFieldException e) {
-         assertNotNull(e.getMessage());
-         assertNotNull(e.fieldName);
-         assertNotNull(e.fieldValue);
-      }
+      // test CAN save 2 templates with same title
+      authoringService.saveTemplate( new EvalTemplate( new Date(), 
+            EvalTestDataLoad.MAINT_USER_ID, 
+            EvalConstants.TEMPLATE_TYPE_STANDARD, test_title, 
+            EvalConstants.SHARING_PRIVATE, 
+            EvalTestDataLoad.NOT_EXPERT), 
+            EvalTestDataLoad.MAINT_USER_ID);
 
    }
 
@@ -2483,25 +2468,6 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
 
       // test invalid user cannot create templates
       assertFalse( authoringService.canCreateTemplate(EvalTestDataLoad.INVALID_USER_ID) );
-   }
-
-
-   /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalTemplatesLogicImpl#checkTemplateTitleUnused(java.lang.String)}.
-    */
-   public void testCheckTemplateTitleUnused() {
-      // check that new unique title is ok
-      assertTrue( authoringService.checkTemplateTitleUnused("my crazy title xzxzxz234123421341234", null) );
-
-      assertTrue( authoringService.checkTemplateTitleUnused("my crazy title 2389473234243209342742702347027", null) );
-
-      // check existing title fails
-      assertFalse( authoringService.checkTemplateTitleUnused( etdl.templateAdmin.getTitle(), null ) );
-
-      assertFalse( authoringService.checkTemplateTitleUnused( etdl.templatePublic.getTitle(), null ) );
-
-      // check existing is ok with exclude
-      assertTrue( authoringService.checkTemplateTitleUnused(etdl.templateAdmin.getTitle(), etdl.templateAdmin.getId()) );
    }
 
 

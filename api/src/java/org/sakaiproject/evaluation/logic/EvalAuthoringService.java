@@ -17,7 +17,6 @@ package org.sakaiproject.evaluation.logic;
 import java.util.List;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.exceptions.UniqueFieldException;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
@@ -503,18 +502,4 @@ public interface EvalAuthoringService {
    public boolean canRemoveTemplate(String userId, Long templateId);
 
 
-   // CHECKS
-
-   /**
-    * Check if a title can be used for a new template,
-    * this check should be done before the template save is attempted
-    * 
-    * @param title a possible title for a new template
-    * @param templateId a template id (optional, can be null) to exclude from the title check,
-    * allows a check to be made without triggering that the title is in use by the
-    * template we are currently working with (probably already saved)
-    * @return true if this title is unused, false otherwise
-    */
-   public boolean checkTemplateTitleUnused(String title, Long templateId);
-   
 }

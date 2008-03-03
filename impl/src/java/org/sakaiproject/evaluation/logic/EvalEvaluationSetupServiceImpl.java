@@ -115,8 +115,8 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
    protected void initiateUpdateStateTimer() {
       // timer repeats every 60 minutes
       final long repeatInterval = 1000 * 60 * 60;
-      // start up a timer after 2 mins + random(10 mins) and run it every 60 mins
-      long startDelay = 1000 * 60 * new Random().nextInt(5) + (1000 * 60 * 2);
+      // start up a timer after 2 mins + random(10 mins)
+      long startDelay =  (1000 * 60 * 2) + (1000 * 60 * new Random().nextInt(10));
 
       TimerTask runStateUpdateTask = new TimerTask() {
          @SuppressWarnings("unchecked")
@@ -131,34 +131,39 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                      new String[] {"state", "state"}, 
                      new Object[] {EvalConstants.EVALUATION_STATE_VIEWABLE, EvalConstants.EVALUATION_STATE_DELETED},
                      new int[] {EvaluationDao.NOT_EQUALS, EvaluationDao.NOT_EQUALS});
-               log.info("Checking the state of " + evals.size() + " evaluations to ensure they are all up to date...");
-               // set the partial purge number of days to 2
-               long partialPurgeTime = System.currentTimeMillis() - (2 * 24 * 60 * 60 * 1000);
-               // loop through and update the state of the evals if needed
-               int count = 0;
-               for (EvalEvaluation evaluation : evals) {
-                  String evalState = evaluationService.returnAndFixEvalState(evaluation, false);
-                  if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(evalState)) {
-                     // purge out partial evaluations older than the partial purge time
-                     if (evaluation.getLastModified().getTime() < partialPurgeTime) {
-                        log.info("Purging partial evaluation ("+evaluation.getId()+") from " + evaluation.getLastModified());
-                        deleteEvaluation(evaluation.getId(), EvalExternalLogic.ADMIN_USER_ID);
-                     }
-                  } else {
-                     String currentEvalState = evaluation.getState();
-                     if (! currentEvalState.equals(evalState) ) {
-                        evalState = evaluationService.returnAndFixEvalState(evaluation, true); // update the state
-                        count++;
-                        // trigger the jobs logic to look at this since the state changed
-                        evalJobLogic.processEvaluationStateChange(evaluation.getId(), EvalJobLogic.ACTION_UPDATE);
+               if (evals.size() > 0) {
+                  log.info("Checking the state of " + evals.size() + " evaluations to ensure they are all up to date...");
+                  // set the partial purge number of days to 2
+                  long partialPurgeTime = System.currentTimeMillis() - (2 * 24 * 60 * 60 * 1000);
+                  // loop through and update the state of the evals if needed
+                  int count = 0;
+                  for (EvalEvaluation evaluation : evals) {
+                     String evalState = evaluationService.returnAndFixEvalState(evaluation, false);
+                     if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(evalState)) {
+                        // purge out partial evaluations older than the partial purge time
+                        if (evaluation.getLastModified().getTime() < partialPurgeTime) {
+                           log.info("Purging partial evaluation ("+evaluation.getId()+") from " + evaluation.getLastModified());
+                           deleteEvaluation(evaluation.getId(), EvalExternalLogic.ADMIN_USER_ID);
+                        }
+                     } else {
+                        String currentEvalState = evaluation.getState();
+                        if (! currentEvalState.equals(evalState) ) {
+                           evalState = evaluationService.returnAndFixEvalState(evaluation, true); // update the state
+                           count++;
+                           // trigger the jobs logic to look at this since the state changed
+                           evalJobLogic.processEvaluationStateChange(evaluation.getId(), EvalJobLogic.ACTION_UPDATE);
+                        }
                      }
                   }
+                  if (count > 0) {
+                     log.info("Updated the state of "+count+" evaluations...");
+                  }
                }
-               log.info("Updated the state of "+count+" evaluations...");
+
                // finally we will reset the system config cache
                if (settings instanceof EvalSettingsImpl) {
                   ((EvalSettingsImpl) settings).resetCache();
-               }               
+               }
             }
          }
       };
