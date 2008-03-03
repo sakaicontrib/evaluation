@@ -209,7 +209,6 @@ tool/src/java/org/sakaiproject/evaluation/tool/producers/RemoveItemProducer.java
 tool/src/java/org/sakaiproject/evaluation/tool/producers/RemoveScaleProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/RemoveTemplateProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ReportChooseGroupsProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/java/org/sakaiproject/evaluation/tool/producers/ReportsViewEssaysProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ReportsViewingProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ShowEvalCategoryProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/SummaryProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
@@ -380,5 +379,4 @@ tool/src/webapp/content/templates/report_view.html -text svn_keywords=Date+Revis
 tool/src/webapp/content/templates/show_eval_category.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/summary.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/take_eval.html -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/webapp/content/templates/view_essay_response.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/tools/sakai.evaluation.tool.xml -text svn_keywords=Date+Revision+Author+URL+Id

@@ -650,6 +650,7 @@
       <property name="reportingPermissions" ref="org.sakaiproject.evaluation.tool.reporting.ReportingPermissions" />
    </bean>
 
+<!-- 
    <bean
       class="org.sakaiproject.evaluation.tool.producers.ReportsViewEssaysProducer">
       <property name="externalLogic"
@@ -663,5 +664,6 @@
       <property name="reportingPermissions" 
          ref="org.sakaiproject.evaluation.tool.reporting.ReportingPermissions" />
    </bean>
+   -->
 
 </beans>

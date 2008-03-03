@@ -116,9 +116,28 @@
 								</tr>
 							</table>
 						</div>
+						<!-- DIV tag for Unhidden Essay Questions -->
+						<div rsf:id="expandedEssayType:">
+							<!-- //gsilver: let the list take care of the numbers -->
+							<!--<span style="font-weight:bold;" rsf:id="itemNum">#</span>-->
+							<h4>
+								<span rsf:id="itemNum">#</span>
+								<span rsf:id="itemText"/>
+								<span rsf:id="showNA:"><span rsf:id="na-desc">N/A</span></span>
+							</h4>	
+							<div class="itemListNew">
+								<ol  style="list-style: lower-alpha;	list-style-position: inside;">
+									<li rsf:id="answers:">
+										<!-- //gsilver: let the list take care of the numbers -->
+										<!--<span style="font-weight:bold;" rsf:id="answerNum">#</span>-->
+										<span rsf:id="itemAnswer"/>
+									</li>	
+								</ol>
+							</div>
+						</div>
 						<!-- DIV tag for Essay type -->
 						<div rsf:id="essayType:">
-						<table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "100%" class="listHier lines" style="margin:0">
+						  <table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "100%" class="listHier lines" style="margin:0">
 								<tr  class="highLightRow">
 									<td width="3%" valign="top">
 										<span rsf:id="itemNum">#</span>.
@@ -136,10 +155,9 @@
 					</li>
 				</ol>
 				</div>
-			</div>                                                                                 
+			</div>
 
 			<!-- this BEGINS the INSTRUCTOR(S) section -->
-																										
 			<div rsf:id="instructorSection:">
 			  <h3 rsf:id="report-instructor-questions">Instructor Questions:</h3>
 				<div class="itemListNew">
@@ -162,7 +180,7 @@
 									<tr  rsf:id="answers:">
 										<td></td>
 										<td>
-											<h5 style="color:pink"><span rsf:id="responseText">text</span></h5>
+											<h5><span rsf:id="responseText">text</span></h5>
 										</td>
 										<td>
 											<span  rsf:id="responseTotal">#</span> Responses
