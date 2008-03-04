@@ -186,11 +186,6 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       // replace adhoc default title with a unique title
       if (EvalConstants.SCALE_ADHOC_DEFAULT_TITLE.equals(scale.getTitle())) {
          scale.setTitle("adhoc-" + EvalUtils.makeUniqueIdentifier(100));
-      } else {
-         // had to remove this because hibernate cannot handle it
-//         if (! checkScaleTitleUnused(scale.getTitle(), scale.getId()) ) {
-//            throw new UniqueFieldException("This scale title ("+scale.getTitle()+") is already in use, title must be unique", "title", scale.getTitle());
-//         }
       }
 
       // check perms and save
@@ -207,31 +202,6 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 
       // should not get here so die if we do
       throw new RuntimeException("User ("+userId+") could NOT save scale ("+scale.getId()+"), title: " + scale.getTitle());
-   }
-
-   /**
-    * This won't work because of crappy hibernate... -AZ
-    */
-   public boolean checkScaleTitleUnused(String title, Long scaleId) {
-      log.debug("title: " + title + ", ScaleId: " + scaleId);
-      int count = -1;
-      if (scaleId == null) {
-         count = dao.countByProperties(EvalScale.class, 
-               new String[] {"title"},
-               new Object[] {title},
-               new int[] {ByPropsFinder.EQUALS} );
-      } else {
-         count = dao.countByProperties(EvalScale.class, 
-               new String[] {"title", "id"},
-               new Object[] {title, scaleId},
-               new int[] {ByPropsFinder.EQUALS, ByPropsFinder.NOT_EQUALS} );        
-      }
-
-      if (count == 0) {
-         return true;
-      } else {
-         return false;
-      }
    }
 
 
