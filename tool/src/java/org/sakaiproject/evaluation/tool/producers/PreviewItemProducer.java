@@ -59,12 +59,6 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
     */
    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {	
 
-      UIMessage.make(tofill, "preview-item-title", "previewitem.page.title");
-
-      UIMessage.make(tofill, "summary-title", "summary.page.title");
-
-      UIMessage.make(tofill, "modify-template-title", "modifytemplate.page.title");
-
       // get templateItem to preview from VPs
       ItemViewParameters previewItemViewParams = (ItemViewParameters) viewparams;
       EvalTemplateItem templateItem = null;
@@ -78,7 +72,7 @@ public class PreviewItemProducer implements ViewComponentProducer, ViewParamsRep
       }
 
       // use the renderer evolver
-      itemRenderer.renderItem(tofill, "previewed-item:", null, templateItem, 0, true);
+      itemRenderer.renderItem(tofill, "previewed-item:", null, templateItem, templateItem.getDisplayOrder(), true);
 
       // render the close button
       UIMessage.make(tofill, "close-button", "general.close.window.button");

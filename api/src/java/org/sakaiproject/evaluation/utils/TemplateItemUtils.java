@@ -315,7 +315,7 @@ public class TemplateItemUtils {
       }
 
       EvalTemplateItem templateItem = new EvalTemplateItem(item.getLastModified(), item.getOwner(), null, item,
-            new Integer(1), item.getCategory(), EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE);
+            new Integer(0), item.getCategory(), EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE);
 
       if (item.getUsesNA() == null) {
          templateItem.setUsesNA(Boolean.TRUE);
