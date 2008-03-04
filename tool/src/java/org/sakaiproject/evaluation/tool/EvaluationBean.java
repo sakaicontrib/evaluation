@@ -217,11 +217,11 @@ public class EvaluationBean {
       eval.setInstructorOpt(instOpt);
 
       // email settings
-      emailAvailableTxt = evaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE).getMessage();// available template
+      emailAvailableTxt = null; // available template
+      emailReminderTxt =  null; //reminder email
+
       eval.setReminderDays(new Integer(EvalToolConstants.REMINDER_EMAIL_DAYS_VALUES[1]));
-      emailReminderTxt =  evaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_REMINDER).getMessage();//reminder email
-      String s = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
-      eval.setReminderFromEmail(s);
+      eval.setReminderFromEmail( (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS) );
 
       // set the template
       EvalTemplate template = (EvalTemplate) authoringService.getTemplateById(this.templateId);
@@ -378,6 +378,7 @@ public class EvaluationBean {
       emailAvailableTxt = FormattedText.processFormattedText(emailAvailableTxt, errorMessages);
 
       if (errorMessages.length() != 0) {
+         // invalid text in the email message so fail
 
          Long tempEvalId = eval.getId();
 
@@ -600,6 +601,13 @@ public class EvaluationBean {
       this.eval = new EvalEvaluation();
       // set the state to partial
       this.eval.setState(EvalConstants.EVALUATION_STATE_PARTIAL);
+
+      // reset some values in the bean
+
+      // email settings
+      emailAvailableTxt = null; // available template
+      emailReminderTxt =  null; //reminder email
+
    }
 
    /**
@@ -660,9 +668,9 @@ public class EvaluationBean {
       eval.studentViewResults = eval.getStudentsDate() == null ? Boolean.FALSE: Boolean.TRUE;
       eval.instructorViewResults = eval.getInstructorsDate() == null ? Boolean.FALSE: Boolean.TRUE;
 
-      //email settings
-      emailAvailableTxt = eval.getAvailableEmailTemplate().getMessage(); // available template
-      emailReminderTxt =  eval.getReminderEmailTemplate().getMessage();  //reminder email
+      // email templates (get the template text if set)
+      emailAvailableTxt = eval.getAvailableEmailTemplate() != null ? eval.getAvailableEmailTemplate().getMessage() : null; // available template
+      emailReminderTxt =  eval.getReminderEmailTemplate() != null ? eval.getReminderEmailTemplate().getMessage() : null;  //reminder email
 
       return EvaluationSettingsProducer.VIEW_ID;
    }
@@ -799,28 +807,32 @@ public class EvaluationBean {
       // Email template section
 
       // Save email available template
-      EvalEmailTemplate availableTemplate = evaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
-      if (emailAvailableTxt.equals(availableTemplate.getMessage())) {
-         // null it out as the template has not been modified
-         availableTemplate = null;
-      } else {
-         availableTemplate = new EvalEmailTemplate(external.getCurrentUserId(), EvalConstants.EMAIL_TEMPLATE_AVAILABLE,
-               EvalEmailConstants.EMAIL_AVAILABLE_DEFAULT_SUBJECT, emailAvailableTxt);
-         evaluationSetupService.saveEmailTemplate(availableTemplate, external.getCurrentUserId());
+      if (emailAvailableTxt != null) {
+         EvalEmailTemplate availableTemplate = evaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
+         if (emailAvailableTxt.equals(availableTemplate.getMessage())) {
+            // null it out as the template has not been modified
+            availableTemplate = null;
+         } else {
+            availableTemplate = new EvalEmailTemplate(external.getCurrentUserId(), EvalConstants.EMAIL_TEMPLATE_AVAILABLE,
+                  EvalEmailConstants.EMAIL_AVAILABLE_DEFAULT_SUBJECT, emailAvailableTxt);
+            evaluationSetupService.saveEmailTemplate(availableTemplate, external.getCurrentUserId());
+         }
+         eval.setAvailableEmailTemplate(availableTemplate);
       }
-      eval.setAvailableEmailTemplate(availableTemplate);
 
       // Save the email reminder template
-      EvalEmailTemplate reminderTemplate = evaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_REMINDER);
-      if (emailReminderTxt.equals(reminderTemplate.getMessage())) {
-         // null it out as the template has not been modified
-         reminderTemplate = null;
-      } else {
-         reminderTemplate = new EvalEmailTemplate(external.getCurrentUserId(), EvalConstants.EMAIL_TEMPLATE_REMINDER,
-               EvalEmailConstants.EMAIL_REMINDER_DEFAULT_SUBJECT, emailReminderTxt);
-         evaluationSetupService.saveEmailTemplate(reminderTemplate, external.getCurrentUserId());
+      if (emailReminderTxt != null) {
+         EvalEmailTemplate reminderTemplate = evaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_REMINDER);
+         if (emailReminderTxt.equals(reminderTemplate.getMessage())) {
+            // null it out as the template has not been modified
+            reminderTemplate = null;
+         } else {
+            reminderTemplate = new EvalEmailTemplate(external.getCurrentUserId(), EvalConstants.EMAIL_TEMPLATE_REMINDER,
+                  EvalEmailConstants.EMAIL_REMINDER_DEFAULT_SUBJECT, emailReminderTxt);
+            evaluationSetupService.saveEmailTemplate(reminderTemplate, external.getCurrentUserId());
+         }
+         eval.setReminderEmailTemplate(reminderTemplate);
       }
-      eval.setReminderEmailTemplate(reminderTemplate);
 
    }
 

@@ -170,4 +170,15 @@ public interface EvalExternalLogic extends ExternalUsers, ExternalEvalGroups, Ex
     */
    public <T> T getConfigurationSetting(String settingName, T defaultValue);
 
+
+   // TEXT
+
+   /**
+    * Cleans up the users submitted strings to protect us from XSS
+    * 
+    * @param userSubmittedString any string from the user which could be dangerous
+    * @return a cleaned up string which is now safe
+    */
+   public String cleanupUserStrings(String userSubmittedString);
+
 }

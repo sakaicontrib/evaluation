@@ -72,6 +72,7 @@ import org.sakaiproject.tool.api.ToolManager;
 import org.sakaiproject.user.api.User;
 import org.sakaiproject.user.api.UserDirectoryService;
 import org.sakaiproject.user.api.UserNotDefinedException;
+import org.sakaiproject.util.FormattedText;
 import org.sakaiproject.util.ResourceLoader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -935,6 +936,15 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
          log.warn("Cannot byte array for Content Hosting File", e);
          return null;
       }
+   }
+
+
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#cleanupUserStrings(java.lang.String)
+    */
+   public String cleanupUserStrings(String userSubmittedString) {
+      // clean up the string
+      return FormattedText.processFormattedText(userSubmittedString, new StringBuffer(), true, false);            
    }
 
 }

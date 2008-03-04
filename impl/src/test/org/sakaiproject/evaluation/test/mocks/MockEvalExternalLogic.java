@@ -456,6 +456,15 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
       return returnValue;
    }
 
+   public byte[] getFileContent(String abspath) {
+      return new byte[] {'H','E','L','L','O',' ','E','V','A','L','U','A','T','I','O','N' };
+   }
+
+   public String cleanupUserStrings(String userSubmittedString) {
+      return userSubmittedString;
+   }
+
+
 
 	// testing methods
 
@@ -475,10 +484,6 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
     */
    public void resetEmailsSentCounter() {
       emailsSentCounter = 0;
-   }
-
-   public byte[] getFileContent(String abspath) {
-      return new byte[] {'H','E','L','L','O',' ','E','V','A','L','U','A','T','I','O','N' };
    }
 
 }

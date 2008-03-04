@@ -18,7 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.model.EvalEmailTemplate;
+import org.sakaiproject.evaluation.tool.EvaluationBean;
 import org.sakaiproject.evaluation.tool.locators.EmailTemplateWBL;
 import org.sakaiproject.evaluation.tool.viewparams.EmailViewParameters;
 
@@ -55,6 +58,16 @@ public class ModifyEmailProducer implements ViewComponentProducer, NavigationCas
       this.externalLogic = externalLogic;
    }
 
+   private EvaluationBean evaluationBean;
+   public void setEvaluationBean(EvaluationBean evaluationBean) {
+      this.evaluationBean = evaluationBean;
+   }
+
+   private EvalEvaluationService evaluationService;
+   public void setEvaluationService(EvalEvaluationService evaluationService) {
+      this.evaluationService = evaluationService;
+   }
+
    private String emailTemplateLocator = "emailTemplateWBL.";
 
    /* (non-Javadoc)
@@ -64,8 +77,8 @@ public class ModifyEmailProducer implements ViewComponentProducer, NavigationCas
 
       // handle the input params for the view
       EmailViewParameters emailViewParams = (EmailViewParameters) viewparams;
-      if (emailViewParams.emailType == null) {
-         throw new IllegalArgumentException("Must have an emailType set when accessing this page");
+      if (emailViewParams.templateId == null && emailViewParams.emailType == null) {
+         throw new IllegalArgumentException("Either templateId or emailType must be set before accessing the preview email view");
       }
       String emailTemplateType = emailViewParams.emailType;
 
@@ -107,30 +120,50 @@ public class ModifyEmailProducer implements ViewComponentProducer, NavigationCas
       UIForm form = UIForm.make(tofill, "emailTemplateForm");
 
       String inputBinding = null;
-      String commandBinding = null;
+      String inputInitValue = null;
+      String actionBinding = null;
       if (emailViewParams.inEval) {
-         if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailTemplateType)) {
+         // TODO get rid of most of this once the EvaluationBean is dead
+         // get the email template
+         EvalEmailTemplate emailTemplate = null;
+         if (emailViewParams.templateId != null) {
+            emailTemplate = evaluationService.getEmailTemplate(emailViewParams.templateId);
+         }
+         if (emailTemplate == null 
+               && emailViewParams.emailType != null) {
+            emailTemplate = evaluationService.getDefaultEmailTemplate(emailViewParams.emailType);
+         }
+
+         if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailViewParams.emailType)) {
+            actionBinding = "evaluationBean.saveAvailableEmailTemplate";
             inputBinding = "evaluationBean.emailAvailableTxt";
-            commandBinding = "evaluationBean.saveAvailableEmailTemplate";
-         } else if (EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailTemplateType)) {
+            inputInitValue = evaluationBean.emailAvailableTxt;
+         } else if (EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailViewParams.emailType)) {
+            actionBinding = "evaluationBean.saveReminderEmailTemplate";
             inputBinding = "evaluationBean.emailReminderTxt";
-            commandBinding = "evaluationBean.saveReminderEmailTemplate";
+            inputInitValue = evaluationBean.emailReminderTxt;
          } else {
             throw new IllegalArgumentException("Unknown email template type for use in evaluation: " + emailTemplateType);
          }
+
+         if (inputInitValue == null) {
+            // if there is nothing in the bean then just use the defaults
+            inputInitValue = emailTemplate.getMessage();
+         }
+
          // add in the close window control
          UIMessage.make(tofill, "closeWindow", "general.close.window.button");
       } else {
          // not part of an evaluation so use the WBL
          inputBinding = emailTemplateOTP + "message";
-         commandBinding = emailTemplateLocator + "saveAll";
+         actionBinding = emailTemplateLocator + "saveAll";
          // also show the subject editor
          UIBranchContainer subjectBranch = UIBranchContainer.make(form, "showSubject:");
-         UIInput.make(subjectBranch, "subject", emailTemplateOTP + "subject");
-         UIMessage.make(subjectBranch, "subject_label", "modifyemail.template.subject");
+         UIInput.make(subjectBranch, "emailSubject", emailTemplateOTP + "subject");
+         UIMessage.make(subjectBranch, "emailSubject_label", "modifyemail.template.subject");
       }
-      UIInput.make(form, "message", inputBinding, null);
-      UICommand.make(form, "saveEmailTemplate", UIMessage.make("modifyemail.save.changes.link"), commandBinding);
+      UIInput.make(form, "emailMessage", inputBinding, inputInitValue);
+      UICommand.make(form, "saveEmailTemplate", UIMessage.make("modifyemail.save.changes.link"), actionBinding);
 
    }
 
@@ -143,7 +176,7 @@ public class ModifyEmailProducer implements ViewComponentProducer, NavigationCas
       i.add(new NavigationCase(EvalConstants.EMAIL_TEMPLATE_REMINDER, new EmailViewParameters(
             PreviewEmailProducer.VIEW_ID, null, EvalConstants.EMAIL_TEMPLATE_REMINDER, true)));
       // default return case
-      i.add( new NavigationCase(new SimpleViewParameters(ControlEmailTemplatesProducer.VIEW_ID)) );
+      i.add( new NavigationCase("", new SimpleViewParameters(ControlEmailTemplatesProducer.VIEW_ID)) );
       return i;
    }
 
