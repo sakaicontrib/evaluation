@@ -127,71 +127,73 @@ public class ExistingItemsProducer implements ViewComponentProducer, NavigationC
       String searchString = itemViewParameters.searchString;
       if (searchString == null) searchString = "";
 
-      UIMessage.make(tofill, "page-title", "items.existing.page.title"); //$NON-NLS-2$
-
       UIInternalLink.make(tofill, "modify-items-link", UIMessage.make("items.page.title"), //$NON-NLS-2$
-            new SimpleViewParameters(SummaryProducer.VIEW_ID));
+            new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
 
       UIInternalLink.make(tofill, "modify-template-link", UIMessage.make("modifytemplate.page.title"), //$NON-NLS-2$
             new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, templateId) );
-
-      UIMessage.make(tofill, "items-choose-items", "items.choose.items"); //$NON-NLS-2$
 
       if (searchString.length() > 0) {
          UIMessage.make(tofill, "search-current", "existing.items");
          UIOutput.make(tofill, "search-current-value", searchString);
       }
 
-      UIForm searchForm = UIForm.make(tofill, "search-form", itemViewParameters);
-      UIMessage.make(searchForm, "search-command", "items.search.command" );
-      UIInput.make(searchForm, "search-box", "#{searchString}");
-
-      UIMessage.make(tofill, "item-select-col-title", "items.select.col.title"); //$NON-NLS-2$
-      UIMessage.make(tofill, "item-item-col-title", "items.item.col.title"); //$NON-NLS-2$
-      UIMessage.make(tofill, "item-list-summary", "item.list.summary"); //$NON-NLS-2$
-      UIForm form = UIForm.make(tofill, "insert-items-form");
-
       // loop through all existing items
       List<EvalItem> existingItems = authoringService.getItemsForUser(currentUserId, null, null, false);
-      for (int i = 0; i < existingItems.size(); i++) {
-         EvalItem item = (EvalItem) existingItems.get(i);
-         UIBranchContainer items = UIBranchContainer.make(form, "item-list:", item.getId().toString());
-         if (i % 2 == 0) {
-            items.decorators = new DecoratorList( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
+      UIForm form = UIForm.make(tofill, "insert-items-form");
+
+      if (existingItems.size() > 0) {
+         UIForm searchForm = UIForm.make(tofill, "search-form", itemViewParameters);
+         UIMessage.make(searchForm, "search-command", "items.search.command" );
+         UIInput.make(searchForm, "search-box", "#{searchString}");
+
+         for (int i = 0; i < existingItems.size(); i++) {
+            EvalItem item = (EvalItem) existingItems.get(i);
+            UIBranchContainer items = UIBranchContainer.make(form, "item-list:", item.getId().toString());
+            if (i % 2 == 0) {
+               items.decorators = new DecoratorList( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
+            }
+
+            UIBoundBoolean checkbox = UIBoundBoolean.make(items, "insert-item-checkbox", "#{expertItemsBean.selectedIds." + item.getId() + "}");
+            UILabelTargetDecorator.targetLabel(UIOutput.make(items, "item-label"), checkbox);
+            UIVerbatim.make(items, "item-text", item.getItemText());
+            if (item.getScale() != null) {
+               String scaleText = item.getScale().getTitle() + " (";
+               for (int j = 0; j < item.getScale().getOptions().length; j++) {
+                  scaleText += (j==0?"":",") + item.getScale().getOptions()[j];
+               }
+               scaleText += ")";
+               UIOutput.make(items, "item-scale", scaleText);
+            } else {
+               UIOutput.make(items, "item-scale", item.getClassification());
+            }
+            if (item.getDescription() != null) {
+               UIOutput.make(items, "item-desc", item.getExpertDescription());
+            }
          }
 
-         UIBoundBoolean checkbox = UIBoundBoolean.make(items, "insert-item-checkbox", "#{expertItemsBean.selectedIds." + item.getId() + "}");
-         UILabelTargetDecorator.targetLabel(UIOutput.make(items, "item-label"), checkbox);
-         UIVerbatim.make(items, "item-text", item.getItemText());
-         if (item.getScale() != null) {
-            String scaleText = item.getScale().getTitle() + " (";
-            for (int j = 0; j < item.getScale().getOptions().length; j++) {
-               scaleText += (j==0?"":",") + item.getScale().getOptions()[j];
-            }
-            scaleText += ")";
-            UIOutput.make(items, "item-scale", scaleText);
-         } else {
-            UIOutput.make(items, "item-scale", item.getClassification());
-         }
-         if (item.getDescription() != null) {
-            UIOutput.make(items, "item-desc", item.getExpertDescription());
-         }
+         // create the Insert Items button
+         UICommand addItemsCommand = UICommand.make(form, "insert-items-command", UIMessage.make("expert.items.insert"),
+                  "#{expertItemsBean.processActionAddItems}");
+         addItemsCommand.parameters.add(new UIELBinding("#{expertItemsBean.templateId}", templateId));
+
+         // create the top cancel link
+         UIInternalLink.make(form, "cancel-items", UIMessage.make("items.cancel"), 
+               new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, templateId) );
+      } else {
+         UIMessage.make(form, "no-items", "no.list.items");
       }
 
-      // create the cancel link
-      UIInternalLink.make(tofill, "cancel-items", UIMessage.make("items.cancel"), 
+      // create the bottom cancel link
+      UIInternalLink.make(form, "cancel-items-bottom", UIMessage.make("items.cancel"), 
             new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, templateId) );
-
-      // create the Insert Items button
-      UICommand addItemsCommand = UICommand.make(form, "insert-items-command", UIMessage.make("expert.items.insert"),
-      "#{expertItemsBean.processActionAddItems}");
-      addItemsCommand.parameters.add(new UIELBinding("#{expertItemsBean.templateId}", templateId));
    }
 
    /* 
     * (non-Javadoc)
     * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
     */
+   @SuppressWarnings("unchecked")
    public List reportNavigationCases() {
       List i = new ArrayList();
       i.add(new NavigationCase("success", new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, null) ) );

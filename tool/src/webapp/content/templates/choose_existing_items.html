@@ -2,7 +2,7 @@
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title rsf:id="page-title">Items - Choose Items</title>
+		<title rsf:id="msg=items.existing.page.title">Items - Choose Items</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter"	type="text/css" rel="stylesheet" media="all" />
 		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all" />
@@ -28,7 +28,7 @@
 				<li><a rsf:id="modify-template-link" href="template_modify.html">Template</a></li>
 				<!--// gsilver: this link goes to the dashboard -->
 				<li><a rsf:id="modify-items-link" href="modify_items.html">Items</a></li>
-				<li rsf:id="items-choose-items" class="lastCrumb">Choose Items</li>
+				<li rsf:id="msg=items.choose.items" class="lastCrumb">Choose Items</li>
 			</ul>
 		</div>
 		
@@ -40,7 +40,7 @@
 		
 		<div class="navPanel">
 			<div class="viewNav">
-				<h3 rsf:id="page-title">Items</h3>
+				<h3 rsf:id="msg=items.existing.page.title">Items</h3>
 			</div>	
 			<div class="searchNav">
 					<span rsf:id="search-current" class="highlight">Current Search:</span>
@@ -54,20 +54,18 @@
 		
 		<form rsf:id="insert-items-form" method="post" action="template_modify.html" style="margin:0px;">
 
-			<!--//gsilver: summary needs to be rendered by producer so that it can be i18n - adding same text to invisble caption for now -->
-
             <!-- added buttons at top -AZ (http://jira.sakaiproject.org/jira/browse/EVALSYS-385) -->			
             <p>
-                <input rsf:id="insert-items-command" type="submit" value="Insert Items"  class="active" accesskey="s" />
-                <a rsf:id="cancel-items" href="template_modify.html" class="makeButton"  id="cancel-items" style="display:inline;float:none" accesskey="x">Cancel</a>
+                <input rsf:id="insert-items-command" type="submit" value="Insert Items" class="active" accesskey="s" />
+                <a rsf:id="cancel-items" href="template_modify.html" class="makeButton" id="cancel-items" style="display:inline;float:none" accesskey="x">Cancel</a>
             </p>
-			
-			<table  class="listHier lines nolines" summary="Column 1 has checkboxes used to select items, Column 2 has information about items" cellpadding="0" cellspacing="0">
-				<caption rsf:id="item-list-summary" class="skip">Selectable items. Column 1 has checkboxes used to select items, Column 2 has information about items</caption>
+
+			<table class="listHier lines nolines" summary="Column 1 has checkboxes used to select items, Column 2 has information about items" cellpadding="0" cellspacing="0">
+				<caption rsf:id="msg=item.list.summary" class="skip">Selectable items. Column 1 has checkboxes used to select items, Column 2 has information about items</caption>
 				<thead class="skip">
 					<tr>
-						<th width="5%" scope="col" class="attach"><span class="skip" rsf:id="item-select-col-title">Select</span></th>
-						<th scope="col"><span rsf:id="item-item-col-title">Items</span></th>
+						<th width="5%" scope="col" class="attach"><span rsf:id="msg=items.select.col.title" class="skip">Select</span></th>
+						<th scope="col"><span rsf:id="msg=items.item.col.title">Items</span></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -102,7 +100,8 @@
 			
 			<p>
 				<input rsf:id="insert-items-command" type="submit" value="Insert Items"  class="active" accesskey="s" />
-				<a rsf:id="cancel-items" href="template_modify.html" class="makeButton"  id="cancel-items" style="display:inline;float:none" accesskey="x">Cancel</a>
+                <div rsf:id="no-items" />
+				<a rsf:id="cancel-items-bottom" href="template_modify.html" class="makeButton"  id="cancel-items" style="display:inline;float:none" accesskey="x">Cancel</a>
 			</p>
 			
 		</form>

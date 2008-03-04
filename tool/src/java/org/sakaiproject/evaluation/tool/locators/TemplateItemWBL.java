@@ -23,6 +23,8 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.LocalTemplateLogic;
 
 import uk.org.ponder.beanutil.WriteableBeanLocator;
+import uk.org.ponder.messageutil.TargettedMessage;
+import uk.org.ponder.messageutil.TargettedMessageList;
 
 /**
  * This is the OTP bean used to locate {@link EvalTemplateItem}s
@@ -38,6 +40,12 @@ public class TemplateItemWBL implements WriteableBeanLocator {
    public void setLocalTemplateLogic(LocalTemplateLogic localTemplateLogic) {
       this.localTemplateLogic = localTemplateLogic;
    }
+
+   private TargettedMessageList messages;
+   public void setMessages(TargettedMessageList messages) {
+      this.messages = messages;
+   }
+
 
    // keep track of all template items that have been delivered during this request
    private Map<String, EvalTemplateItem> delivered = new HashMap<String, EvalTemplateItem>();
@@ -69,6 +77,8 @@ public class TemplateItemWBL implements WriteableBeanLocator {
       Long templateItemId = Long.valueOf(beanname);
       localTemplateLogic.deleteTemplateItem(templateItemId);
       delivered.remove(beanname);
+      messages.addMessage( new TargettedMessage("templateitem.removed.message", null, 
+            TargettedMessage.SEVERITY_INFO));
       return true;
    }
 
@@ -96,6 +106,9 @@ public class TemplateItemWBL implements WriteableBeanLocator {
             }
          }
          localTemplateLogic.saveTemplateItem(templateItem);
+         messages.addMessage( new TargettedMessage("templateitem.saved.message", 
+               new Object[] { templateItem.getDisplayOrder() }, 
+               TargettedMessage.SEVERITY_INFO));
       }
    }
 
@@ -117,6 +130,9 @@ public class TemplateItemWBL implements WriteableBeanLocator {
          localTemplateLogic.saveItem( templateItem.getItem() );
          // then save the templateItem
          localTemplateLogic.saveTemplateItem(templateItem);
+         messages.addMessage( new TargettedMessage("templateitem.saved.message", 
+               new Object[] { templateItem.getDisplayOrder() }, 
+               TargettedMessage.SEVERITY_INFO));
       }
    }
 

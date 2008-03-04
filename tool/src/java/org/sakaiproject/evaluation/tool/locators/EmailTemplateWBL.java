@@ -24,6 +24,8 @@ import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 
 import uk.org.ponder.beanutil.WriteableBeanLocator;
+import uk.org.ponder.messageutil.TargettedMessage;
+import uk.org.ponder.messageutil.TargettedMessageList;
 
 /**
  * OTP bean used to locate {@link EvalEmailTemplate}s
@@ -54,6 +56,11 @@ public class EmailTemplateWBL implements WriteableBeanLocator {
    private EvalEvaluationSetupService evaluationSetupService;
    public void setEvaluationSetupService(EvalEvaluationSetupService evaluationSetupService) {
       this.evaluationSetupService = evaluationSetupService;
+   }
+
+   private TargettedMessageList messages;
+   public void setMessages(TargettedMessageList messages) {
+      this.messages = messages;
    }
 
 
@@ -87,6 +94,9 @@ public class EmailTemplateWBL implements WriteableBeanLocator {
       Long emailTemplateId = Long.valueOf(name);
       evaluationSetupService.removeEmailTemplate(emailTemplateId, externalLogic.getCurrentUserId());
       delivered.remove(name);
+      messages.addMessage( new TargettedMessage("controlemailtemplates.template.removed.message",
+            new Object[] { emailTemplateId }, 
+            TargettedMessage.SEVERITY_INFO));
       return true;
    }
 
@@ -104,7 +114,13 @@ public class EmailTemplateWBL implements WriteableBeanLocator {
          if (key.startsWith(NEW_PREFIX)) {
             // add in extra logic needed for new items here
          }
+         // cleanup the text before saving
+         emailTemplate.setMessage( externalLogic.cleanupUserStrings(emailTemplate.getMessage()) );
+         emailTemplate.setSubject( externalLogic.cleanupUserStrings(emailTemplate.getSubject()) );
          evaluationSetupService.saveEmailTemplate(emailTemplate, externalLogic.getCurrentUserId());
+         messages.addMessage( new TargettedMessage("controlemailtemplates.template.saved.message",
+               new Object[] { emailTemplate.getType(), emailTemplate.getSubject() }, 
+               TargettedMessage.SEVERITY_INFO));
       }
    }
 

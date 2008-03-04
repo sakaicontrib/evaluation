@@ -49,10 +49,12 @@ ${URLtoAddItems} - the direct URL to add items to an evaluation <br/>
 ${URLtoOptOut} - the direct URL for evaluators to opt in to use this evaluation
 					</div>
                     <div rsf:id="showSubject:">
-                        <label rsf:id="subject_label" for="subject">Subject:</label>
-                        <input rsf:id="subject" type="text" id="subject" size="80" maxlength="250" />
+                        <label rsf:id="emailSubject_label" for="emailSubject">Subject:</label>
+                        <input rsf:id="emailSubject" type="text" id="emailSubject" size="80" maxlength="250" />
                     </div>
-					<textarea rsf:id="message" rows="10" cols="110" name="message" id="message"></textarea>
+					<textarea rsf:id="emailMessage" rows="20" cols="120" name="emailMessage" id="emailMessage">
+                         The text of the email message will appear here
+                    </textarea>
 				</div>	
 				<p class="act">		
 					<input rsf:id="saveEmailTemplate" name="saveEmailTemplate" type="submit" value="Save Changes" accesskey="s" class="active" />
