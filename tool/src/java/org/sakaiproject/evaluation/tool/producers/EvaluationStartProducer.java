@@ -20,6 +20,7 @@ import java.util.List;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
@@ -185,10 +186,11 @@ public class EvaluationStartProducer implements ViewComponentProducer, Navigatio
                UISelectLabel.make(radiobranch, "radioLabel", selectID, i);
 
                // UIOutput.make(radiobranch,"radioOwner", logic.getUserDisplayName( owners[i]));
-               UIOutput.make(radiobranch, "radioOwner", externalLogic.getUserDisplayName(owners[i]));
-               UIInternalLink.make(radiobranch, "viewPreview_link", UIMessage
-                     .make("starteval.view.preview.link"), new EvalViewParameters(
-                     PreviewEvalProducer.VIEW_ID, null, new Long(values[i])));
+               EvalUser owner = externalLogic.getEvalUserById( owners[i] );
+               UIOutput.make(radiobranch, "radioOwner", owner.displayName );
+               UIInternalLink.make(radiobranch, "viewPreview_link", 
+                     UIMessage.make("starteval.view.preview.link"), 
+                     new EvalViewParameters(PreviewEvalProducer.VIEW_ID, null, new Long(values[i])));
             }
          }
       } else {
@@ -208,6 +210,7 @@ public class EvaluationStartProducer implements ViewComponentProducer, Navigatio
     * 
     * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
     */
+   @SuppressWarnings("unchecked")
    public List reportNavigationCases() {
       List i = new ArrayList();
       i.add(new NavigationCase(EvaluationSettingsProducer.VIEW_ID, new SimpleViewParameters(

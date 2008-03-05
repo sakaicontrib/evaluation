@@ -12,6 +12,8 @@
 			ref="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
 		<property name="persistentClasses">
 			<list>
+                <value>org.sakaiproject.evaluation.model.EvalAdhocGroup</value>
+                <value>org.sakaiproject.evaluation.model.EvalAdhocUser</value>
 				<value>org.sakaiproject.evaluation.model.EvalAnswer</value>
 				<value>org.sakaiproject.evaluation.model.EvalAssignGroup</value>
 				<value>org.sakaiproject.evaluation.model.EvalAssignHierarchy</value>

@@ -22,6 +22,7 @@ import junit.framework.TestCase;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
 
@@ -79,19 +80,19 @@ public class EvalExternalLogicStubTest extends TestCase {
 	/**
 	 * Test method for {@link org.sakaiproject.evaluation.logic.impl.MockEvalExternalLogic#getUserDisplayName(java.lang.String)}.
 	 */
-	public void testGetUserDisplayName() {
+	public void testGetEvalUserById() {
 
-		String username = external.getUserDisplayName(EvalTestDataLoad.USER_ID);
-		Assert.assertNotNull(username);
-		Assert.assertEquals(EvalTestDataLoad.USER_DISPLAY, username);
+		EvalUser user = external.getEvalUserById(EvalTestDataLoad.USER_ID);
+		Assert.assertNotNull(user);
+		Assert.assertEquals(EvalTestDataLoad.USER_DISPLAY, user.displayName);
 
-		username = external.getUserDisplayName(EvalTestDataLoad.MAINT_USER_ID);
-		Assert.assertNotNull(username);
-		Assert.assertEquals(EvalTestDataLoad.MAINT_USER_DISPLAY, username);
+		user = external.getEvalUserById(EvalTestDataLoad.MAINT_USER_ID);
+		Assert.assertNotNull(user);
+		Assert.assertEquals(EvalTestDataLoad.MAINT_USER_DISPLAY, user.displayName);
 
-		username = external.getUserDisplayName(EvalTestDataLoad.ADMIN_USER_ID);
-		Assert.assertNotNull(username);
-		Assert.assertEquals(EvalTestDataLoad.ADMIN_USER_DISPLAY, username);
+		user = external.getEvalUserById(EvalTestDataLoad.ADMIN_USER_ID);
+		Assert.assertNotNull(user);
+		Assert.assertEquals(EvalTestDataLoad.ADMIN_USER_DISPLAY, user.displayName);
 
 	}
 

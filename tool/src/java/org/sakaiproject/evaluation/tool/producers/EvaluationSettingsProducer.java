@@ -26,6 +26,7 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.entity.EvalCategoryEntityProvider;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
@@ -228,7 +229,8 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
                      UIBranchContainer.make(chooseTemplate, "templateOptions:", i + "");
                   UISelectChoice.make(radiobranch, "radioValue", selectID, i);
                   UISelectLabel.make(radiobranch, "radioLabel", selectID, i);
-                  UIOutput.make(radiobranch, "radioOwner", externalLogic.getUserDisplayName( template.getOwner() ) );
+                  EvalUser owner = externalLogic.getEvalUserById( template.getOwner() );
+                  UIOutput.make(radiobranch, "radioOwner", owner.displayName );
                   UIInternalLink.make(radiobranch, "viewPreview_link", 
                         UIMessage.make("starteval.view.preview.link"), 
                         new EvalViewParameters(PreviewEvalProducer.VIEW_ID, null, template.getId()) );

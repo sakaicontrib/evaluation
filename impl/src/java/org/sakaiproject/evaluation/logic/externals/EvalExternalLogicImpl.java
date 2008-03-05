@@ -19,6 +19,7 @@ import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -49,8 +50,8 @@ import org.sakaiproject.evaluation.logic.entity.EvaluationEntityProvider;
 import org.sakaiproject.evaluation.logic.entity.ItemEntityProvider;
 import org.sakaiproject.evaluation.logic.entity.TemplateEntityProvider;
 import org.sakaiproject.evaluation.logic.entity.TemplateItemEntityProvider;
-import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalConfig;
@@ -237,7 +238,19 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
    }
 
    /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#getUserUsername(java.lang.String)
+    * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#getUserId(java.lang.String)
+    */
+   public String getUserId(String username) {
+      try {
+         return userDirectoryService.getUserId(username);
+      } catch(UserNotDefinedException ex) {
+         log.error("Could not get userId from username: " + username);
+      }
+      return null;
+   }
+
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#getUserUsername(java.lang.String)
     */
    public String getUserUsername(String userId) {
       if (isUserAnonymous(userId)) {
@@ -252,21 +265,9 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
    }
 
 
-
-   /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#getUserId(java.lang.String)
-    */
-   public String getUserId(String username) {
-      try {
-         return userDirectoryService.getUserId(username);
-      } catch(UserNotDefinedException ex) {
-         log.error("Could not get userId from username: " + username);
-      }
-      return null;
-   }
-
-   /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#getUserDisplayName(java.lang.String)
+   /**
+    * @param userId
+    * @return
     */
    public String getUserDisplayName(String userId) {
       if (isUserAnonymous(userId)) {
@@ -279,6 +280,96 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
          log.error("Could not get user from userId: " + userId, ex);
       }
       return "----------";
+   }
+
+
+
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#getEvalUserById(java.lang.String)
+    */
+   public EvalUser getEvalUserById(String userId) {
+      EvalUser user = makeInvalidUser(userId, null);
+      if (isUserAnonymous(userId)) {
+         user = makeAnonymousUser(userId);
+      } else {
+         // try to get internal user from eval
+         // TODO
+
+         // try to get user from Sakai
+         try {
+            User sakaiUser = userDirectoryService.getUser(userId);
+            user = new EvalUser(userId, EvalConstants.USER_TYPE_EXTERNAL,
+                  sakaiUser.getEmail(), sakaiUser.getEid(), sakaiUser.getDisplayName());
+         } catch(UserNotDefinedException ex) {
+            log.error("Could not get user from userId: " + userId, ex);
+         }
+      }
+      return user;
+   }
+
+   /**
+    * Generate an invalid user with fields filled out correctly,
+    * userId and email should not both be null
+    * 
+    * @param userId can be null
+    * @param email can be null
+    * @return
+    */
+   protected EvalUser makeInvalidUser(String userId, String email) {
+      if (userId == null) {
+         userId = "invalid:" + email;
+      }
+      EvalUser user = new EvalUser(userId, EvalConstants.USER_TYPE_INVALID, email);
+      user.displayName = EvalConstants.USER_TYPE_INVALID;
+      return user;
+   }
+
+   /**
+    * Generate an anonymous user with fields filled out correctly
+    * 
+    * @param userId
+    * @return
+    */
+   protected EvalUser makeAnonymousUser(String userId) {
+      return new EvalUser(userId, EvalConstants.USER_TYPE_ANONYMOUS,
+            null, "eid:" + userId, EvalConstants.USER_TYPE_ANONYMOUS);
+   }
+
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#getEvalUserByEmail(java.lang.String)
+    */
+   @SuppressWarnings("unchecked")
+   public EvalUser getEvalUserByEmail(String email) {
+      EvalUser user = makeInvalidUser(null, email);
+      Collection<User> sakaiUsers = userDirectoryService.findUsersByEmail(email);
+      if (sakaiUsers.size() > 0) {
+         User sakaiUser = sakaiUsers.iterator().next(); // just get the first one
+         user = new EvalUser(sakaiUser.getId(), EvalConstants.USER_TYPE_EXTERNAL,
+               sakaiUser.getEmail(), sakaiUser.getEid(), sakaiUser.getDisplayName());
+      }
+
+      // get the internal user if none found so far
+      if (EvalConstants.USER_TYPE_INVALID.equals(user.type)) {
+         // TODO
+      }
+
+      if (EvalConstants.USER_TYPE_INVALID.equals(user.type)) {
+         log.info("Could not get user from email: " + email);
+      }
+      return user;
+   }
+
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#getEvalUsersByIds(java.lang.String[])
+    */
+   public List<EvalUser> getEvalUsersByIds(String[] userIds) {
+      // make this more efficient maybe?
+      List<EvalUser> users = new ArrayList<EvalUser>();
+      for (int i = 0; i < userIds.length; i++) {
+         String userId = userIds[i];
+         users.add( getEvalUserById(userId) );
+      }
+      return users;
    }
 
 
@@ -944,7 +1035,8 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
     */
    public String cleanupUserStrings(String userSubmittedString) {
       // clean up the string
-      return FormattedText.processFormattedText(userSubmittedString, new StringBuilder(), true, false);            
+      // CANNOT CHANGE THIS TO STRINGBUILDER OR 2.4.x and below will fail -AZ
+      return FormattedText.processFormattedText(userSubmittedString, new StringBuffer(), true, false);            
    }
 
 }
