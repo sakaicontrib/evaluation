@@ -1036,7 +1036,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
    public String cleanupUserStrings(String userSubmittedString) {
       // clean up the string
       // CANNOT CHANGE THIS TO STRINGBUILDER OR 2.4.x and below will fail -AZ
-      return FormattedText.processFormattedText(userSubmittedString, new StringBuffer(), true, false);            
+      return FormattedText.processFormattedText(userSubmittedString, new StringBuffer());            
    }
 
 }
