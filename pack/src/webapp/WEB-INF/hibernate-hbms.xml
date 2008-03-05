@@ -9,6 +9,8 @@
       class="org.sakaiproject.springframework.orm.hibernate.impl.AdditionalHibernateMappingsImpl">
       <property name="mappingResources">
          <list>
+            <value>org/sakaiproject/evaluation/dao/hbm/EvalAdhocGroup.hbm.xml</value>
+            <value>org/sakaiproject/evaluation/dao/hbm/EvalAdhocUser.hbm.xml</value>
             <value>org/sakaiproject/evaluation/dao/hbm/EvalAnswer.hbm.xml</value>
             <value>org/sakaiproject/evaluation/dao/hbm/EvalAssignGroup.hbm.xml</value>
             <value>org/sakaiproject/evaluation/dao/hbm/EvalAssignHierarchy.hbm.xml</value>

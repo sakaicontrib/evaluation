@@ -11,6 +11,7 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.locators.TemplateItemWBL;
@@ -197,7 +198,8 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 
          UIMessage.make(form, "itemClassification", "modifytemplate.itemtype.block");
          UIMessage.make(form, "added-by", "modifyitem.added.by");
-         UIOutput.make(form, "userInfo", external.getUserDisplayName(firstTemplateItem.getOwner()));
+         EvalUser owner = external.getEvalUserById( firstTemplateItem.getOwner() );
+         UIOutput.make(form, "userInfo", owner.displayName );
          // remove link
 
          if (modify) {

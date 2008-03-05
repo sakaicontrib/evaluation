@@ -26,6 +26,7 @@ import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
+import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
@@ -351,7 +352,8 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
             UIMessage.make(itemBranch, "item-category", categoryMessage);
             UIMessage.make(tofill, "item-category-title", "modifytemplate.item.category.title");
 
-            UIOutput.make(itemBranch, "item-owner-name", externalLogic.getUserDisplayName(templateItem.getOwner()));
+            EvalUser owner = externalLogic.getEvalUserById( templateItem.getOwner() );
+            UIOutput.make(itemBranch, "item-owner-name", owner.displayName);
             UIMessage.make(tofill, "item-owner-title", "modifytemplate.item.owner.title");
 
             Boolean useResultsSharing = (Boolean) evalSettings.get(EvalSettings.ITEM_USE_RESULTS_SHARING);

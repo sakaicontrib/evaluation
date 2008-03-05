@@ -19,6 +19,7 @@ import java.util.List;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.viewparams.ItemViewParameters;
@@ -160,7 +161,8 @@ public class ControlItemsProducer implements ViewComponentProducer {
             UIInternalLink.make(itemBranch, "item-preview-link", UIMessage.make("general.command.preview"), 
                   new ItemViewParameters(PreviewItemProducer.VIEW_ID, item.getId(), (Long)null) );
 
-            UIOutput.make(itemBranch, "item-owner", externalLogic.getUserDisplayName( item.getOwner()) );
+            EvalUser owner = externalLogic.getEvalUserById( item.getOwner() );
+            UIOutput.make(itemBranch, "item-owner", owner.displayName );
             if (item.getExpert().booleanValue() == true) {
                // label expert items
                UIMessage.make(itemBranch, "item-expert", "controlitems.expert.label");

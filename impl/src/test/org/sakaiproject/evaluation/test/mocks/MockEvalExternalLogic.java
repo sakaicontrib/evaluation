@@ -24,6 +24,7 @@ import java.util.Set;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 
 
@@ -317,39 +318,50 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
 	 * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#isUserAnonymous(java.lang.String)
 	 */
 	public boolean isUserAnonymous(String userId) {
-		if (userId.equals(EvalTestDataLoad.USER_ID) ||
-				userId.equals(EvalTestDataLoad.MAINT_USER_ID) ||
-				userId.equals(EvalTestDataLoad.ADMIN_USER_ID)) {
+		if (userId.equals(EvalTestDataLoad.USER_ID) 
+		      ||	userId.equals(EvalTestDataLoad.MAINT_USER_ID) 
+		      ||	userId.equals(EvalTestDataLoad.ADMIN_USER_ID)
+				|| userId.equals(EvalTestDataLoad.STUDENT_USER_ID)) {
 			return false;
 		}
 		return true;
 	}
 
-	/**
-	 * Return titles from the data load class
-	 */
-	public String getDisplayTitle(String evalGroupId) {
-		if ( EvalTestDataLoad.SITE1_REF.equals(evalGroupId) ) {
-			return EvalTestDataLoad.SITE1_TITLE;
-		} else if ( EvalTestDataLoad.SITE2_REF.equals(evalGroupId) ) {
-			return EvalTestDataLoad.SITE2_TITLE;			
-		}
-		return "--------";
-	}
+   public EvalUser getEvalUserById(String userId) {
+      EvalUser user = new EvalUser(userId, EvalConstants.USER_TYPE_INVALID, null);
+      if ( EvalTestDataLoad.ADMIN_USER_ID.equals(userId) ) {
+         user = new EvalUser(userId, EvalConstants.USER_TYPE_INTERNAL, userId + "@institution.edu",
+               EvalTestDataLoad.ADMIN_USER_NAME, EvalTestDataLoad.ADMIN_USER_DISPLAY);
+      } else if ( EvalTestDataLoad.MAINT_USER_ID.equals(userId) ) {
+         user = new EvalUser(userId, EvalConstants.USER_TYPE_EXTERNAL, userId + "@institution.edu",
+               EvalTestDataLoad.MAINT_USER_NAME, EvalTestDataLoad.MAINT_USER_DISPLAY);
+      } else if ( EvalTestDataLoad.USER_ID.equals(userId) ) {
+         user = new EvalUser(userId, EvalConstants.USER_TYPE_EXTERNAL, userId + "@institution.edu",
+               EvalTestDataLoad.USER_NAME, EvalTestDataLoad.USER_DISPLAY);
+      } else if ( EvalTestDataLoad.STUDENT_USER_ID.equals(userId) ) {
+         user = new EvalUser(userId, EvalConstants.USER_TYPE_EXTERNAL, userId + "@institution.edu",
+               EvalTestDataLoad.STUDENT_USER_ID, EvalTestDataLoad.STUDENT_USER_ID + "name");
+      }
+      return user;
+   }
 
-	/**
-	 * Return names from the data load class
-	 */
-	public String getUserDisplayName(String userId) {
-		if ( EvalTestDataLoad.ADMIN_USER_ID.equals(userId) ) {
-			return EvalTestDataLoad.ADMIN_USER_DISPLAY;
-		} else if ( EvalTestDataLoad.MAINT_USER_ID.equals(userId) ) {
-			return EvalTestDataLoad.MAINT_USER_DISPLAY;			
-		} else if ( EvalTestDataLoad.USER_ID.equals(userId) ) {
-			return EvalTestDataLoad.USER_DISPLAY;			
-		}
-		return "----------";
-	}
+   public EvalUser getEvalUserByEmail(String email) {
+      String userId = email; // userId + "@institution.edu"
+      int position = userId.indexOf('@');
+      if (position != -1) {
+         userId = userId.substring(0, position);
+      }
+      EvalUser user = getEvalUserById(userId);
+      return user;
+   }
+
+   public List<EvalUser> getEvalUsersByIds(String[] userIds) {
+      List<EvalUser> users = new ArrayList<EvalUser>();
+      for (String userId : userIds) {
+         users.add( getEvalUserById(userId) );
+      }
+      return users;
+   }
 
 	/**
 	 * Return usernames from the data load class
@@ -391,6 +403,17 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
 		return Locale.US;
 	}
 
+   /**
+    * Return titles from the data load class
+    */
+   public String getDisplayTitle(String evalGroupId) {
+      if ( EvalTestDataLoad.SITE1_REF.equals(evalGroupId) ) {
+         return EvalTestDataLoad.SITE1_TITLE;
+      } else if ( EvalTestDataLoad.SITE2_REF.equals(evalGroupId) ) {
+         return EvalTestDataLoad.SITE2_TITLE;         
+      }
+      return "--------";
+   }
 
 	/**
 	 * Return Context objects based on data from the data load class

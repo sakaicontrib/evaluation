@@ -21,6 +21,7 @@ import java.util.Locale;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
@@ -184,7 +185,8 @@ public class ControlTemplatesProducer implements ViewComponentProducer {
 				      externalLogic.getEntityURL(template) )
 				      .decorate( new UITooltipDecorator( UIMessage.make("general.direct.link.title") ) );
 
-				UIOutput.make(templateRow, "template-owner", externalLogic.getUserDisplayName( template.getOwner() ));
+            EvalUser owner = externalLogic.getEvalUserById( template.getOwner() );
+				UIOutput.make(templateRow, "template-owner", owner.displayName );
 				UIOutput.make(templateRow, "template-last-update", df.format( template.getLastModified() ));
 
 			}

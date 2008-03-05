@@ -31,6 +31,7 @@ import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
+import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -344,9 +345,9 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
             // for each instructor, make a branch containing all instructor questions
             for (String instructorUserId : instructors) {
                UIBranchContainer instructorSection = UIBranchContainer.make(form, "instructorSection:", "inst"+displayNumber);
-               String instructorName = external.getUserDisplayName(instructorUserId);
+               EvalUser instructor = external.getEvalUserById( instructorUserId );
                UIMessage.make(instructorSection, "instructor-questions-header", 
-                     "takeeval.instructor.questions.header", new Object[] { instructorName });
+                     "takeeval.instructor.questions.header", new Object[] { instructor.displayName });
                // for each non-child item in this evaluation
                handleCategoryRender(
                      TemplateItemUtils.getCategoryTemplateItems(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, nonChildItemsList), 

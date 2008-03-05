@@ -21,6 +21,7 @@ import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -198,7 +199,8 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
          }
          itemOTP = "itemWBL." + ItemBeanWBL.NEW_1 + ".";
          commonDisplayOTP = itemOTP;
-         itemOwnerName = externalLogic.getUserDisplayName(currentUserId);
+         EvalUser owner = externalLogic.getEvalUserById( currentUserId );
+         itemOwnerName = owner.displayName;
          // check if we are operating in a template
          if (templateId != null) {
             // new template item in the current template
@@ -229,7 +231,8 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
             scaleId = currentScale.getId();
          }
 
-         itemOwnerName = externalLogic.getUserDisplayName(item.getOwner());
+         EvalUser owner = externalLogic.getEvalUserById( item.getOwner() );
+         itemOwnerName = owner.displayName;
          itemClassification = item.getClassification();
          itemOTP = "itemWBL." + itemId + ".";
          commonDisplayOTP = itemOTP;
@@ -249,7 +252,8 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
             scaleId = currentScale.getId();
          }
 
-         itemOwnerName = externalLogic.getUserDisplayName(templateItem.getItem().getOwner());
+         EvalUser owner = externalLogic.getEvalUserById( templateItem.getItem().getOwner() );
+         itemOwnerName = owner.displayName;
          itemClassification = templateItem.getItem().getClassification();
          templateItemOTP = "templateItemWBL." + templateItemId + ".";
          itemOTP = templateItemOTP + "item.";

@@ -26,7 +26,7 @@ public class EvalConstants {
     * The current version of the app for updating purposes,
     * this should always be the NEXT version of the tool if this is trunk code
     */
-   public static String APP_VERSION = "1.2.0-RC2"; 
+   public static String APP_VERSION = "1.2.0-RC2";
 
    public static String SVN_REVISION = "$Revision$";
    public static String SVN_LAST_UPDATE = "$Date$";
@@ -222,6 +222,29 @@ public class EvalConstants {
     * Permission: User can take an evaluation for any group they have this permission in
     */
    public final static String PERM_TAKE_EVALUATION = "eval.take.evaluation";
+
+
+   /**
+    * EvalUser class: Unknown type
+    */
+   public final static String USER_TYPE_UNKNOWN = "Unknown";
+   /**
+    * EvalUser class: Invalid user (this user could not be found in the system)
+    */
+   public final static String USER_TYPE_INVALID = "Invalid";
+   /**
+    * EvalUser class: Anonymous user who does not have an account or is not identified
+    */
+   public final static String USER_TYPE_ANONYMOUS = "Anonymous";
+   /**
+    * EvalUser class: Internal user, this is probably an ad-hoc user or maybe the admin user
+    */
+   public final static String USER_TYPE_INTERNAL = "Internal";
+   /**
+    * EvalUser class: External user, this user comes in via a provider or from Sakai
+    */
+   public final static String USER_TYPE_EXTERNAL = "External";
+
 
    /**
     * EvalGroup class: Unknown type

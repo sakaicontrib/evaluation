@@ -12,6 +12,7 @@ import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -70,8 +71,7 @@ public class PDFReportExporter {
          }
       }
 
-      String userDisplayName = externalLogic.getUserDisplayName(externalLogic.getCurrentUserId());
-      String userEid = externalLogic.getUserUsername(externalLogic.getCurrentUserId());
+      EvalUser user = externalLogic.getEvalUserById( externalLogic.getCurrentUserId() );
 
       DateFormat df = DateFormat.getDateInstance(DateFormat.LONG);
 
@@ -80,8 +80,8 @@ public class PDFReportExporter {
       int enrollmentsCount = evaluationService.countParticipantsForEval(responses.evaluation.getId());
 
       evalPDFReportBuilder.addTitlePage(responses.evaluation.getTitle(), 
-            userDisplayName, 
-            messageLocator.getMessage("reporting.pdf.accountinfo", new String[] {userEid, userDisplayName}), 
+            user.displayName, 
+            messageLocator.getMessage("reporting.pdf.accountinfo", new String[] {user.username, user.displayName}), 
             messageLocator.getMessage("reporting.pdf.startdatetime",df.format(responses.evaluation.getStartDate())),
             messageLocator.getMessage("reporting.pdf.replyrate", new String[] { EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount) }),
             bannerImageBytes, messageLocator.getMessage("reporting.pdf.defaultsystemname"));
