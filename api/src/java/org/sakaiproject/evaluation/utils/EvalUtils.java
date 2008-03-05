@@ -112,7 +112,8 @@ public class EvalUtils {
     * 
     * @param checkState the state constant to check
     * @param currentState the state constant that represents the current state
-    * @param includeSame TODO
+    * @param includeSame if true then true will be returned if the checkState = currentState,
+    * otherwise false is returned when the states are equal
     * @return true if the checkState is equal to or after the currentState, 
     * false if the currentState is before the checkState
     */
@@ -123,7 +124,7 @@ public class EvalUtils {
       } else {
          int checkNum = stateToNumber(checkState);
          int currentNum = stateToNumber(currentState);
-         if (currentNum >= checkNum) {
+         if (currentNum < checkNum) {
             isAfterState = true;
          }
       }
@@ -148,13 +149,14 @@ public class EvalUtils {
       } else {
          int checkNum = stateToNumber(checkState);
          int currentNum = stateToNumber(currentState);
-         if (currentNum < checkNum) {
+         if (currentNum > checkNum) {
             isBeforeState = true;
          }
       }
       return isBeforeState;
    }
 
+   private static HashMap<String, Integer> stateNumbers = null;
    /**
     * Defines the ORDER of the states<br/>
     * States: Partial -> InQueue -> Active -> GracePeriod -> Closed -> Viewable (-> Deleted)
@@ -165,22 +167,14 @@ public class EvalUtils {
    private static int stateToNumber(String stateConstant) {
       // maybe should do this with a map or something
       int value = -1;
-      if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(stateConstant)) {
-         value = 0;
-      } else if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(stateConstant)) {
-         value = 1;
-      } else if (EvalConstants.EVALUATION_STATE_ACTIVE.equals(stateConstant)) {
-         value = 2;
-      } else if (EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(stateConstant)) {
-         value = 3;
-      } else if (EvalConstants.EVALUATION_STATE_CLOSED.equals(stateConstant)) {
-         value = 4;
-      } else if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(stateConstant)) {
-         value = 5;
-      } else if (EvalConstants.EVALUATION_STATE_DELETED.equals(stateConstant)) {
-         value = 6;
-      } else if (EvalConstants.EVALUATION_STATE_UNKNOWN.equals(stateConstant)) {
-         value = -1;
+      if (stateNumbers == null) {
+         stateNumbers = new HashMap<String, Integer>();
+         for (int i = 0; i < EvalConstants.STATE_ORDER.length; i++) {
+            stateNumbers.put(EvalConstants.STATE_ORDER[i], i);
+         }
+      }
+      if (stateNumbers.containsKey(stateConstant)) {
+         value = stateNumbers.get(stateConstant);
       }
       return value;
    }
@@ -508,5 +502,7 @@ public class EvalUtils {
       }
       return returnString;
    }
+
+
 
 }
