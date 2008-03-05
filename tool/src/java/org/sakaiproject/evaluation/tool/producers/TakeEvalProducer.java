@@ -175,12 +175,11 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 
       // check the states of the evaluation first to give the user a tip that this eval is not takeable,
       // also avoids wasting time checking permissions when the evaluation certainly is closed
-      String evalStatus = evaluationService.updateEvaluationState(evaluationId); // make sure state is up to date
-      if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(evalStatus)) {
-         UIMessage.make(tofill, "eval-cannot-take-message", "takeeval.eval.not.open", 
+      String evalState = evaluationService.returnAndFixEvalState(eval, true); // make sure state is up to date
+      if (EvalUtils.checkStateBefore(EvalConstants.EVALUATION_STATE_ACTIVE, evalState, true)) {
+            UIMessage.make(tofill, "eval-cannot-take-message", "takeeval.eval.not.open", 
                new String[] {df.format(eval.getStartDate()), df.format(eval.getDueDate())} );
-      } else if (EvalConstants.EVALUATION_STATE_CLOSED.equals(evalStatus) ||
-            EvalConstants.EVALUATION_STATE_VIEWABLE.equals(evalStatus)) {
+      } else if (EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_CLOSED, evalState, true)) {
          UIMessage.make(tofill, "eval-cannot-take-message", "takeeval.eval.closed",
                new String[] {df.format(eval.getDueDate())} );
       } else {
@@ -291,7 +290,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
          }
 
          // get the setting and make sure it cannot be null (fix for http://www.caret.cam.ac.uk/jira/browse/CTL-531)
-         Boolean studentAllowedLeaveUnanswered = ((Boolean)evalSettings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED));
+         Boolean studentAllowedLeaveUnanswered = (Boolean) evalSettings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED);
          if (studentAllowedLeaveUnanswered == null) {
             studentAllowedLeaveUnanswered = eval.getBlankResponsesAllowed();
             if (studentAllowedLeaveUnanswered == null) {

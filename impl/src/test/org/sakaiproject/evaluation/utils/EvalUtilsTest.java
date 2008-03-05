@@ -148,6 +148,48 @@ public class EvalUtilsTest extends TestCase {
       // no exceptions thrown
    }
 
+
+   /**
+    * Test method for {@link org.sakaiproject.evaluation.utils.EvalUtils#checkStateAfter(java.lang.String, java.lang.String, boolean)}.
+    */
+   public void testCheckStateAfter() {
+      // check that same works
+      assertTrue( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.EVALUATION_STATE_INQUEUE, true) );
+      assertTrue( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.EVALUATION_STATE_PARTIAL, true) );
+
+      assertTrue( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.EVALUATION_STATE_PARTIAL, false) );
+      assertTrue( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_CLOSED, EvalConstants.EVALUATION_STATE_ACTIVE, false) );
+      assertTrue( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_VIEWABLE, EvalConstants.EVALUATION_STATE_CLOSED, false) );
+
+      // now check the false cases
+      assertFalse( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.EVALUATION_STATE_ACTIVE, false) );
+
+      assertFalse( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.EVALUATION_STATE_ACTIVE, false) );
+      assertFalse( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_GRACEPERIOD, EvalConstants.EVALUATION_STATE_CLOSED, false) );
+      assertFalse( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.EVALUATION_STATE_VIEWABLE, false) );
+   }
+
+   /**
+    * Test method for {@link org.sakaiproject.evaluation.utils.EvalUtils#checkStateBefore(java.lang.String, java.lang.String, boolean)}.
+    */
+   public void testCheckStateBefore() {
+      // check that same works
+      assertTrue( EvalUtils.checkStateBefore(EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.EVALUATION_STATE_ACTIVE, true) );
+      assertTrue( EvalUtils.checkStateBefore(EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.EVALUATION_STATE_ACTIVE, true) );
+
+      assertTrue( EvalUtils.checkStateBefore(EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.EVALUATION_STATE_ACTIVE, false) );
+      assertTrue( EvalUtils.checkStateBefore(EvalConstants.EVALUATION_STATE_GRACEPERIOD, EvalConstants.EVALUATION_STATE_CLOSED, false) );
+      assertTrue( EvalUtils.checkStateBefore(EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.EVALUATION_STATE_VIEWABLE, false) );
+
+      // now check the false cases
+      assertFalse( EvalUtils.checkStateBefore(EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.EVALUATION_STATE_INQUEUE, false) );
+
+      assertFalse( EvalUtils.checkStateBefore(EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.EVALUATION_STATE_PARTIAL, false) );
+      assertFalse( EvalUtils.checkStateBefore(EvalConstants.EVALUATION_STATE_CLOSED, EvalConstants.EVALUATION_STATE_ACTIVE, false) );
+      assertFalse( EvalUtils.checkStateBefore(EvalConstants.EVALUATION_STATE_VIEWABLE, EvalConstants.EVALUATION_STATE_CLOSED, false) );
+   }
+
+
    /**
     * Test method for {@link org.sakaiproject.evaluation.utils.EvalUtils#validateSharingConstant(java.lang.String)}.
     */
@@ -324,7 +366,6 @@ public class EvalUtilsTest extends TestCase {
       difference = EvalUtils.getHoursDifference(startTime, endTime);
       assertEquals(5, difference);
    }
-
 
 
 
@@ -540,6 +581,16 @@ public class EvalUtilsTest extends TestCase {
       } catch (IllegalArgumentException e) {
          assertNotNull(e);
       }
+   }
+
+   /**
+    * Test method for {@link org.sakaiproject.evaluation.utils.EvalUtils#makeResponseRateStringFromCounts(int, int)}.
+    */
+   public void testMakeResponseRateStringFromCounts() {
+      assertNotNull( EvalUtils.makeResponseRateStringFromCounts(0, 10) );
+      assertNotNull( EvalUtils.makeResponseRateStringFromCounts(10, 0) );
+      assertNotNull( EvalUtils.makeResponseRateStringFromCounts(0, 0) );
+      assertNotNull( EvalUtils.makeResponseRateStringFromCounts(20, 20) );
    }
 
 }

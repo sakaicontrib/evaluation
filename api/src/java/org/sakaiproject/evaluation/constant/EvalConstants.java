@@ -26,7 +26,7 @@ public class EvalConstants {
     * The current version of the app for updating purposes,
     * this should always be the NEXT version of the tool if this is trunk code
     */
-   public static String APP_VERSION = "1.2.0-RC2";
+   public static String APP_VERSION = "1.2.0-RC2"; 
 
    public static String SVN_REVISION = "$Revision$";
    public static String SVN_LAST_UPDATE = "$Date$";
@@ -113,6 +113,20 @@ public class EvalConstants {
     * <br/>States: Partial -> InQueue -> Active -> GracePeriod -> Closed -> Viewable (-> Deleted)
     */
    public static final String EVALUATION_STATE_DELETED = "Deleted";
+
+   /**
+    * This defines the correct order to move through the evaluation states
+    * <br/>States: Partial -> InQueue -> Active -> GracePeriod -> Closed -> Viewable (-> Deleted)
+    */
+   public static final String[] STATE_ORDER = {
+      EVALUATION_STATE_PARTIAL,
+      EVALUATION_STATE_INQUEUE,
+      EVALUATION_STATE_ACTIVE,
+      EVALUATION_STATE_GRACEPERIOD,
+      EVALUATION_STATE_CLOSED,
+      EVALUATION_STATE_VIEWABLE,
+      EVALUATION_STATE_DELETED
+   };
 
 
    /**
