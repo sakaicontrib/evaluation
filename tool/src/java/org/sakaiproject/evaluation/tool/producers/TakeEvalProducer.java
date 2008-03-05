@@ -176,10 +176,10 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
       // check the states of the evaluation first to give the user a tip that this eval is not takeable,
       // also avoids wasting time checking permissions when the evaluation certainly is closed
       String evalState = evaluationService.returnAndFixEvalState(eval, true); // make sure state is up to date
-      if (EvalUtils.checkStateBefore(EvalConstants.EVALUATION_STATE_ACTIVE, evalState, true)) {
+      if (EvalUtils.checkStateBefore(evalState, EvalConstants.EVALUATION_STATE_ACTIVE, true)) {
             UIMessage.make(tofill, "eval-cannot-take-message", "takeeval.eval.not.open", 
                new String[] {df.format(eval.getStartDate()), df.format(eval.getDueDate())} );
-      } else if (EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_CLOSED, evalState, true)) {
+      } else if (EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_CLOSED, true)) {
          UIMessage.make(tofill, "eval-cannot-take-message", "takeeval.eval.closed",
                new String[] {df.format(eval.getDueDate())} );
       } else {
@@ -315,18 +315,20 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 
          // get the instructors for this evaluation
          Set<String> instructors = external.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED);
+         String[] instructorIds = instructors.toArray(new String[instructors.size()]);
 
-         // Get the Hierarchy NodeIDs for the current Group
-         List<EvalHierarchyNode> evalHierNodes = hierarchyLogic.getNodesAboveEvalGroup(evalGroupId);
-         String[] evalHierNodeIDs = new String[evalHierNodes.size()];
-         for (int nodecnt = 0; nodecnt < evalHierNodes.size(); nodecnt++) {
-            evalHierNodeIDs[nodecnt] = evalHierNodes.get(nodecnt).id;
+         // Get the Hierarchy NodeIDs for the current Group and turn it into an array of ids
+         List<EvalHierarchyNode> hierarchyNodes = hierarchyLogic.getNodesAboveEvalGroup(evalGroupId);
+         String[] hierarchyNodeIDs = new String[hierarchyNodes.size()];
+         for (int i = 0; i < hierarchyNodes.size(); i++) {
+            hierarchyNodeIDs[i] = hierarchyNodes.get(i).id;
          }
 
          // get all items for this evaluation
-         allItems = authoringService.getTemplateItemsForEvaluation(evaluationId, evalHierNodeIDs, instructors.toArray(new String[instructors.size()]), new String[] {evalGroupId});
+         allItems = authoringService.getTemplateItemsForEvaluation(evaluationId, hierarchyNodeIDs, 
+               instructorIds, new String[] {evalGroupId});
 
-         // filter out the block child items, to get a list non-child items
+         // filter out the block child items, to get a list of non-child items
          List<EvalTemplateItem> nonChildItemsList = TemplateItemUtils.getNonChildItems(allItems);
 
          if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_COURSE, nonChildItemsList)) {
@@ -336,7 +338,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
             // for each non-child item in this evaluation
             handleCategoryRender(
                   TemplateItemUtils.getCategoryTemplateItems(EvalConstants.ITEM_CATEGORY_COURSE, nonChildItemsList), 
-                  form, courseSection, evalHierNodes, null);
+                  form, courseSection, hierarchyNodes, null);
          }
 
          if (instructors.size() > 0 &&
@@ -350,7 +352,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                // for each non-child item in this evaluation
                handleCategoryRender(
                      TemplateItemUtils.getCategoryTemplateItems(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, nonChildItemsList), 
-                     form, instructorSection, evalHierNodes, instructorUserId);
+                     form, instructorSection, hierarchyNodes, instructorUserId);
             }
          }
 
@@ -376,7 +378,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
        * have to take care of the special toplevel hierarchy type first.
        * 
        * I don't suppose this is terribly efficient, just looping through the nodes and items over and over again.
-       * However, I don't any survey is going to have enough questions for it to ever matter.
+       * However, I don't think any survey is going to have enough questions for it to ever matter.
        */
       List<EvalTemplateItem> templateItems = new ArrayList<EvalTemplateItem>();
       for (EvalTemplateItem item: itemsList) {

@@ -26,6 +26,7 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
+import org.sakaiproject.evaluation.test.mocks.MockExternalHierarchyLogic;
 
 
 /**
@@ -35,7 +36,7 @@ import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
  */
 public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
 
-   protected EvalDeliveryServiceImpl responses;
+   protected EvalDeliveryServiceImpl deliveryService;
    protected EvalSettings settings;
 
    private EvalEvaluation evaluationClosedTwo;
@@ -72,12 +73,13 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       authoringServiceImpl.setSecurityChecks(securityChecks);
 
       // create and setup the object to be tested
-      responses = new EvalDeliveryServiceImpl();
-      responses.setDao(evaluationDao);
-      responses.setExternalLogic( new MockEvalExternalLogic() );
-      responses.setEvaluationService(evaluationService);
-      responses.setSettings(settings);
-      responses.setAuthoringService( authoringServiceImpl );
+      deliveryService = new EvalDeliveryServiceImpl();
+      deliveryService.setDao(evaluationDao);
+      deliveryService.setExternalLogic( new MockEvalExternalLogic() );
+      deliveryService.setHierarchyLogic( new MockExternalHierarchyLogic() );
+      deliveryService.setEvaluationService(evaluationService);
+      deliveryService.setSettings(settings);
+      deliveryService.setAuthoringService( authoringServiceImpl );
    }
 
    // run this before each test starts and as part of the transaction
@@ -124,16 +126,16 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
    public void testGetResponseById() {
       EvalResponse response = null;
 
-      response = responses.getResponseById( etdl.response1.getId() );
+      response = deliveryService.getResponseById( etdl.response1.getId() );
       assertNotNull(response);
       assertEquals(etdl.response1.getId(), response.getId());
 
-      response = responses.getResponseById( etdl.response2.getId() );
+      response = deliveryService.getResponseById( etdl.response2.getId() );
       assertNotNull(response);
       assertEquals(etdl.response2.getId(), response.getId());
 
       // test get eval by invalid id
-      response = responses.getResponseById( EvalTestDataLoad.INVALID_LONG_ID );
+      response = deliveryService.getResponseById( EvalTestDataLoad.INVALID_LONG_ID );
       assertNull(response);
    }
 
@@ -146,14 +148,14 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       List<Long> ids = null;
 
       // retrieve one response for a normal user in one eval
-      l = responses.getEvaluationResponses(EvalTestDataLoad.USER_ID, 
+      l = deliveryService.getEvaluationResponses(EvalTestDataLoad.USER_ID, 
             new Long[] { etdl.evaluationActive.getId() }, true );
       assertNotNull(l);
       assertEquals(1, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
       assertTrue(ids.contains( etdl.response1.getId() ));
 
-      l = responses.getEvaluationResponses(EvalTestDataLoad.STUDENT_USER_ID, 
+      l = deliveryService.getEvaluationResponses(EvalTestDataLoad.STUDENT_USER_ID, 
             new Long[] { etdl.evaluationClosed.getId() }, true );
       assertNotNull(l);
       assertEquals(1, l.size());
@@ -161,7 +163,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       assertTrue(ids.contains( etdl.response3.getId() ));
 
       // retrieve all responses for a normal user in one eval
-      l = responses.getEvaluationResponses(EvalTestDataLoad.USER_ID, 
+      l = deliveryService.getEvaluationResponses(EvalTestDataLoad.USER_ID, 
             new Long[] { etdl.evaluationClosed.getId() }, true );
       assertNotNull(l);
       assertEquals(2, l.size());
@@ -170,7 +172,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       assertTrue(ids.contains( etdl.response6.getId() ));
 
       // retrieve all responses for a normal user in mutliple evals
-      l = responses.getEvaluationResponses(EvalTestDataLoad.USER_ID, 
+      l = deliveryService.getEvaluationResponses(EvalTestDataLoad.USER_ID, 
             new Long[] { etdl.evaluationActive.getId(), etdl.evaluationClosed.getId(), etdl.evaluationViewable.getId() }, true );
       assertNotNull(l);
       assertEquals(4, l.size());
@@ -181,30 +183,30 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       assertTrue(ids.contains( etdl.response6.getId() ));
 
       // attempt to retrieve all responses
-      l = responses.getEvaluationResponses(EvalTestDataLoad.USER_ID, 
+      l = deliveryService.getEvaluationResponses(EvalTestDataLoad.USER_ID, 
             new Long[] { etdl.evaluationActive.getId(), etdl.evaluationClosed.getId(), etdl.evaluationViewable.getId() }, null );
       assertNotNull(l);
       assertEquals(4, l.size());
 
       // attempt to retrieve all incomplete responses (there are none)
-      l = responses.getEvaluationResponses(EvalTestDataLoad.USER_ID, 
+      l = deliveryService.getEvaluationResponses(EvalTestDataLoad.USER_ID, 
             new Long[] { etdl.evaluationActive.getId(), etdl.evaluationClosed.getId(), etdl.evaluationViewable.getId() }, false );
       assertNotNull(l);
       assertEquals(0, l.size());
 
       // attempt to retrieve results for user that has no responses
-      l = responses.getEvaluationResponses(EvalTestDataLoad.STUDENT_USER_ID, 
+      l = deliveryService.getEvaluationResponses(EvalTestDataLoad.STUDENT_USER_ID, 
             new Long[] { etdl.evaluationActive.getId() }, true );
       assertNotNull(l);
       assertEquals(0, l.size());
 
-      l = responses.getEvaluationResponses(EvalTestDataLoad.MAINT_USER_ID, 
+      l = deliveryService.getEvaluationResponses(EvalTestDataLoad.MAINT_USER_ID, 
             new Long[] { etdl.evaluationActive.getId(), etdl.evaluationClosed.getId(), etdl.evaluationViewable.getId() }, true );
       assertNotNull(l);
       assertEquals(0, l.size());
 
       // test that admin can fetch all results for evaluationSetupService
-      l = responses.getEvaluationResponses(EvalTestDataLoad.ADMIN_USER_ID, 
+      l = deliveryService.getEvaluationResponses(EvalTestDataLoad.ADMIN_USER_ID, 
             new Long[] { etdl.evaluationActive.getId(), etdl.evaluationClosed.getId(), etdl.evaluationViewable.getId() }, true );
       assertNotNull(l);
       assertEquals(6, l.size());
@@ -216,7 +218,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       assertTrue(ids.contains( etdl.response5.getId() ));
       assertTrue(ids.contains( etdl.response6.getId() ));
 
-      l = responses.getEvaluationResponses(EvalTestDataLoad.ADMIN_USER_ID, 
+      l = deliveryService.getEvaluationResponses(EvalTestDataLoad.ADMIN_USER_ID, 
             new Long[] { etdl.evaluationViewable.getId() }, true );
       assertNotNull(l);
       assertEquals(2, l.size());
@@ -226,7 +228,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
 
       // check that empty array causes failure
       try {
-         l = responses.getEvaluationResponses(EvalTestDataLoad.ADMIN_USER_ID, 
+         l = deliveryService.getEvaluationResponses(EvalTestDataLoad.ADMIN_USER_ID, 
                new Long[] {}, true );
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
@@ -235,7 +237,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
 
       // check that invalid IDs cause failure
       try {
-         l = responses.getEvaluationResponses(EvalTestDataLoad.ADMIN_USER_ID, 
+         l = deliveryService.getEvaluationResponses(EvalTestDataLoad.ADMIN_USER_ID, 
                new Long[] { EvalTestDataLoad.INVALID_LONG_ID }, true );
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
@@ -243,7 +245,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       }
 
       try {
-         l = responses.getEvaluationResponses(EvalTestDataLoad.ADMIN_USER_ID, 
+         l = deliveryService.getEvaluationResponses(EvalTestDataLoad.ADMIN_USER_ID, 
                new Long[] { etdl.evaluationViewable.getId(), EvalTestDataLoad.INVALID_LONG_ID }, true );
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
@@ -259,37 +261,37 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
    public void testCountResponses() {
 
       // test counts for all responses in various evaluationSetupService
-      assertEquals(3, responses.countResponses( etdl.evaluationClosed.getId(), null, null) );
-      assertEquals(2, responses.countResponses( etdl.evaluationViewable.getId(), null, null) );
-      assertEquals(1, responses.countResponses( etdl.evaluationActive.getId(), null, null) );
-      assertEquals(0, responses.countResponses( etdl.evaluationActiveUntaken.getId(), null, null) );
+      assertEquals(3, deliveryService.countResponses( etdl.evaluationClosed.getId(), null, null) );
+      assertEquals(2, deliveryService.countResponses( etdl.evaluationViewable.getId(), null, null) );
+      assertEquals(1, deliveryService.countResponses( etdl.evaluationActive.getId(), null, null) );
+      assertEquals(0, deliveryService.countResponses( etdl.evaluationActiveUntaken.getId(), null, null) );
 
       // test counts limited by evalGroupId
-      assertEquals(1, responses.countResponses( etdl.evaluationClosed.getId(), EvalTestDataLoad.SITE1_REF, null) );
-      assertEquals(0, responses.countResponses( etdl.evaluationViewable.getId(), EvalTestDataLoad.SITE1_REF, null) );
-      assertEquals(1, responses.countResponses( etdl.evaluationActive.getId(), EvalTestDataLoad.SITE1_REF, null) );
-      assertEquals(0, responses.countResponses( etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.SITE1_REF, null) );
+      assertEquals(1, deliveryService.countResponses( etdl.evaluationClosed.getId(), EvalTestDataLoad.SITE1_REF, null) );
+      assertEquals(0, deliveryService.countResponses( etdl.evaluationViewable.getId(), EvalTestDataLoad.SITE1_REF, null) );
+      assertEquals(1, deliveryService.countResponses( etdl.evaluationActive.getId(), EvalTestDataLoad.SITE1_REF, null) );
+      assertEquals(0, deliveryService.countResponses( etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.SITE1_REF, null) );
 
-      assertEquals(2, responses.countResponses( etdl.evaluationClosed.getId(), EvalTestDataLoad.SITE2_REF, null) );
-      assertEquals(2, responses.countResponses( etdl.evaluationViewable.getId(), EvalTestDataLoad.SITE2_REF, null) );
-      assertEquals(0, responses.countResponses( etdl.evaluationActive.getId(), EvalTestDataLoad.SITE2_REF, null) );
-      assertEquals(0, responses.countResponses( etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.SITE2_REF, null) );
+      assertEquals(2, deliveryService.countResponses( etdl.evaluationClosed.getId(), EvalTestDataLoad.SITE2_REF, null) );
+      assertEquals(2, deliveryService.countResponses( etdl.evaluationViewable.getId(), EvalTestDataLoad.SITE2_REF, null) );
+      assertEquals(0, deliveryService.countResponses( etdl.evaluationActive.getId(), EvalTestDataLoad.SITE2_REF, null) );
+      assertEquals(0, deliveryService.countResponses( etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.SITE2_REF, null) );
 
       // test counts limited by completed
-      assertEquals(3, responses.countResponses( etdl.evaluationClosed.getId(), null, true) );
-      assertEquals(2, responses.countResponses( etdl.evaluationViewable.getId(), null, true) );
-      assertEquals(1, responses.countResponses( etdl.evaluationActive.getId(), null, true) );
-      assertEquals(0, responses.countResponses( etdl.evaluationActiveUntaken.getId(), null, true) );
+      assertEquals(3, deliveryService.countResponses( etdl.evaluationClosed.getId(), null, true) );
+      assertEquals(2, deliveryService.countResponses( etdl.evaluationViewable.getId(), null, true) );
+      assertEquals(1, deliveryService.countResponses( etdl.evaluationActive.getId(), null, true) );
+      assertEquals(0, deliveryService.countResponses( etdl.evaluationActiveUntaken.getId(), null, true) );
 
       // test counts limited by incomplete
-      assertEquals(0, responses.countResponses( etdl.evaluationClosed.getId(), null, false) );
-      assertEquals(0, responses.countResponses( etdl.evaluationViewable.getId(), null, false) );
-      assertEquals(0, responses.countResponses( etdl.evaluationActive.getId(), null, false) );
-      assertEquals(0, responses.countResponses( etdl.evaluationActiveUntaken.getId(), null, false) );
+      assertEquals(0, deliveryService.countResponses( etdl.evaluationClosed.getId(), null, false) );
+      assertEquals(0, deliveryService.countResponses( etdl.evaluationViewable.getId(), null, false) );
+      assertEquals(0, deliveryService.countResponses( etdl.evaluationActive.getId(), null, false) );
+      assertEquals(0, deliveryService.countResponses( etdl.evaluationActiveUntaken.getId(), null, false) );
 
       // check that invalid IDs cause failure
       try {
-         responses.countResponses( EvalTestDataLoad.INVALID_LONG_ID, null, null );
+         deliveryService.countResponses( EvalTestDataLoad.INVALID_LONG_ID, null, null );
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
          assertNotNull(e);
@@ -305,27 +307,27 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       List<Long> ids = null;
 
       // retrieve one answer for an eval
-      l = responses.getEvalAnswers( etdl.item1.getId(), etdl.evaluationActive.getId(), null );
+      l = deliveryService.getEvalAnswers( etdl.item1.getId(), etdl.evaluationActive.getId(), null );
       assertNotNull(l);
       assertEquals(1, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
       assertTrue(ids.contains( etdl.answer1_1.getId() ));
 
-      l = responses.getEvalAnswers( etdl.item5.getId(), etdl.evaluationClosed.getId(), null );
+      l = deliveryService.getEvalAnswers( etdl.item5.getId(), etdl.evaluationClosed.getId(), null );
       assertNotNull(l);
       assertEquals(1, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
       assertTrue(ids.contains( etdl.answer2_5.getId() ));
 
       // retrieve multiple answers for an eval
-      l = responses.getEvalAnswers( etdl.item1.getId(), etdl.evaluationViewable.getId(), null );
+      l = deliveryService.getEvalAnswers( etdl.item1.getId(), etdl.evaluationViewable.getId(), null );
       assertNotNull(l);
       assertEquals(2, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
       assertTrue(ids.contains( etdl.answer4_1.getId() ));
       assertTrue(ids.contains( etdl.answer5_1.getId() ));
 
-      l = responses.getEvalAnswers( etdl.item2.getId(), etdl.evaluationClosed.getId(), null );
+      l = deliveryService.getEvalAnswers( etdl.item2.getId(), etdl.evaluationClosed.getId(), null );
       assertNotNull(l);
       assertEquals(2, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
@@ -333,7 +335,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       assertTrue(ids.contains( etdl.answer3_2.getId() ));
 
       // retrieve no answers for an eval item
-      l = responses.getEvalAnswers( etdl.item1.getId(), etdl.evaluationActiveUntaken.getId(), null );
+      l = deliveryService.getEvalAnswers( etdl.item1.getId(), etdl.evaluationActiveUntaken.getId(), null );
       assertNotNull(l);
       assertEquals(0, l.size());
 
@@ -343,14 +345,14 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
 
       // check that invalid ids cause failure
       try {
-         l = responses.getEvalAnswers( EvalTestDataLoad.INVALID_LONG_ID, etdl.evaluationActiveUntaken.getId(), null );
+         l = deliveryService.getEvalAnswers( EvalTestDataLoad.INVALID_LONG_ID, etdl.evaluationActiveUntaken.getId(), null );
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
          assertNotNull(e);
       }
 
       try {
-         l = responses.getEvalAnswers( etdl.item1.getId(), EvalTestDataLoad.INVALID_LONG_ID, null );
+         l = deliveryService.getEvalAnswers( etdl.item1.getId(), EvalTestDataLoad.INVALID_LONG_ID, null );
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
          assertNotNull(e);
@@ -365,14 +367,14 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       List<Long> l = null;
 
       // retrieve all response Ids for an evaluation
-      l = responses.getEvalResponseIds(etdl.evaluationClosed.getId(), null, true);
+      l = deliveryService.getEvalResponseIds(etdl.evaluationClosed.getId(), null, true);
       assertNotNull(l);
       assertEquals(3, l.size());
       assertTrue(l.contains( etdl.response2.getId() ));
       assertTrue(l.contains( etdl.response3.getId() ));
       assertTrue(l.contains( etdl.response6.getId() ));
 
-      l = responses.getEvalResponseIds(etdl.evaluationClosed.getId(), new String[] {}, true);
+      l = deliveryService.getEvalResponseIds(etdl.evaluationClosed.getId(), new String[] {}, true);
       assertNotNull(l);
       assertEquals(3, l.size());
       assertTrue(l.contains( etdl.response2.getId() ));
@@ -380,7 +382,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       assertTrue(l.contains( etdl.response6.getId() ));
 
       // retrieve all response Ids for an evaluation using all groups
-      l = responses.getEvalResponseIds(etdl.evaluationClosed.getId(), 
+      l = deliveryService.getEvalResponseIds(etdl.evaluationClosed.getId(), 
             new String[] {EvalTestDataLoad.SITE1_REF, EvalTestDataLoad.SITE2_REF}, true);
       assertNotNull(l);
       assertEquals(3, l.size());
@@ -389,48 +391,48 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       assertTrue(l.contains( etdl.response6.getId() ));
 
       // test retrieval of all responses for an evaluation
-      l = responses.getEvalResponseIds(etdl.evaluationClosed.getId(), 
+      l = deliveryService.getEvalResponseIds(etdl.evaluationClosed.getId(), 
             new String[] {EvalTestDataLoad.SITE1_REF, EvalTestDataLoad.SITE2_REF}, null);
       assertNotNull(l);
       assertEquals(3, l.size());
 
       // test retrieval of incomplete responses for an evaluation
-      l = responses.getEvalResponseIds(etdl.evaluationClosed.getId(), 
+      l = deliveryService.getEvalResponseIds(etdl.evaluationClosed.getId(), 
             new String[] {EvalTestDataLoad.SITE1_REF, EvalTestDataLoad.SITE2_REF}, false);
       assertNotNull(l);
       assertEquals(0, l.size());
 
       // retrieve all response Ids for an evaluation in one group only
-      l = responses.getEvalResponseIds(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE1_REF}, true);
+      l = deliveryService.getEvalResponseIds(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE1_REF}, true);
       assertNotNull(l);
       assertEquals(1, l.size());
       assertTrue(l.contains( etdl.response2.getId() ));
 
       // retrieve all response Ids for an evaluation in one group only
-      l = responses.getEvalResponseIds(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE2_REF}, true);
+      l = deliveryService.getEvalResponseIds(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE2_REF}, true);
       assertNotNull(l);
       assertEquals(2, l.size());
       assertTrue(l.contains( etdl.response3.getId() ));
       assertTrue(l.contains( etdl.response6.getId() ));
 
-      l = responses.getEvalResponseIds(etdl.evaluationActive.getId(), new String[] {EvalTestDataLoad.SITE1_REF}, true);
+      l = deliveryService.getEvalResponseIds(etdl.evaluationActive.getId(), new String[] {EvalTestDataLoad.SITE1_REF}, true);
       assertNotNull(l);
       assertEquals(1, l.size());
       assertTrue(l.contains( etdl.response1.getId() ));
 
       // try to get responses for an eval group that is not associated with this eval
-      l = responses.getEvalResponseIds(etdl.evaluationActive.getId(), new String[] {EvalTestDataLoad.SITE2_REF}, true);
+      l = deliveryService.getEvalResponseIds(etdl.evaluationActive.getId(), new String[] {EvalTestDataLoad.SITE2_REF}, true);
       assertNotNull(l);
       assertEquals(0, l.size());
 
       // try to get responses for an eval with no responses
-      l = responses.getEvalResponseIds(etdl.evaluationActiveUntaken.getId(), null, true);
+      l = deliveryService.getEvalResponseIds(etdl.evaluationActiveUntaken.getId(), null, true);
       assertNotNull(l);
       assertEquals(0, l.size());
 
       // check that invalid eval ids cause failure
       try {
-         l = responses.getEvalResponseIds( EvalTestDataLoad.INVALID_LONG_ID, null, true);
+         l = deliveryService.getEvalResponseIds( EvalTestDataLoad.INVALID_LONG_ID, null, true);
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
          assertNotNull(e);
@@ -446,18 +448,18 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       // test saving a response with no answers is ok
       EvalResponse responseNone = new EvalResponse( new Date(), EvalTestDataLoad.STUDENT_USER_ID, 
             EvalTestDataLoad.SITE1_REF, new Date(), etdl.evaluationActiveUntaken);
-      responses.saveResponse( responseNone, EvalTestDataLoad.STUDENT_USER_ID);
+      deliveryService.saveResponse( responseNone, EvalTestDataLoad.STUDENT_USER_ID);
       assertNotNull(responseNone.getId());
 
       // test saving a response when admin user is ok
-      responses.saveResponse( new EvalResponse( new Date(), 
+      deliveryService.saveResponse( new EvalResponse( new Date(), 
             EvalTestDataLoad.ADMIN_USER_ID, EvalTestDataLoad.SITE1_REF, 
             new Date(), etdl.evaluationActiveUntaken), 
             EvalTestDataLoad.ADMIN_USER_ID);
 
       // test saving a response for a closed evaluation fails
       try {
-         responses.saveResponse( new EvalResponse( new Date(), 
+         deliveryService.saveResponse( new EvalResponse( new Date(), 
                EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE1_REF, 
                new Date(), evaluationClosedTwo), 
                EvalTestDataLoad.USER_ID);
@@ -468,7 +470,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
 
       // test saving a response when user has no permission fails
       try {
-         responses.saveResponse( new EvalResponse( new Date(), 
+         deliveryService.saveResponse( new EvalResponse( new Date(), 
                EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE2_REF, 
                new Date(), etdl.evaluationActiveUntaken), 
                EvalTestDataLoad.MAINT_USER_ID);
@@ -479,7 +481,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
 
       // test saving a response for an invalid evalGroupId fails (evalGroupId not assigned to this eval)
       try {
-         responses.saveResponse( new EvalResponse( new Date(), 
+         deliveryService.saveResponse( new EvalResponse( new Date(), 
                EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE3_REF, 
                new Date(), etdl.evaluationActive), 
                EvalTestDataLoad.USER_ID);
@@ -509,20 +511,20 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       responseAns.setAnswers( new HashSet<EvalAnswer>() );
       EvalAnswer answer1_1 = new EvalAnswer( responseAns, etdl.templateItem1P, etdl.item1, null, null, "text");
       responseAns.getAnswers().add( answer1_1 );
-      responses.saveResponse( responseAns, EvalTestDataLoad.USER_ID);
+      deliveryService.saveResponse( responseAns, EvalTestDataLoad.USER_ID);
       assertNotNull(responseAns.getId());
       assertNotNull(answer1_1.getId());
 
       // test updating an already created response is ok
       responseNone.setEndTime( new Date() );
-      responses.saveResponse( responseNone, EvalTestDataLoad.STUDENT_USER_ID);
+      deliveryService.saveResponse( responseNone, EvalTestDataLoad.STUDENT_USER_ID);
 
       // test adding answers to an already created response is ok
       // make sure the answer is saved also
       responseNone.setAnswers( new HashSet<EvalAnswer>() );
       EvalAnswer answer2_1 = new EvalAnswer( responseNone, etdl.templateItem1P, etdl.item1, null, null, Integer.valueOf(1));
       responseNone.getAnswers().add( answer2_1 );
-      responses.saveResponse( responseNone, EvalTestDataLoad.STUDENT_USER_ID);
+      deliveryService.saveResponse( responseNone, EvalTestDataLoad.STUDENT_USER_ID);
       assertNotNull(answer2_1.getId());
 
       // force the system setting to be cleared so the eval setting takes over
@@ -536,7 +538,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       EvalAnswer RA_3_3 = new EvalAnswer( responseRequired, etdl.templateItem3U, etdl.item3, null, null, 2 );
       responseRequired.getAnswers().add( RA_3_3 );
       try {
-         responses.saveResponse( responseRequired, EvalTestDataLoad.USER_ID);
+         deliveryService.saveResponse( responseRequired, EvalTestDataLoad.USER_ID);
          fail("Should have thrown exception");
       } catch (IllegalStateException e) {
          assertNotNull(e);
@@ -548,7 +550,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       EvalAnswer RA_1_1 = new EvalAnswer( responseRequired, etdl.templateItem1U, etdl.item1, null, null, 2 );
       responseRequired.getAnswers().add( RA_1_1 );
       try {
-         responses.saveResponse( responseRequired, EvalTestDataLoad.USER_ID);
+         deliveryService.saveResponse( responseRequired, EvalTestDataLoad.USER_ID);
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
          assertNotNull(e);
@@ -564,7 +566,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
             EvalTestDataLoad.MAINT_USER_ID, EvalConstants.ITEM_CATEGORY_INSTRUCTOR, 2 );
       responseRequired.getAnswers().add( RA_1_1 );
       responseRequired.setEndTime( new Date() );
-      responses.saveResponse( responseRequired, EvalTestDataLoad.USER_ID);
+      deliveryService.saveResponse( responseRequired, EvalTestDataLoad.USER_ID);
       assertNotNull(responseRequired.getId());
       assertNotNull(RA_1_1.getId());
       assertNotNull(RA_3_3.getId());
@@ -584,7 +586,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       // test saving a response without proper ownership fails
       try {
          responseNone.setEndTime( new Date() );
-         responses.saveResponse( responseNone, EvalTestDataLoad.USER_ID);
+         deliveryService.saveResponse( responseNone, EvalTestDataLoad.USER_ID);
          fail("Should have thrown exception");
       } catch (SecurityException e) {
          assertNotNull(e);
@@ -592,7 +594,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
 
       // test saving a response when one exists fails
       try {
-         responses.saveResponse( new EvalResponse( new Date(), 
+         deliveryService.saveResponse( new EvalResponse( new Date(), 
                EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE1_REF, 
                new Date(), etdl.evaluationActive), 
                EvalTestDataLoad.USER_ID);
@@ -602,7 +604,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       }
 
       try {
-         responses.saveResponse( new EvalResponse( new Date(), 
+         deliveryService.saveResponse( new EvalResponse( new Date(), 
                EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE2_REF, 
                new Date(), etdl.evaluationActive), 
                EvalTestDataLoad.MAINT_USER_ID);
@@ -619,28 +621,28 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
    public void testCanModifyResponse() {
 
       // test owner can modify unlocked
-      assertTrue( responses.canModifyResponse(
+      assertTrue( deliveryService.canModifyResponse(
             EvalTestDataLoad.USER_ID, etdl.response1.getId()) );
 
       // test admin cannot override permissions
-      assertFalse( responses.canModifyResponse(
+      assertFalse( deliveryService.canModifyResponse(
             EvalTestDataLoad.ADMIN_USER_ID,	etdl.response1.getId()) );
 
       // test users without perms cannot modify
-      assertFalse( responses.canModifyResponse(
+      assertFalse( deliveryService.canModifyResponse(
             EvalTestDataLoad.MAINT_USER_ID,	etdl.response1.getId()) );
-      assertFalse( responses.canModifyResponse(
+      assertFalse( deliveryService.canModifyResponse(
             EvalTestDataLoad.STUDENT_USER_ID, etdl.response1.getId()) );
 
       // test no one can modify locked responses
-      assertFalse( responses.canModifyResponse(
+      assertFalse( deliveryService.canModifyResponse(
             EvalTestDataLoad.ADMIN_USER_ID,	etdl.response3.getId()) );
-      assertFalse( responses.canModifyResponse(
+      assertFalse( deliveryService.canModifyResponse(
             EvalTestDataLoad.STUDENT_USER_ID, etdl.response3.getId()) );
 
       // test invalid id causes failure
       try {
-         responses.canModifyResponse( EvalTestDataLoad.ADMIN_USER_ID, 
+         deliveryService.canModifyResponse( EvalTestDataLoad.ADMIN_USER_ID, 
                EvalTestDataLoad.INVALID_LONG_ID );
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
@@ -653,17 +655,17 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       EvalResponse response = null;
 
       // check retrieving an existing responses
-      response = responses.getEvaluationResponseForUserAndGroup(etdl.evaluationClosed.getId(), EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE1_REF);
+      response = deliveryService.getEvaluationResponseForUserAndGroup(etdl.evaluationClosed.getId(), EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE1_REF);
       assertNotNull(response);
       assertEquals(etdl.response2.getId(), response.getId());
 
       // check creating a new response
-      response = responses.getEvaluationResponseForUserAndGroup(etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE1_REF);
+      response = deliveryService.getEvaluationResponseForUserAndGroup(etdl.evaluationActiveUntaken.getId(), EvalTestDataLoad.USER_ID, EvalTestDataLoad.SITE1_REF);
       assertNotNull(response);
 
       // test cannot create response for closed evaluation
       try {
-         response = responses.getEvaluationResponseForUserAndGroup(etdl.evaluationClosed.getId(), EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE1_REF);
+         response = deliveryService.getEvaluationResponseForUserAndGroup(etdl.evaluationClosed.getId(), EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE1_REF);
          fail("Should have thrown exception");
       } catch (IllegalStateException e) {
          assertNotNull(e);
@@ -671,7 +673,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
 
       // test invalid permissions to create response fails
       try {
-         response = responses.getEvaluationResponseForUserAndGroup(etdl.evaluationActive.getId(), EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE1_REF);
+         response = deliveryService.getEvaluationResponseForUserAndGroup(etdl.evaluationActive.getId(), EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE1_REF);
          fail("Should have thrown exception");
       } catch (IllegalStateException e) {
          assertNotNull(e);

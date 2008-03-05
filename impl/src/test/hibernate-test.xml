@@ -92,4 +92,9 @@
       class="org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic">
    </bean>
 
+   <!-- fake external hierarchy bean -->
+   <bean id="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic"
+      class="org.sakaiproject.evaluation.test.mocks.MockExternalHierarchyLogic">
+   </bean>
+
 </beans>

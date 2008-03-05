@@ -191,18 +191,18 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 
       // EVALUATION TITLE/INSTRUCTIONS
 
-      if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_ACTIVE, currentEvalState, true) ) {
-         UIOutput.make(tofill, "title_disabled", evaluation.getTitle());
-      } else {
+      if ( EvalUtils.checkStateBefore(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true) ) {
          UIInput.make(form, "title", evaluationOTP + "title");
+      } else {
+         UIOutput.make(tofill, "title_disabled", evaluation.getTitle());
       }
 
-      if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_CLOSED, currentEvalState, true) ) {
-         UIVerbatim.make(tofill, "instructions_disabled", evaluation.getInstructions());
-      } else {
+      if ( EvalUtils.checkStateBefore(currentEvalState, EvalConstants.EVALUATION_STATE_CLOSED, true) ) {
          UIInput instructionsInput = UIInput.make(form, "instructions:", evaluationOTP + "instructions");
          instructionsInput.decorators = new DecoratorList(new UITextDimensionsDecorator(60, 4));
          richTextEvolver.evolveTextInput(instructionsInput);
+      } else {
+         UIVerbatim.make(tofill, "instructions_disabled", evaluation.getInstructions());
       }
 
       // only put up the controls/auto binding if this is not already set
@@ -315,7 +315,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
       UIBranchContainer showResultsToStudents = UIBranchContainer.make(form, "showResultsToStudents:");
       generateSettingsControlledCheckbox(showResultsToStudents, "studentViewResults", 
             evaluationOTP + "studentViewResults", studentViewResults, form, 
-            EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_VIEWABLE, currentEvalState, true) );
+            EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_VIEWABLE, true) );
       generateViewDateControl(showResultsToStudents, "studentsViewDate", 
             evaluationOTP + "studentsDate", studentViewResults, useDateTime, sameViewDateForAll);
 
@@ -324,7 +324,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
       UIBranchContainer showResultsToInst = UIBranchContainer.make(form, "showResultsToInst:");
       generateSettingsControlledCheckbox(showResultsToInst, "instructorViewResults", 
             evaluationOTP + "instructorViewResults", instructorViewResults, form, 
-            EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_VIEWABLE, currentEvalState, true) );
+            EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_VIEWABLE, true) );
       generateViewDateControl(showResultsToInst, "instructorsViewDate", 
             evaluationOTP + "instructorsDate", instructorViewResults, useDateTime, sameViewDateForAll);
 
@@ -336,7 +336,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
       UIBranchContainer showBlankQuestionAllowedToStut = UIBranchContainer.make(form, "showBlankQuestionAllowedToStut:");
       generateSettingsControlledCheckbox(showBlankQuestionAllowedToStut, 
             "blankResponsesAllowed", evaluationOTP + "blankResponsesAllowed", studentUnanswersAllowed, form, 
-            EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_ACTIVE, currentEvalState, true) );
+            EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true) );
 
 
       // Student Modify Responses
@@ -344,7 +344,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
       UIBranchContainer showModifyResponsesAllowedToStu = UIBranchContainer.make(form, "showModifyResponsesAllowedToStu:");
       generateSettingsControlledCheckbox(showModifyResponsesAllowedToStu, 
             "modifyResponsesAllowed", evaluationOTP + "modifyResponsesAllowed", studentModifyReponses, form,
-            EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_ACTIVE, currentEvalState, true) );
+            EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true) );
 
 
 
@@ -352,7 +352,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 
       UISelect authControlSelect = UISelect.make(form, "auth-control-choose", EvalToolConstants.AUTHCONTROL_VALUES, 
             EvalToolConstants.AUTHCONTROL_LABELS, evaluationOTP + "authControl").setMessageKeys();
-      if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_ACTIVE, currentEvalState, true) ) {
+      if ( EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true) ) {
          RSFUtils.disableComponent(authControlSelect);
       }
 
@@ -368,7 +368,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
          if (instUseFromAboveValue == null) {
             UISelect instOpt = UISelect.make(form, "instructorOpt", EvalToolConstants.INSTRUCTOR_OPT_VALUES, 
                   EvalToolConstants.INSTRUCTOR_OPT_LABELS, evaluationOTP + "instructorOpt").setMessageKeys();
-            if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_INQUEUE, currentEvalState, true) ) {
+            if ( EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_INQUEUE, true) ) {
                RSFUtils.disableComponent(instOpt);
             }
          } else {
@@ -391,7 +391,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
       // email reminder control
       UISelect reminderDaysSelect = UISelect.make(form, "reminderDays", EvalToolConstants.REMINDER_EMAIL_DAYS_VALUES, 
             EvalToolConstants.REMINDER_EMAIL_DAYS_LABELS, evaluationOTP + "reminderDays").setMessageKeys();
-      if ( EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_GRACEPERIOD, currentEvalState, true) ) {
+      if ( EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_GRACEPERIOD, true) ) {
          RSFUtils.disableComponent(reminderDaysSelect);
       }
 
@@ -517,7 +517,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
     */
    private void generateDateSelector(UIBranchContainer parent, String rsfId, String binding, 
          String currentEvalState, String worksUntilState, boolean useDateTime) {
-      if ( EvalUtils.checkStateAfter(worksUntilState, currentEvalState, true) ) {
+      if ( EvalUtils.checkStateAfter(currentEvalState, worksUntilState, true) ) {
          String suffix = ".date";
          if (useDateTime) {
             suffix = ".time";

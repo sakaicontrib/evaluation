@@ -25,6 +25,8 @@ import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
+import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
@@ -53,9 +55,14 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
       this.dao = dao;
    }
 
-   private EvalExternalLogic external;
+   private EvalExternalLogic externalLogic;
    public void setExternalLogic(EvalExternalLogic external) {
-      this.external = external;
+      this.externalLogic = external;
+   }
+
+   private ExternalHierarchyLogic hierarchyLogic;
+   public void setHierarchyLogic(ExternalHierarchyLogic logic) {
+      this.hierarchyLogic = logic;
    }
 
    private EvalEvaluationService evaluationService;
@@ -141,7 +148,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
       comparisons.add(ByPropsFinder.EQUALS);
 
       // if user is admin then return all matching responses for this evaluation
-      if (! external.isUserAdmin(userId)) {
+      if (! externalLogic.isUserAdmin(userId)) {
          // not admin, only return the responses for this user
          props.add("owner");
          values.add(userId);
@@ -311,9 +318,9 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
          }
 
          if (newResponse) {
-            external.registerEntityEvent(EVENT_RESPONSE_CREATED, response);
+            externalLogic.registerEntityEvent(EVENT_RESPONSE_CREATED, response);
          } else {
-            external.registerEntityEvent(EVENT_RESPONSE_UPDATED, response);            
+            externalLogic.registerEntityEvent(EVENT_RESPONSE_UPDATED, response);            
          }
          int answerCount = response.getAnswers() == null ? 0 : response.getAnswers().size();
          log.info("User (" + userId + ") saved response (" + response.getId() + ") to" +
@@ -390,23 +397,31 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
       // get a list of the valid templateItems for this evaluation
       EvalEvaluation eval = response.getEvaluation();
       Long evalId = eval.getId();
-      // TODO - make this more efficient by limiting the nodes, instructors, and groups
-      List<EvalTemplateItem> allTemplateItems = authoringService.getTemplateItemsForEvaluation(evalId, new String[] {}, new String[] {}, new String[] {});
 
-      // OLD - this should use a method elsewhere -AZ
-//      EvalEvaluation eval = response.getEvaluation();
-//      Long templateId = eval.getTemplate().getId();
-//      List<EvalTemplateItem> allTemplateItems = 
-//         dao.findByProperties(EvalTemplateItem.class, 
-//               new String[] { "template.id" },
-//               new Object[] { templateId });
+      String[] evalGroupIDs = new String[] {};
+      String[] hierarchyNodeIDs = new String[] {};
+      // add in the group and the hierarchy nodes if the group is set
+      if (response.getEvalGroupId() != null) {
+         evalGroupIDs = new String[] { response.getEvalGroupId() };
+
+         // Get the Hierarchy NodeIDs for the current Group and turn it into an array of ids
+         List<EvalHierarchyNode> hierarchyNodes = hierarchyLogic.getNodesAboveEvalGroup(response.getEvalGroupId());
+         hierarchyNodeIDs = new String[hierarchyNodes.size()];
+         for (int i = 0; i < hierarchyNodes.size(); i++) {
+            hierarchyNodeIDs[i] = hierarchyNodes.get(i).id;
+         }
+      }
+
+      // retrieve all appropriate items for this evaluation response
+      List<EvalTemplateItem> allTemplateItems = 
+         authoringService.getTemplateItemsForEvaluation(evalId, hierarchyNodeIDs, new String[] {}, evalGroupIDs);
 
       List<EvalTemplateItem> templateItems = TemplateItemUtils.getAnswerableTemplateItems(allTemplateItems);
 
       // put all templateItemIds into a set for easy comparison
       Set<Long> templateItemIds = new HashSet<Long>();
       for (int i = 0; i < templateItems.size(); i++) {
-         templateItemIds.add(((EvalTemplateItem) templateItems.get(i)).getId());
+         templateItemIds.add( templateItems.get(i).getId() );
       }
 
       // check the answers
@@ -422,8 +437,8 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
 
          // make sure the item and template item are available for this answer
          if (answer.getTemplateItem() == null || answer.getTemplateItem().getItem() == null) {
-            throw new IllegalArgumentException("NULL templateItem or templateItem.item for answer: " +
-            "Answers must have the templateItem set, and that must have the item set");
+            throw new IllegalArgumentException("NULL templateItem or templateItem.item for answer: " 
+                  + "Answers must have the templateItem set, and that must have the item set");
          }
 
          // decode NA value
@@ -469,7 +484,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
             }
          }
 
-         // TODO - check if numerical answers are valid?
+         // TODO - check if numerical answers are valid? (i.e. within the size of the scale)
 
          // add the unique answer key (TIId + assocType + assocId) for this answer to the answered keys set
          answeredAnswerKeys.add( answer.getTemplateItem().getId().toString() + answer.getAssociatedType() + answer.getAssociatedId() );
@@ -489,7 +504,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
          Set<String> requiredAnswerKeys = new HashSet<String>();
 
          // get the instructors for this evaluation/group
-         Set<String> instructors = external.getUserIdsForEvalGroup(response.getEvalGroupId(), EvalConstants.PERM_BE_EVALUATED);
+         Set<String> instructors = externalLogic.getUserIdsForEvalGroup(response.getEvalGroupId(), EvalConstants.PERM_BE_EVALUATED);
          // filter out the block child items, to get a list non-child items
          List<EvalTemplateItem> requiredTemplateItems = TemplateItemUtils.getRequiredTemplateItems(templateItems);
 

@@ -91,7 +91,7 @@ public class EvalSecurityChecksImpl {
             String evalState = EvalUtils.getEvaluationState(eval, false);
             Boolean responseRemovalAllowed = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_RESPONSE_REMOVAL);
             if ( responseRemovalAllowed && 
-                  EvalUtils.checkStateAfter(EvalConstants.EVALUATION_STATE_CLOSED, evalState, true) ) {
+                  EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_CLOSED, true) ) {
                allowed = true;
             } else {
                throw new IllegalStateException("Cannot control (modify) locked evaluation ("+eval.getId()+")");
@@ -239,7 +239,7 @@ public class EvalSecurityChecksImpl {
 
       // check state to see if assign groups can be added
       String state = EvalUtils.getEvaluationState(eval, false);
-      if ( EvalUtils.checkStateBefore(EvalConstants.EVALUATION_STATE_ACTIVE, state, true) ) {
+      if ( EvalUtils.checkStateBefore(state, EvalConstants.EVALUATION_STATE_ACTIVE, true) ) {
          // check eval user permissions (just owner and super at this point)
          if (! canUserControlEvaluation(userId, eval)) {
             throw new SecurityException("User ("+userId+") cannot create assign evalGroupId in evaluation ("+eval.getId()+"), do not have permission");
