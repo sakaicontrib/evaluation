@@ -8,10 +8,11 @@ package org.sakaiproject.evaluation.tool.viewparams;
 public class ExcelReportViewParams extends DownloadReportViewParams {
     public ExcelReportViewParams() {}
 
-    public ExcelReportViewParams(String viewID, Long templateId, Long evalId, String[] groupIds) {
+    public ExcelReportViewParams(String viewID, Long templateId, Long evalId, String[] groupIds, String filename) {
         this.viewID = viewID;
         this.templateId = templateId;
         this.evalId = evalId;
         this.groupIds = groupIds;
+        this.filename = filename;
     }
 }

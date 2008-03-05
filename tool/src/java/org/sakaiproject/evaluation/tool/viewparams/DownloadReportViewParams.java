@@ -28,21 +28,23 @@ public class DownloadReportViewParams extends SimpleViewParameters {
 
 	public Long templateId; 
 	public Long evalId;
+	public String filename;
 
 	// See the comment in EssayResponseParams.java
 	public String[] groupIds;
 
 	public DownloadReportViewParams() {}
 
-	public DownloadReportViewParams(String viewID, Long templateId, Long evalId, String[] groupIds) {
+	public DownloadReportViewParams(String viewID, Long templateId, Long evalId, String[] groupIds, String filename) {
 		this.viewID = viewID;
 		this.templateId = templateId;
 		this.evalId = evalId;
 		this.groupIds = groupIds;
+		this.filename = filename;
 	}
 
 	public String getParseSpec() {
 		// include a comma delimited list of the public properties in this class
-		return super.getParseSpec() + ",templateId,evalId,groupIds";
+		return super.getParseSpec() + ",templateId,evalId,groupIds, *:stuff, @1:filename";
 	}
 }
