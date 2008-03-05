@@ -447,22 +447,29 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
                  viewEssaysParams);
          }
          
+         /*
+          * sgithens March 4, 2008 8:49 PM Central Time
+          * 
+          * Fixed the Viewparameters to have real file names in EVALSYS-452
+          * Working on removing these hardcoded filenames and giving them survey
+          * specific names in EVALSYS-445
+          */
          Boolean allowCSVExport = (Boolean) evalSettings.get(EvalSettings.ENABLE_CSV_REPORT_EXPORT);
          if (allowCSVExport != null && allowCSVExport == true) {
             UIInternalLink.make(tofill, "csvResultsReport", UIMessage.make("viewreport.view.csv"), new CSVReportViewParams(
-                  "csvResultsReport", template.getId(), reportViewParams.evaluationId, groupIds));
+                  "csvResultsReport", template.getId(), reportViewParams.evaluationId, groupIds, "SurveyResults.csv"));
          }
 
          Boolean allowXLSExport = (Boolean) evalSettings.get(EvalSettings.ENABLE_XLS_REPORT_EXPORT);
          if (allowXLSExport != null && allowXLSExport == true) {
             UIInternalLink.make(tofill, "xlsResultsReport", UIMessage.make("viewreport.view.xls"), new ExcelReportViewParams(
-                  "xlsResultsReport", template.getId(), reportViewParams.evaluationId, groupIds));
+                  "xlsResultsReport", template.getId(), reportViewParams.evaluationId, groupIds, "SurveyResults.xls"));
          }
 
          Boolean allowPDFExport = (Boolean) evalSettings.get(EvalSettings.ENABLE_PDF_REPORT_EXPORT);
          if (allowPDFExport != null && allowPDFExport == true) {
             UIInternalLink.make(tofill, "pdfResultsReport", UIMessage.make("viewreport.view.pdf"), new PDFReportViewParams(
-                  "pdfResultsReport", template.getId(), reportViewParams.evaluationId, groupIds));
+                  "pdfResultsReport", template.getId(), reportViewParams.evaluationId, groupIds, "SurveyResults.pdf"));
          }
       }
 }
