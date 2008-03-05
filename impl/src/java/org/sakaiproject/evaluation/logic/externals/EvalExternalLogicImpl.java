@@ -944,7 +944,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
     */
    public String cleanupUserStrings(String userSubmittedString) {
       // clean up the string
-      return FormattedText.processFormattedText(userSubmittedString, new StringBuffer(), true, false);            
+      return FormattedText.processFormattedText(userSubmittedString, new StringBuilder(), true, false);            
    }
 
 }
