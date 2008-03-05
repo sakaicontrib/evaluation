@@ -29,6 +29,7 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
 import org.sakaiproject.evaluation.test.mocks.MockEvalJobLogic;
+import org.sakaiproject.evaluation.test.mocks.MockExternalHierarchyLogic;
 
 
 /**
@@ -73,6 +74,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       evaluationSetupService = new EvalEvaluationSetupServiceImpl();
       evaluationSetupService.setDao(evaluationDao);
       evaluationSetupService.setExternalLogic( new MockEvalExternalLogic() );
+      evaluationSetupService.setHierarchyLogic( new MockExternalHierarchyLogic() );
       evaluationSetupService.setSettings(settings);
       evaluationSetupService.setSecurityChecks(securityChecks);
       evaluationSetupService.setEvaluationService(evaluationService);
@@ -93,17 +95,6 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
     */
    public void testSaveEvaluation() {
       EvalEvaluation eval = null;
-
-//    fail(
-//    " -15 days: " + etdl.fifteenDaysAgo +
-//    ", -4days: " + etdl.fourDaysAgo +
-//    ", -3days: " + etdl.threeDaysAgo +
-//    ", yesterday: " + etdl.yesterday +
-//    ", today: " + etdl.today +
-//    ", tomorrow:" + etdl.tomorrow +
-//    ", 3days:" + etdl.threeDaysFuture +
-//    ", 4days:" + etdl.fourDaysFuture
-//    );
 
       // save a valid evaluation (all dates separate)
       eval = new EvalEvaluation( EvalConstants.EVALUATION_TYPE_EVALUATION, 

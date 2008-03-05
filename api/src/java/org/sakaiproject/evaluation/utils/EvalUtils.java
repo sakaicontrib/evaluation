@@ -107,24 +107,24 @@ public class EvalUtils {
    }
 
    /**
-    * Allows checking the order of states<br/>
+    * Allows checking the order of states (firstState AFTER secondState)<br/>
     * States: Partial -> InQueue -> Active -> GracePeriod -> Closed -> Viewable (-> Deleted)
     * 
-    * @param checkState the state constant to check
-    * @param currentState the state constant that represents the current state
-    * @param includeSame if true then true will be returned if the checkState = currentState,
+    * @param firstState the first state constant to check
+    * @param secondState the second state constant to check
+    * @param includeSame if true then true will be returned if the firstState = secondState,
     * otherwise false is returned when the states are equal
-    * @return true if the checkState is equal to or after the currentState, 
-    * false if the currentState is before the checkState
+    * @return true if the firstState is after the secondState, 
+    * false if the firstState is before the secondState
     */
-   public static boolean checkStateAfter(String checkState, String currentState, boolean includeSame) {
+   public static boolean checkStateAfter(String firstState, String secondState, boolean includeSame) {
       boolean isAfterState = false;
-      if (checkState.equals(currentState)) {
+      if (firstState.equals(secondState)) {
          isAfterState = includeSame;
       } else {
-         int checkNum = stateToNumber(checkState);
-         int currentNum = stateToNumber(currentState);
-         if (currentNum < checkNum) {
+         int firstNum = stateToNumber(firstState);
+         int secondNum = stateToNumber(secondState);
+         if (firstNum > secondNum) {
             isAfterState = true;
          }
       }
@@ -132,24 +132,24 @@ public class EvalUtils {
    }
 
    /**
-    * Allows checking the order of states<br/>
+    * Allows checking the order of states (firstState BEFORE secondState)<br/>
     * States: Partial -> InQueue -> Active -> GracePeriod -> Closed -> Viewable (-> Deleted)
     * 
-    * @param checkState the state constant to check
-    * @param currentState the state constant that represents the current state
+    * @param firstState the first state constant to check
+    * @param secondState the second state constant to check
     * @param includeSame if true then true will be returned if the checkState = currentState,
     * otherwise false is returned when the states are equal
-    * @return true if the checkState is before the currentState, 
-    * false if the currentState is after the checkState
+    * @return true if the firstState is before the secondState, 
+    * false if the firstState is after the secondState
     */
-   public static boolean checkStateBefore(String checkState, String currentState, boolean includeSame) {
+   public static boolean checkStateBefore(String firstState, String secondState, boolean includeSame) {
       boolean isBeforeState = false;
-      if (checkState.equals(currentState)) {
+      if (firstState.equals(secondState)) {
          isBeforeState = includeSame;
       } else {
-         int checkNum = stateToNumber(checkState);
-         int currentNum = stateToNumber(currentState);
-         if (currentNum > checkNum) {
+         int firstNum = stateToNumber(firstState);
+         int secondNum = stateToNumber(secondState);
+         if (firstNum < secondNum) {
             isBeforeState = true;
          }
       }
