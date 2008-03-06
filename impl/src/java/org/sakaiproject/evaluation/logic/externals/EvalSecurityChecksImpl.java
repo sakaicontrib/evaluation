@@ -19,6 +19,8 @@ import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.model.EvalAdhocGroup;
+import org.sakaiproject.evaluation.model.EvalAdhocUser;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
@@ -382,6 +384,20 @@ public class EvalSecurityChecksImpl {
          }
       }
       return allowed;
+   }
+
+   public boolean checkUserControlAdhocUser(String userId, EvalAdhocUser user) {
+      if (! evalBeanUtils.checkUserPermission(userId, user.getOwner()) ) {
+         throw new SecurityException("User ("+userId+") cannot control adhoc user ("+user.getId()+") without permissions");
+      }
+      return true;
+   }
+
+   public boolean checkUserControlAdhocGroup(String userId, EvalAdhocGroup group) {
+      if (! evalBeanUtils.checkUserPermission(userId, group.getOwner()) ) {
+         throw new SecurityException("User ("+userId+") cannot control adhoc group ("+group.getId()+") without permissions");
+      }
+      return true;
    }
 
 }

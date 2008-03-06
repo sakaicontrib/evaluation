@@ -44,6 +44,7 @@ import org.sakaiproject.entity.api.Reference;
 import org.sakaiproject.entitybroker.EntityBroker;
 import org.sakaiproject.entitybroker.IdEntityReference;
 import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.logic.EvalAdhocSupportLogicImpl;
 import org.sakaiproject.evaluation.logic.entity.AssignGroupEntityProvider;
 import org.sakaiproject.evaluation.logic.entity.ConfigEntityProvider;
 import org.sakaiproject.evaluation.logic.entity.EvaluationEntityProvider;
@@ -164,6 +165,14 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
    private ApplicationContext applicationContext;
    public void setApplicationContext(ApplicationContext applicationContext) {
       this.applicationContext = applicationContext;
+   }
+
+
+   // INTERNAL for adhoc user/group lookups
+
+   private EvalAdhocSupportLogicImpl adhocSupportLogic;
+   public void setAdhocSupportLogic(EvalAdhocSupportLogicImpl adhocSupportLogic) {
+      this.adhocSupportLogic = adhocSupportLogic;
    }
 
 
@@ -293,7 +302,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
          user = makeAnonymousUser(userId);
       } else {
          // try to get internal user from eval
-         // TODO
+         // TODO adhocSupportLogic
 
          // try to get user from Sakai
          try {
@@ -457,13 +466,13 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
            }
          }
       } catch (Exception e) {
-         log.warn("Failure while attempting to get current location: " + e.getMessage());
+         // sakai failed to get us a location so we can assume we are not inside the portal
          location = null;
       }
 
       if (location == null) {
-         log.warn("Could not get the current location (we are probably outside the portal), returning the fake one");
          location = NO_LOCATION;
+         log.info("Could not get the current location (we are probably outside the portal), returning the NON-location one: " + location);
       }
       return location;
    }
