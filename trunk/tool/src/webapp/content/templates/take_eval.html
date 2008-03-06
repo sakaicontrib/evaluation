@@ -1,0 +1,106 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title rsf:id="page-title">Take Evaluation</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Expires" content="-1" />
+		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+	</head>
+	
+	<body rsf:id="scr=sakai-body">
+		<div class="portletBody">
+
+			<div class="textPanel"> 			
+				<h3 style="display:inline">
+					<span rsf:id="eval-title-header" class="highlight">Evaluation:</span>
+					<span rsf:id="evalTitle">Evaluation title here</span>
+				</h3>
+				<span rsf:id="show-group-title:">
+					(<span rsf:id="group-title-header">Group:</span>
+					<span rsf:id="group-title">Group title here</span>)
+				</span>
+			</div>
+
+			<!--//gsilver: is this "Switch group" functional? because this is where the whitespace is coming from 
+                (AZ: yes, it is all that is functional, the rest inside the tags is just a placeholder) -->
+			<div rsf:id="show-switch-group:" class="navPanel">
+				<div class="viewNav">
+					<label  rsf:id="switch-group-header" for="switch-group-list-selection"> Switch group:</label>
+					<form rsf:id="switch-group-form" action="take_eval.html" method="get" class="inlineForm">
+						<select rsf:id="switch-group-list">
+							<option selected="selected">Group 1</option>
+							<option>Group 2</option>
+							<option>Group 3</option>
+						</select>
+						<input rsf:id="switch-group-button" type="submit" value="Switch" />
+					</form>
+				</div>	
+			</div>
+
+            <div rsf:id="message-for:*" class="alertMessage">
+                <ul style="margin:0px;">
+                    <li>Message for user here</li>
+                </ul>
+            </div>
+	
+			<div rsf:id="show-eval-instructions:" class="instruction">
+				<h5 rsf:id="eval-instructions-header" style="display:inline;padding-right:1em">Instructions:</h5>
+				<span rsf:id="eval-instructions">Evaluation instructions would go here if any have been specified. This block may be up to 4000 chars.</span>
+			</div>
+	
+		   <div rsf:id="show-eval-note:" class="instruction">
+			   <h5 rsf:id="msg=general.note"  style="display:inline;padding-right:1em">Note:</h5>
+			   <span rsf:id="eval-note-text">Additional instructional note to the user here</span>
+		   </div>
+			
+			<div rsf:id="eval-cannot-take-message" class="alertMessage"></div>
+			
+			<div rsf:id="form-branch:">
+				<form name="eval_form" rsf:id="evaluationForm" method="post">
+					<div rsf:id="courseSection:">	
+					<fieldset class="itemListNew">
+						<legend rsf:id="course-questions-header"> Group Items: </legend>
+						<ol  class="itemListEval">
+							<li rsf:id="itemrow:hier-node-section">
+								<h4 rsf:id="hier-node-title">Top Level or something like Biology Dept</h4>
+							</li>
+							<li rsf:id="itemrow:first">
+								   <!-- DIV tag for item renderer -->
+								  <div rsf:id="rendered-item:">Items get rendered here</div>
+							 </li>
+						</ol>
+						</fieldset>
+					</div>
+			
+					
+					<!-- this BEGINS the INSTRUCTOR(S) section -->
+					<div rsf:id="instructorSection:">
+						<fieldset class="itemListNew">
+						<legend rsf:id="instructor-questions-header"> Evaluatee Items: </legend>
+							<ol class="itemListEval">
+								<li rsf:id="itemrow:hier-node-section">
+									<h4 rsf:id="hier-node-title">Top Level or something like Biology Dept</h4>
+								</li>
+								<li rsf:id="itemrow:first">
+									<!-- DIV tag for item renderer -->
+									<div rsf:id="rendered-item:">Render item here</div>
+								</li>
+							</ol>
+						</fieldset> 
+					</div>
+			
+					<div class="act">
+						<input rsf:id="submitEvaluation" type="submit" value="Submit Evaluation" accesskey="s" class="active"/>
+					</div>
+			
+				</form>
+			</div>
+			
+		</div>
+	</body>
+</html>

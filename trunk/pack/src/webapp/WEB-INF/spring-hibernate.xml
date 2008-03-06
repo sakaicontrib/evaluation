@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!-- Aaron Zeckoski (aaronz@vt.edu) -->
+<beans>
+
+	<!-- create a DAO bean, use the hibernate implementation -->
+	<bean id="org.sakaiproject.evaluation.dao.impl.EvaluationDaoTarget"
+		class="org.sakaiproject.evaluation.dao.EvaluationDaoImpl"
+		init-method="init">
+		<property name="sessionFactory" 
+			ref="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
+		<property name="persistentClasses">
+			<list>
+                <value>org.sakaiproject.evaluation.model.EvalAdhocGroup</value>
+                <value>org.sakaiproject.evaluation.model.EvalAdhocUser</value>
+				<value>org.sakaiproject.evaluation.model.EvalAnswer</value>
+				<value>org.sakaiproject.evaluation.model.EvalAssignGroup</value>
+				<value>org.sakaiproject.evaluation.model.EvalAssignHierarchy</value>
+				<value>org.sakaiproject.evaluation.model.EvalConfig</value>
+				<value>org.sakaiproject.evaluation.model.EvalEmailTemplate</value>
+				<value>org.sakaiproject.evaluation.model.EvalEvaluation</value>
+                <value>org.sakaiproject.evaluation.model.EvalGroupNodes</value>
+				<value>org.sakaiproject.evaluation.model.EvalItem</value>
+				<value>org.sakaiproject.evaluation.model.EvalItemGroup</value>
+                <value>org.sakaiproject.evaluation.model.EvalLock</value>
+				<value>org.sakaiproject.evaluation.model.EvalResponse</value>
+				<value>org.sakaiproject.evaluation.model.EvalScale</value>
+				<value>org.sakaiproject.evaluation.model.EvalTemplate</value>
+				<value>org.sakaiproject.evaluation.model.EvalTemplateItem</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- This wraps our DAO so that the transactions are managed -->
+	<bean id="org.sakaiproject.evaluation.dao.EvaluationDao"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="org.sakaiproject.springframework.orm.hibernate.GlobalTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="org.sakaiproject.evaluation.dao.impl.EvaluationDaoTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+				<prop key="count*">PROPAGATION_REQUIRED,readOnly</prop>
+				<prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+<!--				<prop key="*">PROPAGATION_REQUIRED,+java.lang.RuntimeException</prop>-->
+			</props>
+		</property>
+	</bean>
+
+
+   <!-- create a data preloading bean which will be used by the data preloader -->
+   <bean id="org.sakaiproject.evaluation.dao.PreloadData"
+      class="org.sakaiproject.evaluation.dao.PreloadDataImpl">
+      <property name="evaluationDao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+      <property name="externalLogic"
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+   </bean>
+
+   <!-- handles the adhoc user/group data saving/retrieval -->
+   <bean id="org.sakaiproject.evaluation.logic.EvalAdhocSupportLogic"
+      class="org.sakaiproject.evaluation.logic.EvalAdhocSupportLogicImpl">
+      <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+   </bean>
+
+</beans>

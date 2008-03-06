@@ -1,0 +1,164 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title rsf:id="modify-block-title">Edit Block</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all" />
+		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all" />
+		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js" />
+		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+
+		<script type="text/javascript" language="JavaScript" src="../js/jquery/jquery.js"></script>
+		<script type="text/javascript" language="JavaScript" src="../js/jquery/form.js"></script>
+		<script type="text/javascript" language="JavaScript" src="../js/jquery/interface/iutil.js"></script>
+		<script type="text/javascript" language="JavaScript" src="../js/jquery/interface/idrag.js"></script>
+		<script type="text/javascript" language="JavaScript" src="../js/jquery/interface/idrop.js"></script>
+		<script type="text/javascript" language="JavaScript" src="../js/jquery/interface/isortables.js"></script>
+		<script type="text/javascript" language="JavaScript" src="../js/blockReorderUtils.js"></script>
+		<script>
+     			var flag = "";
+     			
+     			function validateForm(){  
+     			
+     			if (flag=="cancel" || flag =="add" || flag == "remove")	{
+     			document.block_form.target = "_self";		
+     			return true;
+     			}
+     			else if (flag=="save") {
+     			document.block_form.target = "_self";
+     			}
+     			//This is for preview 
+     			else
+     			document.block_form.target = "_blank";  
+     			return true;
+     			}
+     		</script>
+	</head>
+	<body>
+		<div class="portletBody">
+
+           <div class="navIntraTool">
+               <a rsf:id="administrate-link" href="administrate.html">Administrate</a>
+               <a rsf:id="summary-link" href="summary.html">Summary</a>
+               <a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a>
+               <a rsf:id="control-templates-link" href="control_templates.html">My Templates</a>
+               <a rsf:id="control-items-link" href="control_items.html">My Items</a>
+               <a rsf:id="control-scales-link" href="control_scales.html">My Scales</a>
+           </div>
+
+			<ul class="breadCrumb">
+				<li>
+					<a rsf:id="summary-link" href="summary.html">Summary</a>
+				</li>
+				<li rsf:id="create-eval-title">Create Evaluation</li>
+				<li rsf:id="modify-block-title" class="lastCrumb">Edit Block</li>
+			</ul>
+
+			<div rsf:id="message-for:*" class="alertMessage">
+				<ul style="margin:0px;">
+					<li>Message for user here</li>
+				</ul>
+			</div>
+			<div rsf:id="errorPage:">
+				<span rsf:id="errorMsg" style="font-weight:bold;color:red;">####</span>
+				<br />
+				<br />
+				<input type="button" value="Back" onclick="javascript:history.go(-1);return false;" rsf:id="back-button" />
+			</div>
+			<div class="evalEditorSmall">
+				<form name="block_form" rsf:id="blockForm" method="post" onsubmit="javascript:return validateForm();">
+					<h3 rsf:id="modifyblock-page-title">Creating block</h3>
+					<div class="navPanel highlightPanel">
+						<div class="viewNav">
+							<h4 rsf:id="modifyblock-items-list-title" style="margin:0">Blocking items:</h4>
+						</div>
+						<div class="listNav">
+							<span rsf:id="showRemoveLink:">
+								<a href="#" name="remove_link" rsf:id="remove_link">Remove</a>
+							</span>
+						</div>
+					</div>
+					<p  rsf:id="modifyblock-items-list-instructions" class="instruction">Drag and drop to rearrange the blocked items</p>
+					<div id="itemTable" class="itemTable">
+						<div rsf:id="itemRow:" id="itemRow::1:" class="itemRow" style="padding:.2em;width:99%">
+							<input type="hidden" rsf:id="hidden-item-id" name="hidden-item-id" value="0" id="itemRow::1:hidden-item-id" />
+							<span rsf:id="item-num" id="itemRow::1:item-num" class="itemLabel">1</span>.&nbsp;
+							<span rsf:id="item-text" class="itemText">Child item text here</span>
+							
+							<span class="itemRight">
+								<a rsf:id="modify-row-item" href="modify_scaled.html">Modify</a>
+								&nbsp;
+								<a rsf:id="remove-row-item" href="remove_question.html">Remove</a>
+							</span>
+							
+						</div>
+					</div>
+
+					<span rsf:id="item-header">Blocking items:</span>
+					<span name="itemNo" rsf:id="itemNo">1</span>:
+					<span name="itemClassification" rsf:id="itemClassification">####</span>
+					(<span rsf:id="added-by">added by</span>
+					<span name="userInfo" rsf:id="userInfo">#####</span>)
+					<p>
+						<span rsf:id="scale-type-header">Scale Type:</span>
+						<span name="scaleLabel" rsf:id="scaleLabel" class="highlight">Title of scale (scale points)</span>
+					</p>
+			
+					<h4 rsf:id="item-header-text-header">Item Header Text :</h4>
+					
+					<div>
+						<span rsf:id="block-text-select" />
+						<div rsf:id="block-text-choice:" class="blockText">
+							<input type="radio" name="block-text-radio" rsf:id="block-text-radio" id="block-text-choice::0:block-text-radio" />
+							<label for="block-text-radio" rsf:id="block-text">Block item text</label>
+						</div>
+					</div>
+					
+					<div id="item-text-div">
+						<div rsf:id="item_text:">
+							<textarea name="item_text-dummy" rsf:id="item_text-dummy" cols="80" rows="5" />
+						</div>
+					</div>
+					<br />
+					
+					<p rsf:id="showNA:" class="checkbox">
+						<input type="checkbox" name="item_NA" rsf:id="item_NA" value="" />
+						<span rsf:id="add-na-header">Add N/A (not available):</span>
+					</p>
+					<p class="checkbox">
+						<input type="checkbox" name="idealColor" rsf:id="idealColor" value="" />
+						<span rsf:id="ideal-coloring-header">Use Ideal Coloring:</span>
+					</p>
+					<div rsf:id="showItemCategory:">
+						<h4 rsf:id="msg=modifyitem.item.category.header">Item Category:</h4>
+						<span rsf:id="item_category" />
+						<input type="radio" name="item_category_C" rsf:id="item_category_C" />
+						<label for="item_category_C" rsf:id="msg=modifyitem.course.category">Course</label>
+						<input type="radio" name="item_category_I" rsf:id="item_category_I" />
+						<label for="item_category_I" rsf:id="msg=modifyitem.instructor.category">Instructor</label>
+					</div>
+
+                   <!-- DIV tag for node selector renderer -->
+                   <div rsf:id="hierarchyNodeSelector:">
+                     <div>
+                        <h4><span>Hierarchy Assignment:</span></h4>
+                        <select style="font-family: monospace">
+                           <option value="TOP_LEVEL">Top Level</option>
+                           <option value="BIOL_DEPT">+ Biology Dept</option>
+                           <option value="BIOL_101">  - Bio 101</option>
+                        </select>
+                     </div>
+                   </div>
+
+					<p class="act">
+						<input type="hidden" rsf:id="ordered-child-ids" id="ordered-child-ids" />
+						<input name="saveBlockAction" rsf:id="saveBlockAction" id="saveBlockAction" type="submit" value="Save item" class="active" accesskey="s" />
+						<input name="previewBlockAction" rsf:id="previewBlockAction" type="submit" value="Preview item" onclick="javascript:flag='preview';" accesskey="v"/>
+						<input type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" rsf:id="cancel-button"  accesskey="x"/>
+					</p>
+				</form>
+			</div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,897 @@
+/** 
+ * Aaron Zeckoski (aaronz@vt.edu) 
+ * Gonzalo Silverio
+ */
+
+ @media print  {
+   body {
+		font-size: 9pt !important;
+		margin: 0 !important;
+		padding: 0 !important;
+	}
+	
+	.itemListNew li, .itemListNew li li{
+		border:1px solid #aaa !important
+		
+	}
+}
+
+A.inactive {
+	text-decoration: none;
+	font-weight: bold;
+	font-style: italic;
+} 
+ 
+.testStyles {
+	color:red;
+}
+
+form {
+	margin: 0;
+	display: inline;
+}
+
+
+.oddrow {
+	background-color: #E1E1E1;
+}
+
+.instructions {
+	font-size: 0.9em;
+	font-style: italic;
+}
+
+/**
+ * Special style to force divs to be able to work right when floating in all browsers
+ */
+.cleaner {
+	clear:both;
+	height:1px;
+	font-size:1px;
+	border:none;
+	margin:0; padding:0;
+	background:transparent;
+}
+
+/**
+ * Styles for emulating tables
+ */
+DIV.divrow {
+	width: 99.5%;
+	padding: 0.2em;
+}
+
+DIV.leftcol {
+	float: left;
+	text-align: left;
+}
+
+DIV.centercol {
+	float: left;
+	text-align: center;
+}
+
+DIV.rightcol {
+	float: right;
+	text-align: right;
+}
+
+
+/**
+ * Styles for the drag and drop
+ */
+DIV#itemTable {
+	border:1px solid #FFDD77;
+	margin:.5em 0;
+	padding: 0 .5em;
+	background:#FFFFEE
+}
+
+DIV.itemList {
+	list-style-type: none;
+	marker-offset: 0;
+	margin: 0;
+	padding: 0;
+}
+
+DIV.itemRow {
+	border: 1px solid #aaa;
+	width: 100%;
+	padding: 0;
+	margin: .6em 0 ;
+	cursor: move;
+	background:#fff
+}
+DIV.itemLine {
+	clear: left;
+	border-bottom: 1px solid #aaa;
+	background:#eee;
+	padding:.2em;
+	vertical-align:middle
+}
+
+DIV.itemLine2 {
+	clear: left;
+	vertical-align:middle;
+	padding:.2em
+}
+
+.itemLine3 {
+	clear: both;
+	margin: .5em .5em .5em 4.5em;
+	list-style-position: outside;
+	line-height:150%;
+	padding:0;
+	line-height:150%;
+}
+.itemCheckbox {
+	float: left;
+	cursor: default;
+	margin: 0;
+	padding: 1px 1.5em 1px 3px;
+
+	
+}
+.itemCheckbox input{
+	margin:0
+	
+}
+SPAN.itemType {
+	float: left;
+	padding: 0;
+}
+
+SPAN.itemRight {
+	font-size: 0.9em;
+	float: right;
+	padding: 0 .4em;
+	white-space: nowrap;
+}
+
+SPAN.itemLink {
+	width: 6%;
+	float: right;
+	text-align: center;
+	padding: 0 0.2em;
+	border-left:1px solid black;
+}
+
+SELECT.selectReorder {
+	cursor: auto;
+	font-weight: bold;
+}
+
+LABEL.itemNum {
+	float: left;
+	text-align: left;
+	font-weight: bold;
+	padding-right: 0.3em;
+	margin: 0;
+}
+
+h4.itemText {
+	display:inline;
+	padding:0;
+	margin:0;
+	float: left;
+	text-align: left;
+	border: 1px solid #fff;
+	font-weight: bold;
+	color:#333
+}
+span.itemText div {
+	padding: 0;
+	
+}
+/*
+lines created with the rteditor are rendered as <p> - so flatten out.
+ */
+span.itemText div p{
+	margin-top: 0;
+}
+SPAN.scaleDesc {
+	float: right;
+	text-align: right;
+	padding: .2em .2em 0 0;
+	white-space: nowrap;
+}
+
+.childItem {
+	font-size: 0.95em;
+	margin:0;
+	padding:0;
+}
+
+.orderChanged {
+	background-color: #ffc;
+	border:1px solid #fd7
+}
+
+
+table.sample {
+	border-width: 1px 1px 1px 1px;
+	border-spacing: 1px;
+	border-style: none none none none;
+	border-color: black black black black;
+	border-collapse: collapse;
+	background-color: white;
+}
+table.sample td {
+	border-width: 1px 1px 1px 1px;
+	padding: 1px 1px 1px 1px;
+	border-style: solid solid solid solid;
+	border-color: black black black black;
+	background-color: white;
+	-moz-border-radius: 0px 0px 0px 0px;
+}
+.borderLeft {
+	border-top:.01em solid black;
+	border-bottom:.01em solid black;
+	border-left:.01em solid black; 
+}
+.borderMid {
+	border-top:.01em solid black;
+	border-bottom:.01em solid black;
+}
+.borderRight {
+	border-top:.01em solid black;
+	border-bottom:.01em solid black;
+	border-left:.01em solid black;
+	border-right:.01em solid black;	
+}
+/*The following 2 classes are being used in table so should not be removed */
+.div_box_element{
+  float:left;
+  border-right:1px solid black;
+  padding:2px;
+}
+
+.div_box_element_center{
+  float:left;
+  border-right:1px solid black;
+  padding:2px;
+  text-align:center;
+  font-style:italic;
+}
+
+SPAN.itemLabel {
+	text-align: left;
+	font-weight: bold;
+}
+
+/*Revist the following to see if they are needed or not. We are not using div's anymore */
+.err_message{
+  color:red;
+}
+
+.div_base{
+  width:80%;
+}
+
+.div_box_base{
+  width:90%;
+  border:1px solid black;
+}
+
+.div_element_right{
+  float:right;
+  padding:5px;
+  text-align:center;
+}
+
+.div_element_left{
+  float:left;
+  padding:5px;
+  text-align:center;
+}
+
+.div_element_preview{
+	position: absolute;
+	left:70%;
+	width:30%;
+	padding:5px;
+	text-align:left;
+}
+
+/*DIV.summaryBox {
+	width: 97%;
+	height: 100%;
+	border: 2px #999 solid;
+	padding: 3px;
+	margin-bottom: 8px;
+}
+*/
+.summaryHeader {
+	font-size: 1.1em;
+	font-weight: bold;
+	margin-bottom: 3px;
+}
+
+UL.summaryToolList {
+	margin: 0px;
+	padding-left: 2em;
+}
+
+DIV.listHeader {
+	font-weight: bold;
+	margin-left: 1em;
+}
+
+UL.summaryEvaluateList {
+	margin: 0px;
+	padding-left: 2em;
+}
+
+.noListItems {
+	font-size: .9em;
+	font-style: italic;
+	margin-left: 3em;
+}
+
+
+/* breadcrumb navigation styles */
+.breadCrumb {
+	font-size: .9em;
+	padding: .5em 0; 
+	background: #ffe; /* This is our background color */
+	margin: 1em 0;
+}
+
+.navIntraTool 	 .breadCrumb {
+	margin:0;float:left
+}
+
+.breadCrumb li{
+	display: inline; 
+	background: #ffe url(../images/breadSep.gif) center right no-repeat;
+	padding:0 1.2em 0  .5em;
+	margin:0;
+}
+.breadCrumb li:first-child{
+	padding-left:3px
+}
+.breadCrumb li.lastCrumb{
+	display: inline; 
+	background-image: none;
+}
+
+.breadCrumbCurrent {
+	font-weight: bold;
+	display: inline; 
+	padding: 0px;
+}
+
+A.breadCrumb {
+	font-weight: bold;
+	margin: 0px;
+}
+
+A:hover.breadCrumb {
+	color: #333;
+}
+
+input.makeLink {
+	color: #27d;
+	padding: 0;
+	margin: 0;
+	background-color: transparent;
+	border:none;
+	text-decoration: underline;
+	cursor: pointer;
+	/* keep IE 6 and 7 from creating h-padding proportionate to the length of the string */
+	overflow: visible
+}
+
+input:hover.makeLink {
+	color: #33f;
+	cursor: hand;
+}
+input.makeLinkSmall{
+	font-size:.8em	
+}
+
+/* render link as a button */
+a:link.makeButton, a:visited.makeButton
+{
+  float: left;
+  margin: 2px 5px 2px 5px;
+  padding: 2px;
+  width: 100px;
+  border-top: 2px solid #cccccc;
+  border-bottom: 2px solid #666666;
+  border-left: 2px solid #cccccc;
+  border-right: 2px solid #666666;
+  background: #f1f1f1;
+  text-align: center;
+  text-decoration: none;
+  font: normal 10pt Verdana;
+  color: black;
+}
+
+a:hover.makeButton
+{
+  background: #FFFFFF;
+  color: #3333CC;
+}
+
+a:active.makeButton
+{
+  border-bottom: 2px solid #cccccc;
+  border-top: 2px solid #666666;
+  border-right: 2px solid #cccccc;
+  border-left: 2px solid #666666;
+}
+
+/* administrate view */
+td.checktable1 {
+	text-align: right;
+}
+
+td.checktable2 {
+	padding-left: 1em;
+}
+
+.noteText {
+	font-size: 90%;
+	font-style: italic;
+}
+
+.itemsHeader {
+	font-weight: bold;
+	font-size: 1.1em;
+	color: #990033;
+}
+
+.itemsText {
+	font-size: 1.0em;
+}
+
+.itemsDesc {
+	display: block;
+	font-size: 0.8em;
+	text-indent: 1em;
+}
+
+.itemsScale {
+	display: block;
+	font-size: 0.9em;
+	text-indent: 1em;
+	font-style: italic;
+}
+
+
+.expertItem {
+	font-size: 1.1em;
+}
+
+.expertItemCategory {
+	font-size: 0.9em;
+}
+
+.expertItemCategoryCurrent {
+	font-weight: bold;
+	font-size: 1.1em;
+	color: #009933;
+}
+
+.itemsListOddLine {
+	background-color: #eee;
+}
+
+.visibleFS{
+	border: 1px solid #ccc;
+	padding:1em .5em;
+}
+.visibleFS legend{
+	padding:.2em;
+	color: orange;
+	margin-left:1em;
+	}
+
+label.block{
+	padding: 0 0 .3em 0;	
+}
+
+.itemAction .itemMD{
+	padding: .2em .3em 1px 0;
+	white-space: nowrap;
+}
+
+
+.messageStepGraphic
+{
+	height:100%;
+	overflow: hidden;
+	margin:1em 0
+}
+.messageStepGraphic div{
+	width:100px;
+	float:left;
+}
+.messageStepGraphic a{
+	text-decoration: none !important;
+	font-size: 1em;
+}
+
+.messageStepGraphic a:hover{
+	text-decoration: none !important;
+}
+.messageStepGraphic div span{
+	margin-top:2em;
+	font-size:90%;
+	text-align: center;
+	color:#aaa;
+	display:block;
+}
+.first-cur-step span, .med-cur-step span, .last-cur-step span{
+	color: #666 !important;
+}
+.messageStepGraphic .first-noncur-step{
+	background:#fff url(../images/first-noncur-step.gif) top left no-repeat;
+}
+.messageStepGraphic .first-cur-step{
+	background:#fff url(../images/first-cur-step.gif) top left no-repeat;
+}
+.messageStepGraphic .med-noncur-step{
+	background:#fff url(../images/med-noncur-step.gif) top left no-repeat;
+}
+.messageStepGraphic .med-cur-step{
+	background:#fff url(../images/med-cur-step.gif) top left no-repeat;
+}
+.messageStepGraphic .last-noncur-step{
+	background:#fff url(../images/last-noncur-step.gif) top left no-repeat;
+}
+.messageStepGraphic .last-cur-step{
+	background:#fff url(../images/last-cur-step.gif) top left no-repeat;
+}
+.summaryBox{
+	border:1px solid #aaa;margin:0 0 1em 0;
+}
+.summaryBox .innerPanel{
+	padding:.5em;
+}
+.summaryCol1{
+	width:49.5%;height:100%;overflow:hidden;float:left;margin-top:1em
+}
+.summaryCol2{
+	width:49.5%;height:100%;overflow:hidden;float:right;margin-top:1em
+}
+.summaryCol1 h4, .summaryCol2 h4{
+	background:#ddd !important;
+	margin-top:0;
+	padding:.5em;
+	border-bottom:1px solid #aaa;
+}
+	
+.summaryBox table th{
+	background:#eee;
+	border:none
+}
+
+.scaleOuterList{
+	width:60%;
+	padding:0;
+	margin:1em 0 ;
+	list-style: decimal;
+	
+}
+
+.scaleInnerList{
+	list-style: none;
+	background:#fff;
+	padding:0 2em;
+	margin:0 0 1em 0;
+}
+.scaleInnerList li{
+	padding-left:1em;
+	border:1px solid red;
+	list-style-position: inside;
+}
+
+.scaleOuterListLi{
+	list-style:none;	
+}
+.scaleTitleLine{
+	height:1.5em;overflow:hide;background:#eee;padding:.1em .1em .1em .3em;	
+}
+
+.scaleTitleLineNum{
+	font-weight:bold; color:#333;float:left;
+} 
+
+.scaleTitle{
+	font-weight:bold; color:#333;width:60%;float:left;padding-left:1em	
+}
+
+.scaleTitleLine .itemAction{
+	 text-align:right;float:right
+}
+
+
+.idealScalePoint{
+	clear:both;padding:0;text-align:right
+	}
+
+/* add the following bnack in after work on the js */	
+/*.addItem{
+	border:1px solid gray;
+	background:#fff url(../images/add.gif) center left no-repeat;
+	padding:0 0 0 2em
+}	
+
+.removeItem{
+	background:#eee url(../images/delete.gif) center left no-repeat;
+	padding-left:1em;
+}
+
+.removeItem{
+	background:#eee url(../images/delete.gif) center left no-repeat;
+	padding-left:1em;
+}
+.removeItemDisabled{
+	background:#eee url(../images/delete-inact.gif) center left no-repeat;
+	padding-left:1em;
+}
+*/
+
+	
+.evalEditorSmall{
+	width:50em
+}
+.listHier 	input.makeLink{
+
+}
+
+.itemAction input.makeLink{
+	font-family: verdana,arial;
+	font-size: 100%;
+	color: #27d;
+	padding: .2em .3em 1px 0;	
+	white-space: nowrap;
+}
+
+.navIntraTool input.makeLink{
+	font-family: verdana,arial;
+	font-size: 100%;
+	color: #35b;
+	padding: 0;	
+	white-space: nowrap;
+}
+.navIntraTool input.makeLink:hover{
+	color: #33f;
+}
+.lighthighlight{
+	color:#000;
+	padding-left:.5em
+	}
+.itemOperations{
+	border:1px solid #ffa;
+	background:#ffe;
+	padding:.3em
+}
+.itemOperationsEnabled{
+	border:1px solid #fd7;
+	background:#ffc;
+	padding:.3em
+
+}
+
+.sortablehover{
+
+}
+.sorthelper{
+
+}
+
+.sortableactive{
+
+}
+
+.selectable{
+	float: left;
+	cursor: default;
+	margin: 0;
+	bac
+	padding:0;
+	padding: 1px 1.5em 1px 3px;
+	background:#eee url(../images/asterisk_orange.gif) 1.7em no-repeat;
+}
+.selectable input{
+	margin:0;
+}	
+.notselectable{
+	float: left;
+	cursor: default;
+	margin: 0;
+	padding:0;
+	padding: 1px 1.5em 1px 3px;
+}
+
+.notselectable input{
+	margin:0
+	}
+.notselectable *{
+	filter:progid:DXImageTransform.Microsoft.Alpha(Opacity=50), progid:DXImageTransform.Microsoft.BasicImage(grayscale=1) !important;
+	-moz-opacity:.50 !important;
+}	
+
+.checkPlaceholder
+{
+	float: left;
+	cursor: default;
+	margin: 0;
+	padding-right:2.5em;
+	visibility:hidden
+}
+
+.itemListNew{
+	width:95%;
+	border-color: #eee;
+	border-style: solid;
+	border-width:2px;
+	padding:.5em;
+	list-style: none;
+}
+.itemListNew legend {
+	padding:.3em .7em;
+	color: orange;
+	font-size: 110%;
+	margin-left:1em;
+}
+.itemListNew ol{
+	padding: 0;
+	margin:0;
+}	
+.itemListNew li{
+	padding:.3em;
+	margin:.3em;
+	border:1px solid #eee
+}
+
+.itemListNew li:hover .itemScalePanel{
+	border:1px solid #aaa
+}
+.itemListNew li:hover .itemScalePanel{
+	border:1px solid #aaa;
+	background:#fff;
+}
+.itemListEval li{
+	list-style: none;
+	padding: .5em;
+	margin:.2em;
+}	
+
+.itemListNew .itemListEval li:hover{
+/*	background: #ffc*/
+}
+.itemListNew .itemListEval h4{
+	display:inline;
+	color:#333;
+}
+.itemListNew .itemListEval li:hover h4{
+	color:#000
+}
+.itemListEval label{
+	color:#333;
+		}
+.itemListEval label:hover{
+	color:#000
+}
+.itemScalePanel{
+	height:31px;
+	border:1px solid #E1E1E1
+}
+.itemScalePanel:hover{
+	border:1px solid #aaa
+}
+.itemScalePanel td{
+	padding:.3em .5em;
+}
+
+.itemScalePanel .compactDisplayStart{
+	background:#FF8BA0
+}
+.itemScalePanel .compactDisplayEnd{
+	background:#8BE8A2
+}
+
+
+.itemScalePanel td.idealScale{
+	padding:0 !important;
+	vertical-align: top;
+/*
+	text-align:center
+*/	
+}
+
+.itemScalePanel td.idealScale div{
+	margin:0;
+}
+
+
+.itemScalePanel td.idealScale label{
+/*	border:1px solid transparent;*/
+	padding:5px 2px .2em 2px;
+	margin: 0 2px
+}
+
+.itemScalePanel td.idealScale label:hover{
+	border:1px solid #aaa;	
+	background:#fff;
+	margin: 0 1px
+}
+.idealScaleBack{
+	width:100%;
+	display:block;
+	position:absolute;
+	z-index:5
+	}
+.idealScaleBack img{
+	width:100%;
+	height:29px;
+	overflow:hidden;
+}
+
+.fullVertical{
+	margin:.5em 2em
+}
+.fullVertical ol li{
+	margin:0;
+	border:none 
+}
+	
+.fullDisplayHorizontal td{
+	padding:0;
+/*
+	height:100%;
+	overflow:hidden;
+	padding:.3em;
+	margin:.5em 0 .2em .5em;
+	white-space: nowrap;
+	text-align: center;
+	clear:both;
+
+*/
+}
+.fullDisplayHorizontal span{
+/*
+	padding:.3em .75em;
+*/
+}
+
+.fullVertical .na label{
+	padding-left:.2em
+}
+.fakeHeader{
+color: #555;
+	padding: 0;
+	font-weight: bold;
+	font-family: Arial,Helvetica,sans-serif;
+	margin: 1em 0 ;
+	background-color: transparent !important;
+}
+.addItem{
+	padding-left:2em;
+	background:transparent url(../images/add.png) center left no-repeat
+}
+.goToList{
+	padding-left:2em;
+	background:transparent url(../images/application_view_list.png) center left no-repeat
+}
+.exportAction{
+	padding-left:2em;
+	background:transparent url(../images/table_go.png) center left no-repeat
+}
+
+/*templates are rendering error messg. as div.alertMessage > ul li, so take default list styles out */ 
+.alertMessage ul{
+	padding:0;
+	margin:0;
+	list-style:none;	
+}
+
+.alertMessage ul li{
+	padding:0;
+	margin:0;
+	list-style:none;	
+}

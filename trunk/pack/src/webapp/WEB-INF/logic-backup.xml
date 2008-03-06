@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<!-- Aaron Zeckoski (aaronz@vt.edu) -->
+<!-- some of these beans access Sakai services directly -->
+<beans>
+
+   <!-- email notifications -->
+   <bean id="org.sakaiproject.evaluation.logic.EvalEmailsLogic"
+      class="org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl" init-method="init">
+      <property name="externalLogic"
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+      <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+      <property name="evaluationService"
+         ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+   </bean>
+
+   <!-- jobs processing -->
+   <!-- FIXME stop using Sakai services directly -->
+   <bean id="org.sakaiproject.evaluation.logic.EvalJobLogic"
+      class="org.sakaiproject.evaluation.logic.scheduling.EvalJobLogicImpl"
+      init-method="init">
+      <property name="externalLogic"
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+      <property name="evaluationService"
+         ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+      <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+      <property name="emails" ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
+      <property name="scheduledInvocationManager"
+         ref="org.sakaiproject.api.app.scheduler.ScheduledInvocationManager" />
+      <property name="timeService" ref="org.sakaiproject.time.api.TimeService" />
+   </bean>
+
+   <!-- imports -->
+   <!-- REMOVED for now to fix circular dependencies, and to get rid of beans that make invalid direct use of Sakai -AZ
+	<bean id="org.sakaiproject.evaluation.logic.imports.EvalImport"
+      class="org.sakaiproject.evaluation.logic.imports.EvalImportImpl"
+      init-method="init">
+      <property name="EvalEvaluationSetupService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
+      <property name="evalEmailsLogic" ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
+      <property name="evalEvaluationsLogic" ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
+      <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+      <property name="authoringService"
+            ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
+        <property name="contentHostingService" ref="org.sakaiproject.content.api.ContentHostingService" />
+        <property name="sessionManager" ref="org.sakaiproject.tool.api.SessionManager" />
+	</bean>
+      
+      <bean id="org.sakaiproject.evaluation.logic.imports.EvalImportLogic"
+      class="org.sakaiproject.evaluation.logic.imports.EvalImportLogicImpl"
+      init-method="init"> 
+      <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+		<property name="evalImport"
+      ref="org.sakaiproject.evaluation.logic.imports.EvalImport" />
+      <property name="evalImportJob"
+      ref="org.sakaiproject.evaluation.logic.imports.EvalImportJob" />
+      </bean>
+   -->
+
+</beans>

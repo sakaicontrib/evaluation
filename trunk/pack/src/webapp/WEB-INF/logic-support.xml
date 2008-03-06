@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!-- Aaron Zeckoski (aaronz@vt.edu) -->
+<beans>
+
+   <!-- handles api based retrieval of application settings -->
+   <bean id="org.sakaiproject.evaluation.logic.EvalSettings"
+      class="org.sakaiproject.evaluation.logic.EvalSettingsImpl" init-method="init">
+      <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+      <property name="externalLogic"
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+   </bean>
+
+   <!-- utils which require other low level evaluation beans -->
+   <bean id="org.sakaiproject.evaluation.beans.EvalBeanUtils"
+        class="org.sakaiproject.evaluation.beans.EvalBeanUtils">
+      <property name="externalLogic"
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+      <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+   </bean>
+
+   <!-- handles security checks -->
+   <bean id="org.sakaiproject.evaluation.logic.externals.EvalSecurityChecks"
+      class="org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl">
+      <property name="externalLogic"
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+      <property name="evalBeanUtils"
+         ref="org.sakaiproject.evaluation.beans.EvalBeanUtils" />
+      <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+   </bean>
+
+   <!-- handles simpler evaluation methods -->
+   <bean id="org.sakaiproject.evaluation.logic.EvalEvaluationService"
+      class="org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl">
+      <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+      <property name="externalLogic"
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+      <property name="securityChecks"
+         ref="org.sakaiproject.evaluation.logic.externals.EvalSecurityChecks" />
+      <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+   </bean>
+
+
+   <!-- a general transaction interceptor for the logic beans -->
+   <bean id="org.sakaiproject.evaluation.interceptor.LogicTransactionProxy"
+      class="org.springframework.transaction.interceptor.TransactionInterceptor">
+      <property name="transactionManager">
+         <ref bean="org.sakaiproject.springframework.orm.hibernate.GlobalTransactionManager" />
+      </property>
+      <property name="transactionAttributes">
+         <props>
+            <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+            <prop key="can*">PROPAGATION_REQUIRED,readOnly</prop>
+            <prop key="check*">PROPAGATION_REQUIRED,readOnly</prop>
+            <prop key="count*">PROPAGATION_REQUIRED,readOnly</prop>
+            <prop key="*">PROPAGATION_REQUIRED</prop>
+            <!-- <prop key="*">PROPAGATION_REQUIRED,+java.lang.RuntimeException</prop> -->
+         </props>
+      </property>
+   </bean>
+
+   <!-- bean to wrap all the logic beans inside the transaction interceptor -->
+   <bean class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+      <property name="interceptorNames">
+         <list>
+            <idref bean="org.sakaiproject.evaluation.interceptor.LogicTransactionProxy" />
+         </list>
+      </property>
+      <property name="beanNames">
+         <list>
+            <value>org.sakaiproject.evaluation.logic.Eval*</value>
+            <value>org.sakaiproject.evaluation.beans.Eval*</value>
+            <value>org.sakaiproject.evaluation.logic.import.Eval*</value>
+         </list>
+      </property>
+   </bean>
+
+</beans>

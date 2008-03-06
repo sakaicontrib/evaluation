@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!-- Aaron Zeckoski (aaronz@vt.edu) -->
+<beans>
+
+   <!-- Add our HBM files to the Sakai global session factory -->
+   <bean id="org.sakaiproject.springframework.orm.hibernate.impl.AdditionalHibernateMappingsImpl.evaluation"
+      class="org.sakaiproject.springframework.orm.hibernate.impl.AdditionalHibernateMappingsImpl">
+      <property name="mappingResources">
+         <list>
+            <value>org/sakaiproject/evaluation/dao/hbm/EvalAdhocGroup.hbm.xml</value>
+            <value>org/sakaiproject/evaluation/dao/hbm/EvalAdhocUser.hbm.xml</value>
+            <value>org/sakaiproject/evaluation/dao/hbm/EvalAnswer.hbm.xml</value>
+            <value>org/sakaiproject/evaluation/dao/hbm/EvalAssignGroup.hbm.xml</value>
+            <value>org/sakaiproject/evaluation/dao/hbm/EvalAssignHierarchy.hbm.xml</value>
+            <value>org/sakaiproject/evaluation/dao/hbm/EvalConfig.hbm.xml</value>
+            <value>org/sakaiproject/evaluation/dao/hbm/EvalEmailTemplate.hbm.xml</value>
+            <value>org/sakaiproject/evaluation/dao/hbm/EvalEvaluation.hbm.xml</value>
+            <value>org/sakaiproject/evaluation/dao/hbm/EvalGroupNodes.hbm.xml</value>
+            <value>org/sakaiproject/evaluation/dao/hbm/EvalItem.hbm.xml</value>
+            <value>org/sakaiproject/evaluation/dao/hbm/EvalItemGroup.hbm.xml</value>
+            <value>org/sakaiproject/evaluation/dao/hbm/EvalLock.hbm.xml</value>
+            <value>org/sakaiproject/evaluation/dao/hbm/EvalResponse.hbm.xml</value>
+            <value>org/sakaiproject/evaluation/dao/hbm/EvalScale.hbm.xml</value>
+            <value>org/sakaiproject/evaluation/dao/hbm/EvalTemplate.hbm.xml</value>
+            <value>org/sakaiproject/evaluation/dao/hbm/EvalTemplateItem.hbm.xml</value>
+         </list>
+      </property>
+   </bean>
+
+</beans>

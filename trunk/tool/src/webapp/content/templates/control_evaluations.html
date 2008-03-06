@@ -1,0 +1,173 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+	   <title rsf:id="page-title">My Evaluations</title>
+	   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	   <link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+	   <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+	   <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+	   <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+	</head>
+	
+	<body>
+		<div class="portletBody">
+
+        <div class="navIntraTool">
+            <a rsf:id="administrate-link" href="administrate.html">Administrate</a>
+            <a rsf:id="summary-link" href="summary.html">Summary</a>
+            <a rsf:id="control-evaluations-link" class="inactive" href="control_evaluations.html">My Evaluations</a>
+            <a rsf:id="control-templates-link" href="control_templates.html">My Templates</a>
+            <a rsf:id="control-items-link" href="control_items.html">My Items</a>
+            <a rsf:id="control-scales-link" href="control_scales.html">My Scales</a>
+        </div>
+				
+		<ul class="breadCrumb"  style="clear:both;height:1.5em">
+			<li style="float:left"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
+			<li style="float:left" rsf:id="page-title"  class="lastCrumb">My Evaluations</li>
+			<li style="float:right" class=" lastCrumb addItem">
+				<form rsf:id="begin-evaluation-form" method="post" class="inlineForm addItem" >
+					<input rsf:id="begin-evaluation-link" value="Start Evaluation" type="submit" class="makeLink makeLinkSmall" />    
+				</form>
+			</li>	
+
+		</ul> 
+
+		<div rsf:id="message-for:*" class="alertMessage">
+			<ul style="margin:0px;">
+				<li>Message for user here</li>
+			</ul>
+		</div>
+		
+		<h3 rsf:id="msg=controlevaluations.inqueue.header">In-Queue Evaluations</h3>
+			
+		<p rsf:id="msg=controlevaluations.inqueue.description" class="instruction">Your Evaluations in queue that have not started yet</p>
+		<!--
+		<form rsf:id="begin-evaluation-form" method="post" class="inlineForm">
+			<input rsf:id="begin-evaluation-link" value="Start Evaluation" type="submit" class="makeLink" />
+		</form>
+		-->
+		
+		<div rsf:id="inqueue-eval-listing:">
+			<form rsf:id="inqueue-eval-form" method="post">
+				<table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
+					<thead>
+						<tr>
+							<th rsf:id="msg=controlevaluations.eval.title.header" width="50%">Evaluation Title</th>
+							<th rsf:id="msg=controlevaluations.eval.settings.header" width="20%">Settings</th>
+							<th rsf:id="msg=controlevaluations.eval.assigned.header" width="15%">Assigned</th>
+							<th rsf:id="msg=controlevaluations.eval.startdate.header" width="10%">Start Date</th>
+							<th rsf:id="msg=controlevaluations.eval.duedate.header" width="15%">Due Date</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr rsf:id="inqueue-eval-row:"> 
+							<td headers="titleinqueue">
+								<a rsf:id="inqueue-eval-link" href="preview_eval.html" target="_blank">Evaluation Title 1</a>
+								<span rsf:id="eval-direct-link" class="itemAction">(<a rsf:id="payload-component" href="take_eval.html" title="direct url to the evaluation" target="_blank">link</a>)</span>
+								<span rsf:id="eval-category-direct-link">[<a rsf:id="payload-component" href="show_eval_category.html" title="direct url to the category" target="_blank">category</a>]</span>
+							</td>
+							<td headers="settingsinqueue" class="itemAction">
+								<input rsf:id="inqueue-eval-edit-link" type="submit" class="makeLink" value="Edit" />
+								<span rsf:id="inqueue-eval-delete-link">| <a rsf:id="payload-component" href="remove_evaluation.html">Delete</a></span>
+							</td>
+							<td headers="assignedinqueue">
+								<input rsf:id="inqueue-eval-assigned-link" type="submit" value="Course 1010" class="makeLink" />
+								<span rsf:id="inqueue-eval-assigned"></span>
+							</td>
+							<td rsf:id="inqueue-eval-startdate" nowrap="nowrap" headers="startinqueue">15/03/2007</td>					
+							<td rsf:id="inqueue-eval-duedate" nowrap="nowrap" headers="dueinqueue">20/03/2007</td>	
+						</tr>
+					</tbody>
+				</table>
+			</form>
+		</div>                               
+		<p rsf:id="no-inqueue-evals"  class="instruction highlightPanel">No evaluations in-queue</p>
+		
+		<h3 rsf:id="msg=controlevaluations.active.header" style="font-weight:bold;">Active Evaluations</h3>
+		<p rsf:id="msg=controlevaluations.active.description"  class="instruction">Your Evaluations currently active for users to take</p>
+
+		<div rsf:id="active-eval-listing:">
+			<form rsf:id="active-eval-form" method="post">
+				<table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
+					<thead>
+						<tr>
+							<th rsf:id="msg=controlevaluations.eval.title.header" width="50%" >Evaluation Title</th>
+							<th rsf:id="msg=controlevaluations.eval.settings.header" width="20%">Settings</th>
+							<th rsf:id="msg=controlevaluations.eval.assigned.header" width="15%">Assigned</th>
+							<!--//gsilver: collapsing into title column 
+							<th rsf:id="eval-responses-header" width="10%">Responses</th>
+							-->
+							<th rsf:id="msg=controlevaluations.eval.startdate.header" width="10%">Start Date</th>
+							<th rsf:id="msg=controlevaluations.eval.duedate.header" width="15%">Due Date</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr rsf:id="active-eval-row:"> 
+							<td headers="titleact">
+								<div style="float:left">
+									 <a rsf:id="active-eval-link" href="preview_eval.html">Evaluation Title 1</a>
+
+									<span rsf:id="eval-direct-link" class="itemAction">(<a rsf:id="payload-component" href="take_eval.html" title="direct url to the evaluation" target="_blank">link</a>)</span>
+									<span rsf:id="eval-category-direct-link">[<a rsf:id="payload-component" href="show_eval_category.html" title="direct url to the category" target="_blank">category</a>]</span>
+								</div>
+								<div rsf:id="active-eval-response-rate" style="float: right;padding-right:2em">Responses: 10/100</div>
+							</td>
+							<td headers="settingsact" class="itemAction">
+								<input rsf:id="active-eval-edit-link" type="submit" class="makeLink" value="Edit" /><span rsf:id="active-eval-delete-link">| <a rsf:id="payload-component" href="remove_evaluation.html">Delete</a></span>
+							</td>		
+							<td headers="assignedact">
+								<input rsf:id="active-eval-assigned-link" type="submit" value="Course 1010" class="makeLink" />
+								<span rsf:id="active-eval-assigned"></span>
+							</td>
+							<td rsf:id="active-eval-startdate" headers="startact"  nowrap="nowrap">15/03/2007</td>					
+							<td rsf:id="active-eval-duedate" headers="dueact"  nowrap="nowrap" >20/03/2007</td>	
+						</tr>
+					</tbody>
+				</table>
+			</form>
+		</div>
+		<p rsf:id="no-active-evals" class="instruction highlightPanel" >No active evaluations</p>
+
+		<h3  rsf:id="msg=controlevaluations.closed.header">Closed Evaluations</h3>
+		<p rsf:id="msg=controlevaluations.closed.description"  class="instruction">Your Evaluations which have been completed</p>
+		<div rsf:id="closed-eval-listing:">
+			<form rsf:id="closed-eval-form" method="post">
+				<table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
+					<thead>
+						<tr>
+							<th rsf:id="msg=controlevaluations.eval.title.header" width="50%">Evaluation Title</th>
+							<th rsf:id="msg=controlevaluations.eval.report.header"  width="20%">Report</th>
+							<th rsf:id="msg=controlevaluations.eval.assigned.header" width="15%">Assigned</th>
+							<th rsf:id="msg=controlevaluations.eval.responserate.header" width="10%">Response Rate</th>
+							<th rsf:id="msg=controlevaluations.eval.duedate.header" width="15%">Due Date</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr rsf:id="closed-eval-row:"> 
+							<td headers="titleclosed">
+								<a rsf:id="closed-eval-link" href="preview_eval.html">Evaluation Title 1</a>
+								<span rsf:id="eval-link-category-title">Category:</span>
+								<span rsf:id="eval-category">[<span rsf:id="payload-component">category</span>]</span>
+							</td>
+							<td headers="settingsclosed" class="itemAction">
+								<a rsf:id="closed-eval-report-link" href="view_report.html">Report</a>
+								<span rsf:id="closed-eval-message"></span>
+								<span rsf:id="closed-eval-delete-link">| <a rsf:id="payload-component" href="remove_evaluation.html">Delete</a></span>
+							</td>
+							<td  headers="assignedclosed" >
+								<input rsf:id="closed-eval-assigned-link" type="submit" value="Course 1010" class="makeLink" />
+								<span rsf:id="closed-eval-assigned"></span>
+							</td>
+							<td rsf:id="closed-eval-response-rate" headers="resprateclosed" nowrap="nowrap">40/50 - 80%</td>						
+							<td rsf:id="closed-eval-duedate" headers="dueclosed"  nowrap="nowrap">20/03/2007</td>	
+						</tr>
+					</tbody>
+				</table>
+			</form>
+		</div>
+		<p rsf:id="no-closed-evals"  class="instruction highlightPanel">No closed evaluations</p>
+		
+		</div>
+		</body>
+</html>

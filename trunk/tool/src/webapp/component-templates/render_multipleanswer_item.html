@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Multiple Answer Item Renderer:</title>
+	</head>
+	<body>
+	
+		<!-- html template for the multiple answer item renderer -AZ -->
+		<div rsf:id="render-multipleanswer-item:">
+
+            <div rsf:id="fullType:">
+                <!-- Full, Vertical DISPLAY -->
+                    <h4>
+                        <span rsf:id="itemNum">#</span>.&nbsp;
+                        <span rsf:id="itemText">Full or vertical display text here</span>
+                    </h4>
+                    <!-- Next row for Full, Vertical Display -->
+                    <div rsf:id="nextrow:">
+
+                        <div rsf:id="verticalDisplay:" class="fullVertical">
+                            <!-- DIV tag for Vertical display -->
+                            <span rsf:id="dummyCheckbox" />
+                            <ol>
+                                <li rsf:id="scaleOptions:">
+                                    <input rsf:id="choiceValue" type="checkbox" id="vertical1" name="vertical1" />
+                                    <label for="vertical1" rsf:id="choiceLabel">vertical label</label>
+                                </li>
+                                <li rsf:id="scaleOptions:">
+                                    <input rsf:id="choiceValue" type="checkbox" id="vertical2" name="vertical2" />
+                                    <label for="vertical2" rsf:id="choiceLabel">vertical label</label>
+                                </li>
+                                <li rsf:id="scaleOptions:">
+                                    <input rsf:id="choiceValue" type="checkbox" id="vertical3" name="vertical3" />
+                                    <label for="vertical3" rsf:id="choiceLabel">vertical label</label>
+                                </li>
+                            </ol>
+                            <div rsf:id="showNA:" class="na">
+                                <input type="checkbox" rsf:id="itemNA" name="vertical" id="itemNA" /> <label rsf:id="descNA" for="itemNA">N/A</label>
+                            </div>
+                        </div>
+
+                        <div rsf:id="fullDisplay:" class="fullDisplayHorizontal">
+                            <!-- DIV tag for full display  -->
+                            <span rsf:id="dummyCheckbox" />
+                            <span rsf:id="scaleOptions:">
+                                <input type="checkbox" rsf:id="choiceValue" id="full1" name="full1" />
+                                <label for="full1" rsf:id="choiceLabel">full label</label>                                  
+                            </span>
+                            <span rsf:id="scaleOptions:">
+                                <input type="checkbox" rsf:id="choiceValue" id="full2" name="full2" />
+                                <label for="full2" rsf:id="choiceLabel">full label</label>                                  
+                            </span>
+                            <span rsf:id="scaleOptions:">
+                                <input type="checkbox" rsf:id="choiceValue" id="full3" name="full3" />
+                                <label for="full3" rsf:id="choiceLabel">full label</label>                                  
+                            </span>
+                            <div rsf:id="showNA:">
+                                    <input type="checkbox" rsf:id="itemNA" name="full" id="itemNA" /> <label rsf:id="descNA" for="itemNA">N/A</label>
+                            </div>
+                        </div>
+                    </div>
+
+            </div>
+
+		</div>
+	
+	</body>
+</html>

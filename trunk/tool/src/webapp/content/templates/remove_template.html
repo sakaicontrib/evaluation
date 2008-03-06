@@ -1,0 +1,46 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title rsf:id="remove-template-title">Remove Template</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+	</head>
+	
+	<body>
+		<div class="portletBody">
+			
+			<ul class="breadCrumb">
+				<li><a rsf:id="summary-link" href="summary.html">Summary</a></li><li><a rsf:id="control-templates-link" href="control_templates.html">My Templates</a></li><li class="lastCrumb" rsf:id="remove-template-title">Remove Template</li>
+				<!-- <li rsf:id="control-panel-title">Control Panel</li> -->
+			</ul>
+			
+			<div rsf:id="message-for:*" class="alertMessage">
+				<ul style="margin:0px;">
+					<li>Message for user here</li>                                                    
+				</ul>
+			</div>
+			
+			<h3 rsf:id="remove-template-title"></h3>
+			<div rsf:id="cannot-remove-message" class="alertMessage"></div>
+																																													  
+			<div rsf:id="removeDiv:">
+				<div class="alertMessage">
+					<span rsf:id="remove-template-confirm-text">Are you sure you want to remove template NAME? The removal is permanant.</span>
+					<p rsf:id="remove-template-note" style="font-style:italic;">All data related to the template will be removed permanantly.</p>
+				</div>
+				<div class="act">
+					<form rsf:id="remove-template-form" method="post" class="inlineForm">
+						<input rsf:id="remove-template-button" type="submit" value="Remove Template" class="active" accesskey="s" />
+					</form>
+					<input rsf:id="cancel-command-link" type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" accesskey="x"/>	
+				</div>	
+			</div>
+		
+		</div>
+	</body>
+</html>
+

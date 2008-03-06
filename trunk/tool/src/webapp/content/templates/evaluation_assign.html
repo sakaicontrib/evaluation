@@ -1,0 +1,78 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title rsf:id="page-title">Assign Evaluation to groups</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />    
+	</head>
+	
+	<body>
+		<div class="portletBody">
+			
+			<div class="navIntraTool">
+	<!--			<a rsf:id="summary-link" href="summary.html">Summary</a> -->
+			</div>
+			
+			<div>
+				<ul class="breadCrumb">
+				<!-- first link in the bcrumb does not seem to be looking in the message.properties for a value -->
+				<li><a rsf:id="summary-link" href="summary.html">Evaluations dashboard</a></li><li rsf:id="create-eval-title">Add Evaluation</li><li class="lastCrumb" rsf:id="page-title">Assign Evaluation</li>					
+				</ul>
+			</div>
+			
+			<div rsf:id="message-for:*" class="alertMessage">
+				<ul style="margin:0px;">
+					<li>Message for user here</li>
+				</ul>
+			</div>
+			<h3 rsf:id="assign-eval-edit-page-title">Evaluation Assignment Confirmation</h3>
+
+						
+			<form rsf:id="eval-assign-form" method="post">
+				<h4 rsf:id="assign-hierarchy-title">Assign to Hierarchy Nodes</h4>
+				<div rsf:id="hierarchy-tree-select:">(Tree goes here)
+				</div>
+			
+				<p class="instruction"  rsf:id="assign-eval-instructions">You are allowed to assign this evaluation (eval title) to the groups listed below.</p> 
+				
+				<div rsf:id="siteCheckboxes"/>
+				<table border="0" cellspacing="0" cellpadding="3" style="width:90%" class="listHier lines nolines" >
+					<thead>
+						<tr>
+							<th class="attach" >
+								<span rsf:id="select-header">Select</span>
+							</th>
+							<th>
+								<span rsf:id="name-header">Title</span>
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr rsf:id="sites:"> 
+							<td class="attach" >
+								<input rsf:id="siteId" type="checkbox" id="site-id" />
+							</td>
+							<td>
+								<label rsf:id="siteTitle" for="site-id">group title</label>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				
+				
+
+				<p class="act">	
+					<input type="submit" name="save_assigned_courses" value="Save Assigned Courses" rsf:id="confirmAssignCourses" class="active" accesskey="s" />
+					<input type="submit" name="edit_settings" value="Edit Settings" rsf:id="editSettings"  accesskey="r" />
+					<input type="submit" name="cancel" value="Cancel" rsf:id="cancel-button"  accesskey="x" /> 
+ 				</p>	
+			
+			</form>
+				
+		</div>	
+	</body>
+</html>

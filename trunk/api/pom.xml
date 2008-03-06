@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns="http://maven.apache.org/POM/4.0.0"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+   <name>Sakai Evaluation API</name>
+   <groupId>org.sakaiproject.evaluation</groupId>
+   <artifactId>sakai-evaluation-api</artifactId>
+   <version>1.2.0</version><!--eval.version-->
+   <organization>
+      <name>Sakai Project</name>
+      <url>http://www.sakaiproject.org/</url>
+   </organization>
+   <inceptionYear>2006</inceptionYear>
+
+   <parent>
+      <artifactId>evaluation</artifactId>
+      <groupId>org.sakaiproject</groupId>
+      <version>1.2.0</version><!--eval.version-->
+   </parent>
+
+   <!-- you must deploy your API to shared or it will be 
+      inaccessible from your tool -->
+   <packaging>jar</packaging>
+   <properties>
+      <deploy.target>shared</deploy.target>
+   </properties>
+
+   <dependencies>
+
+      <!-- Apache commons dependencies -->
+      <dependency>
+         <groupId>commons-logging</groupId>
+         <artifactId>commons-logging</artifactId>
+         <version>1.1</version>
+         <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>org.sakaiproject.entitybroker</groupId>
+         <artifactId>entitybroker-api</artifactId>
+         <version>1.2.0</version>
+         <scope>provided</scope>
+      </dependency>
+
+      <!-- sakai dependencies -->
+      <dependency>
+         <groupId>org.sakaiproject</groupId>
+         <artifactId>sakai-entity-api</artifactId>
+         <version>${sakai.version}</version>
+         <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>org.sakaiproject</groupId>
+         <artifactId>sakai-scheduler-api</artifactId>
+         <version>${sakai.version}</version>
+         <scope>provided</scope>
+      </dependency>
+
+      <!-- generic DAO -->
+      <dependency>
+         <groupId>org.sakaiproject</groupId>
+         <artifactId>generic-dao</artifactId>
+         <version>${sakai.generic-dao.version}</version>
+         <scope>provided</scope>
+      </dependency>
+
+      <!-- Quartz scheduling -->
+      <dependency>
+         <groupId>quartz</groupId>
+         <artifactId>quartz</artifactId>
+         <version>1.5.2</version>
+         <scope>provided</scope>
+      </dependency>
+
+   </dependencies>
+
+   <build>
+      <sourceDirectory>src/java</sourceDirectory>
+      <resources>
+         <resource>
+            <directory>src/java</directory>
+            <includes>
+               <include>**/*.xml</include>
+            </includes>
+         </resource>
+      </resources>
+   </build>
+</project>

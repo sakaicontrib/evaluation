@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns="http://maven.apache.org/POM/4.0.0"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+   <groupId>org.sakaiproject</groupId>
+   <artifactId>evaluation</artifactId>
+   <name>Sakai Evaluation Project</name>
+   <version>1.2.0</version><!--eval.version-->
+   <description>
+      Online Course and Instructor Ratings
+
+      The Evaluation System is a tool that runs under Sakai version 2.2 or higher. The
+      Evaluation System is used to conduct formative and summative (end of term) evaluations
+      and review the results. An evaluation consists of a series of scaled and/or free text
+      questions, which are delivered to students over a fixed time period (typically a few
+      days).
+
+      The evaluation system allows colleges, departments, and instructors to manage their
+      own body of questions which are part of a combined end of term evaluation. This allows
+      colleges and departments within a larger institution to collect targeted information
+      from their students, while preserving a consistent set of questions used through the
+      institution.
+
+      Evaluation results can easily be reviewed within a single course, across colleges or
+      departments, or across the entire university. Results can be reviewed for a single
+      evaluation covering a short time period, or can be displayed for a series of
+      evaluations conducted across a larger time period.
+
+      The evaluation system contacts students to notify them of upcoming evaluations
+      automatically, and to remind students to complete an ongoing evaluation. The
+      notification scheme is intended to increase the response rate.
+   </description>
+   <url>http://bugs.sakaiproject.org/confluence/display/EVALSYS/Home</url>
+   <packaging>pom</packaging>
+
+   <parent>
+      <artifactId>master</artifactId>
+      <groupId>org.sakaiproject</groupId>
+      <version>SNAPSHOT</version>
+      <relativePath>../master/pom.xml</relativePath>
+   </parent>
+
+   <profiles>
+      <profile>
+         <id>full</id>
+         <activation>
+            <activeByDefault>true</activeByDefault>
+         </activation>
+         <modules>
+            <module>api</module>
+            <module>impl</module>
+            <module>pack</module>
+            <module>tool</module>
+         </modules>
+      </profile>
+      <profile>
+         <id>tool</id>
+         <modules>
+            <module>tool</module>
+         </modules>
+      </profile>
+   </profiles>
+</project>
