@@ -23,6 +23,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
@@ -76,7 +78,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  */
 public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter, ActionResultInterceptor {
 
-   // removed original authors for writing code that does not even work -AZ
+   private static Log log = LogFactory.getLog(TakeEvalProducer.class);
 
    public static final String VIEW_ID = "take_eval";
    public String getViewID() {
@@ -167,21 +169,30 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
       // get the evaluation based on the passed in VPs
       EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
       if (eval == null) {
+         log.error("Cannot find evalaution with id: " + evaluationId);
          throw new IllegalArgumentException("Invalid evaluationId ("+evaluationId+"), cannot load evaluation");
       }
 
       UIMessage.make(tofill, "eval-title-header", "takeeval.eval.title.header");
       UIOutput.make(tofill, "evalTitle", eval.getTitle());
 
-      // check the states of the evaluation first to give the user a tip that this eval is not takeable,
-      // also avoids wasting time checking permissions when the evaluation certainly is closed
+      /* check the states of the evaluation first to give the user a tip that this eval is not takeable,
+       * also avoids wasting time checking permissions when the evaluation certainly is closed,
+       * also allows us to give the user a nice custom message
+       */
       String evalState = evaluationService.returnAndFixEvalState(eval, true); // make sure state is up to date
-      if (EvalUtils.checkStateBefore(evalState, EvalConstants.EVALUATION_STATE_ACTIVE, true)) {
-            UIMessage.make(tofill, "eval-cannot-take-message", "takeeval.eval.not.open", 
-               new String[] {df.format(eval.getStartDate()), df.format(eval.getDueDate())} );
+      if (EvalUtils.checkStateBefore(evalState, EvalConstants.EVALUATION_STATE_ACTIVE, false)) {
+         String dueDate = "--------";
+         if (eval.getDueDate() != null) {
+            dueDate = df.format(eval.getDueDate());
+         }
+         UIMessage.make(tofill, "eval-cannot-take-message", "takeeval.eval.not.open", 
+               new String[] {df.format(eval.getStartDate()), dueDate} );
+         log.info("User ("+currentUserId+") cannot take evaluation yet, not open until: " + eval.getStartDate());
       } else if (EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_CLOSED, true)) {
          UIMessage.make(tofill, "eval-cannot-take-message", "takeeval.eval.closed",
                new String[] {df.format(eval.getDueDate())} );
+         log.info("User ("+currentUserId+") cannot take evaluation anymore, closed on: " + eval.getDueDate());
       } else {
          // eval state is possible to take eval
          canAccess = true;
@@ -239,127 +250,128 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                }
             }
          }
-      }
 
-      if (userCanAccess) {
-         // load up the response if this user has one already
-         if (responseId == null) {
-            EvalResponse response = evaluationService.getResponseForUserAndGroup(evaluationId, currentUserId, evalGroupId);
-            if (response == null) {
-               // create the initial response if there is not one
-               // EVALSYS-360 because of a hibernate issue this will not work, do a binding instead -AZ
-               //responseId = localResponsesLogic.createResponse(evaluationId, currentUserId, evalGroupId);
-            } else {
-               responseId = response.getId();
+         if (userCanAccess) {
+            // load up the response if this user has one already
+            if (responseId == null) {
+               EvalResponse response = evaluationService.getResponseForUserAndGroup(evaluationId, currentUserId, evalGroupId);
+               if (response == null) {
+                  // create the initial response if there is not one
+                  // EVALSYS-360 because of a hibernate issue this will not work, do a binding instead -AZ
+                  //responseId = localResponsesLogic.createResponse(evaluationId, currentUserId, evalGroupId);
+               } else {
+                  responseId = response.getId();
+               }
             }
-         }
-
-         if (responseId != null) {
-            // load up the previous responses for this user (no need to attempt to load if the response is new, there will be no answers yet)
-            answerMap = localResponsesLogic.getAnswersMapByTempItemAndAssociated(responseId);
-         }
-
-         // show the switch group selection and form if there are other valid groups for this user
-         if (validGroups.size() > 1) {
-            String[] values = new String[validGroups.size()];
-            String[] labels = new String[validGroups.size()];
-            for (int i=0; i<validGroups.size(); i++) {
-               EvalGroup group = (EvalGroup) validGroups.get(i);
-               values[i] = group.evalGroupId;
-               labels[i] = group.title;
+   
+            if (responseId != null) {
+               // load up the previous responses for this user (no need to attempt to load if the response is new, there will be no answers yet)
+               answerMap = localResponsesLogic.getAnswersMapByTempItemAndAssociated(responseId);
             }
-            // show the switch group selection and form
-            UIBranchContainer showSwitchGroup = UIBranchContainer.make(tofill, "show-switch-group:");
-            UIMessage.make(showSwitchGroup, "switch-group-header", "takeeval.switch.group.header");
-            UIForm chooseGroupForm = UIForm.make(showSwitchGroup, "switch-group-form", 
-                  new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, evalGroupId, responseId));
-            UISelect.make(chooseGroupForm, "switch-group-list", values, labels,  "#{evalGroupId}");
-            UIMessage.make(chooseGroupForm, "switch-group-button", "takeeval.switch.group.button");            
-         }
-
-         // fill in group title
-         UIBranchContainer groupTitle = UIBranchContainer.make(tofill, "show-group-title:");
-         UIMessage.make(groupTitle, "group-title-header", "takeeval.group.title.header");	
-         UIOutput.make(groupTitle, "group-title", external.getDisplayTitle(evalGroupId) );
-
-         // show instructions if not null
-         if (eval.getInstructions() != null && !("".equals(eval.getInstructions())) ) {
-            UIBranchContainer instructions = UIBranchContainer.make(tofill, "show-eval-instructions:");
-            UIMessage.make(instructions, "eval-instructions-header", "takeeval.instructions.header");	
-            UIVerbatim.make(instructions, "eval-instructions", eval.getInstructions());
-         }
-
-         // get the setting and make sure it cannot be null (fix for http://www.caret.cam.ac.uk/jira/browse/CTL-531)
-         Boolean studentAllowedLeaveUnanswered = (Boolean) evalSettings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED);
-         if (studentAllowedLeaveUnanswered == null) {
-            studentAllowedLeaveUnanswered = eval.getBlankResponsesAllowed();
+   
+            // show the switch group selection and form if there are other valid groups for this user
+            if (validGroups.size() > 1) {
+               String[] values = new String[validGroups.size()];
+               String[] labels = new String[validGroups.size()];
+               for (int i=0; i<validGroups.size(); i++) {
+                  EvalGroup group = (EvalGroup) validGroups.get(i);
+                  values[i] = group.evalGroupId;
+                  labels[i] = group.title;
+               }
+               // show the switch group selection and form
+               UIBranchContainer showSwitchGroup = UIBranchContainer.make(tofill, "show-switch-group:");
+               UIMessage.make(showSwitchGroup, "switch-group-header", "takeeval.switch.group.header");
+               UIForm chooseGroupForm = UIForm.make(showSwitchGroup, "switch-group-form", 
+                     new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, evalGroupId, responseId));
+               UISelect.make(chooseGroupForm, "switch-group-list", values, labels,  "#{evalGroupId}");
+               UIMessage.make(chooseGroupForm, "switch-group-button", "takeeval.switch.group.button");            
+            }
+   
+            // fill in group title
+            UIBranchContainer groupTitle = UIBranchContainer.make(tofill, "show-group-title:");
+            UIMessage.make(groupTitle, "group-title-header", "takeeval.group.title.header");	
+            UIOutput.make(groupTitle, "group-title", external.getDisplayTitle(evalGroupId) );
+   
+            // show instructions if not null
+            if (eval.getInstructions() != null && !("".equals(eval.getInstructions())) ) {
+               UIBranchContainer instructions = UIBranchContainer.make(tofill, "show-eval-instructions:");
+               UIMessage.make(instructions, "eval-instructions-header", "takeeval.instructions.header");	
+               UIVerbatim.make(instructions, "eval-instructions", eval.getInstructions());
+            }
+   
+            // get the setting and make sure it cannot be null (fix for http://www.caret.cam.ac.uk/jira/browse/CTL-531)
+            Boolean studentAllowedLeaveUnanswered = (Boolean) evalSettings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED);
             if (studentAllowedLeaveUnanswered == null) {
-               studentAllowedLeaveUnanswered = false;
+               studentAllowedLeaveUnanswered = eval.getBlankResponsesAllowed();
+               if (studentAllowedLeaveUnanswered == null) {
+                  studentAllowedLeaveUnanswered = false;
+               }
             }
-         }
-         // show a warning to the user if all items must be filled in
-         if ( studentAllowedLeaveUnanswered == false ) {
-            UIBranchContainer note = UIBranchContainer.make(tofill, "show-eval-note:");
-            UIMessage.make(note, "eval-note-text", "takeeval.user.must.answer.all.note");   
-         }
-
-         UIBranchContainer formBranch = UIBranchContainer.make(tofill, "form-branch:");
-         UIForm form = UIForm.make(formBranch, "evaluationForm");
-
-         // bind the evaluation and evalGroup to the ones in the take eval bean
-         String evalOTP = "evaluationBeanLocator.";
-         form.parameters.add( new UIELBinding("#{takeEvalBean.eval}", new ELReference(evalOTP + eval.getId())) );
-         form.parameters.add( new UIELBinding("#{takeEvalBean.evalGroupId}", evalGroupId) );
-
-         // now we begin the complex task of rendering the evaluation items
-
-         // get the instructors for this evaluation
-         Set<String> instructors = external.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED);
-         String[] instructorIds = instructors.toArray(new String[instructors.size()]);
-
-         // Get the Hierarchy NodeIDs for the current Group and turn it into an array of ids
-         List<EvalHierarchyNode> hierarchyNodes = hierarchyLogic.getNodesAboveEvalGroup(evalGroupId);
-         String[] hierarchyNodeIDs = new String[hierarchyNodes.size()];
-         for (int i = 0; i < hierarchyNodes.size(); i++) {
-            hierarchyNodeIDs[i] = hierarchyNodes.get(i).id;
-         }
-
-         // get all items for this evaluation
-         allItems = authoringService.getTemplateItemsForEvaluation(evaluationId, hierarchyNodeIDs, 
-               instructorIds, new String[] {evalGroupId});
-
-         // filter out the block child items, to get a list of non-child items
-         List<EvalTemplateItem> nonChildItemsList = TemplateItemUtils.getNonChildItems(allItems);
-
-         if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_COURSE, nonChildItemsList)) {
-            // for all course items, go through render process
-            UIBranchContainer courseSection = UIBranchContainer.make(form, "courseSection:");
-            UIMessage.make(courseSection, "course-questions-header", "takeeval.group.questions.header");
-            // for each non-child item in this evaluation
-            handleCategoryRender(
-                  TemplateItemUtils.getCategoryTemplateItems(EvalConstants.ITEM_CATEGORY_COURSE, nonChildItemsList), 
-                  form, courseSection, hierarchyNodes, null);
-         }
-
-         if (instructors.size() > 0 &&
-               TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, nonChildItemsList)) {	
-            // for each instructor, make a branch containing all instructor questions
-            for (String instructorUserId : instructors) {
-               UIBranchContainer instructorSection = UIBranchContainer.make(form, "instructorSection:", "inst"+displayNumber);
-               EvalUser instructor = external.getEvalUserById( instructorUserId );
-               UIMessage.make(instructorSection, "instructor-questions-header", 
-                     "takeeval.instructor.questions.header", new Object[] { instructor.displayName });
+            // show a warning to the user if all items must be filled in
+            if ( studentAllowedLeaveUnanswered == false ) {
+               UIBranchContainer note = UIBranchContainer.make(tofill, "show-eval-note:");
+               UIMessage.make(note, "eval-note-text", "takeeval.user.must.answer.all.note");   
+            }
+   
+            UIBranchContainer formBranch = UIBranchContainer.make(tofill, "form-branch:");
+            UIForm form = UIForm.make(formBranch, "evaluationForm");
+   
+            // bind the evaluation and evalGroup to the ones in the take eval bean
+            String evalOTP = "evaluationBeanLocator.";
+            form.parameters.add( new UIELBinding("#{takeEvalBean.eval}", new ELReference(evalOTP + eval.getId())) );
+            form.parameters.add( new UIELBinding("#{takeEvalBean.evalGroupId}", evalGroupId) );
+   
+            // now we begin the complex task of rendering the evaluation items
+   
+            // get the instructors for this evaluation
+            Set<String> instructors = external.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED);
+            String[] instructorIds = instructors.toArray(new String[instructors.size()]);
+   
+            // Get the Hierarchy NodeIDs for the current Group and turn it into an array of ids
+            List<EvalHierarchyNode> hierarchyNodes = hierarchyLogic.getNodesAboveEvalGroup(evalGroupId);
+            String[] hierarchyNodeIDs = new String[hierarchyNodes.size()];
+            for (int i = 0; i < hierarchyNodes.size(); i++) {
+               hierarchyNodeIDs[i] = hierarchyNodes.get(i).id;
+            }
+   
+            // get all items for this evaluation
+            allItems = authoringService.getTemplateItemsForEvaluation(evaluationId, hierarchyNodeIDs, 
+                  instructorIds, new String[] {evalGroupId});
+   
+            // filter out the block child items, to get a list of non-child items
+            List<EvalTemplateItem> nonChildItemsList = TemplateItemUtils.getNonChildItems(allItems);
+   
+            if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_COURSE, nonChildItemsList)) {
+               // for all course items, go through render process
+               UIBranchContainer courseSection = UIBranchContainer.make(form, "courseSection:");
+               UIMessage.make(courseSection, "course-questions-header", "takeeval.group.questions.header");
                // for each non-child item in this evaluation
                handleCategoryRender(
-                     TemplateItemUtils.getCategoryTemplateItems(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, nonChildItemsList), 
-                     form, instructorSection, hierarchyNodes, instructorUserId);
+                     TemplateItemUtils.getCategoryTemplateItems(EvalConstants.ITEM_CATEGORY_COURSE, nonChildItemsList), 
+                     form, courseSection, hierarchyNodes, null);
             }
+   
+            if (instructors.size() > 0 &&
+                  TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, nonChildItemsList)) {	
+               // for each instructor, make a branch containing all instructor questions
+               for (String instructorUserId : instructors) {
+                  UIBranchContainer instructorSection = UIBranchContainer.make(form, "instructorSection:", "inst"+displayNumber);
+                  EvalUser instructor = external.getEvalUserById( instructorUserId );
+                  UIMessage.make(instructorSection, "instructor-questions-header", 
+                        "takeeval.instructor.questions.header", new Object[] { instructor.displayName });
+                  // for each non-child item in this evaluation
+                  handleCategoryRender(
+                        TemplateItemUtils.getCategoryTemplateItems(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, nonChildItemsList), 
+                        form, instructorSection, hierarchyNodes, instructorUserId);
+               }
+            }
+   
+            UICommand.make(form, "submitEvaluation", UIMessage.make("takeeval.submit.button"), "#{takeEvalBean.submitEvaluation}");
+         } else {
+            // user cannot access eval so give them a sad message
+            UIMessage.make(tofill, "eval-cannot-take-message", "takeeval.user.cannot.take");
+            log.info("User ("+currentUserId+") cannot take evaluation: " + eval.getId());
          }
-
-         UICommand.make(form, "submitEvaluation", UIMessage.make("takeeval.submit.button"), "#{takeEvalBean.submitEvaluation}");
-      } else {
-         // user cannot access eval so give them a sad message
-         UIMessage.make(tofill, "eval-cannot-take-message", "takeeval.user.cannot.take");
       }
    }
 
@@ -533,8 +545,11 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                new ELReference("itemWBL." + templateItem.getItem().getId())) );
 
          // bind the associated id (current instructor id or environment) and type to the current answer
-         form.parameters.add( new UIELBinding(currAnswerOTP + "associatedId", associatedId) );
-         form.parameters.add( new UIELBinding(currAnswerOTP + "associatedType", associatedType) );
+         if (associatedId != null) {
+            // only do the binding if this is not null, otherwise it will bind in empty strings
+            form.parameters.add( new UIELBinding(currAnswerOTP + "associatedId", associatedId) );
+            form.parameters.add( new UIELBinding(currAnswerOTP + "associatedType", associatedType) );
+         }
       }
 
       // generate binding for the UI input element (UIInput, UISelect, etc.) to the correct part of answer

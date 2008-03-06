@@ -41,7 +41,6 @@ public class EvaluationEntityProviderImpl implements EvaluationEntityProvider, C
 	}
 
 	public boolean entityExists(String id) {
-		log.warn("NOTE: checking if evaluation exists: " + id);
 		Long evaluationId;
 		try {
 		   evaluationId = new Long(id);
