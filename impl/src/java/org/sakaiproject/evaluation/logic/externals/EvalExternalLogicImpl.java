@@ -53,6 +53,7 @@ import org.sakaiproject.evaluation.logic.entity.TemplateEntityProvider;
 import org.sakaiproject.evaluation.logic.entity.TemplateItemEntityProvider;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
+import org.sakaiproject.evaluation.model.EvalAdhocUser;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalConfig;
@@ -222,101 +223,37 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
       return userId;
    }
 
-   /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#isUserAnonymous(java.lang.String)
-    */
-   public boolean isUserAnonymous(String userId) {
-      String currentUserId = sessionManager.getCurrentSessionUserId();
-      if (userId.equals(currentUserId)) {
-         return false;
-      }
-      Session session = sessionManager.getCurrentSession();
-      String sessionUserId = (String) session.getAttribute(ANON_USER_ATTRIBUTE);
-      if (userId.equals(sessionUserId)) {
-         return true;
-      }
-      // used up both cheap tests, now try the costly one
-      try {
-         // try to lookup this user, exception if we cannot find them
-         userDirectoryService.getUserEid(userId);
-         return false;
-      } catch (Exception e) {
-         // could not find user so they are anonymous
-         return true;
-      }
-   }
-
-   /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#getUserId(java.lang.String)
-    */
-   public String getUserId(String username) {
-      try {
-         return userDirectoryService.getUserId(username);
-      } catch(UserNotDefinedException ex) {
-         log.error("Could not get userId from username: " + username);
-      }
-      return null;
-   }
-
-   /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#getUserUsername(java.lang.String)
-    */
-   public String getUserUsername(String userId) {
-      if (isUserAnonymous(userId)) {
-         return "anonymous";
-      }
-      try {
-         return userDirectoryService.getUserEid(userId);
-      } catch(UserNotDefinedException ex) {
-         log.error("Could not get username from userId: " + userId, ex);
-      }
-      return "------";
-   }
-
-
+   
    /**
+    * INTERNAL METHOD<br/>
+    * Get the user or return null if user cannot be found,
+    * attempts to retrieve the user from the internal set and from sakai
+    * 
     * @param userId
-    * @return
+    * @return user or null if none found
     */
-   public String getUserDisplayName(String userId) {
-      if (isUserAnonymous(userId)) {
-         return "Anonymous User";
-      }
-      try {
-         User user = userDirectoryService.getUser(userId);
-         return user.getDisplayName();
-      } catch(UserNotDefinedException ex) {
-         log.error("Could not get user from userId: " + userId, ex);
-      }
-      return "----------";
-   }
-
-
-
-   /* (non-Javadoc)
-    * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#getEvalUserById(java.lang.String)
-    */
-   public EvalUser getEvalUserById(String userId) {
-      EvalUser user = makeInvalidUser(userId, null);
-      if (isUserAnonymous(userId)) {
-         user = makeAnonymousUser(userId);
+   protected EvalUser getEvalUserOrNull(String userId) {
+      EvalUser user = null;
+      // try to get internal user from eval
+      EvalAdhocUser adhocUser = adhocSupportLogic.getAdhocUserById(EvalAdhocUser.getIdFromAdhocUserId(userId));
+      if (adhocUser != null) {
+         user = new EvalUser(userId, EvalConstants.USER_TYPE_INTERNAL,
+               adhocUser.getEmail(), adhocUser.getUsername(), adhocUser.getDisplayName());
       } else {
-         // try to get internal user from eval
-         // TODO adhocSupportLogic
-
          // try to get user from Sakai
          try {
             User sakaiUser = userDirectoryService.getUser(userId);
             user = new EvalUser(userId, EvalConstants.USER_TYPE_EXTERNAL,
                   sakaiUser.getEmail(), sakaiUser.getEid(), sakaiUser.getDisplayName());
          } catch(UserNotDefinedException ex) {
-            log.error("Could not get user from userId: " + userId, ex);
+            log.debug("Sakai could not get user from userId: " + userId, ex);
          }
       }
       return user;
    }
 
    /**
+    * INTERNAL METHOD<br/>
     * Generate an invalid user with fields filled out correctly,
     * userId and email should not both be null
     * 
@@ -334,6 +271,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
    }
 
    /**
+    * INTERNAL METHOD<br/>
     * Generate an anonymous user with fields filled out correctly
     * 
     * @param userId
@@ -344,29 +282,109 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
             null, "eid:" + userId, EvalConstants.USER_TYPE_ANONYMOUS);
    }
 
+
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#isUserAnonymous(java.lang.String)
+    */
+   public boolean isUserAnonymous(String userId) {
+      String currentUserId = sessionManager.getCurrentSessionUserId();
+      if (userId.equals(currentUserId)) {
+         return false;
+      }
+      Session session = sessionManager.getCurrentSession();
+      String sessionUserId = (String) session.getAttribute(ANON_USER_ATTRIBUTE);
+      if (userId.equals(sessionUserId)) {
+         return true;
+      }
+      // used up both cheap tests, now try the costly one
+      EvalUser user = getEvalUserById(userId);
+      if (EvalConstants.USER_TYPE_INVALID.equals(user.type)
+            || EvalConstants.USER_TYPE_ANONYMOUS.equals(user.type) ) {
+         return true;
+      }
+      return false;
+   }
+
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#getUserId(java.lang.String)
+    */
+   public String getUserId(String username) {
+      String userId = null;
+      EvalAdhocUser adhocUser = adhocSupportLogic.getAdhocUserByUsername(username);
+      if (adhocUser != null) {
+         userId = adhocUser.getUserId();
+      } else {
+         try {
+            userId = userDirectoryService.getUserId(username);
+         } catch(UserNotDefinedException ex) {
+            log.error("Could not get userId from username: " + username);
+         }
+      }
+      return userId;
+   }
+
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#getUserUsername(java.lang.String)
+    */
+   public String getUserUsername(String userId) {
+      String username = "------";
+      if (isUserAnonymous(userId)) {
+         username = "anonymous";
+      } else {
+         EvalUser user = getEvalUserOrNull(userId);
+         if (user != null) {
+            username = user.username;
+         } else {
+            try {
+               username = userDirectoryService.getUserEid(userId);
+            } catch(UserNotDefinedException ex) {
+               log.warn("Sakai could not get username from userId: " + userId, ex);
+            }
+         }
+      }
+      return username;
+   }
+
+
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#getEvalUserById(java.lang.String)
+    */
+   public EvalUser getEvalUserById(String userId) {
+      EvalUser user = makeInvalidUser(userId, null);
+      if (isUserAnonymous(userId)) {
+         user = makeAnonymousUser(userId);
+      } else {
+         EvalUser eu = getEvalUserOrNull(userId);
+         if (eu != null) {
+            user = eu;
+         }
+      }
+      return user;
+   }
+
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#getEvalUserByEmail(java.lang.String)
     */
    @SuppressWarnings("unchecked")
    public EvalUser getEvalUserByEmail(String email) {
       EvalUser user = makeInvalidUser(null, email);
-      Collection<User> sakaiUsers = userDirectoryService.findUsersByEmail(email);
-      if (sakaiUsers.size() > 0) {
-         User sakaiUser = sakaiUsers.iterator().next(); // just get the first one
-         user = new EvalUser(sakaiUser.getId(), EvalConstants.USER_TYPE_EXTERNAL,
-               sakaiUser.getEmail(), sakaiUser.getEid(), sakaiUser.getDisplayName());
-      }
-
-      // get the internal user if none found so far
-      if (EvalConstants.USER_TYPE_INVALID.equals(user.type)) {
-         // TODO
-      }
-
-      if (EvalConstants.USER_TYPE_INVALID.equals(user.type)) {
-         log.info("Could not get user from email: " + email);
+      // get the internal user if possible
+      EvalAdhocUser adhocUser = adhocSupportLogic.getAdhocUserByEmail(email);
+      if (adhocUser != null) {
+         user = new EvalUser(adhocUser.getUserId(), EvalConstants.USER_TYPE_INTERNAL,
+               adhocUser.getEmail(), adhocUser.getUsername(), adhocUser.getDisplayName());
+      } else {
+         Collection<User> sakaiUsers = userDirectoryService.findUsersByEmail(email);
+         if (sakaiUsers.size() > 0) {
+            User sakaiUser = sakaiUsers.iterator().next(); // just get the first one
+            user = new EvalUser(sakaiUser.getId(), EvalConstants.USER_TYPE_EXTERNAL,
+                  sakaiUser.getEmail(), sakaiUser.getEid(), sakaiUser.getDisplayName());
+         }
       }
       return user;
    }
+
+
 
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#getEvalUsersByIds(java.lang.String[])

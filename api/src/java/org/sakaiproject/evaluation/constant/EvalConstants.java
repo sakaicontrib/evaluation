@@ -26,7 +26,7 @@ public class EvalConstants {
     * The current version of the app for updating purposes,
     * this should always be the NEXT version of the tool if this is trunk code
     */
-   public static String APP_VERSION = "1.2.0-RC2"; 
+   public static String APP_VERSION = "1.2.0-RC3";
 
    public static String SVN_REVISION = "$Revision$";
    public static String SVN_LAST_UPDATE = "$Date$";
@@ -280,6 +280,10 @@ public class EvalConstants {
     * EvalGroup class: Provided type (represents an eval group from a provider)
     */
    public final static String GROUP_TYPE_PROVIDED = "Provided";
+   /**
+    * EvalGroup class: Adhoc type (represents an adhoc group of users)
+    */
+   public final static String GROUP_TYPE_ADHOC = "Adhoc";
 
    /**
     * Scale ideal setting: no selection of this scale is the ideal one

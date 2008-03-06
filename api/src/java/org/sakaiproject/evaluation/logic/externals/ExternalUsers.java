@@ -68,9 +68,8 @@ public interface ExternalUsers {
    public EvalUser getEvalUserById(String userId);
 
    /**
-    * Get user objects populated with data based on the input set of emails,
-    * guarantees to return one {@link EvalUser} object per input email and in the
-    * same order as the inputs
+    * Get user object populated with data based on the input email,
+    * guarantees to return one {@link EvalUser} object
     * 
     * @param email the email address for a user
     * @return a populated {@link EvalUser} object
