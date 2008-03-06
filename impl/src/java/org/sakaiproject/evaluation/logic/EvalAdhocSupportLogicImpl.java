@@ -14,7 +14,10 @@
 
 package org.sakaiproject.evaluation.logic;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -51,7 +54,10 @@ public class EvalAdhocSupportLogicImpl {
     * @return the adhoc user or null if not found
     */
    public EvalAdhocUser getAdhocUserById(Long adhocUserId) {
-      EvalAdhocUser user = (EvalAdhocUser) dao.findById(EvalAdhocUser.class, adhocUserId);
+      EvalAdhocUser user = null;
+      if (adhocUserId != null) {
+         user = (EvalAdhocUser) dao.findById(EvalAdhocUser.class, adhocUserId);
+      }
       return user;
    }
 
@@ -89,6 +95,55 @@ public class EvalAdhocSupportLogicImpl {
          user = users.get(0);
       }
       return user;      
+   }
+
+   /**
+    * Method which will allow for fairly efficient fetching of large numbers of internal users
+    * 
+    * @param userIds an array of internal user ids
+    * @return a map of userId -> {@link EvalAdhocUser}
+    */
+   public Map<String, EvalAdhocUser> getAdhocUsersByUserIds(String[] userIds) {
+      Map<String, EvalAdhocUser> m = new HashMap<String, EvalAdhocUser>();
+      if (userIds.length > 0) {
+         List<Long> adhocIds = new ArrayList<Long>();
+         for (int i = 0; i < userIds.length; i++) {
+            Long id = EvalAdhocUser.getIdFromAdhocUserId(userIds[i]);
+            if (id != null) {
+               adhocIds.add(id);
+            }
+         }
+         if (adhocIds.size() > 0) {
+            Long[] ids = adhocIds.toArray(new Long[adhocIds.size()]);
+            List<EvalAdhocUser> adhocUsers = getAdhocUsersByIds(ids);
+            for (EvalAdhocUser adhocUser : adhocUsers) {
+               m.put(adhocUser.getUserId(), adhocUser);
+            }
+         }
+      }
+      return m;
+   }
+
+   /**
+    * Find a set of users based on the input array of ids
+    * 
+    * @param ids the persistent ids of {@link EvalAdhocUser}s,
+    * empty set return no users, null returns all users
+    * @return a list of adhoc users which match the ids
+    */
+   @SuppressWarnings("unchecked")
+   public List<EvalAdhocUser> getAdhocUsersByIds(Long[] ids) {
+      List<EvalAdhocUser> users = new ArrayList<EvalAdhocUser>();
+      if (ids == null) {
+         users = dao.findAll(EvalAdhocUser.class);
+      } else {
+         if (ids.length > 0) {
+            users = dao.findByProperties(EvalAdhocUser.class, 
+                  new String[] {"id"}, 
+                  new Object[] {ids});
+         }
+      }
+      return users;
    }
 
    /**
@@ -184,7 +239,10 @@ public class EvalAdhocSupportLogicImpl {
     * @return the adhoc group or null if not found
     */
    public EvalAdhocGroup getAdhocGroupById(Long adhocGroupId) {
-      EvalAdhocGroup group = (EvalAdhocGroup) dao.findById(EvalAdhocGroup.class, adhocGroupId);
+      EvalAdhocGroup group = null;
+      if (adhocGroupId != null) {
+         group = (EvalAdhocGroup) dao.findById(EvalAdhocGroup.class, adhocGroupId);
+      }
       return group;
    }
 

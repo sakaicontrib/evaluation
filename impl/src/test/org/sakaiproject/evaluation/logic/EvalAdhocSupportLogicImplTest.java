@@ -16,6 +16,8 @@ package org.sakaiproject.evaluation.logic;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
@@ -67,6 +69,9 @@ public class EvalAdhocSupportLogicImplTest extends BaseTestEvalLogic {
 
       user = adhocSupportLogic.getAdhocUserById(EvalTestDataLoad.INVALID_LONG_ID);
       assertNull(user);
+
+      user = adhocSupportLogic.getAdhocUserById(null);
+      assertNull(user);
    }
 
    public void testGetAdhocUserByEmail() {
@@ -79,6 +84,77 @@ public class EvalAdhocSupportLogicImplTest extends BaseTestEvalLogic {
 
       user = adhocSupportLogic.getAdhocUserByEmail(EvalTestDataLoad.INVALID_CONSTANT_STRING);
       assertNull(user);
+   }
+
+   /**
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalAdhocSupportLogicImpl#getAdhocUsersByIds(java.lang.Long[])}.
+    */
+   public void testGetAdhocUsersByIds() {
+      List<EvalAdhocUser> l = null;
+      List<Long> ids = null;
+
+      l = adhocSupportLogic.getAdhocUsersByIds(new Long[] {etdl.user1.getId(), etdl.user2.getId()});
+      assertNotNull(l);
+      assertEquals(2, l.size());
+      ids = EvalTestDataLoad.makeIdList(l);      
+      assertTrue(ids.contains(etdl.user1.getId()));
+      assertTrue(ids.contains(etdl.user2.getId()));
+
+      l = adhocSupportLogic.getAdhocUsersByIds(new Long[] {etdl.user1.getId(), EvalTestDataLoad.INVALID_LONG_ID});
+      assertNotNull(l);
+      assertEquals(1, l.size());
+      ids = EvalTestDataLoad.makeIdList(l);
+      assertTrue(ids.contains(etdl.user1.getId()));
+
+      // get no users with empty
+      l = adhocSupportLogic.getAdhocUsersByIds(new Long[] {});
+      assertNotNull(l);
+      assertEquals(0, l.size());
+
+      // get all users with a null
+      l = adhocSupportLogic.getAdhocUsersByIds(null);
+      assertNotNull(l);
+      assertEquals(3, l.size());
+
+   }
+
+   /**
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalAdhocSupportLogicImpl#getAdhocUsersByUserIds(java.lang.String[])}.
+    */
+   public void testGetAdhocUsersByUserIds() {
+      Map<String, EvalAdhocUser> m = null;
+      List<Long> ids = null;
+      Set<String> userIds = null;
+
+      // first try with 2 internal users
+      m = adhocSupportLogic.getAdhocUsersByUserIds( new String[] {etdl.user1.getUserId(), etdl.user3.getUserId()} );
+      assertNotNull(m);
+      assertEquals(2, m.size());
+      ids = EvalTestDataLoad.makeIdList(m.values());
+      assertTrue(ids.contains(etdl.user1.getId()));
+      assertTrue(ids.contains(etdl.user3.getId()));
+      userIds = m.keySet();
+      assertNotNull(userIds);
+      assertTrue(userIds.contains(etdl.user1.getUserId()));
+      assertTrue(userIds.contains(etdl.user3.getUserId()));
+
+      // mix of internal and external
+      m = adhocSupportLogic.getAdhocUsersByUserIds( new String[] {etdl.user1.getUserId(), EvalTestDataLoad.USER_ID} );
+      assertNotNull(m);
+      assertEquals(1, m.size());
+      ids = EvalTestDataLoad.makeIdList(m.values());
+      assertTrue(ids.contains(etdl.user1.getId()));
+
+      // only external
+      m = adhocSupportLogic.getAdhocUsersByUserIds( new String[] {EvalTestDataLoad.USER_ID, EvalTestDataLoad.STUDENT_USER_ID} );
+      assertNotNull(m);
+      assertEquals(0, m.size());
+
+      // empty array
+      m = adhocSupportLogic.getAdhocUsersByUserIds( new String[] {} );
+      assertNotNull(m);
+      assertEquals(0, m.size());
+
    }
 
    /**
@@ -144,6 +220,9 @@ public class EvalAdhocSupportLogicImplTest extends BaseTestEvalLogic {
       assertEquals(group.getEvalGroupId(), etdl.group1.getEvalGroupId());
 
       group = adhocSupportLogic.getAdhocGroupById(EvalTestDataLoad.INVALID_LONG_ID);
+      assertNull(group);
+
+      group = adhocSupportLogic.getAdhocGroupById(null);
       assertNull(group);
    }
 
