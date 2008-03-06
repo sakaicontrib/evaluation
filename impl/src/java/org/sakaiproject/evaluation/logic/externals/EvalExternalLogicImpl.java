@@ -19,12 +19,15 @@ import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import javax.mail.internet.AddressException;
@@ -297,9 +300,8 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
          return true;
       }
       // used up both cheap tests, now try the costly one
-      EvalUser user = getEvalUserById(userId);
-      if (EvalConstants.USER_TYPE_INVALID.equals(user.type)
-            || EvalConstants.USER_TYPE_ANONYMOUS.equals(user.type) ) {
+      EvalUser user = getEvalUserOrNull(userId);
+      if (user == null) {
          return true;
       }
       return false;
@@ -389,13 +391,58 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.externals.ExternalUsers#getEvalUsersByIds(java.lang.String[])
     */
+   @SuppressWarnings("unchecked")
    public List<EvalUser> getEvalUsersByIds(String[] userIds) {
-      // make this more efficient maybe?
       List<EvalUser> users = new ArrayList<EvalUser>();
+      boolean foundAll = false;
+      if (userIds == null 
+            || userIds.length == 0) {
+         foundAll = true;
+      }
+
+      Map<String, EvalAdhocUser> adhocUsers = new HashMap<String, EvalAdhocUser>();
+      if (! foundAll) {
+         // get as many internal user as possible
+         adhocUsers = adhocSupportLogic.getAdhocUsersByUserIds(userIds);
+         if (adhocUsers.size() == userIds.length) {
+            foundAll = true;
+         }
+      }
+
+      Map<String, User> sakaiUsers = new HashMap<String, User>();
+      if (! foundAll) {
+         // get remaining users from Sakai
+         List<String> ids = Arrays.asList(userIds);
+         List<User> sakUsers = userDirectoryService.getUsers(ids);
+         for (User user : sakUsers) {
+            sakaiUsers.put(user.getId(), user);
+         }
+      }
+
+      /* now put the users into the list in the original order of the array 
+       * with INVALID EvalUser objects in place of not-found users
+       */
       for (int i = 0; i < userIds.length; i++) {
          String userId = userIds[i];
-         users.add( getEvalUserById(userId) );
+         EvalUser user = null;
+         if (adhocUsers.containsKey(userId)) {
+            EvalAdhocUser adhocUser = adhocUsers.get(userId);
+            user = new EvalUser(adhocUser.getUserId(), EvalConstants.USER_TYPE_INTERNAL,
+                  adhocUser.getEmail(), adhocUser.getUsername(), adhocUser.getDisplayName());
+         } else if (sakaiUsers.containsKey(userId)) {
+            User sakaiUser = sakaiUsers.get(userId);
+            user = new EvalUser(sakaiUser.getId(), EvalConstants.USER_TYPE_EXTERNAL,
+                  sakaiUser.getEmail(), sakaiUser.getEid(), sakaiUser.getDisplayName());            
+         } else {
+            makeInvalidUser(userId, null);
+         }
+         users.add(user);
       }
+// original not very efficient version -AZ
+//      for (int i = 0; i < userIds.length; i++) {
+//         String userId = userIds[i];
+//         users.add( getEvalUserById(userId) );
+//      }
       return users;
    }
 
