@@ -47,7 +47,7 @@ public class EvalAdhocSupportLogicImpl {
    /**
     * Get the adhoc user by the unique id (not the userId)
     * 
-    * @param adhocUserId teh unique id for an {@link EvalAdhocUser}
+    * @param adhocUserId the unique id for an {@link EvalAdhocUser}
     * @return the adhoc user or null if not found
     */
    public EvalAdhocUser getAdhocUserById(Long adhocUserId) {
@@ -55,14 +55,36 @@ public class EvalAdhocSupportLogicImpl {
       return user;
    }
 
+   /**
+    * Get the adhoc user by the unique username (login name)
+    * 
+    * @param username the unique login name
+    * @return the adhoc user or null if not found
+    */
+   @SuppressWarnings("unchecked")
+   public EvalAdhocUser getAdhocUserByUsername(String username) {
+      EvalAdhocUser user = null;
+      List<EvalAdhocUser> users = dao.findByProperties(EvalAdhocUser.class, 
+            new String[] {"username"}, 
+            new Object[] {username});
+      if (users.size() > 0) {
+         user = users.get(0);
+      }
+      return user;      
+   }
+
+   /**
+    * Get the adhoc user by the unique email address
+    * 
+    * @param email the unique email address
+    * @return the adhoc user or null if not found
+    */
    @SuppressWarnings("unchecked")
    public EvalAdhocUser getAdhocUserByEmail(String email) {
       EvalAdhocUser user = null;
       List<EvalAdhocUser> users = dao.findByProperties(EvalAdhocUser.class, 
             new String[] {"email"}, 
-            new Object[] {email},
-            new int[] {EvaluationDao.EQUALS},
-            new String[] {"lastModified" + EvaluationDao.DESC});
+            new Object[] {email});
       if (users.size() > 0) {
          user = users.get(0);
       }
