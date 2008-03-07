@@ -117,27 +117,35 @@
 					
 					<div id="item-text-div">
 						<div rsf:id="item_text:">
-							<textarea name="item_text-dummy" rsf:id="item_text-dummy" cols="80" rows="5" />
+							<textarea name="item_text-dummy" rsf:id="item_text-dummy" cols="80" rows="5">
+                            </textarea>
 						</div>
 					</div>
 					<br />
-					
-					<p rsf:id="showNA:" class="checkbox">
-						<input type="checkbox" name="item_NA" rsf:id="item_NA" value="" />
-						<span rsf:id="add-na-header">Add N/A (not available):</span>
-					</p>
-					<p class="checkbox">
-						<input type="checkbox" name="idealColor" rsf:id="idealColor" value="" />
-						<span rsf:id="ideal-coloring-header">Use Ideal Coloring:</span>
-					</p>
-					<div rsf:id="showItemCategory:">
-						<h4 rsf:id="msg=modifyitem.item.category.header">Item Category:</h4>
-						<span rsf:id="item_category" />
-						<input type="radio" name="item_category_C" rsf:id="item_category_C" />
-						<label for="item_category_C" rsf:id="msg=modifyitem.course.category">Course</label>
-						<input type="radio" name="item_category_I" rsf:id="item_category_I" />
-						<label for="item_category_I" rsf:id="msg=modifyitem.instructor.category">Instructor</label>
-					</div>
+
+                    <p class="checkbox">
+                        <input type="checkbox" name="idealColor" rsf:id="idealColor" value="" />
+                        <span rsf:id="ideal-coloring-header">Use Ideal Coloring:</span>
+                    </p>
+
+                   <p rsf:id="showNA:" class="checkbox">
+                       <input rsf:id="item_NA" type="checkbox" id="item-na" />
+                       <label rsf:id="add-na-header" for="showNA:::item-na">N/A (not applicable):</label>
+                   </p>
+
+                   <div rsf:id="showItemCategory:">
+                       <b rsf:id="msg=modifyitem.item.category.header">Item Category:</b>
+   
+                       <span rsf:id="item-category-list" />
+                       <span rsf:id="item-category-branch:" class="checkbox">
+                           <input rsf:id="item-category-radio" type="radio" name="item_category" id="item_category_C" />
+                           <label rsf:id="item-category-label" for="item-category-radio">Group/Course</label>                                  
+                       </span>
+                       <span rsf:id="item-category-branch:"  class="checkbox">
+                           <input rsf:id="item-category-radio" type="radio" name="item_category" id="item_category_I" />
+                           <label rsf:id="item-category-label" for="item-category-radio">Evaluatee/Instructor</label>
+                       </span>
+                   </div>
 
                    <!-- DIV tag for node selector renderer -->
                    <div rsf:id="hierarchyNodeSelector:">

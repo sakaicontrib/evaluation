@@ -33,7 +33,9 @@ import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UISelectChoice;
+import uk.org.ponder.rsf.components.UISelectLabel;
 import uk.org.ponder.rsf.components.UIVerbatim;
+import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
 import uk.org.ponder.rsf.evolvers.TextInputEvolver;
 import uk.org.ponder.rsf.flow.jsfnav.DynamicNavigationCaseReporter;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
@@ -157,20 +159,6 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
          }
       }
 
-      /*
-       * ----------------------------- //if (!modify && validScaleIds && validChildsNo) {// creating
-       * new block with the same scalecase if (!modify && validChildsNo) {// creating new block with
-       * the same scale case boolean shift = false; // get the first Block ID if any, and shift it
-       * to the first of the // templateItems array for (int i = 0; i < templateItems.length; i++) {
-       * if (templateItems[i].getBlockParent() != null &&
-       * templateItems[i].getBlockParent().booleanValue() == true) { if (i > 0) { EvalTemplateItem
-       * tmpTI = templateItems[0]; templateItems[0] = templateItems[i]; templateItems[i] = tmpTI;
-       * shift = true; } createFromBlock = true; break; } } // reconstruct IDs to be passed if
-       * (shift) { templateItemIds = templateItems[0].getId().toString(); for (int i = 1; i <
-       * templateItems.length; i++) { templateItemIds = templateItemIds + "," +
-       * templateItems[i].getId().toString(); }// end of for loop } }
-       * ---------------------------------
-       */
 
       UIMessage.make(tofill, "modify-block-title", "modifyblock.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
       UIMessage.make(tofill, "create-eval-title", "starteval.page.title"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -216,13 +204,12 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
          UIMessage.make(form, "ideal-coloring-header", "modifyblock.ideal.coloring.header"); //$NON-NLS-1$ //$NON-NLS-2$
 
          /*
-          * (non-javadoc) If the system setting (admin setting) for
+          * If the system setting (admin setting) for
           * "EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY" is set as true then all items default to
           * "Course". If it is set to false, then all items default to "Instructor". If it is set to
           * null then user is given the option to choose between "Course" and "Instructor".
           */
-         Boolean isDefaultCourse = (Boolean) settings
-               .get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
+         Boolean isDefaultCourse = (Boolean) settings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
 
          String itemPath = null, blockId = null;
 
@@ -243,38 +230,48 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
             UIBoundBoolean.make(form, "idealColor", "#{templateBBean.idealColor}", null);
          }
 
+         /*
+          * If the system setting (admin setting) for
+          * "EvalSettings.NOT_AVAILABLE_ALLOWED" is set as true then only we need to show the
+          * item_NA checkbox.
+          */
+         if (((Boolean) settings.get(EvalSettings.NOT_AVAILABLE_ALLOWED)).booleanValue()) {
+            UIBranchContainer showNA = UIBranchContainer.make(form, "showNA:");
+            UIMessage.make(showNA, "add-na-header", "modifyitem.add.na.header"); //$NON-NLS-1$ //$NON-NLS-2$
+            UIBoundBoolean.make(form, "item_NA", itemPath + ".usesNA", null);
+         }
+
+         // RENDER the category selector
+         Boolean useCourseCategoryOnly = (Boolean) settings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
+         if (useCourseCategoryOnly) {
+            form.parameters.add(new UIELBinding(itemPath + ".category",
+                  EvalToolConstants.ITEM_CATEGORY_VALUES[isDefaultCourse.booleanValue() ? 0 : 1]));
+         } else {
+            // show all category choices so the user can choose, default is course category
+            UIBranchContainer showItemCategory = UIBranchContainer.make(form, "showItemCategory:");
+            UIMessage.make(showItemCategory, "item-category-header", "modifyitem.item.category.header");
+            UISelect radios = UISelect.make(showItemCategory, "item-category-list", 
+                  EvalToolConstants.ITEM_CATEGORY_VALUES, 
+                  EvalToolConstants.ITEM_CATEGORY_LABELS_PROPS,
+                  itemPath + ".category").setMessageKeys();
+            for (int i = 0; i < EvalToolConstants.ITEM_CATEGORY_VALUES.length; i++) {
+               UIBranchContainer radioBranch = UIBranchContainer.make(showItemCategory, "item-category-branch:", i+"");
+               UISelectChoice choice = UISelectChoice.make(radioBranch, "item-category-radio", radios.getFullID(), i);
+               UISelectLabel.make(radioBranch, "item-category-label", radios.getFullID(), i)
+                     .decorate( new UILabelTargetDecorator(choice) );
+            }
+         }
+
          // hierarchy node selector control
-         Boolean showHierarchyOptions = (Boolean) settings
-               .get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
+         Boolean showHierarchyOptions = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
          if (showHierarchyOptions) {
             hierarchyNodeSelectorRenderer.renderHierarchyNodeSelector(form,
                   "hierarchyNodeSelector:", itemPath + ".hierarchyNodeId", null);
          }
 
-         /*
-          * --------------------------- if (modify) {// modify existing block
-          * 
-          * itemPath = "templateItemWBL." + templateItems[0].getId(); if
-          * (templateItems[0].getScaleDisplaySetting() != null &&
-          * templateItems[0].getScaleDisplaySetting().equals(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED))
-          * UIBoundBoolean.make(form, "idealColor", "#{templateBBean.idealColor}", Boolean.TRUE);
-          * else UIBoundBoolean.make(form, "idealColor", "#{templateBBean.idealColor}", null);
-          * 
-          * //categorySettings(isDefaultCourse,itemPath, form);
-          *  } else {// create new block // create new block from multiple existing Block and other
-          * scaled item if (createFromBlock) { itemPath = "templateItemWBL." +
-          * templateItems[0].getId(); if (templateItems[0].getScaleDisplaySetting() != null &&
-          * templateItems[0].getScaleDisplaySetting().equals(
-          * EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED)) UIBoundBoolean.make(form,
-          * "idealColor", "#{templateBBean.idealColor}", Boolean.TRUE); else
-          * UIBoundBoolean.make(form, "idealColor", "#{templateBBean.idealColor}", null);
-          *  } else { // selected items are all normal scaled type itemPath =
-          * "templateItemWBL.new1"; UIBoundBoolean.make(form, "idealColor",
-          * "#{templateBBean.idealColor}", null); } } -----------------------
-          */
 
-         categorySettings(isDefaultCourse, itemPath, form);
-
+         // render the child items
+         
          int blockItemListSize = blockItemList.size();
 
          if ((!modify) && (blockItemListSize > 0)) {
@@ -307,43 +304,9 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
          UIInput itemtext = UIInput.make(form, "item_text:", itemPath + ".item.itemText", null);
          richTextEvolver.evolveTextInput(itemtext);
 
-         /*
-          * (non-javadoc) If the system setting (admin setting) for
-          * "EvalSettings.NOT_AVAILABLE_ALLOWED" is set as true then only we need to show the
-          * item_NA checkbox.
-          */
-         if (((Boolean) settings.get(EvalSettings.NOT_AVAILABLE_ALLOWED)).booleanValue()) {
-            UIBranchContainer showNA = UIBranchContainer.make(form, "showNA:");
-            UIMessage.make(showNA, "add-na-header", "modifyitem.add.na.header"); //$NON-NLS-1$ //$NON-NLS-2$
-            UIBoundBoolean.make(form, "item_NA", itemPath + ".usesNA", null);
-         }
 
          // render the items below
          UIMessage.make(form, "items-header", "modifyitem.item.header");
-
-         /*
-          * ------------------ if (modify) {// for modify existing block item // get Block child
-          * item EvalTemplate template = templateItems[0].getTemplate(); List l =
-          * itemsLogic.getTemplateItemsForTemplate(template.getId(), null, null); List childList =
-          * TemplateItemUtils.getChildItems(l, templateItems[0].getId()); for (int i = 0; i <
-          * childList.size(); i++) { EvalTemplateItem child = (EvalTemplateItem) childList.get(i);
-          * emitItem(form, child, child.getDisplayOrder().intValue()); } } else { if
-          * (createFromBlock) {// render the first block child , then others, // possibly other
-          * block child List allTemplateItems = itemsLogic.getTemplateItemsForTemplate(templateId,
-          * null, null); int orderNo = 0; for (int i = 0; i < templateItems.length; i++) { if
-          * (TemplateItemUtils.getTemplateItemType(templateItems[i]).equals(
-          * EvalConstants.ITEM_TYPE_BLOCK_PARENT)) {
-          * 
-          * List children = TemplateItemUtils.getChildItems(allTemplateItems,
-          * templateItems[i].getId());
-          * 
-          * for (int k = 0; k < children.size(); k++) { EvalTemplateItem myChild =
-          * (EvalTemplateItem) children.get(k); emitItem(form, myChild, orderNo + 1); orderNo++; } }
-          * else {// normal scale type emitItem(form, templateItems[i], orderNo + 1); orderNo++; } }
-          *  } else { // selected items are all normal scaled type for (int i = 0; i <
-          * templateItems.length; i++) { emitItem(form, templateItems[i], i + 1); } } }
-          * -------------------------
-          */
 
          List<EvalTemplateItem> allTemplateItems = authoringService.getTemplateItemsForTemplate(
                templateId, null, null, null);
@@ -383,47 +346,23 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 
    }
 
+   /**
+    * @param tofill
+    * @param templateItem
+    * @param index
+    */
    private void emitItem(UIContainer tofill, EvalTemplateItem templateItem, int index) {
       UIBranchContainer radiobranch = UIBranchContainer.make(tofill,
             "itemRow:", templateItem.getId().toString()); //$NON-NLS-1$
       UIOutput.make(radiobranch, "hidden-item-id", templateItem.getId().toString());
       UIOutput.make(radiobranch, "item-num", Integer.toString(index));
       UIVerbatim.make(radiobranch, "item-text", templateItem.getItem().getItemText());
-
-      /*
-       * String targetView =
-       * EvalToolConstants.classificationToView(templateItem.getItem().getClassification());
-       * ViewParameters target = new TemplateItemViewParameters(targetView,
-       * templateItem.getTemplate().getId(), templateItem.getId()); UIInternalLink.make(tofill,
-       * "modify-row-item", UIMessage.make("general.command.edit"), target);
-       * 
-       * UIInternalLink.make(tofill, "remove-row-item",
-       * UIMessage.make("general.command.delete"), new
-       * ItemViewParameters(RemoveItemProducer.VIEW_ID, null, templateItem.getId(),
-       * templateItem.getTemplate().getId()) );
-       */
    }
 
-   private void categorySettings(Boolean isDefaultCourse, String itemPath, UIForm form) {
-      if (isDefaultCourse == null) {
-         UIBranchContainer showItemCategory = UIBranchContainer.make(form, "showItemCategory:"); //$NON-NLS-1$
-         // Radio Buttons for "Item Category"
-         String[] courseCategoryList = { "modifyitem.course.category.header",
-               "modifyitem.instructor.category.header" };
-         UISelect radios = UISelect.make(showItemCategory, "item_category",
-               EvalToolConstants.ITEM_CATEGORY_VALUES, courseCategoryList, itemPath
-                     + ".category", null);
 
-         String selectID = radios.getFullID();
-         UISelectChoice.make(showItemCategory, "item_category_C", selectID, 0); //$NON-NLS-1$
-         UISelectChoice.make(showItemCategory, "item_category_I", selectID, 1); //$NON-NLS-1$
-      } else {
-
-         form.parameters.add(new UIELBinding(itemPath + ".category",
-               EvalToolConstants.ITEM_CATEGORY_VALUES[isDefaultCourse.booleanValue() ? 0 : 1]));
-      }
-   }
-
+   /* (non-Javadoc)
+    * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
+    */
    @SuppressWarnings("unchecked")
    public List reportNavigationCases() {
       List i = new ArrayList();
@@ -436,6 +375,9 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
       return i;
    }
 
+   /* (non-Javadoc)
+    * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
+    */
    public ViewParameters getViewParameters() {
       return new BlockIdsParameters();
    }
