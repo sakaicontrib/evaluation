@@ -25,7 +25,7 @@ import java.util.TreeMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.dao.EvaluationDao;
+import org.sakaiproject.evaluation.dao.EvaluationDaoImpl;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
@@ -60,8 +60,8 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
    protected final String EVENT_EVAL_STATE_STOP =                    "eval.evaluation.state.stop";
    protected final String EVENT_EVAL_STATE_VIEWABLE =                "eval.evaluation.state.viewable";
 
-   private EvaluationDao dao;
-   public void setDao(EvaluationDao dao) {
+   private EvaluationDaoImpl dao;
+   public void setDao(EvaluationDaoImpl dao) {
       this.dao = dao;
    }
 
@@ -133,7 +133,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
       count = dao.countByProperties(EvalEvaluation.class,
             new String[] {"template.id", "state", "state"}, 
             new Object[] {templateId, EvalConstants.EVALUATION_STATE_PARTIAL, EvalConstants.EVALUATION_STATE_DELETED},
-            new int[] {EvaluationDao.EQUALS, EvaluationDao.NOT_EQUALS, EvaluationDao.NOT_EQUALS});
+            new int[] {EvaluationDaoImpl.EQUALS, EvaluationDaoImpl.NOT_EQUALS, EvaluationDaoImpl.NOT_EQUALS});
       return count;
    }
 
@@ -151,7 +151,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
       List<EvalEvaluation> evals = dao.findByProperties(EvalEvaluation.class,
             new String[] {"template.id", "state", "state"}, 
             new Object[] {templateId, EvalConstants.EVALUATION_STATE_PARTIAL, EvalConstants.EVALUATION_STATE_DELETED},
-            new int[] {EvaluationDao.EQUALS, EvaluationDao.NOT_EQUALS, EvaluationDao.NOT_EQUALS});
+            new int[] {EvaluationDaoImpl.EQUALS, EvaluationDaoImpl.NOT_EQUALS, EvaluationDaoImpl.NOT_EQUALS});
       for (EvalEvaluation evaluation : evals) {
          fixupEvaluation(evaluation);
       }
@@ -764,7 +764,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
       if (emailTemplateTypeConstant != null) {
          props.add("type");
          values.add(emailTemplateTypeConstant);
-         comparisons.add(EvaluationDao.EQUALS);
+         comparisons.add(EvaluationDaoImpl.EQUALS);
       }
 
       // admin can see all
@@ -778,9 +778,9 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
          props.add("defaultType");
          values.add("");
          if (includeDefaultsOnly) {
-            comparisons.add(EvaluationDao.NOT_NULL);
+            comparisons.add(EvaluationDaoImpl.NOT_NULL);
          } else {
-            comparisons.add(EvaluationDao.NULL);            
+            comparisons.add(EvaluationDaoImpl.NULL);            
          }
       }
 

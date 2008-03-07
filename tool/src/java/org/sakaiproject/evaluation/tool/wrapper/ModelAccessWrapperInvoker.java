@@ -14,29 +14,28 @@
 
 package org.sakaiproject.evaluation.tool.wrapper;
 
-import org.sakaiproject.evaluation.dao.EvaluationDao;
+import org.sakaiproject.evaluation.dao.EvalDaoInvoker;
 
 import uk.org.ponder.util.RunnableInvoker;
 
 /**
- * This wraps our dao so that it can be accessed lazily
- * The purpose of this is to adapt the DAO interface to the RSF interface
- * as required By ClassLoader Separation
+ * This wraps our dao so that there is a transaction wrapped around requests,
+ * This also allows us to lazy load things via the model in the tool
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class ModelAccessWrapperInvoker implements RunnableInvoker {
 
-	private EvaluationDao evaluationDao;
-	public void setEvaluationDao(EvaluationDao evaluationDao) {
-		this.evaluationDao = evaluationDao;
-	}
+   public EvalDaoInvoker daoInvoker;
+   public void setDaoInvoker(EvalDaoInvoker daoInvoker) {
+      this.daoInvoker = daoInvoker;
+   }
 
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.util.RunnableInvoker#invokeRunnable(java.lang.Runnable)
 	 */
 	public void invokeRunnable(Runnable toinvoke) {
-		evaluationDao.invokeTransactionalAccess(toinvoke);
+	   daoInvoker.invokeTransactionalAccess(toinvoke);
 	}
 
 }

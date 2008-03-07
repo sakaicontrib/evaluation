@@ -108,8 +108,8 @@
 	<!-- special wrapper beans which work with genericdao to allow hibernate lazy inits -->
 	<bean id="org.sakaiproject.evaluation.ModelAccessWrapperInvoker"
 		class="org.sakaiproject.evaluation.tool.wrapper.ModelAccessWrapperInvoker">
-		<property name="evaluationDao"
-			ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+		<property name="daoInvoker"
+			ref="org.sakaiproject.evaluation.dao.EvalDaoInvoker" />
 	</bean>
 
 	<bean class="uk.org.ponder.rsac.BeanFetchBracketer">
@@ -222,15 +222,6 @@
 		<property name="messageLocator" ref="messageLocator" />
 	</bean>
 
-	<bean id="org.sakaiproject.evaluation.tool.reporting.ReportingPermissions"
-		class="org.sakaiproject.evaluation.tool.reporting.ReportingPermissions">
-        <property name="evaluationDao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
-		<property name="externalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
-		<property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings"/>
-		<property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
-        <property name="evalBeanUtils" ref="org.sakaiproject.evaluation.beans.EvalBeanUtils" />        
-	</bean>
-	
 	<!-- This ViewParametersInterceptor is responsible for redirecting the page
 	     if there is only group to select from. -->
 	<bean parent="viewParamsInterceptorParent">

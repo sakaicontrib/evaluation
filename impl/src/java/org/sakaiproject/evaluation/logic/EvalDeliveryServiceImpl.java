@@ -23,7 +23,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.dao.EvaluationDao;
+import org.sakaiproject.evaluation.dao.EvaluationDaoImpl;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
@@ -50,8 +50,8 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
    protected final String EVENT_RESPONSE_CREATED =                   "eval.response.created";
    protected final String EVENT_RESPONSE_UPDATED =                   "eval.response.updated";
 
-   private EvaluationDao dao;
-   public void setDao(EvaluationDao dao) {
+   private EvaluationDaoImpl dao;
+   public void setDao(EvaluationDaoImpl dao) {
       this.dao = dao;
    }
 

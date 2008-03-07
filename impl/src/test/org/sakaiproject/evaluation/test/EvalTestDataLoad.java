@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
 import org.sakaiproject.evaluation.model.EvalAnswer;
@@ -45,6 +44,7 @@ import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
+import org.sakaiproject.genericdao.api.GenericDao;
 
 
 /**
@@ -458,15 +458,18 @@ public class EvalTestDataLoad {
    // ADHOC stuff
 
    /**
-    * owned by {@link #ADMIN_USER_ID}, user1@institution.edu
+    * owned by {@link #ADMIN_USER_ID}, user1@institution.edu,
+    * in group1 and group2
     */
    public EvalAdhocUser user1;
    /**
-    * owned by {@link #MAINT_USER_ID}, user2@institution.edu
+    * owned by {@link #MAINT_USER_ID}, user2@institution.edu,
+    * in NO groups
     */
    public EvalAdhocUser user2;
    /**
-    * owned by {@link #MAINT_USER_ID}, user3@institution.edu
+    * owned by {@link #MAINT_USER_ID}, user3@institution.edu,
+    * in group2
     */
    public EvalAdhocUser user3;
 
@@ -475,7 +478,7 @@ public class EvalTestDataLoad {
     */
    public EvalAdhocGroup group1;
    /**
-    * Owned by maint, contains USER_ID, user2, user3
+    * Owned by maint, contains USER_ID, user1, user3
     */
    public EvalAdhocGroup group2;
 
@@ -1048,20 +1051,14 @@ public class EvalTestDataLoad {
       objectiveA2 = new EvalItemGroup(new Date(), EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.ITEM_GROUP_TYPE_OBJECTIVE,
             "A2", "description", Boolean.TRUE, categoryA, null);
 
+      // ADHOC groups and users
+
       user1 = new EvalAdhocUser(ADMIN_USER_ID, "user1@institution.edu", "user1", "User One", EvalAdhocUser.TYPE_EVALUATOR);
       user2 = new EvalAdhocUser(MAINT_USER_ID, "user2@institution.edu", "user2", "User Two", EvalAdhocUser.TYPE_EVALUATOR);
       user3 = new EvalAdhocUser(MAINT_USER_ID, "user3@institution.edu", "user3", "User Three", EvalAdhocUser.TYPE_EVALUATOR);
-
-      List<String> g1users = new ArrayList<String>();
-      g1users.add(STUDENT_USER_ID);
-      g1users.add(user1.getUserId());
-      List<String> g2users = new ArrayList<String>();
-      g2users.add(USER_ID);
-      g2users.add(user2.getUserId());
-      g2users.add(user3.getUserId());
-      
-      group1 = new EvalAdhocGroup(ADMIN_USER_ID, "group 1", g1users, null);
-      group2 = new EvalAdhocGroup(MAINT_USER_ID, "group 2", g2users, null);
+     
+      group1 = new EvalAdhocGroup(ADMIN_USER_ID, "group 1", new String[] { STUDENT_USER_ID, user1.getUserId() }, null);
+      group2 = new EvalAdhocGroup(MAINT_USER_ID, "group 2", new String[] { USER_ID, user1.getUserId(), user3.getUserId() }, null);
 
    }
 
@@ -1070,7 +1067,7 @@ public class EvalTestDataLoad {
     * @param dao A DAO with a save method which takes a persistent object as an argument<br/>
     * Example: dao.save(templateUser);
     */
-   public void saveAll(EvaluationDao dao) {
+   public void saveAll(GenericDao dao) {
       dao.save(scale1);
       dao.save(scale2);
       dao.save(scale3);
@@ -1192,6 +1189,10 @@ public class EvalTestDataLoad {
       dao.save(user1);
       dao.save(user2);
       dao.save(user3);
+
+      // need to do this because the ids are null still otherwise
+      group1.setParticipantIds( new String[] { STUDENT_USER_ID, user1.getUserId() } );
+      group2.setParticipantIds( new String[] { USER_ID, user1.getUserId(), user3.getUserId() } );
 
       dao.save(group1);
       dao.save(group2);

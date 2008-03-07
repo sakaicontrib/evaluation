@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
@@ -29,6 +30,7 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.PreloadTestDataImpl;
+import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.springframework.test.AbstractTransactionalSpringContextTests;
 
 
@@ -39,7 +41,7 @@ import org.springframework.test.AbstractTransactionalSpringContextTests;
  */
 public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTests {
 
-   protected EvaluationDao evaluationDao;
+   protected EvaluationDaoImpl evaluationDao;
 
    private EvalTestDataLoad etdl;
 
@@ -51,16 +53,16 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
    protected String[] getConfigLocations() {
       // point to the needed spring config files, must be on the classpath
       // (add component/src/webapp/WEB-INF to the build path in Eclipse),
-      // they also need to be referenced in the project.xml file
+      // they also need to be referenced in the maven file
       return new String[] {"hibernate-test.xml", "spring-hibernate.xml"};
    }
 
    // run this before each test starts
    protected void onSetUpBeforeTransaction() throws Exception {
       // load the spring created dao class bean from the Spring Application Context
-      evaluationDao = (EvaluationDao) applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationDao");
+      evaluationDao = (EvaluationDaoImpl) applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationDao");
       if (evaluationDao == null) {
-         throw new NullPointerException("DAO could not be retrieved from spring evalGroupId");
+         throw new NullPointerException("DAO could not be retrieved from spring context");
       }
 
       // check the preloaded data
@@ -71,7 +73,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 
       PreloadTestDataImpl ptd = (PreloadTestDataImpl) applicationContext.getBean("org.sakaiproject.evaluation.test.PreloadTestData");
       if (ptd == null) {
-         throw new NullPointerException("PreloadTestDataImpl could not be retrieved from spring evalGroupId");
+         throw new NullPointerException("PreloadTestDataImpl could not be retrieved from spring context");
       }
 
       // get test objects
@@ -864,10 +866,63 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       }
 
    }
-   
-   
-   
-   
+
+
+   public void testGetEvalAdhocGroupsByUserAndPerm() {
+      List<EvalAdhocGroup> l = null;
+      List<Long> ids = null;
+
+      // make sure the group has the user
+      EvalAdhocGroup checkGroup = (EvalAdhocGroup) evaluationDao.findById(EvalAdhocGroup.class, etdl.group2.getId());
+      assertTrue( ArrayUtils.contains(checkGroup.getParticipantIds(), etdl.user3.getUserId()) );
+
+      l = evaluationDao.getEvalAdhocGroupsByUserAndPerm(etdl.user3.getUserId(), EvalConstants.PERM_TAKE_EVALUATION);
+      assertNotNull(l);
+      assertEquals(1, l.size());
+      assertEquals(etdl.group2.getId(), l.get(0).getId());
+
+      l = evaluationDao.getEvalAdhocGroupsByUserAndPerm(EvalTestDataLoad.STUDENT_USER_ID, EvalConstants.PERM_TAKE_EVALUATION);
+      assertNotNull(l);
+      assertEquals(1, l.size());
+      assertEquals(etdl.group1.getId(), l.get(0).getId());
+
+      l = evaluationDao.getEvalAdhocGroupsByUserAndPerm(etdl.user1.getUserId(), EvalConstants.PERM_TAKE_EVALUATION);
+      assertNotNull(l);
+      assertEquals(2, l.size());
+      ids = EvalTestDataLoad.makeIdList(l);
+      assertTrue(ids.contains(etdl.group1.getId()));
+      assertTrue(ids.contains(etdl.group2.getId()));
+
+      l = evaluationDao.getEvalAdhocGroupsByUserAndPerm(etdl.user2.getUserId(), EvalConstants.PERM_TAKE_EVALUATION);
+      assertNotNull(l);
+      assertEquals(0, l.size());
+
+   }
+
+
+   public void testIsUserAllowedInAdhocGroup() {
+      boolean allowed = false;
+
+      allowed = evaluationDao.isUserAllowedInAdhocGroup(EvalTestDataLoad.USER_ID, EvalConstants.PERM_TAKE_EVALUATION, etdl.group2.getEvalGroupId());
+      assertTrue(allowed);
+
+      allowed = evaluationDao.isUserAllowedInAdhocGroup(EvalTestDataLoad.USER_ID, EvalConstants.PERM_BE_EVALUATED, etdl.group2.getEvalGroupId());
+      assertFalse(allowed);
+
+      allowed = evaluationDao.isUserAllowedInAdhocGroup(etdl.user1.getUserId(), EvalConstants.PERM_TAKE_EVALUATION, etdl.group1.getEvalGroupId());
+      assertTrue(allowed);
+
+      allowed = evaluationDao.isUserAllowedInAdhocGroup(etdl.user1.getUserId(), EvalConstants.PERM_BE_EVALUATED, etdl.group1.getEvalGroupId());
+      assertFalse(allowed);
+
+      allowed = evaluationDao.isUserAllowedInAdhocGroup(etdl.user2.getUserId(), EvalConstants.PERM_TAKE_EVALUATION, etdl.group1.getEvalGroupId());
+      assertFalse(allowed);
+
+      allowed = evaluationDao.isUserAllowedInAdhocGroup(etdl.user2.getUserId(), EvalConstants.PERM_BE_EVALUATED, etdl.group1.getEvalGroupId());
+      assertFalse(allowed);
+   }
+
+
    
    
    // LOCKING tests

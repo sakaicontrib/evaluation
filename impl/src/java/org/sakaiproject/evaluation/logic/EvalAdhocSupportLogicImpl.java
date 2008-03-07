@@ -21,7 +21,8 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.sakaiproject.evaluation.dao.EvaluationDao;
+import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.dao.EvaluationDaoImpl;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
 
@@ -39,8 +40,8 @@ public class EvalAdhocSupportLogicImpl {
 
    private static Log log = LogFactory.getLog(EvalAdhocSupportLogicImpl.class);
 
-   private EvaluationDao dao;
-   public void setDao(EvaluationDao dao) {
+   private EvaluationDaoImpl dao;
+   public void setDao(EvaluationDaoImpl dao) {
       this.dao = dao;
    }
 
@@ -271,15 +272,44 @@ public class EvalAdhocSupportLogicImpl {
     * @return the list of all adhoc groups that this user owns
     */
    @SuppressWarnings("unchecked")
-   public List<EvalAdhocGroup> getAdhocGroupsForUser(String userId) {
+   public List<EvalAdhocGroup> getAdhocGroupsForOwner(String userId) {
       List<EvalAdhocGroup> groups = dao.findByProperties(EvalAdhocGroup.class, 
             new String[] {"owner"}, 
             new Object[] {userId},
-            new int[] {EvaluationDao.EQUALS},
+            new int[] {EvaluationDaoImpl.EQUALS},
             new String[] {"title"});
       return groups;
    }
 
+   /**
+    * Get adhoc groups for a user and permission, 
+    * this is a way to check the perms for a user
+    * 
+    * @param userId the internal user id (not username)
+    * @param permissionConstant a permission constant which is 
+    * {@link EvalConstants#PERM_BE_EVALUATED} for instructors/evaluatees OR
+    * {@link EvalConstants#PERM_TAKE_EVALUATION} for students/evaluators,
+    * other permissions will return no results
+    * @return a list of adhoc groups for which this user has this permission
+    */
+   @SuppressWarnings("unchecked")
+   public List<EvalAdhocGroup> getEvalAdhocGroupsByUserAndPerm(String userId, String permissionConstant) {
+      // passthrough to the dao method
+      return dao.getEvalAdhocGroupsByUserAndPerm(userId, permissionConstant);
+   }
 
+   /**
+    * Check if a user has a specified permission/role within an adhoc group
+    * 
+    * @param userId the internal user id (not username)
+    * @param permission a permission string PERM constant (from this API),
+    * <b>Note</b>: only take evaluation and be evaluated are supported
+    * @param evalGroupId the unique id of an adhoc eval group (not the persistent id)
+    * @return true if allowed, false otherwise
+    */
+   public boolean isUserAllowedInAdhocGroup(String userId, String permissionConstant, String evalGroupId) {
+      // passthrough to the dao method
+      return dao.isUserAllowedInAdhocGroup(userId, permissionConstant, evalGroupId);
+   }
 
 }

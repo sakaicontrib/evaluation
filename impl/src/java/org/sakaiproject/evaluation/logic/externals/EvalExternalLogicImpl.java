@@ -56,6 +56,7 @@ import org.sakaiproject.evaluation.logic.entity.TemplateEntityProvider;
 import org.sakaiproject.evaluation.logic.entity.TemplateItemEntityProvider;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
+import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
@@ -470,23 +471,37 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
     * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#makeEvalGroupObject(java.lang.String)
     */
    public EvalGroup makeEvalGroupObject(String evalGroupId) {
+      if (evalGroupId == null) {
+         throw new IllegalArgumentException("evalGroupId cannot be null");
+      }
+
       EvalGroup c = null;
-      try {
-         // try to get the site object based on the entity reference (which is the evalGroupId)
-         Object entity = entityBroker.fetchEntity(evalGroupId);
-         if (entity instanceof Site) {
-            Site site = (Site) entityBroker.fetchEntity(evalGroupId);
-            c = new EvalGroup( evalGroupId, site.getTitle(), 
-                  getContextType(SAKAI_SITE_TYPE) );
-         } else if (entity instanceof Group) {
-            Group group = (Group) entityBroker.fetchEntity(evalGroupId);
-            c = new EvalGroup( evalGroupId, group.getTitle(), 
-                  getContextType(SAKAI_GROUP_TYPE) );
+      // try to get the adhoc group first
+      EvalAdhocGroup adhocGroup = adhocSupportLogic.getAdhocGroupById(EvalAdhocGroup.getIdFromAdhocEvalGroupId(evalGroupId));
+      if (adhocGroup != null) {
+         c = new EvalGroup( evalGroupId, adhocGroup.getTitle(), 
+               EvalConstants.GROUP_TYPE_ADHOC );
+      }
+
+      if (c == null) {
+         // check Sakai
+         try {
+            // try to get the site object based on the entity reference (which is the evalGroupId)
+            Object entity = entityBroker.fetchEntity(evalGroupId);
+            if (entity instanceof Site) {
+               Site site = (Site) entityBroker.fetchEntity(evalGroupId);
+               c = new EvalGroup( evalGroupId, site.getTitle(), 
+                     getContextType(SAKAI_SITE_TYPE) );
+            } else if (entity instanceof Group) {
+               Group group = (Group) entityBroker.fetchEntity(evalGroupId);
+               c = new EvalGroup( evalGroupId, group.getTitle(), 
+                     getContextType(SAKAI_GROUP_TYPE) );
+            }
+         } catch (Exception e) {
+            // invalid site reference
+            log.debug("Could not get sakai site from evalGroupId:" + evalGroupId, e);
+            c = null;
          }
-      } catch (Exception e) {
-         // invalid site reference
-         log.debug("Could not get sakai site from evalGroupId:" + evalGroupId, e);
-         c = null;
       }
 
       if (c == null) {
@@ -551,9 +566,6 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
       if (group != null 
             && group.title != null) {
          title = group.title;
-      }
-      if (UNKNOWN_TITLE.equals(title)) {
-         log.warn("Cannot get the title for evalGroupId: " + evalGroupId);
       }
       return title;
    }

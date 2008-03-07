@@ -104,13 +104,13 @@
       <property name="pdfReportExporter" ref="PDFReportExporter" />
       <property name="response" ref="httpServletResponse" />
       <property name="evalResponseAggregatorUtil" ref="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil" />
-      <property name="reportingPermissions" ref="org.sakaiproject.evaluation.tool.reporting.ReportingPermissions" />
+      <property name="reportingPermissions" ref="org.sakaiproject.evaluation.logic.ReportingPermissions" />
    </bean>
 
 	<bean id="org.sakaiproject.evaluation.tool.reporting.CurrentViewableReports" 
 		class="org.sakaiproject.evaluation.tool.reporting.CurrentViewableReports">
 		<property name="reportingPermissions" 
-			ref="org.sakaiproject.evaluation.tool.reporting.ReportingPermissions" />
+			ref="org.sakaiproject.evaluation.logic.ReportingPermissions" />
 	</bean>
 
    <!-- LOCATORS - OTP bean locators here -->
@@ -621,7 +621,7 @@
       <property name="reportsBean" ref="reportsBean" />
       <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
       <property name="evalResponseAggregatorUtil" ref="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil" />
-      <property name="reportingPermissions" ref="org.sakaiproject.evaluation.tool.reporting.ReportingPermissions" />
+      <property name="reportingPermissions" ref="org.sakaiproject.evaluation.logic.ReportingPermissions" />
    </bean>
 
    <bean
@@ -633,7 +633,7 @@
       <property name="authoringService"
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
       <property name="reportsBean" ref="reportsBean" />
-      <property name="reportingPermissions" ref="org.sakaiproject.evaluation.tool.reporting.ReportingPermissions" />
+      <property name="reportingPermissions" ref="org.sakaiproject.evaluation.logic.ReportingPermissions" />
    </bean>
 
 </beans>

@@ -19,15 +19,15 @@
         <property name="title" type="java.lang.String">
             <column name="TITLE" length="255" />
         </property>
-        <list name="participantIds" table="EVAL_ADHOC_PARTICIPANTS" cascade="all" lazy="false" fetch="join">
-            <key column="ID" not-null="true" />
+        <array name="participantIds" table="EVAL_ADHOC_PARTICIPANTS" cascade="all">
+            <key column="GROUP_ID" not-null="true" />
             <list-index column="PARTICIPANTS_INDEX" />
-            <element column="USER_ID" type="java.lang.String" not-null="true" />
-        </list>
-        <list name="evaluateeIds" table="EVAL_ADHOC_EVALUATEES" cascade="all" lazy="false" fetch="join">
-            <key column="ID" not-null="true" />
+            <element type="string" column="USER_ID" not-null="true" />
+        </array>
+        <array name="evaluateeIds" table="EVAL_ADHOC_EVALUATEES" cascade="all">
+            <key column="GROUP_ID" not-null="true" />
             <list-index column="EVALUATEES_INDEX" />
-            <element column="USER_ID" type="java.lang.String" not-null="true" />
-        </list>
+            <element type="string" column="USER_ID" not-null="true" />
+        </array>
     </class>
 </hibernate-mapping>

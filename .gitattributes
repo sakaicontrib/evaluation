@@ -8,7 +8,7 @@ api/project.xml -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/beans/EvalBeanUtils.java svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/constant/EvalConstants.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/constant/EvalEmailConstants.java svn_keywords=Date+Revision+Author+HeadURL+Id
-api/src/java/org/sakaiproject/evaluation/dao/EvaluationDao.java -text svn_keywords=Date+Revision+Author+URL+Id
+api/src/java/org/sakaiproject/evaluation/dao/EvalDaoInvoker.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalAnswer.hbm.xml -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalAssignGroup.hbm.xml -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/dao/hbm/EvalAssignHierarchy.hbm.xml -text svn_keywords=Date+Revision+Author+URL+Id
@@ -29,6 +29,7 @@ api/src/java/org/sakaiproject/evaluation/logic/EvalEmailsLogic.java -text svn_ke
 api/src/java/org/sakaiproject/evaluation/logic/EvalEvaluationService.java svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/logic/EvalEvaluationSetupService.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/logic/EvalSettings.java -text svn_keywords=Date+Revision+Author+URL+Id
+api/src/java/org/sakaiproject/evaluation/logic/ReportingPermissions.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/logic/entity/AssignGroupEntityProvider.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/logic/entity/ConfigEntityProvider.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/logic/entity/EvalCategoryEntityProvider.java -text svn_keywords=Date+Revision+Author+URL+Id
@@ -76,6 +77,7 @@ api/src/java/org/sakaiproject/evaluation/utils/SettingsLogicUtils.java -text svn
 api/src/java/org/sakaiproject/evaluation/utils/TemplateItemUtils.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/pom.xml svn_keywords=Date+Revision+Author+URL+Id
 impl/project.xml -text svn_keywords=Date+Revision+Author+URL+Id
+impl/src/java/org/sakaiproject/evaluation/dao/EvalDaoInvokerImpl.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/java/org/sakaiproject/evaluation/dao/EvalDataPreloaderImpl.java svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/dao/EvaluationDaoImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/dao/PreloadDataImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
@@ -86,6 +88,7 @@ impl/src/java/org/sakaiproject/evaluation/logic/EvalEmailsLogicImpl.java -text s
 impl/src/java/org/sakaiproject/evaluation/logic/EvalEvaluationServiceImpl.java svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/EvalEvaluationSetupServiceImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/EvalSettingsImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
+impl/src/java/org/sakaiproject/evaluation/logic/ReportingPermissionsImpl.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/entity/AssignGroupEntityProviderImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/entity/ConfigEntityProviderImpl.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/java/org/sakaiproject/evaluation/logic/entity/EvalCategoryEntityProviderImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
@@ -235,7 +238,6 @@ tool/src/java/org/sakaiproject/evaluation/tool/reporting/LikertPercentageItemLab
 tool/src/java/org/sakaiproject/evaluation/tool/reporting/PDFReportExporter.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/reporting/ReportHandlerHook.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/reporting/ReportViewParamsInterceptor.java -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/java/org/sakaiproject/evaluation/tool/reporting/ReportingPermissions.java svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/reporting/XLSReportExporter.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/utils/EvalAggregatedResponses.java svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/utils/EvalResponseAggregatorUtil.java svn_keywords=Date+Revision+Author+URL+Id
