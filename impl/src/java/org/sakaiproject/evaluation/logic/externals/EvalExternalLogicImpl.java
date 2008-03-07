@@ -19,10 +19,10 @@ import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -413,8 +413,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
       Map<String, User> sakaiUsers = new HashMap<String, User>();
       if (! foundAll) {
          // get remaining users from Sakai
-         List<String> ids = Arrays.asList(userIds);
-         List<User> sakUsers = userDirectoryService.getUsers(ids);
+         List<User> sakUsers = getSakaiUsers(userIds);
          for (User user : sakUsers) {
             sakaiUsers.put(user.getId(), user);
          }
@@ -476,12 +475,6 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
       }
 
       EvalGroup c = null;
-      // try to get the adhoc group first
-      EvalAdhocGroup adhocGroup = adhocSupportLogic.getAdhocGroupById(EvalAdhocGroup.getIdFromAdhocEvalGroupId(evalGroupId));
-      if (adhocGroup != null) {
-         c = new EvalGroup( evalGroupId, adhocGroup.getTitle(), 
-               EvalConstants.GROUP_TYPE_ADHOC );
-      }
 
       if (c == null) {
          // check Sakai
@@ -501,6 +494,15 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
             // invalid site reference
             log.debug("Could not get sakai site from evalGroupId:" + evalGroupId, e);
             c = null;
+         }
+      }
+
+      if (c == null) {
+         // try to get the adhoc group
+         EvalAdhocGroup adhocGroup = adhocSupportLogic.getAdhocGroupById(EvalAdhocGroup.getIdFromAdhocEvalGroupId(evalGroupId));
+         if (adhocGroup != null) {
+            c = new EvalGroup( evalGroupId, adhocGroup.getTitle(), 
+                  EvalConstants.GROUP_TYPE_ADHOC );
          }
       }
 
@@ -591,6 +593,11 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
          }
       }
 
+      // also check the adhoc groups
+// taking this out for now because we do not want to allow adhoc groups to provide permission to create templates/evals
+//      List<EvalAdhocGroup> adhocGroups = adhocSupportLogic.getAdhocGroupsForOwner(userId);
+//      count += adhocGroups.size();
+      
       // also check provider
       if (evalGroupsProvider != null) {
          if (EvalConstants.PERM_BE_EVALUATED.equals(permission) ||
@@ -611,6 +618,8 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
       log.debug("userId: " + userId + ", permission: " + permission);
 
       List<EvalGroup> l = new ArrayList<EvalGroup>();
+
+      // get the groups from Sakai
       Set<String> authzGroupIds = 
          authzGroupService.getAuthzGroupsIsAllowed(userId, permission, null);
       Iterator<String> it = authzGroupIds.iterator();
@@ -647,6 +656,12 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
          }
       }
 
+      // also check the internal groups
+      List<EvalAdhocGroup> adhocGroups = adhocSupportLogic.getAdhocGroupsByUserAndPerm(userId, permission);
+      for (EvalAdhocGroup adhocGroup : adhocGroups) {
+         l.add( new EvalGroup(adhocGroup.getEvalGroupId(), adhocGroup.getTitle(), EvalConstants.GROUP_TYPE_ADHOC) );
+      }
+
       // also check provider
       if (evalGroupsProvider != null) {
          if (EvalConstants.PERM_BE_EVALUATED.equals(permission) ||
@@ -661,7 +676,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
          }
       }
 
-      if (l.isEmpty()) log.warn("Empty list of groups for user:" + userId + ", permission: " + permission);
+      if (l.isEmpty()) log.info("Empty list of groups for user:" + userId + ", permission: " + permission);
       return l;
    }
 
@@ -669,18 +684,9 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
     * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#countUserIdsForEvalGroup(java.lang.String, java.lang.String)
     */
    public int countUserIdsForEvalGroup(String evalGroupId, String permission) {
-      int count = getUserIdsForEvalGroup(evalGroupId, permission).size();
-
-      // also check provider
-      if (evalGroupsProvider != null) {
-         if (EvalConstants.PERM_BE_EVALUATED.equals(permission) ||
-               EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
-            log.debug("Using eval groups provider: evalGroupId: " + evalGroupId + ", permission: " + permission);
-            count += evalGroupsProvider.countUserIdsForEvalGroups(new String[] {evalGroupId}, translatePermission(permission));
-         }
-      }
-
-      return count;
+      // get the count from the method which retrieves all the groups,
+      // this method might be better to retire
+      return getUserIdsForEvalGroup(evalGroupId, permission).size();
    }
 
    /* (non-Javadoc)
@@ -688,21 +694,56 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
     */
    @SuppressWarnings("unchecked")
    public Set<String> getUserIdsForEvalGroup(String evalGroupId, String permission) {
-      String reference = evalGroupId;
-      List<String> azGroups = new ArrayList<String>();
-      azGroups.add(reference);
-      Set<String> userIds = authzGroupService.getUsersIsAllowed(permission, azGroups);
-      // need to remove the admin user or else they show up in unwanted places
-      if (userIds.contains(ADMIN_USER_ID)) {
-         userIds.remove(ADMIN_USER_ID);
+      Set<String> userIds = new HashSet<String>();
+
+      /* NOTE: we are assuming there is not much chance that there will be some users stored in
+       * multiple data stores for the same group id so we only check until we find at least one user,
+       * this means checks for user in groups with no users in them end up being really costly
+       */
+
+      // check internal adhoc groups
+      if (EvalConstants.PERM_BE_EVALUATED.equals(permission) ||
+            EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
+         Long id = EvalAdhocGroup.getIdFromAdhocEvalGroupId(evalGroupId);
+         if (id != null) {
+            EvalAdhocGroup adhocGroup = adhocSupportLogic.getAdhocGroupById(id);
+            if (adhocGroup != null) {
+               String[] ids = null;
+               if (EvalConstants.PERM_BE_EVALUATED.equals(permission)) {
+                  ids = adhocGroup.getEvaluateeIds();
+               } else if (EvalConstants.PERM_TAKE_EVALUATION.equals(permission)) {
+                  ids = adhocGroup.getParticipantIds();
+               }
+               if (ids != null) {
+                  for (int i = 0; i < ids.length; i++) {
+                     userIds.add( ids[i] );
+                  }
+               }
+            }
+         }
       }
 
-      // also check provider
-      if (evalGroupsProvider != null) {
-         if (EvalConstants.PERM_BE_EVALUATED.equals(permission) ||
-               EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
-            log.debug("Using eval groups provider: evalGroupId: " + evalGroupId + ", permission: " + permission);
-            userIds.addAll( evalGroupsProvider.getUserIdsForEvalGroups(new String[] {evalGroupId}, translatePermission(permission)) );
+      // only go on to check the Sakai sites/groups if nothing was found
+      if (userIds.size() == 0) {
+         String reference = evalGroupId;
+         List<String> azGroups = new ArrayList<String>();
+         azGroups.add(reference);
+         userIds.addAll( authzGroupService.getUsersIsAllowed(permission, azGroups) );
+         // need to remove the admin user or else they show up in unwanted places
+         if (userIds.contains(ADMIN_USER_ID)) {
+            userIds.remove(ADMIN_USER_ID);
+         }
+      }
+
+      // check the provider if we still found nothing
+      if (userIds.size() == 0) {
+         // also check provider
+         if (evalGroupsProvider != null) {
+            if (EvalConstants.PERM_BE_EVALUATED.equals(permission) ||
+                  EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
+               log.debug("Using eval groups provider: evalGroupId: " + evalGroupId + ", permission: " + permission);
+               userIds.addAll( evalGroupsProvider.getUserIdsForEvalGroups(new String[] {evalGroupId}, translatePermission(permission)) );
+            }
          }
       }
 
@@ -714,19 +755,30 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
     * @see org.sakaiproject.evaluation.logic.EvalExternalLogic#isUserAllowedInEvalGroup(java.lang.String, java.lang.String, java.lang.String)
     */
    public boolean isUserAllowedInEvalGroup(String userId, String permission, String evalGroupId) {
+
+      /* NOTE: false checks end up being really costly and should probably be cached
+       */
+
       if (evalGroupId == null) {
-         if (securityService.isSuperUser(userId)) {
+         // special check for the admin user
+         if (isUserAdmin(userId)) {
             return true;
          }
          return false;
       }
 
+      // try checking Sakai first
       String reference = evalGroupId;
       if ( securityService.unlock(userId, permission, reference) ) {
          return true;
       }
 
-      // also check provider
+      // check the internal groups next
+      if ( adhocSupportLogic.isUserAllowedInAdhocGroup(userId, permission, evalGroupId) ) {
+         return true;
+      }
+
+      // finally check provider
       if (evalGroupsProvider != null) {
          if (EvalConstants.PERM_BE_EVALUATED.equals(permission) ||
                EvalConstants.PERM_TAKE_EVALUATION.equals(permission) ) {
@@ -738,6 +790,41 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
       }
 
       return false;
+   }
+
+
+   /**
+    * Safe method for getting a large number of users from Sakai
+    * 
+    * @param userIds an array of internal user ids
+    * @return a list of {@link User}
+    */
+   public List<User> getSakaiUsers(String[] userIds) {
+      // TODO - cannot use this because of the way the UDS works (it will not let us call this unless
+      // the user already exists in Sakai -AZ
+//    // get the list of users efficiently
+//    List userIds = Arrays.asList( toUserIds );
+//    List l = userDirectoryService.getUsers( userIds );
+
+      // handling this in a much less efficient way for now (see above comment) -AZ
+      List<User> l = new ArrayList<User>(); // fill this with users
+      for (int i = 0; i < userIds.length; i++) {
+         User user = null;
+         try {
+            user = userDirectoryService.getUser( userIds[i] );
+         } catch (UserNotDefinedException e) {
+            log.debug("Cannot find user object by id:" + userIds[i] );
+            try {
+               user = userDirectoryService.getUserByEid( userIds[i] );
+            } catch (UserNotDefinedException e1) {
+               log.debug("Cannot find user object by eid:" + userIds[i] );
+            }
+         }
+         if (user != null) {
+            l.add(user);
+         }
+      }
+      return l;
    }
 
    /* (non-Javadoc)
@@ -755,46 +842,16 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
       }
 
       // handle the list of TO addresses
-      // TODO - cannot use this because of the way the UDS works (it will not let us call this unless
-      // the user already exists in Sakai -AZ
-//    // get the list of users efficiently
-//    List userIds = Arrays.asList( toUserIds );
-//    List l = userDirectoryService.getUsers( userIds );
-
-      // handling this in a much less efficient way for now (see above comment) -AZ
-      List<User> l = new ArrayList<User>(); // fill this with users
-      for (int i = 0; i < toUserIds.length; i++) {
-         User user;
-         try {
-            user = userDirectoryService.getUser( toUserIds[i] );
-         } catch (UserNotDefinedException e) {
-            log.debug("Cannot find user object by id:" + toUserIds[i] );
-            try {
-               user = userDirectoryService.getUserByEid( toUserIds[i] );
-            } catch (UserNotDefinedException e1) {
-               if (deferExceptions) {
-                  exceptionTracker += e.getMessage() + " :: ";
-                  log.error("Deferring exception: Failed to find user: " + toUserIds[i], e);
-                  continue;
-               } else {
-                  // die here since we were unable to find this user at all
-                  throw new IllegalArgumentException("Invalid user: Cannot find user object by id or eid:" + toUserIds[i], e );
-               } 
-            }
-         }
-         l.add(user);
-      }
-      // end of much less efficient way of doing things -AZ
-
-      // email address validity is checked at entry but value can be null
+      List<EvalUser> l = getEvalUsersByIds(toUserIds);
       List<String> toEmails = new ArrayList<String>();
-      for (ListIterator<User> iterator = l.listIterator(); iterator.hasNext();) {
-         User u = iterator.next();
-         if ( u.getEmail() == null || "".equals(u.getEmail()) ) {
+      // email address validity is checked at entry but value should not be null
+      for (Iterator<EvalUser> iterator = l.iterator(); iterator.hasNext();) {
+         EvalUser user = iterator.next();
+         if ( user.email == null || "".equals(user.email) ) {
             iterator.remove();
-            log.warn("sendEmails: Could not get an email address for " + u.getDisplayName() + " ("+u.getId()+")");
+            log.warn("sendEmails: Could not get an email address for " + user.displayName + " ("+user.userId+")");
          } else {
-            toEmails.add(u.getEmail());
+            toEmails.add(user.email);
          }
       }
 

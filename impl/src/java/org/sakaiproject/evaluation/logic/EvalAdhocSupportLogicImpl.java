@@ -293,7 +293,7 @@ public class EvalAdhocSupportLogicImpl {
     * @return a list of adhoc groups for which this user has this permission
     */
    @SuppressWarnings("unchecked")
-   public List<EvalAdhocGroup> getEvalAdhocGroupsByUserAndPerm(String userId, String permissionConstant) {
+   public List<EvalAdhocGroup> getAdhocGroupsByUserAndPerm(String userId, String permissionConstant) {
       // passthrough to the dao method
       return dao.getEvalAdhocGroupsByUserAndPerm(userId, permissionConstant);
    }

@@ -296,24 +296,24 @@ public class EvalAdhocSupportLogicImplTest extends BaseTestEvalLogic {
       List<EvalAdhocGroup> l = null;
       List<Long> ids = null;
 
-      l = adhocSupportLogic.getEvalAdhocGroupsByUserAndPerm(etdl.user3.getUserId(), EvalConstants.PERM_TAKE_EVALUATION);
+      l = adhocSupportLogic.getAdhocGroupsByUserAndPerm(etdl.user3.getUserId(), EvalConstants.PERM_TAKE_EVALUATION);
       assertNotNull(l);
       assertEquals(1, l.size());
       assertEquals(etdl.group2.getId(), l.get(0).getId());
 
-      l = adhocSupportLogic.getEvalAdhocGroupsByUserAndPerm(EvalTestDataLoad.STUDENT_USER_ID, EvalConstants.PERM_TAKE_EVALUATION);
+      l = adhocSupportLogic.getAdhocGroupsByUserAndPerm(EvalTestDataLoad.STUDENT_USER_ID, EvalConstants.PERM_TAKE_EVALUATION);
       assertNotNull(l);
       assertEquals(1, l.size());
       assertEquals(etdl.group1.getId(), l.get(0).getId());
 
-      l = adhocSupportLogic.getEvalAdhocGroupsByUserAndPerm(etdl.user1.getUserId(), EvalConstants.PERM_TAKE_EVALUATION);
+      l = adhocSupportLogic.getAdhocGroupsByUserAndPerm(etdl.user1.getUserId(), EvalConstants.PERM_TAKE_EVALUATION);
       assertNotNull(l);
       assertEquals(2, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
       assertTrue(ids.contains(etdl.group1.getId()));
       assertTrue(ids.contains(etdl.group2.getId()));
 
-      l = adhocSupportLogic.getEvalAdhocGroupsByUserAndPerm(etdl.user2.getUserId(), EvalConstants.PERM_TAKE_EVALUATION);
+      l = adhocSupportLogic.getAdhocGroupsByUserAndPerm(etdl.user2.getUserId(), EvalConstants.PERM_TAKE_EVALUATION);
       assertNotNull(l);
       assertEquals(0, l.size());
 
