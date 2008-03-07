@@ -31,9 +31,9 @@ public class EvalDataPreloaderImpl {
 
    public static String EVAL_PRELOAD_LOCK = "data.preload.lock";
 
-   private EvaluationDao evaluationDao;
-   public void setEvaluationDao(EvaluationDao evaluationDao) {
-      this.evaluationDao = evaluationDao;
+   private EvaluationDaoImpl dao;
+   public void setDao(EvaluationDaoImpl evaluationDao) {
+      this.dao = evaluationDao;
    }
 
    private EvalExternalLogic externalLogic;
@@ -53,7 +53,7 @@ public class EvalDataPreloaderImpl {
          if (! preloadData.checkCriticalDataPreloaded() ) {
             log.info("Preload data missing, preparing to preload critical evaluation system data");
             String serverId = externalLogic.getConfigurationSetting(EvalExternalLogic.SETTING_SERVER_ID, "UNKNOWN_SERVER_ID");
-            Boolean result = evaluationDao.lockAndExecuteRunnable(EVAL_PRELOAD_LOCK, serverId, preloadData);
+            Boolean result = dao.lockAndExecuteRunnable(EVAL_PRELOAD_LOCK, serverId, preloadData);
             if (result == null) {
                throw new IllegalStateException("Failure attempting to obtain lock and preload evaluation system data, " +
                		"see logs just before this for more details, system terminating...");

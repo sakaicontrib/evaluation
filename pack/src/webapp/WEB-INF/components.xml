@@ -62,7 +62,7 @@
         and the tests already have a test data preloader and tests do not need to be cluster safe -->
    <bean class="org.sakaiproject.evaluation.dao.EvalDataPreloaderImpl"
         init-method="init">
-      <property name="evaluationDao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+      <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
       <property name="externalLogic"
          ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="preloadData"

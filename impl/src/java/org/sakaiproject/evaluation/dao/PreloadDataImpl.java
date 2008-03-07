@@ -22,7 +22,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.constant.EvalEmailConstants;
-import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalConfig;
@@ -42,9 +41,9 @@ public class PreloadDataImpl implements Runnable {
 
    private static Log log = LogFactory.getLog(PreloadDataImpl.class);
 
-   private EvaluationDao evaluationDao;
-   public void setEvaluationDao(EvaluationDao evaluationDao) {
-      this.evaluationDao = evaluationDao;
+   private EvaluationDaoImpl dao;
+   public void setDao(EvaluationDaoImpl evaluationDao) {
+      this.dao = evaluationDao;
    }
 
    private EvalExternalLogic externalLogic;
@@ -68,15 +67,15 @@ public class PreloadDataImpl implements Runnable {
     */
    public boolean checkCriticalDataPreloaded() {
       boolean preloaded = true;
-      if (evaluationDao.countAll(EvalConfig.class) <= 0) {
+      if (dao.countAll(EvalConfig.class) <= 0) {
          preloaded = false;
       }
 
-      if (evaluationDao.countAll(EvalEmailTemplate.class) <= 0) {
+      if (dao.countAll(EvalEmailTemplate.class) <= 0) {
          preloaded = false;
       }
 
-      if (evaluationDao.countAll(EvalScale.class) <= 0) {
+      if (dao.countAll(EvalScale.class) <= 0) {
          preloaded = false;
       }
 
@@ -96,7 +95,7 @@ public class PreloadDataImpl implements Runnable {
    @SuppressWarnings("unchecked")
    public void preloadEvalConfig() {
       // check if there are any EvalConfig items present
-      int count = evaluationDao.countAll(EvalConfig.class);
+      int count = dao.countAll(EvalConfig.class);
       if (count == 0) {
          // Default Instructor system settings
          saveConfig(EvalSettings.INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS, true);
@@ -153,7 +152,7 @@ public class PreloadDataImpl implements Runnable {
          saveConfig(EvalSettings.ITEM_USE_RESULTS_SHARING, false);
          saveConfig(EvalSettings.ENABLE_IMPORTING, false);
 
-         log.info("Preloaded " + evaluationDao.countAll(EvalConfig.class) + " evaluation system EvalConfig items");
+         log.info("Preloaded " + dao.countAll(EvalConfig.class) + " evaluation system EvalConfig items");
       }
    }
 
@@ -166,7 +165,7 @@ public class PreloadDataImpl implements Runnable {
    }
 
    private void saveConfig(String key, String value) {
-      evaluationDao.save(new EvalConfig(new Date(), SettingsLogicUtils.getName(key), value));
+      dao.save(new EvalConfig(new Date(), SettingsLogicUtils.getName(key), value));
    }
 
    /**
@@ -175,23 +174,23 @@ public class PreloadDataImpl implements Runnable {
    public void preloadEmailTemplate() {
 
       // check if there are any emailTemplates present
-      int count = evaluationDao.countByProperties(EvalEmailTemplate.class, 
+      int count = dao.countByProperties(EvalEmailTemplate.class, 
             new String[] {"defaultType"},
             new Object[] {""},
-            new int[] {EvaluationDao.NOT_NULL});
+            new int[] {EvaluationDaoImpl.NOT_NULL});
       if (count == 0) {
-         evaluationDao.save(new EvalEmailTemplate(ADMIN_OWNER, EvalConstants.EMAIL_TEMPLATE_CREATED, EvalEmailConstants.EMAIL_CREATED_DEFAULT_SUBJECT,
+         dao.save(new EvalEmailTemplate(ADMIN_OWNER, EvalConstants.EMAIL_TEMPLATE_CREATED, EvalEmailConstants.EMAIL_CREATED_DEFAULT_SUBJECT,
                EvalEmailConstants.EMAIL_CREATED_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_CREATED));
-         evaluationDao.save(new EvalEmailTemplate(ADMIN_OWNER, EvalConstants.EMAIL_TEMPLATE_AVAILABLE, EvalEmailConstants.EMAIL_AVAILABLE_DEFAULT_SUBJECT,
+         dao.save(new EvalEmailTemplate(ADMIN_OWNER, EvalConstants.EMAIL_TEMPLATE_AVAILABLE, EvalEmailConstants.EMAIL_AVAILABLE_DEFAULT_SUBJECT,
                EvalEmailConstants.EMAIL_AVAILABLE_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_AVAILABLE));
-         evaluationDao.save(new EvalEmailTemplate(ADMIN_OWNER, EvalConstants.EMAIL_TEMPLATE_AVAILABLE_OPT_IN, EvalEmailConstants.EMAIL_AVAILABLE_OPT_IN_SUBJECT,
+         dao.save(new EvalEmailTemplate(ADMIN_OWNER, EvalConstants.EMAIL_TEMPLATE_AVAILABLE_OPT_IN, EvalEmailConstants.EMAIL_AVAILABLE_OPT_IN_SUBJECT,
                EvalEmailConstants.EMAIL_AVAILABLE_OPT_IN_TEXT, EvalConstants.EMAIL_TEMPLATE_AVAILABLE_OPT_IN));
-         evaluationDao.save(new EvalEmailTemplate(ADMIN_OWNER, EvalConstants.EMAIL_TEMPLATE_REMINDER, EvalEmailConstants.EMAIL_REMINDER_DEFAULT_SUBJECT,
+         dao.save(new EvalEmailTemplate(ADMIN_OWNER, EvalConstants.EMAIL_TEMPLATE_REMINDER, EvalEmailConstants.EMAIL_REMINDER_DEFAULT_SUBJECT,
                EvalEmailConstants.EMAIL_REMINDER_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_REMINDER));
-         evaluationDao.save(new EvalEmailTemplate(ADMIN_OWNER, EvalConstants.EMAIL_TEMPLATE_RESULTS, EvalEmailConstants.EMAIL_RESULTS_DEFAULT_SUBJECT,
+         dao.save(new EvalEmailTemplate(ADMIN_OWNER, EvalConstants.EMAIL_TEMPLATE_RESULTS, EvalEmailConstants.EMAIL_RESULTS_DEFAULT_SUBJECT,
                EvalEmailConstants.EMAIL_RESULTS_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_RESULTS));
 
-         log.info("Preloaded " + evaluationDao.countAll(EvalEmailTemplate.class) + " evaluation EmailTemplates");
+         log.info("Preloaded " + dao.countAll(EvalEmailTemplate.class) + " evaluation EmailTemplates");
       }
    }
 
@@ -202,7 +201,7 @@ public class PreloadDataImpl implements Runnable {
    public void preloadScales() {
 
       // check if there are any scales present
-      int count = evaluationDao.countAll(EvalScale.class);
+      int count = dao.countAll(EvalScale.class);
       if (count == 0) {
          // NOTE: If you change the number of scales here (14 currently),
          // you will need to update the test in EvalScalesLogicImplTest also
@@ -255,7 +254,7 @@ public class PreloadDataImpl implements Runnable {
 //       new String[] { "Req. in Major", "Req. out of Major",
 //       "Elective filling Req.", "Free Elec. in Major", "Free Elec. out of Major" });
 
-         log.info("Preloaded " + evaluationDao.countAll(EvalScale.class) + " evaluation scales");
+         log.info("Preloaded " + dao.countAll(EvalScale.class) + " evaluation scales");
       }
    }
 
@@ -269,7 +268,7 @@ public class PreloadDataImpl implements Runnable {
       EvalScale scale = new EvalScale(new Date(), ADMIN_OWNER, title, EvalConstants.SCALE_MODE_SCALE, 
             EvalConstants.SHARING_PUBLIC, Boolean.TRUE,
             "", ideal, options, Boolean.FALSE);
-      evaluationDao.save(scale);
+      dao.save(scale);
       return scale;
    }
 
@@ -280,7 +279,7 @@ public class PreloadDataImpl implements Runnable {
    public void preloadExpertItems() {
 
       // check if there are any items present
-      int count = evaluationDao.countAll(EvalItem.class);
+      int count = dao.countAll(EvalItem.class);
       if (count == 0) {
          // NOTE: If you change the number of items here
          // you will need to update the test in the logic tests
@@ -358,8 +357,8 @@ public class PreloadDataImpl implements Runnable {
          saveCategoryGroup("Assignments", "Measure the perception of out of class assignments", itemSet);
 
 
-         log.info("Preloaded " + evaluationDao.countAll(EvalItem.class) + " evaluation items");
-         log.info("Preloaded " + evaluationDao.countAll(EvalItemGroup.class) + " evaluation item groups");
+         log.info("Preloaded " + dao.countAll(EvalItem.class) + " evaluation items");
+         log.info("Preloaded " + dao.countAll(EvalItemGroup.class) + " evaluation item groups");
       }
 
    }
@@ -369,21 +368,21 @@ public class PreloadDataImpl implements Runnable {
             text, description, EvalConstants.SHARING_PUBLIC, EvalConstants.ITEM_TYPE_SCALED,
             Boolean.TRUE, expertDescription, scale, null, Boolean.FALSE, null, 
             EvalConstants.ITEM_SCALE_DISPLAY_FULL_COLORED, category, Boolean.FALSE);
-      evaluationDao.save(item);
+      dao.save(item);
       return item;
    }
 
    private EvalItemGroup saveObjectiveGroup(String title, String description, Set<EvalItem> items, EvalItemGroup parentGroup) {
       EvalItemGroup group = new EvalItemGroup(new Date(), ADMIN_OWNER, EvalConstants.ITEM_GROUP_TYPE_OBJECTIVE,
             title, description, Boolean.TRUE, parentGroup, items);
-      evaluationDao.save( group );
+      dao.save( group );
       return group;
    }
 
    private EvalItemGroup saveCategoryGroup(String title, String description, Set<EvalItem> items) {
       EvalItemGroup group = new EvalItemGroup(new Date(), ADMIN_OWNER, EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
             title, description, Boolean.TRUE, null, items);
-      evaluationDao.save( group );
+      dao.save( group );
       return group;
    }
 

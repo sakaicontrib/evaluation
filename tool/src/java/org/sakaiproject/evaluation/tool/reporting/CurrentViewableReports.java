@@ -1,5 +1,6 @@
 package org.sakaiproject.evaluation.tool.reporting;
 
+import org.sakaiproject.evaluation.logic.ReportingPermissions;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 
 /* This small little class is meant to be a request scope bean to bridge the gap

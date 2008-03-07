@@ -1,18 +1,14 @@
-package org.sakaiproject.evaluation.tool.reporting;
+package org.sakaiproject.evaluation.logic;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashSet;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.dao.EvaluationDao;
-import org.sakaiproject.evaluation.logic.EvalEvaluationService;
-import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.dao.EvaluationDaoImpl;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -42,11 +38,11 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
  *             otherwise it must be past the current date
  * @author Steven Githens
  */
-public class ReportingPermissions {
-   private static Log log = LogFactory.getLog(ReportingPermissions.class);
+public class ReportingPermissionsImpl implements ReportingPermissions {
+//   private static Log log = LogFactory.getLog(ReportingPermissionsImpl.class);
 
-   private EvaluationDao dao;
-   public void setEvaluationDao(EvaluationDao dao) {
+   private EvaluationDaoImpl dao;
+   public void setDao(EvaluationDaoImpl dao) {
       this.dao = dao;
    }
 
@@ -71,39 +67,15 @@ public class ReportingPermissions {
    }
 
 
-   /**
-    * Signature variation for convenience (especially if you only have the 
-    * information from a ViewParams). See {@link #chooseGroupsPartialCheck(EvalEvaluation)}
-    * for complete details on the return value
-    * 
-    * @param evalId unique ID of an {@link EvalEvaluation}
-    * @return The array of groupIds we can choose from for viewing responses in 
-    * this evaluation.  If you cannot view the responses from any groups in this
-    * evaluation, this will return an empty list.
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.ReportingPermissions#chooseGroupsPartialCheck(java.lang.Long)
     */
    public String[] chooseGroupsPartialCheck(Long evalId) {
       return chooseGroupsPartialCheck(evaluationService.getEvaluationById(evalId));
    }
    
-   /**
-    * This is a sort of partial security check based off of the full 
-    * {@link #canViewEvaluationResponses(EvalEvaluation, String[])} method.
-    * 
-    * This is primarily needed for the Choose Groups page in reporting. In this
-    * case, we want to genuinely check most of the permissions, except we don't
-    * actually know what Group ID's we are looking at (because we are about to 
-    * choose them).  Instead, we want to check almost all of the items in the 
-    * rules, and if they pass successfully, return the Groups that we are able
-    * to choose from for report viewing.
-    *
-    * @param evaluation an {@link EvalEvaluation} (must have been saved)
-    * @return The array of groupIds we can choose from for viewing responses in 
-    * this evaluation.  If you cannot view the responses from any groups in this
-    * evaluation, this will return an empty list.<br/>
-    * <b>NOTE:</b> If the survey is anonymous the returned array will be empty.
-    * You should not rely on this has the sole permission check, mostly 
-    * just for populating the Choose Groups page, and redirecting if the length
-    * of the returned groups is 0 or 1.
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.ReportingPermissions#chooseGroupsPartialCheck(org.sakaiproject.evaluation.model.EvalEvaluation)
     */
    public String[] chooseGroupsPartialCheck(EvalEvaluation evaluation) {
       String currentUserId = externalLogic.getCurrentUserId();
@@ -196,14 +168,8 @@ public class ReportingPermissions {
       return groupIdsTogo.toArray(new String[] {});
    }
 
-   /**
-    * Decide whether the current user can view the responses for an evaluation
-    * and set of groups that participated in it.
-    * 
-    * @param evaluation The EvalEvaluation object we are looking at responses for.
-    * @param groupIds The String array of Group IDs we want to view results for.
-    * This usually look like "/site/mysite".
-    * @return Yes or no answer if you can view the responses.
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.ReportingPermissions#canViewEvaluationResponses(org.sakaiproject.evaluation.model.EvalEvaluation, java.lang.String[])
     */
    public boolean canViewEvaluationResponses(EvalEvaluation evaluation, String[] groupIds) {
       String currentUserId = externalLogic.getCurrentUserId();

@@ -14,11 +14,11 @@
 
 package org.sakaiproject.evaluation.logic;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
@@ -227,27 +227,27 @@ public class EvalAdhocSupportLogicImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.EvalAdhocSupportLogicImpl#getAdhocGroupsForUser(java.lang.String)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalAdhocSupportLogicImpl#getAdhocGroupsForOwner(java.lang.String)}.
     */
-   public void testGetAdhocGroupsForUser() {
+   public void testGetAdhocGroupsForOwner() {
       List<EvalAdhocGroup> l = null;
       EvalAdhocGroup group = null;
 
-      l = adhocSupportLogic.getAdhocGroupsForUser(EvalTestDataLoad.MAINT_USER_ID);
+      l = adhocSupportLogic.getAdhocGroupsForOwner(EvalTestDataLoad.MAINT_USER_ID);
       assertNotNull(l);
       assertEquals(1, l.size());
       group = l.get(0);
       assertNotNull(group);
       assertEquals(etdl.group2.getId(), group.getId());
 
-      l = adhocSupportLogic.getAdhocGroupsForUser(EvalTestDataLoad.ADMIN_USER_ID);
+      l = adhocSupportLogic.getAdhocGroupsForOwner(EvalTestDataLoad.ADMIN_USER_ID);
       assertNotNull(l);
       assertEquals(1, l.size());
       group = l.get(0);
       assertNotNull(group);
       assertEquals(etdl.group1.getId(), group.getId());
 
-      l = adhocSupportLogic.getAdhocGroupsForUser(EvalTestDataLoad.USER_ID);
+      l = adhocSupportLogic.getAdhocGroupsForOwner(EvalTestDataLoad.USER_ID);
       assertNotNull(l);
       assertEquals(0, l.size());
    }
@@ -264,11 +264,8 @@ public class EvalAdhocSupportLogicImplTest extends BaseTestEvalLogic {
       assertNotNull( group1.getTitle() );
       assertNotNull( group1.getLastModified() );
 
-      List<String> participants = new ArrayList<String>();
-      participants.add(EvalTestDataLoad.STUDENT_USER_ID);
-      participants.add(EvalTestDataLoad.USER_ID);
-      
-      EvalAdhocGroup group2 = new EvalAdhocGroup(EvalTestDataLoad.MAINT_USER_ID, "another new group", participants, null);
+      EvalAdhocGroup group2 = new EvalAdhocGroup(EvalTestDataLoad.MAINT_USER_ID, "another new group", 
+            new String[] { EvalTestDataLoad.STUDENT_USER_ID, EvalTestDataLoad.USER_ID }, null);
       adhocSupportLogic.saveAdhocGroup(group2);
       assertNotNull( group2.getId() );
       assertNotNull( group2.getOwner() );
@@ -293,6 +290,55 @@ public class EvalAdhocSupportLogicImplTest extends BaseTestEvalLogic {
          //fail("Exception: " + e.getMessage()); // see why failing
       }
 
+   }
+
+   public void testGetEvalAdhocGroupsByUserAndPerm() {
+      List<EvalAdhocGroup> l = null;
+      List<Long> ids = null;
+
+      l = adhocSupportLogic.getEvalAdhocGroupsByUserAndPerm(etdl.user3.getUserId(), EvalConstants.PERM_TAKE_EVALUATION);
+      assertNotNull(l);
+      assertEquals(1, l.size());
+      assertEquals(etdl.group2.getId(), l.get(0).getId());
+
+      l = adhocSupportLogic.getEvalAdhocGroupsByUserAndPerm(EvalTestDataLoad.STUDENT_USER_ID, EvalConstants.PERM_TAKE_EVALUATION);
+      assertNotNull(l);
+      assertEquals(1, l.size());
+      assertEquals(etdl.group1.getId(), l.get(0).getId());
+
+      l = adhocSupportLogic.getEvalAdhocGroupsByUserAndPerm(etdl.user1.getUserId(), EvalConstants.PERM_TAKE_EVALUATION);
+      assertNotNull(l);
+      assertEquals(2, l.size());
+      ids = EvalTestDataLoad.makeIdList(l);
+      assertTrue(ids.contains(etdl.group1.getId()));
+      assertTrue(ids.contains(etdl.group2.getId()));
+
+      l = adhocSupportLogic.getEvalAdhocGroupsByUserAndPerm(etdl.user2.getUserId(), EvalConstants.PERM_TAKE_EVALUATION);
+      assertNotNull(l);
+      assertEquals(0, l.size());
+
+   }
+
+   public void testIsUserAllowedInAdhocGroup() {
+      boolean allowed = false;
+
+      allowed = adhocSupportLogic.isUserAllowedInAdhocGroup(EvalTestDataLoad.USER_ID, EvalConstants.PERM_TAKE_EVALUATION, etdl.group2.getEvalGroupId());
+      assertTrue(allowed);
+
+      allowed = adhocSupportLogic.isUserAllowedInAdhocGroup(EvalTestDataLoad.USER_ID, EvalConstants.PERM_BE_EVALUATED, etdl.group2.getEvalGroupId());
+      assertFalse(allowed);
+
+      allowed = adhocSupportLogic.isUserAllowedInAdhocGroup(etdl.user1.getUserId(), EvalConstants.PERM_TAKE_EVALUATION, etdl.group1.getEvalGroupId());
+      assertTrue(allowed);
+
+      allowed = adhocSupportLogic.isUserAllowedInAdhocGroup(etdl.user1.getUserId(), EvalConstants.PERM_BE_EVALUATED, etdl.group1.getEvalGroupId());
+      assertFalse(allowed);
+
+      allowed = adhocSupportLogic.isUserAllowedInAdhocGroup(etdl.user2.getUserId(), EvalConstants.PERM_TAKE_EVALUATION, etdl.group1.getEvalGroupId());
+      assertFalse(allowed);
+
+      allowed = adhocSupportLogic.isUserAllowedInAdhocGroup(etdl.user2.getUserId(), EvalConstants.PERM_BE_EVALUATED, etdl.group1.getEvalGroupId());
+      assertFalse(allowed);
    }
 
 }

@@ -44,6 +44,46 @@ public class ArrayUtils {
       return list;
    }
 
+   /**
+    * Checks to see if an array contains a value,
+    * will return false if a null value is supplied
+    * 
+    * @param <T>
+    * @param array any array of objects
+    * @param value the value to check for
+    * @return true if the value is found, false otherwise
+    */
+   public static <T> boolean contains(T[] array, T value) {
+      boolean foundValue = false;
+      if (value != null) {
+         for (int i = 0; i < array.length; i++) {
+            if (value.equals(array[i])) {
+               foundValue = true;
+               break;
+            }
+         }
+      }
+      return foundValue;
+   }
+
+   /**
+    * Checks to see if an array contains a value
+    * 
+    * @param array
+    * @param value
+    * @return true if the value is found, false otherwise
+    */
+   public static boolean contains(int[] array, int value) {
+      boolean foundValue = false;
+      for (int i = 0; i < array.length; i++) {
+         if (value == array[i]) {
+            foundValue = true;
+            break;
+         }
+      }
+      return foundValue;
+   }
+
 	/**
 	 * Append an item to the end of an array and return the new array
 	 * 
