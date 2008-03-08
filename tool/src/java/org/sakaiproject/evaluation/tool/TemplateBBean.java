@@ -235,7 +235,8 @@ public class TemplateBBean {
          // iterate through templateItemIdList and add all non-block items (including the children of block items in templateItemIdList) 
          for (String itemId : templateItemIdList) {
             EvalTemplateItem templateItem = authoringService.getTemplateItemById(Long.valueOf(itemId));
-            if (TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)) { // block parent
+            if (TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)) {
+               // this is a block (the parent) being combined into the new block
                blockChildren = TemplateItemUtils.getChildItems(allTemplateItems, templateItem.getId());
                for (EvalTemplateItem child : blockChildren) {
                   child.setBlockId(parentId);
@@ -248,10 +249,12 @@ public class TemplateBBean {
                   localTemplateLogic.deleteTemplateItem(templateItem.getId());
                }
 
-            } else { // normal scale type
+            } else {
+               // this is a child item in the new block
                templateItem.setBlockParent(Boolean.FALSE);
                templateItem.setBlockId(parentId);
                templateItem.setDisplayOrder(new Integer(orderedChildIdList.indexOf(itemId) + 1));
+               templateItem.setCategory(parent.getCategory()); // set the child category to the parent category EVALSYS-441
                localTemplateLogic.saveTemplateItem(templateItem);
             }
 
@@ -276,39 +279,26 @@ public class TemplateBBean {
          }
 
       } else { // modify block
+         // update the parent
          EvalTemplateItem parent = authoringService.getTemplateItemById(Long.valueOf(blockId));
-         saveBlockChildrenOrder(parent.getId(), orderedChildIdList);
          setIdealColorForBlockParent(parent);
          localTemplateLogic.saveItem(parent.getItem());
          localTemplateLogic.saveTemplateItem(parent);
+
+         // update the children
+         List<EvalTemplateItem> blockChildren = authoringService.getBlockChildTemplateItemsForBlockParent(parent.getId(), false);
+         for (EvalTemplateItem child : blockChildren) {
+            child.setDisplayOrder(new Integer(orderedChildIdList.indexOf(child.getId().toString()) + 1));
+            child.setCategory(parent.getCategory()); // EVALSYS-441
+            localTemplateLogic.saveTemplateItem(child);
+         }
+
       }
 
       return "success";
    }
 
-   private void saveBlockChildrenOrder(Long parentId, List<String> orderedChildIdList) {
-
-      List<EvalTemplateItem> blockChildren = authoringService.getBlockChildTemplateItemsForBlockParent(parentId, false);
-
-      for (EvalTemplateItem child : blockChildren) {
-         child.setDisplayOrder(new Integer(orderedChildIdList.indexOf(child.getId().toString()) + 1));
-         localTemplateLogic.saveTemplateItem(child);
-      }
-
-   }
-
    private void setIdealColorForBlockParent(EvalTemplateItem parent) {
-      /*
-		if (idealColor != null) { // only reset when this field is changed
-			if (idealColor == Boolean.TRUE) {
-				item.setScaleDisplaySetting(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED);
-				item.getItem().setScaleDisplaySetting(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED);
-			} else {
-				item.setScaleDisplaySetting(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED);
-				item.getItem().setScaleDisplaySetting(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED);
-			}
-		}
-       */
 
       if ((idealColor != null) && (idealColor == Boolean.TRUE)) {
          parent.setScaleDisplaySetting(EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED);
