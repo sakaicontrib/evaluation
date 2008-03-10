@@ -61,8 +61,8 @@
    </bean>
 
    <!-- handles the adhoc user/group data saving/retrieval -->
-   <bean id="org.sakaiproject.evaluation.logic.EvalAdhocSupportLogic"
-      class="org.sakaiproject.evaluation.dao.EvalAdhocSupportLogicImpl">
+   <bean id="org.sakaiproject.evaluation.dao.EvalAdhocSupport"
+      class="org.sakaiproject.evaluation.dao.EvalAdhocSupportImpl">
       <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
    </bean>
 
@@ -105,6 +105,7 @@
             <value>org.sakaiproject.evaluation.logic.Eval*</value>
             <value>org.sakaiproject.evaluation.beans.Eval*</value>
             <value>org.sakaiproject.evaluation.logic.import.Eval*</value>
+            <value>org.sakaiproject.evaluation.dao.EvalAdhocSupport</value>
          </list>
       </property>
    </bean>

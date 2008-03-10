@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.dao.EvalAdhocSupportLogicImpl;
+import org.sakaiproject.evaluation.dao.EvalAdhocSupportImpl;
 import org.sakaiproject.evaluation.logic.BaseTestEvalLogic;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
@@ -33,9 +33,9 @@ import org.sakaiproject.evaluation.test.EvalTestDataLoad;
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
-public class EvalAdhocSupportLogicImplTest extends BaseTestEvalLogic {
+public class EvalAdhocSupportImplTest extends BaseTestEvalLogic {
 
-   EvalAdhocSupportLogicImpl adhocSupportLogic;
+   EvalAdhocSupportImpl adhocSupportLogic;
 
    @Override
    // run this before each test starts
@@ -47,7 +47,7 @@ public class EvalAdhocSupportLogicImplTest extends BaseTestEvalLogic {
       // setup the mock objects if needed
 
       // create and setup the object to be tested
-      adhocSupportLogic = new EvalAdhocSupportLogicImpl();
+      adhocSupportLogic = new EvalAdhocSupportImpl();
       adhocSupportLogic.setDao(evaluationDao);
 
    }
@@ -60,7 +60,7 @@ public class EvalAdhocSupportLogicImplTest extends BaseTestEvalLogic {
     */
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.dao.EvalAdhocSupportLogicImpl#getAdhocUserById(java.lang.Long)}.
+    * Test method for {@link org.sakaiproject.evaluation.dao.EvalAdhocSupportImpl#getAdhocUserById(java.lang.Long)}.
     */
    public void testGetAdhocUserById() {
       EvalAdhocUser user = null;
@@ -89,7 +89,7 @@ public class EvalAdhocSupportLogicImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.dao.EvalAdhocSupportLogicImpl#getAdhocUsersByIds(java.lang.Long[])}.
+    * Test method for {@link org.sakaiproject.evaluation.dao.EvalAdhocSupportImpl#getAdhocUsersByIds(java.lang.Long[])}.
     */
    public void testGetAdhocUsersByIds() {
       List<EvalAdhocUser> l = null;
@@ -121,7 +121,7 @@ public class EvalAdhocSupportLogicImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.dao.EvalAdhocSupportLogicImpl#getAdhocUsersByUserIds(java.lang.String[])}.
+    * Test method for {@link org.sakaiproject.evaluation.dao.EvalAdhocSupportImpl#getAdhocUsersByUserIds(java.lang.String[])}.
     */
    public void testGetAdhocUsersByUserIds() {
       Map<String, EvalAdhocUser> m = null;
@@ -160,7 +160,7 @@ public class EvalAdhocSupportLogicImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.dao.EvalAdhocSupportLogicImpl#saveAdhocUser(org.sakaiproject.evaluation.model.EvalAdhocUser, java.lang.String)}.
+    * Test method for {@link org.sakaiproject.evaluation.dao.EvalAdhocSupportImpl#saveAdhocUser(org.sakaiproject.evaluation.model.EvalAdhocUser, java.lang.String)}.
     */
    public void testSaveAdhocUser() {
 
@@ -212,7 +212,7 @@ public class EvalAdhocSupportLogicImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.dao.EvalAdhocSupportLogicImpl#getAdhocGroupById(java.lang.Long)}.
+    * Test method for {@link org.sakaiproject.evaluation.dao.EvalAdhocSupportImpl#getAdhocGroupById(java.lang.Long)}.
     */
    public void testGetAdhocGroupById() {
       EvalAdhocGroup group = null;
@@ -229,7 +229,7 @@ public class EvalAdhocSupportLogicImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.dao.EvalAdhocSupportLogicImpl#getAdhocGroupsForOwner(java.lang.String)}.
+    * Test method for {@link org.sakaiproject.evaluation.dao.EvalAdhocSupportImpl#getAdhocGroupsForOwner(java.lang.String)}.
     */
    public void testGetAdhocGroupsForOwner() {
       List<EvalAdhocGroup> l = null;
@@ -255,7 +255,7 @@ public class EvalAdhocSupportLogicImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.dao.EvalAdhocSupportLogicImpl#saveAdhocGroup(org.sakaiproject.evaluation.model.EvalAdhocGroup, java.lang.String)}.
+    * Test method for {@link org.sakaiproject.evaluation.dao.EvalAdhocSupportImpl#saveAdhocGroup(org.sakaiproject.evaluation.model.EvalAdhocGroup, java.lang.String)}.
     */
    public void testSaveAdhocGroup() {
 
