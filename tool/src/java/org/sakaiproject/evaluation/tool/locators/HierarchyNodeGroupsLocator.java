@@ -77,16 +77,16 @@ public class HierarchyNodeGroupsLocator implements BeanLocator {
     }
     
     public void saveAll() {
-       for (Iterator i = delivered.keySet().iterator(); i.hasNext();) {
+       for (Iterator<String> i = delivered.keySet().iterator(); i.hasNext();) {
           String key = (String) i.next();
-          Map groupbools = (Map) delivered.get(key);
-          assignGroups(key,groupbools);
+          Map<String, Boolean> groupbools = delivered.get(key);
+          assignGroups(key, groupbools);
        }
     }
 
-    private void assignGroups(String nodeid, Map groupbools) {
+    private void assignGroups(String nodeid, Map<String, Boolean> groupbools) {
        Set<String> assignedGroup = new HashSet<String>();
-       for (Iterator i = groupbools.keySet().iterator(); i.hasNext();) {
+       for (Iterator<String> i = groupbools.keySet().iterator(); i.hasNext();) {
           String groupid = (String) i.next();
           Boolean assigned = (Boolean) groupbools.get(groupid);
           if (assigned.booleanValue() == true) {
