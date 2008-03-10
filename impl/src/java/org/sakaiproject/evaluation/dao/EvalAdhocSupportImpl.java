@@ -36,9 +36,9 @@ import org.sakaiproject.evaluation.model.EvalAdhocUser;
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
-public class EvalAdhocSupportLogicImpl {
+public class EvalAdhocSupportImpl implements EvalAdhocSupport {
 
-   private static Log log = LogFactory.getLog(EvalAdhocSupportLogicImpl.class);
+   private static Log log = LogFactory.getLog(EvalAdhocSupportImpl.class);
 
    private EvaluationDao dao;
    public void setDao(EvaluationDao dao) {

@@ -8,7 +8,7 @@
    <bean id="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic"
 	      class="org.sakaiproject.evaluation.logic.externals.EvalExternalLogicImpl"
 	      init-method="init">
-      <property name="adhocSupportLogic" ref="org.sakaiproject.evaluation.logic.EvalAdhocSupportLogic" />
+      <property name="adhocSupportLogic" ref="org.sakaiproject.evaluation.dao.EvalAdhocSupport" />
       <property name="authzGroupService" ref="org.sakaiproject.authz.api.AuthzGroupService" />
       <property name="emailService" ref="org.sakaiproject.email.api.EmailService" />
       <property name="entityBroker" ref="org.sakaiproject.entitybroker.EntityBroker" />
