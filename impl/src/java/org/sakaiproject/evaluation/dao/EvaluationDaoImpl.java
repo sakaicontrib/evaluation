@@ -690,7 +690,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Co
     */
    @SuppressWarnings("unchecked")
    public String getNodeIdForEvalGroup(String evalGroupId) {
-      String hql = "select egn.nodeId from EvalGroupNodes egn where egn.evalGroups.id = ? order by egn.nodeId";
+      String hql = "select egn.nodeId from EvalGroupNodes egn join egn.evalGroups egrps where egrps.id = ? order by egn.nodeId";
       // switched to join from the subselect version
 //      String hql = "select egn.nodeId from EvalGroupNodes egn where ? in elements(egn.evalGroups) order by egn.nodeId";
       String[] params = new String[] {evalGroupId};
@@ -827,8 +827,9 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Co
       if (permCheck != null) {
          Map<String, Object> params = new HashMap<String, Object>();
          params.put("userId", userId);
+         // select b.baz from Foo f join f.bars b"
          // select g.* from EVAL_ADHOC_GROUP g join EVAL_ADHOC_PARTICIPANTS p on p.ID = g.ID and p.USER_ID = 'aaronz' order by g.ID
-         String hql = "from EvalAdhocGroup as ag where ag." + permCheck + ".id = :userId order by ag.id";
+         String hql = "from EvalAdhocGroup ag join ag." + permCheck + " userIds  where userIds.id = :userId order by ag.id";
          results = executeHqlQuery(hql, params, 0, 0);
       } else {
          results = new ArrayList<EvalAdhocGroup>();
@@ -861,8 +862,9 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Co
       if (permCheck != null) {
          Long id = EvalAdhocGroup.getIdFromAdhocEvalGroupId(evalGroupId);
          if (id != null) {
-            String hql = "select count(ag) from EvalAdhocGroup as ag where ag.id = " + id
-            		+ " and ag." + permCheck + ".id = '" + userId + "'";
+            // from EvalAdhocGroup ag join ag." + permCheck + " userIds where userIds.id = :userId
+            String hql = "select count(ag) from EvalAdhocGroup ag join ag." + permCheck + " userIds "
+            		+ " where ag.id = " + id + " and userIds.id = '" + userId + "'";
             Query query = getSession().createQuery(hql);
             int count = ( (Number) query.iterate().next() ).intValue();
             if (count >= 1) {
