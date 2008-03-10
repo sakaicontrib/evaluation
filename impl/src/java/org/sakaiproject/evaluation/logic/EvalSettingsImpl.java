@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.sakaiproject.evaluation.dao.EvaluationDaoImpl;
+import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalConfig;
@@ -37,8 +37,8 @@ public class EvalSettingsImpl implements EvalSettings {
 
    private static Log log = LogFactory.getLog(EvalSettingsImpl.class);
 
-   private EvaluationDaoImpl dao;
-   public void setDao(EvaluationDaoImpl dao) {
+   private EvaluationDao dao;
+   public void setDao(EvaluationDao dao) {
       this.dao = dao;
    }
 

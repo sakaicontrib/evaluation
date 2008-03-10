@@ -14,7 +14,7 @@
 
 package org.sakaiproject.evaluation.logic;
 
-import org.sakaiproject.evaluation.dao.EvaluationDaoImpl;
+import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.PreloadTestDataImpl;
@@ -32,7 +32,7 @@ import org.springframework.test.AbstractTransactionalSpringContextTests;
  */
 public abstract class BaseTestEvalLogic extends AbstractTransactionalSpringContextTests {
 
-   protected EvaluationDaoImpl evaluationDao;
+   protected EvaluationDao evaluationDao;
    protected EvalTestDataLoad etdl;
 
    protected String[] getConfigLocations() {
@@ -46,7 +46,7 @@ public abstract class BaseTestEvalLogic extends AbstractTransactionalSpringConte
    protected void onSetUpBeforeTransaction() throws Exception {
 
       // load the spring created dao class bean from the Spring Application Context
-      evaluationDao = (EvaluationDaoImpl) applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationDao");
+      evaluationDao = (EvaluationDao) applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationDao");
       if (evaluationDao == null) {
          throw new NullPointerException("DAO could not be retrieved from spring context");
       }

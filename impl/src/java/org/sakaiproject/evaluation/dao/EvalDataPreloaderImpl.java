@@ -31,8 +31,8 @@ public class EvalDataPreloaderImpl {
 
    public static String EVAL_PRELOAD_LOCK = "data.preload.lock";
 
-   private EvaluationDaoImpl dao;
-   public void setDao(EvaluationDaoImpl evaluationDao) {
+   private EvaluationDao dao;
+   public void setDao(EvaluationDao evaluationDao) {
       this.dao = evaluationDao;
    }
 

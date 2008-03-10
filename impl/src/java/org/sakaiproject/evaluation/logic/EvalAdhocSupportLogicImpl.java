@@ -22,7 +22,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.dao.EvaluationDaoImpl;
+import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
 
@@ -40,8 +40,8 @@ public class EvalAdhocSupportLogicImpl {
 
    private static Log log = LogFactory.getLog(EvalAdhocSupportLogicImpl.class);
 
-   private EvaluationDaoImpl dao;
-   public void setDao(EvaluationDaoImpl dao) {
+   private EvaluationDao dao;
+   public void setDao(EvaluationDao dao) {
       this.dao = dao;
    }
 
@@ -276,7 +276,7 @@ public class EvalAdhocSupportLogicImpl {
       List<EvalAdhocGroup> groups = dao.findByProperties(EvalAdhocGroup.class, 
             new String[] {"owner"}, 
             new Object[] {userId},
-            new int[] {EvaluationDaoImpl.EQUALS},
+            new int[] {EvaluationDao.EQUALS},
             new String[] {"title"});
       return groups;
    }

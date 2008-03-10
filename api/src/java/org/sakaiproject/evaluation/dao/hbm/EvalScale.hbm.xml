@@ -50,8 +50,7 @@
 			<column name="IDEAL" />
 		</property>
 		<!-- this holds the scale options for this scale, this must not be null (enforced in code) -->
-		<array name="options" table="EVAL_SCALE_OPTIONS"
-			cascade="all">
+		<array name="options" table="EVAL_SCALE_OPTIONS" cascade="all">
                 <!-- all-delete-orphan -->
 			<key column="ID" not-null="true" />
 			<list-index column="SCALE_OPTION_INDEX" />

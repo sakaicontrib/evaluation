@@ -46,7 +46,6 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.ComparatorsUtils;
-import org.sakaiproject.genericdao.api.CompleteGenericDao;
 import org.sakaiproject.genericdao.hibernate.HibernateCompleteGenericDao;
 import org.springframework.dao.DataAccessException;
 
@@ -66,7 +65,7 @@ import org.springframework.dao.DataAccessException;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements CompleteGenericDao {
+public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements EvaluationDao {
 
    private static Log log = LogFactory.getLog(EvaluationDaoImpl.class);
 
