@@ -31,6 +31,7 @@ import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
+import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.ReportsBean;
 import org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil;
 import org.sakaiproject.evaluation.tool.viewparams.CSVReportViewParams;
@@ -40,6 +41,7 @@ import org.sakaiproject.evaluation.tool.viewparams.PDFReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import org.sakaiproject.util.FormattedText;
+import org.sakaiproject.util.Validator;
 
 import uk.org.ponder.arrayutil.ArrayUtil;
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -191,7 +193,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
             }
             
             // Render Reporting links such as xls, pdf output, and options for viewing essays and stuff
-            renderReportingOptionsTopLinks(tofill, template, reportViewParams);
+            renderReportingOptionsTopLinks(tofill, evaluation, template, reportViewParams);
             
             // Evaluation Info
             UIOutput.make(tofill, "evaluationTitle", evaluation.getTitle());
@@ -433,7 +435,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
     * @param template
     * @param reportViewParams
     */
-   private void renderReportingOptionsTopLinks(UIContainer tofill, EvalTemplate template, ReportParameters reportViewParams) {
+   private void renderReportingOptionsTopLinks(UIContainer tofill, EvalEvaluation evaluation, EvalTemplate template, ReportParameters reportViewParams) {
       // Render the link to show "All Essays" or "All Questions"
          ReportParameters viewEssaysParams = (ReportParameters) reportViewParams.copyBase();
          if (VIEWMODE_ALLESSAYS.equals(currentViewMode)) {
@@ -448,28 +450,34 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
          }
          
          /*
-          * sgithens March 4, 2008 8:49 PM Central Time
-          * 
-          * Fixed the Viewparameters to have real file names in EVALSYS-452
-          * Working on removing these hardcoded filenames and giving them survey
-          * specific names in EVALSYS-445
+          * The Downloaded names should have a max length indicated by the
+          * constant.  We run them through the validator to make sure they
+          * are ok for display on OS filesystems. At the moment we are using
+          * just the Evaluation title for the name of the downloaded file.
           */
+         String evaltitle = evaluation.getTitle();
+         if (evaltitle.length() > EvalToolConstants.EVAL_REPORTING_MAX_NAME_LENGTH) {
+            evaltitle = evaltitle.substring(0, EvalToolConstants.EVAL_REPORTING_MAX_NAME_LENGTH);
+         }
+         
+         evaltitle = Validator.escapeZipEntry(evaltitle);
+         
          Boolean allowCSVExport = (Boolean) evalSettings.get(EvalSettings.ENABLE_CSV_REPORT_EXPORT);
          if (allowCSVExport != null && allowCSVExport == true) {
             UIInternalLink.make(tofill, "csvResultsReport", UIMessage.make("viewreport.view.csv"), new CSVReportViewParams(
-                  "csvResultsReport", template.getId(), reportViewParams.evaluationId, groupIds, "SurveyResults.csv"));
+                  "csvResultsReport", template.getId(), reportViewParams.evaluationId, groupIds, evaltitle+".csv"));
          }
 
          Boolean allowXLSExport = (Boolean) evalSettings.get(EvalSettings.ENABLE_XLS_REPORT_EXPORT);
          if (allowXLSExport != null && allowXLSExport == true) {
             UIInternalLink.make(tofill, "xlsResultsReport", UIMessage.make("viewreport.view.xls"), new ExcelReportViewParams(
-                  "xlsResultsReport", template.getId(), reportViewParams.evaluationId, groupIds, "SurveyResults.xls"));
+                  "xlsResultsReport", template.getId(), reportViewParams.evaluationId, groupIds, evaltitle+".xls"));
          }
 
          Boolean allowPDFExport = (Boolean) evalSettings.get(EvalSettings.ENABLE_PDF_REPORT_EXPORT);
          if (allowPDFExport != null && allowPDFExport == true) {
             UIInternalLink.make(tofill, "pdfResultsReport", UIMessage.make("viewreport.view.pdf"), new PDFReportViewParams(
-                  "pdfResultsReport", template.getId(), reportViewParams.evaluationId, groupIds, "SurveyResults.pdf"));
+                  "pdfResultsReport", template.getId(), reportViewParams.evaluationId, groupIds, evaltitle+".pdf"));
          }
       }
 }

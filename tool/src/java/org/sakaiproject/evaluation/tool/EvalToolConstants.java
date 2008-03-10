@@ -321,5 +321,8 @@ public class EvalToolConstants {
       "general.public"
    };
 
+   // The downloadable results reporting files have a maximum length, before
+   // they are chopped off.
+   public static int EVAL_REPORTING_MAX_NAME_LENGTH = 40;
 }
 
