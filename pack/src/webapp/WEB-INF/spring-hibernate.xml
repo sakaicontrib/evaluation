@@ -62,7 +62,7 @@
 
    <!-- handles the adhoc user/group data saving/retrieval -->
    <bean id="org.sakaiproject.evaluation.logic.EvalAdhocSupportLogic"
-      class="org.sakaiproject.evaluation.logic.EvalAdhocSupportLogicImpl">
+      class="org.sakaiproject.evaluation.dao.EvalAdhocSupportLogicImpl">
       <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
    </bean>
 

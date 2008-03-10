@@ -17,6 +17,11 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.genericdao.api.CompleteGenericDao;
 
+/**
+ * Do NOT use this class outside the LOGIC layer
+ * 
+ * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
+ */
 public interface EvaluationDao extends CompleteGenericDao {
 
    /**
