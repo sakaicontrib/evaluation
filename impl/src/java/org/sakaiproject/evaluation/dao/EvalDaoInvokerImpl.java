@@ -22,8 +22,8 @@ package org.sakaiproject.evaluation.dao;
  */
 public class EvalDaoInvokerImpl implements EvalDaoInvoker {
 
-   public EvaluationDaoImpl dao;
-   public void setDao(EvaluationDaoImpl dao) {
+   public EvaluationDao dao;
+   public void setDao(EvaluationDao dao) {
       this.dao = dao;
    }
 

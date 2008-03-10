@@ -29,7 +29,7 @@ import java.util.TimerTask;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.dao.EvaluationDaoImpl;
+import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
@@ -56,8 +56,8 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
    private final String EVENT_EVAL_UPDATE = "eval.evaluation.updated";
    private final String EVENT_EVAL_DELETE = "eval.evaluation.deleted";
 
-   private EvaluationDaoImpl dao;
-   public void setDao(EvaluationDaoImpl dao) {
+   private EvaluationDao dao;
+   public void setDao(EvaluationDao dao) {
       this.dao = dao;
    }
 
@@ -130,7 +130,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                List<EvalEvaluation> evals = dao.findByProperties(EvalEvaluation.class, 
                      new String[] {"state", "state"}, 
                      new Object[] {EvalConstants.EVALUATION_STATE_VIEWABLE, EvalConstants.EVALUATION_STATE_DELETED},
-                     new int[] {EvaluationDaoImpl.NOT_EQUALS, EvaluationDaoImpl.NOT_EQUALS});
+                     new int[] {EvaluationDao.NOT_EQUALS, EvaluationDao.NOT_EQUALS});
                if (evals.size() > 0) {
                   log.info("Checking the state of " + evals.size() + " evaluations to ensure they are all up to date...");
                   // set the partial purge number of days to 2
@@ -558,7 +558,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          evals = dao.findByProperties(EvalEvaluation.class,
                new String[] {"evalCategory"}, 
                new Object[] {evalCategory}, 
-               new int[] {EvaluationDaoImpl.EQUALS},
+               new int[] {EvaluationDao.EQUALS},
                new String[] {"startDate"});
       } else {
          // get all evals for a specific user for a category

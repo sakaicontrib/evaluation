@@ -8,7 +8,7 @@ import java.util.Set;
 
 import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.dao.EvaluationDaoImpl;
+import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -41,8 +41,8 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 public class ReportingPermissionsImpl implements ReportingPermissions {
 //   private static Log log = LogFactory.getLog(ReportingPermissionsImpl.class);
 
-   private EvaluationDaoImpl dao;
-   public void setDao(EvaluationDaoImpl dao) {
+   private EvaluationDao dao;
+   public void setDao(EvaluationDao dao) {
       this.dao = dao;
    }
 

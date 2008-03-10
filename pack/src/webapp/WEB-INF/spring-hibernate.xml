@@ -5,7 +5,7 @@
 <beans>
 
    <!-- create a DAO bean, use the hibernate implementation -->
-   <bean id="org.sakaiproject.evaluation.dao.impl.EvaluationDaoTarget"
+   <bean id="org.sakaiproject.evaluation.dao.EvaluationDaoTarget"
       class="org.sakaiproject.evaluation.dao.EvaluationDaoImpl" init-method="init">
       <property name="sessionFactory"
          ref="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
@@ -34,12 +34,11 @@
    <!-- This wraps our DAO so that the transactions are managed -->
    <bean id="org.sakaiproject.evaluation.dao.EvaluationDao"
       class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-      <property name="proxyTargetClass" value="true" />
       <property name="transactionManager">
          <ref bean="org.sakaiproject.springframework.orm.hibernate.GlobalTransactionManager" />
       </property>
       <property name="target">
-         <ref bean="org.sakaiproject.evaluation.dao.impl.EvaluationDaoTarget" />
+         <ref bean="org.sakaiproject.evaluation.dao.EvaluationDaoTarget" />
       </property>
       <property name="transactionAttributes">
          <props>
@@ -71,6 +70,43 @@
    <bean id="org.sakaiproject.evaluation.dao.EvalDaoInvoker"
       class="org.sakaiproject.evaluation.dao.EvalDaoInvokerImpl">
       <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+   </bean>
+
+
+
+
+   <!-- a general transaction interceptor for the logic beans -->
+   <bean id="org.sakaiproject.evaluation.interceptor.LogicTransactionProxy"
+      class="org.springframework.transaction.interceptor.TransactionInterceptor">
+      <property name="transactionManager">
+         <ref bean="org.sakaiproject.springframework.orm.hibernate.GlobalTransactionManager" />
+      </property>
+      <property name="transactionAttributes">
+         <props>
+            <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+            <prop key="can*">PROPAGATION_REQUIRED,readOnly</prop>
+            <prop key="check*">PROPAGATION_REQUIRED,readOnly</prop>
+            <prop key="count*">PROPAGATION_REQUIRED,readOnly</prop>
+            <prop key="*">PROPAGATION_REQUIRED</prop>
+            <!-- <prop key="*">PROPAGATION_REQUIRED,+java.lang.RuntimeException</prop> -->
+         </props>
+      </property>
+   </bean>
+
+   <!-- bean to wrap all the logic beans inside the transaction interceptor -->
+   <bean class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+      <property name="interceptorNames">
+         <list>
+            <idref bean="org.sakaiproject.evaluation.interceptor.LogicTransactionProxy" />
+         </list>
+      </property>
+      <property name="beanNames">
+         <list>
+            <value>org.sakaiproject.evaluation.logic.Eval*</value>
+            <value>org.sakaiproject.evaluation.beans.Eval*</value>
+            <value>org.sakaiproject.evaluation.logic.import.Eval*</value>
+         </list>
+      </property>
    </bean>
 
 </beans>

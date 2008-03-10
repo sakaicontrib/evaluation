@@ -41,8 +41,8 @@ public class PreloadDataImpl implements Runnable {
 
    private static Log log = LogFactory.getLog(PreloadDataImpl.class);
 
-   private EvaluationDaoImpl dao;
-   public void setDao(EvaluationDaoImpl evaluationDao) {
+   private EvaluationDao dao;
+   public void setDao(EvaluationDao evaluationDao) {
       this.dao = evaluationDao;
    }
 
@@ -177,7 +177,7 @@ public class PreloadDataImpl implements Runnable {
       int count = dao.countByProperties(EvalEmailTemplate.class, 
             new String[] {"defaultType"},
             new Object[] {""},
-            new int[] {EvaluationDaoImpl.NOT_NULL});
+            new int[] {EvaluationDao.NOT_NULL});
       if (count == 0) {
          dao.save(new EvalEmailTemplate(ADMIN_OWNER, EvalConstants.EMAIL_TEMPLATE_CREATED, EvalEmailConstants.EMAIL_CREATED_DEFAULT_SUBJECT,
                EvalEmailConstants.EMAIL_CREATED_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_CREATED));

@@ -16,7 +16,7 @@ package org.sakaiproject.evaluation.test;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.sakaiproject.evaluation.dao.EvaluationDaoImpl;
+import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.dao.PreloadDataImpl;
 
 
@@ -42,8 +42,8 @@ public class PreloadTestDataImpl {
 
    private static Log log = LogFactory.getLog(PreloadTestDataImpl.class);
 
-   private EvaluationDaoImpl dao;
-   public void setDao(EvaluationDaoImpl dao) {
+   private EvaluationDao dao;
+   public void setDao(EvaluationDao dao) {
       this.dao = dao;
    }
 

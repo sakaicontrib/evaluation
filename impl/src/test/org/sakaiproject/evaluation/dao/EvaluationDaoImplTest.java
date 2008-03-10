@@ -41,7 +41,7 @@ import org.springframework.test.AbstractTransactionalSpringContextTests;
  */
 public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTests {
 
-   protected EvaluationDaoImpl evaluationDao;
+   protected EvaluationDao evaluationDao;
 
    private EvalTestDataLoad etdl;
 
@@ -60,7 +60,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
    // run this before each test starts
    protected void onSetUpBeforeTransaction() throws Exception {
       // load the spring created dao class bean from the Spring Application Context
-      evaluationDao = (EvaluationDaoImpl) applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationDao");
+      evaluationDao = (EvaluationDao) applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationDao");
       if (evaluationDao == null) {
          throw new NullPointerException("DAO could not be retrieved from spring context");
       }
