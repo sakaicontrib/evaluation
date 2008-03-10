@@ -223,7 +223,8 @@ public class EvalUtils {
     * Ensures that there is minimum number of hours difference between
     * the start date of the evaluation and due/stop date of the evaluation,
     * updates the due/stop/view dates as needed, will not move dates unless they have to be moved,
-    * stop date will be set to the due date if necessary and view date will be set to the stop date + 1 second
+    * stop date will be set to the due date if necessary and view date will be set to the stop date + 1 second<br/>
+    * This will now ensure that the dates are actually set before attempting to read them
     * 
     * @param eval {@link EvalEvaluation} object that contains both start and due date.
     * @param minHoursLong the minimum number of hours between the startdate and the duedate,
@@ -237,24 +238,30 @@ public class EvalUtils {
        * to reflect this minimum time difference. After that update the 
        * stop and view date also.
        */
-      if (getHoursDifference(eval.getStartDate(), eval.getDueDate()) < minHoursLong) {
-
-         // Update due date
-         Date newDueDate = new Date( eval.getStartDate().getTime() + (1000 * 60 * 60 * minHoursLong) );
-         log.info("Fixing eval (" + eval.getId() + ") due date from " + eval.getDueDate() + " to " + newDueDate);
-         eval.setDueDate(newDueDate);
-
-         // Update stop date if needed
-         if (eval.getStopDate().before(eval.getDueDate())) {
-            eval.setStopDate(eval.getDueDate());
-         }
-
-         // Update view date if needed
-         if (eval.getViewDate().equals(eval.getStopDate()) ||
-               eval.getViewDate().before(eval.getStopDate()) ) {
-            Date newView = new Date( eval.getStopDate().getTime() + 5000 );
-            log.info("Fixing the view date from " + eval.getViewDate() + " to " + newView);
-            eval.setViewDate(newView);
+      if (eval.getDueDate() != null) {
+         if (getHoursDifference(eval.getStartDate(), eval.getDueDate()) < minHoursLong) {
+   
+            // Update due date
+            Date newDueDate = new Date( eval.getStartDate().getTime() + (1000 * 60 * 60 * minHoursLong) );
+            log.info("Fixing eval (" + eval.getId() + ") due date from " + eval.getDueDate() + " to " + newDueDate);
+            eval.setDueDate(newDueDate);
+   
+            // Update stop date if needed
+            if (eval.getStopDate() != null) {
+               if (eval.getStopDate().before(eval.getDueDate())) {
+                  eval.setStopDate(eval.getDueDate());
+               }
+            }
+   
+            // Update view date if needed
+            if (eval.getViewDate() != null) {
+               if (eval.getViewDate().equals(eval.getStopDate()) ||
+                     eval.getViewDate().before(eval.getStopDate()) ) {
+                  Date newView = new Date( eval.getStopDate().getTime() + 5000 );
+                  log.info("Fixing the view date from " + eval.getViewDate() + " to " + newView);
+                  eval.setViewDate(newView);
+               }
+            }
          }
       }
       return eval.getDueDate();
