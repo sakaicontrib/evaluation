@@ -56,7 +56,14 @@ public class EvalItem implements java.io.Serializable {
     */
    private Long copyOf;
 
+   /**
+    * Indicates that the object is hidden from the control views and will not be visible to the user for editing/removal
+    */
+   private boolean hidden = false;
+
+
    // Constructors
+
 
    /** default constructor */
    public EvalItem() {
@@ -237,6 +244,14 @@ public class EvalItem implements java.io.Serializable {
 
    public void setCopyOf(Long copyOf) {
       this.copyOf = copyOf;
+   }
+   
+   public boolean isHidden() {
+      return hidden;
+   }
+   
+   public void setHidden(boolean hidden) {
+      this.hidden = hidden;
    }
 
 }
