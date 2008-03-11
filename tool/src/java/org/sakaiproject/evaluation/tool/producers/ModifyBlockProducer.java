@@ -135,9 +135,8 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
 
       // check if each templateItem has the same scale, otherwise show warning text
       // enforce system settings of maximum number of child items for new Block creation
-      if (!modify) {
-         int maxChildsNo = ((Integer) settings.get(EvalSettings.ITEMS_ALLOWED_IN_QUESTION_BLOCK))
-               .intValue();
+      if (! modify) {
+         int maxChildsNo = ((Integer) settings.get(EvalSettings.ITEMS_ALLOWED_IN_QUESTION_BLOCK)).intValue();
          // get actual total number of no-parent item(block childs + normal scaled type)
          int actualChildsNo = 0;
          for (int i = 0; i < templateItemIds.length; i++) {

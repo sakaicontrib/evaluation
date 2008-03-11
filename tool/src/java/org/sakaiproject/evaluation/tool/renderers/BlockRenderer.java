@@ -137,6 +137,7 @@ public class BlockRenderer implements ItemRenderer {
             UIMessage.make(blockStepped, "na-desc", "viewitem.na.desc");
          }
 
+         // render the stepped labels and images
          int scaleLength = scaleValues.length;
          int limit = usesNA ? scaleLength - 1: scaleLength;  // skip the NA value at the end
          for (int j = 0; j < limit; ++j) {
@@ -200,16 +201,17 @@ public class BlockRenderer implements ItemRenderer {
                UISelectChoice.make(childRow, "na-input", selectID, scaleLength - 1);
             }
 
+            // render child radio choices
             for (int k = 0; k < limit; ++k) {
                if (colored) {
-                  UIBranchContainer radioBranchFirst = UIBranchContainer.make(childRow, "scaleOptionColored:", j+"");
-                  UISelectChoice.make(radioBranchFirst, "radioValueColored", selectID, j);
+                  UIBranchContainer radioBranchFirst = UIBranchContainer.make(childRow, "scaleOptionColored:", k+"");
+                  UISelectChoice.make(radioBranchFirst, "radioValueColored", selectID, k);
                   // this is confusing but this is now the one underneath
-                  UIBranchContainer radioBranchSecond = UIBranchContainer.make(childRow, "scaleOption:", j+"");
+                  UIBranchContainer radioBranchSecond = UIBranchContainer.make(childRow, "scaleOption:", k+"");
                   UIOutput.make(radioBranchSecond, "radioValue");
                } else {
-                  UIBranchContainer radioBranchSecond = UIBranchContainer.make(childRow, "scaleOption:", j+"");
-                  UISelectChoice.make(radioBranchSecond, "radioValue", selectID, j);
+                  UIBranchContainer radioBranchSecond = UIBranchContainer.make(childRow, "scaleOption:", k+"");
+                  UISelectChoice.make(radioBranchSecond, "radioValue", selectID, k);
                }
             }
 
