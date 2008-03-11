@@ -1317,4 +1317,32 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       return template;
    }
 
+   
+   // COPYING
+
+
+   public Long[] copyItems(Long[] itemIds, String ownerId, boolean hidden) {
+      // TODO Auto-generated method stub
+      return null;
+   }
+
+
+   public Long[] copyScales(Long[] scaleIds, String ownerId, boolean hidden) {
+      // TODO Auto-generated method stub
+      return null;
+   }
+
+
+   public Long copyTemplate(Long templateId, String title, String ownerId, boolean hidden) {
+      // TODO Auto-generated method stub
+      return null;
+   }
+
+
+   public Long[] copyTemplateItems(Long[] templateItemIds, String ownerId, boolean hidden) {
+      // TODO Auto-generated method stub
+      return null;
+   }
+
+
 }

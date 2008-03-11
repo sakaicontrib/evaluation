@@ -502,4 +502,77 @@ public interface EvalAuthoringService {
    public boolean canRemoveTemplate(String userId, Long templateId);
 
 
+   // COPYING
+
+   /**
+    * Makes a complete copy of a template,
+    * also copies all related templateItems, items, and scales,
+    * all copies will automatically become private
+    * <br/>
+    * Permission checks should be performed to ensure that the current user can view the entities that they want to copy,
+    * there is no need to check if they can modify them though as the original entities will not be changed
+    * 
+    * @param templateId the unique id of an {@link EvalTemplate} object to make a copy of
+    * @param title the new title to assign to the copied template (will generate a title if this is blank or empty)
+    * @param ownerId the internal user id of the user who will be the owner of the copies,
+    * will use the current owner if this is null
+    * @param hidden if this true then the copy will be hidden from control views by default,
+    * else it will be shown in control views (internal copies should be hidden, user triggered copies should not)
+    * @return the unique id of the copy of the template
+    * @throws IllegalArgumentException if the template id is invalid
+    */
+   public Long copyTemplate(Long templateId, String title, String ownerId, boolean hidden);
+
+   /**
+    * Makes a copy of a set of template items,
+    * also copies all related items and scales,
+    * all copies will automatically become private and will be assigned to the current user
+    * <br/>
+    * Permission checks should be performed to ensure that the current user can view the entities that they want to copy,
+    * there is no need to check if they can modify them though as the original entities will not be changed
+    * 
+    * @param templateItemIds the unique ids of {@link EvalTemplateItem}s to make copies of
+    * @param ownerId the internal user id of the user who will be the owner of the copies,
+    * will use the current owner if this is null
+    * @param hidden if this true then the copy will be hidden from control views by default,
+    * else it will be shown in control views (internal copies should be hidden, user triggered copies should not)
+    * @return the unique ids of the copies (in the same order)
+    * @throws IllegalArgumentException if any of the ids are invalid
+    */
+   public Long[] copyTemplateItems(Long[] templateItemIds, String ownerId, boolean hidden);
+
+   /**
+    * Makes a copy of a set of items,
+    * also copies all related scales
+    * <br/>
+    * Permission checks should be performed to ensure that the current user can view the entities that they want to copy,
+    * there is no need to check if they can modify them though as the original entities will not be changed
+    * 
+    * @param itemIds the unique ids of {@link EvalItem}s to make copies of
+    * @param ownerId the internal user id of the user who will be the owner of the copies,
+    * will use the current owner if this is null
+    * @param hidden if this true then the copy will be hidden from control views by default,
+    * else it will be shown in control views (internal copies should be hidden, user triggered copies should not)
+    * @return the unique ids of the copies (in the same order)
+    * @throws IllegalArgumentException if any of the ids are invalid
+    */
+   public Long[] copyItems(Long[] itemIds, String ownerId, boolean hidden);
+
+   /**
+    * Makes a copy of a set of items,
+    * also copies all related scales
+    * <br/>
+    * Permission checks should be performed to ensure that the current user can view the entities that they want to copy,
+    * there is no need to check if they can modify them though as the original entities will not be changed
+    * 
+    * @param scaleIds the unique ids of {@link EvalScale}s to make copies of
+    * @param ownerId the internal user id of the user who will be the owner of the copies,
+    * will use the current owner if this is null
+    * @param hidden if this true then the copy will be hidden from control views by default,
+    * else it will be shown in control views (internal copies should be hidden, user triggered copies should not)
+    * @return the unique ids of the copies (in the same order)
+    * @throws IllegalArgumentException if any of the ids are invalid
+    */
+   public Long[] copyScales(Long[] scaleIds, String ownerId, boolean hidden);
+
 }

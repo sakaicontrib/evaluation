@@ -64,5 +64,8 @@
         <property name="copyOf" type="java.lang.Long">
             <column name="COPY_OF" />
         </property>
+        <property name="hidden" type="boolean">
+            <column name="HIDDEN" />
+        </property>
 	</class>
 </hibernate-mapping>
