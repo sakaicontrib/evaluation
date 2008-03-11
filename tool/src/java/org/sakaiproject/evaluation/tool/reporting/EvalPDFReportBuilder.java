@@ -158,9 +158,14 @@ public class EvalPDFReportBuilder {
           //responseArea.addElement(questionPara);
           this.addQuestionText(question);
           com.lowagie.text.List list = new com.lowagie.text.List(com.lowagie.text.List.UNORDERED);
+          list.setListSymbol("\u2022   ");
+          list.setIndentationLeft(20f);
           for (String essay: responses) {
-             com.lowagie.text.ListItem item = new com.lowagie.text.ListItem(essay, this.paragraphFont);
-             list.add(item);
+             if (essay != null && essay.length() > 0) {
+                com.lowagie.text.ListItem item = new com.lowagie.text.ListItem(essay, this.paragraphFont);
+                item.setSpacingAfter(8f);
+                list.add(item);
+             }
           }
           this.responseArea.addElement(list);
        } catch (Exception e) {
