@@ -47,7 +47,6 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.ComparatorsUtils;
 import org.sakaiproject.genericdao.hibernate.HibernateCompleteGenericDao;
-import org.springframework.dao.DataAccessException;
 
 /**
  * This is the more specific Evaluation data access interface,
@@ -73,161 +72,189 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       log.debug("init");
    }
 
+
    /**
-    * Construct the HQL to do the templates query based on booleans and userId
-    * 
-    * @param userId
-    *           the Sakai internal user Id (of the owner)
-    * @param publicTemplates
-    * @param visibleTemplates
-    * @param sharedTemplates
-    * @return an HQL query string
+    * Construct the HQL to do the sharing query based on sharing constants and userId
+    * @return the HQL query string
     */
-   private String makeTemplateHQL(String userId, boolean includeEmpty, boolean publicTemplates,
-         boolean visibleTemplates, boolean sharedTemplates) {
-
-      /**
-       * TODO - Hierarchy visible and shared sharing methods are meant to work by relating the
-       * hierarchy level of the owner with the sharing setting in the template, however, that was
-       * when we assumed there would only be one level per user. That is no longer anything we have
-       * control over (since we depend on data that comes from another API) so we will have to add
-       * in a table which will track the hierarchy levels and link them to the template. This will
-       * be a very simple but necessary table.
-       */
-
-      boolean atleastOnePredicate = false;
-      StringBuffer query = new StringBuffer("from EvalTemplate as template where template.type = '"
-            + EvalConstants.TEMPLATE_TYPE_STANDARD + "' ");
-
-      // do not include templates which have no items in them
-      if (!includeEmpty) {
-         query.append(" and template.templateItems.size > 0 and ");
-      } else {
-         query.append(" and ");
+   private <T> String buildSharingHQL(String className, String userId,
+         String[] sharingConstants, String[] props, Object[] values, int[] comparisons,
+         String[] order, String[] options) {
+      if (sharingConstants == null || sharingConstants.length == 0) {
+         throw new IllegalArgumentException("No sharing constants specified, you must specify at least one");
       }
 
-      if (userId == null) {
-         // null userId means return all private templates
-         if (atleastOnePredicate) query.append(" or ");
-         atleastOnePredicate = true;
+      StringBuilder query = new StringBuilder();
+      query.append("from ");
+      query.append(className);
+      query.append(" as entity where 1=1 ");
 
-         query.append(" template.sharing = '" + EvalConstants.SHARING_PRIVATE + "' ");
-      } else if ("".equals(userId)) {
-         // blank userId means no private templates
-      } else {
-         // all private templates based on the userId (owner)
-         if (atleastOnePredicate) query.append(" or ");
-         atleastOnePredicate = true;
-
-         query.append(" (template.sharing = '" + EvalConstants.SHARING_PRIVATE + "' and template.owner = '"
-               + userId + "') ");
+      if (sharingConstants != null && sharingConstants.length > 0) {
+         query.append(" and (");
+         for (int i = 0; i < sharingConstants.length; i++) {
+            if (i > 0) {
+               query.append(" or ");
+            }
+            // check if we include private (owner equivalent)
+            if (EvalConstants.SHARING_PRIVATE.equals(sharingConstants[i])
+                  || EvalConstants.SHARING_OWNER.equals(sharingConstants[i]) ) {
+               if (userId == null) {
+                  query.append(" entity.sharing = '");
+                  query.append(EvalConstants.SHARING_PRIVATE);
+                  query.append("' ");
+               } else {
+                  query.append(" (entity.sharing = '");
+                  query.append(EvalConstants.SHARING_PRIVATE);
+                  query.append("' and entity.owner = '");
+                  query.append(userId);
+                  query.append("') ");
+               }
+            } else if (EvalConstants.SHARING_PUBLIC.equals(sharingConstants[i])) {
+               query.append(" entity.sharing = '");
+               query.append(EvalConstants.SHARING_PUBLIC);
+               query.append("' ");
+            } else {
+               query.append(" entity.sharing = '");
+               query.append(sharingConstants[i]);
+               query.append("' ");               
+            }
+         }
+         query.append(") ");
       }
 
-      if (publicTemplates) {
-         if (atleastOnePredicate) query.append(" or ");
-         atleastOnePredicate = true;
-
-         query.append(" template.sharing = '" + EvalConstants.SHARING_PUBLIC + "'");
+      // add in the optional prop/value comparisons
+      if (props != null && props.length > 0
+            && values != null && values.length > 0
+            && comparisons != null && comparisons.length > 0) {
+         if (props.length != values.length 
+               && values.length != comparisons.length) {
+            throw new IllegalArgumentException("Invalid array sizes: props ("+props.length+"), values("
+                  +values.length+"), and comparisons("+comparisons.length+") must match");
+         }
+         for (int i = 0; i < props.length; i++) {
+            query.append(" and entity.");
+            query.append( makeComparisonHQL(props[i], comparisons[i], values[i]) );
+            query.append(" ");
+         }
       }
 
-      // if (visibleTemplates) {
-      // if (atleastOnePredicate)
-      // query.append(" or ");
-      // atleastOnePredicate = true;
+      // handle special options
+      if (options != null && options.length > 0) {
+         for (int i = 0; i < options.length; i++) {
+            if ("notHidden".equals(options[i])) {
+               query.append(" and entity.hidden = false ");
+            } else if ("notEmpty".equals(options[i])) {
+               query.append(" and entity.templateItems.size > 0 ");
+            }
+         }
+      }
 
-      // query.append(" template.sharing = '" + EvalConstants.SHARING_VISIBLE + "' ");
-      // }
-
-      // if (sharedTemplates) {
-      // if (atleastOnePredicate)
-      // query.append(" or ");
-      // atleastOnePredicate = true;
-
-      // query.append(" template.sharing = '" + EvalConstants.SHARING_SHARED + "' ");
-      // }
+      // add ordering to returned values
+      if (order != null && order.length > 0) {
+         for (int i = 0; i < order.length; i++) {
+            if (i == 0) {
+               query.append(" order by entity.");
+               query.append(order[i]);
+            } else {
+               query.append(", entity.");
+               query.append(order[i]);
+            }
+         }
+      }
 
       return query.toString();
    }
 
    /**
-    * Count the templates that are visible to a user
+    * Generates the HQL snippet needed to represent this property/comparison/value triple
     * 
-    * @param userId internal user id, owner of the private templates to be selected,
-    * if it is null then all "Private" templates returned, if empty string then no private templates
-    * @param sharingConstants an array of sharing constants (private, public, etc) to define 
-    * what to include in the return
-    * @param includeEmpty if true then include templates with no items in them, else only return 
-    * templates with at least one item
-    * @return the count of accessible EvalTemplates for this user
+    * @param property the name of the entity property
+    * @param comparisonConstant the comparison constant (e.g. EQUALS)
+    * @param value the value to compare the property to
+    * @return a string representing the HQL snippet (e.g. propA = 'apple')
     */
-   public int countVisibleTemplates(String userId, String[] sharingConstants, boolean includeEmpty) {
-      boolean publicTemplates = false;
-      for (int i = 0; i < sharingConstants.length; i++) {
-         String sharingConstant = sharingConstants[i];
-         if (EvalConstants.SHARING_PRIVATE.equals(sharingConstant)) {
-            if (userId == null || userId.equals("")) {
-               throw new IllegalArgumentException("Must specify a userId when requesting private templates");
-            }
-         } else if (EvalConstants.SHARING_PUBLIC.equals(sharingConstant)) {
-            publicTemplates = true;
-         }
+   public String makeComparisonHQL(String property, int comparisonConstant, Object value) {
+      String sval = "'" + value.toString() + "'";
+      switch (comparisonConstant) {
+      case EQUALS:      return property + " = " + sval;
+      case GREATER:     return property + " > " + sval;
+      case LESS:        return property + " < " + sval;
+      case LIKE:        return property + " like " + sval;
+      case NOT_EQUALS:  return property + " <> " + sval;
+      case NOT_NULL:    return property + " is not null";
+      case NULL:        return property + " is null";
+      default: throw new IllegalArgumentException("Invalid comparison constant: " + comparisonConstant);
       }
-      String hqlQuery = makeTemplateHQL(userId, includeEmpty, publicTemplates, false, false);
+   }
 
-      int count = 0;
-      try {
-         count = count(hqlQuery);
-      } catch (DataAccessException e) {
-         // this may appear to be a swallowed error, but it is actually intended behavior
-         log.error("Invalid argument combination (most likely you tried to request no items) caused failure",
-               e);
-      }
+
+   /**
+    * A general method for counting entities which are shared for a specific user,
+    * this is abstracting the idea of ((private & owner) or (public)) and (other options)
+    * 
+    * @param <T>
+    * @param entityClass the class of the entity to be retrieved
+    * @param userId the internal user Id (of the owner),
+    * null userId means return all private templates,
+    * has no effect if private constant is not included in the sharingConstants list
+    * @param sharingConstants an array of SHARING_ constants from {@link EvalConstants},
+    * this cannot be null or empty
+    * @param props an array of extra properties to compare to values
+    * @param values an array of extra values
+    * @param comparisons an array of extra comparisons
+    * @param options extra options which are specially handled: 
+    * notHidden for scales/items/TIs/templates,
+    * notEmpty for templates
+    * @return a count of the matching entities
+    * @see #getSharedEntitiesForUser(Class, String, String[], String[], Object[], int[], String[], String[])
+    */
+   public <T> int countSharedEntitiesForUser(Class<T> entityClass, String userId,
+         String[] sharingConstants, String[] props, Object[] values, int[] comparisons,
+         String[] options) {
+
+      String hql = buildSharingHQL(entityClass.getName(), userId, sharingConstants, 
+            props, values, comparisons, null, options);
+      int count = count(hql);
       return count;
    }
 
    /**
-    * Find templates visible for a user, only includes standard type templates,
-    * (does not include templates that hold added items, 
-    * "private" and owned by someone, "public", (shared and visible not handled yet)
+    * A general method for fetching entities which are shared for a specific user,
+    * this is abstracting the idea of ((private & owner) or (public)) and (other options)
     * 
-    * @param userId Sakai internal user id, owner of the private templates to be selected,
-    * if it is null then all "Private" templates returned, if empty string then no private templates
-    * @param sharingConstants an array of sharing constants (private, public, etc) to define 
-    * what to include in the return
-    * @param includeEmpty if true then include templates with no items in them, else only return 
-    * templates with at least one item
-    * @return a List of EvalTemplate objects, ordered by sharing and title alphabetic
+    * @param <T>
+    * @param entityClass the class of the entity to be retrieved
+    * @param userId the internal user Id (of the owner),
+    * null userId means return all private templates,
+    * has no effect if private constant is not included in the sharingConstants list
+    * @param sharingConstants an array of SHARING_ constants from {@link EvalConstants},
+    * this cannot be null or empty
+    * @param props an array of extra properties to compare to values
+    * @param values an array of extra values
+    * @param comparisons an array of extra comparisons
+    * @param order a string array of property names to order by
+    * @param options extra options which are specially handled: 
+    * notHidden for scales/items/TIs/templates,
+    * notEmpty for templates
+    * @param start the returned entity to start with (for paging), 0 means start with the first one
+    * @param limit the total number of entities to return, 0 means return all
+    * @return a list of entities
     */
    @SuppressWarnings("unchecked")
-   public List<EvalTemplate> getVisibleTemplates(String userId, String[] sharingConstants,
-         boolean includeEmpty) {
+   public <T> List<T> getSharedEntitiesForUser(Class<T> entityClass, String userId,
+         String[] sharingConstants, String[] props, Object[] values, int[] comparisons,
+         String[] order, String[] options, int start, int limit) {
 
-      boolean publicTemplates = false;
-      for (int i = 0; i < sharingConstants.length; i++) {
-         String sharingConstant = sharingConstants[i];
-         if (EvalConstants.SHARING_PRIVATE.equals(sharingConstant)) {
-            if (userId == null || userId.equals("")) {
-               throw new IllegalArgumentException("Must specify a userId when requesting private templates");
-            }
-         } else if (EvalConstants.SHARING_PUBLIC.equals(sharingConstant)) {
-            publicTemplates = true;
-         }
-      }
-      String hqlQuery = makeTemplateHQL(userId, includeEmpty, publicTemplates, false, false);
-
-      // add ordering to returned values
-      hqlQuery += " order by template.sharing, template.title";
-
-      List<EvalTemplate> l = new ArrayList<EvalTemplate>();
-      try {
-         l = getHibernateTemplate().find(hqlQuery);
-      } catch (DataAccessException e) {
-         // this may appear to be a swallowed error, but it is actually intended behavior
-         log.error("Invalid argument combination (most likely you tried to request no items) caused failure");
-      }
+      String hql = buildSharingHQL(entityClass.getName(), userId, sharingConstants, 
+            props, values, comparisons, order, options);
+      Map<String, Object> params = new HashMap<String, Object>();
+      List<T> l = executeHqlQuery(hql, params, start, limit);
       return l;
    }
 
+  
+   
+   
    /**
     * Returns all evaluation objects associated with the input groups,
     * can also include anonymous evaluations

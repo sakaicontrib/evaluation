@@ -235,63 +235,27 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
    public List<EvalScale> getScalesForUser(String userId, String sharingConstant) {
       log.debug("userId: " + userId + ", sharingConstant: " + sharingConstant );
 
-      List<EvalScale> l = new ArrayList<EvalScale>();
-
-      // get admin state
-      boolean isAdmin = external.isUserAdmin(userId);
-
-      boolean getPublic = false;
-      boolean getPrivate = false;
-
-      // check the sharingConstant param
-      if (sharingConstant != null) {
-         EvalUtils.validateSharingConstant(sharingConstant);
+      if (userId == null) {
+         throw new IllegalArgumentException("Must include a userId");
       }
 
-      if ( sharingConstant == null || 
-            EvalConstants.SHARING_OWNER.equals(sharingConstant) ) {
-         // return all scales visible to this user
-         getPublic = true;
-         getPrivate = true;
-      } else if ( EvalConstants.SHARING_PRIVATE.equals(sharingConstant) ) {
-         // return only private scales visible to this user
-         getPrivate = true;
-      } else if ( EvalConstants.SHARING_PUBLIC.equals(sharingConstant) ) {
-         // return all public scales
-         getPublic = true;
+      // admin always gets all of the templates of a type
+      if (external.isUserAdmin(userId)) {
+         userId = null;
       }
 
-      // handle private sharing items
-      if (getPrivate) {
-         String[] props;
-         Object[] values;
-         int[] comps;
-         if (isAdmin) {
-            props = new String[] { "mode", "sharing" };
-            values = new Object[] { EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PRIVATE };
-            comps = new int[] { ByPropsFinder.EQUALS , ByPropsFinder.EQUALS };
-         } else {
-            props = new String[] { "mode", "sharing", "owner" };
-            values = new Object[] { EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PRIVATE, userId };            
-            comps = new int[] { ByPropsFinder.EQUALS, ByPropsFinder.EQUALS, ByPropsFinder.EQUALS };
-         }
-         l.addAll( dao.findByProperties(EvalScale.class, 
-               props, 
-               values,
-               comps,
-               new String[] {"title"}) );
-      }
+      String[] sharingConstants = makeSharingConstantsArray(sharingConstant);
 
-      // handle public sharing items
-      if (getPublic) {
-         l.addAll( dao.findByProperties(EvalScale.class, 
-               new String[] { "mode", "sharing" }, 
-               new Object[] { EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PUBLIC },
-               new int[] { ByPropsFinder.EQUALS, ByPropsFinder.EQUALS },
-               new String[] {"title"}) );
-      }
+      // only get type standard templates
+      String[] props = new String[] { "mode" };
+      Object[] values = new Object[] { EvalConstants.SCALE_MODE_SCALE };
+      int[] comparisons = new int[] { ByPropsFinder.EQUALS };
 
-      return l;
+      String[] order = new String[] {"title"};
+      String[] options = new String[] {"notHidden"};
+
+      return dao.getSharedEntitiesForUser(EvalScale.class, userId, sharingConstants, 
+            props, values, comparisons, order, options, 0, 0);
    }
 
 
@@ -486,35 +450,19 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
    }
 
 
-   @SuppressWarnings("unchecked")
    public List<EvalItem> getItemsForUser(String userId, String sharingConstant, String filter, boolean includeExpert) {
       log.debug("sharingConstant:" + sharingConstant + ", userId:" + userId + ", filter:" + filter  + ", includeExpert:" + includeExpert);
 
-      List<EvalItem> l = new ArrayList<EvalItem>();
-
-      // get admin state
-      boolean isAdmin = external.isUserAdmin(userId);
-
-      boolean getPublic = false;
-      boolean getPrivate = false;
-
-      // check the sharingConstant param
-      if (sharingConstant != null) {
-         EvalUtils.validateSharingConstant(sharingConstant);
+      if (userId == null) {
+         throw new IllegalArgumentException("Must include a userId");
       }
 
-      if ( sharingConstant == null || 
-            EvalConstants.SHARING_OWNER.equals(sharingConstant) ) {
-         // return all items visible to this user
-         getPublic = true;
-         getPrivate = true;
-      } else if ( EvalConstants.SHARING_PRIVATE.equals(sharingConstant) ) {
-         // return only private items visible to this user
-         getPrivate = true;
-      } else if ( EvalConstants.SHARING_PUBLIC.equals(sharingConstant) ) {
-         // return all public items
-         getPublic = true;
+      // admin always gets all of the templates of a type
+      if (external.isUserAdmin(userId)) {
+         userId = null;
       }
+
+      String[] sharingConstants = makeSharingConstantsArray(sharingConstant);
 
       // leave out the block parent items
       String[] props = new String[] { "classification" };
@@ -533,31 +481,11 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
          comparisons = ArrayUtils.appendArray(comparisons, ByPropsFinder.LIKE);
       }
 
-      // handle private sharing items
-      if (getPrivate) {
-         String[] privateProps = ArrayUtils.appendArray(props, "sharing");
-         Object[] privateValues = ArrayUtils.appendArray(values, EvalConstants.SHARING_PRIVATE);
-         int[] privateComparisons = ArrayUtils.appendArray(comparisons, ByPropsFinder.EQUALS);
+      String[] order = new String[] {"id"};
+      String[] options = new String[] {"notHidden"};
 
-         if (!isAdmin) {
-            privateProps = ArrayUtils.appendArray(privateProps, "owner");
-            privateValues = ArrayUtils.appendArray(privateValues, userId);
-            privateComparisons = ArrayUtils.appendArray(privateComparisons, ByPropsFinder.EQUALS);
-         }
-
-         l.addAll( dao.findByProperties(EvalItem.class, privateProps, privateValues, privateComparisons, new String[] {"id"}) );
-      }
-
-      // handle public sharing items
-      if (getPublic) {
-         String[] publicProps = ArrayUtils.appendArray(props, "sharing");
-         Object[] publicValues = ArrayUtils.appendArray(values, EvalConstants.SHARING_PUBLIC);
-         int[] publicComparisons = ArrayUtils.appendArray(comparisons, ByPropsFinder.EQUALS);
-
-         l.addAll( dao.findByProperties(EvalItem.class, publicProps, publicValues, publicComparisons, new String[] {"id"}) );
-      }
-
-      return ArrayUtils.removeDuplicates(l); // remove duplicates from the list
+      return dao.getSharedEntitiesForUser(EvalItem.class, userId, sharingConstants, 
+            props, values, comparisons, order, options, 0, 0);
    }
 
 
@@ -1212,9 +1140,8 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
        * link them to the template. This will be a very simple but necessary table.
        */
 
-      // check sharing constant
-      if (sharingConstant != null) {
-         EvalUtils.validateSharingConstant(sharingConstant);
+      if (userId == null) {
+         throw new IllegalArgumentException("Must include a userId");
       }
 
       // admin always gets all of the templates of a type
@@ -1222,20 +1149,51 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
          userId = null;
       }
 
+      String[] sharingConstants = makeSharingConstantsArray(sharingConstant);
+
+      // only get type standard templates
+      String[] props = new String[] { "type" };
+      Object[] values = new Object[] { EvalConstants.TEMPLATE_TYPE_STANDARD };
+      int[] comparisons = new int[] { ByPropsFinder.EQUALS };
+
+      String[] order = new String[] {"sharing","title"};
+      String[] options = null;
+      if (includeEmpty) {
+         options = new String[] {"notHidden"};
+      } else {
+         options = new String[] {"notHidden", "notEmpty"};
+      }
+
+      return dao.getSharedEntitiesForUser(EvalTemplate.class, userId, sharingConstants, 
+            props, values, comparisons, order, options, 0, 0);
+   }
+
+
+
+   /**
+    * Takes a single sharing constant and turns it into an array of sharing constants
+    * based on the rule that null/owner means private and public
+    * 
+    * @param sharingConstant
+    * @return array of sharing constants
+    */
+   private String[] makeSharingConstantsArray(String sharingConstant) {
+      if (sharingConstant != null) {
+         EvalUtils.validateSharingConstant(sharingConstant);
+      }
       String[] sharingConstants = new String[] {};
       if (EvalConstants.SHARING_PRIVATE.equals(sharingConstant)) {
          // do private templates only
+         sharingConstants = new String[] {EvalConstants.SHARING_PRIVATE};
       } else if (EvalConstants.SHARING_PUBLIC.equals(sharingConstant)) {
          // do public templates only
          sharingConstants = new String[] {EvalConstants.SHARING_PUBLIC};
-         userId = "";
       } else if (sharingConstant == null || 
             EvalConstants.SHARING_OWNER.equals(sharingConstant)) {
          // do all templates visible to this user
-         sharingConstants = new String[] {EvalConstants.SHARING_PUBLIC};
+         sharingConstants = new String[] {EvalConstants.SHARING_PRIVATE, EvalConstants.SHARING_PUBLIC};
       }
-
-      return dao.getVisibleTemplates(userId, sharingConstants, includeEmpty);
+      return sharingConstants;
    }
 
 
