@@ -1278,29 +1278,57 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
    
    // COPYING
 
+   @SuppressWarnings("unchecked")
+   public Long[] copyScales(Long[] scaleIds, String title, String ownerId, boolean hidden) {
+      if (ownerId == null || ownerId.length() == 0) {
+         throw new IllegalArgumentException("Invalid ownerId, cannot be null or empty string");         
+      }
+      if (scaleIds == null || scaleIds.length == 0) {
+         throw new IllegalArgumentException("Invalid scaleIds array, cannot be null or empty");         
+      }
+
+      List<EvalScale> scales = dao.findByProperties(EvalScale.class, new String[] {"id"}, new Object[] { scaleIds });
+      if (scales.size() != scaleIds.length) {
+         throw new IllegalArgumentException("Invalid scaleIds in the scaleIds array: " + scaleIds);
+      }
+
+      Set<EvalScale> copiedScales = new HashSet<EvalScale>();
+      for (EvalScale scale : scales) {
+         String newTitle = title;
+         if (newTitle == null || newTitle.length() == 0) {
+            newTitle = "Copy of " + scale.getTitle();
+         }
+         EvalScale newScale = new EvalScale(new Date(), ownerId, newTitle, scale.getMode(), 
+               EvalConstants.SHARING_PRIVATE, false, null, scale.getIdeal(), 
+               ArrayUtils.copy(scale.getOptions()), false);
+         newScale.setCopyOf(scale.getId());
+         newScale.setHidden(hidden);
+         copiedScales.add(newScale);
+      }
+      dao.saveSet(copiedScales);
+
+      Long[] copiedIds = new Long[scales.size()];
+      int counter = 0;
+      for (EvalScale newScale : copiedScales) {
+         copiedIds[counter] = newScale.getId();
+         counter++;
+      }
+      return copiedIds;
+   }
 
    public Long[] copyItems(Long[] itemIds, String ownerId, boolean hidden) {
       // TODO Auto-generated method stub
       return null;
    }
 
-
-   public Long[] copyScales(Long[] scaleIds, String ownerId, boolean hidden) {
-      // TODO Auto-generated method stub
-      return null;
-   }
-
-
-   public Long copyTemplate(Long templateId, String title, String ownerId, boolean hidden) {
-      // TODO Auto-generated method stub
-      return null;
-   }
-
-
    public Long[] copyTemplateItems(Long[] templateItemIds, String ownerId, boolean hidden) {
       // TODO Auto-generated method stub
       return null;
    }
 
+   public Long copyTemplate(Long templateId, String title, String ownerId, boolean hidden) {
+      // TODO Auto-generated method stub
+      return null;
+   }
 
 }

@@ -507,7 +507,7 @@ public interface EvalAuthoringService {
    /**
     * Makes a complete copy of a template,
     * also copies all related templateItems, items, and scales,
-    * all copies will automatically become private
+    * does not copy expert indication and forces the sharing to be set to private
     * <br/>
     * Permission checks should be performed to ensure that the current user can view the entities that they want to copy,
     * there is no need to check if they can modify them though as the original entities will not be changed
@@ -525,8 +525,7 @@ public interface EvalAuthoringService {
 
    /**
     * Makes a copy of a set of template items,
-    * also copies all related items and scales,
-    * all copies will automatically become private and will be assigned to the current user
+    * also copies all related items and scales
     * <br/>
     * Permission checks should be performed to ensure that the current user can view the entities that they want to copy,
     * there is no need to check if they can modify them though as the original entities will not be changed
@@ -536,14 +535,15 @@ public interface EvalAuthoringService {
     * will use the current owner if this is null
     * @param hidden if this true then the copy will be hidden from control views by default,
     * else it will be shown in control views (internal copies should be hidden, user triggered copies should not)
-    * @return the unique ids of the copies (in the same order)
+    * @return the unique ids of the copies
     * @throws IllegalArgumentException if any of the ids are invalid
     */
    public Long[] copyTemplateItems(Long[] templateItemIds, String ownerId, boolean hidden);
 
    /**
     * Makes a copy of a set of items,
-    * also copies all related scales
+    * also copies all related scales,
+    * does not copy expert indication and forces the sharing to be set to private
     * <br/>
     * Permission checks should be performed to ensure that the current user can view the entities that they want to copy,
     * there is no need to check if they can modify them though as the original entities will not be changed
@@ -553,26 +553,28 @@ public interface EvalAuthoringService {
     * will use the current owner if this is null
     * @param hidden if this true then the copy will be hidden from control views by default,
     * else it will be shown in control views (internal copies should be hidden, user triggered copies should not)
-    * @return the unique ids of the copies (in the same order)
+    * @return the unique ids of the copies
     * @throws IllegalArgumentException if any of the ids are invalid
     */
    public Long[] copyItems(Long[] itemIds, String ownerId, boolean hidden);
 
    /**
-    * Makes a copy of a set of items,
-    * also copies all related scales
+    * Makes a copy of a set of scales,
+    * does not copy expert indication and forces the sharing to be set to private
     * <br/>
     * Permission checks should be performed to ensure that the current user can view the entities that they want to copy,
     * there is no need to check if they can modify them though as the original entities will not be changed
     * 
     * @param scaleIds the unique ids of {@link EvalScale}s to make copies of
+    * @param title the new title to assign to the copied scales (will generate a title if this is blank or empty),
+    * note that this will assign the same title to all the copied scales so be careful here
     * @param ownerId the internal user id of the user who will be the owner of the copies,
     * will use the current owner if this is null
     * @param hidden if this true then the copy will be hidden from control views by default,
     * else it will be shown in control views (internal copies should be hidden, user triggered copies should not)
-    * @return the unique ids of the copies (in the same order)
+    * @return the unique ids of the copies
     * @throws IllegalArgumentException if any of the ids are invalid
     */
-   public Long[] copyScales(Long[] scaleIds, String ownerId, boolean hidden);
+   public Long[] copyScales(Long[] scaleIds, String title, String ownerId, boolean hidden);
 
 }
