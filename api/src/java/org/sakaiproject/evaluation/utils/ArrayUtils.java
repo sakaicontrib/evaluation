@@ -45,6 +45,21 @@ public class ArrayUtils {
    }
 
    /**
+    * Make a copy of an array
+    * 
+    * @param <T>
+    * @param array an array of objects
+    * @return a copy of the array
+    */
+   @SuppressWarnings("unchecked")
+   public static <T> T[] copy(T[] array) {
+      Class<?> type = array.getClass().getComponentType();
+      T[] newArray = (T[]) Array.newInstance(type, array.length);
+      System.arraycopy( array, 0, newArray, 0, array.length );
+      return newArray;
+   }
+
+   /**
     * Checks to see if an array contains a value,
     * will return false if a null value is supplied
     * 
