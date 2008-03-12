@@ -265,9 +265,12 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
             log.debug("User has permission to assign evaluation in at least one group");
             /*
              * TODO - this check needs to be more robust at some point
-             * currently we are ignoring shared and visible templates - aaronz.
+             * currently we are ignoring shared and visible templates - AZ
              */
-            if (dao.countVisibleTemplates(userId, new String[] {EvalConstants.SHARING_PUBLIC}, false) > 0 ) {
+            int count = dao.countSharedEntitiesForUser(EvalTemplate.class, userId, 
+                  new String[] {EvalConstants.SHARING_PUBLIC, EvalConstants.SHARING_PRIVATE}, 
+                  null, null, null, new String[] {"notEmpty"});
+            if (count > 0 ) {
                // if they can access at least one template with an item then they can create an evaluation
                return true;
             }

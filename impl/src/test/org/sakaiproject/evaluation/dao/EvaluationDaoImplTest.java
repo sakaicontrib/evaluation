@@ -31,6 +31,7 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.PreloadTestDataImpl;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
+import org.sakaiproject.genericdao.api.finders.ByPropsFinder;
 import org.springframework.test.AbstractTransactionalSpringContextTests;
 
 
@@ -121,17 +122,23 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
     * test name like so: testMethodClassInt (for method(Class, int);
     */
 
-
-   /**
-    * Test method for {@link org.sakaiproject.evaluation.dao.EvaluationDaoImpl#getVisibleTemplates(java.lang.String, boolean, boolean, boolean)}.
-    */
-   public void testGetVisibleTemplates() {
+   public void testGetSharedEntitiesForUser() {
       List<EvalTemplate> l = null;
       List<Long> ids = null;
 
+      // test using templates
+      String[] props = new String[] { "type" };
+      Object[] values = new Object[] { EvalConstants.TEMPLATE_TYPE_STANDARD };
+      int[] comparisons = new int[] { ByPropsFinder.EQUALS };
+
+      String[] order = new String[] {"sharing","title"};
+      String[] options = new String[] {"notHidden"};
+      String[] notEmptyOptions = new String[] {"notHidden", "notEmpty"};
+
       // all templates visible to user
-      l = evaluationDao.getVisibleTemplates(EvalTestDataLoad.USER_ID, 
-            new String[] {EvalConstants.SHARING_PUBLIC}, true);
+      l = evaluationDao.getSharedEntitiesForUser(EvalTemplate.class, 
+            EvalTestDataLoad.USER_ID, new String[] {EvalConstants.SHARING_PRIVATE, EvalConstants.SHARING_PUBLIC}, 
+            props, values, comparisons, order, options, 0, 0);
       assertNotNull(l);
       assertEquals(5, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
@@ -142,8 +149,9 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       assertTrue(ids.contains( etdl.templateEid.getId() ));
 
       // all templates visible to maint user
-      l = evaluationDao.getVisibleTemplates(EvalTestDataLoad.MAINT_USER_ID,
-            new String[] {EvalConstants.SHARING_PUBLIC}, true);
+      l = evaluationDao.getSharedEntitiesForUser(EvalTemplate.class, 
+            EvalTestDataLoad.MAINT_USER_ID, new String[] {EvalConstants.SHARING_PRIVATE, EvalConstants.SHARING_PUBLIC}, 
+            props, values, comparisons, order, options, 0, 0);
       assertNotNull(l);
       assertEquals(4, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
@@ -153,8 +161,9 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       assertTrue(ids.contains( etdl.templateEid.getId() ));
 
       // all templates owned by USER
-      l = evaluationDao.getVisibleTemplates(EvalTestDataLoad.USER_ID,
-            new String[] {}, true);
+      l = evaluationDao.getSharedEntitiesForUser(EvalTemplate.class, 
+            EvalTestDataLoad.USER_ID, new String[] {EvalConstants.SHARING_PRIVATE}, 
+            props, values, comparisons, order, options, 0, 0);
       assertNotNull(l);
       assertEquals(2, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
@@ -162,8 +171,9 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       assertTrue(ids.contains( etdl.templateUserUnused.getId() ));
 
       // all private templates
-      l = evaluationDao.getVisibleTemplates(null,
-            new String[] {}, true);
+      l = evaluationDao.getSharedEntitiesForUser(EvalTemplate.class, 
+            null, new String[] {EvalConstants.SHARING_PRIVATE}, 
+            props, values, comparisons, order, options, 0, 0);
       assertNotNull(l);
       assertEquals(6, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
@@ -175,8 +185,9 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       assertTrue(ids.contains( etdl.templateAdminBlock.getId() ));
 
       // all private non-empty templates
-      l = evaluationDao.getVisibleTemplates(null,
-            new String[] {}, false);
+      l = evaluationDao.getSharedEntitiesForUser(EvalTemplate.class, 
+            null, new String[] {EvalConstants.SHARING_PRIVATE}, 
+            props, values, comparisons, order, notEmptyOptions, 0, 0);
       assertNotNull(l);
       assertEquals(5, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
@@ -187,8 +198,9 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       assertTrue(ids.contains( etdl.templateAdminBlock.getId() ));
 
       // all public templates
-      l = evaluationDao.getVisibleTemplates("", 
-            new String[] {EvalConstants.SHARING_PUBLIC}, true);
+      l = evaluationDao.getSharedEntitiesForUser(EvalTemplate.class, 
+            null, new String[] {EvalConstants.SHARING_PUBLIC}, 
+            props, values, comparisons, order, options, 0, 0);
       assertNotNull(l);
       assertEquals(3, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
@@ -197,64 +209,87 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       assertTrue(ids.contains( etdl.templateEid.getId() ));
 
       // all templates (admin would use this)
-      l = evaluationDao.getVisibleTemplates(null, 
-            new String[] {EvalConstants.SHARING_PUBLIC, EvalConstants.SHARING_SHARED, EvalConstants.SHARING_VISIBLE}, true);
+      l = evaluationDao.getSharedEntitiesForUser(EvalTemplate.class, 
+            null, new String[] {EvalConstants.SHARING_PRIVATE, EvalConstants.SHARING_PUBLIC, EvalConstants.SHARING_SHARED, EvalConstants.SHARING_VISIBLE}, 
+            props, values, comparisons, order, options, 0, 0);
       assertNotNull(l);
       assertEquals(9, l.size());
 
       // all non-empty templates (admin would use this)
-      l = evaluationDao.getVisibleTemplates(null, 
-            new String[] {EvalConstants.SHARING_PUBLIC, EvalConstants.SHARING_SHARED, EvalConstants.SHARING_VISIBLE}, false);
+      l = evaluationDao.getSharedEntitiesForUser(EvalTemplate.class, 
+            null, new String[] {EvalConstants.SHARING_PRIVATE, EvalConstants.SHARING_PUBLIC, EvalConstants.SHARING_SHARED, EvalConstants.SHARING_VISIBLE}, 
+            props, values, comparisons, order, notEmptyOptions, 0, 0);
       assertNotNull(l);
       assertEquals(8, l.size());
 
       // no templates (no one should do this, it throws an exception)
-      l = evaluationDao.getVisibleTemplates("", new String[] {}, true);
-      assertNotNull(l);
-      assertEquals(0, l.size());
+      try {
+         l = evaluationDao.getSharedEntitiesForUser(EvalTemplate.class, 
+               null, new String[] {}, 
+               props, values, comparisons, order, notEmptyOptions, 0, 0);
+         fail("Should have thrown an exception");
+      } catch (IllegalArgumentException e) {
+         assertNotNull(e);
+      }
    }
 
-   /**
-    * Test method for {@link org.sakaiproject.evaluation.dao.EvaluationDaoImpl#countVisibleTemplates(java.lang.String, boolean, boolean, boolean)}.
-    */
-   public void testCountVisibleTemplates() {
+   public void testCountSharedEntitiesForUser() {
+      int count = 0;
+
+      // test using templates
+      String[] props = new String[] { "type" };
+      Object[] values = new Object[] { EvalConstants.TEMPLATE_TYPE_STANDARD };
+      int[] comparisons = new int[] { ByPropsFinder.EQUALS };
+
+      String[] options = new String[] {"notHidden"};
+      String[] notEmptyOptions = new String[] {"notHidden", "notEmpty"};
+
       // all templates visible to user
-      int count = evaluationDao.countVisibleTemplates(EvalTestDataLoad.USER_ID, 
-            new String[] {EvalConstants.SHARING_PUBLIC}, true);
+      count = evaluationDao.countSharedEntitiesForUser(EvalTemplate.class, 
+            EvalTestDataLoad.USER_ID, new String[] {EvalConstants.SHARING_PRIVATE, EvalConstants.SHARING_PUBLIC}, 
+            props, values, comparisons, options);
       assertEquals(5, count);
 
       // all templates visible to maint user
-      count = evaluationDao.countVisibleTemplates(EvalTestDataLoad.MAINT_USER_ID, 
-            new String[] {EvalConstants.SHARING_PUBLIC}, true);
+      count = evaluationDao.countSharedEntitiesForUser(EvalTemplate.class, 
+            EvalTestDataLoad.MAINT_USER_ID, new String[] {EvalConstants.SHARING_PRIVATE, EvalConstants.SHARING_PUBLIC}, 
+            props, values, comparisons, options);
       assertEquals(4, count);
 
       // all templates owned by USER
-      count = evaluationDao.countVisibleTemplates(EvalTestDataLoad.USER_ID, 
-            new String[] {}, true);
+      count = evaluationDao.countSharedEntitiesForUser(EvalTemplate.class, 
+            EvalTestDataLoad.USER_ID, new String[] {EvalConstants.SHARING_PRIVATE}, 
+            props, values, comparisons, options);
       assertEquals(2, count);
 
       // all private templates (admin only)
-      count = evaluationDao.countVisibleTemplates(null, 
-            new String[] {}, true);
+      count = evaluationDao.countSharedEntitiesForUser(EvalTemplate.class, 
+            null, new String[] {EvalConstants.SHARING_PRIVATE}, 
+            props, values, comparisons, options);
       assertEquals(6, count);
 
       // all private non-empty templates (admin only)
-      count = evaluationDao.countVisibleTemplates(null, 
-            new String[] {}, false);
+      count = evaluationDao.countSharedEntitiesForUser(EvalTemplate.class, 
+            null, new String[] {EvalConstants.SHARING_PRIVATE}, 
+            props, values, comparisons, notEmptyOptions);
       assertEquals(5, count);
 
       // all public templates
-      count = evaluationDao.countVisibleTemplates("", new String[] {EvalConstants.SHARING_PUBLIC}, true);
+      count = evaluationDao.countSharedEntitiesForUser(EvalTemplate.class, 
+            null, new String[] {EvalConstants.SHARING_PUBLIC}, 
+            props, values, comparisons, options);
       assertEquals(3, count);
 
       // all templates (admin would use this)
-      count = evaluationDao.countVisibleTemplates(null, 
-            new String[] {EvalConstants.SHARING_PUBLIC, EvalConstants.SHARING_SHARED, EvalConstants.SHARING_VISIBLE}, true);
+      count = evaluationDao.countSharedEntitiesForUser(EvalTemplate.class, 
+            null, new String[] {EvalConstants.SHARING_PRIVATE, EvalConstants.SHARING_PUBLIC, EvalConstants.SHARING_SHARED, EvalConstants.SHARING_VISIBLE}, 
+            props, values, comparisons, options);
       assertEquals(9, count);
 
       // all non-empty templates (admin would use this)
-      count = evaluationDao.countVisibleTemplates(null, 
-            new String[] {EvalConstants.SHARING_PUBLIC, EvalConstants.SHARING_SHARED, EvalConstants.SHARING_VISIBLE}, false);
+      count = evaluationDao.countSharedEntitiesForUser(EvalTemplate.class, 
+            null, new String[] {EvalConstants.SHARING_PRIVATE, EvalConstants.SHARING_PUBLIC, EvalConstants.SHARING_SHARED, EvalConstants.SHARING_VISIBLE}, 
+            props, values, comparisons, notEmptyOptions);
       assertEquals(8, count);
    }
 

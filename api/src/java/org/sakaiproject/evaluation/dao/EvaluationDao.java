@@ -25,34 +25,52 @@ import org.sakaiproject.genericdao.api.CompleteGenericDao;
 public interface EvaluationDao extends CompleteGenericDao {
 
    /**
-    * Count the templates that are visible to a user
+    * A general method for fetching entities which are shared for a specific user,
+    * this is abstracting the idea of ((private & owner) or (public)) and (other options)
     * 
-    * @param userId internal user id, owner of the private templates to be selected,
-    * if it is null then all "Private" templates returned, if empty string then no private templates
-    * @param sharingConstants an array of sharing constants (private, public, etc) to define 
-    * what to include in the return
-    * @param includeEmpty if true then include templates with no items in them, else only return 
-    * templates with at least one item
-    * @return the count of accessible EvalTemplates for this user
+    * @param <T>
+    * @param entityClass the class of the entity to be retrieved
+    * @param userId the internal user Id (of the owner),
+    * null userId means return all private templates,
+    * has no effect if private constant is not included in the sharingConstants list
+    * @param sharingConstants an array of SHARING_ constants from {@link EvalConstants},
+    * this cannot be null or empty
+    * @param props an array of extra properties to compare to values
+    * @param values an array of extra values
+    * @param comparisons an array of extra comparisons
+    * @param order a string array of property names to order by
+    * @param options extra options which are specially handled: 
+    * notHidden for scales/items/TIs/templates,
+    * notEmpty for templates
+    * @param start the returned entity to start with (for paging), 0 means start with the first one
+    * @param limit the total number of entities to return, 0 means return all
+    * @return a list of entities
     */
-   public int countVisibleTemplates(String userId, String[] sharingConstants, boolean includeEmpty);
+   public <T> List<T> getSharedEntitiesForUser(Class<T> entityClass, String userId, String[] sharingConstants,
+         String[] props, Object[] values, int[] comparisons, String[] order, String[] options, int start, int limit);
 
    /**
-    * Find templates visible for a user, only includes standard type templates,
-    * (does not include templates that hold added items, 
-    * "private" and owned by someone, "public", (shared and visible not handled yet)
+    * A general method for counting entities which are shared for a specific user,
+    * this is abstracting the idea of ((private & owner) or (public)) and (other options)
     * 
-    * @param userId Sakai internal user id, owner of the private templates to be selected,
-    * if it is null then all "Private" templates returned, if empty string then no private templates
-    * @param sharingConstants an array of sharing constants (private, public, etc) to define 
-    * what to include in the return
-    * @param includeEmpty if true then include templates with no items in them, else only return 
-    * templates with at least one item
-    * @return a List of EvalTemplate objects, ordered by sharing and title alphabetic
+    * @param <T>
+    * @param entityClass the class of the entity to be retrieved
+    * @param userId the internal user Id (of the owner),
+    * null userId means return all private templates,
+    * has no effect if private constant is not included in the sharingConstants list
+    * @param sharingConstants an array of SHARING_ constants from {@link EvalConstants},
+    * this cannot be null or empty
+    * @param props an array of extra properties to compare to values
+    * @param values an array of extra values
+    * @param comparisons an array of extra comparisons
+    * @param options extra options which are specially handled: 
+    * notHidden for scales/items/TIs/templates,
+    * notEmpty for templates
+    * @return a count of the matching entities
+    * @see #getSharedEntitiesForUser(Class, String, String[], String[], Object[], int[], String[], String[])
     */
-   @SuppressWarnings("unchecked")
-   public List<EvalTemplate> getVisibleTemplates(String userId, String[] sharingConstants,
-         boolean includeEmpty);
+   public <T> int countSharedEntitiesForUser(Class<T> entityClass, String userId, String[] sharingConstants,
+         String[] props, Object[] values, int[] comparisons, String[] options);
 
    /**
     * Returns all evaluation objects associated with the input groups,
