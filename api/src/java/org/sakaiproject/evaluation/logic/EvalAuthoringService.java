@@ -505,8 +505,8 @@ public interface EvalAuthoringService {
    // COPYING
 
    /**
-    * Makes a complete copy of a template,
-    * also copies all related templateItems, items, and scales,
+    * Makes a complete copy of a template (also copies all related templateItems), 
+    * can also copy items, and scales if specified,
     * does not copy expert indication and forces the sharing to be set to private
     * <br/>
     * Permission checks should be performed to ensure that the current user can view the entities that they want to copy,
@@ -518,14 +518,17 @@ public interface EvalAuthoringService {
     * will use the current owner if this is null
     * @param hidden if this true then the copy will be hidden from control views by default,
     * else it will be shown in control views (internal copies should be hidden, user triggered copies should not)
+    * @param includeChildren if true then all items and scales are also copied (templateItems are always copied),
+    * if false the ids are used but copies are not made (in general you should copy all children when duplicating
+    * but you probably only need to copy the object when the user makes a copy)
     * @return the unique id of the copy of the template
     * @throws IllegalArgumentException if the template id is invalid
     */
-   public Long copyTemplate(Long templateId, String title, String ownerId, boolean hidden);
+   public Long copyTemplate(Long templateId, String title, String ownerId, boolean hidden, boolean includeChildren);
 
    /**
     * Makes a copy of a set of template items,
-    * also copies all related items and scales
+    * also copies all related items and scales if specified
     * <br/>
     * Permission checks should be performed to ensure that the current user can view the entities that they want to copy,
     * there is no need to check if they can modify them though as the original entities will not be changed
@@ -535,14 +538,17 @@ public interface EvalAuthoringService {
     * will use the current owner if this is null
     * @param hidden if this true then the copy will be hidden from control views by default,
     * else it will be shown in control views (internal copies should be hidden, user triggered copies should not)
+    * @param includeChildren if true then all items and scales are also copied,
+    * if false the ids are used but copies are not made (in general you should copy all children when duplicating
+    * but you probably only need to copy the object when the user makes a copy)
     * @return the unique ids of the copies
     * @throws IllegalArgumentException if any of the ids are invalid
     */
-   public Long[] copyTemplateItems(Long[] templateItemIds, String ownerId, boolean hidden);
+   public Long[] copyTemplateItems(Long[] templateItemIds, String ownerId, boolean hidden, boolean includeChildren);
 
    /**
     * Makes a copy of a set of items,
-    * also copies all related scales,
+    * also copies all related scales if specified,
     * does not copy expert indication and forces the sharing to be set to private
     * <br/>
     * Permission checks should be performed to ensure that the current user can view the entities that they want to copy,
@@ -553,10 +559,13 @@ public interface EvalAuthoringService {
     * will use the current owner if this is null
     * @param hidden if this true then the copy will be hidden from control views by default,
     * else it will be shown in control views (internal copies should be hidden, user triggered copies should not)
+    * @param includeChildren if true then all scales are also copied,
+    * if false the ids are used but copies are not made (in general you should copy all children when duplicating
+    * but you probably only need to copy the object when the user makes a copy)
     * @return the unique ids of the copies
     * @throws IllegalArgumentException if any of the ids are invalid
     */
-   public Long[] copyItems(Long[] itemIds, String ownerId, boolean hidden);
+   public Long[] copyItems(Long[] itemIds, String ownerId, boolean hidden, boolean includeChildren);
 
    /**
     * Makes a copy of a set of scales,
