@@ -174,7 +174,14 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
     * @return a string representing the HQL snippet (e.g. propA = 'apple')
     */
    public String makeComparisonHQL(String property, int comparisonConstant, Object value) {
-      String sval = "'" + value.toString() + "'";
+      String sval = null;
+      if (value.getClass().isAssignableFrom(Boolean.class) 
+            || value.getClass().isAssignableFrom(Number.class)) {
+         // special handling for boolean and numbers
+         sval = value.toString();
+      } else {
+         sval = "'" + value.toString() + "'";
+      }
       switch (comparisonConstant) {
       case EQUALS:      return property + " = " + sval;
       case GREATER:     return property + " > " + sval;

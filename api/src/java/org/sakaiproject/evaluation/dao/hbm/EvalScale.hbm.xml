@@ -64,7 +64,7 @@
         <property name="copyOf" type="java.lang.Long">
             <column name="COPY_OF" />
         </property>
-        <property name="hidden" type="boolean">
+        <property name="hidden" type="java.lang.Boolean">
             <column name="HIDDEN" />
         </property>
 	</class>
