@@ -43,7 +43,6 @@ public interface EvalAdhocSupport {
     * @param username the unique login name
     * @return the adhoc user or null if not found
     */
-   @SuppressWarnings("unchecked")
    public EvalAdhocUser getAdhocUserByUsername(String username);
 
    /**
@@ -52,7 +51,6 @@ public interface EvalAdhocSupport {
     * @param email the unique email address
     * @return the adhoc user or null if not found
     */
-   @SuppressWarnings("unchecked")
    public EvalAdhocUser getAdhocUserByEmail(String email);
 
    /**
@@ -70,13 +68,12 @@ public interface EvalAdhocSupport {
     * empty set return no users, null returns all users
     * @return a list of adhoc users which match the ids
     */
-   @SuppressWarnings("unchecked")
    public List<EvalAdhocUser> getAdhocUsersByIds(Long[] ids);
 
    /**
     * Save this adhoc user,
     * owner and email must be set<br/>
-    * This will check to see if this user already exists and will fetch the existing one
+    * This will check to see if this user already exists and will update the existing one
     * rather than saving more copies of the same user
     * 
     * @param user
@@ -100,13 +97,12 @@ public interface EvalAdhocSupport {
    public void saveAdhocGroup(EvalAdhocGroup group);
 
    /**
-    * Get the list of adhoc groups for this user,
+    * Get the list of adhoc groups for the user that created them,
     * ordered by title
     * 
     * @param userId internal user id (not username)
     * @return the list of all adhoc groups that this user owns
     */
-   @SuppressWarnings("unchecked")
    public List<EvalAdhocGroup> getAdhocGroupsForOwner(String userId);
 
    /**
@@ -120,7 +116,6 @@ public interface EvalAdhocSupport {
     * other permissions will return no results
     * @return a list of adhoc groups for which this user has this permission
     */
-   @SuppressWarnings("unchecked")
    public List<EvalAdhocGroup> getAdhocGroupsByUserAndPerm(String userId, String permissionConstant);
 
    /**
@@ -132,7 +127,6 @@ public interface EvalAdhocSupport {
     * @param evalGroupId the unique id of an adhoc eval group (not the persistent id)
     * @return true if allowed, false otherwise
     */
-   public boolean isUserAllowedInAdhocGroup(String userId, String permissionConstant,
-         String evalGroupId);
+   public boolean isUserAllowedInAdhocGroup(String userId, String permissionConstant, String evalGroupId);
 
 }
