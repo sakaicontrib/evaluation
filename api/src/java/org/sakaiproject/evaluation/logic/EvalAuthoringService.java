@@ -530,6 +530,11 @@ public interface EvalAuthoringService {
     * Makes a copy of a set of template items,
     * also copies all related items and scales if specified
     * <br/>
+    * <b>WARNING:</b> Be careful about copying blocks, you must include the complete set of 
+    * templateItem ids when copying blocks or the copy will fail to work, block copying will
+    * be handled specially so if you want to copy items which are part of a block without the block parent
+    * you can do it but they will end up outside the block
+    * <br/>
     * Permission checks should be performed to ensure that the current user can view the entities that they want to copy,
     * there is no need to check if they can modify them though as the original entities will not be changed
     * 
@@ -538,13 +543,15 @@ public interface EvalAuthoringService {
     * will use the current owner if this is null
     * @param hidden if this true then the copy will be hidden from control views by default,
     * else it will be shown in control views (internal copies should be hidden, user triggered copies should not)
+    * @param toTemplateId this is the id of the template to copy these templateItems to,
+    * if this is null then items will be copied to the same template they are currently in
     * @param includeChildren if true then all items and scales are also copied,
     * if false the ids are used but copies are not made (in general you should copy all children when duplicating
     * but you probably only need to copy the object when the user makes a copy)
     * @return the unique ids of the copies
     * @throws IllegalArgumentException if any of the ids are invalid
     */
-   public Long[] copyTemplateItems(Long[] templateItemIds, String ownerId, boolean hidden, boolean includeChildren);
+   public Long[] copyTemplateItems(Long[] templateItemIds, String ownerId, boolean hidden, Long toTemplateId, boolean includeChildren);
 
    /**
     * Makes a copy of a set of items,

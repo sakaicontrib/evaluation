@@ -2671,10 +2671,179 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.EvalAuthoringServiceImpl#copyTemplateItems(java.lang.Long[], java.lang.String, boolean, boolean)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalAuthoringServiceImpl#copyTemplateItems(java.lang.Long[], java.lang.String, boolean, Long, boolean)}.
     */
+   @SuppressWarnings("unchecked")
    public void testCopyTemplateItems() {
-//    fail("Not yet implemented");
+      Long[] copiedIds = null;
+      Long[] templateItemIds = null;
+
+      // copy a single templateItem
+      EvalTemplateItem original = etdl.templateItem1U;
+      templateItemIds = new Long[] {original.getId()};
+      copiedIds = authoringService.copyTemplateItems(templateItemIds, EvalTestDataLoad.MAINT_USER_ID, true, null, true);
+      assertNotNull(copiedIds);
+      assertEquals(templateItemIds.length, copiedIds.length);
+      EvalTemplateItem copy1 = (EvalTemplateItem) evaluationDao.findById(EvalTemplateItem.class, copiedIds[0]);
+      assertNotNull(copy1);
+
+      // verify the copy worked
+      // check the things that should differ
+      assertNotSame(copy1.getId(), original.getId());
+      assertEquals(original.getId(), copy1.getCopyOf());
+      assertEquals(EvalTestDataLoad.MAINT_USER_ID, copy1.getOwner());
+      assertEquals(true, copy1.isHidden());
+      assertTrue(original.getDisplayOrder() < copy1.getDisplayOrder());
+
+      // check the things that should match
+      assertEquals(original.getBlockId(), copy1.getBlockId());
+      assertEquals(original.getBlockParent(), copy1.getBlockParent());
+      assertEquals(original.getCategory(), copy1.getCategory());
+      assertEquals(original.getDisplayRows(), copy1.getDisplayRows());
+      assertEquals(original.getHierarchyLevel(), copy1.getHierarchyLevel());
+      assertEquals(original.getHierarchyNodeId(), copy1.getHierarchyNodeId());
+      assertEquals(original.getResultsSharing(), copy1.getResultsSharing());
+      assertEquals(original.getScaleDisplaySetting(), copy1.getScaleDisplaySetting());
+      assertEquals(original.getUsesNA(), copy1.getUsesNA());
+
+      assertEquals(original.getTemplate().getId(), copy1.getTemplate().getId());
+
+      // check that the item was copied correctly also
+      assertNotNull(copy1.getItem());
+      assertNotNull(original.getItem());
+      assertNotSame(original.getItem().getId(), copy1.getItem().getId());
+      assertEquals(original.getItem().getItemText(), copy1.getItem().getItemText());
+
+      // now do a copy without children
+      original = etdl.templateItem1P;
+      templateItemIds = new Long[] {original.getId()};
+      copiedIds = authoringService.copyTemplateItems(templateItemIds, EvalTestDataLoad.MAINT_USER_ID, true, null, false);
+      assertNotNull(copiedIds);
+      assertEquals(templateItemIds.length, copiedIds.length);
+      EvalTemplateItem copy2 = (EvalTemplateItem) evaluationDao.findById(EvalTemplateItem.class, copiedIds[0]);
+      assertNotNull(copy2);
+
+      // verify the copy worked
+      // check the things that should differ
+      assertNotSame(copy2.getId(), original.getId());
+      assertEquals(copy2.getCopyOf(), original.getId());
+      assertEquals(copy2.getOwner(), EvalTestDataLoad.MAINT_USER_ID);
+      assertEquals(copy2.isHidden(), true);
+      assertTrue(original.getDisplayOrder() < copy2.getDisplayOrder());
+
+      // check the things that should match
+      assertEquals(copy2.getBlockId(), original.getBlockId());
+      assertEquals(copy2.getBlockParent(), original.getBlockParent());
+      assertEquals(copy2.getCategory(), original.getCategory());
+      assertEquals(copy2.getDisplayRows(), original.getDisplayRows());
+      assertEquals(copy2.getHierarchyLevel(), original.getHierarchyLevel());
+      assertEquals(copy2.getHierarchyNodeId(), original.getHierarchyNodeId());
+      assertEquals(copy2.getResultsSharing(), original.getResultsSharing());
+      assertEquals(copy2.getScaleDisplaySetting(), original.getScaleDisplaySetting());
+      assertEquals(copy2.getUsesNA(), original.getUsesNA());
+
+      assertEquals(copy2.getTemplate().getId(), original.getTemplate().getId());
+
+      // check that the item was used but not copied
+      assertNotNull(copy2.getItem());
+      assertEquals(copy2.getItem().getId(), original.getItem().getId());
+
+
+      // only 1 countable item in the block template
+      assertEquals( 1, authoringService.getItemCountForTemplate(etdl.templateAdminBlock.getId()) );
+
+      // test out copying a complete block
+      templateItemIds = new Long[] {etdl.templateItem9B.getId(), etdl.templateItem2B.getId(), etdl.templateItem3B.getId()};
+      copiedIds = authoringService.copyTemplateItems(templateItemIds, EvalTestDataLoad.MAINT_USER_ID, true, null, false);
+      assertNotNull(copiedIds);
+      assertEquals(templateItemIds.length, copiedIds.length);
+      List<EvalTemplateItem> templateItems = evaluationDao.findByProperties(EvalTemplateItem.class, new String[] {"id"}, new Object[] { copiedIds });
+      assertNotNull(templateItems);
+      assertEquals(templateItemIds.length, templateItems.size());
+
+      // verify the copy worked
+      Long blockParentId = null;
+      for (EvalTemplateItem templateItem : templateItems) {
+         assertNotNull(templateItem.getBlockParent());
+         if (templateItem.getBlockParent()) {
+            assertNull(templateItem.getBlockId());
+            blockParentId = templateItem.getId();
+         } else {
+            assertNotNull(templateItem.getBlockId());            
+         }
+      }
+
+      for (EvalTemplateItem templateItem : templateItems) {
+         assertEquals(templateItem.getOwner(), EvalTestDataLoad.MAINT_USER_ID);
+         assertEquals(templateItem.isHidden(), true);
+         assertEquals(copy2.getTemplate().getId(), original.getTemplate().getId());
+         if (templateItem.getBlockParent()) {
+            // check the things that should differ
+            assertNotSame(templateItem.getId(), etdl.templateItem9B.getId());
+            assertEquals(templateItem.getCopyOf(), etdl.templateItem9B.getId());
+         } else {
+            // check the block is assigned correctly
+            assertEquals(blockParentId, templateItem.getBlockId());
+         }
+      }
+
+      // now 2 countable items in the block template
+      assertEquals( 2, authoringService.getItemCountForTemplate(etdl.templateAdminBlock.getId()) );
+
+
+      // now copy over to a new template
+      original = etdl.templateItem1P;
+      templateItemIds = new Long[] {original.getId()};
+      copiedIds = authoringService.copyTemplateItems(templateItemIds, EvalTestDataLoad.MAINT_USER_ID, true, etdl.templateAdmin.getId(), false);
+      assertNotNull(copiedIds);
+      assertEquals(templateItemIds.length, copiedIds.length);
+      EvalTemplateItem copy3 = (EvalTemplateItem) evaluationDao.findById(EvalTemplateItem.class, copiedIds[0]);
+      assertNotNull(copy3);
+
+      // check the template
+      assertNotSame(copy3.getTemplate().getId(), original.getTemplate().getId());
+      assertEquals(etdl.templateAdmin.getId(), copy3.getTemplate().getId());
+
+
+      // check we can copy a bunch of things
+      templateItemIds = new Long[] {etdl.templateItem2A.getId(), etdl.templateItem3A.getId(), etdl.templateItem5A.getId()};
+      copiedIds = authoringService.copyTemplateItems(templateItemIds, EvalTestDataLoad.MAINT_USER_ID, false, null, true);
+      assertNotNull(copiedIds);
+      assertEquals(templateItemIds.length, copiedIds.length);
+      for (int i = 0; i < copiedIds.length; i++) {
+         assertNotNull(evaluationDao.findById(EvalTemplateItem.class, copiedIds[i]));
+      }
+
+      assertEquals( 2, authoringService.getItemCountForTemplate(etdl.templateUser.getId()) );
+
+      // check we can copy a bunch of things (without children) into the same template
+      templateItemIds = new Long[] {etdl.templateItem1User.getId(), etdl.templateItem5User.getId()};
+      copiedIds = authoringService.copyTemplateItems(templateItemIds, EvalTestDataLoad.MAINT_USER_ID, false, null, false);
+      assertNotNull(copiedIds);
+      assertEquals(templateItemIds.length, copiedIds.length);
+      for (int i = 0; i < copiedIds.length; i++) {
+         assertNotNull(evaluationDao.findById(EvalTemplateItem.class, copiedIds[i]));
+      }
+
+      assertEquals( 4, authoringService.getItemCountForTemplate(etdl.templateUser.getId()) );
+
+      // check that trying to do an inside copy of TIs from multiple templates causes failure
+      templateItemIds = new Long[] {etdl.templateItem1P.getId(), etdl.templateItem2A.getId()};
+      try {
+         copiedIds = authoringService.copyTemplateItems(templateItemIds, EvalTestDataLoad.MAINT_USER_ID, false, null, true);
+         fail("Should have thrown exception");
+      } catch (IllegalArgumentException e) {
+         assertNotNull(e);
+      }
+
+      // check that invalid templateItemId causes exception
+      templateItemIds = new Long[] {etdl.templateItem2A.getId(), EvalTestDataLoad.INVALID_LONG_ID};
+      try {
+         copiedIds = authoringService.copyTemplateItems(templateItemIds, EvalTestDataLoad.MAINT_USER_ID, false, null, true);
+         fail("Should have thrown exception");
+      } catch (IllegalArgumentException e) {
+         assertNotNull(e);
+      }
    }
 
    /**

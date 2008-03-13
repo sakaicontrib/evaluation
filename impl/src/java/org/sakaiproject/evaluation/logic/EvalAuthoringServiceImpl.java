@@ -560,24 +560,12 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 
       // get the template items count to set display order for new templateItems
       if (templateItem.getId() == null) {
-         if (templateItem.getBlockParent() != null &&
-               templateItem.getBlockParent().booleanValue() &&
-               templateItem.getDisplayOrder() != null) {
+         if (TemplateItemUtils.isBlockParent(templateItem) 
+               && templateItem.getDisplayOrder() != null) {
             // if this a block parent then we allow the display order to be set
          } else {
             // new item
-            int itemsCount = 0;
-            if (template.getTemplateItems() != null) {
-               // TODO - write a DAO method to do this faster
-               for (Iterator iter = template.getTemplateItems().iterator(); iter.hasNext();) {
-                  EvalTemplateItem eti = (EvalTemplateItem) iter.next();
-                  if (eti.getBlockId() == null) {
-                     // only count items which are not children of a block
-                     itemsCount++;
-                  }
-               }
-               //itemsCount = template.getTemplateItems().size();
-            }
+            int itemsCount = getItemCountForTemplate(template.getId());
             templateItem.setDisplayOrder( new Integer(itemsCount + 1) );
          }
       } else {
@@ -662,6 +650,35 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 
       // should not get here so die if we do
       throw new RuntimeException("User ("+userId+") could NOT save templateItem ("+templateItem.getId()+")");
+   }
+
+
+
+   /**
+    * Used for determining next available displayOrder
+    * 
+    * @param templateId unique id for a template
+    * @return a count of the non-child items in the template
+    */
+   protected int getItemCountForTemplate(Long templateId) {
+      // only count items which are not children of a block
+      int itemsCount = dao.countByProperties(EvalTemplateItem.class, 
+            new String[] {"template.id", "blockId"}, 
+            new Object[] {templateId, ""},
+            new int[] {EvaluationDao.EQUALS, EvaluationDao.NULL});
+// OLD way
+//            int itemsCount = 0;
+//            if (template.getTemplateItems() != null) {
+//               // TODO - write a DAO method to do this faster
+//               for (Iterator iter = template.getTemplateItems().iterator(); iter.hasNext();) {
+//                  EvalTemplateItem eti = (EvalTemplateItem) iter.next();
+//                  if (eti.getBlockId() == null) {
+//                     // only count items which are not children of a block
+//                     itemsCount++;
+//                  }
+//               }
+//            }
+      return itemsCount;
    }
 
 
@@ -1341,7 +1358,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
             EvalScale scale = null;
             if (includeChildren) {
                Long[] scaleIds = copyScales(new Long[] {original.getScale().getId()}, null, ownerId, hidden);
-               scale = (EvalScale) dao.findById(EvalScale.class, scaleIds[0]);
+               scale = getScaleById(scaleIds[0]);
             } else {
                scale = original.getScale();
             }
@@ -1362,10 +1379,131 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       return copiedIds;
    }
 
-   public Long[] copyTemplateItems(Long[] templateItemIds, String ownerId, boolean hidden, boolean includeChildren) {
-      // TODO Auto-generated method stub
-      return null;
+   @SuppressWarnings("unchecked")
+   public Long[] copyTemplateItems(Long[] templateItemIds, String ownerId, boolean hidden, Long toTemplateId, boolean includeChildren) {
+      if (ownerId == null || ownerId.length() == 0) {
+         throw new IllegalArgumentException("Invalid ownerId, cannot be null or empty string");  
+      }
+      if (templateItemIds == null || templateItemIds.length == 0) {
+         throw new IllegalArgumentException("Invalid templateItemIds array, cannot be null or empty");
+      }
+
+      EvalTemplate toTemplate = null;
+      if (toTemplateId != null) {
+         toTemplate = getTemplateById(toTemplateId);
+         if (toTemplate == null) {
+            throw new IllegalArgumentException("Invalid toTemplateId, cannot find the template by this id: " + toTemplateId);
+         }
+      }
+
+      List<EvalTemplateItem> templateItemsList = dao.findByProperties(EvalTemplateItem.class, new String[] {"id"}, new Object[] { templateItemIds });
+      if (templateItemsList.size() != templateItemIds.length) {
+         throw new IllegalArgumentException("Invalid templateItemIds in array: " + templateItemIds);
+      }
+
+      // now we check that copying into the originating template is correct and ensure the toTemplate is set
+      if (toTemplate == null) {
+         // all templateItems must be from the same template if this is the case
+         for (EvalTemplateItem templateItem : templateItemsList) {
+            Long templateId = templateItem.getTemplate().getId();
+            if (toTemplate == null) {
+               toTemplate = getTemplateById(templateId);
+            } else {
+               if (! toTemplate.getId().equals(templateId)) {
+                  throw new IllegalArgumentException("All templateItems must be from the same template when doing a copies within a template,"
+                           + " if you want to copy templateItems from multiple templates into the same templates they are currently in you must "
+                        	+ "do it in batches where each set if from one template");
+               }
+            }
+         }
+      }
+
+      // sort the list of template items
+      templateItemsList = TemplateItemUtils.orderTemplateItems(templateItemsList);
+
+      int itemCount = 1; // start at display order 1
+      if (toTemplateId == null) {
+         // copying inside one template so start at the item count + 1
+         // get the count of items in the destination template so we know where to start displayOrder from
+         itemCount = getItemCountForTemplate(toTemplate.getId()) + 1;
+      }
+
+      // check for block items
+      List<EvalTemplateItem> nonChildItems = TemplateItemUtils.getNonChildItems(templateItemsList);
+
+      // iterate though in display order and copy the template items
+      int counter = 0;
+      Long[] copiedIds = new Long[templateItemsList.size()];
+      for (int i = 0; i < nonChildItems.size(); i++) {
+         EvalTemplateItem original = nonChildItems.get(i);
+         if (TemplateItemUtils.isBlockParent(original)) {
+            // this is a block parent so copy it and its children
+            Long originalBlockParentId = original.getId();
+            templateItemsList.remove(original); // take this out of the list
+            // copy and save the parent
+            EvalTemplateItem copyParent = copyTemplateItem(original, toTemplate, ownerId, hidden, includeChildren);
+            copyParent.setDisplayOrder(itemCount + i); // fix up display order
+            copyParent.setBlockId(null);
+            copyParent.setBlockParent(true);
+            dao.save(copyParent);
+            copiedIds[counter++] = copyParent.getId();
+            Long blockParentId = copyParent.getId();
+
+            // loop through and copy all the children and assign them to the parent
+            List<EvalTemplateItem> childItems = TemplateItemUtils.getChildItems(templateItemsList, originalBlockParentId);
+            for (int j = 0; j < childItems.size(); j++) {
+               EvalTemplateItem child = childItems.get(j);
+               templateItemsList.remove(child); // take this out of the list
+               // copy the child item
+               EvalTemplateItem copy = copyTemplateItem(child, toTemplate, ownerId, hidden, includeChildren);
+               copy.setDisplayOrder(j); // fix up display order
+               copy.setBlockId(blockParentId);
+               copy.setBlockParent(false);
+               dao.save(copy);
+               copiedIds[counter++] = copy.getId();
+            }
+         } else {
+            // not in a block
+            EvalTemplateItem copy = copyTemplateItem(original, toTemplate, ownerId, hidden, includeChildren);
+            copy.setDisplayOrder(itemCount + i); // fix up display order
+            dao.save(copy);
+            copiedIds[counter++] = copy.getId();
+         }
+      }
+      return copiedIds;
    }
+
+   /**
+    * Makes a non-persistent copy of a templateItem, nulls out the block fields,
+    * inherits the display order from the original
+    * 
+    * @param original the original item to copy
+    * @param toTemplate
+    * @param ownerId
+    * @param hidden
+    * @param includeChildren
+    * @return the copy of the templateItem (not persisted)
+    */
+   private EvalTemplateItem copyTemplateItem(EvalTemplateItem original, EvalTemplate toTemplate,
+         String ownerId, boolean hidden, boolean includeChildren) {
+      EvalTemplateItem copy = new EvalTemplateItem(new Date(), ownerId, toTemplate, null, original.getDisplayOrder(),
+            original.getCategory(), original.getHierarchyLevel(), original.getHierarchyNodeId(), original.getDisplayRows(),
+            original.getScaleDisplaySetting(), original.getUsesNA(), null, null, original.getResultsSharing());
+      // copy the item as well if needed
+      EvalItem item = null;
+      if (includeChildren) {
+         Long[] itemIds = copyItems(new Long[] {original.getItem().getId()}, ownerId, hidden, includeChildren);
+         item = getItemById(itemIds[0]);
+      } else {
+         item = original.getItem();
+      }
+      copy.setItem(item);
+      // set the other copy fields correctly
+      copy.setCopyOf(original.getId());
+      copy.setHidden(hidden);
+      return copy;
+   }
+
 
    public Long copyTemplate(Long templateId, String title, String ownerId, boolean hidden, boolean includeChildren) {
       // TODO Auto-generated method stub
