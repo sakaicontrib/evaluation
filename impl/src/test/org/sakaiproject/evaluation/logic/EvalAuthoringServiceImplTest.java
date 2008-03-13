@@ -2504,7 +2504,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       for (int i = 0; i < copy1.getOptions().length; i++) {
          assertEquals(copy1.getOptions()[i], etdl.scale1.getOptions()[i]);
       }
-      
+
 
       // make sure title generation works
       scaleIds = new Long[] {etdl.scale1.getId()};
@@ -2535,24 +2535,153 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.EvalAuthoringServiceImpl#copyItems(java.lang.Long[], java.lang.String, boolean)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalAuthoringServiceImpl#copyItems(java.lang.Long[], java.lang.String, boolean, boolean)}.
     */
    public void testCopyItems() {
-//      fail("Not yet implemented");
+      Long[] copiedIds = null;
+      Long[] itemIds = null;
+
+      // copy a single item
+      EvalItem original = etdl.item1;
+      itemIds = new Long[] {original.getId()};
+      copiedIds = authoringService.copyItems(itemIds, EvalTestDataLoad.MAINT_USER_ID, true, true);
+      assertNotNull(copiedIds);
+      assertEquals(itemIds.length, copiedIds.length);
+      EvalItem copy1 = (EvalItem) evaluationDao.findById(EvalItem.class, copiedIds[0]);
+      assertNotNull(copy1);
+
+      // verify the copy worked
+      // check the things that should differ
+      assertNotSame(copy1.getId(), original.getId());
+      assertEquals(copy1.getCopyOf(), original.getId());
+      assertEquals(copy1.getOwner(), EvalTestDataLoad.MAINT_USER_ID);
+      assertEquals(copy1.isHidden(), true);
+      assertEquals(copy1.getExpert(), Boolean.FALSE);
+      assertEquals(copy1.getExpertDescription(), null);
+      assertEquals(copy1.getLocked(), Boolean.FALSE);
+      assertEquals(copy1.getSharing(), EvalConstants.SHARING_PRIVATE);
+
+      // check the things that should match
+      assertEquals(copy1.getCategory(), original.getCategory());
+      assertEquals(copy1.getClassification(), original.getClassification());
+      assertEquals(copy1.getDescription(), original.getDescription());
+      assertEquals(copy1.getDisplayRows(), original.getDisplayRows());
+      assertEquals(copy1.getItemText(), original.getItemText());
+      assertEquals(copy1.getScaleDisplaySetting(), original.getScaleDisplaySetting());
+      assertEquals(copy1.getUsesNA(), original.getUsesNA());
+
+      // check that the scale was copied correctly also
+      assertNotNull(original.getScale());
+      assertNotNull(copy1.getScale());
+      assertNotSame(copy1.getScale().getId(), original.getScale().getId());
+      for (int i = 0; i < copy1.getScale().getOptions().length; i++) {
+         assertEquals(copy1.getScale().getOptions()[i], original.getScale().getOptions()[i]);
+      }
+
+      // now do a copy without children
+      original = etdl.item1;
+      itemIds = new Long[] {original.getId()};
+      copiedIds = authoringService.copyItems(itemIds, EvalTestDataLoad.MAINT_USER_ID, true, false);
+      assertNotNull(copiedIds);
+      assertEquals(itemIds.length, copiedIds.length);
+      EvalItem copy2 = (EvalItem) evaluationDao.findById(EvalItem.class, copiedIds[0]);
+      assertNotNull(copy2);
+
+      // verify the copy worked
+      // check the things that should differ
+      assertNotSame(copy2.getId(), original.getId());
+      assertEquals(copy2.getCopyOf(), original.getId());
+      assertEquals(copy2.getOwner(), EvalTestDataLoad.MAINT_USER_ID);
+      assertEquals(copy2.isHidden(), true);
+      assertEquals(copy2.getExpert(), Boolean.FALSE);
+      assertEquals(copy2.getExpertDescription(), null);
+      assertEquals(copy2.getLocked(), Boolean.FALSE);
+      assertEquals(copy2.getSharing(), EvalConstants.SHARING_PRIVATE);
+
+      // check the things that should match
+      assertEquals(copy2.getCategory(), original.getCategory());
+      assertEquals(copy2.getClassification(), original.getClassification());
+      assertEquals(copy2.getDescription(), original.getDescription());
+      assertEquals(copy2.getDisplayRows(), original.getDisplayRows());
+      assertEquals(copy2.getItemText(), original.getItemText());
+      assertEquals(copy2.getScaleDisplaySetting(), original.getScaleDisplaySetting());
+      assertEquals(copy2.getUsesNA(), original.getUsesNA());
+
+      // check that the scale was used but not copied
+      assertNotNull(copy2.getScale());
+      assertEquals(copy2.getScale().getId(), original.getScale().getId());
+      
+
+
+      // copy a single item (text item this time), true for child copy even though there are no children should be ok
+      original = etdl.item5;
+      itemIds = new Long[] {original.getId()};
+      copiedIds = authoringService.copyItems(itemIds, EvalTestDataLoad.MAINT_USER_ID, true, true);
+      assertNotNull(copiedIds);
+      assertEquals(itemIds.length, copiedIds.length);
+      EvalItem copy3 = (EvalItem) evaluationDao.findById(EvalItem.class, copiedIds[0]);
+      assertNotNull(copy3);
+
+      // verify the copy worked
+      // check the things that should differ
+      assertNotSame(copy3.getId(), original.getId());
+      assertEquals(copy3.getCopyOf(), original.getId());
+      assertEquals(copy3.getOwner(), EvalTestDataLoad.MAINT_USER_ID);
+      assertEquals(copy3.isHidden(), true);
+      assertEquals(copy3.getExpert(), Boolean.FALSE);
+      assertEquals(copy3.getExpertDescription(), null);
+      assertEquals(copy3.getLocked(), Boolean.FALSE);
+      assertEquals(copy3.getSharing(), EvalConstants.SHARING_PRIVATE);
+
+      // check the things that should match
+      assertEquals(copy3.getCategory(), original.getCategory());
+      assertEquals(copy3.getClassification(), original.getClassification());
+      assertEquals(copy3.getDescription(), original.getDescription());
+      assertEquals(copy3.getDisplayRows(), original.getDisplayRows());
+      assertEquals(copy3.getItemText(), original.getItemText());
+      assertEquals(copy3.getScaleDisplaySetting(), original.getScaleDisplaySetting());
+      assertEquals(copy3.getUsesNA(), original.getUsesNA());
+
+      // check we can copy a bunch of things
+      itemIds = new Long[] {etdl.item2.getId(), etdl.item3.getId(), etdl.item4.getId()};
+      copiedIds = authoringService.copyItems(itemIds, EvalTestDataLoad.MAINT_USER_ID, false, true);
+      assertNotNull(copiedIds);
+      assertEquals(itemIds.length, copiedIds.length);
+      for (int i = 0; i < copiedIds.length; i++) {
+         assertNotNull(evaluationDao.findById(EvalItem.class, copiedIds[i]));
+      }
+
+      // check we can copy a bunch of things (without children)
+      itemIds = new Long[] {etdl.item2.getId(), etdl.item4.getId(), etdl.item6.getId()};
+      copiedIds = authoringService.copyItems(itemIds, EvalTestDataLoad.MAINT_USER_ID, false, false);
+      assertNotNull(copiedIds);
+      assertEquals(itemIds.length, copiedIds.length);
+      for (int i = 0; i < copiedIds.length; i++) {
+         assertNotNull(evaluationDao.findById(EvalItem.class, copiedIds[i]));
+      }
+
+      // check that invalid itemId causes exception
+      itemIds = new Long[] {etdl.item2.getId(), EvalTestDataLoad.INVALID_LONG_ID};
+      try {
+         copiedIds = authoringService.copyItems(itemIds, EvalTestDataLoad.MAINT_USER_ID, false, true);
+         fail("Should have thrown exception");
+      } catch (IllegalArgumentException e) {
+         assertNotNull(e);
+      }
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.EvalAuthoringServiceImpl#copyTemplateItems(java.lang.Long[], java.lang.String, boolean)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalAuthoringServiceImpl#copyTemplateItems(java.lang.Long[], java.lang.String, boolean, boolean)}.
     */
    public void testCopyTemplateItems() {
-//      fail("Not yet implemented");
+//    fail("Not yet implemented");
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.EvalAuthoringServiceImpl#copyTemplate(java.lang.Long, java.lang.String, java.lang.String, boolean)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalAuthoringServiceImpl#copyTemplate(java.lang.Long, java.lang.String, java.lang.String, boolean, boolean)}.
     */
    public void testCopyTemplate() {
-//      fail("Not yet implemented");
+//    fail("Not yet implemented");
    }
 
 }
