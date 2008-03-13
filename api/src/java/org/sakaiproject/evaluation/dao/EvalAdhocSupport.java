@@ -18,12 +18,28 @@ import java.util.List;
 import java.util.Map;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.ExternalUsers;
+import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
 
 /**
- * Do NOT use this interface if outside the logic layer<br/>
- * This is just needed because we cannot proxy properly in Sakai without it
+ * This is for dealing with Adhoc users and groups<br/>,
+ * these are stored in evaluation itself and more details notes are here:
+ * http://confluence.sakaiproject.org/confluence/display/EVALSYS/Evaluation+Implementation<br/>
+ * <br/>
+ * This is the primary interface for dealing with adhoc users and groups (writes/updates).
+ * This interface should be used when fetching adhoc groups (especially for getting the list of existing adhoc groups).
+ * <br/>
+ * When fetching user information about a large group of users (e.g. when displaying the adhoc group members to the user) 
+ * you should use the methods in {@link EvalExternalLogic} (in particular {@link ExternalUsers}).
+ * <br/>
+ * {@link ExternalUsers#getEvalUsersByIds(String[])} in particular is the method to fetch a large list of users and 
+ * it does it as efficiently as possible. All user interaction should be done with {@link EvalUser} objects
+ * <br/>
+ * <b>WARNING</b>: Do NOT use this interface if outside the logic layer<br/>
+ * This is just needed because we cannot proxy properly in Sakai without it</br>
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
