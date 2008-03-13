@@ -247,7 +247,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
 
       String hql = buildSharingHQL(entityClass.getName(), userId, sharingConstants, 
             props, values, comparisons, order, options);
-      log.info("getSharedEntitiesForUser: HQL=" + hql); // TODO - make this debug
+      log.warn("getSharedEntitiesForUser: HQL=" + hql); // TODO - make this debug
       Map<String, Object> params = new HashMap<String, Object>();
       List<T> l = executeHqlQuery(hql, params, start, limit);
       return l;
