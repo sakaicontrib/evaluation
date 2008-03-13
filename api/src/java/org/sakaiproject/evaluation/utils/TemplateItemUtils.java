@@ -300,6 +300,37 @@ public class TemplateItemUtils {
       return childItemsList;
    }
 
+
+   /**
+    * return all the templateItems from a larger list for a specific nodeId<br/>
+    * This is primarily useful for taking all the items in a template and splitting out the ones which are only associated with a specific node
+    * 
+    * @param templateItemsList a List of {@link EvalTemplateItem} objects from a template
+    * @param hierarchyNodeId unique id for a hierarchy node, use null to indicate the top level of the hierarchy
+    * @return a List of {@link EvalTemplateItem} objects or empty if none found
+    */
+   public static List<EvalTemplateItem> getNodeItems(List<EvalTemplateItem> templateItemsList, String hierarchyNodeId) {
+      List<EvalTemplateItem> nodeItems = new ArrayList<EvalTemplateItem>();
+
+      for (EvalTemplateItem templateItem : templateItemsList) {
+         if (hierarchyNodeId == null) {
+            if (templateItem.getHierarchyLevel().equals(EvalConstants.HIERARCHY_LEVEL_TOP)) {
+               nodeItems.add(templateItem);
+            }
+         } else {
+            if ( templateItem.getHierarchyLevel().equals(EvalConstants.HIERARCHY_LEVEL_NODE) 
+                  && templateItem.getHierarchyNodeId().equals(hierarchyNodeId) ) {
+               nodeItems.add(templateItem);
+            }            
+         }
+      }
+      
+      // fix the order
+      Collections.sort(nodeItems, new ComparatorsUtils.TemplateItemComparatorByOrder() );
+      return nodeItems;
+   }
+
+
    /**
     * Creates an {@link EvalTemplateItem} object from an {@link EvalItem} object by inferring
     * the necessary paramters for previewing or rendering when only an item is available, 
