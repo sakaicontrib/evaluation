@@ -346,7 +346,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                UIBranchContainer courseSection = UIBranchContainer.make(form, "courseSection:");
                UIMessage.make(courseSection, "course-questions-header", "takeeval.group.questions.header");
                // for each non-child item in this evaluation
-               handleCategoryRender(
+               handleCategoryRender( 
                      TemplateItemUtils.getCategoryTemplateItems(EvalConstants.ITEM_CATEGORY_COURSE, nonChildItemsList), 
                      form, courseSection, hierarchyNodes, null);
             }
@@ -354,8 +354,10 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
             if (instructors.size() > 0 &&
                   TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, nonChildItemsList)) {	
                // for each instructor, make a branch containing all instructor questions
+               int instructorCount = 0;
                for (String instructorUserId : instructors) {
-                  UIBranchContainer instructorSection = UIBranchContainer.make(form, "instructorSection:", "inst"+displayNumber);
+                  instructorCount++; // start with instructor 1
+                  UIBranchContainer instructorSection = UIBranchContainer.make(form, "instructorSection:", "inst"+instructorCount);
                   EvalUser instructor = external.getEvalUserById( instructorUserId );
                   UIMessage.make(instructorSection, "instructor-questions-header", 
                         "takeeval.instructor.questions.header", new Object[] { instructor.displayName });
@@ -383,33 +385,23 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
     * @param evalHierNodes
     * @param associatedId the ID if there is something associated with these items
     */
-   private void handleCategoryRender(List<EvalTemplateItem> itemsList, UIForm form, UIBranchContainer section, 
+   private void handleCategoryRender(List<EvalTemplateItem> templateItemsList, UIForm form, UIBranchContainer section, 
          List<EvalHierarchyNode> evalHierNodes, String associatedId) {
+
       /* We need to render things by section. For now we'll just loop through each evalHierNode to start, and 
        * see if there are items of it. If there are we'll go ahead and render them with a group header.  We 
        * have to take care of the special toplevel hierarchy type first.
-       * 
-       * I don't suppose this is terribly efficient, just looping through the nodes and items over and over again.
-       * However, I don't think any survey is going to have enough questions for it to ever matter.
        */
-      List<EvalTemplateItem> templateItems = new ArrayList<EvalTemplateItem>();
-      for (EvalTemplateItem item: itemsList) {
-         if (item.getHierarchyLevel().equals(EvalConstants.HIERARCHY_LEVEL_TOP)) {
-            templateItems.add(item);
-         }
-      }
 
+      // top level first
+      List<EvalTemplateItem> templateItems = TemplateItemUtils.getNodeItems(templateItemsList, null);
       if (templateItems.size() > 0) {
          handleCategoryHierarchyNodeRender(templateItems, form, section, null, associatedId);
       }
 
+      // then do the remaining nodes in order supplied
       for (EvalHierarchyNode evalNode: evalHierNodes) {
-         templateItems = new ArrayList<EvalTemplateItem>();
-         for (EvalTemplateItem item: itemsList) {
-            if (item.getHierarchyLevel().equals(EvalConstants.HIERARCHY_LEVEL_NODE) && item.getHierarchyNodeId().equals(evalNode.id)) {
-               templateItems.add(item);
-            }
-         }
+         templateItems = TemplateItemUtils.getNodeItems(templateItemsList, evalNode.id);
          if (templateItems.size() > 0) {
             handleCategoryHierarchyNodeRender(templateItems, form, section, evalNode.title, associatedId);
          }
@@ -422,20 +414,21 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
     * this method once for each node group, passing in the items for that node, and the title (ie. "Biology Department") that you want rendered.
     * If you pass in a null or empty sectiontitle, it will assume that it is for the general top level node level.
     */
-   private void handleCategoryHierarchyNodeRender(List<EvalTemplateItem> itemsInNode, UIForm form, UIContainer tofill, 
+   private void handleCategoryHierarchyNodeRender(List<EvalTemplateItem> itemsInNode, UIForm form, UIContainer parent, 
          String sectiontitle, String associatedId) {
-      // Showing the section title is system configurable via the administrate view
-      Boolean showHierSectionTitle = (Boolean) evalSettings.get(EvalSettings.DISPLAY_HIERARCHY_HEADERS);
-      if (showHierSectionTitle != null && showHierSectionTitle.booleanValue() == true) {
-         if (sectiontitle != null && !sectiontitle.equals("")) {
-            UIBranchContainer labelrow = UIBranchContainer.make(tofill, "itemrow:hier-node-section");
+
+      if (sectiontitle != null && sectiontitle.length() > 0) {
+         // Showing the section title is system configurable via the administrate view
+         Boolean showHierSectionTitle = (Boolean) evalSettings.get(EvalSettings.DISPLAY_HIERARCHY_HEADERS);
+         if (showHierSectionTitle) {
+            UIBranchContainer labelrow = UIBranchContainer.make(parent, "itemrow:hier-node-section");
             UIOutput.make(labelrow, "hier-node-title", sectiontitle);
          }
       }
 
-      for (int i = 0; i <itemsInNode.size(); i++) {
+      for (int i = 0; i < itemsInNode.size(); i++) {
          EvalTemplateItem templateItem = itemsInNode.get(i);
-         UIBranchContainer radiobranch = UIBranchContainer.make(tofill, "itemrow:first", i+"");
+         UIBranchContainer radiobranch = UIBranchContainer.make(parent, "itemrow:first"); // , i+""); // EVALSYS-336 - allow RSF to generate unique ids itself
          if (i % 2 == 1) {
             radiobranch.decorators = new DecoratorList( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
          }
