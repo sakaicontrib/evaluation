@@ -201,9 +201,17 @@ public class HierarchyRenderUtil {
          UIInput.make(tableRow, "parant-id-input", null, "NO_PARENT");
       }
 
+      Map<String, Integer> numGroupsMap = hierarchyLogic.countEvalGroupsForNodes(new String[] {node.id});
+      int numberOfAssignedGroups = numGroupsMap.get(node.id).intValue();
+      
+      /* If this node has groups assigned to it, we should not be able to add
+       * sub-nodes.
+       */
       UIOutput.make(tableRow, "add-child-cell");
-      UIInternalLink.make(tableRow, "add-child-link", UIMessage.make("controlhierarchy.add"),
+      if (numberOfAssignedGroups < 1) {
+         UIInternalLink.make(tableRow, "add-child-link", UIMessage.make("controlhierarchy.add"),
             new ModifyHierarchyNodeParameters(ModifyHierarchyNodeProducer.VIEW_ID, node.id, true));
+      }
       UIOutput.make(tableRow, "modify-node-cell");
       UIInternalLink.make(tableRow, "modify-node-link", UIMessage.make("controlhierarchy.modify"),
             new ModifyHierarchyNodeParameters(ModifyHierarchyNodeProducer.VIEW_ID, node.id, false));
@@ -226,9 +234,9 @@ public class HierarchyRenderUtil {
          UIInternalLink.make(tableRow, "assign-groups-link", UIMessage.make("controlhierarchy.assigngroups"), 
                new HierarchyNodeParameters(ModifyHierarchyNodeGroupsProducer.VIEW_ID, node.id));
          
-         Map<String, Integer> numGroupsMap = hierarchyLogic.countEvalGroupsForNodes(new String[] {node.id});
+         
          UIOutput.make(tableRow, "assigned-group-count-cell");
-         UIOutput.make(tableRow, "assign-group-count", numGroupsMap.get(node.id).toString());
+         UIOutput.make(tableRow, "assign-group-count", numberOfAssignedGroups+"");
       }
       
       /*
