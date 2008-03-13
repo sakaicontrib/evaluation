@@ -2479,6 +2479,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       Long[] scaleIds = null;
 
       // copy a single scale
+      EvalScale original = etdl.scale1;
       scaleIds = new Long[] {etdl.scale1.getId()};
       copiedIds = authoringService.copyScales(scaleIds, "new scale 1", EvalTestDataLoad.MAINT_USER_ID, true);
       assertNotNull(copiedIds);
@@ -2488,21 +2489,21 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
 
       // verify the copy worked
       // check the things that should differ
-      assertNotSame(copy1.getId(), etdl.scale1.getId());
-      assertEquals(copy1.getCopyOf(), etdl.scale1.getId());
-      assertEquals(copy1.getTitle(), "new scale 1");
-      assertEquals(copy1.getOwner(), EvalTestDataLoad.MAINT_USER_ID);
-      assertEquals(copy1.isHidden(), true);
-      assertEquals(copy1.getExpert(), Boolean.FALSE);
-      assertEquals(copy1.getExpertDescription(), null);
-      assertEquals(copy1.getLocked(), Boolean.FALSE);
-      assertEquals(copy1.getSharing(), EvalConstants.SHARING_PRIVATE);
+      assertNotSame(original.getId(), copy1.getId());
+      assertEquals(original.getId(), copy1.getCopyOf());
+      assertEquals("new scale 1", copy1.getTitle());
+      assertEquals(EvalTestDataLoad.MAINT_USER_ID, copy1.getOwner());
+      assertEquals(true, copy1.isHidden());
+      assertEquals(Boolean.FALSE, copy1.getExpert());
+      assertEquals(null, copy1.getExpertDescription());
+      assertEquals(Boolean.FALSE, copy1.getLocked());
+      assertEquals(EvalConstants.SHARING_PRIVATE, copy1.getSharing());
 
       // check the things that should match
-      assertEquals(copy1.getIdeal(), etdl.scale1.getIdeal());
-      assertEquals(copy1.getMode(), etdl.scale1.getMode());
+      assertEquals(original.getIdeal(), copy1.getIdeal());
+      assertEquals(original.getMode(), copy1.getMode());
       for (int i = 0; i < copy1.getOptions().length; i++) {
-         assertEquals(copy1.getOptions()[i], etdl.scale1.getOptions()[i]);
+         assertEquals(original.getOptions()[i], copy1.getOptions()[i]);
       }
 
 
@@ -2850,7 +2851,62 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
     * Test method for {@link org.sakaiproject.evaluation.logic.EvalAuthoringServiceImpl#copyTemplate(java.lang.Long, java.lang.String, java.lang.String, boolean, boolean)}.
     */
    public void testCopyTemplate() {
-//    fail("Not yet implemented");
+/**
+      Long[] copiedIds = null;
+      Long[] templateIds = null;
+
+      // copy a single template
+      EvalTemplate original = etdl.templateUser;
+      templateIds = new Long[] {original.getId()};
+      copiedIds = authoringService.copyScales(templateIds, "new template 1", EvalTestDataLoad.MAINT_USER_ID, true);
+      assertNotNull(copiedIds);
+      assertEquals(templateIds.length, copiedIds.length);
+      EvalTemplate copy1 = (EvalTemplate) evaluationDao.findById(EvalTemplate.class, copiedIds[0]);
+      assertNotNull(copy1);
+
+      // verify the copy worked
+      // check the things that should differ
+      assertNotSame(original.getId(), copy1.getId());
+      assertEquals(original.getId(), copy1.getCopyOf());
+      assertEquals("new template 1", copy1.getTitle());
+      assertEquals(EvalTestDataLoad.MAINT_USER_ID, copy1.getOwner());
+      assertEquals(true, copy1.isHidden());
+      assertEquals(Boolean.FALSE, copy1.getExpert());
+      assertEquals(null, copy1.getExpertDescription());
+      assertEquals(Boolean.FALSE, copy1.getLocked());
+      assertEquals(EvalConstants.SHARING_PRIVATE, copy1.getSharing());
+
+      // check the things that should match
+//      assertEquals(original.getIdeal(), copy1.getIdeal());
+
+
+      // make sure title generation works
+      templateIds = new Long[] {etdl.templateUnused.getId()};
+      copiedIds = authoringService.copyScales(templateIds, "", EvalTestDataLoad.MAINT_USER_ID, false);
+      assertNotNull(copiedIds);
+      assertEquals(templateIds.length, copiedIds.length);
+      EvalTemplate copy2 = (EvalTemplate) evaluationDao.findById(EvalTemplate.class, copiedIds[0]);
+      assertNotNull(copy2);
+      assertNotNull(copy2.getTitle());
+
+      // check we can copy a bunch of things
+      templateIds = new Long[] {etdl.templatePublic.getId(), etdl.templatePublicUnused.getId()};
+      copiedIds = authoringService.copyScales(templateIds, null, EvalTestDataLoad.MAINT_USER_ID, false);
+      assertNotNull(copiedIds);
+      assertEquals(templateIds.length, copiedIds.length);
+      for (int i = 0; i < copiedIds.length; i++) {
+         assertNotNull(evaluationDao.findById(EvalTemplate.class, copiedIds[i]));
+      }
+
+      // check that invalid templateid causes death
+      templateIds = new Long[] {etdl.templateAdmin.getId(), EvalTestDataLoad.INVALID_LONG_ID};
+      try {
+         copiedIds = authoringService.copyScales(templateIds, null, EvalTestDataLoad.MAINT_USER_ID, false);
+         fail("Should have thrown exception");
+      } catch (IllegalArgumentException e) {
+         assertNotNull(e);
+      }
+**/
    }
 
 }
