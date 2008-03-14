@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
+import org.sakaiproject.evaluation.logic.exceptions.ResponseSaveException;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
@@ -273,8 +274,8 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
          Long evaluationId = response.getEvaluation().getId();
          String evalGroupId = response.getEvalGroupId();
          if (! evaluationService.canTakeEvaluation(userId, evaluationId, evalGroupId)) {
-            throw new IllegalStateException("User (" + userId + ") cannot take this evaluation (" + evaluationId
-                  + ") in this evalGroupId (" + evalGroupId + ") right now");
+            throw new ResponseSaveException("User (" + userId + ") cannot take this evaluation (" + evaluationId
+                  + ") in this evalGroupId (" + evalGroupId + ") right now", ResponseSaveException.TYPE_CANNOT_TAKE_EVAL);
          }
 
          // check to make sure answers are valid for this evaluation
@@ -290,7 +291,8 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                }
                if (unansweredAllowed.booleanValue() == false) {
                   // all items must be completed so die if they are not
-                  throw new IllegalStateException("User submitted a blank response and there are required answers");
+                  throw new ResponseSaveException("User submitted a blank response and there are required answers", 
+                        ResponseSaveException.TYPE_BLANK_RESPONSE);
                }
             }
             response.setAnswers(new HashSet());
@@ -533,7 +535,8 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
          // remove all the answered keys from the required keys and if everything was answered then there will be nothing left in the required keys set
          requiredAnswerKeys.removeAll(answeredAnswerKeys);
          if (requiredAnswerKeys.size() > 0) {
-            throw new IllegalStateException("Missing " + requiredAnswerKeys.size() + " required items for this evaluation response: " + response.getId());
+            throw new ResponseSaveException("Missing " + requiredAnswerKeys.size() 
+                  + " required items for this evaluation response: " + response.getId(), ResponseSaveException.TYPE_MISSING_REQUIRED_ANSWERS);
          }
       }
 

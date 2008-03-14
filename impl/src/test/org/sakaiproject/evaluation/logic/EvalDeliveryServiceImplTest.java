@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.logic.exceptions.ResponseSaveException;
 import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
@@ -475,8 +476,9 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
                new Date(), etdl.evaluationActiveUntaken), 
                EvalTestDataLoad.MAINT_USER_ID);
          fail("Should have thrown exception");
-      } catch (IllegalStateException e) {
+      } catch (ResponseSaveException e) {
          assertNotNull(e);
+         assertEquals(ResponseSaveException.TYPE_CANNOT_TAKE_EVAL, e.type);
       }
 
       // test saving a response for an invalid evalGroupId fails (evalGroupId not assigned to this eval)
@@ -486,8 +488,9 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
                new Date(), etdl.evaluationActive), 
                EvalTestDataLoad.USER_ID);
          fail("Should have thrown exception");
-      } catch (IllegalStateException e) {
+      } catch (ResponseSaveException e) {
          assertNotNull(e);
+         assertEquals(ResponseSaveException.TYPE_CANNOT_TAKE_EVAL, e.type);
       }
 
       // TODO - make this work
@@ -540,8 +543,9 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       try {
          deliveryService.saveResponse( responseRequired, EvalTestDataLoad.USER_ID);
          fail("Should have thrown exception");
-      } catch (IllegalStateException e) {
+      } catch (ResponseSaveException e) {
          assertNotNull(e);
+         assertEquals(ResponseSaveException.TYPE_MISSING_REQUIRED_ANSWERS, e.type);
       }
       assertNull(responseRequired.getId());
       assertNull(RA_3_3.getId());
@@ -599,8 +603,9 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
                new Date(), etdl.evaluationActive), 
                EvalTestDataLoad.USER_ID);
          fail("Should have thrown exception");
-      } catch (IllegalStateException e) {
+      } catch (ResponseSaveException e) {
          assertNotNull(e);
+         assertEquals(ResponseSaveException.TYPE_CANNOT_TAKE_EVAL, e.type);
       }
 
       try {
@@ -609,8 +614,9 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
                new Date(), etdl.evaluationActive), 
                EvalTestDataLoad.MAINT_USER_ID);
          fail("Should have thrown exception");
-      } catch (IllegalStateException e) {
+      } catch (ResponseSaveException e) {
          assertNotNull(e);
+         assertEquals(ResponseSaveException.TYPE_CANNOT_TAKE_EVAL, e.type);
       }
 
    }
@@ -675,8 +681,9 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       try {
          response = deliveryService.getEvaluationResponseForUserAndGroup(etdl.evaluationActive.getId(), EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE1_REF);
          fail("Should have thrown exception");
-      } catch (IllegalStateException e) {
+      } catch (ResponseSaveException e) {
          assertNotNull(e);
+         assertEquals(ResponseSaveException.TYPE_CANNOT_TAKE_EVAL, e.type);
       }
 
    }
