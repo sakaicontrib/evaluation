@@ -17,10 +17,8 @@ package org.sakaiproject.evaluation.tool.producers;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
@@ -108,10 +106,12 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, N
       UIMessage.make(tofill, "assign-evaluation-title", "assigneval.page.title");
       UIMessage.make(tofill, "assign-evaluation-title-confirmation", "assigneval.page.confirmation.title");
       UIMessage.make(tofill, "eval-assign-info", "evaluationassignconfirm.eval.assign.info", new Object[] {evaluationBean.eval.getTitle()});
-      // getting the data this way is crap
+
+      // TODO getting the data this way is crap
       Date startDate = evaluationBean.eval.getStartDate();
       if (startDate == null) { startDate = evaluationBean.startDate; }
       if (startDate == null) { startDate = new Date(); } // default to avoid crashing, hate this -AZ
+
       UIMessage.make(tofill, "eval-assign-instructions", "evaluationassignconfirm.eval.assign.instructions",
             new Object[] {df.format(startDate)});
 
@@ -123,19 +123,16 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, N
       UIMessage.make(tofill, "enrollment-header", "evaluationassignconfirm.enrollment.header");
 
       String[] selectedIds = evaluationBean.selectedEvalGroupIds;
+      // TODO this calculation of the enrollment out in the bean is really weird, get rid of it
       int[] enrollment = evaluationBean.enrollment;
-
-      Map<String, String> allIdTitleMap = new HashMap<String, String>();
-      List<EvalGroup> evalGroups = externalLogic.getEvalGroupsForUser(externalLogic.getCurrentUserId(), EvalConstants.PERM_BE_EVALUATED);
-      for (EvalGroup evalGroup : evalGroups) {
-         allIdTitleMap.put(evalGroup.evalGroupId, evalGroup.title);
-      }
 
       if (selectedIds != null && selectedIds.length > 0) {
          for (int i = 0; i < selectedIds.length; ++i) {
             String evalGroupId = selectedIds[i];
+            EvalGroup group = externalLogic.makeEvalGroupObject(evalGroupId);
+
             UIBranchContainer siteRow = UIBranchContainer.make(tofill, "sites:", evalGroupId);
-            UIOutput.make(siteRow, "siteTitle", (String) allIdTitleMap.get(evalGroupId));
+            UIOutput.make(siteRow, "siteTitle", group.title);
             if (evaluationId != null) {
                // only add in this link if the evaluation exists
                Long assignGroupId = evaluationService.getAssignGroupId(evaluationId, evalGroupId);
@@ -163,6 +160,7 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, N
          if (selectedNodeIDs != null && selectedNodeIDs.length > 0) {
             for (int i = 0; i < selectedNodeIDs.length; i++ ) {
                EvalHierarchyNode node = hierLogic.getNodeById(selectedNodeIDs[i]);
+
                UIBranchContainer nodeRow = UIBranchContainer.make(tofill, "node-row:");
                UIOutput.make(nodeRow, "node-title", node.title);
                UIOutput.make(nodeRow, "node-abbr", node.description);
@@ -172,30 +170,20 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, N
          }
       }
 
-      // show submit buttons for first time evaluation creation && Queued Evaluation case
-      if (evaluationId == null) {
-         //first time evaluation creation
-         showButtonsForm(tofill);
-      } else {
-         // check if evaluation is queued; Closed, started evaluation can not have assign groups changed
-         if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(EvalUtils.getEvaluationState( evaluationBean.eval, false ) ) ) {
-            showButtonsForm(tofill);
-         }
+      // show submit buttons for first time evaluation creation && not active yet Evaluation case
+      String evalState = EvalUtils.getEvaluationState( evaluationBean.eval, false );
+      if (evaluationId == null 
+            || EvalUtils.checkStateBefore(evalState, EvalConstants.EVALUATION_STATE_ACTIVE, false) ) {
+         //first time evaluation creation or still in queue
+         UIBranchContainer showButtons = UIBranchContainer.make(tofill, "showButtons:");
+         UIForm evalAssignForm = UIForm.make(showButtons, "evalAssignForm");
+         UICommand.make(evalAssignForm, "doneAssignment", 
+               UIMessage.make("evaluationassignconfirm.done.button"), "#{evaluationBean.doneAssignmentAction}");
+         UICommand.make(evalAssignForm, "changeAssignedCourse", 
+               UIMessage.make("evaluationassignconfirm.changes.assigned.courses.button"), "#{evaluationBean.changeAssignedCourseAction}");
       }
    }
 
-   /**
-    * @param tofill
-    */
-   private void showButtonsForm(UIContainer tofill) {
-      UIBranchContainer showButtons = UIBranchContainer.make(tofill, "showButtons:");
-      UIForm evalAssignForm = UIForm.make(showButtons, "evalAssignForm");
-      UICommand.make(evalAssignForm, "doneAssignment", 
-            UIMessage.make("evaluationassignconfirm.done.button"), "#{evaluationBean.doneAssignmentAction}");
-      UICommand.make(evalAssignForm, "changeAssignedCourse", 
-            UIMessage.make("evaluationassignconfirm.changes.assigned.courses.button"),
-      "#{evaluationBean.changeAssignedCourseAction}");
-   }
 
    /* (non-Javadoc)
     * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
