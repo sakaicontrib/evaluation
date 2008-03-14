@@ -221,6 +221,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
 
       String hql = buildSharingHQL(entityClass.getName(), userId, sharingConstants, 
             props, values, comparisons, null, options);
+      log.debug("countSharedEntitiesForUser: HQL=" + hql);
       int count = count(hql);
       return count;
    }
@@ -254,7 +255,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
 
       String hql = buildSharingHQL(entityClass.getName(), userId, sharingConstants, 
             props, values, comparisons, order, options);
-      log.warn("getSharedEntitiesForUser: HQL=" + hql); // TODO - make this debug
+      log.debug("getSharedEntitiesForUser: HQL=" + hql);
       Map<String, Object> params = new HashMap<String, Object>();
       List<T> l = executeHqlQuery(hql, params, start, limit);
       return l;
