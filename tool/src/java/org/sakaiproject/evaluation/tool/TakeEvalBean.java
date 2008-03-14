@@ -19,6 +19,7 @@ import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.sakaiproject.evaluation.logic.exceptions.ResponseSaveException;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.locators.ResponseBeanLocator;
@@ -30,6 +31,7 @@ import uk.org.ponder.messageutil.TargettedMessageList;
  * This request-scope bean handles taking evaluations
  * 
  * @author Will Humphries (whumphri@vt.edu)
+ * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
 public class TakeEvalBean {
 
@@ -58,10 +60,16 @@ public class TakeEvalBean {
       log.debug("submit evaluation");
       try {
          responseBeanLocator.saveAll(eval, evalGroupId, startDate);
-      } catch (IllegalStateException e) {
-         // TODO - find a better way to do this, using this as the way to tell that the submission was incomplete, this is not really ideal -AZ
-         messages.addMessage( new TargettedMessage("takeeval.user.must.answer.all.exception", new Object[] {},
-               TargettedMessage.SEVERITY_ERROR));
+      } catch (ResponseSaveException e) {
+         String messageKey = "unknown.caps";
+         if (ResponseSaveException.TYPE_MISSING_REQUIRED_ANSWERS.equals(e.type)) {
+            messageKey = "takeeval.user.must.answer.all.exception";
+         } else if (ResponseSaveException.TYPE_BLANK_RESPONSE.equals(e.type)) {
+            messageKey = "takeeval.user.blank.response.exception";
+         } else if (ResponseSaveException.TYPE_CANNOT_TAKE_EVAL.equals(e.type)) {
+            messageKey = "takeeval.user.cannot.take.now.exception";
+         }
+         messages.addMessage( new TargettedMessage(messageKey, e) );
          return "failure";
       }
       messages.addMessage( new TargettedMessage("evaluations.take.message",
