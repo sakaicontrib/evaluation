@@ -1,17 +1,16 @@
-/******************************************************************************
- * AdministrateProducer.java - created by aaronz@vt.edu
- * 
- * Copyright (c) 2007 Virginia Polytechnic Institute and State University
+/**
+ * AdministrateProducer.java - evaluation - Sep 18, 2006 11:35:56 AM - azeckoski
+ * $URL$
+ * $Id$
+ **************************************************************************
+ * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
- * 
- * Contributors:
- * Aaron Zeckoski (aaronz@vt.edu)
- * Kapil Ahuja (kahuja@vt.edu)
- * Antranig Basman (antranig@caret.cam.ac.uk)
- *****************************************************************************/
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ */
 
 package org.sakaiproject.evaluation.tool.producers;
 
