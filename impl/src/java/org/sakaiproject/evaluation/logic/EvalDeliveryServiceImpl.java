@@ -454,8 +454,10 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
             // check that the associated id is filled in for associated items
             if (EvalConstants.ITEM_CATEGORY_COURSE.equals(answer.getTemplateItem().getCategory())) {
                if (answer.getAssociatedId() != null) {
-                  log.warn("Course answers should have the associated id field blank, for templateItem: "
-                        + answer.getTemplateItem().getId());
+                  log.warn("Course answer (key="+ TemplateItemUtils.makeTemplateItemAnswerKey(answer.getTemplateItem().getId(), 
+                        answer.getAssociatedType(), answer.getAssociatedId()) +") should have the associated id "
+                        + "("+answer.getAssociatedId()+") field null, "
+                  		+ "for templateItem (" + answer.getTemplateItem().getId() + "), setting associated id and type to null");
                }
                answer.setAssociatedId(null);
                answer.setAssociatedType(null);
@@ -489,7 +491,8 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
          // TODO - check if numerical answers are valid? (i.e. within the size of the scale)
 
          // add the unique answer key (TIId + assocType + assocId) for this answer to the answered keys set
-         answeredAnswerKeys.add( answer.getTemplateItem().getId().toString() + answer.getAssociatedType() + answer.getAssociatedId() );
+         answeredAnswerKeys.add( TemplateItemUtils.makeTemplateItemAnswerKey(answer.getTemplateItem().getId(), 
+               answer.getAssociatedType(), answer.getAssociatedId()) );
       }
 
       // check if required answers are filled in
@@ -515,7 +518,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
             List<EvalTemplateItem> requiredCourseTIs = 
                TemplateItemUtils.getCategoryTemplateItems(EvalConstants.ITEM_CATEGORY_COURSE, requiredTemplateItems);
             for (EvalTemplateItem templateItem : requiredCourseTIs) {
-               requiredAnswerKeys.add( templateItem.getId().toString() + null + null );
+               requiredAnswerKeys.add( TemplateItemUtils.makeTemplateItemAnswerKey(templateItem.getId(), null, null) );
             }
          }
 
@@ -527,7 +530,8 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                List<EvalTemplateItem> requiredInstructorTIs = 
                   TemplateItemUtils.getCategoryTemplateItems(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, requiredTemplateItems);
                for (EvalTemplateItem templateItem : requiredInstructorTIs) {
-                  requiredAnswerKeys.add( templateItem.getId().toString() + EvalConstants.ITEM_CATEGORY_INSTRUCTOR + instructorUserId );
+                  requiredAnswerKeys.add( TemplateItemUtils.makeTemplateItemAnswerKey(templateItem.getId(), 
+                        EvalConstants.ITEM_CATEGORY_INSTRUCTOR, instructorUserId) );
                }
             }
          }
@@ -536,7 +540,11 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
          requiredAnswerKeys.removeAll(answeredAnswerKeys);
          if (requiredAnswerKeys.size() > 0) {
             throw new ResponseSaveException("Missing " + requiredAnswerKeys.size() 
-                  + " required items for this evaluation response: " + response.getId(), ResponseSaveException.TYPE_MISSING_REQUIRED_ANSWERS);
+                  + " answers for required items (received "+answeredAnswerKeys.size()+" answers) for this evaluation"
+                  + " response (" + response.getId() + ") for user (" + response.getOwner() + ")"
+                  + " :: missing keys=" + ArrayUtils.arrayToString(requiredAnswerKeys.toArray(new String[] {})) 
+                  + " :: received keys=" + ArrayUtils.arrayToString(answeredAnswerKeys.toArray(new String[] {})), 
+                     ResponseSaveException.TYPE_MISSING_REQUIRED_ANSWERS);
          }
       }
 

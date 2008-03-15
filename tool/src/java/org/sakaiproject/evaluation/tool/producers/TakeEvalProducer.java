@@ -513,7 +513,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
          newAnswer = true;
       } else {
          // if the user has answered this question before, point at their response
-         String key = templateItem.getId() + associatedType + associatedId;
+         String key = TemplateItemUtils.makeTemplateItemAnswerKey(templateItem.getId(), associatedType, associatedId);
          EvalAnswer currAnswer = (EvalAnswer) answerMap.get(key);
          if (currAnswer == null) {
             // this is a new answer

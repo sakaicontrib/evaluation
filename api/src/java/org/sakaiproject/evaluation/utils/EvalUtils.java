@@ -375,7 +375,8 @@ public class EvalUtils {
          // decode the NA value
          decodeAnswerNA(answer);
          // place the answers into a map which uses the TI, assocType, and assocId as a key
-         String key = answer.getTemplateItem().getId().toString() + answer.getAssociatedType() + answer.getAssociatedId();
+         String key = TemplateItemUtils.makeTemplateItemAnswerKey(answer.getTemplateItem().getId(), 
+               answer.getAssociatedType(), answer.getAssociatedId());
          map.put(key, answer);
       }
       return map;

@@ -189,7 +189,7 @@ public class BlockRenderer implements ItemRenderer {
             if (! disabled && bindings != null) {
                childBinding = bindings[j];
             }
-            UISelect childRadios = UISelect.make(childRow, "dummyRadio", scaleValues, scaleLabels, childBinding, initValue);
+            UISelect childRadios = UISelect.make(childRow, "childRadio", scaleValues, scaleLabels, childBinding, initValue);
             String selectID = childRadios.getFullID();
 
             if (disabled) {
