@@ -29,6 +29,7 @@ import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.utils.EvalUtils;
+import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
 
 /**
@@ -77,11 +78,11 @@ public class LocalResponsesLogic {
 
    /**
     * Get a map of answers for the given response, where the key to
-    * access a given response is the unique pairing of templateItemId and
-    * the associated field of the answer (instructor id, environment key, etc.)
+    * access a given response answer is the unique set of templateItemId and
+    * the associated field/id (instructor id, environment key, etc.)
     * 
     * @param response the response we want to get the answers for
-    * @return a hashmap of answers, where an answer's key = templateItemId + answer.associated
+    * @return a hashmap of answers, where an answer's key is created using {@link TemplateItemUtils#makeTemplateItemAnswerKey(Long, String, String)}
     */	
    public Map<String, EvalAnswer> getAnswersMapByTempItemAndAssociated(Long responseId) {
       EvalResponse response = responsesLogic.getResponseById(responseId);

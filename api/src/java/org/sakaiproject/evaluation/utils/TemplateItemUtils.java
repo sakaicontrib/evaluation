@@ -330,6 +330,20 @@ public class TemplateItemUtils {
       return nodeItems;
    }
 
+   /**
+    * Make a template item answer key which will uniquely identify the answer for a specific item
+    * 
+    * @param templateItemId a unique id for an {@link EvalTemplateItem}
+    * @param associatedType the type associated with this TI (can be null)
+    * @param associatedId the id of the thing associated with this TI (can be null)
+    * @return a unique key for the answer to this templateItem
+    */
+   public static String makeTemplateItemAnswerKey(Long templateItemId, String associatedType, String associatedId) {
+      if (templateItemId == null) {
+         throw new IllegalArgumentException("templateItemId must be set");
+      }
+      return templateItemId.toString() + "_" + associatedType + "_" + associatedId;
+   }
 
    /**
     * Creates an {@link EvalTemplateItem} object from an {@link EvalItem} object by inferring

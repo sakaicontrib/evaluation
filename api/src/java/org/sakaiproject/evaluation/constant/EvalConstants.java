@@ -26,7 +26,7 @@ public class EvalConstants {
     * The current version of the app for updating purposes,
     * this should always be the NEXT version of the tool if this is trunk code
     */
-   public static String APP_VERSION = "1.2.0-RC5";
+   public static String APP_VERSION = "1.2.0-RC5"; 
 
    public static String SVN_REVISION = "$Revision$";
    public static String SVN_LAST_UPDATE = "$Date$";
@@ -394,7 +394,7 @@ public class EvalConstants {
    /**
     * Item category (category) setting:
     * This item is in the environment category and will be repeated
-    * for each environemnt setup for the evaluation group when the 
+    * for each environment setup for the evaluation group when the 
     * evaluation is rendered for the takers, a unique id for that
     * environment should be bound to associated answers
     */
