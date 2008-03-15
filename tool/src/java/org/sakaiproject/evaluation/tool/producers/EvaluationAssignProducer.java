@@ -1,10 +1,21 @@
-/******************************************************************************
- * EvaluationAssignProducer.java - created by kahuja@vt.edu on Oct 05, 2006
- *****************************************************************************/
+/**
+ * EvaluationAssignProducer.java - evaluation - Sep 18, 2006 11:35:56 AM - azeckoski
+ * $URL$
+ * $Id$
+ **************************************************************************
+ * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
+ * Licensed under the Educational Community License version 1.0
+ * 
+ * A copy of the Educational Community License has been included in this 
+ * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ */
 
 package org.sakaiproject.evaluation.tool.producers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -27,8 +38,6 @@ import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
-import uk.org.ponder.rsf.components.UISelect;
-import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
@@ -40,10 +49,9 @@ import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /**
- * assign an evaluation to courses 
+ * assign an evaluation to groups and hierarchy nodes 
  * 
- * @author Kapil Ahuja (kahuja@vt.edu)
- * @author Rui Feng (fengr@vt.edu)
+ * @author Steve Githens (sgithens@caret.cam.ac.uk)
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class EvaluationAssignProducer implements ViewComponentProducer, NavigationCaseReporter {
@@ -72,7 +80,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
    public void setHierarchyRenderUtil(HierarchyRenderUtil util) {
       hierUtil = util;
    }
-   
+
    private ExternalHierarchyLogic hierarchyLogic;
    public void setExternalHierarchyLogic(ExternalHierarchyLogic logic) {
       this.hierarchyLogic = logic;
@@ -102,38 +110,37 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
 
       List<EvalGroup> evalGroups = externalLogic.getEvalGroupsForUser(externalLogic.getCurrentUserId(), EvalConstants.PERM_BE_EVALUATED);
       if (evalGroups.size() > 0) {
-         String[] ids = new String[evalGroups.size()];
-         String[] labels = new String[evalGroups.size()];
+         Map<String, EvalGroup> groupsMap = new HashMap<String, EvalGroup>();
          for (int i=0; i < evalGroups.size(); i++) {
             EvalGroup c = (EvalGroup) evalGroups.get(i);
-            ids[i] = c.evalGroupId;
-            labels[i] = c.title;
+            groupsMap.put(c.evalGroupId, c);
          }
 
          //UISelect siteCheckboxes = UISelect.makeMultiple(form, "siteCheckboxes", ids, "#{evaluationBean.selectedEvalGroupIds}", null);
          //String selectID = siteCheckboxes.getFullID();
 
-         Set<String> evalGroupIDs = new HashSet<String>();
-         /* Display the table for selecting hierarchy nodes */
+         // Display the table for selecting hierarchy nodes
          Boolean showHierarchy = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
-         if (showHierarchy.booleanValue() == true) {
+         if (showHierarchy) {
             UIMessage.make(form, "assign-hierarchy-title", "assigneval.page.hier.title");
             hierUtil.renderSelectHierarchyNodesTree(form, "hierarchy-tree-select:", "", "" );
          }
-         
-         String[] nonAssignedEvalGroupIDs = getEvalGroupIDsNotAssignedInHierarchy().toArray(new String[] {});
-         //for (int i=0; i < ids.length; i++){
+
+         // display checkboxes for selecting the non-hierarchy groups
+         String[] nonAssignedEvalGroupIDs = getEvalGroupIDsNotAssignedInHierarchy(evalGroups).toArray(new String[] {});
          for (int i = 0; i < nonAssignedEvalGroupIDs.length; i++) {
             UIBranchContainer checkboxRow = UIBranchContainer.make(form, "sites:", i+"");
             if (i % 2 == 0) {
                checkboxRow.decorators = new DecoratorList( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
             }
-            //UISelectChoice checkbox = UISelectChoice.make(checkboxRow, "siteId", selectID, i);
-            UIBoundBoolean checkbox = UIBoundBoolean.make(checkboxRow, "siteId", "evaluationBean.selectedEvalGroupIDsMap."+nonAssignedEvalGroupIDs[i]);
-            //TODO  we shouldn't need to keep fetching this from the service API
-            UIOutput title = UIOutput.make(checkboxRow, "siteTitle", externalLogic.getDisplayTitle(nonAssignedEvalGroupIDs[i]));
+            UIBoundBoolean checkbox = UIBoundBoolean.make(checkboxRow, "siteId", 
+                  "evaluationBean.selectedEvalGroupIDsMap."+nonAssignedEvalGroupIDs[i]);
+            // get title from the map since it is faster
+            UIOutput title = UIOutput.make(checkboxRow, "siteTitle", groupsMap.get(nonAssignedEvalGroupIDs[i]).title );
             UILabelTargetDecorator.targetLabel(title, checkbox); // make title a label for checkbox
          }
+      } else {
+         // TODO tell user there are no groups to assign to
       }
 
       /*
@@ -153,33 +160,38 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
       UICommand.make(form, "editSettings", UIMessage.make("assigneval.edit.settings.button"), "#{evaluationBean.backToSettingsAction}");
       UICommand.make(form, "confirmAssignCourses", UIMessage.make("assigneval.save.assigned.button"), "#{evaluationBean.confirmAssignCoursesAction}");
    }
-   
-   public Set<String> getEvalGroupIDsNotAssignedInHierarchy() {
-       
-       // 1. All the Evaluation Group IDs
-       Set<String> evalGroupIDs = new HashSet<String>();
-       List<EvalGroup> evalGroups = externalLogic.getEvalGroupsForUser(externalLogic.getCurrentUserId(), EvalConstants.PERM_BE_EVALUATED);
-       for (EvalGroup evalGroup: evalGroups) {
-           evalGroupIDs.add(evalGroup.evalGroupId);
-       }
-       
-       // 2. All the Evaluation Group IDs that are assigned to Hierarchy Nodes
-       Set<String> hierAssignedGroupIDs = new HashSet<String>();
-       
-       EvalHierarchyNode rootNode = hierarchyLogic.getRootLevelNode();
-       String[] rootNodeChildren = rootNode.childNodeIds.toArray(new String[] {});
-       if (rootNodeChildren.length > 0) {
-          Map<String,Set<String>> assignedGroups = hierarchyLogic.getEvalGroupsForNodes(rootNodeChildren);
-          
-          for (String key: assignedGroups.keySet()) {
-              hierAssignedGroupIDs.addAll(assignedGroups.get(key));
-          }
-          
-          // 3. Remove all EvalGroup IDs that have been assigned to 
-          evalGroupIDs.removeAll(hierAssignedGroupIDs);
-       }
-       
-       return evalGroupIDs;
+
+   /**
+    * I think this is getting all the groupIds that are not currently assigned to nodes in the hierarchy
+    * 
+    * @param evalGroups the list of eval groups to check in
+    * @return the set of evalGroupsIds from the input list of evalGroups which are not assigned to hierarchy nodes
+    */
+   protected Set<String> getEvalGroupIDsNotAssignedInHierarchy(List<EvalGroup> evalGroups) {
+      // TODO - we probably need a method to simply get all assigned groupIds in the hierarchy to make this a bit faster
+
+      // 1. All the Evaluation Group IDs in a set
+      Set<String> evalGroupIDs = new HashSet<String>();
+      for (EvalGroup evalGroup: evalGroups) {
+         evalGroupIDs.add(evalGroup.evalGroupId);
+      }
+
+      // 2. All the Evaluation Group IDs that are assigned to Hierarchy Nodes
+      EvalHierarchyNode rootNode = hierarchyLogic.getRootLevelNode();
+      String[] rootNodeChildren = rootNode.childNodeIds.toArray(new String[] {});
+      if (rootNodeChildren.length > 0) {
+         Map<String,Set<String>> assignedGroups = hierarchyLogic.getEvalGroupsForNodes(rootNodeChildren);
+
+         Set<String> hierAssignedGroupIDs = new HashSet<String>();
+         for (String key: assignedGroups.keySet()) {
+            hierAssignedGroupIDs.addAll(assignedGroups.get(key));
+         }
+         // 3. Remove all EvalGroup IDs that have been assigned to 
+         evalGroupIDs.removeAll(hierAssignedGroupIDs);
+      }
+
+
+      return evalGroupIDs;
    }
 
    /* (non-Javadoc)
