@@ -76,7 +76,7 @@ public class TextTemplateLogicUtils {
 
       if (textTemplate == null || textTemplate.equals("")) {
          throw new IllegalArgumentException("The textTemplate cannot be null or empty string, " +
-         		"please pass in at least something in the template or do not call this method");
+         "please pass in at least something in the template or do not call this method");
       }
 
       if (useFreemarker == true) {
@@ -126,7 +126,8 @@ public class TextTemplateLogicUtils {
          Properties p = new Properties();
          p.setProperty(RuntimeConstants.INPUT_ENCODING, "UTF-8");
          p.setProperty(RuntimeConstants.OUTPUT_ENCODING, "UTF-8");
-         p.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, "org.apache.velocity.runtime.log.Log4JLogChute"); // SimpleLog4JLogSystem");
+         p.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, "org.apache.velocity.runtime.log.NullLogSystem"); // no logging at all
+//       p.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, "org.apache.velocity.runtime.log.Log4JLogChute"); // SimpleLog4JLogSystem");
          p.setProperty("runtime.log.logsystem.log4j.category", "vm.none");
          p.setProperty(RuntimeConstants.RUNTIME_LOG_REFERENCE_LOG_INVALID, "true");
          p.setProperty(RuntimeConstants.RESOURCE_MANAGER_DEFAULTCACHE_SIZE, "0");

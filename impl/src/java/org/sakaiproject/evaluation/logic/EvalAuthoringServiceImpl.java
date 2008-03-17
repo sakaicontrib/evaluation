@@ -1505,9 +1505,44 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
    }
 
 
+   @SuppressWarnings("unchecked")
    public Long copyTemplate(Long templateId, String title, String ownerId, boolean hidden, boolean includeChildren) {
-      // TODO Auto-generated method stub
-      return null;
+      if (ownerId == null || ownerId.length() == 0) {
+         throw new IllegalArgumentException("Invalid ownerId, cannot be null or empty string");         
+      }
+      if (templateId == null || templateId == 0) {
+         throw new IllegalArgumentException("Invalid templateId, cannot be null or 0");         
+      }
+
+      EvalTemplate original = getTemplateById(templateId);
+      if (original == null) {
+         throw new IllegalArgumentException("Invalid templateId submitted ("+templateId+"), could not retrieve the template");
+      }
+
+      String newTitle = title;
+      if (newTitle == null || newTitle.length() == 0) {
+         newTitle = "Copy of " + original.getTitle();
+      }
+      EvalTemplate copy = new EvalTemplate(new Date(), ownerId, original.getType(), 
+            newTitle, original.getDescription(), EvalConstants.SHARING_PRIVATE, 
+            false, null, null, false);
+      // set the other copy fields
+      copy.setCopyOf(original.getId());
+      copy.setHidden(hidden);
+
+      dao.save(copy);
+
+      if (original.getTemplateItems() != null 
+            && original.getTemplateItems().size() > 0) {
+         // now copy the template items and save the new linkages
+         Long[] originalTIIds = TemplateItemUtils.makeTemplateItemsIdsArray(original.getTemplateItems());
+         Long[] templateItemIds = copyTemplateItems(originalTIIds, ownerId, hidden, copy.getId(), includeChildren);
+         List<EvalTemplateItem> templateItemsList = dao.findByProperties(EvalTemplateItem.class, new String[] {"id"}, new Object[] { templateItemIds });
+         copy.setTemplateItems( new HashSet<EvalTemplateItem>(templateItemsList) );
+         dao.save(copy);
+      }
+
+      return copy.getId();
    }
 
 }

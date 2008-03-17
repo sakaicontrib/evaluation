@@ -29,6 +29,7 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
+import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
 
 /**
@@ -2851,10 +2852,10 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
     * Test method for {@link org.sakaiproject.evaluation.logic.EvalAuthoringServiceImpl#copyTemplate(java.lang.Long, java.lang.String, java.lang.String, boolean, boolean)}.
     */
    public void testCopyTemplate() {
-/**
       Long copiedId = null;
 
-      // copy a single template
+      // copy a single template with all children
+      // (should create duplicates of all the items and scales)
       EvalTemplate original = etdl.templateUser;
       copiedId = authoringService.copyTemplate(original.getId(), "copy templateUser", EvalTestDataLoad.MAINT_USER_ID, true, true);
       assertNotNull(copiedId);
@@ -2878,20 +2879,65 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       assertEquals(original.getType(), copy1.getType());
 
       // make sure the template items copied
-      // TODO
+      assertEquals(original.getTemplateItems().size(), copy1.getTemplateItems().size());
+      List<EvalTemplateItem> originalTIs = TemplateItemUtils.makeTemplateItemsList(original.getTemplateItems());
+      List<EvalTemplateItem> copyTIs = TemplateItemUtils.makeTemplateItemsList(copy1.getTemplateItems());
+      assertEquals(original.getTemplateItems().size(), originalTIs.size());
+      assertEquals(originalTIs.size(), copyTIs.size());
+      for (int i = 0; i < originalTIs.size(); i++) {
+         EvalTemplateItem originalTI = originalTIs.get(i);
+         EvalTemplateItem copyTI = copyTIs.get(i);
+         assertNotSame(originalTI.getId(), copyTI.getId());
+         assertEquals(originalTI.getDisplayOrder(), copyTI.getDisplayOrder());
+         // now check the item underneath is a copy of the same item
+         assertEquals(originalTI.getItem().getId(), copyTI.getItem().getCopyOf());
+      }
 
-      // test copying without children
+      // test copying without children (all TIs have to be copies as they cannot be shared but the things underneath should not copy)
       original = etdl.templatePublic;
       copiedId = authoringService.copyTemplate(original.getId(), "", EvalTestDataLoad.MAINT_USER_ID, true, false);
-      // TODO
+      assertNotNull(copiedId);
+      EvalTemplate copy2 = (EvalTemplate) evaluationDao.findById(EvalTemplate.class, copiedId);
+      assertNotNull(copy2);
+
+      // verify the copy worked
+      // check the things that should differ
+      assertNotSame(original.getId(), copy2.getId());
+      assertEquals(original.getId(), copy2.getCopyOf());
+      assertNotSame(original.getTitle(), copy2.getTitle());
+      assertEquals(EvalTestDataLoad.MAINT_USER_ID, copy2.getOwner());
+      assertEquals(true, copy2.isHidden());
+      assertEquals(Boolean.FALSE, copy2.getExpert());
+      assertEquals(null, copy2.getExpertDescription());
+      assertEquals(Boolean.FALSE, copy2.getLocked());
+      assertEquals(EvalConstants.SHARING_PRIVATE, copy2.getSharing());
+
+      // check the things that should match
+      assertEquals(original.getDescription(), copy2.getDescription());
+      assertEquals(original.getType(), copy2.getType());
+
+      // make sure the template items copied
+      assertEquals(original.getTemplateItems().size(), copy2.getTemplateItems().size());
+      originalTIs = TemplateItemUtils.makeTemplateItemsList(original.getTemplateItems());
+      copyTIs = TemplateItemUtils.makeTemplateItemsList(copy2.getTemplateItems());
+      assertEquals(original.getTemplateItems().size(), originalTIs.size());
+      assertEquals(originalTIs.size(), copyTIs.size());
+      for (int i = 0; i < originalTIs.size(); i++) {
+         EvalTemplateItem originalTI = originalTIs.get(i);
+         EvalTemplateItem copyTI = copyTIs.get(i);
+         assertNotSame(originalTI.getId(), copyTI.getId());
+         assertEquals(originalTI.getDisplayOrder(), copyTI.getDisplayOrder());
+         // now check the item underneath is the same item (and not a copy)
+         assertEquals(originalTI.getItem().getId(), copyTI.getItem().getId());
+      }
 
       // make sure title generation works
       original = etdl.templateUnused;
       copiedId = authoringService.copyTemplate(original.getId(), "", EvalTestDataLoad.MAINT_USER_ID, true, true);
       assertNotNull(copiedId);
-      EvalTemplate copy2 = (EvalTemplate) evaluationDao.findById(EvalTemplate.class, copiedId);
-      assertNotNull(copy2);
-      assertNotNull(copy2.getTitle());
+      EvalTemplate copy3 = (EvalTemplate) evaluationDao.findById(EvalTemplate.class, copiedId);
+      assertNotNull(copy3);
+      assertNotNull(copy3.getTitle());
 
       // check that invalid templateid causes death
       try {
@@ -2900,7 +2946,6 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       } catch (IllegalArgumentException e) {
          assertNotNull(e);
       }
-**/
    }
 
 }
