@@ -22,11 +22,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
+import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.locators.ItemBeanWBL;
+import org.sakaiproject.evaluation.tool.locators.ScaleBeanLocator;
 import org.sakaiproject.evaluation.tool.locators.TemplateBeanLocator;
 import org.sakaiproject.evaluation.tool.locators.TemplateItemWBL;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
+
+import uk.org.ponder.messageutil.TargettedMessage;
+import uk.org.ponder.messageutil.TargettedMessageList;
 
 /**
  * This request-scope bean handles template creation and modification and actions related
@@ -35,14 +40,30 @@ import org.sakaiproject.evaluation.utils.TemplateItemUtils;
  * @author Will Humphries (whumphri@vt.edu)
  * @author Antranig Basman
  * @author Rui Feng (fengr@vt.edu)
+ * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
 public class TemplateBBean {
 
    private static Log log = LogFactory.getLog(TemplateBBean.class);
 
+   private EvalExternalLogic externalLogic;
+   public void setExternalLogic(EvalExternalLogic externalLogic) {
+      this.externalLogic = externalLogic;
+   }
+
    private LocalTemplateLogic localTemplateLogic;
    public void setLocalTemplateLogic(LocalTemplateLogic localTemplateLogic) {
       this.localTemplateLogic = localTemplateLogic;
+   }
+
+   private EvalAuthoringService authoringService;
+   public void setAuthoringService(EvalAuthoringService authoringService) {
+      this.authoringService = authoringService;
+   }
+
+   private TemplateBeanLocator templateBeanLocator;
+   public void setTemplateBeanLocator(TemplateBeanLocator templateBeanLocator) {
+      this.templateBeanLocator = templateBeanLocator;
    }
 
    private ItemBeanWBL itemBeanWBL;
@@ -55,21 +76,26 @@ public class TemplateBBean {
       this.templateItemWBL = templateItemWBL;
    }
 
-   private TemplateBeanLocator templateBeanLocator;
-   public void setTemplateBeanLocator(TemplateBeanLocator templateBeanLocator) {
-      this.templateBeanLocator = templateBeanLocator;
+   private ScaleBeanLocator scaleBeanLocator;
+   public void setScaleBeanLocator(ScaleBeanLocator scaleBeanLocator) {
+      this.scaleBeanLocator = scaleBeanLocator;
    }
 
-   private EvalAuthoringService authoringService;
-   public void setAuthoringService(EvalAuthoringService authoringService) {
-      this.authoringService = authoringService;
+   private TargettedMessageList messages;
+   public void setMessages(TargettedMessageList messages) {
+      this.messages = messages;
    }
 
 
+   // public pea type variables
 
    public Long templateId;
+   public Long itemId;
+   public Long scaleId;
+
    public Boolean idealColor;
    public Integer originalDisplayOrder;
+
    public String blockId;
    public String blockTextChoice;
    public String orderedChildIds;
@@ -77,6 +103,7 @@ public class TemplateBBean {
 
 
    // TEMPLATES
+
    /**
     * If the template is not saved, button will show text "continue and add
     * question" method binding to the "continue and add question" button on
@@ -97,6 +124,21 @@ public class TemplateBBean {
    public String updateTemplateTitleDesc() {
       log.debug("update template title/desc");
       templateBeanLocator.saveAll();
+      messages.addMessage( new TargettedMessage("modifytemplatetitledesc.success.user.message", 
+            new Object[] {}, TargettedMessage.SEVERITY_INFO) );
+      return "success";
+   }
+
+   /**
+    * Make a copy of a template at the users request,
+    * templateId must be set
+    */
+   public String copyTemplate() {
+      log.debug("make a copy of a template ("+templateId+") at the users request");
+      String ownerId = externalLogic.getCurrentUserId();
+      Long copiedId = authoringService.copyTemplate(templateId, null, ownerId, false, false);
+      messages.addMessage( new TargettedMessage("controltemplates.copy.user.message", 
+            new Object[] {templateId, copiedId}, TargettedMessage.SEVERITY_INFO) );
       return "success";
    }
 
@@ -106,6 +148,19 @@ public class TemplateBBean {
    public String saveItemAction() {
       log.info("save item");
       itemBeanWBL.saveAll();
+      return "success";
+   }
+
+   /**
+    * Make a copy of an item at the users request,
+    * itemId must be set
+    */
+   public String copyItem() {
+      log.debug("make a copy of an item ("+itemId+") at the users request");
+      String ownerId = externalLogic.getCurrentUserId();
+      Long[] copiedIds = authoringService.copyItems(new Long[] {itemId}, ownerId, false, false);
+      messages.addMessage( new TargettedMessage("controlitems.copy.user.message", 
+            new Object[] {itemId, copiedIds[0]}, TargettedMessage.SEVERITY_INFO) );
       return "success";
    }
 
@@ -125,11 +180,42 @@ public class TemplateBBean {
       return "success";
    }
 
-   private void emit(EvalTemplateItem toemit, int outindex) {
-      log.debug("EvalTemplateItem toemit: " + toemit.getId() + ", outindex: " + outindex);
-      toemit.setDisplayOrder(new Integer(outindex));
-      localTemplateLogic.saveTemplateItem(toemit);
+
+   // SCALES
+
+   /**
+    * Saves a scale (does a check of perms)
+    */
+   public String saveScaleAction() {
+      log.debug("save scale");
+      scaleBeanLocator.saveAll();
+      return "success";
    }
+
+   /**
+    * Deletes a scale (does a check of perms)
+    */
+   public String deleteScaleAction() {
+      log.debug("delete scale");
+      scaleBeanLocator.deleteScale(scaleId);
+      return "success";
+   }
+
+   /**
+    * Make a copy of a scale at the users request,
+    * scaleId must be set
+    */
+   public String copyScale() {
+      log.debug("make a copy of a scale ("+scaleId+") at the users request");
+      String ownerId = externalLogic.getCurrentUserId();
+      Long[] copiedIds = authoringService.copyScales(new Long[] {scaleId}, null, ownerId, false);
+      messages.addMessage( new TargettedMessage("controlscales.copy.user.message", 
+            new Object[] {scaleId, copiedIds[0]}, TargettedMessage.SEVERITY_INFO) );
+      return "success";
+   }
+
+
+   // BLOCKS and REORDERING
 
    /**
     * NB - this implementation depends on Hibernate reference equality
@@ -173,6 +259,13 @@ public class TemplateBBean {
          emit(item, i++);
       }
    }
+
+   private void emit(EvalTemplateItem toemit, int outindex) {
+      log.debug("EvalTemplateItem toemit: " + toemit.getId() + ", outindex: " + outindex);
+      toemit.setDisplayOrder(new Integer(outindex));
+      localTemplateLogic.saveTemplateItem(toemit);
+   }
+
 
    /**
     * Action to save a block type item,

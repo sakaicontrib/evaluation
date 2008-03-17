@@ -27,7 +27,10 @@ import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
+import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIELBinding;
+import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UILink;
 import uk.org.ponder.rsf.components.UIMessage;
@@ -141,15 +144,12 @@ public class ControlTemplatesProducer implements ViewComponentProducer {
 		List<EvalTemplate> templates = authoringService.getTemplatesForUser(currentUserId, null, true);
 		if (templates.size() > 0) {
 			UIBranchContainer templateListing = UIBranchContainer.make(tofill, "template-listing:");
-
-			UIMessage.make(templateListing, "template-title-header", "controltemplates.template.title.header");	
-			UIMessage.make(templateListing, "template-owner-header", "controltemplates.template.owner.header");
-			UIMessage.make(templateListing, "template-lastupdate-header", "controltemplates.template.lastupdate.header");
+         UIForm form = UIForm.make(templateListing, "copyForm");
 
 			for (int i = 0; i < templates.size(); i++) {
 				EvalTemplate template = (EvalTemplate) (templates.get(i));
 
-				UIBranchContainer templateRow = UIBranchContainer.make(templateListing, "template-row:", template.getId().toString());
+				UIBranchContainer templateBranch = UIBranchContainer.make(form, "template-row:", template.getId().toString());
 
 				// local locked check is more efficient so do that first
 				if ( ! template.getLocked().booleanValue() &&
@@ -158,36 +158,41 @@ public class ControlTemplatesProducer implements ViewComponentProducer {
 				} else {
                 	// template not controllable
 				}
-            UIOutput.make(templateRow, "template-title", template.getTitle());
+            UIOutput.make(templateBranch, "template-title", template.getTitle());
 
             // local locked check is more efficient so do that first
 				if ( ! template.getLocked().booleanValue() &&
 				      authoringService.canModifyTemplate(currentUserId, template.getId()) ) {
-               UIInternalLink.make(templateRow, "template-modify-link", UIMessage.make("general.command.edit"), 
+               UIInternalLink.make(templateBranch, "template-modify-link", UIMessage.make("general.command.edit"), 
                      new TemplateViewParameters( ModifyTemplateItemsProducer.VIEW_ID, template.getId() ));
 				} else {
-					UIMessage.make(templateRow, "template-modify-dummy", "general.command.edit")
+					UIMessage.make(templateBranch, "template-modify-dummy", "general.command.edit")
 					      .decorate( new UITooltipDecorator( UIMessage.make("controltemplates.template.inuse.note") ) );
 				}
             if ( ! template.getLocked().booleanValue() &&
                   authoringService.canRemoveTemplate(currentUserId, template.getId()) ) {
-               UIInternalLink.make(templateRow, "template-delete-link", UIMessage.make("general.command.delete"),
+               UIInternalLink.make(templateBranch, "template-delete-link", UIMessage.make("general.command.delete"),
                      new TemplateViewParameters( RemoveTemplateProducer.VIEW_ID, template.getId() ));
             } else {
-               UIMessage.make(templateRow, "template-delete-dummy", "general.command.delete")
+               UIMessage.make(templateBranch, "template-delete-dummy", "general.command.delete")
                      .decorate( new UITooltipDecorator( UIMessage.make("controltemplates.template.inuse.note") ) );
             }
-            UIInternalLink.make(templateRow, "template-preview-link", UIMessage.make("general.command.preview"),
+            UIInternalLink.make(templateBranch, "template-preview-link", UIMessage.make("general.command.preview"),
                   new EvalViewParameters( PreviewEvalProducer.VIEW_ID, null, template.getId() ));
 
 				// direct link to the template
-				UILink.make(templateRow, "template-direct-link", UIMessage.make("general.direct.link"), 
+				UILink.make(templateBranch, "template-direct-link", UIMessage.make("general.direct.link"), 
 				      externalLogic.getEntityURL(template) )
 				      .decorate( new UITooltipDecorator( UIMessage.make("general.direct.link.title") ) );
 
             EvalUser owner = externalLogic.getEvalUserById( template.getOwner() );
-				UIOutput.make(templateRow, "template-owner", owner.displayName );
-				UIOutput.make(templateRow, "template-last-update", df.format( template.getLastModified() ));
+				UIOutput.make(templateBranch, "template-owner", owner.displayName );
+				UIOutput.make(templateBranch, "template-last-update", df.format( template.getLastModified() ));
+
+	         // create the copy button/link
+	         UICommand copy = UICommand.make(templateBranch, "template-copy-link", 
+	               UIMessage.make("general.copy"), "templateBBean.copyTemplate");
+	         copy.parameters.add(new UIELBinding("templateBBean.templateId", template.getId()));
 
 			}
 		} else {

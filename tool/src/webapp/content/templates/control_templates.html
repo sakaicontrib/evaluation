@@ -40,37 +40,40 @@
 			
 			<!-- This block (list template) is not visible if there are no templates visible -->
 			<div rsf:id="template-listing:">
-				<table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
-					<thead>
-						<tr>
-							<th rsf:id="template-title-header" id="title">Template Title</th>
-							<th rsf:id="template-owner-header" width="15%" id="owner">Owner</th>
-							<th rsf:id="template-lastupdate-header" width="15%" id="updated">Last Update</th>
-							<th width="20%" align="center" id="actions">&nbsp;</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr rsf:id="template-row:">
-							<td headers="title">
-                                <span rsf:id="template-title">Template Title</span>
-                                &nbsp;&nbsp;
-                                <span rsf:id="template-direct-link"> (<a rsf:id="payload-component" href="preview_eval.html" target="_blank">link</a>)</span>
-                            </td>
-							<!-- <td align="center"><a href="#" name="copy-template-link">Copy</a></td> -->
-							<td rsf:id="template-owner" headers="owner">owner displayname</td>
-							<td rsf:id="template-last-update"  headers="update">11/11/2006</td>
-							<td class="itemAction" headers="action">
-                                <a rsf:id="template-modify-link" href="modify_template_items.html">Edit</a>
-                                <span rsf:id="template-modify-dummy"></span> | 
-								<a rsf:id="template-delete-link" href="remove_template.html">Delete</a>
-                                <span rsf:id="template-delete-dummy"></span> | 
-                                <a rsf:id="template-preview-link" href="preview_eval.html" target="_blank">Preview</a>
-							</td>	
-						</tr>
-					</tbody>
-				</table>
+                <form rsf:id="copyForm">
+                  <table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
+                     <thead>
+                        <tr>
+                           <!-- rsf cannot computer ids when using msg= so had to remove the ids -->
+                           <th rsf:id="msg=controltemplates.template.title.header">Template Title</th>
+                           <th rsf:id="msg=controltemplates.template.owner.header" width="15%">Owner</th>
+                           <th rsf:id="msg=controltemplates.template.lastupdate.header" width="15%">Last Update</th>
+                           <th width="20%" align="center">&nbsp;</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        <tr rsf:id="template-row:">
+                           <td headers="title">
+                              <span rsf:id="template-title">Template Title</span>
+                              &nbsp;&nbsp;
+                              <span rsf:id="template-direct-link"> (<a rsf:id="payload-component" href="preview_eval.html" target="_blank">link</a>)</span>
+                           </td>
+                           <td rsf:id="template-owner">owner displayname</td>
+                           <td rsf:id="template-last-update">11/11/2006</td>
+                           <td class="itemAction">
+                              <a rsf:id="template-modify-link" href="modify_template_items.html">Edit</a>
+                              <span rsf:id="template-modify-dummy"></span> | 
+                              <a rsf:id="template-delete-link" href="remove_template.html">Delete</a>
+                              <span rsf:id="template-delete-dummy"></span> | 
+                              <a rsf:id="template-preview-link" href="preview_eval.html" target="_blank">Preview</a> |
+                              <input rsf:id="template-copy-link" type="submit" class="makeLink" value="Copy" />
+                           </td>
+                        </tr>
+                     </tbody>
+                  </table>
+                </form>
 			</div>
-			<p  rsf:id="no-templates" class="instruction">No templates available</p>
+			<p rsf:id="no-templates" class="instruction">No templates available</p>
 		
 		</div>
 	</body>

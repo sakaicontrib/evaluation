@@ -72,72 +72,71 @@
 			-->
 			
 			<!-- This block (list items) is not visible if there are no items visible -->
-			<table  rsf:id="item-listing:" class="listHier lines nolines" border="0" cellpadding="0" cellspacing="0" summary="placeholder summary">
-				<thead class="skip" style="display:none">
-					<tr>
-						<th id="itemMD">
-							<span rsf:id="items-metadata-title">Item title and details</span>
-						</th>
-						<th id="itemAction">
-							<span rsf:id="items-action-title">Actions</span>
-						</th>
-						<th id="itemOwner">
-							<span rsf:id="items-owner-title">Owner</span>
-						</th>
-						<th id="itemExpert">
-							<span rsf:id="items-expert-title">Expert</span>
-						</th>
-					</tr>
-				</thead>
-					<tbody>
-							
-					<tr rsf:id="item-row:">
-						<td headers="itemMD">
-							<h4 rsf:id="item-classification" style="display:inline">Item Classification</h4>
-							<span rsf:id="item-scale" class="instruction">
-								- Item Scale (the title of the scale and the points in parens)
-							</span>
-							<div rsf:id="item-text" class="textPanel indnt2">Item Text (the text entered for the item itself will appear here, it is possibly quite long</div>
-						</td>
-						<td class="itemAction" headers="itemAction" style="white-space:nowrap">
-							<a rsf:id="item-remove-link" href="remove_item.html">Delete</a>
-							<span rsf:id="item-remove-dummy"></span> | 
-							<a rsf:id="item-modify-link" href="modify_scaled.html">Edit</a>
-							<span rsf:id="item-modify-dummy"></span> | 
-							<a rsf:id="item-preview-link" href="preview_item.html" target="_blank">Preview</a>
-								<!-- <a href="#" name="copy-item-link">Copy</a> -->
-						</td>
-						<td headers="itemOwner">
-								<span rsf:id="item-owner">owner displayname</span>
-						</td>
-						<td headers="itemExpert">
-								<span rsf:id="item-expert" class="rightcol" style="margin:0em 1em;">
-									Expert
-								</span>
-						</td>	
-					</tr>
-					<tr class="itemsListOddLine">
-						<td>
-							<h4 rsf:id="item-classification" style="display:inline">Item Classification</h4>
-							<span rsf:id="item-scale">
-								- Item Scale (the title of the scale and the points in parens)
-							</span>
-							<div rsf:id="item-text" class="textPanel  indnt2">Item Text (the text entered for the item itself will appear here, it is possibly quite long</div>
-						</td>
-						<td class="itemAction"  style="white-space:nowrap">
-							<a rsf:id="item-remove-link" href="remove_item.html">Delete</a>
-							<span rsf:id="item-remove-dummy"></span>
-							<a rsf:id="item-modify-link" href="modify_scaled.html">Edit</a>
-							<span rsf:id="item-modify-dummy"></span>
-							<a rsf:id="item-preview-link" href="preview_item.html">Preview</a>
-						</td>
-						<td>
-									<!-- <a href="#" name="copy-item-link">Copy</a> -->
-									<span rsf:id="item-owner">owner displayname</span>
-						</td>			
-					</tr>
-				</tbody>	
-			</table	>
+            <form rsf:id="copyForm">
+      			<table rsf:id="item-listing:" class="listHier lines nolines" border="0" cellpadding="0" cellspacing="0" summary="placeholder summary">
+      				<thead class="skip" style="display:none">
+      					<tr>
+      						<th id="itemMD">
+      							<span rsf:id="items-metadata-title">Item title and details</span>
+      						</th>
+      						<th id="itemAction">
+      							<span rsf:id="items-action-title">Actions</span>
+      						</th>
+      						<th id="itemOwner">
+      							<span rsf:id="items-owner-title">Owner</span>
+      						</th>
+      					</tr>
+      				</thead>
+      				<tbody>	
+      					<tr rsf:id="item-row:">
+      						<td headers="itemMD">
+      							<h4 rsf:id="item-classification" style="display:inline">Item Classification</h4>
+      							<span rsf:id="item-scale" class="instruction">
+      								- Item Scale (the title of the scale and the points in parens)
+      							</span>
+                                <span rsf:id="item-expert" style="font-weight: bold; font-size: 0.8em;">
+                                    [<span rsf:id="payload-component">Expert</span>]
+                                </span>
+      							<div rsf:id="item-text" class="textPanel indnt2">Item Text (the text entered for the item itself will appear here, it is possibly quite long</div>
+      						</td>
+      						<td class="itemAction" headers="itemAction" style="white-space:nowrap">
+      							<a rsf:id="item-remove-link" href="remove_item.html">Delete</a>
+      							<span rsf:id="item-remove-dummy"></span> | 
+      							<a rsf:id="item-modify-link" href="modify_scaled.html">Edit</a>
+      							<span rsf:id="item-modify-dummy"></span> | 
+      							<a rsf:id="item-preview-link" href="preview_item.html" target="_blank">Preview</a> |
+                                <input rsf:id="item-copy-link" type="submit" class="makeLink" value="Copy" />
+      						</td>
+      						<td headers="itemOwner" class="rightcol" style="margin:0em 1em;">
+      							<span rsf:id="item-owner">owner displayname</span>
+      						</td>
+      					</tr>
+      					<tr rsf:id="item-row:" class="itemsListOddLine">
+      						<td>
+      							<h4 rsf:id="item-classification" style="display:inline">Item Classification</h4>
+      							<span rsf:id="item-scale">
+      								- Item Scale (the title of the scale and the points in parens)
+      							</span>
+      							<div rsf:id="item-text" class="textPanel  indnt2">Item Text (the text entered for the item itself will appear here, it is possibly quite long</div>
+      						</td>
+      						<td class="itemAction"  style="white-space:nowrap">
+      							<a rsf:id="item-remove-link" href="remove_item.html">Delete</a>
+      							<span rsf:id="item-remove-dummy"></span> |
+      							<a rsf:id="item-modify-link" href="modify_scaled.html">Edit</a>
+      							<span rsf:id="item-modify-dummy"></span> |
+      							<a rsf:id="item-preview-link" href="preview_item.html">Preview</a> |
+                                <input rsf:id="item-copy-link" type="submit" class="makeLink" value="Copy" />
+      						</td>
+      						<td class="rightcol" style="margin:0em 1em;">
+      							<span rsf:id="item-owner">owner displayname</span>
+      						</td>
+                            <td headers="itemCopy" class="rightcol" style="margin:0em 1em;">
+                               <input rsf:id="item-copy-link" type="submit" class="makeLink" value="Copy" />
+                            </td>   
+      					</tr>
+      				</tbody>	
+      			</table>
+            </form>
 			
 			<div rsf:id="no-items" class="instruction">No items available</div>
 		
