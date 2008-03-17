@@ -175,7 +175,10 @@ public class TemplateBBean {
    }
 
    /**
-    * Action to save a block type item
+    * Action to save a block type item,
+    * this is stupidly complex now and entails changing the order of items in the template,
+    * copying various settings around and fixing up child items to inherit from the parent items<br/>
+    * This logic is getting complex enough that it probably needs to be broken out at some point
     * 
     * @return
     */
@@ -255,6 +258,9 @@ public class TemplateBBean {
                templateItem.setBlockId(parentId);
                templateItem.setDisplayOrder(new Integer(orderedChildIdList.indexOf(itemId) + 1));
                templateItem.setCategory(parent.getCategory()); // set the child category to the parent category EVALSYS-441
+               // children have to inherit the parent hierarchy settings
+               templateItem.setHierarchyLevel(parent.getHierarchyLevel());
+               templateItem.setHierarchyNodeId(parent.getHierarchyNodeId());
                localTemplateLogic.saveTemplateItem(templateItem);
             }
 
@@ -290,6 +296,9 @@ public class TemplateBBean {
          for (EvalTemplateItem child : blockChildren) {
             child.setDisplayOrder(new Integer(orderedChildIdList.indexOf(child.getId().toString()) + 1));
             child.setCategory(parent.getCategory()); // EVALSYS-441
+            // children have to inherit the parent hierarchy settings
+            child.setHierarchyLevel(parent.getHierarchyLevel());
+            child.setHierarchyNodeId(parent.getHierarchyNodeId());
             localTemplateLogic.saveTemplateItem(child);
          }
 
