@@ -194,7 +194,7 @@ public class ModifyScaleProducer implements ViewComponentProducer, ViewParamsRep
       // command buttons
       UIMessage.make(form, "scale-add-modify-cancel-button", "general.cancel.button");
       UICommand.make(form, "scale-add-modify-save-button", 
-            UIMessage.make("modifyscale.save.scale.button"), "#{scaleBean.saveScaleAction}");
+            UIMessage.make("modifyscale.save.scale.button"), "templateBBean.saveScaleAction");
 
    }
 
@@ -202,6 +202,7 @@ public class ModifyScaleProducer implements ViewComponentProducer, ViewParamsRep
     * (non-Javadoc)
     * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
     */
+   @SuppressWarnings("unchecked")
    public List reportNavigationCases() {
       List togo = new ArrayList();
       togo.add(new NavigationCase("success", new SimpleViewParameters(ControlScalesProducer.VIEW_ID)));

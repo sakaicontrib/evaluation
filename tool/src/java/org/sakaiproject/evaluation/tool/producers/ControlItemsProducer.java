@@ -26,7 +26,9 @@ import org.sakaiproject.evaluation.tool.viewparams.ItemViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
+import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
@@ -139,10 +141,12 @@ public class ControlItemsProducer implements ViewComponentProducer {
             "#{itemClassification}").setMessageKeys();
       UIMessage.make(addItemForm, "add-item-button", "controlitems.items.add.button");
 
+      UIForm form = UIForm.make(tofill, "copyForm");
+
       // get items for the current user
       List<EvalItem> userItems = authoringService.getItemsForUser(currentUserId, null, null, userAdmin);
       if (userItems.size() > 0) {
-         UIBranchContainer itemListing = UIBranchContainer.make(tofill, "item-listing:");
+         UIBranchContainer itemListing = UIBranchContainer.make(form, "item-listing:");
 
          for (int i = 0; i < userItems.size(); i++) {
             EvalItem item = (EvalItem) userItems.get(i);
@@ -158,9 +162,6 @@ public class ControlItemsProducer implements ViewComponentProducer {
                UIOutput.make(itemBranch, "item-scale", scaleDisplaySettingLabel);
             }
 
-            UIInternalLink.make(itemBranch, "item-preview-link", UIMessage.make("general.command.preview"), 
-                  new ItemViewParameters(PreviewItemProducer.VIEW_ID, item.getId(), (Long)null) );
-
             EvalUser owner = externalLogic.getEvalUserById( item.getOwner() );
             UIOutput.make(itemBranch, "item-owner", owner.displayName );
             if (item.getExpert().booleanValue() == true) {
@@ -169,6 +170,9 @@ public class ControlItemsProducer implements ViewComponentProducer {
             }
 
             UIVerbatim.make(itemBranch, "item-text", item.getItemText());
+
+            UIInternalLink.make(itemBranch, "item-preview-link", UIMessage.make("general.command.preview"), 
+                  new ItemViewParameters(PreviewItemProducer.VIEW_ID, item.getId(), (Long)null) );
 
             // local locked check is more efficient so do that first
             if ( !item.getLocked().booleanValue() && 
@@ -187,6 +191,11 @@ public class ControlItemsProducer implements ViewComponentProducer {
             } else {
                UIMessage.make(itemBranch, "item-remove-dummy", "general.command.delete");
             }
+
+            // create the copy button/link
+            UICommand copy = UICommand.make(itemBranch, "item-copy-link", UIMessage.make("general.copy"),
+                  "templateBBean.copyItem");
+            copy.parameters.add(new UIELBinding("templateBBean.itemId", item.getId()));
 
          }
       } else {

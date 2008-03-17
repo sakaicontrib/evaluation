@@ -41,10 +41,6 @@
 
 
    <!-- request scope backing beans here -->
-   <bean id="scaleBean"
-      class="org.sakaiproject.evaluation.tool.ScaleBean">
-      <property name="scaleBeanLocator" ref="scaleBeanLocator" />
-   </bean>
 
    <bean id="takeEvalBean"
       class="org.sakaiproject.evaluation.tool.TakeEvalBean">
@@ -56,12 +52,16 @@
 
    <bean id="templateBBean"
       class="org.sakaiproject.evaluation.tool.TemplateBBean">
+      <property name="externalLogic"
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+      <property name="authoringService"
+         ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
       <property name="localTemplateLogic" ref="localTemplateLogic" />
       <property name="itemBeanWBL" ref="itemWBL" />
       <property name="templateItemWBL" ref="templateItemWBL" />
       <property name="templateBeanLocator" ref="templateBeanLocator" />
-      <property name="authoringService"
-         ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
+      <property name="scaleBeanLocator" ref="scaleBeanLocator" />
+      <property name="messages" ref="targettedMessageList" />
    </bean>
 
    <bean id="importBean"
@@ -73,15 +73,6 @@
          ref="org.sakaiproject.content.api.ContentHostingService" />
       <property name="sessionManager"
          ref="org.sakaiproject.tool.api.SessionManager" />
-   </bean>
-
-   <bean id="itemsBean"
-      class="org.sakaiproject.evaluation.tool.ItemsBean"
-      init-method="init">
-      <property name="external"
-         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
-      <property name="authoringService"
-         ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
    </bean>
 
    <bean id="expertItemsBean"
