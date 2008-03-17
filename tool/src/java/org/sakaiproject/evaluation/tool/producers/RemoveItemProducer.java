@@ -14,18 +14,24 @@
 
 package org.sakaiproject.evaluation.tool.producers;
 
+import java.util.List;
+
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
+import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
+import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.ItemViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
+import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIDeletionBinding;
+import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
@@ -47,6 +53,12 @@ public class RemoveItemProducer implements ViewComponentProducer, ViewParamsRepo
    public static final String VIEW_ID = "remove_item";
    public String getViewID() {
       return VIEW_ID;
+   }
+
+
+   private EvalExternalLogic externalLogic;
+   public void setExternalLogic(EvalExternalLogic external) {
+      this.externalLogic = external;
    }
 
    private EvalAuthoringService authoringService;
@@ -95,6 +107,9 @@ public class RemoveItemProducer implements ViewComponentProducer, ViewParamsRepo
                itemViewParams.itemId + " and templateItem=" + itemViewParams.templateItemId);
       }
 
+      String beanBinding = "templateBBean.";
+      String actionBinding = "deleteItemAction";
+
       String itemOTPBinding = null;
       if (item == null) {
          // we are removing a template item
@@ -114,6 +129,19 @@ public class RemoveItemProducer implements ViewComponentProducer, ViewParamsRepo
                UIMessage.make("controlitems.page.title"), 
                new SimpleViewParameters(ControlItemsProducer.VIEW_ID) );
          UIMessage.make(tofill, "remove-item-confirm-text", "removeitem.item.confirmation");
+
+         // in use message
+         List<EvalTemplate> templates = authoringService.getTemplatesUsingItem(item.getId());
+         if (templates.size() > 0) {
+            actionBinding = "hideItemAction";
+            UIBranchContainer inUseBranch = UIBranchContainer.make(tofill, "inUse:");
+            UIMessage.make(inUseBranch, "inUseWarning", "removeitem.inuse.warning", new Object[] {templates.size()});
+            for (EvalTemplate template : templates) {
+               UIBranchContainer itemsBranch = UIBranchContainer.make(inUseBranch, "items:");
+               UIMessage.make(itemsBranch, "itemInfo", "removeitem.inuse.info", new Object[] {template.getId(), 
+                     externalLogic.getEvalUserById(template.getOwner()).displayName, template.getTitle()});
+            }
+         }
       }
 
       // use the renderer evolver to show the item
@@ -121,11 +149,20 @@ public class RemoveItemProducer implements ViewComponentProducer, ViewParamsRepo
 
       UIMessage.make(tofill, "cancel-command-link", "general.cancel.button");
 
-      // remove the items using a OTP deletion binding
       UIForm form = UIForm.make(tofill, "remove-item-form");
-      UICommand removeButton = UICommand.make(form, "remove-item-command-link", 
-            UIMessage.make("removeitem.remove.item.button"));
-      removeButton.parameters.add(new UIDeletionBinding(itemOTPBinding));
+
+      if (item == null) {
+         // removing TI so just use the OTP deletion binding
+         UICommand removeButton = UICommand.make(form, "remove-item-command-link", 
+               UIMessage.make("removeitem.remove.item.button"));
+         removeButton.parameters.add(new UIDeletionBinding(itemOTPBinding));
+      } else {
+         // removing or hiding an item
+         UICommand deleteCommand = UICommand.make(form, "remove-item-command-link", 
+               UIMessage.make("removeitem.remove.item.button"), beanBinding + actionBinding);
+         deleteCommand.parameters.add(new UIELBinding(beanBinding + "itemId", item.getId()));
+      }
+
    }
 
    /* (non-Javadoc)

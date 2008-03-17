@@ -281,11 +281,12 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       // get the scale by id
       EvalScale scale = getScaleOrFail(scaleId);
 
-      // cannot remove scales that are in use
-      if (dao.isUsedScale(scaleId)) {
-         log.debug("Cannot remove scale ("+scaleId+") which is used in at least one item");
-         return false;
-      }
+      // can remove scales that are in use now
+//      // cannot remove scales that are in use
+//      if (dao.isUsedScale(scaleId)) {
+//         log.debug("Cannot remove scale ("+scaleId+") which is used in at least one item");
+//         return false;
+//      }
 
       // check perms and locked
       boolean allowed = false;
@@ -775,11 +776,12 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       // get the item by id
       EvalItem item = getItemOrFail(itemId);
 
-      // cannot remove items that are in use
-      if (dao.isUsedItem(itemId)) {
-         log.debug("Cannot remove item ("+itemId+") which is used in at least one template");
-         return false;
-      }
+      // can remove items that are in use now
+//      // cannot remove items that are in use
+//      if (dao.isUsedItem(itemId)) {
+//         log.debug("Cannot remove item ("+itemId+") which is used in at least one template");
+//         return false;
+//      }
 
       // check perms and locked
       boolean allowed = false;
@@ -1543,6 +1545,34 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       }
 
       return copy.getId();
+   }
+
+
+   @SuppressWarnings("unchecked")
+   public List<EvalItem> getItemsUsingScale(Long scaleId) {
+      if (getScaleById(scaleId) == null) {
+         throw new IllegalArgumentException("Invalid scaleId, no scale found with this id: " + scaleId);
+      }
+      List<EvalItem> items = dao.findByProperties(EvalItem.class, new String[] {"scale.id"}, new Object[] { scaleId });
+      return items;
+   }
+
+
+   @SuppressWarnings("unchecked")
+   public List<EvalTemplate> getTemplatesUsingItem(Long itemId) {
+      if (getItemById(itemId) == null) {
+         throw new IllegalArgumentException("Invalid itemId, no item found with this id: " + itemId);
+      }
+      List<EvalTemplateItem> templateItems = dao.findByProperties(EvalTemplateItem.class, new String[] {"item.id"}, new Object[] { itemId });
+      Set<Long> ids = new HashSet<Long>();
+      for (EvalTemplateItem templateItem : templateItems) {
+         ids.add(templateItem.getTemplate().getId());
+      }
+      List<EvalTemplate> templates = new ArrayList<EvalTemplate>();
+      for (Long templateId : ids) {
+         templates.add( getTemplateById(templateId) );
+      }
+      return templates;
    }
 
 }

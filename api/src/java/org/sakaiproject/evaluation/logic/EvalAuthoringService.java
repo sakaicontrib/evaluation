@@ -502,6 +502,7 @@ public interface EvalAuthoringService {
    public boolean canRemoveTemplate(String userId, Long templateId);
 
 
+
    // COPYING
 
    /**
@@ -592,5 +593,24 @@ public interface EvalAuthoringService {
     * @throws IllegalArgumentException if any of the ids are invalid
     */
    public Long[] copyScales(Long[] scaleIds, String title, String ownerId, boolean hidden);
+
+   
+   // IN-USE / USING checks
+
+   /**
+    * Get the list of all the items which are using a scale 
+    * 
+    * @param scaleId the unique id of an {@link EvalScale}
+    * @return the list of all {@link EvalItem}s which are using this scale (or empty if none found)
+    */
+   public List<EvalItem> getItemsUsingScale(Long scaleId);
+
+   /**
+    * Get the list of all the templates which are using an item
+    * 
+    * @param itemId the unique id of an {@link EvalItem}
+    * @return the list of all {@link EvalTemplate}s which are using this item (or empty if none found)
+    */
+   public List<EvalTemplate> getTemplatesUsingItem(Long itemId);
 
 }

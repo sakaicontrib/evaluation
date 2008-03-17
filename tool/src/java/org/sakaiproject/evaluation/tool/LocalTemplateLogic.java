@@ -197,6 +197,17 @@ public class LocalTemplateLogic {
       authoringService.saveItem(item, external.getCurrentUserId());
    }
 
+   /**
+    * Hides an item (this will make the item inaccessible to users)
+    * 
+    * @param itemId the unique id of an item
+    */
+   public void hideItem(Long itemId) {
+      EvalItem item = fetchItem(itemId);
+      item.setHidden(true);
+      authoringService.saveItem(item, external.getCurrentUserId());
+   }
+
    public void deleteItem(Long id) {
       authoringService.deleteItem(id, external.getCurrentUserId());
    }
@@ -227,6 +238,17 @@ public class LocalTemplateLogic {
             scale.getIdeal().equals(EvalToolConstants.NULL)) {
          scale.setIdeal(null);
       }
+      authoringService.saveScale(scale, external.getCurrentUserId());
+   }
+
+   /**
+    * Hides a scale (this will make the scale inaccessible to users)
+    * 
+    * @param scaleId the unique id of a scale
+    */
+   public void hideScale(Long scaleId) {
+      EvalScale scale = fetchScale(scaleId);
+      scale.setHidden(true);
       authoringService.saveScale(scale, external.getCurrentUserId());
    }
 

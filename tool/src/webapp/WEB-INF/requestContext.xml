@@ -386,6 +386,8 @@
 
    <bean
       class="org.sakaiproject.evaluation.tool.producers.RemoveItemProducer">
+      <property name="externalLogic"
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="authoringService"
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
       <property name="itemRenderer"
@@ -450,7 +452,8 @@
       class="org.sakaiproject.evaluation.tool.producers.RemoveScaleProducer">
       <property name="external"
          ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
-      <property name="localTemplateLogic" ref="localTemplateLogic" />
+      <property name="authoringService"
+         ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
    </bean>
 
 

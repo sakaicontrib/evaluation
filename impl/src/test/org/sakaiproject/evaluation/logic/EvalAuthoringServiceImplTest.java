@@ -456,13 +456,14 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       assertFalse( authoringService.canRemoveScale(
             EvalTestDataLoad.USER_ID, etdl.scale3.getId()) );
 
-      // test cannot remove unlocked used scale
-      assertFalse( authoringService.canRemoveScale(
-            EvalTestDataLoad.MAINT_USER_ID,  etdl.scale2.getId()) );
-
-      // test admin cannot remove unlocked used scale
-      assertFalse( authoringService.canRemoveScale(
-            EvalTestDataLoad.ADMIN_USER_ID,  etdl.scale2.getId()) );
+      // can remove items that are in use now
+//      // test cannot remove unlocked used scale
+//      assertFalse( authoringService.canRemoveScale(
+//            EvalTestDataLoad.MAINT_USER_ID,  etdl.scale2.getId()) );
+//
+//      // test admin cannot remove unlocked used scale
+//      assertFalse( authoringService.canRemoveScale(
+//            EvalTestDataLoad.ADMIN_USER_ID,  etdl.scale2.getId()) );
 
       // test cannot remove locked scale
       assertFalse( authoringService.canRemoveScale(
@@ -1672,11 +1673,12 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       assertFalse( authoringService.canRemoveItem( EvalTestDataLoad.USER_ID, 
             etdl.item4.getId() ) );
 
-      // test cannot remove unlocked items that are in use in templates
-      assertFalse( authoringService.canRemoveItem( EvalTestDataLoad.MAINT_USER_ID, 
-            etdl.item6.getId() ) );
-      assertFalse( authoringService.canRemoveItem( EvalTestDataLoad.ADMIN_USER_ID, 
-            etdl.item9.getId() ) );
+      // can remove items that are in use now
+//      // test cannot remove unlocked items that are in use in templates
+//      assertFalse( authoringService.canRemoveItem( EvalTestDataLoad.MAINT_USER_ID, 
+//            etdl.item6.getId() ) );
+//      assertFalse( authoringService.canRemoveItem( EvalTestDataLoad.ADMIN_USER_ID, 
+//            etdl.item9.getId() ) );
 
       // test cannot remove locked items
       assertFalse( authoringService.canRemoveItem( EvalTestDataLoad.ADMIN_USER_ID, 
@@ -2612,7 +2614,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       // check that the scale was used but not copied
       assertNotNull(copy2.getScale());
       assertEquals(copy2.getScale().getId(), original.getScale().getId());
-      
+
 
 
       // copy a single item (text item this time), true for child copy even though there are no children should be ok
@@ -2948,4 +2950,45 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       }
    }
 
+
+
+   public void testGetItemsUsingScale() {
+      List<EvalItem> items = null;
+
+      items = authoringService.getItemsUsingScale(etdl.scale1.getId());
+      assertNotNull(items);
+      assertEquals(5, items.size());
+
+      items = authoringService.getItemsUsingScale(etdl.scale4.getId());
+      assertNotNull(items);
+      assertEquals(0, items.size());
+
+      // check that invalid id causes death
+      try {
+         items = authoringService.getItemsUsingScale(EvalTestDataLoad.INVALID_LONG_ID);
+         fail("Should have thrown exception");
+      } catch (IllegalArgumentException e) {
+         assertNotNull(e);
+      }
+   }
+
+   public void testGetTemplatesUsingItem() {
+      List<EvalTemplate> templates = null;
+
+      templates = authoringService.getTemplatesUsingItem(etdl.item1.getId());
+      assertNotNull(templates);
+      assertEquals(3, templates.size());
+
+      templates = authoringService.getTemplatesUsingItem(etdl.item11.getId());
+      assertNotNull(templates);
+      assertEquals(0, templates.size());
+
+      // check that invalid id causes death
+      try {
+         templates = authoringService.getTemplatesUsingItem(EvalTestDataLoad.INVALID_LONG_ID);
+         fail("Should have thrown exception");
+      } catch (IllegalArgumentException e) {
+         assertNotNull(e);
+      }
+   }
 }

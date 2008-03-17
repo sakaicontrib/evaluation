@@ -16,11 +16,13 @@ package org.sakaiproject.evaluation.tool.producers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
-import org.sakaiproject.evaluation.tool.LocalTemplateLogic;
 import org.sakaiproject.evaluation.tool.viewparams.EvalScaleParameters;
 
+import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIELBinding;
@@ -39,24 +41,24 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * Handles scale removal confirmation.
  * 
  * @author Kapil Ahuja (kahuja@vt.edu)
+ * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
 public class RemoveScaleProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
 
-   // RSF specific
    public static final String VIEW_ID = "remove_scale";
    public String getViewID() {
       return VIEW_ID;
    }
 
-   // Spring injection 
+
    private EvalExternalLogic external;
    public void setExternal(EvalExternalLogic external) {
       this.external = external;
    }
 
-   private LocalTemplateLogic localTemplateLogic;
-   public void setLocalTemplateLogic(LocalTemplateLogic localTemplateLogic) {
-      this.localTemplateLogic = localTemplateLogic;
+   private EvalAuthoringService authoringService;
+   public void setAuthoringService(EvalAuthoringService authoringService) {
+      this.authoringService = authoringService;
    }
 
 
@@ -64,43 +66,50 @@ public class RemoveScaleProducer implements ViewComponentProducer, ViewParamsRep
     * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
     */
    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
-      String currentUserId = external.getCurrentUserId();
-      boolean userAdmin = external.isUserAdmin(currentUserId);
 
-      if (!userAdmin) {
-         // Security check and denial
-         throw new SecurityException("Non-admin users may not access this page");
-      }
-
-      EvalScaleParameters evalScaleParams = (EvalScaleParameters) viewparams;
-      Long scaleId = evalScaleParams.scaleId;
-
-      /*
-       * Fetching the scale from LocalScaleLogic just because 
-       * we need the number of scale options.
-       */
-      EvalScale scale = localTemplateLogic.fetchScale(scaleId);
+      String beanBinding = "templateBBean.";
+      String actionBinding = "deleteScaleAction";
 
       /*
        * top menu links and bread crumbs here
        */
-      UIInternalLink.make(tofill, "summary-link", UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID));
-      UIInternalLink.make(tofill, "administrate-link", UIMessage.make("administrate.page.title"), new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-      UIInternalLink.make(tofill, "scale-control-toplink", UIMessage.make("controlscales.page.title"), new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+      UIInternalLink.make(tofill, "summary-link", 
+            UIMessage.make("summary.page.title"), new SimpleViewParameters(SummaryProducer.VIEW_ID));
+      UIInternalLink.make(tofill, "administrate-link", 
+            UIMessage.make("administrate.page.title"), new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+      UIInternalLink.make(tofill, "control-scales-link",
+            UIMessage.make("controlscales.page.title"), new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
 
-      // Page title
-      UIMessage.make(tofill, "page-title", "removescale.page.title");
+      // passed in values
+      EvalScaleParameters evalScaleParams = (EvalScaleParameters) viewparams;
+      Long scaleId = evalScaleParams.scaleId;
 
+      EvalScale scale = authoringService.getScaleById(scaleId);
+
+      // deletion message
       UIMessage.make(tofill, "removescale.confirm.text", 
             "removescale.confirm.text", new Object[] {scale.getTitle()});
 
+
+      // in use message
+      List<EvalItem> items = authoringService.getItemsUsingScale(scale.getId());
+      if (items.size() > 0) {
+         actionBinding = "hideScaleAction";
+         UIBranchContainer inUseBranch = UIBranchContainer.make(tofill, "inUse:");
+         UIMessage.make(inUseBranch, "inUseWarning", "removescale.inuse.warning", new Object[] {items.size()});
+         for (EvalItem item : items) {
+            UIBranchContainer itemsBranch = UIBranchContainer.make(inUseBranch, "items:");
+            UIMessage.make(itemsBranch, "itemInfo", "removescale.inuse.info", new Object[] {item.getId(), 
+                  item.getCategory(), external.getEvalUserById(item.getOwner()).displayName, item.getItemText()});
+         }
+      }
 
       UIMessage.make(tofill, "remove-scale-cancel-button", "general.cancel.button");
 
       UIForm form = UIForm.make(tofill, "remove-scale-form");
       UICommand deleteCommand = UICommand.make(form, "remove-scale-remove-button", 
-            UIMessage.make("removescale.remove.scale.button"), "templateBBean.deleteScaleAction");
-      deleteCommand.parameters.add(new UIELBinding("templateBBean.scaleId", scaleId));
+            UIMessage.make("removescale.remove.scale.button"), beanBinding + actionBinding);
+      deleteCommand.parameters.add(new UIELBinding(beanBinding + "scaleId", scaleId));
    }
 
    /* 
