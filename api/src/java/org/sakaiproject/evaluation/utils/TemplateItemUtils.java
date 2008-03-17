@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.utils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -59,6 +60,33 @@ public class TemplateItemUtils {
       } else {
          throw new IllegalStateException("Cannot identify this item classification:" + templateItem.getItem().getClassification());
       }
+   }
+
+   /**
+    * Create an ordered list or templateItems (by displayOrder) from any collection of template items
+    * 
+    * @param templateItemsCollection any collection of {@link EvalTemplateItem}
+    * @return a list of {@link EvalTemplateItem} in order by display order
+    */
+   public static List<EvalTemplateItem> makeTemplateItemsList(Collection<EvalTemplateItem> templateItemsCollection) {
+      List<EvalTemplateItem> templateItemsList = new ArrayList<EvalTemplateItem>();
+
+      for (EvalTemplateItem templateItem : templateItemsCollection) {
+         templateItemsList.add(templateItem);
+      }
+
+      return orderTemplateItems(templateItemsList);
+   }
+
+   public static Long[] makeTemplateItemsIdsArray(Collection<EvalTemplateItem> templateItemsCollection) {
+      List<Long> templateItemsIds = new ArrayList<Long>();
+
+      for (EvalTemplateItem templateItem : templateItemsCollection) {
+         templateItemsIds.add(templateItem.getId());
+      }
+
+      Long[] ids = templateItemsIds.toArray(new Long[] {});
+      return ids;
    }
 
    /**
