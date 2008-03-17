@@ -1148,6 +1148,20 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
 
    // IN_USE checks
 
+   /**
+    * NOT USED
+    * @param scaleId
+    * @return
+    */
+   @SuppressWarnings("unchecked")
+   protected Long[] getItemIdsUsingScale(Long scaleId) {
+      String hql = "select item.id from EvalItem item join item.scale itemScale where itemScale.id = ? order by item.id";
+      Object[] params = new Object[] {scaleId};
+      List<Long> l = getHibernateTemplate().find(hql, params);
+      return l.toArray(new Long[] {});
+   }
+
+
    /*
     * (non-Javadoc)
     * 

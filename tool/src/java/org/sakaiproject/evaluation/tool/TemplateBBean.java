@@ -164,6 +164,28 @@ public class TemplateBBean {
       return "success";
    }
 
+   /**
+    * hide the item (instead of removing it)
+    */
+   public String hideItemAction() {
+      log.debug("hide item");
+      localTemplateLogic.hideItem(itemId);
+      messages.addMessage( new TargettedMessage("removeitem.removed.user.message", 
+            new Object[] {itemId}, TargettedMessage.SEVERITY_INFO) );
+      return "success";
+   }
+
+   /**
+    * remove the item (does perm check)
+    */
+   public String deleteItemAction() {
+      log.debug("delete item");
+      localTemplateLogic.deleteItem(itemId);
+      messages.addMessage( new TargettedMessage("removeitem.removed.user.message", 
+            new Object[] {itemId}, TargettedMessage.SEVERITY_INFO) );
+      return "success";
+   }
+
 
    // TEMPLATE ITEMS
 
@@ -198,6 +220,19 @@ public class TemplateBBean {
    public String deleteScaleAction() {
       log.debug("delete scale");
       scaleBeanLocator.deleteScale(scaleId);
+      messages.addMessage( new TargettedMessage("removescale.removed.user.message", 
+            new Object[] {scaleId}, TargettedMessage.SEVERITY_INFO) );
+      return "success";
+   }
+
+   /**
+    * Hides a scale instead of removing it (does a check of perms)
+    */
+   public String hideScaleAction() {
+      log.debug("hide scale");
+      localTemplateLogic.hideScale(scaleId);
+      messages.addMessage( new TargettedMessage("removescale.removed.user.message", 
+            new Object[] {scaleId}, TargettedMessage.SEVERITY_INFO) );
       return "success";
    }
 

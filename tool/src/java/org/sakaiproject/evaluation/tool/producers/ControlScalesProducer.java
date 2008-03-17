@@ -63,12 +63,6 @@ public class ControlScalesProducer implements ViewComponentProducer {
     */
    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
       String currentUserId = external.getCurrentUserId();
-      boolean userAdmin = external.isUserAdmin(currentUserId);
-
-      if (!userAdmin) {
-         // Security check and denial
-         throw new SecurityException("Non-admin users may not access this page");
-      }
 
       /*
        * top links here
