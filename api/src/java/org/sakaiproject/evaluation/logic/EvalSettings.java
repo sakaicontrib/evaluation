@@ -213,6 +213,20 @@ public interface EvalSettings {
     */
    public static final String ENABLE_IMPORTING = "ENABLE_IMPORTING:java.lang.Boolean";
 
+   /**
+    * If this is enabled then we are allow the user to create their own adhoc groups and we search
+    * the adhoc groups and treat them as normal eval groups, otherwise adhoc groups
+    * are ignored and the user cannot create them
+    */
+   public static final String ENABLE_ADHOC_GROUPS = "ENABLE_ADHOC_GROUPS:java.lang.Boolean";
+   /**
+    * If this is enabled then we are allow the user to create their own adhoc users and we search
+    * the adhoc users and treat them as normal eval users, otherwise adhoc users
+    * are ignored and the user cannot create them<br/>
+    * In other words, the user can only add existing users to their adhoc groups (if those are enabled),
+    * it makes little sense to enable this if adhoc groups are off
+    */
+   public static final String ENABLE_ADHOC_USERS = "ENABLE_ADHOC_USERS:java.lang.Boolean";
 
    /**
     * This is here to identify all the boolean ONLY settings in the system,
@@ -224,6 +238,8 @@ public interface EvalSettings {
       ADMIN_VIEW_INSTRUCTOR_ADDED_RESULTS,
       DISPLAY_HIERARCHY_HEADERS,
       DISPLAY_HIERARCHY_OPTIONS,
+      ENABLE_ADHOC_GROUPS,
+      ENABLE_ADHOC_USERS,
       ENABLE_CSV_REPORT_EXPORT,
       ENABLE_EVAL_CATEGORIES,
       ENABLE_EVAL_RESPONSE_REMOVAL,

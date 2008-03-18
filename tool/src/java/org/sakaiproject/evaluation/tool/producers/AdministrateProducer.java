@@ -303,6 +303,9 @@ public class AdministrateProducer implements ViewComponentProducer {
       makeBoolean(form, "general-expert-templates", EvalSettings.USE_EXPERT_TEMPLATES);
       makeBoolean(form, "general-expert-questions", EvalSettings.USE_EXPERT_ITEMS);	
 
+      makeBoolean(form, "general-enable-adhoc-groups", EvalSettings.ENABLE_ADHOC_GROUPS);
+      makeBoolean(form, "general-enable-adhoc-users", EvalSettings.ENABLE_ADHOC_USERS); 
+
 //    makeBoolean(form, "general-require-comments-block",  EvalSettings.REQUIRE_COMMENTS_BLOCK);
 
       //Number of days old can an eval be and still be recently closed

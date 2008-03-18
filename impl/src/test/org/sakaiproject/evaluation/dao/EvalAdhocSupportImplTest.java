@@ -21,6 +21,7 @@ import java.util.Set;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvalAdhocSupportImpl;
 import org.sakaiproject.evaluation.logic.BaseTestEvalLogic;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
@@ -43,12 +44,21 @@ public class EvalAdhocSupportImplTest extends BaseTestEvalLogic {
       super.onSetUpBeforeTransaction();
 
       // load up any other needed spring beans
+      EvalSettings settings = (EvalSettings) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalSettings");
+      if (settings == null) {
+         throw new NullPointerException("EvalSettings could not be retrieved from spring context");
+      }
 
       // setup the mock objects if needed
 
       // create and setup the object to be tested
       adhocSupportLogic = new EvalAdhocSupportImpl();
       adhocSupportLogic.setDao(evaluationDao);
+      adhocSupportLogic.setSettings(settings);
+
+      // enable these for the tests
+      settings.set(EvalSettings.ENABLE_ADHOC_GROUPS, true);
+      settings.set(EvalSettings.ENABLE_ADHOC_USERS, true);
 
    }
 
