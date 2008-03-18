@@ -12,17 +12,6 @@
 		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
 	</head>
 	<body>
-		<script type="text/javascript">
-		//<![CDATA[
-		//YAHOO.widget.Logger.enableBrowserConsole();
-		//var myLogReader1 = new YAHOO.widget.LogReader(null,{width: "60em", verboseOutput: false}); 
-		//myLogReader1.formatMsg = function(oLogMsg) { 
-		//  var category = oLogMsg.category; 
-		//  return "<p><span class='"+category+"'>"+category+"</span> "+ 
-		//          this.html2Text(oLogMsg.msg)+"</p>"; };
-		//          }, 10 );
-		//]]>
-		</script>
 		<div class="portletBody">
 
            <div class="navIntraTool">
@@ -87,8 +76,9 @@
                       </table>
                   </div>
                   <div rsf:id="showTemplate:" class="shorttext">
-                    <span rsf:id="eval_template_title">Template: template title</span> 
-                    (<a rsf:id="eval_template_preview_link" href="#" target="_blank">View preview</a>)
+                    <span rsf:id="eval_template_title">Template: template title</span>
+                    &nbsp; (<a rsf:id="eval_template_preview_link" href="preview_eval.html" target="_blank">View preview</a>)
+                    <span rsf:id="eval_template_modify_link">&nbsp; [<a rsf:id="payload-component" href="modify_template.html">Modify</a>]</span>
                   </div>
                 </fieldset>
 
