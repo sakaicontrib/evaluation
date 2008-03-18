@@ -1296,11 +1296,12 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       // get the template by id
       EvalTemplate template = getTemplateOrFail(templateId);
 
-      // cannot remove templates that are in use
-      if (dao.isUsedTemplate(templateId)) {
-         log.debug("Cannot remove template ("+templateId+") which is used in at least one evaluation");
-         return false;
-      }
+      // can remove templates that are in use now since it should not happen
+//      // cannot remove templates that are in use
+//      if (dao.isUsedTemplate(templateId)) {
+//         log.debug("Cannot remove template ("+templateId+") which is used in at least one evaluation");
+//         return false;
+//      }
 
       // check perms and locked
       boolean allowed = false;
@@ -1348,7 +1349,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       for (EvalScale original : scales) {
          String newTitle = title;
          if (newTitle == null || newTitle.length() == 0) {
-            newTitle = "Copy of " + original.getTitle();
+            newTitle = original.getTitle() + " (copy)";
          }
          EvalScale copy = new EvalScale(new Date(), ownerId, newTitle, original.getMode(), 
                EvalConstants.SHARING_PRIVATE, false, null, original.getIdeal(), 
@@ -1556,7 +1557,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 
       String newTitle = title;
       if (newTitle == null || newTitle.length() == 0) {
-         newTitle = "Copy of " + original.getTitle();
+         newTitle = original.getTitle() + " (copy)";
       }
       EvalTemplate copy = new EvalTemplate(new Date(), ownerId, original.getType(), 
             newTitle, original.getDescription(), EvalConstants.SHARING_PRIVATE, 

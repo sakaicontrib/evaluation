@@ -253,6 +253,11 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
          UIInternalLink.make(showTemplateBranch, "eval_template_preview_link", 
                UIMessage.make("evalsettings.template.preview.link"), 
                new EvalViewParameters(PreviewEvalProducer.VIEW_ID, null, template.getId()) );         
+         if ( ! template.getLocked().booleanValue() &&
+               authoringService.canModifyTemplate(currentUserId, template.getId()) ) {
+            UIInternalLink.make(showTemplateBranch, "eval_template_modify_link", UIMessage.make("general.command.edit"), 
+                  new TemplateViewParameters( ModifyTemplateItemsProducer.VIEW_ID, template.getId() ));
+         }
       }
 
 
