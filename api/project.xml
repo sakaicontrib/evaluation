@@ -31,12 +31,7 @@
          <type>plugin</type>
       </dependency>
 
-      <!-- our tool internal dependencies -->
-      <dependency>
-         <groupId>sakaiproject</groupId>
-         <artifactId>sakai-evaluation-model-api</artifactId>
-         <version>${sakai.version}</version>
-      </dependency>
+      <!-- our tool internal dependencies (none for api) -->
 
       <!-- Apache commons dependencies -->
       <dependency>
