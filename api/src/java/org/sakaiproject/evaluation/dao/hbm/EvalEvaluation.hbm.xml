@@ -87,10 +87,6 @@
         <many-to-one name="template" class="org.sakaiproject.evaluation.model.EvalTemplate" foreign-key="EVALUATION_TEMPLATE_FKC" lazy="proxy" fetch="select">
             <column name="TEMPLATE_FK" not-null="true" />
         </many-to-one>
-        <!-- the template which stores the added items for this evaluation -->
-        <many-to-one name="addedTemplate" class="org.sakaiproject.evaluation.model.EvalTemplate" foreign-key="EVALUATION_ADDED_TEMPLATE_FKC" lazy="proxy" fetch="select">
-            <column name="ADDED_TEMPLATE_FK" />
-        </many-to-one>
         <!-- the responses associated with this evaluation -->
         <set name="responses" order-by="EVALUATION_FK" lazy="true" fetch="select" inverse="true">
             <key foreign-key="RESPONSE_EVALUATION_FKC">
