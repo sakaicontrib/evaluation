@@ -10,6 +10,39 @@ var EvalSystem = function() {
   }
 
   return {
+  
+    /**
+     * This will bind a checkbox to a some area (usually a div) so that clicking
+     * the checkbox will hide/show the area.
+     *
+     * This is initially for the evaluation_assign page, where we are collapsing
+     * and showing the different options for evaluation assignment.
+     *
+     * areaId: The ID of the area to show/hide
+     * checkboxId: The ID of the checkbox to trigger the hide/show
+     */
+    hideAndShowRegionWithCheckbox: function (areaId, checkboxId) {
+        var area = $("#"+areaId);
+        var checkbox = $("#"+checkboxId);
+        
+        var changeAction = function(event) {
+            var checkboxValue = event.target.checked;
+            
+            // If the checkbox becomes clicked and the area is hidden unhide it.
+            // If the checkbox is unclicked and it's visible then hide it.
+            if (checkboxValue && area.is(':hidden')) {
+                area.show("slow");
+            } 
+            else if (!checkboxValue && area.is(':visible')) {
+                area.hide("normal");
+            }
+            else {
+                // Do Nothing
+            }
+        }
+        
+        checkbox.change( function (event) { changeAction(event) }).change();
+    },
 
     // this just makes it easier to add in more stuff later -AZ
     initEvalSettings: function (areaId, selectId, selectValue, reminderId) {
