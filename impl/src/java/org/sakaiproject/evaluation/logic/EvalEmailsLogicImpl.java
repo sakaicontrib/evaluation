@@ -25,10 +25,6 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.constant.EvalEmailConstants;
-import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
-import org.sakaiproject.evaluation.logic.EvalEvaluationService;
-import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
@@ -88,25 +84,26 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       String from = getFromEmailOrFail(eval);
       EvalEmailTemplate emailTemplate = getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_CREATED, evaluationId);
 
-      // append opt-in, opt-out, and/or add questions messages followed by footer
-      StringBuilder sb = new StringBuilder();
+      Map<String, String> replacementValues = new HashMap<String, String>();
+      replacementValues.put("HelpdeskEmail", from);
+
+      // setup the opt-in, opt-out, and add questions variables
       int addItems = ((Integer) settings.get(EvalSettings.ADMIN_ADD_ITEMS_NUMBER)).intValue();
-      sb.append(emailTemplate.getMessage());
       if (! eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_REQUIRED) || (addItems > 0)) {
          if (eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_OPT_IN)) {
             // if eval is opt-in notify instructors that they may opt in
-            sb.append(EvalEmailConstants.EMAIL_CREATED_OPT_IN_TEXT);
+            replacementValues.put("ShowOptInText", "true");
          } else if (eval.getInstructorOpt().equals(EvalConstants.INSTRUCTOR_OPT_OUT)) {
             // if eval is opt-out notify instructors that they may opt out
-            sb.append(EvalEmailConstants.EMAIL_CREATED_OPT_OUT_TEXT);
+            replacementValues.put("ShowOptOutText", "true");
          }
          if (addItems > 0) {
             // if eval allows instructors to add questions notify instructors they may add questions
-            sb.append(EvalEmailConstants.EMAIL_CREATED_ADD_ITEMS_TEXT);
+            replacementValues.put("ShowAddItemsText", "true");
          }
       }
-      sb.append(EvalEmailConstants.EMAIL_CREATED_DEFAULT_TEXT_FOOTER);
-      String message = sb.toString();
+
+      String message = emailTemplate.getMessage();
 
       // get the associated groups for this evaluation
       Map<Long, List<EvalGroup>> evalGroups = evaluationService.getEvaluationGroups(new Long[] { evaluationId }, true);
@@ -148,8 +145,6 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
          }
 
          // replace the text of the template with real values
-         Map<String, String> replacementValues = new HashMap<String, String>();
-         replacementValues.put("HelpdeskEmail", from);
          message = makeEmailMessage(message, eval, group, replacementValues);
          String subject = makeEmailMessage(emailTemplate.getSubject(), eval, group, replacementValues);
 
@@ -496,6 +491,17 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       replacementValues.put("EvalDueDate", df.format(eval.getDueDate()));
       replacementValues.put("EvalResultsDate", df.format(eval.getViewDate()));
       replacementValues.put("EvalGroupTitle", group.title);
+
+      // ensure that the if-then variables are set to false if they are unset
+      if (! replacementValues.containsKey("ShowAddItemsText")) {
+         replacementValues.put("ShowAddItemsText", "false");
+      }
+      if (! replacementValues.containsKey("ShowOptInText")) {
+         replacementValues.put("ShowOptInText", "false");
+      }
+      if (! replacementValues.containsKey("ShowOptOutText")) {
+         replacementValues.put("ShowOptOutText", "false");
+      }
 
       // generate URLs to the evaluation
       String evalEntityURL = null;
