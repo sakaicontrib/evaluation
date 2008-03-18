@@ -1140,7 +1140,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
                new EvalTemplate(new Date(), EvalTestDataLoad.ADMIN_USER_ID, 
                      EvalConstants.TEMPLATE_TYPE_STANDARD, "new template one", 
                      "description", EvalConstants.SHARING_PRIVATE, EvalTestDataLoad.NOT_EXPERT, 
-                     "expert desc", null, EvalTestDataLoad.LOCKED),
+                     "expert desc", null, EvalTestDataLoad.LOCKED, false),
                      Boolean.TRUE);
          fail("Should have thrown an exception");
       } catch (IllegalStateException e) {

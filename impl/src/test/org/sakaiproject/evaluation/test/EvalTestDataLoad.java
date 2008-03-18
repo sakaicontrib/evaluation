@@ -635,44 +635,44 @@ public class EvalTestDataLoad {
       templateAdmin = new EvalTemplate(new Date(), ADMIN_USER_ID, 
             EvalConstants.TEMPLATE_TYPE_STANDARD, "Template admin", 
             "description", EvalConstants.SHARING_PRIVATE, NOT_EXPERT, 
-            "expert desc", null, LOCKED);
+            "expert desc", null, LOCKED, false);
       templateAdminNoItems = new EvalTemplate(new Date(), ADMIN_USER_ID, 
             EvalConstants.TEMPLATE_TYPE_STANDARD, "Template admin no items", 
             "description", EvalConstants.SHARING_PRIVATE, NOT_EXPERT, 
-            "not expert desc", null, UNLOCKED);
+            "not expert desc", null, UNLOCKED, false);
       templatePublicUnused = new EvalTemplate(new Date(), ADMIN_USER_ID, 
             EvalConstants.TEMPLATE_TYPE_STANDARD, "Template unused public", 
             "description", EvalConstants.SHARING_PUBLIC, NOT_EXPERT, 
-            "expert desc", null, UNLOCKED);
+            "expert desc", null, UNLOCKED, false);
       templatePublic = new EvalTemplate(new Date(), MAINT_USER_ID, 
             EvalConstants.TEMPLATE_TYPE_STANDARD, "Template maint public", 
             "description", EvalConstants.SHARING_PUBLIC, EXPERT, 
-            "expert desc", null, LOCKED);
+            "expert desc", null, LOCKED, false);
       templateUnused = new EvalTemplate(new Date(), MAINT_USER_ID, 
             EvalConstants.TEMPLATE_TYPE_STANDARD, "Template maint unused", 
             "description", EvalConstants.SHARING_PRIVATE, NOT_EXPERT, 
-            "expert desc", null, UNLOCKED);
+            "expert desc", null, UNLOCKED, false);
       templateUser = new EvalTemplate(new Date(), USER_ID, 
             EvalConstants.TEMPLATE_TYPE_STANDARD, "Template user", 
             "description", EvalConstants.SHARING_PRIVATE, NOT_EXPERT, 
-            "expert desc", null, LOCKED);
+            "expert desc", null, LOCKED, false);
       templateUserUnused = new EvalTemplate(new Date(), USER_ID, 
             EvalConstants.TEMPLATE_TYPE_STANDARD, "Template user unused", 
             "description", EvalConstants.SHARING_PRIVATE, EXPERT, 
-            "expert desc", null, UNLOCKED);
+            "expert desc", null, UNLOCKED, false);
       templateAdminBlock = new EvalTemplate(new Date(), ADMIN_USER_ID, 
             EvalConstants.TEMPLATE_TYPE_STANDARD, "Template admin with block", 
             "description", EvalConstants.SHARING_PRIVATE, NOT_EXPERT, 
-            "expert desc", null, UNLOCKED);
+            "expert desc", null, UNLOCKED, false);
       templateAdminComplex = new EvalTemplate(new Date(), ADMIN_USER_ID, 
             EvalConstants.TEMPLATE_TYPE_ADDED, "Template admin added", 
             "description", EvalConstants.SHARING_PRIVATE, NOT_EXPERT, 
-            "expert desc", null, UNLOCKED);
+            "expert desc", null, UNLOCKED, false);
 
       templateEid = new EvalTemplate(new Date(), ADMIN_USER_ID, 
             EvalConstants.TEMPLATE_TYPE_STANDARD, "Template Eid", 
             "description", EvalConstants.SHARING_PUBLIC, NOT_EXPERT,
-            "expert desc", null, UNLOCKED);
+            "expert desc", null, UNLOCKED, false);
       templateEid.setEid("test-template-1");
 
       // assign items to templates

@@ -40,7 +40,9 @@ import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
+import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
+import org.sakaiproject.evaluation.utils.EvalUtils;
 
 /**
  * Implementation for EvalEvaluationSetupService
@@ -84,6 +86,11 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
    private ExternalHierarchyLogic hierarchyLogic;
    public void setHierarchyLogic(ExternalHierarchyLogic hierarchyLogic) {
       this.hierarchyLogic = hierarchyLogic;
+   }
+
+   private EvalAuthoringService authoringService;
+   public void setAuthoringService(EvalAuthoringService authoringService) {
+      this.authoringService = authoringService;
    }
 
    private EvalEmailsLogic emails;
@@ -264,24 +271,40 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          // All other checks have been moved to the tool (bad I know)
       }
 
-      // make sure the evaluation type required field is set
-      if (evaluation.getType() == null) {
-         evaluation.setType(EvalConstants.EVALUATION_TYPE_EVALUATION);
-      }
-
       // make sure the state is set correctly (does not override special states)
-      evaluationService.returnAndFixEvalState(evaluation, false);
+      String evalState = evaluationService.returnAndFixEvalState(evaluation, false);
 
-      // make sure we are not using a blank template here
-      if (evaluation.getTemplate() == null ||
-            evaluation.getTemplate().getTemplateItems() == null ||
-            evaluation.getTemplate().getTemplateItems().size() <= 0) {
-         throw new IllegalArgumentException("Evaluations must include a template and the template must have at least one item in it");
-      } else if (! EvalConstants.TEMPLATE_TYPE_STANDARD.equals(evaluation.getTemplate().getType())) {
-         throw new IllegalArgumentException("Evaluations cannot use templates of type: " + evaluation.getTemplate().getType() + 
-         " as the primary template");			
+      // make sure we are not using a blank template here and get the template without using lazy loading
+      EvalTemplate template = null;
+      if (evaluation.getTemplate() == null 
+            || evaluation.getTemplate().getId() == null) {
+         throw new IllegalArgumentException("Evaluations must include a template (it cannot be null)");
+      } else {
+         // template is set so check that it has items in it
+         template = authoringService.getTemplateById(evaluation.getTemplate().getId());
+         if (template.getTemplateItems() == null 
+               || template.getTemplateItems().size() <= 0) {
+            throw new IllegalArgumentException("Evaluations must include a template with at least one item in it");
+         }         
       }
 
+      // make sure the template is copied if not in partial state, it is ok to have the original template while in partial state
+      if ( EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_PARTIAL, false) ) {
+         // this eval is not partial anymore so the template MUST be a hidden copy
+         if (template.getCopyOf() == null ||
+               template.isHidden() == false) {
+            // not a hidden copy so make one
+            Long copiedTemplateId = authoringService.copyTemplate(template.getId(), null, evaluation.getOwner(), true, true);
+            EvalTemplate copy = authoringService.getTemplateById(copiedTemplateId);
+            evaluation.setTemplate(copy);
+            // alternative is to throw an exception to force the user to do this, but we may as well handle it
+//            throw new IllegalStateException("This evaluation ("+evaluation.getId()+") is being saved "
+//            		+ "in a state ("+evalState+") that is after the partial state with "
+//                  + "a template that has not been copied yet, this is invalid as all evaluations must use copied "
+//                  + "templates, copy the template using the authoringService.copyTemplate method before saving this eval");
+         }
+      }
+      
       // force the student/instructor dates based on the boolean settings
       if (evaluation.studentViewResults != null && ! evaluation.studentViewResults) {
          evaluation.setStudentsDate(null);
@@ -299,6 +322,11 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       }
       if (evaluation.getAuthControl() == null) {
          evaluation.setAuthControl( EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ );
+      }
+
+      // make sure the evaluation type required field is set
+      if (evaluation.getType() == null) {
+         evaluation.setType(EvalConstants.EVALUATION_TYPE_EVALUATION);
       }
 
       if (evaluation.getEvalCategory() != null && 
@@ -369,7 +397,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
       if ( securityChecks.canUserRemoveEval(userId, evaluation) ) {
 
-         Set[] entitySets = new HashSet[4];
+         Set[] entitySets = new HashSet[3];
          // remove associated AssignGroups
          List<EvalAssignGroup> acs = dao.findByProperties(EvalAssignGroup.class, 
                new String[] {"evaluation.id"}, 
@@ -413,26 +441,48 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             }
          }
 
-         // add eval to a set to be removed
-         Set evalSet = new HashSet();
-         entitySets[3] = evalSet;
-         evalSet.add(evaluation);
-
-         // unlock the evaluation (this is clear the other locks)
+         // unlock the evaluation (this will clear the other locks)
          dao.lockEvaluation(evaluation, false);
 
-         // destroy all the related responses and answers for now
+         // check for related responses and answers
          List<Long> responseIds = dao.getResponseIds(evaluation.getId(), null, null, null);
          if (responseIds.size() > 0) {
-            dao.removeResponses( responseIds.toArray(new Long[responseIds.size()]) );
+            // cannot remove this evaluation, there are responses, we will just set the state to deleted
+            evaluation.setState(EvalConstants.EVALUATION_STATE_DELETED);
+            // old method was to actually remove data
+            // dao.removeResponses( responseIds.toArray(new Long[responseIds.size()]) );
+         } else {
+            // remove the evaluation since there are no responses
+
+            // add eval to a set to be removed
+            Set evalSet = new HashSet();
+            evalSet.add(evaluation);
+            entitySets = ArrayUtils.appendArray(entitySets, evalSet);
+
+            // remove the associated template if it is a copy (it should be)
+            EvalTemplate template = null;
+            if (evaluation.getTemplate() != null 
+                  || evaluation.getTemplate().getId() != null) {
+               // there is a template so get it and check to see if it needs to be removed
+               template = authoringService.getTemplateById(evaluation.getTemplate().getId());
+               if (template.getCopyOf() != null ||
+                     template.isHidden() == true) {
+                  // this is a copy so remove it and all children
+                  if (securityChecks.checkUserControlTemplate(userId, template)) {
+                     authoringService.deleteTemplate(template.getId(), userId);
+                  } else {
+                     log.warn("Could not remove the template ("+template.getId()+") associated with this "
+                     		+ "eval ("+evaluationId+") since this user has no permission, continuing to remove evaluation anyway");
+                  }
+               }
+            }
          }
 
          // fire the evaluation deleted event
          external.registerEntityEvent(EVENT_EVAL_DELETE, evaluation);
 
-         // remove the evaluation and related data in one transaction
+         // remove the evaluation and related data (except template) in one transaction
          dao.deleteMixedSet(entitySets);
-         //dao.delete(eval);
 
          // remove any remaining scheduled jobs
          evalJobLogic.processEvaluationStateChange(evaluationId, EvalJobLogic.ACTION_DELETE);

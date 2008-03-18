@@ -446,6 +446,9 @@ public interface EvalAuthoringService {
     * Unlocks any associated items that are not being used in other locked templates<br/>
     * Use {@link #canControlTemplate(String, Long)} to check if
     * the user can control this template and avoid exceptions<br/>
+    * <b>NOTE:</b> This will also remove all the children items and scales if this
+    * template is detected to be a hidden copy (indicating no one can see or use
+    * it other than the associated evaluation which would have locked it)
     * 
     * @param template the object to be removed
     * @param userId the internal user id (not username)

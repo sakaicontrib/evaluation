@@ -1111,6 +1111,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
    }
 
 
+   @SuppressWarnings("unchecked")
    public void deleteTemplate(Long templateId, String userId) {
       log.debug("templateId: " + templateId + ", userId: " + userId);
       // get the template by id
@@ -1128,11 +1129,43 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
             dao.lockTemplate(template, Boolean.FALSE);
          }
 
-         if ( template.getTemplateItems().size() > 0 ) {
-            // remove all associated templateItems (disassociate all items automatically)
-            EvalTemplateItem[] templateItems = (EvalTemplateItem[]) 
-            template.getTemplateItems().toArray( new EvalTemplateItem[] {} ); // LAZY LOAD
-            dao.removeTemplateItems(templateItems);
+         List<EvalTemplateItem> templateItems = getTemplateItemsForTemplate(template.getId(), new String[] {}, new String[] {}, new String[] {});
+         if ( templateItems.size() > 0 ) {
+            if (template.getCopyOf() != null 
+                  || template.isHidden() == true) {
+               // this is a copy so remove all children (templateItems, items, and scales)
+               Set<EvalTemplateItem> TIset = new HashSet<EvalTemplateItem>(templateItems);
+               Set<EvalItem> itemSet = new HashSet<EvalItem>();
+               Set<EvalScale> scaleSet = new HashSet<EvalScale>();
+
+               // loop through the TIs and fill the other sets with the persistent objects (if they are copies)
+               for (EvalTemplateItem templateItem : templateItems) {
+                  EvalItem item = templateItem.getItem();
+                  if (item.getCopyOf() != null 
+                        || item.isHidden() == true) {
+                     itemSet.add(item);
+                     EvalScale scale = item.getScale();
+                     if (scale != null) {
+                        if (scale.getCopyOf() != null 
+                              || scale.isHidden() == true) {
+                           scaleSet.add(scale);
+                        }
+                     }
+                  }
+               }
+
+               // remove all the children in one large transaction
+               Set[] entitySets = new HashSet[3];
+               entitySets[0] = TIset;
+               entitySets[1] = itemSet;
+               entitySets[2] = scaleSet;
+               dao.deleteMixedSet(entitySets);
+            } else {
+               // this is an original template so do not remove the children
+               EvalTemplateItem[] TIArray = templateItems.toArray(new EvalTemplateItem[templateItems.size()]);
+               // remove all associated templateItems (disassociate all items automatically)
+               dao.removeTemplateItems(TIArray);
+            }
          }
 
          dao.delete(template);
@@ -1527,7 +1560,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       }
       EvalTemplate copy = new EvalTemplate(new Date(), ownerId, original.getType(), 
             newTitle, original.getDescription(), EvalConstants.SHARING_PRIVATE, 
-            false, null, null, false);
+            false, null, null, false, false);
       // set the other copy fields
       copy.setCopyOf(original.getId());
       copy.setHidden(hidden);

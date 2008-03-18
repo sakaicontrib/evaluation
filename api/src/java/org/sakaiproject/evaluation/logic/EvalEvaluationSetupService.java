@@ -40,7 +40,12 @@ public interface EvalEvaluationSetupService {
     * Evaluations can be saved with the email templates as null and will use the
     * default templates in this circumstance<br/>
     * <b>Note:</b> Do NOT attempt to save an evaluation with a null template
-    * or a template that contains no items<br/>
+    * or a template that contains no items or an exception will result<br/>
+    * <b>Note:</b> All evaluations must run with copies of templates.
+    * The template will automatically be copied the first time the
+    * evaluation is saved in a state that is after PARTIAL, you can also copy the
+    * template yourself and assign the copied template to the evaluation<br/>
+    * 
     * <b>Note about dates</b>:<br/>
     * Start date - eval becomes active on this date, cannot change start date once it passes, 
     * most parts of evaluation cannot change on this date, no assigned contexts can be modified<br/>
