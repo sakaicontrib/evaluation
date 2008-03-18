@@ -537,7 +537,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
     * @see edu.vt.sakai.evaluation.logic.EvalEvaluationsLogic#getEvaluationsForUser(java.lang.String, boolean, boolean)
     */
    @SuppressWarnings("unchecked")
-   public List<EvalEvaluation> getEvaluationsForUser(String userId, boolean activeOnly, boolean untakenOnly) {
+   public List<EvalEvaluation> getEvaluationsForUser(String userId, boolean activeOnly, boolean untakenOnly, boolean includeAnonymous) {
       List<EvalGroup> takeGroups = external.getEvalGroupsForUser(userId, EvalConstants.PERM_TAKE_EVALUATION);
 
       String[] evalGroupIds = new String[takeGroups.size()];
@@ -547,7 +547,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       }
 
       // get the evaluations
-      List<EvalEvaluation> evals = dao.getEvaluationsByEvalGroups( evalGroupIds, activeOnly, false, true );
+      List<EvalEvaluation> evals = dao.getEvaluationsByEvalGroups( evalGroupIds, activeOnly, false, includeAnonymous );
 
       if (untakenOnly) {
          // filter out the evaluations this user already took
