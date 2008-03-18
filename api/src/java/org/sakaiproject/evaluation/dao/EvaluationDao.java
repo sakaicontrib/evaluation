@@ -228,15 +228,6 @@ public interface EvaluationDao extends CompleteGenericDao {
    public String getNodeIdForEvalGroup(String evalGroupId);
 
    /**
-    * Get all the templates ids associated with an evaluation
-    * 
-    * @param evaluationId a unique id for an {@link EvalEvaluation}
-    * @return a list of template ids for {@link EvalTemplate} objects
-    */
-   @SuppressWarnings("unchecked")
-   public List<Long> getTemplateIdsForEvaluation(Long evaluationId);
-
-   /**
     * Get all the users who have completely responded to an evaluation 
     * and optionally within group(s) assigned to that evaluation
     * 

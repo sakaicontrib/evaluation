@@ -546,8 +546,11 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
     * @return a list of {@link EvalTemplateItem} objects, ordered by displayOrder and template
     */
    public List<EvalTemplateItem> getTemplateItemsByEvaluation(Long evalId, String[] nodeIds, String[] instructorIds, String[] groupIds) {
-      List<Long> templateIds = getTemplateIdsForEvaluation(evalId);
-      return getTemplateItemsByTemplates(templateIds.toArray(new Long[] {}), nodeIds, instructorIds, groupIds);
+      Long templateId = getTemplateIdForEvaluation(evalId);
+      if (templateId == null) {
+         throw new IllegalArgumentException("Could not retrieve a template id for this evaluation");
+      }
+      return getTemplateItemsByTemplates(new Long[] {templateId}, nodeIds, instructorIds, groupIds);
    }
 
    /**
@@ -743,19 +746,16 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
     * @return a list of template ids for {@link EvalTemplate} objects
     */
    @SuppressWarnings("unchecked")
-   public List<Long> getTemplateIdsForEvaluation(Long evaluationId) {
-      String hql = "select eval.template.id, eval.addedTemplate.id from EvalEvaluation eval where eval.id = ?";
+   protected Long getTemplateIdForEvaluation(Long evaluationId) {
+      Long templateId = null;
+      String hql = "select eval.template.id from EvalEvaluation eval where eval.id = ?";
       Object[] params = new Object[] {evaluationId};
-      List<Long> l = new ArrayList<Long>();
-      List<Object[]> results = getHibernateTemplate().find(hql, params);
-      if (!results.isEmpty() && results.get(0) != null) {
-         Object[] stuff = results.get(0);
-         if (stuff[0] != null)
-            l.add( (Long) stuff[0]);
-         if (stuff[1] != null)
-            l.add( (Long) stuff[1]);
+      List<Long> results = getHibernateTemplate().find(hql, params);
+      if (! results.isEmpty() 
+            && results.get(0) != null) {
+         templateId = results.get(0);
       }
-      return l;
+      return templateId;
    }
 
 
@@ -1114,11 +1114,6 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
                lockTemplate(template, Boolean.TRUE);
             }
 
-            EvalTemplate addedTemplate = evaluation.getAddedTemplate();
-            if (addedTemplate != null && !addedTemplate.getLocked().booleanValue()) {
-               lockTemplate(addedTemplate, Boolean.TRUE);
-            }
-
             evaluation.setLocked(Boolean.TRUE);
             getHibernateTemplate().update(evaluation);
             return true;
@@ -1136,9 +1131,6 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
             // unlock associated templates if there are any
             if (evaluation.getTemplate() != null) {
                lockTemplate(evaluation.getTemplate(), Boolean.FALSE);
-            }
-            if (evaluation.getAddedTemplate() != null) {
-               lockTemplate(evaluation.getAddedTemplate(), Boolean.FALSE);
             }
 
             return true;

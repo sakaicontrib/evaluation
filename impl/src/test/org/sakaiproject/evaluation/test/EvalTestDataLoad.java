@@ -876,36 +876,36 @@ public class EvalTestDataLoad {
             tomorrow, null, null, null, null, null,
             EvalConstants.EVALUATION_STATE_PARTIAL, EvalConstants.SHARING_PRIVATE, 
             EvalConstants.INSTRUCTOR_REQUIRED, new Integer(0), null, null, null, null, templatePublic, null,
-            null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, UNLOCKED,
-            EvalConstants.EVALUATION_AUTHCONTROL_NONE, null);
+            Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_NONE,
+            null);
       // Evaluation not started yet (starts tomorrow)
       evaluationNew = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, MAINT_USER_ID, "Eval new", null, 
             tomorrow, threeDaysFuture, threeDaysFuture, fourDaysFuture, null, null,
             EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.SHARING_VISIBLE, 
             EvalConstants.INSTRUCTOR_OPT_IN, new Integer(1), null, null, null, null, templatePublic, null,
-            null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, UNLOCKED,
-            EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null);
+            Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ,
+            null);
       // Evaluation not started yet (starts tomorrow), ADMIN
       evaluationNewAdmin = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, ADMIN_USER_ID, "Eval admin", null, 
             tomorrow, threeDaysFuture, threeDaysFuture, fourDaysFuture,  null, null,
             EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.SHARING_VISIBLE, 
             EvalConstants.INSTRUCTOR_OPT_IN, new Integer(1), null, null, null, null, templateAdmin, null,
-            null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, UNLOCKED,
-            EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, EVAL_CATEGORY_1);
+            Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ,
+            EVAL_CATEGORY_1);
       // Evaluation Active (ends today), viewable tomorrow
       evaluationActive = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, MAINT_USER_ID, "Eval active", null, 
             yesterday, today, today, tomorrow, null, null,
             EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.SHARING_VISIBLE, 
             EvalConstants.INSTRUCTOR_OPT_IN, new Integer(1), EVAL_FROM_EMAIL, null, null, null, templateUser, null,
-            null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, LOCKED,
-            EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null);
+            Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, LOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ,
+            null);
       //Evaluation Provided (has eid set, not null)
       evaluationProvided = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, MAINT_USER_ID, "Eval provided", null, 
               yesterday, today, today, tomorrow, null, null,
               EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.SHARING_VISIBLE, 
               EvalConstants.INSTRUCTOR_REQUIRED, new Integer(1), null, null, null, null, templateUser, null,
-              null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, LOCKED,
-              EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null);
+              Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, LOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ,
+              null);
       evaluationProvided.setEid("test-eid");
 
       // Evaluation Active (ends tomorrow), viewable 3 days
@@ -913,8 +913,8 @@ public class EvalTestDataLoad {
             yesterday, tomorrow, tomorrow, threeDaysFuture, null, null,
             EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.SHARING_VISIBLE, 
             EvalConstants.INSTRUCTOR_REQUIRED, new Integer(1), EVAL_FROM_EMAIL, null, null, null, templatePublic, null,
-            null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, UNLOCKED,
-            EvalConstants.EVALUATION_AUTHCONTROL_NONE, EVAL_CATEGORY_1);
+            Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_NONE,
+            EVAL_CATEGORY_1);
       // evaluation in the DUE state
 //    evaluationDueUntaken = new EvalEvaluation(new Date(), MAINT_USER_ID, "Eval due not taken", null, 
 //    threeDaysAgo, yesterday, tomorrow, threeDaysFuture, null, null,
@@ -925,23 +925,23 @@ public class EvalTestDataLoad {
       evaluationClosed = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, ADMIN_USER_ID, "Eval closed", null, 
             threeDaysAgo, yesterday, yesterday, tomorrow, null, null,
             EvalConstants.EVALUATION_STATE_CLOSED, EvalConstants.SHARING_VISIBLE, 
-            EvalConstants.INSTRUCTOR_OPT_IN, new Integer(2), null, null, null, null, templateAdmin, templateAdminComplex,
-            null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, LOCKED,
-            EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, EVAL_CATEGORY_2);
+            EvalConstants.INSTRUCTOR_OPT_IN, new Integer(2), null, null, null, null, templateAdmin, null,
+            Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, LOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ,
+            EVAL_CATEGORY_2);
       // evaluation complete (3 days ago) and viewable (yesterday)
       evaluationViewable = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, ADMIN_USER_ID, "Eval viewable", null, 
             twentyDaysAgo, twentyDaysAgo, twentyDaysAgo, fifteenDaysAgo, null, null,
             EvalConstants.EVALUATION_STATE_VIEWABLE, EvalConstants.SHARING_VISIBLE, 
             EvalConstants.INSTRUCTOR_OPT_IN, new Integer(2), null, null, null, null, templateUser, null,
-            null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, LOCKED,
-            EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null);
+            Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, LOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ,
+            null);
 
       evaluationDeleted = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, MAINT_USER_ID, "Eval deleted", null, 
             fifteenDaysAgo, fourDaysAgo, null, null, null, null,
             EvalConstants.EVALUATION_STATE_DELETED, EvalConstants.SHARING_PUBLIC, 
             EvalConstants.INSTRUCTOR_REQUIRED, new Integer(0), null, null, null, null, templateUser, null,
-            null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, UNLOCKED,
-            EvalConstants.EVALUATION_AUTHCONTROL_NONE, null);
+            Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_NONE,
+            null);
 
       // email templates
       emailTemplate1 = new EvalEmailTemplate(ADMIN_USER_ID, EvalConstants.EMAIL_TEMPLATE_AVAILABLE, "Email Subject 1", "Email Template 1");

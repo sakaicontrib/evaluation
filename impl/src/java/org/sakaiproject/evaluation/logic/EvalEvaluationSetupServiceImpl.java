@@ -226,7 +226,8 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       Calendar calendar = GregorianCalendar.getInstance();
       calendar.add(Calendar.MINUTE, -30); // put today a bit in the past (30 minutes)
       Date today = calendar.getTime();
-      if (evaluation.getId() == null) { // creating new evaluation
+      if (evaluation.getId() == null) {
+         // creating new evaluation
          newEvaluation = true;
 
          if (evaluation.getDueDate() != null 
@@ -253,7 +254,8 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             throw new SecurityException("User ("+userId+") attempted to create evaluation without permissions");
          }
 
-      } else { // updating existing evaluation
+      } else {
+         // updating existing evaluation
 
          if (! securityChecks.canUserControlEvaluation(userId, evaluation) ) {
             throw new SecurityException("User ("+userId+") attempted to update existing evaluation ("+evaluation.getId()+") without permissions");
@@ -278,13 +280,6 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       } else if (! EvalConstants.TEMPLATE_TYPE_STANDARD.equals(evaluation.getTemplate().getType())) {
          throw new IllegalArgumentException("Evaluations cannot use templates of type: " + evaluation.getTemplate().getType() + 
          " as the primary template");			
-      }
-
-      // check the added template for type
-      if (evaluation.getAddedTemplate() != null &&
-            ! EvalConstants.TEMPLATE_TYPE_ADDED.equals(evaluation.getTemplate().getType()) ) {
-         throw new IllegalArgumentException("Evaluations cannot use templates of type: " + evaluation.getTemplate().getType() + 
-               " as the added template, must be " + EvalConstants.TEMPLATE_TYPE_ADDED);			
       }
 
       // force the student/instructor dates based on the boolean settings

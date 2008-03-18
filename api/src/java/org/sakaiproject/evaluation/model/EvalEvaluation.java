@@ -113,9 +113,12 @@ public class EvalEvaluation implements java.io.Serializable {
     */
    private EvalEmailTemplate reminderEmailTemplate;
 
+   /**
+    * This is the template associated with this evaluation, this should always be a copy of
+    * an existing template once the evaluation is created
+    * (no longer in the partial state)
+    */
    private EvalTemplate template;
-
-   private EvalTemplate addedTemplate;
 
    private Set<EvalResponse> responses = new HashSet<EvalResponse>(0);
 
@@ -241,9 +244,9 @@ public class EvalEvaluation implements java.io.Serializable {
          Date dueDate, Date stopDate, Date viewDate, Date studentsDate, Date instructorsDate, String state,
          String resultsSharing, String instructorOpt, Integer reminderDays, String reminderFromEmail,
          String termId, EvalEmailTemplate availableEmailTemplate,
-         EvalEmailTemplate reminderEmailTemplate, EvalTemplate template, EvalTemplate addedTemplate, Set<EvalResponse> responses,
-         Boolean blankResponsesAllowed, Boolean modifyResponsesAllowed, Boolean unregisteredAllowed,
-         Boolean locked, String authControl, String evalCategory) {
+         EvalEmailTemplate reminderEmailTemplate, EvalTemplate template, Set<EvalResponse> responses, Boolean blankResponsesAllowed,
+         Boolean modifyResponsesAllowed, Boolean unregisteredAllowed, Boolean locked,
+         String authControl, String evalCategory) {
       if (this.lastModified == null) { this.lastModified = new Date(); }
       this.type = type;
       this.owner = owner;
@@ -263,7 +266,6 @@ public class EvalEvaluation implements java.io.Serializable {
       this.availableEmailTemplate = availableEmailTemplate;
       this.reminderEmailTemplate = reminderEmailTemplate;
       this.template = template;
-      this.addedTemplate = addedTemplate;
       this.responses = responses;
       this.resultsSharing = resultsSharing;
       this.blankResponsesAllowed = blankResponsesAllowed;
@@ -272,14 +274,6 @@ public class EvalEvaluation implements java.io.Serializable {
       this.locked = locked;
       this.authControl = authControl;
       this.evalCategory = evalCategory;
-   }
-
-   public EvalTemplate getAddedTemplate() {
-      return addedTemplate;
-   }
-
-   public void setAddedTemplate(EvalTemplate addedTemplate) {
-      this.addedTemplate = addedTemplate;
    }
 
    public String getAuthControl() {
