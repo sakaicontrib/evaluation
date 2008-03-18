@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.sakaiproject.evaluation.beans.EvalBeanUtils;
+import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
@@ -35,9 +37,9 @@ public class EvaluationBeanLocator implements BeanLocator {
    public static final String NEW_PREFIX = "new";
    public static String NEW_1 = NEW_PREFIX + "1";
 
-   private EvalExternalLogic external;
-   public void setExternal(EvalExternalLogic external) {
-      this.external = external;
+   private EvalExternalLogic externalLogic;
+   public void setExternalLogic(EvalExternalLogic external) {
+      this.externalLogic = external;
    }
 
    private EvalEvaluationService evaluationService;
@@ -50,6 +52,11 @@ public class EvaluationBeanLocator implements BeanLocator {
       this.evaluationSetupService = evaluationSetupService;
    }
 
+   private EvalBeanUtils evalBeanUtils;
+   public void setEvalBeanUtils(EvalBeanUtils evalBeanUtils) {
+      this.evalBeanUtils = evalBeanUtils;
+   }
+
 
    private Map<String, EvalEvaluation> delivered = new HashMap<String, EvalEvaluation>();
 
@@ -57,7 +64,10 @@ public class EvaluationBeanLocator implements BeanLocator {
       EvalEvaluation togo = delivered.get(name);
       if (togo == null) {
          if (name.startsWith(NEW_PREFIX)) {
-            togo = new EvalEvaluation();
+            togo = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, externalLogic.getCurrentUserId(),
+                  null, null, EvalConstants.EVALUATION_STATE_PARTIAL, null, null, null);
+            // set the defaults for this newly created evaluation
+            evalBeanUtils.setEvaluationDefaults(togo, EvalConstants.EVALUATION_TYPE_EVALUATION);
          } else {
             togo = evaluationService.getEvaluationById(new Long(name));
          }
@@ -69,11 +79,13 @@ public class EvaluationBeanLocator implements BeanLocator {
    public void saveAll() {
       for (Iterator<String> it = delivered.keySet().iterator(); it.hasNext();) {
          String key = it.next();
-         EvalEvaluation Evaluation = delivered.get(key);
+         EvalEvaluation evaluation = delivered.get(key);
          if (key.startsWith(NEW_PREFIX)) {
             // could do stuff here
          }
-         evaluationSetupService.saveEvaluation(Evaluation, external.getCurrentUserId());
+         // fix up all the dates before saving
+         evalBeanUtils.fixupEvaluationDates(evaluation);
+         evaluationSetupService.saveEvaluation(evaluation, externalLogic.getCurrentUserId());
       }
    }
 }
