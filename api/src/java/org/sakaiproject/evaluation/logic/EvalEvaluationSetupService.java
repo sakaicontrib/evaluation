@@ -97,9 +97,11 @@ public interface EvalEvaluationSetupService {
     * @param activeOnly if true, only include active evaluations, if false, include all evaluations
     * @param untakenOnly if true, include only the evaluations which have NOT been taken, 
     * if false, include all evaluations
+    * @param includeAnonymous if true then include evaluations which can be taken anonymously (since these are accessible
+    * to any user in any group), if false, only include evals which require keys or authentication
     * @return a List of {@link EvalEvaluation} objects (sorted by DueDate)
     */
-   public List<EvalEvaluation> getEvaluationsForUser(String userId, boolean activeOnly, boolean untakenOnly);
+   public List<EvalEvaluation> getEvaluationsForUser(String userId, boolean activeOnly, boolean untakenOnly, boolean includeAnonymous);
 
 
    // EVAL GROUPS
