@@ -569,7 +569,7 @@ public class EvaluationBean {
             throw new IllegalStateException("Invalid evaluation created with no assignments! Destroying evaluation: " + eval.getId());
          }
   
-         messages.addMessage( new TargettedMessage("evaluationSetupService.add.message",
+         messages.addMessage( new TargettedMessage("evaluations.add.message",
                new Object[] { eval.getTitle(), df.format(eval.getStartDate()) }, 
                TargettedMessage.SEVERITY_INFO));
 

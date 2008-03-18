@@ -35,12 +35,23 @@
       <property name="locale" ref="requestLocale" />
    </bean>
 
-   <bean id="reportsBean"
-      class="org.sakaiproject.evaluation.tool.ReportsBean">
-   </bean>
-
-
    <!-- request scope backing beans here -->
+
+   <bean id="setupEvalBean"
+      class="org.sakaiproject.evaluation.tool.SetupEvalBean"
+      init-method="init">
+      <property name="externalLogic"
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+      <property name="evaluationService"
+         ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+      <property name="evaluationSetupService"
+         ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
+      <property name="externalHierarchyLogic"
+         ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+      <property name="evaluationBeanLocator" ref="evaluationBeanLocator" />
+      <property name="messages" ref="targettedMessageList" />
+      <property name="locale" ref="requestLocale" />
+   </bean>
 
    <bean id="takeEvalBean"
       class="org.sakaiproject.evaluation.tool.TakeEvalBean">
@@ -98,6 +109,10 @@
       <property name="reportingPermissions" ref="org.sakaiproject.evaluation.logic.ReportingPermissions" />
    </bean>
 
+   <bean id="reportsBean"
+      class="org.sakaiproject.evaluation.tool.ReportsBean">
+   </bean>
+
 	<bean id="org.sakaiproject.evaluation.tool.reporting.CurrentViewableReports" 
 		class="org.sakaiproject.evaluation.tool.reporting.CurrentViewableReports">
 		<property name="reportingPermissions" 
@@ -146,12 +161,14 @@
 
    <bean id="evaluationBeanLocator"
       class="org.sakaiproject.evaluation.tool.locators.EvaluationBeanLocator">
-      <property name="external"
+      <property name="externalLogic"
          ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="evaluationService"
          ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
       <property name="evaluationSetupService"
          ref="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService" />
+      <property name="evalBeanUtils"
+         ref="org.sakaiproject.evaluation.beans.EvalBeanUtils" />
    </bean>
 
    <bean id="responseBeanLocator"

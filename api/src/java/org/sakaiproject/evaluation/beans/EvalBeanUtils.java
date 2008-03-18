@@ -220,6 +220,11 @@ public class EvalBeanUtils {
          eval.setUnregisteredAllowed(Boolean.FALSE);
       }
 
+      // fix up the reminder days to the default
+      if (eval.getReminderDays() == null) {
+         eval.setReminderDays(1);
+      }
+
       // admin settings
       if (eval.getInstructorOpt() == null) {
          String instOpt = (String) settings.get(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE);
