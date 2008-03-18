@@ -2083,7 +2083,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
             EvalTestDataLoad.ADMIN_USER_ID, 
             EvalConstants.TEMPLATE_TYPE_STANDARD, "admin test template", 
             "desc", EvalConstants.SHARING_PRIVATE, EvalTestDataLoad.EXPERT, 
-            "expert desc", null, EvalTestDataLoad.LOCKED), 
+            "expert desc", null, EvalTestDataLoad.LOCKED, false), 
             EvalTestDataLoad.ADMIN_USER_ID);
 
       // test user without perms cannot create template

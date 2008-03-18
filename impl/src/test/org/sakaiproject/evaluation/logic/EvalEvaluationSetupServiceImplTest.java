@@ -69,6 +69,13 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       emailsLogicImpl.setExternalLogic( new MockEvalExternalLogic() );
       emailsLogicImpl.setSettings(settings);
 
+      // create the other needed logic impls
+      EvalAuthoringServiceImpl authoringServiceImpl = new EvalAuthoringServiceImpl();
+      authoringServiceImpl.setDao(evaluationDao);
+      authoringServiceImpl.setExternalLogic( new MockEvalExternalLogic() );
+      authoringServiceImpl.setSettings(settings);
+      authoringServiceImpl.setSecurityChecks(securityChecks);
+
 
       // create and setup the object to be tested
       evaluationSetupService = new EvalEvaluationSetupServiceImpl();
@@ -80,6 +87,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       evaluationSetupService.setEvaluationService(evaluationService);
       evaluationSetupService.setEvalJobLogic( new MockEvalJobLogic() ); // set to the mock object
       evaluationSetupService.setEmails(emailsLogicImpl);
+      evaluationSetupService.setAuthoringService(authoringServiceImpl);
 
    }
 
@@ -105,8 +113,28 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       evaluationSetupService.saveEvaluation( eval, EvalTestDataLoad.MAINT_USER_ID );
       EvalEvaluation checkEval = evaluationService.getEvaluationById(eval.getId());
       assertNotNull(checkEval);
-      // check that entity equality works (no longer using this check)
-      //assertEquals(eval, checkEval);
+
+      // check that the template was copied
+      assertNotSame(etdl.templatePublic.getId(), eval.getTemplate().getId());
+      assertTrue(eval.getTemplate().isHidden());
+      assertNotNull(eval.getTemplate().getCopyOf());
+
+
+      // save a valid evaluation in partial state
+      EvalEvaluation partialEval = new EvalEvaluation( EvalConstants.EVALUATION_TYPE_EVALUATION, 
+            EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
+            etdl.today, etdl.tomorrow, etdl.threeDaysFuture, etdl.fourDaysFuture, 
+            EvalConstants.EVALUATION_STATE_PARTIAL, 
+            EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic);
+      evaluationSetupService.saveEvaluation( partialEval, EvalTestDataLoad.MAINT_USER_ID );
+      checkEval = evaluationService.getEvaluationById(partialEval.getId());
+      assertNotNull(checkEval);
+
+      // check that the template was NOT copied
+      assertEquals(etdl.templatePublic.getId(), partialEval.getTemplate().getId());
+      assertFalse(partialEval.getTemplate().isHidden());
+      assertNull(partialEval.getTemplate().getCopyOf());
+
 
       // save a valid evaluation (due and stop date identical)
       evaluationSetupService.saveEvaluation( new EvalEvaluation( EvalConstants.EVALUATION_TYPE_EVALUATION, 

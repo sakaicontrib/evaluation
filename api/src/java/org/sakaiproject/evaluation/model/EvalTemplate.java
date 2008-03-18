@@ -70,10 +70,11 @@ public class EvalTemplate implements java.io.Serializable {
       this.expert = expert;
    }
 
-   /** full constructor */
+   /** full constructor 
+    **/
    public EvalTemplate(Date lastModified, String owner, String type, String title, String description,
          String sharing, Boolean expert, String expertDescription, Set<EvalTemplateItem> templateItems,
-         Boolean locked) {
+         Boolean locked, boolean hidden) {
       this.lastModified = lastModified;
       this.owner = owner;
       this.type = type;
@@ -84,6 +85,7 @@ public class EvalTemplate implements java.io.Serializable {
       this.expertDescription = expertDescription;
       this.templateItems = templateItems;
       this.locked = locked;
+      this.hidden = hidden;
    }
 
    public String getDescription() {

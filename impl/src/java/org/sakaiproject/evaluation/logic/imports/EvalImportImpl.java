@@ -660,7 +660,7 @@ public class EvalImportImpl implements EvalImport {
 			String expertDescription = element.getChildText("EXPERTDESCR");
 			Set<EvalTemplateItem> templateItems = new HashSet<EvalTemplateItem>(0);
 			EvalTemplate template = new EvalTemplate(new Date(), owner, type, title, description,  sharing, expert,
-					expertDescription, templateItems, locked);
+					expertDescription, templateItems, locked, false);
 			template.setEid(eid);
 			return template;
 		}
