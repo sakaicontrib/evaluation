@@ -60,10 +60,19 @@
          ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
    </bean>
 
+   <!-- handles api based retrieval of application settings -->
+   <bean id="org.sakaiproject.evaluation.logic.EvalSettings"
+      class="org.sakaiproject.evaluation.logic.EvalSettingsImpl" init-method="init">
+      <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+      <property name="externalLogic"
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+   </bean>
+
    <!-- handles the adhoc user/group data saving/retrieval -->
    <bean id="org.sakaiproject.evaluation.dao.EvalAdhocSupport"
       class="org.sakaiproject.evaluation.dao.EvalAdhocSupportImpl">
       <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+      <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
    </bean>
 
    <!-- provides the invoker access to the dao -->

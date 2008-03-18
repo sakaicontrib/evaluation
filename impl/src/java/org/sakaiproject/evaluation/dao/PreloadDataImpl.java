@@ -151,6 +151,8 @@ public class PreloadDataImpl implements Runnable {
          // INSTITUTIONAL SPECIFIC
          saveConfig(EvalSettings.ITEM_USE_RESULTS_SHARING, false);
          saveConfig(EvalSettings.ENABLE_IMPORTING, false);
+         saveConfig(EvalSettings.ENABLE_ADHOC_GROUPS, false);
+         saveConfig(EvalSettings.ENABLE_ADHOC_USERS, false);
 
          log.info("Preloaded " + dao.countAll(EvalConfig.class) + " evaluation system EvalConfig items");
       }

@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
 
@@ -32,7 +33,10 @@ import org.sakaiproject.evaluation.model.EvalAdhocUser;
  * use this rather than attempting to save/fetch/remove adhoc
  * users and groups directly using the dao<br/>
  * <b>WARNING:</b> Does not do any permissions checking and thus is not accessible from
- * anywhere but inside the logic layer
+ * anywhere but inside the logic layer<br/>
+ * All these methods will be disabled (i.e. return empty sets, false, etc.) by 
+ * the {@link EvalSettings#ENABLE_ADHOC_GROUPS} and {@link EvalSettings#ENABLE_ADHOC_USERS} settings,
+ * the exception here are the save methods which will throw exceptions if they are used when the settings are disabled
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
@@ -43,6 +47,11 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
    private EvaluationDao dao;
    public void setDao(EvaluationDao dao) {
       this.dao = dao;
+   }
+   
+   private EvalSettings settings;
+   public void setSettings(EvalSettings settings) {
+      this.settings = settings;
    }
 
 
@@ -56,8 +65,10 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
     */
    public EvalAdhocUser getAdhocUserById(Long adhocUserId) {
       EvalAdhocUser user = null;
-      if (adhocUserId != null) {
-         user = (EvalAdhocUser) dao.findById(EvalAdhocUser.class, adhocUserId);
+      if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_USERS) ) {
+         if (adhocUserId != null) {
+            user = (EvalAdhocUser) dao.findById(EvalAdhocUser.class, adhocUserId);
+         }
       }
       return user;
    }
@@ -71,11 +82,13 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
    @SuppressWarnings("unchecked")
    public EvalAdhocUser getAdhocUserByUsername(String username) {
       EvalAdhocUser user = null;
-      List<EvalAdhocUser> users = dao.findByProperties(EvalAdhocUser.class, 
-            new String[] {"username"}, 
-            new Object[] {username});
-      if (users.size() > 0) {
-         user = users.get(0);
+      if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_USERS) ) {
+         List<EvalAdhocUser> users = dao.findByProperties(EvalAdhocUser.class, 
+               new String[] {"username"}, 
+               new Object[] {username});
+         if (users.size() > 0) {
+            user = users.get(0);
+         }
       }
       return user;      
    }
@@ -89,11 +102,13 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
    @SuppressWarnings("unchecked")
    public EvalAdhocUser getAdhocUserByEmail(String email) {
       EvalAdhocUser user = null;
-      List<EvalAdhocUser> users = dao.findByProperties(EvalAdhocUser.class, 
-            new String[] {"email"}, 
-            new Object[] {email});
-      if (users.size() > 0) {
-         user = users.get(0);
+      if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_USERS) ) {
+         List<EvalAdhocUser> users = dao.findByProperties(EvalAdhocUser.class, 
+               new String[] {"email"}, 
+               new Object[] {email});
+         if (users.size() > 0) {
+            user = users.get(0);
+         }
       }
       return user;      
    }
@@ -106,19 +121,21 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
     */
    public Map<String, EvalAdhocUser> getAdhocUsersByUserIds(String[] userIds) {
       Map<String, EvalAdhocUser> m = new HashMap<String, EvalAdhocUser>();
-      if (userIds.length > 0) {
-         List<Long> adhocIds = new ArrayList<Long>();
-         for (int i = 0; i < userIds.length; i++) {
-            Long id = EvalAdhocUser.getIdFromAdhocUserId(userIds[i]);
-            if (id != null) {
-               adhocIds.add(id);
+      if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_USERS) ) {
+         if (userIds.length > 0) {
+            List<Long> adhocIds = new ArrayList<Long>();
+            for (int i = 0; i < userIds.length; i++) {
+               Long id = EvalAdhocUser.getIdFromAdhocUserId(userIds[i]);
+               if (id != null) {
+                  adhocIds.add(id);
+               }
             }
-         }
-         if (adhocIds.size() > 0) {
-            Long[] ids = adhocIds.toArray(new Long[adhocIds.size()]);
-            List<EvalAdhocUser> adhocUsers = getAdhocUsersByIds(ids);
-            for (EvalAdhocUser adhocUser : adhocUsers) {
-               m.put(adhocUser.getUserId(), adhocUser);
+            if (adhocIds.size() > 0) {
+               Long[] ids = adhocIds.toArray(new Long[adhocIds.size()]);
+               List<EvalAdhocUser> adhocUsers = getAdhocUsersByIds(ids);
+               for (EvalAdhocUser adhocUser : adhocUsers) {
+                  m.put(adhocUser.getUserId(), adhocUser);
+               }
             }
          }
       }
@@ -135,13 +152,15 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
    @SuppressWarnings("unchecked")
    public List<EvalAdhocUser> getAdhocUsersByIds(Long[] ids) {
       List<EvalAdhocUser> users = new ArrayList<EvalAdhocUser>();
-      if (ids == null) {
-         users = dao.findAll(EvalAdhocUser.class);
-      } else {
-         if (ids.length > 0) {
-            users = dao.findByProperties(EvalAdhocUser.class, 
-                  new String[] {"id"}, 
-                  new Object[] {ids});
+      if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_USERS) ) {
+         if (ids == null) {
+            users = dao.findAll(EvalAdhocUser.class);
+         } else {
+            if (ids.length > 0) {
+               users = dao.findByProperties(EvalAdhocUser.class, 
+                     new String[] {"id"}, 
+                     new Object[] {ids});
+            }
          }
       }
       return users;
@@ -164,6 +183,10 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
       }
       if (user.getEmail() == null) {
          throw new IllegalArgumentException("email address must be set for adhoc users");
+      }
+
+      if (! (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_USERS) ) {
+         throw new IllegalStateException(EvalSettings.ENABLE_ADHOC_USERS + " is currently disalbed, you cannot save any adhoc users");
       }
 
       boolean existingFound = false;
@@ -241,8 +264,10 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
     */
    public EvalAdhocGroup getAdhocGroupById(Long adhocGroupId) {
       EvalAdhocGroup group = null;
-      if (adhocGroupId != null) {
-         group = (EvalAdhocGroup) dao.findById(EvalAdhocGroup.class, adhocGroupId);
+      if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_GROUPS) ) {
+         if (adhocGroupId != null) {
+            group = (EvalAdhocGroup) dao.findById(EvalAdhocGroup.class, adhocGroupId);
+         }
       }
       return group;
    }
@@ -260,6 +285,10 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
       if (group.getTitle() == null) {
          throw new IllegalArgumentException("title must be set for adhoc group");
       }
+      if (! (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_GROUPS) ) {
+         throw new IllegalStateException(EvalSettings.ENABLE_ADHOC_GROUPS + " is currently disabled, you cannot save any adhoc groups");
+      }
+
       dao.save(group);
       log.info("Saved adhoc group: " + group.getEvalGroupId());
    }
@@ -273,11 +302,14 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
     */
    @SuppressWarnings("unchecked")
    public List<EvalAdhocGroup> getAdhocGroupsForOwner(String userId) {
-      List<EvalAdhocGroup> groups = dao.findByProperties(EvalAdhocGroup.class, 
-            new String[] {"owner"}, 
-            new Object[] {userId},
-            new int[] {EvaluationDao.EQUALS},
-            new String[] {"title"});
+      List<EvalAdhocGroup> groups = new ArrayList<EvalAdhocGroup>(0);
+      if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_GROUPS) ) {
+         groups = dao.findByProperties(EvalAdhocGroup.class, 
+               new String[] {"owner"}, 
+               new Object[] {userId},
+               new int[] {EvaluationDao.EQUALS},
+               new String[] {"title"});
+      }
       return groups;
    }
 
@@ -294,8 +326,12 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
     */
    @SuppressWarnings("unchecked")
    public List<EvalAdhocGroup> getAdhocGroupsByUserAndPerm(String userId, String permissionConstant) {
-      // passthrough to the dao method
-      return dao.getEvalAdhocGroupsByUserAndPerm(userId, permissionConstant);
+      List<EvalAdhocGroup> groups = new ArrayList<EvalAdhocGroup>(0);
+      if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_GROUPS) ) {
+         // passthrough to the dao method
+         groups = dao.getEvalAdhocGroupsByUserAndPerm(userId, permissionConstant);
+      }
+      return groups;
    }
 
    /**
@@ -308,8 +344,12 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
     * @return true if allowed, false otherwise
     */
    public boolean isUserAllowedInAdhocGroup(String userId, String permissionConstant, String evalGroupId) {
-      // passthrough to the dao method
-      return dao.isUserAllowedInAdhocGroup(userId, permissionConstant, evalGroupId);
+      boolean allowed = false;
+      if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_GROUPS) ) {
+         // passthrough to the dao method
+         allowed = dao.isUserAllowedInAdhocGroup(userId, permissionConstant, evalGroupId);
+      }
+      return allowed;
    }
 
 }
