@@ -444,21 +444,36 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          // unlock the evaluation (this will clear the other locks)
          dao.lockEvaluation(evaluation, false);
 
+         boolean removeTemplate = false;
          // check for related responses and answers
          List<Long> responseIds = dao.getResponseIds(evaluation.getId(), null, null, null);
          if (responseIds.size() > 0) {
             // cannot remove this evaluation, there are responses, we will just set the state to deleted
             evaluation.setState(EvalConstants.EVALUATION_STATE_DELETED);
+            dao.save(evaluation);
             // old method was to actually remove data
             // dao.removeResponses( responseIds.toArray(new Long[responseIds.size()]) );
          } else {
-            // remove the evaluation since there are no responses
+            // remove the evaluation and copied template since there are no responses
+            removeTemplate = true;
 
             // add eval to a set to be removed
             Set evalSet = new HashSet();
             evalSet.add(evaluation);
             entitySets = ArrayUtils.appendArray(entitySets, evalSet);
+         }
 
+         // fire the evaluation deleted event
+         external.registerEntityEvent(EVENT_EVAL_DELETE, evaluation);
+
+         // remove the evaluation and related data (except template) in one transaction
+         dao.deleteMixedSet(entitySets);
+
+         // remove any remaining scheduled jobs
+         evalJobLogic.processEvaluationStateChange(evaluationId, EvalJobLogic.ACTION_DELETE);
+
+         // this has to be after the removal of the evaluation
+         if (removeTemplate) {
             // remove the associated template if it is a copy (it should be)
             EvalTemplate template = null;
             if (evaluation.getTemplate() != null 
@@ -472,20 +487,11 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                      authoringService.deleteTemplate(template.getId(), userId);
                   } else {
                      log.warn("Could not remove the template ("+template.getId()+") associated with this "
-                     		+ "eval ("+evaluationId+") since this user has no permission, continuing to remove evaluation anyway");
+                           + "eval ("+evaluationId+") since this user has no permission, continuing to remove evaluation anyway");
                   }
                }
             }
          }
-
-         // fire the evaluation deleted event
-         external.registerEntityEvent(EVENT_EVAL_DELETE, evaluation);
-
-         // remove the evaluation and related data (except template) in one transaction
-         dao.deleteMixedSet(entitySets);
-
-         // remove any remaining scheduled jobs
-         evalJobLogic.processEvaluationStateChange(evaluationId, EvalJobLogic.ACTION_DELETE);
 
          log.info("User ("+userId+") removed evaluation ("+evaluationId+"), title: " + evaluation.getTitle());
          return;

@@ -26,6 +26,7 @@ import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
 import org.sakaiproject.evaluation.test.mocks.MockEvalJobLogic;
@@ -314,11 +315,11 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       try {
          evaluationSetupService.deleteEvaluation(etdl.evaluationNewAdmin.getId(), EvalTestDataLoad.MAINT_USER_ID);
          fail("Should have thrown exception");
-      } catch (RuntimeException e) {
+      } catch (SecurityException e) {
          assertNotNull(e);
       }
 
-      // attempt to remove evaluation with assigned contexts (check for cleanup)
+      // attempt to remove evaluation with assigned groups (check for cleanup)
       int countACs = evaluationDao.countByProperties(EvalAssignGroup.class, 
             new String[] { "evaluation.id" }, 
             new Object[] { etdl.evaluationNewAdmin.getId() });
@@ -335,17 +336,38 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       try {
          evaluationSetupService.deleteEvaluation(etdl.evaluationActive.getId(), EvalTestDataLoad.MAINT_USER_ID);
          fail("Should have thrown exception");
-      } catch (RuntimeException e) {
+      } catch (IllegalStateException e) {
          assertNotNull(e);
       }
 
-      // attempt to remove evaluation which is completed
-      try {
-         evaluationSetupService.deleteEvaluation(etdl.evaluationClosed.getId(), EvalTestDataLoad.MAINT_USER_ID);
-         fail("Should have thrown exception");
-      } catch (RuntimeException e) {
-         assertNotNull(e);
-      }
+      // attempt to remove evaluation which is completed but no responses (allowed)
+      Long evalIdToRemove = etdl.evaluationClosedUntaken.getId();
+      evaluationSetupService.deleteEvaluation(evalIdToRemove, EvalTestDataLoad.ADMIN_USER_ID);
+      assertNull( evaluationDao.findById(EvalEvaluation.class, evalIdToRemove) );
+
+      // remove eval with responses (check that it is not actually removed)
+      evalIdToRemove = etdl.evaluationClosed.getId();
+      evaluationSetupService.deleteEvaluation(evalIdToRemove, EvalTestDataLoad.ADMIN_USER_ID);
+      EvalEvaluation deletedEval = evaluationService.getEvaluationById(evalIdToRemove);
+      assertNotNull( deletedEval );
+      assertEquals(EvalConstants.EVALUATION_STATE_DELETED, deletedEval.getState());
+
+      // http://jira.sakaiproject.org/jira/browse/EVALSYS-485 - remove eval and copied template (no responses)
+      // first create the evaluation which should copy the template
+      EvalEvaluation evalTest485 = new EvalEvaluation( EvalConstants.EVALUATION_TYPE_EVALUATION, 
+            EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
+            etdl.today, etdl.tomorrow, etdl.threeDaysFuture, etdl.fourDaysFuture, 
+            EvalConstants.EVALUATION_STATE_INQUEUE, 
+            EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic);
+      evaluationSetupService.saveEvaluation( evalTest485, EvalTestDataLoad.MAINT_USER_ID );
+      EvalEvaluation checkEval485 = evaluationService.getEvaluationById(evalTest485.getId());
+      assertNotNull(checkEval485);
+      Long templateId = checkEval485.getTemplate().getId();
+
+      evalIdToRemove = evalTest485.getId();
+      evaluationSetupService.deleteEvaluation(evalIdToRemove, EvalTestDataLoad.ADMIN_USER_ID);
+      assertNull( evaluationService.getEvaluationById(evalIdToRemove) );
+      assertNull( evaluationDao.findById(EvalTemplate.class, templateId) );
 
       // test for an invalid Eval that it does not cause an exception
       evaluationSetupService.deleteEvaluation( EvalTestDataLoad.INVALID_LONG_ID, EvalTestDataLoad.MAINT_USER_ID);
@@ -358,15 +380,16 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       List<EvalEvaluation> evals = null;
       List<Long> ids = null;
 
-      // get all evaluationSetupService for user
+      // get all evaluations for user
       evals = evaluationSetupService.getEvaluationsForUser(EvalTestDataLoad.USER_ID, false, false, true);
       assertNotNull(evals);
-      assertEquals(5, evals.size());
+      assertEquals(6, evals.size());
       ids = EvalTestDataLoad.makeIdList(evals);
       assertTrue(ids.contains( etdl.evaluationNewAdmin.getId() ));
       assertTrue(ids.contains( etdl.evaluationActive.getId() ));
       assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
       assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
+      assertTrue(ids.contains( etdl.evaluationClosedUntaken.getId() ));
       assertTrue(ids.contains( etdl.evaluationViewable.getId() ));
 
       // check sorting
@@ -444,12 +467,12 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       // test getting visible evals for the admin user (should be all)
       evals = evaluationSetupService.getVisibleEvaluationsForUser(EvalTestDataLoad.ADMIN_USER_ID, false, false);
       assertNotNull(evals);
-      assertEquals(7, evals.size());
+      assertEquals(8, evals.size());
 
       // test getting recent closed evals for the admin user
       evals = evaluationSetupService.getVisibleEvaluationsForUser(EvalTestDataLoad.ADMIN_USER_ID, true, false);
       assertNotNull(evals);
-      assertEquals(6, evals.size());
+      assertEquals(7, evals.size());
       ids = EvalTestDataLoad.makeIdList(evals);
       assertTrue(! ids.contains( etdl.evaluationViewable.getId() ));
 
