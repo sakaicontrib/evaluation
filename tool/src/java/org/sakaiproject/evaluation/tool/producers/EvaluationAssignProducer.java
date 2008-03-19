@@ -30,14 +30,17 @@ import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.tool.EvaluationBean;
 import org.sakaiproject.evaluation.tool.utils.HierarchyRenderUtil;
 
+import uk.org.ponder.htmlutil.HTMLUtil;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIForm;
+import uk.org.ponder.rsf.components.UIInitBlock;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
@@ -86,10 +89,6 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
       this.hierarchyLogic = logic;
    }
 
-
-   /* (non-Javadoc)
-    * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
-    */
    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
       UIMessage.make(tofill, "page-title", "assigneval.page.title");
@@ -108,6 +107,19 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
       UIMessage.make(form, "name-header", "assigneval.name.header");
       UIMessage.make(form, "select-header", "assigneval.select.header");		
 
+      /*
+       * What's happening here is that we have 4 areas: hierarchy, groups, 
+       * new adhoc groups, and existing adhoc groups that can be hidden and selected
+       * which a checkbox for each one.  I'm not using the UIInitBlock at the moment
+       * because it doesn't seem to take arrays for the javascript arguments (and keep 
+       * them as javascript arrays).  So we are just putting the javascript initialization
+       * here and running it at the bottom of the page.
+       */
+      StringBuilder initJS = new StringBuilder();
+      
+      /*
+       * Selection GUI for Hierarchy Nodes and Evaluation Groups
+       */
       List<EvalGroup> evalGroups = externalLogic.getEvalGroupsForUser(externalLogic.getCurrentUserId(), EvalConstants.PERM_BE_EVALUATED);
       if (evalGroups.size() > 0) {
          Map<String, EvalGroup> groupsMap = new HashMap<String, EvalGroup>();
@@ -116,17 +128,26 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
             groupsMap.put(c.evalGroupId, c);
          }
 
-         //UISelect siteCheckboxes = UISelect.makeMultiple(form, "siteCheckboxes", ids, "#{evaluationBean.selectedEvalGroupIds}", null);
-         //String selectID = siteCheckboxes.getFullID();
-
          // Display the table for selecting hierarchy nodes
          Boolean showHierarchy = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
          if (showHierarchy) {
+            UIBoundBoolean hierarchyCheckbox = UIBoundBoolean.make(form, "use-hierarchynodes-checkbox");
             UIMessage.make(form, "assign-hierarchy-title", "assigneval.page.hier.title");
+            
+            UIOutput hierarchyDiv = UIOutput.make(form, "hierarchy-assignment-area");
+            
+            initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.hideAndShowRegionWithCheckbox", 
+                  new String[] {hierarchyDiv.getFullID(), hierarchyCheckbox.getFullID()}));
             hierUtil.renderSelectHierarchyNodesTree(form, "hierarchy-tree-select:", "", "" );
          }
 
          // display checkboxes for selecting the non-hierarchy groups
+         UIBoundBoolean evalGroupCheckbox = UIBoundBoolean.make(form, "use-evalgroups-checkbox");
+         UIMessage.make(form, "assign-evalgroups-title", "assigneval.page.groups.title");
+         UIOutput evalGroupDiv = UIOutput.make(form, "evalgroups-assignment-area");
+         initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.hideAndShowRegionWithCheckbox", 
+               new String[] {evalGroupDiv.getFullID(), evalGroupCheckbox.getFullID()}));
+         
          String[] nonAssignedEvalGroupIDs = getEvalGroupIDsNotAssignedInHierarchy(evalGroups).toArray(new String[] {});
          for (int i = 0; i < nonAssignedEvalGroupIDs.length; i++) {
             UIBranchContainer checkboxRow = UIBranchContainer.make(form, "sites:", i+"");
@@ -141,6 +162,18 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
          }
       } else {
          // TODO tell user there are no groups to assign to
+      }
+      
+      /*
+       * Selection GUI for new and existing ad-hoc groups.
+       */
+      Boolean useAdHocGroups = (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_GROUPS);
+      if (useAdHocGroups) {
+         UIBoundBoolean addhocGroupCheckbox = UIBoundBoolean.make(form, "use-adhocgroups-checkbox");
+         UIMessage.make(form, "assign-adhocgroups-title", "assigneval.page.adhocgroups.title");
+         UIOutput addhocGroupDiv = UIOutput.make(form, "newadhocgroup-assignment-area");
+         initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.hideAndShowRegionWithCheckbox", 
+               new String[] {addhocGroupDiv.getFullID(), addhocGroupCheckbox.getFullID()}));
       }
 
       /*
@@ -159,6 +192,12 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
       UICommand.make(form, "cancel-button", UIMessage.make("general.cancel.button"), "#{evaluationBean.cancelAssignAction}");
       UICommand.make(form, "editSettings", UIMessage.make("assigneval.edit.settings.button"), "#{evaluationBean.backToSettingsAction}");
       UICommand.make(form, "confirmAssignCourses", UIMessage.make("assigneval.save.assigned.button"), "#{evaluationBean.confirmAssignCoursesAction}");
+   
+      // Setup JavaScript for the collapse able sections
+      //UIInitBlock.make(tofill, "initJavaScript", "EvalSystem.initEvalAssign", new Object[] {
+      //      new String[] {"one","two"}, new String[] {"three","four"}
+      //});
+      UIVerbatim.make(tofill, "initJavaScript", initJS.toString());
    }
 
    /**
