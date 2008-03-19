@@ -1085,12 +1085,12 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       // get all templates
       l = evaluationService.getEmailTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, null, null);
       assertNotNull(l);
-      assertEquals(8, l.size());
+      assertEquals(10, l.size());
 
       // get only default templates
       l = evaluationService.getEmailTemplatesForUser(EvalTestDataLoad.ADMIN_USER_ID, null, true);
       assertNotNull(l);
-      assertEquals(5, l.size());
+      assertEquals(7, l.size());
       for (EvalEmailTemplate emailTemplate : l) {
          assertNotNull(emailTemplate.getDefaultType());
       }
