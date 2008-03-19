@@ -167,8 +167,8 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
          // Display the table for selecting hierarchy nodes
          Boolean showHierarchy = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
          if (showHierarchy) {
-            UIBoundBoolean hierarchyCheckbox = UIBoundBoolean.make(form, "use-hierarchynodes-checkbox");
-
+            UIOutput hierarchyCheckbox = UIOutput.make(form, "use-hierarchynodes-checkbox");
+            
             UIOutput hierarchyDiv = UIOutput.make(form, "hierarchy-assignment-area");
 
             initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.hideAndShowRegionWithCheckbox", 
@@ -177,7 +177,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
          }
 
          // display checkboxes for selecting the non-hierarchy groups
-         UIBoundBoolean evalGroupCheckbox = UIBoundBoolean.make(form, "use-evalgroups-checkbox");
+         UIOutput evalGroupCheckbox = UIOutput.make(form, "use-evalgroups-checkbox");
 
          UIOutput evalGroupDiv = UIOutput.make(form, "evalgroups-assignment-area");
          initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.hideAndShowRegionWithCheckbox", 
@@ -204,8 +204,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
        */
       Boolean useAdHocGroups = (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_GROUPS);
       if (useAdHocGroups) {
-         UIBoundBoolean addhocGroupCheckbox = UIBoundBoolean.make(form, "use-adhocgroups-checkbox");
-         UIMessage.make(form, "assign-adhocgroups-title", "assigneval.page.adhocgroups.title");
+         UIOutput addhocGroupCheckbox = UIOutput.make(form, "use-adhocgroups-checkbox");
          UIOutput addhocGroupDiv = UIOutput.make(form, "newadhocgroup-assignment-area");
 
          initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.hideAndShowRegionWithCheckbox", 
@@ -239,9 +238,6 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
 //      UICommand.make(form, "confirmAssignCourses", UIMessage.make("assigneval.save.assigned.button"), "#{evaluationBean.confirmAssignCoursesAction}");
 
       // Setup JavaScript for the collapse able sections
-      //UIInitBlock.make(tofill, "initJavaScript", "EvalSystem.initEvalAssign", new Object[] {
-      //      new String[] {"one","two"}, new String[] {"three","four"}
-      //});
       UIVerbatim.make(tofill, "initJavaScript", initJS.toString());
    }
 
