@@ -37,6 +37,7 @@ import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInitBlock;
+import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
@@ -174,6 +175,12 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
          UIOutput addhocGroupDiv = UIOutput.make(form, "newadhocgroup-assignment-area");
          initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.hideAndShowRegionWithCheckbox", 
                new String[] {addhocGroupDiv.getFullID(), addhocGroupCheckbox.getFullID()}));
+         
+         UIInput adhocGroupName = UIInput.make(form, "adhoc-group-name", "");
+         UIInput adhocGroupEmails = UIInput.make(form, "adhoc-email-input", "");
+         
+         UIOutput saveEmailsButton = UIOutput.make(form, "adhoc-save-emails-button");
+         UIOutput clearEmailsButton = UIOutput.make(form, "adhoc-clear-emails-button");
       }
 
       /*

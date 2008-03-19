@@ -83,7 +83,23 @@
 					<span rsf:id="assign-adhocgroups-title">I'd like to survey an ad-hoc group I'll specify now</span>
 				</p>
 				<div rsf:id="newadhocgroup-assignment-area" id="newadhocgroup-assignment-area">
-					Ad Hoc Group Assignment Widgetry
+					<p>
+						<span>Give this group a name: </span>
+						<input rsf:id="adhoc-group-name" type="textbox" />
+					</p>
+					<div rsf:id="adhoc-emails-area:">
+						<table>
+							<tr><td>sgithens at caret.cam.ac.uk <img src="cross.png" alt="X"/></td></tr>
+						</table>
+					</div>
+					<div>
+						<textarea rsf:id="adhoc-email-input" rows="5" cols="80">
+					    	Paste or type the emails of the people you want to survey in this box. Separate the 
+					    	address usings commas, semi-colons, new lines, or just spaces.
+						</textarea>
+					</div>
+					<input rsf:id="adhoc-save-emails-button" type="button" value="Save emails"/>	
+					<input rsf:id="adhoc-clear-emails-button" type="button" value="Clear all"/>
 				</div>
 				
 				<!-- 4. Use Existing ad-hoc groups -->
