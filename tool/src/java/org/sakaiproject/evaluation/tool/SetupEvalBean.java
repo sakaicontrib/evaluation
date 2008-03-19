@@ -114,7 +114,7 @@ public class SetupEvalBean {
    public String removeEvalAction(){
       EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
       evaluationSetupService.deleteEvaluation(evaluationId, externalLogic.getCurrentUserId());
-      messages.addMessage( new TargettedMessage("controlevaluations.delete.user.messagee",
+      messages.addMessage( new TargettedMessage("controlevaluations.delete.user.message",
             new Object[] { eval.getTitle() }, TargettedMessage.SEVERITY_INFO));
       return "success";
    }
