@@ -129,7 +129,7 @@ public class ControlTemplatesProducer implements ViewComponentProducer {
             new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
          UIInternalLink.make(tofill, "begin-evaluation-link", 
                UIMessage.make("starteval.page.title"), 
-               new TemplateViewParameters(EvaluationStartProducer.VIEW_ID, null));
+               new EvalViewParameters(EvaluationCreateProducer.VIEW_ID, null));
       }
 
       

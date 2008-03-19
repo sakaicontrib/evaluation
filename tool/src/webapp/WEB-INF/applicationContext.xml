@@ -26,7 +26,7 @@
 	<!-- the beans listed here are allowed access to values (security) -->
 	<bean parent="requestAddressibleParent">
 		<property name="value" value="id-defunnel, 
-		      evaluationBean, setupEvalBean, reportsBean, templateBBean, importBean, itemsBean, expertItemsBean, 
+		      setupEvalBean, reportsBean, templateBBean, importBean, itemsBean, expertItemsBean, 
 		      templateBeanLocator, templateItemWBL, answersBeanLocator, responseAnswersBeanLocator, responseBeanLocator, 
 		      evaluationBeanLocator, takeEvalBean, settingsBean, scaleBean, scaleBeanLocator, itemWBL, 
 		      hierNodeLocator, hierNodeLocatorInvoker, hierNodeGroupsLocator, hierNodeGroupsLocatorInvoker,
@@ -83,24 +83,36 @@
 	<!-- define any XML producer files -->
 	<bean id="siteMap" parent="siteMapParent" />
 
+    <!-- fills in the templateId in the ViewParams when creating new templates -->
 	<bean parent="actionResultInterceptorParent">
 		<property name="value">
-			<bean class="org.sakaiproject.evaluation.tool.wrapper.EvalActionResultInterceptor">
-				<property name="templateBeanLocator">
-					<bean parent="RSACBridgeProxy">
-						<property name="targetBeanName"
-							value="templateBeanLocator" />
-					</bean>
-				</property>
+			<bean class="org.sakaiproject.evaluation.tool.wrapper.TemplateActionResultInterceptor">
+                <property name="templateBeanLocator">
+                    <bean parent="RSACBridgeProxy">
+                        <property name="targetBeanName" value="templateBeanLocator" />
+                    </bean>
+                </property>
 			</bean>
 		</property>
 	</bean>
 
+    <!-- fills in the evaluationId in the ViewParams when creating new evaluations -->
+    <bean parent="actionResultInterceptorParent">
+        <property name="value">
+            <bean class="org.sakaiproject.evaluation.tool.wrapper.EvalActionResultInterceptor">
+                <property name="evaluationBeanLocator">
+                    <bean parent="RSACBridgeProxy">
+                        <property name="targetBeanName" value="evaluationBeanLocator" />
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
 	<bean parent="handlerHookParent">
 		<property name="value">
 			<bean parent="RSACBridgeProxy">
-				<property name="targetBeanName"
-					value="reportHandlerHook" />
+				<property name="targetBeanName"	value="reportHandlerHook" />
 			</bean>
 		</property>
 	</bean>

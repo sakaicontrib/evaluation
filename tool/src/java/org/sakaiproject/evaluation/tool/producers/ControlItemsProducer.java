@@ -22,8 +22,8 @@ import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
+import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.ItemViewParameters;
-import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
@@ -120,7 +120,7 @@ public class ControlItemsProducer implements ViewComponentProducer {
             new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
          UIInternalLink.make(tofill, "begin-evaluation-link", 
                UIMessage.make("starteval.page.title"), 
-               new TemplateViewParameters(EvaluationStartProducer.VIEW_ID, null));
+               new EvalViewParameters(EvaluationCreateProducer.VIEW_ID, null));
       }
 
 

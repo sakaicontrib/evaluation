@@ -209,10 +209,10 @@ public class ModifyTemplateProducer implements ViewComponentProducer, ViewParams
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
 	 */
-	public List reportNavigationCases() {
+	@SuppressWarnings("unchecked")
+   public List reportNavigationCases() {
 		List togo = new ArrayList();
-		togo.add(new NavigationCase("success", new TemplateViewParameters(
-				ModifyTemplateItemsProducer.VIEW_ID, null)));
+		togo.add(new NavigationCase("success", new TemplateViewParameters(ModifyTemplateItemsProducer.VIEW_ID, null)));
 		return togo;
 	}
 

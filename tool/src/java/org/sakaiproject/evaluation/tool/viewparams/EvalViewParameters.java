@@ -32,9 +32,9 @@ public class EvalViewParameters extends SimpleViewParameters {
 
    /**
     * if this is true then all the other values are ignored and this is assigned to the
-    * default "no group" assignGroup
+    * default "no group" assignGroup, if false or null then it gets ignored
     */
-   public Boolean noGroups = false;
+   public Boolean noGroups;
    /**
     * Holds the selected group ids to assign to this evaluation
     */
