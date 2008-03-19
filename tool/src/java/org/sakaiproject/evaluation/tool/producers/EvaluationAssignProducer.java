@@ -14,7 +14,6 @@
 
 package org.sakaiproject.evaluation.tool.producers;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -22,21 +21,21 @@ import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
-import org.sakaiproject.evaluation.tool.EvaluationBean;
+import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.utils.HierarchyRenderUtil;
+import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 
 import uk.org.ponder.htmlutil.HTMLUtil;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
-import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIForm;
-import uk.org.ponder.rsf.components.UIInitBlock;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
@@ -45,20 +44,21 @@ import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
-import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
-import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
+import uk.org.ponder.rsf.flow.ARIResult;
+import uk.org.ponder.rsf.flow.ActionResultInterceptor;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
 /**
  * assign an evaluation to groups and hierarchy nodes 
  * 
- * @author Steve Githens (sgithens@caret.cam.ac.uk)
  * @author Aaron Zeckoski (aaronz@vt.edu)
+ * @author Steve Githens (sgithens@caret.cam.ac.uk)
  */
-public class EvaluationAssignProducer implements ViewComponentProducer, NavigationCaseReporter {
+public class EvaluationAssignProducer implements ViewComponentProducer, ViewParamsReporter, ActionResultInterceptor {
 
    public static final String VIEW_ID = "evaluation_assign";
    public String getViewID() {
@@ -70,9 +70,9 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
       this.externalLogic = externalLogic;
    }
 
-   private EvaluationBean evaluationBean;
-   public void setEvaluationBean(EvaluationBean evaluationBean) {
-      this.evaluationBean = evaluationBean;
+   private EvalEvaluationService evaluationService;
+   public void setEvaluationService(EvalEvaluationService evaluationService) {
+      this.evaluationService = evaluationService;
    }
 
    private EvalSettings settings;
@@ -92,21 +92,56 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
 
    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
-      UIMessage.make(tofill, "page-title", "assigneval.page.title");
+      // local variables used in the render logic
+      String currentUserId = externalLogic.getCurrentUserId();
+      boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
+      boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
 
-      UIInternalLink.make(tofill, "summary-link", UIMessage.make("summary.page.title"),
-            new SimpleViewParameters(SummaryProducer.VIEW_ID));	
+      /*
+       * top links here
+       */
+      UIInternalLink.make(tofill, "summary-link", 
+            UIMessage.make("summary.page.title"), 
+            new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
-      UIMessage.make(tofill, "create-eval-title", "starteval.page.title");
-      UIMessage.make(tofill, "eval-settings-title", "evalsettings.page.title");
+      if (userAdmin) {
+         UIInternalLink.make(tofill, "administrate-link", 
+               UIMessage.make("administrate.page.title"),
+               new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+         UIInternalLink.make(tofill, "control-scales-link",
+               UIMessage.make("controlscales.page.title"),
+               new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+      }
 
-      UIMessage.make(tofill, "assign-eval-edit-page-title", "assigneval.assign.page.title", new Object[] {evaluationBean.eval.getTitle()});
-      UIMessage.make(tofill, "assign-eval-instructions", "assigneval.assign.instructions", new Object[] {evaluationBean.eval.getTitle()});
+      if (beginEvaluation) {
+         UIInternalLink.make(tofill, "control-evaluations-link",
+               UIMessage.make("controlevaluations.page.title"),
+               new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
+      } else {
+         throw new SecurityException("User attempted to access " + 
+               VIEW_ID + " when they are not allowed");
+      }
 
-      UIForm form = UIForm.make(tofill, "eval-assign-form");
+      EvalViewParameters evalViewParams = (EvalViewParameters) viewparams;
+      if (evalViewParams.evaluationId == null) {
+         throw new IllegalArgumentException("Cannot access this view unless the evaluationId is set");
+      }
 
-      UIMessage.make(form, "name-header", "assigneval.name.header");
-      UIMessage.make(form, "select-header", "assigneval.select.header");		
+      /**
+       * This is the evaluation we are working with on this page,
+       * this should ONLY be read from, do not change any of these fields
+       */
+      EvalEvaluation evaluation = evaluationService.getEvaluationById(evalViewParams.evaluationId);
+
+
+      UIMessage.make(tofill, "assign-eval-edit-page-title", "assigneval.assign.page.title", new Object[] {evaluation.getTitle()});
+      UIMessage.make(tofill, "assign-eval-instructions", "assigneval.assign.instructions", new Object[] {evaluation.getTitle()});
+
+      // this is a get form which does not submit to a backing bean
+      EvalViewParameters formViewParams = (EvalViewParameters) evalViewParams.copyBase();
+      formViewParams.viewID = EvaluationAssignConfirmProducer.VIEW_ID;
+      UIForm form = UIForm.make(tofill, "eval-assign-form", formViewParams);
+      // TODO bind into the selectedGroupIDsMap and selectedHierarchyNodeIDsMap in the VP
 
       /*
        * What's happening here is that we have 4 areas: hierarchy, groups, 
@@ -117,7 +152,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
        * here and running it at the bottom of the page.
        */
       StringBuilder initJS = new StringBuilder();
-      
+
       /*
        * Selection GUI for Hierarchy Nodes and Evaluation Groups
        */
@@ -133,10 +168,9 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
          Boolean showHierarchy = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
          if (showHierarchy) {
             UIBoundBoolean hierarchyCheckbox = UIBoundBoolean.make(form, "use-hierarchynodes-checkbox");
-            UIMessage.make(form, "assign-hierarchy-title", "assigneval.page.hier.title");
-            
+
             UIOutput hierarchyDiv = UIOutput.make(form, "hierarchy-assignment-area");
-            
+
             initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.hideAndShowRegionWithCheckbox", 
                   new String[] {hierarchyDiv.getFullID(), hierarchyCheckbox.getFullID()}));
             hierUtil.renderSelectHierarchyNodesTree(form, "hierarchy-tree-select:", "", "" );
@@ -144,27 +178,27 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
 
          // display checkboxes for selecting the non-hierarchy groups
          UIBoundBoolean evalGroupCheckbox = UIBoundBoolean.make(form, "use-evalgroups-checkbox");
-         UIMessage.make(form, "assign-evalgroups-title", "assigneval.page.groups.title");
+
          UIOutput evalGroupDiv = UIOutput.make(form, "evalgroups-assignment-area");
          initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.hideAndShowRegionWithCheckbox", 
                new String[] {evalGroupDiv.getFullID(), evalGroupCheckbox.getFullID()}));
-         
+
          String[] nonAssignedEvalGroupIDs = getEvalGroupIDsNotAssignedInHierarchy(evalGroups).toArray(new String[] {});
          for (int i = 0; i < nonAssignedEvalGroupIDs.length; i++) {
-            UIBranchContainer checkboxRow = UIBranchContainer.make(form, "sites:", i+"");
+            UIBranchContainer checkboxRow = UIBranchContainer.make(form, "groups:", i+"");
             if (i % 2 == 0) {
                checkboxRow.decorators = new DecoratorList( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
             }
-            UIBoundBoolean checkbox = UIBoundBoolean.make(checkboxRow, "siteId", 
-                  "evaluationBean.selectedEvalGroupIDsMap."+nonAssignedEvalGroupIDs[i]);
+            UIBoundBoolean checkbox = UIBoundBoolean.make(checkboxRow, "evalGroupId", 
+                  "selectedGroupIDsMap."+nonAssignedEvalGroupIDs[i]);
             // get title from the map since it is faster
-            UIOutput title = UIOutput.make(checkboxRow, "siteTitle", groupsMap.get(nonAssignedEvalGroupIDs[i]).title );
+            UIOutput title = UIOutput.make(checkboxRow, "groupTitle", groupsMap.get(nonAssignedEvalGroupIDs[i]).title );
             UILabelTargetDecorator.targetLabel(title, checkbox); // make title a label for checkbox
          }
       } else {
          // TODO tell user there are no groups to assign to
       }
-      
+
       /*
        * Selection GUI for new and existing ad-hoc groups.
        */
@@ -173,12 +207,13 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
          UIBoundBoolean addhocGroupCheckbox = UIBoundBoolean.make(form, "use-adhocgroups-checkbox");
          UIMessage.make(form, "assign-adhocgroups-title", "assigneval.page.adhocgroups.title");
          UIOutput addhocGroupDiv = UIOutput.make(form, "newadhocgroup-assignment-area");
+
          initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.hideAndShowRegionWithCheckbox", 
                new String[] {addhocGroupDiv.getFullID(), addhocGroupCheckbox.getFullID()}));
-         
+
          UIInput adhocGroupName = UIInput.make(form, "adhoc-group-name", "");
          UIInput adhocGroupEmails = UIInput.make(form, "adhoc-email-input", "");
-         
+
          UIOutput saveEmailsButton = UIOutput.make(form, "adhoc-save-emails-button");
          UIOutput clearEmailsButton = UIOutput.make(form, "adhoc-clear-emails-button");
       }
@@ -196,10 +231,13 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
        *  ..."
        */
 
-      UICommand.make(form, "cancel-button", UIMessage.make("general.cancel.button"), "#{evaluationBean.cancelAssignAction}");
-      UICommand.make(form, "editSettings", UIMessage.make("assigneval.edit.settings.button"), "#{evaluationBean.backToSettingsAction}");
-      UICommand.make(form, "confirmAssignCourses", UIMessage.make("assigneval.save.assigned.button"), "#{evaluationBean.confirmAssignCoursesAction}");
-   
+      // all command buttons are just HTML now so no more bindings
+      UIMessage.make(form, "cancel-button", "general.cancel.button");
+      UIMessage.make(form, "confirmAssignCourses", "assigneval.save.assigned.button" );
+
+//      UICommand.make(form, "editSettings", UIMessage.make("assigneval.edit.settings.button"), "#{evaluationBean.backToSettingsAction}");
+//      UICommand.make(form, "confirmAssignCourses", UIMessage.make("assigneval.save.assigned.button"), "#{evaluationBean.confirmAssignCoursesAction}");
+
       // Setup JavaScript for the collapse able sections
       //UIInitBlock.make(tofill, "initJavaScript", "EvalSystem.initEvalAssign", new Object[] {
       //      new String[] {"one","two"}, new String[] {"three","four"}
@@ -240,17 +278,30 @@ public class EvaluationAssignProducer implements ViewComponentProducer, Navigati
       return evalGroupIDs;
    }
 
+
    /* (non-Javadoc)
-    * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
+    * @see uk.org.ponder.rsf.flow.ActionResultInterceptor#interceptActionResult(uk.org.ponder.rsf.flow.ARIResult, uk.org.ponder.rsf.viewstate.ViewParameters, java.lang.Object)
     */
-   @SuppressWarnings("unchecked")
-   public List reportNavigationCases() {
-      List i = new ArrayList();
-      i.add(new NavigationCase(SummaryProducer.VIEW_ID, new SimpleViewParameters(SummaryProducer.VIEW_ID)));
-      i.add(new NavigationCase(EvaluationSettingsProducer.VIEW_ID, new SimpleViewParameters(EvaluationSettingsProducer.VIEW_ID)));
-      i.add(new NavigationCase(EvaluationAssignConfirmProducer.VIEW_ID, new SimpleViewParameters(EvaluationAssignConfirmProducer.VIEW_ID)));
-      return i;
+   public void interceptActionResult(ARIResult result, ViewParameters incoming, Object actionReturn) {
+      // handles the navigation cases and passing along data from view to view
+      EvalViewParameters evp = (EvalViewParameters) incoming;
+      Long evalId = evp.evaluationId;
+      if ("evalSettings".equals(actionReturn)) {
+         result.resultingView = new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evalId);
+      } else if ("evalAssign".equals(actionReturn)) {
+         result.resultingView = new EvalViewParameters(EvaluationAssignProducer.VIEW_ID, evalId);
+      } else if ("evalConfirm".equals(actionReturn)) {
+         result.resultingView = new EvalViewParameters(EvaluationAssignConfirmProducer.VIEW_ID, evalId);
+      } else if ("controlEvals".equals(actionReturn)) {
+         result.resultingView = new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID);
+      }
    }
 
+   /* (non-Javadoc)
+    * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
+    */
+   public ViewParameters getViewParameters() {
+      return new EvalViewParameters();
+   }
 
 }

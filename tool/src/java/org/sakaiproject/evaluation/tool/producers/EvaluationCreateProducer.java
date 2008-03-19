@@ -1,16 +1,16 @@
-/******************************************************************************
- * EvaluationStartProducer.java - created by kahuja@vt.edu on Oct 05, 2006
- * 
- * Copyright (c) 2007 Virginia Polytechnic Institute and State University
+/**
+ * $Id$
+ * $URL$
+ * EvaluationCreateProducer.java - evaluation - Mar 19, 2008 11:32:44 AM - azeckoski
+ **************************************************************************
+ * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
- * 
- * Contributors:
- * Rui Feng (fengr@vt.edu)
- * Kapil Ahuja (kahuja@vt.edu)
- *****************************************************************************/
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ */
 
 package org.sakaiproject.evaluation.tool.producers;
 
@@ -22,8 +22,8 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalTemplate;
+import org.sakaiproject.evaluation.tool.locators.EvaluationBeanLocator;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
-import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
@@ -38,7 +38,6 @@ import uk.org.ponder.rsf.components.UIOutputMany;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.UISelectLabel;
-import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UITextDimensionsDecorator;
 import uk.org.ponder.rsf.evolvers.TextInputEvolver;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
@@ -49,16 +48,15 @@ import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
-/**
- * Start a Evaluation page
- * 
- * @author Kapil Ahuja (kahuja@vt.edu)
- * @author Rui Feng (fengr@vt.edu)
- */
-public class EvaluationStartProducer implements ViewComponentProducer, NavigationCaseReporter,
-      ViewParamsReporter {
 
-   public static final String VIEW_ID = "evaluation_start";
+/**
+ * This is the view which begins the evaluation creation process (for starting/beginning evaluations)
+ * 
+ * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
+ */
+public class EvaluationCreateProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
+
+   public static final String VIEW_ID = "evaluation_create";
    public String getViewID() {
       return VIEW_ID;
    }
@@ -83,9 +81,10 @@ public class EvaluationStartProducer implements ViewComponentProducer, Navigatio
       this.richTextEvolver = richTextEvolver;
    }
 
-
-   public void fillComponents(UIContainer tofill, ViewParameters viewparams,
-         ComponentChecker checker) {
+   /* (non-Javadoc)
+    * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
+    */
+   public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
       // local variables used in the render logic
       String currentUserId = externalLogic.getCurrentUserId();
@@ -127,105 +126,90 @@ public class EvaluationStartProducer implements ViewComponentProducer, Navigatio
                VIEW_ID + " when they are not allowed");
       }
 
-      UIMessage.make(tofill, "start-eval-title", "starteval.page.title");
-      UIMessage.make(tofill, "start-eval-header", "starteval.header");
+      EvalViewParameters evalViewParams = (EvalViewParameters) viewparams;
 
-      TemplateViewParameters evalViewParams = (TemplateViewParameters) viewparams;
+      String actionBean = "setupEvalBean.";
+      String evaluationOTP = "evaluationBeanLocator." + EvaluationBeanLocator.NEW_1 + ".";
 
-      UIForm form = UIForm.make(tofill, "basic-form");
+      UIForm form = UIForm.make(tofill, "start_eval_form");
 
-      UIMessage.make(form, "title-header", "starteval.title.header");
-      UIMessage.make(form, "instructions-header", "starteval.instructions.header");
-      UIMessage.make(form, "instructions-desc", "starteval.instructions.desc");
-
-      UIInput.make(form, "title", "#{evaluationBean.eval.title}");
-      UIInput instructions = UIInput.make(form, "instructions:",
-            "#{evaluationBean.eval.instructions}");
-      instructions.decorators = new DecoratorList(new UITextDimensionsDecorator(60, 4));
+      UIInput.make(form, "title", evaluationOTP + ".title");
+      UIInput instructions = UIInput.make(form, "instructions:", evaluationOTP + ".instructions");
+      instructions.decorate( new UITextDimensionsDecorator(100, 4) );
       richTextEvolver.evolveTextInput(instructions);
 
-      // Code to make bottom table containing the list of templates when coming from Summary or Edit
-      // Settings page.
+      // Make bottom table containing the list of templates if no template set
       if (evalViewParams.templateId == null) {
-
-         // List templateList = evaluationBean.getTemplatesToDisplay();
-         List<EvalTemplate> templateList = authoringService.getTemplatesForUser(externalLogic.getCurrentUserId(), null,
-               false);
-         if (templateList != null && templateList.size() > 0) {
+         // get the templates usable by this user
+         List<EvalTemplate> templateList = 
+            authoringService.getTemplatesForUser(currentUserId, null, false);
+         if (templateList.size() > 0) {
             UIBranchContainer chooseTemplate = UIBranchContainer.make(form, "chooseTemplate:");
 
-            // Preparing the string array of template titles and corresponding id's
             String[] values = new String[templateList.size()];
             String[] labels = new String[templateList.size()];
-            String[] owners = new String[templateList.size()];
 
-            for (int count = 0; count < templateList.size(); count++) {
-               values[count] = ((EvalTemplate) (templateList.get(count))).getId().toString();
-               labels[count] = ((EvalTemplate) (templateList.get(count))).getTitle();
-               owners[count] = ((EvalTemplate) (templateList.get(count))).getOwner();
-            }
-
-            UIMessage.make(chooseTemplate, "choose-template-header",
-                  "starteval.choose.template.header");
-            UIMessage
-                  .make(chooseTemplate, "choose-template-desc", "starteval.choose.template.desc");
-            UIMessage.make(chooseTemplate, "template-title-header",
-                  "starteval.template.title.header");
-            UIMessage.make(chooseTemplate, "template-owner-header",
-                  "starteval.template.ownder.header");
-            UISelect radios = UISelect.make(chooseTemplate, "templateRadio", values, labels,
-                  "#{evaluationBean.templateId}", null);
-
-            radios.optionnames = UIOutputMany.make(labels);
-
+            UISelect radios = UISelect.make(chooseTemplate, "templateRadio", 
+                  null, null, actionBean + "templateId", 
+                  templateList.get(0).getId().toString()); // default template choice is the first one
             String selectID = radios.getFullID();
-            for (int i = 0; i < values.length; ++i) {
-               UIBranchContainer radiobranch = UIBranchContainer.make(chooseTemplate,
-                     "templateOptions:", i + "");
+            for (int i = 0; i < templateList.size(); i++) {
+               EvalTemplate template = templateList.get(i);
+               values[i] = template.getId().toString();
+               labels[i] = template.getTitle();
+               UIBranchContainer radiobranch = 
+                  UIBranchContainer.make(chooseTemplate, "templateOptions:", i + "");
                UISelectChoice.make(radiobranch, "radioValue", selectID, i);
                UISelectLabel.make(radiobranch, "radioLabel", selectID, i);
-
-               // UIOutput.make(radiobranch,"radioOwner", logic.getUserDisplayName( owners[i]));
-               EvalUser owner = externalLogic.getEvalUserById( owners[i] );
+               EvalUser owner = externalLogic.getEvalUserById( template.getOwner() );
                UIOutput.make(radiobranch, "radioOwner", owner.displayName );
                UIInternalLink.make(radiobranch, "viewPreview_link", 
                      UIMessage.make("starteval.view.preview.link"), 
-                     new EvalViewParameters(PreviewEvalProducer.VIEW_ID, null, new Long(values[i])));
+                     new EvalViewParameters(PreviewEvalProducer.VIEW_ID, null, template.getId()) );
             }
+            // need to assign the choices and labels at the end here since we used nulls at the beginning
+            radios.optionlist = UIOutputMany.make(values);
+            radios.optionnames = UIOutputMany.make(labels);
+         } else {
+            throw new IllegalStateException("User got to evaluation settings when they have no access to any templates... " 
+                  + "producer suicide was the only way out");
          }
       } else {
-         form.parameters.add(new UIELBinding("#{evaluationBean.templateId}",
-               evalViewParams.templateId));
+         // just bind in the template explicitly
+         form.parameters.add(new UIELBinding(actionBean + "templateId", evalViewParams.templateId));
+         // display the info about the template
+         EvalTemplate template = authoringService.getTemplateById(evalViewParams.templateId);
+         UIBranchContainer showTemplateBranch = UIBranchContainer.make(tofill, "showTemplate:");
+         UIMessage.make(showTemplateBranch, "eval_template_title", "evalsettings.template.title.display",
+               new Object[] { template.getTitle() });
+         UIInternalLink.make(showTemplateBranch, "eval_template_preview_link", 
+               UIMessage.make("evalsettings.template.preview.link"), 
+               new EvalViewParameters(PreviewEvalProducer.VIEW_ID, null, template.getId()) );         
       }
 
       UIMessage.make(form, "cancel-button", "general.cancel.button");
-      UICommand
-            .make(
-                  form,
-                  "continueToSettings", UIMessage.make("starteval.continue.settings.link"), "#{evaluationBean.continueToSettingsAction}"); //$NON-NLS-3$
+      UICommand.make(form, "continueToSettings", UIMessage.make("starteval.continue.settings.link"), 
+            actionBean + "completeCreateAction");
+
    }
 
-   /*
-    * (non-Javadoc)
-    * 
+
+   /* (non-Javadoc)
     * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
     */
    @SuppressWarnings("unchecked")
    public List reportNavigationCases() {
-      List i = new ArrayList();
-      i.add(new NavigationCase(EvaluationSettingsProducer.VIEW_ID, new SimpleViewParameters(
-            EvaluationSettingsProducer.VIEW_ID)));
-      i.add(new NavigationCase(ModifyTemplateItemsProducer.VIEW_ID, new SimpleViewParameters(
-            ModifyTemplateItemsProducer.VIEW_ID)));
-      i.add(new NavigationCase(SummaryProducer.VIEW_ID, new SimpleViewParameters(
-            SummaryProducer.VIEW_ID)));
-      return i;
+      List togo = new ArrayList();
+      // the evaluationId should get filled in by the org.sakaiproject.evaluation.tool.wrapper.EvalActionResultInterceptor.java
+      togo.add( new NavigationCase("evalSettings", new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, null)) );
+      return togo;
    }
 
    /* (non-Javadoc)
     * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
     */
    public ViewParameters getViewParameters() {
-      return new TemplateViewParameters();
+      return new EvalViewParameters();
    }
+
 }

@@ -45,8 +45,8 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.tool.producers.ControlEvaluationsProducer;
 import org.sakaiproject.evaluation.tool.producers.EvaluationAssignConfirmProducer;
 import org.sakaiproject.evaluation.tool.producers.EvaluationAssignProducer;
+import org.sakaiproject.evaluation.tool.producers.EvaluationCreateProducer;
 import org.sakaiproject.evaluation.tool.producers.EvaluationSettingsProducer;
-import org.sakaiproject.evaluation.tool.producers.EvaluationStartProducer;
 import org.sakaiproject.evaluation.tool.producers.SummaryProducer;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.util.FormattedText;
@@ -60,6 +60,9 @@ import uk.org.ponder.messageutil.TargettedMessageList;
  * @author Rui Feng (fengr@vt.edu)
  * @author Kapil Ahuja (kahuja@vt.edu)
  * @author Aaron Zeckoski (aaronz@vt.edu)
+ * 
+ * 
+ * @deprecated
  */
 public class EvaluationBean {
 
@@ -152,6 +155,7 @@ public class EvaluationBean {
     * evaluation_start.html.
     * 
     * @return View id that sends the control to evaluation settings page.
+ * @deprecated
     */
    public String continueToSettingsAction() {
       // Initializing all the bind variables used in EvaluationSettingsProducer. 
@@ -240,6 +244,7 @@ public class EvaluationBean {
     * evaluation_setting.html.
     * 
     * @return View id that sends the control to assign page.
+ * @deprecated
     */
    public String continueAssigningAction()	{	
 
@@ -252,6 +257,7 @@ public class EvaluationBean {
     * Method binding to the "Save Settings" button on the evaluation_setting.html.
     * 
     * @return View id that sends the control to control panel or summary.
+ * @deprecated
     */
    public String saveSettingsAction() {	
       /*
@@ -324,6 +330,7 @@ public class EvaluationBean {
     * 
     * @return View id that sends the control to 
     * 			control panel
+ * @deprecated
     */
    public String cancelSettingsAction() {	
 
@@ -339,6 +346,7 @@ public class EvaluationBean {
     * evaluation_assign.html.
     * 
     * @return View id that sends the control to summary page.
+ * @deprecated
     */
    public String cancelAssignAction() {	
       return SummaryProducer.VIEW_ID;
@@ -349,6 +357,7 @@ public class EvaluationBean {
     * on the evaluation_assign.html.
     * 
     * @return View id that sends the control to settings page.
+ * @deprecated
     */
    public String backToSettingsAction() {	
       return EvaluationSettingsProducer.VIEW_ID;
@@ -362,6 +371,7 @@ public class EvaluationBean {
     * @return String that is used to determine the place where control is to be sent
     * 			in ModifyEmailProducer (reportNavigationCases method)
     * @throws SecurityException 
+ * @deprecated
     */
    public String saveAvailableEmailTemplate() throws SecurityException {
 
@@ -406,6 +416,7 @@ public class EvaluationBean {
     * @return String that is used to determine the place where control is to be sent
     * 			in ModifyEmailProducer (reportNavigationCases method)
     * @throws SecurityException 
+ * @deprecated
     */
    public String saveReminderEmailTemplate() throws SecurityException {
 
@@ -441,6 +452,7 @@ public class EvaluationBean {
     * 
     * @return String that is used to determine the place where control is to be sent
     * 			in PreviewEmailProducer (reportNavigationCases method)
+ * @deprecated
     */
    public String modifyAvailableEmailTemplate(){
       return EvalConstants.EMAIL_TEMPLATE_AVAILABLE;
@@ -452,6 +464,7 @@ public class EvaluationBean {
     * 
     * @return String that is used to determine the place where control is to be sent
     * 			in PreviewEmailProducer (reportNavigationCases method)
+ * @deprecated
     */
    public String modifyReminderEmailTemplate(){
       return EvalConstants.EMAIL_TEMPLATE_REMINDER;
@@ -465,6 +478,7 @@ public class EvaluationBean {
     * 
     * @return View id which goes to assign confirm page
     *          if atleast one course is selected.
+ * @deprecated
     */
    public String confirmAssignCoursesAction() { 
 
@@ -524,6 +538,7 @@ public class EvaluationBean {
     * When come from control panel then saveSettingsAction method is called.
     * 
     * @return view id telling RSF where to send the control
+ * @deprecated
     */
    public String doneAssignmentAction() {	
 
@@ -587,6 +602,7 @@ public class EvaluationBean {
     * on control panel (for queued evaluationSetupService). 
     * 
     * @return View id that sends the control to assign page.
+ * @deprecated
     */
    public String changeAssignedCourseAction(){
 
@@ -596,6 +612,7 @@ public class EvaluationBean {
 
    /**
     * Makes a new evaluation object residing in this session bean.
+ * @deprecated
     */	
    public void clearEvaluation(){
       this.eval = new EvalEvaluation();
@@ -615,6 +632,7 @@ public class EvaluationBean {
     * the Control Panel page.
     *
     * @return View id that sends the control to evaluation start page.
+ * @deprecated
     */	
    public String startEvaluation(){
 
@@ -641,7 +659,7 @@ public class EvaluationBean {
        * kahuja on March 7th, 2007
        */
 
-      return EvaluationStartProducer.VIEW_ID;
+      return EvaluationCreateProducer.VIEW_ID;
    }
 
    /**
@@ -651,6 +669,7 @@ public class EvaluationBean {
     * 2) Summary page: evalAdminTitleLink for queued, active evaluation
     * 
     * @return View id sending the control to evaluation settings producer.
+ * @deprecated
     */
    public String editEvalSettingAction(){	
       eval = evaluationService.getEvaluationById(eval.getId());
@@ -679,6 +698,7 @@ public class EvaluationBean {
     * Method binding to control panel page "Assigned" Link/Command.
     * 
     * @return View id sending the control to assign confirm page.
+ * @deprecated
     */
    public String evalAssigned() {
       eval = evaluationService.getEvaluationById(evalId);
@@ -704,7 +724,8 @@ public class EvaluationBean {
     * Method binding to the "Cancel" button on the remove_evaluation.html.
     * 
     * @return View id sending the control to control panel page.
-    */
+  * @deprecated
+   */
    public String cancelRemoveEvalAction(){
       return ControlEvaluationsProducer.VIEW_ID;
    }
@@ -714,7 +735,8 @@ public class EvaluationBean {
     * on the remove_evalaution.html
     * 
     * @return View id sending the control to control panel page.
-    */
+  * @deprecated
+   */
    public String removeEvalAction(){
       evaluationSetupService.deleteEvaluation(evalId, external.getCurrentUserId());
       return ControlEvaluationsProducer.VIEW_ID;
@@ -726,7 +748,8 @@ public class EvaluationBean {
    /**
     * Ultra simplified version of the remove template code
     * @return
-    */
+  * @deprecated
+   */
    public String removeTemplateAction() {
       String currentUserId = external.getCurrentUserId();
       Long templateId = new Long(tmplId);
@@ -739,7 +762,8 @@ public class EvaluationBean {
     * saving settings for the first time (called from 
     * doneAssignmentAction method) and saving other times 
     * (called from saveSettingsAction method).  
-    */
+  * @deprecated
+   */
    private void commonSaveTasks() {
 
       boolean useStopDate = ((Boolean) settings.get(EvalSettings.EVAL_USE_STOP_DATE));

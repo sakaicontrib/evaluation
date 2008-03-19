@@ -16,13 +16,14 @@ package org.sakaiproject.evaluation.tool;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
@@ -30,6 +31,7 @@ import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.tool.locators.EvaluationBeanLocator;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
@@ -54,14 +56,19 @@ public class SetupEvalBean {
     * This should be set to the evalId we are currently working with
     */
    public Long evaluationId;
+   /**
+    * This should be set to the templateId we are assigning to the evaluation
+    */
+   public Long templateId;
 
-   // These are for the Assign screen, which is now bound by UIBoundBooleans
-   public Map<String, Boolean> selectedEvalGroupIDsMap = new HashMap<String, Boolean>();
-   public Map<String, Boolean> selectedEvalHierarchyNodeIDsMap = new HashMap<String, Boolean>();
-
-   // TODO are these still needed?
-// public String[] selectedEvalGroupIds;
-// public String[] selectedEvalHierarchyNodeIds;
+   /**
+    * the selected groups ids to bind to this evaluation when creating it
+    */
+   public String[] selectedGroupIDs = new String[] {};
+   /**
+    * the selected hierarchy nodes to bind to this evaluation when creating it
+    */
+   public String[] selectedHierarchyNodeIDs = new String[] {};
 
 
    private EvalEvaluationService evaluationService;
@@ -82,6 +89,11 @@ public class SetupEvalBean {
    private EvalEvaluationSetupService evaluationSetupService;
    public void setEvaluationSetupService(EvalEvaluationSetupService evaluationSetupService) {
       this.evaluationSetupService = evaluationSetupService;
+   }
+
+   private EvalAuthoringService authoringService;
+   public void setAuthoringService(EvalAuthoringService authoringService) {
+      this.authoringService = authoringService;
    }
 
    private EvaluationBeanLocator evaluationBeanLocator;
@@ -127,6 +139,18 @@ public class SetupEvalBean {
     * Completed the initial creation page where the template is chosen
     */
    public String completeCreateAction() {
+      // set the template on the evaluation in the bean locator (TODO - get rid of this)
+      if (templateId == null) {
+         throw new IllegalStateException("The templateId is null, it must be set so it can be assigned to the new evaluation");
+      }
+      EvalEvaluation eval = evaluationBeanLocator.getCurrentEval();
+      if (eval == null) {
+         throw new IllegalStateException("The evaluation cannot be retrieved from the bean locator, critical failure");
+      }
+      EvalTemplate template = authoringService.getTemplateById(templateId);
+      eval.setTemplate(template);
+
+      // save the new evaluation
       evaluationBeanLocator.saveAll();
       return "evalSettings";
    }
@@ -135,11 +159,20 @@ public class SetupEvalBean {
     * Updated or initially set the evaluation settings
     */
    public String completeSettingsAction() {
-      EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
+      // set the template on the evaluation in the bean locator if not null
+      if (templateId != null) {
+         EvalEvaluation eval = evaluationBeanLocator.getCurrentEval();
+         if (eval != null) {
+            EvalTemplate template = authoringService.getTemplateById(templateId);
+            eval.setTemplate(template);
+         }
+      }
+
       evaluationBeanLocator.saveAll();
 
+      EvalEvaluation eval = evaluationBeanLocator.getCurrentEval();
       String destination = "controlEvals";
-      if (creatingEval) {
+      if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(eval.getState())) {
          destination = "evalAssign";
       } else {
          messages.addMessage( new TargettedMessage("evalsettings.updated.message",
@@ -159,28 +192,27 @@ public class SetupEvalBean {
       // TODO this check is identical to the one above -AZ
       // make sure that the submitted nodes are valid and populate the nodes list
       Set<EvalHierarchyNode> nodes = null;
-      if (! selectedEvalHierarchyNodeIDsMap.isEmpty()) {
-         String[] selectedHierarchyNodeIds = makeArrayFromBooleanMap(selectedEvalHierarchyNodeIDsMap);
-         nodes = hierarchyLogic.getNodesByIds(selectedHierarchyNodeIds);
-         if (nodes.size() != selectedHierarchyNodeIds.length) {
+      if (selectedHierarchyNodeIDs.length > 0) {
+         nodes = hierarchyLogic.getNodesByIds(selectedHierarchyNodeIDs);
+         if (nodes.size() != selectedHierarchyNodeIDs.length) {
             throw new IllegalArgumentException("Invalid set of hierarchy node ids submitted which "
-                  + "includes node Ids which are not in the hierarchy: " + ArrayUtils.arrayToString(selectedHierarchyNodeIds));
+                  + "includes node Ids which are not in the hierarchy: " + ArrayUtils.arrayToString(selectedHierarchyNodeIDs));
          }
       } else {
          nodes = new HashSet<EvalHierarchyNode>();
       }
 
       // at least 1 node or group must be selected
-      if (selectedEvalGroupIDsMap.isEmpty() 
+      if (selectedGroupIDs.length == 0 
             && nodes.isEmpty() ) {
          messages.addMessage( new TargettedMessage("assigneval.invalid.selection",
                new Object[] {}, TargettedMessage.SEVERITY_ERROR));
          return "fail";
       }
 
-      if (creatingEval) {
+      EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
+      if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(eval.getState())) {
          // save eval and assign groups
-         EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
 
          // save the new evaluation state (moving from partial)
          eval.setState( EvalUtils.getEvaluationState(eval, true) ); // set the state according to dates only
@@ -192,10 +224,9 @@ public class SetupEvalBean {
          Set<String> allNodeIds = hierarchyLogic.getAllChildrenNodes(nodes, true);
 
          // save all the assignments (hierarchy and group)
-         String[] selectedGroupIds = makeArrayFromBooleanMap(selectedEvalGroupIDsMap);
          List<EvalAssignHierarchy> assignedHierList = 
             evaluationSetupService.addEvalAssignments(evaluationId, 
-                  allNodeIds.toArray(new String[allNodeIds.size()]), selectedGroupIds);
+                  allNodeIds.toArray(new String[allNodeIds.size()]), selectedGroupIDs);
 
          // failsafe check (to make sure we are not creating an eval with no assigned groups)
          if (assignedHierList.isEmpty()) {
@@ -212,9 +243,8 @@ public class SetupEvalBean {
          Set<String> allNodeIds = hierarchyLogic.getAllChildrenNodes(nodes, true);
 
          // save all the assignments (hierarchy and group)
-         String[] selectedGroupIds = makeArrayFromBooleanMap(selectedEvalGroupIDsMap);
          evaluationSetupService.addEvalAssignments(evaluationId, 
-                  allNodeIds.toArray(new String[allNodeIds.size()]), selectedGroupIds);
+                  allNodeIds.toArray(new String[allNodeIds.size()]), selectedGroupIDs);
       }
       return "controlEvals";
    }
@@ -228,7 +258,7 @@ public class SetupEvalBean {
     * @param booleanSelectionMap a map of string -> boolean (from RSF bound booleans)
     * @return an array of the keys where boolean is true
     */
-   private String[] makeArrayFromBooleanMap(Map<String, Boolean> booleanSelectionMap) {
+   public static String[] makeArrayFromBooleanMap(Map<String, Boolean> booleanSelectionMap) {
       List<String> hierNodeIdList = new ArrayList<String>();
       for (String hierNodeID: booleanSelectionMap.keySet()) {
          if (booleanSelectionMap.get(hierNodeID) == true) {

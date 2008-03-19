@@ -22,7 +22,7 @@ import java.util.Map;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
+import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
@@ -74,11 +74,10 @@ public class RemoveEvalProducer implements ViewComponentProducer, ViewParamsRepo
                   ControlEvaluationsProducer.VIEW_ID));
 
 
-      TemplateViewParameters evalViewParams = (TemplateViewParameters) viewparams;
+      EvalViewParameters evalViewParams = (EvalViewParameters) viewparams;
 
       if (evalViewParams.templateId != null) {
-         // TODO this is using the wrong view params.... very poor -AZ
-         EvalEvaluation eval = evaluationService.getEvaluationById(evalViewParams.templateId);
+         EvalEvaluation eval = evaluationService.getEvaluationById(evalViewParams.evaluationId);
          if (eval != null) {
             UIMessage.make(tofill, "remove-eval-confirm-name", 
                   "removeeval.confirm.name", new Object[] { eval.getTitle() });
@@ -112,14 +111,14 @@ public class RemoveEvalProducer implements ViewComponentProducer, ViewParamsRepo
 
             UIMessage.make(tofill, "cancel-command-link", "general.cancel.button");
 
-            String beanBinding = "setupEvalBean.";
+            String actionBean = "setupEvalBean.";
             String actionBinding = "removeEvalAction";
 
             UIForm form = UIForm.make(tofill, "removeEvalForm");
 
             UICommand deleteCommand = UICommand.make(form, "remove-eval-command-link", 
-                  UIMessage.make("removeeval.remove.button"), beanBinding + actionBinding);
-            deleteCommand.parameters.add(new UIELBinding(beanBinding + "evaluationId", eval.getId()));
+                  UIMessage.make("removeeval.remove.button"), actionBean + actionBinding);
+            deleteCommand.parameters.add(new UIELBinding(actionBean + "evaluationId", eval.getId()));
 
          } else {
             throw new RuntimeException("Cannot remove evaluation, no eval id found in passed in params, illegal access to page");
@@ -141,7 +140,7 @@ public class RemoveEvalProducer implements ViewComponentProducer, ViewParamsRepo
     * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
     */
    public ViewParameters getViewParameters() {
-      return new TemplateViewParameters();
+      return new EvalViewParameters();
    }
 
 

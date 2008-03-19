@@ -32,22 +32,16 @@ import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
-import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
-import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
-import uk.org.ponder.rsf.components.UIELBinding;
-import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UILink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UITooltipDecorator;
-import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
-import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
@@ -58,7 +52,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  *
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class ControlEvaluationsProducer implements ViewComponentProducer, NavigationCaseReporter {
+public class ControlEvaluationsProducer implements ViewComponentProducer {
 
    /* (non-Javadoc)
     * @see uk.org.ponder.rsf.view.ViewComponentProducer#getViewID()
@@ -179,23 +173,22 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
       }
 
       // create inqueue evaluations header and link
-      UIForm startEvalForm = UIForm.make(tofill, "begin-evaluation-form");
-      UICommand.make(startEvalForm, "begin-evaluation-link", UIMessage.make("starteval.page.title"), "#{evaluationBean.startEvaluation}");
+      UIInternalLink.make(tofill, "begin-evaluation-link", UIMessage.make("starteval.page.title"), 
+            new EvalViewParameters(EvaluationCreateProducer.VIEW_ID, null) );
 
       if (inqueueEvals.size() > 0) {
          UIBranchContainer evalListing = UIBranchContainer.make(tofill, "inqueue-eval-listing:");
-         UIForm evalForm = UIForm.make(evalListing, "inqueue-eval-form");
 
          for (int i = 0; i < inqueueEvals.size(); i++) {
             EvalEvaluation evaluation = (EvalEvaluation) inqueueEvals.get(i);
 
-            UIBranchContainer evaluationRow = UIBranchContainer.make(evalForm, "inqueue-eval-row:", evaluation.getId().toString());
+            UIBranchContainer evaluationRow = UIBranchContainer.make(evalListing, "inqueue-eval-row:", evaluation.getId().toString());
 
-            UIMessage.make(evalForm, "eval-preview-title", "controlevaluations.eval.preview.title");
-            UIMessage.make(evalForm, "eval-link-title", "controlevaluations.eval.link.title");
+            UIMessage.make(evaluationRow, "eval-preview-title", "controlevaluations.eval.preview.title");
+            UIMessage.make(evaluationRow, "eval-link-title", "controlevaluations.eval.link.title");
 
             UIInternalLink.make(evaluationRow, "inqueue-eval-link", evaluation.getTitle(), 
-                  new EvalViewParameters( PreviewEvalProducer.VIEW_ID, evaluation.getId(),	evaluation.getTemplate().getId() ) );
+                  new EvalViewParameters( PreviewEvalProducer.VIEW_ID, evaluation.getId(), evaluation.getTemplate().getId() ) );
             UILink.make(evaluationRow, "eval-direct-link", UIMessage.make("controlevaluations.eval.direct.link"), 
                   externalLogic.getEntityURL(evaluation));
             if (evaluation.getEvalCategory() != null) {
@@ -208,33 +201,26 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
             // vary the display depending on the number of groups assigned
             int groupsCount = evaluationService.countEvaluationGroups(evaluation.getId());
             if (groupsCount == 1) {
-               UICommand evalAssigned = UICommand.make(evaluationRow, 
-                     "inqueue-eval-assigned-link", 
-                     getTitleForFirstEvalGroup(evaluation.getId()),
-               "#{evaluationBean.evalAssigned}");
-               evalAssigned.parameters.add(new UIELBinding("#{evaluationBean.evalId}", evaluation.getId()));
+               UIInternalLink.make(evaluationRow, "inqueue-eval-assigned-link", getTitleForFirstEvalGroup(evaluation.getId()), 
+                     new EvalViewParameters(EvaluationAssignConfirmProducer.VIEW_ID, evaluation.getId()) );
             } else {
-               UICommand evalAssigned = UICommand.make(evaluationRow, 
-                     "inqueue-eval-assigned-link", 
-                     UIMessage.make("controlevaluations.eval.groups.link", new Object[] { new Integer(groupsCount) }),
-               "#{evaluationBean.evalAssigned}");
-               evalAssigned.parameters.add(new UIELBinding("#{evaluationBean.evalId}", evaluation.getId()));
+               UIInternalLink.make(evaluationRow, "inqueue-eval-assigned-link", 
+                     UIMessage.make("controlevaluations.eval.groups.link", new Object[] { new Integer(groupsCount) }), 
+                     new EvalViewParameters(EvaluationAssignConfirmProducer.VIEW_ID, evaluation.getId()) );
             }
 
             UIOutput.make(evaluationRow, "inqueue-eval-startdate", df.format(evaluation.getStartDate()));
             UIOutput.make(evaluationRow, "inqueue-eval-duedate", df.format(evaluation.getDueDate()));
 
-            UICommand evalEdit = UICommand.make(evaluationRow, "inqueue-eval-edit-link", 
-                  UIMessage.make("general.command.edit"), "#{evaluationBean.editEvalSettingAction}");
-            evalEdit.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", evaluation.getId()));
+            UIInternalLink.make(evaluationRow, "inqueue-eval-edit-link", UIMessage.make("general.command.edit"),
+                  new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluation.getId()) );
 
             // do the locked check first since it is more efficient
             if ( ! evaluation.getLocked().booleanValue() &&
                   evaluationService.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
                // evaluation removable
-               UIInternalLink.make(evaluationRow, "inqueue-eval-delete-link", 
-                     UIMessage.make("general.command.delete"), 
-                     new TemplateViewParameters( RemoveEvalProducer.VIEW_ID, evaluation.getId() ) );
+               UIInternalLink.make(evaluationRow, "inqueue-eval-delete-link", UIMessage.make("general.command.delete"), 
+                     new EvalViewParameters( RemoveEvalProducer.VIEW_ID, evaluation.getId() ) );
             }
 
          }
@@ -246,15 +232,14 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
       // create active evaluations header and link
       if (activeEvals.size() > 0) {
          UIBranchContainer evalListing = UIBranchContainer.make(tofill, "active-eval-listing:");
-         UIForm evalForm = UIForm.make(evalListing, "active-eval-form");
 
          for (int i = 0; i < activeEvals.size(); i++) {
             EvalEvaluation evaluation = (EvalEvaluation) activeEvals.get(i);
 
-            UIBranchContainer evaluationRow = UIBranchContainer.make(evalForm, "active-eval-row:", evaluation.getId().toString());
+            UIBranchContainer evaluationRow = UIBranchContainer.make(evalListing, "active-eval-row:", evaluation.getId().toString());
 
-            UIMessage.make(evalForm, "eval-preview-title", "controlevaluations.eval.preview.title");
-            UIMessage.make(evalForm, "eval-link-title", "controlevaluations.eval.link.title");
+            UIMessage.make(evalListing, "eval-preview-title", "controlevaluations.eval.preview.title");
+            UIMessage.make(evalListing, "eval-link-title", "controlevaluations.eval.link.title");
 
             UIInternalLink.make(evaluationRow, "active-eval-link", evaluation.getTitle(), 
                   new EvalViewParameters( PreviewEvalProducer.VIEW_ID, evaluation.getId(),	evaluation.getTemplate().getId() ) );
@@ -270,17 +255,12 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
             // vary the display depending on the number of groups assigned
             int groupsCount = evaluationService.countEvaluationGroups(evaluation.getId());
             if (groupsCount == 1) {
-               UICommand evalAssigned = UICommand.make(evaluationRow, 
-                     "active-eval-assigned-link", 
-                     getTitleForFirstEvalGroup(evaluation.getId()),
-               "#{evaluationBean.evalAssigned}");
-               evalAssigned.parameters.add(new UIELBinding("#{evaluationBean.evalId}", evaluation.getId()));
+               UIInternalLink.make(evaluationRow, "active-eval-assigned-link", getTitleForFirstEvalGroup(evaluation.getId()), 
+                     new EvalViewParameters(EvaluationAssignConfirmProducer.VIEW_ID, evaluation.getId()) );
             } else {
-               UICommand evalAssigned = UICommand.make(evaluationRow, 
-                     "active-eval-assigned-link", 
-                     UIMessage.make("controlevaluations.eval.groups.link", new Object[] { new Integer(groupsCount) }),
-               "#{evaluationBean.evalAssigned}");
-               evalAssigned.parameters.add(new UIELBinding("#{evaluationBean.evalId}", evaluation.getId()));
+               UIInternalLink.make(evaluationRow, "active-eval-assigned-link", 
+                     UIMessage.make("controlevaluations.eval.groups.link", new Object[] { new Integer(groupsCount) }), 
+                     new EvalViewParameters(EvaluationAssignConfirmProducer.VIEW_ID, evaluation.getId()) );
             }
 
             // calculate the response rate
@@ -293,17 +273,14 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
             UIOutput.make(evaluationRow, "active-eval-startdate", df.format(evaluation.getStartDate()));
             UIOutput.make(evaluationRow, "active-eval-duedate", df.format(evaluation.getDueDate()));
 
-            UICommand evalEdit = UICommand.make(evaluationRow, 
-                  "active-eval-edit-link", 
-                  UIMessage.make("general.command.edit"),
-            "#{evaluationBean.editEvalSettingAction}");
-            evalEdit.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", evaluation.getId()));
+            
+            UIInternalLink.make(evaluationRow, "active-eval-edit-link", UIMessage.make("general.command.edit"),
+                  new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluation.getId()) );
 
             if ( evaluationService.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
                // evaluation removable
-               UIInternalLink.make(evaluationRow, "active-eval-delete-link", 
-                     UIMessage.make("general.command.delete"), 
-                     new TemplateViewParameters( RemoveEvalProducer.VIEW_ID, evaluation.getId() ) );
+               UIInternalLink.make(evaluationRow, "active-eval-delete-link", UIMessage.make("general.command.delete"), 
+                     new EvalViewParameters( RemoveEvalProducer.VIEW_ID, evaluation.getId() ) );
             }
 
          }
@@ -314,15 +291,14 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
       // create closed evaluations header and link
       if (closedEvals.size() > 0) {
          UIBranchContainer evalListing = UIBranchContainer.make(tofill, "closed-eval-listing:");
-         UIForm evalForm = UIForm.make(evalListing, "closed-eval-form");
 
          for (int i = 0; i < closedEvals.size(); i++) {
             EvalEvaluation evaluation = (EvalEvaluation) closedEvals.get(i);
 
-            UIBranchContainer evaluationRow = UIBranchContainer.make(evalForm, "closed-eval-row:", evaluation.getId().toString());
+            UIBranchContainer evaluationRow = UIBranchContainer.make(evalListing, "closed-eval-row:", evaluation.getId().toString());
 
-            UIMessage.make(evalForm, "eval-preview-title", "controlevaluations.eval.preview.title");
-            UIMessage.make(evalForm, "eval-link-title", "controlevaluations.eval.link.title");
+            UIMessage.make(evalListing, "eval-preview-title", "controlevaluations.eval.preview.title");
+            UIMessage.make(evalListing, "eval-link-title", "controlevaluations.eval.link.title");
 
             UIInternalLink.make(evaluationRow, "closed-eval-link", evaluation.getTitle(), 
                   new EvalViewParameters( PreviewEvalProducer.VIEW_ID, evaluation.getId(), evaluation.getTemplate().getId() ) );
@@ -335,17 +311,12 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
             // vary the display depending on the number of groups assigned
             int groupsCount = evaluationService.countEvaluationGroups(evaluation.getId());
             if (groupsCount == 1) {
-               UICommand evalAssigned = UICommand.make(evaluationRow, 
-                     "closed-eval-assigned-link", 
-                     getTitleForFirstEvalGroup(evaluation.getId()),
-               "#{evaluationBean.evalAssigned}");
-               evalAssigned.parameters.add(new UIELBinding("#{evaluationBean.evalId}", evaluation.getId()));
+               UIInternalLink.make(evaluationRow, "closed-eval-assigned-link", getTitleForFirstEvalGroup(evaluation.getId()), 
+                     new EvalViewParameters(EvaluationAssignConfirmProducer.VIEW_ID, evaluation.getId()) );
             } else {
-               UICommand evalAssigned = UICommand.make(evaluationRow, 
-                     "closed-eval-assigned-link", 
-                     UIMessage.make("controlevaluations.eval.groups.link", new Object[] { new Integer(groupsCount) }),
-               "#{evaluationBean.evalAssigned}");
-               evalAssigned.parameters.add(new UIELBinding("#{evaluationBean.evalId}", evaluation.getId()));
+               UIInternalLink.make(evaluationRow, "closed-eval-assigned-link", 
+                     UIMessage.make("controlevaluations.eval.groups.link", new Object[] { new Integer(groupsCount) }), 
+                     new EvalViewParameters(EvaluationAssignConfirmProducer.VIEW_ID, evaluation.getId()) );
             }
 
             // calculate the response rate
@@ -357,16 +328,15 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 
             UIOutput.make(evaluationRow, "closed-eval-duedate", df.format(evaluation.getDueDate()));
 
-            UICommand evalEdit = UICommand.make(evaluationRow, "closed-eval-edit-link", 
-                  UIMessage.make("general.command.edit"), "#{evaluationBean.editEvalSettingAction}");
-            evalEdit.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", evaluation.getId()));
+            UIInternalLink.make(evaluationRow, "closed-eval-edit-link", UIMessage.make("general.command.edit"),
+                  new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluation.getId()) );
 
             if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(EvalUtils.getEvaluationState(evaluation, false)) ) {
                int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
                if ( responsesNeeded == 0 ) {
                   UIInternalLink.make(evaluationRow, "closed-eval-report-link", 
                         UIMessage.make("controlevaluations.eval.report.link"),
-                        new ReportParameters(ReportChooseGroupsProducer.VIEW_ID, evaluation.getId() ));	
+                        new ReportParameters(ReportChooseGroupsProducer.VIEW_ID, evaluation.getId() ));  
                } else {
                   // cannot view yet, more responses needed
                   UIMessage.make(evaluationRow, "closed-eval-message", 
@@ -380,9 +350,8 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
 
             if ( evaluationService.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
                // evaluation removable
-               UIInternalLink.make(evaluationRow, "closed-eval-delete-link", 
-                     UIMessage.make("general.command.delete"), 
-                     new TemplateViewParameters( RemoveEvalProducer.VIEW_ID, evaluation.getId() ) );
+               UIInternalLink.make(evaluationRow, "closed-eval-delete-link", UIMessage.make("general.command.delete"), 
+                     new EvalViewParameters( RemoveEvalProducer.VIEW_ID, evaluation.getId() ) );
             }
 
          }
@@ -391,23 +360,6 @@ public class ControlEvaluationsProducer implements ViewComponentProducer, Naviga
       }
 
    }
-
-   /* (non-Javadoc)
-    * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
-    */
-   @SuppressWarnings("unchecked")
-   public List reportNavigationCases() {
-      List i = new ArrayList();
-
-      i.add(new NavigationCase(EvaluationSettingsProducer.VIEW_ID, new SimpleViewParameters(
-            EvaluationSettingsProducer.VIEW_ID)));
-      i.add(new NavigationCase(EvaluationStartProducer.VIEW_ID, new SimpleViewParameters(
-            EvaluationStartProducer.VIEW_ID)));
-      i.add(new NavigationCase(EvaluationAssignConfirmProducer.VIEW_ID, new SimpleViewParameters(
-            EvaluationAssignConfirmProducer.VIEW_ID)));
-
-      return i;
-   }	
 
    /**
     * Gets the title for the first returned evalGroupId for this evaluation,

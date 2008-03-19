@@ -88,4 +88,18 @@ public class EvaluationBeanLocator implements BeanLocator {
          evaluationSetupService.saveEvaluation(evaluation, externalLogic.getCurrentUserId());
       }
    }
+
+   /**
+    * Get the first evaluation that is currently being worked with in this locator,
+    * if there are none then return null, otherwise return the first one
+    * @return an evaluation or null if none
+    */
+   public EvalEvaluation getCurrentEval() {
+      EvalEvaluation eval = null;
+      if (delivered.size() > 0) {
+         eval = delivered.values().iterator().next();
+      }
+      return eval;
+   }
+
 }

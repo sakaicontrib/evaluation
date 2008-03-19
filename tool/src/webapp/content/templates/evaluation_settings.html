@@ -57,12 +57,12 @@
 
                   <!-- This block (choose template) is not visible if user has chosen a template or already assigned -->
                   <div rsf:id="chooseTemplate:" class="longtext">
-                     <h4 rsf:id="choose-template-header">Choose Template:</h4>
-                     <p class="instruction"  rsf:id="choose-template-desc">Select the template to use for this evaluation. Templates define the questions used.</p>
+                  <h4 rsf:id="msg=starteval.choose.template.header">Choose Template:</h4>
+                  <p rsf:id="msg=starteval.choose.template.desc" class="instruction">Select the template to use for this evaluation. Templates define the questions used.</p>
                       <table border = "0" cellspacing = "0" cellpadding = "0"  class="listHier lines nolines" style="width:60%">
                           <tr>
-                              <th id="titleCol"><span rsf:id="template-title-header">Template Title</span></th>
-                              <th id="ownerCol"><span rsf:id="template-owner-header">Owner</span></th>
+                              <th id="titleCol"><span rsf:id="msg=starteval.template.title.header">Template Title</span></th>
+                              <th id="ownerCol"><span rsf:id="msg=starteval.template.ownder.header">Owner</span></th>
                               <th id="actionCol" align="center">&nbsp;</th>
                           </tr>
                           <tr rsf:id="templateOptions:"> 
@@ -277,12 +277,7 @@
 
 				<p class="act">
 					<input name="continue_assigning" rsf:id="continueAssigning" type="submit" value="Continue to Assign to Courses" accesskey="s" class="active"/>
-					<span rsf:id="firstTime:">                                                                                                                                    
-						<input name="cancel_setting" type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" rsf:id="cancel-button" accesskey="x" />
-					</span>
-					<span rsf:id="subsequentTimes:">
-						<input name="cancel_setting" type="submit" value="Cancel" rsf:id="cancel-button" accesskey="x"/>
-					</span>
+					<input rsf:id="cancel-button" name="cancel_setting" type="button" value="Cancel" onclick="javascript:history.go(-1);return false;" accesskey="x" />
 				</p>	
 			</form>
 

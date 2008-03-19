@@ -1,21 +1,20 @@
-/******************************************************************************
- * EvaluationSettingsProducer.java - created by kahuja@vt.edu on Oct 05, 2006
- * 
- * Copyright (c) 2007 Virginia Polytechnic Institute and State University
+/**
+ * $Id$
+ * $URL$
+ * EvaluationSettingsProducer.java - evaluation - Oct 05, 2006 11:32:44 AM - kahuja
+ **************************************************************************
+ * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
- * 
- * Contributors:
- * Kapil Ahuja (kahuja@vt.edu)
- * Rui Feng (fengr@vt.edu)
- *****************************************************************************/
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ */
 
 package org.sakaiproject.evaluation.tool.producers;
 
 import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -30,7 +29,6 @@ import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
-import org.sakaiproject.evaluation.tool.EvaluationBean;
 import org.sakaiproject.evaluation.tool.utils.RSFUtils;
 import org.sakaiproject.evaluation.tool.viewparams.EmailViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
@@ -62,8 +60,8 @@ import uk.org.ponder.rsf.components.decorators.UITextDimensionsDecorator;
 import uk.org.ponder.rsf.components.decorators.UITooltipDecorator;
 import uk.org.ponder.rsf.evolvers.FormatAwareDateInputEvolver;
 import uk.org.ponder.rsf.evolvers.TextInputEvolver;
-import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
-import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
+import uk.org.ponder.rsf.flow.ARIResult;
+import uk.org.ponder.rsf.flow.ActionResultInterceptor;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
@@ -72,7 +70,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
 /**
  * This producer is used to render the evaluation settings page. It is used when
- * user either creates a new evaluation (coming forward from "Start Evaluation"
+ * user either creates a new evaluation (coming forward from "Begin Evaluation"
  * page or coming backward from "Assign Evaluation to courses" page) or from
  * control panel to edit the existing settings.
  * 
@@ -80,7 +78,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * @author Kapil Ahuja (kahuja@vt.edu)
  * @author Rui Feng (fengr@vt.edu)
  */
-public class EvaluationSettingsProducer implements ViewComponentProducer, NavigationCaseReporter, ViewParamsReporter {
+public class EvaluationSettingsProducer implements ViewComponentProducer, ViewParamsReporter, ActionResultInterceptor {
 
    public static final String VIEW_ID = "evaluation_settings";
    public String getViewID() {
@@ -90,11 +88,6 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
    private EvalSettings settings;
    public void setSettings(EvalSettings settings) {
       this.settings = settings;
-   }
-
-   private EvaluationBean evaluationBean;
-   public void setEvaluationBean(EvaluationBean evaluationBean) {
-      this.evaluationBean = evaluationBean;
    }
 
    private EvalExternalLogic externalLogic;
@@ -133,6 +126,19 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
       EvalViewParameters evalViewParams = (EvalViewParameters) viewparams;
+      if (evalViewParams.evaluationId == null) {
+         throw new IllegalArgumentException("Cannot access this view unless the evaluationId is set");
+      }
+
+      String actionBean = "setupEvalBean.";
+      String evaluationOTP = "evaluationBeanLocator." + evalViewParams.evaluationId + ".";
+      /**
+       * This is the evaluation we are working with on this page,
+       * this should ONLY be read from, do not change any of these fields
+       */
+      EvalEvaluation evaluation = evaluationService.getEvaluationById(evalViewParams.evaluationId);
+      String currentEvalState = evaluationService.returnAndFixEvalState(evaluation, true);
+
 
       // local variables used in the render logic
       String currentUserId = externalLogic.getCurrentUserId();
@@ -142,15 +148,6 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 
       DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG, locale);
       DateFormat timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT, locale);
-
-      String evalBeanOTP = "evaluationBean.";
-      String evaluationOTP = evalBeanOTP + "eval.";
-      /**
-       * This is the evaluation we are working with on this page,
-       * this should ONLY be read to, do not change any of these fields
-       */
-      EvalEvaluation evaluation = evaluationBean.eval;
-      String currentEvalState = evaluationService.returnAndFixEvalState(evaluation, true);
 
       /*
        * top links here
@@ -218,8 +215,9 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
                String[] values = new String[templateList.size()];
                String[] labels = new String[templateList.size()];
 
+               // TODO - this is not a good way to do this
                UISelect radios = UISelect.make(chooseTemplate, "templateRadio", 
-                     null, null, evalBeanOTP + "templateId", null);
+                     null, null, actionBean + "templateId", null);
                String selectID = radios.getFullID();
                for (int i = 0; i < templateList.size(); i++) {
                   EvalTemplate template = templateList.get(i);
@@ -239,11 +237,12 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
                radios.optionlist = UIOutputMany.make(values);
                radios.optionnames = UIOutputMany.make(labels);
             } else {
-               throw new IllegalStateException("User got to evaluation settings when they have no access to any templates... " +
-               "producer suicide was the only way out");
+               throw new IllegalStateException("User got to evaluation settings when they have no access to any templates... " 
+                     + "producer suicide was the only way out");
             }
          } else {
-            form.parameters.add(new UIELBinding(evalBeanOTP + "templateId", evalViewParams.templateId));
+            // just bind in the template explicitly to the evaluation
+            form.parameters.add( new UIELBinding(evaluationOTP + "template", new ELReference("templateBeanLocator." + evalViewParams.templateId)) );
          }
       } else {
          EvalTemplate template = authoringService.getTemplateById(evaluation.getTemplate().getId());
@@ -272,19 +271,19 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 
       // Start Date
       UIBranchContainer showStartDate = UIBranchContainer.make(form, "showStartDate:");
-      generateDateSelector(showStartDate, "startDate", evalBeanOTP + "startDate", 
+      generateDateSelector(showStartDate, "startDate", evaluationOTP + "startDate", 
             currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, useDateTime);
 
       // Due Date
       UIBranchContainer showDueDate = UIBranchContainer.make(form, "showDueDate:");
-      generateDateSelector(showDueDate, "dueDate", evalBeanOTP + "dueDate", 
+      generateDateSelector(showDueDate, "dueDate", evaluationOTP + "dueDate", 
             currentEvalState, EvalConstants.EVALUATION_STATE_GRACEPERIOD, useDateTime);
 
       // Stop Date - Show the "Stop date" text box only if allowed in the System settings
       Boolean useStopDate = (Boolean) settings.get(EvalSettings.EVAL_USE_STOP_DATE);
       if (useStopDate) {
          UIBranchContainer showStopDate = UIBranchContainer.make(form, "showStopDate:");
-         generateDateSelector(showStopDate, "stopDate", evalBeanOTP + "stopDate", 
+         generateDateSelector(showStopDate, "stopDate", evaluationOTP + "stopDate", 
                currentEvalState, EvalConstants.EVALUATION_STATE_CLOSED, useDateTime);
       }
 
@@ -307,7 +306,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
       // show the view date only if allowed by system settings
       if (((Boolean) settings.get(EvalSettings.EVAL_USE_VIEW_DATE)).booleanValue()) {
          UIBranchContainer showViewDate = UIBranchContainer.make(form, "showViewDate:");
-         generateDateSelector(showViewDate, "viewDate", evalBeanOTP + "viewDate", 
+         generateDateSelector(showViewDate, "viewDate", evaluationOTP + "viewDate", 
                currentEvalState, EvalConstants.EVALUATION_STATE_VIEWABLE, useDateTime);
       }
 
@@ -429,18 +428,12 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 
       // EVAL SETTINGS SAVING CONTROLS
       // if this evaluation is already saved, show "Save Settings" button else this is the "Continue to Assign to Courses" button
+      String messageKey = "evalsettings.save.settings.link";
       if (evaluation.getId() == null) {
-         UICommand.make(form, "continueAssigning", UIMessage.make("evalsettings.continue.assigning.link"), evalBeanOTP + "continueAssigningAction");
-
-         UIBranchContainer firstTime = UIBranchContainer.make(form, "firstTime:");
-         UIMessage.make(firstTime, "cancel-button", "general.cancel.button");
-
-      } else {
-         UICommand.make(form, "continueAssigning", UIMessage.make("evalsettings.save.settings.link"), evalBeanOTP + "saveSettingsAction");
-
-         UIBranchContainer subsequentTimes = UIBranchContainer.make(form, "subsequentTimes:");
-         UICommand.make(subsequentTimes, "cancel-button", UIMessage.make("general.cancel.button"), evalBeanOTP + "cancelSettingsAction");
+         messageKey = "evalsettings.continue.assigning.link";
       }
+      UICommand.make(form, "continueAssigning", UIMessage.make(messageKey), actionBean + "completeSettingsAction");
+      UIMessage.make(tofill, "cancel-button", "general.cancel.button");
 
       // this fills in the javascript call (areaId, selectId, selectValue, reminderId)
       // NOTE: RSF bug causes us to have to generate the ids manually (http://www.caret.cam.ac.uk/jira/browse/RSF-65)
@@ -452,19 +445,22 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, Naviga
 
 
    /* (non-Javadoc)
-    * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
+    * @see uk.org.ponder.rsf.flow.ActionResultInterceptor#interceptActionResult(uk.org.ponder.rsf.flow.ARIResult, uk.org.ponder.rsf.viewstate.ViewParameters, java.lang.Object)
     */
-   @SuppressWarnings("unchecked")
-   public List reportNavigationCases() {
-      List i = new ArrayList();
-      // Physical templateId is filled in by global Interceptor
-      i.add(new NavigationCase(EvaluationStartProducer.VIEW_ID, new TemplateViewParameters(EvaluationStartProducer.VIEW_ID, null)));
-      i.add(new NavigationCase(ControlEvaluationsProducer.VIEW_ID, new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID)));
-      i.add(new NavigationCase(EvaluationAssignProducer.VIEW_ID, new SimpleViewParameters(EvaluationAssignProducer.VIEW_ID)));
-
-      return i;
+   public void interceptActionResult(ARIResult result, ViewParameters incoming, Object actionReturn) {
+      // handles the navigation cases and passing along data from view to view
+      EvalViewParameters evp = (EvalViewParameters) incoming;
+      Long evalId = evp.evaluationId;
+      if ("evalSettings".equals(actionReturn)) {
+         result.resultingView = new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evalId);
+      } else if ("evalAssign".equals(actionReturn)) {
+         result.resultingView = new EvalViewParameters(EvaluationAssignProducer.VIEW_ID, evalId);
+      } else if ("evalConfirm".equals(actionReturn)) {
+         result.resultingView = new EvalViewParameters(EvaluationAssignConfirmProducer.VIEW_ID, evalId);
+      } else if ("controlEvals".equals(actionReturn)) {
+         result.resultingView = new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID);
+      }
    }
-
 
    /* (non-Javadoc)
     * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
