@@ -33,7 +33,6 @@ import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
-import org.sakaiproject.evaluation.tool.viewparams.EvalTakeViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
@@ -235,8 +234,8 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 							   // can modify responses so show the link still
 								// take eval link when pending
 								UIInternalLink.make(evalcourserow, "evaluationCourseLink", title,
-										new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID,
-												eval.getId(), groupId, response.getId()) );
+										new EvalViewParameters(TakeEvalProducer.VIEW_ID,
+												eval.getId(), response.getId(), groupId) );
 							} else {
 							   // show title only when completed and cannot modify
 							   UIOutput.make(evalcourserow, "evaluationCourseLink_disabled", title);
@@ -245,7 +244,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 						   // no response yet for this eval/group
 							// take eval link when pending
 							UIInternalLink.make(evalcourserow, "evaluationCourseLink", title,
-									new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID,
+									new EvalViewParameters(TakeEvalProducer.VIEW_ID,
 											eval.getId(), groupId) );
 							status = "summary.status.pending";
 						}

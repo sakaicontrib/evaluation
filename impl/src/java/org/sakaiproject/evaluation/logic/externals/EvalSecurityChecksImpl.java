@@ -18,7 +18,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
@@ -44,11 +43,6 @@ import org.sakaiproject.evaluation.utils.EvalUtils;
 public class EvalSecurityChecksImpl {
 
    private static Log log = LogFactory.getLog(EvalSecurityChecksImpl.class);
-
-   private EvalSettings settings;
-   public void setSettings(EvalSettings settings) {
-      this.settings = settings;
-   }
 
    private EvalExternalLogic externalLogic;
    public void setExternalLogic(EvalExternalLogic externalLogic) {
@@ -89,14 +83,14 @@ public class EvalSecurityChecksImpl {
          // check locked first
          if (eval.getId() != null &&
                eval.getLocked().booleanValue() == true) {
-            // if eval is closed AND admin override is on then we can remove the eval anyway
+            // locked evals in the active/graceperiod state cannot be removed, all others can
             String evalState = EvalUtils.getEvaluationState(eval, false);
-            Boolean responseRemovalAllowed = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_RESPONSE_REMOVAL);
-            if ( responseRemovalAllowed && 
-                  EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_CLOSED, true) ) {
-               allowed = true;
+            if ( EvalConstants.EVALUATION_STATE_ACTIVE.equals(evalState) 
+                  || EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(evalState) ) {
+               throw new IllegalStateException("Cannot remove evaluation ("+eval.getId()+") that has responses while it is active");
             } else {
-               throw new IllegalStateException("Cannot control (modify) locked evaluation ("+eval.getId()+")");
+               // can remove any other evaluation since it effectively just deactivates it if there are responses
+               allowed = true;
             }
          }
 

@@ -43,7 +43,7 @@ import org.sakaiproject.evaluation.tool.LocalResponsesLogic;
 import org.sakaiproject.evaluation.tool.locators.ResponseAnswersBeanLocator;
 import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.EvalCategoryViewParameters;
-import org.sakaiproject.evaluation.tool.viewparams.EvalTakeViewParameters;
+import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
@@ -161,7 +161,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
             new SimpleViewParameters(SummaryProducer.VIEW_ID));			
 
       // get passed in get params
-      EvalTakeViewParameters evalTakeViewParams = (EvalTakeViewParameters) viewparams;
+      EvalViewParameters evalTakeViewParams = (EvalViewParameters) viewparams;
       evaluationId = evalTakeViewParams.evaluationId;
       evalGroupId = evalTakeViewParams.evalGroupId;
       responseId = evalTakeViewParams.responseId;
@@ -282,7 +282,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                UIBranchContainer showSwitchGroup = UIBranchContainer.make(tofill, "show-switch-group:");
                UIMessage.make(showSwitchGroup, "switch-group-header", "takeeval.switch.group.header");
                UIForm chooseGroupForm = UIForm.make(showSwitchGroup, "switch-group-form", 
-                     new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, evalGroupId, responseId));
+                     new EvalViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, responseId, evalGroupId));
                UISelect.make(chooseGroupForm, "switch-group-list", values, labels,  "#{evalGroupId}");
                UIMessage.make(chooseGroupForm, "switch-group-button", "takeeval.switch.group.button");            
             }
@@ -564,7 +564,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
     * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
     */
    public ViewParameters getViewParameters() {
-      return new EvalTakeViewParameters();
+      return new EvalViewParameters();
    }
 
    /* (non-Javadoc)
@@ -577,8 +577,11 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
       return i;
    }
 
+   /* (non-Javadoc)
+    * @see uk.org.ponder.rsf.flow.ActionResultInterceptor#interceptActionResult(uk.org.ponder.rsf.flow.ARIResult, uk.org.ponder.rsf.viewstate.ViewParameters, java.lang.Object)
+    */
    public void interceptActionResult(ARIResult result, ViewParameters incoming, Object actionReturn) {
-      EvalTakeViewParameters etvp = (EvalTakeViewParameters) incoming;
+      EvalViewParameters etvp = (EvalViewParameters) incoming;
       if (etvp.evalCategory != null) {
          result.resultingView = new EvalCategoryViewParameters(ShowEvalCategoryProducer.VIEW_ID, etvp.evalCategory);
       }

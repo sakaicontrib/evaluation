@@ -305,9 +305,9 @@ public class EvalTestDataLoad {
     */
    public EvalEvaluation evaluationActiveUntaken;
    /**
-    * Evaluation Due (stopped yesterday, due tomorrow), MAINT_USER_ID owns, templatePublic, NO responses, No ACs
+    * Evaluation Complete (ended yesterday, viewable tomorrow), ADMIN_USER_ID owns, templateAdmin, NO responses, 1 AC, recently closed
     */
-// public EvalEvaluation evaluationDueUntaken;
+   public EvalEvaluation evaluationClosedUntaken;
    /**
     * Evaluation Complete (ended yesterday, viewable tomorrow), ADMIN_USER_ID owns, templateAdmin/templateAdminComplex, 2 responses, 2 ACs, recently closed, EVAL_CATEGORY_2
     */
@@ -383,6 +383,10 @@ public class EvalTestDataLoad {
     * Group Assignment: MAINT_USER_ID, SITE1_REF, {@link #evaluationDeleted}
     */
    public EvalAssignGroup assign9;
+   /**
+    * Group Assignment: MAINT_USER_ID, SITE1_REF, {@link #evaluationClosedUntaken}
+    */
+   public EvalAssignGroup assign10;
    /**
     * Group Assignment: ADMIN_USER_ID, SITE2_REF, {@link #evaluationNewAdmin} + eid
     */
@@ -928,6 +932,13 @@ public class EvalTestDataLoad {
             EvalConstants.INSTRUCTOR_OPT_IN, new Integer(2), null, null, null, null, templateAdmin, null,
             Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, LOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ,
             EVAL_CATEGORY_2);
+      // Evaluation Complete (ended yesterday, viewable tomorrow), recent close
+      evaluationClosedUntaken = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, ADMIN_USER_ID, "Eval closed untaken", null, 
+            threeDaysAgo, yesterday, yesterday, tomorrow, null, null,
+            EvalConstants.EVALUATION_STATE_CLOSED, EvalConstants.SHARING_VISIBLE, 
+            EvalConstants.INSTRUCTOR_REQUIRED, new Integer(0), null, null, null, null, templateAdmin, null,
+            Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ,
+            null);
       // evaluation complete (3 days ago) and viewable (yesterday)
       evaluationViewable = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, ADMIN_USER_ID, "Eval viewable", null, 
             twentyDaysAgo, twentyDaysAgo, twentyDaysAgo, fifteenDaysAgo, null, null,
@@ -970,6 +981,8 @@ public class EvalTestDataLoad {
             Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationPartial);
       assign9 = new EvalAssignGroup( MAINT_USER_ID, SITE1_REF, EvalConstants.GROUP_TYPE_SITE, 
             Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationDeleted);
+      assign10 = new EvalAssignGroup( MAINT_USER_ID, SITE1_REF, EvalConstants.GROUP_TYPE_SITE, 
+            Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationClosedUntaken);
       // Dick, you cannot assign 2 groups to an eval with the same evalGroupId... I have fixed this by making up a fake id -AZ
       assignGroupProvided = new EvalAssignGroup( ADMIN_USER_ID, "AZ-new-ref", EvalConstants.GROUP_TYPE_SITE, 
             Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationNewAdmin);
@@ -1141,7 +1154,7 @@ public class EvalTestDataLoad {
       dao.save(evaluationNewAdmin);
       dao.save(evaluationActive);
       dao.save(evaluationActiveUntaken);
-//    dao.save(evaluationDueUntaken);
+      dao.save(evaluationClosedUntaken);
       dao.save(evaluationClosed);
       dao.save(evaluationViewable);
       dao.save(evaluationProvided);
@@ -1156,6 +1169,7 @@ public class EvalTestDataLoad {
       dao.save(assign7);
       dao.save(assign8);
       dao.save(assign9);
+      dao.save(assign10);
       dao.save(assignGroupProvided);
 
       dao.save(assignHier1);

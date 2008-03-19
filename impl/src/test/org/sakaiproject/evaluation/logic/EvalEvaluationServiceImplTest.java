@@ -371,17 +371,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       assertFalse( evaluationService.canRemoveEvaluation(
             EvalTestDataLoad.ADMIN_USER_ID, etdl.evaluationActive.getId() ) );
 
-      // flip the switch and check that removal NOT allowed
-      settings.set(EvalSettings.ENABLE_EVAL_RESPONSE_REMOVAL, false);
-
-      // test cannot remove (closed and viewable)
-      assertFalse( evaluationService.canRemoveEvaluation(
-            EvalTestDataLoad.ADMIN_USER_ID, etdl.evaluationViewable.getId() ) );
-
-      // flip the switch and check that removal now allowed
-      settings.set(EvalSettings.ENABLE_EVAL_RESPONSE_REMOVAL, true);
-
-      // test cannot remove (closed and viewable)
+      // test can remove (closed and viewable)
       assertTrue( evaluationService.canRemoveEvaluation(
             EvalTestDataLoad.ADMIN_USER_ID, etdl.evaluationViewable.getId() ) );
    }

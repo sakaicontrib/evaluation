@@ -199,7 +199,8 @@ public interface EvalSettings {
     */
    public static final String ENABLE_EVAL_CATEGORIES = "ENABLE_EVAL_CATEGORIES:java.lang.Boolean";
    /**
-    * CONSTANT: If this is activated then evaluation responses can be removed - {@link Boolean}, default False
+    * CONSTANT: If this is activated then evaluation responses can be removed,
+    * this is for removal of individual responses - {@link Boolean}, default False
     */
    public static final String ENABLE_EVAL_RESPONSE_REMOVAL = "ENABLE_EVAL_RESPONSE_REMOVAL:java.lang.Boolean";
 

@@ -121,6 +121,7 @@ public class SetupEvalBean {
 
 
    // NOTE: these are the simple navigation methods
+   // 4 steps to create an evaluation: 1) Create -> 2) Settings -> 3) Assign -> 4) Confirm/Save
 
    /**
     * Completed the initial creation page where the template is chosen
@@ -147,51 +148,18 @@ public class SetupEvalBean {
       return destination;
    }
 
-   /**
-    * Select groups and nodes to be assigned to the evaluation (for first time or subsequently)
-    */
-   public String completeAssignAction() {
-      // make sure that the submitted nodes are valid and populate the nodes list
-      Set<EvalHierarchyNode> nodes = null;
-      if (selectedEvalHierarchyNodeIDsMap != null 
-            && ! selectedEvalHierarchyNodeIDsMap.isEmpty()) {
-         String[] selectedHierarchyNodeIds = makeArrayFromBooleanMap(selectedEvalHierarchyNodeIDsMap);
-         nodes = hierarchyLogic.getNodesByIds(selectedHierarchyNodeIds);
-         if (nodes.size() != selectedHierarchyNodeIds.length) {
-            throw new IllegalArgumentException("Invalid set of hierarchy node ids submitted which "
-                  + "includes node Ids which are not in the hierarchy: " + ArrayUtils.arrayToString(selectedHierarchyNodeIds));
-         }
-      } else {
-         nodes = new HashSet<EvalHierarchyNode>();
-      }
+   // NOTE: There is no action for the 3) assign step because that one just passes the data straight to the confirm view
 
-      // at least 1 node or group must be selected
-      if ( (selectedEvalGroupIDsMap == null 
-            || selectedEvalGroupIDsMap.isEmpty()) 
-            && nodes.isEmpty() ) {
-         messages.addMessage( new TargettedMessage("assigneval.invalid.selection",
-               new Object[] {}, TargettedMessage.SEVERITY_ERROR));
-         return "fail";
-      }
-
-      // TODO now we need to get this nice list along to the confirm page and then from that page back to this bean,
-      // so how the heck do we do this I wonder? need to ask Antranig I guess
-
-      if (creatingEval) {
-      }
-      return "evalConfirm";
-   }
-
+   // TODO - how do we handle removing assignments? (Currently not supported)
 
    /**
-    * Complete the creation process for an evaluation (view all the current settings and assignments)
+    * Complete the creation process for an evaluation (view all the current settings and assignments and create eval/assignments)
     */
    public String completeConfirmAction() {
       // TODO this check is identical to the one above -AZ
       // make sure that the submitted nodes are valid and populate the nodes list
       Set<EvalHierarchyNode> nodes = null;
-      if (selectedEvalHierarchyNodeIDsMap != null 
-            && ! selectedEvalHierarchyNodeIDsMap.isEmpty()) {
+      if (! selectedEvalHierarchyNodeIDsMap.isEmpty()) {
          String[] selectedHierarchyNodeIds = makeArrayFromBooleanMap(selectedEvalHierarchyNodeIDsMap);
          nodes = hierarchyLogic.getNodesByIds(selectedHierarchyNodeIds);
          if (nodes.size() != selectedHierarchyNodeIds.length) {
@@ -203,8 +171,7 @@ public class SetupEvalBean {
       }
 
       // at least 1 node or group must be selected
-      if ( (selectedEvalGroupIDsMap == null 
-            || selectedEvalGroupIDsMap.isEmpty()) 
+      if (selectedEvalGroupIDsMap.isEmpty() 
             && nodes.isEmpty() ) {
          messages.addMessage( new TargettedMessage("assigneval.invalid.selection",
                new Object[] {}, TargettedMessage.SEVERITY_ERROR));

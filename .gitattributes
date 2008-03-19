@@ -255,7 +255,6 @@ tool/src/java/org/sakaiproject/evaluation/tool/viewparams/EmailViewParameters.ja
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/EssayResponseParams.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/EvalCategoryViewParameters.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/EvalScaleParameters.java -text svn_keywords=Date+Revision+Author+URL+Id
-tool/src/java/org/sakaiproject/evaluation/tool/viewparams/EvalTakeViewParameters.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/EvalViewParameters.java svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ExcelReportViewParams.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/ExpertItemViewParameters.java -text svn_keywords=Date+Revision+Author+URL+Id

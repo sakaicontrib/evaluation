@@ -31,7 +31,6 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer;
 import org.sakaiproject.evaluation.tool.producers.ReportsViewingProducer;
 import org.sakaiproject.evaluation.tool.producers.TakeEvalProducer;
-import org.sakaiproject.evaluation.tool.viewparams.EvalTakeViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 import org.sakaiproject.evaluation.tool.wrapper.ModelAccessWrapperInvoker;
@@ -121,7 +120,7 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
         if ( EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(evaluation.getAuthControl()) ) {
             // anonymous evaluation URLs ALWAYS go to the take_eval page
         	log.info("User taking anonymous evaluation: " + evaluationId + " for group: " + evalGroupId);
-            return new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, evalGroupId);
+            return new EvalViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, evalGroupId);
         } else {
             // authenticated evaluation URLs depend on the state of the evaluation and the users permissions,
             // failsafe goes to take eval when it cannot determine where else to go
@@ -148,13 +147,13 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
                     if (evalGroups.length > 0) {
                         // if we are being evaluated in at least one group in this eval then we can add items
                         // TODO - except we do not have a view yet so go to the preview eval page 
-                        return new EvalViewParameters(PreviewEvalProducer.VIEW_ID, evaluationId, null);
+                        return new EvalViewParameters(PreviewEvalProducer.VIEW_ID, evaluationId);
                     }
                 } else {
                     if (externalLogic.isUserAllowedInEvalGroup(currentUserId, EvalConstants.PERM_BE_EVALUATED, evalGroupId)) {
                         // those being evaluated get to go to add their own questions
                         // TODO - except we do not have a view yet so go to the preview eval page 
-                        return new EvalViewParameters(PreviewEvalProducer.VIEW_ID, evaluationId, null);
+                        return new EvalViewParameters(PreviewEvalProducer.VIEW_ID, evaluationId);
                     }
                 }
                 // else just require auth
@@ -166,11 +165,11 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
                 // check perms if not anonymous
                 if (currentUserId.equals(evaluation.getOwner()) ||
                         externalLogic.isUserAllowedInEvalGroup(currentUserId, EvalConstants.PERM_BE_EVALUATED, evalGroupId)) {
-                    return new EvalViewParameters(PreviewEvalProducer.VIEW_ID, evaluationId, null);
+                    return new EvalViewParameters(PreviewEvalProducer.VIEW_ID, evaluationId);
                 } else {
                     if ( evaluationService.canTakeEvaluation(currentUserId, evaluationId, evalGroupId) ) {
                     	log.info("User ("+currentUserId+") taking authenticated evaluation: " + evaluationId + " for group: " + evalGroupId);
-                        return new EvalTakeViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, evalGroupId);
+                        return new EvalViewParameters(TakeEvalProducer.VIEW_ID, evaluationId, evalGroupId);
                     }
                 }
             }
