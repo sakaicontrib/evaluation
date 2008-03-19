@@ -147,6 +147,7 @@ pack/src/webapp/WEB-INF/spring-hibernate.xml -text svn_keywords=Date+Revision+Au
 /pom.xml svn_keywords=Date+Revision+Author+URL+Id
 /project.properties -text svn_keywords=Date+Revision+Author+URL+Id
 /project.xml -text svn_keywords=Date+Revision+Author+URL+Id
+/removeEvalTablesMySQL.sql -text
 tool/maven.xml -text svn_keywords=Date+Revision+Author+URL+Id
 tool/pom.xml svn_keywords=Date+Revision+Author+URL+Id
 tool/project.properties -text svn_keywords=Date+Revision+Author+URL+Id
