@@ -14,6 +14,7 @@
 
 package org.sakaiproject.evaluation.tool.producers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -40,6 +41,9 @@ import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.UIOutputMany;
+import uk.org.ponder.rsf.components.UISelect;
+import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
@@ -140,10 +144,24 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
       // this is a get form which does not submit to a backing bean
       EvalViewParameters formViewParams = (EvalViewParameters) evalViewParams.copyBase();
       formViewParams.viewID = EvaluationAssignConfirmProducer.VIEW_ID;
+      
+      /* 
+       * About this views form.
+       * 
+       * 
+       */
       UIForm form = UIForm.make(tofill, "eval-assign-form", formViewParams);
-      // TODO bind into the selectedGroupIDsMap and selectedHierarchyNodeIDsMap in the VP
+      UISelect hierarchyNodesSelect;
+      
+      List<String> evalGroupsLabels = new ArrayList<String>();
+      List<String> evalGroupsValues = new ArrayList<String>();
+      UISelect evalGroupsSelect = UISelect.makeMultiple(form, "evalGroupSelectHolder", 
+            new String[] {}, new String[] {}, "selectedGroupIDs", new String[] {});
+      String evalGroupsSelectID = evalGroupsSelect.getFullID();
 
       /*
+       * About the 4 collapsable areas.
+       * 
        * What's happening here is that we have 4 areas: hierarchy, groups, 
        * new adhoc groups, and existing adhoc groups that can be hidden and selected
        * which a checkbox for each one.  I'm not using the UIInitBlock at the moment
@@ -189,11 +207,15 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
             if (i % 2 == 0) {
                checkboxRow.decorators = new DecoratorList( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
             }
-            UIBoundBoolean checkbox = UIBoundBoolean.make(checkboxRow, "evalGroupId", 
-                  "selectedGroupIDsMap."+nonAssignedEvalGroupIDs[i]);
+            
+            evalGroupsLabels.add(groupsMap.get(nonAssignedEvalGroupIDs[i]).title);
+            evalGroupsValues.add(nonAssignedEvalGroupIDs[i]);
+            
+            UISelectChoice choice = UISelectChoice.make(checkboxRow, "evalGroupId", evalGroupsSelectID, evalGroupsLabels.size()-1);
+
             // get title from the map since it is faster
             UIOutput title = UIOutput.make(checkboxRow, "groupTitle", groupsMap.get(nonAssignedEvalGroupIDs[i]).title );
-            UILabelTargetDecorator.targetLabel(title, checkbox); // make title a label for checkbox
+            UILabelTargetDecorator.targetLabel(title, choice); // make title a label for checkbox
          }
       } else {
          // TODO tell user there are no groups to assign to
@@ -229,6 +251,10 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
        *  	at uk.org.ponder.rsf.uitype.StringArrayUIType.valueUnchanged(StringArrayUIType.java:23)
        *  ..."
        */
+      
+      // Add all the groups back to the UISelect Many's
+      evalGroupsSelect.optionlist = UIOutputMany.make(evalGroupsValues.toArray(new String[] {}));
+      evalGroupsSelect.optionnames = UIOutputMany.make(evalGroupsLabels.toArray(new String[] {}));
 
       // all command buttons are just HTML now so no more bindings
       UIMessage.make(form, "cancel-button", "general.cancel.button");

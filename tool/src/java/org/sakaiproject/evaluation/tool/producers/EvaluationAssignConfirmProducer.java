@@ -140,7 +140,7 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, V
             new Object[] {df.format(evaluation.getStartDate())});
 
       // show the selected groups
-      String[] selectedGroupIDs = SetupEvalBean.makeArrayFromBooleanMap(evalViewParams.selectedGroupIDsMap);
+      String[] selectedGroupIDs = evalViewParams.selectedGroupIDs; //SetupEvalBean.makeArrayFromBooleanMap(evalViewParams.selectedGroupIDsMap);
       if (selectedGroupIDs != null 
             && selectedGroupIDs.length > 0) {
          for (int i = 0; i < selectedGroupIDs.length; ++i) {
@@ -168,7 +168,7 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, V
       Boolean showHierarchy = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
       if (showHierarchy) {
          UIOutput.make(tofill, "nodes-selected-table");
-         String[] selectedNodeIDs = SetupEvalBean.makeArrayFromBooleanMap(evalViewParams.selectedHierarchyNodeIDsMap);
+         String[] selectedNodeIDs = evalViewParams.selectedHierarchyNodeIDs; //SetupEvalBean.makeArrayFromBooleanMap(evalViewParams.selectedHierarchyNodeIDsMap);
          if (selectedNodeIDs != null && selectedNodeIDs.length > 0) {
             for (int i = 0; i < selectedNodeIDs.length; i++ ) {
                EvalHierarchyNode node = hierLogic.getNodeById(selectedNodeIDs[i]);
@@ -192,10 +192,16 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, V
                actionBean + "completeConfirmAction");
          UIMessage.make(evalAssignForm, "cancel-button", "evaluationassignconfirm.changes.assigned.courses.button");
          // bind in the selected nodes and groups
-         evalAssignForm.parameters.add( new UIELBinding(actionBean + "selectedGroupIDs", 
-               SetupEvalBean.makeArrayFromBooleanMap(evalViewParams.selectedGroupIDsMap)) );
-         evalAssignForm.parameters.add( new UIELBinding(actionBean + "selectedHierarchyNodeIDs", 
-               SetupEvalBean.makeArrayFromBooleanMap(evalViewParams.selectedHierarchyNodeIDsMap)) );
+         //evalAssignForm.parameters.add( new UIELBinding(actionBean + "selectedGroupIDs", 
+         //      evalViewParams.selectedGroupIDs) );
+         //evalAssignForm.parameters.add( new UIELBinding(actionBean + "selectedHierarchyNodeIDs", 
+         //      evalViewParams.selectedHierarchyNodeIDs) );
+         evalAssignForm.parameters.add( new UIELBinding(actionBean + "selectedGroupIDsWithPucArray", 
+               evalViewParams.selectedGroupIDs) );
+         evalAssignForm.parameters.add( new UIELBinding(actionBean + "selectedHierarchyNodeIDsWithPucArray", 
+               evalViewParams.selectedHierarchyNodeIDs) );
+         evalAssignForm.parameters.add( new UIELBinding(actionBean + "evaluationId",evaluationId));
+         //evalAssignForm.parameters.add( new UIELBinding(actionBean + ))
          // also bind the evaluation id
          evalAssignForm.parameters.add( new UIELBinding(actionBean + "evaluationId", evaluationId) );
       }

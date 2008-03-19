@@ -36,6 +36,7 @@ import org.sakaiproject.evaluation.tool.locators.EvaluationBeanLocator;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
+import uk.org.ponder.conversion.StringArrayParser;
 import uk.org.ponder.messageutil.TargettedMessage;
 import uk.org.ponder.messageutil.TargettedMessageList;
 
@@ -70,6 +71,13 @@ public class SetupEvalBean {
     */
    public String[] selectedHierarchyNodeIDs = new String[] {};
 
+   public void setSelectedGroupIDsWithPucArray(String toparse) {
+      selectedGroupIDs = (String[]) StringArrayParser.instance.parse(toparse);
+   }
+   
+   public void setSelectedHierarchyNodeIDsWithPucArray(String toparse) {
+      selectedHierarchyNodeIDs = (String[]) StringArrayParser.instance.parse(toparse);
+   }
 
    private EvalEvaluationService evaluationService;
    public void setEvaluationService(EvalEvaluationService evaluationService) {
