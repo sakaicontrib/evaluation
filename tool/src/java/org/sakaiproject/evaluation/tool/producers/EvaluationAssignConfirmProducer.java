@@ -196,6 +196,8 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, V
                SetupEvalBean.makeArrayFromBooleanMap(evalViewParams.selectedGroupIDsMap)) );
          evalAssignForm.parameters.add( new UIELBinding(actionBean + "selectedHierarchyNodeIDs", 
                SetupEvalBean.makeArrayFromBooleanMap(evalViewParams.selectedHierarchyNodeIDsMap)) );
+         // also bind the evaluation id
+         evalAssignForm.parameters.add( new UIELBinding(actionBean + "evaluationId", evaluationId) );
       }
    }
 
