@@ -191,7 +191,14 @@ public class PreloadDataImpl implements Runnable {
                EvalEmailConstants.EMAIL_REMINDER_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_REMINDER));
          dao.save(new EvalEmailTemplate(ADMIN_OWNER, EvalConstants.EMAIL_TEMPLATE_RESULTS, EvalEmailConstants.EMAIL_RESULTS_DEFAULT_SUBJECT,
                EvalEmailConstants.EMAIL_RESULTS_DEFAULT_TEXT, EvalConstants.EMAIL_TEMPLATE_RESULTS));
-
+         //one email per user
+         dao.save(new EvalEmailTemplate(ADMIN_OWNER,EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE, 
+        		 EvalEmailConstants.EMAIL_CONSOLIDATED_AVAILABLE_DEFAULT_SUBJECT,EvalEmailConstants.EMAIL_CONSOLIDATED_AVAILABLE_DEFAULT_TEXT, 
+        		 EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE));
+         dao.save(new EvalEmailTemplate(ADMIN_OWNER,EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER, 
+        		 EvalEmailConstants.EMAIL_CONSOLIDATED_REMINDER_DEFAULT_SUBJECT,EvalEmailConstants.EMAIL_CONSOLIDATED_REMINDER_DEFAULT_TEXT, 
+        		 EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_REMINDER));
+        		 
          log.info("Preloaded " + dao.countAll(EvalEmailTemplate.class) + " evaluation EmailTemplates");
       }
    }

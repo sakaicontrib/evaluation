@@ -520,8 +520,26 @@ public class EvalConstants {
     * used when the evaluation results are ready to view
     */
    public static final String EMAIL_TEMPLATE_RESULTS = "Results";
-
-
+   /**
+    * EmailTemplate type setting:
+    * This identifies a template as the "single-email-per-user evaluation available template",
+    * used when the evaluation is available to be taken
+    */
+   public static final String EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE = "ConsolidatedAvailable";
+	/**
+	 * EmailTemplate type setting:
+	 * This identifies a template as the "single-email-per-user evaluation reminder template",
+	 * used when evaluation responses are outstanding
+	 */
+	public static final String EMAIL_TEMPLATE_CONSOLIDATED_REMINDER = "ConsolidatedReminder";
+	/**
+	 * EmailTemplate type setting:
+	 * This identifies a template as the "single-email-per-user evaluation subject template",
+	 * used with the "single-email-per-user" email notification option
+	 */
+	public static final String EMAIL_TEMPLATE_CONSOLIDATED_SUBJECT = "ConsolidatedSubject";
+	
+	
    /**
     * Evaluation time to wait: Time to wait in minutes for certain actions, used for time to start and time to view among others
     */
