@@ -7,6 +7,8 @@
 		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
 		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
 		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+		<script type="text/javascript" language="JavaScript" src="../js/jquery/jquery.js"></script>
+        <script type="text/javascript" language="JavaScript" src="../js/evalUtils.js"></script>
 		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />    
 	</head>
 	
@@ -33,37 +35,67 @@
 
 						
 			<form rsf:id="eval-assign-form" method="post">
-				<h4 rsf:id="assign-hierarchy-title">Assign to Hierarchy Nodes</h4>
-				<div rsf:id="hierarchy-tree-select:">(Tree goes here)
+			
+				<!-- 1. Hierarchy Node Assignments -->
+				<p>
+					<input rsf:id="use-hierarchynodes-checkbox" id="use-hierarchynodes-checkbox" type="checkbox" />
+					<span rsf:id="assign-hierarchy-title">Assign to Hierarchy Nodes</span>
+				</p>
+				<div rsf:id="hierarchy-assignment-area" id="hierarchy-assignment-area">
+					<div rsf:id="hierarchy-tree-select:">(Tree goes here)</div>
 				</div>
 			
-				<p class="instruction"  rsf:id="assign-eval-instructions">You are allowed to assign this evaluation (eval title) to the groups listed below.</p> 
+				<!-- 2. Eval Group Assignments -->
+				<p>
+					<input rsf:id="use-evalgroups-checkbox" id="use-evalgroups-checkbox" type="checkbox" />
+					<span rsf:id="assign-evalgroups-title">Assign to Evaluation Groups</span>
+				</p>
+				<div rsf:id="evalgroups-assignment-area" id="evalgroups-assignment-area">
+					<p class="instruction"  rsf:id="assign-eval-instructions">You are allowed to assign this evaluation (eval title) to the groups listed below.</p> 
+					<div rsf:id="siteCheckboxes"/>
+					<table border="0" cellspacing="0" cellpadding="3" style="width:90%" class="listHier lines nolines" >
+						<thead>
+							<tr>
+								<th class="attach" >
+									<span rsf:id="select-header">Select</span>
+								</th>
+								<th>
+									<span rsf:id="name-header">Title</span>
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr rsf:id="sites:"> 
+								<td class="attach" >
+									<input rsf:id="siteId" type="checkbox" id="site-id" />
+								</td>
+								<td>
+									<label rsf:id="siteTitle" for="site-id">group title</label>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 				
-				<div rsf:id="siteCheckboxes"/>
-				<table border="0" cellspacing="0" cellpadding="3" style="width:90%" class="listHier lines nolines" >
-					<thead>
-						<tr>
-							<th class="attach" >
-								<span rsf:id="select-header">Select</span>
-							</th>
-							<th>
-								<span rsf:id="name-header">Title</span>
-							</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr rsf:id="sites:"> 
-							<td class="attach" >
-								<input rsf:id="siteId" type="checkbox" id="site-id" />
-							</td>
-							<td>
-								<label rsf:id="siteTitle" for="site-id">group title</label>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+				<!-- 3. Create new ad-hoc groups -->
+				<p>
+					<input rsf:id="use-adhocgroups-checkbox" id="use-adhocgroups-checkbox" type="checkbox" />
+					<span rsf:id="assign-adhocgroups-title">I'd like to survey an ad-hoc group I'll specify now</span>
+				</p>
+				<div rsf:id="newadhocgroup-assignment-area" id="newadhocgroup-assignment-area">
+					Ad Hoc Group Assignment Widgetry
+				</div>
 				
-				
+				<!-- 4. Use Existing ad-hoc groups -->
+				<!-- 
+				<p>
+					<input rsf:id="use-previous-addhocgroups-checkbox" id="use-previous-addhocgroups-checkbox" type="checkbox" />
+					<span>I'd like to survey a group I've previously surveyed</span>
+				</p>
+				<div rsf:id="previousadhocgroup-assignment-area" id="previousadhocgroup-assignment-area">
+					Previous Ad Group Assignment
+				</div>
+				-->
 
 				<p class="act">	
 					<input type="submit" name="save_assigned_courses" value="Save Assigned Courses" rsf:id="confirmAssignCourses" class="active" accesskey="s" />
@@ -73,6 +105,10 @@
 			
 			</form>
 				
-		</div>	
+		</div>
+		
+		<script rsf:id="initJavaScript" type="text/javascript" language="JavaScript">
+			EvalSystem.initEvalAssign();
+		</script>	
 	</body>
 </html>
