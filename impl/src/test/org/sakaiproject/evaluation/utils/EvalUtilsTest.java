@@ -361,13 +361,21 @@ public class EvalUtilsTest extends TestCase {
       difference = EvalUtils.getHoursDifference(endTime, startTime);
       assertEquals(-5, difference);
 
-      endTime = new Date( startTime.getTime() + (1000 * 60 * 60 * 50) );
+      endTime = new Date( startTime.getTime() + (1000l * 60l * 60l * 50l) );
       difference = EvalUtils.getHoursDifference(startTime, endTime);
       assertEquals(50, difference);
 
-      endTime = new Date( startTime.getTime() + (1000 * 60 * 60 * 500) );
+      endTime = new Date( startTime.getTime() + (1000l * 60l * 60l * 500l) );
       difference = EvalUtils.getHoursDifference(startTime, endTime);
       assertEquals(500, difference);
+
+      endTime = new Date( startTime.getTime() + (1000l * 60l * 60l * 5000l) );
+      difference = EvalUtils.getHoursDifference(startTime, endTime);
+      assertEquals(5000, difference);
+
+      endTime = new Date( startTime.getTime() + (1000l * 60l * 60l * 50000l) );
+      difference = EvalUtils.getHoursDifference(startTime, endTime);
+      assertEquals(50000, difference);
 
       // check that it rounds correctly
       endTime = new Date( startTime.getTime() + (1000 * 60 * 60 * 5) + (1000 * 60 * 30) );
