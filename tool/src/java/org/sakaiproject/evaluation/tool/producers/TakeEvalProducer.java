@@ -209,7 +209,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
          } else {
             // select the first eval group the current user can take evaluation in,
             // also store the total number so we can give the user a list to choose from if there are more than one
-            Map<Long, List<EvalAssignGroup>> m = evaluationService.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
+            Map<Long, List<EvalAssignGroup>> m = evaluationService.getAssignGroupsForEvals(new Long[] {evaluationId}, true, null);
             if ( external.isUserAdmin(currentUserId) ) {
                // special case, the super admin can always access
                userCanAccess = true;

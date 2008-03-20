@@ -154,11 +154,9 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
          } else {
             // user can view all groups
 
-            // TODO FIXME Should the includeUnapproved be true or false for this
-            // use case??
+            //Should the includeUnapproved be true or false for this use case?? - false -AZ
             Map<Long, List<EvalAssignGroup>> evalAssignGroupMap = 
-               evaluationService.getEvaluationAssignGroups(new Long[] {evaluation.getId()}, false);
-
+               evaluationService.getAssignGroupsForEvals(new Long[] {evaluation.getId()}, false, null);
             for (EvalAssignGroup evalAssignGroup: evalAssignGroupMap.get(evaluation.getId())) {
                groupIdsTogo.add(evalAssignGroup.getEvalGroupId());
             }

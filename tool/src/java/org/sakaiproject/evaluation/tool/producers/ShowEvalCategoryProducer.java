@@ -101,7 +101,7 @@ public class ShowEvalCategoryProducer implements ViewComponentProducer, ViewPara
 			}
 
 			// get all the associated groups in one big chunk (for speed)
-			Map<Long, List<EvalGroup>> m = evaluationService.getEvaluationGroups(evalIds, false);
+			Map<Long, List<EvalGroup>> m = evaluationService.getEvalGroupsForEval(evalIds, false, null);
 
 			// display each evaluation in this category
 			for (int i=0; i<evals.size(); i++) {

@@ -1,0 +1,120 @@
+<!DOCTYPE html      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:rsf="http://ponder.org.uk/rsf" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title rsf:id="msg=evaluationassignments.page.title">Display Assignments</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link href="/library/skin/tool_base.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+		<link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
+		<script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
+		<link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />    
+	</head>
+	
+	<body>
+		<div class="portletBody">
+		
+			<div class="navIntraTool">
+                <a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a>
+			</div>
+			
+			<ul class="breadCrumb">
+				<li><a rsf:id="summary-link" href="summary.html">Summary</a></li><li><a rsf:id="control-evaluations-link" href="control_evaluations.html">My Evaluations</a></li><li class="lastCrumb" rsf:id="msg=evaluationassignments.page.title">Display Assignments</li>
+			</ul>
+			
+			<div rsf:id="message-for:*" class="alertMessage">
+				<ul style="margin:0px;">
+					<li>Message for user here</li>
+				</ul>
+			</div>
+			<h3 rsf:id="msg=evaluationassignments.page.title">Evaluation Display Assignments</h3>
+			
+			<p class="instruction" rsf:id="eval-assign-info">
+				You have chosen to assign the evaluation (eval title) to the following groups.
+			</p>
+			<p class="instruction" rsf:id="msg=evaluationassignments.info">
+				This shows the current groups and hierarchy nodes that your evaluation is assigned to
+			</p>
+
+			<div rsf:id="msg=evaluationassignments.groups.header" style="font-weight:bold;">Individual Groups:</div>
+            <span rsf:id="no-courses-selected" style="font-style:italic;"></span>
+			<table border="0" cellspacing="0" cellpadding="0" style="width:90%" class="listHier lines nolines">
+				<tr>
+					<th >
+						<span rsf:id="msg=evaluationassignconfirm.title.header">Title</span>
+					</th>
+					<th>
+					</th>
+					<th>
+						<span rsf:id="msg=evaluationassignconfirm.enrollment.header">Enrollment</span>
+					</th>
+				</tr>
+				<tr rsf:id="groups:"> 
+					<td>
+						<span rsf:id="groupTitle">Group title</span>
+					</td>
+					<td class="itemAction">
+						<span rsf:id="direct-eval-group-link"><a rsf:id="payload-component" href="take_eval.html" title="direct url to the evaluation for this group">link</a></span>
+					</td>
+					<td>
+						<span rsf:id="enrollment">10</span>
+					</td>
+				</tr>
+			</table>
+
+            <div rsf:id="showHierarchy:">
+               <div rsf:id="msg=evaluationassignments.nodes.header" style="font-weight:bold;">Individual Hierarchy Nodes:</div>
+               <span rsf:id="no-nodes-selected" style="font-style:italic;"></span>
+               <table rsf:id="nodes-selected-table" border="0" cellspacing="0" cellpadding="0" style="width:90%" class="listHier lines nolines">
+                  <tr>
+                  	<th>
+                  		<span rsf:id="msg=evaluationassignconfirm.title.header">Title</span>
+                  	</th>
+                  	<th>
+                  		<span rsf:id="msg=evaluationassignconfirm.abbr.header">Abbreviation</span>
+                  	</th>
+                  </tr>
+                  <tr rsf:id="node-row:node">
+                  	<td>
+                  		<span rsf:id="node-title">Department of Biology</span>
+                  	</td>
+                  	<td>
+                  		<span rsf:id="node-abbr">BIODEPT</span>
+                  	</td>
+                  </tr>
+                  <tr rsf:id="node-row:groups">
+                    <td>
+                      <span rsf:id="no-groups-for-node"></span>
+                      <table rsf:id="nodeGroupTable:" border="0" cellspacing="0" cellpadding="0" style="width:90%" class="listHier lines nolines">
+                         <tr>
+                             <th>
+                                 <span rsf:id="msg=evaluationassignconfirm.title.header">Title</span>
+                             </th>
+                             <th>
+                             </th>
+                             <th>
+                                 <span rsf:id="msg=evaluationassignconfirm.enrollment.header">Enrollment</span>
+                             </th>
+                         </tr>
+                         <tr rsf:id="groups:"> 
+                             <td>
+                                 <span rsf:id="groupTitle">Group title</span>
+                             </td>
+                             <td class="itemAction">
+                                 <span rsf:id="direct-eval-group-link"><a rsf:id="payload-component" href="take_eval.html" title="direct url to the evaluation for this group">link</a></span>
+                             </td>
+                             <td>
+                                 <span rsf:id="enrollment">10</span>
+                             </td>
+                         </tr>
+                      </table>
+                    </td>
+                  </tr>
+               </table>
+            </div>
+
+            <input rsf:id="cancel-button" name="cancel" type="button" value="Back" onclick="javascript:history.go(-1);return false;" accesskey="x" />
+
+		</div>
+				
+	</body>
+</html>

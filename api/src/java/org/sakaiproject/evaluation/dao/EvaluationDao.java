@@ -97,11 +97,12 @@ public interface EvaluationDao extends CompleteGenericDao {
     * @param recentClosedDate only return evaluations which closed after this date
     * @param startResult 0 to start with the first result, otherwise start with this result number
     * @param maxResults 0 to return all results, otherwise limit the number of evals returned to this
+    * @param includePartial if true then partial evals are included, otherwise only fully created evals
     * @return a List of EvalEvaluation objects sorted by stop date, title, and id
     */
    @SuppressWarnings("unchecked")
    public List<EvalEvaluation> getEvaluationsForOwnerAndGroups(String userId,
-         String[] evalGroupIds, Date recentClosedDate, int startResult, int maxResults);
+         String[] evalGroupIds, Date recentClosedDate, int startResult, int maxResults, boolean includePartial);
 
    /**
     * Returns all answers to the given item associated with 

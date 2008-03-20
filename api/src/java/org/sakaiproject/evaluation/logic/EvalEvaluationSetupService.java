@@ -85,9 +85,11 @@ public interface EvalEvaluationSetupService {
     * (still returns all active and in queue evaluations), if false return all closed evaluations
     * @param showNotOwned if true for a non-admin user, then return all 
     * evaluations which are both owned and not-owned, else only return the owned evaluations.
+    * @param includePartial if true then partial evaluations will be returned as well,
+    * otherwise only fully created evaluations are returned
     * @return a List of {@link EvalEvaluation} objects
     */
-   public List<EvalEvaluation> getVisibleEvaluationsForUser(String userId, boolean recentOnly, boolean showNotOwned);
+   public List<EvalEvaluation> getVisibleEvaluationsForUser(String userId, boolean recentOnly, boolean showNotOwned, boolean includePartial);
 
    /**
     * Get all evaluations that can be taken by this user,

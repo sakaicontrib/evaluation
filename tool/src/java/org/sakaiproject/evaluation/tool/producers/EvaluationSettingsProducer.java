@@ -435,7 +435,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
       // EVAL SETTINGS SAVING CONTROLS
       // if this evaluation is already saved, show "Save Settings" button else this is the "Continue to Assign to Courses" button
       String messageKey = "evalsettings.save.settings.link";
-      if (evaluation.getId() == null) {
+      if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(evaluation.getState())) {
          messageKey = "evalsettings.continue.assigning.link";
       }
       UICommand.make(form, "continueAssigning", UIMessage.make(messageKey), actionBean + "completeSettingsAction");

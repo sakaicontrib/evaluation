@@ -236,7 +236,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
       EvalEvaluation eval = getEvaluationOrFail(evaluationId);
       if (! EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(eval.getAuthControl())) {
          // only counting if the eval is not anonymous, anon is always 0 enrollments effectively
-         Map<Long, List<EvalAssignGroup>> evalAssignGroups = getEvaluationAssignGroups(new Long[] {evaluationId}, true);
+         Map<Long, List<EvalAssignGroup>> evalAssignGroups = getAssignGroupsForEvals(new Long[] {evaluationId}, true, null);
          List<EvalAssignGroup> groups = evalAssignGroups.get(evaluationId);
          for (int i=0; i<groups.size(); i++) {
             EvalAssignGroup eac = (EvalAssignGroup) groups.get(i);
@@ -385,9 +385,9 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
                   EvalResponse response = getResponseForUserAndGroup(evaluationId, userId, evalGroupId);
                   if (response == null) response = new EvalResponse(); // avoid a null pointer exception
                   log.info("User (" + userId + ") cannot take evaluation (" + evaluationId + ") again " +
-                  		"in this evalGroupId (" + evalGroupId + "), " +
-                           "completed response exists ("+response.getId()+") from " + response.getEndTime() +
-                              " and this evaluation does not allow multiple attempts");
+                        "in this evalGroupId (" + evalGroupId + "), " +
+                        "completed response exists ("+response.getId()+") from " + response.getEndTime() +
+                  " and this evaluation does not allow multiple attempts");
                   return false;
                }
             }
@@ -484,8 +484,8 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 
 
    @SuppressWarnings("unchecked")
-   public Map<Long, List<EvalAssignGroup>> getEvaluationAssignGroups(Long[] evaluationIds,
-         boolean includeUnApproved) {
+   public Map<Long, List<EvalAssignGroup>> getAssignGroupsForEvals(Long[] evaluationIds,
+         boolean includeUnApproved, Boolean includeHierarchyGroups) {
       log.debug("evalIds: " + evaluationIds + ", includeUnApproved=" + includeUnApproved);
       Map<Long, List<EvalAssignGroup>> evals = new TreeMap<Long, List<EvalAssignGroup>>();
 
@@ -511,7 +511,22 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
          comparisons.add(ByPropsFinder.EQUALS);
       }
 
-      // get all the EACs for the given eval ids in one storage call
+      // include all groups unless this is not null and then we limit
+      if (includeHierarchyGroups != null) {
+         if (includeHierarchyGroups) {
+            // only include those which were added via nodes
+            props.add("nodeId");
+            values.add("");
+            comparisons.add(ByPropsFinder.NOT_NULL);
+         } else {
+            // only include those which were added directly (i.e. nodeId = null)
+            props.add("nodeId");
+            values.add("");
+            comparisons.add(ByPropsFinder.NULL);            
+         }
+      }
+
+      // get all the groups for the given eval ids in one storage call
       List<EvalAssignGroup> l = dao.findByProperties(EvalAssignGroup.class, 
             props.toArray(new String[props.size()]), 
             values.toArray(new Object[values.size()]), 
@@ -530,13 +545,13 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
    }
 
 
-   public Map<Long, List<EvalGroup>> getEvaluationGroups(Long[] evaluationIds,
-         boolean includeUnApproved) {
+   public Map<Long, List<EvalGroup>> getEvalGroupsForEval(Long[] evaluationIds,
+         boolean includeUnApproved, Boolean includeHierarchyGroups) {
       log.debug("evalIds: " + evaluationIds + ", includeUnApproved=" + includeUnApproved);
       Map<Long, List<EvalGroup>> evals = new TreeMap<Long, List<EvalGroup>>();
 
       Map<Long, List<EvalAssignGroup>> evalAGs = 
-         getEvaluationAssignGroups(evaluationIds, includeUnApproved);
+         getAssignGroupsForEvals(evaluationIds, includeUnApproved, includeHierarchyGroups);
 
       // replace each assign group with an EvalGroup
       for (Iterator<Long> iter = evalAGs.keySet().iterator(); iter.hasNext();) {

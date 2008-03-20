@@ -106,7 +106,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       String message = emailTemplate.getMessage();
 
       // get the associated groups for this evaluation
-      Map<Long, List<EvalGroup>> evalGroups = evaluationService.getEvaluationGroups(new Long[] { evaluationId }, true);
+      Map<Long, List<EvalGroup>> evalGroups = evaluationService.getEvalGroupsForEval(new Long[] { evaluationId }, true, null);
 
       // only one possible map key so we can assume evaluationId
       List<EvalGroup> groups = evalGroups.get(evaluationId);
@@ -180,7 +180,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
 
       // get the associated assign groups for this evaluation
       Map<Long, List<EvalAssignGroup>> evalAssignGroups = 
-         evaluationService.getEvaluationAssignGroups(new Long[] { evaluationId }, true);
+         evaluationService.getAssignGroupsForEvals(new Long[] { evaluationId }, true, null);
       List<EvalAssignGroup> assignGroups = evalAssignGroups.get(evaluationId);
 
       List<String> sentEmails = new ArrayList<String>();
@@ -308,7 +308,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       // get the associated eval groups for this evaluation
       // NOTE: this only returns the groups that should get emails, there is no need to do an additional check
       // to see if the instructor has opted in in this case -AZ
-      Map<Long, List<EvalGroup>> evalGroupIds = evaluationService.getEvaluationGroups(new Long[] { evaluationId }, false);
+      Map<Long, List<EvalGroup>> evalGroupIds = evaluationService.getEvalGroupsForEval(new Long[] { evaluationId }, false, null);
 
       // only one possible map key so we can assume evaluationId
       List<EvalGroup> groups = evalGroupIds.get(evaluationId);
@@ -375,7 +375,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       EvalEmailTemplate emailTemplate = getEmailTemplateOrFail(EvalConstants.EMAIL_TEMPLATE_RESULTS, evaluationId);
 
       // get the associated eval groups for this evaluation
-      Map<Long, List<EvalGroup>> evalGroupIds = evaluationService.getEvaluationGroups(new Long[] { evaluationId }, false);
+      Map<Long, List<EvalGroup>> evalGroupIds = evaluationService.getEvalGroupsForEval(new Long[] { evaluationId }, false, null);
       // only one possible map key so we can assume evaluationId
       List<EvalGroup> groups = evalGroupIds.get(evaluationId);
       if (log.isDebugEnabled()) log.debug("Found " + groups.size() + " groups for available evaluation: " + evaluationId);
@@ -385,7 +385,7 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
       }
 
       // get the associated eval assign groups for this evaluation
-      Map<Long, List<EvalAssignGroup>> evalAssignGroups = evaluationService.getEvaluationAssignGroups(new Long[] { evaluationId }, false);
+      Map<Long, List<EvalAssignGroup>> evalAssignGroups = evaluationService.getAssignGroupsForEvals(new Long[] { evaluationId }, false, null);
       // only one possible map key so we can assume evaluationId
       List<EvalAssignGroup> assignGroups = evalAssignGroups.get(evaluationId);
       if (log.isDebugEnabled()) log.debug("Found " + assignGroups.size() + " assign groups for available evaluation: " + evaluationId);
