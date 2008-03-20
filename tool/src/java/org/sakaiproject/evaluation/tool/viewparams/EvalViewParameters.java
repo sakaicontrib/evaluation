@@ -38,15 +38,12 @@ public class EvalViewParameters extends SimpleViewParameters {
    /**
     * Holds the selected group ids to assign to this evaluation
     */
-   //public Map<String, Boolean> selectedGroupIDsMap = new HashMap<String, Boolean>();
    public String[] selectedGroupIDs = new String[] {};
    
    /**
     * Holds the selected node ids to assign to this evaluation
     */
-   //public Map<String, Boolean> selectedHierarchyNodeIDsMap = new HashMap<String, Boolean>();
    public String[] selectedHierarchyNodeIDs = new String[] {};
-
 
    public EvalViewParameters() { }
 

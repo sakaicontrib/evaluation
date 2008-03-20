@@ -1,5 +1,6 @@
 package org.sakaiproject.evaluation.tool.renderers;
 
+import java.util.List;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
@@ -14,6 +15,7 @@ import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIJointContainer;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.decorators.UIFreeAttributeDecorator;
 
 /**
@@ -21,6 +23,8 @@ import uk.org.ponder.rsf.components.decorators.UIFreeAttributeDecorator;
  * ,with potential evalgroup leaves, in the assign page of the create evaluation
  * wizard.  This is going in it's own class for clarity because it requires
  * several recursive methods.
+ * 
+ * This class should not be used as a singleton, it has instance fields.
  */
 public class HierarchyTreeNodeSelectRenderer {
     private ExternalHierarchyLogic hierarchyLogic;
@@ -33,12 +37,29 @@ public class HierarchyTreeNodeSelectRenderer {
        this.externalLogic = externalLogic;
     }
     
+    String groupsSelectID; 
+    String hierNodesSelectID;
+    List<String> evalGroupLabels; 
+    List<String> evalGroupValues;
+    List<String> hierNodeLabels; 
+    List<String> hierNodeValues;
+    
     /**
      * @param parent
      * @param clientID
      * @param elbinding
      */
-    public void renderSelectHierarchyNodesTree(UIContainer parent, String clientID, String elbinding, String groupElBinding) {
+    public void renderSelectHierarchyNodesTree(UIContainer parent, String clientID, 
+            String groupsSelectID, String hierNodesSelectID,
+            List<String> evalGroupLabels, List<String> evalGroupValues,
+            List<String> hierNodeLabels, List<String> hierNodeValues) {
+       this.groupsSelectID = groupsSelectID;
+       this.hierNodesSelectID = hierNodesSelectID;
+       this.evalGroupLabels = evalGroupLabels;
+       this.evalGroupValues = evalGroupValues;
+       this.hierNodeLabels = hierNodeLabels;
+       this.hierNodeValues = hierNodeValues;
+        
        UIJointContainer joint = new UIJointContainer(parent, clientID, "hierarchy_table_treeview:");
 
        UIMessage.make(joint, "node-select-header", "controlhierarchy.table.selectnode.header");
@@ -105,12 +126,24 @@ public class HierarchyTreeNodeSelectRenderer {
         if (toRender instanceof EvalHierarchyNode) {
             EvalHierarchyNode evalHierNode = (EvalHierarchyNode) toRender;
             title = evalHierNode.title;
-            UIBoundBoolean.make(tableRow, "select-checkbox", "evaluationBean.selectedEvalHierarchyNodeIDsMap."+evalHierNode.id);
+          
+            hierNodeLabels.add(title);
+            hierNodeValues.add(evalHierNode.id);
+            UISelectChoice choice = UISelectChoice.make(tableRow, "select-checkbox",
+                hierNodesSelectID, hierNodeLabels.size()-1);
+            //UIBoundBoolean.make(tableRow, "select-checkbox", "evaluationBean.selectedEvalHierarchyNodeIDsMap."+evalHierNode.id);
         }
         else if (toRender instanceof EvalGroup) {
             EvalGroup evalGroup = (EvalGroup) toRender;
             title = evalGroup.title;
-            UIBoundBoolean.make(tableRow, "select-checkbox", "evaluationBean.selectedEvalGroupIDsMap."+evalGroup.evalGroupId);
+            
+            evalGroupLabels.add(title);
+            evalGroupValues.add(evalGroup.evalGroupId);
+            
+            UISelectChoice choice = UISelectChoice.make(tableRow, "select-checkbox",
+                groupsSelectID, evalGroupLabels.size()-1);
+            
+            //UIBoundBoolean.make(tableRow, "select-checkbox", "evaluationBean.selectedEvalGroupIDsMap."+evalGroup.evalGroupId);
         }
         else {
             title = "";

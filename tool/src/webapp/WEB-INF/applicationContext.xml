@@ -159,12 +159,6 @@
       <property name="externalHierarchyLogic" 
          ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
    </bean>
-   
-   <bean id="org.sakaiproject.evaluation.tool.renderers.HierarchyTreeNodeSelectRenderer"
-      class="org.sakaiproject.evaluation.tool.renderers.HierarchyTreeNodeSelectRenderer">
-      <property name="externalHierarchyLogic" />
-      <property name="externalLogic" />
-   </bean>
 
 	<!-- Override this definition from RSF-evolvers, to reflect the fact we are
 		serving the RSF components templates from our own webapp (as provided using

@@ -197,10 +197,6 @@
          ref="HierarchySelectNodeRowRenderer" />
    </bean>
 
-   <bean id="HierarchySelectNodeRowRenderer"
-      class="org.sakaiproject.evaluation.tool.renderers.HierarchyRowRenderer" />
-
-
    <!-- producers below here -->
 
    <!-- ADMINISTRATE producers -->
@@ -524,6 +520,13 @@
         ref="org.sakaiproject.evaluation.tool.renderers.HierarchyTreeNodeSelectRenderer" />
       <property name="externalHierarchyLogic" 
         ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+   </bean>
+   
+   <!-- This renderer is only used by the EvaluationAssignProducer (right above here) -->
+   <bean id="org.sakaiproject.evaluation.tool.renderers.HierarchyTreeNodeSelectRenderer"
+      class="org.sakaiproject.evaluation.tool.renderers.HierarchyTreeNodeSelectRenderer">
+      <property name="externalHierarchyLogic" ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic"/>
+      <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic"/>
    </bean>
 
    <bean class="org.sakaiproject.evaluation.tool.producers.EvaluationAssignConfirmProducer">
