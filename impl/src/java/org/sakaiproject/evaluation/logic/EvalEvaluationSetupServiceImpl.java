@@ -746,10 +746,21 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
    // HIERARCHY
 
-   public List<EvalAssignHierarchy> addEvalAssignments(Long evaluationId, String[] nodeIds, String[] evalGroupIds) {
+   public List<EvalAssignHierarchy> setEvalAssignments(Long evaluationId, String[] nodeIds, String[] evalGroupIds, boolean appendMode) {
 
       // get the evaluation
       EvalEvaluation eval = getEvaluationOrFail(evaluationId);
+
+      if (evalGroupIds == null) {
+         evalGroupIds = new String[] {};
+      }
+      if (nodeIds == null) {
+         nodeIds = new String[] {};
+      }
+
+      if (evalGroupIds.length == 0 && nodeIds.length == 0) {
+         throw new IllegalArgumentException("Cannot assign an evaluation to 0 nodes and 0 groups, you must pass in at least one node id or group id");
+      }
 
       // check if this evaluation can be modified
       String userId = external.getCurrentUserId();
@@ -759,13 +770,31 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          Set<String> nodeIdsSet = new HashSet<String>();
          Set<String> currentNodeIds = new HashSet<String>();
 
-         List<EvalAssignHierarchy> current = evaluationService.getAssignHierarchyByEval(evaluationId);
-         for (EvalAssignHierarchy evalAssignHierarchy : current) {
-            currentNodeIds.add(evalAssignHierarchy.getNodeId());
+         List<EvalAssignHierarchy> currentAssignHierarchies = evaluationService.getAssignHierarchyByEval(evaluationId);
+         for (EvalAssignHierarchy assignHierarchy : currentAssignHierarchies) {
+            currentNodeIds.add(assignHierarchy.getNodeId());
          }
 
          for (int i = 0; i < nodeIds.length; i++) {
             nodeIdsSet.add(nodeIds[i]);
+         }
+
+         if (! appendMode) {
+            Set<String> selectedNodeIds = new HashSet<String>(nodeIdsSet);
+            Set<String> existingNodeIds = new HashSet<String>(currentNodeIds);
+            existingNodeIds.removeAll(selectedNodeIds);
+            // now remove all the nodes remaining in the current set
+            if (existingNodeIds.size() > 0) {
+               Long[] removeHierarchyIds = new Long[existingNodeIds.size()];
+               int counter = 0;
+               for (EvalAssignHierarchy assignHierarchy : currentAssignHierarchies) {
+                  if (existingNodeIds.contains(assignHierarchy.getNodeId())) {
+                     removeHierarchyIds[counter] = assignHierarchy.getId();
+                     counter++;
+                  }
+               }
+               deleteAssignHierarchyNodesById(removeHierarchyIds);
+            }            
          }
 
          // then remove the duplicates so we end up with the filtered list to only new ones
@@ -787,21 +816,35 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          Set<String> currentEvalGroupIds = new HashSet<String>();
 
          // get the current list of assigned eval groups
-         List<EvalAssignGroup> currentGroups = getEvaluationAssignGroups(evaluationId);
+         Map<Long, List<EvalAssignGroup>> groupsMap = evaluationService.getAssignGroupsForEvals(new Long[] {evaluationId}, true, null);
+         List<EvalAssignGroup> currentGroups = groupsMap.get(evaluationId);
          for (EvalAssignGroup evalAssignGroup : currentGroups) {
             currentEvalGroupIds.add(evalAssignGroup.getEvalGroupId());
          }
 
-         /*
-          * According to the API Documentation, evalGroupIds can be null if there
-          * are none to assign.
-          */
-         if (evalGroupIds == null) {
-            evalGroupIds = new String[] {};
-         }
-
          for (int i = 0; i < evalGroupIds.length; i++) {
             evalGroupIdsSet.add(evalGroupIds[i]);
+         }
+
+         if (! appendMode) {
+            Set<String> selectedGroupIds = new HashSet<String>(evalGroupIdsSet);
+            Set<String> existingGroupIds = new HashSet<String>();
+            for (EvalAssignGroup assignGroup : currentGroups) {
+               if (assignGroup.getNodeId() == null) {
+                  existingGroupIds.add(assignGroup.getEvalGroupId());
+               }
+            }
+            existingGroupIds.removeAll(selectedGroupIds);
+            // now remove all the groups remaining in the existing set
+            if (existingGroupIds.size() > 0) {
+               Set<EvalAssignGroup> removeAssignGroups = new HashSet<EvalAssignGroup>();
+               for (EvalAssignGroup assignGroup : currentGroups) {
+                  if (existingGroupIds.contains(assignGroup.getEvalGroupId())) {
+                     removeAssignGroups.add(assignGroup);
+                  }
+               }
+               dao.deleteSet(removeAssignGroups);
+            }
          }
 
          // next we need to expand all the assigned hierarchy nodes into a massive set of eval assign groups
