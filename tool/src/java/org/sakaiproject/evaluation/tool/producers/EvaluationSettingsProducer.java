@@ -181,6 +181,14 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
                VIEW_ID + " when they are not allowed");
       }
 
+      UIInternalLink.make(tofill, "eval-settings-link",
+            UIMessage.make("evalsettings.page.title"),
+            new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evalViewParams.evaluationId) );
+      if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(evaluation.getState())) {
+         // creating a new eval
+         UIMessage.make(tofill, "eval-start-text", "starteval.page.title");
+      }
+      
 
       UIForm form = UIForm.make(tofill, "evalSettingsForm");
 
