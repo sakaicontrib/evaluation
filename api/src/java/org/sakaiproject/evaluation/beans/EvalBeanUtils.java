@@ -260,7 +260,8 @@ public class EvalBeanUtils {
       if (eval.getStartDate().after( now ) ) {
          // set the start date/time to now if immediate start is selected (custom start date is false) AND
          // the start date is NOT in the past
-         if (! eval.customStartDate) {
+         if (eval.customStartDate != null 
+               && ! eval.customStartDate) {
             eval.setStartDate( now );
          }
       }

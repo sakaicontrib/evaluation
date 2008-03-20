@@ -30,6 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
+import org.sakaiproject.evaluation.logic.exceptions.BlankRequiredFieldException;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
@@ -192,6 +193,15 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
       // set the date modified
       evaluation.setLastModified( new Date() );
+
+      // check for required fields first
+      if (EvalUtils.isBlank(evaluation.getTitle())) {
+         throw new BlankRequiredFieldException("Cannot save an evaluation with a blank title", "title");
+      }
+
+      if (evaluation.getStartDate() == null) {
+         throw new BlankRequiredFieldException("Cannot save an evaluation with a null startDate", "startDate");
+      }
 
       // test date ordering first (for the dates that are set) - this should be externalized
       if (evaluation.getDueDate() != null) {
