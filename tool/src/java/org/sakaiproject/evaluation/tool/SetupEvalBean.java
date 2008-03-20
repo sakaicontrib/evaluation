@@ -343,6 +343,11 @@ public class SetupEvalBean {
       } else {
          // just assigning groups
 
+         // TODO - we might want to allow appending assigns while state is active?
+         if (EvalUtils.checkStateAfter(eval.getState(), EvalConstants.EVALUATION_STATE_INQUEUE, false)) {
+            throw new IllegalStateException("User cannot update evaluation assignments once an evaluation has started");
+         }
+
          // save all the assignments (hierarchy and group)
          evaluationSetupService.setEvalAssignments(evaluationId, 
                allNodeIds.toArray(new String[allNodeIds.size()]), selectedGroupIDs, false);
