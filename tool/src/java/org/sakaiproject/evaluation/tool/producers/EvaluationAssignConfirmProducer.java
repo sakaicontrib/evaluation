@@ -129,6 +129,14 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, V
             UIMessage.make("controlevaluations.page.title"),
             new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
 
+      UIInternalLink.make(tofill, "eval-settings-link",
+            UIMessage.make("evalsettings.page.title"),
+            new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evalViewParams.evaluationId) );
+      if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(evaluation.getState())) {
+         // creating a new eval
+         UIMessage.make(tofill, "eval-start-text", "starteval.page.title");
+      }
+
 
       // normal page content
 

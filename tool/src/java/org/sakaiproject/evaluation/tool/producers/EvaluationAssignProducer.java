@@ -112,6 +112,15 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
        */
       EvalEvaluation evaluation = evaluationService.getEvaluationById(evalViewParams.evaluationId);
 
+      UIInternalLink.make(tofill, "eval-settings-link",
+            UIMessage.make("evalsettings.page.title"),
+            new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evalViewParams.evaluationId) );
+      if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(evaluation.getState())) {
+         // creating a new eval
+         UIMessage.make(tofill, "eval-start-text", "starteval.page.title");
+      }
+
+
       UIMessage.make(tofill, "assign-eval-edit-page-title", "assigneval.assign.page.title", new Object[] {evaluation.getTitle()});
       UIMessage.make(tofill, "assign-eval-instructions", "assigneval.assign.instructions", new Object[] {evaluation.getTitle()});
 

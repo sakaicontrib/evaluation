@@ -40,6 +40,7 @@ api/src/java/org/sakaiproject/evaluation/logic/entity/ItemEntityProvider.java sv
 api/src/java/org/sakaiproject/evaluation/logic/entity/TemplateEntityProvider.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/logic/entity/TemplateItemEntityProvider.java svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/logic/exceptions/BlankRequiredFieldException.java svn_keywords=Date+Revision+Author+HeadURL+Id
+api/src/java/org/sakaiproject/evaluation/logic/exceptions/InvalidDatesException.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/logic/exceptions/ResponseSaveException.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/logic/exceptions/UserMessage.java svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/logic/externals/EvalExternalLogic.java -text svn_keywords=Date+Revision+Author+URL+Id

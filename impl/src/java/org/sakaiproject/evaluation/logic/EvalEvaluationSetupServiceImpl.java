@@ -31,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.exceptions.BlankRequiredFieldException;
+import org.sakaiproject.evaluation.logic.exceptions.InvalidDatesException;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
@@ -206,35 +207,39 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       // test date ordering first (for the dates that are set) - this should be externalized
       if (evaluation.getDueDate() != null) {
          if (evaluation.getStartDate().compareTo(evaluation.getDueDate()) >= 0) {
-            throw new IllegalArgumentException(
+            throw new InvalidDatesException(
                   "due date (" + evaluation.getDueDate() +
                   ") must occur after start date (" + 
-                  evaluation.getStartDate() + "), can occur on the same date but not at the same time");
+                  evaluation.getStartDate() + "), can occur on the same date but not at the same time",
+                  "dueDate");
          }
 
          if (evaluation.getStopDate() != null) {
             if (evaluation.getDueDate().compareTo(evaluation.getStopDate()) > 0 ) {
-               throw new IllegalArgumentException(
+               throw new InvalidDatesException(
                      "stop date (" + evaluation.getStopDate() +
                      ") must occur on or after due date (" + 
-                     evaluation.getDueDate() + "), can be identical");
+                     evaluation.getDueDate() + "), can be identical",
+                     "stopDate");
             }
             if (evaluation.getViewDate() != null) {
                if (evaluation.getViewDate().compareTo(evaluation.getStopDate()) < 0 ) {
-                  throw new IllegalArgumentException(
+                  throw new InvalidDatesException(
                         "view date (" + evaluation.getViewDate() +
                         ") must occur on or after stop date (" + 
-                        evaluation.getStopDate() + "), can be identical");
+                        evaluation.getStopDate() + "), can be identical",
+                        "viewDate");
                }
             }
          }
 
          if (evaluation.getViewDate() != null) {
             if (evaluation.getViewDate().compareTo(evaluation.getDueDate()) < 0 ) {
-               throw new IllegalArgumentException(
+               throw new InvalidDatesException(
                      "view date (" + evaluation.getViewDate() +
                      ") must occur on or after due date (" + 
-                     evaluation.getDueDate() + "), can be identical");
+                     evaluation.getDueDate() + "), can be identical",
+                     "viewDate");
             }
          }
       }
@@ -249,15 +254,17 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
          if (evaluation.getDueDate() != null 
                && evaluation.getDueDate().before(today)) {
-            throw new IllegalArgumentException(
+            throw new InvalidDatesException(
                   "due date (" + evaluation.getDueDate() +
-            ") cannot occur in the past for new evaluations");
+                  ") cannot occur in the past for new evaluations",
+                  "dueDate");
          }
          if (evaluation.getStopDate() != null 
                && evaluation.getStopDate().before(today)) {
-            throw new IllegalArgumentException(
+            throw new InvalidDatesException(
                   "stop date (" + evaluation.getStopDate() +
-            ") cannot occur in the past for new evaluations");
+                  ") cannot occur in the past for new evaluations",
+                  "stopDate");
          }
 
          // test if new evaluation occurs in the past

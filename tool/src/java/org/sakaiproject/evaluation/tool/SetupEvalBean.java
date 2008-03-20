@@ -27,6 +27,7 @@ import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.exceptions.BlankRequiredFieldException;
+import org.sakaiproject.evaluation.logic.exceptions.InvalidDatesException;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
@@ -235,6 +236,7 @@ public class SetupEvalBean {
       } catch (BlankRequiredFieldException e) {
          messages.addMessage( new TargettedMessage(e.messageKey, 
                new Object[] { e.fieldName }, TargettedMessage.SEVERITY_ERROR));
+         throw new RuntimeException(e); // should not be needed but it is
       }
       return "evalSettings";
    }
@@ -257,7 +259,11 @@ public class SetupEvalBean {
       } catch (BlankRequiredFieldException e) {
          messages.addMessage( new TargettedMessage(e.messageKey, 
                new Object[] { e.fieldName }, TargettedMessage.SEVERITY_ERROR));
-         throw new RuntimeException(e); // should not be needed
+         throw new RuntimeException(e); // should not be needed but it is
+      } catch (InvalidDatesException e) {
+         messages.addMessage( new TargettedMessage(e.messageKey, 
+               new Object[] {}, TargettedMessage.SEVERITY_ERROR));         
+         throw new RuntimeException(e); // should not be needed but it is
       }
       // TODO - fix this once RSF is fixed, remove all above this line and uncomment below
 //    completeCreateAction();
