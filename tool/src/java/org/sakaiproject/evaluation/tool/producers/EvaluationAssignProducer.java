@@ -150,7 +150,11 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
        * 
        */
       UIForm form = UIForm.make(tofill, "eval-assign-form", formViewParams);
-      UISelect hierarchyNodesSelect;
+      List<String> hierNodesLabels = new ArrayList<String>();
+      List<String> hierNodesValues = new ArrayList<String>();
+      UISelect hierarchyNodesSelect = UISelect.makeMultiple(form, "hierarchyNodeSelectHolder", 
+              new String[] {}, new String[] {}, "selectedHierarchyNodeIDs", new String[] {});
+      String hierNodesSelectID = hierarchyNodesSelect.getFullID();
       
       List<String> evalGroupsLabels = new ArrayList<String>();
       List<String> evalGroupsValues = new ArrayList<String>();
@@ -191,7 +195,9 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
             initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.hideAndShowRegionWithCheckbox", 
                   new String[] {hierarchyDiv.getFullID(), hierarchyCheckbox.getFullID()}));
             
-            hierUtil.renderSelectHierarchyNodesTree(form, "hierarchy-tree-select:", "", "" );
+            hierUtil.renderSelectHierarchyNodesTree(form, "hierarchy-tree-select:", 
+                    evalGroupsSelectID, hierNodesSelectID, evalGroupsLabels, evalGroupsValues,
+                    hierNodesLabels, hierNodesValues);
          }
 
          // display checkboxes for selecting the non-hierarchy groups
@@ -252,10 +258,13 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
        *  ..."
        */
       
-      // Add all the groups back to the UISelect Many's
+      // Add all the groups and hierarchy nodes back to the UISelect Many's
       evalGroupsSelect.optionlist = UIOutputMany.make(evalGroupsValues.toArray(new String[] {}));
       evalGroupsSelect.optionnames = UIOutputMany.make(evalGroupsLabels.toArray(new String[] {}));
 
+      hierarchyNodesSelect.optionlist = UIOutputMany.make(hierNodesValues.toArray(new String[] {}));
+      hierarchyNodesSelect.optionnames = UIOutputMany.make(hierNodesLabels.toArray(new String[] {}));
+      
       // all command buttons are just HTML now so no more bindings
       UIMessage.make(form, "cancel-button", "general.cancel.button");
       UIMessage.make(form, "confirmAssignCourses", "assigneval.save.assigned.button" );
