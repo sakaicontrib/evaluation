@@ -1105,4 +1105,74 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
    }
 
 
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.EvalEvaluationSetupService#assignEmailTemplate(java.lang.Long, java.lang.Long, java.lang.String, java.lang.String)
+    */
+   public void assignEmailTemplate(Long emailTemplateId, Long evaluationId, String emailTemplateTypeConstant, String userId) {
+      EvalEvaluation eval = getEvaluationOrFail(evaluationId);
+      if (! securityChecks.canUserControlEvaluation(userId, eval) ) {
+         throw new SecurityException("User ("+userId+") attempted to update existing evaluation ("+eval.getId()+") without permissions");
+      }
+
+      boolean clearAssociation = false;
+      if (emailTemplateId == null) {
+         if (emailTemplateTypeConstant == null) {
+            throw new IllegalArgumentException("emailTemplateTypeConstant cannot be null when clearing association");
+         }
+         clearAssociation = true;
+      } else {
+         EvalEmailTemplate emailTemplate = evaluationService.getEmailTemplate(emailTemplateId);
+         // assign to the evaluation
+         if (emailTemplate.getDefaultType() == null) {
+            // only assign non-default templates of the right type
+            if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailTemplate.getType())) {
+               eval.setAvailableEmailTemplate(emailTemplate);
+            } else if (EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailTemplate.getType())) {
+               eval.setReminderEmailTemplate(emailTemplate);
+            }
+            dao.save(eval);
+         } else {
+            emailTemplateTypeConstant = emailTemplate.getType();
+            clearAssociation = true;
+         }
+      }
+      
+      if (clearAssociation
+            && emailTemplateTypeConstant != null) {
+         Long checkEmailTemplateId = null;
+         String evalTemplateType = null;
+         if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailTemplateTypeConstant)) {
+            if (eval.getAvailableEmailTemplate() != null) {
+               checkEmailTemplateId = eval.getAvailableEmailTemplate().getId();
+               evalTemplateType = "availableEmailTemplate";
+            }
+            eval.setAvailableEmailTemplate(null);
+         } else if (EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailTemplateTypeConstant)) {
+            if (eval.getReminderEmailTemplate() != null) {
+               checkEmailTemplateId = eval.getReminderEmailTemplate().getId();
+               evalTemplateType = "reminderEmailTemplate";
+            }
+            eval.setReminderEmailTemplate(null);
+         }
+         dao.save(eval);
+
+         // also remove the unused template if possible
+         if (checkEmailTemplateId != null) {
+            EvalEmailTemplate checkTemplate = evaluationService.getEmailTemplate(checkEmailTemplateId);
+            if (checkTemplate != null
+                  && checkTemplate.getDefaultType() == null) {
+               // only remove non-default templates
+               int evalsUsingTemplate = dao.countByProperties(EvalEvaluation.class, 
+                     new String[] {evalTemplateType + ".id"}, 
+                     new Object[] {checkEmailTemplateId}) ;
+               if ( evalsUsingTemplate <= 0 ) {
+                  // template was only used in this evaluation
+                  dao.delete(checkTemplate);
+               }
+            }
+         }
+      }
+   }
+
+
 }

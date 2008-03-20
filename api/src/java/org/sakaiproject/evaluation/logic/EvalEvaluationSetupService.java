@@ -203,4 +203,17 @@ public interface EvalEvaluationSetupService {
     */
    public void removeEmailTemplate(Long emailTemplateId, String userId);
 
+   /**
+    * Assign an email template to an evaluation,
+    * setting the emailTemplateId to null (and including an emailTemplateTypeConstant) or 
+    * using a default template id will clear the association
+    * 
+    * @param emailTemplateId the unique id of an {@link EvalEmailTemplate}
+    * @param evaluationId the unique id of an {@link EvalEvaluation}
+    * @param emailTemplateTypeConstant a constant, use the EMAIL_TEMPLATE constants from 
+    * {@link org.sakaiproject.evaluation.constant.EvalConstants} to indicate the type
+    * @param userId the internal user id (not username)
+    */
+   public void assignEmailTemplate(Long emailTemplateId, Long evaluationId, String emailTemplateTypeConstant, String userId);
+
 }

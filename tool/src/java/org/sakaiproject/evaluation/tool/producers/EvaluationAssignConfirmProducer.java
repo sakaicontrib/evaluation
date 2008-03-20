@@ -27,7 +27,6 @@ import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.tool.SetupEvalBean;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
@@ -140,7 +139,7 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, V
             new Object[] {df.format(evaluation.getStartDate())});
 
       // show the selected groups
-      String[] selectedGroupIDs = evalViewParams.selectedGroupIDs; //SetupEvalBean.makeArrayFromBooleanMap(evalViewParams.selectedGroupIDsMap);
+      String[] selectedGroupIDs = evalViewParams.selectedGroupIDs;
       if (selectedGroupIDs != null 
             && selectedGroupIDs.length > 0) {
          for (int i = 0; i < selectedGroupIDs.length; ++i) {
@@ -167,18 +166,20 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, V
       // show the selected hierarchy nodes
       Boolean showHierarchy = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
       if (showHierarchy) {
-         UIOutput.make(tofill, "nodes-selected-table");
-         String[] selectedNodeIDs = evalViewParams.selectedHierarchyNodeIDs; //SetupEvalBean.makeArrayFromBooleanMap(evalViewParams.selectedHierarchyNodeIDsMap);
-         if (selectedNodeIDs != null && selectedNodeIDs.length > 0) {
+         UIBranchContainer hierarchyBranch = UIBranchContainer.make(tofill, "showHierarchy:");
+         UIOutput.make(hierarchyBranch, "nodes-selected-table");
+         String[] selectedNodeIDs = evalViewParams.selectedHierarchyNodeIDs;
+         if (selectedNodeIDs != null 
+               && selectedNodeIDs.length > 0) {
             for (int i = 0; i < selectedNodeIDs.length; i++ ) {
                EvalHierarchyNode node = hierLogic.getNodeById(selectedNodeIDs[i]);
 
-               UIBranchContainer nodeRow = UIBranchContainer.make(tofill, "node-row:");
+               UIBranchContainer nodeRow = UIBranchContainer.make(hierarchyBranch, "node-row:");
                UIOutput.make(nodeRow, "node-title", node.title);
                UIOutput.make(nodeRow, "node-abbr", node.description);
             }
          } else {
-            UIMessage.make(tofill, "no-nodes-selected", "evaluationassignconfirm.no_nodes_selected");
+            UIMessage.make(hierarchyBranch, "no-nodes-selected", "evaluationassignconfirm.no_nodes_selected");
          }
       }
 

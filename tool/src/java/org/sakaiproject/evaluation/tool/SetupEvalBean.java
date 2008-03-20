@@ -30,8 +30,10 @@ import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
+import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
+import org.sakaiproject.evaluation.tool.locators.EmailTemplateWBL;
 import org.sakaiproject.evaluation.tool.locators.EvaluationBeanLocator;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
@@ -61,6 +63,14 @@ public class SetupEvalBean {
     * This should be set to the templateId we are assigning to the evaluation
     */
    public Long templateId;
+   /**
+    * This should be set to the emailTemplateId we are assigning to the evaluation
+    */
+   public Long emailTemplateId;
+   /**
+    * This is set to the type of email template when resetting the evaluation to use default templates
+    */
+   public String emailTemplateType;
 
    /**
     * the selected groups ids to bind to this evaluation when creating it
@@ -78,7 +88,7 @@ public class SetupEvalBean {
    public void setSelectedGroupIDsWithPucArray(String toparse) {
       selectedGroupIDs = (String[]) StringArrayParser.instance.parse(toparse);
    }
-   
+
    public void setSelectedHierarchyNodeIDsWithPucArray(String toparse) {
       selectedHierarchyNodeIDs = (String[]) StringArrayParser.instance.parse(toparse);
    }
@@ -113,6 +123,11 @@ public class SetupEvalBean {
       this.evaluationBeanLocator = evaluationBeanLocator;
    }
 
+   private EmailTemplateWBL emailTemplateWBL;
+   public void setEmailTemplateWBL(EmailTemplateWBL emailTemplateWBL) {
+      this.emailTemplateWBL = emailTemplateWBL;
+   }
+
    private TargettedMessageList messages;
    public void setMessages(TargettedMessageList messages) {
       this.messages = messages;
@@ -129,19 +144,69 @@ public class SetupEvalBean {
       df = DateFormat.getDateInstance(DateFormat.LONG, locale);
    }
 
-   
+
    // Action bindings
 
    /**
     * Handles removal action from the remove eval view
     */
    public String removeEvalAction(){
+      if (evaluationId == null) {
+         throw new IllegalArgumentException("evaluationId and emailTemplateId cannot be null");
+      }
       EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
       evaluationSetupService.deleteEvaluation(evaluationId, externalLogic.getCurrentUserId());
       messages.addMessage( new TargettedMessage("controlevaluations.delete.user.message",
             new Object[] { eval.getTitle() }, TargettedMessage.SEVERITY_INFO));
       return "success";
    }
+
+   /**
+    * Handles saving and assigning email templates to an evaluation,
+    * can just assign the email template if the emailTemplateId is set or
+    * will save and assign the one in the locator
+    */
+   public String saveAndAssignEmailTemplate() {
+      if (evaluationId == null) {
+         throw new IllegalArgumentException("evaluationId and emailTemplateId cannot be null");
+      }
+
+      EvalEmailTemplate emailTemplate = null;
+      if (emailTemplateId == null) {
+         // get it from the locator
+         emailTemplateWBL.saveAll();
+         emailTemplate = emailTemplateWBL.getCurrentEmailTemplate();
+      } else {
+         // just load up and assign the template and do not save it
+         emailTemplate = evaluationService.getEmailTemplate(emailTemplateId);
+      }
+
+      // assign to the evaluation
+      evaluationSetupService.assignEmailTemplate(emailTemplate.getId(), evaluationId, null, externalLogic.getCurrentUserId());
+
+      // user message
+      EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
+      messages.addMessage( new TargettedMessage("controlemailtemplates.template.assigned.message",
+            new Object[] { emailTemplate.getType(), emailTemplate.getSubject(), eval.getTitle() }, 
+            TargettedMessage.SEVERITY_INFO));
+      return "successAssign";
+   }
+
+   /**
+    * Handles resetting the evaluation to use the default template
+    */
+   public String resetToDefaultEmailTemplate() {
+      if (evaluationId == null 
+            || emailTemplateType == null) {
+         throw new IllegalArgumentException("evaluationId and emailTemplateType cannot be null");
+      }
+
+      // reset to default email template
+      evaluationSetupService.assignEmailTemplate(null, evaluationId, emailTemplateType, externalLogic.getCurrentUserId());
+
+      return "successReset";
+   }
+
 
 
    // NOTE: these are the simple navigation methods
@@ -201,7 +266,9 @@ public class SetupEvalBean {
     * Complete the creation process for an evaluation (view all the current settings and assignments and create eval/assignments)
     */
    public String completeConfirmAction() {
-      // TODO this check is identical to the one above -AZ
+      if (evaluationId == null) {
+         throw new IllegalArgumentException("evaluationId and emailTemplateId cannot be null");
+      }
       // make sure that the submitted nodes are valid and populate the nodes list
       Set<EvalHierarchyNode> nodes = null;
       if (selectedHierarchyNodeIDs.length > 0) {
@@ -256,7 +323,7 @@ public class SetupEvalBean {
 
          // save all the assignments (hierarchy and group)
          evaluationSetupService.addEvalAssignments(evaluationId, 
-                  allNodeIds.toArray(new String[allNodeIds.size()]), selectedGroupIDs);
+               allNodeIds.toArray(new String[allNodeIds.size()]), selectedGroupIDs);
       }
       return "controlEvals";
    }

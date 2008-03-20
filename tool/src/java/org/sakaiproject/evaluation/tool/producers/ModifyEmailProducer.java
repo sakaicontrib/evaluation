@@ -14,27 +14,23 @@
 
 package org.sakaiproject.evaluation.tool.producers;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
-import org.sakaiproject.evaluation.tool.EvaluationBean;
 import org.sakaiproject.evaluation.tool.locators.EmailTemplateWBL;
 import org.sakaiproject.evaluation.tool.viewparams.EmailViewParameters;
 
-import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIVerbatim;
-import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
-import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
+import uk.org.ponder.rsf.flow.ARIResult;
+import uk.org.ponder.rsf.flow.ActionResultInterceptor;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
@@ -46,7 +42,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class ModifyEmailProducer implements ViewComponentProducer, NavigationCaseReporter, ViewParamsReporter {
+public class ModifyEmailProducer implements ViewComponentProducer, ViewParamsReporter, ActionResultInterceptor {
 
    public static final String VIEW_ID = "modify_email";
    public String getViewID() {
@@ -56,11 +52,6 @@ public class ModifyEmailProducer implements ViewComponentProducer, NavigationCas
    private EvalExternalLogic externalLogic;
    public void setExternalLogic(EvalExternalLogic externalLogic) {
       this.externalLogic = externalLogic;
-   }
-
-   private EvaluationBean evaluationBean;
-   public void setEvaluationBean(EvaluationBean evaluationBean) {
-      this.evaluationBean = evaluationBean;
    }
 
    private EvalEvaluationService evaluationService;
@@ -77,23 +68,37 @@ public class ModifyEmailProducer implements ViewComponentProducer, NavigationCas
 
       // handle the input params for the view
       EmailViewParameters emailViewParams = (EmailViewParameters) viewparams;
-      if (emailViewParams.templateId == null && emailViewParams.emailType == null) {
+      if (emailViewParams.templateId == null 
+            && emailViewParams.emailType == null) {
          throw new IllegalArgumentException("Either templateId or emailType must be set before accessing the preview email view");
       }
-      String emailTemplateType = emailViewParams.emailType;
 
-      String emailTemplateOTP = null;
+      String actionBean = "setupEvalBean.";
+
+      // form the proper OTP path
+      boolean newEmailTemplate = true;
+      String emailTemplateId = EmailTemplateWBL.NEW_1 + emailViewParams.emailType; // default is new one of the supplied type
       if (emailViewParams.templateId == null) {
-         emailTemplateOTP = emailTemplateLocator + EmailTemplateWBL.NEW_1 + emailTemplateType + ".";
+         // see if we can get the id from the evaluation
+         if (emailViewParams.evaluationId != null) {
+            EvalEmailTemplate emailTemplate = evaluationService.getEmailTemplate(emailViewParams.evaluationId, emailViewParams.emailType);
+            if (emailTemplate.getDefaultType() == null) {
+               // found a non-default template
+               emailTemplateId = emailTemplate.getId().toString();
+               newEmailTemplate = false;
+            }
+         }
       } else {
-         emailTemplateOTP = emailTemplateLocator + emailViewParams.templateId + ".";         
+         emailTemplateId = emailViewParams.templateId.toString();
+         newEmailTemplate = false;
       }
+      String emailTemplateOTP = emailTemplateLocator + emailTemplateId + ".";
 
       // local variables used in the render logic
       String currentUserId = externalLogic.getCurrentUserId();
       boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
 
-      if (! emailViewParams.inEval) {
+      if (emailViewParams.evaluationId == null) {
          /*
           * top links here
           */
@@ -113,73 +118,75 @@ public class ModifyEmailProducer implements ViewComponentProducer, NavigationCas
       }
 
       UIMessage.make(tofill, "modify-template-header", "modifyemail.modify.template.header", 
-               new Object[] {emailTemplateType});
+               new Object[] {emailViewParams.emailType});
 
       UIVerbatim.make(tofill, "email_templates_fieldhints", UIMessage.make("email.templates.field.names"));
 
       UIForm form = UIForm.make(tofill, "emailTemplateForm");
 
-      String inputBinding = null;
-      String inputInitValue = null;
       String actionBinding = null;
-      if (emailViewParams.inEval) {
-         // TODO get rid of most of this once the EvaluationBean is dead
-         // get the email template
-         EvalEmailTemplate emailTemplate = null;
-         if (emailViewParams.templateId != null) {
-            emailTemplate = evaluationService.getEmailTemplate(emailViewParams.templateId);
-         }
-         if (emailTemplate == null 
-               && emailViewParams.emailType != null) {
-            emailTemplate = evaluationService.getDefaultEmailTemplate(emailViewParams.emailType);
-         }
+      if (emailViewParams.evaluationId != null) {
+         // bind in the evaluationId
+         form.parameters.add(new UIELBinding(actionBean + "evaluationId", emailViewParams.evaluationId));
+         actionBinding = actionBean + "saveAndAssignEmailTemplate";
 
-         if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailViewParams.emailType)) {
-            actionBinding = "evaluationBean.saveAvailableEmailTemplate";
-            inputBinding = "evaluationBean.emailAvailableTxt";
-            inputInitValue = evaluationBean.emailAvailableTxt;
-         } else if (EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailViewParams.emailType)) {
-            actionBinding = "evaluationBean.saveReminderEmailTemplate";
-            inputBinding = "evaluationBean.emailReminderTxt";
-            inputInitValue = evaluationBean.emailReminderTxt;
+         // check the type is set and not invalid
+         if (emailViewParams.emailType == null) {
+            throw new IllegalArgumentException("emailType must be set when working with an evaluation");            
          } else {
-            throw new IllegalArgumentException("Unknown email template type for use in evaluation: " + emailTemplateType);
-         }
-
-         if (inputInitValue == null) {
-            // if there is nothing in the bean then just use the defaults
-            inputInitValue = emailTemplate.getMessage();
+            if ( ! (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailViewParams.emailType)
+                 || EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailViewParams.emailType)) ) {
+               throw new IllegalArgumentException("Unknown email template type for use in evaluation: " + emailViewParams.emailType);
+            }
          }
 
          // add in the close window control
          UIMessage.make(tofill, "closeWindow", "general.close.window.button");
+         if (! newEmailTemplate) {
+            // add in the reset to default if not a new email template
+            UICommand resetCommand = UICommand.make(form, "resetEmailTemplate", UIMessage.make("modifyemail.reset.to.default.link"), 
+                  actionBean + "resetToDefaultEmailTemplate");
+            resetCommand.addParameter( new UIELBinding(actionBean + "emailTemplateType", emailViewParams.emailType) );
+         }
       } else {
          // not part of an evaluation so use the WBL
-         inputBinding = emailTemplateOTP + "message";
          actionBinding = emailTemplateLocator + "saveAll";
-         // also show the subject editor
-         UIBranchContainer subjectBranch = UIBranchContainer.make(form, "showSubject:");
-         UIInput.make(subjectBranch, "emailSubject", emailTemplateOTP + "subject");
-         UIMessage.make(subjectBranch, "emailSubject_label", "modifyemail.template.subject");
+         // add in a cancel button
+         UIMessage.make(form, "cancel-button", "general.cancel.button");
       }
-      UIInput.make(form, "emailMessage", inputBinding, inputInitValue);
+
+      UIInput.make(form, "emailSubject", emailTemplateOTP + "subject");
+      UIInput.make(form, "emailMessage", emailTemplateOTP + "message");
+
       UICommand.make(form, "saveEmailTemplate", UIMessage.make("modifyemail.save.changes.link"), actionBinding);
 
    }
 
-   @SuppressWarnings("unchecked")
-   public List reportNavigationCases() {
-      List i = new ArrayList();
-      // this is kind of wacky
-      i.add(new NavigationCase(EvalConstants.EMAIL_TEMPLATE_AVAILABLE, new EmailViewParameters(
-            PreviewEmailProducer.VIEW_ID, null, EvalConstants.EMAIL_TEMPLATE_AVAILABLE, true)));
-      i.add(new NavigationCase(EvalConstants.EMAIL_TEMPLATE_REMINDER, new EmailViewParameters(
-            PreviewEmailProducer.VIEW_ID, null, EvalConstants.EMAIL_TEMPLATE_REMINDER, true)));
-      // default return case
-      i.add( new NavigationCase("", new SimpleViewParameters(ControlEmailTemplatesProducer.VIEW_ID)) );
-      return i;
+
+   /* (non-Javadoc)
+    * @see uk.org.ponder.rsf.flow.ActionResultInterceptor#interceptActionResult(uk.org.ponder.rsf.flow.ARIResult, uk.org.ponder.rsf.viewstate.ViewParameters, java.lang.Object)
+    */
+   public void interceptActionResult(ARIResult result, ViewParameters incoming, Object actionReturn) {
+      // handles the navigation cases and passing along data from view to view
+      EmailViewParameters evp = (EmailViewParameters) incoming;
+      EmailViewParameters outgoing = (EmailViewParameters) evp.copyBase(); // inherit all the incoming data
+      if ("success".equals(actionReturn) 
+            || "successAssign".equals(actionReturn) 
+            || "successReset".equals(actionReturn) ) {
+         outgoing.viewID = PreviewEmailProducer.VIEW_ID;
+         result.resultingView = outgoing;
+      } else if ("failure".equals(actionReturn)) {
+         // failure just comes back here
+         result.resultingView = outgoing;
+      } else {
+         // default
+         result.resultingView = new SimpleViewParameters(ControlEmailTemplatesProducer.VIEW_ID);
+      }
    }
 
+   /* (non-Javadoc)
+    * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
+    */
    public ViewParameters getViewParameters() {
       return new EmailViewParameters();
    }

@@ -917,4 +917,46 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
    }
 
+   
+   public void testAssignEmailTemplate() {
+      EvalEvaluation eval = null;
+
+      // check assigning works
+      eval = evaluationService.getEvaluationById(etdl.evaluationActive.getId());
+      assertNull(eval.getAvailableEmailTemplate());
+      evaluationSetupService.assignEmailTemplate(etdl.emailTemplate1.getId(), etdl.evaluationActive.getId(), null, EvalTestDataLoad.ADMIN_USER_ID);
+      eval = evaluationService.getEvaluationById(etdl.evaluationActive.getId());
+      assertNotNull(eval.getAvailableEmailTemplate());
+      assertEquals(etdl.emailTemplate1.getId(), eval.getAvailableEmailTemplate().getId());
+
+      // check unassigning works
+      evaluationSetupService.assignEmailTemplate(null, etdl.evaluationActive.getId(), EvalConstants.EMAIL_TEMPLATE_AVAILABLE, EvalTestDataLoad.ADMIN_USER_ID);
+      eval = evaluationService.getEvaluationById(etdl.evaluationActive.getId());
+      assertNull(eval.getAvailableEmailTemplate());
+      
+      // check default template unassigns
+      EvalEmailTemplate defaultTemplate = evaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
+      assertNotNull(defaultTemplate);
+      evaluationSetupService.assignEmailTemplate(defaultTemplate.getId(), etdl.evaluationNew.getId(), null, EvalTestDataLoad.ADMIN_USER_ID);
+      eval = evaluationService.getEvaluationById(etdl.evaluationNew.getId());
+      assertNull(eval.getAvailableEmailTemplate());
+
+      // invalid evalid causes failure
+      try {
+         evaluationSetupService.assignEmailTemplate(etdl.emailTemplate1.getId(), EvalTestDataLoad.INVALID_LONG_ID, null, EvalTestDataLoad.ADMIN_USER_ID);
+         fail("Should have thrown exception");
+      } catch (IllegalArgumentException e) {
+         assertNotNull(e);
+      }
+
+      // invalid argument combination causes failure
+      try {
+         evaluationSetupService.assignEmailTemplate(null, etdl.evaluationActive.getId(), null, EvalTestDataLoad.ADMIN_USER_ID);
+         fail("Should have thrown exception");
+      } catch (IllegalArgumentException e) {
+         assertNotNull(e);
+      }
+
+   }
+
 }

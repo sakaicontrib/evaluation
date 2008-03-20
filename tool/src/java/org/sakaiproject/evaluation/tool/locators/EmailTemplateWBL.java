@@ -124,4 +124,15 @@ public class EmailTemplateWBL implements WriteableBeanLocator {
       }
    }
 
+   /**
+    * @return the current email template we are working with or null if none
+    */
+   public EvalEmailTemplate getCurrentEmailTemplate() {
+      EvalEmailTemplate emailTemplate = null;
+      if (delivered.size() > 0) {
+         emailTemplate = delivered.values().iterator().next();
+      }
+      return emailTemplate;
+   }
+
 }
