@@ -141,15 +141,18 @@ public interface EvalEvaluationSetupService {
    // HIERARCHY LOGIC
 
    /**
-    * Assigns hierarchy nodes and/or evalgroups to an evaluation and therefore assigns all evalgroups that are located
+    * Assigns hierarchy nodes and/or eval groups to an evaluation and therefore assigns all eval groups that are located
     * at that hierarchy node, this will not include groups below or above this node so if you want
     * to assign the nodes below you will need to include them in the array
     * @param evaluationId unique id of an {@link EvalEvaluation}
     * @param nodeIds unique IDs of a set of hierarchy nodes (null if none to assign)
     * @param evalGroupIds the internal unique IDs for a set of evalGroups (null if none to assign)
+    * @param appendMode if true then we will add these assignments to the evaluation but not change any existing ones,
+    * if false then the set of passed in assignments will be made the only assignments for this evaluation,
+    * existing assignments that do not match will be removed
     * @return a list of the persisted hierarchy assignments (nodes and groups together)
     */
-   public List<EvalAssignHierarchy> addEvalAssignments(Long evaluationId, String[] nodeIds, String[] evalGroupIds);
+   public List<EvalAssignHierarchy> setEvalAssignments(Long evaluationId, String[] nodeIds, String[] evalGroupIds, boolean appendMode);
 
    /**
     * Remove all assigned hierarchy nodes with the unique ids specified,
