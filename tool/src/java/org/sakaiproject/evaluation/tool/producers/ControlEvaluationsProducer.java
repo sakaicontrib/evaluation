@@ -150,11 +150,12 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
       }
 
       // get all the visible evaluations for the current user
+      List<EvalEvaluation> partialEvals = new ArrayList<EvalEvaluation>();
       List<EvalEvaluation> inqueueEvals = new ArrayList<EvalEvaluation>();
       List<EvalEvaluation> activeEvals = new ArrayList<EvalEvaluation>();
       List<EvalEvaluation> closedEvals = new ArrayList<EvalEvaluation>();
 
-      List<EvalEvaluation> evals = evaluationSetupService.getVisibleEvaluationsForUser(externalLogic.getCurrentUserId(), false, false);
+      List<EvalEvaluation> evals = evaluationSetupService.getVisibleEvaluationsForUser(externalLogic.getCurrentUserId(), false, false, true);
       for (int j = 0; j < evals.size(); j++) {
          // get queued, active, closed evaluations by date
          // check the state of the eval to determine display data
@@ -169,13 +170,37 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
          } else if (EvalConstants.EVALUATION_STATE_ACTIVE.equals(evalStatus) ||
                EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(evalStatus) ) {
             activeEvals.add(eval);
+         } else if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(evalStatus) ) {
+            partialEvals.add(eval);
          }
       }
 
-      // create inqueue evaluations header and link
+      // create start new eval link
       UIInternalLink.make(tofill, "begin-evaluation-link", UIMessage.make("starteval.page.title"), 
             new EvalViewParameters(EvaluationCreateProducer.VIEW_ID, null) );
 
+
+      // create partial evaluations header and listing
+      if (partialEvals.size() > 0) {
+         UIBranchContainer evalListing = UIBranchContainer.make(tofill, "partial-eval-listing:");
+
+         for (int i = 0; i < partialEvals.size(); i++) {
+            EvalEvaluation evaluation = (EvalEvaluation) partialEvals.get(i);
+
+            UIBranchContainer evaluationRow = UIBranchContainer.make(evalListing, "partial-eval-row:", evaluation.getId().toString());
+
+            UIOutput.make(evaluationRow, "partial-eval-title", evaluation.getTitle() );
+            UIOutput.make(evaluationRow, "partial-eval-created", df.format(evaluation.getLastModified()));
+
+            UIInternalLink.make(evaluationRow, "inqueue-eval-edit-link", UIMessage.make("controlevaluations.partial.continue"),
+                  new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluation.getId()) );
+
+            UIInternalLink.make(evaluationRow, "inqueue-eval-delete-link", UIMessage.make("general.command.delete"), 
+                  new EvalViewParameters( RemoveEvalProducer.VIEW_ID, evaluation.getId() ) );
+         }
+      }
+
+      // create inqueue evaluations header
       if (inqueueEvals.size() > 0) {
          UIBranchContainer evalListing = UIBranchContainer.make(tofill, "inqueue-eval-listing:");
 
@@ -183,9 +208,6 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
             EvalEvaluation evaluation = (EvalEvaluation) inqueueEvals.get(i);
 
             UIBranchContainer evaluationRow = UIBranchContainer.make(evalListing, "inqueue-eval-row:", evaluation.getId().toString());
-
-            UIMessage.make(evaluationRow, "eval-preview-title", "controlevaluations.eval.preview.title");
-            UIMessage.make(evaluationRow, "eval-link-title", "controlevaluations.eval.link.title");
 
             UIInternalLink.make(evaluationRow, "inqueue-eval-link", evaluation.getTitle(), 
                   new EvalViewParameters( PreviewEvalProducer.VIEW_ID, evaluation.getId(), evaluation.getTemplate().getId() ) );
@@ -202,11 +224,11 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
             int groupsCount = evaluationService.countEvaluationGroups(evaluation.getId());
             if (groupsCount == 1) {
                UIInternalLink.make(evaluationRow, "inqueue-eval-assigned-link", getTitleForFirstEvalGroup(evaluation.getId()), 
-                     new EvalViewParameters(EvaluationAssignConfirmProducer.VIEW_ID, evaluation.getId()) );
+                     new EvalViewParameters(EvaluationAssignmentsProducer.VIEW_ID, evaluation.getId()) );
             } else {
                UIInternalLink.make(evaluationRow, "inqueue-eval-assigned-link", 
                      UIMessage.make("controlevaluations.eval.groups.link", new Object[] { new Integer(groupsCount) }), 
-                     new EvalViewParameters(EvaluationAssignConfirmProducer.VIEW_ID, evaluation.getId()) );
+                     new EvalViewParameters(EvaluationAssignmentsProducer.VIEW_ID, evaluation.getId()) );
             }
 
             UIOutput.make(evaluationRow, "inqueue-eval-startdate", df.format(evaluation.getStartDate()));
@@ -238,9 +260,6 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
 
             UIBranchContainer evaluationRow = UIBranchContainer.make(evalListing, "active-eval-row:", evaluation.getId().toString());
 
-            UIMessage.make(evalListing, "eval-preview-title", "controlevaluations.eval.preview.title");
-            UIMessage.make(evalListing, "eval-link-title", "controlevaluations.eval.link.title");
-
             UIInternalLink.make(evaluationRow, "active-eval-link", evaluation.getTitle(), 
                   new EvalViewParameters( PreviewEvalProducer.VIEW_ID, evaluation.getId(),	evaluation.getTemplate().getId() ) );
             UILink.make(evaluationRow, "eval-direct-link", UIMessage.make("controlevaluations.eval.direct.link"), 
@@ -256,11 +275,11 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
             int groupsCount = evaluationService.countEvaluationGroups(evaluation.getId());
             if (groupsCount == 1) {
                UIInternalLink.make(evaluationRow, "active-eval-assigned-link", getTitleForFirstEvalGroup(evaluation.getId()), 
-                     new EvalViewParameters(EvaluationAssignConfirmProducer.VIEW_ID, evaluation.getId()) );
+                     new EvalViewParameters(EvaluationAssignmentsProducer.VIEW_ID, evaluation.getId()) );
             } else {
                UIInternalLink.make(evaluationRow, "active-eval-assigned-link", 
                      UIMessage.make("controlevaluations.eval.groups.link", new Object[] { new Integer(groupsCount) }), 
-                     new EvalViewParameters(EvaluationAssignConfirmProducer.VIEW_ID, evaluation.getId()) );
+                     new EvalViewParameters(EvaluationAssignmentsProducer.VIEW_ID, evaluation.getId()) );
             }
 
             // calculate the response rate
@@ -297,9 +316,6 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
 
             UIBranchContainer evaluationRow = UIBranchContainer.make(evalListing, "closed-eval-row:", evaluation.getId().toString());
 
-            UIMessage.make(evalListing, "eval-preview-title", "controlevaluations.eval.preview.title");
-            UIMessage.make(evalListing, "eval-link-title", "controlevaluations.eval.link.title");
-
             UIInternalLink.make(evaluationRow, "closed-eval-link", evaluation.getTitle(), 
                   new EvalViewParameters( PreviewEvalProducer.VIEW_ID, evaluation.getId(), evaluation.getTemplate().getId() ) );
             if (evaluation.getEvalCategory() != null) {
@@ -312,11 +328,11 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
             int groupsCount = evaluationService.countEvaluationGroups(evaluation.getId());
             if (groupsCount == 1) {
                UIInternalLink.make(evaluationRow, "closed-eval-assigned-link", getTitleForFirstEvalGroup(evaluation.getId()), 
-                     new EvalViewParameters(EvaluationAssignConfirmProducer.VIEW_ID, evaluation.getId()) );
+                     new EvalViewParameters(EvaluationAssignmentsProducer.VIEW_ID, evaluation.getId()) );
             } else {
                UIInternalLink.make(evaluationRow, "closed-eval-assigned-link", 
                      UIMessage.make("controlevaluations.eval.groups.link", new Object[] { new Integer(groupsCount) }), 
-                     new EvalViewParameters(EvaluationAssignConfirmProducer.VIEW_ID, evaluation.getId()) );
+                     new EvalViewParameters(EvaluationAssignmentsProducer.VIEW_ID, evaluation.getId()) );
             }
 
             // calculate the response rate
@@ -369,7 +385,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
     * @return title of first evalGroupId returned
     */
    private String getTitleForFirstEvalGroup(Long evaluationId) {
-      Map<Long, List<EvalAssignGroup>> evalAssignGroups = evaluationService.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
+      Map<Long, List<EvalAssignGroup>> evalAssignGroups = evaluationService.getAssignGroupsForEvals(new Long[] {evaluationId}, true, null);
       List<EvalAssignGroup> groups = evalAssignGroups.get(evaluationId);
       EvalAssignGroup eac = (EvalAssignGroup) groups.get(0);
       return externalLogic.getDisplayTitle( eac.getEvalGroupId() );

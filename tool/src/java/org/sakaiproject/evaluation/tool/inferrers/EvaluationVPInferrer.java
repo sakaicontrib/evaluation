@@ -140,7 +140,7 @@ public class EvaluationVPInferrer implements EntityViewParamsInferrer {
             if (EvalConstants.EVALUATION_STATE_INQUEUE.equals( EvalUtils.getEvaluationState(evaluation, false) )) {
                 // go to the add instructor items view if permission
                 if (evalGroupId == null) {
-                   Map<Long, List<EvalAssignGroup>> m = evaluationService.getEvaluationAssignGroups(new Long[] {evaluationId}, true);
+                   Map<Long, List<EvalAssignGroup>> m = evaluationService.getAssignGroupsForEvals(new Long[] {evaluationId}, true, null);
                     EvalGroup[] evalGroups = EvalUtils.getGroupsInCommon(
                             externalLogic.getEvalGroupsForUser(currentUserId, EvalConstants.PERM_BE_EVALUATED), 
                             m.get(evaluationId) );

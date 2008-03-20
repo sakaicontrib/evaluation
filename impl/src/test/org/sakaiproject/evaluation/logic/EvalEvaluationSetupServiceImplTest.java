@@ -455,14 +455,14 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#getVisibleEvaluationsForUser(java.lang.String, boolean, boolean)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#getVisibleEvaluationsForUser(java.lang.String, boolean, boolean, boolean)}.
     */
    public void testGetVisibleEvaluationsForUser() {
       // test getting visible evals for the maint user
       List<EvalEvaluation> evals = null;
       List<Long> ids = null;
 
-      evals = evaluationSetupService.getVisibleEvaluationsForUser(EvalTestDataLoad.MAINT_USER_ID, false, false);
+      evals = evaluationSetupService.getVisibleEvaluationsForUser(EvalTestDataLoad.MAINT_USER_ID, false, false, false);
       assertNotNull(evals);
       assertEquals(4, evals.size());
       ids = EvalTestDataLoad.makeIdList(evals);
@@ -472,19 +472,19 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       assertTrue(ids.contains( etdl.evaluationProvided.getId() ));
 
       // test getting visible evals for the admin user (should be all)
-      evals = evaluationSetupService.getVisibleEvaluationsForUser(EvalTestDataLoad.ADMIN_USER_ID, false, false);
+      evals = evaluationSetupService.getVisibleEvaluationsForUser(EvalTestDataLoad.ADMIN_USER_ID, false, false, false);
       assertNotNull(evals);
       assertEquals(8, evals.size());
 
       // test getting recent closed evals for the admin user
-      evals = evaluationSetupService.getVisibleEvaluationsForUser(EvalTestDataLoad.ADMIN_USER_ID, true, false);
+      evals = evaluationSetupService.getVisibleEvaluationsForUser(EvalTestDataLoad.ADMIN_USER_ID, true, false, false);
       assertNotNull(evals);
       assertEquals(7, evals.size());
       ids = EvalTestDataLoad.makeIdList(evals);
       assertTrue(! ids.contains( etdl.evaluationViewable.getId() ));
 
       // test getting visible evals for the normal user (should be none)
-      evals = evaluationSetupService.getVisibleEvaluationsForUser(EvalTestDataLoad.USER_ID, false, false);
+      evals = evaluationSetupService.getVisibleEvaluationsForUser(EvalTestDataLoad.USER_ID, false, false, false);
       assertNotNull(evals);
       assertEquals(0, evals.size());
 

@@ -4,7 +4,10 @@ package org.sakaiproject.evaluation.model;
 import java.util.Date;
 
 /**
- * EvalAssignHierarchy
+ * This is the assignment of a node to an evaluation and is how we know that the
+ * groups related to the node should be taking an eval, it has to be expanded into the
+ * groups and they must be assigned or it will have no real affect, this is mostly just allowing us
+ * to track the original assignment actions<br/>
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
@@ -18,6 +21,9 @@ public class EvalAssignHierarchy implements java.io.Serializable {
 
    protected String owner;
 
+   /**
+    * This will be set to the node id of the node which is assigned
+    */
    protected String nodeId;
 
    protected Boolean instructorApproval;

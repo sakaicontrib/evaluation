@@ -349,7 +349,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
     */
    @SuppressWarnings("unchecked")
    public List<EvalEvaluation> getEvaluationsForOwnerAndGroups(String userId,
-         String[] evalGroupIds, Date recentClosedDate, int startResult, int maxResults) {
+         String[] evalGroupIds, Date recentClosedDate, int startResult, int maxResults, boolean includePartial) {
       Map<String, Object> params = new HashMap<String, Object>();
 
       String recentHQL = "";
@@ -383,9 +383,12 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       }
 
       // need to filter out the partial and deleted state evals
-      String stateHQL = " and eval.state <> :partialState and eval.state <> :deletedState ";
-      params.put("partialState", EvalConstants.EVALUATION_STATE_PARTIAL);
+      String stateHQL = " and eval.state <> :deletedState ";
       params.put("deletedState", EvalConstants.EVALUATION_STATE_DELETED);
+      if (! includePartial) {
+         stateHQL = stateHQL + " and eval.state <> :partialState ";
+         params.put("partialState", EvalConstants.EVALUATION_STATE_PARTIAL);
+      }
 
       List<EvalEvaluation> evals = null;
       String hql = "select eval from EvalEvaluation as eval " 

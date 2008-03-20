@@ -180,8 +180,8 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 				evalIds[i] = ((EvalEvaluation) evalsToTake.get(i)).getId();
 			}
 
-			// now fetch all the information we care about for these evaluationSetupService at once (for speed)
-			Map<Long, List<EvalGroup>> evalGroups = evaluationService.getEvaluationGroups(evalIds, false);
+			// now fetch all the information we care about for these evaluations at once (for speed)
+			Map<Long, List<EvalGroup>> evalGroups = evaluationService.getEvalGroupsForEval(evalIds, false, null);
 			List<EvalResponse> evalResponses = deliveryService.getEvaluationResponses(currentUserId, evalIds, true);
 
 			for (Iterator<EvalEvaluation> itEvals = evalsToTake.iterator(); itEvals.hasNext();) {
@@ -264,7 +264,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		 */
       Boolean instViewResults = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
       if (instViewResults == null) { instViewResults = true; } // if configurable then we will assume some are probably shared
-		List<EvalEvaluation> evals = evaluationSetupService.getVisibleEvaluationsForUser(currentUserId, true, instViewResults);
+		List<EvalEvaluation> evals = evaluationSetupService.getVisibleEvaluationsForUser(currentUserId, true, instViewResults, false);
 		/*
 		 * If the person is an admin, then just point new evals to existing object.
 		 * If the person is not an admin then only show owned evals +

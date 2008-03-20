@@ -142,8 +142,8 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                      new int[] {EvaluationDao.NOT_EQUALS, EvaluationDao.NOT_EQUALS});
                if (evals.size() > 0) {
                   log.info("Checking the state of " + evals.size() + " evaluations to ensure they are all up to date...");
-                  // set the partial purge number of days to 2
-                  long partialPurgeTime = System.currentTimeMillis() - (2 * 24 * 60 * 60 * 1000);
+                  // set the partial purge number of days to 5
+                  long partialPurgeTime = System.currentTimeMillis() - (5 * 24 * 60 * 60 * 1000);
                   // loop through and update the state of the evals if needed
                   int count = 0;
                   for (EvalEvaluation evaluation : evals) {
@@ -520,7 +520,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
 
    @SuppressWarnings("unchecked")
-   public List<EvalEvaluation> getVisibleEvaluationsForUser(String userId, boolean recentOnly, boolean showNotOwned) {
+   public List<EvalEvaluation> getVisibleEvaluationsForUser(String userId, boolean recentOnly, boolean showNotOwned, boolean includePartial) {
 
       Date recentClosedDate = null;
       if (recentOnly) {
@@ -550,7 +550,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          }
       }
 
-      List<EvalEvaluation> l = dao.getEvaluationsForOwnerAndGroups(userId, evalGroupIds, recentClosedDate, 0, 0);
+      List<EvalEvaluation> l = dao.getEvaluationsForOwnerAndGroups(userId, evalGroupIds, recentClosedDate, 0, 0, includePartial);
 
       return l;
    }

@@ -96,7 +96,7 @@ public class RemoveEvalProducer implements ViewComponentProducer, ViewParamsRepo
          UIOutput.make(tofill, "evalAssigned", count + " groups");
       } else if (count == 1) {
          Long[] evalIds = { eval.getId() };
-         Map<Long, List<EvalGroup>> evalGroups = evaluationService.getEvaluationGroups(evalIds, true);
+         Map<Long, List<EvalGroup>> evalGroups = evaluationService.getEvalGroupsForEval(evalIds, true, null);
          List<EvalGroup> groups = evalGroups.get(eval.getId());
          EvalGroup group = groups.get(0);
          String title = group.title;

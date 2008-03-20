@@ -397,7 +397,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       List<Long> ids = null;
 
       // test getting all evals
-      l = evaluationDao.getEvaluationsForOwnerAndGroups(null, null, null, 0, 0);
+      l = evaluationDao.getEvaluationsForOwnerAndGroups(null, null, null, 0, 0, false);
       assertNotNull(l);
       assertEquals(9, l.size());
       // check the order
@@ -409,7 +409,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       assertEquals(ids.get(4), etdl.evaluationProvided.getId() );
 
       // test getting all evals with limit
-      l = evaluationDao.getEvaluationsForOwnerAndGroups(null, null, null, 0, 3);
+      l = evaluationDao.getEvaluationsForOwnerAndGroups(null, null, null, 0, 3, false);
       assertNotNull(l);
       assertEquals(3, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
@@ -418,7 +418,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       assertEquals(ids.get(1), etdl.evaluationClosed.getId() );
       assertEquals(ids.get(2), etdl.evaluationClosedUntaken.getId() );
 
-      l = evaluationDao.getEvaluationsForOwnerAndGroups(null, null, null, 2, 2);
+      l = evaluationDao.getEvaluationsForOwnerAndGroups(null, null, null, 2, 2, false);
       assertNotNull(l);
       assertEquals(2, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
@@ -427,7 +427,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       assertEquals(ids.get(1), etdl.evaluationActive.getId() );
 
       // test filtering by owner
-      l = evaluationDao.getEvaluationsForOwnerAndGroups(EvalTestDataLoad.ADMIN_USER_ID, null, null, 0, 0);
+      l = evaluationDao.getEvaluationsForOwnerAndGroups(EvalTestDataLoad.ADMIN_USER_ID, null, null, 0, 0, false);
       assertNotNull(l);
       assertEquals(4, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
@@ -436,14 +436,14 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       assertTrue(ids.contains( etdl.evaluationClosedUntaken.getId() ));
       assertTrue(ids.contains( etdl.evaluationViewable.getId() ));
 
-      l = evaluationDao.getEvaluationsForOwnerAndGroups(EvalTestDataLoad.USER_ID, null, null, 0, 0);
+      l = evaluationDao.getEvaluationsForOwnerAndGroups(EvalTestDataLoad.USER_ID, null, null, 0, 0, false);
       assertNotNull(l);
       assertEquals(0, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
 
       // test filtering by groups
       l = evaluationDao.getEvaluationsForOwnerAndGroups(null, 
-            new String[] {EvalTestDataLoad.SITE1_REF}, null, 0, 0);
+            new String[] {EvalTestDataLoad.SITE1_REF}, null, 0, 0, false);
       assertNotNull(l);
       assertEquals(5, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
@@ -455,7 +455,7 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
 
       // test filtering by owner and groups
       l = evaluationDao.getEvaluationsForOwnerAndGroups(EvalTestDataLoad.ADMIN_USER_ID, 
-            new String[] {EvalTestDataLoad.SITE1_REF}, null, 0, 0);
+            new String[] {EvalTestDataLoad.SITE1_REF}, null, 0, 0, false);
       assertNotNull(l);
       assertEquals(6, l.size());
       ids = EvalTestDataLoad.makeIdList(l);

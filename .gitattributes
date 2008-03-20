@@ -196,6 +196,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlScalesProducer.j
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ControlTemplatesProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/EvaluationAssignConfirmProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/EvaluationAssignProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/producers/EvaluationAssignmentsProducer.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/EvaluationCreateProducer.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/EvaluationSettingsProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ExistingItemsProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
@@ -365,6 +366,7 @@ tool/src/webapp/content/templates/control_scales.html -text svn_keywords=Date+Re
 tool/src/webapp/content/templates/control_templates.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/evaluation_assign.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/evaluation_assign_confirm.html -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/templates/evaluation_assignments.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/templates/evaluation_create.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/evaluation_settings.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/import_error.html -text svn_keywords=Date+Revision+Author+URL+Id

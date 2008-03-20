@@ -527,11 +527,11 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#getEvaluationGroups(java.lang.Long[], boolean)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#getEvalGroupsForEval(java.lang.Long[], boolean, Boolean)}.
     */
    public void testGetEvaluationGroups() {
-      Map<Long, List<EvalGroup>> m = evaluationService.getEvaluationGroups( 
-            new Long[] { etdl.evaluationClosed.getId() }, true );
+      Map<Long, List<EvalGroup>> m = evaluationService.getEvalGroupsForEval( 
+            new Long[] { etdl.evaluationClosed.getId() }, true, null );
       assertNotNull(m);
       List<EvalGroup> evalGroups = m.get( etdl.evaluationClosed.getId() );
       assertNotNull(evalGroups);
@@ -539,8 +539,8 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       assertTrue( evalGroups.get(0) instanceof EvalGroup );
       assertTrue( evalGroups.get(1) instanceof EvalGroup );
 
-      m = evaluationService.getEvaluationGroups( 
-            new Long[] { etdl.evaluationActive.getId() }, true );
+      m = evaluationService.getEvalGroupsForEval( 
+            new Long[] { etdl.evaluationActive.getId() }, true, null );
       assertNotNull(m);
       evalGroups = m.get( etdl.evaluationActive.getId() );
       assertNotNull(evalGroups);
@@ -549,16 +549,16 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       assertEquals( EvalTestDataLoad.SITE1_REF, ((EvalGroup) evalGroups.get(0)).evalGroupId );
 
       // test no assigned contexts
-      m = evaluationService.getEvaluationGroups( 
-            new Long[] { etdl.evaluationNew.getId() }, true );
+      m = evaluationService.getEvalGroupsForEval( 
+            new Long[] { etdl.evaluationNew.getId() }, true, null );
       assertNotNull(m);
       evalGroups = m.get( etdl.evaluationNew.getId() );
       assertNotNull(evalGroups);
       assertEquals(0, evalGroups.size());
 
       // test invalid
-      m = evaluationService.getEvaluationGroups( 
-            new Long[] { EvalTestDataLoad.INVALID_LONG_ID }, true );
+      m = evaluationService.getEvalGroupsForEval( 
+            new Long[] { EvalTestDataLoad.INVALID_LONG_ID }, true, null );
       assertNotNull(m);
       evalGroups = m.get( EvalTestDataLoad.INVALID_LONG_ID );
       assertNotNull(evalGroups);
@@ -567,12 +567,12 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#getEvaluationAssignGroups(java.lang.Long[], boolean)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#getAssignGroupsForEvals(java.lang.Long[], boolean, Boolean)}.
     */
    public void testGetEvaluationAssignGroups() {
       // this is mostly tested above
-      Map<Long, List<EvalAssignGroup>> m = evaluationService.getEvaluationAssignGroups( 
-            new Long[] { etdl.evaluationClosed.getId() }, true );
+      Map<Long, List<EvalAssignGroup>> m = evaluationService.getAssignGroupsForEvals( 
+            new Long[] { etdl.evaluationClosed.getId() }, true, null );
       assertNotNull(m);
       List<EvalAssignGroup> eags = m.get( etdl.evaluationClosed.getId() );
       assertNotNull(eags);

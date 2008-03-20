@@ -233,7 +233,10 @@ public interface EvalEvaluationService {
    public EvalAssignHierarchy getAssignHierarchyById(Long assignHierarchyId);
 
    /**
-    * Get all the assigned hierarchy nodes by the evaluation they are associated with
+    * Get all the assigned hierarchy nodes by the evaluation they are associated with,
+    * combine this with {@link #getAssignGroupsForEvals(Long[], boolean, Boolean)} to list the groups
+    * which are associated with these nodes
+    * 
     * @param evaluationId unique id of an {@link EvalEvaluation}, this should be used for
     * managing the list of assign hierarchies
     * @return a list of all the hierarchy assignments for an evaluation, empty if none found
@@ -247,25 +250,31 @@ public interface EvalEvaluationService {
     * @param evaluationIds an array of the ids of {@link EvalEvaluation} objects
     * @param includeUnApproved if true, include the evaluation contexts which have not been instructor approved yet,
     * you should not include these when displaying evaluationSetupService to users to take or sending emails
+    * @param includeHierarchyGroups if true then all groups which were added because a node was added will be included,
+    * if false then only groups which were added directly will be included, 
+    * if null then all (directly added and node added groups) will be included
     * @return a Map of evaluationId (Long) -> List of {@link EvalGroup} objects
     */
-   public Map<Long, List<EvalGroup>> getEvaluationGroups(Long[] evaluationIds, boolean includeUnApproved);
+   public Map<Long, List<EvalGroup>> getEvalGroupsForEval(Long[] evaluationIds, boolean includeUnApproved, Boolean includeHierarchyGroups);
 
    /**
     * Get the list of assigned groups for an array of evaluation ids, this
     * is how the evaluation is tied to users (users are associated with a group),
-    * same as {@link #getEvaluationGroups(Long[], boolean)} but returns {@link EvalAssignGroup}s
+    * same as {@link #getEvalGroupsForEval(Long[], boolean, Boolean)} but returns {@link EvalAssignGroup}s
     * 
     * @param evaluationIds an array of the ids of {@link EvalEvaluation} objects
     * @param includeUnApproved if true, include the evaluation contexts which have not been instructor approved yet,
     * you should not include these when displaying evaluationSetupService to users to take or sending emails
+    * @param includeHierarchyGroups if true then all groups which were added because a node was added will be included,
+    * if false then only groups which were added directly will be included,
+    * if null then all (directly added and node added groups) will be included
     * @return a Map of evaluationId (Long) -> List of {@link EvalAssignGroup} objects
     */
-   public Map<Long, List<EvalAssignGroup>> getEvaluationAssignGroups(Long[] evaluationIds, boolean includeUnApproved);
+   public Map<Long, List<EvalAssignGroup>> getAssignGroupsForEvals(Long[] evaluationIds, boolean includeUnApproved, Boolean includeHierarchyGroups);
 
    /**
     * Count the number of eval groups assigned for an evaluation id
-    * (this is much faster than the related method: {@link #getEvaluationGroups(Long[], boolean)})
+    * (this is much faster than the related method: {@link #getEvalGroupsForEval(Long[], boolean, Boolean)})
     * 
     * @param evaluationId the id of an {@link EvalEvaluation} object
     * @return the count of eval groups
