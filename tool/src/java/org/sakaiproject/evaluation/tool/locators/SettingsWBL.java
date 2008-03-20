@@ -19,7 +19,7 @@ import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.utils.SettingsLogicUtils;
 
 import uk.org.ponder.beanutil.WriteableBeanLocator;
-import uk.org.ponder.conversion.StaticLeafParser;
+import uk.org.ponder.conversion.GeneralLeafParser;
 
 /**
  * Obviates the need for a backing bean for administrative functionality 
@@ -40,8 +40,8 @@ public class SettingsWBL implements WriteableBeanLocator {
    }
 
    // Spring injection 
-   private StaticLeafParser leafParser;
-   public void setLeafParser(StaticLeafParser leafParser) {
+   private GeneralLeafParser leafParser;
+   public void setLeafParser(GeneralLeafParser leafParser) {
       this.leafParser = leafParser;
    }
 
