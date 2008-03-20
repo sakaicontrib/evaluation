@@ -520,12 +520,13 @@
          ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
       <property name="settings"
          ref="org.sakaiproject.evaluation.logic.EvalSettings" />  
-      <property name="hierarchyRenderUtil" ref="HierarchyRenderUtil" />
-      <property name="externalHierarchyLogic" ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+      <property name="hierarchyRenderUtil" 
+        ref="org.sakaiproject.evaluation.tool.renderers.HierarchyTreeNodeSelectRenderer" />
+      <property name="externalHierarchyLogic" 
+        ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
    </bean>
 
-   <bean
-      class="org.sakaiproject.evaluation.tool.producers.EvaluationAssignConfirmProducer">
+   <bean class="org.sakaiproject.evaluation.tool.producers.EvaluationAssignConfirmProducer">
       <property name="externalLogic"
          ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="evaluationService"

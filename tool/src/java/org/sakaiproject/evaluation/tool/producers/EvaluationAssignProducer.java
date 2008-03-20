@@ -29,11 +29,10 @@ import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.tool.utils.HierarchyRenderUtil;
+import org.sakaiproject.evaluation.tool.renderers.HierarchyTreeNodeSelectRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 
 import uk.org.ponder.htmlutil.HTMLUtil;
-import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIForm;
@@ -84,8 +83,8 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
       this.settings = settings;
    }
 
-   private HierarchyRenderUtil hierUtil;
-   public void setHierarchyRenderUtil(HierarchyRenderUtil util) {
+   private HierarchyTreeNodeSelectRenderer hierUtil;
+   public void setHierarchyRenderUtil(HierarchyTreeNodeSelectRenderer util) {
       hierUtil = util;
    }
 
