@@ -189,8 +189,7 @@
       <dependency>
          <groupId>sakairsf</groupId>
          <artifactId>SakaiRSFComponents-templates</artifactId>
-<!--     <version>${rsfutil.version}-sakai_${sakairsf.sakai.version}</version> -->
-         <version>0.7.3M1p2-sakai_${sakairsf.sakai.version}</version>
+     <version>${rsfutil.version}-sakai_${sakairsf.sakai.version}</version>
          <type>war</type>
          <properties>
             <explode>true</explode>

@@ -37,8 +37,8 @@ import uk.org.ponder.rsf.components.UISelectLabel;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
 import uk.org.ponder.rsf.evolvers.TextInputEvolver;
-import uk.org.ponder.rsf.flow.jsfnav.DynamicNavigationCaseReporter;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
+import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
@@ -52,7 +52,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * @author "Rick Moyer" <rmoyer@umd.edu>
  */
 public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsReporter,
-      DynamicNavigationCaseReporter {
+      NavigationCaseReporter {
 
    public static final String VIEW_ID = "modify_block";
    public String getViewID() {
