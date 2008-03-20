@@ -511,6 +511,23 @@ public class EvalUtils {
       return returnString;
    }
 
-
+   /**
+    * Check if a string is blank,
+    * if blank then return true
+    * 
+    * @param value any string
+    * @return true if this is blank
+    */
+   public static boolean isBlank(String value) {
+      boolean blank = false;
+      if (value == null) {
+         blank = true;
+      } else {
+         if (value.trim().length() == 0) {
+            blank = true;
+         }
+      }
+      return blank;
+   }
 
 }

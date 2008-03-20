@@ -69,10 +69,8 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
 /**
- * This producer is used to render the evaluation settings page. It is used when
- * user either creates a new evaluation (coming forward from "Begin Evaluation"
- * page or coming backward from "Assign Evaluation to courses" page) or from
- * control panel to edit the existing settings.
+ * This producer is used to render the evaluation settings page,
+ * it is used to control all the settings related to a single evaluation
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  * @author Kapil Ahuja (kahuja@vt.edu)

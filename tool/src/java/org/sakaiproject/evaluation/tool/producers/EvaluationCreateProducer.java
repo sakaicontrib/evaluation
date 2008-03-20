@@ -152,6 +152,7 @@ public class EvaluationCreateProducer implements ViewComponentProducer, ViewPara
             UISelect radios = UISelect.make(chooseTemplate, "templateRadio", 
                   null, null, actionBean + "templateId", 
                   templateList.get(0).getId().toString()); // default template choice is the first one
+            //radios.selection.darreshaper = new ELReference("id-defunnel"); // use the defunneler to bind the template directly
             String selectID = radios.getFullID();
             for (int i = 0; i < templateList.size(); i++) {
                EvalTemplate template = templateList.get(i);
@@ -177,6 +178,7 @@ public class EvaluationCreateProducer implements ViewComponentProducer, ViewPara
       } else {
          // just bind in the template explicitly
          form.parameters.add(new UIELBinding(actionBean + "templateId", evalViewParams.templateId));
+//         form.parameters.add( new UIELBinding(evaluationOTP + "template", new ELReference("templateBeanLocator." + evalViewParams.templateId)) );
          // display the info about the template
          EvalTemplate template = authoringService.getTemplateById(evalViewParams.templateId);
          UIBranchContainer showTemplateBranch = UIBranchContainer.make(tofill, "showTemplate:");

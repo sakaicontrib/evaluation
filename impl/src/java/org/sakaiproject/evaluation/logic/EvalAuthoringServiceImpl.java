@@ -26,6 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
+import org.sakaiproject.evaluation.logic.exceptions.BlankRequiredFieldException;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.model.EvalItem;
@@ -188,6 +189,11 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
          scale.setTitle("adhoc-" + EvalUtils.makeUniqueIdentifier(100));
       }
 
+      // check for required title
+      if (EvalUtils.isBlank(scale.getTitle())) {
+         throw new BlankRequiredFieldException("Cannot save a scale with a blank title", "title");
+      }
+
       // check perms and save
       if (securityChecks.checkUserControlScale(userId, scale)) {
          dao.save(scale);
@@ -344,6 +350,11 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 
       // set the date modified
       item.setLastModified( new Date() );
+
+      // check for required fields first
+      if (EvalUtils.isBlank(item.getItemText())) {
+         throw new BlankRequiredFieldException("Cannot save an item with a blank text", "itemText");
+      }
 
       // validates the item based on the classification
       TemplateItemUtils.validateItemByClassification(item);
@@ -1053,6 +1064,11 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 
       // set the date modified
       template.setLastModified( new Date() );
+
+      // check for required fields first
+      if (EvalUtils.isBlank(template.getTitle())) {
+         throw new BlankRequiredFieldException("Cannot save a template with a blank title", "title");
+      }
 
       // check the sharing constants
       EvalUtils.validateSharingConstant(template.getSharing());

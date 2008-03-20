@@ -26,6 +26,7 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
+import org.sakaiproject.evaluation.logic.exceptions.BlankRequiredFieldException;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
@@ -216,6 +217,7 @@ public class SetupEvalBean {
     * Completed the initial creation page where the template is chosen
     */
    public String completeCreateAction() {
+      // TODO - get rid of this once RSF is fixed
       // set the template on the evaluation in the bean locator (TODO - get rid of this)
       if (templateId == null) {
          throw new IllegalStateException("The templateId is null, it must be set so it can be assigned to the new evaluation");
@@ -228,7 +230,12 @@ public class SetupEvalBean {
       eval.setTemplate(template);
 
       // save the new evaluation
-      evaluationBeanLocator.saveAll();
+      try {
+         evaluationBeanLocator.saveAll();
+      } catch (BlankRequiredFieldException e) {
+         messages.addMessage( new TargettedMessage(e.messageKey, 
+               new Object[] { e.fieldName }, TargettedMessage.SEVERITY_ERROR));
+      }
       return "evalSettings";
    }
 
@@ -245,7 +252,15 @@ public class SetupEvalBean {
          }
       }
 
-      evaluationBeanLocator.saveAll();
+      try {
+         evaluationBeanLocator.saveAll();
+      } catch (BlankRequiredFieldException e) {
+         messages.addMessage( new TargettedMessage(e.messageKey, 
+               new Object[] { e.fieldName }, TargettedMessage.SEVERITY_ERROR));
+         throw new RuntimeException(e); // should not be needed
+      }
+      // TODO - fix this once RSF is fixed, remove all above this line and uncomment below
+//    completeCreateAction();
 
       EvalEvaluation eval = evaluationBeanLocator.getCurrentEval();
       String destination = "controlEvals";

@@ -51,7 +51,8 @@ public class EntityNameInferrerImpl implements EntityNameInferrer {
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.rsf.state.entity.EntityNameInferrer#getEntityName(java.lang.Class)
 	 */
-	public String getEntityName(Class entityclazz) {
+	@SuppressWarnings("unchecked")
+   public String getEntityName(Class entityclazz) {
 		String name = entityclazz.getName();
 		for (int i = 0; i < ENTITY_CLASSES.length; i++) {
 			if (ENTITY_CLASSES[i].equals(name)) {

@@ -22,6 +22,7 @@ import org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.exceptions.BlankRequiredFieldException;
 import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
@@ -173,8 +174,9 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic),
                EvalTestDataLoad.MAINT_USER_ID );
          fail("Should have thrown exception");
-      } catch (NullPointerException e) {
+      } catch (BlankRequiredFieldException e) {
          assertNotNull(e);
+         assertEquals("startDate", e.fieldName);
          //fail("Exception: " + e.getMessage()); // see why failing
       }
 
