@@ -25,7 +25,6 @@ import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.providers.EvalGroupsProvider;
 import org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeGroupsProducer;
 import org.sakaiproject.evaluation.tool.producers.ModifyHierarchyNodeProducer;
-import org.sakaiproject.evaluation.tool.renderers.HierarchyRowRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.HierarchyNodeParameters;
 import org.sakaiproject.evaluation.tool.viewparams.ModifyHierarchyNodeParameters;
 
@@ -71,10 +70,10 @@ public class HierarchyRenderUtil {
    /* 
     * This is currently for the select checkboxes in the new eval wizard.
     */
-   private HierarchyRowRenderer hierarchyRowRenderer;
-   public void setHierarchyRowRenderer(HierarchyRowRenderer renderer) {
-       hierarchyRowRenderer = renderer;
-   }
+  // private HierarchyRowRenderer hierarchyRowRenderer;
+  // public void setHierarchyRowRenderer(HierarchyRowRenderer renderer) {
+  //     hierarchyRowRenderer = renderer;
+  // }
 
    /**
     * This renders a view of the hierarchy that allows modification and addition of
@@ -98,68 +97,6 @@ public class HierarchyRenderUtil {
       renderHierarchyNode(joint, root, 0);
    }
 
-   /**
-    * @param parent
-    * @param clientID
-    * @param elbinding
-    */
-   public void renderSelectHierarchyNodesTree(UIContainer parent, String clientID, String elbinding, String groupElBinding) {
-      UIJointContainer joint = new UIJointContainer(parent, clientID, "hierarchy_table_treeview:");
-
-      UIMessage.make(joint, "node-select-header", "controlhierarchy.table.selectnode.header");
-      UIMessage.make(joint, "hierarchy-header", "controlhierarchy.table.heirarchy.header");
-
-      EvalHierarchyNode root = hierarchyLogic.getRootLevelNode();
-
-      //UISelect siteCheckboxes = UISelect.makeMultiple(joint, "selectColumnCheckboxes", new String[] {}, elbinding, null);
-      //String selectID = siteCheckboxes.getFullID();
-      //List<String> checkboxValues = new ArrayList<String>();
-
-      renderSelectHierarchyNode(joint, root, 0);
-
-      //String[] ids = checkboxValues.toArray(new String[]{});
-      //siteCheckboxes.optionlist = siteCheckboxes.optionnames = UIOutputMany.make(ids);
-   }
-
-   /**
-    * @param tofill
-    * @param node
-    * @param level
-    * @param selectID
-    * @param checkboxValues
-    */
-   private void renderSelectHierarchyNode(UIContainer tofill, EvalHierarchyNode node, int level ) {
-      hierarchyRowRenderer.renderRow(tofill, "hierarchy-level-row:", level, node);
-      
-      Set<String> groupIDs = hierarchyLogic.getEvalGroupsForNode(node.id);
-      for (String groupID: groupIDs) {
-          EvalGroup evalGroupObj = externalLogic.makeEvalGroupObject(groupID);
-          hierarchyRowRenderer.renderRow(tofill, "hierarchy-level-row:", level+1, evalGroupObj);
-      }
-      
-      for (String childNodeID: node.directChildNodeIds) {
-          EvalHierarchyNode childHierNode = hierarchyLogic.getNodeById(childNodeID);
-          renderSelectHierarchyNode(tofill, childHierNode, level+1);
-      }
-      
-      /* 
-      String title = node.title != null ? node.title : "Null Title?";
-      UIBranchContainer tableRow = UIBranchContainer.make(tofill, "hierarchy-level-row:");
-      UIOutput.make(tableRow, "node-select-cell");
-      UISelectChoice.make(tableRow, "select-checkbox", selectID, checkboxValues.size());
-      checkboxValues.add(node.id);
-      UIOutput name = UIOutput.make(tableRow, "node-name", title);
-      name.decorate(new UIFreeAttributeDecorator( MapUtil.make("style", "text-indent:" + (level*2) + "em") ));
-
-      Set<String> groupIDs = hierarchyLogic.getEvalGroupsForNode(node.id);
-      for (String groupID: groupIDs) {
-          renderSelectHierarchyGroup(tofill, groupID, level+1, evalGroupIDs, groupClientID);
-      }
-
-      for (String childId : node.directChildNodeIds) {
-         renderSelectHierarchyNode(tofill, hierarchyLogic.getNodeById(childId), level+1, selectID, checkboxValues, evalGroupIDs, groupElBinding, groupClientID);
-      } */
-   }
    
    private void renderSelectHierarchyGroup(UIContainer tofill, String groupID, int level, Set<String> evalGroupIDs, String clientID) {
        UIBranchContainer tableRow = UIBranchContainer.make(tofill, "hierarchy-level-row:");

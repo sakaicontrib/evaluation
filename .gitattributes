@@ -226,7 +226,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/renderers/AddItemControlRenderer.
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/BlockRenderer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/HeaderRenderer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/HierarchyNodeSelectorRenderer.java svn_keywords=Date+Revision+Author+URL+Id
-tool/src/java/org/sakaiproject/evaluation/tool/renderers/HierarchyRowRenderer.java svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/renderers/HierarchyTreeNodeSelectRenderer.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/ItemRenderer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/ItemRendererImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/renderers/MultipleAnswerRenderer.java svn_keywords=Date+Revision+Author+URL+Id
