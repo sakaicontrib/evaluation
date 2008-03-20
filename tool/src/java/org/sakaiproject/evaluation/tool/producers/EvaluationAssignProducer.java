@@ -185,12 +185,13 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
          // Display the table for selecting hierarchy nodes
          Boolean showHierarchy = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
          if (showHierarchy) {
-            UIOutput hierarchyCheckbox = UIOutput.make(form, "use-hierarchynodes-checkbox");
+            UIOutput.make(form, "hierarchy-node-area");
             
+            UIOutput hierarchyCheckbox = UIOutput.make(form, "use-hierarchynodes-checkbox");
             UIOutput hierarchyDiv = UIOutput.make(form, "hierarchy-assignment-area");
-
             initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.hideAndShowRegionWithCheckbox", 
                   new String[] {hierarchyDiv.getFullID(), hierarchyCheckbox.getFullID()}));
+            
             hierUtil.renderSelectHierarchyNodesTree(form, "hierarchy-tree-select:", "", "" );
          }
 
