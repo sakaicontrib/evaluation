@@ -193,8 +193,6 @@
          ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
       <property name="externalLogic"
          ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
-      <property name="hierarchyRowRenderer"
-         ref="HierarchySelectNodeRowRenderer" />
    </bean>
 
    <!-- producers below here -->
