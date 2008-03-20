@@ -56,7 +56,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
 /**
- * assign an evaluation to groups and hierarchy nodes 
+ * View for assigning an evaluation to groups and hierarchy nodes. 
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  * @author Steve Githens (sgithens@caret.cam.ac.uk)
@@ -97,33 +97,9 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
 
       // local variables used in the render logic
       String currentUserId = externalLogic.getCurrentUserId();
-      boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
-      boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
-
-      /*
-       * top links here
-       */
-      UIInternalLink.make(tofill, "summary-link", 
-            UIMessage.make("summary.page.title"), 
-            new SimpleViewParameters(SummaryProducer.VIEW_ID));
-
-      if (userAdmin) {
-         UIInternalLink.make(tofill, "administrate-link", 
-               UIMessage.make("administrate.page.title"),
-               new SimpleViewParameters(AdministrateProducer.VIEW_ID));
-         UIInternalLink.make(tofill, "control-scales-link",
-               UIMessage.make("controlscales.page.title"),
-               new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
-      }
-
-      if (beginEvaluation) {
-         UIInternalLink.make(tofill, "control-evaluations-link",
-               UIMessage.make("controlevaluations.page.title"),
-               new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
-      } else {
-         throw new SecurityException("User attempted to access " + 
-               VIEW_ID + " when they are not allowed");
-      }
+      
+      // render top links
+      renderTopLinks(tofill, currentUserId);
 
       EvalViewParameters evalViewParams = (EvalViewParameters) viewparams;
       if (evalViewParams.evaluationId == null) {
@@ -136,7 +112,6 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
        */
       EvalEvaluation evaluation = evaluationService.getEvaluationById(evalViewParams.evaluationId);
 
-
       UIMessage.make(tofill, "assign-eval-edit-page-title", "assigneval.assign.page.title", new Object[] {evaluation.getTitle()});
       UIMessage.make(tofill, "assign-eval-instructions", "assigneval.assign.instructions", new Object[] {evaluation.getTitle()});
 
@@ -145,17 +120,33 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
       formViewParams.viewID = EvaluationAssignConfirmProducer.VIEW_ID;
       
       /* 
-       * About this views form.
+       * About this form.
        * 
+       * This is a GET form that has 2 UISelects, one for Hierarchy Nodes, and
+       * one for Eval Groups (which includes adhoc groups).  They are interspered
+       * and mixed together. In order to do this easily we pass in empty String
+       * arrays for the option values and labels in the UISelects. This is partially
+       * because rendering each individual checkbox requires and integer indicating
+       * it's position, and this view is too complicated to generate these arrays
+       * ahead of time.  So we generate the String Arrays on the fly, using the list.size()-1
+       * at each point to get this index.  Then at the very end we update the UISelect's
+       * with the appropriate optionlist and optionnames. This actually works 
+       * really good and the wizard feels much smoother than it did with the 
+       * old session bean.
+       * 
+       * Also see the comments on HierarchyTreeNodeSelectRenderer. 
        * 
        */
       UIForm form = UIForm.make(tofill, "eval-assign-form", formViewParams);
+      
+      // Things for building the UISelect of Hierarchy Node Checkboxes
       List<String> hierNodesLabels = new ArrayList<String>();
       List<String> hierNodesValues = new ArrayList<String>();
       UISelect hierarchyNodesSelect = UISelect.makeMultiple(form, "hierarchyNodeSelectHolder", 
               new String[] {}, new String[] {}, "selectedHierarchyNodeIDs", new String[] {});
       String hierNodesSelectID = hierarchyNodesSelect.getFullID();
       
+      // Things for building the UISelect of Eval Group Checkboxes
       List<String> evalGroupsLabels = new ArrayList<String>();
       List<String> evalGroupsValues = new ArrayList<String>();
       UISelect evalGroupsSelect = UISelect.makeMultiple(form, "evalGroupSelectHolder", 
@@ -171,6 +162,8 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
        * because it doesn't seem to take arrays for the javascript arguments (and keep 
        * them as javascript arrays).  So we are just putting the javascript initialization
        * here and running it at the bottom of the page.
+       * 
+       * TODO: Replace these silly checkboxes with arrows, and put it in a seperate method.
        */
       StringBuilder initJS = new StringBuilder();
 
@@ -258,7 +251,8 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
        *  ..."
        */
       
-      // Add all the groups and hierarchy nodes back to the UISelect Many's
+      // Add all the groups and hierarchy nodes back to the UISelect Many's. see
+      // the large comment further up.
       evalGroupsSelect.optionlist = UIOutputMany.make(evalGroupsValues.toArray(new String[] {}));
       evalGroupsSelect.optionnames = UIOutputMany.make(evalGroupsLabels.toArray(new String[] {}));
 
@@ -333,6 +327,42 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
     */
    public ViewParameters getViewParameters() {
       return new EvalViewParameters();
+   }
+   
+   /**
+    * Renders the usual action breadcrumbs at the top.
+    * 
+    * @param tofill
+    * @param currentUserId
+    */
+   private void renderTopLinks(UIContainer tofill, String currentUserId) {
+      boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
+      boolean beginEvaluation = evaluationService.canBeginEvaluation(currentUserId);
+
+      /*
+       * top links here
+       */
+      UIInternalLink.make(tofill, "summary-link", 
+            UIMessage.make("summary.page.title"), 
+            new SimpleViewParameters(SummaryProducer.VIEW_ID));
+
+      if (userAdmin) {
+         UIInternalLink.make(tofill, "administrate-link", 
+               UIMessage.make("administrate.page.title"),
+               new SimpleViewParameters(AdministrateProducer.VIEW_ID));
+         UIInternalLink.make(tofill, "control-scales-link",
+               UIMessage.make("controlscales.page.title"),
+               new SimpleViewParameters(ControlScalesProducer.VIEW_ID));
+      }
+
+      if (beginEvaluation) {
+         UIInternalLink.make(tofill, "control-evaluations-link",
+               UIMessage.make("controlevaluations.page.title"),
+               new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
+      } else {
+         throw new SecurityException("User attempted to access " + 
+               VIEW_ID + " when they are not allowed");
+      }
    }
 
 }
