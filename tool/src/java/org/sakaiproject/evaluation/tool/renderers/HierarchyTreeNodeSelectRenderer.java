@@ -25,6 +25,8 @@ import uk.org.ponder.rsf.components.decorators.UIFreeAttributeDecorator;
  * several recursive methods.
  * 
  * This class should not be used as a singleton, it has instance fields.
+ * 
+ * @author Steven Githens
  */
 public class HierarchyTreeNodeSelectRenderer {
     private ExternalHierarchyLogic hierarchyLogic;
@@ -44,12 +46,31 @@ public class HierarchyTreeNodeSelectRenderer {
     List<String> hierNodeLabels; 
     List<String> hierNodeValues;
     
-    /**
-     * @param parent
-     * @param clientID
-     * @param elbinding
-     */
-    public void renderSelectHierarchyNodesTree(UIContainer parent, String clientID, 
+    
+   /**
+    * This is the main entry point for rendering the hierarchy with selectable
+    * checkboxes.  The parent container should be inside whatever form is being
+    * used. The groups and nodes SelectID's are the getFullID's that were generated
+    * from the UISelect. We're doing a GET form here so there are no EL Bindings
+    * for these checkboxes.  The Lists of things are used for storing the option
+    * label/value at each point.  These are live references that are passed in 
+    * and used after this method invocation to update the UISelect.optionslist
+    * and UISelect.optionnames for the Hierarchy Nodes and Group Nodes.
+    * 
+    * From a visual perspective, the Hierarchy and Group Nodes are interspersed
+    * together throughout the page, but we keep them seperate with the two 
+    * UISelects.
+    * 
+    * @param parent
+    * @param clientID
+    * @param groupsSelectID
+    * @param hierNodesSelectID
+    * @param evalGroupLabels
+    * @param evalGroupValues
+    * @param hierNodeLabels
+    * @param hierNodeValues
+    */
+   public void renderSelectHierarchyNodesTree(UIContainer parent, String clientID, 
             String groupsSelectID, String hierNodesSelectID,
             List<String> evalGroupLabels, List<String> evalGroupValues,
             List<String> hierNodeLabels, List<String> hierNodeValues) {
@@ -67,24 +88,18 @@ public class HierarchyTreeNodeSelectRenderer {
 
        EvalHierarchyNode root = hierarchyLogic.getRootLevelNode();
 
-       //UISelect siteCheckboxes = UISelect.makeMultiple(joint, "selectColumnCheckboxes", new String[] {}, elbinding, null);
-       //String selectID = siteCheckboxes.getFullID();
-       //List<String> checkboxValues = new ArrayList<String>();
-
        renderSelectHierarchyNode(joint, root, 0);
-
-       //String[] ids = checkboxValues.toArray(new String[]{});
-       //siteCheckboxes.optionlist = siteCheckboxes.optionnames = UIOutputMany.make(ids);
     }
     
-    /**
-     * @param tofill
-     * @param node
-     * @param level
-     * @param selectID
-     * @param checkboxValues
-     */
-    private void renderSelectHierarchyNode(UIContainer tofill, EvalHierarchyNode node, int level ) {
+
+   /**
+    * Performs the recursive rendering logic for a single hierarchy node.
+    * 
+    * @param tofill
+    * @param node
+    * @param level
+    */
+   private void renderSelectHierarchyNode(UIContainer tofill, EvalHierarchyNode node, int level ) {
        renderRow(tofill, "hierarchy-level-row:", level, node);
        
        Set<String> groupIDs = hierarchyLogic.getEvalGroupsForNode(node.id);
@@ -98,26 +113,18 @@ public class HierarchyTreeNodeSelectRenderer {
            renderSelectHierarchyNode(tofill, childHierNode, level+1);
        }
        
-       /* 
-       String title = node.title != null ? node.title : "Null Title?";
-       UIBranchContainer tableRow = UIBranchContainer.make(tofill, "hierarchy-level-row:");
-       UIOutput.make(tableRow, "node-select-cell");
-       UISelectChoice.make(tableRow, "select-checkbox", selectID, checkboxValues.size());
-       checkboxValues.add(node.id);
-       UIOutput name = UIOutput.make(tableRow, "node-name", title);
-       name.decorate(new UIFreeAttributeDecorator( MapUtil.make("style", "text-indent:" + (level*2) + "em") ));
-
-       Set<String> groupIDs = hierarchyLogic.getEvalGroupsForNode(node.id);
-       for (String groupID: groupIDs) {
-           renderSelectHierarchyGroup(tofill, groupID, level+1, evalGroupIDs, groupClientID);
-       }
-
-       for (String childId : node.directChildNodeIds) {
-          renderSelectHierarchyNode(tofill, hierarchyLogic.getNodeById(childId), level+1, selectID, checkboxValues, evalGroupIDs, groupElBinding, groupClientID);
-       } */
     }
     
-    public void renderRow(UIContainer parent, String clientID, int level, Object toRender) {
+   /**
+    * Renders a single row, which could either be a hierarchy node or eval group
+    * with a checkbox.
+    *
+    * @param parent
+    * @param clientID
+    * @param level
+    * @param toRender
+    */
+   private void renderRow(UIContainer parent, String clientID, int level, Object toRender) {
         UIBranchContainer tableRow = UIBranchContainer.make(parent, "hierarchy-level-row:");
         
         UIOutput.make(tableRow, "node-select-cell");
@@ -131,7 +138,6 @@ public class HierarchyTreeNodeSelectRenderer {
             hierNodeValues.add(evalHierNode.id);
             UISelectChoice choice = UISelectChoice.make(tableRow, "select-checkbox",
                 hierNodesSelectID, hierNodeLabels.size()-1);
-            //UIBoundBoolean.make(tableRow, "select-checkbox", "evaluationBean.selectedEvalHierarchyNodeIDsMap."+evalHierNode.id);
         }
         else if (toRender instanceof EvalGroup) {
             EvalGroup evalGroup = (EvalGroup) toRender;
@@ -142,8 +148,6 @@ public class HierarchyTreeNodeSelectRenderer {
             
             UISelectChoice choice = UISelectChoice.make(tableRow, "select-checkbox",
                 groupsSelectID, evalGroupLabels.size()-1);
-            
-            //UIBoundBoolean.make(tableRow, "select-checkbox", "evaluationBean.selectedEvalGroupIDsMap."+evalGroup.evalGroupId);
         }
         else {
             title = "";
