@@ -390,7 +390,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
 
       // email available template link
       UIInternalLink.make(form, "emailAvailable_link", UIMessage.make("evalsettings.available.mail.link"), 
-            new EmailViewParameters(PreviewEmailProducer.VIEW_ID, null, EvalConstants.EMAIL_TEMPLATE_AVAILABLE, true) );
+            new EmailViewParameters(PreviewEmailProducer.VIEW_ID, null, EvalConstants.EMAIL_TEMPLATE_AVAILABLE, evaluation.getId()) );
 
       // email reminder control
       UISelect reminderDaysSelect = UISelect.make(form, "reminderDays", EvalToolConstants.REMINDER_EMAIL_DAYS_VALUES, 
@@ -401,7 +401,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
 
       // email reminder template link
       UIInternalLink.make(form, "emailReminder_link", UIMessage.make("evalsettings.reminder.mail.link"), 
-            new EmailViewParameters(PreviewEmailProducer.VIEW_ID, null, EvalConstants.EMAIL_TEMPLATE_REMINDER, true) );
+            new EmailViewParameters(PreviewEmailProducer.VIEW_ID, null, EvalConstants.EMAIL_TEMPLATE_REMINDER, evaluation.getId()) );
 
       // email from address control
       String defaultEmail = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);

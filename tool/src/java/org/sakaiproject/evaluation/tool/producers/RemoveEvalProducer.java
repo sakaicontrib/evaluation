@@ -1,15 +1,16 @@
-/******************************************************************************
- * RemoveEvalProducer.java - created by fengr@vt.edu on Nov 16, 2006
- * 
- * Copyright (c) 2007 Virginia Polytechnic Institute and State University
+/**
+ * $Id$
+ * $URL$
+ * RemoveEvalProducer.java - evaluation - Nov 16, 2006 11:32:44 AM - fengr
+ **************************************************************************
+ * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
- * 
- * Contributors:
- * Rui Feng (fengr@vt.edu)
- *****************************************************************************/
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ */
 
 package org.sakaiproject.evaluation.tool.producers;
 
@@ -40,9 +41,9 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
 /**
- * This page confirms that the user wants to remove an evaluation
+ * This displays the evaluation removal options to the user,
+ * rewrite of the original which is simpler and includes error checking
  * 
- * @author Rui Feng (fengr@vt.edu)
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class RemoveEvalProducer implements ViewComponentProducer, ViewParamsReporter, NavigationCaseReporter {
@@ -62,68 +63,65 @@ public class RemoveEvalProducer implements ViewComponentProducer, ViewParamsRepo
       this.locale=locale;
    }
 
-   public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
-      UIMessage.make(tofill, "page-title", "removeeval.page.title");	
+   /* (non-Javadoc)
+    * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
+    */
+   public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
       UIInternalLink.make(tofill, "summary-link", UIMessage.make("summary.page.title"),
             new SimpleViewParameters(SummaryProducer.VIEW_ID));
 
-      UIInternalLink.make(tofill, "control-evaluations-link",
-            UIMessage.make("controlevaluations.page.title"), new SimpleViewParameters(
-                  ControlEvaluationsProducer.VIEW_ID));
-
+      UIInternalLink.make(tofill, "control-evaluations-link", UIMessage.make("controlevaluations.page.title"), 
+            new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID) );
 
       EvalViewParameters evalViewParams = (EvalViewParameters) viewparams;
-
-      if (evalViewParams.templateId != null) {
-         EvalEvaluation eval = evaluationService.getEvaluationById(evalViewParams.evaluationId);
-         if (eval != null) {
-            UIMessage.make(tofill, "remove-eval-confirm-name", 
-                  "removeeval.confirm.name", new Object[] { eval.getTitle() });
-            UIMessage.make(tofill, "remove-eval-note", "removeeval.note");
-
-            UIMessage.make(tofill, "eval-title-header", "removeeval.title.header");
-            UIOutput.make(tofill, "evalTitle", eval.getTitle());
-            UIMessage.make(tofill, "assigned-header", "removeeval.assigned.header");
-            UIMessage.make(tofill, "start-date-header", "removeeval.start.date.header");
-            UIMessage.make(tofill, "due-date-header", "removeeval.due.date.header");
-
-            int count = evaluationService.countEvaluationGroups(eval.getId());
-            if (count > 1) {
-               UIOutput.make(tofill, "evalAssigned", count + " groups");
-            } else if (count == 1) {
-               Long[] evalIds = { eval.getId() };
-               Map<Long, List<EvalGroup>> evalGroups = evaluationService.getEvaluationGroups(evalIds, true);
-               List<EvalGroup> groups = evalGroups.get(eval.getId());
-               EvalGroup group = groups.get(0);
-               String title = group.title;
-               UIOutput.make(tofill, "evalAssigned", title);
-            } else {
-               UIMessage.make(tofill, "evalAssigned", "removeeval.assigned.none");
-            }
-
-            DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
-
-            UIOutput.make(tofill, "evalStartDate", df.format(eval.getStartDate()));
-            UIOutput.make(tofill, "evalDueDate", df.format(eval.getDueDate()));
-
-
-            UIMessage.make(tofill, "cancel-command-link", "general.cancel.button");
-
-            String actionBean = "setupEvalBean.";
-            String actionBinding = "removeEvalAction";
-
-            UIForm form = UIForm.make(tofill, "removeEvalForm");
-
-            UICommand deleteCommand = UICommand.make(form, "remove-eval-command-link", 
-                  UIMessage.make("removeeval.remove.button"), actionBean + actionBinding);
-            deleteCommand.parameters.add(new UIELBinding(actionBean + "evaluationId", eval.getId()));
-
-         } else {
-            throw new RuntimeException("Cannot remove evaluation, no eval id found in passed in params, illegal access to page");
-         }
+      if (evalViewParams.evaluationId == null) {
+         throw new IllegalArgumentException("Cannot access this view unless the evaluationId is set");
       }
+
+      EvalEvaluation eval = evaluationService.getEvaluationById(evalViewParams.evaluationId);
+      if (eval == null) {
+         throw new RuntimeException("Cannot remove evaluation, no eval id found in passed in params, illegal access to page");
+      }
+
+         
+      UIMessage.make(tofill, "remove-eval-confirm-name", 
+            "removeeval.confirm.name", new Object[] { eval.getTitle() });
+
+      UIOutput.make(tofill, "evalTitle", eval.getTitle());
+
+      int count = evaluationService.countEvaluationGroups(eval.getId());
+      if (count > 1) {
+         UIOutput.make(tofill, "evalAssigned", count + " groups");
+      } else if (count == 1) {
+         Long[] evalIds = { eval.getId() };
+         Map<Long, List<EvalGroup>> evalGroups = evaluationService.getEvaluationGroups(evalIds, true);
+         List<EvalGroup> groups = evalGroups.get(eval.getId());
+         EvalGroup group = groups.get(0);
+         String title = group.title;
+         UIOutput.make(tofill, "evalAssigned", title);
+      } else {
+         UIMessage.make(tofill, "evalAssigned", "removeeval.assigned.none");
+      }
+
+      DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+
+      UIOutput.make(tofill, "evalStartDate", df.format(eval.getStartDate()));
+      UIOutput.make(tofill, "evalDueDate", df.format(eval.getDueDate()));
+
+
+      UIMessage.make(tofill, "cancel-command-link", "general.cancel.button");
+
+      String actionBean = "setupEvalBean.";
+      String actionBinding = "removeEvalAction";
+
+      UIForm form = UIForm.make(tofill, "removeEvalForm");
+
+      UICommand deleteCommand = UICommand.make(form, "remove-eval-command-link", 
+            UIMessage.make("removeeval.remove.button"), actionBean + actionBinding);
+      deleteCommand.parameters.add(new UIELBinding(actionBean + "evaluationId", eval.getId()));
+
    }
 
    /* (non-Javadoc)

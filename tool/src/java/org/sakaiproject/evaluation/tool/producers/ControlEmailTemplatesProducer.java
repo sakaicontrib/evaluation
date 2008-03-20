@@ -151,7 +151,7 @@ public class ControlEmailTemplatesProducer implements ViewComponentProducer, Vie
          if ( canControl ) {
             UIInternalLink.make(templatesBranch, "modify_link", 
                   UIMessage.make("general.command.edit"), 
-                  new EmailViewParameters(ModifyEmailProducer.VIEW_ID, emailTemplate.getId(), emailTemplate.getType(), false) );
+                  new EmailViewParameters(ModifyEmailProducer.VIEW_ID, emailTemplate.getId(), emailTemplate.getType(), null) );
          } else {
             UIMessage.make(templatesBranch, "modify_link_disabled", "general.command.edit");
          }

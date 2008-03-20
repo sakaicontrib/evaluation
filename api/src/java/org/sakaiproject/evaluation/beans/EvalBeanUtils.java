@@ -225,6 +225,12 @@ public class EvalBeanUtils {
          eval.setReminderDays(1);
       }
 
+      // set the reminder email address to the default
+      if (eval.getReminderFromEmail() == null) {
+         String from = (String) settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
+         eval.setReminderFromEmail(from);
+      }
+
       // admin settings
       if (eval.getInstructorOpt() == null) {
          String instOpt = (String) settings.get(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE);
