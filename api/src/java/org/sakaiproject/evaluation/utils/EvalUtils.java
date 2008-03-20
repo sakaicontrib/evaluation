@@ -313,7 +313,7 @@ public class EvalUtils {
     */
    public static int getHoursDifference(Date date1, Date date2) {
       long millisecondsDifference = date2.getTime() - date1.getTime();
-      return (int) millisecondsDifference / (60*60*1000);
+      return (int) (millisecondsDifference / (60*60*1000));
    }
 
 
