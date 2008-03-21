@@ -683,90 +683,90 @@ public class EvalTestDataLoad {
       templateItem1User = new EvalTemplateItem( new Date(), USER_ID, 
             templateUser, item1, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
             EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
-            null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, null, null, null);
+            null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, false, null, null, null);
       templateItem1P = new EvalTemplateItem( new Date(), MAINT_USER_ID, 
             templatePublic, item1, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
             EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
-            null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, null, null, null);
+            null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, false, null, null, null);
       templateItem1U = new EvalTemplateItem( new Date(), MAINT_USER_ID, 
             templateUnused, item1, new Integer(1), EvalConstants.ITEM_CATEGORY_INSTRUCTOR,
             EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
-            null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, null, null, null);
+            null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, false, null, null, null);
       templateItem2A = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
             templateAdmin, item2, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
             EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
-            null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, null, null, null);
+            null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, false, null, null, null);
       templateItem3A = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
             templateAdmin, item3, new Integer(2), EvalConstants.ITEM_CATEGORY_COURSE,
             EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
-            null, EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL, Boolean.FALSE, null, null, null);
+            null, EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL, Boolean.FALSE, false, null, null, null);
       templateItem3U = new EvalTemplateItem( new Date(), MAINT_USER_ID, 
             templateUnused, item3, new Integer(2), EvalConstants.ITEM_CATEGORY_COURSE,
             EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
-            null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, null, null, null);
+            null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, false, null, null, null);
       templateItem3PU = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
             templatePublicUnused, item3, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
             EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
-            null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, null, null, null);
+            null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, false, null, null, null);
       templateItem5A = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
             templateAdmin, item5, new Integer(3), EvalConstants.ITEM_CATEGORY_INSTRUCTOR,
             EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
-            new Integer(3), null, Boolean.FALSE, null, null, null);
+            new Integer(3), null, Boolean.FALSE, false, null, null, null);
       templateItem5User = new EvalTemplateItem( new Date(), USER_ID, 
             templateUser, item5, new Integer(2), EvalConstants.ITEM_CATEGORY_INSTRUCTOR,
             EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
-            new Integer(2), null, Boolean.FALSE, null, null, null);
+            new Integer(2), null, Boolean.FALSE, false, null, null, null);
       templateItem5U = new EvalTemplateItem( new Date(), MAINT_USER_ID, 
             templateUnused, item5, new Integer(3), EvalConstants.ITEM_CATEGORY_INSTRUCTOR,
             EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
-            new Integer(3), null, Boolean.FALSE, null, null, null);
+            new Integer(3), null, Boolean.FALSE, false, null, null, null);
       templateItem6UU = new EvalTemplateItem( new Date(), USER_ID, 
             templateUserUnused, item6, new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE,
             EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
-            new Integer(4), null, Boolean.FALSE, null, null, null);
+            new Integer(4), null, Boolean.FALSE, false, null, null, null);
       // items block
       templateItem9B = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
             templateAdminBlock, item9, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
             EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
-            null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, Boolean.TRUE, null, null);
+            null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, false, Boolean.TRUE, null, null);
       templateItem2B = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
             templateAdminBlock, item2, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
             EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
-            null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, Boolean.FALSE, templateItem9B.getId(), null );
+            null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, false, Boolean.FALSE, templateItem9B.getId(), null );
       templateItem3B = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
             templateAdminBlock, item3, new Integer(2), EvalConstants.ITEM_CATEGORY_COURSE,
             EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
-            null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, Boolean.FALSE, templateItem9B.getId(), null );
+            null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, false, Boolean.FALSE, templateItem9B.getId(), null );
       // added items
       templateItem10AC1 = new EvalTemplateItem( new Date(), MAINT_USER_ID, 
             templateAdminComplex, item10, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
             EvalConstants.HIERARCHY_LEVEL_INSTRUCTOR, MAINT_USER_ID,
-            new Integer(2), null, Boolean.FALSE, null, null, null);
+            new Integer(2), null, Boolean.FALSE, false, null, null, null);
       templateItem10AC2 = new EvalTemplateItem( new Date(), MAINT_USER_ID, 
             templateAdminComplex, item10, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
             EvalConstants.HIERARCHY_LEVEL_GROUP, SITE1_REF,
-            new Integer(2), null, Boolean.FALSE, null, null, null);
+            new Integer(2), null, Boolean.FALSE, false, null, null, null);
       templateItem10AC3 = new EvalTemplateItem( new Date(), MAINT_USER_ID, 
             templateAdminComplex, item10, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
             EvalConstants.HIERARCHY_LEVEL_GROUP, SITE2_REF,
-            new Integer(2), null, Boolean.FALSE, null, null, null);
+            new Integer(2), null, Boolean.FALSE, false, null, null, null);
 
       templateItem1Eid = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
             templateEid, item1Eid, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
             EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
-            null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, null, null, null);
+            null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, false, null, null, null);
       templateItem1Eid.setEid("test-templateitem-1");
 
       templateItem2Eid = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
             templateEid, item2Eid, new Integer(2), EvalConstants.ITEM_CATEGORY_COURSE,
             EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
-            null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, null, null, null);
+            null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, false, null, null, null);
       templateItem2Eid.setEid("test-templateitem-2");
 
       templateItem3Eid = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
             templateEid, item3Eid, new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE,
             EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
-            null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, null, null, null);
+            null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, false, null, null, null);
       templateItem3Eid.setEid("test-templateitem-3");
 
       // associate the templates with the link
@@ -1004,18 +1004,18 @@ public class EvalTestDataLoad {
       response6 = new EvalResponse(new Date(), USER_ID, SITE2_REF, 
             new Date(), today, null, evaluationClosed);
 
-      answer1_1 = new EvalAnswer(response1, templateItem1P, item1, null, null, null, ANSWER_SCALED_ONE, null);
+      answer1_1 = new EvalAnswer(response1, templateItem1P, item1, null, null, null, ANSWER_SCALED_ONE, null, null);
 
-      answer2_2 = new EvalAnswer(response2, templateItem2A, item2, null, null, null, ANSWER_SCALED_ONE, null);
-      answer2_5 = new EvalAnswer(response2, templateItem5A, item5, MAINT_USER_ID, EvalConstants.ITEM_CATEGORY_INSTRUCTOR, ANSWER_TEXT, null, null);
+      answer2_2 = new EvalAnswer(response2, templateItem2A, item2, null, null, null, ANSWER_SCALED_ONE, null, null);
+      answer2_5 = new EvalAnswer(response2, templateItem5A, item5, MAINT_USER_ID, EvalConstants.ITEM_CATEGORY_INSTRUCTOR, ANSWER_TEXT, null, null, null);
 
-      answer3_2 = new EvalAnswer(response3, templateItem3A, item2, null, null, null, ANSWER_SCALED_TWO, null);
+      answer3_2 = new EvalAnswer(response3, templateItem3A, item2, null, null, null, ANSWER_SCALED_TWO, null, null);
       // left the text answer blank
 
-      answer4_1 = new EvalAnswer(response4, templateItem1User, item1, null, null, null, ANSWER_SCALED_THREE, null);
-      answer4_5 = new EvalAnswer(response4, templateItem5User, item5, MAINT_USER_ID, EvalConstants.ITEM_CATEGORY_INSTRUCTOR, ANSWER_TEXT, null, null);
+      answer4_1 = new EvalAnswer(response4, templateItem1User, item1, null, null, null, ANSWER_SCALED_THREE, null, null);
+      answer4_5 = new EvalAnswer(response4, templateItem5User, item5, MAINT_USER_ID, EvalConstants.ITEM_CATEGORY_INSTRUCTOR, ANSWER_TEXT, null, null, null);
 
-      answer5_1 = new EvalAnswer(response5, templateItem5User, item1, MAINT_USER_ID, EvalConstants.ITEM_CATEGORY_INSTRUCTOR, null, ANSWER_SCALED_TWO, null);
+      answer5_1 = new EvalAnswer(response5, templateItem5User, item1, MAINT_USER_ID, EvalConstants.ITEM_CATEGORY_INSTRUCTOR, null, ANSWER_SCALED_TWO, null, null);
       // left the text answer blank
 
       // associate the answers

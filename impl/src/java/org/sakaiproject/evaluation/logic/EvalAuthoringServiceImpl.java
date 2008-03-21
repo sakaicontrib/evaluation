@@ -1403,7 +1403,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       for (EvalItem original : items) {
          EvalItem copy = new EvalItem(new Date(), ownerId, original.getItemText(), original.getDescription(),
                EvalConstants.SHARING_PRIVATE, original.getClassification(), false, null, null, null, original.getUsesNA(),
-               original.getDisplayRows(), original.getScaleDisplaySetting(), original.getCategory(), false);
+               original.getUsesComment(), original.getDisplayRows(), original.getScaleDisplaySetting(), original.getCategory(), false);
          if (original.getScale() != null) {
             // This could be more efficient if we stored up the scaleIds and mapped them 
             // and then copied them all at once and then reassigned them but the code would be a lot harder to read
@@ -1540,7 +1540,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
          String ownerId, boolean hidden, boolean includeChildren) {
       EvalTemplateItem copy = new EvalTemplateItem(new Date(), ownerId, toTemplate, null, original.getDisplayOrder(),
             original.getCategory(), original.getHierarchyLevel(), original.getHierarchyNodeId(), original.getDisplayRows(),
-            original.getScaleDisplaySetting(), original.getUsesNA(), null, null, original.getResultsSharing());
+            original.getScaleDisplaySetting(), original.getUsesNA(), original.getUsesComment(), null, null, original.getResultsSharing());
       // copy the item as well if needed
       EvalItem item = null;
       if (includeChildren) {

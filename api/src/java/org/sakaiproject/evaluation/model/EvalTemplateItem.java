@@ -33,11 +33,16 @@ public class EvalTemplateItem implements java.io.Serializable {
 
    private String hierarchyNodeId;
 
+   private Boolean usesNA;
+
+   /**
+    * Indicates that there should be a comments box displayed beneath this item when displayed to the user
+    */
+   private Boolean usesComment;
+
    private Integer displayRows;
 
    private String scaleDisplaySetting;
-
-   private Boolean usesNA;
 
    private Boolean blockParent;
 
@@ -77,10 +82,11 @@ public class EvalTemplateItem implements java.io.Serializable {
       this.hierarchyNodeId = hierarchyNodeId;
    }
 
-   /** full constructor */
+   /** full constructor 
+    * @param usesComment TODO*/
    public EvalTemplateItem(Date lastModified, String owner, EvalTemplate template, EvalItem item, Integer displayOrder, String category,
          String hierarchyLevel, String hierarchyNodeId, Integer displayRows, String scaleDisplaySetting, Boolean usesNA, 
-         Boolean blockParent, Long blockId, String resultsSharing) {
+         Boolean usesComment, Boolean blockParent, Long blockId, String resultsSharing) {
       this.lastModified = lastModified;
       this.owner = owner;
       this.template = template;
@@ -92,6 +98,7 @@ public class EvalTemplateItem implements java.io.Serializable {
       this.displayRows = displayRows;
       this.scaleDisplaySetting = scaleDisplaySetting;
       this.usesNA = usesNA;
+      this.usesComment = usesComment;
       this.blockParent = blockParent;
       this.blockId = blockId;
       this.resultsSharing = resultsSharing;
@@ -234,12 +241,18 @@ public class EvalTemplateItem implements java.io.Serializable {
       this.copyOf = copyOf;
    }
 
-   
+   public Boolean getUsesComment() {
+      return usesComment;
+   }
+
+   public void setUsesComment(Boolean usesComment) {
+      this.usesComment = usesComment;
+   }
+
    public boolean isHidden() {
       return hidden;
    }
 
-   
    public void setHidden(boolean hidden) {
       this.hidden = hidden;
    }

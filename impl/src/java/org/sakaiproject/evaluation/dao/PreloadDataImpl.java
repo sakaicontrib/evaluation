@@ -375,8 +375,8 @@ public class PreloadDataImpl implements Runnable {
    private EvalItem saveScaledExpertItem(String text, String description, String expertDescription, EvalScale scale, String category) {
       EvalItem item = new EvalItem(new Date(), ADMIN_OWNER, 
             text, description, EvalConstants.SHARING_PUBLIC, EvalConstants.ITEM_TYPE_SCALED,
-            Boolean.TRUE, expertDescription, scale, null, Boolean.FALSE, null, 
-            EvalConstants.ITEM_SCALE_DISPLAY_FULL_COLORED, category, Boolean.FALSE);
+            Boolean.TRUE, expertDescription, scale, null, Boolean.FALSE, false, 
+            null, EvalConstants.ITEM_SCALE_DISPLAY_FULL_COLORED, category, Boolean.FALSE);
       dao.save(item);
       return item;
    }

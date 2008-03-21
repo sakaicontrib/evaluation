@@ -57,6 +57,10 @@
         <property name="usesNA" type="java.lang.Boolean">
             <column name="USES_NA" />
         </property>
+        <!-- (this is a hint only and used when making the templateItem) -->
+        <property name="usesComment" type="java.lang.Boolean">
+            <column name="USES_COMMENT" />
+        </property>
         <!-- how big should the text box be when rendering this item -->
         <!-- (this is a hint only and used when making the templateItem) -->
         <property name="displayRows" type="java.lang.Integer">

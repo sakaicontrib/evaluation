@@ -541,8 +541,8 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
             EvalTestDataLoad.MAINT_USER_ID, test_text, test_desc, 
             EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_SCALED, 
             EvalTestDataLoad.NOT_EXPERT, "expert desc", etdl.scale1, null,
-            Boolean.FALSE, null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, 
-            EvalConstants.ITEM_CATEGORY_COURSE, EvalTestDataLoad.UNLOCKED), 
+            Boolean.FALSE, false, null, 
+            EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, EvalConstants.ITEM_CATEGORY_COURSE, EvalTestDataLoad.UNLOCKED), 
             EvalTestDataLoad.MAINT_USER_ID);
 
       // test saving valid item locked
@@ -550,8 +550,8 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
             EvalTestDataLoad.MAINT_USER_ID, test_text, test_desc, 
             EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_TEXT, 
             EvalTestDataLoad.NOT_EXPERT, "expert desc", null, null,
-            null, new Integer(2), null, 
-            EvalConstants.ITEM_CATEGORY_COURSE, EvalTestDataLoad.LOCKED), 
+            null, false, new Integer(2), 
+            null, EvalConstants.ITEM_CATEGORY_COURSE, EvalTestDataLoad.LOCKED), 
             EvalTestDataLoad.MAINT_USER_ID);
 
       // test saving valid item with no date, NA, and lock specified ok
@@ -559,8 +559,8 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
             EvalTestDataLoad.MAINT_USER_ID, test_text, test_desc, 
             EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_TEXT, 
             EvalTestDataLoad.NOT_EXPERT, "expert desc", null, null,
-            null, new Integer(2), null, 
-            EvalConstants.ITEM_CATEGORY_COURSE, null);
+            null, false, new Integer(2), 
+            null, EvalConstants.ITEM_CATEGORY_COURSE, null);
       authoringService.saveItem( eiTest1, 
             EvalTestDataLoad.MAINT_USER_ID);
       // make sure the values are filled in for us
@@ -586,8 +586,8 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
                EvalTestDataLoad.MAINT_USER_ID, test_text, test_desc, 
                EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_SCALED, 
                EvalTestDataLoad.NOT_EXPERT, "expert desc", etdl.scale2, null,
-               Boolean.FALSE, new Integer(3), EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, 
-               EvalConstants.ITEM_CATEGORY_COURSE, EvalTestDataLoad.UNLOCKED),
+               Boolean.FALSE, false, new Integer(3), 
+               EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, EvalConstants.ITEM_CATEGORY_COURSE, EvalTestDataLoad.UNLOCKED),
                EvalTestDataLoad.MAINT_USER_ID);
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
@@ -612,8 +612,8 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
                EvalTestDataLoad.MAINT_USER_ID, test_text, test_desc, 
                EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_TEXT, 
                EvalTestDataLoad.NOT_EXPERT, "expert desc", etdl.scale2, null,
-               Boolean.FALSE, null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, 
-               EvalConstants.ITEM_CATEGORY_COURSE, EvalTestDataLoad.UNLOCKED),
+               Boolean.FALSE, false, null, 
+               EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, EvalConstants.ITEM_CATEGORY_COURSE, EvalTestDataLoad.UNLOCKED),
                EvalTestDataLoad.MAINT_USER_ID);
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
@@ -626,8 +626,8 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
                EvalTestDataLoad.MAINT_USER_ID, test_text, test_desc, 
                EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_HEADER, 
                EvalTestDataLoad.NOT_EXPERT, "expert desc", etdl.scale2, null,
-               Boolean.FALSE, new Integer(3), EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, 
-               EvalConstants.ITEM_CATEGORY_COURSE, EvalTestDataLoad.UNLOCKED),
+               Boolean.FALSE, false, new Integer(3), 
+               EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, EvalConstants.ITEM_CATEGORY_COURSE, EvalTestDataLoad.UNLOCKED),
                EvalTestDataLoad.MAINT_USER_ID);
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
@@ -1175,7 +1175,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
             EvalTestDataLoad.ADMIN_USER_ID, noItems, etdl.item5, 
             null, EvalConstants.ITEM_CATEGORY_COURSE, 
             EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
-            new Integer(3), null, Boolean.FALSE, null, null, null);
+            new Integer(3), null, Boolean.FALSE, false, null, null, null);
       authoringService.saveTemplateItem( eiTest1, 
             EvalTestDataLoad.ADMIN_USER_ID);
       assertNotNull( eiTest1.getItem() );
@@ -1199,7 +1199,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
             EvalTestDataLoad.ADMIN_USER_ID, noItems, etdl.item7, 
             new Integer(2), EvalConstants.ITEM_CATEGORY_COURSE, 
             EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
-            new Integer(3), null, Boolean.FALSE, null, null, null),
+            new Integer(3), null, Boolean.FALSE, false, null, null, null),
             EvalTestDataLoad.ADMIN_USER_ID);
 
       // test saving valid templateItem with locked item
@@ -1207,7 +1207,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
             EvalTestDataLoad.MAINT_USER_ID, etdl.templateUnused, etdl.item2, 
             new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
             EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
-            null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null, null),
+            null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, false, null, null, null),
             EvalTestDataLoad.MAINT_USER_ID);
 
       // test saving valid templateItem with empty required fields (inherit from item)
@@ -1215,7 +1215,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
             EvalTestDataLoad.ADMIN_USER_ID, noItems, etdl.item4, 
             new Integer(99), null, 
             EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
-            null, null, null, null, null, null);
+            null, null, null, false, null, null, null);
       authoringService.saveTemplateItem( eiTest2, 
             EvalTestDataLoad.ADMIN_USER_ID);
       // make sure the values are filled in for us
@@ -1237,7 +1237,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
                EvalTestDataLoad.MAINT_USER_ID, etdl.templateUnused, null, 
                new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
                EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
-               null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null, null),
+               null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, false, null, null, null),
                EvalTestDataLoad.MAINT_USER_ID);
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
@@ -1250,7 +1250,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
                EvalTestDataLoad.MAINT_USER_ID, null, etdl.item3, 
                new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
                EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
-               null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null, null),
+               null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, false, null, null, null),
                EvalTestDataLoad.MAINT_USER_ID);
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
@@ -1263,7 +1263,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
                EvalTestDataLoad.MAINT_USER_ID, etdl.templateUnused, etdl.item4, 
                new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
                EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
-               new Integer(2), EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null, null),
+               new Integer(2), EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, false, null, null, null),
                EvalTestDataLoad.MAINT_USER_ID);
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
@@ -1276,7 +1276,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
                EvalTestDataLoad.MAINT_USER_ID, etdl.templateUnused, etdl.item6, 
                new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
                EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
-               new Integer(4), EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null, null),
+               new Integer(4), EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, false, null, null, null),
                EvalTestDataLoad.MAINT_USER_ID);
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
@@ -1303,7 +1303,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
                EvalTestDataLoad.MAINT_USER_ID, etdl.templateUnused, etdl.item8, 
                new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
                EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
-               new Integer(1), EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null, null),
+               new Integer(1), EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, false, null, null, null),
                EvalTestDataLoad.MAINT_USER_ID);
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {

@@ -43,5 +43,8 @@
         <property name="associatedType" type="java.lang.String">
             <column name="ASSOCIATED_TYPE" />
         </property>
+        <property name="comment" type="text">
+            <column name="COMMENT_ANSWER" />
+        </property>
     </class>
 </hibernate-mapping>

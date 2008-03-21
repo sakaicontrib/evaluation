@@ -39,10 +39,24 @@ public class EvalItem implements java.io.Serializable {
 
    private Set<EvalTemplateItem> templateItems = new HashSet<EvalTemplateItem>(0);
 
+   /**
+    * display hint
+    */
    private Boolean usesNA;
 
+   /**
+    * display hint
+    */
+   private Boolean usesComment;
+
+   /**
+    * display hint
+    */
    private Integer displayRows;
 
+   /**
+    * display hint
+    */
    private String scaleDisplaySetting;
 
    private String category;
@@ -80,11 +94,12 @@ public class EvalItem implements java.io.Serializable {
       this.expert = expert;
    }
 
-   /** full constructor */
+   /** full constructor 
+    * @param usesComment TODO*/
    public EvalItem(Date lastModified, String owner, String itemText, String description, String sharing,
          String classification, Boolean expert, String expertDescription, EvalScale scale,
-         Set<EvalTemplateItem> templateItems, Boolean usesNA, Integer displayRows,
-         String scaleDisplaySetting, String category, Boolean locked) {
+         Set<EvalTemplateItem> templateItems, Boolean usesNA, Boolean usesComment,
+         Integer displayRows, String scaleDisplaySetting, String category, Boolean locked) {
       this.lastModified = lastModified;
       this.owner = owner;
       this.itemText = itemText;
@@ -96,6 +111,7 @@ public class EvalItem implements java.io.Serializable {
       this.scale = scale;
       this.templateItems = templateItems;
       this.usesNA = usesNA;
+      this.usesComment = usesComment;
       this.displayRows = displayRows;
       this.scaleDisplaySetting = scaleDisplaySetting;
       this.category = category;
@@ -252,6 +268,14 @@ public class EvalItem implements java.io.Serializable {
    
    public void setHidden(boolean hidden) {
       this.hidden = hidden;
+   }
+
+   public Boolean getUsesComment() {
+      return usesComment;
+   }
+
+   public void setUsesComment(Boolean usesComment) {
+      this.usesComment = usesComment;
    }
 
 }
