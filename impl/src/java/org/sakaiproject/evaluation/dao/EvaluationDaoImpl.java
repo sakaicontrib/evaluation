@@ -261,51 +261,68 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       return l;
    }
 
-  
-   
-   
+
+
    /**
     * Returns all evaluation objects associated with the input groups,
-    * can also include anonymous evaluations
+    * can also include anonymous evaluations and filter on a number
+    * of options
     * 
     * @param evalGroupIds an array of eval group IDs to get associated evals for, 
     * can be empty or null but only anonymous evals will be returned
-    * @param activeOnly if true, only include active evaluations, if false, include all evaluations
-    * @param includeUnApproved if true, include the evaluations for groups which have not been instructor approved yet,
-    * you should not include these when displaying evaluations to users to take or sending emails
-    * @param includeAnonymous if true then include evaluations which can be taken anonymously (since these are accessible
-    * to any user in any group), if false, only include evals which require keys or authentication
+    * @param activeOnly if true, only include active evaluations, 
+    * if false only include inactive (inqueue, graceperiod, closed, viewable), 
+    * if null, include all evaluations (except partial and deleted)
+    * @param approvedOnly if true, include the evaluations for groups which have been instructor approved only,
+    * if false, include evals for groups which have not been approved only,
+    * if null, include approved and unapproved,
+    * NOTE: you should not include unapproved when displaying evaluations to users to take or sending emails
+    * @param includeAnonymous if true, only include evaluations authcontrol = anon, 
+    * if false, include any evaluations with authcontrol != anon,
+    * if null, include all evaluations regardless of authcontrol
     * @return a List of EvalEvaluation objects sorted by due date, title, and id
     */
    @SuppressWarnings("unchecked")
-   public List<EvalEvaluation> getEvaluationsByEvalGroups(String[] evalGroupIds, boolean activeOnly,
-         boolean includeUnApproved, boolean includeAnonymous) {
+   public List<EvalEvaluation> getEvaluationsByEvalGroups(String[] evalGroupIds, Boolean activeOnly,
+         Boolean approvedOnly, Boolean includeAnonymous, int startResult, int maxResults) {
+
       boolean emptyReturn = false;
       Map<String, Object> params = new HashMap<String, Object>();
+      String joinHQL = "";
+
       String groupsHQL = "";
       if (evalGroupIds != null && evalGroupIds.length > 0) {
-         String unapprovedHQL = "";
-         if (! includeUnApproved) {
-            unapprovedHQL = " and assign.instructorApproval = :approval ";
-            params.put("approval", true);
-         }
-         groupsHQL = " eval.id in (select distinct assign.evaluation.id " +
-         "from EvalAssignGroup as assign where assign.nodeId is null " +
-         "and assign.evalGroupId in (:evalGroupIds)" + unapprovedHQL + ") ";
-         params.put("evalGroupIds", evalGroupIds);
+         joinHQL += ", EvalAssignGroup as assign ";
 
-         params.put("authControl", EvalConstants.EVALUATION_AUTHCONTROL_NONE);
-         if (includeAnonymous) {
-            groupsHQL += "or eval.authControl = :authControl";
-         } else {
-            groupsHQL += "and eval.authControl != :authControl";            
+         String approvedHQL = "";
+         if (approvedOnly != null) {
+            approvedHQL = " and assign.instructorApproval = :approval ";
+            if (approvedOnly) {
+               params.put("approval", true);
+            } else {
+               params.put("approval", false);               
+            }
          }
-         groupsHQL = " and (" + groupsHQL + ") ";
+
+         String anonymousHQL = "";
+         if (includeAnonymous != null) {
+            params.put("authControl", EvalConstants.EVALUATION_AUTHCONTROL_NONE);
+            if (includeAnonymous) {
+               anonymousHQL += "or eval.authControl = :authControl";
+            } else {
+               anonymousHQL += "and eval.authControl <> :authControl";            
+            }
+         }
+
+         groupsHQL = " and (eval.id in (select distinct assign.evaluation.id from EvalAssignGroup as assign " 
+            + "where assign.evalGroupId in (:evalGroupIds)" + approvedHQL + ")" + anonymousHQL + ")";
+         params.put("evalGroupIds", evalGroupIds);
       } else {
          // no groups but we want to get anonymous evals
-         if (includeAnonymous) {
+         if (includeAnonymous != null
+               && includeAnonymous) {
             params.put("authControl", EvalConstants.EVALUATION_AUTHCONTROL_NONE);
-            groupsHQL += " and eval.authControl = :authControl ";
+            groupsHQL = " and eval.authControl = :authControl ";
          } else {
             // no groups and no anonymous evals means nothing to return
             emptyReturn = true;
@@ -316,20 +333,47 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       if (emptyReturn) {
          evals = new ArrayList<EvalEvaluation>();
       } else {
+         // there should be some evaluations
+
+         // giving up on this join for now, it would have to take groups into account as well
+//         String responsesHQL = "";
+//         if (untakenOnly != null) {
+//            if (EvalUtils.isBlank(userId)) {
+//               throw new IllegalArgumentException("userId cannot be null if untakenOnly is not null");
+//            }
+//            joinHQL += ", EvalResponse as resp ";
+//            responsesHQL = " and resp.evaluation.id = eval.id and (resp.owner = :userId and resp.endTime is ";
+//            if (untakenOnly) {
+//               responsesHQL += "null) ";
+//            } else {
+//               responsesHQL += "not null) ";
+//            }
+//            params.put("userId", userId);
+//         }
+
          String activeHQL = "";
-         if (activeOnly) {
-            activeHQL = " and eval.state = :activeState ";
-            params.put("activeState", EvalConstants.EVALUATION_STATE_ACTIVE);
+         if (activeOnly != null) {
+            if (activeOnly) {
+               activeHQL = " and eval.state = :activeState ";
+               params.put("activeState", EvalConstants.EVALUATION_STATE_ACTIVE);
+            } else {
+               activeHQL = " and (eval.state = :queueState or eval.state = :graceState or eval.state = :closedState or eval.state = :viewState) ";
+               params.put("queueState", EvalConstants.EVALUATION_STATE_INQUEUE);
+               params.put("graceState", EvalConstants.EVALUATION_STATE_GRACEPERIOD);
+               params.put("closedState", EvalConstants.EVALUATION_STATE_CLOSED);
+               params.put("viewState", EvalConstants.EVALUATION_STATE_VIEWABLE);
+            }
          } else {
             // need to filter out the partial and deleted state evals
             activeHQL = " and eval.state <> :partialState and eval.state <> :deletedState ";
             params.put("partialState", EvalConstants.EVALUATION_STATE_PARTIAL);
             params.put("deletedState", EvalConstants.EVALUATION_STATE_DELETED);
          }
-         String hql = "select eval from EvalEvaluation as eval " +
-         " where 1=1 " + activeHQL + groupsHQL + 
-         " order by eval.dueDate, eval.title, eval.id";
-         evals = executeHqlQuery(hql, params, 0, 0);
+
+         String hql = "select distinct eval from EvalEvaluation as eval " + joinHQL 
+            + " where 1=1 " + activeHQL + groupsHQL //+ responsesHQL 
+            + " order by eval.dueDate, eval.title, eval.id";
+         evals = executeHqlQuery(hql, params, startResult, maxResults);
          Collections.sort(evals, new ComparatorsUtils.EvaluationDateTitleIdComparator());
       }
       return evals;
@@ -367,8 +411,8 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       String groupsHQL = "";
       if (evalGroupIds != null && evalGroupIds.length > 0) {
          groupsHQL = " eval.id in (select distinct assign.evaluation.id "
-               + "from EvalAssignGroup as assign where assign.nodeId is null "
-               + "and assign.evalGroupId in (:evalGroupIds) ) ";
+            + "from EvalAssignGroup as assign where assign.nodeId is null "
+            + "and assign.evalGroupId in (:evalGroupIds) ) ";
          params.put("evalGroupIds", evalGroupIds);
       }
 
@@ -392,8 +436,8 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
 
       List<EvalEvaluation> evals = null;
       String hql = "select eval from EvalEvaluation as eval " 
-            + " where 1=1 " + stateHQL + recentHQL + ownerGroupHQL 
-            + " order by eval.stopDate, eval.title, eval.id";
+         + " where 1=1 " + stateHQL + recentHQL + ownerGroupHQL 
+         + " order by eval.stopDate, eval.title, eval.id";
       evals = executeHqlQuery(hql, params, startResult, maxResults);
       Collections.sort(evals, new ComparatorsUtils.EvaluationDateTitleIdComparator());
       return evals;
@@ -733,7 +777,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
    public String getNodeIdForEvalGroup(String evalGroupId) {
       String hql = "select egn.nodeId from EvalGroupNodes egn join egn.evalGroups egrps where egrps.id = ? order by egn.nodeId";
       // switched to join from the subselect version
-//      String hql = "select egn.nodeId from EvalGroupNodes egn where ? in elements(egn.evalGroups) order by egn.nodeId";
+//    String hql = "select egn.nodeId from EvalGroupNodes egn where ? in elements(egn.evalGroups) order by egn.nodeId";
       String[] params = new String[] {evalGroupId};
       List<String> l = getHibernateTemplate().find(hql, params);
       if (l.isEmpty()) {
@@ -902,7 +946,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
          if (id != null) {
             // from EvalAdhocGroup ag join ag." + permCheck + " userIds where userIds.id = :userId
             String hql = "select count(ag) from EvalAdhocGroup ag join ag." + permCheck + " userIds "
-            		+ " where ag.id = " + id + " and userIds.id = '" + userId + "'";
+            + " where ag.id = " + id + " and userIds.id = '" + userId + "'";
             Query query = getSession().createQuery(hql);
             int count = ( (Number) query.iterate().next() ).intValue();
             if (count >= 1) {
@@ -910,7 +954,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
             }
          }
       }
-      
+
       return allowed;
    }
 
@@ -1065,7 +1109,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
          } else {
             // unlock template (if not locked elsewhere)
             String hqlQuery = "from EvalEvaluation as eval where eval.template.id = '" + template.getId()
-                  + "' and eval.locked = true";
+            + "' and eval.locked = true";
             if (count(hqlQuery) > 0) {
                // this is locked by something, we cannot unlock it
                log.info("Cannot unlock template (" + template.getId() + "), it is locked elsewhere");

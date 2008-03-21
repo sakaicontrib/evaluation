@@ -78,16 +78,23 @@ public interface EvaluationDao extends CompleteGenericDao {
     * 
     * @param evalGroupIds an array of eval group IDs to get associated evals for, 
     * can be empty or null but only anonymous evals will be returned
-    * @param activeOnly if true, only include active evaluations, if false, include all evaluations
-    * @param includeUnApproved if true, include the evaluations for groups which have not been instructor approved yet,
-    * you should not include these when displaying evaluations to users to take or sending emails
-    * @param includeAnonymous if true then include evaluations which can be taken anonymously (since these are accessible
-    * to any user in any group), if false, only include evals which require keys or authentication
+    * @param activeOnly if true, only include active evaluations, 
+    * if false only include inactive (inqueue, graceperiod, closed, viewable), 
+    * if null, include all evaluations (except partial and deleted)
+    * @param approvedOnly if true, include the evaluations for groups which have been instructor approved only,
+    * if false, include evals for groups which have not been approved only,
+    * if null, include approved and unapproved,
+    * NOTE: you should not include unapproved when displaying evaluations to users to take or sending emails
+    * @param includeAnonymous if true, include assigned and anonymous evaluations (only anonymous evals if evalGroupIds is null), 
+    * if false, only include assigned evals which are not also anonymous,
+    * if null include only assigned evaluations
+    * @param startResult 0 to start with the first result, otherwise start with this result number
+    * @param maxResults 0 to return all results, otherwise limit the number of evals returned to this
     * @return a List of EvalEvaluation objects sorted by due date, title, and id
     */
    @SuppressWarnings("unchecked")
    public List<EvalEvaluation> getEvaluationsByEvalGroups(String[] evalGroupIds,
-         boolean activeOnly, boolean includeUnApproved, boolean includeAnonymous);
+         Boolean activeOnly, Boolean approvedOnly, Boolean includeAnonymous, int startResult, int maxResults);
 
    /**
     * Get a set of evaluations based on the owner and their groups
