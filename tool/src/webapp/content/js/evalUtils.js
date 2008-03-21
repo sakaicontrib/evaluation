@@ -11,6 +11,17 @@ var EvalSystem = function() {
 
   return {
   
+  	initAssignAdhocGroupArea: function (saveButtonId,clearButtonId,
+        groupNameInputId,emailInputId,emailListDivId) {
+        var saveButton = $("#"+saveButtonId);
+        alert("Init Adchods: " + saveButtonId + ", " + saveButton);
+        var saveEmailsAction = function(event) {
+            alert("Saving emails");
+        }
+        
+        saveButton.click( function (event) { saveEmailsAction(event) });
+  	},
+  
     /**
      * This will bind a checkbox to a some area (usually a div) so that clicking
      * the checkbox will hide/show the area.
