@@ -381,23 +381,22 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#getEvaluationsForUser(String, boolean, boolean, boolean)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#getEvaluationsForUser(String, Boolean, Boolean, Boolean)}.
     */
    public void testGetEvaluationsForUser() {
       List<EvalEvaluation> evals = null;
       List<Long> ids = null;
 
       // get all evaluations for user
-      evals = evaluationSetupService.getEvaluationsForUser(EvalTestDataLoad.USER_ID, false, false, true);
+      evals = evaluationSetupService.getEvaluationsForUser(EvalTestDataLoad.USER_ID, null, null, true);
       assertNotNull(evals);
-      assertEquals(6, evals.size());
+      assertEquals(5, evals.size());
       ids = EvalTestDataLoad.makeIdList(evals);
       assertTrue(ids.contains( etdl.evaluationNewAdmin.getId() ));
       assertTrue(ids.contains( etdl.evaluationActive.getId() ));
       assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
       assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
       assertTrue(ids.contains( etdl.evaluationClosedUntaken.getId() ));
-      assertTrue(ids.contains( etdl.evaluationViewable.getId() ));
 
       // check sorting
       Date lastDate = null;
@@ -415,31 +414,43 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       }
 
       // test get for another user
-      evals = evaluationSetupService.getEvaluationsForUser(EvalTestDataLoad.STUDENT_USER_ID, false, false, true);
+      evals = evaluationSetupService.getEvaluationsForUser(EvalTestDataLoad.STUDENT_USER_ID, null, null, true);
       assertNotNull(evals);
-      assertEquals(4, evals.size());
+      assertEquals(3, evals.size());
       ids = EvalTestDataLoad.makeIdList(evals);
       assertTrue(ids.contains( etdl.evaluationNewAdmin.getId() ));
       assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
-      assertTrue(ids.contains( etdl.evaluationViewable.getId() ));
       assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
 
-      // get all active evaluationSetupService for user
-      evals = evaluationSetupService.getEvaluationsForUser(EvalTestDataLoad.USER_ID, true, false, true);
+      // get only assigned evals for user
+      evals = evaluationSetupService.getEvaluationsForUser(EvalTestDataLoad.STUDENT_USER_ID, null, null, null);
+      assertNotNull(evals);
+      assertEquals(2, evals.size());
+      ids = EvalTestDataLoad.makeIdList(evals);
+      assertTrue(ids.contains( etdl.evaluationNewAdmin.getId() ));
+      assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
+
+      // get all active evaluations for user
+      evals = evaluationSetupService.getEvaluationsForUser(EvalTestDataLoad.USER_ID, true, null, true);
       assertNotNull(evals);
       assertEquals(2, evals.size());
       ids = EvalTestDataLoad.makeIdList(evals);
       assertTrue(ids.contains( etdl.evaluationActive.getId() ));
       assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
 
+      // get assigned active evaluations for user
+      evals = evaluationSetupService.getEvaluationsForUser(EvalTestDataLoad.STUDENT_USER_ID, true, null, null);
+      assertNotNull(evals);
+      assertEquals(0, evals.size());
+
       // test active evals for another user
-      evals = evaluationSetupService.getEvaluationsForUser(EvalTestDataLoad.STUDENT_USER_ID, true, false, true);
+      evals = evaluationSetupService.getEvaluationsForUser(EvalTestDataLoad.STUDENT_USER_ID, true, null, true);
       assertNotNull(evals);
       assertEquals(1, evals.size());
       ids = EvalTestDataLoad.makeIdList(evals);
       assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
 
-      // don't include taken evaluationSetupService
+      // don't include taken evaluations
       evals = evaluationSetupService.getEvaluationsForUser(EvalTestDataLoad.USER_ID, true, true, true);
       assertNotNull(evals);
       assertEquals(1, evals.size());
@@ -447,7 +458,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
 
       // try to get for invalid user
-      evals = evaluationSetupService.getEvaluationsForUser(EvalTestDataLoad.INVALID_USER_ID, false, false, true);
+      evals = evaluationSetupService.getEvaluationsForUser(EvalTestDataLoad.INVALID_USER_ID, true, null, true);
       assertNotNull(evals);
       assertEquals(1, evals.size());
       ids = EvalTestDataLoad.makeIdList(evals);

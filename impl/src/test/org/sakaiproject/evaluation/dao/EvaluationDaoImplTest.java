@@ -297,9 +297,22 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       List<EvalEvaluation> l = null;
       List<Long> ids = null;
 
-      // test getting evaluations for 2 sites
+      // test getting all assigned evaluations for 2 sites
       l = evaluationDao.getEvaluationsByEvalGroups(
-            new String[] {EvalTestDataLoad.SITE1_REF, EvalTestDataLoad.SITE2_REF}, false, true, false);
+            new String[] {EvalTestDataLoad.SITE1_REF, EvalTestDataLoad.SITE2_REF}, null, null, null, 0, 0);
+      assertNotNull(l);
+      assertEquals(6, l.size());
+      ids = EvalTestDataLoad.makeIdList(l);
+      assertTrue(ids.contains( etdl.evaluationNewAdmin.getId() ));
+      assertTrue(ids.contains( etdl.evaluationActive.getId() ));
+      assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
+      assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
+      assertTrue(ids.contains( etdl.evaluationClosedUntaken.getId() ));
+      assertTrue(ids.contains( etdl.evaluationViewable.getId() ));
+
+      // test getting all assigned (minus anonymous) evaluations for 2 sites
+      l = evaluationDao.getEvaluationsByEvalGroups(
+            new String[] {EvalTestDataLoad.SITE1_REF, EvalTestDataLoad.SITE2_REF}, null, null, false, 0, 0);
       assertNotNull(l);
       assertEquals(5, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
@@ -309,19 +322,20 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       assertTrue(ids.contains( etdl.evaluationClosedUntaken.getId() ));
       assertTrue(ids.contains( etdl.evaluationViewable.getId() ));
 
-      // test getting evaluations by evalGroupId
+      // test getting assigned evaluations by one evalGroupId
       l = evaluationDao.getEvaluationsByEvalGroups(
-            new String[] {EvalTestDataLoad.SITE1_REF}, false, true, false);
+            new String[] {EvalTestDataLoad.SITE1_REF}, null, null, null, 0, 0);
       assertNotNull(l);
-      assertEquals(4, l.size());
+      assertEquals(5, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
       assertTrue(ids.contains( etdl.evaluationNewAdmin.getId() ));
       assertTrue(ids.contains( etdl.evaluationActive.getId() ));
+      assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
       assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
       assertTrue(ids.contains( etdl.evaluationClosedUntaken.getId() ));
 
       l = evaluationDao.getEvaluationsByEvalGroups(
-            new String[] {EvalTestDataLoad.SITE2_REF}, false, true, false);
+            new String[] {EvalTestDataLoad.SITE2_REF}, null, null, null, 0, 0);
       assertNotNull(l);
       assertEquals(3, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
@@ -330,9 +344,9 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
       assertTrue(ids.contains( etdl.evaluationViewable.getId() ));
 
-      // test getting by groupId and getting anons (should not get any deleted or partial evals)
+      // test getting by groupId and including anons (should not get any deleted or partial evals)
       l = evaluationDao.getEvaluationsByEvalGroups(
-            new String[] {EvalTestDataLoad.SITE1_REF}, false, true, true);
+            new String[] {EvalTestDataLoad.SITE1_REF}, null, null, true, 0, 0);
       assertNotNull(l);
       assertEquals(5, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
@@ -342,52 +356,138 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
       assertTrue(ids.contains( etdl.evaluationClosedUntaken.getId() ));
 
-      // test invalid site
-      l = evaluationDao.getEvaluationsByEvalGroups(
-            new String[] {"invalid evalGroupId"}, false, true, false);
-      assertNotNull(l);
-      assertEquals(0, l.size());
-
       // test that the get active part works
       l = evaluationDao.getEvaluationsByEvalGroups(
-            new String[] {EvalTestDataLoad.SITE1_REF}, true, true, false);
-      assertNotNull(l);
-      assertEquals(1, l.size());
-      ids = EvalTestDataLoad.makeIdList(l);
-      assertTrue(ids.contains( etdl.evaluationActive.getId() ));
-
-      l = evaluationDao.getEvaluationsByEvalGroups(
-            new String[] {EvalTestDataLoad.SITE2_REF}, true, true, false);
-      assertNotNull(l);
-      assertEquals(0, l.size());
-
-      // test that the get active plus anon works
-      l = evaluationDao.getEvaluationsByEvalGroups(
-            new String[] {EvalTestDataLoad.SITE1_REF}, true, true, true);
+            new String[] {EvalTestDataLoad.SITE1_REF}, true, null, null, 0, 0);
       assertNotNull(l);
       assertEquals(2, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
       assertTrue(ids.contains( etdl.evaluationActive.getId() ));
       assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
 
+      l = evaluationDao.getEvaluationsByEvalGroups(
+            new String[] {EvalTestDataLoad.SITE2_REF}, true, null, null, 0, 0);
+      assertNotNull(l);
+      assertEquals(0, l.size());
+
+      // active minus anon
+      l = evaluationDao.getEvaluationsByEvalGroups(
+            new String[] {EvalTestDataLoad.SITE1_REF}, true, null, false, 0, 0);
+      assertNotNull(l);
+      assertEquals(1, l.size());
+      ids = EvalTestDataLoad.makeIdList(l);
+      assertTrue(ids.contains( etdl.evaluationActive.getId() ));
+
+      // test that the get active plus anon works
+      l = evaluationDao.getEvaluationsByEvalGroups(
+            new String[] {EvalTestDataLoad.SITE2_REF}, true, null, true, 0, 0);
+      assertNotNull(l);
+      assertEquals(1, l.size());
+      ids = EvalTestDataLoad.makeIdList(l);
+      assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
+
       // test getting from an invalid evalGroupId
       l = evaluationDao.getEvaluationsByEvalGroups(
-            new String[] {EvalTestDataLoad.INVALID_CONTEXT}, true, true, false);
+            new String[] {EvalTestDataLoad.INVALID_CONTEXT}, null, null, null, 0, 0);
       assertNotNull(l);
       assertEquals(0, l.size());		
 
       // test getting all anonymous evals
       l = evaluationDao.getEvaluationsByEvalGroups(
-            new String[] {}, false, false, true);
+            new String[] {}, null, null, true, 0, 0);
       assertNotNull(l);
       assertEquals(1, l.size());		
       ids = EvalTestDataLoad.makeIdList(l);
       assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
 
       // testing getting no evals
-      l = evaluationDao.getEvaluationsByEvalGroups(null, false, false, false);
+      l = evaluationDao.getEvaluationsByEvalGroups(null, null, null, false, 0, 0);
       assertNotNull(l);
       assertEquals(0, l.size());
+
+      // test unapproved assigned evaluations
+      l = evaluationDao.getEvaluationsByEvalGroups(
+            new String[] {EvalTestDataLoad.SITE1_REF}, null, false, null, 0, 0);
+      assertNotNull(l);
+      assertEquals(1, l.size());
+      ids = EvalTestDataLoad.makeIdList(l);
+      assertTrue(ids.contains( etdl.evaluationNewAdmin.getId() ));
+
+      l = evaluationDao.getEvaluationsByEvalGroups(
+            new String[] {EvalTestDataLoad.SITE1_REF, EvalTestDataLoad.SITE2_REF}, null, false, null, 0, 0);
+      assertNotNull(l);
+      assertEquals(2, l.size());
+      ids = EvalTestDataLoad.makeIdList(l);
+      assertTrue(ids.contains( etdl.evaluationNewAdmin.getId() ));
+      assertTrue(ids.contains( etdl.evaluationViewable.getId() ));
+
+      // test getting all APPROVED assigned evaluations
+      l = evaluationDao.getEvaluationsByEvalGroups(
+            new String[] {EvalTestDataLoad.SITE1_REF}, null, true, null, 0, 0);
+      assertNotNull(l);
+      assertEquals(4, l.size());
+      ids = EvalTestDataLoad.makeIdList(l);
+      assertTrue(ids.contains( etdl.evaluationActive.getId() ));
+      assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
+      assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
+      assertTrue(ids.contains( etdl.evaluationClosedUntaken.getId() ));
+
+      l = evaluationDao.getEvaluationsByEvalGroups(
+            new String[] {EvalTestDataLoad.SITE1_REF, EvalTestDataLoad.SITE2_REF}, null, true, null, 0, 0);
+      assertNotNull(l);
+      assertEquals(5, l.size());
+      ids = EvalTestDataLoad.makeIdList(l);
+      assertTrue(ids.contains( etdl.evaluationNewAdmin.getId() ));
+      assertTrue(ids.contains( etdl.evaluationActive.getId() ));
+      assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
+      assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
+      assertTrue(ids.contains( etdl.evaluationClosedUntaken.getId() ));
+
+//      // test getting taken evals only
+//      l = evaluationDao.getEvaluationsByEvalGroups(
+//            new String[] {EvalTestDataLoad.SITE1_REF, EvalTestDataLoad.SITE2_REF}, null, null, null, true, EvalTestDataLoad.USER_ID, 0, 0);
+//      assertNotNull(l);
+//      assertEquals(3, l.size());
+//      ids = EvalTestDataLoad.makeIdList(l);
+//      assertTrue(ids.contains( etdl.evaluationActive.getId() ));
+//      assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
+//      assertTrue(ids.contains( etdl.evaluationViewable.getId() ));
+//
+//      l = evaluationDao.getEvaluationsByEvalGroups(
+//            new String[] {EvalTestDataLoad.SITE1_REF}, null, null, null, true, EvalTestDataLoad.USER_ID, 0, 0);
+//      assertNotNull(l);
+//      assertEquals(2, l.size());
+//      ids = EvalTestDataLoad.makeIdList(l);
+//      assertTrue(ids.contains( etdl.evaluationActive.getId() ));
+//      assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
+//
+//      l = evaluationDao.getEvaluationsByEvalGroups(
+//            new String[] {EvalTestDataLoad.SITE2_REF}, null, null, null, true, EvalTestDataLoad.USER_ID, 0, 0);
+//      assertNotNull(l);
+//      assertEquals(2, l.size());
+//      ids = EvalTestDataLoad.makeIdList(l);
+//      assertTrue(ids.contains( etdl.evaluationClosed.getId() ));
+//      assertTrue(ids.contains( etdl.evaluationViewable.getId() ));
+//
+//      // test getting untaken evals only
+//      l = evaluationDao.getEvaluationsByEvalGroups(
+//            new String[] {EvalTestDataLoad.SITE1_REF, EvalTestDataLoad.SITE2_REF}, null, null, null, false, EvalTestDataLoad.USER_ID, 0, 0);
+//      assertNotNull(l);
+//      assertEquals(3, l.size());
+//      ids = EvalTestDataLoad.makeIdList(l);
+//      assertTrue(ids.contains( etdl.evaluationNewAdmin.getId() ));
+//      assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
+//      assertTrue(ids.contains( etdl.evaluationClosedUntaken.getId() ));
+//
+//      l = evaluationDao.getEvaluationsByEvalGroups(
+//            new String[] {EvalTestDataLoad.SITE2_REF}, null, null, null, false, EvalTestDataLoad.USER_ID, 0, 0);
+//      assertNotNull(l);
+//      assertEquals(4, l.size());
+//      ids = EvalTestDataLoad.makeIdList(l);
+//      assertTrue(ids.contains( etdl.evaluationNewAdmin.getId() ));
+//      assertTrue(ids.contains( etdl.evaluationActive.getId() ));
+//      assertTrue(ids.contains( etdl.evaluationActiveUntaken.getId() ));
+//      assertTrue(ids.contains( etdl.evaluationClosedUntaken.getId() ));
 
    }
 

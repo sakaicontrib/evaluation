@@ -155,7 +155,7 @@ public interface EvalEvaluationService {
     * without knowing the group (simply leave evalGroupId null), this check will
     * only tell you if the user is in at least one valid group for this evaluation
     * <br/> 
-    * Use {@link #getEvaluationsForUser(String, boolean, boolean, boolean)} if you are trying
+    * Use {@link #getEvaluationsForUser(String, Boolean, Boolean, Boolean)} if you are trying
     * to determine which "take evaluation" links to show a user
     * 
     * @param userId the internal user id (not username)

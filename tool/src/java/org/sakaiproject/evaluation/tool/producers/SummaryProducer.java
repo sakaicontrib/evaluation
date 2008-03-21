@@ -171,7 +171,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		/*
 		 * for the evaluationSetupService taking box
 		 */
-		List<EvalEvaluation> evalsToTake = evaluationSetupService.getEvaluationsForUser(currentUserId, true, false, false);
+		List<EvalEvaluation> evalsToTake = evaluationSetupService.getEvaluationsForUser(currentUserId, true, null, null);
       UIBranchContainer evalBC = UIBranchContainer.make(tofill, "evaluationsBox:");
 		if (evalsToTake.size() > 0) {
 			// build an array of evaluation ids

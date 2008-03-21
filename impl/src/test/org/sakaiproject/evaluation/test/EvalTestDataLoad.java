@@ -972,7 +972,7 @@ public class EvalTestDataLoad {
       assign4 = new EvalAssignGroup( MAINT_USER_ID, SITE2_REF, EvalConstants.GROUP_TYPE_SITE, 
             Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, evaluationClosed);
       assign5 = new EvalAssignGroup( ADMIN_USER_ID, SITE2_REF, EvalConstants.GROUP_TYPE_SITE, 
-            Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationViewable);
+            Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, evaluationViewable);
       assign6 = new EvalAssignGroup( MAINT_USER_ID, SITE1_REF, EvalConstants.GROUP_TYPE_SITE, 
             Boolean.FALSE, Boolean.FALSE, Boolean.TRUE, evaluationNewAdmin);
       assign7 = new EvalAssignGroup( ADMIN_USER_ID, SITE2_REF, EvalConstants.GROUP_TYPE_SITE, 

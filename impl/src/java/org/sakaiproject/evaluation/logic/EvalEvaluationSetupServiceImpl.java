@@ -560,7 +560,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
     * @see edu.vt.sakai.evaluation.logic.EvalEvaluationsLogic#getEvaluationsForUser(java.lang.String, boolean, boolean)
     */
    @SuppressWarnings("unchecked")
-   public List<EvalEvaluation> getEvaluationsForUser(String userId, boolean activeOnly, boolean untakenOnly, boolean includeAnonymous) {
+   public List<EvalEvaluation> getEvaluationsForUser(String userId, Boolean activeOnly, Boolean untakenOnly, Boolean includeAnonymous) {
       List<EvalGroup> takeGroups = external.getEvalGroupsForUser(userId, EvalConstants.PERM_TAKE_EVALUATION);
 
       String[] evalGroupIds = new String[takeGroups.size()];
@@ -570,28 +570,37 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       }
 
       // get the evaluations
-      List<EvalEvaluation> evals = dao.getEvaluationsByEvalGroups( evalGroupIds, activeOnly, false, includeAnonymous );
+      List<EvalEvaluation> evals = dao.getEvaluationsByEvalGroups( evalGroupIds, activeOnly, true, includeAnonymous, 0, 0 );
 
-      if (untakenOnly) {
-         // filter out the evaluations this user already took
-
-         // create an array of the evaluation ids
-         Long[] evalIds = new Long[evals.size()];
-         for (int j = 0; j < evals.size(); j++) {
-            evalIds[j] = evals.get(j).getId();
-         }
-
-         // now get the responses for all the returned evals
-         List<EvalResponse> l = dao.findByProperties(EvalResponse.class, 
-               new String[] {"owner", "evaluation.id"}, 
-               new Object[] {userId, evalIds});
-
-         // Iterate through and remove the evals this user already took
-         for (int i = 0; i < l.size(); i++) {
-            Long evalIdTaken = l.get(i).getEvaluation().getId();
+      if (evals.size() > 0) {
+         // filter out taken/untaken if desired
+         if (untakenOnly != null) {
+            // create an array of the evaluation ids
+            Long[] evalIds = new Long[evals.size()];
             for (int j = 0; j < evals.size(); j++) {
-               if (evalIdTaken.equals(evals.get(j).getId())) {
-                  evals.remove(j);
+               evalIds[j] = evals.get(j).getId();
+            }
+   
+            // now get the responses for all the returned evals
+            List<EvalResponse> l = dao.findByProperties(EvalResponse.class, 
+                  new String[] {"owner", "evaluation.id"}, 
+                  new Object[] {userId, evalIds});
+   
+            // Iterate through and remove the evals this user already took
+            for (int i = 0; i < l.size(); i++) {
+               Long evalIdTaken = l.get(i).getEvaluation().getId();
+               for (int j = 0; j < evals.size(); j++) {
+                  if (evalIdTaken.equals(evals.get(j).getId())) {
+                     if (untakenOnly) {
+                        // filter out the evaluations this user already took
+                        evals.remove(j);
+                     }
+                  } else {
+                     if (! untakenOnly) {
+                        // filter out the evaluations this user hasn't taken
+                        evals.remove(j);
+                     }
+                  }
                }
             }
          }
@@ -639,7 +648,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          }
 
          // this sucks for efficiency -AZ
-         List<EvalEvaluation> l = dao.getEvaluationsByEvalGroups( evalGroupIds, true, false, true ); // only get active for users
+         List<EvalEvaluation> l = dao.getEvaluationsByEvalGroups( evalGroupIds, true, true, true, 0, 0 ); // only get active for users
          for (EvalEvaluation evaluation : l) {
             if ( evalCategory.equals(evaluation.getEvalCategory()) ) {
                evals.add(evaluation);
