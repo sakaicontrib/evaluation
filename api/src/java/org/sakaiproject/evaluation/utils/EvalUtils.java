@@ -238,11 +238,12 @@ public class EvalUtils {
        * to reflect this minimum time difference. After that update the 
        * stop and view date also.
        */
-      if (eval.getDueDate() != null) {
+      if (eval.getDueDate() != null
+            && minHoursLong > 0) {
          if (getHoursDifference(eval.getStartDate(), eval.getDueDate()) < minHoursLong) {
    
             // Update due date
-            Date newDueDate = new Date( eval.getStartDate().getTime() + (1000 * 60 * 60 * minHoursLong) );
+            Date newDueDate = new Date( eval.getStartDate().getTime() + (1000l * 60l * 60l * (long)minHoursLong) );
             log.info("Fixing eval (" + eval.getId() + ") due date from " + eval.getDueDate() + " to " + newDueDate);
             eval.setDueDate(newDueDate);
    
