@@ -31,8 +31,10 @@ import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.renderers.HierarchyTreeNodeSelectRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewStateHandler;
 
 import uk.org.ponder.htmlutil.HTMLUtil;
+import uk.org.ponder.rsf.builtin.UVBProducer;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIForm;
@@ -91,6 +93,11 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
    private ExternalHierarchyLogic hierarchyLogic;
    public void setExternalHierarchyLogic(ExternalHierarchyLogic logic) {
       this.hierarchyLogic = logic;
+   }
+   
+   private ViewStateHandler vsh;
+   public void setViewStateHandler(ViewStateHandler vsh) {
+      this.vsh = vsh;
    }
 
    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
@@ -241,6 +248,8 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
          initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.hideAndShowRegionWithCheckbox", 
                new String[] {addhocGroupDiv.getFullID(), addhocGroupCheckbox.getFullID()}));
 
+         UIOutput adhocEmailsArea = UIOutput.make(form, "adhoc-emails-area:");
+         
          UIInput adhocGroupName = UIInput.make(form, "adhoc-group-name", null);
          UIInput adhocGroupEmails = UIInput.make(form, "adhoc-email-input", null);
 
@@ -248,7 +257,9 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
          UIOutput clearEmailsButton = UIOutput.make(form, "adhoc-clear-emails-button");
          
          initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.initAssignAdhocGroupArea", 
-                 new String[] {saveEmailsButton.getFullID()}));
+                 new String[] {saveEmailsButton.getFullID(), clearEmailsButton.getFullID(),
+               adhocGroupName.getFullID(), adhocGroupEmails.getFullID(),
+               adhocEmailsArea.getFullID(), vsh.getFullURL(new SimpleViewParameters(UVBProducer.VIEW_ID))}));
       }
 
       /*

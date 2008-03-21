@@ -12,14 +12,35 @@ var EvalSystem = function() {
   return {
   
   	initAssignAdhocGroupArea: function (saveButtonId,clearButtonId,
-        groupNameInputId,emailInputId,emailListDivId) {
+        groupNameInputId,emailInputId,emailListDivId,uvburl) {
+        var groupNameInput = $("#"+groupNameInputId);
+        var emailListInput = $("#"+emailInputId);
+        var emailListDiv = $("#"+emailListDivId);
         var saveButton = $("#"+saveButtonId);
-        alert("Init Adchods: " + saveButtonId + ", " + saveButton);
-        var saveEmailsAction = function(event) {
-            alert("Saving emails");
+        var clearButton = $("#"+clearButtonId);
+        
+        var adhocGroupId = null;
+        
+        var saveUpdateEmailsAction = function(event) {
+            //alert("Saving emails" + groupNameInput.val() + "\n" + emailListInput.val());
+            //alert("The URL is: " + uvburl);
+            //alert("Going:");
+            updater();
         }
         
-        saveButton.click( function (event) { saveEmailsAction(event) });
+        var clearEmailsAction = function(event) {
+            alert("Clearing emails");
+        }
+        
+        var saveCallback = function(event) {
+            alert("Done with Ajax");
+        }
+        
+        //var updater = RSF.getAJAXUpdater([inputField], ajaxUrl, [elBinding], callback);
+        var updater = RSF.getAJAXUpdater([], uvburl, [], saveCallback);
+        
+        saveButton.click( function (event) { saveUpdateEmailsAction(event) });
+        clearButton.click( function (event) { clearEmailsAction(event) });
   	},
   
     /**

@@ -184,6 +184,12 @@
       <property name="hierarchyLogic"
          ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
    </bean>
+   
+   <bean id="adhocGroupsBean"
+   		class="org.sakaiproject.evaluation.tool.locators.AdhocGroupsBean">
+   	  <property name="adhocGroupId" ref="org.sakaiproject.evaluation.dao.EvalAdhocSupport" />
+   	  <property name="evalExternalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+   </bean>
 
 
    <!-- evolver definitions here -->
@@ -519,6 +525,8 @@
         ref="org.sakaiproject.evaluation.tool.renderers.HierarchyTreeNodeSelectRenderer" />
       <property name="externalHierarchyLogic" 
         ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+      <property name="viewStateHandler"
+      	ref="viewStateHandler" />
    </bean>
    
    <!-- This renderer is only used by the EvaluationAssignProducer (right above here) -->
