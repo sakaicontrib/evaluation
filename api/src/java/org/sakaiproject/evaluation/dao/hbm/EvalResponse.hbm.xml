@@ -18,7 +18,7 @@
         </property>
         <!-- a unique ID for this eval group, the context in Sakai (siteId sometimes) -->
         <property name="evalGroupId" type="java.lang.String" index="eval_response_groupid">
-            <column name="group_id" not-null="true" length="255" />
+            <column name="GROUP_ID" not-null="true" length="255" />
         </property>
         <!-- This is the time when this response was initiated -->
         <property name="startTime" type="java.util.Date">
@@ -39,5 +39,8 @@
         <many-to-one name="evaluation" class="org.sakaiproject.evaluation.model.EvalEvaluation" foreign-key="RESPONSE_EVALUATION_FKC" lazy="proxy" fetch="select" not-null="true">
             <column name="EVALUATION_FK" not-null="true" />
         </many-to-one>
+        <property name="comment" type="text">
+            <column name="COMMENT_RESPONSE" />
+        </property>
     </class>
 </hibernate-mapping>

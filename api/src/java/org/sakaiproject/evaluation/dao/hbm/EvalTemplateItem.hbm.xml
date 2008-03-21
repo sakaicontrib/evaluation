@@ -58,6 +58,9 @@
         <property name="usesNA" type="java.lang.Boolean">
             <column name="USES_NA" />
         </property>
+        <property name="usesComment" type="java.lang.Boolean">
+            <column name="USES_COMMENT" />
+        </property>
         <!-- is this item the parent item for a block -->
         <property name="blockParent" type="java.lang.Boolean">
             <column name="BLOCK_PARENT" />

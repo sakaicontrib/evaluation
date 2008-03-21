@@ -31,6 +31,12 @@ public class EvalResponse implements java.io.Serializable {
    private EvalEvaluation evaluation;
 
    /**
+    * This holds a comment for the users response to this eval,
+    * i.e. this would be the comment for the evaluation itself from this user
+    */
+   private String comment;
+
+   /**
     * This is a special variable we are using to keep track of whether this response was
     * complete when it was loaded from the database, if it is true then it is/was complete,
     * if it is false then it was not complete<br/>
@@ -128,6 +134,16 @@ public class EvalResponse implements java.io.Serializable {
 
    public void setStartTime(Date startTime) {
       this.startTime = startTime;
+   }
+
+   
+   public String getComment() {
+      return comment;
+   }
+
+   
+   public void setComment(String comment) {
+      this.comment = comment;
    }
 
 }

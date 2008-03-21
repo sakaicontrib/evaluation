@@ -788,8 +788,8 @@ public class EvalImportImpl implements EvalImport {
 			EvalTemplateItem evalTemplateItem = 
 				new EvalTemplateItem(new Date(), owner,	
 						template, item, displayOrder, itemCategory, level, nodeId,
-						displayRows, scaleDisplaySetting, usesNA, blockParent, blockId,
-						resultsSharing);
+						displayRows, scaleDisplaySetting, usesNA, false, blockParent,
+						blockId, resultsSharing);
 			evalTemplateItem.setEid(eid);
 			return evalTemplateItem;
 		}
@@ -1055,8 +1055,8 @@ public class EvalImportImpl implements EvalImport {
 	
 			//new item
 			EvalItem item = new EvalItem(new Date(), currentUserId, itemText, description, sharing, classification, expert,
-					expertDescription, scale, templateItems, usesNA, displayRows, scaleDisplaySetting, category, 
-					locked);
+					expertDescription, scale, templateItems, usesNA, false, displayRows, scaleDisplaySetting, 
+					category, locked);
 			
 			item.setEid(eid);
 			return item;

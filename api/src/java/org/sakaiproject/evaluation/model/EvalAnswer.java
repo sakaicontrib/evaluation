@@ -42,9 +42,22 @@ public class EvalAnswer implements java.io.Serializable {
 
    private String multiAnswerCode;
 
+   /**
+    * If there is something (as defined by the type) associated with this answer then the id will be set,
+    * otherwise this is null
+    */
    private String associatedId;
 
+   /**
+    * If there is something associated with this answer then the type (e.g. instructor) will be set,
+    * otherwise this is null, always null for answers associated with course items
+    */
    private String associatedType;
+
+   /**
+    * If there is a user comment associated with this answer it will be stored here
+    */
+   private String comment;
 
    /**
     * Non-persistent field which will be populated with the actual scale array keys
@@ -109,10 +122,11 @@ public class EvalAnswer implements java.io.Serializable {
 
    /** 
     * full constructor 
+    * @param comment TODO
     */
    public EvalAnswer(EvalResponse response, EvalTemplateItem templateItem,
          EvalItem item, String associatedId, String associatedType, String text,
-         Integer numeric, String multiAnswerCode) {
+         Integer numeric, String multiAnswerCode, String comment) {
       if (this.lastModified == null) { this.lastModified = new Date(); }
       this.response = response;
       this.templateItem = templateItem;
@@ -122,6 +136,7 @@ public class EvalAnswer implements java.io.Serializable {
       this.text = text;
       this.numeric = numeric;
       this.multiAnswerCode = multiAnswerCode;
+      this.comment = comment;
    }
 
    // Property accessors
@@ -212,6 +227,16 @@ public class EvalAnswer implements java.io.Serializable {
     */
    public void setMultiAnswerCode(String multiAnswerCode) {
       this.multiAnswerCode = multiAnswerCode;
+   }
+
+   
+   public String getComment() {
+      return comment;
+   }
+
+   
+   public void setComment(String comment) {
+      this.comment = comment;
    }
 
 }
