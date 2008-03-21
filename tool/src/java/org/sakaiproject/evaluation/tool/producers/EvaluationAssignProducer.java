@@ -234,17 +234,21 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
        */
       Boolean useAdHocGroups = (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_GROUPS);
       if (useAdHocGroups) {
+         UIOutput.make(form, "create-adhoc-groups-area");
          UIOutput addhocGroupCheckbox = UIOutput.make(form, "use-adhocgroups-checkbox");
          UIOutput addhocGroupDiv = UIOutput.make(form, "newadhocgroup-assignment-area");
 
          initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.hideAndShowRegionWithCheckbox", 
                new String[] {addhocGroupDiv.getFullID(), addhocGroupCheckbox.getFullID()}));
 
-         UIInput adhocGroupName = UIInput.make(form, "adhoc-group-name", "");
-         UIInput adhocGroupEmails = UIInput.make(form, "adhoc-email-input", "");
+         UIInput adhocGroupName = UIInput.make(form, "adhoc-group-name", null);
+         UIInput adhocGroupEmails = UIInput.make(form, "adhoc-email-input", null);
 
          UIOutput saveEmailsButton = UIOutput.make(form, "adhoc-save-emails-button");
          UIOutput clearEmailsButton = UIOutput.make(form, "adhoc-clear-emails-button");
+         
+         initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.initAssignAdhocGroupArea", 
+                 new String[] {saveEmailsButton.getFullID()}));
       }
 
       /*
