@@ -299,21 +299,6 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
                UIOutput.make(itemBranch, "scale-display", scaleDisplaySettingLabel);
             }
 
-            /* Hierarchy Messages 
-             * Only Display these if they are enabled in the preferences.
-             */
-            Boolean showHierarchy = (Boolean) evalSettings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
-            if ( showHierarchy != null && showHierarchy.booleanValue() ) {
-               UIMessage.make(itemBranch, "item-hierarchy-level-title", "modifytemplate.item.hierarchy.level.title");
-               UIOutput.make(itemBranch, "item-hierarchy-level", templateItem.getHierarchyLevel());
-               /* Don't show the Node Id if it's a top level item */
-               if (!templateItem.getHierarchyLevel().equals(EvalConstants.HIERARCHY_LEVEL_TOP)) {
-                  UIMessage.make(itemBranch, "item-hierarchy-nodeid-title", "modifytemplate.item.hierarchy.nodeid.title");
-                  EvalHierarchyNode curnode = hierarchyLogic.getNodeById(templateItem.getHierarchyNodeId());
-                  UIOutput.make(itemBranch, "item-hierarchy-nodeid", curnode.title);
-               }
-            }
-
             UIInternalLink.make(itemBranch, "preview-row-item", UIMessage.make("general.command.preview"), 
                   new ItemViewParameters(PreviewItemProducer.VIEW_ID, (Long) null, templateItem.getId()) );
 
@@ -355,8 +340,23 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
             UIOutput.make(itemBranch, "item-owner-name", owner.displayName);
             UIMessage.make(tofill, "item-owner-title", "modifytemplate.item.owner.title");
 
+            /* Hierarchy Messages 
+             * Only Display these if they are enabled in the preferences.
+             */
+            Boolean showHierarchy = (Boolean) evalSettings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
+            if ( showHierarchy ) {
+               UIMessage.make(itemBranch, "item-hierarchy-level-title", "modifytemplate.item.hierarchy.level.title");
+               UIOutput.make(itemBranch, "item-hierarchy-level", templateItem.getHierarchyLevel());
+               /* Don't show the Node Id if it's a top level item */
+               if (!templateItem.getHierarchyLevel().equals(EvalConstants.HIERARCHY_LEVEL_TOP)) {
+                  UIMessage.make(itemBranch, "item-hierarchy-nodeid-title", "modifytemplate.item.hierarchy.nodeid.title");
+                  EvalHierarchyNode curnode = hierarchyLogic.getNodeById(templateItem.getHierarchyNodeId());
+                  UIOutput.make(itemBranch, "item-hierarchy-nodeid", curnode.title);
+               }
+            }
+
             Boolean useResultsSharing = (Boolean) evalSettings.get(EvalSettings.ITEM_USE_RESULTS_SHARING);
-            if ( useResultsSharing != null && useResultsSharing.booleanValue() ) {
+            if ( useResultsSharing ) {
                // only show results sharing if it is being used
                UIMessage.make(tofill, "item-resultssharing-title", "modifytemplate.item.resultssharing.title");
                String resultsSharingMessage = "unknown.caps";
@@ -365,7 +365,7 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
                } else if ( EvalConstants.SHARING_PRIVATE.equals(templateItem.getResultsSharing()) ) {
                   resultsSharingMessage = "general.private";
                }
-               UIMessage.make(itemBranch, "item-results-sharing", resultsSharingMessage);
+               UIMessage.make(itemBranch, "item-resultssharing", resultsSharingMessage);
             }
 
             if ( EvalConstants.ITEM_TYPE_SCALED.equals(templateItem.getItem().getClassification()) &&
@@ -375,13 +375,26 @@ public class ModifyTemplateItemsProducer implements ViewComponentProducer, ViewP
                UIOutput.make(itemBranch, "scale-type", templateItem.getItem().getScale().getTitle());
             }
 
-            if ((templateItem.getUsesNA() != null) && (templateItem.getUsesNA().booleanValue()) ) {
-               UIMessage.make(itemBranch, "item-na-title", "modifytemplate.item.na.title");
-               UIMessage.make(itemBranch, "item-na-value", "modifytemplate.item.na.value");
+            // display item options
+            boolean showOptions = false;
+            if ( templateItem.getUsesNA() != null 
+                  && templateItem.getUsesNA() ) {
+               UIMessage.make(itemBranch, "item-na-enabled", "modifytemplate.item.na.note");
+               showOptions = true;
+            }
+
+            if ( templateItem.getUsesComment() != null 
+                  && templateItem.getUsesComment() ) {
+               UIMessage.make(itemBranch, "item-comment-enabled", "modifytemplate.item.comment.note");
+               showOptions = true;
+            }
+
+            if (showOptions) {
+               UIMessage.make(itemBranch, "item-options", "modifytemplate.item.options");               
             }
 
             // block child items
-            if ( templateItem.getBlockParent() != null && templateItem.getBlockParent().booleanValue() ) {
+            if ( TemplateItemUtils.isBlockParent(templateItem) ) {
                List<EvalTemplateItem> childList = TemplateItemUtils.getChildItems(itemList, templateItem.getId());
                if (childList.size() > 0) {
                   UIBranchContainer blockChildren = UIBranchContainer.make(itemBranch, "block-children:");

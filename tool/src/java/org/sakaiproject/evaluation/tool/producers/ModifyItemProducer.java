@@ -185,6 +185,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
       String scaleDisplaySetting = null; // the scale display setting for the item/TI
       String displayRows = null; // the number of rows to display for the text area
       Boolean usesNA = null; // whether or not the item uses the N/A option
+      Boolean usesComment = null; // whether or not the item uses the comment option
       Long scaleId = null; // this holds the current scale id if there is one
 
       // now we validate the incoming view params
@@ -224,6 +225,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
          scaleDisplaySetting = item.getScaleDisplaySetting();
          displayRows = item.getDisplayRows() != null ? item.getDisplayRows().toString() : null;
          usesNA = item.getUsesNA();
+         usesComment = item.getUsesComment();
          // if this is locked then we should probably be failing at this point
          itemLocked = item.getLocked() != null ? item.getLocked() : itemLocked;
          if (item.getScale() != null) {
@@ -246,6 +248,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
          scaleDisplaySetting = templateItem.getScaleDisplaySetting();
          displayRows = templateItem.getDisplayRows() != null ? templateItem.getDisplayRows().toString() : null;
          usesNA = templateItem.getUsesNA();
+         usesComment = templateItem.getUsesComment();
          itemLocked = templateItem.getItem().getLocked() != null ? templateItem.getItem().getLocked() : itemLocked;
          if (templateItem.getItem().getScale() != null) {
             currentScale = templateItem.getItem().getScale();
@@ -434,12 +437,24 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
          }
 
          if (! EvalConstants.ITEM_TYPE_HEADER.equals(itemClassification)) {
+            // na option for all non-header items
             Boolean naAllowed = (Boolean) settings.get(EvalSettings.NOT_AVAILABLE_ALLOWED);
             if (naAllowed) {
                UIBranchContainer showNA = UIBranchContainer.make(itemDisplayHintsBranch, "showNA:");
                UIBoundBoolean bb = UIBoundBoolean.make(showNA, "item-na", commonDisplayOTP + "usesNA", usesNA);
                UIMessage.make(showNA,"item-na-header", "modifyitem.item.na.header")
                      .decorate( new UILabelTargetDecorator(bb) );
+            }
+
+            if (! EvalConstants.ITEM_TYPE_TEXT.equals(itemClassification)) {
+               // comments options for all non-text and non-header items
+               Boolean commentAllowed = (Boolean) settings.get(EvalSettings.ENABLE_ITEM_COMMENTS);
+               if (commentAllowed) {
+                  UIBranchContainer showComment = UIBranchContainer.make(itemDisplayHintsBranch, "showItemComment:");
+                  UIBoundBoolean bb = UIBoundBoolean.make(showComment, "item-comment", commonDisplayOTP + "usesComment", usesComment);
+                  UIMessage.make(showComment,"item-comment-header", "modifyitem.item.comment.header")
+                        .decorate( new UILabelTargetDecorator(bb) );
+               }
             }
          }
 

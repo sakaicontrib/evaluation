@@ -297,4 +297,23 @@ public class EvalEmailConstants {
 		"2) Enter your username and password and click on 'Login' button. \n" +
 		"3) Click on '${ToolTitle}' in the left navigation menu under ${ToolSite}. \n" +
 		"4) Click on a link under 'Current evaluations to take'. \n";
+
+
+	// What are these constants? -AZ
+
+   /**
+    * If used in a default email template, apply a patch to change this to the name of your local Sakai instance (e.g., CamTools, CTools).
+    */
+   public static final String CMS_TITLE = "Sakai instance";
+   
+   /**
+    * If used in a default email template, apply a patch to change this to the name of a different site where the tool resides.
+    */
+   public static final String TOOL_SITE = "My Workspace";
+    
+   /**
+    * If used in a default email template, apply a patch to change this to the name of another tool title (e.g., Teaching Questionnaires).
+    */
+   public static final String TOOL_TITLE = "Course Evaluations";
+
 }

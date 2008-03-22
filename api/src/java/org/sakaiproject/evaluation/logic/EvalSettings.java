@@ -230,6 +230,12 @@ public interface EvalSettings {
    public static final String ENABLE_ADHOC_USERS = "ENABLE_ADHOC_USERS:java.lang.Boolean";
 
    /**
+    * Enable evaluation taker comments on all non-text answerable items, this is configured
+    * on a per item basis, and will disable all comments if turned off
+    */
+   public static final String ENABLE_ITEM_COMMENTS = "ENABLE_ITEM_COMMENTS:java.lang.Boolean";
+
+   /**
     * This is here to identify all the boolean ONLY settings in the system,
     * this does not include Booleans which are configurable (i.e. can be set to null, true, or false)
     * but only includes the booleans which are always true or false
@@ -245,6 +251,7 @@ public interface EvalSettings {
       ENABLE_EVAL_CATEGORIES,
       ENABLE_EVAL_RESPONSE_REMOVAL,
       ENABLE_IMPORTING,
+      ENABLE_ITEM_COMMENTS,
       ENABLE_PDF_REPORT_BANNER,
       ENABLE_PDF_REPORT_EXPORT,
       ENABLE_SUMMARY_SITES_BOX,

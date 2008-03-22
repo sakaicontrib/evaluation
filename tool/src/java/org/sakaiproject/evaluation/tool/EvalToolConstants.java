@@ -180,7 +180,7 @@ public class EvalToolConstants {
     * Defines the allowed values for the Integer constants in pulldowns
     */
    public static final String[] PULLDOWN_INTEGER_VALUES = new String[] {
-      "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "12", "15", "18", "20", "25", "50"};	
+      "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "12", "14", "15", "18", "20", "21", "25", "28", "30", "50", "60", "90"};	
 
    /**
     * Defines the allowed values for minimum time difference (in hours) 

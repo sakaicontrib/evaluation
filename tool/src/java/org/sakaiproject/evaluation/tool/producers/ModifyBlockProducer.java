@@ -236,7 +236,7 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
           */
          if (((Boolean) settings.get(EvalSettings.NOT_AVAILABLE_ALLOWED)).booleanValue()) {
             UIBranchContainer showNA = UIBranchContainer.make(form, "showNA:");
-            UIMessage.make(showNA, "add-na-header", "modifyitem.add.na.header"); //$NON-NLS-1$ //$NON-NLS-2$
+            UIMessage.make(showNA, "add-na-header", "modifyitem.item.na.header");
             UIBoundBoolean.make(form, "item_NA", itemPath + ".usesNA", null);
          }
 

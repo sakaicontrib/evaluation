@@ -306,6 +306,8 @@ public class AdministrateProducer implements ViewComponentProducer {
       makeBoolean(form, "general-enable-adhoc-groups", EvalSettings.ENABLE_ADHOC_GROUPS);
       makeBoolean(form, "general-enable-adhoc-users", EvalSettings.ENABLE_ADHOC_USERS); 
 
+      makeBoolean(form, "general-enable-item-comments", EvalSettings.ENABLE_ITEM_COMMENTS);
+
 //    makeBoolean(form, "general-require-comments-block",  EvalSettings.REQUIRE_COMMENTS_BLOCK);
 
       //Number of days old can an eval be and still be recently closed
@@ -337,7 +339,7 @@ public class AdministrateProducer implements ViewComponentProducer {
     */
    private void makeBoolean(UIContainer parent, String ID, String adminkey) {
       // Must use "composePath" here since admin keys currently contain periods
-      UIBoundBoolean.make(parent, ID, adminkey == null? null : PathUtil.composePath(ADMIN_WBL, adminkey)); 
+      UIBoundBoolean.make(parent, ID, adminkey == null ? null : PathUtil.composePath(ADMIN_WBL, adminkey));
    }
 
    /*

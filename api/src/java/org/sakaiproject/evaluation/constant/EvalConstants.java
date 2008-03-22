@@ -26,25 +26,11 @@ public class EvalConstants {
     * The current version of the app for updating purposes,
     * this should always be the NEXT version of the tool if this is trunk code
     */
-   public static String APP_VERSION = "1.2.0-RC5";
+   public static String APP_VERSION = "1.2.0-RC5"; 
 
    public static String SVN_REVISION = "$Revision$";
    public static String SVN_LAST_UPDATE = "$Date$";
-   
-   /**
-    * If used in a default email template, apply a patch to change this to the name of your local Sakai instance (e.g., CamTools, CTools).
-    */
-   public static final String CMS_TITLE = "Sakai instance";
-   
-   /**
-    * If used in a default email template, apply a patch to change this to the name of a different site where the tool resides.
-    */
-   public static final String TOOL_SITE = "My Workspace";
-	 
-   /**
-    * If used in a default email template, apply a patch to change this to the name of another tool title (e.g., Teaching Questionnaires).
-    */
-   public static final String TOOL_TITLE = "Course Evaluations";
+
 
    /**
     * Evaluation type: EVALUATION This is the standard type of evaluation for course/program assessment
