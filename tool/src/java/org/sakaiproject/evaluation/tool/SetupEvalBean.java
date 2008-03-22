@@ -83,18 +83,6 @@ public class SetupEvalBean {
     */
    public String[] selectedHierarchyNodeIDs = new String[] {};
 
-   /*
-    * TODO FIXME Bug that is fixed in next version of RSF. See
-    * EvaluationAssignConfirmProducer around line: 196
-    */
-   public void setSelectedGroupIDsWithPucArray(String toparse) {
-      selectedGroupIDs = (String[]) StringArrayParser.instance.parse(toparse);
-   }
-
-   public void setSelectedHierarchyNodeIDsWithPucArray(String toparse) {
-      selectedHierarchyNodeIDs = (String[]) StringArrayParser.instance.parse(toparse);
-   }
-
    private EvalEvaluationService evaluationService;
    public void setEvaluationService(EvalEvaluationService evaluationService) {
       this.evaluationService = evaluationService;

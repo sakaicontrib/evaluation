@@ -201,21 +201,10 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, V
                actionBean + "completeConfirmAction");
          UIMessage.make(evalAssignForm, "cancel-button", "evaluationassignconfirm.changes.assigned.courses.button");
          
-         
-         // TODO FIXME Apparently there is a bug, that is fixed in RSF 0.7.3M1 
-         // for binding EL to String[] arrays. The problem here is that it's not
-         // getting decoded, so the array encoding is just put in the first array
-         // index. ( it ends up looking like: String[] {"2:3:wow5:great"} for 
-         // String[] {"wow","great"}
-         
          // bind in the selected nodes and groups
-         //evalAssignForm.parameters.add( new UIELBinding(actionBean + "selectedGroupIDs", 
-         //      evalViewParams.selectedGroupIDs) );
-         //evalAssignForm.parameters.add( new UIELBinding(actionBean + "selectedHierarchyNodeIDs", 
-         //      evalViewParams.selectedHierarchyNodeIDs) );
-         evalAssignForm.parameters.add( new UIELBinding(actionBean + "selectedGroupIDsWithPucArray", 
+         evalAssignForm.parameters.add( new UIELBinding(actionBean + "selectedGroupIDs", 
                evalViewParams.selectedGroupIDs) );
-         evalAssignForm.parameters.add( new UIELBinding(actionBean + "selectedHierarchyNodeIDsWithPucArray", 
+         evalAssignForm.parameters.add( new UIELBinding(actionBean + "selectedHierarchyNodeIDs", 
                evalViewParams.selectedHierarchyNodeIDs) );
          evalAssignForm.parameters.add( new UIELBinding(actionBean + "evaluationId",evaluationId));
          
