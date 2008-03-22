@@ -22,8 +22,11 @@ import java.util.Map;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
+import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIJointContainer;
+import uk.org.ponder.rsf.components.UIMessage;
 
 /**
  * The main implementation for the ItemRenderer class which allows the presentation programmers
@@ -80,6 +83,30 @@ public class ItemRendererImpl implements ItemRenderer {
 	public String getRenderType() {
 		// this handles no specific type so return null
 		return null;
+	}
+
+	/**
+	 * Render the comment block beneath an item if enabled for this item and handle the binding if there is one
+	 * 
+	 * @param parent
+	 * @param templateItem
+	 * @param bindings
+	 */
+	public static void renderCommentBlock(UIContainer parent, EvalTemplateItem templateItem, String[] bindings) {
+      // render the item comment if enabled
+      boolean usesComment = templateItem.getUsesComment() == null ? false : templateItem.getUsesComment().booleanValue();
+      if (usesComment) {
+         String commentBinding = null;
+         if (bindings.length >= 3) {
+            commentBinding = bindings[2];
+         }
+         String commentInit = null;
+         if (commentBinding == null) commentInit = "";
+
+         UIBranchContainer showComment = UIBranchContainer.make(parent, "showComment:");
+         UIMessage.make(showComment, "itemCommentHeader", "viewitem.comment.desc");
+         UIInput.make(showComment, "itemComment", commentBinding, commentInit);
+      }
 	}
 
 }

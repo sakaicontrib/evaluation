@@ -375,7 +375,7 @@ public class TemplateItemUtils {
 
    /**
     * Creates an {@link EvalTemplateItem} object from an {@link EvalItem} object by inferring
-    * the necessary paramters for previewing or rendering when only an item is available, 
+    * the necessary parameters for previewing or rendering when only an item is available, 
     * does NOT create a persistent object<br/>
     * NOTE: template is set to null
     * 
@@ -390,11 +390,9 @@ public class TemplateItemUtils {
       EvalTemplateItem templateItem = new EvalTemplateItem(item.getLastModified(), item.getOwner(), null, item,
             new Integer(0), item.getCategory(), EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE);
 
-      if (item.getUsesNA() == null) {
-         templateItem.setUsesNA(Boolean.TRUE);
-      } else {
-         templateItem.setUsesNA(item.getUsesNA());
-      }
+      templateItem.setUsesNA(item.getUsesNA() == null ? Boolean.FALSE : item.getUsesNA());
+
+      templateItem.setUsesComment(item.getUsesComment() == null ? Boolean.FALSE : item.getUsesComment());
 
       if ( EvalConstants.ITEM_TYPE_SCALED.equals(item.getClassification()) ) {
          if (item.getScaleDisplaySetting() == null) {

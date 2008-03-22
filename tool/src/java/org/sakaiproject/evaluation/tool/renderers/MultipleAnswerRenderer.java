@@ -123,6 +123,10 @@ public class MultipleAnswerRenderer implements ItemRenderer {
       } else {
          throw new IllegalStateException("Unknown scaleDisplaySetting ("+scaleDisplaySetting+") for " + getRenderType());
       }
+
+      // render the item comment
+      ItemRendererImpl.renderCommentBlock(container, templateItem, bindings);
+
       return container;
    }
 
