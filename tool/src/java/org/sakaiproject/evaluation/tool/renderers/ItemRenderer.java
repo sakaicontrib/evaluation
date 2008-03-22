@@ -35,8 +35,12 @@ public interface ItemRenderer {
 	 * @param parent any RSF {@link UIContainer} object which will contain the rendered item
 	 * @param ID the (RSF) ID of this component
 	 * @param bindings an array of EL expressions to be used as the value binding for the contained String value, can be null if no binding,
-	 * use an array with one item for most types but if you are rendering a block then you should pass in the child item bindings in
-	 * display order, do not include a binding for the parent
+	 * use an array with the elements as follows:
+	 * 0 = main answer binding
+	 * 1 = not applicable binding
+	 * 2 = item comment binding
+	 * <b>NOTE:</b> if you are rendering a block then you should pass in the child item bindings in display order, 
+	 * do not include a binding for the parent
 	 * @param templateItem the templateItem to render (if you only have an item then
 	 * simply create an {@link EvalTemplateItem} and wrap the item in it)
 	 * @param displayNumber the number to display next to this item (if 0 or less then display none)

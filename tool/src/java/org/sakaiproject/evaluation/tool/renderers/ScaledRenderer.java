@@ -64,7 +64,7 @@ public class ScaledRenderer implements ItemRenderer {
       String scaleLabels[] = new String[optionCount];
 
       String scaleDisplaySetting = templateItem.getScaleDisplaySetting();
-      boolean usesNA = templateItem.getUsesNA().booleanValue();
+      boolean usesNA = templateItem.getUsesNA() == null ? false : templateItem.getUsesNA().booleanValue();
 
       if (EvalConstants.ITEM_SCALE_DISPLAY_COMPACT.equals(scaleDisplaySetting) ||
             EvalConstants.ITEM_SCALE_DISPLAY_COMPACT_COLORED.equals(scaleDisplaySetting)) {
@@ -287,6 +287,10 @@ public class ScaledRenderer implements ItemRenderer {
       } else {
          throw new IllegalStateException("Unknown scaleDisplaySetting ("+scaleDisplaySetting+") for " + getRenderType());
       }
+
+      // render the item comment
+      ItemRendererImpl.renderCommentBlock(container, templateItem, bindings);
+
       return container;
    }
 

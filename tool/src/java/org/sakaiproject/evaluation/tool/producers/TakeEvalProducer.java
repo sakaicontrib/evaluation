@@ -546,16 +546,20 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
       }
 
       // generate binding for the UI input element (UIInput, UISelect, etc.) to the correct part of answer
-      String[] bindings = null;
+      String[] bindings = new String[3];
+      // set the primary binding depending on the item type
       String itemType = TemplateItemUtils.getTemplateItemType(templateItem);
       if ( EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemType) ) {
-         bindings = new String[] { currAnswerOTP + "multipleAnswers", currAnswerOTP + "NA" };
+         bindings[0] = currAnswerOTP + "multipleAnswers";
       } else if ( EvalConstants.ITEM_TYPE_TEXT.equals(itemType) ) {
-         bindings = new String[] { currAnswerOTP + "text", currAnswerOTP + "NA" };
+         bindings[0] = currAnswerOTP + "text";
       } else {
          // this is the default binding (scaled and MC)
-         bindings = new String[] { currAnswerOTP + "numeric" };
+         bindings[0] = currAnswerOTP + "numeric";
       }
+      // set the NA and comment bindings
+      bindings[1] = currAnswerOTP + "NA";
+      bindings[2] = currAnswerOTP + "comment";
       return bindings;
    }
 
