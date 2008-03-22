@@ -66,8 +66,8 @@
 					<div class="listNav">
 						<div rsf:id="level-header" class="instruction">Current Level - # existing items</div>
 						<label rsf:id="add-item-note" for="add-item-control:::add-item-classification-selection">Add Item:</label>
-						<span rsf:id="add-item-control:">
-							<form name="modify_template_items_form">
+						<div rsf:id="add-item-control:" style="display:inline;">
+							<form name="modify_template_items_form" style="display:inline;">
 								<select	id="itemClassification-selection">
 									<option value="modify_scaled.html" selected="selected">Scaled/Survey</option>
 									<option value="modify_essay.html">Short Answer/Essay</option>
@@ -78,7 +78,7 @@
 								<input id="add_questions" type="button" value="Add"
 									onclick="EvalSystem.operateSelectLink(this.id, 'itemClassification-selection')" />
 							</form>
-						</span>
+						</div>
 					</div>
 				</div>
 				<!-- // gsilver: this block should be rendered only if there are items to be rendered, otherwise a message such as "No items have been added yet. To add items select from left. -->
@@ -133,27 +133,20 @@
 										<span class="scaleDesc textPanelFooter">
 											<span rsf:id="item-scale-type-title" class="lighthighlight">Scale Type:</span>	
 											<span rsf:id="scale-type" style="white-space:nowrap;">Scale Type</span>
-											<span rsf:id="item-na-title" class="lighthighlight">NA available:</span>
-											<span rsf:id="item-na-value">yes/no</span>
+                                            <span rsf:id="item-resultssharing-enabled" class="lighthighlight">Results Sharing</span>
+                                            <span rsf:id="item-resultssharing">Results Sharing</span>
+                                            <span rsf:id="item-options" class="lighthighlight">Options:</span>
+                                            <span rsf:id="item-na-enabled">NA</span>
+                                            <span rsf:id="item-comment-enabled">Comment</span>
 										</span>
 										<span class="scaleDesc textPanelFooter">
-											<span rsf:id="item-owner-title" class="lighthighlight">Results Sharing</span>
-											<span rsf:id="item-owner-name" >
-												Owner name
-											</span>
-											<span rsf:id="item-category-title" class="lighthighlight">
-												Category:
-											</span>
-											<span rsf:id="item-category">
-												Category
-											</span>
-											<span rsf:id="item-resultssharing-title" class="lighthighlight">Results Sharing</span>
-											<span rsf:id="item-results-sharing">
-												Results Sharing
-											</span>
-											<span rsf:id="item-hierarchy-level-title" class="lighthighlight">Hierarchy Level</span>
+											<span rsf:id="item-owner-title" class="lighthighlight">Owner:</span>
+											<span rsf:id="item-owner-name">Owner name</span>
+											<span rsf:id="item-category-title" class="lighthighlight">Category:</span>
+											<span rsf:id="item-category">Category</span>
+											<span rsf:id="item-hierarchy-level-title" class="lighthighlight">Hierarchy Level:</span>
 											<span rsf:id="item-hierarchy-level">Top Level</span>
-											<span rsf:id="item-hierarchy-nodeid-title" class="lighthighlight">Hierarchy ID</span>
+											<span rsf:id="item-hierarchy-nodeid-title" class="lighthighlight">Hierarchy ID:</span>
 											<span rsf:id="item-hierarchy-nodeid">Some Node ID or Professor ID</span>
 										</span>
 										<div class="cleaner">&nbsp;</div>
