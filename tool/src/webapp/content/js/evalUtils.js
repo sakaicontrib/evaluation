@@ -8,16 +8,26 @@ var EvalSystem = function() {
   function $it(elementID) {
     return document.getElementById(elementID);
   }
+  
+  /**
+   * Because JQuery uses this sort of CSS based selector system, if you have 
+   * wacky characters in your tag ID (such as RSF Colons) you have to escape 
+   * them. At the moment this just escapes the colons, should probably have a
+   * fuller (or automatic) jquery escaping mechanism.
+   */
+  function escForJquery(value) {
+    return value.replace(/:/g, "\\:");
+  }
 
   return {
   
   	initAssignAdhocGroupArea: function (saveButtonId,clearButtonId,
         groupNameInputId,emailInputId,emailListDivId,uvburl) {
-        var groupNameInput = $("#"+groupNameInputId);
-        var emailListInput = $("#"+emailInputId);
-        var emailListDiv = $("#"+emailListDivId);
-        var saveButton = $("#"+saveButtonId);
-        var clearButton = $("#"+clearButtonId);
+        var groupNameInput = $("#"+escForJquery(groupNameInputId));
+        var emailListInput = $("#"+escForJquery(emailInputId));
+        var emailListDiv = $("#"+escForJquery(emailListDivId));
+        var saveButton = $("#"+escForJquery(saveButtonId));
+        var clearButton = $("#"+escForJquery(clearButtonId));
         
         var adhocGroupId = null;
         
@@ -54,8 +64,8 @@ var EvalSystem = function() {
      * checkboxId: The ID of the checkbox to trigger the hide/show
      */
     hideAndShowRegionWithCheckbox: function (areaId, checkboxId) {
-        var area = $("#"+areaId);
-        var checkbox = $("#"+checkboxId);
+        var area = $("#"+escForJquery(areaId));
+        var checkbox = $("#"+escForJquery(checkboxId));
         
         var changeAction = function(event) {
             var checkboxValue = event.target.checked;
@@ -74,6 +84,30 @@ var EvalSystem = function() {
         }
         
         checkbox.change( function (event) { changeAction(event) }).change();
+    },
+    
+    hideAndShowAssignArea: function(areaId,showId,hideId) {
+        var area = $("#"+escForJquery(areaId));
+        var showButton = $("#"+escForJquery(showId));
+        var hideButton = $("#"+escForJquery(hideId));
+        
+        var clickAction = function(event) {
+            if (area.is(':hidden')) {
+                area.show("slow");
+                showButton.hide();
+                hideButton.show();
+            }
+            else {
+                area.hide("normal");
+                showButton.show();
+                hideButton.hide();
+            }
+        }
+        
+        area.hide();
+        
+        showButton.click( function (event) { clickAction(event) });
+        hideButton.click( function (event) { clickAction(event) });
     },
 
     // this just makes it easier to add in more stuff later -AZ

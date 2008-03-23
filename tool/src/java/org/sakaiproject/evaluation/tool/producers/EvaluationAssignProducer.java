@@ -60,8 +60,15 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 /**
  * View for assigning an evaluation to groups and hierarchy nodes. 
  * 
+ * This Producer has instance variables for tracking state of the view, and
+ * should never be reused or used as a singleton.
+ * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  * @author Steve Githens (sgithens@caret.cam.ac.uk)
+ */
+/**
+ * @author sgithens
+ *
  */
 public class EvaluationAssignProducer implements ViewComponentProducer, ViewParamsReporter, ActionResultInterceptor {
 
@@ -99,6 +106,11 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
    public void setViewStateHandler(ViewStateHandler vsh) {
       this.vsh = vsh;
    }
+   
+   /*
+    * Instance Variables for building up rendering information.
+    */
+   private StringBuilder initJS = new StringBuilder();
 
    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
@@ -179,13 +191,10 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
        * them as javascript arrays).  So we are just putting the javascript initialization
        * here and running it at the bottom of the page.
        * 
-       * TODO: Replace these silly checkboxes with arrows, and put it in a seperate method.
        */
-      StringBuilder initJS = new StringBuilder();
-
-      /*
-       * Selection GUI for Hierarchy Nodes and Evaluation Groups
-       */
+      Boolean useAdHocGroups = (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_GROUPS);
+      Boolean showHierarchy = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
+      
       List<EvalGroup> evalGroups = externalLogic.getEvalGroupsForUser(externalLogic.getCurrentUserId(), EvalConstants.PERM_BE_EVALUATED);
       if (evalGroups.size() > 0) {
          Map<String, EvalGroup> groupsMap = new HashMap<String, EvalGroup>();
@@ -194,31 +203,38 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
             groupsMap.put(c.evalGroupId, c);
          }
 
-         // Display the table for selecting hierarchy nodes
-         Boolean showHierarchy = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
+         /*
+          * Area 1. Selection GUI for Hierarchy Nodes and Evaluation Groups
+          */
+         
          if (showHierarchy) {
-            UIOutput.make(form, "hierarchy-node-area");
+            UIBranchContainer hierarchyArea = UIBranchContainer.make(form, "hierarchy-node-area:");
             
-            UIOutput hierarchyCheckbox = UIOutput.make(form, "use-hierarchynodes-checkbox");
-            UIOutput hierarchyDiv = UIOutput.make(form, "hierarchy-assignment-area");
-            initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.hideAndShowRegionWithCheckbox", 
-                  new String[] {hierarchyDiv.getFullID(), hierarchyCheckbox.getFullID()}));
+            addCollapseControl(hierarchyArea, "hierarchy-assignment-area", "hide-button", "show-button");
             
-            hierUtil.renderSelectHierarchyNodesTree(form, "hierarchy-tree-select:", 
+            hierUtil.renderSelectHierarchyNodesTree(hierarchyArea, "hierarchy-tree-select:", 
                     evalGroupsSelectID, hierNodesSelectID, evalGroupsLabels, evalGroupsValues,
                     hierNodesLabels, hierNodesValues);
          }
 
-         // display checkboxes for selecting the non-hierarchy groups
-         UIOutput evalGroupCheckbox = UIOutput.make(form, "use-evalgroups-checkbox");
-
-         UIOutput evalGroupDiv = UIOutput.make(form, "evalgroups-assignment-area");
-         initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.hideAndShowRegionWithCheckbox", 
-               new String[] {evalGroupDiv.getFullID(), evalGroupCheckbox.getFullID()}));
+         /*
+          * Area 2. display checkboxes for selecting the non-hierarchy groups
+          */
+         UIBranchContainer evalgroupArea = UIBranchContainer.make(form, "evalgroups-area:");
+         
+         // If both the hierarchy and adhoc groups are disabled, don't hide the
+         // selection area and don't make it collapsable, since it will be the
+         // only thing on the screen.
+         if (!showHierarchy && !useAdHocGroups) {
+             UIOutput.make(evalgroupArea, "evalgroups-assignment-area");
+         }
+         else {
+             addCollapseControl(evalgroupArea, "evalgroups-assignment-area", "hide-button", "show-button");
+         }
 
          String[] nonAssignedEvalGroupIDs = getEvalGroupIDsNotAssignedInHierarchy(evalGroups).toArray(new String[] {});
          for (int i = 0; i < nonAssignedEvalGroupIDs.length; i++) {
-            UIBranchContainer checkboxRow = UIBranchContainer.make(form, "groups:", i+"");
+            UIBranchContainer checkboxRow = UIBranchContainer.make(evalgroupArea, "groups:", i+"");
             if (i % 2 == 0) {
                checkboxRow.decorators = new DecoratorList( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
             }
@@ -237,43 +253,27 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
       }
 
       /*
-       * Selection GUI for new and existing ad-hoc groups.
+       * Area 3: Selection GUI for new ad-hoc groups.
        */
-      Boolean useAdHocGroups = (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_GROUPS);
+      
       if (useAdHocGroups) {
-         UIOutput.make(form, "create-adhoc-groups-area");
-         UIOutput addhocGroupCheckbox = UIOutput.make(form, "use-adhocgroups-checkbox");
-         UIOutput addhocGroupDiv = UIOutput.make(form, "newadhocgroup-assignment-area");
-
-         initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.hideAndShowRegionWithCheckbox", 
-               new String[] {addhocGroupDiv.getFullID(), addhocGroupCheckbox.getFullID()}));
-
-         UIOutput adhocEmailsArea = UIOutput.make(form, "adhoc-emails-area:");
+         UIBranchContainer newAdhocgroupArea = UIBranchContainer.make(form, "create-adhoc-groups-area:");
          
-         UIInput adhocGroupName = UIInput.make(form, "adhoc-group-name", null);
-         UIInput adhocGroupEmails = UIInput.make(form, "adhoc-email-input", null);
+         addCollapseControl(newAdhocgroupArea, "newadhocgroup-assignment-area", "hide-button", "show-button");
 
-         UIOutput saveEmailsButton = UIOutput.make(form, "adhoc-save-emails-button");
-         UIOutput clearEmailsButton = UIOutput.make(form, "adhoc-clear-emails-button");
+         UIOutput adhocEmailsArea = UIOutput.make(newAdhocgroupArea, "adhoc-emails-area:");
+         
+         UIInput adhocGroupName = UIInput.make(newAdhocgroupArea, "adhoc-group-name", null);
+         UIInput adhocGroupEmails = UIInput.make(newAdhocgroupArea, "adhoc-email-input", null);
+
+         UIOutput saveEmailsButton = UIOutput.make(newAdhocgroupArea, "adhoc-save-emails-button");
+         UIOutput clearEmailsButton = UIOutput.make(newAdhocgroupArea, "adhoc-clear-emails-button");
          
          initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.initAssignAdhocGroupArea", 
                  new String[] {saveEmailsButton.getFullID(), clearEmailsButton.getFullID(),
                adhocGroupName.getFullID(), adhocGroupEmails.getFullID(),
                adhocEmailsArea.getFullID(), vsh.getFullURL(new SimpleViewParameters(UVBProducer.VIEW_ID))}));
       }
-
-      /*
-       * TODO: If more than one course is selected and you come back to this page from confirm page,
-       * then without changing the selection you again go to confirm page, you get a null pointer
-       * that is created by RSF as:
-       * 
-       * 	"Error flattening value[Ljava.lang.String;@944d4a into class [Ljava.lang.String;
-       * 	...
-       *  java.lang.NullPointerException
-       * 		at uk.org.ponder.arrayutil.ArrayUtil.lexicalCompare(ArrayUtil.java:205)
-       *  	at uk.org.ponder.rsf.uitype.StringArrayUIType.valueUnchanged(StringArrayUIType.java:23)
-       *  ..."
-       */
       
       // Add all the groups and hierarchy nodes back to the UISelect Many's. see
       // the large comment further up.
@@ -327,6 +327,28 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
       return evalGroupIDs;
    }
 
+   
+   /**
+    * Taking the parent container and rsf:id's for the collapsed area and tags
+    * to show and hide, creates the necessary javascript.  The Javascript is
+    * appended to the instance variable holding the javascript that will be 
+    * rendered at the bottom of the page for javascript initialization.
+    * 
+    * @param tofill
+    * @param areaId
+    * @param hideId
+    * @param showId
+    */
+   private void addCollapseControl(UIContainer tofill, String areaId, String hideId,
+           String showId) {
+       UIOutput hideControl = UIOutput.make(tofill, hideId);
+       UIOutput showControl = UIOutput.make(tofill, showId);
+       
+       UIOutput areaDiv = UIOutput.make(tofill, areaId);
+       initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.hideAndShowAssignArea", 
+             new String[] {areaDiv.getFullID(), showControl.getFullID(),
+             hideControl.getFullID()}));
+   }
 
    /* (non-Javadoc)
     * @see uk.org.ponder.rsf.flow.ActionResultInterceptor#interceptActionResult(uk.org.ponder.rsf.flow.ARIResult, uk.org.ponder.rsf.viewstate.ViewParameters, java.lang.Object)
