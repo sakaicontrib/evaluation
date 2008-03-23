@@ -295,6 +295,7 @@ tool/src/webapp/content/images/application_view_list.png -text svneol=unset#imag
 tool/src/webapp/content/images/asterisk_orange.gif -text svneol=unset#image/gif svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/breadSep.gif -text svneol=unset#image/gif svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/calendar.gif -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/images/collapsed.png -text
 tool/src/webapp/content/images/corner.gif -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/delete-inact.gif -text svneol=unset#image/gif svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/delete.gif -text svneol=unset#image/gif svn_keywords=Date+Revision+Author+URL+Id
@@ -313,6 +314,7 @@ tool/src/webapp/content/images/last-noncur-step.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/med-cur-step.gif -text svneol=unset#image/gif svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/med-noncur-step.gif -text svneol=unset#image/gif svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/table_go.png -text svneol=unset#image/png svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/images/uncollapsed.png -text
 tool/src/webapp/content/js/blockReorderUtils.js -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/blockUtils.js -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/evalUtils.js -text svn_keywords=Date+Revision+Author+URL+Id

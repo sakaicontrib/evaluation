@@ -38,12 +38,16 @@
 				<span rsf:id="hierarchyNodeSelectHolder"></span>
 				<span rsf:id="evalGroupSelectHolder"></span>
 			
-				<div rsf:id="hierarchy-node-area">
+				<div rsf:id="hierarchy-node-area:">
 				<!-- 1. Hierarchy Node Assignments                           -->
 				<!-- This entire div will be hidden if hiearchy usage is     -->
 				<!-- disabled in the admin settings                          -->
 					<p>
 						<input rsf:id="use-hierarchynodes-checkbox" id="use-hierarchynodes-checkbox" type="checkbox" />
+						<span>
+							<img src="/sakai-evaluation-tool/content/images/collapsed.png" rsf:id="show-button" id="" />
+							<img src="/sakai-evaluation-tool/content/images/uncollapsed.png" style="display:none" rsf:id="hide-button" id="" />
+						</span>
 						<span rsf:id="msg=assigneval.page.hier.title">Assign to Hierarchy Nodes</span>
 					</p>
 					<div rsf:id="hierarchy-assignment-area" id="hierarchy-assignment-area">
@@ -52,42 +56,50 @@
 				</div>
 			
 				<!-- 2. Eval Group Assignments -->
-				<p>
-					<input rsf:id="use-evalgroups-checkbox" id="use-evalgroups-checkbox" type="checkbox" />
-					<span rsf:id="msg=assigneval.page.groups.title">Assign to Evaluation Groups</span>
-				</p>
-				<div rsf:id="evalgroups-assignment-area" id="evalgroups-assignment-area">
-					<p class="instruction"  rsf:id="assign-eval-instructions">You are allowed to assign this evaluation (eval title) to the groups listed below.</p> 
-					<div rsf:id="siteCheckboxes"/>
-					<table border="0" cellspacing="0" cellpadding="3" style="width:90%" class="listHier lines nolines" >
-						<thead>
-							<tr>
-								<th class="attach" >
-									<span rsf:id="msg=assigneval.select.header">Select</span>
-								</th>
-								<th>
-									<span rsf:id="msg=assigneval.name.header">Title</span>
-								</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr rsf:id="groups:"> 
-								<td class="attach" >
-									<input rsf:id="evalGroupId" type="checkbox" id="evalGroupId" />
-								</td>
-								<td>
-									<label rsf:id="groupTitle" for="evalGroupId">group title</label>
-								</td>
-							</tr>
-						</tbody>
-					</table>
+				<div rsf:id="evalgroups-area:">
+					<p>
+						<span>
+							<img src="/sakai-evaluation-tool/content/images/collapsed.png" rsf:id="show-button" id="" />
+							<img src="/sakai-evaluation-tool/content/images/uncollapsed.png" style="display:none" rsf:id="hide-button" id="" />
+						</span>
+						<span rsf:id="msg=assigneval.page.groups.title">Assign to Evaluation Groups</span>
+					</p>
+					<div rsf:id="evalgroups-assignment-area" id="evalgroups-assignment-area">
+						<p class="instruction"  rsf:id="assign-eval-instructions">You are allowed to assign this evaluation (eval title) to the groups listed below.</p> 
+						<div rsf:id="siteCheckboxes"/>
+						<table border="0" cellspacing="0" cellpadding="3" style="width:90%" class="listHier lines nolines" >
+							<thead>
+								<tr>
+									<th class="attach" >
+										<span rsf:id="msg=assigneval.select.header">Select</span>
+									</th>
+									<th>
+										<span rsf:id="msg=assigneval.name.header">Title</span>
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr rsf:id="groups:"> 
+									<td class="attach" >
+										<input rsf:id="evalGroupId" type="checkbox" id="evalGroupId" />
+									</td>
+									<td>
+										<label rsf:id="groupTitle" for="evalGroupId">group title</label>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 				</div>
 				
-				<div rsf:id="create-adhoc-groups-area">
+				<div rsf:id="create-adhoc-groups-area:">
 				<!-- 3. Create new ad-hoc groups                             -->
 				<!-- This will be hidden if adhoc groups are disabled.       -->
 					<p>
-						<input rsf:id="use-adhocgroups-checkbox" id="use-adhocgroups-checkbox" type="checkbox" />
+						<span>
+							<img src="/sakai-evaluation-tool/content/images/collapsed.png" rsf:id="show-button" id="" />
+							<img src="/sakai-evaluation-tool/content/images/uncollapsed.png" style="display:none" rsf:id="hide-button" id="" />
+						</span>
 						<span rsf:id="msg=assigneval.page.adhocgroups.title">I'd like to survey an ad-hoc group I'll specify now</span>
 					</p>
 					<div rsf:id="newadhocgroup-assignment-area" id="newadhocgroup-assignment-area">
@@ -114,12 +126,15 @@
 				</div>
 				
 				
-				<div rsf:id="use-existing-adhoc-groups-area">
+				<div rsf:id="use-existing-adhoc-groups-area:">
 				<!-- 4. Use Existing ad-hoc groups                           -->
 				<!-- This div will be hidden if adhoc groups are disabled,   -->
 				<!-- or you have no previous adhoc groups.                   -->
 					<p>
-						<input rsf:id="use-previous-addhocgroups-checkbox" id="use-previous-addhocgroups-checkbox" type="checkbox" />
+						<span>
+							<img src="/sakai-evaluation-tool/content/images/collapsed.png" rsf:id="show-button" id="" />
+							<img src="/sakai-evaluation-tool/content/images/uncollapsed.png" style="display:none" rsf:id="hide-button" id="" />
+						</span>
 						<span>I'd like to survey a group I've previously surveyed</span>
 					</p>
 					<div rsf:id="previousadhocgroup-assignment-area" id="previousadhocgroup-assignment-area">
