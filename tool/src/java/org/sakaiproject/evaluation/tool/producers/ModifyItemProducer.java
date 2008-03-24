@@ -438,7 +438,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
 
          if (! EvalConstants.ITEM_TYPE_HEADER.equals(itemClassification)) {
             // na option for all non-header items
-            Boolean naAllowed = (Boolean) settings.get(EvalSettings.NOT_AVAILABLE_ALLOWED);
+            Boolean naAllowed = (Boolean) settings.get(EvalSettings.ENABLE_NOT_AVAILABLE);
             if (naAllowed) {
                UIBranchContainer showNA = UIBranchContainer.make(itemDisplayHintsBranch, "showNA:");
                UIBoundBoolean bb = UIBoundBoolean.make(showNA, "item-na", commonDisplayOTP + "usesNA", usesNA);

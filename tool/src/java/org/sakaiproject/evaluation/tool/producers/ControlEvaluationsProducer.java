@@ -26,6 +26,7 @@ import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.entity.EvalCategoryEntityProvider;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
@@ -35,7 +36,10 @@ import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
+import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIELBinding;
+import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UILink;
 import uk.org.ponder.rsf.components.UIMessage;
@@ -97,11 +101,20 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
       this.evalBeanUtils = evalBeanUtils;
    }
 
+   private EvalSettings settings;
+   public void setSettings(EvalSettings settings) {
+      this.settings = settings;
+   }
+
 
    /* (non-Javadoc)
     * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
     */
    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+
+      String actionBean = "setupEvalBean.";
+      boolean earlyCloseAllowed = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_EARLY_CLOSE);
+      boolean reopeningAllowed = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_REOPEN);
 
       // use a date which is related to the current users locale
       DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
@@ -292,7 +305,6 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
             UIOutput.make(evaluationRow, "active-eval-startdate", df.format(evaluation.getStartDate()));
             UIOutput.make(evaluationRow, "active-eval-duedate", df.format(evaluation.getDueDate()));
 
-            
             UIInternalLink.make(evaluationRow, "active-eval-edit-link", UIMessage.make("general.command.edit"),
                   new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluation.getId()) );
 
@@ -302,6 +314,12 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
                      new EvalViewParameters( RemoveEvalProducer.VIEW_ID, evaluation.getId() ) );
             }
 
+            if (earlyCloseAllowed) {
+               UIForm form = UIForm.make(evaluationRow, "evalCloseForm");
+               form.addParameter( new UIELBinding(actionBean + "evaluationId", evaluation.getId()) );
+               UICommand.make(form, "evalCloseCommand", UIMessage.make("controlevaluations.active.close.now"), 
+                     actionBean + "closeEvalAction");
+            }
          }
       } else {
          UIMessage.make(tofill, "no-active-evals", "controlevaluations.active.none");
@@ -344,9 +362,6 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
 
             UIOutput.make(evaluationRow, "closed-eval-duedate", df.format(evaluation.getDueDate()));
 
-            UIInternalLink.make(evaluationRow, "closed-eval-edit-link", UIMessage.make("general.command.edit"),
-                  new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluation.getId()) );
-
             if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(EvalUtils.getEvaluationState(evaluation, false)) ) {
                int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
                if ( responsesNeeded == 0 ) {
@@ -364,10 +379,19 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
                      new String[] { df.format(evaluation.getViewDate()) });
             }
 
+            UIInternalLink.make(evaluationRow, "closed-eval-edit-link", UIMessage.make("general.command.edit"),
+                  new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluation.getId()) );
+
             if ( evaluationService.canRemoveEvaluation(currentUserId, evaluation.getId()) ) {
                // evaluation removable
                UIInternalLink.make(evaluationRow, "closed-eval-delete-link", UIMessage.make("general.command.delete"), 
                      new EvalViewParameters( RemoveEvalProducer.VIEW_ID, evaluation.getId() ) );
+            }
+            
+            if (reopeningAllowed) {
+               // TODO add in link to settings page with reopen option
+//               UIInternalLink.make(evaluationRow, "closed-eval-reopen-link", UIMessage.make("controlevaluations.closed.reopen.now"),
+//                     new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluation.getId()) );
             }
 
          }

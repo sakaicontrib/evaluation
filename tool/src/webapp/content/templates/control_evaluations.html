@@ -129,7 +129,10 @@
 						<td headers="settingsact" class="itemAction">
                             <a rsf:id="active-eval-edit-link" href="evaluation_settings.html">Edit</a>
                             <span rsf:id="active-eval-delete-link">| <a rsf:id="payload-component" href="remove_evaluation.html">Delete</a></span>
-						</td>		
+                            <form rsf:id="evalCloseForm" method="post" action="control_evaluations.html" class="inlineForm">
+                               | <input rsf:id="evalCloseCommand" type="submit" value="Close" class="makeLink" />
+                            </form>
+						</td>
 						<td headers="assignedact">
                             <a rsf:id="active-eval-assigned-link" href="evaluation_assign_confirm.html">12</a>
 							<span rsf:id="active-eval-assigned"></span>
@@ -148,11 +151,11 @@
 			<table border="0" cellspacing="0" cellpadding="0" class="listHier lines nolines" summary="placeholder summary">
 				<thead>
 					<tr>
-						<th rsf:id="msg=controlevaluations.eval.title.header" width="50%">Evaluation Title</th>
-						<th rsf:id="msg=controlevaluations.eval.report.header"  width="20%">Report</th>
-						<th rsf:id="msg=controlevaluations.eval.assigned.header" width="15%">Assigned</th>
+						<th rsf:id="msg=controlevaluations.eval.title.header" width="40%">Evaluation Title</th>
+						<th rsf:id="msg=controlevaluations.eval.report.header"  width="30%">Report</th>
+						<th rsf:id="msg=controlevaluations.eval.assigned.header" width="10%">Assigned</th>
 						<th rsf:id="msg=controlevaluations.eval.responserate.header" width="10%">Response Rate</th>
-						<th rsf:id="msg=controlevaluations.eval.duedate.header" width="15%">Due Date</th>
+						<th rsf:id="msg=controlevaluations.eval.duedate.header" width="10%">Due Date</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -167,6 +170,7 @@
 							<span rsf:id="closed-eval-message"></span>
                             <span rsf:id="closed-eval-edit-link">| <a rsf:id="payload-component" href="evaluation_settings.html">Edit</a></span>
 							<span rsf:id="closed-eval-delete-link">| <a rsf:id="payload-component" href="remove_evaluation.html">Delete</a></span>
+                            <span rsf:id="closed-eval-reopen-link">| <a rsf:id="payload-component" href="evaluation_settings.html">Reopen</a></span>
 						</td>
 						<td  headers="assignedclosed" >
                             <a rsf:id="closed-eval-assigned-link" href="evaluation_assign_confirm.html">Course 1010</a>

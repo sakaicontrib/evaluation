@@ -470,6 +470,8 @@
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
       <property name="deliveryService"
          ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
+      <property name="settings"
+         ref="org.sakaiproject.evaluation.logic.EvalSettings" />
       <property name="evalBeanUtils" 
          ref="org.sakaiproject.evaluation.beans.EvalBeanUtils" />
       <property name="locale" ref="requestLocale" />

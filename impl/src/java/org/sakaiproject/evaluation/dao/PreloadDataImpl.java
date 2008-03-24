@@ -124,7 +124,7 @@ public class PreloadDataImpl implements Runnable {
          String helpdeskEmail = externalLogic.getConfigurationSetting("support.email", "helpdesk@institution.edu");
          saveConfig(EvalSettings.FROM_EMAIL_ADDRESS, helpdeskEmail);
          saveConfig(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS, 3);
-         saveConfig(EvalSettings.NOT_AVAILABLE_ALLOWED, true);
+         saveConfig(EvalSettings.ENABLE_NOT_AVAILABLE, true);
          saveConfig(EvalSettings.ITEMS_ALLOWED_IN_QUESTION_BLOCK, 10);
          saveConfig(EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY, EvalConstants.SHARING_OWNER);
          saveConfig(EvalSettings.USE_EXPERT_TEMPLATES, true);
@@ -140,7 +140,9 @@ public class PreloadDataImpl implements Runnable {
          saveConfig(EvalSettings.EVAL_USE_STOP_DATE, false);
          saveConfig(EvalSettings.EVAL_USE_VIEW_DATE, false);
          saveConfig(EvalSettings.EVAL_USE_SAME_VIEW_DATES, true);
-         saveConfig(EvalSettings.EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE, 4);
+         saveConfig(EvalSettings.EVAL_MIN_TIME_DIFF_BETWEEN_START_DUE, 8);
+         saveConfig(EvalSettings.ENABLE_EVAL_EARLY_CLOSE, true);
+         saveConfig(EvalSettings.ENABLE_EVAL_REOPEN, true);
 
          // REPORTING
          saveConfig(EvalSettings.ENABLE_CSV_REPORT_EXPORT, true);
@@ -151,8 +153,9 @@ public class PreloadDataImpl implements Runnable {
          // INSTITUTIONAL SPECIFIC
          saveConfig(EvalSettings.ITEM_USE_RESULTS_SHARING, false);
          saveConfig(EvalSettings.ENABLE_IMPORTING, false);
-         saveConfig(EvalSettings.ENABLE_ADHOC_GROUPS, false);
-         saveConfig(EvalSettings.ENABLE_ADHOC_USERS, false);
+         saveConfig(EvalSettings.ENABLE_ADHOC_GROUPS, true);
+         saveConfig(EvalSettings.ENABLE_ADHOC_USERS, true);
+         saveConfig(EvalSettings.ENABLE_ITEM_COMMENTS, true);
 
          log.info("Preloaded " + dao.countAll(EvalConfig.class) + " evaluation system EvalConfig items");
       }

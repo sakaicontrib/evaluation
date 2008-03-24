@@ -110,6 +110,16 @@ public interface EvalEvaluationSetupService {
     */
    public List<EvalEvaluation> getEvaluationsForUser(String userId, Boolean activeOnly, Boolean untakenOnly, Boolean includeAnonymous);
 
+   /**
+    * Close an evaluation before the closing date,
+    * this will force the evaluation closed and move up the closing date and stop dates to now<br/>
+    * Does nothing if the evaluation is already closed
+    * 
+    * @param evaluationId the id of an {@link EvalEvaluation} object
+    * @param userId the internal user id (not username)
+    * @return the evaluation that is being worked with
+    */
+   public EvalEvaluation closeEvaluation(Long evaluationId, String userId);
 
    // EVAL GROUPS
 

@@ -387,7 +387,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
          item.setLocked( Boolean.FALSE );
       }
       // check the NOT_AVAILABLE_ALLOWED system setting
-      Boolean naAllowed = (Boolean) settings.get(EvalSettings.NOT_AVAILABLE_ALLOWED);
+      Boolean naAllowed = (Boolean) settings.get(EvalSettings.ENABLE_NOT_AVAILABLE);
       if (naAllowed.booleanValue()) {
          // can set NA
          if (item.getUsesNA() == null) {
@@ -596,7 +596,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       if (templateItem.getResultsSharing() == null) {
          templateItem.setResultsSharing(EvalConstants.SHARING_PUBLIC);
       }
-      Boolean naAllowed = (Boolean) settings.get(EvalSettings.NOT_AVAILABLE_ALLOWED);
+      Boolean naAllowed = (Boolean) settings.get(EvalSettings.ENABLE_NOT_AVAILABLE);
       if (naAllowed.booleanValue()) {
          // can set NA
          if (templateItem.getUsesNA() == null) {
