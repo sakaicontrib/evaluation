@@ -238,7 +238,8 @@ public class EvalUtils {
        * to reflect this minimum time difference. After that update the 
        * stop and view date also.
        */
-      if (eval.getDueDate() != null
+      if (minHoursLong > 0 
+            && eval.getDueDate() != null
             && minHoursLong > 0) {
          if (getHoursDifference(eval.getStartDate(), eval.getDueDate()) < minHoursLong) {
    

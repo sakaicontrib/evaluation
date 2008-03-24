@@ -285,16 +285,12 @@ public class EvalBeanUtils {
       }
 
       if (! useStopDate) {
-         // force stop date to due date if not in use
-         eval.setStopDate(eval.getDueDate());
+         // force stop date to null if not in use
+         eval.setStopDate(null);
       }
 
-      // set stop date to the due date if not set
-      if (eval.getStopDate() == null) {
-         // this is possible since the stopDate class variable might be set to null
-         log.info("Setting the null stop date to the due date: " + eval.getDueDate());
-         eval.setStopDate(eval.getDueDate());
-      } else {
+      // set stop date to the due date if not set and in use
+      if (eval.getStopDate() != null) {
          // force the stop date to the end of the day if we are using dates only
          if (! useDateTime ) {
             if (eval.getStopDate() != null) {
@@ -310,10 +306,14 @@ public class EvalBeanUtils {
       }
 
       if (! useViewDate) {
-         if (eval.getDueDate() != null) {
-            // force view date to due date + const mins if not in use
-            eval.setViewDate( new Date( eval.getDueDate().getTime() + (1000 * 60 * EvalConstants.EVALUATION_TIME_TO_WAIT_MINS) ) );
-         }
+         // force view date to null if not in use
+         eval.setViewDate(null);
+      }
+
+      if (eval.getViewDate() != null
+            && eval.getViewDate().before(eval.getDueDate())) {
+         // force view date to due date if it is before the due date
+         eval.setViewDate( eval.getDueDate() );
       }
 
       /*
