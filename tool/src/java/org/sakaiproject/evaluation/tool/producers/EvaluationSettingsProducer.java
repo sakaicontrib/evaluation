@@ -15,7 +15,9 @@
 package org.sakaiproject.evaluation.tool.producers;
 
 import java.text.DateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -137,7 +139,6 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
       EvalEvaluation evaluation = evaluationService.getEvaluationById(evalViewParams.evaluationId);
       String currentEvalState = evaluationService.returnAndFixEvalState(evaluation, true);
 
-
       // local variables used in the render logic
       String currentUserId = externalLogic.getCurrentUserId();
       boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
@@ -191,6 +192,36 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
       
 
       UIForm form = UIForm.make(tofill, "evalSettingsForm");
+
+      // REOPENING eval (SPECIAL CASE)
+      Date reOpenDueDate = null;
+      Date reOpenStopDate = null;
+      boolean reOpening = false;
+      if (evalViewParams.reOpening) {
+         Boolean enableReOpen = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_REOPEN);
+         if (enableReOpen) {
+            // check if already active, do nothing if not closed
+            if (EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_CLOSED, false)) {
+               // force the due and stop dates to something reasonable
+               Calendar calendar = new GregorianCalendar();
+               calendar.setTime( new Date() );
+               calendar.add(Calendar.DATE, 1);
+               reOpenDueDate = calendar.getTime();
+
+               Boolean useStopDate = (Boolean) settings.get(EvalSettings.EVAL_USE_STOP_DATE);
+               if (useStopDate) {
+                  // assign stop date to equal due date for now
+                  reOpenStopDate = calendar.getTime();
+               }
+
+               // finally force the state to appear active
+               currentEvalState = EvalConstants.EVALUATION_STATE_ACTIVE;
+               form.parameters.add( new UIELBinding(actionBean + "reOpening", true) ); // so we know we are reopening
+               reOpening = true;
+            }
+         }
+      }
+
 
       // EVALUATION TITLE/INSTRUCTIONS
 
@@ -278,19 +309,19 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
       // Start Date
       UIBranchContainer showStartDate = UIBranchContainer.make(form, "showStartDate:");
       generateDateSelector(showStartDate, "startDate", evaluationOTP + "startDate", 
-            currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, useDateTime);
+            null, currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, useDateTime);
 
       // Due Date
       UIBranchContainer showDueDate = UIBranchContainer.make(form, "showDueDate:");
       generateDateSelector(showDueDate, "dueDate", evaluationOTP + "dueDate", 
-            currentEvalState, EvalConstants.EVALUATION_STATE_GRACEPERIOD, useDateTime);
+            reOpenDueDate, currentEvalState, EvalConstants.EVALUATION_STATE_GRACEPERIOD, useDateTime);
 
       // Stop Date - Show the "Stop date" text box only if allowed in the System settings
       Boolean useStopDate = (Boolean) settings.get(EvalSettings.EVAL_USE_STOP_DATE);
       if (useStopDate) {
          UIBranchContainer showStopDate = UIBranchContainer.make(form, "showStopDate:");
          generateDateSelector(showStopDate, "stopDate", evaluationOTP + "stopDate", 
-               currentEvalState, EvalConstants.EVALUATION_STATE_CLOSED, useDateTime);
+               reOpenStopDate, currentEvalState, EvalConstants.EVALUATION_STATE_CLOSED, useDateTime);
       }
 
       // EVALUATION RESULTS VIEWING/SHARING
@@ -313,7 +344,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
       if (((Boolean) settings.get(EvalSettings.EVAL_USE_VIEW_DATE)).booleanValue()) {
          UIBranchContainer showViewDate = UIBranchContainer.make(form, "showViewDate:");
          generateDateSelector(showViewDate, "viewDate", evaluationOTP + "viewDate", 
-               currentEvalState, EvalConstants.EVALUATION_STATE_VIEWABLE, useDateTime);
+               null, currentEvalState, EvalConstants.EVALUATION_STATE_VIEWABLE, useDateTime);
       }
 
 
@@ -438,6 +469,9 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
       if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(evaluation.getState())) {
          messageKey = "evalsettings.continue.assigning.link";
       }
+      if (reOpening) {
+         messageKey = "evalsettings.reopening.eval.link";
+      }
       UICommand.make(form, "continueAssigning", UIMessage.make(messageKey), actionBean + "completeSettingsAction");
       UIMessage.make(tofill, "cancel-button", "general.cancel.button");
 
@@ -518,12 +552,13 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
     * @param parent the parent container
     * @param rsfId the rsf id of the checkbox
     * @param binding the EL binding for this control value
+    * @param initValue null or an initial date value
     * @param currentEvalState
     * @param worksUntilState
     * @param useDateTime
     */
    private void generateDateSelector(UIBranchContainer parent, String rsfId, String binding, 
-         String currentEvalState, String worksUntilState, boolean useDateTime) {
+         Date initValue, String currentEvalState, String worksUntilState, boolean useDateTime) {
       if ( EvalUtils.checkStateAfter(currentEvalState, worksUntilState, true) ) {
          String suffix = ".date";
          if (useDateTime) {
@@ -532,7 +567,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
          UIOutput.make(parent, rsfId + "_disabled", null, binding)
             .resolver = new ELReference("dateResolver." + suffix);
       } else {
-         UIInput datePicker = UIInput.make(parent, rsfId + ":", binding); 
+         UIInput datePicker = UIInput.make(parent, rsfId + ":", binding, initValue.toString());
          if (useDateTime) {
             dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_TIME_INPUT);         
          } else {

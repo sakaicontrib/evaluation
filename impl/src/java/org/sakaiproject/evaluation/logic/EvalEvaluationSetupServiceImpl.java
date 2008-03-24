@@ -60,7 +60,6 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
    private final String EVENT_EVAL_UPDATE = "eval.evaluation.updated";
    private final String EVENT_EVAL_DELETE = "eval.evaluation.deleted";
    private final String EVENT_EVAL_CLOSED = "eval.evaluation.closed.early";
-   private final String EVENT_EVAL_REOPENED = "eval.evaluation.reopened";
 
    private EvaluationDao dao;
    public void setDao(EvaluationDao dao) {
