@@ -307,7 +307,7 @@ public class AdministrateProducer implements ViewComponentProducer {
       makeBoolean(form, "general-enable-adhoc-users", EvalSettings.ENABLE_ADHOC_USERS); 
 
       makeBoolean(form, "general-enable-eval-close", EvalSettings.ENABLE_EVAL_EARLY_CLOSE); 
-//      makeBoolean(form, "general-enable-eval-reopen", EvalSettings.ENABLE_EVAL_REOPEN); 
+      makeBoolean(form, "general-enable-eval-reopen", EvalSettings.ENABLE_EVAL_REOPEN); 
 
       makeBoolean(form, "general-enable-item-comments", EvalSettings.ENABLE_ITEM_COMMENTS);
 

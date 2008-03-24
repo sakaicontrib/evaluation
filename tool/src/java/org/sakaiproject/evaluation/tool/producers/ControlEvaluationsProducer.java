@@ -389,9 +389,9 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
             }
             
             if (reopeningAllowed) {
-               // TODO add in link to settings page with reopen option
-//               UIInternalLink.make(evaluationRow, "closed-eval-reopen-link", UIMessage.make("controlevaluations.closed.reopen.now"),
-//                     new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluation.getId()) );
+               // add in link to settings page with reopen option
+               UIInternalLink.make(evaluationRow, "closed-eval-reopen-link", UIMessage.make("controlevaluations.closed.reopen.now"),
+                     new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, evaluation.getId(), true) );
             }
 
          }

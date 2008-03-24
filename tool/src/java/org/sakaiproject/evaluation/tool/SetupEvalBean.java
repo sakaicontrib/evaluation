@@ -52,6 +52,8 @@ import uk.org.ponder.messageutil.TargettedMessageList;
  */
 public class SetupEvalBean {
 
+   private final String EVENT_EVAL_REOPENED = "eval.evaluation.reopened";
+
    /**
     * This should be set to true while we are creating an evaluation
     */
@@ -72,6 +74,10 @@ public class SetupEvalBean {
     * This is set to the type of email template when resetting the evaluation to use default templates
     */
    public String emailTemplateType;
+   /**
+    * Set to true if we are reopening this evaluation
+    */
+   public boolean reOpening = false;
 
    /**
     * the selected groups ids to bind to this evaluation when creating it
@@ -288,8 +294,15 @@ public class SetupEvalBean {
       if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(eval.getState())) {
          destination = "evalAssign";
       } else {
-         messages.addMessage( new TargettedMessage("evalsettings.updated.message",
-               new Object[] { eval.getTitle() }, TargettedMessage.SEVERITY_INFO));
+         if (reOpening) {
+            // we are reopening the evaluation
+            externalLogic.registerEntityEvent(EVENT_EVAL_REOPENED, eval);
+            messages.addMessage( new TargettedMessage("controlevaluations.reopen.user.message",
+                  new Object[] { eval.getTitle() }, TargettedMessage.SEVERITY_INFO));
+         } else {
+            messages.addMessage( new TargettedMessage("evalsettings.updated.message",
+                  new Object[] { eval.getTitle() }, TargettedMessage.SEVERITY_INFO));
+         }
       }
       return destination;
    }

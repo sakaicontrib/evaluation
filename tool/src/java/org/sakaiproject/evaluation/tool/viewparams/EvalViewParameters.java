@@ -10,9 +10,6 @@
 
 package org.sakaiproject.evaluation.tool.viewparams;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 
 /**
@@ -45,11 +42,25 @@ public class EvalViewParameters extends SimpleViewParameters {
     */
    public String[] selectedHierarchyNodeIDs = new String[] {};
 
+   /**
+    * Set to true if we are reopening this evaluation
+    */
+   public boolean reOpening = false;
+
    public EvalViewParameters() { }
 
    public EvalViewParameters(String viewID, Long evaluationId) {
       this.viewID = viewID;
       this.evaluationId = evaluationId;
+   }
+   
+   /**
+    * Special constructor used for making the VP when generating a URL for reopening evals
+    */
+   public EvalViewParameters(String viewID, Long evaluationId, boolean reOpening) {
+      this.viewID = viewID;
+      this.evaluationId = evaluationId;
+      this.reOpening = reOpening;
    }
 
    public EvalViewParameters(String viewID, Long evaluationId, String evalGroupId) {
