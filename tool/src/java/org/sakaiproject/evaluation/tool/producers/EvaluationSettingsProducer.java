@@ -567,13 +567,13 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
          UIOutput.make(parent, rsfId + "_disabled", null, binding)
             .resolver = new ELReference("dateResolver." + suffix);
       } else {
-         UIInput datePicker = UIInput.make(parent, rsfId + ":", binding, initValue.toString());
+         UIInput datePicker = UIInput.make(parent, rsfId + ":", binding);
          if (useDateTime) {
             dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_TIME_INPUT);         
          } else {
             dateevolver.setStyle(FormatAwareDateInputEvolver.DATE_INPUT);        
          }
-         dateevolver.evolveDateInput(datePicker);
+         dateevolver.evolveDateInput(datePicker, initValue);
       }
    }
 
