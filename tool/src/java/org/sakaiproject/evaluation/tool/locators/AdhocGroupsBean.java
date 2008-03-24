@@ -1,5 +1,7 @@
 package org.sakaiproject.evaluation.tool.locators;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.dao.EvalAdhocSupport;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
@@ -12,9 +14,11 @@ import org.sakaiproject.evaluation.model.EvalAdhocGroup;
  * @author Steven Githens
  */
 public class AdhocGroupsBean {
+   private static Log log = LogFactory.getLog(AdhocGroupsBean.class);
+    
    private String adhocGroupId;
    private String adhocGroupTitle;
-   private String[] newAdhocGroupUsers;
+   private String newAdhocGroupUsers;
    
    private EvalAdhocSupport evalAdhocSupport;
    public void setEvalAdhocSupport(EvalAdhocSupport bean) {
@@ -30,7 +34,9 @@ public class AdhocGroupsBean {
       EvalAdhocGroup group = new EvalAdhocGroup(externalLogic.getCurrentUserId(),
             adhocGroupTitle);
 
+      log.info("About to save Adhoc group: " + adhocGroupTitle);
       evalAdhocSupport.saveAdhocGroup(group);
+      log.info("Saved adhoc group");
    }
    
    /*
@@ -43,12 +49,6 @@ public class AdhocGroupsBean {
    public void setAdhocGroupId(String adhocGroupId) {
       this.adhocGroupId = adhocGroupId;
    }
-   public String[] getNewAdhocGroupUsers() {
-      return newAdhocGroupUsers;
-   }
-   public void setNewAdhocGroupUsers(String[] newAdhocGroupUsers) {
-      this.newAdhocGroupUsers = newAdhocGroupUsers;
-   }
 
    public String getAdhocGroupTitle() {
       return adhocGroupTitle;
@@ -56,6 +56,14 @@ public class AdhocGroupsBean {
 
    public void setAdhocGroupTitle(String adhocGroupTitle) {
       this.adhocGroupTitle = adhocGroupTitle;
+   }
+
+   public String getNewAdhocGroupUsers() {
+       return newAdhocGroupUsers;
+   }
+
+   public void setNewAdhocGroupUsers(String newAdhocGroupUsers) {
+       this.newAdhocGroupUsers = newAdhocGroupUsers;
    }
    
    

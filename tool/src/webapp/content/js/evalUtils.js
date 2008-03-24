@@ -18,6 +18,44 @@ var EvalSystem = function() {
   function escForJquery(value) {
     return value.replace(/:/g, "\\:");
   }
+  
+  /**
+   * This is the meat and potatos RSF UVB function I've always wanted,
+   * designed for the UVB enthusiast who knows what they want. It takes
+   * the UVB URL, the bindings/values to send over, the bindings you 
+   * want back, and an optional action binding.
+   *
+   * @uvburl The url. In practice this usually looks something like,
+   *   http://server/myapp/faces/UVBview, though it's best to generate it with
+   *   viewStateHandler.getFullURL(new SimpleViewParameters(UVBProducer.VIEW_ID))
+   *
+   * @inbindings This should be a standard object hash of bindings to values.
+   *   ex. inbindings['mybean.value1'] = 'one';  
+   *       inbindings['mybean.value2'] = 'two';
+   *
+   * @outbindings This should be an array of bindings you want back from the request.
+   *   ex. outbindings[0] = 'mybean.value3'
+   *       outbindings[1] = 'mybean.value4'
+   *
+   * @actionbinding This should a String with the actionbinding. Can be null if
+   *   you don't want one.  ex. 'mybean.execute'
+   *
+   * @callback This should be a standard javascript ajax callback function
+   */
+  function fireUVBRequest(uvburl, inbindings, outbindings, actionbinding, callback) {
+    var queries = new Array();
+    for (i in inbindings) {
+      queries.push(RSF.renderBinding(i,inbindings[i]));
+    }
+    for (i in outbindings) {
+      queries.push(RSF.renderUVBQuery(i));
+    }
+    if (actionbinding != null) {
+      queries.push(RSF.renderActionBinding(actionbinding));
+    }
+    var body = queries.join("&");
+    RSF.queueAJAXRequest(queries[0],"POST",uvburl,body,callback);
+  }
 
   return {
   
@@ -32,59 +70,30 @@ var EvalSystem = function() {
         var adhocGroupId = null;
         
         var saveUpdateEmailsAction = function(event) {
-            //alert("Saving emails" + groupNameInput.val() + "\n" + emailListInput.val());
-            //alert("The URL is: " + uvburl);
-            //alert("Going:");
-            updater();
+            var inbindings = new Object();
+            if (adhocGroupId == null) {
+                inbindings['adhocGroupsBean.adhocGroupTitle'] = groupNameInput.val();
+                inbindings['adhocGroupsBean.newAdhocGroupUsers'] = emailListInput.val();
+            }
+            fireUVBRequest(uvburl, inbindings, [], 'adhocGroupsBean.adNewAdHocGroup', saveCallback);
         }
         
         var clearEmailsAction = function(event) {
             alert("Clearing emails");
         }
         
-        var saveCallback = function(event) {
-            alert("Done with Ajax");
+        var saveCallback = {
+            success: function(response) {
+                alert("Done with Ajax");
+            }
         }
         
         //var updater = RSF.getAJAXUpdater([inputField], ajaxUrl, [elBinding], callback);
-        var updater = RSF.getAJAXUpdater([], uvburl, [], saveCallback);
+        //var updater = RSF.getAJAXUpdater([], uvburl, [], saveCallback);
         
         saveButton.click( function (event) { saveUpdateEmailsAction(event) });
         clearButton.click( function (event) { clearEmailsAction(event) });
   	},
-  
-    /**
-     * This will bind a checkbox to a some area (usually a div) so that clicking
-     * the checkbox will hide/show the area.
-     *
-     * This is initially for the evaluation_assign page, where we are collapsing
-     * and showing the different options for evaluation assignment.
-     *
-     * areaId: The ID of the area to show/hide
-     * checkboxId: The ID of the checkbox to trigger the hide/show
-     */
-    hideAndShowRegionWithCheckbox: function (areaId, checkboxId) {
-        var area = $("#"+escForJquery(areaId));
-        var checkbox = $("#"+escForJquery(checkboxId));
-        
-        var changeAction = function(event) {
-            var checkboxValue = event.target.checked;
-            
-            // If the checkbox becomes clicked and the area is hidden unhide it.
-            // If the checkbox is unclicked and it's visible then hide it.
-            if (checkboxValue && area.is(':hidden')) {
-                area.show("slow");
-            } 
-            else if (!checkboxValue && area.is(':visible')) {
-                area.hide("normal");
-            }
-            else {
-                // Do Nothing
-            }
-        }
-        
-        checkbox.change( function (event) { changeAction(event) }).change();
-    },
     
     hideAndShowAssignArea: function(areaId,showId,hideId) {
         var area = $("#"+escForJquery(areaId));
@@ -102,6 +111,7 @@ var EvalSystem = function() {
                 showButton.show();
                 hideButton.hide();
             }
+            var hmm = RSF.getDOMModifyFirer().fireEvent();
         }
         
         area.hide();
