@@ -187,7 +187,7 @@
    
    <bean id="adhocGroupsBean"
    		class="org.sakaiproject.evaluation.tool.locators.AdhocGroupsBean">
-   	  <property name="adhocGroupId" ref="org.sakaiproject.evaluation.dao.EvalAdhocSupport" />
+   	  <property name="evalAdhocSupport" ref="org.sakaiproject.evaluation.dao.EvalAdhocSupport" />
    	  <property name="evalExternalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
    </bean>
 
