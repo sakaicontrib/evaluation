@@ -234,7 +234,7 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
           * "EvalSettings.NOT_AVAILABLE_ALLOWED" is set as true then only we need to show the
           * item_NA checkbox.
           */
-         if (((Boolean) settings.get(EvalSettings.NOT_AVAILABLE_ALLOWED)).booleanValue()) {
+         if (((Boolean) settings.get(EvalSettings.ENABLE_NOT_AVAILABLE)).booleanValue()) {
             UIBranchContainer showNA = UIBranchContainer.make(form, "showNA:");
             UIMessage.make(showNA, "add-na-header", "modifyitem.item.na.header");
             UIBoundBoolean.make(form, "item_NA", itemPath + ".usesNA", null);

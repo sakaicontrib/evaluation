@@ -146,18 +146,28 @@ public class EvalBeanUtils {
          calendar.setTime(eval.getDueDate());
       }
 
-      // assign stop date to equal due date for now
-      if (eval.getStopDate() == null) {
-         eval.setStopDate(eval.getDueDate());
-         log.debug("Setting stop date to default of: " + eval.getStopDate());
+      Boolean useStopDate = (Boolean) settings.get(EvalSettings.EVAL_USE_STOP_DATE);
+      if (useStopDate) {
+         // assign stop date to equal due date for now
+         if (eval.getStopDate() == null) {
+            eval.setStopDate(eval.getDueDate());
+            log.debug("Setting stop date to default of: " + eval.getStopDate());
+         }
+      } else {
+         eval.setStopDate(null);
       }
 
-      // assign default view date
-      calendar.add(Calendar.DATE, 1);
-      if (eval.getViewDate() == null) {
-         // default the view date to the today + 2
-         eval.setViewDate(calendar.getTime());
-         log.debug("Setting view date to default of: " + eval.getViewDate());
+      Boolean useViewDate = (Boolean) settings.get(EvalSettings.EVAL_USE_VIEW_DATE);
+      if (useViewDate) {
+         // assign default view date
+         calendar.add(Calendar.DATE, 1);
+         if (eval.getViewDate() == null) {
+            // default the view date to the today + 2
+            eval.setViewDate(calendar.getTime());
+            log.debug("Setting view date to default of: " + eval.getViewDate());
+         }
+      } else {
+         eval.setViewDate(null);
       }
 
       // results viewable settings
@@ -166,7 +176,7 @@ public class EvalBeanUtils {
       eval.studentViewResults = studentsView;
       if (studentsView == null || studentsView) {
          eval.studentViewResults = true;
-         studentsDate = eval.getViewDate();
+         studentsDate = eval.getViewDate() == null ? eval.getDueDate() : eval.getViewDate();
       }
       if (eval.getStudentsDate() == null) {
          eval.setStudentsDate(studentsDate);
@@ -179,7 +189,8 @@ public class EvalBeanUtils {
       Boolean instructorsView = (Boolean) settings.get(EvalSettings.STUDENT_VIEW_RESULTS);
       eval.instructorViewResults = instructorsView;
       if (instructorsView == null || instructorsView) {
-         instructorsDate = eval.getViewDate();
+         eval.instructorViewResults = true;
+         instructorsDate = eval.getViewDate() == null ? eval.getDueDate() : eval.getViewDate();
       }
       if (eval.getInstructorsDate() == null) {
          eval.setInstructorsDate(instructorsDate);

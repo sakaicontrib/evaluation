@@ -265,7 +265,7 @@ public class AdministrateProducer implements ViewComponentProducer {
             EvalToolConstants.PULLDOWN_INTEGER_VALUES,
             EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS, false);
 
-      makeBoolean(form, "general-na-allowed", EvalSettings.NOT_AVAILABLE_ALLOWED);
+      makeBoolean(form, "general-na-allowed", EvalSettings.ENABLE_NOT_AVAILABLE);
 
       // Select for maximum number of questions in a block
       makeSelect(form, "general-max-questions-block",	//$NON-NLS-1$
@@ -305,6 +305,9 @@ public class AdministrateProducer implements ViewComponentProducer {
 
       makeBoolean(form, "general-enable-adhoc-groups", EvalSettings.ENABLE_ADHOC_GROUPS);
       makeBoolean(form, "general-enable-adhoc-users", EvalSettings.ENABLE_ADHOC_USERS); 
+
+      makeBoolean(form, "general-enable-eval-close", EvalSettings.ENABLE_EVAL_EARLY_CLOSE); 
+//      makeBoolean(form, "general-enable-eval-reopen", EvalSettings.ENABLE_EVAL_REOPEN); 
 
       makeBoolean(form, "general-enable-item-comments", EvalSettings.ENABLE_ITEM_COMMENTS);
 

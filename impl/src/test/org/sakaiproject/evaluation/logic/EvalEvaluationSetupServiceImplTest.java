@@ -380,6 +380,32 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       evaluationSetupService.deleteEvaluation( EvalTestDataLoad.INVALID_LONG_ID, EvalTestDataLoad.MAINT_USER_ID);
    }
 
+   public void testCloseEvaluation() {
+      EvalEvaluation eval = null;
+
+      // testing closing an active eval
+      eval = evaluationSetupService.closeEvaluation(etdl.evaluationActive.getId(), EvalTestDataLoad.MAINT_USER_ID);
+      assertNotNull(eval);
+      assertEquals(etdl.evaluationActive.getId(), eval.getId());
+      assertEquals(EvalConstants.EVALUATION_STATE_CLOSED, eval.getState());
+      assertTrue(eval.getDueDate().getTime() < System.currentTimeMillis());
+
+      // testing closing a viewable eval
+      eval = evaluationSetupService.closeEvaluation(etdl.evaluationViewable.getId(), EvalTestDataLoad.MAINT_USER_ID);
+      assertNotNull(eval);
+      assertEquals(etdl.evaluationViewable.getId(), eval.getId());
+      assertEquals(EvalConstants.EVALUATION_STATE_VIEWABLE, eval.getState());
+
+      // test invalid id fails
+      try {
+         eval = evaluationSetupService.closeEvaluation(EvalTestDataLoad.INVALID_LONG_ID, EvalTestDataLoad.ADMIN_USER_ID);
+         fail("Should have thrown exception");
+      } catch (IllegalArgumentException e) {
+         assertNotNull(e);
+      }
+
+   }
+
    /**
     * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#getEvaluationsForUser(String, Boolean, Boolean, Boolean)}.
     */

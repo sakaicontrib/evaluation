@@ -411,8 +411,10 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
       boolean allowed = false;
       try {
          allowed = securityChecks.canUserRemoveEval(userId, eval);
-      } catch (RuntimeException e) {
-         log.warn("User ("+userId+") cannot remove evalaution: " + eval.getId() + ", " + e.getMessage());
+      } catch (IllegalStateException e) {
+         allowed = false;
+      } catch (SecurityException e) {
+         log.debug("User ("+userId+") cannot remove evalaution: " + eval.getId() + ", " + e.getMessage());
          allowed = false;
       }
       return allowed;

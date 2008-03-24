@@ -40,7 +40,6 @@ import org.sakaiproject.evaluation.tool.locators.EvaluationBeanLocator;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
-import uk.org.ponder.conversion.StringArrayParser;
 import uk.org.ponder.messageutil.TargettedMessage;
 import uk.org.ponder.messageutil.TargettedMessageList;
 
@@ -142,11 +141,39 @@ public class SetupEvalBean {
     */
    public String removeEvalAction(){
       if (evaluationId == null) {
-         throw new IllegalArgumentException("evaluationId and emailTemplateId cannot be null");
+         throw new IllegalArgumentException("evaluationId cannot be null");
       }
       EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
       evaluationSetupService.deleteEvaluation(evaluationId, externalLogic.getCurrentUserId());
       messages.addMessage( new TargettedMessage("controlevaluations.delete.user.message",
+            new Object[] { eval.getTitle() }, TargettedMessage.SEVERITY_INFO));
+      return "success";
+   }
+
+   /**
+    * Handles close eval action from control evaluations view
+    */
+   public String closeEvalAction(){
+      if (evaluationId == null) {
+         throw new IllegalArgumentException("evaluationId cannot be null");
+      }
+      EvalEvaluation eval = evaluationSetupService.closeEvaluation(evaluationId, externalLogic.getCurrentUserId());
+      messages.addMessage( new TargettedMessage("controlevaluations.closed.user.message",
+            new Object[] { eval.getTitle() }, TargettedMessage.SEVERITY_INFO));
+      return "success";
+   }
+
+   /**
+    * Handles reopening evaluation action (from eval settings view)
+    */
+   public String reopenEvalAction(){
+      if (evaluationId == null) {
+         throw new IllegalArgumentException("evaluationId cannot be null");
+      }
+      EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
+      // TODO reopen action
+      //evaluationSetupService.deleteEvaluation(evaluationId, externalLogic.getCurrentUserId());
+      messages.addMessage( new TargettedMessage("controlevaluations.reopen.user.message",
             new Object[] { eval.getTitle() }, TargettedMessage.SEVERITY_INFO));
       return "success";
    }

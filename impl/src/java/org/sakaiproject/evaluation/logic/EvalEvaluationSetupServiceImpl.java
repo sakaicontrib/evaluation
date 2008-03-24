@@ -59,6 +59,8 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
    private final String EVENT_EVAL_CREATE = "eval.evaluation.created";
    private final String EVENT_EVAL_UPDATE = "eval.evaluation.updated";
    private final String EVENT_EVAL_DELETE = "eval.evaluation.deleted";
+   private final String EVENT_EVAL_CLOSED = "eval.evaluation.closed.early";
+   private final String EVENT_EVAL_REOPENED = "eval.evaluation.reopened";
 
    private EvaluationDao dao;
    public void setDao(EvaluationDao dao) {
@@ -325,9 +327,23 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       // force the student/instructor dates based on the boolean settings
       if (evaluation.studentViewResults != null && ! evaluation.studentViewResults) {
          evaluation.setStudentsDate(null);
+      } else {
+         // fix up the dates
+         if (evaluation.getStudentsDate() == null) {
+            evaluation.setStudentsDate( evaluation.getViewDate() == null ? evaluation.getDueDate() : evaluation.getViewDate() );
+         } else if (evaluation.getViewDate() == null && evaluation.getStudentsDate() == null) {
+            evaluation.setStudentsDate( evaluation.getDueDate() );
+         }
       }
       if (evaluation.instructorViewResults != null && ! evaluation.instructorViewResults) {
          evaluation.setInstructorsDate(null);
+      } else {
+         // fix up the dates
+         if (evaluation.getInstructorsDate() == null) {
+            evaluation.setInstructorsDate( evaluation.getViewDate() == null ? evaluation.getDueDate() : evaluation.getViewDate() );
+         } else if (evaluation.getViewDate() == null && evaluation.getInstructorsDate() == null) {
+            evaluation.setInstructorsDate( evaluation.getDueDate() );
+         }
       }
 
       // fill in any default values and nulls here
@@ -519,6 +535,44 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
    }
 
 
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.EvalEvaluationSetupService#closeEvaluation(java.lang.Long, java.lang.String)
+    */
+   public EvalEvaluation closeEvaluation(Long evaluationId, String userId) {
+      EvalEvaluation evaluation = evaluationService.getEvaluationById(evaluationId);
+      if (evaluation == null) {
+         throw new IllegalArgumentException("Invalid evaluation id, cannot find evaluation: " + evaluationId);
+      }
+
+      String evalState = evaluationService.returnAndFixEvalState(evaluation, true);
+      if (EvalUtils.checkStateBefore(evalState, EvalConstants.EVALUATION_STATE_CLOSED, false)) {
+         // set closing date to now
+         Date now = new Date();
+         evaluation.setDueDate(now);
+
+         // fix stop and view dates if needed
+         evaluation.setStopDate(null);
+         if (evaluation.getViewDate() != null
+               && evaluation.getViewDate().before(now)) {
+            evaluation.setViewDate(null);
+         }
+
+         // fix up state (should go to closed)
+         evaluationService.returnAndFixEvalState(evaluation, false);
+
+         // save evaluation (should also update the email sending)
+         saveEvaluation(evaluation, userId);
+   
+         // fire the evaluation closed event
+         external.registerEntityEvent(EVENT_EVAL_CLOSED, evaluation);
+      } else {
+         log.warn(userId + " tried to close eval that is already closed ("+evaluationId+"): " + evaluation.getTitle());
+      }
+
+      return evaluation;
+   }
+
+   
    @SuppressWarnings("unchecked")
    public List<EvalEvaluation> getVisibleEvaluationsForUser(String userId, boolean recentOnly, boolean showNotOwned, boolean includePartial) {
 

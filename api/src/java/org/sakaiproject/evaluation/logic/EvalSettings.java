@@ -101,7 +101,12 @@ public interface EvalSettings {
    /**
     * CONSTANT: Are users allowed to use Not Available in templates and evaluations - {@link Boolean}, default True
     */
-   public static final String NOT_AVAILABLE_ALLOWED = "NOT_AVAILABLE_ALLOWED:java.lang.Boolean";
+   public static final String ENABLE_NOT_AVAILABLE = "ENABLE_NOT_AVAILABLE:java.lang.Boolean";
+   /**
+    * Enable evaluation taker comments on all non-text answerable items, this is configured
+    * on a per item basis, and will disable all comments if turned off
+    */
+   public static final String ENABLE_ITEM_COMMENTS = "ENABLE_ITEM_COMMENTS:java.lang.Boolean";
    /**
     * CONSTANT: Require a comments block to be included in every evaluation - {@link Boolean}, default True
     */
@@ -136,12 +141,12 @@ public interface EvalSettings {
    public static final String EVAL_RECENTLY_CLOSED_DAYS = "EVAL_RECENTLY_CLOSED_DAYS:java.lang.Integer";
    /**
     * CONSTANT: Allow users to set the stop date when creating evaluations - {@link Boolean}, default False<br/>
-    * <b>Note:</b> Stop date should default to the due date when the user cannot set it
+    * <b>Note:</b> Stop date should default to null when it cannot be set
     */
    public static final String EVAL_USE_STOP_DATE = "EVAL_USE_STOP_DATE:java.lang.Boolean";
    /**
     * CONSTANT: Allow users to set the view date when creating evaluations - {@link Boolean}, default False<br/>
-    * <b>Note:</b> View date should default to the due date + 1 minute when the user cannot set it
+    * <b>Note:</b> View date should default to null when it cannot be set
     */
    public static final String EVAL_USE_VIEW_DATE = "EVAL_USE_VIEW_DATE:java.lang.Boolean";
    /**
@@ -203,6 +208,15 @@ public interface EvalSettings {
     * this is for removal of individual responses - {@link Boolean}, default False
     */
    public static final String ENABLE_EVAL_RESPONSE_REMOVAL = "ENABLE_EVAL_RESPONSE_REMOVAL:java.lang.Boolean";
+   /**
+    * Enable evaluation early closing, this allows the owners and admins to close evaluations early
+    */
+   public static final String ENABLE_EVAL_EARLY_CLOSE = "ENABLE_EVAL_EARLY_CLOSE:java.lang.Boolean";
+   /**
+    * Enable evaluation reopening, this allows the owners and admins to reopen an evaluation
+    * after it closes
+    */
+   public static final String ENABLE_EVAL_REOPEN = "ENABLE_EVAL_REOPEN:java.lang.Boolean";
 
    /**
     * CONSTANT: Can the item results sharing be set for template items - {@link Boolean}, default False,
@@ -229,11 +243,6 @@ public interface EvalSettings {
     */
    public static final String ENABLE_ADHOC_USERS = "ENABLE_ADHOC_USERS:java.lang.Boolean";
 
-   /**
-    * Enable evaluation taker comments on all non-text answerable items, this is configured
-    * on a per item basis, and will disable all comments if turned off
-    */
-   public static final String ENABLE_ITEM_COMMENTS = "ENABLE_ITEM_COMMENTS:java.lang.Boolean";
 
    /**
     * This is here to identify all the boolean ONLY settings in the system,
@@ -249,6 +258,8 @@ public interface EvalSettings {
       ENABLE_ADHOC_USERS,
       ENABLE_CSV_REPORT_EXPORT,
       ENABLE_EVAL_CATEGORIES,
+      ENABLE_EVAL_EARLY_CLOSE,
+      ENABLE_EVAL_REOPEN,
       ENABLE_EVAL_RESPONSE_REMOVAL,
       ENABLE_IMPORTING,
       ENABLE_ITEM_COMMENTS,
@@ -264,7 +275,7 @@ public interface EvalSettings {
       INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS,
       ITEM_USE_RESULTS_SHARING,
       ITEM_USE_COURSE_CATEGORY_ONLY,
-      NOT_AVAILABLE_ALLOWED,
+      ENABLE_NOT_AVAILABLE,
       REQUIRE_COMMENTS_BLOCK,
       USE_EXPERT_ITEMS,
       USE_EXPERT_TEMPLATES
