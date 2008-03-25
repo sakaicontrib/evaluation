@@ -359,6 +359,25 @@ public class EvalUtils {
       return newTitle;
    }
 
+   /**
+    * Ensures that a string does not exceed a certain length, if it does then
+    * the "..." is appended in the return
+    * 
+    * @param str any string
+    * @param maxLength
+    * @return
+    */
+   public static String makeMaxLengthString(String str, int maxLength) {
+      if (str == null) {
+         return null;
+      }
+      if (maxLength > 3) {
+         if (str.length() > maxLength) {
+            str = str.substring(0, maxLength - 2) + "...";
+         }
+      }
+      return str;
+   }
 
    /**
     * Get a map of answers for the given response, where the key to

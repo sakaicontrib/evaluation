@@ -341,7 +341,7 @@ public class ModifyItemProducer implements ViewComponentProducer, ViewParamsRepo
             scaleList.selection.darreshaper = new ELReference("#{id-defunnel}");
          } else {
             // just display the name of the current scale without a select box
-            UIOutput.make(showItemScale, "item-scale-current", ScaledUtils.makeScaleText(currentScale) );
+            UIOutput.make(showItemScale, "item-scale-current", ScaledUtils.makeScaleText(currentScale, 0) );
          }
       } else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(itemClassification) ||
             EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemClassification) ) {

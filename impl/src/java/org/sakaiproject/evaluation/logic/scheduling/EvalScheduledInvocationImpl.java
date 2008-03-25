@@ -18,6 +18,7 @@
  * limitations under the License.
  *
  **********************************************************************************/
+
 package org.sakaiproject.evaluation.logic.scheduling;
 
 import org.apache.commons.logging.Log;
@@ -30,7 +31,6 @@ import org.sakaiproject.evaluation.logic.externals.EvalScheduledInvocation;
  * when it is run by the ScheduledInvocationManager.
  * 
  * @author rwellis
- *
  */
 public class EvalScheduledInvocationImpl implements EvalScheduledInvocation {
 	
@@ -40,22 +40,17 @@ public class EvalScheduledInvocationImpl implements EvalScheduledInvocation {
 	public void setEvalJobLogic(EvalJobLogic evalJobLogic) {
 		this.evalJobLogic = evalJobLogic;
 	}
-	
-	public EvalScheduledInvocationImpl() {
-	}
-	
-	public void init() {
-	}
 
 	/**
 	 * execute is the only method of a ScheduledInvocationCommand
 	 * 
+	 * FIXME this is obvious... but what does this method actually do?????
+	 * 
 	 * @param opaqueContext a String that can be decoded to do determine what to do
 	 */
 	public void execute(String opaqueContext) {
-		
+	   // FIXME wrapping in a try-catch like this is generally bad and dangerous, I don't think this is a good idea -AZ
 		try {
-		
 			if(opaqueContext == null || opaqueContext.equals("")) {
 				log.warn(this + " opaqueContext is null or empty");
 				return;
@@ -77,9 +72,9 @@ public class EvalScheduledInvocationImpl implements EvalScheduledInvocation {
 			
 			//call method to fix state, send email and/or schedule a job
 			evalJobLogic.jobAction(evalId, jobType);
-		}
-		catch(Exception e) {
-			log.error(this + ".execute(" + opaqueContext + ") " + e);
+		} catch(RuntimeException e) {
+		   // changed this to catch runtime exceptions only and to log the full stacktrace
+			log.error(this + ".execute(" + opaqueContext + ") " + e.getMessage(), e);
 		}
 	}
 }
