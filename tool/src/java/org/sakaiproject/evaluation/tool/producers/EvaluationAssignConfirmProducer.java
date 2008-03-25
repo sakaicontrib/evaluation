@@ -210,14 +210,14 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, V
       Boolean showHierarchy = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
       if (showHierarchy) {
          UIBranchContainer hierarchyBranch = UIBranchContainer.make(tofill, "showHierarchy:");
-         UIOutput.make(hierarchyBranch, "showSelectedNodes:");
          String[] selectedNodeIDs = evalViewParams.selectedHierarchyNodeIDs;
          if (selectedNodeIDs != null 
                && selectedNodeIDs.length > 0) {
+            UIBranchContainer nodesBranch = UIBranchContainer.make(tofill, "showSelectedNodes:");
             for (int i = 0; i < selectedNodeIDs.length; i++ ) {
                EvalHierarchyNode node = hierLogic.getNodeById(selectedNodeIDs[i]);
 
-               UIBranchContainer nodeRow = UIBranchContainer.make(hierarchyBranch, "nodes:");
+               UIBranchContainer nodeRow = UIBranchContainer.make(nodesBranch, "nodes:");
                UIOutput.make(nodeRow, "nodeTitle", node.title);
                UIOutput.make(nodeRow, "nodeAbbr", node.description);
             }
