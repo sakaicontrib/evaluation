@@ -15,6 +15,8 @@
 package org.sakaiproject.evaluation.tool.producers;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -104,6 +106,7 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, V
       Long evaluationId = evalViewParams.evaluationId;
 
       DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+      DateFormat dtf = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, locale);
 
       // local variables used in the render logic
       String currentUserId = externalLogic.getCurrentUserId();
@@ -140,27 +143,59 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, V
 
       // normal page content
 
-      UIMessage.make(tofill, "eval-assign-info", "evaluationassignconfirm.eval.assign.info", 
+      UIMessage.make(tofill, "evalAssignInfo", "evaluationassignconfirm.eval.assign.info", 
             new Object[] {evaluation.getTitle()});
 
-      UIMessage.make(tofill, "eval-assign-instructions", "evaluationassignconfirm.eval.assign.instructions",
+      UIMessage.make(tofill, "evalAssignInstructions", "evaluationassignconfirm.eval.assign.instructions",
             new Object[] {df.format(evaluation.getStartDate())});
 
-      // show the selected groups
+      // display info about the evaluation (dates and what not)
+      UIOutput.make(tofill, "startDate", dtf.format(evaluation.getStartDate()) );
+
+      if (evaluation.getDueDate() != null) {
+         UIBranchContainer branch = UIBranchContainer.make(tofill, "showDueDate:");
+         UIOutput.make(branch, "dueDate", dtf.format(evaluation.getDueDate()) );
+      }
+
+      if (evaluation.getStopDate() != null) {
+         UIBranchContainer branch = UIBranchContainer.make(tofill, "showStopDate:");
+         UIOutput.make(branch, "stopDate", dtf.format(evaluation.getStopDate()) );
+      }
+
+      if (evaluation.getViewDate() != null) {
+         UIBranchContainer branch = UIBranchContainer.make(tofill, "showViewDate:");
+         UIOutput.make(branch, "viewDate", dtf.format(evaluation.getViewDate()) );
+      }
+
+      // turn the selected groups into list of normal and adhoc groups
+      List<EvalGroup> normalGroups = new ArrayList<EvalGroup>();
+      List<EvalGroup> adhocGroups = new ArrayList<EvalGroup>();
       String[] selectedGroupIDs = evalViewParams.selectedGroupIDs;
       if (selectedGroupIDs != null 
             && selectedGroupIDs.length > 0) {
          for (int i = 0; i < selectedGroupIDs.length; ++i) {
             String evalGroupId = selectedGroupIDs[i];
             EvalGroup group = externalLogic.makeEvalGroupObject(evalGroupId);
+            if (EvalConstants.GROUP_TYPE_ADHOC.equals(group.type)) {
+               adhocGroups.add(group);
+            } else {
+               normalGroups.add(group);               
+            }
+         }
+      }
 
-            UIBranchContainer groupRow = UIBranchContainer.make(tofill, "groups:", evalGroupId);
+      // show the selected groups
+      if (! normalGroups.isEmpty()) {
+         UIBranchContainer groupsBranch = UIBranchContainer.make(tofill, "showSelectedGroups:");
+         for (EvalGroup group : normalGroups) {
+            String evalGroupId = group.evalGroupId;
+            UIBranchContainer groupRow = UIBranchContainer.make(groupsBranch, "groups:", evalGroupId);
             UIOutput.make(groupRow, "groupTitle", group.title);
             if (evaluationId != null) {
                // only add in this link if the evaluation exists
                Long assignGroupId = evaluationService.getAssignGroupId(evaluationId, evalGroupId);
                if (assignGroupId != null) {
-                  UILink.make(groupRow, "direct-eval-group-link", UIMessage.make("evaluationassignconfirm.direct.link"), 
+                  UILink.make(groupRow, "directGroupLink", UIMessage.make("evaluationassignconfirm.direct.link"), 
                         externalLogic.getEntityURL(AssignGroupEntityProvider.ENTITY_PREFIX, assignGroupId.toString()));
                }
             }
@@ -168,26 +203,52 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, V
             UIOutput.make(groupRow, "enrollment", s.size() + "");
          }
       } else {
-         UIMessage.make(tofill, "no-courses-selected", "evaluationassignconfirm.no_nodes_selected");
+         UIMessage.make(tofill, "noGroupsSelected", "evaluationassignconfirm.no.group.selected");
       }
 
       // show the selected hierarchy nodes
       Boolean showHierarchy = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
       if (showHierarchy) {
          UIBranchContainer hierarchyBranch = UIBranchContainer.make(tofill, "showHierarchy:");
-         UIOutput.make(hierarchyBranch, "nodes-selected-table");
+         UIOutput.make(hierarchyBranch, "showSelectedNodes:");
          String[] selectedNodeIDs = evalViewParams.selectedHierarchyNodeIDs;
          if (selectedNodeIDs != null 
                && selectedNodeIDs.length > 0) {
             for (int i = 0; i < selectedNodeIDs.length; i++ ) {
                EvalHierarchyNode node = hierLogic.getNodeById(selectedNodeIDs[i]);
 
-               UIBranchContainer nodeRow = UIBranchContainer.make(hierarchyBranch, "node-row:");
-               UIOutput.make(nodeRow, "node-title", node.title);
-               UIOutput.make(nodeRow, "node-abbr", node.description);
+               UIBranchContainer nodeRow = UIBranchContainer.make(hierarchyBranch, "nodes:");
+               UIOutput.make(nodeRow, "nodeTitle", node.title);
+               UIOutput.make(nodeRow, "nodeAbbr", node.description);
             }
          } else {
-            UIMessage.make(hierarchyBranch, "no-nodes-selected", "evaluationassignconfirm.no_nodes_selected");
+            UIMessage.make(hierarchyBranch, "noNodesSelected", "evaluationassignconfirm.no.nodes.selected");
+         }
+      }
+
+      // show the selected adhoc groups
+      Boolean showAdhocGroups = (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_GROUPS);
+      if (showAdhocGroups) {
+         UIBranchContainer adhocBranch = UIBranchContainer.make(tofill, "showAdhoc:");
+         UIOutput.make(adhocBranch, "showAdhocGroups:");
+         if (! adhocGroups.isEmpty()) {
+            for (EvalGroup group : normalGroups) {
+               String evalGroupId = group.evalGroupId;
+               UIBranchContainer groupRow = UIBranchContainer.make(adhocBranch, "groups:", evalGroupId);
+               UIOutput.make(groupRow, "groupTitle", group.title);
+               if (evaluationId != null) {
+                  // only add in this link if the evaluation exists
+                  Long assignGroupId = evaluationService.getAssignGroupId(evaluationId, evalGroupId);
+                  if (assignGroupId != null) {
+                     UILink.make(groupRow, "directGroupLink", UIMessage.make("evaluationassignconfirm.direct.link"), 
+                           externalLogic.getEntityURL(AssignGroupEntityProvider.ENTITY_PREFIX, assignGroupId.toString()));
+                  }
+               }
+               Set<String> s = externalLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_TAKE_EVALUATION);
+               UIOutput.make(groupRow, "enrollment", s.size() + "");
+            }
+         } else {
+            UIMessage.make(adhocBranch, "noAdhocSelected", "evaluationassignconfirm.no.adhoc.selected");
          }
       }
 
@@ -206,8 +267,7 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, V
                evalViewParams.selectedGroupIDs) );
          evalAssignForm.parameters.add( new UIELBinding(actionBean + "selectedHierarchyNodeIDs", 
                evalViewParams.selectedHierarchyNodeIDs) );
-         evalAssignForm.parameters.add( new UIELBinding(actionBean + "evaluationId",evaluationId));
-         
+
          // also bind the evaluation id
          evalAssignForm.parameters.add( new UIELBinding(actionBean + "evaluationId", evaluationId) );
       }

@@ -388,7 +388,7 @@ public class EvalUtils {
    public static boolean isValidEmail(String email) {
       boolean valid = false;
       if (email != null && email.length() > 5) {
-         valid = email.matches("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,3,4})$");
+         valid = email.matches("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,6})$");
       }
       return valid;
    }

@@ -635,6 +635,7 @@ public class EvalUtilsTest extends TestCase {
       assertTrue( EvalUtils.isValidEmail("aaronz@vt.edu") );
       assertTrue( EvalUtils.isValidEmail("aaron@caret.cam.ac.uk") );
       assertTrue( EvalUtils.isValidEmail("Aaron.Zeckoski@vt.edu") );
+      assertTrue( EvalUtils.isValidEmail("aaron@long.and.really.log.domain.info") );
 
       assertFalse( EvalUtils.isValidEmail(null) );
       assertFalse( EvalUtils.isValidEmail("") );
