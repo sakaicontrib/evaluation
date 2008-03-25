@@ -1180,31 +1180,34 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
     * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#cleanupUserStrings(java.lang.String)
     */
    public String cleanupUserStrings(String userSubmittedString) {
-      // nulls are ok
       if (userSubmittedString == null) {
+         // nulls are ok
          return null;
+      } else if (userSubmittedString.length() == 0) {
+         // empty string is ok
+         return "";
       }
 
       // clean up the string using Sakai text format (should stop XSS)
       // CANNOT CHANGE THIS TO STRINGBUILDER OR 2.4.x and below will fail -AZ
-      String cleanup = FormattedText.processFormattedText(userSubmittedString.trim(), new StringBuffer());
+      String cleanup = FormattedText.processFormattedText(userSubmittedString.trim(), new StringBuffer()).trim();
       // also cleanup richtext editor garbage
 
       // (remove trailing blank lines)
       // - While (cleanup ends with "<p>&nbsp;</p>") remove trailing "<p>&nbsp;</p>".
       if (cleanup.endsWith(ENDING_P_SPACE_TAGS)) {
          // chop off the end
-         cleanup = cleanup.substring(0, cleanup.length() - ENDING_P_SPACE_TAGS.length() - 1);
+         cleanup = cleanup.substring(0, cleanup.length() - ENDING_P_SPACE_TAGS.length() - 1).trim();
       }
 
       // (remove a single set of <p> tags)
       // if cleanup starts with "<p>" and cleanup ends with "</p>" and, remove leading "<p>" and trailing "</p>" from cleanup
       if (cleanup.startsWith(STARTING_P_TAG) && cleanup.endsWith(ENDING_P_TAG)) {
          // chop off the front and end
-         cleanup = cleanup.substring(STARTING_P_TAG.length() - 1, cleanup.length() - ENDING_P_TAG.length() - 1);
+         cleanup = cleanup.substring(STARTING_P_TAG.length(), cleanup.length() - ENDING_P_TAG.length() - 1).trim();
       }
 
-      return cleanup.trim();
+      return cleanup;
    }
 
 }
