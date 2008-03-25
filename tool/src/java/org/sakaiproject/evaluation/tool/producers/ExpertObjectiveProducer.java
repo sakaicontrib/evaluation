@@ -209,7 +209,7 @@ public class ExpertObjectiveProducer implements ViewComponentProducer, Navigatio
             UILabelTargetDecorator.targetLabel(UIOutput.make(items, "item-label"), checkbox);
             UIVerbatim.make(items, "item-text", expertItem.getItemText()); //$NON-NLS-1$
             if (expertItem.getScale() != null) {
-               UIOutput.make(items, "item-scale", ScaledUtils.makeScaleText(expertItem.getScale())); //$NON-NLS-1$
+               UIOutput.make(items, "item-scale", ScaledUtils.makeScaleText(expertItem.getScale(), 0)); //$NON-NLS-1$
             }
             if (expertItem.getExpertDescription() != null) {
                UIVerbatim.make(items, "item-expert-desc", expertItem.getExpertDescription()); //$NON-NLS-1$

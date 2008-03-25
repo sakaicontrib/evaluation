@@ -36,6 +36,7 @@ import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
 import org.sakaiproject.evaluation.tool.viewparams.TemplateViewParameters;
+import org.sakaiproject.evaluation.utils.EvalUtils;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
@@ -169,7 +170,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		}
 
 		/*
-		 * for the evaluationSetupService taking box
+		 * for the evaluations taking box
 		 */
 		List<EvalEvaluation> evalsToTake = evaluationSetupService.getEvaluationsForUser(currentUserId, true, null, null);
       UIBranchContainer evalBC = UIBranchContainer.make(tofill, "evaluationsBox:");
@@ -189,7 +190,7 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 
 				UIBranchContainer evalrow = UIBranchContainer.make(evalBC, "evaluationsList:", eval.getId().toString() );
 
-				UIOutput.make(evalrow, "evaluationTitleTitle", eval.getTitle() );
+				UIOutput.make(evalrow, "evaluationTitleTitle", EvalUtils.makeMaxLengthString(eval.getTitle(), 70) );
 				UIMessage.make(evalrow, "evaluationCourseEvalTitle", "summary.evaluations.courseeval.title" );
 				UIMessage.make(evalrow, "evaluationStartsTitle", "summary.evaluations.starts.title" );
             UIMessage.make(evalrow, "evaluationEndsTitle", "summary.evaluations.ends.title" );
@@ -201,10 +202,10 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 						continue; // skip processing for invalid groups
 					}
 
-					//check that the user can take evaluationSetupService in this evalGroupId
+					//check that the user can take evaluations in this evalGroupId
 					if (externalLogic.isUserAllowedInEvalGroup(currentUserId, EvalConstants.PERM_TAKE_EVALUATION, group.evalGroupId)) {
 						String groupId = group.evalGroupId;
-						String title = group.title;
+						String title = EvalUtils.makeMaxLengthString(group.title, 50);
 						String status = "unknown.caps";
 
 						// find the object in the list matching the evalGroupId and evalId,
@@ -359,12 +360,14 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 				 */
 				if (EvalConstants.EVALUATION_STATE_CLOSED.equals(evalStatus)
                   || EvalConstants.EVALUATION_STATE_VIEWABLE.equals(evalStatus)) {
-               UIInternalLink.make(evalrow, "evalAdminTitleLink_preview", eval.getTitle(),
+               UIInternalLink.make(evalrow, "evalAdminTitleLink_preview", 
+                     EvalUtils.makeMaxLengthString(eval.getTitle(), 70),
                      new EvalViewParameters(PreviewEvalProducer.VIEW_ID, eval.getId(), 
                            eval.getTemplate().getId()));
             } else {
                UICommand evalEditUIC = UICommand.make(evalrow, "evalAdminTitleLink_edit", 
-                     eval.getTitle(), "#{evaluationBean.editEvalSettingAction}");
+                     EvalUtils.makeMaxLengthString(eval.getTitle(), 70), 
+                     "#{evaluationBean.editEvalSettingAction}");
                evalEditUIC.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", eval.getId()));
             }
 

@@ -44,21 +44,18 @@ public class EvalImportJobImpl implements EvalImportJob{
 	
 	private static final Log log = LogFactory.getLog(EvalImportJobImpl.class);
 	
-	//on demand injection of services
+	//on demand injection of services - this is bad, use real injection -AZ
 	private org.sakaiproject.evaluation.logic.imports.EvalImport evalImport = 
 		(org.sakaiproject.evaluation.logic.imports.EvalImport) ComponentManager.get(org.sakaiproject.evaluation.logic.imports.EvalImport.class);
 	private org.sakaiproject.tool.api.SessionManager sessionManager = 
 		(org.sakaiproject.tool.api.SessionManager) ComponentManager.get(org.sakaiproject.tool.api.SessionManager.class);
-	 // TODO Use actual injection here -AZ
+	 // FIXME Use actual injection here -AZ
 	
-	List results = new ArrayList(); // TODO NOT threadsafe, fix this -AZ
-	String currentUserId = null; // TODO NOT threadsafe, fix this -AZ
-	String jobName = null; // TODO NOT threadsafe, fix this -AZ
-	 
-	public void init() {
-		
-	}
-	
+	List results = new ArrayList(); // FIXME NOT threadsafe, fix this -AZ
+	String currentUserId = null; // FIXME NOT threadsafe, fix this -AZ
+	String jobName = null; // FIXME NOT threadsafe, fix this -AZ
+
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.quartz.Job#execute(org.quartz.JobExecutionContext)

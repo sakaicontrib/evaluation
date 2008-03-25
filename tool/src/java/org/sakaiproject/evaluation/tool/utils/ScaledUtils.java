@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
+import org.sakaiproject.evaluation.utils.EvalUtils;
 
 import uk.org.ponder.stringutil.StringUtil;
 
@@ -94,7 +95,7 @@ public class ScaledUtils {
 	public static String[] getScaleLabels(List<EvalScale> scales) {
 		List<String> scaleLabels = new ArrayList<String>();
 		for (EvalScale scale : scales) {
-			scaleLabels.add( makeScaleText(scale) );
+			scaleLabels.add( makeScaleText(scale, 120) );
 		}
 		return (String[]) scaleLabels.toArray(new String[scaleLabels.size()]);
 	}
@@ -119,9 +120,10 @@ public class ScaledUtils {
     * works for any scale (not just for scaled mode)
     * 
     * @param scale any persisted scale
+    * @param maxLength the maximum length of this text
     * @return a string suitable for display to the user
     */
-   public static String makeScaleText(EvalScale scale) {
+   public static String makeScaleText(EvalScale scale, int maxLength) {
       StringBuilder scaleText = new StringBuilder();
       if (EvalConstants.SCALE_MODE_SCALE.equals(scale.getMode())) {
          scaleText.append( scale.getOptions().length );
@@ -138,7 +140,7 @@ public class ScaledUtils {
       if (EvalConstants.SCALE_MODE_SCALE.equals(scale.getMode())) {
          scaleText.append( ")" );
       }
-      return scaleText.toString();
+      return EvalUtils.makeMaxLengthString(scaleText.toString(), maxLength);
    }
 
 }

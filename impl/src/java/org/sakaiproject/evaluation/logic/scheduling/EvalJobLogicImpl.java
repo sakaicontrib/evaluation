@@ -351,13 +351,11 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 
          // make sure scheduleView By Instructors job invocation start date matches
          // EvalEvaluation instructor's date
-         checkInvocationDate(eval, EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS, 
-               eval.getInstructorsDate());
+         checkInvocationDate(eval, EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS, eval.getInstructorsDate());
 
          // make sure scheduleView By Students job invocation start date matches EvalEvaluation
          // student's date
-         checkInvocationDate(eval, EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS, eval
-               .getStudentsDate());
+         checkInvocationDate(eval, EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS, eval.getStudentsDate());
       }
    }
 
@@ -399,8 +397,17 @@ public class EvalJobLogicImpl implements EvalJobLogic {
     */
    protected void checkInvocationDate(EvalEvaluation eval, String jobType, Date correctDate) {
 
-      if (eval == null || jobType == null || correctDate == null)
+      if (eval == null || jobType == null) {
+         // FIXME - this is dangerous as there is no indication that this method did nothing, should be a failure -AZ
+         log.warn("checkInvocationDate(eval ("+eval+") or jobType ("+jobType+") are null, cannot proceed with check");
          return;
+      }
+
+      if (correctDate == null) {
+         // FIXME this can happen sometimes (any date other than startdate can be null), not sure how you may want to handle it -AZ
+         log.warn("checkInvocationDate(eval=" + eval.getId() + ", jobType=" + jobType + " :: null correctDate, cannot proceed with check");
+         return;
+      }
 
       if (log.isDebugEnabled())
          log.debug("EvalJobLogicImpl.checkInvocationDate(" + eval.getId() + "," + jobType + ","
