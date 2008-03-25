@@ -73,9 +73,9 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       this.dao = dao;
    }
 
-   private EvalExternalLogic external;
+   private EvalExternalLogic externalLogic;
    public void setExternalLogic(EvalExternalLogic external) {
-      this.external = external;
+      this.externalLogic = external;
    }
 
    private EvalSettings settings;
@@ -144,23 +144,16 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
          throw new IllegalArgumentException("Scale options cannot be null and must have at least 2 items");
       }
 
-      // check for non-null values which can be inferred
-      if (scale.getMode() == null) {
-         // set this to the default then
-         scale.setMode(EvalConstants.SCALE_MODE_SCALE);
-      }
-
+      // check the sharing constants
       if (scale.getSharing() == null) {
          scale.setSharing(EvalConstants.SHARING_PRIVATE);
       }
-
-      // check the sharing constants
       EvalUtils.validateSharingConstant(scale.getSharing());
       if ( EvalConstants.SHARING_OWNER.equals(scale.getSharing()) ) {
          throw new IllegalArgumentException("Invalid sharing constant ("+scale.getSharing()+") set for scale ("+scale.getTitle()+"), cannot use SHARING_OWNER");
       } else if ( EvalConstants.SHARING_PUBLIC.equals(scale.getSharing()) ) {
          // test if non-admin trying to set public sharing
-         if (! external.isUserAdmin(userId) ) {
+         if (! externalLogic.isUserAdmin(userId) ) {
             throw new IllegalArgumentException("Only admins can set scale ("+scale.getTitle()+") sharing to public");
          }
       }
@@ -169,38 +162,47 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       boolean newScale = true;
       if (scale.getId() != null) {
          newScale = false;
-         // existing scale, don't allow change to locked setting
-
-         // TODO - this does not work, it just gets the persistent scale from memory -AZ
-         EvalScale existingScale = getScaleOrFail(scale.getId());
-
-         if (! existingScale.getLocked().equals(scale.getLocked())) {
-            throw new IllegalArgumentException("Cannot change locked setting on existing scale (" + scale.getId() + ")");
-         }
-      }
-
-      // fill in any default values and nulls here
-      if (scale.getLocked() == null) {
-         scale.setLocked( Boolean.FALSE );
-      }
-
-      // replace adhoc default title with a unique title
-      if (EvalConstants.SCALE_ADHOC_DEFAULT_TITLE.equals(scale.getTitle())) {
-         scale.setTitle("adhoc-" + EvalUtils.makeUniqueIdentifier(100));
-      }
-
-      // check for required title
-      if (EvalUtils.isBlank(scale.getTitle())) {
-         throw new BlankRequiredFieldException("Cannot save a scale with a blank title", "title");
+//         // existing scale, don't allow change to locked setting
+//
+//         // TODO - this does not work, it just gets the persistent scale from memory -AZ
+//         EvalScale existingScale = getScaleOrFail(scale.getId());
+//
+//         if (! existingScale.getLocked().equals(scale.getLocked())) {
+//            throw new IllegalArgumentException("Cannot change locked setting on existing scale (" + scale.getId() + ")");
+//         }
       }
 
       // check perms and save
       if (securityChecks.checkUserControlScale(userId, scale)) {
+         // fill in any default values and nulls here
+         if (scale.getMode() == null) {
+            // set this to the default then
+            scale.setMode(EvalConstants.SCALE_MODE_SCALE);
+         }
+
+         if (scale.getLocked() == null) {
+            scale.setLocked( Boolean.FALSE );
+         }
+
+         // replace adhoc default title with a unique title
+         if (EvalConstants.SCALE_ADHOC_DEFAULT_TITLE.equals(scale.getTitle())) {
+            scale.setTitle("adhoc-" + EvalUtils.makeUniqueIdentifier(100));
+         }
+
+         // check for required title
+         if (EvalUtils.isBlank(scale.getTitle())) {
+            throw new BlankRequiredFieldException("Cannot save a scale with a blank title", "title");
+         } else {
+            // cleanup for XSS scripting and strings
+            scale.setTitle( externalLogic.cleanupUserStrings(scale.getTitle()) );
+         }
+
+         // now save the scale
          dao.save(scale);
          if (newScale) {
-            external.registerEntityEvent(EVENT_SCALE_CREATE, scale);
+            externalLogic.registerEntityEvent(EVENT_SCALE_CREATE, scale);
          } else {
-            external.registerEntityEvent(EVENT_SCALE_UPDATE, scale);
+            externalLogic.registerEntityEvent(EVENT_SCALE_UPDATE, scale);
          }
          log.info("User ("+userId+") saved scale ("+scale.getId()+"), title: " + scale.getTitle());
          return;
@@ -225,7 +227,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       // check perms and remove
       if (securityChecks.checkUserControlScale(userId, scale)) {
          dao.delete(scale);
-         external.registerEntityEvent(EVENT_SCALE_DELETE, scale);
+         externalLogic.registerEntityEvent(EVENT_SCALE_DELETE, scale);
          log.info("User ("+userId+") deleted scale ("+scale.getId()+"), title: " + scale.getTitle());
          return;
       }
@@ -246,7 +248,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       }
 
       // admin always gets all of the templates of a type
-      if (external.isUserAdmin(userId)) {
+      if (externalLogic.isUserAdmin(userId)) {
          userId = null;
       }
 
@@ -365,7 +367,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
          throw new IllegalArgumentException("Invalid sharing constant ("+item.getSharing()+") set for item ("+item.getItemText()+"), cannot use SHARING_OWNER");
       } else if ( EvalConstants.SHARING_PUBLIC.equals(item.getSharing()) ) {
          // test if non-admin trying to set public sharing
-         if (! external.isUserAdmin(userId) ) {
+         if (! externalLogic.isUserAdmin(userId) ) {
             throw new IllegalArgumentException("Only admins can set item ("+item.getItemText()+") sharing to public");
          }
       }
@@ -382,30 +384,37 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
          }
       }
 
-      // fill in the default settings for optional unspecified values
-      if (item.getLocked() == null) {
-         item.setLocked( Boolean.FALSE );
-      }
-      // check the NOT_AVAILABLE_ALLOWED system setting
-      Boolean naAllowed = (Boolean) settings.get(EvalSettings.ENABLE_NOT_AVAILABLE);
-      if (naAllowed.booleanValue()) {
-         // can set NA
-         if (item.getUsesNA() == null) {
+      if (securityChecks.checkUserControlItem(userId, item)) {
+         // fill in the default settings for optional unspecified values
+         if (item.getLocked() == null) {
+            item.setLocked( Boolean.FALSE );
+         }
+
+         // check the NOT_AVAILABLE_ALLOWED system setting
+         Boolean naAllowed = (Boolean) settings.get(EvalSettings.ENABLE_NOT_AVAILABLE);
+         if (naAllowed.booleanValue()) {
+            // can set NA
+            if (item.getUsesNA() == null) {
+               item.setUsesNA( Boolean.FALSE );
+            }
+         } else {
             item.setUsesNA( Boolean.FALSE );
          }
-      } else {
-         item.setUsesNA( Boolean.FALSE );
-      }
-      if (item.getCategory() == null) {
-         item.setCategory( EvalConstants.ITEM_CATEGORY_COURSE );
-      }
+         if (item.getCategory() == null) {
+            item.setCategory( EvalConstants.ITEM_CATEGORY_COURSE );
+         }
 
-      if (securityChecks.checkUserControlItem(userId, item)) {
+         // cleanup for XSS scripting and strings
+         item.setItemText( externalLogic.cleanupUserStrings(item.getItemText()) );
+         item.setDescription( externalLogic.cleanupUserStrings(item.getDescription()) );
+         item.setExpertDescription( externalLogic.cleanupUserStrings(item.getExpertDescription()) );
+
+         // save the item
          dao.save(item);
          if (newItem) {
-            external.registerEntityEvent(EVENT_ITEM_CREATE, item);
+            externalLogic.registerEntityEvent(EVENT_ITEM_CREATE, item);
          } else {
-            external.registerEntityEvent(EVENT_ITEM_UPDATE, item);
+            externalLogic.registerEntityEvent(EVENT_ITEM_UPDATE, item);
          }
          log.info("User ("+userId+") saved item ("+item.getId()+"), title: " + item.getItemText());
 
@@ -439,7 +448,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
          EvalScale scale = item.getScale(); // LAZY LOAD
          String itemClassification = item.getClassification();
          dao.delete(item);
-         external.registerEntityEvent(EVENT_ITEM_DELETE, item);
+         externalLogic.registerEntityEvent(EVENT_ITEM_DELETE, item);
          log.info("User ("+userId+") removed item ("+item.getId()+"), title: " + item.getItemText());
 
          // unlock associated scales if there were any
@@ -470,7 +479,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       }
 
       // admin always gets all of the templates of a type
-      if (external.isUserAdmin(userId)) {
+      if (externalLogic.isUserAdmin(userId)) {
          userId = null;
       }
 
@@ -641,13 +650,13 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
             entitySets[2] = templateSet;
 
             dao.saveMixedSet(entitySets);
-            external.registerEntityEvent(EVENT_TEMPLATEITEM_CREATE, templateItem);
+            externalLogic.registerEntityEvent(EVENT_TEMPLATEITEM_CREATE, templateItem);
          } else {
             // existing item so just save it
             // TODO - make sure the item and template do not change for existing templateItems
 
             dao.save(templateItem);
-            external.registerEntityEvent(EVENT_TEMPLATEITEM_UPDATE, templateItem);
+            externalLogic.registerEntityEvent(EVENT_TEMPLATEITEM_UPDATE, templateItem);
          }
 
          // Should not be locking this here -AZ
@@ -708,7 +717,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
          // attempt to unlock the related item
          dao.lockItem(item, Boolean.FALSE);
          // fire event
-         external.registerEntityEvent(EVENT_TEMPLATEITEM_DELETE, templateItem);
+         externalLogic.registerEntityEvent(EVENT_TEMPLATEITEM_DELETE, templateItem);
          return;
       }
 
@@ -909,7 +918,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       }
 
       // check only admin can create expert item groups
-      if ( itemGroup.getExpert().booleanValue() && ! external.isUserAdmin(userId) ) {
+      if ( itemGroup.getExpert().booleanValue() && ! externalLogic.isUserAdmin(userId) ) {
          throw new IllegalArgumentException("Only admins can create expert item groups");
       }
 
@@ -1078,7 +1087,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
          // test if non-admin trying to set public sharing
          String system_sharing = (String) settings.get(EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY);
          if (! EvalConstants.SHARING_PUBLIC.equals(system_sharing) &&
-               ! external.isUserAdmin(userId) ) {
+               ! externalLogic.isUserAdmin(userId) ) {
             throw new IllegalArgumentException("Only admins can set template ("+template.getTitle()+") sharing to public");
          }
       }
@@ -1090,27 +1099,33 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
             throw new SecurityException("User ("+userId+") cannot create templates, invalid permissions");
          }
       } else {
-         // existing template, don't allow change to locked setting
-         EvalTemplate existingTemplate = getTemplateOrFail(template.getId());
-
-         if (! existingTemplate.getLocked().equals(template.getLocked())) {
-            throw new IllegalArgumentException("Cannot change locked setting on existing template (" + template.getId() + ")");
-         }
-      }
-
-      // fill in any default values and nulls here
-      if (template.getLocked() == null) {
-         template.setLocked( Boolean.FALSE );
+         // does not work with hibernate
+//         // existing template, don't allow change to locked setting
+//         EvalTemplate existingTemplate = getTemplateOrFail(template.getId());
+//
+//         if (! existingTemplate.getLocked().equals(template.getLocked())) {
+//            throw new IllegalArgumentException("Cannot change locked setting on existing template (" + template.getId() + ")");
+//         }
       }
 
       if (securityChecks.checkUserControlTemplate(userId, template)) {
+         // fill in any default values and nulls here
+         if (template.getLocked() == null) {
+            template.setLocked( Boolean.FALSE );
+         }
+
+         // cleanup for XSS scripting and strings
+         template.setTitle( externalLogic.cleanupUserStrings(template.getTitle()) );
+         template.setDescription( externalLogic.cleanupUserStrings(template.getDescription()) );
+         template.setExpertDescription( externalLogic.cleanupUserStrings(template.getExpertDescription()) );
+
          dao.save(template);
          log.info("User ("+userId+") saved template ("+template.getId()+"), title: " + template.getTitle());
 
          if (newTemplate) {
-            external.registerEntityEvent(EVENT_TEMPLATE_CREATE, template);
+            externalLogic.registerEntityEvent(EVENT_TEMPLATE_CREATE, template);
          } else {
-            external.registerEntityEvent(EVENT_TEMPLATE_UPDATE, template);
+            externalLogic.registerEntityEvent(EVENT_TEMPLATE_UPDATE, template);
          }
 
          if (template.getLocked().booleanValue() == true) {
@@ -1186,7 +1201,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 
          dao.delete(template);
          // fire the template deleted event
-         external.registerEntityEvent(EVENT_TEMPLATE_DELETE, template);
+         externalLogic.registerEntityEvent(EVENT_TEMPLATE_DELETE, template);
          return;
       }
 
@@ -1213,7 +1228,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       }
 
       // admin always gets all of the templates of a type
-      if (external.isUserAdmin(userId)) {
+      if (externalLogic.isUserAdmin(userId)) {
          userId = null;
       }
 
@@ -1271,7 +1286,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
    public boolean canCreateTemplate(String userId) {
       log.debug("userId: " + userId);
       boolean allowed = false;
-      if ( external.isUserAdmin(userId) ) {
+      if ( externalLogic.isUserAdmin(userId) ) {
          // the system super user can create templates always
          allowed = true;
       } else {
@@ -1283,7 +1298,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
           * TODO - make this check system wide and not evalGroupId specific - aaronz.
           */
          if ( ((Boolean)settings.get(EvalSettings.INSTRUCTOR_ALLOWED_CREATE_EVALUATIONS)).booleanValue() && 
-               external.countEvalGroupsForUser(userId, EvalConstants.PERM_WRITE_TEMPLATE) > 0 ) {
+               externalLogic.countEvalGroupsForUser(userId, EvalConstants.PERM_WRITE_TEMPLATE) > 0 ) {
             allowed = true;
          }
       }

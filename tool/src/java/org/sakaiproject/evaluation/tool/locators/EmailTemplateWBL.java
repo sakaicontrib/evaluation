@@ -114,9 +114,6 @@ public class EmailTemplateWBL implements WriteableBeanLocator {
          if (key.startsWith(NEW_PREFIX)) {
             // add in extra logic needed for new items here
          }
-         // cleanup the text before saving
-         emailTemplate.setMessage( externalLogic.cleanupUserStrings(emailTemplate.getMessage()) );
-         emailTemplate.setSubject( externalLogic.cleanupUserStrings(emailTemplate.getSubject()) );
          evaluationSetupService.saveEmailTemplate(emailTemplate, externalLogic.getCurrentUserId());
          messages.addMessage( new TargettedMessage("controlemailtemplates.template.saved.message",
                new Object[] { emailTemplate.getType(), emailTemplate.getSubject() }, 

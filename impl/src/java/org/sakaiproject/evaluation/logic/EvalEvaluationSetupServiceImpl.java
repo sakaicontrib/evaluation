@@ -66,9 +66,9 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       this.dao = dao;
    }
 
-   private EvalExternalLogic external;
+   private EvalExternalLogic externalLogic;
    public void setExternalLogic(EvalExternalLogic external) {
-      this.external = external;
+      this.externalLogic = external;
    }
 
    private EvalSettings settings;
@@ -132,7 +132,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          @SuppressWarnings("unchecked")
          @Override
          public void run() {
-            String serverId = external.getConfigurationSetting(EvalExternalLogic.SETTING_SERVER_ID, "UNKNOWN_SERVER_ID");
+            String serverId = externalLogic.getConfigurationSetting(EvalExternalLogic.SETTING_SERVER_ID, "UNKNOWN_SERVER_ID");
             Boolean lockObtained = dao.obtainLock(EVAL_UPDATE_TIMER, serverId, repeatInterval);
             // only execute the code if we have an exclusive lock
             if (lockObtained != null && lockObtained) {
@@ -394,15 +394,22 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 //      }
       evaluation.setInstructorOpt(EvalConstants.INSTRUCTOR_REQUIRED);
 
+      // cleanup for XSS scripting and strings
+      evaluation.setTitle( externalLogic.cleanupUserStrings(evaluation.getTitle()) );
+      evaluation.setInstructions( externalLogic.cleanupUserStrings(evaluation.getInstructions()) );
+      evaluation.setReminderFromEmail( externalLogic.cleanupUserStrings(evaluation.getReminderFromEmail()) );
+      evaluation.setEvalCategory( externalLogic.cleanupUserStrings(evaluation.getEvalCategory()) );
+
+      // save the eval
       dao.save(evaluation);
       log.info("User ("+userId+") saved evaluation ("+evaluation.getId()+"), title: " + evaluation.getTitle());
 
       if (newEvaluation) {
-         external.registerEntityEvent(EVENT_EVAL_CREATE, evaluation);
+         externalLogic.registerEntityEvent(EVENT_EVAL_CREATE, evaluation);
          // call logic to manage Quartz scheduled jobs
          evalJobLogic.processEvaluationStateChange(evaluation.getId(), EvalJobLogic.ACTION_CREATE);
       } else {
-         external.registerEntityEvent(EVENT_EVAL_UPDATE, evaluation);
+         externalLogic.registerEntityEvent(EVENT_EVAL_UPDATE, evaluation);
          // call logic to manage Quartz scheduled jobs
          evalJobLogic.processEvaluationStateChange(evaluation.getId(), EvalJobLogic.ACTION_UPDATE);
       }
@@ -496,7 +503,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          }
 
          // fire the evaluation deleted event
-         external.registerEntityEvent(EVENT_EVAL_DELETE, evaluation);
+         externalLogic.registerEntityEvent(EVENT_EVAL_DELETE, evaluation);
 
          // remove the evaluation and related data (except template) in one transaction
          dao.deleteMixedSet(entitySets);
@@ -563,7 +570,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          saveEvaluation(evaluation, userId);
    
          // fire the evaluation closed event
-         external.registerEntityEvent(EVENT_EVAL_CLOSED, evaluation);
+         externalLogic.registerEntityEvent(EVENT_EVAL_CLOSED, evaluation);
       } else {
          log.warn(userId + " tried to close eval that is already closed ("+evaluationId+"): " + evaluation.getTitle());
       }
@@ -586,13 +593,13 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       }
 
       String[] evalGroupIds = null;
-      if (external.isUserAdmin(userId)) {
+      if (externalLogic.isUserAdmin(userId)) {
          // null out the userId so we get all evaluations
          userId = null;
       } else {
          if (showNotOwned) {
             // Get the list of EvalGroup where user has "eval.be.evaluated" permission.
-            List<EvalGroup> evaluatedGroups = external.getEvalGroupsForUser(userId, EvalConstants.PERM_BE_EVALUATED);
+            List<EvalGroup> evaluatedGroups = externalLogic.getEvalGroupsForUser(userId, EvalConstants.PERM_BE_EVALUATED);
             if (evaluatedGroups.size() > 0) {
                evalGroupIds = new String[evaluatedGroups.size()];
                for (int i = 0; i < evaluatedGroups.size(); i++) {
@@ -614,7 +621,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
     */
    @SuppressWarnings("unchecked")
    public List<EvalEvaluation> getEvaluationsForUser(String userId, Boolean activeOnly, Boolean untakenOnly, Boolean includeAnonymous) {
-      List<EvalGroup> takeGroups = external.getEvalGroupsForUser(userId, EvalConstants.PERM_TAKE_EVALUATION);
+      List<EvalGroup> takeGroups = externalLogic.getEvalGroupsForUser(userId, EvalConstants.PERM_TAKE_EVALUATION);
 
       String[] evalGroupIds = new String[takeGroups.size()];
       for (int i=0; i<takeGroups.size(); i++) {
@@ -692,7 +699,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                new String[] {"startDate"});
       } else {
          // get all evals for a specific user for a category
-         List takeGroups = external.getEvalGroupsForUser(userId, EvalConstants.PERM_TAKE_EVALUATION);
+         List takeGroups = externalLogic.getEvalGroupsForUser(userId, EvalConstants.PERM_TAKE_EVALUATION);
 
          String[] evalGroupIds = new String[takeGroups.size()];
          for (int i=0; i<takeGroups.size(); i++) {
@@ -825,7 +832,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       }
 
       // check if this evaluation can be modified
-      String userId = external.getCurrentUserId();
+      String userId = externalLogic.getCurrentUserId();
       if (securityChecks.checkCreateAssignGroup(userId, eval)) {
 
          // first we have to get all the assigned hierarchy nodes for this eval
@@ -955,7 +962,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
    @SuppressWarnings("unchecked")
    public void deleteAssignHierarchyNodesById(Long[] assignHierarchyIds) {
-      String userId = external.getCurrentUserId();
+      String userId = externalLogic.getCurrentUserId();
       // get the list of hierarchy assignments
       List<EvalAssignHierarchy> l = dao.findByProperties(EvalAssignHierarchy.class,
             new String[] { "id" }, new Object[] { assignHierarchyIds });
@@ -1018,7 +1025,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          emailTemplate.setDefaultType(null);
 
       } else {
-         boolean userAdmin = external.isUserAdmin(userId);
+         boolean userAdmin = externalLogic.isUserAdmin(userId);
          // existing template
 
          if (! userAdmin) {
@@ -1050,6 +1057,10 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             // admin can modify any templates that they like
          }
       }
+
+      // cleanup for XSS scripting and strings
+      emailTemplate.setMessage( externalLogic.cleanupUserStrings(emailTemplate.getMessage()) );
+      emailTemplate.setSubject( externalLogic.cleanupUserStrings(emailTemplate.getSubject()) );
 
       // save the template if allowed
       dao.save(emailTemplate);
