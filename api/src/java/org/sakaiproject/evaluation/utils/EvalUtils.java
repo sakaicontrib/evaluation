@@ -380,6 +380,20 @@ public class EvalUtils {
    }
 
    /**
+    * Check if an email address is valid (you should trim it before you send it along)
+    * 
+    * @param email an email address
+    * @return true if valid, false otherwise
+    */
+   public static boolean isValidEmail(String email) {
+      boolean valid = false;
+      if (email != null && email.length() > 5) {
+         valid = email.matches("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,3,4})$");
+      }
+      return valid;
+   }
+
+   /**
     * Get a map of answers for the given response, where the key to
     * access a given response is the unique pairing of templateItemId and
     * the associated field of the answer (instructor id, environment key, etc.)
