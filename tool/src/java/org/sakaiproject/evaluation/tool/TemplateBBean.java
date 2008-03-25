@@ -22,6 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
+import org.sakaiproject.evaluation.logic.exceptions.BlankRequiredFieldException;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.locators.ItemBeanWBL;
@@ -105,25 +106,19 @@ public class TemplateBBean {
    // TEMPLATES
 
    /**
-    * If the template is not saved, button will show text "continue and add
-    * question" method binding to the "continue and add question" button on
-    * template_title_description.html replaces
-    * TemplateBean.createTemplateAction, but template is added to db here.
-    */
-   public String createTemplateAction() {
-      log.debug("create template");
-      templateBeanLocator.saveAll();
-      return "success";
-   }
-
-   /**
     * If the template is already stored, button will show text "Save" method
     * binding to the "Save" button on template_title_description.html replaces
     * TemplateBean.saveTemplate()
     */
    public String updateTemplateTitleDesc() {
       log.debug("update template title/desc");
-      templateBeanLocator.saveAll();
+      try {
+         templateBeanLocator.saveAll();
+      } catch (BlankRequiredFieldException e) {
+         messages.addMessage( new TargettedMessage(e.messageKey, 
+               new Object[] { e.fieldName }, TargettedMessage.SEVERITY_ERROR));
+         throw new RuntimeException(e); // should not be needed but it is
+      }
       messages.addMessage( new TargettedMessage("modifytemplatetitledesc.success.user.message", 
             new Object[] {}, TargettedMessage.SEVERITY_INFO) );
       return "success";
@@ -147,7 +142,13 @@ public class TemplateBBean {
 
    public String saveItemAction() {
       log.info("save item");
-      itemBeanWBL.saveAll();
+      try {
+         itemBeanWBL.saveAll();
+      } catch (BlankRequiredFieldException e) {
+         messages.addMessage( new TargettedMessage(e.messageKey, 
+               new Object[] { e.fieldName }, TargettedMessage.SEVERITY_ERROR));
+         throw new RuntimeException(e); // should not be needed but it is
+      }
       return "success";
    }
 
@@ -191,14 +192,26 @@ public class TemplateBBean {
 
    public String saveTemplateItemAction() {
       log.debug("save template item");
-      templateItemWBL.saveAll();
+      try {
+         templateItemWBL.saveAll();
+      } catch (BlankRequiredFieldException e) {
+         messages.addMessage( new TargettedMessage(e.messageKey, 
+               new Object[] { e.fieldName }, TargettedMessage.SEVERITY_ERROR));
+         throw new RuntimeException(e); // should not be needed but it is
+      }
       return "success";
    }
 
 
    public String saveBothAction() {
       log.info("save template item and item");
-      templateItemWBL.saveBoth();
+      try {
+         templateItemWBL.saveBoth();
+      } catch (BlankRequiredFieldException e) {
+         messages.addMessage( new TargettedMessage(e.messageKey, 
+               new Object[] { e.fieldName }, TargettedMessage.SEVERITY_ERROR));
+         throw new RuntimeException(e); // should not be needed but it is
+      }
       return "success";
    }
 
@@ -210,7 +223,13 @@ public class TemplateBBean {
     */
    public String saveScaleAction() {
       log.debug("save scale");
-      scaleBeanLocator.saveAll();
+      try {
+         scaleBeanLocator.saveAll();
+      } catch (BlankRequiredFieldException e) {
+         messages.addMessage( new TargettedMessage(e.messageKey, 
+               new Object[] { e.fieldName }, TargettedMessage.SEVERITY_ERROR));
+         throw new RuntimeException(e); // should not be needed but it is
+      }
       return "success";
    }
 
@@ -342,8 +361,14 @@ public class TemplateBBean {
             parent.getItem().setCategory(parent.getCategory());
             setIdealColorForBlockParent(parent);
 
-            localTemplateLogic.saveItem(parent.getItem());
-            localTemplateLogic.saveTemplateItem(parent);
+            try {
+               localTemplateLogic.saveItem(parent.getItem());
+               localTemplateLogic.saveTemplateItem(parent);
+            } catch (BlankRequiredFieldException e) {
+               messages.addMessage( new TargettedMessage(e.messageKey, 
+                     new Object[] { e.fieldName }, TargettedMessage.SEVERITY_ERROR));
+               throw new RuntimeException(e); // should not be needed but it is
+            }
          } else {
             parent = authoringService.getTemplateItemById(Long.valueOf(blockTextChoice));
          }
@@ -416,8 +441,14 @@ public class TemplateBBean {
          // update the parent
          EvalTemplateItem parent = authoringService.getTemplateItemById(Long.valueOf(blockId));
          setIdealColorForBlockParent(parent);
-         localTemplateLogic.saveItem(parent.getItem());
-         localTemplateLogic.saveTemplateItem(parent);
+         try {
+            localTemplateLogic.saveItem(parent.getItem());
+            localTemplateLogic.saveTemplateItem(parent);
+         } catch (BlankRequiredFieldException e) {
+            messages.addMessage( new TargettedMessage(e.messageKey, 
+                  new Object[] { e.fieldName }, TargettedMessage.SEVERITY_ERROR));
+            throw new RuntimeException(e); // should not be needed but it is
+         }
 
          // update the children
          List<EvalTemplateItem> blockChildren = authoringService.getBlockChildTemplateItemsForBlockParent(parent.getId(), false);
@@ -429,7 +460,6 @@ public class TemplateBBean {
             child.setHierarchyNodeId(parent.getHierarchyNodeId());
             localTemplateLogic.saveTemplateItem(child);
          }
-
       }
 
       return "success";
