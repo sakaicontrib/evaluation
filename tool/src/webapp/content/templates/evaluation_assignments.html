@@ -27,83 +27,60 @@
 				</ul>
 			</div>
 			<h3 rsf:id="msg=evaluationassignments.page.title">Evaluation Display Assignments</h3>
-			
-			<p class="instruction" rsf:id="eval-assign-info">
-				You have chosen to assign the evaluation (eval title) to the following groups.
-			</p>
+            
+            <div>
+                <a rsf:id="modifyAssignmentsLink" href="evaluation_assign.html">Modify evaluation assignments</a>
+            </div>
+
 			<p class="instruction" rsf:id="msg=evaluationassignments.info">
 				This shows the current groups and hierarchy nodes that your evaluation is assigned to
 			</p>
 
-			<div rsf:id="msg=evaluationassignments.groups.header" style="font-weight:bold;">Individual Groups:</div>
-            <span rsf:id="no-courses-selected" style="font-style:italic;"></span>
-			<table border="0" cellspacing="0" cellpadding="0" style="width:90%" class="listHier lines nolines">
-				<tr>
-					<th >
-						<span rsf:id="msg=evaluationassignconfirm.title.header">Title</span>
-					</th>
-					<th>
-					</th>
-					<th>
-						<span rsf:id="msg=evaluationassignconfirm.enrollment.header">Enrollment</span>
-					</th>
-				</tr>
-				<tr rsf:id="groups:"> 
-					<td>
-						<span rsf:id="groupTitle">Group title</span>
-					</td>
-					<td class="itemAction">
-						<span rsf:id="direct-eval-group-link"><a rsf:id="payload-component" href="take_eval.html" title="direct url to the evaluation for this group">link</a></span>
-					</td>
-					<td>
-						<span rsf:id="enrollment">10</span>
-					</td>
-				</tr>
-			</table>
+            <div rsf:id="msg=evaluationassignments.groups.header" style="font-weight:bold;">Individual Groups:</div>
+            <span rsf:id="noGroupsSelected" style="font-style:italic;"></span>
+            <table rsf:id="showSelectedGroups:" border="0" cellspacing="0" cellpadding="0" style="width:90%" class="listHier lines nolines">
+                <tr rsf:id="groups:"> 
+                    <td width="60%">
+                        <span rsf:id="groupTitle">Group title</span>
+                        &nbsp;
+                        <span rsf:id="directGroupLink">(<a rsf:id="payload-component" href="take_eval.html" title="direct url to the evaluation for this group">link</a>)</span>
+                    </td>
+                    <td width="30%">
+                        <span rsf:id="enrollment">20 members</span>
+                    </td>
+                    <td width="10%">
+                        <span rsf:id="groupType">adhoc</span>
+                    </td>
+                </tr>
+            </table>
 
             <div rsf:id="showHierarchy:">
                <div rsf:id="msg=evaluationassignments.nodes.header" style="font-weight:bold;">Individual Hierarchy Nodes:</div>
-               <span rsf:id="no-nodes-selected" style="font-style:italic;"></span>
-               <table rsf:id="nodes-selected-table" border="0" cellspacing="0" cellpadding="0" style="width:90%" class="listHier lines nolines">
-                  <tr>
-                  	<th>
-                  		<span rsf:id="msg=evaluationassignconfirm.title.header">Title</span>
-                  	</th>
-                  	<th>
-                  		<span rsf:id="msg=evaluationassignconfirm.abbr.header">Abbreviation</span>
-                  	</th>
+               <span rsf:id="noNodesSelected" style="font-style:italic;"></span>
+               <table rsf:id="showSelectedNodes:" border="0" cellspacing="0" cellpadding="0" style="width:90%" class="listHier lines nolines">
+                  <tr rsf:id="nodes:node">
+                    <td width="60%">
+                        <span rsf:id="nodeTitle">Department of Biology</span>
+                    </td>
+                    <td width="40%">
+                        <span rsf:id="nodeAbbr">BIODEPT</span>
+                    </td>
                   </tr>
-                  <tr rsf:id="node-row:node">
-                  	<td>
-                  		<span rsf:id="node-title">Department of Biology</span>
-                  	</td>
-                  	<td>
-                  		<span rsf:id="node-abbr">BIODEPT</span>
-                  	</td>
-                  </tr>
-                  <tr rsf:id="node-row:groups">
+                  <tr rsf:id="nodes:groups">
                     <td>
-                      <span rsf:id="no-groups-for-node"></span>
+                      <span rsf:id="noGroupsForNode"></span>
                       <table rsf:id="nodeGroupTable:" border="0" cellspacing="0" cellpadding="0" style="width:90%" class="listHier lines nolines">
-                         <tr>
-                             <th>
-                                 <span rsf:id="msg=evaluationassignconfirm.title.header">Title</span>
-                             </th>
-                             <th>
-                             </th>
-                             <th>
-                                 <span rsf:id="msg=evaluationassignconfirm.enrollment.header">Enrollment</span>
-                             </th>
-                         </tr>
                          <tr rsf:id="groups:"> 
-                             <td>
+                             <td width="60%">
                                  <span rsf:id="groupTitle">Group title</span>
+                                 &nbsp;
+                                 <span rsf:id="directGroupLink">(<a rsf:id="payload-component" href="take_eval.html" title="direct url to the evaluation for this group">link</a>)</span>
                              </td>
-                             <td class="itemAction">
-                                 <span rsf:id="direct-eval-group-link"><a rsf:id="payload-component" href="take_eval.html" title="direct url to the evaluation for this group">link</a></span>
+                             <td width="30%">
+                                 <span rsf:id="enrollment">20 members</span>
                              </td>
-                             <td>
-                                 <span rsf:id="enrollment">10</span>
+                             <td width="10%">
+                                 <span rsf:id="groupType">adhoc</span>
                              </td>
                          </tr>
                       </table>
@@ -112,6 +89,7 @@
                </table>
             </div>
 
+            <br/>
             <input rsf:id="cancel-button" name="cancel" type="button" value="Back" onclick="javascript:history.go(-1);return false;" accesskey="x" />
 
 		</div>
