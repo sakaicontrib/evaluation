@@ -609,4 +609,37 @@ public class EvalUtilsTest extends TestCase {
       assertNotNull( EvalUtils.makeResponseRateStringFromCounts(20, 20) );
    }
 
+   public void testMakeMaxLengthString() {
+      String result = null;
+      String test = "this is a string";
+
+      result = EvalUtils.makeMaxLengthString(test, 100);
+      assertNotNull(result);
+      assertEquals(test, result);
+
+      result = EvalUtils.makeMaxLengthString(test, 10);
+      assertNotNull(result);
+      assertEquals("this is ...", result);
+
+      // test this leaves the string alone
+      result = EvalUtils.makeMaxLengthString(test, 0);
+      assertNotNull(result);
+      assertEquals(test, result);
+
+      // check null is ok
+      result = EvalUtils.makeMaxLengthString(null, 100);
+      assertNull(result);
+   }
+
+   public void testIsValidEmail() {
+      assertTrue( EvalUtils.isValidEmail("aaronz@vt.edu") );
+      assertTrue( EvalUtils.isValidEmail("aaron@caret.cam.ac.uk") );
+      assertTrue( EvalUtils.isValidEmail("Aaron.Zeckoski@vt.edu") );
+
+      assertFalse( EvalUtils.isValidEmail(null) );
+      assertFalse( EvalUtils.isValidEmail("") );
+      assertFalse( EvalUtils.isValidEmail("not an email") );
+      assertFalse( EvalUtils.isValidEmail("not@email") );
+   }
+
 }
