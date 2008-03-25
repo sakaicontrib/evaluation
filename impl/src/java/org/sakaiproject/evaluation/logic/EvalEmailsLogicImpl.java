@@ -488,8 +488,18 @@ public class EvalEmailsLogicImpl implements EvalEmailsLogic {
             externalLogic.getUserLocale(externalLogic.getCurrentUserId()));
 
       replacementValues.put("EvalStartDate", df.format(eval.getStartDate()));
-      replacementValues.put("EvalDueDate", df.format(eval.getDueDate()));
-      replacementValues.put("EvalResultsDate", df.format(eval.getViewDate()));
+      String dueDate = "--------";
+      if (eval.getDueDate() != null) {
+         dueDate = df.format(eval.getDueDate());
+      }
+      replacementValues.put("EvalDueDate", dueDate);
+      String viewDate = null;
+      if (eval.getViewDate() != null) {
+         viewDate = df.format(eval.getDueDate());
+      } else {
+         viewDate = dueDate;
+      }
+      replacementValues.put("EvalResultsDate", viewDate);
       replacementValues.put("EvalGroupTitle", group.title);
 
       // ensure that the if-then variables are set to false if they are unset
