@@ -620,14 +620,10 @@ public class EvalJobLogicImpl implements EvalJobLogic {
    protected void sendAvailableEmail(Long evalId) {
       // For now, we always want to include the evaluatees in the evaluationSetupService
       boolean includeEvaluatees = true;
-      try {
-         String[] sentMessages = emails.sendEvalAvailableNotifications(evalId, includeEvaluatees);
-         if (log.isDebugEnabled())
-            log.debug("EvalJobLogicImpl.sendAvailableEmail(" + evalId + ")" + " sentMessages: "
-                  + sentMessages.toString());
-      } catch (Exception e) {
-         log.error(this + ".sendAvailableEmail(" + evalId + ")" + e);
-      }
+      String[] sentMessages = emails.sendEvalAvailableNotifications(evalId, includeEvaluatees);
+      if (log.isDebugEnabled())
+         log.debug("EvalJobLogicImpl.sendAvailableEmail(" + evalId + ")" + " sentMessages: "
+               + sentMessages.toString());
    }
 
    /**
@@ -638,14 +634,10 @@ public class EvalJobLogicImpl implements EvalJobLogic {
     */
    protected void sendCreatedEmail(Long evalId) {
       boolean includeOwner = true;
-      try {
-         String[] sentMessages = emails.sendEvalCreatedNotifications(evalId, includeOwner);
-         if (log.isDebugEnabled())
-            log.debug("EvalJobLogicImpl.sendCreatedEmail(" + evalId + ")" + " sentMessages: "
-                  + sentMessages.toString());
-      } catch (Exception e) {
-         log.error(this + ".sendCreatedEmail(" + evalId + ")" + e);
-      }
+      String[] sentMessages = emails.sendEvalCreatedNotifications(evalId, includeOwner);
+      if (log.isDebugEnabled())
+         log.debug("EvalJobLogicImpl.sendCreatedEmail(" + evalId + ")" + " sentMessages: "
+               + sentMessages.toString());
    }
 
    /**
@@ -655,18 +647,14 @@ public class EvalJobLogicImpl implements EvalJobLogic {
     *           the EvalEvaluation id
     */
    protected void sendReminderEmail(Long evalId) {
-      try {
-         EvalEvaluation eval = evaluationService.getEvaluationById(evalId);
-         if (eval.getState().equals(EvalConstants.EVALUATION_STATE_ACTIVE)
-               && eval.getReminderDays().intValue() != 0) {
-            String includeConstant = EvalConstants.EVAL_INCLUDE_NONTAKERS;
-            String[] sentMessages = emails.sendEvalReminderNotifications(evalId, includeConstant);
-            if (log.isDebugEnabled())
-               log.debug("EvalJobLogicImpl.sendReminderEmail(" + evalId + ")" + " sentMessages: "
-                     + sentMessages.toString());
-         }
-      } catch (Exception e) {
-         log.error(this + ".sendReminderEmail(" + evalId + ")" + e);
+      EvalEvaluation eval = evaluationService.getEvaluationById(evalId);
+      if (eval.getState().equals(EvalConstants.EVALUATION_STATE_ACTIVE)
+            && eval.getReminderDays().intValue() != 0) {
+         String includeConstant = EvalConstants.EVAL_INCLUDE_NONTAKERS;
+         String[] sentMessages = emails.sendEvalReminderNotifications(evalId, includeConstant);
+         if (log.isDebugEnabled())
+            log.debug("EvalJobLogicImpl.sendReminderEmail(" + evalId + ")" + " sentMessages: "
+                  + sentMessages.toString());
       }
    }
 
