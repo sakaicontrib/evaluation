@@ -288,12 +288,9 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
 
       boolean emptyReturn = false;
       Map<String, Object> params = new HashMap<String, Object>();
-      String joinHQL = "";
 
       String groupsHQL = "";
       if (evalGroupIds != null && evalGroupIds.length > 0) {
-         joinHQL += ", EvalAssignGroup as assign ";
-
          String approvedHQL = "";
          if (approvedOnly != null) {
             approvedHQL = " and assign.instructorApproval = :approval ";
@@ -370,7 +367,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
             params.put("deletedState", EvalConstants.EVALUATION_STATE_DELETED);
          }
 
-         String hql = "select distinct eval from EvalEvaluation as eval " + joinHQL 
+         String hql = "select eval from EvalEvaluation as eval " 
             + " where 1=1 " + activeHQL + groupsHQL //+ responsesHQL 
             + " order by eval.dueDate, eval.title, eval.id";
          evals = executeHqlQuery(hql, params, startResult, maxResults);
