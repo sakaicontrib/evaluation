@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
@@ -17,10 +15,11 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.utils.ComparatorsUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
-import uk.org.ponder.util.UniversalRuntimeException;
-import uk.org.ponder.messageutil.MessageLocator;
 
-/*
+import uk.org.ponder.messageutil.MessageLocator;
+import uk.org.ponder.util.UniversalRuntimeException;
+
+/**
  * This utility class is responsible for creating convenient arrays and other 
  * things that collect all the responses for an evaluation. An example is a 2D
  * List containing all the responses ready to be fed into an excel or csv file.
@@ -31,7 +30,6 @@ import uk.org.ponder.messageutil.MessageLocator;
  * @author Steven Githens (swgithen@mtu.edu)
  */
 public class EvalResponseAggregatorUtil {
-   private static Log log = LogFactory.getLog(EvalResponseAggregatorUtil.class);
    
    private EvalEvaluationService evaluationService;
    public void setEvaluationService(EvalEvaluationService evaluationService) {
@@ -76,41 +74,33 @@ public class EvalResponseAggregatorUtil {
          responseRows.add(currResponseRow);
       }
 
-      //get all items
-      List<EvalTemplateItem> allItems = new ArrayList<EvalTemplateItem>(template.getTemplateItems());
-
-      if (!allItems.isEmpty()) {
+      // get all answerable template items
+      List<EvalTemplateItem> allTemplateItems = new ArrayList<EvalTemplateItem>(template.getTemplateItems());
+      // FIXME - do this using the authoringService
+//      allItems = authoringService.getTemplateItemsForEvaluation(evaluationId, hierarchyNodeIDs, 
+//            instructorIds, new String[] {evalGroupId});
+      
+      if (! allTemplateItems.isEmpty()) {
          //filter out the block child items, to get a list non-child items
-         List<EvalTemplateItem> ncItemsList = TemplateItemUtils.getNonChildItems(allItems);
+         List<EvalTemplateItem> ncItemsList = TemplateItemUtils.getNonChildItems(allTemplateItems);
          Collections.sort(ncItemsList, new ComparatorsUtils.TemplateItemComparatorByOrder());
-         //for each item
+
+         // for each templateItem
          for (int i = 0; i < ncItemsList.size(); i++) {
             //fetch the item
-            EvalTemplateItem tempItem1 = (EvalTemplateItem) ncItemsList.get(i);
-            allEvalTemplateItems.add(tempItem1);
-            EvalItem item1 = tempItem1.getItem();
+            EvalTemplateItem templateItem = (EvalTemplateItem) ncItemsList.get(i);
+            String itemType = TemplateItemUtils.getTemplateItemType(templateItem);
+            allEvalTemplateItems.add(templateItem);
+            EvalItem item = templateItem.getItem();
 
-            //if the item is normal scaled or text (essay)
-            if (TemplateItemUtils.getTemplateItemType(tempItem1).equals(EvalConstants.ITEM_TYPE_SCALED)
-                  || TemplateItemUtils.getTemplateItemType(tempItem1).equals(EvalConstants.ITEM_TYPE_TEXT)
-                  || TemplateItemUtils.getTemplateItemType(tempItem1).equals(EvalConstants.ITEM_TYPE_MULTIPLEANSWER)
-                  || TemplateItemUtils.getTemplateItemType(tempItem1).equals(EvalConstants.ITEM_TYPE_MULTIPLECHOICE)) {
-
-               //add the item description to the top row
-               // This is rich text, each particular output format can decide if it needs to be flattened.
-               topRow.add(item1.getItemText());
-               allEvalItems.add(item1);
-
-               //get all answers to this item within this evaluation
-               List<EvalAnswer> itemAnswers = deliveryService.getEvalAnswers(item1.getId(), evaluation.getId(), groupIds);
-               updateResponseList(numOfResponses, responseIds, responseRows, itemAnswers, tempItem1, item1);
-
-            }
-            // block parent type (block child handled inside this)
-            else if (TemplateItemUtils.getTemplateItemType(tempItem1).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)) {
+            // if this is a non-block type
+            if (EvalConstants.ITEM_TYPE_HEADER.equals(itemType)
+               || EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(itemType)) {
+               // do nothing with these types, children handled by the parents and header not needed for export
+            } else if (TemplateItemUtils.isBlockParent(templateItem)) {
                //add the block description to the top row
-               topRow.add(item1.getItemText());
-               allEvalItems.add(item1);
+               topRow.add(item.getItemText());
+               allEvalItems.add(item);
                for (int j = 0; j < numOfResponses; j++) {
                   List<String> currRow = responseRows.get(j);
                   //add blank response to block parent row
@@ -118,7 +108,7 @@ public class EvalResponseAggregatorUtil {
                }
 
                //get child block items
-               List<EvalTemplateItem> childList = TemplateItemUtils.getChildItems(allItems, tempItem1.getId());
+               List<EvalTemplateItem> childList = TemplateItemUtils.getChildItems(allTemplateItems, templateItem.getId());
                for (int j = 0; j < childList.size(); j++) {
                   EvalTemplateItem tempItemChild = (EvalTemplateItem) childList.get(j);
                   allEvalTemplateItems.add(tempItemChild);
@@ -128,19 +118,20 @@ public class EvalResponseAggregatorUtil {
                   allEvalItems.add(child);
                   //get all answers to the child item within this eval
                   List<EvalAnswer> itemAnswers = deliveryService.getEvalAnswers(child.getId(), evaluation.getId(), groupIds);
-                  updateResponseList(numOfResponses, responseIds, responseRows, itemAnswers, tempItemChild, child);
+                  updateResponseList(numOfResponses, responseIds, responseRows, itemAnswers, tempItemChild);
                }
-            }
-            // for block child 
-            else if (TemplateItemUtils.getTemplateItemType(tempItem1).equals(EvalConstants.ITEM_TYPE_BLOCK_CHILD)) {
-               // do nothing as they are already handled inside block parent
-            }
-            // for header type items
-            else if (TemplateItemUtils.getTemplateItemType(tempItem1).equals(EvalConstants.ITEM_TYPE_HEADER)) {
-               // DO nothing for header type
             } else {
-               // SHOULD NOT GET HERE UNLESS WE HAVE an unhandled type which is an error
-               throw new UniversalRuntimeException("Unknown type, cannot do csv export: " + tempItem1.getItem().getClassification());
+               // this should be one of the non-block answerable types (updateResponseList will check the types)
+
+               //add the item description to the top row
+               // This is rich text, each particular output format can decide if it needs to be flattened.
+               topRow.add(item.getItemText());
+               allEvalItems.add(item);
+
+               //get all answers to this item within this evaluation
+               List<EvalAnswer> itemAnswers = deliveryService.getEvalAnswers(item.getId(), evaluation.getId(), groupIds);
+               updateResponseList(numOfResponses, responseIds, responseRows, itemAnswers, templateItem);
+
             }
          }
       }
@@ -150,18 +141,17 @@ public class EvalResponseAggregatorUtil {
    }
    
    /**
-    * This method iterates through list of answers for the concerened question 
+    * This method iterates through list of answers for the concerned question 
     * and updates the list of responses.
     * 
     * @param numOfResponses number of responses for the concerned evaluation
     * @param responseIds list of response ids
     * @param responseRows list containing all responses (i.e. list of answers for each question)
     * @param itemAnswers list of answers for the concerened question
-    * @param tempItem1 EvalTemplateItem object for which the answers are fetched
-    * @param item1 EvalItem object for which the answers are fetched
+    * @param templateItem EvalTemplateItem object for which the answers are fetched
     */
    private void updateResponseList(int numOfResponses, List<Long> responseIds, List<List<String>> responseRows, List<EvalAnswer> itemAnswers,
-         EvalTemplateItem tempItem1, EvalItem item1) {
+         EvalTemplateItem templateItem) {
 
       /* 
        * Fix for EVALSYS-123 i.e. export CSV functionality 
@@ -197,15 +187,16 @@ public class EvalResponseAggregatorUtil {
           * If text/essay type item just add the text 
           * else (scaled type or block child, which is also scaled) item then look up the label
           */
+         String itemType = TemplateItemUtils.getTemplateItemType(templateItem);
          currRow = responseRows.get(actualIndexOfResponse);
          if (currAnswer.NA) {
             currRow.add(messageLocator.getMessage("reporting.notapplicable.shortlabel"));
          }
-         else if (EvalConstants.ITEM_TYPE_TEXT.equals(TemplateItemUtils.getTemplateItemType(tempItem1))) {
+         else if (EvalConstants.ITEM_TYPE_TEXT.equals(itemType)) {
             currRow.add(currAnswer.getText());
          } 
-         else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(TemplateItemUtils.getTemplateItemType(tempItem1))) {
-            String labels[] = item1.getScale().getOptions();
+         else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemType)) {
+            String labels[] = templateItem.getItem().getScale().getOptions();
             StringBuilder sb = new StringBuilder();
             Integer[] decoded = EvalUtils.decodeMultipleAnswers(currAnswer.getMultiAnswerCode());
             for (int k = 0; k < decoded.length; k++) {
@@ -215,13 +206,15 @@ public class EvalResponseAggregatorUtil {
             }
             currRow.add(sb.toString());
          }
-         else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(TemplateItemUtils.getTemplateItemType(tempItem1)) ||
-               EvalConstants.ITEM_TYPE_SCALED.equals(TemplateItemUtils.getTemplateItemType(tempItem1))) {
-            String labels[] = item1.getScale().getOptions();
+         else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(itemType) 
+               || EvalConstants.ITEM_TYPE_SCALED.equals(itemType)
+               || EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(itemType)) {
+            String labels[] = templateItem.getItem().getScale().getOptions();
             currRow.add(labels[currAnswer.getNumeric().intValue()]);
          }
          else {
-            throw new UniversalRuntimeException("Trying to add an unsupported question type to the Spreadsheet Data Lists.");
+            throw new UniversalRuntimeException("Trying to add an unsupported question type ("+itemType+") " 
+            		+ "for template item ("+templateItem.getId()+") to the Spreadsheet Data Lists");
          }
 
          /*
