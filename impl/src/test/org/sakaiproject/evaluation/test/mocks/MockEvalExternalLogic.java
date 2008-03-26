@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.test.mocks;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -24,8 +25,11 @@ import java.util.Set;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.logic.model.EvalScheduledJob;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
+
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 
 /**
@@ -487,6 +491,25 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
       return userSubmittedString;
    }
 
+
+   // FOR scheduling
+   // the methods below should return some fake jobs which will correctly correspond to the jobs one would expect to find
+   // in the system based on the current test dats (i.e. maybe 8 or so jobs should exist based on the current test data)
+   
+   public String createScheduledJob(Date executionDate, Long evaluationId, String jobType) {
+      // TODO - make these return some fake data for testing - Dick should do this when he writes tests for this code
+      throw new NotImplementedException();
+   }
+
+   public void deleteScheduledJob(String jobID) {
+      // TODO - make these return some fake data for testing - Dick should do this when he writes tests for this code
+      throw new NotImplementedException();
+   }
+
+   public EvalScheduledJob[] findScheduledJobs(Long evaluationId, String jobType) {
+      // TODO - make these return some fake data for testing - Dick should do this when he writes tests for this code
+      throw new NotImplementedException();
+   }
 
 
 	// testing methods

@@ -188,10 +188,8 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
    // EVALUATIONS
 
-   public void saveEvaluation(EvalEvaluation evaluation, String userId) {
+   public void saveEvaluation(EvalEvaluation evaluation, String userId, boolean created) {
       log.debug("evalId: " + evaluation.getId() + ",userId: " + userId);
-
-      boolean newEvaluation = false;
 
       // set the date modified
       evaluation.setLastModified( new Date() );
@@ -251,7 +249,6 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       Date today = calendar.getTime();
       if (evaluation.getId() == null) {
          // creating new evaluation
-         newEvaluation = true;
 
          if (evaluation.getDueDate() != null 
                && evaluation.getDueDate().before(today)) {
@@ -290,6 +287,10 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       }
 
       // make sure the state is set correctly (does not override special states)
+      if (created) {
+         // eval was just created so we will force it out of partial state
+         evaluation.setState(EvalConstants.EVALUATION_STATE_INQUEUE);
+      }
       String evalState = evaluationService.returnAndFixEvalState(evaluation, false);
 
       // make sure we are not using a blank template here and get the template without using lazy loading
@@ -404,14 +405,17 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       dao.save(evaluation);
       log.info("User ("+userId+") saved evaluation ("+evaluation.getId()+"), title: " + evaluation.getTitle());
 
-      if (newEvaluation) {
-         externalLogic.registerEntityEvent(EVENT_EVAL_CREATE, evaluation);
-         // call logic to manage Quartz scheduled jobs
-         evalJobLogic.processEvaluationStateChange(evaluation.getId(), EvalJobLogic.ACTION_CREATE);
-      } else {
-         externalLogic.registerEntityEvent(EVENT_EVAL_UPDATE, evaluation);
-         // call logic to manage Quartz scheduled jobs
-         evalJobLogic.processEvaluationStateChange(evaluation.getId(), EvalJobLogic.ACTION_UPDATE);
+      // initialize the scheduling for the eval jobs (only if state is not partial)
+      if ( EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_PARTIAL, false) ) {
+         if (created) {
+            externalLogic.registerEntityEvent(EVENT_EVAL_CREATE, evaluation);
+            // call logic to manage Quartz scheduled jobs
+            evalJobLogic.processEvaluationStateChange(evaluation.getId(), EvalJobLogic.ACTION_CREATE);
+         } else {
+            externalLogic.registerEntityEvent(EVENT_EVAL_UPDATE, evaluation);
+            // call logic to manage Quartz scheduled jobs
+            evalJobLogic.processEvaluationStateChange(evaluation.getId(), EvalJobLogic.ACTION_UPDATE);
+         }
       }
 
       // effectively we are locking the evaluation when a user replies to it, otherwise the chain can be changed
@@ -567,7 +571,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          evaluationService.returnAndFixEvalState(evaluation, false);
 
          // save evaluation (should also update the email sending)
-         saveEvaluation(evaluation, userId);
+         saveEvaluation(evaluation, userId, false);
    
          // fire the evaluation closed event
          externalLogic.registerEntityEvent(EVENT_EVAL_CLOSED, evaluation);

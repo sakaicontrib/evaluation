@@ -85,7 +85,7 @@ public class EvaluationBeanLocator implements BeanLocator {
          }
          // fix up all the dates before saving
          evalBeanUtils.fixupEvaluationDates(evaluation);
-         evaluationSetupService.saveEvaluation(evaluation, externalLogic.getCurrentUserId());
+         evaluationSetupService.saveEvaluation(evaluation, externalLogic.getCurrentUserId(), false);
       }
    }
 

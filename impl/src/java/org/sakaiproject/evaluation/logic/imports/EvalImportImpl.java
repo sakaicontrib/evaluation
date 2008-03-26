@@ -521,7 +521,7 @@ public class EvalImportImpl implements EvalImport {
 					}
 					
 					//save or update
-					evalEvaluationsLogic.saveEvaluation(evaluation, currentUserId);
+					evalEvaluationsLogic.saveEvaluation(evaluation, currentUserId, false);
 					externalLogic.registerEntityEvent(event, evaluation);
 					evaluationsSaved++;
 					

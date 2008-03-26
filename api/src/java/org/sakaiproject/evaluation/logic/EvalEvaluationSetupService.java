@@ -59,8 +59,11 @@ public interface EvalEvaluationSetupService {
     * 
     * @param evaluation evaluation object to save
     * @param userId the internal user id (not username)
+    * @param created set this to true when the evaluation has been just created 
+    * (i.e. going from partial state to a real state),
+    * false in all other cases
     */
-   public void saveEvaluation(EvalEvaluation evaluation, String userId);
+   public void saveEvaluation(EvalEvaluation evaluation, String userId, boolean created);
 
    /**
     * Delete an evaluation from persistent storage,

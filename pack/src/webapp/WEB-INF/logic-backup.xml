@@ -15,19 +15,14 @@
    </bean>
 
    <!-- jobs processing -->
-   <!-- FIXME stop using Sakai services directly -->
    <bean id="org.sakaiproject.evaluation.logic.EvalJobLogic"
-      class="org.sakaiproject.evaluation.logic.scheduling.EvalJobLogicImpl"
-      init-method="init">
+      class="org.sakaiproject.evaluation.logic.scheduling.EvalJobLogicImpl">
       <property name="externalLogic"
          ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="evaluationService"
          ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
       <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
       <property name="emails" ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
-      <property name="scheduledInvocationManager"
-         ref="org.sakaiproject.api.app.scheduler.ScheduledInvocationManager" />
-      <property name="timeService" ref="org.sakaiproject.time.api.TimeService" />
    </bean>
 
    <!-- imports -->

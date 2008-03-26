@@ -34,6 +34,8 @@ import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.sakaiproject.api.app.scheduler.DelayedInvocation;
+import org.sakaiproject.api.app.scheduler.ScheduledInvocationManager;
 import org.sakaiproject.authz.api.AuthzGroupService;
 import org.sakaiproject.authz.api.FunctionManager;
 import org.sakaiproject.authz.api.SecurityService;
@@ -54,6 +56,7 @@ import org.sakaiproject.evaluation.logic.entity.ItemEntityProvider;
 import org.sakaiproject.evaluation.logic.entity.TemplateEntityProvider;
 import org.sakaiproject.evaluation.logic.entity.TemplateItemEntityProvider;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.logic.model.EvalScheduledJob;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
@@ -73,6 +76,7 @@ import org.sakaiproject.exception.IdUnusedException;
 import org.sakaiproject.site.api.Group;
 import org.sakaiproject.site.api.Site;
 import org.sakaiproject.site.api.SiteService;
+import org.sakaiproject.time.api.TimeService;
 import org.sakaiproject.tool.api.Session;
 import org.sakaiproject.tool.api.SessionManager;
 import org.sakaiproject.tool.api.ToolManager;
@@ -106,6 +110,11 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
    private static final String ADMIN_USER_ID = "admin";
    
    private String UNKNOWN_TITLE = "--------"; 
+   
+   /**
+    * This must match the id of the bean which implements {@link EvalScheduledInvocation}
+    */
+   protected final String SCHEDULER_SPRING_BEAN_ID = "org.sakaiproject.evaluation.logic.externals.EvalScheduledInvocation";
 
    private AuthzGroupService authzGroupService;
    public void setAuthzGroupService(AuthzGroupService authzGroupService) {
@@ -165,6 +174,16 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
    private ContentHostingService contentHostingService;
    public void setContentHostingService(ContentHostingService service) {
       this.contentHostingService = service;
+   }
+
+   protected ScheduledInvocationManager scheduledInvocationManager;
+   public void setScheduledInvocationManager(ScheduledInvocationManager scheduledInvocationManager) {
+      this.scheduledInvocationManager = scheduledInvocationManager;
+   }
+
+   protected TimeService timeService;
+   public void setTimeService(TimeService timeService) {
+      this.timeService = timeService;
    }
 
    private ApplicationContext applicationContext;
@@ -1192,6 +1211,42 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
       cleanup = FormattedText.processFormattedText(cleanup, new StringBuffer()).trim();
 
       return cleanup;
+   }
+
+   // JOBS related pass-through methods
+
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.externals.ExternalScheduler#createScheduledJob(java.util.Date, java.lang.String)
+    */
+   public String createScheduledJob(Date executionDate, Long evaluationId, String jobType) {
+      String jobKey = EvalScheduledJob.encodeContextId(evaluationId, jobType);
+      return scheduledInvocationManager.createDelayedInvocation(
+            timeService.newTime(executionDate.getTime()), 
+            SCHEDULER_SPRING_BEAN_ID, jobKey);
+   }
+
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.externals.ExternalScheduler#deleteScheduledJob(java.lang.String)
+    */
+   public void deleteScheduledJob(String jobID) {
+      scheduledInvocationManager.deleteDelayedInvocation(jobID);
+   }
+
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.externals.ExternalScheduler#findScheduledJobs(java.lang.String)
+    */
+   public EvalScheduledJob[] findScheduledJobs(Long evaluationId, String jobType) {
+      String jobKey = EvalScheduledJob.encodeContextId(evaluationId, jobType);
+      DelayedInvocation[] invocations = scheduledInvocationManager.findDelayedInvocations(SCHEDULER_SPRING_BEAN_ID, jobKey);
+      EvalScheduledJob[] jobs = new EvalScheduledJob[0];
+      if (invocations != null) {
+         jobs = new EvalScheduledJob[invocations.length];
+         for (int i = 0; i < invocations.length; i++) {
+            DelayedInvocation inv = invocations[i];
+            jobs[i] = new EvalScheduledJob(inv.uuid, inv.date, inv.componentId, inv.contextId);
+         }
+      }
+      return jobs;
    }
 
 }
