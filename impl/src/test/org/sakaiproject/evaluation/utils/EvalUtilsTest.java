@@ -643,4 +643,88 @@ public class EvalUtilsTest extends TestCase {
       assertFalse( EvalUtils.isValidEmail("not@email") );
    }
 
+   public void testCleanupHtmlPtags() {
+      String original = null;
+      String cleanup = null;
+
+      // check the trim ends cases
+      original = "test with one return\n <p>&nbsp;</p> ";
+      cleanup = EvalUtils.cleanupHtmlPtags(original);
+      assertNotNull(cleanup);
+      assertEquals("test with one return", cleanup);
+
+      original = "test with two returns\n <p>&nbsp;</p>\n <p>&nbsp;</p>";
+      cleanup = EvalUtils.cleanupHtmlPtags(original);
+      assertNotNull(cleanup);
+      assertEquals("test with two returns", cleanup);
+
+      original = "test with multiple returns\n <p>&nbsp;</p> <p>&nbsp;</p>\n   <p>&nbsp;</p><p>&nbsp;</p>\n";
+      cleanup = EvalUtils.cleanupHtmlPtags(original);
+      assertNotNull(cleanup);
+      assertEquals("test with multiple returns", cleanup);
+
+      // test the trim surrounding cases
+      original = "<p>test trimming extra surrounding</p>";
+      cleanup = EvalUtils.cleanupHtmlPtags(original);
+      assertNotNull(cleanup);
+      assertEquals("test trimming extra surrounding", cleanup);
+
+      original = "<p> test trimming extra surrounding</p>  ";
+      cleanup = EvalUtils.cleanupHtmlPtags(original);
+      assertNotNull(cleanup);
+      assertEquals("test trimming extra surrounding", cleanup);
+
+      original = "<p>line one</p>\n<p>line two</p>";
+      cleanup = EvalUtils.cleanupHtmlPtags(original);
+      assertNotNull(cleanup);
+      assertEquals(original, cleanup);
+
+      original = "<p> test not trimming</p>    <p>extra surrounding </p>";
+      cleanup = EvalUtils.cleanupHtmlPtags(original);
+      assertNotNull(cleanup);
+      assertEquals(original, cleanup);
+
+      // test both at once
+      original = "<p>test with two returns</p> <p>&nbsp;</p> <p>&nbsp;</p>";
+      cleanup = EvalUtils.cleanupHtmlPtags(original);
+      assertNotNull(cleanup);
+      assertEquals("test with two returns", cleanup);
+
+      // check that strings that should not change do not
+      original = "no p tags to cleanup";
+      cleanup = EvalUtils.cleanupHtmlPtags(original);
+      assertNotNull(cleanup);
+      assertEquals(original, cleanup);
+
+      original = "no p tags to cleanup, <p>they are all in the middle</p> so ok";
+      cleanup = EvalUtils.cleanupHtmlPtags(original);
+      assertNotNull(cleanup);
+      assertEquals(original, cleanup);
+
+      original = "<p> at the beginning</p> but not at the end";
+      cleanup = EvalUtils.cleanupHtmlPtags(original);
+      assertNotNull(cleanup);
+      assertEquals(original, cleanup);
+
+      original = "nothing at the beginning, <p>at the end</p>";
+      cleanup = EvalUtils.cleanupHtmlPtags(original);
+      assertNotNull(cleanup);
+      assertEquals(original, cleanup);
+
+      // check null and empty are ok
+      original = null;
+      cleanup = EvalUtils.cleanupHtmlPtags(original);
+      assertNull(cleanup);
+
+      original = "";
+      cleanup = EvalUtils.cleanupHtmlPtags(original);
+      assertNotNull(cleanup);
+      assertEquals(original, cleanup);
+
+      original = "   ";
+      cleanup = EvalUtils.cleanupHtmlPtags(original);
+      assertNotNull(cleanup);
+      assertEquals(original, cleanup);
+   }
+
 }
