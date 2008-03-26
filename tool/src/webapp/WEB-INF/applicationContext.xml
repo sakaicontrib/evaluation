@@ -259,4 +259,23 @@
             class="org.sakaiproject.evaluation.tool.locators.DateResolver">
         <property name="localeGetter" ref="requestLocaleProxy" />
     </bean>
+    
+   <!-- View Params For Reporting Types -->
+   <bean parent="viewParamsRegistrarParent">
+      <property name="viewID" value="csvResultsReport" />
+      <property name="viewParamsClass"
+       value="org.sakaiproject.evaluation.tool.viewparams.CSVReportViewParams" />
+   </bean>
+   
+   <bean parent="viewParamsRegistrarParent">
+      <property name="viewID" value="xlsResultsReport" />
+      <property name="viewParamsClass"
+       value="org.sakaiproject.evaluation.tool.viewparams.ExcelReportViewParams" />
+   </bean>
+   
+   <bean parent="viewParamsRegistrarParent">
+      <property name="viewID" value="pdfResultsReport" />
+      <property name="viewParamsClass"
+       value="org.sakaiproject.evaluation.tool.viewparams.PDFReportViewParams" />
+   </bean>
 </beans>
