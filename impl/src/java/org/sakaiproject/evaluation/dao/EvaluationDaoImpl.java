@@ -1261,14 +1261,24 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
     */
    @SuppressWarnings("unchecked")
    private List executeHqlQuery(String hql, Map<String, Object> params, int start, int limit) {
-      Query query = getSession().createQuery(hql);
-      query.setFirstResult(start);
-      if (limit > 0) {
-         query.setMaxResults(limit);
+      List l = null;
+      try {
+         Query query = getSession().createQuery(hql);
+         query.setFirstResult(start);
+         if (limit > 0) {
+            query.setMaxResults(limit);
+         }
+         setParameters(query, params);
+         l = query.list();
+      } catch (org.hibernate.exception.SQLGrammarException e) {
+         // failed to execute the query
+         StringBuilder info = new StringBuilder();
+         info.append("Failure info: errorCode=" + e.getErrorCode());
+         info.append(", SQLstate=" + e.getSQLState());
+         info.append(", SQL=" + e.getSQL());
+         throw new RuntimeException("Unable to execute query: " + e.getMessage() + " :: HQL=" + hql + " :: " + info, e);
       }
-      setParameters(query, params);
-      log.debug("HQL query:" + query.getQueryString());
-      return query.list();
+      return l;
    }
 
 
