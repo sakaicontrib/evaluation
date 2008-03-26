@@ -107,6 +107,37 @@ public class TextTemplateLogicUtilsTest extends TestCase {
       TextTemplateLogicUtils.useVelocity = true;
 
       runTestingProcessTextTemplate();
+
+      // test velocity if statements
+      String result = null;
+
+      Map<String, String> replacementValues = new HashMap<String, String>();
+      replacementValues.put("name", "Aaron Zeckoski");
+      replacementValues.put("ShowSomething", "false");
+
+      String sampleIf = 
+         "This sample template has information that can be optionally shown:\n" +
+         "Welcome ${name}, You will optionally be shown something:\n" +
+         "#if ($ShowSomething == \"true\")\n" +
+         "This is optionally shown\n" +
+         "#end\n";
+      String resultIf = 
+         "This sample template has information that can be optionally shown:\n" +
+         "Welcome Aaron Zeckoski, You will optionally be shown something:\n" +
+         "This is optionally shown\n";
+      String resultNotIf = 
+         "This sample template has information that can be optionally shown:\n" +
+         "Welcome Aaron Zeckoski, You will optionally be shown something:\n";
+
+      result = TextTemplateLogicUtils.processTextTemplate(sampleIf, replacementValues);
+      assertNotNull(result);
+      assertEquals(resultNotIf, result);
+
+      replacementValues.put("ShowSomething", "true");
+
+      result = TextTemplateLogicUtils.processTextTemplate(sampleIf, replacementValues);
+      assertNotNull(result);
+      assertEquals(resultIf, result);
    }
 
 }
