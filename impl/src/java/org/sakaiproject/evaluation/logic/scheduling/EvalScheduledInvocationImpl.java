@@ -25,12 +25,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalScheduledInvocation;
+import org.sakaiproject.evaluation.logic.model.EvalScheduledJob;
+import org.sakaiproject.evaluation.logic.model.EvalScheduledJob.EvalIdType;
 
 /**
  * This class simply calls a method in EvalJobLogic 
  * when it is run by the ScheduledInvocationManager.
  * 
  * @author rwellis
+ * @author Aaron Zeckoski (aaron@caret.cam.ac.uk) - fixed and simplified
  */
 public class EvalScheduledInvocationImpl implements EvalScheduledInvocation {
 	
@@ -42,40 +45,26 @@ public class EvalScheduledInvocationImpl implements EvalScheduledInvocation {
 	}
 
 	/**
-	 * execute is the only method of a ScheduledInvocationCommand
-	 * 
-	 * FIXME this is obvious... but what does this method actually do?????
+	 * This executes the scheduled job and is called by the scheduler service,
+	 * there is no execution logic here, it simply calls the jobs logic method 
+	 * and that handles all the execution
 	 * 
 	 * @param opaqueContext a String that can be decoded to do determine what to do
 	 */
 	public void execute(String opaqueContext) {
-	   // FIXME wrapping in a try-catch like this is generally bad and dangerous, I don't think this is a good idea -AZ
-		try {
-			if(opaqueContext == null || opaqueContext.equals("")) {
-				log.warn(this + " opaqueContext is null or empty");
-				return;
-			}
-			
-			if(log.isDebugEnabled())
-				log.debug("EvalScheduledInvocationImpl.execute(" + opaqueContext + ")");
-			
-			/*
-			 *	opaqueContext provides evaluation id and job type.
-			 */
-			String[] parts = opaqueContext.split("/");
-			if(parts.length != 2) {
-				log.warn(this + " opaqueContext parts != 2 " + opaqueContext);
-			}
-			String id = parts[0];
-			Long evalId = Long.valueOf(id);
-			String jobType = parts[1];
-			
-			//call method to fix state, send email and/or schedule a job
-			evalJobLogic.jobAction(evalId, jobType);
-		} catch(RuntimeException e) {
-		   // changed this to catch runtime exceptions only and to log the full stacktrace
-			log.error(this + ".execute(" + opaqueContext + ") " + e.getMessage(), e);
-		}
+      if (opaqueContext == null || opaqueContext.equals("")) {
+         throw new IllegalStateException("Invalid opaqueContext (null or empty), something has failed in the job scheduler");
+      }
+      
+      if(log.isDebugEnabled()) log.debug("EvalScheduledInvocationImpl.execute(" + opaqueContext + ")");
+
+		// opaqueContext provides evaluation id and job type.
+		EvalIdType eit = EvalScheduledJob.decodeContextId(opaqueContext);
+		Long evalId = eit.evaluationId;
+		String jobType = eit.jobType;
+		
+		// call method to fix state, send email and/or schedule a job
+		evalJobLogic.jobAction(evalId, jobType);
 	}
 }
 
