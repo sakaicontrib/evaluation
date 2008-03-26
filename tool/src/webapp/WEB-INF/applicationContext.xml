@@ -80,9 +80,6 @@
 		<property name="guardMethod" value="templateBBean.saveReorder" />
 	</bean>
 
-	<!-- define any XML producer files -->
-	<bean id="siteMap" parent="siteMapParent" />
-
     <!-- fills in the templateId in the ViewParams when creating new templates -->
 	<bean parent="actionResultInterceptorParent">
 		<property name="value">
