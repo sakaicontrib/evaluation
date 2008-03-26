@@ -45,28 +45,28 @@ public class EvalEmailConstants {
     * ${URLtoAddItems} - the direct URL to add items to an evaluation
     * ${URLtoOptOut} - the direct URL for evaluators to opt in to use this evaluation
     * ${URLtoMyWorkspaceDashboard} - the direct URL the Evaluation Dashboard on the user's My Workspace site
-    * Special if-then variables:
-    * ${ShowAddItemsText} - will be "true" if the add items text should be shown
-    * ${ShowOptInText} - will be "true" if this eval is opt-in (exclusive with opt-in)
-    * ${ShowOptOutText} - will be "true" if this eval is opt-out (exclusive with opt-out)
+    * Special <#if Var == "true"> </#if> variables:
+    * ShowAddItemsText - will be "true" if the add items text should be shown
+    * ShowOptInText - will be "true" if this eval is opt-in (exclusive with opt-in)
+    * ShowOptOutText - will be "true" if this eval is opt-out (exclusive with opt-out)
     */
    public static final String EMAIL_CREATED_DEFAULT_TEXT = 
       "All information submitted to the Evaluation System is confidential. Instructors cannot identify which submissions belong to which students. Students are required to login to the system for the sole purpose of providing students access to the appropriate evaluations for their associated courses. Instructors can only view general statistics as allowed by the university. Please send privacy concerns to ${HelpdeskEmail}. \n" +
       "\n" +
       "An evaluation (${EvalTitle}) has been created for: ${EvalGroupTitle}.\n" +
       "\n" +
-      "#if ($ShowAddItemsText == \"true\")\n" +
+      "<#if ShowAddItemsText == \"true\">\n" +
       "You may add items to this evaluation until ${EvalStartDate} using the following link:\n" + 
       "${URLtoAddItems} \n" +
-      "#end\n" +
-      "#if ($ShowOptInText == \"true\")\n" +
+      "</#if>\n" +
+      "<#if ShowOptInText == \"true\">\n" +
       "Its use is optional. To use the evaluation, you must opt in by using the following link:\n" +
       "${URLtoOptIn} \n" + 
       "If you do not opt in, the evaluation will not be used.\n" +
-      "#elseif ($ShowOptOutText == \"true\")\n" +
+      "<#elseif ShowOptOutText == \"true\">\n" +
       "Its use is optional. The evaluation will be used unless you opt out by using the following link:\n" +
       "${URLtoOptOut} \n" +
-      "#end\n" +
+      "</#if>\n" +
       "\n" +
       "The evaluation will run from ${EvalStartDate} to ${EvalDueDate} and the results of the evaluation will be viewable on ${EvalResultsDate}.\n" +
       "\n" +      
