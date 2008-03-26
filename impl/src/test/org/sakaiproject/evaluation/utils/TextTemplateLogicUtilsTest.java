@@ -169,6 +169,10 @@ public class TextTemplateLogicUtilsTest extends TestCase {
       result = TextTemplateLogicUtils.processTextTemplate(sampleIf, replacementValues);
       assertNotNull(result);
       assertEquals(resultIf, result);
+
+      // back to defaults (required for maven 2)
+      TextTemplateLogicUtils.useFreemarker = true;
+      TextTemplateLogicUtils.useVelocity = false;
    }
 
 }
