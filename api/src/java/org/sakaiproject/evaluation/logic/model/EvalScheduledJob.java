@@ -86,10 +86,10 @@ public class EvalScheduledJob {
     */
    public void setContextId(String contextId) {
       this.contextId = contextId;
-      if (contextId.indexOf(SEPARATOR) != -1) {
-         int index = contextId.indexOf(SEPARATOR);
-         this.evaluationId = new Long(contextId.substring(0, index));
-         this.jobType = contextId.substring(index + 1);
+      EvalIdType eit = decodeContextId(contextId);
+      if (eit.evaluationId != null) {
+         this.evaluationId = eit.evaluationId;
+         this.jobType = eit.jobType;
       }
    }
 
@@ -115,7 +115,28 @@ public class EvalScheduledJob {
     * @return the context string
     */
    public static String encodeContextId(Long evaluationId, String jobType) {
-      return evaluationId + SEPARATOR + jobType;
+      return evaluationId.toString() + SEPARATOR + jobType;
+   }
+
+   /**
+    * Decode a contextId in the evalId and jobType
+    * 
+    * @param contextId and encoded context string
+    * @return
+    */
+   public static EvalIdType decodeContextId(String contextId) {
+      EvalIdType rvalue = new EvalIdType();
+      if (contextId.indexOf(SEPARATOR) != -1) {
+         int index = contextId.indexOf(SEPARATOR);
+         rvalue.evaluationId = new Long(contextId.substring(0, index));
+         rvalue.jobType = contextId.substring(index + 1);
+      }
+      return rvalue;
+   }
+
+   public static class EvalIdType {
+      public Long evaluationId;
+      public String jobType;
    }
 
 }
