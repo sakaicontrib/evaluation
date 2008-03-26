@@ -68,6 +68,7 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.providers.EvalGroupsProvider;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
+import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.exception.IdUnusedException;
 import org.sakaiproject.site.api.Group;
 import org.sakaiproject.site.api.Site;
@@ -1172,10 +1173,6 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
    }
 
 
-   public static String ENDING_P_SPACE_TAGS = "<p>&nbsp;</p>";
-   public static String STARTING_P_TAG = "<p>";
-   public static String ENDING_P_TAG = "</p>";
-
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.externals.EvalExternalLogic#cleanupUserStrings(java.lang.String)
     */
@@ -1188,24 +1185,11 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
          return "";
       }
 
+      String cleanup = EvalUtils.cleanupHtmlPtags(userSubmittedString.trim());
+
       // clean up the string using Sakai text format (should stop XSS)
       // CANNOT CHANGE THIS TO STRINGBUILDER OR 2.4.x and below will fail -AZ
-      String cleanup = FormattedText.processFormattedText(userSubmittedString.trim(), new StringBuffer()).trim();
-      // also cleanup richtext editor garbage
-
-      // (remove trailing blank lines)
-      // - While (cleanup ends with "<p>&nbsp;</p>") remove trailing "<p>&nbsp;</p>".
-      if (cleanup.endsWith(ENDING_P_SPACE_TAGS)) {
-         // chop off the end
-         cleanup = cleanup.substring(0, cleanup.length() - ENDING_P_SPACE_TAGS.length()).trim();
-      }
-
-      // (remove a single set of <p> tags)
-      // if cleanup starts with "<p>" and cleanup ends with "</p>" and, remove leading "<p>" and trailing "</p>" from cleanup
-      if (cleanup.startsWith(STARTING_P_TAG) && cleanup.endsWith(ENDING_P_TAG)) {
-         // chop off the front and end
-         cleanup = cleanup.substring(STARTING_P_TAG.length(), cleanup.length() - ENDING_P_TAG.length()).trim();
-      }
+      cleanup = FormattedText.processFormattedText(cleanup, new StringBuffer()).trim();
 
       return cleanup;
    }
