@@ -27,7 +27,7 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public interface EvalExternalLogic extends ExternalUsers, ExternalEvalGroups, ExternalContent {
+public interface EvalExternalLogic extends ExternalUsers, ExternalEvalGroups, ExternalContent, ExternalScheduler {
 
    public static final String ADMIN_USER_ID = "admin";
 

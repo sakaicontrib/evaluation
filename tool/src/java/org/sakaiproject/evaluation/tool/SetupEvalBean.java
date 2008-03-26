@@ -348,9 +348,8 @@ public class SetupEvalBean {
       if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(eval.getState())) {
          // save eval and assign groups
 
-         // save the new evaluation state (moving from partial)
-         eval.setState( EvalUtils.getEvaluationState(eval, true) ); // set the state according to dates only
-         evaluationSetupService.saveEvaluation(eval, externalLogic.getCurrentUserId());
+         // save the new evaluation state (moving from partial), set to true should fix up the state automatically
+         evaluationSetupService.saveEvaluation(eval, externalLogic.getCurrentUserId(), true);
 
          // NOTE - this allows the evaluation to be saved with zero assign groups if this fails
 

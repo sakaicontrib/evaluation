@@ -113,7 +113,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
             etdl.today, etdl.tomorrow, etdl.threeDaysFuture, etdl.fourDaysFuture, 
             EvalConstants.EVALUATION_STATE_INQUEUE, 
             EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic);
-      evaluationSetupService.saveEvaluation( eval, EvalTestDataLoad.MAINT_USER_ID );
+      evaluationSetupService.saveEvaluation( eval, EvalTestDataLoad.MAINT_USER_ID, false );
       EvalEvaluation checkEval = evaluationService.getEvaluationById(eval.getId());
       assertNotNull(checkEval);
 
@@ -129,7 +129,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
             etdl.today, etdl.tomorrow, etdl.threeDaysFuture, etdl.fourDaysFuture, 
             EvalConstants.EVALUATION_STATE_PARTIAL, 
             EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic);
-      evaluationSetupService.saveEvaluation( partialEval, EvalTestDataLoad.MAINT_USER_ID );
+      evaluationSetupService.saveEvaluation( partialEval, EvalTestDataLoad.MAINT_USER_ID, false );
       checkEval = evaluationService.getEvaluationById(partialEval.getId());
       assertNotNull(checkEval);
 
@@ -145,7 +145,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
             etdl.today, etdl.tomorrow, etdl.tomorrow, etdl.threeDaysFuture, 
             EvalConstants.EVALUATION_STATE_INQUEUE, 
             EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic), 
-            EvalTestDataLoad.MAINT_USER_ID );
+            EvalTestDataLoad.MAINT_USER_ID, false );
 
 
       // test view date can be same as due date and stop date can be null
@@ -154,7 +154,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
             etdl.today, etdl.tomorrow, null, etdl.tomorrow,
             EvalConstants.EVALUATION_STATE_INQUEUE, 
             EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic),
-            EvalTestDataLoad.MAINT_USER_ID );
+            EvalTestDataLoad.MAINT_USER_ID, false );
 
       // test start date can be the only one set
       evaluationSetupService.saveEvaluation( new EvalEvaluation( EvalConstants.EVALUATION_TYPE_EVALUATION, 
@@ -162,7 +162,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
             etdl.today, null, null, null,
             EvalConstants.EVALUATION_STATE_INQUEUE, 
             EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic),
-            EvalTestDataLoad.MAINT_USER_ID );
+            EvalTestDataLoad.MAINT_USER_ID, false );
 
       // try to save invalid evaluations
 
@@ -173,7 +173,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                null, null, null, null,
                EvalConstants.EVALUATION_STATE_INQUEUE, 
                EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic),
-               EvalTestDataLoad.MAINT_USER_ID );
+               EvalTestDataLoad.MAINT_USER_ID, false );
          fail("Should have thrown exception");
       } catch (BlankRequiredFieldException e) {
          assertNotNull(e);
@@ -189,7 +189,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                etdl.threeDaysFuture, etdl.tomorrow, etdl.tomorrow, etdl.fourDaysFuture, 
                EvalConstants.EVALUATION_STATE_INQUEUE, 
                EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic),
-               EvalTestDataLoad.MAINT_USER_ID );
+               EvalTestDataLoad.MAINT_USER_ID, false );
          fail("Should have thrown exception");
       } catch (InvalidDatesException e) {
          assertNotNull(e);
@@ -203,7 +203,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                etdl.tomorrow, etdl.tomorrow, etdl.tomorrow, etdl.fourDaysFuture, 
                EvalConstants.EVALUATION_STATE_INQUEUE, 
                EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic),
-               EvalTestDataLoad.MAINT_USER_ID );
+               EvalTestDataLoad.MAINT_USER_ID, false );
          fail("Should have thrown exception");
       } catch (InvalidDatesException e) {
          assertNotNull(e);
@@ -218,7 +218,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                etdl.today, etdl.threeDaysFuture, etdl.tomorrow, etdl.fourDaysFuture, 
                EvalConstants.EVALUATION_STATE_INQUEUE, 
                EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic),
-               EvalTestDataLoad.MAINT_USER_ID );
+               EvalTestDataLoad.MAINT_USER_ID, false );
          fail("Should have thrown exception");
       } catch (InvalidDatesException e) {
          assertNotNull(e);
@@ -234,7 +234,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
             etdl.yesterday, etdl.tomorrow, etdl.threeDaysFuture, etdl.fourDaysFuture,
             EvalConstants.EVALUATION_STATE_INQUEUE, 
             EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic);
-      evaluationSetupService.saveEvaluation( testStartEval, EvalTestDataLoad.MAINT_USER_ID );
+      evaluationSetupService.saveEvaluation( testStartEval, EvalTestDataLoad.MAINT_USER_ID, false );
       assertNotNull(testStartEval.getId());
       assertTrue(testStartEval.getStartDate().compareTo(new Date()) <= 0);
 
@@ -245,7 +245,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                etdl.yesterday, etdl.yesterday, etdl.tomorrow, etdl.fourDaysFuture,
                EvalConstants.EVALUATION_STATE_INQUEUE, 
                EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic),
-               EvalTestDataLoad.MAINT_USER_ID );
+               EvalTestDataLoad.MAINT_USER_ID, false );
          fail("Should have thrown exception");
       } catch (InvalidDatesException e) {
          assertNotNull(e);
@@ -260,7 +260,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                etdl.today, etdl.tomorrow, etdl.threeDaysFuture, etdl.fourDaysFuture,
                EvalConstants.EVALUATION_STATE_INQUEUE, 
                EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic),
-               EvalTestDataLoad.USER_ID );
+               EvalTestDataLoad.USER_ID, false );
          fail("Should have thrown exception");
       } catch (SecurityException e) {
          assertNotNull(e);
@@ -274,7 +274,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                etdl.today, etdl.tomorrow, etdl.tomorrow, etdl.threeDaysFuture, 
                EvalConstants.EVALUATION_STATE_INQUEUE, 
                EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templateAdminNoItems), 
-               EvalTestDataLoad.ADMIN_USER_ID );
+               EvalTestDataLoad.ADMIN_USER_ID, false );
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
          assertNotNull(e);
@@ -287,7 +287,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
                etdl.today, etdl.tomorrow, etdl.tomorrow, etdl.threeDaysFuture, 
                EvalConstants.EVALUATION_STATE_INQUEUE, 
                EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), null), 
-               EvalTestDataLoad.ADMIN_USER_ID );
+               EvalTestDataLoad.ADMIN_USER_ID, false );
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
          assertNotNull(e);
@@ -366,7 +366,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
             etdl.today, etdl.tomorrow, etdl.threeDaysFuture, etdl.fourDaysFuture, 
             EvalConstants.EVALUATION_STATE_INQUEUE, 
             EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic);
-      evaluationSetupService.saveEvaluation( evalTest485, EvalTestDataLoad.MAINT_USER_ID );
+      evaluationSetupService.saveEvaluation( evalTest485, EvalTestDataLoad.MAINT_USER_ID, false );
       EvalEvaluation checkEval485 = evaluationService.getEvaluationById(evalTest485.getId());
       assertNotNull(checkEval485);
       Long templateId = checkEval485.getTemplate().getId();

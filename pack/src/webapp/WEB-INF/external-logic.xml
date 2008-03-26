@@ -22,6 +22,9 @@
       <property name="toolManager" ref="org.sakaiproject.tool.api.ToolManager" />
       <property name="userDirectoryService" ref="org.sakaiproject.user.api.UserDirectoryService" />
       <property name="contentHostingService" ref="org.sakaiproject.content.api.ContentHostingService" /> 
+      <property name="scheduledInvocationManager"
+         ref="org.sakaiproject.api.app.scheduler.ScheduledInvocationManager" />
+      <property name="timeService" ref="org.sakaiproject.time.api.TimeService" />
    </bean>
 
    <bean id="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic"
