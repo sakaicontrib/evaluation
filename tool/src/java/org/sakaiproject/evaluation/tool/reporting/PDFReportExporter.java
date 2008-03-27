@@ -90,7 +90,7 @@ public class PDFReportExporter {
       evalPDFReportBuilder.addIntroduction(responses.evaluation.getTitle(), plainInstructions);
 
       List<EvalTemplateItem> allTemplateItems = new ArrayList<EvalTemplateItem>(responses.template.getTemplateItems());
-      List<EvalTemplateItem> orderedItems = TemplateItemUtils.orderTemplateItems(allTemplateItems);
+      List<EvalTemplateItem> orderedItems = TemplateItemUtils.orderTemplateItems(allTemplateItems, false);
 
       for (int i = 0; i < orderedItems.size(); i++) {
          EvalTemplateItem templateItem = orderedItems.get(i);

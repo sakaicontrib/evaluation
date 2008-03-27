@@ -513,10 +513,10 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
    public List<EvalItem> getItemsForTemplate(Long templateId, String userId) {
       log.debug("templateId:" + templateId + ", userId:" + userId);
 
-      // TODO make this limit the items based on the user
+      // TODO make this limit the items based on the user, currently it gets all items
 
       List<EvalItem> l = new ArrayList<EvalItem>();
-      List<EvalTemplateItem> etis = getTemplateItemsForTemplate(templateId, null, null, null);
+      List<EvalTemplateItem> etis = getTemplateItemsForTemplate(templateId, new String[] {}, new String[] {}, new String[] {});
       for (EvalTemplateItem evalTemplateItem : etis) {
          l.add(evalTemplateItem.getItem());
       }
@@ -1128,6 +1128,9 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
             externalLogic.registerEntityEvent(EVENT_TEMPLATE_UPDATE, template);
          }
 
+         // validate and save all related template items
+         validateTemplateItemsForTemplate(template.getId());
+
          if (template.getLocked().booleanValue() == true) {
             // lock template and associated items
             log.info("Locking template ("+template.getId()+") and associated items");
@@ -1139,6 +1142,25 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 
       // should not get here so die if we do
       throw new RuntimeException("User ("+userId+") could NOT save template ("+template.getId()+"), title: " + template.getTitle());
+   }
+
+
+
+   /**
+    * Validates and saves all the template items related to this template
+    * 
+    * @param templateId the id of an {@link EvalTemplate}
+    */
+   private void validateTemplateItemsForTemplate(Long templateId) {
+      List<EvalTemplateItem> templateItems = getTemplateItemsForTemplate(templateId, new String[] {}, new String[] {}, new String[] {});
+      if (templateItems.size() > 0) {
+         for (EvalTemplateItem templateItem : templateItems) {
+            TemplateItemUtils.validateTemplateItemByClassification(templateItem);
+         }
+         List<EvalTemplateItem> orderedItems = TemplateItemUtils.orderTemplateItems(templateItems, true);
+         Set<EvalTemplateItem> s = new HashSet<EvalTemplateItem>(orderedItems);
+         dao.saveSet(s);
+      }
    }
 
 
@@ -1486,7 +1508,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       }
 
       // sort the list of template items
-      templateItemsList = TemplateItemUtils.orderTemplateItems(templateItemsList);
+      templateItemsList = TemplateItemUtils.orderTemplateItems(templateItemsList, false);
 
       int itemCount = 1; // start at display order 1
       if (toTemplateId == null) {

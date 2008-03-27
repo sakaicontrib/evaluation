@@ -75,7 +75,7 @@ public class TemplateItemUtils {
          templateItemsList.add(templateItem);
       }
 
-      return orderTemplateItems(templateItemsList);
+      return orderTemplateItems(templateItemsList, false);
    }
 
    public static Long[] makeTemplateItemsIdsArray(Collection<EvalTemplateItem> templateItemsCollection) {
@@ -117,7 +117,7 @@ public class TemplateItemUtils {
    public static List<EvalTemplateItem> getCategoryTemplateItems(String itemTypeConstant, List<EvalTemplateItem> templateItemsList) {    
       List<EvalTemplateItem> catItemsList = new ArrayList<EvalTemplateItem>();
 
-      List<EvalTemplateItem> orderedItems = orderTemplateItems(templateItemsList);
+      List<EvalTemplateItem> orderedItems = orderTemplateItems(templateItemsList, false);
 
       for (int i=0; i<orderedItems.size(); i++) {
          EvalTemplateItem templateItem = (EvalTemplateItem) orderedItems.get(i);
@@ -132,24 +132,35 @@ public class TemplateItemUtils {
 
    /**
     * Reorder a list of templateItems to be in the correct displayOrder,
-    * this does not change the displayOrder values, it simply places everything in the
-    * correct order in the returned list
+    * this does not change the displayOrder values unless fixOrder is true, 
+    * it simply places everything in the correct order in the returned list
     * 
     * @param templateItemsList a List of {@link EvalTemplateItem} objects from a template
+    * @param fixOrder if true then this will correct the displayOrder (but not save it),
+    * otherwise the templateItems are placed in the correct order in the list but displayOrder is not changed<br/>
+    * <b>WARNING:</b> This MUST be the complete list of all templateItems in this template or this will corrupt the ordering badly!
     * @return a List of {@link EvalTemplateItem} objects
     */
-   public static List<EvalTemplateItem> orderTemplateItems(List<EvalTemplateItem> templateItemsList) {
+   public static List<EvalTemplateItem> orderTemplateItems(List<EvalTemplateItem> templateItemsList, boolean fixOrder) {
       List<EvalTemplateItem> orderedItemsList = new ArrayList<EvalTemplateItem>();
 
+      // get the ordered list of all non-children
       List<EvalTemplateItem> nonChildrenItems = getNonChildItems(templateItemsList);
       for (int i=0; i<nonChildrenItems.size(); i++) {
          EvalTemplateItem templateItem = (EvalTemplateItem) nonChildrenItems.get(i);
          String type = getTemplateItemType(templateItem);
+         if (fixOrder) {
+            templateItem.setDisplayOrder(i + 1);
+         }
          orderedItemsList.add(templateItem);
          if (EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(type)) {
+            // get the ordered list of all non-children
             List<EvalTemplateItem> childrenItems = getChildItems(templateItemsList, templateItem.getId());
             for (int j=0; j<childrenItems.size(); j++) {
                EvalTemplateItem childItem = (EvalTemplateItem) childrenItems.get(j);
+               if (fixOrder) {
+                  childItem.setDisplayOrder(j + 1);
+               }
                orderedItemsList.add(childItem);
             }
          }
@@ -198,7 +209,7 @@ public class TemplateItemUtils {
    public static List<EvalTemplateItem> getAnswerableTemplateItems(List<EvalTemplateItem> templateItemsList) {		
       List<EvalTemplateItem> answerableItemsList = new ArrayList<EvalTemplateItem>();
 
-      List<EvalTemplateItem> orderedItems = orderTemplateItems(templateItemsList);
+      List<EvalTemplateItem> orderedItems = orderTemplateItems(templateItemsList, false);
 
       for (int i=0; i<orderedItems.size(); i++) {
          EvalTemplateItem templateItem = (EvalTemplateItem) orderedItems.get(i);
@@ -241,7 +252,7 @@ public class TemplateItemUtils {
    public static List<EvalTemplateItem> getRequiredTemplateItems(List<EvalTemplateItem> templateItemsList) {       
       List<EvalTemplateItem> requiredItemsList = new ArrayList<EvalTemplateItem>();
 
-      List<EvalTemplateItem> orderedItems = orderTemplateItems(templateItemsList);
+      List<EvalTemplateItem> orderedItems = orderTemplateItems(templateItemsList, false);
 
       for (int i=0; i<orderedItems.size(); i++) {
          EvalTemplateItem templateItem = (EvalTemplateItem) orderedItems.get(i);
@@ -269,6 +280,22 @@ public class TemplateItemUtils {
             templateItem.getBlockParent()) {
          result = true;
       } else if (EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals( getTemplateItemType(templateItem) )) {
+         result = true;
+      }
+      return result;
+   }
+
+   /**
+    * Check if a templateItem is a blockChild
+    * <b>NOTE</b> use {@link #getChildItems(List, Long)} to get the child items for this block from a larger set
+    * @param templateItem a templateItem persistent object
+    * @return true if the item is a block child, false otherwise
+    */
+   public static boolean isBlockChild(EvalTemplateItem templateItem) {
+      boolean result = false;
+      if ( templateItem.getBlockParent() != null && 
+            templateItem.getBlockParent() == false &&
+            templateItem.getBlockId() != null) {
          result = true;
       }
       return result;

@@ -27,7 +27,7 @@ import junit.framework.TestCase;
 
 
 /**
- * 
+ * Testing all the utilities used for template items
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
@@ -135,7 +135,7 @@ public class TemplateItemUtilsTest extends TestCase {
    }
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.utils.TemplateItemUtils#orderTemplateItems(java.util.List)}.
+    * Test method for {@link org.sakaiproject.evaluation.utils.TemplateItemUtils#orderTemplateItems(java.util.List, boolean)}.
     */
    public void testOrderTemplateItems() {
       EvalTestDataLoad etdl = new EvalTestDataLoad();
@@ -146,14 +146,76 @@ public class TemplateItemUtilsTest extends TestCase {
       itemList.add(etdl.templateItem3A);
 
       List<EvalTemplateItem> list = null;
-      list = TemplateItemUtils.orderTemplateItems(itemList);
+      list = TemplateItemUtils.orderTemplateItems(itemList, false);
       assertNotNull(list);
       assertEquals(3, list.size());
       assertEquals(etdl.templateItem2A, list.get(0));
       assertEquals(etdl.templateItem3A, list.get(1));
       assertEquals(etdl.templateItem5A, list.get(2));
 
+      // check if this corrects invalid orders of items
+      // check for orders with gaps in them (like a deletion)
+      etdl.templateItem1U.setDisplayOrder(2);
+      etdl.templateItem3U.setDisplayOrder(4);
+      etdl.templateItem5U.setDisplayOrder(5);
+
+      itemList.clear();
+      itemList.add(etdl.templateItem1U);
+      itemList.add(etdl.templateItem3U);
+      itemList.add(etdl.templateItem5U);
+
+      list = TemplateItemUtils.orderTemplateItems(itemList, true);
+      assertNotNull(list);
+      assertEquals(3, list.size());
+      assertEquals(etdl.templateItem1U, list.get(0));
+      assertEquals(etdl.templateItem3U, list.get(1));
+      assertEquals(etdl.templateItem5U, list.get(2));
+      assertEquals(new Integer(1), etdl.templateItem1U.getDisplayOrder());
+      assertEquals(new Integer(2), etdl.templateItem3U.getDisplayOrder());
+      assertEquals(new Integer(3), etdl.templateItem5U.getDisplayOrder());
+
+      // check for orders which are all the same
+      etdl.templateItem1U.setDisplayOrder(2);
+      etdl.templateItem3U.setDisplayOrder(2);
+      etdl.templateItem5U.setDisplayOrder(2);
+
+      itemList.clear();
+      itemList.add(etdl.templateItem1U);
+      itemList.add(etdl.templateItem3U);
+      itemList.add(etdl.templateItem5U);
+
+      list = TemplateItemUtils.orderTemplateItems(itemList, true);
+      assertNotNull(list);
+      assertEquals(3, list.size());
+      assertEquals(etdl.templateItem1U, list.get(0));
+      assertEquals(etdl.templateItem3U, list.get(1));
+      assertEquals(etdl.templateItem5U, list.get(2));
+      assertEquals(new Integer(1), etdl.templateItem1U.getDisplayOrder());
+      assertEquals(new Integer(2), etdl.templateItem3U.getDisplayOrder());
+      assertEquals(new Integer(3), etdl.templateItem5U.getDisplayOrder());
+
+      // check for orders which are reversed
+      etdl.templateItem1U.setDisplayOrder(1);
+      etdl.templateItem3U.setDisplayOrder(2);
+      etdl.templateItem5U.setDisplayOrder(3);
+
+      itemList.clear();
+      itemList.add(etdl.templateItem5U);
+      itemList.add(etdl.templateItem3U);
+      itemList.add(etdl.templateItem1U);
+
+      list = TemplateItemUtils.orderTemplateItems(itemList, true);
+      assertNotNull(list);
+      assertEquals(3, list.size());
+      assertEquals(etdl.templateItem1U, list.get(0));
+      assertEquals(etdl.templateItem3U, list.get(1));
+      assertEquals(etdl.templateItem5U, list.get(2));
+      assertEquals(new Integer(1), etdl.templateItem1U.getDisplayOrder());
+      assertEquals(new Integer(2), etdl.templateItem3U.getDisplayOrder());
+      assertEquals(new Integer(3), etdl.templateItem5U.getDisplayOrder());
+
       // TODO check for block ordering
+
    }
 
    /**
@@ -237,6 +299,22 @@ public class TemplateItemUtilsTest extends TestCase {
       assertFalse( TemplateItemUtils.isBlockParent(etdl.templateItem5U) );
       assertFalse( TemplateItemUtils.isBlockParent(etdl.templateItem6UU) );
       assertTrue( TemplateItemUtils.isBlockParent(etdl.templateItem9B) );
+   }
+
+   public void testIsBlockChild() {
+      EvalTestDataLoad etdl = new EvalTestDataLoad();
+
+      // need to trick this into thinking it works
+      etdl.templateItem9B.setId( new Long(0) );
+      etdl.templateItem2B.setBlockId( new Long(0) );
+      etdl.templateItem3B.setBlockId( new Long(0) );
+
+      assertFalse( TemplateItemUtils.isBlockChild(etdl.templateItem1U) );
+      assertTrue( TemplateItemUtils.isBlockChild(etdl.templateItem2B) );
+      assertTrue( TemplateItemUtils.isBlockChild(etdl.templateItem3B) );
+      assertFalse( TemplateItemUtils.isBlockChild(etdl.templateItem5U) );
+      assertFalse( TemplateItemUtils.isBlockChild(etdl.templateItem6UU) );
+      assertFalse( TemplateItemUtils.isBlockChild(etdl.templateItem9B) );
    }
 
    /**

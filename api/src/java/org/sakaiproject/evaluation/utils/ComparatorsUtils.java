@@ -29,32 +29,41 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 public class ComparatorsUtils {
 
    /**
-    * Sort evaluationSetupService by due date, then by title, then by id
+    * static class to sort {@link EvalEvaluation} by due date, then by title, then by id
     */
    public static class EvaluationDateTitleIdComparator implements Comparator<EvalEvaluation> {
       public int compare(EvalEvaluation eval0, EvalEvaluation eval1) {
-         int comparison = (eval0).getDueDate().compareTo((eval1).getDueDate());
-         if (comparison == 0) {
-            comparison = (eval0).getTitle().compareTo((eval1).getTitle());
+         int comparison = 0;
+         if (eval0.getDueDate() != null && eval1.getDueDate() != null) {
+            comparison = eval0.getDueDate().compareTo(eval1.getDueDate());
          }
          if (comparison == 0) {
-            comparison = (eval0).getId().compareTo((eval1).getId());
+            comparison = eval0.getTitle().compareTo(eval1.getTitle());
+         }
+         if (comparison == 0) {
+            comparison = eval0.getId().compareTo(eval1.getId());
          }         
          return comparison;
       }
    }
 
    /**
-    * static class to sort EvalTemplateItem objects by DisplayOrder
+    * static class to sort {@link EvalTemplateItem} objects by DisplayOrder (and ID if needed)
     */
    public static class TemplateItemComparatorByOrder implements Comparator<EvalTemplateItem>  {
       public int compare(EvalTemplateItem eti0, EvalTemplateItem eti1) {
-         return eti0.getDisplayOrder().compareTo( eti1.getDisplayOrder() );
+         int comparison = 0;
+         comparison = eti0.getDisplayOrder().compareTo( eti1.getDisplayOrder() );
+         if (comparison == 0
+               && eti0.getId() != null && eti1.getId() != null) {
+            comparison = eti0.getId().compareTo(eti1.getId());
+         }         
+         return comparison;
       }
    }
 
    /**
-    * static class to sort EvalTemplateItem objects by Id
+    * static class to sort {@link EvalTemplateItem} objects by Id
     */
    public static class TemplateItemComparatorById implements Comparator<EvalTemplateItem>  {
       public int compare(EvalTemplateItem eti0, EvalTemplateItem eti1) {
@@ -63,7 +72,7 @@ public class ComparatorsUtils {
    }
 
    /**
-    * static class to sort EvalItem objects by Id
+    * static class to sort {@link EvalItem} objects by Id
     */
    public static class ItemComparatorById implements Comparator<EvalItem> {
       public int compare(EvalItem item0, EvalItem item1) {
@@ -72,11 +81,16 @@ public class ComparatorsUtils {
    }
 
    /**
-    * static class to sort EvalTemplateItem objects by DisplayOrder
+    * static class to sort {@link EvalItemGroup} objects by Title
     */
    public static class ItemGroupComparatorByTitle implements Comparator<EvalItemGroup> {
       public int compare(EvalItemGroup ig0, EvalItemGroup ig1) {
-         return ig0.getTitle().compareTo( ig1.getTitle() );
+         int comparison = 0;
+         comparison = ig0.getTitle().compareTo( ig1.getTitle() );
+         if (comparison == 0) {
+            comparison = ig0.getId().compareTo(ig1.getId());
+         }         
+         return comparison;
       }
    }
 
