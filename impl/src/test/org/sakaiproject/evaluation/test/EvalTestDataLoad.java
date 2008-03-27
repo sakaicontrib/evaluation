@@ -913,9 +913,9 @@ public class EvalTestDataLoad {
               null);
       evaluationProvided.setEid("test-eid");
 
-      // Evaluation Active (ends tomorrow), viewable 3 days
+      // Evaluation Active (open until tomorrow), immediate viewing
       evaluationActiveUntaken = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, MAINT_USER_ID, "Eval active not taken", null, 
-            yesterday, tomorrow, tomorrow, threeDaysFuture, null, null,
+            yesterday, tomorrow, null, null, null, null,
             EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.SHARING_VISIBLE, 
             EvalConstants.INSTRUCTOR_REQUIRED, new Integer(1), EVAL_FROM_EMAIL, null, null, null, templatePublic, null,
             Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_NONE,
