@@ -319,23 +319,22 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 				UIBranchContainer evalrow = UIBranchContainer.make(evalAdminForm,
 						"evalAdminList:", eval.getId().toString() );
 
-				Date date;
-
-				String evalStatus = evaluationService.updateEvaluationState(eval.getId());
-            if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(evalStatus)) {
-               date = eval.getStartDate();
-               UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalStatus);
-            } else if (EvalConstants.EVALUATION_STATE_ACTIVE.equals(evalStatus)) {
-               date = eval.getStopDate();
-               UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalStatus);
-            } else if (EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(evalStatus)) {
-               date = eval.getDueDate();
-               UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalStatus);
-            } else if (EvalConstants.EVALUATION_STATE_CLOSED.equals(evalStatus)) {
-               date = eval.getViewDate();
-               UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalStatus);
-            } else if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(evalStatus)) {
-               date = eval.getViewDate();
+				Date displayDate = null;
+				String evalState = evaluationService.updateEvaluationState(eval.getId());
+            if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(evalState)) {
+               displayDate = getDisplayableDate(eval, EvalConstants.EVALUATION_STATE_ACTIVE);
+               UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalState);
+            } else if (EvalConstants.EVALUATION_STATE_ACTIVE.equals(evalState)) {
+               displayDate = getDisplayableDate(eval, EvalConstants.EVALUATION_STATE_GRACEPERIOD);
+               UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalState);
+            } else if (EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(evalState)) {
+               displayDate = getDisplayableDate(eval, EvalConstants.EVALUATION_STATE_CLOSED);
+               UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalState);
+            } else if (EvalConstants.EVALUATION_STATE_CLOSED.equals(evalState)) {
+               displayDate = getDisplayableDate(eval, EvalConstants.EVALUATION_STATE_VIEWABLE);
+               UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalState);
+            } else if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(evalState)) {
+               displayDate = getDisplayableDate(eval, EvalConstants.EVALUATION_STATE_VIEWABLE);
                int responsesCount = deliveryService.countResponses(eval.getId(), null, true);
                int enrollmentsCount = evaluationService.countParticipantsForEval(eval.getId());
                int responsesNeeded = evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
@@ -343,12 +342,12 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
                   UIInternalLink.make(evalrow, "viewReportLink", UIMessage.make("viewreport.page.title"),
                         new ReportParameters(ReportChooseGroupsProducer.VIEW_ID, eval.getId()));
                } else {
-                  UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalStatus)
+                  UIMessage.make(evalrow, "evalAdminStatus", "summary.status." + evalState)
                         .decorate( new UITooltipDecorator( 
                               UIMessage.make("controlevaluations.eval.report.awaiting.responses", new Object[] { responsesNeeded }) ) );
                }
             } else {
-               date = eval.getStartDate();
+               displayDate = eval.getStartDate();
             }
 
 
@@ -358,21 +357,18 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 				 * but start date should be disabled
 				 * 3) if a evaluation is closed, title link go to previewEval page with populated data
 				 */
-				if (EvalConstants.EVALUATION_STATE_CLOSED.equals(evalStatus)
-                  || EvalConstants.EVALUATION_STATE_VIEWABLE.equals(evalStatus)) {
+				if (EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_CLOSED, true)) {
                UIInternalLink.make(evalrow, "evalAdminTitleLink_preview", 
                      EvalUtils.makeMaxLengthString(eval.getTitle(), 70),
-                     new EvalViewParameters(PreviewEvalProducer.VIEW_ID, eval.getId(), 
-                           eval.getTemplate().getId()));
+                     new EvalViewParameters(PreviewEvalProducer.VIEW_ID, eval.getId(), eval.getTemplate().getId()));
             } else {
-               UICommand evalEditUIC = UICommand.make(evalrow, "evalAdminTitleLink_edit", 
-                     EvalUtils.makeMaxLengthString(eval.getTitle(), 70), 
-                     "#{evaluationBean.editEvalSettingAction}");
-               evalEditUIC.parameters.add(new UIELBinding("#{evaluationBean.eval.id}", eval.getId()));
+               UIInternalLink.make(evalrow, "evalAdminTitleLink_edit", 
+                     EvalUtils.makeMaxLengthString(eval.getTitle(), 70),
+                     new EvalViewParameters(EvaluationSettingsProducer.VIEW_ID, eval.getId()));
             }
 
-            UIMessage.make(evalrow, "evalAdminDateLabel", "summary.label." + evalStatus);
-            UIOutput.make(evalrow, "evalAdminDate", df.format(date));
+            UIMessage.make(evalrow, "evalAdminDateLabel", "summary.label." + evalState);
+            UIOutput.make(evalrow, "evalAdminDate", df.format(displayDate));
          }
 		}
 
@@ -444,6 +440,36 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		}
 
 	}
+
+   /**
+    * Gets a date to display to the user depending on the state, 
+    * guarantees to return a date even if the dates are null
+    * 
+    * @param eval an evaluation (must be saved already)
+    * @param evalState the state which you want to get the date for,
+    * e.g. EVALUATION_STATE_VIEWABLE would get the view date and EVALUATION_STATE_CLOSED would get the due date
+    * @return a displayable date
+    */
+   private Date getDisplayableDate(EvalEvaluation eval, String evalState) {
+      Date date = null;
+      if (eval.getViewDate() != null 
+            && EvalConstants.EVALUATION_STATE_VIEWABLE.equals(evalState)) {
+         date = eval.getViewDate();
+      } else {
+         if (eval.getStopDate() != null 
+               && EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(evalState)) {
+            date = eval.getStopDate();
+         } else {
+            if (eval.getDueDate() != null 
+                  && EvalConstants.EVALUATION_STATE_CLOSED.equals(evalState)) {
+               date = eval.getDueDate();
+            } else {
+               date = eval.getStartDate();
+            }
+         }
+      }
+      return date;
+   }
 
 
 	/* (non-Javadoc)
