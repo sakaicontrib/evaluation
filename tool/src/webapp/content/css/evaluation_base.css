@@ -857,7 +857,7 @@ label.block{
 	margin:0;
 	padding:.3em;
 	border:none;
-	list-style: none; 
+	list-style: none  !important; 
 }	
 .fullDisplayHorizontal td{
 	padding:0;
