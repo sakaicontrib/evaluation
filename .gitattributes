@@ -187,6 +187,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/locators/ScaleBeanLocator.java -t
 tool/src/java/org/sakaiproject/evaluation/tool/locators/SettingsWBL.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/locators/TemplateBeanLocator.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/locators/TemplateItemWBL.java -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/producers/AdhocGroupParticipantsDiv.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdminTestEGProviderProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/AdministrateReportingProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
@@ -252,6 +253,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/utils/EvalResponseAggregatorUtil.
 tool/src/java/org/sakaiproject/evaluation/tool/utils/HierarchyRenderUtil.java svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/utils/RSFUtils.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/utils/ScaledUtils.java -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/viewparams/AdhocGroupParams.java -text
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/AdminTestEGViewParameters.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/BlockIdsParameters.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/viewparams/CSVReportViewParams.java -text svn_keywords=Date+Revision+Author+URL+Id
@@ -354,6 +356,7 @@ tool/src/webapp/content/js/jquery/interface/ittabs.js -text svn_keywords=Date+Re
 tool/src/webapp/content/js/jquery/interface/iutil.js -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/jquery/jquery.js svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/js/reorderUtils.js -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/templates/adhoc_group_participants_div.html -text
 tool/src/webapp/content/templates/admin_test_evalgroup_provider.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/administrate.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/administrate_reporting.html -text svn_keywords=Date+Revision+Author+URL+Id
