@@ -267,10 +267,11 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
          UIInput adhocGroupEmails = UIInput.make(newAdhocgroupArea, "adhoc-email-input", null);
 
          UIOutput saveEmailsButton = UIOutput.make(newAdhocgroupArea, "adhoc-save-emails-button");
-         UIOutput clearEmailsButton = UIOutput.make(newAdhocgroupArea, "adhoc-clear-emails-button");
+         //UIOutput clearEmailsButton = UIOutput.make(newAdhocgroupArea, "adhoc-clear-emails-button");
+         UIOutput addMoreUsersButton = UIOutput.make(newAdhocgroupArea, "adhoc-addmoreusers-button");
          
          initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.initAssignAdhocGroupArea", 
-                 new String[] {saveEmailsButton.getFullID(), clearEmailsButton.getFullID(),
+                 new String[] {saveEmailsButton.getFullID(), addMoreUsersButton.getFullID(),
                adhocGroupName.getFullID(), adhocGroupEmails.getFullID(),
                adhocEmailsArea.getFullID(), vsh.getFullURL(new SimpleViewParameters(UVBProducer.VIEW_ID))}));
       }

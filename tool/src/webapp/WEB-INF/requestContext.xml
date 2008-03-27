@@ -189,6 +189,9 @@
    		class="org.sakaiproject.evaluation.tool.locators.AdhocGroupsBean">
    	  <property name="evalAdhocSupport" ref="org.sakaiproject.evaluation.dao.EvalAdhocSupport" />
    	  <property name="evalExternalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+      <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+      <property name="uvbBean" ref="UVBBean" />
+      <property name="viewStateHandler" ref="viewStateHandler" /> 
    </bean>
 
 
@@ -425,7 +428,8 @@
       <property name="authoringService"
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
    </bean>
-
+   
+   <bean class="org.sakaiproject.evaluation.tool.producers.AdhocGroupParticipantsDiv" /> 
 
    <!-- SCALES -->
    <bean

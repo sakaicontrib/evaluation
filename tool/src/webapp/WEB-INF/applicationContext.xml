@@ -247,10 +247,12 @@
 	</bean>
 
    <!-- temporary fix until 0.7.3 - enables write guard for all UVB paths -->
+   <!-- 
    <bean parent="writeGuardParent">
       <property name="guardedPath" value="UVBBean.paths"/>
       <property name="guardMethod" value="UVBBean.populate"/>
    </bean>
+   -->
 
     <bean id="dateResolver"
             class="org.sakaiproject.evaluation.tool.locators.DateResolver">
