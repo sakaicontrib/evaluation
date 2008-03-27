@@ -307,8 +307,8 @@ public class ModifyBlockProducer implements ViewComponentProducer, ViewParamsRep
          // render the items below
          UIMessage.make(form, "items-header", "modifyitem.item.header");
 
-         List<EvalTemplateItem> allTemplateItems = authoringService.getTemplateItemsForTemplate(
-               templateId, null, null, null);
+         List<EvalTemplateItem> allTemplateItems = 
+            authoringService.getTemplateItemsForTemplate(templateId, new String[] {}, new String[] {}, new String[] {});
          int orderNo = 0;
          for (int i = 0; i < templateItemIds.length; i++) {
             EvalTemplateItem item = templateItemList.get(i);

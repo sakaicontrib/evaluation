@@ -432,7 +432,8 @@ public interface EvalAuthoringService {
     * Save or update the template only if it is not locked<br/>
     * Locks any associated items if this template is locked<br/>
     * Use {@link #canCreateTemplate(String)} or {@link #canControlTemplate(String, Long)}
-    * to check if user can save template and avoid exceptions
+    * to check if user can save template and avoid exceptions<br/>
+    * Also will validate associated templateItems and ensure the ordering is valid
     * 
     * @param template the object to be saved
     * @param userId the internal user id (not username)
@@ -514,7 +515,8 @@ public interface EvalAuthoringService {
     * does not copy expert indication and forces the sharing to be set to private
     * <br/>
     * Permission checks should be performed to ensure that the current user can view the entities that they want to copy,
-    * there is no need to check if they can modify them though as the original entities will not be changed
+    * there is no need to check if they can modify them though as the original entities will not be changed<br/>
+    * Validates order or template items
     * 
     * @param templateId the unique id of an {@link EvalTemplate} object to make a copy of
     * @param title the new title to assign to the copied template (will generate a title if this is blank or empty)

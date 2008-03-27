@@ -78,6 +78,13 @@ public class LocalTemplateLogic {
       return authoringService.getTemplateItemById(itemId);
    }
 
+   /**
+    * Get the list of all non-instructor and non-group template items for this template
+    * This probably needs to handle instructor at some point (i.e. it should display the instructor added items possibly)
+    * 
+    * @param templateId
+    * @return
+    */
    public List<EvalTemplateItem> fetchTemplateItems(Long templateId) {
       if (templateId == null) {
          return new ArrayList<EvalTemplateItem>();
@@ -142,14 +149,15 @@ public class LocalTemplateLogic {
 
       EvalTemplateItem templateItem = authoringService.getTemplateItemById(templateItemId);
       // get a list of all template items in this template
-      List<EvalTemplateItem> allTemplateItems = authoringService.getTemplateItemsForTemplate(templateItem.getTemplate().getId(), null, null, null);
+      List<EvalTemplateItem> allTemplateItems = 
+         authoringService.getTemplateItemsForTemplate(templateItem.getTemplate().getId(), new String[] {}, new String[] {}, new String[] {});
       // get the list of items without child items included
       List<EvalTemplateItem> noChildList = TemplateItemUtils.getNonChildItems(allTemplateItems);
 
       // now remove the item and correct the display order
       int orderAdjust = 0;
       int removedItemDisplayOrder = 0;
-      if (TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)) {
+      if (TemplateItemUtils.isBlockParent(templateItem)) {
          // remove the parent item and free up the child items into individual items if the block parent is removed
          removedItemDisplayOrder = templateItem.getDisplayOrder().intValue();
          List<EvalTemplateItem> childList = TemplateItemUtils.getChildItems(allTemplateItems, templateItem.getId());

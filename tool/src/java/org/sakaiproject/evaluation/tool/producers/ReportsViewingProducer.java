@@ -207,7 +207,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
             }
             UIMessage.make(tofill, "selectedGroups", "viewreport.viewinggroups", new String[] {groupsString});
 
-            List<EvalTemplateItem> answerableItemsList = TemplateItemUtils.orderTemplateItems(allTemplateItems);
+            List<EvalTemplateItem> answerableItemsList = TemplateItemUtils.orderTemplateItems(allTemplateItems, false);
 
             UIBranchContainer courseSection = null;
             UIBranchContainer instructorSection = null;

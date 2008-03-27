@@ -284,7 +284,7 @@ public class TemplateBBean {
    public void saveReorder() { 
       log.info("save items reordering");
       Map<String, EvalTemplateItem> delivered = templateItemWBL.getDeliveredBeans();
-      List<EvalTemplateItem> l = authoringService.getTemplateItemsForTemplate(templateId, null, null, null);
+      List<EvalTemplateItem> l = authoringService.getTemplateItemsForTemplate(templateId, new String[] {}, new String[] {}, new String[] {});
       List<EvalTemplateItem> ordered = TemplateItemUtils.getNonChildItems(l);
       for (int i = 1; i <= ordered.size();) {
          EvalTemplateItem item = (EvalTemplateItem) ordered.get(i - 1);
@@ -312,6 +312,8 @@ public class TemplateBBean {
          }
          emit(item, i++);
       }
+      // this will seem a little odd but we are saving the template to validate the order of all templateItems
+      localTemplateLogic.saveTemplate(localTemplateLogic.fetchTemplate(templateId));
    }
 
    private void emit(EvalTemplateItem toemit, int outindex) {
