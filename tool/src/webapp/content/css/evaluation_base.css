@@ -769,6 +769,9 @@ label.block{
 }	
 .itemListEval li ol li{
 	list-style:decimal;
+	list-style-position:inside;
+	border:none;
+	padding:.2em;
 }	
 
 
@@ -846,11 +849,16 @@ label.block{
 .fullVertical{
 	margin:.5em 2em
 }
+.fullVertical ol {
+	padding-left:0;
+	margin:0;
+}
 .fullVertical ol li{
 	margin:0;
-	border:none 
-}
-	
+	padding:.3em;
+	border:none;
+	list-style: none; 
+}	
 .fullDisplayHorizontal td{
 	padding:0;
 /*
