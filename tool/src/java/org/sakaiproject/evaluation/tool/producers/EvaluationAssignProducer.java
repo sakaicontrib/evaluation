@@ -285,7 +285,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
       hierarchyNodesSelect.optionnames = UIOutputMany.make(hierNodesLabels.toArray(new String[] {}));
       
       // all command buttons are just HTML now so no more bindings
-      UIMessage.make(form, "cancel-button", "general.cancel.button");
+      UIMessage.make(form, "back-button", "general.back.button");
       UIMessage.make(form, "confirmAssignCourses", "assigneval.save.assigned.button" );
 
 //      UICommand.make(form, "editSettings", UIMessage.make("assigneval.edit.settings.button"), "#{evaluationBean.backToSettingsAction}");
