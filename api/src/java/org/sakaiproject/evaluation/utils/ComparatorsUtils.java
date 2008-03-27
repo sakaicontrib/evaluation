@@ -36,6 +36,8 @@ public class ComparatorsUtils {
          int comparison = 0;
          if (eval0.getDueDate() != null && eval1.getDueDate() != null) {
             comparison = eval0.getDueDate().compareTo(eval1.getDueDate());
+         } else {
+            comparison = eval0.getStartDate().compareTo(eval1.getStartDate());
          }
          if (comparison == 0) {
             comparison = eval0.getTitle().compareTo(eval1.getTitle());

@@ -395,7 +395,9 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
 
       String recentHQL = "";
       if (recentClosedDate != null) {
-         recentHQL = " and eval.stopDate >= :recentClosedDate ";
+         recentHQL = " and ( (eval.viewDate is not null and eval.viewDate >= :recentClosedDate) "
+         		+ "or (eval.stopDate is not null and eval.stopDate >= :recentClosedDate) "
+               + "or (eval.dueDate is not null and eval.dueDate >= :recentClosedDate) ) ";
          params.put("recentClosedDate", recentClosedDate);
       }
 
@@ -434,7 +436,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       List<EvalEvaluation> evals = null;
       String hql = "select eval from EvalEvaluation as eval " 
          + " where 1=1 " + stateHQL + recentHQL + ownerGroupHQL 
-         + " order by eval.stopDate, eval.title, eval.id";
+         + " order by eval.dueDate, eval.title, eval.id";
       evals = executeHqlQuery(hql, params, startResult, maxResults);
       Collections.sort(evals, new ComparatorsUtils.EvaluationDateTitleIdComparator());
       return evals;
