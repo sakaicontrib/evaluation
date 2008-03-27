@@ -138,6 +138,7 @@ impl/src/test/org/sakaiproject/evaluation/test/mocks/MockEvalJobLogic.java svn_k
 impl/src/test/org/sakaiproject/evaluation/test/mocks/MockExternalHierarchyLogic.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/test/org/sakaiproject/evaluation/utils/ArrayUtilsTest.java svn_keywords=Date+Revision+Author+URL+Id
 impl/src/test/org/sakaiproject/evaluation/utils/EvalUtilsTest.java svn_keywords=Date+Revision+Author+URL+Id
+impl/src/test/org/sakaiproject/evaluation/utils/TemplateItemUtilsTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/test/org/sakaiproject/evaluation/utils/TextTemplateLogicUtilsTest.java svn_keywords=Date+Revision+Author+URL+Id
 pack/pom.xml svn_keywords=Date+Revision+Author+URL+Id
 pack/project.xml -text svn_keywords=Date+Revision+Author+URL+Id

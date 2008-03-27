@@ -553,6 +553,7 @@ public class EvalTestDataLoad {
       item1 = new EvalItem(new Date(), ADMIN_USER_ID, ITEM_TEXT, 
             EvalConstants.SHARING_PUBLIC, EvalConstants.ITEM_TYPE_SCALED, EXPERT);
       item1.setScale(scale1);
+      item1.setUsesNA(true);
       item1.setScaleDisplaySetting( EvalConstants.ITEM_SCALE_DISPLAY_COMPACT );
       item1.setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
       item1.setLocked(LOCKED);

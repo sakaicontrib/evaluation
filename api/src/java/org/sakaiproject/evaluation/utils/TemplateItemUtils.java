@@ -275,7 +275,7 @@ public class TemplateItemUtils {
    }
 
    /**
-    * filter out the Block child items, and only return non-child items, return then
+    * filter out the Block child items, and only return non-child items, return them
     * in correctly sorted display order
     * 
     * @param tempItemsList a List of {@link EvalTemplateItem} objects in a template
