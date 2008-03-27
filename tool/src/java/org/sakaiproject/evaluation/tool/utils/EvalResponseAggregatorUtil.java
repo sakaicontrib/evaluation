@@ -2,11 +2,15 @@ package org.sakaiproject.evaluation.tool.utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
+import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
@@ -44,6 +48,11 @@ public class EvalResponseAggregatorUtil {
    private MessageLocator messageLocator;
    public void setMessageLocator(MessageLocator locator) {
       this.messageLocator = locator;
+   }
+   
+   private EvalExternalLogic externalLogic;
+   public void setEvalExternalLogic(EvalExternalLogic logic) {
+       this.externalLogic = logic;
    }
 
    public EvalAggregatedResponses getAggregatedResponses(EvalEvaluation evaluation, String[] groupIds) {
@@ -286,4 +295,37 @@ public class EvalResponseAggregatorUtil {
 
        return togo;
    }
+   
+   
+   /**
+    * This method will go through a list of template items, looking at items that
+    * are of Instructor type, and create a Map of all the instructors userId's and
+    * EvalUsers. This is useful for all the reporting types that need to show
+    * the instructors seperately, and need to sort them before hand, or generally
+    * know who they are.
+    * 
+    * @param eval The EvalEvaluation we are looking at.
+    * @param templateItems The list of template items, these will be filtered for
+    * Instructor types.
+    * @param groupIds The groupIds we are trying to view.
+    * @return Returns a Map of the instructors as EvalUsers keyed by userId
+    */
+   public Map<String,EvalUser> getInstructorsForAnsweredItems(EvalEvaluation eval,
+           List<EvalTemplateItem> templateItems, String[] groupIds) {
+       Map<String,EvalUser> instructors = new HashMap<String,EvalUser>();
+       
+       for (EvalTemplateItem templateItem: templateItems) {
+           if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(templateItem.getCategory())) {
+               List<EvalAnswer> itemAnswers = deliveryService.getEvalAnswers(templateItem.getItem().getId(), eval.getId(), groupIds);
+               for (EvalAnswer answer: itemAnswers) {
+                   if (!instructors.containsKey(answer.getAssociatedId())) {
+                       instructors.put(answer.getAssociatedId(), externalLogic.getEvalUserById(answer.getAssociatedId()));
+                   }
+               }
+           }
+       }
+       
+       return instructors;
+   }
+   
 }
