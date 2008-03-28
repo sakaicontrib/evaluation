@@ -14,6 +14,7 @@
 
 package org.sakaiproject.evaluation.utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
@@ -25,7 +26,8 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
  * these categories should receive special treatment in most cases<br/>
  * The structure goes {@link TemplateItemGroup} -> {@link HierarchyNodeGroup} -> {@link EvalTemplateItem}
  * <b>NOTE:</b> There will always be a top level {@link HierarchyNodeGroup} but it may have an empty list of
- * templateItems inside it
+ * templateItems inside it<br/>
+ * Normally you would want to iterate through the {@link #hierarchyNodeGroups} and 
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
@@ -49,11 +51,40 @@ public class TemplateItemGroup {
     */
    public List<HierarchyNodeGroup> hierarchyNodeGroups;
 
-   public TemplateItemGroup() { }
-   
+   /**
+    * @return the count of all template items contained in this group,
+    * does not include block children
+    */
+   public int getTemplateItemsCount() {
+      int total = 0;
+      for (HierarchyNodeGroup hng : hierarchyNodeGroups) {
+         total += hng.templateItems.size();
+      }
+      return total;
+   }
+
+   /**
+    * @return the list of all template items in this group in displayOrder,
+    * does not include block children
+    */
+   public List<EvalTemplateItem> getTemplateItems() {
+      List<EvalTemplateItem> tis = new ArrayList<EvalTemplateItem>();
+      for (HierarchyNodeGroup hng : hierarchyNodeGroups) {
+         tis.addAll(hng.templateItems);
+      }
+      return tis;
+   }
+
    public TemplateItemGroup(String associateType, String associateId) {
       this.associateType = associateType;
       this.associateId = associateId;
+      hierarchyNodeGroups = new ArrayList<HierarchyNodeGroup>();
+   }
+
+   public TemplateItemGroup(String associateType, String associateId, List<HierarchyNodeGroup> hierarchyNodeGroups) {
+      this.associateType = associateType;
+      this.associateId = associateId;
+      this.hierarchyNodeGroups = hierarchyNodeGroups;
    }
 
 }

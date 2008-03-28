@@ -14,6 +14,7 @@
 
 package org.sakaiproject.evaluation.utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
@@ -24,6 +25,8 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
  * This is a high level group of hierarchy nodes which contain template items,
  * these nodes should receive special treatment in most cases<br/>
  * The structure goes {@link TemplateItemGroup} -> {@link HierarchyNodeGroup} -> {@link EvalTemplateItem}<br/>
+ * Normally you would want to iterate over the {@link #templateItems} and process each one in order,
+ * don't forget to handle the special case of the block parents
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
@@ -44,6 +47,12 @@ public class HierarchyNodeGroup {
 
    public HierarchyNodeGroup(EvalHierarchyNode node) {
       this.node = node;
+      templateItems = new ArrayList<EvalTemplateItem>();
    }
-  
+
+   public HierarchyNodeGroup(EvalHierarchyNode node, List<EvalTemplateItem> templateItems) {
+      this.node = node;
+      this.templateItems = templateItems;
+   }
+
 }
