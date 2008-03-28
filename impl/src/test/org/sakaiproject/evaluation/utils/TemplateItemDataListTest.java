@@ -62,11 +62,11 @@ public class TemplateItemDataListTest extends TestCase {
       assertNotNull(tidl);
       assertEquals(3, tidl.getTemplateItemsCount());
       assertEquals(3, tidl.getNonChildItemsCount());
-      assertEquals(1, tidl.getAssociateGroupingsCount());
+      assertEquals(1, tidl.getTemplateItemGroupsCount());
       assertEquals(EvalConstants.ITEM_CATEGORY_COURSE, tidl.getTemplateItemGroups().get(0).associateType);
 
       // test the flattened data list
-      flatList = tidl.getDataTemplateItems();
+      flatList = tidl.getFlatListOfDataTemplateItems(false);
       assertNotNull(flatList);
       assertEquals(2, flatList.size());
       assertEquals(etdl.templateItem2A, flatList.get(0).templateItem);
@@ -84,18 +84,20 @@ public class TemplateItemDataListTest extends TestCase {
       assertNotNull(tidl);
       assertEquals(3, tidl.getTemplateItemsCount());
       assertEquals(3, tidl.getNonChildItemsCount());
-      assertEquals(2, tidl.getAssociateGroupingsCount());
+      assertEquals(2, tidl.getTemplateItemGroupsCount());
       assertEquals(EvalConstants.ITEM_CATEGORY_COURSE, tidl.getTemplateItemGroups().get(0).associateType);
       assertEquals(2, tidl.getTemplateItemGroups().get(0).getTemplateItemsCount());
+      assertEquals(2, tidl.getTemplateItemGroups().get(0).getDataTemplateItems(false).size());
       assertEquals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, tidl.getTemplateItemGroups().get(1).associateType);
       assertEquals(1, tidl.getTemplateItemGroups().get(1).getTemplateItemsCount());
+      assertEquals(1, tidl.getTemplateItemGroups().get(1).getDataTemplateItems(false).size());
       assertEquals(EvalTestDataLoad.MAINT_USER_ID, tidl.getTemplateItemGroups().get(1).associateId);
       assertEquals(2, tidl.getAssociateTypes().size());
       assertEquals(EvalConstants.ITEM_CATEGORY_COURSE, tidl.getAssociateTypes().get(0));
       assertEquals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, tidl.getAssociateTypes().get(1));
 
       // test the flattened data list
-      flatList = tidl.getDataTemplateItems();
+      flatList = tidl.getFlatListOfDataTemplateItems(false);
       assertNotNull(flatList);
       assertEquals(3, flatList.size());
       assertEquals(etdl.templateItem2A, flatList.get(0).templateItem);
@@ -113,7 +115,7 @@ public class TemplateItemDataListTest extends TestCase {
       assertNotNull(tidl);
       assertEquals(3, tidl.getTemplateItemsCount());
       assertEquals(3, tidl.getNonChildItemsCount());
-      assertEquals(3, tidl.getAssociateGroupingsCount());
+      assertEquals(3, tidl.getTemplateItemGroupsCount());
       assertEquals(EvalConstants.ITEM_CATEGORY_COURSE, tidl.getTemplateItemGroups().get(0).associateType);
       assertEquals(2, tidl.getTemplateItemGroups().get(0).getTemplateItemsCount());
       assertEquals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, tidl.getTemplateItemGroups().get(1).associateType);
@@ -125,7 +127,7 @@ public class TemplateItemDataListTest extends TestCase {
       assertEquals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, tidl.getAssociateTypes().get(1));
 
       // test the flattened data list
-      flatList = tidl.getDataTemplateItems();
+      flatList = tidl.getFlatListOfDataTemplateItems(false);
       assertNotNull(flatList);
       assertEquals(4, flatList.size());
       assertEquals(etdl.templateItem2A, flatList.get(0).templateItem);
@@ -149,7 +151,7 @@ public class TemplateItemDataListTest extends TestCase {
       assertNotNull(tidl);
       assertEquals(3, tidl.getTemplateItemsCount());
       assertEquals(3, tidl.getNonChildItemsCount());
-      assertEquals(2, tidl.getAssociateGroupingsCount());
+      assertEquals(2, tidl.getTemplateItemGroupsCount());
       assertEquals(EvalConstants.ITEM_CATEGORY_COURSE, tidl.getTemplateItemGroups().get(0).associateType);
       assertEquals(2, tidl.getTemplateItemGroups().get(0).getTemplateItemsCount());
       assertEquals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, tidl.getTemplateItemGroups().get(1).associateType);
@@ -160,11 +162,13 @@ public class TemplateItemDataListTest extends TestCase {
       // node1 is not used so we will only get the top level nodes back
       assertEquals(1, tidl.getTemplateItemGroups().get(0).hierarchyNodeGroups.size());
       assertNull(tidl.getTemplateItemGroups().get(0).hierarchyNodeGroups.get(0).node);
+      assertEquals(2, tidl.getTemplateItemGroups().get(0).getDataTemplateItems(false).size());
       assertEquals(1, tidl.getTemplateItemGroups().get(1).hierarchyNodeGroups.size());
       assertNull(tidl.getTemplateItemGroups().get(1).hierarchyNodeGroups.get(0).node);
+      assertEquals(1, tidl.getTemplateItemGroups().get(1).getDataTemplateItems(false).size());
 
       // test the flattened data list
-      flatList = tidl.getDataTemplateItems();
+      flatList = tidl.getFlatListOfDataTemplateItems(false);
       assertNotNull(flatList);
       assertEquals(3, flatList.size());
       assertEquals(etdl.templateItem2A, flatList.get(0).templateItem);

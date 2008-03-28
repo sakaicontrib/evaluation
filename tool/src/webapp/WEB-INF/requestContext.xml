@@ -482,19 +482,6 @@
    </bean>
 
    <bean
-      class="org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer">
-      <property name="external"
-         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
-      <property name="evaluationService"
-         ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
-      <property name="authoringService"
-         ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
-      <property name="itemRenderer"
-         ref="org.sakaiproject.evaluation.tool.renderers.ItemRenderer" />
-      <property name="messageLocator" ref="messageLocator" />
-   </bean>
-
-   <bean
       class="org.sakaiproject.evaluation.tool.producers.EvaluationCreateProducer">
       <property name="externalLogic"
          ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
@@ -607,12 +594,29 @@
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
       <property name="itemRenderer"
          ref="org.sakaiproject.evaluation.tool.renderers.ItemRenderer" />
-      <property name="localResponsesLogic" ref="localResponsesLogic" />
-      <property name="evalSettings"
-         ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-      <property name="locale" ref="requestLocale" />
       <property name="externalHierarchyLogic"
          ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+      <property name="evalSettings"
+         ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+      <property name="localResponsesLogic" ref="localResponsesLogic" />
+      <property name="locale" ref="requestLocale" />
+   </bean>
+
+   <bean
+      class="org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer">
+      <property name="external"
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+      <property name="evaluationService"
+         ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+      <property name="authoringService"
+         ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
+      <property name="itemRenderer"
+         ref="org.sakaiproject.evaluation.tool.renderers.ItemRenderer" />
+      <property name="externalHierarchyLogic"
+         ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+      <property name="evalSettings"
+         ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+      <property name="messageLocator" ref="messageLocator" />
    </bean>
 
    <bean

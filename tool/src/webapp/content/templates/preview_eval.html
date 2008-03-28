@@ -33,36 +33,21 @@
 				<div rsf:id="eval-instructions"  class="instruction" style="display:inline">Evaluation instructions would go here if any have been specified. This block may be up to 4000 chars.</div>
 			</div>
 
-			<div rsf:id="courseSection:">
-				<fieldset class="itemListNew">
-					<legend rsf:id="course-questions-header"> Course Questions: </legend>
-					<ol class="itemListEval">
-						<li rsf:id="itemrow:hier-node-section">
-								<h4 rsf:id="hier-node-title">Top Level or something like Biology Dept</h4>
-							</li>
-						<li rsf:id="itemrow:first">
-							<!-- DIV tag for item renderer -->
-							<div rsf:id="previewed-item:"></div>
-						</li>
-						</ol>
-				</fieldset>
-			</div>
-
-			<div rsf:id="instructorSection:">
-				<fieldset class="itemListNew">
-					<legend rsf:id="instructor-questions-header">  Instructor Questions:  </legend>
-					<ol class="itemListEval">
-						<li rsf:id="itemrow:hier-node-section">
-								<h4 rsf:id="hier-node-title">Top Level or something like Biology Dept</h4>
-							</li>
-						<li rsf:id="itemrow:first">
-							<!-- DIV tag for item renderer -->
-							<div rsf:id="previewed-item:"></div>
-						</li>
-						</ol>
-				</fieldset>
-			</div>
-
+            <!-- render items -->
+            <div rsf:id="categorySection:">
+               <fieldset class="itemListNew">
+                  <legend rsf:id="categoryHeader"> Group Items: </legend>
+                  <ol class="itemListEval">
+                     <li rsf:id="itemrow:nodeSection">
+                         <h4 rsf:id="nodeTitle">Top Level or something like Biology Dept</h4>
+                     </li>
+                     <li rsf:id="itemrow:templateItem">
+                        <!-- DIV tag for item renderer -->
+                        <div rsf:id="renderedItem:">Items get rendered here</div>
+                     </li>
+                  </ol>
+               </fieldset>
+            </div>
 		
 		</div>
 	</body>

@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.logic.externals;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
@@ -89,5 +90,14 @@ public interface ExternalHierarchyLogic extends EvalHierarchyProvider {
     * @return a set of all unique child nodes
     */
    public Set<String> getAllChildrenNodes(Collection<EvalHierarchyNode> nodes, boolean includeSuppliedNodeIds);
+
+   /**
+    * Create a sorted list of nodes based on a set of input nodes,
+    * list goes from root (or highest parent) down to the bottom most node
+    * 
+    * @param nodes a collection of nodes
+    * @return a list of {@link EvalHierarchyNode}
+    */
+   public List<EvalHierarchyNode> getSortedNodes(Collection<EvalHierarchyNode> nodes);
 
 }
