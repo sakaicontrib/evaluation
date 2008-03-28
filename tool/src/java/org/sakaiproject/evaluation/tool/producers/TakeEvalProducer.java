@@ -337,7 +337,7 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
             // make the TI data structure and get the flat list of DTIs
             Map<String, List<String>> associates = new HashMap<String, List<String>>();
             associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, new ArrayList<String>(instructors));
-            TemplateItemDataList tidl = new TemplateItemDataList(allItems, hierarchyNodes, associates);
+            TemplateItemDataList tidl = new TemplateItemDataList(allItems, hierarchyNodes, associates, null);
 
             // loop through the TIGs and handle each associated category
             for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {

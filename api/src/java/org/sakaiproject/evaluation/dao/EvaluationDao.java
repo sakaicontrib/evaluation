@@ -115,14 +115,15 @@ public interface EvaluationDao extends CompleteGenericDao {
     * Returns all answers to the given item associated with 
     * responses which are associated with the given evaluation,
     * only returns the answers for completed responses
-    *
-    * @param itemId the id of the item you want answers for
+    * 
     * @param evalId the id of the evaluation you want answers from
     * @param evalGroupIds an array of eval group IDs to return answers for,
-    * if null then just return all answers for this evaluation
+    * if null then just return answers for all groups
+    * @param templateItemIds the ids of the template items you want answers for,
+    * if null then return answers for all template items
     * @return a list of EvalAnswer objects or empty list if none found
     */
-   public List<EvalAnswer> getAnswers(Long itemId, Long evalId, String[] evalGroupIds);
+   public List<EvalAnswer> getAnswers(Long evalId, String[] evalGroupIds, Long[] templateItemIds);
 
    /**
     * Removes a group of templateItems and updates all related items 

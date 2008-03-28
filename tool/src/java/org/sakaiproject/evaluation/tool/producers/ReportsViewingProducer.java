@@ -1,21 +1,24 @@
-/******************************************************************************
- * ViewReportProducer.java - created by on Oct 05, 2006
- * 
- * Copyright (c) 2007 Virginia Polytechnic Institute and State University
+/**
+ * $Id$
+ * $URL$
+ * ReportsViewingProducer.java - evaluation - Oct 05, 2006 9:23:47 PM - whumphri
+ **************************************************************************
+ * Copyright (c) 2008 Centre for Applied Research in Educational Technologies, University of Cambridge
  * Licensed under the Educational Community License version 1.0
  * 
  * A copy of the Educational Community License has been included in this 
  * distribution and is available at: http://www.opensource.org/licenses/ecl1.php
- * 
- * Contributors:
- * Will Humphries (whumphri@vt.edu)
- *****************************************************************************/
+ *
+ * Aaron Zeckoski (azeckoski@gmail.com) (aaronz@vt.edu) (aaron@caret.cam.ac.uk)
+ */
 
 package org.sakaiproject.evaluation.tool.producers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,22 +29,26 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.ReportingPermissions;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
+import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
-import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.ReportsBean;
 import org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil;
+import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
 import org.sakaiproject.evaluation.tool.viewparams.CSVReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.ExcelReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.PDFReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
+import org.sakaiproject.evaluation.utils.TemplateItemDataList;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
-import org.sakaiproject.util.FormattedText;
+import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
+import org.sakaiproject.evaluation.utils.TemplateItemDataList.HierarchyNodeGroup;
+import org.sakaiproject.evaluation.utils.TemplateItemDataList.TemplateItemGroup;
 import org.sakaiproject.util.Validator;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -50,7 +57,6 @@ import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UIVerbatim;
-import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
@@ -61,13 +67,13 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 /**
  * rendering the report results from an evaluation
  * 
- * @author Will Humphries (whumphri@vt.edu)
- * @author Aaron Zeckoski (aaronz@vt.edu)
  * @author Steven Githens
+ * @author Aaron Zeckoski (aaronz@vt.edu)
+ * @author Will Humphries (whumphri@vt.edu)
  */
 public class ReportsViewingProducer implements ViewComponentProducer, ViewParamsReporter {
    private static Log log = LogFactory.getLog(ReportsViewingProducer.class);
-   
+
    private static final String VIEWMODE_REGULAR = "viewmode_regular";
    private static final String VIEWMODE_ALLESSAYS = "viewmode_allessays";
    private static final String VIEWMODE_SELECTITEMS = "viewmode_selectitems";
@@ -97,6 +103,11 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
       this.deliveryService = deliveryService;
    }
 
+   private ExternalHierarchyLogic hierarchyLogic;
+   public void setExternalHierarchyLogic(ExternalHierarchyLogic logic) {
+      this.hierarchyLogic = logic;
+   }
+
    public ReportsBean reportsBean;
    public void setReportsBean(ReportsBean reportsBean) {
       this.reportsBean = reportsBean;
@@ -106,12 +117,12 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
    public void setEvalSettings(EvalSettings evalSettings) {
       this.evalSettings = evalSettings;
    }
-   
+
    private EvalResponseAggregatorUtil responseAggregator;
    public void setEvalResponseAggregatorUtil(EvalResponseAggregatorUtil bean) {
-       this.responseAggregator = bean;
+      this.responseAggregator = bean;
    }
-   
+
    private ReportingPermissions reportingPermissions;
    public void setReportingPermissions(ReportingPermissions perms) {
       this.reportingPermissions = perms;
@@ -119,7 +130,6 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
 
    int displayNumber = 0;
 
-   String[] groupIds;
    String currentViewMode = VIEWMODE_REGULAR;
    boolean collapseEssays = true;
    Long[] itemsToView;
@@ -130,7 +140,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
       ReportParameters reportViewParams = (ReportParameters) viewparams;
       String currentUserId = externalLogic.getCurrentUserId();
-      
+
       if (VIEWMODE_ALLESSAYS.equals(reportViewParams.viewmode)) {
          currentViewMode = VIEWMODE_ALLESSAYS;
          collapseEssays = false;
@@ -148,14 +158,16 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
       else {
          currentViewMode = VIEWMODE_REGULAR;
       }
-      
+
       renderTopLinks(tofill);
 
       UIMessage.make(tofill, "view-report-title", "viewreport.page.title");
 
       Long evaluationId = reportViewParams.evaluationId;
-      if (evaluationId != null) {
-
+      if (evaluationId == null) {
+         // invalid view params
+         throw new IllegalArgumentException("Evaluation id is required to view report");
+      } else {
          /*
           * We only need to show the choose groups breadcrumb if it's actually 
           * possible for us to view more than one group.
@@ -163,112 +175,224 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
          String[] viewableGroups = reportingPermissions.chooseGroupsPartialCheck(evaluationId);
          if (viewableGroups.length > 1) {
             UIInternalLink.make(tofill, "report-groups-title", UIMessage.make("reportgroups.page.title"), 
-               new ReportParameters(ReportChooseGroupsProducer.VIEW_ID, reportViewParams.evaluationId));
+                  new ReportParameters(ReportChooseGroupsProducer.VIEW_ID, reportViewParams.evaluationId));
          }
+         String[] groupIds = (reportViewParams.groupIds == null ? new String[] {} : reportViewParams.groupIds);
+         reportViewParams.groupIds = groupIds;
 
          EvalEvaluation evaluation = evaluationService.getEvaluationById(reportViewParams.evaluationId);
 
          // do a permission check
-         if (!reportingPermissions.canViewEvaluationResponses(evaluation, reportViewParams.groupIds)) {
+         if (! reportingPermissions.canViewEvaluationResponses(evaluation, groupIds)) {
             throw new SecurityException("Invalid user attempting to access reports page: " + currentUserId);
          }
 
-         // get template from DAO 
-         EvalTemplate template = evaluation.getTemplate();
+         Long templateId = evaluation.getTemplate().getId();
 
-         // TODO - this should respect the user
-         //List allTemplateItems = itemsLogic.getTemplateItemsForEvaluation(evaluationId, null, null);
-         List<EvalTemplateItem> allTemplateItems = new ArrayList<EvalTemplateItem>(template.getTemplateItems());
-         if (!allTemplateItems.isEmpty()) {
-               groupIds = reportViewParams.groupIds;
-              
-               if (VIEWMODE_ALLESSAYS.equals(reportViewParams.viewmode)) {
-                  currentViewMode = VIEWMODE_ALLESSAYS;
-               }
-            //}
-            String groupsDebug = "";
-            for (String debug: groupIds) {
-               groupsDebug += ", " + debug;
+         // get all items for this template (maybe limit these by groups later)
+         List<EvalTemplateItem> allTemplateItems = 
+            authoringService.getTemplateItemsForTemplate(templateId, new String[] {}, new String[] {}, new String[] {});
+
+         if (! allTemplateItems.isEmpty()) {
+
+            if (VIEWMODE_ALLESSAYS.equals(reportViewParams.viewmode)) {
+               currentViewMode = VIEWMODE_ALLESSAYS;
             }
-            
+
             // Render Reporting links such as xls, pdf output, and options for viewing essays and stuff
-            renderReportingOptionsTopLinks(tofill, evaluation, template, reportViewParams);
-            
+            renderReportingOptionsTopLinks(tofill, evaluation, templateId, reportViewParams);
+
             // Evaluation Info
             UIOutput.make(tofill, "evaluationTitle", evaluation.getTitle());
-            String groupsString = "";
-            String[] groupIds = reportViewParams.groupIds == null ? new String[] {} : reportViewParams.groupIds;
-            for (int groupCounter = 0; groupCounter < reportViewParams.groupIds.length; groupCounter++) {
-               groupsString +=  externalLogic.getDisplayTitle(groupIds[groupCounter]);
-               if (groupCounter+1 < groupIds.length) {
-                  groupsString += ", ";
+            StringBuilder groupsString = new StringBuilder();
+            for (int groupCounter = 0; groupCounter < groupIds.length; groupCounter++) {
+               if (groupCounter > 0) {
+                  groupsString.append(", ");
                }
+               groupsString.append( externalLogic.getDisplayTitle(groupIds[groupCounter]) );
             }
-            UIMessage.make(tofill, "selectedGroups", "viewreport.viewinggroups", new String[] {groupsString});
+            UIMessage.make(tofill, "selectedGroups", "viewreport.viewinggroups", new String[] {groupsString.toString()});
 
-            List<EvalTemplateItem> answerableItemsList = TemplateItemUtils.orderTemplateItems(allTemplateItems, false);
+            // get all the answers
+            List<EvalAnswer> answers = deliveryService.getAnswersForEval(evaluationId, groupIds, null);
 
-            UIBranchContainer courseSection = null;
-            UIBranchContainer instructorSection = null;
+            // get the list of all instructors for this report
+            Map<String,EvalUser> instructorIdtoEvalUser = 
+               responseAggregator.getInstructorsForAnsweredItems(allTemplateItems, answers);
+            Set<String> instructors = instructorIdtoEvalUser.keySet();
 
-            // handle showing all course type items
-            if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_COURSE, answerableItemsList)) {
-               courseSection = UIBranchContainer.make(tofill, "courseSection:");
-               UIMessage.make(courseSection, "report-course-questions", "viewreport.itemlist.coursequestions");
-               for (int i = 0; i < answerableItemsList.size(); i++) {
-                  EvalTemplateItem templateItem = answerableItemsList.get(i);
+            // Get the sorted list of all nodes for this set of template items
+            List<EvalHierarchyNode> hierarchyNodes = RenderingUtils.makeEvalNodesList(hierarchyLogic, allTemplateItems);
 
-                  if (EvalConstants.ITEM_CATEGORY_COURSE.equals(templateItem.getCategory())
-                        && renderBasedOffOptions(templateItem)) {
-                     UIBranchContainer branch = UIBranchContainer.make(courseSection, "itemrow:first", i + "");
-                     if (i % 2 == 1)
-                        branch.decorators = new DecoratorList( new UIStyleDecorator("") ); // must match the existing CSS class
-                     renderTemplateItemResults(templateItem, evaluation.getId(), branch, null);  
+            // make the TI data structure
+            Map<String, List<String>> associates = new HashMap<String, List<String>>();
+            associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, new ArrayList<String>(instructors));
+            TemplateItemDataList tidl = new TemplateItemDataList(allTemplateItems, hierarchyNodes, associates, answers);
+
+            int renderedItemCount = 0;
+            // loop through the TIGs and handle each associated category
+            for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {
+               // check if we should render any of these items at all
+               if (! renderAnyBasedOnOptions(tig.getTemplateItems())) {
+                  continue;
+               }
+               UIBranchContainer categorySectionBranch = UIBranchContainer.make(tofill, "categorySection:");
+               // handle printing the category header
+               if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType)) {
+                  UIMessage.make(categorySectionBranch, "categoryHeader", "viewreport.itemlist.coursequestions");
+               } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
+                  EvalUser instructor = instructorIdtoEvalUser.get( tig.associateId );
+                  UIMessage.make(categorySectionBranch, "categoryHeader", 
+                        "viewreport.itemlist.forinstructor", new Object[] { instructor.displayName });
+               }
+
+               // loop through the hierarchy node groups
+               for (HierarchyNodeGroup hng : tig.hierarchyNodeGroups) {
+                  // check if we should render any of these items at all
+                  if (! renderAnyBasedOnOptions(hng.templateItems)) {
+                     continue;
+                  }
+                  // render a node title
+                  if (hng.node != null) {
+                     // Showing the section title is system configurable via the administrate view
+                     Boolean showHierSectionTitle = (Boolean) evalSettings.get(EvalSettings.DISPLAY_HIERARCHY_HEADERS);
+                     if (showHierSectionTitle) {
+                        UIBranchContainer nodeTitleBranch = UIBranchContainer.make(categorySectionBranch, "itemrow:nodeSection");
+                        UIOutput.make(nodeTitleBranch, "nodeTitle", hng.node.title);
+                     }
+                  }
+
+                  List<DataTemplateItem> dtis = hng.getDataTemplateItems(true); // include block children
+                  for (int i = 0; i < dtis.size(); i++) {
+                     DataTemplateItem dti = dtis.get(i);
+                     if (renderBasedOnOptions(dti.templateItem)) {
+                        UIBranchContainer nodeItemsBranch = UIBranchContainer.make(categorySectionBranch, "itemrow:templateItem");
+                        if (renderedItemCount % 2 == 1) {
+                           nodeItemsBranch.decorate( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
+                        }
+                        renderTemplateItemResults(nodeItemsBranch, dti, reportViewParams);
+                        renderedItemCount++;
+                     }
                   }
                }
+
             }
 
-            // handle showing all instructor type items
-            if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, answerableItemsList)) {
-                
-               Map<String,EvalUser> instructors = responseAggregator.getInstructorsForAnsweredItems(evaluation, answerableItemsList, groupIds);
-               
-               for (String instId: instructors.keySet()) {
-                   EvalUser curInstructor = instructors.get(instId);
-                   instructorSection = UIBranchContainer.make(tofill, "instructorSection:");
-                   UIMessage.make(instructorSection, "report-instructor-questions", "viewreport.itemlist.forinstructor", new String[] {curInstructor.displayName});
-                       
-                   for (int i = 0; i < answerableItemsList.size(); i++) {
-                       EvalTemplateItem templateItem = answerableItemsList.get(i);
-
-                       if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(templateItem.getCategory())
-                               && renderBasedOffOptions(templateItem)) {
-                           UIBranchContainer branch = UIBranchContainer.make(instructorSection, "itemrow:first", i + "");
-                           if (i % 2 == 1)
-                               branch.decorators = new DecoratorList( new UIStyleDecorator("") ); // must match the existing CSS class
-                           renderTemplateItemResults(templateItem, evaluation.getId(), branch, instId);
-                          
-                       }
-                   }
-               }
-            }
          }
-      } else {
-         // invalid view params
-         throw new IllegalArgumentException("Evaluation id is required to view report");
       }
 
    }
-   
-   /**
-    * Should we render this item based off the passed in paramters?  (ie. Should
-    * we only render certain template items)
-    */
-   private boolean renderBasedOffOptions(EvalTemplateItem templateItem) {
-      EvalItem item = templateItem.getItem();
 
-      String templateItemType = item.getClassification();
-      
+
+   /**
+    * Handles the rendering of the response answer results for a specific templateItem
+    * 
+    * @param parent the parent contrainer to render in
+    * @param dti the wrapper for this templateItem
+    */
+   private void renderTemplateItemResults(UIBranchContainer parent, DataTemplateItem dti, ReportParameters reportViewParams) {
+      displayNumber++;
+      EvalTemplateItem templateItem = dti.templateItem;
+      String templateItemType = TemplateItemUtils.getTemplateItemType(templateItem);
+
+      // get the answers associated with this data template item
+      List<EvalAnswer> itemAnswers = dti.getAnswers();
+
+      if ( EvalConstants.ITEM_TYPE_SCALED.equals(templateItemType) 
+            || EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(templateItemType) 
+            || EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(templateItemType)
+            || EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(templateItemType) ) {
+         // scales/choices type item
+         EvalScale scale = templateItem.getItem().getScale();
+         String[] scaleOptions = scale.getOptions();
+         int optionCount = scaleOptions.length;
+         String scaleLabels[] = new String[optionCount];
+
+         UIBranchContainer scaled = UIBranchContainer.make(parent, "scaledSurvey:");
+
+         UIOutput.make(scaled, "itemNum", displayNumber+"");
+         UIVerbatim.make(scaled, "itemText", templateItem.getItem().getItemText());
+
+         int[] responseNumbers = responseAggregator.countResponseChoices(templateItemType, scaleLabels.length, itemAnswers);
+
+         for (int x = 0; x < scaleLabels.length; x++) {
+            UIBranchContainer answerbranch = UIBranchContainer.make(scaled, "answers:", x + "");
+            UIOutput.make(answerbranch, "responseText", scaleOptions[x]);
+            UIOutput.make(answerbranch, "responseTotal", responseNumbers[x]+"");
+         }
+
+         if (templateItem.getUsesNA()) {
+            UIBranchContainer answerbranch = UIBranchContainer.make(scaled, "answers:");
+            UIMessage.make(answerbranch, "responseText", "reporting.notapplicable.longlabel");
+            UIOutput.make(answerbranch, "responseTotal", responseNumbers[responseNumbers.length-1]+"");
+         }
+
+      } else if (EvalConstants.ITEM_TYPE_TEXT.equals(templateItemType)) {
+         // text/essay type items
+         if (collapseEssays) {
+            UIBranchContainer essay = UIBranchContainer.make(parent, "essayType:");
+            UIOutput.make(essay, "itemNum", displayNumber + "");
+            UIVerbatim.make(essay, "itemText", templateItem.getItem().getItemText());
+
+            ReportParameters params = new ReportParameters(VIEW_ID, reportViewParams.evaluationId);
+            params.viewmode = VIEWMODE_SELECTITEMS;
+            params.items = new Long[] {templateItem.getId()};
+            params.groupIds = reportViewParams.groupIds;
+            UIInternalLink.make(essay, "essayResponse", UIMessage.make("viewreport.view.viewresponses"), params);
+         } else {
+            UIBranchContainer essay = UIBranchContainer.make(parent, "expandedEssayType:");
+            UIOutput.make(essay, "itemNum", displayNumber + "");
+            UIOutput.make(essay, "itemText", templateItem.getItem().getItemText());
+
+            //count the number of answers that match this one
+            for (int y = 0; y < itemAnswers.size(); y++) {
+               UIBranchContainer answerbranch = UIBranchContainer.make(essay, "answers:");
+               if (y % 2 == 1) {
+                  answerbranch.decorate(new UIStyleDecorator("itemsListOddLine")); // must match the existing CSS class
+               }
+               EvalAnswer curr = itemAnswers.get(y);
+               UIOutput.make(answerbranch, "answerNum", (y + 1)+"");
+               UIOutput.make(answerbranch, "itemAnswer", curr.getText());
+            }
+         }
+
+      } else if (EvalConstants.ITEM_TYPE_HEADER.equals(templateItemType)
+            || EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(templateItemType)) {
+         // header/textual bits
+         UIBranchContainer textual = UIBranchContainer.make(parent, "textualItem:");
+         UIOutput.make(textual, "itemNum", displayNumber + "");
+         UIVerbatim.make(textual, "itemText", templateItem.getItem().getItemText());
+
+      } else {
+         displayNumber--;
+         log.warn("Skipped invalid item type ("+templateItemType+"): TI: " + templateItem.getId() );
+      }
+   }
+
+
+   /**
+    * Checks if any of the items in a set should be rendered based
+    * on the passed in options for this view
+    * 
+    * @param templateItems a list of {@link EvalTemplateItem}
+    * @return true if any of the items in this list should be rendered, false otherwise
+    */
+   private boolean renderAnyBasedOnOptions(List<EvalTemplateItem> templateItems) {
+      boolean renderAny = false;
+      for (EvalTemplateItem templateItem : templateItems) {
+         if (renderBasedOnOptions(templateItem)) {
+            renderAny = true;
+            break;
+         }
+      }
+      return renderAny;
+   }
+
+   /**
+    * Should we render this item based off the passed in parameters?
+    * (ie. Should we only render certain template items)
+    */
+   private boolean renderBasedOnOptions(EvalTemplateItem templateItem) {
       boolean togo = false;
       if (VIEWMODE_SELECTITEMS.equals(currentViewMode)) {
          // If this item isn't in the list of items to view, don't render it.
@@ -281,8 +405,10 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
          togo = contains;
       }
       else if (VIEWMODE_ALLESSAYS.equals(currentViewMode)) {
-         if (EvalConstants.ITEM_TYPE_TEXT.equals(templateItemType))
-         togo = true;
+         String templateItemType = TemplateItemUtils.getTemplateItemType(templateItem);
+         if (EvalConstants.ITEM_TYPE_TEXT.equals(templateItemType)) {
+            togo = true;
+         }
       }
       else if (VIEWMODE_REGULAR.equals(currentViewMode)) {
          togo = true;
@@ -294,117 +420,6 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
    }
 
    /**
-    * @param templateItem
- * @param evalId
- * @param branch
-    */
-   private void renderTemplateItemResults(EvalTemplateItem templateItem, Long evalId, UIBranchContainer branch, String optionalAssociatedId) {
-      EvalItem item = templateItem.getItem();
-      displayNumber++;
-      String templateItemType = item.getClassification();
-      if ((templateItemType.equals(EvalConstants.ITEM_TYPE_SCALED) || 
-          templateItemType.equals(EvalConstants.ITEM_TYPE_MULTIPLEANSWER) ||
-          templateItemType.equals(EvalConstants.ITEM_TYPE_MULTIPLECHOICE))) {
-         //normal scaled type
-         EvalScale scale = item.getScale();
-         String[] scaleOptions = scale.getOptions();
-         int optionCount = scaleOptions.length;
-         String scaleLabels[] = new String[optionCount];
-
-         UIBranchContainer scaled = UIBranchContainer.make(branch, "scaledSurvey:");
-
-         UIOutput.make(scaled, "itemNum", displayNumber+"");
-         UIVerbatim.make(scaled, "itemText", item.getItemText());
-
-         // SWG FIXME TODO We need to handle having zero groups for anonymous surveys,
-         // but we can't just pass in an empty groupID array because that will give
-         // us *all* the groups.  Huge Security hole.
-         List<EvalAnswer> allItemAnswers = new ArrayList<EvalAnswer>();
-         if (groupIds != null && groupIds.length != 0) {
-            allItemAnswers = deliveryService.getEvalAnswers(item.getId(), evalId, groupIds);
-         }
-         
-         // Optionally filter by the associatedId
-         List<EvalAnswer> itemAnswers = filterAnswersByAssociatedId(allItemAnswers, optionalAssociatedId);
-
-         int[] responseNumbers = responseAggregator.countResponseChoices(templateItemType, scaleLabels.length, itemAnswers);
-         
-         for (int x = 0; x < scaleLabels.length; x++) {
-            UIBranchContainer answerbranch = UIBranchContainer.make(scaled, "answers:", x + "");
-            UIOutput.make(answerbranch, "responseText", scaleOptions[x]);
-            UIOutput.make(answerbranch, "responseTotal", responseNumbers[x]+"");
-         }
-         
-         if (templateItem.getUsesNA()) {
-            UIBranchContainer answerbranch = UIBranchContainer.make(scaled, "answers:");
-            UIMessage.make(answerbranch, "responseText", "reporting.notapplicable.longlabel");
-            UIOutput.make(answerbranch, "responseTotal", responseNumbers[responseNumbers.length-1]+"");
-         }
-
-      } 
-      else if (templateItemType.equals(EvalConstants.ITEM_TYPE_TEXT)) { //"Short Answer/Essay"
-         if (collapseEssays) {
-            UIBranchContainer essay = UIBranchContainer.make(branch, "essayType:");
-            UIOutput.make(essay, "itemNum", displayNumber + "");
-            UIVerbatim.make(essay, "itemText", item.getItemText());
-
-            //UIInternalLink.make(essay, "essayResponse", 
-            //      new EssayResponseParams(ReportsViewEssaysProducer.VIEW_ID, evalId, templateItem.getId(), groupIds));
-            ReportParameters params = new ReportParameters(VIEW_ID, evalId);
-            params.viewmode = VIEWMODE_SELECTITEMS;
-            params.items = new Long[] {templateItem.getId()};
-            params.groupIds = groupIds;
-            UIInternalLink.make(essay, "essayResponse", UIMessage.make("viewreport.view.viewresponses"),
-                  params);
-         }
-         else {
-            UIBranchContainer essay = UIBranchContainer.make(branch, "expandedEssayType:");
-            UIOutput.make(essay, "itemNum", displayNumber + "");
-            UIOutput.make(essay, "itemText", FormattedText.convertFormattedTextToPlaintext(item.getItemText()));
-
-            List<EvalAnswer> allItemAnswers = deliveryService.getEvalAnswers(item.getId(), evalId, groupIds);
-           // Optionally filter by the associatedId
-            List<EvalAnswer> itemAnswers = filterAnswersByAssociatedId(allItemAnswers, optionalAssociatedId);
-
-            
-            //count the number of answers that match this one
-            for (int y = 0; y < itemAnswers.size(); y++) {
-               UIBranchContainer answerbranch = UIBranchContainer.make(essay, "answers:", y + "");
-               if (y % 2 == 1) {
-                  answerbranch.decorators = new DecoratorList(new UIStyleDecorator("itemsListOddLine")); // must match the existing CSS class
-               }
-               EvalAnswer curr = itemAnswers.get(y);
-               UIOutput.make(answerbranch, "answerNum", new Integer(y + 1).toString());
-               UIOutput.make(answerbranch, "itemAnswer", curr.getText());
-            }
-         }
-      } else {
-         displayNumber--;
-         log.warn("Skipped invalid item type ("+templateItemType+"): TI: " + templateItem.getId() + ", Item: " + item.getId() );
-      }
-   }
-
-   public ViewParameters getViewParameters() {
-      return new ReportParameters();
-   }
-   
-   private List<EvalAnswer> filterAnswersByAssociatedId(List<EvalAnswer> allItemAnswers, String associatedId) {
-       // Optionally filter by the associatedId
-       List<EvalAnswer> itemAnswers = new ArrayList<EvalAnswer>();
-       if (associatedId != null) {
-           for (EvalAnswer answer: allItemAnswers) {
-               if (answer.getAssociatedId().equals(associatedId)) {
-                   itemAnswers.add(answer);
-               }
-           }
-       }
-       else {
-           itemAnswers = allItemAnswers;
-       }
-       return itemAnswers;
-   }
-   
-   /**
     * Moved this top link rendering out of the main producer code. 
     * TODO FIXME: Is there not some standard Evalution Util class to render 
     * all these top links?  Find out. sgithens 2008-03-01 7:13PM Central Time
@@ -412,9 +427,8 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
     * @param tofill The parent UIContainer.
     */
    private void renderTopLinks(UIContainer tofill) {
-      
-      
-   // local variables used in the render logic
+
+      // local variables used in the render logic
       String currentUserId = externalLogic.getCurrentUserId();
       boolean userAdmin = externalLogic.isUserAdmin(currentUserId);
       boolean createTemplate = authoringService.canCreateTemplate(currentUserId);
@@ -447,64 +461,75 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
          throw new SecurityException("User attempted to access " + 
                VIEW_ID + " when they are not allowed");
       }
-      
+
       if (beginEvaluation) {
          UIInternalLink.make(tofill, "control-evaluations-link",
                UIMessage.make("controlevaluations.page.title"),
-            new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
+               new SimpleViewParameters(ControlEvaluationsProducer.VIEW_ID));
       }
    }
-   
+
    /**
     * Renders the reporting specific links like XLS and PDF download, etc.
     * 
     * @param tofill
-    * @param template
+    * @param evaluation
+    * @param templateId
     * @param reportViewParams
     */
-   private void renderReportingOptionsTopLinks(UIContainer tofill, EvalEvaluation evaluation, EvalTemplate template, ReportParameters reportViewParams) {
+   private void renderReportingOptionsTopLinks(UIContainer tofill, EvalEvaluation evaluation, Long templateId, ReportParameters reportViewParams) {
       // Render the link to show "All Essays" or "All Questions"
-         ReportParameters viewEssaysParams = (ReportParameters) reportViewParams.copyBase();
-         if (VIEWMODE_ALLESSAYS.equals(currentViewMode)) {
-            viewEssaysParams.viewmode = VIEWMODE_REGULAR; 
-            UIInternalLink.make(tofill, "fullEssayResponse", UIMessage.make("viewreport.view.allquestions"), 
-                 viewEssaysParams);
-         }
-         else {
-            viewEssaysParams.viewmode = VIEWMODE_ALLESSAYS;
-            UIInternalLink.make(tofill, "fullEssayResponse",  UIMessage.make("viewreport.view.essays"), 
-                 viewEssaysParams);
-         }
-         
-         /*
-          * The Downloaded names should have a max length indicated by the
-          * constant.  We run them through the validator to make sure they
-          * are ok for display on OS filesystems. At the moment we are using
-          * just the Evaluation title for the name of the downloaded file.
-          */
-         String evaltitle = evaluation.getTitle();
-         if (evaltitle.length() > EvalToolConstants.EVAL_REPORTING_MAX_NAME_LENGTH) {
-            evaltitle = evaltitle.substring(0, EvalToolConstants.EVAL_REPORTING_MAX_NAME_LENGTH);
-         }
-         
-         evaltitle = Validator.escapeZipEntry(evaltitle);
-         
-         Boolean allowCSVExport = (Boolean) evalSettings.get(EvalSettings.ENABLE_CSV_REPORT_EXPORT);
-         if (allowCSVExport != null && allowCSVExport == true) {
-            UIInternalLink.make(tofill, "csvResultsReport", UIMessage.make("viewreport.view.csv"), new CSVReportViewParams(
-                  "csvResultsReport", template.getId(), reportViewParams.evaluationId, groupIds, evaltitle+".csv"));
-         }
-
-         Boolean allowXLSExport = (Boolean) evalSettings.get(EvalSettings.ENABLE_XLS_REPORT_EXPORT);
-         if (allowXLSExport != null && allowXLSExport == true) {
-            UIInternalLink.make(tofill, "xlsResultsReport", UIMessage.make("viewreport.view.xls"), new ExcelReportViewParams(
-                  "xlsResultsReport", template.getId(), reportViewParams.evaluationId, groupIds, evaltitle+".xls"));
-         }
-
-         Boolean allowPDFExport = (Boolean) evalSettings.get(EvalSettings.ENABLE_PDF_REPORT_EXPORT);
-         if (allowPDFExport != null && allowPDFExport == true) {
-            UIInternalLink.make(tofill, "pdfResultsReport", UIMessage.make("viewreport.view.pdf"), new PDFReportViewParams(
-                  "pdfResultsReport", template.getId(), reportViewParams.evaluationId, groupIds, evaltitle+".pdf"));
-         }
+      ReportParameters viewEssaysParams = (ReportParameters) reportViewParams.copyBase();
+      if (VIEWMODE_ALLESSAYS.equals(currentViewMode)) {
+         viewEssaysParams.viewmode = VIEWMODE_REGULAR; 
+         UIInternalLink.make(tofill, "fullEssayResponse", UIMessage.make("viewreport.view.allquestions"), 
+               viewEssaysParams);
       }
+      else {
+         viewEssaysParams.viewmode = VIEWMODE_ALLESSAYS;
+         UIInternalLink.make(tofill, "fullEssayResponse",  UIMessage.make("viewreport.view.essays"), 
+               viewEssaysParams);
+      }
+
+      /*
+       * The Downloaded names should have a max length indicated by the
+       * constant.  We run them through the validator to make sure they
+       * are ok for display on OS filesystems. At the moment we are using
+       * just the Evaluation title for the name of the downloaded file.
+       */
+      String evaltitle = evaluation.getTitle();
+      if (evaltitle.length() > EvalToolConstants.EVAL_REPORTING_MAX_NAME_LENGTH) {
+         evaltitle = evaltitle.substring(0, EvalToolConstants.EVAL_REPORTING_MAX_NAME_LENGTH);
+      }
+
+      // FIXME don't use sakai classes directly (plus what the crap does this do anyway? -AZ)
+      evaltitle = Validator.escapeZipEntry(evaltitle);
+
+      Boolean allowCSVExport = (Boolean) evalSettings.get(EvalSettings.ENABLE_CSV_REPORT_EXPORT);
+      if (allowCSVExport != null && allowCSVExport == true) {
+         UIInternalLink.make(tofill, "csvResultsReport", UIMessage.make("viewreport.view.csv"), new CSVReportViewParams(
+               "csvResultsReport", templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+".csv"));
+      }
+
+      Boolean allowXLSExport = (Boolean) evalSettings.get(EvalSettings.ENABLE_XLS_REPORT_EXPORT);
+      if (allowXLSExport != null && allowXLSExport == true) {
+         UIInternalLink.make(tofill, "xlsResultsReport", UIMessage.make("viewreport.view.xls"), new ExcelReportViewParams(
+               "xlsResultsReport", templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+".xls"));
+      }
+
+      Boolean allowPDFExport = (Boolean) evalSettings.get(EvalSettings.ENABLE_PDF_REPORT_EXPORT);
+      if (allowPDFExport != null && allowPDFExport == true) {
+         UIInternalLink.make(tofill, "pdfResultsReport", UIMessage.make("viewreport.view.pdf"), new PDFReportViewParams(
+               "pdfResultsReport", templateId, reportViewParams.evaluationId, reportViewParams.groupIds, evaltitle+".pdf"));
+      }
+   }
+
+
+   /* (non-Javadoc)
+    * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
+    */
+   public ViewParameters getViewParameters() {
+      return new ReportParameters();
+   }
+
 }

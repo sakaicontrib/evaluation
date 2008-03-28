@@ -36,7 +36,7 @@ import junit.framework.TestCase;
 public class TemplateItemDataListTest extends TestCase {
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.utils.TemplateItemDataList#TemplateItemDataList(java.util.List, java.util.List, java.util.Map)}.
+    * Test method for {@link org.sakaiproject.evaluation.utils.TemplateItemDataList#TemplateItemDataList(java.util.List, java.util.List, java.util.Map, List)}.
     */
    public void testTemplateItemDataList() {
       EvalTestDataLoad etdl = new EvalTestDataLoad();
@@ -47,7 +47,7 @@ public class TemplateItemDataListTest extends TestCase {
 
       // test empty TI list fails
       try {
-         tidl = new TemplateItemDataList(testList, null, null);
+         tidl = new TemplateItemDataList(testList, null, null, null);
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
          assertNotNull(e.getMessage());
@@ -58,7 +58,7 @@ public class TemplateItemDataListTest extends TestCase {
       testList.add(etdl.templateItem3A); // course
       testList.add(etdl.templateItem5A); // instructor
 
-      tidl = new TemplateItemDataList(testList, null, null);
+      tidl = new TemplateItemDataList(testList, null, null, null);
       assertNotNull(tidl);
       assertEquals(3, tidl.getTemplateItemsCount());
       assertEquals(3, tidl.getNonChildItemsCount());
@@ -80,7 +80,7 @@ public class TemplateItemDataListTest extends TestCase {
       associateIds.add(EvalTestDataLoad.MAINT_USER_ID);
       associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, associateIds);
 
-      tidl = new TemplateItemDataList(testList, null, associates);
+      tidl = new TemplateItemDataList(testList, null, associates, null);
       assertNotNull(tidl);
       assertEquals(3, tidl.getTemplateItemsCount());
       assertEquals(3, tidl.getNonChildItemsCount());
@@ -111,7 +111,7 @@ public class TemplateItemDataListTest extends TestCase {
       associateIds.add(EvalTestDataLoad.ADMIN_USER_ID);
       associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, associateIds);
 
-      tidl = new TemplateItemDataList(testList, null, associates);
+      tidl = new TemplateItemDataList(testList, null, associates, null);
       assertNotNull(tidl);
       assertEquals(3, tidl.getTemplateItemsCount());
       assertEquals(3, tidl.getNonChildItemsCount());
@@ -147,7 +147,7 @@ public class TemplateItemDataListTest extends TestCase {
       associateIds.add(EvalTestDataLoad.MAINT_USER_ID);
       associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, associateIds);
 
-      tidl = new TemplateItemDataList(testList, nodes, associates);
+      tidl = new TemplateItemDataList(testList, nodes, associates, null);
       assertNotNull(tidl);
       assertEquals(3, tidl.getTemplateItemsCount());
       assertEquals(3, tidl.getNonChildItemsCount());

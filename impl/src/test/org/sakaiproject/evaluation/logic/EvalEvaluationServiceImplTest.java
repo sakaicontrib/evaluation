@@ -20,11 +20,8 @@ import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.constant.EvalEmailConstants;
-import org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl;
-import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
-import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
@@ -983,65 +980,6 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
       }
    }
 
-   /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#getAnswers(java.lang.Long, java.lang.Long, java.lang.String[])}.
-    */
-   public void testGetEvalAnswers() {
-      List<EvalAnswer> l = null;
-      List<Long> ids = null;
-
-      // retrieve one answer for an eval
-      l = evaluationService.getAnswers( etdl.item1.getId(), etdl.evaluationActive.getId(), null );
-      assertNotNull(l);
-      assertEquals(1, l.size());
-      ids = EvalTestDataLoad.makeIdList(l);
-      assertTrue(ids.contains( etdl.answer1_1.getId() ));
-
-      l = evaluationService.getAnswers( etdl.item5.getId(), etdl.evaluationClosed.getId(), null );
-      assertNotNull(l);
-      assertEquals(1, l.size());
-      ids = EvalTestDataLoad.makeIdList(l);
-      assertTrue(ids.contains( etdl.answer2_5.getId() ));
-
-      // retrieve multiple answers for an eval
-      l = evaluationService.getAnswers( etdl.item1.getId(), etdl.evaluationViewable.getId(), null );
-      assertNotNull(l);
-      assertEquals(2, l.size());
-      ids = EvalTestDataLoad.makeIdList(l);
-      assertTrue(ids.contains( etdl.answer4_1.getId() ));
-      assertTrue(ids.contains( etdl.answer5_1.getId() ));
-
-      l = evaluationService.getAnswers( etdl.item2.getId(), etdl.evaluationClosed.getId(), null );
-      assertNotNull(l);
-      assertEquals(2, l.size());
-      ids = EvalTestDataLoad.makeIdList(l);
-      assertTrue(ids.contains( etdl.answer2_2.getId() ));
-      assertTrue(ids.contains( etdl.answer3_2.getId() ));
-
-      // retrieve no answers for an eval item
-      l = evaluationService.getAnswers( etdl.item1.getId(), etdl.evaluationActiveUntaken.getId(), null );
-      assertNotNull(l);
-      assertEquals(0, l.size());
-
-      // TODO - add checks which only retrieve partial results for an eval (limit eval groups)
-
-      // TODO - check that invalid item/eval combinations cause failure?
-
-      // check that invalid ids cause failure
-      try {
-         l = evaluationService.getAnswers( EvalTestDataLoad.INVALID_LONG_ID, etdl.evaluationActiveUntaken.getId(), null );
-         fail("Should have thrown exception");
-      } catch (IllegalArgumentException e) {
-         assertNotNull(e);
-      }
-
-      try {
-         l = evaluationService.getAnswers( etdl.item1.getId(), EvalTestDataLoad.INVALID_LONG_ID, null );
-         fail("Should have thrown exception");
-      } catch (IllegalArgumentException e) {
-         assertNotNull(e);
-      }
-   }
 
    /**
     * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#canModifyResponse(java.lang.String, java.lang.Long)}.

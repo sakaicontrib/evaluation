@@ -34,25 +34,25 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * @author Steven Githens (swgithen@mtu.edu)
  */
 public class EvalResponseAggregatorUtil {
-   
+
    private EvalEvaluationService evaluationService;
    public void setEvaluationService(EvalEvaluationService evaluationService) {
       this.evaluationService = evaluationService;
    }
-   
+
    private EvalDeliveryService deliveryService;
    public void setDeliveryService(EvalDeliveryService deliveryService) {
       this.deliveryService = deliveryService;
    }
-   
+
    private MessageLocator messageLocator;
    public void setMessageLocator(MessageLocator locator) {
       this.messageLocator = locator;
    }
-   
+
    private EvalExternalLogic externalLogic;
    public void setEvalExternalLogic(EvalExternalLogic logic) {
-       this.externalLogic = logic;
+      this.externalLogic = logic;
    }
 
    public EvalAggregatedResponses getAggregatedResponses(EvalEvaluation evaluation, String[] groupIds) {
@@ -62,7 +62,7 @@ public class EvalResponseAggregatorUtil {
       List<List<String>> responseRows = new ArrayList<List<String>>();//holds response rows
 
       EvalTemplate template = evaluation.getTemplate();
-      
+
       /*
        * Getting list of response ids serves 2 purposes:
        * 
@@ -86,9 +86,9 @@ public class EvalResponseAggregatorUtil {
       // get all answerable template items
       List<EvalTemplateItem> allTemplateItems = new ArrayList<EvalTemplateItem>(template.getTemplateItems());
       // FIXME - do this using the authoringService
-//      allItems = authoringService.getTemplateItemsForEvaluation(evaluationId, hierarchyNodeIDs, 
-//            instructorIds, new String[] {evalGroupId});
-      
+//    allItems = authoringService.getTemplateItemsForEvaluation(evaluationId, hierarchyNodeIDs, 
+//    instructorIds, new String[] {evalGroupId});
+
       if (! allTemplateItems.isEmpty()) {
          //filter out the block child items, to get a list non-child items
          List<EvalTemplateItem> ncItemsList = TemplateItemUtils.getNonChildItems(allTemplateItems);
@@ -104,7 +104,7 @@ public class EvalResponseAggregatorUtil {
 
             // if this is a non-block type
             if (EvalConstants.ITEM_TYPE_HEADER.equals(itemType)
-               || EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(itemType)) {
+                  || EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(itemType)) {
                // do nothing with these types, children handled by the parents and header not needed for export
             } else if (TemplateItemUtils.isBlockParent(templateItem)) {
                //add the block description to the top row
@@ -126,7 +126,7 @@ public class EvalResponseAggregatorUtil {
                   topRow.add(child.getItemText());
                   allEvalItems.add(child);
                   //get all answers to the child item within this eval
-                  List<EvalAnswer> itemAnswers = deliveryService.getEvalAnswers(child.getId(), evaluation.getId(), groupIds);
+                  List<EvalAnswer> itemAnswers = deliveryService.getAnswersForEval(evaluation.getId(), groupIds, new Long[] {tempItemChild.getId()});
                   updateResponseList(numOfResponses, responseIds, responseRows, itemAnswers, tempItemChild);
                }
             } else {
@@ -138,17 +138,17 @@ public class EvalResponseAggregatorUtil {
                allEvalItems.add(item);
 
                //get all answers to this item within this evaluation
-               List<EvalAnswer> itemAnswers = deliveryService.getEvalAnswers(item.getId(), evaluation.getId(), groupIds);
+               List<EvalAnswer> itemAnswers = deliveryService.getAnswersForEval(evaluation.getId(), groupIds, new Long[] {templateItem.getId()});
                updateResponseList(numOfResponses, responseIds, responseRows, itemAnswers, templateItem);
 
             }
          }
       }
-      
+
       return new EvalAggregatedResponses(evaluation,groupIds,allEvalItems,allEvalTemplateItems,
             topRow, responseRows, numOfResponses);
    }
-   
+
    /**
     * This method iterates through list of answers for the concerned question 
     * and updates the list of responses.
@@ -180,9 +180,9 @@ public class EvalResponseAggregatorUtil {
 
          EvalAnswer currAnswer = (EvalAnswer) itemAnswers.get(j);
          actualIndexOfResponse = responseIds.indexOf(currAnswer.getResponse().getId());
-         
+
          EvalUtils.decodeAnswerNA(currAnswer);
-         
+
          // Fill empty answers if the answer corresponding to a response is not in itemAnswers list. 
          if (actualIndexOfResponse > idealIndexOfResponse) {
             for (int count = idealIndexOfResponse; count < actualIndexOfResponse; count++) {
@@ -223,7 +223,7 @@ public class EvalResponseAggregatorUtil {
          }
          else {
             throw new UniversalRuntimeException("Trying to add an unsupported question type ("+itemType+") " 
-            		+ "for template item ("+templateItem.getId()+") to the Spreadsheet Data Lists");
+                  + "for template item ("+templateItem.getId()+") to the Spreadsheet Data Lists");
          }
 
          /*
@@ -240,7 +240,7 @@ public class EvalResponseAggregatorUtil {
       }
 
    }
-   
+
    /*
     * This method deals with producing an array of total number of responses for
     * a list of answers.  It does not deal with any of the logic (such as groups,
@@ -262,41 +262,41 @@ public class EvalResponseAggregatorUtil {
     * @param answers The List of EvalAnswers to work with.
     */
    public int[] countResponseChoices(String itemType, int scaleSize, List<EvalAnswer> itemAnswers) {
-       // Make the array one size larger in case we need to add N/A tallies.
-       int[] togo = new int[scaleSize+1];
+      // Make the array one size larger in case we need to add N/A tallies.
+      int[] togo = new int[scaleSize+1];
 
-       if (!EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemType) &&
-             !EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(itemType) &&
-             !EvalConstants.ITEM_TYPE_SCALED.equals(itemType)) {
-          throw new IllegalArgumentException("The itemType needs to be ITEM_TYPE_MULTIPLEANSWER, ITEM_TYPE_MULTIPLECHOICE, or ITEM_TYPE_SCALED");
-       }
-       
-       for (EvalAnswer answer: itemAnswers) {
-          EvalUtils.decodeAnswerNA(answer);
-          if (answer.NA) {
-             togo[togo.length-1]++;
-          }
-          else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemType)) {
-             Integer[] decoded = EvalUtils.decodeMultipleAnswers(answer.getMultiAnswerCode());
-             for (Integer decodedAnswer: decoded) {
-                togo[decodedAnswer.intValue()]++;
-             }
-          }
-          else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(itemType) || 
+      if (!EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemType) &&
+            !EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(itemType) &&
+            !EvalConstants.ITEM_TYPE_SCALED.equals(itemType)) {
+         throw new IllegalArgumentException("The itemType needs to be ITEM_TYPE_MULTIPLEANSWER, ITEM_TYPE_MULTIPLECHOICE, or ITEM_TYPE_SCALED");
+      }
+
+      for (EvalAnswer answer: itemAnswers) {
+         EvalUtils.decodeAnswerNA(answer);
+         if (answer.NA) {
+            togo[togo.length-1]++;
+         }
+         else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemType)) {
+            Integer[] decoded = EvalUtils.decodeMultipleAnswers(answer.getMultiAnswerCode());
+            for (Integer decodedAnswer: decoded) {
+               togo[decodedAnswer.intValue()]++;
+            }
+         }
+         else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(itemType) || 
                EvalConstants.ITEM_TYPE_SCALED.equals(itemType)) {
-             if (answer.getNumeric().intValue() > 0) {
-                togo[answer.getNumeric().intValue()]++;
-             }
-          }
-          else {
-             throw new RuntimeException("This shouldn't happen");
-          }
-       }
+            if (answer.getNumeric().intValue() > 0) {
+               togo[answer.getNumeric().intValue()]++;
+            }
+         }
+         else {
+            throw new RuntimeException("This shouldn't happen");
+         }
+      }
 
-       return togo;
+      return togo;
    }
-   
-   
+
+
    /**
     * This method will go through a list of template items, looking at items that
     * are of Instructor type, and create a Map of all the instructors userId's and
@@ -304,28 +304,22 @@ public class EvalResponseAggregatorUtil {
     * the instructors seperately, and need to sort them before hand, or generally
     * know who they are.
     * 
-    * @param eval The EvalEvaluation we are looking at.
-    * @param templateItems The list of template items, these will be filtered for
-    * Instructor types.
-    * @param groupIds The groupIds we are trying to view.
+    * @param templateItems The list of template items, these will be filtered for Instructor types.
+    * @param answers a list of all the answers to pull out the instructor userIds from
     * @return Returns a Map of the instructors as EvalUsers keyed by userId
     */
-   public Map<String,EvalUser> getInstructorsForAnsweredItems(EvalEvaluation eval,
-           List<EvalTemplateItem> templateItems, String[] groupIds) {
-       Map<String,EvalUser> instructors = new HashMap<String,EvalUser>();
-       
-       for (EvalTemplateItem templateItem: templateItems) {
-           if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(templateItem.getCategory())) {
-               List<EvalAnswer> itemAnswers = deliveryService.getEvalAnswers(templateItem.getItem().getId(), eval.getId(), groupIds);
-               for (EvalAnswer answer: itemAnswers) {
-                   if (!instructors.containsKey(answer.getAssociatedId())) {
-                       instructors.put(answer.getAssociatedId(), externalLogic.getEvalUserById(answer.getAssociatedId()));
-                   }
+   public Map<String, EvalUser> getInstructorsForAnsweredItems(List<EvalTemplateItem> templateItems, List<EvalAnswer> answers) {
+      Map<String,EvalUser> instructors = new HashMap<String,EvalUser>();
+      for (EvalTemplateItem templateItem: templateItems) {
+         if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(templateItem.getCategory())) {
+            for (EvalAnswer answer: answers) {
+               if (! instructors.containsKey(answer.getAssociatedId())) {
+                  instructors.put(answer.getAssociatedId(), externalLogic.getEvalUserById(answer.getAssociatedId()));
                }
-           }
-       }
-       
-       return instructors;
+            }
+         }
+      }
+      return instructors;
    }
-   
+
 }
