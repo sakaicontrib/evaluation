@@ -884,7 +884,7 @@ label.block{
 .fakeHeader{
 color: #555;
 	padding: 0;
-	font-weight: bold;
+/*	font-weight: bold; */
 	font-family: Arial,Helvetica,sans-serif;
 	margin: 1em 0 ;
 	background-color: transparent !important;
