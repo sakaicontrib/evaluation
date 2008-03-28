@@ -15,6 +15,7 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,6 +26,7 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.ReportingPermissions;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
@@ -65,7 +67,6 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * @author Aaron Zeckoski (aaronz@vt.edu)
  * @author Steven Githens
  */
-
 public class ReportsViewingProducer implements ViewComponentProducer, ViewParamsReporter {
    private static Log log = LogFactory.getLog(ReportsViewingProducer.class);
    
@@ -118,7 +119,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
       this.reportingPermissions = perms;
    }
 
-   int displayNumber = 1;
+   int displayNumber = 0;
 
    String[] groupIds;
    String currentViewMode = VIEWMODE_REGULAR;
@@ -224,28 +225,34 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
                      UIBranchContainer branch = UIBranchContainer.make(courseSection, "itemrow:first", i + "");
                      if (i % 2 == 1)
                         branch.decorators = new DecoratorList( new UIStyleDecorator("") ); // must match the existing CSS class
-                     renderTemplateItemResults(templateItem, evaluation.getId(), displayNumber, branch);  
+                     renderTemplateItemResults(templateItem, evaluation.getId(), branch, null);  
                   }
-                  displayNumber++;
                }
             }
 
             // handle showing all instructor type items
             if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, answerableItemsList)) {
-               instructorSection = UIBranchContainer.make(tofill, "instructorSection:");
-               UIMessage.make(instructorSection, "report-instructor-questions", "viewreport.itemlist.instructorquestions");
-               for (int i = 0; i < answerableItemsList.size(); i++) {
-                  EvalTemplateItem templateItem = answerableItemsList.get(i);
+                
+               Map<String,EvalUser> instructors = responseAggregator.getInstructorsForAnsweredItems(evaluation, answerableItemsList, groupIds);
+               
+               for (String instId: instructors.keySet()) {
+                   EvalUser curInstructor = instructors.get(instId);
+                   instructorSection = UIBranchContainer.make(tofill, "instructorSection:");
+                   UIMessage.make(instructorSection, "report-instructor-questions", "viewreport.itemlist.forinstructor", new String[] {curInstructor.displayName});
+                       
+                   for (int i = 0; i < answerableItemsList.size(); i++) {
+                       EvalTemplateItem templateItem = answerableItemsList.get(i);
 
-                  if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(templateItem.getCategory())
-                        && renderBasedOffOptions(templateItem)) {
-                     UIBranchContainer branch = UIBranchContainer.make(instructorSection, "itemrow:first", i + "");
-                     if (i % 2 == 1)
-                        branch.decorators = new DecoratorList( new UIStyleDecorator("") ); // must match the existing CSS class
-                     renderTemplateItemResults(templateItem, evaluation.getId(), i, branch);
-                  }
-                  displayNumber++;
-               } 				
+                       if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(templateItem.getCategory())
+                               && renderBasedOffOptions(templateItem)) {
+                           UIBranchContainer branch = UIBranchContainer.make(instructorSection, "itemrow:first", i + "");
+                           if (i % 2 == 1)
+                               branch.decorators = new DecoratorList( new UIStyleDecorator("") ); // must match the existing CSS class
+                           renderTemplateItemResults(templateItem, evaluation.getId(), branch, instId);
+                          
+                       }
+                   }
+               }
             }
          }
       } else {
@@ -290,13 +297,12 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
 
    /**
     * @param templateItem
-    * @param evalId
-    * @param displayNum
-    * @param branch
+ * @param evalId
+ * @param branch
     */
-   private void renderTemplateItemResults(EvalTemplateItem templateItem, Long evalId, int displayNum, UIBranchContainer branch) {
+   private void renderTemplateItemResults(EvalTemplateItem templateItem, Long evalId, UIBranchContainer branch, String optionalAssociatedId) {
       EvalItem item = templateItem.getItem();
-
+      displayNumber++;
       String templateItemType = item.getClassification();
       if ((templateItemType.equals(EvalConstants.ITEM_TYPE_SCALED) || 
           templateItemType.equals(EvalConstants.ITEM_TYPE_MULTIPLEANSWER) ||
@@ -309,16 +315,19 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
 
          UIBranchContainer scaled = UIBranchContainer.make(branch, "scaledSurvey:");
 
-         UIOutput.make(scaled, "itemNum", displayNum+"");
+         UIOutput.make(scaled, "itemNum", displayNumber+"");
          UIVerbatim.make(scaled, "itemText", item.getItemText());
 
          // SWG FIXME TODO We need to handle having zero groups for anonymous surveys,
          // but we can't just pass in an empty groupID array because that will give
          // us *all* the groups.  Huge Security hole.
-         List<EvalAnswer> itemAnswers = new ArrayList<EvalAnswer>();
+         List<EvalAnswer> allItemAnswers = new ArrayList<EvalAnswer>();
          if (groupIds != null && groupIds.length != 0) {
-            itemAnswers = deliveryService.getEvalAnswers(item.getId(), evalId, groupIds);
+            allItemAnswers = deliveryService.getEvalAnswers(item.getId(), evalId, groupIds);
          }
+         
+         // Optionally filter by the associatedId
+         List<EvalAnswer> itemAnswers = filterAnswersByAssociatedId(allItemAnswers, optionalAssociatedId);
 
          int[] responseNumbers = responseAggregator.countResponseChoices(templateItemType, scaleLabels.length, itemAnswers);
          
@@ -338,7 +347,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
       else if (templateItemType.equals(EvalConstants.ITEM_TYPE_TEXT)) { //"Short Answer/Essay"
          if (collapseEssays) {
             UIBranchContainer essay = UIBranchContainer.make(branch, "essayType:");
-            UIOutput.make(essay, "itemNum", displayNum + "");
+            UIOutput.make(essay, "itemNum", displayNumber + "");
             UIVerbatim.make(essay, "itemText", item.getItemText());
 
             //UIInternalLink.make(essay, "essayResponse", 
@@ -352,11 +361,14 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
          }
          else {
             UIBranchContainer essay = UIBranchContainer.make(branch, "expandedEssayType:");
-            UIOutput.make(essay, "itemNum", displayNum + "");
+            UIOutput.make(essay, "itemNum", displayNumber + "");
             UIOutput.make(essay, "itemText", FormattedText.convertFormattedTextToPlaintext(item.getItemText()));
 
-            List<EvalAnswer> itemAnswers = deliveryService.getEvalAnswers(item.getId(), evalId, groupIds);
+            List<EvalAnswer> allItemAnswers = deliveryService.getEvalAnswers(item.getId(), evalId, groupIds);
+           // Optionally filter by the associatedId
+            List<EvalAnswer> itemAnswers = filterAnswersByAssociatedId(allItemAnswers, optionalAssociatedId);
 
+            
             //count the number of answers that match this one
             for (int y = 0; y < itemAnswers.size(); y++) {
                UIBranchContainer answerbranch = UIBranchContainer.make(essay, "answers:", y + "");
@@ -369,12 +381,29 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
             }
          }
       } else {
+         displayNumber--;
          log.warn("Skipped invalid item type ("+templateItemType+"): TI: " + templateItem.getId() + ", Item: " + item.getId() );
       }
    }
 
    public ViewParameters getViewParameters() {
       return new ReportParameters();
+   }
+   
+   private List<EvalAnswer> filterAnswersByAssociatedId(List<EvalAnswer> allItemAnswers, String associatedId) {
+       // Optionally filter by the associatedId
+       List<EvalAnswer> itemAnswers = new ArrayList<EvalAnswer>();
+       if (associatedId != null) {
+           for (EvalAnswer answer: allItemAnswers) {
+               if (answer.getAssociatedId().equals(associatedId)) {
+                   itemAnswers.add(answer);
+               }
+           }
+       }
+       else {
+           itemAnswers = allItemAnswers;
+       }
+       return itemAnswers;
    }
    
    /**
