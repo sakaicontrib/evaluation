@@ -90,7 +90,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
       if (log.isDebugEnabled())
          log.debug("EvalJobLogicImpl.processEvaluationStateChange(" + evaluationId + ") and state=" + actionState);
       if (evaluationId == null || actionState == null) {
-         throw new NullPointerException("both evaluationId ("+evaluationId+") and actionState ("+actionState+") must be set");
+         throw new NullPointerException("processEvaluationStateChange: both evaluationId ("+evaluationId+") and actionState ("+actionState+") must be set");
       }
 
       if (EvalJobLogic.ACTION_CREATE.equals(actionState)) {
@@ -117,7 +117,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
     */
    public void jobAction(Long evaluationId, String jobType) {
       if (evaluationId == null || jobType == null) {
-         throw new NullPointerException("both evaluationId ("+evaluationId+") and jobType ("+jobType+") must be set");
+         throw new NullPointerException("jobAction: both evaluationId ("+evaluationId+") and jobType ("+jobType+") must be set");
       }
 
       /*
