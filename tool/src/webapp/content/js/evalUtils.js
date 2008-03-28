@@ -20,10 +20,18 @@ var EvalSystem = function() {
   }
   
   /**
+   * NOTE: THis is moving to RSF TRunk. as soon as we upgrade to 0.7.3M3 we 
+   *       should start using this from the RSF Namespace.
+   *
    * This is the meat and potatos RSF UVB function I've always wanted,
    * designed for the UVB enthusiast who knows what they want. It takes
    * the UVB URL, the bindings/values to send over, the bindings you 
    * want back, and an optional action binding.
+   *
+   * @token A special token depicting this request. You can often put in whatever
+   * you like, but this can be used to stop the dreaded double submission effects.
+   * If a post with the same token is already being processed, subsequent ones
+   * will be ignored.
    *
    * @uvburl The url. In practice this usually looks something like,
    *   http://server/myapp/faces/UVBview, though it's best to generate it with
@@ -40,9 +48,10 @@ var EvalSystem = function() {
    * @actionbinding This should a String with the actionbinding. Can be null if
    *   you don't want one.  ex. 'mybean.execute'
    *
-   * @callback This should be a standard javascript ajax callback function
+   * @callback This should be a standard javascript object containing the usual
+   * callback functions such as success.
    */
-  function fireUVBRequest(uvburl, inbindings, outbindings, actionbinding, callback) {
+  function fireUVBRequest(token, uvburl, inbindings, outbindings, actionbinding, callback) {
     var queries = new Array();
     for (var i in inbindings) {
       queries.push(RSF.renderBinding(i,inbindings[i]));
@@ -54,7 +63,7 @@ var EvalSystem = function() {
       queries.push(RSF.renderUVBQuery(outbindings[i]));
     }
     var body = queries.join("&");
-    RSF.queueAJAXRequest(queries[0],"POST",uvburl,body,callback);
+    RSF.queueAJAXRequest(token,"POST",uvburl,body,callback);
   }
 
   return {
@@ -85,7 +94,7 @@ var EvalSystem = function() {
                 outbindings.push('adhocGroupsBean.acceptedAdhocUsers');
                 outbindings.push('adhocGroupsBean.rejectedUsers');
                 outbindings.push('adhocGroupsBean.participantDivUrl');
-                fireUVBRequest(uvburl, inbindings, outbindings, 'adhocGroupsBean.adNewAdHocGroup', saveCallback);
+                fireUVBRequest('atoken', uvburl, inbindings, outbindings, 'adhocGroupsBean.adNewAdHocGroup', saveCallback);
             }
             else {
                 inbindings['adhocGroupsBean.adhocGroupId'] = adhocGroupId;
@@ -94,7 +103,7 @@ var EvalSystem = function() {
                 outbindings.push('adhocGroupsBean.acceptedAdhocUsers');
                 outbindings.push('adhocGroupsBean.rejectedUsers');
                 outbindings.push('adhocGroupsBean.participantDivUrl');
-                fireUVBRequest(uvburl, inbindings, outbindings, 'adhocGroupsBean.addUsersToAdHocGroup', saveCallback);
+                fireUVBRequest('atoken', uvburl, inbindings, outbindings, 'adhocGroupsBean.addUsersToAdHocGroup', saveCallback);
             }
             emailListInput.val('');
         }
