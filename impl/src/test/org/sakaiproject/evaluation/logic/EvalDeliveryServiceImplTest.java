@@ -307,53 +307,72 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
       List<EvalAnswer> l = null;
       List<Long> ids = null;
 
-      // retrieve one answer for an eval
-      l = deliveryService.getEvalAnswers( etdl.item1.getId(), etdl.evaluationActive.getId(), null );
+      // test getting all answers first
+      l = deliveryService.getAnswersForEval(etdl.evaluationClosed.getId(), null, null);
       assertNotNull(l);
-      assertEquals(1, l.size());
+      assertEquals(3, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
-      assertTrue(ids.contains( etdl.answer1_1.getId() ));
+      assertTrue(ids.contains( etdl.answer2_2A.getId() ));
+      assertTrue(ids.contains( etdl.answer2_5A.getId() ));
+      assertTrue(ids.contains( etdl.answer3_2A.getId() ));
 
-      l = deliveryService.getEvalAnswers( etdl.item5.getId(), etdl.evaluationClosed.getId(), null );
-      assertNotNull(l);
-      assertEquals(1, l.size());
-      ids = EvalTestDataLoad.makeIdList(l);
-      assertTrue(ids.contains( etdl.answer2_5.getId() ));
-
-      // retrieve multiple answers for an eval
-      l = deliveryService.getEvalAnswers( etdl.item1.getId(), etdl.evaluationViewable.getId(), null );
+      // restrict to template item
+      l = deliveryService.getAnswersForEval(etdl.evaluationClosed.getId(), null, new Long[] {etdl.templateItem2A.getId()});
       assertNotNull(l);
       assertEquals(2, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
-      assertTrue(ids.contains( etdl.answer4_1.getId() ));
-      assertTrue(ids.contains( etdl.answer5_1.getId() ));
+      assertTrue(ids.contains( etdl.answer2_2A.getId() ));
+      assertTrue(ids.contains( etdl.answer3_2A.getId() ));
 
-      l = deliveryService.getEvalAnswers( etdl.item2.getId(), etdl.evaluationClosed.getId(), null );
+      // restrict to multiple template items
+      l = deliveryService.getAnswersForEval(etdl.evaluationClosed.getId(), null, new Long[] {etdl.templateItem2A.getId(), etdl.templateItem5A.getId()});
+      assertNotNull(l);
+      assertEquals(3, l.size());
+      ids = EvalTestDataLoad.makeIdList(l);
+      assertTrue(ids.contains( etdl.answer2_2A.getId() ));
+      assertTrue(ids.contains( etdl.answer2_5A.getId() ));
+      assertTrue(ids.contains( etdl.answer3_2A.getId() ));
+
+      // test restricting to groups
+      l = deliveryService.getAnswersForEval(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE1_REF}, null);
       assertNotNull(l);
       assertEquals(2, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
-      assertTrue(ids.contains( etdl.answer2_2.getId() ));
-      assertTrue(ids.contains( etdl.answer3_2.getId() ));
+      assertTrue(ids.contains( etdl.answer2_2A.getId() ));
+      assertTrue(ids.contains( etdl.answer2_5A.getId() ));
 
-      // retrieve no answers for an eval item
-      l = deliveryService.getEvalAnswers( etdl.item1.getId(), etdl.evaluationActiveUntaken.getId(), null );
+      l = deliveryService.getAnswersForEval(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE2_REF}, null);
+      assertNotNull(l);
+      assertEquals(1, l.size());
+      ids = EvalTestDataLoad.makeIdList(l);
+      assertTrue(ids.contains( etdl.answer3_2A.getId() ));
+
+      // test restricting to groups and TIs
+      l = deliveryService.getAnswersForEval(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE1_REF}, new Long[] {etdl.templateItem2A.getId()});
+      assertNotNull(l);
+      assertEquals(1, l.size());
+      ids = EvalTestDataLoad.makeIdList(l);
+      assertTrue(ids.contains( etdl.answer2_2A.getId() ));
+
+      l = deliveryService.getAnswersForEval(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE2_REF}, new Long[] {etdl.templateItem2A.getId()});
+      assertNotNull(l);
+      assertEquals(1, l.size());
+      ids = EvalTestDataLoad.makeIdList(l);
+      assertTrue(ids.contains( etdl.answer3_2A.getId() ));
+
+      // test restricting to answers not in this group
+      l = deliveryService.getAnswersForEval(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE2_REF}, new Long[] {etdl.templateItem5A.getId()});
+      assertNotNull(l);
+      assertEquals(0, l.size());
+      
+      // test template item that is not in this evaluation
+      l = deliveryService.getAnswersForEval(etdl.evaluationClosed.getId(), null, new Long[] {etdl.templateItem1U.getId()});
       assertNotNull(l);
       assertEquals(0, l.size());
 
-      // TODO - add checks which only retrieve partial results for an eval (limit eval groups)
-
-      // TODO - check that invalid item/eval combinations cause failure?
-
       // check that invalid ids cause failure
       try {
-         l = deliveryService.getEvalAnswers( EvalTestDataLoad.INVALID_LONG_ID, etdl.evaluationActiveUntaken.getId(), null );
-         fail("Should have thrown exception");
-      } catch (IllegalArgumentException e) {
-         assertNotNull(e);
-      }
-
-      try {
-         l = deliveryService.getEvalAnswers( etdl.item1.getId(), EvalTestDataLoad.INVALID_LONG_ID, null );
+         l = deliveryService.getAnswersForEval( EvalTestDataLoad.INVALID_LONG_ID, null, null );
          fail("Should have thrown exception");
       } catch (IllegalArgumentException e) {
          assertNotNull(e);

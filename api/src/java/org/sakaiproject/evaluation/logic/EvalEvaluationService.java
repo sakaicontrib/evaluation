@@ -20,12 +20,10 @@ import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
-import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 
@@ -399,19 +397,6 @@ public interface EvalEvaluationService {
     * @return a list of response ids, in order by response id
     */
    public List<Long> getResponseIds(Long evaluationId, String[] evalGroupIds, Boolean completed);
-
-   /**
-    * Get the answers associated with this item and with a response to this evaluation,
-    * (i.e. item answers submitted as part of a response to the given evaluation) within
-    * the given evalGroupsIds, only gets answers from completed responses
-    * 
-    * @param itemId the id of an {@link EvalItem} object
-    * @param evaluationId the id of an {@link EvalEvaluation} object
-    * @param evalGroupIds the internal eval group ids (represents a site or group),
-    * if null, include count for all eval groups for this evaluation
-    * @return a list of {@link EvalAnswer} objects
-    */
-   public List<EvalAnswer> getAnswers(Long itemId, Long evaluationId, String[] evalGroupIds);
 
 
    // PERMISSIONS

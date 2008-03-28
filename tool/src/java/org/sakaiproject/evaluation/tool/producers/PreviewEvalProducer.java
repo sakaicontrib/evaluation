@@ -17,10 +17,8 @@ package org.sakaiproject.evaluation.tool.producers;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
@@ -33,6 +31,7 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
+import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
@@ -168,23 +167,13 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
       List<EvalTemplateItem> allItems = 
          authoringService.getTemplateItemsForTemplate(templateId, new String[] {}, new String[] {}, new String[] {});
 
-      // Get the nodeIds for all nodes which items are related to
-      Set<String> nodeIds = new HashSet<String>();
-      for (EvalTemplateItem templateItem : allItems) {
-         if (EvalConstants.HIERARCHY_LEVEL_NODE.equals(templateItem.getHierarchyLevel())) {
-            nodeIds.add(templateItem.getHierarchyNodeId());
-         }
-      }
-      List<EvalHierarchyNode> hierarchyNodes = new ArrayList<EvalHierarchyNode>();
-      if (nodeIds.size() > 0) {
-         Set<EvalHierarchyNode> nodes = hierarchyLogic.getNodesByIds(nodeIds.toArray(new String[] {}));
-         hierarchyNodes = hierarchyLogic.getSortedNodes(nodes);
-      }
+      // Get the sorted list of all nodes for this set of template items
+      List<EvalHierarchyNode> hierarchyNodes = RenderingUtils.makeEvalNodesList(hierarchyLogic, allItems);
 
       // make the TI data structure
       Map<String, List<String>> associates = new HashMap<String, List<String>>();
       associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, instructors);
-      TemplateItemDataList tidl = new TemplateItemDataList(allItems, hierarchyNodes, associates);
+      TemplateItemDataList tidl = new TemplateItemDataList(allItems, hierarchyNodes, associates, null);
 
       // loop through the TIGs and handle each associated category
       for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {

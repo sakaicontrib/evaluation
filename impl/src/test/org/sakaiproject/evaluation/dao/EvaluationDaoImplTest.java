@@ -581,49 +581,74 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       assertNotNull(s);
       assertEquals(2, s.size());
       ids = EvalTestDataLoad.makeIdList(s);
-      assertTrue(ids.contains( etdl.answer2_2.getId() ));
-      assertTrue(ids.contains( etdl.answer2_5.getId() ));
+      assertTrue(ids.contains( etdl.answer2_2A.getId() ));
+      assertTrue(ids.contains( etdl.answer2_5A.getId() ));
 
-      l = evaluationDao.getAnswers(etdl.item2.getId(), etdl.evaluationClosed.getId(), null);
+      // test getting all answers first
+      l = evaluationDao.getAnswers(etdl.evaluationClosed.getId(), null, null);
+      assertNotNull(l);
+      assertEquals(3, l.size());
+      ids = EvalTestDataLoad.makeIdList(l);
+      assertTrue(ids.contains( etdl.answer2_2A.getId() ));
+      assertTrue(ids.contains( etdl.answer2_5A.getId() ));
+      assertTrue(ids.contains( etdl.answer3_2A.getId() ));
+
+      // restrict to template item
+      l = evaluationDao.getAnswers(etdl.evaluationClosed.getId(), null, new Long[] {etdl.templateItem2A.getId()});
       assertNotNull(l);
       assertEquals(2, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
-      assertTrue(ids.contains( etdl.answer2_2.getId() ));
-      assertTrue(ids.contains( etdl.answer3_2.getId() ));
+      assertTrue(ids.contains( etdl.answer2_2A.getId() ));
+      assertTrue(ids.contains( etdl.answer3_2A.getId() ));
+
+      // restrict to multiple template items
+      l = evaluationDao.getAnswers(etdl.evaluationClosed.getId(), null, new Long[] {etdl.templateItem2A.getId(), etdl.templateItem5A.getId()});
+      assertNotNull(l);
+      assertEquals(3, l.size());
+      ids = EvalTestDataLoad.makeIdList(l);
+      assertTrue(ids.contains( etdl.answer2_2A.getId() ));
+      assertTrue(ids.contains( etdl.answer2_5A.getId() ));
+      assertTrue(ids.contains( etdl.answer3_2A.getId() ));
 
       // test restricting to groups
-      l = evaluationDao.getAnswers(etdl.item2.getId(), etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE1_REF});
+      l = evaluationDao.getAnswers(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE1_REF}, null);
+      assertNotNull(l);
+      assertEquals(2, l.size());
+      ids = EvalTestDataLoad.makeIdList(l);
+      assertTrue(ids.contains( etdl.answer2_2A.getId() ));
+      assertTrue(ids.contains( etdl.answer2_5A.getId() ));
+
+      l = evaluationDao.getAnswers(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE2_REF}, null);
       assertNotNull(l);
       assertEquals(1, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
-      assertTrue(ids.contains( etdl.answer2_2.getId() ));
+      assertTrue(ids.contains( etdl.answer3_2A.getId() ));
 
-      l = evaluationDao.getAnswers(etdl.item2.getId(), etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE2_REF});
+      // test restricting to groups and TIs
+      l = evaluationDao.getAnswers(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE1_REF}, new Long[] {etdl.templateItem2A.getId()});
       assertNotNull(l);
       assertEquals(1, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
-      assertTrue(ids.contains( etdl.answer3_2.getId() ));
+      assertTrue(ids.contains( etdl.answer2_2A.getId() ));
 
-      l = evaluationDao.getAnswers(etdl.item5.getId(), etdl.evaluationClosed.getId(), null);
+      l = evaluationDao.getAnswers(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE2_REF}, new Long[] {etdl.templateItem2A.getId()});
       assertNotNull(l);
       assertEquals(1, l.size());
       ids = EvalTestDataLoad.makeIdList(l);
-      assertTrue(ids.contains( etdl.answer2_5.getId() ));
+      assertTrue(ids.contains( etdl.answer3_2A.getId() ));
 
-      // test item that is not in this evaluation
-      l = evaluationDao.getAnswers(etdl.item3.getId(), etdl.evaluationClosed.getId(), null);
+      // test restricting to answers not in this group
+      l = evaluationDao.getAnswers(etdl.evaluationClosed.getId(), new String[] {EvalTestDataLoad.SITE2_REF}, new Long[] {etdl.templateItem5A.getId()});
+      assertNotNull(l);
+      assertEquals(0, l.size());
+      
+      // test template item that is not in this evaluation
+      l = evaluationDao.getAnswers(etdl.evaluationClosed.getId(), null, new Long[] {etdl.templateItem1U.getId()});
       assertNotNull(l);
       assertEquals(0, l.size());
 
-      // test invalid eval id
-      // TODO - this should probably throw an exception
-      l = evaluationDao.getAnswers(etdl.item1.getId(), Long.valueOf(999), null);
-      assertNotNull(l);
-      assertEquals(0, l.size());
-
-      // test invalid item id
-      // TODO - this should probably throw an exception
-      l = evaluationDao.getAnswers(Long.valueOf(999), etdl.evaluationClosed.getId(), null);
+      // test invalid eval id returns nothing
+      l = evaluationDao.getAnswers(EvalTestDataLoad.INVALID_LONG_ID, null, null);
       assertNotNull(l);
       assertEquals(0, l.size());
    }

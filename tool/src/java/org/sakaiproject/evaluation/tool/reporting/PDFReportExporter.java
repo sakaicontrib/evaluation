@@ -100,7 +100,7 @@ public class PDFReportExporter {
          // Security hole to pass in an empty groupID array because then we get *all* of them.
          List<EvalAnswer> itemAnswers = new ArrayList<EvalAnswer>();
          if (responses.groupIds != null && responses.groupIds.length > 0) {
-            itemAnswers = deliveryService.getEvalAnswers(item.getId(), responses.evaluation.getId(), responses.groupIds);
+            itemAnswers = deliveryService.getAnswersForEval(responses.evaluation.getId(), responses.groupIds, new Long[] {templateItem.getId()});
          }
 
          String templateItemType = TemplateItemUtils.getTemplateItemType(templateItem);

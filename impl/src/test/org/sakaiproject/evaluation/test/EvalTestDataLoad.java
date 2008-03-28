@@ -425,13 +425,13 @@ public class EvalTestDataLoad {
    public EvalResponse response6;
 
    // ANSWERS
-   public EvalAnswer answer1_1;
-   public EvalAnswer answer2_2;
-   public EvalAnswer answer2_5;
-   public EvalAnswer answer3_2;
-   public EvalAnswer answer4_1;
-   public EvalAnswer answer4_5;
-   public EvalAnswer answer5_1;
+   public EvalAnswer answer1_1P;
+   public EvalAnswer answer2_2A;
+   public EvalAnswer answer2_5A;
+   public EvalAnswer answer3_2A;
+   public EvalAnswer answer4_1User;
+   public EvalAnswer answer4_5User;
+   public EvalAnswer answer5_5User;
 
    // ITEM GROUPS
    /**
@@ -1005,41 +1005,41 @@ public class EvalTestDataLoad {
       response6 = new EvalResponse(new Date(), USER_ID, SITE2_REF, 
             new Date(), today, null, evaluationClosed);
 
-      answer1_1 = new EvalAnswer(response1, templateItem1P, item1, null, null, null, ANSWER_SCALED_ONE, null, null);
+      answer1_1P = new EvalAnswer(response1, templateItem1P, item1, null, null, null, ANSWER_SCALED_ONE, null, null);
 
-      answer2_2 = new EvalAnswer(response2, templateItem2A, item2, null, null, null, ANSWER_SCALED_ONE, null, null);
-      answer2_5 = new EvalAnswer(response2, templateItem5A, item5, MAINT_USER_ID, EvalConstants.ITEM_CATEGORY_INSTRUCTOR, ANSWER_TEXT, null, null, null);
+      answer2_2A = new EvalAnswer(response2, templateItem2A, item2, null, null, null, ANSWER_SCALED_ONE, null, null);
+      answer2_5A = new EvalAnswer(response2, templateItem5A, item5, MAINT_USER_ID, EvalConstants.ITEM_CATEGORY_INSTRUCTOR, ANSWER_TEXT, null, null, null);
 
-      answer3_2 = new EvalAnswer(response3, templateItem3A, item2, null, null, null, ANSWER_SCALED_TWO, null, null);
+      answer3_2A = new EvalAnswer(response3, templateItem2A, item2, null, null, null, ANSWER_SCALED_TWO, null, null);
       // left the text answer blank
 
-      answer4_1 = new EvalAnswer(response4, templateItem1User, item1, null, null, null, ANSWER_SCALED_THREE, null, null);
-      answer4_5 = new EvalAnswer(response4, templateItem5User, item5, MAINT_USER_ID, EvalConstants.ITEM_CATEGORY_INSTRUCTOR, ANSWER_TEXT, null, null, null);
+      answer4_1User = new EvalAnswer(response4, templateItem1User, item1, null, null, null, ANSWER_SCALED_THREE, null, null);
+      answer4_5User = new EvalAnswer(response4, templateItem5User, item5, MAINT_USER_ID, EvalConstants.ITEM_CATEGORY_INSTRUCTOR, ANSWER_TEXT, null, null, null);
 
-      answer5_1 = new EvalAnswer(response5, templateItem5User, item1, MAINT_USER_ID, EvalConstants.ITEM_CATEGORY_INSTRUCTOR, null, ANSWER_SCALED_TWO, null, null);
+      answer5_5User = new EvalAnswer(response5, templateItem5User, item5, MAINT_USER_ID, EvalConstants.ITEM_CATEGORY_INSTRUCTOR, null, ANSWER_SCALED_TWO, null, null);
       // left the text answer blank
 
       // associate the answers
       Set<EvalAnswer> answers = new HashSet<EvalAnswer>();
-      answers.add(answer1_1);
+      answers.add(answer1_1P);
       response1.setAnswers(answers);
 
       answers = new HashSet<EvalAnswer>();
-      answers.add(answer2_2);
-      answers.add(answer2_5);
+      answers.add(answer2_2A);
+      answers.add(answer2_5A);
       response2.setAnswers(answers);
 
       answers = new HashSet<EvalAnswer>();
-      answers.add(answer3_2);
+      answers.add(answer3_2A);
       response3.setAnswers(answers);
 
       answers = new HashSet<EvalAnswer>();
-      answers.add(answer4_1);
-      answers.add(answer4_5);
+      answers.add(answer4_1User);
+      answers.add(answer4_5User);
       response4.setAnswers(answers);
 
       answers = new HashSet<EvalAnswer>();
-      answers.add(answer5_1);
+      answers.add(answer5_5User);
       response5.setAnswers(answers);
 
       answers = new HashSet<EvalAnswer>();
@@ -1182,13 +1182,13 @@ public class EvalTestDataLoad {
       dao.save(response5);
       dao.save(response6);
 
-      dao.save(answer1_1);
-      dao.save(answer2_2);
-      dao.save(answer2_5);
-      dao.save(answer3_2);
-      dao.save(answer4_1);
-      dao.save(answer4_5);
-      dao.save(answer5_1);
+      dao.save(answer1_1P);
+      dao.save(answer2_2A);
+      dao.save(answer2_5A);
+      dao.save(answer3_2A);
+      dao.save(answer4_1User);
+      dao.save(answer4_5User);
+      dao.save(answer5_5User);
 
       dao.save(categoryA);
       dao.save(categoryB);

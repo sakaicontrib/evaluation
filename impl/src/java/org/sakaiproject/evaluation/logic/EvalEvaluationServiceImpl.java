@@ -26,17 +26,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
-import org.sakaiproject.evaluation.logic.EvalEvaluationService;
-import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
-import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
@@ -733,22 +729,6 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
             comparisons.add(ByPropsFinder.NULL);            
          }
       }
-   }
-
-   public List<EvalAnswer> getAnswers(Long itemId, Long evaluationId, String[] evalGroupIds) {
-      log.debug("itemId: " + itemId + ", evaluationId: " + evaluationId);
-
-      if (dao.countByProperties(EvalItem.class, new String[] { "id" }, new Object[] { itemId }) <= 0) {
-         throw new IllegalArgumentException("Could not find item with id: " + itemId);
-      }
-
-      if (! checkEvaluationExists(evaluationId)) {
-         throw new IllegalArgumentException("Could not find evaluation with id: " + evaluationId);
-      }
-
-      // pass through to the dao method
-      List<EvalAnswer> answers = dao.getAnswers(itemId, evaluationId, evalGroupIds);
-      return answers;
    }
 
 
