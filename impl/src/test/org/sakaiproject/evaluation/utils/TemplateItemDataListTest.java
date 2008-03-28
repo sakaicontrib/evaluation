@@ -23,6 +23,7 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
+import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
 
 import junit.framework.TestCase;
 
@@ -41,6 +42,7 @@ public class TemplateItemDataListTest extends TestCase {
       EvalTestDataLoad etdl = new EvalTestDataLoad();
 
       List<EvalTemplateItem> testList = new ArrayList<EvalTemplateItem>();
+      List<DataTemplateItem> flatList = null;
       TemplateItemDataList tidl = null;
 
       // test empty TI list fails
@@ -61,7 +63,16 @@ public class TemplateItemDataListTest extends TestCase {
       assertEquals(3, tidl.getTemplateItemsCount());
       assertEquals(3, tidl.getNonChildItemsCount());
       assertEquals(1, tidl.getAssociateGroupingsCount());
-      assertEquals(EvalConstants.ITEM_CATEGORY_COURSE, tidl.get(0).associateType);
+      assertEquals(EvalConstants.ITEM_CATEGORY_COURSE, tidl.getTemplateItemGroups().get(0).associateType);
+
+      // test the flattened data list
+      flatList = tidl.getDataTemplateItems();
+      assertNotNull(flatList);
+      assertEquals(2, flatList.size());
+      assertEquals(etdl.templateItem2A, flatList.get(0).templateItem);
+      assertTrue(flatList.get(0).isFirstInAssociated);
+      assertEquals(etdl.templateItem3A, flatList.get(1).templateItem);
+      assertFalse(flatList.get(1).isFirstInAssociated);
 
       // now add in some associates
       Map<String, List<String>> associates = new HashMap<String, List<String>>();
@@ -74,14 +85,25 @@ public class TemplateItemDataListTest extends TestCase {
       assertEquals(3, tidl.getTemplateItemsCount());
       assertEquals(3, tidl.getNonChildItemsCount());
       assertEquals(2, tidl.getAssociateGroupingsCount());
-      assertEquals(EvalConstants.ITEM_CATEGORY_COURSE, tidl.get(0).associateType);
-      assertEquals(2, tidl.get(0).getTemplateItemsCount());
-      assertEquals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, tidl.get(1).associateType);
-      assertEquals(1, tidl.get(1).getTemplateItemsCount());
-      assertEquals(EvalTestDataLoad.MAINT_USER_ID, tidl.get(1).associateId);
+      assertEquals(EvalConstants.ITEM_CATEGORY_COURSE, tidl.getTemplateItemGroups().get(0).associateType);
+      assertEquals(2, tidl.getTemplateItemGroups().get(0).getTemplateItemsCount());
+      assertEquals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, tidl.getTemplateItemGroups().get(1).associateType);
+      assertEquals(1, tidl.getTemplateItemGroups().get(1).getTemplateItemsCount());
+      assertEquals(EvalTestDataLoad.MAINT_USER_ID, tidl.getTemplateItemGroups().get(1).associateId);
       assertEquals(2, tidl.getAssociateTypes().size());
       assertEquals(EvalConstants.ITEM_CATEGORY_COURSE, tidl.getAssociateTypes().get(0));
       assertEquals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, tidl.getAssociateTypes().get(1));
+
+      // test the flattened data list
+      flatList = tidl.getDataTemplateItems();
+      assertNotNull(flatList);
+      assertEquals(3, flatList.size());
+      assertEquals(etdl.templateItem2A, flatList.get(0).templateItem);
+      assertTrue(flatList.get(0).isFirstInAssociated);
+      assertEquals(etdl.templateItem3A, flatList.get(1).templateItem);
+      assertFalse(flatList.get(1).isFirstInAssociated);
+      assertEquals(etdl.templateItem5A, flatList.get(2).templateItem);
+      assertTrue(flatList.get(2).isFirstInAssociated);
 
       // now test multiple associates
       associateIds.add(EvalTestDataLoad.ADMIN_USER_ID);
@@ -92,15 +114,28 @@ public class TemplateItemDataListTest extends TestCase {
       assertEquals(3, tidl.getTemplateItemsCount());
       assertEquals(3, tidl.getNonChildItemsCount());
       assertEquals(3, tidl.getAssociateGroupingsCount());
-      assertEquals(EvalConstants.ITEM_CATEGORY_COURSE, tidl.get(0).associateType);
-      assertEquals(2, tidl.get(0).getTemplateItemsCount());
-      assertEquals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, tidl.get(1).associateType);
-      assertEquals(1, tidl.get(1).getTemplateItemsCount());
-      assertEquals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, tidl.get(2).associateType);
-      assertEquals(1, tidl.get(2).getTemplateItemsCount());
+      assertEquals(EvalConstants.ITEM_CATEGORY_COURSE, tidl.getTemplateItemGroups().get(0).associateType);
+      assertEquals(2, tidl.getTemplateItemGroups().get(0).getTemplateItemsCount());
+      assertEquals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, tidl.getTemplateItemGroups().get(1).associateType);
+      assertEquals(1, tidl.getTemplateItemGroups().get(1).getTemplateItemsCount());
+      assertEquals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, tidl.getTemplateItemGroups().get(2).associateType);
+      assertEquals(1, tidl.getTemplateItemGroups().get(2).getTemplateItemsCount());
       assertEquals(2, tidl.getAssociateTypes().size());
       assertEquals(EvalConstants.ITEM_CATEGORY_COURSE, tidl.getAssociateTypes().get(0));
       assertEquals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, tidl.getAssociateTypes().get(1));
+
+      // test the flattened data list
+      flatList = tidl.getDataTemplateItems();
+      assertNotNull(flatList);
+      assertEquals(4, flatList.size());
+      assertEquals(etdl.templateItem2A, flatList.get(0).templateItem);
+      assertTrue(flatList.get(0).isFirstInAssociated);
+      assertEquals(etdl.templateItem3A, flatList.get(1).templateItem);
+      assertFalse(flatList.get(1).isFirstInAssociated);
+      assertEquals(etdl.templateItem5A, flatList.get(2).templateItem);
+      assertTrue(flatList.get(2).isFirstInAssociated);
+      assertEquals(etdl.templateItem5A, flatList.get(3).templateItem);
+      assertTrue(flatList.get(3).isFirstInAssociated);
 
       // now test adding in some hierarchy nodes
       List<EvalHierarchyNode> nodes = new ArrayList<EvalHierarchyNode>();
@@ -115,18 +150,29 @@ public class TemplateItemDataListTest extends TestCase {
       assertEquals(3, tidl.getTemplateItemsCount());
       assertEquals(3, tidl.getNonChildItemsCount());
       assertEquals(2, tidl.getAssociateGroupingsCount());
-      assertEquals(EvalConstants.ITEM_CATEGORY_COURSE, tidl.get(0).associateType);
-      assertEquals(2, tidl.get(0).getTemplateItemsCount());
-      assertEquals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, tidl.get(1).associateType);
-      assertEquals(1, tidl.get(1).getTemplateItemsCount());
+      assertEquals(EvalConstants.ITEM_CATEGORY_COURSE, tidl.getTemplateItemGroups().get(0).associateType);
+      assertEquals(2, tidl.getTemplateItemGroups().get(0).getTemplateItemsCount());
+      assertEquals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, tidl.getTemplateItemGroups().get(1).associateType);
+      assertEquals(1, tidl.getTemplateItemGroups().get(1).getTemplateItemsCount());
       assertEquals(2, tidl.getAssociateTypes().size());
       assertEquals(EvalConstants.ITEM_CATEGORY_COURSE, tidl.getAssociateTypes().get(0));
       assertEquals(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, tidl.getAssociateTypes().get(1));
       // node1 is not used so we will only get the top level nodes back
-      assertEquals(1, tidl.get(0).hierarchyNodeGroups.size());
-      assertNull(tidl.get(0).hierarchyNodeGroups.get(0).node);
-      assertEquals(1, tidl.get(1).hierarchyNodeGroups.size());
-      assertNull(tidl.get(1).hierarchyNodeGroups.get(0).node);
+      assertEquals(1, tidl.getTemplateItemGroups().get(0).hierarchyNodeGroups.size());
+      assertNull(tidl.getTemplateItemGroups().get(0).hierarchyNodeGroups.get(0).node);
+      assertEquals(1, tidl.getTemplateItemGroups().get(1).hierarchyNodeGroups.size());
+      assertNull(tidl.getTemplateItemGroups().get(1).hierarchyNodeGroups.get(0).node);
+
+      // test the flattened data list
+      flatList = tidl.getDataTemplateItems();
+      assertNotNull(flatList);
+      assertEquals(3, flatList.size());
+      assertEquals(etdl.templateItem2A, flatList.get(0).templateItem);
+      assertTrue(flatList.get(0).isFirstInAssociated);
+      assertEquals(etdl.templateItem3A, flatList.get(1).templateItem);
+      assertFalse(flatList.get(1).isFirstInAssociated);
+      assertEquals(etdl.templateItem5A, flatList.get(2).templateItem);
+      assertTrue(flatList.get(2).isFirstInAssociated);
 
       // TODO add in test data for TIs associated with nodes at some point
    }

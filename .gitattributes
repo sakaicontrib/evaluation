@@ -80,10 +80,8 @@ api/src/java/org/sakaiproject/evaluation/providers/EvalHierarchyProvider.java -t
 api/src/java/org/sakaiproject/evaluation/utils/ArrayUtils.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/utils/ComparatorsUtils.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/utils/EvalUtils.java -text svn_keywords=Date+Revision+Author+URL+Id
-api/src/java/org/sakaiproject/evaluation/utils/HierarchyNodeGroup.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/utils/SettingsLogicUtils.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/utils/TemplateItemDataList.java svn_keywords=Date+Revision+Author+HeadURL+Id
-api/src/java/org/sakaiproject/evaluation/utils/TemplateItemGroup.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/utils/TemplateItemUtils.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/pom.xml svn_keywords=Date+Revision+Author+URL+Id
 impl/project.xml -text svn_keywords=Date+Revision+Author+URL+Id

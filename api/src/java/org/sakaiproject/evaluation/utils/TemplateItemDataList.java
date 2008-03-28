@@ -25,19 +25,40 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 
 
 /**
- * An extension to list that allows us to easily get things like the total number of template items contained in this structure,
- * otherwise this basically behaves just like a normal list<br/>
+ * A special data structure for wrapping template items that allows us to easily get things 
+ * like the total number of template items contained in this structure and meta data about them<br/>
  * We can also store extra data in the list (like the total list of template items)<br/>
- * <b>NOTE:</b> The size of this list is going to be the number of {@link TemplateItemGroup}s contained,
- * these indicate the number of associate groupings
+ * <b>NOTE:</b> The size of this list is going to be the number of {@link DataTemplateItem}s contained,
+ * these indicate the total number of rendered items and not the total count of TemplateItems
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
-public class TemplateItemDataList extends ArrayList<TemplateItemGroup> {
+public class TemplateItemDataList {
 
+   private List<DataTemplateItem> dataTemplateItems = null;
    /**
-    * This should be the complete DISPLAYORDERED list of all templateItems in this data structure
+    * This is the main method you should call after creating this data structure,
+    * it will return the complete list of all the special 
+    * @return the complete DISPLAYORDERED list of all dataTemplateItems in this data structure
     */
+   public List<DataTemplateItem> getDataTemplateItems() {
+      if (dataTemplateItems == null) {
+         buildFlatDataList();
+      }
+      return dataTemplateItems;
+   }
+
+   private List<TemplateItemGroup> templateItemGroups = null;
+   /**
+    * @return the list of all {@link TemplateItemGroup}s in this structure
+    */
+   public List<TemplateItemGroup> getTemplateItemGroups() {
+      if (templateItemGroups == null) {
+         buildDataStructure();
+      }
+      return templateItemGroups;
+   }
+
    private List<EvalTemplateItem> allTemplateItems = null;
    /**
     * @return the complete DISPLAYORDERED list of all templateItems in this data structure
@@ -46,9 +67,6 @@ public class TemplateItemDataList extends ArrayList<TemplateItemGroup> {
       return allTemplateItems;
    }
 
-   /**
-    * The list of all hierarchy nodes which we are using with this set of templateItems
-    */
    private List<EvalHierarchyNode> hierarchyNodes = null;
    /**
     * @return the list of hierarchy nodes we are working with, empty if there are none
@@ -57,9 +75,6 @@ public class TemplateItemDataList extends ArrayList<TemplateItemGroup> {
       return hierarchyNodes;
    }
 
-   /**
-    * The list of all associates (defines the categories we are working with)
-    */
    private Map<String, List<String>> associates = null;
    /**
     * @return the map of associate types -> lists of ids for that type,
@@ -143,17 +158,51 @@ public class TemplateItemDataList extends ArrayList<TemplateItemGroup> {
     * should always be 1 or greater
     */
    public int getAssociateGroupingsCount() {
-      return this.size();
+      return templateItemGroups.size();
    }
 
+   // BUILD the flat list and return it
+
+   /**
+    * This turns the data structure into a flattened list of {@link DataTemplateItem}s
+    */
+   protected void buildFlatDataList() {
+      if (templateItemGroups == null) {
+         buildDataStructure();
+      }
+
+      dataTemplateItems = new ArrayList<DataTemplateItem>();
+      // loop through and build the flattened list
+      for (int i = 0; i < templateItemGroups.size(); i++) {
+         TemplateItemGroup tig = templateItemGroups.get(i);
+         for (int j = 0; j < tig.hierarchyNodeGroups.size(); j++) {
+            HierarchyNodeGroup hng = tig.hierarchyNodeGroups.get(j);
+            for (int k = 0; k < hng.templateItems.size(); k++) {
+               EvalTemplateItem templateItem = hng.templateItems.get(k);
+               DataTemplateItem dti = new DataTemplateItem(templateItem, tig.associateType, tig.associateId, hng.node);
+               if (k == 0) {
+                  dti.isFirstInNode = true;
+                  if (j == 0) {
+                     dti.isFirstInAssociated = true;
+                  }
+               }
+               dataTemplateItems.add(dti);
+            }
+         }
+      }
+   }
 
    // INTERNAL processing methods
 
+   /**
+    * This processes the data in the structure and builds up a nested list structure so the TIs are properly grouped
+    */
    protected void buildDataStructure() {
       if (allTemplateItems == null || hierarchyNodes == null || associates == null) {
          throw new IllegalArgumentException("null inputs are not allowed, empty lists are ok though");
       }
 
+      templateItemGroups = new ArrayList<TemplateItemGroup>();
       if (allTemplateItems.size() > 0) {
          // filter out the block child items, to get a list of non-child items
          List<EvalTemplateItem> nonChildItemsList = TemplateItemUtils.getNonChildItems(this.allTemplateItems);
@@ -178,7 +227,7 @@ public class TemplateItemDataList extends ArrayList<TemplateItemGroup> {
                   // handle the data creation for this associateId
                   TemplateItemGroup tig = new TemplateItemGroup(associateType, associateId);
                   tig.hierarchyNodeGroups = new ArrayList<HierarchyNodeGroup>();
-                  this.add(tig);
+                  templateItemGroups.add(tig);
 
                   // now handle the hierarchy levels
                   // top level first
@@ -214,5 +263,165 @@ public class TemplateItemDataList extends ArrayList<TemplateItemGroup> {
       tig.hierarchyNodeGroups.add(hng);
    }
 
+
+   // INNER classes
+
+   /**
+    * This is a template item with lots of extra meta data so that it can be easily determined where it
+    * goes in the processing order and whether it is in the hierarchy or associated with nodes<br/>
+    * <b>NOTE:</b> The same template item can belong to many DataTemplateItems
+    * 
+    * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
+    */
+   public class DataTemplateItem {
+
+      /**
+       * The template item for this data object
+       */
+      public EvalTemplateItem templateItem;
+      /**
+       * The type (category) of this template item,
+       * this will usually be like {@link EvalConstants#ITEM_CATEGORY_INSTRUCTOR},
+       * required and cannot be null
+       */
+      public String associateType;
+      /**
+       * The optional ID of the thing that is associated with this type for this template item,
+       * e.g. if this is an instructor it would be their internal userId<br/>
+       * can be null
+       */
+      public String associateId;
+      /**
+       * The hierarchy node associated with this template items,
+       * null indicates this is the top level and not a node at all
+       */
+      public EvalHierarchyNode node;
+      /**
+       * true if this is the first item for its associated type and id
+       */
+      public boolean isFirstInAssociated = false;
+      /**
+       * true if this is the first item for the hierarchy node (or for the top level)
+       */
+      public boolean isFirstInNode = false;
+      /**
+       * this will be null if this is not a block parent,
+       * if this is a block parent then this will be a list of all block children in displayOrder 
+       */
+      public List<EvalTemplateItem> blockChildItems;
+
+      public DataTemplateItem(EvalTemplateItem templateItem, String associateType,
+            String associateId, EvalHierarchyNode node) {
+         this.templateItem = templateItem;
+         this.associateType = associateType;
+         this.associateId = associateId;
+         this.node = node;
+         if (TemplateItemUtils.isBlockParent(templateItem)) {
+            blockChildItems = TemplateItemUtils.getChildItems(allTemplateItems, templateItem.getId());
+         }
+      }
+
+   }
+
+   /**
+    * This is a high level group of template items related to categories (e.g. Course, Instructor, ...),
+    * these categories should receive special treatment in most cases<br/>
+    * The structure goes {@link TemplateItemGroup} -> {@link HierarchyNodeGroup} -> {@link EvalTemplateItem}
+    * <b>NOTE:</b> There will always be a top level {@link HierarchyNodeGroup} but it may have an empty list of
+    * templateItems inside it<br/>
+    * Normally you would want to iterate through the {@link #hierarchyNodeGroups} and 
+    * 
+    * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
+    */
+   public class TemplateItemGroup {
+
+      /**
+       * The type (category) of this TIG,
+       * this will usually be like {@link EvalConstants#ITEM_CATEGORY_INSTRUCTOR},
+       * required and cannot be null
+       */
+      public String associateType;
+      /**
+       * The optional ID of the thing that is associated with this type,
+       * e.g. if this is an instructor it would be their internal userId<br/>
+       * can be null
+       */
+      public String associateId;
+      /**
+       * The list of hierarchical node groups within this group,
+       * ordered correctly for display and reporting
+       */
+      public List<HierarchyNodeGroup> hierarchyNodeGroups;
+
+      /**
+       * @return the count of all template items contained in this group,
+       * does not include block children
+       */
+      public int getTemplateItemsCount() {
+         int total = 0;
+         for (HierarchyNodeGroup hng : hierarchyNodeGroups) {
+            total += hng.templateItems.size();
+         }
+         return total;
+      }
+
+      /**
+       * @return the list of all template items in this group in displayOrder,
+       * does not include block children
+       */
+      public List<EvalTemplateItem> getTemplateItems() {
+         List<EvalTemplateItem> tis = new ArrayList<EvalTemplateItem>();
+         for (HierarchyNodeGroup hng : hierarchyNodeGroups) {
+            tis.addAll(hng.templateItems);
+         }
+         return tis;
+      }
+
+      public TemplateItemGroup(String associateType, String associateId) {
+         this.associateType = associateType;
+         this.associateId = associateId;
+         hierarchyNodeGroups = new ArrayList<HierarchyNodeGroup>();
+      }
+
+      public TemplateItemGroup(String associateType, String associateId, List<HierarchyNodeGroup> hierarchyNodeGroups) {
+         this.associateType = associateType;
+         this.associateId = associateId;
+         this.hierarchyNodeGroups = hierarchyNodeGroups;
+      }
+   }
+
+   /**
+    * This is a high level group of hierarchy nodes which contain template items,
+    * these nodes should receive special treatment in most cases<br/>
+    * The structure goes {@link TemplateItemGroup} -> {@link HierarchyNodeGroup} -> {@link EvalTemplateItem}<br/>
+    * Normally you would want to iterate over the {@link #templateItems} and process each one in order,
+    * don't forget to handle the special case of the block parents
+    * 
+    * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
+    */
+   public class HierarchyNodeGroup {
+
+      /**
+       * The hierarchy node associated with this group of template items,
+       * null indicates this is the top level and all TIs here are associated with the top level and not a node at all
+       */
+      public EvalHierarchyNode node;
+      /**
+       * The list of template items within this group (will not include block-child items),
+       * ordered correctly for display and reporting
+       */
+      public List<EvalTemplateItem> templateItems;
+
+      public HierarchyNodeGroup(EvalHierarchyNode node) {
+         this.node = node;
+         templateItems = new ArrayList<EvalTemplateItem>();
+      }
+
+      public HierarchyNodeGroup(EvalHierarchyNode node, List<EvalTemplateItem> templateItems) {
+         this.node = node;
+         this.templateItems = templateItems;
+      }
+
+   }
 
 }
