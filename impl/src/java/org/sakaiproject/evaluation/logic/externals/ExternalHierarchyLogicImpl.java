@@ -265,6 +265,25 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
    }
 
 
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic#getSortedNodes(java.util.Collection)
+    */
+   public List<EvalHierarchyNode> getSortedNodes(Collection<EvalHierarchyNode> nodes) {
+      List<HierarchyNode> hNodes = new ArrayList<HierarchyNode>();
+      for (EvalHierarchyNode eNode : nodes) {
+         hNodes.add(makeHierarchyNode(eNode));
+      }
+
+      List<HierarchyNode> sortedNodes = HierarchyUtils.getSortedNodes(hNodes);
+
+      List<EvalHierarchyNode> sortedENodes = new ArrayList<EvalHierarchyNode>();
+      for (HierarchyNode hNode : sortedNodes) {
+         sortedENodes.add( makeEvalNode(hNode) );
+      }
+      return sortedENodes;
+   }
+
+
 
    public void assignUserNodePerm(String userId, String nodeId, String hierarchyPermConstant) {
       // TODO Auto-generated method stub
@@ -303,6 +322,24 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
       eNode.directParentNodeIds = node.directParentNodeIds;
       eNode.parentNodeIds = node.parentNodeIds;
       return eNode;
+   }
+
+   /**
+    * Create an eval node from a basic hierarchy node
+    * 
+    * @param evalNode an {@link EvalHierarchyNode}
+    * @return a {@link HierarchyNode} based on the eval node
+    */
+   private HierarchyNode makeHierarchyNode(EvalHierarchyNode evalNode) {
+      HierarchyNode node = new HierarchyNode();
+      node.id = evalNode.id;
+      node.title = evalNode.title;
+      node.description = evalNode.description;
+      node.directChildNodeIds = evalNode.directChildNodeIds;
+      node.childNodeIds = evalNode.childNodeIds;
+      node.directParentNodeIds = evalNode.directParentNodeIds;
+      node.parentNodeIds = evalNode.parentNodeIds;
+      return node;
    }
 
    /**

@@ -229,6 +229,12 @@ public class MockExternalHierarchyLogic implements ExternalHierarchyLogic {
    }
 
 
+   public List<EvalHierarchyNode> getSortedNodes(Collection<EvalHierarchyNode> nodes) {
+      // doesn't really sort anything
+      return new ArrayList<EvalHierarchyNode>(nodes);
+   }
+
+
    // NO PERMS STUFF WORKING YET
 
    /* (non-Javadoc)

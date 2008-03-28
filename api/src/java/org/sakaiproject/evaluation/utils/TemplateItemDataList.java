@@ -27,25 +27,22 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 /**
  * A special data structure for wrapping template items that allows us to easily get things 
  * like the total number of template items contained in this structure and meta data about them<br/>
- * We can also store extra data in the list (like the total list of template items)<br/>
- * <b>NOTE:</b> The size of this list is going to be the number of {@link DataTemplateItem}s contained,
- * these indicate the total number of rendered items and not the total count of TemplateItems
+ * We can also store extra data in the list (like the total list of template items)
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
 public class TemplateItemDataList {
 
-   private List<DataTemplateItem> dataTemplateItems = null;
    /**
-    * This is the main method you should call after creating this data structure,
-    * it will return the complete list of all the special 
-    * @return the complete DISPLAYORDERED list of all dataTemplateItems in this data structure
+    * This will create a flat list of all wrapped template items in the proper order,
+    * these indicate the total number of rendered items and not the total count of TemplateItems<br/>
+    * 
+    * @param includeBlockChildren if true then block children will be included in the flat list,
+    * otherwise they are only included in the {@link DataTemplateItem#blockChildItems} list
+    * @return the complete DISPLAYORDERED list of DataTemplateItems in this data structure
     */
-   public List<DataTemplateItem> getDataTemplateItems() {
-      if (dataTemplateItems == null) {
-         buildFlatDataList();
-      }
-      return dataTemplateItems;
+   public List<DataTemplateItem> getFlatListOfDataTemplateItems(boolean includeBlockChildren) {
+      return buildFlatDataList(null, null, includeBlockChildren);
    }
 
    private List<TemplateItemGroup> templateItemGroups = null;
@@ -154,10 +151,10 @@ public class TemplateItemDataList {
    }
 
    /**
-    * @return the count of the number of associate groupings,
+    * @return the count of the number of associate TI groupings,
     * should always be 1 or greater
     */
-   public int getAssociateGroupingsCount() {
+   public int getTemplateItemGroupsCount() {
       return templateItemGroups.size();
    }
 
@@ -165,18 +162,33 @@ public class TemplateItemDataList {
 
    /**
     * This turns the data structure into a flattened list of {@link DataTemplateItem}s
+    * 
+    * @param includeTIG if not null, then only return wrapped items from this {@link TemplateItemGroup}
+    * @param includeHNG if not null, then only return wrapped items from this {@link HierarchyNodeGroup}
+    * @param includeBlockChildren if true then block children will be included in the flat list,
+    * otherwise they are only included in the {@link DataTemplateItem#blockChildItems} list
     */
-   protected void buildFlatDataList() {
+   protected List<DataTemplateItem> buildFlatDataList(TemplateItemGroup includeTIG, HierarchyNodeGroup includeHNG, boolean includeBlockChildren) {
       if (templateItemGroups == null) {
          buildDataStructure();
       }
 
-      dataTemplateItems = new ArrayList<DataTemplateItem>();
+      List<DataTemplateItem> dataTemplateItems = new ArrayList<DataTemplateItem>();
       // loop through and build the flattened list
       for (int i = 0; i < templateItemGroups.size(); i++) {
          TemplateItemGroup tig = templateItemGroups.get(i);
+         if (includeTIG != null
+               && ! includeTIG.equals(tig)) {
+            // skip data from all groups except the matching one
+            continue;
+         }
          for (int j = 0; j < tig.hierarchyNodeGroups.size(); j++) {
             HierarchyNodeGroup hng = tig.hierarchyNodeGroups.get(j);
+            if (includeHNG != null
+                  && ! includeHNG.equals(hng)) {
+               // skip data from all groups except the matching one
+               continue;
+            }
             for (int k = 0; k < hng.templateItems.size(); k++) {
                EvalTemplateItem templateItem = hng.templateItems.get(k);
                DataTemplateItem dti = new DataTemplateItem(templateItem, tig.associateType, tig.associateId, hng.node);
@@ -187,9 +199,19 @@ public class TemplateItemDataList {
                   }
                }
                dataTemplateItems.add(dti);
+               // add in the block children to the flat list
+               if (includeBlockChildren 
+                     && dti.blockChildItems != null) {
+                  for (EvalTemplateItem childItem : dti.blockChildItems) {
+                     DataTemplateItem child = new DataTemplateItem(childItem, tig.associateType, tig.associateId, hng.node);
+                     child.blockParentId = dti.templateItem.getId();
+                     dataTemplateItems.add(child);
+                  }
+               }
             }
          }
       }
+      return dataTemplateItems;
    }
 
    // INTERNAL processing methods
@@ -309,6 +331,11 @@ public class TemplateItemDataList {
        * if this is a block parent then this will be a list of all block children in displayOrder 
        */
       public List<EvalTemplateItem> blockChildItems;
+      /**
+       * set to the templateItem id of the blockParent if this is a block child,
+       * blockParentId will be null if this is not a block child
+       */
+      public Long blockParentId = null;
 
       public DataTemplateItem(EvalTemplateItem templateItem, String associateType,
             String associateId, EvalHierarchyNode node) {
@@ -377,6 +404,15 @@ public class TemplateItemDataList {
          return tis;
       }
 
+      /**
+       * @param includeBlockChildren if true then block children will be included in the flat list,
+       * otherwise they are only included in the {@link DataTemplateItem#blockChildItems} list
+       * @return the list of all wrapped template items in this group in displayOrder
+       */
+      public List<DataTemplateItem> getDataTemplateItems(boolean includeBlockChildren) {
+         return buildFlatDataList(this, null, includeBlockChildren);
+      }
+
       public TemplateItemGroup(String associateType, String associateId) {
          this.associateType = associateType;
          this.associateId = associateId;
@@ -412,6 +448,15 @@ public class TemplateItemDataList {
        */
       public List<EvalTemplateItem> templateItems;
 
+      /**
+       * @param includeBlockChildren if true then block children will be included in the flat list,
+       * otherwise they are only included in the {@link DataTemplateItem#blockChildItems} list
+       * @return the list of all wrapped template items in this group in displayOrder
+       */
+      public List<DataTemplateItem> getDataTemplateItems(boolean includeBlockChildren) {
+         return buildFlatDataList(null, this, includeBlockChildren);
+      }
+
       public HierarchyNodeGroup(EvalHierarchyNode node) {
          this.node = node;
          templateItems = new ArrayList<EvalTemplateItem>();
@@ -424,4 +469,32 @@ public class TemplateItemDataList {
 
    }
 
+   /**
+    * A helper method which allows us to deal with item categories more easily,
+    * simply supply the item category type and an array of values in EvalConstants.ITEM_CATEGORY_ORDER
+    * to match against the category
+    * 
+    * @param categoryType the category to match
+    * @param values the values corresponding to the categories
+    * @return the appropriate value
+    * @throws IllegalStateException if the categoryType does not match a valid one
+    */
+   public static String getValueForCategory(String categoryType, String... values) {
+      boolean found = false;
+      if (values == null 
+            || values.length != EvalConstants.ITEM_CATEGORY_ORDER.length) {
+         throw new IllegalArgumentException("Must supply the same number of values as the number of valid categories");
+      }
+      String value = null;
+      for (int i = 0; i < EvalConstants.ITEM_CATEGORY_ORDER.length; i++) {
+         if (categoryType.equals(EvalConstants.ITEM_CATEGORY_ORDER[i])) {
+            found = true;
+            value = values[i];
+         }
+      }
+      if (! found) {
+         throw new IllegalStateException("Don't know how to handle rendering category type: " + categoryType);
+      }
+      return value;
+   }
 }
