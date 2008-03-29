@@ -599,6 +599,7 @@
       <property name="evalSettings"
          ref="org.sakaiproject.evaluation.logic.EvalSettings" />
       <property name="localResponsesLogic" ref="localResponsesLogic" />
+      <property name="messages" ref="targettedMessageList" />
       <property name="locale" ref="requestLocale" />
    </bean>
 
@@ -642,9 +643,7 @@
          ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
       <property name="externalHierarchyLogic"
          ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
-      <property name="reportsBean" ref="reportsBean" />
       <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-      <property name="evalResponseAggregatorUtil" ref="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil" />
       <property name="reportingPermissions" ref="org.sakaiproject.evaluation.logic.ReportingPermissions" />
    </bean>
 

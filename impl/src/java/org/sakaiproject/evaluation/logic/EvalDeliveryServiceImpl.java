@@ -589,7 +589,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                   + " response (" + response.getId() + ") for user (" + response.getOwner() + ")"
                   + " :: missing keys=" + ArrayUtils.arrayToString(requiredAnswerKeys.toArray(new String[] {})) 
                   + " :: received keys=" + ArrayUtils.arrayToString(answeredAnswerKeys.toArray(new String[] {})), 
-                  ResponseSaveException.TYPE_MISSING_REQUIRED_ANSWERS);
+                  requiredAnswerKeys.toArray(new String[] {}) );
          }
       }
 

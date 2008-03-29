@@ -27,10 +27,23 @@ public class ResponseSaveException extends RuntimeException {
    public static String TYPE_BLANK_RESPONSE = "blankResponse";
 
    public String type;
+   public String[] missingItemAnswerKeys;
 
    public ResponseSaveException(String message, String type) {
       super(message);
       this.type = type;
    }
-   
+
+   /**
+    * Constructor for error where we are missing required answers
+    * 
+    * @param message the message
+    * @param missingItemAnswerKeys and array of itemAnswerKeys
+    */
+   public ResponseSaveException(String message, String[] missingItemAnswerKeys) {
+      super(message);
+      this.type = TYPE_MISSING_REQUIRED_ANSWERS;
+      this.missingItemAnswerKeys = missingItemAnswerKeys;
+   }
+
 }
