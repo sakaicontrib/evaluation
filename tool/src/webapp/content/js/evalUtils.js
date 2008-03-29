@@ -15,8 +15,8 @@ var EvalSystem = function() {
    * them. At the moment this just escapes the colons, should probably have a
    * fuller (or automatic) jquery escaping mechanism.
    */
-  function escForJquery(value) {
-    return value.replace(/:/g, "\\:");
+  function escIdForJquery(value) {
+    return value != null ? "#" + value.replace(/:/g, "\\:") : null;
   }
   
   /**
@@ -75,11 +75,11 @@ var EvalSystem = function() {
      */
   	initAssignAdhocGroupArea: function (saveButtonId,addMoreUsersButtonId,
         groupNameInputId,emailInputId,emailListDivId,uvburl) {
-        var groupNameInput = $("#"+escForJquery(groupNameInputId));
-        var emailListInput = $("#"+escForJquery(emailInputId));
-        var emailListDiv = $("#"+escForJquery(emailListDivId));
-        var saveButton = $("#"+escForJquery(saveButtonId));
-        var addMoreUsersButton = $("#"+escForJquery(addMoreUsersButtonId));
+        var groupNameInput = $(escIdForJquery(groupNameInputId));
+        var emailListInput = $(escIdForJquery(emailInputId));
+        var emailListDiv = $(escIdForJquery(emailListDivId));
+        var saveButton = $(escIdForJquery(saveButtonId));
+        var addMoreUsersButton = $(escIdForJquery(addMoreUsersButtonId));
         
         var adhocGroupId = null;
    
@@ -145,9 +145,9 @@ var EvalSystem = function() {
   	},
     
     hideAndShowAssignArea: function(areaId,showId,hideId) {
-        var area = $("#"+escForJquery(areaId));
-        var showButton = $("#"+escForJquery(showId));
-        var hideButton = $("#"+escForJquery(hideId));
+        var area = $(escIdForJquery(areaId));
+        var showButton = $(escIdForJquery(showId));
+        var hideButton = $(escIdForJquery(hideId));
         
         var clickAction = function(event) {
             if (area.is(':hidden')) {
@@ -167,6 +167,57 @@ var EvalSystem = function() {
         
         showButton.click( function (event) { clickAction(event) });
         hideButton.click( function (event) { clickAction(event) });
+    },
+
+    initEvalReportView: function () {
+        // for now this is just enabling toggling of comments and responses
+        // see the makeToggle method for description of arguments
+        EvalSystem.makeToggle("showAllComments", "hideAllComments", null, "showcomments", false);
+        EvalSystem.makeToggle("showAllTextResponses", "hideAllTextResponses", null, "showtextresponses", true);
+    },
+
+    /**
+     * This will hide an area (or a set areas that match the toggleClass)
+     * when the element with hideId is clicked (it will also be hidden),
+     * it will show the area(s) and the hideId element when the element with showId is clicked,
+     * and also hide the showId element
+     * showId: the id of the element that triggers the show when clicked
+     * hideId: the id of the element that triggers the hide when clicked
+     * areaId: the id of area (div probably) to show/hide, set null if not used
+     * toggleClass: a classname such that all elements with this class will be shown/hidden, set null if not used
+     * initialHide: if true then start things hidden, else start things shown (default if unspecified)
+     */
+    makeToggle: function (showId, hideId, areaId, toggleClass, initialHide) {
+        var showButton = $(escIdForJquery(showId));
+        var hideButton = $(escIdForJquery(hideId));
+        var area = $(escIdForJquery(areaId));
+        var toggles = $(toggleClass == null ? null : "." + toggleClass);
+
+        showButton.show();
+        hideButton.show();
+
+        var showAction = function(event) {
+            showButton.hide();
+            hideButton.show();
+            area.show("normal");
+            toggles.show("normal");
+        }
+
+        var hideAction = function(event) {
+            showButton.show();
+            hideButton.hide();
+            area.hide("normal");
+            toggles.hide("normal");
+        }
+
+        if (initialHide) {
+            hideAction();
+        } else {
+            showAction();
+        }
+
+        showButton.click( function (event) { showAction(event) });
+        hideButton.click( function (event) { hideAction(event) });
     },
 
     // this just makes it easier to add in more stuff later -AZ
