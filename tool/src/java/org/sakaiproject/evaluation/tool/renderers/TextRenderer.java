@@ -51,6 +51,9 @@ public class TextRenderer implements ItemRenderer {
 	public UIJointContainer renderItem(UIContainer parent, String ID, String[] bindings, EvalTemplateItem templateItem, int displayNumber, boolean disabled) {
 
 		UIJointContainer container = new UIJointContainer(parent, ID, COMPONENT_ID);
+      if (templateItem.renderOption) {
+         container.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
+      }
 
 		if (displayNumber <= 0) displayNumber = 0;
 		String initValue = null;
