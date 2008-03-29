@@ -49,6 +49,7 @@
                      <h4 rsf:id="nodeTitle">title for this node section</h4>
                   </li>
                   <li rsf:id="itemrow:templateItem" style="padding:0">
+
                     <!-- DIV tag for rendering block parent text or header text -->
                     <div rsf:id="textualItem:">
                         <table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "100%" class="listHier lines" style="margin:0">
@@ -63,6 +64,7 @@
                             </tr>
                         </table>
                     </div>
+
                     <!-- DIV tag for Scaled display -->
                     <div rsf:id="scaledSurvey:">
                         <table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "100%" class="listHier lines" style="margin:0">
@@ -81,11 +83,21 @@
                                     <h5><span rsf:id="responseText">answer choice text</span></h5>
                                 </td>
                                 <td class="special">
-                                    <span  rsf:id="responseTotal">#</span> Responses
+                                    <span rsf:id="responsesCount"># Responses</span>
                                 </td>
                             </tr>
                         </table>
+                        <div rsf:id="showComments:" style="margin-left: 1em;">
+                           <span rsf:id="noComments" style="font-style: italic;"></span>
+                           <ol style="list-style: lower-alpha; list-style-position: inside;">
+                              <li rsf:id="comments:">
+                                 <!-- //gsilver: let the list take care of the numbers -->
+                                 <span rsf:id="itemComment">comment here</span>
+                              </li>   
+                           </ol>
+                        </div>
                     </div>
+
                     <!-- DIV tag for Essay type -->
                     <div rsf:id="essayType:">
                       <table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "100%" class="listHier lines" style="margin:0">
@@ -96,38 +108,26 @@
                                 <td width="70%" valign="top">
                                     <h4><span rsf:id="itemText"/></h4>
                                 </td>
-                                <td>
-                                    <div rsf:id="showNA:">N/A</div>
-                                    <a href="#" rsf:id="essayResponse">View Responses</a>
+                                <td class="special">
+                                    <span rsf:id="responsesCount"># Responses</span>
+                                    <div rsf:id="showNA:" style="display: inline;">
+                                        <span rsf:id="msg=reporting.notapplicable.shortlabel">N/A</span>
+                                        :
+                                        <span rsf:id="naCount">5</span>
+                                    </div>
                                 </td>
                             </tr>
                         </table>
-                    </div>
-                    <!-- DIV tag for Unhidden Essay Questions -->
-                     <div rsf:id="expandedEssayType:">
-                        <table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width="100%" class="listHier lines" style="margin:0">
-                           <tr class="highLightRow">
-                              <td width="3%" valign="top">
-                                 <span rsf:id="itemNum">#</span>.
-                              </td>
-                              <td width="70%" valign="top">
-                                 <h4><span rsf:id="itemText"/></h4>
-                              </td>
-                              <td>
-                                 <div rsf:id="showNA:">N/A</div>
-                                 <a href="#" rsf:id="essayResponse">View Responses</a>
-                              </td>
-                           </tr>
-                        </table>
-                        <div style="margin-left: 1em;">
+                        <div rsf:id="showResponses:" style="margin-left: 1em;">
+                           <span rsf:id="noResponses" style="font-style: italic;"></span>
                            <ol style="list-style: lower-alpha; list-style-position: inside;">
-                              <li rsf:id="answers:">
+                              <li rsf:id="responses:">
                                  <!-- //gsilver: let the list take care of the numbers -->
-                                 <span rsf:id="itemAnswer">essay answer here</span>
+                                 <span rsf:id="itemResponse">essay response here</span>
                               </li>   
                            </ol>
                         </div>
-                     </div>
+                    </div>
 
                   </li>
                </ol>
