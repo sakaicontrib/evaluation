@@ -149,7 +149,6 @@ public class EvalPDFReportBuilder {
        } catch (Exception e) {
           throw new UniversalRuntimeException("Unable to add Header to PDF Report");
        }
-       
     }
     
     public void addEssayResponse(String question, List<String> responses) {
