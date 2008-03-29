@@ -54,6 +54,9 @@ public class TemplateItemDataListTest extends TestCase {
       }
 
       // test that we can produce a valid one
+      etdl.templateItem2A.setId(102l);
+      etdl.templateItem3A.setId(103l);
+      etdl.templateItem5A.setId(105l);
       testList.add(etdl.templateItem2A); // course
       testList.add(etdl.templateItem3A); // course
       testList.add(etdl.templateItem5A); // instructor
@@ -179,6 +182,9 @@ public class TemplateItemDataListTest extends TestCase {
       assertTrue(flatList.get(2).isFirstInAssociated);
 
       // TODO add in test data for TIs associated with nodes at some point
+
+      // TODO add in tests for answers mapping
+
    }
 
 }

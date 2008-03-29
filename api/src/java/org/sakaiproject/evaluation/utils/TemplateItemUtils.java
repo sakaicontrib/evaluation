@@ -404,6 +404,10 @@ public class TemplateItemUtils {
       if (templateItemId == null) {
          throw new IllegalArgumentException("templateItemId must be set");
       }
+      if (EvalConstants.ITEM_CATEGORY_COURSE.equals(associatedType)) {
+         associatedType = null;
+         associatedId = null;
+      }
       return templateItemId.toString() + "_" + associatedType + "_" + associatedId;
    }
 

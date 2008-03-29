@@ -293,7 +293,6 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
     * @param dti the wrapper for this templateItem
     */
    private void renderTemplateItemResults(UIBranchContainer tofill, DataTemplateItem dti, ReportParameters reportViewParams) {
-      displayNumber++;
       EvalTemplateItem templateItem = dti.templateItem;
       String templateItemType = TemplateItemUtils.getTemplateItemType(templateItem);
 
@@ -305,61 +304,66 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
             || EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(templateItemType)
             || EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(templateItemType) ) {
          // scales/choices type item
-         EvalScale scale = templateItem.getItem().getScale();
-         String[] scaleOptions = scale.getOptions();
-         int optionCount = scaleOptions.length;
-         String scaleLabels[] = new String[optionCount];
+         displayNumber++;
 
          UIBranchContainer scaled = UIBranchContainer.make(tofill, "scaledSurvey:");
 
          UIOutput.make(scaled, "itemNum", displayNumber+"");
          UIVerbatim.make(scaled, "itemText", templateItem.getItem().getItemText());
 
-         int[] responseNumbers = responseAggregator.countResponseChoices(templateItemType, scaleLabels.length, itemAnswers);
-
          int responsesCount = 0;
-         for (int x = 0; x < scaleLabels.length; x++) {
-            int responseCount = responseNumbers[x];
-            UIBranchContainer answerbranch = UIBranchContainer.make(scaled, "answers:", x + "");
-            UIOutput.make(answerbranch, "responseText", scaleOptions[x]);
-            UIOutput.make(answerbranch, "responseTotal", responseCount+"");
-            responsesCount += responseCount;
-         }
-
          int naCount = 0;
-         if (templateItem.getUsesNA()) {
-            naCount = responseNumbers[responseNumbers.length-1];
-            UIBranchContainer answerbranch = UIBranchContainer.make(scaled, "answers:");
-            UIMessage.make(answerbranch, "responseText", "reporting.notapplicable.longlabel");
-            UIOutput.make(answerbranch, "responseTotal", naCount+"");
+         if (! VIEWMODE_ALLESSAYS.equals(currentViewMode)) {
+            // if we are in essay view mode then do not show the scale or the answers counts
+            EvalScale scale = templateItem.getItem().getScale();
+            String[] scaleOptions = scale.getOptions();
+            String scaleLabels[] = new String[scaleOptions.length];
+
+            int[] responseNumbers = EvalResponseAggregatorUtil.countResponseChoices(templateItemType, scaleOptions.length, itemAnswers);
+
+            for (int x = 0; x < scaleLabels.length; x++) {
+               int responseCount = responseNumbers[x];
+               responsesCount += responseCount;
+               UIBranchContainer answerbranch = UIBranchContainer.make(scaled, "answers:", x + "");
+               UIOutput.make(answerbranch, "responseText", scaleOptions[x]);
+               UIOutput.make(answerbranch, "responseTotal", responseCount+"");
+            }
+
+            if (templateItem.getUsesNA()) {
+               naCount = responseNumbers[responseNumbers.length-1];
+               UIBranchContainer answerbranch = UIBranchContainer.make(scaled, "answers:");
+               UIMessage.make(answerbranch, "responseText", "reporting.notapplicable.longlabel");
+               UIOutput.make(answerbranch, "responseTotal", naCount+"");
+            }
+         } else {
+            responsesCount = itemAnswers.size();
          }
 
          UIMessage.make(scaled, "responsesCount", "viewreport.responses.count", new Object[] {responsesCount + naCount});
 
-         if (! EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(templateItemType)) {
-            if (templateItem.getUsesComment()) {
-               // render the comments
-               UIBranchContainer showCommentsBranch = UIBranchContainer.make(tofill, "showComments:");
-               int commentCount = 0;
-               for (EvalAnswer answer : itemAnswers) {
-                  if (! EvalUtils.isBlank(answer.getComment())) {
-                     UIBranchContainer commentsBranch = UIBranchContainer.make(showCommentsBranch, "comments:");
-                     if (commentCount % 2 == 1) {
-                        commentsBranch.decorate(new UIStyleDecorator("itemsListOddLine")); // must match the existing CSS class
-                     }
-                     UIOutput.make(commentsBranch, "commentNum", (commentCount + 1)+"");
-                     UIOutput.make(commentsBranch, "itemComment", answer.getComment());
-                     commentCount++;
+         if (templateItem.getUsesComment()) {
+            // render the comments
+            UIBranchContainer showCommentsBranch = UIBranchContainer.make(tofill, "showComments:");
+            int commentCount = 0;
+            for (EvalAnswer answer : itemAnswers) {
+               if (! EvalUtils.isBlank(answer.getComment())) {
+                  UIBranchContainer commentsBranch = UIBranchContainer.make(showCommentsBranch, "comments:");
+                  if (commentCount % 2 == 1) {
+                     commentsBranch.decorate(new UIStyleDecorator("itemsListOddLine")); // must match the existing CSS class
                   }
+                  UIOutput.make(commentsBranch, "commentNum", (commentCount + 1)+"");
+                  UIOutput.make(commentsBranch, "itemComment", answer.getComment());
+                  commentCount++;
                }
-               if (commentCount == 0) {
-                  UIMessage.make(showCommentsBranch, "noComment", "viewreport.no.comments");
-               }
-            }            
-         }
+            }
+            if (commentCount == 0) {
+               UIMessage.make(showCommentsBranch, "noComment", "viewreport.no.comments");
+            }
+         }            
 
       } else if (EvalConstants.ITEM_TYPE_TEXT.equals(templateItemType)) {
          // text/essay type items
+         displayNumber++;
          UIBranchContainer essay = UIBranchContainer.make(tofill, "essayType:");
          UIOutput.make(essay, "itemNum", displayNumber + "");
          UIVerbatim.make(essay, "itemText", templateItem.getItem().getItemText());
@@ -403,11 +407,9 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
             || EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(templateItemType)) {
          // header/textual bits
          UIBranchContainer textual = UIBranchContainer.make(tofill, "textualItem:");
-         UIOutput.make(textual, "itemNum", displayNumber + "");
          UIVerbatim.make(textual, "itemText", templateItem.getItem().getItemText());
 
       } else {
-         displayNumber--;
          log.warn("Skipped invalid item type ("+templateItemType+"): TI: " + templateItem.getId() );
       }
    }
@@ -444,8 +446,11 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
          }
       }
       else if (VIEWMODE_ALLESSAYS.equals(currentViewMode)) {
+         // show all items with comments or textual responses
          String templateItemType = TemplateItemUtils.getTemplateItemType(templateItem);
          if (EvalConstants.ITEM_TYPE_TEXT.equals(templateItemType)) {
+            togo = true;
+         } else if (templateItem.getUsesComment()) {
             togo = true;
          }
       }
@@ -522,12 +527,12 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
       ReportParameters viewEssaysParams = (ReportParameters) reportViewParams.copyBase();
       if (VIEWMODE_ALLESSAYS.equals(currentViewMode)) {
          viewEssaysParams.viewmode = VIEWMODE_REGULAR; 
-         UIInternalLink.make(tofill, "fullEssayResponse", UIMessage.make("viewreport.view.allquestions"), 
+         UIInternalLink.make(tofill, "viewItemsFilterLink", UIMessage.make("viewreport.view.all"), 
                viewEssaysParams);
       }
       else {
          viewEssaysParams.viewmode = VIEWMODE_ALLESSAYS;
-         UIInternalLink.make(tofill, "fullEssayResponse",  UIMessage.make("viewreport.view.essays"), 
+         UIInternalLink.make(tofill, "viewItemsFilterLink",  UIMessage.make("viewreport.view.written"), 
                viewEssaysParams);
       }
 

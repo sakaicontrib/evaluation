@@ -8,6 +8,8 @@
    <link href="/library/skin/default/tool.css" rsf:id="scr=portal-matter" type="text/css" rel="stylesheet" media="all"/>
    <script type="text/javascript" rsf:id="scr=portal-matter" language="JavaScript" src="/library/js/headscripts.js"></script>
    <link href="../css/evaluation_base.css" type="text/css" rel="stylesheet" media="all" />
+   <script type="text/javascript" language="JavaScript" src="../js/jquery/jquery.js"></script>
+   <script type="text/javascript" language="JavaScript" src="../js/evalUtils.js"></script>
 </head>
 
 <body>
@@ -22,15 +24,26 @@
             <a rsf:id="control-scales-link" href="control_scales.html">My Scales</a>
          </div>
          
-         <ul class="breadCrumb"  style="clear:both;height:1.5em">
+         <ul class="breadCrumb" style="clear:both;height:1.5em;">
          	<li style="float:left"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
          	<li style="float:left"><a rsf:id="report-groups-title" href="report_groups.html">Choose Report Groups</a></li>
-         	<li rsf:id="view-report-title"   style="float:left" class="lastCrumb">View Report</li>
-         	<li style="float:right" class=" lastCrumb"><a href="#" target="_blank" rsf:id="pdfResultsReport"  class="exportAction">Export pdf</a></li>
-         	<li style="float:right" class=" lastCrumb"><a href="#" target="_blank" rsf:id="xlsResultsReport"  class="exportAction">Export xls</a></li>
-         	<li style="float:right" class=" lastCrumb"><a href="#" target="_blank" rsf:id="csvResultsReport"  class="exportAction">Export csv</a></li>
-         	<li style="float:right" class=" lastCrumb"><a href="#" rsf:id="fullEssayResponse" class="goToList">View Essay Responses</a></li>
+         	<li rsf:id="view-report-title" style="float:left" class="lastCrumb">View Report</li>
          </ul>
+
+         <!-- this div is appearing over top of other things, not sure why -AZ -->
+         <div>
+            <ul style="clear:both;display:inline;">
+               <li style="float:right"><a rsf:id="pdfResultsReport" href="#" target="_blank" class="exportAction">Export pdf</a></li>
+               <li style="float:right"><a rsf:id="xlsResultsReport" href="#" target="_blank" class="exportAction">Export xls</a></li>
+               <li style="float:right"><a rsf:id="csvResultsReport" href="#" target="_blank" class="exportAction">Export csv</a></li>
+               <li style="float:right"><a rsf:id="viewItemsFilterLink" href="#" class="goToList">View Written Responses Only</a></li>
+               <li id="hideAllComments" style="float:left;display:none;"><span rsf:id="msg=viewreport.hide.all.comments" class="makeLink">Hide All Comments</span></li>
+               <li id="showAllComments" style="float:left;display:none;"><span rsf:id="msg=viewreport.view.all.comments" class="makeLink">Show All Comments</span></li>
+               <li id="hideAllTextResponses" style="float:left;display:none;"><span rsf:id="msg=viewreport.hide.all.responses" class="makeLink">Hide All Text Responses</span></li>
+               <li id="showAllTextResponses" style="float:left;display:none;"><span rsf:id="msg=viewreport.view.all.responses" class="makeLink">Show All Text Responses</span></li>
+            </ul>
+         </div>
+
          <div rsf:id="message-for:*" class="alertMessage">
          	<ul style="margin:0px;">
          		<li>Message for user here</li>
@@ -54,10 +67,7 @@
                     <div rsf:id="textualItem:">
                         <table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "100%" class="listHier lines" style="margin:0">
                             <tr class="highLightRow">
-                                <td width="3%" valign="top">
-                                  <span rsf:id="itemNum">#</span>.
-                                </td>
-                                <td width="70%" valign="top">
+                                <td width="75%" valign="top">
                                     <h4><span rsf:id="itemText">Textual/header item text here</span></h4>
                                 </td>
                                 <td>&nbsp;</td>
@@ -73,7 +83,7 @@
                                     <span  rsf:id="itemNum">#</span>.
                                 </td>
                                 <td width="70%" valign="top">
-                                    <h4><span rsf:id="itemText">Item question text here</span></h4>
+                                    <h4><span rsf:id="itemText">Scaled item question text here</span></h4>
                                 </td>
                                 <td></td>
                             </tr>
@@ -87,13 +97,13 @@
                                 </td>
                             </tr>
                         </table>
-                        <div rsf:id="showComments:" style="margin-left: 1em;">
+                        <div rsf:id="showComments:" style="margin-left: 1em;" class="showcomments">
                            <span rsf:id="noComments" style="font-style: italic;"></span>
                            <ol style="list-style: lower-alpha; list-style-position: inside;">
                               <li rsf:id="comments:">
                                  <!-- //gsilver: let the list take care of the numbers -->
                                  <span rsf:id="itemComment">comment here</span>
-                              </li>   
+                              </li>
                            </ol>
                         </div>
                     </div>
@@ -106,7 +116,7 @@
                                     <span rsf:id="itemNum">#</span>.
                                 </td>
                                 <td width="70%" valign="top">
-                                    <h4><span rsf:id="itemText"/></h4>
+                                    <h4><span rsf:id="itemText">Essay item text here</span></h4>
                                 </td>
                                 <td class="special">
                                     <span rsf:id="responsesCount"># Responses</span>
@@ -118,7 +128,7 @@
                                 </td>
                             </tr>
                         </table>
-                        <div rsf:id="showResponses:" style="margin-left: 1em;">
+                        <div rsf:id="showResponses:" style="margin-left: 1em;" class="showtextresponses">
                            <span rsf:id="noResponses" style="font-style: italic;"></span>
                            <ol style="list-style: lower-alpha; list-style-position: inside;">
                               <li rsf:id="responses:">
@@ -135,5 +145,12 @@
          </div>
 
 	</div>
+
+    <!-- javascript initialization block (will be overwritten by RSF) -->
+    <script rsf:id="initJavascript" type="text/javascript" language="JavaScript">
+       // see the evalUtils.js file for more info about the method arguments
+       EvalSystem.initEvalReportView();
+    </script>
+
 </body>
 </html>

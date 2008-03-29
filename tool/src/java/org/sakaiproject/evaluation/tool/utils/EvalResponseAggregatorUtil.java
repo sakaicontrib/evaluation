@@ -18,7 +18,9 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.utils.ComparatorsUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
+import org.sakaiproject.evaluation.utils.TemplateItemDataList;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
+import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
 
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.util.UniversalRuntimeException;
@@ -28,10 +30,8 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * things that collect all the responses for an evaluation. An example is a 2D
  * List containing all the responses ready to be fed into an excel or csv file.
  * 
- * @author Aaron Zeckoski (aaronz@vt.edu)
- * @author Rui Feng (fengr@vt.edu)
- * @author Will Humphries (whumphri@vt.edu)
  * @author Steven Githens (swgithen@mtu.edu)
+ * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class EvalResponseAggregatorUtil {
 
@@ -55,13 +55,21 @@ public class EvalResponseAggregatorUtil {
       this.externalLogic = logic;
    }
 
+
+   /**
+    * FIXME - this should us the new {@link DataTemplateItem}s and the {@link TemplateItemDataList}
+    * 
+    * @param evaluation
+    * @param groupIds
+    * @return
+    */
    public EvalAggregatedResponses getAggregatedResponses(EvalEvaluation evaluation, String[] groupIds) {
       List<String> topRow = new ArrayList<String>(); //holds top row (item text)
       List<EvalItem> allEvalItems = new ArrayList<EvalItem>(); //holds all expanded eval items (blocks are expanded here)
       List<EvalTemplateItem> allEvalTemplateItems = new ArrayList<EvalTemplateItem>(); 
       List<List<String>> responseRows = new ArrayList<List<String>>();//holds response rows
 
-      EvalTemplate template = evaluation.getTemplate();
+      EvalTemplate template = evaluation.getTemplate(); // LAZY LOAD
 
       /*
        * Getting list of response ids serves 2 purposes:
@@ -84,7 +92,7 @@ public class EvalResponseAggregatorUtil {
       }
 
       // get all answerable template items
-      List<EvalTemplateItem> allTemplateItems = new ArrayList<EvalTemplateItem>(template.getTemplateItems());
+      List<EvalTemplateItem> allTemplateItems = new ArrayList<EvalTemplateItem>(template.getTemplateItems()); // LAZY LOAD
       // FIXME - do this using the authoringService
 //    allItems = authoringService.getTemplateItemsForEvaluation(evaluationId, hierarchyNodeIDs, 
 //    instructorIds, new String[] {evalGroupId});
@@ -148,6 +156,33 @@ public class EvalResponseAggregatorUtil {
       return new EvalAggregatedResponses(evaluation,groupIds,allEvalItems,allEvalTemplateItems,
             topRow, responseRows, numOfResponses);
    }
+
+
+   /**
+    * This method will go through a list of template items, looking at items that
+    * are of Instructor type, and create a Map of all the instructors userId's and
+    * EvalUsers. This is useful for all the reporting types that need to show
+    * the instructors seperately, and need to sort them before hand, or generally
+    * know who they are.
+    * 
+    * @param templateItems The list of template items, these will be filtered for Instructor types.
+    * @param answers a list of all the answers to pull out the instructor userIds from
+    * @return Returns a Map of the instructors as EvalUsers keyed by userId
+    */
+   public Map<String, EvalUser> getInstructorsForAnsweredItems(List<EvalTemplateItem> templateItems, List<EvalAnswer> answers) {
+      Map<String,EvalUser> instructors = new HashMap<String,EvalUser>();
+      for (EvalTemplateItem templateItem: templateItems) {
+         if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(templateItem.getCategory())) {
+            for (EvalAnswer answer: answers) {
+               if (! instructors.containsKey(answer.getAssociatedId())) {
+                  instructors.put(answer.getAssociatedId(), externalLogic.getEvalUserById(answer.getAssociatedId()));
+               }
+            }
+         }
+      }
+      return instructors;
+   }
+
 
    /**
     * This method iterates through list of answers for the concerned question 
@@ -241,8 +276,10 @@ public class EvalResponseAggregatorUtil {
 
    }
 
-   /*
-    * This method deals with producing an array of total number of responses for
+   // STATIC METHODS
+
+   /**
+    * This static method deals with producing an array of total number of responses for
     * a list of answers.  It does not deal with any of the logic (such as groups,
     * etc.) it takes to get a list of answers.
     * 
@@ -255,71 +292,42 @@ public class EvalResponseAggregatorUtil {
     * the very last item of the array, allowing you to still match up the indexes
     * with the original Scale options.
     * 
-    * @param itemType The Item type. Should be one of EvalConstants.ITEM_TYPE_SCALED,
-    * EvalConstants.ITEM_TYPE_MULTIPLECHOICE, or EvalConstants.ITEM_TYPE_MULTIPLEANSWER
+    * @param templateItemType The template item type. Should be like EvalConstants.ITEM_TYPE_SCALED
     * @param scaleSize The size of the scale items. The returned integer array will
-    * be this big. With each index being a count of responses for that scale type.
+    * be this big (+1 for NA). With each index being a count of responses for that scale type.
     * @param answers The List of EvalAnswers to work with.
     */
-   public int[] countResponseChoices(String itemType, int scaleSize, List<EvalAnswer> itemAnswers) {
+   public static int[] countResponseChoices(String templateItemType, int scaleSize, List<EvalAnswer> itemAnswers) {
       // Make the array one size larger in case we need to add N/A tallies.
       int[] togo = new int[scaleSize+1];
 
-      if (!EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemType) &&
-            !EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(itemType) &&
-            !EvalConstants.ITEM_TYPE_SCALED.equals(itemType)) {
-         throw new IllegalArgumentException("The itemType needs to be ITEM_TYPE_MULTIPLEANSWER, ITEM_TYPE_MULTIPLECHOICE, or ITEM_TYPE_SCALED");
-      }
-
-      for (EvalAnswer answer: itemAnswers) {
-         EvalUtils.decodeAnswerNA(answer);
-         if (answer.NA) {
-            togo[togo.length-1]++;
-         }
-         else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemType)) {
-            Integer[] decoded = EvalUtils.decodeMultipleAnswers(answer.getMultiAnswerCode());
-            for (Integer decodedAnswer: decoded) {
-               togo[decodedAnswer.intValue()]++;
+      if ( EvalConstants.ITEM_TYPE_SCALED.equals(templateItemType) 
+            || EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(templateItemType) 
+            || EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(templateItemType)
+            || EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(templateItemType) ) {
+         
+         for (EvalAnswer answer: itemAnswers) {
+            EvalUtils.decodeAnswerNA(answer);
+            if (answer.NA) {
+               togo[togo.length-1]++;
             }
-         }
-         else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(itemType) || 
-               EvalConstants.ITEM_TYPE_SCALED.equals(itemType)) {
-            if (answer.getNumeric().intValue() > 0) {
-               togo[answer.getNumeric().intValue()]++;
+            else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(templateItemType)) {
+               Integer[] decoded = EvalUtils.decodeMultipleAnswers(answer.getMultiAnswerCode());
+               for (Integer decodedAnswer: decoded) {
+                  togo[decodedAnswer.intValue()]++;
+               }
             }
-         }
-         else {
-            throw new RuntimeException("This shouldn't happen");
-         }
-      }
-
-      return togo;
-   }
-
-
-   /**
-    * This method will go through a list of template items, looking at items that
-    * are of Instructor type, and create a Map of all the instructors userId's and
-    * EvalUsers. This is useful for all the reporting types that need to show
-    * the instructors seperately, and need to sort them before hand, or generally
-    * know who they are.
-    * 
-    * @param templateItems The list of template items, these will be filtered for Instructor types.
-    * @param answers a list of all the answers to pull out the instructor userIds from
-    * @return Returns a Map of the instructors as EvalUsers keyed by userId
-    */
-   public Map<String, EvalUser> getInstructorsForAnsweredItems(List<EvalTemplateItem> templateItems, List<EvalAnswer> answers) {
-      Map<String,EvalUser> instructors = new HashMap<String,EvalUser>();
-      for (EvalTemplateItem templateItem: templateItems) {
-         if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(templateItem.getCategory())) {
-            for (EvalAnswer answer: answers) {
-               if (! instructors.containsKey(answer.getAssociatedId())) {
-                  instructors.put(answer.getAssociatedId(), externalLogic.getEvalUserById(answer.getAssociatedId()));
+            else {
+               if (answer.getNumeric().intValue() > 0) {
+                  togo[answer.getNumeric().intValue()]++;
                }
             }
          }
+      } else {
+         throw new IllegalArgumentException("The itemType needs to be one that has numeric answers, this one is invalid: " + templateItemType);
       }
-      return instructors;
+
+      return togo;
    }
 
 }

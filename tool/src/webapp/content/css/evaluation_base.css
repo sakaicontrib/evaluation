@@ -370,6 +370,18 @@ A:hover.breadCrumb {
 	color: #333;
 }
 
+.makeLink {
+    color: #27d;
+    padding: 0;
+    margin: 0;
+    background-color: transparent;
+    border:none;
+    text-decoration: underline;
+    cursor: pointer;
+    /* keep IE 6 and 7 from creating h-padding proportionate to the length of the string */
+    overflow: visible;
+}
+
 input.makeLink {
 	color: #27d;
 	padding: 0;
