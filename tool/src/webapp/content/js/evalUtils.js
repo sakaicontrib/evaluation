@@ -143,31 +143,6 @@ var EvalSystem = function() {
         addMoreUsersButton.click();
         //clearButton.click( function (event) { clearEmailsAction(event) });
   	},
-    
-    hideAndShowAssignArea: function(areaId,showId,hideId) {
-        var area = $(escIdForJquery(areaId));
-        var showButton = $(escIdForJquery(showId));
-        var hideButton = $(escIdForJquery(hideId));
-        
-        var clickAction = function(event) {
-            if (area.is(':hidden')) {
-                area.show("slow");
-                showButton.hide();
-                hideButton.show();
-            }
-            else {
-                area.hide("normal");
-                showButton.show();
-                hideButton.hide();
-            }
-            var hmm = RSF.getDOMModifyFirer().fireEvent();
-        }
-        
-        area.hide();
-        
-        showButton.click( function (event) { clickAction(event) });
-        hideButton.click( function (event) { clickAction(event) });
-    },
 
     initEvalReportView: function () {
         // for now this is just enabling toggling of comments and responses
