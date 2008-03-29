@@ -160,36 +160,6 @@ public class EvalResponseAggregatorUtil {
             topRow, responseRows, numOfResponses);
    }
 
-
-   /**
-    * This method will go through a list of template items, looking at items that
-    * are of Instructor type, and create a Map of all the instructors userId's and
-    * EvalUsers. This is useful for all the reporting types that need to show
-    * the instructors seperately, and need to sort them before hand, or generally
-    * know who they are.
-    * 
-    * @param answers a list of all the answers to pull out the instructor userIds from
-    * @return Returns a Map of the instructors as EvalUsers keyed by userId
-    */
-   public Map<String, EvalUser> getInstructorsForAnsweredItems(List<EvalAnswer> answers) {
-      Map<String,EvalUser> instructors = new HashMap<String,EvalUser>();
-      for (EvalAnswer answer: answers) {
-         // If the answers associated type is instructor and we haven't added
-         // it to the Map yet, we should do so.
-         if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(answer.getAssociatedType()) &&
-               ! instructors.containsKey(answer.getAssociatedId())) {
-            if (answer.getAssociatedId() == null) {
-               log.warn("EvalAnswer has associated type instructor but no associated id. EvalAnswer.id="+answer.getId());
-            }
-            else {
-               instructors.put(answer.getAssociatedId(), externalLogic.getEvalUserById(answer.getAssociatedId()));
-            }
-         }
-      }
-      return instructors;
-   }
-
-
    /**
     * This method iterates through list of answers for the concerned question 
     * and updates the list of responses.
