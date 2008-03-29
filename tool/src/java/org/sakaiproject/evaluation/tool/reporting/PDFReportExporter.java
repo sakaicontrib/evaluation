@@ -4,6 +4,7 @@ import java.io.OutputStream;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -221,12 +222,9 @@ public class PDFReportExporter {
       List<EvalAnswer> answers = deliveryService.getAnswersForEval(eval.getId(), groupIds, null);
       
       // get the list of all instructors for this report and put the user objects for them into a map
-      Set<String> instructorIds = TemplateItemDataList.getInstructorsForAnswers(answers);
-      List<EvalUser> instructors = externalLogic.getEvalUsersByIds(instructorIds.toArray(new String[] {}));
-      Map<String,EvalUser> instructorIdtoEvalUser = new HashMap<String, EvalUser>();
-      for (EvalUser evalUser : instructors) {
-         instructorIdtoEvalUser.put(evalUser.userId, evalUser);
-      }
+      Set<String> instructorIds = new HashSet<String>();
+      Map<String,EvalUser> instructorIdtoEvalUser = new HashMap<String,EvalUser>();
+      responseAggregator.fillInstructorInformation(answers, instructorIds, instructorIdtoEvalUser);
       
       // Get the sorted list of all nodes for this set of template items
       List<EvalHierarchyNode> hierarchyNodes = RenderingUtils.makeEvalNodesList(hierarchyLogic, allTemplateItems);

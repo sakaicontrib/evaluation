@@ -641,6 +641,7 @@
          ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
       <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
       <property name="reportingPermissions" ref="org.sakaiproject.evaluation.logic.ReportingPermissions" />
+      <property name="evalResponseAggregatorUtil" ref="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil" />
    </bean>
 
    <bean
