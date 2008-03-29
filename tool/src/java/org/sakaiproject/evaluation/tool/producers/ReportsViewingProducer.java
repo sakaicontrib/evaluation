@@ -195,6 +195,8 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
 
             // Evaluation Info
             UIOutput.make(tofill, "evaluationTitle", evaluation.getTitle());
+            
+            // The comma separated list of groups we viewing
             StringBuilder groupsString = new StringBuilder();
             for (int groupCounter = 0; groupCounter < groupIds.length; groupCounter++) {
                if (groupCounter > 0) {
