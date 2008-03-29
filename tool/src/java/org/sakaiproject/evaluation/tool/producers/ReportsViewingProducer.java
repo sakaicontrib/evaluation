@@ -110,19 +110,9 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
       this.hierarchyLogic = logic;
    }
 
-   public ReportsBean reportsBean;
-   public void setReportsBean(ReportsBean reportsBean) {
-      this.reportsBean = reportsBean;
-   }
-
    private EvalSettings evalSettings;
    public void setEvalSettings(EvalSettings evalSettings) {
       this.evalSettings = evalSettings;
-   }
-
-   private EvalResponseAggregatorUtil responseAggregator;
-   public void setEvalResponseAggregatorUtil(EvalResponseAggregatorUtil bean) {
-      this.responseAggregator = bean;
    }
 
    private ReportingPermissions reportingPermissions;
@@ -182,7 +172,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
          String[] groupIds = (reportViewParams.groupIds == null ? new String[] {} : reportViewParams.groupIds);
          reportViewParams.groupIds = groupIds;
 
-         EvalEvaluation evaluation = evaluationService.getEvaluationById(reportViewParams.evaluationId);
+         EvalEvaluation evaluation = evaluationService.getEvaluationById(evaluationId);
 
          // do a permission check
          if (! reportingPermissions.canViewEvaluationResponses(evaluation, groupIds)) {
@@ -218,17 +208,20 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
             // get all the answers
             List<EvalAnswer> answers = deliveryService.getAnswersForEval(evaluationId, groupIds, null);
 
-            // get the list of all instructors for this report
-            Map<String,EvalUser> instructorIdtoEvalUser = 
-               responseAggregator.getInstructorsForAnsweredItems(allTemplateItems, answers);
-            Set<String> instructors = instructorIdtoEvalUser.keySet();
+            // get the list of all instructors for this report and put the user objects for them into a map
+            Set<String> instructorIds = TemplateItemDataList.getInstructorsForAnswers(answers);
+            List<EvalUser> instructors = externalLogic.getEvalUsersByIds(instructorIds.toArray(new String[] {}));
+            Map<String,EvalUser> instructorIdtoEvalUser = new HashMap<String, EvalUser>();
+            for (EvalUser evalUser : instructors) {
+               instructorIdtoEvalUser.put(evalUser.userId, evalUser);
+            }
 
             // Get the sorted list of all nodes for this set of template items
             List<EvalHierarchyNode> hierarchyNodes = RenderingUtils.makeEvalNodesList(hierarchyLogic, allTemplateItems);
 
             // make the TI data structure
             Map<String, List<String>> associates = new HashMap<String, List<String>>();
-            associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, new ArrayList<String>(instructors));
+            associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, new ArrayList<String>(instructorIds));
             TemplateItemDataList tidl = new TemplateItemDataList(allTemplateItems, hierarchyNodes, associates, answers);
 
             int renderedItemCount = 0;

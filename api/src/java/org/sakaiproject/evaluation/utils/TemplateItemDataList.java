@@ -17,8 +17,10 @@ package org.sakaiproject.evaluation.utils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
@@ -640,6 +642,26 @@ public class TemplateItemDataList {
          throw new IllegalStateException("Don't know how to handle rendering category type: " + categoryType);
       }
       return value;
+   }
+
+   /**
+    * A helper method to get the list of unique instructor userIds 
+    * for the {@link EvalConstants#ITEM_CATEGORY_INSTRUCTOR} type item answers from the list of answers<br/>
+    * <b>NOTE:</b> Use getEvalUsersByIds(String[]) from externalLogic to turn this into a set of EvalUsers if needed
+    * 
+    * @param answers a list of {@link EvalAnswer}
+    * @return the set of userIds
+    */
+   public static Set<String> getInstructorsForAnswers(List<EvalAnswer> answers) {
+      Set<String> userIds = new HashSet<String>();
+      for (EvalAnswer answer: answers) {
+         if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(answer.getAssociatedType())) {
+            if (! EvalUtils.isBlank(answer.getAssociatedId())) {
+               userIds.add(answer.getAssociatedId());
+            }
+         }
+      }
+      return userIds;
    }
 
 }

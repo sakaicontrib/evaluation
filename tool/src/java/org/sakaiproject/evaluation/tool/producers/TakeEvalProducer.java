@@ -51,6 +51,7 @@ import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.HierarchyNodeGroup;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.TemplateItemGroup;
 
+import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
@@ -113,19 +114,24 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
       this.localResponsesLogic = localResponsesLogic;
    }
 
+   private ExternalHierarchyLogic hierarchyLogic;
+   public void setExternalHierarchyLogic(ExternalHierarchyLogic logic) {
+      this.hierarchyLogic = logic;
+   }
+
    private EvalSettings evalSettings;
    public void setEvalSettings(EvalSettings evalSettings) {
       this.evalSettings = evalSettings;
    }
 
+   private TargettedMessageList messages;
+   public void setMessages(TargettedMessageList messages) {
+      this.messages = messages;
+   }
+
    private Locale locale;
    public void setLocale(Locale locale) {
       this.locale = locale;
-   }
-
-   private ExternalHierarchyLogic hierarchyLogic;
-   public void setExternalHierarchyLogic(ExternalHierarchyLogic logic) {
-      this.hierarchyLogic = logic;
    }
 
    Long responseId;
@@ -166,7 +172,6 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
       // get the evaluation based on the passed in VPs
       EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
       if (eval == null) {
-         log.error("Cannot find evalaution with id: " + evaluationId);
          throw new IllegalArgumentException("Invalid evaluationId ("+evaluationId+"), cannot load evaluation");
       }
 
