@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -82,6 +83,11 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
    public static final String VIEW_ID = "report_view";
    public String getViewID() {
       return VIEW_ID;
+   }
+   
+   private EvalResponseAggregatorUtil responseAggregator;
+   public void setEvalResponseAggregatorUtil(EvalResponseAggregatorUtil bean) {
+      this.responseAggregator = bean;
    }
 
    private EvalExternalLogic externalLogic;
@@ -210,12 +216,9 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
             List<EvalAnswer> answers = deliveryService.getAnswersForEval(evaluationId, groupIds, null);
 
             // get the list of all instructors for this report and put the user objects for them into a map
-            Set<String> instructorIds = TemplateItemDataList.getInstructorsForAnswers(answers);
-            List<EvalUser> instructors = externalLogic.getEvalUsersByIds(instructorIds.toArray(new String[] {}));
+            Set<String> instructorIds = new HashSet<String>();
             Map<String,EvalUser> instructorIdtoEvalUser = new HashMap<String, EvalUser>();
-            for (EvalUser evalUser : instructors) {
-               instructorIdtoEvalUser.put(evalUser.userId, evalUser);
-            }
+            responseAggregator.fillInstructorInformation(answers, instructorIds, instructorIdtoEvalUser);
 
             // Get the sorted list of all nodes for this set of template items
             List<EvalHierarchyNode> hierarchyNodes = RenderingUtils.makeEvalNodesList(hierarchyLogic, allTemplateItems);
