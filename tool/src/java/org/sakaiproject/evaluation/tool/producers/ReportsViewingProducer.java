@@ -318,7 +318,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
                responsesCount += responseCount;
                UIBranchContainer answerbranch = UIBranchContainer.make(scaled, "answers:", x + "");
                UIOutput.make(answerbranch, "responseText", scaleOptions[x]);
-               UIOutput.make(answerbranch, "responseTotal", responseCount+"");
+               UIMessage.make(answerbranch, "responsesCount", "viewreport.responses.count", new String[] {responseNumbers[x]+""});
             }
 
             if (templateItem.getUsesNA()) {
