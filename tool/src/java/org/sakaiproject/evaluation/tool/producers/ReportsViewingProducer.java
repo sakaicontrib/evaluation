@@ -44,6 +44,8 @@ import org.sakaiproject.evaluation.tool.viewparams.CSVReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.ExcelReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.PDFReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
+import org.sakaiproject.evaluation.utils.ArrayUtils;
+import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
@@ -239,11 +241,11 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
                UIBranchContainer categorySectionBranch = UIBranchContainer.make(tofill, "categorySection:");
                // handle printing the category header
                if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType)) {
-                  UIMessage.make(categorySectionBranch, "categoryHeader", "viewreport.itemlist.coursequestions");
+                  UIMessage.make(categorySectionBranch, "categoryHeader", "viewreport.itemlist.course");
                } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
                   EvalUser instructor = instructorIdtoEvalUser.get( tig.associateId );
                   UIMessage.make(categorySectionBranch, "categoryHeader", 
-                        "viewreport.itemlist.forinstructor", new Object[] { instructor.displayName });
+                        "viewreport.itemlist.instructor", new Object[] { instructor.displayName });
                }
 
                // loop through the hierarchy node groups
@@ -287,10 +289,10 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
    /**
     * Handles the rendering of the response answer results for a specific templateItem
     * 
-    * @param parent the parent contrainer to render in
+    * @param tofill the parent container to render in
     * @param dti the wrapper for this templateItem
     */
-   private void renderTemplateItemResults(UIBranchContainer parent, DataTemplateItem dti, ReportParameters reportViewParams) {
+   private void renderTemplateItemResults(UIBranchContainer tofill, DataTemplateItem dti, ReportParameters reportViewParams) {
       displayNumber++;
       EvalTemplateItem templateItem = dti.templateItem;
       String templateItemType = TemplateItemUtils.getTemplateItemType(templateItem);
@@ -308,58 +310,99 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
          int optionCount = scaleOptions.length;
          String scaleLabels[] = new String[optionCount];
 
-         UIBranchContainer scaled = UIBranchContainer.make(parent, "scaledSurvey:");
+         UIBranchContainer scaled = UIBranchContainer.make(tofill, "scaledSurvey:");
 
          UIOutput.make(scaled, "itemNum", displayNumber+"");
          UIVerbatim.make(scaled, "itemText", templateItem.getItem().getItemText());
 
          int[] responseNumbers = responseAggregator.countResponseChoices(templateItemType, scaleLabels.length, itemAnswers);
 
+         int responsesCount = 0;
          for (int x = 0; x < scaleLabels.length; x++) {
+            int responseCount = responseNumbers[x];
             UIBranchContainer answerbranch = UIBranchContainer.make(scaled, "answers:", x + "");
             UIOutput.make(answerbranch, "responseText", scaleOptions[x]);
-            UIOutput.make(answerbranch, "responseTotal", responseNumbers[x]+"");
+            UIOutput.make(answerbranch, "responseTotal", responseCount+"");
+            responsesCount += responseCount;
          }
 
+         int naCount = 0;
          if (templateItem.getUsesNA()) {
+            naCount = responseNumbers[responseNumbers.length-1];
             UIBranchContainer answerbranch = UIBranchContainer.make(scaled, "answers:");
             UIMessage.make(answerbranch, "responseText", "reporting.notapplicable.longlabel");
-            UIOutput.make(answerbranch, "responseTotal", responseNumbers[responseNumbers.length-1]+"");
+            UIOutput.make(answerbranch, "responseTotal", naCount+"");
+         }
+
+         UIMessage.make(scaled, "responsesCount", "viewreport.responses.count", new Object[] {responsesCount + naCount});
+
+         if (! EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(templateItemType)) {
+            if (templateItem.getUsesComment()) {
+               // render the comments
+               UIBranchContainer showCommentsBranch = UIBranchContainer.make(tofill, "showComments:");
+               int commentCount = 0;
+               for (EvalAnswer answer : itemAnswers) {
+                  if (! EvalUtils.isBlank(answer.getComment())) {
+                     UIBranchContainer commentsBranch = UIBranchContainer.make(showCommentsBranch, "comments:");
+                     if (commentCount % 2 == 1) {
+                        commentsBranch.decorate(new UIStyleDecorator("itemsListOddLine")); // must match the existing CSS class
+                     }
+                     UIOutput.make(commentsBranch, "commentNum", (commentCount + 1)+"");
+                     UIOutput.make(commentsBranch, "itemComment", answer.getComment());
+                     commentCount++;
+                  }
+               }
+               if (commentCount == 0) {
+                  UIMessage.make(showCommentsBranch, "noComment", "viewreport.no.comments");
+               }
+            }            
          }
 
       } else if (EvalConstants.ITEM_TYPE_TEXT.equals(templateItemType)) {
          // text/essay type items
-         if (collapseEssays) {
-            UIBranchContainer essay = UIBranchContainer.make(parent, "essayType:");
-            UIOutput.make(essay, "itemNum", displayNumber + "");
-            UIVerbatim.make(essay, "itemText", templateItem.getItem().getItemText());
+         UIBranchContainer essay = UIBranchContainer.make(tofill, "essayType:");
+         UIOutput.make(essay, "itemNum", displayNumber + "");
+         UIVerbatim.make(essay, "itemText", templateItem.getItem().getItemText());
 
-            ReportParameters params = new ReportParameters(VIEW_ID, reportViewParams.evaluationId);
-            params.viewmode = VIEWMODE_SELECTITEMS;
-            params.items = new Long[] {templateItem.getId()};
-            params.groupIds = reportViewParams.groupIds;
-            UIInternalLink.make(essay, "essayResponse", UIMessage.make("viewreport.view.viewresponses"), params);
-         } else {
-            UIBranchContainer essay = UIBranchContainer.make(parent, "expandedEssayType:");
-            UIOutput.make(essay, "itemNum", displayNumber + "");
-            UIOutput.make(essay, "itemText", templateItem.getItem().getItemText());
+         ReportParameters params = new ReportParameters(VIEW_ID, reportViewParams.evaluationId);
+         params.viewmode = VIEWMODE_SELECTITEMS;
+         params.items = new Long[] {templateItem.getId()};
+         params.groupIds = reportViewParams.groupIds;
+         UIInternalLink.make(essay, "essayResponse", UIMessage.make("viewreport.view.viewresponses"), params);
 
-            //count the number of answers that match this one
-            for (int y = 0; y < itemAnswers.size(); y++) {
-               UIBranchContainer answerbranch = UIBranchContainer.make(essay, "answers:");
-               if (y % 2 == 1) {
-                  answerbranch.decorate(new UIStyleDecorator("itemsListOddLine")); // must match the existing CSS class
+         // render the responses
+         UIBranchContainer showResponsesBranch = UIBranchContainer.make(tofill, "showResponses:");
+         int responsesCount = 0;
+         int naCount = 0;
+         for (EvalAnswer answer : itemAnswers) {
+            if (answer.NA) {
+               naCount++;
+            } else if (! EvalUtils.isBlank(answer.getText())) {
+               UIBranchContainer responsesBranch = UIBranchContainer.make(showResponsesBranch, "responses:");
+               if (responsesCount % 2 == 1) {
+                  responsesBranch.decorate(new UIStyleDecorator("itemsListOddLine")); // must match the existing CSS class
                }
-               EvalAnswer curr = itemAnswers.get(y);
-               UIOutput.make(answerbranch, "answerNum", (y + 1)+"");
-               UIOutput.make(answerbranch, "itemAnswer", curr.getText());
+               UIOutput.make(responsesBranch, "responseNum", (responsesCount + 1)+"");
+               UIOutput.make(responsesBranch, "itemResponse", answer.getText());
+               responsesCount++;
             }
+         }
+         if (responsesCount == 0) {
+            UIMessage.make(showResponsesBranch, "noResponse", "viewreport.no.responses");
+         }
+
+         UIMessage.make(essay, "responsesCount", "viewreport.responses.count", new Object[] {responsesCount + naCount});
+
+         if (templateItem.getUsesNA()) {
+            // show the number of NA responses
+            UIBranchContainer naBranch = UIBranchContainer.make(essay, "showNA:");
+            UIOutput.make(naBranch, "naCount", naCount+"");
          }
 
       } else if (EvalConstants.ITEM_TYPE_HEADER.equals(templateItemType)
             || EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(templateItemType)) {
          // header/textual bits
-         UIBranchContainer textual = UIBranchContainer.make(parent, "textualItem:");
+         UIBranchContainer textual = UIBranchContainer.make(tofill, "textualItem:");
          UIOutput.make(textual, "itemNum", displayNumber + "");
          UIVerbatim.make(textual, "itemText", templateItem.getItem().getItemText());
 
@@ -396,13 +439,9 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
       boolean togo = false;
       if (VIEWMODE_SELECTITEMS.equals(currentViewMode)) {
          // If this item isn't in the list of items to view, don't render it.
-         boolean contains = false;
-         for (int i = 0; i < itemsToView.length; i++) {
-            if (templateItem.getId().equals(new Long(itemsToView[i]))) {
-               contains = true;
-            }
+         if (ArrayUtils.contains(itemsToView, templateItem.getId())) {
+            togo = true;
          }
-         togo = contains;
       }
       else if (VIEWMODE_ALLESSAYS.equals(currentViewMode)) {
          String templateItemType = TemplateItemUtils.getTemplateItemType(templateItem);
@@ -414,7 +453,8 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
          togo = true;
       }
       else {
-         togo = false;
+         // default to true
+         togo = true;
       }
       return togo;
    }

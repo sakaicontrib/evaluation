@@ -474,7 +474,7 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       params.put("evalId", evalId);
       String hql = "select answer from EvalAnswer as answer join answer.response as ansswerresp"
          + " where ansswerresp.evaluation.id = :evalId and ansswerresp.endTime is not null " + groupsHQL + itemsHQL
-         + " order by ansswerresp.id";
+         + " order by ansswerresp.id, answer.id";
       // TODO optimize this once we are using a newer version of hibernate that supports "with"
 
       List<EvalAnswer> results = executeHqlQuery(hql, params, 0, 0);
