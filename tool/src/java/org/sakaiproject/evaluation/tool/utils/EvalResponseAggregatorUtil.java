@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
@@ -34,6 +36,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class EvalResponseAggregatorUtil {
+   private static Log log = LogFactory.getLog(EvalResponseAggregatorUtil.class);
 
    private EvalEvaluationService evaluationService;
    public void setEvaluationService(EvalEvaluationService evaluationService) {
@@ -165,18 +168,21 @@ public class EvalResponseAggregatorUtil {
     * the instructors seperately, and need to sort them before hand, or generally
     * know who they are.
     * 
-    * @param templateItems The list of template items, these will be filtered for Instructor types.
     * @param answers a list of all the answers to pull out the instructor userIds from
     * @return Returns a Map of the instructors as EvalUsers keyed by userId
     */
-   public Map<String, EvalUser> getInstructorsForAnsweredItems(List<EvalTemplateItem> templateItems, List<EvalAnswer> answers) {
+   public Map<String, EvalUser> getInstructorsForAnsweredItems(List<EvalAnswer> answers) {
       Map<String,EvalUser> instructors = new HashMap<String,EvalUser>();
-      for (EvalTemplateItem templateItem: templateItems) {
-         if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(templateItem.getCategory())) {
-            for (EvalAnswer answer: answers) {
-               if (! instructors.containsKey(answer.getAssociatedId())) {
-                  instructors.put(answer.getAssociatedId(), externalLogic.getEvalUserById(answer.getAssociatedId()));
-               }
+      for (EvalAnswer answer: answers) {
+         // If the answers associated type is instructor and we haven't added
+         // it to the Map yet, we should do so.
+         if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(answer.getAssociatedType()) &&
+               ! instructors.containsKey(answer.getAssociatedId())) {
+            if (answer.getAssociatedId() == null) {
+               log.warn("EvalAnswer has associated type instructor but no associated id. EvalAnswer.id="+answer.getId());
+            }
+            else {
+               instructors.put(answer.getAssociatedId(), externalLogic.getEvalUserById(answer.getAssociatedId()));
             }
          }
       }
