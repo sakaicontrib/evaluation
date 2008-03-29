@@ -6,8 +6,8 @@ import java.io.OutputStreamWriter;
 import java.util.List;
 
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.tool.utils.EvalAggregatedResponses;
-import org.sakaiproject.util.FormattedText;
 
 import uk.org.ponder.util.UniversalRuntimeException;
 import au.com.bytecode.opencsv.CSVWriter;
@@ -15,6 +15,11 @@ import au.com.bytecode.opencsv.CSVWriter;
 public class CSVReportExporter {
     private static final char COMMA = ',';
     private EvalSettings evalSettings;
+    
+    private EvalExternalLogic externalLogic;
+    public void setExternalLogic(EvalExternalLogic externalLogic) {
+       this.externalLogic = externalLogic;
+    }
 
     public void formatResponses(EvalAggregatedResponses responses, OutputStream outputStream) {
         OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
@@ -23,8 +28,7 @@ public class CSVReportExporter {
       //convert the top row to an array
         String[] topRowArray = new String[responses.topRow.size()];
         for (int i = 0; i < responses.topRow.size(); i++) {
-            String questionString = 
-               FormattedText.convertFormattedTextToPlaintext(responses.topRow.get(i));
+            String questionString = externalLogic.cleanupUserStrings(responses.topRow.get(i));
             topRowArray[i] = (String) questionString;
         }
         //write the top row to CSVWriter object

@@ -18,7 +18,6 @@ import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.utils.EvalAggregatedResponses;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
-import org.sakaiproject.util.FormattedText;
 
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.util.UniversalRuntimeException;
@@ -129,7 +128,7 @@ public class XLSReportExporter {
       for (int i = 0; i < responses.topRow.size(); i++) {
          // Adding one because we want the first column to be a numbered list.
          HSSFCell cell = headerRow.createCell((short)(i+1));
-         String questionString = FormattedText.convertFormattedTextToPlaintext(responses.topRow.get(i));
+         String questionString = externalLogic.cleanupUserStrings(responses.topRow.get(i));
          cell.setCellValue(((String)questionString));
          cell.setCellStyle(boldHeaderStyle);
       }

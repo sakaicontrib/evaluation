@@ -204,6 +204,7 @@
 	<!-- Reporting Utilities -->
 	<bean id="CSVReportExporter" class="org.sakaiproject.evaluation.tool.reporting.CSVReportExporter">
 		<property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+        <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
 	</bean>
 
 	<bean id="XLSReportExporter" class="org.sakaiproject.evaluation.tool.reporting.XLSReportExporter">
