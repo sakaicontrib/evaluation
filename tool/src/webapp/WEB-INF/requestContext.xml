@@ -92,10 +92,6 @@
       <property name="reportingPermissions" ref="org.sakaiproject.evaluation.logic.ReportingPermissions" />
    </bean>
 
-   <bean id="reportsBean"
-      class="org.sakaiproject.evaluation.tool.ReportsBean">
-   </bean>
-
 	<bean id="org.sakaiproject.evaluation.tool.reporting.CurrentViewableReports" 
 		class="org.sakaiproject.evaluation.tool.reporting.CurrentViewableReports">
 		<property name="reportingPermissions" 
@@ -655,7 +651,6 @@
          ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
       <property name="authoringService"
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
-      <property name="reportsBean" ref="reportsBean" />
       <property name="reportingPermissions" ref="org.sakaiproject.evaluation.logic.ReportingPermissions" />
    </bean>
 
