@@ -18,6 +18,7 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -29,6 +30,7 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.exceptions.ResponseSaveException;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
@@ -51,6 +53,7 @@ import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.HierarchyNodeGroup;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.TemplateItemGroup;
 
+import uk.org.ponder.messageutil.TargettedMessage;
 import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -254,6 +257,27 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
          }
 
          if (userCanAccess) {
+            // check if we had a failure during a previous submit and get the missingKeys out if that was the failure
+            Set<String> missingKeys = new HashSet<String>();
+            if (messages.isError() && messages.size() > 0) {
+               for (int i = 0; i < messages.size(); i++) {
+                  TargettedMessage message = messages.messageAt(i);
+                  Exception e = message.exception;
+                  if (e instanceof ResponseSaveException) {
+                     ResponseSaveException rse = (ResponseSaveException) e;
+                     if (ResponseSaveException.TYPE_MISSING_REQUIRED_ANSWERS.equals(rse.type)) {
+                        if (rse.missingItemAnswerKeys != null
+                              && rse.missingItemAnswerKeys.length > 0) {
+                           for (int j = 0; j < rse.missingItemAnswerKeys.length; j++) {
+                              missingKeys.add(rse.missingItemAnswerKeys[j]);
+                           }
+                        }
+                     }
+                     break;
+                  }
+               }
+            }
+
             // load up the response if this user has one already
             if (responseId == null) {
                EvalResponse response = evaluationService.getResponseForUserAndGroup(evaluationId, currentUserId, evalGroupId);
@@ -343,6 +367,16 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
             Map<String, List<String>> associates = new HashMap<String, List<String>>();
             associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, new ArrayList<String>(instructors));
             TemplateItemDataList tidl = new TemplateItemDataList(allItems, hierarchyNodes, associates, null);
+
+            // loop through all DTIs and flag items that were missing
+            if (! missingKeys.isEmpty()) {
+               for (DataTemplateItem dti : tidl.getFlatListOfDataTemplateItems(true)) {
+                  if (missingKeys.contains(dti.getKey())) {
+                     // flag this template item for invalidated rendering if it was missing
+                     dti.templateItem.renderOption = true;
+                  }
+               }
+            }
 
             // loop through the TIGs and handle each associated category
             for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {

@@ -70,6 +70,9 @@ public class ScaledRenderer implements ItemRenderer {
             EvalConstants.ITEM_SCALE_DISPLAY_COMPACT_COLORED.equals(scaleDisplaySetting)) {
 
          UIBranchContainer compact = UIBranchContainer.make(container, "compactDisplay:");
+         if (templateItem.renderOption) {
+            compact.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
+         }
 
          // setup simple variables to make code more clear
          boolean colored = EvalConstants.ITEM_SCALE_DISPLAY_COMPACT_COLORED.equals(scaleDisplaySetting);
@@ -148,6 +151,9 @@ public class ScaledRenderer implements ItemRenderer {
             EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL.equals(scaleDisplaySetting)) {
 
          UIBranchContainer fullFirst = UIBranchContainer.make(container, "fullType:");
+         if (templateItem.renderOption) {
+            fullFirst.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
+         }
 
          for (int count = 0; count < optionCount; count++) {
             scaleValues[count] = new Integer(count).toString();
@@ -208,7 +214,11 @@ public class ScaledRenderer implements ItemRenderer {
 
       } else if (EvalConstants.ITEM_SCALE_DISPLAY_STEPPED.equals(scaleDisplaySetting) ||
             EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED.equals(scaleDisplaySetting) ) {
+
          UIBranchContainer stepped = UIBranchContainer.make(container, "steppedDisplay:");
+         if (templateItem.renderOption) {
+            stepped.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
+         }
 
          // setup simple variables to make code more clear
          boolean colored = EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED.equals(scaleDisplaySetting);

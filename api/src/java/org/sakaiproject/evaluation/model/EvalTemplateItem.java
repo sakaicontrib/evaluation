@@ -3,6 +3,7 @@ package org.sakaiproject.evaluation.model;
 //Generated Mar 20, 2007 10:08:13 AM by Hibernate Tools 3.2.0.beta6a
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * This is an item in a template,
@@ -62,8 +63,22 @@ public class EvalTemplateItem implements java.io.Serializable {
     */
    private boolean hidden = false;
 
-   // Constructors
+   // NON-persistent fields
 
+   /**
+    * If this is set to true then this item should be rendered differently,
+    * typically used to indicate validation failure for this item
+    */
+   public boolean renderOption = false;
+
+   /**
+    * If this is a block parent then this can hold the list of child items,
+    * this is only needed if rendering, however, in the case of rendering,
+    * it MUST be included
+    */
+   public List<EvalTemplateItem> childTemplateItems = null;
+
+   // Constructors
 
    /** default constructor */
    public EvalTemplateItem() {

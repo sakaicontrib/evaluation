@@ -75,6 +75,9 @@ public class MultipleAnswerRenderer implements ItemRenderer {
             EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL.equals(scaleDisplaySetting)) {
 
          UIBranchContainer fullFirst = UIBranchContainer.make(container, "fullType:");
+         if (templateItem.renderOption) {
+            fullFirst.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
+         }
 
          for (int count = 0; count < optionCount; count++) {
             scaleValues[count] = new Integer(count).toString();

@@ -387,7 +387,10 @@ public class TemplateItemDataList {
    /**
     * This is a template item with lots of extra meta data so that it can be easily determined where it
     * goes in the processing order and whether it is in the hierarchy or associated with nodes<br/>
-    * <b>NOTE:</b> The same template item can belong to many DataTemplateItems
+    * <b>NOTE:</b> The same template item can belong to many DataTemplateItems<br/>
+    * <b>WARNING:</b> You will get a new one of these objects each time you request 
+    * one so any changes you make to it will appear to be lost when another one is retrieved from the TIDL
+    * that has the same set of attributes
     * 
     * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
     */
@@ -459,6 +462,7 @@ public class TemplateItemDataList {
          this.node = node;
          if (TemplateItemUtils.isBlockParent(templateItem)) {
             blockChildItems = TemplateItemUtils.getChildItems(allTemplateItems, templateItem.getId());
+            this.templateItem.childTemplateItems = blockChildItems; // for rendering
          }
       }
 
