@@ -47,11 +47,6 @@ public class PDFReportExporter {
    public void setEvaluationService(EvalEvaluationService evaluationService) {
       this.evaluationService = evaluationService;
    }
-   
-   private EvalAuthoringService authoringService;
-   public void setAuthoringService(EvalAuthoringService authoringService) {
-      this.authoringService = authoringService;
-   }
 
    private EvalSettings evalSettings;
    public void setEvalSettings(EvalSettings evalSettings) {
@@ -71,11 +66,6 @@ public class PDFReportExporter {
    private MessageLocator messageLocator;
    public void setMessageLocator(MessageLocator locator) {
       this.messageLocator = locator;
-   }
-   
-   private ExternalHierarchyLogic hierarchyLogic;
-   public void setExternalHierarchyLogic(ExternalHierarchyLogic logic) {
-      this.hierarchyLogic = logic;
    }
 
    public void formatResponses(EvalAggregatedResponses responses, OutputStream outputStream) {
@@ -109,10 +99,7 @@ public class PDFReportExporter {
       String plainInstructions = externalLogic.cleanupUserStrings(responses.evaluation.getInstructions());
       evalPDFReportBuilder.addIntroduction(responses.evaluation.getTitle(), plainInstructions);
 
-      List<EvalTemplateItem> allTemplateItems = new ArrayList<EvalTemplateItem>(responses.template.getTemplateItems());
-      List<EvalTemplateItem> orderedItems = TemplateItemUtils.orderTemplateItems(allTemplateItems, false);
-
-      TemplateItemDataList tidl = prepareTemplateItemDataStructure(responses.evaluation, responses.groupIds);
+      TemplateItemDataList tidl = responseAggregator.prepareTemplateItemDataStructure(responses.evaluation, responses.groupIds);
       
       // Loop through the major group types: Course Questions, Instructor Questions, etc.
       int renderedItemCount = 0;
@@ -202,38 +189,5 @@ public class PDFReportExporter {
          else {
             log.warn("Trying to add unknown type to PDF: " + TemplateItemUtils.getTemplateItemType(templateItem));
          }
-   }
-   
-   /**
-    * Does the preparation work for getting the DITL.  At the moment, this is basically
-    * everything from ReportsViewingProducer before it started iterating through
-    * the template data items.  Looking into making this the same for all the reporting
-    * formats.
-    * 
-    * @param eval
-    * @param groupIds
-    * @return
-    */
-   public TemplateItemDataList prepareTemplateItemDataStructure(EvalEvaluation eval, String[] groupIds) {
-      List<EvalTemplateItem> allTemplateItems = 
-         authoringService.getTemplateItemsForTemplate(eval.getTemplate().getId(), new String[] {}, new String[] {}, new String[] {});
-      
-      // get all the answers
-      List<EvalAnswer> answers = deliveryService.getAnswersForEval(eval.getId(), groupIds, null);
-      
-      // get the list of all instructors for this report and put the user objects for them into a map
-      Set<String> instructorIds = new HashSet<String>();
-      Map<String,EvalUser> instructorIdtoEvalUser = new HashMap<String,EvalUser>();
-      responseAggregator.fillInstructorInformation(answers, instructorIds, instructorIdtoEvalUser);
-      
-      // Get the sorted list of all nodes for this set of template items
-      List<EvalHierarchyNode> hierarchyNodes = RenderingUtils.makeEvalNodesList(hierarchyLogic, allTemplateItems);
-      
-      // make the TI data structure
-      Map<String, List<String>> associates = new HashMap<String, List<String>>();
-      associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, new ArrayList<String>(instructorIds));
-      TemplateItemDataList tidl = new TemplateItemDataList(allTemplateItems, hierarchyNodes, associates, answers);
-      
-      return tidl;
    }
 }

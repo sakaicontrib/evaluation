@@ -3,6 +3,7 @@ package org.sakaiproject.evaluation.tool.utils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -10,9 +11,12 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
+import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -39,6 +43,16 @@ import uk.org.ponder.util.UniversalRuntimeException;
 public class EvalResponseAggregatorUtil {
    private static Log log = LogFactory.getLog(EvalResponseAggregatorUtil.class);
 
+   private ExternalHierarchyLogic hierarchyLogic;
+   public void setExternalHierarchyLogic(ExternalHierarchyLogic logic) {
+      this.hierarchyLogic = logic;
+   }
+   
+   private EvalAuthoringService authoringService;
+   public void setAuthoringService(EvalAuthoringService authoringService) {
+      this.authoringService = authoringService;
+   }
+   
    private EvalEvaluationService evaluationService;
    public void setEvaluationService(EvalEvaluationService evaluationService) {
       this.evaluationService = evaluationService;
@@ -332,6 +346,57 @@ public class EvalResponseAggregatorUtil {
       for (EvalUser evalUser : instructors) {
          instructorIdtoEvalUser.put(evalUser.userId, evalUser);
       }
+   }
+   
+   /**
+    * Does the preparation work for getting the DITL.  At the moment, this is basically
+    * everything from ReportsViewingProducer before it started iterating through
+    * the template data items.  Looking into making this the same for all the reporting
+    * formats.
+    * 
+    * @param eval
+    * @param groupIds
+    * @return
+    */
+   public TemplateItemDataList prepareTemplateItemDataStructure(EvalEvaluation eval, String[] groupIds) {
+      List<EvalTemplateItem> allTemplateItems = 
+         authoringService.getTemplateItemsForTemplate(eval.getTemplate().getId(), new String[] {}, new String[] {}, new String[] {});
+      
+      // get all the answers
+      List<EvalAnswer> answers = deliveryService.getAnswersForEval(eval.getId(), groupIds, null);
+      
+      // get the list of all instructors for this report and put the user objects for them into a map
+      Set<String> instructorIds = new HashSet<String>();
+      Map<String,EvalUser> instructorIdtoEvalUser = new HashMap<String,EvalUser>();
+      fillInstructorInformation(answers, instructorIds, instructorIdtoEvalUser);
+      
+      // Get the sorted list of all nodes for this set of template items
+      List<EvalHierarchyNode> hierarchyNodes = RenderingUtils.makeEvalNodesList(hierarchyLogic, allTemplateItems);
+      
+      // make the TI data structure
+      Map<String, List<String>> associates = new HashMap<String, List<String>>();
+      associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, new ArrayList<String>(instructorIds));
+      TemplateItemDataList tidl = new TemplateItemDataList(allTemplateItems, hierarchyNodes, associates, answers);
+      
+      return tidl;
+   }
+   
+   /**
+    * Returns a comma separated list of the human readable names for the array
+    * of group ids.  This is used in a number of the reporting classes.
+    * 
+    * @param groupIds
+    * @return
+    */
+   public String getCommaSeperatedGroupNames(String[] groupIds) {
+      StringBuilder groupsString = new StringBuilder();
+      for (int groupCounter = 0; groupCounter < groupIds.length; groupCounter++) {
+         if (groupCounter > 0) {
+            groupsString.append(", ");
+         }
+         groupsString.append( externalLogic.getDisplayTitle(groupIds[groupCounter]) );
+      }
+      return groupsString.toString();
    }
 
 }

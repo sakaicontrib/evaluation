@@ -16,6 +16,7 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.utils.EvalAggregatedResponses;
+import org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
@@ -23,6 +24,11 @@ import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 public class XLSReportExporter {
+   
+   private EvalResponseAggregatorUtil responseAggregator;
+   public void setEvalResponseAggregatorUtil(EvalResponseAggregatorUtil bean) {
+      this.responseAggregator = bean;
+   }
 
    private EvalExternalLogic externalLogic;
    public void setExternalLogic(EvalExternalLogic externalLogic) {
@@ -84,20 +90,12 @@ public class XLSReportExporter {
       cellA2.setCellStyle(boldHeaderStyle);
       cellA2.setCellValue( EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount) );
 
-      //if (groupTitles.size() > 0) {
       if (responses.groupIds.length > 0) {
          HSSFRow row3 = sheet.createRow(2);
          HSSFCell cellA3 = row3.createCell((short)0);
 
-         String groupsString = "";
-         for (int groupCounter = 0; groupCounter < responses.groupIds.length; groupCounter++) {
-            groupsString +=  externalLogic.getDisplayTitle(responses.groupIds[groupCounter]);
-            if (groupCounter+1 < responses.groupIds.length) {
-               groupsString += ", ";
-            }
-         }
          cellA3.setCellValue(messageLocator.getMessage("reporting.xls.participants",
-               new String[] {groupsString}));
+               new String[] {responseAggregator.getCommaSeperatedGroupNames(responses.groupIds)}));
       }
 
       // Questions types (just above header row)
