@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
@@ -41,7 +39,6 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class EvalResponseAggregatorUtil {
-   private static Log log = LogFactory.getLog(EvalResponseAggregatorUtil.class);
 
    private ExternalHierarchyLogic hierarchyLogic;
    public void setExternalHierarchyLogic(ExternalHierarchyLogic logic) {
@@ -287,6 +284,7 @@ public class EvalResponseAggregatorUtil {
     * @param scaleSize The size of the scale items. The returned integer array will
     * be this big (+1 for NA). With each index being a count of responses for that scale type.
     * @param answers The List of EvalAnswers to work with.
+    * @deprecated use {@link TemplateItemDataList#getAnswerChoicesCounts(String, int, List)}
     */
    public static int[] countResponseChoices(String templateItemType, int scaleSize, List<EvalAnswer> itemAnswers) {
       // Make the array one size larger in case we need to add N/A tallies.
@@ -303,14 +301,33 @@ public class EvalResponseAggregatorUtil {
                togo[togo.length-1]++;
             }
             else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(templateItemType)) {
-               Integer[] decoded = EvalUtils.decodeMultipleAnswers(answer.getMultiAnswerCode());
-               for (Integer decodedAnswer: decoded) {
-                  togo[decodedAnswer.intValue()]++;
+               // special handling for the multiple answer items
+               if (! EvalConstants.NO_MULTIPLE_ANSWER.equals(answer.getMultiAnswerCode())) {
+                  Integer[] decoded = EvalUtils.decodeMultipleAnswers(answer.getMultiAnswerCode());
+                  for (Integer decodedAnswer: decoded) {
+                     int answerValue = decodedAnswer.intValue();
+                     if (answerValue >= 0 && answerValue < togo.length) {
+                        // answer will fit in the array
+                        togo[answerValue]++;
+                     } else {
+                        // put it in the NA slot
+                        togo[togo.length-1]++;
+                     }
+                  }
                }
             }
             else {
-               if (answer.getNumeric().intValue() > 0) {
-                  togo[answer.getNumeric().intValue()]++;
+               // standard handling for single answer items
+               int answerValue = answer.getNumeric().intValue();
+               if (! EvalConstants.NO_NUMERIC_ANSWER.equals(answerValue)) {
+                  // this numeric answer is not one that should be ignored
+                  if (answerValue >= 0 && answerValue < togo.length) {
+                     // answer will fit in the array
+                     togo[answerValue]++;
+                  } else {
+                     // put it in the NA slot
+                     togo[togo.length-1]++;
+                  }
                }
             }
          }
@@ -320,7 +337,7 @@ public class EvalResponseAggregatorUtil {
 
       return togo;
    }
-   
+
 
    /**
     * Convenience method to build a Set of instructor ID's and a Map of their 
