@@ -28,20 +28,24 @@
          	<li style="float:left"><a rsf:id="summary-link" href="summary.html">Summary</a></li>
          	<li style="float:left"><a rsf:id="report-groups-title" href="report_groups.html">Choose Report Groups</a></li>
          	<li rsf:id="view-report-title" style="float:left" class="lastCrumb">View Report</li>
+            <li style="float:right" class="lastCrumb"><a rsf:id="pdfResultsReport" href="#" target="_blank" class="exportAction">Export pdf</a></li>
+            <li style="float:right" class="lastCrumb"><a rsf:id="xlsResultsReport" href="#" target="_blank" class="exportAction">Export xls</a></li>
+            <li style="float:right" class="lastCrumb"><a rsf:id="csvResultsReport" href="#" target="_blank" class="exportAction">Export csv</a></li>
+            <li style="float:right" class="lastCrumb"><a rsf:id="viewItemsFilterLink" href="#" class="goToList">View Written Responses Only</a></li>
          </ul>
 
-         <!-- this div is appearing over top of other things, not sure why -AZ -->
-         <div>
-            <ul style="clear:both;">
-               <li style="float:right"><a rsf:id="pdfResultsReport" href="#" target="_blank" class="exportAction">Export pdf</a></li>
-               <li style="float:right"><a rsf:id="xlsResultsReport" href="#" target="_blank" class="exportAction">Export xls</a></li>
-               <li style="float:right"><a rsf:id="csvResultsReport" href="#" target="_blank" class="exportAction">Export csv</a></li>
-               <li style="float:right"><a rsf:id="viewItemsFilterLink" href="#" class="goToList">View Written Responses Only</a></li>
-               <li id="hideAllComments" style="float:left;display:none;"><span rsf:id="msg=viewreport.hide.all.comments" class="makeLink">Hide All Comments</span></li>
-               <li id="showAllComments" style="float:left;display:none;"><span rsf:id="msg=viewreport.view.all.comments" class="makeLink">Show All Comments</span></li>
-               <li id="hideAllTextResponses" style="float:left;display:none;"><span rsf:id="msg=viewreport.hide.all.responses" class="makeLink">Hide All Text Responses</span></li>
-               <li id="showAllTextResponses" style="float:left;display:none;"><span rsf:id="msg=viewreport.view.all.responses" class="makeLink">Show All Text Responses</span></li>
-            </ul>
+         <div style="text-align:right;margin:0 2em;">
+            <!-- optionally made visible if there are comments in this report -->
+            <span id="allComments" style="display:none;">
+               <span id="allCommentsHide" style="display:none;"><span rsf:id="msg=viewreport.hide.all.comments" class="makeLink">Hide All Comments</span></span>
+               <span id="allCommentsShow" style="display:none;"><span rsf:id="msg=viewreport.view.all.comments" class="makeLink">Show All Comments</span></span>
+            </span>
+            &nbsp;
+            <!-- optionally made visible if there are text responses in this report -->
+            <span id="allTextResponses" style="display:none;">
+               <span id="allTextResponsesHide" style="display:none;"><span rsf:id="msg=viewreport.hide.all.responses" class="makeLink">Hide All Text Responses</span></span>
+               <span id="allTextResponsesShow" style="display:none;"><span rsf:id="msg=viewreport.view.all.responses" class="makeLink">Show All Text Responses</span></span>
+            </span>
          </div>
 
          <div rsf:id="message-for:*" class="alertMessage">
@@ -152,7 +156,7 @@
     <!-- javascript initialization block (will be overwritten by RSF) -->
     <script rsf:id="initJavascript" type="text/javascript" language="JavaScript">
        // see the evalUtils.js file for more info about the method arguments
-       EvalSystem.initEvalReportView();
+       EvalSystem.initEvalReportView("allComments", "allTextResponses");
     </script>
 
 </body>

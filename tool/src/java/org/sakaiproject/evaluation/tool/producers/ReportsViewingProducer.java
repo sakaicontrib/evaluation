@@ -111,6 +111,8 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
       this.reportingPermissions = perms;
    }
 
+   int totalCommentsCount = 0;
+   int totalTextResponsesCount = 0;
    int displayNumber = 0;
 
    String currentViewMode = VIEWMODE_REGULAR;
@@ -252,8 +254,18 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
 
             }
 
+            // show the comments/textresponses stuff
+            String allComments = "";
+            if (totalCommentsCount > 0) {
+               allComments = "allComments";
+            }
+            String allTextResponses = "";
+            if (totalTextResponsesCount > 0) {
+               allTextResponses = "allTextResponses";
+            }            
             // this fills in the javascript init call ()
-            UIInitBlock.make(tofill, "initJavascript", "EvalSystem.initEvalReportView", new Object[] {} );
+            UIInitBlock.make(tofill, "initJavascript", "EvalSystem.initEvalReportView", 
+                  new Object[] {allComments, allTextResponses} );
 
          }
       }
@@ -334,6 +346,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
             if (commentCount == 0) {
                UIMessage.make(showCommentsBranch, "noComment", "viewreport.no.comments");
             }
+            totalCommentsCount += commentCount;
          }            
 
       } else if (EvalConstants.ITEM_TYPE_TEXT.equals(templateItemType)) {
@@ -369,6 +382,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
          if (responsesCount == 0) {
             UIMessage.make(showResponsesBranch, "noResponse", "viewreport.no.responses");
          }
+         totalTextResponsesCount += responsesCount;
 
          UIMessage.make(essay, "responsesCount", "viewreport.responses.count", new Object[] {responsesCount + naCount});
 
