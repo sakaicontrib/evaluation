@@ -14,7 +14,6 @@
 
 package org.sakaiproject.evaluation.tool.producers;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -31,7 +30,6 @@ import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.ReportingPermissions;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
-import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -39,7 +37,6 @@ import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil;
-import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
 import org.sakaiproject.evaluation.tool.viewparams.CSVReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.ExcelReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.PDFReportViewParams;
@@ -205,7 +202,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
             
             // The Groups we are viewing
             UIMessage.make(tofill, "selectedGroups", "viewreport.viewinggroups", 
-                  new String[] {responseAggregator.getCommaSeperatedGroupNames(groupIds)});
+                  new String[] { responseAggregator.getCommaSeperatedGroupNames(groupIds) });
 
             
             // get all the answers
@@ -315,7 +312,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
                UIMessage.make(answerbranch, "responsesCount", "viewreport.responses.count", new String[] {responseNumbers[x]+""});
             }
 
-            if (templateItem.getUsesNA()) {
+            if (templateItem.getUsesNA() != null && templateItem.getUsesNA()) {
                naCount = responseNumbers[responseNumbers.length-1];
                UIBranchContainer answerbranch = UIBranchContainer.make(scaled, "answers:");
                UIMessage.make(answerbranch, "responseText", "reporting.notapplicable.longlabel");
@@ -327,7 +324,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
 
          UIMessage.make(scaled, "responsesCount", "viewreport.responses.count", new Object[] {responsesCount + naCount});
 
-         if (templateItem.getUsesComment()) {
+         if (templateItem.getUsesComment() != null && templateItem.getUsesComment()) {
             // render the comments
             UIBranchContainer showCommentsBranch = UIBranchContainer.make(tofill, "showComments:");
             int commentCount = 0;
@@ -383,7 +380,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
 
          UIMessage.make(essay, "responsesCount", "viewreport.responses.count", new Object[] {responsesCount + naCount});
 
-         if (templateItem.getUsesNA()) {
+         if (templateItem.getUsesNA() != null && templateItem.getUsesNA()) {
             // show the number of NA responses
             UIBranchContainer naBranch = UIBranchContainer.make(essay, "showNA:");
             UIOutput.make(naBranch, "naCount", naCount+"");
