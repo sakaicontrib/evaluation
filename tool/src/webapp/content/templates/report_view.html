@@ -32,7 +32,7 @@
 
          <!-- this div is appearing over top of other things, not sure why -AZ -->
          <div>
-            <ul style="clear:both;display:inline;">
+            <ul style="clear:both;">
                <li style="float:right"><a rsf:id="pdfResultsReport" href="#" target="_blank" class="exportAction">Export pdf</a></li>
                <li style="float:right"><a rsf:id="xlsResultsReport" href="#" target="_blank" class="exportAction">Export xls</a></li>
                <li style="float:right"><a rsf:id="csvResultsReport" href="#" target="_blank" class="exportAction">Export csv</a></li>
@@ -85,19 +85,22 @@
                                 <td width="70%" valign="top">
                                     <h4><span rsf:id="itemText">Scaled item question text here</span></h4>
                                 </td>
-                                <td></td>
+                                <td class="special">
+                                    <span rsf:id="responsesCount">50 Responses</span>
+                                </td>
                             </tr>
-                            <tr rsf:id="answers:">
+                            <tr rsf:id="choices:">
                                 <td></td>
                                 <td>
-                                    <h5><span rsf:id="responseText">answer choice text</span></h5>
+                                    <h5><span rsf:id="choiceText">answer choice text</span></h5>
                                 </td>
                                 <td class="special">
-                                    <span rsf:id="responsesCount"># Responses</span>
+                                    <span rsf:id="choiceCount">5 (10%)</span>
                                 </td>
                             </tr>
                         </table>
                         <div rsf:id="showComments:" style="margin-left: 1em;" class="showcomments">
+                           <h4 rsf:id="msg=viewreport.comments.header">Comments:</h4>
                            <span rsf:id="noComments" style="font-style: italic;"></span>
                            <ol style="list-style: lower-alpha; list-style-position: inside;">
                               <li rsf:id="comments:">

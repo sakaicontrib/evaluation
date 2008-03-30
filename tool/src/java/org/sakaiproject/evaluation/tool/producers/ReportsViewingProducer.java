@@ -50,6 +50,7 @@ import org.sakaiproject.util.Validator;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIInitBlock;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
@@ -251,6 +252,9 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
 
             }
 
+            // this fills in the javascript init call ()
+            UIInitBlock.make(tofill, "initJavascript", "EvalSystem.initEvalReportView", new Object[] {} );
+
          }
       }
 
@@ -279,10 +283,12 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
 
          UIBranchContainer scaled = UIBranchContainer.make(tofill, "scaledSurvey:");
 
+         int responsesCount = itemAnswers.size();
+
          UIOutput.make(scaled, "itemNum", displayNumber+"");
          UIVerbatim.make(scaled, "itemText", templateItem.getItem().getItemText());
+         UIMessage.make(scaled, "responsesCount", "viewreport.responses.count", new Object[] {responsesCount});
 
-         int responsesCount = 0;
          int naCount = 0;
          if (! VIEWMODE_ALLESSAYS.equals(currentViewMode)) {
             // if we are in essay view mode then do not show the scale or the answers counts
@@ -290,27 +296,25 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
             String[] scaleOptions = scale.getOptions();
             String scaleLabels[] = new String[scaleOptions.length];
 
-            int[] responseNumbers = EvalResponseAggregatorUtil.countResponseChoices(templateItemType, scaleOptions.length, itemAnswers);
+            int[] choicesCounts = TemplateItemDataList.getAnswerChoicesCounts(templateItemType, scaleOptions.length, itemAnswers);
 
             for (int x = 0; x < scaleLabels.length; x++) {
-               int responseCount = responseNumbers[x];
-               responsesCount += responseCount;
-               UIBranchContainer answerbranch = UIBranchContainer.make(scaled, "answers:", x + "");
-               UIOutput.make(answerbranch, "responseText", scaleOptions[x]);
-               UIMessage.make(answerbranch, "responsesCount", "viewreport.responses.count", new String[] {responseNumbers[x]+""});
+               UIBranchContainer choicesBranch = UIBranchContainer.make(scaled, "choices:");
+               UIOutput.make(choicesBranch, "choiceText", scaleOptions[x]);
+               UIMessage.make(choicesBranch, "choiceCount", "viewreport.answers.percentage", 
+                     new String[] { choicesCounts[x]+"", makePercentage(choicesCounts[x], responsesCount) });
             }
 
             if (templateItem.getUsesNA() != null && templateItem.getUsesNA()) {
-               naCount = responseNumbers[responseNumbers.length-1];
-               UIBranchContainer answerbranch = UIBranchContainer.make(scaled, "answers:");
-               UIMessage.make(answerbranch, "responseText", "reporting.notapplicable.longlabel");
-               UIOutput.make(answerbranch, "responseTotal", naCount+"");
+               naCount = choicesCounts[choicesCounts.length-1];
+               UIBranchContainer choicesBranch = UIBranchContainer.make(scaled, "choices:");
+               UIMessage.make(choicesBranch, "responseText", "reporting.notapplicable.longlabel");
+               UIMessage.make(choicesBranch, "choiceCount", "viewreport.answers.percentage", 
+                     new String[] { naCount+"", makePercentage(naCount, responsesCount) });
             }
-         } else {
-            responsesCount = itemAnswers.size();
          }
 
-         UIMessage.make(scaled, "responsesCount", "viewreport.responses.count", new Object[] {responsesCount + naCount});
+         UIMessage.make(scaled, "responsesCount", "viewreport.responses.count", new Object[] {responsesCount});
 
          if (templateItem.getUsesComment() != null && templateItem.getUsesComment()) {
             // render the comments
@@ -383,6 +387,22 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
       } else {
          log.warn("Skipped invalid item type ("+templateItemType+"): TI: " + templateItem.getId() );
       }
+   }
+
+
+   /**
+    * @param value
+    * @param total
+    * @return a string version of the percentage number
+    */
+   private String makePercentage(int value, int total) {
+      String percentage = null;
+      if (total > 0) {
+         percentage = ((value * 100) / total) + "";
+      } else {
+         percentage = "0";
+      }
+      return percentage;
    }
 
 

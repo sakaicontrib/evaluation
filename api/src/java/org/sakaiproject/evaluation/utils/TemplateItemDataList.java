@@ -26,6 +26,7 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalResponse;
+import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 
 
@@ -673,6 +674,81 @@ public class TemplateItemDataList {
          }
       }
       return userIds;
+   }
+
+   /**
+    * This helper method deals with producing an array of total number of responses for
+    * a list of answers.  It does not deal with any of the logic (such as groups,
+    * etc.) it takes to get a list of answers.
+    * 
+    * The item type should be the expected constant from EvalConstants. For 
+    * scaled and multiple choice questions, this will count the answers numeric
+    * field for each scale.  For multiple answers, it will aggregate all the responses
+    * for each answer to their scale choice.
+    * 
+    * If the item allows Not Applicable answers, this tally will be included as 
+    * the very last item of the array, allowing you to still match up the indexes
+    * with the original Scale options.
+    * 
+    * @param templateItemType the template item type from {@link TemplateItemUtils#getTemplateItemType(EvalTemplateItem)},
+    * e.g. {@link EvalConstants#ITEM_TYPE_MULTIPLECHOICE}
+    * @param scaleChoices the number of scale choices (normally this is the size of the {@link EvalScale#getOptions()} array. 
+    * The returned integer array will be this big (+1 for NA), each index being a count of answers for that scale choice
+    * @param answers the List of EvalAnswers to work with
+    * @throws IllegalArgumentException if this is not an itemType that has numeric answers (Scaled/MC/MA/...)
+    */
+   public static int[] getAnswerChoicesCounts(String templateItemType, int scaleChoices, List<EvalAnswer> itemAnswers) {
+      // Make the array one size larger in case we need to add N/A tallies.
+      int[] togo = new int[scaleChoices+1];
+
+      if ( EvalConstants.ITEM_TYPE_SCALED.equals(templateItemType) 
+            || EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(templateItemType) 
+            || EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(templateItemType)
+            || EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(templateItemType) ) {
+         
+         for (EvalAnswer answer: itemAnswers) {
+            EvalUtils.decodeAnswerNA(answer);
+            if (answer.NA) {
+               togo[togo.length-1]++;
+            }
+            else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(templateItemType)) {
+               // special handling for the multiple answer items
+               if (! EvalConstants.NO_MULTIPLE_ANSWER.equals(answer.getMultiAnswerCode())) {
+                  // this multiple answer is not one that should be ignored
+                  Integer[] decoded = EvalUtils.decodeMultipleAnswers(answer.getMultiAnswerCode());
+                  for (Integer decodedAnswer: decoded) {
+                     incrementArraySafely(decodedAnswer.intValue(), togo);
+                  }
+               }
+            }
+            else {
+               // standard handling for single answer items
+               if (! EvalConstants.NO_NUMERIC_ANSWER.equals(answer.getNumeric())) {
+                  // this numeric answer is not one that should be ignored
+                  incrementArraySafely(answer.getNumeric().intValue(), togo);
+               }
+            }
+         }
+      } else {
+         throw new IllegalArgumentException("The itemType needs to be one that has numeric answers, this one is invalid: " + templateItemType);
+      }
+
+      return togo;
+   }
+
+   /**
+    * Ensures we will not get AIOOB exceptions
+    * @param answerValue
+    * @param togo
+    */
+   private static void incrementArraySafely(int answerValue, int[] togo) {
+      if (answerValue >= 0 && answerValue < togo.length) {
+         // answer will fit in the array
+         togo[answerValue]++;
+      } else {
+         // put it in the NA slot
+         togo[togo.length-1]++;
+      }
    }
 
 }
