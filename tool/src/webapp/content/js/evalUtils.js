@@ -144,11 +144,17 @@ var EvalSystem = function() {
         //clearButton.click( function (event) { clearEmailsAction(event) });
   	},
 
-    initEvalReportView: function () {
+    initEvalReportView: function (allCommentsId, allTextResponsesId) {
         // for now this is just enabling toggling of comments and responses
         // see the makeToggle method for description of arguments
-        EvalSystem.makeToggle("showAllComments", "hideAllComments", null, "showcomments", false);
-        EvalSystem.makeToggle("showAllTextResponses", "hideAllTextResponses", null, "showtextresponses", true);
+        if (allCommentsId.length > 0) {
+            $(escIdForJquery(allCommentsId)).show();
+            EvalSystem.makeToggle(allCommentsId + "Show", allCommentsId + "Hide", null, "showcomments", false);
+        }
+        if (allTextResponsesId.length > 0) {
+            $(escIdForJquery(allTextResponsesId)).show();
+            EvalSystem.makeToggle(allTextResponsesId + "Show", allTextResponsesId + "Hide", null, "showtextresponses", false);
+        }
     },
 
     /**
