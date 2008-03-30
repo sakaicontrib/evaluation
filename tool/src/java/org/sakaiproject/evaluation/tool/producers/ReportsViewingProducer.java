@@ -24,12 +24,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.ReportingPermissions;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
-import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -100,16 +98,6 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
    private EvalAuthoringService authoringService;
    public void setAuthoringService(EvalAuthoringService authoringService) {
       this.authoringService = authoringService;
-   }
-
-   private EvalDeliveryService deliveryService;
-   public void setDeliveryService(EvalDeliveryService deliveryService) {
-      this.deliveryService = deliveryService;
-   }
-
-   private ExternalHierarchyLogic hierarchyLogic;
-   public void setExternalHierarchyLogic(ExternalHierarchyLogic logic) {
-      this.hierarchyLogic = logic;
    }
 
    private EvalSettings evalSettings;

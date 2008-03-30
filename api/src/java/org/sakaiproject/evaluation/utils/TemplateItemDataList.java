@@ -464,6 +464,13 @@ public class TemplateItemDataList {
             blockChildItems = TemplateItemUtils.getChildItems(allTemplateItems, templateItem.getId());
             this.templateItem.childTemplateItems = blockChildItems; // for rendering
          }
+         // minor fixups to ensure nulls are filled in
+         if (templateItem.getUsesComment() == null) {
+            templateItem.setUsesComment(false);
+         }
+         if (templateItem.getUsesNA() == null) {
+            templateItem.setUsesNA(false);
+         }
       }
 
       /**
