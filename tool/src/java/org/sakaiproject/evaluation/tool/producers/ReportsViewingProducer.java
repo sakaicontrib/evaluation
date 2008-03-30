@@ -185,11 +185,12 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
          }
 
          Long templateId = evaluation.getTemplate().getId();
+         
+         // Fetch most of all the data and metadata with the ultra TIDL object
+         TemplateItemDataList tidl = responseAggregator.prepareTemplateItemDataStructure(evaluation, groupIds);
 
-         // get all items for this template (maybe limit these by groups later)
-         List<EvalTemplateItem> allTemplateItems = 
-            authoringService.getTemplateItemsForTemplate(templateId, new String[] {}, new String[] {}, new String[] {});
-
+         List<EvalTemplateItem> allTemplateItems = tidl.getAllTemplateItems();
+         
          if (! allTemplateItems.isEmpty()) {
 
             if (VIEWMODE_ALLESSAYS.equals(reportViewParams.viewmode)) {
@@ -202,32 +203,20 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
             // Evaluation Info
             UIOutput.make(tofill, "evaluationTitle", evaluation.getTitle());
             
-            // The comma separated list of groups we viewing
-            StringBuilder groupsString = new StringBuilder();
-            for (int groupCounter = 0; groupCounter < groupIds.length; groupCounter++) {
-               if (groupCounter > 0) {
-                  groupsString.append(", ");
-               }
-               groupsString.append( externalLogic.getDisplayTitle(groupIds[groupCounter]) );
-            }
-            UIMessage.make(tofill, "selectedGroups", "viewreport.viewinggroups", new String[] {groupsString.toString()});
+            // The Groups we are viewing
+            UIMessage.make(tofill, "selectedGroups", "viewreport.viewinggroups", 
+                  new String[] {responseAggregator.getCommaSeperatedGroupNames(groupIds)});
 
+            
             // get all the answers
-            List<EvalAnswer> answers = deliveryService.getAnswersForEval(evaluationId, groupIds, null);
-
+            List<EvalAnswer> answers = tidl.getAnswers();
+            
             // get the list of all instructors for this report and put the user objects for them into a map
             Set<String> instructorIds = new HashSet<String>();
             Map<String,EvalUser> instructorIdtoEvalUser = new HashMap<String, EvalUser>();
             responseAggregator.fillInstructorInformation(answers, instructorIds, instructorIdtoEvalUser);
 
-            // Get the sorted list of all nodes for this set of template items
-            List<EvalHierarchyNode> hierarchyNodes = RenderingUtils.makeEvalNodesList(hierarchyLogic, allTemplateItems);
-
-            // make the TI data structure
-            Map<String, List<String>> associates = new HashMap<String, List<String>>();
-            associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, new ArrayList<String>(instructorIds));
-            TemplateItemDataList tidl = new TemplateItemDataList(allTemplateItems, hierarchyNodes, associates, answers);
-
+            
             int renderedItemCount = 0;
             // loop through the TIGs and handle each associated category
             for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {
