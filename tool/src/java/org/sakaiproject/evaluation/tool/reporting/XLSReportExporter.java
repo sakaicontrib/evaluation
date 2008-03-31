@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -60,6 +61,17 @@ public class XLSReportExporter {
    public void setMessageLocator(MessageLocator locator) {
       this.messageLocator = locator;
    }
+   
+   /**
+    * The regular set string value method in POI is deprecated, and this prefered
+    * way is much more bulky, so this is a convenience method.
+    * 
+    * @param cell
+    * @param value
+    */
+   private void setPlainStringCell(HSSFCell cell, String value) {
+      cell.setCellValue(new HSSFRichTextString(value));
+   }
 
    public void formatResponses(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream) {
       HSSFWorkbook wb = new HSSFWorkbook();
@@ -89,7 +101,7 @@ public class XLSReportExporter {
       // Evaluation Title
       HSSFRow row1 = sheet.createRow(0);
       HSSFCell cellA1 = row1.createCell((short)0);
-      cellA1.setCellValue(evaluation.getTitle());
+      setPlainStringCell(cellA1,evaluation.getTitle());
       cellA1.setCellStyle(mainTitleStyle);
 
       // calculate the response rate
@@ -99,13 +111,13 @@ public class XLSReportExporter {
       HSSFRow row2 = sheet.createRow(1);
       HSSFCell cellA2 = row2.createCell((short)0);
       cellA2.setCellStyle(boldHeaderStyle);
-      cellA2.setCellValue( EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount) );
+      setPlainStringCell(cellA2,EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount) );
 
       if (groupIds.length > 0) {
          HSSFRow row3 = sheet.createRow(2);
          HSSFCell cellA3 = row3.createCell((short)0);
 
-         cellA3.setCellValue(messageLocator.getMessage("reporting.xls.participants",
+         setPlainStringCell(cellA3,messageLocator.getMessage("reporting.xls.participants",
                new String[] {responseAggregator.getCommaSeperatedGroupNames(groupIds)}));
       }
       
@@ -136,35 +148,35 @@ public class XLSReportExporter {
          HSSFCell cell = questionTypeRow.createCell(headerCount);
          
          if (EvalConstants.ITEM_TYPE_SCALED.equals(type)) {
-            cell.setCellValue(messageLocator.getMessage("reporting.itemtypelabel.scale"));
+            setPlainStringCell(cell,messageLocator.getMessage("reporting.itemtypelabel.scale"));
          }
          else if (EvalConstants.ITEM_TYPE_TEXT.equals(type)) {
-            cell.setCellValue(messageLocator.getMessage("reporting.itemtypelabel.text"));
+            setPlainStringCell(cell,messageLocator.getMessage("reporting.itemtypelabel.text"));
          }
          else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(type)) {
-            cell.setCellValue(messageLocator.getMessage("reporting.itemtypelabel.multipleanswer"));
+            setPlainStringCell(cell,messageLocator.getMessage("reporting.itemtypelabel.multipleanswer"));
          }
          else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(type)) {
-            cell.setCellValue(messageLocator.getMessage("reporting.itemtypelabel.multiplechoice"));
+            setPlainStringCell(cell,messageLocator.getMessage("reporting.itemtypelabel.multiplechoice"));
          }
          else {
-            cell.setCellValue("");
+            setPlainStringCell(cell,"");
          }
          cell.setCellStyle(italicMiniHeaderStyle);
          
          HSSFCell questionText = questionTextRow.createCell(headerCount);
-         questionText.setCellValue(externalLogic.cleanupUserStrings(
+         setPlainStringCell(questionText,externalLogic.cleanupUserStrings(
                dti.templateItem.getItem().getItemText()));
          
          HSSFCell questionCat = questionCatRow.createCell(headerCount);
          if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(dti.associateType)) {
-            questionCat.setCellValue("Instructor: " + externalLogic.getUserUsername(dti.associateId)); // TODO FIXME i18n
+            setPlainStringCell(questionCat,"Instructor: " + externalLogic.getUserUsername(dti.associateId)); // TODO FIXME i18n
          }
          else if (EvalConstants.ITEM_CATEGORY_COURSE.equals(dti.associateType)) {
-            questionCat.setCellValue("Course"); // TODO FIXME i18n
+            setPlainStringCell(questionCat,"Course"); // TODO FIXME i18n
          }
          else {
-            questionCat.setCellValue("");
+            setPlainStringCell(questionCat,"");
          }
          
          headerCount++;
@@ -189,7 +201,7 @@ public class XLSReportExporter {
             // In Eval, users can leave questions blank, in which case this will
             // be null
             if (answer != null) {
-               responseCell.setCellValue(responseAggregator.formatForSpreadSheet(answer.getTemplateItem(), answer));
+               setPlainStringCell(responseCell,responseAggregator.formatForSpreadSheet(answer.getTemplateItem(), answer));
             }
             dtiCounter++;
          }
