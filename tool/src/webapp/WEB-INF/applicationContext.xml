@@ -214,7 +214,6 @@
       <property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
       <property name="evalResponseAggregatorUtil" ref="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil" />
       <property name="messageLocator" ref="messageLocator" />
-      <property name="localeGetter" ref="requestLocaleProxy" />
 	</bean>
 
 	<bean id="PDFReportExporter" class="org.sakaiproject.evaluation.tool.reporting.PDFReportExporter">

@@ -509,6 +509,33 @@ public class TemplateItemDataList {
       }
 
       /**
+       * @return true if this item is set to use comments
+       */
+      public boolean usesComments() {
+         boolean uses = false;
+         if (templateItem.getUsesComment() != null && templateItem.getUsesComment()) {
+            uses = true;
+         }
+         return uses;
+      }
+
+      /**
+       * @return the list of all comments for this item
+       */
+      public List<String> getComments() {
+         List<String> comments = new ArrayList<String>();
+         List<EvalAnswer> answers = getAnswers();
+         if (answers != null) {
+            for (EvalAnswer answer : answers) {
+               if (! EvalUtils.isBlank(answer.getComment())) {
+                  comments.add( answer.getComment() );
+               }
+            }
+         }
+         return comments;
+      }
+
+      /**
        * @return the list of all answers related to this data template item,
        * this will be null if the item is not answerable
        */

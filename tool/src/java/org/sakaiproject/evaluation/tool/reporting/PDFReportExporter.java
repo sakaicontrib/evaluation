@@ -92,7 +92,7 @@ public class PDFReportExporter implements ReportExporter {
             messageLocator.getMessage("reporting.pdf.startdatetime",df.format(evaluation.getStartDate())),
             messageLocator.getMessage("reporting.pdf.replyrate", 
                   new String[] { EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount) }),
-            bannerImageBytes, messageLocator.getMessage("reporting.pdf.defaultsystemname"));
+                  bannerImageBytes, messageLocator.getMessage("reporting.pdf.defaultsystemname"));
 
       // set title and instructions
       evalPDFReportBuilder.addIntroduction( evaluation.getTitle(), 
@@ -164,14 +164,23 @@ public class PDFReportExporter implements ReportExporter {
       else if (EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(templateItemType)) {
          evalPDFReportBuilder.addSectionHeader(questionText);
       }
+      else if (EvalConstants.ITEM_TYPE_TEXT.equals(templateItemType)) {
+         List<String> essays = new ArrayList<String>();
+         for (EvalAnswer answer: itemAnswers) {
+            essays.add(answer.getText());
+         }
+         evalPDFReportBuilder.addTextItemsList(questionText, essays);
+      }
       else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(templateItemType) ||
             EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(templateItemType) ||
             EvalConstants.ITEM_TYPE_SCALED.equals(templateItemType) ||
             EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(templateItemType)) {
-         boolean showPercentages = false;
-         if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(templateItemType)) {
-            showPercentages = true;
-         }
+         // always showing percentages for now
+         boolean showPercentages = true;
+//       boolean showPercentages = false;
+//       if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(templateItemType)) {
+//       showPercentages = true;
+//       }
 
          int[] responseArray = TemplateItemDataList.getAnswerChoicesCounts(templateItemType, item.getScale().getOptions().length, itemAnswers);
 
@@ -189,13 +198,18 @@ public class PDFReportExporter implements ReportExporter {
 
          evalPDFReportBuilder.addLikertResponse(questionText, 
                optionLabels, responseArray, showPercentages);
-      }
-      else if (EvalConstants.ITEM_TYPE_TEXT.equals(templateItemType)) {
-         List<String> essays = new ArrayList<String>();
-         for (EvalAnswer answer: itemAnswers) {
-            essays.add(answer.getText());
+
+         // handle comments
+         if (dti.usesComments()) {
+            List<String> comments = dti.getComments();
+            if (comments.size() <= 0) {
+               evalPDFReportBuilder.addSectionHeader( messageLocator.getMessage("viewreport.comments.header") );
+               evalPDFReportBuilder.addRegularText( messageLocator.getMessage("viewreport.no.comments") );
+            } else {
+               evalPDFReportBuilder.addTextItemsList(messageLocator.getMessage("viewreport.comments.header"), comments);
+            }
          }
-         evalPDFReportBuilder.addEssayResponse(questionText, essays);
+
       }
       else {
          log.warn("Trying to add unknown type to PDF: " + templateItemType);
