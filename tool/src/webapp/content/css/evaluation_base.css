@@ -950,3 +950,29 @@ color: #555;
 .itemsListOddLine .steppedRowContainer td td {
 	border:none;
 }
+
+.validFail{
+ /* top parent of failed group 
+   can have a border, for example, or just style children below
+  */
+}
+.validFail .label{
+	color:#b11;
+	font-weight:bold;
+}
+.validFail label{
+	color:#000 !important;
+	
+}
+
+
+.validFailGlyph{
+	display:none; /* do not show if not child of .validFail */
+}
+.validFail .validFailGlyph{
+	display:inline;
+	color:#b11;
+	font-weight:bold;
+	font-size:100%;
+	padding:0;
+}
