@@ -68,7 +68,7 @@ public class PDFReportExporter {
       this.messageLocator = locator;
    }
 
-   public void formatResponses(EvalAggregatedResponses responses, OutputStream outputStream) {
+   public void formatResponses(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream) {
 
       EvalPDFReportBuilder evalPDFReportBuilder = new EvalPDFReportBuilder(outputStream);
 
@@ -86,20 +86,20 @@ public class PDFReportExporter {
       DateFormat df = DateFormat.getDateInstance(DateFormat.LONG);
 
       // calculate the response rate
-      int responsesCount = deliveryService.countResponses(responses.evaluation.getId(), null, true);
-      int enrollmentsCount = evaluationService.countParticipantsForEval(responses.evaluation.getId());
+      int responsesCount = deliveryService.countResponses(evaluation.getId(), null, true);
+      int enrollmentsCount = evaluationService.countParticipantsForEval(evaluation.getId());
 
-      evalPDFReportBuilder.addTitlePage(responses.evaluation.getTitle(), 
+      evalPDFReportBuilder.addTitlePage(evaluation.getTitle(), 
             user.displayName, 
             messageLocator.getMessage("reporting.pdf.accountinfo", new String[] {user.username, user.displayName}), 
-            messageLocator.getMessage("reporting.pdf.startdatetime",df.format(responses.evaluation.getStartDate())),
+            messageLocator.getMessage("reporting.pdf.startdatetime",df.format(evaluation.getStartDate())),
             messageLocator.getMessage("reporting.pdf.replyrate", new String[] { EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount) }),
             bannerImageBytes, messageLocator.getMessage("reporting.pdf.defaultsystemname"));
 
-      String plainInstructions = externalLogic.cleanupUserStrings(responses.evaluation.getInstructions());
-      evalPDFReportBuilder.addIntroduction(responses.evaluation.getTitle(), plainInstructions);
+      String plainInstructions = externalLogic.cleanupUserStrings(evaluation.getInstructions());
+      evalPDFReportBuilder.addIntroduction(evaluation.getTitle(), plainInstructions);
 
-      TemplateItemDataList tidl = responseAggregator.prepareTemplateItemDataStructure(responses.evaluation, responses.groupIds);
+      TemplateItemDataList tidl = responseAggregator.prepareTemplateItemDataStructure(evaluation, groupIds);
       
       // Loop through the major group types: Course Questions, Instructor Questions, etc.
       int renderedItemCount = 0;
@@ -162,7 +162,7 @@ public class PDFReportExporter {
                showPercentages = true;
             }
             
-            int[] responseArray = responseAggregator.countResponseChoices(templateItemType, item.getScale().getOptions().length, itemAnswers);
+            int[] responseArray = TemplateItemDataList.getAnswerChoicesCounts(templateItemType, item.getScale().getOptions().length, itemAnswers);
             
             String[] optionLabels;
             if (templateItem.getUsesNA()) {
