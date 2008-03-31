@@ -236,9 +236,10 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
                      DataTemplateItem dti = dtis.get(i);
                      if (renderBasedOnOptions(dti.templateItem)) {
                         UIBranchContainer nodeItemsBranch = UIBranchContainer.make(categorySectionBranch, "itemrow:templateItem");
-                        if (renderedItemCount % 2 == 1) {
-                           nodeItemsBranch.decorate( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
-                        }
+                        // add a style to each rendered item
+                        String styleClass = renderedItemCount % 2 == 1 ? "reportItemOddLine" : "reportItemEvenLine"; // must match the existing CSS classes
+                        nodeItemsBranch.decorate( new UIStyleDecorator(styleClass) );
+                        // render the item
                         renderTemplateItemResults(nodeItemsBranch, dti, reportViewParams);
                         renderedItemCount++;
                      }
