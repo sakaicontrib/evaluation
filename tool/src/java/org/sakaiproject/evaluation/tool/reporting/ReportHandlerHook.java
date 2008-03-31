@@ -156,7 +156,7 @@ public class ReportHandlerHook implements HandlerHook {
       else if (drvp instanceof PDFReportViewParams) {
          response.setContentType("application/pdf");
          response.setHeader("filename", "report.pdf");
-         pdfReportExporter.formatResponses(responses, resultsOutputStream);
+         pdfReportExporter.formatResponses(evaluation, drvp.groupIds, resultsOutputStream);
       }
       return true;
    }
