@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -22,6 +23,11 @@ import au.com.bytecode.opencsv.CSVWriter;
 
 public class CSVReportExporter implements ReportExporter {
    private static final char COMMA = ',';
+
+   private EvalExternalLogic externalLogic;
+   public void setExternalLogic(EvalExternalLogic externalLogic) {
+      this.externalLogic = externalLogic;
+   }
 
    private EvalResponseAggregatorUtil responseAggregator;
    public void setEvalResponseAggregatorUtil(EvalResponseAggregatorUtil bean) {
@@ -56,7 +62,7 @@ public class CSVReportExporter implements ReportExporter {
       List<String> questionTextRow = new ArrayList<String>();
       for (DataTemplateItem dti: dtiList) {
          questionTypeRow.add(responseAggregator.getHeaderLabelForItemType(dti.getTemplateItemType()));
-         questionTextRow.add(dti.templateItem.getItem().getItemText());
+         questionTextRow.add( externalLogic.makePlainTextFromHTML( dti.templateItem.getItem().getItemText() ) );
          if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(dti.associateType)) {
             questionCatRow.add( messageLocator.getMessage("reporting.spreadsheet.instructor", 
                   instructorIdtoEvalUser.get(dti.associateId).displayName) );

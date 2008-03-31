@@ -1213,6 +1213,21 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
       return cleanup;
    }
 
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.externals.ExternalTextUtils#makePlainTextFromHTML(java.lang.String)
+    */
+   public String makePlainTextFromHTML(String html) {
+      if (html == null) {
+         // nulls are ok
+         return null;
+      } else if (html.length() == 0) {
+         // empty string is ok
+         return "";
+      }
+      return FormattedText.convertFormattedTextToPlaintext(html).trim();
+   }
+
+
    // JOBS related pass-through methods
 
    /* (non-Javadoc)

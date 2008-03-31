@@ -28,6 +28,7 @@ import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalScheduledJob;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
+import org.sakaiproject.evaluation.utils.EvalUtils;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -488,8 +489,13 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
    }
 
    public String cleanupUserStrings(String userSubmittedString) {
-      return userSubmittedString;
+      return EvalUtils.cleanupHtmlPtags(userSubmittedString);
    }
+
+   public String makePlainTextFromHTML(String html) {
+      return html;
+   }
+
 
 
    // FOR scheduling

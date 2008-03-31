@@ -160,7 +160,7 @@ public class EvalResponseAggregatorUtil {
          togo = messageLocator.getMessage("reporting.notapplicable.shortlabel");
       }
       else if (EvalConstants.ITEM_TYPE_TEXT.equals(itemType)) {
-         togo = answer.getText();
+         togo = externalLogic.makePlainTextFromHTML( answer.getText() );
       } 
       else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemType)) {
          String labels[] = templateItem.getItem().getScale().getOptions();
