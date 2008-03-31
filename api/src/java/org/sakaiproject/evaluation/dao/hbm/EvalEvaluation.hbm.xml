@@ -122,5 +122,12 @@
         <property name="evalCategory" type="java.lang.String" index="eval_eval_category">
             <column name="EVAL_CATEGORY" length="255" />
         </property>
+        <!-- Allows for linking this eval to data automatically when it is created -->
+        <property name="autoUseTag" type="java.lang.String">
+            <column name="AUTO_USE_TAG" length="255" />
+        </property>
+        <property name="autoUseInsertion" type="java.lang.String">
+            <column name="AUTO_USE_INSERTION" length="255" />
+        </property>
     </class>
 </hibernate-mapping>

@@ -26,7 +26,7 @@ public class EvalConstants {
     * The current version of the app for updating purposes,
     * this should always be the NEXT version of the tool if this is trunk code
     */
-   public static String APP_VERSION = "1.2.0-RC5";
+   public static String APP_VERSION = "1.2.0-RC5"; 
 
    public static String SVN_REVISION = "$Revision$";
    public static String SVN_LAST_UPDATE = "$Date$";
@@ -142,6 +142,17 @@ public class EvalConstants {
     * Evaluation authentication control: Authentication not required to access this evaluation (anonymous allowed)
     */
    public static final String EVALUATION_AUTHCONTROL_NONE = "NONE";
+
+   /**
+    * AutoUse items will be inserted before existing items when they are added
+    * to the template for the evaluation
+    */
+   public static final String EVALUATION_AUTOUSE_INSERTION_BEFORE = "Before";
+   /**
+    * AutoUse items will be inserted after existing items when they are added
+    * to the template for the evaluation
+    */
+   public static final String EVALUATION_AUTOUSE_INSERTION_AFTER = "After";
 
 
    /**
