@@ -234,7 +234,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
       }
 
       // render the item
-      itemRenderer.renderItem(parent, "renderedItem:", null, templateItem, displayNumber, false);
+      itemRenderer.renderItem(parent, "renderedItem:", null, templateItem, displayNumber, true);
 
       // increment the display number
       displayNumber += displayIncrement;
