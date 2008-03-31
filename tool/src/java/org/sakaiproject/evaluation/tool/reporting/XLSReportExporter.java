@@ -69,12 +69,12 @@ public class XLSReportExporter {
     * @param value
     */
    private void setPlainStringCell(HSSFCell cell, String value) {
-      cell.setCellValue(new HSSFRichTextString(value));
+      cell.setCellValue(new HSSFRichTextString(value).getString());
    }
 
    public void formatResponses(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream) {
       HSSFWorkbook wb = new HSSFWorkbook();
-      HSSFSheet sheet = wb.createSheet("Responses"); //TODO i18n
+      HSSFSheet sheet = wb.createSheet(messageLocator.getMessage("reporting.xls.sheetname"));
 
       // Title Style
       HSSFFont font = wb.createFont();
@@ -117,7 +117,7 @@ public class XLSReportExporter {
          HSSFCell cellA3 = row3.createCell((short)0);
 
          setPlainStringCell(cellA3,messageLocator.getMessage("reporting.xls.participants",
-               new String[] {responseAggregator.getCommaSeperatedGroupNames(groupIds)}));
+               new String[] {responseAggregator.getCommaSeparatedGroupNames(groupIds)}));
       }
       
       /* Logic for creating this view

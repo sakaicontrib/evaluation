@@ -193,7 +193,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
             
             // The Groups we are viewing
             UIMessage.make(tofill, "selectedGroups", "viewreport.viewinggroups", 
-                  new String[] { responseAggregator.getCommaSeperatedGroupNames(groupIds) });
+                  new String[] { responseAggregator.getCommaSeparatedGroupNames(groupIds) });
 
             
             // get all the answers
