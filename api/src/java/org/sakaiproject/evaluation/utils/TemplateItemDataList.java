@@ -447,7 +447,7 @@ public class TemplateItemDataList {
        * blockParentId will be null if this is not a block child
        */
       public Long blockParentId = null;
-
+      
       public DataTemplateItem(EvalTemplateItem templateItem, String associateType,
             String associateId, EvalHierarchyNode node) {
          if (templateItem == null) {
@@ -472,6 +472,23 @@ public class TemplateItemDataList {
          if (templateItem.getUsesNA() == null) {
             templateItem.setUsesNA(false);
          }
+      }
+
+      /**
+       * @return the type of this template item,
+       * @see TemplateItemUtils#getTemplateItemType(EvalTemplateItem)
+       */
+      public String getTemplateItemType() {
+         return TemplateItemUtils.getTemplateItemType(this.templateItem);
+      }
+
+      /**
+       * @return true if this item is answerable (i.e. not just a text header/block parent/etc.),
+       * false otherwise
+       * @see TemplateItemUtils#isAnswerable(EvalTemplateItem)
+       */
+      public boolean isAnswerable() {
+         return TemplateItemUtils.isAnswerable(this.templateItem);
       }
 
       /**
