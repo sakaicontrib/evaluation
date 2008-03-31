@@ -16,33 +16,18 @@ package org.sakaiproject.evaluation.tool.reporting;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.ReportingPermissions;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
-import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplate;
-import org.sakaiproject.evaluation.model.EvalTemplateItem;
-import org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil;
 import org.sakaiproject.evaluation.tool.viewparams.CSVReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.DownloadReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.ExcelReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.PDFReportViewParams;
-import org.sakaiproject.evaluation.utils.ComparatorsUtils;
-import org.sakaiproject.evaluation.utils.TemplateItemUtils;
-
-import com.sun.org.apache.xerces.internal.impl.dv.DVFactoryException;
 
 import uk.org.ponder.rsf.processor.HandlerHook;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
