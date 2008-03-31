@@ -51,6 +51,6 @@
 	<classpathentry kind="var" path="MAVEN_REPO/jfree/jars/jcommon-1.0.9.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/jfreechart/jars/jfreechart-1.0.0.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/com.lowagie/jars/itext-2.0.7.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/poi/jars/poi-2.5.1.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/poi/jars/poi-3.0-FINAL.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

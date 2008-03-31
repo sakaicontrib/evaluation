@@ -7,21 +7,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList;
-import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
 
+import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.util.UniversalRuntimeException;
 import au.com.bytecode.opencsv.CSVWriter;
 
 public class CSVReportExporter {
     private static final char COMMA = ',';
-    private EvalSettings evalSettings;
     
     private EvalExternalLogic externalLogic;
     public void setExternalLogic(EvalExternalLogic externalLogic) {
@@ -33,8 +31,20 @@ public class CSVReportExporter {
        this.responseAggregator = bean;
     }
 
+    private MessageLocator messageLocator;
+    public void setMessageLocator(MessageLocator locator) {
+       this.messageLocator = locator;
+    }
 
-    public void formatResponses(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream) {
+
+   /**
+    * Format the results for export
+    * 
+    * @param evaluation
+    * @param groupIds
+    * @param outputStream
+    */
+   public void formatResponses(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream) {
         OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
         CSVWriter writer = new CSVWriter(outputStreamWriter, COMMA);
         
@@ -49,15 +59,14 @@ public class CSVReportExporter {
         List<String> questionTypeRow = new ArrayList<String>();
         List<String> questionTextRow = new ArrayList<String>();
         for (DataTemplateItem dti: dtiList) {
-           String type = TemplateItemUtils.getTemplateItemType(dti.templateItem);
-           questionTypeRow.add(responseAggregator.getHeaderLabelForItemType(type));
-           questionTextRow.add(externalLogic.cleanupUserStrings(
-               dti.templateItem.getItem().getItemText()));
+           questionTypeRow.add(responseAggregator.getHeaderLabelForItemType(dti.getTemplateItemType()));
+           questionTextRow.add(dti.templateItem.getItem().getItemText());
            if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(dti.associateType)) {
-              questionCatRow.add("Instructor: " + externalLogic.getUserUsername(dti.associateId)); // TODO FIXME i18n
+              questionCatRow.add( messageLocator.getMessage("reporting.spreadsheet.instructor", 
+                    externalLogic.getUserUsername(dti.associateId)) );
            }
            else if (EvalConstants.ITEM_CATEGORY_COURSE.equals(dti.associateType)) {
-              questionCatRow.add("Course"); // TODO FIXME i18n
+              questionCatRow.add( messageLocator.getMessage("reporting.spreadsheet.course") );
            }
            else {
               questionCatRow.add("");
@@ -116,9 +125,5 @@ public class CSVReportExporter {
         } catch (IOException e1) {
             throw UniversalRuntimeException.accumulate(e1, "Could not close the CSVWriter");
         }
-    }
-
-    public void setEvalSettings(EvalSettings evalSettings) {
-        this.evalSettings = evalSettings;
     }
 }

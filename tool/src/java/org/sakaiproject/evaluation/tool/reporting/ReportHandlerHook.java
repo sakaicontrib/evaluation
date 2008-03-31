@@ -16,14 +16,15 @@ package org.sakaiproject.evaluation.tool.reporting;
 
 import java.io.IOException;
 import java.io.OutputStream;
+
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.ReportingPermissions;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.tool.viewparams.CSVReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.DownloadReportViewParams;
 import org.sakaiproject.evaluation.tool.viewparams.ExcelReportViewParams;
@@ -36,10 +37,8 @@ import uk.org.ponder.util.UniversalRuntimeException;
 /**
  * Handles the generation of files for exporting results
  * 
- * @author Aaron Zeckoski (aaronz@vt.edu)
- * @author Rui Feng (fengr@vt.edu)
- * @author Will Humphries (whumphri@vt.edu)
  * @author Steven Githens
+ * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class ReportHandlerHook implements HandlerHook {
 
@@ -100,7 +99,6 @@ public class ReportHandlerHook implements HandlerHook {
 
       // get evaluation and template from DAO
       EvalEvaluation evaluation = evaluationService.getEvaluationById(drvp.evalId);
-      EvalTemplate template = evaluation.getTemplate();
 
       String currentUserId = externalLogic.getCurrentUserId();
 

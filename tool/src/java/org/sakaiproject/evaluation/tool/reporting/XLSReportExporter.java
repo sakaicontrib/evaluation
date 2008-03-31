@@ -17,14 +17,11 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
-import org.sakaiproject.evaluation.utils.TemplateItemDataList.HierarchyNodeGroup;
-import org.sakaiproject.evaluation.utils.TemplateItemDataList.TemplateItemGroup;
 
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.util.UniversalRuntimeException;
@@ -69,7 +66,7 @@ public class XLSReportExporter {
     * @param value
     */
    private void setPlainStringCell(HSSFCell cell, String value) {
-      cell.setCellValue(new HSSFRichTextString(value).getString());
+      cell.setCellValue(new HSSFRichTextString(value));
    }
 
    public void formatResponses(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream) {

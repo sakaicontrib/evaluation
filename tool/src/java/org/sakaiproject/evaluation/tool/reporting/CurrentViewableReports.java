@@ -1,9 +1,9 @@
 package org.sakaiproject.evaluation.tool.reporting;
 
 import org.sakaiproject.evaluation.logic.ReportingPermissions;
-import org.sakaiproject.evaluation.model.EvalEvaluation;
 
-/* This small little class is meant to be a request scope bean to bridge the gap
+/**
+ * This little class is meant to be a request scope bean to bridge the gap
  * between the Choose Groups VCP and our VPI that redirects if there is only 
  * one group available to select.
  * 

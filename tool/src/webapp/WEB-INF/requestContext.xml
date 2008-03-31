@@ -81,14 +81,16 @@
    <bean id="reportHandlerHook"
       class="org.sakaiproject.evaluation.tool.reporting.ReportHandlerHook">
       <property name="viewparams" ref="viewParameters" />
-      <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+      <property name="externalLogic" 
+        ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="evaluationService"
          ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+      <property name="reportingPermissions" 
+        ref="org.sakaiproject.evaluation.logic.ReportingPermissions" />
       <property name="csvReportExporter" ref="CSVReportExporter" />
       <property name="xlsReportExporter" ref="XLSReportExporter" />
       <property name="pdfReportExporter" ref="PDFReportExporter" />
       <property name="response" ref="httpServletResponse" />
-      <property name="reportingPermissions" ref="org.sakaiproject.evaluation.logic.ReportingPermissions" />
    </bean>
 
 	<bean id="org.sakaiproject.evaluation.tool.reporting.CurrentViewableReports" 
