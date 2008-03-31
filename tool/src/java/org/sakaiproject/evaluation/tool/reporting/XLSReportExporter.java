@@ -14,16 +14,27 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.model.EvalAnswer;
+import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.utils.EvalAggregatedResponses;
 import org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil;
 import org.sakaiproject.evaluation.utils.EvalUtils;
+import org.sakaiproject.evaluation.utils.TemplateItemDataList;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
+import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
+import org.sakaiproject.evaluation.utils.TemplateItemDataList.HierarchyNodeGroup;
+import org.sakaiproject.evaluation.utils.TemplateItemDataList.TemplateItemGroup;
 
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 public class XLSReportExporter {
+   
+   private static final short QUESTION_CAT_ROW = 3; // Course, Instructor, etc
+   private static final short QUESTION_TYPE_ROW = 4;
+   private static final short QUESTION_TEXT_ROW = 5;
+   private static final short FIRST_ANSWER_ROW = 6;
    
    private EvalResponseAggregatorUtil responseAggregator;
    public void setEvalResponseAggregatorUtil(EvalResponseAggregatorUtil bean) {
@@ -50,9 +61,9 @@ public class XLSReportExporter {
       this.messageLocator = locator;
    }
 
-   public void formatResponses(EvalAggregatedResponses responses, OutputStream outputStream) {
+   public void formatResponses(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream) {
       HSSFWorkbook wb = new HSSFWorkbook();
-      HSSFSheet sheet = wb.createSheet("Responses");
+      HSSFSheet sheet = wb.createSheet("Responses"); //TODO i18n
 
       // Title Style
       HSSFFont font = wb.createFont();
@@ -78,70 +89,111 @@ public class XLSReportExporter {
       // Evaluation Title
       HSSFRow row1 = sheet.createRow(0);
       HSSFCell cellA1 = row1.createCell((short)0);
-      cellA1.setCellValue(responses.evaluation.getTitle());
+      cellA1.setCellValue(evaluation.getTitle());
       cellA1.setCellStyle(mainTitleStyle);
 
       // calculate the response rate
-      int responsesCount = deliveryService.countResponses(responses.evaluation.getId(), null, true);
-      int enrollmentsCount = evaluationService.countParticipantsForEval(responses.evaluation.getId());
+      int responsesCount = deliveryService.countResponses(evaluation.getId(), null, true);
+      int enrollmentsCount = evaluationService.countParticipantsForEval(evaluation.getId());
 
       HSSFRow row2 = sheet.createRow(1);
       HSSFCell cellA2 = row2.createCell((short)0);
       cellA2.setCellStyle(boldHeaderStyle);
       cellA2.setCellValue( EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount) );
 
-      if (responses.groupIds.length > 0) {
+      if (groupIds.length > 0) {
          HSSFRow row3 = sheet.createRow(2);
          HSSFCell cellA3 = row3.createCell((short)0);
 
          cellA3.setCellValue(messageLocator.getMessage("reporting.xls.participants",
-               new String[] {responseAggregator.getCommaSeperatedGroupNames(responses.groupIds)}));
+               new String[] {responseAggregator.getCommaSeperatedGroupNames(groupIds)}));
       }
+      
+      /* Logic for creating this view
+       * 1) make tidl
+       * 2) get DTIs for this eval from tidl
+       * 3) use DTIs to make the headers
+       * 4) get responseIds from tidl
+       * 5) loop over response ids
+       * 6) loop over DTIs
+       * 7) check answersmap for an answer, if there put in cell, if missing, insert blank
+       * 8) done
+       */
+      
+      // 1 Make TIDL
+      TemplateItemDataList tidl = responseAggregator.prepareTemplateItemDataStructure(evaluation, groupIds);
 
-      // Questions types (just above header row)
-      HSSFRow questionTypeRow = sheet.createRow((short)4);
-      for (int i = 0; i < responses.allEvalTemplateItems.size(); i++) {
-         EvalTemplateItem tempItem = responses.allEvalTemplateItems.get(i);
-         HSSFCell cell = questionTypeRow.createCell((short)(i+1));
-         if (EvalConstants.ITEM_TYPE_SCALED.equals(TemplateItemUtils.getTemplateItemType(tempItem))) {
+      // 2 get DTIs for this eval from tidl
+      List<DataTemplateItem> dtiList = tidl.getFlatListOfDataTemplateItems(true);
+      
+      // 3 use DTIs to make the headers
+      HSSFRow questionCatRow = sheet.createRow(QUESTION_CAT_ROW);
+      HSSFRow questionTypeRow = sheet.createRow(QUESTION_TYPE_ROW);
+      HSSFRow questionTextRow = sheet.createRow(QUESTION_TEXT_ROW);
+      short headerCount = 1;
+      for (DataTemplateItem dti: dtiList) {
+         String type = TemplateItemUtils.getTemplateItemType(dti.templateItem);
+         HSSFCell cell = questionTypeRow.createCell(headerCount);
+         
+         if (EvalConstants.ITEM_TYPE_SCALED.equals(type)) {
             cell.setCellValue(messageLocator.getMessage("reporting.itemtypelabel.scale"));
          }
-         else if (EvalConstants.ITEM_TYPE_TEXT.equals(TemplateItemUtils.getTemplateItemType(tempItem))) {
+         else if (EvalConstants.ITEM_TYPE_TEXT.equals(type)) {
             cell.setCellValue(messageLocator.getMessage("reporting.itemtypelabel.text"));
          }
-         else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(TemplateItemUtils.getTemplateItemType(tempItem))) {
+         else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(type)) {
             cell.setCellValue(messageLocator.getMessage("reporting.itemtypelabel.multipleanswer"));
          }
-         else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(TemplateItemUtils.getTemplateItemType(tempItem))) {
+         else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(type)) {
             cell.setCellValue(messageLocator.getMessage("reporting.itemtypelabel.multiplechoice"));
          }
          else {
             cell.setCellValue("");
          }
          cell.setCellStyle(italicMiniHeaderStyle);
-      }
-
-      // Header Row
-      HSSFRow headerRow = sheet.createRow((short)5);
-      for (int i = 0; i < responses.topRow.size(); i++) {
-         // Adding one because we want the first column to be a numbered list.
-         HSSFCell cell = headerRow.createCell((short)(i+1));
-         String questionString = externalLogic.cleanupUserStrings(responses.topRow.get(i));
-         cell.setCellValue(((String)questionString));
-         cell.setCellStyle(boldHeaderStyle);
-      }
-
-      // Fill in the rest
-      for (int i = 0; i < responses.responseRows.size(); i++) {
-         HSSFRow row = sheet.createRow((short)(i+6)); 
-         HSSFCell indexCell = row.createCell((short)0);
-         indexCell.setCellValue(i+1);
-         indexCell.setCellStyle(boldHeaderStyle);
-         List<String> rowResponses = (List<String>) responses.responseRows.get(i);
-         for (int j = 0 ; j < rowResponses.size(); j++) {
-            HSSFCell responseCell = row.createCell((short)(j+1));
-            responseCell.setCellValue(rowResponses.get(j));
+         
+         HSSFCell questionText = questionTextRow.createCell(headerCount);
+         questionText.setCellValue(externalLogic.cleanupUserStrings(
+               dti.templateItem.getItem().getItemText()));
+         
+         HSSFCell questionCat = questionCatRow.createCell(headerCount);
+         if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(dti.associateType)) {
+            questionCat.setCellValue("Instructor: " + externalLogic.getUserUsername(dti.associateId)); // TODO FIXME i18n
          }
+         else if (EvalConstants.ITEM_CATEGORY_COURSE.equals(dti.associateType)) {
+            questionCat.setCellValue("Course"); // TODO FIXME i18n
+         }
+         else {
+            questionCat.setCellValue("");
+         }
+         
+         headerCount++;
+      }
+
+      // 4) get responseIds from tidl
+      List<Long> responseIds = tidl.getResponseIdsForAnswers();
+      
+      // 5) loop over response ids
+      short responseIdCounter = 0;
+      for (Long responseId: responseIds) {
+         HSSFRow row = sheet.createRow(responseIdCounter+FIRST_ANSWER_ROW); 
+         HSSFCell indexCell = row.createCell((short)0);
+         indexCell.setCellValue(responseIdCounter+1);
+         indexCell.setCellStyle(boldHeaderStyle);
+         // 6) loop over DTIs
+         short dtiCounter = 1;
+         for (DataTemplateItem dti: dtiList) {
+            // 7) check answersmap for an answer, if there put in cell, if missing, insert blank
+            EvalAnswer answer = dti.getAnswer(responseId);
+            HSSFCell responseCell = row.createCell(dtiCounter);
+            // In Eval, users can leave questions blank, in which case this will
+            // be null
+            if (answer != null) {
+               responseCell.setCellValue(responseAggregator.formatForSpreadSheet(answer.getTemplateItem(), answer));
+            }
+            dtiCounter++;
+         }
+         responseIdCounter++;
       }
 
       // dump the output to the response stream

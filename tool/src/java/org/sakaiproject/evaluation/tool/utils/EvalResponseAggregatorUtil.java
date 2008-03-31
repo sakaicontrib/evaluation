@@ -263,6 +263,41 @@ public class EvalResponseAggregatorUtil {
       }
 
    }
+   
+   public String formatForSpreadSheet(EvalTemplateItem templateItem, EvalAnswer answer) {
+      String togo = "";
+      
+      String itemType = TemplateItemUtils.getTemplateItemType(templateItem);
+      EvalUtils.decodeAnswerNA(answer);
+      if (answer.NA) {
+         togo = messageLocator.getMessage("reporting.notapplicable.shortlabel");
+      }
+      else if (EvalConstants.ITEM_TYPE_TEXT.equals(itemType)) {
+         togo = answer.getText();
+      } 
+      else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemType)) {
+         String labels[] = templateItem.getItem().getScale().getOptions();
+         StringBuilder sb = new StringBuilder();
+         Integer[] decoded = EvalUtils.decodeMultipleAnswers(answer.getMultiAnswerCode());
+         for (int k = 0; k < decoded.length; k++) {
+            sb.append(labels[decoded[k].intValue()]);
+            if (k+1 < decoded.length) 
+               sb.append(",");
+         }
+         togo = sb.toString();
+      }
+      else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(itemType) 
+            || EvalConstants.ITEM_TYPE_SCALED.equals(itemType)
+            || EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(itemType)) {
+         String labels[] = templateItem.getItem().getScale().getOptions();
+         togo = labels[answer.getNumeric().intValue()];
+      }
+      else {
+         throw new UniversalRuntimeException("Trying to add an unsupported question type ("+itemType+") " 
+               + "for template item ("+templateItem.getId()+") to the Spreadsheet Data Lists");
+      }
+      return togo;
+   }
 
    // STATIC METHODS
 

@@ -151,7 +151,7 @@ public class ReportHandlerHook implements HandlerHook {
       else if (drvp instanceof ExcelReportViewParams) {
          response.setContentType("application/vnd.ms-excel");
          response.setHeader("filename", "report.xls");
-         xlsReportExporter.formatResponses(responses, resultsOutputStream);
+         xlsReportExporter.formatResponses(evaluation, drvp.groupIds, resultsOutputStream);
       }
       else if (drvp instanceof PDFReportViewParams) {
          response.setContentType("application/pdf");

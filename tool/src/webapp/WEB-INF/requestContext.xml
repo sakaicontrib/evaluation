@@ -624,6 +624,11 @@
          ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
       <property name="locale" ref="requestLocale" />
    </bean>
+   
+   <!-- Dater Views -->
+   <bean class="org.sakaiproject.evaluation.tool.producers.UserAvailableEvalsDataView">
+      <property name="jsonProvider" ref="JSONProvider" />
+   </bean>
 
 
    <!-- REPORTING -->
