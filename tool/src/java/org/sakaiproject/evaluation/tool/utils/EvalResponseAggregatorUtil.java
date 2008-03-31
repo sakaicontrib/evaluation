@@ -1,7 +1,6 @@
 package org.sakaiproject.evaluation.tool.utils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -18,14 +17,10 @@ import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.model.EvalItem;
-import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
-import org.sakaiproject.evaluation.utils.ComparatorsUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
-import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
 
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.util.UniversalRuntimeException;
@@ -68,108 +63,6 @@ public class EvalResponseAggregatorUtil {
    private EvalExternalLogic externalLogic;
    public void setEvalExternalLogic(EvalExternalLogic logic) {
       this.externalLogic = logic;
-   }
-
-
-   /**
-    * FIXME - this should us the new {@link DataTemplateItem}s and the {@link TemplateItemDataList}
-    * 
-    * @param evaluation
-    * @param groupIds
-    * @return
-    */
-   public EvalAggregatedResponses getAggregatedResponses(EvalEvaluation evaluation, String[] groupIds) {
-      List<String> topRow = new ArrayList<String>(); //holds top row (item text)
-      List<EvalItem> allEvalItems = new ArrayList<EvalItem>(); //holds all expanded eval items (blocks are expanded here)
-      List<EvalTemplateItem> allEvalTemplateItems = new ArrayList<EvalTemplateItem>(); 
-      List<List<String>> responseRows = new ArrayList<List<String>>();//holds response rows
-
-      EvalTemplate template = evaluation.getTemplate(); // LAZY LOAD
-
-      /*
-       * Getting list of response ids serves 2 purposes:
-       * 
-       * a) Main purpose: We need to check in the for loop at line 171
-       * that which student (i.e. which response) has not submitted
-       * the answer for a particular question. This is so that we can 
-       * add empty space instead
-       * 
-       * b) Side purpose: countResponses method in EvalDeliveryService
-       * does not take array of groups ids
-       */
-      List<Long> responseIds = evaluationService.getResponseIds(evaluation.getId(), groupIds, true);
-      int numOfResponses = responseIds.size();
-
-      //add a row for each response
-      for (int i = 0; i < numOfResponses; i++) {
-         List<String> currResponseRow = new ArrayList<String>();
-         responseRows.add(currResponseRow);
-      }
-
-      // get all answerable template items
-      List<EvalTemplateItem> allTemplateItems = new ArrayList<EvalTemplateItem>(template.getTemplateItems()); // LAZY LOAD
-      // FIXME - do this using the authoringService
-//    allItems = authoringService.getTemplateItemsForEvaluation(evaluationId, hierarchyNodeIDs, 
-//    instructorIds, new String[] {evalGroupId});
-
-      if (! allTemplateItems.isEmpty()) {
-         //filter out the block child items, to get a list non-child items
-         List<EvalTemplateItem> ncItemsList = TemplateItemUtils.getNonChildItems(allTemplateItems);
-         Collections.sort(ncItemsList, new ComparatorsUtils.TemplateItemComparatorByOrder());
-
-         // for each templateItem
-         for (int i = 0; i < ncItemsList.size(); i++) {
-            //fetch the item
-            EvalTemplateItem templateItem = (EvalTemplateItem) ncItemsList.get(i);
-            String itemType = TemplateItemUtils.getTemplateItemType(templateItem);
-            allEvalTemplateItems.add(templateItem);
-            EvalItem item = templateItem.getItem();
-
-            // if this is a non-block type
-            if (EvalConstants.ITEM_TYPE_HEADER.equals(itemType)
-                  || EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(itemType)) {
-               // do nothing with these types, children handled by the parents and header not needed for export
-            } else if (TemplateItemUtils.isBlockParent(templateItem)) {
-               //add the block description to the top row
-               topRow.add(item.getItemText());
-               allEvalItems.add(item);
-               for (int j = 0; j < numOfResponses; j++) {
-                  List<String> currRow = responseRows.get(j);
-                  //add blank response to block parent row
-                  currRow.add("");
-               }
-
-               //get child block items
-               List<EvalTemplateItem> childList = TemplateItemUtils.getChildItems(allTemplateItems, templateItem.getId());
-               for (int j = 0; j < childList.size(); j++) {
-                  EvalTemplateItem tempItemChild = (EvalTemplateItem) childList.get(j);
-                  allEvalTemplateItems.add(tempItemChild);
-                  EvalItem child = tempItemChild.getItem();
-                  //add child's text to top row
-                  topRow.add(child.getItemText());
-                  allEvalItems.add(child);
-                  //get all answers to the child item within this eval
-                  List<EvalAnswer> itemAnswers = deliveryService.getAnswersForEval(evaluation.getId(), groupIds, new Long[] {tempItemChild.getId()});
-                  updateResponseList(numOfResponses, responseIds, responseRows, itemAnswers, tempItemChild);
-               }
-            } else {
-               // this should be one of the non-block answerable types (updateResponseList will check the types)
-
-               //add the item description to the top row
-               // This is rich text, each particular output format can decide if it needs to be flattened.
-               topRow.add(item.getItemText());
-               allEvalItems.add(item);
-
-               //get all answers to this item within this evaluation
-               List<EvalAnswer> itemAnswers = deliveryService.getAnswersForEval(evaluation.getId(), groupIds, new Long[] {templateItem.getId()});
-               updateResponseList(numOfResponses, responseIds, responseRows, itemAnswers, templateItem);
-
-            }
-         }
-      }
-
-      return new EvalAggregatedResponses(evaluation,groupIds,allEvalItems,allEvalTemplateItems,
-            topRow, responseRows, numOfResponses);
    }
 
    /**
