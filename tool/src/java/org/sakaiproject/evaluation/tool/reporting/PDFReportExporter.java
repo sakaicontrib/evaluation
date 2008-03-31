@@ -98,6 +98,7 @@ public class PDFReportExporter {
       String plainInstructions = externalLogic.cleanupUserStrings(evaluation.getInstructions());
       evalPDFReportBuilder.addIntroduction(evaluation.getTitle(), plainInstructions);
 
+      // 1 Make TIDL
       TemplateItemDataList tidl = responseAggregator.prepareTemplateItemDataStructure(evaluation, groupIds);
       
       // Loop through the major group types: Course Questions, Instructor Questions, etc.
@@ -153,9 +154,13 @@ public class PDFReportExporter {
          if (EvalConstants.ITEM_TYPE_HEADER.equals(templateItemType)) {
             evalPDFReportBuilder.addSectionHeader(questionText);
          }
+         else if (EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(templateItemType)) {
+            evalPDFReportBuilder.addSectionHeader(questionText);
+         }
          else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(templateItemType) ||
                   EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(templateItemType) ||
-                  EvalConstants.ITEM_TYPE_SCALED.equals(templateItemType)) {
+                  EvalConstants.ITEM_TYPE_SCALED.equals(templateItemType) ||
+                  EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(templateItemType)) {
             boolean showPercentages = false;
             if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(templateItemType)) {
                showPercentages = true;

@@ -20,6 +20,7 @@
 
    <properties>
       <sakairsf.sakai.version>2.2.x</sakairsf.sakai.version>
+      <!-- <rsfutil.version>0.7.3M2-SNAPSHOT</rsfutil.version> -->
       <rsfutil.version>0.7.3M1</rsfutil.version>
    </properties>
    <packaging>war</packaging>
