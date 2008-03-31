@@ -75,8 +75,16 @@ public class EvalItem implements java.io.Serializable {
     */
    private boolean hidden = false;
 
+   /**
+    * If this is not null then this item will be added to the copy of the template 
+    * used for the evaluations with the related linking autoUseTag when the eval is created<br/>
+    * <b>NOTE:</b> It is preferable to handle this using the template item or template
+    */
+   private String autoUseTag;
+
 
    // Constructors
+
 
 
    /** default constructor */
@@ -276,6 +284,14 @@ public class EvalItem implements java.io.Serializable {
 
    public void setUsesComment(Boolean usesComment) {
       this.usesComment = usesComment;
+   }
+   
+   public String getAutoUseTag() {
+      return autoUseTag;
+   }
+   
+   public void setAutoUseTag(String autoUseTag) {
+      this.autoUseTag = autoUseTag;
    }
 
 }

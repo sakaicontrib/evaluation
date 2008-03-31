@@ -86,5 +86,9 @@
         <property name="hidden" type="java.lang.Boolean">
             <column name="HIDDEN" />
         </property>
+        <!-- Allows for linking this data to evals automatically when they are created -->
+        <property name="autoUseTag" type="java.lang.String">
+            <column name="AUTO_USE_TAG" length="255" />
+        </property>
     </class>
 </hibernate-mapping>

@@ -144,6 +144,20 @@ public class EvalEvaluation implements java.io.Serializable {
    private String evalCategory;
 
    /**
+    * If this is not null then we will load in all templates/templateItems/items with the
+    * related linking autoUseTag when the evaluation is created
+    */
+   private String autoUseTag;
+
+   /**
+    * Controls whether the autoUseTag does anything and where the autoUse items are inserted,
+    * if this is null then autoUse is disabled and no items are inserted,
+    * otherwise the constants determine which location to insert the autoUse data,
+    * for example: {@link EvalConstants#EVALUATION_AUTOUSE_INSERTION_BEFORE}
+    */
+   private String autoUseInsertion;
+
+   /**
     * Non-persistent field:<br/>
     * Set when creating the evaluation only, this will cause the {@link #studentsDate}
     * to be nulled out when the evaluation is saved if set to false,
@@ -219,7 +233,6 @@ public class EvalEvaluation implements java.io.Serializable {
 
    /** 
     * general use constructor 
-    * @param resultSharing TODO
     */
    public EvalEvaluation(String type, String owner, String title, Date startDate, Date dueDate,
          Date stopDate, Date viewDate, String state, String resultsSharing, Integer reminderDays, EvalTemplate template) {
@@ -237,8 +250,8 @@ public class EvalEvaluation implements java.io.Serializable {
       this.template = template;
    }
 
-   /** full constructor 
-    * @param resultsSharing TODO
+   /** 
+    * full constructor 
     */
    public EvalEvaluation(String type, String owner, String title, String instructions, Date startDate,
          Date dueDate, Date stopDate, Date viewDate, Date studentsDate, Date instructorsDate, String state,
@@ -506,6 +519,26 @@ public class EvalEvaluation implements java.io.Serializable {
    
    public void setResultsSharing(String resultsPrivacy) {
       this.resultsSharing = resultsPrivacy;
+   }
+
+   
+   public String getAutoUseTag() {
+      return autoUseTag;
+   }
+
+   
+   public void setAutoUseTag(String autoUseTag) {
+      this.autoUseTag = autoUseTag;
+   }
+
+   
+   public String getAutoUseInsertion() {
+      return autoUseInsertion;
+   }
+
+   
+   public void setAutoUseInsertion(String autoUseInsertion) {
+      this.autoUseInsertion = autoUseInsertion;
    }
 
 }

@@ -63,6 +63,12 @@ public class EvalTemplateItem implements java.io.Serializable {
     */
    private boolean hidden = false;
 
+   /**
+    * If this is not null then template item will be added to the copy of the template 
+    * used for the evaluations with the related linking autoUseTag when the eval is created
+    */
+   private String autoUseTag;
+
    // NON-persistent fields
 
    /**
@@ -270,6 +276,16 @@ public class EvalTemplateItem implements java.io.Serializable {
 
    public void setHidden(boolean hidden) {
       this.hidden = hidden;
+   }
+
+   
+   public String getAutoUseTag() {
+      return autoUseTag;
+   }
+
+   
+   public void setAutoUseTag(String autoUseTag) {
+      this.autoUseTag = autoUseTag;
    }
 
 }
