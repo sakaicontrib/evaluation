@@ -2,12 +2,16 @@ package org.sakaiproject.evaluation.tool.reporting;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -26,6 +30,7 @@ import org.sakaiproject.evaluation.utils.TemplateItemDataList;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
 
+import uk.org.ponder.localeutil.LocaleGetter;
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.util.UniversalRuntimeException;
 
@@ -60,6 +65,13 @@ public class XLSReportExporter implements ReportExporter {
    public void setMessageLocator(MessageLocator locator) {
       this.messageLocator = locator;
    }
+   
+   private LocaleGetter localeGetter;
+   public void setLocaleGetter(LocaleGetter localeGetter) {
+      this.localeGetter = localeGetter;
+   }
+   
+   HSSFCellStyle dateCellStyle;
 
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.tool.reporting.ReportExporter#buildReport(org.sakaiproject.evaluation.model.EvalEvaluation, java.lang.String[], java.io.OutputStream)
@@ -88,7 +100,14 @@ public class XLSReportExporter implements ReportExporter {
       font.setItalic(true);
       HSSFCellStyle italicMiniHeaderStyle = wb.createCellStyle();
       italicMiniHeaderStyle.setFont(font);
-
+      
+      // Date meta Style
+      dateCellStyle = wb.createCellStyle();
+      // TODO FIXME HELPME To properly
+      //String dateCellFormat = ((SimpleDateFormat)DateFormat.getDateInstance(DateFormat.MEDIUM, localeGetter.get())).toLocalizedPattern();
+      //http://poi.apache.org/apidocs/org/apache/poi/hssf/usermodel/HSSFDataFormat.html
+      dateCellStyle.setDataFormat((short)0x16);
+      
       // Evaluation Title
       HSSFRow row1 = sheet.createRow(0);
       HSSFCell cellA1 = row1.createCell((short)0);
@@ -106,10 +125,10 @@ public class XLSReportExporter implements ReportExporter {
 
       // dates
       setPlainStringCell(row1.createCell((short) 2), messageLocator.getMessage("evalsettings.start.date.header") );
-      row2.createCell((short) 2).setCellValue(evaluation.getStartDate());
+      setDateCell(row2.createCell((short) 2),evaluation.getStartDate());
       if (evaluation.getDueDate() != null) {
          setPlainStringCell(row1.createCell((short) 3), messageLocator.getMessage("evalsettings.due.date.header") );
-         row2.createCell((short) 3).setCellValue(evaluation.getDueDate());
+         setDateCell(row2.createCell((short) 3),evaluation.getDueDate());
       }
 
       // add in list of groups
@@ -213,8 +232,23 @@ public class XLSReportExporter implements ReportExporter {
     * @param cell
     * @param value
     */
-   private void setPlainStringCell(HSSFCell cell, String value) {
+   private HSSFCell setPlainStringCell(HSSFCell cell, String value) {
       cell.setCellValue(new HSSFRichTextString(value));
+      return cell;
+   }
+   
+   /**
+    * Sets the cell contents to the date (requires extra work because Excel stores
+    * dates as numbers.  
+    * 
+    * @param cell
+    * @param date
+    * @return
+    */
+   private HSSFCell setDateCell(HSSFCell cell, Date date) {
+      cell.setCellStyle(dateCellStyle);
+      cell.setCellValue(date);
+      return cell;
    }
 
 }
