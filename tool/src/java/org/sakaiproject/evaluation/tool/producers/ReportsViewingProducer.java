@@ -350,11 +350,11 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
          UIOutput.make(essay, "itemNum", displayNumber + "");
          UIVerbatim.make(essay, "itemText", templateItem.getItem().getItemText());
 
-         ReportParameters params = new ReportParameters(VIEW_ID, reportViewParams.evaluationId);
-         params.viewmode = VIEWMODE_SELECTITEMS;
-         params.items = new Long[] {templateItem.getId()};
-         params.groupIds = reportViewParams.groupIds;
-         UIInternalLink.make(essay, "essayResponse", UIMessage.make("viewreport.view.viewresponses"), params);
+//         ReportParameters params = new ReportParameters(VIEW_ID, reportViewParams.evaluationId);
+//         params.viewmode = VIEWMODE_SELECTITEMS;
+//         params.items = new Long[] {templateItem.getId()};
+//         params.groupIds = reportViewParams.groupIds;
+//         UIInternalLink.make(essay, "essayResponse", UIMessage.make("viewreport.view.viewresponses"), params);
 
          // render the responses
          UIBranchContainer showResponsesBranch = UIBranchContainer.make(tofill, "showResponses:");
