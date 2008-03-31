@@ -27,7 +27,7 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public interface EvalExternalLogic extends ExternalUsers, ExternalEvalGroups, ExternalContent, ExternalScheduler {
+public interface EvalExternalLogic extends ExternalUsers, ExternalEvalGroups, ExternalContent, ExternalScheduler, ExternalTextUtils {
 
    public static final String ADMIN_USER_ID = "admin";
 
@@ -170,15 +170,5 @@ public interface EvalExternalLogic extends ExternalUsers, ExternalEvalGroups, Ex
     */
    public <T> T getConfigurationSetting(String settingName, T defaultValue);
 
-
-   // TEXT
-
-   /**
-    * Cleans up the users submitted strings to protect us from XSS
-    * 
-    * @param userSubmittedString any string from the user which could be dangerous
-    * @return a cleaned up string which is now safe
-    */
-   public String cleanupUserStrings(String userSubmittedString);
 
 }

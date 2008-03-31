@@ -90,11 +90,13 @@ public class PDFReportExporter implements ReportExporter {
             user.displayName, 
             messageLocator.getMessage("reporting.pdf.accountinfo", new String[] {user.username, user.displayName}), 
             messageLocator.getMessage("reporting.pdf.startdatetime",df.format(evaluation.getStartDate())),
-            messageLocator.getMessage("reporting.pdf.replyrate", new String[] { EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount) }),
+            messageLocator.getMessage("reporting.pdf.replyrate", 
+                  new String[] { EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount) }),
             bannerImageBytes, messageLocator.getMessage("reporting.pdf.defaultsystemname"));
 
-      String plainInstructions = externalLogic.cleanupUserStrings(evaluation.getInstructions());
-      evalPDFReportBuilder.addIntroduction(evaluation.getTitle(), plainInstructions);
+      // set title and instructions
+      evalPDFReportBuilder.addIntroduction( evaluation.getTitle(), 
+            externalLogic.makePlainTextFromHTML(evaluation.getInstructions()) );
 
       // 1 Make TIDL
       TemplateItemDataList tidl = responseAggregator.prepareTemplateItemDataStructure(evaluation, groupIds);
@@ -150,7 +152,7 @@ public class PDFReportExporter implements ReportExporter {
    private void renderDataTemplateItem(EvalPDFReportBuilder evalPDFReportBuilder, DataTemplateItem dti) {
       EvalTemplateItem templateItem = dti.templateItem;
       EvalItem item = templateItem.getItem();
-      String questionText = externalLogic.cleanupUserStrings(item.getItemText());
+      String questionText = externalLogic.makePlainTextFromHTML(item.getItemText());
 
       List<EvalAnswer> itemAnswers = dti.getAnswers();
 
