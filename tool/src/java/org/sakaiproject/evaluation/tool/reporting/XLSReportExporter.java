@@ -104,10 +104,18 @@ public class XLSReportExporter implements ReportExporter {
       cellA2.setCellStyle(boldHeaderStyle);
       setPlainStringCell(cellA2, EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount) );
 
+      // dates
+      setPlainStringCell(row1.createCell((short) 2), messageLocator.getMessage("evalsettings.start.date.header") );
+      row2.createCell((short) 2).setCellValue(evaluation.getStartDate());
+      if (evaluation.getDueDate() != null) {
+         setPlainStringCell(row1.createCell((short) 3), messageLocator.getMessage("evalsettings.due.date.header") );
+         row2.createCell((short) 3).setCellValue(evaluation.getDueDate());
+      }
+
+      // add in list of groups
       if (groupIds.length > 0) {
          HSSFRow row3 = sheet.createRow(2);
          HSSFCell cellA3 = row3.createCell((short)0);
-
          setPlainStringCell(cellA3, 
                messageLocator.getMessage("reporting.xls.participants",
                      new Object[] {responseAggregator.getCommaSeparatedGroupNames(groupIds)}) );
