@@ -450,5 +450,33 @@ public class EvalResponseAggregatorUtil {
       }
       return groupsString.toString();
    }
+   
+   
+   /**
+    * Get the translated label for the template item type destined for the 
+    * spreadsheet header.
+    * 
+    * @param templateItemType
+    * @return
+    */
+   public String getHeaderLabelForItemType(String templateItemType) {
+      String togo;
+      if (EvalConstants.ITEM_TYPE_SCALED.equals(templateItemType)) {
+         togo = messageLocator.getMessage("reporting.itemtypelabel.scale");
+      }
+      else if (EvalConstants.ITEM_TYPE_TEXT.equals(templateItemType)) {
+         togo = messageLocator.getMessage("reporting.itemtypelabel.text");
+      }
+      else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(templateItemType)) {
+         togo = messageLocator.getMessage("reporting.itemtypelabel.multipleanswer");
+      }
+      else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(templateItemType)) {
+         togo = messageLocator.getMessage("reporting.itemtypelabel.multiplechoice");
+      }
+      else {
+         togo = "";
+      }
+      return togo;
+   }
 
 }
