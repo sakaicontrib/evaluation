@@ -2,8 +2,6 @@ package org.sakaiproject.evaluation.tool.reporting;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +9,6 @@ import java.util.Set;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -27,10 +24,8 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList;
-import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
 
-import uk.org.ponder.localeutil.LocaleGetter;
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.util.UniversalRuntimeException;
 
@@ -64,11 +59,6 @@ public class XLSReportExporter implements ReportExporter {
    private MessageLocator messageLocator;
    public void setMessageLocator(MessageLocator locator) {
       this.messageLocator = locator;
-   }
-   
-   private LocaleGetter localeGetter;
-   public void setLocaleGetter(LocaleGetter localeGetter) {
-      this.localeGetter = localeGetter;
    }
    
    HSSFCellStyle dateCellStyle;
@@ -167,10 +157,9 @@ public class XLSReportExporter implements ReportExporter {
       HSSFRow questionTextRow = sheet.createRow(QUESTION_TEXT_ROW);
       short headerCount = 1;
       for (DataTemplateItem dti: dtiList) {
-         String type = TemplateItemUtils.getTemplateItemType(dti.templateItem);
          HSSFCell cell = questionTypeRow.createCell(headerCount);
 
-         setPlainStringCell(cell, responseAggregator.getHeaderLabelForItemType(type));
+         setPlainStringCell(cell, responseAggregator.getHeaderLabelForItemType(dti.getTemplateItemType()));
          cell.setCellStyle(italicMiniHeaderStyle);
 
          HSSFCell questionText = questionTextRow.createCell(headerCount);
@@ -190,6 +179,14 @@ public class XLSReportExporter implements ReportExporter {
          }
 
          headerCount++;
+
+         if (dti.usesComments()) {
+            // add an extra column for comments
+            setPlainStringCell(questionTypeRow.createCell(headerCount), 
+                  messageLocator.getMessage("viewreport.comments.header") ).setCellStyle(italicMiniHeaderStyle);            
+            headerCount++;
+         }
+
       }
 
       // 4) get responseIds from tidl
@@ -211,6 +208,12 @@ public class XLSReportExporter implements ReportExporter {
             // In Eval, users can leave questions blank, in which case this will be null
             if (answer != null) {
                setPlainStringCell(responseCell, responseAggregator.formatForSpreadSheet(answer.getTemplateItem(), answer));
+               if (dti.usesComments()) {
+                  // put comment in the extra column
+                  dtiCounter++;
+                  setPlainStringCell(row.createCell(dtiCounter), 
+                        EvalUtils.isBlank(answer.getComment()) ? "" : answer.getComment());
+               }            
             }
             dtiCounter++;
          }

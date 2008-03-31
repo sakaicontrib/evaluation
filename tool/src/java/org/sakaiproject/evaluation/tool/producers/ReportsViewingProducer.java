@@ -314,7 +314,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
             if (templateItem.getUsesNA() != null && templateItem.getUsesNA()) {
                naCount = choicesCounts[choicesCounts.length-1];
                UIBranchContainer choicesBranch = UIBranchContainer.make(scaled, "choices:");
-               UIMessage.make(choicesBranch, "responseText", "reporting.notapplicable.longlabel");
+               UIMessage.make(choicesBranch, "choiceText", "reporting.notapplicable.longlabel");
                UIMessage.make(choicesBranch, "choiceCount", "viewreport.answers.percentage", 
                      new String[] { naCount+"", makePercentage(naCount, responsesCount) });
             }
@@ -322,25 +322,24 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
 
          UIMessage.make(scaled, "responsesCount", "viewreport.responses.count", new Object[] {responsesCount});
 
-         if (templateItem.getUsesComment() != null && templateItem.getUsesComment()) {
+         if (dti.usesComments()) {
             // render the comments
             UIBranchContainer showCommentsBranch = UIBranchContainer.make(tofill, "showComments:");
+            List<String> comments = dti.getComments();
             int commentCount = 0;
-            for (EvalAnswer answer : itemAnswers) {
-               if (! EvalUtils.isBlank(answer.getComment())) {
-                  UIBranchContainer commentsBranch = UIBranchContainer.make(showCommentsBranch, "comments:");
-                  if (commentCount % 2 == 1) {
-                     commentsBranch.decorate(new UIStyleDecorator("itemsListOddLine")); // must match the existing CSS class
-                  }
-                  UIOutput.make(commentsBranch, "commentNum", (commentCount + 1)+"");
-                  UIOutput.make(commentsBranch, "itemComment", answer.getComment());
-                  commentCount++;
+            for (String comment : comments) {
+               UIBranchContainer commentsBranch = UIBranchContainer.make(showCommentsBranch, "comments:");
+               if (commentCount % 2 == 1) {
+                  commentsBranch.decorate(new UIStyleDecorator("itemsListOddLine")); // must match the existing CSS class
                }
+               UIOutput.make(commentsBranch, "commentNum", (commentCount + 1)+"");
+               UIOutput.make(commentsBranch, "itemComment", comment);
+               commentCount++;
             }
-            if (commentCount == 0) {
+            if (comments.size() <= 0) {
                UIMessage.make(showCommentsBranch, "noComment", "viewreport.no.comments");
             }
-            totalCommentsCount += commentCount;
+            totalCommentsCount += comments.size();
          }            
 
       } else if (EvalConstants.ITEM_TYPE_TEXT.equals(templateItemType)) {

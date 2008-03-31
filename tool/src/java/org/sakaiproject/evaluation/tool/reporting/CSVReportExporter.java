@@ -14,6 +14,7 @@ import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil;
+import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
 
@@ -73,6 +74,15 @@ public class CSVReportExporter implements ReportExporter {
          else {
             questionCatRow.add( messageLocator.getMessage("unknown.caps") );
          }
+
+         if (dti.usesComments()) {
+            // add an extra column for comments
+            questionTypeRow.add( messageLocator.getMessage("viewreport.comments.header") );
+            // also add in blanks for the other columns
+            questionTextRow.add( "" );
+            questionCatRow.add( "" );
+         }
+
       }
 
       writer.writeNext(questionCatRow.toArray(new String[] {}));
@@ -90,9 +100,16 @@ public class CSVReportExporter implements ReportExporter {
             EvalAnswer answer = dti.getAnswer(responseId);
             if (answer != null) {
                nextResponseRow.add(responseAggregator.formatForSpreadSheet(answer.getTemplateItem(), answer));
+               if (dti.usesComments()) {
+                  // put comment in the next column
+                  nextResponseRow.add( EvalUtils.isBlank(answer.getComment()) ? "" : answer.getComment() );
+               }
             }
             else {
                nextResponseRow.add("");
+               if (dti.usesComments()) {
+                  nextResponseRow.add(""); // put in blank to space columns correctly
+               }
             }
          }
          writer.writeNext(nextResponseRow.toArray(new String[] {}));
