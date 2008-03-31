@@ -4,6 +4,8 @@ import java.io.OutputStream;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,7 +29,7 @@ import org.sakaiproject.evaluation.utils.TemplateItemDataList.TemplateItemGroup;
 
 import uk.org.ponder.messageutil.MessageLocator;
 
-public class PDFReportExporter {
+public class PDFReportExporter implements ReportExporter {
    private static Log log = LogFactory.getLog(PDFReportExporter.class);
 
    private EvalExternalLogic externalLogic;
@@ -60,7 +62,10 @@ public class PDFReportExporter {
       this.messageLocator = locator;
    }
 
-   public void formatResponses(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream) {
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.tool.reporting.ReportExporter#buildReport(org.sakaiproject.evaluation.model.EvalEvaluation, java.lang.String[], java.io.OutputStream)
+    */
+   public void buildReport(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream) {
 
       EvalPDFReportBuilder evalPDFReportBuilder = new EvalPDFReportBuilder(outputStream);
 
@@ -93,20 +98,27 @@ public class PDFReportExporter {
 
       // 1 Make TIDL
       TemplateItemDataList tidl = responseAggregator.prepareTemplateItemDataStructure(evaluation, groupIds);
-      
+
+      // 1.5 get instructor info
+      Set<String> instructorIds = tidl.getAssociateIds(EvalConstants.ITEM_CATEGORY_INSTRUCTOR);
+      Map<String, EvalUser> instructorIdtoEvalUser = responseAggregator.getInstructorsInformation(instructorIds);
+
       // Loop through the major group types: Course Questions, Instructor Questions, etc.
       int renderedItemCount = 0;
       for (TemplateItemGroup tig: tidl.getTemplateItemGroups()) {
-         
          // Print the type of the next group we're doing
          if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType)) {
-            evalPDFReportBuilder.addSectionHeader(messageLocator.getMessage("viewreport.itemlist.course"));
+            evalPDFReportBuilder.addSectionHeader(
+                  messageLocator.getMessage("viewreport.itemlist.course") );
          }
          else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
-            String instructor = externalLogic.getEvalUserById(tig.associateId).displayName;
-            evalPDFReportBuilder.addSectionHeader(messageLocator.getMessage("viewreport.itemlist.instructor", new String[] {instructor}));
+            evalPDFReportBuilder.addSectionHeader(
+                  messageLocator.getMessage("viewreport.itemlist.instructor", 
+                        new String[] {instructorIdtoEvalUser.get(tig.associateId).displayName}));
+         } else {
+            evalPDFReportBuilder.addSectionHeader( messageLocator.getMessage("unknown.caps") );
          }
-         
+
          for (HierarchyNodeGroup hng: tig.hierarchyNodeGroups) {
             // Render the Node title if it's enabled in the admin settings.
             if (hng.node != null) {
@@ -116,7 +128,7 @@ public class PDFReportExporter {
                   evalPDFReportBuilder.addSectionHeader(hng.node.title);
                }
             }
-            
+
             List<DataTemplateItem> dtis = hng.getDataTemplateItems(true); // include block children
             for (int i = 0; i < dtis.size(); i++) {
                DataTemplateItem dti = dtis.get(i);
@@ -125,10 +137,10 @@ public class PDFReportExporter {
             }
          }
       }
-      
+
       evalPDFReportBuilder.close();
    }
-      
+
    /**
     * Renders a single question giving the DataTemplateItem.
     * 
@@ -136,55 +148,55 @@ public class PDFReportExporter {
     * @param dti
     */
    private void renderDataTemplateItem(EvalPDFReportBuilder evalPDFReportBuilder, DataTemplateItem dti) {
-         EvalTemplateItem templateItem = dti.templateItem;
-         EvalItem item = templateItem.getItem();
-         String questionText = externalLogic.cleanupUserStrings(item.getItemText());
-         
-         List<EvalAnswer> itemAnswers = dti.getAnswers();
+      EvalTemplateItem templateItem = dti.templateItem;
+      EvalItem item = templateItem.getItem();
+      String questionText = externalLogic.cleanupUserStrings(item.getItemText());
 
-         String templateItemType = TemplateItemUtils.getTemplateItemType(templateItem);
-         
-         if (EvalConstants.ITEM_TYPE_HEADER.equals(templateItemType)) {
-            evalPDFReportBuilder.addSectionHeader(questionText);
-         }
-         else if (EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(templateItemType)) {
-            evalPDFReportBuilder.addSectionHeader(questionText);
-         }
-         else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(templateItemType) ||
-                  EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(templateItemType) ||
-                  EvalConstants.ITEM_TYPE_SCALED.equals(templateItemType) ||
-                  EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(templateItemType)) {
-            boolean showPercentages = false;
-            if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(templateItemType)) {
-               showPercentages = true;
-            }
-            
-            int[] responseArray = TemplateItemDataList.getAnswerChoicesCounts(templateItemType, item.getScale().getOptions().length, itemAnswers);
-            
-            String[] optionLabels;
-            if (templateItem.getUsesNA()) {
-               optionLabels = new String[item.getScale().getOptions().length+1];
-               for (int m = 0; m < item.getScale().getOptions().length; m++) {
-                  optionLabels[m] = item.getScale().getOptions()[m];
-               }
-               optionLabels[optionLabels.length-1] = messageLocator.getMessage("reporting.notapplicable.longlabel");
-            }
-            else {
-               optionLabels = item.getScale().getOptions();
-            }
+      List<EvalAnswer> itemAnswers = dti.getAnswers();
 
-            evalPDFReportBuilder.addLikertResponse(questionText, 
-                  optionLabels, responseArray, showPercentages);
+      String templateItemType = TemplateItemUtils.getTemplateItemType(templateItem);
+
+      if (EvalConstants.ITEM_TYPE_HEADER.equals(templateItemType)) {
+         evalPDFReportBuilder.addSectionHeader(questionText);
+      }
+      else if (EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(templateItemType)) {
+         evalPDFReportBuilder.addSectionHeader(questionText);
+      }
+      else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(templateItemType) ||
+            EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(templateItemType) ||
+            EvalConstants.ITEM_TYPE_SCALED.equals(templateItemType) ||
+            EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(templateItemType)) {
+         boolean showPercentages = false;
+         if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(templateItemType)) {
+            showPercentages = true;
          }
-         else if (EvalConstants.ITEM_TYPE_TEXT.equals(templateItemType)) {
-            List<String> essays = new ArrayList<String>();
-            for (EvalAnswer answer: itemAnswers) {
-               essays.add(answer.getText());
+
+         int[] responseArray = TemplateItemDataList.getAnswerChoicesCounts(templateItemType, item.getScale().getOptions().length, itemAnswers);
+
+         String[] optionLabels;
+         if (templateItem.getUsesNA()) {
+            optionLabels = new String[item.getScale().getOptions().length+1];
+            for (int m = 0; m < item.getScale().getOptions().length; m++) {
+               optionLabels[m] = item.getScale().getOptions()[m];
             }
-            evalPDFReportBuilder.addEssayResponse(questionText, essays);
+            optionLabels[optionLabels.length-1] = messageLocator.getMessage("reporting.notapplicable.longlabel");
          }
          else {
-            log.warn("Trying to add unknown type to PDF: " + templateItemType);
+            optionLabels = item.getScale().getOptions();
          }
+
+         evalPDFReportBuilder.addLikertResponse(questionText, 
+               optionLabels, responseArray, showPercentages);
+      }
+      else if (EvalConstants.ITEM_TYPE_TEXT.equals(templateItemType)) {
+         List<String> essays = new ArrayList<String>();
+         for (EvalAnswer answer: itemAnswers) {
+            essays.add(answer.getText());
+         }
+         evalPDFReportBuilder.addEssayResponse(questionText, essays);
+      }
+      else {
+         log.warn("Trying to add unknown type to PDF: " + templateItemType);
+      }
    }
 }

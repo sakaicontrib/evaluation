@@ -194,6 +194,23 @@ public class TemplateItemDataList {
       return templateItemGroups.size();
    }
 
+   /**
+    * Convenience method to get all the associateIds of a certain type,
+    * will return empty list if this type is unused or there are no associate ids
+    * 
+    * @param associateType the constant associate type string
+    * @return a set (empty if no ids for the given type)
+    * @see #associates map for more information about the possible returns
+    */
+   public Set<String> getAssociateIds(String associateType) {
+      Set<String> ids = new HashSet<String>();
+      if (this.associates.containsKey(associateType)) {
+         ids.addAll( this.associates.get(associateType) );
+      }
+      return ids;
+   }
+
+
    // BUILD the flat list and return it
 
    /**
