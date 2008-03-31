@@ -480,7 +480,7 @@ public class TemplateItemDataList {
          this.node = node;
          if (TemplateItemUtils.isBlockParent(templateItem)) {
             blockChildItems = TemplateItemUtils.getChildItems(allTemplateItems, templateItem.getId());
-            this.templateItem.childTemplateItems = blockChildItems; // for rendering
+            this.templateItem.childTemplateItems = new ArrayList<EvalTemplateItem>(blockChildItems); // for rendering
          }
          // minor fixups to ensure nulls are filled in
          if (templateItem.getUsesComment() == null) {

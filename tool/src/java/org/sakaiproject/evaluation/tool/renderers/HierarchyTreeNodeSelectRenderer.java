@@ -9,7 +9,6 @@ import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 
 import uk.org.ponder.arrayutil.MapUtil;
-import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIJointContainer;
@@ -136,7 +135,7 @@ public class HierarchyTreeNodeSelectRenderer {
           
             hierNodeLabels.add(title);
             hierNodeValues.add(evalHierNode.id);
-            UISelectChoice choice = UISelectChoice.make(tableRow, "select-checkbox",
+            UISelectChoice.make(tableRow, "select-checkbox",
                 hierNodesSelectID, hierNodeLabels.size()-1);
         }
         else if (toRender instanceof EvalGroup) {
@@ -146,7 +145,7 @@ public class HierarchyTreeNodeSelectRenderer {
             evalGroupLabels.add(title);
             evalGroupValues.add(evalGroup.evalGroupId);
             
-            UISelectChoice choice = UISelectChoice.make(tableRow, "select-checkbox",
+            UISelectChoice.make(tableRow, "select-checkbox",
                 groupsSelectID, evalGroupLabels.size()-1);
         }
         else {
