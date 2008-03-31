@@ -10,7 +10,6 @@ import java.util.Set;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalDeliveryService;
-import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
@@ -39,15 +38,10 @@ public class EvalResponseAggregatorUtil {
    public void setExternalHierarchyLogic(ExternalHierarchyLogic logic) {
       this.hierarchyLogic = logic;
    }
-   
+
    private EvalAuthoringService authoringService;
    public void setAuthoringService(EvalAuthoringService authoringService) {
       this.authoringService = authoringService;
-   }
-   
-   private EvalEvaluationService evaluationService;
-   public void setEvaluationService(EvalEvaluationService evaluationService) {
-      this.evaluationService = evaluationService;
    }
 
    private EvalDeliveryService deliveryService;
@@ -75,91 +69,92 @@ public class EvalResponseAggregatorUtil {
     * @param itemAnswers list of answers for the concerened question
     * @param templateItem EvalTemplateItem object for which the answers are fetched
     */
-   private void updateResponseList(int numOfResponses, List<Long> responseIds, List<List<String>> responseRows, List<EvalAnswer> itemAnswers,
-         EvalTemplateItem templateItem) {
+// FIXME UNUSED method
+//   private void updateResponseList(int numOfResponses, List<Long> responseIds, List<List<String>> responseRows, List<EvalAnswer> itemAnswers,
+//         EvalTemplateItem templateItem) {
+//
+//      /* 
+//       * Fix for EVALSYS-123 i.e. export CSV functionality 
+//       * fails when answer for a question left unanswered by 
+//       * student.
+//       * 
+//       * Basically we need to check if the particular student 
+//       * (identified by a response id) has answered a particular
+//       * question. If yes, then add the answer to the list, else
+//       * add empty string - kahuja 23rd Apr 2007. 
+//       */
+//      int actualIndexOfResponse = 0;
+//      int idealIndexOfResponse = 0;
+//      List<String> currRow = null;
+//      int lengthOfAnswers = itemAnswers.size();
+//      for (int j = 0; j < lengthOfAnswers; j++) {
+//
+//         EvalAnswer currAnswer = (EvalAnswer) itemAnswers.get(j);
+//         actualIndexOfResponse = responseIds.indexOf(currAnswer.getResponse().getId());
+//
+//         EvalUtils.decodeAnswerNA(currAnswer);
+//
+//         // Fill empty answers if the answer corresponding to a response is not in itemAnswers list. 
+//         if (actualIndexOfResponse > idealIndexOfResponse) {
+//            for (int count = idealIndexOfResponse; count < actualIndexOfResponse; count++) {
+//               currRow = responseRows.get(idealIndexOfResponse);
+//               currRow.add(" ");
+//            }
+//         }
+//
+//         /*
+//          * Add the answer to item within the current response to the output row.
+//          * If text/essay type item just add the text 
+//          * else (scaled type or block child, which is also scaled) item then look up the label
+//          */
+//         String itemType = TemplateItemUtils.getTemplateItemType(templateItem);
+//         currRow = responseRows.get(actualIndexOfResponse);
+//         if (currAnswer.NA) {
+//            currRow.add(messageLocator.getMessage("reporting.notapplicable.shortlabel"));
+//         }
+//         else if (EvalConstants.ITEM_TYPE_TEXT.equals(itemType)) {
+//            currRow.add(currAnswer.getText());
+//         } 
+//         else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemType)) {
+//            String labels[] = templateItem.getItem().getScale().getOptions();
+//            StringBuilder sb = new StringBuilder();
+//            Integer[] decoded = EvalUtils.decodeMultipleAnswers(currAnswer.getMultiAnswerCode());
+//            for (int k = 0; k < decoded.length; k++) {
+//               sb.append(labels[decoded[k].intValue()]);
+//               if (k+1 < decoded.length) 
+//                  sb.append(",");
+//            }
+//            currRow.add(sb.toString());
+//         }
+//         else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(itemType) 
+//               || EvalConstants.ITEM_TYPE_SCALED.equals(itemType)
+//               || EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(itemType)) {
+//            String labels[] = templateItem.getItem().getScale().getOptions();
+//            currRow.add(labels[currAnswer.getNumeric().intValue()]);
+//         }
+//         else {
+//            throw new UniversalRuntimeException("Trying to add an unsupported question type ("+itemType+") " 
+//                  + "for template item ("+templateItem.getId()+") to the Spreadsheet Data Lists");
+//         }
+//
+//         /*
+//          * Update the ideal index to "actual index + 1" 
+//          * because now actual answer has been added to list.
+//          */
+//         idealIndexOfResponse = actualIndexOfResponse + 1;
+//      }
+//
+//      // If empty answers occurs at end such that all responses have not been filled.
+//      for (int count = idealIndexOfResponse; count < numOfResponses; count++) {
+//         currRow = responseRows.get(idealIndexOfResponse);
+//         currRow.add(" ");
+//      }
+//
+//   }
 
-      /* 
-       * Fix for EVALSYS-123 i.e. export CSV functionality 
-       * fails when answer for a question left unanswered by 
-       * student.
-       * 
-       * Basically we need to check if the particular student 
-       * (identified by a response id) has answered a particular
-       * question. If yes, then add the answer to the list, else
-       * add empty string - kahuja 23rd Apr 2007. 
-       */
-      int actualIndexOfResponse = 0;
-      int idealIndexOfResponse = 0;
-      List<String> currRow = null;
-      int lengthOfAnswers = itemAnswers.size();
-      for (int j = 0; j < lengthOfAnswers; j++) {
-
-         EvalAnswer currAnswer = (EvalAnswer) itemAnswers.get(j);
-         actualIndexOfResponse = responseIds.indexOf(currAnswer.getResponse().getId());
-
-         EvalUtils.decodeAnswerNA(currAnswer);
-
-         // Fill empty answers if the answer corresponding to a response is not in itemAnswers list. 
-         if (actualIndexOfResponse > idealIndexOfResponse) {
-            for (int count = idealIndexOfResponse; count < actualIndexOfResponse; count++) {
-               currRow = responseRows.get(idealIndexOfResponse);
-               currRow.add(" ");
-            }
-         }
-
-         /*
-          * Add the answer to item within the current response to the output row.
-          * If text/essay type item just add the text 
-          * else (scaled type or block child, which is also scaled) item then look up the label
-          */
-         String itemType = TemplateItemUtils.getTemplateItemType(templateItem);
-         currRow = responseRows.get(actualIndexOfResponse);
-         if (currAnswer.NA) {
-            currRow.add(messageLocator.getMessage("reporting.notapplicable.shortlabel"));
-         }
-         else if (EvalConstants.ITEM_TYPE_TEXT.equals(itemType)) {
-            currRow.add(currAnswer.getText());
-         } 
-         else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemType)) {
-            String labels[] = templateItem.getItem().getScale().getOptions();
-            StringBuilder sb = new StringBuilder();
-            Integer[] decoded = EvalUtils.decodeMultipleAnswers(currAnswer.getMultiAnswerCode());
-            for (int k = 0; k < decoded.length; k++) {
-               sb.append(labels[decoded[k].intValue()]);
-               if (k+1 < decoded.length) 
-                  sb.append(",");
-            }
-            currRow.add(sb.toString());
-         }
-         else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(itemType) 
-               || EvalConstants.ITEM_TYPE_SCALED.equals(itemType)
-               || EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(itemType)) {
-            String labels[] = templateItem.getItem().getScale().getOptions();
-            currRow.add(labels[currAnswer.getNumeric().intValue()]);
-         }
-         else {
-            throw new UniversalRuntimeException("Trying to add an unsupported question type ("+itemType+") " 
-                  + "for template item ("+templateItem.getId()+") to the Spreadsheet Data Lists");
-         }
-
-         /*
-          * Update the ideal index to "actual index + 1" 
-          * because now actual answer has been added to list.
-          */
-         idealIndexOfResponse = actualIndexOfResponse + 1;
-      }
-
-      // If empty answers occurs at end such that all responses have not been filled.
-      for (int count = idealIndexOfResponse; count < numOfResponses; count++) {
-         currRow = responseRows.get(idealIndexOfResponse);
-         currRow.add(" ");
-      }
-
-   }
-   
    public String formatForSpreadSheet(EvalTemplateItem templateItem, EvalAnswer answer) {
       String togo = "";
-      
+
       String itemType = TemplateItemUtils.getTemplateItemType(templateItem);
       EvalUtils.decodeAnswerNA(answer);
       if (answer.NA) {
@@ -173,9 +168,15 @@ public class EvalResponseAggregatorUtil {
          StringBuilder sb = new StringBuilder();
          Integer[] decoded = EvalUtils.decodeMultipleAnswers(answer.getMultiAnswerCode());
          for (int k = 0; k < decoded.length; k++) {
-            sb.append(labels[decoded[k].intValue()]);
-            if (k+1 < decoded.length) 
+            if (k > 0) {
                sb.append(",");
+            }
+            int decode = decoded[k].intValue();
+            if (decode >= 0 && decode < labels.length) {
+               sb.append( labels[decoded[k].intValue()] );
+            } else {
+               sb.append(decode);
+            }
          }
          togo = sb.toString();
       }
@@ -183,7 +184,12 @@ public class EvalResponseAggregatorUtil {
             || EvalConstants.ITEM_TYPE_SCALED.equals(itemType)
             || EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(itemType)) {
          String labels[] = templateItem.getItem().getScale().getOptions();
-         togo = labels[answer.getNumeric().intValue()];
+         int value = answer.getNumeric().intValue();
+         if (value >= 0 && value < labels.length) {
+            togo = labels[value];
+         } else {
+            togo = value + "";
+         }
       }
       else {
          throw new UniversalRuntimeException("Trying to add an unsupported question type ("+itemType+") " 
@@ -222,7 +228,7 @@ public class EvalResponseAggregatorUtil {
             || EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(templateItemType) 
             || EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(templateItemType)
             || EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(templateItemType) ) {
-         
+
          for (EvalAnswer answer: itemAnswers) {
             EvalUtils.decodeAnswerNA(answer);
             if (answer.NA) {
@@ -292,7 +298,7 @@ public class EvalResponseAggregatorUtil {
          instructorIdtoEvalUser.put(evalUser.userId, evalUser);
       }
    }
-   
+
    /**
     * Does the preparation work for getting the DITL.  At the moment, this is basically
     * everything from ReportsViewingProducer before it started iterating through
@@ -306,26 +312,26 @@ public class EvalResponseAggregatorUtil {
    public TemplateItemDataList prepareTemplateItemDataStructure(EvalEvaluation eval, String[] groupIds) {
       List<EvalTemplateItem> allTemplateItems = 
          authoringService.getTemplateItemsForTemplate(eval.getTemplate().getId(), new String[] {}, new String[] {}, new String[] {});
-      
+
       // get all the answers
       List<EvalAnswer> answers = deliveryService.getAnswersForEval(eval.getId(), groupIds, null);
-      
+
       // get the list of all instructors for this report and put the user objects for them into a map
       Set<String> instructorIds = new HashSet<String>();
       Map<String,EvalUser> instructorIdtoEvalUser = new HashMap<String,EvalUser>();
       fillInstructorInformation(answers, instructorIds, instructorIdtoEvalUser);
-      
+
       // Get the sorted list of all nodes for this set of template items
       List<EvalHierarchyNode> hierarchyNodes = RenderingUtils.makeEvalNodesList(hierarchyLogic, allTemplateItems);
-      
+
       // make the TI data structure
       Map<String, List<String>> associates = new HashMap<String, List<String>>();
       associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, new ArrayList<String>(instructorIds));
       TemplateItemDataList tidl = new TemplateItemDataList(allTemplateItems, hierarchyNodes, associates, answers);
-      
+
       return tidl;
    }
-   
+
    /**
     * Returns a comma separated list of the human readable names for the array
     * of group ids.  This is used in a number of the reporting classes.
@@ -333,7 +339,7 @@ public class EvalResponseAggregatorUtil {
     * @param groupIds
     * @return
     */
-   public String getCommaSeperatedGroupNames(String[] groupIds) {
+   public String getCommaSeparatedGroupNames(String[] groupIds) {
       StringBuilder groupsString = new StringBuilder();
       for (int groupCounter = 0; groupCounter < groupIds.length; groupCounter++) {
          if (groupCounter > 0) {
@@ -343,8 +349,7 @@ public class EvalResponseAggregatorUtil {
       }
       return groupsString.toString();
    }
-   
-   
+
    /**
     * Get the translated label for the template item type destined for the 
     * spreadsheet header.
@@ -354,17 +359,18 @@ public class EvalResponseAggregatorUtil {
     */
    public String getHeaderLabelForItemType(String templateItemType) {
       String togo;
-      if (EvalConstants.ITEM_TYPE_SCALED.equals(templateItemType)) {
-         togo = messageLocator.getMessage("reporting.itemtypelabel.scale");
+      if (EvalConstants.ITEM_TYPE_SCALED.equals(templateItemType)
+            || EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(templateItemType)) {
+         togo = messageLocator.getMessage("item.classification.scaled");
       }
       else if (EvalConstants.ITEM_TYPE_TEXT.equals(templateItemType)) {
-         togo = messageLocator.getMessage("reporting.itemtypelabel.text");
+         togo = messageLocator.getMessage("item.classification.text");
       }
       else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(templateItemType)) {
-         togo = messageLocator.getMessage("reporting.itemtypelabel.multipleanswer");
+         togo = messageLocator.getMessage("item.classification.multianswer");
       }
       else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(templateItemType)) {
-         togo = messageLocator.getMessage("reporting.itemtypelabel.multiplechoice");
+         togo = messageLocator.getMessage("item.classification.multichoice");
       }
       else {
          togo = "";
