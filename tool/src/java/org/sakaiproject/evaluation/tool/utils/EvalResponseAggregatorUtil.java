@@ -359,6 +359,12 @@ public class EvalResponseAggregatorUtil {
       else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(templateItemType)) {
          togo = messageLocator.getMessage("item.classification.multichoice");
       }
+      else if (EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(templateItemType)) {
+         togo = messageLocator.getMessage("item.classification.block");
+      }
+      else if (EvalConstants.ITEM_TYPE_HEADER.equals(templateItemType)) {
+         togo = messageLocator.getMessage("item.classification.header");
+      }
       else {
          togo = "";
       }
