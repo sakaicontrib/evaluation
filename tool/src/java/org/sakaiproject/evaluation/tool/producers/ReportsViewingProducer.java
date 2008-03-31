@@ -14,8 +14,6 @@
 
 package org.sakaiproject.evaluation.tool.producers;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -80,7 +78,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
    public String getViewID() {
       return VIEW_ID;
    }
-   
+
    private EvalResponseAggregatorUtil responseAggregator;
    public void setEvalResponseAggregatorUtil(EvalResponseAggregatorUtil bean) {
       this.responseAggregator = bean;
@@ -173,12 +171,12 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
          }
 
          Long templateId = evaluation.getTemplate().getId();
-         
+
          // Fetch most of all the data and metadata with the ultra TIDL object
          TemplateItemDataList tidl = responseAggregator.prepareTemplateItemDataStructure(evaluation, groupIds);
 
          List<EvalTemplateItem> allTemplateItems = tidl.getAllTemplateItems();
-         
+
          if (! allTemplateItems.isEmpty()) {
 
             if (VIEWMODE_ALLESSAYS.equals(reportViewParams.viewmode)) {
@@ -190,21 +188,16 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
 
             // Evaluation Info
             UIOutput.make(tofill, "evaluationTitle", evaluation.getTitle());
-            
+
             // The Groups we are viewing
             UIMessage.make(tofill, "selectedGroups", "viewreport.viewinggroups", 
                   new String[] { responseAggregator.getCommaSeparatedGroupNames(groupIds) });
 
-            
-            // get all the answers
-            List<EvalAnswer> answers = tidl.getAnswers();
-            
-            // get the list of all instructors for this report and put the user objects for them into a map
-            Set<String> instructorIds = new HashSet<String>();
-            Map<String,EvalUser> instructorIdtoEvalUser = new HashMap<String, EvalUser>();
-            responseAggregator.fillInstructorInformation(answers, instructorIds, instructorIdtoEvalUser);
 
-            
+            // get the list of all instructors for this report and put the user objects for them into a map
+            Set<String> instructorIds = TemplateItemDataList.getInstructorsForAnswers(tidl.getAnswers());
+            Map<String, EvalUser> instructorIdtoEvalUser = responseAggregator.getInstructorsInformation(instructorIds);
+
             int renderedItemCount = 0;
             // loop through the TIGs and handle each associated category
             for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {

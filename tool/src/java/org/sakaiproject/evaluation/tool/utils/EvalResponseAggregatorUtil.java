@@ -2,7 +2,6 @@ package org.sakaiproject.evaluation.tool.utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -277,26 +276,16 @@ public class EvalResponseAggregatorUtil {
     * Convenience method to build a Set of instructor ID's and a Map of their 
     * EvalUsers which you will probably always need when formatting a report.
     * 
-    * The first parameter is the real List of Answers. The second two parameters
-    * are variables you should pass in because you want them assigned, the list 
-    * and map of instructors.
-    * 
-    * I am doing this in lieu of not wanting to make another class or return an 
-    * Object[2] since I still don't know the proper way to get around Java not 
-    * having multiple return values.  Maybe we'll tack these on to the DITL or
-    * factor it into something else.
-    * 
-    * @param answers The List of EvalAnswer's, will not be changed.
-    * @param instructorIds 
-    * @param instructorIdtoEvalUser
+    * @param instructorIds a set of internal user ids
+    * @return the map of userId -> {@link EvalUser}
     */
-   public void fillInstructorInformation(final List<EvalAnswer> answers,
-         Set<String> instructorIds, Map<String,EvalUser> instructorIdtoEvalUser) {
-      instructorIds.addAll(TemplateItemDataList.getInstructorsForAnswers(answers));
+   public Map<String, EvalUser> getInstructorsInformation(Set<String> instructorIds) {
+      Map<String, EvalUser> instructorIdtoEvalUser = new HashMap<String, EvalUser>();
       List<EvalUser> instructors = externalLogic.getEvalUsersByIds(instructorIds.toArray(new String[] {}));
       for (EvalUser evalUser : instructors) {
          instructorIdtoEvalUser.put(evalUser.userId, evalUser);
       }
+      return instructorIdtoEvalUser;
    }
 
    /**
@@ -317,9 +306,7 @@ public class EvalResponseAggregatorUtil {
       List<EvalAnswer> answers = deliveryService.getAnswersForEval(eval.getId(), groupIds, null);
 
       // get the list of all instructors for this report and put the user objects for them into a map
-      Set<String> instructorIds = new HashSet<String>();
-      Map<String,EvalUser> instructorIdtoEvalUser = new HashMap<String,EvalUser>();
-      fillInstructorInformation(answers, instructorIds, instructorIdtoEvalUser);
+      Set<String> instructorIds = TemplateItemDataList.getInstructorsForAnswers(answers);
 
       // Get the sorted list of all nodes for this set of template items
       List<EvalHierarchyNode> hierarchyNodes = RenderingUtils.makeEvalNodesList(hierarchyLogic, allTemplateItems);

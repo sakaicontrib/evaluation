@@ -121,17 +121,17 @@ public class ReportHandlerHook implements HandlerHook {
       if (drvp instanceof CSVReportViewParams) {
          response.setContentType("text/x-csv");
          response.setHeader("filename", "report.csv");
-         csvReportExporter.formatResponses(evaluation, drvp.groupIds, resultsOutputStream);
+         csvReportExporter.buildReport(evaluation, drvp.groupIds, resultsOutputStream);
       }
       else if (drvp instanceof ExcelReportViewParams) {
          response.setContentType("application/vnd.ms-excel");
          response.setHeader("filename", "report.xls");
-         xlsReportExporter.formatResponses(evaluation, drvp.groupIds, resultsOutputStream);
+         xlsReportExporter.buildReport(evaluation, drvp.groupIds, resultsOutputStream);
       }
       else if (drvp instanceof PDFReportViewParams) {
          response.setContentType("application/pdf");
          response.setHeader("filename", "report.pdf");
-         pdfReportExporter.formatResponses(evaluation, drvp.groupIds, resultsOutputStream);
+         pdfReportExporter.buildReport(evaluation, drvp.groupIds, resultsOutputStream);
       }
       return true;
    }
