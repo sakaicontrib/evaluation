@@ -147,21 +147,7 @@ public class XLSReportExporter {
          String type = TemplateItemUtils.getTemplateItemType(dti.templateItem);
          HSSFCell cell = questionTypeRow.createCell(headerCount);
          
-         if (EvalConstants.ITEM_TYPE_SCALED.equals(type)) {
-            setPlainStringCell(cell,messageLocator.getMessage("reporting.itemtypelabel.scale"));
-         }
-         else if (EvalConstants.ITEM_TYPE_TEXT.equals(type)) {
-            setPlainStringCell(cell,messageLocator.getMessage("reporting.itemtypelabel.text"));
-         }
-         else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(type)) {
-            setPlainStringCell(cell,messageLocator.getMessage("reporting.itemtypelabel.multipleanswer"));
-         }
-         else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(type)) {
-            setPlainStringCell(cell,messageLocator.getMessage("reporting.itemtypelabel.multiplechoice"));
-         }
-         else {
-            setPlainStringCell(cell,"");
-         }
+         setPlainStringCell(cell, responseAggregator.getHeaderLabelForItemType(type));
          cell.setCellStyle(italicMiniHeaderStyle);
          
          HSSFCell questionText = questionTextRow.createCell(headerCount);

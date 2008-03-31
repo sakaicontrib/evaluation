@@ -96,11 +96,6 @@ public class ReportHandlerHook implements HandlerHook {
       this.response = response;
    }
    
-   private EvalResponseAggregatorUtil responseAggregatorUtil; 
-   public void setEvalResponseAggregatorUtil(EvalResponseAggregatorUtil bean) {
-      this.responseAggregatorUtil = bean;
-   }
-   
    private ReportingPermissions reportingPermissions;
    public void setReportingPermissions(ReportingPermissions perms) {
       this.reportingPermissions = perms;
@@ -140,13 +135,11 @@ public class ReportHandlerHook implements HandlerHook {
       
       // Response Headers that are the same for all Output types
       response.setHeader("Content-disposition", "inline");
-      
-      EvalAggregatedResponses responses = responseAggregatorUtil.getAggregatedResponses(evaluation, drvp.groupIds);
-      
+           
       if (drvp instanceof CSVReportViewParams) {
          response.setContentType("text/x-csv");
          response.setHeader("filename", "report.csv");
-         csvReportExporter.formatResponses(responses, resultsOutputStream);
+         csvReportExporter.formatResponses(evaluation, drvp.groupIds, resultsOutputStream);
       }
       else if (drvp instanceof ExcelReportViewParams) {
          response.setContentType("application/vnd.ms-excel");

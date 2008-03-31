@@ -205,12 +205,12 @@
 	<bean id="CSVReportExporter" class="org.sakaiproject.evaluation.tool.reporting.CSVReportExporter">
 		<property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
         <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
-	</bean>
+	    <property name="evalResponseAggregatorUtil" ref="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil" />
+    </bean>
 
 	<bean id="XLSReportExporter" class="org.sakaiproject.evaluation.tool.reporting.XLSReportExporter">
         <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
-        <property name="deliveryService"
-           ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
+        <property name="deliveryService" ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
         <property name="messageLocator" ref="messageLocator" />
         <property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
         <property name="evalResponseAggregatorUtil" ref="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil" />

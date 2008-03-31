@@ -88,7 +88,6 @@
       <property name="xlsReportExporter" ref="XLSReportExporter" />
       <property name="pdfReportExporter" ref="PDFReportExporter" />
       <property name="response" ref="httpServletResponse" />
-      <property name="evalResponseAggregatorUtil" ref="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil" />
       <property name="reportingPermissions" ref="org.sakaiproject.evaluation.logic.ReportingPermissions" />
    </bean>
 
