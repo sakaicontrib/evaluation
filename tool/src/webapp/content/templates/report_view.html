@@ -14,7 +14,6 @@
 
 <body>
 	<div class="portletBody">
-
          <div class="navIntraTool">
             <a rsf:id="administrate-link" href="administrate.html">Administrate</a>
             <a rsf:id="summary-link" href="summary.html">Summary</a>
@@ -34,18 +33,24 @@
             <li style="float:right" class="lastCrumb"><a rsf:id="viewItemsFilterLink" href="#" class="goToList">View Written Responses Only</a></li>
          </ul>
 
-         <div style="text-align:right;margin:0 2em;">
+         <div class="navPanel">
+				 	<div class="viewNav">
+	         <h3 rsf:id="evaluationTitle" style="margin:0;padding:0">Title of the survey</h3>
+				 	</div>
+					<div class="listNav">
+						<ul style="list-style:none;display:inline;margin:0;padding:0">
             <!-- optionally made visible if there are comments in this report -->
-            <span id="allComments" style="display:none;">
+            <li id="allComments" style="list-style:none;display:inline;margin:0;padding:0 .2em">
                <span id="allCommentsHide" style="display:none;"><span rsf:id="msg=viewreport.hide.all.comments" class="makeLink">Hide All Comments</span></span>
                <span id="allCommentsShow" style="display:none;"><span rsf:id="msg=viewreport.view.all.comments" class="makeLink">Show All Comments</span></span>
-            </span>
-            &nbsp;
+            </li>
             <!-- optionally made visible if there are text responses in this report -->
-            <span id="allTextResponses" style="display:none;">
+            <li id="allTextResponses" style="display:none;list-style:none;display:inline;margin:0;padding:0 .2em">
                <span id="allTextResponsesHide" style="display:none;"><span rsf:id="msg=viewreport.hide.all.responses" class="makeLink">Hide All Text Responses</span></span>
                <span id="allTextResponsesShow" style="display:none;"><span rsf:id="msg=viewreport.view.all.responses" class="makeLink">Show All Text Responses</span></span>
-            </span>
+            </li>
+						</ul>
+						</div>
          </div>
 
          <div rsf:id="message-for:*" class="alertMessage">
@@ -54,14 +59,14 @@
          	</ul>
          </div>
          
-         <h3 rsf:id="evaluationTitle">Title of the survey</h3>
-         <h4 rsf:id="selectedGroups">Viewing Groups: Chemistry, Biology, and Biomed</h4>
+
+         <p class="instruction" rsf:id="selectedGroups">Viewing Groups: Chemistry, Biology, and Biomed</p>
 
          <!-- this BEGINS the category section -->
          <div rsf:id="categorySection:">
             <h3 rsf:id="categoryHeader">Group Items:</h3>
-            <div class="itemListNew">
-               <ol class="itemListEval">
+            <div class="itemListReport">
+               <ol>
                   <li rsf:id="itemrow:nodeSection">
                      <h4 rsf:id="nodeTitle">title for this node section</h4>
                   </li>
@@ -69,14 +74,7 @@
 
                     <!-- DIV tag for rendering block parent text or header text -->
                     <div rsf:id="textualItem:">
-                        <table border = "0" cellspacing = "0" cellpadding = "0" rules="none" width = "100%" class="listHier lines" style="margin:0">
-                            <tr class="highLightRow">
-                                <td width="75%" valign="top">
-                                    <h4><span rsf:id="itemText">Textual/header item text here</span></h4>
-                                </td>
-                                <td>&nbsp;</td>
-                            </tr>
-                        </table>
+                      <h4 style="font-size:1.3em;display:block;padding:.2em;margin:.5em 0;"><span rsf:id="itemText">Textual/header item text here</span></h4>
                     </div>
 
                     <!-- DIV tag for Scaled display -->
@@ -103,10 +101,10 @@
                                 </td>
                             </tr>
                         </table>
-                        <div rsf:id="showComments:" style="margin-left: 1em;" class="showcomments">
-                           <h4 rsf:id="msg=viewreport.comments.header">Comments:</h4>
+                        <div rsf:id="showComments:" class="showcomments">
+                           <h5 rsf:id="msg=viewreport.comments.header">Comments:</h5>
                            <span rsf:id="noComments" style="font-style: italic;"></span>
-                           <ol style="list-style: lower-alpha; list-style-position: inside;">
+                           <ol>
                               <li rsf:id="comments:">
                                  <!-- //gsilver: let the list take care of the numbers -->
                                  <span rsf:id="itemComment">comment here</span>
@@ -135,9 +133,9 @@
                                 </td>
                             </tr>
                         </table>
-                        <div rsf:id="showResponses:" style="margin-left: 1em;" class="showtextresponses">
+                        <div rsf:id="showResponses:" class="showtextresponses">
                            <span rsf:id="noResponses" style="font-style: italic;"></span>
-                           <ol style="list-style: lower-alpha; list-style-position: inside;">
+                           <ol>
                               <li rsf:id="responses:">
                                  <!-- //gsilver: let the list take care of the numbers -->
                                  <span rsf:id="itemResponse">essay response here</span>
