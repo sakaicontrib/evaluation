@@ -295,10 +295,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
       initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.initEvalAssignValidation", 
             new String[] {form.getFullID(), assignErrorDiv.getFullID(), assignButton.getFullID()}));
       
-//      UICommand.make(form, "editSettings", UIMessage.make("assigneval.edit.settings.button"), "#{evaluationBean.backToSettingsAction}");
-//      UICommand.make(form, "confirmAssignCourses", UIMessage.make("assigneval.save.assigned.button"), "#{evaluationBean.confirmAssignCoursesAction}");
-
-      // Setup JavaScript for the collapse able sections
+      // Setup JavaScript for the collapseable sections
       UIVerbatim.make(tofill, "initJavaScript", initJS.toString());
    }
 
