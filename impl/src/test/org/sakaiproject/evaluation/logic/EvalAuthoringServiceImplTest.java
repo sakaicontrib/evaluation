@@ -2990,4 +2990,12 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
          assertNotNull(e);
       }
    }
+
+   /**
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalAuthoringServiceImpl#getAutoUseTemplateItems(java.lang.String)}.
+    */
+   public void testGetAutoUseTemplateItems() {
+      //fail("Not yet implemented");
+   }
+
 }

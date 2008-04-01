@@ -1684,4 +1684,11 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       return templates;
    }
 
+
+
+   public List<EvalTemplateItem> getAutoUseTemplateItems(String templateAutoUseTag, String templateItemAutoUseTag, String itemAutoUseTag) {
+      // TODO Auto-generated method stub
+      return null;
+   }
+
 }

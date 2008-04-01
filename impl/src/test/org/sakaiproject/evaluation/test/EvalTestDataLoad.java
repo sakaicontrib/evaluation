@@ -116,6 +116,11 @@ public class EvalTestDataLoad {
 
    public final static String EVAL_FROM_EMAIL = "admin@eval.testing.com";
 
+   /**
+    * Used by {@link #templateItem6UU}, {@link #templateItem3A}, {@link #templateUnused}, and {@link #item4}
+    */
+   public final static String AUTO_USE_TAG = "official";
+
 
    // SCALES
    /**
@@ -158,7 +163,7 @@ public class EvalTestDataLoad {
     */
    public EvalItem item3;
    /**
-    * Item that is not used in any template, scaled, unlocked, MAINT_USER_ID owns, private
+    * Item that is not used in any template, scaled, unlocked, MAINT_USER_ID owns, private, {@value #AUTO_USE_TAG}
     */
    public EvalItem item4;
    /**
@@ -249,7 +254,7 @@ public class EvalTestDataLoad {
    public EvalTemplate templatePublic;
    /**
     * Template that is not being used, private, MAINT_USER_ID owns, unlocked
-    * <br/>Uses {@link #item3} and {@link #item5}
+    * <br/>Uses {@link #item3} and {@link #item5}, {@link #AUTO_USE_TAG}
     */
    public EvalTemplate templateUnused;
    /**
@@ -575,6 +580,7 @@ public class EvalTestDataLoad {
       item4.setScaleDisplaySetting( EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL );
       item4.setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
       item4.setLocked(UNLOCKED);
+      item4.setAutoUseTag(AUTO_USE_TAG);
       item5 = new EvalItem(new Date(), MAINT_USER_ID, "Textual locked", 
             EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_TEXT, NOT_EXPERT);
       item5.setDisplayRows( new Integer(2) );
@@ -657,6 +663,7 @@ public class EvalTestDataLoad {
             EvalConstants.TEMPLATE_TYPE_STANDARD, "Template maint unused", 
             "description", EvalConstants.SHARING_PRIVATE, NOT_EXPERT, 
             "expert desc", null, UNLOCKED, false);
+      templateUnused.setAutoUseTag(AUTO_USE_TAG);
       templateUser = new EvalTemplate(new Date(), USER_ID, 
             EvalConstants.TEMPLATE_TYPE_STANDARD, "Template user", 
             "description", EvalConstants.SHARING_PRIVATE, NOT_EXPERT, 
@@ -697,6 +704,7 @@ public class EvalTestDataLoad {
             templateAdmin, item2, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,
             EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
             null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.FALSE, false, null, null, null);
+      templateItem2A.setAutoUseTag(AUTO_USE_TAG);
       templateItem3A = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
             templateAdmin, item3, new Integer(2), EvalConstants.ITEM_CATEGORY_COURSE,
             EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
@@ -725,6 +733,7 @@ public class EvalTestDataLoad {
             templateUserUnused, item6, new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE,
             EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE,
             new Integer(4), null, Boolean.FALSE, false, null, null, null);
+      templateItem6UU.setAutoUseTag(AUTO_USE_TAG);
       // items block
       templateItem9B = new EvalTemplateItem( new Date(), ADMIN_USER_ID, 
             templateAdminBlock, item9, new Integer(1), EvalConstants.ITEM_CATEGORY_COURSE,

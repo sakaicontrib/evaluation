@@ -618,4 +618,29 @@ public interface EvalAuthoringService {
     */
    public List<EvalTemplate> getTemplatesUsingItem(Long itemId);
 
+   // AUTO USE lookup
+
+
+   /**
+    * Find all templates, templaeItems, and items with the given autoUseTag on them,
+    * items from the templates found will be returned (without the template but in the correct order),
+    * {@link EvalItem}s will be wrapped in a non-persisted {@link EvalTemplateItem},
+    * will not return 2 copies of the same templateItem but if an item is used in a templateItem
+    * then you may end up with 2 templateItems that appear to be the same<br/>
+    * <b>NOTE:</b> does not check if this authoring object is visible so care should be taken to
+    * control which items/template items/templates are allowed to have autoUseTags placed on them
+    * 
+    * @param templateAutoUseTag the autoUseTag field from {@link EvalTemplate},
+    * will return all the templateItems from any templates with this tag,
+    * null means skip checking for templates
+    * @param templateItemAutoUseTag the autoUseTag field from {@link EvalTemplateItem},
+    * will return all the templateItems with this tag,
+    * null means skip checking for templateItems
+    * @param itemAutoUseTag  the autoUseTag field from {@link EvalItem},
+    * will return all the items with this tag (wrapped in a non-persisted templateItem),
+    * null means skip checking for items
+    * @return a list of template items
+    */
+   public List<EvalTemplateItem> getAutoUseTemplateItems(String templateAutoUseTag, String templateItemAutoUseTag, String itemAutoUseTag);
+
 }
