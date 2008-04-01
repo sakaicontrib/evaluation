@@ -136,7 +136,8 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
          UIMessage.make(tofill, "preview-title-prefix", "previeweval.evaluation.title.prefix");
          // load the real evaluation and template
          eval = evaluationService.getEvaluationById(evaluationId);
-         template = authoringService.getTemplateById(eval.getTemplate().getId());
+         templateId = eval.getTemplate().getId();
+         template = authoringService.getTemplateById(templateId);
       }
 
       UIMessage.make(tofill, "eval-title-header", "takeeval.eval.title.header");
