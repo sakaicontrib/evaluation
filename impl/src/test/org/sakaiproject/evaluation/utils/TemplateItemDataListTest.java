@@ -39,7 +39,7 @@ public class TemplateItemDataListTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.TemplateItemDataList#TemplateItemDataList(java.util.List, java.util.List, java.util.Map, List)}.
     */
    public void testTemplateItemDataList() {
-      EvalTestDataLoad etdl = new EvalTestDataLoad();
+      EvalTestDataLoad etdl = new EvalTestDataLoad(null);
 
       List<EvalTemplateItem> testList = new ArrayList<EvalTemplateItem>();
       List<DataTemplateItem> flatList = null;

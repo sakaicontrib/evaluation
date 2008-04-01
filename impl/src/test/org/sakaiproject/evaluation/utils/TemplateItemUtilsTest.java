@@ -37,7 +37,7 @@ public class TemplateItemUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.TemplateItemUtils#getTemplateItemType(org.sakaiproject.evaluation.model.EvalTemplateItem)}.
     */
    public void testGetTemplateItemType() {
-      EvalTestDataLoad etdl = new EvalTestDataLoad();
+      EvalTestDataLoad etdl = new EvalTestDataLoad(null);
       String itemType = null;
 
       itemType = TemplateItemUtils.getTemplateItemType(etdl.templateItem1P);
@@ -49,7 +49,7 @@ public class TemplateItemUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.TemplateItemUtils#makeTemplateItemsList(java.util.Collection)}.
     */
    public void testMakeTemplateItemsList() {
-      EvalTestDataLoad etdl = new EvalTestDataLoad();
+      EvalTestDataLoad etdl = new EvalTestDataLoad(null);
       Set<EvalTemplateItem> collection = new HashSet<EvalTemplateItem>();
       List<EvalTemplateItem> list = null;
 
@@ -73,7 +73,7 @@ public class TemplateItemUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.TemplateItemUtils#makeTemplateItemsIdsArray(java.util.Collection)}.
     */
    public void testMakeTemplateItemsIdsArray() {
-      EvalTestDataLoad etdl = new EvalTestDataLoad();
+      EvalTestDataLoad etdl = new EvalTestDataLoad(null);
       Set<EvalTemplateItem> collection = new HashSet<EvalTemplateItem>();
       Long[] array = null;
 
@@ -95,7 +95,7 @@ public class TemplateItemUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.TemplateItemUtils#checkTemplateItemsCategoryExists(java.lang.String, java.util.List)}.
     */
    public void testCheckTemplateItemsCategoryExists() {
-      EvalTestDataLoad etdl = new EvalTestDataLoad();
+      EvalTestDataLoad etdl = new EvalTestDataLoad(null);
       List<EvalTemplateItem> itemList = new ArrayList<EvalTemplateItem>();
 
       itemList.add(etdl.templateItem2A);
@@ -111,7 +111,7 @@ public class TemplateItemUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.TemplateItemUtils#getCategoryTemplateItems(java.lang.String, java.util.List)}.
     */
    public void testGetCategoryTemplateItems() {
-      EvalTestDataLoad etdl = new EvalTestDataLoad();
+      EvalTestDataLoad etdl = new EvalTestDataLoad(null);
       List<EvalTemplateItem> itemList = new ArrayList<EvalTemplateItem>();
 
       itemList.add(etdl.templateItem2A);
@@ -139,7 +139,7 @@ public class TemplateItemUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.TemplateItemUtils#orderTemplateItems(java.util.List, boolean)}.
     */
    public void testOrderTemplateItems() {
-      EvalTestDataLoad etdl = new EvalTestDataLoad();
+      EvalTestDataLoad etdl = new EvalTestDataLoad(null);
       List<EvalTemplateItem> itemList = new ArrayList<EvalTemplateItem>();
 
       itemList.add(etdl.templateItem2A);
@@ -223,7 +223,7 @@ public class TemplateItemUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.TemplateItemUtils#isAnswerable(org.sakaiproject.evaluation.model.EvalTemplateItem)}.
     */
    public void testIsAnswerable() {
-      EvalTestDataLoad etdl = new EvalTestDataLoad();
+      EvalTestDataLoad etdl = new EvalTestDataLoad(null);
 
       assertTrue( TemplateItemUtils.isAnswerable(etdl.templateItem1U) );
       assertTrue( TemplateItemUtils.isAnswerable(etdl.templateItem2B) );
@@ -237,7 +237,7 @@ public class TemplateItemUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.TemplateItemUtils#getAnswerableTemplateItems(java.util.List)}.
     */
    public void testGetAnswerableTemplateItems() {
-      EvalTestDataLoad etdl = new EvalTestDataLoad();
+      EvalTestDataLoad etdl = new EvalTestDataLoad(null);
       List<EvalTemplateItem> itemList = new ArrayList<EvalTemplateItem>();
 
       // need to trick this into thinking it works
@@ -259,7 +259,7 @@ public class TemplateItemUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.TemplateItemUtils#isRequired(org.sakaiproject.evaluation.model.EvalTemplateItem)}.
     */
    public void testIsRequired() {
-      EvalTestDataLoad etdl = new EvalTestDataLoad();
+      EvalTestDataLoad etdl = new EvalTestDataLoad(null);
 
       assertTrue( TemplateItemUtils.isRequired(etdl.templateItem1U) );
       assertTrue( TemplateItemUtils.isRequired(etdl.templateItem2B) );
@@ -273,7 +273,7 @@ public class TemplateItemUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.TemplateItemUtils#getRequiredTemplateItems(java.util.List)}.
     */
    public void testGetRequiredTemplateItems() {
-      EvalTestDataLoad etdl = new EvalTestDataLoad();
+      EvalTestDataLoad etdl = new EvalTestDataLoad(null);
       List<EvalTemplateItem> itemList = new ArrayList<EvalTemplateItem>();
 
       itemList.add(etdl.templateItem1U);
@@ -292,7 +292,7 @@ public class TemplateItemUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.TemplateItemUtils#isBlockParent(org.sakaiproject.evaluation.model.EvalTemplateItem)}.
     */
    public void testIsBlockParent() {
-      EvalTestDataLoad etdl = new EvalTestDataLoad();
+      EvalTestDataLoad etdl = new EvalTestDataLoad(null);
 
       assertFalse( TemplateItemUtils.isBlockParent(etdl.templateItem1U) );
       assertFalse( TemplateItemUtils.isBlockParent(etdl.templateItem2B) );
@@ -303,7 +303,7 @@ public class TemplateItemUtilsTest extends TestCase {
    }
 
    public void testIsBlockChild() {
-      EvalTestDataLoad etdl = new EvalTestDataLoad();
+      EvalTestDataLoad etdl = new EvalTestDataLoad(null);
 
       // need to trick this into thinking it works
       etdl.templateItem9B.setId( new Long(0) );
@@ -322,7 +322,7 @@ public class TemplateItemUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.TemplateItemUtils#getNonChildItems(java.util.List)}.
     */
    public void testGetNonChildItems() {
-      EvalTestDataLoad etdl = new EvalTestDataLoad();
+      EvalTestDataLoad etdl = new EvalTestDataLoad(null);
       List<EvalTemplateItem> itemList = new ArrayList<EvalTemplateItem>();
 
       itemList.add(etdl.templateItem2B);
@@ -340,7 +340,7 @@ public class TemplateItemUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.TemplateItemUtils#getChildItems(java.util.List, java.lang.Long)}.
     */
    public void testGetChildItems() {
-      EvalTestDataLoad etdl = new EvalTestDataLoad();
+      EvalTestDataLoad etdl = new EvalTestDataLoad(null);
       List<EvalTemplateItem> itemList = new ArrayList<EvalTemplateItem>();
 
       // need to trick this into thinking it works
@@ -364,7 +364,7 @@ public class TemplateItemUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.TemplateItemUtils#getNodeItems(java.util.List, java.lang.String)}.
     */
    public void testGetNodeItems() {
-      EvalTestDataLoad etdl = new EvalTestDataLoad();
+      EvalTestDataLoad etdl = new EvalTestDataLoad(null);
       List<EvalTemplateItem> itemList = new ArrayList<EvalTemplateItem>();
 
       itemList.add(etdl.templateItem1U);
@@ -399,7 +399,7 @@ public class TemplateItemUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.TemplateItemUtils#makeTemplateItem(org.sakaiproject.evaluation.model.EvalItem)}.
     */
    public void testMakeTemplateItem() {
-      EvalTestDataLoad etdl = new EvalTestDataLoad();
+      EvalTestDataLoad etdl = new EvalTestDataLoad(null);
       EvalTemplateItem newTI = null;
 
       newTI = TemplateItemUtils.makeTemplateItem(etdl.item1);
@@ -413,7 +413,7 @@ public class TemplateItemUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.TemplateItemUtils#validateItemByClassification(org.sakaiproject.evaluation.model.EvalItem)}.
     */
    public void testValidateItemByClassification() {
-      EvalTestDataLoad etdl = new EvalTestDataLoad();
+      EvalTestDataLoad etdl = new EvalTestDataLoad(null);
       TemplateItemUtils.validateItemByClassification(etdl.item1);
    }
 
@@ -421,7 +421,7 @@ public class TemplateItemUtilsTest extends TestCase {
     * Test method for {@link org.sakaiproject.evaluation.utils.TemplateItemUtils#validateTemplateItemByClassification(org.sakaiproject.evaluation.model.EvalTemplateItem)}.
     */
    public void testValidateTemplateItemByClassification() {
-      EvalTestDataLoad etdl = new EvalTestDataLoad();
+      EvalTestDataLoad etdl = new EvalTestDataLoad(null);
       TemplateItemUtils.validateTemplateItemByClassification(etdl.templateItem1U);
    }
 

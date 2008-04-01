@@ -46,6 +46,10 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.genericdao.api.GenericDao;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import com.sun.tools.example.debug.bdi.NoThreadException;
+
 
 /**
  * This class holds a bunch of items used to prepopulate the database and then
@@ -117,7 +121,7 @@ public class EvalTestDataLoad {
    public final static String EVAL_FROM_EMAIL = "admin@eval.testing.com";
 
    /**
-    * Used by {@link #templateItem6UU}, {@link #templateItem3A}, {@link #templateUnused}, and {@link #item4}
+    * Used by {@link #templateItem6UU}, {@link #templateItem2A}, {@link #templateUnused}, and {@link #item4}
     */
    public final static String AUTO_USE_TAG = "official";
 
@@ -254,7 +258,7 @@ public class EvalTestDataLoad {
    public EvalTemplate templatePublic;
    /**
     * Template that is not being used, private, MAINT_USER_ID owns, unlocked
-    * <br/>Uses {@link #item3} and {@link #item5}, {@link #AUTO_USE_TAG}
+    * <br/>Uses {@link #item1}, {@link #item3} and {@link #item5}, {@link #AUTO_USE_TAG}
     */
    public EvalTemplate templateUnused;
    /**
@@ -512,19 +516,28 @@ public class EvalTestDataLoad {
          new String[] {SITE3_REF});
 
 
-   public EvalTestDataLoad() {
-      initialize();
-
+   /**
+    * Construct the test data loader
+    * 
+    * @param dao a real dao which can insert data in the database,
+    * if null then a fake one will be created (the data will not be truly accessible)
+    */
+   public EvalTestDataLoad(GenericDao dao) {
       AUTHZGROUPSET1.add(AUTHZGROUP1A_ID);
       AUTHZGROUPSET1.add(AUTHZGROUP1B_ID);
       AUTHZGROUPSET2.add(AUTHZGROUP2A_ID);
+
+      if (dao == null) {
+         dao = new FakeGenericDao();
+      }
+      initializeAndSave(dao);      
    }
 
    /**
     * initialize all the objects in this data load pea
     * (this will make sure all the public properties are not null)
     */
-   public void initialize() {
+   public void initializeAndSave(GenericDao dao) {
       String[] options1 = {"Bad", "Average", "Good"};
       scale1 = new EvalScale(new Date(), ADMIN_USER_ID, "Scale 1", 
             EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PUBLIC, NOT_EXPERT, 
@@ -554,6 +567,14 @@ public class EvalTestDataLoad {
             "description",
             EvalConstants.SCALE_IDEAL_LOW, optionsEid, UNLOCKED);
       scaleEid.setEid("test-scale-1");
+
+      // SAVE
+      dao.save(scale1);
+      dao.save(scale2);
+      dao.save(scale3);
+      dao.save(scale4);
+
+      dao.save(scaleEid);
 
       item1 = new EvalItem(new Date(), ADMIN_USER_ID, ITEM_TEXT, 
             EvalConstants.SHARING_PUBLIC, EvalConstants.ITEM_TYPE_SCALED, EXPERT);
@@ -641,6 +662,24 @@ public class EvalTestDataLoad {
       item3Eid.setLocked(UNLOCKED);
       item3Eid.setEid("test-item-3");
 
+      // SAVE items  (NOTE: resaving further down)
+      dao.save(item1);
+      dao.save(item2);
+      dao.save(item3);
+      dao.save(item4);
+      dao.save(item5);
+      dao.save(item6);
+      dao.save(item7);
+      dao.save(item8);
+      dao.save(item9);
+      dao.save(item10);
+      dao.save(item11);
+
+      dao.save(item1Eid);
+      dao.save(item2Eid);
+      dao.save(item3Eid);
+
+
       //templateShared = new EvalTemplate(new Date(), ADMIN_USER_ID, "Template shared", EvalConstants.SHARING_SHARED, UNLOCKED, NOT_EXPERT);
       //templateVisible = new EvalTemplate(new Date(), ADMIN_USER_ID, "Template visible", EvalConstants.SHARING_VISIBLE, UNLOCKED, NOT_EXPERT);
       templateAdmin = new EvalTemplate(new Date(), ADMIN_USER_ID, 
@@ -686,6 +725,22 @@ public class EvalTestDataLoad {
             "description", EvalConstants.SHARING_PUBLIC, NOT_EXPERT,
             "expert desc", null, UNLOCKED, false);
       templateEid.setEid("test-template-1");
+
+      // SAVE template (NOTE: resaving further down)
+      //dao.save(templateShared);
+      //dao.save(templateVisible);
+      dao.save(templateAdmin);
+      dao.save(templateAdminNoItems);
+      dao.save(templatePublicUnused);
+      dao.save(templatePublic);
+      dao.save(templateUnused);
+      dao.save(templateUser);
+      dao.save(templateUserUnused);
+      dao.save(templateAdminBlock);
+      dao.save(templateAdminComplex);
+
+      dao.save(templateEid);
+
 
       // assign items to templates
       templateItem1User = new EvalTemplateItem( new Date(), USER_ID, 
@@ -779,6 +834,35 @@ public class EvalTestDataLoad {
             null, EvalConstants.ITEM_SCALE_DISPLAY_COMPACT, Boolean.FALSE, false, null, null, null);
       templateItem3Eid.setEid("test-templateitem-3");
 
+      // save template items
+      dao.save(templateItem1User);
+      dao.save(templateItem1P);
+      dao.save(templateItem1U);
+      dao.save(templateItem2A);
+      dao.save(templateItem3A);
+      dao.save(templateItem3PU);
+      dao.save(templateItem3U);
+      dao.save(templateItem5A);
+      dao.save(templateItem5U);
+      dao.save(templateItem5User);
+      dao.save(templateItem6UU);
+      dao.save(templateItem9B);
+
+      dao.save(templateItem1Eid);
+      dao.save(templateItem2Eid);
+      dao.save(templateItem3Eid);
+
+      // set block id
+      templateItem2B.setBlockId( templateItem9B.getId() );
+      dao.save(templateItem2B);
+      templateItem3B.setBlockId( templateItem9B.getId() );
+      dao.save(templateItem3B);
+      // added items
+      dao.save(templateItem10AC1);
+      dao.save(templateItem10AC2);
+      dao.save(templateItem10AC3);
+
+
       // associate the templates with the link
       templateAdmin.setTemplateItems( new HashSet<EvalTemplateItem>() );
       templateAdmin.getTemplateItems().add( templateItem2A );
@@ -818,6 +902,20 @@ public class EvalTestDataLoad {
       templateEid.getTemplateItems().add( templateItem1Eid );
       templateEid.getTemplateItems().add( templateItem2Eid );
       templateEid.getTemplateItems().add( templateItem3Eid);
+
+      // reSAVE templates
+      dao.update(templateAdmin);
+      dao.update(templateAdminNoItems);
+      dao.update(templatePublicUnused);
+      dao.update(templatePublic);
+      dao.update(templateUnused);
+      dao.update(templateUser);
+      dao.update(templateUserUnused);
+      dao.update(templateAdminBlock);
+      dao.update(templateAdminComplex);
+
+      dao.update(templateEid);
+
 
       // associate the items with the link
       item1.setTemplateItems( new HashSet<EvalTemplateItem>() );
@@ -862,6 +960,24 @@ public class EvalTestDataLoad {
 
       item3Eid.setTemplateItems( new HashSet<EvalTemplateItem>() );
       item3Eid.getTemplateItems().add( templateItem3Eid);
+
+      // reSAVE items
+      dao.update(item1);
+      dao.update(item2);
+      dao.update(item3);
+      dao.update(item4);
+      dao.update(item5);
+      dao.update(item6);
+      dao.update(item7);
+      dao.update(item8);
+      dao.update(item9);
+      dao.update(item10);
+      dao.update(item11);
+
+      dao.update(item1Eid);
+      dao.update(item2Eid);
+      dao.update(item3Eid);
+
 
       // init the evaluation times
       Calendar calendar = GregorianCalendar.getInstance();
@@ -915,11 +1031,11 @@ public class EvalTestDataLoad {
             null);
       //Evaluation Provided (has eid set, not null)
       evaluationProvided = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, MAINT_USER_ID, "Eval provided", null, 
-              yesterday, today, today, tomorrow, null, null,
-              EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.SHARING_VISIBLE, 
-              EvalConstants.INSTRUCTOR_REQUIRED, new Integer(1), null, null, null, null, templateUser, null,
-              Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, LOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ,
-              null);
+            yesterday, today, today, tomorrow, null, null,
+            EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.SHARING_VISIBLE, 
+            EvalConstants.INSTRUCTOR_REQUIRED, new Integer(1), null, null, null, null, templateUser, null,
+            Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, LOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ,
+            null);
       evaluationProvided.setEid("test-eid");
 
       // Evaluation Active (open until tomorrow), immediate viewing
@@ -972,6 +1088,22 @@ public class EvalTestDataLoad {
       emailTemplate3 = new EvalEmailTemplate(MAINT_USER_ID, EvalConstants.EMAIL_TEMPLATE_REMINDER, "Email Subject 3", "Email Template 3"); 
       evaluationActive.setReminderEmailTemplate(emailTemplate3);
 
+      dao.save(emailTemplate1);
+      dao.save(emailTemplate2);
+      dao.save(emailTemplate3);
+
+      dao.save(evaluationPartial);
+      dao.save(evaluationNew);
+      dao.save(evaluationNewAdmin);
+      dao.save(evaluationActive);
+      dao.save(evaluationActiveUntaken);
+      dao.save(evaluationClosedUntaken);
+      dao.save(evaluationClosed);
+      dao.save(evaluationViewable);
+      dao.save(evaluationProvided);
+      dao.save(evaluationDeleted);
+
+
       // evalGroupId assignments
       assign1 = new EvalAssignGroup( MAINT_USER_ID, SITE1_REF, EvalConstants.GROUP_TYPE_SITE, 
             Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationActive);
@@ -1000,6 +1132,22 @@ public class EvalTestDataLoad {
 
       assignHier1 = new EvalAssignHierarchy( MAINT_USER_ID, "1", Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, evaluationActive);
 
+
+      dao.save(assign1);
+      dao.save(assign2);
+      dao.save(assign3);
+      dao.save(assign4);
+      dao.save(assign5);
+      dao.save(assign6);
+      dao.save(assign7);
+      dao.save(assign8);
+      dao.save(assign9);
+      dao.save(assign10);
+      dao.save(assignGroupProvided);
+
+      dao.save(assignHier1);
+
+
       // now init response data for the evaluationSetupService
       response1 = new EvalResponse(new Date(), USER_ID, SITE1_REF, 
             new Date(), today, null, evaluationActive);
@@ -1014,6 +1162,15 @@ public class EvalTestDataLoad {
       response6 = new EvalResponse(new Date(), USER_ID, SITE2_REF, 
             new Date(), today, null, evaluationClosed);
 
+      // SAVE responses  (NOTE: resaving further down)
+      dao.save(response1);
+      dao.save(response2);
+      dao.save(response3);
+      dao.save(response4);
+      dao.save(response5);
+      dao.save(response6);
+
+
       answer1_1P = new EvalAnswer(response1, templateItem1P, item1, null, null, null, ANSWER_SCALED_ONE, null, null);
 
       answer2_2A = new EvalAnswer(response2, templateItem2A, item2, null, null, null, ANSWER_SCALED_ONE, null, null);
@@ -1027,6 +1184,16 @@ public class EvalTestDataLoad {
 
       answer5_5User = new EvalAnswer(response5, templateItem5User, item5, MAINT_USER_ID, EvalConstants.ITEM_CATEGORY_INSTRUCTOR, null, ANSWER_SCALED_TWO, null, null);
       // left the text answer blank
+
+
+      dao.save(answer1_1P);
+      dao.save(answer2_2A);
+      dao.save(answer2_5A);
+      dao.save(answer3_2A);
+      dao.save(answer4_1User);
+      dao.save(answer4_5User);
+      dao.save(answer5_5User);
+
 
       // associate the answers
       Set<EvalAnswer> answers = new HashSet<EvalAnswer>();
@@ -1054,6 +1221,15 @@ public class EvalTestDataLoad {
       answers = new HashSet<EvalAnswer>();
       response6.setAnswers(answers); // left all answers blank
 
+      // reSAVE responses
+      dao.update(response1);
+      dao.update(response2);
+      dao.update(response3);
+      dao.update(response4);
+      dao.update(response5);
+      dao.update(response6);
+
+
       // catgories and objectives
       categoryA = new EvalItemGroup(new Date(), EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
             "A", "description", Boolean.TRUE, null, null);
@@ -1066,6 +1242,12 @@ public class EvalTestDataLoad {
       categoryD = new EvalItemGroup(new Date(), EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.ITEM_GROUP_TYPE_CATEGORY,
             "D", "description", Boolean.FALSE, null, null);
 
+      dao.save(categoryA);
+      dao.save(categoryB);
+      dao.save(categoryC);
+      dao.save(categoryD);
+
+
       Set<EvalItem> itemsA1 = new HashSet<EvalItem>();
       itemsA1.add( item2 );
       itemsA1.add( item6 );
@@ -1074,145 +1256,27 @@ public class EvalTestDataLoad {
       objectiveA2 = new EvalItemGroup(new Date(), EvalTestDataLoad.ADMIN_USER_ID, EvalConstants.ITEM_GROUP_TYPE_OBJECTIVE,
             "A2", "description", Boolean.TRUE, categoryA, null);
 
+      dao.save(objectiveA1);
+      dao.save(objectiveA2);
+
+      // can save nodes anytime
+      dao.save(egn1);
+      dao.save(egn2);
+
+
       // ADHOC groups and users
 
       user1 = new EvalAdhocUser(ADMIN_USER_ID, "user1@institution.edu", "user1", "User One", EvalAdhocUser.TYPE_EVALUATOR);
       user2 = new EvalAdhocUser(MAINT_USER_ID, "user2@institution.edu", "user2", "User Two", EvalAdhocUser.TYPE_EVALUATOR);
       user3 = new EvalAdhocUser(MAINT_USER_ID, "user3@institution.edu", "user3", "User Three", EvalAdhocUser.TYPE_EVALUATOR);
-     
-      group1 = new EvalAdhocGroup(ADMIN_USER_ID, "group 1", new String[] { STUDENT_USER_ID, user1.getUserId() }, null);
-      group2 = new EvalAdhocGroup(MAINT_USER_ID, "group 2", new String[] { USER_ID, user1.getUserId(), user3.getUserId() }, null);
 
-   }
-
-   /**
-    * Store all of the persistent objects in this pea
-    * @param dao A DAO with a save method which takes a persistent object as an argument<br/>
-    * Example: dao.save(templateUser);
-    */
-   public void saveAll(GenericDao dao) {
-      dao.save(scale1);
-      dao.save(scale2);
-      dao.save(scale3);
-      dao.save(scale4);
-
-      dao.save(scaleEid);
-
-      //dao.save(templateShared);
-      //dao.save(templateVisible);
-      dao.save(templateAdmin);
-      dao.save(templateAdminNoItems);
-      dao.save(templatePublicUnused);
-      dao.save(templatePublic);
-      dao.save(templateUnused);
-      dao.save(templateUser);
-      dao.save(templateUserUnused);
-      dao.save(templateAdminBlock);
-      dao.save(templateAdminComplex);
-
-      dao.save(templateEid);
-
-      dao.save(item1);
-      dao.save(item2);
-      dao.save(item3);
-      dao.save(item4);
-      dao.save(item5);
-      dao.save(item6);
-      dao.save(item7);
-      dao.save(item8);
-      dao.save(item9);
-      dao.save(item10);
-      dao.save(item11);
-
-      dao.save(item1Eid);
-      dao.save(item2Eid);
-      dao.save(item3Eid);
-
-      dao.save(templateItem1User);
-      dao.save(templateItem1P);
-      dao.save(templateItem1U);
-      dao.save(templateItem2A);
-      dao.save(templateItem3A);
-      dao.save(templateItem3PU);
-      dao.save(templateItem3U);
-      dao.save(templateItem5A);
-      dao.save(templateItem5U);
-      dao.save(templateItem5User);
-      dao.save(templateItem6UU);
-      dao.save(templateItem9B);
-
-      dao.save(templateItem1Eid);
-      dao.save(templateItem2Eid);
-      dao.save(templateItem3Eid);
-
-      // set block id
-      templateItem2B.setBlockId( templateItem9B.getId() );
-      dao.save(templateItem2B);
-      templateItem3B.setBlockId( templateItem9B.getId() );
-      dao.save(templateItem3B);
-      // added items
-      dao.save(templateItem10AC1);
-      dao.save(templateItem10AC2);
-      dao.save(templateItem10AC3);
-
-      dao.save(emailTemplate1);
-      dao.save(emailTemplate2);
-      dao.save(emailTemplate3);
-
-      dao.save(evaluationPartial);
-      dao.save(evaluationNew);
-      dao.save(evaluationNewAdmin);
-      dao.save(evaluationActive);
-      dao.save(evaluationActiveUntaken);
-      dao.save(evaluationClosedUntaken);
-      dao.save(evaluationClosed);
-      dao.save(evaluationViewable);
-      dao.save(evaluationProvided);
-      dao.save(evaluationDeleted);
-
-      dao.save(assign1);
-      dao.save(assign2);
-      dao.save(assign3);
-      dao.save(assign4);
-      dao.save(assign5);
-      dao.save(assign6);
-      dao.save(assign7);
-      dao.save(assign8);
-      dao.save(assign9);
-      dao.save(assign10);
-      dao.save(assignGroupProvided);
-
-      dao.save(assignHier1);
-
-      dao.save(response1);
-      dao.save(response2);
-      dao.save(response3);
-      dao.save(response4);
-      dao.save(response5);
-      dao.save(response6);
-
-      dao.save(answer1_1P);
-      dao.save(answer2_2A);
-      dao.save(answer2_5A);
-      dao.save(answer3_2A);
-      dao.save(answer4_1User);
-      dao.save(answer4_5User);
-      dao.save(answer5_5User);
-
-      dao.save(categoryA);
-      dao.save(categoryB);
-      dao.save(categoryC);
-      dao.save(categoryD);
-
-      dao.save(objectiveA1);
-      dao.save(objectiveA2);
-
-      dao.save(egn1);
-      dao.save(egn2);
 
       dao.save(user1);
       dao.save(user2);
       dao.save(user3);
+
+      group1 = new EvalAdhocGroup(ADMIN_USER_ID, "group 1", new String[] { STUDENT_USER_ID, user1.getUserId() }, null);
+      group2 = new EvalAdhocGroup(MAINT_USER_ID, "group 2", new String[] { USER_ID, user1.getUserId(), user3.getUserId() }, null);
 
       // need to do this because the ids are null still otherwise
       group1.setParticipantIds( new String[] { STUDENT_USER_ID, user1.getUserId() } );
@@ -1220,7 +1284,9 @@ public class EvalTestDataLoad {
 
       dao.save(group1);
       dao.save(group2);
+
    }
+
 
    /**
     * Take a collection of persistent objects and turn it into a list of the unique ids<br/>
@@ -1250,5 +1316,75 @@ public class EvalTestDataLoad {
       }
       return l;
    }
+
+   /**
+    * A fake generic dao which will stand in for a real one in the case of saving stuff
+    * 
+    * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
+    */
+   public class FakeGenericDao implements GenericDao {
+
+      int idCounter = 0;
+
+      public Object findById(Class entityClass, Serializable id) {
+         throw new NotImplementedException();
+      }
+
+      public String getIdProperty(Class entityClass) {
+         return "id";
+      }
+
+      public List getPersistentClasses() {
+         throw new NotImplementedException();
+      }
+
+      public void invokeTransactionalAccess(Runnable toinvoke) {
+         throw new NotImplementedException();
+      }
+
+      public void setPersistentClasses(List classes) {
+         throw new NotImplementedException();
+      }
+
+      public void create(Object object) {
+         throw new NotImplementedException();
+      }
+
+      public void delete(Object object) {
+         throw new NotImplementedException();
+      }
+
+      public boolean delete(Class entityClass, Serializable id) {
+         throw new NotImplementedException();
+      }
+
+      public void save(Object object) {
+         Class<?> elementClass = object.getClass();
+         try {
+            Method getIdMethod = elementClass.getMethod("getId", new Class[] {});
+            Method setIdMethod = elementClass.getMethod("setId", new Class[] {Long.class});
+            Long id = (Long) getIdMethod.invoke(object, (Object[])null);
+            if (id == null) {
+               id = new Long(idCounter++);
+               setIdMethod.invoke(object, new Object[] { id });
+            }
+         } catch (SecurityException e) {
+            throw new RuntimeException("Failed to get id methods from object",e);
+         } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Failed to get id methods from object",e);
+         } catch (NoSuchMethodException e) {
+            throw new RuntimeException("Failed to get id methods from object",e);
+         } catch (IllegalAccessException e) {
+            throw new RuntimeException("Failed to get id methods from object",e);
+         } catch (InvocationTargetException e) {
+            throw new RuntimeException("Failed to get id methods from object",e);
+         }
+      }
+
+      public void update(Object object) {
+         // OK
+      }
+
+   };
 
 }
