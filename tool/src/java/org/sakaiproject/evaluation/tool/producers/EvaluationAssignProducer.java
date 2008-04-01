@@ -139,7 +139,6 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
          UIMessage.make(tofill, "eval-start-text", "starteval.page.title");
       }
 
-
       UIMessage.make(tofill, "assign-eval-edit-page-title", "assigneval.assign.page.title", new Object[] {evaluation.getTitle()});
       UIMessage.make(tofill, "assign-eval-instructions", "assigneval.assign.instructions", new Object[] {evaluation.getTitle()});
 
@@ -287,8 +286,15 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
       
       // all command buttons are just HTML now so no more bindings
       UIMessage.make(form, "back-button", "general.back.button");
-      UIMessage.make(form, "confirmAssignCourses", "assigneval.save.assigned.button" );
+      UIMessage assignButton = UIMessage.make(form, "confirmAssignCourses", "assigneval.save.assigned.button" );
 
+      // Error message to be triggered by javascript if users doesn't select anything
+      // There is a 'evalgroupselect' class on each input checkbox that the JS 
+      // can check for now.
+      UIMessage assignErrorDiv = UIMessage.make(tofill, "nogroups-error", "assigneval.invalid.selection");
+      initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.initEvalAssignValidation", 
+            new String[] {form.getFullID(), assignErrorDiv.getFullID(), assignButton.getFullID()}));
+      
 //      UICommand.make(form, "editSettings", UIMessage.make("assigneval.edit.settings.button"), "#{evaluationBean.backToSettingsAction}");
 //      UICommand.make(form, "confirmAssignCourses", UIMessage.make("assigneval.save.assigned.button"), "#{evaluationBean.confirmAssignCoursesAction}");
 
