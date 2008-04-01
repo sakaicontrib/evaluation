@@ -18,6 +18,7 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -29,6 +30,7 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.exceptions.ResponseSaveException;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
@@ -45,8 +47,14 @@ import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.EvalCategoryViewParameters;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.utils.EvalUtils;
+import org.sakaiproject.evaluation.utils.TemplateItemDataList;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
+import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
+import org.sakaiproject.evaluation.utils.TemplateItemDataList.HierarchyNodeGroup;
+import org.sakaiproject.evaluation.utils.TemplateItemDataList.TemplateItemGroup;
 
+import uk.org.ponder.messageutil.TargettedMessage;
+import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
@@ -58,7 +66,6 @@ import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UIVerbatim;
-import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionResultInterceptor;
@@ -110,9 +117,19 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
       this.localResponsesLogic = localResponsesLogic;
    }
 
+   private ExternalHierarchyLogic hierarchyLogic;
+   public void setExternalHierarchyLogic(ExternalHierarchyLogic logic) {
+      this.hierarchyLogic = logic;
+   }
+
    private EvalSettings evalSettings;
    public void setEvalSettings(EvalSettings evalSettings) {
       this.evalSettings = evalSettings;
+   }
+
+   private TargettedMessageList messages;
+   public void setMessages(TargettedMessageList messages) {
+      this.messages = messages;
    }
 
    private Locale locale;
@@ -120,22 +137,11 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
       this.locale = locale;
    }
 
-   private ExternalHierarchyLogic hierarchyLogic;
-   public void setExternalHierarchyLogic(ExternalHierarchyLogic logic) {
-      this.hierarchyLogic = logic;
-   }
-
    Long responseId;
-   Long evaluationId;
-   String evalGroupId;
 
    int displayNumber=1;
    int renderedItemCount=0;
 
-   /**
-    * List of all evaluation items for the current evaluation
-    */
-   List<EvalTemplateItem> allItems;
    /**
     * Map of key to Answers for the current response<br/>
     * key = templateItemId + answer.associatedType + answer.associatedId
@@ -162,14 +168,13 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
 
       // get passed in get params
       EvalViewParameters evalTakeViewParams = (EvalViewParameters) viewparams;
-      evaluationId = evalTakeViewParams.evaluationId;
-      evalGroupId = evalTakeViewParams.evalGroupId;
+      Long evaluationId = evalTakeViewParams.evaluationId;
+      String evalGroupId = evalTakeViewParams.evalGroupId;
       responseId = evalTakeViewParams.responseId;
 
       // get the evaluation based on the passed in VPs
       EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
       if (eval == null) {
-         log.error("Cannot find evalaution with id: " + evaluationId);
          throw new IllegalArgumentException("Invalid evaluationId ("+evaluationId+"), cannot load evaluation");
       }
 
@@ -252,6 +257,27 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
          }
 
          if (userCanAccess) {
+            // check if we had a failure during a previous submit and get the missingKeys out if that was the failure
+            Set<String> missingKeys = new HashSet<String>();
+            if (messages.isError() && messages.size() > 0) {
+               for (int i = 0; i < messages.size(); i++) {
+                  TargettedMessage message = messages.messageAt(i);
+                  Exception e = message.exception;
+                  if (e instanceof ResponseSaveException) {
+                     ResponseSaveException rse = (ResponseSaveException) e;
+                     if (ResponseSaveException.TYPE_MISSING_REQUIRED_ANSWERS.equals(rse.type)) {
+                        if (rse.missingItemAnswerKeys != null
+                              && rse.missingItemAnswerKeys.length > 0) {
+                           for (int j = 0; j < rse.missingItemAnswerKeys.length; j++) {
+                              missingKeys.add(rse.missingItemAnswerKeys[j]);
+                           }
+                        }
+                     }
+                     break;
+                  }
+               }
+            }
+
             // load up the response if this user has one already
             if (responseId == null) {
                EvalResponse response = evaluationService.getResponseForUserAndGroup(evaluationId, currentUserId, evalGroupId);
@@ -263,12 +289,12 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                   responseId = response.getId();
                }
             }
-   
+
             if (responseId != null) {
                // load up the previous responses for this user (no need to attempt to load if the response is new, there will be no answers yet)
                answerMap = localResponsesLogic.getAnswersMapByTempItemAndAssociated(responseId);
             }
-   
+
             // show the switch group selection and form if there are other valid groups for this user
             if (validGroups.size() > 1) {
                String[] values = new String[validGroups.size()];
@@ -286,19 +312,19 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                UISelect.make(chooseGroupForm, "switch-group-list", values, labels,  "#{evalGroupId}");
                UIMessage.make(chooseGroupForm, "switch-group-button", "takeeval.switch.group.button");            
             }
-   
+
             // fill in group title
             UIBranchContainer groupTitle = UIBranchContainer.make(tofill, "show-group-title:");
             UIMessage.make(groupTitle, "group-title-header", "takeeval.group.title.header");	
             UIOutput.make(groupTitle, "group-title", external.getDisplayTitle(evalGroupId) );
-   
+
             // show instructions if not null
             if (eval.getInstructions() != null && !("".equals(eval.getInstructions())) ) {
                UIBranchContainer instructions = UIBranchContainer.make(tofill, "show-eval-instructions:");
                UIMessage.make(instructions, "eval-instructions-header", "takeeval.instructions.header");	
                UIVerbatim.make(instructions, "eval-instructions", eval.getInstructions());
             }
-   
+
             // get the setting and make sure it cannot be null (fix for http://www.caret.cam.ac.uk/jira/browse/CTL-531)
             Boolean studentAllowedLeaveUnanswered = (Boolean) evalSettings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED);
             if (studentAllowedLeaveUnanswered == null) {
@@ -312,62 +338,83 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
                UIBranchContainer note = UIBranchContainer.make(tofill, "show-eval-note:");
                UIMessage.make(note, "eval-note-text", "takeeval.user.must.answer.all.note");   
             }
-   
+
             UIBranchContainer formBranch = UIBranchContainer.make(tofill, "form-branch:");
             UIForm form = UIForm.make(formBranch, "evaluationForm");
-   
+
             // bind the evaluation and evalGroup to the ones in the take eval bean
             String evalOTP = "evaluationBeanLocator.";
             form.parameters.add( new UIELBinding("#{takeEvalBean.eval}", new ELReference(evalOTP + eval.getId())) );
             form.parameters.add( new UIELBinding("#{takeEvalBean.evalGroupId}", evalGroupId) );
-   
-            // now we begin the complex task of rendering the evaluation items
-   
+
+            // BEGIN the complex task of rendering the evaluation items
+
             // get the instructors for this evaluation
             Set<String> instructors = external.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED);
-            String[] instructorIds = instructors.toArray(new String[instructors.size()]);
-   
-            // Get the Hierarchy NodeIDs for the current Group and turn it into an array of ids
+
+            // Get the Hierarchy Nodes for the current Group and turn it into an array of node ids
             List<EvalHierarchyNode> hierarchyNodes = hierarchyLogic.getNodesAboveEvalGroup(evalGroupId);
             String[] hierarchyNodeIDs = new String[hierarchyNodes.size()];
             for (int i = 0; i < hierarchyNodes.size(); i++) {
                hierarchyNodeIDs[i] = hierarchyNodes.get(i).id;
             }
-   
+
             // get all items for this evaluation
-            allItems = authoringService.getTemplateItemsForEvaluation(evaluationId, hierarchyNodeIDs, 
-                  instructorIds, new String[] {evalGroupId});
-   
-            // filter out the block child items, to get a list of non-child items
-            List<EvalTemplateItem> nonChildItemsList = TemplateItemUtils.getNonChildItems(allItems);
-   
-            if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_COURSE, nonChildItemsList)) {
-               // for all course items, go through render process
-               UIBranchContainer courseSection = UIBranchContainer.make(form, "courseSection:");
-               UIMessage.make(courseSection, "course-questions-header", "takeeval.group.questions.header");
-               // for each non-child item in this evaluation
-               handleCategoryRender( 
-                     TemplateItemUtils.getCategoryTemplateItems(EvalConstants.ITEM_CATEGORY_COURSE, nonChildItemsList), 
-                     form, courseSection, hierarchyNodes, null);
-            }
-   
-            if (instructors.size() > 0 &&
-                  TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, nonChildItemsList)) {	
-               // for each instructor, make a branch containing all instructor questions
-               int instructorCount = 0;
-               for (String instructorUserId : instructors) {
-                  instructorCount++; // start with instructor 1
-                  UIBranchContainer instructorSection = UIBranchContainer.make(form, "instructorSection:", "inst"+instructorCount);
-                  EvalUser instructor = external.getEvalUserById( instructorUserId );
-                  UIMessage.make(instructorSection, "instructor-questions-header", 
-                        "takeeval.instructor.questions.header", new Object[] { instructor.displayName });
-                  // for each non-child item in this evaluation
-                  handleCategoryRender(
-                        TemplateItemUtils.getCategoryTemplateItems(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, nonChildItemsList), 
-                        form, instructorSection, hierarchyNodes, instructorUserId);
+            List<EvalTemplateItem> allItems = authoringService.getTemplateItemsForEvaluation(evaluationId, hierarchyNodeIDs, 
+                  instructors.toArray(new String[instructors.size()]), new String[] {evalGroupId});
+
+            // make the TI data structure and get the flat list of DTIs
+            Map<String, List<String>> associates = new HashMap<String, List<String>>();
+            associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, new ArrayList<String>(instructors));
+            TemplateItemDataList tidl = new TemplateItemDataList(allItems, hierarchyNodes, associates, null);
+
+            // loop through all DTIs and flag items that were missing
+            if (! missingKeys.isEmpty()) {
+               for (DataTemplateItem dti : tidl.getFlatListOfDataTemplateItems(true)) {
+                  if (missingKeys.contains(dti.getKey())) {
+                     // flag this template item for invalidated rendering if it was missing
+                     dti.templateItem.renderOption = true;
+                  }
                }
             }
-   
+
+            // loop through the TIGs and handle each associated category
+            for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {
+               UIBranchContainer categorySectionBranch = UIBranchContainer.make(form, "categorySection:");
+               // handle printing the category header
+               if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType)) {
+                  UIMessage.make(categorySectionBranch, "categoryHeader", "takeeval.group.questions.header");
+               } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
+                  EvalUser instructor = external.getEvalUserById( tig.associateId );
+                  UIMessage.make(categorySectionBranch, "categoryHeader", 
+                        "takeeval.instructor.questions.header", new Object[] { instructor.displayName });
+               }
+
+               // loop through the hierarchy node groups
+               for (HierarchyNodeGroup hng : tig.hierarchyNodeGroups) {
+                  // render a node title
+                  if (hng.node != null) {
+                     // Showing the section title is system configurable via the administrate view
+                     Boolean showHierSectionTitle = (Boolean) evalSettings.get(EvalSettings.DISPLAY_HIERARCHY_HEADERS);
+                     if (showHierSectionTitle) {
+                        UIBranchContainer nodeTitleBranch = UIBranchContainer.make(categorySectionBranch, "itemrow:nodeSection");
+                        UIOutput.make(nodeTitleBranch, "nodeTitle", hng.node.title);
+                     }
+                  }
+
+                  List<DataTemplateItem> dtis = hng.getDataTemplateItems(false);
+                  for (int i = 0; i < dtis.size(); i++) {
+                     DataTemplateItem dti = dtis.get(i);
+                     UIBranchContainer nodeItemsBranch = UIBranchContainer.make(categorySectionBranch, "itemrow:templateItem");
+                     if (i % 2 == 1) {
+                        nodeItemsBranch.decorate( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
+                     }
+                     renderItemPrep(nodeItemsBranch, form, dti);
+                  }
+               }
+
+            }
+
             UICommand.make(form, "submitEvaluation", UIMessage.make("takeeval.submit.button"), "#{takeEvalBean.submitEvaluation}");
          } else {
             // user cannot access eval so give them a sad message
@@ -378,88 +425,29 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
    }
 
    /**
-    * Handles the rendering of a set of items in a category/section of the view
-    * @param itemsList the list of items to render in this section
-    * @param form the form the controls for this set of items are attached to
-    * @param section the parent branch container that holds all the UI elements in this section
-    * @param evalHierNodes
-    * @param associatedId the ID if there is something associated with these items
-    */
-   private void handleCategoryRender(List<EvalTemplateItem> templateItemsList, UIForm form, UIBranchContainer section, 
-         List<EvalHierarchyNode> evalHierNodes, String associatedId) {
-
-      /* We need to render things by section. For now we'll just loop through each evalHierNode to start, and 
-       * see if there are items of it. If there are we'll go ahead and render them with a group header.  We 
-       * have to take care of the special toplevel hierarchy type first.
-       */
-
-      // top level first
-      List<EvalTemplateItem> templateItems = TemplateItemUtils.getNodeItems(templateItemsList, null);
-      if (templateItems.size() > 0) {
-         handleCategoryHierarchyNodeRender(templateItems, form, section, null, associatedId);
-      }
-
-      // then do the remaining nodes in order supplied
-      for (EvalHierarchyNode evalNode: evalHierNodes) {
-         templateItems = TemplateItemUtils.getNodeItems(templateItemsList, evalNode.id);
-         if (templateItems.size() > 0) {
-            handleCategoryHierarchyNodeRender(templateItems, form, section, evalNode.title, associatedId);
-         }
-      }
-   }
-
-   /**
-    * This method is most likely to be invoked from handleCategoryRender. Basically it handles the grouping by node for each category.
-    * So say in the Group/Courses category, you may have questions for "General", "Biology Department", and "Botany 101". You would call
-    * this method once for each node group, passing in the items for that node, and the title (ie. "Biology Department") that you want rendered.
-    * If you pass in a null or empty sectiontitle, it will assume that it is for the general top level node level.
-    */
-   private void handleCategoryHierarchyNodeRender(List<EvalTemplateItem> itemsInNode, UIForm form, UIContainer parent, 
-         String sectiontitle, String associatedId) {
-
-      if (sectiontitle != null && sectiontitle.length() > 0) {
-         // Showing the section title is system configurable via the administrate view
-         Boolean showHierSectionTitle = (Boolean) evalSettings.get(EvalSettings.DISPLAY_HIERARCHY_HEADERS);
-         if (showHierSectionTitle) {
-            UIBranchContainer labelrow = UIBranchContainer.make(parent, "itemrow:hier-node-section");
-            UIOutput.make(labelrow, "hier-node-title", sectiontitle);
-         }
-      }
-
-      for (int i = 0; i < itemsInNode.size(); i++) {
-         EvalTemplateItem templateItem = itemsInNode.get(i);
-         UIBranchContainer radiobranch = UIBranchContainer.make(parent, "itemrow:first"); // , i+""); // EVALSYS-336 - allow RSF to generate unique ids itself
-         if (i % 2 == 1) {
-            radiobranch.decorators = new DecoratorList( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
-         }
-         renderItemPrep(radiobranch, form, templateItem, associatedId);
-      }
-   }
-
-   /**
-    * Prep for rendering an item I assume (no comments by original authors) -AZ
+    * Prepare to render an item, this handles blocks correctly
     * 
-    * @param branch
-    * @param form
-    * @param templateItem
-    * @param associatedId
+    * @param parent the parent container
+    * @param form the form this item will associate with
+    * @param dti the wrapped template item we will render
     */
-   private void renderItemPrep(UIBranchContainer branch, UIForm form, EvalTemplateItem templateItem, String associatedId) {
+   private void renderItemPrep(UIBranchContainer parent, UIForm form, DataTemplateItem dti) {
       int displayIncrement = 0; // stores the increment in the display number
       String[] currentAnswerOTP = null; // holds array of bindings for items
+      EvalTemplateItem templateItem = dti.templateItem;
       if (! TemplateItemUtils.isAnswerable(templateItem)) {
          // nothing to bind for unanswerable items unless it is a block parent
-         if ( TemplateItemUtils.isBlockParent(templateItem) ) {
+         if ( dti.blockChildItems != null ) {
             // Handle the BLOCK PARENT special case - block item being rendered
 
             // get the child items for this block
-            List<EvalTemplateItem> childList = TemplateItemUtils.getChildItems(allItems, templateItem.getId());
+            List<EvalTemplateItem> childList = dti.blockChildItems;
             currentAnswerOTP = new String[childList.size()];
             // for each child item, construct a binding
             for (int j = 0; j < childList.size(); j++) {
                EvalTemplateItem currChildItem = childList.get(j);
                // set up OTP paths
-               String[] childAnswerOTP = setupCurrentAnswerBindings(form, currChildItem, associatedId);
+               String[] childAnswerOTP = setupCurrentAnswerBindings(form, currChildItem, dti.associateId);
                if (childAnswerOTP != null) {
                   currentAnswerOTP[j] = childAnswerOTP[0];
                }
@@ -469,12 +457,12 @@ public class TakeEvalProducer implements ViewComponentProducer, ViewParamsReport
          }
       } else {
          // non-block and answerable items
-         currentAnswerOTP = setupCurrentAnswerBindings(form, templateItem, associatedId);
+         currentAnswerOTP = setupCurrentAnswerBindings(form, templateItem, dti.associateId);
          displayIncrement++;
       }
 
       // render the item
-      itemRenderer.renderItem(branch, "rendered-item:", currentAnswerOTP, templateItem, displayNumber, false);
+      itemRenderer.renderItem(parent, "renderedItem:", currentAnswerOTP, templateItem, displayNumber, false);
 
       /* increment the item counters, if we displayed 1 item, increment by 1,
        * if we displayed a block, renderedItem has been incremented for each child, increment displayNumber by the number of blockChildren,

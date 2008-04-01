@@ -81,19 +81,16 @@
    <bean id="reportHandlerHook"
       class="org.sakaiproject.evaluation.tool.reporting.ReportHandlerHook">
       <property name="viewparams" ref="viewParameters" />
-      <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+      <property name="externalLogic" 
+        ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="evaluationService"
          ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+      <property name="reportingPermissions" 
+        ref="org.sakaiproject.evaluation.logic.ReportingPermissions" />
       <property name="csvReportExporter" ref="CSVReportExporter" />
       <property name="xlsReportExporter" ref="XLSReportExporter" />
       <property name="pdfReportExporter" ref="PDFReportExporter" />
       <property name="response" ref="httpServletResponse" />
-      <property name="evalResponseAggregatorUtil" ref="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil" />
-      <property name="reportingPermissions" ref="org.sakaiproject.evaluation.logic.ReportingPermissions" />
-   </bean>
-
-   <bean id="reportsBean"
-      class="org.sakaiproject.evaluation.tool.ReportsBean">
    </bean>
 
 	<bean id="org.sakaiproject.evaluation.tool.reporting.CurrentViewableReports" 
@@ -482,19 +479,6 @@
    </bean>
 
    <bean
-      class="org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer">
-      <property name="external"
-         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
-      <property name="evaluationService"
-         ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
-      <property name="authoringService"
-         ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
-      <property name="itemRenderer"
-         ref="org.sakaiproject.evaluation.tool.renderers.ItemRenderer" />
-      <property name="messageLocator" ref="messageLocator" />
-   </bean>
-
-   <bean
       class="org.sakaiproject.evaluation.tool.producers.EvaluationCreateProducer">
       <property name="externalLogic"
          ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
@@ -607,12 +591,30 @@
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
       <property name="itemRenderer"
          ref="org.sakaiproject.evaluation.tool.renderers.ItemRenderer" />
-      <property name="localResponsesLogic" ref="localResponsesLogic" />
-      <property name="evalSettings"
-         ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-      <property name="locale" ref="requestLocale" />
       <property name="externalHierarchyLogic"
          ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+      <property name="evalSettings"
+         ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+      <property name="localResponsesLogic" ref="localResponsesLogic" />
+      <property name="messages" ref="targettedMessageList" />
+      <property name="locale" ref="requestLocale" />
+   </bean>
+
+   <bean
+      class="org.sakaiproject.evaluation.tool.producers.PreviewEvalProducer">
+      <property name="external"
+         ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+      <property name="evaluationService"
+         ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+      <property name="authoringService"
+         ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
+      <property name="itemRenderer"
+         ref="org.sakaiproject.evaluation.tool.renderers.ItemRenderer" />
+      <property name="externalHierarchyLogic"
+         ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+      <property name="evalSettings"
+         ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+      <property name="messageLocator" ref="messageLocator" />
    </bean>
 
    <bean
@@ -622,6 +624,11 @@
       <property name="evaluationService"
          ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
       <property name="locale" ref="requestLocale" />
+   </bean>
+   
+   <!-- Dater Views -->
+   <bean class="org.sakaiproject.evaluation.tool.producers.UserAvailableEvalsDataView">
+      <property name="jsonProvider" ref="JSONProvider" />
    </bean>
 
 
@@ -634,12 +641,12 @@
          ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
       <property name="authoringService"
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
-      <property name="deliveryService"
-         ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
-      <property name="reportsBean" ref="reportsBean" />
-      <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-      <property name="evalResponseAggregatorUtil" ref="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil" />
-      <property name="reportingPermissions" ref="org.sakaiproject.evaluation.logic.ReportingPermissions" />
+      <property name="evalSettings" 
+        ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+      <property name="reportingPermissions" 
+        ref="org.sakaiproject.evaluation.logic.ReportingPermissions" />
+      <property name="evalResponseAggregatorUtil" 
+        ref="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil" />
    </bean>
 
    <bean
@@ -650,8 +657,8 @@
          ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
       <property name="authoringService"
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
-      <property name="reportsBean" ref="reportsBean" />
-      <property name="reportingPermissions" ref="org.sakaiproject.evaluation.logic.ReportingPermissions" />
+      <property name="reportingPermissions" 
+        ref="org.sakaiproject.evaluation.logic.ReportingPermissions" />
    </bean>
 
 </beans>

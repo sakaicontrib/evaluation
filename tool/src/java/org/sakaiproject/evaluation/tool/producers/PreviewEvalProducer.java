@@ -16,18 +16,28 @@ package org.sakaiproject.evaluation.tool.producers;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
+import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
+import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.renderers.ItemRenderer;
+import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
+import org.sakaiproject.evaluation.utils.TemplateItemDataList;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
+import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
+import org.sakaiproject.evaluation.utils.TemplateItemDataList.HierarchyNodeGroup;
+import org.sakaiproject.evaluation.utils.TemplateItemDataList.TemplateItemGroup;
 
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -35,7 +45,6 @@ import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UIVerbatim;
-import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
@@ -49,191 +58,193 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  */
 public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsReporter {
 
-    public static final String VIEW_ID = "preview_eval";
-    public String getViewID() {
-        return VIEW_ID;
-    }
+   public static final String VIEW_ID = "preview_eval";
+   public String getViewID() {
+      return VIEW_ID;
+   }
 
-    private EvalExternalLogic external;
-    public void setExternal(EvalExternalLogic external) {
-        this.external = external;
-    }
+   private EvalExternalLogic external;
+   public void setExternal(EvalExternalLogic external) {
+      this.external = external;
+   }
 
-    private EvalEvaluationService evaluationService;
-    public void setEvaluationService(EvalEvaluationService evaluationService) {
-       this.evaluationService = evaluationService;
-    }
+   private EvalEvaluationService evaluationService;
+   public void setEvaluationService(EvalEvaluationService evaluationService) {
+      this.evaluationService = evaluationService;
+   }
 
-    private EvalAuthoringService authoringService;
-    public void setAuthoringService(EvalAuthoringService authoringService) {
-       this.authoringService = authoringService;
-    }
+   private EvalAuthoringService authoringService;
+   public void setAuthoringService(EvalAuthoringService authoringService) {
+      this.authoringService = authoringService;
+   }
 
-    private ItemRenderer itemRenderer;
-    public void setItemRenderer(ItemRenderer itemRenderer) {
-        this.itemRenderer = itemRenderer;
-    }
+   private ItemRenderer itemRenderer;
+   public void setItemRenderer(ItemRenderer itemRenderer) {
+      this.itemRenderer = itemRenderer;
+   }
 
-    private MessageLocator messageLocator;
-    public void setMessageLocator(MessageLocator messageLocator) {
-        this.messageLocator = messageLocator;
-    }
+   private MessageLocator messageLocator;
+   public void setMessageLocator(MessageLocator messageLocator) {
+      this.messageLocator = messageLocator;
+   }
 
-    List<EvalTemplateItem> allItems = new ArrayList<EvalTemplateItem>();
-    int displayedItems = 1; //  determines the number to display next to each item
-    int colorCounter = 0; // used to determine whether to color the background of an item
+   private ExternalHierarchyLogic hierarchyLogic;
+   public void setExternalHierarchyLogic(ExternalHierarchyLogic logic) {
+      this.hierarchyLogic = logic;
+   }
 
-    /* (non-Javadoc)
-     * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
-     */
-    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
+   private EvalSettings evalSettings;
+   public void setEvalSettings(EvalSettings evalSettings) {
+      this.evalSettings = evalSettings;
+   }
 
-        // NOTE: the logic in this page was based on where the link originated (which is a terrible way to do things) and has
-        // been changed to instead be based on the incoming view parameters, as a result, this is mostly a rewrite
-        // so the original authors have been removed -AZ
+   int displayNumber = 1; //  determines the number to display next to each item
 
-        String currentUserId = external.getCurrentUserId();
+   /* (non-Javadoc)
+    * @see uk.org.ponder.rsf.view.ComponentProducer#fillComponents(uk.org.ponder.rsf.components.UIContainer, uk.org.ponder.rsf.viewstate.ViewParameters, uk.org.ponder.rsf.view.ComponentChecker)
+    */
+   public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
-        EvalViewParameters previewEvalViewParams = (EvalViewParameters)viewparams;
-        if (previewEvalViewParams.evaluationId == null && 
-                previewEvalViewParams.templateId == null) {
-            throw new IllegalArgumentException("Must specify template id or evaluation id, both cannot be null");
-        }
+      String currentUserId = external.getCurrentUserId();
 
-        Long evaluationId = previewEvalViewParams.evaluationId;
-        Long templateId = previewEvalViewParams.templateId;
-        String evalGroupId = previewEvalViewParams.evalGroupId;
-        EvalEvaluation eval = null;
-        EvalTemplate template = null;
+      EvalViewParameters previewEvalViewParams = (EvalViewParameters)viewparams;
+      if (previewEvalViewParams.evaluationId == null && 
+            previewEvalViewParams.templateId == null) {
+         throw new IllegalArgumentException("Must specify template id or evaluation id, both cannot be null");
+      }
 
-        if (evaluationId == null) {
-            // previewing a template
-            UIMessage.make(tofill, "preview-title", "previeweval.template.title");
-            // load up the template
-            template = authoringService.getTemplateById(templateId);
-            // create a fake evaluation
-            eval = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, currentUserId, messageLocator.getMessage("previeweval.evaluation.title.default"), 
-                    new Date(), new Date(), new Date(), new Date(), EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.SHARING_VISIBLE,
-                    new Integer(1), template);
-            eval.setInstructions(messageLocator.getMessage("previeweval.instructions.default"));
-        } else {
-            // previewing an evaluation
-            UIMessage.make(tofill, "preview-title", "previeweval.evaluation.title");
-            UIMessage.make(tofill, "preview-title-prefix", "previeweval.evaluation.title.prefix");
-            // load the real evaluation and template
-            eval = evaluationService.getEvaluationById(evaluationId);
-            template = eval.getTemplate();
-        }
+      Long evaluationId = previewEvalViewParams.evaluationId;
+      Long templateId = previewEvalViewParams.templateId;
+      String evalGroupId = previewEvalViewParams.evalGroupId;
+      EvalEvaluation eval = null;
+      EvalTemplate template = null;
 
-        UIMessage.make(tofill, "eval-title-header", "takeeval.eval.title.header");
-        UIOutput.make(tofill, "evalTitle", eval.getTitle());
+      if (evaluationId == null) {
+         // previewing a template
+         UIMessage.make(tofill, "preview-title", "previeweval.template.title");
+         // load up the template
+         template = authoringService.getTemplateById(templateId);
+         // create a fake evaluation
+         eval = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, currentUserId, 
+               messageLocator.getMessage("previeweval.evaluation.title.default"), 
+               new Date(), new Date(), new Date(), new Date(), EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.SHARING_VISIBLE,
+               new Integer(1), template);
+         eval.setInstructions(messageLocator.getMessage("previeweval.instructions.default"));
+      } else {
+         // previewing an evaluation
+         UIMessage.make(tofill, "preview-title", "previeweval.evaluation.title");
+         UIMessage.make(tofill, "preview-title-prefix", "previeweval.evaluation.title.prefix");
+         // load the real evaluation and template
+         eval = evaluationService.getEvaluationById(evaluationId);
+         template = authoringService.getTemplateById(eval.getTemplate().getId());
+      }
 
-        UIBranchContainer groupTitle = UIBranchContainer.make(tofill, "show-group-title:");
-        UIMessage.make(groupTitle, "group-title-header", "takeeval.group.title.header");
-        if (evalGroupId == null) {
-            UIMessage.make(groupTitle, "group-title", "previeweval.course.title.default");
-        } else {
-            UIOutput.make(groupTitle, "group-title", external.getDisplayTitle(evalGroupId) );
-        }
+      UIMessage.make(tofill, "eval-title-header", "takeeval.eval.title.header");
+      UIOutput.make(tofill, "evalTitle", eval.getTitle());
 
-        // show instructions if not null
-        if (eval.getInstructions() != null) {
-            UIBranchContainer instructions = UIBranchContainer.make(tofill, "show-eval-instructions:");
-            UIMessage.make(instructions, "eval-instructions-header", "takeeval.instructions.header");	
-            UIVerbatim.make(instructions, "eval-instructions", eval.getInstructions());
-        }
+      UIBranchContainer groupTitle = UIBranchContainer.make(tofill, "show-group-title:");
+      UIMessage.make(groupTitle, "group-title-header", "takeeval.group.title.header");
+      if (evalGroupId == null) {
+         UIMessage.make(groupTitle, "group-title", "previeweval.course.title.default");
+      } else {
+         UIOutput.make(groupTitle, "group-title", external.getDisplayTitle(evalGroupId) );
+      }
 
-        // TODO - rendering logic is identical to take evals page, should be put into a common util class -AZ
+      // show instructions if not null
+      if (eval.getInstructions() != null) {
+         UIBranchContainer instructions = UIBranchContainer.make(tofill, "show-eval-instructions:");
+         UIMessage.make(instructions, "eval-instructions-header", "takeeval.instructions.header");	
+         UIVerbatim.make(instructions, "eval-instructions", eval.getInstructions());
+      }
 
-        // get items(parent items, child items --need to set order
-        allItems = new ArrayList<EvalTemplateItem>(template.getTemplateItems()); // LAZY LOAD
-        if (! allItems.isEmpty()) {
-            // filter out the block child items, to get a list of ordered non-child items
-            List<EvalTemplateItem> ncItemsList = TemplateItemUtils.getNonChildItems(allItems);
 
-            // check if there are any "Course" items or "Instructor" items;
-            UIBranchContainer courseSection = null;
-            UIBranchContainer instructorSection = null;
+      // make up 2 fake instructors for this evaluation (to show the instructor added items)
+      List<String> instructors = new ArrayList<String>();
+      instructors.add("fake1");
+      instructors.add("fake2");
 
-            if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_COURSE, ncItemsList)) {	
-                colorCounter=0;
-                courseSection = UIBranchContainer.make(tofill,"courseSection:");
-                UIMessage.make(courseSection, "course-questions-header", "previeweval.course.questions.header"); 
-                for (int i = 0; i < ncItemsList.size(); i++) {	
-                    EvalTemplateItem templateItem = (EvalTemplateItem) ncItemsList.get(i);
+      // get all items for this template
+      List<EvalTemplateItem> allItems = 
+         authoringService.getTemplateItemsForTemplate(templateId, new String[] {}, new String[] {}, new String[] {});
 
-                    String cat = templateItem.getCategory();
-                    if (cat == null) {
-                        throw new IllegalStateException("Template item with null category found: " + templateItem.getId() );
-                    } else if (EvalConstants.ITEM_CATEGORY_COURSE.equals(cat)) {
-                        doFillComponent(courseSection, templateItem, colorCounter);
-                        ncItemsList.remove(i);
-                        i--;
-                        colorCounter++;
-                    } 
-                }
+      // Get the sorted list of all nodes for this set of template items
+      List<EvalHierarchyNode> hierarchyNodes = RenderingUtils.makeEvalNodesList(hierarchyLogic, allItems);
+
+      // make the TI data structure
+      Map<String, List<String>> associates = new HashMap<String, List<String>>();
+      associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, instructors);
+      TemplateItemDataList tidl = new TemplateItemDataList(allItems, hierarchyNodes, associates, null);
+
+      // loop through the TIGs and handle each associated category
+      for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {
+         UIBranchContainer categorySectionBranch = UIBranchContainer.make(tofill, "categorySection:");
+         // handle printing the category header
+         if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType)) {
+            UIMessage.make(categorySectionBranch, "categoryHeader", "takeeval.group.questions.header");
+         } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
+            String instructorName = tig.associateId.equals("fake2") ? "Steven Githens" : "Aaron Zeckoski";
+            UIMessage.make(categorySectionBranch, "categoryHeader", 
+                  "takeeval.instructor.questions.header", new Object[] { instructorName });
+         }
+
+         // loop through the hierarchy node groups
+         for (HierarchyNodeGroup hng : tig.hierarchyNodeGroups) {
+            // render a node title
+            if (hng.node != null) {
+               // Showing the section title is system configurable via the administrate view
+               Boolean showHierSectionTitle = (Boolean) evalSettings.get(EvalSettings.DISPLAY_HIERARCHY_HEADERS);
+               if (showHierSectionTitle) {
+                  UIBranchContainer nodeTitleBranch = UIBranchContainer.make(categorySectionBranch, "itemrow:nodeSection");
+                  UIOutput.make(nodeTitleBranch, "nodeTitle", hng.node.title);
+               }
             }
 
-            if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, ncItemsList)) {	
-                colorCounter=0;
-                instructorSection = UIBranchContainer.make(tofill,"instructorSection:");
-                UIMessage.make(instructorSection, "instructor-questions-header", "previeweval.instructor.questions.header"); 
-                for (int i = 0; i < ncItemsList.size(); i++) {	
-                    EvalTemplateItem templateItem = (EvalTemplateItem) ncItemsList.get(i);
-
-                    String cat = templateItem.getCategory();
-                    if (cat == null) {
-                        throw new IllegalStateException("Template item with null category found: " + templateItem.getId() );
-                    } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(cat)) {
-                        doFillComponent(instructorSection, templateItem, colorCounter);
-                        ncItemsList.remove(i);
-                        i--;
-                        colorCounter++;
-                    } 
-                }	
+            List<DataTemplateItem> dtis = hng.getDataTemplateItems(false);
+            for (int i = 0; i < dtis.size(); i++) {
+               DataTemplateItem dti = dtis.get(i);
+               UIBranchContainer nodeItemsBranch = UIBranchContainer.make(categorySectionBranch, "itemrow:templateItem");
+               if (i % 2 == 1) {
+                  nodeItemsBranch.decorate( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
+               }
+               renderItemPrep(nodeItemsBranch, dti);
             }
+         }
+      }
 
-            // strangely we are removing items from the list as we go and then dying if things are left out -AZ
-            if (ncItemsList.size() > 0) {
-                throw new IllegalStateException("Items found with categories that are not rendered");
-            }
+   }
 
-        }
+   /**
+    * Prepare to render an item, this handles blocks correctly
+    * 
+    * @param parent the parent container
+    * @param dti the wrapped template item we will render
+    */
+   private void renderItemPrep(UIBranchContainer parent, DataTemplateItem dti) {
+      int displayIncrement = 0; // stores the increment in the display number
+      EvalTemplateItem templateItem = dti.templateItem;
+      if (! TemplateItemUtils.isAnswerable(templateItem)) {
+         // nothing to bind for unanswerable items unless it is a block parent
+         if ( dti.blockChildItems != null ) {
+            // Handle the BLOCK PARENT special case - block item being rendered
+            displayIncrement = dti.blockChildItems.size();
+         }
+      } else {
+         // non-block and answerable items
+         displayIncrement++;
+      }
 
-    }
+      // render the item
+      itemRenderer.renderItem(parent, "renderedItem:", null, templateItem, displayNumber, true);
 
+      // increment the display number
+      displayNumber += displayIncrement;
+   }
 
-    /**
-     * @param section
-     * @param templateItem
-     * @param colorCounter
-     */
-    private void doFillComponent(UIBranchContainer section, EvalTemplateItem templateItem, int colorCounter) {
-        UIBranchContainer itemsBranch = null;
-        itemsBranch = UIBranchContainer.make(section, "itemrow:first", Integer.toString(displayedItems));
-
-        // use the renderer evolver
-        itemRenderer.renderItem(itemsBranch, "previewed-item:", null, templateItem, displayedItems, true);
-        if(TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)){
-            List<EvalTemplateItem> childList = TemplateItemUtils.getChildItems(allItems, templateItem.getId());
-            displayedItems += childList.size();
-        } else if (TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_HEADER)) { 
-            // no change, do not count header
-        } else {
-            displayedItems++;
-        }
-        //increment by 1 if not block, else increment by num of block children
-
-        if (colorCounter % 2 == 1) {
-            itemsBranch.decorators = new DecoratorList( new UIStyleDecorator("itemsListOddLine") );// must match the existing CSS class 
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
-     */
-    public ViewParameters getViewParameters() {
-        return new EvalViewParameters();
-    }
+   /* (non-Javadoc)
+    * @see uk.org.ponder.rsf.viewstate.ViewParamsReporter#getViewParameters()
+    */
+   public ViewParameters getViewParameters() {
+      return new EvalViewParameters();
+   }
 
 }

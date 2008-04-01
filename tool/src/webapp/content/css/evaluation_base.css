@@ -120,7 +120,6 @@ DIV.itemLine2 {
 	clear: both;
 	margin: .5em .5em .5em 4.5em;
 	list-style-position: outside;
-	line-height:150%;
 	padding:0;
 	line-height:150%;
 }
@@ -370,6 +369,18 @@ A:hover.breadCrumb {
 	color: #333;
 }
 
+.makeLink {
+    color: #27d;
+    padding: 0;
+    margin: 0;
+    background-color: transparent;
+    border:none;
+    text-decoration: underline;
+    cursor: pointer;
+    /* keep IE 6 and 7 from creating h-padding proportionate to the length of the string */
+    overflow: visible;
+}
+
 input.makeLink {
 	color: #27d;
 	padding: 0;
@@ -382,16 +393,16 @@ input.makeLink {
 	overflow: visible
 }
 
-input:hover.makeLink {
+input.makeLink:hover {
 	color: #33f;
-	cursor: hand;
+	cursor:pointer;
 }
 input.makeLinkSmall{
 	font-size:.8em	
 }
 
 /* render link as a button */
-a:link.makeButton, a:visited.makeButton
+a.makeButton:link, a.makeButton:visited
 {
   float: left;
   margin: 2px 5px 2px 5px;
@@ -408,14 +419,13 @@ a:link.makeButton, a:visited.makeButton
   color: black;
 }
 
-a:hover.makeButton
+a.makeButton:hover
 {
   background: #FFFFFF;
   color: #3333CC;
 }
 
-a:active.makeButton
-{
+a.makeButton:active{
   border-bottom: 2px solid #cccccc;
   border-top: 2px solid #666666;
   border-right: 2px solid #cccccc;
@@ -584,7 +594,6 @@ label.block{
 }
 .scaleInnerList li{
 	padding-left:1em;
-	border:1px solid red;
 	list-style-position: inside;
 }
 
@@ -592,7 +601,7 @@ label.block{
 	list-style:none;	
 }
 .scaleTitleLine{
-	height:1.5em;overflow:hide;background:#eee;padding:.1em .1em .1em .3em;	
+	height:1.5em;overflow:hidden;background:#eee;padding:.1em .1em .1em .3em;	
 }
 
 .scaleTitleLineNum{
@@ -691,7 +700,6 @@ label.block{
 	float: left;
 	cursor: default;
 	margin: 0;
-	bac
 	padding:0;
 	padding: 1px 1.5em 1px 3px;
 	background:#eee url(../images/asterisk_orange.gif) 1.7em no-repeat;
@@ -748,9 +756,6 @@ label.block{
 	border:1px solid #eee
 }
 
-.itemListNew li:hover .itemScalePanel{
-	border:1px solid #aaa
-}
 .itemListNew li:hover .itemScalePanel{
 	border:1px solid #aaa;
 	background:#fff;
@@ -913,4 +918,61 @@ color: #555;
 	padding:0;
 	margin:0;
 	list-style:none;	
+}
+/*see block items*/
+.steppedRowContainer {
+	border-collapse: collapse;
+}
+.steppedRowContainer tr:hover{
+	background:#eee;
+}
+.steppedRowContainer tr:hover td{
+	border-bottom:1px solid #000;
+}
+.steppedRowContainer tr:hover td.exclude{
+	border:none;
+}
+.steppedRowContainer td{
+	border-top:1px solid #ccc;
+	border-bottom:1px solid #ccc
+}
+.steppedRowContainer td td{
+	border:none
+}
+.itemsListOddLine .steppedRowContainer tr:hover{
+	background:#fff;
+}
+
+.itemsListOddLine .steppedRowContainer td{
+	border-top:1px solid #fff;
+	border-bottom:1px solid #fff
+}
+.itemsListOddLine .steppedRowContainer td td {
+	border:none;
+}
+
+.validFail{
+ /* top parent of failed group 
+   can have a border, for example, or just style children below
+  */
+}
+.validFail .label{
+	color:#b11;
+	font-weight:bold;
+}
+.validFail label{
+	color:#000 !important;
+	
+}
+
+
+.validFailGlyph{
+	display:none; /* do not show if not child of .validFail */
+}
+.validFail .validFailGlyph{
+	display:inline;
+	color:#b11;
+	font-weight:bold;
+	font-size:100%;
+	padding:0;
 }

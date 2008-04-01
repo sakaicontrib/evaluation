@@ -30,7 +30,6 @@ import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
@@ -88,7 +87,96 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
       log.debug("Init");
    }
 
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.EvalDeliveryService#saveResponse(org.sakaiproject.evaluation.model.EvalResponse, java.lang.String)
+    */
+   @SuppressWarnings("unchecked")
+   public void saveResponse(EvalResponse response, String userId) {
+      log.debug("userId: " + userId + ", response: " + response.getId() + ", evalGroupId: " + response.getEvalGroupId());
 
+      // set the date modified
+      response.setLastModified(new Date());
+
+      boolean newResponse = true;
+      if (response.getId() != null) {
+         newResponse = false;
+         // TODO - existing response, don't allow change to any setting
+         // except starttime, endtime, and answers
+      }
+
+      // fill in any default values and nulls here
+
+      // check perms and evaluation state
+      if (checkUserModifyResponse(userId, response)) {
+         // make sure the user can take this evalaution
+         Long evaluationId = response.getEvaluation().getId();
+         String evalGroupId = response.getEvalGroupId();
+         if (! evaluationService.canTakeEvaluation(userId, evaluationId, evalGroupId)) {
+            throw new ResponseSaveException("User (" + userId + ") cannot take this evaluation (" + evaluationId
+                  + ") in this evalGroupId (" + evalGroupId + ") right now", ResponseSaveException.TYPE_CANNOT_TAKE_EVAL);
+         }
+
+         // check to make sure answers are valid for this evaluation
+         if (response.getAnswers() != null && !response.getAnswers().isEmpty()) {
+            checkAnswersValidForEval(response);
+         } else {
+            if (response.getEndTime() != null) {
+               // the response is complete (submission of an evaluation) and not just creating the empty response
+               // check if answers are required to be filled in
+               Boolean unansweredAllowed = (Boolean)settings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED);
+               if (unansweredAllowed == null) {
+                  unansweredAllowed = response.getEvaluation().getBlankResponsesAllowed();
+               }
+               if (unansweredAllowed.booleanValue() == false) {
+                  // all items must be completed so die if they are not
+                  throw new ResponseSaveException("User submitted a blank response and there are required answers", 
+                        ResponseSaveException.TYPE_BLANK_RESPONSE);
+               }
+            }
+            response.setAnswers(new HashSet());
+         }
+
+         // save everything in one transaction
+
+         // response has to be saved first
+         Set<EvalResponse> responseSet = new HashSet<EvalResponse>();
+         responseSet.add(response);
+
+         Set<EvalAnswer> answersSet = response.getAnswers();
+
+         dao.saveMixedSet(new Set[] {responseSet, answersSet});
+
+         String completeMessage = ", response is incomplete";
+         if (response.getEndTime() != null) {
+            /* the response is complete (submission of an evaluation) 
+             * and not just creating the empty response so lock related evaluation
+             */
+            log.info("Locking evaluation (" + response.getEvaluation().getId() + ") and associated entities");
+            EvalEvaluation evaluation = (EvalEvaluation) dao.findById(EvalEvaluation.class, response.getEvaluation().getId());
+            dao.lockEvaluation(evaluation, true);
+            completeMessage = ", response is complete";
+         }
+
+         if (newResponse) {
+            externalLogic.registerEntityEvent(EVENT_RESPONSE_CREATED, response);
+         } else {
+            externalLogic.registerEntityEvent(EVENT_RESPONSE_UPDATED, response);            
+         }
+         int answerCount = response.getAnswers() == null ? 0 : response.getAnswers().size();
+         log.info("User (" + userId + ") saved response (" + response.getId() + ") to" +
+               "evaluation ("+evaluationId+") for groupId (" + response.getEvalGroupId() + ") " +
+               " with " + answerCount + " answers" + completeMessage);
+         return;
+      }
+
+      // should not get here so die if we do
+      throw new RuntimeException("User (" + userId + ") could NOT save response (" + response.getId()
+            + "), evalGroupId: " + response.getEvalGroupId());
+   }
+
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.EvalDeliveryService#getResponseById(java.lang.Long)
+    */
    public EvalResponse getResponseById(Long responseId) {
       log.debug("responseId: " + responseId);
       // get the response by passing in id
@@ -108,7 +196,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
       List<EvalResponse> responses = dao.findByProperties(EvalResponse.class, 
             new String[] { "owner", "evaluation.id", "evalGroupId" }, 
             new Object[] { userId, evaluationId, evalGroupId }
-         );
+      );
       if (responses.isEmpty()) {
          // create a new response and save it
          response = new EvalResponse(new Date(), userId, evalGroupId, new Date(), evaluation);
@@ -118,7 +206,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
             response = responses.get(0);
          } else {
             throw new IllegalStateException("Invalid responses state, this user ("+userId+") has more than 1 response " +
-            		"for evaluation ("+evaluationId+") and evalGroupId ("+evalGroupId+")");
+                  "for evaluation ("+evaluationId+") and evalGroupId ("+evalGroupId+")");
          }
       }
 
@@ -196,7 +284,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
             props.toArray(new String[props.size()]), 
             values.toArray(new Object[values.size()]), 
             ArrayUtils.listToIntArray(comparisons)
-            );
+      );
 
    }
 
@@ -220,28 +308,9 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
       }
    }
 
-
-   public List<EvalAnswer> getEvalAnswers(Long itemId, Long evaluationId, String[] evalGroupIds) {
-      log.debug("itemId: " + itemId + ", evaluationId: " + evaluationId);
-
-      if (dao.countByProperties(EvalItem.class, new String[] { "id" }, new Object[] { itemId }) <= 0) {
-         throw new IllegalArgumentException("Could not find item with id: " + itemId);
-      }
-
-      if (dao.countByProperties(EvalEvaluation.class, new String[] { "id" }, new Object[] { evaluationId }) <= 0) {
-         throw new IllegalArgumentException("Could not find evaluation with id: " + evaluationId);
-      }
-
-      List<EvalAnswer> answers = dao.getAnswers(itemId, evaluationId, evalGroupIds);
-      for (EvalAnswer answer : answers) {
-         // decode the stored answers into the int array
-         answer.multipleAnswers = EvalUtils.decodeMultipleAnswers(answer.getMultiAnswerCode());
-         // decode NA value
-         EvalUtils.decodeAnswerNA(answer);
-      }
-      return answers;
-   }
-
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.EvalDeliveryService#getEvalResponseIds(java.lang.Long, java.lang.String[], java.lang.Boolean)
+    */
    public List<Long> getEvalResponseIds(Long evaluationId, String[] evalGroupIds, Boolean completed) {
       log.debug("evaluationId: " + evaluationId);
 
@@ -252,89 +321,65 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
       return dao.getResponseIds(evaluationId, evalGroupIds, null, completed);
    }
 
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.EvalDeliveryService#getEvaluationResponses(java.lang.Long, java.lang.String[], java.lang.Boolean)
+    */
    @SuppressWarnings("unchecked")
-   public void saveResponse(EvalResponse response, String userId) {
-      log.debug("userId: " + userId + ", response: " + response.getId() + ", evalGroupId: " + response.getEvalGroupId());
+   public List<EvalResponse> getEvaluationResponses(Long evaluationId, String[] evalGroupIds, Boolean completed) {
+      log.debug("evaluationId: " + evaluationId);
 
-      // set the date modified
-      response.setLastModified(new Date());
-
-      boolean newResponse = true;
-      if (response.getId() != null) {
-         newResponse = false;
-         // TODO - existing response, don't allow change to any setting
-         // except starttime, endtime, and answers
+      if (dao.countByProperties(EvalEvaluation.class, new String[] { "id" }, new Object[] { evaluationId }) <= 0) {
+         throw new IllegalArgumentException("Could not find evaluation with id: " + evaluationId);
       }
 
-      // fill in any default values and nulls here
+      List<String> props = new ArrayList<String>();
+      List<Object> values = new ArrayList<Object>();
+      List<Number> comparisons = new ArrayList<Number>();
 
-      // check perms and evaluation state
-      if (checkUserModifyResponse(userId, response)) {
-         // make sure the user can take this evalaution
-         Long evaluationId = response.getEvaluation().getId();
-         String evalGroupId = response.getEvalGroupId();
-         if (! evaluationService.canTakeEvaluation(userId, evaluationId, evalGroupId)) {
-            throw new ResponseSaveException("User (" + userId + ") cannot take this evaluation (" + evaluationId
-                  + ") in this evalGroupId (" + evalGroupId + ") right now", ResponseSaveException.TYPE_CANNOT_TAKE_EVAL);
-         }
+      // basic search params
+      props.add("evaluation.id");
+      values.add(evaluationId);
+      comparisons.add(ByPropsFinder.EQUALS);
 
-         // check to make sure answers are valid for this evaluation
-         if (response.getAnswers() != null && !response.getAnswers().isEmpty()) {
-            checkAnswersValidForEval(response);
-         } else {
-            if (response.getEndTime() != null) {
-               // the response is complete (submission of an evaluation) and not just creating the empty response
-               // check if answers are required to be filled in
-               Boolean unansweredAllowed = (Boolean)settings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED);
-               if (unansweredAllowed == null) {
-                  unansweredAllowed = response.getEvaluation().getBlankResponsesAllowed();
-               }
-               if (unansweredAllowed.booleanValue() == false) {
-                  // all items must be completed so die if they are not
-                  throw new ResponseSaveException("User submitted a blank response and there are required answers", 
-                        ResponseSaveException.TYPE_BLANK_RESPONSE);
-               }
-            }
-            response.setAnswers(new HashSet());
-         }
-
-         // save everything in one transaction
-
-         // response has to be saved first
-         Set<EvalResponse> responseSet = new HashSet<EvalResponse>();
-         responseSet.add(response);
-
-         Set<EvalAnswer> answersSet = response.getAnswers();
-
-         dao.saveMixedSet(new Set[] {responseSet, answersSet});
-
-         String completeMessage = ", response is incomplete";
-         if (response.getEndTime() != null) {
-            /* the response is complete (submission of an evaluation) 
-             * and not just creating the empty response so lock related evaluation
-             */
-            log.info("Locking evaluation (" + response.getEvaluation().getId() + ") and associated entities");
-            EvalEvaluation evaluation = (EvalEvaluation) dao.findById(EvalEvaluation.class, response.getEvaluation().getId());
-            dao.lockEvaluation(evaluation, true);
-            completeMessage = ", response is complete";
-         }
-
-         if (newResponse) {
-            externalLogic.registerEntityEvent(EVENT_RESPONSE_CREATED, response);
-         } else {
-            externalLogic.registerEntityEvent(EVENT_RESPONSE_UPDATED, response);            
-         }
-         int answerCount = response.getAnswers() == null ? 0 : response.getAnswers().size();
-         log.info("User (" + userId + ") saved response (" + response.getId() + ") to" +
-         		"evaluation ("+evaluationId+") for groupId (" + response.getEvalGroupId() + ") " +
-         		" with " + answerCount + " answers" + completeMessage);
-         return;
+      if (evalGroupIds != null && evalGroupIds.length > 0) {
+         props.add("evalGroupId");
+         values.add(evalGroupIds);
+         comparisons.add(ByPropsFinder.EQUALS);
       }
 
-      // should not get here so die if we do
-      throw new RuntimeException("User (" + userId + ") could NOT save response (" + response.getId()
-            + "), evalGroupId: " + response.getEvalGroupId());
+      handleCompleted(completed, props, values, comparisons);
+
+      return dao.findByProperties(EvalResponse.class, 
+            props.toArray(new String[props.size()]), 
+            values.toArray(new Object[values.size()]), 
+            ArrayUtils.listToIntArray(comparisons)
+      );
    }
+
+
+
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.EvalDeliveryService#getAnswersForEval(java.lang.Long, java.lang.String[], java.lang.Long[])
+    */
+   public List<EvalAnswer> getAnswersForEval(Long evaluationId, String[] evalGroupIds, Long[] templateItemIds) {
+      log.debug("evaluationId: " + evaluationId);
+
+      if (dao.countByProperties(EvalEvaluation.class, new String[] { "id" }, new Object[] { evaluationId }) <= 0) {
+         throw new IllegalArgumentException("Could not find evaluation with id: " + evaluationId);
+      }
+
+      List<EvalAnswer> answers = dao.getAnswers(evaluationId, evalGroupIds, templateItemIds);
+
+      for (EvalAnswer answer : answers) {
+         // decode the stored answers into the int array
+         answer.multipleAnswers = EvalUtils.decodeMultipleAnswers(answer.getMultiAnswerCode());
+         // decode NA value
+         EvalUtils.decodeAnswerNA(answer);
+      }
+      return answers;
+   }
+
+
 
    // PERMISSIONS
 
@@ -457,7 +502,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                   log.warn("Course answer (key="+ TemplateItemUtils.makeTemplateItemAnswerKey(answer.getTemplateItem().getId(), 
                         answer.getAssociatedType(), answer.getAssociatedId()) +") should have the associated id "
                         + "("+answer.getAssociatedId()+") field null, "
-                  		+ "for templateItem (" + answer.getTemplateItem().getId() + "), setting associated id and type to null");
+                        + "for templateItem (" + answer.getTemplateItem().getId() + "), setting associated id and type to null");
                }
                answer.setAssociatedId(null);
                answer.setAssociatedType(null);
@@ -544,7 +589,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                   + " response (" + response.getId() + ") for user (" + response.getOwner() + ")"
                   + " :: missing keys=" + ArrayUtils.arrayToString(requiredAnswerKeys.toArray(new String[] {})) 
                   + " :: received keys=" + ArrayUtils.arrayToString(answeredAnswerKeys.toArray(new String[] {})), 
-                     ResponseSaveException.TYPE_MISSING_REQUIRED_ANSWERS);
+                  requiredAnswerKeys.toArray(new String[] {}) );
          }
       }
 

@@ -62,6 +62,9 @@ public class EvalScheduledInvocationImpl implements EvalScheduledInvocation {
 		EvalIdType eit = EvalScheduledJob.decodeContextId(opaqueContext);
 		Long evalId = eit.evaluationId;
 		String jobType = eit.jobType;
+		if (evalId == null || jobType == null) {
+         throw new NullPointerException("EvalScheduledInvocationImpl.execute: both evaluationId ("+evalId+") and jobType ("+jobType+") must be set, opaqueContext=" + opaqueContext);
+		}
 		
 		// call method to fix state, send email and/or schedule a job
 		evalJobLogic.jobAction(evalId, jobType);

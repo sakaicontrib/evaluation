@@ -37,6 +37,7 @@ import uk.org.ponder.rsf.components.UISelectLabel;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UIFreeAttributeDecorator;
+import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 
 /**
  * This handles the rendering of scaled type items
@@ -69,8 +70,12 @@ public class BlockRenderer implements ItemRenderer {
          throw new IllegalArgumentException("Block renderer can only work for block parents, this templateItem ("+templateItem.getId()+") is a block child");
       }
 
+      List<EvalTemplateItem> childList = templateItem.childTemplateItems;
+      if (childList == null || childList.isEmpty()) {
+         // get the list of children the slow way if we have to
+         childList = authoringService.getBlockChildTemplateItemsForBlockParent(templateItem.getId(), false);
+      }
       // check that the child count matches the bindings count
-      List<EvalTemplateItem> childList = authoringService.getBlockChildTemplateItemsForBlockParent(templateItem.getId(), false);
       if ( ! disabled && (childList.size() != bindings.length) ) {
          throw new IllegalArgumentException("The bindings array ("+bindings.length+") must match the size of the block child count ("+childList.size()+")");
       }
@@ -176,6 +181,9 @@ public class BlockRenderer implements ItemRenderer {
 
             // For the radio buttons
             UIBranchContainer childRow = UIBranchContainer.make(blockStepped, "childRow:", j+"" );
+            if (childTemplateItem.renderOption) {
+               childRow.decorate( new UIStyleDecorator("validFail") ); // must match the existing CSS class
+            }
             if (colored) {
                UILink.make(childRow, "idealImage", idealImage);
             }

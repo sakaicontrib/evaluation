@@ -90,6 +90,7 @@ public class TemplateItemUtilsTest extends TestCase {
       assertEquals(3, array.length);
    }
 
+
    /**
     * Test method for {@link org.sakaiproject.evaluation.utils.TemplateItemUtils#checkTemplateItemsCategoryExists(java.lang.String, java.util.List)}.
     */

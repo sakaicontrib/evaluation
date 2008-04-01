@@ -1,7 +1,5 @@
 package org.sakaiproject.evaluation.tool.reporting;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.tool.producers.ReportChooseGroupsProducer;
 import org.sakaiproject.evaluation.tool.producers.ReportsViewingProducer;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
@@ -19,7 +17,6 @@ import uk.org.ponder.rsf.viewstate.ViewParamsInterceptor;
  * @author sgithens
  */
 public class ReportViewParamsInterceptor implements ViewParamsInterceptor {
-   private static Log log = LogFactory.getLog(ReportViewParamsInterceptor.class);
 
    private CurrentViewableReports curViewableReports;
    public void setCurrentViewableReports(CurrentViewableReports cur) {

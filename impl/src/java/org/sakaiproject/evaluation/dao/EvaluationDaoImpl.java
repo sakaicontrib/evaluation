@@ -447,39 +447,37 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
     * Returns all answers to the given item associated with 
     * responses which are associated with the given evaluation,
     * only returns the answers for completed responses
-    *
-    * @param itemId the id of the item you want answers for
+    * 
     * @param evalId the id of the evaluation you want answers from
     * @param evalGroupIds an array of eval group IDs to return answers for,
-    * if null then just return all answers for this evaluation
+    * if null then just return answers for all groups
+    * @param templateItemIds the ids of the template items you want answers for,
+    * if null then return answers for all template items
     * @return a list of EvalAnswer objects or empty list if none found
     */
-   public List<EvalAnswer> getAnswers(Long itemId, Long evalId, String[] evalGroupIds) {
+   @SuppressWarnings("unchecked")
+   public List<EvalAnswer> getAnswers(Long evalId, String[] evalGroupIds, Long[] templateItemIds) {
       Map<String, Object> params = new HashMap<String, Object>();
+
       String groupsHQL = "";
       if (evalGroupIds != null && evalGroupIds.length > 0) {
          groupsHQL = " and ansswerresp.evalGroupId in (:evalGroupIds) ";
          params.put("evalGroupIds", evalGroupIds);
       }
-      params.put("itemId", itemId);
+
+      String itemsHQL = "";
+      if (templateItemIds != null && templateItemIds.length > 0) {
+         itemsHQL = " and answer.templateItem.id in (:templateItemIds) ";
+         params.put("templateItemIds", templateItemIds);
+      }
+
       params.put("evalId", evalId);
-      String hql = "select answer from EvalAnswer as answer join answer.response as ansswerresp "
-         + "where ansswerresp.evaluation.id = :evalId and ansswerresp.endTime is not null " + groupsHQL
-         + "and answer.item.id = :itemId order by ansswerresp.id";
+      String hql = "select answer from EvalAnswer as answer join answer.response as ansswerresp"
+         + " where ansswerresp.evaluation.id = :evalId and ansswerresp.endTime is not null " + groupsHQL + itemsHQL
+         + " order by ansswerresp.id, answer.id";
       // TODO optimize this once we are using a newer version of hibernate that supports "with"
 
-      // replaced with a join
-      // String hql = "from EvalAnswer as answer where answer.item.id = :itemId and
-      // answer.response.id in " +
-      // "(select response.id from EvalResponse as response where response.evaluation.id = :evalId "
-      // +
-      // groupsHQL + " order by response.id)";
-
-      List<?> things = executeHqlQuery(hql, params, 0, 0);
-      List<EvalAnswer> results = new ArrayList<EvalAnswer>();
-      for (Object object : things) {
-         results.add((EvalAnswer) object);
-      }
+      List<EvalAnswer> results = executeHqlQuery(hql, params, 0, 0);
       return results;
    }
 

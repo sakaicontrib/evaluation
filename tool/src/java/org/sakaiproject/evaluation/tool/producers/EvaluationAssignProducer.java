@@ -196,6 +196,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
       Boolean showHierarchy = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
       
       List<EvalGroup> evalGroups = externalLogic.getEvalGroupsForUser(externalLogic.getCurrentUserId(), EvalConstants.PERM_BE_EVALUATED);
+      
       if (evalGroups.size() > 0) {
          Map<String, EvalGroup> groupsMap = new HashMap<String, EvalGroup>();
          for (int i=0; i < evalGroups.size(); i++) {
@@ -345,10 +346,11 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
        UIOutput hideControl = UIOutput.make(tofill, hideId);
        UIOutput showControl = UIOutput.make(tofill, showId);
        
+       //makeToggle: function (showId, hideId, areaId, toggleClass, initialHide) {
        UIOutput areaDiv = UIOutput.make(tofill, areaId);
-       initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.hideAndShowAssignArea", 
-             new String[] {areaDiv.getFullID(), showControl.getFullID(),
-             hideControl.getFullID()}));
+       initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.makeToggle", 
+             new String[] { showControl.getFullID(),hideControl.getFullID(),
+               areaDiv.getFullID(),null,"true"}));
    }
 
    /* (non-Javadoc)

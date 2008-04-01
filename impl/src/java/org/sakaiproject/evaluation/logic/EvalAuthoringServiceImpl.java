@@ -594,33 +594,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
          // TODO - check if the display orders are set to a value that is used already?
       }
 
-      // set the default values for unspecified optional values
-      if (templateItem.getCategory() == null) {
-         if (item.getCategory() == null) {
-            templateItem.setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
-         } else {
-            templateItem.setCategory(item.getCategory());
-         }
-      }
-      if (templateItem.getResultsSharing() == null) {
-         templateItem.setResultsSharing(EvalConstants.SHARING_PUBLIC);
-      }
-      Boolean naAllowed = (Boolean) settings.get(EvalSettings.ENABLE_NOT_AVAILABLE);
-      if (naAllowed.booleanValue()) {
-         // can set NA
-         if (templateItem.getUsesNA() == null) {
-            templateItem.setUsesNA( Boolean.FALSE );
-         }
-      } else {
-         templateItem.setUsesNA( Boolean.FALSE );
-      }
-      // defaults for hierarchy level of template items
-      if (templateItem.getHierarchyLevel() == null) {
-         templateItem.setHierarchyLevel(EvalConstants.HIERARCHY_LEVEL_TOP);
-      }
-      if (templateItem.getHierarchyNodeId() == null) {
-         templateItem.setHierarchyNodeId(EvalConstants.HIERARCHY_NODE_ID_NONE);
-      }
+      fixUpTemplateItem(templateItem);
 
       if (securityChecks.checkUserControlTemplateItem(userId, templateItem)) {
 
@@ -671,6 +645,53 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 
       // should not get here so die if we do
       throw new RuntimeException("User ("+userId+") could NOT save templateItem ("+templateItem.getId()+")");
+   }
+
+
+
+   /**
+    * Fixes up a templateItem before saving to ensure it is valid
+    * 
+    * @param templateItem
+    */
+   private void fixUpTemplateItem(EvalTemplateItem templateItem) {
+      // set the default values for unspecified optional values
+      EvalItem item = templateItem.getItem();
+      if (templateItem.getCategory() == null) {
+         if (item.getCategory() == null) {
+            templateItem.setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
+         } else {
+            templateItem.setCategory(item.getCategory());
+         }
+      }
+      if (templateItem.getResultsSharing() == null) {
+         templateItem.setResultsSharing(EvalConstants.SHARING_PUBLIC);
+      }
+      Boolean naAllowed = (Boolean) settings.get(EvalSettings.ENABLE_NOT_AVAILABLE);
+      if (naAllowed.booleanValue()) {
+         // can set NA
+         if (templateItem.getUsesNA() == null) {
+            templateItem.setUsesNA( Boolean.FALSE );
+         }
+      } else {
+         templateItem.setUsesNA( Boolean.FALSE );
+      }
+      Boolean usesComments = (Boolean) settings.get(EvalSettings.ENABLE_ITEM_COMMENTS);
+      if (usesComments.booleanValue()) {
+         // can use comments
+         if (templateItem.getUsesComment() == null) {
+            templateItem.setUsesComment( Boolean.FALSE );
+         }
+      } else {
+         templateItem.setUsesComment( Boolean.FALSE );
+      }
+      // defaults for hierarchy level of template items
+      if (templateItem.getHierarchyLevel() == null) {
+         templateItem.setHierarchyLevel(EvalConstants.HIERARCHY_LEVEL_TOP);
+      }
+      if (templateItem.getHierarchyNodeId() == null) {
+         templateItem.setHierarchyNodeId(EvalConstants.HIERARCHY_NODE_ID_NONE);
+      }
    }
 
 
@@ -1590,6 +1611,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       // set the other copy fields correctly
       copy.setCopyOf(original.getId());
       copy.setHidden(hidden);
+      fixUpTemplateItem(copy); // fix up to ensure fields are set correctly
       return copy;
    }
 

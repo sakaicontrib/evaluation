@@ -90,7 +90,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
       if (log.isDebugEnabled())
          log.debug("EvalJobLogicImpl.processEvaluationStateChange(" + evaluationId + ") and state=" + actionState);
       if (evaluationId == null || actionState == null) {
-         throw new NullPointerException("both evaluationId ("+evaluationId+") and actionState ("+actionState+") must be set");
+         throw new NullPointerException("processEvaluationStateChange: both evaluationId ("+evaluationId+") and actionState ("+actionState+") must be set");
       }
 
       if (EvalJobLogic.ACTION_CREATE.equals(actionState)) {
@@ -117,7 +117,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
     */
    public void jobAction(Long evaluationId, String jobType) {
       if (evaluationId == null || jobType == null) {
-         throw new NullPointerException("both evaluationId ("+evaluationId+") and jobType ("+jobType+") must be set");
+         throw new NullPointerException("jobAction: both evaluationId ("+evaluationId+") and jobType ("+jobType+") must be set");
       }
 
       /*
@@ -451,27 +451,31 @@ public class EvalJobLogicImpl implements EvalJobLogic {
    }
 
    /**
-    * Remove reminder if the due date now comes before the reminder or 
-    * reminder days was changed to 0
+    * If there is a reminder then remove reminder if the due date now comes before the reminder or 
+    * reminder days was changed to 0, otherwise do nothing
     * 
-    * @param evalId
-    *           the EvalEvaluation id
+    * @param evalId the unique id of an {@link EvalEvaluation}
     */
    protected void fixReminder(Long evaluationId) {
       EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
       
       EvalScheduledJob[] jobs = externalLogic.findScheduledJobs(evaluationId, EvalConstants.JOB_TYPE_REMINDER);
-      cleanupExtraJobs(jobs);
-      EvalScheduledJob job = jobs[0];
-
-      Date reminderAt = job.date;
-      if (eval.getReminderDays().intValue() == 0 
-            || reminderAt.after(eval.getDueDate())) {
-         // remove reminder
-         externalLogic.deleteScheduledJob(job.uuid);
+      if (jobs.length > 0) {
+         cleanupExtraJobs(jobs);
+         EvalScheduledJob job = jobs[0];
+   
+         Date reminderAt = job.date;
+         if (eval.getReminderDays().intValue() == 0 
+               || reminderAt.after(eval.getDueDate())) {
+            // remove reminder
+            externalLogic.deleteScheduledJob(job.uuid);
+            if (log.isDebugEnabled())
+               log.debug("EvalJobLogicImpl.fixReminders remove reminder after the due date "
+                     + job.uuid + "," + job.contextId + "," + job.date);
+         }
+      } else {
          if (log.isDebugEnabled())
-            log.debug("EvalJobLogicImpl.fixReminders remove reminder after the due date "
-                  + job.uuid + "," + job.contextId + "," + job.date);
+            log.debug("EvalJobLogicImpl.fixReminders could not find any reminders for eval: " + evaluationId);
       }
    }
 

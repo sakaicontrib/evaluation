@@ -203,32 +203,35 @@
 
 	<!-- Reporting Utilities -->
 	<bean id="CSVReportExporter" class="org.sakaiproject.evaluation.tool.reporting.CSVReportExporter">
-		<property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-	</bean>
+      <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+      <property name="evalResponseAggregatorUtil" ref="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil" />
+      <property name="messageLocator" ref="messageLocator" />
+    </bean>
 
 	<bean id="XLSReportExporter" class="org.sakaiproject.evaluation.tool.reporting.XLSReportExporter">
-        <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
-        <property name="deliveryService"
-           ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
-        <property name="messageLocator" ref="messageLocator" />
-        <property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+      <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+      <property name="deliveryService" ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
+      <property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+      <property name="evalResponseAggregatorUtil" ref="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil" />
+      <property name="messageLocator" ref="messageLocator" />
 	</bean>
 
 	<bean id="PDFReportExporter" class="org.sakaiproject.evaluation.tool.reporting.PDFReportExporter">
-        <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
-        <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-        <property name="deliveryService"
-           ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
-		<property name="evalResponseAggregatorUtil" ref="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil" />
-		<property name="messageLocator" ref="messageLocator" />
-		<property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
-	</bean>
+      <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+      <property name="evalSettings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+      <property name="deliveryService" ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
+      <property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+      <property name="evalResponseAggregatorUtil" ref="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil" />
+      <property name="messageLocator" ref="messageLocator" />
+    </bean>
 	
 	<bean  id="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil" 
-		class="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil">
-		<property name="deliveryService" ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
-		<property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
-		<property name="messageLocator" ref="messageLocator" />
+		  class="org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil">
+      <property name="deliveryService" ref="org.sakaiproject.evaluation.logic.EvalDeliveryService" />
+      <property name="evalExternalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+      <property name="externalHierarchyLogic" ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+      <property name="authoringService" ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
+      <property name="messageLocator" ref="messageLocator" />
 	</bean>
 
 	<!-- This ViewParametersInterceptor is responsible for redirecting the page

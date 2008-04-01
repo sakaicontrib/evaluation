@@ -47,60 +47,42 @@
                     <li>Message for user here</li>
                 </ul>
             </div>
-	
+
 			<div rsf:id="show-eval-instructions:" class="instruction">
 				<h5 rsf:id="eval-instructions-header" style="display:inline;padding-right:1em">Instructions:</h5>
 				<span rsf:id="eval-instructions">Evaluation instructions would go here if any have been specified. This block may be up to 4000 chars.</span>
 			</div>
-	
+
 		   <div rsf:id="show-eval-note:" class="instruction">
 			   <h5 rsf:id="msg=general.note"  style="display:inline;padding-right:1em">Note:</h5>
 			   <div rsf:id="eval-note-text" style="display:inline">Additional instructional note to the user here</div>
 		   </div>
-			
+
 			<div rsf:id="eval-cannot-take-message" class="alertMessage"></div>
-			
+
 			<div rsf:id="form-branch:">
-				<form name="eval_form" rsf:id="evaluationForm" method="post">
-					<div rsf:id="courseSection:">	
-					<fieldset class="itemListNew">
-						<legend rsf:id="course-questions-header"> Group Items: </legend>
-						<ol  class="itemListEval">
-							<li rsf:id="itemrow:hier-node-section">
-								<h4 rsf:id="hier-node-title">Top Level or something like Biology Dept</h4>
-							</li>
-							<li rsf:id="itemrow:first">
-								   <!-- DIV tag for item renderer -->
-								  <div rsf:id="rendered-item:">Items get rendered here</div>
-							 </li>
-						</ol>
+				<form rsf:id="evaluationForm" name="eval_form" method="post">
+					<div rsf:id="categorySection:">
+                        <fieldset class="itemListNew">
+                           <legend rsf:id="categoryHeader"> Group Items: </legend>
+                           <ol class="itemListEval">
+                              <li rsf:id="itemrow:nodeSection">
+                                  <h4 rsf:id="nodeTitle">Top Level or something like Biology Dept</h4>
+                              </li>
+                              <li rsf:id="itemrow:templateItem">
+                                 <!-- DIV tag for item renderer -->
+                                 <div rsf:id="renderedItem:">Items get rendered here</div>
+                              </li>
+                           </ol>
 						</fieldset>
 					</div>
-			
-					
-					<!-- this BEGINS the INSTRUCTOR(S) section -->
-					<div rsf:id="instructorSection:">
-						<fieldset class="itemListNew">
-						<legend rsf:id="instructor-questions-header"> Evaluatee Items: </legend>
-							<ol class="itemListEval">
-								<li rsf:id="itemrow:hier-node-section">
-									<h4 rsf:id="hier-node-title">Top Level or something like Biology Dept</h4>
-								</li>
-								<li rsf:id="itemrow:first">
-									<!-- DIV tag for item renderer -->
-									<div rsf:id="rendered-item:">Render item here</div>
-								</li>
-							</ol>
-						</fieldset> 
-					</div>
-			
+
 					<div class="act">
 						<input rsf:id="submitEvaluation" type="submit" value="Submit Evaluation" accesskey="s" class="active"/>
 					</div>
-			
 				</form>
 			</div>
-			
+
 		</div>
 	</body>
 </html>
