@@ -1402,7 +1402,60 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       return template;
    }
 
-   
+
+   /* (non-Javadoc)
+    * @see org.sakaiproject.evaluation.logic.EvalAuthoringService#getAutoUseTemplateItems(java.lang.String, java.lang.String, java.lang.String)
+    */
+   @SuppressWarnings("unchecked")
+   public List<EvalTemplateItem> getAutoUseTemplateItems(String templateAutoUseTag, String templateItemAutoUseTag, String itemAutoUseTag) {
+
+      List<EvalTemplateItem> items = new ArrayList<EvalTemplateItem>();
+      // first add in the templates items
+      if (! EvalUtils.isBlank(templateAutoUseTag)) {
+         List<EvalTemplate> templates = dao.findByProperties(EvalTemplate.class, 
+               new String[] {"autoUseTag"}, 
+               new Object[] {templateAutoUseTag}, 
+               new int[] {ByPropsFinder.EQUALS},
+               new String[] {"id"}
+         );
+         for (EvalTemplate template : templates) {
+            List<EvalTemplateItem> templateItemsList = getTemplateItemsForTemplate(template.getId(), new String[] {}, null, null); // only hierarchy nodes
+            items.addAll( TemplateItemUtils.orderTemplateItems(templateItemsList, false) );
+         }
+      }
+
+      // now the template items (only if not already there)
+      if (! EvalUtils.isBlank(templateItemAutoUseTag)) {
+         List<EvalTemplateItem> templateItems = dao.findByProperties(EvalTemplateItem.class, 
+               new String[] {"autoUseTag"}, 
+               new Object[] {templateItemAutoUseTag}, 
+               new int[] {ByPropsFinder.EQUALS},
+               new String[] {"displayOrder", "id"}
+         );
+         for (EvalTemplateItem templateItem : templateItems) {
+            if (! items.contains(templateItem)) {
+               items.add(templateItem);
+            }
+         }
+      }
+
+      // finally put in the items wrapper in a templateItem
+      if (! EvalUtils.isBlank(itemAutoUseTag)) {
+         List<EvalItem> evalItems = dao.findByProperties(EvalItem.class, 
+               new String[] {"autoUseTag"}, 
+               new Object[] {itemAutoUseTag}, 
+               new int[] {ByPropsFinder.EQUALS},
+               new String[] {"id"}
+         );
+         for (EvalItem evalItem : evalItems) {
+            items.add( TemplateItemUtils.makeTemplateItem(evalItem) );
+         }
+      }
+
+      return items;
+   }
+
+
    // COPYING
 
    @SuppressWarnings("unchecked")
@@ -1588,10 +1641,10 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
     * inherits the display order from the original
     * 
     * @param original the original item to copy
-    * @param toTemplate
-    * @param ownerId
-    * @param hidden
-    * @param includeChildren
+    * @param toTemplate the template to copy this templateItem to
+    * @param ownerId set as the owner of this copy
+    * @param hidden if true then the resulting copy will be marked as hidden 
+    * @param includeChildren also make persistent copies of children if true
     * @return the copy of the templateItem (not persisted)
     */
    private EvalTemplateItem copyTemplateItem(EvalTemplateItem original, EvalTemplate toTemplate,
@@ -1682,13 +1735,6 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
          templates.add( getTemplateById(templateId) );
       }
       return templates;
-   }
-
-
-
-   public List<EvalTemplateItem> getAutoUseTemplateItems(String templateAutoUseTag, String templateItemAutoUseTag, String itemAutoUseTag) {
-      // TODO Auto-generated method stub
-      return null;
    }
 
 }

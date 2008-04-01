@@ -77,7 +77,6 @@ public class PreloadTestDataImpl {
     */
    public void preloadDB(){
       log.info("preloading DB...");
-      etdl = new EvalTestDataLoad();
-      etdl.saveAll(dao);
+      etdl = new EvalTestDataLoad(dao);
    }
 }

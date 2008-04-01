@@ -75,9 +75,14 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
     * test name like so: testMethodClassInt (for method(Class, int);
     */
 
+   @SuppressWarnings("unchecked")
    public void testPreloadedItemGroupsData() {
       // check the full count of preloaded items
       assertEquals(17, evaluationDao.countAll(EvalItemGroup.class) );
+
+      assertEquals(10, evaluationDao.countAll(EvalTemplate.class) );
+      List<EvalTemplate> templates1 = evaluationDao.findAll(EvalTemplate.class);
+      assertEquals(10, templates1.size());
    }
 
    public void testPreloadedItemData() {
@@ -2674,6 +2679,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       }
    }
 
+
    /**
     * Test method for {@link org.sakaiproject.evaluation.logic.EvalAuthoringServiceImpl#copyTemplateItems(java.lang.Long[], java.lang.String, boolean, Long, boolean)}.
     */
@@ -2991,11 +2997,61 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       }
    }
 
+
    /**
     * Test method for {@link org.sakaiproject.evaluation.logic.EvalAuthoringServiceImpl#getAutoUseTemplateItems(java.lang.String)}.
     */
    public void testGetAutoUseTemplateItems() {
-      //fail("Not yet implemented");
+      List<EvalTemplateItem> items = null;
+      List<Long> ids = null;
+
+      // positive tests
+      items = authoringService.getAutoUseTemplateItems(EvalTestDataLoad.AUTO_USE_TAG, null, null);
+      assertNotNull(items);
+      assertEquals(3, items.size());
+      ids = EvalTestDataLoad.makeIdList(items);
+      assertEquals(etdl.templateItem1U.getId(), ids.get(0));
+      assertEquals(etdl.templateItem3U.getId(), ids.get(1));
+      assertEquals(etdl.templateItem5U.getId(), ids.get(2));
+
+      items = authoringService.getAutoUseTemplateItems(null, EvalTestDataLoad.AUTO_USE_TAG, null);
+      assertNotNull(items);
+      assertEquals(2, items.size());
+      ids = EvalTestDataLoad.makeIdList(items);
+      assertEquals(etdl.templateItem2A.getId(), ids.get(0));
+      assertEquals(etdl.templateItem6UU.getId(), ids.get(1));
+
+      items = authoringService.getAutoUseTemplateItems(null, null, EvalTestDataLoad.AUTO_USE_TAG);
+      assertNotNull(items);
+      assertEquals(1, items.size());
+      assertEquals(etdl.item4.getId(), items.get(0).getItem().getId());
+
+      items = authoringService.getAutoUseTemplateItems(EvalTestDataLoad.AUTO_USE_TAG, EvalTestDataLoad.AUTO_USE_TAG, EvalTestDataLoad.AUTO_USE_TAG);
+      assertNotNull(items);
+      ids = EvalTestDataLoad.makeIdList(items);
+      assertEquals(6, items.size());
+      assertEquals(etdl.templateItem1U.getId(), ids.get(0));
+      assertEquals(etdl.templateItem3U.getId(), ids.get(1));
+      assertEquals(etdl.templateItem5U.getId(), ids.get(2));
+      assertEquals(etdl.templateItem2A.getId(), ids.get(3));
+      assertEquals(etdl.templateItem6UU.getId(), ids.get(4));
+      assertNull(items.get(5).getId());
+
+
+      // negative tests
+      items = authoringService.getAutoUseTemplateItems(null, null, null);
+      assertNotNull(items);
+      assertEquals(0, items.size());
+
+      items = authoringService.getAutoUseTemplateItems("UNKNOWN", null, null);
+      assertNotNull(items);
+      assertEquals(0, items.size());
+
+      items = authoringService.getAutoUseTemplateItems("UNKNOWN", "UNKNOWN", "UNKNOWN");
+      assertNotNull(items);
+      assertEquals(0, items.size());
+
+      // no exceptions thrown
    }
 
 }

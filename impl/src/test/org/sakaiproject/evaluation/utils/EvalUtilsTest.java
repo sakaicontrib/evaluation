@@ -44,7 +44,7 @@ public class EvalUtilsTest extends TestCase {
     */
    public void testGetEvaluationState() {
       String state = null;
-      EvalTestDataLoad etdl = new EvalTestDataLoad();
+      EvalTestDataLoad etdl = new EvalTestDataLoad(null);
 
       // positive
       etdl.evaluationNew.setId( new Long(1) );
@@ -392,7 +392,7 @@ public class EvalUtilsTest extends TestCase {
       EvalGroup[] groups = null;
       List<EvalGroup> evalGroups = null;
       List<EvalAssignGroup> assignGroups = null;
-      EvalTestDataLoad etdl = new EvalTestDataLoad();
+      EvalTestDataLoad etdl = new EvalTestDataLoad(null);
 
       // test all empty stuff
       evalGroups = new ArrayList<EvalGroup>();

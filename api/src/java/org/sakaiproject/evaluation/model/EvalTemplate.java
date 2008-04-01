@@ -94,6 +94,11 @@ public class EvalTemplate implements java.io.Serializable {
       this.hidden = hidden;
    }
 
+   @Override
+   public String toString() {
+      return this.getId() + ":" + this.getTitle() + ":" + this.getType() + ":copyOf=" + this.copyOf;
+   }
+
    public String getDescription() {
       return description;
    }

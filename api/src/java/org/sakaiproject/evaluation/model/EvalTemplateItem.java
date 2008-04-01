@@ -125,6 +125,12 @@ public class EvalTemplateItem implements java.io.Serializable {
       this.resultsSharing = resultsSharing;
    }
 
+   @Override
+   public String toString() {
+      return this.id + ":cat=" + this.category + ":order=" + this.displayOrder + ":copyOf=" + this.copyOf;
+   }
+
+
    // Property accessors
    public Long getId() {
       return this.id;
