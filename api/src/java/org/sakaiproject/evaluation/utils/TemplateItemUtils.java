@@ -17,10 +17,12 @@ package org.sakaiproject.evaluation.utils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.EvalItem;
+import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 
 /**
@@ -453,6 +455,27 @@ public class TemplateItemUtils {
          }
       }
       return templateItem;
+   }
+
+   /**
+    * Make a non-persistent copy of a persistent templateItem,
+    * this is mostly a convenience method to reduce code duplication
+    * 
+    * @param original the original item to copy
+    * @param toTemplate the template to copy this templateItem to
+    * @param ownerId set as the owner of this copy
+    * @param hidden if true then the resulting copy will be marked as hidden 
+    * @return the copy of the templateItem (not persisted)
+    */
+   public static EvalTemplateItem makeCopyOfTemplateItem(EvalTemplateItem original, EvalTemplate toTemplate,
+         String ownerId, boolean hidden) {
+      EvalTemplateItem copy = new EvalTemplateItem(new Date(), ownerId, toTemplate, original.getItem(), original.getDisplayOrder(),
+            original.getCategory(), original.getHierarchyLevel(), original.getHierarchyNodeId(), original.getDisplayRows(),
+            original.getScaleDisplaySetting(), original.getUsesNA(), original.getUsesComment(), null, null, original.getResultsSharing());
+      // set the other copy fields correctly
+      copy.setCopyOf(original.getId());
+      copy.setHidden(hidden);
+      return copy;
    }
 
    /**

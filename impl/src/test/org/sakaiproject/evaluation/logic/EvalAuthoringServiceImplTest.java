@@ -3054,4 +3054,67 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       // no exceptions thrown
    }
 
+   public void testDoAutoUseInsertion() {
+      List<EvalTemplateItem> items = null;
+      List<EvalTemplateItem> currentItems = null;
+      Long templateId = null;
+      int displayOrder = 0;
+
+      // check out the template first
+      templateId = etdl.templateUser.getId();
+      currentItems = authoringService.getTemplateItemsForTemplate(templateId, new String[] {}, new String[] {}, new String[] {});
+      assertEquals(2, currentItems.size());
+
+      // test insertion without save
+      items = authoringService.doAutoUseInsertion(EvalTestDataLoad.AUTO_USE_TAG, templateId, EvalConstants.EVALUATION_AUTOUSE_INSERTION_AFTER, false);
+      assertNotNull(items);
+      assertEquals(8, items.size()); // + 6 autoUse items
+      // check the order
+      displayOrder = 1;
+      for (EvalTemplateItem item : items) {
+         if (displayOrder >= 3) {
+            assertEquals(EvalTestDataLoad.AUTO_USE_TAG, item.getAutoUseInsertionTag());
+         } else {
+            assertNull(item.getAutoUseInsertionTag());
+         }
+         assertEquals(new Integer(displayOrder++), item.getDisplayOrder());
+      }
+
+      currentItems = authoringService.getTemplateItemsForTemplate(templateId, new String[] {}, new String[] {}, new String[] {});
+      assertEquals(2, currentItems.size());
+
+      // test insertion without save in different order
+      items = authoringService.doAutoUseInsertion(EvalTestDataLoad.AUTO_USE_TAG, templateId, EvalConstants.EVALUATION_AUTOUSE_INSERTION_BEFORE, false);
+      assertNotNull(items);
+      assertEquals(8, items.size()); // + 6 autoUse items
+      // check the order
+      displayOrder = 1;
+      for (EvalTemplateItem item : items) {
+         // check for autoUse tag
+         if (displayOrder <= 6) {
+            assertEquals(EvalTestDataLoad.AUTO_USE_TAG, item.getAutoUseInsertionTag());
+         } else {
+            assertNull(item.getAutoUseInsertionTag());
+         }
+         assertEquals(new Integer(displayOrder++), item.getDisplayOrder());
+      }
+
+      // test insertion with save
+      items = authoringService.doAutoUseInsertion(EvalTestDataLoad.AUTO_USE_TAG, templateId, EvalConstants.EVALUATION_AUTOUSE_INSERTION_AFTER, true);
+      assertNotNull(items);
+      assertEquals(8, items.size()); // + 6 autoUse items
+      displayOrder = 1;
+      for (EvalTemplateItem item : items) {
+         assertEquals(new Integer(displayOrder++), item.getDisplayOrder());
+      }
+
+      currentItems = authoringService.getTemplateItemsForTemplate(templateId, new String[] {}, new String[] {}, new String[] {});
+      assertEquals(8, currentItems.size());
+
+      // test nothing to insert
+      items = authoringService.doAutoUseInsertion("FAKE", templateId, EvalConstants.EVALUATION_AUTOUSE_INSERTION_AFTER, false);
+      assertNull(items);
+
+   }
+
 }
