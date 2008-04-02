@@ -48,8 +48,6 @@ import org.sakaiproject.genericdao.api.GenericDao;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import com.sun.tools.example.debug.bdi.NoThreadException;
-
 
 /**
  * This class holds a bunch of items used to prepopulate the database and then
