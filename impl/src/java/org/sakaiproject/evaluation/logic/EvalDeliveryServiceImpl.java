@@ -16,8 +16,10 @@ package org.sakaiproject.evaluation.logic;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -34,7 +36,9 @@ import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
+import org.sakaiproject.evaluation.utils.TemplateItemDataList;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
+import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
 import org.sakaiproject.genericdao.api.finders.ByPropsFinder;
 
 /**
@@ -443,32 +447,39 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
 
       // get a list of the valid templateItems for this evaluation
       EvalEvaluation eval = response.getEvaluation();
-      Long evalId = eval.getId();
+      Long evaluationId = eval.getId();
+      String evalGroupId = response.getEvalGroupId();
 
-      String[] evalGroupIDs = new String[] {};
-      String[] hierarchyNodeIDs = new String[] {};
-      // add in the group and the hierarchy nodes if the group is set
-      if (response.getEvalGroupId() != null) {
-         evalGroupIDs = new String[] { response.getEvalGroupId() };
+      // get the instructors for this evaluation
+      Set<String> instructors = externalLogic.getUserIdsForEvalGroup(evalGroupId, EvalConstants.PERM_BE_EVALUATED);
 
-         // Get the Hierarchy NodeIDs for the current Group and turn it into an array of ids
-         List<EvalHierarchyNode> hierarchyNodes = hierarchyLogic.getNodesAboveEvalGroup(response.getEvalGroupId());
-         hierarchyNodeIDs = new String[hierarchyNodes.size()];
-         for (int i = 0; i < hierarchyNodes.size(); i++) {
-            hierarchyNodeIDs[i] = hierarchyNodes.get(i).id;
-         }
+      // Get the Hierarchy Nodes for the current Group and turn it into an array of node ids
+      List<EvalHierarchyNode> hierarchyNodes = hierarchyLogic.getNodesAboveEvalGroup(evalGroupId);
+      String[] hierarchyNodeIDs = new String[hierarchyNodes.size()];
+      for (int i = 0; i < hierarchyNodes.size(); i++) {
+         hierarchyNodeIDs[i] = hierarchyNodes.get(i).id;
       }
 
-      // retrieve all appropriate items for this evaluation response
-      List<EvalTemplateItem> allTemplateItems = 
-         authoringService.getTemplateItemsForEvaluation(evalId, hierarchyNodeIDs, new String[] {}, evalGroupIDs);
+      // get all items for this evaluation
+      List<EvalTemplateItem> allItems = authoringService.getTemplateItemsForEvaluation(evaluationId, hierarchyNodeIDs, 
+            instructors.toArray(new String[instructors.size()]), new String[] {evalGroupId});
 
-      List<EvalTemplateItem> templateItems = TemplateItemUtils.getAnswerableTemplateItems(allTemplateItems);
+      // make the TI data structure and get the flat list of DTIs
+      Map<String, List<String>> associates = new HashMap<String, List<String>>();
+      associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, new ArrayList<String>(instructors));
+      TemplateItemDataList tidl = new TemplateItemDataList(allItems, hierarchyNodes, associates, null);
 
-      // put all templateItemIds into a set for easy comparison
-      Set<Long> templateItemIds = new HashSet<Long>();
-      for (int i = 0; i < templateItems.size(); i++) {
-         templateItemIds.add( templateItems.get(i).getId() );
+      List<DataTemplateItem> allDTIs = tidl.getFlatListOfDataTemplateItems(true);
+
+      Set<Long> answerableTemplateItemIds = new HashSet<Long>();
+      Set<String> requiredAnswerKeys = new HashSet<String>();
+      for (DataTemplateItem dti : allDTIs) {
+         if (dti.isAnswerable()) {
+            answerableTemplateItemIds.add(dti.templateItem.getId());
+         }
+         if (dti.isRequired()) {
+            requiredAnswerKeys.add(dti.getKey());
+         }
       }
 
       // check the answers
@@ -527,7 +538,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
             }
 
             // make sure answer is associated with a valid templateItem for this evaluation
-            if (! templateItemIds.contains(answer.getTemplateItem().getId())) {
+            if (! answerableTemplateItemIds.contains(answer.getTemplateItem().getId())) {
                throw new IllegalArgumentException("This answer templateItem (" + answer.getTemplateItem().getId()
                      + ") is not part of this evaluation (" + response.getEvaluation().getTitle() + ")");
             }
@@ -551,35 +562,6 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
 
       if (! unansweredAllowed) {
          // all items must be completed so die if they are not
-         Set<String> requiredAnswerKeys = new HashSet<String>();
-
-         // get the instructors for this evaluation/group
-         Set<String> instructors = externalLogic.getUserIdsForEvalGroup(response.getEvalGroupId(), EvalConstants.PERM_BE_EVALUATED);
-         // filter out the block child items, to get a list non-child items
-         List<EvalTemplateItem> requiredTemplateItems = TemplateItemUtils.getRequiredTemplateItems(templateItems);
-
-         // check the course items answers
-         if (TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_COURSE, requiredTemplateItems)) {
-            List<EvalTemplateItem> requiredCourseTIs = 
-               TemplateItemUtils.getCategoryTemplateItems(EvalConstants.ITEM_CATEGORY_COURSE, requiredTemplateItems);
-            for (EvalTemplateItem templateItem : requiredCourseTIs) {
-               requiredAnswerKeys.add( TemplateItemUtils.makeTemplateItemAnswerKey(templateItem.getId(), null, null) );
-            }
-         }
-
-         // check the instructors items answers
-         if (instructors.size() > 0 &&
-               TemplateItemUtils.checkTemplateItemsCategoryExists(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, requiredTemplateItems)) {  
-            // for each instructor, make a branch containing all instructor questions
-            for (String instructorUserId : instructors) {
-               List<EvalTemplateItem> requiredInstructorTIs = 
-                  TemplateItemUtils.getCategoryTemplateItems(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, requiredTemplateItems);
-               for (EvalTemplateItem templateItem : requiredInstructorTIs) {
-                  requiredAnswerKeys.add( TemplateItemUtils.makeTemplateItemAnswerKey(templateItem.getId(), 
-                        EvalConstants.ITEM_CATEGORY_INSTRUCTOR, instructorUserId) );
-               }
-            }
-         }
 
          // remove all the answered keys from the required keys and if everything was answered then there will be nothing left in the required keys set
          requiredAnswerKeys.removeAll(answeredAnswerKeys);

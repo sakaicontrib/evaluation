@@ -63,9 +63,9 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
       return VIEW_ID;
    }
 
-   private EvalExternalLogic external;
-   public void setExternal(EvalExternalLogic external) {
-      this.external = external;
+   private EvalExternalLogic externalLogic;
+   public void setExternalLogic(EvalExternalLogic external) {
+      this.externalLogic = external;
    }
 
    private EvalEvaluationService evaluationService;
@@ -105,7 +105,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
     */
    public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
 
-      String currentUserId = external.getCurrentUserId();
+      String currentUserId = externalLogic.getCurrentUserId();
 
       EvalViewParameters previewEvalViewParams = (EvalViewParameters)viewparams;
       if (previewEvalViewParams.evaluationId == null && 
@@ -148,7 +148,7 @@ public class PreviewEvalProducer implements ViewComponentProducer, ViewParamsRep
       if (evalGroupId == null) {
          UIMessage.make(groupTitle, "group-title", "previeweval.course.title.default");
       } else {
-         UIOutput.make(groupTitle, "group-title", external.getDisplayTitle(evalGroupId) );
+         UIOutput.make(groupTitle, "group-title", externalLogic.getDisplayTitle(evalGroupId) );
       }
 
       // show instructions if not null

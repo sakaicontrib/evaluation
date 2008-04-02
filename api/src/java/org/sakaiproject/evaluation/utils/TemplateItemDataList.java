@@ -509,6 +509,15 @@ public class TemplateItemDataList {
       }
 
       /**
+       * @return true if this item is required (i.e. must be answered),
+       * false otherwise
+       * @see TemplateItemUtils#isRequired(EvalTemplateItem)
+       */
+      public boolean isRequired() {
+         return TemplateItemUtils.isRequired(this.templateItem);
+      }
+
+      /**
        * @return true if this item is set to use comments
        */
       public boolean usesComments() {

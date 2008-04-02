@@ -341,9 +341,6 @@ public class SetupEvalBean {
          return "fail";
       }
 
-      // expand the hierarchy to include all nodes below this one
-      Set<String> allNodeIds = hierarchyLogic.getAllChildrenNodes(nodes, true);
-
       EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
       if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(eval.getState())) {
          // save eval and assign groups
@@ -355,8 +352,7 @@ public class SetupEvalBean {
 
          // save all the assignments (hierarchy and group)
          List<EvalAssignHierarchy> assignedHierList = 
-            evaluationSetupService.setEvalAssignments(evaluationId, 
-                  allNodeIds.toArray(new String[allNodeIds.size()]), selectedGroupIDs, false);
+            evaluationSetupService.setEvalAssignments(evaluationId, selectedHierarchyNodeIDs, selectedGroupIDs, false);
 
          // failsafe check (to make sure we are not creating an eval with no assigned groups)
          if (assignedHierList.isEmpty()) {
@@ -376,8 +372,7 @@ public class SetupEvalBean {
          }
 
          // save all the assignments (hierarchy and group)
-         evaluationSetupService.setEvalAssignments(evaluationId, 
-               allNodeIds.toArray(new String[allNodeIds.size()]), selectedGroupIDs, false);
+         evaluationSetupService.setEvalAssignments(evaluationId, selectedHierarchyNodeIDs, selectedGroupIDs, false);
       }
       return "controlEvals";
    }
