@@ -195,6 +195,11 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       // set the date modified
       evaluation.setLastModified( new Date() );
 
+      if (created && EvalUtils.checkStateAfter(evaluation.getState(), EvalConstants.EVALUATION_STATE_PARTIAL, true)) {
+         // created can only be true when this eval is in partial state
+         created = false;
+      }
+
       // check for required fields first
       if (EvalUtils.isBlank(evaluation.getTitle())) {
          throw new BlankRequiredFieldException("Cannot save an evaluation with a blank title", "title");
@@ -317,6 +322,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             Long copiedTemplateId = authoringService.copyTemplate(template.getId(), null, evaluation.getOwner(), true, true);
             EvalTemplate copy = authoringService.getTemplateById(copiedTemplateId);
             evaluation.setTemplate(copy);
+            template = copy; // set the new template to the template variable
             // alternative is to throw an exception to force the user to do this, but we may as well handle it
 //            throw new IllegalStateException("This evaluation ("+evaluation.getId()+") is being saved "
 //            		+ "in a state ("+evalState+") that is after the partial state with "
@@ -416,6 +422,16 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             externalLogic.registerEntityEvent(EVENT_EVAL_UPDATE, evaluation);
             // call logic to manage Quartz scheduled jobs
             evalJobLogic.processEvaluationStateChange(evaluation.getId(), EvalJobLogic.ACTION_UPDATE);
+         }
+      }
+
+      // support for autoUse insertion of items on eval creation
+      if (created) {
+         if (! EvalUtils.isBlank(evaluation.getAutoUseInsertion())
+               && ! EvalUtils.isBlank(evaluation.getAutoUseTag()) ) {
+            // the tag and the AutoUseInsertion values are set so we should try to find any autoUse items and add them in
+            Long templateId = evaluation.getTemplate().getId();
+            authoringService.doAutoUseInsertion(evaluation.getAutoUseTag(), templateId, evaluation.getAutoUseInsertion(), true);
          }
       }
 

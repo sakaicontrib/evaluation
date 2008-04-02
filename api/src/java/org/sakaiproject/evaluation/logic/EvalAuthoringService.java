@@ -618,8 +618,7 @@ public interface EvalAuthoringService {
     */
    public List<EvalTemplate> getTemplatesUsingItem(Long itemId);
 
-   // AUTO USE lookup
-
+   // AUTO USE tags
 
    /**
     * Find all templates, templaeItems, and items with the given autoUseTag on them,
@@ -642,5 +641,23 @@ public interface EvalAuthoringService {
     * @return a list of template items
     */
    public List<EvalTemplateItem> getAutoUseTemplateItems(String templateAutoUseTag, String templateItemAutoUseTag, String itemAutoUseTag);
+
+   /**
+    * Insert all the autoUse items that have the given tag into the template identified by the given id,
+    * this will automatically fixup the ordering and handle all the saves (if saveAll is set to true)<br/>
+    * <b>NOTE:</b> saveAll allows you to simply retrieve the template with the autoUse items inserted (for preview purposes),
+    * these templateItems are not appropriate for copying and only appropriate for previewing purposes
+    * 
+    * @param autoUseTag the autoUse tag which will be used to find items to insert into this template
+    * @param templateId the unique id of an {@link EvalTemplate}
+    * @param insertionPointConstant the constant to indicate where to insert the items in the template, 
+    * example: {@link EvalConstants#EVALUATION_AUTOUSE_INSERTION_AFTER}
+    * @param saveAll if this is true then the items will be inserted and the template will be updated and saved,
+    * if this is false then no changes will be made to persistent objects and instead you receive back a list of
+    * copies which have not been saved (and should not be saved)
+    * @return a list of all templateItems in correct order after the insertion IF one was made, 
+    * otherwise this will return null if no insertions were made
+    */
+   public List<EvalTemplateItem> doAutoUseInsertion(String autoUseTag, Long templateId, String insertionPointConstant, boolean saveAll);
 
 }
