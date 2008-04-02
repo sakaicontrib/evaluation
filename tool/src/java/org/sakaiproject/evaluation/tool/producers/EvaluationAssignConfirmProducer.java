@@ -203,7 +203,7 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, V
             UIOutput.make(groupRow, "enrollment", s.size() + "");
          }
       } else {
-         UIMessage.make(tofill, "noGroupsSelected", "evaluationassignconfirm.no.group.selected");
+         UIMessage.make(tofill, "noGroupsSelected", "evaluationassignconfirm.no.groups.selected");
       }
 
       // show the selected hierarchy nodes

@@ -37,6 +37,7 @@ import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
+import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
@@ -440,49 +441,22 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
       if ( securityChecks.canUserRemoveEval(userId, evaluation) ) {
 
-         Set[] entitySets = new HashSet[3];
          // remove associated AssignGroups
          List<EvalAssignGroup> acs = dao.findByProperties(EvalAssignGroup.class, 
                new String[] {"evaluation.id"}, 
                new Object[] {evaluationId});
          Set<EvalAssignGroup> assignGroupSet = new HashSet<EvalAssignGroup>(acs);
-         entitySets[0] = assignGroupSet;
+         dao.deleteSet(assignGroupSet);
 
          // remove associated assigned hierarchy nodes
          List<EvalAssignHierarchy> ahs = dao.findByProperties(EvalAssignHierarchy.class, 
                new String[] {"evaluation.id"}, 
                new Object[] {evaluationId});
          Set<EvalAssignHierarchy> assignHierSet = new HashSet<EvalAssignHierarchy>(ahs);
-         entitySets[1] = assignHierSet;
+         dao.deleteSet(assignHierSet);
 
-         // remove associated unused email templates
-         Set<EvalEmailTemplate> emailSet = new HashSet<EvalEmailTemplate>();
-         entitySets[2] = emailSet;
-         if (evaluation.getAvailableEmailTemplate() != null) {
-            if (evaluation.getAvailableEmailTemplate().getDefaultType() == null) {
-               // only remove non-default templates
-               Long emailTemplateId = evaluation.getAvailableEmailTemplate().getId();
-               int evalsUsingTemplate = dao.countByProperties(EvalEvaluation.class, 
-                     new String[] {"availableEmailTemplate.id"}, 
-                     new Object[] {emailTemplateId}) ;
-               if ( evalsUsingTemplate <= 1 ) {
-                  // template was only used in this evaluation
-                  emailSet.add( evaluation.getAvailableEmailTemplate() );
-               }
-            }
-         }
-         if (evaluation.getReminderEmailTemplate() != null) {
-            if (evaluation.getReminderEmailTemplate().getDefaultType() == null) {
-               Long emailTemplateId = evaluation.getReminderEmailTemplate().getId();
-               int evalsUsingTemplate = dao.countByProperties(EvalEvaluation.class, 
-                     new String[] {"reminderEmailTemplate.id"}, 
-                     new Object[] {emailTemplateId}) ;
-               if ( evalsUsingTemplate <= 1 ) {
-                  // template was only used in this evaluation
-                  emailSet.add( evaluation.getReminderEmailTemplate() );
-               }
-            }
-         }
+         EvalEmailTemplate available = evaluation.getAvailableEmailTemplate();
+         EvalEmailTemplate reminder = evaluation.getReminderEmailTemplate();
 
          // unlock the evaluation (this will clear the other locks)
          dao.lockEvaluation(evaluation, false);
@@ -493,29 +467,56 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          if (responseIds.size() > 0) {
             // cannot remove this evaluation, there are responses, we will just set the state to deleted
             evaluation.setState(EvalConstants.EVALUATION_STATE_DELETED);
+            // clear email templates
+            evaluation.setAvailableEmailTemplate(null);
+            evaluation.setReminderEmailTemplate(null);
+            // save the new state
             dao.save(evaluation);
+
             // old method was to actually remove data
             // dao.removeResponses( responseIds.toArray(new Long[responseIds.size()]) );
          } else {
             // remove the evaluation and copied template since there are no responses
             removeTemplate = true;
-
-            // add eval to a set to be removed
-            Set evalSet = new HashSet();
-            evalSet.add(evaluation);
-            entitySets = ArrayUtils.appendArray(entitySets, evalSet);
+            dao.delete(evaluation);
          }
 
          // fire the evaluation deleted event
          externalLogic.registerEntityEvent(EVENT_EVAL_DELETE, evaluation);
 
-         // remove the evaluation and related data (except template) in one transaction
-         dao.deleteMixedSet(entitySets);
-
          // remove any remaining scheduled jobs
          evalJobLogic.processEvaluationStateChange(evaluationId, EvalJobLogic.ACTION_DELETE);
 
          // this has to be after the removal of the evaluation
+
+         // remove associated unused email templates
+         Set<EvalEmailTemplate> emailSet = new HashSet<EvalEmailTemplate>();
+         if (available != null) {
+            if (available.getDefaultType() == null) {
+               // only remove non-default templates
+               int evalsUsingTemplate = dao.countByProperties(EvalEvaluation.class, 
+                     new String[] {"availableEmailTemplate.id"}, 
+                     new Object[] {available.getId()}) ;
+               if ( evalsUsingTemplate <= 1 ) {
+                  // template was only used in this evaluation
+                  emailSet.add( available );
+               }
+            }
+         }
+         if (reminder != null) {
+            if (reminder.getDefaultType() == null) {
+               int evalsUsingTemplate = dao.countByProperties(EvalEvaluation.class, 
+                     new String[] {"reminderEmailTemplate.id"}, 
+                     new Object[] {reminder.getId()}) ;
+               if ( evalsUsingTemplate <= 1 ) {
+                  // template was only used in this evaluation
+                  emailSet.add( reminder );
+               }
+            }
+         }
+         dao.deleteSet(emailSet);
+
+         // remove template if needed
          if (removeTemplate) {
             // remove the associated template if it is a copy (it should be)
             EvalTemplate template = null;
@@ -872,7 +873,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
          // then remove the duplicates so we end up with the filtered list to only new ones
          nodeIdsSet.removeAll(currentNodeIds);
-         nodeIds = nodeIdsSet.toArray(nodeIds);
+         nodeIds = nodeIdsSet.toArray(new String[] {});
 
          // now we need to create all the persistent hierarchy assignment objects
          Set<EvalAssignHierarchy> nodeAssignments = new HashSet<EvalAssignHierarchy>();
@@ -921,10 +922,11 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          }
 
          // next we need to expand all the assigned hierarchy nodes into a massive set of eval assign groups
-         Set<String> allNodeIds = new HashSet<String>();
-         allNodeIds.addAll(nodeIdsSet);
+         Set<EvalHierarchyNode> nodes = hierarchyLogic.getNodesByIds(nodeIdsSet.toArray(new String[] {}));
+         // expand the actual new set of nodes into a complete list of nodes including children
+         Set<String> allNodeIds = hierarchyLogic.getAllChildrenNodes(nodes, true);
          allNodeIds.addAll(currentNodeIds);
-         Map<String, Set<String>> allEvalGroupIds = hierarchyLogic.getEvalGroupsForNodes( allNodeIds.toArray(nodeIds) );
+         Map<String, Set<String>> allEvalGroupIds = hierarchyLogic.getEvalGroupsForNodes( allNodeIds.toArray(new String[] {}) );
 
          // now eliminate the evalgroupids from the evalGroupIds array which happen to be contained in the nodes,
          // this leaves us with only the group ids which are not contained in the nodes which are already assigned
@@ -934,14 +936,14 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
          // then remove the eval groups ids which are already assigned to this eval so we only have new ones
          evalGroupIdsSet.removeAll(currentEvalGroupIds);
-         evalGroupIds = evalGroupIdsSet.toArray(evalGroupIds);
+         evalGroupIds = evalGroupIdsSet.toArray(new String[] {});
 
          // now we need to create all the persistent group assignment objects for the new groups
          Set<EvalAssignGroup> groupAssignments = new HashSet<EvalAssignGroup>();
          groupAssignments.addAll( makeAssignGroups(eval, userId, evalGroupIdsSet, null) );
 
-         // finally we add in the groups for all the new expanded assign groups
-         for (String nodeId : nodeIdsSet) {
+         // finally we add in the groups for all the new expanded assign groups for the expanded nodes set
+         for (String nodeId : allNodeIds) {
             if (allEvalGroupIds.containsKey(nodeId)) {
                groupAssignments.addAll( makeAssignGroups(eval, userId, allEvalGroupIds.get(nodeId), nodeId) );               
             }
