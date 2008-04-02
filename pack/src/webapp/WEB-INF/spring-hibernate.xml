@@ -25,8 +25,11 @@
             <value>org.sakaiproject.evaluation.model.EvalLock</value>
             <value>org.sakaiproject.evaluation.model.EvalResponse</value>
             <value>org.sakaiproject.evaluation.model.EvalScale</value>
+            <value>org.sakaiproject.evaluation.model.EvalTags</value>
+            <value>org.sakaiproject.evaluation.model.EvalTagsMeta</value>
             <value>org.sakaiproject.evaluation.model.EvalTemplate</value>
             <value>org.sakaiproject.evaluation.model.EvalTemplateItem</value>
+            <value>org.sakaiproject.evaluation.model.EvalTranslation</value>
          </list>
       </property>
    </bean>

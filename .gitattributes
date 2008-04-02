@@ -73,8 +73,11 @@ api/src/java/org/sakaiproject/evaluation/model/EvalItemGroup.java -text svn_keyw
 api/src/java/org/sakaiproject/evaluation/model/EvalLock.java svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalResponse.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalScale.java -text svn_keywords=Date+Revision+Author+URL+Id
+api/src/java/org/sakaiproject/evaluation/model/EvalTags.java svn_keywords=Date+Revision+Author+HeadURL+Id
+api/src/java/org/sakaiproject/evaluation/model/EvalTagsMeta.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalTemplate.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/model/EvalTemplateItem.java -text svn_keywords=Date+Revision+Author+URL+Id
+api/src/java/org/sakaiproject/evaluation/model/EvalTranslation.java svn_keywords=Date+Revision+Author+HeadURL+Id
 api/src/java/org/sakaiproject/evaluation/model/readme.txt -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/providers/EvalGroupsProvider.java -text svn_keywords=Date+Revision+Author+URL+Id
 api/src/java/org/sakaiproject/evaluation/providers/EvalHierarchyProvider.java -text svn_keywords=Date+Revision+Author+URL+Id
@@ -156,6 +159,7 @@ pack/src/webapp/WEB-INF/spring-hibernate.xml -text svn_keywords=Date+Revision+Au
 /project.properties -text svn_keywords=Date+Revision+Author+URL+Id
 /project.xml -text svn_keywords=Date+Revision+Author+URL+Id
 /removeEvalTablesMySQL.sql -text
+/removeEvalTablesOracle.sql svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/maven.xml -text svn_keywords=Date+Revision+Author+URL+Id
 tool/pom.xml svn_keywords=Date+Revision+Author+URL+Id
 tool/project.properties -text svn_keywords=Date+Revision+Author+URL+Id
