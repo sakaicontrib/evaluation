@@ -70,19 +70,20 @@ var EvalSystem = function() {
   
     /*
      *  This code is largely in exploration mode and obviously very broken
-     *  still. But shouldn't show up at all unless you've enabled adhoc groups
-     *  in the admin settings.
+     *  still, random things commented out here and there. But shouldn't show up 
+     *  at all unless you've enabled adhoc groups in the admin settings.
      *
      *  Evaluation will still compile, but this is not going to work until we
      *  move up to 0.7.3M2, but this functionality is disabled by default.
      */
   	initAssignAdhocGroupArea: function (saveButtonId,addMoreUsersButtonId,
-        groupNameInputId,emailInputId,emailListDivId,uvburl) {
+        groupNameInputId,emailInputId,emailListDivId,uvburl,cloneMemberBranchId) {
         var groupNameInput = $(escIdForJquery(groupNameInputId));
         var emailListInput = $(escIdForJquery(emailInputId));
         var emailListDiv = $(escIdForJquery(emailListDivId));
         var saveButton = $(escIdForJquery(saveButtonId));
         var addMoreUsersButton = $(escIdForJquery(addMoreUsersButtonId));
+        var cloneMemberBranch = $(escIdForJquery(cloneMemberBranchId));
         
         var adhocGroupId = null;
    
@@ -126,12 +127,18 @@ var EvalSystem = function() {
                 var UVB = RSF.accumulateUVBResponse(response.responseXML);
                 
                 var adhocGroupId = UVB.EL["adhocGroupsBean.adhocGroupId"];
-                var divurl = UVB.EL["adhocGroupsBean.participantDivUrl"];
-                //alert(UVB.EL["adhocGroupsBean.acceptedInternalUsers"]);
-                //alert(UVB.EL["adhocGroupsBean.acceptedAdhocUsers"]);
-                //alert(UVB.EL["adhocGroupsBean.rejectedUsers"]);
+                //var divurl = UVB.EL["adhocGroupsBean.participantDivUrl"];
+                for (var i in UVB.EL["adhocGroupsBean.acceptedInternalUsers"]) {
+                    var nextMember = cloneMemberBranch.clone();
+                    //nextMember.filter("
+                }
+                alert(UVB.EL["adhocGroupsBean.acceptedInternalUsers"]);
+                alert(UVB.EL["adhocGroupsBean.acceptedAdhocUsers"]);
+                alert(UVB.EL["adhocGroupsBean.rejectedUsers"]);
                 
-                divurl = divurl.replace(/\\/g,'');
+                var newMember = cloneMemberBranch.clone().show().insertAfter(cloneMemberBranch);
+                
+                //divurl = divurl.replace(/\\/g,'');
                 //alert("The DivURL: =" + divurl + "=");
                 saveButton.hide();
                 addMoreUsersButton.show();
@@ -166,6 +173,7 @@ var EvalSystem = function() {
         form.submit(function() {
             if (!passes) {
                 errorDiv.show();
+                RSF.getDOMModifyFirer().fireEvent();
             }
             return passes;
         });
@@ -219,6 +227,7 @@ var EvalSystem = function() {
             hideButton.show();
             area.show("normal");
             toggles.show("normal");
+            RSF.getDOMModifyFirer().fireEvent();
         }
 
         var hideAction = function(event) {
@@ -226,6 +235,7 @@ var EvalSystem = function() {
             hideButton.hide();
             area.hide("normal");
             toggles.hide("normal");
+            RSF.getDOMModifyFirer().fireEvent();
         }
 
         if (initialHide) {
