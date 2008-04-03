@@ -229,6 +229,7 @@ public class EvalEvaluation implements java.io.Serializable {
       this.resultsSharing = resultsSharing;
       this.reminderDays = reminderDays;
       this.template = template;
+      fixUpStuInst();
    }
 
    /** 
@@ -248,6 +249,7 @@ public class EvalEvaluation implements java.io.Serializable {
       this.resultsSharing = resultsSharing;
       this.reminderDays = reminderDays;
       this.template = template;
+      fixUpStuInst();
    }
 
    /** 
@@ -287,6 +289,20 @@ public class EvalEvaluation implements java.io.Serializable {
       this.locked = locked;
       this.authControl = authControl;
       this.evalCategory = evalCategory;
+      fixUpStuInst();
+   }
+
+   public void fixUpStuInst() {
+      if (this.studentsDate == null) {
+         this.studentViewResults = false;
+      } else {
+         this.studentViewResults = true;
+      }
+      if (this.instructorsDate == null) {
+         this.instructorViewResults = false;
+      } else {
+         this.instructorViewResults = true;
+      }
    }
 
    public String getAuthControl() {
@@ -367,6 +383,7 @@ public class EvalEvaluation implements java.io.Serializable {
 
    public void setInstructorsDate(Date instructorsDate) {
       this.instructorsDate = instructorsDate;
+      fixUpStuInst();
    }
 
    public Date getLastModified() {
@@ -463,6 +480,7 @@ public class EvalEvaluation implements java.io.Serializable {
 
    public void setStudentsDate(Date studentsDate) {
       this.studentsDate = studentsDate;
+      fixUpStuInst();
    }
 
    public EvalTemplate getTemplate() {
