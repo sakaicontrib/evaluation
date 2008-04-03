@@ -65,8 +65,8 @@ public class AdhocGroupsBean {
       group.setParticipantIds(participants.toArray(new String[] {}));
       
       evalAdhocSupport.saveAdhocGroup(group);
-      participantDivUrl = vsh.getFullURL(
-              new AdhocGroupParams(AdhocGroupParticipantsDiv.VIEW_ID, group.getId()));
+      //participantDivUrl = vsh.getFullURL(
+      //        new AdhocGroupParams(AdhocGroupParticipantsDiv.VIEW_ID, group.getId()));
       adhocGroupId = group.getId();
       uvbBean.populate();
       log.info("Saved adhoc group");
