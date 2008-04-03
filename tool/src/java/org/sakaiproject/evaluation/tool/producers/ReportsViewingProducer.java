@@ -156,24 +156,32 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
           * possible for us to view more than one group.
           */
          String[] viewableGroups = reportingPermissions.chooseGroupsPartialCheck(evaluationId);
-         if (viewableGroups.length > 1) {
+         if (viewableGroups.length == 0) {
+            UIMessage.make(tofill, "security-warning", "viewreport.not.allowed");
+            return;
+         } else if (viewableGroups.length == 1) {
+            // only one group to view
+            reportViewParams.groupIds = viewableGroups;
+         } else if (viewableGroups.length > 1) {
+            // user can choose other groups so give them a link
             UIInternalLink.make(tofill, "report-groups-title", UIMessage.make("reportgroups.page.title"), 
                   new ReportParameters(ReportChooseGroupsProducer.VIEW_ID, reportViewParams.evaluationId));
+            if (reportViewParams.groupIds == null || reportViewParams.groupIds.length == 0) {
+               reportViewParams.groupIds = viewableGroups;
+            }
          }
-         String[] groupIds = (reportViewParams.groupIds == null ? new String[] {} : reportViewParams.groupIds);
-         reportViewParams.groupIds = groupIds;
 
          EvalEvaluation evaluation = evaluationService.getEvaluationById(evaluationId);
 
          // do a permission check
-         if (! reportingPermissions.canViewEvaluationResponses(evaluation, groupIds)) {
+         if (! reportingPermissions.canViewEvaluationResponses(evaluation, reportViewParams.groupIds)) {
             throw new SecurityException("Invalid user attempting to access reports page: " + currentUserId);
          }
 
          Long templateId = evaluation.getTemplate().getId();
 
          // Fetch most of all the data and metadata with the ultra TIDL object
-         TemplateItemDataList tidl = responseAggregator.prepareTemplateItemDataStructure(evaluation, groupIds);
+         TemplateItemDataList tidl = responseAggregator.prepareTemplateItemDataStructure(evaluation, reportViewParams.groupIds);
 
          List<EvalTemplateItem> allTemplateItems = tidl.getAllTemplateItems();
 
@@ -191,7 +199,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
 
             // The Groups we are viewing
             UIMessage.make(tofill, "selectedGroups", "viewreport.viewinggroups", 
-                  new String[] { responseAggregator.getCommaSeparatedGroupNames(groupIds) });
+                  new String[] { responseAggregator.getCommaSeparatedGroupNames(reportViewParams.groupIds) });
 
 
             // get the list of all instructors for this report and put the user objects for them into a map
