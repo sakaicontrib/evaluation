@@ -32,9 +32,11 @@
 					<li>Message for user here</li>
 				</ul>
 			</div>
+			<div id="" rsf:id="nogroups-error" style="display:none" class="alertMessage">You need to select at least one eval group or heirarchy node.</div>
+			
 			<h3 rsf:id="assign-eval-edit-page-title">Evaluation Assignment Confirmation</h3>
 						
-			<form rsf:id="eval-assign-form" method="post">
+			<form id="eval-assign-form" rsf:id="eval-assign-form" method="get">
 				<span rsf:id="hierarchyNodeSelectHolder"></span>
 				<span rsf:id="evalGroupSelectHolder"></span>
 			
@@ -43,7 +45,6 @@
 				<!-- This entire div will be hidden if hiearchy usage is     -->
 				<!-- disabled in the admin settings                          -->
 					<p>
-						<input rsf:id="use-hierarchynodes-checkbox" id="use-hierarchynodes-checkbox" type="checkbox" />
 						<span>
 							<img src="/sakai-evaluation-tool/content/images/collapsed.png" rsf:id="show-button" id="" />
 							<img src="/sakai-evaluation-tool/content/images/uncollapsed.png" style="display:none" rsf:id="hide-button" id="" />
@@ -81,7 +82,7 @@
 							<tbody>
 								<tr rsf:id="groups:"> 
 									<td class="attach" >
-										<input rsf:id="evalGroupId" type="checkbox" id="evalGroupId" />
+										<input class="evalgroupselect" rsf:id="evalGroupId" type="checkbox" id="evalGroupId" />
 									</td>
 									<td>
 										<label rsf:id="groupTitle" for="evalGroupId">group title</label>
@@ -144,9 +145,9 @@
 				</div>
 
 				<p class="act">	
-					<input rsf:id="confirmAssignCourses" type="submit" name="save_assigned_courses" value="Save Assigned Courses" class="active" accesskey="s" />
-					<input rsf:id="editSettings" type="submit" name="edit_settings" value="Edit Settings" accesskey="r" />
-                    <input rsf:id="back-button" name="back" type="button" value="Back" onclick="javascript:history.go(-1);return false;" accesskey="x" />             
+					<input id="confirmAssignCourses" rsf:id="confirmAssignCourses" type="submit" name="save_assigned_courses" value="Save Assigned Courses" class="active" accesskey="s" />
+					<input id="" rsf:id="editSettings" type="submit" name="edit_settings" value="Edit Settings" accesskey="r" />
+                    <input id="back-button" rsf:id="back-button" name="back" type="button" value="Back" onclick="javascript:history.go(-1);return false;" accesskey="x" />             
  				</p>	
 			
 			</form>
@@ -154,7 +155,7 @@
 		</div>
 		
 		<script rsf:id="initJavaScript" type="text/javascript" language="JavaScript">
-			EvalSystem.initEvalAssign();
+			EvalSystem.initEvalAssignValidation("eval-assign-form","nogroups-error","confirmAssignCourses");
 		</script>	
 	</body>
 </html>

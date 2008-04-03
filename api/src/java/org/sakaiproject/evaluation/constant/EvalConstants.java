@@ -26,7 +26,7 @@ public class EvalConstants {
     * The current version of the app for updating purposes,
     * this should always be the NEXT version of the tool if this is trunk code
     */
-   public static String APP_VERSION = "1.2.0-RC5";
+   public static String APP_VERSION = "1.2.0-RC6";
 
    public static String SVN_REVISION = "$Revision$";
    public static String SVN_LAST_UPDATE = "$Date$";

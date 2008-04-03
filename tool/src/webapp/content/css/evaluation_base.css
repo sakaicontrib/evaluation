@@ -976,3 +976,22 @@ color: #555;
 	font-size:100%;
 	padding:0;
 }
+.itemListReport ol{
+	list-style: none;
+	margin:0;
+	padding:0	
+}
+.itemListReport .showcomments, .itemListReport .showtextresponses{
+	margin: 1em;
+	color:#666;
+	margin-left:3.5%
+}
+.itemListReport .showcomments  ol, .itemListReport .showtextresponses ol{
+	list-style: lower-alpha; list-style-position: inside;line-height:150%
+}
+.itemListReport .showcomments  ol li, .itemListReport .showtextresponses ol li{
+	text-indent:-2em;margin-left:2em;padding:.4em
+}
+.itemListReport .showcomments li.itemsListOddLine, .itemListReport .showtextresponses li.itemsListOddLine{
+	background:#fff
+}

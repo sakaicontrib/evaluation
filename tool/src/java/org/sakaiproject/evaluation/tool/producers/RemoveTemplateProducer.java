@@ -67,6 +67,8 @@ public class RemoveTemplateProducer implements ViewComponentProducer, Navigation
 
 		String currentUserId = externalLogic.getCurrentUserId();
 
+		String actionBean = "templateBBean.";
+
 		UIMessage.make(tofill, "remove-template-title", "removetemplate.page.title");
 		UIMessage.make(tofill, "control-panel-title","modifytemplate.page.title");
 		
@@ -90,20 +92,22 @@ public class RemoveTemplateProducer implements ViewComponentProducer, Navigation
 
 				UIForm form = UIForm.make(removeDiv, "remove-template-form");
 				UICommand removeCmd = UICommand.make(form, "remove-template-button", 
-						UIMessage.make("removetemplate.remove.button"), 
-						"#{evaluationBean.removeTemplateAction}");
-				removeCmd.parameters.add(new UIELBinding("#{evaluationBean.tmplId}", template.getId().toString()));
+						UIMessage.make("removetemplate.remove.button"), actionBean + "removeTemplate");
+				removeCmd.parameters.add(new UIELBinding(actionBean + "templateId", template.getId().toString()));
 			} else {
 				// cannot remove for some reason
 				UIMessage.make(tofill, "cannot-remove-message", "removetemplate.noremove.text", new Object[] {template.getTitle()});
 			}
+		} else {
+		   throw new IllegalArgumentException("templateId must be set for this view");
 		}
 	}
 
 	/* (non-Javadoc)
 	 * @see uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter#reportNavigationCases()
 	 */
-	public List reportNavigationCases() {
+	@SuppressWarnings("unchecked")
+   public List reportNavigationCases() {
 		List i = new ArrayList();
 		i.add(new NavigationCase("success", new SimpleViewParameters(ControlTemplatesProducer.VIEW_ID)));
 		return i;

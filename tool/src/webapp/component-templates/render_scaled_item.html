@@ -11,46 +11,47 @@
 		<div rsf:id="render-scaled-item:">
 			<div rsf:id="compactDisplay:" style="clear:both;height:100%;overflow:hidden;vertical-align:middle;">
 				<!-- Compact DISPLAY -->
-					<div style="float:left;padding:.3em 0;">
-							<span class="validFailGlyph">*</span> <span rsf:id="itemNum" class="label">#</span><span class="label">.&nbsp;</span>
-							<div rsf:id="itemText" style="display:inline" class="label">Item text for compact items goes here</div>
-					</div>	
-					<table border="0" cellspacing="0" cellpadding="0" width="10%" style="float:right" class="itemScalePanel">
-						<tr>
-							<td width="5%" nowrap="nowrap"  rsf:id="compactStartContainer:">
-								<span  rsf:id="compactDisplayStart">compactDisplayStart</span>
-							</td>
-							<td width="89%" nowrap="nowrap"  rsf:id="compactRadioContainer:" class="idealScale">
-								<span rsf:id="dummyRadio" />
-								<div style="width:100%;position:relative;">
-									<div class="idealScaleBack" style="">
-										<img src="../content/images/ideal-none.jpg" rsf:id="idealImage" alt="ideal scale coloring"/>
-									</div>
-			
-									<!-- For correct spacing there are 2 sets of radio buttons. This is the fake one -->
-									<div style="width:100%;display:block;position:absolute;z-index:6;background-color:transparent;padding-top:5px">
-										<label rsf:id="scaleOptionColored:"><input type="radio" name="choices" rsf:id="radioValueColored" /></label>
-										<label rsf:id="scaleOptionColored:"><input type="radio" name="choices" rsf:id="radioValueColored" /></label>
-										<label rsf:id="scaleOptionColored:"><input type="radio" name="choices" rsf:id="radioValueColored" /></label>
-									</div>
+				<div style="float:left;padding:.3em 0;">
+                     <span class="validFailGlyph">*</span>
+                     <span rsf:id="itemNum" class="label">#</span><span class="label">.&nbsp;</span>
+                     <div rsf:id="itemText" style="display:inline" class="label">Item text for compact items goes here</div>
+				</div>	
+				<table border="0" cellspacing="0" cellpadding="0" width="10%" style="float:right" class="itemScalePanel">
+					<tr>
+						<td width="5%" nowrap="nowrap"  rsf:id="compactStartContainer:">
+							<span  rsf:id="compactDisplayStart">compactDisplayStart</span>
+						</td>
+						<td width="89%" nowrap="nowrap"  rsf:id="compactRadioContainer:" class="idealScale">
+							<span rsf:id="dummyRadio" />
+							<div style="width:100%;position:relative;">
+								<div class="idealScaleBack" style="">
+									<img src="../content/images/ideal-none.jpg" rsf:id="idealImage" alt="ideal scale coloring"/>
 								</div>
-				
-								<!-- This is the real set of radio buttons -->
-									<div style="padding-top:5px"></div>
-									<label rsf:id="scaleOption:"><input type="radio" name="choices" rsf:id="radioValue" /></label>
-									<label rsf:id="scaleOption:"><input type="radio" name="choices" rsf:id="radioValue" /></label>
-									<label rsf:id="scaleOption:"><input type="radio" name="choices" rsf:id="radioValue" /></label>
-								
-							</td>
+		
+								<!-- For correct spacing there are 2 sets of radio buttons. This is the fake one -->
+								<div style="width:100%;display:block;position:absolute;z-index:6;background-color:transparent;padding-top:5px">
+									<label rsf:id="scaleOptionColored:"><input type="radio" name="choices" rsf:id="radioValueColored" /></label>
+									<label rsf:id="scaleOptionColored:"><input type="radio" name="choices" rsf:id="radioValueColored" /></label>
+									<label rsf:id="scaleOptionColored:"><input type="radio" name="choices" rsf:id="radioValueColored" /></label>
+								</div>
+							</div>
 			
-							<td width="5%" nowrap="nowrap" rsf:id="compactEndContainer:">
-								<span rsf:id="compactDisplayEnd">compactDisplayEnd</span>
-							</td>
-							<td rsf:id="showNA:" style="white-space:nowrap">
-								<input type="radio" name="choices" rsf:id="na-input" id="na-input" /><label rsf:id="na-desc" for="na-input">N/A</label>
-							</td>
-						</tr>
-					</table>
+							<!-- This is the real set of radio buttons -->
+								<div style="padding-top:5px"></div>
+								<label rsf:id="scaleOption:"><input type="radio" name="choices" rsf:id="radioValue" /></label>
+								<label rsf:id="scaleOption:"><input type="radio" name="choices" rsf:id="radioValue" /></label>
+								<label rsf:id="scaleOption:"><input type="radio" name="choices" rsf:id="radioValue" /></label>
+							
+						</td>
+		
+						<td width="5%" nowrap="nowrap" rsf:id="compactEndContainer:">
+							<span rsf:id="compactDisplayEnd">compactDisplayEnd</span>
+						</td>
+						<td rsf:id="showNA:" style="white-space:nowrap">
+							<input type="radio" name="choices" rsf:id="na-input" id="na-input" /><label rsf:id="na-desc" for="na-input">N/A</label>
+						</td>
+					</tr>
+				</table>
 			</div>
 			
 			<div rsf:id="fullType:">

@@ -24,6 +24,7 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.exceptions.BlankRequiredFieldException;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.locators.ItemBeanWBL;
 import org.sakaiproject.evaluation.tool.locators.ScaleBeanLocator;
@@ -137,6 +138,18 @@ public class TemplateBBean {
       return "success";
    }
 
+   /**
+    * Remove a template and create a user message,
+    * templateId must be set
+    */
+   public String removeTemplate() {
+      String ownerId = externalLogic.getCurrentUserId();
+      EvalTemplate template = authoringService.getTemplateById(templateId);
+      authoringService.deleteTemplate(templateId, ownerId);
+      messages.addMessage( new TargettedMessage("controltemplates.remove.user.message", 
+            new Object[] {template.getTitle()}, TargettedMessage.SEVERITY_INFO) );
+      return "success";
+   }
 
    // ITEMS
 

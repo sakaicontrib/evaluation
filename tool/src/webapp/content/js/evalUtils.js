@@ -72,6 +72,9 @@ var EvalSystem = function() {
      *  This code is largely in exploration mode and obviously very broken
      *  still. But shouldn't show up at all unless you've enabled adhoc groups
      *  in the admin settings.
+     *
+     *  Evaluation will still compile, but this is not going to work until we
+     *  move up to 0.7.3M2, but this functionality is disabled by default.
      */
   	initAssignAdhocGroupArea: function (saveButtonId,addMoreUsersButtonId,
         groupNameInputId,emailInputId,emailListDivId,uvburl) {
@@ -143,6 +146,40 @@ var EvalSystem = function() {
         addMoreUsersButton.click();
         //clearButton.click( function (event) { clearEmailsAction(event) });
   	},
+    
+    /**
+     *  A little bit of javascript to validate the Eval Assign Page. At the 
+     *  moment this is only for making sure users have selected at least one
+     *  group or hierarchy node or something.
+     *
+     * @errorDivId A Div with an already translated message we can light up.
+     * @submitButtonId The button that is doing the submitting.
+     */
+    initEvalAssignValidation: function(formId, errorDivId, submitButtonId) {
+        var form = $(escIdForJquery(formId));
+        var errorDiv = $(escIdForJquery(errorDivId));
+        var submitButton = $(escIdForJquery(submitButtonId));
+        
+        // Boolean to store whether the form should submit based on validation.
+        var passes = false;
+        
+        form.submit(function() {
+            if (!passes) {
+                errorDiv.show();
+            }
+            return passes;
+        });
+        
+        var onAssignClick = function(event) {
+            passes = false;
+            var n = $(".evalgroupselect:checked").length;
+            if (n > 0) {
+                passes=true;
+            }
+        }
+        
+        submitButton.click( function(event) { onAssignClick(event) } );
+    },
 
     initEvalReportView: function (allCommentsId, allTextResponsesId) {
         // for now this is just enabling toggling of comments and responses
