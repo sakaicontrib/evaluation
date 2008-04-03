@@ -7,13 +7,13 @@ import org.sakaiproject.evaluation.logic.ReportingPermissions;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.viewparams.ReportParameters;
+
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIMessage;
-import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.UISelectLabel;
@@ -114,7 +114,7 @@ public class ReportChooseGroupsProducer implements ViewComponentProducer, ViewPa
          // do a permission check
          String[] possibleGroupIdsToView = reportingPermissions.chooseGroupsPartialCheck(evaluation);
          if (possibleGroupIdsToView.length == 0) {
-            UIOutput.make(tofill, "security-warning", "You cannot view responses for any of the groups.");
+            UIMessage.make(tofill, "security-warning", "viewreport.not.allowed");
             return;
          }
 
