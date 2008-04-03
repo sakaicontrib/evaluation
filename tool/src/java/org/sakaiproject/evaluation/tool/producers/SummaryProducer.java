@@ -269,30 +269,21 @@ public class SummaryProducer implements ViewComponentProducer, DefaultView, Navi
 		 * If the person is not an admin then only show owned evals +
 		 * not-owned evals that are available for viewing results.
 		 */
-		List<EvalEvaluation> newEvals;
-		if (userAdmin) {
-			newEvals =  evals;
-		} else {
+		List<EvalEvaluation> newEvals = evals;
+		if (instViewResults 
+		      && !userAdmin) {
 			newEvals = new ArrayList<EvalEvaluation>();
-			int numEvals = evals.size();
-			Date currentDate = new Date();
-
-			for (int count = 0; count < numEvals; count++) {
-				EvalEvaluation evaluation = (EvalEvaluation) evals.get(count);
-
-				// Add the owned evals
-				if (currentUserId.equals(evaluation.getOwner())) {
-					newEvals.add(evaluation);
-				} else {
-					// From the not-owned evals show those
-					// that are available for viewing results.
-					if (currentDate.before(evaluation.getViewDate())) {
-						// Do nothing
-					} else {
-						newEvals.add(evaluation);
-					}
-				}
-			}
+			for (EvalEvaluation evaluation : evals) {
+            // Add the owned evals
+            if (currentUserId.equals(evaluation.getOwner())) {
+               newEvals.add(evaluation);
+            } else {
+               // From the not-owned evals show those that are available for viewing results
+               if ( EvalUtils.checkStateAfter(evaluation.getState(), EvalConstants.EVALUATION_STATE_VIEWABLE, true) ) {
+                  newEvals.add(evaluation);
+               }
+            }
+         }
 		}
 
 		if (! newEvals.isEmpty()) {
