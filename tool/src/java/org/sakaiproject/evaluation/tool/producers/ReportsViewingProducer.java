@@ -508,10 +508,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
          UIInternalLink.make(tofill, "control-items-link",
                UIMessage.make("controlitems.page.title"), 
                new SimpleViewParameters(ControlItemsProducer.VIEW_ID));
-      } else {
-         throw new SecurityException("User attempted to access " + 
-               VIEW_ID + " when they are not allowed");
-      }
+      } 
 
       if (beginEvaluation) {
          UIInternalLink.make(tofill, "control-evaluations-link",
