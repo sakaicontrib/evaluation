@@ -72,11 +72,10 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
 /**
  * This producer is used to render the evaluation settings page,
- * it is used to control all the settings related to a single evaluation
+ * it is used to control all the settings related to a single evaluation,
+ * complete rewrite from the original version
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
- * @author Kapil Ahuja (kahuja@vt.edu)
- * @author Rui Feng (fengr@vt.edu)
  */
 public class EvaluationSettingsProducer implements ViewComponentProducer, ViewParamsReporter, ActionResultInterceptor {
 
