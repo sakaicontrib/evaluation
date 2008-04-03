@@ -46,16 +46,33 @@ public class AdhocGroupsBean {
     * adhocGroupId and newAdhocGroupUsers
     */
    public void addUsersToAdHocGroup() {
+       String currentUserId = externalLogic.getCurrentUserId();
        EvalAdhocGroup group = evalAdhocSupport.getAdhocGroupById(new Long(adhocGroupId));
+       adhocGroupId = group.getId();
+       
+       /*
+        * You can only change the adhoc group if you are the owner.
+        */
+       if (!currentUserId.equals(group.getOwner())) {
+          throw new SecurityException("Only EvalAdhocGroup owners can change their groups: " + group.getId() + " , " + currentUserId);
+       }
 
+       
    }
    
    /*
     * Adds a new Adhoc Group using the data entered into newAdhocGroupUsers.
     */
-   public void adNewAdHocGroup() {
-      EvalAdhocGroup group = new EvalAdhocGroup(externalLogic.getCurrentUserId(),
-            adhocGroupTitle);
+   public void addNewAdHocGroup() {
+      String currentUserId = externalLogic.getCurrentUserId();
+      /*
+       * At the we allow any registered user to create adhoc groups.
+       */
+      if (externalLogic.isUserAnonymous(currentUserId)) {
+         throw new SecurityException("Anonymous users cannot create EvalAdhocGroups: " + currentUserId);
+      }
+      
+      EvalAdhocGroup group = new EvalAdhocGroup(currentUserId, adhocGroupTitle);
 
       log.info("About to save Adhoc group: " + adhocGroupTitle);
       

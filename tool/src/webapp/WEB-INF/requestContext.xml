@@ -191,6 +191,11 @@
       <property name="viewStateHandler" ref="viewStateHandler" /> 
    </bean>
 
+   <bean id="adhocGroupMemberRemovalBean"
+        class="org.sakaiproject.evaluation.tool.locators.AdhocGroupMemberRemovalBean" >
+      <property name="evalAdhocSupport" ref="org.sakaiproject.evaluation.dao.EvalAdhocSupport" />
+      <property name="evalExternalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+   </bean>
 
    <!-- evolver definitions here -->
 
