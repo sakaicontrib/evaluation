@@ -261,7 +261,12 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
          
          addCollapseControl(newAdhocgroupArea, "newadhocgroup-assignment-area", "hide-button", "show-button");
 
-         UIOutput adhocEmailsArea = UIOutput.make(newAdhocgroupArea, "adhoc-emails-area:");
+         // The actual div for the current adhoc members to go in, and we'll make
+         // an example member row that will be cloned with javascript.
+         UIOutput adhocEmailsArea = UIOutput.make(newAdhocgroupArea, "adhoc-emails-area");
+         UIOutput exampleAdhocMember = UIOutput.make(newAdhocgroupArea, "adhoc-member-row");
+         //UIOutput.make(exampleAdhocMember, "name", "Steven Githens");
+         //UIOutput.make(exampleAdhocMember, "email", "sgithens at the caret.cam.ac.uk");
          
          UIInput adhocGroupName = UIInput.make(newAdhocgroupArea, "adhoc-group-name", null);
          UIInput adhocGroupEmails = UIInput.make(newAdhocgroupArea, "adhoc-email-input", null);
@@ -273,7 +278,8 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
          initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.initAssignAdhocGroupArea", 
                  new String[] {saveEmailsButton.getFullID(), addMoreUsersButton.getFullID(),
                adhocGroupName.getFullID(), adhocGroupEmails.getFullID(),
-               adhocEmailsArea.getFullID(), vsh.getFullURL(new SimpleViewParameters(UVBProducer.VIEW_ID))}));
+               adhocEmailsArea.getFullID(), vsh.getFullURL(new SimpleViewParameters(UVBProducer.VIEW_ID)), 
+               exampleAdhocMember.getFullID()}));
       }
       
       // Add all the groups and hierarchy nodes back to the UISelect Many's. see
