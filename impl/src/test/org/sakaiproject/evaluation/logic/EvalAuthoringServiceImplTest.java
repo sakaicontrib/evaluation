@@ -3062,6 +3062,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
 
       // check out the template first
       templateId = etdl.templateUser.getId();
+      authoringService.getTemplateById(templateId).setLocked(false); // make this unlocked
       currentItems = authoringService.getTemplateItemsForTemplate(templateId, new String[] {}, new String[] {}, new String[] {});
       assertEquals(2, currentItems.size());
 
@@ -3100,16 +3101,25 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       }
 
       // test insertion with save
-      items = authoringService.doAutoUseInsertion(EvalTestDataLoad.AUTO_USE_TAG, templateId, EvalConstants.EVALUATION_AUTOUSE_INSERTION_AFTER, true);
+      items = authoringService.doAutoUseInsertion(EvalTestDataLoad.AUTO_USE_TAG, templateId, EvalConstants.EVALUATION_AUTOUSE_INSERTION_BEFORE, true);
       assertNotNull(items);
       assertEquals(8, items.size()); // + 6 autoUse items
       displayOrder = 1;
       for (EvalTemplateItem item : items) {
+         if (displayOrder <= 6) {
+            assertEquals(EvalTestDataLoad.AUTO_USE_TAG, item.getAutoUseInsertionTag());
+         } else {
+            assertNull(item.getAutoUseInsertionTag());
+         }
          assertEquals(new Integer(displayOrder++), item.getDisplayOrder());
       }
 
       currentItems = authoringService.getTemplateItemsForTemplate(templateId, new String[] {}, new String[] {}, new String[] {});
       assertEquals(8, currentItems.size());
+      currentItems = TemplateItemUtils.orderTemplateItems(currentItems, false);
+      for (int i = 0; i < items.size(); i++) {
+         assertEquals(currentItems.get(i).getId(), items.get(i).getId());
+      }      
 
       // test nothing to insert
       items = authoringService.doAutoUseInsertion("FAKE", templateId, EvalConstants.EVALUATION_AUTOUSE_INSERTION_AFTER, false);

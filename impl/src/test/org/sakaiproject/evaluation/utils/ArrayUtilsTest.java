@@ -172,6 +172,34 @@ public class ArrayUtilsTest extends TestCase {
       }
    }
 
+   public void testAppendArrays() {
+      String[] a1 = new String[] {"aaa", "bbb", "ccc"};
+      String[] a2 = new String[] {"ddd", "eee"};
+
+      String[] result = null;
+
+      result = ArrayUtils.appendArrays(a1, a2);
+      assertNotNull(result);
+      assertEquals(5, result.length);
+      assertEquals("aaa", result[0]);
+      assertEquals("bbb", result[1]);
+      assertEquals("ccc", result[2]);
+      assertEquals("ddd", result[3]);
+      assertEquals("eee", result[4]);
+
+      result = ArrayUtils.appendArrays(a1, new String[] {});
+      assertNotNull(result);
+      assertEquals(a1.length, result.length);
+
+      result = ArrayUtils.appendArrays(a2, new String[] {});
+      assertNotNull(result);
+      assertEquals(a2.length, result.length);
+
+      result = ArrayUtils.appendArrays(new String[] {}, new String[] {});
+      assertNotNull(result);
+      assertEquals(0, result.length);
+   }
+
    /**
     * Test method for {@link org.sakaiproject.evaluation.utils.ArrayUtils#prependArray(java.lang.String[], java.lang.String)}.
     */
