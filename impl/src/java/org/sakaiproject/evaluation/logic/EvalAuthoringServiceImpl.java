@@ -17,9 +17,11 @@ package org.sakaiproject.evaluation.logic;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -1521,8 +1523,8 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
                toTemplate = getTemplateById(templateId);
             } else {
                if (! toTemplate.getId().equals(templateId)) {
-                  throw new IllegalArgumentException("All templateItems must be from the same template when doing a copies within a template,"
-                           + " if you want to copy templateItems from multiple templates into the same templates they are currently in you must "
+                  throw new IllegalArgumentException("All templateItems must be from the same template when doing a copy within a template, "
+                           + "if you want to copy templateItems from multiple templates into the same templates they are currently in you must "
                         	+ "do it in batches where each set if from one template");
                }
             }
@@ -1544,43 +1546,56 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 
       // iterate though in display order and copy the template items
       int counter = 0;
+      int displayOrder = 0;
       Long[] copiedIds = new Long[templateItemsList.size()];
-      for (int i = 0; i < nonChildItems.size(); i++) {
-         EvalTemplateItem original = nonChildItems.get(i);
+      for (EvalTemplateItem original : nonChildItems) {
+         templateItemsList.remove(original); // take this out of the list
          if (TemplateItemUtils.isBlockParent(original)) {
             // this is a block parent so copy it and its children
             Long originalBlockParentId = original.getId();
-            templateItemsList.remove(original); // take this out of the list
-            // copy and save the parent
-            EvalTemplateItem copyParent = copyTemplateItem(original, toTemplate, ownerId, hidden, includeChildren);
-            copyParent.setDisplayOrder(itemCount + i); // fix up display order
-            copyParent.setBlockId(null);
-            copyParent.setBlockParent(true);
-            dao.save(copyParent);
-            copiedIds[counter++] = copyParent.getId();
-            Long blockParentId = copyParent.getId();
-
-            // loop through and copy all the children and assign them to the parent
             List<EvalTemplateItem> childItems = TemplateItemUtils.getChildItems(templateItemsList, originalBlockParentId);
-            for (int j = 0; j < childItems.size(); j++) {
-               EvalTemplateItem child = childItems.get(j);
-               templateItemsList.remove(child); // take this out of the list
-               // copy the child item
-               EvalTemplateItem copy = copyTemplateItem(child, toTemplate, ownerId, hidden, includeChildren);
-               copy.setDisplayOrder(j); // fix up display order
-               copy.setBlockId(blockParentId);
-               copy.setBlockParent(false);
-               dao.save(copy);
-               copiedIds[counter++] = copy.getId();
+            if (childItems.size() > 0) {
+               // copy and save the parent only if there are children in this set of items
+               EvalTemplateItem copyParent = copyTemplateItem(original, toTemplate, ownerId, hidden, includeChildren);
+               copyParent.setDisplayOrder(itemCount + displayOrder); // fix up display order
+               copyParent.setBlockId(null);
+               copyParent.setBlockParent(true);
+               dao.save(copyParent);
+               copiedIds[counter++] = copyParent.getId();
+               Long blockParentId = copyParent.getId();
+   
+               // loop through and copy all the children and assign them to the parent
+               for (int j = 0; j < childItems.size(); j++) {
+                  EvalTemplateItem child = childItems.get(j);
+                  templateItemsList.remove(child); // take this out of the list
+                  // copy the child item
+                  EvalTemplateItem copy = copyTemplateItem(child, toTemplate, ownerId, hidden, includeChildren);
+                  copy.setDisplayOrder(j); // fix up display order
+                  copy.setBlockId(blockParentId);
+                  copy.setBlockParent(false);
+                  dao.save(copy);
+                  copiedIds[counter++] = copy.getId();
+               }
             }
          } else {
-            // not in a block
+            // not a block parent
             EvalTemplateItem copy = copyTemplateItem(original, toTemplate, ownerId, hidden, includeChildren);
-            copy.setDisplayOrder(itemCount + i); // fix up display order
+            copy.setDisplayOrder(itemCount + displayOrder); // fix up display order
             dao.save(copy);
             copiedIds[counter++] = copy.getId();
          }
+         displayOrder++;
       }
+
+      // now copy any remaining orphaned block children
+      for (EvalTemplateItem original : templateItemsList) {
+         displayOrder++;
+         EvalTemplateItem copy = copyTemplateItem(original, toTemplate, ownerId, hidden, includeChildren);
+         copy.setDisplayOrder(itemCount + counter); // fix up display order
+         dao.save(copy);
+         copiedIds[counter] = copy.getId();
+      }
+
       return copiedIds;
    }
 
@@ -1734,6 +1749,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.logic.EvalAuthoringService#doAutoUseInsertion(java.lang.String, java.lang.Long, java.lang.String, boolean)
     */
+   @SuppressWarnings("unchecked")
    public List<EvalTemplateItem> doAutoUseInsertion(String autoUseTag, Long templateId, String insertionPointConstant, boolean saveAll) {
       List<EvalTemplateItem> allTemplateItems = null;
       // get all the autoUse items
@@ -1742,13 +1758,8 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
          log.info("Found "+autoUseItems.size()+" autoUse items to insert for tag (" + autoUseTag + ") into template (id="+templateId+")");
          allTemplateItems = new ArrayList<EvalTemplateItem>();
          EvalTemplate template = getTemplateOrFail(templateId);
-         // copy and update all insertion items to have the correct value in the insertion field
-         List<EvalTemplateItem> insertionItems = new ArrayList<EvalTemplateItem>();
-         for (EvalTemplateItem original : autoUseItems) {
-            EvalTemplateItem copy = TemplateItemUtils.makeCopyOfTemplateItem(original, template, template.getOwner(), true);
-            copy.setAutoUseInsertionTag(autoUseTag);
-            insertionItems.add(copy);
-         }
+         String ownerId = template.getOwner();
+
          // get all current template items sorted
          List<EvalTemplateItem> currentItems = null;
          List<EvalTemplateItem> currentTemplateItems = TemplateItemUtils.orderTemplateItems(
@@ -1763,6 +1774,73 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
                currentItems.add(copy);
             }
          }
+
+         // copy and update all insertion items to have the correct value in the insertion field
+         List<EvalTemplateItem> insertionItems = new ArrayList<EvalTemplateItem>();
+         Long[] copiedTIIds = new Long[0];
+         if (saveAll) {
+            // filter out the non-persistent TIs and make lists of all ids per template
+            List<EvalTemplateItem> unsavedTIs = new ArrayList<EvalTemplateItem>();
+            Map<Long, List<Long>> templateToTIsMap = new HashMap<Long, List<Long>>();
+            for (EvalTemplateItem templateItem : autoUseItems) {
+               Long templateItemId = templateItem.getId();
+               if (templateItem.getId() != null) {
+                  Long currentTemplateId = templateItem.getTemplate().getId();
+                  if (templateToTIsMap.containsKey(currentTemplateId)) {
+                     templateToTIsMap.get(currentTemplateId).add(templateItemId);
+                  } else {
+                     List<Long> templateTIIds = new ArrayList<Long>();
+                     templateTIIds.add(templateItemId);
+                     templateToTIsMap.put(currentTemplateId, templateTIIds);
+                  }
+               } else {
+                  unsavedTIs.add(templateItem);
+               }
+            }
+            // use the copy method to make persistent copies of all template items and children
+            for (Long currentTemplateId : templateToTIsMap.keySet()) {
+               List<Long> TIIds = templateToTIsMap.get(currentTemplateId);
+               Long[] copiedIds = copyTemplateItems(TIIds.toArray(new Long[] {}), ownerId, true, template.getId(), true);
+               copiedTIIds = ArrayUtils.appendArrays(copiedTIIds, copiedIds);
+            }
+            // fetch the new copies based on the ids
+            List<EvalTemplateItem> templateItemsList = dao.findByProperties(EvalTemplateItem.class, new String[] {"id"}, new Object[] { copiedTIIds });
+            // now put the copied items into the list in the order of the copied ids
+            for (int i = 0; i < copiedTIIds.length; i++) {
+               Long id = copiedTIIds[i];
+               for (EvalTemplateItem templateItem : templateItemsList) {
+                  if (id.equals(templateItem.getId())) {
+                     insertionItems.add(templateItem);
+                     templateItemsList.remove(templateItem);
+                     break;
+                  }
+               }
+            }
+            // save all unsaved items
+            for (EvalTemplateItem templateItem : unsavedTIs) {
+               templateItem.setTemplate(template);
+               templateItem.setOwner(ownerId);
+               saveTemplateItem(templateItem, ownerId);
+               insertionItems.add(templateItem);
+            }
+         } else {
+            // just make a simple non-persistent copy of all the items
+            for (EvalTemplateItem original : autoUseItems) {
+               EvalTemplateItem copy = TemplateItemUtils.makeCopyOfTemplateItem(original, template, template.getOwner(), true);
+               // preserve the block data
+               copy.setBlockId(original.getBlockId());
+               copy.setBlockParent(original.getBlockParent());
+               // now add in the autouse data
+               copy.setAutoUseInsertionTag(autoUseTag);
+               insertionItems.add(copy);
+            }
+         }
+
+         // set the autoUse insertion value
+         for (EvalTemplateItem insertedTemplateItem : insertionItems) {
+            insertedTemplateItem.setAutoUseInsertionTag(autoUseTag);
+         }
+
          if (EvalConstants.EVALUATION_AUTOUSE_INSERTION_BEFORE.equals(insertionPointConstant)) {
             // inserting autoUse items before the existing ones
             allTemplateItems.addAll(insertionItems);
@@ -1775,17 +1853,17 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
             throw new IllegalArgumentException("Do not know how to handle autoUse insertion point of: " + insertionPointConstant);
          }
 
-         if (saveAll) {
-            // now we update the displayOrders to the current list order (which should be correct)
-            int displayOrder = 1;
-            for (EvalTemplateItem templateItem : allTemplateItems) {
-               if (! TemplateItemUtils.isBlockChild(templateItem)) {
-                  // only update the order of non-block children
-                  templateItem.setDisplayOrder(displayOrder++);
-               }
-               // update all templateItems to have the correct template
-               templateItem.setTemplate(template);
+         // now we update the displayOrders to the current list order (which should be correct)
+         int displayOrder = 1;
+         for (EvalTemplateItem templateItem : allTemplateItems) {
+            if (! TemplateItemUtils.isBlockChild(templateItem)) {
+               // only update the order of non-block children
+               templateItem.setDisplayOrder(displayOrder++);
             }
+         }
+
+         // save if set and then return the list of all copied items with corrected display order
+         if (saveAll) {
             // save all the templateItems
             Set<EvalTemplateItem> allItems = new HashSet<EvalTemplateItem>(allTemplateItems);
             dao.saveSet( allItems );
@@ -1793,15 +1871,6 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
             template.setTemplateItems( allItems );
             dao.save(template);
             log.info("Saved and inserted "+autoUseItems.size()+" autoUse items for tag (" + autoUseTag + ") into template (id="+templateId+")");
-         } else {
-            // don't save, just return the list of all copied items with corrected display order
-            int displayOrder = 1;
-            for (EvalTemplateItem templateItem : allTemplateItems) {
-               if (! TemplateItemUtils.isBlockChild(templateItem)) {
-                  // only update the order of non-block children
-                  templateItem.setDisplayOrder(displayOrder++);
-               }
-            }
          }
       } else {
          log.info("No autoUse items can be found to insert for tag: " + autoUseTag);
