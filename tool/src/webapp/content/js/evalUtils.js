@@ -86,6 +86,9 @@ var EvalSystem = function() {
         var cloneMemberBranch = $(escIdForJquery(cloneMemberBranchId));
         
         var adhocGroupId = null;
+        
+        var outbindings = ['adhocGroupsBean.adhocGroupId', 'adhocGroupsBean.acceptedInternalUsers',
+          'adhocGroupsBean.acceptedAdhocUsers', 'adhocGroupsBean.rejectedUsers'];
    
         var saveUpdateEmailsAction = function(event) {
             var inbindings = new Object();
@@ -93,20 +96,11 @@ var EvalSystem = function() {
             if (adhocGroupId == null) {
                 inbindings['adhocGroupsBean.adhocGroupTitle'] = groupNameInput.val();
                 inbindings['adhocGroupsBean.newAdhocGroupUsers'] = emailListInput.val();
-                outbindings.push('adhocGroupsBean.adhocGroupId');
-                outbindings.push('adhocGroupsBean.acceptedInternalUsers');
-                outbindings.push('adhocGroupsBean.acceptedAdhocUsers');
-                outbindings.push('adhocGroupsBean.rejectedUsers');
-                outbindings.push('adhocGroupsBean.participantDivUrl');
-                fireUVBRequest('atoken', uvburl, inbindings, outbindings, 'adhocGroupsBean.adNewAdHocGroup', saveCallback);
+                fireUVBRequest('atoken', uvburl, inbindings, outbindings, 'adhocGroupsBean.addNewAdHocGroup', saveCallback);
             }
             else {
                 inbindings['adhocGroupsBean.adhocGroupId'] = adhocGroupId;
                 inbindings['adhocGroupsBean.newAdhocGroupUsers'] = emailListInput.val();
-                outbindings.push('adhocGroupsBean.acceptedInternalUsers');
-                outbindings.push('adhocGroupsBean.acceptedAdhocUsers');
-                outbindings.push('adhocGroupsBean.rejectedUsers');
-                outbindings.push('adhocGroupsBean.participantDivUrl');
                 fireUVBRequest('atoken', uvburl, inbindings, outbindings, 'adhocGroupsBean.addUsersToAdHocGroup', saveCallback);
             }
             emailListInput.val('');
@@ -127,25 +121,18 @@ var EvalSystem = function() {
                 var UVB = RSF.accumulateUVBResponse(response.responseXML);
                 
                 var adhocGroupId = UVB.EL["adhocGroupsBean.adhocGroupId"];
-                //var divurl = UVB.EL["adhocGroupsBean.participantDivUrl"];
-                for (var i in UVB.EL["adhocGroupsBean.acceptedInternalUsers"]) {
+                var acceptedInternalUsers = UVB.EL["adhocGroupsBean.acceptedInternalUsers"];
+                for (var i in acceptedInternalUsers) {
                     var nextMember = cloneMemberBranch.clone();
-                    //nextMember.filter("
+                    nextMember.find("td:eq(0)").text(acceptedInternalUsers[i]);
+                    nextMember.show().insertAfter(cloneMemberBranch);
                 }
                 alert(UVB.EL["adhocGroupsBean.acceptedInternalUsers"]);
                 alert(UVB.EL["adhocGroupsBean.acceptedAdhocUsers"]);
                 alert(UVB.EL["adhocGroupsBean.rejectedUsers"]);
                 
-                var newMember = cloneMemberBranch.clone().show().insertAfter(cloneMemberBranch);
-                
-                //divurl = divurl.replace(/\\/g,'');
-                //alert("The DivURL: =" + divurl + "=");
                 saveButton.hide();
                 addMoreUsersButton.show();
-                //RSF.queueAJAXRequest(adhocGroupId,"GET",divurl,null,updateParticipantDiv);
-                //RSF.issueAJAXRequest("GET", divurl, [], updateParticipantDiv)
-                //emailListDiv.load("http://localhost:8080/portal/tool/bb5fb768-70ce-4c14-80a9-7297189de2b7/adhoc_group_participants_div?adhocGroupId=103");
-                emailListDiv.load(divurl);
             }
         }
         

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sakaiproject.evaluation.dao.EvalAdhocSupport;
+import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 
 /**
@@ -26,9 +27,20 @@ public class AdhocGroupMemberRemovalBean {
     * Stuff we need injected.
     */
    private EvalAdhocSupport evalAdhocSupport;
+   private EvalExternalLogic externalLogic;
+   
    
    public void removeUser() { 
+      String currentUserId = externalLogic.getCurrentUserId();
       EvalAdhocGroup adhocGroup = evalAdhocSupport.getAdhocGroupById(adhocGroupId);
+      
+      /*
+       * You can only change the adhoc group if you are the owner.
+       */
+      if (!currentUserId.equals(adhocGroup.getOwner())) {
+         throw new SecurityException("Only EvalAdhocGroup owners can change their groups: " + adhocGroup.getId() + " , " + currentUserId);
+      }
+      
       List<String> participants = new ArrayList<String>();
       for (String partId: adhocGroup.getParticipantIds()) {
          if (!partId.equals(adhocUserId)) {
@@ -60,6 +72,10 @@ public class AdhocGroupMemberRemovalBean {
 
    public void setAdhocUserId(String adhocUserId) {
       this.adhocUserId = adhocUserId;
+   }
+   
+   public void setEvalExternalLogic(EvalExternalLogic logic) {
+      this.externalLogic = logic;
    }
    
 }
