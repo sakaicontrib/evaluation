@@ -132,21 +132,24 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       evaluationSetupService.saveEvaluation( partialEval, EvalTestDataLoad.MAINT_USER_ID, false );
       checkEval = evaluationService.getEvaluationById(partialEval.getId());
       assertNotNull(checkEval);
+      assertEquals(EvalConstants.EVALUATION_STATE_PARTIAL, partialEval.getState());
 
       // check that the template was NOT copied
       assertEquals(etdl.templatePublic.getId(), partialEval.getTemplate().getId());
       assertFalse(partialEval.getTemplate().isHidden());
       assertNull(partialEval.getTemplate().getCopyOf());
 
+      // now save the partial eval and complete
+      evaluationSetupService.saveEvaluation( partialEval, EvalTestDataLoad.MAINT_USER_ID, true );
+      assertEquals(EvalConstants.EVALUATION_STATE_INQUEUE, partialEval.getState());
 
-      // save a valid evaluation (due and stop date identical)
+      // save a valid evaluation (due and stop date identical), and create
       evaluationSetupService.saveEvaluation( new EvalEvaluation( EvalConstants.EVALUATION_TYPE_EVALUATION, 
             EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
             etdl.today, etdl.tomorrow, etdl.tomorrow, etdl.threeDaysFuture, 
             EvalConstants.EVALUATION_STATE_INQUEUE, 
             EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic), 
-            EvalTestDataLoad.MAINT_USER_ID, false );
-
+            EvalTestDataLoad.MAINT_USER_ID, true );
 
       // test view date can be same as due date and stop date can be null
       evaluationSetupService.saveEvaluation( new EvalEvaluation( EvalConstants.EVALUATION_TYPE_EVALUATION, 
@@ -162,7 +165,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
             etdl.today, null, null, null,
             EvalConstants.EVALUATION_STATE_INQUEUE, 
             EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), etdl.templatePublic),
-            EvalTestDataLoad.MAINT_USER_ID, false );
+            EvalTestDataLoad.MAINT_USER_ID, true );
 
       // try to save invalid evaluations
 

@@ -195,7 +195,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       // set the date modified
       evaluation.setLastModified( new Date() );
 
-      if (created && EvalUtils.checkStateAfter(evaluation.getState(), EvalConstants.EVALUATION_STATE_PARTIAL, true)) {
+      if (created && EvalUtils.checkStateAfter(evaluation.getState(), EvalConstants.EVALUATION_STATE_PARTIAL, false)) {
          // created can only be true when this eval is in partial state
          created = false;
       }
