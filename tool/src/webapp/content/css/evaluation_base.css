@@ -987,7 +987,7 @@ color: #555;
 	margin-left:3.5%
 }
 .itemListReport .showcomments  ol, .itemListReport .showtextresponses ol{
-	list-style: lower-alpha; list-style-position: inside;line-height:150%
+	list-style: lower-alpha; list-style-position: outside;line-height:150%
 }
 .itemListReport .showcomments  ol li, .itemListReport .showtextresponses ol li{
 	text-indent:-2em;margin-left:2em;padding:.4em
