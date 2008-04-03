@@ -103,6 +103,9 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, V
        * this should ONLY be read from, do not change any of these fields
        */
       EvalEvaluation evaluation = evaluationService.getEvaluationById(evalViewParams.evaluationId);
+      if (evaluation == null) {
+         throw new IllegalArgumentException("Could not find evaluation with this id, invalid evaluation id:" + evalViewParams.evaluationId);
+      }
       Long evaluationId = evalViewParams.evaluationId;
 
       DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
