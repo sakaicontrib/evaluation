@@ -267,7 +267,7 @@ public class EvalSecurityChecksImpl {
       }
 
       String state = EvalUtils.getEvaluationState(eval, false);
-      if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(state)) {
+      if (EvalUtils.checkStateBefore(state, EvalConstants.EVALUATION_STATE_INQUEUE, true)) {
          checkControlAssignGroup(userId, assignGroup);
       } else {
          throw new IllegalStateException("User ("+userId+") cannot remove this assign evalGroupId ("+assignGroup.getId()+"), invalid eval state");

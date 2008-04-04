@@ -416,6 +416,11 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       List<EvalEvaluation> evals = null;
       List<Long> ids = null;
 
+      // testing instructor approval
+      EvalAssignGroup eag = (EvalAssignGroup) evaluationDao.findById(EvalAssignGroup.class, etdl.assign5.getId());
+      eag.setInstructorApproval(false);
+      evaluationDao.save(eag);
+
       // get all evaluations for user
       evals = evaluationSetupService.getEvaluationsForUser(EvalTestDataLoad.USER_ID, null, null, true);
       assertNotNull(evals);
@@ -879,7 +884,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       Long eacId = eac1.getId();
       evaluationSetupService.deleteAssignGroup( eacId, EvalTestDataLoad.MAINT_USER_ID );
 
-      evaluationSetupService.deleteAssignGroup( etdl.assign6.getId(), EvalTestDataLoad.MAINT_USER_ID );
+      evaluationSetupService.deleteAssignGroup( etdl.assign8.getId(), EvalTestDataLoad.MAINT_USER_ID );
 
       // check save worked
       l = evaluationDao.findByProperties(EvalAssignGroup.class, 

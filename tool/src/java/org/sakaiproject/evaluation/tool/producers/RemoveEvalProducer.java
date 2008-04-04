@@ -91,7 +91,7 @@ public class RemoveEvalProducer implements ViewComponentProducer, ViewParamsRepo
 
       UIOutput.make(tofill, "evalTitle", eval.getTitle());
 
-      int count = evaluationService.countEvaluationGroups(eval.getId());
+      int count = evaluationService.countEvaluationGroups(eval.getId(), false);
       if (count > 1) {
          UIOutput.make(tofill, "evalAssigned", count + " groups");
       } else if (count == 1) {

@@ -309,14 +309,14 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
 	 * Always assume the current evalGroupId is CONTEXT1
 	 */
 	public String getCurrentEvalGroup() {
-		return EvalTestDataLoad.SITE1_REF;
+		return currentGroupId;
 	}
 
 	/**
 	 * Always assume the current user is USER_ID
 	 */
 	public String getCurrentUserId() {
-		return EvalTestDataLoad.USER_ID;
+		return currentUserId;
 	}
 
 	/* (non-Javadoc)
@@ -536,6 +536,16 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
     */
    public void resetEmailsSentCounter() {
       emailsSentCounter = 0;
+   }
+
+   private String currentUserId = EvalTestDataLoad.USER_ID;
+   public void setCurrentUserId(String userId) {
+      currentUserId = userId;
+   }
+
+   private String currentGroupId = EvalTestDataLoad.SITE1_REF;
+   public void setCurrentGroupId(String evalGroupId) {
+      currentGroupId = evalGroupId;
    }
 
 }

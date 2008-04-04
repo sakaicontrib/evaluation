@@ -13,10 +13,10 @@ import org.sakaiproject.evaluation.logic.EvalEvaluationService;
  */
 public class EvalEvaluation implements java.io.Serializable {
 
-   // Fields    
+   // Fields
 
    private Long id;
-   
+
    private String eid;
 
    private Date lastModified;
@@ -33,101 +33,107 @@ public class EvalEvaluation implements java.io.Serializable {
    private String instructions;
 
    /**
-    * This is the date at which the evaluation becomes active,
-    * the users can take the evaluation after this<br/>
-    * This MUST be set, see {@link #customStartDate}
+    * This is the date at which the evaluation becomes active, the users can take the evaluation
+    * after this<br/> This MUST be set, see {@link #customStartDate}
     */
    private Date startDate;
 
    /**
-    * This is the ending date for the evaluation<br/>
-    * if this is null then there is no due date and the evaluation is open until
-    * manually closed<br/>
-    * Affected by the {@link #useDueDate} setting<br/>
+    * This is the ending date for the evaluation<br/> if this is null then there is no due date and
+    * the evaluation is open until manually closed<br/> Affected by the {@link #useDueDate} setting<br/>
     * <b>NOTE:</b> a null value here means that the evaluation is open until manually closed
     */
    private Date dueDate;
 
    /**
-    * this defines the grace period for completing the evaluation after the due date,
-    * if this is null then there is no grace period<br/>
-    * Affected by the {@link #useStopDate} setting<br/>
+    * this defines the grace period for completing the evaluation after the due date, if this is
+    * null then there is no grace period<br/> Affected by the {@link #useStopDate} setting<br/>
     * <b>NOTE:</b> a null value here means that there is no grace period
     */
    private Date stopDate;
 
    /**
-    * The overall view date for this evaluation,
-    * Note that this trumps the students and instructors dates and they must be set to be after this one
-    * or they will have no effect<br/>
-    * Affected by the {@link #useViewDate} setting<br/>
-    * <b>NOTE:</b> a null value here means that the results are immediately viewable after the evaluation closes<br/>
-    * TODO - how to handle view date that is before the start date?
+    * The overall view date for this evaluation, Note that this trumps the students and instructors
+    * dates and they must be set to be after this one or they will have no effect<br/> Affected by
+    * the {@link #useViewDate} setting<br/> <b>NOTE:</b> a null value here means that the results
+    * are immediately viewable after the evaluation closes<br/> TODO - how to handle view date that
+    * is before the start date?
     */
    private Date viewDate;
 
+
    /**
-    * if this is null then students cannot view the results of this evaluation,
-    * otherwise students can view after this date<br/>
-    * <b>NOTE:</b> see {@link #studentViewResults}
+    * if this is true then students can view results for this evaluation, This will cause the
+    * {@link #studentsDate} to be nulled out when the evaluation is saved if set to false
+    */
+   private boolean studentViewResults;
+   /**
+    * if this is true then instructors can view results for this evaluation, This will cause the
+    * {@link #instructorsDate} to be nulled out out when the evaluation is saved if set to false
+    */
+   private boolean instructorViewResults;
+
+   /**
+    * if {@link #studentViewResults} is true and this is null then students can view results as soon as
+    * the evaluation is closed, otherwise they can view results after this date
     */
    private Date studentsDate;
 
    /**
-    * if this is null instructors cannot view the results of this evaluation,
-    * otherwise results can only be viewed after this date<br/>
-    * <b>NOTE:</b> see {@link #instructorViewResults}
+    * if {@link #instructorViewResults} is true and this is null then non-owner instructors can view results as soon as
+    * the evaluation is closed, otherwise they can view results after this date
     */
    private Date instructorsDate;
 
+   
    /**
-    * You should use the methods which check the state of the evaluation rather than looking at this field directly<br/>
-    * see {@link EvalEvaluationService#updateEvaluationState(Long)} and {@link EvalEvaluationService#returnAndFixEvalState(EvalEvaluation, boolean)}
+    * You should use the methods which check the state of the evaluation rather than looking at this
+    * field directly in most cases<br/> 
+    * see {@link EvalEvaluationService#updateEvaluationState(Long)} and
+    * {@link EvalEvaluationService#returnAndFixEvalState(EvalEvaluation, boolean)}
     */
    private String state;
 
    private String instructorOpt;
 
    /**
-    * the number of days between reminder emails,
-    * 0 means emails are disabled
+    * the number of days between reminder emails, 0 means emails are disabled
     */
    private Integer reminderDays;
 
    /**
-    * This will be the email address that notification emails should be sent from for this evaluation
+    * This will be the email address that notification emails should be sent from for this
+    * evaluation
     */
    private String reminderFromEmail;
 
    private String termId;
 
    /**
-    * if this is set then use the template here,
-    * if null then use the default {@link EvalConstants#EMAIL_TEMPLATE_AVAILABLE}
+    * if this is set then use the template here, if null then use the default
+    * {@link EvalConstants#EMAIL_TEMPLATE_AVAILABLE}
     */
    private EvalEmailTemplate availableEmailTemplate;
 
    /**
-    * if this is set then use the template here,
-    * if null then use the default {@link EvalConstants#EMAIL_TEMPLATE_AVAILABLE}<br/>
+    * if this is set then use the template here, if null then use the default
+    * {@link EvalConstants#EMAIL_TEMPLATE_AVAILABLE}<br/>
     */
    private EvalEmailTemplate reminderEmailTemplate;
 
    /**
-    * This is the template associated with this evaluation, this should always be a copy of
-    * an existing template once the evaluation is created
-    * (no longer in the partial state)
+    * This is the template associated with this evaluation, this should always be a copy of an
+    * existing template once the evaluation is created (no longer in the partial state)
     */
    private EvalTemplate template;
 
    private Set<EvalResponse> responses = new HashSet<EvalResponse>(0);
 
    /**
-    * Defines the sharing setting for the results of this evaluation,
-    * Uses the sharing constants: e.g. {@link EvalConstants#SHARING_VISIBLE}<br/>
-    * <b>NOTE:</b> private means only the owner and superadmin can see the results,
-    * public means anyone can see the results, visible is the owner plus all
-    * admins and colleagues (default)
+    * Defines the sharing setting for the results of this evaluation, Uses the sharing constants:
+    * e.g. {@link EvalConstants#SHARING_VISIBLE}<br/> <b>NOTE:</b> private means only the owner
+    * and superadmin can see the results, public means anyone can see the results, visible is the
+    * owner plus all admins and colleagues (default)
     */
    private String resultsSharing;
 
@@ -144,70 +150,47 @@ public class EvalEvaluation implements java.io.Serializable {
    private String evalCategory;
 
    /**
-    * If this is not null then we will load in all templates/templateItems/items with the
-    * related linking autoUseTag when the evaluation is created
+    * If this is not null then we will load in all templates/templateItems/items with the related
+    * linking autoUseTag when the evaluation is created
     */
    private String autoUseTag;
 
    /**
-    * Controls whether the autoUseTag does anything and where the autoUse items are inserted,
-    * if this is null then autoUse is disabled and no items are inserted,
-    * otherwise the constants determine which location to insert the autoUse data,
-    * for example: {@link EvalConstants#EVALUATION_AUTOUSE_INSERTION_BEFORE}
+    * Controls whether the autoUseTag does anything and where the autoUse items are inserted, if
+    * this is null then autoUse is disabled and no items are inserted, otherwise the constants
+    * determine which location to insert the autoUse data, for example:
+    * {@link EvalConstants#EVALUATION_AUTOUSE_INSERTION_BEFORE}
     */
    private String autoUseInsertion;
 
-   /**
-    * Non-persistent field:<br/>
-    * Set when creating the evaluation only, this will cause the {@link #studentsDate}
-    * to be nulled out when the evaluation is saved if set to false,
-    * otherwise does nothing (assumes the field can be set but will not fail if it is not)<br/>
-    * This is ignored if it is null<br/>
-    */
-   public Boolean studentViewResults;
-   /**
-    * Non-persistent field:<br/>
-    * Set when creating the evaluation only, this will cause the {@link #instructorsDate}
-    * to be nulled out out when the evaluation is saved if set to false,
-    * otherwise does nothing (assumes the field can be set but will not fail if it is not)<br/>
-    * This is ignored if it is null<br/>
-    */
-   public Boolean instructorViewResults;
+
+   // NON_PERSISTENT
 
    /**
-    * Non-persistent field:<br/>
-    * If this is set to false then the evaluation start date will be set to now,
-    * otherwise the currently set start date will be used<br/>
-    * <b>NOTE:</b> this should only be set when an evaluation is not yet saved
-    * This is ignored if it is null<br/>
+    * Non-persistent field:<br/> If this is set to false then the evaluation start date will be set
+    * to now, otherwise the currently set start date will be used<br/> <b>NOTE:</b> this should
+    * only be set when an evaluation is not yet saved This is ignored if it is null<br/>
     */
    public Boolean customStartDate;
    /**
-    * Non-persistent field:<br/>
-    * If this is set to false then the evaluation due date will be set null and
-    * the evaluation will be open forever,
-    * otherwise the currently set due date will be used<br/>
-    * This is ignored if it is null<br/>
-    * <b>NOTE:</b> this will override any setting for {@link #useStopDate} and {@link #useViewDate}
+    * Non-persistent field:<br/> If this is set to false then the evaluation due date will be set
+    * null and the evaluation will be open forever, otherwise the currently set due date will be
+    * used<br/> This is ignored if it is null<br/> <b>NOTE:</b> this will override any setting
+    * for {@link #useStopDate} and {@link #useViewDate}
     */
    public Boolean useDueDate;
    /**
-    * Non-persistent field:<br/>
-    * If this is set to false then the evaluation stop date will be set to whatever
-    * the due date is set to (effectively meaning there is no grace period at all),
-    * otherwise the currently set stop date will be used<br/>
-    * This is ignored if it is null<br/>
+    * Non-persistent field:<br/> If this is set to false then the evaluation stop date will be set
+    * to whatever the due date is set to (effectively meaning there is no grace period at all),
+    * otherwise the currently set stop date will be used<br/> This is ignored if it is null<br/>
     */
    public Boolean useStopDate;
    /**
-    * Non-persistent field:<br/>
-    * If this is set to false then the evaluation view date will be set to whatever
-    * the due date is set to (effectively meaning the results are immediately viewable),
-    * otherwise the currently set view date will be used<br/>
-    * This is ignored if it is null<br/>
+    * Non-persistent field:<br/> If this is set to false then the evaluation view date will be set
+    * to whatever the due date is set to (effectively meaning the results are immediately viewable),
+    * otherwise the currently set view date will be used<br/> This is ignored if it is null<br/>
     */
    public Boolean useViewDate;
-
 
    // Constructors
 
@@ -218,9 +201,11 @@ public class EvalEvaluation implements java.io.Serializable {
    /**
     * minimal constructor
     */
-   public EvalEvaluation(String type, String owner, String title, Date startDate,
-         String state, String resultsSharing, Integer reminderDays, EvalTemplate template) {
-      if (this.lastModified == null) { this.lastModified = new Date(); }
+   public EvalEvaluation(String type, String owner, String title, Date startDate, String state,
+         String resultsSharing, Integer reminderDays, EvalTemplate template) {
+      if (this.lastModified == null) {
+         this.lastModified = new Date();
+      }
       this.type = type;
       this.owner = owner;
       this.title = title;
@@ -229,15 +214,17 @@ public class EvalEvaluation implements java.io.Serializable {
       this.resultsSharing = resultsSharing;
       this.reminderDays = reminderDays;
       this.template = template;
-      fixUpStuInst();
    }
 
-   /** 
-    * general use constructor 
+   /**
+    * general use constructor
     */
    public EvalEvaluation(String type, String owner, String title, Date startDate, Date dueDate,
-         Date stopDate, Date viewDate, String state, String resultsSharing, Integer reminderDays, EvalTemplate template) {
-      if (this.lastModified == null) { this.lastModified = new Date(); }
+         Date stopDate, Date viewDate, String state, String resultsSharing, Integer reminderDays,
+         EvalTemplate template) {
+      if (this.lastModified == null) {
+         this.lastModified = new Date();
+      }
       this.type = type;
       this.owner = owner;
       this.title = title;
@@ -249,20 +236,22 @@ public class EvalEvaluation implements java.io.Serializable {
       this.resultsSharing = resultsSharing;
       this.reminderDays = reminderDays;
       this.template = template;
-      fixUpStuInst();
    }
 
-   /** 
-    * full constructor 
+   /**
+    * full constructor
     */
-   public EvalEvaluation(String type, String owner, String title, String instructions, Date startDate,
-         Date dueDate, Date stopDate, Date viewDate, Date studentsDate, Date instructorsDate, String state,
-         String resultsSharing, String instructorOpt, Integer reminderDays, String reminderFromEmail,
-         String termId, EvalEmailTemplate availableEmailTemplate,
-         EvalEmailTemplate reminderEmailTemplate, EvalTemplate template, Set<EvalResponse> responses, Boolean blankResponsesAllowed,
-         Boolean modifyResponsesAllowed, Boolean unregisteredAllowed, Boolean locked,
-         String authControl, String evalCategory) {
-      if (this.lastModified == null) { this.lastModified = new Date(); }
+   public EvalEvaluation(String type, String owner, String title, String instructions,
+         Date startDate, Date dueDate, Date stopDate, Date viewDate, boolean studentViewResults,
+         Date studentsDate, boolean instructorViewResults, Date instructorsDate, String state,
+         String resultsSharing, String instructorOpt, Integer reminderDays,
+         String reminderFromEmail, String termId,
+         EvalEmailTemplate availableEmailTemplate, EvalEmailTemplate reminderEmailTemplate, EvalTemplate template,
+         Set<EvalResponse> responses, Boolean blankResponsesAllowed, Boolean modifyResponsesAllowed,
+         Boolean unregisteredAllowed, Boolean locked, String authControl, String evalCategory) {
+      if (this.lastModified == null) {
+         this.lastModified = new Date();
+      }
       this.type = type;
       this.owner = owner;
       this.title = title;
@@ -271,7 +260,9 @@ public class EvalEvaluation implements java.io.Serializable {
       this.stopDate = stopDate;
       this.dueDate = dueDate;
       this.viewDate = viewDate;
+      this.studentViewResults = studentViewResults;
       this.studentsDate = studentsDate;
+      this.instructorViewResults = instructorViewResults;
       this.instructorsDate = instructorsDate;
       this.state = state;
       this.instructorOpt = instructorOpt;
@@ -289,21 +280,12 @@ public class EvalEvaluation implements java.io.Serializable {
       this.locked = locked;
       this.authControl = authControl;
       this.evalCategory = evalCategory;
-      fixUpStuInst();
    }
 
-   public void fixUpStuInst() {
-      if (this.studentsDate == null) {
-         this.studentViewResults = false;
-      } else {
-         this.studentViewResults = true;
-      }
-      if (this.instructorsDate == null) {
-         this.instructorViewResults = false;
-      } else {
-         this.instructorViewResults = true;
-      }
-   }
+   @Override
+   public String toString() {
+      return "eval: ["+this.type+"] "+this.title+" ("+this.id+") state="+this.state+" ,start=" + this.startDate + ", due="+this.dueDate;
+   };
 
    public String getAuthControl() {
       return authControl;
@@ -344,14 +326,14 @@ public class EvalEvaluation implements java.io.Serializable {
    public void setEvalCategory(String evalCategory) {
       this.evalCategory = evalCategory;
    }
-   
-	public String getEid() {
-		return this.eid;
-	}
 
-	public void setEid(String eid) {
-		this.eid = eid;
-	}
+   public String getEid() {
+      return this.eid;
+   }
+
+   public void setEid(String eid) {
+      this.eid = eid;
+   }
 
    public Long getId() {
       return id;
@@ -383,7 +365,6 @@ public class EvalEvaluation implements java.io.Serializable {
 
    public void setInstructorsDate(Date instructorsDate) {
       this.instructorsDate = instructorsDate;
-      fixUpStuInst();
    }
 
    public Date getLastModified() {
@@ -480,7 +461,6 @@ public class EvalEvaluation implements java.io.Serializable {
 
    public void setStudentsDate(Date studentsDate) {
       this.studentsDate = studentsDate;
-      fixUpStuInst();
    }
 
    public EvalTemplate getTemplate() {
@@ -522,41 +502,53 @@ public class EvalEvaluation implements java.io.Serializable {
    public void setViewDate(Date viewDate) {
       this.viewDate = viewDate;
    }
-   
+
    public String getType() {
       return type;
    }
-   
+
    public void setType(String type) {
       this.type = type;
    }
-   
+
    public String getResultsSharing() {
       return resultsSharing;
    }
-   
+
    public void setResultsSharing(String resultsPrivacy) {
       this.resultsSharing = resultsPrivacy;
    }
 
-   
    public String getAutoUseTag() {
       return autoUseTag;
    }
 
-   
    public void setAutoUseTag(String autoUseTag) {
       this.autoUseTag = autoUseTag;
    }
 
-   
    public String getAutoUseInsertion() {
       return autoUseInsertion;
    }
 
-   
    public void setAutoUseInsertion(String autoUseInsertion) {
       this.autoUseInsertion = autoUseInsertion;
+   }
+
+   public boolean getStudentViewResults() {
+      return studentViewResults;
+   }
+
+   public void setStudentViewResults(boolean studentViewResults) {
+      this.studentViewResults = studentViewResults;
+   }
+
+   public boolean getInstructorViewResults() {
+      return instructorViewResults;
+   }
+
+   public void setInstructorViewResults(boolean instructorViewResults) {
+      this.instructorViewResults = instructorViewResults;
    }
 
 }

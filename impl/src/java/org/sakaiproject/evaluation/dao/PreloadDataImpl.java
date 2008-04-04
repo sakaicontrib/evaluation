@@ -109,7 +109,7 @@ public class PreloadDataImpl implements Runnable {
          // Default Student settings
          saveConfig(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED, true);
          saveConfig(EvalSettings.STUDENT_MODIFY_RESPONSES, false);
-         saveConfig(EvalSettings.STUDENT_VIEW_RESULTS, false);
+         saveConfig(EvalSettings.STUDENT_ALLOWED_VIEW_RESULTS, false);
 
          // Default Admin settings
          saveConfig(EvalSettings.ADMIN_ADD_ITEMS_NUMBER, 5);

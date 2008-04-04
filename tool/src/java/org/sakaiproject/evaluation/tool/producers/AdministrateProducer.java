@@ -230,7 +230,7 @@ public class AdministrateProducer implements ViewComponentProducer {
       makeSelect(form, "students-view-results",
             administrateConfigurableValues, 
             administrateConfigurableLabels, 
-            EvalSettings.STUDENT_VIEW_RESULTS, true);
+            EvalSettings.STUDENT_ALLOWED_VIEW_RESULTS, true);
       UIMessage.make(form, "students-view-results-note","administrate.students.view.results.note");
 
       // Administrator Settings

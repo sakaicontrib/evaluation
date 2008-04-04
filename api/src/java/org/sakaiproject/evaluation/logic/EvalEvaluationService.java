@@ -247,7 +247,7 @@ public interface EvalEvaluationService {
     * 
     * @param evaluationIds an array of the ids of {@link EvalEvaluation} objects
     * @param includeUnApproved if true, include the evaluation contexts which have not been instructor approved yet,
-    * you should not include these when displaying evaluationSetupService to users to take or sending emails
+    * you should not include these when displaying evaluations to users to take or sending emails
     * @param includeHierarchyGroups if true then all groups which were added because a node was added will be included,
     * if false then only groups which were added directly will be included, 
     * if null then all (directly added and node added groups) will be included
@@ -261,8 +261,8 @@ public interface EvalEvaluationService {
     * same as {@link #getEvalGroupsForEval(Long[], boolean, Boolean)} but returns {@link EvalAssignGroup}s
     * 
     * @param evaluationIds an array of the ids of {@link EvalEvaluation} objects
-    * @param includeUnApproved if true, include the evaluation contexts which have not been instructor approved yet,
-    * you should not include these when displaying evaluationSetupService to users to take or sending emails
+    * @param includeUnApproved if true, include the evaluation groups which have not been instructor approved yet,
+    * you should not include these when displaying evaluations to users to take or sending emails
     * @param includeHierarchyGroups if true then all groups which were added because a node was added will be included,
     * if false then only groups which were added directly will be included,
     * if null then all (directly added and node added groups) will be included
@@ -275,9 +275,11 @@ public interface EvalEvaluationService {
     * (this is much faster than the related method: {@link #getEvalGroupsForEval(Long[], boolean, Boolean)})
     * 
     * @param evaluationId the id of an {@link EvalEvaluation} object
+    * @param includeUnApproved if true, include the evaluation groups which have not been instructor approved yet,
+    * you should not include these when displaying evaluations to users to take or sending emails
     * @return the count of eval groups
     */
-   public int countEvaluationGroups(Long evaluationId);
+   public int countEvaluationGroups(Long evaluationId, boolean includeUnApproved);
 
    /**
     * Gets the total count of participants for an evaluation,<br/>

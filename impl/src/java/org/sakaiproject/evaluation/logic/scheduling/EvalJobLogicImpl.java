@@ -185,25 +185,20 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 
       } else if (EvalConstants.JOB_TYPE_CLOSED.equals(jobType)) {
          // schedule results viewable by owner - admin notification
-         if (eval.getViewDate() != null) {
-            scheduleJob(eval.getId(), eval.getViewDate(), EvalConstants.JOB_TYPE_VIEWABLE);
-            if (! EvalConstants.SHARING_PRIVATE.equals(eval.getResultsSharing()) ) {
-               if (eval.getInstructorsDate() != null) {
-                  Date instructorViewDate = eval.getInstructorsDate();
-                  // schedule results viewable by instructors notification
-                  scheduleJob(eval.getId(), instructorViewDate,
-                        EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS);
-               }
-               if (eval.getStudentsDate() != null) {
-                  Date studentViewDate = eval.getStudentsDate();
-                  // schedule results viewable by students notification
-                  scheduleJob(eval.getId(), studentViewDate,
-                        EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS);
-               }
+         Date viewDate = eval.getViewDate() == null ? now : eval.getViewDate();
+         scheduleJob(eval.getId(), viewDate, EvalConstants.JOB_TYPE_VIEWABLE);
+
+         if (! EvalConstants.SHARING_PRIVATE.equals(eval.getResultsSharing()) ) {
+            if (eval.getInstructorViewResults()) {
+               Date instructorViewDate = eval.getInstructorsDate() == null ? now : eval.getInstructorsDate();
+               // schedule results viewable by instructors notification
+               scheduleJob(eval.getId(), instructorViewDate, EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS);
             }
-         } else {
-            // viewable now
-            scheduleJob(eval.getId(), now, EvalConstants.JOB_TYPE_VIEWABLE);
+            if (eval.getStudentViewResults()) {
+               Date studentViewDate = eval.getStudentsDate() == null ? now : eval.getStudentsDate();
+               // schedule results viewable by students notification
+               scheduleJob(eval.getId(), studentViewDate, EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS);
+            }
          }
 
       } else if (EvalConstants.JOB_TYPE_VIEWABLE.equals(jobType)) {
@@ -340,13 +335,27 @@ public class EvalJobLogicImpl implements EvalJobLogic {
          // make sure scheduleView job invocation start date matches EvalEvaluation view date
          checkInvocationDate(eval, EvalConstants.JOB_TYPE_VIEWABLE, eval.getViewDate());
 
-         // make sure scheduleView By Instructors job invocation start date matches
-         // EvalEvaluation instructor's date
-         checkInvocationDate(eval, EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS, eval.getInstructorsDate());
+         // make sure scheduleView By Instructors job invocation start date matches EvalEvaluation instructor's date
+         if (eval.getInstructorViewResults()) {
+            checkInvocationDate(eval, EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS, eval.getInstructorsDate());
+         } else {
+            // not allowed so remove the job
+            EvalScheduledJob[] jobs = externalLogic.findScheduledJobs(eval.getId(), EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS);
+            for (EvalScheduledJob evalScheduledJob : jobs) {
+               externalLogic.deleteScheduledJob(evalScheduledJob.uuid);               
+            }
+         }
 
-         // make sure scheduleView By Students job invocation start date matches EvalEvaluation
-         // student's date
-         checkInvocationDate(eval, EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS, eval.getStudentsDate());
+         // make sure scheduleView By Students job invocation start date matches EvalEvaluation student's date
+         if (eval.getStudentViewResults()) {
+            checkInvocationDate(eval, EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS, eval.getStudentsDate());
+         } else {
+            // not allowed so remove the job
+            EvalScheduledJob[] jobs = externalLogic.findScheduledJobs(eval.getId(), EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS);
+            for (EvalScheduledJob evalScheduledJob : jobs) {
+               externalLogic.deleteScheduledJob(evalScheduledJob.uuid);               
+            }            
+         }
       }
    }
 

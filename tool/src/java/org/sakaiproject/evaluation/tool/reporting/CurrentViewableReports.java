@@ -18,7 +18,7 @@ public class CurrentViewableReports {
 
    public void populate(Long evalId) {
       this.evalId = evalId;
-      viewableGroupIDs = reportingPermissions.chooseGroupsPartialCheck(evalId);
+      viewableGroupIDs = reportingPermissions.getResultsViewableEvalGroupIdsForCurrentUser(evalId).toArray(new String[] {});
    }
 
    /* Boring java boilerplate code below */
