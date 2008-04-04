@@ -990,7 +990,7 @@ color: #555;
 	list-style: lower-alpha; list-style-position: outside;line-height:150%
 }
 .itemListReport .showcomments  ol li, .itemListReport .showtextresponses ol li{
-	text-indent:-2em;margin-left:2em;padding:.4em
+	padding:.4em
 }
 .itemListReport .showcomments li.itemsListOddLine, .itemListReport .showtextresponses li.itemsListOddLine{
 	background:#fff
