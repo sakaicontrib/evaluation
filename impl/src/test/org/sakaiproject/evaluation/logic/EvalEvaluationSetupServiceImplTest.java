@@ -44,6 +44,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
    protected EvalEvaluationSetupServiceImpl evaluationSetupService;
    private EvalEvaluationService evaluationService;
+   private EvalAuthoringService authoringService;
 
    // run this before each test starts
    protected void onSetUpBeforeTransaction() throws Exception {
@@ -76,8 +77,9 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
       EvalAuthoringServiceImpl authoringServiceImpl = new EvalAuthoringServiceImpl();
       authoringServiceImpl.setDao(evaluationDao);
       authoringServiceImpl.setExternalLogic( new MockEvalExternalLogic() );
-      authoringServiceImpl.setSettings(settings);
       authoringServiceImpl.setSecurityChecks(securityChecks);
+      authoringServiceImpl.setSettings(settings);
+      authoringService = authoringServiceImpl;
 
 
       // create and setup the object to be tested
@@ -381,6 +383,27 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
       // test for an invalid Eval that it does not cause an exception
       evaluationSetupService.deleteEvaluation( EvalTestDataLoad.INVALID_LONG_ID, EvalTestDataLoad.MAINT_USER_ID);
+
+      // http://jira.sakaiproject.org/jira/browse/EVALSYS-545 - removing partial eval will remove copied template as well
+      // test that removing an eval with a copied template does not remove the template if still partial
+      Long templateId545 = authoringService.copyTemplate(etdl.templatePublic.getId(), "copy 545", EvalTestDataLoad.MAINT_USER_ID, true, false);
+      EvalTemplate template545 = authoringService.getTemplateById(templateId545);
+      EvalEvaluation evalTest545 = new EvalEvaluation( EvalConstants.EVALUATION_TYPE_EVALUATION, 
+            EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
+            etdl.today, etdl.tomorrow, etdl.threeDaysFuture, etdl.fourDaysFuture, 
+            EvalConstants.EVALUATION_STATE_PARTIAL, 
+            EvalConstants.SHARING_VISIBLE, Integer.valueOf(1), template545);
+      evaluationSetupService.saveEvaluation( evalTest545, EvalTestDataLoad.MAINT_USER_ID, false ); // partial
+      EvalEvaluation checkEval545 = evaluationService.getEvaluationById(evalTest545.getId());
+      assertNotNull(checkEval545);
+      Long checkEval545templateId = checkEval545.getTemplate().getId();
+      assertEquals(templateId545, checkEval545templateId);
+
+      evalIdToRemove = evalTest545.getId();
+      evaluationSetupService.deleteEvaluation(evalIdToRemove, EvalTestDataLoad.ADMIN_USER_ID);
+      assertNull( evaluationService.getEvaluationById(evalIdToRemove) );
+      assertNotNull( evaluationDao.findById(EvalTemplate.class, checkEval545templateId) );
+
    }
 
    public void testCloseEvaluation() {

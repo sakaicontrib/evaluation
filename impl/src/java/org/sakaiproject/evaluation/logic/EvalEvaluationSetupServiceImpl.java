@@ -510,22 +510,25 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
          }
          dao.deleteSet(emailSet);
 
-         // remove template if needed
          if (removeTemplate) {
-            // remove the associated template if it is a copy (it should be)
-            EvalTemplate template = null;
-            if (evaluation.getTemplate() != null 
-                  || evaluation.getTemplate().getId() != null) {
-               // there is a template so get it and check to see if it needs to be removed
-               template = authoringService.getTemplateById(evaluation.getTemplate().getId());
-               if (template.getCopyOf() != null ||
-                     template.isHidden() == true) {
-                  // this is a copy so remove it and all children
-                  if (securityChecks.checkUserControlTemplate(userId, template)) {
-                     authoringService.deleteTemplate(template.getId(), userId);
-                  } else {
-                     log.warn("Could not remove the template ("+template.getId()+") associated with this "
-                           + "eval ("+evaluationId+") since this user has no permission, continuing to remove evaluation anyway");
+            // remove template if it is a copy
+            if (EvalUtils.checkStateAfter(evaluation.getState(), EvalConstants.EVALUATION_STATE_PARTIAL, false)) {
+               // this is not partial (partials do not have copies made yet)
+               // remove the associated template if it is a copy (it should be)
+               EvalTemplate template = null;
+               if (evaluation.getTemplate() != null 
+                     || evaluation.getTemplate().getId() != null) {
+                  // there is a template so get it and check to see if it needs to be removed
+                  template = authoringService.getTemplateById(evaluation.getTemplate().getId());
+                  if (template.getCopyOf() != null ||
+                        template.isHidden() == true) {
+                     // this is a copy so remove it and all children
+                     if (securityChecks.checkUserControlTemplate(userId, template)) {
+                        authoringService.deleteTemplate(template.getId(), userId);
+                     } else {
+                        log.warn("Could not remove the template ("+template.getId()+") associated with this "
+                              + "eval ("+evaluationId+") since this user has no permission, continuing to remove evaluation anyway");
+                     }
                   }
                }
             }
