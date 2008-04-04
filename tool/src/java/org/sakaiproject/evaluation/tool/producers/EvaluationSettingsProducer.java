@@ -351,7 +351,7 @@ public class EvaluationSettingsProducer implements ViewComponentProducer, ViewPa
       boolean sameViewDateForAll = (Boolean) settings.get(EvalSettings.EVAL_USE_SAME_VIEW_DATES);
 
       // Student view date
-      Boolean studentViewResults = (Boolean) settings.get(EvalSettings.STUDENT_VIEW_RESULTS);
+      Boolean studentViewResults = (Boolean) settings.get(EvalSettings.STUDENT_ALLOWED_VIEW_RESULTS);
       UIBranchContainer showResultsToStudents = UIBranchContainer.make(form, "showResultsToStudents:");
       generateSettingsControlledCheckbox(showResultsToStudents, "studentViewResults", 
             evaluationOTP + "studentViewResults", studentViewResults, form, 

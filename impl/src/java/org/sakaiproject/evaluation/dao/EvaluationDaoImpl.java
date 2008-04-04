@@ -73,6 +73,27 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
    }
 
 
+   public void fixupDatabase() {
+      // fix up some of the null fields
+      int count = 0;
+      count = countByProperties(EvalEvaluation.class, new String[] {"studentViewResults"}, new Object[] {""}, new int[] {EvaluationDao.NULL});
+      if (count > 0) {
+         int counter = 0;
+         counter += getHibernateTemplate().bulkUpdate("update EvalEvaluation eval set eval.studentViewResults = false where eval.studentsDate is null");
+         counter += getHibernateTemplate().bulkUpdate("update EvalEvaluation eval set eval.studentViewResults = true where eval.studentsDate is not null");
+         log.info("Updated " + counter + " EvalEvaluation.studentViewResults fields from null to boolean values based on studentsDate values");
+      }
+      count = countByProperties(EvalEvaluation.class, new String[] {"instructorViewResults"}, new Object[] {""}, new int[] {EvaluationDao.NULL});
+      if (count > 0) {
+         int counter = 0;
+         counter += getHibernateTemplate().bulkUpdate("update EvalEvaluation eval set eval.instructorViewResults = false where eval.instructorsDate is null");
+         counter += getHibernateTemplate().bulkUpdate("update EvalEvaluation eval set eval.instructorViewResults = true where eval.instructorsDate is not null");
+         log.info("Updated " + counter + " EvalEvaluation.instructorViewResults fields from null to boolean values based on instructorsDate values");
+      }
+      
+   }
+
+
    /**
     * Construct the HQL to do the sharing query based on sharing constants and userId
     * @return the HQL query string
@@ -1420,80 +1441,6 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       return releasedLock;
    }
 
-   /**
-    * Allows for an easy way to run some code ONLY if a lock can be obtained by
-    * the executer, if the lock can be obtained then the Runnable is executed,
-    * if not, then nothing happens<br/>
-    * This is primarily useful for ensuring only a single server in the cluster
-    * is executing some code<br/>
-    * <b>NOTE:</b> This intentionally returns a null on failure rather than an exception since exceptions will
-    * cause a rollback which makes the current session effectively dead, this also makes it impossible to 
-    * control the failure so instead we return null as a marker
-    * @param lockId the name of the lock which we are seeking
-    * @param executerId a unique id for the executer of this code (normally a server id)
-    * @param toExecute a {@link Runnable} which will have the run method executed if a lock can be obtained
-    * 
-    * @return true if the code was executed, false if someone else has the lock, null if there was a failure
-    */
-   @SuppressWarnings("unchecked")
-   public Boolean lockAndExecuteRunnable(String lockId, String executerId, Runnable toExecute) {
-      if (executerId == null || 
-            "".equals(executerId)) {
-         throw new IllegalArgumentException("The executer Id must be set");
-      }
-      if (lockId == null || 
-            "".equals(lockId)) {
-         throw new IllegalArgumentException("The lock Id must be set");
-      }
-      if (toExecute == null) {
-         throw new IllegalArgumentException("The toExecute Runnable must not be null");
-      }
-
-      // basically we are opening a transaction to get the current lock and set it if it is not there
-      Boolean loadingData = false;
-      try {
-         // check the lock
-         List<EvalLock> locks = findByProperties(EvalLock.class, 
-               new String[] {"name"},
-               new Object[] {lockId});
-         if (locks.size() > 0) {
-            // check if this is my lock, if not, then exit, if so then go ahead
-            EvalLock lock = locks.get(0);
-            if (lock.getHolder().equals(executerId)) {
-               loadingData = true;
-            } else {
-               loadingData = false;
-            }
-         } else {
-            // obtain the lock
-            EvalLock lock = new EvalLock(lockId, executerId);
-            getHibernateTemplate().save(lock);
-            getHibernateTemplate().flush(); // this should commit the data immediately
-            loadingData = true;
-         }
-         locks.clear(); // clear the locks list
-
-         if (loadingData) {
-            // execute the runnable method
-            toExecute.run();
-
-            // clear the lock
-            locks = findByProperties(EvalLock.class, 
-                  new String[] {"name"},
-                  new Object[] {lockId});
-            getHibernateTemplate().deleteAll(locks);
-            // commit preload and lock removal
-            getHibernateTemplate().flush();
-         }
-      } catch (RuntimeException e) {
-         loadingData = null; // null indicates the failure
-         cleanupLockAfterFailure(lockId);
-         log.fatal("Lock and execute failure for lock ("+lockId+"): " + e.getMessage(), e);
-      }
-
-      return loadingData;
-   }
-
 
    /**
     * Cleans up lock if there was a failure
@@ -1514,5 +1461,6 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
          log.error("Could not cleanup the lock ("+lockId+") after failure: " + ex.getMessage(), ex);
       }
    }
+
 
 }

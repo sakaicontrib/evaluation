@@ -418,11 +418,30 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService {
 
    // EVAL AND ASSIGN GROUPS
 
-   public int countEvaluationGroups(Long evaluationId) {
+   public int countEvaluationGroups(Long evaluationId, boolean includeUnApproved) {
       log.debug("evalId: " + evaluationId);
+
+      List<String> props = new ArrayList<String>();
+      List<Object> values = new ArrayList<Object>();
+      List<Number> comparisons = new ArrayList<Number>();
+
+      // basic search params
+      props.add("evaluation.id");
+      values.add(evaluationId);
+      comparisons.add(ByPropsFinder.EQUALS);
+
+      if (! includeUnApproved) {
+         // only include those that are approved
+         props.add("instructorApproval");
+         values.add(Boolean.TRUE);
+         comparisons.add(ByPropsFinder.EQUALS);
+      }
+
       int count = dao.countByProperties(EvalAssignGroup.class, 
-            new String[] {"evaluation.id"}, 
-            new Object[] {evaluationId});
+            props.toArray(new String[props.size()]), 
+            values.toArray(new Object[values.size()]), 
+            ArrayUtils.listToIntArray(comparisons)
+         );
       return count;
    }
 

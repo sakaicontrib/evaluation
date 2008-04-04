@@ -75,7 +75,7 @@ public interface EvalSettings {
     * CONSTANT: Student is allowed to view the results of the evaluation - {@link Boolean}, default False
     * <b>Note:</b> If this is NULL then the evaluation settings override, otherwise this overrides the evaluation setting
     */
-   public static final String STUDENT_VIEW_RESULTS = "STUDENT_VIEW_RESULTS:java.lang.Boolean";
+   public static final String STUDENT_ALLOWED_VIEW_RESULTS = "STUDENT_ALLOWED_VIEW_RESULTS:java.lang.Boolean";
 
    /**
     * CONSTANT: Admin is allowed to add this many items to an evaluation from above in the hierarchy - {@link Integer}, default 5
@@ -290,7 +290,7 @@ public interface EvalSettings {
       INSTRUCTOR_ALLOWED_VIEW_RESULTS,
       STUDENT_ALLOWED_LEAVE_UNANSWERED,
       STUDENT_MODIFY_RESPONSES,
-      STUDENT_VIEW_RESULTS
+      STUDENT_ALLOWED_VIEW_RESULTS
    };
 
    /**

@@ -155,19 +155,19 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
           * We only need to show the choose groups breadcrumb if it's actually 
           * possible for us to view more than one group.
           */
-         String[] viewableGroups = reportingPermissions.chooseGroupsPartialCheck(evaluationId);
-         if (viewableGroups.length == 0) {
+         Set<String> viewableGroups = reportingPermissions.getResultsViewableEvalGroupIdsForCurrentUser(evaluationId);
+         if (viewableGroups.isEmpty()) {
             UIMessage.make(tofill, "security-warning", "viewreport.not.allowed");
             return;
-         } else if (viewableGroups.length == 1) {
+         } else if (viewableGroups.size() == 1) {
             // only one group to view
-            reportViewParams.groupIds = viewableGroups;
-         } else if (viewableGroups.length > 1) {
+            reportViewParams.groupIds = viewableGroups.toArray(new String[] {});
+         } else if (viewableGroups.size() > 1) {
             // user can choose other groups so give them a link
             UIInternalLink.make(tofill, "report-groups-title", UIMessage.make("reportgroups.page.title"), 
                   new ReportParameters(ReportChooseGroupsProducer.VIEW_ID, reportViewParams.evaluationId));
             if (reportViewParams.groupIds == null || reportViewParams.groupIds.length == 0) {
-               reportViewParams.groupIds = viewableGroups;
+               reportViewParams.groupIds = viewableGroups.toArray(new String[] {});
             }
          }
 

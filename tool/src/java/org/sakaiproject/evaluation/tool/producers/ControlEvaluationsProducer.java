@@ -234,7 +234,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
             }
 
             // vary the display depending on the number of groups assigned
-            int groupsCount = evaluationService.countEvaluationGroups(evaluation.getId());
+            int groupsCount = evaluationService.countEvaluationGroups(evaluation.getId(), false);
             if (groupsCount == 1) {
                UIInternalLink.make(evaluationRow, "inqueue-eval-assigned-link", getTitleForFirstEvalGroup(evaluation.getId()), 
                      new EvalViewParameters(EvaluationAssignmentsProducer.VIEW_ID, evaluation.getId()) );
@@ -285,7 +285,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
             }
 
             // vary the display depending on the number of groups assigned
-            int groupsCount = evaluationService.countEvaluationGroups(evaluation.getId());
+            int groupsCount = evaluationService.countEvaluationGroups(evaluation.getId(), false);
             if (groupsCount == 1) {
                UIInternalLink.make(evaluationRow, "active-eval-assigned-link", getTitleForFirstEvalGroup(evaluation.getId()), 
                      new EvalViewParameters(EvaluationAssignmentsProducer.VIEW_ID, evaluation.getId()) );
@@ -343,7 +343,7 @@ public class ControlEvaluationsProducer implements ViewComponentProducer {
             }
 
             // vary the display depending on the number of groups assigned
-            int groupsCount = evaluationService.countEvaluationGroups(evaluation.getId());
+            int groupsCount = evaluationService.countEvaluationGroups(evaluation.getId(), false);
             if (groupsCount == 1) {
                UIInternalLink.make(evaluationRow, "closed-eval-assigned-link", getTitleForFirstEvalGroup(evaluation.getId()), 
                      new EvalViewParameters(EvaluationAssignmentsProducer.VIEW_ID, evaluation.getId()) );

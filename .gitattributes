@@ -136,6 +136,7 @@ impl/src/test/org/sakaiproject/evaluation/logic/EvalExternalLogicStubTest.java -
 impl/src/test/org/sakaiproject/evaluation/logic/EvalJobLogicImplTest.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/test/org/sakaiproject/evaluation/logic/EvalSettingsImplTest.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/test/org/sakaiproject/evaluation/logic/ExternalHierarchyLogicImplTest.java -text svn_keywords=Date+Revision+Author+URL+Id
+impl/src/test/org/sakaiproject/evaluation/logic/ReportingPermissionsImplTest.java svn_keywords=Date+Revision+Author+HeadURL+Id
 impl/src/test/org/sakaiproject/evaluation/test/EvalTestDataLoad.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/test/org/sakaiproject/evaluation/test/PreloadTestDataImpl.java -text svn_keywords=Date+Revision+Author+URL+Id
 impl/src/test/org/sakaiproject/evaluation/test/mocks/MockEvalExternalLogic.java -text svn_keywords=Date+Revision+Author+URL+Id

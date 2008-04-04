@@ -330,28 +330,6 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 //                  + "templates, copy the template using the authoringService.copyTemplate method before saving this eval");
          }
       }
-      
-      // force the student/instructor dates based on the boolean settings
-      if (evaluation.studentViewResults != null && ! evaluation.studentViewResults) {
-         evaluation.setStudentsDate(null);
-      } else {
-         // fix up the dates
-         if (evaluation.getStudentsDate() == null) {
-            evaluation.setStudentsDate( evaluation.getViewDate() == null ? evaluation.getDueDate() : evaluation.getViewDate() );
-         } else if (evaluation.getViewDate() == null && evaluation.getStudentsDate() == null) {
-            evaluation.setStudentsDate( evaluation.getDueDate() );
-         }
-      }
-      if (evaluation.instructorViewResults != null && ! evaluation.instructorViewResults) {
-         evaluation.setInstructorsDate(null);
-      } else {
-         // fix up the dates
-         if (evaluation.getInstructorsDate() == null) {
-            evaluation.setInstructorsDate( evaluation.getViewDate() == null ? evaluation.getDueDate() : evaluation.getViewDate() );
-         } else if (evaluation.getViewDate() == null && evaluation.getInstructorsDate() == null) {
-            evaluation.setInstructorsDate( evaluation.getDueDate() );
-         }
-      }
 
       // fill in any default values and nulls here
       if (evaluation.getLocked() == null) {
@@ -1214,7 +1192,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       if (eah.getInstructorsViewResults() == null) {
          Boolean instViewResults = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
          if (instViewResults == null) {
-            if (eval.getInstructorsDate() != null) {
+            if (eval.getInstructorViewResults()) {
                eah.setInstructorsViewResults( Boolean.TRUE );
             } else {
                eah.setInstructorsViewResults( Boolean.FALSE );
@@ -1225,9 +1203,9 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
       }
       // setStudentsViewResults
       if (eah.getStudentsViewResults() == null) {
-         Boolean studViewResults = (Boolean) settings.get(EvalSettings.STUDENT_VIEW_RESULTS);
+         Boolean studViewResults = (Boolean) settings.get(EvalSettings.STUDENT_ALLOWED_VIEW_RESULTS);
          if (studViewResults == null) {
-            if (eval.getStudentsDate() != null) {
+            if (eval.getStudentViewResults()) {
                eah.setStudentsViewResults( Boolean.TRUE );
             } else {
                eah.setStudentsViewResults( Boolean.FALSE );

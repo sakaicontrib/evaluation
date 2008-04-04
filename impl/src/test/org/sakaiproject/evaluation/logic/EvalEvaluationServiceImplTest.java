@@ -392,21 +392,21 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
    // EVAL AND GROUP ASSIGNS
 
    /**
-    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#countEvaluationGroups(java.lang.Long)}.
+    * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl#countEvaluationGroups(java.lang.Long, boolean)}.
     */
    public void testCountEvaluationGroups() {
-      int count = evaluationService.countEvaluationGroups( etdl.evaluationClosed.getId() );
+      int count = evaluationService.countEvaluationGroups( etdl.evaluationClosed.getId(), false );
       assertEquals(2, count);
 
-      count = evaluationService.countEvaluationGroups( etdl.evaluationActive.getId() );
+      count = evaluationService.countEvaluationGroups( etdl.evaluationActive.getId(), false );
       assertEquals(1, count);
 
       // test no assigned contexts
-      count = evaluationService.countEvaluationGroups( etdl.evaluationNew.getId() );
+      count = evaluationService.countEvaluationGroups( etdl.evaluationNew.getId(), false );
       assertEquals(0, count);
 
       // test invalid
-      count = evaluationService.countEvaluationGroups( EvalTestDataLoad.INVALID_LONG_ID );
+      count = evaluationService.countEvaluationGroups( EvalTestDataLoad.INVALID_LONG_ID, false );
       assertEquals(0, count);
    }
 
@@ -624,9 +624,9 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
    public void testCanDeleteAssignGroup() {
       // test can remove an AC in new eval
       assertTrue( evaluationService.canDeleteAssignGroup(
-            EvalTestDataLoad.MAINT_USER_ID,  etdl.assign6.getId()) );
+            EvalTestDataLoad.MAINT_USER_ID,  etdl.assign8.getId()) );
       assertTrue( evaluationService.canDeleteAssignGroup(
-            EvalTestDataLoad.ADMIN_USER_ID,  etdl.assign6.getId()) );
+            EvalTestDataLoad.ADMIN_USER_ID,  etdl.assign8.getId()) );
       assertTrue( evaluationService.canDeleteAssignGroup(
             EvalTestDataLoad.ADMIN_USER_ID,  etdl.assign7.getId()) );
 

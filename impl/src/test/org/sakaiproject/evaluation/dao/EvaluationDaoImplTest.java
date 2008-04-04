@@ -21,9 +21,9 @@ import java.util.Set;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAnswer;
+import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
-import org.sakaiproject.evaluation.model.EvalLock;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
@@ -107,11 +107,11 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       evaluationDao.save( itemUnlocked );
 
       evalUnLocked = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, EvalTestDataLoad.MAINT_USER_ID, "Eval active not taken", null, 
-            etdl.yesterday, etdl.tomorrow, etdl.tomorrow, etdl.threeDaysFuture, null, null,
-            EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.SHARING_VISIBLE, 
-            EvalConstants.INSTRUCTOR_OPT_IN, new Integer(1), null, null, null, null, etdl.templatePublicUnused, null,
-            Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, EvalTestDataLoad.UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ,
-            null);
+            etdl.yesterday, etdl.tomorrow, etdl.tomorrow, etdl.threeDaysFuture, false, null,
+            false, null, 
+            EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_OPT_IN, new Integer(1), null, null, null, null,
+            etdl.templatePublicUnused, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
+            EvalTestDataLoad.UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null);
       evaluationDao.save( evalUnLocked );
 
    }
@@ -296,6 +296,11 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
    public void testGetEvaluationsByEvalGroups() {
       List<EvalEvaluation> l = null;
       List<Long> ids = null;
+
+      // testing instructor approval false
+      EvalAssignGroup eag = (EvalAssignGroup) evaluationDao.findById(EvalAssignGroup.class, etdl.assign5.getId());
+      eag.setInstructorApproval(false);
+      evaluationDao.save(eag);
 
       // test getting all assigned evaluations for 2 sites
       l = evaluationDao.getEvaluationsByEvalGroups(
@@ -969,14 +974,12 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       // check for groups that are fully enabled
       evalGroupIds = evaluationDao.getViewableEvalGroupIds(etdl.evaluationClosed.getId(), EvalConstants.PERM_BE_EVALUATED, null);
       assertNotNull(evalGroupIds);
-      assertEquals(2, evalGroupIds.size());
+      assertEquals(1, evalGroupIds.size());
       assertTrue(evalGroupIds.contains(etdl.assign3.getEvalGroupId()));
-      assertTrue(evalGroupIds.contains(etdl.assign4.getEvalGroupId()));
 
       evalGroupIds = evaluationDao.getViewableEvalGroupIds(etdl.evaluationClosed.getId(), EvalConstants.PERM_TAKE_EVALUATION, null);
       assertNotNull(evalGroupIds);
-      assertEquals(2, evalGroupIds.size());
-      assertTrue(evalGroupIds.contains(etdl.assign3.getEvalGroupId()));
+      assertEquals(1, evalGroupIds.size());
       assertTrue(evalGroupIds.contains(etdl.assign4.getEvalGroupId()));
 
       // check for mixture
@@ -1307,11 +1310,11 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       try {
          evaluationDao.lockEvaluation(
                new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, EvalTestDataLoad.MAINT_USER_ID, "Eval new", null, 
-                     etdl.tomorrow, etdl.threeDaysFuture, etdl.threeDaysFuture, etdl.fourDaysFuture, null, null,
-                     EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.SHARING_VISIBLE, 
-                     EvalConstants.INSTRUCTOR_OPT_IN, new Integer(1), null, null, null, null, etdl.templatePublic, null,
-                     Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, EvalTestDataLoad.UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ,
-                     null),
+                     etdl.tomorrow, etdl.threeDaysFuture, etdl.threeDaysFuture, etdl.fourDaysFuture, false, null,
+                     false, null, 
+                     EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_OPT_IN, new Integer(1), null, null, null, null,
+                     etdl.templatePublic, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
+                     EvalTestDataLoad.UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null),
                true
          );
          fail("Should have thrown an exception");
@@ -1429,77 +1432,6 @@ public class EvaluationDaoImplTest extends AbstractTransactionalSpringContextTes
       }
       try {
          evaluationDao.releaseLock(null, "AZ1");
-         fail("Should have thrown an exception");
-      } catch (IllegalArgumentException e) {
-         assertNotNull(e);
-      }
-   }
-
-   /**
-    * Something about this test means it has to run at the end or the others fail
-    */
-   public void testLockAndExecuteRunnable() {
-      final int[] checker = new int[] { 0 }; 
-      Runnable toExecute = new Runnable() {
-         public void run() {
-            checker[0] = checker[0] + 1;
-         }
-      };
-
-      // make sure no locks exist
-      assertEquals(0, evaluationDao.countAll(EvalLock.class));
-
-      assertEquals(0, checker[0]);
-      assertTrue( evaluationDao.lockAndExecuteRunnable("AZ.lock", "AZ1", toExecute) );
-      assertEquals(1, checker[0]);
-
-      // make sure locks were cleared
-      assertEquals(0, evaluationDao.countAll(EvalLock.class));
-
-      // insert a fake lock and test that it blocks the execute
-      EvalLock fakeLock = new EvalLock("FAKE.lock", "AZ2");
-      evaluationDao.save(fakeLock);
-
-      assertEquals(1, evaluationDao.countAll(EvalLock.class));
-
-      assertEquals(1, checker[0]);
-      assertFalse( evaluationDao.lockAndExecuteRunnable("FAKE.lock", "AZ1", toExecute) );
-      assertEquals(1, checker[0]);
-
-      evaluationDao.delete(fakeLock);
-
-      // make sure locks were cleared
-      assertEquals(0, evaluationDao.countAll(EvalLock.class));
-
-
-      // test the a failing execute still cleans up the locks
-      Runnable toExecuteFails = new Runnable() {
-         public void run() {
-            checker[0] = checker[0] + 1;
-            throw new IllegalStateException("Oh Noes!");
-         }
-      };
-
-      assertEquals(1, checker[0]);
-      assertNull( evaluationDao.lockAndExecuteRunnable("AZ.lock", "AZ1", toExecuteFails) );
-      assertEquals(2, checker[0]);
-      assertEquals(0, evaluationDao.countAll(EvalLock.class));
-
-      // check invalid arguments cause failure
-      try {
-         evaluationDao.lockAndExecuteRunnable("AZ.lock", null, toExecute);
-         fail("Should have thrown an exception");
-      } catch (IllegalArgumentException e) {
-         assertNotNull(e);
-      }
-      try {
-         evaluationDao.lockAndExecuteRunnable(null, "AZ1", toExecute);
-         fail("Should have thrown an exception");
-      } catch (IllegalArgumentException e) {
-         assertNotNull(e);
-      }
-      try {
-         evaluationDao.lockAndExecuteRunnable("AZ.lock", "AZ1", null);
          fail("Should have thrown an exception");
       } catch (IllegalArgumentException e) {
          assertNotNull(e);
