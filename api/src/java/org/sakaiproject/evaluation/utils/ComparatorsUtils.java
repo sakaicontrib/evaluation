@@ -96,4 +96,13 @@ public class ComparatorsUtils {
       }
    }
 
+   /**
+    * static class to sort {@link EvalItem} objects by Id
+    */
+   public static class GroupComparatorByTitle implements Comparator<org.sakaiproject.evaluation.logic.model.EvalGroup> {
+      public int compare(org.sakaiproject.evaluation.logic.model.EvalGroup item0, org.sakaiproject.evaluation.logic.model.EvalGroup item1) {
+         return item0.title.compareTo( item1.title );
+      }
+   }
+
 }
