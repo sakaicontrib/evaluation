@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.tool.producers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -31,7 +32,7 @@ import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.renderers.HierarchyTreeNodeSelectRenderer;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
-import uk.org.ponder.rsf.viewstate.ViewStateHandler;
+import org.sakaiproject.evaluation.utils.ComparatorsUtils;
 
 import uk.org.ponder.htmlutil.HTMLUtil;
 import uk.org.ponder.rsf.builtin.UVBProducer;
@@ -46,7 +47,6 @@ import uk.org.ponder.rsf.components.UIOutputMany;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.UIVerbatim;
-import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UILabelTargetDecorator;
 import uk.org.ponder.rsf.components.decorators.UIStyleDecorator;
 import uk.org.ponder.rsf.flow.ARIResult;
@@ -56,6 +56,7 @@ import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
+import uk.org.ponder.rsf.viewstate.ViewStateHandler;
 
 /**
  * View for assigning an evaluation to groups and hierarchy nodes. 
@@ -65,10 +66,6 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  * @author Steve Githens (sgithens@caret.cam.ac.uk)
- */
-/**
- * @author sgithens
- *
  */
 public class EvaluationAssignProducer implements ViewComponentProducer, ViewParamsReporter, ActionResultInterceptor {
 
@@ -107,7 +104,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
       this.vsh = vsh;
    }
    
-   /*
+   /**
     * Instance Variables for building up rendering information.
     */
    private StringBuilder initJS = new StringBuilder();
@@ -225,7 +222,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
          // If both the hierarchy and adhoc groups are disabled, don't hide the
          // selection area and don't make it collapsable, since it will be the
          // only thing on the screen.
-         if (!showHierarchy && !useAdHocGroups) {
+         if (! showHierarchy && ! useAdHocGroups) {
              UIOutput.make(evalgroupArea, "evalgroups-assignment-area");
          }
          else {
@@ -233,20 +230,30 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
          }
 
          String[] nonAssignedEvalGroupIDs = getEvalGroupIDsNotAssignedInHierarchy(evalGroups).toArray(new String[] {});
+         List<EvalGroup> unassignedEvalGroups = new ArrayList<EvalGroup>();
          for (int i = 0; i < nonAssignedEvalGroupIDs.length; i++) {
-            UIBranchContainer checkboxRow = UIBranchContainer.make(evalgroupArea, "groups:", i+"");
-            if (i % 2 == 0) {
-               checkboxRow.decorators = new DecoratorList( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
+            unassignedEvalGroups.add(groupsMap.get(nonAssignedEvalGroupIDs[i]));
+         }
+         // sort the list by title
+         Collections.sort(unassignedEvalGroups, new ComparatorsUtils.GroupComparatorByTitle());
+
+         int count = 0;
+         for (EvalGroup evalGroup : unassignedEvalGroups) {
+            UIBranchContainer checkboxRow = UIBranchContainer.make(evalgroupArea, "groups:", count+"");
+            if (count % 2 == 0) {
+               checkboxRow.decorate( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
             }
-            
-            evalGroupsLabels.add(groupsMap.get(nonAssignedEvalGroupIDs[i]).title);
-            evalGroupsValues.add(nonAssignedEvalGroupIDs[i]);
+
+            evalGroupsLabels.add(evalGroup.title);
+            evalGroupsValues.add(evalGroup.evalGroupId);
             
             UISelectChoice choice = UISelectChoice.make(checkboxRow, "evalGroupId", evalGroupsSelectID, evalGroupsLabels.size()-1);
 
             // get title from the map since it is faster
-            UIOutput title = UIOutput.make(checkboxRow, "groupTitle", groupsMap.get(nonAssignedEvalGroupIDs[i]).title );
+            UIOutput title = UIOutput.make(checkboxRow, "groupTitle", evalGroup.title );
             UILabelTargetDecorator.targetLabel(title, choice); // make title a label for checkbox
+
+            count++;
          }
       } else {
          // TODO tell user there are no groups to assign to
