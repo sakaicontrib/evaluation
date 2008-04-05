@@ -673,7 +673,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       if (naAllowed.booleanValue()) {
          // can set NA
          if (templateItem.getUsesNA() == null) {
-            templateItem.setUsesNA( Boolean.FALSE );
+            templateItem.setUsesNA(item.getUsesNA() == null ? Boolean.FALSE : item.getUsesNA());
          }
       } else {
          templateItem.setUsesNA( Boolean.FALSE );
@@ -682,7 +682,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
       if (usesComments.booleanValue()) {
          // can use comments
          if (templateItem.getUsesComment() == null) {
-            templateItem.setUsesComment( Boolean.FALSE );
+            templateItem.setUsesComment(item.getUsesComment() == null ? Boolean.FALSE : item.getUsesComment());
          }
       } else {
          templateItem.setUsesComment( Boolean.FALSE );

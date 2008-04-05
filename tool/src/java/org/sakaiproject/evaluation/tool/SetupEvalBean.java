@@ -133,8 +133,11 @@ public class SetupEvalBean {
       this.locale=locale;
    }
 
-
    DateFormat df = DateFormat.getDateInstance(DateFormat.LONG);
+
+   /**
+    * sets he locale on the date formatter correctly
+    */
    public void init() {
       df = DateFormat.getDateInstance(DateFormat.LONG, locale);
    }
