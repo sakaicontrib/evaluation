@@ -70,8 +70,7 @@
    </bean>
 
    <bean id="expertItemsBean"
-      class="org.sakaiproject.evaluation.tool.ExpertItemsBean"
-      init-method="init">
+      class="org.sakaiproject.evaluation.tool.ExpertItemsBean">
       <property name="external"
          ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="authoringService"

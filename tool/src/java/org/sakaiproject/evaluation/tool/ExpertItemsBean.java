@@ -14,7 +14,6 @@
 
 package org.sakaiproject.evaluation.tool;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -27,9 +26,10 @@ import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
+import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 
 /**
- * The backing bean for expert items adding
+ * The backing bean for expert and existing items adding
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
@@ -40,9 +40,9 @@ public class ExpertItemsBean {
 	public Map<String, Boolean> selectedIds = new HashMap<String, Boolean>();
 	public Long templateId;
 
-	private EvalExternalLogic external;
+	private EvalExternalLogic externalLogic;
 	public void setExternal(EvalExternalLogic external) {
-		this.external = external;
+		this.externalLogic = external;
 	}
 
    private EvalAuthoringService authoringService;
@@ -50,13 +50,7 @@ public class ExpertItemsBean {
       this.authoringService = authoringService;
    }
 
-	public void init() {
-		log.debug("init");
-	}
-
-	public ExpertItemsBean() {
-		log.debug("constructor");
-	}
+	public ExpertItemsBean() { }
 
 	/**
 	 * Creates templateItems to add items to a template
@@ -65,15 +59,15 @@ public class ExpertItemsBean {
 	public String processActionAddItems() {
 		log.debug("in process action add items, selectedItems=" + selectedIds.size());
 
-		String currentUserId = external.getCurrentUserId();
-		String level = EvalConstants.HIERARCHY_LEVEL_TOP;
-		String nodeId = EvalConstants.HIERARCHY_NODE_ID_NONE;
+		String currentUserId = externalLogic.getCurrentUserId();
+		String hierarchyLevel = EvalConstants.HIERARCHY_LEVEL_TOP;
+		String hierarchyNodeId = EvalConstants.HIERARCHY_NODE_ID_NONE;
 
 		EvalTemplate template = authoringService.getTemplateById(templateId);
 		if (EvalConstants.TEMPLATE_TYPE_ADDED.equals( template.getType() )) {
 			// TODO change the level and node based on current settings
-			level = EvalConstants.HIERARCHY_LEVEL_INSTRUCTOR;
-			nodeId = currentUserId;
+		   hierarchyLevel = EvalConstants.HIERARCHY_LEVEL_INSTRUCTOR;
+			hierarchyNodeId = currentUserId;
 		}
 
 		for (Iterator<String> iter = selectedIds.keySet().iterator(); iter.hasNext(); ) {
@@ -85,9 +79,13 @@ public class ExpertItemsBean {
 			}
 			log.debug("Checking to add item:" + itemId);
 			if (selectedIds.get(itemId.toString()) == Boolean.TRUE) {
-				EvalTemplateItem templateItem = 
-					new EvalTemplateItem(new Date(), currentUserId,	
-							template, item, null, null, level, nodeId);
+			   // make the template item based on the item and default settings
+				EvalTemplateItem templateItem = TemplateItemUtils.makeTemplateItem(item);
+				templateItem.setOwner(currentUserId);
+				templateItem.setTemplate(template);
+				templateItem.setHierarchyLevel(hierarchyLevel);
+				templateItem.setHierarchyNodeId(hierarchyNodeId);
+				// save the template item
 				authoringService.saveTemplateItem(templateItem, currentUserId);
 				log.info("Added new item (" + item.getId() + ") to template (" + template.getId() + ") via templateItem (" + templateItem.getId() + ")");
 			}
