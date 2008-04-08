@@ -4,10 +4,34 @@
 <title>Evaluation Messages Template</title>
 </head>
 <body>
-<div rsf:id="rsf-messages:" class="alertMessage">
-<ul style="margin:0px;">
-	<li rsf:id="message:">Message for user here</li>
-</ul>
+<div rsf:id="rsf-messages:" style="display:inline" >
+<style type="text/css">
+  .rsf-errortext   {color: red; font-weight: bold; display:inline; }
+  .rsf-infotext    {color: green; font-weight: bold; display:inline; }
+  .rsf-confirmtext {color: blue; font-weight: bold; display:inline; }
+  .rsf-outeralign  {display: inline; vertical-align: middle}
+</style>
+  <div rsf:id="error-messages:" class="rsf-outeralign">
+    <table class="rsf-outeralign">
+      <tr rsf:id="message:"><td rsf:id="payload-component" class="rsf-errortext">Error message for user here</td></tr>
+      <tr rsf:id="message:"><td rsf:id="payload-component" class="rsf-errortext">Second message here</td></tr>
+    </table>
+    <br/>
+  </div>
+  
+  <div rsf:id="info-messages:" class="rsf-outeralign">
+    <table class="rsf-outeralign">
+      <tr rsf:id="message:"><td rsf:id="payload-component" class="rsf-infotext">Info message for user here</td></tr>
+    </table>
+    <br/>
+  </div>
+  
+  <div rsf:id="confirm-messages:" class="rsf-outeralign">
+    <table class="rsf-outeralign">
+      <tr rsf:id="message:"><td rsf:id="payload-component" class="rsf-confirmtext">Confirm message for user here</td></tr>
+   </table>
+   <br/>
+  </div>
 </div>
 </body>
 </html>
