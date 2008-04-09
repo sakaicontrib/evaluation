@@ -18,53 +18,6 @@ var EvalSystem = function() {
   function escIdForJquery(value) {
     return value != null ? "#" + value.replace(/:/g, "\\:") : null;
   }
-  
-  /**
-   * NOTE: THis is moving to RSF TRunk. as soon as we upgrade to 0.7.3M3 we 
-   *       should start using this from the RSF Namespace.
-   *
-   * This is the meat and potatos RSF UVB function I've always wanted,
-   * designed for the UVB enthusiast who knows what they want. It takes
-   * the UVB URL, the bindings/values to send over, the bindings you 
-   * want back, and an optional action binding.
-   *
-   * @token A special token depicting this request. You can often put in whatever
-   * you like, but this can be used to stop the dreaded double submission effects.
-   * If a post with the same token is already being processed, subsequent ones
-   * will be ignored.
-   *
-   * @uvburl The url. In practice this usually looks something like,
-   *   http://server/myapp/faces/UVBview, though it's best to generate it with
-   *   viewStateHandler.getFullURL(new SimpleViewParameters(UVBProducer.VIEW_ID))
-   *
-   * @inbindings This should be a standard object hash of bindings to values.
-   *   ex. inbindings['mybean.value1'] = 'one';  
-   *       inbindings['mybean.value2'] = 'two';
-   *
-   * @outbindings This should be an array of bindings you want back from the request.
-   *   ex. outbindings[0] = 'mybean.value3'
-   *       outbindings[1] = 'mybean.value4'
-   *
-   * @actionbinding This should a String with the actionbinding. Can be null if
-   *   you don't want one.  ex. 'mybean.execute'
-   *
-   * @callback This should be a standard javascript object containing the usual
-   * callback functions such as success.
-   */
-  function fireUVBRequest(token, uvburl, inbindings, outbindings, actionbinding, callback) {
-    var queries = new Array();
-    for (var i in inbindings) {
-      queries.push(RSF.renderBinding(i,inbindings[i]));
-    }
-    if (actionbinding != null) {
-      queries.push(RSF.renderActionBinding(actionbinding));
-    }
-    for (var i in outbindings) {
-      queries.push(RSF.renderUVBQuery(outbindings[i]));
-    }
-    var body = queries.join("&");
-    RSF.queueAJAXRequest(token,"POST",uvburl,body,callback);
-  }
 
   return {
   
@@ -96,12 +49,12 @@ var EvalSystem = function() {
             if (adhocGroupId == null) {
                 inbindings['adhocGroupsBean.adhocGroupTitle'] = groupNameInput.val();
                 inbindings['adhocGroupsBean.newAdhocGroupUsers'] = emailListInput.val();
-                fireUVBRequest('atoken', uvburl, inbindings, outbindings, 'adhocGroupsBean.addNewAdHocGroup', saveCallback);
+                RSF.fireUVBRequest('atoken', uvburl, inbindings, outbindings, 'adhocGroupsBean.addNewAdHocGroup', saveCallback);
             }
             else {
                 inbindings['adhocGroupsBean.adhocGroupId'] = adhocGroupId;
                 inbindings['adhocGroupsBean.newAdhocGroupUsers'] = emailListInput.val();
-                fireUVBRequest('atoken', uvburl, inbindings, outbindings, 'adhocGroupsBean.addUsersToAdHocGroup', saveCallback);
+                RSF.fireUVBRequest('atoken', uvburl, inbindings, outbindings, 'adhocGroupsBean.addUsersToAdHocGroup', saveCallback);
             }
             emailListInput.val('');
         }
