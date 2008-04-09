@@ -262,7 +262,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
       /*
        * Area 3: Selection GUI for new ad-hoc groups.
        */
-      
+      /*
       if (useAdHocGroups) {
          UIBranchContainer newAdhocgroupArea = UIBranchContainer.make(form, "create-adhoc-groups-area:");
          
@@ -288,6 +288,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
                adhocEmailsArea.getFullID(), vsh.getFullURL(new SimpleViewParameters(UVBProducer.VIEW_ID)), 
                exampleAdhocMember.getFullID()}));
       }
+      */
       
       // Add all the groups and hierarchy nodes back to the UISelect Many's. see
       // the large comment further up.
