@@ -29,6 +29,7 @@ var EvalSystem = function() {
      *  Evaluation will still compile, but this is not going to work until we
      *  move up to 0.7.3M2, but this functionality is disabled by default.
      */
+     /*
   	initAssignAdhocGroupArea: function (saveButtonId,addMoreUsersButtonId,
         groupNameInputId,emailInputId,emailListDivId,uvburl,cloneMemberBranchId) {
         var groupNameInput = $(escIdForJquery(groupNameInputId));
@@ -92,7 +93,7 @@ var EvalSystem = function() {
         saveButton.click( function (event) { saveUpdateEmailsAction(event) });
         addMoreUsersButton.click();
         //clearButton.click( function (event) { clearEmailsAction(event) });
-  	},
+  	}, */
     
     /**
      *  A little bit of javascript to validate the Eval Assign Page. At the 
