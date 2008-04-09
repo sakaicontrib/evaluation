@@ -7,13 +7,11 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvalAdhocSupport;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
-import org.sakaiproject.evaluation.tool.viewparams.AdhocGroupParams;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
 import uk.org.ponder.rsf.builtin.UVBBean;
@@ -38,7 +36,6 @@ public class AdhocGroupsBean {
    public Map<String,String> acceptedInternalUsers = new HashMap<String,String>();
    public Map<String,String> acceptedAdhocUsers = new HashMap<String,String>();
    public List<String> rejectedUsers = new ArrayList<String>();
-   public String participantDivUrl;
    
    /*
     * Adds more users to an existing adhocgroup using the data entered with
@@ -166,11 +163,6 @@ public class AdhocGroupsBean {
    private EvalSettings settings;
    public void setSettings(EvalSettings settings) {
       this.settings = settings;
-   }
-   
-   private ViewStateHandler vsh;
-   public void setViewStateHandler(ViewStateHandler vsh) {
-       this.vsh = vsh;
    }
 
    public String getUserId() {

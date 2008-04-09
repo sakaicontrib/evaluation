@@ -216,6 +216,7 @@ tool/src/java/org/sakaiproject/evaluation/tool/producers/ExpertCategoryProducer.
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ExpertItemsProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ExpertObjectiveProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ImportErrorProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyAdhocGroupProducer.java svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyBlockProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyEmailProducer.java -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/java/org/sakaiproject/evaluation/tool/producers/ModifyHierarchyNodeGroupsProducer.java svn_keywords=Date+Revision+Author+URL+Id
@@ -389,6 +390,7 @@ tool/src/webapp/content/templates/evaluation_assignments.html svneol=native#text
 tool/src/webapp/content/templates/evaluation_create.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/evaluation_settings.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/import_error.html -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/templates/modify_adhoc_group.html svneol=native#text/html svn_keywords=Date+Revision+Author+HeadURL+Id
 tool/src/webapp/content/templates/modify_block.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/modify_email.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/templates/modify_hierarchy_node.html svneol=native#text/html svn_keywords=Date+Revision+Author+URL+Id

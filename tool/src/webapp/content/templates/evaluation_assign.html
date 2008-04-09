@@ -93,9 +93,10 @@
 					</div>
 				</div>
 				
-				<div rsf:id="create-adhoc-groups-area:">
+			<!-- 	<div rsf:id="create-adhoc-groups-area:"> -->
 				<!-- 3. Create new ad-hoc groups                             -->
 				<!-- This will be hidden if adhoc groups are disabled.       -->
+                <!-- 
 					<p>
 						<span>
 							<img src="/sakai-evaluation-tool/content/images/collapsed.png" rsf:id="show-button" id="" />
@@ -109,17 +110,15 @@
 							<input rsf:id="adhoc-group-name" id="" type="textbox" />
 						</p>
 						<div rsf:id="adhoc-emails-area" id="">
-							<table>
+							<table> -->
 								<!-- This will be an example branch that will be copied with RSF.duplicateBranch -->
+                <!-- 
 								<tr id="adhoc-member-row:" style="display:none" rsf:id="adhoc-member-row:">
 									<td>Steven Githens</td>
 									<td>
 										<input type="button" value="Remove from group" />
 									</td>
 								</tr>
-								<!-- 
-								<tr><td>sgithens at caret.cam.ac.uk <img src="cross.png" alt="X"/></td></tr>
-								-->
 							</table>
 						</div>
 						<div>
@@ -130,9 +129,9 @@
 						</div>
 						<input rsf:id="adhoc-save-emails-button" id="" type="button" value="Save emails"/>	
 						<input style="display:none" rsf:id="adhoc-addmoreusers-button" id="" type="button" value="Add More Users" />
-						<!-- <input rsf:id="adhoc-clear-emails-button" id="" type="button" value="Clear all"/> -->
 					</div>
 				</div>
+        -->
 				
 				
 				<div rsf:id="use-adhoc-groups-area:">
@@ -146,10 +145,32 @@
 						</span>
 						<span>I'd like to survey a group I've previously surveyed</span>
 					</p>
-					<div rsf:id="previousadhocgroup-assignment-area" id="previousadhocgroup-assignment-area">
-						Previous Ad Group Assignment
+					<div rsf:id="evalgroups-assignment-area" id="evalgroups-assignment-area">
+						<table rsf:id="adhoc-groups-table" border="0" cellspacing="0" cellpadding="3" style="width:90%" class="listHier lines nolines" >
+							<thead>
+								<tr>
+									<th class="attach" >
+										<span rsf:id="msg=assigneval.select.header">Select</span>
+									</th>
+									<th>
+										<span rsf:id="msg=assigneval.name.header">Title</span>
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr rsf:id="groups:"> 
+									<td class="attach" >
+										<input class="evalgroupselect" rsf:id="evalGroupId" type="checkbox" id="evalGroupId" />
+									</td>
+									<td>
+										<label rsf:id="groupTitle" for="evalGroupId">group title</label>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+                        <a rsf:id="new-adhocgroup-link" href="#">Create a new Adhoc Group now.</a>
 					</div>
-                    <a href="#">Create a new Adhoc Group now.</a>
+                    
 				</div>
 
 				<p class="act">	
