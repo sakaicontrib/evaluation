@@ -303,10 +303,12 @@ tool/src/webapp/component-templates/render_multiplechoice_item.html svneol=nativ
 tool/src/webapp/component-templates/render_scaled_item.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/component-templates/render_text_item.html -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/css/evaluation_base.css -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/images/accept.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/add.gif -text svneol=unset#image/gif svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/add.png -text svneol=unset#image/png svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/application_view_list.png -text svneol=unset#image/png svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/asterisk_orange.gif -text svneol=unset#image/gif svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/images/asterisk_yellow.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/breadSep.gif -text svneol=unset#image/gif svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/calendar.gif -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/collapsed.png -text
@@ -315,6 +317,7 @@ tool/src/webapp/content/images/delete-inact.gif -text svneol=unset#image/gif svn
 tool/src/webapp/content/images/delete.gif -text svneol=unset#image/gif svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/down-arrow.gif -text svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/down-line.gif -text svn_keywords=Date+Revision+Author+URL+Id
+tool/src/webapp/content/images/exclamation.gif -text svneol=unset#image/gif
 tool/src/webapp/content/images/first-cur-step.gif -text svneol=unset#image/gif svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/first-noncur-step.gif -text svneol=unset#image/gif svn_keywords=Date+Revision+Author+URL+Id
 tool/src/webapp/content/images/ideal-high.jpg -text svn_keywords=Date+Revision+Author+URL+Id
