@@ -187,7 +187,6 @@
    	  <property name="evalExternalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
       <property name="uvbBean" ref="UVBBean" />
-      <property name="viewStateHandler" ref="viewStateHandler" /> 
    </bean>
 
    <bean id="adhocGroupMemberRemovalBean"
@@ -517,8 +516,8 @@
         ref="org.sakaiproject.evaluation.tool.renderers.HierarchyTreeNodeSelectRenderer" />
       <property name="externalHierarchyLogic" 
         ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
-      <property name="viewStateHandler"
-      	ref="viewStateHandler" />
+      <property name="viewStateHandler"	ref="viewStateHandler" />
+      <property name="evalAdhocSupport" ref="org.sakaiproject.evaluation.dao.EvalAdhocSupport" />
    </bean>
    
    <!-- This renderer is only used by the EvaluationAssignProducer (right above here) -->
@@ -661,6 +660,11 @@
          ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
       <property name="reportingPermissions" 
         ref="org.sakaiproject.evaluation.logic.ReportingPermissions" />
+   </bean>
+   
+   <!-- Adhoc Group Views -->
+   <bean class="org.sakaiproject.evaluation.tool.producers.ModifyAdhocGroupProducer">
+   
    </bean>
 
 </beans>

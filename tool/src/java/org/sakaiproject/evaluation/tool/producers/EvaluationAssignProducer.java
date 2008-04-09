@@ -23,14 +23,17 @@ import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.dao.EvalAdhocSupport;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
+import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.renderers.HierarchyTreeNodeSelectRenderer;
+import org.sakaiproject.evaluation.tool.viewparams.AdhocGroupParams;
 import org.sakaiproject.evaluation.tool.viewparams.EvalViewParameters;
 import org.sakaiproject.evaluation.utils.ComparatorsUtils;
 
@@ -102,6 +105,11 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
    private ViewStateHandler vsh;
    public void setViewStateHandler(ViewStateHandler vsh) {
       this.vsh = vsh;
+   }
+   
+   private EvalAdhocSupport evalAdhocSupport;
+   public void setEvalAdhocSupport(EvalAdhocSupport bean) {
+      this.evalAdhocSupport = bean;
    }
    
    /**
@@ -258,8 +266,30 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
       } else {
          // TODO tell user there are no groups to assign to
       }
-
+      
       /*
+       * Area 3: Selection GUI for Adhoc Groups
+       */
+      if (useAdHocGroups) {
+          UIBranchContainer adhocGroupsArea = UIBranchContainer.make(form, "use-adhoc-groups-area:");
+          
+          addCollapseControl(adhocGroupsArea, "evalgroups-assignment-area", "hide-button", "show-button");
+      
+          // Table of Existing adhoc groups for selection
+          List<EvalAdhocGroup> myAdhocGroups = evalAdhocSupport.getAdhocGroupsForOwner(currentUserId);
+          if (myAdhocGroups.size() > 0) {
+              UIOutput.make(adhocGroupsArea, "adhoc-groups-table");
+          }
+          for (EvalAdhocGroup adhocGroup: myAdhocGroups) {
+              UIBranchContainer tableRow = UIBranchContainer.make(adhocGroupsArea, "groups:");
+              UIOutput.make(tableRow, "groupTitle", adhocGroup.getTitle());
+          }
+          
+          UIInternalLink.make(adhocGroupsArea, "new-adhocgroup-link", UIMessage.make("assigneval.page.adhocgroups.newgrouplink"),
+                  new AdhocGroupParams(ModifyAdhocGroupProducer.VIEW_ID, null));
+      }
+
+      /* OLD AJAX Deprecated
        * Area 3: Selection GUI for new ad-hoc groups.
        */
       /*
