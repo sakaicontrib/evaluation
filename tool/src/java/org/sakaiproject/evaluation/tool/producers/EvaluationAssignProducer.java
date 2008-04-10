@@ -279,46 +279,29 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
           List<EvalAdhocGroup> myAdhocGroups = evalAdhocSupport.getAdhocGroupsForOwner(currentUserId);
           if (myAdhocGroups.size() > 0) {
               UIOutput.make(adhocGroupsArea, "adhoc-groups-table");
-          }
-          for (EvalAdhocGroup adhocGroup: myAdhocGroups) {
-              UIBranchContainer tableRow = UIBranchContainer.make(adhocGroupsArea, "groups:");
-              UIOutput.make(tableRow, "groupTitle", adhocGroup.getTitle());
-          }
           
+              int count = 0;
+	          for (EvalAdhocGroup adhocGroup: myAdhocGroups) {
+	              UIBranchContainer tableRow = UIBranchContainer.make(adhocGroupsArea, "groups:");
+	              if (count % 2 == 0) {
+	                  tableRow.decorate( new UIStyleDecorator("itemsListOddLine") ); // must match the existing CSS class
+	               }
+	              
+	              evalGroupsLabels.add(adhocGroup.getTitle());
+	              evalGroupsValues.add(adhocGroup.getEvalGroupId());
+	              
+	              UISelectChoice choice = UISelectChoice.make(tableRow, "evalGroupId", evalGroupsSelectID, evalGroupsLabels.size()-1);
+
+	              // get title from the map since it is faster
+	              UIOutput title = UIOutput.make(tableRow, "groupTitle", adhocGroup.getTitle() );
+	              UILabelTargetDecorator.targetLabel(title, choice); // make title a label for checkbox
+	              
+	              count ++;
+	          }
+          }
           UIInternalLink.make(adhocGroupsArea, "new-adhocgroup-link", UIMessage.make("assigneval.page.adhocgroups.newgrouplink"),
                   new AdhocGroupParams(ModifyAdhocGroupProducer.VIEW_ID, null));
       }
-
-      /* OLD AJAX Deprecated
-       * Area 3: Selection GUI for new ad-hoc groups.
-       */
-      /*
-      if (useAdHocGroups) {
-         UIBranchContainer newAdhocgroupArea = UIBranchContainer.make(form, "create-adhoc-groups-area:");
-         
-         addCollapseControl(newAdhocgroupArea, "newadhocgroup-assignment-area", "hide-button", "show-button");
-
-         // The actual div for the current adhoc members to go in, and we'll make
-         // an example member row that will be cloned with javascript.
-         UIOutput adhocEmailsArea = UIOutput.make(newAdhocgroupArea, "adhoc-emails-area");
-         UIOutput exampleAdhocMember = UIOutput.make(newAdhocgroupArea, "adhoc-member-row");
-         //UIOutput.make(exampleAdhocMember, "name", "Steven Githens");
-         //UIOutput.make(exampleAdhocMember, "email", "sgithens at the caret.cam.ac.uk");
-         
-         UIInput adhocGroupName = UIInput.make(newAdhocgroupArea, "adhoc-group-name", null);
-         UIInput adhocGroupEmails = UIInput.make(newAdhocgroupArea, "adhoc-email-input", null);
-
-         UIOutput saveEmailsButton = UIOutput.make(newAdhocgroupArea, "adhoc-save-emails-button");
-         //UIOutput clearEmailsButton = UIOutput.make(newAdhocgroupArea, "adhoc-clear-emails-button");
-         UIOutput addMoreUsersButton = UIOutput.make(newAdhocgroupArea, "adhoc-addmoreusers-button");
-         
-         initJS.append(HTMLUtil.emitJavascriptCall("EvalSystem.initAssignAdhocGroupArea", 
-                 new String[] {saveEmailsButton.getFullID(), addMoreUsersButton.getFullID(),
-               adhocGroupName.getFullID(), adhocGroupEmails.getFullID(),
-               adhocEmailsArea.getFullID(), vsh.getFullURL(new SimpleViewParameters(UVBProducer.VIEW_ID)), 
-               exampleAdhocMember.getFullID()}));
-      }
-      */
       
       // Add all the groups and hierarchy nodes back to the UISelect Many's. see
       // the large comment further up.
