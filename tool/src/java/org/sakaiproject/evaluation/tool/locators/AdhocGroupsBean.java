@@ -94,7 +94,8 @@ public class AdhocGroupsBean {
         * 2. If Adhoc users are allowed, is this a valid email address?
         * 3. Otherwise add it to the garbage list.
         */
-       for (String potentialId: potentialMembers) {
+       for (String next: potentialMembers) {
+    	   String potentialId = next.trim();
            if (externalLogic.getUserId(potentialId) != null) {
                participants.add(externalLogic.getUserId(potentialId));
                acceptedInternalUsers.add(potentialId);  
