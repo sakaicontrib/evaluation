@@ -27,10 +27,11 @@ import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
-
 /**
  * This view is for creating or modifying adhoc groups. If the Group ID in the incoming
- * ViewParams is null, we assume we are creating a new adhoc group.
+ * ViewParams is null, we assume we are creating a new adhoc group.  We have an optional
+ * returnURL param on the AdhocGroupParams which we are currently using to go back to the
+ * Evaluation Assign Groups Page.
  * 
  * @author sgithens
  */
@@ -86,6 +87,10 @@ ActionResultInterceptor {
     	UIForm form = UIForm.make(tofill, "adhoc-group-form");
     	UIInput.make(form, "group-name-input", "adhocGroupsBean.adhocGroupTitle", adhocGroupTitle);
     	
+    	/*
+    	 * If this is not a new group, then we render a table containing all the current group
+    	 * members, along with a button on each row to remove that particular member.
+    	 */
     	if (!newGroup) {
     		UIOutput.make(form, "existing-members");
     		String[] participants = evalAdhocGroup.getParticipantIds();
@@ -110,6 +115,10 @@ ActionResultInterceptor {
     	// Place to add more users via email address
     	UIInput.make(form, "add-members-input", "adhocGroupsBean.newAdhocGroupUsers");
     	
+    	/*
+    	 * There are two different methods depending on whether this is a new group
+    	 * or not.  If it's not, we also attach the Adhoc Group ID to the button.
+    	 */
     	if (newGroup) {
     		UICommand saveButton = UICommand.make(form, "save-button", UIMessage.make("modifyadhocgroup.newsave"), "adhocGroupsBean.addNewAdHocGroup");
     	}
@@ -118,9 +127,10 @@ ActionResultInterceptor {
     		saveButton.parameters = new ParameterList(new UIELBinding("adhocGroupsBean.adhocGroupId", evalAdhocGroup.getId()));
     	}
     	
-    	// Handler return URL
+    	// Handler return URL to go back to the Evaluation Wizard if specified. In the future
+    	// we'll probably want to generalize this system.
     	if (params.returnURL != null) {
-    		UILink.make(tofill, "return-link", params.returnURL);
+    		UILink.make(tofill, "return-link", UIMessage.make("modifyadhocgroup.backtoevalassign"), params.returnURL);
     	}
     }
 
@@ -133,7 +143,11 @@ ActionResultInterceptor {
     }
 
 	public void interceptActionResult(ARIResult result, ViewParameters incoming, Object actionReturn) {
-		
+
+		/*
+		 * If we just created a new adhoc group, then we want to redirect to the 
+		 * same page, but for that new Adhoc Group ID.
+		 */
 		if (AdhocGroupsBean.SAVED_NEW_ADHOCGROUP.equals(actionReturn) &&
 				incoming instanceof AdhocGroupParams) {
 			AdhocGroupParams params = (AdhocGroupParams) incoming.copyBase();

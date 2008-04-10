@@ -15,7 +15,7 @@ import uk.org.ponder.messageutil.TargettedMessageList;
 /**
  * We haven't yet gone down the path of creating full blown bean locators for
  * adhoc groups (and not sure if we will), so we have a few small beans to 
- * service our UVB calls from the assign page adhoc ajax.  This is for removing
+ * service our adhoc groups page.  This is for removing
  * members from an adhoc group you have created.
  * 
  * @author sgithens
@@ -35,6 +35,9 @@ public class AdhocGroupMemberRemovalBean {
    private EvalExternalLogic externalLogic;
    private TargettedMessageList messages;
      
+   /**
+    * This is destined to be bound via EL to a button.
+    */
    public void removeUser() { 
       String currentUserId = externalLogic.getCurrentUserId();
       EvalAdhocGroup adhocGroup = evalAdhocSupport.getAdhocGroupById(adhocGroupId);
@@ -57,13 +60,9 @@ public class AdhocGroupMemberRemovalBean {
       
       
       EvalUser user = externalLogic.getEvalUserById(adhocUserId);
-      String humanReadableUsername = user.displayName;
-      if (EvalConstants.USER_TYPE_INTERNAL.equals(user.type)) {
-    	  humanReadableUsername = user.email;
-      }
 
       messages.addMessage(new TargettedMessage("modifyadhocgroup.message.removeduser",
-    		  new String[] { humanReadableUsername }, TargettedMessage.SEVERITY_INFO));
+    		  new String[] { user.displayName }, TargettedMessage.SEVERITY_INFO));
    }
 
    /*
