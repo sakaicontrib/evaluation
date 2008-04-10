@@ -27,6 +27,7 @@ public class AdhocGroupsBean {
    private static Log log = LogFactory.getLog(AdhocGroupsBean.class);
    
    public static final String SAVED_NEW_ADHOCGROUP = "added-adhoc-group";
+   public static final String UPDATED_ADHOCGROUP = "updated-adhoc-group";
     
    private Long adhocGroupId;
    private String adhocGroupTitle;
@@ -40,7 +41,7 @@ public class AdhocGroupsBean {
     * Adds more users to an existing adhocgroup using the data entered with
     * adhocGroupId and newAdhocGroupUsers
     */
-   public void addUsersToAdHocGroup() {
+   public String addUsersToAdHocGroup() {
        String currentUserId = externalLogic.getCurrentUserId();
        EvalAdhocGroup group = evalAdhocSupport.getAdhocGroupById(new Long(adhocGroupId));
        adhocGroupId = group.getId();
@@ -51,7 +52,26 @@ public class AdhocGroupsBean {
        if (!currentUserId.equals(group.getOwner())) {
           throw new SecurityException("Only EvalAdhocGroup owners can change their groups: " + group.getId() + " , " + currentUserId);
        }
+       
+       updateAdHocGroup(group);
+       
+       return UPDATED_ADHOCGROUP;
    
+   }
+   
+   public String addNewAdHocGroup() {
+	   String currentUserId = externalLogic.getCurrentUserId();
+	      /*
+	       * At the moment we allow any registered user to create adhoc groups.
+	       */
+	      if (externalLogic.isUserAnonymous(currentUserId)) {
+	         throw new SecurityException("Anonymous users cannot create EvalAdhocGroups: " + currentUserId);
+	      }
+	   EvalAdhocGroup group = new EvalAdhocGroup(currentUserId, adhocGroupTitle);
+	   
+	   updateAdHocGroup(group);
+	   
+	   return SAVED_NEW_ADHOCGROUP;
    }
    
    /**
@@ -59,7 +79,7 @@ public class AdhocGroupsBean {
     * 
     * @return
     */
-   public String addNewAdHocGroup() {
+   private void updateAdHocGroup(EvalAdhocGroup group) {
       String currentUserId = externalLogic.getCurrentUserId();
       /*
        * At the moment we allow any registered user to create adhoc groups.
@@ -70,14 +90,22 @@ public class AdhocGroupsBean {
       
       Boolean useAdhocusers = (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_USERS);
       
-      EvalAdhocGroup group = new EvalAdhocGroup(currentUserId, adhocGroupTitle);
-
-      log.info("About to save Adhoc group: " + adhocGroupTitle);
-      
       List<String> participants = new ArrayList<String>();
       checkAndAddToParticipantsList(newAdhocGroupUsers, participants);
      
-      group.setParticipantIds(participants.toArray(new String[] {}));
+      String[] existingParticipants = group.getParticipantIds();
+      if (existingParticipants == null) {
+    	  existingParticipants = new String[] {};
+      }
+      
+      List<String> allParticipants = new ArrayList<String>();
+      for (String particpant: existingParticipants) {
+    	  allParticipants.add(particpant);
+      }
+      
+      allParticipants.addAll(participants);
+      
+      group.setParticipantIds(allParticipants.toArray(new String[] {}));
       
       evalAdhocSupport.saveAdhocGroup(group);
       adhocGroupId = group.getId();
@@ -101,7 +129,7 @@ public class AdhocGroupsBean {
     	  log.info("Add entries added succesfully to new adhocGroup: " + adhocGroupId);
       }
       
-      return SAVED_NEW_ADHOCGROUP;
+      
    }
    
    /*

@@ -111,10 +111,10 @@ ActionResultInterceptor {
     	UIInput.make(form, "add-members-input", "adhocGroupsBean.newAdhocGroupUsers");
     	
     	if (newGroup) {
-    		UICommand saveButton = UICommand.make(form, "save-button", "adhocGroupsBean.addNewAdHocGroup");
+    		UICommand saveButton = UICommand.make(form, "save-button", UIMessage.make("modifyadhocgroup.newsave"), "adhocGroupsBean.addNewAdHocGroup");
     	}
     	else {
-    		UICommand saveButton = UICommand.make(form, "save-button", "adhocGroupsBean.addUsersToAdHocGroup");
+    		UICommand saveButton = UICommand.make(form, "save-button", UIMessage.make("modifyadhocgroup.update"), "adhocGroupsBean.addUsersToAdHocGroup");
     		saveButton.parameters = new ParameterList(new UIELBinding("adhocGroupsBean.adhocGroupId", evalAdhocGroup.getId()));
     	}
     	
