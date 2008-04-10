@@ -93,47 +93,6 @@
 					</div>
 				</div>
 				
-			<!-- 	<div rsf:id="create-adhoc-groups-area:"> -->
-				<!-- 3. Create new ad-hoc groups                             -->
-				<!-- This will be hidden if adhoc groups are disabled.       -->
-                <!-- 
-					<p>
-						<span>
-							<img src="/sakai-evaluation-tool/content/images/collapsed.png" rsf:id="show-button" id="" />
-							<img src="/sakai-evaluation-tool/content/images/uncollapsed.png" style="display:none" rsf:id="hide-button" id="" />
-						</span>
-						<span rsf:id="msg=assigneval.page.adhocgroups.title">I'd like to survey an ad-hoc group I'll specify now</span>
-					</p>
-					<div rsf:id="newadhocgroup-assignment-area" id="newadhocgroup-assignment-area">
-						<p>
-							<span>Give this group a name: </span>
-							<input rsf:id="adhoc-group-name" id="" type="textbox" />
-						</p>
-						<div rsf:id="adhoc-emails-area" id="">
-							<table> -->
-								<!-- This will be an example branch that will be copied with RSF.duplicateBranch -->
-                <!-- 
-								<tr id="adhoc-member-row:" style="display:none" rsf:id="adhoc-member-row:">
-									<td>Steven Githens</td>
-									<td>
-										<input type="button" value="Remove from group" />
-									</td>
-								</tr>
-							</table>
-						</div>
-						<div>
-							<textarea rsf:id="adhoc-email-input" id="" rows="5" cols="80">
-						    	Paste or type the emails of the people you want to survey in this box. Separate the 
-						    	address usings commas, semi-colons, new lines, or just spaces.
-							</textarea>
-						</div>
-						<input rsf:id="adhoc-save-emails-button" id="" type="button" value="Save emails"/>	
-						<input style="display:none" rsf:id="adhoc-addmoreusers-button" id="" type="button" value="Add More Users" />
-					</div>
-				</div>
-        -->
-				
-				
 				<div rsf:id="use-adhoc-groups-area:">
 				<!-- 3. Use Existing ad-hoc groups                           -->
 				<!-- This div will be hidden if adhoc groups are disabled,   -->
@@ -143,9 +102,10 @@
 							<img src="/sakai-evaluation-tool/content/images/collapsed.png" rsf:id="show-button" id="" />
 							<img src="/sakai-evaluation-tool/content/images/uncollapsed.png" style="display:none" rsf:id="hide-button" id="" />
 						</span>
-						<span>I'd like to survey a group I've previously surveyed</span>
+						<span rsf:id="msg=assigneval.page.adhocgroups.title">Assign to an adhoc group.</span>
 					</p>
 					<div rsf:id="evalgroups-assignment-area" id="evalgroups-assignment-area">
+						<a rsf:id="new-adhocgroup-link" href="#">Create a new Adhoc Group now.</a>
 						<table rsf:id="adhoc-groups-table" border="0" cellspacing="0" cellpadding="3" style="width:90%" class="listHier lines nolines" >
 							<thead>
 								<tr>
@@ -168,7 +128,6 @@
 								</tr>
 							</tbody>
 						</table>
-                        <a rsf:id="new-adhocgroup-link" href="#">Create a new Adhoc Group now.</a>
 					</div>
                     
 				</div>

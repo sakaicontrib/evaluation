@@ -52,8 +52,7 @@ public class AdhocGroupsBean {
        if (!currentUserId.equals(group.getOwner())) {
           throw new SecurityException("Only EvalAdhocGroup owners can change their groups: " + group.getId() + " , " + currentUserId);
        }
-
-       
+   
    }
    
    /*
@@ -81,7 +80,12 @@ public class AdhocGroupsBean {
       //participantDivUrl = vsh.getFullURL(
       //        new AdhocGroupParams(AdhocGroupParticipantsDiv.VIEW_ID, group.getId()));
       adhocGroupId = group.getId();
-      uvbBean.populate();
+      if (uvbBean.paths != null && uvbBean.values != null) {
+    	  uvbBean.populate();
+      }
+      else {
+    	  log.error("The UVB BEan has not bean filled with values and paths!");
+      }
       log.info("Saved adhoc group");
    }
    
