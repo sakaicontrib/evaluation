@@ -29,18 +29,24 @@ public class AdhocGroupsBean {
    public static final String SAVED_NEW_ADHOCGROUP = "added-adhoc-group";
    public static final String UPDATED_ADHOCGROUP = "updated-adhoc-group";
     
+   // These three variables are for EL form binding.
    private Long adhocGroupId;
    private String adhocGroupTitle;
    private String newAdhocGroupUsers;
    
+   // These are for keeping track of users. They may not all be used at the moment
+   // but would be needed if we want more detailed error/confirm dialogs.
    public List<String> acceptedInternalUsers = new ArrayList<String>();
    public List<String> acceptedAdhocUsers = new ArrayList<String>();
    public List<String> rejectedUsers = new ArrayList<String>();
    
-   /*
+   /**
     * Adds more users to an existing adhocgroup using the data entered with
-    * adhocGroupId and newAdhocGroupUsers
-    */
+    * adhocGroupId and newAdhocGroupUsers.
+    * 
+    * @return The UPDATED_ADHOCGROUP constant that could be used in ARI2 or
+    * other action return mechanisms.
+ 	*/
    public String addUsersToAdHocGroup() {
        String currentUserId = externalLogic.getCurrentUserId();
        EvalAdhocGroup group = evalAdhocSupport.getAdhocGroupById(new Long(adhocGroupId));
@@ -59,6 +65,11 @@ public class AdhocGroupsBean {
    
    }
    
+   /**
+    * Primarily for EL Button Binding when creating new adhoc groups.
+    * 
+    * @return The action return SAVED_NEW_ADHOCGROUP for use in ARI2 primarily.
+ 	*/
    public String addNewAdHocGroup() {
 	   String currentUserId = externalLogic.getCurrentUserId();
 	      /*
@@ -75,9 +86,9 @@ public class AdhocGroupsBean {
    }
    
    /**
-    * Adds a new Adhoc Group using the data entered into newAdhocGroupUsers.
+    * Updates the Group by adding the newline seperated users in member
+    * variable newAdhocGroupUsers.
     * 
-    * @return
     */
    private void updateAdHocGroup(EvalAdhocGroup group) {
       String currentUserId = externalLogic.getCurrentUserId();
@@ -129,11 +140,13 @@ public class AdhocGroupsBean {
     	  log.info("Add entries added succesfully to new adhocGroup: " + adhocGroupId);
       }
       
-      
    }
    
-   /*
-    * Adds folks to the participants list and does validation and stuff.
+   /**
+    * Adds folks to the participants list and does validation.
+    * 
+    * @param data The newline seperated list of adhoc users.
+    * @param participants The existing list we are adding more participants to.
     */
    private void checkAndAddToParticipantsList(String data, List<String> participants) {
        String[] potentialMembers = data.split("\n");
