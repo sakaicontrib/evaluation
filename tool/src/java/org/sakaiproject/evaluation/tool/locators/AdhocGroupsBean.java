@@ -12,7 +12,9 @@ import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
+import uk.org.ponder.messageutil.TargettedMessage;
 import uk.org.ponder.messageutil.TargettedMessageList;
+import uk.org.ponder.stringutil.StringList;
 
 /**
  * This is not a true Bean Locator. It's primary purpose is
@@ -66,6 +68,8 @@ public class AdhocGroupsBean {
          throw new SecurityException("Anonymous users cannot create EvalAdhocGroups: " + currentUserId);
       }
       
+      Boolean useAdhocusers = (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_USERS);
+      
       EvalAdhocGroup group = new EvalAdhocGroup(currentUserId, adhocGroupTitle);
 
       log.info("About to save Adhoc group: " + adhocGroupTitle);
@@ -80,6 +84,23 @@ public class AdhocGroupsBean {
 
       log.info("Saved adhoc group: " + adhocGroupId);
 	
+      messages.addMessage(new TargettedMessage("modifyadhocgroup.message.savednewgroup",
+    		  new String[] { group.getTitle() }, TargettedMessage.SEVERITY_INFO));
+      
+      StringList rejectedStringList = new StringList(rejectedUsers.toArray(new String[]{}));
+      String rejectedUsersDisplay = rejectedStringList.toString();
+      if (rejectedUsers.size() > 0 && useAdhocusers) {
+    	  messages.addMessage(new TargettedMessage("modifyadhocgroup.message.badusers",
+        		  new String[] { rejectedUsersDisplay }, TargettedMessage.SEVERITY_ERROR));
+      }
+      else if (rejectedUsers.size() > 0) {
+    	  messages.addMessage(new TargettedMessage("modifyadhocgroup.message.badusers.noadhocusers",
+        		  new String[] { rejectedUsersDisplay }, TargettedMessage.SEVERITY_ERROR));
+      }
+      else {
+    	  log.info("Add entries added succesfully to new adhocGroup: " + adhocGroupId);
+      }
+      
       return SAVED_NEW_ADHOCGROUP;
    }
    
