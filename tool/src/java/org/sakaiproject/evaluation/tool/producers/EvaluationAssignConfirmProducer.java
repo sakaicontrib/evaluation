@@ -235,7 +235,7 @@ public class EvaluationAssignConfirmProducer implements ViewComponentProducer, V
          UIBranchContainer adhocBranch = UIBranchContainer.make(tofill, "showAdhoc:");
          UIOutput.make(adhocBranch, "showAdhocGroups:");
          if (! adhocGroups.isEmpty()) {
-            for (EvalGroup group : normalGroups) {
+            for (EvalGroup group : adhocGroups) {
                String evalGroupId = group.evalGroupId;
                UIBranchContainer groupRow = UIBranchContainer.make(adhocBranch, "groups:", evalGroupId);
                UIOutput.make(groupRow, "groupTitle", group.title);
