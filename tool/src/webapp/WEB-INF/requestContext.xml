@@ -186,12 +186,14 @@
    	  <property name="evalAdhocSupport" ref="org.sakaiproject.evaluation.dao.EvalAdhocSupport" />
    	  <property name="evalExternalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+      <property name="messages" ref="targettedMessageList" />
    </bean>
 
    <bean id="adhocGroupMemberRemovalBean"
         class="org.sakaiproject.evaluation.tool.locators.AdhocGroupMemberRemovalBean" >
       <property name="evalAdhocSupport" ref="org.sakaiproject.evaluation.dao.EvalAdhocSupport" />
       <property name="evalExternalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+   	  <property name="messages" ref="targettedMessageList" />
    </bean>
 
    <!-- evolver definitions here -->

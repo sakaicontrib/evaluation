@@ -12,6 +12,8 @@ import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
+import uk.org.ponder.messageutil.TargettedMessageList;
+
 /**
  * This is not a true Bean Locator. It's primary purpose is
  * for handling the calls for adhoc groups from the
@@ -152,6 +154,11 @@ public class AdhocGroupsBean {
    private EvalSettings settings;
    public void setSettings(EvalSettings settings) {
       this.settings = settings;
+   }
+   
+   private TargettedMessageList messages;
+   public void setMessages(TargettedMessageList messages) {
+	  this.messages = messages;
    }
    
 }

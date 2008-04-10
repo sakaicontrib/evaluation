@@ -3,9 +3,14 @@ package org.sakaiproject.evaluation.tool.locators;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvalAdhocSupport;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
+import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
+
+import uk.org.ponder.messageutil.TargettedMessage;
+import uk.org.ponder.messageutil.TargettedMessageList;
 
 /**
  * We haven't yet gone down the path of creating full blown bean locators for
@@ -28,8 +33,8 @@ public class AdhocGroupMemberRemovalBean {
     */
    private EvalAdhocSupport evalAdhocSupport;
    private EvalExternalLogic externalLogic;
-   
-   
+   private TargettedMessageList messages;
+     
    public void removeUser() { 
       String currentUserId = externalLogic.getCurrentUserId();
       EvalAdhocGroup adhocGroup = evalAdhocSupport.getAdhocGroupById(adhocGroupId);
@@ -49,6 +54,16 @@ public class AdhocGroupMemberRemovalBean {
       }
       adhocGroup.setParticipantIds(participants.toArray(new String[] {}));
       evalAdhocSupport.saveAdhocGroup(adhocGroup);
+      
+      
+      EvalUser user = externalLogic.getEvalUserById(adhocUserId);
+      String humanReadableUsername = user.displayName;
+      if (EvalConstants.USER_TYPE_INTERNAL.equals(user.type)) {
+    	  humanReadableUsername = user.email;
+      }
+
+      messages.addMessage(new TargettedMessage("modifyadhocgroup.message.removeduser",
+    		  new String[] { humanReadableUsername }, TargettedMessage.SEVERITY_INFO));
    }
 
    /*
@@ -78,4 +93,7 @@ public class AdhocGroupMemberRemovalBean {
       this.externalLogic = logic;
    }
    
+   public void setMessages(TargettedMessageList messages) {
+	  this.messages = messages;
+   }
 }
