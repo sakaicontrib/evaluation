@@ -491,7 +491,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
             }
          }
          if (user != null) {
-            sakaiUsers.put(userIds[i], user);
+            sakaiUsers.put(user.getId(), user);
          }
       }
       return sakaiUsers;
