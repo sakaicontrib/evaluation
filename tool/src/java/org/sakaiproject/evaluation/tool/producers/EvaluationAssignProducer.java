@@ -300,7 +300,7 @@ public class EvaluationAssignProducer implements ViewComponentProducer, ViewPara
 	          }
           }
           UIInternalLink.make(adhocGroupsArea, "new-adhocgroup-link", UIMessage.make("assigneval.page.adhocgroups.newgrouplink"),
-                  new AdhocGroupParams(ModifyAdhocGroupProducer.VIEW_ID, null));
+                  new AdhocGroupParams(ModifyAdhocGroupProducer.VIEW_ID, null, vsh.getFullURL(evalViewParams)));
       }
       
       // Add all the groups and hierarchy nodes back to the UISelect Many's. see

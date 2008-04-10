@@ -1,9 +1,7 @@
 package org.sakaiproject.evaluation.tool.locators;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,13 +12,10 @@ import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 
-import uk.org.ponder.rsf.builtin.UVBBean;
-import uk.org.ponder.rsf.viewstate.ViewStateHandler;
-
 /**
  * This is not a true Bean Locator. It's primary purpose is
- * for handling the UVB Ajax calls for adhoc groups from the
- * evaluation_assign page.
+ * for handling the calls for adhoc groups from the
+ * modify_adhoc_groups page.
  * 
  * @author Steven Githens
  */
@@ -30,11 +25,9 @@ public class AdhocGroupsBean {
    private Long adhocGroupId;
    private String adhocGroupTitle;
    private String newAdhocGroupUsers;
-   private String userId; // Used for binding users to remove
-   private UVBBean uvbBean;
    
-   public Map<String,String> acceptedInternalUsers = new HashMap<String,String>();
-   public Map<String,String> acceptedAdhocUsers = new HashMap<String,String>();
+   public List<String> acceptedInternalUsers = new ArrayList<String>();
+   public List<String> acceptedAdhocUsers = new ArrayList<String>();
    public List<String> rejectedUsers = new ArrayList<String>();
    
    /*
@@ -61,7 +54,7 @@ public class AdhocGroupsBean {
    public void addNewAdHocGroup() {
       String currentUserId = externalLogic.getCurrentUserId();
       /*
-       * At the we allow any registered user to create adhoc groups.
+       * At the moment we allow any registered user to create adhoc groups.
        */
       if (externalLogic.isUserAnonymous(currentUserId)) {
          throw new SecurityException("Anonymous users cannot create EvalAdhocGroups: " + currentUserId);
@@ -77,15 +70,8 @@ public class AdhocGroupsBean {
       group.setParticipantIds(participants.toArray(new String[] {}));
       
       evalAdhocSupport.saveAdhocGroup(group);
-      //participantDivUrl = vsh.getFullURL(
-      //        new AdhocGroupParams(AdhocGroupParticipantsDiv.VIEW_ID, group.getId()));
       adhocGroupId = group.getId();
-      if (uvbBean.paths != null && uvbBean.values != null) {
-    	  uvbBean.populate();
-      }
-      else {
-    	  log.error("The UVB BEan has not bean filled with values and paths!");
-      }
+
       log.info("Saved adhoc group");
    }
    
@@ -104,14 +90,14 @@ public class AdhocGroupsBean {
         */
        for (String potentialId: potentialMembers) {
            if (externalLogic.getUserId(potentialId) != null) {
-               participants.add(potentialId);
-               acceptedInternalUsers.put(potentialId, potentialId + ", " + externalLogic.getUserUsername(potentialId));  
+               participants.add(externalLogic.getUserId(potentialId));
+               acceptedInternalUsers.add(potentialId);  
            }
            else if (useAdhocusers && EvalUtils.isValidEmail(potentialId)) {
                EvalAdhocUser newuser = new EvalAdhocUser(externalLogic.getCurrentUserId(), potentialId);
                evalAdhocSupport.saveAdhocUser(newuser);
                participants.add(newuser.getUserId());
-               acceptedAdhocUsers.put(newuser.getUserId(), "Adhoc user, " + potentialId);
+               acceptedAdhocUsers.add(potentialId);
            }
            else {
                rejectedUsers.add(potentialId);
@@ -145,14 +131,6 @@ public class AdhocGroupsBean {
    public void setNewAdhocGroupUsers(String newAdhocGroupUsers) {
        this.newAdhocGroupUsers = newAdhocGroupUsers;
    }
-
-   public UVBBean getUvbBean() {
-       return uvbBean;
-   }
-
-   public void setUvbBean(UVBBean uvbBean) {
-       this.uvbBean = uvbBean;
-   }
    
    private EvalAdhocSupport evalAdhocSupport;
    public void setEvalAdhocSupport(EvalAdhocSupport bean) {
@@ -167,14 +145,6 @@ public class AdhocGroupsBean {
    private EvalSettings settings;
    public void setSettings(EvalSettings settings) {
       this.settings = settings;
-   }
-
-   public String getUserId() {
-       return userId;
-   }
-
-   public void setUserId(String userId) {
-       this.userId = userId;
    }
    
 }

@@ -186,7 +186,6 @@
    	  <property name="evalAdhocSupport" ref="org.sakaiproject.evaluation.dao.EvalAdhocSupport" />
    	  <property name="evalExternalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
       <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-      <property name="uvbBean" ref="UVBBean" />
    </bean>
 
    <bean id="adhocGroupMemberRemovalBean"
@@ -664,7 +663,8 @@
    
    <!-- Adhoc Group Views -->
    <bean class="org.sakaiproject.evaluation.tool.producers.ModifyAdhocGroupProducer">
-   
+       <property name="evalAdhocSupport" ref="org.sakaiproject.evaluation.dao.EvalAdhocSupport" />
+       <property name="evalExternalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
    </bean>
 
 </beans>
