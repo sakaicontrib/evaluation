@@ -261,7 +261,8 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
       EvalAdhocUser adhocUser = adhocSupportLogic.getAdhocUserById(EvalAdhocUser.getIdFromAdhocUserId(userId));
       if (adhocUser != null) {
          user = new EvalUser(userId, EvalConstants.USER_TYPE_INTERNAL,
-               adhocUser.getEmail(), adhocUser.getUsername(), adhocUser.getDisplayName());
+               adhocUser.getEmail(), adhocUser.getUsername(), 
+               adhocUser.getDisplayName() == null ? adhocUser.getEmail() : adhocUser.getDisplayName());
       } else {
          // try to get user from Sakai
          try {
@@ -394,7 +395,8 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
       EvalAdhocUser adhocUser = adhocSupportLogic.getAdhocUserByEmail(email);
       if (adhocUser != null) {
          user = new EvalUser(adhocUser.getUserId(), EvalConstants.USER_TYPE_INTERNAL,
-               adhocUser.getEmail(), adhocUser.getUsername(), adhocUser.getDisplayName());
+               adhocUser.getEmail(), adhocUser.getUsername(), 
+               adhocUser.getDisplayName() == null ? adhocUser.getEmail() : adhocUser.getDisplayName());
       } else {
          Collection<User> sakaiUsers = userDirectoryService.findUsersByEmail(email);
          if (sakaiUsers.size() > 0) {
@@ -444,7 +446,8 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
          if (adhocUsers.containsKey(userId)) {
             EvalAdhocUser adhocUser = adhocUsers.get(userId);
             user = new EvalUser(adhocUser.getUserId(), EvalConstants.USER_TYPE_INTERNAL,
-                  adhocUser.getEmail(), adhocUser.getUsername(), adhocUser.getDisplayName());
+                  adhocUser.getEmail(), adhocUser.getUsername(), 
+                  adhocUser.getDisplayName() == null ? adhocUser.getEmail() : adhocUser.getDisplayName());
          } else if (sakaiUsers.containsKey(userId)) {
             User sakaiUser = sakaiUsers.get(userId);
             user = new EvalUser(sakaiUser.getId(), EvalConstants.USER_TYPE_EXTERNAL,
