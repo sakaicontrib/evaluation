@@ -7,6 +7,7 @@ import org.sakaiproject.evaluation.dao.EvalAdhocSupport;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
+import org.sakaiproject.evaluation.tool.locators.AdhocGroupsBean;
 import org.sakaiproject.evaluation.tool.viewparams.AdhocGroupParams;
 
 import uk.org.ponder.rsf.components.ParameterList;
@@ -19,6 +20,8 @@ import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UILink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.flow.ARIResult;
+import uk.org.ponder.rsf.flow.ActionResultInterceptor;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
@@ -31,7 +34,8 @@ import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
  * 
  * @author sgithens
  */
-public class ModifyAdhocGroupProducer implements ViewComponentProducer, ViewParamsReporter {
+public class ModifyAdhocGroupProducer implements ViewComponentProducer, ViewParamsReporter,
+ActionResultInterceptor {
     public static final String VIEW_ID = "modify_adhoc_group";
     
     private EvalAdhocSupport evalAdhocSupport;
@@ -43,6 +47,11 @@ public class ModifyAdhocGroupProducer implements ViewComponentProducer, ViewPara
     public void setEvalExternalLogic(EvalExternalLogic logic) {
        this.externalLogic = logic;
     }
+    
+    private AdhocGroupsBean adhocGroupsBean;
+    public void setAdhocGroupsBean(AdhocGroupsBean adhocGroupsBean) {
+		this.adhocGroupsBean = adhocGroupsBean;
+	}
 
     public void fillComponents(UIContainer tofill, ViewParameters viewparams, ComponentChecker checker) {
     	AdhocGroupParams params = (AdhocGroupParams) viewparams;
@@ -117,5 +126,16 @@ public class ModifyAdhocGroupProducer implements ViewComponentProducer, ViewPara
     public ViewParameters getViewParameters() {
         return new AdhocGroupParams();
     }
+
+	public void interceptActionResult(ARIResult result, ViewParameters incoming, Object actionReturn) {
+		
+		if (AdhocGroupsBean.SAVED_NEW_ADHOCGROUP.equals(actionReturn) &&
+				incoming instanceof AdhocGroupParams) {
+			AdhocGroupParams params = (AdhocGroupParams) incoming.copyBase();
+			params.adhocGroupId = adhocGroupsBean.getAdhocGroupId();
+			result.resultingView = params;
+		}
+		
+	}
 
 }
