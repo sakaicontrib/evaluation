@@ -432,10 +432,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
       Map<String, User> sakaiUsers = new HashMap<String, User>();
       if (! foundAll) {
          // get remaining users from Sakai
-         List<User> sakUsers = getSakaiUsers(userIds);
-         for (User user : sakUsers) {
-            sakaiUsers.put(user.getId(), user);
-         }
+         sakaiUsers.putAll(getSakaiUsers(userIds));
       }
 
       /* now put the users into the list in the original order of the array 
@@ -453,7 +450,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
             user = new EvalUser(sakaiUser.getId(), EvalConstants.USER_TYPE_EXTERNAL,
                   sakaiUser.getEmail(), sakaiUser.getEid(), sakaiUser.getDisplayName());            
          } else {
-            makeInvalidUser(userId, null);
+            user = makeInvalidUser(userId, null);
          }
          users.add(user);
       }
@@ -463,6 +460,41 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
 //         users.add( getEvalUserById(userId) );
 //      }
       return users;
+   }
+
+
+   /**
+    * Safe method for getting a large number of users from Sakai
+    * 
+    * @param userIds an array of internal user ids
+    * @return a map of userId -> {@link User}
+    */
+   public Map<String, User> getSakaiUsers(String[] userIds) {
+      // TODO - cannot use this because of the way the UDS works (it will not let us call this unless
+      // the user already exists in Sakai -AZ
+//    // get the list of users efficiently
+//    List userIds = Arrays.asList( toUserIds );
+//    List l = userDirectoryService.getUsers( userIds );
+
+      // handling this in a much less efficient way for now (see above comment) -AZ
+      Map<String, User> sakaiUsers = new HashMap<String, User>(); // fill this with users
+      for (int i = 0; i < userIds.length; i++) {
+         User user = null;
+         try {
+            user = userDirectoryService.getUser( userIds[i] );
+         } catch (UserNotDefinedException e) {
+            log.debug("Cannot find user object by id:" + userIds[i] );
+            try {
+               user = userDirectoryService.getUserByEid( userIds[i] );
+            } catch (UserNotDefinedException e1) {
+               log.debug("Cannot find user object by eid:" + userIds[i] );
+            }
+         }
+         if (user != null) {
+            sakaiUsers.put(userIds[i], user);
+         }
+      }
+      return sakaiUsers;
    }
 
 
@@ -809,41 +841,6 @@ public class EvalExternalLogicImpl implements EvalExternalLogic, ApplicationCont
       }
 
       return false;
-   }
-
-
-   /**
-    * Safe method for getting a large number of users from Sakai
-    * 
-    * @param userIds an array of internal user ids
-    * @return a list of {@link User}
-    */
-   public List<User> getSakaiUsers(String[] userIds) {
-      // TODO - cannot use this because of the way the UDS works (it will not let us call this unless
-      // the user already exists in Sakai -AZ
-//    // get the list of users efficiently
-//    List userIds = Arrays.asList( toUserIds );
-//    List l = userDirectoryService.getUsers( userIds );
-
-      // handling this in a much less efficient way for now (see above comment) -AZ
-      List<User> l = new ArrayList<User>(); // fill this with users
-      for (int i = 0; i < userIds.length; i++) {
-         User user = null;
-         try {
-            user = userDirectoryService.getUser( userIds[i] );
-         } catch (UserNotDefinedException e) {
-            log.debug("Cannot find user object by id:" + userIds[i] );
-            try {
-               user = userDirectoryService.getUserByEid( userIds[i] );
-            } catch (UserNotDefinedException e1) {
-               log.debug("Cannot find user object by eid:" + userIds[i] );
-            }
-         }
-         if (user != null) {
-            l.add(user);
-         }
-      }
-      return l;
    }
 
    /* (non-Javadoc)
