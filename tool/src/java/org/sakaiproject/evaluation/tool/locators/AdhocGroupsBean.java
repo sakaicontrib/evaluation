@@ -21,6 +21,8 @@ import org.sakaiproject.evaluation.utils.EvalUtils;
  */
 public class AdhocGroupsBean {
    private static Log log = LogFactory.getLog(AdhocGroupsBean.class);
+   
+   public static final String SAVED_NEW_ADHOCGROUP = "added-adhoc-group";
     
    private Long adhocGroupId;
    private String adhocGroupTitle;
@@ -48,10 +50,12 @@ public class AdhocGroupsBean {
    
    }
    
-   /*
+   /**
     * Adds a new Adhoc Group using the data entered into newAdhocGroupUsers.
+    * 
+    * @return
     */
-   public void addNewAdHocGroup() {
+   public String addNewAdHocGroup() {
       String currentUserId = externalLogic.getCurrentUserId();
       /*
        * At the moment we allow any registered user to create adhoc groups.
@@ -72,7 +76,9 @@ public class AdhocGroupsBean {
       evalAdhocSupport.saveAdhocGroup(group);
       adhocGroupId = group.getId();
 
-      log.info("Saved adhoc group");
+      log.info("Saved adhoc group: " + adhocGroupId);
+	
+      return SAVED_NEW_ADHOCGROUP;
    }
    
    /*
