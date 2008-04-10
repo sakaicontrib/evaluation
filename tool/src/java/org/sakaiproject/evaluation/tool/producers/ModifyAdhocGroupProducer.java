@@ -96,9 +96,14 @@ ActionResultInterceptor {
     				UIMessage.make(row, "user-id", "modifyadhocgroup.adhocuser.label");
     			}
     			else {
-    				UIOutput.make(row, "user-id", evalUser.userId);
+    				UIOutput.make(row, "user-id", evalUser.username);
     			}
     			UIOutput.make(row, "user-display", evalUser.displayName);
+    			// Remove Button
+    			UICommand removeButton = UICommand.make(row, "remove-member", "adhocGroupMemberRemovalBean.removeUser");
+    			removeButton.parameters = new ParameterList();
+    			removeButton.parameters.add(new UIELBinding("adhocGroupMemberRemovalBean.adhocGroupId", evalAdhocGroup.getId()));
+    			removeButton.parameters.add(new UIELBinding("adhocGroupMemberRemovalBean.adhocUserId", evalUser.userId));
     		}
     	}
     	
