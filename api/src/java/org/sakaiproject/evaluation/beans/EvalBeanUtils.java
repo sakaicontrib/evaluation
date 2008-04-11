@@ -189,7 +189,6 @@ public class EvalBeanUtils {
 
       Date instructorsDate = null;
       Boolean instructorsView = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
-      eval.setInstructorViewResults( instructorsView );
       if (instructorsView != null) {
          eval.setInstructorViewResults( instructorsView );
       }
