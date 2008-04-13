@@ -25,8 +25,10 @@ public class EvalLikertChartBuilder {
         
         DefaultCategoryDataset likertDataset = new DefaultCategoryDataset();
         
+	int responsesCount = 0;
         for (int i = 0; i < responses.length; i++) {
             likertDataset.addValue(values[i], "Responses", responses[i]);
+	    responsesCount += values[i];
         }
         
         JFreeChart chart = ChartFactory.createBarChart(
@@ -55,7 +57,7 @@ public class EvalLikertChartBuilder {
         renderer.setOutlineStroke(new BasicStroke(0.5f));
         renderer.setBaseItemLabelsVisible(true);
         if (showPercentages) {
-            renderer.setBaseItemLabelGenerator(new LikertPercentageItemLabelGenerator(responses.length));
+            renderer.setBaseItemLabelGenerator(new LikertPercentageItemLabelGenerator(responsesCount));
         }
         else {
             renderer.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator());
