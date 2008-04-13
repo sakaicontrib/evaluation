@@ -411,13 +411,7 @@ public class ReportsViewingProducer implements ViewComponentProducer, ViewParams
     * @return a string version of the percentage number
     */
    private String makePercentage(int value, int total) {
-      String percentage = null;
-      if (total > 0) {
-         percentage = ((value * 100) / total) + "";
-      } else {
-         percentage = "0";
-      }
-      return percentage;
+	   return (total > 0) ? String.format("%.0f", (float) (value * 100.0 / total)) : "0"; 
    }
 
 
