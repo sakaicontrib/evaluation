@@ -148,7 +148,7 @@
    <scm>
       <connection>scm:svn:https://source.sakaiproject.org/contrib/evaluation/trunk/</connection>
       <developerConnection>scm:svn:https://source.sakaiproject.org/contrib/evaluation/trunk/</developerConnection>
-      <url>https://source.sakaiproject.org/contrib/evaluation/trunk/?root=contrib</url>
+      <url>https://source.sakaiproject.org/viewsvn/evaluation/?root=contrib</url>
    </scm>
 
 </project>
