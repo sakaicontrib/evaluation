@@ -38,6 +38,7 @@
       <artifactId>master</artifactId>
       <groupId>org.sakaiproject</groupId>
       <version>2.5.0</version>
+      <relativePath>../master/pom.xml</relativePath>
    </parent>
 
    <profiles>
@@ -60,4 +61,94 @@
          </modules>
       </profile>
    </profiles>
+
+   <!-- Project developers -->
+   <developers>
+      <developer>
+         <id>aaronz@vt.edu</id>
+         <name>Aaron Zeckoski</name>
+         <email>aaron@caret.cam.ac.uk</email>
+         <url>http://confluence.sakaiproject.org/confluence/display/~aaronz</url>
+         <organization>CARET</organization>
+         <organizationUrl>http://www.caret.cam.ac.uk/</organizationUrl>
+         <roles>
+            <role>Project Manager</role>
+            <role>Architect</role>
+            <role>Developer</role>
+         </roles>
+         <timezone>0</timezone>
+      </developer>
+   </developers>
+
+   <repositories>
+      <repository>
+         <id>sakai-maven</id>
+         <name>Sakai Maven Repo</name>
+         <layout>default</layout>
+               <url>http://source.sakaiproject.org/maven2</url>
+         <snapshots>
+           <enabled>false</enabled>
+         </snapshots>
+      </repository>
+      <repository>
+         <id>default</id>
+         <name>Maven Repository Switchboard</name>
+         <layout>default</layout>
+               <url>http://repo1.maven.org/maven2</url>
+         <snapshots>
+           <enabled>false</enabled>
+         </snapshots>
+      </repository>
+   </repositories>
+
+   <distributionManagement>
+      <repository>
+         <id>Sakai-Maven2</id>
+         <name>Sakaiproject Maven 2 repository</name>
+         <url>file://source.sakaiproject.org/maven2/</url>
+      </repository>
+      <site>
+         <id>local site</id>
+         <url>file:./site/</url>
+      </site>
+   </distributionManagement>
+
+   <issueManagement>
+      <system>JIRA</system>
+      <url>http://jira.sakaiproject.org/jira/browse/EVALSYS</url>
+   </issueManagement>
+
+   <ciManagement>
+      <system>Continuum</system>
+      <url>http://saffron.caret.cam.ac.uk/continuum</url>
+      <notifiers>
+         <notifier>
+            <type>mail</type>
+            <sendOnError>true</sendOnError>
+            <sendOnFailure>true</sendOnFailure>
+            <sendOnSuccess>false</sendOnSuccess>
+            <sendOnWarning>false</sendOnWarning>
+            <configuration>
+               <address>aaron@caret.cam.ac.uk</address>
+            </configuration>
+         </notifier>
+      </notifiers>
+   </ciManagement>
+
+   <!-- define the license -->
+   <licenses>
+      <license>
+         <name>Educational Community License, Version 1.0</name>
+         <url>http://www.opensource.org/licenses/ecl1.php</url>
+         <distribution>repo</distribution>
+      </license>
+   </licenses>
+
+   <!-- define source code repository location -->
+   <scm>
+      <connection>scm:svn:https://source.sakaiproject.org/contrib/evaluation/trunk/</connection>
+      <developerConnection>scm:svn:https://source.sakaiproject.org/contrib/evaluation/trunk/</developerConnection>
+      <url>https://source.sakaiproject.org/contrib/evaluation/trunk/?root=contrib</url>
+   </scm>
+
 </project>
