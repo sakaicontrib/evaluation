@@ -37,7 +37,7 @@ import org.sakaiproject.evaluation.utils.SettingsLogicUtils;
  * 
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
-public class PreloadDataImpl implements Runnable {
+public class PreloadDataImpl {
 
    private static Log log = LogFactory.getLog(PreloadDataImpl.class);
 
@@ -51,7 +51,7 @@ public class PreloadDataImpl implements Runnable {
       this.externalLogic = externalLogic;
    }
 
-   public void run() {
+   public void preload() {
       // run the methods that will preload the data
       preloadEvalConfig();
       preloadEmailTemplate();
@@ -67,18 +67,20 @@ public class PreloadDataImpl implements Runnable {
     */
    public boolean checkCriticalDataPreloaded() {
       boolean preloaded = true;
-      if (dao.countAll(EvalConfig.class) <= 0) {
+      int configCount = dao.countAll(EvalConfig.class);
+      if (configCount <= 0) {
          preloaded = false;
+      } else {
+         int emailTemplateCount = dao.countAll(EvalEmailTemplate.class);
+         if (emailTemplateCount <= 0) {
+            preloaded = false;
+         } else {
+            int scaleCount = dao.countAll(EvalScale.class);
+            if (scaleCount <= 0) {
+               preloaded = false;
+            }
+         }
       }
-
-      if (dao.countAll(EvalEmailTemplate.class) <= 0) {
-         preloaded = false;
-      }
-
-      if (dao.countAll(EvalScale.class) <= 0) {
-         preloaded = false;
-      }
-
       return preloaded;
    }
 

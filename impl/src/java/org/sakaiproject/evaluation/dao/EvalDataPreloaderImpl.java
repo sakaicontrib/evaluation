@@ -59,7 +59,7 @@ public class EvalDataPreloaderImpl {
                throw new IllegalStateException("Failure attempting to obtain lock ("+EVAL_PRELOAD_LOCK+") and preload evaluation system data, " 
                      + "see logs just before this for more details, system terminating...");               
             } else if (gotLock) {
-               preloadData.run();
+               preloadData.preload();
                dao.releaseLock(EVAL_PRELOAD_LOCK, serverId);
             }
          }
