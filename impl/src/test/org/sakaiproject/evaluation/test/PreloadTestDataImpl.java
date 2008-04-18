@@ -67,7 +67,7 @@ public class PreloadTestDataImpl {
          throw new NullPointerException("PreloadDataImpl must be loaded before this class");
       } else {
          // run the data preloading method
-         preloadData.run();
+         preloadData.preload();
       }
       preloadDB();
    }
