@@ -102,6 +102,9 @@ public class PDFReportExporter implements ReportExporter {
       evalPDFReportBuilder.addIntroduction( evaluation.getTitle(), 
             externalLogic.makePlainTextFromHTML(evaluation.getInstructions()) );
 
+      // Reset question numbering
+      displayNumber = 0;
+      
       // 1 Make TIDL
       TemplateItemDataList tidl = responseAggregator.prepareTemplateItemDataStructure(evaluation, groupIds);
 
