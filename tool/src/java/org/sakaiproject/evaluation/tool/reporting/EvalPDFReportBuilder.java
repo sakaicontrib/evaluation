@@ -79,8 +79,8 @@ public class EvalPDFReportBuilder {
          // Groups
          
          Paragraph groupPara = new Paragraph(groupNames, frontAuthorFont);
-         usernamePara.setSpacingBefore(25.0f);
-         usernamePara.setAlignment(Element.ALIGN_CENTER);
+         groupPara.setSpacingBefore(25.0f);
+         groupPara.setAlignment(Element.ALIGN_CENTER);
          document.add(groupPara);
 
 
@@ -98,8 +98,8 @@ public class EvalPDFReportBuilder {
 
          // Ended on
          Paragraph endedPara = new Paragraph(endDate, frontInfoFont);
-         startedPara.setAlignment(Element.ALIGN_CENTER);
-         startedPara.setSpacingBefore(25.0f);
+         endedPara.setAlignment(Element.ALIGN_CENTER);
+         endedPara.setSpacingBefore(25.0f);
          document.add(endedPara);
          
          // Reply Rate
