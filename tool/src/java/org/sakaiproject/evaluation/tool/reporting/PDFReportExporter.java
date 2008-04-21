@@ -32,6 +32,8 @@ import uk.org.ponder.messageutil.MessageLocator;
 public class PDFReportExporter implements ReportExporter {
    private static Log log = LogFactory.getLog(PDFReportExporter.class);
 
+   int displayNumber = 0;
+   
    private EvalExternalLogic externalLogic;
    public void setExternalLogic(EvalExternalLogic externalLogic) {
       this.externalLogic = externalLogic;
@@ -167,11 +169,12 @@ public class PDFReportExporter implements ReportExporter {
          evalPDFReportBuilder.addSectionHeader(questionText);
       }
       else if (EvalConstants.ITEM_TYPE_TEXT.equals(templateItemType)) {
+    	 displayNumber++;
          List<String> essays = new ArrayList<String>();
          for (EvalAnswer answer: itemAnswers) {
             essays.add(answer.getText());
          }
-         evalPDFReportBuilder.addTextItemsList(questionText, essays);
+         evalPDFReportBuilder.addTextItemsList(displayNumber + ". " + questionText, essays);
       }
       else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(templateItemType) ||
             EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(templateItemType) ||
@@ -184,6 +187,8 @@ public class PDFReportExporter implements ReportExporter {
 //       showPercentages = true;
 //       }
 
+         displayNumber++;
+         
          int[] responseArray = TemplateItemDataList.getAnswerChoicesCounts(templateItemType, item.getScale().getOptions().length, itemAnswers);
 
          String[] optionLabels;
@@ -198,7 +203,7 @@ public class PDFReportExporter implements ReportExporter {
             optionLabels = item.getScale().getOptions();
          }
 
-         evalPDFReportBuilder.addLikertResponse(questionText, 
+         evalPDFReportBuilder.addLikertResponse(displayNumber + ". " + questionText, 
                optionLabels, responseArray, showPercentages);
 
          // handle comments
