@@ -86,10 +86,13 @@ public class PDFReportExporter implements ReportExporter {
       int responsesCount = deliveryService.countResponses(evaluation.getId(), null, true);
       int enrollmentsCount = evaluationService.countParticipantsForEval(evaluation.getId());
 
+      String groupNames = responseAggregator.getCommaSeparatedGroupNames(groupIds);
+      
       evalPDFReportBuilder.addTitlePage(evaluation.getTitle(), 
-            user.displayName, 
+            groupNames, 
             messageLocator.getMessage("reporting.pdf.accountinfo", new String[] {user.username, user.displayName}), 
             messageLocator.getMessage("reporting.pdf.startdatetime",df.format(evaluation.getStartDate())),
+            messageLocator.getMessage("reporting.pdf.enddatetime",df.format(evaluation.getDueDate())),
             messageLocator.getMessage("reporting.pdf.replyrate", 
                   new String[] { EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount) }),
                   bannerImageBytes, messageLocator.getMessage("reporting.pdf.defaultsystemname"));

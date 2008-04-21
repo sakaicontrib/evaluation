@@ -41,8 +41,8 @@ public class EvalPDFReportBuilder {
          pdfWriter.setStrictImageSequence(true);
          document.open();
 
-         questionTextFont = new Font(Font.TIMES_ROMAN, 14, Font.BOLD);
-         paragraphFont = new Font(Font.TIMES_ROMAN, 10, Font.NORMAL);
+         questionTextFont = new Font(Font.TIMES_ROMAN, 12, Font.BOLD);
+         paragraphFont = new Font(Font.TIMES_ROMAN, 9, Font.NORMAL);
          frontTitleFont = new Font(Font.TIMES_ROMAN, frontTitleSize, Font.NORMAL);
          frontAuthorFont = new Font(Font.TIMES_ROMAN, 18, Font.NORMAL);
          frontInfoFont = new Font(Font.TIMES_ROMAN, 16, Font.NORMAL);
@@ -60,8 +60,8 @@ public class EvalPDFReportBuilder {
       }
    }
 
-   public void addTitlePage(String evaltitle, String username, String accountInfo,
-         String startDate, String responseInformation, byte[] bannerImageBytes,
+   public void addTitlePage(String evaltitle, String username, String[] groupNames,
+         String startDate, String endDate, String responseInformation, byte[] bannerImageBytes,
          String evalSystemTitle) {
       try {
          PdfContentByte cb = pdfWriter.getDirectContent();
@@ -76,11 +76,12 @@ public class EvalPDFReportBuilder {
          titlePara.setAlignment(Element.ALIGN_CENTER);
          document.add(titlePara);
 
-         // User Name
-         Paragraph usernamePara = new Paragraph(username, frontAuthorFont);
+         // Groups
+         
+         Paragraph groupPara = new Paragraph(groupNames, frontAuthorFont);
          usernamePara.setSpacingBefore(25.0f);
          usernamePara.setAlignment(Element.ALIGN_CENTER);
-         document.add(usernamePara);
+         document.add(groupPara);
 
 
          // Little info area? I don't know, it was on the mockup though
@@ -89,18 +90,18 @@ public class EvalPDFReportBuilder {
          infoPara.setSpacingBefore(90.0f);
          document.add(infoPara);
 
-         // Account stuff
-         Paragraph accountPara = new Paragraph(accountInfo, frontInfoFont);
-         accountPara.setAlignment(Element.ALIGN_CENTER);
-         accountPara.setSpacingBefore(110.0f);
-         document.add(accountPara);
-
          // Started on
          Paragraph startedPara = new Paragraph(startDate, frontInfoFont);
          startedPara.setAlignment(Element.ALIGN_CENTER);
          startedPara.setSpacingBefore(25.0f);
          document.add(startedPara);
 
+         // Ended on
+         Paragraph endedPara = new Paragraph(endDate, frontInfoFont);
+         startedPara.setAlignment(Element.ALIGN_CENTER);
+         startedPara.setSpacingBefore(25.0f);
+         document.add(endedPara);
+         
          // Reply Rate
          Paragraph replyRatePara = new Paragraph(responseInformation, frontInfoFont);
          replyRatePara.setAlignment(Element.ALIGN_CENTER);
@@ -215,4 +216,5 @@ public class EvalPDFReportBuilder {
       }
    }
 
+      
 }
