@@ -41,7 +41,7 @@ public class EvalPDFReportBuilder {
          pdfWriter.setStrictImageSequence(true);
          document.open();
 
-         questionTextFont = new Font(Font.TIMES_ROMAN, 12, Font.BOLD);
+         questionTextFont = new Font(Font.TIMES_ROMAN, 11, Font.BOLD);
          paragraphFont = new Font(Font.TIMES_ROMAN, 9, Font.NORMAL);
          frontTitleFont = new Font(Font.TIMES_ROMAN, frontTitleSize, Font.NORMAL);
          frontAuthorFont = new Font(Font.TIMES_ROMAN, 18, Font.NORMAL);
@@ -60,7 +60,7 @@ public class EvalPDFReportBuilder {
       }
    }
 
-   public void addTitlePage(String evaltitle, String username, String[] groupNames,
+   public void addTitlePage(String evaltitle, String groupNames,
          String startDate, String endDate, String responseInformation, byte[] bannerImageBytes,
          String evalSystemTitle) {
       try {

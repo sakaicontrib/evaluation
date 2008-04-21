@@ -90,7 +90,6 @@ public class PDFReportExporter implements ReportExporter {
       
       evalPDFReportBuilder.addTitlePage(evaluation.getTitle(), 
             groupNames, 
-            messageLocator.getMessage("reporting.pdf.accountinfo", new String[] {user.username, user.displayName}), 
             messageLocator.getMessage("reporting.pdf.startdatetime",df.format(evaluation.getStartDate())),
             messageLocator.getMessage("reporting.pdf.enddatetime",df.format(evaluation.getDueDate())),
             messageLocator.getMessage("reporting.pdf.replyrate", 
