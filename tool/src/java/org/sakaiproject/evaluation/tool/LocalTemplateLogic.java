@@ -170,12 +170,8 @@ public class LocalTemplateLogic {
          // delete parent template item and item
          Long itemId = templateItem.getItem().getId();
          authoringService.deleteTemplateItem(templateItem.getId(), currentUserId);
-         try {
-            authoringService.deleteItem(itemId, currentUserId);
-         } catch (RuntimeException e) {
-            // this is ok, the parent item is probably just used by another template item
-            log.info("Could not remove parent block item ("+itemId+"), it appears to be in use: " + e.getMessage());
-         }
+         // FIXME if this parent is used elsewhere then this will fail -AZ
+         authoringService.deleteItem(itemId, currentUserId);
 
          // modify block children template items
          for (int i = 0; i < childList.size(); i++) {
