@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
@@ -35,6 +37,8 @@ import org.sakaiproject.evaluation.utils.TemplateItemUtils;
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class LocalTemplateLogic {
+
+   private static Log log = LogFactory.getLog(LocalTemplateLogic.class);
 
    private EvalExternalLogic external;
    public void setExternal(EvalExternalLogic external) {
@@ -166,7 +170,12 @@ public class LocalTemplateLogic {
          // delete parent template item and item
          Long itemId = templateItem.getItem().getId();
          authoringService.deleteTemplateItem(templateItem.getId(), currentUserId);
-         authoringService.deleteItem(itemId, currentUserId);
+         try {
+            authoringService.deleteItem(itemId, currentUserId);
+         } catch (RuntimeException e) {
+            // this is ok, the parent item is probably just used by another template item
+            log.info("Could not remove parent block item ("+itemId+"), it appears to be in use: " + e.getMessage());
+         }
 
          // modify block children template items
          for (int i = 0; i < childList.size(); i++) {
