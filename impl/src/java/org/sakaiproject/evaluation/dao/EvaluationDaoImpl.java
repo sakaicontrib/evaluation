@@ -1218,11 +1218,9 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       return l.toArray(new Long[] {});
    }
 
-
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.sakaiproject.evaluation.dao.EvaluationDaoImpl#isUsedScale(java.lang.Long)
+   /**
+    * @param scaleId
+    * @return true if this scale is used in any items
     */
    public boolean isUsedScale(Long scaleId) {
       log.debug("scaleId: " + scaleId);
@@ -1234,10 +1232,9 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       return false;
    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.sakaiproject.evaluation.dao.EvaluationDaoImpl#isUsedItem(java.lang.Long)
+   /**
+    * @param itemId
+    * @return true if this item is used in any template (via a template item)
     */
    public boolean isUsedItem(Long itemId) {
       log.debug("itemId: " + itemId);
@@ -1249,10 +1246,9 @@ public class EvaluationDaoImpl extends HibernateCompleteGenericDao implements Ev
       return false;
    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.sakaiproject.evaluation.dao.EvaluationDaoImpl#isUsedTemplate(java.lang.Long)
+   /**
+    * @param templateId
+    * @return true if this template is used in any evalautions
     */
    public boolean isUsedTemplate(Long templateId) {
       log.debug("templateId: " + templateId);

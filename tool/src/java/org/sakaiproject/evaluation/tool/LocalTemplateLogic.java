@@ -22,6 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
+import org.sakaiproject.evaluation.logic.exceptions.InUseException;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalScale;
@@ -170,8 +171,12 @@ public class LocalTemplateLogic {
          // delete parent template item and item
          Long itemId = templateItem.getItem().getId();
          authoringService.deleteTemplateItem(templateItem.getId(), currentUserId);
-         // FIXME if this parent is used elsewhere then this will fail -AZ
-         authoringService.deleteItem(itemId, currentUserId);
+         // if this parent is used elsewhere then this will cause exception - EVALSYS-559
+         try {
+            authoringService.deleteItem(itemId, currentUserId);
+         } catch (InUseException e) {
+            log.info("Cannot remove block parent item ("+itemId+") - item is in use elsewhere");
+         }
 
          // modify block children template items
          for (int i = 0; i < childList.size(); i++) {

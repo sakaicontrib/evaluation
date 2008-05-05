@@ -29,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.exceptions.BlankRequiredFieldException;
+import org.sakaiproject.evaluation.logic.exceptions.InUseException;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.model.EvalItem;
@@ -447,6 +448,12 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 //    }
 
       if (securityChecks.checkUserControlItem(userId, item)) {
+
+         // check if this item is in use and throw an exception if it is
+         if (dao.isUsedItem(itemId)) {
+            throw new InUseException("This item is being used in at least one other template");
+         }
+
          EvalScale scale = item.getScale(); // LAZY LOAD
          String itemClassification = item.getClassification();
          dao.delete(item);

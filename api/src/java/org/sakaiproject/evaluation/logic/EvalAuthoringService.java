@@ -17,6 +17,7 @@ package org.sakaiproject.evaluation.logic;
 import java.util.List;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.logic.exceptions.InUseException;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
@@ -163,6 +164,7 @@ public interface EvalAuthoringService {
     * 
     * @param itemId the id of an EvalItem object
     * @param userId the internal user id (not username)
+    * @throws InUseException if this item is in use and cannot be removed
     */
    public void deleteItem(Long itemId, String userId);
 
