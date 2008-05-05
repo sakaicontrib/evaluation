@@ -341,24 +341,21 @@ public interface EvaluationDao extends CompleteGenericDao {
     */
    public boolean lockEvaluation(EvalEvaluation evaluation, Boolean lockState);
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.sakaiproject.evaluation.dao.EvaluationDaoImpl#isUsedScale(java.lang.Long)
+   /**
+    * @param scaleId
+    * @return true if this scale is used in any items
     */
    public boolean isUsedScale(Long scaleId);
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.sakaiproject.evaluation.dao.EvaluationDaoImpl#isUsedItem(java.lang.Long)
+   /**
+    * @param itemId
+    * @return true if this item is used in any template (via a template item)
     */
    public boolean isUsedItem(Long itemId);
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.sakaiproject.evaluation.dao.EvaluationDaoImpl#isUsedTemplate(java.lang.Long)
+   /**
+    * @param templateId
+    * @return true if this template is used in any evalautions
     */
    public boolean isUsedTemplate(Long templateId);
 
