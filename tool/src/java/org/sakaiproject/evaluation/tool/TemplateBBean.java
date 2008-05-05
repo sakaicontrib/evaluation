@@ -426,6 +426,7 @@ public class TemplateBBean {
                templateItem.setBlockId(parentId);
                templateItem.setDisplayOrder(new Integer(orderedChildIdList.indexOf(itemId) + 1));
                templateItem.setCategory(parent.getCategory()); // set the child category to the parent category EVALSYS-441
+               templateItem.setUsesNA(parent.getUsesNA()); // child inherits parent NA setting EVALSYS-549
                // children have to inherit the parent hierarchy settings
                templateItem.setHierarchyLevel(parent.getHierarchyLevel());
                templateItem.setHierarchyNodeId(parent.getHierarchyNodeId());
@@ -470,6 +471,7 @@ public class TemplateBBean {
          for (EvalTemplateItem child : blockChildren) {
             child.setDisplayOrder(new Integer(orderedChildIdList.indexOf(child.getId().toString()) + 1));
             child.setCategory(parent.getCategory()); // EVALSYS-441
+            child.setUsesNA(parent.getUsesNA()); // child inherits parent NA setting EVALSYS-549
             // children have to inherit the parent hierarchy settings
             child.setHierarchyLevel(parent.getHierarchyLevel());
             child.setHierarchyNodeId(parent.getHierarchyNodeId());
