@@ -110,6 +110,7 @@ public class RemoveItemProducer implements ViewComponentProducer, ViewParamsRepo
       String beanBinding = "templateBBean.";
       String actionBinding = "deleteItemAction";
 
+      int displayNum = 1;
       String itemOTPBinding = null;
       if (item == null) {
          // we are removing a template item
@@ -121,6 +122,9 @@ public class RemoveItemProducer implements ViewComponentProducer, ViewParamsRepo
                new Object[] {templateItem.getDisplayOrder(), templateItem.getTemplate().getTitle()});
          if (TemplateItemUtils.getTemplateItemType(templateItem).equals(EvalConstants.ITEM_TYPE_BLOCK_PARENT)) {
             UIMessage.make(tofill, "remove-item-block-text", "removeitem.block.text");
+         }
+         if (templateItem.getDisplayOrder() != null) {
+            displayNum = templateItem.getDisplayOrder();
          }
       } else {
          // we are removing an item
@@ -145,7 +149,7 @@ public class RemoveItemProducer implements ViewComponentProducer, ViewParamsRepo
       }
 
       // use the renderer evolver to show the item
-      itemRenderer.renderItem(tofill, "item-to-remove:", null, templateItem, 0, true);
+      itemRenderer.renderItem(tofill, "item-to-remove:", null, templateItem, displayNum, true);
 
       UIMessage.make(tofill, "cancel-command-link", "general.cancel.button");
 
