@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
+import org.sakaiproject.evaluation.logic.exceptions.InUseException;
 import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
@@ -756,11 +757,6 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
 //    assertNotNull(e);
 //    }
 
-      // test removing expert item ok for admin
-      authoringService.deleteItem(etdl.item6.getId(), 
-            EvalTestDataLoad.ADMIN_USER_ID);
-      assertNull( authoringService.getItemById(etdl.item6.getId()) );
-
       // test removing unused item OK
       authoringService.deleteItem(etdl.item4.getId(), 
             EvalTestDataLoad.MAINT_USER_ID);
@@ -769,6 +765,15 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       authoringService.deleteItem(etdl.item7.getId(), 
             EvalTestDataLoad.ADMIN_USER_ID);
       assertNull( authoringService.getItemById(etdl.item7.getId()) );
+
+      // test removing an item that is in use (used in a TI) causes exception
+      try {
+         authoringService.deleteItem(etdl.item6.getId(), 
+               EvalTestDataLoad.ADMIN_USER_ID);
+         fail("Should have thrown exception");
+      } catch (InUseException e) {
+         assertNotNull(e);
+      }
 
       // test removing invalid item id fails
       try {
